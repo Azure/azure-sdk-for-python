@@ -18,14 +18,14 @@ from azure.core.paging import ItemPaged
 from azure.core.pipeline.transport import AioHttpTransport
 
 from asynctestcase import AsyncContainerRegistryTestClass
-from constants import TO_BE_DELETED
+from constants import TO_BE_DELETED, HELLO_WORLD
 from preparer import acr_preparer
 
 
 class TestContainerRegistryClient(AsyncContainerRegistryTestClass):
     @acr_preparer()
-    async def test_list_repositories(self, containerregistry_baseurl):
-        client = self.create_registry_client(containerregistry_baseurl)
+    async def test_list_repositories(self, containerregistry_endpoint):
+        client = self.create_registry_client(containerregistry_endpoint)
 
         repositories = client.list_repositories()
 
@@ -40,8 +40,8 @@ class TestContainerRegistryClient(AsyncContainerRegistryTestClass):
         assert count > 0
 
     @acr_preparer()
-    async def test_list_repositories_by_page(self, containerregistry_baseurl):
-        client = self.create_registry_client(containerregistry_baseurl)
+    async def test_list_repositories_by_page(self, containerregistry_endpoint):
+        client = self.create_registry_client(containerregistry_endpoint)
         results_per_page = 2
         total_pages = 0
 
@@ -61,41 +61,37 @@ class TestContainerRegistryClient(AsyncContainerRegistryTestClass):
         assert total_pages >= 1
 
     @acr_preparer()
-    async def test_delete_repository(self, containerregistry_baseurl, containerregistry_resource_group):
+    async def test_delete_repository(self, containerregistry_endpoint, containerregistry_resource_group):
         repository = self.get_resource_name("repo")
-        self._import_tag_to_be_deleted(
-            containerregistry_baseurl, resource_group=containerregistry_resource_group, repository=repository
-        )
-        client = self.create_registry_client(containerregistry_baseurl)
+        self.import_image(HELLO_WORLD, [TO_BE_DELETED])
+        client = self.create_registry_client(containerregistry_endpoint)
 
-        result = await client.delete_repository(repository)
+        result = await client.delete_repository(TO_BE_DELETED)
         assert isinstance(result, DeletedRepositoryResult)
         assert result.deleted_registry_artifact_digests is not None
         assert result.deleted_tags is not None
 
-        self.sleep(5)
-
         async for repo in client.list_repositories():
-            if repo == repository:
+            if repo == TO_BE_DELETED:
                 raise ValueError("Repository not deleted")
 
     @acr_preparer()
-    async def test_delete_repository_does_not_exist(self, containerregistry_baseurl):
-        client = self.create_registry_client(containerregistry_baseurl)
+    async def test_delete_repository_does_not_exist(self, containerregistry_endpoint):
+        client = self.create_registry_client(containerregistry_endpoint)
 
         with pytest.raises(ResourceNotFoundError):
             deleted_result = await client.delete_repository("not_real_repo")
 
     @acr_preparer()
-    async def test_transport_closed_only_once(self, containerregistry_baseurl):
+    async def test_transport_closed_only_once(self, containerregistry_endpoint):
         transport = AioHttpTransport()
-        client = self.create_registry_client(containerregistry_baseurl, transport=transport)
+        client = self.create_registry_client(containerregistry_endpoint, transport=transport)
         async with client:
             async for r in client.list_repositories():
                 pass
             assert transport.session is not None
 
-            repo_client = client.get_repository_client("hello-world")
+            repo_client = client.get_repository_client(HELLO_WORLD)
             async with repo_client:
                 assert transport.session is not None
 

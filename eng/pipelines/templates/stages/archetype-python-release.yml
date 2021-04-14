@@ -56,7 +56,7 @@ stages:
                         ReleaseSha: $(Build.SourceVersion)
                         RepoId: Azure/azure-sdk-for-python
                         WorkingDirectory: $(System.DefaultWorkingDirectory)
-
+                    
           - ${{if ne(artifact.skipPublishPackage, 'true')}}:
             - deployment: PublishPackage
               displayName: "Publish to PyPI"
@@ -240,7 +240,7 @@ stages:
     jobs:
     - job: PublishPackages
       displayName: "Publish package to daily feed"
-      condition: or(eq(variables['SetDevVersion'], 'true'), and(eq(variables['Build.Reason'],'Schedule'), eq(variables['System.TeamProject'], 'internal')))
+      condition: and(eq(variables['SetDevVersion'], 'true'), eq(variables['System.TeamProject'], 'internal'))
       pool:
         name: azsdk-pool-mms-ubuntu-1804-general
         vmImage: MMSUbuntu18.04

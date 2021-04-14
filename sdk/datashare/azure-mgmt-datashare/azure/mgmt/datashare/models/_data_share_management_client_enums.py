@@ -26,6 +26,49 @@ class _CaseInsensitiveEnumMeta(EnumMeta):
             raise AttributeError(name)
 
 
+class CreatedByType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+    """The type of identity that created the resource.
+    """
+
+    USER = "User"
+    APPLICATION = "Application"
+    MANAGED_IDENTITY = "ManagedIdentity"
+    KEY = "Key"
+
+class DataSetKind(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+    """Kind of data set.
+    """
+
+    BLOB = "Blob"
+    CONTAINER = "Container"
+    BLOB_FOLDER = "BlobFolder"
+    ADLS_GEN2_FILE_SYSTEM = "AdlsGen2FileSystem"
+    ADLS_GEN2_FOLDER = "AdlsGen2Folder"
+    ADLS_GEN2_FILE = "AdlsGen2File"
+    ADLS_GEN1_FOLDER = "AdlsGen1Folder"
+    ADLS_GEN1_FILE = "AdlsGen1File"
+    KUSTO_CLUSTER = "KustoCluster"
+    KUSTO_DATABASE = "KustoDatabase"
+    SQL_DB_TABLE = "SqlDBTable"
+    SQL_DW_TABLE = "SqlDWTable"
+    SYNAPSE_WORKSPACE_SQL_POOL_TABLE = "SynapseWorkspaceSqlPoolTable"
+
+class DataSetMappingKind(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+    """Kind of data set mapping.
+    """
+
+    BLOB = "Blob"
+    CONTAINER = "Container"
+    BLOB_FOLDER = "BlobFolder"
+    ADLS_GEN2_FILE_SYSTEM = "AdlsGen2FileSystem"
+    ADLS_GEN2_FOLDER = "AdlsGen2Folder"
+    ADLS_GEN2_FILE = "AdlsGen2File"
+    KUSTO_CLUSTER = "KustoCluster"
+    KUSTO_DATABASE = "KustoDatabase"
+    SQL_DB_TABLE = "SqlDBTable"
+    SQL_DW_TABLE = "SqlDWTable"
+    SYNAPSE_WORKSPACE_SQL_POOL_TABLE = "SynapseWorkspaceSqlPoolTable"
+
 class DataSetMappingStatus(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     """Gets the status of the data set mapping.
     """
@@ -49,6 +92,7 @@ class DataSetType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     KUSTO_DATABASE = "KustoDatabase"
     SQL_DB_TABLE = "SqlDBTable"
     SQL_DW_TABLE = "SqlDWTable"
+    SYNAPSE_WORKSPACE_SQL_POOL_TABLE = "SynapseWorkspaceSqlPoolTable"
 
 class InvitationStatus(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     """The status of the invitation.
@@ -59,23 +103,14 @@ class InvitationStatus(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     REJECTED = "Rejected"
     WITHDRAWN = "Withdrawn"
 
-class Kind(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
-    """Kind of data set.
+class LastModifiedByType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+    """The type of identity that last modified the resource.
     """
 
-    BLOB = "Blob"
-    CONTAINER = "Container"
-    BLOB_FOLDER = "BlobFolder"
-    ADLS_GEN2_FILE_SYSTEM = "AdlsGen2FileSystem"
-    ADLS_GEN2_FOLDER = "AdlsGen2Folder"
-    ADLS_GEN2_FILE = "AdlsGen2File"
-    ADLS_GEN1_FOLDER = "AdlsGen1Folder"
-    ADLS_GEN1_FILE = "AdlsGen1File"
-    KUSTO_CLUSTER = "KustoCluster"
-    KUSTO_DATABASE = "KustoDatabase"
-    SQL_DB_TABLE = "SqlDBTable"
-    SQL_DW_TABLE = "SqlDWTable"
-    SCHEDULE_BASED = "ScheduleBased"
+    USER = "User"
+    APPLICATION = "Application"
+    MANAGED_IDENTITY = "ManagedIdentity"
+    KEY = "Key"
 
 class OutputType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     """Type of output file
@@ -85,7 +120,7 @@ class OutputType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     PARQUET = "Parquet"
 
 class ProvisioningState(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
-    """Provisioning state of the kusto cluster data set.
+    """Provisioning state of the data set mapping.
     """
 
     SUCCEEDED = "Succeeded"
@@ -117,6 +152,12 @@ class ShareSubscriptionStatus(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum
     SOURCE_DELETED = "SourceDeleted"
     REVOKING = "Revoking"
 
+class SourceShareSynchronizationSettingKind(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+    """Kind of synchronization setting on share.
+    """
+
+    SCHEDULE_BASED = "ScheduleBased"
+
 class Status(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     """Operation state of the long running operation.
     """
@@ -134,6 +175,18 @@ class SynchronizationMode(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
 
     INCREMENTAL = "Incremental"
     FULL_SYNC = "FullSync"
+
+class SynchronizationSettingKind(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+    """Kind of synchronization setting.
+    """
+
+    SCHEDULE_BASED = "ScheduleBased"
+
+class TriggerKind(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+    """Kind of synchronization on trigger.
+    """
+
+    SCHEDULE_BASED = "ScheduleBased"
 
 class TriggerStatus(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     """Gets the trigger state

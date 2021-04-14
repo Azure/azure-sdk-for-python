@@ -560,7 +560,7 @@ class SearchDocumentsResult(msrest.serialization.Model):
         'count': {'key': '@odata\\.count', 'type': 'long'},
         'coverage': {'key': '@search\\.coverage', 'type': 'float'},
         'facets': {'key': '@search\\.facets', 'type': '{[FacetResult]}'},
-        'answers': {'key': '@search\\.answers', 'type': '{[AnswerResult]}'},
+        'answers': {'key': '@search\\.answers', 'type': '[AnswerResult]'},
         'next_page_parameters': {'key': '@search\\.nextPageParameters', 'type': 'SearchRequest'},
         'results': {'key': 'value', 'type': '[SearchResult]'},
         'next_link': {'key': '@odata\\.nextLink', 'type': 'str'},
@@ -991,7 +991,7 @@ class SearchResult(msrest.serialization.Model):
         'score': {'key': '@search\\.score', 'type': 'float'},
         'reranker_score': {'key': '@search\\.rerankerScore', 'type': 'float'},
         'highlights': {'key': '@search\\.highlights', 'type': '{[str]}'},
-        'captions': {'key': '@search\\.captions', 'type': '{[CaptionResult]}'},
+        'captions': {'key': '@search\\.captions', 'type': '[CaptionResult]'},
     }
 
     def __init__(

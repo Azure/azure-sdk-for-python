@@ -1,5 +1,13 @@
 # Release History
 
+## 6.2.0 (2021-04-06)
+
+**Features**
+
+  - Model DatabaseAccountUpdateParameters has a new parameter default_identity
+  - Model DatabaseAccountCreateUpdateParameters has a new parameter default_identity
+  - Model DatabaseAccountGetResults has a new parameter default_identity
+
 ## 6.1.0 (2021-03-02)
 
 **Features**

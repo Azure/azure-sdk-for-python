@@ -1,7 +1,12 @@
 # Release History
 
-## 4.1.1 (Unreleased)
+## 4.1.2 (Unreleased)
 
+
+## 4.1.1 (2021-04-07)
+
+  **Bug Fixes**
+  - Improved the `repr` on `EventGridEvent` to show more meaningful text.
 
 ## 4.1.0 (2021-03-23)
 
