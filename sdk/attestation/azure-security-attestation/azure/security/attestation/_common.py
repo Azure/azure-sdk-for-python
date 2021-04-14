@@ -22,7 +22,7 @@ class Base64Url:
         # type(bytes)->str
         base64val= base64.urlsafe_b64encode(unencoded)
         strip_trailing=base64val.split(b'=')[0] # pick the string before the trailing =
-        return str(strip_trailing, 'utf-8')
+        return strip_trailing.decode('utf-8')
 
     @staticmethod
     def decode(encoded):
