@@ -15,10 +15,17 @@ from datetime import datetime
 from msrest.serialization import TZ_UTC
 from azure.core.credentials import AccessToken
 
+"""
+Converts DateTime in local time to the Epoch in UTC in second.
 
+:param input_datetime: Input datetime
+:type input_datetime: datetime
+:return: Integer
+:rtype: int
+"""
 def _convert_datetime_to_utc_int(expires_on):
-    epoch = time.localtime().tm_gmtoff
-    return time.mktime(expires_on.timetuple()) + epoch
+    offset_from_utc = time.localtime().tm_gmtoff
+    return time.mktime(expires_on.timetuple()) + offset_from_utc
 
 def parse_connection_str(conn_str):
     # type: (str) -> Tuple[str, str, str, str]
