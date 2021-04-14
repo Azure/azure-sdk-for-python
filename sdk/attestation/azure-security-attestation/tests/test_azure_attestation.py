@@ -16,12 +16,14 @@
 # Coverage %      : 100
 # ----------------------
 
+from typing import ByteString
 import unittest
 from devtools_testutils import AzureTestCase, PowerShellPreparer
 import functools
 import cryptography
 import cryptography.x509
 import base64
+import pytest
 from azure.security.attestation import AttestationClient, AttestationAdministrationClient, AttestationType
 
 AttestationPreparer = functools.partial(
@@ -43,7 +45,7 @@ AttestationPreparer = functools.partial(
             attestation_isolated_signing_key='xxxx',
             attestation_isolated_signing_certificate='xxxx',
             attestation_service_management_url='https://management.core.windows.net/',
-            attestation_location_short_name='unk',
+            attestation_location_short_name='wus', # Note: This must match the short name in the fake resources.
             attestation_client_id='xxxx',
             attestation_client_secret='secret',
             attestation_tenant_id='tenant',
@@ -58,6 +60,7 @@ class AzureAttestationTest(AzureTestCase):
             super(AzureAttestationTest, self).setUp()
 
     @AttestationPreparer()
+    @pytest.mark.live_test_only
     def test_shared_getopenidmetadata(self, attestation_location_short_name):
         attest_client = self.shared_client(attestation_location_short_name)
         open_id_metadata = attest_client.get_openidmetadata()
@@ -68,6 +71,7 @@ class AzureAttestationTest(AzureTestCase):
             assert open_id_metadata["issuer"] == self.shared_base_uri(attestation_location_short_name)
 
     @AttestationPreparer()
+    @pytest.mark.live_test_only
     def test_aad_getopenidmetadata(self, attestation_aad_url):
         attest_client = self.create_client(attestation_aad_url)
         open_id_metadata = attest_client.get_openidmetadata()
@@ -78,6 +82,7 @@ class AzureAttestationTest(AzureTestCase):
             assert open_id_metadata["issuer"] == attestation_aad_url
 
     @AttestationPreparer()
+    @pytest.mark.live_test_only
     def test_isolated_getopenidmetadata(self, attestation_isolated_url):
         attest_client = self.create_client(attestation_isolated_url)
         open_id_metadata = attest_client.get_openidmetadata()

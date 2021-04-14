@@ -21,75 +21,82 @@ import base64
 import pytest
 from azure.security.attestation import AttestationToken, AttestationSigner, SigningKey
 
-AttestationPreparer = functools.partial(
-            PowerShellPreparer, "attestation",
-#            attestation_azure_authority_host='xxx',
-#            attestation_resource_group='yyyy',
-#            attestation_subscription_id='xxx',
-#            attestation_location_short_name='xxx',
-#            attestation_environment='AzureCloud',
-            attestation_policy_signing_key0='keyvalue',
-            attestation_policy_signing_key1='keyvalue',
-            attestation_policy_signing_key2='keyvalue',
-            attestation_policy_signing_certificate0='more junk',
-            attestation_policy_signing_certificate1='more junk',
-            attestation_policy_signing_certificate2='more junk',
-            attestation_serialized_policy_signing_key0="junk",
-            attestation_serialized_policy_signing_key1="junk",
-            attestation_serialized_policy_signing_key2="junk",
-            attestation_serialized_isolated_signing_key='yyyy',
-            attestation_isolated_signing_key='xxxx',
-            attestation_isolated_signing_certificate='xxxx',
-            attestation_service_management_url='https://management.core.windows.net/',
-            attestation_location_short_name='xxxx',
-            attestation_client_id='xxxx',
-            attestation_client_secret='secret',
-            attestation_tenant_id='tenant',
-            attestation_isolated_url='https://fakeresource.wus.attest.azure.net',
-            attestation_aad_url='https://fakeresource.wus.attest.azure.net',
-#            attestation_resource_manager_url='https://resourcemanager/zzz'
-        )
 
-class AzureAttestationTokenTest(AzureTestCase):
+class TestAzureAttestationToken(unittest.TestCase):
 
     def setUp(self):
-        super(AzureAttestationTokenTest, self).setUp()
+        super(TestAzureAttestationToken, self).setUp()
 
-    @AttestationPreparer()
     def test_create_unsecured_token(self):
         token = AttestationToken(body={"val1":[1,2,3]})
         assert token.get_body() == {"val1":[1,2,3]}
 
-    @AttestationPreparer()
-    def test_create_signing_key(self, attestation_policy_signing_key0, attestation_policy_signing_certificate0):
-        der_cert = base64.b64decode(attestation_policy_signing_certificate0)
-        cert = x509.load_der_x509_certificate(der_cert)
-
-        der_key = base64.b64decode(attestation_policy_signing_key0)
-        key = serialization.load_der_private_key(der_key, password=None)
-
+    def test_create_signing_key(self):
+        key = self._create_rsa_key()
+        cert = self._create_x509_certificate(key, u'test certificate')
 
         signer = SigningKey(key, cert)
-        assert signer.certificate.subject == cert.subject
+        self.assertEqual(signer.certificate.subject, cert.subject)
 
-    @AttestationPreparer()
-    def test_create_signer_ecds(self):
-        eckey = ec.generate_private_key(ec.SECP256R1())
+    def test_create_signing_wrong_key(self):
+        """ SigningKey should throw if the key and certificate don't match.
+        """
+        key1 = self._create_rsa_key()
+        cert = self._create_x509_certificate(key1, u'test certificate')
+        key2 = self._create_rsa_key()
+
+        # This should throw an exception, fail if the exception isn't thrown.
+        with self.assertRaises(Exception):
+            signer = SigningKey(key2, cert)
+
+    @staticmethod
+    def _create_ecds_key(): # -> EllipticCurvePrivateKey
+        return ec.generate_private_key(ec.SECP256R1())
+
+    @staticmethod
+    def _create_rsa_key(): # -> EllipticCurvePrivateKey
+        return rsa.generate_private_key(65537, 2048)
+
+    @staticmethod
+    def _create_x509_certificate(key, subject_name): # -> Certificate
+        #type key: (EllipticCurvePrivateKey | RSAPrivateKey)
+        #type subject_name: str
         builder = CertificateBuilder()
         builder = builder.subject_name(x509.Name([
-            x509.NameAttribute(NameOID.COMMON_NAME, u'attestation.test'),
+            x509.NameAttribute(NameOID.COMMON_NAME, subject_name),
         ]))
         builder = builder.issuer_name(x509.Name([
-            x509.NameAttribute(NameOID.COMMON_NAME, u'attestation.test'),
+            x509.NameAttribute(NameOID.COMMON_NAME, subject_name),
         ]))
 
         one_day = datetime.timedelta(1, 0, 0)
         builder = builder.not_valid_before(datetime.datetime.today() - one_day)
         builder = builder.not_valid_after(datetime.datetime.today() + (one_day * 30))
         builder = builder.serial_number(x509.random_serial_number())        
-        builder = builder.public_key(eckey.public_key())
-        builder = builder.add_extension(x509.SubjectAlternativeName([x509.DNSName(u'attestation.test')]), critical=False)
+        builder = builder.public_key(key.public_key())
+        builder = builder.add_extension(x509.SubjectAlternativeName([x509.DNSName(subject_name)]), critical=False)
         builder = builder.add_extension(x509.BasicConstraints(ca=False, path_length=None), critical=True)
-        certificate = builder.sign(private_key=eckey, algorithm=hashes.SHA256())
+        return builder.sign(private_key=key, algorithm=hashes.SHA256())
+
+
+    def test_create_signer_ecds(self):
+        """ Generate an ECDS key and a certificate wrapping the key, then verify we can create a signing key over it.
+        """
+        eckey = self._create_ecds_key()
+        certificate = self._create_x509_certificate(eckey, u'attestation.test')
         signer = SigningKey(eckey, certificate)
-        assert  signer.certificate.subject==x509.Name([x509.NameAttribute(NameOID.COMMON_NAME, u'attestation.test')])
+        self.assertEqual(signer.certificate.subject, x509.Name([x509.NameAttribute(NameOID.COMMON_NAME, u'attestation.test')]))
+
+    # @AttestationPreparer()
+    # def test_create_secured_token(self, attestation_policy_signing_key0, attestation_policy_signing_certificate0):
+    #     der_cert = base64.b64decode(attestation_policy_signing_certificate0)
+    #     cert = x509.load_der_x509_certificate(der_cert)
+
+    #     der_key = base64.b64decode(attestation_policy_signing_key0)
+    #     key = serialization.load_der_private_key(der_key, password=None)
+
+    #     signer = SigningKey(key, cert)
+
+    #     token = AttestationToken(body={"val1": [1, 2, 3]}, signer=signer)
+    #     assert token.get_body() == {"val1": [1, 2, 3]}
+    #     assert token.validate_token()

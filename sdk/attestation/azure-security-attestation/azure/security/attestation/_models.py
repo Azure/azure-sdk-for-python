@@ -136,37 +136,39 @@ class AttestationToken(Generic[T]):
         self._body = decoder.decode(self.body_bytes)
         self._header = decoder.decode(self.header_bytes)
 
-        # Populate the standardized fields in the header.
-        self.algorithm = self._header.get('alg')
-        self.content_type = self._header.get('cty')
-        self.critical = self._header.get('crit') #type: Optional[bool]
-        self.key_id = self._header.get('kid')
-        self.key_url = self._header.get('jku')
-        self.type = self._header.get('typ')
-        self.certificate_thumbprint = self._header.get('x5t')
-        self.certificate_sha256_thumbprint = self._header.get('x5t#256')
-        self.x509_url = self._header.get('x5u')
+        # If the caller didn't specify a body when constructing the class, populate the well known attributes from the token.
+        if (body is None):
+            # Populate the standardized fields in the header.
+            self.algorithm = self._header.get('alg')
+            self.content_type = self._header.get('cty')
+            self.critical = self._header.get('crit') #type: Optional[bool]
+            self.key_id = self._header.get('kid')
+            self.key_url = self._header.get('jku')
+            self.type = self._header.get('typ')
+            self.certificate_thumbprint = self._header.get('x5t')
+            self.certificate_sha256_thumbprint = self._header.get('x5t#256')
+            self.x509_url = self._header.get('x5u')
 
-        # Populate the standardized fields from the body.
-        exp = self._body.get('exp')
-        if (exp is not None):
-            self.expiration_time = datetime.fromtimestamp(exp)
-        else:
-            self.expiration_time = None
+            # Populate the standardized fields from the body.
+            exp = self._body.get('exp')
+            if (exp is not None):
+                self.expiration_time = datetime.fromtimestamp(exp)
+            else:
+                self.expiration_time = None
 
-        iat = self._body.get('iat')
-        if (iat is not None):
-            self.issuance_time = datetime.fromtimestamp(iat)
-        else:
-            self.issuance_time = None
+            iat = self._body.get('iat')
+            if (iat is not None):
+                self.issuance_time = datetime.fromtimestamp(iat)
+            else:
+                self.issuance_time = None
 
-        nbf = self._body.get('nbf')
-        if (nbf is not None):
-            self.not_before_time = datetime.fromtimestamp(nbf)
-        else:
-            self.not_before_time = None
-        
-        self.issuer = self._body.get('iss')
+            nbf = self._body.get('nbf')
+            if (nbf is not None):
+                self.not_before_time = datetime.fromtimestamp(nbf)
+            else:
+                self.not_before_time = None
+            
+            self.issuer = self._body.get('iss')
 
     def __str__(self):
         return self._token

@@ -85,7 +85,7 @@ class AttestationAdministrationClient(object):
         if self._config.token_validation_options.validate_token:
             token.validate_token(self._config.token_validation_options, self._get_signers())
 
-        return AttestationResult[str](token, token.get_body())
+        return AttestationResult[PolicyResult](token, token.get_body())
 
 
     @distributed_trace

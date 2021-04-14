@@ -46,6 +46,7 @@ class AsyncAzureAttestationTest(AzureTestCase):
         super(AsyncAzureAttestationTest, self).setUp()
 
     @AttestationPreparer()
+    @pytest.mark.live_test_only
     async def test_shared_getopenidmetadataasync(self, attestation_location_short_name):
         attest_client = self.shared_client(attestation_location_short_name)
         open_id_metadata = (await attest_client.get_openidmetadata())
