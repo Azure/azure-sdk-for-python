@@ -34,7 +34,6 @@ steps:
 
   - script: |
       python --version
-      python -m pip install pip==20.1
       pip install -r eng/autorest_req.txt
       git clone ${{ parameters.auto_rest_clone_url }}
       cd autorest.python
