@@ -23,7 +23,6 @@ from azure.core.tracing.decorator_async import distributed_trace_async
 
 from .._base_client import parse_connection_str
 from .._entity import TableEntity
-from .._generated.aio import AzureTable
 from .._generated.models import SignedIdentifier, TableProperties
 from .._models import AccessPolicy, BatchTransactionResult
 from .._serialize import serialize_iso, _parameter_filter_substitution
@@ -69,11 +68,6 @@ class TableClient(AsyncTablesBaseClient):
         _validate_table_name(table_name)
         self.table_name = table_name
         super(TableClient, self).__init__(account_url, credential=credential, **kwargs)
-        self._client = AzureTable(
-            self.url,
-            policies=kwargs.pop('policies', self._policies),
-            **kwargs
-        )
 
     def _format_url(self, hostname):
         """Format the endpoint URL according to the current location

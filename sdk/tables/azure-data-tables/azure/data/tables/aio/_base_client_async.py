@@ -4,18 +4,7 @@
 # license information.
 # --------------------------------------------------------------------------
 
-from typing import (  # pylint: disable=unused-import
-    Union,
-    Optional,
-    Any,
-    Iterable,
-    Dict,
-    List,
-    Type,
-    Tuple,
-    TYPE_CHECKING,
-)
-import logging
+from typing import Any, List
 from uuid import uuid4
 
 from azure.core.credentials import AzureSasCredential
@@ -38,6 +27,7 @@ from azure.core.pipeline.transport import (
     HttpRequest,
 )
 
+from .._generated.aio import AzureTable
 from .._base_client import AccountHostsMixin
 from .._authentication import SharedKeyCredentialPolicy
 from .._constants import STORAGE_OAUTH_SCOPE
@@ -49,6 +39,20 @@ from ._policies_async import AsyncTablesRetryPolicy
 
 class AsyncTablesBaseClient(AccountHostsMixin):
 
+    def __init__(
+        self,
+        account_url,  # type: str
+        credential=None,  # type: str
+        **kwargs  # type: Any
+    ):
+        # type: (...) -> None
+        super(AsyncTablesBaseClient, self).__init__(account_url, credential=credential, **kwargs)
+        self._client = AzureTable(
+            self.url,
+            policies=kwargs.pop('policies', self._policies),
+            **kwargs
+        )
+
     async def __aenter__(self):
         await self._client.__aenter__()
         return self
@@ -56,7 +60,7 @@ class AsyncTablesBaseClient(AccountHostsMixin):
     async def __aexit__(self, *args):
         await self._client.__aexit__(*args)
 
-    async def close(self):
+    async def close(self) -> None:
         """This method is to close the sockets opened by the client.
         It need not be used when using with a context manager.
         """
@@ -64,7 +68,6 @@ class AsyncTablesBaseClient(AccountHostsMixin):
 
     def _configure_credential(self, credential):
         # type: (Any) -> None
-        self._credential_policy = None
         if hasattr(credential, "get_token"):
             self._credential_policy = AsyncBearerTokenCredentialPolicy(
                 credential, STORAGE_OAUTH_SCOPE

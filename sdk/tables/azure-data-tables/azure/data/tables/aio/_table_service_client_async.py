@@ -18,7 +18,6 @@ from azure.core.tracing.decorator_async import distributed_trace_async
 
 from .. import LocationMode
 from .._base_client import parse_connection_str
-from .._generated.aio._azure_table import AzureTable
 from .._generated.models import TableServiceProperties
 from .._models import service_stats_deserialize, service_properties_deserialize
 from .._error import _process_table_error
@@ -73,20 +72,6 @@ class TableServiceClient(AsyncTablesBaseClient):
             :dedent: 8
             :caption: Creating the tableServiceClient with Shared Access Signature.
     """
-
-    def __init__(
-        self,
-        account_url,  # type: str
-        credential=None,  # type: str
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> None
-        super(TableServiceClient, self).__init__(account_url, credential=credential, **kwargs)
-        self._client = AzureTable(
-            self.url,
-            policies=kwargs.pop('policies', self._policies),
-            **kwargs
-        )
 
     def _format_url(self, hostname):
         """Format the endpoint URL according to the current location

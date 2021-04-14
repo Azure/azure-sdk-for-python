@@ -3,8 +3,6 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
-
-import asyncio
 import time
 
 from azure.core.pipeline.policies import AsyncRetryPolicy
@@ -64,7 +62,7 @@ class AsyncTablesRetryPolicy(AsyncRetryPolicy):
         whether the returned status code is on the list of status codes to
         be retried upon on the presence of the aforementioned header)
         """
-        should_retry = super(AsyncTablesRetryPolicy, self).is_retry(settings, response)    
+        should_retry = super(AsyncTablesRetryPolicy, self).is_retry(settings, response)
         status = response.http_response.status_code
         if status == 404 and settings['mode'] == LocationMode.SECONDARY:
             # Response code 404 should be retried if secondary was used.
@@ -95,7 +93,7 @@ class AsyncTablesRetryPolicy(AsyncRetryPolicy):
         super(AsyncTablesRetryPolicy, self).update_context(context, retry_settings)
         context['location_mode'] = retry_settings['mode']
 
-    def update_request(self, request, retry_settings):
+    def update_request(self, request, retry_settings):  # pylint: disable=no-self-use
         """Updates the pipeline request before attempting to retry.
 
         :param PipelineRequest request: The outgoing request.

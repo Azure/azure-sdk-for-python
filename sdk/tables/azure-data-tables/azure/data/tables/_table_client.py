@@ -21,7 +21,6 @@ from azure.core.tracing.decorator import distributed_trace
 from ._deserialize import _convert_to_entity, _trim_service_metadata
 from ._entity import TableEntity
 from ._error import _process_table_error, _validate_table_name
-from ._generated import AzureTable
 from ._generated.models import (
     SignedIdentifier,
     TableProperties,
@@ -69,11 +68,6 @@ class TableClient(TablesBaseClient):
         _validate_table_name(table_name)
         self.table_name = table_name
         super(TableClient, self).__init__(account_url, credential=credential, **kwargs)
-        self._client = AzureTable(
-            self.url,
-            policies=kwargs.pop('policies', self._policies),
-            **kwargs
-        )
 
     def _format_url(self, hostname):
         """Format the endpoint URL according to the current location

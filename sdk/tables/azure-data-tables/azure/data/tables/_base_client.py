@@ -4,19 +4,15 @@
 # license information.
 # --------------------------------------------------------------------------
 
-from typing import TYPE_CHECKING, Tuple, Dict
-
-import logging
-from uuid import uuid4, UUID
-from datetime import datetime
-import six
-
+from typing import Tuple, Optional, Any, List
+from uuid import uuid4
 try:
     from urllib.parse import parse_qs, quote, urlparse
 except ImportError:
     from urlparse import parse_qs, urlparse  # type: ignore
     from urllib2 import quote  # type: ignore
 
+import six
 from azure.core.configuration import Configuration
 from azure.core.credentials import AzureSasCredential
 from azure.core.utils import parse_connection_string
@@ -40,6 +36,7 @@ from azure.core.pipeline.policies import (
     RequestIdPolicy
 )
 
+from ._generated import AzureTable
 from ._common_conversion import _is_cosmos_endpoint
 from ._shared_access_signature import QueryStringConstants
 from ._constants import (
@@ -56,13 +53,6 @@ from ._policies import (
 )
 from ._models import BatchErrorException
 from ._sdk_moniker import SDK_MONIKER
-
-if TYPE_CHECKING:
-    from typing import (
-        Optional,
-        Any,
-        List,
-    )
 
 
 class AccountHostsMixin(object):  # pylint: disable=too-many-instance-attributes
@@ -121,7 +111,7 @@ class AccountHostsMixin(object):  # pylint: disable=too-many-instance-attributes
                 LocationMode.PRIMARY: primary_hostname,
                 LocationMode.SECONDARY: secondary_hostname,
             }
-
+        self._credential_policy = None
         self._configure_credential(self.credential)
         self._policies = self._configure_policies(hosts=self._hosts, **kwargs)
         if self._cosmos_endpoint:
@@ -199,13 +189,28 @@ class AccountHostsMixin(object):  # pylint: disable=too-many-instance-attributes
 
 class TablesBaseClient(AccountHostsMixin):
 
+    def __init__(
+        self,
+        account_url,  # type: str
+        credential=None,  # type: str
+        **kwargs  # type: Any
+    ):
+        # type: (...) -> None
+
+        super(TablesBaseClient, self).__init__(account_url, credential=credential, **kwargs)
+        self._client = AzureTable(
+            self.url,
+            policies=kwargs.pop('policies', self._policies),
+            **kwargs
+        )
+
     def __enter__(self):
         self._client.__enter__()
         return self
 
     def __exit__(self, *args):
         self._client.__exit__(*args)
-    
+
     def _configure_policies(self, **kwargs):
         return [
             RequestIdPolicy(**kwargs),
@@ -225,7 +230,6 @@ class TablesBaseClient(AccountHostsMixin):
 
     def _configure_credential(self, credential):
         # type: (Any) -> Tuple[Configuration, Pipeline]
-        self._credential_policy = None
         if hasattr(credential, "get_token"):
             self._credential_policy = BearerTokenCredentialPolicy(
                 credential, STORAGE_OAUTH_SCOPE
@@ -305,6 +309,7 @@ class TablesBaseClient(AccountHostsMixin):
         return transaction_result
 
     def close(self):
+        # type: () -> None
         """This method is to close the sockets opened by the client.
         It need not be used when using with a context manager.
         """

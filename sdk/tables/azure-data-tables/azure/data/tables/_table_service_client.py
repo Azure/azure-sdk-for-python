@@ -11,7 +11,6 @@ from azure.core.paging import ItemPaged
 from azure.core.tracing.decorator import distributed_trace
 from azure.core.pipeline import Pipeline
 
-from ._generated import AzureTable
 from ._generated.models import TableProperties, TableServiceProperties
 from ._models import (
     TablePropertiesPaged,
@@ -27,16 +26,7 @@ from ._serialize import _parameter_filter_substitution
 
 
 class TableServiceClient(TablesBaseClient):
-    """ :ivar str account_name: Name of the storage account (Cosmos or Azure)"""
-
-    def __init__(
-        self,
-        account_url,  # type: str
-        credential=None,  # type: str
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> None
-        """Create TableServiceClient from a Credential.
+    """Create TableServiceClient from a Credential.
 
         :param account_url:
             A url to an Azure Storage account.
@@ -65,12 +55,6 @@ class TableServiceClient(TablesBaseClient):
                 :dedent: 8
                 :caption: Authenticating a TableServiceClient from a Shared Account Key
         """
-        super(TableServiceClient, self).__init__(account_url, credential=credential, **kwargs)
-        self._client = AzureTable(
-            self.url,
-            policies=kwargs.pop('policies', self._policies),
-            **kwargs
-        )
 
     def _format_url(self, hostname):
         """Format the endpoint URL according to the current location
