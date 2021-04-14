@@ -16,33 +16,37 @@ parameters:
   - name: auto_rest_clone_url
     type: string
     default: 'https://github.com/Azure/autorest.python.git'
+  - name: VerifyAutorest
+    type: boolean
+    default: true
 
 steps:
-  - task: UsePythonVersion@0
-    displayName: Use
-    inputs:
-      versionSpec: ${{ parameters.PythonVersion }}
+  - ${{if ne(artifact.VerifyAutorest, 'true')}}:
+    - task: UsePythonVersion@0
+      displayName: Use
+      inputs:
+        versionSpec: ${{ parameters.PythonVersion }}
 
-  - task: NodeTool@0
-    inputs:
-      versionSpec: ${{ parameters.NodeVersion }}
+    - task: NodeTool@0
+      inputs:
+        versionSpec: ${{ parameters.NodeVersion }}
 
-  - script: |
-      npm install -g autorest
-      autorest --help
-    displayName: "Install autorest"
+    - script: |
+        npm install -g autorest
+        autorest --help
+      displayName: "Install autorest"
 
-  - script: |
-      python --version
-      pip install -r eng/autorest_req.txt
-      git clone ${{ parameters.auto_rest_clone_url }}
-      cd autorest.python
-      npm install
-    displayName: 'Prepare Environment'
+    - script: |
+        python --version
+        pip install -r eng/autorest_req.txt
+        git clone ${{ parameters.auto_rest_clone_url }}
+        cd autorest.python
+        npm install
+      displayName: 'Prepare Environment'
 
-  - task: PythonScript@0
-    displayName: 'Run autorest Python'
-    inputs:
-      scriptPath: 'scripts/devops_tasks/verify_autorest.py'
-      arguments: >-
-        --service_directory="${{ parameters.ServiceDirectory }}"
+    - task: PythonScript@0
+      displayName: 'Run autorest Python'
+      inputs:
+        scriptPath: 'scripts/devops_tasks/verify_autorest.py'
+        arguments: >-
+          --service_directory="${{ parameters.ServiceDirectory }}"
