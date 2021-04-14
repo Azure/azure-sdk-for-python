@@ -56,7 +56,7 @@ class TrioStreamDownloadGenerator(AsyncIterator):
     :param response: The response object.
     :param raw: If returns the raw stream.
     """
-    def __init__(self, pipeline: Pipeline, response: AsyncHttpResponse, raw: bool=False) -> None:
+    def __init__(self, pipeline: Pipeline, response: AsyncHttpResponse, raw: bool = False) -> None:
         self.pipeline = pipeline
         self.request = response.request
         self.response = response
