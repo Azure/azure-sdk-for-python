@@ -7,6 +7,9 @@
 # --------------------------------------------------------------------------
 
 from ._managed_labs_client import ManagedLabsClient
+from ._version import VERSION
+
+__version__ = VERSION
 __all__ = ['ManagedLabsClient']
 
 try:

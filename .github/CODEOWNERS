@@ -26,7 +26,7 @@
 /sdk/storage/                                                        @amishra-dev @zezha-msft @annatisch @xiafu-msft @tasherif-msft @kasobol-msft
 
 # PRLabel: %App Configuration
-/sdk/appconfiguration/                                               @xiangyan99
+/sdk/appconfiguration/                                               @xiangyan99 @seankane-msft
 
 /sdk/applicationinsights/azure-applicationinsights/                  @divya-jay @geneh @alongafni
 /sdk/loganalytics/azure-loganalytics/                                @divya-jay @geneh @alongafni
@@ -108,13 +108,16 @@
 /sdk/metricsadvisor/                                                 @xiangyan99 @kristapratico
 
 # PRLabel: %Cognitive - Translator
-/sdk/documenttranslation/                                            @kristapratico @mohamedshabanofficial
+/sdk/translation/                                                    @kristapratico @mohamedshabanofficial
 
 # PRLabel: %Tables
 /sdk/tables/                                                         @seankane-msft
 
 # PRLabel: %Media
 /sdk/media/                                                          @naiteeks @bennage @giakas
+
+# PRLabel: %Container Registry
+/sdk/containerregistry/                                              @seankane-msft
 
 # Smoke Tests
 /common/smoketest/                                                   @lmazuel @chlowell @annatisch @rakshith91 @shurd @southpolesteve

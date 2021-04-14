@@ -66,6 +66,16 @@ class AfdProvisioningState(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     DELETING = "Deleting"
     CREATING = "Creating"
 
+class AfdQueryStringCachingBehavior(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+    """Defines how CDN caches requests that include query strings. You can ignore any query strings
+    when caching, bypass caching to prevent requests that contain query strings from being cached,
+    or cache every request with a unique URL.
+    """
+
+    IGNORE_QUERY_STRING = "IgnoreQueryString"
+    USE_QUERY_STRING = "UseQueryString"
+    NOT_SET = "NotSet"
+
 class Algorithm(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     """Algorithm to use for URL signing
     """
@@ -221,69 +231,7 @@ class EndpointResourceState(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum))
     STOPPED = "Stopped"
     STOPPING = "Stopping"
 
-class Enum31(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
-
-    PT5_M = "PT5M"
-    PT1_H = "PT1H"
-    P1_D = "P1D"
-
-class Enum35(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
-
-    URL = "url"
-    REFERRER = "referrer"
-    BROWSER = "browser"
-    USER_AGENT = "userAgent"
-    COUNTRY_OR_REGION = "countryOrRegion"
-
-class Enum37(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
-
-    PT5_M = "PT5M"
-    PT1_H = "PT1H"
-    P1_D = "P1D"
-
-class Enum38(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
-
-    ALLOW = "allow"
-    BLOCK = "block"
-    LOG = "log"
-    REDIRECT = "redirect"
-
-class Enum39(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
-
-    HTTP_STATUS_CODE = "httpStatusCode"
-    CUSTOM_DOMAIN = "customDomain"
-
-class Enum40(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
-
-    MANAGED = "managed"
-    CUSTOM = "custom"
-    BOT = "bot"
-
-class Enum42(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
-
-    ACTION = "action"
-    RULE_GROUP = "ruleGroup"
-    RULE_ID = "ruleId"
-    USER_AGENT = "userAgent"
-    CLIENT_IP = "clientIp"
-    URL = "url"
-    COUNTRY = "country"
-    RULE_TYPE = "ruleType"
-
-class Enum43(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
-
-    ALLOW = "allow"
-    BLOCK = "block"
-    LOG = "log"
-    REDIRECT = "redirect"
-
-class Enum44(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
-
-    MANAGED = "managed"
-    CUSTOM = "custom"
-    BOT = "bot"
-
-class Enum47(with_metaclass(_CaseInsensitiveEnumMeta, int, Enum)):
+class Enum46(with_metaclass(_CaseInsensitiveEnumMeta, int, Enum)):
     """If the action type is block, this field defines the default customer overridable http response
     status code.
     """
@@ -308,31 +256,6 @@ class GeoFilterActions(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
 
     BLOCK = "Block"
     ALLOW = "Allow"
-
-class Get4ItemsItem(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
-
-    CLIENT_REQUEST_COUNT = "clientRequestCount"
-    CLIENT_REQUEST_TRAFFIC = "clientRequestTraffic"
-    CLIENT_REQUEST_BANDWIDTH = "clientRequestBandwidth"
-    ORIGIN_REQUEST_TRAFFIC = "originRequestTraffic"
-    ORIGIN_REQUEST_BANDWIDTH = "originRequestBandwidth"
-    TOTAL_LATENCY = "totalLatency"
-
-class Get5ItemsItem(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
-
-    CLIENT_REQUEST_COUNT = "clientRequestCount"
-    CLIENT_REQUEST_TRAFFIC = "clientRequestTraffic"
-    CLIENT_REQUEST_BANDWIDTH = "clientRequestBandwidth"
-    ORIGIN_REQUEST_TRAFFIC = "originRequestTraffic"
-    ORIGIN_REQUEST_BANDWIDTH = "originRequestBandwidth"
-
-class Get8ItemsItem(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
-
-    HTTP_STATUS_CODE = "httpStatusCode"
-    PROTOCOL = "protocol"
-    CACHE_STATUS = "cacheStatus"
-    COUNTRY = "country"
-    CUSTOM_DOMAIN = "customDomain"
 
 class HeaderAction(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     """Action to perform
@@ -390,6 +313,46 @@ class LinkToDefaultDomain(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
 
     ENABLED = "Enabled"
     DISABLED = "Disabled"
+
+class LogMetric(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+
+    CLIENT_REQUEST_COUNT = "clientRequestCount"
+    CLIENT_REQUEST_TRAFFIC = "clientRequestTraffic"
+    CLIENT_REQUEST_BANDWIDTH = "clientRequestBandwidth"
+    ORIGIN_REQUEST_TRAFFIC = "originRequestTraffic"
+    ORIGIN_REQUEST_BANDWIDTH = "originRequestBandwidth"
+    TOTAL_LATENCY = "totalLatency"
+
+class LogMetricsGranularity(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+
+    PT5_M = "PT5M"
+    PT1_H = "PT1H"
+    P1_D = "P1D"
+
+class LogMetricsGroupBy(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+
+    HTTP_STATUS_CODE = "httpStatusCode"
+    PROTOCOL = "protocol"
+    CACHE_STATUS = "cacheStatus"
+    COUNTRY = "country"
+    CUSTOM_DOMAIN = "customDomain"
+
+class LogRanking(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+
+    URL = "url"
+    REFERRER = "referrer"
+    BROWSER = "browser"
+    USER_AGENT = "userAgent"
+    COUNTRY_OR_REGION = "countryOrRegion"
+
+class LogRankingMetric(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+
+    CLIENT_REQUEST_COUNT = "clientRequestCount"
+    CLIENT_REQUEST_TRAFFIC = "clientRequestTraffic"
+    HIT_COUNT = "hitCount"
+    MISS_COUNT = "missCount"
+    USER_ERROR_COUNT = "userErrorCount"
+    ERROR_COUNT = "errorCount"
 
 class ManagedRuleEnabledState(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     """Describes if the managed rule is in enabled or disabled state. Defaults to Disabled if not
@@ -845,8 +808,47 @@ class ValidateSecretType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     MANAGED_CERTIFICATE = "ManagedCertificate"
     CUSTOMER_CERTIFICATE = "CustomerCertificate"
 
+class WafAction(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+
+    ALLOW = "allow"
+    BLOCK = "block"
+    LOG = "log"
+    REDIRECT = "redirect"
+
+class WafGranularity(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+
+    PT5_M = "PT5M"
+    PT1_H = "PT1H"
+    P1_D = "P1D"
+
+class WafMetric(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+
+    CLIENT_REQUEST_COUNT = "clientRequestCount"
+
 class WafMetricsResponseGranularity(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
 
     PT5_M = "PT5M"
     PT1_H = "PT1H"
     P1_D = "P1D"
+
+class WafRankingGroupBy(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+
+    HTTP_STATUS_CODE = "httpStatusCode"
+    CUSTOM_DOMAIN = "customDomain"
+
+class WafRankingType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+
+    ACTION = "action"
+    RULE_GROUP = "ruleGroup"
+    RULE_ID = "ruleId"
+    USER_AGENT = "userAgent"
+    CLIENT_IP = "clientIp"
+    URL = "url"
+    COUNTRY = "country"
+    RULE_TYPE = "ruleType"
+
+class WafRuleType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+
+    MANAGED = "managed"
+    CUSTOM = "custom"
+    BOT = "bot"

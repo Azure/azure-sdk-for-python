@@ -139,6 +139,22 @@ class BlobServiceSamples(object):
             # Delete the container
             blob_service_client.delete_container("containertest")
 
+    def get_blob_service_client_from_container_client(self):
+        # Instantiate a BlobServiceClient using a connection string
+        from azure.storage.blob import ContainerClient
+        container_client1 = ContainerClient.from_connection_string(self.connection_string, "container")
+        container_client1.create_container()
+
+        # [START get_blob_service_client_from_container_client]
+        blob_service_client = container_client1.get_blob_service_client()
+        print(blob_service_client.get_service_properties())
+        container_client2 = blob_service_client.get_container_client("container")
+
+        print(container_client2.get_container_properties())
+        container_client2.delete_container()
+        # [END get_blob_service_client_from_container_client]
+
+
 if __name__ == '__main__':
     sample = BlobServiceSamples()
     sample.get_storage_account_information()
@@ -146,3 +162,4 @@ if __name__ == '__main__':
     sample.container_operations()
     sample.blob_service_properties()
     sample.blob_service_stats()
+    sample.get_blob_service_client_from_container_client()

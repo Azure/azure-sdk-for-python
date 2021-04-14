@@ -256,6 +256,30 @@ class FileTest(StorageTestCase):
         downloaded_data = file_client.download_file().readall()
         self.assertEqual(data, downloaded_data)
 
+    def test_upload_data_in_substreams(self):
+        # parallel upload cannot be recorded
+        if TestMode.need_recording_file(self.test_mode):
+            return
+
+        directory_name = self._get_directory_reference()
+
+        # Create a directory to put the file under that
+        directory_client = self.dsc.get_directory_client(self.file_system_name, directory_name)
+        directory_client.create_directory()
+
+        file_client = directory_client.get_file_client('filename')
+        # Get 16MB data
+        data = self.get_random_bytes(16*1024*1024)
+        # Ensure chunk size is greater than threshold (8MB > 4MB) - for optimized upload
+        file_client.upload_data(data, chunk_size=8*1024*1024, overwrite=True, max_concurrency=3)
+        downloaded_data = file_client.download_file().readall()
+        self.assertEqual(data, downloaded_data)
+
+        # Run on single thread
+        file_client.upload_data(data, chunk_size=8*1024*1024, overwrite=True)
+        downloaded_data = file_client.download_file().readall()
+        self.assertEqual(data, downloaded_data)
+
     @record
     def test_upload_data_to_existing_file(self):
         directory_name = self._get_directory_reference()

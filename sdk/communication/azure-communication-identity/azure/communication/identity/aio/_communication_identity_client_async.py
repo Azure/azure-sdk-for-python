@@ -3,6 +3,7 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 # ------------------------------------
+from typing import TYPE_CHECKING, Any, List, Union, Tuple
 
 from azure.core.tracing.decorator_async import distributed_trace_async
 from azure.core.credentials import AccessToken
@@ -12,6 +13,10 @@ from .._generated.aio._communication_identity_client\
 from .._shared.utils import parse_connection_str, get_authentication_policy
 from .._shared.models import CommunicationUserIdentifier
 from .._version import SDK_MONIKER
+
+if TYPE_CHECKING:
+    from azure.core.credentials_async import AsyncTokenCredential
+    from .._generated.models import CommunicationTokenScope
 
 
 class CommunicationIdentityClient:
@@ -30,11 +35,10 @@ class CommunicationIdentityClient:
     """
     def __init__(
             self,
-            endpoint, # type: str
-            credential, # type: AsyncTokenCredential
-            **kwargs # type: Any
-        ):
-        # type: (...) -> None
+            endpoint: str,
+            credential: 'AsyncTokenCredential',
+            **kwargs
+        ) -> None:
         try:
             if not endpoint.lower().startswith('http'):
                 endpoint = "https://" + endpoint
@@ -53,10 +57,7 @@ class CommunicationIdentityClient:
             **kwargs)
 
     @classmethod
-    def from_connection_string(
-            cls, conn_str,  # type: str
-            **kwargs  # type: Any
-        ):  # type: (...) -> CommunicationIdentityClient
+    def from_connection_string(cls, conn_str: str, **kwargs) -> 'CommunicationIdentityClient':
         """Create CommunicationIdentityClient from a Connection String.
 
         :param str conn_str:
@@ -78,76 +79,72 @@ class CommunicationIdentityClient:
         return cls(endpoint, access_key, **kwargs)
 
     @distributed_trace_async
-    async def create_user(self, **kwargs):
-        # type: (...) -> CommunicationUserIdentifier
+    async def create_user(self, **kwargs) -> 'CommunicationUserIdentifier':
         """create a single Communication user
 
         :return: CommunicationUserIdentifier
         :rtype: ~azure.communication.identity.CommunicationUserIdentifier
         """
         return await self._identity_service_client.communication_identity.create(
-            cls=lambda pr, u, e: CommunicationUserIdentifier(u.identity.id),
+            cls=lambda pr, u, e: CommunicationUserIdentifier(u.identity.id, raw_id=u.identity.id),
             **kwargs)
 
     @distributed_trace_async
     async def create_user_and_token(
             self,
-            scopes, # type: List[Union[str, "_model.CommunicationTokenScope"]]
-            **kwargs # type: Any
-        ):
-        # type: (...) -> Tuple[CommunicationUserIdentifier, AccessToken]
+            scopes: List[Union[str, 'CommunicationTokenScope']],
+            **kwargs
+        ) -> Tuple['CommunicationUserIdentifier', AccessToken]:
         """create a single Communication user with an identity token.
         :param scopes:
             List of scopes to be added to the token.
-        :type scopes: list[str or ~azure.communication.identity.models.CommunicationTokenScope]
+        :type scopes: list[str or ~azure.communication.identity.CommunicationTokenScope]
         :return: A tuple of a CommunicationUserIdentifier and a AccessToken.
         :rtype:
             tuple of (~azure.communication.identity.CommunicationUserIdentifier, ~azure.core.credentials.AccessToken)
         """
         return await self._identity_service_client.communication_identity.create(
             create_token_with_scopes=scopes,
-            cls=lambda pr, u, e: (CommunicationUserIdentifier(u.identity.id),
+            cls=lambda pr, u, e: (CommunicationUserIdentifier(u.identity.id, raw_id=u.identity.id),
                 AccessToken(u.access_token.token, u.access_token.expires_on)),
             **kwargs)
 
     @distributed_trace_async
     async def delete_user(
             self,
-            communication_user, # type: CommunicationUserIdentifier
-            **kwargs # type: Any
-        ):
-        # type: (...) -> None
+            user: CommunicationUserIdentifier,
+            **kwargs
+        ) -> None:
         """Triggers revocation event for user and deletes all its data.
 
-        :param communication_user:
+        :param user:
             Azure Communication User to delete
-        :type communication_user: ~azure.communication.identity.CommunicationUserIdentifier
+        :type user: ~azure.communication.identity.CommunicationUserIdentifier
         :return: None
         :rtype: None
         """
         await self._identity_service_client.communication_identity.delete(
-            communication_user.identifier, **kwargs)
+            user.properties['id'], **kwargs)
 
     @distributed_trace_async
     async def get_token(
             self,
-            user, # type: CommunicationUserIdentifier
-            scopes, # type: List[Union[str, "_model.CommunicationTokenScope"]]
-            **kwargs # type: Any
-        ):
-        # type: (...) -> AccessToken
+            user: CommunicationUserIdentifier,
+            scopes: List[Union[str, 'CommunicationTokenScope']],
+            **kwargs
+        ) -> AccessToken:
         """Generates a new token for an identity.
 
         :param user: Azure Communication User
         :type user: ~azure.communication.identity.CommunicationUserIdentifier
         :param scopes:
             List of scopes to be added to the token.
-        :type scopes: list[str or ~azure.communication.identity.models.CommunicationTokenScope]
+        :type scopes: list[str or ~azure.communication.identity.CommunicationTokenScope]
         :return: AccessToken
         :rtype: ~azure.core.credentials.AccessToken
         """
         return await self._identity_service_client.communication_identity.issue_access_token(
-            user.identifier,
+            user.properties['id'],
             scopes,
             cls=lambda pr, u, e: AccessToken(u.token, u.expires_on),
             **kwargs)
@@ -155,10 +152,9 @@ class CommunicationIdentityClient:
     @distributed_trace_async
     async def revoke_tokens(
             self,
-            user, # type: CommunicationUserIdentifier
-            **kwargs # type: Any
-        ):
-        # type: (...) -> None
+            user: CommunicationUserIdentifier,
+            **kwargs
+        ) -> None:
         """Schedule revocation of all tokens of an identity.
 
         :param user: Azure Communication User.
@@ -167,14 +163,14 @@ class CommunicationIdentityClient:
         :rtype: None
         """
         return await self._identity_service_client.communication_identity.revoke_access_tokens(
-            user.identifier if user else None,
+            user.properties['id'] if user else None,
             **kwargs)
 
     async def __aenter__(self) -> "CommunicationIdentityClient":
         await self._identity_service_client.__aenter__()
         return self
 
-    async def __aexit__(self, *args: "Any") -> None:
+    async def __aexit__(self, *args) -> None:
         await self.close()
 
     async def close(self) -> None:

@@ -12,7 +12,7 @@ from azure.core.credentials import AccessToken
 from azure.core.exceptions import HttpResponseError
 from azure.communication.chat import (
     ChatThreadClient,
-    ChatThreadParticipant,
+    ChatParticipant,
     ChatMessageType
 )
 from azure.communication.chat._shared.models import(
@@ -396,7 +396,7 @@ class TestChatThreadClient(unittest.TestCase):
         for chat_thread_participant_page in chat_thread_participants.by_page():
             l = list(chat_thread_participant_page)
             assert len(l) == 1
-            l[0].user.id = participant_id
+            l[0].identifier.properties['id'] = participant_id
 
     def test_list_participants_with_results_per_page(self):
         thread_id = "19:81181a8abbf54b5695f87a0042ddcba9@thread.v2"
@@ -453,8 +453,8 @@ class TestChatThreadClient(unittest.TestCase):
             return mock_response(status_code=201)
         chat_thread_client = ChatThreadClient("https://endpoint", TestChatThreadClient.credential, thread_id, transport=Mock(send=mock_send))
 
-        new_participant = ChatThreadParticipant(
-                user=CommunicationUserIdentifier(new_participant_id),
+        new_participant = ChatParticipant(
+                identifier=CommunicationUserIdentifier(new_participant_id),
                 display_name='name',
                 share_history_time=datetime.utcnow())
         participants = [new_participant]
@@ -486,8 +486,8 @@ class TestChatThreadClient(unittest.TestCase):
             })
         chat_thread_client = ChatThreadClient("https://endpoint", TestChatThreadClient.credential, thread_id, transport=Mock(send=mock_send))
 
-        new_participant = ChatThreadParticipant(
-                user=CommunicationUserIdentifier(new_participant_id),
+        new_participant = ChatParticipant(
+                identifier=CommunicationUserIdentifier(new_participant_id),
                 display_name='name',
                 share_history_time=datetime.utcnow())
         participants = [new_participant]
@@ -503,7 +503,7 @@ class TestChatThreadClient(unittest.TestCase):
         failed_participant = result[0][0]
         communication_error = result[0][1]
 
-        self.assertEqual(new_participant.user.identifier, failed_participant.user.identifier)
+        self.assertEqual(new_participant.identifier.properties['id'], failed_participant.identifier.properties['id'])
         self.assertEqual(new_participant.display_name, failed_participant.display_name)
         self.assertEqual(new_participant.share_history_time, failed_participant.share_history_time)
         self.assertEqual(error_message, communication_error.message)
@@ -519,7 +519,7 @@ class TestChatThreadClient(unittest.TestCase):
         chat_thread_client = ChatThreadClient("https://endpoint", TestChatThreadClient.credential, thread_id, transport=Mock(send=mock_send))
 
         try:
-            chat_thread_client.remove_participant(user=CommunicationUserIdentifier(participant_id))
+            chat_thread_client.remove_participant(identifier=CommunicationUserIdentifier(participant_id))
         except:
             raised = True
 

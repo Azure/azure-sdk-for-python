@@ -8,15 +8,12 @@
 import pytest
 
 from datetime import datetime, timedelta
-import os
 import unittest
 
 from azure.core import MatchConditions
 from azure.core.exceptions import HttpResponseError, ResourceNotFoundError, ResourceModifiedError
-
 from azure.storage.blob import (
     BlobServiceClient,
-    ContainerClient,
     BlobClient,
     BlobLeaseClient,
     StorageErrorCode,
@@ -26,6 +23,11 @@ from azure.storage.blob import (
     BlobProperties,
     ContainerSasPermissions,
     AccessPolicy,
+    generate_blob_sas,
+    BlobSasPermissions,
+    generate_account_sas,
+    ResourceTypes,
+    AccountSasPermissions, generate_container_sas, ContainerClient,
 )
 from _shared.testcase import StorageTestCase, GlobalStorageAccountPreparer
 
@@ -67,6 +69,71 @@ class StorageBlobAccessConditionsTest(StorageTestCase):
         return container, blob
 
     # --Test cases for blob service --------------------------------------------
+    @GlobalStorageAccountPreparer()
+    def test_get_blob_service_client_from_container(
+            self, resource_group, location, storage_account, storage_account_key):
+        bsc1 = BlobServiceClient(
+            self.account_url(storage_account, "blob"), storage_account_key, connection_data_block_size=4 * 1024)
+        self._setup()
+        container_client1 = self._create_container(self.container_name, bsc1)
+        container_client1.get_container_properties()
+        test_datetime = (datetime.utcnow() - timedelta(minutes=15))
+
+        # Act
+        metadata = {'hello': 'world', 'number': '43'}
+        # Set metadata to check against later
+        container_client1.set_container_metadata(metadata, if_modified_since=test_datetime)
+
+        # Assert metadata is set
+        cc1_md1 = container_client1.get_container_properties().metadata
+        self.assertDictEqual(metadata, cc1_md1)
+
+        # Get blob service client from container client
+        bsc_props1 = bsc1.get_service_properties()
+        bsc2 = container_client1.get_blob_service_client()
+        bsc_props2 = bsc2.get_service_properties()
+        self.assertDictEqual(bsc_props1, bsc_props2)
+
+        # Return to container and assert its properties
+        container_client2 = bsc2.get_container_client(self.container_name)
+        cc2_md1 = container_client2.get_container_properties().metadata
+        self.assertDictEqual(cc2_md1, cc1_md1)
+
+    @GlobalStorageAccountPreparer()
+    def test_get_container_client_from_blob(self, resource_group, location, storage_account, storage_account_key):
+        bsc = BlobServiceClient(
+            self.account_url(storage_account, "blob"), storage_account_key, connection_data_block_size=4 * 1024)
+        self._setup()
+        container_client1 = self._create_container(self.container_name, bsc)
+        test_datetime = (datetime.utcnow() - timedelta(minutes=15))
+
+        # Act
+        metadata = {'hello': 'world', 'number': '43'}
+        # Set metadata to check against later
+        container_client1.set_container_metadata(metadata, if_modified_since=test_datetime)
+
+        # Assert metadata is set
+        md1 = container_client1.get_container_properties().metadata
+        self.assertDictEqual(metadata, md1)
+
+        # Create a blob from container_client1
+        blob_name = self.get_resource_name("testblob1")
+        blob_client1 = container_client1.get_blob_client(blob_name)
+
+        # Upload data to blob and get container_client again
+        blob_client1.upload_blob(b"this is test data")
+        blob_client1_data = blob_client1.download_blob().readall()
+        container_client2 = blob_client1.get_container_client()
+
+        md2 = container_client2.get_container_properties().metadata
+        self.assertEqual(md1, md2)
+
+        # Ensure we can get blob client again
+        blob_client2 = container_client2.get_blob_client(blob_name)
+        blob_client2_data = blob_client2.download_blob().readall()
+
+        self.assertEqual(blob_client1_data, blob_client2_data)
+
     @GlobalStorageAccountPreparer()
     def test_set_container_metadata_with_if_modified(self, resource_group, location, storage_account, storage_account_key):
         bsc = BlobServiceClient(self.account_url(storage_account, "blob"), storage_account_key, connection_data_block_size=4 * 1024)

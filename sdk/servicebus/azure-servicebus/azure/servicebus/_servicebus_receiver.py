@@ -19,7 +19,7 @@ from ._base_handler import BaseHandler
 from ._common.message import ServiceBusReceivedMessage
 from ._common.utils import (
     create_authentication,
-    trace_link_message,
+    get_receive_links,
     receive_trace_context_manager,
 )
 from ._common.constants import (
@@ -172,9 +172,9 @@ class ServiceBusReceiver(
                 original_timeout = self._handler._timeout
                 self._handler._timeout = max_wait_time * 1000
             try:
-                with receive_trace_context_manager(self) as receive_span:
-                    message = self._inner_next()
-                    trace_link_message(message, receive_span)
+                message = self._inner_next()
+                links = get_receive_links(message)
+                with receive_trace_context_manager(self, links=links):
                     yield message
             except StopIteration:
                 break
@@ -197,9 +197,9 @@ class ServiceBusReceiver(
 
     def __next__(self):
         # Normally this would wrap the yield of the iter, but for a direct next call we just trace imperitively.
-        with receive_trace_context_manager(self) as receive_span:
-            message = self._inner_next()
-            trace_link_message(message, receive_span)
+        message = self._inner_next()
+        links = get_receive_links(message)
+        with receive_trace_context_manager(self, links=links):
             return message
 
     next = __next__  # for python2.7
@@ -592,14 +592,14 @@ class ServiceBusReceiver(
             raise ValueError("The max_wait_time must be greater than 0.")
         if max_message_count is not None and max_message_count <= 0:
             raise ValueError("The max_message_count must be greater than 0")
-        with receive_trace_context_manager(self) as receive_span:
-            messages = self._do_retryable_operation(
-                self._receive,
-                max_message_count=max_message_count,
-                timeout=max_wait_time,
-                operation_requires_timeout=True,
-            )
-            trace_link_message(messages, receive_span)
+        messages = self._do_retryable_operation(
+            self._receive,
+            max_message_count=max_message_count,
+            timeout=max_wait_time,
+            operation_requires_timeout=True,
+        )
+        links = get_receive_links(messages)
+        with receive_trace_context_manager(self, links=links):
             if (
                 self._auto_lock_renewer
                 and not self._session
@@ -660,16 +660,16 @@ class ServiceBusReceiver(
             receive_mode=self._receive_mode,
             receiver=self,
         )
+        messages = self._mgmt_request_response_with_retry(
+            REQUEST_RESPONSE_RECEIVE_BY_SEQUENCE_NUMBER,
+            message,
+            handler,
+            timeout=timeout,
+        )
+        links = get_receive_links(messages)
         with receive_trace_context_manager(
-            self, span_name=SPAN_NAME_RECEIVE_DEFERRED
-        ) as receive_span:
-            messages = self._mgmt_request_response_with_retry(
-                REQUEST_RESPONSE_RECEIVE_BY_SEQUENCE_NUMBER,
-                message,
-                handler,
-                timeout=timeout,
-            )
-            trace_link_message(messages, receive_span)
+            self, span_name=SPAN_NAME_RECEIVE_DEFERRED, links=links
+        ):
             if (
                 self._auto_lock_renewer
                 and not self._session
@@ -721,14 +721,14 @@ class ServiceBusReceiver(
         }
 
         self._populate_message_properties(message)
+        handler = functools.partial(mgmt_handlers.peek_op, receiver=self)
+        messages = self._mgmt_request_response_with_retry(
+            REQUEST_RESPONSE_PEEK_OPERATION, message, handler, timeout=timeout
+        )
+        links = get_receive_links(messages)
         with receive_trace_context_manager(
-            self, span_name=SPAN_NAME_PEEK
-        ) as receive_span:
-            handler = functools.partial(mgmt_handlers.peek_op, receiver=self)
-            messages = self._mgmt_request_response_with_retry(
-                REQUEST_RESPONSE_PEEK_OPERATION, message, handler, timeout=timeout
-            )
-            trace_link_message(messages, receive_span)
+            self, span_name=SPAN_NAME_PEEK, links=links
+        ):
             return messages
 
     def complete_message(self, message):

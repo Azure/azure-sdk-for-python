@@ -97,6 +97,33 @@ class RecognizeInvoiceSampleAsync(object):
                 shipping_address_recipient = invoice.fields.get("ShippingAddressRecipient")
                 if shipping_address_recipient:
                     print("Shipping Address Recipient: {} has confidence: {}".format(shipping_address_recipient.value, shipping_address_recipient.confidence))
+                print("Invoice items:")
+                for idx, item in enumerate(invoice.fields.get("Items").value):
+                    print("...Item #{}".format(idx+1))
+                    item_description = item.value.get("Description")
+                    if item_description:
+                        print("......Description: {} has confidence: {}".format(item_description.value, item_description.confidence))
+                    item_quantity = item.value.get("Quantity")
+                    if item_quantity:
+                        print("......Quantity: {} has confidence: {}".format(item_quantity.value, item_quantity.confidence))
+                    unit = item.value.get("Unit")
+                    if unit:
+                        print("......Unit: {} has confidence: {}".format(unit.value, unit.confidence))
+                    unit_price = item.value.get("UnitPrice")
+                    if unit_price:
+                        print("......Unit Price: {} has confidence: {}".format(unit_price.value, unit_price.confidence))
+                    product_code = item.value.get("ProductCode")
+                    if product_code:
+                        print("......Product Code: {} has confidence: {}".format(product_code.value, product_code.confidence))
+                    item_date = item.value.get("Date")
+                    if item_date:
+                        print("......Date: {} has confidence: {}".format(item_date.value, item_date.confidence))
+                    tax = item.value.get("Tax")
+                    if tax:
+                        print("......Tax: {} has confidence: {}".format(tax.value, tax.confidence))
+                    amount = item.value.get("Amount")
+                    if amount:
+                        print("......Amount: {} has confidence: {}".format(amount.value, amount.confidence))
                 subtotal = invoice.fields.get("SubTotal")
                 if subtotal:
                     print("Subtotal: {} has confidence: {}".format(subtotal.value, subtotal.confidence))

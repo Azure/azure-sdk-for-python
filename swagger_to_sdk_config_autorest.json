@@ -1,8 +1,8 @@
 {
   "meta": {
     "autorest_options": {
-      "version": "3.0.6369",
-      "use": "@autorest/python@5.4.3",
+      "version": "3.3.0",
+      "use": "@autorest/python@5.6.5",
       "python": "",
       "python-mode": "update",
       "sdkrel:python-sdks-folder": "./sdk/.",

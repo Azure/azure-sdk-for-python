@@ -16,7 +16,7 @@ from azure.communication.chat.aio import (
     CommunicationTokenCredential
 )
 from azure.communication.chat import (
-    ChatThreadParticipant
+    ChatParticipant
 )
 from azure.communication.identity._shared.utils import parse_connection_str
 from azure_devtools.scenario_tests import RecordingProcessor
@@ -61,8 +61,8 @@ class ChatClientTestAsync(AsyncCommunicationTestCase):
         topic = "test topic"
         share_history_time = datetime.utcnow()
         share_history_time = share_history_time.replace(tzinfo=TZ_UTC)
-        participants = [ChatThreadParticipant(
-            user=self.user,
+        participants = [ChatParticipant(
+            identifier=self.user,
             display_name='name',
             share_history_time=share_history_time
         )]
