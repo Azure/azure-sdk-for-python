@@ -25,7 +25,7 @@ class AsyncConfidentialLedgerClientBase(object):
     def __init__(
         self,
         *,
-        ledger_url: str,
+        endpoint: str,
         credential: Union[ConfidentialLedgerCertificateCredential, "TokenCredential"],
         ledger_certificate_path: str,
         **kwargs: Any
@@ -37,13 +37,13 @@ class AsyncConfidentialLedgerClientBase(object):
             self._client = client
             return
 
-        if not ledger_url:
-            raise ValueError("Expected ledger_url to be a non-empty string")
+        if not endpoint:
+            raise ValueError("Expected endpoint to be a non-empty string")
 
         if not credential:
             raise ValueError("Expected credential to not be None")
 
-        if type(ledger_certificate_path) is not str:
+        if not isinstance(ledger_certificate_path, str):
             raise TypeError("ledger_certificate_path must be a string")
 
         if ledger_certificate_path == "":
@@ -51,12 +51,12 @@ class AsyncConfidentialLedgerClientBase(object):
                 "If not None, ledger_certificate_path must be a non-empty string"
             )
 
-        ledger_url = ledger_url.strip(" /")
+        endpoint = endpoint.strip(" /")
         try:
-            if not ledger_url.lower().startswith("https://"):
-                self._ledger_url = "https://" + ledger_url
+            if not endpoint.startswith("https://"):
+                self._endpoint = "https://" + endpoint
             else:
-                self._ledger_url = ledger_url
+                self._endpoint = endpoint
         except AttributeError:
             raise ValueError("Confidential Ledger URL must be a string.")
 
@@ -117,9 +117,9 @@ class AsyncConfidentialLedgerClientBase(object):
             )
 
     @property
-    def ledger_url(self) -> str:
+    def endpoint(self) -> str:
         """The URL this client is connected to."""
-        return self._ledger_url
+        return self._endpoint
 
     async def __aenter__(self) -> "AsyncConfidentialLedgerClientBase":
         await self._client.__aenter__()

@@ -16,7 +16,7 @@ class AadCredentialClientTest(ConfidentialLedgerClientTestMixin.BaseTest):
             ConfidentialLedgerClient,
             credential=self.get_credential(ConfidentialLedgerClient),
             ledger_certificate_path=self.network_certificate_path,
-            ledger_url=self.confidential_ledger_url,
+            endpoint=self.confidential_ledger_url,
         )
 
         client = self.create_client_from_credential(
@@ -25,7 +25,7 @@ class AadCredentialClientTest(ConfidentialLedgerClientTestMixin.BaseTest):
                 self.user_certificate_path
             ),
             ledger_certificate_path=self.network_certificate_path,
-            ledger_url=self.confidential_ledger_url,
+            endpoint=self.confidential_ledger_url,
         )
 
         aad_object_id = self.set_value_to_scrub(

@@ -43,7 +43,7 @@ class ConfidentialLedgerClient(AsyncConfidentialLedgerClientBase):
         1) Authentication using a client certificate.
         2) TLS verification using the Confidential Ledger TLS certificate.
 
-    :param str ledger_url: URL of the Confidential Ledger service.
+    :param str endpoint: URL of the Confidential Ledger service.
     :param credential: A credential object for authenticating with the Confidential Ledger.
     :type credential: ~azure.confidentialledger.ConfidentialLedgerCertificateCredential
     :param str ledger_certificate_path: The path to the ledger's TLS certificate.
@@ -53,13 +53,13 @@ class ConfidentialLedgerClient(AsyncConfidentialLedgerClientBase):
 
     def __init__(
         self,
-        ledger_url: str,
+        endpoint: str,
         credential: Union[ConfidentialLedgerCertificateCredential, "TokenCredential"],
         ledger_certificate_path: str,
         **kwargs: Any,
     ) -> None:
         super().__init__(
-            ledger_url=ledger_url,
+            endpoint=endpoint,
             credential=credential,
             ledger_certificate_path=ledger_certificate_path,
             **kwargs,
@@ -93,7 +93,7 @@ class ConfidentialLedgerClient(AsyncConfidentialLedgerClientBase):
             raise ValueError("entry_contents must not be None")
 
         result = await self._client.post_ledger_entry(
-            ledger_base_url=self._ledger_url,
+            ledger_base_url=self._endpoint,
             contents=entry_contents,
             sub_ledger_id=sub_ledger_id,
             cls=kwargs.pop("cls", AppendResult._from_pipeline_result),
@@ -107,7 +107,7 @@ class ConfidentialLedgerClient(AsyncConfidentialLedgerClientBase):
 
     @distributed_trace_async
     async def create_or_update_user(
-        self, user_id: str, role: LedgerUserRole, **kwargs: Any
+        self, user_id: str, role: Union[str, LedgerUserRole], **kwargs: Any
     ) -> LedgerUser:
         """Creates a new Confidential Ledger user, or updates an existing one.
 
@@ -115,17 +115,17 @@ class ConfidentialLedgerClient(AsyncConfidentialLedgerClientBase):
             certificate fingerprint.
         :type user_id: str
         :param role: Role to assigned to the user.
-        :type role: LedgerUserRole
+        :type role: str or LedgerUserRole
         :return: Details of the updated ledger user.
         :rtype: ~azure.confidentialledger.LedgerUser
         :raises: ~azure.core.exceptions.HttpResponseError
         """
 
         if user_id is None or role is None:
-            raise ValueError("user_id and role cannot be None")
+            raise ValueError("user_id or role cannot be None")
 
         result = await self._client.patch_user(
-            ledger_base_url=self._ledger_url,
+            ledger_base_url=self._endpoint,
             user_id=user_id,
             assigned_role=role,
             **kwargs,
@@ -150,7 +150,7 @@ class ConfidentialLedgerClient(AsyncConfidentialLedgerClientBase):
             raise ValueError("user_id cannot be None")
 
         await self._client.delete_user(
-            ledger_base_url=self._ledger_url, user_id=user_id, **kwargs
+            ledger_base_url=self._endpoint, user_id=user_id, **kwargs
         )
 
     @distributed_trace_async
@@ -165,7 +165,7 @@ class ConfidentialLedgerClient(AsyncConfidentialLedgerClientBase):
         """
 
         result = await self._client.get_constitution(
-            ledger_base_url=self._ledger_url, **kwargs
+            ledger_base_url=self._endpoint, **kwargs
         )
         return Constitution(script=result.script, digest=result.digest)
 
@@ -181,7 +181,7 @@ class ConfidentialLedgerClient(AsyncConfidentialLedgerClientBase):
         """
 
         result = await self._client.get_consortium_members(
-            ledger_base_url=self._ledger_url, **kwargs
+            ledger_base_url=self._endpoint, **kwargs
         )
         return Consortium(
             members=[
@@ -200,7 +200,7 @@ class ConfidentialLedgerClient(AsyncConfidentialLedgerClientBase):
         """
 
         result = await self._client.get_enclave_quotes(
-            ledger_base_url=self._ledger_url, **kwargs
+            ledger_base_url=self._endpoint, **kwargs
         )
         return LedgerEnclaves(
             {
@@ -210,7 +210,7 @@ class ConfidentialLedgerClient(AsyncConfidentialLedgerClientBase):
                     raw_quote=quote.raw,
                     version=quote.quote_version,
                 )
-                for _, quote in result.enclave_quotes.items()
+                for quote in result.enclave_quotes.values()
             },
             result.current_node_id,
         )
@@ -240,8 +240,19 @@ class ConfidentialLedgerClient(AsyncConfidentialLedgerClientBase):
         :raises: ~azure.core.exceptions.HttpResponseError
         """
 
+        if from_transaction_id is not None:
+            if not from_transaction_id:
+                raise ValueError(
+                    "If not None, from_transaction_id must be a non-empty string"
+                )
+        if to_transaction_id is not None:
+            if not to_transaction_id:
+                raise ValueError(
+                    "If not None, to_transaction_id must be a non-empty string"
+                )
+
         return self._client.get_ledger_entries(
-            ledger_base_url=self._ledger_url,
+            ledger_base_url=self._endpoint,
             from_transaction_id=from_transaction_id,
             to_transaction_id=to_transaction_id,
             sub_ledger_id=sub_ledger_id,
@@ -284,42 +295,48 @@ class ConfidentialLedgerClient(AsyncConfidentialLedgerClientBase):
         :raises: ~azure.core.exceptions.HttpResponseError
         """
 
+        if transaction_id is not None:
+            if not transaction_id:
+                raise ValueError(
+                    "If not None, transaction_id must be a non-empty string"
+                )
+
         if transaction_id is None:
             result = await self._client.get_current_ledger_entry(
-                ledger_base_url=self._ledger_url, sub_ledger_id=sub_ledger_id, **kwargs
+                ledger_base_url=self._endpoint, sub_ledger_id=sub_ledger_id, **kwargs
             )
             return LedgerEntry(
                 transaction_id=result.transaction_id,
                 contents=result.contents,
                 sub_ledger_id=result.sub_ledger_id,
             )
-        else:
-            ready = False
-            result = None
-            state = None
-            for _ in range(max_tries):
-                result = await self._client.get_ledger_entry_for_transaction_id(
-                    ledger_base_url=self._ledger_url,
-                    transaction_id=transaction_id,
-                    sub_ledger_id=sub_ledger_id,
-                    **kwargs,
-                )
-                ready = result.state == ConfidentialLedgerQueryState.READY
-                if not ready:
-                    state = result.state
-                    await asyncio.sleep(interval)
-                else:
-                    break
-            if not ready:
-                raise TimeoutError(
-                    f"After {max_tries} attempts, the query still had state {state}, not {ConfidentialLedgerQueryState.READY}"
-                )
 
-            return LedgerEntry(
-                transaction_id=result.entry.transaction_id,
-                contents=result.entry.contents,
-                sub_ledger_id=result.entry.sub_ledger_id,
+        ready = False
+        result = None
+        state = None
+        for _ in range(max_tries):
+            result = await self._client.get_ledger_entry_for_transaction_id(
+                ledger_base_url=self._endpoint,
+                transaction_id=transaction_id,
+                sub_ledger_id=sub_ledger_id,
+                **kwargs,
             )
+            ready = result.state == ConfidentialLedgerQueryState.READY
+            if not ready:
+                state = result.state
+                await asyncio.sleep(interval)
+            else:
+                break
+        if not ready:
+            raise TimeoutError(
+                f"After {max_tries} attempts, the query still had state {state}, not {ConfidentialLedgerQueryState.READY}"
+            )
+
+        return LedgerEntry(
+            transaction_id=result.entry.transaction_id,
+            contents=result.entry.contents,
+            sub_ledger_id=result.entry.sub_ledger_id,
+        )
 
     @distributed_trace_async
     async def get_transaction_receipt(
@@ -352,7 +369,7 @@ class ConfidentialLedgerClient(AsyncConfidentialLedgerClientBase):
         state = None
         for _ in range(max_tries):
             result = await self._client.get_receipt(
-                ledger_base_url=self._ledger_url,
+                ledger_base_url=self._endpoint,
                 transaction_id=transaction_id,
                 **kwargs,
             )
@@ -391,7 +408,7 @@ class ConfidentialLedgerClient(AsyncConfidentialLedgerClientBase):
             raise ValueError("transaction_id cannot be None")
 
         result = await self._client.get_transaction_status(
-            ledger_base_url=self._ledger_url, transaction_id=transaction_id, **kwargs
+            ledger_base_url=self._endpoint, transaction_id=transaction_id, **kwargs
         )
         return TransactionStatus(
             transaction_id=result.transaction_id, state=TransactionState(result.state)
@@ -417,7 +434,7 @@ class ConfidentialLedgerClient(AsyncConfidentialLedgerClientBase):
             raise ValueError("user_id cannot be None")
 
         result = await self._client.get_user(
-            ledger_base_url=self._ledger_url, user_id=user_id, **kwargs
+            ledger_base_url=self._endpoint, user_id=user_id, **kwargs
         )
         return LedgerUser(
             user_id=result.user_id, role=LedgerUserRole(result.assigned_role)

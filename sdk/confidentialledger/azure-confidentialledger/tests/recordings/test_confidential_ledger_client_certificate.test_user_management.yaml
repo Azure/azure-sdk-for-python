@@ -25,7 +25,7 @@ interactions:
       content-type:
       - application/json
       x-ms-ccf-transaction-id:
-      - '5.8751'
+      - '2.1375'
     status:
       code: 200
       message: OK
@@ -51,7 +51,7 @@ interactions:
       content-type:
       - application/json
       x-ms-ccf-transaction-id:
-      - '5.8751'
+      - '2.1375'
     status:
       code: 200
       message: OK
@@ -77,7 +77,7 @@ interactions:
       content-length:
       - '0'
       x-ms-ccf-transaction-id:
-      - '5.8752'
+      - '2.1376'
     status:
       code: 204
       message: No Content
@@ -107,7 +107,7 @@ interactions:
       content-type:
       - application/json
       x-ms-ccf-transaction-id:
-      - '5.8753'
+      - '2.1378'
     status:
       code: 200
       message: OK
@@ -133,7 +133,7 @@ interactions:
       content-type:
       - application/json
       x-ms-ccf-transaction-id:
-      - '5.8753'
+      - '2.1378'
     status:
       code: 200
       message: OK
@@ -159,7 +159,7 @@ interactions:
       content-length:
       - '0'
       x-ms-ccf-transaction-id:
-      - '5.8755'
+      - '2.1379'
     status:
       code: 204
       message: No Content

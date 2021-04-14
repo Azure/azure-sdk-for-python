@@ -32,7 +32,7 @@ DEFAULT_VERSION = ApiVersion.V0_1
 
 
 class ConfidentialLedgerClientBase(object):
-    def __init__(self, ledger_url, credential, ledger_certificate_path, **kwargs):
+    def __init__(self, endpoint, credential, ledger_certificate_path, **kwargs):
         # type: (str, Union[ConfidentialLedgerCertificateCredential, TokenCredential], str, Any) -> None
 
         client = kwargs.get("generated_client")
@@ -41,13 +41,13 @@ class ConfidentialLedgerClientBase(object):
             self._client = client
             return
 
-        if not ledger_url:
-            raise ValueError("Expected ledger_url to be a non-empty string")
+        if not endpoint:
+            raise ValueError("Expected endpoint to be a non-empty string")
 
         if not credential:
             raise ValueError("Expected credential to not be None")
 
-        if type(ledger_certificate_path) is not str:
+        if not isinstance(ledger_certificate_path, str):
             raise TypeError("ledger_certificate_path must be a string")
 
         if ledger_certificate_path == "":
@@ -56,13 +56,13 @@ class ConfidentialLedgerClientBase(object):
             )
 
         try:
-            ledger_url = ledger_url.strip(" /")
-            if not ledger_url.lower().startswith("https://"):
-                self._ledger_url = "https://" + ledger_url
+            endpoint = endpoint.strip(" /")
+            if not endpoint.startswith("https://"):
+                self._endpoint = "https://" + endpoint
             else:
-                self._ledger_url = ledger_url
-        except AttributeError:
-            raise ValueError("Confidential Ledger URL must be a string.")
+                self._endpoint = endpoint
+        except AttributeError as e:
+            raise ValueError("Confidential Ledger URL must be a string.") from e
 
         self.api_version = kwargs.pop("api_version", DEFAULT_VERSION)
 
@@ -118,10 +118,10 @@ class ConfidentialLedgerClientBase(object):
             )
 
     @property
-    def ledger_url(self):
+    def endpoint(self):
         # type: () -> str
         """The URL this client is connected to."""
-        return self._ledger_url
+        return self._endpoint
 
     def __enter__(self):
         # type: () -> ConfidentialLedgerClientBase

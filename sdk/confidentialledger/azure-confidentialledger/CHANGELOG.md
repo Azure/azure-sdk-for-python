@@ -1,5 +1,5 @@
 # Release History
 
 
-## 0.0.1 (Unreleased)
+## 1.0.0b1 (Unreleased)
   - Initial public preview implementation

@@ -34,5 +34,6 @@ class ConfidentialLedgerIdentityServiceClientTest(AsyncConfidentialLedgerTestCas
         )  # type: LedgerIdentity
         self.assertEqual(network_identity.ledger_id, self.ledger_id)
         self.assertEqual(
-            network_identity.ledger_tls_certificate, self.network_certificate
+            network_identity.ledger_tls_certificate.strip("\n\u0000"),
+            self.network_certificate,
         )

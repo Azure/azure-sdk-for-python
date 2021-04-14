@@ -15,5 +15,5 @@ class CertificateCredentialClientTest(ConfidentialLedgerClientTestMixin.BaseTest
                 self.user_certificate_path
             ),
             ledger_certificate_path=self.network_certificate_path,
-            ledger_url=self.confidential_ledger_url,
+            endpoint=self.confidential_ledger_url,
         )

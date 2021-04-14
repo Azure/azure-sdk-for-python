@@ -46,7 +46,7 @@ class ConfidentialLedgerClient(ConfidentialLedgerClientBase):
         1) Authentication using a client certificate.
         2) TLS verification using the Confidential Ledger TLS certificate.
 
-    :param str ledger_url: URL of the Confidential Ledger service.
+    :param str endpoint: URL of the Confidential Ledger service.
     :param credential: A credential object for authenticating with the Confidential Ledger.
     :type credential: ~azure.confidentialledger.ConfidentialLedgerCertificateCredential
     :param str ledger_certificate_path: The path to the ledger's TLS certificate.
@@ -54,11 +54,11 @@ class ConfidentialLedgerClient(ConfidentialLedgerClientBase):
     :type api_version: ~azure.confidentialledger.ApiVersion
     """
 
-    def __init__(self, ledger_url, credential, ledger_certificate_path, **kwargs):
+    def __init__(self, endpoint, credential, ledger_certificate_path, **kwargs):
         # type: (str, Union[ConfidentialLedgerCertificateCredential, TokenCredential], str, Any) -> None
 
         super(ConfidentialLedgerClient, self).__init__(
-            ledger_url=ledger_url,
+            endpoint=endpoint,
             credential=credential,
             ledger_certificate_path=ledger_certificate_path,
             **kwargs,
@@ -81,16 +81,17 @@ class ConfidentialLedgerClient(ConfidentialLedgerClientBase):
             durably saved to the ledger.
         """
 
-        sub_ledger_id = kwargs.pop("sub_ledger_id", None)
         wait_for_commit = kwargs.pop("wait_for_commit", False)
 
         if entry_contents is None:
-            raise ValueError("entry_contents must not be a string")
+            raise ValueError("entry_contents must be a string")
 
         result = self._client.post_ledger_entry(
-            ledger_base_url=self._ledger_url,
+            ledger_base_url=self._endpoint,
             contents=entry_contents,
-            sub_ledger_id=sub_ledger_id,
+            # Not a valid kwarg for wait_for_commit (will throw at requests layer),
+            # so it has to be popped.
+            sub_ledger_id=kwargs.pop("sub_ledger_id", None),
             cls=kwargs.pop("cls", AppendResult._from_pipeline_result),
             **kwargs,
         )
@@ -104,7 +105,7 @@ class ConfidentialLedgerClient(ConfidentialLedgerClientBase):
     def create_or_update_user(
         self,
         user_id,  # type: str
-        role,  # type: LedgerUserRole
+        role,  # type: Union[str, LedgerUserRole]
         **kwargs,  # type: Any
     ):
         # type: (...) -> LedgerUser
@@ -114,17 +115,17 @@ class ConfidentialLedgerClient(ConfidentialLedgerClientBase):
             certificate fingerprint.
         :type user_id: str
         :param role: Role to assigned to the user.
-        :type role: LedgerUserRole
+        :type role: str or LedgerUserRole
         :return: Details of the updated ledger user.
         :rtype: ~azure.confidentialledger.LedgerUser
         :raises: ~azure.core.exceptions.HttpResponseError
         """
 
         if user_id is None or role is None:
-            raise ValueError("user_id and role cannot be None")
+            raise ValueError("user_id or role cannot be None")
 
         result = self._client.patch_user(
-            ledger_base_url=self._ledger_url,
+            ledger_base_url=self._endpoint,
             user_id=user_id,
             assigned_role=role,
             **kwargs,
@@ -154,7 +155,7 @@ class ConfidentialLedgerClient(ConfidentialLedgerClientBase):
             raise ValueError("user_id cannot be None")
 
         self._client.delete_user(
-            ledger_base_url=self._ledger_url, user_id=user_id, **kwargs
+            ledger_base_url=self._endpoint, user_id=user_id, **kwargs
         )
 
     @distributed_trace
@@ -171,9 +172,7 @@ class ConfidentialLedgerClient(ConfidentialLedgerClientBase):
         :raises: ~azure.core.exceptions.HttpResponseError
         """
 
-        result = self._client.get_constitution(
-            ledger_base_url=self._ledger_url, **kwargs
-        )
+        result = self._client.get_constitution(ledger_base_url=self._endpoint, **kwargs)
         return Constitution(script=result.script, digest=result.digest)
 
     @distributed_trace
@@ -192,7 +191,7 @@ class ConfidentialLedgerClient(ConfidentialLedgerClientBase):
         """
 
         result = self._client.get_consortium_members(
-            ledger_base_url=self._ledger_url, **kwargs
+            ledger_base_url=self._endpoint, **kwargs
         )
         return Consortium(
             members=[
@@ -215,7 +214,7 @@ class ConfidentialLedgerClient(ConfidentialLedgerClientBase):
         """
 
         result = self._client.get_enclave_quotes(
-            ledger_base_url=self._ledger_url, **kwargs
+            ledger_base_url=self._endpoint, **kwargs
         )
         return LedgerEnclaves(
             {
@@ -225,7 +224,7 @@ class ConfidentialLedgerClient(ConfidentialLedgerClientBase):
                     raw_quote=quote.raw,
                     version=quote.quote_version,
                 )
-                for _, quote in result.enclave_quotes.items()
+                for quote in result.enclave_quotes.values()
             },
             result.current_node_id,
         )
@@ -250,13 +249,22 @@ class ConfidentialLedgerClient(ConfidentialLedgerClientBase):
 
         from_transaction_id = kwargs.pop("from_transaction_id", None)
         to_transaction_id = kwargs.pop("to_transaction_id", None)
-        sub_ledger_id = kwargs.pop("sub_ledger_id", None)
+
+        if from_transaction_id is not None:
+            if not from_transaction_id:
+                raise ValueError(
+                    "If not None, from_transaction_id must be a non-empty string"
+                )
+        if to_transaction_id is not None:
+            if not to_transaction_id:
+                raise ValueError(
+                    "If not None, to_transaction_id must be a non-empty string"
+                )
 
         return self._client.get_ledger_entries(
-            ledger_base_url=self._ledger_url,
+            ledger_base_url=self._endpoint,
             from_transaction_id=from_transaction_id,
             to_transaction_id=to_transaction_id,
-            sub_ledger_id=sub_ledger_id,
             cls=kwargs.pop(
                 "cls",
                 lambda entries: [
@@ -291,47 +299,51 @@ class ConfidentialLedgerClient(ConfidentialLedgerClientBase):
         :raises: ~azure.core.exceptions.HttpResponseError
         """
 
-        sub_ledger_id = kwargs.pop("sub_ledger_id", None)
         transaction_id = kwargs.pop("transaction_id", None)
+
+        if transaction_id is not None:
+            if not transaction_id:
+                raise ValueError(
+                    "If not None, transaction_id must be a non-empty string"
+                )
 
         if transaction_id is None:
             result = self._client.get_current_ledger_entry(
-                ledger_base_url=self._ledger_url, sub_ledger_id=sub_ledger_id, **kwargs
+                ledger_base_url=self._endpoint, **kwargs
             )
             return LedgerEntry(
                 transaction_id=result.transaction_id,
                 contents=result.contents,
                 sub_ledger_id=result.sub_ledger_id,
             )
-        else:
-            ready = False
-            result = None
-            state = None
-            for _ in range(max_tries):
-                result = self._client.get_ledger_entry_for_transaction_id(
-                    ledger_base_url=self._ledger_url,
-                    transaction_id=transaction_id,
-                    sub_ledger_id=sub_ledger_id,
-                    **kwargs,
-                )
-                ready = result.state == ConfidentialLedgerQueryState.READY
-                if not ready:
-                    state = result.state
-                    time.sleep(interval)
-                else:
-                    break
-            if not ready:
-                raise TimeoutError(
-                    "After {0} attempts, the query still had state {1}, not {2}".format(
-                        max_tries, state, ConfidentialLedgerQueryState.READY
-                    )
-                )
 
-            return LedgerEntry(
-                transaction_id=result.entry.transaction_id,
-                contents=result.entry.contents,
-                sub_ledger_id=result.entry.sub_ledger_id,
+        ready = False
+        result = None
+        state = None
+        for _ in range(max_tries):
+            result = self._client.get_ledger_entry_for_transaction_id(
+                ledger_base_url=self._endpoint,
+                transaction_id=transaction_id,
+                **kwargs,
             )
+            ready = result.state == ConfidentialLedgerQueryState.READY
+            if not ready:
+                state = result.state
+                time.sleep(interval)
+            else:
+                break
+        if not ready:
+            raise TimeoutError(
+                "After {0} attempts, the query still had state {1}, not {2}".format(
+                    max_tries, state, ConfidentialLedgerQueryState.READY
+                )
+            )
+
+        return LedgerEntry(
+            transaction_id=result.entry.transaction_id,
+            contents=result.entry.contents,
+            sub_ledger_id=result.entry.sub_ledger_id,
+        )
 
     @distributed_trace
     def get_transaction_receipt(
@@ -364,7 +376,7 @@ class ConfidentialLedgerClient(ConfidentialLedgerClientBase):
         state = None
         for _ in range(max_tries):
             result = self._client.get_receipt(
-                ledger_base_url=self._ledger_url,
+                ledger_base_url=self._endpoint,
                 transaction_id=transaction_id,
                 **kwargs,
             )
@@ -406,7 +418,7 @@ class ConfidentialLedgerClient(ConfidentialLedgerClientBase):
             raise ValueError("transaction_id cannot be None")
 
         result = self._client.get_transaction_status(
-            ledger_base_url=self._ledger_url, transaction_id=transaction_id, **kwargs
+            ledger_base_url=self._endpoint, transaction_id=transaction_id, **kwargs
         )
         return TransactionStatus(
             transaction_id=result.transaction_id, state=TransactionState(result.state)
@@ -433,7 +445,7 @@ class ConfidentialLedgerClient(ConfidentialLedgerClientBase):
             raise ValueError("user_id cannot be None")
 
         result = self._client.get_user(
-            ledger_base_url=self._ledger_url, user_id=user_id, **kwargs
+            ledger_base_url=self._endpoint, user_id=user_id, **kwargs
         )
         return LedgerUser(
             user_id=result.user_id, role=LedgerUserRole(result.assigned_role)

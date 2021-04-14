@@ -18,11 +18,11 @@ interactions:
     headers:
       content-length: '78'
       content-type: application/json
-      x-ms-ccf-transaction-id: '5.9093'
+      x-ms-ccf-transaction-id: '2.1741'
     status:
       code: 200
       message: OK
-    url: https://lyshi-sdk-ledger.eastus.cloudapp.azure.com/app/users/000000000000000000000000000000000000?api-version=0.1-preview
+    url: https://lyshi-sdk-ledger-1.eastus.cloudapp.azure.com/app/users/000000000000000000000000000000000000?api-version=0.1-preview
 - request:
     body: null
     headers:
@@ -38,11 +38,11 @@ interactions:
     headers:
       content-length: '78'
       content-type: application/json
-      x-ms-ccf-transaction-id: '5.9093'
+      x-ms-ccf-transaction-id: '2.1742'
     status:
       code: 200
       message: OK
-    url: https://lyshi-sdk-ledger.eastus.cloudapp.azure.com/app/users/000000000000000000000000000000000000?api-version=0.1-preview
+    url: https://lyshi-sdk-ledger-1.eastus.cloudapp.azure.com/app/users/000000000000000000000000000000000000?api-version=0.1-preview
 - request:
     body: null
     headers:
@@ -57,11 +57,11 @@ interactions:
       string: ''
     headers:
       content-length: '0'
-      x-ms-ccf-transaction-id: '5.9095'
+      x-ms-ccf-transaction-id: '2.1743'
     status:
       code: 204
       message: No Content
-    url: https://lyshi-sdk-ledger.eastus.cloudapp.azure.com/app/users/000000000000000000000000000000000000?api-version=0.1-preview
+    url: https://lyshi-sdk-ledger-1.eastus.cloudapp.azure.com/app/users/000000000000000000000000000000000000?api-version=0.1-preview
 - request:
     body: '{"assignedRole": "Reader"}'
     headers:
@@ -81,11 +81,11 @@ interactions:
     headers:
       content-length: '73'
       content-type: application/json
-      x-ms-ccf-transaction-id: '5.9096'
+      x-ms-ccf-transaction-id: '2.1745'
     status:
       code: 200
       message: OK
-    url: https://lyshi-sdk-ledger.eastus.cloudapp.azure.com/app/users/000000000000000000000000000000000000?api-version=0.1-preview
+    url: https://lyshi-sdk-ledger-1.eastus.cloudapp.azure.com/app/users/000000000000000000000000000000000000?api-version=0.1-preview
 - request:
     body: null
     headers:
@@ -101,11 +101,11 @@ interactions:
     headers:
       content-length: '73'
       content-type: application/json
-      x-ms-ccf-transaction-id: '5.9096'
+      x-ms-ccf-transaction-id: '2.1745'
     status:
       code: 200
       message: OK
-    url: https://lyshi-sdk-ledger.eastus.cloudapp.azure.com/app/users/000000000000000000000000000000000000?api-version=0.1-preview
+    url: https://lyshi-sdk-ledger-1.eastus.cloudapp.azure.com/app/users/000000000000000000000000000000000000?api-version=0.1-preview
 - request:
     body: null
     headers:
@@ -120,9 +120,9 @@ interactions:
       string: ''
     headers:
       content-length: '0'
-      x-ms-ccf-transaction-id: '5.9098'
+      x-ms-ccf-transaction-id: '2.1747'
     status:
       code: 204
       message: No Content
-    url: https://lyshi-sdk-ledger.eastus.cloudapp.azure.com/app/users/000000000000000000000000000000000000?api-version=0.1-preview
+    url: https://lyshi-sdk-ledger-1.eastus.cloudapp.azure.com/app/users/000000000000000000000000000000000000?api-version=0.1-preview
 version: 1

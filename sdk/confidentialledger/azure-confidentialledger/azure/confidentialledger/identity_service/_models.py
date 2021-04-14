@@ -25,7 +25,7 @@ class LedgerIdentity(object):
 
     def __init__(self, ledger_id, ledger_tls_certificate):
         self._ledger_id = ledger_id
-        self._ledger_tls_certificate = ledger_tls_certificate
+        self._ledger_tls_certificate = ledger_tls_certificate.strip("\n\u0000")
 
     @property
     def ledger_id(self):
