@@ -145,10 +145,11 @@ class AsyncioStreamDownloadGenerator(AsyncIterator):
         self.request = response.request
         self.response = response
         self.block_size = response.block_size
-        self.iter_content_func = self.response.internal_response.iter_content(self.block_size)
-        self.content_length = int(response.headers.get('Content-Length', 0))
-        self.downloaded = 0
         self._raw = raw
+        self.iter_content_func = self.response.internal_response.iter_content(self.block_size)
+        if self._raw and hasattr(self.response.internal_response.raw, 'stream'):
+            delattr(self.response.internal_response.raw.__class__, 'stream')
+        self.content_length = int(response.headers.get('Content-Length', 0))
 
     def __len__(self):
         return self.content_length
@@ -156,10 +157,17 @@ class AsyncioStreamDownloadGenerator(AsyncIterator):
     async def __anext__(self):
         loop = _get_running_loop()
         try:
-            chunk = await loop.run_in_executor(
-                None,
-                _iterate_response_content,
-                self.iter_content_func,
+            if self._raw:
+                chunk = await loop.run_in_executor(
+                    None,
+                    _iterate_response_content,
+                    self.iter_content_func,
+                )
+            else:
+                chunk = await loop.run_in_executor(
+                    None,
+                    _iterate_response_content,
+                    self.iter_content_func,
             )
             if not chunk:
                 raise _ResponseStopIteration()
@@ -178,6 +186,6 @@ class AsyncioStreamDownloadGenerator(AsyncIterator):
 class AsyncioRequestsTransportResponse(AsyncHttpResponse, RequestsTransportResponse): # type: ignore
     """Asynchronous streaming of data from the response.
     """
-    def stream_download(self, pipeline, raw=False) -> AsyncIteratorType[bytes]: # type: ignore
+    def stream_download(self, pipeline, raw=True) -> AsyncIteratorType[bytes]: # type: ignore
         """Generator for streaming request body data."""
         return AsyncioStreamDownloadGenerator(pipeline, self, raw=raw) # type: ignore

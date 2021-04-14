@@ -105,9 +105,11 @@ class StreamDownloadGenerator(object):
         self.request = response.request
         self.response = response
         self.block_size = response.block_size
-        self.iter_content_func = self.response.internal_response.iter_content(self.block_size)
-        self.content_length = int(response.headers.get('Content-Length', 0))
         self._raw = raw
+        self.iter_content_func = self.response.internal_response.iter_content(self.block_size)
+        if self._raw and hasattr(self.response.internal_response.raw, 'stream'):
+            delattr(self.response.internal_response.raw.__class__, 'stream')
+        self.content_length = int(response.headers.get('Content-Length', 0))
 
     def __len__(self):
         return self.content_length
@@ -117,10 +119,7 @@ class StreamDownloadGenerator(object):
 
     def __next__(self):
         try:
-            if self._raw:
-                chunk = self.response.internal_response.raw.read(self.block_size, decode_content=False)
-            else:
-                chunk = next(self.iter_content_func)
+            chunk = next(self.iter_content_func)
             if not chunk:
                 raise StopIteration()
             return chunk

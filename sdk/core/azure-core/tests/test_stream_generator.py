@@ -69,6 +69,8 @@ def test_response_streaming_error_behavior():
 
     class FakeStreamWithConnectionError:
         # fake object for urllib3.response.HTTPResponse
+        def __init__(self):
+            self.total_response_size = 500
 
         def stream(self, chunk_size, decode_content=False):
             assert chunk_size == block_size
@@ -82,17 +84,17 @@ def test_response_streaming_error_behavior():
 
         def read(self, chunk_size, decode_content=False):
             assert chunk_size == block_size
-            left = total_response_size
-            while left > 0:
-                if left <= block_size:
+            if self.total_response_size > 0:
+                if self.total_response_size <= block_size:
                     raise requests.exceptions.ConnectionError()
-                data = b"X" * min(chunk_size, left)
-                left -= len(data)
-                yield data
+                data = b"X" * min(chunk_size, self.total_response_size)
+                self.total_response_size -= len(data)
+                return data
 
         def close(self):
             pass
 
+    s = FakeStreamWithConnectionError()
     req_response.raw = FakeStreamWithConnectionError()
 
     response = RequestsTransportResponse(
