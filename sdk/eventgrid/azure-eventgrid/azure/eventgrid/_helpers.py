@@ -77,11 +77,6 @@ def _get_authentication_policy(credential):
         return AzureKeyCredentialPolicy(
             credential=credential, name=constants.EVENTGRID_KEY_HEADER
         )
-    elif isinstance(credential, AzureNamedKeyCredential):
-        return AzureNamedKeyCredentialPolicy(
-            name=constants.EVENTGRID_KEY_HEADER,
-            credential=credential
-        )
     if isinstance(credential, AzureSasCredential):
         return EventGridSasCredentialPolicy(
             credential=credential, name=constants.EVENTGRID_TOKEN_HEADER
