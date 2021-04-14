@@ -26,7 +26,7 @@ from .._entity import TableEntity
 from .._generated.aio import AzureTable
 from .._generated.models import SignedIdentifier, TableProperties
 from .._models import AccessPolicy, BatchTransactionResult
-from .._serialize import serialize_iso
+from .._serialize import serialize_iso, _parameter_filter_substitution
 from .._deserialize import _return_headers_and_deserialized
 from .._error import _process_table_error, _validate_table_name
 from .._models import UpdateMode
@@ -68,12 +68,7 @@ class TableClient(AsyncTablesBaseClient):
             raise ValueError("Please specify a table name.")
         _validate_table_name(table_name)
         self.table_name = table_name
-        super(TableClient, self).__init__(
-            account_url,
-            table_name=table_name,
-            credential=credential,
-            **kwargs
-        )
+        super(TableClient, self).__init__(account_url, credential=credential, **kwargs)
         self._client = AzureTable(
             self.url,
             policies=kwargs.pop('policies', self._policies),
@@ -474,7 +469,7 @@ class TableClient(AsyncTablesBaseClient):
     @distributed_trace
     def query_entities(
         self,
-        filter,  # type: str  # pylint: disable=redefined-builtin
+        query_filter,
         **kwargs
     ):
         # type: (...) -> AsyncItemPaged[TableEntity]
@@ -499,9 +494,9 @@ class TableClient(AsyncTablesBaseClient):
                 :caption: Querying entities from a TableClient
         """
         parameters = kwargs.pop("parameters", None)
-        filter = self._parameter_filter_substitution(
-            parameters, filter
-        )  # pylint: disable = redefined-builtin
+        query_filter = _parameter_filter_substitution(
+            parameters, query_filter
+        )
         top = kwargs.pop("results_per_page", None)
         user_select = kwargs.pop("select", None)
         if user_select and not isinstance(user_select, str):
@@ -512,7 +507,7 @@ class TableClient(AsyncTablesBaseClient):
             command,
             table=self.table_name,
             results_per_page=top,
-            filter=filter,
+            filter=query_filter,
             select=user_select,
             page_iterator_class=TableEntityPropertiesPaged,
         )

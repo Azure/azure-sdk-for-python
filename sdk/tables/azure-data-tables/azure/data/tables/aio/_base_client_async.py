@@ -40,18 +40,11 @@ from azure.core.pipeline.transport import (
 
 from .._base_client import AccountHostsMixin
 from .._authentication import SharedKeyCredentialPolicy
-from .._constants import STORAGE_OAUTH_SCOPE, CONNECTION_TIMEOUT, READ_TIMEOUT
-from .._generated.aio._configuration import AzureTableConfiguration
+from .._constants import STORAGE_OAUTH_SCOPE
 from .._models import BatchErrorException, BatchTransactionResult
-from .._policies import (
-    StorageContentValidation,
-    StorageRequestHook,
-    StorageHosts,
-    StorageHeadersPolicy,
-    StorageLoggingPolicy,
-)
+from .._policies import StorageHosts, StorageHeadersPolicy
 from .._sdk_moniker import SDK_MONIKER
-from ._policies_async import AsyncTablesRetryPolicy)
+from ._policies_async import AsyncTablesRetryPolicy
 
 
 class AsyncTablesBaseClient(AccountHostsMixin):
@@ -91,9 +84,9 @@ class AsyncTablesBaseClient(AccountHostsMixin):
             ProxyPolicy(**kwargs),
             ContentDecodePolicy(response_encoding="utf-8"),
             AsyncRedirectPolicy(**kwargs),
+            StorageHosts(**kwargs),
             AsyncTablesRetryPolicy(**kwargs),
             self._credential_policy,
-            StorageHosts(**kwargs),
             CustomHookPolicy(**kwargs),
             NetworkTraceLoggingPolicy(**kwargs),
             DistributedTracingPolicy(**kwargs),

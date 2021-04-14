@@ -11,6 +11,7 @@ from math import isnan
 from enum import Enum
 import sys
 
+import six
 from azure.core import MatchConditions
 from azure.core.exceptions import raise_with_traceback
 

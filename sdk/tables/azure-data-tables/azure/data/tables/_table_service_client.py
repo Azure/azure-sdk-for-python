@@ -19,13 +19,14 @@ from ._models import (
     service_properties_deserialize,
     TableItem
 )
-from ._base_client import parse_connection_str, AccountHostsMixin
+from ._base_client import parse_connection_str, TablesBaseClient
 from ._models import LocationMode
 from ._error import _process_table_error
 from ._table_client import TableClient
+from ._serialize import _parameter_filter_substitution
 
 
-class TableServiceClient(AccountHostsMixin):
+class TableServiceClient(TablesBaseClient):
     """ :ivar str account_name: Name of the storage account (Cosmos or Azure)"""
 
     def __init__(
@@ -295,7 +296,7 @@ class TableServiceClient(AccountHostsMixin):
                 :caption: Querying tables in a storage account
         """
         parameters = kwargs.pop("parameters", None)
-        query_filter = self._parameter_filter_substitution(
+        query_filter = _parameter_filter_substitution(
             parameters, query_filter
         )
         top = kwargs.pop("results_per_page", None)

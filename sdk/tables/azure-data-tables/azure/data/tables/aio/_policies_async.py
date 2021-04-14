@@ -84,6 +84,25 @@ class AsyncTablesRetryPolicy(AsyncRetryPolicy):
         config["hosts"] = options.pop("hosts", None)
         return config
 
+    def update_context(self, context, retry_settings):
+        """Updates retry history in pipeline context.
+
+        :param context: The pipeline context.
+        :type context: ~azure.core.pipeline.PipelineContext
+        :param retry_settings: The retry settings.
+        :type retry_settings: dict
+        """
+        super(AsyncTablesRetryPolicy, self).update_context(context, retry_settings)
+        context['location_mode'] = retry_settings['mode']
+
+    def update_request(self, request, retry_settings):
+        """Updates the pipeline request before attempting to retry.
+
+        :param PipelineRequest request: The outgoing request.
+        :param dict(str, Any) retry_settings: The current retry context settings.
+        """
+        set_next_host_location(retry_settings, request)
+
     async def send(self, request):
         """Uses the configured retry policy to send the request to the next policy in the pipeline.
 
@@ -108,7 +127,7 @@ class AsyncTablesRetryPolicy(AsyncRetryPolicy):
                 if self.is_retry(retry_settings, response):
                     retry_active = self.increment(retry_settings, response=response)
                     if retry_active:
-                        set_next_host_location(retry_settings, request)
+                        self.update_request(request, retry_settings)
                         await self.sleep(retry_settings, request.context.transport, response=response)
                         is_response_error = True
                         continue
@@ -121,7 +140,7 @@ class AsyncTablesRetryPolicy(AsyncRetryPolicy):
                 if self._is_method_retryable(retry_settings, request.http_request):
                     retry_active = self.increment(retry_settings, response=request, error=err)
                     if retry_active:
-                        set_next_host_location(retry_settings, request)
+                        self.update_request(request, retry_settings)
                         await self.sleep(retry_settings, request.context.transport)
                         if isinstance(err, ServiceRequestError):
                             is_response_error = False

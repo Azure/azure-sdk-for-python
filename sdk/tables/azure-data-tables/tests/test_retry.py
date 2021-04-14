@@ -15,15 +15,14 @@ from azure.core.exceptions import (
     AzureError,
     ClientAuthenticationError
 )
+from azure.core.pipeline.policies import RetryMode
 from azure.core.pipeline.transport import(
     RequestsTransport
 )
 
 from azure.data.tables import (
     TableServiceClient,
-    LocationMode,
-    LinearRetry,
-    ExponentialRetry,
+    LocationMode
 )
 
 from _shared.testcase import (
@@ -100,8 +99,13 @@ class StorageRetryTest(AzureTestCase, TableTestCase):
 
     @TablesPreparer()
     def test_retry_on_timeout(self, tables_storage_account_name, tables_primary_storage_account_key):
-        retry = ExponentialRetry(initial_backoff=1, increment_base=2)
-        self._set_up(tables_storage_account_name, tables_primary_storage_account_key, retry_policy=retry, default_table=False)
+        self._set_up(
+            tables_storage_account_name,
+            tables_primary_storage_account_key,
+            default_table=False,
+            retry_mode=RetryMode.Exponential,
+            retry_backoff_factor=1
+            )
 
         new_table_name = self.get_resource_name('uttable')
         callback = ResponseCallback(status=201, new_status=408).override_status
@@ -118,8 +122,12 @@ class StorageRetryTest(AzureTestCase, TableTestCase):
 
     @TablesPreparer()
     def test_retry_callback_and_retry_context(self, tables_storage_account_name, tables_primary_storage_account_key):
-        retry = LinearRetry(backoff=1)
-        self._set_up(tables_storage_account_name, tables_primary_storage_account_key, retry_policy=retry, default_table=False)
+        self._set_up(
+            tables_storage_account_name,
+            tables_primary_storage_account_key,
+            default_table=False,
+            retry_mode=RetryMode.Fixed,
+            retry_backoff_factor=1)
 
         new_table_name = self.get_resource_name('uttable')
         callback = ResponseCallback(status=201, new_status=408).override_status
@@ -139,14 +147,14 @@ class StorageRetryTest(AzureTestCase, TableTestCase):
     @pytest.mark.live_test_only
     @TablesPreparer()
     def test_retry_on_socket_timeout(self, tables_storage_account_name, tables_primary_storage_account_key):
-        retry = LinearRetry(backoff=1)
         retry_transport = RetryRequestTransport(connection_timeout=11, read_timeout=0.000000000001)
         self._set_up(
             tables_storage_account_name,
             tables_primary_storage_account_key,
-            retry_policy=retry,
             transport=retry_transport,
-            default_table=False)
+            default_table=False,
+            retry_mode=RetryMode.Fixed,
+            retry_backoff_factor=1)
     
         new_table_name = self.get_resource_name('uttable')
         try:

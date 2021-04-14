@@ -4,16 +4,13 @@
 # license information.
 # --------------------------------------------------------------------------
 
-from time import time
-import uuid
+import time
 from typing import Any, TYPE_CHECKING, Dict
 from wsgiref.handlers import format_date_time
-
 try:
     from urllib.parse import urlparse
 except ImportError:
     from urlparse import urlparse  # type: ignore
-
 
 from azure.core.pipeline.policies import (
     HeadersPolicy,
@@ -52,7 +49,7 @@ class StorageHeadersPolicy(HeadersPolicy):
         super(StorageHeadersPolicy, self).on_request(request)
 
         # Add required date headers
-        current_time = format_date_time(time())
+        current_time = format_date_time(time.time())
         request.http_request.headers["x-ms-date"] = current_time
         request.http_request.headers["Date"] = current_time
 
@@ -157,6 +154,25 @@ class TablesRetryPolicy(RetryPolicy):
         config["hosts"] = options.pop("hosts", None)
         return config
 
+    def update_context(self, context, retry_settings):
+        """Updates retry history in pipeline context.
+
+        :param context: The pipeline context.
+        :type context: ~azure.core.pipeline.PipelineContext
+        :param retry_settings: The retry settings.
+        :type retry_settings: dict
+        """
+        super(TablesRetryPolicy, self).update_context(context, retry_settings)
+        context['location_mode'] = retry_settings['mode']
+
+    def update_request(self, request, retry_settings):
+        """Updates the pipeline request before attempting to retry.
+
+        :param PipelineRequest request: The outgoing request.
+        :param dict(str, Any) retry_settings: The current retry context settings.
+        """
+        set_next_host_location(retry_settings, request)
+
     def send(self, request):
         """Sends the PipelineRequest object to the next policy. Uses retry settings if necessary.
 
@@ -170,8 +186,6 @@ class TablesRetryPolicy(RetryPolicy):
         retry_active = True
         response = None
         retry_settings = self.configure_retries(request.context.options)
-        self._configure_positions(request, retry_settings)
-
         absolute_timeout = retry_settings['timeout']
         is_response_error = True
 
@@ -179,11 +193,12 @@ class TablesRetryPolicy(RetryPolicy):
             try:
                 start_time = time.time()
                 self._configure_timeout(request, absolute_timeout, is_response_error)
+                print("Request CONTEXT", request.context)
                 response = self.next.send(request)
                 if self.is_retry(retry_settings, response):
                     retry_active = self.increment(retry_settings, response=response)
                     if retry_active:
-                        set_next_host_location(retry_settings, request)
+                        self.update_request(request, retry_settings)
                         self.sleep(retry_settings, request.context.transport, response=response)
                         is_response_error = True
                         continue
@@ -196,7 +211,7 @@ class TablesRetryPolicy(RetryPolicy):
                 if self._is_method_retryable(retry_settings, request.http_request):
                     retry_active = self.increment(retry_settings, response=request, error=err)
                     if retry_active:
-                        set_next_host_location(retry_settings, request)
+                        self.update_request(request, retry_settings)
                         self.sleep(retry_settings, request.context.transport)
                         if isinstance(err, ServiceRequestError):
                             is_response_error = False

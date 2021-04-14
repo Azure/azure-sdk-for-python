@@ -23,6 +23,7 @@ from .._generated.models import TableServiceProperties
 from .._models import service_stats_deserialize, service_properties_deserialize
 from .._error import _process_table_error
 from .._models import TableItem
+from .._serialize import _parameter_filter_substitution
 from ._table_client_async import TableClient
 from ._base_client_async import AsyncTablesBaseClient
 from ._models import TablePropertiesPaged
@@ -350,7 +351,7 @@ class TableServiceClient(AsyncTablesBaseClient):
                 :caption: Querying tables in an account given specific parameters
         """
         parameters = kwargs.pop("parameters", None)
-        query_filter = self._parameter_filter_substitution(
+        query_filter = _parameter_filter_substitution(
             parameters, query_filter
         )
         user_select = kwargs.pop("select", None)

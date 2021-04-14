@@ -27,8 +27,8 @@ from ._generated.models import (
     TableProperties,
 )
 from ._serialize import _get_match_headers, _add_entity_properties
-from ._base_client import parse_connection_str, AccountHostsMixin
-from ._serialize import serialize_iso
+from ._base_client import parse_connection_str, TablesBaseClient
+from ._serialize import serialize_iso, _parameter_filter_substitution
 from ._deserialize import _return_headers_and_deserialized
 from ._table_batch import TableBatchOperations
 from ._models import TableEntityPropertiesPaged, UpdateMode, AccessPolicy
@@ -37,7 +37,7 @@ if TYPE_CHECKING:
     from typing import Optional, Any, Union  # pylint: disable=ungrouped-imports
 
 
-class TableClient(AccountHostsMixin):
+class TableClient(TablesBaseClient):
     """ :ivar str account_name: Name of the storage account (Cosmos or Azure)"""
 
     def __init__(
@@ -68,9 +68,7 @@ class TableClient(AccountHostsMixin):
             raise ValueError("Please specify a table name.")
         _validate_table_name(table_name)
         self.table_name = table_name
-        super(TableClient, self).__init__(
-            account_url, table_name, credential=credential, **kwargs
-        )
+        super(TableClient, self).__init__(account_url, credential=credential, **kwargs)
         self._client = AzureTable(
             self.url,
             policies=kwargs.pop('policies', self._policies),
@@ -469,7 +467,7 @@ class TableClient(AccountHostsMixin):
     @distributed_trace
     def query_entities(
         self,
-        filter,  # type: str  pylint: disable=redefined-builtin
+        query_filter,
         **kwargs
     ):
         # type: (...) -> ItemPaged[TableEntity]
@@ -494,8 +492,8 @@ class TableClient(AccountHostsMixin):
                 :caption: Query entities held within a table
         """
         parameters = kwargs.pop("parameters", None)
-        filter = self._parameter_filter_substitution(
-            parameters, filter
+        query_filter = _parameter_filter_substitution(
+            parameters, query_filter
         )
         top = kwargs.pop("results_per_page", None)
         user_select = kwargs.pop("select", None)
@@ -507,7 +505,7 @@ class TableClient(AccountHostsMixin):
             command,
             table=self.table_name,
             results_per_page=top,
-            filter=filter,
+            filter=query_filter,
             select=user_select,
             page_iterator_class=TableEntityPropertiesPaged,
         )
