@@ -2,7 +2,7 @@ import json
 
 from cryptography.hazmat.primitives.asymmetric import rsa
 from ._common import Base64Url
-from typing import Any, List, Optional, TypeVar, Generic, Union
+from typing import Any, Callable, List, Optional, TypeVar, Generic, Union
 from cryptography.hazmat.primitives.asymmetric.ec import EllipticCurvePrivateKey
 from cryptography.hazmat.primitives.serialization import Encoding, PublicFormat
 from cryptography.x509 import Certificate
@@ -30,7 +30,7 @@ class TokenValidationOptions(object):
         self,
         **kwargs):
         self.validate_token = kwargs.get('validate_token') #type: bool
-        self.validation_callback = kwargs.get('validation_callback') # Callable[['AttestationToken', AttestationSigner], bool]):
+        self.validation_callback = kwargs.get('validation_callback') # type:Callable[['AttestationToken', AttestationSigner], bool]
         self.validate_signature = kwargs.get('validate_signature') # type:bool
 
 
@@ -211,7 +211,7 @@ class AttestationToken(Generic[T]):
         return return_value
 
 class AttestationResult(Generic[T]):
-    def __init__(self, token : AttestationToken, value: T):
+    def __init__(self, token, value): #type (AttestationToken, T) -> None
         self.token = token
         self.value = value
 

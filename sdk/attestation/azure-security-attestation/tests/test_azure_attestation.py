@@ -59,6 +59,8 @@ class AzureAttestationTest(AzureTestCase):
     def setUp(self):
             super(AzureAttestationTest, self).setUp()
 
+    # The caching infrastructure won't cache .well-known/openid_metadata responses so
+    # mark the metadata related tests as live-only.
     @AttestationPreparer()
     @pytest.mark.live_test_only
     def test_shared_getopenidmetadata(self, attestation_location_short_name):
@@ -226,13 +228,13 @@ class AzureAttestationTest(AzureTestCase):
                 instance_url=base_uri)
             return attest_client
 
-    def shared_client(self, location_name: str): #type() -> AttestationClient:
+    def shared_client(self, location_name): #type(str) -> AttestationClient:
             """
             docstring
             """
             return self.create_client(self.shared_base_uri(location_name))
 
-    def shared_admin_client(self, location_name: str): #type() -> AttestationAdministrationClient:
+    def shared_admin_client(self, location_name): #type(str) -> AttestationAdministrationClient:
             """
             docstring
             """
@@ -240,7 +242,7 @@ class AzureAttestationTest(AzureTestCase):
 
 
     @staticmethod
-    def shared_base_uri(location_name: str):
+    def shared_base_uri(location_name): #type(str) -> str
         # When run with recorded tests, the location_name may be 'None', deal with it.
         if location_name is not None:
             return 'https://shared'+location_name+'.'+location_name+'.attest.azure.net'
