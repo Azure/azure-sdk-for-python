@@ -1,11 +1,12 @@
 import json
+
+from cryptography.hazmat.primitives.asymmetric import rsa
 from ._common import Base64Url
-from typing import Any, List, Optional, TypeVar, Generic, Callable
-from cryptography.hazmat.primitives.asymmetric.dsa import DSAParameterNumbers, DSAPrivateKey
-from cryptography.hazmat.primitives.asymmetric.ec import ECDSA, EllipticCurvePrivateKey, EllipticCurvePublicKey
+from typing import Any, List, Optional, TypeVar, Generic, Union
+from cryptography.hazmat.primitives.asymmetric.ec import EllipticCurvePrivateKey
 from cryptography.hazmat.primitives.serialization import Encoding, PublicFormat
 from cryptography.x509 import Certificate
-from cryptography.hazmat.primitives.asymmetric.rsa import RSAPublicKey, RSAPrivateKey
+from cryptography.hazmat.primitives.asymmetric.rsa import RSAPrivateKey
 from json import JSONDecoder, JSONEncoder
 from datetime import datetime
 
@@ -44,7 +45,7 @@ class SigningKey(object):
     :var certificate: An X.509 Certificate whose public key matches the signing_key's public key.
     :vartype certificate: Certificate
     """
-    def __init__(self, signing_key, certificate): #type: ((RSAPrivateKey | EllipticCurvePrivateKey), Certificate) -> None
+    def __init__(self, signing_key, certificate): #type: (Union[rsa.RSAPrivateKey | EllipticCurvePrivateKey], Certificate) -> None
         self.signing_key = signing_key
         self.certificate = certificate
 
@@ -194,11 +195,11 @@ class AttestationToken(Generic[T]):
         return True
 
 
-    def get_body(self) -> T:
+    def get_body(self): #type: () -> T
         return self._body
 
     @staticmethod
-    def _create_unsecured_jwt(body: Any): #type(Any) -> str
+    def _create_unsecured_jwt(body): #type(Any) -> str
         """ Return an unsecured JWT expressing the body.
         """
         # Base64Url encoded '{"alg":"none"}'. See https://www.rfc-editor.org/rfc/rfc7515.html#appendix-A.5 for more information.
