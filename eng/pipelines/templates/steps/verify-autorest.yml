@@ -1,10 +1,4 @@
 parameters:
-  - name: ServiceToTest
-    type: string
-    default: ''
-  - name: SDKType
-    type: string
-    default: 'client'
   - name: ServiceDirectory
     type: string
   - name: NodeVersion
@@ -21,7 +15,7 @@ parameters:
     default: true
 
 steps:
-  - ${{if ne(artifact.VerifyAutorest, 'true')}}:
+  - ${{if ne(parameters.VerifyAutorest, 'true')}}:
     - task: UsePythonVersion@0
       displayName: Use
       inputs:
