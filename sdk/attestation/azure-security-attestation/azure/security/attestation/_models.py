@@ -15,7 +15,7 @@ class AttestationSigner(object):
     """ Represents a signing certificate returned by the Attestation Service.
 
     """
-    def __init__(self, certificates: List[Certificate], key_id : str, **kwargs):
+    def __init__(self, certificates, key_id, **kwargs): #type: (List[Certificate], str, Any) -> None
         self.certificates = certificates
         self.key_id = key_id
 
@@ -40,11 +40,11 @@ class SigningKey(object):
     the public key portion of the private key.
 
     :var signing_key: The RSA or ECDS signing key to sign the token supplied to the customer.
-    :vartype signing_key: (rsa.RSAPrivateKey | ElilipticCurvePrivateKey)
+    :vartype signing_key: (rsa.RSAPrivateKey | EllipticCurvePrivateKey)
     :var certificate: An X.509 Certificate whose public key matches the signing_key's public key.
     :vartype certificate: Certificate
     """
-    def __init__(self, signing_key, certificate: Certificate ):
+    def __init__(self, signing_key, certificate): #type: ((RSAPrivateKey | EllipticCurvePrivateKey), Certificate) -> None
         self.signing_key = signing_key
         self.certificate = certificate
 
@@ -179,7 +179,7 @@ class AttestationToken(Generic[T]):
 
     """ Validate the attestation token based on the options specified in the TokenValidationOptions
     """
-    def validate_token(self, options: TokenValidationOptions, signing_certificates: List[AttestationSigner]) -> bool:
+    def validate_token(self, options, signing_certificates): #type (TokenValidationOptions, List[AttestationSigner]) -> bool
         if not options.validate_token:
             if (options.validation_callback is not None):
                 options.validation_callback(self, None)
@@ -198,7 +198,7 @@ class AttestationToken(Generic[T]):
         return self._body
 
     @staticmethod
-    def _create_unsecured_jwt(body: Any) -> str:
+    def _create_unsecured_jwt(body: Any): #type(Any) -> str
         """ Return an unsecured JWT expressing the body.
         """
         # Base64Url encoded '{"alg":"none"}'. See https://www.rfc-editor.org/rfc/rfc7515.html#appendix-A.5 for more information.
@@ -215,7 +215,7 @@ class AttestationResult(Generic[T]):
         self.value = value
 
 class StoredAttestationPolicy(object):
-    def __init__(self, stored_policy : str):
+    def __init__(self, stored_policy): #type(str) -> None
         self._stored_policy = Base64Url.encode(stored_policy.encode('utf-8'))
 
 
