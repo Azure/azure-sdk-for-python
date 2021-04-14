@@ -58,15 +58,15 @@ class TestAzureAttestationToken(unittest.TestCase):
         signer = SigningKey(eckey, certificate)
         self.assertEqual(signer.certificate.subject, x509.Name([x509.NameAttribute(NameOID.COMMON_NAME, u'attestation.test')]))
 
-    # def test_create_secured_token(self):
-    #     key = self._create_rsa_key()
-    #     cert = self._create_x509_certificate(key, u'test certificate')
+    def test_create_secured_token(self):
+        key = self._create_rsa_key()
+        cert = self._create_x509_certificate(key, u'test certificate')
 
-    #     signer = SigningKey(key, cert)
+        signer = SigningKey(key, cert)
 
-    #     token = AttestationToken(body={"val1": [1, 2, 3]}, signer=signer)
-    #     self.assertEqual(token.get_body(), {"val1": [1, 2, 3]})
-    #     self.assertTrue(token.validate_token())
+        token = AttestationToken(body={"val1": [1, 2, 3]}, signer=signer)
+        self.assertEqual(token.get_body(), {"val1": [1, 2, 3]})
+        self.assertTrue(token.validate_token())
 
     # Helper functions to create keys and certificates wrapping those keys.
     @staticmethod

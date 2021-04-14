@@ -20,7 +20,7 @@ class Base64Url:
     @staticmethod
     def encode(unencoded):
         # type(bytes)->str
-        base64val= base64.urlsafe_b64encode(unencoded)
+        base64val = base64.urlsafe_b64encode(unencoded)
         strip_trailing=base64val.split(b'=')[0] # pick the string before the trailing =
         return strip_trailing.decode('utf-8')
 

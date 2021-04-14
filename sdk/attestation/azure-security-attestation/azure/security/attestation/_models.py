@@ -1,12 +1,20 @@
+from base64 import b64encode
+import base64
 import json
+from cryptography.hazmat.primitives import hashes
 
 from cryptography.hazmat.primitives.asymmetric import rsa
+from cryptography.hazmat.primitives.asymmetric import padding
+from cryptography.hazmat.primitives.asymmetric.dsa import DSAPublicKey
+from cryptography.hazmat.primitives.asymmetric.padding import AsymmetricPadding, PKCS1v15
+from cryptography.hazmat.primitives.hashes import HashAlgorithm, SHA256
 from ._common import Base64Url
+from ._generated.models import PolicyResult
 from typing import Any, Callable, List, Optional, TypeVar, Generic, Union
 from cryptography.hazmat.primitives.asymmetric.ec import EllipticCurvePrivateKey
 from cryptography.hazmat.primitives.serialization import Encoding, PublicFormat
-from cryptography.x509 import Certificate
-from cryptography.hazmat.primitives.asymmetric.rsa import RSAPrivateKey
+from cryptography.x509 import Certificate, load_der_x509_certificate
+from cryptography.hazmat.primitives.asymmetric.rsa import RSAPrivateKey, RSAPublicKey
 from json import JSONDecoder, JSONEncoder
 from datetime import datetime
 
@@ -120,7 +128,7 @@ class AttestationToken(Generic[T]):
         signer = kwargs.get('signer') #type: SigningKey
         if (body):
             if (signer):
-                pass
+                token = self._create_secured_jwt(body, signer)
             else:
                 token = self._create_unsecured_jwt(body)
         else:
@@ -180,35 +188,150 @@ class AttestationToken(Generic[T]):
 
     """ Validate the attestation token based on the options specified in the TokenValidationOptions
     """
-    def validate_token(self, options, signing_certificates): #type (TokenValidationOptions, List[AttestationSigner]) -> bool
-        if not options.validate_token:
+    def validate_token(self, options = None, signing_certificates = None): 
+        #type: (TokenValidationOptions, List[AttestationSigner]) -> bool
+        if options is not None and not options.validate_token:
             if (options.validation_callback is not None):
                 options.validation_callback(self, None)
             return True
 
-        if self.algorithm != 'none' and options.validate_signature:
+        if self._header['alg'] != 'none' and options is None or options.validate_signature:
             # validate the signature for the token.
-            pass
+            candidate_certificates = self._get_candidate_signing_certificates(signing_certificates)
+            if (not self._validate_signature(candidate_certificates)):
+                raise Exception("Could not find the certificate used to sign the token.")
+        self._validate_static_properties(options)
 
         if (options.validation_callback is not None):
             return options.validation_callback(self, None)
         return True
 
 
-    def get_body(self): #type: () -> T
+    def get_body(self): 
+        #type: () -> T
         return self._body
 
+    def _get_candidate_signing_certificates(self, signing_certificates):
+        #type: (List[AttestationSigner]) -> List[AttestationSigner]
+
+        candidates = List[AttestationSigner]()
+        desired_key_id = self.key_id
+        if desired_key_id is not None:
+            for signer in signing_certificates:
+                if (signer.key_id == desired_key_id):
+                    candidates.append(signer)
+                    break
+            # If we didn't find a matching key ID in the supplied certificates,
+            # try the JWS header to see if there might be a corresponding key.
+            if (len(candidates) == 0):
+                if self._header['jwk']:
+                    if self._header['jwk']['kid'] == desired_key_id:
+                        if (self._header['jwk']['x5c']):
+                            signers=List[Certificate]()
+                            for cert in self._header['jwk']['x5c']:
+                                signer = load_der_x509_certificate(base64.b64decode(cert))
+                                signers.append(signer)
+                        candidates.append(AttestationSigner(signers, desired_key_id))
+        else:
+            # We don't have a signer, so we need to try every possible signer.
+            # If the caller provided a list of certificates, use that as the exclusive source,
+            # otherwise iterate through the possible certificates.
+            if signing_certificates is not None:
+                for signer in signing_certificates:
+                    candidates.append(signer)
+            else:
+                if self._header['jwk']:
+                    if (self._header['jwk']['x5c']):
+                        signers=List[Certificate]()
+                        for cert in self._header['jwk']['x5c']:
+                            signer = load_der_x509_certificate(base64.b64decode(cert))
+                            signers.append(signer)
+                    candidates.append(AttestationSigner(signers, None))
+                if self._header['x5c']:
+                        if (self._header['x5c']):
+                            signers=List[Certificate]()
+                            for cert in self._header['x5c']:
+                                signer = load_der_x509_certificate(base64.b64decode(cert))
+                                signers.append(signer)
+                        candidates.append(AttestationSigner(signers, None))
+
+        return candidates
+
+    def _validate_signature(self, candidate_certificates):
+        #type:(List[AttestationSigner]) -> bool
+        signed_data = Base64Url.encode(self.header_bytes)+'.'+Base64Url.encode(self.body_bytes)
+        for signer in candidate_certificates:
+            signer_key = signer.certificates[0].public_key()
+            # Try to verify the signature with this candidate.
+            # If it doesn't work, try the next signer.
+            try:
+                if isinstance(signer_key, RSAPublicKey):
+                    signer_key.verify(
+                        self.signature_bytes,
+                        signed_data.encode('utf-8'),
+                        padding.PKCS1v15(),
+                        SHA256())
+                else:
+                    signer_key.verify(
+                        self.signature_bytes,
+                        signed_data.encode('utf-8'),
+                        SHA256())
+                return True
+            except:
+                pass
+        return False
+
+    def _validate_static_properties(self, options):
+        #type:(TokenValidationOptions) -> bool
+        return True
+        pass
+
     @staticmethod
-    def _create_unsecured_jwt(body): #type(Any) -> str
+    def _create_unsecured_jwt(body): #type: (Any) -> str
         """ Return an unsecured JWT expressing the body.
         """
         # Base64Url encoded '{"alg":"none"}'. See https://www.rfc-editor.org/rfc/rfc7515.html#appendix-A.5 for more information.
         return_value = "eyJhbGciOiJub25lIn0."
-        encoder = JSONEncoder()
-        encoded_body = encoder.encode(body)
+        encoded_body = JSONEncoder().encode(body)
         return_value += Base64Url.encode(encoded_body.encode('utf-8'))
         return_value += '.'
         return return_value
+
+    @staticmethod
+    def _create_secured_jwt(body, signer):
+        #type: (Any, SigningKey) -> str
+        """ Return a secured JWT expressing the body, secured with the specified signing key.
+        :type body:Any - The body of the token to be serialized.
+        :type signer:SigningKey - the certificate and key to sign the token.
+        """
+        base64_certificate = str(base64.b64encode(signer.certificate.public_bytes(Encoding.DER)), 'utf-8')
+        header = { 
+            "alg": "RSA256" if isinstance(signer.signing_key, RSAPrivateKey) else "ECDH256",
+            "x5c": [
+                base64_certificate
+            ]
+        }
+        json_header = JSONEncoder().encode(header)
+        return_value = Base64Url.encode(json_header.encode('utf-8'))
+        json_body = JSONEncoder().encode(body)
+        return_value += '.'
+        return_value += Base64Url.encode(json_body.encode('utf-8'))
+
+        # Now we want to sign the return_value.
+        if isinstance(signer.signing_key, RSAPrivateKey):
+            signature = signer.signing_key.sign(
+                return_value.encode('utf-8'), 
+                algorithm=SHA256(),
+                padding=padding.PKCS1v15())
+        else:
+            signature = signer.signing_key.sign(
+                return_value.encode('utf-8'), 
+                algorithm=SHA256())
+        # And finally append the base64url encoded signature.
+        return_value += '.'
+        return_value += Base64Url.encode(signature)
+        return return_value
+
 
 class AttestationResult(Generic[T]):
     def __init__(self, token, value): #type (AttestationToken, T) -> None
@@ -216,7 +339,7 @@ class AttestationResult(Generic[T]):
         self.value = value
 
 class StoredAttestationPolicy(object):
-    def __init__(self, stored_policy): #type(str) -> None
+    def __init__(self, stored_policy): #type: (str) -> None
         self._stored_policy = Base64Url.encode(stored_policy.encode('utf-8'))
 
 
