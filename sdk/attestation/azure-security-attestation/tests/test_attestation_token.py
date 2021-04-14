@@ -48,19 +48,37 @@ class TestAzureAttestationToken(unittest.TestCase):
         # This should throw an exception, fail if the exception isn't thrown.
         with self.assertRaises(Exception):
             signer = SigningKey(key2, cert)
+            print(signer) # reference signer so pylint is happy.
 
+    def test_create_signer_ecds(self):
+        """ Generate an ECDS key and a certificate wrapping the key, then verify we can create a signing key over it.
+        """
+        eckey = self._create_ecds_key()
+        certificate = self._create_x509_certificate(eckey, u'attestation.test')
+        signer = SigningKey(eckey, certificate)
+        self.assertEqual(signer.certificate.subject, x509.Name([x509.NameAttribute(NameOID.COMMON_NAME, u'attestation.test')]))
+
+    # def test_create_secured_token(self):
+    #     key = self._create_rsa_key()
+    #     cert = self._create_x509_certificate(key, u'test certificate')
+
+    #     signer = SigningKey(key, cert)
+
+    #     token = AttestationToken(body={"val1": [1, 2, 3]}, signer=signer)
+    #     self.assertEqual(token.get_body(), {"val1": [1, 2, 3]})
+    #     self.assertTrue(token.validate_token())
+
+    # Helper functions to create keys and certificates wrapping those keys.
     @staticmethod
-    def _create_ecds_key(): # -> EllipticCurvePrivateKey
+    def _create_ecds_key(): #type() -> EllipticCurvePrivateKey
         return ec.generate_private_key(ec.SECP256R1())
 
     @staticmethod
-    def _create_rsa_key(): # -> EllipticCurvePrivateKey
+    def _create_rsa_key(): #type() -> EllipticCurvePrivateKey
         return rsa.generate_private_key(65537, 2048)
 
     @staticmethod
-    def _create_x509_certificate(key, subject_name): # -> Certificate
-        #type key: (EllipticCurvePrivateKey | RSAPrivateKey)
-        #type subject_name: str
+    def _create_x509_certificate(key, subject_name): #type(Union[EllipticCurvePrivateKey,RSAPrivateKey], str) -> Certificate
         builder = CertificateBuilder()
         builder = builder.subject_name(x509.Name([
             x509.NameAttribute(NameOID.COMMON_NAME, subject_name),
@@ -77,26 +95,3 @@ class TestAzureAttestationToken(unittest.TestCase):
         builder = builder.add_extension(x509.SubjectAlternativeName([x509.DNSName(subject_name)]), critical=False)
         builder = builder.add_extension(x509.BasicConstraints(ca=False, path_length=None), critical=True)
         return builder.sign(private_key=key, algorithm=hashes.SHA256())
-
-
-    def test_create_signer_ecds(self):
-        """ Generate an ECDS key and a certificate wrapping the key, then verify we can create a signing key over it.
-        """
-        eckey = self._create_ecds_key()
-        certificate = self._create_x509_certificate(eckey, u'attestation.test')
-        signer = SigningKey(eckey, certificate)
-        self.assertEqual(signer.certificate.subject, x509.Name([x509.NameAttribute(NameOID.COMMON_NAME, u'attestation.test')]))
-
-    # @AttestationPreparer()
-    # def test_create_secured_token(self, attestation_policy_signing_key0, attestation_policy_signing_certificate0):
-    #     der_cert = base64.b64decode(attestation_policy_signing_certificate0)
-    #     cert = x509.load_der_x509_certificate(der_cert)
-
-    #     der_key = base64.b64decode(attestation_policy_signing_key0)
-    #     key = serialization.load_der_private_key(der_key, password=None)
-
-    #     signer = SigningKey(key, cert)
-
-    #     token = AttestationToken(body={"val1": [1, 2, 3]}, signer=signer)
-    #     assert token.get_body() == {"val1": [1, 2, 3]}
-    #     assert token.validate_token()

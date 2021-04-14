@@ -58,7 +58,8 @@ class AttestationAdministrationClient(object):
         self._signing_certificates = None
 
     @distributed_trace
-    def get_policy(self, attestation_type: AttestationType) -> AttestationResult[str]:
+    def get_policy(self, attestation_type): 
+        #type(AttestationType) -> AttestationResult[str]:
         """ Retrieves the attestation policy for a specified attestation type.
         :param attestation_type - The attestation parameter type.
         :type attestation_type: AttestationType
@@ -77,7 +78,8 @@ class AttestationAdministrationClient(object):
         return AttestationResult[str](token, actual_policy)
 
     @distributed_trace
-    def set_policy(self, attestation_type: AttestationType, attestation_policy: str, signing_key=None) -> AttestationResult[PolicyResult]:
+    def set_policy(self, attestation_type, attestation_policy, signing_key=None): 
+        #type(AttestationType, str, SigningKey) -> AttestationResult[PolicyResult]:
         base64_policy = Base64Url.encode(attestation_policy.encode('utf-8'))
         policy_token = AttestationToken[StoredAttestationPolicy](body={"AttestationPolicy": base64_policy})
         policyResult = self._client.policy.set(attestation_type=attestation_type, new_attestation_policy=policy_token.serialize())
@@ -89,7 +91,8 @@ class AttestationAdministrationClient(object):
 
 
     @distributed_trace
-    def _get_signers(self) -> List[AttestationSigner]:
+    def _get_signers(self):
+        #type() -> List[AttestationSigner]
         """ Returns the set of signing certificates used to sign attestation tokens.
         """
 
