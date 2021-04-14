@@ -173,7 +173,7 @@ function Get-DocsCiObjectForPackage($packageName, $packageVersion = $null) {
   }
 
   if ($packageVersion) { 
-    $output.package_info.version = ">=$packageVersion"
+    $output.package_info | Add-Member -MemberType NoteProperty -Name 'version' -Value ">=$packageVersion"
   }
 
   return $output;
@@ -213,7 +213,7 @@ function Update-python-CIConfig($ciRepo, $locationInDocRepo)
     }
 
     Write-Host "Add latest package: $($package.Package)"
-    $latestPackages.packages += Get-DocsCiObjectForPackage($package.Package) 
+    $latestPackages.packages += Get-DocsCiObjectForPackage $package.Package
   }
 
   $latestPackages | ConvertTo-Json -Depth 100 | Set-Content $latestConfigPath
@@ -262,7 +262,7 @@ function Update-python-CIConfig($ciRepo, $locationInDocRepo)
     }
   foreach ($package in $remainingPreviewPackages) {
     Write-Host "Add preview package: $($package.Package)@$($package.VersionPreview)"
-    $outputPackages += Get-DocsCiObjectForPackage($package.Package, $package.VersionPreview)
+    $outputPackages += Get-DocsCiObjectForPackage $package.Package $package.VersionPreview
   }
 
   $previewPackages.packages = $outputPackages
