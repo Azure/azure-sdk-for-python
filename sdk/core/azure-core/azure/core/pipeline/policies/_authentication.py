@@ -161,7 +161,7 @@ class AzureNamedKeyCredentialPolicy(SansIOHTTPPolicy):
     :raises: ValueError or TypeError
     """
     def __init__(self, credential, name, **kwargs):  # pylint: disable=unused-argument
-        # type: (AzureNamedKeyCredential, **Any) -> None
+        # type: (AzureNamedKeyCredential, str, **Any) -> None
         super(AzureNamedKeyCredentialPolicy, self).__init__()
         self._credential = credential
         self._name = name
