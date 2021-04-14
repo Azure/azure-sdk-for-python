@@ -12,7 +12,7 @@ parameters:
     default: '12.x'
   - name: PythonVersion
     type: string
-    default: '3.9'
+    default: '$(PythonVersion)'
   - name: auto_rest_clone_url
     type: string
     default: 'https://github.com/Azure/autorest.python.git'
@@ -39,13 +39,7 @@ steps:
       git clone ${{ parameters.auto_rest_clone_url }}
       cd autorest.python
       npm install
-      cd ..
     displayName: 'Prepare Environment'
-
-  - pwsh: |
-      Get-ChildItem ./
-    displayName: 'List contents'
-    condition: always()
 
   - task: PythonScript@0
     displayName: 'Run autorest Python'
@@ -53,14 +47,3 @@ steps:
       scriptPath: 'scripts/devops_tasks/verify_autorest.py'
       arguments: >-
         --service_directory="${{ parameters.ServiceDirectory }}"
-
-  - pwsh: |
-      If (Test-Path autorest.python) {
-        Remove-Item -Path autorest.python -Force -Recurse
-        Get-ChildItem
-      } Else {
-        Get-ChildItem
-        Write-Output "No autorest.python folder could be found"
-      }
-    displayName: 'Remove autorest.python'
-    condition: always()
