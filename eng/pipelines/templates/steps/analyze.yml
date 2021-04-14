@@ -117,6 +117,7 @@ steps:
     - template: ../steps/verify-autorest.yml
       parameters:
         ServiceDirectory: ${{ parameters.ServiceDirectory }}
+        VerifyAutorest: ${{ parameters.VerifyAutorest }}
 
   - template: /eng/common/pipelines/templates/steps/create-apireview.yml
     parameters:
