@@ -198,7 +198,7 @@ class PhoneNumbersClient(object):
         )
 
         result_properties = poller.result().additional_properties
-        if 'status' in result_properties and result_properties['status'] == 'failed':
+        if 'status' in result_properties and result_properties['status'].lower() == 'failed':
             raise HttpResponseError(message=result_properties['error']['message'])
 
         return poller
