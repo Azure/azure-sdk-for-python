@@ -6,3 +6,4 @@
 
 TO_BE_DELETED = "to_be_deleted"
 DOES_NOT_EXIST = "does_not_exist"
+HELLO_WORLD = "library/hello-world"

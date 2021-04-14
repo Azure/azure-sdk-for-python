@@ -13,4 +13,6 @@ package-name: azure-appconfiguration
 clear-output-folder: true
 enable-xml: true
 vanilla: true
+add-credentials: true
+credential-scopes: https://dev.azuresynapse.net/.default
 ```

@@ -15,11 +15,11 @@ interactions:
       DataServiceVersion:
       - '3.0'
       Date:
-      - Mon, 05 Apr 2021 20:53:04 GMT
+      - Wed, 07 Apr 2021 22:32:50 GMT
       User-Agent:
-      - azsdk-python-data-tables/12.0.0b6 Python/3.7.4 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-data-tables/12.0.0b7 Python/3.9.0rc1 (Windows-10-10.0.19041-SP0)
       x-ms-date:
-      - Mon, 05 Apr 2021 20:53:04 GMT
+      - Wed, 07 Apr 2021 22:32:50 GMT
       x-ms-version:
       - '2019-02-02'
     method: POST
@@ -33,7 +33,7 @@ interactions:
       content-type:
       - application/json;odata=minimalmetadata;streaming=true;charset=utf-8
       date:
-      - Mon, 05 Apr 2021 20:53:04 GMT
+      - Wed, 07 Apr 2021 22:32:51 GMT
       location:
       - https://fake_table_account.table.core.windows.net/Tables('uttable270d0f94')
       server:
@@ -63,11 +63,11 @@ interactions:
       DataServiceVersion:
       - '3.0'
       Date:
-      - Mon, 05 Apr 2021 20:53:04 GMT
+      - Wed, 07 Apr 2021 22:32:50 GMT
       User-Agent:
-      - azsdk-python-data-tables/12.0.0b6 Python/3.7.4 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-data-tables/12.0.0b7 Python/3.9.0rc1 (Windows-10-10.0.19041-SP0)
       x-ms-date:
-      - Mon, 05 Apr 2021 20:53:04 GMT
+      - Wed, 07 Apr 2021 22:32:50 GMT
       x-ms-version:
       - '2019-02-02'
     method: POST
@@ -75,14 +75,14 @@ interactions:
   response:
     body:
       string: '{"odata.error":{"code":"TableAlreadyExists","message":{"lang":"en-US","value":"The
-        table specified already exists.\nRequestId:71db8f83-4002-0032-1b5d-2ada53000000\nTime:2021-04-05T20:53:22.8853531Z"}}}'
+        table specified already exists.\nRequestId:0451134d-a002-0077-1dfd-2b0fb0000000\nTime:2021-04-07T22:33:07.4938348Z"}}}'
     headers:
       cache-control:
       - no-cache
       content-type:
       - application/json;odata=minimalmetadata;streaming=true;charset=utf-8
       date:
-      - Mon, 05 Apr 2021 20:53:22 GMT
+      - Wed, 07 Apr 2021 22:33:07 GMT
       server:
       - Windows-Azure-Table/1.0 Microsoft-HTTPAPI/2.0
       transfer-encoding:
@@ -106,11 +106,11 @@ interactions:
       Content-Length:
       - '0'
       Date:
-      - Mon, 05 Apr 2021 20:53:23 GMT
+      - Wed, 07 Apr 2021 22:33:07 GMT
       User-Agent:
-      - azsdk-python-data-tables/12.0.0b6 Python/3.7.4 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-data-tables/12.0.0b7 Python/3.9.0rc1 (Windows-10-10.0.19041-SP0)
       x-ms-date:
-      - Mon, 05 Apr 2021 20:53:23 GMT
+      - Wed, 07 Apr 2021 22:33:07 GMT
       x-ms-version:
       - '2019-02-02'
     method: DELETE
@@ -124,7 +124,7 @@ interactions:
       content-length:
       - '0'
       date:
-      - Mon, 05 Apr 2021 20:53:22 GMT
+      - Wed, 07 Apr 2021 22:33:07 GMT
       server:
       - Windows-Azure-Table/1.0 Microsoft-HTTPAPI/2.0
       x-content-type-options:
@@ -146,11 +146,11 @@ interactions:
       Content-Length:
       - '0'
       Date:
-      - Mon, 05 Apr 2021 20:53:23 GMT
+      - Wed, 07 Apr 2021 22:33:07 GMT
       User-Agent:
-      - azsdk-python-data-tables/12.0.0b6 Python/3.7.4 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-data-tables/12.0.0b7 Python/3.9.0rc1 (Windows-10-10.0.19041-SP0)
       x-ms-date:
-      - Mon, 05 Apr 2021 20:53:23 GMT
+      - Wed, 07 Apr 2021 22:33:07 GMT
       x-ms-version:
       - '2019-02-02'
     method: DELETE
@@ -158,14 +158,14 @@ interactions:
   response:
     body:
       string: '{"odata.error":{"code":"ResourceNotFound","message":{"lang":"en-US","value":"The
-        specified resource does not exist.\nRequestId:71db9005-4002-0032-195d-2ada53000000\nTime:2021-04-05T20:53:23.8910718Z"}}}'
+        specified resource does not exist.\nRequestId:0451138c-a002-0077-5afd-2b0fb0000000\nTime:2021-04-07T22:33:07.7860414Z"}}}'
     headers:
       cache-control:
       - no-cache
       content-type:
       - application/json;odata=minimalmetadata;streaming=true;charset=utf-8
       date:
-      - Mon, 05 Apr 2021 20:53:23 GMT
+      - Wed, 07 Apr 2021 22:33:07 GMT
       server:
       - Windows-Azure-Table/1.0 Microsoft-HTTPAPI/2.0
       transfer-encoding:

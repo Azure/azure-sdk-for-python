@@ -60,13 +60,6 @@ steps:
     condition: and(succeededOrFailed(), ne(variables['Build.Reason'],'PullRequest'))
     displayName: 'Component Detection'
 
-  - task: PublishPipelineArtifact@1
-    condition: succeededOrFailed()
-    displayName: 'Publish Report Artifacts'
-    inputs:
-     artifactName: reports
-     pathtoPublish: $(Build.ArtifactStagingDirectory)/reports
-
   - task: PythonScript@0
     displayName: 'Verify sdist'
     condition: and(succeededOrFailed(), ne(variables['Skip.VerifySdist'],'true'))
@@ -94,7 +87,7 @@ steps:
       TestMarkArgument: ${{ parameters.TestMarkArgument }}
 
   - task: DownloadPipelineArtifact@2
-    condition: and(succeededOrFailed(), ne(variables['Skip.ApiStubGen'],'true'))
+    condition: succeededOrFailed()
     inputs:
       artifactName: 'packages'
       targetPath: $(Build.ArtifactStagingDirectory)
@@ -125,4 +118,13 @@ steps:
       parameters:
         ServiceDirectory: ${{ parameters.ServiceDirectory }}
 
+  - template: /eng/common/pipelines/templates/steps/create-apireview.yml
+    parameters:
+      Artifacts: ${{ parameters.Artifacts }}
+
   - template: /eng/common/pipelines/templates/steps/eng-common-workflow-enforcer.yml
+
+  - template: /eng/common/pipelines/templates/steps/publish-artifact.yml
+    parameters:
+      ArtifactPath: '$(Build.ArtifactStagingDirectory)/reports'
+      ArtifactName: 'reports'
