@@ -1,0 +1,48 @@
+parameters:
+  - name: ServiceToTest
+    type: string
+    default: ''
+  - name: SDKType
+    type: string
+    default: 'client'
+  - name: ServiceDirectory
+    type: string
+  - name: NodeVersion
+    type: string
+    default: '12.x'
+  - name: PythonVersion
+    type: string
+    default: '$(PythonVersion)'
+  - name: auto_rest_clone_url
+    type: string
+    default: 'https://github.com/Azure/autorest.python.git'
+
+steps:
+  - task: UsePythonVersion@0
+    displayName: Use
+    inputs:
+      versionSpec: ${{ parameters.PythonVersion }}
+
+  - task: NodeTool@0
+    inputs:
+      versionSpec: ${{ parameters.NodeVersion }}
+
+  - script: |
+      npm install -g autorest
+      autorest --help
+    displayName: "Install autorest"
+
+  - script: |
+      python --version
+      pip install -r eng/autorest_req.txt
+      git clone ${{ parameters.auto_rest_clone_url }}
+      cd autorest.python
+      npm install
+    displayName: 'Prepare Environment'
+
+  - task: PythonScript@0
+    displayName: 'Run autorest Python'
+    inputs:
+      scriptPath: 'scripts/devops_tasks/verify_autorest.py'
+      arguments: >-
+        --service_directory="${{ parameters.ServiceDirectory }}"

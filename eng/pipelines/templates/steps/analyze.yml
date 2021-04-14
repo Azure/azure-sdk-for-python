@@ -5,6 +5,7 @@ parameters:
   AdditionalTestArgs: ''
   Artifacts: []
   TestPipeline: false
+  VerifyAutorest: true
 
 steps:
   - template: /eng/pipelines/templates/steps/analyze_dependency.yml
@@ -111,6 +112,11 @@ steps:
       BuildTargetingString: ${{ parameters.BuildTargetingString }}
       TestMarkArgument: ${{ parameters.TestMarkArgument }}
       AdditionalTestArgs: ${{parameters.AdditionalTestArgs}}
+
+  - ${{if eq(parameters.VerifyAutorest, 'true')}}:
+    - template: ../steps/verify-autorest.yml
+      parameters:
+        ServiceDirectory: ${{ parameters.ServiceDirectory }}
 
   - template: /eng/common/pipelines/templates/steps/create-apireview.yml
     parameters:
