@@ -12,6 +12,7 @@ from typing import (  # pylint: disable=unused-import
     Tuple,
 )
 from datetime import datetime
+import calendar
 from msrest.serialization import TZ_UTC
 from azure.core.credentials import AccessToken
 
@@ -24,8 +25,7 @@ Converts DateTime in local time to the Epoch in UTC in second.
 :rtype: int
 """
 def _convert_datetime_to_utc_int(expires_on):
-    offset_from_utc = time.localtime().tm_gmtoff
-    return time.mktime(expires_on.timetuple()) + offset_from_utc
+    return int(calendar.timegm(expires_on.utctimetuple()))
 
 def parse_connection_str(conn_str):
     # type: (str) -> Tuple[str, str, str, str]
@@ -61,7 +61,7 @@ def get_current_utc_time():
 
 def get_current_utc_as_int():
     # type: () -> int
-    current_utc_datetime = datetime.utcnow().replace(tzinfo=TZ_UTC)
+    current_utc_datetime = datetime.utcnow()
     return _convert_datetime_to_utc_int(current_utc_datetime)
 
 def create_access_token(token):
