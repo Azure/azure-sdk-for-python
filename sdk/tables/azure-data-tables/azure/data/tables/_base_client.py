@@ -13,11 +13,9 @@ except ImportError:
     from urllib2 import quote  # type: ignore
 
 import six
-from azure.core.configuration import Configuration
 from azure.core.credentials import AzureSasCredential
 from azure.core.utils import parse_connection_string
 from azure.core.exceptions import ClientAuthenticationError, ResourceNotFoundError
-from azure.core.pipeline import Pipeline
 from azure.core.pipeline.transport import (
     HttpTransport,
     HttpRequest,
