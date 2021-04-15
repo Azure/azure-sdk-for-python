@@ -20,6 +20,7 @@ from ._models import (
 )
 from ._user_agent import USER_AGENT
 from ._polling import TranslationPolling
+from ._helpers import get_http_logging_policy
 if TYPE_CHECKING:
     from azure.core.paging import ItemPaged
 
@@ -62,12 +63,14 @@ class DocumentTranslationClient(object):  # pylint: disable=r0205
         authentication_policy = AzureKeyCredentialPolicy(
             name=COGNITIVE_KEY_HEADER, credential=credential
         )
+
         self._client = _BatchDocumentTranslationClient(
             endpoint=endpoint,
             credential=credential,  # type: ignore
             api_version=self._api_version,
             sdk_moniker=USER_AGENT,
             authentication_policy=authentication_policy,
+            http_logging_policy=get_http_logging_policy(),
             **kwargs
         )
 
