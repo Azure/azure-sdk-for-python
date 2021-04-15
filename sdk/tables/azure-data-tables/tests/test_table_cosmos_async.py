@@ -33,6 +33,14 @@ class TableTestAsync(AzureTestCase, AsyncTableTestCase):
         table_name = self.get_resource_name(prefix)
         return table_name
 
+    async def _delete_all_tables(self, account_name, key):
+        client = TableServiceClient(self.account_url(account_name, "cosmos"), key)
+        async for table in client.list_tables():
+            await client.delete_table(table.table_name)
+
+        if self.is_live:
+            self.sleep(10)
+
     async def _create_table(self, ts, prefix=TEST_TABLE_PREFIX, table_list=None):
         table_name = self._get_table_reference(prefix)
         try:
@@ -159,10 +167,10 @@ class TableTestAsync(AzureTestCase, AsyncTableTestCase):
         if self.is_live:
             sleep(SLEEP_DELAY)
 
-    @pytest.mark.skip("small page and large page issues, 6 != 3")
     @CosmosPreparer()
     async def test_list_tables_with_num_results(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
         # Arrange
+        await self._delete_all_tables(tables_cosmos_account_name, tables_primary_cosmos_account_key)
         prefix = 'listtable'
         ts = TableServiceClient(self.account_url(tables_cosmos_account_name, "cosmos"), tables_primary_cosmos_account_key)
         table_list = []
@@ -170,19 +178,23 @@ class TableTestAsync(AzureTestCase, AsyncTableTestCase):
             await self._create_table(ts, prefix + str(i), table_list)
 
         # Act
-        big_page = []
+        all_tables = 0
         async for t in ts.list_tables():
-            big_page.append(t)
+            all_tables += 1
 
-        small_page = []
-        async for s in ts.list_tables(results_per_page=3).by_page():
-            small_page.append(s)
+        small_page = 0
+        async for page in ts.list_tables(results_per_page=3).by_page():
+            page_size = 0
+            async for table in page:
+                page_size += 1
+            assert page_size <= 3
+            small_page += 1
 
-        assert len(small_page) ==  2
-        assert len(big_page) >=  4
+        assert small_page == 2
+        assert all_tables == 4
 
-        if self.is_live:
-            sleep(SLEEP_DELAY)
+        # if self.is_live:
+        #     sleep(SLEEP_DELAY)
 
     @CosmosPreparer()
     async def test_list_tables_with_marker(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):

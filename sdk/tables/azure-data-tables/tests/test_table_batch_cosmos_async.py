@@ -623,32 +623,6 @@ class StorageTableBatchTest(AzureTestCase, AsyncTableTestCase):
         finally:
             await self._tear_down()
 
-    @pytest.mark.skip("The same row operations do not fail on Cosmos")
-    @CosmosPreparer()
-    async def test_batch_same_row_operations_fail(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
-        # Arrange
-        await self._set_up(tables_cosmos_account_name, tables_primary_cosmos_account_key)
-        try:
-            entity = self._create_random_entity_dict('001', 'batch_negative_1')
-            await self.table.create_entity(entity)
-
-            # Act
-            batch = self.table.create_batch()
-
-            entity = self._create_updated_entity_dict(
-                '001', 'batch_negative_1')
-            batch.update_entity(entity)
-
-            entity = self._create_random_entity_dict(
-                '001', 'batch_negative_1')
-            batch.update_entity(entity)
-
-            # Assert
-            with pytest.raises(BatchErrorException):
-                await self.table.send_batch(batch)
-        finally:
-            await self._tear_down()
-
     @CosmosPreparer()
     async def test_batch_different_partition_operations_fail(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
         # Arrange
@@ -670,29 +644,6 @@ class StorageTableBatchTest(AzureTestCase, AsyncTableTestCase):
             # Assert
             with pytest.raises(ValueError):
                 batch.create_entity(entity)
-        finally:
-            await self._tear_down()
-
-    @pytest.mark.skip("On Cosmos, the limit is not specified.")
-    @CosmosPreparer()
-    async def test_batch_too_many_ops(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
-        # Arrange
-        await self._set_up(tables_cosmos_account_name, tables_primary_cosmos_account_key)
-        try:
-            entity = self._create_random_entity_dict('001', 'batch_negative_1')
-            await self.table.create_entity(entity)
-
-            # Act
-            with pytest.raises(BatchErrorException):
-                batch = self.table.create_batch()
-                for i in range(0, 101):
-                    entity = TableEntity()
-                    entity.PartitionKey = 'large'
-                    entity.RowKey = 'item{0}'.format(i)
-                    batch.create_entity(entity)
-                await self.table.send_batch(batch)
-
-            # Assert
         finally:
             await self._tear_down()
 

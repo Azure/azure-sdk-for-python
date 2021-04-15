@@ -209,7 +209,6 @@ class TestTableClientUnit(TableTestCase):
                     table_name="foo")
 
     @pytest.mark.skip("Testing against a different cloud than the one created in powershell script")
-
     def test_create_service_china(self):
         # Arrange
         # TODO: Confirm regional cloud cosmos URLs

@@ -190,7 +190,6 @@ class TestTableClientUnit(AsyncTableTestCase):
                 url = self.account_url(self.tables_cosmos_account_name, "cosmos").replace('https', 'http')
                 service_type(url, credential=self.token_credential, table_name='foo')
 
-    @pytest.mark.skip("Confirm cosmos national cloud URLs")
     @pytest.mark.asyncio
     async def test_create_service_china_async(self):
         # Arrange
@@ -206,7 +205,7 @@ class TestTableClientUnit(AsyncTableTestCase):
             assert service.account_name ==  self.tables_cosmos_account_name
             assert service.credential.account_name ==  self.tables_cosmos_account_name
             assert service.credential.account_key ==  self.tables_primary_cosmos_account_key
-            assert service._primary_endpoint.startswith('https://{}.{}.core.chinacloudapi.cn'.format(self.tables_cosmos_account_name, "cosmos"))
+            assert service._primary_endpoint.startswith('https://{}.{}.core.chinacloudapi.cn'.format(self.tables_cosmos_account_name, "table"))
 
     @pytest.mark.asyncio
     async def test_create_service_protocol_async(self):
