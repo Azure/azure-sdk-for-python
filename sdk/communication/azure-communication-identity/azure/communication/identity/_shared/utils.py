@@ -12,6 +12,7 @@ from typing import (  # pylint: disable=unused-import
     Tuple,
 )
 from datetime import datetime
+import calendar
 from msrest.serialization import TZ_UTC
 from azure.core.credentials import AccessToken
 
