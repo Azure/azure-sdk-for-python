@@ -81,6 +81,7 @@ class TestTranslation(AsyncDocumentTranslationTest):
         blob_data = b'This is some text2'
         additional_source_container_sas_url = self.create_source_container(data=Document(data=blob_data))
         target_container_sas_url = self.create_target_container()
+        additional_target_container_sas_url = self.create_target_container()
 
         # prepare translation inputs
         translation_inputs = [
@@ -97,7 +98,7 @@ class TestTranslation(AsyncDocumentTranslationTest):
                 source_url=additional_source_container_sas_url,
                 targets=[
                     TranslationTarget(
-                        target_url=target_container_sas_url,
+                        target_url=additional_target_container_sas_url,
                         language_code="fr"
                     )
                 ]
