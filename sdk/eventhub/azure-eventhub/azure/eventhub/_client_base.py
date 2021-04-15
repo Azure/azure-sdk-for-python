@@ -20,6 +20,7 @@ except ImportError:
 
 from uamqp import AMQPClient, Message, authentication, constants, errors, compat, utils
 import six
+from azure.core.utils import parse_connection_string as core_parse_connection_string
 from azure.core.credentials import AccessToken, AzureSasCredential
 
 from .exceptions import _handle_exception, ClientClosedError, ConnectError
@@ -43,7 +44,7 @@ _Address = collections.namedtuple("Address", "hostname path")
 _AccessToken = collections.namedtuple("AccessToken", "token expires_on")
 
 
-def _parse_conn_str(conn_str, kwargs):
+def _parse_conn_str(conn_str, **kwargs):
     # type: (str, Dict[str, Any]) -> Tuple[str, Optional[str], Optional[str], str, Optional[str], Optional[int]]
     endpoint = None
     shared_access_key_name = None
@@ -52,38 +53,66 @@ def _parse_conn_str(conn_str, kwargs):
     shared_access_signature = None  # type: Optional[str]
     shared_access_signature_expiry = None # type: Optional[int]
     eventhub_name = kwargs.pop("eventhub_name", None)  # type: Optional[str]
-    for element in conn_str.split(";"):
-        key, _, value = element.partition("=")
-        if key.lower() == "endpoint":
-            endpoint = value.rstrip("/")
-        elif key.lower() == "hostname":
-            endpoint = value.rstrip("/")
-        elif key.lower() == "sharedaccesskeyname":
-            shared_access_key_name = value
-        elif key.lower() == "sharedaccesskey":
-            shared_access_key = value
-        elif key.lower() == "entitypath":
-            entity_path = value
-        elif key.lower() == "sharedaccesssignature":
-            shared_access_signature = value
-            try:
-                # Expiry can be stored in the "se=<timestamp>" clause of the token. ('&'-separated key-value pairs)
-                # type: ignore
-                shared_access_signature_expiry = int(shared_access_signature.split('se=')[1].split('&')[0])
-            except (IndexError, TypeError, ValueError): # Fallback since technically expiry is optional.
-                # An arbitrary, absurdly large number, since you can't renew.
-                shared_access_signature_expiry = int(time.time() * 2)
-    if not (all((endpoint, shared_access_key_name, shared_access_key)) or all((endpoint, shared_access_signature))):
-        raise ValueError(
-            "Invalid connection string. Should be in the format: "
-            "Endpoint=sb://<FQDN>/;SharedAccessKeyName=<KeyName>;SharedAccessKey=<KeyValue>"
-        )
+    check_case = kwargs.pop("check_case", False)    # type: Optional[bool]
+    conn_settings = core_parse_connection_string(conn_str, case_sensitive_keys=check_case)
+    if check_case:
+        shared_access_key = conn_settings.get("SharedAccessKey")
+        shared_access_key_name = conn_settings.get("SharedAccessKeyName")
+        endpoint = conn_settings.get("Endpoint")
+        entity_path = conn_settings.get("EntityPath")
+    
+        # non case sensitive check when parsing connection string for internal use
+        for key, value in conn_settings.items():
+            # only sas check is non case sensitive for both conn str properties and internal use
+            if key.lower() == "sharedaccesssignature":
+                shared_access_signature = value
+                try:
+                    # Expiry can be stored in the "se=<timestamp>" clause of the token. ('&'-separated key-value pairs)
+                    shared_access_signature_expiry = int(
+                        shared_access_signature.split("se=")[1].split("&")[0]   # type: ignore
+                    )
+                except (
+                    IndexError,
+                    TypeError,
+                    ValueError,
+                ):  # Fallback since technically expiry is optional.
+                    # An arbitrary, absurdly large number, since you can't renew.
+                    shared_access_signature_expiry = int(time.time() * 2)
+
+    if not check_case:
+        endpoint = conn_settings.get("endpoint") or conn_settings.get("hostname")
+        if endpoint:
+            endpoint = endpoint.rstrip("/")
+        shared_access_key_name = conn_settings.get("sharedaccesskeyname")
+        shared_access_key = conn_settings.get("sharedaccesskey")
+        entity_path = conn_settings.get('entitypath')
+        shared_access_signature = conn_settings.get("sharedaccesssignature")
+
     entity = cast(str, eventhub_name or entity_path)
-    left_slash_pos = cast(str, endpoint).find("//")
-    if left_slash_pos != -1:
-        host = cast(str, endpoint)[left_slash_pos + 2 :]
-    else:
-        host = str(endpoint)
+
+    # check that endpoint is valid
+    if not endpoint:
+        raise ValueError("Connection string is either blank or malformed.")
+    parsed = urlparse(endpoint)
+    if not parsed.netloc:
+        raise ValueError("Invalid Endpoint on the Connection String.")
+    host = cast(str, parsed.netloc.strip())
+
+    if any([shared_access_key, shared_access_key_name]) and not all(
+        [shared_access_key, shared_access_key_name]
+    ):
+        raise ValueError(
+            "Connection string must have both SharedAccessKeyName and SharedAccessKey."
+        )
+    if shared_access_signature and shared_access_key:
+        raise ValueError(
+            "Only one of the SharedAccessKey or SharedAccessSignature must be present."
+        )
+    if not shared_access_signature and not shared_access_key:
+        raise ValueError(
+            "At least one of the SharedAccessKey or SharedAccessSignature must be present."
+        )
+
     return (host,
             str(shared_access_key_name) if shared_access_key_name else None,
             str(shared_access_key) if shared_access_key else None,
@@ -218,7 +247,7 @@ class ClientBase(object):  # pylint:disable=too-many-instance-attributes
     @staticmethod
     def _from_connection_string(conn_str, **kwargs):
         # type: (str, Any) -> Dict[str, Any]
-        host, policy, key, entity, token, token_expiry = _parse_conn_str(conn_str, kwargs)
+        host, policy, key, entity, token, token_expiry = _parse_conn_str(conn_str, **kwargs)
         kwargs["fully_qualified_namespace"] = host
         kwargs["eventhub_name"] = entity
         if token and token_expiry:
