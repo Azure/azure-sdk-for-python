@@ -349,7 +349,7 @@ if __name__ == "__main__":
     for checkpoint in legacy_checkpoints:
         metadata = {
             "offset": str(checkpoint["offset"]),
-            "sequence_number": str(checkpoint["sequence_number"]),
+            "sequencenumber": str(checkpoint["sequence_number"]),
         }
         name = "{}{}".format(prefix, checkpoint["partition_id"])
         container_client.upload_blob(name, data="", metadata=metadata)
