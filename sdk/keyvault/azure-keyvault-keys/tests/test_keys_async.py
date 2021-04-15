@@ -11,7 +11,7 @@ import logging
 
 from azure.core.exceptions import ResourceExistsError, ResourceNotFoundError
 from azure.core.pipeline.policies import SansIOHTTPPolicy
-from azure.keyvault.keys import JsonWebKey, KeyExportParameters, KeyReleasePolicy
+from azure.keyvault.keys import JsonWebKey, KeyReleasePolicy
 from azure.keyvault.keys.aio import KeyClient
 from six import byte2int
 import pytest
@@ -66,7 +66,7 @@ class KeyVaultKeyTest(KeysTestCase, KeyVaultTestCase):
         self.assertEqual(k1.recovery_level, k2.recovery_level)
 
     async def _create_rsa_key(self, client, key_name, **kwargs):
-        key_ops = ["encrypt", "decrypt", "sign", "verify", "wrapKey", "unwrapKey"]
+        key_ops = kwargs.get("key_operations") or ["encrypt", "decrypt", "sign", "verify", "wrapKey", "unwrapKey"]
         hsm = kwargs.get("hardware_protected") or False
         if self.is_live:
             await asyncio.sleep(2)  # to avoid throttling by the service
@@ -282,8 +282,9 @@ class KeyVaultKeyTest(KeysTestCase, KeyVaultTestCase):
         export_key = await self._create_rsa_key(
             client, self.get_resource_name("export-key"), hardware_protected=True, key_operations=["export"]
         )
-        export_parameters = KeyExportParameters(export_key.key, algorithm="CKM_RSA_AES_KEY_WRAP")
-        exported_key = await client.export_key(key_name, key.properties.version, export_parameters)
+        exported_key = await client.export_key(
+            key_name, key.properties.version, wrapping_key=export_key.key, algorithm="CKM_RSA_AES_KEY_WRAP"
+        )
 
     @all_api_versions()
     @client_setup

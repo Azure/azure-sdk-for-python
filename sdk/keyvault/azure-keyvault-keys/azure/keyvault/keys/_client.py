@@ -19,7 +19,7 @@ if TYPE_CHECKING:
     # pylint:disable=unused-import
     from typing import Any, Optional, Union
     from azure.core.paging import ItemPaged
-    from ._models import JsonWebKey, KeyExportParameters, KeyReleaseParameters
+    from ._models import JsonWebKey, KeyReleaseParameters
 
 
 class KeyClient(KeyVaultClientBase):
@@ -68,8 +68,8 @@ class KeyClient(KeyVaultClientBase):
         :keyword ~datetime.datetime not_before: Not before date of the key in UTC
         :keyword ~datetime.datetime expires_on: Expiry date of the key in UTC
         :keyword bool exportable: Whether the private key can be exported.
-        :param release_policy: The policy rules under which the key can be exported.
-        :type release_policy: ~azure.keyvault.keys.KeyReleasePolicy
+        :keyword release_policy: The policy rules under which the key can be exported.
+        :paramtype release_policy: ~azure.keyvault.keys.KeyReleasePolicy
         :returns: The created key
         :rtype: ~azure.keyvault.keys.KeyVaultKey
         :raises: :class:`~azure.core.exceptions.HttpResponseError`
@@ -138,8 +138,8 @@ class KeyClient(KeyVaultClientBase):
         :keyword ~datetime.datetime not_before: Not before date of the key in UTC
         :keyword ~datetime.datetime expires_on: Expiry date of the key in UTC
         :keyword bool exportable: Whether the private key can be exported.
-        :param release_policy: The policy rules under which the key can be exported.
-        :type release_policy: ~azure.keyvault.keys.KeyReleasePolicy
+        :keyword release_policy: The policy rules under which the key can be exported.
+        :paramtype release_policy: ~azure.keyvault.keys.KeyReleasePolicy
         :returns: The created key
         :rtype: ~azure.keyvault.keys.KeyVaultKey
         :raises: :class:`~azure.core.exceptions.HttpResponseError`
@@ -175,8 +175,8 @@ class KeyClient(KeyVaultClientBase):
         :keyword ~datetime.datetime not_before: Not before date of the key in UTC
         :keyword ~datetime.datetime expires_on: Expiry date of the key in UTC
         :keyword bool exportable: Whether the private key can be exported.
-        :param release_policy: The policy rules under which the key can be exported.
-        :type release_policy: ~azure.keyvault.keys.KeyReleasePolicy
+        :keyword release_policy: The policy rules under which the key can be exported.
+        :paramtype release_policy: ~azure.keyvault.keys.KeyReleasePolicy
         :returns: The created key
         :rtype: ~azure.keyvault.keys.KeyVaultKey
         :raises: :class:`~azure.core.exceptions.HttpResponseError`
@@ -603,8 +603,8 @@ class KeyClient(KeyVaultClientBase):
         :keyword ~datetime.datetime not_before: Not before date of the key in UTC
         :keyword ~datetime.datetime expires_on: Expiry date of the key in UTC
         :keyword bool exportable: Whether the private key can be exported.
-        :param release_policy: The policy rules under which the key can be exported.
-        :type release_policy: ~azure.keyvault.keys.KeyReleasePolicy
+        :keyword release_policy: The policy rules under which the key can be exported.
+        :paramtype release_policy: ~azure.keyvault.keys.KeyReleasePolicy
         :returns: The imported key
         :rtype: ~azure.keyvault.keys.KeyVaultKey
         :raises: :class:`~azure.core.exceptions.HttpResponseError`
@@ -643,8 +643,8 @@ class KeyClient(KeyVaultClientBase):
         return KeyVaultKey._from_key_bundle(bundle)
 
     @distributed_trace
-    def export_key(self, name, version, parameters, **kwargs):
-        # type: (str, str, KeyExportParameters, **Any) -> KeyVaultKey
+    def export_key(self, name, version, **kwargs):
+        # type: (str, str, **Any) -> KeyVaultKey
         """Exports a key.
 
         The export key operation is applicable to all key types. The target key must be marked
@@ -652,30 +652,43 @@ class KeyClient(KeyVaultClientBase):
 
         :param str name: The name of the key to export.
         :param str version: A specific version of the key to export.
-        :param parameters: The parameters for the export operation.
-        :type parameters: ~azure.keyvault.keys.KeyExportParameters
+        :keyword wrapping_key: The export encryption key. This must be an RSA key that supports encryption.
+        :paramtype key: ~azure.keyvault.keys.JsonWebKey
+        :keyword str wrapping_key_id: The export key encryption key identifier. This must be a RSA key that supports
+         encryption.
+        :keyword str algorithm: The encryption algorithm to use to protected the exported key material. Possible values
+         include: "CKM_RSA_AES_KEY_WRAP", "RSA_AES_KEY_WRAP_256", "RSA_AES_KEY_WRAP_384".
         :return: The exported key.
         :rtype: ~azure.keyvault.keys.KeyVaultKey
         :raises: :class:`~azure.core.exceptions.HttpResponseError`
         """
-        key_parameters = self._models.KeyExportParameters(
-            kek=parameters.key._to_generated_model(), enc=parameters.algorithm
+        wrapping_key = kwargs.pop("wrapping_key", None)
+        if wrapping_key is not None:
+            wrapping_key = wrapping_key._to_generated_model()
+
+        parameters = self._models.KeyExportParameters(
+            wrapping_key=wrapping_key,
+            wrapping_kid=kwargs.pop("wrapping_key_id", None),
+            enc=kwargs.pop("algorithm", None)
         )
-        bundle = self._client.export(self.vault_url, name, version, key_parameters, **kwargs)
+
+        bundle = self._client.export(self.vault_url, name, version, parameters, **kwargs)
         return KeyVaultKey._from_key_bundle(bundle)
 
     @distributed_trace
-    def release_key(self, name, version, parameters, **kwargs):
-        # type: (str, str, KeyReleaseParameters, **Any) -> KeyReleaseResult
+    def release_key(self, name, target, version, **kwargs):
+        # type: (str, str, str, **Any) -> KeyReleaseResult
         """Releases a key.
 
         The release key operation is applicable to all key types. The target key must be marked
         exportable. This operation requires the keys/release permission.
 
         :param str name: The name of the key to get.
+        :param str target: The attestation assertion for the target of the key release.
         :param str version: A specific version of the key to release.
-        :param parameters: The parameters for the key release operation.
-        :type parameters: ~azure.keyvault.keys.KeyReleaseParameters
+        :keyword str algorithm: The encryption algorithm to use to protect the released key material. Possible values
+         include: "CKM_RSA_AES_KEY_WRAP", "RSA_AES_KEY_WRAP_256", "RSA_AES_KEY_WRAP_384".
+        :keyword str nonce: A client-provided nonce for freshness.
         :return: The result of the key release.
         :rtype: ~azure.keyvault.keys.KeyReleaseResult
         :raises: :class:`~azure.core.exceptions.HttpResponseError`
@@ -685,7 +698,7 @@ class KeyClient(KeyVaultClientBase):
             key_name=name,
             key_version=version,
             parameters=self._models.KeyReleaseParameters(
-                environment=parameters.environment, nonce=parameters.nonce, enc=parameters.algorithm
+                target=target, nonce=kwargs.pop("nonce", None), enc=kwargs.pop("algorithm", None)
             ),
             **kwargs
         )

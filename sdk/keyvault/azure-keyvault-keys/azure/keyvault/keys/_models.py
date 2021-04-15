@@ -61,23 +61,6 @@ class JsonWebKey(object):
         return jwk
 
 
-class KeyExportParameters(object):
-    """The parameters for a key export.
-
-    This includes a key and algorithm that are used for encrypting the exported key material.
-
-    :param key: The export encryption key. This must be an RSA key that supports encryption.
-    :type key: ~azure.keyvault.keys.JsonWebKey
-    :keyword str algorithm: The encryption algorithm to use to protected the exported key material. Possible values
-     include: "CKM_RSA_AES_KEY_WRAP", "RSA_AES_KEY_WRAP_256", "RSA_AES_KEY_WRAP_384".
-    """
-
-    def __init__(self, key, **kwargs):
-        # type: (JsonWebKey, **Any) -> None
-        self.key = key
-        self.algorithm = kwargs.get("algorithm", None)
-
-
 class KeyProperties(object):
     """A key's id and attributes."""
 
@@ -237,46 +220,19 @@ class KeyProperties(object):
         return self._managed
 
 
-class KeyReleaseParameters(object):
-    """The parameters for key release.
-
-    :param str environment: The target environment assertion.
-    :keyword str algorithm: The encryption algorithm to use to protect the released key material. Possible values
-     include: "CKM_RSA_AES_KEY_WRAP", "RSA_AES_KEY_WRAP_256", "RSA_AES_KEY_WRAP_384".
-    :keyword str nonce: A client-provided nonce for freshness.
-    """
-
-    def __init__(self, environment, **kwargs):
-        # type: (str, **Any) -> None
-        self.environment = environment
-        self.algorithm = kwargs.get("algorithm", None)
-        self.nonce = kwargs.get("nonce", None)
-
-
 class KeyReleasePolicy(object):
     """A key release policy.
 
     :param data: Blob encoding the policy rules under which the key can be released.
     :type data: bytes
-    :keyword content_type: Content type and version of key release policy. Defaults to 
-     'application/json; charset=utf-8; version=1.0'.
+    :keyword content_type: Content type and version of key release policy.
     :type content_type: str
     """
 
     def __init__(self, data, **kwargs):
         # type: (bytes, **Any) -> None
         self.data = data
-        self.content_type = kwargs.get("content_type", None) or "application/json; charset=utf-8; version=1.0"
-
-    @classmethod
-    def _from_key_bundle(cls, key_bundle):
-        # type: (_models.KeyBundle) -> Optional[KeyReleasePolicy]
-        """Construct a KeyReleasePolicy from an autorest-generated KeyBundle"""
-        release_policy = None
-        if hasattr(key_bundle, "release_policy"):
-            policy = key_bundle.release_policy
-            release_policy = None if policy is None else cls(data=policy.data, content_type=policy.content_type)
-        return release_policy
+        self.content_type = kwargs.get("content_type", None)
 
 
 class KeyReleaseResult(object):
@@ -343,12 +299,18 @@ class KeyVaultKey(object):
     def _from_key_bundle(cls, key_bundle):
         # type: (_models.KeyBundle) -> KeyVaultKey
         """Construct a KeyVaultKey from an autorest-generated KeyBundle"""
+        release_policy = None
+        if hasattr(key_bundle, "release_policy") and key_bundle.release_policy is not None:
+            release_policy = KeyReleasePolicy(
+                data=key_bundle.release_policy.data, content_type=key_bundle.release_policy.content_type
+            )
+
         # pylint:disable=protected-access
         return cls(
             key_id=key_bundle.key.kid,
             jwk={field: getattr(key_bundle.key, field, None) for field in JsonWebKey._FIELDS},
             properties=KeyProperties._from_key_bundle(key_bundle),
-            release_policy=KeyReleasePolicy._from_key_bundle(key_bundle)
+            release_policy=release_policy
         )
 
     @property
