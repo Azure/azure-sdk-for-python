@@ -42,7 +42,7 @@ from ._base_async import (
     AsyncHttpResponse,
     _ResponseStopIteration,
     _iterate_response_content)
-from ._requests_basic import RequestsTransportResponse
+from ._requests_basic import RequestsTransportResponse, _read_raw_stream
 from ._base_requests_async import RequestsAsyncTransportBase
 
 
@@ -146,10 +146,10 @@ class AsyncioStreamDownloadGenerator(AsyncIterator):
         self.response = response
         self.block_size = response.block_size
         self._raw = raw
-        self.iter_content_func = self.response.internal_response.iter_content(self.block_size)
-        if self._raw and hasattr(self.response.internal_response, 'raw') \
-                and hasattr(self.response.internal_response.raw, 'stream'):
-            delattr(self.response.internal_response.raw.__class__, 'stream')
+        if self._raw:
+            self.iter_content_func = _read_raw_stream(self.response.internal_response, self.block_size)
+        else:
+            self.iter_content_func = self.response.internal_response.iter_content(self.block_size)
         self.content_length = int(response.headers.get('Content-Length', 0))
 
     def __len__(self):
@@ -158,17 +158,10 @@ class AsyncioStreamDownloadGenerator(AsyncIterator):
     async def __anext__(self):
         loop = _get_running_loop()
         try:
-            if self._raw:
-                chunk = await loop.run_in_executor(
-                    None,
-                    _iterate_response_content,
-                    self.iter_content_func,
-                )
-            else:
-                chunk = await loop.run_in_executor(
-                    None,
-                    _iterate_response_content,
-                    self.iter_content_func,
+            chunk = await loop.run_in_executor(
+                None,
+                _iterate_response_content,
+                self.iter_content_func,
             )
             if not chunk:
                 raise _ResponseStopIteration()

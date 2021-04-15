@@ -28,6 +28,9 @@ import logging
 from typing import Iterator, Optional, Any, Union, TypeVar
 import urllib3 # type: ignore
 from urllib3.util.retry import Retry # type: ignore
+from urllib3.exceptions import (
+    DecodeError, ReadTimeoutError, ProtocolError, LocationParseError
+)
 import requests
 
 from azure.core.configuration import ConnectionConfiguration
@@ -48,6 +51,25 @@ PipelineType = TypeVar("PipelineType")
 
 _LOGGER = logging.getLogger(__name__)
 
+def _read_raw_stream(response, chunk_size=1):
+    # Special case for urllib3.
+    if hasattr(response.raw, 'stream'):
+        try:
+            for chunk in response.raw.stream(chunk_size, decode_content=False):
+                yield chunk
+        except ProtocolError as e:
+            raise ChunkedEncodingError(e)
+        except DecodeError as e:
+            raise ContentDecodingError(e)
+        except ReadTimeoutError as e:
+            raise ConnectionError(e)
+    else:
+        # Standard file-like object.
+        while True:
+            chunk = response.raw.read(chunk_size)
+            if not chunk:
+                break
+            yield chunk
 
 class _RequestsTransportResponseBase(_HttpResponseBase):
     """Base class for accessing response data.
@@ -106,10 +128,10 @@ class StreamDownloadGenerator(object):
         self.response = response
         self.block_size = response.block_size
         self._raw = raw
-        self.iter_content_func = self.response.internal_response.iter_content(self.block_size)
-        if self._raw and hasattr(self.response.internal_response, 'raw') \
-                and hasattr(self.response.internal_response.raw, 'stream'):
-            delattr(self.response.internal_response.raw.__class__, 'stream')
+        if self._raw:
+            self.iter_content_func = _read_raw_stream(self.response.internal_response, self.block_size)
+        else:
+            self.iter_content_func = self.response.internal_response.iter_content(self.block_size)
         self.content_length = int(response.headers.get('Content-Length', 0))
 
     def __len__(self):

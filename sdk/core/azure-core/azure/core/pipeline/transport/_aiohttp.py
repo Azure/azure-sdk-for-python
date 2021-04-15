@@ -41,6 +41,7 @@ from ._base_async import (
     AsyncHttpTransport,
     AsyncHttpResponse,
     _ResponseStopIteration)
+from ._requests_basic import _read_raw_stream
 
 # Matching requests, because why not?
 CONTENT_CHUNK_SIZE = 10 * 1024
@@ -206,9 +207,6 @@ class AioHttpStreamDownloadGenerator(AsyncIterator):
         self.block_size = response.block_size
         self._raw = raw
         self.content_length = int(response.internal_response.headers.get('Content-Length', 0))
-        if self._raw and hasattr(self.response.internal_response, 'raw') \
-                and hasattr(self.response.internal_response.raw, 'stream'):
-            delattr(self.response.internal_response.raw.__class__, 'stream')
 
     def __len__(self):
         return self.content_length
