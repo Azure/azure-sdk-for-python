@@ -146,12 +146,15 @@ class KeyProperties(object):
     
     @property
     def exportable(self):
-        # type: () -> bool
+        # type: () -> Optional[bool]
         """Whether the private key can be exported
 
         :rtype: bool
         """
-        return self._attributes.exportable
+        # exportable was added in 7.3-preview
+        if self._attributes and hasattr(self._attributes, "exportable"):
+            return self._attributes.exportable
+        return None
 
     @property
     def created_on(self):
