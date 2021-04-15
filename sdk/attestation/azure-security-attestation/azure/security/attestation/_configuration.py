@@ -47,7 +47,7 @@ class AttestationClientConfiguration(Configuration):
             raise ValueError("Parameter 'instance_url' must not be None.")
         super(AttestationClientConfiguration, self).__init__(**kwargs)
 
-        self.token_validation_options = kwargs.get('validation_options') # type: TokenValidationOptions
+        self.token_validation_options = kwargs.get('token_validation_options') # type: TokenValidationOptions
         if (self.token_validation_options == None):
             self.token_validation_options = TokenValidationOptions(validate_token=True)
         self.credential = credential

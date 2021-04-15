@@ -30,9 +30,13 @@ class AttestationSigner(object):
 
 class TokenValidationOptions(object):
     """ Validation options for an Attestation Token object.
-    :keyword bool validate_token: if True, validate the returned token, otherwise return the token unvalidated.
+    :keyword bool validate_token: if True, validate the token, otherwise return the token unvalidated.
     :keyword Callable[['AttestationToken', 'AttestationSigner'], bool] validation_callback: Callback to allow clients to perform custom validation of the token.
-    :keyword bool validate_signature: if True, validate the signature of the returned token.
+    :keyword bool validate_signature: if True, validate the signature of the token being validated.
+    :keyword bool validate_expiration: If True, validate the expiration time of the token being validated.
+    :keyword str issuer: Expected issuer, used if validate_issuer is true.
+    :keyword bool validate_issuer: If True, validate that the issuer of the token matches the expected issuer.
+    :keyword bool validate_not_before_time: If true, validate the "Not Before" time in the token.
     """
     def __init__(
         self,
@@ -40,6 +44,11 @@ class TokenValidationOptions(object):
         self.validate_token = kwargs.get('validate_token') #type: bool
         self.validation_callback = kwargs.get('validation_callback') # type:Callable[['AttestationToken', AttestationSigner], bool]
         self.validate_signature = kwargs.get('validate_signature') # type:bool
+        self.validate_expiration = kwargs.get('validate_expiration') # type:bool
+        self.validate_not_before = kwargs.get('validate_not_before') # type:bool
+        self.validate_issuer = kwargs.get('validate_issuer') #type:bool
+        self.issuer = kwargs.get('issuer') #type:str
+        self.validation_slack = kwargs.get('validation_slack') #type:int
 
 
 class SigningKey(object):
@@ -138,12 +147,12 @@ class AttestationToken(Generic[T]):
         token_parts = token.split('.')
         if len(token_parts) != 3:
             raise ValueError("Malformed JSON Web Token")
-        self.header_bytes = Base64Url.decode(token_parts[0]).decode('utf-8')
-        self.body_bytes =Base64Url.decode(token_parts[1]).decode('utf-8')
+        self.header_bytes = Base64Url.decode(token_parts[0])
+        self.body_bytes =Base64Url.decode(token_parts[1])
         self.signature_bytes = Base64Url.decode(token_parts[2])
         decoder = JSONDecoder()
-        self._body = decoder.decode(self.body_bytes)
-        self._header = decoder.decode(self.header_bytes)
+        self._body = decoder.decode(self.body_bytes.decode('ascii'))
+        self._header = decoder.decode(self.header_bytes.decode('ascii'))
 
         # If the caller didn't specify a body when constructing the class, populate the well known attributes from the token.
         if (body is None):
@@ -190,12 +199,15 @@ class AttestationToken(Generic[T]):
     """
     def validate_token(self, options = None, signing_certificates = None): 
         #type: (TokenValidationOptions, List[AttestationSigner]) -> bool
-        if options is not None and not options.validate_token:
+        if (options is None):
+            options = TokenValidationOptions(validate_token=True, validate_signature=True, validate_expiration=True)
+        if not options.validate_token:
+            self._validate_static_properties(options)
             if (options.validation_callback is not None):
                 options.validation_callback(self, None)
             return True
 
-        if self._header['alg'] != 'none' and options is None or options.validate_signature:
+        if self._header['alg'] != 'none' and options.validate_signature:
             # validate the signature for the token.
             candidate_certificates = self._get_candidate_signing_certificates(signing_certificates)
             if (not self._validate_signature(candidate_certificates)):
@@ -209,13 +221,15 @@ class AttestationToken(Generic[T]):
 
     def get_body(self): 
         #type: () -> T
-        return self._body
+        # if isinstance(T, str):
+            return self._body
+        # return T.__class__.serialize(self.body_bytes.decode('ascii'))
 
     def _get_candidate_signing_certificates(self, signing_certificates):
         #type: (List[AttestationSigner]) -> List[AttestationSigner]
 
-        candidates = List[AttestationSigner]()
-        desired_key_id = self.key_id
+        candidates = list()
+        desired_key_id = self._header.get('kid')
         if desired_key_id is not None:
             for signer in signing_certificates:
                 if (signer.key_id == desired_key_id):
@@ -227,10 +241,7 @@ class AttestationToken(Generic[T]):
                 if self._header['jwk']:
                     if self._header['jwk']['kid'] == desired_key_id:
                         if (self._header['jwk']['x5c']):
-                            signers=List[Certificate]()
-                            for cert in self._header['jwk']['x5c']:
-                                signer = load_der_x509_certificate(base64.b64decode(cert))
-                                signers.append(signer)
+                            signers=self._get_signers_from_x5c(self._header['jwk']['x5c'])
                         candidates.append(AttestationSigner(signers, desired_key_id))
         else:
             # We don't have a signer, so we need to try every possible signer.
@@ -240,22 +251,23 @@ class AttestationToken(Generic[T]):
                 for signer in signing_certificates:
                     candidates.append(signer)
             else:
-                if self._header['jwk']:
-                    if (self._header['jwk']['x5c']):
-                        signers=List[Certificate]()
-                        for cert in self._header['jwk']['x5c']:
-                            signer = load_der_x509_certificate(base64.b64decode(cert))
-                            signers.append(signer)
-                    candidates.append(AttestationSigner(signers, None))
-                if self._header['x5c']:
-                        if (self._header['x5c']):
-                            signers=List[Certificate]()
-                            for cert in self._header['x5c']:
-                                signer = load_der_x509_certificate(base64.b64decode(cert))
-                                signers.append(signer)
+                if self._header.get('jwk'):
+                    if (self._header['jwk'].get('x5c')):
+                        signers = self._get_signers_from_x5c(self._header['jwk']['x5c'])
                         candidates.append(AttestationSigner(signers, None))
+                if self._header.get('x5c'):
+                    signers = self._get_signers_from_x5c(self._header['x5c'])
+                    candidates.append(AttestationSigner(signers, None))
 
         return candidates
+
+    def _get_signers_from_x5c(self, x5clist):
+        #type:(List[str]) -> List[AttestationSigner]
+        signers = list()
+        for cert in x5clist:
+            signer = load_der_x509_certificate(base64.b64decode(cert))
+            signers.append(signer)
+        return signers
 
     def _validate_signature(self, candidate_certificates):
         #type:(List[AttestationSigner]) -> bool
@@ -283,8 +295,22 @@ class AttestationToken(Generic[T]):
 
     def _validate_static_properties(self, options):
         #type:(TokenValidationOptions) -> bool
+        """ Validate the static properties in the attestation token.
+        """
+        if options.validate_expiration and hasattr(self, 'expiration_time') and self.expiration_time is not None:
+            if (datetime.now() > self.expiration_time):
+                delta = datetime.now() - self.expiration_time
+                if delta.total_seconds > options.validation_slack:
+                    raise Exception(u'Token is expired.')
+        if options.validate_not_before and hasattr(self, 'not_before_time') and self.not_before_time is not None:
+            if (datetime.now() < self.not_before_time):
+                delta = self.expiration_time - datetime.now()
+                if delta.total_seconds > options.validation_slack:
+                    raise Exception(u'Token is not yet valid.')
+        if options.validate_issuer and hasattr(self, 'issuer') and self.issuer is not None: 
+            if (options.issuer != self.issuer):
+                raise Exception(u'Issuer in token: ', self.issuer, ' is not the expected issuer: ', options.issuer, '.')
         return True
-        pass
 
     @staticmethod
     def _create_unsecured_jwt(body): #type: (Any) -> str

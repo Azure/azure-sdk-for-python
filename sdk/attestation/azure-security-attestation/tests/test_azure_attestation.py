@@ -24,7 +24,8 @@ import cryptography
 import cryptography.x509
 import base64
 import pytest
-from azure.security.attestation import AttestationClient, AttestationAdministrationClient, AttestationType
+from azure.security.attestation import AttestationClient, AttestationAdministrationClient, AttestationType, TokenValidationOptions
+
 
 AttestationPreparer = functools.partial(
             PowerShellPreparer, "attestation",
@@ -215,7 +216,13 @@ class AzureAttestationTest(AzureTestCase):
             credential = self.get_credential(AttestationClient)
             attest_client = self.create_client_from_credential(AttestationClient,
                 credential=credential,
-                instance_url=base_uri)
+                instance_url=base_uri,
+                token_validation_options = TokenValidationOptions(
+                    validate_token=True,
+                    validate_signature=True,
+                    validate_issuer=self.is_live,
+                    issuer=base_uri,
+                    validate_expiration=self.is_live))
             return attest_client
 
     def create_admin_client(self, base_uri): #type() -> AttestationAdministrationClient:
@@ -225,7 +232,13 @@ class AzureAttestationTest(AzureTestCase):
             credential = self.get_credential(AttestationAdministrationClient)
             attest_client = self.create_client_from_credential(AttestationAdministrationClient,
                 credential=credential,
-                instance_url=base_uri)
+                instance_url=base_uri,
+                token_validation_options = TokenValidationOptions(
+                    validate_token=True,
+                    validate_signature=True,
+                    validate_issuer=self.is_live,
+                    issuer=base_uri,
+                    validate_expiration=self.is_live))
             return attest_client
 
     def shared_client(self, location_name): #type(str) -> AttestationClient:
