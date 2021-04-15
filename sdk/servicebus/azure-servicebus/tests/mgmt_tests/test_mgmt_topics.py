@@ -79,7 +79,7 @@ class ServiceBusAdministrationClientTopicTests(AzureMgmtTestCase):
                 max_size_in_megabytes=3072
             )
             topic_2 = mgmt_service.get_topic(topic_name_2)
-            assert topic_2.name == topic_name
+            assert topic_2.name == topic_name_2
             assert topic_2.auto_delete_on_idle == datetime.timedelta(minutes=10)
             assert topic_2.default_message_time_to_live == datetime.timedelta(minutes=11)
             assert topic_2.duplicate_detection_history_time_window == datetime.timedelta(minutes=12)

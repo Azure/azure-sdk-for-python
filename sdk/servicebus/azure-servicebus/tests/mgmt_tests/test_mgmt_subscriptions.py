@@ -86,7 +86,7 @@ class ServiceBusAdministrationClientSubscriptionTests(AzureMgmtTestCase):
                 requires_session=True
             )
             subscription_2 = mgmt_service.get_subscription(topic_name, subscription_name_2)
-            assert subscription_2.name == subscription_name
+            assert subscription_2.name == subscription_name_2
             assert subscription_2.auto_delete_on_idle == datetime.timedelta(minutes=10)
             assert subscription_2.dead_lettering_on_message_expiration == True
             assert subscription_2.default_message_time_to_live == datetime.timedelta(minutes=11)

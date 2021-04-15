@@ -248,7 +248,7 @@ class ServiceBusAdministrationClientQueueAsyncTests(AzureMgmtTestCase):
             queue_name_2,
             auto_delete_on_idle="PT10M1S",
             dead_lettering_on_message_expiration=True,
-            default_message_time_to_live="PT11M32S",
+            default_message_time_to_live="PT11M2S",
             duplicate_detection_history_time_window="PT12M3S",
             enable_batched_operations=True,
             enable_express=True,
