@@ -41,7 +41,6 @@ from ._base_async import (
     AsyncHttpTransport,
     AsyncHttpResponse,
     _ResponseStopIteration)
-from ._requests_basic import _read_raw_stream
 
 # Matching requests, because why not?
 CONTENT_CHUNK_SIZE = 10 * 1024
