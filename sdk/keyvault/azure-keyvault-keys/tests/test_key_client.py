@@ -11,7 +11,7 @@ import json
 
 from azure.core.exceptions import ResourceExistsError, ResourceNotFoundError
 from azure.core.pipeline.policies import SansIOHTTPPolicy
-from azure.keyvault.keys import JsonWebKey, KeyClient, KeyExportParameters, KeyReleasePolicy
+from azure.keyvault.keys import JsonWebKey, KeyClient, KeyReleasePolicy
 from parameterized import parameterized, param
 import pytest
 
@@ -133,49 +133,6 @@ class KeyClientTests(KeysTestCase, KeyVaultTestCase):
         imported_key = client.import_key(name, key)
         self._validate_rsa_key_bundle(imported_key, client.vault_url, name, key.kty, key.key_ops)
         return imported_key
-    
-    @pytest.mark.skip("Key export is not yet supported by the service")
-    def test_key_export_mhsm(self, **kwargs):
-        self._skip_if_not_configured(True)
-        endpoint_url = self.managed_hsm_url
-
-        client = self.create_key_client(endpoint_url)
-        assert client is not None
-
-        # create key to export
-        key_name = self.get_resource_name("rsa-key")
-        json_policy = {
-          "anyOf": [
-            {
-              "allOf": [
-                {
-                  "claim": "x-ms-attestation-type",
-                  "equals": "sevsnpvm"
-                },
-                {
-                  "claim": "x-ms-sevsnpvm-authorkeydigest",
-                  "equals": "000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000"
-                },
-                {
-                  "claim": "x-ms-runtime.vm-configuration.secure-boot",
-                  "equals": True
-                }
-              ],
-              "authority": "https://sharedeus.eus.test.attest.azure.net/"
-            }
-          ],
-          "version": "1.0.0"
-        }
-        policy_string = json.dumps(json_policy).encode()
-        policy = KeyReleasePolicy(policy_string)
-        key = self._create_rsa_key(client, key_name, hardware_protected=True, exportable=True, release_policy=policy)
-
-        # create key for encrypting the exported key
-        export_key = self._create_rsa_key(
-            client, self.get_resource_name("export-key"), hardware_protected=True, key_operations=["export"]
-        )
-        export_parameters = KeyExportParameters(export_key.key, algorithm="CKM_RSA_AES_KEY_WRAP")
-        exported_key = client.export_key(key_name, key.properties.version, export_parameters)
 
     @parameterized.expand([param(is_hsm=b) for b in [True, False]], name_func=suffixed_test_name)
     def test_key_crud_operations(self, **kwargs):
@@ -239,6 +196,50 @@ class KeyClientTests(KeysTestCase, KeyVaultTestCase):
         deleted_key = client.get_deleted_key(rsa_key.name)
         self.assertIsNotNone(deleted_key)
         self.assertEqual(rsa_key.id, deleted_key.id)
+
+    @pytest.mark.skip("Key export is not yet supported by the service")
+    def test_key_export_mhsm(self, **kwargs):
+        self._skip_if_not_configured(True)
+        endpoint_url = self.managed_hsm_url
+
+        client = self.create_key_client(endpoint_url)
+        assert client is not None
+
+        # create key to export
+        key_name = self.get_resource_name("rsa-key")
+        json_policy = {
+          "anyOf": [
+            {
+              "allOf": [
+                {
+                  "claim": "x-ms-attestation-type",
+                  "equals": "sevsnpvm"
+                },
+                {
+                  "claim": "x-ms-sevsnpvm-authorkeydigest",
+                  "equals": "000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000"
+                },
+                {
+                  "claim": "x-ms-runtime.vm-configuration.secure-boot",
+                  "equals": True
+                }
+              ],
+              "authority": "https://sharedeus.eus.test.attest.azure.net/"
+            }
+          ],
+          "version": "1.0.0"
+        }
+        policy_string = json.dumps(json_policy).encode()
+        policy = KeyReleasePolicy(policy_string)
+        key = self._create_rsa_key(client, key_name, hardware_protected=True, exportable=True, release_policy=policy)
+
+        # create key for encrypting the exported key
+        export_key = self._create_rsa_key(
+            client, self.get_resource_name("export-key"), hardware_protected=True, key_operations=["export"]
+        )
+        exported_key = client.export_key(
+            key_name, key.properties.version, wrapping_key=export_key.key, algorithm="CKM_RSA_AES_KEY_WRAP"
+        )
 
     @parameterized.expand([param(is_hsm=b) for b in [True, False]], name_func=suffixed_test_name)
     def test_backup_restore(self, **kwargs):
