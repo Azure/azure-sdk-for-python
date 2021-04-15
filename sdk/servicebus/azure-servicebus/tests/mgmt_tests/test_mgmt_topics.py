@@ -146,6 +146,17 @@ class ServiceBusAdministrationClientTopicTests(AzureMgmtTestCase):
             # assert topic_description.requires_duplicate_detection == True
             # assert topic_description.requires_session == True
             assert topic_description.support_ordering == True
+
+            topic_description.auto_delete_on_idle = "PT10M1S"
+            topic_description.default_message_time_to_live = "PT11M2S"
+            topic_description.duplicate_detection_history_time_window = "PT12M3S"
+            mgmt_service.update_topic(topic_description)
+            topic_description = mgmt_service.get_topic(topic_name)
+
+            assert topic_description.auto_delete_on_idle == datetime.timedelta(minutes=10, seconds=1)
+            assert topic_description.default_message_time_to_live == datetime.timedelta(minutes=11, seconds=2)
+            assert topic_description.duplicate_detection_history_time_window == datetime.timedelta(minutes=12, seconds=3)
+
         finally:
             mgmt_service.delete_topic(topic_name)
 

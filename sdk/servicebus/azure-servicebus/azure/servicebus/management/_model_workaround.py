@@ -239,16 +239,21 @@ MODEL_CLASS_ATTRIBUTES = {
 
 
 def avoid_timedelta_overflow(td):
-    # type: (Optional[timedelta]) -> Optional[timedelta]
+    # type: (Optional[timedelta, str]) -> Optional[timedelta, str]
     """Service Bus REST API uses "P10675199DT2H48M5.4775807S" as default value for some properties, which are of type
     datetime.timedelta. When they are deserialized, Python round the milliseconds from 4775807 to 477581.
     When we get an entity (for instance, QueueDescription) and update this entity, this default value is
     deserialized to "P10675199DT2H48M5.477581S". Service Bus doesn't accept this value probably because it's too large.
     The workaround is to deduct the milliseconds by 0.000001.
     """
-    result = td
-    if td is not None and td.days == 10675199 and td.microseconds >= 477581:
-        result = timedelta(seconds=td.total_seconds() - 0.000001)
+    try:
+        result = td
+        if td is not None and td.days == 10675199 and td.microseconds >= 477581:
+            result = timedelta(seconds=td.total_seconds() - 0.000001)
+    except AttributeError:
+        # td is expected to be an ISO 8601 time span string
+        # in this case we don't do client validation and let the service handle the string
+        pass
     return result
 
 

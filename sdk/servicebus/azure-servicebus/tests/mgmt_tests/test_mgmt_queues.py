@@ -401,6 +401,17 @@ class ServiceBusAdministrationClientQueueTests(AzureMgmtTestCase):
             assert queue_description.forward_dead_lettered_messages_to.endswith(".servicebus.windows.net/{}".format(queue_name))
             #assert queue_description.requires_duplicate_detection == True
             #assert queue_description.requires_session == True
+
+            queue_description.auto_delete_on_idle = "PT10M1S"
+            queue_description.default_message_time_to_live = "PT11M2S"
+            queue_description.duplicate_detection_history_time_window = "PT12M3S"
+
+            mgmt_service.update_queue(queue_description)
+            queue_description = mgmt_service.get_queue(queue_name)
+
+            assert queue_description.auto_delete_on_idle == datetime.timedelta(minutes=10, seconds=1)
+            assert queue_description.default_message_time_to_live == datetime.timedelta(minutes=11, seconds=2)
+            assert queue_description.duplicate_detection_history_time_window == datetime.timedelta(minutes=12, seconds=3)
         finally:
             mgmt_service.delete_queue(queue_name)
             mgmt_service.delete_topic(topic_name)

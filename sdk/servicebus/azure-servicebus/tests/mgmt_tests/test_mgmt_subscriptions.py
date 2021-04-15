@@ -211,6 +211,15 @@ class ServiceBusAdministrationClientSubscriptionTests(AzureMgmtTestCase):
             assert subscription_description.forward_to is None
             assert subscription_description.forward_dead_lettered_messages_to is None
 
+            subscription_description.auto_delete_on_idle = "PT10M1S"
+            subscription_description.default_message_time_to_live = "PT11M2S"
+            subscription_description.lock_duration = "PT3M3S"
+            mgmt_service.update_subscription(topic_description.name, subscription_description)
+            subscription_description = mgmt_service.get_subscription(topic_description.name, subscription_name)
+            assert subscription_description.auto_delete_on_idle == datetime.timedelta(minutes=10, seconds=1)
+            assert subscription_description.default_message_time_to_live == datetime.timedelta(minutes=11, seconds=2)
+            assert subscription_description.lock_duration == datetime.timedelta(minutes=3, seconds=3)
+
         finally:
             mgmt_service.delete_subscription(topic_name, subscription_name)
             mgmt_service.delete_topic(topic_name)
