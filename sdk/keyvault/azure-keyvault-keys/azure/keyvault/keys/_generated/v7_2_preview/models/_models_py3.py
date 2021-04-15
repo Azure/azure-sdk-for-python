@@ -349,9 +349,9 @@ class JsonWebKey(msrest.serialization.Model):
 
     :param kid: Key identifier.
     :type kid: str
-    :param kty: JsonWebKey Key Type (kty), as defined in https://tools.ietf.org/html/draft-ietf-
-     jose-json-web-algorithms-40. Possible values include: "EC", "EC-HSM", "RSA", "RSA-HSM", "oct",
-     "oct-HSM".
+    :param kty: JsonWebKey Key Type (kty), as defined in
+     https://tools.ietf.org/html/draft-ietf-jose-json-web-algorithms-40. Possible values include:
+     "EC", "EC-HSM", "RSA", "RSA-HSM", "oct", "oct-HSM".
     :type kty: str or ~azure.keyvault.v7_2.models.JsonWebKeyType
     :param key_ops:
     :type key_ops: list[str]
@@ -682,9 +682,9 @@ class KeyOperationsParameters(msrest.serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param algorithm: Required. algorithm identifier. Possible values include: "RSA-OAEP", "RSA-
-     OAEP-256", "RSA1_5", "A128GCM", "A192GCM", "A256GCM", "A128KW", "A192KW", "A256KW", "A128CBC",
-     "A192CBC", "A256CBC", "A128CBCPAD", "A192CBCPAD", "A256CBCPAD".
+    :param algorithm: Required. algorithm identifier. Possible values include: "RSA-OAEP",
+     "RSA-OAEP-256", "RSA1_5", "A128GCM", "A192GCM", "A256GCM", "A128KW", "A192KW", "A256KW",
+     "A128CBC", "A192CBC", "A256CBC", "A128CBCPAD", "A192CBCPAD", "A256CBCPAD".
     :type algorithm: str or ~azure.keyvault.v7_2.models.JsonWebKeyEncryptionAlgorithm
     :param value: Required.
     :type value: bytes

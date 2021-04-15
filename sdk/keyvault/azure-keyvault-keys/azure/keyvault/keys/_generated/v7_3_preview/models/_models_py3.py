@@ -358,9 +358,9 @@ class JsonWebKey(msrest.serialization.Model):
 
     :param kid: Key identifier.
     :type kid: str
-    :param kty: JsonWebKey Key Type (kty), as defined in https://tools.ietf.org/html/draft-ietf-
-     jose-json-web-algorithms-40. Possible values include: "EC", "EC-HSM", "RSA", "RSA-HSM", "oct",
-     "oct-HSM".
+    :param kty: JsonWebKey Key Type (kty), as defined in
+     https://tools.ietf.org/html/draft-ietf-jose-json-web-algorithms-40. Possible values include:
+     "EC", "EC-HSM", "RSA", "RSA-HSM", "oct", "oct-HSM".
     :type kty: str or ~azure.keyvault.v7_3.models.JsonWebKeyType
     :param key_ops:
     :type key_ops: list[str]
@@ -581,34 +581,34 @@ class KeyCreateParameters(msrest.serialization.Model):
 class KeyExportParameters(msrest.serialization.Model):
     """The export key parameters.
 
-    All required parameters must be populated in order to send to Azure.
-
-    :param kek: Required. The export key encryption Json web key. This key MUST be a RSA key that
+    :param wrapping_key: The export key encryption Json web key. This key MUST be a RSA key that
      supports encryption.
-    :type kek: ~azure.keyvault.v7_3.models.JsonWebKey
+    :type wrapping_key: ~azure.keyvault.v7_3.models.JsonWebKey
+    :param wrapping_kid: The export key encryption key identifier. This key MUST be a RSA key that
+     supports encryption.
+    :type wrapping_kid: str
     :param enc: The encryption algorithm to use to protected the exported key material. Possible
      values include: "CKM_RSA_AES_KEY_WRAP", "RSA_AES_KEY_WRAP_256", "RSA_AES_KEY_WRAP_384".
     :type enc: str or ~azure.keyvault.v7_3.models.KeyEncryptionAlgorithm
     """
 
-    _validation = {
-        'kek': {'required': True},
-    }
-
     _attribute_map = {
-        'kek': {'key': 'kek', 'type': 'JsonWebKey'},
+        'wrapping_key': {'key': 'wrappingKey', 'type': 'JsonWebKey'},
+        'wrapping_kid': {'key': 'wrappingKid', 'type': 'str'},
         'enc': {'key': 'enc', 'type': 'str'},
     }
 
     def __init__(
         self,
         *,
-        kek: "JsonWebKey",
+        wrapping_key: Optional["JsonWebKey"] = None,
+        wrapping_kid: Optional[str] = None,
         enc: Optional[Union[str, "KeyEncryptionAlgorithm"]] = None,
         **kwargs
     ):
         super(KeyExportParameters, self).__init__(**kwargs)
-        self.kek = kek
+        self.wrapping_key = wrapping_key
+        self.wrapping_kid = wrapping_kid
         self.enc = enc
 
 
@@ -740,9 +740,9 @@ class KeyOperationsParameters(msrest.serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param algorithm: Required. algorithm identifier. Possible values include: "RSA-OAEP", "RSA-
-     OAEP-256", "RSA1_5", "A128GCM", "A192GCM", "A256GCM", "A128KW", "A192KW", "A256KW", "A128CBC",
-     "A192CBC", "A256CBC", "A128CBCPAD", "A192CBCPAD", "A256CBCPAD".
+    :param algorithm: Required. algorithm identifier. Possible values include: "RSA-OAEP",
+     "RSA-OAEP-256", "RSA1_5", "A128GCM", "A192GCM", "A256GCM", "A128KW", "A192KW", "A256KW",
+     "A128CBC", "A192CBC", "A256CBC", "A128CBCPAD", "A192CBCPAD", "A256CBCPAD".
     :type algorithm: str or ~azure.keyvault.v7_3.models.JsonWebKeyEncryptionAlgorithm
     :param value: Required.
     :type value: bytes
@@ -834,8 +834,8 @@ class KeyReleaseParameters(msrest.serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param environment: Required. The target environment assertion.
-    :type environment: str
+    :param target: Required. The attestation assertion for the target of the key release.
+    :type target: str
     :param nonce: A client provided nonce for freshness.
     :type nonce: str
     :param enc: The encryption algorithm to use to protected the exported key material. Possible
@@ -844,11 +844,11 @@ class KeyReleaseParameters(msrest.serialization.Model):
     """
 
     _validation = {
-        'environment': {'required': True, 'min_length': 1},
+        'target': {'required': True, 'min_length': 1},
     }
 
     _attribute_map = {
-        'environment': {'key': 'env', 'type': 'str'},
+        'target': {'key': 'target', 'type': 'str'},
         'nonce': {'key': 'nonce', 'type': 'str'},
         'enc': {'key': 'enc', 'type': 'str'},
     }
@@ -856,13 +856,13 @@ class KeyReleaseParameters(msrest.serialization.Model):
     def __init__(
         self,
         *,
-        environment: str,
+        target: str,
         nonce: Optional[str] = None,
         enc: Optional[Union[str, "KeyEncryptionAlgorithm"]] = None,
         **kwargs
     ):
         super(KeyReleaseParameters, self).__init__(**kwargs)
-        self.environment = environment
+        self.target = target
         self.nonce = nonce
         self.enc = enc
 
@@ -884,7 +884,7 @@ class KeyReleasePolicy(msrest.serialization.Model):
     def __init__(
         self,
         *,
-        content_type: Optional[str] = "application/json; charset=utf-8; version=1.0",
+        content_type: Optional[str] = "application/json; charset=utf-8",
         data: Optional[bytes] = None,
         **kwargs
     ):
