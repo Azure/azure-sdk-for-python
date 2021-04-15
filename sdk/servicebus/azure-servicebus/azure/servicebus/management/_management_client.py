@@ -669,10 +669,10 @@ class ServiceBusAdministrationClient:  # pylint:disable=too-many-public-methods
             or topic.duplicate_detection_history_time_window
         )
 
-        to_update.default_message_time_to_live = avoid_timedelta_overflow(
+        to_update.default_message_time_to_live = avoid_timedelta_overflow(  # type: ignore
             to_update.default_message_time_to_live
         )
-        to_update.auto_delete_on_idle = avoid_timedelta_overflow(
+        to_update.auto_delete_on_idle = avoid_timedelta_overflow(  # type: ignore
             to_update.auto_delete_on_idle
         )
 
@@ -934,10 +934,10 @@ class ServiceBusAdministrationClient:  # pylint:disable=too-many-public-methods
         )
         to_update = subscription._to_internal_entity()
 
-        to_update.default_message_time_to_live = avoid_timedelta_overflow(
+        to_update.default_message_time_to_live = avoid_timedelta_overflow(  # type: ignore
             to_update.default_message_time_to_live
         )
-        to_update.auto_delete_on_idle = avoid_timedelta_overflow(
+        to_update.auto_delete_on_idle = avoid_timedelta_overflow(  # type: ignore
             to_update.auto_delete_on_idle
         )
         create_entity_body = CreateSubscriptionBody(

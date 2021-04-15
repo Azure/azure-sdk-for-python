@@ -2,11 +2,6 @@
 
 ## 7.1.2 (Unreleased)
 
-**Bug Fixes**
-
-* Fixed bug that `ServiceBusAdministrationClient.update_*` throwing `AttributeError` when updating timespan
-related properties(`auto_delete_on_idle`, `default_message_time_to_live`,
-`duplicate_detection_history_time_window` and `lock_duration`) with string in ISO 8601 duration format.
 
 
 ## 7.1.1 (2021-04-07)

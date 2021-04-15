@@ -248,8 +248,8 @@ def avoid_timedelta_overflow(td):
     """
     try:
         result = td
-        if td is not None and td.days == 10675199 and td.microseconds >= 477581:
-            result = timedelta(seconds=td.total_seconds() - 0.000001)
+        if td is not None and td.days == 10675199 and td.microseconds >= 477581:  # type: ignore
+            result = timedelta(seconds=td.total_seconds() - 0.000001)  # type: ignore
     except AttributeError:
         # td is expected to be an ISO 8601 time span string
         # in this case we don't do client validation and let the service handle the string
