@@ -31,15 +31,20 @@ def set_next_host_location(settings, request):
     """
     A function which sets the next host location on the request, if applicable.
     """
-    if settings["hosts"] and all(settings["hosts"].values()):
-        url = urlparse(request.http_request.url)
-        # If there's more than one possible location, retry to the alternative
-        if settings["mode"] == LocationMode.PRIMARY:
-            settings["mode"] = LocationMode.SECONDARY
-        else:
-            settings["mode"] = LocationMode.PRIMARY
-        updated = url._replace(netloc=settings["hosts"].get(settings["mode"]))
-        request.http_request.url = updated.geturl()
+    if request.http_request.method not in ['GET', 'HEAD']:
+        return
+    try:
+        if settings["retry_secondary"] and settings["hosts"] and all(settings["hosts"].values()):
+            url = urlparse(request.http_request.url)
+            # If there's more than one possible location, retry to the alternative
+            if settings["mode"] == LocationMode.PRIMARY:
+                settings["mode"] = LocationMode.SECONDARY
+            else:
+                settings["mode"] = LocationMode.PRIMARY
+            updated = url._replace(netloc=settings["hosts"].get(settings["mode"]))
+            request.http_request.url = updated.geturl()
+    except KeyError:
+        pass
 
 
 class StorageHeadersPolicy(HeadersPolicy):
@@ -193,7 +198,6 @@ class TablesRetryPolicy(RetryPolicy):
             try:
                 start_time = time.time()
                 self._configure_timeout(request, absolute_timeout, is_response_error)
-                print("Request CONTEXT", request.context)
                 response = self.next.send(request)
                 if self.is_retry(retry_settings, response):
                     retry_active = self.increment(retry_settings, response=response)

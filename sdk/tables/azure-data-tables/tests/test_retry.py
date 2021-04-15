@@ -81,7 +81,6 @@ class StorageRetryTest(AzureTestCase, TableTestCase):
                 pass
 
     # --Test Cases --------------------------------------------
-    @pytest.mark.skip("TODO")
     @TablesPreparer()
     def test_retry_on_server_error(self, tables_storage_account_name, tables_primary_storage_account_key):
         self._set_up(tables_storage_account_name, tables_primary_storage_account_key, default_table=False)
@@ -97,7 +96,6 @@ class StorageRetryTest(AzureTestCase, TableTestCase):
             self.ts.delete_table(new_table_name)
             self._tear_down()
 
-    @pytest.mark.skip("TODO")
     @TablesPreparer()
     def test_retry_on_timeout(self, tables_storage_account_name, tables_primary_storage_account_key):
         self._set_up(
@@ -108,44 +106,14 @@ class StorageRetryTest(AzureTestCase, TableTestCase):
             retry_backoff_factor=1
             )
 
-        new_table_name = self.get_resource_name('uttable')
-        callback = ResponseCallback(status=201, new_status=408).override_status
-
+        callback = ResponseCallback(status=200, new_status=408).override_first_status
         try:
-            # The initial create will return 201, but we overwrite it with 408 and retry.
-            # The retry will then get a 409 conflict.
-            with pytest.raises(ResourceExistsError):
-                self.ts.create_table(new_table_name, raw_response_hook=callback)
+            # The initial get will return 200, but we overwrite it with 408 and retry.
+            # The retry will then succeed.
+            self.ts.get_service_properties(raw_response_hook=callback)
         finally:
-            self.ts.delete_table(new_table_name)
             self._tear_down()
 
-    @pytest.mark.skip("TODO")
-    @TablesPreparer()
-    def test_retry_callback_and_retry_context(self, tables_storage_account_name, tables_primary_storage_account_key):
-        self._set_up(
-            tables_storage_account_name,
-            tables_primary_storage_account_key,
-            default_table=False,
-            retry_mode=RetryMode.Fixed,
-            retry_backoff_factor=1)
-
-        new_table_name = self.get_resource_name('uttable')
-        callback = ResponseCallback(status=201, new_status=408).override_status
-
-        def assert_exception_is_present_on_retry_context(**kwargs):
-            self.assertIsNotNone(kwargs.get('response'))
-            self.assertEqual(kwargs['response'].status_code, 408)
-        try:
-            # The initial create will return 201, but we overwrite it with 408 and retry.
-            # The retry will then get a 409 conflict.
-            with pytest.raises(ResourceExistsError):
-                self.ts.create_table(new_table_name, raw_response_hook=callback, retry_hook=assert_exception_is_present_on_retry_context)
-        finally:
-            self.ts.delete_table(new_table_name)
-            self._tear_down()
-
-    @pytest.mark.skip("TODO")
     @pytest.mark.live_test_only
     @TablesPreparer()
     def test_retry_on_socket_timeout(self, tables_storage_account_name, tables_primary_storage_account_key):
@@ -161,7 +129,7 @@ class StorageRetryTest(AzureTestCase, TableTestCase):
         new_table_name = self.get_resource_name('uttable')
         try:
             with pytest.raises(AzureError) as error:
-                self.ts.create_table(new_table_name)
+                self.ts.get_service_properties()
 
             # 3 retries + 1 original == 4
             assert retry_transport.count == 4
@@ -169,29 +137,25 @@ class StorageRetryTest(AzureTestCase, TableTestCase):
             self.assertTrue('read timeout' in str(error.value), 'Expected socket timeout but got different exception.')
 
         finally:
-            # we must make the timeout normal again to let the delete operation succeed
-            self.ts.delete_table(new_table_name, connection_timeout=(11, 11))
-            self._tear_down(connection_timeout=(11, 11))
+            self._tear_down()
 
+    @TablesPreparer()
+    def test_no_retry(self, tables_storage_account_name, tables_primary_storage_account_key):
+        self._set_up(tables_storage_account_name, tables_primary_storage_account_key, retry_total=0, default_table=False)
 
-    # Waiting on fix to client pipeline
-    # @TablesPreparer()
-    # def test_no_retry(self, tables_storage_account_name, tables_primary_storage_account_key):
-    #     self._set_up(tables_storage_account_name, tables_primary_storage_account_key, retry_total=0, default_table=False)
+        new_table_name = self.get_resource_name('uttable')
 
-    #     new_table_name = self.get_resource_name('uttable')
+        # Force the create call to 'timeout' with a 408
+        callback = ResponseCallback(status=201, new_status=500).override_status
 
-    #     # Force the create call to 'timeout' with a 408
-    #     callback = ResponseCallback(status=201, new_status=408).override_status
+        try:
+            with pytest.raises(HttpResponseError) as error:
+                self.ts.create_table(new_table_name, raw_response_hook=callback)
+            self.assertEqual(error.value.response.status_code, 500)
+            self.assertEqual(error.value.reason, 'Created')
 
-    #     try:
-    #         with pytest.raises(HttpResponseError) as error:
-    #             self.ts.create_table(new_table_name, raw_response_hook=callback)
-    #         self.assertEqual(error.value.response.status_code, 408)
-    #         self.assertEqual(error.value.reason, 'Created')
-
-    #     finally:
-    #         self.ts.delete_table(new_table_name)
-    #         self._tear_down()
+        finally:
+            self.ts.delete_table(new_table_name)
+            self._tear_down()
 # ------------------------------------------------------------------------------
 
