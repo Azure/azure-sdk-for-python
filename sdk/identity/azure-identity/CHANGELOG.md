@@ -1,7 +1,9 @@
 # Release History
 
 ## 1.6.0b4 (Unreleased)
-
+### Added
+- `AzurePowerShellCredential` authenticates as the identity logged in to Azure
+  PowerShell ([#17341](https://github.com/Azure/azure-sdk-for-python/issues/17341))
 
 ## 1.6.0b3 (2021-04-06)
 ### Breaking Changes
