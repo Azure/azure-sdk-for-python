@@ -15,7 +15,7 @@ interactions:
       User-Agent:
       - azsdk-python-keyvault-keys/4.3.2 Python/3.5.3 (Windows-10-10.0.19041-SP0)
     method: POST
-    uri: https://managedhsm/keys/selective-restore-test-keya85a1290/create?api-version=7.2-preview
+    uri: https://managedhsm/keys/selective-restore-test-keya85a1290/create?api-version=7.3-preview
   response:
     body:
       string: ''
@@ -58,7 +58,7 @@ interactions:
       User-Agent:
       - azsdk-python-keyvault-keys/4.3.2 Python/3.5.3 (Windows-10-10.0.19041-SP0)
     method: POST
-    uri: https://managedhsm/keys/selective-restore-test-keya85a1290/create?api-version=7.2-preview
+    uri: https://managedhsm/keys/selective-restore-test-keya85a1290/create?api-version=7.3-preview
   response:
     body:
       string: '{"attributes":{"created":1612826772,"enabled":true,"exportable":false,"recoverableDays":90,"recoveryLevel":"Recoverable+Purgeable","updated":1612826772},"key":{"e":"AQAB","key_ops":["wrapKey","decrypt","encrypt","unwrapKey","sign","verify"],"kid":"https://managedhsm/keys/selective-restore-test-keya85a1290/2baac872a79e4f4d37d2fd1d360b7b38","kty":"RSA-HSM","n":"op5WXDgzSfohX67cJmBplGev8zwrI_gy7qTLCTjgw-Hb7B4AvS8q0QXoytAZic2QLfb9eaoaCClHbck0OlHjQykQdthxTX6usMXOqVfcwQ12nfQ8pJjnAZg08kyVs5hZDWjlbdInNIUwBdwwmyrEBckTh6UlolxIIsOJiUbrihv3wdv_4JnSRQm7f7lV69tNs7meqdOI-fjiOYwP8eH1hau265uRb6en9aoov0p59IWvZ-HVocak5eYjv3-8XnGL4Fr2FvwT5HTlSUmkiAGOiK2PBkyzgZLXImgZ06i1bEqPDMlUufYsKIBf3jHUpdkiorB0s7ZoXHc1PNh-AkygAw"}}'
@@ -570,7 +570,7 @@ interactions:
       User-Agent:
       - azsdk-python-keyvault-keys/4.3.2 Python/3.5.3 (Windows-10-10.0.19041-SP0)
     method: DELETE
-    uri: https://managedhsm/keys/selective-restore-test-keya85a1290?api-version=7.2-preview
+    uri: https://managedhsm/keys/selective-restore-test-keya85a1290?api-version=7.3-preview
   response:
     body:
       string: '{"attributes":{"created":1612826772,"enabled":true,"exportable":false,"recoverableDays":90,"recoveryLevel":"Recoverable+Purgeable","updated":1612826772},"deletedDate":1612826814,"key":{"e":"AQAB","key_ops":["wrapKey","encrypt","decrypt","unwrapKey","sign","verify"],"kid":"https://managedhsm/keys/selective-restore-test-keya85a1290/2baac872a79e4f4d37d2fd1d360b7b38","kty":"RSA-HSM","n":"op5WXDgzSfohX67cJmBplGev8zwrI_gy7qTLCTjgw-Hb7B4AvS8q0QXoytAZic2QLfb9eaoaCClHbck0OlHjQykQdthxTX6usMXOqVfcwQ12nfQ8pJjnAZg08kyVs5hZDWjlbdInNIUwBdwwmyrEBckTh6UlolxIIsOJiUbrihv3wdv_4JnSRQm7f7lV69tNs7meqdOI-fjiOYwP8eH1hau265uRb6en9aoov0p59IWvZ-HVocak5eYjv3-8XnGL4Fr2FvwT5HTlSUmkiAGOiK2PBkyzgZLXImgZ06i1bEqPDMlUufYsKIBf3jHUpdkiorB0s7ZoXHc1PNh-AkygAw"},"recoveryId":"https://managedhsm/deletedkeys/selective-restore-test-keya85a1290","scheduledPurgeDate":1620602814}'
@@ -610,7 +610,7 @@ interactions:
       User-Agent:
       - azsdk-python-keyvault-keys/4.3.2 Python/3.5.3 (Windows-10-10.0.19041-SP0)
     method: GET
-    uri: https://managedhsm/deletedkeys/selective-restore-test-keya85a1290?api-version=7.2-preview
+    uri: https://managedhsm/deletedkeys/selective-restore-test-keya85a1290?api-version=7.3-preview
   response:
     body:
       string: '{"attributes":{"created":1612826772,"enabled":true,"exportable":false,"recoverableDays":90,"recoveryLevel":"Recoverable+Purgeable","updated":1612826772},"deletedDate":1612826814,"key":{"e":"AQAB","key_ops":["verify","sign","unwrapKey","encrypt","decrypt","wrapKey"],"kid":"https://managedhsm/keys/selective-restore-test-keya85a1290/2baac872a79e4f4d37d2fd1d360b7b38","kty":"RSA-HSM","n":"op5WXDgzSfohX67cJmBplGev8zwrI_gy7qTLCTjgw-Hb7B4AvS8q0QXoytAZic2QLfb9eaoaCClHbck0OlHjQykQdthxTX6usMXOqVfcwQ12nfQ8pJjnAZg08kyVs5hZDWjlbdInNIUwBdwwmyrEBckTh6UlolxIIsOJiUbrihv3wdv_4JnSRQm7f7lV69tNs7meqdOI-fjiOYwP8eH1hau265uRb6en9aoov0p59IWvZ-HVocak5eYjv3-8XnGL4Fr2FvwT5HTlSUmkiAGOiK2PBkyzgZLXImgZ06i1bEqPDMlUufYsKIBf3jHUpdkiorB0s7ZoXHc1PNh-AkygAw"},"recoveryId":"https://managedhsm/deletedkeys/selective-restore-test-keya85a1290","scheduledPurgeDate":1620602814}'
@@ -654,7 +654,7 @@ interactions:
       User-Agent:
       - azsdk-python-keyvault-keys/4.3.2 Python/3.5.3 (Windows-10-10.0.19041-SP0)
     method: DELETE
-    uri: https://managedhsm/deletedkeys/selective-restore-test-keya85a1290?api-version=7.2-preview
+    uri: https://managedhsm/deletedkeys/selective-restore-test-keya85a1290?api-version=7.3-preview
   response:
     body:
       string: ''
