@@ -6,7 +6,6 @@
 
 import base64
 import json
-import time
 from typing import (  # pylint: disable=unused-import
     cast,
     Tuple,
@@ -16,15 +15,15 @@ import calendar
 from msrest.serialization import TZ_UTC
 from azure.core.credentials import AccessToken
 
-"""
-Converts DateTime in local time to the Epoch in UTC in second.
-
-:param input_datetime: Input datetime
-:type input_datetime: datetime
-:return: Integer
-:rtype: int
-"""
 def _convert_datetime_to_utc_int(expires_on):
+    """
+    Converts DateTime in local time to the Epoch in UTC in second.
+
+    :param input_datetime: Input datetime
+    :type input_datetime: datetime
+    :return: Integer
+    :rtype: int
+    """
     return int(calendar.timegm(expires_on.utctimetuple()))
 
 def parse_connection_str(conn_str):

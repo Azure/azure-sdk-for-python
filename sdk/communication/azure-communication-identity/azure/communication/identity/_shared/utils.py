@@ -14,7 +14,6 @@ from typing import (  # pylint: disable=unused-import
 from datetime import datetime
 from msrest.serialization import TZ_UTC
 from azure.core.credentials import AccessToken
-import calendar
 
 def _convert_datetime_to_utc_int(expires_on):
     return int(calendar.timegm(expires_on.utctimetuple()))
