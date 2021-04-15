@@ -178,7 +178,8 @@ class MgmtDnsTest(AzureMgmtTestCase):
             zone.name
         )
         async_delete.wait()
-
+    
+    @unittest.skip("using this API is no longer allowed")
     @ResourceGroupPreparer()
     @VirtualNetworkPreparer()
     def test_private_zone(self, resource_group, location, registration_virtual_network, resolution_virtual_network):
