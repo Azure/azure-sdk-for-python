@@ -11,20 +11,20 @@ import sys
 from typing import Generator
 from azure.core.rest import HttpRequest
 
-def test_rest_request_repr():
+def test_request_repr():
     request = HttpRequest("GET", "http://example.org")
     assert repr(request) == "<HttpRequest [GET], url: 'http://example.org'>"
 
-def test_rest_no_content():
+def test_no_content():
     request = HttpRequest("GET", "http://example.org")
     assert "Content-Length" not in request.headers
 
-def test_rest_content_length_header():
+def test_content_length_header():
     request = HttpRequest("POST", "http://example.org", content=b"test 123")
     assert request.headers["Content-Length"] == "8"
 
 
-def test_rest_iterable_content():
+def test_iterable_content():
     class Content:
         def __iter__(self):
             yield b"test 123"  # pragma: nocover
@@ -33,7 +33,7 @@ def test_rest_iterable_content():
     assert request.headers == {"Transfer-Encoding": "chunked", "Content-Type": "application/octet-stream"}
 
 
-def test_rest_generator_with_transfer_encoding_header():
+def test_generator_with_transfer_encoding_header():
     def content():
         yield b"test 123"  # pragma: nocover
 
@@ -41,7 +41,7 @@ def test_rest_generator_with_transfer_encoding_header():
     assert request.headers == {"Transfer-Encoding": "chunked", "Content-Type": "application/octet-stream"}
 
 
-def test_rest_generator_with_content_length_header():
+def test_generator_with_content_length_header():
     def content():
         yield b"test 123"  # pragma: nocover
 
@@ -52,21 +52,21 @@ def test_rest_generator_with_content_length_header():
     assert request.headers == {"Content-Length": "8", "Content-Type": "application/octet-stream"}
 
 
-def test_rest_url_encoded_data():
+def test_url_encoded_data():
     request = HttpRequest("POST", "http://example.org", data={"test": "123"})
 
     assert request.headers["Content-Type"] == "application/x-www-form-urlencoded"
     assert request.content == {'test': '123'}  # httpx makes this just b'test=123'. set_formdata_body is still keeping it as a dict
 
 
-def test_rest_json_encoded_data():
+def test_json_encoded_data():
     request = HttpRequest("POST", "http://example.org", json={"test": 123})
 
     assert request.headers["Content-Type"] == "application/json"
     assert request.content == '{"test": 123}'
 
 
-def test_rest_headers():
+def test_headers():
     request = HttpRequest("POST", "http://example.org", json={"test": 123})
 
     assert request.headers == {
@@ -75,7 +75,7 @@ def test_rest_headers():
     }
 
 
-def test_rest_ignore_transfer_encoding_header_if_content_length_exists():
+def test_ignore_transfer_encoding_header_if_content_length_exists():
     """
     `Transfer-Encoding` should be ignored if `Content-Length` has been set explicitly.
     See https://github.com/encode/httpx/issues/1168
@@ -91,18 +91,18 @@ def test_rest_ignore_transfer_encoding_header_if_content_length_exists():
     assert "Transfer-Encoding" not in request.headers
     assert request.headers["Content-Length"] == "4"
 
-def test_rest_override_accept_encoding_header():
+def test_override_accept_encoding_header():
     headers = {"Accept-Encoding": "identity"}
 
     request = HttpRequest("GET", "http://example.org", headers=headers)
     assert request.headers["Accept-Encoding"] == "identity"
 
 """Test request body"""
-def test_rest_empty_content():
+def test_empty_content():
     request = HttpRequest("GET", "http://example.org")
     assert request.content == None
 
-def test_rest_string_content():
+def test_string_content():
     request = HttpRequest("PUT", "http://example.org", content="Hello, world!")
     assert request.headers == {"Content-Length": "13", "Content-Type": "text/plain"}
     assert request.content == "Hello, world!"
@@ -122,7 +122,7 @@ def test_rest_string_content():
 
 @pytest.mark.skipif(sys.version_info < (3, 0),
                     reason="In 2.7, b'' is the same as a string, so will have text/plain content type")
-def test_rest_bytes_content():
+def test_bytes_content():
     request = HttpRequest("PUT", "http://example.org", content=b"Hello, world!")
     assert request.headers == {"Content-Length": "13", "Content-Type": "application/octet-stream"}
     assert request.content == b"Hello, world!"
@@ -140,7 +140,7 @@ def test_rest_bytes_content():
     assert request.headers == {"Content-Type": "application/octet-stream"}
     assert request.content == b"Hello, world!"
 
-def test_rest_iterator_content():
+def test_iterator_content():
     # NOTE: in httpx, content reads out the actual value. Don't do that (yet) in azure rest
     def hello_world():
         yield b"Hello, "
@@ -164,7 +164,7 @@ def test_rest_iterator_content():
     assert isinstance(request.content, Generator)
 
 
-def test_rest_json_content():
+def test_json_content():
     request = HttpRequest("POST", url="http://example.org", json={"Hello": "world!"})
 
     assert request.headers == {
@@ -173,7 +173,7 @@ def test_rest_json_content():
     }
     assert request.content == '{"Hello": "world!"}'
 
-def test_rest_urlencoded_content():
+def test_urlencoded_content():
     # NOTE: not adding content length setting and content testing bc we're not adding content length in the rest code
     # that's dealt with later in the pipeline.
     request = HttpRequest("POST", url="http://example.org", data={"Hello": "world!"})
@@ -184,7 +184,7 @@ def test_rest_urlencoded_content():
 # NOTE: commenting out multipart files content setting tests for now. We currently leave the content length / type setting for the pipeline
 # to do on the internal request.
 
-# def test_rest_multipart_files_content():
+# def test_multipart_files_content():
 #     files = {"file": io.BytesIO(b"<file content>")}
 #     request = HttpRequest("POST", url="http://example.org", files=files)
 
@@ -203,7 +203,7 @@ def test_rest_urlencoded_content():
 #         ]
 #     )
 
-# def test_rest_multipart_data_and_files_content():
+# def test_multipart_data_and_files_content():
 #     data = {"message": "Hello, world!"}
 #     files = {"file": io.BytesIO(b"<file content>")}
 #     request = HttpRequest("POST", url="http://example.org", data=data, files=files)
@@ -227,14 +227,14 @@ def test_rest_urlencoded_content():
 #         ]
 #     )
 
-def test_rest_empty_request():
+def test_empty_request():
     request = HttpRequest("POST", url="http://example.org", data={}, files={})
 
     assert request.headers == {}
     assert request.content == {} # in core, we don't convert urlencoded dict to bytes representation in content
 
 # NOTE: For files, we don't allow list of tuples yet, just dict. Will uncomment when we add this capability
-# def test_rest_multipart_multiple_files_single_input_content():
+# def test_multipart_multiple_files_single_input_content():
 #     files = [
 #         ("file", io.BytesIO(b"<file content 1>")),
 #         ("file", io.BytesIO(b"<file content 2>")),

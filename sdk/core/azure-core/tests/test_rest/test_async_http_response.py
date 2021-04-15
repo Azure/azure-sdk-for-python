@@ -39,7 +39,7 @@ def _create_http_response(status_code=None, request=None, headers=None, content=
     )
 
 @pytest.mark.asyncio
-async def test_rest_response():
+async def test_response():
     response = _create_http_response(
         status_code=200,
         content=b"Hello, world!",
@@ -57,7 +57,7 @@ async def test_rest_response():
 
 
 @pytest.mark.asyncio
-async def test_rest_response_content():
+async def test_response_content():
     response = _create_http_response(status_code=200, content=b"Hello, world!")
 
     assert response.status_code == 200
@@ -69,7 +69,7 @@ async def test_rest_response_content():
 
 
 @pytest.mark.asyncio
-async def test_rest_response_text():
+async def test_response_text():
     response = _create_http_response(200, content=b"Hello, world!", headers={
         "Content-Length": "13",
         "Content-Type": "text/plain; charset=utf-8",
@@ -88,7 +88,7 @@ async def test_rest_response_text():
 
 
 @pytest.mark.asyncio
-async def test_rest_response_html():
+async def test_response_html():
     response = _create_http_response(200, content=b"<html><body>Hello, world!</html></body>")
 
     assert response.status_code == 200
@@ -99,7 +99,7 @@ async def test_rest_response_html():
     response.raise_for_status()
 
 @pytest.mark.asyncio
-async def test_rest_raise_for_status():
+async def test_raise_for_status():
     request = HttpRequest("GET", "https://example.org")
 
     response = _create_http_response(200, request=request)
@@ -114,7 +114,7 @@ async def test_rest_raise_for_status():
         response.raise_for_status()
 
 
-def test_rest_response_repr():
+def test_response_repr():
     headers = {"Content-Type": "text-plain"}
     response = _create_http_response(
         200,
@@ -124,7 +124,7 @@ def test_rest_response_repr():
     assert repr(response) == "<AsyncHttpResponse: 200 OK, Content-Type: text-plain>"
 
 @pytest.mark.asyncio
-async def test_rest_response_content_type_encoding():
+async def test_response_content_type_encoding():
     """
     Use the charset encoding in the Content-Type header if possible.
     """
@@ -142,7 +142,7 @@ async def test_rest_response_content_type_encoding():
 
 
 @pytest.mark.asyncio
-async def test_rest_response_autodetect_encoding():
+async def test_response_autodetect_encoding():
     """
     Autodetect encoding if there is no Content-Type header.
     """
@@ -157,7 +157,7 @@ async def test_rest_response_autodetect_encoding():
 
 
 @pytest.mark.asyncio
-async def test_rest_response_fallback_to_autodetect():
+async def test_response_fallback_to_autodetect():
     """
     Fallback to autodetection if we get an invalid charset in the Content-Type header.
     """
@@ -174,7 +174,7 @@ async def test_rest_response_fallback_to_autodetect():
 
 
 @pytest.mark.asyncio
-async def test_rest_response_no_charset_with_ascii_content():
+async def test_response_no_charset_with_ascii_content():
     """
     A response with ascii encoded content should decode correctly,
     even with no charset specified.
@@ -194,7 +194,7 @@ async def test_rest_response_no_charset_with_ascii_content():
 
 
 @pytest.mark.asyncio
-async def test_rest_response_no_charset_with_iso_8859_1_content():
+async def test_response_no_charset_with_iso_8859_1_content():
     """
     A response with ISO 8859-1 encoded content should decode correctly,
     even with no charset specified.
@@ -212,7 +212,7 @@ async def test_rest_response_no_charset_with_iso_8859_1_content():
     assert response.encoding is None
 
 @pytest.mark.asyncio
-async def test_rest_response_set_explicit_encoding():
+async def test_response_set_explicit_encoding():
     headers = {
         "Content-Type": "text-plain; charset=utf-8"
     }  # Deliberately incorrect charset
@@ -228,7 +228,7 @@ async def test_rest_response_set_explicit_encoding():
     assert response.encoding == "latin-1"
 
 @pytest.mark.asyncio
-async def test_rest_json():
+async def test_json():
     data = {"greeting": "hello", "recipient": "world"}
     content = json.dumps(data).encode("utf-8")
     headers = {"Content-Type": "application/json"}
@@ -241,7 +241,7 @@ async def test_rest_json():
     assert response.json() == data
 
 @pytest.mark.asyncio
-async def test_rest_json_with_specified_encoding():
+async def test_json_with_specified_encoding():
     data = {"greeting": "hello", "recipient": "world"}
     content = json.dumps(data).encode("utf-16")
     headers = {"Content-Type": "application/json, charset=utf-16"}
@@ -254,7 +254,7 @@ async def test_rest_json_with_specified_encoding():
     assert response.json() == data
 
 @pytest.mark.asyncio
-async def test_rest_response_with_unset_request():
+async def test_response_with_unset_request():
     response = _create_http_response(200, content=b"Hello, world!")
 
     assert response.status_code == 200
@@ -265,7 +265,7 @@ async def test_rest_response_with_unset_request():
 
 
 @pytest.mark.asyncio
-async def test_rest_set_request_after_init():
+async def test_set_request_after_init():
     response = _create_http_response(200, content=b"Hello, world!")
 
     response.request = HttpRequest("GET", "https://www.example.org")
@@ -275,20 +275,20 @@ async def test_rest_set_request_after_init():
 
 
 @pytest.mark.asyncio
-async def test_rest_cannot_access_unset_request():
+async def test_cannot_access_unset_request():
     response = _create_http_response(200, content=b"Hello, world!")
 
     with pytest.raises(RuntimeError):
         response.request
 
 @pytest.mark.asyncio
-async def test_rest_emoji():
+async def test_emoji():
     response = _create_http_response(200, content="👩".encode("utf-8"))
     await response.read()
     assert response.text == "👩"
 
 @pytest.mark.asyncio
-async def test_rest_emoji_family_with_skin_tone_modifier():
+async def test_emoji_family_with_skin_tone_modifier():
     headers = {
         "Content-Type": "text-plain; charset=utf-16"
     }
@@ -297,7 +297,7 @@ async def test_rest_emoji_family_with_skin_tone_modifier():
     assert response.text == "👩🏻‍👩🏽‍👧🏾‍👦🏿 SSN: 859-98-0987"
 
 @pytest.mark.asyncio
-async def test_rest_korean_nfc():
+async def test_korean_nfc():
     response = _create_http_response(200, content="아가".encode("utf-8"))
     await response.read()
     assert response.text == "아가"

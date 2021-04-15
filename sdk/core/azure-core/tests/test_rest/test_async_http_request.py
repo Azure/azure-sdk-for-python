@@ -10,7 +10,7 @@ import pytest
 from azure.core.rest import HttpRequest
 from typing import AsyncGenerator
 
-def test_rest_transfer_encoding_header():
+def test_transfer_encoding_header():
     async def streaming_body(data):
         yield data  # pragma: nocover
 
@@ -20,7 +20,7 @@ def test_rest_transfer_encoding_header():
     assert "Content-Length" not in request.headers
     assert request.headers["Transfer-Encoding"] == "chunked"
 
-def test_rest_override_content_length_header():
+def test_override_content_length_header():
     async def streaming_body(data):
         yield data  # pragma: nocover
 
@@ -31,7 +31,7 @@ def test_rest_override_content_length_header():
     assert request.headers["Content-Length"] == "0"
 
 @pytest.mark.asyncio
-async def test_rest_aiterator_content():
+async def test_aiterator_content():
     async def hello_world():
         yield b"Hello, "
         yield b"world!"

@@ -13,7 +13,7 @@ def _get_headers(header_value):
     request = HttpRequest(method="GET", url="http://example.org", headers=header_value)
     return request.headers
 
-def test_rest_headers():
+def test_headers():
     # headers still can't be list of tuples. Will uncomment once we add this support
     # h = _get_headers([("a", "123"), ("a", "456"), ("b", "789")])
     # assert "a" in h
@@ -42,7 +42,7 @@ def test_rest_headers():
     assert h["B"] == "789"
 
 
-def test_rest_header_mutations():
+def test_header_mutations():
     h = _get_headers({})
     assert dict(h) == {}
     h["a"] = "1"
@@ -57,7 +57,7 @@ def test_rest_header_mutations():
     assert dict(h) == {"b": "4"}
 
 
-def test_rest_headers_insert_retains_ordering():
+def test_headers_insert_retains_ordering():
     h = _get_headers({"a": "a", "b": "b", "c": "c"})
     h["b"] = "123"
     if sys.version_info >= (3, 6):
@@ -66,7 +66,7 @@ def test_rest_headers_insert_retains_ordering():
         assert set(list(h.values())) == set(["a", "123", "c"])
 
 
-def test_rest_headers_insert_appends_if_new():
+def test_headers_insert_appends_if_new():
     h = _get_headers({"a": "a", "b": "b", "c": "c"})
     h["d"] = "123"
     if sys.version_info >= (3, 6):
@@ -75,20 +75,20 @@ def test_rest_headers_insert_appends_if_new():
         assert set(list(h.values())) == set(["a", "b", "c", "123"])
 
 
-def test_rest_headers_insert_removes_all_existing():
+def test_headers_insert_removes_all_existing():
     h = _get_headers([("a", "123"), ("a", "456")])
     h["a"] = "789"
     assert dict(h) == {"a": "789"}
 
 
-def test_rest_headers_delete_removes_all_existing():
+def test_headers_delete_removes_all_existing():
     h = _get_headers([("a", "123"), ("a", "456")])
     del h["a"]
     assert dict(h) == {}
 
 # Can't support list of tuples. Will uncomment once we add that support
 
-# def test_rest_multiple_headers():
+# def test_multiple_headers():
 #     """
 #     `Headers.get_list` should support both split_commas=False and split_commas=True.
 #     """

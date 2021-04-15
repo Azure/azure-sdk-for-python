@@ -44,7 +44,7 @@ def _assert_stream_state(response, open):
         assert all(checks)
 
 @pytest.mark.asyncio
-async def test_rest_iter_raw():
+async def test_iter_raw():
     response = await _create_http_response(url="https://httpbin.org/image/jpeg")
     raw = b""
     async for chunk in response.iter_raw():
@@ -64,13 +64,13 @@ async def _iter_raw_with_chunk_size_helper(chunk_size):
     assert raw == _read_jpeg_file()
 
 @pytest.mark.asyncio
-async def test_rest_iter_raw_with_chunk_size():
+async def test_iter_raw_with_chunk_size():
     await _iter_raw_with_chunk_size_helper(chunk_size=5)
     await _iter_raw_with_chunk_size_helper(chunk_size=13)
     await _iter_raw_with_chunk_size_helper(chunk_size=20)
 
 @pytest.mark.asyncio
-async def test_rest_iter_raw_num_bytes_downloaded():
+async def test_iter_raw_num_bytes_downloaded():
     response = await _create_http_response(url="https://httpbin.org/image/jpeg")
 
     num_downloaded = response.num_bytes_downloaded
@@ -89,7 +89,7 @@ async def _iter_bytes_with_chunk_size_helper(chunk_size):
     assert raw == _read_jpeg_file()
 
 @pytest.mark.asyncio
-async def test_rest_iter_bytes():
+async def test_iter_bytes():
     response = await _create_http_response(url="https://httpbin.org/image/jpeg")
     raw = b""
     async for chunk in response.iter_bytes():
@@ -99,13 +99,13 @@ async def test_rest_iter_bytes():
     assert raw == _read_jpeg_file()
 
 @pytest.mark.asyncio
-async def test_rest_iter_bytes_with_chunk_size():
+async def test_iter_bytes_with_chunk_size():
     await _iter_bytes_with_chunk_size_helper(chunk_size=5)
     await _iter_bytes_with_chunk_size_helper(chunk_size=13)
     await _iter_bytes_with_chunk_size_helper(chunk_size=20)
 
 @pytest.mark.asyncio
-async def test_rest_iter_text():
+async def test_iter_text():
     response = await _create_http_response(url="https://httpbin.org/stream/10")
     raw = ""
     async for chunk in response.iter_text():
@@ -126,13 +126,13 @@ async def _iter_text_with_chunk_size_helper(chunk_size):
     assert len([r for r in raw.split("\n") if r]) == 10
 
 @pytest.mark.asyncio
-async def test_rest_iter_text_with_chunk_size():
+async def test_iter_text_with_chunk_size():
     await _iter_text_with_chunk_size_helper(chunk_size=5)
     await _iter_text_with_chunk_size_helper(chunk_size=13)
     await _iter_text_with_chunk_size_helper(chunk_size=20)
 
 @pytest.mark.asyncio
-async def test_rest_iter_lines():
+async def test_iter_lines():
     response = await _create_http_response(url="https://httpbin.org/stream/10")
     lines = []
     async for chunk in response.iter_lines():
@@ -147,7 +147,7 @@ async def test_rest_iter_lines():
 
 
 @pytest.mark.asyncio
-async def test_rest_sync_streaming_response():
+async def test_sync_streaming_response():
     response = await _create_http_response(url="https://httpbin.org/image/jpeg")
 
     assert response.status_code == 200
@@ -163,7 +163,7 @@ async def test_rest_sync_streaming_response():
 
 
 @pytest.mark.asyncio
-async def test_rest_cannot_read_after_stream_consumed():
+async def test_cannot_read_after_stream_consumed():
     response = await _create_http_response(url="https://httpbin.org/image/jpeg")
 
     content = b""

@@ -13,7 +13,7 @@ except (ImportError, SyntaxError):
 
 from azure.core._pipeline_client import PipelineClient
 
-def test_rest_stream_context_manager():
+def test_stream_context_manager():
     transport = mock.MagicMock()
     client = PipelineClient(base_url="", transport=transport)
     with _StreamContextManager(client=client, request=HttpRequest(method="GET", url="https://httpbin.org/get")) as r:
@@ -34,3 +34,6 @@ def test_rest_stream_context_manager():
     internal_response_mock_calls = response._internal_response.internal_response.mock_calls
     assert len(internal_response_mock_calls) == 1
     assert internal_response_mock_calls[0][0] == '__exit__'  # assert exit was called
+
+def test_stream_context_manager_error():
+    

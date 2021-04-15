@@ -13,7 +13,7 @@ from azure.core.rest._rest_py3 import _AsyncStreamContextManager
 from azure.core._pipeline_client_async import AsyncPipelineClient
 
 @pytest.mark.asyncio
-async def test_rest_stream_context_manager():
+async def test_stream_context_manager():
     async def monkey_patch_magic_mock():
         pass
     transport = AsyncMock()

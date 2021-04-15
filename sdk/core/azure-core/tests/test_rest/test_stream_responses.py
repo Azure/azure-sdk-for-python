@@ -45,7 +45,7 @@ def _assert_stream_state(response, open):
     else:
         assert all(checks)
 
-def test_rest_iter_raw():
+def test_iter_raw():
     response = _create_http_response(url="https://httpbin.org/image/jpeg")
     raw = b""
     for chunk in response.iter_raw():
@@ -64,12 +64,12 @@ def _iter_raw_with_chunk_size_helper(chunk_size):
     _assert_stream_state(response, open=False)
     assert raw == _read_jpeg_file()
 
-def test_rest_iter_raw_with_chunk_size():
+def test_iter_raw_with_chunk_size():
     _iter_raw_with_chunk_size_helper(chunk_size=5)
     _iter_raw_with_chunk_size_helper(chunk_size=13)
     _iter_raw_with_chunk_size_helper(chunk_size=20)
 
-def test_rest_iter_raw_num_bytes_downloaded():
+def test_iter_raw_num_bytes_downloaded():
     response = _create_http_response(url="https://httpbin.org/image/jpeg")
 
     num_downloaded = response.num_bytes_downloaded
@@ -87,7 +87,7 @@ def _iter_bytes_with_chunk_size_helper(chunk_size):
     _assert_stream_state(response, open=False)
     assert raw == _read_jpeg_file()
 
-def test_rest_iter_bytes():
+def test_iter_bytes():
     response = _create_http_response(url="https://httpbin.org/image/jpeg")
     raw = b""
     for chunk in response.iter_bytes():
@@ -96,12 +96,12 @@ def test_rest_iter_bytes():
     _assert_stream_state(response, open=False)
     assert raw == _read_jpeg_file()
 
-def test_rest_iter_bytes_with_chunk_size():
+def test_iter_bytes_with_chunk_size():
     _iter_bytes_with_chunk_size_helper(chunk_size=5)
     _iter_bytes_with_chunk_size_helper(chunk_size=13)
     _iter_bytes_with_chunk_size_helper(chunk_size=20)
 
-def test_rest_iter_text():
+def test_iter_text():
     response = _create_http_response(url="https://httpbin.org/stream/10")
     raw = ""
     for chunk in response.iter_text():
@@ -121,12 +121,12 @@ def _iter_text_with_chunk_size_helper(chunk_size):
     _assert_stream_state(response, open=False)
     assert len([r for r in raw.split("\n") if r]) == 10
 
-def test_rest_iter_text_with_chunk_size():
+def test_iter_text_with_chunk_size():
     _iter_text_with_chunk_size_helper(chunk_size=5)
     _iter_text_with_chunk_size_helper(chunk_size=13)
     _iter_text_with_chunk_size_helper(chunk_size=20)
 
-def test_rest_iter_lines():
+def test_iter_lines():
     response = _create_http_response(url="https://httpbin.org/stream/10")
     lines = []
     for chunk in response.iter_lines():
@@ -140,7 +140,7 @@ def test_rest_iter_lines():
         assert line[-1] == "\n"
 
 
-def test_rest_sync_streaming_response():
+def test_sync_streaming_response():
     response = _create_http_response(url="https://httpbin.org/image/jpeg")
 
     assert response.status_code == 200
@@ -154,7 +154,7 @@ def test_rest_sync_streaming_response():
     assert response.content == file_bytes
     assert response.is_closed
 
-def test_rest_cannot_read_after_stream_consumed():
+def test_cannot_read_after_stream_consumed():
     response = _create_http_response(url="https://httpbin.org/image/jpeg")
 
     content = b""

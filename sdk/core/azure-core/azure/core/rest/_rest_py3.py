@@ -539,12 +539,6 @@ class _HttpResponseBase:
             type(self).__name__, self.status_code, self.reason, content_type_str
         )
 
-    def stream_download(self, pipeline=None):
-        """Generator for streaming request body data.
-
-        :rtype: iterator[bytes]
-        """
-
     def _validate_streaming_access(self) -> None:
         if self.is_closed:
             raise TypeError("Can not iterate over stream, it is closed.")
