@@ -100,28 +100,22 @@ class TableServicePropertiesTest(AzureTestCase, TableTestCase):
         assert ret1.days ==  ret2.days
 
     # --Test cases for errors ---------------------------------------
-    # @pytest.mark.skip("Cosmos Tables does not yet support service properties")
     @CosmosPreparer()
     def test_too_many_cors_rules(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
-        # Arrange
         tsc = TableServiceClient(self.account_url(tables_cosmos_account_name, "cosmos"), tables_primary_cosmos_account_key)
         cors = []
         for i in range(0, 6):
             cors.append(CorsRule(['www.xyz.com'], ['GET']))
 
-        # Assert
         with pytest.raises(HttpResponseError):
             tsc.set_service_properties(None, None, None, cors)
         self.sleep(SLEEP_DELAY)
 
-    # @pytest.mark.skip("Cosmos Tables does not yet support service properties")
     @CosmosPreparer()
     def test_retention_too_long(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
-        # Arrange
         tsc = TableServiceClient(self.account_url(tables_cosmos_account_name, "cosmos"), tables_primary_cosmos_account_key)
         minute_metrics = Metrics(enabled=True, include_apis=True, retention_policy=RetentionPolicy(enabled=True, days=366))
 
-        # Assert
         with pytest.raises(HttpResponseError):
             tsc.set_service_properties(None, None, minute_metrics)
         self.sleep(SLEEP_DELAY)
