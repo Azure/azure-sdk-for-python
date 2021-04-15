@@ -277,39 +277,6 @@ class StorageTableTest(AzureTestCase, TableTestCase):
         if self.is_live:
             sleep(SLEEP_DELAY)
 
-    @pytest.mark.skipif(sys.version_info < (3, 0), reason="requires Python3")
-    @CosmosPreparer()
-    def test_locale(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
-        # Arrange
-        ts = TableServiceClient(self.account_url(tables_cosmos_account_name, "cosmos"), tables_primary_cosmos_account_key)
-        table = (self._get_table_reference())
-        init_locale = locale.getlocale()
-        if os.name == "nt":
-            culture = "Spanish_Spain"
-        elif os.name == 'posix':
-            culture = 'es_ES.UTF-8'
-        else:
-            culture = 'es_ES.utf8'
-
-        locale.setlocale(locale.LC_ALL, culture)
-        e = None
-
-        # Act
-        ts.create_table(table)
-
-        resp = ts.list_tables()
-
-        e = sys.exc_info()[0]
-
-        # Assert
-        assert e is None
-
-        ts.delete_table(table)
-        locale.setlocale(locale.LC_ALL, init_locale[0] or 'en_US')
-
-        if self.is_live:
-            sleep(SLEEP_DELAY)
-
 
 class TestTableUnitTest(TableTestCase):
     tables_cosmos_account_name = "fake_storage_account"
