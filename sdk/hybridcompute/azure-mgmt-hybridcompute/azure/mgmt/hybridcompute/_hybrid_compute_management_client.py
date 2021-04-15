@@ -16,11 +16,14 @@ from ._configuration import HybridComputeManagementClientConfiguration
 from .operations import MachinesOperations
 from .operations import MachineExtensionsOperations
 from .operations import Operations
+from .operations import PrivateLinkScopesOperations
+from .operations import PrivateLinkResourcesOperations
+from .operations import PrivateEndpointConnectionsOperations
 from . import models
 
 
 class HybridComputeManagementClient(SDKClient):
-    """The Hybrid Compute Management Client.
+    """HybridComputeManagementClient
 
     :ivar config: Configuration for client.
     :vartype config: HybridComputeManagementClientConfiguration
@@ -31,13 +34,17 @@ class HybridComputeManagementClient(SDKClient):
     :vartype machine_extensions: azure.mgmt.hybridcompute.operations.MachineExtensionsOperations
     :ivar operations: Operations operations
     :vartype operations: azure.mgmt.hybridcompute.operations.Operations
+    :ivar private_link_scopes: PrivateLinkScopes operations
+    :vartype private_link_scopes: azure.mgmt.hybridcompute.operations.PrivateLinkScopesOperations
+    :ivar private_link_resources: PrivateLinkResources operations
+    :vartype private_link_resources: azure.mgmt.hybridcompute.operations.PrivateLinkResourcesOperations
+    :ivar private_endpoint_connections: PrivateEndpointConnections operations
+    :vartype private_endpoint_connections: azure.mgmt.hybridcompute.operations.PrivateEndpointConnectionsOperations
 
     :param credentials: Credentials needed for the client to connect to Azure.
     :type credentials: :mod:`A msrestazure Credentials
      object<msrestazure.azure_active_directory>`
-    :param subscription_id: Subscription credentials which uniquely identify
-     Microsoft Azure subscription. The subscription ID forms part of the URI
-     for every service call.
+    :param subscription_id: The ID of the target subscription.
     :type subscription_id: str
     :param str base_url: Service URL
     """
@@ -49,7 +56,7 @@ class HybridComputeManagementClient(SDKClient):
         super(HybridComputeManagementClient, self).__init__(self.config.credentials, self.config)
 
         client_models = {k: v for k, v in models.__dict__.items() if isinstance(v, type)}
-        self.api_version = '2020-08-02'
+        self.api_version = '2021-03-25-preview'
         self._serialize = Serializer(client_models)
         self._deserialize = Deserializer(client_models)
 
@@ -58,4 +65,10 @@ class HybridComputeManagementClient(SDKClient):
         self.machine_extensions = MachineExtensionsOperations(
             self._client, self.config, self._serialize, self._deserialize)
         self.operations = Operations(
+            self._client, self.config, self._serialize, self._deserialize)
+        self.private_link_scopes = PrivateLinkScopesOperations(
+            self._client, self.config, self._serialize, self._deserialize)
+        self.private_link_resources = PrivateLinkResourcesOperations(
+            self._client, self.config, self._serialize, self._deserialize)
+        self.private_endpoint_connections = PrivateEndpointConnectionsOperations(
             self._client, self.config, self._serialize, self._deserialize)

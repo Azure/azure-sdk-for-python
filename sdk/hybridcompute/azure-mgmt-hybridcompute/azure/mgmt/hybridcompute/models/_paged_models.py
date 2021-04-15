@@ -51,3 +51,42 @@ class OperationValuePaged(Paged):
     def __init__(self, *args, **kwargs):
 
         super(OperationValuePaged, self).__init__(*args, **kwargs)
+class HybridComputePrivateLinkScopePaged(Paged):
+    """
+    A paging container for iterating over a list of :class:`HybridComputePrivateLinkScope <azure.mgmt.hybridcompute.models.HybridComputePrivateLinkScope>` object
+    """
+
+    _attribute_map = {
+        'next_link': {'key': 'nextLink', 'type': 'str'},
+        'current_page': {'key': 'value', 'type': '[HybridComputePrivateLinkScope]'}
+    }
+
+    def __init__(self, *args, **kwargs):
+
+        super(HybridComputePrivateLinkScopePaged, self).__init__(*args, **kwargs)
+class PrivateLinkResourcePaged(Paged):
+    """
+    A paging container for iterating over a list of :class:`PrivateLinkResource <azure.mgmt.hybridcompute.models.PrivateLinkResource>` object
+    """
+
+    _attribute_map = {
+        'next_link': {'key': 'nextLink', 'type': 'str'},
+        'current_page': {'key': 'value', 'type': '[PrivateLinkResource]'}
+    }
+
+    def __init__(self, *args, **kwargs):
+
+        super(PrivateLinkResourcePaged, self).__init__(*args, **kwargs)
+class PrivateEndpointConnectionPaged(Paged):
+    """
+    A paging container for iterating over a list of :class:`PrivateEndpointConnection <azure.mgmt.hybridcompute.models.PrivateEndpointConnection>` object
+    """
+
+    _attribute_map = {
+        'next_link': {'key': 'nextLink', 'type': 'str'},
+        'current_page': {'key': 'value', 'type': '[PrivateEndpointConnection]'}
+    }
+
+    def __init__(self, *args, **kwargs):
+
+        super(PrivateEndpointConnectionPaged, self).__init__(*args, **kwargs)

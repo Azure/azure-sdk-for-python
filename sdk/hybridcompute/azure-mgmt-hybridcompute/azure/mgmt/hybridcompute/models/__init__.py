@@ -11,95 +11,160 @@
 
 try:
     from ._models_py3 import AzureEntityResource
+    from ._models_py3 import ConnectionDetail
+    from ._models_py3 import ErrorAdditionalInfo
     from ._models_py3 import ErrorDetail
     from ._models_py3 import ErrorResponse, ErrorResponseException
+    from ._models_py3 import HybridComputePrivateLinkScope
+    from ._models_py3 import HybridComputePrivateLinkScopeProperties
     from ._models_py3 import Identity
     from ._models_py3 import LocationData
     from ._models_py3 import Machine
     from ._models_py3 import MachineExtension
     from ._models_py3 import MachineExtensionInstanceView
     from ._models_py3 import MachineExtensionInstanceViewStatus
-    from ._models_py3 import MachineExtensionPropertiesInstanceView
-    from ._models_py3 import MachineExtensionPropertiesModel
+    from ._models_py3 import MachineExtensionProperties
     from ._models_py3 import MachineExtensionUpdate
-    from ._models_py3 import MachineExtensionUpdatePropertiesModel
-    from ._models_py3 import MachineIdentity
+    from ._models_py3 import MachineExtensionUpdateProperties
     from ._models_py3 import MachineProperties
-    from ._models_py3 import MachinePropertiesOsProfile
     from ._models_py3 import MachineUpdate
     from ._models_py3 import MachineUpdateProperties
     from ._models_py3 import OperationValue
-    from ._models_py3 import OperationValueDisplayModel
+    from ._models_py3 import OperationValueDisplay
     from ._models_py3 import OSProfile
+    from ._models_py3 import Plan
+    from ._models_py3 import PrivateEndpointConnection
+    from ._models_py3 import PrivateEndpointConnectionProperties
+    from ._models_py3 import PrivateEndpointProperty
+    from ._models_py3 import PrivateLinkResource
+    from ._models_py3 import PrivateLinkResourceProperties
+    from ._models_py3 import PrivateLinkScopesResource
+    from ._models_py3 import PrivateLinkScopeValidationDetails
+    from ._models_py3 import PrivateLinkServiceConnectionStateProperty
     from ._models_py3 import ProxyResource
     from ._models_py3 import Resource
+    from ._models_py3 import ResourceModelWithAllowedPropertySet
+    from ._models_py3 import ResourceModelWithAllowedPropertySetIdentity
+    from ._models_py3 import ResourceModelWithAllowedPropertySetPlan
+    from ._models_py3 import ResourceModelWithAllowedPropertySetSku
+    from ._models_py3 import ResourceUpdate
+    from ._models_py3 import Sku
+    from ._models_py3 import SystemData
+    from ._models_py3 import TagsResource
     from ._models_py3 import TrackedResource
-    from ._models_py3 import UpdateResource
 except (SyntaxError, ImportError):
     from ._models import AzureEntityResource
+    from ._models import ConnectionDetail
+    from ._models import ErrorAdditionalInfo
     from ._models import ErrorDetail
     from ._models import ErrorResponse, ErrorResponseException
+    from ._models import HybridComputePrivateLinkScope
+    from ._models import HybridComputePrivateLinkScopeProperties
     from ._models import Identity
     from ._models import LocationData
     from ._models import Machine
     from ._models import MachineExtension
     from ._models import MachineExtensionInstanceView
     from ._models import MachineExtensionInstanceViewStatus
-    from ._models import MachineExtensionPropertiesInstanceView
-    from ._models import MachineExtensionPropertiesModel
+    from ._models import MachineExtensionProperties
     from ._models import MachineExtensionUpdate
-    from ._models import MachineExtensionUpdatePropertiesModel
-    from ._models import MachineIdentity
+    from ._models import MachineExtensionUpdateProperties
     from ._models import MachineProperties
-    from ._models import MachinePropertiesOsProfile
     from ._models import MachineUpdate
     from ._models import MachineUpdateProperties
     from ._models import OperationValue
-    from ._models import OperationValueDisplayModel
+    from ._models import OperationValueDisplay
     from ._models import OSProfile
+    from ._models import Plan
+    from ._models import PrivateEndpointConnection
+    from ._models import PrivateEndpointConnectionProperties
+    from ._models import PrivateEndpointProperty
+    from ._models import PrivateLinkResource
+    from ._models import PrivateLinkResourceProperties
+    from ._models import PrivateLinkScopesResource
+    from ._models import PrivateLinkScopeValidationDetails
+    from ._models import PrivateLinkServiceConnectionStateProperty
     from ._models import ProxyResource
     from ._models import Resource
+    from ._models import ResourceModelWithAllowedPropertySet
+    from ._models import ResourceModelWithAllowedPropertySetIdentity
+    from ._models import ResourceModelWithAllowedPropertySetPlan
+    from ._models import ResourceModelWithAllowedPropertySetSku
+    from ._models import ResourceUpdate
+    from ._models import Sku
+    from ._models import SystemData
+    from ._models import TagsResource
     from ._models import TrackedResource
-    from ._models import UpdateResource
+from ._paged_models import HybridComputePrivateLinkScopePaged
 from ._paged_models import MachineExtensionPaged
 from ._paged_models import MachinePaged
 from ._paged_models import OperationValuePaged
+from ._paged_models import PrivateEndpointConnectionPaged
+from ._paged_models import PrivateLinkResourcePaged
 from ._hybrid_compute_management_client_enums import (
     StatusTypes,
     StatusLevelTypes,
+    ResourceIdentityType,
+    CreatedByType,
+    SkuTier,
+    PublicNetworkAccessType,
     InstanceViewTypes,
 )
 
 __all__ = [
     'AzureEntityResource',
+    'ConnectionDetail',
+    'ErrorAdditionalInfo',
     'ErrorDetail',
     'ErrorResponse', 'ErrorResponseException',
+    'HybridComputePrivateLinkScope',
+    'HybridComputePrivateLinkScopeProperties',
     'Identity',
     'LocationData',
     'Machine',
     'MachineExtension',
     'MachineExtensionInstanceView',
     'MachineExtensionInstanceViewStatus',
-    'MachineExtensionPropertiesInstanceView',
-    'MachineExtensionPropertiesModel',
+    'MachineExtensionProperties',
     'MachineExtensionUpdate',
-    'MachineExtensionUpdatePropertiesModel',
-    'MachineIdentity',
+    'MachineExtensionUpdateProperties',
     'MachineProperties',
-    'MachinePropertiesOsProfile',
     'MachineUpdate',
     'MachineUpdateProperties',
     'OperationValue',
-    'OperationValueDisplayModel',
+    'OperationValueDisplay',
     'OSProfile',
+    'Plan',
+    'PrivateEndpointConnection',
+    'PrivateEndpointConnectionProperties',
+    'PrivateEndpointProperty',
+    'PrivateLinkResource',
+    'PrivateLinkResourceProperties',
+    'PrivateLinkScopesResource',
+    'PrivateLinkScopeValidationDetails',
+    'PrivateLinkServiceConnectionStateProperty',
     'ProxyResource',
     'Resource',
+    'ResourceModelWithAllowedPropertySet',
+    'ResourceModelWithAllowedPropertySetIdentity',
+    'ResourceModelWithAllowedPropertySetPlan',
+    'ResourceModelWithAllowedPropertySetSku',
+    'ResourceUpdate',
+    'Sku',
+    'SystemData',
+    'TagsResource',
     'TrackedResource',
-    'UpdateResource',
     'MachinePaged',
     'MachineExtensionPaged',
     'OperationValuePaged',
+    'HybridComputePrivateLinkScopePaged',
+    'PrivateLinkResourcePaged',
+    'PrivateEndpointConnectionPaged',
     'StatusTypes',
     'StatusLevelTypes',
+    'ResourceIdentityType',
+    'CreatedByType',
+    'SkuTier',
+    'PublicNetworkAccessType',
     'InstanceViewTypes',
 ]
