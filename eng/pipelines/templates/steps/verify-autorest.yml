@@ -58,30 +58,8 @@ steps:
 
     - template: /eng/common/pipelines/templates/steps/create-pull-request.yml
       displayName: Create PR for ${{ artifact.name}}
-      condition: and(failed(), ne(variables['Build.Reason'],'PullRequest'), eq(variables['System.TeamProject'], 'internal'))
+      condition: and(ne(variables['Build.Reason'],'PullRequest'), eq(variables['System.TeamProject'], 'internal'))
       parameters:
         CommitMsg: "Regenerated code from nightly builds"
         PRTitle: "Automated autorest generation"
         PRBranchName: 'autorest-${{ ServiceDirectory }}'
-
-    # https://github.com/Azure/azure-sdk-for-python/blob/master/eng/common/pipelines/templates/steps/create-pull-request.yml
-
-    # If the above fails and it's an internal run, create a PR
-
-
-    # - task: Powershell@2
-    #   inputs:
-    #     filePath: $(Build.SourcesDirectory)/eng/common/scripts/git-branch-push.ps1
-    #     arguments: >
-    #       -ArtifactPath ${{parameters.ArtifactPath}}
-    #       -APIViewUri $(azuresdk-apiview-uri)
-    #       -APIKey $(azuresdk-apiview-apikey)
-    #       -APILabel "Auto Review - $(Build.SourceVersion)"
-    #       -PackageName ${{artifact.name}}
-    #       -SourceBranch $(Build.SourceBranchName)
-    #       -DefaultBranch $(DefaultBranch)
-    #       -ConfigFileDir '${{parameters.ConfigFileDir}}'
-    #     pwsh: true
-    #     workingDirectory: $(Pipeline.Workspace)
-    #   displayName: Create API Review for ${{ artifact.name}}
-    #   condition: and(failed(), ne(variables['Build.Reason'],'PullRequest'), eq(variables['System.TeamProject'], 'internal'))
