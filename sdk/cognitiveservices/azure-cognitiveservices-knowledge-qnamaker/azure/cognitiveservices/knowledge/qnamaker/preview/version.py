@@ -9,8 +9,5 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from ._runtime_operations import RuntimeOperations
+VERSION = "v5.0-preview.2"
 
-__all__ = [
-    'RuntimeOperations',
-]
