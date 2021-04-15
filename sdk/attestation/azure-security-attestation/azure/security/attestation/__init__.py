@@ -8,8 +8,8 @@
 
 from ._client import AttestationClient
 from ._administration_client import AttestationAdministrationClient
-from ._models import AttestationResult, AttestationSigner, AttestationToken, SigningKey
-from ._generated.models import AttestationType
+from ._models import AttestationResponse, AttestationSigner, AttestationToken, SigningKey
+from ._generated.models import AttestationType, StoredAttestationPolicy, PolicyResult, AttestationResult
 from ._configuration import TokenValidationOptions
 from ._version import VERSION
 
@@ -20,8 +20,11 @@ __all__ = [
     'AttestationType',
     'AttestationToken',
     'AttestationSigner',
+    'AttestationResponse',
     'AttestationResult',
     'TokenValidationOptions',
+    'StoredAttestationPolicy',
+    'PolicyResult',
     'SigningKey',
 ]
 

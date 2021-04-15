@@ -20,9 +20,9 @@ if TYPE_CHECKING:
     from azure.core.pipeline.transport import HttpRequest, HttpResponse
 
 from ._generated import AzureAttestationRestClient
-from ._generated.models import AttestationType, PolicyResult, StoredAttestationPolicy
+from ._generated.models import AttestationType, PolicyResult
 from ._configuration import AttestationClientConfiguration
-from ._models import AttestationSigner, AttestationToken, AttestationResult, StoredAttestationPolicy
+from ._models import AttestationSigner, AttestationToken, AttestationResponse, StoredAttestationPolicy, SigningKey
 from ._common import Base64Url
 import cryptography
 import cryptography.x509
@@ -68,26 +68,25 @@ class AttestationAdministrationClient(object):
         policyResult = self._client.policy.get(attestation_type)
         token = AttestationToken[PolicyResult](token=policyResult.token)
         token_body = token.get_body()
-        stored_policy = AttestationToken[StoredAttestationPolicy](token=token_body['x-ms-policy'])
+        stored_policy = AttestationToken[StoredAttestationPolicy](token=token_body.policy)
 
-        actual_policy = Base64Url.decode(stored_policy.get_body()['AttestationPolicy']).decode()
+        actual_policy = stored_policy.get_body().attestation_policy #type: bytes
 
         if self._config.token_validation_options.validate_token:
             token.validate_token(self._config.token_validation_options, self._get_signers())
 
-        return AttestationResult[str](token, actual_policy)
+        return AttestationResponse[str](token, actual_policy.decode('utf-8'))
 
     @distributed_trace
     def set_policy(self, attestation_type, attestation_policy, signing_key=None): 
-        #type(AttestationType, str, SigningKey) -> AttestationResult[PolicyResult]:
-        base64_policy = Base64Url.encode(attestation_policy.encode('utf-8'))
-        policy_token = AttestationToken[StoredAttestationPolicy](body={"AttestationPolicy": base64_policy})
+        #type:(AttestationType, str, SigningKey) -> AttestationResponse[PolicyResult]
+        policy_token = AttestationToken[StoredAttestationPolicy](body=StoredAttestationPolicy(attestation_policy = attestation_policy.encode('ascii')))
         policyResult = self._client.policy.set(attestation_type=attestation_type, new_attestation_policy=policy_token.serialize())
         token = AttestationToken[PolicyResult](token=policyResult.token)
         if self._config.token_validation_options.validate_token:
             token.validate_token(self._config.token_validation_options, self._get_signers())
 
-        return AttestationResult[PolicyResult](token, token.get_body())
+        return AttestationResponse[PolicyResult](token, token.get_body())
 
 
     @distributed_trace

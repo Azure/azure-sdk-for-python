@@ -18,13 +18,15 @@
 
 from typing import ByteString
 import unittest
+from cryptography.hazmat.primitives import hashes
 from devtools_testutils import AzureTestCase, PowerShellPreparer
 import functools
 import cryptography
 import cryptography.x509
+from cryptography.hazmat.primitives import serialization
 import base64
 import pytest
-from azure.security.attestation import AttestationClient, AttestationAdministrationClient, AttestationType, TokenValidationOptions
+from azure.security.attestation import AttestationClient, AttestationAdministrationClient, AttestationType, TokenValidationOptions, StoredAttestationPolicy, AttestationToken, SigningKey
 
 
 AttestationPreparer = functools.partial(
@@ -153,13 +155,45 @@ class AzureAttestationTest(AzureTestCase):
         print('Token: ', policy_response.token)
 
     @AttestationPreparer()
-    def test_aad_set_policy_sgx(self, attestation_aad_url):
+    def test_aad_set_policy_sgx_unsecured(self, attestation_aad_url):
         attestation_policy = "version=1.0; authorizationrules{=> permit();}; issuancerules{};"
 
         attest_client = self.create_admin_client(attestation_aad_url)
         policy_set_response = attest_client.set_policy(AttestationType.SGX_ENCLAVE, attestation_policy)
         policy_get_response = attest_client.get_policy(AttestationType.SGX_ENCLAVE)
         assert policy_get_response.value == attestation_policy
+
+        expected_policy = AttestationToken(body=StoredAttestationPolicy(attestation_policy=str(attestation_policy).encode('ascii')))
+        hasher = hashes.Hash(hashes.SHA256())
+        hasher.update(expected_policy.serialize().encode('utf-8'))
+        expected_hash = hasher.finalize()
+
+        assert expected_hash == policy_set_response.value.policy_token_hash
+
+
+    @AttestationPreparer()
+    @pytest.mark.live_test_only
+    def test_aad_set_policy_sgx_secured(self, attestation_aad_url, attestation_policy_signing_key0, attestation_policy_signing_certificate0):
+        attestation_policy = "version=1.0; authorizationrules{=> permit();}; issuancerules{};"
+
+        decoded_cert = base64.b64decode(attestation_policy_signing_certificate0)
+
+        signing_certificate = cryptography.x509.load_der_x509_certificate(decoded_cert)
+        key = serialization.load_der_private_key(base64.b64decode(attestation_policy_signing_key0), password=None)
+
+        attest_client = self.create_admin_client(attestation_aad_url)
+        policy_set_response = attest_client.set_policy(AttestationType.SGX_ENCLAVE,
+            attestation_policy,
+            signing_key=SigningKey(key, signing_certificate))
+        policy_get_response = attest_client.get_policy(AttestationType.SGX_ENCLAVE)
+        assert policy_get_response.value == attestation_policy
+
+        expected_policy = AttestationToken(body=StoredAttestationPolicy(attestation_policy=str(attestation_policy).encode('ascii')))
+        hasher = hashes.Hash(hashes.SHA256())
+        hasher.update(expected_policy.serialize().encode('utf-8'))
+        expected_hash = hasher.finalize()
+
+        assert expected_hash == policy_set_response.value.policy_token_hash
 
 #     @AttestationPreparer()
 #     def test_aad_get_policy_management_signers(self, attestation_aad_url):
@@ -262,19 +296,20 @@ class AzureAttestationTest(AzureTestCase):
         return 'https://sharedxxx.xxx.attest.azure.net'
    
 class Base64Url:
+    """Equivalent to base64.urlsafe_b64encode, but strips padding from the encoded and decoded strings.
+    """
     @staticmethod
     def encode(unencoded):
-        base64val= base64.b64encode(unencoded)
-        strip_trailing=base64val.split("=")[0] # pick the string before the trailing =
-        converted = strip_trailing.replace("+", "-").replace("/", "_")
-        return converted
+        # type(bytes)->str
+        base64val = base64.urlsafe_b64encode(unencoded)
+        strip_trailing=base64val.split(b'=')[0] # pick the string before the trailing =
+        return strip_trailing.decode('utf-8')
 
     @staticmethod
     def decode(encoded):
-        converted = encoded.replace("-", "+").replace("_", "/")
-        padding_added = converted + "=" * ((len(converted)* -1) % 4)
-        return base64.b64decode(padding_added)
-
+        # type(str)->bytes
+        padding_added = encoded + "=" * ((len(encoded)* -1) % 4)
+        return base64.urlsafe_b64decode(padding_added.encode('utf-8'))
 
 
 #------------------------------------------------------------------------------

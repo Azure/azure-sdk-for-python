@@ -35,4 +35,10 @@ payload-flattening-threshold: 2
 package-name: azure-attestation
 credential-scopes: 'https://attest.azure.net/.default'
 
+#directive:
+#  from: swagger-document
+#  where: "$.definitions.StoredAttestationPolicy"
+#  transform: >
+#    $["x-ms-client-name"] = "GeneratedStoredAttestationPolicy"
+
 ```
