@@ -56,10 +56,11 @@ steps:
         arguments: >-
           --service_directory="${{ parameters.ServiceDirectory }}"
 
-    - template: /eng/common/pipelines/templates/steps/create-pull-request.yml
-      displayName: Create PR for ${{ artifact.name}}
-      condition: and(ne(variables['Build.Reason'],'PullRequest'), eq(variables['System.TeamProject'], 'internal'))
-      parameters:
-        CommitMsg: "Regenerated code from nightly builds"
-        PRTitle: "Automated autorest generation"
-        PRBranchName: 'autorest-${{ ServiceDirectory }}'
+    - ${{ if and(ne(variables['Build.Reason'], 'PullRequest'), eq(variables['System.TeamProject'], 'internal')) }}:
+      - template: /eng/common/pipelines/templates/steps/create-pull-request.yml
+    #   # displayName: Create PR for ${{ ServiceDirectory }}
+    #   condition: and(ne(variables['Build.Reason'],'PullRequest'), eq(variables['System.TeamProject'], 'internal'))
+        parameters:
+          CommitMsg: "Regenerated code from nightly builds"
+          PRTitle: "Automated autorest generation"
+          PRBranchName: 'autorest-${{ ServiceDirectory }}'
