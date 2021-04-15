@@ -12,7 +12,7 @@ parameters:
     default: 'https://github.com/Azure/autorest.python.git'
   - name: VerifyAutorest
     type: boolean
-    default: true
+    default: false
 
 steps:
   - ${{if ne(parameters.VerifyAutorest, 'true')}}:

@@ -77,8 +77,6 @@ jobs:
     condition: and(succeededOrFailed(), ne(variables['Skip.Analyze'], 'true'))
     variables:
     - template: ../variables/globals.yml
-    parameters:
-      VerifyAutorest: ${{ parameters.VerifyAutorest }}
 
     dependsOn:
       - 'Build'
