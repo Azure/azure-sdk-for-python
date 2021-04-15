@@ -3,10 +3,9 @@
 # Licensed under the MIT License. See LICENSE.txt in the project root for
 # license information.
 # -------------------------------------------------------------------------
-from typing import TYPE_CHECKING
 from collections import namedtuple
+from typing import TYPE_CHECKING
 import six
-
 
 if TYPE_CHECKING:
     from typing import Any, NamedTuple
