@@ -1,5 +1,94 @@
 interactions:
 - request:
+    body: '{"source": {"registryUri": "registry.hub.docker.com", "sourceImage": "library/hello-world"},
+      "targetTags": ["to_be_deleted"], "mode": "Force"}'
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '142'
+      Content-Type:
+      - application/json
+      User-Agent:
+      - azsdk-python-azure-mgmt-containerregistry/8.0.0b1 Python/3.9.0rc1 (Windows-10-10.0.19041-SP0)
+    method: POST
+    uri: https://management.azure.com/subscriptions/2cd617ea-1866-46b1-90e3-fffb087ebf9b/resourceGroups/fake_rg/providers/Microsoft.ContainerRegistry/registries/seankane/importImage?api-version=2019-05-01
+  response:
+    body:
+      string: 'null'
+    headers:
+      cache-control:
+      - no-cache
+      content-length:
+      - '4'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Tue, 13 Apr 2021 15:58:28 GMT
+      expires:
+      - '-1'
+      location:
+      - https://management.azure.com/subscriptions/2cd617ea-1866-46b1-90e3-fffb087ebf9b/providers/Microsoft.ContainerRegistry/locations/WESTUS2/operationResults/registries-15a1cf12-9c71-11eb-9c7f-002b67128e4c?api-version=2019-05-01
+      pragma:
+      - no-cache
+      server:
+      - Microsoft-HTTPAPI/2.0
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      x-content-type-options:
+      - nosniff
+      x-ms-ratelimit-remaining-subscription-writes:
+      - '1198'
+    status:
+      code: 202
+      message: Accepted
+- request:
+    body: null
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - azsdk-python-azure-mgmt-containerregistry/8.0.0b1 Python/3.9.0rc1 (Windows-10-10.0.19041-SP0)
+    method: GET
+    uri: https://management.azure.com/subscriptions/2cd617ea-1866-46b1-90e3-fffb087ebf9b/providers/Microsoft.ContainerRegistry/locations/WESTUS2/operationResults/registries-15a1cf12-9c71-11eb-9c7f-002b67128e4c?api-version=2019-05-01
+  response:
+    body:
+      string: '{"status": "Succeeded"}'
+    headers:
+      cache-control:
+      - no-cache
+      content-length:
+      - '22'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Tue, 13 Apr 2021 15:58:40 GMT
+      expires:
+      - '-1'
+      pragma:
+      - no-cache
+      server:
+      - Microsoft-HTTPAPI/2.0
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      transfer-encoding:
+      - chunked
+      vary:
+      - Accept-Encoding
+      x-content-type-options:
+      - nosniff
+    status:
+      code: 200
+      message: OK
+- request:
     body: null
     headers:
       Accept:
@@ -14,9 +103,10 @@ interactions:
     uri: https://fake_url.azurecr.io/acr/v1/_catalog
   response:
     body:
-      string: '{"errors": [{"code": "UNAUTHORIZED", "message": "authentication required,
-        visit https://aka.ms/acr/authorization for more information.", "detail": [{"Type":
-        "registry", "Name": "catalog", "Action": "*"}]}]}'
+      string: '{"errors":[{"code":"UNAUTHORIZED","message":"authentication required,
+        visit https://aka.ms/acr/authorization for more information.","detail":[{"Type":"registry","Name":"catalog","Action":"*"}]}]}
+
+        '
     headers:
       access-control-expose-headers:
       - Docker-Content-Digest
@@ -30,7 +120,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Wed, 07 Apr 2021 12:51:02 GMT
+      - Tue, 13 Apr 2021 15:58:42 GMT
       docker-distribution-api-version:
       - registry/2.0
       server:
@@ -38,7 +128,8 @@ interactions:
       strict-transport-security:
       - max-age=31536000; includeSubDomains
       - max-age=31536000; includeSubDomains
-      www-authenticate: Bearer realm="https://fake_url.azurecr.io/oauth2/token",service="fake_url.azurecr.io",scope="fake_scope",error="invalid_token"
+      www-authenticate:
+      - Bearer realm="https://seankane.azurecr.io/oauth2/token",service="seankane.azurecr.io",scope="registry:catalog:*"
       x-content-type-options:
       - nosniff
     status:
@@ -70,7 +161,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Wed, 07 Apr 2021 12:51:03 GMT
+      - Tue, 13 Apr 2021 15:58:43 GMT
       server:
       - openresty
       strict-transport-security:
@@ -78,7 +169,7 @@ interactions:
       transfer-encoding:
       - chunked
       x-ms-ratelimit-remaining-calls-per-second:
-      - '333.133333'
+      - '166.6'
     status:
       code: 200
       message: OK
@@ -108,7 +199,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Wed, 07 Apr 2021 12:51:04 GMT
+      - Tue, 13 Apr 2021 15:58:43 GMT
       server:
       - openresty
       strict-transport-security:
@@ -116,7 +207,7 @@ interactions:
       transfer-encoding:
       - chunked
       x-ms-ratelimit-remaining-calls-per-second:
-      - '333.116667'
+      - '166.2'
     status:
       code: 200
       message: OK
@@ -135,11 +226,9 @@ interactions:
     uri: https://fake_url.azurecr.io/acr/v1/_catalog
   response:
     body:
-      string: '{"repositories": ["alpine/git", "debian", "hello-world", "library/hello-world",
-        "repo160e197b", "repo2e8319c5", "repo308e19dd", "repo6ce51658", "repo9b321760",
-        "repo_set160e197b", "repo_set_manib7cc1bf8", "repob7cc1bf8", "repod2be1c42",
-        "repoeb7113db", "reposet160e197b", "reposetmanib7cc1bf8", "to_be_deleted",
-        "ubuntu"]}'
+      string: '{"repositories": ["library/alpine", "library/busybox", "library/hello-world",
+        "repo2e8319c5", "repo308e19dd", "repo9b321760", "repod2be1c42", "repoeb7113db",
+        "to_be_deleted"]}'
     headers:
       access-control-expose-headers:
       - Docker-Content-Digest
@@ -149,11 +238,11 @@ interactions:
       connection:
       - keep-alive
       content-length:
-      - '305'
+      - '167'
       content-type:
       - application/json; charset=utf-8
       date:
-      - Wed, 07 Apr 2021 12:51:04 GMT
+      - Tue, 13 Apr 2021 15:58:43 GMT
       docker-distribution-api-version:
       - registry/2.0
       server:
@@ -183,9 +272,10 @@ interactions:
     uri: https://fake_url.azurecr.io/acr/v1/to_be_deleted
   response:
     body:
-      string: '{"errors": [{"code": "UNAUTHORIZED", "message": "authentication required,
-        visit https://aka.ms/acr/authorization for more information.", "detail": [{"Type":
-        "repository", "Name": "to_be_deleted", "Action": "delete"}]}]}'
+      string: '{"errors":[{"code":"UNAUTHORIZED","message":"authentication required,
+        visit https://aka.ms/acr/authorization for more information.","detail":[{"Type":"repository","Name":"to_be_deleted","Action":"delete"}]}]}
+
+        '
     headers:
       access-control-expose-headers:
       - Docker-Content-Digest
@@ -199,7 +289,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Wed, 07 Apr 2021 12:51:05 GMT
+      - Tue, 13 Apr 2021 15:58:44 GMT
       docker-distribution-api-version:
       - registry/2.0
       server:
@@ -207,7 +297,8 @@ interactions:
       strict-transport-security:
       - max-age=31536000; includeSubDomains
       - max-age=31536000; includeSubDomains
-      www-authenticate: Bearer realm="https://fake_url.azurecr.io/oauth2/token",service="fake_url.azurecr.io",scope="fake_scope",error="invalid_token"
+      www-authenticate:
+      - Bearer realm="https://seankane.azurecr.io/oauth2/token",service="seankane.azurecr.io",scope="repository:to_be_deleted:delete"
       x-content-type-options:
       - nosniff
     status:
@@ -239,7 +330,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Wed, 07 Apr 2021 12:51:07 GMT
+      - Tue, 13 Apr 2021 15:58:45 GMT
       server:
       - openresty
       strict-transport-security:
@@ -247,7 +338,7 @@ interactions:
       transfer-encoding:
       - chunked
       x-ms-ratelimit-remaining-calls-per-second:
-      - '333.016667'
+      - '166.2'
     status:
       code: 200
       message: OK
@@ -277,7 +368,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Wed, 07 Apr 2021 12:51:07 GMT
+      - Tue, 13 Apr 2021 15:58:46 GMT
       server:
       - openresty
       strict-transport-security:
@@ -285,7 +376,7 @@ interactions:
       transfer-encoding:
       - chunked
       x-ms-ratelimit-remaining-calls-per-second:
-      - '332.983333'
+      - '166.116667'
     status:
       code: 200
       message: OK
@@ -330,7 +421,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Wed, 07 Apr 2021 12:51:09 GMT
+      - Tue, 13 Apr 2021 15:58:47 GMT
       docker-distribution-api-version:
       - registry/2.0
       server:
@@ -341,7 +432,7 @@ interactions:
       x-content-type-options:
       - nosniff
       x-ms-ratelimit-remaining-calls-per-second:
-      - '32.000000'
+      - '8.000000'
     status:
       code: 202
       message: Accepted
@@ -360,9 +451,10 @@ interactions:
     uri: https://fake_url.azurecr.io/acr/v1/_catalog
   response:
     body:
-      string: '{"errors": [{"code": "UNAUTHORIZED", "message": "authentication required,
-        visit https://aka.ms/acr/authorization for more information.", "detail": [{"Type":
-        "registry", "Name": "catalog", "Action": "*"}]}]}'
+      string: '{"errors":[{"code":"UNAUTHORIZED","message":"authentication required,
+        visit https://aka.ms/acr/authorization for more information.","detail":[{"Type":"registry","Name":"catalog","Action":"*"}]}]}
+
+        '
     headers:
       access-control-expose-headers:
       - Docker-Content-Digest
@@ -376,7 +468,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Wed, 07 Apr 2021 12:51:15 GMT
+      - Tue, 13 Apr 2021 15:58:47 GMT
       docker-distribution-api-version:
       - registry/2.0
       server:
@@ -384,7 +476,8 @@ interactions:
       strict-transport-security:
       - max-age=31536000; includeSubDomains
       - max-age=31536000; includeSubDomains
-      www-authenticate: Bearer realm="https://fake_url.azurecr.io/oauth2/token",service="fake_url.azurecr.io",scope="fake_scope",error="invalid_token"
+      www-authenticate:
+      - Bearer realm="https://seankane.azurecr.io/oauth2/token",service="seankane.azurecr.io",scope="registry:catalog:*"
       x-content-type-options:
       - nosniff
     status:
@@ -416,7 +509,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Wed, 07 Apr 2021 12:51:15 GMT
+      - Tue, 13 Apr 2021 15:58:48 GMT
       server:
       - openresty
       strict-transport-security:
@@ -424,7 +517,7 @@ interactions:
       transfer-encoding:
       - chunked
       x-ms-ratelimit-remaining-calls-per-second:
-      - '333.1'
+      - '166.183333'
     status:
       code: 200
       message: OK
@@ -454,7 +547,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Wed, 07 Apr 2021 12:51:15 GMT
+      - Tue, 13 Apr 2021 15:58:48 GMT
       server:
       - openresty
       strict-transport-security:
@@ -462,7 +555,7 @@ interactions:
       transfer-encoding:
       - chunked
       x-ms-ratelimit-remaining-calls-per-second:
-      - '333.083333'
+      - '165.6'
     status:
       code: 200
       message: OK
@@ -481,10 +574,8 @@ interactions:
     uri: https://fake_url.azurecr.io/acr/v1/_catalog
   response:
     body:
-      string: '{"repositories": ["alpine/git", "debian", "hello-world", "library/hello-world",
-        "repo160e197b", "repo2e8319c5", "repo308e19dd", "repo6ce51658", "repo9b321760",
-        "repo_set160e197b", "repo_set_manib7cc1bf8", "repob7cc1bf8", "repod2be1c42",
-        "repoeb7113db", "reposet160e197b", "reposetmanib7cc1bf8", "ubuntu"]}'
+      string: '{"repositories": ["library/alpine", "library/busybox", "library/hello-world",
+        "repo2e8319c5", "repo308e19dd", "repo9b321760", "repod2be1c42", "repoeb7113db"]}'
     headers:
       access-control-expose-headers:
       - Docker-Content-Digest
@@ -494,11 +585,11 @@ interactions:
       connection:
       - keep-alive
       content-length:
-      - '289'
+      - '151'
       content-type:
       - application/json; charset=utf-8
       date:
-      - Wed, 07 Apr 2021 12:51:15 GMT
+      - Tue, 13 Apr 2021 15:58:48 GMT
       docker-distribution-api-version:
       - registry/2.0
       server:

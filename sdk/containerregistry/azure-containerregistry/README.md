@@ -35,7 +35,7 @@ az acr create --name MyContainerRegistry --resource-group MyResourceGroup --loca
 
 ### Authenticate the client
 
-The [Azure Identity library][identity] provides easy Azure Active Directory support for authentication.
+The [Azure Identity library][identity] provides easy Azure Active Directory support for authentication. The `DefaultAzureCredential` assumes the `AZURE_CLIENT_ID`, `AZURE_TENANT_ID`, and `AZURE_CLIENT_SECRET` environment variables are set, for more information refer to the [Azure Identity environment variables section](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/identity/azure-identity#environment-variables)
 
 ```python
 # Create a ContainerRegistryClient that will authenticate through Active Directory

@@ -1,5 +1,30 @@
 # Release History
 
+## 7.0.0 (2021-04-15)
+
+**Features**
+
+  - Model MachineUpdateProperties has a new parameter private_link_scope_resource_id
+  - Model MachineUpdateProperties has a new parameter parent_cluster_resource_id
+  - Model MachineProperties has a new parameter private_link_scope_resource_id
+  - Model MachineProperties has a new parameter parent_cluster_resource_id
+  - Model MachineProperties has a new parameter detected_properties
+  - Added operation group PrivateLinkResourcesOperations
+  - Added operation group PrivateEndpointConnectionsOperations
+  - Added operation group PrivateLinkScopesOperations
+
+**Breaking changes**
+
+  - Operation MachinesOperations.delete has a new signature
+  - Operation MachinesOperations.get has a new signature
+  - Model ErrorDetail has a new signature
+  - Model OperationValue has a new signature
+  - Model Machine has a new signature
+  - Model MachineExtension has a new signature
+  - Model MachineExtensionInstanceViewStatus has a new signature
+  - Model MachineUpdate has a new signature
+  - Model MachineExtensionUpdate has a new signature
+
 ## 7.0.0b1 (2020-12-07)
 
 This is beta preview version.

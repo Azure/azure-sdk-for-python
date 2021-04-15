@@ -104,7 +104,7 @@ class TestSearchClient(object):
         )
 
     @mock.patch(
-        "azure.search.documents._generated.v2020_06_preview.operations._documents_operations.DocumentsOperations.count"
+        "azure.search.documents._generated.operations._documents_operations.DocumentsOperations.count"
     )
     def test_get_document_count(self, mock_count):
         client = SearchClient("endpoint", "index name", CREDENTIAL)
@@ -116,7 +116,7 @@ class TestSearchClient(object):
 
 
     @mock.patch(
-        "azure.search.documents._generated.v2020_06_preview.operations._documents_operations.DocumentsOperations.get"
+        "azure.search.documents._generated.operations._documents_operations.DocumentsOperations.get"
     )
     def test_get_document(self, mock_get):
         client = SearchClient("endpoint", "index name", CREDENTIAL)
@@ -139,7 +139,7 @@ class TestSearchClient(object):
         assert mock_get.call_args[1]["selected_fields"] == "foo"
 
     @mock.patch(
-        "azure.search.documents._generated.v2020_06_preview.operations._documents_operations.DocumentsOperations.search_post"
+        "azure.search.documents._generated.operations._documents_operations.DocumentsOperations.search_post"
     )
     def test_search_query_argument(self, mock_search_post):
         client = SearchClient("endpoint", "index name", CREDENTIAL)
@@ -158,7 +158,7 @@ class TestSearchClient(object):
         )
 
     @mock.patch(
-        "azure.search.documents._generated.v2020_06_preview.operations._documents_operations.DocumentsOperations.suggest_post"
+        "azure.search.documents._generated.operations._documents_operations.DocumentsOperations.suggest_post"
     )
     def test_suggest_query_argument(self, mock_suggest_post):
         client = SearchClient("endpoint", "index name", CREDENTIAL)
@@ -182,7 +182,7 @@ class TestSearchClient(object):
             )
 
     @mock.patch(
-        "azure.search.documents._generated.v2020_06_preview.operations._documents_operations.DocumentsOperations.autocomplete_post"
+        "azure.search.documents._generated.operations._documents_operations.DocumentsOperations.autocomplete_post"
     )
     def test_autocomplete_query_argument(self, mock_autocomplete_post):
         client = SearchClient("endpoint", "index name", CREDENTIAL)
@@ -198,7 +198,7 @@ class TestSearchClient(object):
         )
 
     @mock.patch(
-        "azure.search.documents._generated.v2020_06.operations._documents_operations.DocumentsOperations.count"
+        "azure.search.documents._generated.operations._documents_operations.DocumentsOperations.count"
     )
     def test_get_document_count_v2020_06_30(self, mock_count):
         client = SearchClient("endpoint", "index name", CREDENTIAL, api_version=ApiVersion.V2020_06_30)
@@ -209,7 +209,7 @@ class TestSearchClient(object):
         assert mock_count.call_args[1]["headers"] == client._headers
 
     @mock.patch(
-        "azure.search.documents._generated.v2020_06.operations._documents_operations.DocumentsOperations.get"
+        "azure.search.documents._generated.operations._documents_operations.DocumentsOperations.get"
     )
     def test_get_document_v2020_06_30(self, mock_get):
         client = SearchClient("endpoint", "index name", CREDENTIAL, api_version=ApiVersion.V2020_06_30)
@@ -232,7 +232,7 @@ class TestSearchClient(object):
         assert mock_get.call_args[1]["selected_fields"] == "foo"
 
     @mock.patch(
-        "azure.search.documents._generated.v2020_06.operations._documents_operations.DocumentsOperations.search_post"
+        "azure.search.documents._generated.operations._documents_operations.DocumentsOperations.search_post"
     )
     def test_search_query_argument_v2020_06_30(self, mock_search_post):
         client = SearchClient("endpoint", "index name", CREDENTIAL, api_version=ApiVersion.V2020_06_30)
@@ -251,7 +251,7 @@ class TestSearchClient(object):
         )
 
     @mock.patch(
-        "azure.search.documents._generated.v2020_06.operations._documents_operations.DocumentsOperations.suggest_post"
+        "azure.search.documents._generated.operations._documents_operations.DocumentsOperations.suggest_post"
     )
     def test_suggest_query_argument_v2020_06_30(self, mock_suggest_post):
         client = SearchClient("endpoint", "index name", CREDENTIAL, api_version=ApiVersion.V2020_06_30)
@@ -267,7 +267,7 @@ class TestSearchClient(object):
         )
 
     @mock.patch(
-        "azure.search.documents._generated.v2020_06.operations._documents_operations.DocumentsOperations.autocomplete_post"
+        "azure.search.documents._generated.operations._documents_operations.DocumentsOperations.autocomplete_post"
     )
     def test_autocomplete_query_argument_v2020_06_30(self, mock_autocomplete_post):
         client = SearchClient("endpoint", "index name", CREDENTIAL, api_version=ApiVersion.V2020_06_30)
@@ -318,7 +318,7 @@ class TestSearchClient(object):
             assert mock_index_documents.call_args[1]["extra"] == "foo"
 
     @mock.patch(
-        "azure.search.documents._generated.v2020_06_preview.operations._documents_operations.DocumentsOperations.index"
+        "azure.search.documents._generated.operations._documents_operations.DocumentsOperations.index"
     )
     def test_index_documents(self, mock_index):
         client = SearchClient("endpoint", "index name", CREDENTIAL)
