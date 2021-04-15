@@ -31,6 +31,8 @@
 /sdk/applicationinsights/azure-applicationinsights/                  @divya-jay @geneh @alongafni
 /sdk/loganalytics/azure-loganalytics/                                @divya-jay @geneh @alongafni
 
+/sdk/attestation/azure-security-attestation                          @azure/ @larryosterman @Azure/azure-sdk-write-attestation
+
 # PRLabel: %Batch
 /sdk/batch/                                                          @cRui861 @paterasMSFT @dpwatrous @gingi @zfengms
 /sdk/cognitiveservices/azure-cognitiveservices-vision-customvision/  @areddish
