@@ -116,6 +116,7 @@ class KeyClient(KeyVaultClientBase):
 
         :param str name: The name for the new key.
         :keyword int size: Key size in bits, for example 2048, 3072, or 4096.
+        :keyword int public_exponent: The RSA public exponent to use. Applies only to RSA keys created in a Managed HSM.
         :keyword bool hardware_protected: Whether the key should be created in a hardware security module.
          Defaults to ``False``.
         :keyword key_operations: Allowed key operations
