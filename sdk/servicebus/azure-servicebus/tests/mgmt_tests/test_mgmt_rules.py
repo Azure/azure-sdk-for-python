@@ -48,7 +48,7 @@ class ServiceBusAdministrationClientRuleTests(AzureMgmtTestCase):
             "@param": datetime(2020, 7, 5, 11, 12, 13),
         })
 
-        sql_filter = SqlRuleFilter("Priority = @param1 and Level = @param2", parameters={
+        sql_filter = SqlRuleFilter("Priority = @param1 AND Level = @param2", parameters={
             "@param1": "str1",
             "@param2": 1
         })
@@ -76,7 +76,7 @@ class ServiceBusAdministrationClientRuleTests(AzureMgmtTestCase):
             mgmt_service.create_rule(topic_name, subscription_name, rule_name_2, filter=sql_filter)
             rule_desc = mgmt_service.get_rule(topic_name, subscription_name, rule_name_2)
             assert type(rule_desc.filter) == SqlRuleFilter
-            assert rule_desc.filter.sql_expression == "Priority = @param1 and Level = @param2"
+            assert rule_desc.filter.sql_expression == "Priority = @param1 AND Level = @param2"
             assert rule_desc.filter.parameters["@param1"] == "str1"
             assert rule_desc.filter.parameters["@param2"] == 1
 
