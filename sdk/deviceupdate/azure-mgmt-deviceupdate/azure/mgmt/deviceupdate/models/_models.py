@@ -111,6 +111,10 @@ class Account(TrackedResource):
     :type tags: dict[str, str]
     :param location: Required. The geo-location where the resource lives.
     :type location: str
+    :ivar system_data: Metadata pertaining to creation and last modification of the resource.
+    :vartype system_data: ~device_update.models.SystemData
+    :param identity: The type of identity used for the resource.
+    :type identity: ~device_update.models.Identity
     :ivar provisioning_state: Provisioning state. Possible values include: "Succeeded", "Deleted",
      "Failed", "Canceled", "Accepted", "Creating".
     :vartype provisioning_state: str or ~device_update.models.ProvisioningState
@@ -123,6 +127,7 @@ class Account(TrackedResource):
         'name': {'readonly': True},
         'type': {'readonly': True},
         'location': {'required': True},
+        'system_data': {'readonly': True},
         'provisioning_state': {'readonly': True},
         'host_name': {'readonly': True},
     }
@@ -133,6 +138,8 @@ class Account(TrackedResource):
         'type': {'key': 'type', 'type': 'str'},
         'tags': {'key': 'tags', 'type': '{str}'},
         'location': {'key': 'location', 'type': 'str'},
+        'system_data': {'key': 'systemData', 'type': 'SystemData'},
+        'identity': {'key': 'identity', 'type': 'Identity'},
         'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
         'host_name': {'key': 'properties.hostName', 'type': 'str'},
     }
@@ -142,6 +149,8 @@ class Account(TrackedResource):
         **kwargs
     ):
         super(Account, self).__init__(**kwargs)
+        self.system_data = None
+        self.identity = kwargs.get('identity', None)
         self.provisioning_state = None
         self.host_name = None
 
@@ -195,12 +204,15 @@ class AccountUpdate(TagUpdate):
     :param tags: A set of tags. List of key value pairs that describe the resource. This will
      overwrite the existing tags.
     :type tags: dict[str, str]
+    :param identity: The type of identity used for the resource.
+    :type identity: ~device_update.models.Identity
     :param location: The geo-location where the resource lives.
     :type location: str
     """
 
     _attribute_map = {
         'tags': {'key': 'tags', 'type': '{str}'},
+        'identity': {'key': 'identity', 'type': 'Identity'},
         'location': {'key': 'location', 'type': 'str'},
     }
 
@@ -209,7 +221,59 @@ class AccountUpdate(TagUpdate):
         **kwargs
     ):
         super(AccountUpdate, self).__init__(**kwargs)
+        self.identity = kwargs.get('identity', None)
         self.location = kwargs.get('location', None)
+
+
+class CheckNameAvailabilityRequest(msrest.serialization.Model):
+    """The check availability request body.
+
+    :param name: The name of the resource for which availability needs to be checked.
+    :type name: str
+    :param type: The resource type.
+    :type type: str
+    """
+
+    _attribute_map = {
+        'name': {'key': 'name', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(CheckNameAvailabilityRequest, self).__init__(**kwargs)
+        self.name = kwargs.get('name', None)
+        self.type = kwargs.get('type', None)
+
+
+class CheckNameAvailabilityResponse(msrest.serialization.Model):
+    """The check availability result.
+
+    :param name_available: Indicates if the resource name is available.
+    :type name_available: bool
+    :param reason: The reason why the given name is not available. Possible values include:
+     "Invalid", "AlreadyExists".
+    :type reason: str or ~device_update.models.CheckNameAvailabilityReason
+    :param message: Detailed reason why the given name is available.
+    :type message: str
+    """
+
+    _attribute_map = {
+        'name_available': {'key': 'nameAvailable', 'type': 'bool'},
+        'reason': {'key': 'reason', 'type': 'str'},
+        'message': {'key': 'message', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(CheckNameAvailabilityResponse, self).__init__(**kwargs)
+        self.name_available = kwargs.get('name_available', None)
+        self.reason = kwargs.get('reason', None)
+        self.message = kwargs.get('message', None)
 
 
 class ErrorAdditionalInfo(msrest.serialization.Model):
@@ -242,33 +306,8 @@ class ErrorAdditionalInfo(msrest.serialization.Model):
         self.info = None
 
 
-class ErrorDefinition(msrest.serialization.Model):
-    """Error response indicates that the service is not able to process the incoming request.
-
-    Variables are only populated by the server, and will be ignored when sending a request.
-
-    :ivar error: Error details.
-    :vartype error: ~device_update.models.ErrorResponse
-    """
-
-    _validation = {
-        'error': {'readonly': True},
-    }
-
-    _attribute_map = {
-        'error': {'key': 'error', 'type': 'ErrorResponse'},
-    }
-
-    def __init__(
-        self,
-        **kwargs
-    ):
-        super(ErrorDefinition, self).__init__(**kwargs)
-        self.error = None
-
-
-class ErrorResponse(msrest.serialization.Model):
-    """Common error response for all Azure Resource Manager APIs to return error details for failed operations. (This also follows the OData error response format.).
+class ErrorDetail(msrest.serialization.Model):
+    """The error detail.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
@@ -279,7 +318,7 @@ class ErrorResponse(msrest.serialization.Model):
     :ivar target: The error target.
     :vartype target: str
     :ivar details: The error details.
-    :vartype details: list[~device_update.models.ErrorResponse]
+    :vartype details: list[~device_update.models.ErrorDetail]
     :ivar additional_info: The error additional info.
     :vartype additional_info: list[~device_update.models.ErrorAdditionalInfo]
     """
@@ -296,7 +335,7 @@ class ErrorResponse(msrest.serialization.Model):
         'code': {'key': 'code', 'type': 'str'},
         'message': {'key': 'message', 'type': 'str'},
         'target': {'key': 'target', 'type': 'str'},
-        'details': {'key': 'details', 'type': '[ErrorResponse]'},
+        'details': {'key': 'details', 'type': '[ErrorDetail]'},
         'additional_info': {'key': 'additionalInfo', 'type': '[ErrorAdditionalInfo]'},
     }
 
@@ -304,12 +343,65 @@ class ErrorResponse(msrest.serialization.Model):
         self,
         **kwargs
     ):
-        super(ErrorResponse, self).__init__(**kwargs)
+        super(ErrorDetail, self).__init__(**kwargs)
         self.code = None
         self.message = None
         self.target = None
         self.details = None
         self.additional_info = None
+
+
+class ErrorResponse(msrest.serialization.Model):
+    """Common error response for all Azure Resource Manager APIs to return error details for failed operations. (This also follows the OData error response format.).
+
+    :param error: The error object.
+    :type error: ~device_update.models.ErrorDetail
+    """
+
+    _attribute_map = {
+        'error': {'key': 'error', 'type': 'ErrorDetail'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(ErrorResponse, self).__init__(**kwargs)
+        self.error = kwargs.get('error', None)
+
+
+class Identity(msrest.serialization.Model):
+    """Identity for the resource.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar principal_id: The principal ID of resource identity.
+    :vartype principal_id: str
+    :ivar tenant_id: The tenant ID of resource.
+    :vartype tenant_id: str
+    :param type: The identity type. Possible values include: "SystemAssigned", "None".
+    :type type: str or ~device_update.models.ResourceIdentityType
+    """
+
+    _validation = {
+        'principal_id': {'readonly': True},
+        'tenant_id': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'principal_id': {'key': 'principalId', 'type': 'str'},
+        'tenant_id': {'key': 'tenantId', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(Identity, self).__init__(**kwargs)
+        self.principal_id = None
+        self.tenant_id = None
+        self.type = kwargs.get('type', None)
 
 
 class Instance(TrackedResource):
@@ -331,6 +423,8 @@ class Instance(TrackedResource):
     :type tags: dict[str, str]
     :param location: Required. The geo-location where the resource lives.
     :type location: str
+    :ivar system_data: Metadata pertaining to creation and last modification of the resource.
+    :vartype system_data: ~device_update.models.SystemData
     :ivar provisioning_state: Provisioning state. Possible values include: "Succeeded", "Deleted",
      "Failed", "Canceled", "Accepted", "Creating".
     :vartype provisioning_state: str or ~device_update.models.ProvisioningState
@@ -345,6 +439,7 @@ class Instance(TrackedResource):
         'name': {'readonly': True},
         'type': {'readonly': True},
         'location': {'required': True},
+        'system_data': {'readonly': True},
         'provisioning_state': {'readonly': True},
         'account_name': {'readonly': True},
     }
@@ -355,6 +450,7 @@ class Instance(TrackedResource):
         'type': {'key': 'type', 'type': 'str'},
         'tags': {'key': 'tags', 'type': '{str}'},
         'location': {'key': 'location', 'type': 'str'},
+        'system_data': {'key': 'systemData', 'type': 'SystemData'},
         'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
         'account_name': {'key': 'properties.accountName', 'type': 'str'},
         'iot_hubs': {'key': 'properties.iotHubs', 'type': '[IotHubSettings]'},
@@ -365,6 +461,7 @@ class Instance(TrackedResource):
         **kwargs
     ):
         super(Instance, self).__init__(**kwargs)
+        self.system_data = None
         self.provisioning_state = None
         self.account_name = None
         self.iot_hubs = kwargs.get('iot_hubs', None)
@@ -434,8 +531,8 @@ class Operation(msrest.serialization.Model):
     :ivar name: The name of the operation, as per Resource-Based Access Control (RBAC). Examples:
      "Microsoft.Compute/virtualMachines/write", "Microsoft.Compute/virtualMachines/capture/action".
     :vartype name: str
-    :ivar is_data_action: Whether the operation applies to data-plane. This is "true" for data-
-     plane operations and "false" for ARM/control-plane operations.
+    :ivar is_data_action: Whether the operation applies to data-plane. This is "true" for
+     data-plane operations and "false" for ARM/control-plane operations.
     :vartype is_data_action: bool
     :param display: Localized display information for this particular operation.
     :type display: ~device_update.models.OperationDisplay
@@ -547,3 +644,44 @@ class OperationListResult(msrest.serialization.Model):
         super(OperationListResult, self).__init__(**kwargs)
         self.value = None
         self.next_link = None
+
+
+class SystemData(msrest.serialization.Model):
+    """Metadata pertaining to creation and last modification of the resource.
+
+    :param created_by: The identity that created the resource.
+    :type created_by: str
+    :param created_by_type: The type of identity that created the resource. Possible values
+     include: "User", "Application", "ManagedIdentity", "Key".
+    :type created_by_type: str or ~device_update.models.CreatedByType
+    :param created_at: The timestamp of resource creation (UTC).
+    :type created_at: ~datetime.datetime
+    :param last_modified_by: The identity that last modified the resource.
+    :type last_modified_by: str
+    :param last_modified_by_type: The type of identity that last modified the resource. Possible
+     values include: "User", "Application", "ManagedIdentity", "Key".
+    :type last_modified_by_type: str or ~device_update.models.CreatedByType
+    :param last_modified_at: The timestamp of resource last modification (UTC).
+    :type last_modified_at: ~datetime.datetime
+    """
+
+    _attribute_map = {
+        'created_by': {'key': 'createdBy', 'type': 'str'},
+        'created_by_type': {'key': 'createdByType', 'type': 'str'},
+        'created_at': {'key': 'createdAt', 'type': 'iso-8601'},
+        'last_modified_by': {'key': 'lastModifiedBy', 'type': 'str'},
+        'last_modified_by_type': {'key': 'lastModifiedByType', 'type': 'str'},
+        'last_modified_at': {'key': 'lastModifiedAt', 'type': 'iso-8601'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(SystemData, self).__init__(**kwargs)
+        self.created_by = kwargs.get('created_by', None)
+        self.created_by_type = kwargs.get('created_by_type', None)
+        self.created_at = kwargs.get('created_at', None)
+        self.last_modified_by = kwargs.get('last_modified_by', None)
+        self.last_modified_by_type = kwargs.get('last_modified_by_type', None)
+        self.last_modified_at = kwargs.get('last_modified_at', None)

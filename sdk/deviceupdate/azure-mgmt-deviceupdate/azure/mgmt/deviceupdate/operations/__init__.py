@@ -6,11 +6,13 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
+from ._device_update_operations import DeviceUpdateOperationsMixin
 from ._accounts_operations import AccountsOperations
 from ._instances_operations import InstancesOperations
 from ._operations import Operations
 
 __all__ = [
+    'DeviceUpdateOperationsMixin',
     'AccountsOperations',
     'InstancesOperations',
     'Operations',

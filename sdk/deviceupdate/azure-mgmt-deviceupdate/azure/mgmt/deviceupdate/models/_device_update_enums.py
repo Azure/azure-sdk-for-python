@@ -32,6 +32,22 @@ class ActionType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
 
     INTERNAL = "Internal"
 
+class CheckNameAvailabilityReason(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+    """The reason why the given name is not available.
+    """
+
+    INVALID = "Invalid"
+    ALREADY_EXISTS = "AlreadyExists"
+
+class CreatedByType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+    """The type of identity that created the resource.
+    """
+
+    USER = "User"
+    APPLICATION = "Application"
+    MANAGED_IDENTITY = "ManagedIdentity"
+    KEY = "Key"
+
 class Origin(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     """The intended executor of the operation; as in Resource Based Access Control (RBAC) and audit
     logs UX. Default value is "user,system"
@@ -51,3 +67,10 @@ class ProvisioningState(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     CANCELED = "Canceled"
     ACCEPTED = "Accepted"
     CREATING = "Creating"
+
+class ResourceIdentityType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+    """The identity type.
+    """
+
+    SYSTEM_ASSIGNED = "SystemAssigned"
+    NONE = "None"
