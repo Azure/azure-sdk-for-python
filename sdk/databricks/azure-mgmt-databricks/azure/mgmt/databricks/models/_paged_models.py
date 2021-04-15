@@ -25,3 +25,29 @@ class WorkspacePaged(Paged):
     def __init__(self, *args, **kwargs):
 
         super(WorkspacePaged, self).__init__(*args, **kwargs)
+class VirtualNetworkPeeringPaged(Paged):
+    """
+    A paging container for iterating over a list of :class:`VirtualNetworkPeering <azure.mgmt.databricks.models.VirtualNetworkPeering>` object
+    """
+
+    _attribute_map = {
+        'next_link': {'key': 'nextLink', 'type': 'str'},
+        'current_page': {'key': 'value', 'type': '[VirtualNetworkPeering]'}
+    }
+
+    def __init__(self, *args, **kwargs):
+
+        super(VirtualNetworkPeeringPaged, self).__init__(*args, **kwargs)
+class OperationPaged(Paged):
+    """
+    A paging container for iterating over a list of :class:`Operation <azure.mgmt.databricks.models.Operation>` object
+    """
+
+    _attribute_map = {
+        'next_link': {'key': 'nextLink', 'type': 'str'},
+        'current_page': {'key': 'value', 'type': '[Operation]'}
+    }
+
+    def __init__(self, *args, **kwargs):
+
+        super(OperationPaged, self).__init__(*args, **kwargs)
