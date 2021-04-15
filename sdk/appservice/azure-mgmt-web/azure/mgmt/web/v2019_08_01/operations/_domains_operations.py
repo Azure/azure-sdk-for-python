@@ -823,10 +823,10 @@ class DomainsOperations(object):
     def create_or_update_ownership_identifier(
             self, resource_group_name, domain_name, name, kind=None, ownership_id=None, custom_headers=None, raw=False, **operation_config):
         """Creates an ownership identifier for a domain or updates identifier
-        details for an existing identifer.
+        details for an existing identifier.
 
         Description for Creates an ownership identifier for a domain or updates
-        identifier details for an existing identifer.
+        identifier details for an existing identifier.
 
         :param resource_group_name: Name of the resource group to which the
          resource belongs.
@@ -959,10 +959,10 @@ class DomainsOperations(object):
     def update_ownership_identifier(
             self, resource_group_name, domain_name, name, kind=None, ownership_id=None, custom_headers=None, raw=False, **operation_config):
         """Creates an ownership identifier for a domain or updates identifier
-        details for an existing identifer.
+        details for an existing identifier.
 
         Description for Creates an ownership identifier for a domain or updates
-        identifier details for an existing identifer.
+        identifier details for an existing identifier.
 
         :param resource_group_name: Name of the resource group to which the
          resource belongs.
