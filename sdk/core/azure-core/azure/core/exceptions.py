@@ -304,6 +304,16 @@ class HttpResponseError(AzureError):
             pass
         return None
 
+    def __str__(self):
+        try:
+            json_body = ", body: {}".format(self.response.json())
+        except ValueError:
+            # failed to deserialize json
+            json_body = ""
+        return "HttpResponseError: {} {}{}".format(
+            self.status_code, self.reason, json_body
+        )
+
 
 class DecodeError(HttpResponseError):
     """Error raised during response deserialization."""

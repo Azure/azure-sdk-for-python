@@ -47,7 +47,7 @@ def test_response():
         content=b"Hello, world!",
         request=HttpRequest("GET", "https://example.org"),
     )
-
+    response.read()
     assert response.status_code == 200
     assert response.reason == "OK"
     assert response.text == "Hello, world!"
@@ -58,7 +58,7 @@ def test_response():
 
 def test_response_content():
     response = _create_http_response(status_code=200, content=b"Hello, world!")
-
+    response.read()
     assert response.status_code == 200
     assert response.reason == "OK"
     assert response.text == "Hello, world!"
@@ -70,7 +70,7 @@ def test_response_text():
         "Content-Length": "13",
         "Content-Type": "text/plain; charset=utf-8",
     })
-
+    response.read()
     assert response.status_code == 200
     assert response.reason == "OK"
     assert response.text == "Hello, world!"
@@ -83,7 +83,7 @@ def test_response_text():
 
 def test_response_html():
     response = _create_http_response(200, content=b"<html><body>Hello, world!</html></body>")
-
+    response.read()
     assert response.status_code == 200
     assert response.reason == "OK"
     assert response.text == "<html><body>Hello, world!</html></body>"
@@ -111,7 +111,6 @@ def test_response_repr():
         content=b"Hello, world!",
         headers=headers
     )
-    response.read()
     assert repr(response) == "<HttpResponse: 200 OK, Content-Type: text-plain>"
 
 def test_response_content_type_encoding():
@@ -125,6 +124,7 @@ def test_response_content_type_encoding():
         content=content,
         headers=headers,
     )
+    response.read()
     assert response.text == u"Latin 1: ÿ"
     assert response.encoding == "latin-1"
 
@@ -138,6 +138,7 @@ def test_response_autodetect_encoding():
         200,
         content=content,
     )
+    response.read()
     assert response.text == u"おはようございます。"
     assert response.encoding is None
 
@@ -154,6 +155,7 @@ def test_response_fallback_to_autodetect():
         content=content,
         headers=headers,
     )
+    response.read()
     assert response.text == u"おはようございます。"
     assert response.encoding is None
 
@@ -170,6 +172,7 @@ def test_response_no_charset_with_ascii_content():
         content=content,
         headers=headers,
     )
+    response.read()
     assert response.status_code == 200
     assert response.encoding is None
     assert response.text == "Hello, world!"
@@ -187,6 +190,7 @@ def test_response_no_charset_with_iso_8859_1_content():
         content=content,
         headers=headers,
     )
+    response.read()
     assert response.text == u"Accented: Österreich"
     assert response.encoding is None
 
@@ -199,6 +203,7 @@ def test_response_set_explicit_encoding():
         content=u"Latin 1: ÿ".encode("latin-1"),
         headers=headers,
     )
+    response.read()
     response.encoding = "latin-1"
     assert response.text == u"Latin 1: ÿ"
     assert response.encoding == "latin-1"
@@ -212,6 +217,7 @@ def test_json():
         content=content,
         headers=headers,
     )
+    response.read()
     assert response.json() == data
 
 # NOTE: This works in async, not sync. Seems requests can't handle this, but aiohttp can
@@ -228,7 +234,7 @@ def test_json():
 
 def test_response_with_unset_request():
     response = _create_http_response(200, content=b"Hello, world!")
-
+    response.read()
     assert response.status_code == 200
     assert response.reason == "OK"
     assert response.text == "Hello, world!"
@@ -252,6 +258,8 @@ def test_cannot_access_unset_request():
 
 def test_emoji():
     response = _create_http_response(200, content=u"👩".encode("utf-16"))
+    response.read()
+    response.read()
     assert response.text == u"👩"
 
 def test_emoji_family_with_skin_tone_modifier():
@@ -259,8 +267,10 @@ def test_emoji_family_with_skin_tone_modifier():
         "Content-Type": "text-plain; charset=utf-16"
     }
     response = _create_http_response(200, headers=headers, content=u"👩🏻‍👩🏽‍👧🏾‍👦🏿 SSN: 859-98-0987".encode("utf-16"))
+    response.read()
     assert response.text == u"👩🏻‍👩🏽‍👧🏾‍👦🏿 SSN: 859-98-0987"
 
 def test_korean_nfc():
     response = _create_http_response(200, content=u"아가".encode("utf-8"))
+    response.read()
     assert response.text == u"아가"

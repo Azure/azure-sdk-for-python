@@ -24,10 +24,6 @@
 #
 # --------------------------------------------------------------------------
 
-__all__ = [
-    "HttpRequest",
-    "HttpResponse",
-]
 from abc import abstractmethod
 import sys
 import six
@@ -68,6 +64,7 @@ class HttpVerbs(str, Enum):
     PATCH = "PATCH"
     DELETE = "DELETE"
     MERGE = "MERGE"
+from azure.core.exceptions import HttpResponseError
 
 ########################### UTILS SECTION #################################
 
@@ -419,6 +416,7 @@ class _HttpResponseBase(object):
     def text(self):
         # type: (...) -> str
         """Returns the response body as a string"""
+        self.content  # access content to make sure we trigger if response not fully read in
         return self._internal_response.text(encoding=self.encoding)
 
     @property
@@ -472,7 +470,8 @@ class _HttpResponseBase(object):
 
         If response is good, does nothing.
         """
-        return self._internal_response.raise_for_status()
+        if self.status_code >= 400:
+            raise HttpResponseError(response=self)
 
     def __repr__(self):
         # type: (...) -> str
@@ -486,9 +485,9 @@ class _HttpResponseBase(object):
     def _validate_streaming_access(self):
         # type: (...) -> None
         if self.is_closed:
-            raise TypeError("Can not iterate over stream, it is closed.")
+            raise ResponseClosedError()
         if self.is_stream_consumed:
-            raise TypeError("Can not iterate over stream, it has been fully consumed")
+            raise StreamConsumedError()
 
 class HttpResponse(_HttpResponseBase):
 
@@ -498,7 +497,7 @@ class HttpResponse(_HttpResponseBase):
         try:
             return self._content
         except AttributeError:
-            raise TypeError("You have not read in the response's bytes yet. Call response.read() first.")
+            raise ResponseNotReadError()
 
     def close(self):
         # type: (...) -> None
@@ -570,3 +569,29 @@ class HttpResponse(_HttpResponseBase):
             yield raw_bytes
 
         self._close_stream()
+
+########################### ERRORS SECTION #################################
+
+class StreamConsumedError(Exception):
+    def __init__(self):
+        message = (
+            "You are attempting to read or stream content that has already been streamed. "
+            "You have likely already consumed this stream, so it can not be accessed anymore."
+        )
+        super(StreamConsumedError, self).__init__(message)
+
+class ResponseClosedError(Exception):
+    def __init__(self):
+        message = (
+            "You can not try to read or stream this response's content, since the "
+            "response has been closed."
+        )
+        super(ResponseClosedError, self).__init__(message)
+
+class ResponseNotReadError(Exception):
+
+    def __init__(self):
+        message = (
+            "You have not read in the response's bytes yet. Call response.read() first."
+        )
+        super(ResponseNotReadError, self).__init__(message)

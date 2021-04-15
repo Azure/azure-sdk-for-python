@@ -6,7 +6,7 @@
 import os
 import json
 import pytest
-from azure.core.rest import AsyncHttpResponse, HttpRequest
+from azure.core.rest import AsyncHttpResponse, HttpRequest, ResponseClosedError, StreamConsumedError
 from azure.core.pipeline.transport import AioHttpTransport
 
 HTTPBIN_JPEG_FILE_NAME = os.path.abspath(os.path.join(os.path.abspath(__file__), "..", "httpbin.jpeg"))
@@ -170,15 +170,15 @@ async def test_cannot_read_after_stream_consumed():
     async for chunk in response.iter_bytes():
         content += chunk
 
-    with pytest.raises(TypeError) as ex:
+    with pytest.raises(ResponseClosedError) as ex:
         await response.read()
-    assert "Can not iterate over stream, it is closed." in str(ex.value)
+    assert "You can not try to read or stream this response's content, since the response has been closed" in str(ex.value)
 
 @pytest.mark.asyncio
 async def test_cannot_read_after_response_closed():
     response = await _create_http_response(url="https://httpbin.org/image/jpeg")
 
     await response.close()
-    with pytest.raises(TypeError) as ex:
+    with pytest.raises(ResponseClosedError) as ex:
         await response.read()
-    assert "Can not iterate over stream, it is closed." in str(ex.value)
+    assert "You can not try to read or stream this response's content, since the response has been closed" in str(ex.value)
