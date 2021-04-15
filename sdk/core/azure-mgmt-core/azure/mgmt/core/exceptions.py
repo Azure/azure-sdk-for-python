@@ -70,8 +70,25 @@ class ARMErrorFormat(ODataV4Format):
             for additional_info in json_object.get("additionalInfo", [])
         ]
 
-    def __str__(self):
-        error_str = super(ARMErrorFormat, self).__str__()
+    def message_details(self):
+        """Return a detailled string of the error.
+        """
+        # () -> str
+        error_str = "Code: {}".format(self.code)
+        error_str += "\nMessage: {}".format(self.message)
+        if self.target:
+            error_str += "\nTarget: {}".format(self.target)
+
+        if self.details:
+            error_str += "\nException Details:"
+            for error_obj in self.details:
+                # Indent for visibility
+                error_str += "\n".join("\t" + s for s in str(error_obj).splitlines())
+
+        if self.innererror:
+            error_str += "\nInner error: {}".format(
+                json.dumps(self.innererror, indent=4)
+            )
 
         if self.additional_info:
             error_str += "\nAdditional Information:"
