@@ -239,7 +239,7 @@ MODEL_CLASS_ATTRIBUTES = {
 
 
 def avoid_timedelta_overflow(td):
-    # type: (Optional[timedelta, str]) -> Optional[timedelta, str]
+    # type: (Optional[Union[timedelta, str]]) -> Optional[Union[timedelta, str]]
     """Service Bus REST API uses "P10675199DT2H48M5.4775807S" as default value for some properties, which are of type
     datetime.timedelta. When they are deserialized, Python round the milliseconds from 4775807 to 477581.
     When we get an entity (for instance, QueueDescription) and update this entity, this default value is
