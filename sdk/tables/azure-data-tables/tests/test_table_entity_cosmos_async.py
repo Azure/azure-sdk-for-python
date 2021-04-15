@@ -1036,24 +1036,21 @@ class StorageTableEntityTest(AzureTestCase, AsyncTableTestCase):
         row_key_with_single_quote = "a''''b"
         await self._set_up(tables_cosmos_account_name, tables_primary_cosmos_account_key)
         try:
-            entity, _ = await self._insert_random_entity(pk=partition_key_with_single_quote,
-                                                         rk=row_key_with_single_quote)
+            entity, _ = await self._insert_random_entity(pk=partition_key_with_single_quote, rk=row_key_with_single_quote)
 
             # Act
             sent_entity = self._create_updated_entity_dict(entity.PartitionKey, entity.RowKey)
             await self.table.upsert_entity(mode=UpdateMode.REPLACE, entity=sent_entity)
 
             # row key here only has 2 quotes
-            received_entity = await self.table.get_entity(
-                entity.PartitionKey, entity.RowKey)
+            received_entity = await self.table.get_entity(entity.PartitionKey, entity.RowKey)
             self._assert_updated_entity(received_entity)
 
             # Act
             sent_entity['newField'] = 'newFieldValue'
             await self.table.update_entity(mode=UpdateMode.REPLACE, entity=sent_entity)
 
-            received_entity = await self.table.get_entity(
-                entity.PartitionKey, entity.RowKey)
+            received_entity = await self.table.get_entity(entity.PartitionKey, entity.RowKey)
             self._assert_updated_entity(received_entity)
             assert received_entity['newField'] ==  'newFieldValue'
 

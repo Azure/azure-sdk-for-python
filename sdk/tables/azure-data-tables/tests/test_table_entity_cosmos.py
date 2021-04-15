@@ -1270,7 +1270,7 @@ class StorageTableEntityTest(AzureTestCase, TableTestCase):
             self._tear_down()
             self.sleep(SLEEP_DELAY)
 
-    @pytest.mark.skip("Returns Bad Request")
+    @pytest.mark.skip("Bad Request: Cosmos cannot handle single quotes in a PK/RK (confirm)")
     @CosmosPreparer()
     def test_operations_on_entity_with_partition_key_having_single_quote(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
 
