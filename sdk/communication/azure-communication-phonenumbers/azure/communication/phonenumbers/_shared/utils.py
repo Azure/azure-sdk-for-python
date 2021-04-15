@@ -14,10 +14,10 @@ from typing import (  # pylint: disable=unused-import
 from datetime import datetime
 from msrest.serialization import TZ_UTC
 from azure.core.credentials import AccessToken
+import calendar
 
 def _convert_datetime_to_utc_int(expires_on):
-    epoch = time.mktime(datetime(1970, 1, 1).timetuple())
-    return epoch-time.mktime(expires_on.timetuple())
+    return int(calendar.timegm(expires_on.utctimetuple()))
 
 def parse_connection_str(conn_str):
     # type: (str) -> Tuple[str, str, str, str]
