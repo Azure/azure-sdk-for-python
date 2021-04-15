@@ -12,7 +12,7 @@ For a rich example of a well formatted readme, please check [here.](https://gith
 This SDK provides the following functionality for the Microsoft Azure Attestation Service
 * Microsoft Azure Attestation Enclave Attestation
 * Attestation Policy Management APIs
-* Attestation Policy Managemetn Certificate Management APIs.
+* Attestation Policy Management Certificate Management APIs.
 
 # Examples
 
