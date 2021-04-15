@@ -487,7 +487,6 @@ class StorageTableTest(AzureTestCase, TableTestCase):
         finally:
             self._delete_table(table=table, ts=tsc)
 
-    @pytest.mark.skip("Test fails on Linux and in Python2. Throws a locale.Error: unsupported locale setting")
     @TablesPreparer()
     def test_locale(self, tables_storage_account_name, tables_primary_storage_account_key):
         # Arrange

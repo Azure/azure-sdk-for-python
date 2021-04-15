@@ -427,7 +427,6 @@ class TableTestAsync(AzureTestCase, AsyncTableTestCase):
         if self.is_live:
             sleep(SLEEP_DELAY)
 
-    @pytest.mark.skip("Test fails on Linux and in Python2. Throws a locale.Error: unsupported locale setting")
     @CosmosPreparer()
     async def test_locale(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
         # Arrange
