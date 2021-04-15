@@ -29,7 +29,7 @@ from typing import Iterator, Optional, Any, Union, TypeVar
 import urllib3 # type: ignore
 from urllib3.util.retry import Retry # type: ignore
 from urllib3.exceptions import (
-    DecodeError, ReadTimeoutError, ProtocolError, LocationParseError
+    DecodeError, ReadTimeoutError, ProtocolError
 )
 import requests
 
@@ -58,11 +58,11 @@ def _read_raw_stream(response, chunk_size=1):
             for chunk in response.raw.stream(chunk_size, decode_content=False):
                 yield chunk
         except ProtocolError as e:
-            raise ChunkedEncodingError(e)
+            raise requests.exceptions.ChunkedEncodingError(e)
         except DecodeError as e:
-            raise ContentDecodingError(e)
+            raise requests.exceptions.ContentDecodingError(e)
         except ReadTimeoutError as e:
-            raise ConnectionError(e)
+            raise requests.exceptions.ConnectionError(e)
     else:
         # Standard file-like object.
         while True:
