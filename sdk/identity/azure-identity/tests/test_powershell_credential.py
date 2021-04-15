@@ -6,6 +6,7 @@ import base64
 import logging
 from platform import python_version
 import subprocess
+import sys
 
 from azure.core.exceptions import ClientAuthenticationError
 from azure.identity import AzurePowerShellCredential, CredentialUnavailableError
@@ -60,18 +61,8 @@ def test_cannot_execute_shell():
             AzurePowerShellCredential().get_token("scope")
 
 
-@pytest.mark.parametrize(
-    "kwargs,expected_powershell,stderr",
-    (
-        ({}, "pwsh", ""),
-        ({}, "pwsh", PREPARING_MODULES),
-        ({"use_legacy_powershell": False}, "pwsh", ""),
-        ({"use_legacy_powershell": False}, "pwsh", PREPARING_MODULES),
-        ({"use_legacy_powershell": True}, "powershell", ""),
-        ({"use_legacy_powershell": True}, "powershell", PREPARING_MODULES),
-    ),
-)
-def test_get_token(kwargs, expected_powershell, stderr):
+@pytest.mark.parametrize("stderr", ("", PREPARING_MODULES))
+def test_get_token(stderr):
     """The credential should parse Azure PowerShell's output to an AccessToken"""
 
     expected_access_token = "access"
@@ -81,7 +72,7 @@ def test_get_token(kwargs, expected_powershell, stderr):
 
     Popen = get_mock_Popen(stdout=stdout, stderr=stderr)
     with mock.patch(POPEN, Popen):
-        token = AzurePowerShellCredential(**kwargs).get_token(scope)
+        token = AzurePowerShellCredential().get_token(scope)
 
     assert token.token == expected_access_token
     assert token.expires_on == expected_expires_on
@@ -89,7 +80,7 @@ def test_get_token(kwargs, expected_powershell, stderr):
     assert Popen.call_count == 1
     args, kwargs = Popen.call_args
     command = args[0][-1]
-    assert command.startswith(expected_powershell + " -NonInteractive -EncodedCommand ")
+    assert command.startswith("pwsh -NonInteractive -EncodedCommand ")
 
     encoded_script = command.split()[-1]
     decoded_script = base64.urlsafe_b64decode(encoded_script).decode("utf-16-le")
@@ -112,6 +103,18 @@ def test_ignores_extraneous_stdout_content():
 
     assert token.token == expected_access_token
     assert token.expires_on == expected_expires_on
+
+
+@pytest.mark.skipif(not sys.platform.startswith("win"), reason="tests Windows-specific behavior")
+def test_legacy_powershell():
+    Popen = get_mock_Popen(stdout="azsdk%***%42")
+    with mock.patch(POPEN, Popen):
+        AzurePowerShellCredential(use_legacy_powershell=True).get_token("scope")
+
+    assert Popen.call_count == 1
+    args, kwargs = Popen.call_args
+    command = args[0][-1]
+    assert command.startswith("powershell")
 
 
 @pytest.mark.parametrize("platform", ("darwin", "linux"))

@@ -4,6 +4,7 @@
 # ------------------------------------
 import base64
 import logging
+import sys
 from unittest.mock import Mock, patch
 
 from azure.core.exceptions import ClientAuthenticationError
@@ -53,18 +54,8 @@ async def test_cannot_execute_shell():
             await AzurePowerShellCredential().get_token("scope")
 
 
-@pytest.mark.parametrize(
-    "kwargs,expected_powershell,stderr",
-    (
-        ({}, "pwsh", ""),
-        ({}, "pwsh", PREPARING_MODULES),
-        ({"use_legacy_powershell": False}, "pwsh", ""),
-        ({"use_legacy_powershell": False}, "pwsh", PREPARING_MODULES),
-        ({"use_legacy_powershell": True}, "powershell", ""),
-        ({"use_legacy_powershell": True}, "powershell", PREPARING_MODULES),
-    ),
-)
-async def test_get_token(kwargs, expected_powershell, stderr):
+@pytest.mark.parametrize("stderr", ("", PREPARING_MODULES))
+async def test_get_token(stderr):
     """The credential should parse Azure PowerShell's output to an AccessToken"""
 
     expected_access_token = "access"
@@ -74,7 +65,7 @@ async def test_get_token(kwargs, expected_powershell, stderr):
 
     mock_exec = get_mock_exec(stdout=stdout, stderr=stderr)
     with patch(CREATE_SUBPROCESS_EXEC, mock_exec):
-        token = await AzurePowerShellCredential(**kwargs).get_token(scope)
+        token = await AzurePowerShellCredential().get_token(scope)
 
     assert token.token == expected_access_token
     assert token.expires_on == expected_expires_on
@@ -82,7 +73,7 @@ async def test_get_token(kwargs, expected_powershell, stderr):
     assert mock_exec.call_count == 1
     args, kwargs = mock_exec.call_args
     command = args[-1]
-    assert command.startswith(expected_powershell + " -NonInteractive -EncodedCommand ")
+    assert command.startswith("pwsh -NonInteractive -EncodedCommand ")
 
     encoded_script = command.split()[-1]
     decoded_script = base64.urlsafe_b64decode(encoded_script).decode("utf-16-le")
@@ -102,6 +93,18 @@ async def test_ignores_extraneous_stdout_content():
 
     assert token.token == expected_access_token
     assert token.expires_on == expected_expires_on
+
+
+@pytest.mark.skipif(not sys.platform.startswith("win"), reason="tests Windows-specific behavior")
+async def test_legacy_powershell():
+    mock_exec = get_mock_exec(stdout="azsdk%***%42")
+    with patch(CREATE_SUBPROCESS_EXEC, mock_exec):
+        await AzurePowerShellCredential(use_legacy_powershell=True).get_token("scope")
+
+    assert mock_exec.call_count == 1
+    args, kwargs = mock_exec.call_args
+    command = args[-1]
+    assert command.startswith("powershell")
 
 
 @pytest.mark.parametrize("platform", ("darwin", "linux"))
@@ -204,6 +207,7 @@ async def test_unexpected_error():
     assert False, "Credential should have included stderr in a DEBUG level message"
 
 
+@pytest.mark.skipif(not sys.platform.startswith("win"), reason="tests Windows-specific behavior")
 async def test_windows_fallback():
     """The credential should fall back to the sync implementation when not using ProactorEventLoop on Windows"""
 
