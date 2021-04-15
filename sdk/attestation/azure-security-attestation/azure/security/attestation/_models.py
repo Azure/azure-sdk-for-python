@@ -330,11 +330,10 @@ class AttestationToken(Generic[T]):
         :type body:Any - The body of the token to be serialized.
         :type signer:SigningKey - the certificate and key to sign the token.
         """
-        base64_certificate = base64.b64encode(signer.certificate.public_bytes(Encoding.DER))
         header = { 
             "alg": "RSA256" if isinstance(signer.signing_key, RSAPrivateKey) else "ECDH256",
             "x5c": [
-                base64_certificate.decode('utf-8')
+                base64.b64encode(signer.certificate.public_bytes(Encoding.DER)).decode('utf-8')
             ]
         }
         json_header = JSONEncoder().encode(header)
