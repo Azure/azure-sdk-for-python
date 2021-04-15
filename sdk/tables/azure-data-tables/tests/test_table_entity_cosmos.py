@@ -1388,7 +1388,6 @@ class StorageTableEntityTest(AzureTestCase, TableTestCase):
             self._tear_down()
             self.sleep(SLEEP_DELAY)
 
-    # @pytest.mark.skip("response time is three hours before the given one")
     @CosmosPreparer()
     def test_timezone(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
         # Arrange
@@ -1612,7 +1611,6 @@ class StorageTableEntityTest(AzureTestCase, TableTestCase):
             self.ts.delete_table(table_name)
             self._tear_down()
 
-    @pytest.mark.skip("returns ' sex' instead of deserializing into just 'sex'")
     @CosmosPreparer()
     def test_query_entities_with_select(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
         # Arrange
@@ -1621,17 +1619,17 @@ class StorageTableEntityTest(AzureTestCase, TableTestCase):
             table = self._create_query_table(2)
 
             # Act
-            entities = list(table.list_entities(select=['age', 'sex']))
-
-            # Assert
-            assert len(entities) ==  2
-            for entity in entities:
-                assert isinstance(entities,  TableEntity)
-                assert entity.age ==  39
-                assert entity.sex ==  u'male'
+            entities = []
+            for entity in table.list_entities(select=['age', 'sex']):
+                entities.append(entity)
+                assert entity.age == 39
+                assert entity.sex == 'male'
                 assert not hasattr(entity, "birthday")
                 assert not hasattr(entity, "married")
                 assert not hasattr(entity, "deceased")
+
+            # Assert
+            assert len(entities) == 2
         finally:
             self._tear_down()
             self.sleep(SLEEP_DELAY)
