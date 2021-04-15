@@ -56,7 +56,7 @@ class TableServiceStatsTest(AzureTestCase, TableTestCase):
 
         self.sleep(SLEEP_DELAY)
 
-    # @pytest.mark.skip("JSON is invalid for cosmos")
+    @pytest.mark.skip("JSON is invalid for cosmos")
     @CosmosPreparer()
     def test_table_service_stats_when_unavailable(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
         tsc = TableServiceClient(self.account_url(tables_cosmos_account_name, "cosmos"), tables_primary_cosmos_account_key)

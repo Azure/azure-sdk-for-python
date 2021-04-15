@@ -487,6 +487,7 @@ class StorageTableTest(AzureTestCase, TableTestCase):
         finally:
             self._delete_table(table=table, ts=tsc)
 
+    @pytest.mark.skipif(sys.version_info < (3, 0), reason="requires Python3")
     @TablesPreparer()
     def test_locale(self, tables_storage_account_name, tables_primary_storage_account_key):
         # Arrange

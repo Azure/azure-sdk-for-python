@@ -277,6 +277,7 @@ class StorageTableTest(AzureTestCase, TableTestCase):
         if self.is_live:
             sleep(SLEEP_DELAY)
 
+    @pytest.mark.skipif(sys.version_info < (3, 0), reason="requires Python3")
     @CosmosPreparer()
     def test_locale(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
         # Arrange
