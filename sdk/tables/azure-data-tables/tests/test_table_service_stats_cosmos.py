@@ -45,6 +45,7 @@ class TableServiceStatsTest(AzureTestCase, TableTestCase):
     def override_response_body_with_live_status(response):
         response.http_response.text = lambda _: SERVICE_LIVE_RESP_BODY
 
+    # TODO: Should we remove these both from cosmos sync/async?
     # --Test cases per service ---------------------------------------
     @pytest.mark.skip("JSON is invalid for cosmos")
     @CosmosPreparer()
