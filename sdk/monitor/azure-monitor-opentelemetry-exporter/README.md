@@ -50,7 +50,7 @@ Some of the key concepts for the Azure monitor exporter include:
 
 * [Opentelemetry][opentelemtry_spec]: Opentelemetry is a set of libraries used to collect and export telemetry data (metrics, logs, and traces) for analysis in order to understand your software's performance and behavior.
 
-* [Instrumentation][instrumentation_library]: The ability to call the opentelemetry API directly by any application is facilitated by instrumentaton. A library that enables OpenTelemetry observability for another library is called an Instrumentation Library.
+* [Instrumentation][instrumentation_library]: The ability to call the opentelemetry API directly by any application is facilitated by instrumentation. A library that enables OpenTelemetry observability for another library is called an instrumentation Library.
 
 * [Trace][trace_concept]: Trace refers to distributed tracing. It can be thought of as a directed acyclic graph (DAG) of Spans, where the edges between Spans are defined as parent/child relationship.
 
