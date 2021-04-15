@@ -14,90 +14,95 @@ from ._farm_beats_client_enums import *
 
 
 class ApplicationData(msrest.serialization.Model):
-    """Defines ApplicationData request object.
+    """Schema of application data resource.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    :param total_material: Common data measure for storing various data(Farm operations/Weather).
-    :type total_material: ~azure.farmbeats.models.Measure
-    :param avg_material: Common data measure for storing various data(Farm operations/Weather).
-    :type avg_material: ~azure.farmbeats.models.Measure
     :param application_product_details: Application product details.
     :type application_product_details: list[~azure.farmbeats.models.ApplicationProductDetail]
-    :ivar id: Unique Id.
-    :vartype id: str
-    :ivar farmer_id: Assoiciated Farmer Id with the operation data.
-    :vartype farmer_id: str
-    :param operation_start_date_time: Start datetime of operation.
-    :type operation_start_date_time: ~datetime.datetime
-    :param operation_end_date_time: End datetime of operation.
-    :type operation_end_date_time: ~datetime.datetime
-    :param source: Source of the data.
+    :param avg_material: Schema for storing measurement reading and unit.
+    :type avg_material: ~azure.farmbeats.models.Measure
+    :param total_material: Schema for storing measurement reading and unit.
+    :type total_material: ~azure.farmbeats.models.Measure
+    :param area: Schema for storing measurement reading and unit.
+    :type area: ~azure.farmbeats.models.Measure
+    :param source: Source of the operation data.
     :type source: str
-    :param operation_modified_date_time: Modified date time of the farm operation.
-     This will come from the provider itself.
+    :param operation_modified_date_time: Modified date-time of the operation data, sample format:
+     yyyy-MM-ddTHH:mm:ssZ.
+     Note: this will be specified by the source provider itself.
     :type operation_modified_date_time: ~datetime.datetime
-    :param associated_boundary_id: AssociatedBoundaryId represents boundary of field for which
-     operation is done where as
-     OperationBoundaryId represents actual area of operation done inside field.
+    :param operation_start_date_time: Start date-time of the operation data, sample format:
+     yyyy-MM-ddTHH:mm:ssZ.
+    :type operation_start_date_time: ~datetime.datetime
+    :param operation_end_date_time: End date-time of the operation data, sample format:
+     yyyy-MM-ddTHH:mm:ssZ.
+    :type operation_end_date_time: ~datetime.datetime
+    :ivar attachments_link: Link for attachments.
+    :vartype attachments_link: str
+    :param associated_boundary_id: Optional boundary ID of the field for which operation was
+     applied.
     :type associated_boundary_id: str
-    :ivar created_date_time: Date when resource was created.
-    :vartype created_date_time: ~datetime.datetime
-    :ivar modified_date_time: Date when resource was last modified.
-    :vartype modified_date_time: ~datetime.datetime
+    :param operation_boundary_id: Optional boundary ID of the actual area for which operation was
+     applied inside the specified field.
+    :type operation_boundary_id: str
+    :ivar farmer_id: Farmer ID which belongs to the operation data.
+    :vartype farmer_id: str
+    :ivar id: Unique resource ID.
+    :vartype id: str
     :ivar e_tag: The ETag value to implement optimistic concurrency.
     :vartype e_tag: str
-    :ivar attachments_link: Area.
-    :vartype attachments_link: str
-    :param area: Common data measure for storing various data(Farm operations/Weather).
-    :type area: ~azure.farmbeats.models.Measure
-    :param operation_boundary_id: Operation boundary Id.
-    :type operation_boundary_id: str
     :param status: Status of the resource.
     :type status: str
+    :ivar created_date_time: Date-time when resource was created, sample format:
+     yyyy-MM-ddTHH:mm:ssZ.
+    :vartype created_date_time: ~datetime.datetime
+    :ivar modified_date_time: Date-time when resource was last modified, sample format:
+     yyyy-MM-ddTHH:mm:ssZ.
+    :vartype modified_date_time: ~datetime.datetime
     :param name: Name to identify resource.
     :type name: str
-    :param description: Textual description of resource.
+    :param description: Textual description of the resource.
     :type description: str
-    :param properties: A list of key value pairs that describe the document.
-     A maximum of 25 key value pairs can be provided for a document,
-     and each tuple must have a key no greater than 50 characters
-     and value no greater than 150 characters.
-     Only string and numeral values are supported.
+    :param properties: A collection of key value pairs that belongs to the resource.
+     Each pair must not have a key greater than 50 characters
+     and must not have a value greater than 150 characters.
+     Note: A maximum of 25 key value pairs can be provided for a resource and only string and
+     numeral values are supported.
     :type properties: dict[str, object]
     """
 
     _validation = {
-        'id': {'readonly': True},
-        'farmer_id': {'readonly': True},
         'source': {'max_length': 100, 'min_length': 2},
+        'attachments_link': {'readonly': True},
+        'farmer_id': {'readonly': True},
+        'id': {'readonly': True},
+        'e_tag': {'readonly': True},
+        'status': {'max_length': 100, 'min_length': 0},
         'created_date_time': {'readonly': True},
         'modified_date_time': {'readonly': True},
-        'e_tag': {'readonly': True},
-        'attachments_link': {'readonly': True},
-        'status': {'max_length': 100, 'min_length': 0},
         'name': {'max_length': 100, 'min_length': 0},
         'description': {'max_length': 500, 'min_length': 0},
     }
 
     _attribute_map = {
-        'total_material': {'key': 'totalMaterial', 'type': 'Measure'},
-        'avg_material': {'key': 'avgMaterial', 'type': 'Measure'},
         'application_product_details': {'key': 'applicationProductDetails', 'type': '[ApplicationProductDetail]'},
-        'id': {'key': 'id', 'type': 'str'},
-        'farmer_id': {'key': 'farmerId', 'type': 'str'},
-        'operation_start_date_time': {'key': 'operationStartDateTime', 'type': 'iso-8601'},
-        'operation_end_date_time': {'key': 'operationEndDateTime', 'type': 'iso-8601'},
+        'avg_material': {'key': 'avgMaterial', 'type': 'Measure'},
+        'total_material': {'key': 'totalMaterial', 'type': 'Measure'},
+        'area': {'key': 'area', 'type': 'Measure'},
         'source': {'key': 'source', 'type': 'str'},
         'operation_modified_date_time': {'key': 'operationModifiedDateTime', 'type': 'iso-8601'},
+        'operation_start_date_time': {'key': 'operationStartDateTime', 'type': 'iso-8601'},
+        'operation_end_date_time': {'key': 'operationEndDateTime', 'type': 'iso-8601'},
+        'attachments_link': {'key': 'attachmentsLink', 'type': 'str'},
         'associated_boundary_id': {'key': 'associatedBoundaryId', 'type': 'str'},
+        'operation_boundary_id': {'key': 'operationBoundaryId', 'type': 'str'},
+        'farmer_id': {'key': 'farmerId', 'type': 'str'},
+        'id': {'key': 'id', 'type': 'str'},
+        'e_tag': {'key': 'eTag', 'type': 'str'},
+        'status': {'key': 'status', 'type': 'str'},
         'created_date_time': {'key': 'createdDateTime', 'type': 'iso-8601'},
         'modified_date_time': {'key': 'modifiedDateTime', 'type': 'iso-8601'},
-        'e_tag': {'key': 'eTag', 'type': 'str'},
-        'attachments_link': {'key': 'attachmentsLink', 'type': 'str'},
-        'area': {'key': 'area', 'type': 'Measure'},
-        'operation_boundary_id': {'key': 'operationBoundaryId', 'type': 'str'},
-        'status': {'key': 'status', 'type': 'str'},
         'name': {'key': 'name', 'type': 'str'},
         'description': {'key': 'description', 'type': 'str'},
         'properties': {'key': 'properties', 'type': '{object}'},
@@ -106,15 +111,15 @@ class ApplicationData(msrest.serialization.Model):
     def __init__(
         self,
         *,
-        total_material: Optional["Measure"] = None,
-        avg_material: Optional["Measure"] = None,
         application_product_details: Optional[List["ApplicationProductDetail"]] = None,
-        operation_start_date_time: Optional[datetime.datetime] = None,
-        operation_end_date_time: Optional[datetime.datetime] = None,
+        avg_material: Optional["Measure"] = None,
+        total_material: Optional["Measure"] = None,
+        area: Optional["Measure"] = None,
         source: Optional[str] = None,
         operation_modified_date_time: Optional[datetime.datetime] = None,
+        operation_start_date_time: Optional[datetime.datetime] = None,
+        operation_end_date_time: Optional[datetime.datetime] = None,
         associated_boundary_id: Optional[str] = None,
-        area: Optional["Measure"] = None,
         operation_boundary_id: Optional[str] = None,
         status: Optional[str] = None,
         name: Optional[str] = None,
@@ -123,23 +128,23 @@ class ApplicationData(msrest.serialization.Model):
         **kwargs
     ):
         super(ApplicationData, self).__init__(**kwargs)
-        self.total_material = total_material
-        self.avg_material = avg_material
         self.application_product_details = application_product_details
-        self.id = None
-        self.farmer_id = None
-        self.operation_start_date_time = operation_start_date_time
-        self.operation_end_date_time = operation_end_date_time
+        self.avg_material = avg_material
+        self.total_material = total_material
+        self.area = area
         self.source = source
         self.operation_modified_date_time = operation_modified_date_time
+        self.operation_start_date_time = operation_start_date_time
+        self.operation_end_date_time = operation_end_date_time
+        self.attachments_link = None
         self.associated_boundary_id = associated_boundary_id
+        self.operation_boundary_id = operation_boundary_id
+        self.farmer_id = None
+        self.id = None
+        self.e_tag = None
+        self.status = status
         self.created_date_time = None
         self.modified_date_time = None
-        self.e_tag = None
-        self.attachments_link = None
-        self.area = area
-        self.operation_boundary_id = operation_boundary_id
-        self.status = status
         self.name = name
         self.description = description
         self.properties = properties
@@ -178,16 +183,16 @@ class ApplicationDataListResponse(msrest.serialization.Model):
 
 
 class ApplicationProductDetail(msrest.serialization.Model):
-    """Schema for Application product detail.
+    """Schema of product used during application.
 
-    :param product_name: Name of the product in the application.
+    :param product_name: Name of the product applied.
     :type product_name: str
-    :param is_carrier: Is the product a carrier for a tank mix.
+    :param is_carrier: A flag indicating whether product is a carrier for a tank mix.
     :type is_carrier: bool
-    :param total_material: Common data measure for storing various data(Farm operations/Weather).
-    :type total_material: ~azure.farmbeats.models.Measure
-    :param avg_material: Common data measure for storing various data(Farm operations/Weather).
+    :param avg_material: Schema for storing measurement reading and unit.
     :type avg_material: ~azure.farmbeats.models.Measure
+    :param total_material: Schema for storing measurement reading and unit.
+    :type total_material: ~azure.farmbeats.models.Measure
     """
 
     _validation = {
@@ -197,28 +202,28 @@ class ApplicationProductDetail(msrest.serialization.Model):
     _attribute_map = {
         'product_name': {'key': 'productName', 'type': 'str'},
         'is_carrier': {'key': 'isCarrier', 'type': 'bool'},
-        'total_material': {'key': 'totalMaterial', 'type': 'Measure'},
         'avg_material': {'key': 'avgMaterial', 'type': 'Measure'},
+        'total_material': {'key': 'totalMaterial', 'type': 'Measure'},
     }
 
     def __init__(
         self,
         *,
         product_name: Optional[str] = None,
-        is_carrier: Optional[bool] = None,
-        total_material: Optional["Measure"] = None,
+        is_carrier: Optional[bool] = False,
         avg_material: Optional["Measure"] = None,
+        total_material: Optional["Measure"] = None,
         **kwargs
     ):
         super(ApplicationProductDetail, self).__init__(**kwargs)
         self.product_name = product_name
         self.is_carrier = is_carrier
-        self.total_material = total_material
         self.avg_material = avg_material
+        self.total_material = total_material
 
 
 class Attachment(msrest.serialization.Model):
-    """Api Model for Attachment object.
+    """Schema of attachment resource.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
@@ -331,7 +336,7 @@ class AttachmentListResponse(msrest.serialization.Model):
 
 
 class Boundary(msrest.serialization.Model):
-    """Api Model for boundary object.
+    """Schema of boundary resource.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
@@ -347,25 +352,27 @@ class Boundary(msrest.serialization.Model):
     :vartype acreage: float
     :ivar parent_type: Type of the parent it belongs to.
     :vartype parent_type: str
-    :ivar id: Unique Id.
+    :ivar id: Unique resource ID.
     :vartype id: str
-    :param status: Status of the resource.
-    :type status: str
-    :ivar created_date_time: Date when resource was created.
-    :vartype created_date_time: ~datetime.datetime
-    :ivar modified_date_time: Date when resource was last modified.
-    :vartype modified_date_time: ~datetime.datetime
     :ivar e_tag: The ETag value to implement optimistic concurrency.
     :vartype e_tag: str
+    :param status: Status of the resource.
+    :type status: str
+    :ivar created_date_time: Date-time when resource was created, sample format:
+     yyyy-MM-ddTHH:mm:ssZ.
+    :vartype created_date_time: ~datetime.datetime
+    :ivar modified_date_time: Date-time when resource was last modified, sample format:
+     yyyy-MM-ddTHH:mm:ssZ.
+    :vartype modified_date_time: ~datetime.datetime
     :param name: Name to identify resource.
     :type name: str
-    :param description: Textual description of resource.
+    :param description: Textual description of the resource.
     :type description: str
-    :param properties: A list of key value pairs that describe the document.
-     A maximum of 25 key value pairs can be provided for a document,
-     and each tuple must have a key no greater than 50 characters
-     and value no greater than 150 characters.
-     Only string and numeral values are supported.
+    :param properties: A collection of key value pairs that belongs to the resource.
+     Each pair must not have a key greater than 50 characters
+     and must not have a value greater than 150 characters.
+     Note: A maximum of 25 key value pairs can be provided for a resource and only string and
+     numeral values are supported.
     :type properties: dict[str, object]
     """
 
@@ -374,10 +381,10 @@ class Boundary(msrest.serialization.Model):
         'acreage': {'readonly': True},
         'parent_type': {'readonly': True},
         'id': {'readonly': True},
+        'e_tag': {'readonly': True},
         'status': {'max_length': 100, 'min_length': 0},
         'created_date_time': {'readonly': True},
         'modified_date_time': {'readonly': True},
-        'e_tag': {'readonly': True},
         'name': {'max_length': 100, 'min_length': 0},
         'description': {'max_length': 500, 'min_length': 0},
     }
@@ -390,10 +397,10 @@ class Boundary(msrest.serialization.Model):
         'acreage': {'key': 'acreage', 'type': 'float'},
         'parent_type': {'key': 'parentType', 'type': 'str'},
         'id': {'key': 'id', 'type': 'str'},
+        'e_tag': {'key': 'eTag', 'type': 'str'},
         'status': {'key': 'status', 'type': 'str'},
         'created_date_time': {'key': 'createdDateTime', 'type': 'iso-8601'},
         'modified_date_time': {'key': 'modifiedDateTime', 'type': 'iso-8601'},
-        'e_tag': {'key': 'eTag', 'type': 'str'},
         'name': {'key': 'name', 'type': 'str'},
         'description': {'key': 'description', 'type': 'str'},
         'properties': {'key': 'properties', 'type': '{object}'},
@@ -419,10 +426,10 @@ class Boundary(msrest.serialization.Model):
         self.acreage = None
         self.parent_type = None
         self.id = None
+        self.e_tag = None
         self.status = status
         self.created_date_time = None
         self.modified_date_time = None
-        self.e_tag = None
         self.name = name
         self.description = description
         self.properties = properties
@@ -461,19 +468,19 @@ class BoundaryListResponse(msrest.serialization.Model):
 
 
 class BoundaryOverlapResponse(msrest.serialization.Model):
-    """Api Model for boundary overlap response.
+    """Schema of boundary overlap response.
 
     :param boundary_acreage: Acreage of Main boundary.
     :type boundary_acreage: float
-    :param overlapping_boundary_acreage: Acreage of overlapping boundary.
-    :type overlapping_boundary_acreage: float
+    :param other_boundary_acreage: Acreage of other boundary.
+    :type other_boundary_acreage: float
     :param intersecting_acreage: Acreage of intersecting boundary.
     :type intersecting_acreage: float
     """
 
     _attribute_map = {
         'boundary_acreage': {'key': 'boundaryAcreage', 'type': 'float'},
-        'overlapping_boundary_acreage': {'key': 'overlappingBoundaryAcreage', 'type': 'float'},
+        'other_boundary_acreage': {'key': 'otherBoundaryAcreage', 'type': 'float'},
         'intersecting_acreage': {'key': 'intersectingAcreage', 'type': 'float'},
     }
 
@@ -481,14 +488,109 @@ class BoundaryOverlapResponse(msrest.serialization.Model):
         self,
         *,
         boundary_acreage: Optional[float] = None,
-        overlapping_boundary_acreage: Optional[float] = None,
+        other_boundary_acreage: Optional[float] = None,
         intersecting_acreage: Optional[float] = None,
         **kwargs
     ):
         super(BoundaryOverlapResponse, self).__init__(**kwargs)
         self.boundary_acreage = boundary_acreage
-        self.overlapping_boundary_acreage = overlapping_boundary_acreage
+        self.other_boundary_acreage = other_boundary_acreage
         self.intersecting_acreage = intersecting_acreage
+
+
+class CascadeDeleteJobDetails(msrest.serialization.Model):
+    """Schema for GetCascadeDeleteJobDetails.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :param duration_in_seconds: Duration of the job in seconds.
+    :type duration_in_seconds: str
+    :param id: Unique job id.
+    :type id: str
+    :param job_status: Various states a job can be in. Possible values include: "Waiting",
+     "Running", "Succeeded", "Failed", "Cancelled".
+    :type job_status: str or ~azure.farmbeats.models.JobStatus
+    :param message: Status message to capture more details of the job.
+    :type message: str
+    :ivar created_date_time: Job created at dateTime. Sample format: yyyy-MM-ddTHH:mm:ssZ.
+    :vartype created_date_time: ~datetime.datetime
+    :ivar last_action_date_time: Job was last acted upon at dateTime. Sample format:
+     yyyy-MM-ddTHH:mm:ssZ.
+    :vartype last_action_date_time: ~datetime.datetime
+    :ivar start_time: Job start time when available. Sample format: yyyy-MM-ddTHH:mm:ssZ.
+    :vartype start_time: ~datetime.datetime
+    :ivar end_time: Job end time when available. Sample format: yyyy-MM-ddTHH:mm:ssZ.
+    :vartype end_time: ~datetime.datetime
+    :ivar is_cancellation_requested: A boolean flag indicating whether job cancellation is
+     requested.
+    :vartype is_cancellation_requested: bool
+    :param name: Name to identify resource.
+    :type name: str
+    :param description: Textual description of the resource.
+    :type description: str
+    :param properties: A collection of key value pairs that belongs to the resource.
+     Each pair must not have a key greater than 50 characters
+     and must not have a value greater than 150 characters.
+     Note: A maximum of 25 key value pairs can be provided for a resource and only string and
+     numeral values are supported.
+    :type properties: dict[str, object]
+    :param request_body: CascadeDelete job request object.
+    :type request_body: ~azure.farmbeats.models.CascadeDeleteJobRequest
+    """
+
+    _validation = {
+        'created_date_time': {'readonly': True},
+        'last_action_date_time': {'readonly': True},
+        'start_time': {'readonly': True},
+        'end_time': {'readonly': True},
+        'is_cancellation_requested': {'readonly': True},
+        'name': {'max_length': 100, 'min_length': 0},
+        'description': {'max_length': 500, 'min_length': 0},
+    }
+
+    _attribute_map = {
+        'duration_in_seconds': {'key': 'durationInSeconds', 'type': 'str'},
+        'id': {'key': 'id', 'type': 'str'},
+        'job_status': {'key': 'jobStatus', 'type': 'str'},
+        'message': {'key': 'message', 'type': 'str'},
+        'created_date_time': {'key': 'createdDateTime', 'type': 'iso-8601'},
+        'last_action_date_time': {'key': 'lastActionDateTime', 'type': 'iso-8601'},
+        'start_time': {'key': 'startTime', 'type': 'iso-8601'},
+        'end_time': {'key': 'endTime', 'type': 'iso-8601'},
+        'is_cancellation_requested': {'key': 'isCancellationRequested', 'type': 'bool'},
+        'name': {'key': 'name', 'type': 'str'},
+        'description': {'key': 'description', 'type': 'str'},
+        'properties': {'key': 'properties', 'type': '{object}'},
+        'request_body': {'key': 'requestBody', 'type': 'CascadeDeleteJobRequest'},
+    }
+
+    def __init__(
+        self,
+        *,
+        duration_in_seconds: Optional[str] = None,
+        id: Optional[str] = None,
+        job_status: Optional[Union[str, "JobStatus"]] = None,
+        message: Optional[str] = None,
+        name: Optional[str] = None,
+        description: Optional[str] = None,
+        properties: Optional[Dict[str, object]] = None,
+        request_body: Optional["CascadeDeleteJobRequest"] = None,
+        **kwargs
+    ):
+        super(CascadeDeleteJobDetails, self).__init__(**kwargs)
+        self.duration_in_seconds = duration_in_seconds
+        self.id = id
+        self.job_status = job_status
+        self.message = message
+        self.created_date_time = None
+        self.last_action_date_time = None
+        self.start_time = None
+        self.end_time = None
+        self.is_cancellation_requested = None
+        self.name = name
+        self.description = description
+        self.properties = properties
+        self.request_body = request_body
 
 
 class CascadeDeleteJobRequest(msrest.serialization.Model):
@@ -504,13 +606,13 @@ class CascadeDeleteJobRequest(msrest.serialization.Model):
     :type resource_type: str
     :param name: Name to identify resource.
     :type name: str
-    :param description: Textual description of resource.
+    :param description: Textual description of the resource.
     :type description: str
-    :param properties: A list of key value pairs that describe the document.
-     A maximum of 25 key value pairs can be provided for a document,
-     and each tuple must have a key no greater than 50 characters
-     and value no greater than 150 characters.
-     Only string and numeral values are supported.
+    :param properties: A collection of key value pairs that belongs to the resource.
+     Each pair must not have a key greater than 50 characters
+     and must not have a value greater than 150 characters.
+     Note: A maximum of 25 key value pairs can be provided for a resource and only string and
+     numeral values are supported.
     :type properties: dict[str, object]
     """
 
@@ -556,34 +658,36 @@ class CascadeDeleteJobResponse(msrest.serialization.Model):
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    :param duration: Duration of the job.
-    :type duration: str
-    :param id: Id of the job.
+    :param duration_in_seconds: Duration of the job in seconds.
+    :type duration_in_seconds: str
+    :param id: Unique job id.
     :type id: str
     :param job_status: Various states a job can be in. Possible values include: "Waiting",
      "Running", "Succeeded", "Failed", "Cancelled".
     :type job_status: str or ~azure.farmbeats.models.JobStatus
     :param message: Status message to capture more details of the job.
     :type message: str
-    :ivar created_date_time: Job created at date time.
+    :ivar created_date_time: Job created at dateTime. Sample format: yyyy-MM-ddTHH:mm:ssZ.
     :vartype created_date_time: ~datetime.datetime
-    :ivar last_action_date_time: Job was last acted upon at.
+    :ivar last_action_date_time: Job was last acted upon at dateTime. Sample format:
+     yyyy-MM-ddTHH:mm:ssZ.
     :vartype last_action_date_time: ~datetime.datetime
-    :ivar start_time: Job start time when available.
+    :ivar start_time: Job start time when available. Sample format: yyyy-MM-ddTHH:mm:ssZ.
     :vartype start_time: ~datetime.datetime
-    :ivar end_time: Job end time when available.
+    :ivar end_time: Job end time when available. Sample format: yyyy-MM-ddTHH:mm:ssZ.
     :vartype end_time: ~datetime.datetime
-    :ivar is_cancellation_requested: Flag that gets set when job cancellation is requested.
+    :ivar is_cancellation_requested: A boolean flag indicating whether job cancellation is
+     requested.
     :vartype is_cancellation_requested: bool
     :param name: Name to identify resource.
     :type name: str
-    :param description: Textual description of resource.
+    :param description: Textual description of the resource.
     :type description: str
-    :param properties: A list of key value pairs that describe the document.
-     A maximum of 25 key value pairs can be provided for a document,
-     and each tuple must have a key no greater than 50 characters
-     and value no greater than 150 characters.
-     Only string and numeral values are supported.
+    :param properties: A collection of key value pairs that belongs to the resource.
+     Each pair must not have a key greater than 50 characters
+     and must not have a value greater than 150 characters.
+     Note: A maximum of 25 key value pairs can be provided for a resource and only string and
+     numeral values are supported.
     :type properties: dict[str, object]
     """
 
@@ -598,7 +702,7 @@ class CascadeDeleteJobResponse(msrest.serialization.Model):
     }
 
     _attribute_map = {
-        'duration': {'key': 'duration', 'type': 'str'},
+        'duration_in_seconds': {'key': 'durationInSeconds', 'type': 'str'},
         'id': {'key': 'id', 'type': 'str'},
         'job_status': {'key': 'jobStatus', 'type': 'str'},
         'message': {'key': 'message', 'type': 'str'},
@@ -615,7 +719,7 @@ class CascadeDeleteJobResponse(msrest.serialization.Model):
     def __init__(
         self,
         *,
-        duration: Optional[str] = None,
+        duration_in_seconds: Optional[str] = None,
         id: Optional[str] = None,
         job_status: Optional[Union[str, "JobStatus"]] = None,
         message: Optional[str] = None,
@@ -625,161 +729,7 @@ class CascadeDeleteJobResponse(msrest.serialization.Model):
         **kwargs
     ):
         super(CascadeDeleteJobResponse, self).__init__(**kwargs)
-        self.duration = duration
-        self.id = id
-        self.job_status = job_status
-        self.message = message
-        self.created_date_time = None
-        self.last_action_date_time = None
-        self.start_time = None
-        self.end_time = None
-        self.is_cancellation_requested = None
-        self.name = name
-        self.description = description
-        self.properties = properties
-
-
-class CascadeStatusUpdateJobRequest(msrest.serialization.Model):
-    """Cascade status update job request object.
-
-    All required parameters must be populated in order to send to Azure.
-
-    :param farmer_id: Required. Farmer Id of the resource.
-    :type farmer_id: str
-    :param resource_id: Required. The id of the resource.
-    :type resource_id: str
-    :param resource_type: Required. The type of the resource.
-    :type resource_type: str
-    :param status: Required. Status of the resource to be updated.
-    :type status: str
-    :param name: Name to identify resource.
-    :type name: str
-    :param description: Textual description of resource.
-    :type description: str
-    :param properties: A list of key value pairs that describe the document.
-     A maximum of 25 key value pairs can be provided for a document,
-     and each tuple must have a key no greater than 50 characters
-     and value no greater than 150 characters.
-     Only string and numeral values are supported.
-    :type properties: dict[str, object]
-    """
-
-    _validation = {
-        'farmer_id': {'required': True},
-        'resource_id': {'required': True},
-        'resource_type': {'required': True},
-        'status': {'required': True},
-        'name': {'max_length': 100, 'min_length': 0},
-        'description': {'max_length': 500, 'min_length': 0},
-    }
-
-    _attribute_map = {
-        'farmer_id': {'key': 'farmerId', 'type': 'str'},
-        'resource_id': {'key': 'resourceId', 'type': 'str'},
-        'resource_type': {'key': 'resourceType', 'type': 'str'},
-        'status': {'key': 'status', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'description': {'key': 'description', 'type': 'str'},
-        'properties': {'key': 'properties', 'type': '{object}'},
-    }
-
-    def __init__(
-        self,
-        *,
-        farmer_id: str,
-        resource_id: str,
-        resource_type: str,
-        status: str,
-        name: Optional[str] = None,
-        description: Optional[str] = None,
-        properties: Optional[Dict[str, object]] = None,
-        **kwargs
-    ):
-        super(CascadeStatusUpdateJobRequest, self).__init__(**kwargs)
-        self.farmer_id = farmer_id
-        self.resource_id = resource_id
-        self.resource_type = resource_type
-        self.status = status
-        self.name = name
-        self.description = description
-        self.properties = properties
-
-
-class CascadeStatusUpdateJobResponse(msrest.serialization.Model):
-    """CascadeStatusUpdate job response.
-
-    Variables are only populated by the server, and will be ignored when sending a request.
-
-    :param duration: Duration of the job.
-    :type duration: str
-    :param id: Id of the job.
-    :type id: str
-    :param job_status: Various states a job can be in. Possible values include: "Waiting",
-     "Running", "Succeeded", "Failed", "Cancelled".
-    :type job_status: str or ~azure.farmbeats.models.JobStatus
-    :param message: Status message to capture more details of the job.
-    :type message: str
-    :ivar created_date_time: Job created at date time.
-    :vartype created_date_time: ~datetime.datetime
-    :ivar last_action_date_time: Job was last acted upon at.
-    :vartype last_action_date_time: ~datetime.datetime
-    :ivar start_time: Job start time when available.
-    :vartype start_time: ~datetime.datetime
-    :ivar end_time: Job end time when available.
-    :vartype end_time: ~datetime.datetime
-    :ivar is_cancellation_requested: Flag that gets set when job cancellation is requested.
-    :vartype is_cancellation_requested: bool
-    :param name: Name to identify resource.
-    :type name: str
-    :param description: Textual description of resource.
-    :type description: str
-    :param properties: A list of key value pairs that describe the document.
-     A maximum of 25 key value pairs can be provided for a document,
-     and each tuple must have a key no greater than 50 characters
-     and value no greater than 150 characters.
-     Only string and numeral values are supported.
-    :type properties: dict[str, object]
-    """
-
-    _validation = {
-        'created_date_time': {'readonly': True},
-        'last_action_date_time': {'readonly': True},
-        'start_time': {'readonly': True},
-        'end_time': {'readonly': True},
-        'is_cancellation_requested': {'readonly': True},
-        'name': {'max_length': 100, 'min_length': 0},
-        'description': {'max_length': 500, 'min_length': 0},
-    }
-
-    _attribute_map = {
-        'duration': {'key': 'duration', 'type': 'str'},
-        'id': {'key': 'id', 'type': 'str'},
-        'job_status': {'key': 'jobStatus', 'type': 'str'},
-        'message': {'key': 'message', 'type': 'str'},
-        'created_date_time': {'key': 'createdDateTime', 'type': 'iso-8601'},
-        'last_action_date_time': {'key': 'lastActionDateTime', 'type': 'iso-8601'},
-        'start_time': {'key': 'startTime', 'type': 'iso-8601'},
-        'end_time': {'key': 'endTime', 'type': 'iso-8601'},
-        'is_cancellation_requested': {'key': 'isCancellationRequested', 'type': 'bool'},
-        'name': {'key': 'name', 'type': 'str'},
-        'description': {'key': 'description', 'type': 'str'},
-        'properties': {'key': 'properties', 'type': '{object}'},
-    }
-
-    def __init__(
-        self,
-        *,
-        duration: Optional[str] = None,
-        id: Optional[str] = None,
-        job_status: Optional[Union[str, "JobStatus"]] = None,
-        message: Optional[str] = None,
-        name: Optional[str] = None,
-        description: Optional[str] = None,
-        properties: Optional[Dict[str, object]] = None,
-        **kwargs
-    ):
-        super(CascadeStatusUpdateJobResponse, self).__init__(**kwargs)
-        self.duration = duration
+        self.duration_in_seconds = duration_in_seconds
         self.id = id
         self.job_status = job_status
         self.message = message
@@ -794,41 +744,43 @@ class CascadeStatusUpdateJobResponse(msrest.serialization.Model):
 
 
 class Crop(msrest.serialization.Model):
-    """Api Model for Crop object.
+    """Schema of crop resource.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
     :param phenotype: Crop phenotype.
     :type phenotype: str
-    :ivar id: Unique Id.
+    :ivar id: Unique resource ID.
     :vartype id: str
-    :param status: Status of the resource.
-    :type status: str
-    :ivar created_date_time: Date when resource was created.
-    :vartype created_date_time: ~datetime.datetime
-    :ivar modified_date_time: Date when resource was last modified.
-    :vartype modified_date_time: ~datetime.datetime
     :ivar e_tag: The ETag value to implement optimistic concurrency.
     :vartype e_tag: str
+    :param status: Status of the resource.
+    :type status: str
+    :ivar created_date_time: Date-time when resource was created, sample format:
+     yyyy-MM-ddTHH:mm:ssZ.
+    :vartype created_date_time: ~datetime.datetime
+    :ivar modified_date_time: Date-time when resource was last modified, sample format:
+     yyyy-MM-ddTHH:mm:ssZ.
+    :vartype modified_date_time: ~datetime.datetime
     :param name: Name to identify resource.
     :type name: str
-    :param description: Textual description of resource.
+    :param description: Textual description of the resource.
     :type description: str
-    :param properties: A list of key value pairs that describe the document.
-     A maximum of 25 key value pairs can be provided for a document,
-     and each tuple must have a key no greater than 50 characters
-     and value no greater than 150 characters.
-     Only string and numeral values are supported.
+    :param properties: A collection of key value pairs that belongs to the resource.
+     Each pair must not have a key greater than 50 characters
+     and must not have a value greater than 150 characters.
+     Note: A maximum of 25 key value pairs can be provided for a resource and only string and
+     numeral values are supported.
     :type properties: dict[str, object]
     """
 
     _validation = {
         'phenotype': {'max_length': 100, 'min_length': 0},
         'id': {'readonly': True},
+        'e_tag': {'readonly': True},
         'status': {'max_length': 100, 'min_length': 0},
         'created_date_time': {'readonly': True},
         'modified_date_time': {'readonly': True},
-        'e_tag': {'readonly': True},
         'name': {'max_length': 100, 'min_length': 0},
         'description': {'max_length': 500, 'min_length': 0},
     }
@@ -836,10 +788,10 @@ class Crop(msrest.serialization.Model):
     _attribute_map = {
         'phenotype': {'key': 'phenotype', 'type': 'str'},
         'id': {'key': 'id', 'type': 'str'},
+        'e_tag': {'key': 'eTag', 'type': 'str'},
         'status': {'key': 'status', 'type': 'str'},
         'created_date_time': {'key': 'createdDateTime', 'type': 'iso-8601'},
         'modified_date_time': {'key': 'modifiedDateTime', 'type': 'iso-8601'},
-        'e_tag': {'key': 'eTag', 'type': 'str'},
         'name': {'key': 'name', 'type': 'str'},
         'description': {'key': 'description', 'type': 'str'},
         'properties': {'key': 'properties', 'type': '{object}'},
@@ -858,10 +810,10 @@ class Crop(msrest.serialization.Model):
         super(Crop, self).__init__(**kwargs)
         self.phenotype = phenotype
         self.id = None
+        self.e_tag = None
         self.status = status
         self.created_date_time = None
         self.modified_date_time = None
-        self.e_tag = None
         self.name = name
         self.description = description
         self.properties = properties
@@ -900,7 +852,7 @@ class CropListResponse(msrest.serialization.Model):
 
 
 class CropVariety(msrest.serialization.Model):
-    """Api Model for CropVariety object.
+    """Schema of crop variety resource.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
@@ -910,25 +862,27 @@ class CropVariety(msrest.serialization.Model):
     :type brand: str
     :param product: CropVariety product.
     :type product: str
-    :ivar id: Unique Id.
+    :ivar id: Unique resource ID.
     :vartype id: str
-    :param status: Status of the resource.
-    :type status: str
-    :ivar created_date_time: Date when resource was created.
-    :vartype created_date_time: ~datetime.datetime
-    :ivar modified_date_time: Date when resource was last modified.
-    :vartype modified_date_time: ~datetime.datetime
     :ivar e_tag: The ETag value to implement optimistic concurrency.
     :vartype e_tag: str
+    :param status: Status of the resource.
+    :type status: str
+    :ivar created_date_time: Date-time when resource was created, sample format:
+     yyyy-MM-ddTHH:mm:ssZ.
+    :vartype created_date_time: ~datetime.datetime
+    :ivar modified_date_time: Date-time when resource was last modified, sample format:
+     yyyy-MM-ddTHH:mm:ssZ.
+    :vartype modified_date_time: ~datetime.datetime
     :param name: Name to identify resource.
     :type name: str
-    :param description: Textual description of resource.
+    :param description: Textual description of the resource.
     :type description: str
-    :param properties: A list of key value pairs that describe the document.
-     A maximum of 25 key value pairs can be provided for a document,
-     and each tuple must have a key no greater than 50 characters
-     and value no greater than 150 characters.
-     Only string and numeral values are supported.
+    :param properties: A collection of key value pairs that belongs to the resource.
+     Each pair must not have a key greater than 50 characters
+     and must not have a value greater than 150 characters.
+     Note: A maximum of 25 key value pairs can be provided for a resource and only string and
+     numeral values are supported.
     :type properties: dict[str, object]
     """
 
@@ -937,10 +891,10 @@ class CropVariety(msrest.serialization.Model):
         'brand': {'max_length': 100, 'min_length': 0},
         'product': {'max_length': 100, 'min_length': 0},
         'id': {'readonly': True},
+        'e_tag': {'readonly': True},
         'status': {'max_length': 100, 'min_length': 0},
         'created_date_time': {'readonly': True},
         'modified_date_time': {'readonly': True},
-        'e_tag': {'readonly': True},
         'name': {'max_length': 100, 'min_length': 0},
         'description': {'max_length': 500, 'min_length': 0},
     }
@@ -950,10 +904,10 @@ class CropVariety(msrest.serialization.Model):
         'brand': {'key': 'brand', 'type': 'str'},
         'product': {'key': 'product', 'type': 'str'},
         'id': {'key': 'id', 'type': 'str'},
+        'e_tag': {'key': 'eTag', 'type': 'str'},
         'status': {'key': 'status', 'type': 'str'},
         'created_date_time': {'key': 'createdDateTime', 'type': 'iso-8601'},
         'modified_date_time': {'key': 'modifiedDateTime', 'type': 'iso-8601'},
-        'e_tag': {'key': 'eTag', 'type': 'str'},
         'name': {'key': 'name', 'type': 'str'},
         'description': {'key': 'description', 'type': 'str'},
         'properties': {'key': 'properties', 'type': '{object}'},
@@ -975,10 +929,10 @@ class CropVariety(msrest.serialization.Model):
         self.brand = brand
         self.product = product
         self.id = None
+        self.e_tag = None
         self.status = status
         self.created_date_time = None
         self.modified_date_time = None
-        self.e_tag = None
         self.name = name
         self.description = description
         self.properties = properties
@@ -1029,8 +983,9 @@ class Error(msrest.serialization.Model):
     :type details: list[~azure.farmbeats.models.Error]
     :param innererror: Inner error containing list of errors.
     
-     :code:`<see href="https://github.com/Microsoft/api-
-     guidelines/blob/vNext/Guidelines.md#innererror--object">InnerError reference document</see>`.
+     :code:`<see
+     href="https://github.com/Microsoft/api-guidelines/blob/vNext/Guidelines.md#innererror--object">InnerError
+     reference document</see>`.
     :type innererror: ~azure.farmbeats.models.InnerError
     """
 
@@ -1089,41 +1044,43 @@ class ErrorResponse(msrest.serialization.Model):
 
 
 class Farm(msrest.serialization.Model):
-    """Api Model for Farm object.
+    """Schema of farm resource.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
     :ivar farmer_id: Farmer Id.
     :vartype farmer_id: str
-    :ivar id: Unique Id.
+    :ivar id: Unique resource ID.
     :vartype id: str
-    :param status: Status of the resource.
-    :type status: str
-    :ivar created_date_time: Date when resource was created.
-    :vartype created_date_time: ~datetime.datetime
-    :ivar modified_date_time: Date when resource was last modified.
-    :vartype modified_date_time: ~datetime.datetime
     :ivar e_tag: The ETag value to implement optimistic concurrency.
     :vartype e_tag: str
+    :param status: Status of the resource.
+    :type status: str
+    :ivar created_date_time: Date-time when resource was created, sample format:
+     yyyy-MM-ddTHH:mm:ssZ.
+    :vartype created_date_time: ~datetime.datetime
+    :ivar modified_date_time: Date-time when resource was last modified, sample format:
+     yyyy-MM-ddTHH:mm:ssZ.
+    :vartype modified_date_time: ~datetime.datetime
     :param name: Name to identify resource.
     :type name: str
-    :param description: Textual description of resource.
+    :param description: Textual description of the resource.
     :type description: str
-    :param properties: A list of key value pairs that describe the document.
-     A maximum of 25 key value pairs can be provided for a document,
-     and each tuple must have a key no greater than 50 characters
-     and value no greater than 150 characters.
-     Only string and numeral values are supported.
+    :param properties: A collection of key value pairs that belongs to the resource.
+     Each pair must not have a key greater than 50 characters
+     and must not have a value greater than 150 characters.
+     Note: A maximum of 25 key value pairs can be provided for a resource and only string and
+     numeral values are supported.
     :type properties: dict[str, object]
     """
 
     _validation = {
         'farmer_id': {'readonly': True},
         'id': {'readonly': True},
+        'e_tag': {'readonly': True},
         'status': {'max_length': 100, 'min_length': 0},
         'created_date_time': {'readonly': True},
         'modified_date_time': {'readonly': True},
-        'e_tag': {'readonly': True},
         'name': {'max_length': 100, 'min_length': 0},
         'description': {'max_length': 500, 'min_length': 0},
     }
@@ -1131,10 +1088,10 @@ class Farm(msrest.serialization.Model):
     _attribute_map = {
         'farmer_id': {'key': 'farmerId', 'type': 'str'},
         'id': {'key': 'id', 'type': 'str'},
+        'e_tag': {'key': 'eTag', 'type': 'str'},
         'status': {'key': 'status', 'type': 'str'},
         'created_date_time': {'key': 'createdDateTime', 'type': 'iso-8601'},
         'modified_date_time': {'key': 'modifiedDateTime', 'type': 'iso-8601'},
-        'e_tag': {'key': 'eTag', 'type': 'str'},
         'name': {'key': 'name', 'type': 'str'},
         'description': {'key': 'description', 'type': 'str'},
         'properties': {'key': 'properties', 'type': '{object}'},
@@ -1152,58 +1109,60 @@ class Farm(msrest.serialization.Model):
         super(Farm, self).__init__(**kwargs)
         self.farmer_id = None
         self.id = None
+        self.e_tag = None
         self.status = status
         self.created_date_time = None
         self.modified_date_time = None
-        self.e_tag = None
         self.name = name
         self.description = description
         self.properties = properties
 
 
 class Farmer(msrest.serialization.Model):
-    """Api Model for Farmer object.
+    """Schema of farmer resource.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    :ivar id: Unique Id.
+    :ivar id: Unique resource ID.
     :vartype id: str
-    :param status: Status of the resource.
-    :type status: str
-    :ivar created_date_time: Date when resource was created.
-    :vartype created_date_time: ~datetime.datetime
-    :ivar modified_date_time: Date when resource was last modified.
-    :vartype modified_date_time: ~datetime.datetime
     :ivar e_tag: The ETag value to implement optimistic concurrency.
     :vartype e_tag: str
+    :param status: Status of the resource.
+    :type status: str
+    :ivar created_date_time: Date-time when resource was created, sample format:
+     yyyy-MM-ddTHH:mm:ssZ.
+    :vartype created_date_time: ~datetime.datetime
+    :ivar modified_date_time: Date-time when resource was last modified, sample format:
+     yyyy-MM-ddTHH:mm:ssZ.
+    :vartype modified_date_time: ~datetime.datetime
     :param name: Name to identify resource.
     :type name: str
-    :param description: Textual description of resource.
+    :param description: Textual description of the resource.
     :type description: str
-    :param properties: A list of key value pairs that describe the document.
-     A maximum of 25 key value pairs can be provided for a document,
-     and each tuple must have a key no greater than 50 characters
-     and value no greater than 150 characters.
-     Only string and numeral values are supported.
+    :param properties: A collection of key value pairs that belongs to the resource.
+     Each pair must not have a key greater than 50 characters
+     and must not have a value greater than 150 characters.
+     Note: A maximum of 25 key value pairs can be provided for a resource and only string and
+     numeral values are supported.
     :type properties: dict[str, object]
     """
 
     _validation = {
         'id': {'readonly': True},
+        'e_tag': {'readonly': True},
         'status': {'max_length': 100, 'min_length': 0},
         'created_date_time': {'readonly': True},
         'modified_date_time': {'readonly': True},
-        'e_tag': {'readonly': True},
         'name': {'max_length': 100, 'min_length': 0},
         'description': {'max_length': 500, 'min_length': 0},
     }
 
     _attribute_map = {
         'id': {'key': 'id', 'type': 'str'},
+        'e_tag': {'key': 'eTag', 'type': 'str'},
         'status': {'key': 'status', 'type': 'str'},
         'created_date_time': {'key': 'createdDateTime', 'type': 'iso-8601'},
         'modified_date_time': {'key': 'modifiedDateTime', 'type': 'iso-8601'},
-        'e_tag': {'key': 'eTag', 'type': 'str'},
         'name': {'key': 'name', 'type': 'str'},
         'description': {'key': 'description', 'type': 'str'},
         'properties': {'key': 'properties', 'type': '{object}'},
@@ -1220,10 +1179,10 @@ class Farmer(msrest.serialization.Model):
     ):
         super(Farmer, self).__init__(**kwargs)
         self.id = None
+        self.e_tag = None
         self.status = status
         self.created_date_time = None
         self.modified_date_time = None
-        self.e_tag = None
         self.name = name
         self.description = description
         self.properties = properties
@@ -1308,13 +1267,13 @@ class FarmOperationDataIngestionJobRequest(msrest.serialization.Model):
     :type start_year: int
     :param name: Name to identify resource.
     :type name: str
-    :param description: Textual description of resource.
+    :param description: Textual description of the resource.
     :type description: str
-    :param properties: A list of key value pairs that describe the document.
-     A maximum of 25 key value pairs can be provided for a document,
-     and each tuple must have a key no greater than 50 characters
-     and value no greater than 150 characters.
-     Only string and numeral values are supported.
+    :param properties: A collection of key value pairs that belongs to the resource.
+     Each pair must not have a key greater than 50 characters
+     and must not have a value greater than 150 characters.
+     Note: A maximum of 25 key value pairs can be provided for a resource and only string and
+     numeral values are supported.
     :type properties: dict[str, object]
     """
 
@@ -1367,34 +1326,36 @@ class FarmOperationDataIngestionJobResponse(msrest.serialization.Model):
     :type operations: list[str or ~azure.farmbeats.models.FieldOperationType]
     :param start_year: Start Year (Minimum = 2000, Maximum = CurrentYear).
     :type start_year: int
-    :param duration: Duration of the job.
-    :type duration: str
-    :param id: Id of the job.
+    :param duration_in_seconds: Duration of the job in seconds.
+    :type duration_in_seconds: str
+    :param id: Unique job id.
     :type id: str
     :param job_status: Various states a job can be in. Possible values include: "Waiting",
      "Running", "Succeeded", "Failed", "Cancelled".
     :type job_status: str or ~azure.farmbeats.models.JobStatus
     :param message: Status message to capture more details of the job.
     :type message: str
-    :ivar created_date_time: Job created at date time.
+    :ivar created_date_time: Job created at dateTime. Sample format: yyyy-MM-ddTHH:mm:ssZ.
     :vartype created_date_time: ~datetime.datetime
-    :ivar last_action_date_time: Job was last acted upon at.
+    :ivar last_action_date_time: Job was last acted upon at dateTime. Sample format:
+     yyyy-MM-ddTHH:mm:ssZ.
     :vartype last_action_date_time: ~datetime.datetime
-    :ivar start_time: Job start time when available.
+    :ivar start_time: Job start time when available. Sample format: yyyy-MM-ddTHH:mm:ssZ.
     :vartype start_time: ~datetime.datetime
-    :ivar end_time: Job end time when available.
+    :ivar end_time: Job end time when available. Sample format: yyyy-MM-ddTHH:mm:ssZ.
     :vartype end_time: ~datetime.datetime
-    :ivar is_cancellation_requested: Flag that gets set when job cancellation is requested.
+    :ivar is_cancellation_requested: A boolean flag indicating whether job cancellation is
+     requested.
     :vartype is_cancellation_requested: bool
     :param name: Name to identify resource.
     :type name: str
-    :param description: Textual description of resource.
+    :param description: Textual description of the resource.
     :type description: str
-    :param properties: A list of key value pairs that describe the document.
-     A maximum of 25 key value pairs can be provided for a document,
-     and each tuple must have a key no greater than 50 characters
-     and value no greater than 150 characters.
-     Only string and numeral values are supported.
+    :param properties: A collection of key value pairs that belongs to the resource.
+     Each pair must not have a key greater than 50 characters
+     and must not have a value greater than 150 characters.
+     Note: A maximum of 25 key value pairs can be provided for a resource and only string and
+     numeral values are supported.
     :type properties: dict[str, object]
     """
 
@@ -1411,7 +1372,7 @@ class FarmOperationDataIngestionJobResponse(msrest.serialization.Model):
     _attribute_map = {
         'operations': {'key': 'operations', 'type': '[str]'},
         'start_year': {'key': 'startYear', 'type': 'int'},
-        'duration': {'key': 'duration', 'type': 'str'},
+        'duration_in_seconds': {'key': 'durationInSeconds', 'type': 'str'},
         'id': {'key': 'id', 'type': 'str'},
         'job_status': {'key': 'jobStatus', 'type': 'str'},
         'message': {'key': 'message', 'type': 'str'},
@@ -1430,7 +1391,7 @@ class FarmOperationDataIngestionJobResponse(msrest.serialization.Model):
         *,
         operations: Optional[List[Union[str, "FieldOperationType"]]] = None,
         start_year: Optional[int] = None,
-        duration: Optional[str] = None,
+        duration_in_seconds: Optional[str] = None,
         id: Optional[str] = None,
         job_status: Optional[Union[str, "JobStatus"]] = None,
         message: Optional[str] = None,
@@ -1442,7 +1403,7 @@ class FarmOperationDataIngestionJobResponse(msrest.serialization.Model):
         super(FarmOperationDataIngestionJobResponse, self).__init__(**kwargs)
         self.operations = operations
         self.start_year = start_year
-        self.duration = duration
+        self.duration_in_seconds = duration_in_seconds
         self.id = id
         self.job_status = job_status
         self.message = message
@@ -1456,8 +1417,103 @@ class FarmOperationDataIngestionJobResponse(msrest.serialization.Model):
         self.properties = properties
 
 
+class FarmOperationsDataIngestionJobDetails(msrest.serialization.Model):
+    """Schema for GetFarmOperationsDataIngestionJobDetails.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :param duration_in_seconds: Duration of the job in seconds.
+    :type duration_in_seconds: str
+    :param id: Unique job id.
+    :type id: str
+    :param job_status: Various states a job can be in. Possible values include: "Waiting",
+     "Running", "Succeeded", "Failed", "Cancelled".
+    :type job_status: str or ~azure.farmbeats.models.JobStatus
+    :param message: Status message to capture more details of the job.
+    :type message: str
+    :ivar created_date_time: Job created at dateTime. Sample format: yyyy-MM-ddTHH:mm:ssZ.
+    :vartype created_date_time: ~datetime.datetime
+    :ivar last_action_date_time: Job was last acted upon at dateTime. Sample format:
+     yyyy-MM-ddTHH:mm:ssZ.
+    :vartype last_action_date_time: ~datetime.datetime
+    :ivar start_time: Job start time when available. Sample format: yyyy-MM-ddTHH:mm:ssZ.
+    :vartype start_time: ~datetime.datetime
+    :ivar end_time: Job end time when available. Sample format: yyyy-MM-ddTHH:mm:ssZ.
+    :vartype end_time: ~datetime.datetime
+    :ivar is_cancellation_requested: A boolean flag indicating whether job cancellation is
+     requested.
+    :vartype is_cancellation_requested: bool
+    :param name: Name to identify resource.
+    :type name: str
+    :param description: Textual description of the resource.
+    :type description: str
+    :param properties: A collection of key value pairs that belongs to the resource.
+     Each pair must not have a key greater than 50 characters
+     and must not have a value greater than 150 characters.
+     Note: A maximum of 25 key value pairs can be provided for a resource and only string and
+     numeral values are supported.
+    :type properties: dict[str, object]
+    :param request_body: FarmOperationDataIngestionJobRequest.
+    :type request_body: ~azure.farmbeats.models.FarmOperationDataIngestionJobRequest
+    """
+
+    _validation = {
+        'created_date_time': {'readonly': True},
+        'last_action_date_time': {'readonly': True},
+        'start_time': {'readonly': True},
+        'end_time': {'readonly': True},
+        'is_cancellation_requested': {'readonly': True},
+        'name': {'max_length': 100, 'min_length': 0},
+        'description': {'max_length': 500, 'min_length': 0},
+    }
+
+    _attribute_map = {
+        'duration_in_seconds': {'key': 'durationInSeconds', 'type': 'str'},
+        'id': {'key': 'id', 'type': 'str'},
+        'job_status': {'key': 'jobStatus', 'type': 'str'},
+        'message': {'key': 'message', 'type': 'str'},
+        'created_date_time': {'key': 'createdDateTime', 'type': 'iso-8601'},
+        'last_action_date_time': {'key': 'lastActionDateTime', 'type': 'iso-8601'},
+        'start_time': {'key': 'startTime', 'type': 'iso-8601'},
+        'end_time': {'key': 'endTime', 'type': 'iso-8601'},
+        'is_cancellation_requested': {'key': 'isCancellationRequested', 'type': 'bool'},
+        'name': {'key': 'name', 'type': 'str'},
+        'description': {'key': 'description', 'type': 'str'},
+        'properties': {'key': 'properties', 'type': '{object}'},
+        'request_body': {'key': 'requestBody', 'type': 'FarmOperationDataIngestionJobRequest'},
+    }
+
+    def __init__(
+        self,
+        *,
+        duration_in_seconds: Optional[str] = None,
+        id: Optional[str] = None,
+        job_status: Optional[Union[str, "JobStatus"]] = None,
+        message: Optional[str] = None,
+        name: Optional[str] = None,
+        description: Optional[str] = None,
+        properties: Optional[Dict[str, object]] = None,
+        request_body: Optional["FarmOperationDataIngestionJobRequest"] = None,
+        **kwargs
+    ):
+        super(FarmOperationsDataIngestionJobDetails, self).__init__(**kwargs)
+        self.duration_in_seconds = duration_in_seconds
+        self.id = id
+        self.job_status = job_status
+        self.message = message
+        self.created_date_time = None
+        self.last_action_date_time = None
+        self.start_time = None
+        self.end_time = None
+        self.is_cancellation_requested = None
+        self.name = name
+        self.description = description
+        self.properties = properties
+        self.request_body = request_body
+
+
 class Field(msrest.serialization.Model):
-    """Api Model for field object.
+    """Schema of field resource.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
@@ -1469,25 +1525,27 @@ class Field(msrest.serialization.Model):
     :vartype primary_boundary_id: str
     :ivar boundary_ids: Boundary Ids.
     :vartype boundary_ids: list[str]
-    :ivar id: Unique Id.
+    :ivar id: Unique resource ID.
     :vartype id: str
-    :param status: Status of the resource.
-    :type status: str
-    :ivar created_date_time: Date when resource was created.
-    :vartype created_date_time: ~datetime.datetime
-    :ivar modified_date_time: Date when resource was last modified.
-    :vartype modified_date_time: ~datetime.datetime
     :ivar e_tag: The ETag value to implement optimistic concurrency.
     :vartype e_tag: str
+    :param status: Status of the resource.
+    :type status: str
+    :ivar created_date_time: Date-time when resource was created, sample format:
+     yyyy-MM-ddTHH:mm:ssZ.
+    :vartype created_date_time: ~datetime.datetime
+    :ivar modified_date_time: Date-time when resource was last modified, sample format:
+     yyyy-MM-ddTHH:mm:ssZ.
+    :vartype modified_date_time: ~datetime.datetime
     :param name: Name to identify resource.
     :type name: str
-    :param description: Textual description of resource.
+    :param description: Textual description of the resource.
     :type description: str
-    :param properties: A list of key value pairs that describe the document.
-     A maximum of 25 key value pairs can be provided for a document,
-     and each tuple must have a key no greater than 50 characters
-     and value no greater than 150 characters.
-     Only string and numeral values are supported.
+    :param properties: A collection of key value pairs that belongs to the resource.
+     Each pair must not have a key greater than 50 characters
+     and must not have a value greater than 150 characters.
+     Note: A maximum of 25 key value pairs can be provided for a resource and only string and
+     numeral values are supported.
     :type properties: dict[str, object]
     """
 
@@ -1496,10 +1554,10 @@ class Field(msrest.serialization.Model):
         'primary_boundary_id': {'readonly': True},
         'boundary_ids': {'readonly': True, 'unique': True},
         'id': {'readonly': True},
+        'e_tag': {'readonly': True},
         'status': {'max_length': 100, 'min_length': 0},
         'created_date_time': {'readonly': True},
         'modified_date_time': {'readonly': True},
-        'e_tag': {'readonly': True},
         'name': {'max_length': 100, 'min_length': 0},
         'description': {'max_length': 500, 'min_length': 0},
     }
@@ -1510,10 +1568,10 @@ class Field(msrest.serialization.Model):
         'primary_boundary_id': {'key': 'primaryBoundaryId', 'type': 'str'},
         'boundary_ids': {'key': 'boundaryIds', 'type': '[str]'},
         'id': {'key': 'id', 'type': 'str'},
+        'e_tag': {'key': 'eTag', 'type': 'str'},
         'status': {'key': 'status', 'type': 'str'},
         'created_date_time': {'key': 'createdDateTime', 'type': 'iso-8601'},
         'modified_date_time': {'key': 'modifiedDateTime', 'type': 'iso-8601'},
-        'e_tag': {'key': 'eTag', 'type': 'str'},
         'name': {'key': 'name', 'type': 'str'},
         'description': {'key': 'description', 'type': 'str'},
         'properties': {'key': 'properties', 'type': '{object}'},
@@ -1535,10 +1593,10 @@ class Field(msrest.serialization.Model):
         self.primary_boundary_id = None
         self.boundary_ids = None
         self.id = None
+        self.e_tag = None
         self.status = status
         self.created_date_time = None
         self.modified_date_time = None
-        self.e_tag = None
         self.name = name
         self.description = description
         self.properties = properties
@@ -1610,76 +1668,81 @@ class GeoJsonObject(msrest.serialization.Model):
 
 
 class HarvestData(msrest.serialization.Model):
-    """Defines HarvestData request object.
+    """Schema of harvest data resource.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    :param total_yield: Common data measure for storing various data(Farm operations/Weather).
+    :param total_yield: Schema for storing measurement reading and unit.
     :type total_yield: ~azure.farmbeats.models.Measure
-    :param avg_yield: Common data measure for storing various data(Farm operations/Weather).
+    :param avg_yield: Schema for storing measurement reading and unit.
     :type avg_yield: ~azure.farmbeats.models.Measure
-    :param wet_mass: Common data measure for storing various data(Farm operations/Weather).
-    :type wet_mass: ~azure.farmbeats.models.Measure
-    :param avg_wet_mass: Common data measure for storing various data(Farm operations/Weather).
+    :param total_wet_mass: Schema for storing measurement reading and unit.
+    :type total_wet_mass: ~azure.farmbeats.models.Measure
+    :param avg_wet_mass: Schema for storing measurement reading and unit.
     :type avg_wet_mass: ~azure.farmbeats.models.Measure
-    :param avg_moisture: Common data measure for storing various data(Farm operations/Weather).
+    :param avg_moisture: Schema for storing measurement reading and unit.
     :type avg_moisture: ~azure.farmbeats.models.Measure
-    :param avg_speed: Common data measure for storing various data(Farm operations/Weather).
+    :param avg_speed: Schema for storing measurement reading and unit.
     :type avg_speed: ~azure.farmbeats.models.Measure
     :param harvest_product_details: Harvest product details.
     :type harvest_product_details: list[~azure.farmbeats.models.HarvestProductDetail]
-    :ivar id: Unique Id.
-    :vartype id: str
-    :ivar farmer_id: Assoiciated Farmer Id with the operation data.
-    :vartype farmer_id: str
-    :param operation_start_date_time: Start datetime of operation.
-    :type operation_start_date_time: ~datetime.datetime
-    :param operation_end_date_time: End datetime of operation.
-    :type operation_end_date_time: ~datetime.datetime
-    :param source: Source of the data.
+    :param area: Schema for storing measurement reading and unit.
+    :type area: ~azure.farmbeats.models.Measure
+    :param source: Source of the operation data.
     :type source: str
-    :param operation_modified_date_time: Modified date time of the farm operation.
-     This will come from the provider itself.
+    :param operation_modified_date_time: Modified date-time of the operation data, sample format:
+     yyyy-MM-ddTHH:mm:ssZ.
+     Note: this will be specified by the source provider itself.
     :type operation_modified_date_time: ~datetime.datetime
-    :param associated_boundary_id: AssociatedBoundaryId represents boundary of field for which
-     operation is done where as
-     OperationBoundaryId represents actual area of operation done inside field.
+    :param operation_start_date_time: Start date-time of the operation data, sample format:
+     yyyy-MM-ddTHH:mm:ssZ.
+    :type operation_start_date_time: ~datetime.datetime
+    :param operation_end_date_time: End date-time of the operation data, sample format:
+     yyyy-MM-ddTHH:mm:ssZ.
+    :type operation_end_date_time: ~datetime.datetime
+    :ivar attachments_link: Link for attachments.
+    :vartype attachments_link: str
+    :param associated_boundary_id: Optional boundary ID of the field for which operation was
+     applied.
     :type associated_boundary_id: str
-    :ivar created_date_time: Date when resource was created.
-    :vartype created_date_time: ~datetime.datetime
-    :ivar modified_date_time: Date when resource was last modified.
-    :vartype modified_date_time: ~datetime.datetime
+    :param operation_boundary_id: Optional boundary ID of the actual area for which operation was
+     applied inside the specified field.
+    :type operation_boundary_id: str
+    :ivar farmer_id: Farmer ID which belongs to the operation data.
+    :vartype farmer_id: str
+    :ivar id: Unique resource ID.
+    :vartype id: str
     :ivar e_tag: The ETag value to implement optimistic concurrency.
     :vartype e_tag: str
-    :ivar attachments_link: Area.
-    :vartype attachments_link: str
-    :param area: Common data measure for storing various data(Farm operations/Weather).
-    :type area: ~azure.farmbeats.models.Measure
-    :param operation_boundary_id: Operation boundary Id.
-    :type operation_boundary_id: str
     :param status: Status of the resource.
     :type status: str
+    :ivar created_date_time: Date-time when resource was created, sample format:
+     yyyy-MM-ddTHH:mm:ssZ.
+    :vartype created_date_time: ~datetime.datetime
+    :ivar modified_date_time: Date-time when resource was last modified, sample format:
+     yyyy-MM-ddTHH:mm:ssZ.
+    :vartype modified_date_time: ~datetime.datetime
     :param name: Name to identify resource.
     :type name: str
-    :param description: Textual description of resource.
+    :param description: Textual description of the resource.
     :type description: str
-    :param properties: A list of key value pairs that describe the document.
-     A maximum of 25 key value pairs can be provided for a document,
-     and each tuple must have a key no greater than 50 characters
-     and value no greater than 150 characters.
-     Only string and numeral values are supported.
+    :param properties: A collection of key value pairs that belongs to the resource.
+     Each pair must not have a key greater than 50 characters
+     and must not have a value greater than 150 characters.
+     Note: A maximum of 25 key value pairs can be provided for a resource and only string and
+     numeral values are supported.
     :type properties: dict[str, object]
     """
 
     _validation = {
-        'id': {'readonly': True},
-        'farmer_id': {'readonly': True},
         'source': {'max_length': 100, 'min_length': 2},
+        'attachments_link': {'readonly': True},
+        'farmer_id': {'readonly': True},
+        'id': {'readonly': True},
+        'e_tag': {'readonly': True},
+        'status': {'max_length': 100, 'min_length': 0},
         'created_date_time': {'readonly': True},
         'modified_date_time': {'readonly': True},
-        'e_tag': {'readonly': True},
-        'attachments_link': {'readonly': True},
-        'status': {'max_length': 100, 'min_length': 0},
         'name': {'max_length': 100, 'min_length': 0},
         'description': {'max_length': 500, 'min_length': 0},
     }
@@ -1687,25 +1750,25 @@ class HarvestData(msrest.serialization.Model):
     _attribute_map = {
         'total_yield': {'key': 'totalYield', 'type': 'Measure'},
         'avg_yield': {'key': 'avgYield', 'type': 'Measure'},
-        'wet_mass': {'key': 'wetMass', 'type': 'Measure'},
+        'total_wet_mass': {'key': 'totalWetMass', 'type': 'Measure'},
         'avg_wet_mass': {'key': 'avgWetMass', 'type': 'Measure'},
         'avg_moisture': {'key': 'avgMoisture', 'type': 'Measure'},
         'avg_speed': {'key': 'avgSpeed', 'type': 'Measure'},
         'harvest_product_details': {'key': 'harvestProductDetails', 'type': '[HarvestProductDetail]'},
-        'id': {'key': 'id', 'type': 'str'},
-        'farmer_id': {'key': 'farmerId', 'type': 'str'},
-        'operation_start_date_time': {'key': 'operationStartDateTime', 'type': 'iso-8601'},
-        'operation_end_date_time': {'key': 'operationEndDateTime', 'type': 'iso-8601'},
+        'area': {'key': 'area', 'type': 'Measure'},
         'source': {'key': 'source', 'type': 'str'},
         'operation_modified_date_time': {'key': 'operationModifiedDateTime', 'type': 'iso-8601'},
+        'operation_start_date_time': {'key': 'operationStartDateTime', 'type': 'iso-8601'},
+        'operation_end_date_time': {'key': 'operationEndDateTime', 'type': 'iso-8601'},
+        'attachments_link': {'key': 'attachmentsLink', 'type': 'str'},
         'associated_boundary_id': {'key': 'associatedBoundaryId', 'type': 'str'},
+        'operation_boundary_id': {'key': 'operationBoundaryId', 'type': 'str'},
+        'farmer_id': {'key': 'farmerId', 'type': 'str'},
+        'id': {'key': 'id', 'type': 'str'},
+        'e_tag': {'key': 'eTag', 'type': 'str'},
+        'status': {'key': 'status', 'type': 'str'},
         'created_date_time': {'key': 'createdDateTime', 'type': 'iso-8601'},
         'modified_date_time': {'key': 'modifiedDateTime', 'type': 'iso-8601'},
-        'e_tag': {'key': 'eTag', 'type': 'str'},
-        'attachments_link': {'key': 'attachmentsLink', 'type': 'str'},
-        'area': {'key': 'area', 'type': 'Measure'},
-        'operation_boundary_id': {'key': 'operationBoundaryId', 'type': 'str'},
-        'status': {'key': 'status', 'type': 'str'},
         'name': {'key': 'name', 'type': 'str'},
         'description': {'key': 'description', 'type': 'str'},
         'properties': {'key': 'properties', 'type': '{object}'},
@@ -1716,17 +1779,17 @@ class HarvestData(msrest.serialization.Model):
         *,
         total_yield: Optional["Measure"] = None,
         avg_yield: Optional["Measure"] = None,
-        wet_mass: Optional["Measure"] = None,
+        total_wet_mass: Optional["Measure"] = None,
         avg_wet_mass: Optional["Measure"] = None,
         avg_moisture: Optional["Measure"] = None,
         avg_speed: Optional["Measure"] = None,
         harvest_product_details: Optional[List["HarvestProductDetail"]] = None,
-        operation_start_date_time: Optional[datetime.datetime] = None,
-        operation_end_date_time: Optional[datetime.datetime] = None,
+        area: Optional["Measure"] = None,
         source: Optional[str] = None,
         operation_modified_date_time: Optional[datetime.datetime] = None,
+        operation_start_date_time: Optional[datetime.datetime] = None,
+        operation_end_date_time: Optional[datetime.datetime] = None,
         associated_boundary_id: Optional[str] = None,
-        area: Optional["Measure"] = None,
         operation_boundary_id: Optional[str] = None,
         status: Optional[str] = None,
         name: Optional[str] = None,
@@ -1737,25 +1800,25 @@ class HarvestData(msrest.serialization.Model):
         super(HarvestData, self).__init__(**kwargs)
         self.total_yield = total_yield
         self.avg_yield = avg_yield
-        self.wet_mass = wet_mass
+        self.total_wet_mass = total_wet_mass
         self.avg_wet_mass = avg_wet_mass
         self.avg_moisture = avg_moisture
         self.avg_speed = avg_speed
         self.harvest_product_details = harvest_product_details
-        self.id = None
-        self.farmer_id = None
-        self.operation_start_date_time = operation_start_date_time
-        self.operation_end_date_time = operation_end_date_time
+        self.area = area
         self.source = source
         self.operation_modified_date_time = operation_modified_date_time
+        self.operation_start_date_time = operation_start_date_time
+        self.operation_end_date_time = operation_end_date_time
+        self.attachments_link = None
         self.associated_boundary_id = associated_boundary_id
+        self.operation_boundary_id = operation_boundary_id
+        self.farmer_id = None
+        self.id = None
+        self.e_tag = None
+        self.status = status
         self.created_date_time = None
         self.modified_date_time = None
-        self.e_tag = None
-        self.attachments_link = None
-        self.area = area
-        self.operation_boundary_id = operation_boundary_id
-        self.status = status
         self.name = name
         self.description = description
         self.properties = properties
@@ -1794,30 +1857,30 @@ class HarvestDataListResponse(msrest.serialization.Model):
 
 
 class HarvestProductDetail(msrest.serialization.Model):
-    """Schema for Harvest product detail.
+    """Schema of product used during harvesting.
 
-    :param crop_variety_name: Name of the crop variety.
-    :type crop_variety_name: str
-    :param area: Common data measure for storing various data(Farm operations/Weather).
+    :param product_name: Name of the product.
+    :type product_name: str
+    :param area: Schema for storing measurement reading and unit.
     :type area: ~azure.farmbeats.models.Measure
-    :param total_yield: Common data measure for storing various data(Farm operations/Weather).
+    :param total_yield: Schema for storing measurement reading and unit.
     :type total_yield: ~azure.farmbeats.models.Measure
-    :param avg_yield: Common data measure for storing various data(Farm operations/Weather).
+    :param avg_yield: Schema for storing measurement reading and unit.
     :type avg_yield: ~azure.farmbeats.models.Measure
-    :param avg_moisture: Common data measure for storing various data(Farm operations/Weather).
+    :param avg_moisture: Schema for storing measurement reading and unit.
     :type avg_moisture: ~azure.farmbeats.models.Measure
-    :param total_wet_mass: Common data measure for storing various data(Farm operations/Weather).
+    :param total_wet_mass: Schema for storing measurement reading and unit.
     :type total_wet_mass: ~azure.farmbeats.models.Measure
-    :param avg_wet_mass: Common data measure for storing various data(Farm operations/Weather).
+    :param avg_wet_mass: Schema for storing measurement reading and unit.
     :type avg_wet_mass: ~azure.farmbeats.models.Measure
     """
 
     _validation = {
-        'crop_variety_name': {'max_length': 100, 'min_length': 1},
+        'product_name': {'max_length': 100, 'min_length': 1},
     }
 
     _attribute_map = {
-        'crop_variety_name': {'key': 'cropVarietyName', 'type': 'str'},
+        'product_name': {'key': 'productName', 'type': 'str'},
         'area': {'key': 'area', 'type': 'Measure'},
         'total_yield': {'key': 'totalYield', 'type': 'Measure'},
         'avg_yield': {'key': 'avgYield', 'type': 'Measure'},
@@ -1829,7 +1892,7 @@ class HarvestProductDetail(msrest.serialization.Model):
     def __init__(
         self,
         *,
-        crop_variety_name: Optional[str] = None,
+        product_name: Optional[str] = None,
         area: Optional["Measure"] = None,
         total_yield: Optional["Measure"] = None,
         avg_yield: Optional["Measure"] = None,
@@ -1839,7 +1902,7 @@ class HarvestProductDetail(msrest.serialization.Model):
         **kwargs
     ):
         super(HarvestProductDetail, self).__init__(**kwargs)
-        self.crop_variety_name = crop_variety_name
+        self.product_name = product_name
         self.area = area
         self.total_yield = total_yield
         self.avg_yield = avg_yield
@@ -1848,19 +1911,20 @@ class HarvestProductDetail(msrest.serialization.Model):
         self.avg_wet_mass = avg_wet_mass
 
 
-class ImageFileResponse(msrest.serialization.Model):
-    """Scene ImageFile Response.
+class ImageFile(msrest.serialization.Model):
+    """Schema of image file resource.
 
     All required parameters must be populated in order to send to Azure.
 
-    :param name: Required. Image name.
-    :type name: str
-    :param image_format: ImageFormat for satellite data. Possible values include: "TIF".
-    :type image_format: str or ~azure.farmbeats.models.ImageFormat
-    :param resolution: Resolution of image in meters.
-    :type resolution: float
-    :param file_link: ImageFile link.
+    :param file_link: Link of the image file.
     :type file_link: str
+    :param name: Required. Name of the image file.
+    :type name: str
+    :param image_format: Supported image formats for scene resource. Possible values include:
+     "TIF".
+    :type image_format: str or ~azure.farmbeats.models.ImageFormat
+    :param resolution: Resolution of image file in meters.
+    :type resolution: float
     """
 
     _validation = {
@@ -1868,26 +1932,26 @@ class ImageFileResponse(msrest.serialization.Model):
     }
 
     _attribute_map = {
+        'file_link': {'key': 'fileLink', 'type': 'str'},
         'name': {'key': 'name', 'type': 'str'},
         'image_format': {'key': 'imageFormat', 'type': 'str'},
         'resolution': {'key': 'resolution', 'type': 'float'},
-        'file_link': {'key': 'fileLink', 'type': 'str'},
     }
 
     def __init__(
         self,
         *,
         name: str,
+        file_link: Optional[str] = None,
         image_format: Optional[Union[str, "ImageFormat"]] = None,
         resolution: Optional[float] = None,
-        file_link: Optional[str] = None,
         **kwargs
     ):
-        super(ImageFileResponse, self).__init__(**kwargs)
+        super(ImageFile, self).__init__(**kwargs)
+        self.file_link = file_link
         self.name = name
         self.image_format = image_format
         self.resolution = resolution
-        self.file_link = file_link
 
 
 class InnerError(msrest.serialization.Model):
@@ -1903,8 +1967,9 @@ class InnerError(msrest.serialization.Model):
     :type code: str
     :param innererror: Inner error containing list of errors.
     
-     :code:`<see href="https://github.com/Microsoft/api-
-     guidelines/blob/vNext/Guidelines.md#innererror--object">InnerError reference document</see>`.
+     :code:`<see
+     href="https://github.com/Microsoft/api-guidelines/blob/vNext/Guidelines.md#innererror--object">InnerError
+     reference document</see>`.
     :type innererror: ~azure.farmbeats.models.InnerError
     """
 
@@ -1926,94 +1991,6 @@ class InnerError(msrest.serialization.Model):
         self.additional_properties = additional_properties
         self.code = code
         self.innererror = innererror
-
-
-class JobResponse(msrest.serialization.Model):
-    """Generic job response. Useful for common job tasks like cancellation.
-
-    Variables are only populated by the server, and will be ignored when sending a request.
-
-    :param duration: Duration of the job.
-    :type duration: str
-    :param id: Id of the job.
-    :type id: str
-    :param job_status: Various states a job can be in. Possible values include: "Waiting",
-     "Running", "Succeeded", "Failed", "Cancelled".
-    :type job_status: str or ~azure.farmbeats.models.JobStatus
-    :param message: Status message to capture more details of the job.
-    :type message: str
-    :ivar created_date_time: Job created at date time.
-    :vartype created_date_time: ~datetime.datetime
-    :ivar last_action_date_time: Job was last acted upon at.
-    :vartype last_action_date_time: ~datetime.datetime
-    :ivar start_time: Job start time when available.
-    :vartype start_time: ~datetime.datetime
-    :ivar end_time: Job end time when available.
-    :vartype end_time: ~datetime.datetime
-    :ivar is_cancellation_requested: Flag that gets set when job cancellation is requested.
-    :vartype is_cancellation_requested: bool
-    :param name: Name to identify resource.
-    :type name: str
-    :param description: Textual description of resource.
-    :type description: str
-    :param properties: A list of key value pairs that describe the document.
-     A maximum of 25 key value pairs can be provided for a document,
-     and each tuple must have a key no greater than 50 characters
-     and value no greater than 150 characters.
-     Only string and numeral values are supported.
-    :type properties: dict[str, object]
-    """
-
-    _validation = {
-        'created_date_time': {'readonly': True},
-        'last_action_date_time': {'readonly': True},
-        'start_time': {'readonly': True},
-        'end_time': {'readonly': True},
-        'is_cancellation_requested': {'readonly': True},
-        'name': {'max_length': 100, 'min_length': 0},
-        'description': {'max_length': 500, 'min_length': 0},
-    }
-
-    _attribute_map = {
-        'duration': {'key': 'duration', 'type': 'str'},
-        'id': {'key': 'id', 'type': 'str'},
-        'job_status': {'key': 'jobStatus', 'type': 'str'},
-        'message': {'key': 'message', 'type': 'str'},
-        'created_date_time': {'key': 'createdDateTime', 'type': 'iso-8601'},
-        'last_action_date_time': {'key': 'lastActionDateTime', 'type': 'iso-8601'},
-        'start_time': {'key': 'startTime', 'type': 'iso-8601'},
-        'end_time': {'key': 'endTime', 'type': 'iso-8601'},
-        'is_cancellation_requested': {'key': 'isCancellationRequested', 'type': 'bool'},
-        'name': {'key': 'name', 'type': 'str'},
-        'description': {'key': 'description', 'type': 'str'},
-        'properties': {'key': 'properties', 'type': '{object}'},
-    }
-
-    def __init__(
-        self,
-        *,
-        duration: Optional[str] = None,
-        id: Optional[str] = None,
-        job_status: Optional[Union[str, "JobStatus"]] = None,
-        message: Optional[str] = None,
-        name: Optional[str] = None,
-        description: Optional[str] = None,
-        properties: Optional[Dict[str, object]] = None,
-        **kwargs
-    ):
-        super(JobResponse, self).__init__(**kwargs)
-        self.duration = duration
-        self.id = id
-        self.job_status = job_status
-        self.message = message
-        self.created_date_time = None
-        self.last_action_date_time = None
-        self.start_time = None
-        self.end_time = None
-        self.is_cancellation_requested = None
-        self.name = name
-        self.description = description
-        self.properties = properties
 
 
 class Location(msrest.serialization.Model):
@@ -2050,7 +2027,7 @@ class Location(msrest.serialization.Model):
 
 
 class Measure(msrest.serialization.Model):
-    """Common data measure for storing various data(Farm operations/Weather).
+    """Schema for storing measurement reading and unit.
 
     :param unit: Data unit.
     :type unit: str
@@ -2115,35 +2092,7 @@ class MultiPolygon(GeoJsonObject):
         self.coordinates = coordinates
 
 
-class OAuthConfig(msrest.serialization.Model):
-    """OAuth configuration object needed to initiate oauth flow.
-
-    All required parameters must be populated in order to send to Azure.
-
-    :param oauth_authorization_link: Required. Link needed by end user to perform Oauth
-     authorization.
-    :type oauth_authorization_link: str
-    """
-
-    _validation = {
-        'oauth_authorization_link': {'required': True},
-    }
-
-    _attribute_map = {
-        'oauth_authorization_link': {'key': 'oauthAuthorizationLink', 'type': 'str'},
-    }
-
-    def __init__(
-        self,
-        *,
-        oauth_authorization_link: str,
-        **kwargs
-    ):
-        super(OAuthConfig, self).__init__(**kwargs)
-        self.oauth_authorization_link = oauth_authorization_link
-
-
-class OAuthConfigQuery(msrest.serialization.Model):
+class OAuthConnectRequest(msrest.serialization.Model):
     """Get OAuth config query parameters.
 
     All required parameters must be populated in order to send to Azure.
@@ -2183,7 +2132,7 @@ class OAuthConfigQuery(msrest.serialization.Model):
         user_redirect_state: Optional[str] = None,
         **kwargs
     ):
-        super(OAuthConfigQuery, self).__init__(**kwargs)
+        super(OAuthConnectRequest, self).__init__(**kwargs)
         self.farmer_id = farmer_id
         self.o_auth_provider_id = o_auth_provider_id
         self.user_redirect_link = user_redirect_link
@@ -2191,40 +2140,49 @@ class OAuthConfigQuery(msrest.serialization.Model):
 
 
 class OAuthProvider(msrest.serialization.Model):
-    """Api Model for AuthProvider object.
+    """Schema of OAuth provider resource.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    :ivar id: Unique Id.
-    :vartype id: str
-    :param app_id: OAuth App Id for given Auth Provider.
+    :param app_id: OAuth App Id for given OAuth Provider.
     :type app_id: str
-    :param is_production_app: To determine if the App is ready to be used for Production scenarios
-     in the provider side.
-     If not provided, we assume false.
-     Currently applicable for JohnDeere.
+    :param app_secret: OAuth App secret for given Provider.
+     Note: Won't be sent in response.
+    :type app_secret: str
+    :param api_key: OAuth Api key for given Provider.
+     Note: currently Applicable to Climate provider. Won't be sent in response.
+    :type api_key: str
+    :param is_production_app: An optional flag to determine if the App is ready to be used for
+     Production scenarios in the provider side or not. (Default value: false)
+     Note: Currently applicable for JohnDeere.
     :type is_production_app: bool
+    :ivar id: Unique OAuth provider ID.
+    :vartype id: str
     :ivar e_tag: The ETag value to implement optimistic concurrency.
     :vartype e_tag: str
-    :ivar created_date_time: Date when resource was created.
+    :ivar created_date_time: Date-time when resource was created, sample format:
+     yyyy-MM-ddTHH:mm:ssZ.
     :vartype created_date_time: ~datetime.datetime
-    :ivar modified_date_time: Date when resource was last modified.
+    :ivar modified_date_time: Date-time when resource was last modified, sample format:
+     yyyy-MM-ddTHH:mm:ssZ.
     :vartype modified_date_time: ~datetime.datetime
     :param name: Name to identify resource.
     :type name: str
-    :param description: Textual description of resource.
+    :param description: Textual description of the resource.
     :type description: str
-    :param properties: A list of key value pairs that describe the document.
-     A maximum of 25 key value pairs can be provided for a document,
-     and each tuple must have a key no greater than 50 characters
-     and value no greater than 150 characters.
-     Only string and numeral values are supported.
+    :param properties: A collection of key value pairs that belongs to the resource.
+     Each pair must not have a key greater than 50 characters
+     and must not have a value greater than 150 characters.
+     Note: A maximum of 25 key value pairs can be provided for a resource and only string and
+     numeral values are supported.
     :type properties: dict[str, object]
     """
 
     _validation = {
-        'id': {'readonly': True},
         'app_id': {'max_length': 200, 'min_length': 2},
+        'app_secret': {'max_length': 200, 'min_length': 2},
+        'api_key': {'max_length': 200, 'min_length': 2},
+        'id': {'readonly': True},
         'e_tag': {'readonly': True},
         'created_date_time': {'readonly': True},
         'modified_date_time': {'readonly': True},
@@ -2233,9 +2191,11 @@ class OAuthProvider(msrest.serialization.Model):
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
         'app_id': {'key': 'appId', 'type': 'str'},
+        'app_secret': {'key': 'appSecret', 'type': 'str'},
+        'api_key': {'key': 'apiKey', 'type': 'str'},
         'is_production_app': {'key': 'isProductionApp', 'type': 'bool'},
+        'id': {'key': 'id', 'type': 'str'},
         'e_tag': {'key': 'eTag', 'type': 'str'},
         'created_date_time': {'key': 'createdDateTime', 'type': 'iso-8601'},
         'modified_date_time': {'key': 'modifiedDateTime', 'type': 'iso-8601'},
@@ -2248,16 +2208,20 @@ class OAuthProvider(msrest.serialization.Model):
         self,
         *,
         app_id: Optional[str] = None,
-        is_production_app: Optional[bool] = None,
+        app_secret: Optional[str] = None,
+        api_key: Optional[str] = None,
+        is_production_app: Optional[bool] = False,
         name: Optional[str] = None,
         description: Optional[str] = None,
         properties: Optional[Dict[str, object]] = None,
         **kwargs
     ):
         super(OAuthProvider, self).__init__(**kwargs)
-        self.id = None
         self.app_id = app_id
+        self.app_secret = app_secret
+        self.api_key = api_key
         self.is_production_app = is_production_app
+        self.id = None
         self.e_tag = None
         self.created_date_time = None
         self.modified_date_time = None
@@ -2298,57 +2262,46 @@ class OAuthProviderListResponse(msrest.serialization.Model):
         self.next_link = next_link
 
 
-class OAuthTokenInfo(msrest.serialization.Model):
-    """Api Model for OAuth token info object.
+class OAuthToken(msrest.serialization.Model):
+    """Schema of OAuth token resource.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
     All required parameters must be populated in order to send to Azure.
 
-    :param farmer_id: Required. Farmer Id for this auth config.
+    :param farmer_id: Required. Farmer ID for this OAuth config.
     :type farmer_id: str
-    :param auth_provider_id: Required. Id of the auth provider object containing app information.
+    :param auth_provider_id: Required. ID of the OAuth provider resource containing app
+     information.
     :type auth_provider_id: str
-    :param is_valid: Indicates if the token is a valid and working one or expired.
+    :param is_valid: An optional flag indicating whether the token is a valid or expired (Default
+     value: true).
     :type is_valid: bool
-    :ivar created_date_time: Date when resource was created.
-    :vartype created_date_time: ~datetime.datetime
-    :ivar modified_date_time: Date when resource was last modified.
-    :vartype modified_date_time: ~datetime.datetime
     :ivar e_tag: The ETag value to implement optimistic concurrency.
     :vartype e_tag: str
-    :param name: Name to identify resource.
-    :type name: str
-    :param description: Textual description of resource.
-    :type description: str
-    :param properties: A list of key value pairs that describe the document.
-     A maximum of 25 key value pairs can be provided for a document,
-     and each tuple must have a key no greater than 50 characters
-     and value no greater than 150 characters.
-     Only string and numeral values are supported.
-    :type properties: dict[str, object]
+    :ivar created_date_time: Date-time when resource was created, sample format:
+     yyyy-MM-ddTHH:mm:ssZ.
+    :vartype created_date_time: ~datetime.datetime
+    :ivar modified_date_time: Date-time when resource was last modified, sample format:
+     yyyy-MM-ddTHH:mm:ssZ.
+    :vartype modified_date_time: ~datetime.datetime
     """
 
     _validation = {
         'farmer_id': {'required': True},
         'auth_provider_id': {'required': True},
+        'e_tag': {'readonly': True},
         'created_date_time': {'readonly': True},
         'modified_date_time': {'readonly': True},
-        'e_tag': {'readonly': True},
-        'name': {'max_length': 100, 'min_length': 0},
-        'description': {'max_length': 500, 'min_length': 0},
     }
 
     _attribute_map = {
         'farmer_id': {'key': 'farmerId', 'type': 'str'},
         'auth_provider_id': {'key': 'authProviderId', 'type': 'str'},
         'is_valid': {'key': 'isValid', 'type': 'bool'},
+        'e_tag': {'key': 'eTag', 'type': 'str'},
         'created_date_time': {'key': 'createdDateTime', 'type': 'iso-8601'},
         'modified_date_time': {'key': 'modifiedDateTime', 'type': 'iso-8601'},
-        'e_tag': {'key': 'eTag', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'description': {'key': 'description', 'type': 'str'},
-        'properties': {'key': 'properties', 'type': '{object}'},
     }
 
     def __init__(
@@ -2356,29 +2309,23 @@ class OAuthTokenInfo(msrest.serialization.Model):
         *,
         farmer_id: str,
         auth_provider_id: str,
-        is_valid: Optional[bool] = None,
-        name: Optional[str] = None,
-        description: Optional[str] = None,
-        properties: Optional[Dict[str, object]] = None,
+        is_valid: Optional[bool] = True,
         **kwargs
     ):
-        super(OAuthTokenInfo, self).__init__(**kwargs)
+        super(OAuthToken, self).__init__(**kwargs)
         self.farmer_id = farmer_id
         self.auth_provider_id = auth_provider_id
         self.is_valid = is_valid
+        self.e_tag = None
         self.created_date_time = None
         self.modified_date_time = None
-        self.e_tag = None
-        self.name = name
-        self.description = description
-        self.properties = properties
 
 
-class OAuthTokenInfoListResponse(msrest.serialization.Model):
+class OAuthTokenListResponse(msrest.serialization.Model):
     """Paged response contains list of requested objects and a URL link to get the next set of results.
 
     :param value: List of requested objects.
-    :type value: list[~azure.farmbeats.models.OAuthTokenInfo]
+    :type value: list[~azure.farmbeats.models.OAuthToken]
     :param skip_token: Token used in retrieving the next page. If null, there are no additional
      pages.
     :type skip_token: str
@@ -2387,7 +2334,7 @@ class OAuthTokenInfoListResponse(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': '[OAuthTokenInfo]'},
+        'value': {'key': 'value', 'type': '[OAuthToken]'},
         'skip_token': {'key': '$skipToken', 'type': 'str'},
         'next_link': {'key': 'nextLink', 'type': 'str'},
     }
@@ -2395,105 +2342,21 @@ class OAuthTokenInfoListResponse(msrest.serialization.Model):
     def __init__(
         self,
         *,
-        value: Optional[List["OAuthTokenInfo"]] = None,
+        value: Optional[List["OAuthToken"]] = None,
         skip_token: Optional[str] = None,
         next_link: Optional[str] = None,
         **kwargs
     ):
-        super(OAuthTokenInfoListResponse, self).__init__(**kwargs)
+        super(OAuthTokenListResponse, self).__init__(**kwargs)
         self.value = value
         self.skip_token = skip_token
         self.next_link = next_link
 
 
-class Paths104Hgf2FarmersFarmeridAttachmentsAttachmentidPutRequestbodyContentMultipartFormDataSchema(msrest.serialization.Model):
-    """Paths104Hgf2FarmersFarmeridAttachmentsAttachmentidPutRequestbodyContentMultipartFormDataSchema.
-
-    All required parameters must be populated in order to send to Azure.
-
-    :param file: Required. File of size upto 5mb.
-    :type file: IO
-    :param farmer_id: Farmer id for this attachment.
-    :type farmer_id: str
-    :param resource_id: Associated Resource id for this attachment.
-    :type resource_id: str
-    :param resource_type: Associated Resource type for this attachment
-     i.e. Farmer, Farm, Field, SeasonalField, Boundary, FarmOperationApplicationData, HarvestData,
-     TillageData, PlantingData.
-    :type resource_type: str
-    :param original_file_name: Original File Name for this attachment.
-    :type original_file_name: str
-    :param id: Unique id.
-    :type id: str
-    :param status: Status of the resource.
-    :type status: str
-    :param created_date_time: Date when resource was created.
-    :type created_date_time: str
-    :param modified_date_time: Date when resource was last modified.
-    :type modified_date_time: str
-    :param name: Name to identify resource.
-    :type name: str
-    :param description: Textual description of resource.
-    :type description: str
-    :param e_tag: The ETag value to implement optimistic concurrency.
-    :type e_tag: str
-    """
-
-    _validation = {
-        'file': {'required': True},
-    }
-
-    _attribute_map = {
-        'file': {'key': 'file', 'type': 'IO'},
-        'farmer_id': {'key': 'FarmerId', 'type': 'str'},
-        'resource_id': {'key': 'ResourceId', 'type': 'str'},
-        'resource_type': {'key': 'ResourceType', 'type': 'str'},
-        'original_file_name': {'key': 'OriginalFileName', 'type': 'str'},
-        'id': {'key': 'Id', 'type': 'str'},
-        'status': {'key': 'Status', 'type': 'str'},
-        'created_date_time': {'key': 'CreatedDateTime', 'type': 'str'},
-        'modified_date_time': {'key': 'ModifiedDateTime', 'type': 'str'},
-        'name': {'key': 'Name', 'type': 'str'},
-        'description': {'key': 'Description', 'type': 'str'},
-        'e_tag': {'key': 'ETag', 'type': 'str'},
-    }
-
-    def __init__(
-        self,
-        *,
-        file: IO,
-        farmer_id: Optional[str] = None,
-        resource_id: Optional[str] = None,
-        resource_type: Optional[str] = None,
-        original_file_name: Optional[str] = None,
-        id: Optional[str] = None,
-        status: Optional[str] = None,
-        created_date_time: Optional[str] = None,
-        modified_date_time: Optional[str] = None,
-        name: Optional[str] = None,
-        description: Optional[str] = None,
-        e_tag: Optional[str] = None,
-        **kwargs
-    ):
-        super(Paths104Hgf2FarmersFarmeridAttachmentsAttachmentidPutRequestbodyContentMultipartFormDataSchema, self).__init__(**kwargs)
-        self.file = file
-        self.farmer_id = farmer_id
-        self.resource_id = resource_id
-        self.resource_type = resource_type
-        self.original_file_name = original_file_name
-        self.id = id
-        self.status = status
-        self.created_date_time = created_date_time
-        self.modified_date_time = modified_date_time
-        self.name = name
-        self.description = description
-        self.e_tag = e_tag
-
-
 class Paths1LxjoxzFarmersFarmeridAttachmentsAttachmentidPatchRequestbodyContentMultipartFormDataSchema(msrest.serialization.Model):
     """Paths1LxjoxzFarmersFarmeridAttachmentsAttachmentidPatchRequestbodyContentMultipartFormDataSchema.
 
-    :param file: File of size upto 5mb.
+    :param file: File to be uploaded.
     :type file: IO
     :param farmer_id: Farmer id for this attachment.
     :type farmer_id: str
@@ -2569,93 +2432,98 @@ class Paths1LxjoxzFarmersFarmeridAttachmentsAttachmentidPatchRequestbodyContentM
 
 
 class PlantingData(msrest.serialization.Model):
-    """Defines PlantingData request object.
+    """Schema of planting data resource.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    :param avg_seeding_rate: Common data measure for storing various data(Farm operations/Weather).
-    :type avg_seeding_rate: ~azure.farmbeats.models.Measure
-    :param total_material: Common data measure for storing various data(Farm operations/Weather).
+    :param avg_planting_rate: Schema for storing measurement reading and unit.
+    :type avg_planting_rate: ~azure.farmbeats.models.Measure
+    :param total_material: Schema for storing measurement reading and unit.
     :type total_material: ~azure.farmbeats.models.Measure
-    :param avg_material: Common data measure for storing various data(Farm operations/Weather).
+    :param avg_material: Schema for storing measurement reading and unit.
     :type avg_material: ~azure.farmbeats.models.Measure
-    :param seeding_product_details: Seeding product details.
-    :type seeding_product_details: list[~azure.farmbeats.models.SeedingProductDetail]
-    :ivar id: Unique Id.
-    :vartype id: str
-    :ivar farmer_id: Assoiciated Farmer Id with the operation data.
-    :vartype farmer_id: str
-    :param operation_start_date_time: Start datetime of operation.
-    :type operation_start_date_time: ~datetime.datetime
-    :param operation_end_date_time: End datetime of operation.
-    :type operation_end_date_time: ~datetime.datetime
-    :param source: Source of the data.
+    :param planting_product_details: Planting product details.
+    :type planting_product_details: list[~azure.farmbeats.models.PlantingProductDetail]
+    :param area: Schema for storing measurement reading and unit.
+    :type area: ~azure.farmbeats.models.Measure
+    :param source: Source of the operation data.
     :type source: str
-    :param operation_modified_date_time: Modified date time of the farm operation.
-     This will come from the provider itself.
+    :param operation_modified_date_time: Modified date-time of the operation data, sample format:
+     yyyy-MM-ddTHH:mm:ssZ.
+     Note: this will be specified by the source provider itself.
     :type operation_modified_date_time: ~datetime.datetime
-    :param associated_boundary_id: AssociatedBoundaryId represents boundary of field for which
-     operation is done where as
-     OperationBoundaryId represents actual area of operation done inside field.
+    :param operation_start_date_time: Start date-time of the operation data, sample format:
+     yyyy-MM-ddTHH:mm:ssZ.
+    :type operation_start_date_time: ~datetime.datetime
+    :param operation_end_date_time: End date-time of the operation data, sample format:
+     yyyy-MM-ddTHH:mm:ssZ.
+    :type operation_end_date_time: ~datetime.datetime
+    :ivar attachments_link: Link for attachments.
+    :vartype attachments_link: str
+    :param associated_boundary_id: Optional boundary ID of the field for which operation was
+     applied.
     :type associated_boundary_id: str
-    :ivar created_date_time: Date when resource was created.
-    :vartype created_date_time: ~datetime.datetime
-    :ivar modified_date_time: Date when resource was last modified.
-    :vartype modified_date_time: ~datetime.datetime
+    :param operation_boundary_id: Optional boundary ID of the actual area for which operation was
+     applied inside the specified field.
+    :type operation_boundary_id: str
+    :ivar farmer_id: Farmer ID which belongs to the operation data.
+    :vartype farmer_id: str
+    :ivar id: Unique resource ID.
+    :vartype id: str
     :ivar e_tag: The ETag value to implement optimistic concurrency.
     :vartype e_tag: str
-    :ivar attachments_link: Area.
-    :vartype attachments_link: str
-    :param area: Common data measure for storing various data(Farm operations/Weather).
-    :type area: ~azure.farmbeats.models.Measure
-    :param operation_boundary_id: Operation boundary Id.
-    :type operation_boundary_id: str
     :param status: Status of the resource.
     :type status: str
+    :ivar created_date_time: Date-time when resource was created, sample format:
+     yyyy-MM-ddTHH:mm:ssZ.
+    :vartype created_date_time: ~datetime.datetime
+    :ivar modified_date_time: Date-time when resource was last modified, sample format:
+     yyyy-MM-ddTHH:mm:ssZ.
+    :vartype modified_date_time: ~datetime.datetime
     :param name: Name to identify resource.
     :type name: str
-    :param description: Textual description of resource.
+    :param description: Textual description of the resource.
     :type description: str
-    :param properties: A list of key value pairs that describe the document.
-     A maximum of 25 key value pairs can be provided for a document,
-     and each tuple must have a key no greater than 50 characters
-     and value no greater than 150 characters.
-     Only string and numeral values are supported.
+    :param properties: A collection of key value pairs that belongs to the resource.
+     Each pair must not have a key greater than 50 characters
+     and must not have a value greater than 150 characters.
+     Note: A maximum of 25 key value pairs can be provided for a resource and only string and
+     numeral values are supported.
     :type properties: dict[str, object]
     """
 
     _validation = {
-        'id': {'readonly': True},
-        'farmer_id': {'readonly': True},
         'source': {'max_length': 100, 'min_length': 2},
+        'attachments_link': {'readonly': True},
+        'farmer_id': {'readonly': True},
+        'id': {'readonly': True},
+        'e_tag': {'readonly': True},
+        'status': {'max_length': 100, 'min_length': 0},
         'created_date_time': {'readonly': True},
         'modified_date_time': {'readonly': True},
-        'e_tag': {'readonly': True},
-        'attachments_link': {'readonly': True},
-        'status': {'max_length': 100, 'min_length': 0},
         'name': {'max_length': 100, 'min_length': 0},
         'description': {'max_length': 500, 'min_length': 0},
     }
 
     _attribute_map = {
-        'avg_seeding_rate': {'key': 'avgSeedingRate', 'type': 'Measure'},
+        'avg_planting_rate': {'key': 'avgPlantingRate', 'type': 'Measure'},
         'total_material': {'key': 'totalMaterial', 'type': 'Measure'},
         'avg_material': {'key': 'avgMaterial', 'type': 'Measure'},
-        'seeding_product_details': {'key': 'seedingProductDetails', 'type': '[SeedingProductDetail]'},
-        'id': {'key': 'id', 'type': 'str'},
-        'farmer_id': {'key': 'farmerId', 'type': 'str'},
-        'operation_start_date_time': {'key': 'operationStartDateTime', 'type': 'iso-8601'},
-        'operation_end_date_time': {'key': 'operationEndDateTime', 'type': 'iso-8601'},
+        'planting_product_details': {'key': 'plantingProductDetails', 'type': '[PlantingProductDetail]'},
+        'area': {'key': 'area', 'type': 'Measure'},
         'source': {'key': 'source', 'type': 'str'},
         'operation_modified_date_time': {'key': 'operationModifiedDateTime', 'type': 'iso-8601'},
+        'operation_start_date_time': {'key': 'operationStartDateTime', 'type': 'iso-8601'},
+        'operation_end_date_time': {'key': 'operationEndDateTime', 'type': 'iso-8601'},
+        'attachments_link': {'key': 'attachmentsLink', 'type': 'str'},
         'associated_boundary_id': {'key': 'associatedBoundaryId', 'type': 'str'},
+        'operation_boundary_id': {'key': 'operationBoundaryId', 'type': 'str'},
+        'farmer_id': {'key': 'farmerId', 'type': 'str'},
+        'id': {'key': 'id', 'type': 'str'},
+        'e_tag': {'key': 'eTag', 'type': 'str'},
+        'status': {'key': 'status', 'type': 'str'},
         'created_date_time': {'key': 'createdDateTime', 'type': 'iso-8601'},
         'modified_date_time': {'key': 'modifiedDateTime', 'type': 'iso-8601'},
-        'e_tag': {'key': 'eTag', 'type': 'str'},
-        'attachments_link': {'key': 'attachmentsLink', 'type': 'str'},
-        'area': {'key': 'area', 'type': 'Measure'},
-        'operation_boundary_id': {'key': 'operationBoundaryId', 'type': 'str'},
-        'status': {'key': 'status', 'type': 'str'},
         'name': {'key': 'name', 'type': 'str'},
         'description': {'key': 'description', 'type': 'str'},
         'properties': {'key': 'properties', 'type': '{object}'},
@@ -2664,16 +2532,16 @@ class PlantingData(msrest.serialization.Model):
     def __init__(
         self,
         *,
-        avg_seeding_rate: Optional["Measure"] = None,
+        avg_planting_rate: Optional["Measure"] = None,
         total_material: Optional["Measure"] = None,
         avg_material: Optional["Measure"] = None,
-        seeding_product_details: Optional[List["SeedingProductDetail"]] = None,
-        operation_start_date_time: Optional[datetime.datetime] = None,
-        operation_end_date_time: Optional[datetime.datetime] = None,
+        planting_product_details: Optional[List["PlantingProductDetail"]] = None,
+        area: Optional["Measure"] = None,
         source: Optional[str] = None,
         operation_modified_date_time: Optional[datetime.datetime] = None,
+        operation_start_date_time: Optional[datetime.datetime] = None,
+        operation_end_date_time: Optional[datetime.datetime] = None,
         associated_boundary_id: Optional[str] = None,
-        area: Optional["Measure"] = None,
         operation_boundary_id: Optional[str] = None,
         status: Optional[str] = None,
         name: Optional[str] = None,
@@ -2682,24 +2550,24 @@ class PlantingData(msrest.serialization.Model):
         **kwargs
     ):
         super(PlantingData, self).__init__(**kwargs)
-        self.avg_seeding_rate = avg_seeding_rate
+        self.avg_planting_rate = avg_planting_rate
         self.total_material = total_material
         self.avg_material = avg_material
-        self.seeding_product_details = seeding_product_details
-        self.id = None
-        self.farmer_id = None
-        self.operation_start_date_time = operation_start_date_time
-        self.operation_end_date_time = operation_end_date_time
+        self.planting_product_details = planting_product_details
+        self.area = area
         self.source = source
         self.operation_modified_date_time = operation_modified_date_time
+        self.operation_start_date_time = operation_start_date_time
+        self.operation_end_date_time = operation_end_date_time
+        self.attachments_link = None
         self.associated_boundary_id = associated_boundary_id
+        self.operation_boundary_id = operation_boundary_id
+        self.farmer_id = None
+        self.id = None
+        self.e_tag = None
+        self.status = status
         self.created_date_time = None
         self.modified_date_time = None
-        self.e_tag = None
-        self.attachments_link = None
-        self.area = area
-        self.operation_boundary_id = operation_boundary_id
-        self.status = status
         self.name = name
         self.description = description
         self.properties = properties
@@ -2735,6 +2603,42 @@ class PlantingDataListResponse(msrest.serialization.Model):
         self.value = value
         self.skip_token = skip_token
         self.next_link = next_link
+
+
+class PlantingProductDetail(msrest.serialization.Model):
+    """Schema for Planting product detail.
+
+    :param product_name: Name of the product.
+    :type product_name: str
+    :param area: Schema for storing measurement reading and unit.
+    :type area: ~azure.farmbeats.models.Measure
+    :param total_material: Schema for storing measurement reading and unit.
+    :type total_material: ~azure.farmbeats.models.Measure
+    :param avg_material: Schema for storing measurement reading and unit.
+    :type avg_material: ~azure.farmbeats.models.Measure
+    """
+
+    _attribute_map = {
+        'product_name': {'key': 'productName', 'type': 'str'},
+        'area': {'key': 'area', 'type': 'Measure'},
+        'total_material': {'key': 'totalMaterial', 'type': 'Measure'},
+        'avg_material': {'key': 'avgMaterial', 'type': 'Measure'},
+    }
+
+    def __init__(
+        self,
+        *,
+        product_name: Optional[str] = None,
+        area: Optional["Measure"] = None,
+        total_material: Optional["Measure"] = None,
+        avg_material: Optional["Measure"] = None,
+        **kwargs
+    ):
+        super(PlantingProductDetail, self).__init__(**kwargs)
+        self.product_name = product_name
+        self.area = area
+        self.total_material = total_material
+        self.avg_material = avg_material
 
 
 class Point(GeoJsonObject):
@@ -2814,14 +2718,14 @@ class SatelliteData(msrest.serialization.Model):
     :type image_names: list[str or ~azure.farmbeats.models.ImageName]
     :param image_formats: List of ImageFormats. Available value: TIF.
     :type image_formats: list[str or ~azure.farmbeats.models.ImageFormat]
-    :param image_resolutions: List of ImageResolutions in meters. Available value: 10/Ten.
-    :type image_resolutions: list[str or ~azure.farmbeats.models.ImageResolution]
+    :param image_resolutions: List of ImageResolutions in meters. Available values: 10, 20, 60.
+    :type image_resolutions: list[float]
     """
 
     _attribute_map = {
         'image_names': {'key': 'imageNames', 'type': '[str]'},
         'image_formats': {'key': 'imageFormats', 'type': '[str]'},
-        'image_resolutions': {'key': 'imageResolutions', 'type': '[str]'},
+        'image_resolutions': {'key': 'imageResolutions', 'type': '[float]'},
     }
 
     def __init__(
@@ -2829,13 +2733,108 @@ class SatelliteData(msrest.serialization.Model):
         *,
         image_names: Optional[List[Union[str, "ImageName"]]] = None,
         image_formats: Optional[List[Union[str, "ImageFormat"]]] = None,
-        image_resolutions: Optional[List[Union[str, "ImageResolution"]]] = None,
+        image_resolutions: Optional[List[float]] = None,
         **kwargs
     ):
         super(SatelliteData, self).__init__(**kwargs)
         self.image_names = image_names
         self.image_formats = image_formats
         self.image_resolutions = image_resolutions
+
+
+class SatelliteIngestionJobDetails(msrest.serialization.Model):
+    """Schema for GetSatelliteJobDetails.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :param duration_in_seconds: Duration of the job in seconds.
+    :type duration_in_seconds: str
+    :param id: Unique job id.
+    :type id: str
+    :param job_status: Various states a job can be in. Possible values include: "Waiting",
+     "Running", "Succeeded", "Failed", "Cancelled".
+    :type job_status: str or ~azure.farmbeats.models.JobStatus
+    :param message: Status message to capture more details of the job.
+    :type message: str
+    :ivar created_date_time: Job created at dateTime. Sample format: yyyy-MM-ddTHH:mm:ssZ.
+    :vartype created_date_time: ~datetime.datetime
+    :ivar last_action_date_time: Job was last acted upon at dateTime. Sample format:
+     yyyy-MM-ddTHH:mm:ssZ.
+    :vartype last_action_date_time: ~datetime.datetime
+    :ivar start_time: Job start time when available. Sample format: yyyy-MM-ddTHH:mm:ssZ.
+    :vartype start_time: ~datetime.datetime
+    :ivar end_time: Job end time when available. Sample format: yyyy-MM-ddTHH:mm:ssZ.
+    :vartype end_time: ~datetime.datetime
+    :ivar is_cancellation_requested: A boolean flag indicating whether job cancellation is
+     requested.
+    :vartype is_cancellation_requested: bool
+    :param name: Name to identify resource.
+    :type name: str
+    :param description: Textual description of the resource.
+    :type description: str
+    :param properties: A collection of key value pairs that belongs to the resource.
+     Each pair must not have a key greater than 50 characters
+     and must not have a value greater than 150 characters.
+     Note: A maximum of 25 key value pairs can be provided for a resource and only string and
+     numeral values are supported.
+    :type properties: dict[str, object]
+    :param request_body: SatelliteIngestionJobRequest.
+    :type request_body: ~azure.farmbeats.models.SatelliteIngestionJobRequest
+    """
+
+    _validation = {
+        'created_date_time': {'readonly': True},
+        'last_action_date_time': {'readonly': True},
+        'start_time': {'readonly': True},
+        'end_time': {'readonly': True},
+        'is_cancellation_requested': {'readonly': True},
+        'name': {'max_length': 100, 'min_length': 0},
+        'description': {'max_length': 500, 'min_length': 0},
+    }
+
+    _attribute_map = {
+        'duration_in_seconds': {'key': 'durationInSeconds', 'type': 'str'},
+        'id': {'key': 'id', 'type': 'str'},
+        'job_status': {'key': 'jobStatus', 'type': 'str'},
+        'message': {'key': 'message', 'type': 'str'},
+        'created_date_time': {'key': 'createdDateTime', 'type': 'iso-8601'},
+        'last_action_date_time': {'key': 'lastActionDateTime', 'type': 'iso-8601'},
+        'start_time': {'key': 'startTime', 'type': 'iso-8601'},
+        'end_time': {'key': 'endTime', 'type': 'iso-8601'},
+        'is_cancellation_requested': {'key': 'isCancellationRequested', 'type': 'bool'},
+        'name': {'key': 'name', 'type': 'str'},
+        'description': {'key': 'description', 'type': 'str'},
+        'properties': {'key': 'properties', 'type': '{object}'},
+        'request_body': {'key': 'requestBody', 'type': 'SatelliteIngestionJobRequest'},
+    }
+
+    def __init__(
+        self,
+        *,
+        duration_in_seconds: Optional[str] = None,
+        id: Optional[str] = None,
+        job_status: Optional[Union[str, "JobStatus"]] = None,
+        message: Optional[str] = None,
+        name: Optional[str] = None,
+        description: Optional[str] = None,
+        properties: Optional[Dict[str, object]] = None,
+        request_body: Optional["SatelliteIngestionJobRequest"] = None,
+        **kwargs
+    ):
+        super(SatelliteIngestionJobDetails, self).__init__(**kwargs)
+        self.duration_in_seconds = duration_in_seconds
+        self.id = id
+        self.job_status = job_status
+        self.message = message
+        self.created_date_time = None
+        self.last_action_date_time = None
+        self.start_time = None
+        self.end_time = None
+        self.is_cancellation_requested = None
+        self.name = name
+        self.description = description
+        self.properties = properties
+        self.request_body = request_body
 
 
 class SatelliteIngestionJobRequest(msrest.serialization.Model):
@@ -2860,13 +2859,13 @@ class SatelliteIngestionJobRequest(msrest.serialization.Model):
     :type data: ~azure.farmbeats.models.SatelliteData
     :param name: Name to identify resource.
     :type name: str
-    :param description: Textual description of resource.
+    :param description: Textual description of the resource.
     :type description: str
-    :param properties: A list of key value pairs that describe the document.
-     A maximum of 25 key value pairs can be provided for a document,
-     and each tuple must have a key no greater than 50 characters
-     and value no greater than 150 characters.
-     Only string and numeral values are supported.
+    :param properties: A collection of key value pairs that belongs to the resource.
+     Each pair must not have a key greater than 50 characters
+     and must not have a value greater than 150 characters.
+     Note: A maximum of 25 key value pairs can be provided for a resource and only string and
+     numeral values are supported.
     :type properties: dict[str, object]
     """
 
@@ -2925,34 +2924,36 @@ class SatelliteIngestionJobResponse(msrest.serialization.Model):
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    :param duration: Duration of the job.
-    :type duration: str
-    :param id: Id of the job.
+    :param duration_in_seconds: Duration of the job in seconds.
+    :type duration_in_seconds: str
+    :param id: Unique job id.
     :type id: str
     :param job_status: Various states a job can be in. Possible values include: "Waiting",
      "Running", "Succeeded", "Failed", "Cancelled".
     :type job_status: str or ~azure.farmbeats.models.JobStatus
     :param message: Status message to capture more details of the job.
     :type message: str
-    :ivar created_date_time: Job created at date time.
+    :ivar created_date_time: Job created at dateTime. Sample format: yyyy-MM-ddTHH:mm:ssZ.
     :vartype created_date_time: ~datetime.datetime
-    :ivar last_action_date_time: Job was last acted upon at.
+    :ivar last_action_date_time: Job was last acted upon at dateTime. Sample format:
+     yyyy-MM-ddTHH:mm:ssZ.
     :vartype last_action_date_time: ~datetime.datetime
-    :ivar start_time: Job start time when available.
+    :ivar start_time: Job start time when available. Sample format: yyyy-MM-ddTHH:mm:ssZ.
     :vartype start_time: ~datetime.datetime
-    :ivar end_time: Job end time when available.
+    :ivar end_time: Job end time when available. Sample format: yyyy-MM-ddTHH:mm:ssZ.
     :vartype end_time: ~datetime.datetime
-    :ivar is_cancellation_requested: Flag that gets set when job cancellation is requested.
+    :ivar is_cancellation_requested: A boolean flag indicating whether job cancellation is
+     requested.
     :vartype is_cancellation_requested: bool
     :param name: Name to identify resource.
     :type name: str
-    :param description: Textual description of resource.
+    :param description: Textual description of the resource.
     :type description: str
-    :param properties: A list of key value pairs that describe the document.
-     A maximum of 25 key value pairs can be provided for a document,
-     and each tuple must have a key no greater than 50 characters
-     and value no greater than 150 characters.
-     Only string and numeral values are supported.
+    :param properties: A collection of key value pairs that belongs to the resource.
+     Each pair must not have a key greater than 50 characters
+     and must not have a value greater than 150 characters.
+     Note: A maximum of 25 key value pairs can be provided for a resource and only string and
+     numeral values are supported.
     :type properties: dict[str, object]
     """
 
@@ -2967,7 +2968,7 @@ class SatelliteIngestionJobResponse(msrest.serialization.Model):
     }
 
     _attribute_map = {
-        'duration': {'key': 'duration', 'type': 'str'},
+        'duration_in_seconds': {'key': 'durationInSeconds', 'type': 'str'},
         'id': {'key': 'id', 'type': 'str'},
         'job_status': {'key': 'jobStatus', 'type': 'str'},
         'message': {'key': 'message', 'type': 'str'},
@@ -2984,7 +2985,7 @@ class SatelliteIngestionJobResponse(msrest.serialization.Model):
     def __init__(
         self,
         *,
-        duration: Optional[str] = None,
+        duration_in_seconds: Optional[str] = None,
         id: Optional[str] = None,
         job_status: Optional[Union[str, "JobStatus"]] = None,
         message: Optional[str] = None,
@@ -2994,7 +2995,7 @@ class SatelliteIngestionJobResponse(msrest.serialization.Model):
         **kwargs
     ):
         super(SatelliteIngestionJobResponse, self).__init__(**kwargs)
-        self.duration = duration
+        self.duration_in_seconds = duration_in_seconds
         self.id = id
         self.job_status = job_status
         self.message = message
@@ -3008,33 +3009,34 @@ class SatelliteIngestionJobResponse(msrest.serialization.Model):
         self.properties = properties
 
 
-class SceneEntityResponse(msrest.serialization.Model):
-    """Model for returning Scene object.
+class Scene(msrest.serialization.Model):
+    """Schema of scene resource.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    :param id: Scene Id.
-    :type id: str
-    :param scene_date_time: Scene date-time.
+    :param scene_date_time: Date-time of the scene, sample format: yyyy-MM-ddTHH:mm:ssZ.
     :type scene_date_time: ~datetime.datetime
-    :param farmer_id: Farmer Id.
-    :type farmer_id: str
-    :param provider: Scene Data Provider.
+    :param provider: Data provider of the scene.
     :type provider: str
-    :param source: Scene Data Source.
+    :param source: Data source of the scene.
     :type source: str
-    :param boundary_id: BoundaryId value.
-    :type boundary_id: str
-    :param cloud_cover_percentage: Cloud cover percentage of scene.
-    :type cloud_cover_percentage: float
-    :param dark_pixel_percentage: Dark Pixel percentage of Scene.
-    :type dark_pixel_percentage: float
-    :param ndvi_median_value: Median of NDVI scene values.
-    :type ndvi_median_value: float
-    :param image_format: ImageFormat for satellite data. Possible values include: "TIF".
+    :param image_files: Collection of image files.
+    :type image_files: list[~azure.farmbeats.models.ImageFile]
+    :param image_format: Supported image formats for scene resource. Possible values include:
+     "TIF".
     :type image_format: str or ~azure.farmbeats.models.ImageFormat
-    :param image_files: List of Image files.
-    :type image_files: list[~azure.farmbeats.models.ImageFileResponse]
+    :param cloud_cover_percentage: Cloud cover percentage of the scene.
+    :type cloud_cover_percentage: float
+    :param dark_pixel_percentage: Dark pixel percentage of the scene.
+    :type dark_pixel_percentage: float
+    :param ndvi_median_value: Median of NDVI of the scene.
+    :type ndvi_median_value: float
+    :param boundary_id: Boundary ID which belongs to the scene.
+    :type boundary_id: str
+    :param farmer_id: Farmer ID which belongs to the scene.
+    :type farmer_id: str
+    :param id: Unique scene resource ID.
+    :type id: str
     :ivar e_tag: The ETag value to implement optimistic concurrency.
     :vartype e_tag: str
     """
@@ -3042,64 +3044,64 @@ class SceneEntityResponse(msrest.serialization.Model):
     _validation = {
         'provider': {'max_length': 100, 'min_length': 2},
         'source': {'max_length': 100, 'min_length': 2},
-        'boundary_id': {'max_length': 100, 'min_length': 2},
         'cloud_cover_percentage': {'maximum': 100, 'minimum': 0},
         'dark_pixel_percentage': {'maximum': 100, 'minimum': 0},
         'ndvi_median_value': {'maximum': 1, 'minimum': 0},
+        'boundary_id': {'max_length': 100, 'min_length': 2},
         'e_tag': {'readonly': True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
         'scene_date_time': {'key': 'sceneDateTime', 'type': 'iso-8601'},
-        'farmer_id': {'key': 'farmerId', 'type': 'str'},
         'provider': {'key': 'provider', 'type': 'str'},
         'source': {'key': 'source', 'type': 'str'},
-        'boundary_id': {'key': 'boundaryId', 'type': 'str'},
+        'image_files': {'key': 'imageFiles', 'type': '[ImageFile]'},
+        'image_format': {'key': 'imageFormat', 'type': 'str'},
         'cloud_cover_percentage': {'key': 'cloudCoverPercentage', 'type': 'float'},
         'dark_pixel_percentage': {'key': 'darkPixelPercentage', 'type': 'float'},
         'ndvi_median_value': {'key': 'ndviMedianValue', 'type': 'float'},
-        'image_format': {'key': 'imageFormat', 'type': 'str'},
-        'image_files': {'key': 'imageFiles', 'type': '[ImageFileResponse]'},
+        'boundary_id': {'key': 'boundaryId', 'type': 'str'},
+        'farmer_id': {'key': 'farmerId', 'type': 'str'},
+        'id': {'key': 'id', 'type': 'str'},
         'e_tag': {'key': 'eTag', 'type': 'str'},
     }
 
     def __init__(
         self,
         *,
-        id: Optional[str] = None,
         scene_date_time: Optional[datetime.datetime] = None,
-        farmer_id: Optional[str] = None,
         provider: Optional[str] = None,
         source: Optional[str] = None,
-        boundary_id: Optional[str] = None,
+        image_files: Optional[List["ImageFile"]] = None,
+        image_format: Optional[Union[str, "ImageFormat"]] = None,
         cloud_cover_percentage: Optional[float] = None,
         dark_pixel_percentage: Optional[float] = None,
         ndvi_median_value: Optional[float] = None,
-        image_format: Optional[Union[str, "ImageFormat"]] = None,
-        image_files: Optional[List["ImageFileResponse"]] = None,
+        boundary_id: Optional[str] = None,
+        farmer_id: Optional[str] = None,
+        id: Optional[str] = None,
         **kwargs
     ):
-        super(SceneEntityResponse, self).__init__(**kwargs)
-        self.id = id
+        super(Scene, self).__init__(**kwargs)
         self.scene_date_time = scene_date_time
-        self.farmer_id = farmer_id
         self.provider = provider
         self.source = source
-        self.boundary_id = boundary_id
+        self.image_files = image_files
+        self.image_format = image_format
         self.cloud_cover_percentage = cloud_cover_percentage
         self.dark_pixel_percentage = dark_pixel_percentage
         self.ndvi_median_value = ndvi_median_value
-        self.image_format = image_format
-        self.image_files = image_files
+        self.boundary_id = boundary_id
+        self.farmer_id = farmer_id
+        self.id = id
         self.e_tag = None
 
 
-class SceneEntityResponseListResponse(msrest.serialization.Model):
+class SceneListResponse(msrest.serialization.Model):
     """Paged response contains list of requested objects and a URL link to get the next set of results.
 
     :param value: List of requested objects.
-    :type value: list[~azure.farmbeats.models.SceneEntityResponse]
+    :type value: list[~azure.farmbeats.models.Scene]
     :param skip_token: Token used in retrieving the next page. If null, there are no additional
      pages.
     :type skip_token: str
@@ -3108,7 +3110,7 @@ class SceneEntityResponseListResponse(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': '[SceneEntityResponse]'},
+        'value': {'key': 'value', 'type': '[Scene]'},
         'skip_token': {'key': '$skipToken', 'type': 'str'},
         'next_link': {'key': 'nextLink', 'type': 'str'},
     }
@@ -3116,12 +3118,12 @@ class SceneEntityResponseListResponse(msrest.serialization.Model):
     def __init__(
         self,
         *,
-        value: Optional[List["SceneEntityResponse"]] = None,
+        value: Optional[List["Scene"]] = None,
         skip_token: Optional[str] = None,
         next_link: Optional[str] = None,
         **kwargs
     ):
-        super(SceneEntityResponseListResponse, self).__init__(**kwargs)
+        super(SceneListResponse, self).__init__(**kwargs)
         self.value = value
         self.skip_token = skip_token
         self.next_link = next_link
@@ -3230,57 +3232,59 @@ class SearchBoundaryQuery(msrest.serialization.Model):
 
 
 class Season(msrest.serialization.Model):
-    """Model for returning Season object.
+    """Schema of season resource.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    :param start_date: Season start date.
-    :type start_date: str
-    :param end_date: Season end date.
-    :type end_date: str
+    :param start_date_time: Season start datetime, sample format: yyyy-MM-ddTHH:mm:ssZ.
+    :type start_date_time: ~datetime.datetime
+    :param end_date_time: Season end datetime, sample format: yyyy-MM-ddTHH:mm:ssZ.
+    :type end_date_time: ~datetime.datetime
     :param year: Season year.
-    :type year: str
-    :ivar id: Unique Id.
+    :type year: int
+    :ivar id: Unique resource ID.
     :vartype id: str
-    :param status: Status of the resource.
-    :type status: str
-    :ivar created_date_time: Date when resource was created.
-    :vartype created_date_time: ~datetime.datetime
-    :ivar modified_date_time: Date when resource was last modified.
-    :vartype modified_date_time: ~datetime.datetime
     :ivar e_tag: The ETag value to implement optimistic concurrency.
     :vartype e_tag: str
+    :param status: Status of the resource.
+    :type status: str
+    :ivar created_date_time: Date-time when resource was created, sample format:
+     yyyy-MM-ddTHH:mm:ssZ.
+    :vartype created_date_time: ~datetime.datetime
+    :ivar modified_date_time: Date-time when resource was last modified, sample format:
+     yyyy-MM-ddTHH:mm:ssZ.
+    :vartype modified_date_time: ~datetime.datetime
     :param name: Name to identify resource.
     :type name: str
-    :param description: Textual description of resource.
+    :param description: Textual description of the resource.
     :type description: str
-    :param properties: A list of key value pairs that describe the document.
-     A maximum of 25 key value pairs can be provided for a document,
-     and each tuple must have a key no greater than 50 characters
-     and value no greater than 150 characters.
-     Only string and numeral values are supported.
+    :param properties: A collection of key value pairs that belongs to the resource.
+     Each pair must not have a key greater than 50 characters
+     and must not have a value greater than 150 characters.
+     Note: A maximum of 25 key value pairs can be provided for a resource and only string and
+     numeral values are supported.
     :type properties: dict[str, object]
     """
 
     _validation = {
         'id': {'readonly': True},
+        'e_tag': {'readonly': True},
         'status': {'max_length': 100, 'min_length': 0},
         'created_date_time': {'readonly': True},
         'modified_date_time': {'readonly': True},
-        'e_tag': {'readonly': True},
         'name': {'max_length': 100, 'min_length': 0},
         'description': {'max_length': 500, 'min_length': 0},
     }
 
     _attribute_map = {
-        'start_date': {'key': 'startDate', 'type': 'str'},
-        'end_date': {'key': 'endDate', 'type': 'str'},
-        'year': {'key': 'year', 'type': 'str'},
+        'start_date_time': {'key': 'startDateTime', 'type': 'iso-8601'},
+        'end_date_time': {'key': 'endDateTime', 'type': 'iso-8601'},
+        'year': {'key': 'year', 'type': 'int'},
         'id': {'key': 'id', 'type': 'str'},
+        'e_tag': {'key': 'eTag', 'type': 'str'},
         'status': {'key': 'status', 'type': 'str'},
         'created_date_time': {'key': 'createdDateTime', 'type': 'iso-8601'},
         'modified_date_time': {'key': 'modifiedDateTime', 'type': 'iso-8601'},
-        'e_tag': {'key': 'eTag', 'type': 'str'},
         'name': {'key': 'name', 'type': 'str'},
         'description': {'key': 'description', 'type': 'str'},
         'properties': {'key': 'properties', 'type': '{object}'},
@@ -3289,9 +3293,9 @@ class Season(msrest.serialization.Model):
     def __init__(
         self,
         *,
-        start_date: Optional[str] = None,
-        end_date: Optional[str] = None,
-        year: Optional[str] = None,
+        start_date_time: Optional[datetime.datetime] = None,
+        end_date_time: Optional[datetime.datetime] = None,
+        year: Optional[int] = None,
         status: Optional[str] = None,
         name: Optional[str] = None,
         description: Optional[str] = None,
@@ -3299,21 +3303,21 @@ class Season(msrest.serialization.Model):
         **kwargs
     ):
         super(Season, self).__init__(**kwargs)
-        self.start_date = start_date
-        self.end_date = end_date
+        self.start_date_time = start_date_time
+        self.end_date_time = end_date_time
         self.year = year
         self.id = None
+        self.e_tag = None
         self.status = status
         self.created_date_time = None
         self.modified_date_time = None
-        self.e_tag = None
         self.name = name
         self.description = description
         self.properties = properties
 
 
 class SeasonalField(msrest.serialization.Model):
-    """Api Model for seasonal field object.
+    """Schema of seasonal field resource.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
@@ -3341,27 +3345,29 @@ class SeasonalField(msrest.serialization.Model):
     :type avg_seed_population_value: float
     :param avg_seed_population_unit: Unit of average seed population value attribute.
     :type avg_seed_population_unit: str
-    :param planting_date: Planting date.
-    :type planting_date: str
-    :ivar id: Unique Id.
+    :param planting_date_time: Planting datetime, sample format: yyyy-MM-ddTHH:mm:ssZ.
+    :type planting_date_time: ~datetime.datetime
+    :ivar id: Unique resource ID.
     :vartype id: str
-    :param status: Status of the resource.
-    :type status: str
-    :ivar created_date_time: Date when resource was created.
-    :vartype created_date_time: ~datetime.datetime
-    :ivar modified_date_time: Date when resource was last modified.
-    :vartype modified_date_time: ~datetime.datetime
     :ivar e_tag: The ETag value to implement optimistic concurrency.
     :vartype e_tag: str
+    :param status: Status of the resource.
+    :type status: str
+    :ivar created_date_time: Date-time when resource was created, sample format:
+     yyyy-MM-ddTHH:mm:ssZ.
+    :vartype created_date_time: ~datetime.datetime
+    :ivar modified_date_time: Date-time when resource was last modified, sample format:
+     yyyy-MM-ddTHH:mm:ssZ.
+    :vartype modified_date_time: ~datetime.datetime
     :param name: Name to identify resource.
     :type name: str
-    :param description: Textual description of resource.
+    :param description: Textual description of the resource.
     :type description: str
-    :param properties: A list of key value pairs that describe the document.
-     A maximum of 25 key value pairs can be provided for a document,
-     and each tuple must have a key no greater than 50 characters
-     and value no greater than 150 characters.
-     Only string and numeral values are supported.
+    :param properties: A collection of key value pairs that belongs to the resource.
+     Each pair must not have a key greater than 50 characters
+     and must not have a value greater than 150 characters.
+     Note: A maximum of 25 key value pairs can be provided for a resource and only string and
+     numeral values are supported.
     :type properties: dict[str, object]
     """
 
@@ -3373,10 +3379,10 @@ class SeasonalField(msrest.serialization.Model):
         'avg_yield_unit': {'max_length': 32, 'min_length': 2},
         'avg_seed_population_unit': {'max_length': 32, 'min_length': 2},
         'id': {'readonly': True},
+        'e_tag': {'readonly': True},
         'status': {'max_length': 100, 'min_length': 0},
         'created_date_time': {'readonly': True},
         'modified_date_time': {'readonly': True},
-        'e_tag': {'readonly': True},
         'name': {'max_length': 100, 'min_length': 0},
         'description': {'max_length': 500, 'min_length': 0},
     }
@@ -3394,12 +3400,12 @@ class SeasonalField(msrest.serialization.Model):
         'avg_yield_unit': {'key': 'avgYieldUnit', 'type': 'str'},
         'avg_seed_population_value': {'key': 'avgSeedPopulationValue', 'type': 'float'},
         'avg_seed_population_unit': {'key': 'avgSeedPopulationUnit', 'type': 'str'},
-        'planting_date': {'key': 'plantingDate', 'type': 'str'},
+        'planting_date_time': {'key': 'plantingDateTime', 'type': 'iso-8601'},
         'id': {'key': 'id', 'type': 'str'},
+        'e_tag': {'key': 'eTag', 'type': 'str'},
         'status': {'key': 'status', 'type': 'str'},
         'created_date_time': {'key': 'createdDateTime', 'type': 'iso-8601'},
         'modified_date_time': {'key': 'modifiedDateTime', 'type': 'iso-8601'},
-        'e_tag': {'key': 'eTag', 'type': 'str'},
         'name': {'key': 'name', 'type': 'str'},
         'description': {'key': 'description', 'type': 'str'},
         'properties': {'key': 'properties', 'type': '{object}'},
@@ -3417,7 +3423,7 @@ class SeasonalField(msrest.serialization.Model):
         avg_yield_unit: Optional[str] = None,
         avg_seed_population_value: Optional[float] = None,
         avg_seed_population_unit: Optional[str] = None,
-        planting_date: Optional[str] = None,
+        planting_date_time: Optional[datetime.datetime] = None,
         status: Optional[str] = None,
         name: Optional[str] = None,
         description: Optional[str] = None,
@@ -3437,12 +3443,12 @@ class SeasonalField(msrest.serialization.Model):
         self.avg_yield_unit = avg_yield_unit
         self.avg_seed_population_value = avg_seed_population_value
         self.avg_seed_population_unit = avg_seed_population_unit
-        self.planting_date = planting_date
+        self.planting_date_time = planting_date_time
         self.id = None
+        self.e_tag = None
         self.status = status
         self.created_date_time = None
         self.modified_date_time = None
-        self.e_tag = None
         self.name = name
         self.description = description
         self.properties = properties
@@ -3512,103 +3518,72 @@ class SeasonListResponse(msrest.serialization.Model):
         self.next_link = next_link
 
 
-class SeedingProductDetail(msrest.serialization.Model):
-    """Schema for Seeding product detail.
-
-    :param crop_variety_name: Name of the crop variety.
-    :type crop_variety_name: str
-    :param area: Common data measure for storing various data(Farm operations/Weather).
-    :type area: ~azure.farmbeats.models.Measure
-    :param total_material: Common data measure for storing various data(Farm operations/Weather).
-    :type total_material: ~azure.farmbeats.models.Measure
-    :param avg_material: Common data measure for storing various data(Farm operations/Weather).
-    :type avg_material: ~azure.farmbeats.models.Measure
-    """
-
-    _attribute_map = {
-        'crop_variety_name': {'key': 'cropVarietyName', 'type': 'str'},
-        'area': {'key': 'area', 'type': 'Measure'},
-        'total_material': {'key': 'totalMaterial', 'type': 'Measure'},
-        'avg_material': {'key': 'avgMaterial', 'type': 'Measure'},
-    }
-
-    def __init__(
-        self,
-        *,
-        crop_variety_name: Optional[str] = None,
-        area: Optional["Measure"] = None,
-        total_material: Optional["Measure"] = None,
-        avg_material: Optional["Measure"] = None,
-        **kwargs
-    ):
-        super(SeedingProductDetail, self).__init__(**kwargs)
-        self.crop_variety_name = crop_variety_name
-        self.area = area
-        self.total_material = total_material
-        self.avg_material = avg_material
-
-
 class TillageData(msrest.serialization.Model):
-    """Defines TillageData request object.
+    """Schema of tillage data resource.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    :param tillage_depth: Common data measure for storing various data(Farm operations/Weather).
+    :param tillage_depth: Schema for storing measurement reading and unit.
     :type tillage_depth: ~azure.farmbeats.models.Measure
-    :param tillage_pressure: Common data measure for storing various data(Farm operations/Weather).
+    :param tillage_pressure: Schema for storing measurement reading and unit.
     :type tillage_pressure: ~azure.farmbeats.models.Measure
-    :ivar id: Unique Id.
-    :vartype id: str
-    :ivar farmer_id: Assoiciated Farmer Id with the operation data.
-    :vartype farmer_id: str
-    :param operation_start_date_time: Start datetime of operation.
-    :type operation_start_date_time: ~datetime.datetime
-    :param operation_end_date_time: End datetime of operation.
-    :type operation_end_date_time: ~datetime.datetime
-    :param source: Source of the data.
+    :param area: Schema for storing measurement reading and unit.
+    :type area: ~azure.farmbeats.models.Measure
+    :param source: Source of the operation data.
     :type source: str
-    :param operation_modified_date_time: Modified date time of the farm operation.
-     This will come from the provider itself.
+    :param operation_modified_date_time: Modified date-time of the operation data, sample format:
+     yyyy-MM-ddTHH:mm:ssZ.
+     Note: this will be specified by the source provider itself.
     :type operation_modified_date_time: ~datetime.datetime
-    :param associated_boundary_id: AssociatedBoundaryId represents boundary of field for which
-     operation is done where as
-     OperationBoundaryId represents actual area of operation done inside field.
+    :param operation_start_date_time: Start date-time of the operation data, sample format:
+     yyyy-MM-ddTHH:mm:ssZ.
+    :type operation_start_date_time: ~datetime.datetime
+    :param operation_end_date_time: End date-time of the operation data, sample format:
+     yyyy-MM-ddTHH:mm:ssZ.
+    :type operation_end_date_time: ~datetime.datetime
+    :ivar attachments_link: Link for attachments.
+    :vartype attachments_link: str
+    :param associated_boundary_id: Optional boundary ID of the field for which operation was
+     applied.
     :type associated_boundary_id: str
-    :ivar created_date_time: Date when resource was created.
-    :vartype created_date_time: ~datetime.datetime
-    :ivar modified_date_time: Date when resource was last modified.
-    :vartype modified_date_time: ~datetime.datetime
+    :param operation_boundary_id: Optional boundary ID of the actual area for which operation was
+     applied inside the specified field.
+    :type operation_boundary_id: str
+    :ivar farmer_id: Farmer ID which belongs to the operation data.
+    :vartype farmer_id: str
+    :ivar id: Unique resource ID.
+    :vartype id: str
     :ivar e_tag: The ETag value to implement optimistic concurrency.
     :vartype e_tag: str
-    :ivar attachments_link: Area.
-    :vartype attachments_link: str
-    :param area: Common data measure for storing various data(Farm operations/Weather).
-    :type area: ~azure.farmbeats.models.Measure
-    :param operation_boundary_id: Operation boundary Id.
-    :type operation_boundary_id: str
     :param status: Status of the resource.
     :type status: str
+    :ivar created_date_time: Date-time when resource was created, sample format:
+     yyyy-MM-ddTHH:mm:ssZ.
+    :vartype created_date_time: ~datetime.datetime
+    :ivar modified_date_time: Date-time when resource was last modified, sample format:
+     yyyy-MM-ddTHH:mm:ssZ.
+    :vartype modified_date_time: ~datetime.datetime
     :param name: Name to identify resource.
     :type name: str
-    :param description: Textual description of resource.
+    :param description: Textual description of the resource.
     :type description: str
-    :param properties: A list of key value pairs that describe the document.
-     A maximum of 25 key value pairs can be provided for a document,
-     and each tuple must have a key no greater than 50 characters
-     and value no greater than 150 characters.
-     Only string and numeral values are supported.
+    :param properties: A collection of key value pairs that belongs to the resource.
+     Each pair must not have a key greater than 50 characters
+     and must not have a value greater than 150 characters.
+     Note: A maximum of 25 key value pairs can be provided for a resource and only string and
+     numeral values are supported.
     :type properties: dict[str, object]
     """
 
     _validation = {
-        'id': {'readonly': True},
-        'farmer_id': {'readonly': True},
         'source': {'max_length': 100, 'min_length': 2},
+        'attachments_link': {'readonly': True},
+        'farmer_id': {'readonly': True},
+        'id': {'readonly': True},
+        'e_tag': {'readonly': True},
+        'status': {'max_length': 100, 'min_length': 0},
         'created_date_time': {'readonly': True},
         'modified_date_time': {'readonly': True},
-        'e_tag': {'readonly': True},
-        'attachments_link': {'readonly': True},
-        'status': {'max_length': 100, 'min_length': 0},
         'name': {'max_length': 100, 'min_length': 0},
         'description': {'max_length': 500, 'min_length': 0},
     }
@@ -3616,20 +3591,20 @@ class TillageData(msrest.serialization.Model):
     _attribute_map = {
         'tillage_depth': {'key': 'tillageDepth', 'type': 'Measure'},
         'tillage_pressure': {'key': 'tillagePressure', 'type': 'Measure'},
-        'id': {'key': 'id', 'type': 'str'},
-        'farmer_id': {'key': 'farmerId', 'type': 'str'},
-        'operation_start_date_time': {'key': 'operationStartDateTime', 'type': 'iso-8601'},
-        'operation_end_date_time': {'key': 'operationEndDateTime', 'type': 'iso-8601'},
+        'area': {'key': 'area', 'type': 'Measure'},
         'source': {'key': 'source', 'type': 'str'},
         'operation_modified_date_time': {'key': 'operationModifiedDateTime', 'type': 'iso-8601'},
+        'operation_start_date_time': {'key': 'operationStartDateTime', 'type': 'iso-8601'},
+        'operation_end_date_time': {'key': 'operationEndDateTime', 'type': 'iso-8601'},
+        'attachments_link': {'key': 'attachmentsLink', 'type': 'str'},
         'associated_boundary_id': {'key': 'associatedBoundaryId', 'type': 'str'},
+        'operation_boundary_id': {'key': 'operationBoundaryId', 'type': 'str'},
+        'farmer_id': {'key': 'farmerId', 'type': 'str'},
+        'id': {'key': 'id', 'type': 'str'},
+        'e_tag': {'key': 'eTag', 'type': 'str'},
+        'status': {'key': 'status', 'type': 'str'},
         'created_date_time': {'key': 'createdDateTime', 'type': 'iso-8601'},
         'modified_date_time': {'key': 'modifiedDateTime', 'type': 'iso-8601'},
-        'e_tag': {'key': 'eTag', 'type': 'str'},
-        'attachments_link': {'key': 'attachmentsLink', 'type': 'str'},
-        'area': {'key': 'area', 'type': 'Measure'},
-        'operation_boundary_id': {'key': 'operationBoundaryId', 'type': 'str'},
-        'status': {'key': 'status', 'type': 'str'},
         'name': {'key': 'name', 'type': 'str'},
         'description': {'key': 'description', 'type': 'str'},
         'properties': {'key': 'properties', 'type': '{object}'},
@@ -3640,12 +3615,12 @@ class TillageData(msrest.serialization.Model):
         *,
         tillage_depth: Optional["Measure"] = None,
         tillage_pressure: Optional["Measure"] = None,
-        operation_start_date_time: Optional[datetime.datetime] = None,
-        operation_end_date_time: Optional[datetime.datetime] = None,
+        area: Optional["Measure"] = None,
         source: Optional[str] = None,
         operation_modified_date_time: Optional[datetime.datetime] = None,
+        operation_start_date_time: Optional[datetime.datetime] = None,
+        operation_end_date_time: Optional[datetime.datetime] = None,
         associated_boundary_id: Optional[str] = None,
-        area: Optional["Measure"] = None,
         operation_boundary_id: Optional[str] = None,
         status: Optional[str] = None,
         name: Optional[str] = None,
@@ -3656,20 +3631,20 @@ class TillageData(msrest.serialization.Model):
         super(TillageData, self).__init__(**kwargs)
         self.tillage_depth = tillage_depth
         self.tillage_pressure = tillage_pressure
-        self.id = None
-        self.farmer_id = None
-        self.operation_start_date_time = operation_start_date_time
-        self.operation_end_date_time = operation_end_date_time
+        self.area = area
         self.source = source
         self.operation_modified_date_time = operation_modified_date_time
+        self.operation_start_date_time = operation_start_date_time
+        self.operation_end_date_time = operation_end_date_time
+        self.attachments_link = None
         self.associated_boundary_id = associated_boundary_id
+        self.operation_boundary_id = operation_boundary_id
+        self.farmer_id = None
+        self.id = None
+        self.e_tag = None
+        self.status = status
         self.created_date_time = None
         self.modified_date_time = None
-        self.e_tag = None
-        self.attachments_link = None
-        self.area = area
-        self.operation_boundary_id = operation_boundary_id
-        self.status = status
         self.name = name
         self.description = description
         self.properties = properties
@@ -3708,28 +3683,22 @@ class TillageDataListResponse(msrest.serialization.Model):
 
 
 class WeatherData(msrest.serialization.Model):
-    """Model for weather data.
+    """Schema of weather data.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
     All required parameters must be populated in order to send to Azure.
 
-    :param id: Weather data Id.
-    :type id: str
-    :param farmer_id: Required. Farmer Id.
+    :param farmer_id: Required. Farmer ID.
     :type farmer_id: str
-    :param field_id: Required. Field Id.
-    :type field_id: str
-    :param extension_id: Required. Id of the weather extension.
+    :param boundary_id: Required. Boundary ID.
+    :type boundary_id: str
+    :param extension_id: Required. ID of the weather extension.
     :type extension_id: str
     :param location: Required. Location model class.
     :type location: ~azure.farmbeats.models.Location
-    :param date_time: Required. DateTime of the weather data.
+    :param date_time: Required. Date-time of the weather data, sample format: yyyy-MM-ddTHH:mm:ssZ.
     :type date_time: ~datetime.datetime
-    :param created_date_time: Created date and time of the weather data.
-    :type created_date_time: ~datetime.datetime
-    :param modified_date_time: Modified date and time of the weather data.
-    :type modified_date_time: ~datetime.datetime
     :param unit_system_code: Unit System like US/SI etc.
     :type unit_system_code: str
     :param extension_version: Required. Version of the weather data extension.
@@ -3738,49 +3707,57 @@ class WeatherData(msrest.serialization.Model):
     :type weather_data_type: str
     :param granularity: Required. Granularity of weather data (daily/hourly).
     :type granularity: str
-    :param cloud_cover: Weather data measure.
-    :type cloud_cover: ~azure.farmbeats.models.WeatherMeasure
-    :param dew_point: Weather data measure.
-    :type dew_point: ~azure.farmbeats.models.WeatherMeasure
-    :param growing_degree_day: Weather data measure.
-    :type growing_degree_day: ~azure.farmbeats.models.WeatherMeasure
-    :param precipitation: Weather data measure.
-    :type precipitation: ~azure.farmbeats.models.WeatherMeasure
-    :param pressure: Weather data measure.
-    :type pressure: ~azure.farmbeats.models.WeatherMeasure
-    :param relative_humidity: Weather data measure.
-    :type relative_humidity: ~azure.farmbeats.models.WeatherMeasure
-    :param soil_moisture: Weather data measure.
-    :type soil_moisture: ~azure.farmbeats.models.WeatherMeasure
-    :param soil_temperature: Weather data measure.
-    :type soil_temperature: ~azure.farmbeats.models.WeatherMeasure
-    :param temperature: Weather data measure.
-    :type temperature: ~azure.farmbeats.models.WeatherMeasure
-    :param visibility: Weather data measure.
-    :type visibility: ~azure.farmbeats.models.WeatherMeasure
-    :param wet_bulb_temperature: Weather data measure.
-    :type wet_bulb_temperature: ~azure.farmbeats.models.WeatherMeasure
-    :param wind_chill: Weather data measure.
-    :type wind_chill: ~azure.farmbeats.models.WeatherMeasure
-    :param wind_direction: Weather data measure.
-    :type wind_direction: ~azure.farmbeats.models.WeatherMeasure
-    :param wind_gust: Weather data measure.
-    :type wind_gust: ~azure.farmbeats.models.WeatherMeasure
-    :param wind_speed: Weather data measure.
-    :type wind_speed: ~azure.farmbeats.models.WeatherMeasure
+    :param cloud_cover: Schema for storing measurement reading and unit.
+    :type cloud_cover: ~azure.farmbeats.models.Measure
+    :param dew_point: Schema for storing measurement reading and unit.
+    :type dew_point: ~azure.farmbeats.models.Measure
+    :param growing_degree_day: Schema for storing measurement reading and unit.
+    :type growing_degree_day: ~azure.farmbeats.models.Measure
+    :param precipitation: Schema for storing measurement reading and unit.
+    :type precipitation: ~azure.farmbeats.models.Measure
+    :param pressure: Schema for storing measurement reading and unit.
+    :type pressure: ~azure.farmbeats.models.Measure
+    :param relative_humidity: Schema for storing measurement reading and unit.
+    :type relative_humidity: ~azure.farmbeats.models.Measure
+    :param soil_moisture: Schema for storing measurement reading and unit.
+    :type soil_moisture: ~azure.farmbeats.models.Measure
+    :param soil_temperature: Schema for storing measurement reading and unit.
+    :type soil_temperature: ~azure.farmbeats.models.Measure
+    :param temperature: Schema for storing measurement reading and unit.
+    :type temperature: ~azure.farmbeats.models.Measure
+    :param visibility: Schema for storing measurement reading and unit.
+    :type visibility: ~azure.farmbeats.models.Measure
+    :param wet_bulb_temperature: Schema for storing measurement reading and unit.
+    :type wet_bulb_temperature: ~azure.farmbeats.models.Measure
+    :param wind_chill: Schema for storing measurement reading and unit.
+    :type wind_chill: ~azure.farmbeats.models.Measure
+    :param wind_direction: Schema for storing measurement reading and unit.
+    :type wind_direction: ~azure.farmbeats.models.Measure
+    :param wind_gust: Schema for storing measurement reading and unit.
+    :type wind_gust: ~azure.farmbeats.models.Measure
+    :param wind_speed: Schema for storing measurement reading and unit.
+    :type wind_speed: ~azure.farmbeats.models.Measure
+    :param id: Weather data ID.
+    :type id: str
     :ivar e_tag: The ETag value to implement optimistic concurrency.
     :vartype e_tag: str
-    :param properties: Additional properties of the data.
-     A maximum of 60 key value pairs can be provided for a document,
-     and each tuple must have a key no greater than 50 characters
-     and value no greater than 150 characters.
-     Only string and numeral values are supported.
+    :ivar created_date_time: Date-time when resource was created, sample format:
+     yyyy-MM-ddTHH:mm:ssZ.
+    :vartype created_date_time: ~datetime.datetime
+    :ivar modified_date_time: Date-time when resource was last modified, sample format:
+     yyyy-MM-ddTHH:mm:ssZ.
+    :vartype modified_date_time: ~datetime.datetime
+    :param properties: A collection of key value pairs that belongs to the resource.
+     Each pair must not have a key greater than 50 characters
+     and must not have a value greater than 150 characters.
+     Note: A maximum of 25 key value pairs can be provided for a resource and only string and
+     numeral values are supported.
     :type properties: dict[str, object]
     """
 
     _validation = {
         'farmer_id': {'required': True},
-        'field_id': {'required': True},
+        'boundary_id': {'required': True},
         'extension_id': {'required': True},
         'location': {'required': True},
         'date_time': {'required': True},
@@ -3788,37 +3765,39 @@ class WeatherData(msrest.serialization.Model):
         'weather_data_type': {'required': True},
         'granularity': {'required': True},
         'e_tag': {'readonly': True},
+        'created_date_time': {'readonly': True},
+        'modified_date_time': {'readonly': True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
         'farmer_id': {'key': 'farmerId', 'type': 'str'},
-        'field_id': {'key': 'fieldId', 'type': 'str'},
+        'boundary_id': {'key': 'boundaryId', 'type': 'str'},
         'extension_id': {'key': 'extensionId', 'type': 'str'},
         'location': {'key': 'location', 'type': 'Location'},
         'date_time': {'key': 'dateTime', 'type': 'iso-8601'},
-        'created_date_time': {'key': 'createdDateTime', 'type': 'iso-8601'},
-        'modified_date_time': {'key': 'modifiedDateTime', 'type': 'iso-8601'},
         'unit_system_code': {'key': 'unitSystemCode', 'type': 'str'},
         'extension_version': {'key': 'extensionVersion', 'type': 'str'},
         'weather_data_type': {'key': 'weatherDataType', 'type': 'str'},
         'granularity': {'key': 'granularity', 'type': 'str'},
-        'cloud_cover': {'key': 'cloudCover', 'type': 'WeatherMeasure'},
-        'dew_point': {'key': 'dewPoint', 'type': 'WeatherMeasure'},
-        'growing_degree_day': {'key': 'growingDegreeDay', 'type': 'WeatherMeasure'},
-        'precipitation': {'key': 'precipitation', 'type': 'WeatherMeasure'},
-        'pressure': {'key': 'pressure', 'type': 'WeatherMeasure'},
-        'relative_humidity': {'key': 'relativeHumidity', 'type': 'WeatherMeasure'},
-        'soil_moisture': {'key': 'soilMoisture', 'type': 'WeatherMeasure'},
-        'soil_temperature': {'key': 'soilTemperature', 'type': 'WeatherMeasure'},
-        'temperature': {'key': 'temperature', 'type': 'WeatherMeasure'},
-        'visibility': {'key': 'visibility', 'type': 'WeatherMeasure'},
-        'wet_bulb_temperature': {'key': 'wetBulbTemperature', 'type': 'WeatherMeasure'},
-        'wind_chill': {'key': 'windChill', 'type': 'WeatherMeasure'},
-        'wind_direction': {'key': 'windDirection', 'type': 'WeatherMeasure'},
-        'wind_gust': {'key': 'windGust', 'type': 'WeatherMeasure'},
-        'wind_speed': {'key': 'windSpeed', 'type': 'WeatherMeasure'},
+        'cloud_cover': {'key': 'cloudCover', 'type': 'Measure'},
+        'dew_point': {'key': 'dewPoint', 'type': 'Measure'},
+        'growing_degree_day': {'key': 'growingDegreeDay', 'type': 'Measure'},
+        'precipitation': {'key': 'precipitation', 'type': 'Measure'},
+        'pressure': {'key': 'pressure', 'type': 'Measure'},
+        'relative_humidity': {'key': 'relativeHumidity', 'type': 'Measure'},
+        'soil_moisture': {'key': 'soilMoisture', 'type': 'Measure'},
+        'soil_temperature': {'key': 'soilTemperature', 'type': 'Measure'},
+        'temperature': {'key': 'temperature', 'type': 'Measure'},
+        'visibility': {'key': 'visibility', 'type': 'Measure'},
+        'wet_bulb_temperature': {'key': 'wetBulbTemperature', 'type': 'Measure'},
+        'wind_chill': {'key': 'windChill', 'type': 'Measure'},
+        'wind_direction': {'key': 'windDirection', 'type': 'Measure'},
+        'wind_gust': {'key': 'windGust', 'type': 'Measure'},
+        'wind_speed': {'key': 'windSpeed', 'type': 'Measure'},
+        'id': {'key': 'id', 'type': 'str'},
         'e_tag': {'key': 'eTag', 'type': 'str'},
+        'created_date_time': {'key': 'createdDateTime', 'type': 'iso-8601'},
+        'modified_date_time': {'key': 'modifiedDateTime', 'type': 'iso-8601'},
         'properties': {'key': 'properties', 'type': '{object}'},
     }
 
@@ -3826,44 +3805,39 @@ class WeatherData(msrest.serialization.Model):
         self,
         *,
         farmer_id: str,
-        field_id: str,
+        boundary_id: str,
         extension_id: str,
         location: "Location",
         date_time: datetime.datetime,
         extension_version: str,
         weather_data_type: str,
         granularity: str,
-        id: Optional[str] = None,
-        created_date_time: Optional[datetime.datetime] = None,
-        modified_date_time: Optional[datetime.datetime] = None,
         unit_system_code: Optional[str] = None,
-        cloud_cover: Optional["WeatherMeasure"] = None,
-        dew_point: Optional["WeatherMeasure"] = None,
-        growing_degree_day: Optional["WeatherMeasure"] = None,
-        precipitation: Optional["WeatherMeasure"] = None,
-        pressure: Optional["WeatherMeasure"] = None,
-        relative_humidity: Optional["WeatherMeasure"] = None,
-        soil_moisture: Optional["WeatherMeasure"] = None,
-        soil_temperature: Optional["WeatherMeasure"] = None,
-        temperature: Optional["WeatherMeasure"] = None,
-        visibility: Optional["WeatherMeasure"] = None,
-        wet_bulb_temperature: Optional["WeatherMeasure"] = None,
-        wind_chill: Optional["WeatherMeasure"] = None,
-        wind_direction: Optional["WeatherMeasure"] = None,
-        wind_gust: Optional["WeatherMeasure"] = None,
-        wind_speed: Optional["WeatherMeasure"] = None,
+        cloud_cover: Optional["Measure"] = None,
+        dew_point: Optional["Measure"] = None,
+        growing_degree_day: Optional["Measure"] = None,
+        precipitation: Optional["Measure"] = None,
+        pressure: Optional["Measure"] = None,
+        relative_humidity: Optional["Measure"] = None,
+        soil_moisture: Optional["Measure"] = None,
+        soil_temperature: Optional["Measure"] = None,
+        temperature: Optional["Measure"] = None,
+        visibility: Optional["Measure"] = None,
+        wet_bulb_temperature: Optional["Measure"] = None,
+        wind_chill: Optional["Measure"] = None,
+        wind_direction: Optional["Measure"] = None,
+        wind_gust: Optional["Measure"] = None,
+        wind_speed: Optional["Measure"] = None,
+        id: Optional[str] = None,
         properties: Optional[Dict[str, object]] = None,
         **kwargs
     ):
         super(WeatherData, self).__init__(**kwargs)
-        self.id = id
         self.farmer_id = farmer_id
-        self.field_id = field_id
+        self.boundary_id = boundary_id
         self.extension_id = extension_id
         self.location = location
         self.date_time = date_time
-        self.created_date_time = created_date_time
-        self.modified_date_time = modified_date_time
         self.unit_system_code = unit_system_code
         self.extension_version = extension_version
         self.weather_data_type = weather_data_type
@@ -3883,8 +3857,106 @@ class WeatherData(msrest.serialization.Model):
         self.wind_direction = wind_direction
         self.wind_gust = wind_gust
         self.wind_speed = wind_speed
+        self.id = id
         self.e_tag = None
+        self.created_date_time = None
+        self.modified_date_time = None
         self.properties = properties
+
+
+class WeatherDataDeleteJobDetails(msrest.serialization.Model):
+    """Schema for GetWeatherDataDeleteJobDetails.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :param duration_in_seconds: Duration of the job in seconds.
+    :type duration_in_seconds: str
+    :param id: Unique job id.
+    :type id: str
+    :param job_status: Various states a job can be in. Possible values include: "Waiting",
+     "Running", "Succeeded", "Failed", "Cancelled".
+    :type job_status: str or ~azure.farmbeats.models.JobStatus
+    :param message: Status message to capture more details of the job.
+    :type message: str
+    :ivar created_date_time: Job created at dateTime. Sample format: yyyy-MM-ddTHH:mm:ssZ.
+    :vartype created_date_time: ~datetime.datetime
+    :ivar last_action_date_time: Job was last acted upon at dateTime. Sample format:
+     yyyy-MM-ddTHH:mm:ssZ.
+    :vartype last_action_date_time: ~datetime.datetime
+    :ivar start_time: Job start time when available. Sample format: yyyy-MM-ddTHH:mm:ssZ.
+    :vartype start_time: ~datetime.datetime
+    :ivar end_time: Job end time when available. Sample format: yyyy-MM-ddTHH:mm:ssZ.
+    :vartype end_time: ~datetime.datetime
+    :ivar is_cancellation_requested: A boolean flag indicating whether job cancellation is
+     requested.
+    :vartype is_cancellation_requested: bool
+    :param name: Name to identify resource.
+    :type name: str
+    :param description: Textual description of the resource.
+    :type description: str
+    :param properties: A collection of key value pairs that belongs to the resource.
+     Each pair must not have a key greater than 50 characters
+     and must not have a value greater than 150 characters.
+     Note: A maximum of 25 key value pairs can be provided for a resource and only string and
+     numeral values are supported.
+    :type properties: dict[str, object]
+    :param request_body: WeatherDataDeleteJobRequest.
+    :type request_body: ~azure.farmbeats.models.WeatherDataDeleteJobRequest
+    """
+
+    _validation = {
+        'created_date_time': {'readonly': True},
+        'last_action_date_time': {'readonly': True},
+        'start_time': {'readonly': True},
+        'end_time': {'readonly': True},
+        'is_cancellation_requested': {'readonly': True},
+        'name': {'max_length': 100, 'min_length': 0},
+        'description': {'max_length': 500, 'min_length': 0},
+    }
+
+    _attribute_map = {
+        'duration_in_seconds': {'key': 'durationInSeconds', 'type': 'str'},
+        'id': {'key': 'id', 'type': 'str'},
+        'job_status': {'key': 'jobStatus', 'type': 'str'},
+        'message': {'key': 'message', 'type': 'str'},
+        'created_date_time': {'key': 'createdDateTime', 'type': 'iso-8601'},
+        'last_action_date_time': {'key': 'lastActionDateTime', 'type': 'iso-8601'},
+        'start_time': {'key': 'startTime', 'type': 'iso-8601'},
+        'end_time': {'key': 'endTime', 'type': 'iso-8601'},
+        'is_cancellation_requested': {'key': 'isCancellationRequested', 'type': 'bool'},
+        'name': {'key': 'name', 'type': 'str'},
+        'description': {'key': 'description', 'type': 'str'},
+        'properties': {'key': 'properties', 'type': '{object}'},
+        'request_body': {'key': 'requestBody', 'type': 'WeatherDataDeleteJobRequest'},
+    }
+
+    def __init__(
+        self,
+        *,
+        duration_in_seconds: Optional[str] = None,
+        id: Optional[str] = None,
+        job_status: Optional[Union[str, "JobStatus"]] = None,
+        message: Optional[str] = None,
+        name: Optional[str] = None,
+        description: Optional[str] = None,
+        properties: Optional[Dict[str, object]] = None,
+        request_body: Optional["WeatherDataDeleteJobRequest"] = None,
+        **kwargs
+    ):
+        super(WeatherDataDeleteJobDetails, self).__init__(**kwargs)
+        self.duration_in_seconds = duration_in_seconds
+        self.id = id
+        self.job_status = job_status
+        self.message = message
+        self.created_date_time = None
+        self.last_action_date_time = None
+        self.start_time = None
+        self.end_time = None
+        self.is_cancellation_requested = None
+        self.name = name
+        self.description = description
+        self.properties = properties
+        self.request_body = request_body
 
 
 class WeatherDataDeleteJobRequest(msrest.serialization.Model):
@@ -3898,34 +3970,36 @@ class WeatherDataDeleteJobRequest(msrest.serialization.Model):
     :param farmer_id: Required. The id of the farmer object for which weather data is being
      fetched.
     :type farmer_id: str
-    :param field_id: Required. The id of the field object for which weather data is being fetched.
-    :type field_id: str
-    :param weather_data_type: Type of weather data (forecast/historical).
+    :param boundary_id: Required. The id of the boundary object for which weather data is being
+     fetched.
+    :type boundary_id: str
+    :param weather_data_type: Type of weather data. Possible values include: 'forecast' ,
+     'historical'.
     :type weather_data_type: str
-    :param granularity: Granularity of weather data (daily/hourly).
+    :param granularity: Granularity of weather data. Possible values include: 'daily' , 'hourly'.
     :type granularity: str
-    :param start_date_time: Weather data start UTC datetime (inclusive), sample format: yyyy-Mm-
-     ddTHH:mm:ssZ.
+    :param start_date_time: Weather data start UTC datetime (inclusive), sample format:
+     yyyy-MM-ddTHH:mm:ssZ.
     :type start_date_time: ~datetime.datetime
-    :param end_date_time: Weather data end UTC datetime (inclusive), sample format: yyyy-Mm-
-     ddTHH:mm:ssZ.
+    :param end_date_time: Weather data end UTC datetime (inclusive), sample format:
+     yyyy-MM-ddTHH:mm:ssZ.
     :type end_date_time: ~datetime.datetime
     :param name: Name to identify resource.
     :type name: str
-    :param description: Textual description of resource.
+    :param description: Textual description of the resource.
     :type description: str
-    :param properties: A list of key value pairs that describe the document.
-     A maximum of 25 key value pairs can be provided for a document,
-     and each tuple must have a key no greater than 50 characters
-     and value no greater than 150 characters.
-     Only string and numeral values are supported.
+    :param properties: A collection of key value pairs that belongs to the resource.
+     Each pair must not have a key greater than 50 characters
+     and must not have a value greater than 150 characters.
+     Note: A maximum of 25 key value pairs can be provided for a resource and only string and
+     numeral values are supported.
     :type properties: dict[str, object]
     """
 
     _validation = {
         'extension_id': {'required': True, 'max_length': 100, 'min_length': 2},
         'farmer_id': {'required': True},
-        'field_id': {'required': True},
+        'boundary_id': {'required': True},
         'name': {'max_length': 100, 'min_length': 0},
         'description': {'max_length': 500, 'min_length': 0},
     }
@@ -3933,7 +4007,7 @@ class WeatherDataDeleteJobRequest(msrest.serialization.Model):
     _attribute_map = {
         'extension_id': {'key': 'extensionId', 'type': 'str'},
         'farmer_id': {'key': 'farmerId', 'type': 'str'},
-        'field_id': {'key': 'fieldId', 'type': 'str'},
+        'boundary_id': {'key': 'boundaryId', 'type': 'str'},
         'weather_data_type': {'key': 'weatherDataType', 'type': 'str'},
         'granularity': {'key': 'granularity', 'type': 'str'},
         'start_date_time': {'key': 'startDateTime', 'type': 'iso-8601'},
@@ -3948,7 +4022,7 @@ class WeatherDataDeleteJobRequest(msrest.serialization.Model):
         *,
         extension_id: str,
         farmer_id: str,
-        field_id: str,
+        boundary_id: str,
         weather_data_type: Optional[str] = None,
         granularity: Optional[str] = None,
         start_date_time: Optional[datetime.datetime] = None,
@@ -3961,7 +4035,7 @@ class WeatherDataDeleteJobRequest(msrest.serialization.Model):
         super(WeatherDataDeleteJobRequest, self).__init__(**kwargs)
         self.extension_id = extension_id
         self.farmer_id = farmer_id
-        self.field_id = field_id
+        self.boundary_id = boundary_id
         self.weather_data_type = weather_data_type
         self.granularity = granularity
         self.start_date_time = start_date_time
@@ -3972,38 +4046,40 @@ class WeatherDataDeleteJobRequest(msrest.serialization.Model):
 
 
 class WeatherDataDeleteJobResponse(msrest.serialization.Model):
-    """WeatherDataDelete job response.
+    """Response object for (create) WeatherDataDelete job.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    :param duration: Duration of the job.
-    :type duration: str
-    :param id: Id of the job.
+    :param duration_in_seconds: Duration of the job in seconds.
+    :type duration_in_seconds: str
+    :param id: Unique job id.
     :type id: str
     :param job_status: Various states a job can be in. Possible values include: "Waiting",
      "Running", "Succeeded", "Failed", "Cancelled".
     :type job_status: str or ~azure.farmbeats.models.JobStatus
     :param message: Status message to capture more details of the job.
     :type message: str
-    :ivar created_date_time: Job created at date time.
+    :ivar created_date_time: Job created at dateTime. Sample format: yyyy-MM-ddTHH:mm:ssZ.
     :vartype created_date_time: ~datetime.datetime
-    :ivar last_action_date_time: Job was last acted upon at.
+    :ivar last_action_date_time: Job was last acted upon at dateTime. Sample format:
+     yyyy-MM-ddTHH:mm:ssZ.
     :vartype last_action_date_time: ~datetime.datetime
-    :ivar start_time: Job start time when available.
+    :ivar start_time: Job start time when available. Sample format: yyyy-MM-ddTHH:mm:ssZ.
     :vartype start_time: ~datetime.datetime
-    :ivar end_time: Job end time when available.
+    :ivar end_time: Job end time when available. Sample format: yyyy-MM-ddTHH:mm:ssZ.
     :vartype end_time: ~datetime.datetime
-    :ivar is_cancellation_requested: Flag that gets set when job cancellation is requested.
+    :ivar is_cancellation_requested: A boolean flag indicating whether job cancellation is
+     requested.
     :vartype is_cancellation_requested: bool
     :param name: Name to identify resource.
     :type name: str
-    :param description: Textual description of resource.
+    :param description: Textual description of the resource.
     :type description: str
-    :param properties: A list of key value pairs that describe the document.
-     A maximum of 25 key value pairs can be provided for a document,
-     and each tuple must have a key no greater than 50 characters
-     and value no greater than 150 characters.
-     Only string and numeral values are supported.
+    :param properties: A collection of key value pairs that belongs to the resource.
+     Each pair must not have a key greater than 50 characters
+     and must not have a value greater than 150 characters.
+     Note: A maximum of 25 key value pairs can be provided for a resource and only string and
+     numeral values are supported.
     :type properties: dict[str, object]
     """
 
@@ -4018,7 +4094,7 @@ class WeatherDataDeleteJobResponse(msrest.serialization.Model):
     }
 
     _attribute_map = {
-        'duration': {'key': 'duration', 'type': 'str'},
+        'duration_in_seconds': {'key': 'durationInSeconds', 'type': 'str'},
         'id': {'key': 'id', 'type': 'str'},
         'job_status': {'key': 'jobStatus', 'type': 'str'},
         'message': {'key': 'message', 'type': 'str'},
@@ -4035,7 +4111,7 @@ class WeatherDataDeleteJobResponse(msrest.serialization.Model):
     def __init__(
         self,
         *,
-        duration: Optional[str] = None,
+        duration_in_seconds: Optional[str] = None,
         id: Optional[str] = None,
         job_status: Optional[Union[str, "JobStatus"]] = None,
         message: Optional[str] = None,
@@ -4045,7 +4121,7 @@ class WeatherDataDeleteJobResponse(msrest.serialization.Model):
         **kwargs
     ):
         super(WeatherDataDeleteJobResponse, self).__init__(**kwargs)
-        self.duration = duration
+        self.duration_in_seconds = duration_in_seconds
         self.id = id
         self.job_status = job_status
         self.message = message
@@ -4091,52 +4167,156 @@ class WeatherDataListResponse(msrest.serialization.Model):
         self.next_link = next_link
 
 
-class WeatherIngestionJobRequest(msrest.serialization.Model):
-    """WeatherIngestionJobRequest.
+class WeatherIngestionJobDetails(msrest.serialization.Model):
+    """Schema for GetWeatherIngestionJobDetails.
 
-    All required parameters must be populated in order to send to Azure.
+    Variables are only populated by the server, and will be ignored when sending a request.
 
-    :param extension_id: Required. Id of the extension to be used for the providerInput. eg.
-     DTN.ClearAg.
-    :type extension_id: str
-    :param field_id: Required. The id of the field object for which weather data is being fetched.
-    :type field_id: str
-    :param farmer_id: Required. The id of the farmer object for which weather data is being
-     fetched.
-    :type farmer_id: str
-    :param api_name: Required. Api name to which request is to be made.
-    :type api_name: str
-    :param provider_input: Required. Provider input dictionary which would be used to feed request
-     query/body/parameter information.
-    :type provider_input: dict[str, object]
+    :param duration_in_seconds: Duration of the job in seconds.
+    :type duration_in_seconds: str
+    :param id: Unique job id.
+    :type id: str
+    :param job_status: Various states a job can be in. Possible values include: "Waiting",
+     "Running", "Succeeded", "Failed", "Cancelled".
+    :type job_status: str or ~azure.farmbeats.models.JobStatus
+    :param message: Status message to capture more details of the job.
+    :type message: str
+    :ivar created_date_time: Job created at dateTime. Sample format: yyyy-MM-ddTHH:mm:ssZ.
+    :vartype created_date_time: ~datetime.datetime
+    :ivar last_action_date_time: Job was last acted upon at dateTime. Sample format:
+     yyyy-MM-ddTHH:mm:ssZ.
+    :vartype last_action_date_time: ~datetime.datetime
+    :ivar start_time: Job start time when available. Sample format: yyyy-MM-ddTHH:mm:ssZ.
+    :vartype start_time: ~datetime.datetime
+    :ivar end_time: Job end time when available. Sample format: yyyy-MM-ddTHH:mm:ssZ.
+    :vartype end_time: ~datetime.datetime
+    :ivar is_cancellation_requested: A boolean flag indicating whether job cancellation is
+     requested.
+    :vartype is_cancellation_requested: bool
     :param name: Name to identify resource.
     :type name: str
-    :param description: Textual description of resource.
+    :param description: Textual description of the resource.
     :type description: str
-    :param properties: A list of key value pairs that describe the document.
-     A maximum of 25 key value pairs can be provided for a document,
-     and each tuple must have a key no greater than 50 characters
-     and value no greater than 150 characters.
-     Only string and numeral values are supported.
+    :param properties: A collection of key value pairs that belongs to the resource.
+     Each pair must not have a key greater than 50 characters
+     and must not have a value greater than 150 characters.
+     Note: A maximum of 25 key value pairs can be provided for a resource and only string and
+     numeral values are supported.
     :type properties: dict[str, object]
+    :param request_body: WeatherIngestionJobRequest.
+    :type request_body: ~azure.farmbeats.models.WeatherIngestionJobRequest
     """
 
     _validation = {
-        'extension_id': {'required': True, 'max_length': 100, 'min_length': 2},
-        'field_id': {'required': True},
-        'farmer_id': {'required': True},
-        'api_name': {'required': True, 'max_length': 100, 'min_length': 2},
-        'provider_input': {'required': True},
+        'created_date_time': {'readonly': True},
+        'last_action_date_time': {'readonly': True},
+        'start_time': {'readonly': True},
+        'end_time': {'readonly': True},
+        'is_cancellation_requested': {'readonly': True},
         'name': {'max_length': 100, 'min_length': 0},
         'description': {'max_length': 500, 'min_length': 0},
     }
 
     _attribute_map = {
-        'extension_id': {'key': 'extensionId', 'type': 'str'},
-        'field_id': {'key': 'fieldId', 'type': 'str'},
+        'duration_in_seconds': {'key': 'durationInSeconds', 'type': 'str'},
+        'id': {'key': 'id', 'type': 'str'},
+        'job_status': {'key': 'jobStatus', 'type': 'str'},
+        'message': {'key': 'message', 'type': 'str'},
+        'created_date_time': {'key': 'createdDateTime', 'type': 'iso-8601'},
+        'last_action_date_time': {'key': 'lastActionDateTime', 'type': 'iso-8601'},
+        'start_time': {'key': 'startTime', 'type': 'iso-8601'},
+        'end_time': {'key': 'endTime', 'type': 'iso-8601'},
+        'is_cancellation_requested': {'key': 'isCancellationRequested', 'type': 'bool'},
+        'name': {'key': 'name', 'type': 'str'},
+        'description': {'key': 'description', 'type': 'str'},
+        'properties': {'key': 'properties', 'type': '{object}'},
+        'request_body': {'key': 'requestBody', 'type': 'WeatherIngestionJobRequest'},
+    }
+
+    def __init__(
+        self,
+        *,
+        duration_in_seconds: Optional[str] = None,
+        id: Optional[str] = None,
+        job_status: Optional[Union[str, "JobStatus"]] = None,
+        message: Optional[str] = None,
+        name: Optional[str] = None,
+        description: Optional[str] = None,
+        properties: Optional[Dict[str, object]] = None,
+        request_body: Optional["WeatherIngestionJobRequest"] = None,
+        **kwargs
+    ):
+        super(WeatherIngestionJobDetails, self).__init__(**kwargs)
+        self.duration_in_seconds = duration_in_seconds
+        self.id = id
+        self.job_status = job_status
+        self.message = message
+        self.created_date_time = None
+        self.last_action_date_time = None
+        self.start_time = None
+        self.end_time = None
+        self.is_cancellation_requested = None
+        self.name = name
+        self.description = description
+        self.properties = properties
+        self.request_body = request_body
+
+
+class WeatherIngestionJobRequest(msrest.serialization.Model):
+    """WeatherIngestionJobRequest.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param boundary_id: Required. The id of the boundary object for which weather data is being
+     fetched.
+    :type boundary_id: str
+    :param farmer_id: Required. The id of the farmer object for which weather data is being
+     fetched.
+    :type farmer_id: str
+    :param extension_id: Required. Id of the extension to be used for the providerInput. eg.
+     DTN.ClearAg.
+    :type extension_id: str
+    :param extension_api_name: Required. Extension api name to which request is to be made.
+    :type extension_api_name: str
+    :param extension_api_input: Required. Extension api input dictionary which would be used to
+     feed request query/body/parameter information.
+    :type extension_api_input: dict[str, object]
+    :param extension_data_provider_app_id: App id of the weather data provider.
+    :type extension_data_provider_app_id: str
+    :param extension_data_provider_api_key: Api key of the weather data provider.
+    :type extension_data_provider_api_key: str
+    :param name: Name to identify resource.
+    :type name: str
+    :param description: Textual description of the resource.
+    :type description: str
+    :param properties: A collection of key value pairs that belongs to the resource.
+     Each pair must not have a key greater than 50 characters
+     and must not have a value greater than 150 characters.
+     Note: A maximum of 25 key value pairs can be provided for a resource and only string and
+     numeral values are supported.
+    :type properties: dict[str, object]
+    """
+
+    _validation = {
+        'boundary_id': {'required': True},
+        'farmer_id': {'required': True},
+        'extension_id': {'required': True, 'max_length': 100, 'min_length': 2},
+        'extension_api_name': {'required': True, 'max_length': 100, 'min_length': 2},
+        'extension_api_input': {'required': True},
+        'extension_data_provider_app_id': {'max_length': 200, 'min_length': 2},
+        'extension_data_provider_api_key': {'max_length': 200, 'min_length': 2},
+        'name': {'max_length': 100, 'min_length': 0},
+        'description': {'max_length': 500, 'min_length': 0},
+    }
+
+    _attribute_map = {
+        'boundary_id': {'key': 'boundaryId', 'type': 'str'},
         'farmer_id': {'key': 'farmerId', 'type': 'str'},
-        'api_name': {'key': 'apiName', 'type': 'str'},
-        'provider_input': {'key': 'providerInput', 'type': '{object}'},
+        'extension_id': {'key': 'extensionId', 'type': 'str'},
+        'extension_api_name': {'key': 'extensionApiName', 'type': 'str'},
+        'extension_api_input': {'key': 'extensionApiInput', 'type': '{object}'},
+        'extension_data_provider_app_id': {'key': 'extensionDataProviderAppId', 'type': 'str'},
+        'extension_data_provider_api_key': {'key': 'extensionDataProviderApiKey', 'type': 'str'},
         'name': {'key': 'name', 'type': 'str'},
         'description': {'key': 'description', 'type': 'str'},
         'properties': {'key': 'properties', 'type': '{object}'},
@@ -4145,22 +4325,26 @@ class WeatherIngestionJobRequest(msrest.serialization.Model):
     def __init__(
         self,
         *,
-        extension_id: str,
-        field_id: str,
+        boundary_id: str,
         farmer_id: str,
-        api_name: str,
-        provider_input: Dict[str, object],
+        extension_id: str,
+        extension_api_name: str,
+        extension_api_input: Dict[str, object],
+        extension_data_provider_app_id: Optional[str] = None,
+        extension_data_provider_api_key: Optional[str] = None,
         name: Optional[str] = None,
         description: Optional[str] = None,
         properties: Optional[Dict[str, object]] = None,
         **kwargs
     ):
         super(WeatherIngestionJobRequest, self).__init__(**kwargs)
-        self.extension_id = extension_id
-        self.field_id = field_id
+        self.boundary_id = boundary_id
         self.farmer_id = farmer_id
-        self.api_name = api_name
-        self.provider_input = provider_input
+        self.extension_id = extension_id
+        self.extension_api_name = extension_api_name
+        self.extension_api_input = extension_api_input
+        self.extension_data_provider_app_id = extension_data_provider_app_id
+        self.extension_data_provider_api_key = extension_data_provider_api_key
         self.name = name
         self.description = description
         self.properties = properties
@@ -4171,34 +4355,36 @@ class WeatherIngestionJobResponse(msrest.serialization.Model):
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    :param duration: Duration of the job.
-    :type duration: str
-    :param id: Id of the job.
+    :param duration_in_seconds: Duration of the job in seconds.
+    :type duration_in_seconds: str
+    :param id: Unique job id.
     :type id: str
     :param job_status: Various states a job can be in. Possible values include: "Waiting",
      "Running", "Succeeded", "Failed", "Cancelled".
     :type job_status: str or ~azure.farmbeats.models.JobStatus
     :param message: Status message to capture more details of the job.
     :type message: str
-    :ivar created_date_time: Job created at date time.
+    :ivar created_date_time: Job created at dateTime. Sample format: yyyy-MM-ddTHH:mm:ssZ.
     :vartype created_date_time: ~datetime.datetime
-    :ivar last_action_date_time: Job was last acted upon at.
+    :ivar last_action_date_time: Job was last acted upon at dateTime. Sample format:
+     yyyy-MM-ddTHH:mm:ssZ.
     :vartype last_action_date_time: ~datetime.datetime
-    :ivar start_time: Job start time when available.
+    :ivar start_time: Job start time when available. Sample format: yyyy-MM-ddTHH:mm:ssZ.
     :vartype start_time: ~datetime.datetime
-    :ivar end_time: Job end time when available.
+    :ivar end_time: Job end time when available. Sample format: yyyy-MM-ddTHH:mm:ssZ.
     :vartype end_time: ~datetime.datetime
-    :ivar is_cancellation_requested: Flag that gets set when job cancellation is requested.
+    :ivar is_cancellation_requested: A boolean flag indicating whether job cancellation is
+     requested.
     :vartype is_cancellation_requested: bool
     :param name: Name to identify resource.
     :type name: str
-    :param description: Textual description of resource.
+    :param description: Textual description of the resource.
     :type description: str
-    :param properties: A list of key value pairs that describe the document.
-     A maximum of 25 key value pairs can be provided for a document,
-     and each tuple must have a key no greater than 50 characters
-     and value no greater than 150 characters.
-     Only string and numeral values are supported.
+    :param properties: A collection of key value pairs that belongs to the resource.
+     Each pair must not have a key greater than 50 characters
+     and must not have a value greater than 150 characters.
+     Note: A maximum of 25 key value pairs can be provided for a resource and only string and
+     numeral values are supported.
     :type properties: dict[str, object]
     """
 
@@ -4213,7 +4399,7 @@ class WeatherIngestionJobResponse(msrest.serialization.Model):
     }
 
     _attribute_map = {
-        'duration': {'key': 'duration', 'type': 'str'},
+        'duration_in_seconds': {'key': 'durationInSeconds', 'type': 'str'},
         'id': {'key': 'id', 'type': 'str'},
         'job_status': {'key': 'jobStatus', 'type': 'str'},
         'message': {'key': 'message', 'type': 'str'},
@@ -4230,7 +4416,7 @@ class WeatherIngestionJobResponse(msrest.serialization.Model):
     def __init__(
         self,
         *,
-        duration: Optional[str] = None,
+        duration_in_seconds: Optional[str] = None,
         id: Optional[str] = None,
         job_status: Optional[Union[str, "JobStatus"]] = None,
         message: Optional[str] = None,
@@ -4240,7 +4426,7 @@ class WeatherIngestionJobResponse(msrest.serialization.Model):
         **kwargs
     ):
         super(WeatherIngestionJobResponse, self).__init__(**kwargs)
-        self.duration = duration
+        self.duration_in_seconds = duration_in_seconds
         self.id = id
         self.job_status = job_status
         self.message = message
@@ -4252,33 +4438,3 @@ class WeatherIngestionJobResponse(msrest.serialization.Model):
         self.name = name
         self.description = description
         self.properties = properties
-
-
-class WeatherMeasure(msrest.serialization.Model):
-    """Weather data measure.
-
-    :param unit: Data unit.
-    :type unit: str
-    :param value: Data value.
-    :type value: float
-    """
-
-    _validation = {
-        'unit': {'max_length': 50, 'min_length': 1},
-    }
-
-    _attribute_map = {
-        'unit': {'key': 'unit', 'type': 'str'},
-        'value': {'key': 'value', 'type': 'float'},
-    }
-
-    def __init__(
-        self,
-        *,
-        unit: Optional[str] = None,
-        value: Optional[float] = None,
-        **kwargs
-    ):
-        super(WeatherMeasure, self).__init__(**kwargs)
-        self.unit = unit
-        self.value = value

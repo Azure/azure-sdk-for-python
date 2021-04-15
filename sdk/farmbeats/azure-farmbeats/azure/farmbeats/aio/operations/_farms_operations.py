@@ -4,13 +4,15 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 import datetime
-from typing import Any, AsyncIterable, Callable, Dict, Generic, List, Optional, TypeVar
+from typing import Any, AsyncIterable, Callable, Dict, Generic, List, Optional, TypeVar, Union
 import warnings
 
 from azure.core.async_paging import AsyncItemPaged, AsyncList
 from azure.core.exceptions import ClientAuthenticationError, HttpResponseError, ResourceExistsError, ResourceNotFoundError, map_error
 from azure.core.pipeline import PipelineResponse
 from azure.core.pipeline.transport import AsyncHttpResponse, HttpRequest
+from azure.core.polling import AsyncLROPoller, AsyncNoPolling, AsyncPollingMethod
+from azure.core.polling.async_base_polling import AsyncLROBasePolling
 
 from ... import models as _models
 
@@ -54,9 +56,9 @@ class FarmsOperations:
         skip_token: Optional[str] = None,
         **kwargs
     ) -> AsyncIterable["_models.FarmListResponse"]:
-        """Returns a list of farms.
+        """Returns a paginated list of farm resources under a particular farmer.
 
-        :param farmer_id: Id of the farmer.
+        :param farmer_id: Id of the associated farmer.
         :type farmer_id: str
         :param ids: Ids of the resource.
         :type ids: list[str]
@@ -90,7 +92,7 @@ class FarmsOperations:
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2020-12-31-preview"
+        api_version = "2021-03-31-preview"
         accept = "application/json"
 
         def prepare_request(next_link=None):
@@ -154,8 +156,9 @@ class FarmsOperations:
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
+                error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, response)
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
-                raise HttpResponseError(response=response)
+                raise HttpResponseError(response=response, model=error)
 
             return pipeline_response
 
@@ -178,7 +181,7 @@ class FarmsOperations:
         skip_token: Optional[str] = None,
         **kwargs
     ) -> AsyncIterable["_models.FarmListResponse"]:
-        """Returns a list of farms across all farmers.
+        """Returns a paginated list of farm resources across all farmers.
 
         :param ids: Ids of the resource.
         :type ids: list[str]
@@ -212,7 +215,7 @@ class FarmsOperations:
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2020-12-31-preview"
+        api_version = "2021-03-31-preview"
         accept = "application/json"
 
         def prepare_request(next_link=None):
@@ -268,8 +271,9 @@ class FarmsOperations:
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
+                error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, response)
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
-                raise HttpResponseError(response=response)
+                raise HttpResponseError(response=response, model=error)
 
             return pipeline_response
 
@@ -283,24 +287,24 @@ class FarmsOperations:
         farmer_id: str,
         farm_id: str,
         **kwargs
-    ) -> "_models.Farm":
-        """Returns farm for the given id.
+    ) -> Optional["_models.Farm"]:
+        """Gets a specified farm resource under a particular farmer.
 
-        :param farmer_id: Id of the farmer.
+        :param farmer_id: ID of the associated farmer resource.
         :type farmer_id: str
-        :param farm_id: Id of the farm.
+        :param farm_id: ID of the farm resource.
         :type farm_id: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: Farm, or the result of cls(response)
-        :rtype: ~azure.farmbeats.models.Farm
+        :rtype: ~azure.farmbeats.models.Farm or None
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["_models.Farm"]
+        cls = kwargs.pop('cls', None)  # type: ClsType[Optional["_models.Farm"]]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2020-12-31-preview"
+        api_version = "2021-03-31-preview"
         accept = "application/json"
 
         # Construct URL
@@ -323,85 +327,20 @@ class FarmsOperations:
         pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
 
-        if response.status_code not in [200]:
+        if response.status_code not in [200, 404]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise HttpResponseError(response=response)
+            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, response)
+            raise HttpResponseError(response=response, model=error)
 
-        deserialized = self._deserialize('Farm', pipeline_response)
+        deserialized = None
+        if response.status_code == 200:
+            deserialized = self._deserialize('Farm', pipeline_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})
 
         return deserialized
     get.metadata = {'url': '/farmers/{farmerId}/farms/{farmId}'}  # type: ignore
-
-    async def create(
-        self,
-        farmer_id: str,
-        farm_id: str,
-        body: Optional["_models.Farm"] = None,
-        **kwargs
-    ) -> "_models.Farm":
-        """Creates new farm with given request body.
-
-        :param farmer_id: Id of the associated farmer.
-        :type farmer_id: str
-        :param farm_id: Farm id.
-        :type farm_id: str
-        :param body: Farm object.
-        :type body: ~azure.farmbeats.models.Farm
-        :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: Farm, or the result of cls(response)
-        :rtype: ~azure.farmbeats.models.Farm
-        :raises: ~azure.core.exceptions.HttpResponseError
-        """
-        cls = kwargs.pop('cls', None)  # type: ClsType["_models.Farm"]
-        error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
-        }
-        error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2020-12-31-preview"
-        content_type = kwargs.pop("content_type", "application/json")
-        accept = "application/json"
-
-        # Construct URL
-        url = self.create.metadata['url']  # type: ignore
-        path_format_arguments = {
-            'farmerId': self._serialize.url("farmer_id", farmer_id, 'str'),
-            'farmId': self._serialize.url("farm_id", farm_id, 'str'),
-        }
-        url = self._client.format_url(url, **path_format_arguments)
-
-        # Construct parameters
-        query_parameters = {}  # type: Dict[str, Any]
-        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
-
-        # Construct headers
-        header_parameters = {}  # type: Dict[str, Any]
-        header_parameters['Content-Type'] = self._serialize.header("content_type", content_type, 'str')
-        header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
-
-        body_content_kwargs = {}  # type: Dict[str, Any]
-        if body is not None:
-            body_content = self._serialize.body(body, 'Farm')
-        else:
-            body_content = None
-        body_content_kwargs['content'] = body_content
-        request = self._client.put(url, query_parameters, header_parameters, **body_content_kwargs)
-        pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
-        response = pipeline_response.http_response
-
-        if response.status_code not in [201]:
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise HttpResponseError(response=response)
-
-        deserialized = self._deserialize('Farm', pipeline_response)
-
-        if cls:
-            return cls(pipeline_response, deserialized, {})
-
-        return deserialized
-    create.metadata = {'url': '/farmers/{farmerId}/farms/{farmId}'}  # type: ignore
 
     async def create_or_update(
         self,
@@ -410,13 +349,13 @@ class FarmsOperations:
         body: Optional["_models.Farm"] = None,
         **kwargs
     ) -> "_models.Farm":
-        """Updates Farm for given farm Id.
+        """Creates or updates a farm resource under a particular farmer.
 
-        :param farmer_id: Id of the farmer.
+        :param farmer_id: Id of the associated farmer resource.
         :type farmer_id: str
-        :param farm_id: Id of the farm.
+        :param farm_id: Id of the farm resource.
         :type farm_id: str
-        :param body: New state of farm.
+        :param body: Farm resource payload to create or update.
         :type body: ~azure.farmbeats.models.Farm
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: Farm, or the result of cls(response)
@@ -428,7 +367,7 @@ class FarmsOperations:
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2020-12-31-preview"
+        api_version = "2021-03-31-preview"
         content_type = kwargs.pop("content_type", "application/merge-patch+json")
         accept = "application/json"
 
@@ -459,11 +398,16 @@ class FarmsOperations:
         pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
 
-        if response.status_code not in [200]:
+        if response.status_code not in [200, 201]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise HttpResponseError(response=response)
+            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, response)
+            raise HttpResponseError(response=response, model=error)
 
-        deserialized = self._deserialize('Farm', pipeline_response)
+        if response.status_code == 200:
+            deserialized = self._deserialize('Farm', pipeline_response)
+
+        if response.status_code == 201:
+            deserialized = self._deserialize('Farm', pipeline_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})
@@ -477,7 +421,7 @@ class FarmsOperations:
         farm_id: str,
         **kwargs
     ) -> None:
-        """Deletes Farm for given farm id.
+        """Deletes a specified farm resource under a particular farmer.
 
         :param farmer_id: Id of the farmer.
         :type farmer_id: str
@@ -493,7 +437,8 @@ class FarmsOperations:
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2020-12-31-preview"
+        api_version = "2021-03-31-preview"
+        accept = "application/json"
 
         # Construct URL
         url = self.delete.metadata['url']  # type: ignore
@@ -509,16 +454,191 @@ class FarmsOperations:
 
         # Construct headers
         header_parameters = {}  # type: Dict[str, Any]
+        header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
 
         request = self._client.delete(url, query_parameters, header_parameters)
         pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
 
-        if response.status_code not in [200]:
+        if response.status_code not in [204]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise HttpResponseError(response=response)
+            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, response)
+            raise HttpResponseError(response=response, model=error)
 
         if cls:
             return cls(pipeline_response, None, {})
 
     delete.metadata = {'url': '/farmers/{farmerId}/farms/{farmId}'}  # type: ignore
+
+    async def get_cascade_delete_job_details(
+        self,
+        job_id: str,
+        **kwargs
+    ) -> Optional["_models.CascadeDeleteJobDetails"]:
+        """Get cascade delete job's details.
+
+        :param job_id: Id of the job.
+        :type job_id: str
+        :keyword callable cls: A custom type or function that will be passed the direct response
+        :return: CascadeDeleteJobDetails, or the result of cls(response)
+        :rtype: ~azure.farmbeats.models.CascadeDeleteJobDetails or None
+        :raises: ~azure.core.exceptions.HttpResponseError
+        """
+        cls = kwargs.pop('cls', None)  # type: ClsType[Optional["_models.CascadeDeleteJobDetails"]]
+        error_map = {
+            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
+        }
+        error_map.update(kwargs.pop('error_map', {}))
+        api_version = "2021-03-31-preview"
+        accept = "application/json"
+
+        # Construct URL
+        url = self.get_cascade_delete_job_details.metadata['url']  # type: ignore
+        path_format_arguments = {
+            'jobId': self._serialize.url("job_id", job_id, 'str'),
+        }
+        url = self._client.format_url(url, **path_format_arguments)
+
+        # Construct parameters
+        query_parameters = {}  # type: Dict[str, Any]
+        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
+
+        # Construct headers
+        header_parameters = {}  # type: Dict[str, Any]
+        header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
+
+        request = self._client.get(url, query_parameters, header_parameters)
+        pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200, 404]:
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, response)
+            raise HttpResponseError(response=response, model=error)
+
+        deserialized = None
+        if response.status_code == 200:
+            deserialized = self._deserialize('CascadeDeleteJobDetails', pipeline_response)
+
+        if cls:
+            return cls(pipeline_response, deserialized, {})
+
+        return deserialized
+    get_cascade_delete_job_details.metadata = {'url': '/farms/cascade-delete/{jobId}'}  # type: ignore
+
+    async def _create_cascade_delete_job_initial(
+        self,
+        job_id: str,
+        farmer_id: str,
+        farm_id: str,
+        **kwargs
+    ) -> "_models.CascadeDeleteJobResponse":
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.CascadeDeleteJobResponse"]
+        error_map = {
+            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
+        }
+        error_map.update(kwargs.pop('error_map', {}))
+        api_version = "2021-03-31-preview"
+        accept = "application/json"
+
+        # Construct URL
+        url = self._create_cascade_delete_job_initial.metadata['url']  # type: ignore
+        path_format_arguments = {
+            'jobId': self._serialize.url("job_id", job_id, 'str'),
+        }
+        url = self._client.format_url(url, **path_format_arguments)
+
+        # Construct parameters
+        query_parameters = {}  # type: Dict[str, Any]
+        query_parameters['farmerId'] = self._serialize.query("farmer_id", farmer_id, 'str')
+        query_parameters['farmId'] = self._serialize.query("farm_id", farm_id, 'str')
+        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
+
+        # Construct headers
+        header_parameters = {}  # type: Dict[str, Any]
+        header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
+
+        request = self._client.put(url, query_parameters, header_parameters)
+        pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
+        response = pipeline_response.http_response
+
+        if response.status_code not in [202]:
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            raise HttpResponseError(response=response)
+
+        deserialized = self._deserialize('CascadeDeleteJobResponse', pipeline_response)
+
+        if cls:
+            return cls(pipeline_response, deserialized, {})
+
+        return deserialized
+    _create_cascade_delete_job_initial.metadata = {'url': '/farms/cascade-delete/{jobId}'}  # type: ignore
+
+    async def begin_create_cascade_delete_job(
+        self,
+        job_id: str,
+        farmer_id: str,
+        farm_id: str,
+        **kwargs
+    ) -> AsyncLROPoller["_models.CascadeDeleteJobResponse"]:
+        """Create a cascade delete job for specified farm.
+
+        :param job_id: Job ID supplied by end user.
+        :type job_id: str
+        :param farmer_id: ID of the associated farmer.
+        :type farmer_id: str
+        :param farm_id: ID of the farm to be deleted.
+        :type farm_id: str
+        :keyword callable cls: A custom type or function that will be passed the direct response
+        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
+        :keyword polling: Pass in True if you'd like the AsyncLROBasePolling polling method,
+         False for no polling, or your own initialized polling object for a personal polling strategy.
+        :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
+        :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
+        :return: An instance of AsyncLROPoller that returns either CascadeDeleteJobResponse or the result of cls(response)
+        :rtype: ~azure.core.polling.AsyncLROPoller[~azure.farmbeats.models.CascadeDeleteJobResponse]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        polling = kwargs.pop('polling', False)  # type: Union[bool, AsyncPollingMethod]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.CascadeDeleteJobResponse"]
+        lro_delay = kwargs.pop(
+            'polling_interval',
+            self._config.polling_interval
+        )
+        cont_token = kwargs.pop('continuation_token', None)  # type: Optional[str]
+        if cont_token is None:
+            raw_result = await self._create_cascade_delete_job_initial(
+                job_id=job_id,
+                farmer_id=farmer_id,
+                farm_id=farm_id,
+                cls=lambda x,y,z: x,
+                **kwargs
+            )
+
+        kwargs.pop('error_map', None)
+        kwargs.pop('content_type', None)
+
+        def get_long_running_output(pipeline_response):
+            deserialized = self._deserialize('CascadeDeleteJobResponse', pipeline_response)
+
+            if cls:
+                return cls(pipeline_response, deserialized, {})
+            return deserialized
+
+        path_format_arguments = {
+            'jobId': self._serialize.url("job_id", job_id, 'str'),
+        }
+
+        if polling is True: polling_method = AsyncLROBasePolling(lro_delay, lro_options={'final-state-via': 'location'}, path_format_arguments=path_format_arguments,  **kwargs)
+        elif polling is False: polling_method = AsyncNoPolling()
+        else: polling_method = polling
+        if cont_token:
+            return AsyncLROPoller.from_continuation_token(
+                polling_method=polling_method,
+                continuation_token=cont_token,
+                client=self._client,
+                deserialization_callback=get_long_running_output
+            )
+        else:
+            return AsyncLROPoller(self._client, raw_result, get_long_running_output, polling_method)
+    begin_create_cascade_delete_job.metadata = {'url': '/farms/cascade-delete/{jobId}'}  # type: ignore

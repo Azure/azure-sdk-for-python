@@ -16,7 +16,7 @@ from .. import models as _models
 
 if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
-    from typing import Any, Callable, Dict, Generic, Iterable, List, Optional, TypeVar
+    from typing import Any, Callable, Dict, Generic, Iterable, List, Optional, TypeVar, Union
 
     T = TypeVar('T')
     ClsType = Optional[Callable[[PipelineResponse[HttpRequest, HttpResponse], T, Dict[str, Any]], Any]]
@@ -43,258 +43,6 @@ class OAuthProvidersOperations(object):
         self._deserialize = deserializer
         self._config = config
 
-    def create(
-        self,
-        oauth_provider_id,  # type: str
-        x_ms_farm_beats_oauth_provider_app_secret,  # type: str
-        x_ms_farm_beats_oauth_provider_api_key=None,  # type: Optional[str]
-        body=None,  # type: Optional["_models.OAuthProvider"]
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> "_models.OAuthProvider"
-        """Creates new oauthProvider object with given request body.
-
-        :param oauth_provider_id: OAuthProvider id.
-        :type oauth_provider_id: str
-        :param x_ms_farm_beats_oauth_provider_app_secret: Provider app's app secret.
-        :type x_ms_farm_beats_oauth_provider_app_secret: str
-        :param x_ms_farm_beats_oauth_provider_api_key: Provider app's api key. Applicable for Climate.
-        :type x_ms_farm_beats_oauth_provider_api_key: str
-        :param body: OAuthProvider object.
-        :type body: ~azure.farmbeats.models.OAuthProvider
-        :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: OAuthProvider, or the result of cls(response)
-        :rtype: ~azure.farmbeats.models.OAuthProvider
-        :raises: ~azure.core.exceptions.HttpResponseError
-        """
-        cls = kwargs.pop('cls', None)  # type: ClsType["_models.OAuthProvider"]
-        error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
-        }
-        error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2020-12-31-preview"
-        content_type = kwargs.pop("content_type", "application/json")
-        accept = "application/json"
-
-        # Construct URL
-        url = self.create.metadata['url']  # type: ignore
-        path_format_arguments = {
-            'oauthProviderId': self._serialize.url("oauth_provider_id", oauth_provider_id, 'str'),
-        }
-        url = self._client.format_url(url, **path_format_arguments)
-
-        # Construct parameters
-        query_parameters = {}  # type: Dict[str, Any]
-        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
-
-        # Construct headers
-        header_parameters = {}  # type: Dict[str, Any]
-        header_parameters['x-ms-farmBeats-oauth-provider-app-secret'] = self._serialize.header("x_ms_farm_beats_oauth_provider_app_secret", x_ms_farm_beats_oauth_provider_app_secret, 'str', max_length=200, min_length=2)
-        if x_ms_farm_beats_oauth_provider_api_key is not None:
-            header_parameters['x-ms-farmBeats-oauth-provider-api-key'] = self._serialize.header("x_ms_farm_beats_oauth_provider_api_key", x_ms_farm_beats_oauth_provider_api_key, 'str', max_length=200, min_length=2)
-        header_parameters['Content-Type'] = self._serialize.header("content_type", content_type, 'str')
-        header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
-
-        body_content_kwargs = {}  # type: Dict[str, Any]
-        if body is not None:
-            body_content = self._serialize.body(body, 'OAuthProvider')
-        else:
-            body_content = None
-        body_content_kwargs['content'] = body_content
-        request = self._client.put(url, query_parameters, header_parameters, **body_content_kwargs)
-        pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
-        response = pipeline_response.http_response
-
-        if response.status_code not in [201]:
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise HttpResponseError(response=response)
-
-        deserialized = self._deserialize('OAuthProvider', pipeline_response)
-
-        if cls:
-            return cls(pipeline_response, deserialized, {})
-
-        return deserialized
-    create.metadata = {'url': '/oauth/providers/{oauthProviderId}'}  # type: ignore
-
-    def get(
-        self,
-        oauth_provider_id,  # type: str
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> "_models.OAuthProvider"
-        """Get oauthProvider object with given oauthProvider id.
-
-        :param oauth_provider_id: OAuthProvider Id.
-        :type oauth_provider_id: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: OAuthProvider, or the result of cls(response)
-        :rtype: ~azure.farmbeats.models.OAuthProvider
-        :raises: ~azure.core.exceptions.HttpResponseError
-        """
-        cls = kwargs.pop('cls', None)  # type: ClsType["_models.OAuthProvider"]
-        error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
-        }
-        error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2020-12-31-preview"
-        accept = "application/json"
-
-        # Construct URL
-        url = self.get.metadata['url']  # type: ignore
-        path_format_arguments = {
-            'oauthProviderId': self._serialize.url("oauth_provider_id", oauth_provider_id, 'str'),
-        }
-        url = self._client.format_url(url, **path_format_arguments)
-
-        # Construct parameters
-        query_parameters = {}  # type: Dict[str, Any]
-        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
-
-        # Construct headers
-        header_parameters = {}  # type: Dict[str, Any]
-        header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
-
-        request = self._client.get(url, query_parameters, header_parameters)
-        pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
-        response = pipeline_response.http_response
-
-        if response.status_code not in [200]:
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise HttpResponseError(response=response)
-
-        deserialized = self._deserialize('OAuthProvider', pipeline_response)
-
-        if cls:
-            return cls(pipeline_response, deserialized, {})
-
-        return deserialized
-    get.metadata = {'url': '/oauth/providers/{oauthProviderId}'}  # type: ignore
-
-    def create_or_update(
-        self,
-        oauth_provider_id,  # type: str
-        x_ms_farm_beats_oauth_provider_app_secret=None,  # type: Optional[str]
-        x_ms_farm_beats_oauth_provider_api_key=None,  # type: Optional[str]
-        body=None,  # type: Optional["_models.OAuthProvider"]
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> "_models.OAuthProvider"
-        """Updates OAuthProvider for given oauthProvider Id.
-
-        :param oauth_provider_id: Id of oauthProvider that need to be updated.
-        :type oauth_provider_id: str
-        :param x_ms_farm_beats_oauth_provider_app_secret: Provider app's app secret.
-        :type x_ms_farm_beats_oauth_provider_app_secret: str
-        :param x_ms_farm_beats_oauth_provider_api_key: Provider app's api key. Applicable for Climate.
-        :type x_ms_farm_beats_oauth_provider_api_key: str
-        :param body: New state of oauthProvider.
-        :type body: ~azure.farmbeats.models.OAuthProvider
-        :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: OAuthProvider, or the result of cls(response)
-        :rtype: ~azure.farmbeats.models.OAuthProvider
-        :raises: ~azure.core.exceptions.HttpResponseError
-        """
-        cls = kwargs.pop('cls', None)  # type: ClsType["_models.OAuthProvider"]
-        error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
-        }
-        error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2020-12-31-preview"
-        content_type = kwargs.pop("content_type", "application/merge-patch+json")
-        accept = "application/json"
-
-        # Construct URL
-        url = self.create_or_update.metadata['url']  # type: ignore
-        path_format_arguments = {
-            'oauthProviderId': self._serialize.url("oauth_provider_id", oauth_provider_id, 'str'),
-        }
-        url = self._client.format_url(url, **path_format_arguments)
-
-        # Construct parameters
-        query_parameters = {}  # type: Dict[str, Any]
-        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
-
-        # Construct headers
-        header_parameters = {}  # type: Dict[str, Any]
-        if x_ms_farm_beats_oauth_provider_app_secret is not None:
-            header_parameters['x-ms-farmBeats-oauth-provider-app-secret'] = self._serialize.header("x_ms_farm_beats_oauth_provider_app_secret", x_ms_farm_beats_oauth_provider_app_secret, 'str', max_length=200, min_length=2)
-        if x_ms_farm_beats_oauth_provider_api_key is not None:
-            header_parameters['x-ms-farmBeats-oauth-provider-api-key'] = self._serialize.header("x_ms_farm_beats_oauth_provider_api_key", x_ms_farm_beats_oauth_provider_api_key, 'str', max_length=200, min_length=2)
-        header_parameters['Content-Type'] = self._serialize.header("content_type", content_type, 'str')
-        header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
-
-        body_content_kwargs = {}  # type: Dict[str, Any]
-        if body is not None:
-            body_content = self._serialize.body(body, 'OAuthProvider')
-        else:
-            body_content = None
-        body_content_kwargs['content'] = body_content
-        request = self._client.patch(url, query_parameters, header_parameters, **body_content_kwargs)
-        pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
-        response = pipeline_response.http_response
-
-        if response.status_code not in [200]:
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise HttpResponseError(response=response)
-
-        deserialized = self._deserialize('OAuthProvider', pipeline_response)
-
-        if cls:
-            return cls(pipeline_response, deserialized, {})
-
-        return deserialized
-    create_or_update.metadata = {'url': '/oauth/providers/{oauthProviderId}'}  # type: ignore
-
-    def delete(
-        self,
-        oauth_provider_id,  # type: str
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> None
-        """Deletes OAuthProvider for given oauthProvider id.
-
-        :param oauth_provider_id: Id of oauthProvider to be deleted.
-        :type oauth_provider_id: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: None, or the result of cls(response)
-        :rtype: None
-        :raises: ~azure.core.exceptions.HttpResponseError
-        """
-        cls = kwargs.pop('cls', None)  # type: ClsType[None]
-        error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
-        }
-        error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2020-12-31-preview"
-
-        # Construct URL
-        url = self.delete.metadata['url']  # type: ignore
-        path_format_arguments = {
-            'oauthProviderId': self._serialize.url("oauth_provider_id", oauth_provider_id, 'str'),
-        }
-        url = self._client.format_url(url, **path_format_arguments)
-
-        # Construct parameters
-        query_parameters = {}  # type: Dict[str, Any]
-        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
-
-        # Construct headers
-        header_parameters = {}  # type: Dict[str, Any]
-
-        request = self._client.delete(url, query_parameters, header_parameters)
-        pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
-        response = pipeline_response.http_response
-
-        if response.status_code not in [200]:
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise HttpResponseError(response=response)
-
-        if cls:
-            return cls(pipeline_response, None, {})
-
-    delete.metadata = {'url': '/oauth/providers/{oauthProviderId}'}  # type: ignore
-
     def list(
         self,
         ids=None,  # type: Optional[List[str]]
@@ -310,7 +58,7 @@ class OAuthProvidersOperations(object):
         **kwargs  # type: Any
     ):
         # type: (...) -> Iterable["_models.OAuthProviderListResponse"]
-        """Returns a list of oauthProvider.
+        """Returns a paginated list of oauthProvider resources.
 
         :param ids: Ids of the resource.
         :type ids: list[str]
@@ -344,7 +92,7 @@ class OAuthProvidersOperations(object):
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2020-12-31-preview"
+        api_version = "2021-03-31-preview"
         accept = "application/json"
 
         def prepare_request(next_link=None):
@@ -400,8 +148,9 @@ class OAuthProvidersOperations(object):
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
+                error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, response)
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
-                raise HttpResponseError(response=response)
+                raise HttpResponseError(response=response, model=error)
 
             return pipeline_response
 
@@ -409,3 +158,181 @@ class OAuthProvidersOperations(object):
             get_next, extract_data
         )
     list.metadata = {'url': '/oauth/providers'}  # type: ignore
+
+    def get(
+        self,
+        oauth_provider_id,  # type: str
+        **kwargs  # type: Any
+    ):
+        # type: (...) -> Optional["_models.OAuthProvider"]
+        """Get a specified oauthProvider resource.
+
+        :param oauth_provider_id: ID of the oauthProvider resource.
+        :type oauth_provider_id: str
+        :keyword callable cls: A custom type or function that will be passed the direct response
+        :return: OAuthProvider, or the result of cls(response)
+        :rtype: ~azure.farmbeats.models.OAuthProvider or None
+        :raises: ~azure.core.exceptions.HttpResponseError
+        """
+        cls = kwargs.pop('cls', None)  # type: ClsType[Optional["_models.OAuthProvider"]]
+        error_map = {
+            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
+        }
+        error_map.update(kwargs.pop('error_map', {}))
+        api_version = "2021-03-31-preview"
+        accept = "application/json"
+
+        # Construct URL
+        url = self.get.metadata['url']  # type: ignore
+        path_format_arguments = {
+            'oauthProviderId': self._serialize.url("oauth_provider_id", oauth_provider_id, 'str'),
+        }
+        url = self._client.format_url(url, **path_format_arguments)
+
+        # Construct parameters
+        query_parameters = {}  # type: Dict[str, Any]
+        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
+
+        # Construct headers
+        header_parameters = {}  # type: Dict[str, Any]
+        header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
+
+        request = self._client.get(url, query_parameters, header_parameters)
+        pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200, 404]:
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, response)
+            raise HttpResponseError(response=response, model=error)
+
+        deserialized = None
+        if response.status_code == 200:
+            deserialized = self._deserialize('OAuthProvider', pipeline_response)
+
+        if cls:
+            return cls(pipeline_response, deserialized, {})
+
+        return deserialized
+    get.metadata = {'url': '/oauth/providers/{oauthProviderId}'}  # type: ignore
+
+    def create_or_update(
+        self,
+        oauth_provider_id,  # type: str
+        body=None,  # type: Optional["_models.OAuthProvider"]
+        **kwargs  # type: Any
+    ):
+        # type: (...) -> "_models.OAuthProvider"
+        """Creates or updates an oauthProvider resource.
+
+        :param oauth_provider_id: ID of oauthProvider resource.
+        :type oauth_provider_id: str
+        :param body: OauthProvider resource payload to create or update.
+        :type body: ~azure.farmbeats.models.OAuthProvider
+        :keyword callable cls: A custom type or function that will be passed the direct response
+        :return: OAuthProvider, or the result of cls(response)
+        :rtype: ~azure.farmbeats.models.OAuthProvider
+        :raises: ~azure.core.exceptions.HttpResponseError
+        """
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.OAuthProvider"]
+        error_map = {
+            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
+        }
+        error_map.update(kwargs.pop('error_map', {}))
+        api_version = "2021-03-31-preview"
+        content_type = kwargs.pop("content_type", "application/merge-patch+json")
+        accept = "application/json"
+
+        # Construct URL
+        url = self.create_or_update.metadata['url']  # type: ignore
+        path_format_arguments = {
+            'oauthProviderId': self._serialize.url("oauth_provider_id", oauth_provider_id, 'str'),
+        }
+        url = self._client.format_url(url, **path_format_arguments)
+
+        # Construct parameters
+        query_parameters = {}  # type: Dict[str, Any]
+        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
+
+        # Construct headers
+        header_parameters = {}  # type: Dict[str, Any]
+        header_parameters['Content-Type'] = self._serialize.header("content_type", content_type, 'str')
+        header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
+
+        body_content_kwargs = {}  # type: Dict[str, Any]
+        if body is not None:
+            body_content = self._serialize.body(body, 'OAuthProvider')
+        else:
+            body_content = None
+        body_content_kwargs['content'] = body_content
+        request = self._client.patch(url, query_parameters, header_parameters, **body_content_kwargs)
+        pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200, 201]:
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            raise HttpResponseError(response=response)
+
+        if response.status_code == 200:
+            deserialized = self._deserialize('OAuthProvider', pipeline_response)
+
+        if response.status_code == 201:
+            deserialized = self._deserialize('OAuthProvider', pipeline_response)
+
+        if cls:
+            return cls(pipeline_response, deserialized, {})
+
+        return deserialized
+    create_or_update.metadata = {'url': '/oauth/providers/{oauthProviderId}'}  # type: ignore
+
+    def delete(
+        self,
+        oauth_provider_id,  # type: str
+        **kwargs  # type: Any
+    ):
+        # type: (...) -> None
+        """Deletes an specified oauthProvider resource.
+
+        :param oauth_provider_id: ID of oauthProvider.
+        :type oauth_provider_id: str
+        :keyword callable cls: A custom type or function that will be passed the direct response
+        :return: None, or the result of cls(response)
+        :rtype: None
+        :raises: ~azure.core.exceptions.HttpResponseError
+        """
+        cls = kwargs.pop('cls', None)  # type: ClsType[None]
+        error_map = {
+            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
+        }
+        error_map.update(kwargs.pop('error_map', {}))
+        api_version = "2021-03-31-preview"
+        accept = "application/json"
+
+        # Construct URL
+        url = self.delete.metadata['url']  # type: ignore
+        path_format_arguments = {
+            'oauthProviderId': self._serialize.url("oauth_provider_id", oauth_provider_id, 'str'),
+        }
+        url = self._client.format_url(url, **path_format_arguments)
+
+        # Construct parameters
+        query_parameters = {}  # type: Dict[str, Any]
+        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
+
+        # Construct headers
+        header_parameters = {}  # type: Dict[str, Any]
+        header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
+
+        request = self._client.delete(url, query_parameters, header_parameters)
+        pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
+        response = pipeline_response.http_response
+
+        if response.status_code not in [204]:
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, response)
+            raise HttpResponseError(response=response, model=error)
+
+        if cls:
+            return cls(pipeline_response, None, {})
+
+    delete.metadata = {'url': '/oauth/providers/{oauthProviderId}'}  # type: ignore

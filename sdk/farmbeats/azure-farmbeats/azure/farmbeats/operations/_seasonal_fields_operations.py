@@ -11,12 +11,14 @@ from azure.core.exceptions import ClientAuthenticationError, HttpResponseError, 
 from azure.core.paging import ItemPaged
 from azure.core.pipeline import PipelineResponse
 from azure.core.pipeline.transport import HttpRequest, HttpResponse
+from azure.core.polling import LROPoller, NoPolling, PollingMethod
+from azure.core.polling.base_polling import LROBasePolling
 
 from .. import models as _models
 
 if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
-    from typing import Any, Callable, Dict, Generic, Iterable, List, Optional, TypeVar
+    from typing import Any, Callable, Dict, Generic, Iterable, List, Optional, TypeVar, Union
 
     T = TypeVar('T')
     ClsType = Optional[Callable[[PipelineResponse[HttpRequest, HttpResponse], T, Dict[str, Any]], Any]]
@@ -43,255 +45,6 @@ class SeasonalFieldsOperations(object):
         self._deserialize = deserializer
         self._config = config
 
-    def get(
-        self,
-        farmer_id,  # type: str
-        seasonal_field_id,  # type: str
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> "_models.SeasonalField"
-        """Get field object with given fieldId.
-
-        :param farmer_id: Id of the farmer.
-        :type farmer_id: str
-        :param seasonal_field_id: Id of the seasonalField.
-        :type seasonal_field_id: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: SeasonalField, or the result of cls(response)
-        :rtype: ~azure.farmbeats.models.SeasonalField
-        :raises: ~azure.core.exceptions.HttpResponseError
-        """
-        cls = kwargs.pop('cls', None)  # type: ClsType["_models.SeasonalField"]
-        error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
-        }
-        error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2020-12-31-preview"
-        accept = "application/json"
-
-        # Construct URL
-        url = self.get.metadata['url']  # type: ignore
-        path_format_arguments = {
-            'farmerId': self._serialize.url("farmer_id", farmer_id, 'str'),
-            'seasonalFieldId': self._serialize.url("seasonal_field_id", seasonal_field_id, 'str'),
-        }
-        url = self._client.format_url(url, **path_format_arguments)
-
-        # Construct parameters
-        query_parameters = {}  # type: Dict[str, Any]
-        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
-
-        # Construct headers
-        header_parameters = {}  # type: Dict[str, Any]
-        header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
-
-        request = self._client.get(url, query_parameters, header_parameters)
-        pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
-        response = pipeline_response.http_response
-
-        if response.status_code not in [200]:
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise HttpResponseError(response=response)
-
-        deserialized = self._deserialize('SeasonalField', pipeline_response)
-
-        if cls:
-            return cls(pipeline_response, deserialized, {})
-
-        return deserialized
-    get.metadata = {'url': '/farmers/{farmerId}/seasonalFields/{seasonalFieldId}'}  # type: ignore
-
-    def create(
-        self,
-        farmer_id,  # type: str
-        seasonal_field_id,  # type: str
-        body=None,  # type: Optional["_models.SeasonalField"]
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> "_models.SeasonalField"
-        """Creates new field object with given request body.
-
-        :param farmer_id: Id of the associated farmer.
-        :type farmer_id: str
-        :param seasonal_field_id: SeasonalField id.
-        :type seasonal_field_id: str
-        :param body: Field object.
-        :type body: ~azure.farmbeats.models.SeasonalField
-        :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: SeasonalField, or the result of cls(response)
-        :rtype: ~azure.farmbeats.models.SeasonalField
-        :raises: ~azure.core.exceptions.HttpResponseError
-        """
-        cls = kwargs.pop('cls', None)  # type: ClsType["_models.SeasonalField"]
-        error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
-        }
-        error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2020-12-31-preview"
-        content_type = kwargs.pop("content_type", "application/json")
-        accept = "application/json"
-
-        # Construct URL
-        url = self.create.metadata['url']  # type: ignore
-        path_format_arguments = {
-            'farmerId': self._serialize.url("farmer_id", farmer_id, 'str'),
-            'seasonalFieldId': self._serialize.url("seasonal_field_id", seasonal_field_id, 'str'),
-        }
-        url = self._client.format_url(url, **path_format_arguments)
-
-        # Construct parameters
-        query_parameters = {}  # type: Dict[str, Any]
-        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
-
-        # Construct headers
-        header_parameters = {}  # type: Dict[str, Any]
-        header_parameters['Content-Type'] = self._serialize.header("content_type", content_type, 'str')
-        header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
-
-        body_content_kwargs = {}  # type: Dict[str, Any]
-        if body is not None:
-            body_content = self._serialize.body(body, 'SeasonalField')
-        else:
-            body_content = None
-        body_content_kwargs['content'] = body_content
-        request = self._client.put(url, query_parameters, header_parameters, **body_content_kwargs)
-        pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
-        response = pipeline_response.http_response
-
-        if response.status_code not in [201]:
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise HttpResponseError(response=response)
-
-        deserialized = self._deserialize('SeasonalField', pipeline_response)
-
-        if cls:
-            return cls(pipeline_response, deserialized, {})
-
-        return deserialized
-    create.metadata = {'url': '/farmers/{farmerId}/seasonalFields/{seasonalFieldId}'}  # type: ignore
-
-    def create_or_update(
-        self,
-        farmer_id,  # type: str
-        seasonal_field_id,  # type: str
-        body=None,  # type: Optional["_models.SeasonalField"]
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> "_models.SeasonalField"
-        """Updates SeasonalField for given field Id.
-
-        :param farmer_id: Id of the farmer.
-        :type farmer_id: str
-        :param seasonal_field_id: Id of the seasonalField.
-        :type seasonal_field_id: str
-        :param body: New state of seasonal field.
-        :type body: ~azure.farmbeats.models.SeasonalField
-        :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: SeasonalField, or the result of cls(response)
-        :rtype: ~azure.farmbeats.models.SeasonalField
-        :raises: ~azure.core.exceptions.HttpResponseError
-        """
-        cls = kwargs.pop('cls', None)  # type: ClsType["_models.SeasonalField"]
-        error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
-        }
-        error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2020-12-31-preview"
-        content_type = kwargs.pop("content_type", "application/merge-patch+json")
-        accept = "application/json"
-
-        # Construct URL
-        url = self.create_or_update.metadata['url']  # type: ignore
-        path_format_arguments = {
-            'farmerId': self._serialize.url("farmer_id", farmer_id, 'str'),
-            'seasonalFieldId': self._serialize.url("seasonal_field_id", seasonal_field_id, 'str'),
-        }
-        url = self._client.format_url(url, **path_format_arguments)
-
-        # Construct parameters
-        query_parameters = {}  # type: Dict[str, Any]
-        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
-
-        # Construct headers
-        header_parameters = {}  # type: Dict[str, Any]
-        header_parameters['Content-Type'] = self._serialize.header("content_type", content_type, 'str')
-        header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
-
-        body_content_kwargs = {}  # type: Dict[str, Any]
-        if body is not None:
-            body_content = self._serialize.body(body, 'SeasonalField')
-        else:
-            body_content = None
-        body_content_kwargs['content'] = body_content
-        request = self._client.patch(url, query_parameters, header_parameters, **body_content_kwargs)
-        pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
-        response = pipeline_response.http_response
-
-        if response.status_code not in [200]:
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise HttpResponseError(response=response)
-
-        deserialized = self._deserialize('SeasonalField', pipeline_response)
-
-        if cls:
-            return cls(pipeline_response, deserialized, {})
-
-        return deserialized
-    create_or_update.metadata = {'url': '/farmers/{farmerId}/seasonalFields/{seasonalFieldId}'}  # type: ignore
-
-    def delete(
-        self,
-        farmer_id,  # type: str
-        seasonal_field_id,  # type: str
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> None
-        """Deletes SeasonalField for given id.
-
-        :param farmer_id: Id of the farmer.
-        :type farmer_id: str
-        :param seasonal_field_id: Id of the seasonalField.
-        :type seasonal_field_id: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: None, or the result of cls(response)
-        :rtype: None
-        :raises: ~azure.core.exceptions.HttpResponseError
-        """
-        cls = kwargs.pop('cls', None)  # type: ClsType[None]
-        error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
-        }
-        error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2020-12-31-preview"
-
-        # Construct URL
-        url = self.delete.metadata['url']  # type: ignore
-        path_format_arguments = {
-            'farmerId': self._serialize.url("farmer_id", farmer_id, 'str'),
-            'seasonalFieldId': self._serialize.url("seasonal_field_id", seasonal_field_id, 'str'),
-        }
-        url = self._client.format_url(url, **path_format_arguments)
-
-        # Construct parameters
-        query_parameters = {}  # type: Dict[str, Any]
-        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
-
-        # Construct headers
-        header_parameters = {}  # type: Dict[str, Any]
-
-        request = self._client.delete(url, query_parameters, header_parameters)
-        pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
-        response = pipeline_response.http_response
-
-        if response.status_code not in [200]:
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise HttpResponseError(response=response)
-
-        if cls:
-            return cls(pipeline_response, None, {})
-
-    delete.metadata = {'url': '/farmers/{farmerId}/seasonalFields/{seasonalFieldId}'}  # type: ignore
-
     def list_by_farmer_id(
         self,
         farmer_id,  # type: str
@@ -306,8 +59,8 @@ class SeasonalFieldsOperations(object):
         min_avg_seed_population_value=None,  # type: Optional[float]
         max_avg_seed_population_value=None,  # type: Optional[float]
         avg_seed_population_unit=None,  # type: Optional[str]
-        min_planting_date=None,  # type: Optional[str]
-        max_planting_date=None,  # type: Optional[str]
+        min_planting_date_time=None,  # type: Optional[datetime.datetime]
+        max_planting_date_time=None,  # type: Optional[datetime.datetime]
         ids=None,  # type: Optional[List[str]]
         names=None,  # type: Optional[List[str]]
         property_filters=None,  # type: Optional[List[str]]
@@ -321,9 +74,9 @@ class SeasonalFieldsOperations(object):
         **kwargs  # type: Any
     ):
         # type: (...) -> Iterable["_models.SeasonalFieldListResponse"]
-        """Returns a list of seasonalFields.
+        """Returns a paginated list of seasonal field resources under a particular farmer.
 
-        :param farmer_id: Id of the farmer.
+        :param farmer_id: Id of the associated farmer.
         :type farmer_id: str
         :param farm_ids: Farm Ids of the resource.
         :type farm_ids: list[str]
@@ -349,10 +102,10 @@ class SeasonalFieldsOperations(object):
         :type max_avg_seed_population_value: float
         :param avg_seed_population_unit: Unit of average seed population value attribute.
         :type avg_seed_population_unit: str
-        :param min_planting_date: Minimum planting date in yyyy-MM-dd format.
-        :type min_planting_date: str
-        :param max_planting_date: Maximum planting date in yyyy-MM-dd format.
-        :type max_planting_date: str
+        :param min_planting_date_time: Minimum planting datetime, sample format: yyyy-MM-ddTHH:mm:ssZ.
+        :type min_planting_date_time: ~datetime.datetime
+        :param max_planting_date_time: Maximum planting datetime, sample format: yyyy-MM-ddTHH:mm:ssZ.
+        :type max_planting_date_time: ~datetime.datetime
         :param ids: Ids of the resource.
         :type ids: list[str]
         :param names: Names of the resource.
@@ -385,7 +138,7 @@ class SeasonalFieldsOperations(object):
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2020-12-31-preview"
+        api_version = "2021-03-31-preview"
         accept = "application/json"
 
         def prepare_request(next_link=None):
@@ -424,10 +177,10 @@ class SeasonalFieldsOperations(object):
                     query_parameters['maxAvgSeedPopulationValue'] = self._serialize.query("max_avg_seed_population_value", max_avg_seed_population_value, 'float')
                 if avg_seed_population_unit is not None:
                     query_parameters['avgSeedPopulationUnit'] = self._serialize.query("avg_seed_population_unit", avg_seed_population_unit, 'str')
-                if min_planting_date is not None:
-                    query_parameters['minPlantingDate'] = self._serialize.query("min_planting_date", min_planting_date, 'str')
-                if max_planting_date is not None:
-                    query_parameters['maxPlantingDate'] = self._serialize.query("max_planting_date", max_planting_date, 'str')
+                if min_planting_date_time is not None:
+                    query_parameters['minPlantingDateTime'] = self._serialize.query("min_planting_date_time", min_planting_date_time, 'iso-8601')
+                if max_planting_date_time is not None:
+                    query_parameters['maxPlantingDateTime'] = self._serialize.query("max_planting_date_time", max_planting_date_time, 'iso-8601')
                 if ids is not None:
                     query_parameters['ids'] = [self._serialize.query("ids", q, 'str') if q is not None else '' for q in ids]
                 if names is not None:
@@ -475,15 +228,16 @@ class SeasonalFieldsOperations(object):
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
+                error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, response)
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
-                raise HttpResponseError(response=response)
+                raise HttpResponseError(response=response, model=error)
 
             return pipeline_response
 
         return ItemPaged(
             get_next, extract_data
         )
-    list_by_farmer_id.metadata = {'url': '/farmers/{farmerId}/seasonalFields'}  # type: ignore
+    list_by_farmer_id.metadata = {'url': '/farmers/{farmerId}/seasonal-fields'}  # type: ignore
 
     def list(
         self,
@@ -498,8 +252,8 @@ class SeasonalFieldsOperations(object):
         min_avg_seed_population_value=None,  # type: Optional[float]
         max_avg_seed_population_value=None,  # type: Optional[float]
         avg_seed_population_unit=None,  # type: Optional[str]
-        min_planting_date=None,  # type: Optional[str]
-        max_planting_date=None,  # type: Optional[str]
+        min_planting_date_time=None,  # type: Optional[datetime.datetime]
+        max_planting_date_time=None,  # type: Optional[datetime.datetime]
         ids=None,  # type: Optional[List[str]]
         names=None,  # type: Optional[List[str]]
         property_filters=None,  # type: Optional[List[str]]
@@ -513,7 +267,7 @@ class SeasonalFieldsOperations(object):
         **kwargs  # type: Any
     ):
         # type: (...) -> Iterable["_models.SeasonalFieldListResponse"]
-        """Returns a list of seasonalFields across all farmers.
+        """Returns a paginated list of seasonal field resources across all farmers.
 
         :param farm_ids: Farm Ids of the resource.
         :type farm_ids: list[str]
@@ -539,10 +293,10 @@ class SeasonalFieldsOperations(object):
         :type max_avg_seed_population_value: float
         :param avg_seed_population_unit: Unit of average seed population value attribute.
         :type avg_seed_population_unit: str
-        :param min_planting_date: Minimum planting date in yyyy-MM-dd format.
-        :type min_planting_date: str
-        :param max_planting_date: Maximum planting date in yyyy-MM-dd format.
-        :type max_planting_date: str
+        :param min_planting_date_time: Minimum planting datetime, sample format: yyyy-MM-ddTHH:mm:ssZ.
+        :type min_planting_date_time: ~datetime.datetime
+        :param max_planting_date_time: Maximum planting datetime, sample format: yyyy-MM-ddTHH:mm:ssZ.
+        :type max_planting_date_time: ~datetime.datetime
         :param ids: Ids of the resource.
         :type ids: list[str]
         :param names: Names of the resource.
@@ -575,7 +329,7 @@ class SeasonalFieldsOperations(object):
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2020-12-31-preview"
+        api_version = "2021-03-31-preview"
         accept = "application/json"
 
         def prepare_request(next_link=None):
@@ -610,10 +364,10 @@ class SeasonalFieldsOperations(object):
                     query_parameters['maxAvgSeedPopulationValue'] = self._serialize.query("max_avg_seed_population_value", max_avg_seed_population_value, 'float')
                 if avg_seed_population_unit is not None:
                     query_parameters['avgSeedPopulationUnit'] = self._serialize.query("avg_seed_population_unit", avg_seed_population_unit, 'str')
-                if min_planting_date is not None:
-                    query_parameters['minPlantingDate'] = self._serialize.query("min_planting_date", min_planting_date, 'str')
-                if max_planting_date is not None:
-                    query_parameters['maxPlantingDate'] = self._serialize.query("max_planting_date", max_planting_date, 'str')
+                if min_planting_date_time is not None:
+                    query_parameters['minPlantingDateTime'] = self._serialize.query("min_planting_date_time", min_planting_date_time, 'iso-8601')
+                if max_planting_date_time is not None:
+                    query_parameters['maxPlantingDateTime'] = self._serialize.query("max_planting_date_time", max_planting_date_time, 'iso-8601')
                 if ids is not None:
                     query_parameters['ids'] = [self._serialize.query("ids", q, 'str') if q is not None else '' for q in ids]
                 if names is not None:
@@ -657,12 +411,380 @@ class SeasonalFieldsOperations(object):
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
+                error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, response)
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
-                raise HttpResponseError(response=response)
+                raise HttpResponseError(response=response, model=error)
 
             return pipeline_response
 
         return ItemPaged(
             get_next, extract_data
         )
-    list.metadata = {'url': '/seasonalFields'}  # type: ignore
+    list.metadata = {'url': '/seasonal-fields'}  # type: ignore
+
+    def get(
+        self,
+        farmer_id,  # type: str
+        seasonal_field_id,  # type: str
+        **kwargs  # type: Any
+    ):
+        # type: (...) -> Optional["_models.SeasonalField"]
+        """Gets a specified seasonal field resource under a particular farmer.
+
+        :param farmer_id: Id of the associted farmer.
+        :type farmer_id: str
+        :param seasonal_field_id: Id of the seasonal field.
+        :type seasonal_field_id: str
+        :keyword callable cls: A custom type or function that will be passed the direct response
+        :return: SeasonalField, or the result of cls(response)
+        :rtype: ~azure.farmbeats.models.SeasonalField or None
+        :raises: ~azure.core.exceptions.HttpResponseError
+        """
+        cls = kwargs.pop('cls', None)  # type: ClsType[Optional["_models.SeasonalField"]]
+        error_map = {
+            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
+        }
+        error_map.update(kwargs.pop('error_map', {}))
+        api_version = "2021-03-31-preview"
+        accept = "application/json"
+
+        # Construct URL
+        url = self.get.metadata['url']  # type: ignore
+        path_format_arguments = {
+            'farmerId': self._serialize.url("farmer_id", farmer_id, 'str'),
+            'seasonalFieldId': self._serialize.url("seasonal_field_id", seasonal_field_id, 'str'),
+        }
+        url = self._client.format_url(url, **path_format_arguments)
+
+        # Construct parameters
+        query_parameters = {}  # type: Dict[str, Any]
+        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
+
+        # Construct headers
+        header_parameters = {}  # type: Dict[str, Any]
+        header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
+
+        request = self._client.get(url, query_parameters, header_parameters)
+        pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200, 404]:
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, response)
+            raise HttpResponseError(response=response, model=error)
+
+        deserialized = None
+        if response.status_code == 200:
+            deserialized = self._deserialize('SeasonalField', pipeline_response)
+
+        if cls:
+            return cls(pipeline_response, deserialized, {})
+
+        return deserialized
+    get.metadata = {'url': '/farmers/{farmerId}/seasonal-fields/{seasonalFieldId}'}  # type: ignore
+
+    def create_or_update(
+        self,
+        farmer_id,  # type: str
+        seasonal_field_id,  # type: str
+        body=None,  # type: Optional["_models.SeasonalField"]
+        **kwargs  # type: Any
+    ):
+        # type: (...) -> "_models.SeasonalField"
+        """Creates or Updates a seasonal field resource under a particular farmer.
+
+        :param farmer_id: Id of the associated farmer resource.
+        :type farmer_id: str
+        :param seasonal_field_id: Id of the seasonal field resource.
+        :type seasonal_field_id: str
+        :param body: Seasonal field resource payload to create or update.
+        :type body: ~azure.farmbeats.models.SeasonalField
+        :keyword callable cls: A custom type or function that will be passed the direct response
+        :return: SeasonalField, or the result of cls(response)
+        :rtype: ~azure.farmbeats.models.SeasonalField
+        :raises: ~azure.core.exceptions.HttpResponseError
+        """
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.SeasonalField"]
+        error_map = {
+            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
+        }
+        error_map.update(kwargs.pop('error_map', {}))
+        api_version = "2021-03-31-preview"
+        content_type = kwargs.pop("content_type", "application/merge-patch+json")
+        accept = "application/json"
+
+        # Construct URL
+        url = self.create_or_update.metadata['url']  # type: ignore
+        path_format_arguments = {
+            'farmerId': self._serialize.url("farmer_id", farmer_id, 'str'),
+            'seasonalFieldId': self._serialize.url("seasonal_field_id", seasonal_field_id, 'str'),
+        }
+        url = self._client.format_url(url, **path_format_arguments)
+
+        # Construct parameters
+        query_parameters = {}  # type: Dict[str, Any]
+        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
+
+        # Construct headers
+        header_parameters = {}  # type: Dict[str, Any]
+        header_parameters['Content-Type'] = self._serialize.header("content_type", content_type, 'str')
+        header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
+
+        body_content_kwargs = {}  # type: Dict[str, Any]
+        if body is not None:
+            body_content = self._serialize.body(body, 'SeasonalField')
+        else:
+            body_content = None
+        body_content_kwargs['content'] = body_content
+        request = self._client.patch(url, query_parameters, header_parameters, **body_content_kwargs)
+        pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200, 201]:
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, response)
+            raise HttpResponseError(response=response, model=error)
+
+        if response.status_code == 200:
+            deserialized = self._deserialize('SeasonalField', pipeline_response)
+
+        if response.status_code == 201:
+            deserialized = self._deserialize('SeasonalField', pipeline_response)
+
+        if cls:
+            return cls(pipeline_response, deserialized, {})
+
+        return deserialized
+    create_or_update.metadata = {'url': '/farmers/{farmerId}/seasonal-fields/{seasonalFieldId}'}  # type: ignore
+
+    def delete(
+        self,
+        farmer_id,  # type: str
+        seasonal_field_id,  # type: str
+        **kwargs  # type: Any
+    ):
+        # type: (...) -> None
+        """Deletes a specified seasonal-field resource under a particular farmer.
+
+        :param farmer_id: Id of the farmer.
+        :type farmer_id: str
+        :param seasonal_field_id: Id of the seasonal field.
+        :type seasonal_field_id: str
+        :keyword callable cls: A custom type or function that will be passed the direct response
+        :return: None, or the result of cls(response)
+        :rtype: None
+        :raises: ~azure.core.exceptions.HttpResponseError
+        """
+        cls = kwargs.pop('cls', None)  # type: ClsType[None]
+        error_map = {
+            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
+        }
+        error_map.update(kwargs.pop('error_map', {}))
+        api_version = "2021-03-31-preview"
+        accept = "application/json"
+
+        # Construct URL
+        url = self.delete.metadata['url']  # type: ignore
+        path_format_arguments = {
+            'farmerId': self._serialize.url("farmer_id", farmer_id, 'str'),
+            'seasonalFieldId': self._serialize.url("seasonal_field_id", seasonal_field_id, 'str'),
+        }
+        url = self._client.format_url(url, **path_format_arguments)
+
+        # Construct parameters
+        query_parameters = {}  # type: Dict[str, Any]
+        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
+
+        # Construct headers
+        header_parameters = {}  # type: Dict[str, Any]
+        header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
+
+        request = self._client.delete(url, query_parameters, header_parameters)
+        pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
+        response = pipeline_response.http_response
+
+        if response.status_code not in [204]:
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, response)
+            raise HttpResponseError(response=response, model=error)
+
+        if cls:
+            return cls(pipeline_response, None, {})
+
+    delete.metadata = {'url': '/farmers/{farmerId}/seasonal-fields/{seasonalFieldId}'}  # type: ignore
+
+    def get_cascade_delete_job_details(
+        self,
+        job_id,  # type: str
+        **kwargs  # type: Any
+    ):
+        # type: (...) -> Optional["_models.CascadeDeleteJobDetails"]
+        """Get cascade delete job's details.
+
+        :param job_id: Id of the job.
+        :type job_id: str
+        :keyword callable cls: A custom type or function that will be passed the direct response
+        :return: CascadeDeleteJobDetails, or the result of cls(response)
+        :rtype: ~azure.farmbeats.models.CascadeDeleteJobDetails or None
+        :raises: ~azure.core.exceptions.HttpResponseError
+        """
+        cls = kwargs.pop('cls', None)  # type: ClsType[Optional["_models.CascadeDeleteJobDetails"]]
+        error_map = {
+            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
+        }
+        error_map.update(kwargs.pop('error_map', {}))
+        api_version = "2021-03-31-preview"
+        accept = "application/json"
+
+        # Construct URL
+        url = self.get_cascade_delete_job_details.metadata['url']  # type: ignore
+        path_format_arguments = {
+            'jobId': self._serialize.url("job_id", job_id, 'str'),
+        }
+        url = self._client.format_url(url, **path_format_arguments)
+
+        # Construct parameters
+        query_parameters = {}  # type: Dict[str, Any]
+        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
+
+        # Construct headers
+        header_parameters = {}  # type: Dict[str, Any]
+        header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
+
+        request = self._client.get(url, query_parameters, header_parameters)
+        pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200, 404]:
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, response)
+            raise HttpResponseError(response=response, model=error)
+
+        deserialized = None
+        if response.status_code == 200:
+            deserialized = self._deserialize('CascadeDeleteJobDetails', pipeline_response)
+
+        if cls:
+            return cls(pipeline_response, deserialized, {})
+
+        return deserialized
+    get_cascade_delete_job_details.metadata = {'url': '/seasonal-fields/cascade-delete/{jobId}'}  # type: ignore
+
+    def _create_cascade_delete_job_initial(
+        self,
+        job_id,  # type: str
+        farmer_id,  # type: str
+        seasonal_field_id,  # type: str
+        **kwargs  # type: Any
+    ):
+        # type: (...) -> "_models.CascadeDeleteJobResponse"
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.CascadeDeleteJobResponse"]
+        error_map = {
+            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
+        }
+        error_map.update(kwargs.pop('error_map', {}))
+        api_version = "2021-03-31-preview"
+        accept = "application/json"
+
+        # Construct URL
+        url = self._create_cascade_delete_job_initial.metadata['url']  # type: ignore
+        path_format_arguments = {
+            'jobId': self._serialize.url("job_id", job_id, 'str'),
+        }
+        url = self._client.format_url(url, **path_format_arguments)
+
+        # Construct parameters
+        query_parameters = {}  # type: Dict[str, Any]
+        query_parameters['farmerId'] = self._serialize.query("farmer_id", farmer_id, 'str')
+        query_parameters['seasonalFieldId'] = self._serialize.query("seasonal_field_id", seasonal_field_id, 'str')
+        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
+
+        # Construct headers
+        header_parameters = {}  # type: Dict[str, Any]
+        header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
+
+        request = self._client.put(url, query_parameters, header_parameters)
+        pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
+        response = pipeline_response.http_response
+
+        if response.status_code not in [202]:
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            raise HttpResponseError(response=response)
+
+        deserialized = self._deserialize('CascadeDeleteJobResponse', pipeline_response)
+
+        if cls:
+            return cls(pipeline_response, deserialized, {})
+
+        return deserialized
+    _create_cascade_delete_job_initial.metadata = {'url': '/seasonal-fields/cascade-delete/{jobId}'}  # type: ignore
+
+    def begin_create_cascade_delete_job(
+        self,
+        job_id,  # type: str
+        farmer_id,  # type: str
+        seasonal_field_id,  # type: str
+        **kwargs  # type: Any
+    ):
+        # type: (...) -> LROPoller["_models.CascadeDeleteJobResponse"]
+        """Create a cascade delete job for specified seasonalField.
+
+        :param job_id: Job ID supplied by end user.
+        :type job_id: str
+        :param farmer_id: ID of the associated farmer.
+        :type farmer_id: str
+        :param seasonal_field_id: ID of the seasonalField to be deleted.
+        :type seasonal_field_id: str
+        :keyword callable cls: A custom type or function that will be passed the direct response
+        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
+        :keyword polling: Pass in True if you'd like the LROBasePolling polling method,
+         False for no polling, or your own initialized polling object for a personal polling strategy.
+        :paramtype polling: bool or ~azure.core.polling.PollingMethod
+        :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
+        :return: An instance of LROPoller that returns either CascadeDeleteJobResponse or the result of cls(response)
+        :rtype: ~azure.core.polling.LROPoller[~azure.farmbeats.models.CascadeDeleteJobResponse]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        polling = kwargs.pop('polling', False)  # type: Union[bool, PollingMethod]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.CascadeDeleteJobResponse"]
+        lro_delay = kwargs.pop(
+            'polling_interval',
+            self._config.polling_interval
+        )
+        cont_token = kwargs.pop('continuation_token', None)  # type: Optional[str]
+        if cont_token is None:
+            raw_result = self._create_cascade_delete_job_initial(
+                job_id=job_id,
+                farmer_id=farmer_id,
+                seasonal_field_id=seasonal_field_id,
+                cls=lambda x,y,z: x,
+                **kwargs
+            )
+
+        kwargs.pop('error_map', None)
+        kwargs.pop('content_type', None)
+
+        def get_long_running_output(pipeline_response):
+            deserialized = self._deserialize('CascadeDeleteJobResponse', pipeline_response)
+
+            if cls:
+                return cls(pipeline_response, deserialized, {})
+            return deserialized
+
+        path_format_arguments = {
+            'jobId': self._serialize.url("job_id", job_id, 'str'),
+        }
+
+        if polling is True: polling_method = LROBasePolling(lro_delay, lro_options={'final-state-via': 'location'}, path_format_arguments=path_format_arguments,  **kwargs)
+        elif polling is False: polling_method = NoPolling()
+        else: polling_method = polling
+        if cont_token:
+            return LROPoller.from_continuation_token(
+                polling_method=polling_method,
+                continuation_token=cont_token,
+                client=self._client,
+                deserialization_callback=get_long_running_output
+            )
+        else:
+            return LROPoller(self._client, raw_result, get_long_running_output, polling_method)
+    begin_create_cascade_delete_job.metadata = {'url': '/seasonal-fields/cascade-delete/{jobId}'}  # type: ignore

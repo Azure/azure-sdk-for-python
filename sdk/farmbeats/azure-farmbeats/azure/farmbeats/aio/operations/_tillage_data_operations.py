@@ -4,7 +4,7 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 import datetime
-from typing import Any, AsyncIterable, Callable, Dict, Generic, List, Optional, TypeVar
+from typing import Any, AsyncIterable, Callable, Dict, Generic, List, Optional, TypeVar, Union
 import warnings
 
 from azure.core.async_paging import AsyncItemPaged, AsyncList
@@ -39,251 +39,6 @@ class TillageDataOperations:
         self._deserialize = deserializer
         self._config = config
 
-    async def get(
-        self,
-        tillage_data_id: str,
-        farmer_id: str,
-        **kwargs
-    ) -> "_models.TillageData":
-        """Get TillageData object with given id and farmer id.
-
-        :param tillage_data_id: TillageData id.
-        :type tillage_data_id: str
-        :param farmer_id: Farmer id.
-        :type farmer_id: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: TillageData, or the result of cls(response)
-        :rtype: ~azure.farmbeats.models.TillageData
-        :raises: ~azure.core.exceptions.HttpResponseError
-        """
-        cls = kwargs.pop('cls', None)  # type: ClsType["_models.TillageData"]
-        error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
-        }
-        error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2020-12-31-preview"
-        accept = "application/json"
-
-        # Construct URL
-        url = self.get.metadata['url']  # type: ignore
-        path_format_arguments = {
-            'tillageDataId': self._serialize.url("tillage_data_id", tillage_data_id, 'str'),
-            'farmerId': self._serialize.url("farmer_id", farmer_id, 'str'),
-        }
-        url = self._client.format_url(url, **path_format_arguments)
-
-        # Construct parameters
-        query_parameters = {}  # type: Dict[str, Any]
-        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
-
-        # Construct headers
-        header_parameters = {}  # type: Dict[str, Any]
-        header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
-
-        request = self._client.get(url, query_parameters, header_parameters)
-        pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
-        response = pipeline_response.http_response
-
-        if response.status_code not in [200]:
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise HttpResponseError(response=response)
-
-        deserialized = self._deserialize('TillageData', pipeline_response)
-
-        if cls:
-            return cls(pipeline_response, deserialized, {})
-
-        return deserialized
-    get.metadata = {'url': '/farmers/{farmerId}/tillageData/{tillageDataId}'}  # type: ignore
-
-    async def create(
-        self,
-        farmer_id: str,
-        tillage_data_id: str,
-        body: Optional["_models.TillageData"] = None,
-        **kwargs
-    ) -> "_models.TillageData":
-        """Creates new TillageData object with given request body.
-
-        :param farmer_id: Id of the associated farmer.
-        :type farmer_id: str
-        :param tillage_data_id: TillageData id.
-        :type tillage_data_id: str
-        :param body: TillageData object.
-        :type body: ~azure.farmbeats.models.TillageData
-        :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: TillageData, or the result of cls(response)
-        :rtype: ~azure.farmbeats.models.TillageData
-        :raises: ~azure.core.exceptions.HttpResponseError
-        """
-        cls = kwargs.pop('cls', None)  # type: ClsType["_models.TillageData"]
-        error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
-        }
-        error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2020-12-31-preview"
-        content_type = kwargs.pop("content_type", "application/json")
-        accept = "application/json"
-
-        # Construct URL
-        url = self.create.metadata['url']  # type: ignore
-        path_format_arguments = {
-            'farmerId': self._serialize.url("farmer_id", farmer_id, 'str'),
-            'tillageDataId': self._serialize.url("tillage_data_id", tillage_data_id, 'str'),
-        }
-        url = self._client.format_url(url, **path_format_arguments)
-
-        # Construct parameters
-        query_parameters = {}  # type: Dict[str, Any]
-        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
-
-        # Construct headers
-        header_parameters = {}  # type: Dict[str, Any]
-        header_parameters['Content-Type'] = self._serialize.header("content_type", content_type, 'str')
-        header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
-
-        body_content_kwargs = {}  # type: Dict[str, Any]
-        if body is not None:
-            body_content = self._serialize.body(body, 'TillageData')
-        else:
-            body_content = None
-        body_content_kwargs['content'] = body_content
-        request = self._client.put(url, query_parameters, header_parameters, **body_content_kwargs)
-        pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
-        response = pipeline_response.http_response
-
-        if response.status_code not in [201]:
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise HttpResponseError(response=response)
-
-        deserialized = self._deserialize('TillageData', pipeline_response)
-
-        if cls:
-            return cls(pipeline_response, deserialized, {})
-
-        return deserialized
-    create.metadata = {'url': '/farmers/{farmerId}/tillageData/{tillageDataId}'}  # type: ignore
-
-    async def create_or_update(
-        self,
-        farmer_id: str,
-        tillage_data_id: str,
-        body: Optional["_models.TillageData"] = None,
-        **kwargs
-    ) -> "_models.TillageData":
-        """Updates TillageData object with given request body.
-
-        :param farmer_id: Id of the farmer.
-        :type farmer_id: str
-        :param tillage_data_id: Id of the TillageData.
-        :type tillage_data_id: str
-        :param body: TillageData object.
-        :type body: ~azure.farmbeats.models.TillageData
-        :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: TillageData, or the result of cls(response)
-        :rtype: ~azure.farmbeats.models.TillageData
-        :raises: ~azure.core.exceptions.HttpResponseError
-        """
-        cls = kwargs.pop('cls', None)  # type: ClsType["_models.TillageData"]
-        error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
-        }
-        error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2020-12-31-preview"
-        content_type = kwargs.pop("content_type", "application/merge-patch+json")
-        accept = "application/json"
-
-        # Construct URL
-        url = self.create_or_update.metadata['url']  # type: ignore
-        path_format_arguments = {
-            'farmerId': self._serialize.url("farmer_id", farmer_id, 'str'),
-            'tillageDataId': self._serialize.url("tillage_data_id", tillage_data_id, 'str'),
-        }
-        url = self._client.format_url(url, **path_format_arguments)
-
-        # Construct parameters
-        query_parameters = {}  # type: Dict[str, Any]
-        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
-
-        # Construct headers
-        header_parameters = {}  # type: Dict[str, Any]
-        header_parameters['Content-Type'] = self._serialize.header("content_type", content_type, 'str')
-        header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
-
-        body_content_kwargs = {}  # type: Dict[str, Any]
-        if body is not None:
-            body_content = self._serialize.body(body, 'TillageData')
-        else:
-            body_content = None
-        body_content_kwargs['content'] = body_content
-        request = self._client.patch(url, query_parameters, header_parameters, **body_content_kwargs)
-        pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
-        response = pipeline_response.http_response
-
-        if response.status_code not in [200]:
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise HttpResponseError(response=response)
-
-        deserialized = self._deserialize('TillageData', pipeline_response)
-
-        if cls:
-            return cls(pipeline_response, deserialized, {})
-
-        return deserialized
-    create_or_update.metadata = {'url': '/farmers/{farmerId}/tillageData/{tillageDataId}'}  # type: ignore
-
-    async def delete(
-        self,
-        farmer_id: str,
-        tillage_data_id: str,
-        **kwargs
-    ) -> None:
-        """Deletes TillageData object associated with given id.
-
-        :param farmer_id: Id of the associated farmer.
-        :type farmer_id: str
-        :param tillage_data_id: Id of the TillageData.
-        :type tillage_data_id: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: None, or the result of cls(response)
-        :rtype: None
-        :raises: ~azure.core.exceptions.HttpResponseError
-        """
-        cls = kwargs.pop('cls', None)  # type: ClsType[None]
-        error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
-        }
-        error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2020-12-31-preview"
-
-        # Construct URL
-        url = self.delete.metadata['url']  # type: ignore
-        path_format_arguments = {
-            'farmerId': self._serialize.url("farmer_id", farmer_id, 'str'),
-            'tillageDataId': self._serialize.url("tillage_data_id", tillage_data_id, 'str'),
-        }
-        url = self._client.format_url(url, **path_format_arguments)
-
-        # Construct parameters
-        query_parameters = {}  # type: Dict[str, Any]
-        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
-
-        # Construct headers
-        header_parameters = {}  # type: Dict[str, Any]
-
-        request = self._client.delete(url, query_parameters, header_parameters)
-        pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
-        response = pipeline_response.http_response
-
-        if response.status_code not in [200]:
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise HttpResponseError(response=response)
-
-        if cls:
-            return cls(pipeline_response, None, {})
-
-    delete.metadata = {'url': '/farmers/{farmerId}/tillageData/{tillageDataId}'}  # type: ignore
-
     def list_by_farmer_id(
         self,
         farmer_id: str,
@@ -314,39 +69,45 @@ class TillageDataOperations:
         skip_token: Optional[str] = None,
         **kwargs
     ) -> AsyncIterable["_models.TillageDataListResponse"]:
-        """Returns a list of TillageData documents.
+        """Returns a paginated list of tillage data resources under a particular farm.
 
-        :param farmer_id: Id of the associated farmer.
+        :param farmer_id: ID of the associated farmer.
         :type farmer_id: str
-        :param min_tillage_depth: Minimum TillageDepth value(inclusive).
+        :param min_tillage_depth: Minimum measured tillage depth (inclusive).
         :type min_tillage_depth: float
-        :param max_tillage_depth: Maximum TillageDepth value (inclusive).
+        :param max_tillage_depth: Maximum measured tillage depth (inclusive).
         :type max_tillage_depth: float
-        :param min_tillage_pressure: Minimum TillagePressure value(inclusive).
+        :param min_tillage_pressure: Minimum downforce applied to a tillage implement (inclusive).
         :type min_tillage_pressure: float
-        :param max_tillage_pressure: Maximum TillagePressure value (inclusive).
+        :param max_tillage_pressure: Maximum downforce applied to a tillage implement (inclusive).
         :type max_tillage_pressure: float
-        :param sources: Source of the operation data.
+        :param sources: Sources of the operation data.
         :type sources: list[str]
-        :param associated_boundary_ids: Boundary ids associated with operation data.
+        :param associated_boundary_ids: Boundary IDs associated with operation data.
         :type associated_boundary_ids: list[str]
-        :param operation_boundary_ids: Operation boundary ids associated with operation data.
+        :param operation_boundary_ids: Operation boundary IDs associated with operation data.
         :type operation_boundary_ids: list[str]
-        :param min_operation_start_date_time: Minimum operation StartDateTime (inclusive).
+        :param min_operation_start_date_time: Minimum start date-time of the operation data, sample
+         format: yyyy-MM-ddTHH:mm:ssZ (inclusive).
         :type min_operation_start_date_time: ~datetime.datetime
-        :param max_operation_start_date_time: Maximum operation StartDateTime (inclusive).
+        :param max_operation_start_date_time: Maximum start date-time of the operation data, sample
+         format: yyyy-MM-ddTHH:mm:ssZ (inclusive).
         :type max_operation_start_date_time: ~datetime.datetime
-        :param min_operation_end_date_time: Minimum operation EndDateTime (inclusive).
+        :param min_operation_end_date_time: Minimum end date-time of the operation data, sample format:
+         yyyy-MM-ddTHH:mm:ssZ (inclusive).
         :type min_operation_end_date_time: ~datetime.datetime
-        :param max_operation_end_date_time: Maximum operation EndDateTime (inclusive).
+        :param max_operation_end_date_time: Maximum end date-time of the operation data, sample format:
+         yyyy-MM-ddTHH:mm:ssZ (inclusive).
         :type max_operation_end_date_time: ~datetime.datetime
-        :param min_operation_modified_date_time: Minimum OperationModifiedDateTime (inclusive).
+        :param min_operation_modified_date_time: Minimum modified date-time of the operation data,
+         sample format: yyyy-MM-ddTHH:mm:ssZ (inclusive).
         :type min_operation_modified_date_time: ~datetime.datetime
-        :param max_operation_modified_date_time: Maximum OperationModifiedDateTime (inclusive).
+        :param max_operation_modified_date_time: Maximum modified date-time of the operation data,
+         sample format: yyyy-MM-ddTHH:mm:ssZ (inclusive).
         :type max_operation_modified_date_time: ~datetime.datetime
-        :param min_area: Minimum Area value(inclusive).
+        :param min_area: Minimum area for which operation was applied (inclusive).
         :type min_area: float
-        :param max_area: Maximum Area value (inclusive).
+        :param max_area: Maximum area for which operation was applied (inclusive).
         :type max_area: float
         :param ids: Ids of the resource.
         :type ids: list[str]
@@ -380,7 +141,7 @@ class TillageDataOperations:
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2020-12-31-preview"
+        api_version = "2021-03-31-preview"
         accept = "application/json"
 
         def prepare_request(next_link=None):
@@ -474,15 +235,16 @@ class TillageDataOperations:
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
+                error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, response)
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
-                raise HttpResponseError(response=response)
+                raise HttpResponseError(response=response, model=error)
 
             return pipeline_response
 
         return AsyncItemPaged(
             get_next, extract_data
         )
-    list_by_farmer_id.metadata = {'url': '/farmers/{farmerId}/tillageData'}  # type: ignore
+    list_by_farmer_id.metadata = {'url': '/farmers/{farmerId}/tillage-data'}  # type: ignore
 
     def list(
         self,
@@ -513,37 +275,43 @@ class TillageDataOperations:
         skip_token: Optional[str] = None,
         **kwargs
     ) -> AsyncIterable["_models.TillageDataListResponse"]:
-        """Returns a list of TillageData documents.
+        """Returns a paginated list of tillage data resources across all farmers.
 
-        :param min_tillage_depth: Minimum TillageDepth value(inclusive).
+        :param min_tillage_depth: Minimum measured tillage depth (inclusive).
         :type min_tillage_depth: float
-        :param max_tillage_depth: Maximum TillageDepth value (inclusive).
+        :param max_tillage_depth: Maximum measured tillage depth (inclusive).
         :type max_tillage_depth: float
-        :param min_tillage_pressure: Minimum TillagePressure value(inclusive).
+        :param min_tillage_pressure: Minimum downforce applied to a tillage implement (inclusive).
         :type min_tillage_pressure: float
-        :param max_tillage_pressure: Maximum TillagePressure value (inclusive).
+        :param max_tillage_pressure: Maximum downforce applied to a tillage implement (inclusive).
         :type max_tillage_pressure: float
-        :param sources: Source of the operation data.
+        :param sources: Sources of the operation data.
         :type sources: list[str]
-        :param associated_boundary_ids: Boundary ids associated with operation data.
+        :param associated_boundary_ids: Boundary IDs associated with operation data.
         :type associated_boundary_ids: list[str]
-        :param operation_boundary_ids: Operation boundary ids associated with operation data.
+        :param operation_boundary_ids: Operation boundary IDs associated with operation data.
         :type operation_boundary_ids: list[str]
-        :param min_operation_start_date_time: Minimum operation StartDateTime (inclusive).
+        :param min_operation_start_date_time: Minimum start date-time of the operation data, sample
+         format: yyyy-MM-ddTHH:mm:ssZ (inclusive).
         :type min_operation_start_date_time: ~datetime.datetime
-        :param max_operation_start_date_time: Maximum operation StartDateTime (inclusive).
+        :param max_operation_start_date_time: Maximum start date-time of the operation data, sample
+         format: yyyy-MM-ddTHH:mm:ssZ (inclusive).
         :type max_operation_start_date_time: ~datetime.datetime
-        :param min_operation_end_date_time: Minimum operation EndDateTime (inclusive).
+        :param min_operation_end_date_time: Minimum end date-time of the operation data, sample format:
+         yyyy-MM-ddTHH:mm:ssZ (inclusive).
         :type min_operation_end_date_time: ~datetime.datetime
-        :param max_operation_end_date_time: Maximum operation EndDateTime (inclusive).
+        :param max_operation_end_date_time: Maximum end date-time of the operation data, sample format:
+         yyyy-MM-ddTHH:mm:ssZ (inclusive).
         :type max_operation_end_date_time: ~datetime.datetime
-        :param min_operation_modified_date_time: Minimum OperationModifiedDateTime (inclusive).
+        :param min_operation_modified_date_time: Minimum modified date-time of the operation data,
+         sample format: yyyy-MM-ddTHH:mm:ssZ (inclusive).
         :type min_operation_modified_date_time: ~datetime.datetime
-        :param max_operation_modified_date_time: Maximum OperationModifiedDateTime (inclusive).
+        :param max_operation_modified_date_time: Maximum modified date-time of the operation data,
+         sample format: yyyy-MM-ddTHH:mm:ssZ (inclusive).
         :type max_operation_modified_date_time: ~datetime.datetime
-        :param min_area: Minimum Area value(inclusive).
+        :param min_area: Minimum area for which operation was applied (inclusive).
         :type min_area: float
-        :param max_area: Maximum Area value (inclusive).
+        :param max_area: Maximum area for which operation was applied (inclusive).
         :type max_area: float
         :param ids: Ids of the resource.
         :type ids: list[str]
@@ -577,7 +345,7 @@ class TillageDataOperations:
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2020-12-31-preview"
+        api_version = "2021-03-31-preview"
         accept = "application/json"
 
         def prepare_request(next_link=None):
@@ -663,12 +431,201 @@ class TillageDataOperations:
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
+                error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, response)
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
-                raise HttpResponseError(response=response)
+                raise HttpResponseError(response=response, model=error)
 
             return pipeline_response
 
         return AsyncItemPaged(
             get_next, extract_data
         )
-    list.metadata = {'url': '/tillageData'}  # type: ignore
+    list.metadata = {'url': '/tillage-data'}  # type: ignore
+
+    async def get(
+        self,
+        farmer_id: str,
+        tillage_data_id: str,
+        **kwargs
+    ) -> Optional["_models.TillageData"]:
+        """Get a specified tillage data resource under a particular farmer.
+
+        :param farmer_id: ID of the associated farmer resource.
+        :type farmer_id: str
+        :param tillage_data_id: ID of the tillage data resource.
+        :type tillage_data_id: str
+        :keyword callable cls: A custom type or function that will be passed the direct response
+        :return: TillageData, or the result of cls(response)
+        :rtype: ~azure.farmbeats.models.TillageData or None
+        :raises: ~azure.core.exceptions.HttpResponseError
+        """
+        cls = kwargs.pop('cls', None)  # type: ClsType[Optional["_models.TillageData"]]
+        error_map = {
+            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
+        }
+        error_map.update(kwargs.pop('error_map', {}))
+        api_version = "2021-03-31-preview"
+        accept = "application/json"
+
+        # Construct URL
+        url = self.get.metadata['url']  # type: ignore
+        path_format_arguments = {
+            'farmerId': self._serialize.url("farmer_id", farmer_id, 'str'),
+            'tillageDataId': self._serialize.url("tillage_data_id", tillage_data_id, 'str'),
+        }
+        url = self._client.format_url(url, **path_format_arguments)
+
+        # Construct parameters
+        query_parameters = {}  # type: Dict[str, Any]
+        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
+
+        # Construct headers
+        header_parameters = {}  # type: Dict[str, Any]
+        header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
+
+        request = self._client.get(url, query_parameters, header_parameters)
+        pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200, 404]:
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, response)
+            raise HttpResponseError(response=response, model=error)
+
+        deserialized = None
+        if response.status_code == 200:
+            deserialized = self._deserialize('TillageData', pipeline_response)
+
+        if cls:
+            return cls(pipeline_response, deserialized, {})
+
+        return deserialized
+    get.metadata = {'url': '/farmers/{farmerId}/tillage-data/{tillageDataId}'}  # type: ignore
+
+    async def create_or_update(
+        self,
+        farmer_id: str,
+        tillage_data_id: str,
+        body: Optional["_models.TillageData"] = None,
+        **kwargs
+    ) -> "_models.TillageData":
+        """Creates or updates an tillage data resource under a particular farmer.
+
+        :param farmer_id: ID of the associated farmer.
+        :type farmer_id: str
+        :param tillage_data_id: ID of the tillage data resource.
+        :type tillage_data_id: str
+        :param body: Tillage data resource payload to create or update.
+        :type body: ~azure.farmbeats.models.TillageData
+        :keyword callable cls: A custom type or function that will be passed the direct response
+        :return: TillageData, or the result of cls(response)
+        :rtype: ~azure.farmbeats.models.TillageData
+        :raises: ~azure.core.exceptions.HttpResponseError
+        """
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.TillageData"]
+        error_map = {
+            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
+        }
+        error_map.update(kwargs.pop('error_map', {}))
+        api_version = "2021-03-31-preview"
+        content_type = kwargs.pop("content_type", "application/merge-patch+json")
+        accept = "application/json"
+
+        # Construct URL
+        url = self.create_or_update.metadata['url']  # type: ignore
+        path_format_arguments = {
+            'farmerId': self._serialize.url("farmer_id", farmer_id, 'str'),
+            'tillageDataId': self._serialize.url("tillage_data_id", tillage_data_id, 'str'),
+        }
+        url = self._client.format_url(url, **path_format_arguments)
+
+        # Construct parameters
+        query_parameters = {}  # type: Dict[str, Any]
+        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
+
+        # Construct headers
+        header_parameters = {}  # type: Dict[str, Any]
+        header_parameters['Content-Type'] = self._serialize.header("content_type", content_type, 'str')
+        header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
+
+        body_content_kwargs = {}  # type: Dict[str, Any]
+        if body is not None:
+            body_content = self._serialize.body(body, 'TillageData')
+        else:
+            body_content = None
+        body_content_kwargs['content'] = body_content
+        request = self._client.patch(url, query_parameters, header_parameters, **body_content_kwargs)
+        pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200, 201]:
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, response)
+            raise HttpResponseError(response=response, model=error)
+
+        if response.status_code == 200:
+            deserialized = self._deserialize('TillageData', pipeline_response)
+
+        if response.status_code == 201:
+            deserialized = self._deserialize('TillageData', pipeline_response)
+
+        if cls:
+            return cls(pipeline_response, deserialized, {})
+
+        return deserialized
+    create_or_update.metadata = {'url': '/farmers/{farmerId}/tillage-data/{tillageDataId}'}  # type: ignore
+
+    async def delete(
+        self,
+        farmer_id: str,
+        tillage_data_id: str,
+        **kwargs
+    ) -> None:
+        """Deletes a specified tillage data resource under a particular farmer.
+
+        :param farmer_id: ID of the associated farmer resource.
+        :type farmer_id: str
+        :param tillage_data_id: ID of the tillage data.
+        :type tillage_data_id: str
+        :keyword callable cls: A custom type or function that will be passed the direct response
+        :return: None, or the result of cls(response)
+        :rtype: None
+        :raises: ~azure.core.exceptions.HttpResponseError
+        """
+        cls = kwargs.pop('cls', None)  # type: ClsType[None]
+        error_map = {
+            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
+        }
+        error_map.update(kwargs.pop('error_map', {}))
+        api_version = "2021-03-31-preview"
+        accept = "application/json"
+
+        # Construct URL
+        url = self.delete.metadata['url']  # type: ignore
+        path_format_arguments = {
+            'farmerId': self._serialize.url("farmer_id", farmer_id, 'str'),
+            'tillageDataId': self._serialize.url("tillage_data_id", tillage_data_id, 'str'),
+        }
+        url = self._client.format_url(url, **path_format_arguments)
+
+        # Construct parameters
+        query_parameters = {}  # type: Dict[str, Any]
+        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
+
+        # Construct headers
+        header_parameters = {}  # type: Dict[str, Any]
+        header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
+
+        request = self._client.delete(url, query_parameters, header_parameters)
+        pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
+        response = pipeline_response.http_response
+
+        if response.status_code not in [204]:
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, response)
+            raise HttpResponseError(response=response, model=error)
+
+        if cls:
+            return cls(pipeline_response, None, {})
+
+    delete.metadata = {'url': '/farmers/{farmerId}/tillage-data/{tillageDataId}'}  # type: ignore

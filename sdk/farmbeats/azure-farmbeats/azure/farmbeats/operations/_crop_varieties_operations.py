@@ -16,7 +16,7 @@ from .. import models as _models
 
 if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
-    from typing import Any, Callable, Dict, Generic, Iterable, List, Optional, TypeVar
+    from typing import Any, Callable, Dict, Generic, Iterable, List, Optional, TypeVar, Union
 
     T = TypeVar('T')
     ClsType = Optional[Callable[[PipelineResponse[HttpRequest, HttpResponse], T, Dict[str, Any]], Any]]
@@ -43,255 +43,6 @@ class CropVarietiesOperations(object):
         self._deserialize = deserializer
         self._config = config
 
-    def create(
-        self,
-        crop_id,  # type: str
-        crop_variety_id,  # type: str
-        body=None,  # type: Optional["_models.CropVariety"]
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> "_models.CropVariety"
-        """Creates new cropVariety object with given request body.
-
-        :param crop_id: Crop id.
-        :type crop_id: str
-        :param crop_variety_id: CropVariety id.
-        :type crop_variety_id: str
-        :param body: CropVariety object.
-        :type body: ~azure.farmbeats.models.CropVariety
-        :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: CropVariety, or the result of cls(response)
-        :rtype: ~azure.farmbeats.models.CropVariety
-        :raises: ~azure.core.exceptions.HttpResponseError
-        """
-        cls = kwargs.pop('cls', None)  # type: ClsType["_models.CropVariety"]
-        error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
-        }
-        error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2020-12-31-preview"
-        content_type = kwargs.pop("content_type", "application/json")
-        accept = "application/json"
-
-        # Construct URL
-        url = self.create.metadata['url']  # type: ignore
-        path_format_arguments = {
-            'cropId': self._serialize.url("crop_id", crop_id, 'str'),
-            'cropVarietyId': self._serialize.url("crop_variety_id", crop_variety_id, 'str'),
-        }
-        url = self._client.format_url(url, **path_format_arguments)
-
-        # Construct parameters
-        query_parameters = {}  # type: Dict[str, Any]
-        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
-
-        # Construct headers
-        header_parameters = {}  # type: Dict[str, Any]
-        header_parameters['Content-Type'] = self._serialize.header("content_type", content_type, 'str')
-        header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
-
-        body_content_kwargs = {}  # type: Dict[str, Any]
-        if body is not None:
-            body_content = self._serialize.body(body, 'CropVariety')
-        else:
-            body_content = None
-        body_content_kwargs['content'] = body_content
-        request = self._client.put(url, query_parameters, header_parameters, **body_content_kwargs)
-        pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
-        response = pipeline_response.http_response
-
-        if response.status_code not in [201]:
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise HttpResponseError(response=response)
-
-        deserialized = self._deserialize('CropVariety', pipeline_response)
-
-        if cls:
-            return cls(pipeline_response, deserialized, {})
-
-        return deserialized
-    create.metadata = {'url': '/crops/{cropId}/cropVarieties/{cropVarietyId}'}  # type: ignore
-
-    def get(
-        self,
-        crop_id,  # type: str
-        crop_variety_id,  # type: str
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> "_models.CropVariety"
-        """Get cropVariety object with given cropVariety id.
-
-        :param crop_id: Crop id.
-        :type crop_id: str
-        :param crop_variety_id: CropVariety Id.
-        :type crop_variety_id: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: CropVariety, or the result of cls(response)
-        :rtype: ~azure.farmbeats.models.CropVariety
-        :raises: ~azure.core.exceptions.HttpResponseError
-        """
-        cls = kwargs.pop('cls', None)  # type: ClsType["_models.CropVariety"]
-        error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
-        }
-        error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2020-12-31-preview"
-        accept = "application/json"
-
-        # Construct URL
-        url = self.get.metadata['url']  # type: ignore
-        path_format_arguments = {
-            'cropId': self._serialize.url("crop_id", crop_id, 'str'),
-            'cropVarietyId': self._serialize.url("crop_variety_id", crop_variety_id, 'str'),
-        }
-        url = self._client.format_url(url, **path_format_arguments)
-
-        # Construct parameters
-        query_parameters = {}  # type: Dict[str, Any]
-        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
-
-        # Construct headers
-        header_parameters = {}  # type: Dict[str, Any]
-        header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
-
-        request = self._client.get(url, query_parameters, header_parameters)
-        pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
-        response = pipeline_response.http_response
-
-        if response.status_code not in [200]:
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise HttpResponseError(response=response)
-
-        deserialized = self._deserialize('CropVariety', pipeline_response)
-
-        if cls:
-            return cls(pipeline_response, deserialized, {})
-
-        return deserialized
-    get.metadata = {'url': '/crops/{cropId}/cropVarieties/{cropVarietyId}'}  # type: ignore
-
-    def create_or_update(
-        self,
-        crop_id,  # type: str
-        crop_variety_id,  # type: str
-        body=None,  # type: Optional["_models.CropVariety"]
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> "_models.CropVariety"
-        """Updates CropVariety for given cropVariety Id.
-
-        :param crop_id: Crop id.
-        :type crop_id: str
-        :param crop_variety_id: Id of cropVariety that need to be updated (system-generated).
-        :type crop_variety_id: str
-        :param body: New state of cropVariety.
-        :type body: ~azure.farmbeats.models.CropVariety
-        :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: CropVariety, or the result of cls(response)
-        :rtype: ~azure.farmbeats.models.CropVariety
-        :raises: ~azure.core.exceptions.HttpResponseError
-        """
-        cls = kwargs.pop('cls', None)  # type: ClsType["_models.CropVariety"]
-        error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
-        }
-        error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2020-12-31-preview"
-        content_type = kwargs.pop("content_type", "application/merge-patch+json")
-        accept = "application/json"
-
-        # Construct URL
-        url = self.create_or_update.metadata['url']  # type: ignore
-        path_format_arguments = {
-            'cropId': self._serialize.url("crop_id", crop_id, 'str'),
-            'cropVarietyId': self._serialize.url("crop_variety_id", crop_variety_id, 'str'),
-        }
-        url = self._client.format_url(url, **path_format_arguments)
-
-        # Construct parameters
-        query_parameters = {}  # type: Dict[str, Any]
-        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
-
-        # Construct headers
-        header_parameters = {}  # type: Dict[str, Any]
-        header_parameters['Content-Type'] = self._serialize.header("content_type", content_type, 'str')
-        header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
-
-        body_content_kwargs = {}  # type: Dict[str, Any]
-        if body is not None:
-            body_content = self._serialize.body(body, 'CropVariety')
-        else:
-            body_content = None
-        body_content_kwargs['content'] = body_content
-        request = self._client.patch(url, query_parameters, header_parameters, **body_content_kwargs)
-        pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
-        response = pipeline_response.http_response
-
-        if response.status_code not in [200]:
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise HttpResponseError(response=response)
-
-        deserialized = self._deserialize('CropVariety', pipeline_response)
-
-        if cls:
-            return cls(pipeline_response, deserialized, {})
-
-        return deserialized
-    create_or_update.metadata = {'url': '/crops/{cropId}/cropVarieties/{cropVarietyId}'}  # type: ignore
-
-    def delete(
-        self,
-        crop_id,  # type: str
-        crop_variety_id,  # type: str
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> None
-        """Deletes CropVariety for given cropVariety id.
-
-        :param crop_id: Id of the crop.
-        :type crop_id: str
-        :param crop_variety_id: Id of cropVariety to be deleted.
-        :type crop_variety_id: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: None, or the result of cls(response)
-        :rtype: None
-        :raises: ~azure.core.exceptions.HttpResponseError
-        """
-        cls = kwargs.pop('cls', None)  # type: ClsType[None]
-        error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
-        }
-        error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2020-12-31-preview"
-
-        # Construct URL
-        url = self.delete.metadata['url']  # type: ignore
-        path_format_arguments = {
-            'cropId': self._serialize.url("crop_id", crop_id, 'str'),
-            'cropVarietyId': self._serialize.url("crop_variety_id", crop_variety_id, 'str'),
-        }
-        url = self._client.format_url(url, **path_format_arguments)
-
-        # Construct parameters
-        query_parameters = {}  # type: Dict[str, Any]
-        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
-
-        # Construct headers
-        header_parameters = {}  # type: Dict[str, Any]
-
-        request = self._client.delete(url, query_parameters, header_parameters)
-        pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
-        response = pipeline_response.http_response
-
-        if response.status_code not in [200]:
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise HttpResponseError(response=response)
-
-        if cls:
-            return cls(pipeline_response, None, {})
-
-    delete.metadata = {'url': '/crops/{cropId}/cropVarieties/{cropVarietyId}'}  # type: ignore
-
     def list_by_crop_id(
         self,
         crop_id,  # type: str
@@ -311,7 +62,7 @@ class CropVarietiesOperations(object):
         **kwargs  # type: Any
     ):
         # type: (...) -> Iterable["_models.CropVarietyListResponse"]
-        """Returns a list of crop varieties for a crop.
+        """Returns a paginated list of crop variety resources under a particular crop.
 
         :param crop_id: Id of the associated crop.
         :type crop_id: str
@@ -353,7 +104,7 @@ class CropVarietiesOperations(object):
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2020-12-31-preview"
+        api_version = "2021-03-31-preview"
         accept = "application/json"
 
         def prepare_request(next_link=None):
@@ -423,15 +174,16 @@ class CropVarietiesOperations(object):
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
+                error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, response)
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
-                raise HttpResponseError(response=response)
+                raise HttpResponseError(response=response, model=error)
 
             return pipeline_response
 
         return ItemPaged(
             get_next, extract_data
         )
-    list_by_crop_id.metadata = {'url': '/crops/{cropId}/cropVarieties'}  # type: ignore
+    list_by_crop_id.metadata = {'url': '/crops/{cropId}/crop-varieties'}  # type: ignore
 
     def list(
         self,
@@ -451,7 +203,7 @@ class CropVarietiesOperations(object):
         **kwargs  # type: Any
     ):
         # type: (...) -> Iterable["_models.CropVarietyListResponse"]
-        """Returns a list of cropVariety.
+        """Returns a paginated list of crop variety resources across all crops.
 
         :param crop_ids: CropIds of the resource.
         :type crop_ids: list[str]
@@ -491,7 +243,7 @@ class CropVarietiesOperations(object):
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2020-12-31-preview"
+        api_version = "2021-03-31-preview"
         accept = "application/json"
 
         def prepare_request(next_link=None):
@@ -553,12 +305,204 @@ class CropVarietiesOperations(object):
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
+                error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, response)
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
-                raise HttpResponseError(response=response)
+                raise HttpResponseError(response=response, model=error)
 
             return pipeline_response
 
         return ItemPaged(
             get_next, extract_data
         )
-    list.metadata = {'url': '/cropVarieties'}  # type: ignore
+    list.metadata = {'url': '/crop-varieties'}  # type: ignore
+
+    def get(
+        self,
+        crop_id,  # type: str
+        crop_variety_id,  # type: str
+        **kwargs  # type: Any
+    ):
+        # type: (...) -> Optional["_models.CropVariety"]
+        """Gets a specified crop variety resource under a particular crop.
+
+        :param crop_id: Id of the associted crop.
+        :type crop_id: str
+        :param crop_variety_id: Id of the crop variety.
+        :type crop_variety_id: str
+        :keyword callable cls: A custom type or function that will be passed the direct response
+        :return: CropVariety, or the result of cls(response)
+        :rtype: ~azure.farmbeats.models.CropVariety or None
+        :raises: ~azure.core.exceptions.HttpResponseError
+        """
+        cls = kwargs.pop('cls', None)  # type: ClsType[Optional["_models.CropVariety"]]
+        error_map = {
+            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
+        }
+        error_map.update(kwargs.pop('error_map', {}))
+        api_version = "2021-03-31-preview"
+        accept = "application/json"
+
+        # Construct URL
+        url = self.get.metadata['url']  # type: ignore
+        path_format_arguments = {
+            'cropId': self._serialize.url("crop_id", crop_id, 'str'),
+            'cropVarietyId': self._serialize.url("crop_variety_id", crop_variety_id, 'str'),
+        }
+        url = self._client.format_url(url, **path_format_arguments)
+
+        # Construct parameters
+        query_parameters = {}  # type: Dict[str, Any]
+        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
+
+        # Construct headers
+        header_parameters = {}  # type: Dict[str, Any]
+        header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
+
+        request = self._client.get(url, query_parameters, header_parameters)
+        pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200, 404]:
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, response)
+            raise HttpResponseError(response=response, model=error)
+
+        deserialized = None
+        if response.status_code == 200:
+            deserialized = self._deserialize('CropVariety', pipeline_response)
+
+        if cls:
+            return cls(pipeline_response, deserialized, {})
+
+        return deserialized
+    get.metadata = {'url': '/crops/{cropId}/crop-varieties/{cropVarietyId}'}  # type: ignore
+
+    def create_or_update(
+        self,
+        crop_id,  # type: str
+        crop_variety_id,  # type: str
+        body=None,  # type: Optional["_models.CropVariety"]
+        **kwargs  # type: Any
+    ):
+        # type: (...) -> "_models.CropVariety"
+        """Creates or updates a crop variety resource.
+
+        :param crop_id: Id of the crop resource.
+        :type crop_id: str
+        :param crop_variety_id: Id of the crop variety resource.
+        :type crop_variety_id: str
+        :param body: Crop variety resource payload to create or update.
+        :type body: ~azure.farmbeats.models.CropVariety
+        :keyword callable cls: A custom type or function that will be passed the direct response
+        :return: CropVariety, or the result of cls(response)
+        :rtype: ~azure.farmbeats.models.CropVariety
+        :raises: ~azure.core.exceptions.HttpResponseError
+        """
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.CropVariety"]
+        error_map = {
+            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
+        }
+        error_map.update(kwargs.pop('error_map', {}))
+        api_version = "2021-03-31-preview"
+        content_type = kwargs.pop("content_type", "application/merge-patch+json")
+        accept = "application/json"
+
+        # Construct URL
+        url = self.create_or_update.metadata['url']  # type: ignore
+        path_format_arguments = {
+            'cropId': self._serialize.url("crop_id", crop_id, 'str'),
+            'cropVarietyId': self._serialize.url("crop_variety_id", crop_variety_id, 'str'),
+        }
+        url = self._client.format_url(url, **path_format_arguments)
+
+        # Construct parameters
+        query_parameters = {}  # type: Dict[str, Any]
+        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
+
+        # Construct headers
+        header_parameters = {}  # type: Dict[str, Any]
+        header_parameters['Content-Type'] = self._serialize.header("content_type", content_type, 'str')
+        header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
+
+        body_content_kwargs = {}  # type: Dict[str, Any]
+        if body is not None:
+            body_content = self._serialize.body(body, 'CropVariety')
+        else:
+            body_content = None
+        body_content_kwargs['content'] = body_content
+        request = self._client.patch(url, query_parameters, header_parameters, **body_content_kwargs)
+        pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200, 201]:
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, response)
+            raise HttpResponseError(response=response, model=error)
+
+        if response.status_code == 200:
+            deserialized = self._deserialize('CropVariety', pipeline_response)
+
+        if response.status_code == 201:
+            deserialized = self._deserialize('CropVariety', pipeline_response)
+
+        if cls:
+            return cls(pipeline_response, deserialized, {})
+
+        return deserialized
+    create_or_update.metadata = {'url': '/crops/{cropId}/crop-varieties/{cropVarietyId}'}  # type: ignore
+
+    def delete(
+        self,
+        crop_id,  # type: str
+        crop_variety_id,  # type: str
+        **kwargs  # type: Any
+    ):
+        # type: (...) -> None
+        """Deletes a specified crop variety resource under a particular crop.
+
+        :param crop_id: Id of the crop.
+        :type crop_id: str
+        :param crop_variety_id: Id of the crop variety.
+        :type crop_variety_id: str
+        :keyword callable cls: A custom type or function that will be passed the direct response
+        :return: None, or the result of cls(response)
+        :rtype: None
+        :raises: ~azure.core.exceptions.HttpResponseError
+        """
+        cls = kwargs.pop('cls', None)  # type: ClsType[None]
+        error_map = {
+            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
+        }
+        error_map.update(kwargs.pop('error_map', {}))
+        api_version = "2021-03-31-preview"
+        accept = "application/json"
+
+        # Construct URL
+        url = self.delete.metadata['url']  # type: ignore
+        path_format_arguments = {
+            'cropId': self._serialize.url("crop_id", crop_id, 'str'),
+            'cropVarietyId': self._serialize.url("crop_variety_id", crop_variety_id, 'str'),
+        }
+        url = self._client.format_url(url, **path_format_arguments)
+
+        # Construct parameters
+        query_parameters = {}  # type: Dict[str, Any]
+        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
+
+        # Construct headers
+        header_parameters = {}  # type: Dict[str, Any]
+        header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
+
+        request = self._client.delete(url, query_parameters, header_parameters)
+        pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
+        response = pipeline_response.http_response
+
+        if response.status_code not in [204]:
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, response)
+            raise HttpResponseError(response=response, model=error)
+
+        if cls:
+            return cls(pipeline_response, None, {})
+
+    delete.metadata = {'url': '/crops/{cropId}/crop-varieties/{cropVarietyId}'}  # type: ignore

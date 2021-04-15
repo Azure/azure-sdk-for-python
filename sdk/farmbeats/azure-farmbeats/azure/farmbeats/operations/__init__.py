@@ -9,16 +9,13 @@ from ._attachments_operations import AttachmentsOperations
 from ._boundaries_operations import BoundariesOperations
 from ._crops_operations import CropsOperations
 from ._crop_varieties_operations import CropVarietiesOperations
-from ._events_operations import EventsOperations
 from ._farmers_operations import FarmersOperations
+from ._farm_operations_operations import FarmOperationsOperations
 from ._farms_operations import FarmsOperations
 from ._fields_operations import FieldsOperations
 from ._harvest_data_operations import HarvestDataOperations
-from ._jobs_operations import JobsOperations
-from ._oauth_callbacks_operations import OAuthCallbacksOperations
-from ._oauth_configs_operations import OAuthConfigsOperations
 from ._oauth_providers_operations import OAuthProvidersOperations
-from ._oauth_token_infos_operations import OAuthTokenInfosOperations
+from ._oauth_tokens_operations import OAuthTokensOperations
 from ._planting_data_operations import PlantingDataOperations
 from ._scenes_operations import ScenesOperations
 from ._seasonal_fields_operations import SeasonalFieldsOperations
@@ -32,16 +29,13 @@ __all__ = [
     'BoundariesOperations',
     'CropsOperations',
     'CropVarietiesOperations',
-    'EventsOperations',
     'FarmersOperations',
+    'FarmOperationsOperations',
     'FarmsOperations',
     'FieldsOperations',
     'HarvestDataOperations',
-    'JobsOperations',
-    'OAuthCallbacksOperations',
-    'OAuthConfigsOperations',
     'OAuthProvidersOperations',
-    'OAuthTokenInfosOperations',
+    'OAuthTokensOperations',
     'PlantingDataOperations',
     'ScenesOperations',
     'SeasonalFieldsOperations',

@@ -11,6 +11,8 @@ from azure.core.async_paging import AsyncItemPaged, AsyncList
 from azure.core.exceptions import ClientAuthenticationError, HttpResponseError, ResourceExistsError, ResourceNotFoundError, map_error
 from azure.core.pipeline import PipelineResponse
 from azure.core.pipeline.transport import AsyncHttpResponse, HttpRequest
+from azure.core.polling import AsyncLROPoller, AsyncNoPolling, AsyncPollingMethod
+from azure.core.polling.async_base_polling import AsyncLROBasePolling
 
 from ... import models as _models
 
@@ -50,13 +52,13 @@ class ScenesOperations:
         max_cloud_coverage_percentage: Optional[float] = 100,
         max_dark_pixel_coverage_percentage: Optional[float] = 100,
         image_names: Optional[List[Union[str, "_models.ImageName"]]] = None,
-        image_resolutions: Optional[List[Union[str, "_models.ImageResolution"]]] = None,
+        image_resolutions: Optional[List[float]] = None,
         image_formats: Optional[List[Union[str, "_models.ImageFormat"]]] = None,
         max_page_size: Optional[int] = 50,
         skip_token: Optional[str] = None,
         **kwargs
-    ) -> AsyncIterable["_models.SceneEntityResponseListResponse"]:
-        """Returns a list of scenes for given query filter.
+    ) -> AsyncIterable["_models.SceneListResponse"]:
+        """Returns a paginated list of scene resources.
 
         :param farmer_id: FarmerId.
         :type farmer_id: str
@@ -66,9 +68,9 @@ class ScenesOperations:
         :type provider: str
         :param source: Source name of scene data, default value Sentinel_2_L2A (Sentinel 2 L2A).
         :type source: str
-        :param start_date: Scene start UTC date (inclusive), sample format: yyyy-Mm-ddZ.
+        :param start_date: Scene start UTC date (inclusive), sample format: yyyy-MM-ddZ.
         :type start_date: ~datetime.datetime
-        :param end_date: Scene end UTC date (inclusive), sample format: yyyy-Mm-ddZ.
+        :param end_date: Scene end UTC date (inclusive), sample format: yyyy-MM-ddZ.
         :type end_date: ~datetime.datetime
         :param max_cloud_coverage_percentage: Filter scenes with cloud coverage percentage less than
          max value. Range [0 to 100.0].
@@ -76,11 +78,11 @@ class ScenesOperations:
         :param max_dark_pixel_coverage_percentage: Filter scenes with dark pixel coverage percentage
          less than max value. Range [0 to 100.0].
         :type max_dark_pixel_coverage_percentage: float
-        :param image_names: List of image names to be filtered (Default: AllImages).
+        :param image_names: List of image names to be filtered.
         :type image_names: list[str or ~azure.farmbeats.models.ImageName]
-        :param image_resolutions: List of image resolutions in meters to be filtered (Default: 10).
-        :type image_resolutions: list[str or ~azure.farmbeats.models.ImageResolution]
-        :param image_formats: List of image formats to be filtered (Default: TIF).
+        :param image_resolutions: List of image resolutions in meters to be filtered.
+        :type image_resolutions: list[float]
+        :param image_formats: List of image formats to be filtered.
         :type image_formats: list[str or ~azure.farmbeats.models.ImageFormat]
         :param max_page_size: Maximum number of items needed (inclusive).
          Minimum = 10, Maximum = 1000, Default value = 50.
@@ -88,16 +90,16 @@ class ScenesOperations:
         :param skip_token: Skip token for getting next set of results.
         :type skip_token: str
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: An iterator like instance of either SceneEntityResponseListResponse or the result of cls(response)
-        :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.farmbeats.models.SceneEntityResponseListResponse]
+        :return: An iterator like instance of either SceneListResponse or the result of cls(response)
+        :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.farmbeats.models.SceneListResponse]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["_models.SceneEntityResponseListResponse"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.SceneListResponse"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2020-12-31-preview"
+        api_version = "2021-03-31-preview"
         accept = "application/json"
 
         def prepare_request(next_link=None):
@@ -126,7 +128,7 @@ class ScenesOperations:
                 if image_names is not None:
                     query_parameters['imageNames'] = [self._serialize.query("image_names", q, 'str') if q is not None else '' for q in image_names]
                 if image_resolutions is not None:
-                    query_parameters['imageResolutions'] = [self._serialize.query("image_resolutions", q, 'str') if q is not None else '' for q in image_resolutions]
+                    query_parameters['imageResolutions'] = [self._serialize.query("image_resolutions", q, 'float') if q is not None else '' for q in image_resolutions]
                 if image_formats is not None:
                     query_parameters['imageFormats'] = [self._serialize.query("image_formats", q, 'str') if q is not None else '' for q in image_formats]
                 if max_page_size is not None:
@@ -143,7 +145,7 @@ class ScenesOperations:
             return request
 
         async def extract_data(pipeline_response):
-            deserialized = self._deserialize('SceneEntityResponseListResponse', pipeline_response)
+            deserialized = self._deserialize('SceneListResponse', pipeline_response)
             list_of_elem = deserialized.value
             if cls:
                 list_of_elem = cls(list_of_elem)
@@ -156,8 +158,9 @@ class ScenesOperations:
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
+                error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, response)
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
-                raise HttpResponseError(response=response)
+                raise HttpResponseError(response=response, model=error)
 
             return pipeline_response
 
@@ -165,6 +168,177 @@ class ScenesOperations:
             get_next, extract_data
         )
     list.metadata = {'url': '/scenes'}  # type: ignore
+
+    async def _create_satellite_data_ingestion_job_initial(
+        self,
+        job_id: str,
+        body: Optional["_models.SatelliteIngestionJobRequest"] = None,
+        **kwargs
+    ) -> "_models.SatelliteIngestionJobResponse":
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.SatelliteIngestionJobResponse"]
+        error_map = {
+            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
+        }
+        error_map.update(kwargs.pop('error_map', {}))
+        api_version = "2021-03-31-preview"
+        content_type = kwargs.pop("content_type", "application/json")
+        accept = "application/json"
+
+        # Construct URL
+        url = self._create_satellite_data_ingestion_job_initial.metadata['url']  # type: ignore
+        path_format_arguments = {
+            'jobId': self._serialize.url("job_id", job_id, 'str'),
+        }
+        url = self._client.format_url(url, **path_format_arguments)
+
+        # Construct parameters
+        query_parameters = {}  # type: Dict[str, Any]
+        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
+
+        # Construct headers
+        header_parameters = {}  # type: Dict[str, Any]
+        header_parameters['Content-Type'] = self._serialize.header("content_type", content_type, 'str')
+        header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
+
+        body_content_kwargs = {}  # type: Dict[str, Any]
+        if body is not None:
+            body_content = self._serialize.body(body, 'SatelliteIngestionJobRequest')
+        else:
+            body_content = None
+        body_content_kwargs['content'] = body_content
+        request = self._client.put(url, query_parameters, header_parameters, **body_content_kwargs)
+        pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
+        response = pipeline_response.http_response
+
+        if response.status_code not in [202]:
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            raise HttpResponseError(response=response)
+
+        deserialized = self._deserialize('SatelliteIngestionJobResponse', pipeline_response)
+
+        if cls:
+            return cls(pipeline_response, deserialized, {})
+
+        return deserialized
+    _create_satellite_data_ingestion_job_initial.metadata = {'url': '/scenes/satellite/ingest-data/{jobId}'}  # type: ignore
+
+    async def begin_create_satellite_data_ingestion_job(
+        self,
+        job_id: str,
+        body: Optional["_models.SatelliteIngestionJobRequest"] = None,
+        **kwargs
+    ) -> AsyncLROPoller["_models.SatelliteIngestionJobResponse"]:
+        """Create a satellite data ingestion job.
+
+        :param job_id: JobId provided by user.
+        :type job_id: str
+        :param body: Job parameters supplied by user.
+        :type body: ~azure.farmbeats.models.SatelliteIngestionJobRequest
+        :keyword callable cls: A custom type or function that will be passed the direct response
+        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
+        :keyword polling: Pass in True if you'd like the AsyncLROBasePolling polling method,
+         False for no polling, or your own initialized polling object for a personal polling strategy.
+        :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
+        :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
+        :return: An instance of AsyncLROPoller that returns either SatelliteIngestionJobResponse or the result of cls(response)
+        :rtype: ~azure.core.polling.AsyncLROPoller[~azure.farmbeats.models.SatelliteIngestionJobResponse]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        polling = kwargs.pop('polling', False)  # type: Union[bool, AsyncPollingMethod]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.SatelliteIngestionJobResponse"]
+        lro_delay = kwargs.pop(
+            'polling_interval',
+            self._config.polling_interval
+        )
+        cont_token = kwargs.pop('continuation_token', None)  # type: Optional[str]
+        if cont_token is None:
+            raw_result = await self._create_satellite_data_ingestion_job_initial(
+                job_id=job_id,
+                body=body,
+                cls=lambda x,y,z: x,
+                **kwargs
+            )
+
+        kwargs.pop('error_map', None)
+        kwargs.pop('content_type', None)
+
+        def get_long_running_output(pipeline_response):
+            deserialized = self._deserialize('SatelliteIngestionJobResponse', pipeline_response)
+
+            if cls:
+                return cls(pipeline_response, deserialized, {})
+            return deserialized
+
+        path_format_arguments = {
+            'jobId': self._serialize.url("job_id", job_id, 'str'),
+        }
+
+        if polling is True: polling_method = AsyncLROBasePolling(lro_delay, lro_options={'final-state-via': 'location'}, path_format_arguments=path_format_arguments,  **kwargs)
+        elif polling is False: polling_method = AsyncNoPolling()
+        else: polling_method = polling
+        if cont_token:
+            return AsyncLROPoller.from_continuation_token(
+                polling_method=polling_method,
+                continuation_token=cont_token,
+                client=self._client,
+                deserialization_callback=get_long_running_output
+            )
+        else:
+            return AsyncLROPoller(self._client, raw_result, get_long_running_output, polling_method)
+    begin_create_satellite_data_ingestion_job.metadata = {'url': '/scenes/satellite/ingest-data/{jobId}'}  # type: ignore
+
+    async def get_satellite_data_ingestion_job_details(
+        self,
+        job_id: str,
+        **kwargs
+    ) -> "_models.SatelliteIngestionJobDetails":
+        """Get satellite data ingestion job's details.
+
+        :param job_id: Id of the job.
+        :type job_id: str
+        :keyword callable cls: A custom type or function that will be passed the direct response
+        :return: SatelliteIngestionJobDetails, or the result of cls(response)
+        :rtype: ~azure.farmbeats.models.SatelliteIngestionJobDetails
+        :raises: ~azure.core.exceptions.HttpResponseError
+        """
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.SatelliteIngestionJobDetails"]
+        error_map = {
+            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
+        }
+        error_map.update(kwargs.pop('error_map', {}))
+        api_version = "2021-03-31-preview"
+        accept = "application/json"
+
+        # Construct URL
+        url = self.get_satellite_data_ingestion_job_details.metadata['url']  # type: ignore
+        path_format_arguments = {
+            'jobId': self._serialize.url("job_id", job_id, 'str'),
+        }
+        url = self._client.format_url(url, **path_format_arguments)
+
+        # Construct parameters
+        query_parameters = {}  # type: Dict[str, Any]
+        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
+
+        # Construct headers
+        header_parameters = {}  # type: Dict[str, Any]
+        header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
+
+        request = self._client.get(url, query_parameters, header_parameters)
+        pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            raise HttpResponseError(response=response)
+
+        deserialized = self._deserialize('SatelliteIngestionJobDetails', pipeline_response)
+
+        if cls:
+            return cls(pipeline_response, deserialized, {})
+
+        return deserialized
+    get_satellite_data_ingestion_job_details.metadata = {'url': '/scenes/satellite/ingest-data/{jobId}'}  # type: ignore
 
     async def download(
         self,
@@ -185,7 +359,7 @@ class ScenesOperations:
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2020-12-31-preview"
+        api_version = "2021-03-31-preview"
         accept = "application/json"
 
         # Construct URL

@@ -17,8 +17,8 @@ from ... import models as _models
 T = TypeVar('T')
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]]
 
-class OAuthTokenInfosOperations:
-    """OAuthTokenInfosOperations async operations.
+class OAuthTokensOperations:
+    """OAuthTokensOperations async operations.
 
     You should not instantiate this class directly. Instead, you should create a Client instance that
     instantiates it for you and attaches it as an attribute.
@@ -44,10 +44,6 @@ class OAuthTokenInfosOperations:
         auth_provider_ids: Optional[List[str]] = None,
         farmer_ids: Optional[List[str]] = None,
         is_valid: Optional[bool] = None,
-        ids: Optional[List[str]] = None,
-        names: Optional[List[str]] = None,
-        property_filters: Optional[List[str]] = None,
-        statuses: Optional[List[str]] = None,
         min_created_date_time: Optional[datetime.datetime] = None,
         max_created_date_time: Optional[datetime.datetime] = None,
         min_last_modified_date_time: Optional[datetime.datetime] = None,
@@ -55,8 +51,8 @@ class OAuthTokenInfosOperations:
         max_page_size: Optional[int] = 50,
         skip_token: Optional[str] = None,
         **kwargs
-    ) -> AsyncIterable["_models.OAuthTokenInfoListResponse"]:
-        """Returns a list of OAuthTokenInfo documents.
+    ) -> AsyncIterable["_models.OAuthTokenListResponse"]:
+        """Returns a list of OAuthToken documents.
 
         :param auth_provider_ids: Name of AuthProvider.
         :type auth_provider_ids: list[str]
@@ -64,15 +60,6 @@ class OAuthTokenInfosOperations:
         :type farmer_ids: list[str]
         :param is_valid: If the token object is valid.
         :type is_valid: bool
-        :param ids: Ids of the resource.
-        :type ids: list[str]
-        :param names: Names of the resource.
-        :type names: list[str]
-        :param property_filters: Filters on key-value pairs within the Properties object.
-         eg. "{testkey} eq {testvalue}".
-        :type property_filters: list[str]
-        :param statuses: Statuses of the resource.
-        :type statuses: list[str]
         :param min_created_date_time: Minimum creation date of resource (inclusive).
         :type min_created_date_time: ~datetime.datetime
         :param max_created_date_time: Maximum creation date of resource (inclusive).
@@ -87,16 +74,16 @@ class OAuthTokenInfosOperations:
         :param skip_token: Skip token for getting next set of results.
         :type skip_token: str
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: An iterator like instance of either OAuthTokenInfoListResponse or the result of cls(response)
-        :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.farmbeats.models.OAuthTokenInfoListResponse]
+        :return: An iterator like instance of either OAuthTokenListResponse or the result of cls(response)
+        :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.farmbeats.models.OAuthTokenListResponse]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["_models.OAuthTokenInfoListResponse"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.OAuthTokenListResponse"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2020-12-31-preview"
+        api_version = "2021-03-31-preview"
         accept = "application/json"
 
         def prepare_request(next_link=None):
@@ -115,14 +102,6 @@ class OAuthTokenInfosOperations:
                     query_parameters['farmerIds'] = [self._serialize.query("farmer_ids", q, 'str') if q is not None else '' for q in farmer_ids]
                 if is_valid is not None:
                     query_parameters['isValid'] = self._serialize.query("is_valid", is_valid, 'bool')
-                if ids is not None:
-                    query_parameters['ids'] = [self._serialize.query("ids", q, 'str') if q is not None else '' for q in ids]
-                if names is not None:
-                    query_parameters['names'] = [self._serialize.query("names", q, 'str') if q is not None else '' for q in names]
-                if property_filters is not None:
-                    query_parameters['propertyFilters'] = [self._serialize.query("property_filters", q, 'str') if q is not None else '' for q in property_filters]
-                if statuses is not None:
-                    query_parameters['statuses'] = [self._serialize.query("statuses", q, 'str') if q is not None else '' for q in statuses]
                 if min_created_date_time is not None:
                     query_parameters['minCreatedDateTime'] = self._serialize.query("min_created_date_time", min_created_date_time, 'iso-8601')
                 if max_created_date_time is not None:
@@ -145,7 +124,7 @@ class OAuthTokenInfosOperations:
             return request
 
         async def extract_data(pipeline_response):
-            deserialized = self._deserialize('OAuthTokenInfoListResponse', pipeline_response)
+            deserialized = self._deserialize('OAuthTokenListResponse', pipeline_response)
             list_of_elem = deserialized.value
             if cls:
                 list_of_elem = cls(list_of_elem)
@@ -158,15 +137,16 @@ class OAuthTokenInfosOperations:
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
+                error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, response)
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
-                raise HttpResponseError(response=response)
+                raise HttpResponseError(response=response, model=error)
 
             return pipeline_response
 
         return AsyncItemPaged(
             get_next, extract_data
         )
-    list.metadata = {'url': '/oauth/tokensinfo'}  # type: ignore
+    list.metadata = {'url': '/oauth/tokens'}  # type: ignore
 
     async def delete(
         self,
@@ -174,7 +154,7 @@ class OAuthTokenInfosOperations:
         oauth_provider_id: str,
         **kwargs
     ) -> None:
-        """Deletes OAuth Token Info info for given oauth provider Id and farmer Id.
+        """Deletes OAuth Token for given oauth provider Id and farmer Id.
 
         :param farmer_id: Id of the associated farmer.
         :type farmer_id: str
@@ -190,7 +170,8 @@ class OAuthTokenInfosOperations:
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2020-12-31-preview"
+        api_version = "2021-03-31-preview"
+        accept = "application/json"
 
         # Construct URL
         url = self.delete.metadata['url']  # type: ignore
@@ -203,16 +184,76 @@ class OAuthTokenInfosOperations:
 
         # Construct headers
         header_parameters = {}  # type: Dict[str, Any]
+        header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
 
         request = self._client.post(url, query_parameters, header_parameters)
         pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
 
-        if response.status_code not in [200]:
+        if response.status_code not in []:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise HttpResponseError(response=response)
+            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, response)
+            raise HttpResponseError(response=response, model=error)
 
         if cls:
             return cls(pipeline_response, None, {})
 
-    delete.metadata = {'url': '/oauth/tokensinfo/:remove'}  # type: ignore
+    delete.metadata = {'url': '/oauth/tokens/:remove'}  # type: ignore
+
+    async def get_o_auth_connection_link(
+        self,
+        body: Optional["_models.OAuthConnectRequest"] = None,
+        **kwargs
+    ) -> str:
+        """Returns Connection link needed in the OAuth flow.
+
+        :param body: OAuth Connect Request.
+        :type body: ~azure.farmbeats.models.OAuthConnectRequest
+        :keyword callable cls: A custom type or function that will be passed the direct response
+        :return: str, or the result of cls(response)
+        :rtype: str
+        :raises: ~azure.core.exceptions.HttpResponseError
+        """
+        cls = kwargs.pop('cls', None)  # type: ClsType[str]
+        error_map = {
+            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
+        }
+        error_map.update(kwargs.pop('error_map', {}))
+        api_version = "2021-03-31-preview"
+        content_type = kwargs.pop("content_type", "application/json")
+        accept = "application/json"
+
+        # Construct URL
+        url = self.get_o_auth_connection_link.metadata['url']  # type: ignore
+
+        # Construct parameters
+        query_parameters = {}  # type: Dict[str, Any]
+        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
+
+        # Construct headers
+        header_parameters = {}  # type: Dict[str, Any]
+        header_parameters['Content-Type'] = self._serialize.header("content_type", content_type, 'str')
+        header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
+
+        body_content_kwargs = {}  # type: Dict[str, Any]
+        if body is not None:
+            body_content = self._serialize.body(body, 'OAuthConnectRequest')
+        else:
+            body_content = None
+        body_content_kwargs['content'] = body_content
+        request = self._client.post(url, query_parameters, header_parameters, **body_content_kwargs)
+        pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, response)
+            raise HttpResponseError(response=response, model=error)
+
+        deserialized = self._deserialize('str', pipeline_response)
+
+        if cls:
+            return cls(pipeline_response, deserialized, {})
+
+        return deserialized
+    get_o_auth_connection_link.metadata = {'url': '/oauth/tokens/:connect'}  # type: ignore

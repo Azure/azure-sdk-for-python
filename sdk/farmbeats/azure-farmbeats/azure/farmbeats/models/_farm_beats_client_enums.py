@@ -49,7 +49,7 @@ class GeoJsonObjectType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     MULTI_POLYGON = "MultiPolygon"
 
 class ImageFormat(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
-    """ImageFormat for satellite data.
+    """Supported image formats for scene resource.
     """
 
     TIF = "TIF"
@@ -58,7 +58,6 @@ class ImageName(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     """ImageName for satellite data.
     """
 
-    ALL_IMAGES = "AllImages"
     B01 = "B01"
     B02 = "B02"
     B03 = "B03"
@@ -85,14 +84,8 @@ class ImageName(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     SUN_ZENITH_ANGLES = "sunZenithAngles"
     VIEW_AZIMUTH_MEAN = "viewAzimuthMean"
     VIEW_ZENITH_MEAN = "viewZenithMean"
-
-class ImageResolution(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
-    """Supported resolution values for Satellite Data in meters.
-    """
-
-    TEN = "Ten"
-    TWENTY = "Twenty"
-    SIXTY = "Sixty"
+    LAI = "LAI"
+    LAI_MASK = "LAIMask"
 
 class JobStatus(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     """Various states a job can be in.

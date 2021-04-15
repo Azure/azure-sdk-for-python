@@ -13,10 +13,9 @@ try:
     from ._models_py3 import Boundary
     from ._models_py3 import BoundaryListResponse
     from ._models_py3 import BoundaryOverlapResponse
+    from ._models_py3 import CascadeDeleteJobDetails
     from ._models_py3 import CascadeDeleteJobRequest
     from ._models_py3 import CascadeDeleteJobResponse
-    from ._models_py3 import CascadeStatusUpdateJobRequest
-    from ._models_py3 import CascadeStatusUpdateJobResponse
     from ._models_py3 import Crop
     from ._models_py3 import CropListResponse
     from ._models_py3 import CropVariety
@@ -27,6 +26,7 @@ try:
     from ._models_py3 import FarmListResponse
     from ._models_py3 import FarmOperationDataIngestionJobRequest
     from ._models_py3 import FarmOperationDataIngestionJobResponse
+    from ._models_py3 import FarmOperationsDataIngestionJobDetails
     from ._models_py3 import Farmer
     from ._models_py3 import FarmerListResponse
     from ._models_py3 import Field
@@ -35,44 +35,43 @@ try:
     from ._models_py3 import HarvestData
     from ._models_py3 import HarvestDataListResponse
     from ._models_py3 import HarvestProductDetail
-    from ._models_py3 import ImageFileResponse
+    from ._models_py3 import ImageFile
     from ._models_py3 import InnerError
-    from ._models_py3 import JobResponse
     from ._models_py3 import Location
     from ._models_py3 import Measure
     from ._models_py3 import MultiPolygon
-    from ._models_py3 import OAuthConfig
-    from ._models_py3 import OAuthConfigQuery
+    from ._models_py3 import OAuthConnectRequest
     from ._models_py3 import OAuthProvider
     from ._models_py3 import OAuthProviderListResponse
-    from ._models_py3 import OAuthTokenInfo
-    from ._models_py3 import OAuthTokenInfoListResponse
-    from ._models_py3 import Paths104Hgf2FarmersFarmeridAttachmentsAttachmentidPutRequestbodyContentMultipartFormDataSchema
+    from ._models_py3 import OAuthToken
+    from ._models_py3 import OAuthTokenListResponse
     from ._models_py3 import Paths1LxjoxzFarmersFarmeridAttachmentsAttachmentidPatchRequestbodyContentMultipartFormDataSchema
     from ._models_py3 import PlantingData
     from ._models_py3 import PlantingDataListResponse
+    from ._models_py3 import PlantingProductDetail
     from ._models_py3 import Point
     from ._models_py3 import Polygon
     from ._models_py3 import SatelliteData
+    from ._models_py3 import SatelliteIngestionJobDetails
     from ._models_py3 import SatelliteIngestionJobRequest
     from ._models_py3 import SatelliteIngestionJobResponse
-    from ._models_py3 import SceneEntityResponse
-    from ._models_py3 import SceneEntityResponseListResponse
+    from ._models_py3 import Scene
+    from ._models_py3 import SceneListResponse
     from ._models_py3 import SearchBoundaryQuery
     from ._models_py3 import Season
     from ._models_py3 import SeasonListResponse
     from ._models_py3 import SeasonalField
     from ._models_py3 import SeasonalFieldListResponse
-    from ._models_py3 import SeedingProductDetail
     from ._models_py3 import TillageData
     from ._models_py3 import TillageDataListResponse
     from ._models_py3 import WeatherData
+    from ._models_py3 import WeatherDataDeleteJobDetails
     from ._models_py3 import WeatherDataDeleteJobRequest
     from ._models_py3 import WeatherDataDeleteJobResponse
     from ._models_py3 import WeatherDataListResponse
+    from ._models_py3 import WeatherIngestionJobDetails
     from ._models_py3 import WeatherIngestionJobRequest
     from ._models_py3 import WeatherIngestionJobResponse
-    from ._models_py3 import WeatherMeasure
 except (SyntaxError, ImportError):
     from ._models import ApplicationData  # type: ignore
     from ._models import ApplicationDataListResponse  # type: ignore
@@ -82,10 +81,9 @@ except (SyntaxError, ImportError):
     from ._models import Boundary  # type: ignore
     from ._models import BoundaryListResponse  # type: ignore
     from ._models import BoundaryOverlapResponse  # type: ignore
+    from ._models import CascadeDeleteJobDetails  # type: ignore
     from ._models import CascadeDeleteJobRequest  # type: ignore
     from ._models import CascadeDeleteJobResponse  # type: ignore
-    from ._models import CascadeStatusUpdateJobRequest  # type: ignore
-    from ._models import CascadeStatusUpdateJobResponse  # type: ignore
     from ._models import Crop  # type: ignore
     from ._models import CropListResponse  # type: ignore
     from ._models import CropVariety  # type: ignore
@@ -96,6 +94,7 @@ except (SyntaxError, ImportError):
     from ._models import FarmListResponse  # type: ignore
     from ._models import FarmOperationDataIngestionJobRequest  # type: ignore
     from ._models import FarmOperationDataIngestionJobResponse  # type: ignore
+    from ._models import FarmOperationsDataIngestionJobDetails  # type: ignore
     from ._models import Farmer  # type: ignore
     from ._models import FarmerListResponse  # type: ignore
     from ._models import Field  # type: ignore
@@ -104,44 +103,43 @@ except (SyntaxError, ImportError):
     from ._models import HarvestData  # type: ignore
     from ._models import HarvestDataListResponse  # type: ignore
     from ._models import HarvestProductDetail  # type: ignore
-    from ._models import ImageFileResponse  # type: ignore
+    from ._models import ImageFile  # type: ignore
     from ._models import InnerError  # type: ignore
-    from ._models import JobResponse  # type: ignore
     from ._models import Location  # type: ignore
     from ._models import Measure  # type: ignore
     from ._models import MultiPolygon  # type: ignore
-    from ._models import OAuthConfig  # type: ignore
-    from ._models import OAuthConfigQuery  # type: ignore
+    from ._models import OAuthConnectRequest  # type: ignore
     from ._models import OAuthProvider  # type: ignore
     from ._models import OAuthProviderListResponse  # type: ignore
-    from ._models import OAuthTokenInfo  # type: ignore
-    from ._models import OAuthTokenInfoListResponse  # type: ignore
-    from ._models import Paths104Hgf2FarmersFarmeridAttachmentsAttachmentidPutRequestbodyContentMultipartFormDataSchema  # type: ignore
+    from ._models import OAuthToken  # type: ignore
+    from ._models import OAuthTokenListResponse  # type: ignore
     from ._models import Paths1LxjoxzFarmersFarmeridAttachmentsAttachmentidPatchRequestbodyContentMultipartFormDataSchema  # type: ignore
     from ._models import PlantingData  # type: ignore
     from ._models import PlantingDataListResponse  # type: ignore
+    from ._models import PlantingProductDetail  # type: ignore
     from ._models import Point  # type: ignore
     from ._models import Polygon  # type: ignore
     from ._models import SatelliteData  # type: ignore
+    from ._models import SatelliteIngestionJobDetails  # type: ignore
     from ._models import SatelliteIngestionJobRequest  # type: ignore
     from ._models import SatelliteIngestionJobResponse  # type: ignore
-    from ._models import SceneEntityResponse  # type: ignore
-    from ._models import SceneEntityResponseListResponse  # type: ignore
+    from ._models import Scene  # type: ignore
+    from ._models import SceneListResponse  # type: ignore
     from ._models import SearchBoundaryQuery  # type: ignore
     from ._models import Season  # type: ignore
     from ._models import SeasonListResponse  # type: ignore
     from ._models import SeasonalField  # type: ignore
     from ._models import SeasonalFieldListResponse  # type: ignore
-    from ._models import SeedingProductDetail  # type: ignore
     from ._models import TillageData  # type: ignore
     from ._models import TillageDataListResponse  # type: ignore
     from ._models import WeatherData  # type: ignore
+    from ._models import WeatherDataDeleteJobDetails  # type: ignore
     from ._models import WeatherDataDeleteJobRequest  # type: ignore
     from ._models import WeatherDataDeleteJobResponse  # type: ignore
     from ._models import WeatherDataListResponse  # type: ignore
+    from ._models import WeatherIngestionJobDetails  # type: ignore
     from ._models import WeatherIngestionJobRequest  # type: ignore
     from ._models import WeatherIngestionJobResponse  # type: ignore
-    from ._models import WeatherMeasure  # type: ignore
 
 from ._farm_beats_client_enums import (
     DataProvider,
@@ -149,7 +147,6 @@ from ._farm_beats_client_enums import (
     GeoJsonObjectType,
     ImageFormat,
     ImageName,
-    ImageResolution,
     JobStatus,
     Source,
 )
@@ -163,10 +160,9 @@ __all__ = [
     'Boundary',
     'BoundaryListResponse',
     'BoundaryOverlapResponse',
+    'CascadeDeleteJobDetails',
     'CascadeDeleteJobRequest',
     'CascadeDeleteJobResponse',
-    'CascadeStatusUpdateJobRequest',
-    'CascadeStatusUpdateJobResponse',
     'Crop',
     'CropListResponse',
     'CropVariety',
@@ -177,6 +173,7 @@ __all__ = [
     'FarmListResponse',
     'FarmOperationDataIngestionJobRequest',
     'FarmOperationDataIngestionJobResponse',
+    'FarmOperationsDataIngestionJobDetails',
     'Farmer',
     'FarmerListResponse',
     'Field',
@@ -185,50 +182,48 @@ __all__ = [
     'HarvestData',
     'HarvestDataListResponse',
     'HarvestProductDetail',
-    'ImageFileResponse',
+    'ImageFile',
     'InnerError',
-    'JobResponse',
     'Location',
     'Measure',
     'MultiPolygon',
-    'OAuthConfig',
-    'OAuthConfigQuery',
+    'OAuthConnectRequest',
     'OAuthProvider',
     'OAuthProviderListResponse',
-    'OAuthTokenInfo',
-    'OAuthTokenInfoListResponse',
-    'Paths104Hgf2FarmersFarmeridAttachmentsAttachmentidPutRequestbodyContentMultipartFormDataSchema',
+    'OAuthToken',
+    'OAuthTokenListResponse',
     'Paths1LxjoxzFarmersFarmeridAttachmentsAttachmentidPatchRequestbodyContentMultipartFormDataSchema',
     'PlantingData',
     'PlantingDataListResponse',
+    'PlantingProductDetail',
     'Point',
     'Polygon',
     'SatelliteData',
+    'SatelliteIngestionJobDetails',
     'SatelliteIngestionJobRequest',
     'SatelliteIngestionJobResponse',
-    'SceneEntityResponse',
-    'SceneEntityResponseListResponse',
+    'Scene',
+    'SceneListResponse',
     'SearchBoundaryQuery',
     'Season',
     'SeasonListResponse',
     'SeasonalField',
     'SeasonalFieldListResponse',
-    'SeedingProductDetail',
     'TillageData',
     'TillageDataListResponse',
     'WeatherData',
+    'WeatherDataDeleteJobDetails',
     'WeatherDataDeleteJobRequest',
     'WeatherDataDeleteJobResponse',
     'WeatherDataListResponse',
+    'WeatherIngestionJobDetails',
     'WeatherIngestionJobRequest',
     'WeatherIngestionJobResponse',
-    'WeatherMeasure',
     'DataProvider',
     'FieldOperationType',
     'GeoJsonObjectType',
     'ImageFormat',
     'ImageName',
-    'ImageResolution',
     'JobStatus',
     'Source',
 ]

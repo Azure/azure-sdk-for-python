@@ -16,7 +16,7 @@ from .. import models as _models
 
 if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
-    from typing import Any, Callable, Dict, Generic, Iterable, List, Optional, TypeVar
+    from typing import Any, Callable, Dict, Generic, Iterable, List, Optional, TypeVar, Union
 
     T = TypeVar('T')
     ClsType = Optional[Callable[[PipelineResponse[HttpRequest, HttpResponse], T, Dict[str, Any]], Any]]
@@ -43,246 +43,13 @@ class SeasonsOperations(object):
         self._deserialize = deserializer
         self._config = config
 
-    def create(
-        self,
-        season_id,  # type: str
-        body=None,  # type: Optional["_models.Season"]
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> "_models.Season"
-        """Creates new season object with given request body.
-
-        :param season_id: Season id.
-        :type season_id: str
-        :param body: Season object.
-        :type body: ~azure.farmbeats.models.Season
-        :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: Season, or the result of cls(response)
-        :rtype: ~azure.farmbeats.models.Season
-        :raises: ~azure.core.exceptions.HttpResponseError
-        """
-        cls = kwargs.pop('cls', None)  # type: ClsType["_models.Season"]
-        error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
-        }
-        error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2020-12-31-preview"
-        content_type = kwargs.pop("content_type", "application/json")
-        accept = "application/json"
-
-        # Construct URL
-        url = self.create.metadata['url']  # type: ignore
-        path_format_arguments = {
-            'seasonId': self._serialize.url("season_id", season_id, 'str'),
-        }
-        url = self._client.format_url(url, **path_format_arguments)
-
-        # Construct parameters
-        query_parameters = {}  # type: Dict[str, Any]
-        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
-
-        # Construct headers
-        header_parameters = {}  # type: Dict[str, Any]
-        header_parameters['Content-Type'] = self._serialize.header("content_type", content_type, 'str')
-        header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
-
-        body_content_kwargs = {}  # type: Dict[str, Any]
-        if body is not None:
-            body_content = self._serialize.body(body, 'Season')
-        else:
-            body_content = None
-        body_content_kwargs['content'] = body_content
-        request = self._client.put(url, query_parameters, header_parameters, **body_content_kwargs)
-        pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
-        response = pipeline_response.http_response
-
-        if response.status_code not in [201]:
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise HttpResponseError(response=response)
-
-        deserialized = self._deserialize('Season', pipeline_response)
-
-        if cls:
-            return cls(pipeline_response, deserialized, {})
-
-        return deserialized
-    create.metadata = {'url': '/seasons/{seasonId}'}  # type: ignore
-
-    def get(
-        self,
-        season_id,  # type: str
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> "_models.Season"
-        """Get season object with given season id.
-
-        :param season_id: Season Id.
-        :type season_id: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: Season, or the result of cls(response)
-        :rtype: ~azure.farmbeats.models.Season
-        :raises: ~azure.core.exceptions.HttpResponseError
-        """
-        cls = kwargs.pop('cls', None)  # type: ClsType["_models.Season"]
-        error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
-        }
-        error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2020-12-31-preview"
-        accept = "application/json"
-
-        # Construct URL
-        url = self.get.metadata['url']  # type: ignore
-        path_format_arguments = {
-            'seasonId': self._serialize.url("season_id", season_id, 'str'),
-        }
-        url = self._client.format_url(url, **path_format_arguments)
-
-        # Construct parameters
-        query_parameters = {}  # type: Dict[str, Any]
-        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
-
-        # Construct headers
-        header_parameters = {}  # type: Dict[str, Any]
-        header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
-
-        request = self._client.get(url, query_parameters, header_parameters)
-        pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
-        response = pipeline_response.http_response
-
-        if response.status_code not in [200]:
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise HttpResponseError(response=response)
-
-        deserialized = self._deserialize('Season', pipeline_response)
-
-        if cls:
-            return cls(pipeline_response, deserialized, {})
-
-        return deserialized
-    get.metadata = {'url': '/seasons/{seasonId}'}  # type: ignore
-
-    def create_or_update(
-        self,
-        season_id,  # type: str
-        body=None,  # type: Optional["_models.Season"]
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> "_models.Season"
-        """Updates Season for given season Id.
-
-        :param season_id: Id of season that need to be updated.
-        :type season_id: str
-        :param body: New state of season.
-        :type body: ~azure.farmbeats.models.Season
-        :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: Season, or the result of cls(response)
-        :rtype: ~azure.farmbeats.models.Season
-        :raises: ~azure.core.exceptions.HttpResponseError
-        """
-        cls = kwargs.pop('cls', None)  # type: ClsType["_models.Season"]
-        error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
-        }
-        error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2020-12-31-preview"
-        content_type = kwargs.pop("content_type", "application/merge-patch+json")
-        accept = "application/json"
-
-        # Construct URL
-        url = self.create_or_update.metadata['url']  # type: ignore
-        path_format_arguments = {
-            'seasonId': self._serialize.url("season_id", season_id, 'str'),
-        }
-        url = self._client.format_url(url, **path_format_arguments)
-
-        # Construct parameters
-        query_parameters = {}  # type: Dict[str, Any]
-        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
-
-        # Construct headers
-        header_parameters = {}  # type: Dict[str, Any]
-        header_parameters['Content-Type'] = self._serialize.header("content_type", content_type, 'str')
-        header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
-
-        body_content_kwargs = {}  # type: Dict[str, Any]
-        if body is not None:
-            body_content = self._serialize.body(body, 'Season')
-        else:
-            body_content = None
-        body_content_kwargs['content'] = body_content
-        request = self._client.patch(url, query_parameters, header_parameters, **body_content_kwargs)
-        pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
-        response = pipeline_response.http_response
-
-        if response.status_code not in [200]:
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise HttpResponseError(response=response)
-
-        deserialized = self._deserialize('Season', pipeline_response)
-
-        if cls:
-            return cls(pipeline_response, deserialized, {})
-
-        return deserialized
-    create_or_update.metadata = {'url': '/seasons/{seasonId}'}  # type: ignore
-
-    def delete(
-        self,
-        season_id,  # type: str
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> None
-        """Deletes Season for given season id.
-
-        :param season_id: Id of season to be deleted.
-        :type season_id: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: None, or the result of cls(response)
-        :rtype: None
-        :raises: ~azure.core.exceptions.HttpResponseError
-        """
-        cls = kwargs.pop('cls', None)  # type: ClsType[None]
-        error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
-        }
-        error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2020-12-31-preview"
-
-        # Construct URL
-        url = self.delete.metadata['url']  # type: ignore
-        path_format_arguments = {
-            'seasonId': self._serialize.url("season_id", season_id, 'str'),
-        }
-        url = self._client.format_url(url, **path_format_arguments)
-
-        # Construct parameters
-        query_parameters = {}  # type: Dict[str, Any]
-        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
-
-        # Construct headers
-        header_parameters = {}  # type: Dict[str, Any]
-
-        request = self._client.delete(url, query_parameters, header_parameters)
-        pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
-        response = pipeline_response.http_response
-
-        if response.status_code not in [200]:
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise HttpResponseError(response=response)
-
-        if cls:
-            return cls(pipeline_response, None, {})
-
-    delete.metadata = {'url': '/seasons/{seasonId}'}  # type: ignore
-
     def list(
         self,
-        min_start_date=None,  # type: Optional[str]
-        max_start_date=None,  # type: Optional[str]
-        min_end_date=None,  # type: Optional[str]
-        max_end_date=None,  # type: Optional[str]
-        years=None,  # type: Optional[List[str]]
+        min_start_date_time=None,  # type: Optional[datetime.datetime]
+        max_start_date_time=None,  # type: Optional[datetime.datetime]
+        min_end_date_time=None,  # type: Optional[datetime.datetime]
+        max_end_date_time=None,  # type: Optional[datetime.datetime]
+        years=None,  # type: Optional[List[int]]
         ids=None,  # type: Optional[List[str]]
         names=None,  # type: Optional[List[str]]
         property_filters=None,  # type: Optional[List[str]]
@@ -296,18 +63,18 @@ class SeasonsOperations(object):
         **kwargs  # type: Any
     ):
         # type: (...) -> Iterable["_models.SeasonListResponse"]
-        """Returns a list of seasons.
+        """Returns a paginated list of season resources.
 
-        :param min_start_date: Minimum season start date in yyyy-MM-dd format.
-        :type min_start_date: str
-        :param max_start_date: Maximum season start date in yyyy-MM-dd format.
-        :type max_start_date: str
-        :param min_end_date: Minimum season end date in yyyy-MM-dd format.
-        :type min_end_date: str
-        :param max_end_date: Maximum season end date in yyyy-MM-dd format.
-        :type max_end_date: str
+        :param min_start_date_time: Minimum season start datetime, sample format: yyyy-MM-ddTHH:mm:ssZ.
+        :type min_start_date_time: ~datetime.datetime
+        :param max_start_date_time: Maximum season start datetime, sample format: yyyy-MM-ddTHH:mm:ssZ.
+        :type max_start_date_time: ~datetime.datetime
+        :param min_end_date_time: Minimum season end datetime, sample format: yyyy-MM-ddTHH:mm:ssZ.
+        :type min_end_date_time: ~datetime.datetime
+        :param max_end_date_time: Maximum season end datetime, sample format: yyyy-MM-ddTHH:mm:ssZ.
+        :type max_end_date_time: ~datetime.datetime
         :param years: Years of the resource.
-        :type years: list[str]
+        :type years: list[int]
         :param ids: Ids of the resource.
         :type ids: list[str]
         :param names: Names of the resource.
@@ -340,7 +107,7 @@ class SeasonsOperations(object):
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2020-12-31-preview"
+        api_version = "2021-03-31-preview"
         accept = "application/json"
 
         def prepare_request(next_link=None):
@@ -353,16 +120,16 @@ class SeasonsOperations(object):
                 url = self.list.metadata['url']  # type: ignore
                 # Construct parameters
                 query_parameters = {}  # type: Dict[str, Any]
-                if min_start_date is not None:
-                    query_parameters['minStartDate'] = self._serialize.query("min_start_date", min_start_date, 'str')
-                if max_start_date is not None:
-                    query_parameters['maxStartDate'] = self._serialize.query("max_start_date", max_start_date, 'str')
-                if min_end_date is not None:
-                    query_parameters['minEndDate'] = self._serialize.query("min_end_date", min_end_date, 'str')
-                if max_end_date is not None:
-                    query_parameters['maxEndDate'] = self._serialize.query("max_end_date", max_end_date, 'str')
+                if min_start_date_time is not None:
+                    query_parameters['minStartDateTime'] = self._serialize.query("min_start_date_time", min_start_date_time, 'iso-8601')
+                if max_start_date_time is not None:
+                    query_parameters['maxStartDateTime'] = self._serialize.query("max_start_date_time", max_start_date_time, 'iso-8601')
+                if min_end_date_time is not None:
+                    query_parameters['minEndDateTime'] = self._serialize.query("min_end_date_time", min_end_date_time, 'iso-8601')
+                if max_end_date_time is not None:
+                    query_parameters['maxEndDateTime'] = self._serialize.query("max_end_date_time", max_end_date_time, 'iso-8601')
                 if years is not None:
-                    query_parameters['years'] = [self._serialize.query("years", q, 'str') if q is not None else '' for q in years]
+                    query_parameters['years'] = [self._serialize.query("years", q, 'int') if q is not None else '' for q in years]
                 if ids is not None:
                     query_parameters['ids'] = [self._serialize.query("ids", q, 'str') if q is not None else '' for q in ids]
                 if names is not None:
@@ -406,8 +173,9 @@ class SeasonsOperations(object):
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
+                error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, response)
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
-                raise HttpResponseError(response=response)
+                raise HttpResponseError(response=response, model=error)
 
             return pipeline_response
 
@@ -415,3 +183,182 @@ class SeasonsOperations(object):
             get_next, extract_data
         )
     list.metadata = {'url': '/seasons'}  # type: ignore
+
+    def get(
+        self,
+        season_id,  # type: str
+        **kwargs  # type: Any
+    ):
+        # type: (...) -> Optional["_models.Season"]
+        """Gets a specified season resource.
+
+        :param season_id: Id of the season.
+        :type season_id: str
+        :keyword callable cls: A custom type or function that will be passed the direct response
+        :return: Season, or the result of cls(response)
+        :rtype: ~azure.farmbeats.models.Season or None
+        :raises: ~azure.core.exceptions.HttpResponseError
+        """
+        cls = kwargs.pop('cls', None)  # type: ClsType[Optional["_models.Season"]]
+        error_map = {
+            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
+        }
+        error_map.update(kwargs.pop('error_map', {}))
+        api_version = "2021-03-31-preview"
+        accept = "application/json"
+
+        # Construct URL
+        url = self.get.metadata['url']  # type: ignore
+        path_format_arguments = {
+            'seasonId': self._serialize.url("season_id", season_id, 'str'),
+        }
+        url = self._client.format_url(url, **path_format_arguments)
+
+        # Construct parameters
+        query_parameters = {}  # type: Dict[str, Any]
+        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
+
+        # Construct headers
+        header_parameters = {}  # type: Dict[str, Any]
+        header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
+
+        request = self._client.get(url, query_parameters, header_parameters)
+        pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200, 404]:
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, response)
+            raise HttpResponseError(response=response, model=error)
+
+        deserialized = None
+        if response.status_code == 200:
+            deserialized = self._deserialize('Season', pipeline_response)
+
+        if cls:
+            return cls(pipeline_response, deserialized, {})
+
+        return deserialized
+    get.metadata = {'url': '/seasons/{seasonId}'}  # type: ignore
+
+    def create_or_update(
+        self,
+        season_id,  # type: str
+        body=None,  # type: Optional["_models.Season"]
+        **kwargs  # type: Any
+    ):
+        # type: (...) -> "_models.Season"
+        """Creates or updates a season resource.
+
+        :param season_id: Id of the season resource.
+        :type season_id: str
+        :param body: Season resource payload to create or update.
+        :type body: ~azure.farmbeats.models.Season
+        :keyword callable cls: A custom type or function that will be passed the direct response
+        :return: Season, or the result of cls(response)
+        :rtype: ~azure.farmbeats.models.Season
+        :raises: ~azure.core.exceptions.HttpResponseError
+        """
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.Season"]
+        error_map = {
+            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
+        }
+        error_map.update(kwargs.pop('error_map', {}))
+        api_version = "2021-03-31-preview"
+        content_type = kwargs.pop("content_type", "application/merge-patch+json")
+        accept = "application/json"
+
+        # Construct URL
+        url = self.create_or_update.metadata['url']  # type: ignore
+        path_format_arguments = {
+            'seasonId': self._serialize.url("season_id", season_id, 'str'),
+        }
+        url = self._client.format_url(url, **path_format_arguments)
+
+        # Construct parameters
+        query_parameters = {}  # type: Dict[str, Any]
+        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
+
+        # Construct headers
+        header_parameters = {}  # type: Dict[str, Any]
+        header_parameters['Content-Type'] = self._serialize.header("content_type", content_type, 'str')
+        header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
+
+        body_content_kwargs = {}  # type: Dict[str, Any]
+        if body is not None:
+            body_content = self._serialize.body(body, 'Season')
+        else:
+            body_content = None
+        body_content_kwargs['content'] = body_content
+        request = self._client.patch(url, query_parameters, header_parameters, **body_content_kwargs)
+        pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200, 201]:
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, response)
+            raise HttpResponseError(response=response, model=error)
+
+        if response.status_code == 200:
+            deserialized = self._deserialize('Season', pipeline_response)
+
+        if response.status_code == 201:
+            deserialized = self._deserialize('Season', pipeline_response)
+
+        if cls:
+            return cls(pipeline_response, deserialized, {})
+
+        return deserialized
+    create_or_update.metadata = {'url': '/seasons/{seasonId}'}  # type: ignore
+
+    def delete(
+        self,
+        season_id,  # type: str
+        **kwargs  # type: Any
+    ):
+        # type: (...) -> None
+        """Deletes a specified season resource.
+
+        :param season_id: Id of the season.
+        :type season_id: str
+        :keyword callable cls: A custom type or function that will be passed the direct response
+        :return: None, or the result of cls(response)
+        :rtype: None
+        :raises: ~azure.core.exceptions.HttpResponseError
+        """
+        cls = kwargs.pop('cls', None)  # type: ClsType[None]
+        error_map = {
+            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
+        }
+        error_map.update(kwargs.pop('error_map', {}))
+        api_version = "2021-03-31-preview"
+        accept = "application/json"
+
+        # Construct URL
+        url = self.delete.metadata['url']  # type: ignore
+        path_format_arguments = {
+            'seasonId': self._serialize.url("season_id", season_id, 'str'),
+        }
+        url = self._client.format_url(url, **path_format_arguments)
+
+        # Construct parameters
+        query_parameters = {}  # type: Dict[str, Any]
+        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
+
+        # Construct headers
+        header_parameters = {}  # type: Dict[str, Any]
+        header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
+
+        request = self._client.delete(url, query_parameters, header_parameters)
+        pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
+        response = pipeline_response.http_response
+
+        if response.status_code not in [204]:
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, response)
+            raise HttpResponseError(response=response, model=error)
+
+        if cls:
+            return cls(pipeline_response, None, {})
+
+    delete.metadata = {'url': '/seasons/{seasonId}'}  # type: ignore

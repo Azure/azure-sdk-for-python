@@ -4,13 +4,15 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 import datetime
-from typing import Any, AsyncIterable, Callable, Dict, Generic, List, Optional, TypeVar
+from typing import Any, AsyncIterable, Callable, Dict, Generic, List, Optional, TypeVar, Union
 import warnings
 
 from azure.core.async_paging import AsyncItemPaged, AsyncList
 from azure.core.exceptions import ClientAuthenticationError, HttpResponseError, ResourceExistsError, ResourceNotFoundError, map_error
 from azure.core.pipeline import PipelineResponse
 from azure.core.pipeline.transport import AsyncHttpResponse, HttpRequest
+from azure.core.polling import AsyncLROPoller, AsyncNoPolling, AsyncPollingMethod
+from azure.core.polling.async_base_polling import AsyncLROBasePolling
 
 from ... import models as _models
 
@@ -59,9 +61,9 @@ class BoundariesOperations:
         skip_token: Optional[str] = None,
         **kwargs
     ) -> AsyncIterable["_models.BoundaryListResponse"]:
-        """Returns a list of boundaries.
+        """Returns a paginated list of boundary resources under a particular farmer.
 
-        :param farmer_id: Id of the farmer.
+        :param farmer_id: Id of the associated farmer.
         :type farmer_id: str
         :param is_primary: Is the boundary primary.
         :type is_primary: bool
@@ -105,7 +107,7 @@ class BoundariesOperations:
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2020-12-31-preview"
+        api_version = "2021-03-31-preview"
         accept = "application/json"
 
         def prepare_request(next_link=None):
@@ -179,8 +181,9 @@ class BoundariesOperations:
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
+                error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, response)
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
-                raise HttpResponseError(response=response)
+                raise HttpResponseError(response=response, model=error)
 
             return pipeline_response
 
@@ -199,7 +202,7 @@ class BoundariesOperations:
 
         :param farmer_id: Id of the farmer.
         :type farmer_id: str
-        :param body: Farm query filters.
+        :param body: Query filters.
         :type body: ~azure.farmbeats.models.SearchBoundaryQuery
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: An iterator like instance of either BoundaryListResponse or the result of cls(response)
@@ -211,7 +214,7 @@ class BoundariesOperations:
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2020-12-31-preview"
+        api_version = "2021-03-31-preview"
         content_type = "application/json"
         accept = "application/json"
 
@@ -269,8 +272,9 @@ class BoundariesOperations:
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
+                error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, response)
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
-                raise HttpResponseError(response=response)
+                raise HttpResponseError(response=response, model=error)
 
             return pipeline_response
 
@@ -298,7 +302,7 @@ class BoundariesOperations:
         skip_token: Optional[str] = None,
         **kwargs
     ) -> AsyncIterable["_models.BoundaryListResponse"]:
-        """Returns a list of boundaries across all farmers.
+        """Returns a paginated list of boundary resources across all farmers.
 
         :param is_primary: Is the boundary primary.
         :type is_primary: bool
@@ -342,7 +346,7 @@ class BoundariesOperations:
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2020-12-31-preview"
+        api_version = "2021-03-31-preview"
         accept = "application/json"
 
         def prepare_request(next_link=None):
@@ -408,8 +412,9 @@ class BoundariesOperations:
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
+                error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, response)
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
-                raise HttpResponseError(response=response)
+                raise HttpResponseError(response=response, model=error)
 
             return pipeline_response
 
@@ -425,7 +430,7 @@ class BoundariesOperations:
     ) -> AsyncIterable["_models.BoundaryListResponse"]:
         """Search for boundaries across all farmers by fields and intersecting geometry.
 
-        :param body: Farm query filters.
+        :param body: Query filters.
         :type body: ~azure.farmbeats.models.SearchBoundaryQuery
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: An iterator like instance of either BoundaryListResponse or the result of cls(response)
@@ -437,7 +442,7 @@ class BoundariesOperations:
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2020-12-31-preview"
+        api_version = "2021-03-31-preview"
         content_type = "application/json"
         accept = "application/json"
 
@@ -487,8 +492,9 @@ class BoundariesOperations:
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
+                error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, response)
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
-                raise HttpResponseError(response=response)
+                raise HttpResponseError(response=response, model=error)
 
             return pipeline_response
 
@@ -497,29 +503,202 @@ class BoundariesOperations:
         )
     search.metadata = {'url': '/boundaries'}  # type: ignore
 
+    async def get_cascade_delete_job_details(
+        self,
+        job_id: str,
+        **kwargs
+    ) -> Optional["_models.CascadeDeleteJobDetails"]:
+        """Get cascade delete job's details.
+
+        :param job_id: Id of the job.
+        :type job_id: str
+        :keyword callable cls: A custom type or function that will be passed the direct response
+        :return: CascadeDeleteJobDetails, or the result of cls(response)
+        :rtype: ~azure.farmbeats.models.CascadeDeleteJobDetails or None
+        :raises: ~azure.core.exceptions.HttpResponseError
+        """
+        cls = kwargs.pop('cls', None)  # type: ClsType[Optional["_models.CascadeDeleteJobDetails"]]
+        error_map = {
+            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
+        }
+        error_map.update(kwargs.pop('error_map', {}))
+        api_version = "2021-03-31-preview"
+        accept = "application/json"
+
+        # Construct URL
+        url = self.get_cascade_delete_job_details.metadata['url']  # type: ignore
+        path_format_arguments = {
+            'jobId': self._serialize.url("job_id", job_id, 'str'),
+        }
+        url = self._client.format_url(url, **path_format_arguments)
+
+        # Construct parameters
+        query_parameters = {}  # type: Dict[str, Any]
+        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
+
+        # Construct headers
+        header_parameters = {}  # type: Dict[str, Any]
+        header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
+
+        request = self._client.get(url, query_parameters, header_parameters)
+        pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200, 404]:
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, response)
+            raise HttpResponseError(response=response, model=error)
+
+        deserialized = None
+        if response.status_code == 200:
+            deserialized = self._deserialize('CascadeDeleteJobDetails', pipeline_response)
+
+        if cls:
+            return cls(pipeline_response, deserialized, {})
+
+        return deserialized
+    get_cascade_delete_job_details.metadata = {'url': '/boundaries/cascade-delete/{jobId}'}  # type: ignore
+
+    async def _create_cascade_delete_job_initial(
+        self,
+        job_id: str,
+        farmer_id: str,
+        boundary_id: str,
+        **kwargs
+    ) -> "_models.CascadeDeleteJobResponse":
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.CascadeDeleteJobResponse"]
+        error_map = {
+            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
+        }
+        error_map.update(kwargs.pop('error_map', {}))
+        api_version = "2021-03-31-preview"
+        accept = "application/json"
+
+        # Construct URL
+        url = self._create_cascade_delete_job_initial.metadata['url']  # type: ignore
+        path_format_arguments = {
+            'jobId': self._serialize.url("job_id", job_id, 'str'),
+        }
+        url = self._client.format_url(url, **path_format_arguments)
+
+        # Construct parameters
+        query_parameters = {}  # type: Dict[str, Any]
+        query_parameters['farmerId'] = self._serialize.query("farmer_id", farmer_id, 'str')
+        query_parameters['boundaryId'] = self._serialize.query("boundary_id", boundary_id, 'str')
+        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
+
+        # Construct headers
+        header_parameters = {}  # type: Dict[str, Any]
+        header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
+
+        request = self._client.put(url, query_parameters, header_parameters)
+        pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
+        response = pipeline_response.http_response
+
+        if response.status_code not in [202]:
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            raise HttpResponseError(response=response)
+
+        deserialized = self._deserialize('CascadeDeleteJobResponse', pipeline_response)
+
+        if cls:
+            return cls(pipeline_response, deserialized, {})
+
+        return deserialized
+    _create_cascade_delete_job_initial.metadata = {'url': '/boundaries/cascade-delete/{jobId}'}  # type: ignore
+
+    async def begin_create_cascade_delete_job(
+        self,
+        job_id: str,
+        farmer_id: str,
+        boundary_id: str,
+        **kwargs
+    ) -> AsyncLROPoller["_models.CascadeDeleteJobResponse"]:
+        """Create a cascade delete job for specified field.
+
+        :param job_id: Job ID supplied by end user.
+        :type job_id: str
+        :param farmer_id: ID of the associated farmer.
+        :type farmer_id: str
+        :param boundary_id: ID of the boundary to be deleted.
+        :type boundary_id: str
+        :keyword callable cls: A custom type or function that will be passed the direct response
+        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
+        :keyword polling: Pass in True if you'd like the AsyncLROBasePolling polling method,
+         False for no polling, or your own initialized polling object for a personal polling strategy.
+        :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
+        :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
+        :return: An instance of AsyncLROPoller that returns either CascadeDeleteJobResponse or the result of cls(response)
+        :rtype: ~azure.core.polling.AsyncLROPoller[~azure.farmbeats.models.CascadeDeleteJobResponse]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        polling = kwargs.pop('polling', False)  # type: Union[bool, AsyncPollingMethod]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.CascadeDeleteJobResponse"]
+        lro_delay = kwargs.pop(
+            'polling_interval',
+            self._config.polling_interval
+        )
+        cont_token = kwargs.pop('continuation_token', None)  # type: Optional[str]
+        if cont_token is None:
+            raw_result = await self._create_cascade_delete_job_initial(
+                job_id=job_id,
+                farmer_id=farmer_id,
+                boundary_id=boundary_id,
+                cls=lambda x,y,z: x,
+                **kwargs
+            )
+
+        kwargs.pop('error_map', None)
+        kwargs.pop('content_type', None)
+
+        def get_long_running_output(pipeline_response):
+            deserialized = self._deserialize('CascadeDeleteJobResponse', pipeline_response)
+
+            if cls:
+                return cls(pipeline_response, deserialized, {})
+            return deserialized
+
+        path_format_arguments = {
+            'jobId': self._serialize.url("job_id", job_id, 'str'),
+        }
+
+        if polling is True: polling_method = AsyncLROBasePolling(lro_delay, lro_options={'final-state-via': 'location'}, path_format_arguments=path_format_arguments,  **kwargs)
+        elif polling is False: polling_method = AsyncNoPolling()
+        else: polling_method = polling
+        if cont_token:
+            return AsyncLROPoller.from_continuation_token(
+                polling_method=polling_method,
+                continuation_token=cont_token,
+                client=self._client,
+                deserialization_callback=get_long_running_output
+            )
+        else:
+            return AsyncLROPoller(self._client, raw_result, get_long_running_output, polling_method)
+    begin_create_cascade_delete_job.metadata = {'url': '/boundaries/cascade-delete/{jobId}'}  # type: ignore
+
     async def get(
         self,
         farmer_id: str,
         boundary_id: str,
         **kwargs
-    ) -> "_models.Boundary":
-        """Returns field for the given id.
+    ) -> Optional["_models.Boundary"]:
+        """Gets a specified boundary resource under a particular farmer.
 
-        :param farmer_id: Id of the farmer.
+        :param farmer_id: Id of the associted farmer.
         :type farmer_id: str
         :param boundary_id: Id of the boundary.
         :type boundary_id: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: Boundary, or the result of cls(response)
-        :rtype: ~azure.farmbeats.models.Boundary
+        :rtype: ~azure.farmbeats.models.Boundary or None
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["_models.Boundary"]
+        cls = kwargs.pop('cls', None)  # type: ClsType[Optional["_models.Boundary"]]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2020-12-31-preview"
+        api_version = "2021-03-31-preview"
         accept = "application/json"
 
         # Construct URL
@@ -542,85 +721,20 @@ class BoundariesOperations:
         pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
 
-        if response.status_code not in [200]:
+        if response.status_code not in [200, 404]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise HttpResponseError(response=response)
+            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, response)
+            raise HttpResponseError(response=response, model=error)
 
-        deserialized = self._deserialize('Boundary', pipeline_response)
+        deserialized = None
+        if response.status_code == 200:
+            deserialized = self._deserialize('Boundary', pipeline_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})
 
         return deserialized
     get.metadata = {'url': '/farmers/{farmerId}/boundaries/{boundaryId}'}  # type: ignore
-
-    async def create(
-        self,
-        farmer_id: str,
-        boundary_id: str,
-        body: Optional["_models.Boundary"] = None,
-        **kwargs
-    ) -> "_models.Boundary":
-        """Creates new field with given request body.
-
-        :param farmer_id: Id of the associated farmer.
-        :type farmer_id: str
-        :param boundary_id: Boundary id.
-        :type boundary_id: str
-        :param body: Boundary object.
-        :type body: ~azure.farmbeats.models.Boundary
-        :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: Boundary, or the result of cls(response)
-        :rtype: ~azure.farmbeats.models.Boundary
-        :raises: ~azure.core.exceptions.HttpResponseError
-        """
-        cls = kwargs.pop('cls', None)  # type: ClsType["_models.Boundary"]
-        error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
-        }
-        error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2020-12-31-preview"
-        content_type = kwargs.pop("content_type", "application/json")
-        accept = "application/json"
-
-        # Construct URL
-        url = self.create.metadata['url']  # type: ignore
-        path_format_arguments = {
-            'farmerId': self._serialize.url("farmer_id", farmer_id, 'str'),
-            'boundaryId': self._serialize.url("boundary_id", boundary_id, 'str'),
-        }
-        url = self._client.format_url(url, **path_format_arguments)
-
-        # Construct parameters
-        query_parameters = {}  # type: Dict[str, Any]
-        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
-
-        # Construct headers
-        header_parameters = {}  # type: Dict[str, Any]
-        header_parameters['Content-Type'] = self._serialize.header("content_type", content_type, 'str')
-        header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
-
-        body_content_kwargs = {}  # type: Dict[str, Any]
-        if body is not None:
-            body_content = self._serialize.body(body, 'Boundary')
-        else:
-            body_content = None
-        body_content_kwargs['content'] = body_content
-        request = self._client.put(url, query_parameters, header_parameters, **body_content_kwargs)
-        pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
-        response = pipeline_response.http_response
-
-        if response.status_code not in [201]:
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise HttpResponseError(response=response)
-
-        deserialized = self._deserialize('Boundary', pipeline_response)
-
-        if cls:
-            return cls(pipeline_response, deserialized, {})
-
-        return deserialized
-    create.metadata = {'url': '/farmers/{farmerId}/boundaries/{boundaryId}'}  # type: ignore
 
     async def create_or_update(
         self,
@@ -629,13 +743,13 @@ class BoundariesOperations:
         body: Optional["_models.Boundary"] = None,
         **kwargs
     ) -> "_models.Boundary":
-        """Creates new field with given request body.
+        """Creates or updates a boundary resource.
 
-        :param farmer_id: Id of the farmer.
+        :param farmer_id: Id of the farmer resource.
         :type farmer_id: str
-        :param boundary_id: Id of the boundary.
+        :param boundary_id: Id of the boundary resource.
         :type boundary_id: str
-        :param body: Boundary object.
+        :param body: Boundary resource payload to create or update.
         :type body: ~azure.farmbeats.models.Boundary
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: Boundary, or the result of cls(response)
@@ -647,7 +761,7 @@ class BoundariesOperations:
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2020-12-31-preview"
+        api_version = "2021-03-31-preview"
         content_type = kwargs.pop("content_type", "application/merge-patch+json")
         accept = "application/json"
 
@@ -678,11 +792,16 @@ class BoundariesOperations:
         pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
 
-        if response.status_code not in [200]:
+        if response.status_code not in [200, 201]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise HttpResponseError(response=response)
+            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, response)
+            raise HttpResponseError(response=response, model=error)
 
-        deserialized = self._deserialize('Boundary', pipeline_response)
+        if response.status_code == 200:
+            deserialized = self._deserialize('Boundary', pipeline_response)
+
+        if response.status_code == 201:
+            deserialized = self._deserialize('Boundary', pipeline_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})
@@ -696,7 +815,7 @@ class BoundariesOperations:
         boundary_id: str,
         **kwargs
     ) -> None:
-        """Creates new field with given request body.
+        """Deletes a specified boundary resource under a particular farmer.
 
         :param farmer_id: Id of the farmer.
         :type farmer_id: str
@@ -712,7 +831,8 @@ class BoundariesOperations:
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2020-12-31-preview"
+        api_version = "2021-03-31-preview"
+        accept = "application/json"
 
         # Construct URL
         url = self.delete.metadata['url']  # type: ignore
@@ -728,14 +848,16 @@ class BoundariesOperations:
 
         # Construct headers
         header_parameters = {}  # type: Dict[str, Any]
+        header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
 
         request = self._client.delete(url, query_parameters, header_parameters)
         pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
 
-        if response.status_code not in [200]:
+        if response.status_code not in [204]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise HttpResponseError(response=response)
+            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, response)
+            raise HttpResponseError(response=response, model=error)
 
         if cls:
             return cls(pipeline_response, None, {})
@@ -746,31 +868,31 @@ class BoundariesOperations:
         self,
         farmer_id: str,
         boundary_id: str,
-        overlapping_farmer_id: str,
-        overlapping_boundary_id: str,
+        other_farmer_id: str,
+        other_boundary_id: str,
         **kwargs
-    ) -> "_models.BoundaryOverlapResponse":
-        """Returns overlapping acreage between two boundary IDs.
+    ) -> Optional["_models.BoundaryOverlapResponse"]:
+        """Returns overlapping acreage between two boundary Ids.
 
         :param farmer_id: Id of the farmer.
         :type farmer_id: str
         :param boundary_id: Id of the boundary.
         :type boundary_id: str
-        :param overlapping_farmer_id: FarmerId of the overlapping field.
-        :type overlapping_farmer_id: str
-        :param overlapping_boundary_id: Id of the overlapping boundary.
-        :type overlapping_boundary_id: str
+        :param other_farmer_id: FarmerId of the other field.
+        :type other_farmer_id: str
+        :param other_boundary_id: Id of the other boundary.
+        :type other_boundary_id: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: BoundaryOverlapResponse, or the result of cls(response)
-        :rtype: ~azure.farmbeats.models.BoundaryOverlapResponse
+        :rtype: ~azure.farmbeats.models.BoundaryOverlapResponse or None
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["_models.BoundaryOverlapResponse"]
+        cls = kwargs.pop('cls', None)  # type: ClsType[Optional["_models.BoundaryOverlapResponse"]]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2020-12-31-preview"
+        api_version = "2021-03-31-preview"
         accept = "application/json"
 
         # Construct URL
@@ -783,8 +905,8 @@ class BoundariesOperations:
 
         # Construct parameters
         query_parameters = {}  # type: Dict[str, Any]
-        query_parameters['overlappingFarmerId'] = self._serialize.query("overlapping_farmer_id", overlapping_farmer_id, 'str')
-        query_parameters['overlappingBoundaryId'] = self._serialize.query("overlapping_boundary_id", overlapping_boundary_id, 'str')
+        query_parameters['otherFarmerId'] = self._serialize.query("other_farmer_id", other_farmer_id, 'str')
+        query_parameters['otherBoundaryId'] = self._serialize.query("other_boundary_id", other_boundary_id, 'str')
         query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
 
         # Construct headers
@@ -795,11 +917,14 @@ class BoundariesOperations:
         pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
 
-        if response.status_code not in [200]:
+        if response.status_code not in [200, 404]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise HttpResponseError(response=response)
+            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, response)
+            raise HttpResponseError(response=response, model=error)
 
-        deserialized = self._deserialize('BoundaryOverlapResponse', pipeline_response)
+        deserialized = None
+        if response.status_code == 200:
+            deserialized = self._deserialize('BoundaryOverlapResponse', pipeline_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})

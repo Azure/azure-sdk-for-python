@@ -11,12 +11,14 @@ from azure.core.exceptions import ClientAuthenticationError, HttpResponseError, 
 from azure.core.paging import ItemPaged
 from azure.core.pipeline import PipelineResponse
 from azure.core.pipeline.transport import HttpRequest, HttpResponse
+from azure.core.polling import LROPoller, NoPolling, PollingMethod
+from azure.core.polling.base_polling import LROBasePolling
 
 from .. import models as _models
 
 if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
-    from typing import Any, Callable, Dict, Generic, Iterable, Optional, TypeVar
+    from typing import Any, Callable, Dict, Generic, Iterable, Optional, TypeVar, Union
 
     T = TypeVar('T')
     ClsType = Optional[Callable[[PipelineResponse[HttpRequest, HttpResponse], T, Dict[str, Any]], Any]]
@@ -46,7 +48,7 @@ class WeatherOperations(object):
     def list(
         self,
         farmer_id,  # type: str
-        field_id,  # type: str
+        boundary_id,  # type: str
         extension_id,  # type: str
         weather_data_type,  # type: str
         granularity,  # type: str
@@ -57,23 +59,23 @@ class WeatherOperations(object):
         **kwargs  # type: Any
     ):
         # type: (...) -> Iterable["_models.WeatherDataListResponse"]
-        """Returns a list of weather data for the given query filter.
+        """Returns a paginated list of weather data.
 
-        :param farmer_id: Farmer Id.
+        :param farmer_id: Farmer ID.
         :type farmer_id: str
-        :param field_id: Field Id.
-        :type field_id: str
-        :param extension_id: Id of the weather extension.
+        :param boundary_id: Boundary ID.
+        :type boundary_id: str
+        :param extension_id: ID of the weather extension.
         :type extension_id: str
         :param weather_data_type: Type of weather data (forecast/historical).
         :type weather_data_type: str
         :param granularity: Granularity of weather data (daily/hourly).
         :type granularity: str
-        :param start_date_time: Weather data start UTC date-time (inclusive), sample format: yyyy-Mm-
-         ddTHH:mm:ssZ.
+        :param start_date_time: Weather data start UTC date-time (inclusive), sample format:
+         yyyy-MM-ddTHH:mm:ssZ.
         :type start_date_time: ~datetime.datetime
-        :param end_date_time: Weather data end UTC date-time (inclusive), sample format: yyyy-Mm-
-         ddTHH:mm:ssZ.
+        :param end_date_time: Weather data end UTC date-time (inclusive), sample format:
+         yyyy-MM-ddTHH:mm:ssZ.
         :type end_date_time: ~datetime.datetime
         :param max_page_size: Maximum number of items needed (inclusive).
          Minimum = 10, Maximum = 1000, Default value = 50.
@@ -90,7 +92,7 @@ class WeatherOperations(object):
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2020-12-31-preview"
+        api_version = "2021-03-31-preview"
         accept = "application/json"
 
         def prepare_request(next_link=None):
@@ -104,8 +106,8 @@ class WeatherOperations(object):
                 # Construct parameters
                 query_parameters = {}  # type: Dict[str, Any]
                 query_parameters['farmerId'] = self._serialize.query("farmer_id", farmer_id, 'str')
-                query_parameters['fieldId'] = self._serialize.query("field_id", field_id, 'str')
-                query_parameters['extensionId'] = self._serialize.query("extension_id", extension_id, 'str')
+                query_parameters['boundaryId'] = self._serialize.query("boundary_id", boundary_id, 'str')
+                query_parameters['extensionId'] = self._serialize.query("extension_id", extension_id, 'str', pattern=r'^[A-za-z]{3,50}[.][A-za-z]{3,100}$')
                 query_parameters['weatherDataType'] = self._serialize.query("weather_data_type", weather_data_type, 'str', max_length=50, min_length=0)
                 query_parameters['granularity'] = self._serialize.query("granularity", granularity, 'str', max_length=50, min_length=0)
                 if start_date_time is not None:
@@ -139,8 +141,9 @@ class WeatherOperations(object):
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
+                error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, response)
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
-                raise HttpResponseError(response=response)
+                raise HttpResponseError(response=response, model=error)
 
             return pipeline_response
 
@@ -148,3 +151,351 @@ class WeatherOperations(object):
             get_next, extract_data
         )
     list.metadata = {'url': '/weather'}  # type: ignore
+
+    def _create_data_ingestion_job_initial(
+        self,
+        job_id,  # type: str
+        body=None,  # type: Optional["_models.WeatherIngestionJobRequest"]
+        **kwargs  # type: Any
+    ):
+        # type: (...) -> "_models.WeatherIngestionJobResponse"
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.WeatherIngestionJobResponse"]
+        error_map = {
+            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
+        }
+        error_map.update(kwargs.pop('error_map', {}))
+        api_version = "2021-03-31-preview"
+        content_type = kwargs.pop("content_type", "application/json")
+        accept = "application/json"
+
+        # Construct URL
+        url = self._create_data_ingestion_job_initial.metadata['url']  # type: ignore
+        path_format_arguments = {
+            'jobId': self._serialize.url("job_id", job_id, 'str'),
+        }
+        url = self._client.format_url(url, **path_format_arguments)
+
+        # Construct parameters
+        query_parameters = {}  # type: Dict[str, Any]
+        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
+
+        # Construct headers
+        header_parameters = {}  # type: Dict[str, Any]
+        header_parameters['Content-Type'] = self._serialize.header("content_type", content_type, 'str')
+        header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
+
+        body_content_kwargs = {}  # type: Dict[str, Any]
+        if body is not None:
+            body_content = self._serialize.body(body, 'WeatherIngestionJobRequest')
+        else:
+            body_content = None
+        body_content_kwargs['content'] = body_content
+        request = self._client.put(url, query_parameters, header_parameters, **body_content_kwargs)
+        pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
+        response = pipeline_response.http_response
+
+        if response.status_code not in [202]:
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            raise HttpResponseError(response=response)
+
+        deserialized = self._deserialize('WeatherIngestionJobResponse', pipeline_response)
+
+        if cls:
+            return cls(pipeline_response, deserialized, {})
+
+        return deserialized
+    _create_data_ingestion_job_initial.metadata = {'url': '/weather/ingest-data/{jobId}'}  # type: ignore
+
+    def begin_create_data_ingestion_job(
+        self,
+        job_id,  # type: str
+        body=None,  # type: Optional["_models.WeatherIngestionJobRequest"]
+        **kwargs  # type: Any
+    ):
+        # type: (...) -> LROPoller["_models.WeatherIngestionJobResponse"]
+        """Create a weather data ingestion job.
+
+        :param job_id: Job id supplied by user.
+        :type job_id: str
+        :param body: Job parameters supplied by user.
+        :type body: ~azure.farmbeats.models.WeatherIngestionJobRequest
+        :keyword callable cls: A custom type or function that will be passed the direct response
+        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
+        :keyword polling: Pass in True if you'd like the LROBasePolling polling method,
+         False for no polling, or your own initialized polling object for a personal polling strategy.
+        :paramtype polling: bool or ~azure.core.polling.PollingMethod
+        :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
+        :return: An instance of LROPoller that returns either WeatherIngestionJobResponse or the result of cls(response)
+        :rtype: ~azure.core.polling.LROPoller[~azure.farmbeats.models.WeatherIngestionJobResponse]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        polling = kwargs.pop('polling', False)  # type: Union[bool, PollingMethod]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.WeatherIngestionJobResponse"]
+        lro_delay = kwargs.pop(
+            'polling_interval',
+            self._config.polling_interval
+        )
+        cont_token = kwargs.pop('continuation_token', None)  # type: Optional[str]
+        if cont_token is None:
+            raw_result = self._create_data_ingestion_job_initial(
+                job_id=job_id,
+                body=body,
+                cls=lambda x,y,z: x,
+                **kwargs
+            )
+
+        kwargs.pop('error_map', None)
+        kwargs.pop('content_type', None)
+
+        def get_long_running_output(pipeline_response):
+            deserialized = self._deserialize('WeatherIngestionJobResponse', pipeline_response)
+
+            if cls:
+                return cls(pipeline_response, deserialized, {})
+            return deserialized
+
+        path_format_arguments = {
+            'jobId': self._serialize.url("job_id", job_id, 'str'),
+        }
+
+        if polling is True: polling_method = LROBasePolling(lro_delay, lro_options={'final-state-via': 'location'}, path_format_arguments=path_format_arguments,  **kwargs)
+        elif polling is False: polling_method = NoPolling()
+        else: polling_method = polling
+        if cont_token:
+            return LROPoller.from_continuation_token(
+                polling_method=polling_method,
+                continuation_token=cont_token,
+                client=self._client,
+                deserialization_callback=get_long_running_output
+            )
+        else:
+            return LROPoller(self._client, raw_result, get_long_running_output, polling_method)
+    begin_create_data_ingestion_job.metadata = {'url': '/weather/ingest-data/{jobId}'}  # type: ignore
+
+    def get_data_ingestion_job_details(
+        self,
+        job_id,  # type: str
+        **kwargs  # type: Any
+    ):
+        # type: (...) -> "_models.WeatherIngestionJobDetails"
+        """Get weather ingestion job's details.
+
+        :param job_id: Id of the job.
+        :type job_id: str
+        :keyword callable cls: A custom type or function that will be passed the direct response
+        :return: WeatherIngestionJobDetails, or the result of cls(response)
+        :rtype: ~azure.farmbeats.models.WeatherIngestionJobDetails
+        :raises: ~azure.core.exceptions.HttpResponseError
+        """
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.WeatherIngestionJobDetails"]
+        error_map = {
+            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
+        }
+        error_map.update(kwargs.pop('error_map', {}))
+        api_version = "2021-03-31-preview"
+        accept = "application/json"
+
+        # Construct URL
+        url = self.get_data_ingestion_job_details.metadata['url']  # type: ignore
+        path_format_arguments = {
+            'jobId': self._serialize.url("job_id", job_id, 'str'),
+        }
+        url = self._client.format_url(url, **path_format_arguments)
+
+        # Construct parameters
+        query_parameters = {}  # type: Dict[str, Any]
+        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
+
+        # Construct headers
+        header_parameters = {}  # type: Dict[str, Any]
+        header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
+
+        request = self._client.get(url, query_parameters, header_parameters)
+        pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            raise HttpResponseError(response=response)
+
+        deserialized = self._deserialize('WeatherIngestionJobDetails', pipeline_response)
+
+        if cls:
+            return cls(pipeline_response, deserialized, {})
+
+        return deserialized
+    get_data_ingestion_job_details.metadata = {'url': '/weather/ingest-data/{jobId}'}  # type: ignore
+
+    def _create_data_delete_job_initial(
+        self,
+        job_id,  # type: str
+        body=None,  # type: Optional["_models.WeatherDataDeleteJobRequest"]
+        **kwargs  # type: Any
+    ):
+        # type: (...) -> "_models.WeatherDataDeleteJobResponse"
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.WeatherDataDeleteJobResponse"]
+        error_map = {
+            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
+        }
+        error_map.update(kwargs.pop('error_map', {}))
+        api_version = "2021-03-31-preview"
+        content_type = kwargs.pop("content_type", "application/json")
+        accept = "application/json"
+
+        # Construct URL
+        url = self._create_data_delete_job_initial.metadata['url']  # type: ignore
+        path_format_arguments = {
+            'jobId': self._serialize.url("job_id", job_id, 'str'),
+        }
+        url = self._client.format_url(url, **path_format_arguments)
+
+        # Construct parameters
+        query_parameters = {}  # type: Dict[str, Any]
+        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
+
+        # Construct headers
+        header_parameters = {}  # type: Dict[str, Any]
+        header_parameters['Content-Type'] = self._serialize.header("content_type", content_type, 'str')
+        header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
+
+        body_content_kwargs = {}  # type: Dict[str, Any]
+        if body is not None:
+            body_content = self._serialize.body(body, 'WeatherDataDeleteJobRequest')
+        else:
+            body_content = None
+        body_content_kwargs['content'] = body_content
+        request = self._client.put(url, query_parameters, header_parameters, **body_content_kwargs)
+        pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
+        response = pipeline_response.http_response
+
+        if response.status_code not in [202]:
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            raise HttpResponseError(response=response)
+
+        deserialized = self._deserialize('WeatherDataDeleteJobResponse', pipeline_response)
+
+        if cls:
+            return cls(pipeline_response, deserialized, {})
+
+        return deserialized
+    _create_data_delete_job_initial.metadata = {'url': '/weather/delete-data/{jobId}'}  # type: ignore
+
+    def begin_create_data_delete_job(
+        self,
+        job_id,  # type: str
+        body=None,  # type: Optional["_models.WeatherDataDeleteJobRequest"]
+        **kwargs  # type: Any
+    ):
+        # type: (...) -> LROPoller["_models.WeatherDataDeleteJobResponse"]
+        """Create a weather data delete job.
+
+        :param job_id: Job Id supplied by end user.
+        :type job_id: str
+        :param body: Job parameters supplied by user.
+        :type body: ~azure.farmbeats.models.WeatherDataDeleteJobRequest
+        :keyword callable cls: A custom type or function that will be passed the direct response
+        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
+        :keyword polling: Pass in True if you'd like the LROBasePolling polling method,
+         False for no polling, or your own initialized polling object for a personal polling strategy.
+        :paramtype polling: bool or ~azure.core.polling.PollingMethod
+        :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
+        :return: An instance of LROPoller that returns either WeatherDataDeleteJobResponse or the result of cls(response)
+        :rtype: ~azure.core.polling.LROPoller[~azure.farmbeats.models.WeatherDataDeleteJobResponse]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        polling = kwargs.pop('polling', False)  # type: Union[bool, PollingMethod]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.WeatherDataDeleteJobResponse"]
+        lro_delay = kwargs.pop(
+            'polling_interval',
+            self._config.polling_interval
+        )
+        cont_token = kwargs.pop('continuation_token', None)  # type: Optional[str]
+        if cont_token is None:
+            raw_result = self._create_data_delete_job_initial(
+                job_id=job_id,
+                body=body,
+                cls=lambda x,y,z: x,
+                **kwargs
+            )
+
+        kwargs.pop('error_map', None)
+        kwargs.pop('content_type', None)
+
+        def get_long_running_output(pipeline_response):
+            deserialized = self._deserialize('WeatherDataDeleteJobResponse', pipeline_response)
+
+            if cls:
+                return cls(pipeline_response, deserialized, {})
+            return deserialized
+
+        path_format_arguments = {
+            'jobId': self._serialize.url("job_id", job_id, 'str'),
+        }
+
+        if polling is True: polling_method = LROBasePolling(lro_delay, lro_options={'final-state-via': 'location'}, path_format_arguments=path_format_arguments,  **kwargs)
+        elif polling is False: polling_method = NoPolling()
+        else: polling_method = polling
+        if cont_token:
+            return LROPoller.from_continuation_token(
+                polling_method=polling_method,
+                continuation_token=cont_token,
+                client=self._client,
+                deserialization_callback=get_long_running_output
+            )
+        else:
+            return LROPoller(self._client, raw_result, get_long_running_output, polling_method)
+    begin_create_data_delete_job.metadata = {'url': '/weather/delete-data/{jobId}'}  # type: ignore
+
+    def get_data_delete_job_details(
+        self,
+        job_id,  # type: str
+        **kwargs  # type: Any
+    ):
+        # type: (...) -> "_models.WeatherDataDeleteJobDetails"
+        """Get weather data delete job's details.
+
+        :param job_id: Id of the job.
+        :type job_id: str
+        :keyword callable cls: A custom type or function that will be passed the direct response
+        :return: WeatherDataDeleteJobDetails, or the result of cls(response)
+        :rtype: ~azure.farmbeats.models.WeatherDataDeleteJobDetails
+        :raises: ~azure.core.exceptions.HttpResponseError
+        """
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.WeatherDataDeleteJobDetails"]
+        error_map = {
+            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
+        }
+        error_map.update(kwargs.pop('error_map', {}))
+        api_version = "2021-03-31-preview"
+        accept = "application/json"
+
+        # Construct URL
+        url = self.get_data_delete_job_details.metadata['url']  # type: ignore
+        path_format_arguments = {
+            'jobId': self._serialize.url("job_id", job_id, 'str'),
+        }
+        url = self._client.format_url(url, **path_format_arguments)
+
+        # Construct parameters
+        query_parameters = {}  # type: Dict[str, Any]
+        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
+
+        # Construct headers
+        header_parameters = {}  # type: Dict[str, Any]
+        header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
+
+        request = self._client.get(url, query_parameters, header_parameters)
+        pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            raise HttpResponseError(response=response)
+
+        deserialized = self._deserialize('WeatherDataDeleteJobDetails', pipeline_response)
+
+        if cls:
+            return cls(pipeline_response, deserialized, {})
+
+        return deserialized
+    get_data_delete_job_details.metadata = {'url': '/weather/delete-data/{jobId}'}  # type: ignore

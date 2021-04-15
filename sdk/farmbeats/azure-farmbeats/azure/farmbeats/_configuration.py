@@ -38,7 +38,7 @@ class FarmBeatsClientConfiguration(Configuration):
         super(FarmBeatsClientConfiguration, self).__init__(**kwargs)
 
         self.credential = credential
-        self.api_version = "2020-12-31-preview"
+        self.api_version = "2021-03-31-preview"
         self.credential_scopes = kwargs.pop('credential_scopes', [])
         kwargs.setdefault('sdk_moniker', 'farmbeatsclient/{}'.format(VERSION))
         self._configure(**kwargs)

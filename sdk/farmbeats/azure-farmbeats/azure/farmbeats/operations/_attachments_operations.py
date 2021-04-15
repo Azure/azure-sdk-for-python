@@ -16,7 +16,7 @@ from .. import models as _models
 
 if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
-    from typing import Any, Callable, Dict, Generic, IO, Iterable, List, Optional, TypeVar
+    from typing import Any, Callable, Dict, Generic, IO, Iterable, List, Optional, TypeVar, Union
 
     T = TypeVar('T')
     ClsType = Optional[Callable[[PipelineResponse[HttpRequest, HttpResponse], T, Dict[str, Any]], Any]]
@@ -61,7 +61,7 @@ class AttachmentsOperations(object):
         **kwargs  # type: Any
     ):
         # type: (...) -> Iterable["_models.AttachmentListResponse"]
-        """Returns a list of attachments.
+        """Returns a paginated list of attachment resources under a particular farmer.
 
         :param farmer_id: Id of the associated farmer.
         :type farmer_id: str
@@ -101,7 +101,7 @@ class AttachmentsOperations(object):
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2020-12-31-preview"
+        api_version = "2021-03-31-preview"
         accept = "application/json"
 
         def prepare_request(next_link=None):
@@ -169,8 +169,9 @@ class AttachmentsOperations(object):
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
+                error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, response)
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
-                raise HttpResponseError(response=response)
+                raise HttpResponseError(response=response, model=error)
 
             return pipeline_response
 
@@ -185,24 +186,24 @@ class AttachmentsOperations(object):
         attachment_id,  # type: str
         **kwargs  # type: Any
     ):
-        # type: (...) -> "_models.Attachment"
-        """Returns attachment for the given id.
+        # type: (...) -> Optional["_models.Attachment"]
+        """Gets a specified attachment resource under a particular farmer.
 
-        :param farmer_id: Id of the associated farmer.
+        :param farmer_id: Id of the associted farmer.
         :type farmer_id: str
-        :param attachment_id: Id of the attachment object.
+        :param attachment_id: Id of the attachment.
         :type attachment_id: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: Attachment, or the result of cls(response)
-        :rtype: ~azure.farmbeats.models.Attachment
+        :rtype: ~azure.farmbeats.models.Attachment or None
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["_models.Attachment"]
+        cls = kwargs.pop('cls', None)  # type: ClsType[Optional["_models.Attachment"]]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2020-12-31-preview"
+        api_version = "2021-03-31-preview"
         accept = "application/json"
 
         # Construct URL
@@ -225,130 +226,20 @@ class AttachmentsOperations(object):
         pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
 
-        if response.status_code not in [200]:
+        if response.status_code not in [200, 404]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise HttpResponseError(response=response)
+            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, response)
+            raise HttpResponseError(response=response, model=error)
 
-        deserialized = self._deserialize('Attachment', pipeline_response)
+        deserialized = None
+        if response.status_code == 200:
+            deserialized = self._deserialize('Attachment', pipeline_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})
 
         return deserialized
     get.metadata = {'url': '/farmers/{farmerId}/attachments/{attachmentId}'}  # type: ignore
-
-    def create(
-        self,
-        farmer_id,  # type: str
-        attachment_id,  # type: str
-        file,  # type: IO
-        farmer_id1=None,  # type: Optional[str]
-        resource_id=None,  # type: Optional[str]
-        resource_type=None,  # type: Optional[str]
-        original_file_name=None,  # type: Optional[str]
-        id=None,  # type: Optional[str]
-        status=None,  # type: Optional[str]
-        created_date_time=None,  # type: Optional[str]
-        modified_date_time=None,  # type: Optional[str]
-        name=None,  # type: Optional[str]
-        description=None,  # type: Optional[str]
-        e_tag=None,  # type: Optional[str]
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> "_models.Attachment"
-        """Creates new attachment with given request body.
-
-        :param farmer_id: Id of the associated farmer.
-        :type farmer_id: str
-        :param attachment_id: Attachment id.
-        :type attachment_id: str
-        :param file: File of size upto 5mb.
-        :type file: IO
-        :param farmer_id1: Farmer id for this attachment.
-        :type farmer_id1: str
-        :param resource_id: Associated Resource id for this attachment.
-        :type resource_id: str
-        :param resource_type: Associated Resource type for this attachment
-         i.e. Farmer, Farm, Field, SeasonalField, Boundary, FarmOperationApplicationData, HarvestData,
-         TillageData, PlantingData.
-        :type resource_type: str
-        :param original_file_name: Original File Name for this attachment.
-        :type original_file_name: str
-        :param id: Unique id.
-        :type id: str
-        :param status: Status of the resource.
-        :type status: str
-        :param created_date_time: Date when resource was created.
-        :type created_date_time: str
-        :param modified_date_time: Date when resource was last modified.
-        :type modified_date_time: str
-        :param name: Name to identify resource.
-        :type name: str
-        :param description: Textual description of resource.
-        :type description: str
-        :param e_tag: The ETag value to implement optimistic concurrency.
-        :type e_tag: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: Attachment, or the result of cls(response)
-        :rtype: ~azure.farmbeats.models.Attachment
-        :raises: ~azure.core.exceptions.HttpResponseError
-        """
-        cls = kwargs.pop('cls', None)  # type: ClsType["_models.Attachment"]
-        error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
-        }
-        error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2020-12-31-preview"
-        content_type = kwargs.pop("content_type", "multipart/form-data")
-        accept = "application/json"
-
-        # Construct URL
-        url = self.create.metadata['url']  # type: ignore
-        path_format_arguments = {
-            'farmerId': self._serialize.url("farmer_id", farmer_id, 'str'),
-            'attachmentId': self._serialize.url("attachment_id", attachment_id, 'str'),
-        }
-        url = self._client.format_url(url, **path_format_arguments)
-
-        # Construct parameters
-        query_parameters = {}  # type: Dict[str, Any]
-        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
-
-        # Construct headers
-        header_parameters = {}  # type: Dict[str, Any]
-        header_parameters['Content-Type'] = self._serialize.header("content_type", content_type, 'str')
-        header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
-
-        # Construct form data
-        _form_content = {
-            'file': file,
-            'FarmerId': farmer_id1,
-            'ResourceId': resource_id,
-            'ResourceType': resource_type,
-            'OriginalFileName': original_file_name,
-            'Id': id,
-            'Status': status,
-            'CreatedDateTime': created_date_time,
-            'ModifiedDateTime': modified_date_time,
-            'Name': name,
-            'Description': description,
-            'ETag': e_tag,
-        }
-        request = self._client.put(url, query_parameters, header_parameters, form_content=_form_content)
-        pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
-        response = pipeline_response.http_response
-
-        if response.status_code not in [201]:
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise HttpResponseError(response=response)
-
-        deserialized = self._deserialize('Attachment', pipeline_response)
-
-        if cls:
-            return cls(pipeline_response, deserialized, {})
-
-        return deserialized
-    create.metadata = {'url': '/farmers/{farmerId}/attachments/{attachmentId}'}  # type: ignore
 
     def create_or_update(
         self,
@@ -369,13 +260,13 @@ class AttachmentsOperations(object):
         **kwargs  # type: Any
     ):
         # type: (...) -> "_models.Attachment"
-        """Updates Attachment for given attachment Id.
+        """Creates or updates an attachment resource under a particular farmer.
 
-        :param farmer_id: Id of the associated farmer.
+        :param farmer_id: Id of the associated farmer resource.
         :type farmer_id: str
-        :param attachment_id: Id of attachment that need to be updated.
+        :param attachment_id: Id of the attachment resource.
         :type attachment_id: str
-        :param file: File of size upto 5mb.
+        :param file: File to be uploaded.
         :type file: IO
         :param farmer_id1: Farmer id for this attachment.
         :type farmer_id1: str
@@ -411,7 +302,7 @@ class AttachmentsOperations(object):
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2020-12-31-preview"
+        api_version = "2021-03-31-preview"
         content_type = kwargs.pop("content_type", "multipart/form-data")
         accept = "application/json"
 
@@ -451,11 +342,16 @@ class AttachmentsOperations(object):
         pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
 
-        if response.status_code not in [200]:
+        if response.status_code not in [200, 201]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise HttpResponseError(response=response)
+            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, response)
+            raise HttpResponseError(response=response, model=error)
 
-        deserialized = self._deserialize('Attachment', pipeline_response)
+        if response.status_code == 200:
+            deserialized = self._deserialize('Attachment', pipeline_response)
+
+        if response.status_code == 201:
+            deserialized = self._deserialize('Attachment', pipeline_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})
@@ -470,11 +366,11 @@ class AttachmentsOperations(object):
         **kwargs  # type: Any
     ):
         # type: (...) -> None
-        """Deletes Attachment for given attachment id.
+        """Deletes a specified attachment resource under a particular farmer.
 
-        :param farmer_id: Id of the associated farmer.
+        :param farmer_id: Id of the farmer.
         :type farmer_id: str
-        :param attachment_id: Id of attachment to be deleted.
+        :param attachment_id: Id of the attachment.
         :type attachment_id: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: None, or the result of cls(response)
@@ -486,7 +382,8 @@ class AttachmentsOperations(object):
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2020-12-31-preview"
+        api_version = "2021-03-31-preview"
+        accept = "application/json"
 
         # Construct URL
         url = self.delete.metadata['url']  # type: ignore
@@ -502,14 +399,16 @@ class AttachmentsOperations(object):
 
         # Construct headers
         header_parameters = {}  # type: Dict[str, Any]
+        header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
 
         request = self._client.delete(url, query_parameters, header_parameters)
         pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
 
-        if response.status_code not in [200]:
+        if response.status_code not in [204]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise HttpResponseError(response=response)
+            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, response)
+            raise HttpResponseError(response=response, model=error)
 
         if cls:
             return cls(pipeline_response, None, {})
@@ -539,7 +438,7 @@ class AttachmentsOperations(object):
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2020-12-31-preview"
+        api_version = "2021-03-31-preview"
         accept = "application/octet-stream, application/json"
 
         # Construct URL
@@ -573,4 +472,4 @@ class AttachmentsOperations(object):
             return cls(pipeline_response, deserialized, {})
 
         return deserialized
-    download.metadata = {'url': '/farmers/{farmerId}/attachments/{attachmentId}/:download'}  # type: ignore
+    download.metadata = {'url': '/farmers/{farmerId}/attachments/{attachmentId}/file'}  # type: ignore

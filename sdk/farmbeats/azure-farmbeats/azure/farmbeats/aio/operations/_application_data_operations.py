@@ -4,7 +4,7 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 import datetime
-from typing import Any, AsyncIterable, Callable, Dict, Generic, List, Optional, TypeVar
+from typing import Any, AsyncIterable, Callable, Dict, Generic, List, Optional, TypeVar, Union
 import warnings
 
 from azure.core.async_paging import AsyncItemPaged, AsyncList
@@ -39,251 +39,6 @@ class ApplicationDataOperations:
         self._deserialize = deserializer
         self._config = config
 
-    async def get(
-        self,
-        application_data_id: str,
-        farmer_id: str,
-        **kwargs
-    ) -> "_models.ApplicationData":
-        """Get ApplicationData object with given id and farmer id.
-
-        :param application_data_id: ApplicationData id.
-        :type application_data_id: str
-        :param farmer_id: Farmer id.
-        :type farmer_id: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: ApplicationData, or the result of cls(response)
-        :rtype: ~azure.farmbeats.models.ApplicationData
-        :raises: ~azure.core.exceptions.HttpResponseError
-        """
-        cls = kwargs.pop('cls', None)  # type: ClsType["_models.ApplicationData"]
-        error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
-        }
-        error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2020-12-31-preview"
-        accept = "application/json"
-
-        # Construct URL
-        url = self.get.metadata['url']  # type: ignore
-        path_format_arguments = {
-            'applicationDataId': self._serialize.url("application_data_id", application_data_id, 'str'),
-            'farmerId': self._serialize.url("farmer_id", farmer_id, 'str'),
-        }
-        url = self._client.format_url(url, **path_format_arguments)
-
-        # Construct parameters
-        query_parameters = {}  # type: Dict[str, Any]
-        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
-
-        # Construct headers
-        header_parameters = {}  # type: Dict[str, Any]
-        header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
-
-        request = self._client.get(url, query_parameters, header_parameters)
-        pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
-        response = pipeline_response.http_response
-
-        if response.status_code not in [200]:
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise HttpResponseError(response=response)
-
-        deserialized = self._deserialize('ApplicationData', pipeline_response)
-
-        if cls:
-            return cls(pipeline_response, deserialized, {})
-
-        return deserialized
-    get.metadata = {'url': '/farmers/{farmerId}/applicationData/{applicationDataId}'}  # type: ignore
-
-    async def create(
-        self,
-        farmer_id: str,
-        application_data_id: str,
-        body: Optional["_models.ApplicationData"] = None,
-        **kwargs
-    ) -> "_models.ApplicationData":
-        """Creates new ApplicationData object with given request body.
-
-        :param farmer_id: Id of the associated farmer.
-        :type farmer_id: str
-        :param application_data_id: ApplicationData id.
-        :type application_data_id: str
-        :param body: ApplicationData object.
-        :type body: ~azure.farmbeats.models.ApplicationData
-        :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: ApplicationData, or the result of cls(response)
-        :rtype: ~azure.farmbeats.models.ApplicationData
-        :raises: ~azure.core.exceptions.HttpResponseError
-        """
-        cls = kwargs.pop('cls', None)  # type: ClsType["_models.ApplicationData"]
-        error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
-        }
-        error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2020-12-31-preview"
-        content_type = kwargs.pop("content_type", "application/json")
-        accept = "application/json"
-
-        # Construct URL
-        url = self.create.metadata['url']  # type: ignore
-        path_format_arguments = {
-            'farmerId': self._serialize.url("farmer_id", farmer_id, 'str'),
-            'applicationDataId': self._serialize.url("application_data_id", application_data_id, 'str'),
-        }
-        url = self._client.format_url(url, **path_format_arguments)
-
-        # Construct parameters
-        query_parameters = {}  # type: Dict[str, Any]
-        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
-
-        # Construct headers
-        header_parameters = {}  # type: Dict[str, Any]
-        header_parameters['Content-Type'] = self._serialize.header("content_type", content_type, 'str')
-        header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
-
-        body_content_kwargs = {}  # type: Dict[str, Any]
-        if body is not None:
-            body_content = self._serialize.body(body, 'ApplicationData')
-        else:
-            body_content = None
-        body_content_kwargs['content'] = body_content
-        request = self._client.put(url, query_parameters, header_parameters, **body_content_kwargs)
-        pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
-        response = pipeline_response.http_response
-
-        if response.status_code not in [201]:
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise HttpResponseError(response=response)
-
-        deserialized = self._deserialize('ApplicationData', pipeline_response)
-
-        if cls:
-            return cls(pipeline_response, deserialized, {})
-
-        return deserialized
-    create.metadata = {'url': '/farmers/{farmerId}/applicationData/{applicationDataId}'}  # type: ignore
-
-    async def create_or_update(
-        self,
-        farmer_id: str,
-        application_data_id: str,
-        body: Optional["_models.ApplicationData"] = None,
-        **kwargs
-    ) -> "_models.ApplicationData":
-        """Updates ApplicationData object with given request body.
-
-        :param farmer_id: Id of the farmer.
-        :type farmer_id: str
-        :param application_data_id: Id of the ApplicationData.
-        :type application_data_id: str
-        :param body: ApplicationData object.
-        :type body: ~azure.farmbeats.models.ApplicationData
-        :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: ApplicationData, or the result of cls(response)
-        :rtype: ~azure.farmbeats.models.ApplicationData
-        :raises: ~azure.core.exceptions.HttpResponseError
-        """
-        cls = kwargs.pop('cls', None)  # type: ClsType["_models.ApplicationData"]
-        error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
-        }
-        error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2020-12-31-preview"
-        content_type = kwargs.pop("content_type", "application/merge-patch+json")
-        accept = "application/json"
-
-        # Construct URL
-        url = self.create_or_update.metadata['url']  # type: ignore
-        path_format_arguments = {
-            'farmerId': self._serialize.url("farmer_id", farmer_id, 'str'),
-            'applicationDataId': self._serialize.url("application_data_id", application_data_id, 'str'),
-        }
-        url = self._client.format_url(url, **path_format_arguments)
-
-        # Construct parameters
-        query_parameters = {}  # type: Dict[str, Any]
-        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
-
-        # Construct headers
-        header_parameters = {}  # type: Dict[str, Any]
-        header_parameters['Content-Type'] = self._serialize.header("content_type", content_type, 'str')
-        header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
-
-        body_content_kwargs = {}  # type: Dict[str, Any]
-        if body is not None:
-            body_content = self._serialize.body(body, 'ApplicationData')
-        else:
-            body_content = None
-        body_content_kwargs['content'] = body_content
-        request = self._client.patch(url, query_parameters, header_parameters, **body_content_kwargs)
-        pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
-        response = pipeline_response.http_response
-
-        if response.status_code not in [200]:
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise HttpResponseError(response=response)
-
-        deserialized = self._deserialize('ApplicationData', pipeline_response)
-
-        if cls:
-            return cls(pipeline_response, deserialized, {})
-
-        return deserialized
-    create_or_update.metadata = {'url': '/farmers/{farmerId}/applicationData/{applicationDataId}'}  # type: ignore
-
-    async def delete(
-        self,
-        farmer_id: str,
-        application_data_id: str,
-        **kwargs
-    ) -> None:
-        """Deletes ApplicationData object associated with given id.
-
-        :param farmer_id: Id of the associated farmer.
-        :type farmer_id: str
-        :param application_data_id: Id of the ApplicationData.
-        :type application_data_id: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: None, or the result of cls(response)
-        :rtype: None
-        :raises: ~azure.core.exceptions.HttpResponseError
-        """
-        cls = kwargs.pop('cls', None)  # type: ClsType[None]
-        error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
-        }
-        error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2020-12-31-preview"
-
-        # Construct URL
-        url = self.delete.metadata['url']  # type: ignore
-        path_format_arguments = {
-            'farmerId': self._serialize.url("farmer_id", farmer_id, 'str'),
-            'applicationDataId': self._serialize.url("application_data_id", application_data_id, 'str'),
-        }
-        url = self._client.format_url(url, **path_format_arguments)
-
-        # Construct parameters
-        query_parameters = {}  # type: Dict[str, Any]
-        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
-
-        # Construct headers
-        header_parameters = {}  # type: Dict[str, Any]
-
-        request = self._client.delete(url, query_parameters, header_parameters)
-        pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
-        response = pipeline_response.http_response
-
-        if response.status_code not in [200]:
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise HttpResponseError(response=response)
-
-        if cls:
-            return cls(pipeline_response, None, {})
-
-    delete.metadata = {'url': '/farmers/{farmerId}/applicationData/{applicationDataId}'}  # type: ignore
-
     def list_by_farmer_id(
         self,
         farmer_id: str,
@@ -314,39 +69,49 @@ class ApplicationDataOperations:
         skip_token: Optional[str] = None,
         **kwargs
     ) -> AsyncIterable["_models.ApplicationDataListResponse"]:
-        """Returns a list of ApplicationData documents.
+        """Returns a paginated list of application data resources under a particular farm.
 
-        :param farmer_id: Id of the associated farmer.
+        :param farmer_id: ID of the associated farmer.
         :type farmer_id: str
-        :param min_avg_material: Minimum AvgMaterial value(inclusive).
+        :param min_avg_material: Minimum average amount of material applied during the application
+         (inclusive).
         :type min_avg_material: float
-        :param max_avg_material: Maximum AvgMaterial value (inclusive).
+        :param max_avg_material: Maximum average amount of material applied during the application
+         (inclusive).
         :type max_avg_material: float
-        :param min_total_material: Minimum TotalMaterial value(inclusive).
+        :param min_total_material: Minimum total amount of material applied during the application
+         (inclusive).
         :type min_total_material: float
-        :param max_total_material: Maximum TotalMaterial value (inclusive).
+        :param max_total_material: Maximum total amount of material applied during the application
+         (inclusive).
         :type max_total_material: float
-        :param sources: Source of the operation data.
+        :param sources: Sources of the operation data.
         :type sources: list[str]
-        :param associated_boundary_ids: Boundary ids associated with operation data.
+        :param associated_boundary_ids: Boundary IDs associated with operation data.
         :type associated_boundary_ids: list[str]
-        :param operation_boundary_ids: Operation boundary ids associated with operation data.
+        :param operation_boundary_ids: Operation boundary IDs associated with operation data.
         :type operation_boundary_ids: list[str]
-        :param min_operation_start_date_time: Minimum operation StartDateTime (inclusive).
+        :param min_operation_start_date_time: Minimum start date-time of the operation data, sample
+         format: yyyy-MM-ddTHH:mm:ssZ (inclusive).
         :type min_operation_start_date_time: ~datetime.datetime
-        :param max_operation_start_date_time: Maximum operation StartDateTime (inclusive).
+        :param max_operation_start_date_time: Maximum start date-time of the operation data, sample
+         format: yyyy-MM-ddTHH:mm:ssZ (inclusive).
         :type max_operation_start_date_time: ~datetime.datetime
-        :param min_operation_end_date_time: Minimum operation EndDateTime (inclusive).
+        :param min_operation_end_date_time: Minimum end date-time of the operation data, sample format:
+         yyyy-MM-ddTHH:mm:ssZ (inclusive).
         :type min_operation_end_date_time: ~datetime.datetime
-        :param max_operation_end_date_time: Maximum operation EndDateTime (inclusive).
+        :param max_operation_end_date_time: Maximum end date-time of the operation data, sample format:
+         yyyy-MM-ddTHH:mm:ssZ (inclusive).
         :type max_operation_end_date_time: ~datetime.datetime
-        :param min_operation_modified_date_time: Minimum OperationModifiedDateTime (inclusive).
+        :param min_operation_modified_date_time: Minimum modified date-time of the operation data,
+         sample format: yyyy-MM-ddTHH:mm:ssZ (inclusive).
         :type min_operation_modified_date_time: ~datetime.datetime
-        :param max_operation_modified_date_time: Maximum OperationModifiedDateTime (inclusive).
+        :param max_operation_modified_date_time: Maximum modified date-time of the operation data,
+         sample format: yyyy-MM-ddTHH:mm:ssZ (inclusive).
         :type max_operation_modified_date_time: ~datetime.datetime
-        :param min_area: Minimum Area value(inclusive).
+        :param min_area: Minimum area for which operation was applied (inclusive).
         :type min_area: float
-        :param max_area: Maximum Area value (inclusive).
+        :param max_area: Maximum area for which operation was applied (inclusive).
         :type max_area: float
         :param ids: Ids of the resource.
         :type ids: list[str]
@@ -380,7 +145,7 @@ class ApplicationDataOperations:
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2020-12-31-preview"
+        api_version = "2021-03-31-preview"
         accept = "application/json"
 
         def prepare_request(next_link=None):
@@ -474,15 +239,16 @@ class ApplicationDataOperations:
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
+                error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, response)
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
-                raise HttpResponseError(response=response)
+                raise HttpResponseError(response=response, model=error)
 
             return pipeline_response
 
         return AsyncItemPaged(
             get_next, extract_data
         )
-    list_by_farmer_id.metadata = {'url': '/farmers/{farmerId}/applicationData'}  # type: ignore
+    list_by_farmer_id.metadata = {'url': '/farmers/{farmerId}/application-data'}  # type: ignore
 
     def list(
         self,
@@ -513,37 +279,47 @@ class ApplicationDataOperations:
         skip_token: Optional[str] = None,
         **kwargs
     ) -> AsyncIterable["_models.ApplicationDataListResponse"]:
-        """Returns a list of ApplicationData documents.
+        """Returns a paginated list of application data resources across all farmers.
 
-        :param min_avg_material: Minimum AvgMaterial value(inclusive).
+        :param min_avg_material: Minimum average amount of material applied during the application
+         (inclusive).
         :type min_avg_material: float
-        :param max_avg_material: Maximum AvgMaterial value (inclusive).
+        :param max_avg_material: Maximum average amount of material applied during the application
+         (inclusive).
         :type max_avg_material: float
-        :param min_total_material: Minimum TotalMaterial value(inclusive).
+        :param min_total_material: Minimum total amount of material applied during the application
+         (inclusive).
         :type min_total_material: float
-        :param max_total_material: Maximum TotalMaterial value (inclusive).
+        :param max_total_material: Maximum total amount of material applied during the application
+         (inclusive).
         :type max_total_material: float
-        :param sources: Source of the operation data.
+        :param sources: Sources of the operation data.
         :type sources: list[str]
-        :param associated_boundary_ids: Boundary ids associated with operation data.
+        :param associated_boundary_ids: Boundary IDs associated with operation data.
         :type associated_boundary_ids: list[str]
-        :param operation_boundary_ids: Operation boundary ids associated with operation data.
+        :param operation_boundary_ids: Operation boundary IDs associated with operation data.
         :type operation_boundary_ids: list[str]
-        :param min_operation_start_date_time: Minimum operation StartDateTime (inclusive).
+        :param min_operation_start_date_time: Minimum start date-time of the operation data, sample
+         format: yyyy-MM-ddTHH:mm:ssZ (inclusive).
         :type min_operation_start_date_time: ~datetime.datetime
-        :param max_operation_start_date_time: Maximum operation StartDateTime (inclusive).
+        :param max_operation_start_date_time: Maximum start date-time of the operation data, sample
+         format: yyyy-MM-ddTHH:mm:ssZ (inclusive).
         :type max_operation_start_date_time: ~datetime.datetime
-        :param min_operation_end_date_time: Minimum operation EndDateTime (inclusive).
+        :param min_operation_end_date_time: Minimum end date-time of the operation data, sample format:
+         yyyy-MM-ddTHH:mm:ssZ (inclusive).
         :type min_operation_end_date_time: ~datetime.datetime
-        :param max_operation_end_date_time: Maximum operation EndDateTime (inclusive).
+        :param max_operation_end_date_time: Maximum end date-time of the operation data, sample format:
+         yyyy-MM-ddTHH:mm:ssZ (inclusive).
         :type max_operation_end_date_time: ~datetime.datetime
-        :param min_operation_modified_date_time: Minimum OperationModifiedDateTime (inclusive).
+        :param min_operation_modified_date_time: Minimum modified date-time of the operation data,
+         sample format: yyyy-MM-ddTHH:mm:ssZ (inclusive).
         :type min_operation_modified_date_time: ~datetime.datetime
-        :param max_operation_modified_date_time: Maximum OperationModifiedDateTime (inclusive).
+        :param max_operation_modified_date_time: Maximum modified date-time of the operation data,
+         sample format: yyyy-MM-ddTHH:mm:ssZ (inclusive).
         :type max_operation_modified_date_time: ~datetime.datetime
-        :param min_area: Minimum Area value(inclusive).
+        :param min_area: Minimum area for which operation was applied (inclusive).
         :type min_area: float
-        :param max_area: Maximum Area value (inclusive).
+        :param max_area: Maximum area for which operation was applied (inclusive).
         :type max_area: float
         :param ids: Ids of the resource.
         :type ids: list[str]
@@ -577,7 +353,7 @@ class ApplicationDataOperations:
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2020-12-31-preview"
+        api_version = "2021-03-31-preview"
         accept = "application/json"
 
         def prepare_request(next_link=None):
@@ -663,12 +439,201 @@ class ApplicationDataOperations:
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
+                error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, response)
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
-                raise HttpResponseError(response=response)
+                raise HttpResponseError(response=response, model=error)
 
             return pipeline_response
 
         return AsyncItemPaged(
             get_next, extract_data
         )
-    list.metadata = {'url': '/applicationData'}  # type: ignore
+    list.metadata = {'url': '/application-data'}  # type: ignore
+
+    async def get(
+        self,
+        farmer_id: str,
+        application_data_id: str,
+        **kwargs
+    ) -> Optional["_models.ApplicationData"]:
+        """Get a specified application data resource under a particular farmer.
+
+        :param farmer_id: ID of the associated farmer resource.
+        :type farmer_id: str
+        :param application_data_id: ID of the application data resource.
+        :type application_data_id: str
+        :keyword callable cls: A custom type or function that will be passed the direct response
+        :return: ApplicationData, or the result of cls(response)
+        :rtype: ~azure.farmbeats.models.ApplicationData or None
+        :raises: ~azure.core.exceptions.HttpResponseError
+        """
+        cls = kwargs.pop('cls', None)  # type: ClsType[Optional["_models.ApplicationData"]]
+        error_map = {
+            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
+        }
+        error_map.update(kwargs.pop('error_map', {}))
+        api_version = "2021-03-31-preview"
+        accept = "application/json"
+
+        # Construct URL
+        url = self.get.metadata['url']  # type: ignore
+        path_format_arguments = {
+            'farmerId': self._serialize.url("farmer_id", farmer_id, 'str'),
+            'applicationDataId': self._serialize.url("application_data_id", application_data_id, 'str'),
+        }
+        url = self._client.format_url(url, **path_format_arguments)
+
+        # Construct parameters
+        query_parameters = {}  # type: Dict[str, Any]
+        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
+
+        # Construct headers
+        header_parameters = {}  # type: Dict[str, Any]
+        header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
+
+        request = self._client.get(url, query_parameters, header_parameters)
+        pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200, 404]:
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, response)
+            raise HttpResponseError(response=response, model=error)
+
+        deserialized = None
+        if response.status_code == 200:
+            deserialized = self._deserialize('ApplicationData', pipeline_response)
+
+        if cls:
+            return cls(pipeline_response, deserialized, {})
+
+        return deserialized
+    get.metadata = {'url': '/farmers/{farmerId}/application-data/{applicationDataId}'}  # type: ignore
+
+    async def create_or_update(
+        self,
+        farmer_id: str,
+        application_data_id: str,
+        body: Optional["_models.ApplicationData"] = None,
+        **kwargs
+    ) -> "_models.ApplicationData":
+        """Creates or updates an application data resource under a particular farmer.
+
+        :param farmer_id: ID of the associated farmer.
+        :type farmer_id: str
+        :param application_data_id: ID of the application data resource.
+        :type application_data_id: str
+        :param body: Application data resource payload to create or update.
+        :type body: ~azure.farmbeats.models.ApplicationData
+        :keyword callable cls: A custom type or function that will be passed the direct response
+        :return: ApplicationData, or the result of cls(response)
+        :rtype: ~azure.farmbeats.models.ApplicationData
+        :raises: ~azure.core.exceptions.HttpResponseError
+        """
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.ApplicationData"]
+        error_map = {
+            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
+        }
+        error_map.update(kwargs.pop('error_map', {}))
+        api_version = "2021-03-31-preview"
+        content_type = kwargs.pop("content_type", "application/merge-patch+json")
+        accept = "application/json"
+
+        # Construct URL
+        url = self.create_or_update.metadata['url']  # type: ignore
+        path_format_arguments = {
+            'farmerId': self._serialize.url("farmer_id", farmer_id, 'str'),
+            'applicationDataId': self._serialize.url("application_data_id", application_data_id, 'str'),
+        }
+        url = self._client.format_url(url, **path_format_arguments)
+
+        # Construct parameters
+        query_parameters = {}  # type: Dict[str, Any]
+        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
+
+        # Construct headers
+        header_parameters = {}  # type: Dict[str, Any]
+        header_parameters['Content-Type'] = self._serialize.header("content_type", content_type, 'str')
+        header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
+
+        body_content_kwargs = {}  # type: Dict[str, Any]
+        if body is not None:
+            body_content = self._serialize.body(body, 'ApplicationData')
+        else:
+            body_content = None
+        body_content_kwargs['content'] = body_content
+        request = self._client.patch(url, query_parameters, header_parameters, **body_content_kwargs)
+        pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200, 201]:
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, response)
+            raise HttpResponseError(response=response, model=error)
+
+        if response.status_code == 200:
+            deserialized = self._deserialize('ApplicationData', pipeline_response)
+
+        if response.status_code == 201:
+            deserialized = self._deserialize('ApplicationData', pipeline_response)
+
+        if cls:
+            return cls(pipeline_response, deserialized, {})
+
+        return deserialized
+    create_or_update.metadata = {'url': '/farmers/{farmerId}/application-data/{applicationDataId}'}  # type: ignore
+
+    async def delete(
+        self,
+        farmer_id: str,
+        application_data_id: str,
+        **kwargs
+    ) -> None:
+        """Deletes a specified application data resource under a particular farmer.
+
+        :param farmer_id: ID of the associated farmer resource.
+        :type farmer_id: str
+        :param application_data_id: ID of the application data.
+        :type application_data_id: str
+        :keyword callable cls: A custom type or function that will be passed the direct response
+        :return: None, or the result of cls(response)
+        :rtype: None
+        :raises: ~azure.core.exceptions.HttpResponseError
+        """
+        cls = kwargs.pop('cls', None)  # type: ClsType[None]
+        error_map = {
+            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
+        }
+        error_map.update(kwargs.pop('error_map', {}))
+        api_version = "2021-03-31-preview"
+        accept = "application/json"
+
+        # Construct URL
+        url = self.delete.metadata['url']  # type: ignore
+        path_format_arguments = {
+            'farmerId': self._serialize.url("farmer_id", farmer_id, 'str'),
+            'applicationDataId': self._serialize.url("application_data_id", application_data_id, 'str'),
+        }
+        url = self._client.format_url(url, **path_format_arguments)
+
+        # Construct parameters
+        query_parameters = {}  # type: Dict[str, Any]
+        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
+
+        # Construct headers
+        header_parameters = {}  # type: Dict[str, Any]
+        header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
+
+        request = self._client.delete(url, query_parameters, header_parameters)
+        pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
+        response = pipeline_response.http_response
+
+        if response.status_code not in [204]:
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, response)
+            raise HttpResponseError(response=response, model=error)
+
+        if cls:
+            return cls(pipeline_response, None, {})
+
+    delete.metadata = {'url': '/farmers/{farmerId}/application-data/{applicationDataId}'}  # type: ignore

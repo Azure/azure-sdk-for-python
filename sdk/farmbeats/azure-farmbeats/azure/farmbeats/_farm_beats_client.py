@@ -22,16 +22,13 @@ from .operations import AttachmentsOperations
 from .operations import BoundariesOperations
 from .operations import CropsOperations
 from .operations import CropVarietiesOperations
-from .operations import EventsOperations
 from .operations import FarmersOperations
+from .operations import FarmOperationsOperations
 from .operations import FarmsOperations
 from .operations import FieldsOperations
 from .operations import HarvestDataOperations
-from .operations import JobsOperations
-from .operations import OAuthCallbacksOperations
-from .operations import OAuthConfigsOperations
 from .operations import OAuthProvidersOperations
-from .operations import OAuthTokenInfosOperations
+from .operations import OAuthTokensOperations
 from .operations import PlantingDataOperations
 from .operations import ScenesOperations
 from .operations import SeasonalFieldsOperations
@@ -54,26 +51,20 @@ class FarmBeatsClient(object):
     :vartype crops: azure.farmbeats.operations.CropsOperations
     :ivar crop_varieties: CropVarietiesOperations operations
     :vartype crop_varieties: azure.farmbeats.operations.CropVarietiesOperations
-    :ivar events: EventsOperations operations
-    :vartype events: azure.farmbeats.operations.EventsOperations
     :ivar farmers: FarmersOperations operations
     :vartype farmers: azure.farmbeats.operations.FarmersOperations
+    :ivar farm_operations: FarmOperationsOperations operations
+    :vartype farm_operations: azure.farmbeats.operations.FarmOperationsOperations
     :ivar farms: FarmsOperations operations
     :vartype farms: azure.farmbeats.operations.FarmsOperations
     :ivar fields: FieldsOperations operations
     :vartype fields: azure.farmbeats.operations.FieldsOperations
     :ivar harvest_data: HarvestDataOperations operations
     :vartype harvest_data: azure.farmbeats.operations.HarvestDataOperations
-    :ivar jobs: JobsOperations operations
-    :vartype jobs: azure.farmbeats.operations.JobsOperations
-    :ivar oauth_callbacks: OAuthCallbacksOperations operations
-    :vartype oauth_callbacks: azure.farmbeats.operations.OAuthCallbacksOperations
-    :ivar oauth_configs: OAuthConfigsOperations operations
-    :vartype oauth_configs: azure.farmbeats.operations.OAuthConfigsOperations
     :ivar oauth_providers: OAuthProvidersOperations operations
     :vartype oauth_providers: azure.farmbeats.operations.OAuthProvidersOperations
-    :ivar oauth_token_infos: OAuthTokenInfosOperations operations
-    :vartype oauth_token_infos: azure.farmbeats.operations.OAuthTokenInfosOperations
+    :ivar oauth_tokens: OAuthTokensOperations operations
+    :vartype oauth_tokens: azure.farmbeats.operations.OAuthTokensOperations
     :ivar planting_data: PlantingDataOperations operations
     :vartype planting_data: azure.farmbeats.operations.PlantingDataOperations
     :ivar scenes: ScenesOperations operations
@@ -117,9 +108,9 @@ class FarmBeatsClient(object):
             self._client, self._config, self._serialize, self._deserialize)
         self.crop_varieties = CropVarietiesOperations(
             self._client, self._config, self._serialize, self._deserialize)
-        self.events = EventsOperations(
-            self._client, self._config, self._serialize, self._deserialize)
         self.farmers = FarmersOperations(
+            self._client, self._config, self._serialize, self._deserialize)
+        self.farm_operations = FarmOperationsOperations(
             self._client, self._config, self._serialize, self._deserialize)
         self.farms = FarmsOperations(
             self._client, self._config, self._serialize, self._deserialize)
@@ -127,15 +118,9 @@ class FarmBeatsClient(object):
             self._client, self._config, self._serialize, self._deserialize)
         self.harvest_data = HarvestDataOperations(
             self._client, self._config, self._serialize, self._deserialize)
-        self.jobs = JobsOperations(
-            self._client, self._config, self._serialize, self._deserialize)
-        self.oauth_callbacks = OAuthCallbacksOperations(
-            self._client, self._config, self._serialize, self._deserialize)
-        self.oauth_configs = OAuthConfigsOperations(
-            self._client, self._config, self._serialize, self._deserialize)
         self.oauth_providers = OAuthProvidersOperations(
             self._client, self._config, self._serialize, self._deserialize)
-        self.oauth_token_infos = OAuthTokenInfosOperations(
+        self.oauth_tokens = OAuthTokensOperations(
             self._client, self._config, self._serialize, self._deserialize)
         self.planting_data = PlantingDataOperations(
             self._client, self._config, self._serialize, self._deserialize)
