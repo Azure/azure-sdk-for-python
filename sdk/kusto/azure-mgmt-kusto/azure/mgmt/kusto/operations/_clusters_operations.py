@@ -27,7 +27,7 @@ class ClustersOperations(object):
     :param config: Configuration of service client.
     :param serializer: An object model serializer.
     :param deserializer: An object model deserializer.
-    :ivar api_version: Client API Version. Constant value: "2020-09-18".
+    :ivar api_version: Client API Version. Constant value: "2021-01-01".
     """
 
     models = models
@@ -37,7 +37,7 @@ class ClustersOperations(object):
         self._client = client
         self._serialize = serializer
         self._deserialize = deserializer
-        self.api_version = "2020-09-18"
+        self.api_version = "2021-01-01"
 
         self.config = config
 
@@ -105,7 +105,7 @@ class ClustersOperations(object):
 
 
     def _create_or_update_initial(
-            self, resource_group_name, cluster_name, parameters, custom_headers=None, raw=False, **operation_config):
+            self, resource_group_name, cluster_name, parameters, if_match=None, if_none_match=None, custom_headers=None, raw=False, **operation_config):
         # Construct URL
         url = self.create_or_update.metadata['url']
         path_format_arguments = {
@@ -127,6 +127,10 @@ class ClustersOperations(object):
             header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
         if custom_headers:
             header_parameters.update(custom_headers)
+        if if_match is not None:
+            header_parameters['If-Match'] = self._serialize.header("if_match", if_match, 'str')
+        if if_none_match is not None:
+            header_parameters['If-None-Match'] = self._serialize.header("if_none_match", if_none_match, 'str')
         if self.config.accept_language is not None:
             header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
 
@@ -156,7 +160,7 @@ class ClustersOperations(object):
         return deserialized
 
     def create_or_update(
-            self, resource_group_name, cluster_name, parameters, custom_headers=None, raw=False, polling=True, **operation_config):
+            self, resource_group_name, cluster_name, parameters, if_match=None, if_none_match=None, custom_headers=None, raw=False, polling=True, **operation_config):
         """Create or update a Kusto cluster.
 
         :param resource_group_name: The name of the resource group containing
@@ -167,6 +171,14 @@ class ClustersOperations(object):
         :param parameters: The Kusto cluster parameters supplied to the
          CreateOrUpdate operation.
         :type parameters: ~azure.mgmt.kusto.models.Cluster
+        :param if_match: The ETag of the cluster. Omit this value to always
+         overwrite the current cluster. Specify the last-seen ETag value to
+         prevent accidentally overwriting concurrent changes.
+        :type if_match: str
+        :param if_none_match: Set to '*' to allow a new cluster to be created,
+         but to prevent updating an existing cluster. Other values will result
+         in a 412 Pre-condition Failed response.
+        :type if_none_match: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: The poller return type is ClientRawResponse, the
          direct response alongside the deserialized response
@@ -184,6 +196,8 @@ class ClustersOperations(object):
             resource_group_name=resource_group_name,
             cluster_name=cluster_name,
             parameters=parameters,
+            if_match=if_match,
+            if_none_match=if_none_match,
             custom_headers=custom_headers,
             raw=True,
             **operation_config
@@ -209,7 +223,7 @@ class ClustersOperations(object):
 
 
     def _update_initial(
-            self, resource_group_name, cluster_name, parameters, custom_headers=None, raw=False, **operation_config):
+            self, resource_group_name, cluster_name, parameters, if_match=None, custom_headers=None, raw=False, **operation_config):
         # Construct URL
         url = self.update.metadata['url']
         path_format_arguments = {
@@ -231,6 +245,8 @@ class ClustersOperations(object):
             header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
         if custom_headers:
             header_parameters.update(custom_headers)
+        if if_match is not None:
+            header_parameters['If-Match'] = self._serialize.header("if_match", if_match, 'str')
         if self.config.accept_language is not None:
             header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
 
@@ -262,7 +278,7 @@ class ClustersOperations(object):
         return deserialized
 
     def update(
-            self, resource_group_name, cluster_name, parameters, custom_headers=None, raw=False, polling=True, **operation_config):
+            self, resource_group_name, cluster_name, parameters, if_match=None, custom_headers=None, raw=False, polling=True, **operation_config):
         """Update a Kusto cluster.
 
         :param resource_group_name: The name of the resource group containing
@@ -273,6 +289,10 @@ class ClustersOperations(object):
         :param parameters: The Kusto cluster parameters supplied to the Update
          operation.
         :type parameters: ~azure.mgmt.kusto.models.ClusterUpdate
+        :param if_match: The ETag of the cluster. Omit this value to always
+         overwrite the current cluster. Specify the last-seen ETag value to
+         prevent accidentally overwriting concurrent changes.
+        :type if_match: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: The poller return type is ClientRawResponse, the
          direct response alongside the deserialized response
@@ -290,6 +310,7 @@ class ClustersOperations(object):
             resource_group_name=resource_group_name,
             cluster_name=cluster_name,
             parameters=parameters,
+            if_match=if_match,
             custom_headers=custom_headers,
             raw=True,
             **operation_config
@@ -1023,7 +1044,7 @@ class ClustersOperations(object):
             self, location, name, custom_headers=None, raw=False, **operation_config):
         """Checks that the cluster name is valid and is not already in use.
 
-        :param location: Azure location.
+        :param location: Azure location (region) name.
         :type location: str
         :param name: Cluster name.
         :type name: str

@@ -17,9 +17,11 @@ from .operations import ClustersOperations
 from .operations import ClusterPrincipalAssignmentsOperations
 from .operations import DatabasesOperations
 from .operations import DatabasePrincipalAssignmentsOperations
+from .operations import ScriptsOperations
 from .operations import AttachedDatabaseConfigurationsOperations
 from .operations import DataConnectionsOperations
 from .operations import Operations
+from .operations import OperationsResultsOperations
 from . import models
 
 
@@ -37,12 +39,16 @@ class KustoManagementClient(SDKClient):
     :vartype databases: azure.mgmt.kusto.operations.DatabasesOperations
     :ivar database_principal_assignments: DatabasePrincipalAssignments operations
     :vartype database_principal_assignments: azure.mgmt.kusto.operations.DatabasePrincipalAssignmentsOperations
+    :ivar scripts: Scripts operations
+    :vartype scripts: azure.mgmt.kusto.operations.ScriptsOperations
     :ivar attached_database_configurations: AttachedDatabaseConfigurations operations
     :vartype attached_database_configurations: azure.mgmt.kusto.operations.AttachedDatabaseConfigurationsOperations
     :ivar data_connections: DataConnections operations
     :vartype data_connections: azure.mgmt.kusto.operations.DataConnectionsOperations
     :ivar operations: Operations operations
     :vartype operations: azure.mgmt.kusto.operations.Operations
+    :ivar operations_results: OperationsResults operations
+    :vartype operations_results: azure.mgmt.kusto.operations.OperationsResultsOperations
 
     :param credentials: Credentials needed for the client to connect to Azure.
     :type credentials: :mod:`A msrestazure Credentials
@@ -61,7 +67,7 @@ class KustoManagementClient(SDKClient):
         super(KustoManagementClient, self).__init__(self.config.credentials, self.config)
 
         client_models = {k: v for k, v in models.__dict__.items() if isinstance(v, type)}
-        self.api_version = '2020-09-18'
+        self.api_version = '2021-01-01'
         self._serialize = Serializer(client_models)
         self._deserialize = Deserializer(client_models)
 
@@ -73,9 +79,13 @@ class KustoManagementClient(SDKClient):
             self._client, self.config, self._serialize, self._deserialize)
         self.database_principal_assignments = DatabasePrincipalAssignmentsOperations(
             self._client, self.config, self._serialize, self._deserialize)
+        self.scripts = ScriptsOperations(
+            self._client, self.config, self._serialize, self._deserialize)
         self.attached_database_configurations = AttachedDatabaseConfigurationsOperations(
             self._client, self.config, self._serialize, self._deserialize)
         self.data_connections = DataConnectionsOperations(
             self._client, self.config, self._serialize, self._deserialize)
         self.operations = Operations(
+            self._client, self.config, self._serialize, self._deserialize)
+        self.operations_results = OperationsResultsOperations(
             self._client, self.config, self._serialize, self._deserialize)
