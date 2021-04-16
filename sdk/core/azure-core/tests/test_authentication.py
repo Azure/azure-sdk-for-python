@@ -246,12 +246,12 @@ def test_azure_named_key_credential():
 
 
 def test_azure_named_key_credential_raises():
-    with pytest.raises(TypeError, match="Both name and key must be Strings."):
+    with pytest.raises(TypeError, match="Both name and key must be strings."):
         cred = AzureNamedKeyCredential("sample_name", 123345)
 
     cred = AzureNamedKeyCredential("sample_name", "samplekey")
     assert cred.named_key.name == "sample_name"
     assert cred.named_key.key == "samplekey"
 
-    with pytest.raises(TypeError, match="Both name and key must be Strings."):
+    with pytest.raises(TypeError, match="Both name and key must be strings."):
         cred.update(1234, "newkey")
