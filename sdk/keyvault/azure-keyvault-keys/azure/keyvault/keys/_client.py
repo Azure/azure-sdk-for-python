@@ -19,7 +19,7 @@ if TYPE_CHECKING:
     # pylint:disable=unused-import
     from typing import Any, Optional, Union
     from azure.core.paging import ItemPaged
-    from ._models import JsonWebKey, KeyReleaseParameters
+    from ._models import JsonWebKey
 
 
 class KeyClient(KeyVaultClientBase):
@@ -672,7 +672,9 @@ class KeyClient(KeyVaultClientBase):
             enc=kwargs.pop("algorithm", None)
         )
 
-        bundle = self._client.export(self.vault_url, name, version, parameters, **kwargs)
+        bundle = self._client.export(
+            vault_base_url=self.vault_url, key_name=name, key_version=version, parameters=parameters, **kwargs
+        )
         return KeyVaultKey._from_key_bundle(bundle)
 
     @distributed_trace

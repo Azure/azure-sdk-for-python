@@ -143,7 +143,7 @@ class KeyProperties(object):
         :rtype: ~datetime.datetime
         """
         return self._attributes.expires
-    
+
     @property
     def exportable(self):
         # type: () -> Optional[bool]
@@ -229,7 +229,7 @@ class KeyReleasePolicy(object):
     :param data: Blob encoding the policy rules under which the key can be released.
     :type data: bytes
     :keyword content_type: Content type and version of key release policy.
-    :type content_type: str
+    :paramtype content_type: str
     """
 
     def __init__(self, data, **kwargs):
