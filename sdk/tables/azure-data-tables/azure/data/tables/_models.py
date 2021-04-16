@@ -480,14 +480,14 @@ class TableItem(object):
     Represents an Azure TableItem. Returned by TableServiceClient.list_tables
     and TableServiceClient.query_tables.
 
-    :param str table_name: The name of the table.
+    :param str name: The name of the table.
     :ivar str api_version: The API version included in the service call
     :ivar str date: The date the service call was made
     """
 
-    def __init__(self, table_name, **kwargs):
+    def __init__(self, name, **kwargs):
         # type: (str, **Any) -> None
-        self.table_name = table_name
+        self.name = name
         self.api_version = kwargs.get("version")
         self.date = kwargs.get("date") or kwargs.get("Date")
 

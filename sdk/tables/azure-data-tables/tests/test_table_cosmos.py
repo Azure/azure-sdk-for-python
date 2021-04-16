@@ -71,7 +71,7 @@ class StorageTableTest(AzureTestCase, TableTestCase):
         if table is None:
             return
         try:
-            ts.delete_table(table.table_name)
+            ts.delete_table(table.name)
         except ResourceNotFoundError:
             pass
 
@@ -79,7 +79,7 @@ class StorageTableTest(AzureTestCase, TableTestCase):
         tables = ts.list_tables()
         for table in tables:
             try:
-                ts.delete_table(table.table_name)
+                ts.delete_table(table.name)
             except ResourceNotFoundError:
                 pass
 
@@ -228,10 +228,10 @@ class StorageTableTest(AzureTestCase, TableTestCase):
         big_page = []
         for s in next(ts.list_tables(results_per_page=3).by_page()):
             small_page.append(s)
-            assert s.table_name.startswith(prefix)
+            assert s.name.startswith(prefix)
         for t in next(ts.list_tables().by_page()):
             big_page.append(t)
-            assert t.table_name.startswith(prefix)
+            assert t.name.startswith(prefix)
 
         # Assert
         assert len(small_page) ==  3
@@ -318,7 +318,7 @@ class StorageTableTest(AzureTestCase, TableTestCase):
             assert acl is not None
             assert len(acl) ==  0
         finally:
-            ts.delete_table(table.table_name)
+            ts.delete_table(table.name)
 
         if self.is_live:
             sleep(SLEEP_DELAY)
@@ -340,7 +340,7 @@ class StorageTableTest(AzureTestCase, TableTestCase):
             assert acl is not None
             assert len(acl) ==  0
         finally:
-            ts.delete_table(table.table_name)
+            ts.delete_table(table.name)
 
         if self.is_live:
             sleep(SLEEP_DELAY)
@@ -365,7 +365,7 @@ class StorageTableTest(AzureTestCase, TableTestCase):
             assert acl['empty'].expiry is None
             assert acl['empty'].start is None
         finally:
-            ts.delete_table(table.table_name)
+            ts.delete_table(table.name)
 
         if self.is_live:
             sleep(SLEEP_DELAY)
@@ -378,7 +378,7 @@ class StorageTableTest(AzureTestCase, TableTestCase):
         url = self.account_url(tables_cosmos_account_name, "cosmos")
         ts = TableServiceClient(url, tables_primary_cosmos_account_key)
         table = self._create_table(ts)
-        client = ts.get_table_client(table_name=table.table_name)
+        client = ts.get_table_client(table_name=table.name)
 
         # Act
         identifiers = dict()
@@ -393,7 +393,7 @@ class StorageTableTest(AzureTestCase, TableTestCase):
             assert len(acl) ==  1
             assert 'testid' in acl
         finally:
-            ts.delete_table(table.table_name)
+            ts.delete_table(table.name)
 
         if self.is_live:
             sleep(SLEEP_DELAY)
@@ -413,9 +413,9 @@ class StorageTableTest(AzureTestCase, TableTestCase):
 
             # Assert
             with pytest.raises(ValueError):
-                table.set_table_access_policy(table_name=table.table_name, signed_identifiers=identifiers)
+                table.set_table_access_policy(table_name=table.name, signed_identifiers=identifiers)
         finally:
-            ts.delete_table(table.table_name)
+            ts.delete_table(table.name)
 
         if self.is_live:
             sleep(SLEEP_DELAY)
@@ -455,7 +455,7 @@ class StorageTableTest(AzureTestCase, TableTestCase):
                 self.account_url(tables_cosmos_account_name, "cosmos"),
                 credential=token,
             )
-            sas_table = service.get_table_client(table.table_name)
+            sas_table = service.get_table_client(table.name)
             entities = list(sas_table.list_entities())
 
             # Assert
