@@ -6,7 +6,6 @@
 # --------------------------------------------------------------------------------------------
 
 import argparse
-from git import Repo
 import os
 import logging
 import sys
@@ -60,18 +59,11 @@ def check_diff(folder):
     command = [
         "git",
         "diff",
-        "--quiet",
-        "HEAD",
-        "master",
-        "--",
-        "{}".format(dir_changed)
+        "--exit-code",
+        "{}".format("/".join(dir_changed)),
     ]
     result = run_check_call(command, sdk_dir, always_exit=False)
     if result:
-    # repo = Repo(root_dir)
-    # t = repo.head.commit.tree
-    # d = repo.git.diff(t)
-    # if d:
         command = ["git", "status"]
         run_check_call(command, root_dir)
         raise ValueError(
