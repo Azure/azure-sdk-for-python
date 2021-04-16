@@ -45,7 +45,6 @@ __all__ = [
     'SansIOHTTPPolicy',
     'BearerTokenCredentialPolicy',
     'AzureKeyCredentialPolicy',
-    'AzureNamedKeyCredentialPolicy',
     'AzureSasCredentialPolicy',
     'HeadersPolicy',
     'UserAgentPolicy',
