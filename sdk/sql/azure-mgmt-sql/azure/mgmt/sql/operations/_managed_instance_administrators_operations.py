@@ -27,8 +27,8 @@ class ManagedInstanceAdministratorsOperations(object):
     :param config: Configuration of service client.
     :param serializer: An object model serializer.
     :param deserializer: An object model deserializer.
-    :ivar api_version: The API version to use for the request. Constant value: "2017-03-01-preview".
-    :ivar administrator_name: The administrator name. Constant value: "ActiveDirectory".
+    :ivar api_version: The API version to use for the request. Constant value: "2020-11-01-preview".
+    :ivar administrator_name: . Constant value: "ActiveDirectory".
     """
 
     models = models
@@ -38,7 +38,7 @@ class ManagedInstanceAdministratorsOperations(object):
         self._client = client
         self._serialize = serializer
         self._deserialize = deserializer
-        self.api_version = "2017-03-01-preview"
+        self.api_version = "2020-11-01-preview"
         self.administrator_name = "ActiveDirectory"
 
         self.config = config

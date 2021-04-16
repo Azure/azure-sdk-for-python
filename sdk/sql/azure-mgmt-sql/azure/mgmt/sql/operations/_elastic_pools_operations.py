@@ -223,7 +223,7 @@ class ElasticPoolsOperations(object):
          ~azure.mgmt.sql.models.ElasticPoolPaged[~azure.mgmt.sql.models.ElasticPool]
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
-        api_version = "2020-08-01-preview"
+        api_version = "2020-11-01-preview"
 
         def prepare_request(next_link=None):
             if not next_link:
@@ -303,7 +303,7 @@ class ElasticPoolsOperations(object):
          ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
-        api_version = "2020-08-01-preview"
+        api_version = "2020-11-01-preview"
 
         # Construct URL
         url = self.get.metadata['url']
@@ -352,7 +352,7 @@ class ElasticPoolsOperations(object):
 
     def _create_or_update_initial(
             self, resource_group_name, server_name, elastic_pool_name, parameters, custom_headers=None, raw=False, **operation_config):
-        api_version = "2020-08-01-preview"
+        api_version = "2020-11-01-preview"
 
         # Construct URL
         url = self.create_or_update.metadata['url']
@@ -462,7 +462,7 @@ class ElasticPoolsOperations(object):
 
     def _delete_initial(
             self, resource_group_name, server_name, elastic_pool_name, custom_headers=None, raw=False, **operation_config):
-        api_version = "2020-08-01-preview"
+        api_version = "2020-11-01-preview"
 
         # Construct URL
         url = self.delete.metadata['url']
@@ -549,7 +549,7 @@ class ElasticPoolsOperations(object):
 
     def _update_initial(
             self, resource_group_name, server_name, elastic_pool_name, parameters, custom_headers=None, raw=False, **operation_config):
-        api_version = "2020-08-01-preview"
+        api_version = "2020-11-01-preview"
 
         # Construct URL
         url = self.update.metadata['url']
@@ -657,7 +657,7 @@ class ElasticPoolsOperations(object):
 
     def _failover_initial(
             self, resource_group_name, server_name, elastic_pool_name, custom_headers=None, raw=False, **operation_config):
-        api_version = "2020-08-01-preview"
+        api_version = "2020-11-01-preview"
 
         # Construct URL
         url = self.failover.metadata['url']

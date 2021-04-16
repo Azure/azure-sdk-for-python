@@ -27,7 +27,7 @@ class ServerKeysOperations(object):
     :param config: Configuration of service client.
     :param serializer: An object model serializer.
     :param deserializer: An object model deserializer.
-    :ivar api_version: The API version to use for the request. Constant value: "2015-05-01-preview".
+    :ivar api_version: The API version to use for the request. Constant value: "2020-11-01-preview".
     """
 
     models = models
@@ -37,7 +37,7 @@ class ServerKeysOperations(object):
         self._client = client
         self._serialize = serializer
         self._deserialize = deserializer
-        self.api_version = "2015-05-01-preview"
+        self.api_version = "2020-11-01-preview"
 
         self.config = config
 
@@ -183,7 +183,9 @@ class ServerKeysOperations(object):
 
 
     def _create_or_update_initial(
-            self, resource_group_name, server_name, key_name, parameters, custom_headers=None, raw=False, **operation_config):
+            self, resource_group_name, server_name, key_name, server_key_type, uri=None, custom_headers=None, raw=False, **operation_config):
+        parameters = models.ServerKey(server_key_type=server_key_type, uri=uri)
+
         # Construct URL
         url = self.create_or_update.metadata['url']
         path_format_arguments = {
@@ -235,7 +237,7 @@ class ServerKeysOperations(object):
         return deserialized
 
     def create_or_update(
-            self, resource_group_name, server_name, key_name, parameters, custom_headers=None, raw=False, polling=True, **operation_config):
+            self, resource_group_name, server_name, key_name, server_key_type, uri=None, custom_headers=None, raw=False, polling=True, **operation_config):
         """Creates or updates a server key.
 
         :param resource_group_name: The name of the resource group that
@@ -247,12 +249,17 @@ class ServerKeysOperations(object):
         :param key_name: The name of the server key to be operated on (updated
          or created). The key name is required to be in the format of
          'vault_key_version'. For example, if the keyId is
-         https://YourVaultName.vault.azure.net/keys/YourKeyName/01234567890123456789012345678901,
+         https://YourVaultName.vault.azure.net/keys/YourKeyName/YourKeyVersion,
          then the server key name should be formatted as:
-         YourVaultName_YourKeyName_01234567890123456789012345678901
+         YourVaultName_YourKeyName_YourKeyVersion
         :type key_name: str
-        :param parameters: The requested server key resource state.
-        :type parameters: ~azure.mgmt.sql.models.ServerKey
+        :param server_key_type: The server key type like 'ServiceManaged',
+         'AzureKeyVault'. Possible values include: 'ServiceManaged',
+         'AzureKeyVault'
+        :type server_key_type: str or ~azure.mgmt.sql.models.ServerKeyType
+        :param uri: The URI of the server key. If the ServerKeyType is
+         AzureKeyVault, then the URI is required.
+        :type uri: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: The poller return type is ClientRawResponse, the
          direct response alongside the deserialized response
@@ -270,7 +277,8 @@ class ServerKeysOperations(object):
             resource_group_name=resource_group_name,
             server_name=server_name,
             key_name=key_name,
-            parameters=parameters,
+            server_key_type=server_key_type,
+            uri=uri,
             custom_headers=custom_headers,
             raw=True,
             **operation_config

@@ -28,7 +28,7 @@ class ManagedInstanceEncryptionProtectorsOperations(object):
     :param serializer: An object model serializer.
     :param deserializer: An object model deserializer.
     :ivar encryption_protector_name: The name of the encryption protector to be updated. Constant value: "current".
-    :ivar api_version: The API version to use for the request. Constant value: "2017-10-01-preview".
+    :ivar api_version: The API version to use for the request. Constant value: "2020-11-01-preview".
     """
 
     models = models
@@ -39,7 +39,7 @@ class ManagedInstanceEncryptionProtectorsOperations(object):
         self._serialize = serializer
         self._deserialize = deserializer
         self.encryption_protector_name = "current"
-        self.api_version = "2017-10-01-preview"
+        self.api_version = "2020-11-01-preview"
 
         self.config = config
 
@@ -267,9 +267,7 @@ class ManagedInstanceEncryptionProtectorsOperations(object):
 
 
     def _create_or_update_initial(
-            self, resource_group_name, managed_instance_name, server_key_type, server_key_name=None, custom_headers=None, raw=False, **operation_config):
-        parameters = models.ManagedInstanceEncryptionProtector(server_key_name=server_key_name, server_key_type=server_key_type)
-
+            self, resource_group_name, managed_instance_name, parameters, custom_headers=None, raw=False, **operation_config):
         # Construct URL
         url = self.create_or_update.metadata['url']
         path_format_arguments = {
@@ -319,7 +317,7 @@ class ManagedInstanceEncryptionProtectorsOperations(object):
         return deserialized
 
     def create_or_update(
-            self, resource_group_name, managed_instance_name, server_key_type, server_key_name=None, custom_headers=None, raw=False, polling=True, **operation_config):
+            self, resource_group_name, managed_instance_name, parameters, custom_headers=None, raw=False, polling=True, **operation_config):
         """Updates an existing encryption protector.
 
         :param resource_group_name: The name of the resource group that
@@ -328,12 +326,9 @@ class ManagedInstanceEncryptionProtectorsOperations(object):
         :type resource_group_name: str
         :param managed_instance_name: The name of the managed instance.
         :type managed_instance_name: str
-        :param server_key_type: The encryption protector type like
-         'ServiceManaged', 'AzureKeyVault'. Possible values include:
-         'ServiceManaged', 'AzureKeyVault'
-        :type server_key_type: str or ~azure.mgmt.sql.models.ServerKeyType
-        :param server_key_name: The name of the managed instance key.
-        :type server_key_name: str
+        :param parameters: The requested encryption protector resource state.
+        :type parameters:
+         ~azure.mgmt.sql.models.ManagedInstanceEncryptionProtector
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: The poller return type is ClientRawResponse, the
          direct response alongside the deserialized response
@@ -351,8 +346,7 @@ class ManagedInstanceEncryptionProtectorsOperations(object):
         raw_result = self._create_or_update_initial(
             resource_group_name=resource_group_name,
             managed_instance_name=managed_instance_name,
-            server_key_type=server_key_type,
-            server_key_name=server_key_name,
+            parameters=parameters,
             custom_headers=custom_headers,
             raw=True,
             **operation_config

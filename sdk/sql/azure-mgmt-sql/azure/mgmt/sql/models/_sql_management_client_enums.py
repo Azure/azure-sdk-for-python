@@ -12,32 +12,6 @@
 from enum import Enum
 
 
-class ServerConnectionType(str, Enum):
-
-    default = "Default"
-    proxy = "Proxy"
-    redirect = "Redirect"
-
-
-class SecurityAlertPolicyState(str, Enum):
-
-    new = "New"
-    enabled = "Enabled"
-    disabled = "Disabled"
-
-
-class SecurityAlertPolicyEmailAccountAdmins(str, Enum):
-
-    enabled = "Enabled"
-    disabled = "Disabled"
-
-
-class SecurityAlertPolicyUseServerDefault(str, Enum):
-
-    enabled = "Enabled"
-    disabled = "Disabled"
-
-
 class DataMaskingState(str, Enum):
 
     disabled = "Disabled"
@@ -94,68 +68,6 @@ class UnitDefinitionType(str, Enum):
     percent = "Percent"
     count_per_second = "CountPerSecond"
     bytes_per_second = "BytesPerSecond"
-
-
-class ElasticPoolEdition(str, Enum):
-
-    basic = "Basic"
-    standard = "Standard"
-    premium = "Premium"
-    general_purpose = "GeneralPurpose"
-    business_critical = "BusinessCritical"
-
-
-class ReplicationRole(str, Enum):
-
-    primary = "Primary"
-    secondary = "Secondary"
-    non_readable_secondary = "NonReadableSecondary"
-    source = "Source"
-    copy = "Copy"
-
-
-class ReplicationState(str, Enum):
-
-    pending = "PENDING"
-    seeding = "SEEDING"
-    catch_up = "CATCH_UP"
-    suspended = "SUSPENDED"
-
-
-class RecommendedIndexAction(str, Enum):
-
-    create = "Create"
-    drop = "Drop"
-    rebuild = "Rebuild"
-
-
-class RecommendedIndexState(str, Enum):
-
-    active = "Active"
-    pending = "Pending"
-    executing = "Executing"
-    verifying = "Verifying"
-    pending_revert = "Pending Revert"
-    reverting = "Reverting"
-    reverted = "Reverted"
-    ignored = "Ignored"
-    expired = "Expired"
-    blocked = "Blocked"
-    success = "Success"
-
-
-class RecommendedIndexType(str, Enum):
-
-    clustered = "CLUSTERED"
-    nonclustered = "NONCLUSTERED"
-    columnstore = "COLUMNSTORE"
-    clusteredcolumnstore = "CLUSTERED COLUMNSTORE"
-
-
-class TransparentDataEncryptionStatus(str, Enum):
-
-    enabled = "Enabled"
-    disabled = "Disabled"
 
 
 class ServiceObjectiveName(str, Enum):
@@ -233,6 +145,72 @@ class TransparentDataEncryptionActivityStatus(str, Enum):
     decrypting = "Decrypting"
 
 
+class BlobAuditingPolicyState(str, Enum):
+
+    enabled = "Enabled"
+    disabled = "Disabled"
+
+
+class AdvisorStatus(str, Enum):
+
+    ga = "GA"
+    public_preview = "PublicPreview"
+    limited_public_preview = "LimitedPublicPreview"
+    private_preview = "PrivatePreview"
+
+
+class AutoExecuteStatus(str, Enum):
+
+    enabled = "Enabled"
+    disabled = "Disabled"
+    default = "Default"
+
+
+class AutoExecuteStatusInheritedFrom(str, Enum):
+
+    default = "Default"
+    subscription = "Subscription"
+    server = "Server"
+    elastic_pool = "ElasticPool"
+    database = "Database"
+
+
+class RecommendedActionCurrentState(str, Enum):
+
+    active = "Active"
+    pending = "Pending"
+    executing = "Executing"
+    verifying = "Verifying"
+    pending_revert = "PendingRevert"
+    revert_cancelled = "RevertCancelled"
+    reverting = "Reverting"
+    reverted = "Reverted"
+    ignored = "Ignored"
+    expired = "Expired"
+    monitoring = "Monitoring"
+    resolved = "Resolved"
+    success = "Success"
+    error = "Error"
+
+
+class RecommendedActionInitiatedBy(str, Enum):
+
+    user = "User"
+    system = "System"
+
+
+class ImplementationMethod(str, Enum):
+
+    tsql = "TSql"
+    azure_power_shell = "AzurePowerShell"
+
+
+class IsRetryable(str, Enum):
+
+    yes = "Yes"
+    no = "No"
+
+
 class AutomaticTuningMode(str, Enum):
 
     inherit = "Inherit"
@@ -265,6 +243,192 @@ class AutomaticTuningDisabledReason(str, Enum):
     not_supported = "NotSupported"
 
 
+class ColumnDataType(str, Enum):
+
+    image = "image"
+    text = "text"
+    uniqueidentifier = "uniqueidentifier"
+    date_enum = "date"
+    time = "time"
+    datetime2 = "datetime2"
+    datetimeoffset = "datetimeoffset"
+    tinyint = "tinyint"
+    smallint = "smallint"
+    int_enum = "int"
+    smalldatetime = "smalldatetime"
+    real = "real"
+    money = "money"
+    datetime_enum = "datetime"
+    float_enum = "float"
+    sql_variant = "sql_variant"
+    ntext = "ntext"
+    bit = "bit"
+    decimal_enum = "decimal"
+    numeric = "numeric"
+    smallmoney = "smallmoney"
+    bigint = "bigint"
+    hierarchyid = "hierarchyid"
+    geometry = "geometry"
+    geography = "geography"
+    varbinary = "varbinary"
+    varchar = "varchar"
+    binary = "binary"
+    char = "char"
+    timestamp = "timestamp"
+    nvarchar = "nvarchar"
+    nchar = "nchar"
+    xml = "xml"
+    sysname = "sysname"
+
+
+class TableTemporalType(str, Enum):
+
+    non_temporal_table = "NonTemporalTable"
+    history_table = "HistoryTable"
+    system_versioned_temporal_table = "SystemVersionedTemporalTable"
+
+
+class StorageKeyType(str, Enum):
+
+    shared_access_key = "SharedAccessKey"
+    storage_access_key = "StorageAccessKey"
+
+
+class ManagementOperationState(str, Enum):
+
+    pending = "Pending"
+    in_progress = "InProgress"
+    succeeded = "Succeeded"
+    failed = "Failed"
+    cancel_in_progress = "CancelInProgress"
+    cancelled = "Cancelled"
+
+
+class CreateMode(str, Enum):
+
+    default = "Default"
+    copy = "Copy"
+    secondary = "Secondary"
+    point_in_time_restore = "PointInTimeRestore"
+    restore = "Restore"
+    recovery = "Recovery"
+    restore_external_backup = "RestoreExternalBackup"
+    restore_external_backup_secondary = "RestoreExternalBackupSecondary"
+    restore_long_term_retention_backup = "RestoreLongTermRetentionBackup"
+    online_secondary = "OnlineSecondary"
+
+
+class SampleName(str, Enum):
+
+    adventure_works_lt = "AdventureWorksLT"
+    wide_world_importers_std = "WideWorldImportersStd"
+    wide_world_importers_full = "WideWorldImportersFull"
+
+
+class DatabaseStatus(str, Enum):
+
+    online = "Online"
+    restoring = "Restoring"
+    recovery_pending = "RecoveryPending"
+    recovering = "Recovering"
+    suspect = "Suspect"
+    offline = "Offline"
+    standby = "Standby"
+    shutdown = "Shutdown"
+    emergency_mode = "EmergencyMode"
+    auto_closed = "AutoClosed"
+    copying = "Copying"
+    creating = "Creating"
+    inaccessible = "Inaccessible"
+    offline_secondary = "OfflineSecondary"
+    pausing = "Pausing"
+    paused = "Paused"
+    resuming = "Resuming"
+    scaling = "Scaling"
+    offline_changing_dw_performance_tiers = "OfflineChangingDwPerformanceTiers"
+    online_changing_dw_performance_tiers = "OnlineChangingDwPerformanceTiers"
+    disabled = "Disabled"
+
+
+class CatalogCollationType(str, Enum):
+
+    database_default = "DATABASE_DEFAULT"
+    sql_latin1_general_cp1_ci_as = "SQL_Latin1_General_CP1_CI_AS"
+
+
+class DatabaseLicenseType(str, Enum):
+
+    license_included = "LicenseIncluded"
+    base_price = "BasePrice"
+
+
+class DatabaseReadScale(str, Enum):
+
+    enabled = "Enabled"
+    disabled = "Disabled"
+
+
+class SecondaryType(str, Enum):
+
+    geo = "Geo"
+    named = "Named"
+
+
+class CurrentBackupStorageRedundancy(str, Enum):
+
+    geo = "Geo"
+    local = "Local"
+    zone = "Zone"
+
+
+class RequestedBackupStorageRedundancy(str, Enum):
+
+    geo = "Geo"
+    local = "Local"
+    zone = "Zone"
+
+
+class SecurityAlertsPolicyState(str, Enum):
+
+    enabled = "Enabled"
+    disabled = "Disabled"
+
+
+class CreatedByType(str, Enum):
+
+    user = "User"
+    application = "Application"
+    managed_identity = "ManagedIdentity"
+    key = "Key"
+
+
+class VulnerabilityAssessmentScanTriggerType(str, Enum):
+
+    on_demand = "OnDemand"
+    recurring = "Recurring"
+
+
+class VulnerabilityAssessmentScanState(str, Enum):
+
+    passed = "Passed"
+    failed = "Failed"
+    failed_to_run = "FailedToRun"
+    in_progress = "InProgress"
+
+
+class ElasticPoolState(str, Enum):
+
+    creating = "Creating"
+    ready = "Ready"
+    disabled = "Disabled"
+
+
+class ElasticPoolLicenseType(str, Enum):
+
+    license_included = "LicenseIncluded"
+    base_price = "BasePrice"
+
+
 class ServerKeyType(str, Enum):
 
     service_managed = "ServiceManaged"
@@ -289,38 +453,16 @@ class FailoverGroupReplicationRole(str, Enum):
     secondary = "Secondary"
 
 
-class OperationOrigin(str, Enum):
+class InstanceFailoverGroupReplicationRole(str, Enum):
 
-    user = "user"
-    system = "system"
-
-
-class SyncAgentState(str, Enum):
-
-    online = "Online"
-    offline = "Offline"
-    never_connected = "NeverConnected"
+    primary = "Primary"
+    secondary = "Secondary"
 
 
-class SyncMemberDbType(str, Enum):
+class InstancePoolLicenseType(str, Enum):
 
-    azure_sql_database = "AzureSqlDatabase"
-    sql_server_database = "SqlServerDatabase"
-
-
-class VirtualNetworkRuleState(str, Enum):
-
-    initializing = "Initializing"
-    in_progress = "InProgress"
-    ready = "Ready"
-    deleting = "Deleting"
-    unknown = "Unknown"
-
-
-class BlobAuditingPolicyState(str, Enum):
-
-    enabled = "Enabled"
-    disabled = "Disabled"
+    license_included = "LicenseIncluded"
+    base_price = "BasePrice"
 
 
 class JobAgentState(str, Enum):
@@ -391,112 +533,6 @@ class JobTargetGroupMembershipType(str, Enum):
     exclude = "Exclude"
 
 
-class AutomaticTuningServerMode(str, Enum):
-
-    custom = "Custom"
-    auto = "Auto"
-    unspecified = "Unspecified"
-
-
-class AutomaticTuningServerReason(str, Enum):
-
-    default = "Default"
-    disabled = "Disabled"
-    auto_configured = "AutoConfigured"
-
-
-class RestorePointType(str, Enum):
-
-    continuous = "CONTINUOUS"
-    discrete = "DISCRETE"
-
-
-class SensitivityLabelRank(str, Enum):
-
-    none = "None"
-    low = "Low"
-    medium = "Medium"
-    high = "High"
-    critical = "Critical"
-
-
-class ManagementOperationState(str, Enum):
-
-    pending = "Pending"
-    in_progress = "InProgress"
-    succeeded = "Succeeded"
-    failed = "Failed"
-    cancel_in_progress = "CancelInProgress"
-    cancelled = "Cancelled"
-
-
-class VulnerabilityAssessmentScanTriggerType(str, Enum):
-
-    on_demand = "OnDemand"
-    recurring = "Recurring"
-
-
-class VulnerabilityAssessmentScanState(str, Enum):
-
-    passed = "Passed"
-    failed = "Failed"
-    failed_to_run = "FailedToRun"
-    in_progress = "InProgress"
-
-
-class InstanceFailoverGroupReplicationRole(str, Enum):
-
-    primary = "Primary"
-    secondary = "Secondary"
-
-
-class InstancePoolLicenseType(str, Enum):
-
-    license_included = "LicenseIncluded"
-    base_price = "BasePrice"
-
-
-class PrivateLinkServiceConnectionStateStatus(str, Enum):
-
-    approved = "Approved"
-    pending = "Pending"
-    rejected = "Rejected"
-    disconnected = "Disconnected"
-
-
-class PrivateLinkServiceConnectionStateActionsRequire(str, Enum):
-
-    none = "None"
-
-
-class PrivateEndpointProvisioningState(str, Enum):
-
-    approving = "Approving"
-    ready = "Ready"
-    dropping = "Dropping"
-    failed = "Failed"
-    rejecting = "Rejecting"
-
-
-class IdentityType(str, Enum):
-
-    none = "None"
-    system_assigned = "SystemAssigned"
-    user_assigned = "UserAssigned"
-
-
-class ServerPublicNetworkAccess(str, Enum):
-
-    enabled = "Enabled"
-    disabled = "Disabled"
-
-
-class CheckNameAvailabilityReason(str, Enum):
-
-    invalid = "Invalid"
-    already_exists = "AlreadyExists"
-
-
 class MaxSizeUnit(str, Enum):
 
     megabytes = "Megabytes"
@@ -531,6 +567,230 @@ class PerformanceLevelUnit(str, Enum):
 class PauseDelayTimeUnit(str, Enum):
 
     minutes = "Minutes"
+
+
+class TargetBackupStorageRedundancy(str, Enum):
+
+    geo = "Geo"
+    local = "Local"
+    zone = "Zone"
+
+
+class BackupStorageRedundancy(str, Enum):
+
+    geo = "Geo"
+    local = "Local"
+    zone = "Zone"
+
+
+class DayOfWeek(str, Enum):
+
+    sunday = "Sunday"
+    monday = "Monday"
+    tuesday = "Tuesday"
+    wednesday = "Wednesday"
+    thursday = "Thursday"
+    friday = "Friday"
+    saturday = "Saturday"
+
+
+class QueryTimeGrainType(str, Enum):
+
+    pt1_h = "PT1H"
+    p1_d = "P1D"
+
+
+class QueryMetricUnitType(str, Enum):
+
+    percentage = "percentage"
+    kb = "KB"
+    microseconds = "microseconds"
+    count = "count"
+
+
+class ManagedDatabaseStatus(str, Enum):
+
+    online = "Online"
+    offline = "Offline"
+    shutdown = "Shutdown"
+    creating = "Creating"
+    inaccessible = "Inaccessible"
+    restoring = "Restoring"
+    updating = "Updating"
+
+
+class ManagedDatabaseCreateMode(str, Enum):
+
+    default = "Default"
+    restore_external_backup = "RestoreExternalBackup"
+    point_in_time_restore = "PointInTimeRestore"
+    recovery = "Recovery"
+    restore_long_term_retention_backup = "RestoreLongTermRetentionBackup"
+
+
+class SecurityAlertPolicyState(str, Enum):
+
+    new = "New"
+    enabled = "Enabled"
+    disabled = "Disabled"
+
+
+class SecurityEventType(str, Enum):
+
+    undefined = "Undefined"
+    sql_injection_vulnerability = "SqlInjectionVulnerability"
+    sql_injection_exploit = "SqlInjectionExploit"
+
+
+class SensitivityLabelRank(str, Enum):
+
+    none = "None"
+    low = "Low"
+    medium = "Medium"
+    high = "High"
+    critical = "Critical"
+
+
+class SensitivityLabelUpdateKind(str, Enum):
+
+    set = "set"
+    remove = "remove"
+
+
+class RecommendedSensitivityLabelUpdateKind(str, Enum):
+
+    enable = "enable"
+    disable = "disable"
+
+
+class TransparentDataEncryptionState(str, Enum):
+
+    enabled = "Enabled"
+    disabled = "Disabled"
+
+
+class IdentityType(str, Enum):
+
+    none = "None"
+    system_assigned = "SystemAssigned"
+    user_assigned = "UserAssigned"
+
+
+class ManagedServerCreateMode(str, Enum):
+
+    default = "Default"
+    point_in_time_restore = "PointInTimeRestore"
+
+
+class ManagedInstanceLicenseType(str, Enum):
+
+    license_included = "LicenseIncluded"
+    base_price = "BasePrice"
+
+
+class ManagedInstanceProxyOverride(str, Enum):
+
+    proxy = "Proxy"
+    redirect = "Redirect"
+    default = "Default"
+
+
+class StorageAccountType(str, Enum):
+
+    grs = "GRS"
+    lrs = "LRS"
+    zrs = "ZRS"
+
+
+class AdministratorType(str, Enum):
+
+    active_directory = "ActiveDirectory"
+
+
+class PrincipalType(str, Enum):
+
+    user = "User"
+    group = "Group"
+    application = "Application"
+
+
+class OperationOrigin(str, Enum):
+
+    user = "user"
+    system = "system"
+
+
+class PrivateLinkServiceConnectionStateStatus(str, Enum):
+
+    approved = "Approved"
+    pending = "Pending"
+    rejected = "Rejected"
+    disconnected = "Disconnected"
+
+
+class PrivateLinkServiceConnectionStateActionsRequire(str, Enum):
+
+    none = "None"
+
+
+class PrivateEndpointProvisioningState(str, Enum):
+
+    approving = "Approving"
+    ready = "Ready"
+    dropping = "Dropping"
+    failed = "Failed"
+    rejecting = "Rejecting"
+
+
+class RestorePointType(str, Enum):
+
+    continuous = "CONTINUOUS"
+    discrete = "DISCRETE"
+
+
+class AutomaticTuningServerMode(str, Enum):
+
+    custom = "Custom"
+    auto = "Auto"
+    unspecified = "Unspecified"
+
+
+class AutomaticTuningServerReason(str, Enum):
+
+    default = "Default"
+    disabled = "Disabled"
+    auto_configured = "AutoConfigured"
+
+
+class ServerPublicNetworkAccess(str, Enum):
+
+    enabled = "Enabled"
+    disabled = "Disabled"
+
+
+class ServerWorkspaceFeature(str, Enum):
+
+    connected = "Connected"
+    disconnected = "Disconnected"
+
+
+class CheckNameAvailabilityReason(str, Enum):
+
+    invalid = "Invalid"
+    already_exists = "AlreadyExists"
+
+
+class SyncAgentState(str, Enum):
+
+    online = "Online"
+    offline = "Offline"
+    never_connected = "NeverConnected"
+
+
+class SyncMemberDbType(str, Enum):
+
+    azure_sql_database = "AzureSqlDatabase"
+    sql_server_database = "SqlServerDatabase"
 
 
 class SyncGroupLogType(str, Enum):
@@ -585,180 +845,26 @@ class SyncMemberState(str, Enum):
     un_reprovisioned = "UnReprovisioned"
 
 
-class ManagedDatabaseStatus(str, Enum):
+class VirtualNetworkRuleState(str, Enum):
 
-    online = "Online"
-    offline = "Offline"
-    shutdown = "Shutdown"
-    creating = "Creating"
-    inaccessible = "Inaccessible"
-    restoring = "Restoring"
-    updating = "Updating"
-
-
-class CatalogCollationType(str, Enum):
-
-    database_default = "DATABASE_DEFAULT"
-    sql_latin1_general_cp1_ci_as = "SQL_Latin1_General_CP1_CI_AS"
-
-
-class ManagedDatabaseCreateMode(str, Enum):
-
-    default = "Default"
-    restore_external_backup = "RestoreExternalBackup"
-    point_in_time_restore = "PointInTimeRestore"
-    recovery = "Recovery"
-    restore_long_term_retention_backup = "RestoreLongTermRetentionBackup"
-
-
-class ManagedServerCreateMode(str, Enum):
-
-    default = "Default"
-    point_in_time_restore = "PointInTimeRestore"
-
-
-class ManagedInstanceLicenseType(str, Enum):
-
-    license_included = "LicenseIncluded"
-    base_price = "BasePrice"
-
-
-class ManagedInstanceProxyOverride(str, Enum):
-
-    proxy = "Proxy"
-    redirect = "Redirect"
-    default = "Default"
-
-
-class StorageAccountType(str, Enum):
-
-    grs = "GRS"
-    lrs = "LRS"
-    zrs = "ZRS"
-
-
-class QueryTimeGrainType(str, Enum):
-
-    pt1_h = "PT1H"
-    p1_d = "P1D"
-
-
-class QueryMetricUnitType(str, Enum):
-
-    percentage = "percentage"
-    kb = "KB"
-    microseconds = "microseconds"
-    count = "count"
-
-
-class CreateMode(str, Enum):
-
-    default = "Default"
-    copy = "Copy"
-    secondary = "Secondary"
-    point_in_time_restore = "PointInTimeRestore"
-    restore = "Restore"
-    recovery = "Recovery"
-    restore_external_backup = "RestoreExternalBackup"
-    restore_external_backup_secondary = "RestoreExternalBackupSecondary"
-    restore_long_term_retention_backup = "RestoreLongTermRetentionBackup"
-    online_secondary = "OnlineSecondary"
-
-
-class SampleName(str, Enum):
-
-    adventure_works_lt = "AdventureWorksLT"
-    wide_world_importers_std = "WideWorldImportersStd"
-    wide_world_importers_full = "WideWorldImportersFull"
-
-
-class DatabaseStatus(str, Enum):
-
-    online = "Online"
-    restoring = "Restoring"
-    recovery_pending = "RecoveryPending"
-    recovering = "Recovering"
-    suspect = "Suspect"
-    offline = "Offline"
-    standby = "Standby"
-    shutdown = "Shutdown"
-    emergency_mode = "EmergencyMode"
-    auto_closed = "AutoClosed"
-    copying = "Copying"
-    creating = "Creating"
-    inaccessible = "Inaccessible"
-    offline_secondary = "OfflineSecondary"
-    pausing = "Pausing"
-    paused = "Paused"
-    resuming = "Resuming"
-    scaling = "Scaling"
-    offline_changing_dw_performance_tiers = "OfflineChangingDwPerformanceTiers"
-    online_changing_dw_performance_tiers = "OnlineChangingDwPerformanceTiers"
-    disabled = "Disabled"
-
-
-class DatabaseLicenseType(str, Enum):
-
-    license_included = "LicenseIncluded"
-    base_price = "BasePrice"
-
-
-class DatabaseReadScale(str, Enum):
-
-    enabled = "Enabled"
-    disabled = "Disabled"
-
-
-class SecondaryType(str, Enum):
-
-    geo = "Geo"
-    named = "Named"
-
-
-class StorageKeyType(str, Enum):
-
-    shared_access_key = "SharedAccessKey"
-    storage_access_key = "StorageAccessKey"
-
-
-class ElasticPoolState(str, Enum):
-
-    creating = "Creating"
+    initializing = "Initializing"
+    in_progress = "InProgress"
     ready = "Ready"
-    disabled = "Disabled"
+    failed = "Failed"
+    deleting = "Deleting"
+    unknown = "Unknown"
 
 
-class ElasticPoolLicenseType(str, Enum):
+class ReplicaType(str, Enum):
 
-    license_included = "LicenseIncluded"
-    base_price = "BasePrice"
-
-
-class CreatedByType(str, Enum):
-
-    user = "User"
-    application = "Application"
-    managed_identity = "ManagedIdentity"
-    key = "Key"
-
-
-class LongTermRetentionDatabaseState(str, Enum):
-
-    all = "All"
-    live = "Live"
-    deleted = "Deleted"
+    primary = "Primary"
+    readable_secondary = "ReadableSecondary"
 
 
 class VulnerabilityAssessmentPolicyBaselineName(str, Enum):
 
     master = "master"
     default = "default"
-
-
-class SensitivityLabelSource(str, Enum):
-
-    current = "current"
-    recommended = "recommended"
 
 
 class CapabilityGroup(str, Enum):
@@ -770,46 +876,17 @@ class CapabilityGroup(str, Enum):
     supported_managed_instance_editions = "supportedManagedInstanceEditions"
 
 
-class DatabaseState1(str, Enum):
+class DatabaseState(str, Enum):
 
     all = "All"
     live = "Live"
     deleted = "Deleted"
 
 
-class DatabaseState2(str, Enum):
+class SensitivityLabelSource(str, Enum):
 
-    all = "All"
-    live = "Live"
-    deleted = "Deleted"
-
-
-class DatabaseState3(str, Enum):
-
-    all = "All"
-    live = "Live"
-    deleted = "Deleted"
-
-
-class DatabaseState4(str, Enum):
-
-    all = "All"
-    live = "Live"
-    deleted = "Deleted"
-
-
-class DatabaseState5(str, Enum):
-
-    all = "All"
-    live = "Live"
-    deleted = "Deleted"
-
-
-class DatabaseState6(str, Enum):
-
-    all = "All"
-    live = "Live"
-    deleted = "Deleted"
+    current = "current"
+    recommended = "recommended"
 
 
 class AggregationFunctionType(str, Enum):
@@ -828,9 +905,3 @@ class MetricType(str, Enum):
     log_io = "logIo"
     duration = "duration"
     dtu = "dtu"
-
-
-class ReplicaType(str, Enum):
-
-    primary = "Primary"
-    readable_secondary = "ReadableSecondary"

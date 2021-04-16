@@ -28,7 +28,7 @@ class ManagedBackupShortTermRetentionPoliciesOperations(object):
     :param serializer: An object model serializer.
     :param deserializer: An object model deserializer.
     :ivar policy_name: The policy name. Constant value: "default".
-    :ivar api_version: The API version to use for the request. Constant value: "2017-03-01-preview".
+    :ivar api_version: The API version to use for the request. Constant value: "2020-11-01-preview".
     """
 
     models = models
@@ -39,7 +39,7 @@ class ManagedBackupShortTermRetentionPoliciesOperations(object):
         self._serialize = serializer
         self._deserialize = deserializer
         self.policy_name = "default"
-        self.api_version = "2017-03-01-preview"
+        self.api_version = "2020-11-01-preview"
 
         self.config = config
 
