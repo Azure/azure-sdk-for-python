@@ -266,8 +266,8 @@ class StorageBlockBlobTestAsync(AsyncStorageTestCase):
         # Act
         await self._setup(storage_account, storage_account_key)
         source_blob = await self._create_blob(data=b"This is test data to be copied over.")
-        test_cpk = CustomerProvidedEncryptionKey(key_value="MDEyMzQ1NjcwMTIzNDU2NzAxMjM0NTY3MDEyMzQ1Njc=",
-                                                 key_hash="3QFFFpRA5+XANHqwwbT4yXDmrT/2JaLt/FKHjzhOdoE=")
+`        test_cpk = CustomerProvidedEncryptionKey(key_value="MDEyMzQ1NjcwMTIzNDU2NzAxMjM0NTY3MDEyMzQ1Njc=",
+                                                 key_hash="3QFFFpRA5+XANHqwwbT4yXDmrT/2JaLt/FKHjzhOdoE=")`
         sas = generate_blob_sas(account_name=storage_account.name, account_key=storage_account_key,
                                 container_name=self.container_name, blob_name=source_blob.blob_name,
                                 permission=BlobSasPermissions(read=True), expiry=datetime.utcnow() + timedelta(hours=1))
