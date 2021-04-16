@@ -28,7 +28,7 @@ steps:
   - script: |
       echo "##vso[build.addbuildtag]Scheduled"
     displayName: 'Tag scheduled builds'
-    condition: and(eq(variables['Build.SourceBranchName'],$(DefaultBranch)),eq(variables['Build.Reason'],'Schedule'))
+    condition: and(eq(variables['Build.SourceBranchName'], variables['DefaultBranch']), eq(variables['Build.Reason'],'Schedule'))
 
   - task: UsePythonVersion@0
     displayName: 'Use Python 2.7'
