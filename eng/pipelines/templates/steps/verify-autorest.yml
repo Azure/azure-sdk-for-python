@@ -15,7 +15,7 @@ parameters:
     default: false
 
 steps:
-  - ${{if ne(parameters.VerifyAutorest, 'true')}}:
+  - ${{if eq(parameters.VerifyAutorest, 'true')}}:
     - template: /eng/common/pipelines/templates/steps/set-default-branch.yml
 
     - task: UsePythonVersion@0

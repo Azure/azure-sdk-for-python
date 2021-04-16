@@ -45,7 +45,7 @@ parameters:
     default: []
   - name: VerifyAutorest
     type: boolean
-    default: true
+    default: false
 
 jobs:
   - job: 'Build'
