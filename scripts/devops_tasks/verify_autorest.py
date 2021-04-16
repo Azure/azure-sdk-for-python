@@ -55,6 +55,25 @@ def find_swagger_folders(directory):
 
 
 def check_diff(folder):
+    # We don't care about changes to txt files (dev_requirements change)
+    command = [
+        "git",
+        "checkout",
+        "--",
+        "**/*.txt",
+    ]
+    result = run_check_call(command, sdk_dir, always_exit=False)
+
+    # Remove the whl dirs
+    command = [
+        "rm",
+        "-r",
+        "**/.tmp_whl_dir/"
+    ]
+    result = run_check_call(command, sdk_dir, always_exit=False)
+
+    # Next we need to move the autorest and _tox_logs directories and then replace them
+
     dir_changed = folder.split("/")[:-2]
     command = [
         "git",

@@ -58,6 +58,11 @@ steps:
     parameters:
       SourceDirectory: $(Build.SourcesDirectory)
 
+  - template: ../steps/verify-autorest.yml
+    parameters:
+      ServiceDirectory: ${{ parameters.ServiceDirectory }}
+      VerifyAutorest: ${{ parameters.VerifyAutorest }}
+
   - task: ms.vss-governance-buildtask.governance-build-task-component-detection.ComponentGovernanceComponentDetection@0
     # ComponentGovernance is currently unable to run on pull requests of public projects. Running on non-PR
     # builds should be sufficient.
@@ -116,11 +121,6 @@ steps:
       BuildTargetingString: ${{ parameters.BuildTargetingString }}
       TestMarkArgument: ${{ parameters.TestMarkArgument }}
       AdditionalTestArgs: ${{parameters.AdditionalTestArgs}}
-
-  - template: ../steps/verify-autorest.yml
-    parameters:
-      ServiceDirectory: ${{ parameters.ServiceDirectory }}
-      VerifyAutorest: ${{ parameters.VerifyAutorest }}
 
   - template: /eng/common/pipelines/templates/steps/create-apireview.yml
     parameters:
