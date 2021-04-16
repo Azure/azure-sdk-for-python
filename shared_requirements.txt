@@ -244,3 +244,4 @@ opentelemetry-sdk<2.0.0,>=1.0.0
 #override azure-mgmt-reservations msrest>=0.6.21
 #override azure-mgmt-hybridcompute msrest>=0.6.21
 #override azure-mgmt-reservations msrest>=0.6.21
+#override azure-mgmt-webpubsub msrest>=0.6.21
