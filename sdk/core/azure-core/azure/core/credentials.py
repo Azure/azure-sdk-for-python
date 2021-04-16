@@ -143,6 +143,9 @@ class AzureNamedKeyCredential(object):
 
         Both name and key must be provided in order to update the named key credential.
         Individual attributes cannot be updated.
+
+        :param str name: The name of the credential used to authenticate to an Azure service.
+        :param str key: The key used to authenticate to an Azure service.
         """
         if not isinstance(name, six.string_types) or not isinstance(key, six.string_types):
             raise TypeError("Both name and key must be strings.")
