@@ -28,25 +28,25 @@ class AzurePurviewCatalogClientConfiguration(Configuration):
 
     :param credential: Credential needed for the client to connect to Azure.
     :type credential: ~azure.core.credentials.TokenCredential
-    :param account_name: The name of your Purview account.
-    :type account_name: str
+    :param endpoint: The catalog endpoint of your Purview account. Example: https://{accountName}.catalog.purview.azure.com.
+    :type endpoint: str
     """
 
     def __init__(
         self,
         credential,  # type: "TokenCredential"
-        account_name,  # type: str
+        endpoint,  # type: str
         **kwargs  # type: Any
     ):
         # type: (...) -> None
         if credential is None:
             raise ValueError("Parameter 'credential' must not be None.")
-        if account_name is None:
-            raise ValueError("Parameter 'account_name' must not be None.")
+        if endpoint is None:
+            raise ValueError("Parameter 'endpoint' must not be None.")
         super(AzurePurviewCatalogClientConfiguration, self).__init__(**kwargs)
 
         self.credential = credential
-        self.account_name = account_name
+        self.endpoint = endpoint
         self.credential_scopes = kwargs.pop('credential_scopes', ['https://purview.azure.net/.default'])
         kwargs.setdefault('sdk_moniker', 'purview-catalog/{}'.format(VERSION))
         self._configure(**kwargs)

@@ -10,7 +10,7 @@ from copy import deepcopy
 from typing import TYPE_CHECKING
 
 from azure.core import PipelineClient
-from azure.purview.catalog.core.rest import HttpResponse
+from azure.purview.catalog.core.rest import HttpResponse, _StreamContextManager
 from msrest import Deserializer, Serializer
 
 if TYPE_CHECKING:
@@ -28,19 +28,19 @@ class AzurePurviewCatalogClient(object):
 
     :param credential: Credential needed for the client to connect to Azure.
     :type credential: ~azure.core.credentials.TokenCredential
-    :param account_name: The name of your Purview account.
-    :type account_name: str
+    :param endpoint: The catalog endpoint of your Purview account. Example: https://{accountName}.catalog.purview.azure.com.
+    :type endpoint: str
     """
 
     def __init__(
         self,
         credential,  # type: "TokenCredential"
-        account_name,  # type: str
+        endpoint,  # type: str
         **kwargs  # type: Any
     ):
         # type: (...) -> None
-        base_url = 'https://{accountName}.catalog.purview.azure.com/api'
-        self._config = AzurePurviewCatalogClientConfiguration(credential, account_name, **kwargs)
+        base_url = '{Endpoint}/api'
+        self._config = AzurePurviewCatalogClientConfiguration(credential, endpoint, **kwargs)
         self._client = PipelineClient(base_url=base_url, config=self._config, **kwargs)
 
         self._serialize = Serializer()
@@ -50,11 +50,11 @@ class AzurePurviewCatalogClient(object):
         # type: (HttpRequest, Any) -> HttpResponse
         """Runs the network request through the client's chained policies.
 
-        We have helper methods to create requests specific to this service in `azure.purview.catalog.core.restrest`.
+        We have helper methods to create requests specific to this service in `azure.purview.catalog.rest`.
         Use these helper methods to create the request you pass to this method. See our example below:
 
-        >>> from azure.purview.catalog.core.restrest import build_entityrest_create_or_update_request
-        >>> request = build_entityrest_create_or_update_request(json, content)
+        >>> from azure.purview.catalog.rest import build_create_or_update_request
+        >>> request = build_create_or_update_request(json, content, api_version)
         <HttpRequest [POST], url: '/atlas/v2/entity'>
         >>> response = client.send_request(request)
         <HttpResponse: 200 OK>
@@ -72,16 +72,22 @@ class AzurePurviewCatalogClient(object):
         """
         request_copy = deepcopy(http_request)
         path_format_arguments = {
-            'accountName': self._serialize.url("self._config.account_name", self._config.account_name, 'str', skip_quote=True),
+            'Endpoint': self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
         }
         request_copy.url = self._client.format_url(request_copy.url, **path_format_arguments)
-        stream_response = kwargs.pop("stream_response", False)
-        pipeline_response = self._client._pipeline.run(request_copy._internal_request, stream=stream_response, **kwargs)
-        return HttpResponse(
+        if kwargs.pop("stream_response", False):
+            return _StreamContextManager(
+                client=self._client,
+                request=request_copy,
+            )
+        pipeline_response = self._client._pipeline.run(request_copy._internal_request, **kwargs)
+        response = HttpResponse(
             status_code=pipeline_response.http_response.status_code,
             request=request_copy,
             _internal_response=pipeline_response.http_response
         )
+        response.read()
+        return response
 
     def close(self):
         # type: () -> None

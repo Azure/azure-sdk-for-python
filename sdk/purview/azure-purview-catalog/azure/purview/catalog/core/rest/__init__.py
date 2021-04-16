@@ -27,11 +27,15 @@ try:
     from ._rest_py3 import HttpRequest
     from ._rest_py3 import HttpResponse
     from ._rest_py3 import AsyncHttpResponse
+    from ._rest_py3 import _StreamContextManager
+    from ._rest_py3 import _AsyncStreamContextManager
 
     __all__ = [
         "HttpRequest",
         "HttpResponse",
         "AsyncHttpResponse",
+        "_StreamContextManager",
+        "_AsyncStreamContextManager",
     ]
 except (SyntaxError, ImportError):
     from ._rest import HttpRequest

@@ -10,7 +10,7 @@ from copy import deepcopy
 from typing import Any, Optional, TYPE_CHECKING
 
 from azure.core import AsyncPipelineClient
-from azure.purview.catalog.core.rest import AsyncHttpResponse, HttpRequest
+from azure.purview.catalog.core.rest import AsyncHttpResponse, HttpRequest, _AsyncStreamContextManager
 from msrest import Deserializer, Serializer
 
 if TYPE_CHECKING:
@@ -27,18 +27,18 @@ class AzurePurviewCatalogClient(object):
 
     :param credential: Credential needed for the client to connect to Azure.
     :type credential: ~azure.core.credentials_async.AsyncTokenCredential
-    :param account_name: The name of your Purview account.
-    :type account_name: str
+    :param endpoint: The catalog endpoint of your Purview account. Example: https://{accountName}.catalog.purview.azure.com.
+    :type endpoint: str
     """
 
     def __init__(
         self,
         credential: "AsyncTokenCredential",
-        account_name: str,
+        endpoint: str,
         **kwargs: Any
     ) -> None:
-        base_url = 'https://{accountName}.catalog.purview.azure.com/api'
-        self._config = AzurePurviewCatalogClientConfiguration(credential, account_name, **kwargs)
+        base_url = '{Endpoint}/api'
+        self._config = AzurePurviewCatalogClientConfiguration(credential, endpoint, **kwargs)
         self._client = AsyncPipelineClient(base_url=base_url, config=self._config, **kwargs)
 
         self._serialize = Serializer()
@@ -50,8 +50,8 @@ class AzurePurviewCatalogClient(object):
         We have helper methods to create requests specific to this service in `azure.purview.catalog.rest`.
         Use these helper methods to create the request you pass to this method. See our example below:
 
-        >>> from azure.purview.catalog.rest import build_entityrest_create_or_update_request
-        >>> request = build_entityrest_create_or_update_request(json, content)
+        >>> from azure.purview.catalog.rest import build_create_or_update_request
+        >>> request = build_create_or_update_request(json, content, api_version)
         <HttpRequest [POST], url: '/atlas/v2/entity'>
         >>> response = await client.send_request(request)
         <AsyncHttpResponse: 200 OK>
@@ -69,16 +69,22 @@ class AzurePurviewCatalogClient(object):
         """
         request_copy = deepcopy(http_request)
         path_format_arguments = {
-            'accountName': self._serialize.url("self._config.account_name", self._config.account_name, 'str', skip_quote=True),
+            'Endpoint': self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
         }
         request_copy.url = self._client.format_url(request_copy.url, **path_format_arguments)
-        stream_response = kwargs.pop("stream_response", False)
-        pipeline_response = await self._client._pipeline.run(request_copy._internal_request, stream=stream_response, **kwargs)
-        return AsyncHttpResponse(
+        if kwargs.pop("stream_response", False):
+            return _AsyncStreamContextManager(
+                client=self._client,
+                request=request_copy,
+            )
+        pipeline_response = await self._client._pipeline.run(request_copy._internal_request, **kwargs)
+        response = AsyncHttpResponse(
             status_code=pipeline_response.http_response.status_code,
             request=request_copy,
             _internal_response=pipeline_response.http_response
         )
+        await response.read()
+        return response
 
     async def close(self) -> None:
         await self._client.close()

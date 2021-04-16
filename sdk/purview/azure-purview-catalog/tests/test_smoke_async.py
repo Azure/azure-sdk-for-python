@@ -8,18 +8,17 @@
 import pytest
 from azure.identity.aio import DefaultAzureCredential
 from azure.purview.catalog.aio import AzurePurviewCatalogClient
-from azure.purview.catalog.rest import *
+from azure.purview.catalog.rest.types_rest import build_get_all_type_defs_request
 
 @pytest.mark.asyncio
 async def test_basic_smoke_test():
-    request = build_typesrest_get_all_type_defs_request()
+    request = build_get_all_type_defs_request()
 
     async with DefaultAzureCredential() as credential:
-        async with AzurePurviewCatalogClient(credential=credential, account_name="llcpurview") as client:
+        async with AzurePurviewCatalogClient(credential=credential, endpoint='https://llcpurview.catalog.purview.azure.com') as client:
             response = await client.send_request(request)
             response.raise_for_status()
             assert response.status_code == 200
-            await response.load_body()
             json_response = response.json()
 
             # first assert that the keys we expect are there
