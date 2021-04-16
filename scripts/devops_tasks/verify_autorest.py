@@ -56,6 +56,8 @@ def find_swagger_folders(directory):
 
 def check_diff(folder):
     # We don't care about changes to txt files (dev_requirements change)
+    run_check_call(["git", "status"], sdk_dir, always_exit=False)
+
     command = [
         "git",
         "checkout",
