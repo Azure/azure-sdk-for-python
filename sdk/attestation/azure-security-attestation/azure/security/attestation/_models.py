@@ -144,10 +144,10 @@ class AttestationToken(Generic[T]):
         :keyword Any body: The body of hte newly created token, if provided.
         :keyword SigningKey signer: If specified, the key used to sign the token.
         :keyword str token: If no body or signer is provided, the string representation of the token.
+        :keyword Type body_type: The underlying type of the body of the 'token' parameter, used to deserialize the underlying body when parsing the token.
         """
         body = kwargs.get('body')  # type: Any
         signer = kwargs.get('signer')  # type: SigningKey
-        self._body_type = kwargs.get('body_type') #type: Type
         if (body):
             if (signer):
                 token = self._create_secured_jwt(body, signer)
@@ -157,6 +157,7 @@ class AttestationToken(Generic[T]):
             token = kwargs.pop('token')
 
         self._token = token
+        self._body_type = kwargs.get('body_type') #type: Type
         token_parts = token.split('.')
         if len(token_parts) != 3:
             raise ValueError("Malformed JSON Web Token")
@@ -169,10 +170,8 @@ class AttestationToken(Generic[T]):
         # If the caller didn't specify a body when constructing the class, populate the well known attributes from the token.
         if (body is None):
             # Populate the standardized fields in the header.
-            self.algorithm = self._header.get('alg')
             self.content_type = self._header.get('cty')
             self.critical = self._header.get('crit')  # type: Optional[bool]
-            self.key_id = self._header.get('kid')
             self.key_url = self._header.get('jku')
             self.type = self._header.get('typ')
             self.certificate_thumbprint = self._header.get('x5t')
@@ -180,12 +179,6 @@ class AttestationToken(Generic[T]):
             self.x509_url = self._header.get('x5u')
 
             # Populate the standardized fields from the body.
-            exp = self._body.get('exp')
-            if (exp is not None):
-                self.expiration_time = datetime.fromtimestamp(exp)
-            else:
-                self.expiration_time = None
-
             iat = self._body.get('iat')
             if (iat is not None):
                 self.issuance_time = datetime.fromtimestamp(iat)
@@ -202,6 +195,32 @@ class AttestationToken(Generic[T]):
 
     def __str__(self):
         return self._token
+
+    @property
+    def algorithm(self):
+        #type:() -> str
+        """ Json Web Token Header "algorithm". See https://www.rfc-editor.org/rfc/rfc7515.html#section-4.1.1 for details.
+        If the value of Algorithm is "none" it indicates that the token is unsecured.
+        """
+        return self._header.get('alg')
+
+    @property
+    def key_id(self):
+        #type:() -> str
+        """ Json Web Token Header "Key ID". See https://www.rfc-editor.org/rfc/rfc7515.html#section-4.1.4 for details.
+        """
+        return self._header.get('kid')
+
+    @property
+    def expiration_time(self):
+        #type:() -> datetime
+        """ Expiration time for the token.
+        """
+        exp = self._body.get('exp')
+        if (exp is not None):
+            return datetime.fromtimestamp(exp)
+        return None
+ 
 
     def serialize(self):
         return self._token
@@ -220,7 +239,7 @@ class AttestationToken(Generic[T]):
                 options.validation_callback(self, None)
             return True
 
-        if self._header['alg'] != 'none' and options.validate_signature:
+        if self.algorithm != 'none' and options.validate_signature:
             # validate the signature for the token.
             candidate_certificates = self._get_candidate_signing_certificates(
                 signing_certificates)
@@ -266,7 +285,7 @@ class AttestationToken(Generic[T]):
         # type: (List[AttestationSigner]) -> List[AttestationSigner]
 
         candidates = list()
-        desired_key_id = self._header.get('kid')
+        desired_key_id = self.key_id
         if desired_key_id is not None:
             for signer in signing_certificates:
                 if (signer.key_id == desired_key_id):
@@ -338,7 +357,7 @@ class AttestationToken(Generic[T]):
         # type:(TokenValidationOptions) -> bool
         """ Validate the static properties in the attestation token.
         """
-        if options.validate_expiration and hasattr(self, 'expiration_time') and self.expiration_time is not None:
+        if options.validate_expiration and self.expiration_time is not None:
             if (datetime.now() > self.expiration_time):
                 delta = datetime.now() - self.expiration_time
                 if delta.total_seconds > options.validation_slack:
