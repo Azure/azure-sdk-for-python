@@ -4,22 +4,19 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
-
-import pytest
-from azure.identity.aio import DefaultAzureCredential
-from azure.purview.catalog.aio import AzurePurviewCatalogClient
+from testcase import PurviewCatalogTest, PurviewCatalogPowerShellPreparer
 from azure.purview.catalog.rest.types_rest import build_get_all_type_defs_request
 
-@pytest.mark.asyncio
-async def test_basic_smoke_test():
-    request = build_get_all_type_defs_request()
+class PurviewCatalogSmokeTest(PurviewCatalogTest):
 
-    async with DefaultAzureCredential() as credential:
-        async with AzurePurviewCatalogClient(credential=credential, endpoint='https://llcpurview.catalog.purview.azure.com') as client:
-            response = await client.send_request(request)
-            response.raise_for_status()
-            assert response.status_code == 200
-            json_response = response.json()
+    @PurviewCatalogPowerShellPreparer()
+    async def test_basic_smoke_test(self, purviewcatalog_endpoint):
+        client = self.create_async_client(endpoint=purviewcatalog_endpoint)
+        request = build_get_all_type_defs_request()
+        response = await client.send_request(request)
+        response.raise_for_status()
+        assert response.status_code == 200
+        json_response = response.json()
 
-            # first assert that the keys we expect are there
-            assert set(json_response.keys()) == set(['enumDefs', 'structDefs', 'classificationDefs', 'entityDefs', 'relationshipDefs'])
+        # assert that the keys we expect are there
+        assert set(json_response.keys()) == set(['enumDefs', 'structDefs', 'classificationDefs', 'entityDefs', 'relationshipDefs'])
