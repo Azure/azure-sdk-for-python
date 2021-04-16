@@ -15,6 +15,7 @@ try:
     from ._models_py3 import AvailableRpOperation
     from ._models_py3 import AvailableRpOperationDisplayInfo
     from ._models_py3 import AzureEntityResource
+    from ._models_py3 import AzureSku
     from ._models_py3 import BigDataPoolPatchInfo
     from ._models_py3 import BigDataPoolResourceInfo
     from ._models_py3 import CheckNameAvailabilityRequest
@@ -24,6 +25,9 @@ try:
     from ._models_py3 import CreateSqlPoolRestorePointDefinition
     from ._models_py3 import CustomerManagedKeyDetails
     from ._models_py3 import CustomSetupBase
+    from ._models_py3 import Database
+    from ._models_py3 import DatabaseStatistics
+    from ._models_py3 import DataConnection
     from ._models_py3 import DataLakeStorageAccountDetails
     from ._models_py3 import DataMaskingPolicy
     from ._models_py3 import DataMaskingRule
@@ -36,6 +40,8 @@ try:
     from ._models_py3 import ErrorAdditionalInfo
     from ._models_py3 import ErrorDetail
     from ._models_py3 import ErrorResponse, ErrorResponseException
+    from ._models_py3 import EventGridDataConnection
+    from ._models_py3 import EventHubDataConnection
     from ._models_py3 import ExtendedServerBlobAuditingPolicy
     from ._models_py3 import ExtendedSqlPoolBlobAuditingPolicy
     from ._models_py3 import GeoBackupPolicy
@@ -57,9 +63,13 @@ try:
     from ._models_py3 import IntegrationRuntimeStatus
     from ._models_py3 import IntegrationRuntimeStatusResponse
     from ._models_py3 import IntegrationRuntimeVNetProperties
+    from ._models_py3 import IotHubDataConnection
     from ._models_py3 import IpFirewallRuleInfo
     from ._models_py3 import IpFirewallRuleProperties
     from ._models_py3 import Key
+    from ._models_py3 import KustoPool
+    from ._models_py3 import KustoPoolListResult
+    from ._models_py3 import KustoPoolUpdate
     from ._models_py3 import LibraryInfo
     from ._models_py3 import LibraryRequirements
     from ._models_py3 import LibraryResource
@@ -80,6 +90,8 @@ try:
     from ._models_py3 import ManagedIntegrationRuntimeStatus
     from ._models_py3 import ManagedVirtualNetworkSettings
     from ._models_py3 import MetadataSyncConfig
+    from ._models_py3 import Operation
+    from ._models_py3 import OperationDisplay
     from ._models_py3 import OperationMetaLogSpecification
     from ._models_py3 import OperationMetaMetricDimensionSpecification
     from ._models_py3 import OperationMetaMetricSpecification
@@ -99,6 +111,7 @@ try:
     from ._models_py3 import QueryInterval
     from ._models_py3 import QueryMetric
     from ._models_py3 import QueryStatistic
+    from ._models_py3 import ReadWriteDatabase
     from ._models_py3 import RecommendedSensitivityLabelUpdate
     from ._models_py3 import RecommendedSensitivityLabelUpdateList
     from ._models_py3 import RecoverableSqlPool
@@ -147,6 +160,7 @@ try:
     from ._models_py3 import SsisProject
     from ._models_py3 import SsisVariable
     from ._models_py3 import SubResource
+    from ._models_py3 import SystemData
     from ._models_py3 import TopQueries
     from ._models_py3 import TopQueriesListResult
     from ._models_py3 import TrackedResource
@@ -170,6 +184,7 @@ except (SyntaxError, ImportError):
     from ._models import AvailableRpOperation
     from ._models import AvailableRpOperationDisplayInfo
     from ._models import AzureEntityResource
+    from ._models import AzureSku
     from ._models import BigDataPoolPatchInfo
     from ._models import BigDataPoolResourceInfo
     from ._models import CheckNameAvailabilityRequest
@@ -179,6 +194,9 @@ except (SyntaxError, ImportError):
     from ._models import CreateSqlPoolRestorePointDefinition
     from ._models import CustomerManagedKeyDetails
     from ._models import CustomSetupBase
+    from ._models import Database
+    from ._models import DatabaseStatistics
+    from ._models import DataConnection
     from ._models import DataLakeStorageAccountDetails
     from ._models import DataMaskingPolicy
     from ._models import DataMaskingRule
@@ -191,6 +209,8 @@ except (SyntaxError, ImportError):
     from ._models import ErrorAdditionalInfo
     from ._models import ErrorDetail
     from ._models import ErrorResponse, ErrorResponseException
+    from ._models import EventGridDataConnection
+    from ._models import EventHubDataConnection
     from ._models import ExtendedServerBlobAuditingPolicy
     from ._models import ExtendedSqlPoolBlobAuditingPolicy
     from ._models import GeoBackupPolicy
@@ -212,9 +232,13 @@ except (SyntaxError, ImportError):
     from ._models import IntegrationRuntimeStatus
     from ._models import IntegrationRuntimeStatusResponse
     from ._models import IntegrationRuntimeVNetProperties
+    from ._models import IotHubDataConnection
     from ._models import IpFirewallRuleInfo
     from ._models import IpFirewallRuleProperties
     from ._models import Key
+    from ._models import KustoPool
+    from ._models import KustoPoolListResult
+    from ._models import KustoPoolUpdate
     from ._models import LibraryInfo
     from ._models import LibraryRequirements
     from ._models import LibraryResource
@@ -235,6 +259,8 @@ except (SyntaxError, ImportError):
     from ._models import ManagedIntegrationRuntimeStatus
     from ._models import ManagedVirtualNetworkSettings
     from ._models import MetadataSyncConfig
+    from ._models import Operation
+    from ._models import OperationDisplay
     from ._models import OperationMetaLogSpecification
     from ._models import OperationMetaMetricDimensionSpecification
     from ._models import OperationMetaMetricSpecification
@@ -254,6 +280,7 @@ except (SyntaxError, ImportError):
     from ._models import QueryInterval
     from ._models import QueryMetric
     from ._models import QueryStatistic
+    from ._models import ReadWriteDatabase
     from ._models import RecommendedSensitivityLabelUpdate
     from ._models import RecommendedSensitivityLabelUpdateList
     from ._models import RecoverableSqlPool
@@ -302,6 +329,7 @@ except (SyntaxError, ImportError):
     from ._models import SsisProject
     from ._models import SsisVariable
     from ._models import SubResource
+    from ._models import SystemData
     from ._models import TopQueries
     from ._models import TopQueriesListResult
     from ._models import TrackedResource
@@ -320,6 +348,8 @@ except (SyntaxError, ImportError):
     from ._models import WorkspacePatchInfo
     from ._models import WorkspaceRepositoryConfiguration
 from ._paged_models import BigDataPoolResourceInfoPaged
+from ._paged_models import DatabasePaged
+from ._paged_models import DataConnectionPaged
 from ._paged_models import DataMaskingRulePaged
 from ._paged_models import EncryptionProtectorPaged
 from ._paged_models import ExtendedServerBlobAuditingPolicyPaged
@@ -329,6 +359,7 @@ from ._paged_models import IntegrationRuntimeResourcePaged
 from ._paged_models import IpFirewallRuleInfoPaged
 from ._paged_models import KeyPaged
 from ._paged_models import LibraryResourcePaged
+from ._paged_models import OperationPaged
 from ._paged_models import PrivateEndpointConnectionForPrivateLinkHubPaged
 from ._paged_models import PrivateEndpointConnectionPaged
 from ._paged_models import PrivateLinkHubPaged
@@ -374,6 +405,17 @@ from ._synapse_management_client_enums import (
     IntegrationRuntimeAutoUpdate,
     IntegrationRuntimeAuthKeyName,
     SsisObjectMetadataType,
+    AzureSkuName,
+    AzureSkuTier,
+    State,
+    ResourceProvisioningState,
+    EngineType,
+    CreatedByType,
+    EventHubDataFormat,
+    Compression,
+    IotHubDataFormat,
+    EventGridDataFormat,
+    BlobStorageEventType,
     OperationStatus,
     StorageAccountType,
     GeoBackupPolicyState,
@@ -411,6 +453,7 @@ __all__ = [
     'AvailableRpOperation',
     'AvailableRpOperationDisplayInfo',
     'AzureEntityResource',
+    'AzureSku',
     'BigDataPoolPatchInfo',
     'BigDataPoolResourceInfo',
     'CheckNameAvailabilityRequest',
@@ -420,6 +463,9 @@ __all__ = [
     'CreateSqlPoolRestorePointDefinition',
     'CustomerManagedKeyDetails',
     'CustomSetupBase',
+    'Database',
+    'DatabaseStatistics',
+    'DataConnection',
     'DataLakeStorageAccountDetails',
     'DataMaskingPolicy',
     'DataMaskingRule',
@@ -432,6 +478,8 @@ __all__ = [
     'ErrorAdditionalInfo',
     'ErrorDetail',
     'ErrorResponse', 'ErrorResponseException',
+    'EventGridDataConnection',
+    'EventHubDataConnection',
     'ExtendedServerBlobAuditingPolicy',
     'ExtendedSqlPoolBlobAuditingPolicy',
     'GeoBackupPolicy',
@@ -453,9 +501,13 @@ __all__ = [
     'IntegrationRuntimeStatus',
     'IntegrationRuntimeStatusResponse',
     'IntegrationRuntimeVNetProperties',
+    'IotHubDataConnection',
     'IpFirewallRuleInfo',
     'IpFirewallRuleProperties',
     'Key',
+    'KustoPool',
+    'KustoPoolListResult',
+    'KustoPoolUpdate',
     'LibraryInfo',
     'LibraryRequirements',
     'LibraryResource',
@@ -476,6 +528,8 @@ __all__ = [
     'ManagedIntegrationRuntimeStatus',
     'ManagedVirtualNetworkSettings',
     'MetadataSyncConfig',
+    'Operation',
+    'OperationDisplay',
     'OperationMetaLogSpecification',
     'OperationMetaMetricDimensionSpecification',
     'OperationMetaMetricSpecification',
@@ -495,6 +549,7 @@ __all__ = [
     'QueryInterval',
     'QueryMetric',
     'QueryStatistic',
+    'ReadWriteDatabase',
     'RecommendedSensitivityLabelUpdate',
     'RecommendedSensitivityLabelUpdateList',
     'RecoverableSqlPool',
@@ -543,6 +598,7 @@ __all__ = [
     'SsisProject',
     'SsisVariable',
     'SubResource',
+    'SystemData',
     'TopQueries',
     'TopQueriesListResult',
     'TrackedResource',
@@ -564,6 +620,9 @@ __all__ = [
     'IpFirewallRuleInfoPaged',
     'IntegrationRuntimeResourcePaged',
     'KeyPaged',
+    'OperationPaged',
+    'DatabasePaged',
+    'DataConnectionPaged',
     'LibraryResourcePaged',
     'PrivateEndpointConnectionPaged',
     'PrivateLinkResourcePaged',
@@ -614,6 +673,17 @@ __all__ = [
     'IntegrationRuntimeAutoUpdate',
     'IntegrationRuntimeAuthKeyName',
     'SsisObjectMetadataType',
+    'AzureSkuName',
+    'AzureSkuTier',
+    'State',
+    'ResourceProvisioningState',
+    'EngineType',
+    'CreatedByType',
+    'EventHubDataFormat',
+    'Compression',
+    'IotHubDataFormat',
+    'EventGridDataFormat',
+    'BlobStorageEventType',
     'OperationStatus',
     'StorageAccountType',
     'GeoBackupPolicyState',

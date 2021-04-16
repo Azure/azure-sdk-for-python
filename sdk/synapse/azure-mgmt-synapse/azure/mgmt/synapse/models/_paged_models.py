@@ -64,6 +64,45 @@ class KeyPaged(Paged):
     def __init__(self, *args, **kwargs):
 
         super(KeyPaged, self).__init__(*args, **kwargs)
+class OperationPaged(Paged):
+    """
+    A paging container for iterating over a list of :class:`Operation <azure.mgmt.synapse.models.Operation>` object
+    """
+
+    _attribute_map = {
+        'next_link': {'key': 'nextLink', 'type': 'str'},
+        'current_page': {'key': 'value', 'type': '[Operation]'}
+    }
+
+    def __init__(self, *args, **kwargs):
+
+        super(OperationPaged, self).__init__(*args, **kwargs)
+class DatabasePaged(Paged):
+    """
+    A paging container for iterating over a list of :class:`Database <azure.mgmt.synapse.models.Database>` object
+    """
+
+    _attribute_map = {
+        'next_link': {'key': 'nextLink', 'type': 'str'},
+        'current_page': {'key': 'value', 'type': '[Database]'}
+    }
+
+    def __init__(self, *args, **kwargs):
+
+        super(DatabasePaged, self).__init__(*args, **kwargs)
+class DataConnectionPaged(Paged):
+    """
+    A paging container for iterating over a list of :class:`DataConnection <azure.mgmt.synapse.models.DataConnection>` object
+    """
+
+    _attribute_map = {
+        'next_link': {'key': 'nextLink', 'type': 'str'},
+        'current_page': {'key': 'value', 'type': '[DataConnection]'}
+    }
+
+    def __init__(self, *args, **kwargs):
+
+        super(DataConnectionPaged, self).__init__(*args, **kwargs)
 class LibraryResourcePaged(Paged):
     """
     A paging container for iterating over a list of :class:`LibraryResource <azure.mgmt.synapse.models.LibraryResource>` object

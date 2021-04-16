@@ -26,6 +26,10 @@ from .operations import IntegrationRuntimeAuthKeysOperations
 from .operations import IntegrationRuntimeMonitoringDataOperations
 from .operations import IntegrationRuntimeStatusOperations
 from .operations import KeysOperations
+from .operations import KustoOperations
+from .operations import KustoPoolsOperations
+from .operations import DatabasesOperations
+from .operations import DataConnectionsOperations
 from .operations import LibraryOperations
 from .operations import LibrariesOperations
 from .operations import PrivateEndpointConnectionsOperations
@@ -109,6 +113,14 @@ class SynapseManagementClient(SDKClient):
     :vartype integration_runtime_status: azure.mgmt.synapse.operations.IntegrationRuntimeStatusOperations
     :ivar keys: Keys operations
     :vartype keys: azure.mgmt.synapse.operations.KeysOperations
+    :ivar kusto_operations: KustoOperations operations
+    :vartype kusto_operations: azure.mgmt.synapse.operations.KustoOperations
+    :ivar kusto_pools: KustoPools operations
+    :vartype kusto_pools: azure.mgmt.synapse.operations.KustoPoolsOperations
+    :ivar databases: Databases operations
+    :vartype databases: azure.mgmt.synapse.operations.DatabasesOperations
+    :ivar data_connections: DataConnections operations
+    :vartype data_connections: azure.mgmt.synapse.operations.DataConnectionsOperations
     :ivar library: Library operations
     :vartype library: azure.mgmt.synapse.operations.LibraryOperations
     :ivar libraries: Libraries operations
@@ -221,7 +233,7 @@ class SynapseManagementClient(SDKClient):
         super(SynapseManagementClient, self).__init__(self.config.credentials, self.config)
 
         client_models = {k: v for k, v in models.__dict__.items() if isinstance(v, type)}
-        self.api_version = '2021-03-01'
+        self.api_version = '2021-04-01-preview'
         self._serialize = Serializer(client_models)
         self._deserialize = Deserializer(client_models)
 
@@ -250,6 +262,14 @@ class SynapseManagementClient(SDKClient):
         self.integration_runtime_status = IntegrationRuntimeStatusOperations(
             self._client, self.config, self._serialize, self._deserialize)
         self.keys = KeysOperations(
+            self._client, self.config, self._serialize, self._deserialize)
+        self.kusto_operations = KustoOperations(
+            self._client, self.config, self._serialize, self._deserialize)
+        self.kusto_pools = KustoPoolsOperations(
+            self._client, self.config, self._serialize, self._deserialize)
+        self.databases = DatabasesOperations(
+            self._client, self.config, self._serialize, self._deserialize)
+        self.data_connections = DataConnectionsOperations(
             self._client, self.config, self._serialize, self._deserialize)
         self.library = LibraryOperations(
             self._client, self.config, self._serialize, self._deserialize)

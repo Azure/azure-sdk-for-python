@@ -22,6 +22,10 @@ from ._integration_runtime_auth_keys_operations import IntegrationRuntimeAuthKey
 from ._integration_runtime_monitoring_data_operations import IntegrationRuntimeMonitoringDataOperations
 from ._integration_runtime_status_operations import IntegrationRuntimeStatusOperations
 from ._keys_operations import KeysOperations
+from ._kusto_operations import KustoOperations
+from ._kusto_pools_operations import KustoPoolsOperations
+from ._databases_operations import DatabasesOperations
+from ._data_connections_operations import DataConnectionsOperations
 from ._library_operations import LibraryOperations
 from ._libraries_operations import LibrariesOperations
 from ._private_endpoint_connections_operations import PrivateEndpointConnectionsOperations
@@ -85,6 +89,10 @@ __all__ = [
     'IntegrationRuntimeMonitoringDataOperations',
     'IntegrationRuntimeStatusOperations',
     'KeysOperations',
+    'KustoOperations',
+    'KustoPoolsOperations',
+    'DatabasesOperations',
+    'DataConnectionsOperations',
     'LibraryOperations',
     'LibrariesOperations',
     'PrivateEndpointConnectionsOperations',

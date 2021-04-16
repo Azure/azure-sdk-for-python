@@ -144,6 +144,151 @@ class SsisObjectMetadataType(str, Enum):
     environment = "Environment"
 
 
+class AzureSkuName(str, Enum):
+
+    standard_ds13_v21_tb_ps = "Standard_DS13_v2+1TB_PS"
+    standard_ds13_v22_tb_ps = "Standard_DS13_v2+2TB_PS"
+    standard_ds14_v23_tb_ps = "Standard_DS14_v2+3TB_PS"
+    standard_ds14_v24_tb_ps = "Standard_DS14_v2+4TB_PS"
+    standard_d13_v2 = "Standard_D13_v2"
+    standard_d14_v2 = "Standard_D14_v2"
+    standard_l8s = "Standard_L8s"
+    standard_l16s = "Standard_L16s"
+    standard_l8s_v2 = "Standard_L8s_v2"
+    standard_l16s_v2 = "Standard_L16s_v2"
+    standard_d11_v2 = "Standard_D11_v2"
+    standard_d12_v2 = "Standard_D12_v2"
+    standard_l4s = "Standard_L4s"
+    dev_no_sla_standard_d11_v2 = "Dev(No SLA)_Standard_D11_v2"
+    standard_e64i_v3 = "Standard_E64i_v3"
+    standard_e80ids_v4 = "Standard_E80ids_v4"
+    standard_e2a_v4 = "Standard_E2a_v4"
+    standard_e4a_v4 = "Standard_E4a_v4"
+    standard_e8a_v4 = "Standard_E8a_v4"
+    standard_e16a_v4 = "Standard_E16a_v4"
+    standard_e8as_v41_tb_ps = "Standard_E8as_v4+1TB_PS"
+    standard_e8as_v42_tb_ps = "Standard_E8as_v4+2TB_PS"
+    standard_e16as_v43_tb_ps = "Standard_E16as_v4+3TB_PS"
+    standard_e16as_v44_tb_ps = "Standard_E16as_v4+4TB_PS"
+    dev_no_sla_standard_e2a_v4 = "Dev(No SLA)_Standard_E2a_v4"
+
+
+class AzureSkuTier(str, Enum):
+
+    basic = "Basic"
+    standard = "Standard"
+
+
+class State(str, Enum):
+
+    creating = "Creating"
+    unavailable = "Unavailable"
+    running = "Running"
+    deleting = "Deleting"
+    deleted = "Deleted"
+    stopping = "Stopping"
+    stopped = "Stopped"
+    starting = "Starting"
+    updating = "Updating"
+
+
+class ResourceProvisioningState(str, Enum):
+
+    running = "Running"
+    creating = "Creating"
+    deleting = "Deleting"
+    succeeded = "Succeeded"
+    failed = "Failed"
+    moving = "Moving"
+    canceled = "Canceled"
+
+
+class EngineType(str, Enum):
+
+    v2 = "V2"
+    v3 = "V3"
+
+
+class CreatedByType(str, Enum):
+
+    user = "User"
+    application = "Application"
+    managed_identity = "ManagedIdentity"
+    key = "Key"
+
+
+class EventHubDataFormat(str, Enum):
+
+    multijson = "MULTIJSON"
+    json = "JSON"
+    csv = "CSV"
+    tsv = "TSV"
+    scsv = "SCSV"
+    sohsv = "SOHSV"
+    psv = "PSV"
+    txt = "TXT"
+    raw = "RAW"
+    singlejson = "SINGLEJSON"
+    avro = "AVRO"
+    tsve = "TSVE"
+    parquet = "PARQUET"
+    orc = "ORC"
+    apacheavro = "APACHEAVRO"
+    w3_clogfile = "W3CLOGFILE"
+
+
+class Compression(str, Enum):
+
+    none = "None"
+    gzip = "GZip"
+
+
+class IotHubDataFormat(str, Enum):
+
+    multijson = "MULTIJSON"
+    json = "JSON"
+    csv = "CSV"
+    tsv = "TSV"
+    scsv = "SCSV"
+    sohsv = "SOHSV"
+    psv = "PSV"
+    txt = "TXT"
+    raw = "RAW"
+    singlejson = "SINGLEJSON"
+    avro = "AVRO"
+    tsve = "TSVE"
+    parquet = "PARQUET"
+    orc = "ORC"
+    apacheavro = "APACHEAVRO"
+    w3_clogfile = "W3CLOGFILE"
+
+
+class EventGridDataFormat(str, Enum):
+
+    multijson = "MULTIJSON"
+    json = "JSON"
+    csv = "CSV"
+    tsv = "TSV"
+    scsv = "SCSV"
+    sohsv = "SOHSV"
+    psv = "PSV"
+    txt = "TXT"
+    raw = "RAW"
+    singlejson = "SINGLEJSON"
+    avro = "AVRO"
+    tsve = "TSVE"
+    parquet = "PARQUET"
+    orc = "ORC"
+    apacheavro = "APACHEAVRO"
+    w3_clogfile = "W3CLOGFILE"
+
+
+class BlobStorageEventType(str, Enum):
+
+    microsoft_storage_blob_created = "Microsoft.Storage.BlobCreated"
+    microsoft_storage_blob_renamed = "Microsoft.Storage.BlobRenamed"
+
+
 class OperationStatus(str, Enum):
 
     in_progress = "InProgress"
