@@ -25,7 +25,6 @@ from ._models import (
     BatchTransactionResult,
     BatchErrorException,
 )
-from ._policies import ExponentialRetry, LinearRetry
 from ._version import VERSION
 from ._deserialize import TableErrorCode
 from ._table_batch import TableBatchOperations
@@ -35,8 +34,6 @@ __version__ = VERSION
 __all__ = [
     "TableClient",
     "TableServiceClient",
-    "ExponentialRetry",
-    "LinearRetry",
     "LocationMode",
     "ResourceTypes",
     "AccountSasPermissions",

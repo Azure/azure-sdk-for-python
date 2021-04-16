@@ -1,6 +1,6 @@
 interactions:
 - request:
-    body: '{"TableName": "uttable270d0f94"}'
+    body: '{"TableName": "uttable7d860a15"}'
     headers:
       Accept:
       - application/json;odata=minimalmetadata
@@ -26,7 +26,7 @@ interactions:
     uri: https://fake_table_account.table.core.windows.net/Tables
   response:
     body:
-      string: '{"odata.metadata":"https://fake_table_account.table.core.windows.net/$metadata#Tables/@Element","TableName":"uttable270d0f94"}'
+      string: '{"odata.metadata":"https://fake_table_account.table.core.windows.net/$metadata#Tables/@Element","TableName":"uttable7d860a15"}'
     headers:
       cache-control:
       - no-cache
@@ -35,7 +35,7 @@ interactions:
       date:
       - Thu, 15 Apr 2021 17:53:50 GMT
       location:
-      - https://fake_table_account.table.core.windows.net/Tables('uttable270d0f94')
+      - https://fake_table_account.table.core.windows.net/Tables('uttable7d860a15')
       server:
       - Windows-Azure-Table/1.0 Microsoft-HTTPAPI/2.0
       transfer-encoding:
@@ -47,53 +47,6 @@ interactions:
     status:
       code: 201
       message: Created
-- request:
-    body: '{"TableName": "uttable270d0f94"}'
-    headers:
-      Accept:
-      - application/json;odata=minimalmetadata
-      Accept-Encoding:
-      - gzip, deflate
-      Connection:
-      - keep-alive
-      Content-Length:
-      - '32'
-      Content-Type:
-      - application/json;odata=nometadata
-      DataServiceVersion:
-      - '3.0'
-      Date:
-      - Thu, 15 Apr 2021 17:53:50 GMT
-      User-Agent:
-      - azsdk-python-data-tables/12.0.0b7 Python/3.7.4 (Windows-10-10.0.19041-SP0)
-      x-ms-date:
-      - Thu, 15 Apr 2021 17:53:50 GMT
-      x-ms-version:
-      - '2019-02-02'
-    method: POST
-    uri: https://fake_table_account.table.core.windows.net/Tables
-  response:
-    body:
-      string: '{"odata.error":{"code":"TableAlreadyExists","message":{"lang":"en-US","value":"The
-        table specified already exists.\nRequestId:320a0268-0002-0041-5a20-3282c0000000\nTime:2021-04-15T17:53:50.7966768Z"}}}'
-    headers:
-      cache-control:
-      - no-cache
-      content-type:
-      - application/json;odata=minimalmetadata;streaming=true;charset=utf-8
-      date:
-      - Thu, 15 Apr 2021 17:53:50 GMT
-      server:
-      - Windows-Azure-Table/1.0 Microsoft-HTTPAPI/2.0
-      transfer-encoding:
-      - chunked
-      x-content-type-options:
-      - nosniff
-      x-ms-version:
-      - '2019-02-02'
-    status:
-      code: 409
-      message: Conflict
 - request:
     body: null
     headers:
@@ -114,7 +67,7 @@ interactions:
       x-ms-version:
       - '2019-02-02'
     method: DELETE
-    uri: https://fake_table_account.table.core.windows.net/Tables('uttable270d0f94')
+    uri: https://fake_table_account.table.core.windows.net/Tables('uttable7d860a15')
   response:
     body:
       string: ''
@@ -154,11 +107,11 @@ interactions:
       x-ms-version:
       - '2019-02-02'
     method: DELETE
-    uri: https://fake_table_account.table.core.windows.net/Tables('uttable270d0f94')
+    uri: https://fake_table_account.table.core.windows.net/Tables('uttable7d860a15')
   response:
     body:
       string: '{"odata.error":{"code":"ResourceNotFound","message":{"lang":"en-US","value":"The
-        specified resource does not exist.\nRequestId:320a027b-0002-0041-6c20-3282c0000000\nTime:2021-04-15T17:53:50.8757336Z"}}}'
+        specified resource does not exist.\nRequestId:1044a6a5-8002-004f-3e20-32ab70000000\nTime:2021-04-15T17:53:50.6263170Z"}}}'
     headers:
       cache-control:
       - no-cache
