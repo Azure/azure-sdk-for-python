@@ -20,7 +20,7 @@ if TYPE_CHECKING:
     from typing import Any, List, Optional, Union
     from datetime import datetime
     from azure.core.paging import ItemPaged
-    from ._models import JsonWebKey, KeyReleaseParameters
+    from ._models import JsonWebKey
 
 
 class KeyClient(KeyVaultClientBase):
@@ -623,7 +623,9 @@ class KeyClient(KeyVaultClientBase):
             enc=kwargs.pop("algorithm", None)
         )
 
-        bundle = self._client.export(self.vault_url, name, version, parameters, **kwargs)
+        bundle = self._client.export(
+            vault_base_url=self.vault_url, key_name=name, key_version=version, parameters=parameters, **kwargs
+        )
         return KeyVaultKey._from_key_bundle(bundle)
 
     @distributed_trace
