@@ -24,9 +24,9 @@ steps:
           ServiceName: ${{parameters.ServiceDirectory}}
           ForRelease: false
 
-  - template: /eng/common/pipelines/templates/steps/verify-samples.yml
-    parameters:
-      ServiceDirectory: ${{parameters.ServiceDirectory}}
+# - template: /eng/common/pipelines/templates/steps/verify-samples.yml
+#   parameters:
+#     ServiceDirectory: ${{parameters.ServiceDirectory}}
 
     # Using --always-succeed so as not to block the build. Once package
     # target is based on data available per-package the --always-succeed should
