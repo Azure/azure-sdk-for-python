@@ -9,6 +9,7 @@ from typing import TYPE_CHECKING
 
 from azure.core.pipeline.policies import SansIOHTTPPolicy
 
+from ._cache import ACRCache
 from ._generated import ContainerRegistry
 from ._helpers import _parse_challenge
 from ._user_agent import USER_AGENT
@@ -48,44 +49,38 @@ class ACRExchangeClient(object):
         if not endpoint.startswith("https://") and not endpoint.startswith("http://"):
             endpoint = "https://" + endpoint
         self._endpoint = endpoint
-        self._credential_scopes = "https://management.core.windows.net/.default"
+        self._credential_scope = "https://management.core.windows.net/.default"
         self._client = ContainerRegistry(
             credential=credential,
             url=endpoint,
             sdk_moniker=USER_AGENT,
             authentication_policy=ExchangeClientAuthenticationPolicy(),
-            credential_scopes=kwargs.pop("credential_scopes", self._credential_scopes),
+            credential_scopes=kwargs.pop("credential_scopes", self._credential_scope),
             **kwargs
         )
         self._credential = credential
-        self._token_value = None
-        self._expiry = None
-
-    def get_aad_token(self):
-        if not self._token_value or self.token_is_expired:
-            self._token_value = self._credential.get_token(self._credential_scopes).token
-            self._expiry = datetime.now()
-        return self._token_value
-
-    def token_is_expired(self):
-        # type: () -> bool
-        if not self._expiry:
-            return True
-        # Good for sixty minutes, we'll use 59 to give us an extra cushion
-        return datetime.now() - self._expiry > timedelta(minutes=59)
+        self.cache = ACRCache(**kwargs)
 
     def get_acr_access_token(self, challenge, **kwargs):
         # type: (str, Dict[str, Any]) -> str
         parsed_challenge = _parse_challenge(challenge)
-        refresh_token = self.exchange_aad_token_for_refresh_token(service=parsed_challenge["service"])
+        refresh_token = self.get_refresh_token(parsed_challenge["service"])
         return self.exchange_refresh_token_for_access_token(
             refresh_token, service=parsed_challenge["service"], scope=parsed_challenge["scope"], **kwargs
         )
 
+    def get_refresh_token(self, service):
+        # type: (str) -> str
+        refresh = self.cache.check_refresh_token(service)
+        if not refresh:
+            refresh = self.exchange_aad_token_for_refresh_token(service=service)
+            self.cache.set_refresh_token(service, refresh)
+        return refresh
+
     def exchange_aad_token_for_refresh_token(self, service=None, **kwargs):
         # type: (str, Dict[str, Any]) -> str
         refresh_token = self._client.authentication.exchange_aad_access_token_for_acr_refresh_token(
-            service=service, access_token=self.get_aad_token(), **kwargs
+            service=service, access_token=self._credential.get_token(self._credential_scope).token, **kwargs
         )
         return refresh_token.refresh_token
 

@@ -47,13 +47,13 @@ class ACRExchangeClient(object):
         if not endpoint.startswith("https://") and not endpoint.startswith("http://"):
             endpoint = "https://" + endpoint
         self._endpoint = endpoint
-        self._credential_scopes = "https://management.core.windows.net/.default"
+        self._credential_scope = "https://management.core.windows.net/.default"
         self._client = ContainerRegistry(
             credential=credential,
             url=endpoint,
             sdk_moniker=USER_AGENT,
             authentication_policy=ExchangeClientAuthenticationPolicy(),
-            credential_scopes=kwargs.pop("credential_scopes", self._credential_scopes),
+            credential_scopes=kwargs.pop("credential_scopes", self._credential_scope),
             **kwargs
         )
         self._credential = credential
@@ -68,7 +68,7 @@ class ACRExchangeClient(object):
 
     async def exchange_aad_token_for_refresh_token(self, service=None, **kwargs):
         # type: (str, Dict[str, Any]) -> str
-        token = await self._credential.get_token(self._credential_scopes)
+        token = await self._credential.get_token(self._credential_scope)
         refresh_token = await self._client.authentication.exchange_aad_access_token_for_acr_refresh_token(
             service, token.token, **kwargs
         )
