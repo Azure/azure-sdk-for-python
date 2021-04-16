@@ -4,7 +4,7 @@
 # license information.
 # --------------------------------------------------------------------------
 
-from typing import Dict, Any
+from typing import Dict
 from uuid import UUID
 from datetime import datetime
 from math import isnan

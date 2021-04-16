@@ -151,8 +151,8 @@ class StorageRetryTest(AzureTestCase, TableTestCase):
         try:
             with pytest.raises(HttpResponseError) as error:
                 self.ts.create_table(new_table_name, raw_response_hook=callback)
-             assert error.value.response.status_code == 500
-             assert error.value.reason == 'Created'
+            assert error.value.response.status_code == 500
+            assert error.value.reason == 'Created'
 
         finally:
             self.ts.delete_table(new_table_name)
