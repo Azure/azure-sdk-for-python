@@ -268,7 +268,7 @@ class AioHttpTransportResponse(AsyncHttpResponse):
         """Load in memory the body, so it could be accessible from sync methods."""
         self._body = await self.internal_response.read()
 
-    def stream_download(self, pipeline, raw=True) -> AsyncIteratorType[bytes]:
+    def stream_download(self, pipeline, raw=False) -> AsyncIteratorType[bytes]:
         """Generator for streaming response body data.
 
         :param pipeline: The pipeline object

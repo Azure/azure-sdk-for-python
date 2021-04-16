@@ -99,7 +99,7 @@ class TrioStreamDownloadGenerator(AsyncIterator):
 class TrioRequestsTransportResponse(AsyncHttpResponse, RequestsTransportResponse):  # type: ignore
     """Asynchronous streaming of data from the response.
     """
-    def stream_download(self, pipeline, raw=True) -> AsyncIteratorType[bytes]:  # type: ignore
+    def stream_download(self, pipeline, raw=False) -> AsyncIteratorType[bytes]:  # type: ignore
         """Generator for streaming response data.
         """
         return TrioStreamDownloadGenerator(pipeline, self, raw=raw)

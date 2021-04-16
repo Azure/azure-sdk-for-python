@@ -180,6 +180,6 @@ class AsyncioStreamDownloadGenerator(AsyncIterator):
 class AsyncioRequestsTransportResponse(AsyncHttpResponse, RequestsTransportResponse): # type: ignore
     """Asynchronous streaming of data from the response.
     """
-    def stream_download(self, pipeline, raw=True) -> AsyncIteratorType[bytes]: # type: ignore
+    def stream_download(self, pipeline, raw=False) -> AsyncIteratorType[bytes]: # type: ignore
         """Generator for streaming request body data."""
         return AsyncioStreamDownloadGenerator(pipeline, self, raw=raw) # type: ignore
