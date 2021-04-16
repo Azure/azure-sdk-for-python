@@ -14,6 +14,12 @@ stages:
   - ${{ each package in parameters.TestPackagesEnabled }}:
     - template: ../../eng/pipelines/templates/stages/archetype-sdk-tests.yml
       parameters:
+        CloudConfig:
+          Public:
+            SubscriptionConfiguration: $(sub-config-communication-services-cloud-test-resources)
+          Int:
+            SubscriptionConfiguration: $(sub-config-communication-int-test-resources)
+        Clouds: Public,Int
         AllocateResourceGroup: 'false'
         ${{ if ne(package, 'mgmt') }}:
           BuildTargetingString: ${{ format('azure-communication-{0}', package) }}
