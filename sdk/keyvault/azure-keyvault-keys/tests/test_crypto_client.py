@@ -184,7 +184,7 @@ class CryptoClientTests(KeysTestCase, KeyVaultTestCase):
         self._skip_if_not_configured(is_hsm)
         endpoint_url = self.managed_hsm_url if is_hsm else self.vault_url
 
-        key_client = self.create_key_client(endpoint_url, permissions=NO_GET)
+        key_client = self.create_key_client(endpoint_url, permissions=NO_GET, api_version="7.2-preview")
         key_name = self.get_resource_name("keycrypt")
 
         imported_key = self._import_test_key(key_client, key_name, hardware_protected=is_hsm)
@@ -204,7 +204,7 @@ class CryptoClientTests(KeysTestCase, KeyVaultTestCase):
         self._skip_if_not_configured(is_hsm)
         endpoint_url = self.managed_hsm_url if is_hsm else self.vault_url
 
-        key_client = self.create_key_client(endpoint_url, permissions=NO_GET)
+        key_client = self.create_key_client(endpoint_url, permissions=NO_GET, api_version="7.2-preview")
         key_name = self.get_resource_name("keysign")
 
         md = hashlib.sha256()

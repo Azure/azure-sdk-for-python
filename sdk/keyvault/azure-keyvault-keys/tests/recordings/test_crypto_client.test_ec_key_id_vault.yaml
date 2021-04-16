@@ -13,9 +13,9 @@ interactions:
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-keyvault-keys/4.4.0b4 Python/3.5.3 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-keyvault-keys/4.5.0b1 Python/3.5.3 (Windows-10-10.0.19041-SP0)
     method: POST
-    uri: https://vaultname.vault.azure.net/keys/livekvtesteckey433d1013/create?api-version=7.2-preview
+    uri: https://vaultname.vault.azure.net/keys/livekvtesteckey433d1013/create?api-version=7.3-preview
   response:
     body:
       string: '{"error":{"code":"Unauthorized","message":"Request is missing a Bearer
@@ -28,7 +28,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Fri, 19 Mar 2021 23:02:35 GMT
+      - Wed, 14 Apr 2021 22:55:29 GMT
       expires:
       - '-1'
       pragma:
@@ -45,7 +45,7 @@ interactions:
       x-ms-keyvault-region:
       - eastus2
       x-ms-keyvault-service-version:
-      - 1.2.205.0
+      - 1.2.236.0
       x-powered-by:
       - ASP.NET
     status:
@@ -65,12 +65,12 @@ interactions:
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-keyvault-keys/4.4.0b4 Python/3.5.3 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-keyvault-keys/4.5.0b1 Python/3.5.3 (Windows-10-10.0.19041-SP0)
     method: POST
-    uri: https://vaultname.vault.azure.net/keys/livekvtesteckey433d1013/create?api-version=7.2-preview
+    uri: https://vaultname.vault.azure.net/keys/livekvtesteckey433d1013/create?api-version=7.3-preview
   response:
     body:
-      string: '{"key":{"kid":"https://vaultname.vault.azure.net/keys/livekvtesteckey433d1013/c2cbc14fdb0b405f9b4507100f85c84b","kty":"EC","key_ops":["sign","verify"],"crv":"P-256","x":"STISs3_goj91mOlIpNqFxzE1Kj2BPLKR640BCYKu9Fk","y":"CtMP7wzlWetR6NOzwJvpcKL2pRnUB7ziHsiNc763izQ"},"attributes":{"enabled":true,"created":1616194955,"updated":1616194955,"recoveryLevel":"Recoverable+Purgeable","recoverableDays":90}}'
+      string: '{"key":{"kid":"https://vaultname.vault.azure.net/keys/livekvtesteckey433d1013/210e43036f7d4d0581db323576ec4c19","kty":"EC","key_ops":["sign","verify"],"crv":"P-256","x":"_hs_-B2dRBU8HHWhhwNBzOT9E0X5xgzzTuUzf5a9yVs","y":"Ivv-pzJx7mHgr6SY08ZgcDzktW5hToGDcttz9bcqnF8"},"attributes":{"enabled":true,"created":1618440931,"updated":1618440931,"recoveryLevel":"Recoverable+Purgeable","recoverableDays":90}}'
     headers:
       cache-control:
       - no-cache
@@ -79,7 +79,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Fri, 19 Mar 2021 23:02:35 GMT
+      - Wed, 14 Apr 2021 22:55:31 GMT
       expires:
       - '-1'
       pragma:
@@ -93,7 +93,7 @@ interactions:
       x-ms-keyvault-region:
       - eastus2
       x-ms-keyvault-service-version:
-      - 1.2.205.0
+      - 1.2.236.0
       x-powered-by:
       - ASP.NET
     status:
@@ -109,12 +109,12 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-keyvault-keys/4.4.0b4 Python/3.5.3 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-keyvault-keys/4.5.0b1 Python/3.5.3 (Windows-10-10.0.19041-SP0)
     method: GET
-    uri: https://vaultname.vault.azure.net/keys/livekvtesteckey433d1013/c2cbc14fdb0b405f9b4507100f85c84b?api-version=7.2-preview
+    uri: https://vaultname.vault.azure.net/keys/livekvtesteckey433d1013/210e43036f7d4d0581db323576ec4c19?api-version=7.3-preview
   response:
     body:
-      string: '{"key":{"kid":"https://vaultname.vault.azure.net/keys/livekvtesteckey433d1013/c2cbc14fdb0b405f9b4507100f85c84b","kty":"EC","key_ops":["sign","verify"],"crv":"P-256","x":"STISs3_goj91mOlIpNqFxzE1Kj2BPLKR640BCYKu9Fk","y":"CtMP7wzlWetR6NOzwJvpcKL2pRnUB7ziHsiNc763izQ"},"attributes":{"enabled":true,"created":1616194955,"updated":1616194955,"recoveryLevel":"Recoverable+Purgeable","recoverableDays":90}}'
+      string: '{"key":{"kid":"https://vaultname.vault.azure.net/keys/livekvtesteckey433d1013/210e43036f7d4d0581db323576ec4c19","kty":"EC","key_ops":["sign","verify"],"crv":"P-256","x":"_hs_-B2dRBU8HHWhhwNBzOT9E0X5xgzzTuUzf5a9yVs","y":"Ivv-pzJx7mHgr6SY08ZgcDzktW5hToGDcttz9bcqnF8"},"attributes":{"enabled":true,"created":1618440931,"updated":1618440931,"recoveryLevel":"Recoverable+Purgeable","recoverableDays":90}}'
     headers:
       cache-control:
       - no-cache
@@ -123,7 +123,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Fri, 19 Mar 2021 23:02:36 GMT
+      - Wed, 14 Apr 2021 22:55:32 GMT
       expires:
       - '-1'
       pragma:
@@ -137,7 +137,7 @@ interactions:
       x-ms-keyvault-region:
       - eastus2
       x-ms-keyvault-service-version:
-      - 1.2.205.0
+      - 1.2.236.0
       x-powered-by:
       - ASP.NET
     status:

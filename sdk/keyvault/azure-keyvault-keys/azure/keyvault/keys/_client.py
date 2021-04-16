@@ -8,7 +8,7 @@ from azure.core.tracing.decorator import distributed_trace
 from ._shared import KeyVaultClientBase
 from ._shared.exceptions import error_map as _error_map
 from ._shared._polling import DeleteRecoverPollingMethod, KeyVaultOperationPoller
-from ._models import KeyVaultKey, KeyProperties, DeletedKey
+from ._models import KeyVaultKey, KeyProperties, KeyReleaseResult, DeletedKey
 
 try:
     from typing import TYPE_CHECKING
@@ -67,6 +67,9 @@ class KeyClient(KeyVaultClientBase):
         :paramtype tags: dict[str, str]
         :keyword ~datetime.datetime not_before: Not before date of the key in UTC
         :keyword ~datetime.datetime expires_on: Expiry date of the key in UTC
+        :keyword bool exportable: Whether the private key can be exported.
+        :keyword release_policy: The policy rules under which the key can be exported.
+        :paramtype release_policy: ~azure.keyvault.keys.KeyReleasePolicy
         :returns: The created key
         :rtype: ~azure.keyvault.keys.KeyVaultKey
         :raises: :class:`~azure.core.exceptions.HttpResponseError`
@@ -82,18 +85,27 @@ class KeyClient(KeyVaultClientBase):
         enabled = kwargs.pop("enabled", None)
         not_before = kwargs.pop("not_before", None)
         expires_on = kwargs.pop("expires_on", None)
-        if enabled is not None or not_before is not None or expires_on is not None:
-            attributes = self._models.KeyAttributes(enabled=enabled, not_before=not_before, expires=expires_on)
+        exportable = kwargs.pop("exportable", None)
+
+        if enabled is not None or not_before is not None or expires_on is not None or exportable is not None:
+            attributes = self._models.KeyAttributes(
+                enabled=enabled, not_before=not_before, expires=expires_on, exportable=exportable
+            )
         else:
             attributes = None
 
+        policy = kwargs.pop("release_policy", None)
+        release_policy = None if policy is None else self._models.KeyReleasePolicy(
+            data=policy.data, content_type=policy.content_type
+        )
         parameters = self._models.KeyCreateParameters(
             kty=key_type,
             key_size=kwargs.pop("size", None),
             key_attributes=attributes,
             key_ops=kwargs.pop("key_operations", None),
             tags=kwargs.pop("tags", None),
-            curve=kwargs.pop("curve", None)
+            curve=kwargs.pop("curve", None),
+            release_policy=release_policy
         )
 
         bundle = self._client.create_key(
@@ -123,6 +135,9 @@ class KeyClient(KeyVaultClientBase):
         :paramtype tags: dict[str, str]
         :keyword ~datetime.datetime not_before: Not before date of the key in UTC
         :keyword ~datetime.datetime expires_on: Expiry date of the key in UTC
+        :keyword bool exportable: Whether the private key can be exported.
+        :keyword release_policy: The policy rules under which the key can be exported.
+        :paramtype release_policy: ~azure.keyvault.keys.KeyReleasePolicy
         :returns: The created key
         :rtype: ~azure.keyvault.keys.KeyVaultKey
         :raises: :class:`~azure.core.exceptions.HttpResponseError`
@@ -157,6 +172,9 @@ class KeyClient(KeyVaultClientBase):
         :paramtype tags: dict[str, str]
         :keyword ~datetime.datetime not_before: Not before date of the key in UTC
         :keyword ~datetime.datetime expires_on: Expiry date of the key in UTC
+        :keyword bool exportable: Whether the private key can be exported.
+        :keyword release_policy: The policy rules under which the key can be exported.
+        :paramtype release_policy: ~azure.keyvault.keys.KeyReleasePolicy
         :returns: The created key
         :rtype: ~azure.keyvault.keys.KeyVaultKey
         :raises: :class:`~azure.core.exceptions.HttpResponseError`
@@ -409,7 +427,6 @@ class KeyClient(KeyVaultClientBase):
 
         return KeyVaultOperationPoller(polling_method)
 
-
     @distributed_trace
     def update_key_properties(self, name, version=None, **kwargs):
         # type: (str, Optional[str], **Any) -> KeyVaultKey
@@ -536,6 +553,9 @@ class KeyClient(KeyVaultClientBase):
         :paramtype tags: dict[str, str]
         :keyword ~datetime.datetime not_before: Not before date of the key in UTC
         :keyword ~datetime.datetime expires_on: Expiry date of the key in UTC
+        :keyword bool exportable: Whether the private key can be exported.
+        :keyword release_policy: The policy rules under which the key can be exported.
+        :paramtype release_policy: ~azure.keyvault.keys.KeyReleasePolicy
         :returns: The imported key
         :rtype: ~azure.keyvault.keys.KeyVaultKey
         :raises: :class:`~azure.core.exceptions.HttpResponseError`
@@ -543,16 +563,25 @@ class KeyClient(KeyVaultClientBase):
         enabled = kwargs.pop("enabled", None)
         not_before = kwargs.pop("not_before", None)
         expires_on = kwargs.pop("expires_on", None)
-        if enabled is not None or not_before is not None or expires_on is not None:
-            attributes = self._models.KeyAttributes(enabled=enabled, not_before=not_before, expires=expires_on)
+        exportable = kwargs.pop("exportable", None)
+
+        if enabled is not None or not_before is not None or expires_on is not None or exportable is not None:
+            attributes = self._models.KeyAttributes(
+                enabled=enabled, not_before=not_before, expires=expires_on, exportable=exportable
+            )
         else:
             attributes = None
 
+        policy = kwargs.pop("release_policy", None)
+        release_policy = None if policy is None else self._models.KeyReleasePolicy(
+            data=policy.data, content_type=policy.content_type
+        )
         parameters = self._models.KeyImportParameters(
             key=key._to_generated_model(),
             key_attributes=attributes,
             hsm=kwargs.pop("hardware_protected", None),
-            tags=kwargs.pop("tags", None)
+            tags=kwargs.pop("tags", None),
+            release_policy=release_policy
         )
 
         bundle = self._client.import_key(
@@ -563,3 +592,67 @@ class KeyClient(KeyVaultClientBase):
             **kwargs
         )
         return KeyVaultKey._from_key_bundle(bundle)
+
+    @distributed_trace
+    def export_key(self, name, version, **kwargs):
+        # type: (str, str, **Any) -> KeyVaultKey
+        """Exports a key.
+
+        The export key operation is applicable to all key types. The target key must be marked
+        exportable. This operation requires the keys/export permission.
+
+        :param str name: The name of the key to export.
+        :param str version: A specific version of the key to export.
+        :keyword wrapping_key: The export encryption key. This must be an RSA key that supports encryption.
+        :paramtype key: ~azure.keyvault.keys.JsonWebKey
+        :keyword str wrapping_key_id: The export key encryption key identifier. This must be a RSA key that supports
+         encryption.
+        :keyword str algorithm: The encryption algorithm to use to protected the exported key material. Possible values
+         include: "CKM_RSA_AES_KEY_WRAP", "RSA_AES_KEY_WRAP_256", "RSA_AES_KEY_WRAP_384".
+        :return: The exported key.
+        :rtype: ~azure.keyvault.keys.KeyVaultKey
+        :raises: :class:`~azure.core.exceptions.HttpResponseError`
+        """
+        wrapping_key = kwargs.pop("wrapping_key", None)
+        if wrapping_key is not None:
+            wrapping_key = wrapping_key._to_generated_model()
+
+        parameters = self._models.KeyExportParameters(
+            wrapping_key=wrapping_key,
+            wrapping_kid=kwargs.pop("wrapping_key_id", None),
+            enc=kwargs.pop("algorithm", None)
+        )
+
+        bundle = self._client.export(
+            vault_base_url=self.vault_url, key_name=name, key_version=version, parameters=parameters, **kwargs
+        )
+        return KeyVaultKey._from_key_bundle(bundle)
+
+    @distributed_trace
+    def release_key(self, name, target, version, **kwargs):
+        # type: (str, str, str, **Any) -> KeyReleaseResult
+        """Releases a key.
+
+        The release key operation is applicable to all key types. The target key must be marked
+        exportable. This operation requires the keys/release permission.
+
+        :param str name: The name of the key to get.
+        :param str target: The attestation assertion for the target of the key release.
+        :param str version: A specific version of the key to release.
+        :keyword str algorithm: The encryption algorithm to use to protect the released key material. Possible values
+         include: "CKM_RSA_AES_KEY_WRAP", "RSA_AES_KEY_WRAP_256", "RSA_AES_KEY_WRAP_384".
+        :keyword str nonce: A client-provided nonce for freshness.
+        :return: The result of the key release.
+        :rtype: ~azure.keyvault.keys.KeyReleaseResult
+        :raises: :class:`~azure.core.exceptions.HttpResponseError`
+        """
+        result = self._client.release(
+            vault_base_url=self._vault_url,
+            key_name=name,
+            key_version=version,
+            parameters=self._models.KeyReleaseParameters(
+                target=target, nonce=kwargs.pop("nonce", None), enc=kwargs.pop("algorithm", None)
+            ),
+            **kwargs
+        )
+        return KeyReleaseResult(result.value)

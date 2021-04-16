@@ -9,9 +9,9 @@ interactions:
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-keyvault-keys/4.4.0b4 Python/3.5.3 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-keyvault-keys/4.5.0b1 Python/3.5.3 (Windows-10-10.0.19041-SP0)
     method: PUT
-    uri: https://managedhsmname.managedhsm.azure.net/keys/livekvtestsymmetric-kwfbf21901?api-version=7.2-preview
+    uri: https://managedhsmname.managedhsm.azure.net/keys/livekvtestsymmetric-kwfbf21901?api-version=7.3-preview
   response:
     body:
       string: ''
@@ -29,10 +29,10 @@ interactions:
     status:
       code: 401
       message: Unauthorized
-    url: https://mcpatinotesthsm.managedhsm.azure.net/keys/livekvtestsymmetric-kwfbf21901?api-version=7.2-preview
+    url: https://mcpatinotesthsm.managedhsm.azure.net/keys/livekvtestsymmetric-kwfbf21901?api-version=7.3-preview
 - request:
-    body: '{"key": {"k": "4n7QyEUSu9VbavQ00jfBH-ujEYcPgPLC4zZCYPMcgsg", "kty": "oct-HSM",
-      "key_ops": ["encrypt", "decrypt", "wrapKey", "unwrapKey"]}}'
+    body: '{"key": {"key_ops": ["encrypt", "decrypt", "wrapKey", "unwrapKey"], "k":
+      "4n7QyEUSu9VbavQ00jfBH-ujEYcPgPLC4zZCYPMcgsg", "kty": "oct-HSM"}}'
     headers:
       Accept:
       - application/json
@@ -41,12 +41,12 @@ interactions:
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-keyvault-keys/4.4.0b4 Python/3.5.3 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-keyvault-keys/4.5.0b1 Python/3.5.3 (Windows-10-10.0.19041-SP0)
     method: PUT
-    uri: https://managedhsmname.managedhsm.azure.net/keys/livekvtestsymmetric-kwfbf21901?api-version=7.2-preview
+    uri: https://managedhsmname.managedhsm.azure.net/keys/livekvtestsymmetric-kwfbf21901?api-version=7.3-preview
   response:
     body:
-      string: '{"attributes":{"created":1616196446,"enabled":true,"exportable":false,"recoverableDays":90,"recoveryLevel":"Recoverable+Purgeable","updated":1616196446},"key":{"key_ops":["encrypt","decrypt","unwrapKey","wrapKey"],"kid":"https://managedhsmname.managedhsm.azure.net/keys/livekvtestsymmetric-kwfbf21901/18d70488e86d0988135f072df16b0b63","kty":"oct-HSM"}}'
+      string: '{"attributes":{"created":1618441127,"enabled":true,"exportable":false,"recoverableDays":90,"recoveryLevel":"Recoverable+Purgeable","updated":1618441127},"key":{"key_ops":["encrypt","decrypt","unwrapKey","wrapKey"],"kid":"https://managedhsmname.managedhsm.azure.net/keys/livekvtestsymmetric-kwfbf21901/485fc240a3b543de819419645d45cc77","kty":"oct-HSM"}}'
     headers:
       cache-control: no-cache
       content-length: '353'
@@ -55,25 +55,25 @@ interactions:
       strict-transport-security: max-age=31536000; includeSubDomains
       x-content-type-options: nosniff
       x-frame-options: SAMEORIGIN
-      x-ms-keyvault-network-info: addr=172.92.159.124
+      x-ms-keyvault-network-info: conn_type=Ipv4;addr=172.92.159.124;act_addr_fam=Ipv4;
       x-ms-keyvault-region: eastus2
-      x-ms-server-latency: '227'
+      x-ms-server-latency: '202'
     status:
       code: 200
       message: OK
-    url: https://mcpatinotesthsm.managedhsm.azure.net/keys/livekvtestsymmetric-kwfbf21901?api-version=7.2-preview
+    url: https://mcpatinotesthsm.managedhsm.azure.net/keys/livekvtestsymmetric-kwfbf21901?api-version=7.3-preview
 - request:
     body: null
     headers:
       Accept:
       - application/json
       User-Agent:
-      - azsdk-python-keyvault-keys/4.4.0b4 Python/3.5.3 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-keyvault-keys/4.5.0b1 Python/3.5.3 (Windows-10-10.0.19041-SP0)
     method: GET
-    uri: https://managedhsmname.managedhsm.azure.net/keys/livekvtestsymmetric-kwfbf21901/18d70488e86d0988135f072df16b0b63?api-version=7.2-preview
+    uri: https://managedhsmname.managedhsm.azure.net/keys/livekvtestsymmetric-kwfbf21901/485fc240a3b543de819419645d45cc77?api-version=7.3-preview
   response:
     body:
-      string: '{"attributes":{"created":1616196446,"enabled":true,"exportable":false,"recoverableDays":90,"recoveryLevel":"Recoverable+Purgeable","updated":1616196446},"key":{"key_ops":["decrypt","encrypt","wrapKey","unwrapKey"],"kid":"https://managedhsmname.managedhsm.azure.net/keys/livekvtestsymmetric-kwfbf21901/18d70488e86d0988135f072df16b0b63","kty":"oct-HSM"}}'
+      string: '{"attributes":{"created":1618441127,"enabled":true,"exportable":false,"recoverableDays":90,"recoveryLevel":"Recoverable+Purgeable","updated":1618441127},"key":{"key_ops":["decrypt","encrypt","wrapKey","unwrapKey"],"kid":"https://managedhsmname.managedhsm.azure.net/keys/livekvtestsymmetric-kwfbf21901/485fc240a3b543de819419645d45cc77","kty":"oct-HSM"}}'
     headers:
       cache-control: no-cache
       content-length: '353'
@@ -82,12 +82,12 @@ interactions:
       strict-transport-security: max-age=31536000; includeSubDomains
       x-content-type-options: nosniff
       x-frame-options: SAMEORIGIN
-      x-ms-build-version: 1.0.20210306-1-6fb7c19a-develop
-      x-ms-keyvault-network-info: addr=172.92.159.124
+      x-ms-build-version: 1.0.20210407-3-27236ed1-develop
+      x-ms-keyvault-network-info: conn_type=Ipv4;addr=172.92.159.124;act_addr_fam=Ipv4;
       x-ms-keyvault-region: eastus2
-      x-ms-server-latency: '62'
+      x-ms-server-latency: '54'
     status:
       code: 200
       message: OK
-    url: https://mcpatinotesthsm.managedhsm.azure.net/keys/livekvtestsymmetric-kwfbf21901/18d70488e86d0988135f072df16b0b63?api-version=7.2-preview
+    url: https://mcpatinotesthsm.managedhsm.azure.net/keys/livekvtestsymmetric-kwfbf21901/485fc240a3b543de819419645d45cc77?api-version=7.3-preview
 version: 1

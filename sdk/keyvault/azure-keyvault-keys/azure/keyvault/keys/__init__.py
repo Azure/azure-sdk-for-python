@@ -6,7 +6,14 @@ from ._enums import KeyCurveName, KeyOperation, KeyType
 from ._parse_id import parse_key_vault_key_id
 from ._shared.client_base import ApiVersion
 from ._shared import KeyVaultResourceId
-from ._models import DeletedKey, JsonWebKey, KeyProperties, KeyVaultKey
+from ._models import (
+    DeletedKey,
+    JsonWebKey,
+    KeyProperties,
+    KeyReleasePolicy,
+    KeyReleaseResult,
+    KeyVaultKey,
+)
 from ._client import KeyClient
 
 __all__ = [
@@ -19,6 +26,8 @@ __all__ = [
     "KeyType",
     "DeletedKey",
     "KeyProperties",
+    "KeyReleasePolicy",
+    "KeyReleaseResult",
     "parse_key_vault_key_id",
     "KeyVaultResourceId"
 ]

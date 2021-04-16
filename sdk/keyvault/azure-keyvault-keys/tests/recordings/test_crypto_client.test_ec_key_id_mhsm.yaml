@@ -13,9 +13,9 @@ interactions:
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-keyvault-keys/4.4.0b4 Python/3.5.3 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-keyvault-keys/4.5.0b1 Python/3.5.3 (Windows-10-10.0.19041-SP0)
     method: POST
-    uri: https://managedhsmname.managedhsm.azure.net/keys/livekvtesteckey33180f9c/create?api-version=7.2-preview
+    uri: https://managedhsmname.managedhsm.azure.net/keys/livekvtesteckey33180f9c/create?api-version=7.3-preview
   response:
     body:
       string: ''
@@ -38,7 +38,7 @@ interactions:
       x-frame-options:
       - SAMEORIGIN
       x-ms-server-latency:
-      - '1'
+      - '0'
     status:
       code: 401
       message: Unauthorized
@@ -56,12 +56,12 @@ interactions:
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-keyvault-keys/4.4.0b4 Python/3.5.3 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-keyvault-keys/4.5.0b1 Python/3.5.3 (Windows-10-10.0.19041-SP0)
     method: POST
-    uri: https://managedhsmname.managedhsm.azure.net/keys/livekvtesteckey33180f9c/create?api-version=7.2-preview
+    uri: https://managedhsmname.managedhsm.azure.net/keys/livekvtesteckey33180f9c/create?api-version=7.3-preview
   response:
     body:
-      string: '{"attributes":{"created":1616194950,"enabled":true,"exportable":false,"recoverableDays":90,"recoveryLevel":"Recoverable+Purgeable","updated":1616194950},"key":{"crv":"P-256","key_ops":["verify","sign"],"kid":"https://managedhsmname.managedhsm.azure.net/keys/livekvtesteckey33180f9c/38f9028c28e24b9b80fe3b2800c5950d","kty":"EC-HSM","x":"aD-Od-CpwDHTx3T9XEPYR3-KxdmZg_wtFekJBlrAaSM","y":"exOWHTfjEM5Qwg6GAF09KXJpwN7Ov8LN_ZxxIlqpK9I"}}'
+      string: '{"attributes":{"created":1618440931,"enabled":true,"exportable":false,"recoverableDays":90,"recoveryLevel":"Recoverable+Purgeable","updated":1618440931},"key":{"crv":"P-256","key_ops":["verify","sign"],"kid":"https://managedhsmname.managedhsm.azure.net/keys/livekvtesteckey33180f9c/62883373029703b131d8babe38a492fa","kty":"EC-HSM","x":"frgZxD_CGARJ6xebBoNEInOlQ-zVYUc-mnI-ou1nMVo","y":"FSjBlOzz5mw6vqw88qeACLLakB_2QzZAtTMljaMrdLg"}}'
     headers:
       cache-control:
       - no-cache
@@ -78,11 +78,11 @@ interactions:
       x-frame-options:
       - SAMEORIGIN
       x-ms-keyvault-network-info:
-      - addr=172.92.159.124
+      - conn_type=Ipv4;addr=172.92.159.124;act_addr_fam=Ipv4;
       x-ms-keyvault-region:
       - eastus2
       x-ms-server-latency:
-      - '261'
+      - '515'
     status:
       code: 200
       message: OK
@@ -96,12 +96,12 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-keyvault-keys/4.4.0b4 Python/3.5.3 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-keyvault-keys/4.5.0b1 Python/3.5.3 (Windows-10-10.0.19041-SP0)
     method: GET
-    uri: https://managedhsmname.managedhsm.azure.net/keys/livekvtesteckey33180f9c/38f9028c28e24b9b80fe3b2800c5950d?api-version=7.2-preview
+    uri: https://managedhsmname.managedhsm.azure.net/keys/livekvtesteckey33180f9c/62883373029703b131d8babe38a492fa?api-version=7.3-preview
   response:
     body:
-      string: '{"attributes":{"created":1616194950,"enabled":true,"exportable":false,"recoverableDays":90,"recoveryLevel":"Recoverable+Purgeable","updated":1616194950},"key":{"crv":"P-256","key_ops":["verify","sign"],"kid":"https://managedhsmname.managedhsm.azure.net/keys/livekvtesteckey33180f9c/38f9028c28e24b9b80fe3b2800c5950d","kty":"EC-HSM","x":"aD-Od-CpwDHTx3T9XEPYR3-KxdmZg_wtFekJBlrAaSM","y":"exOWHTfjEM5Qwg6GAF09KXJpwN7Ov8LN_ZxxIlqpK9I"}}'
+      string: '{"attributes":{"created":1618440931,"enabled":true,"exportable":false,"recoverableDays":90,"recoveryLevel":"Recoverable+Purgeable","updated":1618440931},"key":{"crv":"P-256","key_ops":["verify","sign"],"kid":"https://managedhsmname.managedhsm.azure.net/keys/livekvtesteckey33180f9c/62883373029703b131d8babe38a492fa","kty":"EC-HSM","x":"frgZxD_CGARJ6xebBoNEInOlQ-zVYUc-mnI-ou1nMVo","y":"FSjBlOzz5mw6vqw88qeACLLakB_2QzZAtTMljaMrdLg"}}'
     headers:
       cache-control:
       - no-cache
@@ -118,13 +118,13 @@ interactions:
       x-frame-options:
       - SAMEORIGIN
       x-ms-build-version:
-      - 1.0.20210306-1-6fb7c19a-develop
+      - 1.0.20210407-3-27236ed1-develop
       x-ms-keyvault-network-info:
-      - addr=172.92.159.124
+      - conn_type=Ipv4;addr=172.92.159.124;act_addr_fam=Ipv4;
       x-ms-keyvault-region:
       - eastus2
       x-ms-server-latency:
-      - '126'
+      - '248'
     status:
       code: 200
       message: OK
