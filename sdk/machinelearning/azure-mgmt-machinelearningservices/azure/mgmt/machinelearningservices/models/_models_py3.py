@@ -13,12 +13,643 @@ from msrest.serialization import Model
 from msrest.exceptions import HttpOperationError
 
 
+class CreateServiceRequest(Model):
+    """The base class for creating a service.
+
+    You probably want to use the sub-classes and not this class directly. Known
+    sub-classes are: ACIServiceCreateRequest, CreateEndpointVariantRequest
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param description: The description of the service.
+    :type description: str
+    :param kv_tags: The service tag dictionary. Tags are mutable.
+    :type kv_tags: dict[str, str]
+    :param properties: The service properties dictionary. Properties are
+     immutable.
+    :type properties: dict[str, str]
+    :param keys: The authentication keys.
+    :type keys:
+     ~azure.mgmt.machinelearningservices.models.CreateServiceRequestKeys
+    :param environment_image_request: The Environment, models and assets
+     needed for inferencing.
+    :type environment_image_request:
+     ~azure.mgmt.machinelearningservices.models.CreateServiceRequestEnvironmentImageRequest
+    :param location: The name of the Azure location/region.
+    :type location: str
+    :param compute_type: Required. Constant filled by server.
+    :type compute_type: str
+    """
+
+    _validation = {
+        'compute_type': {'required': True},
+    }
+
+    _attribute_map = {
+        'description': {'key': 'description', 'type': 'str'},
+        'kv_tags': {'key': 'kvTags', 'type': '{str}'},
+        'properties': {'key': 'properties', 'type': '{str}'},
+        'keys': {'key': 'keys', 'type': 'CreateServiceRequestKeys'},
+        'environment_image_request': {'key': 'environmentImageRequest', 'type': 'CreateServiceRequestEnvironmentImageRequest'},
+        'location': {'key': 'location', 'type': 'str'},
+        'compute_type': {'key': 'computeType', 'type': 'str'},
+    }
+
+    _subtype_map = {
+        'compute_type': {'ACI': 'ACIServiceCreateRequest', 'Custom': 'CreateEndpointVariantRequest'}
+    }
+
+    def __init__(self, *, description: str=None, kv_tags=None, properties=None, keys=None, environment_image_request=None, location: str=None, **kwargs) -> None:
+        super(CreateServiceRequest, self).__init__(**kwargs)
+        self.description = description
+        self.kv_tags = kv_tags
+        self.properties = properties
+        self.keys = keys
+        self.environment_image_request = environment_image_request
+        self.location = location
+        self.compute_type = None
+
+
+class ACIServiceCreateRequest(CreateServiceRequest):
+    """ACIServiceCreateRequest.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param description: The description of the service.
+    :type description: str
+    :param kv_tags: The service tag dictionary. Tags are mutable.
+    :type kv_tags: dict[str, str]
+    :param properties: The service properties dictionary. Properties are
+     immutable.
+    :type properties: dict[str, str]
+    :param keys: The authentication keys.
+    :type keys:
+     ~azure.mgmt.machinelearningservices.models.CreateServiceRequestKeys
+    :param environment_image_request: The Environment, models and assets
+     needed for inferencing.
+    :type environment_image_request:
+     ~azure.mgmt.machinelearningservices.models.CreateServiceRequestEnvironmentImageRequest
+    :param location: The name of the Azure location/region.
+    :type location: str
+    :param compute_type: Required. Constant filled by server.
+    :type compute_type: str
+    :param container_resource_requirements: The container resource
+     requirements.
+    :type container_resource_requirements:
+     ~azure.mgmt.machinelearningservices.models.ContainerResourceRequirements
+    :param auth_enabled: Whether or not authentication is enabled on the
+     service. Default value: False .
+    :type auth_enabled: bool
+    :param ssl_enabled: Whether or not SSL is enabled. Default value: False .
+    :type ssl_enabled: bool
+    :param app_insights_enabled: Whether or not Application Insights is
+     enabled. Default value: False .
+    :type app_insights_enabled: bool
+    :param data_collection: Details of the data collection options specified.
+    :type data_collection:
+     ~azure.mgmt.machinelearningservices.models.ACIServiceCreateRequestDataCollection
+    :param ssl_certificate: The public SSL certificate in PEM format to use if
+     SSL is enabled.
+    :type ssl_certificate: str
+    :param ssl_key: The public SSL key in PEM format for the certificate.
+    :type ssl_key: str
+    :param cname: The CName for the service.
+    :type cname: str
+    :param dns_name_label: The Dns label for the service.
+    :type dns_name_label: str
+    :param vnet_configuration: The virtual network configuration.
+    :type vnet_configuration:
+     ~azure.mgmt.machinelearningservices.models.ACIServiceCreateRequestVnetConfiguration
+    :param encryption_properties: The encryption properties.
+    :type encryption_properties:
+     ~azure.mgmt.machinelearningservices.models.ACIServiceCreateRequestEncryptionProperties
+    """
+
+    _validation = {
+        'compute_type': {'required': True},
+    }
+
+    _attribute_map = {
+        'description': {'key': 'description', 'type': 'str'},
+        'kv_tags': {'key': 'kvTags', 'type': '{str}'},
+        'properties': {'key': 'properties', 'type': '{str}'},
+        'keys': {'key': 'keys', 'type': 'CreateServiceRequestKeys'},
+        'environment_image_request': {'key': 'environmentImageRequest', 'type': 'CreateServiceRequestEnvironmentImageRequest'},
+        'location': {'key': 'location', 'type': 'str'},
+        'compute_type': {'key': 'computeType', 'type': 'str'},
+        'container_resource_requirements': {'key': 'containerResourceRequirements', 'type': 'ContainerResourceRequirements'},
+        'auth_enabled': {'key': 'authEnabled', 'type': 'bool'},
+        'ssl_enabled': {'key': 'sslEnabled', 'type': 'bool'},
+        'app_insights_enabled': {'key': 'appInsightsEnabled', 'type': 'bool'},
+        'data_collection': {'key': 'dataCollection', 'type': 'ACIServiceCreateRequestDataCollection'},
+        'ssl_certificate': {'key': 'sslCertificate', 'type': 'str'},
+        'ssl_key': {'key': 'sslKey', 'type': 'str'},
+        'cname': {'key': 'cname', 'type': 'str'},
+        'dns_name_label': {'key': 'dnsNameLabel', 'type': 'str'},
+        'vnet_configuration': {'key': 'vnetConfiguration', 'type': 'ACIServiceCreateRequestVnetConfiguration'},
+        'encryption_properties': {'key': 'encryptionProperties', 'type': 'ACIServiceCreateRequestEncryptionProperties'},
+    }
+
+    def __init__(self, *, description: str=None, kv_tags=None, properties=None, keys=None, environment_image_request=None, location: str=None, container_resource_requirements=None, auth_enabled: bool=False, ssl_enabled: bool=False, app_insights_enabled: bool=False, data_collection=None, ssl_certificate: str=None, ssl_key: str=None, cname: str=None, dns_name_label: str=None, vnet_configuration=None, encryption_properties=None, **kwargs) -> None:
+        super(ACIServiceCreateRequest, self).__init__(description=description, kv_tags=kv_tags, properties=properties, keys=keys, environment_image_request=environment_image_request, location=location, **kwargs)
+        self.container_resource_requirements = container_resource_requirements
+        self.auth_enabled = auth_enabled
+        self.ssl_enabled = ssl_enabled
+        self.app_insights_enabled = app_insights_enabled
+        self.data_collection = data_collection
+        self.ssl_certificate = ssl_certificate
+        self.ssl_key = ssl_key
+        self.cname = cname
+        self.dns_name_label = dns_name_label
+        self.vnet_configuration = vnet_configuration
+        self.encryption_properties = encryption_properties
+        self.compute_type = 'ACI'
+
+
+class ModelDataCollection(Model):
+    """The Model data collection properties.
+
+    :param event_hub_enabled: Option for enabling/disabling Event Hub.
+    :type event_hub_enabled: bool
+    :param storage_enabled: Option for enabling/disabling storage.
+    :type storage_enabled: bool
+    """
+
+    _attribute_map = {
+        'event_hub_enabled': {'key': 'eventHubEnabled', 'type': 'bool'},
+        'storage_enabled': {'key': 'storageEnabled', 'type': 'bool'},
+    }
+
+    def __init__(self, *, event_hub_enabled: bool=None, storage_enabled: bool=None, **kwargs) -> None:
+        super(ModelDataCollection, self).__init__(**kwargs)
+        self.event_hub_enabled = event_hub_enabled
+        self.storage_enabled = storage_enabled
+
+
+class ACIServiceCreateRequestDataCollection(ModelDataCollection):
+    """Details of the data collection options specified.
+
+    :param event_hub_enabled: Option for enabling/disabling Event Hub.
+    :type event_hub_enabled: bool
+    :param storage_enabled: Option for enabling/disabling storage.
+    :type storage_enabled: bool
+    """
+
+    _attribute_map = {
+        'event_hub_enabled': {'key': 'eventHubEnabled', 'type': 'bool'},
+        'storage_enabled': {'key': 'storageEnabled', 'type': 'bool'},
+    }
+
+    def __init__(self, *, event_hub_enabled: bool=None, storage_enabled: bool=None, **kwargs) -> None:
+        super(ACIServiceCreateRequestDataCollection, self).__init__(event_hub_enabled=event_hub_enabled, storage_enabled=storage_enabled, **kwargs)
+
+
+class EncryptionProperties(Model):
+    """EncryptionProperties.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param vault_base_url: Required. vault base Url
+    :type vault_base_url: str
+    :param key_name: Required. Encryption Key name
+    :type key_name: str
+    :param key_version: Required. Encryption Key Version
+    :type key_version: str
+    """
+
+    _validation = {
+        'vault_base_url': {'required': True},
+        'key_name': {'required': True},
+        'key_version': {'required': True},
+    }
+
+    _attribute_map = {
+        'vault_base_url': {'key': 'vaultBaseUrl', 'type': 'str'},
+        'key_name': {'key': 'keyName', 'type': 'str'},
+        'key_version': {'key': 'keyVersion', 'type': 'str'},
+    }
+
+    def __init__(self, *, vault_base_url: str, key_name: str, key_version: str, **kwargs) -> None:
+        super(EncryptionProperties, self).__init__(**kwargs)
+        self.vault_base_url = vault_base_url
+        self.key_name = key_name
+        self.key_version = key_version
+
+
+class ACIServiceCreateRequestEncryptionProperties(EncryptionProperties):
+    """The encryption properties.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param vault_base_url: Required. vault base Url
+    :type vault_base_url: str
+    :param key_name: Required. Encryption Key name
+    :type key_name: str
+    :param key_version: Required. Encryption Key Version
+    :type key_version: str
+    """
+
+    _validation = {
+        'vault_base_url': {'required': True},
+        'key_name': {'required': True},
+        'key_version': {'required': True},
+    }
+
+    _attribute_map = {
+        'vault_base_url': {'key': 'vaultBaseUrl', 'type': 'str'},
+        'key_name': {'key': 'keyName', 'type': 'str'},
+        'key_version': {'key': 'keyVersion', 'type': 'str'},
+    }
+
+    def __init__(self, *, vault_base_url: str, key_name: str, key_version: str, **kwargs) -> None:
+        super(ACIServiceCreateRequestEncryptionProperties, self).__init__(vault_base_url=vault_base_url, key_name=key_name, key_version=key_version, **kwargs)
+
+
+class VnetConfiguration(Model):
+    """VnetConfiguration.
+
+    :param vnet_name: The name of the virtual network.
+    :type vnet_name: str
+    :param subnet_name: The name of the virtual network subnet.
+    :type subnet_name: str
+    """
+
+    _attribute_map = {
+        'vnet_name': {'key': 'vnetName', 'type': 'str'},
+        'subnet_name': {'key': 'subnetName', 'type': 'str'},
+    }
+
+    def __init__(self, *, vnet_name: str=None, subnet_name: str=None, **kwargs) -> None:
+        super(VnetConfiguration, self).__init__(**kwargs)
+        self.vnet_name = vnet_name
+        self.subnet_name = subnet_name
+
+
+class ACIServiceCreateRequestVnetConfiguration(VnetConfiguration):
+    """The virtual network configuration.
+
+    :param vnet_name: The name of the virtual network.
+    :type vnet_name: str
+    :param subnet_name: The name of the virtual network subnet.
+    :type subnet_name: str
+    """
+
+    _attribute_map = {
+        'vnet_name': {'key': 'vnetName', 'type': 'str'},
+        'subnet_name': {'key': 'subnetName', 'type': 'str'},
+    }
+
+    def __init__(self, *, vnet_name: str=None, subnet_name: str=None, **kwargs) -> None:
+        super(ACIServiceCreateRequestVnetConfiguration, self).__init__(vnet_name=vnet_name, subnet_name=subnet_name, **kwargs)
+
+
+class ServiceResponseBase(Model):
+    """The base service response. The correct inherited response based on
+    computeType will be returned (ex. ACIServiceResponse).
+
+    You probably want to use the sub-classes and not this class directly. Known
+    sub-classes are: ACIServiceResponse, AKSVariantResponse
+
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param description: The service description.
+    :type description: str
+    :param kv_tags: The service tag dictionary. Tags are mutable.
+    :type kv_tags: dict[str, str]
+    :param properties: The service property dictionary. Properties are
+     immutable.
+    :type properties: dict[str, str]
+    :ivar state: The current state of the service. Possible values include:
+     'Transitioning', 'Healthy', 'Unhealthy', 'Failed', 'Unschedulable'
+    :vartype state: str or
+     ~azure.mgmt.machinelearningservices.models.WebServiceState
+    :ivar error: The error details.
+    :vartype error:
+     ~azure.mgmt.machinelearningservices.models.ServiceResponseBaseError
+    :param deployment_type: The deployment type for the service. Possible
+     values include: 'GRPCRealtimeEndpoint', 'HttpRealtimeEndpoint', 'Batch'
+    :type deployment_type: str or
+     ~azure.mgmt.machinelearningservices.models.DeploymentType
+    :param compute_type: Required. Constant filled by server.
+    :type compute_type: str
+    """
+
+    _validation = {
+        'state': {'readonly': True},
+        'error': {'readonly': True},
+        'compute_type': {'required': True},
+    }
+
+    _attribute_map = {
+        'description': {'key': 'description', 'type': 'str'},
+        'kv_tags': {'key': 'kvTags', 'type': '{str}'},
+        'properties': {'key': 'properties', 'type': '{str}'},
+        'state': {'key': 'state', 'type': 'str'},
+        'error': {'key': 'error', 'type': 'ServiceResponseBaseError'},
+        'deployment_type': {'key': 'deploymentType', 'type': 'str'},
+        'compute_type': {'key': 'computeType', 'type': 'str'},
+    }
+
+    _subtype_map = {
+        'compute_type': {'ACI': 'ACIServiceResponse', 'Custom': 'AKSVariantResponse'}
+    }
+
+    def __init__(self, *, description: str=None, kv_tags=None, properties=None, deployment_type=None, **kwargs) -> None:
+        super(ServiceResponseBase, self).__init__(**kwargs)
+        self.description = description
+        self.kv_tags = kv_tags
+        self.properties = properties
+        self.state = None
+        self.error = None
+        self.deployment_type = deployment_type
+        self.compute_type = None
+
+
+class ACIServiceResponse(ServiceResponseBase):
+    """The response for an ACI service.
+
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param description: The service description.
+    :type description: str
+    :param kv_tags: The service tag dictionary. Tags are mutable.
+    :type kv_tags: dict[str, str]
+    :param properties: The service property dictionary. Properties are
+     immutable.
+    :type properties: dict[str, str]
+    :ivar state: The current state of the service. Possible values include:
+     'Transitioning', 'Healthy', 'Unhealthy', 'Failed', 'Unschedulable'
+    :vartype state: str or
+     ~azure.mgmt.machinelearningservices.models.WebServiceState
+    :ivar error: The error details.
+    :vartype error:
+     ~azure.mgmt.machinelearningservices.models.ServiceResponseBaseError
+    :param deployment_type: The deployment type for the service. Possible
+     values include: 'GRPCRealtimeEndpoint', 'HttpRealtimeEndpoint', 'Batch'
+    :type deployment_type: str or
+     ~azure.mgmt.machinelearningservices.models.DeploymentType
+    :param compute_type: Required. Constant filled by server.
+    :type compute_type: str
+    :param container_resource_requirements: The container resource
+     requirements.
+    :type container_resource_requirements:
+     ~azure.mgmt.machinelearningservices.models.ContainerResourceRequirements
+    :ivar scoring_uri: The Uri for sending scoring requests.
+    :vartype scoring_uri: str
+    :param location: The name of the Azure location/region.
+    :type location: str
+    :param auth_enabled: Whether or not authentication is enabled on the
+     service.
+    :type auth_enabled: bool
+    :param ssl_enabled: Whether or not SSL is enabled.
+    :type ssl_enabled: bool
+    :param app_insights_enabled: Whether or not Application Insights is
+     enabled.
+    :type app_insights_enabled: bool
+    :param data_collection: Details of the data collection options specified.
+    :type data_collection:
+     ~azure.mgmt.machinelearningservices.models.ACIServiceResponseDataCollection
+    :param ssl_certificate: The public SSL certificate in PEM format to use if
+     SSL is enabled.
+    :type ssl_certificate: str
+    :param ssl_key: The public SSL key in PEM format for the certificate.
+    :type ssl_key: str
+    :param cname: The CName for the service.
+    :type cname: str
+    :param public_ip: The public IP address for the service.
+    :type public_ip: str
+    :param public_fqdn: The public Fqdn for the service.
+    :type public_fqdn: str
+    :ivar swagger_uri: The Uri for sending swagger requests.
+    :vartype swagger_uri: str
+    :ivar model_config_map: Details on the models and configurations.
+    :vartype model_config_map: dict[str, object]
+    :param models_property: The list of models.
+    :type models_property:
+     list[~azure.mgmt.machinelearningservices.models.Model]
+    :param environment_image_request: The Environment, models and assets used
+     for inferencing.
+    :type environment_image_request:
+     ~azure.mgmt.machinelearningservices.models.ACIServiceResponseEnvironmentImageRequest
+    :param vnet_configuration: The virtual network configuration.
+    :type vnet_configuration:
+     ~azure.mgmt.machinelearningservices.models.ACIServiceResponseVnetConfiguration
+    :param encryption_properties: The encryption properties.
+    :type encryption_properties:
+     ~azure.mgmt.machinelearningservices.models.ACIServiceResponseEncryptionProperties
+    """
+
+    _validation = {
+        'state': {'readonly': True},
+        'error': {'readonly': True},
+        'compute_type': {'required': True},
+        'scoring_uri': {'readonly': True},
+        'swagger_uri': {'readonly': True},
+        'model_config_map': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'description': {'key': 'description', 'type': 'str'},
+        'kv_tags': {'key': 'kvTags', 'type': '{str}'},
+        'properties': {'key': 'properties', 'type': '{str}'},
+        'state': {'key': 'state', 'type': 'str'},
+        'error': {'key': 'error', 'type': 'ServiceResponseBaseError'},
+        'deployment_type': {'key': 'deploymentType', 'type': 'str'},
+        'compute_type': {'key': 'computeType', 'type': 'str'},
+        'container_resource_requirements': {'key': 'containerResourceRequirements', 'type': 'ContainerResourceRequirements'},
+        'scoring_uri': {'key': 'scoringUri', 'type': 'str'},
+        'location': {'key': 'location', 'type': 'str'},
+        'auth_enabled': {'key': 'authEnabled', 'type': 'bool'},
+        'ssl_enabled': {'key': 'sslEnabled', 'type': 'bool'},
+        'app_insights_enabled': {'key': 'appInsightsEnabled', 'type': 'bool'},
+        'data_collection': {'key': 'dataCollection', 'type': 'ACIServiceResponseDataCollection'},
+        'ssl_certificate': {'key': 'sslCertificate', 'type': 'str'},
+        'ssl_key': {'key': 'sslKey', 'type': 'str'},
+        'cname': {'key': 'cname', 'type': 'str'},
+        'public_ip': {'key': 'publicIp', 'type': 'str'},
+        'public_fqdn': {'key': 'publicFqdn', 'type': 'str'},
+        'swagger_uri': {'key': 'swaggerUri', 'type': 'str'},
+        'model_config_map': {'key': 'modelConfigMap', 'type': '{object}'},
+        'models_property': {'key': 'models', 'type': '[Model]'},
+        'environment_image_request': {'key': 'environmentImageRequest', 'type': 'ACIServiceResponseEnvironmentImageRequest'},
+        'vnet_configuration': {'key': 'vnetConfiguration', 'type': 'ACIServiceResponseVnetConfiguration'},
+        'encryption_properties': {'key': 'encryptionProperties', 'type': 'ACIServiceResponseEncryptionProperties'},
+    }
+
+    def __init__(self, *, description: str=None, kv_tags=None, properties=None, deployment_type=None, container_resource_requirements=None, location: str=None, auth_enabled: bool=None, ssl_enabled: bool=None, app_insights_enabled: bool=None, data_collection=None, ssl_certificate: str=None, ssl_key: str=None, cname: str=None, public_ip: str=None, public_fqdn: str=None, models_property=None, environment_image_request=None, vnet_configuration=None, encryption_properties=None, **kwargs) -> None:
+        super(ACIServiceResponse, self).__init__(description=description, kv_tags=kv_tags, properties=properties, deployment_type=deployment_type, **kwargs)
+        self.container_resource_requirements = container_resource_requirements
+        self.scoring_uri = None
+        self.location = location
+        self.auth_enabled = auth_enabled
+        self.ssl_enabled = ssl_enabled
+        self.app_insights_enabled = app_insights_enabled
+        self.data_collection = data_collection
+        self.ssl_certificate = ssl_certificate
+        self.ssl_key = ssl_key
+        self.cname = cname
+        self.public_ip = public_ip
+        self.public_fqdn = public_fqdn
+        self.swagger_uri = None
+        self.model_config_map = None
+        self.models_property = models_property
+        self.environment_image_request = environment_image_request
+        self.vnet_configuration = vnet_configuration
+        self.encryption_properties = encryption_properties
+        self.compute_type = 'ACI'
+
+
+class ACIServiceResponseDataCollection(ModelDataCollection):
+    """Details of the data collection options specified.
+
+    :param event_hub_enabled: Option for enabling/disabling Event Hub.
+    :type event_hub_enabled: bool
+    :param storage_enabled: Option for enabling/disabling storage.
+    :type storage_enabled: bool
+    """
+
+    _attribute_map = {
+        'event_hub_enabled': {'key': 'eventHubEnabled', 'type': 'bool'},
+        'storage_enabled': {'key': 'storageEnabled', 'type': 'bool'},
+    }
+
+    def __init__(self, *, event_hub_enabled: bool=None, storage_enabled: bool=None, **kwargs) -> None:
+        super(ACIServiceResponseDataCollection, self).__init__(event_hub_enabled=event_hub_enabled, storage_enabled=storage_enabled, **kwargs)
+
+
+class ACIServiceResponseEncryptionProperties(EncryptionProperties):
+    """The encryption properties.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param vault_base_url: Required. vault base Url
+    :type vault_base_url: str
+    :param key_name: Required. Encryption Key name
+    :type key_name: str
+    :param key_version: Required. Encryption Key Version
+    :type key_version: str
+    """
+
+    _validation = {
+        'vault_base_url': {'required': True},
+        'key_name': {'required': True},
+        'key_version': {'required': True},
+    }
+
+    _attribute_map = {
+        'vault_base_url': {'key': 'vaultBaseUrl', 'type': 'str'},
+        'key_name': {'key': 'keyName', 'type': 'str'},
+        'key_version': {'key': 'keyVersion', 'type': 'str'},
+    }
+
+    def __init__(self, *, vault_base_url: str, key_name: str, key_version: str, **kwargs) -> None:
+        super(ACIServiceResponseEncryptionProperties, self).__init__(vault_base_url=vault_base_url, key_name=key_name, key_version=key_version, **kwargs)
+
+
+class EnvironmentImageResponse(Model):
+    """Request to create a Docker image based on Environment.
+
+    :param driver_program: The name of the driver file.
+    :type driver_program: str
+    :param assets: The list of assets.
+    :type assets: list[~azure.mgmt.machinelearningservices.models.ImageAsset]
+    :param model_ids: The list of model Ids.
+    :type model_ids: list[str]
+    :param models_property: The list of models.
+    :type models_property:
+     list[~azure.mgmt.machinelearningservices.models.Model]
+    :param environment: The details of the AZURE ML environment.
+    :type environment:
+     ~azure.mgmt.machinelearningservices.models.EnvironmentImageResponseEnvironment
+    :param environment_reference: The unique identifying details of the AZURE
+     ML environment.
+    :type environment_reference:
+     ~azure.mgmt.machinelearningservices.models.EnvironmentImageResponseEnvironmentReference
+    """
+
+    _attribute_map = {
+        'driver_program': {'key': 'driverProgram', 'type': 'str'},
+        'assets': {'key': 'assets', 'type': '[ImageAsset]'},
+        'model_ids': {'key': 'modelIds', 'type': '[str]'},
+        'models_property': {'key': 'models', 'type': '[Model]'},
+        'environment': {'key': 'environment', 'type': 'EnvironmentImageResponseEnvironment'},
+        'environment_reference': {'key': 'environmentReference', 'type': 'EnvironmentImageResponseEnvironmentReference'},
+    }
+
+    def __init__(self, *, driver_program: str=None, assets=None, model_ids=None, models_property=None, environment=None, environment_reference=None, **kwargs) -> None:
+        super(EnvironmentImageResponse, self).__init__(**kwargs)
+        self.driver_program = driver_program
+        self.assets = assets
+        self.model_ids = model_ids
+        self.models_property = models_property
+        self.environment = environment
+        self.environment_reference = environment_reference
+
+
+class ACIServiceResponseEnvironmentImageRequest(EnvironmentImageResponse):
+    """The Environment, models and assets used for inferencing.
+
+    :param driver_program: The name of the driver file.
+    :type driver_program: str
+    :param assets: The list of assets.
+    :type assets: list[~azure.mgmt.machinelearningservices.models.ImageAsset]
+    :param model_ids: The list of model Ids.
+    :type model_ids: list[str]
+    :param models_property: The list of models.
+    :type models_property:
+     list[~azure.mgmt.machinelearningservices.models.Model]
+    :param environment: The details of the AZURE ML environment.
+    :type environment:
+     ~azure.mgmt.machinelearningservices.models.EnvironmentImageResponseEnvironment
+    :param environment_reference: The unique identifying details of the AZURE
+     ML environment.
+    :type environment_reference:
+     ~azure.mgmt.machinelearningservices.models.EnvironmentImageResponseEnvironmentReference
+    """
+
+    _attribute_map = {
+        'driver_program': {'key': 'driverProgram', 'type': 'str'},
+        'assets': {'key': 'assets', 'type': '[ImageAsset]'},
+        'model_ids': {'key': 'modelIds', 'type': '[str]'},
+        'models_property': {'key': 'models', 'type': '[Model]'},
+        'environment': {'key': 'environment', 'type': 'EnvironmentImageResponseEnvironment'},
+        'environment_reference': {'key': 'environmentReference', 'type': 'EnvironmentImageResponseEnvironmentReference'},
+    }
+
+    def __init__(self, *, driver_program: str=None, assets=None, model_ids=None, models_property=None, environment=None, environment_reference=None, **kwargs) -> None:
+        super(ACIServiceResponseEnvironmentImageRequest, self).__init__(driver_program=driver_program, assets=assets, model_ids=model_ids, models_property=models_property, environment=environment, environment_reference=environment_reference, **kwargs)
+
+
+class ACIServiceResponseVnetConfiguration(VnetConfiguration):
+    """The virtual network configuration.
+
+    :param vnet_name: The name of the virtual network.
+    :type vnet_name: str
+    :param subnet_name: The name of the virtual network subnet.
+    :type subnet_name: str
+    """
+
+    _attribute_map = {
+        'vnet_name': {'key': 'vnetName', 'type': 'str'},
+        'subnet_name': {'key': 'subnetName', 'type': 'str'},
+    }
+
+    def __init__(self, *, vnet_name: str=None, subnet_name: str=None, **kwargs) -> None:
+        super(ACIServiceResponseVnetConfiguration, self).__init__(vnet_name=vnet_name, subnet_name=subnet_name, **kwargs)
+
+
 class Compute(Model):
     """Machine Learning compute object.
 
     You probably want to use the sub-classes and not this class directly. Known
-    sub-classes are: AKS, AmlCompute, VirtualMachine, HDInsight, DataFactory,
-    Databricks, DataLakeAnalytics
+    sub-classes are: AKS, AmlCompute, ComputeInstance, VirtualMachine,
+    HDInsight, DataFactory, Databricks, DataLakeAnalytics
 
     Variables are only populated by the server, and will be ignored when
     sending a request.
@@ -35,9 +666,9 @@ class Compute(Model):
      ~azure.mgmt.machinelearningservices.models.ProvisioningState
     :param description: The description of the Machine Learning compute.
     :type description: str
-    :ivar created_on: The date and time when the compute was created.
+    :ivar created_on: The time at which the compute was created.
     :vartype created_on: datetime
-    :ivar modified_on: The date and time when the compute was last modified.
+    :ivar modified_on: The time at which the compute was last modified.
     :vartype modified_on: datetime
     :param resource_id: ARM resource id of the underlying compute
     :type resource_id: str
@@ -48,6 +679,9 @@ class Compute(Model):
      by user and brought from outside if true, or machine learning service
      provisioned it if false.
     :vartype is_attached_compute: bool
+    :param disable_local_auth: Opt-out of local authentication and ensure
+     customers can use only MSI and AAD exclusively for authentication.
+    :type disable_local_auth: bool
     :param compute_type: Required. Constant filled by server.
     :type compute_type: str
     """
@@ -70,14 +704,15 @@ class Compute(Model):
         'resource_id': {'key': 'resourceId', 'type': 'str'},
         'provisioning_errors': {'key': 'provisioningErrors', 'type': '[MachineLearningServiceError]'},
         'is_attached_compute': {'key': 'isAttachedCompute', 'type': 'bool'},
+        'disable_local_auth': {'key': 'disableLocalAuth', 'type': 'bool'},
         'compute_type': {'key': 'computeType', 'type': 'str'},
     }
 
     _subtype_map = {
-        'compute_type': {'AKS': 'AKS', 'AmlCompute': 'AmlCompute', 'VirtualMachine': 'VirtualMachine', 'HDInsight': 'HDInsight', 'DataFactory': 'DataFactory', 'Databricks': 'Databricks', 'DataLakeAnalytics': 'DataLakeAnalytics'}
+        'compute_type': {'AKS': 'AKS', 'AmlCompute': 'AmlCompute', 'ComputeInstance': 'ComputeInstance', 'VirtualMachine': 'VirtualMachine', 'HDInsight': 'HDInsight', 'DataFactory': 'DataFactory', 'Databricks': 'Databricks', 'DataLakeAnalytics': 'DataLakeAnalytics'}
     }
 
-    def __init__(self, *, compute_location: str=None, description: str=None, resource_id: str=None, **kwargs) -> None:
+    def __init__(self, *, compute_location: str=None, description: str=None, resource_id: str=None, disable_local_auth: bool=None, **kwargs) -> None:
         super(Compute, self).__init__(**kwargs)
         self.compute_location = compute_location
         self.provisioning_state = None
@@ -87,6 +722,7 @@ class Compute(Model):
         self.resource_id = resource_id
         self.provisioning_errors = None
         self.is_attached_compute = None
+        self.disable_local_auth = disable_local_auth
         self.compute_type = None
 
 
@@ -108,9 +744,9 @@ class AKS(Compute):
      ~azure.mgmt.machinelearningservices.models.ProvisioningState
     :param description: The description of the Machine Learning compute.
     :type description: str
-    :ivar created_on: The date and time when the compute was created.
+    :ivar created_on: The time at which the compute was created.
     :vartype created_on: datetime
-    :ivar modified_on: The date and time when the compute was last modified.
+    :ivar modified_on: The time at which the compute was last modified.
     :vartype modified_on: datetime
     :param resource_id: ARM resource id of the underlying compute
     :type resource_id: str
@@ -121,6 +757,9 @@ class AKS(Compute):
      by user and brought from outside if true, or machine learning service
      provisioned it if false.
     :vartype is_attached_compute: bool
+    :param disable_local_auth: Opt-out of local authentication and ensure
+     customers can use only MSI and AAD exclusively for authentication.
+    :type disable_local_auth: bool
     :param compute_type: Required. Constant filled by server.
     :type compute_type: str
     :param properties: AKS properties
@@ -145,12 +784,13 @@ class AKS(Compute):
         'resource_id': {'key': 'resourceId', 'type': 'str'},
         'provisioning_errors': {'key': 'provisioningErrors', 'type': '[MachineLearningServiceError]'},
         'is_attached_compute': {'key': 'isAttachedCompute', 'type': 'bool'},
+        'disable_local_auth': {'key': 'disableLocalAuth', 'type': 'bool'},
         'compute_type': {'key': 'computeType', 'type': 'str'},
         'properties': {'key': 'properties', 'type': 'AKSProperties'},
     }
 
-    def __init__(self, *, compute_location: str=None, description: str=None, resource_id: str=None, properties=None, **kwargs) -> None:
-        super(AKS, self).__init__(compute_location=compute_location, description=description, resource_id=resource_id, **kwargs)
+    def __init__(self, *, compute_location: str=None, description: str=None, resource_id: str=None, disable_local_auth: bool=None, properties=None, **kwargs) -> None:
+        super(AKS, self).__init__(compute_location=compute_location, description=description, resource_id=resource_id, disable_local_auth=disable_local_auth, **kwargs)
         self.properties = properties
         self.compute_type = 'AKS'
 
@@ -277,36 +917,821 @@ class AKSProperties(Model):
     :type agent_count: int
     :param agent_vm_size: Agent virtual machine size
     :type agent_vm_size: str
+    :param cluster_purpose: Intended usage of the cluster. Possible values
+     include: 'FastProd', 'DenseProd', 'DevTest'. Default value: "FastProd" .
+    :type cluster_purpose: str or
+     ~azure.mgmt.machinelearningservices.models.ClusterPurpose
     :param ssl_configuration: SSL configuration
     :type ssl_configuration:
      ~azure.mgmt.machinelearningservices.models.SslConfiguration
     :param aks_networking_configuration: AKS networking configuration for vnet
     :type aks_networking_configuration:
      ~azure.mgmt.machinelearningservices.models.AksNetworkingConfiguration
+    :param load_balancer_type: Load Balancer Type. Possible values include:
+     'PublicIp', 'InternalLoadBalancer'. Default value: "PublicIp" .
+    :type load_balancer_type: str or
+     ~azure.mgmt.machinelearningservices.models.LoadBalancerType
+    :param load_balancer_subnet: Load Balancer Subnet
+    :type load_balancer_subnet: str
     """
 
     _validation = {
         'system_services': {'readonly': True},
-        'agent_count': {'minimum': 1},
+        'agent_count': {'minimum': 0},
     }
 
     _attribute_map = {
         'cluster_fqdn': {'key': 'clusterFqdn', 'type': 'str'},
         'system_services': {'key': 'systemServices', 'type': '[SystemService]'},
         'agent_count': {'key': 'agentCount', 'type': 'int'},
-        'agent_vm_size': {'key': 'agentVMSize', 'type': 'str'},
+        'agent_vm_size': {'key': 'agentVmSize', 'type': 'str'},
+        'cluster_purpose': {'key': 'clusterPurpose', 'type': 'str'},
         'ssl_configuration': {'key': 'sslConfiguration', 'type': 'SslConfiguration'},
         'aks_networking_configuration': {'key': 'aksNetworkingConfiguration', 'type': 'AksNetworkingConfiguration'},
+        'load_balancer_type': {'key': 'loadBalancerType', 'type': 'str'},
+        'load_balancer_subnet': {'key': 'loadBalancerSubnet', 'type': 'str'},
     }
 
-    def __init__(self, *, cluster_fqdn: str=None, agent_count: int=None, agent_vm_size: str=None, ssl_configuration=None, aks_networking_configuration=None, **kwargs) -> None:
+    def __init__(self, *, cluster_fqdn: str=None, agent_count: int=None, agent_vm_size: str=None, cluster_purpose="FastProd", ssl_configuration=None, aks_networking_configuration=None, load_balancer_type="PublicIp", load_balancer_subnet: str=None, **kwargs) -> None:
         super(AKSProperties, self).__init__(**kwargs)
         self.cluster_fqdn = cluster_fqdn
         self.system_services = None
         self.agent_count = agent_count
         self.agent_vm_size = agent_vm_size
+        self.cluster_purpose = cluster_purpose
         self.ssl_configuration = ssl_configuration
         self.aks_networking_configuration = aks_networking_configuration
+        self.load_balancer_type = load_balancer_type
+        self.load_balancer_subnet = load_balancer_subnet
+
+
+class AKSReplicaStatus(Model):
+    """AKSReplicaStatus.
+
+    :param desired_replicas: The desired number of replicas.
+    :type desired_replicas: int
+    :param updated_replicas: The number of updated replicas.
+    :type updated_replicas: int
+    :param available_replicas: The number of available replicas.
+    :type available_replicas: int
+    :param error: The error details.
+    :type error:
+     ~azure.mgmt.machinelearningservices.models.AKSReplicaStatusError
+    """
+
+    _attribute_map = {
+        'desired_replicas': {'key': 'desiredReplicas', 'type': 'int'},
+        'updated_replicas': {'key': 'updatedReplicas', 'type': 'int'},
+        'available_replicas': {'key': 'availableReplicas', 'type': 'int'},
+        'error': {'key': 'error', 'type': 'AKSReplicaStatusError'},
+    }
+
+    def __init__(self, *, desired_replicas: int=None, updated_replicas: int=None, available_replicas: int=None, error=None, **kwargs) -> None:
+        super(AKSReplicaStatus, self).__init__(**kwargs)
+        self.desired_replicas = desired_replicas
+        self.updated_replicas = updated_replicas
+        self.available_replicas = available_replicas
+        self.error = error
+
+
+class MachineLearningServiceError(Model):
+    """Wrapper for error response to follow ARM guidelines.
+
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    :ivar error: The error response.
+    :vartype error: ~azure.mgmt.machinelearningservices.models.ErrorResponse
+    """
+
+    _validation = {
+        'error': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'error': {'key': 'error', 'type': 'ErrorResponse'},
+    }
+
+    def __init__(self, **kwargs) -> None:
+        super(MachineLearningServiceError, self).__init__(**kwargs)
+        self.error = None
+
+
+class MachineLearningServiceErrorException(HttpOperationError):
+    """Server responsed with exception of type: 'MachineLearningServiceError'.
+
+    :param deserialize: A deserializer
+    :param response: Server response to be deserialized.
+    """
+
+    def __init__(self, deserialize, response, *args):
+
+        super(MachineLearningServiceErrorException, self).__init__(deserialize, response, 'MachineLearningServiceError', *args)
+
+
+class AKSReplicaStatusError(MachineLearningServiceError):
+    """The error details.
+
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    :ivar error: The error response.
+    :vartype error: ~azure.mgmt.machinelearningservices.models.ErrorResponse
+    """
+
+    _validation = {
+        'error': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'error': {'key': 'error', 'type': 'ErrorResponse'},
+    }
+
+    def __init__(self, **kwargs) -> None:
+        super(AKSReplicaStatusError, self).__init__(**kwargs)
+
+
+class CreateEndpointVariantRequest(CreateServiceRequest):
+    """The Variant properties.
+
+    You probably want to use the sub-classes and not this class directly. Known
+    sub-classes are: AKSServiceCreateRequest
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param description: The description of the service.
+    :type description: str
+    :param kv_tags: The service tag dictionary. Tags are mutable.
+    :type kv_tags: dict[str, str]
+    :param properties: The service properties dictionary. Properties are
+     immutable.
+    :type properties: dict[str, str]
+    :param keys: The authentication keys.
+    :type keys:
+     ~azure.mgmt.machinelearningservices.models.CreateServiceRequestKeys
+    :param environment_image_request: The Environment, models and assets
+     needed for inferencing.
+    :type environment_image_request:
+     ~azure.mgmt.machinelearningservices.models.CreateServiceRequestEnvironmentImageRequest
+    :param location: The name of the Azure location/region.
+    :type location: str
+    :param compute_type: Required. Constant filled by server.
+    :type compute_type: str
+    :param is_default: Is this the default variant.
+    :type is_default: bool
+    :param traffic_percentile: The amount of traffic variant receives.
+    :type traffic_percentile: float
+    :param type: The type of the variant. Possible values include: 'Control',
+     'Treatment'
+    :type type: str or ~azure.mgmt.machinelearningservices.models.VariantType
+    """
+
+    _validation = {
+        'compute_type': {'required': True},
+    }
+
+    _attribute_map = {
+        'description': {'key': 'description', 'type': 'str'},
+        'kv_tags': {'key': 'kvTags', 'type': '{str}'},
+        'properties': {'key': 'properties', 'type': '{str}'},
+        'keys': {'key': 'keys', 'type': 'CreateServiceRequestKeys'},
+        'environment_image_request': {'key': 'environmentImageRequest', 'type': 'CreateServiceRequestEnvironmentImageRequest'},
+        'location': {'key': 'location', 'type': 'str'},
+        'compute_type': {'key': 'computeType', 'type': 'str'},
+        'is_default': {'key': 'isDefault', 'type': 'bool'},
+        'traffic_percentile': {'key': 'trafficPercentile', 'type': 'float'},
+        'type': {'key': 'type', 'type': 'str'},
+    }
+
+    _subtype_map = {
+        'compute_type': {'AKS': 'AKSServiceCreateRequest'}
+    }
+
+    def __init__(self, *, description: str=None, kv_tags=None, properties=None, keys=None, environment_image_request=None, location: str=None, is_default: bool=None, traffic_percentile: float=None, type=None, **kwargs) -> None:
+        super(CreateEndpointVariantRequest, self).__init__(description=description, kv_tags=kv_tags, properties=properties, keys=keys, environment_image_request=environment_image_request, location=location, **kwargs)
+        self.is_default = is_default
+        self.traffic_percentile = traffic_percentile
+        self.type = type
+        self.compute_type = 'Custom'
+
+
+class AKSServiceCreateRequest(CreateEndpointVariantRequest):
+    """The request to create an AKS service.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param description: The description of the service.
+    :type description: str
+    :param kv_tags: The service tag dictionary. Tags are mutable.
+    :type kv_tags: dict[str, str]
+    :param properties: The service properties dictionary. Properties are
+     immutable.
+    :type properties: dict[str, str]
+    :param keys: The authentication keys.
+    :type keys:
+     ~azure.mgmt.machinelearningservices.models.CreateServiceRequestKeys
+    :param environment_image_request: The Environment, models and assets
+     needed for inferencing.
+    :type environment_image_request:
+     ~azure.mgmt.machinelearningservices.models.CreateServiceRequestEnvironmentImageRequest
+    :param location: The name of the Azure location/region.
+    :type location: str
+    :param compute_type: Required. Constant filled by server.
+    :type compute_type: str
+    :param is_default: Is this the default variant.
+    :type is_default: bool
+    :param traffic_percentile: The amount of traffic variant receives.
+    :type traffic_percentile: float
+    :param type: The type of the variant. Possible values include: 'Control',
+     'Treatment'
+    :type type: str or ~azure.mgmt.machinelearningservices.models.VariantType
+    :param num_replicas: The number of replicas on the cluster.
+    :type num_replicas: int
+    :param data_collection: Details of the data collection options specified.
+    :type data_collection:
+     ~azure.mgmt.machinelearningservices.models.AKSServiceCreateRequestDataCollection
+    :param compute_name: The name of the compute resource.
+    :type compute_name: str
+    :param app_insights_enabled: Whether or not Application Insights is
+     enabled.
+    :type app_insights_enabled: bool
+    :param auto_scaler: The auto scaler properties.
+    :type auto_scaler:
+     ~azure.mgmt.machinelearningservices.models.AKSServiceCreateRequestAutoScaler
+    :param container_resource_requirements: The container resource
+     requirements.
+    :type container_resource_requirements:
+     ~azure.mgmt.machinelearningservices.models.ContainerResourceRequirements
+    :param max_concurrent_requests_per_container: The maximum number of
+     concurrent requests per container.
+    :type max_concurrent_requests_per_container: int
+    :param max_queue_wait_ms: Maximum time a request will wait in the queue
+     (in milliseconds). After this time, the service will return 503 (Service
+     Unavailable)
+    :type max_queue_wait_ms: int
+    :param namespace: Kubernetes namespace for the service.
+    :type namespace: str
+    :param scoring_timeout_ms: The scoring timeout in milliseconds.
+    :type scoring_timeout_ms: int
+    :param auth_enabled: Whether or not authentication is enabled.
+    :type auth_enabled: bool
+    :param liveness_probe_requirements: The liveness probe requirements.
+    :type liveness_probe_requirements:
+     ~azure.mgmt.machinelearningservices.models.AKSServiceCreateRequestLivenessProbeRequirements
+    :param aad_auth_enabled: Whether or not AAD authentication is enabled.
+    :type aad_auth_enabled: bool
+    """
+
+    _validation = {
+        'compute_type': {'required': True},
+    }
+
+    _attribute_map = {
+        'description': {'key': 'description', 'type': 'str'},
+        'kv_tags': {'key': 'kvTags', 'type': '{str}'},
+        'properties': {'key': 'properties', 'type': '{str}'},
+        'keys': {'key': 'keys', 'type': 'CreateServiceRequestKeys'},
+        'environment_image_request': {'key': 'environmentImageRequest', 'type': 'CreateServiceRequestEnvironmentImageRequest'},
+        'location': {'key': 'location', 'type': 'str'},
+        'compute_type': {'key': 'computeType', 'type': 'str'},
+        'is_default': {'key': 'isDefault', 'type': 'bool'},
+        'traffic_percentile': {'key': 'trafficPercentile', 'type': 'float'},
+        'type': {'key': 'type', 'type': 'str'},
+        'num_replicas': {'key': 'numReplicas', 'type': 'int'},
+        'data_collection': {'key': 'dataCollection', 'type': 'AKSServiceCreateRequestDataCollection'},
+        'compute_name': {'key': 'computeName', 'type': 'str'},
+        'app_insights_enabled': {'key': 'appInsightsEnabled', 'type': 'bool'},
+        'auto_scaler': {'key': 'autoScaler', 'type': 'AKSServiceCreateRequestAutoScaler'},
+        'container_resource_requirements': {'key': 'containerResourceRequirements', 'type': 'ContainerResourceRequirements'},
+        'max_concurrent_requests_per_container': {'key': 'maxConcurrentRequestsPerContainer', 'type': 'int'},
+        'max_queue_wait_ms': {'key': 'maxQueueWaitMs', 'type': 'int'},
+        'namespace': {'key': 'namespace', 'type': 'str'},
+        'scoring_timeout_ms': {'key': 'scoringTimeoutMs', 'type': 'int'},
+        'auth_enabled': {'key': 'authEnabled', 'type': 'bool'},
+        'liveness_probe_requirements': {'key': 'livenessProbeRequirements', 'type': 'AKSServiceCreateRequestLivenessProbeRequirements'},
+        'aad_auth_enabled': {'key': 'aadAuthEnabled', 'type': 'bool'},
+    }
+
+    def __init__(self, *, description: str=None, kv_tags=None, properties=None, keys=None, environment_image_request=None, location: str=None, is_default: bool=None, traffic_percentile: float=None, type=None, num_replicas: int=None, data_collection=None, compute_name: str=None, app_insights_enabled: bool=None, auto_scaler=None, container_resource_requirements=None, max_concurrent_requests_per_container: int=None, max_queue_wait_ms: int=None, namespace: str=None, scoring_timeout_ms: int=None, auth_enabled: bool=None, liveness_probe_requirements=None, aad_auth_enabled: bool=None, **kwargs) -> None:
+        super(AKSServiceCreateRequest, self).__init__(description=description, kv_tags=kv_tags, properties=properties, keys=keys, environment_image_request=environment_image_request, location=location, is_default=is_default, traffic_percentile=traffic_percentile, type=type, **kwargs)
+        self.num_replicas = num_replicas
+        self.data_collection = data_collection
+        self.compute_name = compute_name
+        self.app_insights_enabled = app_insights_enabled
+        self.auto_scaler = auto_scaler
+        self.container_resource_requirements = container_resource_requirements
+        self.max_concurrent_requests_per_container = max_concurrent_requests_per_container
+        self.max_queue_wait_ms = max_queue_wait_ms
+        self.namespace = namespace
+        self.scoring_timeout_ms = scoring_timeout_ms
+        self.auth_enabled = auth_enabled
+        self.liveness_probe_requirements = liveness_probe_requirements
+        self.aad_auth_enabled = aad_auth_enabled
+        self.compute_type = 'AKS'
+
+
+class AutoScaler(Model):
+    """The Auto Scaler properties.
+
+    :param autoscale_enabled: Option to enable/disable auto scaling.
+    :type autoscale_enabled: bool
+    :param min_replicas: The minimum number of replicas to scale down to.
+    :type min_replicas: int
+    :param max_replicas: The maximum number of replicas in the cluster.
+    :type max_replicas: int
+    :param target_utilization: The target utilization percentage to use for
+     determining whether to scale the cluster.
+    :type target_utilization: int
+    :param refresh_period_in_seconds: The amount of seconds to wait between
+     auto scale updates.
+    :type refresh_period_in_seconds: int
+    """
+
+    _attribute_map = {
+        'autoscale_enabled': {'key': 'autoscaleEnabled', 'type': 'bool'},
+        'min_replicas': {'key': 'minReplicas', 'type': 'int'},
+        'max_replicas': {'key': 'maxReplicas', 'type': 'int'},
+        'target_utilization': {'key': 'targetUtilization', 'type': 'int'},
+        'refresh_period_in_seconds': {'key': 'refreshPeriodInSeconds', 'type': 'int'},
+    }
+
+    def __init__(self, *, autoscale_enabled: bool=None, min_replicas: int=None, max_replicas: int=None, target_utilization: int=None, refresh_period_in_seconds: int=None, **kwargs) -> None:
+        super(AutoScaler, self).__init__(**kwargs)
+        self.autoscale_enabled = autoscale_enabled
+        self.min_replicas = min_replicas
+        self.max_replicas = max_replicas
+        self.target_utilization = target_utilization
+        self.refresh_period_in_seconds = refresh_period_in_seconds
+
+
+class AKSServiceCreateRequestAutoScaler(AutoScaler):
+    """The auto scaler properties.
+
+    :param autoscale_enabled: Option to enable/disable auto scaling.
+    :type autoscale_enabled: bool
+    :param min_replicas: The minimum number of replicas to scale down to.
+    :type min_replicas: int
+    :param max_replicas: The maximum number of replicas in the cluster.
+    :type max_replicas: int
+    :param target_utilization: The target utilization percentage to use for
+     determining whether to scale the cluster.
+    :type target_utilization: int
+    :param refresh_period_in_seconds: The amount of seconds to wait between
+     auto scale updates.
+    :type refresh_period_in_seconds: int
+    """
+
+    _attribute_map = {
+        'autoscale_enabled': {'key': 'autoscaleEnabled', 'type': 'bool'},
+        'min_replicas': {'key': 'minReplicas', 'type': 'int'},
+        'max_replicas': {'key': 'maxReplicas', 'type': 'int'},
+        'target_utilization': {'key': 'targetUtilization', 'type': 'int'},
+        'refresh_period_in_seconds': {'key': 'refreshPeriodInSeconds', 'type': 'int'},
+    }
+
+    def __init__(self, *, autoscale_enabled: bool=None, min_replicas: int=None, max_replicas: int=None, target_utilization: int=None, refresh_period_in_seconds: int=None, **kwargs) -> None:
+        super(AKSServiceCreateRequestAutoScaler, self).__init__(autoscale_enabled=autoscale_enabled, min_replicas=min_replicas, max_replicas=max_replicas, target_utilization=target_utilization, refresh_period_in_seconds=refresh_period_in_seconds, **kwargs)
+
+
+class AKSServiceCreateRequestDataCollection(ModelDataCollection):
+    """Details of the data collection options specified.
+
+    :param event_hub_enabled: Option for enabling/disabling Event Hub.
+    :type event_hub_enabled: bool
+    :param storage_enabled: Option for enabling/disabling storage.
+    :type storage_enabled: bool
+    """
+
+    _attribute_map = {
+        'event_hub_enabled': {'key': 'eventHubEnabled', 'type': 'bool'},
+        'storage_enabled': {'key': 'storageEnabled', 'type': 'bool'},
+    }
+
+    def __init__(self, *, event_hub_enabled: bool=None, storage_enabled: bool=None, **kwargs) -> None:
+        super(AKSServiceCreateRequestDataCollection, self).__init__(event_hub_enabled=event_hub_enabled, storage_enabled=storage_enabled, **kwargs)
+
+
+class LivenessProbeRequirements(Model):
+    """The liveness probe requirements.
+
+    :param failure_threshold: The number of failures to allow before returning
+     an unhealthy status.
+    :type failure_threshold: int
+    :param success_threshold: The number of successful probes before returning
+     a healthy status.
+    :type success_threshold: int
+    :param timeout_seconds: The probe timeout in seconds.
+    :type timeout_seconds: int
+    :param period_seconds: The length of time between probes in seconds.
+    :type period_seconds: int
+    :param initial_delay_seconds: The delay before the first probe in seconds.
+    :type initial_delay_seconds: int
+    """
+
+    _attribute_map = {
+        'failure_threshold': {'key': 'failureThreshold', 'type': 'int'},
+        'success_threshold': {'key': 'successThreshold', 'type': 'int'},
+        'timeout_seconds': {'key': 'timeoutSeconds', 'type': 'int'},
+        'period_seconds': {'key': 'periodSeconds', 'type': 'int'},
+        'initial_delay_seconds': {'key': 'initialDelaySeconds', 'type': 'int'},
+    }
+
+    def __init__(self, *, failure_threshold: int=None, success_threshold: int=None, timeout_seconds: int=None, period_seconds: int=None, initial_delay_seconds: int=None, **kwargs) -> None:
+        super(LivenessProbeRequirements, self).__init__(**kwargs)
+        self.failure_threshold = failure_threshold
+        self.success_threshold = success_threshold
+        self.timeout_seconds = timeout_seconds
+        self.period_seconds = period_seconds
+        self.initial_delay_seconds = initial_delay_seconds
+
+
+class AKSServiceCreateRequestLivenessProbeRequirements(LivenessProbeRequirements):
+    """The liveness probe requirements.
+
+    :param failure_threshold: The number of failures to allow before returning
+     an unhealthy status.
+    :type failure_threshold: int
+    :param success_threshold: The number of successful probes before returning
+     a healthy status.
+    :type success_threshold: int
+    :param timeout_seconds: The probe timeout in seconds.
+    :type timeout_seconds: int
+    :param period_seconds: The length of time between probes in seconds.
+    :type period_seconds: int
+    :param initial_delay_seconds: The delay before the first probe in seconds.
+    :type initial_delay_seconds: int
+    """
+
+    _attribute_map = {
+        'failure_threshold': {'key': 'failureThreshold', 'type': 'int'},
+        'success_threshold': {'key': 'successThreshold', 'type': 'int'},
+        'timeout_seconds': {'key': 'timeoutSeconds', 'type': 'int'},
+        'period_seconds': {'key': 'periodSeconds', 'type': 'int'},
+        'initial_delay_seconds': {'key': 'initialDelaySeconds', 'type': 'int'},
+    }
+
+    def __init__(self, *, failure_threshold: int=None, success_threshold: int=None, timeout_seconds: int=None, period_seconds: int=None, initial_delay_seconds: int=None, **kwargs) -> None:
+        super(AKSServiceCreateRequestLivenessProbeRequirements, self).__init__(failure_threshold=failure_threshold, success_threshold=success_threshold, timeout_seconds=timeout_seconds, period_seconds=period_seconds, initial_delay_seconds=initial_delay_seconds, **kwargs)
+
+
+class AKSVariantResponse(ServiceResponseBase):
+    """The response for an AKS variant.
+
+    You probably want to use the sub-classes and not this class directly. Known
+    sub-classes are: AKSServiceResponse
+
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param description: The service description.
+    :type description: str
+    :param kv_tags: The service tag dictionary. Tags are mutable.
+    :type kv_tags: dict[str, str]
+    :param properties: The service property dictionary. Properties are
+     immutable.
+    :type properties: dict[str, str]
+    :ivar state: The current state of the service. Possible values include:
+     'Transitioning', 'Healthy', 'Unhealthy', 'Failed', 'Unschedulable'
+    :vartype state: str or
+     ~azure.mgmt.machinelearningservices.models.WebServiceState
+    :ivar error: The error details.
+    :vartype error:
+     ~azure.mgmt.machinelearningservices.models.ServiceResponseBaseError
+    :param deployment_type: The deployment type for the service. Possible
+     values include: 'GRPCRealtimeEndpoint', 'HttpRealtimeEndpoint', 'Batch'
+    :type deployment_type: str or
+     ~azure.mgmt.machinelearningservices.models.DeploymentType
+    :param compute_type: Required. Constant filled by server.
+    :type compute_type: str
+    :param is_default: Is this the default variant.
+    :type is_default: bool
+    :param traffic_percentile: The amount of traffic variant receives.
+    :type traffic_percentile: float
+    :param type: The type of the variant. Possible values include: 'Control',
+     'Treatment'
+    :type type: str or ~azure.mgmt.machinelearningservices.models.VariantType
+    """
+
+    _validation = {
+        'state': {'readonly': True},
+        'error': {'readonly': True},
+        'compute_type': {'required': True},
+    }
+
+    _attribute_map = {
+        'description': {'key': 'description', 'type': 'str'},
+        'kv_tags': {'key': 'kvTags', 'type': '{str}'},
+        'properties': {'key': 'properties', 'type': '{str}'},
+        'state': {'key': 'state', 'type': 'str'},
+        'error': {'key': 'error', 'type': 'ServiceResponseBaseError'},
+        'deployment_type': {'key': 'deploymentType', 'type': 'str'},
+        'compute_type': {'key': 'computeType', 'type': 'str'},
+        'is_default': {'key': 'isDefault', 'type': 'bool'},
+        'traffic_percentile': {'key': 'trafficPercentile', 'type': 'float'},
+        'type': {'key': 'type', 'type': 'str'},
+    }
+
+    _subtype_map = {
+        'compute_type': {'AKS': 'AKSServiceResponse'}
+    }
+
+    def __init__(self, *, description: str=None, kv_tags=None, properties=None, deployment_type=None, is_default: bool=None, traffic_percentile: float=None, type=None, **kwargs) -> None:
+        super(AKSVariantResponse, self).__init__(description=description, kv_tags=kv_tags, properties=properties, deployment_type=deployment_type, **kwargs)
+        self.is_default = is_default
+        self.traffic_percentile = traffic_percentile
+        self.type = type
+        self.compute_type = 'Custom'
+
+
+class AKSServiceResponse(AKSVariantResponse):
+    """The response for an AKS service.
+
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param description: The service description.
+    :type description: str
+    :param kv_tags: The service tag dictionary. Tags are mutable.
+    :type kv_tags: dict[str, str]
+    :param properties: The service property dictionary. Properties are
+     immutable.
+    :type properties: dict[str, str]
+    :ivar state: The current state of the service. Possible values include:
+     'Transitioning', 'Healthy', 'Unhealthy', 'Failed', 'Unschedulable'
+    :vartype state: str or
+     ~azure.mgmt.machinelearningservices.models.WebServiceState
+    :ivar error: The error details.
+    :vartype error:
+     ~azure.mgmt.machinelearningservices.models.ServiceResponseBaseError
+    :param deployment_type: The deployment type for the service. Possible
+     values include: 'GRPCRealtimeEndpoint', 'HttpRealtimeEndpoint', 'Batch'
+    :type deployment_type: str or
+     ~azure.mgmt.machinelearningservices.models.DeploymentType
+    :param compute_type: Required. Constant filled by server.
+    :type compute_type: str
+    :param is_default: Is this the default variant.
+    :type is_default: bool
+    :param traffic_percentile: The amount of traffic variant receives.
+    :type traffic_percentile: float
+    :param type: The type of the variant. Possible values include: 'Control',
+     'Treatment'
+    :type type: str or ~azure.mgmt.machinelearningservices.models.VariantType
+    :param models_property: The list of models.
+    :type models_property:
+     list[~azure.mgmt.machinelearningservices.models.Model]
+    :param container_resource_requirements: The container resource
+     requirements.
+    :type container_resource_requirements:
+     ~azure.mgmt.machinelearningservices.models.ContainerResourceRequirements
+    :param max_concurrent_requests_per_container: The maximum number of
+     concurrent requests per container.
+    :type max_concurrent_requests_per_container: int
+    :param max_queue_wait_ms: Maximum time a request will wait in the queue
+     (in milliseconds). After this time, the service will return 503 (Service
+     Unavailable)
+    :type max_queue_wait_ms: int
+    :param compute_name: The name of the compute resource.
+    :type compute_name: str
+    :param namespace: The Kubernetes namespace of the deployment.
+    :type namespace: str
+    :param num_replicas: The number of replicas on the cluster.
+    :type num_replicas: int
+    :param data_collection: Details of the data collection options specified.
+    :type data_collection:
+     ~azure.mgmt.machinelearningservices.models.AKSServiceResponseDataCollection
+    :param app_insights_enabled: Whether or not Application Insights is
+     enabled.
+    :type app_insights_enabled: bool
+    :param auto_scaler: The auto scaler properties.
+    :type auto_scaler:
+     ~azure.mgmt.machinelearningservices.models.AKSServiceResponseAutoScaler
+    :ivar scoring_uri: The Uri for sending scoring requests.
+    :vartype scoring_uri: str
+    :ivar deployment_status: The deployment status.
+    :vartype deployment_status:
+     ~azure.mgmt.machinelearningservices.models.AKSServiceResponseDeploymentStatus
+    :param scoring_timeout_ms: The scoring timeout in milliseconds.
+    :type scoring_timeout_ms: int
+    :param liveness_probe_requirements: The liveness probe requirements.
+    :type liveness_probe_requirements:
+     ~azure.mgmt.machinelearningservices.models.AKSServiceResponseLivenessProbeRequirements
+    :param auth_enabled: Whether or not authentication is enabled.
+    :type auth_enabled: bool
+    :param aad_auth_enabled: Whether or not AAD authentication is enabled.
+    :type aad_auth_enabled: bool
+    :ivar swagger_uri: The Uri for sending swagger requests.
+    :vartype swagger_uri: str
+    :ivar model_config_map: Details on the models and configurations.
+    :vartype model_config_map: dict[str, object]
+    :param environment_image_request: The Environment, models and assets used
+     for inferencing.
+    :type environment_image_request:
+     ~azure.mgmt.machinelearningservices.models.AKSServiceResponseEnvironmentImageRequest
+    """
+
+    _validation = {
+        'state': {'readonly': True},
+        'error': {'readonly': True},
+        'compute_type': {'required': True},
+        'scoring_uri': {'readonly': True},
+        'deployment_status': {'readonly': True},
+        'swagger_uri': {'readonly': True},
+        'model_config_map': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'description': {'key': 'description', 'type': 'str'},
+        'kv_tags': {'key': 'kvTags', 'type': '{str}'},
+        'properties': {'key': 'properties', 'type': '{str}'},
+        'state': {'key': 'state', 'type': 'str'},
+        'error': {'key': 'error', 'type': 'ServiceResponseBaseError'},
+        'deployment_type': {'key': 'deploymentType', 'type': 'str'},
+        'compute_type': {'key': 'computeType', 'type': 'str'},
+        'is_default': {'key': 'isDefault', 'type': 'bool'},
+        'traffic_percentile': {'key': 'trafficPercentile', 'type': 'float'},
+        'type': {'key': 'type', 'type': 'str'},
+        'models_property': {'key': 'models', 'type': '[Model]'},
+        'container_resource_requirements': {'key': 'containerResourceRequirements', 'type': 'ContainerResourceRequirements'},
+        'max_concurrent_requests_per_container': {'key': 'maxConcurrentRequestsPerContainer', 'type': 'int'},
+        'max_queue_wait_ms': {'key': 'maxQueueWaitMs', 'type': 'int'},
+        'compute_name': {'key': 'computeName', 'type': 'str'},
+        'namespace': {'key': 'namespace', 'type': 'str'},
+        'num_replicas': {'key': 'numReplicas', 'type': 'int'},
+        'data_collection': {'key': 'dataCollection', 'type': 'AKSServiceResponseDataCollection'},
+        'app_insights_enabled': {'key': 'appInsightsEnabled', 'type': 'bool'},
+        'auto_scaler': {'key': 'autoScaler', 'type': 'AKSServiceResponseAutoScaler'},
+        'scoring_uri': {'key': 'scoringUri', 'type': 'str'},
+        'deployment_status': {'key': 'deploymentStatus', 'type': 'AKSServiceResponseDeploymentStatus'},
+        'scoring_timeout_ms': {'key': 'scoringTimeoutMs', 'type': 'int'},
+        'liveness_probe_requirements': {'key': 'livenessProbeRequirements', 'type': 'AKSServiceResponseLivenessProbeRequirements'},
+        'auth_enabled': {'key': 'authEnabled', 'type': 'bool'},
+        'aad_auth_enabled': {'key': 'aadAuthEnabled', 'type': 'bool'},
+        'swagger_uri': {'key': 'swaggerUri', 'type': 'str'},
+        'model_config_map': {'key': 'modelConfigMap', 'type': '{object}'},
+        'environment_image_request': {'key': 'environmentImageRequest', 'type': 'AKSServiceResponseEnvironmentImageRequest'},
+    }
+
+    def __init__(self, *, description: str=None, kv_tags=None, properties=None, deployment_type=None, is_default: bool=None, traffic_percentile: float=None, type=None, models_property=None, container_resource_requirements=None, max_concurrent_requests_per_container: int=None, max_queue_wait_ms: int=None, compute_name: str=None, namespace: str=None, num_replicas: int=None, data_collection=None, app_insights_enabled: bool=None, auto_scaler=None, scoring_timeout_ms: int=None, liveness_probe_requirements=None, auth_enabled: bool=None, aad_auth_enabled: bool=None, environment_image_request=None, **kwargs) -> None:
+        super(AKSServiceResponse, self).__init__(description=description, kv_tags=kv_tags, properties=properties, deployment_type=deployment_type, is_default=is_default, traffic_percentile=traffic_percentile, type=type, **kwargs)
+        self.models_property = models_property
+        self.container_resource_requirements = container_resource_requirements
+        self.max_concurrent_requests_per_container = max_concurrent_requests_per_container
+        self.max_queue_wait_ms = max_queue_wait_ms
+        self.compute_name = compute_name
+        self.namespace = namespace
+        self.num_replicas = num_replicas
+        self.data_collection = data_collection
+        self.app_insights_enabled = app_insights_enabled
+        self.auto_scaler = auto_scaler
+        self.scoring_uri = None
+        self.deployment_status = None
+        self.scoring_timeout_ms = scoring_timeout_ms
+        self.liveness_probe_requirements = liveness_probe_requirements
+        self.auth_enabled = auth_enabled
+        self.aad_auth_enabled = aad_auth_enabled
+        self.swagger_uri = None
+        self.model_config_map = None
+        self.environment_image_request = environment_image_request
+        self.compute_type = 'AKS'
+
+
+class AKSServiceResponseAutoScaler(AutoScaler):
+    """The auto scaler properties.
+
+    :param autoscale_enabled: Option to enable/disable auto scaling.
+    :type autoscale_enabled: bool
+    :param min_replicas: The minimum number of replicas to scale down to.
+    :type min_replicas: int
+    :param max_replicas: The maximum number of replicas in the cluster.
+    :type max_replicas: int
+    :param target_utilization: The target utilization percentage to use for
+     determining whether to scale the cluster.
+    :type target_utilization: int
+    :param refresh_period_in_seconds: The amount of seconds to wait between
+     auto scale updates.
+    :type refresh_period_in_seconds: int
+    """
+
+    _attribute_map = {
+        'autoscale_enabled': {'key': 'autoscaleEnabled', 'type': 'bool'},
+        'min_replicas': {'key': 'minReplicas', 'type': 'int'},
+        'max_replicas': {'key': 'maxReplicas', 'type': 'int'},
+        'target_utilization': {'key': 'targetUtilization', 'type': 'int'},
+        'refresh_period_in_seconds': {'key': 'refreshPeriodInSeconds', 'type': 'int'},
+    }
+
+    def __init__(self, *, autoscale_enabled: bool=None, min_replicas: int=None, max_replicas: int=None, target_utilization: int=None, refresh_period_in_seconds: int=None, **kwargs) -> None:
+        super(AKSServiceResponseAutoScaler, self).__init__(autoscale_enabled=autoscale_enabled, min_replicas=min_replicas, max_replicas=max_replicas, target_utilization=target_utilization, refresh_period_in_seconds=refresh_period_in_seconds, **kwargs)
+
+
+class AKSServiceResponseDataCollection(ModelDataCollection):
+    """Details of the data collection options specified.
+
+    :param event_hub_enabled: Option for enabling/disabling Event Hub.
+    :type event_hub_enabled: bool
+    :param storage_enabled: Option for enabling/disabling storage.
+    :type storage_enabled: bool
+    """
+
+    _attribute_map = {
+        'event_hub_enabled': {'key': 'eventHubEnabled', 'type': 'bool'},
+        'storage_enabled': {'key': 'storageEnabled', 'type': 'bool'},
+    }
+
+    def __init__(self, *, event_hub_enabled: bool=None, storage_enabled: bool=None, **kwargs) -> None:
+        super(AKSServiceResponseDataCollection, self).__init__(event_hub_enabled=event_hub_enabled, storage_enabled=storage_enabled, **kwargs)
+
+
+class AKSServiceResponseDeploymentStatus(AKSReplicaStatus):
+    """The deployment status.
+
+    :param desired_replicas: The desired number of replicas.
+    :type desired_replicas: int
+    :param updated_replicas: The number of updated replicas.
+    :type updated_replicas: int
+    :param available_replicas: The number of available replicas.
+    :type available_replicas: int
+    :param error: The error details.
+    :type error:
+     ~azure.mgmt.machinelearningservices.models.AKSReplicaStatusError
+    """
+
+    _attribute_map = {
+        'desired_replicas': {'key': 'desiredReplicas', 'type': 'int'},
+        'updated_replicas': {'key': 'updatedReplicas', 'type': 'int'},
+        'available_replicas': {'key': 'availableReplicas', 'type': 'int'},
+        'error': {'key': 'error', 'type': 'AKSReplicaStatusError'},
+    }
+
+    def __init__(self, *, desired_replicas: int=None, updated_replicas: int=None, available_replicas: int=None, error=None, **kwargs) -> None:
+        super(AKSServiceResponseDeploymentStatus, self).__init__(desired_replicas=desired_replicas, updated_replicas=updated_replicas, available_replicas=available_replicas, error=error, **kwargs)
+
+
+class AKSServiceResponseEnvironmentImageRequest(EnvironmentImageResponse):
+    """The Environment, models and assets used for inferencing.
+
+    :param driver_program: The name of the driver file.
+    :type driver_program: str
+    :param assets: The list of assets.
+    :type assets: list[~azure.mgmt.machinelearningservices.models.ImageAsset]
+    :param model_ids: The list of model Ids.
+    :type model_ids: list[str]
+    :param models_property: The list of models.
+    :type models_property:
+     list[~azure.mgmt.machinelearningservices.models.Model]
+    :param environment: The details of the AZURE ML environment.
+    :type environment:
+     ~azure.mgmt.machinelearningservices.models.EnvironmentImageResponseEnvironment
+    :param environment_reference: The unique identifying details of the AZURE
+     ML environment.
+    :type environment_reference:
+     ~azure.mgmt.machinelearningservices.models.EnvironmentImageResponseEnvironmentReference
+    """
+
+    _attribute_map = {
+        'driver_program': {'key': 'driverProgram', 'type': 'str'},
+        'assets': {'key': 'assets', 'type': '[ImageAsset]'},
+        'model_ids': {'key': 'modelIds', 'type': '[str]'},
+        'models_property': {'key': 'models', 'type': '[Model]'},
+        'environment': {'key': 'environment', 'type': 'EnvironmentImageResponseEnvironment'},
+        'environment_reference': {'key': 'environmentReference', 'type': 'EnvironmentImageResponseEnvironmentReference'},
+    }
+
+    def __init__(self, *, driver_program: str=None, assets=None, model_ids=None, models_property=None, environment=None, environment_reference=None, **kwargs) -> None:
+        super(AKSServiceResponseEnvironmentImageRequest, self).__init__(driver_program=driver_program, assets=assets, model_ids=model_ids, models_property=models_property, environment=environment, environment_reference=environment_reference, **kwargs)
+
+
+class AKSServiceResponseLivenessProbeRequirements(LivenessProbeRequirements):
+    """The liveness probe requirements.
+
+    :param failure_threshold: The number of failures to allow before returning
+     an unhealthy status.
+    :type failure_threshold: int
+    :param success_threshold: The number of successful probes before returning
+     a healthy status.
+    :type success_threshold: int
+    :param timeout_seconds: The probe timeout in seconds.
+    :type timeout_seconds: int
+    :param period_seconds: The length of time between probes in seconds.
+    :type period_seconds: int
+    :param initial_delay_seconds: The delay before the first probe in seconds.
+    :type initial_delay_seconds: int
+    """
+
+    _attribute_map = {
+        'failure_threshold': {'key': 'failureThreshold', 'type': 'int'},
+        'success_threshold': {'key': 'successThreshold', 'type': 'int'},
+        'timeout_seconds': {'key': 'timeoutSeconds', 'type': 'int'},
+        'period_seconds': {'key': 'periodSeconds', 'type': 'int'},
+        'initial_delay_seconds': {'key': 'initialDelaySeconds', 'type': 'int'},
+    }
+
+    def __init__(self, *, failure_threshold: int=None, success_threshold: int=None, timeout_seconds: int=None, period_seconds: int=None, initial_delay_seconds: int=None, **kwargs) -> None:
+        super(AKSServiceResponseLivenessProbeRequirements, self).__init__(failure_threshold=failure_threshold, success_threshold=success_threshold, timeout_seconds=timeout_seconds, period_seconds=period_seconds, initial_delay_seconds=initial_delay_seconds, **kwargs)
 
 
 class AmlCompute(Compute):
@@ -327,9 +1752,9 @@ class AmlCompute(Compute):
      ~azure.mgmt.machinelearningservices.models.ProvisioningState
     :param description: The description of the Machine Learning compute.
     :type description: str
-    :ivar created_on: The date and time when the compute was created.
+    :ivar created_on: The time at which the compute was created.
     :vartype created_on: datetime
-    :ivar modified_on: The date and time when the compute was last modified.
+    :ivar modified_on: The time at which the compute was last modified.
     :vartype modified_on: datetime
     :param resource_id: ARM resource id of the underlying compute
     :type resource_id: str
@@ -340,6 +1765,9 @@ class AmlCompute(Compute):
      by user and brought from outside if true, or machine learning service
      provisioned it if false.
     :vartype is_attached_compute: bool
+    :param disable_local_auth: Opt-out of local authentication and ensure
+     customers can use only MSI and AAD exclusively for authentication.
+    :type disable_local_auth: bool
     :param compute_type: Required. Constant filled by server.
     :type compute_type: str
     :param properties: AML Compute properties
@@ -365,12 +1793,13 @@ class AmlCompute(Compute):
         'resource_id': {'key': 'resourceId', 'type': 'str'},
         'provisioning_errors': {'key': 'provisioningErrors', 'type': '[MachineLearningServiceError]'},
         'is_attached_compute': {'key': 'isAttachedCompute', 'type': 'bool'},
+        'disable_local_auth': {'key': 'disableLocalAuth', 'type': 'bool'},
         'compute_type': {'key': 'computeType', 'type': 'str'},
         'properties': {'key': 'properties', 'type': 'AmlComputeProperties'},
     }
 
-    def __init__(self, *, compute_location: str=None, description: str=None, resource_id: str=None, properties=None, **kwargs) -> None:
-        super(AmlCompute, self).__init__(compute_location=compute_location, description=description, resource_id=resource_id, **kwargs)
+    def __init__(self, *, compute_location: str=None, description: str=None, resource_id: str=None, disable_local_auth: bool=None, properties=None, **kwargs) -> None:
+        super(AmlCompute, self).__init__(compute_location=compute_location, description=description, resource_id=resource_id, disable_local_auth=disable_local_auth, **kwargs)
         self.properties = properties
         self.compute_type = 'AmlCompute'
 
@@ -383,102 +1812,50 @@ class AmlComputeNodeInformation(Model):
 
     :ivar node_id: Node ID. ID of the compute node.
     :vartype node_id: str
-    :ivar ip_address: IP address. Public IP address of the compute node.
-    :vartype ip_address: str
+    :ivar private_ip_address: Private IP address. Private IP address of the
+     compute node.
+    :vartype private_ip_address: str
+    :ivar public_ip_address: Public IP address. Public IP address of the
+     compute node.
+    :vartype public_ip_address: str
     :ivar port: Port. SSH port number of the node.
     :vartype port: float
+    :ivar node_state: State of the compute node. Values are idle, running,
+     preparing, unusable, leaving and preempted. Possible values include:
+     'idle', 'running', 'preparing', 'unusable', 'leaving', 'preempted'
+    :vartype node_state: str or
+     ~azure.mgmt.machinelearningservices.models.NodeState
+    :ivar run_id: Run ID. ID of the Experiment running on the node, if any
+     else null.
+    :vartype run_id: str
     """
 
     _validation = {
         'node_id': {'readonly': True},
-        'ip_address': {'readonly': True},
+        'private_ip_address': {'readonly': True},
+        'public_ip_address': {'readonly': True},
         'port': {'readonly': True},
+        'node_state': {'readonly': True},
+        'run_id': {'readonly': True},
     }
 
     _attribute_map = {
         'node_id': {'key': 'nodeId', 'type': 'str'},
-        'ip_address': {'key': 'ipAddress', 'type': 'str'},
+        'private_ip_address': {'key': 'privateIpAddress', 'type': 'str'},
+        'public_ip_address': {'key': 'publicIpAddress', 'type': 'str'},
         'port': {'key': 'port', 'type': 'float'},
+        'node_state': {'key': 'nodeState', 'type': 'str'},
+        'run_id': {'key': 'runId', 'type': 'str'},
     }
 
     def __init__(self, **kwargs) -> None:
         super(AmlComputeNodeInformation, self).__init__(**kwargs)
         self.node_id = None
-        self.ip_address = None
+        self.private_ip_address = None
+        self.public_ip_address = None
         self.port = None
-
-
-class ComputeNodesInformation(Model):
-    """Compute nodes information related to a Machine Learning compute. Might
-    differ for every type of compute.
-
-    You probably want to use the sub-classes and not this class directly. Known
-    sub-classes are: AmlComputeNodesInformation
-
-    Variables are only populated by the server, and will be ignored when
-    sending a request.
-
-    All required parameters must be populated in order to send to Azure.
-
-    :ivar next_link: The continuation token.
-    :vartype next_link: str
-    :param compute_type: Required. Constant filled by server.
-    :type compute_type: str
-    """
-
-    _validation = {
-        'next_link': {'readonly': True},
-        'compute_type': {'required': True},
-    }
-
-    _attribute_map = {
-        'next_link': {'key': 'nextLink', 'type': 'str'},
-        'compute_type': {'key': 'computeType', 'type': 'str'},
-    }
-
-    _subtype_map = {
-        'compute_type': {'AmlCompute': 'AmlComputeNodesInformation'}
-    }
-
-    def __init__(self, **kwargs) -> None:
-        super(ComputeNodesInformation, self).__init__(**kwargs)
-        self.next_link = None
-        self.compute_type = None
-
-
-class AmlComputeNodesInformation(ComputeNodesInformation):
-    """Compute node information related to a AmlCompute.
-
-    Variables are only populated by the server, and will be ignored when
-    sending a request.
-
-    All required parameters must be populated in order to send to Azure.
-
-    :ivar next_link: The continuation token.
-    :vartype next_link: str
-    :param compute_type: Required. Constant filled by server.
-    :type compute_type: str
-    :ivar nodes: The collection of returned AmlCompute nodes details.
-    :vartype nodes:
-     list[~azure.mgmt.machinelearningservices.models.AmlComputeNodeInformation]
-    """
-
-    _validation = {
-        'next_link': {'readonly': True},
-        'compute_type': {'required': True},
-        'nodes': {'readonly': True},
-    }
-
-    _attribute_map = {
-        'next_link': {'key': 'nextLink', 'type': 'str'},
-        'compute_type': {'key': 'computeType', 'type': 'str'},
-        'nodes': {'key': 'nodes', 'type': '[AmlComputeNodeInformation]'},
-    }
-
-    def __init__(self, **kwargs) -> None:
-        super(AmlComputeNodesInformation, self).__init__(**kwargs)
-        self.nodes = None
-        self.compute_type = 'AmlCompute'
+        self.node_state = None
+        self.run_id = None
 
 
 class AmlComputeProperties(Model):
@@ -487,12 +1864,21 @@ class AmlComputeProperties(Model):
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
+    :param os_type: Compute OS Type. Possible values include: 'Linux',
+     'Windows'. Default value: "Linux" .
+    :type os_type: str or ~azure.mgmt.machinelearningservices.models.OsType
     :param vm_size: Virtual Machine Size
     :type vm_size: str
     :param vm_priority: Virtual Machine priority. Possible values include:
      'Dedicated', 'LowPriority'
     :type vm_priority: str or
      ~azure.mgmt.machinelearningservices.models.VmPriority
+    :param virtual_machine_image: Virtual Machine image for AML Compute -
+     windows only
+    :type virtual_machine_image:
+     ~azure.mgmt.machinelearningservices.models.VirtualMachineImage
+    :param isolated_network: Network is isolated or not
+    :type isolated_network: bool
     :param scale_settings: Scale settings for AML Compute
     :type scale_settings:
      ~azure.mgmt.machinelearningservices.models.ScaleSettings
@@ -503,6 +1889,17 @@ class AmlComputeProperties(Model):
     :param subnet: Subnet. Virtual network subnet resource ID the compute
      nodes belong to.
     :type subnet: ~azure.mgmt.machinelearningservices.models.ResourceId
+    :param remote_login_port_public_access: Close remote Login Access Port.
+     State of the public SSH port. Possible values are: Disabled - Indicates
+     that the public ssh port is closed on all nodes of the cluster. Enabled -
+     Indicates that the public ssh port is open on all nodes of the cluster.
+     NotSpecified - Indicates that the public ssh port is closed on all nodes
+     of the cluster if VNet is defined, else is open all public nodes. It can
+     be default only during cluster creation time, after creation it will be
+     either enabled or disabled. Possible values include: 'Enabled',
+     'Disabled', 'NotSpecified'. Default value: "NotSpecified" .
+    :type remote_login_port_public_access: str or
+     ~azure.mgmt.machinelearningservices.models.RemoteLoginPortPublicAccess
     :ivar allocation_state: Allocation state. Allocation state of the compute.
      Possible values are: steady - Indicates that the compute is not resizing.
      There are no changes to the number of compute nodes in the compute in
@@ -533,6 +1930,12 @@ class AmlComputeProperties(Model):
      on the compute.
     :vartype node_state_counts:
      ~azure.mgmt.machinelearningservices.models.NodeStateCounts
+    :param enable_node_public_ip: Enable node public IP. Enable or disable
+     node public IP address provisioning. Possible values are: Possible values
+     are: true - Indicates that the compute nodes will have public IPs
+     provisioned. false - Indicates that the compute nodes will have a private
+     endpoint and no public IPs. Default value: True .
+    :type enable_node_public_ip: bool
     """
 
     _validation = {
@@ -545,32 +1948,157 @@ class AmlComputeProperties(Model):
     }
 
     _attribute_map = {
+        'os_type': {'key': 'osType', 'type': 'str'},
         'vm_size': {'key': 'vmSize', 'type': 'str'},
         'vm_priority': {'key': 'vmPriority', 'type': 'str'},
+        'virtual_machine_image': {'key': 'virtualMachineImage', 'type': 'VirtualMachineImage'},
+        'isolated_network': {'key': 'isolatedNetwork', 'type': 'bool'},
         'scale_settings': {'key': 'scaleSettings', 'type': 'ScaleSettings'},
         'user_account_credentials': {'key': 'userAccountCredentials', 'type': 'UserAccountCredentials'},
         'subnet': {'key': 'subnet', 'type': 'ResourceId'},
+        'remote_login_port_public_access': {'key': 'remoteLoginPortPublicAccess', 'type': 'str'},
         'allocation_state': {'key': 'allocationState', 'type': 'str'},
         'allocation_state_transition_time': {'key': 'allocationStateTransitionTime', 'type': 'iso-8601'},
         'errors': {'key': 'errors', 'type': '[MachineLearningServiceError]'},
         'current_node_count': {'key': 'currentNodeCount', 'type': 'int'},
         'target_node_count': {'key': 'targetNodeCount', 'type': 'int'},
         'node_state_counts': {'key': 'nodeStateCounts', 'type': 'NodeStateCounts'},
+        'enable_node_public_ip': {'key': 'enableNodePublicIp', 'type': 'bool'},
     }
 
-    def __init__(self, *, vm_size: str=None, vm_priority=None, scale_settings=None, user_account_credentials=None, subnet=None, **kwargs) -> None:
+    def __init__(self, *, os_type="Linux", vm_size: str=None, vm_priority=None, virtual_machine_image=None, isolated_network: bool=None, scale_settings=None, user_account_credentials=None, subnet=None, remote_login_port_public_access="NotSpecified", enable_node_public_ip: bool=True, **kwargs) -> None:
         super(AmlComputeProperties, self).__init__(**kwargs)
+        self.os_type = os_type
         self.vm_size = vm_size
         self.vm_priority = vm_priority
+        self.virtual_machine_image = virtual_machine_image
+        self.isolated_network = isolated_network
         self.scale_settings = scale_settings
         self.user_account_credentials = user_account_credentials
         self.subnet = subnet
+        self.remote_login_port_public_access = remote_login_port_public_access
         self.allocation_state = None
         self.allocation_state_transition_time = None
         self.errors = None
         self.current_node_count = None
         self.target_node_count = None
         self.node_state_counts = None
+        self.enable_node_public_ip = enable_node_public_ip
+
+
+class AmlUserFeature(Model):
+    """Features enabled for a workspace.
+
+    :param id: Specifies the feature ID
+    :type id: str
+    :param display_name: Specifies the feature name
+    :type display_name: str
+    :param description: Describes the feature for user experience
+    :type description: str
+    """
+
+    _attribute_map = {
+        'id': {'key': 'id', 'type': 'str'},
+        'display_name': {'key': 'displayName', 'type': 'str'},
+        'description': {'key': 'description', 'type': 'str'},
+    }
+
+    def __init__(self, *, id: str=None, display_name: str=None, description: str=None, **kwargs) -> None:
+        super(AmlUserFeature, self).__init__(**kwargs)
+        self.id = id
+        self.display_name = display_name
+        self.description = description
+
+
+class AssignedUser(Model):
+    """A user that can be assigned to a compute instance.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param object_id: Required. User’s AAD Object Id.
+    :type object_id: str
+    :param tenant_id: Required. User’s AAD Tenant Id.
+    :type tenant_id: str
+    """
+
+    _validation = {
+        'object_id': {'required': True},
+        'tenant_id': {'required': True},
+    }
+
+    _attribute_map = {
+        'object_id': {'key': 'objectId', 'type': 'str'},
+        'tenant_id': {'key': 'tenantId', 'type': 'str'},
+    }
+
+    def __init__(self, *, object_id: str, tenant_id: str, **kwargs) -> None:
+        super(AssignedUser, self).__init__(**kwargs)
+        self.object_id = object_id
+        self.tenant_id = tenant_id
+
+
+class AuthKeys(Model):
+    """AuthKeys.
+
+    :param primary_key: The primary key.
+    :type primary_key: str
+    :param secondary_key: The secondary key.
+    :type secondary_key: str
+    """
+
+    _attribute_map = {
+        'primary_key': {'key': 'primaryKey', 'type': 'str'},
+        'secondary_key': {'key': 'secondaryKey', 'type': 'str'},
+    }
+
+    def __init__(self, *, primary_key: str=None, secondary_key: str=None, **kwargs) -> None:
+        super(AuthKeys, self).__init__(**kwargs)
+        self.primary_key = primary_key
+        self.secondary_key = secondary_key
+
+
+class AutoPauseProperties(Model):
+    """Auto pause properties.
+
+    :param delay_in_minutes:
+    :type delay_in_minutes: int
+    :param enabled:
+    :type enabled: bool
+    """
+
+    _attribute_map = {
+        'delay_in_minutes': {'key': 'delayInMinutes', 'type': 'int'},
+        'enabled': {'key': 'enabled', 'type': 'bool'},
+    }
+
+    def __init__(self, *, delay_in_minutes: int=None, enabled: bool=None, **kwargs) -> None:
+        super(AutoPauseProperties, self).__init__(**kwargs)
+        self.delay_in_minutes = delay_in_minutes
+        self.enabled = enabled
+
+
+class AutoScaleProperties(Model):
+    """Auto scale properties.
+
+    :param min_node_count:
+    :type min_node_count: int
+    :param enabled:
+    :type enabled: bool
+    :param max_node_count:
+    :type max_node_count: int
+    """
+
+    _attribute_map = {
+        'min_node_count': {'key': 'minNodeCount', 'type': 'int'},
+        'enabled': {'key': 'enabled', 'type': 'bool'},
+        'max_node_count': {'key': 'maxNodeCount', 'type': 'int'},
+    }
+
+    def __init__(self, *, min_node_count: int=None, enabled: bool=None, max_node_count: int=None, **kwargs) -> None:
+        super(AutoScaleProperties, self).__init__(**kwargs)
+        self.min_node_count = min_node_count
+        self.enabled = enabled
+        self.max_node_count = max_node_count
 
 
 class CloudError(Model):
@@ -599,6 +2127,367 @@ class ClusterUpdateParameters(Model):
         self.scale_settings = scale_settings
 
 
+class ComputeInstance(Compute):
+    """An Azure Machine Learning compute instance.
+
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param compute_location: Location for the underlying compute
+    :type compute_location: str
+    :ivar provisioning_state: The provision state of the cluster. Valid values
+     are Unknown, Updating, Provisioning, Succeeded, and Failed. Possible
+     values include: 'Unknown', 'Updating', 'Creating', 'Deleting',
+     'Succeeded', 'Failed', 'Canceled'
+    :vartype provisioning_state: str or
+     ~azure.mgmt.machinelearningservices.models.ProvisioningState
+    :param description: The description of the Machine Learning compute.
+    :type description: str
+    :ivar created_on: The time at which the compute was created.
+    :vartype created_on: datetime
+    :ivar modified_on: The time at which the compute was last modified.
+    :vartype modified_on: datetime
+    :param resource_id: ARM resource id of the underlying compute
+    :type resource_id: str
+    :ivar provisioning_errors: Errors during provisioning
+    :vartype provisioning_errors:
+     list[~azure.mgmt.machinelearningservices.models.MachineLearningServiceError]
+    :ivar is_attached_compute: Indicating whether the compute was provisioned
+     by user and brought from outside if true, or machine learning service
+     provisioned it if false.
+    :vartype is_attached_compute: bool
+    :param disable_local_auth: Opt-out of local authentication and ensure
+     customers can use only MSI and AAD exclusively for authentication.
+    :type disable_local_auth: bool
+    :param compute_type: Required. Constant filled by server.
+    :type compute_type: str
+    :param properties: Compute Instance properties
+    :type properties:
+     ~azure.mgmt.machinelearningservices.models.ComputeInstanceProperties
+    """
+
+    _validation = {
+        'provisioning_state': {'readonly': True},
+        'created_on': {'readonly': True},
+        'modified_on': {'readonly': True},
+        'provisioning_errors': {'readonly': True},
+        'is_attached_compute': {'readonly': True},
+        'compute_type': {'required': True},
+    }
+
+    _attribute_map = {
+        'compute_location': {'key': 'computeLocation', 'type': 'str'},
+        'provisioning_state': {'key': 'provisioningState', 'type': 'str'},
+        'description': {'key': 'description', 'type': 'str'},
+        'created_on': {'key': 'createdOn', 'type': 'iso-8601'},
+        'modified_on': {'key': 'modifiedOn', 'type': 'iso-8601'},
+        'resource_id': {'key': 'resourceId', 'type': 'str'},
+        'provisioning_errors': {'key': 'provisioningErrors', 'type': '[MachineLearningServiceError]'},
+        'is_attached_compute': {'key': 'isAttachedCompute', 'type': 'bool'},
+        'disable_local_auth': {'key': 'disableLocalAuth', 'type': 'bool'},
+        'compute_type': {'key': 'computeType', 'type': 'str'},
+        'properties': {'key': 'properties', 'type': 'ComputeInstanceProperties'},
+    }
+
+    def __init__(self, *, compute_location: str=None, description: str=None, resource_id: str=None, disable_local_auth: bool=None, properties=None, **kwargs) -> None:
+        super(ComputeInstance, self).__init__(compute_location=compute_location, description=description, resource_id=resource_id, disable_local_auth=disable_local_auth, **kwargs)
+        self.properties = properties
+        self.compute_type = 'ComputeInstance'
+
+
+class ComputeInstanceApplication(Model):
+    """Defines an Aml Instance application and its connectivity endpoint URI.
+
+    :param display_name: Name of the ComputeInstance application.
+    :type display_name: str
+    :param endpoint_uri: Application' endpoint URI.
+    :type endpoint_uri: str
+    """
+
+    _attribute_map = {
+        'display_name': {'key': 'displayName', 'type': 'str'},
+        'endpoint_uri': {'key': 'endpointUri', 'type': 'str'},
+    }
+
+    def __init__(self, *, display_name: str=None, endpoint_uri: str=None, **kwargs) -> None:
+        super(ComputeInstanceApplication, self).__init__(**kwargs)
+        self.display_name = display_name
+        self.endpoint_uri = endpoint_uri
+
+
+class ComputeInstanceConnectivityEndpoints(Model):
+    """Defines all connectivity endpoints and properties for an ComputeInstance.
+
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    :ivar public_ip_address: Public IP Address of this ComputeInstance.
+    :vartype public_ip_address: str
+    :ivar private_ip_address: Private IP Address of this ComputeInstance
+     (local to the VNET in which the compute instance is deployed).
+    :vartype private_ip_address: str
+    """
+
+    _validation = {
+        'public_ip_address': {'readonly': True},
+        'private_ip_address': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'public_ip_address': {'key': 'publicIpAddress', 'type': 'str'},
+        'private_ip_address': {'key': 'privateIpAddress', 'type': 'str'},
+    }
+
+    def __init__(self, **kwargs) -> None:
+        super(ComputeInstanceConnectivityEndpoints, self).__init__(**kwargs)
+        self.public_ip_address = None
+        self.private_ip_address = None
+
+
+class ComputeInstanceCreatedBy(Model):
+    """Describes information on user who created this ComputeInstance.
+
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    :ivar user_name: Name of the user.
+    :vartype user_name: str
+    :ivar user_org_id: Uniquely identifies user' Azure Active Directory
+     organization.
+    :vartype user_org_id: str
+    :ivar user_id: Uniquely identifies the user within his/her organization.
+    :vartype user_id: str
+    """
+
+    _validation = {
+        'user_name': {'readonly': True},
+        'user_org_id': {'readonly': True},
+        'user_id': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'user_name': {'key': 'userName', 'type': 'str'},
+        'user_org_id': {'key': 'userOrgId', 'type': 'str'},
+        'user_id': {'key': 'userId', 'type': 'str'},
+    }
+
+    def __init__(self, **kwargs) -> None:
+        super(ComputeInstanceCreatedBy, self).__init__(**kwargs)
+        self.user_name = None
+        self.user_org_id = None
+        self.user_id = None
+
+
+class ComputeInstanceLastOperation(Model):
+    """The last operation on ComputeInstance.
+
+    :param operation_name: Name of the last operation. Possible values
+     include: 'Create', 'Start', 'Stop', 'Restart', 'Reimage', 'Delete'
+    :type operation_name: str or
+     ~azure.mgmt.machinelearningservices.models.OperationName
+    :param operation_time: Time of the last operation.
+    :type operation_time: datetime
+    :param operation_status: Operation status. Possible values include:
+     'InProgress', 'Succeeded', 'CreateFailed', 'StartFailed', 'StopFailed',
+     'RestartFailed', 'ReimageFailed', 'DeleteFailed'
+    :type operation_status: str or
+     ~azure.mgmt.machinelearningservices.models.OperationStatus
+    """
+
+    _attribute_map = {
+        'operation_name': {'key': 'operationName', 'type': 'str'},
+        'operation_time': {'key': 'operationTime', 'type': 'iso-8601'},
+        'operation_status': {'key': 'operationStatus', 'type': 'str'},
+    }
+
+    def __init__(self, *, operation_name=None, operation_time=None, operation_status=None, **kwargs) -> None:
+        super(ComputeInstanceLastOperation, self).__init__(**kwargs)
+        self.operation_name = operation_name
+        self.operation_time = operation_time
+        self.operation_status = operation_status
+
+
+class ComputeInstanceProperties(Model):
+    """Compute Instance properties.
+
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    :param vm_size: Virtual Machine Size
+    :type vm_size: str
+    :param subnet: Subnet. Virtual network subnet resource ID the compute
+     nodes belong to.
+    :type subnet: ~azure.mgmt.machinelearningservices.models.ResourceId
+    :param application_sharing_policy: Sharing policy for applications on this
+     compute instance. Policy for sharing applications on this compute instance
+     among users of parent workspace. If Personal, only the creator can access
+     applications on this compute instance. When Shared, any workspace user can
+     access applications on this instance depending on his/her assigned role.
+     Possible values include: 'Personal', 'Shared'. Default value: "Shared" .
+    :type application_sharing_policy: str or
+     ~azure.mgmt.machinelearningservices.models.ApplicationSharingPolicy
+    :param ssh_settings: Specifies policy and settings for SSH access.
+    :type ssh_settings:
+     ~azure.mgmt.machinelearningservices.models.ComputeInstanceSshSettings
+    :ivar connectivity_endpoints: Describes all connectivity endpoints
+     available for this ComputeInstance.
+    :vartype connectivity_endpoints:
+     ~azure.mgmt.machinelearningservices.models.ComputeInstanceConnectivityEndpoints
+    :ivar applications: Describes available applications and their endpoints
+     on this ComputeInstance.
+    :vartype applications:
+     list[~azure.mgmt.machinelearningservices.models.ComputeInstanceApplication]
+    :ivar created_by: Describes information on user who created this
+     ComputeInstance.
+    :vartype created_by:
+     ~azure.mgmt.machinelearningservices.models.ComputeInstanceCreatedBy
+    :ivar errors: Errors. Collection of errors encountered on this
+     ComputeInstance.
+    :vartype errors:
+     list[~azure.mgmt.machinelearningservices.models.MachineLearningServiceError]
+    :ivar state: The current state of this ComputeInstance. Possible values
+     include: 'Creating', 'CreateFailed', 'Deleting', 'Running', 'Restarting',
+     'JobRunning', 'SettingUp', 'SetupFailed', 'Starting', 'Stopped',
+     'Stopping', 'UserSettingUp', 'UserSetupFailed', 'Unknown', 'Unusable'
+    :vartype state: str or
+     ~azure.mgmt.machinelearningservices.models.ComputeInstanceState
+    :param compute_instance_authorization_type: Compute Instance Authorization
+     type. The Compute Instance Authorization type. Available values are
+     personal (default). Possible values include: 'personal'. Default value:
+     "personal" .
+    :type compute_instance_authorization_type: str or
+     ~azure.mgmt.machinelearningservices.models.ComputeInstanceAuthorizationType
+    :param personal_compute_instance_settings: Personal Compute Instance
+     settings. Settings for a personal compute instance.
+    :type personal_compute_instance_settings:
+     ~azure.mgmt.machinelearningservices.models.PersonalComputeInstanceSettings
+    :param setup_scripts: Details of customized scripts to execute for setting
+     up the cluster.
+    :type setup_scripts:
+     ~azure.mgmt.machinelearningservices.models.SetupScripts
+    :ivar last_operation: The last operation on ComputeInstance.
+    :vartype last_operation:
+     ~azure.mgmt.machinelearningservices.models.ComputeInstanceLastOperation
+    """
+
+    _validation = {
+        'connectivity_endpoints': {'readonly': True},
+        'applications': {'readonly': True},
+        'created_by': {'readonly': True},
+        'errors': {'readonly': True},
+        'state': {'readonly': True},
+        'last_operation': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'vm_size': {'key': 'vmSize', 'type': 'str'},
+        'subnet': {'key': 'subnet', 'type': 'ResourceId'},
+        'application_sharing_policy': {'key': 'applicationSharingPolicy', 'type': 'str'},
+        'ssh_settings': {'key': 'sshSettings', 'type': 'ComputeInstanceSshSettings'},
+        'connectivity_endpoints': {'key': 'connectivityEndpoints', 'type': 'ComputeInstanceConnectivityEndpoints'},
+        'applications': {'key': 'applications', 'type': '[ComputeInstanceApplication]'},
+        'created_by': {'key': 'createdBy', 'type': 'ComputeInstanceCreatedBy'},
+        'errors': {'key': 'errors', 'type': '[MachineLearningServiceError]'},
+        'state': {'key': 'state', 'type': 'str'},
+        'compute_instance_authorization_type': {'key': 'computeInstanceAuthorizationType', 'type': 'str'},
+        'personal_compute_instance_settings': {'key': 'personalComputeInstanceSettings', 'type': 'PersonalComputeInstanceSettings'},
+        'setup_scripts': {'key': 'setupScripts', 'type': 'SetupScripts'},
+        'last_operation': {'key': 'lastOperation', 'type': 'ComputeInstanceLastOperation'},
+    }
+
+    def __init__(self, *, vm_size: str=None, subnet=None, application_sharing_policy="Shared", ssh_settings=None, compute_instance_authorization_type="personal", personal_compute_instance_settings=None, setup_scripts=None, **kwargs) -> None:
+        super(ComputeInstanceProperties, self).__init__(**kwargs)
+        self.vm_size = vm_size
+        self.subnet = subnet
+        self.application_sharing_policy = application_sharing_policy
+        self.ssh_settings = ssh_settings
+        self.connectivity_endpoints = None
+        self.applications = None
+        self.created_by = None
+        self.errors = None
+        self.state = None
+        self.compute_instance_authorization_type = compute_instance_authorization_type
+        self.personal_compute_instance_settings = personal_compute_instance_settings
+        self.setup_scripts = setup_scripts
+        self.last_operation = None
+
+
+class ComputeInstanceSshSettings(Model):
+    """Specifies policy and settings for SSH access.
+
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    :param ssh_public_access: Access policy for SSH. State of the public SSH
+     port. Possible values are: Disabled - Indicates that the public ssh port
+     is closed on this instance. Enabled - Indicates that the public ssh port
+     is open and accessible according to the VNet/subnet policy if applicable.
+     Possible values include: 'Enabled', 'Disabled'. Default value: "Disabled"
+     .
+    :type ssh_public_access: str or
+     ~azure.mgmt.machinelearningservices.models.SshPublicAccess
+    :ivar admin_user_name: Describes the admin user name.
+    :vartype admin_user_name: str
+    :ivar ssh_port: Describes the port for connecting through SSH.
+    :vartype ssh_port: int
+    :param admin_public_key: Specifies the SSH rsa public key file as a
+     string. Use "ssh-keygen -t rsa -b 2048" to generate your SSH key pairs.
+    :type admin_public_key: str
+    """
+
+    _validation = {
+        'admin_user_name': {'readonly': True},
+        'ssh_port': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'ssh_public_access': {'key': 'sshPublicAccess', 'type': 'str'},
+        'admin_user_name': {'key': 'adminUserName', 'type': 'str'},
+        'ssh_port': {'key': 'sshPort', 'type': 'int'},
+        'admin_public_key': {'key': 'adminPublicKey', 'type': 'str'},
+    }
+
+    def __init__(self, *, ssh_public_access="Disabled", admin_public_key: str=None, **kwargs) -> None:
+        super(ComputeInstanceSshSettings, self).__init__(**kwargs)
+        self.ssh_public_access = ssh_public_access
+        self.admin_user_name = None
+        self.ssh_port = None
+        self.admin_public_key = admin_public_key
+
+
+class ComputeNodesInformation(Model):
+    """Compute nodes information related to a Machine Learning compute. Might
+    differ for every type of compute.
+
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar next_link: The continuation token.
+    :vartype next_link: str
+    :param compute_type: Required. Constant filled by server.
+    :type compute_type: str
+    """
+
+    _validation = {
+        'next_link': {'readonly': True},
+        'compute_type': {'required': True},
+    }
+
+    _attribute_map = {
+        'next_link': {'key': 'nextLink', 'type': 'str'},
+        'compute_type': {'key': 'computeType', 'type': 'str'},
+    }
+
+    def __init__(self, **kwargs) -> None:
+        super(ComputeNodesInformation, self).__init__(**kwargs)
+        self.next_link = None
+        self.compute_type = None
+
+
 class Resource(Model):
     """Azure Resource Manager resource envelope.
 
@@ -609,21 +2498,26 @@ class Resource(Model):
     :vartype id: str
     :ivar name: Specifies the name of the resource.
     :vartype name: str
-    :ivar identity: The identity of the resource.
-    :vartype identity: ~azure.mgmt.machinelearningservices.models.Identity
+    :param identity: The identity of the resource.
+    :type identity: ~azure.mgmt.machinelearningservices.models.Identity
     :param location: Specifies the location of the resource.
     :type location: str
     :ivar type: Specifies the type of the resource.
     :vartype type: str
     :param tags: Contains resource tags defined as key/value pairs.
     :type tags: dict[str, str]
+    :param sku: The sku of the workspace.
+    :type sku: ~azure.mgmt.machinelearningservices.models.Sku
+    :ivar system_data:
+    :vartype system_data:
+     ~azure.mgmt.machinelearningservices.models.SystemData
     """
 
     _validation = {
         'id': {'readonly': True},
         'name': {'readonly': True},
-        'identity': {'readonly': True},
         'type': {'readonly': True},
+        'system_data': {'readonly': True},
     }
 
     _attribute_map = {
@@ -633,16 +2527,20 @@ class Resource(Model):
         'location': {'key': 'location', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
         'tags': {'key': 'tags', 'type': '{str}'},
+        'sku': {'key': 'sku', 'type': 'Sku'},
+        'system_data': {'key': 'systemData', 'type': 'SystemData'},
     }
 
-    def __init__(self, *, location: str=None, tags=None, **kwargs) -> None:
+    def __init__(self, *, identity=None, location: str=None, tags=None, sku=None, **kwargs) -> None:
         super(Resource, self).__init__(**kwargs)
         self.id = None
         self.name = None
-        self.identity = None
+        self.identity = identity
         self.location = location
         self.type = None
         self.tags = tags
+        self.sku = sku
+        self.system_data = None
 
 
 class ComputeResource(Resource):
@@ -655,14 +2553,19 @@ class ComputeResource(Resource):
     :vartype id: str
     :ivar name: Specifies the name of the resource.
     :vartype name: str
-    :ivar identity: The identity of the resource.
-    :vartype identity: ~azure.mgmt.machinelearningservices.models.Identity
+    :param identity: The identity of the resource.
+    :type identity: ~azure.mgmt.machinelearningservices.models.Identity
     :param location: Specifies the location of the resource.
     :type location: str
     :ivar type: Specifies the type of the resource.
     :vartype type: str
     :param tags: Contains resource tags defined as key/value pairs.
     :type tags: dict[str, str]
+    :param sku: The sku of the workspace.
+    :type sku: ~azure.mgmt.machinelearningservices.models.Sku
+    :ivar system_data:
+    :vartype system_data:
+     ~azure.mgmt.machinelearningservices.models.SystemData
     :param properties: Compute properties
     :type properties: ~azure.mgmt.machinelearningservices.models.Compute
     """
@@ -670,8 +2573,8 @@ class ComputeResource(Resource):
     _validation = {
         'id': {'readonly': True},
         'name': {'readonly': True},
-        'identity': {'readonly': True},
         'type': {'readonly': True},
+        'system_data': {'readonly': True},
     }
 
     _attribute_map = {
@@ -681,12 +2584,208 @@ class ComputeResource(Resource):
         'location': {'key': 'location', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
         'tags': {'key': 'tags', 'type': '{str}'},
+        'sku': {'key': 'sku', 'type': 'Sku'},
+        'system_data': {'key': 'systemData', 'type': 'SystemData'},
         'properties': {'key': 'properties', 'type': 'Compute'},
     }
 
-    def __init__(self, *, location: str=None, tags=None, properties=None, **kwargs) -> None:
-        super(ComputeResource, self).__init__(location=location, tags=tags, **kwargs)
+    def __init__(self, *, identity=None, location: str=None, tags=None, sku=None, properties=None, **kwargs) -> None:
+        super(ComputeResource, self).__init__(identity=identity, location=location, tags=tags, sku=sku, **kwargs)
         self.properties = properties
+
+
+class ContainerRegistry(Model):
+    """ContainerRegistry.
+
+    :param address:
+    :type address: str
+    :param username:
+    :type username: str
+    :param password:
+    :type password: str
+    """
+
+    _attribute_map = {
+        'address': {'key': 'address', 'type': 'str'},
+        'username': {'key': 'username', 'type': 'str'},
+        'password': {'key': 'password', 'type': 'str'},
+    }
+
+    def __init__(self, *, address: str=None, username: str=None, password: str=None, **kwargs) -> None:
+        super(ContainerRegistry, self).__init__(**kwargs)
+        self.address = address
+        self.username = username
+        self.password = password
+
+
+class ContainerRegistryResponse(Model):
+    """ContainerRegistryResponse.
+
+    :param address:
+    :type address: str
+    """
+
+    _attribute_map = {
+        'address': {'key': 'address', 'type': 'str'},
+    }
+
+    def __init__(self, *, address: str=None, **kwargs) -> None:
+        super(ContainerRegistryResponse, self).__init__(**kwargs)
+        self.address = address
+
+
+class ContainerResourceRequirements(Model):
+    """The resource requirements for the container (cpu and memory).
+
+    :param cpu: The minimum amount of CPU cores to be used by the container.
+     More info:
+     https://kubernetes.io/docs/concepts/configuration/manage-compute-resources-container/
+    :type cpu: float
+    :param cpu_limit: The maximum amount of CPU cores allowed to be used by
+     the container. More info:
+     https://kubernetes.io/docs/concepts/configuration/manage-compute-resources-container/
+    :type cpu_limit: float
+    :param memory_in_gb: The minimum amount of memory (in GB) to be used by
+     the container. More info:
+     https://kubernetes.io/docs/concepts/configuration/manage-compute-resources-container/
+    :type memory_in_gb: float
+    :param memory_in_gb_limit: The maximum amount of memory (in GB) allowed to
+     be used by the container. More info:
+     https://kubernetes.io/docs/concepts/configuration/manage-compute-resources-container/
+    :type memory_in_gb_limit: float
+    :param gpu: The number of GPU cores in the container.
+    :type gpu: int
+    :param fpga: The number of FPGA PCIE devices exposed to the container.
+     Must be multiple of 2.
+    :type fpga: int
+    """
+
+    _attribute_map = {
+        'cpu': {'key': 'cpu', 'type': 'float'},
+        'cpu_limit': {'key': 'cpuLimit', 'type': 'float'},
+        'memory_in_gb': {'key': 'memoryInGB', 'type': 'float'},
+        'memory_in_gb_limit': {'key': 'memoryInGBLimit', 'type': 'float'},
+        'gpu': {'key': 'gpu', 'type': 'int'},
+        'fpga': {'key': 'fpga', 'type': 'int'},
+    }
+
+    def __init__(self, *, cpu: float=None, cpu_limit: float=None, memory_in_gb: float=None, memory_in_gb_limit: float=None, gpu: int=None, fpga: int=None, **kwargs) -> None:
+        super(ContainerResourceRequirements, self).__init__(**kwargs)
+        self.cpu = cpu
+        self.cpu_limit = cpu_limit
+        self.memory_in_gb = memory_in_gb
+        self.memory_in_gb_limit = memory_in_gb_limit
+        self.gpu = gpu
+        self.fpga = fpga
+
+
+class CosmosDbSettings(Model):
+    """CosmosDbSettings.
+
+    :param collections_throughput: The throughput of the collections in
+     cosmosdb database
+    :type collections_throughput: int
+    """
+
+    _attribute_map = {
+        'collections_throughput': {'key': 'collectionsThroughput', 'type': 'int'},
+    }
+
+    def __init__(self, *, collections_throughput: int=None, **kwargs) -> None:
+        super(CosmosDbSettings, self).__init__(**kwargs)
+        self.collections_throughput = collections_throughput
+
+
+class EnvironmentImageRequest(Model):
+    """Request to create a Docker image based on Environment.
+
+    :param driver_program: The name of the driver file.
+    :type driver_program: str
+    :param assets: The list of assets.
+    :type assets: list[~azure.mgmt.machinelearningservices.models.ImageAsset]
+    :param model_ids: The list of model Ids.
+    :type model_ids: list[str]
+    :param models_property: The list of models.
+    :type models_property:
+     list[~azure.mgmt.machinelearningservices.models.Model]
+    :param environment: The details of the AZURE ML environment.
+    :type environment:
+     ~azure.mgmt.machinelearningservices.models.EnvironmentImageRequestEnvironment
+    :param environment_reference: The unique identifying details of the AZURE
+     ML environment.
+    :type environment_reference:
+     ~azure.mgmt.machinelearningservices.models.EnvironmentImageRequestEnvironmentReference
+    """
+
+    _attribute_map = {
+        'driver_program': {'key': 'driverProgram', 'type': 'str'},
+        'assets': {'key': 'assets', 'type': '[ImageAsset]'},
+        'model_ids': {'key': 'modelIds', 'type': '[str]'},
+        'models_property': {'key': 'models', 'type': '[Model]'},
+        'environment': {'key': 'environment', 'type': 'EnvironmentImageRequestEnvironment'},
+        'environment_reference': {'key': 'environmentReference', 'type': 'EnvironmentImageRequestEnvironmentReference'},
+    }
+
+    def __init__(self, *, driver_program: str=None, assets=None, model_ids=None, models_property=None, environment=None, environment_reference=None, **kwargs) -> None:
+        super(EnvironmentImageRequest, self).__init__(**kwargs)
+        self.driver_program = driver_program
+        self.assets = assets
+        self.model_ids = model_ids
+        self.models_property = models_property
+        self.environment = environment
+        self.environment_reference = environment_reference
+
+
+class CreateServiceRequestEnvironmentImageRequest(EnvironmentImageRequest):
+    """The Environment, models and assets needed for inferencing.
+
+    :param driver_program: The name of the driver file.
+    :type driver_program: str
+    :param assets: The list of assets.
+    :type assets: list[~azure.mgmt.machinelearningservices.models.ImageAsset]
+    :param model_ids: The list of model Ids.
+    :type model_ids: list[str]
+    :param models_property: The list of models.
+    :type models_property:
+     list[~azure.mgmt.machinelearningservices.models.Model]
+    :param environment: The details of the AZURE ML environment.
+    :type environment:
+     ~azure.mgmt.machinelearningservices.models.EnvironmentImageRequestEnvironment
+    :param environment_reference: The unique identifying details of the AZURE
+     ML environment.
+    :type environment_reference:
+     ~azure.mgmt.machinelearningservices.models.EnvironmentImageRequestEnvironmentReference
+    """
+
+    _attribute_map = {
+        'driver_program': {'key': 'driverProgram', 'type': 'str'},
+        'assets': {'key': 'assets', 'type': '[ImageAsset]'},
+        'model_ids': {'key': 'modelIds', 'type': '[str]'},
+        'models_property': {'key': 'models', 'type': '[Model]'},
+        'environment': {'key': 'environment', 'type': 'EnvironmentImageRequestEnvironment'},
+        'environment_reference': {'key': 'environmentReference', 'type': 'EnvironmentImageRequestEnvironmentReference'},
+    }
+
+    def __init__(self, *, driver_program: str=None, assets=None, model_ids=None, models_property=None, environment=None, environment_reference=None, **kwargs) -> None:
+        super(CreateServiceRequestEnvironmentImageRequest, self).__init__(driver_program=driver_program, assets=assets, model_ids=model_ids, models_property=models_property, environment=environment, environment_reference=environment_reference, **kwargs)
+
+
+class CreateServiceRequestKeys(AuthKeys):
+    """The authentication keys.
+
+    :param primary_key: The primary key.
+    :type primary_key: str
+    :param secondary_key: The secondary key.
+    :type secondary_key: str
+    """
+
+    _attribute_map = {
+        'primary_key': {'key': 'primaryKey', 'type': 'str'},
+        'secondary_key': {'key': 'secondaryKey', 'type': 'str'},
+    }
+
+    def __init__(self, *, primary_key: str=None, secondary_key: str=None, **kwargs) -> None:
+        super(CreateServiceRequestKeys, self).__init__(primary_key=primary_key, secondary_key=secondary_key, **kwargs)
 
 
 class Databricks(Compute):
@@ -707,9 +2806,9 @@ class Databricks(Compute):
      ~azure.mgmt.machinelearningservices.models.ProvisioningState
     :param description: The description of the Machine Learning compute.
     :type description: str
-    :ivar created_on: The date and time when the compute was created.
+    :ivar created_on: The time at which the compute was created.
     :vartype created_on: datetime
-    :ivar modified_on: The date and time when the compute was last modified.
+    :ivar modified_on: The time at which the compute was last modified.
     :vartype modified_on: datetime
     :param resource_id: ARM resource id of the underlying compute
     :type resource_id: str
@@ -720,6 +2819,9 @@ class Databricks(Compute):
      by user and brought from outside if true, or machine learning service
      provisioned it if false.
     :vartype is_attached_compute: bool
+    :param disable_local_auth: Opt-out of local authentication and ensure
+     customers can use only MSI and AAD exclusively for authentication.
+    :type disable_local_auth: bool
     :param compute_type: Required. Constant filled by server.
     :type compute_type: str
     :param properties:
@@ -745,12 +2847,13 @@ class Databricks(Compute):
         'resource_id': {'key': 'resourceId', 'type': 'str'},
         'provisioning_errors': {'key': 'provisioningErrors', 'type': '[MachineLearningServiceError]'},
         'is_attached_compute': {'key': 'isAttachedCompute', 'type': 'bool'},
+        'disable_local_auth': {'key': 'disableLocalAuth', 'type': 'bool'},
         'compute_type': {'key': 'computeType', 'type': 'str'},
         'properties': {'key': 'properties', 'type': 'DatabricksProperties'},
     }
 
-    def __init__(self, *, compute_location: str=None, description: str=None, resource_id: str=None, properties=None, **kwargs) -> None:
-        super(Databricks, self).__init__(compute_location=compute_location, description=description, resource_id=resource_id, **kwargs)
+    def __init__(self, *, compute_location: str=None, description: str=None, resource_id: str=None, disable_local_auth: bool=None, properties=None, **kwargs) -> None:
+        super(Databricks, self).__init__(compute_location=compute_location, description=description, resource_id=resource_id, disable_local_auth=disable_local_auth, **kwargs)
         self.properties = properties
         self.compute_type = 'Databricks'
 
@@ -786,15 +2889,19 @@ class DatabricksProperties(Model):
 
     :param databricks_access_token: Databricks access token
     :type databricks_access_token: str
+    :param workspace_url: Workspace Url
+    :type workspace_url: str
     """
 
     _attribute_map = {
         'databricks_access_token': {'key': 'databricksAccessToken', 'type': 'str'},
+        'workspace_url': {'key': 'workspaceUrl', 'type': 'str'},
     }
 
-    def __init__(self, *, databricks_access_token: str=None, **kwargs) -> None:
+    def __init__(self, *, databricks_access_token: str=None, workspace_url: str=None, **kwargs) -> None:
         super(DatabricksProperties, self).__init__(**kwargs)
         self.databricks_access_token = databricks_access_token
+        self.workspace_url = workspace_url
 
 
 class DataFactory(Compute):
@@ -815,9 +2922,9 @@ class DataFactory(Compute):
      ~azure.mgmt.machinelearningservices.models.ProvisioningState
     :param description: The description of the Machine Learning compute.
     :type description: str
-    :ivar created_on: The date and time when the compute was created.
+    :ivar created_on: The time at which the compute was created.
     :vartype created_on: datetime
-    :ivar modified_on: The date and time when the compute was last modified.
+    :ivar modified_on: The time at which the compute was last modified.
     :vartype modified_on: datetime
     :param resource_id: ARM resource id of the underlying compute
     :type resource_id: str
@@ -828,6 +2935,9 @@ class DataFactory(Compute):
      by user and brought from outside if true, or machine learning service
      provisioned it if false.
     :vartype is_attached_compute: bool
+    :param disable_local_auth: Opt-out of local authentication and ensure
+     customers can use only MSI and AAD exclusively for authentication.
+    :type disable_local_auth: bool
     :param compute_type: Required. Constant filled by server.
     :type compute_type: str
     """
@@ -850,11 +2960,12 @@ class DataFactory(Compute):
         'resource_id': {'key': 'resourceId', 'type': 'str'},
         'provisioning_errors': {'key': 'provisioningErrors', 'type': '[MachineLearningServiceError]'},
         'is_attached_compute': {'key': 'isAttachedCompute', 'type': 'bool'},
+        'disable_local_auth': {'key': 'disableLocalAuth', 'type': 'bool'},
         'compute_type': {'key': 'computeType', 'type': 'str'},
     }
 
-    def __init__(self, *, compute_location: str=None, description: str=None, resource_id: str=None, **kwargs) -> None:
-        super(DataFactory, self).__init__(compute_location=compute_location, description=description, resource_id=resource_id, **kwargs)
+    def __init__(self, *, compute_location: str=None, description: str=None, resource_id: str=None, disable_local_auth: bool=None, **kwargs) -> None:
+        super(DataFactory, self).__init__(compute_location=compute_location, description=description, resource_id=resource_id, disable_local_auth=disable_local_auth, **kwargs)
         self.compute_type = 'DataFactory'
 
 
@@ -876,9 +2987,9 @@ class DataLakeAnalytics(Compute):
      ~azure.mgmt.machinelearningservices.models.ProvisioningState
     :param description: The description of the Machine Learning compute.
     :type description: str
-    :ivar created_on: The date and time when the compute was created.
+    :ivar created_on: The time at which the compute was created.
     :vartype created_on: datetime
-    :ivar modified_on: The date and time when the compute was last modified.
+    :ivar modified_on: The time at which the compute was last modified.
     :vartype modified_on: datetime
     :param resource_id: ARM resource id of the underlying compute
     :type resource_id: str
@@ -889,6 +3000,9 @@ class DataLakeAnalytics(Compute):
      by user and brought from outside if true, or machine learning service
      provisioned it if false.
     :vartype is_attached_compute: bool
+    :param disable_local_auth: Opt-out of local authentication and ensure
+     customers can use only MSI and AAD exclusively for authentication.
+    :type disable_local_auth: bool
     :param compute_type: Required. Constant filled by server.
     :type compute_type: str
     :param properties:
@@ -914,12 +3028,13 @@ class DataLakeAnalytics(Compute):
         'resource_id': {'key': 'resourceId', 'type': 'str'},
         'provisioning_errors': {'key': 'provisioningErrors', 'type': '[MachineLearningServiceError]'},
         'is_attached_compute': {'key': 'isAttachedCompute', 'type': 'bool'},
+        'disable_local_auth': {'key': 'disableLocalAuth', 'type': 'bool'},
         'compute_type': {'key': 'computeType', 'type': 'str'},
         'properties': {'key': 'properties', 'type': 'DataLakeAnalyticsProperties'},
     }
 
-    def __init__(self, *, compute_location: str=None, description: str=None, resource_id: str=None, properties=None, **kwargs) -> None:
-        super(DataLakeAnalytics, self).__init__(compute_location=compute_location, description=description, resource_id=resource_id, **kwargs)
+    def __init__(self, *, compute_location: str=None, description: str=None, resource_id: str=None, disable_local_auth: bool=None, properties=None, **kwargs) -> None:
+        super(DataLakeAnalytics, self).__init__(compute_location=compute_location, description=description, resource_id=resource_id, disable_local_auth=disable_local_auth, **kwargs)
         self.properties = properties
         self.compute_type = 'DataLakeAnalytics'
 
@@ -938,6 +3053,305 @@ class DataLakeAnalyticsProperties(Model):
     def __init__(self, *, data_lake_store_account_name: str=None, **kwargs) -> None:
         super(DataLakeAnalyticsProperties, self).__init__(**kwargs)
         self.data_lake_store_account_name = data_lake_store_account_name
+
+
+class DatasetReference(Model):
+    """The dataset reference object.
+
+    :param name: The name of the dataset reference.
+    :type name: str
+    :param id: The id of the dataset reference.
+    :type id: str
+    """
+
+    _attribute_map = {
+        'name': {'key': 'name', 'type': 'str'},
+        'id': {'key': 'id', 'type': 'str'},
+    }
+
+    def __init__(self, *, name: str=None, id: str=None, **kwargs) -> None:
+        super(DatasetReference, self).__init__(**kwargs)
+        self.name = name
+        self.id = id
+
+
+class EncryptionProperty(Model):
+    """EncryptionProperty.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param status: Required. Indicates whether or not the encryption is
+     enabled for the workspace. Possible values include: 'Enabled', 'Disabled'
+    :type status: str or
+     ~azure.mgmt.machinelearningservices.models.EncryptionStatus
+    :param identity: The identity that will be used to access the key vault
+     for encryption at rest.
+    :type identity: ~azure.mgmt.machinelearningservices.models.IdentityForCmk
+    :param key_vault_properties: Required. Customer Key vault properties.
+    :type key_vault_properties:
+     ~azure.mgmt.machinelearningservices.models.KeyVaultProperties
+    """
+
+    _validation = {
+        'status': {'required': True},
+        'key_vault_properties': {'required': True},
+    }
+
+    _attribute_map = {
+        'status': {'key': 'status', 'type': 'str'},
+        'identity': {'key': 'identity', 'type': 'IdentityForCmk'},
+        'key_vault_properties': {'key': 'keyVaultProperties', 'type': 'KeyVaultProperties'},
+    }
+
+    def __init__(self, *, status, key_vault_properties, identity=None, **kwargs) -> None:
+        super(EncryptionProperty, self).__init__(**kwargs)
+        self.status = status
+        self.identity = identity
+        self.key_vault_properties = key_vault_properties
+
+
+class ModelEnvironmentDefinition(Model):
+    """ModelEnvironmentDefinition.
+
+    :param name: The name of the environment.
+    :type name: str
+    :param version: The environment version.
+    :type version: str
+    :param python: Settings for a Python environment.
+    :type python:
+     ~azure.mgmt.machinelearningservices.models.ModelEnvironmentDefinitionPython
+    :param environment_variables: Definition of environment variables to be
+     defined in the environment.
+    :type environment_variables: dict[str, str]
+    :param docker: The definition of a Docker container.
+    :type docker:
+     ~azure.mgmt.machinelearningservices.models.ModelEnvironmentDefinitionDocker
+    :param spark: The configuration for a Spark environment.
+    :type spark:
+     ~azure.mgmt.machinelearningservices.models.ModelEnvironmentDefinitionSpark
+    :param r: Settings for a R environment.
+    :type r:
+     ~azure.mgmt.machinelearningservices.models.ModelEnvironmentDefinitionR
+    :param inferencing_stack_version: The inferencing stack version added to
+     the image. To avoid adding an inferencing stack, do not set this value.
+     Valid values: "latest".
+    :type inferencing_stack_version: str
+    """
+
+    _attribute_map = {
+        'name': {'key': 'name', 'type': 'str'},
+        'version': {'key': 'version', 'type': 'str'},
+        'python': {'key': 'python', 'type': 'ModelEnvironmentDefinitionPython'},
+        'environment_variables': {'key': 'environmentVariables', 'type': '{str}'},
+        'docker': {'key': 'docker', 'type': 'ModelEnvironmentDefinitionDocker'},
+        'spark': {'key': 'spark', 'type': 'ModelEnvironmentDefinitionSpark'},
+        'r': {'key': 'r', 'type': 'ModelEnvironmentDefinitionR'},
+        'inferencing_stack_version': {'key': 'inferencingStackVersion', 'type': 'str'},
+    }
+
+    def __init__(self, *, name: str=None, version: str=None, python=None, environment_variables=None, docker=None, spark=None, r=None, inferencing_stack_version: str=None, **kwargs) -> None:
+        super(ModelEnvironmentDefinition, self).__init__(**kwargs)
+        self.name = name
+        self.version = version
+        self.python = python
+        self.environment_variables = environment_variables
+        self.docker = docker
+        self.spark = spark
+        self.r = r
+        self.inferencing_stack_version = inferencing_stack_version
+
+
+class EnvironmentImageRequestEnvironment(ModelEnvironmentDefinition):
+    """The details of the AZURE ML environment.
+
+    :param name: The name of the environment.
+    :type name: str
+    :param version: The environment version.
+    :type version: str
+    :param python: Settings for a Python environment.
+    :type python:
+     ~azure.mgmt.machinelearningservices.models.ModelEnvironmentDefinitionPython
+    :param environment_variables: Definition of environment variables to be
+     defined in the environment.
+    :type environment_variables: dict[str, str]
+    :param docker: The definition of a Docker container.
+    :type docker:
+     ~azure.mgmt.machinelearningservices.models.ModelEnvironmentDefinitionDocker
+    :param spark: The configuration for a Spark environment.
+    :type spark:
+     ~azure.mgmt.machinelearningservices.models.ModelEnvironmentDefinitionSpark
+    :param r: Settings for a R environment.
+    :type r:
+     ~azure.mgmt.machinelearningservices.models.ModelEnvironmentDefinitionR
+    :param inferencing_stack_version: The inferencing stack version added to
+     the image. To avoid adding an inferencing stack, do not set this value.
+     Valid values: "latest".
+    :type inferencing_stack_version: str
+    """
+
+    _attribute_map = {
+        'name': {'key': 'name', 'type': 'str'},
+        'version': {'key': 'version', 'type': 'str'},
+        'python': {'key': 'python', 'type': 'ModelEnvironmentDefinitionPython'},
+        'environment_variables': {'key': 'environmentVariables', 'type': '{str}'},
+        'docker': {'key': 'docker', 'type': 'ModelEnvironmentDefinitionDocker'},
+        'spark': {'key': 'spark', 'type': 'ModelEnvironmentDefinitionSpark'},
+        'r': {'key': 'r', 'type': 'ModelEnvironmentDefinitionR'},
+        'inferencing_stack_version': {'key': 'inferencingStackVersion', 'type': 'str'},
+    }
+
+    def __init__(self, *, name: str=None, version: str=None, python=None, environment_variables=None, docker=None, spark=None, r=None, inferencing_stack_version: str=None, **kwargs) -> None:
+        super(EnvironmentImageRequestEnvironment, self).__init__(name=name, version=version, python=python, environment_variables=environment_variables, docker=docker, spark=spark, r=r, inferencing_stack_version=inferencing_stack_version, **kwargs)
+
+
+class EnvironmentReference(Model):
+    """EnvironmentReference.
+
+    :param name: Name of the environment.
+    :type name: str
+    :param version: Version of the environment.
+    :type version: str
+    """
+
+    _attribute_map = {
+        'name': {'key': 'name', 'type': 'str'},
+        'version': {'key': 'version', 'type': 'str'},
+    }
+
+    def __init__(self, *, name: str=None, version: str=None, **kwargs) -> None:
+        super(EnvironmentReference, self).__init__(**kwargs)
+        self.name = name
+        self.version = version
+
+
+class EnvironmentImageRequestEnvironmentReference(EnvironmentReference):
+    """The unique identifying details of the AZURE ML environment.
+
+    :param name: Name of the environment.
+    :type name: str
+    :param version: Version of the environment.
+    :type version: str
+    """
+
+    _attribute_map = {
+        'name': {'key': 'name', 'type': 'str'},
+        'version': {'key': 'version', 'type': 'str'},
+    }
+
+    def __init__(self, *, name: str=None, version: str=None, **kwargs) -> None:
+        super(EnvironmentImageRequestEnvironmentReference, self).__init__(name=name, version=version, **kwargs)
+
+
+class ModelEnvironmentDefinitionResponse(Model):
+    """ModelEnvironmentDefinitionResponse.
+
+    :param name: The name of the environment.
+    :type name: str
+    :param version: The environment version.
+    :type version: str
+    :param python: Settings for a Python environment.
+    :type python:
+     ~azure.mgmt.machinelearningservices.models.ModelEnvironmentDefinitionResponsePython
+    :param environment_variables: Definition of environment variables to be
+     defined in the environment.
+    :type environment_variables: dict[str, str]
+    :param docker: The definition of a Docker container.
+    :type docker:
+     ~azure.mgmt.machinelearningservices.models.ModelEnvironmentDefinitionResponseDocker
+    :param spark: The configuration for a Spark environment.
+    :type spark:
+     ~azure.mgmt.machinelearningservices.models.ModelEnvironmentDefinitionResponseSpark
+    :param r: Settings for a R environment.
+    :type r:
+     ~azure.mgmt.machinelearningservices.models.ModelEnvironmentDefinitionResponseR
+    :param inferencing_stack_version: The inferencing stack version added to
+     the image. To avoid adding an inferencing stack, do not set this value.
+     Valid values: "latest".
+    :type inferencing_stack_version: str
+    """
+
+    _attribute_map = {
+        'name': {'key': 'name', 'type': 'str'},
+        'version': {'key': 'version', 'type': 'str'},
+        'python': {'key': 'python', 'type': 'ModelEnvironmentDefinitionResponsePython'},
+        'environment_variables': {'key': 'environmentVariables', 'type': '{str}'},
+        'docker': {'key': 'docker', 'type': 'ModelEnvironmentDefinitionResponseDocker'},
+        'spark': {'key': 'spark', 'type': 'ModelEnvironmentDefinitionResponseSpark'},
+        'r': {'key': 'r', 'type': 'ModelEnvironmentDefinitionResponseR'},
+        'inferencing_stack_version': {'key': 'inferencingStackVersion', 'type': 'str'},
+    }
+
+    def __init__(self, *, name: str=None, version: str=None, python=None, environment_variables=None, docker=None, spark=None, r=None, inferencing_stack_version: str=None, **kwargs) -> None:
+        super(ModelEnvironmentDefinitionResponse, self).__init__(**kwargs)
+        self.name = name
+        self.version = version
+        self.python = python
+        self.environment_variables = environment_variables
+        self.docker = docker
+        self.spark = spark
+        self.r = r
+        self.inferencing_stack_version = inferencing_stack_version
+
+
+class EnvironmentImageResponseEnvironment(ModelEnvironmentDefinitionResponse):
+    """The details of the AZURE ML environment.
+
+    :param name: The name of the environment.
+    :type name: str
+    :param version: The environment version.
+    :type version: str
+    :param python: Settings for a Python environment.
+    :type python:
+     ~azure.mgmt.machinelearningservices.models.ModelEnvironmentDefinitionResponsePython
+    :param environment_variables: Definition of environment variables to be
+     defined in the environment.
+    :type environment_variables: dict[str, str]
+    :param docker: The definition of a Docker container.
+    :type docker:
+     ~azure.mgmt.machinelearningservices.models.ModelEnvironmentDefinitionResponseDocker
+    :param spark: The configuration for a Spark environment.
+    :type spark:
+     ~azure.mgmt.machinelearningservices.models.ModelEnvironmentDefinitionResponseSpark
+    :param r: Settings for a R environment.
+    :type r:
+     ~azure.mgmt.machinelearningservices.models.ModelEnvironmentDefinitionResponseR
+    :param inferencing_stack_version: The inferencing stack version added to
+     the image. To avoid adding an inferencing stack, do not set this value.
+     Valid values: "latest".
+    :type inferencing_stack_version: str
+    """
+
+    _attribute_map = {
+        'name': {'key': 'name', 'type': 'str'},
+        'version': {'key': 'version', 'type': 'str'},
+        'python': {'key': 'python', 'type': 'ModelEnvironmentDefinitionResponsePython'},
+        'environment_variables': {'key': 'environmentVariables', 'type': '{str}'},
+        'docker': {'key': 'docker', 'type': 'ModelEnvironmentDefinitionResponseDocker'},
+        'spark': {'key': 'spark', 'type': 'ModelEnvironmentDefinitionResponseSpark'},
+        'r': {'key': 'r', 'type': 'ModelEnvironmentDefinitionResponseR'},
+        'inferencing_stack_version': {'key': 'inferencingStackVersion', 'type': 'str'},
+    }
+
+    def __init__(self, *, name: str=None, version: str=None, python=None, environment_variables=None, docker=None, spark=None, r=None, inferencing_stack_version: str=None, **kwargs) -> None:
+        super(EnvironmentImageResponseEnvironment, self).__init__(name=name, version=version, python=python, environment_variables=environment_variables, docker=docker, spark=spark, r=r, inferencing_stack_version=inferencing_stack_version, **kwargs)
+
+
+class EnvironmentImageResponseEnvironmentReference(EnvironmentReference):
+    """The unique identifying details of the AZURE ML environment.
+
+    :param name: Name of the environment.
+    :type name: str
+    :param version: Version of the environment.
+    :type version: str
+    """
+
+    _attribute_map = {
+        'name': {'key': 'name', 'type': 'str'},
+        'version': {'key': 'version', 'type': 'str'},
+    }
+
+    def __init__(self, *, name: str=None, version: str=None, **kwargs) -> None:
+        super(EnvironmentImageResponseEnvironmentReference, self).__init__(name=name, version=version, **kwargs)
 
 
 class ErrorDetail(Model):
@@ -977,6 +3391,8 @@ class ErrorResponse(Model):
     :vartype code: str
     :ivar message: Error message.
     :vartype message: str
+    :ivar target: The target of the particular error
+    :vartype target: str
     :ivar details: An array of error detail objects.
     :vartype details:
      list[~azure.mgmt.machinelearningservices.models.ErrorDetail]
@@ -985,12 +3401,14 @@ class ErrorResponse(Model):
     _validation = {
         'code': {'readonly': True},
         'message': {'readonly': True},
+        'target': {'readonly': True},
         'details': {'readonly': True},
     }
 
     _attribute_map = {
         'code': {'key': 'code', 'type': 'str'},
         'message': {'key': 'message', 'type': 'str'},
+        'target': {'key': 'target', 'type': 'str'},
         'details': {'key': 'details', 'type': '[ErrorDetail]'},
     }
 
@@ -998,7 +3416,87 @@ class ErrorResponse(Model):
         super(ErrorResponse, self).__init__(**kwargs)
         self.code = None
         self.message = None
+        self.target = None
         self.details = None
+
+
+class EstimatedVMPrice(Model):
+    """The estimated price info for using a VM of a particular OS type, tier, etc.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param retail_price: Required. Retail price. The price charged for using
+     the VM.
+    :type retail_price: float
+    :param os_type: Required. OS type. Operating system type used by the VM.
+     Possible values include: 'Linux', 'Windows'
+    :type os_type: str or
+     ~azure.mgmt.machinelearningservices.models.VMPriceOSType
+    :param vm_tier: Required. VM tier. The type of the VM. Possible values
+     include: 'Standard', 'LowPriority', 'Spot'
+    :type vm_tier: str or ~azure.mgmt.machinelearningservices.models.VMTier
+    """
+
+    _validation = {
+        'retail_price': {'required': True},
+        'os_type': {'required': True},
+        'vm_tier': {'required': True},
+    }
+
+    _attribute_map = {
+        'retail_price': {'key': 'retailPrice', 'type': 'float'},
+        'os_type': {'key': 'osType', 'type': 'str'},
+        'vm_tier': {'key': 'vmTier', 'type': 'str'},
+    }
+
+    def __init__(self, *, retail_price: float, os_type, vm_tier, **kwargs) -> None:
+        super(EstimatedVMPrice, self).__init__(**kwargs)
+        self.retail_price = retail_price
+        self.os_type = os_type
+        self.vm_tier = vm_tier
+
+
+class EstimatedVMPrices(Model):
+    """The estimated price info for using a VM.
+
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar billing_currency: Required. Billing currency. Three lettered code
+     specifying the currency of the VM price. Example: USD. Default value:
+     "USD" .
+    :vartype billing_currency: str
+    :ivar unit_of_measure: Required. Unit of time measure. The unit of time
+     measurement for the specified VM price. Example: OneHour. Default value:
+     "OneHour" .
+    :vartype unit_of_measure: str
+    :param values: Required. List of estimated VM prices. The list of
+     estimated prices for using a VM of a particular OS type, tier, etc.
+    :type values:
+     list[~azure.mgmt.machinelearningservices.models.EstimatedVMPrice]
+    """
+
+    _validation = {
+        'billing_currency': {'required': True, 'constant': True},
+        'unit_of_measure': {'required': True, 'constant': True},
+        'values': {'required': True},
+    }
+
+    _attribute_map = {
+        'billing_currency': {'key': 'billingCurrency', 'type': 'str'},
+        'unit_of_measure': {'key': 'unitOfMeasure', 'type': 'str'},
+        'values': {'key': 'values', 'type': '[EstimatedVMPrice]'},
+    }
+
+    billing_currency = "USD"
+
+    unit_of_measure = "OneHour"
+
+    def __init__(self, *, values, **kwargs) -> None:
+        super(EstimatedVMPrices, self).__init__(**kwargs)
+        self.values = values
 
 
 class HDInsight(Compute):
@@ -1019,9 +3517,9 @@ class HDInsight(Compute):
      ~azure.mgmt.machinelearningservices.models.ProvisioningState
     :param description: The description of the Machine Learning compute.
     :type description: str
-    :ivar created_on: The date and time when the compute was created.
+    :ivar created_on: The time at which the compute was created.
     :vartype created_on: datetime
-    :ivar modified_on: The date and time when the compute was last modified.
+    :ivar modified_on: The time at which the compute was last modified.
     :vartype modified_on: datetime
     :param resource_id: ARM resource id of the underlying compute
     :type resource_id: str
@@ -1032,6 +3530,9 @@ class HDInsight(Compute):
      by user and brought from outside if true, or machine learning service
      provisioned it if false.
     :vartype is_attached_compute: bool
+    :param disable_local_auth: Opt-out of local authentication and ensure
+     customers can use only MSI and AAD exclusively for authentication.
+    :type disable_local_auth: bool
     :param compute_type: Required. Constant filled by server.
     :type compute_type: str
     :param properties:
@@ -1057,12 +3558,13 @@ class HDInsight(Compute):
         'resource_id': {'key': 'resourceId', 'type': 'str'},
         'provisioning_errors': {'key': 'provisioningErrors', 'type': '[MachineLearningServiceError]'},
         'is_attached_compute': {'key': 'isAttachedCompute', 'type': 'bool'},
+        'disable_local_auth': {'key': 'disableLocalAuth', 'type': 'bool'},
         'compute_type': {'key': 'computeType', 'type': 'str'},
         'properties': {'key': 'properties', 'type': 'HDInsightProperties'},
     }
 
-    def __init__(self, *, compute_location: str=None, description: str=None, resource_id: str=None, properties=None, **kwargs) -> None:
-        super(HDInsight, self).__init__(compute_location=compute_location, description=description, resource_id=resource_id, **kwargs)
+    def __init__(self, *, compute_location: str=None, description: str=None, resource_id: str=None, disable_local_auth: bool=None, properties=None, **kwargs) -> None:
+        super(HDInsight, self).__init__(compute_location=compute_location, description=description, resource_id=resource_id, disable_local_auth=disable_local_auth, **kwargs)
         self.properties = properties
         self.compute_type = 'HDInsight'
 
@@ -1104,9 +3606,14 @@ class Identity(Model):
     :vartype principal_id: str
     :ivar tenant_id: The tenant ID of resource.
     :vartype tenant_id: str
-    :param type: The identity type. Possible values include: 'SystemAssigned'
+    :param type: The identity type. Possible values include: 'SystemAssigned',
+     'SystemAssigned,UserAssigned', 'UserAssigned', 'None'
     :type type: str or
      ~azure.mgmt.machinelearningservices.models.ResourceIdentityType
+    :param user_assigned_identities: The user assigned identities associated
+     with the resource.
+    :type user_assigned_identities: dict[str,
+     ~azure.mgmt.machinelearningservices.models.UserAssignedIdentity]
     """
 
     _validation = {
@@ -1118,13 +3625,145 @@ class Identity(Model):
         'principal_id': {'key': 'principalId', 'type': 'str'},
         'tenant_id': {'key': 'tenantId', 'type': 'str'},
         'type': {'key': 'type', 'type': 'ResourceIdentityType'},
+        'user_assigned_identities': {'key': 'userAssignedIdentities', 'type': '{UserAssignedIdentity}'},
     }
 
-    def __init__(self, *, type=None, **kwargs) -> None:
+    def __init__(self, *, type=None, user_assigned_identities=None, **kwargs) -> None:
         super(Identity, self).__init__(**kwargs)
         self.principal_id = None
         self.tenant_id = None
         self.type = type
+        self.user_assigned_identities = user_assigned_identities
+
+
+class IdentityForCmk(Model):
+    """Identity that will be used to access key vault for encryption at rest.
+
+    :param user_assigned_identity: The ArmId of the user assigned identity
+     that will be used to access the customer managed key vault
+    :type user_assigned_identity: str
+    """
+
+    _attribute_map = {
+        'user_assigned_identity': {'key': 'userAssignedIdentity', 'type': 'str'},
+    }
+
+    def __init__(self, *, user_assigned_identity: str=None, **kwargs) -> None:
+        super(IdentityForCmk, self).__init__(**kwargs)
+        self.user_assigned_identity = user_assigned_identity
+
+
+class ImageAsset(Model):
+    """An Image asset.
+
+    :param id: The Asset Id.
+    :type id: str
+    :param mime_type: The mime type.
+    :type mime_type: str
+    :param url: The Url of the Asset.
+    :type url: str
+    :param unpack: Whether the Asset is unpacked.
+    :type unpack: bool
+    """
+
+    _attribute_map = {
+        'id': {'key': 'id', 'type': 'str'},
+        'mime_type': {'key': 'mimeType', 'type': 'str'},
+        'url': {'key': 'url', 'type': 'str'},
+        'unpack': {'key': 'unpack', 'type': 'bool'},
+    }
+
+    def __init__(self, *, id: str=None, mime_type: str=None, url: str=None, unpack: bool=None, **kwargs) -> None:
+        super(ImageAsset, self).__init__(**kwargs)
+        self.id = id
+        self.mime_type = mime_type
+        self.url = url
+        self.unpack = unpack
+
+
+class KeyVaultProperties(Model):
+    """KeyVaultProperties.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param key_vault_arm_id: Required. The ArmId of the keyVault where the
+     customer owned encryption key is present.
+    :type key_vault_arm_id: str
+    :param key_identifier: Required. Key vault uri to access the encryption
+     key.
+    :type key_identifier: str
+    :param identity_client_id: For future use - The client id of the identity
+     which will be used to access key vault.
+    :type identity_client_id: str
+    """
+
+    _validation = {
+        'key_vault_arm_id': {'required': True},
+        'key_identifier': {'required': True},
+    }
+
+    _attribute_map = {
+        'key_vault_arm_id': {'key': 'keyVaultArmId', 'type': 'str'},
+        'key_identifier': {'key': 'keyIdentifier', 'type': 'str'},
+        'identity_client_id': {'key': 'identityClientId', 'type': 'str'},
+    }
+
+    def __init__(self, *, key_vault_arm_id: str, key_identifier: str, identity_client_id: str=None, **kwargs) -> None:
+        super(KeyVaultProperties, self).__init__(**kwargs)
+        self.key_vault_arm_id = key_vault_arm_id
+        self.key_identifier = key_identifier
+        self.identity_client_id = identity_client_id
+
+
+class ListNotebookKeysResult(Model):
+    """ListNotebookKeysResult.
+
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    :ivar primary_access_key:
+    :vartype primary_access_key: str
+    :ivar secondary_access_key:
+    :vartype secondary_access_key: str
+    """
+
+    _validation = {
+        'primary_access_key': {'readonly': True},
+        'secondary_access_key': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'primary_access_key': {'key': 'primaryAccessKey', 'type': 'str'},
+        'secondary_access_key': {'key': 'secondaryAccessKey', 'type': 'str'},
+    }
+
+    def __init__(self, **kwargs) -> None:
+        super(ListNotebookKeysResult, self).__init__(**kwargs)
+        self.primary_access_key = None
+        self.secondary_access_key = None
+
+
+class ListStorageAccountKeysResult(Model):
+    """ListStorageAccountKeysResult.
+
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    :ivar user_storage_key:
+    :vartype user_storage_key: str
+    """
+
+    _validation = {
+        'user_storage_key': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'user_storage_key': {'key': 'userStorageKey', 'type': 'str'},
+    }
+
+    def __init__(self, **kwargs) -> None:
+        super(ListStorageAccountKeysResult, self).__init__(**kwargs)
+        self.user_storage_key = None
 
 
 class ListWorkspaceKeysResult(Model):
@@ -1142,6 +3781,9 @@ class ListWorkspaceKeysResult(Model):
     :ivar container_registry_credentials:
     :vartype container_registry_credentials:
      ~azure.mgmt.machinelearningservices.models.RegistryListCredentialsResult
+    :ivar notebook_access_keys:
+    :vartype notebook_access_keys:
+     ~azure.mgmt.machinelearningservices.models.ListNotebookKeysResult
     """
 
     _validation = {
@@ -1149,6 +3791,7 @@ class ListWorkspaceKeysResult(Model):
         'user_storage_resource_id': {'readonly': True},
         'app_insights_instrumentation_key': {'readonly': True},
         'container_registry_credentials': {'readonly': True},
+        'notebook_access_keys': {'readonly': True},
     }
 
     _attribute_map = {
@@ -1156,6 +3799,7 @@ class ListWorkspaceKeysResult(Model):
         'user_storage_resource_id': {'key': 'userStorageResourceId', 'type': 'str'},
         'app_insights_instrumentation_key': {'key': 'appInsightsInstrumentationKey', 'type': 'str'},
         'container_registry_credentials': {'key': 'containerRegistryCredentials', 'type': 'RegistryListCredentialsResult'},
+        'notebook_access_keys': {'key': 'notebookAccessKeys', 'type': 'ListNotebookKeysResult'},
     }
 
     def __init__(self, **kwargs) -> None:
@@ -1164,41 +3808,599 @@ class ListWorkspaceKeysResult(Model):
         self.user_storage_resource_id = None
         self.app_insights_instrumentation_key = None
         self.container_registry_credentials = None
+        self.notebook_access_keys = None
 
 
-class MachineLearningServiceError(Model):
-    """Wrapper for error response to follow ARM guidelines.
+class Model(Model):
+    """An Azure Machine Learning Model.
 
-    Variables are only populated by the server, and will be ignored when
-    sending a request.
+    All required parameters must be populated in order to send to Azure.
 
-    :ivar error: The error response.
-    :vartype error: ~azure.mgmt.machinelearningservices.models.ErrorResponse
+    :param id: The Model Id.
+    :type id: str
+    :param name: Required. The Model name.
+    :type name: str
+    :param framework: The Model framework.
+    :type framework: str
+    :param framework_version: The Model framework version.
+    :type framework_version: str
+    :param version: The Model version assigned by Model Management Service.
+    :type version: long
+    :param datasets: The list of datasets associated with the model.
+    :type datasets:
+     list[~azure.mgmt.machinelearningservices.models.DatasetReference]
+    :param url: Required. The URL of the Model. Usually a SAS URL.
+    :type url: str
+    :param mime_type: Required. The MIME type of Model content. For more
+     details about MIME type, please open
+     https://www.iana.org/assignments/media-types/media-types.xhtml
+    :type mime_type: str
+    :param description: The Model description text.
+    :type description: str
+    :param created_time: The Model creation time (UTC).
+    :type created_time: datetime
+    :param modified_time: The Model last modified time (UTC).
+    :type modified_time: datetime
+    :param unpack: Indicates whether we need to unpack the Model during docker
+     Image creation.
+    :type unpack: bool
+    :param parent_model_id: The Parent Model Id.
+    :type parent_model_id: str
+    :param run_id: The RunId that created this model.
+    :type run_id: str
+    :param experiment_name: The name of the experiment where this model was
+     created.
+    :type experiment_name: str
+    :param kv_tags: The Model tag dictionary. Items are mutable.
+    :type kv_tags: dict[str, str]
+    :param properties: The Model property dictionary. Properties are
+     immutable.
+    :type properties: dict[str, str]
+    :param derived_model_ids: Models derived from this model
+    :type derived_model_ids: list[str]
+    :param sample_input_data: Sample Input Data for the Model. A reference to
+     a dataset in the workspace in the format aml://dataset/{datasetId}
+    :type sample_input_data: str
+    :param sample_output_data: Sample Output Data for the Model. A reference
+     to a dataset in the workspace in the format aml://dataset/{datasetId}
+    :type sample_output_data: str
+    :param resource_requirements: Resource requirements for the model
+    :type resource_requirements:
+     ~azure.mgmt.machinelearningservices.models.ContainerResourceRequirements
     """
 
     _validation = {
-        'error': {'readonly': True},
+        'name': {'required': True},
+        'url': {'required': True},
+        'mime_type': {'required': True},
     }
 
     _attribute_map = {
-        'error': {'key': 'error', 'type': 'ErrorResponse'},
+        'id': {'key': 'id', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
+        'framework': {'key': 'framework', 'type': 'str'},
+        'framework_version': {'key': 'frameworkVersion', 'type': 'str'},
+        'version': {'key': 'version', 'type': 'long'},
+        'datasets': {'key': 'datasets', 'type': '[DatasetReference]'},
+        'url': {'key': 'url', 'type': 'str'},
+        'mime_type': {'key': 'mimeType', 'type': 'str'},
+        'description': {'key': 'description', 'type': 'str'},
+        'created_time': {'key': 'createdTime', 'type': 'iso-8601'},
+        'modified_time': {'key': 'modifiedTime', 'type': 'iso-8601'},
+        'unpack': {'key': 'unpack', 'type': 'bool'},
+        'parent_model_id': {'key': 'parentModelId', 'type': 'str'},
+        'run_id': {'key': 'runId', 'type': 'str'},
+        'experiment_name': {'key': 'experimentName', 'type': 'str'},
+        'kv_tags': {'key': 'kvTags', 'type': '{str}'},
+        'properties': {'key': 'properties', 'type': '{str}'},
+        'derived_model_ids': {'key': 'derivedModelIds', 'type': '[str]'},
+        'sample_input_data': {'key': 'sampleInputData', 'type': 'str'},
+        'sample_output_data': {'key': 'sampleOutputData', 'type': 'str'},
+        'resource_requirements': {'key': 'resourceRequirements', 'type': 'ContainerResourceRequirements'},
     }
 
-    def __init__(self, **kwargs) -> None:
-        super(MachineLearningServiceError, self).__init__(**kwargs)
-        self.error = None
+    def __init__(self, *, name: str, url: str, mime_type: str, id: str=None, framework: str=None, framework_version: str=None, version: int=None, datasets=None, description: str=None, created_time=None, modified_time=None, unpack: bool=None, parent_model_id: str=None, run_id: str=None, experiment_name: str=None, kv_tags=None, properties=None, derived_model_ids=None, sample_input_data: str=None, sample_output_data: str=None, resource_requirements=None, **kwargs) -> None:
+        super(Model, self).__init__(**kwargs)
+        self.id = id
+        self.name = name
+        self.framework = framework
+        self.framework_version = framework_version
+        self.version = version
+        self.datasets = datasets
+        self.url = url
+        self.mime_type = mime_type
+        self.description = description
+        self.created_time = created_time
+        self.modified_time = modified_time
+        self.unpack = unpack
+        self.parent_model_id = parent_model_id
+        self.run_id = run_id
+        self.experiment_name = experiment_name
+        self.kv_tags = kv_tags
+        self.properties = properties
+        self.derived_model_ids = derived_model_ids
+        self.sample_input_data = sample_input_data
+        self.sample_output_data = sample_output_data
+        self.resource_requirements = resource_requirements
 
 
-class MachineLearningServiceErrorException(HttpOperationError):
-    """Server responsed with exception of type: 'MachineLearningServiceError'.
+class ModelDockerSection(Model):
+    """ModelDockerSection.
 
-    :param deserialize: A deserializer
-    :param response: Server response to be deserialized.
+    :param base_image: Base image used for Docker-based runs. Mutually
+     exclusive with BaseDockerfile.
+    :type base_image: str
+    :param base_dockerfile: Base Dockerfile used for Docker-based runs.
+     Mutually exclusive with BaseImage.
+    :type base_dockerfile: str
+    :param base_image_registry: Image registry that contains the base image.
+    :type base_image_registry:
+     ~azure.mgmt.machinelearningservices.models.ModelDockerSectionBaseImageRegistry
     """
 
-    def __init__(self, deserialize, response, *args):
+    _attribute_map = {
+        'base_image': {'key': 'baseImage', 'type': 'str'},
+        'base_dockerfile': {'key': 'baseDockerfile', 'type': 'str'},
+        'base_image_registry': {'key': 'baseImageRegistry', 'type': 'ModelDockerSectionBaseImageRegistry'},
+    }
 
-        super(MachineLearningServiceErrorException, self).__init__(deserialize, response, 'MachineLearningServiceError', *args)
+    def __init__(self, *, base_image: str=None, base_dockerfile: str=None, base_image_registry=None, **kwargs) -> None:
+        super(ModelDockerSection, self).__init__(**kwargs)
+        self.base_image = base_image
+        self.base_dockerfile = base_dockerfile
+        self.base_image_registry = base_image_registry
+
+
+class ModelDockerSectionBaseImageRegistry(ContainerRegistry):
+    """Image registry that contains the base image.
+
+    :param address:
+    :type address: str
+    :param username:
+    :type username: str
+    :param password:
+    :type password: str
+    """
+
+    _attribute_map = {
+        'address': {'key': 'address', 'type': 'str'},
+        'username': {'key': 'username', 'type': 'str'},
+        'password': {'key': 'password', 'type': 'str'},
+    }
+
+    def __init__(self, *, address: str=None, username: str=None, password: str=None, **kwargs) -> None:
+        super(ModelDockerSectionBaseImageRegistry, self).__init__(address=address, username=username, password=password, **kwargs)
+
+
+class ModelDockerSectionResponse(Model):
+    """ModelDockerSectionResponse.
+
+    :param base_image: Base image used for Docker-based runs. Mutually
+     exclusive with BaseDockerfile.
+    :type base_image: str
+    :param base_dockerfile: Base Dockerfile used for Docker-based runs.
+     Mutually exclusive with BaseImage.
+    :type base_dockerfile: str
+    :param base_image_registry: Image registry that contains the base image.
+    :type base_image_registry:
+     ~azure.mgmt.machinelearningservices.models.ModelDockerSectionResponseBaseImageRegistry
+    """
+
+    _attribute_map = {
+        'base_image': {'key': 'baseImage', 'type': 'str'},
+        'base_dockerfile': {'key': 'baseDockerfile', 'type': 'str'},
+        'base_image_registry': {'key': 'baseImageRegistry', 'type': 'ModelDockerSectionResponseBaseImageRegistry'},
+    }
+
+    def __init__(self, *, base_image: str=None, base_dockerfile: str=None, base_image_registry=None, **kwargs) -> None:
+        super(ModelDockerSectionResponse, self).__init__(**kwargs)
+        self.base_image = base_image
+        self.base_dockerfile = base_dockerfile
+        self.base_image_registry = base_image_registry
+
+
+class ModelDockerSectionResponseBaseImageRegistry(ContainerRegistryResponse):
+    """Image registry that contains the base image.
+
+    :param address:
+    :type address: str
+    """
+
+    _attribute_map = {
+        'address': {'key': 'address', 'type': 'str'},
+    }
+
+    def __init__(self, *, address: str=None, **kwargs) -> None:
+        super(ModelDockerSectionResponseBaseImageRegistry, self).__init__(address=address, **kwargs)
+
+
+class ModelEnvironmentDefinitionDocker(ModelDockerSection):
+    """The definition of a Docker container.
+
+    :param base_image: Base image used for Docker-based runs. Mutually
+     exclusive with BaseDockerfile.
+    :type base_image: str
+    :param base_dockerfile: Base Dockerfile used for Docker-based runs.
+     Mutually exclusive with BaseImage.
+    :type base_dockerfile: str
+    :param base_image_registry: Image registry that contains the base image.
+    :type base_image_registry:
+     ~azure.mgmt.machinelearningservices.models.ModelDockerSectionBaseImageRegistry
+    """
+
+    _attribute_map = {
+        'base_image': {'key': 'baseImage', 'type': 'str'},
+        'base_dockerfile': {'key': 'baseDockerfile', 'type': 'str'},
+        'base_image_registry': {'key': 'baseImageRegistry', 'type': 'ModelDockerSectionBaseImageRegistry'},
+    }
+
+    def __init__(self, *, base_image: str=None, base_dockerfile: str=None, base_image_registry=None, **kwargs) -> None:
+        super(ModelEnvironmentDefinitionDocker, self).__init__(base_image=base_image, base_dockerfile=base_dockerfile, base_image_registry=base_image_registry, **kwargs)
+
+
+class ModelPythonSection(Model):
+    """ModelPythonSection.
+
+    :param interpreter_path: The python interpreter path to use if an
+     environment build is not required. The path specified gets used to call
+     the user script.
+    :type interpreter_path: str
+    :param user_managed_dependencies: True means that AzureML reuses an
+     existing python environment; False means that AzureML will create a python
+     environment based on the Conda dependencies specification.
+    :type user_managed_dependencies: bool
+    :param conda_dependencies: A JObject containing Conda dependencies.
+    :type conda_dependencies: object
+    :param base_conda_environment:
+    :type base_conda_environment: str
+    """
+
+    _attribute_map = {
+        'interpreter_path': {'key': 'interpreterPath', 'type': 'str'},
+        'user_managed_dependencies': {'key': 'userManagedDependencies', 'type': 'bool'},
+        'conda_dependencies': {'key': 'condaDependencies', 'type': 'object'},
+        'base_conda_environment': {'key': 'baseCondaEnvironment', 'type': 'str'},
+    }
+
+    def __init__(self, *, interpreter_path: str=None, user_managed_dependencies: bool=None, conda_dependencies=None, base_conda_environment: str=None, **kwargs) -> None:
+        super(ModelPythonSection, self).__init__(**kwargs)
+        self.interpreter_path = interpreter_path
+        self.user_managed_dependencies = user_managed_dependencies
+        self.conda_dependencies = conda_dependencies
+        self.base_conda_environment = base_conda_environment
+
+
+class ModelEnvironmentDefinitionPython(ModelPythonSection):
+    """Settings for a Python environment.
+
+    :param interpreter_path: The python interpreter path to use if an
+     environment build is not required. The path specified gets used to call
+     the user script.
+    :type interpreter_path: str
+    :param user_managed_dependencies: True means that AzureML reuses an
+     existing python environment; False means that AzureML will create a python
+     environment based on the Conda dependencies specification.
+    :type user_managed_dependencies: bool
+    :param conda_dependencies: A JObject containing Conda dependencies.
+    :type conda_dependencies: object
+    :param base_conda_environment:
+    :type base_conda_environment: str
+    """
+
+    _attribute_map = {
+        'interpreter_path': {'key': 'interpreterPath', 'type': 'str'},
+        'user_managed_dependencies': {'key': 'userManagedDependencies', 'type': 'bool'},
+        'conda_dependencies': {'key': 'condaDependencies', 'type': 'object'},
+        'base_conda_environment': {'key': 'baseCondaEnvironment', 'type': 'str'},
+    }
+
+    def __init__(self, *, interpreter_path: str=None, user_managed_dependencies: bool=None, conda_dependencies=None, base_conda_environment: str=None, **kwargs) -> None:
+        super(ModelEnvironmentDefinitionPython, self).__init__(interpreter_path=interpreter_path, user_managed_dependencies=user_managed_dependencies, conda_dependencies=conda_dependencies, base_conda_environment=base_conda_environment, **kwargs)
+
+
+class RSection(Model):
+    """RSection.
+
+    :param r_version: The version of R to be installed
+    :type r_version: str
+    :param user_managed: Indicates whether the environment is managed by user
+     or by AzureML.
+    :type user_managed: bool
+    :param rscript_path: The Rscript path to use if an environment build is
+     not required.
+     The path specified gets used to call the user script.
+    :type rscript_path: str
+    :param snapshot_date: Date of MRAN snapshot to use in YYYY-MM-DD format,
+     e.g. "2019-04-17"
+    :type snapshot_date: str
+    :param cran_packages: The CRAN packages to use.
+    :type cran_packages:
+     list[~azure.mgmt.machinelearningservices.models.RCranPackage]
+    :param git_hub_packages: The packages directly from GitHub.
+    :type git_hub_packages:
+     list[~azure.mgmt.machinelearningservices.models.RGitHubPackage]
+    :param custom_url_packages: The packages from custom urls.
+    :type custom_url_packages: list[str]
+    :param bio_conductor_packages: The packages from Bioconductor.
+    :type bio_conductor_packages: list[str]
+    """
+
+    _attribute_map = {
+        'r_version': {'key': 'rVersion', 'type': 'str'},
+        'user_managed': {'key': 'userManaged', 'type': 'bool'},
+        'rscript_path': {'key': 'rscriptPath', 'type': 'str'},
+        'snapshot_date': {'key': 'snapshotDate', 'type': 'str'},
+        'cran_packages': {'key': 'cranPackages', 'type': '[RCranPackage]'},
+        'git_hub_packages': {'key': 'gitHubPackages', 'type': '[RGitHubPackage]'},
+        'custom_url_packages': {'key': 'customUrlPackages', 'type': '[str]'},
+        'bio_conductor_packages': {'key': 'bioConductorPackages', 'type': '[str]'},
+    }
+
+    def __init__(self, *, r_version: str=None, user_managed: bool=None, rscript_path: str=None, snapshot_date: str=None, cran_packages=None, git_hub_packages=None, custom_url_packages=None, bio_conductor_packages=None, **kwargs) -> None:
+        super(RSection, self).__init__(**kwargs)
+        self.r_version = r_version
+        self.user_managed = user_managed
+        self.rscript_path = rscript_path
+        self.snapshot_date = snapshot_date
+        self.cran_packages = cran_packages
+        self.git_hub_packages = git_hub_packages
+        self.custom_url_packages = custom_url_packages
+        self.bio_conductor_packages = bio_conductor_packages
+
+
+class ModelEnvironmentDefinitionR(RSection):
+    """Settings for a R environment.
+
+    :param r_version: The version of R to be installed
+    :type r_version: str
+    :param user_managed: Indicates whether the environment is managed by user
+     or by AzureML.
+    :type user_managed: bool
+    :param rscript_path: The Rscript path to use if an environment build is
+     not required.
+     The path specified gets used to call the user script.
+    :type rscript_path: str
+    :param snapshot_date: Date of MRAN snapshot to use in YYYY-MM-DD format,
+     e.g. "2019-04-17"
+    :type snapshot_date: str
+    :param cran_packages: The CRAN packages to use.
+    :type cran_packages:
+     list[~azure.mgmt.machinelearningservices.models.RCranPackage]
+    :param git_hub_packages: The packages directly from GitHub.
+    :type git_hub_packages:
+     list[~azure.mgmt.machinelearningservices.models.RGitHubPackage]
+    :param custom_url_packages: The packages from custom urls.
+    :type custom_url_packages: list[str]
+    :param bio_conductor_packages: The packages from Bioconductor.
+    :type bio_conductor_packages: list[str]
+    """
+
+    _attribute_map = {
+        'r_version': {'key': 'rVersion', 'type': 'str'},
+        'user_managed': {'key': 'userManaged', 'type': 'bool'},
+        'rscript_path': {'key': 'rscriptPath', 'type': 'str'},
+        'snapshot_date': {'key': 'snapshotDate', 'type': 'str'},
+        'cran_packages': {'key': 'cranPackages', 'type': '[RCranPackage]'},
+        'git_hub_packages': {'key': 'gitHubPackages', 'type': '[RGitHubPackage]'},
+        'custom_url_packages': {'key': 'customUrlPackages', 'type': '[str]'},
+        'bio_conductor_packages': {'key': 'bioConductorPackages', 'type': '[str]'},
+    }
+
+    def __init__(self, *, r_version: str=None, user_managed: bool=None, rscript_path: str=None, snapshot_date: str=None, cran_packages=None, git_hub_packages=None, custom_url_packages=None, bio_conductor_packages=None, **kwargs) -> None:
+        super(ModelEnvironmentDefinitionR, self).__init__(r_version=r_version, user_managed=user_managed, rscript_path=rscript_path, snapshot_date=snapshot_date, cran_packages=cran_packages, git_hub_packages=git_hub_packages, custom_url_packages=custom_url_packages, bio_conductor_packages=bio_conductor_packages, **kwargs)
+
+
+class ModelEnvironmentDefinitionResponseDocker(ModelDockerSectionResponse):
+    """The definition of a Docker container.
+
+    :param base_image: Base image used for Docker-based runs. Mutually
+     exclusive with BaseDockerfile.
+    :type base_image: str
+    :param base_dockerfile: Base Dockerfile used for Docker-based runs.
+     Mutually exclusive with BaseImage.
+    :type base_dockerfile: str
+    :param base_image_registry: Image registry that contains the base image.
+    :type base_image_registry:
+     ~azure.mgmt.machinelearningservices.models.ModelDockerSectionResponseBaseImageRegistry
+    """
+
+    _attribute_map = {
+        'base_image': {'key': 'baseImage', 'type': 'str'},
+        'base_dockerfile': {'key': 'baseDockerfile', 'type': 'str'},
+        'base_image_registry': {'key': 'baseImageRegistry', 'type': 'ModelDockerSectionResponseBaseImageRegistry'},
+    }
+
+    def __init__(self, *, base_image: str=None, base_dockerfile: str=None, base_image_registry=None, **kwargs) -> None:
+        super(ModelEnvironmentDefinitionResponseDocker, self).__init__(base_image=base_image, base_dockerfile=base_dockerfile, base_image_registry=base_image_registry, **kwargs)
+
+
+class ModelEnvironmentDefinitionResponsePython(ModelPythonSection):
+    """Settings for a Python environment.
+
+    :param interpreter_path: The python interpreter path to use if an
+     environment build is not required. The path specified gets used to call
+     the user script.
+    :type interpreter_path: str
+    :param user_managed_dependencies: True means that AzureML reuses an
+     existing python environment; False means that AzureML will create a python
+     environment based on the Conda dependencies specification.
+    :type user_managed_dependencies: bool
+    :param conda_dependencies: A JObject containing Conda dependencies.
+    :type conda_dependencies: object
+    :param base_conda_environment:
+    :type base_conda_environment: str
+    """
+
+    _attribute_map = {
+        'interpreter_path': {'key': 'interpreterPath', 'type': 'str'},
+        'user_managed_dependencies': {'key': 'userManagedDependencies', 'type': 'bool'},
+        'conda_dependencies': {'key': 'condaDependencies', 'type': 'object'},
+        'base_conda_environment': {'key': 'baseCondaEnvironment', 'type': 'str'},
+    }
+
+    def __init__(self, *, interpreter_path: str=None, user_managed_dependencies: bool=None, conda_dependencies=None, base_conda_environment: str=None, **kwargs) -> None:
+        super(ModelEnvironmentDefinitionResponsePython, self).__init__(interpreter_path=interpreter_path, user_managed_dependencies=user_managed_dependencies, conda_dependencies=conda_dependencies, base_conda_environment=base_conda_environment, **kwargs)
+
+
+class RSectionResponse(Model):
+    """RSectionResponse.
+
+    :param r_version: The version of R to be installed
+    :type r_version: str
+    :param user_managed: Indicates whether the environment is managed by user
+     or by AzureML.
+    :type user_managed: bool
+    :param rscript_path: The Rscript path to use if an environment build is
+     not required.
+     The path specified gets used to call the user script.
+    :type rscript_path: str
+    :param snapshot_date: Date of MRAN snapshot to use in YYYY-MM-DD format,
+     e.g. "2019-04-17"
+    :type snapshot_date: str
+    :param cran_packages: The CRAN packages to use.
+    :type cran_packages:
+     list[~azure.mgmt.machinelearningservices.models.RCranPackage]
+    :param git_hub_packages: The packages directly from GitHub.
+    :type git_hub_packages:
+     list[~azure.mgmt.machinelearningservices.models.RGitHubPackageResponse]
+    :param custom_url_packages: The packages from custom urls.
+    :type custom_url_packages: list[str]
+    :param bio_conductor_packages: The packages from Bioconductor.
+    :type bio_conductor_packages: list[str]
+    """
+
+    _attribute_map = {
+        'r_version': {'key': 'rVersion', 'type': 'str'},
+        'user_managed': {'key': 'userManaged', 'type': 'bool'},
+        'rscript_path': {'key': 'rscriptPath', 'type': 'str'},
+        'snapshot_date': {'key': 'snapshotDate', 'type': 'str'},
+        'cran_packages': {'key': 'cranPackages', 'type': '[RCranPackage]'},
+        'git_hub_packages': {'key': 'gitHubPackages', 'type': '[RGitHubPackageResponse]'},
+        'custom_url_packages': {'key': 'customUrlPackages', 'type': '[str]'},
+        'bio_conductor_packages': {'key': 'bioConductorPackages', 'type': '[str]'},
+    }
+
+    def __init__(self, *, r_version: str=None, user_managed: bool=None, rscript_path: str=None, snapshot_date: str=None, cran_packages=None, git_hub_packages=None, custom_url_packages=None, bio_conductor_packages=None, **kwargs) -> None:
+        super(RSectionResponse, self).__init__(**kwargs)
+        self.r_version = r_version
+        self.user_managed = user_managed
+        self.rscript_path = rscript_path
+        self.snapshot_date = snapshot_date
+        self.cran_packages = cran_packages
+        self.git_hub_packages = git_hub_packages
+        self.custom_url_packages = custom_url_packages
+        self.bio_conductor_packages = bio_conductor_packages
+
+
+class ModelEnvironmentDefinitionResponseR(RSectionResponse):
+    """Settings for a R environment.
+
+    :param r_version: The version of R to be installed
+    :type r_version: str
+    :param user_managed: Indicates whether the environment is managed by user
+     or by AzureML.
+    :type user_managed: bool
+    :param rscript_path: The Rscript path to use if an environment build is
+     not required.
+     The path specified gets used to call the user script.
+    :type rscript_path: str
+    :param snapshot_date: Date of MRAN snapshot to use in YYYY-MM-DD format,
+     e.g. "2019-04-17"
+    :type snapshot_date: str
+    :param cran_packages: The CRAN packages to use.
+    :type cran_packages:
+     list[~azure.mgmt.machinelearningservices.models.RCranPackage]
+    :param git_hub_packages: The packages directly from GitHub.
+    :type git_hub_packages:
+     list[~azure.mgmt.machinelearningservices.models.RGitHubPackageResponse]
+    :param custom_url_packages: The packages from custom urls.
+    :type custom_url_packages: list[str]
+    :param bio_conductor_packages: The packages from Bioconductor.
+    :type bio_conductor_packages: list[str]
+    """
+
+    _attribute_map = {
+        'r_version': {'key': 'rVersion', 'type': 'str'},
+        'user_managed': {'key': 'userManaged', 'type': 'bool'},
+        'rscript_path': {'key': 'rscriptPath', 'type': 'str'},
+        'snapshot_date': {'key': 'snapshotDate', 'type': 'str'},
+        'cran_packages': {'key': 'cranPackages', 'type': '[RCranPackage]'},
+        'git_hub_packages': {'key': 'gitHubPackages', 'type': '[RGitHubPackageResponse]'},
+        'custom_url_packages': {'key': 'customUrlPackages', 'type': '[str]'},
+        'bio_conductor_packages': {'key': 'bioConductorPackages', 'type': '[str]'},
+    }
+
+    def __init__(self, *, r_version: str=None, user_managed: bool=None, rscript_path: str=None, snapshot_date: str=None, cran_packages=None, git_hub_packages=None, custom_url_packages=None, bio_conductor_packages=None, **kwargs) -> None:
+        super(ModelEnvironmentDefinitionResponseR, self).__init__(r_version=r_version, user_managed=user_managed, rscript_path=rscript_path, snapshot_date=snapshot_date, cran_packages=cran_packages, git_hub_packages=git_hub_packages, custom_url_packages=custom_url_packages, bio_conductor_packages=bio_conductor_packages, **kwargs)
+
+
+class ModelSparkSection(Model):
+    """ModelSparkSection.
+
+    :param repositories: The list of spark repositories.
+    :type repositories: list[str]
+    :param packages: The Spark packages to use.
+    :type packages:
+     list[~azure.mgmt.machinelearningservices.models.SparkMavenPackage]
+    :param precache_packages: Whether to precache the packages.
+    :type precache_packages: bool
+    """
+
+    _attribute_map = {
+        'repositories': {'key': 'repositories', 'type': '[str]'},
+        'packages': {'key': 'packages', 'type': '[SparkMavenPackage]'},
+        'precache_packages': {'key': 'precachePackages', 'type': 'bool'},
+    }
+
+    def __init__(self, *, repositories=None, packages=None, precache_packages: bool=None, **kwargs) -> None:
+        super(ModelSparkSection, self).__init__(**kwargs)
+        self.repositories = repositories
+        self.packages = packages
+        self.precache_packages = precache_packages
+
+
+class ModelEnvironmentDefinitionResponseSpark(ModelSparkSection):
+    """The configuration for a Spark environment.
+
+    :param repositories: The list of spark repositories.
+    :type repositories: list[str]
+    :param packages: The Spark packages to use.
+    :type packages:
+     list[~azure.mgmt.machinelearningservices.models.SparkMavenPackage]
+    :param precache_packages: Whether to precache the packages.
+    :type precache_packages: bool
+    """
+
+    _attribute_map = {
+        'repositories': {'key': 'repositories', 'type': '[str]'},
+        'packages': {'key': 'packages', 'type': '[SparkMavenPackage]'},
+        'precache_packages': {'key': 'precachePackages', 'type': 'bool'},
+    }
+
+    def __init__(self, *, repositories=None, packages=None, precache_packages: bool=None, **kwargs) -> None:
+        super(ModelEnvironmentDefinitionResponseSpark, self).__init__(repositories=repositories, packages=packages, precache_packages=precache_packages, **kwargs)
+
+
+class ModelEnvironmentDefinitionSpark(ModelSparkSection):
+    """The configuration for a Spark environment.
+
+    :param repositories: The list of spark repositories.
+    :type repositories: list[str]
+    :param packages: The Spark packages to use.
+    :type packages:
+     list[~azure.mgmt.machinelearningservices.models.SparkMavenPackage]
+    :param precache_packages: Whether to precache the packages.
+    :type precache_packages: bool
+    """
+
+    _attribute_map = {
+        'repositories': {'key': 'repositories', 'type': '[str]'},
+        'packages': {'key': 'packages', 'type': '[SparkMavenPackage]'},
+        'precache_packages': {'key': 'precachePackages', 'type': 'bool'},
+    }
+
+    def __init__(self, *, repositories=None, packages=None, precache_packages: bool=None, **kwargs) -> None:
+        super(ModelEnvironmentDefinitionSpark, self).__init__(repositories=repositories, packages=packages, precache_packages=precache_packages, **kwargs)
 
 
 class NodeStateCounts(Model):
@@ -1253,6 +4455,111 @@ class NodeStateCounts(Model):
         self.unusable_node_count = None
         self.leaving_node_count = None
         self.preempted_node_count = None
+
+
+class NotebookAccessTokenResult(Model):
+    """NotebookAccessTokenResult.
+
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    :ivar notebook_resource_id:
+    :vartype notebook_resource_id: str
+    :ivar host_name:
+    :vartype host_name: str
+    :ivar public_dns:
+    :vartype public_dns: str
+    :ivar access_token:
+    :vartype access_token: str
+    :ivar token_type:
+    :vartype token_type: str
+    :ivar expires_in:
+    :vartype expires_in: int
+    :ivar refresh_token:
+    :vartype refresh_token: str
+    :ivar scope:
+    :vartype scope: str
+    """
+
+    _validation = {
+        'notebook_resource_id': {'readonly': True},
+        'host_name': {'readonly': True},
+        'public_dns': {'readonly': True},
+        'access_token': {'readonly': True},
+        'token_type': {'readonly': True},
+        'expires_in': {'readonly': True},
+        'refresh_token': {'readonly': True},
+        'scope': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'notebook_resource_id': {'key': 'notebookResourceId', 'type': 'str'},
+        'host_name': {'key': 'hostName', 'type': 'str'},
+        'public_dns': {'key': 'publicDns', 'type': 'str'},
+        'access_token': {'key': 'accessToken', 'type': 'str'},
+        'token_type': {'key': 'tokenType', 'type': 'str'},
+        'expires_in': {'key': 'expiresIn', 'type': 'int'},
+        'refresh_token': {'key': 'refreshToken', 'type': 'str'},
+        'scope': {'key': 'scope', 'type': 'str'},
+    }
+
+    def __init__(self, **kwargs) -> None:
+        super(NotebookAccessTokenResult, self).__init__(**kwargs)
+        self.notebook_resource_id = None
+        self.host_name = None
+        self.public_dns = None
+        self.access_token = None
+        self.token_type = None
+        self.expires_in = None
+        self.refresh_token = None
+        self.scope = None
+
+
+class NotebookPreparationError(Model):
+    """NotebookPreparationError.
+
+    :param error_message:
+    :type error_message: str
+    :param status_code:
+    :type status_code: int
+    """
+
+    _attribute_map = {
+        'error_message': {'key': 'errorMessage', 'type': 'str'},
+        'status_code': {'key': 'statusCode', 'type': 'int'},
+    }
+
+    def __init__(self, *, error_message: str=None, status_code: int=None, **kwargs) -> None:
+        super(NotebookPreparationError, self).__init__(**kwargs)
+        self.error_message = error_message
+        self.status_code = status_code
+
+
+class NotebookResourceInfo(Model):
+    """NotebookResourceInfo.
+
+    :param fqdn:
+    :type fqdn: str
+    :param resource_id: the data plane resourceId that used to initialize
+     notebook component
+    :type resource_id: str
+    :param notebook_preparation_error: The error that occurs when preparing
+     notebook.
+    :type notebook_preparation_error:
+     ~azure.mgmt.machinelearningservices.models.NotebookPreparationError
+    """
+
+    _attribute_map = {
+        'fqdn': {'key': 'fqdn', 'type': 'str'},
+        'resource_id': {'key': 'resourceId', 'type': 'str'},
+        'notebook_preparation_error': {'key': 'notebookPreparationError', 'type': 'NotebookPreparationError'},
+    }
+
+    def __init__(self, *, fqdn: str=None, resource_id: str=None, notebook_preparation_error=None, **kwargs) -> None:
+        super(NotebookResourceInfo, self).__init__(**kwargs)
+        self.fqdn = fqdn
+        self.resource_id = resource_id
+        self.notebook_preparation_error = notebook_preparation_error
 
 
 class Operation(Model):
@@ -1332,6 +4639,300 @@ class Password(Model):
         self.value = None
 
 
+class PersonalComputeInstanceSettings(Model):
+    """Settings for a personal compute instance.
+
+    :param assigned_user: Assigned User. A user explicitly assigned to a
+     personal compute instance.
+    :type assigned_user:
+     ~azure.mgmt.machinelearningservices.models.AssignedUser
+    """
+
+    _attribute_map = {
+        'assigned_user': {'key': 'assignedUser', 'type': 'AssignedUser'},
+    }
+
+    def __init__(self, *, assigned_user=None, **kwargs) -> None:
+        super(PersonalComputeInstanceSettings, self).__init__(**kwargs)
+        self.assigned_user = assigned_user
+
+
+class PrivateEndpoint(Model):
+    """The Private Endpoint resource.
+
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    :ivar id: The ARM identifier for Private Endpoint
+    :vartype id: str
+    :ivar subnet_arm_id: The ARM identifier for Subnet resource that private
+     endpoint links to
+    :vartype subnet_arm_id: str
+    """
+
+    _validation = {
+        'id': {'readonly': True},
+        'subnet_arm_id': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'id': {'key': 'id', 'type': 'str'},
+        'subnet_arm_id': {'key': 'subnetArmId', 'type': 'str'},
+    }
+
+    def __init__(self, **kwargs) -> None:
+        super(PrivateEndpoint, self).__init__(**kwargs)
+        self.id = None
+        self.subnet_arm_id = None
+
+
+class PrivateEndpointConnection(Resource):
+    """The Private Endpoint Connection resource.
+
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar id: Specifies the resource ID.
+    :vartype id: str
+    :ivar name: Specifies the name of the resource.
+    :vartype name: str
+    :param identity: The identity of the resource.
+    :type identity: ~azure.mgmt.machinelearningservices.models.Identity
+    :param location: Specifies the location of the resource.
+    :type location: str
+    :ivar type: Specifies the type of the resource.
+    :vartype type: str
+    :param tags: Contains resource tags defined as key/value pairs.
+    :type tags: dict[str, str]
+    :param sku: The sku of the workspace.
+    :type sku: ~azure.mgmt.machinelearningservices.models.Sku
+    :ivar system_data:
+    :vartype system_data:
+     ~azure.mgmt.machinelearningservices.models.SystemData
+    :param private_endpoint: The resource of private end point.
+    :type private_endpoint:
+     ~azure.mgmt.machinelearningservices.models.PrivateEndpoint
+    :param private_link_service_connection_state: Required. A collection of
+     information about the state of the connection between service consumer and
+     provider.
+    :type private_link_service_connection_state:
+     ~azure.mgmt.machinelearningservices.models.PrivateLinkServiceConnectionState
+    :param provisioning_state: The provisioning state of the private endpoint
+     connection resource. Possible values include: 'Succeeded', 'Creating',
+     'Deleting', 'Failed'
+    :type provisioning_state: str or
+     ~azure.mgmt.machinelearningservices.models.PrivateEndpointConnectionProvisioningState
+    """
+
+    _validation = {
+        'id': {'readonly': True},
+        'name': {'readonly': True},
+        'type': {'readonly': True},
+        'system_data': {'readonly': True},
+        'private_link_service_connection_state': {'required': True},
+    }
+
+    _attribute_map = {
+        'id': {'key': 'id', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
+        'identity': {'key': 'identity', 'type': 'Identity'},
+        'location': {'key': 'location', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
+        'tags': {'key': 'tags', 'type': '{str}'},
+        'sku': {'key': 'sku', 'type': 'Sku'},
+        'system_data': {'key': 'systemData', 'type': 'SystemData'},
+        'private_endpoint': {'key': 'properties.privateEndpoint', 'type': 'PrivateEndpoint'},
+        'private_link_service_connection_state': {'key': 'properties.privateLinkServiceConnectionState', 'type': 'PrivateLinkServiceConnectionState'},
+        'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
+    }
+
+    def __init__(self, *, private_link_service_connection_state, identity=None, location: str=None, tags=None, sku=None, private_endpoint=None, provisioning_state=None, **kwargs) -> None:
+        super(PrivateEndpointConnection, self).__init__(identity=identity, location=location, tags=tags, sku=sku, **kwargs)
+        self.private_endpoint = private_endpoint
+        self.private_link_service_connection_state = private_link_service_connection_state
+        self.provisioning_state = provisioning_state
+
+
+class PrivateLinkResource(Resource):
+    """A private link resource.
+
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    :ivar id: Specifies the resource ID.
+    :vartype id: str
+    :ivar name: Specifies the name of the resource.
+    :vartype name: str
+    :param identity: The identity of the resource.
+    :type identity: ~azure.mgmt.machinelearningservices.models.Identity
+    :param location: Specifies the location of the resource.
+    :type location: str
+    :ivar type: Specifies the type of the resource.
+    :vartype type: str
+    :param tags: Contains resource tags defined as key/value pairs.
+    :type tags: dict[str, str]
+    :param sku: The sku of the workspace.
+    :type sku: ~azure.mgmt.machinelearningservices.models.Sku
+    :ivar system_data:
+    :vartype system_data:
+     ~azure.mgmt.machinelearningservices.models.SystemData
+    :ivar group_id: The private link resource group id.
+    :vartype group_id: str
+    :ivar required_members: The private link resource required member names.
+    :vartype required_members: list[str]
+    :param required_zone_names: The private link resource Private link DNS
+     zone name.
+    :type required_zone_names: list[str]
+    """
+
+    _validation = {
+        'id': {'readonly': True},
+        'name': {'readonly': True},
+        'type': {'readonly': True},
+        'system_data': {'readonly': True},
+        'group_id': {'readonly': True},
+        'required_members': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'id': {'key': 'id', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
+        'identity': {'key': 'identity', 'type': 'Identity'},
+        'location': {'key': 'location', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
+        'tags': {'key': 'tags', 'type': '{str}'},
+        'sku': {'key': 'sku', 'type': 'Sku'},
+        'system_data': {'key': 'systemData', 'type': 'SystemData'},
+        'group_id': {'key': 'properties.groupId', 'type': 'str'},
+        'required_members': {'key': 'properties.requiredMembers', 'type': '[str]'},
+        'required_zone_names': {'key': 'properties.requiredZoneNames', 'type': '[str]'},
+    }
+
+    def __init__(self, *, identity=None, location: str=None, tags=None, sku=None, required_zone_names=None, **kwargs) -> None:
+        super(PrivateLinkResource, self).__init__(identity=identity, location=location, tags=tags, sku=sku, **kwargs)
+        self.group_id = None
+        self.required_members = None
+        self.required_zone_names = required_zone_names
+
+
+class PrivateLinkResourceListResult(Model):
+    """A list of private link resources.
+
+    :param value: Array of private link resources
+    :type value:
+     list[~azure.mgmt.machinelearningservices.models.PrivateLinkResource]
+    """
+
+    _attribute_map = {
+        'value': {'key': 'value', 'type': '[PrivateLinkResource]'},
+    }
+
+    def __init__(self, *, value=None, **kwargs) -> None:
+        super(PrivateLinkResourceListResult, self).__init__(**kwargs)
+        self.value = value
+
+
+class PrivateLinkServiceConnectionState(Model):
+    """A collection of information about the state of the connection between
+    service consumer and provider.
+
+    :param status: Indicates whether the connection has been
+     Approved/Rejected/Removed by the owner of the service. Possible values
+     include: 'Pending', 'Approved', 'Rejected', 'Disconnected', 'Timeout'
+    :type status: str or
+     ~azure.mgmt.machinelearningservices.models.PrivateEndpointServiceConnectionStatus
+    :param description: The reason for approval/rejection of the connection.
+    :type description: str
+    :param actions_required: A message indicating if changes on the service
+     provider require any updates on the consumer.
+    :type actions_required: str
+    """
+
+    _attribute_map = {
+        'status': {'key': 'status', 'type': 'str'},
+        'description': {'key': 'description', 'type': 'str'},
+        'actions_required': {'key': 'actionsRequired', 'type': 'str'},
+    }
+
+    def __init__(self, *, status=None, description: str=None, actions_required: str=None, **kwargs) -> None:
+        super(PrivateLinkServiceConnectionState, self).__init__(**kwargs)
+        self.status = status
+        self.description = description
+        self.actions_required = actions_required
+
+
+class QuotaBaseProperties(Model):
+    """The properties for Quota update or retrieval.
+
+    :param id: Specifies the resource ID.
+    :type id: str
+    :param type: Specifies the resource type.
+    :type type: str
+    :param limit: Limit. The maximum permitted quota of the resource.
+    :type limit: long
+    :param unit: An enum describing the unit of quota measurement. Possible
+     values include: 'Count'
+    :type unit: str or ~azure.mgmt.machinelearningservices.models.QuotaUnit
+    """
+
+    _attribute_map = {
+        'id': {'key': 'id', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
+        'limit': {'key': 'limit', 'type': 'long'},
+        'unit': {'key': 'unit', 'type': 'str'},
+    }
+
+    def __init__(self, *, id: str=None, type: str=None, limit: int=None, unit=None, **kwargs) -> None:
+        super(QuotaBaseProperties, self).__init__(**kwargs)
+        self.id = id
+        self.type = type
+        self.limit = limit
+        self.unit = unit
+
+
+class QuotaUpdateParameters(Model):
+    """Quota update parameters.
+
+    :param value: The list for update quota.
+    :type value:
+     list[~azure.mgmt.machinelearningservices.models.QuotaBaseProperties]
+    :param location: Region of workspace quota to be updated.
+    :type location: str
+    """
+
+    _attribute_map = {
+        'value': {'key': 'value', 'type': '[QuotaBaseProperties]'},
+        'location': {'key': 'location', 'type': 'str'},
+    }
+
+    def __init__(self, *, value=None, location: str=None, **kwargs) -> None:
+        super(QuotaUpdateParameters, self).__init__(**kwargs)
+        self.value = value
+        self.location = location
+
+
+class RCranPackage(Model):
+    """RCranPackage.
+
+    :param name: The package name.
+    :type name: str
+    :param repository: The repository name.
+    :type repository: str
+    """
+
+    _attribute_map = {
+        'name': {'key': 'name', 'type': 'str'},
+        'repository': {'key': 'repository', 'type': 'str'},
+    }
+
+    def __init__(self, *, name: str=None, repository: str=None, **kwargs) -> None:
+        super(RCranPackage, self).__init__(**kwargs)
+        self.name = name
+        self.repository = repository
+
+
 class RegistryListCredentialsResult(Model):
     """RegistryListCredentialsResult.
 
@@ -1387,6 +4988,224 @@ class ResourceId(Model):
         self.id = id
 
 
+class ResourceName(Model):
+    """The Resource Name.
+
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    :ivar value: The name of the resource.
+    :vartype value: str
+    :ivar localized_value: The localized name of the resource.
+    :vartype localized_value: str
+    """
+
+    _validation = {
+        'value': {'readonly': True},
+        'localized_value': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'value': {'key': 'value', 'type': 'str'},
+        'localized_value': {'key': 'localizedValue', 'type': 'str'},
+    }
+
+    def __init__(self, **kwargs) -> None:
+        super(ResourceName, self).__init__(**kwargs)
+        self.value = None
+        self.localized_value = None
+
+
+class ResourceQuota(Model):
+    """The quota assigned to a resource.
+
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    :ivar id: Specifies the resource ID.
+    :vartype id: str
+    :ivar aml_workspace_location: Region of the AML workspace in the id.
+    :vartype aml_workspace_location: str
+    :ivar type: Specifies the resource type.
+    :vartype type: str
+    :ivar name: Name of the resource.
+    :vartype name: ~azure.mgmt.machinelearningservices.models.ResourceName
+    :ivar limit: Limit. The maximum permitted quota of the resource.
+    :vartype limit: long
+    :ivar unit: An enum describing the unit of quota measurement. Possible
+     values include: 'Count'
+    :vartype unit: str or ~azure.mgmt.machinelearningservices.models.QuotaUnit
+    """
+
+    _validation = {
+        'id': {'readonly': True},
+        'aml_workspace_location': {'readonly': True},
+        'type': {'readonly': True},
+        'name': {'readonly': True},
+        'limit': {'readonly': True},
+        'unit': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'id': {'key': 'id', 'type': 'str'},
+        'aml_workspace_location': {'key': 'amlWorkspaceLocation', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'ResourceName'},
+        'limit': {'key': 'limit', 'type': 'long'},
+        'unit': {'key': 'unit', 'type': 'str'},
+    }
+
+    def __init__(self, **kwargs) -> None:
+        super(ResourceQuota, self).__init__(**kwargs)
+        self.id = None
+        self.aml_workspace_location = None
+        self.type = None
+        self.name = None
+        self.limit = None
+        self.unit = None
+
+
+class ResourceSkuLocationInfo(Model):
+    """ResourceSkuLocationInfo.
+
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    :ivar location: Location of the SKU
+    :vartype location: str
+    :ivar zones: List of availability zones where the SKU is supported.
+    :vartype zones: list[str]
+    :ivar zone_details: Details of capabilities available to a SKU in specific
+     zones.
+    :vartype zone_details:
+     list[~azure.mgmt.machinelearningservices.models.ResourceSkuZoneDetails]
+    """
+
+    _validation = {
+        'location': {'readonly': True},
+        'zones': {'readonly': True},
+        'zone_details': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'location': {'key': 'location', 'type': 'str'},
+        'zones': {'key': 'zones', 'type': '[str]'},
+        'zone_details': {'key': 'zoneDetails', 'type': '[ResourceSkuZoneDetails]'},
+    }
+
+    def __init__(self, **kwargs) -> None:
+        super(ResourceSkuLocationInfo, self).__init__(**kwargs)
+        self.location = None
+        self.zones = None
+        self.zone_details = None
+
+
+class ResourceSkuZoneDetails(Model):
+    """Describes The zonal capabilities of a SKU.
+
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    :ivar name: The set of zones that the SKU is available in with the
+     specified capabilities.
+    :vartype name: list[str]
+    :ivar capabilities: A list of capabilities that are available for the SKU
+     in the specified list of zones.
+    :vartype capabilities:
+     list[~azure.mgmt.machinelearningservices.models.SKUCapability]
+    """
+
+    _validation = {
+        'name': {'readonly': True},
+        'capabilities': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'name': {'key': 'name', 'type': '[str]'},
+        'capabilities': {'key': 'capabilities', 'type': '[SKUCapability]'},
+    }
+
+    def __init__(self, **kwargs) -> None:
+        super(ResourceSkuZoneDetails, self).__init__(**kwargs)
+        self.name = None
+        self.capabilities = None
+
+
+class Restriction(Model):
+    """The restriction because of which SKU cannot be used.
+
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    :ivar type: The type of restrictions. As of now only possible value for
+     this is location.
+    :vartype type: str
+    :ivar values: The value of restrictions. If the restriction type is set to
+     location. This would be different locations where the SKU is restricted.
+    :vartype values: list[str]
+    :param reason_code: The reason for the restriction. Possible values
+     include: 'NotSpecified', 'NotAvailableForRegion',
+     'NotAvailableForSubscription'
+    :type reason_code: str or
+     ~azure.mgmt.machinelearningservices.models.ReasonCode
+    """
+
+    _validation = {
+        'type': {'readonly': True},
+        'values': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'type': {'key': 'type', 'type': 'str'},
+        'values': {'key': 'values', 'type': '[str]'},
+        'reason_code': {'key': 'reasonCode', 'type': 'str'},
+    }
+
+    def __init__(self, *, reason_code=None, **kwargs) -> None:
+        super(Restriction, self).__init__(**kwargs)
+        self.type = None
+        self.values = None
+        self.reason_code = reason_code
+
+
+class RGitHubPackage(Model):
+    """RGitHubPackage.
+
+    :param repository: Repository address in the format
+     username/repo[/subdir][@ref|#pull].
+    :type repository: str
+    :param auth_token: Personal access token to install from a private repo
+    :type auth_token: str
+    """
+
+    _attribute_map = {
+        'repository': {'key': 'repository', 'type': 'str'},
+        'auth_token': {'key': 'authToken', 'type': 'str'},
+    }
+
+    def __init__(self, *, repository: str=None, auth_token: str=None, **kwargs) -> None:
+        super(RGitHubPackage, self).__init__(**kwargs)
+        self.repository = repository
+        self.auth_token = auth_token
+
+
+class RGitHubPackageResponse(Model):
+    """RGitHubPackageResponse.
+
+    :param repository: Repository address in the format
+     username/repo[/subdir][@ref|#pull].
+    :type repository: str
+    """
+
+    _attribute_map = {
+        'repository': {'key': 'repository', 'type': 'str'},
+    }
+
+    def __init__(self, *, repository: str=None, **kwargs) -> None:
+        super(RGitHubPackageResponse, self).__init__(**kwargs)
+        self.repository = repository
+
+
 class ScaleSettings(Model):
     """scale settings for AML Compute.
 
@@ -1397,7 +5216,7 @@ class ScaleSettings(Model):
     :param min_node_count: Min number of nodes to use. Default value: 0 .
     :type min_node_count: int
     :param node_idle_time_before_scale_down: Node Idle Time before scaling
-     down amlCompute
+     down amlCompute. This string needs to be in the RFC Format.
     :type node_idle_time_before_scale_down: timedelta
     """
 
@@ -1416,6 +5235,75 @@ class ScaleSettings(Model):
         self.max_node_count = max_node_count
         self.min_node_count = min_node_count
         self.node_idle_time_before_scale_down = node_idle_time_before_scale_down
+
+
+class ScriptReference(Model):
+    """Script reference.
+
+    :param script_source: The storage source of the script: inline, workspace.
+    :type script_source: str
+    :param script_data: The location of scripts in the mounted volume.
+    :type script_data: str
+    :param script_arguments: Optional command line arguments passed to the
+     script to run.
+    :type script_arguments: str
+    :param timeout: Optional time period passed to timeout command.
+    :type timeout: str
+    """
+
+    _attribute_map = {
+        'script_source': {'key': 'scriptSource', 'type': 'str'},
+        'script_data': {'key': 'scriptData', 'type': 'str'},
+        'script_arguments': {'key': 'scriptArguments', 'type': 'str'},
+        'timeout': {'key': 'timeout', 'type': 'str'},
+    }
+
+    def __init__(self, *, script_source: str=None, script_data: str=None, script_arguments: str=None, timeout: str=None, **kwargs) -> None:
+        super(ScriptReference, self).__init__(**kwargs)
+        self.script_source = script_source
+        self.script_data = script_data
+        self.script_arguments = script_arguments
+        self.timeout = timeout
+
+
+class ScriptsToExecute(Model):
+    """Customized setup scripts.
+
+    :param startup_script: Script that's run every time the machine starts.
+    :type startup_script:
+     ~azure.mgmt.machinelearningservices.models.ScriptReference
+    :param creation_script: Script that's run only once during provision of
+     the compute.
+    :type creation_script:
+     ~azure.mgmt.machinelearningservices.models.ScriptReference
+    """
+
+    _attribute_map = {
+        'startup_script': {'key': 'startupScript', 'type': 'ScriptReference'},
+        'creation_script': {'key': 'creationScript', 'type': 'ScriptReference'},
+    }
+
+    def __init__(self, *, startup_script=None, creation_script=None, **kwargs) -> None:
+        super(ScriptsToExecute, self).__init__(**kwargs)
+        self.startup_script = startup_script
+        self.creation_script = creation_script
+
+
+class ServiceManagedResourcesSettings(Model):
+    """ServiceManagedResourcesSettings.
+
+    :param cosmos_db: The settings for the service managed cosmosdb account.
+    :type cosmos_db:
+     ~azure.mgmt.machinelearningservices.models.CosmosDbSettings
+    """
+
+    _attribute_map = {
+        'cosmos_db': {'key': 'cosmosDb', 'type': 'CosmosDbSettings'},
+    }
+
+    def __init__(self, *, cosmos_db=None, **kwargs) -> None:
+        super(ServiceManagedResourcesSettings, self).__init__(**kwargs)
+        self.cosmos_db = cosmos_db
 
 
 class ServicePrincipalCredentials(Model):
@@ -1445,11 +5333,201 @@ class ServicePrincipalCredentials(Model):
         self.client_secret = client_secret
 
 
+class ServiceResource(Resource):
+    """Machine Learning service object wrapped into ARM resource envelope.
+
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    :ivar id: Specifies the resource ID.
+    :vartype id: str
+    :ivar name: Specifies the name of the resource.
+    :vartype name: str
+    :param identity: The identity of the resource.
+    :type identity: ~azure.mgmt.machinelearningservices.models.Identity
+    :param location: Specifies the location of the resource.
+    :type location: str
+    :ivar type: Specifies the type of the resource.
+    :vartype type: str
+    :param tags: Contains resource tags defined as key/value pairs.
+    :type tags: dict[str, str]
+    :param sku: The sku of the workspace.
+    :type sku: ~azure.mgmt.machinelearningservices.models.Sku
+    :ivar system_data:
+    :vartype system_data:
+     ~azure.mgmt.machinelearningservices.models.SystemData
+    :param properties: Service properties
+    :type properties:
+     ~azure.mgmt.machinelearningservices.models.ServiceResponseBase
+    """
+
+    _validation = {
+        'id': {'readonly': True},
+        'name': {'readonly': True},
+        'type': {'readonly': True},
+        'system_data': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'id': {'key': 'id', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
+        'identity': {'key': 'identity', 'type': 'Identity'},
+        'location': {'key': 'location', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
+        'tags': {'key': 'tags', 'type': '{str}'},
+        'sku': {'key': 'sku', 'type': 'Sku'},
+        'system_data': {'key': 'systemData', 'type': 'SystemData'},
+        'properties': {'key': 'properties', 'type': 'ServiceResponseBase'},
+    }
+
+    def __init__(self, *, identity=None, location: str=None, tags=None, sku=None, properties=None, **kwargs) -> None:
+        super(ServiceResource, self).__init__(identity=identity, location=location, tags=tags, sku=sku, **kwargs)
+        self.properties = properties
+
+
+class ServiceResponseBaseError(MachineLearningServiceError):
+    """The error details.
+
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    :ivar error: The error response.
+    :vartype error: ~azure.mgmt.machinelearningservices.models.ErrorResponse
+    """
+
+    _validation = {
+        'error': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'error': {'key': 'error', 'type': 'ErrorResponse'},
+    }
+
+    def __init__(self, **kwargs) -> None:
+        super(ServiceResponseBaseError, self).__init__(**kwargs)
+
+
+class SetupScripts(Model):
+    """Details of customized scripts to execute for setting up the cluster.
+
+    :param scripts: Customized setup scripts
+    :type scripts: ~azure.mgmt.machinelearningservices.models.ScriptsToExecute
+    """
+
+    _attribute_map = {
+        'scripts': {'key': 'scripts', 'type': 'ScriptsToExecute'},
+    }
+
+    def __init__(self, *, scripts=None, **kwargs) -> None:
+        super(SetupScripts, self).__init__(**kwargs)
+        self.scripts = scripts
+
+
+class SharedPrivateLinkResource(Model):
+    """SharedPrivateLinkResource.
+
+    :param name: Unique name of the private link.
+    :type name: str
+    :param private_link_resource_id: The resource id that private link links
+     to.
+    :type private_link_resource_id: str
+    :param group_id: The private link resource group id.
+    :type group_id: str
+    :param request_message: Request message.
+    :type request_message: str
+    :param status: Indicates whether the connection has been
+     Approved/Rejected/Removed by the owner of the service. Possible values
+     include: 'Pending', 'Approved', 'Rejected', 'Disconnected', 'Timeout'
+    :type status: str or
+     ~azure.mgmt.machinelearningservices.models.PrivateEndpointServiceConnectionStatus
+    """
+
+    _attribute_map = {
+        'name': {'key': 'name', 'type': 'str'},
+        'private_link_resource_id': {'key': 'properties.privateLinkResourceId', 'type': 'str'},
+        'group_id': {'key': 'properties.groupId', 'type': 'str'},
+        'request_message': {'key': 'properties.requestMessage', 'type': 'str'},
+        'status': {'key': 'properties.status', 'type': 'str'},
+    }
+
+    def __init__(self, *, name: str=None, private_link_resource_id: str=None, group_id: str=None, request_message: str=None, status=None, **kwargs) -> None:
+        super(SharedPrivateLinkResource, self).__init__(**kwargs)
+        self.name = name
+        self.private_link_resource_id = private_link_resource_id
+        self.group_id = group_id
+        self.request_message = request_message
+        self.status = status
+
+
+class Sku(Model):
+    """Sku of the resource.
+
+    :param name: Name of the sku
+    :type name: str
+    :param tier: Tier of the sku like Basic or Enterprise
+    :type tier: str
+    """
+
+    _attribute_map = {
+        'name': {'key': 'name', 'type': 'str'},
+        'tier': {'key': 'tier', 'type': 'str'},
+    }
+
+    def __init__(self, *, name: str=None, tier: str=None, **kwargs) -> None:
+        super(Sku, self).__init__(**kwargs)
+        self.name = name
+        self.tier = tier
+
+
+class SKUCapability(Model):
+    """Features/user capabilities associated with the sku.
+
+    :param name: Capability/Feature ID
+    :type name: str
+    :param value: Details about the feature/capability
+    :type value: str
+    """
+
+    _attribute_map = {
+        'name': {'key': 'name', 'type': 'str'},
+        'value': {'key': 'value', 'type': 'str'},
+    }
+
+    def __init__(self, *, name: str=None, value: str=None, **kwargs) -> None:
+        super(SKUCapability, self).__init__(**kwargs)
+        self.name = name
+        self.value = value
+
+
+class SparkMavenPackage(Model):
+    """SparkMavenPackage.
+
+    :param group:
+    :type group: str
+    :param artifact:
+    :type artifact: str
+    :param version:
+    :type version: str
+    """
+
+    _attribute_map = {
+        'group': {'key': 'group', 'type': 'str'},
+        'artifact': {'key': 'artifact', 'type': 'str'},
+        'version': {'key': 'version', 'type': 'str'},
+    }
+
+    def __init__(self, *, group: str=None, artifact: str=None, version: str=None, **kwargs) -> None:
+        super(SparkMavenPackage, self).__init__(**kwargs)
+        self.group = group
+        self.artifact = artifact
+        self.version = version
+
+
 class SslConfiguration(Model):
     """The ssl configuration for scoring.
 
     :param status: Enable or disable ssl for scoring. Possible values include:
-     'Disabled', 'Enabled'
+     'Disabled', 'Enabled', 'Auto'
     :type status: str or ~azure.mgmt.machinelearningservices.models.enum
     :param cert: Cert data
     :type cert: str
@@ -1457,6 +5535,11 @@ class SslConfiguration(Model):
     :type key: str
     :param cname: CNAME of the cert
     :type cname: str
+    :param leaf_domain_label: Leaf domain label of public endpoint
+    :type leaf_domain_label: str
+    :param overwrite_existing_domain: Indicates whether to overwrite existing
+     domain label.
+    :type overwrite_existing_domain: bool
     """
 
     _attribute_map = {
@@ -1464,14 +5547,217 @@ class SslConfiguration(Model):
         'cert': {'key': 'cert', 'type': 'str'},
         'key': {'key': 'key', 'type': 'str'},
         'cname': {'key': 'cname', 'type': 'str'},
+        'leaf_domain_label': {'key': 'leafDomainLabel', 'type': 'str'},
+        'overwrite_existing_domain': {'key': 'overwriteExistingDomain', 'type': 'bool'},
     }
 
-    def __init__(self, *, status=None, cert: str=None, key: str=None, cname: str=None, **kwargs) -> None:
+    def __init__(self, *, status=None, cert: str=None, key: str=None, cname: str=None, leaf_domain_label: str=None, overwrite_existing_domain: bool=None, **kwargs) -> None:
         super(SslConfiguration, self).__init__(**kwargs)
         self.status = status
         self.cert = cert
         self.key = key
         self.cname = cname
+        self.leaf_domain_label = leaf_domain_label
+        self.overwrite_existing_domain = overwrite_existing_domain
+
+
+class SynapseSpark(Model):
+    """A SynapseSpark compute.
+
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param compute_type: Required. The type of compute. Possible values
+     include: 'AKS', 'AmlCompute', 'ComputeInstance', 'DataFactory',
+     'VirtualMachine', 'HDInsight', 'Databricks', 'DataLakeAnalytics',
+     'SynapseSpark'
+    :type compute_type: str or
+     ~azure.mgmt.machinelearningservices.models.ComputeType
+    :param compute_location: Location for the underlying compute
+    :type compute_location: str
+    :ivar provisioning_state: The provision state of the cluster. Valid values
+     are Unknown, Updating, Provisioning, Succeeded, and Failed. Possible
+     values include: 'Unknown', 'Updating', 'Creating', 'Deleting',
+     'Succeeded', 'Failed', 'Canceled'
+    :vartype provisioning_state: str or
+     ~azure.mgmt.machinelearningservices.models.ProvisioningState
+    :param description: The description of the Machine Learning compute.
+    :type description: str
+    :ivar created_on: The time at which the compute was created.
+    :vartype created_on: datetime
+    :ivar modified_on: The time at which the compute was last modified.
+    :vartype modified_on: datetime
+    :param resource_id: ARM resource id of the underlying compute
+    :type resource_id: str
+    :ivar provisioning_errors: Errors during provisioning
+    :vartype provisioning_errors:
+     list[~azure.mgmt.machinelearningservices.models.MachineLearningServiceError]
+    :ivar is_attached_compute: Indicating whether the compute was provisioned
+     by user and brought from outside if true, or machine learning service
+     provisioned it if false.
+    :vartype is_attached_compute: bool
+    :param disable_local_auth: Opt-out of local authentication and ensure
+     customers can use only MSI and AAD exclusively for authentication.
+    :type disable_local_auth: bool
+    :param properties: AKS properties
+    :type properties:
+     ~azure.mgmt.machinelearningservices.models.SynapseSparkProperties
+    """
+
+    _validation = {
+        'compute_type': {'required': True},
+        'provisioning_state': {'readonly': True},
+        'created_on': {'readonly': True},
+        'modified_on': {'readonly': True},
+        'provisioning_errors': {'readonly': True},
+        'is_attached_compute': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'compute_type': {'key': 'computeType', 'type': 'str'},
+        'compute_location': {'key': 'computeLocation', 'type': 'str'},
+        'provisioning_state': {'key': 'provisioningState', 'type': 'str'},
+        'description': {'key': 'description', 'type': 'str'},
+        'created_on': {'key': 'createdOn', 'type': 'iso-8601'},
+        'modified_on': {'key': 'modifiedOn', 'type': 'iso-8601'},
+        'resource_id': {'key': 'resourceId', 'type': 'str'},
+        'provisioning_errors': {'key': 'provisioningErrors', 'type': '[MachineLearningServiceError]'},
+        'is_attached_compute': {'key': 'isAttachedCompute', 'type': 'bool'},
+        'disable_local_auth': {'key': 'disableLocalAuth', 'type': 'bool'},
+        'properties': {'key': 'properties', 'type': 'SynapseSparkProperties'},
+    }
+
+    def __init__(self, *, compute_type, compute_location: str=None, description: str=None, resource_id: str=None, disable_local_auth: bool=None, properties=None, **kwargs) -> None:
+        super(SynapseSpark, self).__init__(**kwargs)
+        self.compute_type = compute_type
+        self.compute_location = compute_location
+        self.provisioning_state = None
+        self.description = description
+        self.created_on = None
+        self.modified_on = None
+        self.resource_id = resource_id
+        self.provisioning_errors = None
+        self.is_attached_compute = None
+        self.disable_local_auth = disable_local_auth
+        self.properties = properties
+
+
+class SynapseSparkPoolProperties(Model):
+    """Properties specific to Synapse Spark pools.
+
+    :param properties: AKS properties
+    :type properties:
+     ~azure.mgmt.machinelearningservices.models.SynapseSparkProperties
+    """
+
+    _attribute_map = {
+        'properties': {'key': 'properties', 'type': 'SynapseSparkProperties'},
+    }
+
+    def __init__(self, *, properties=None, **kwargs) -> None:
+        super(SynapseSparkPoolProperties, self).__init__(**kwargs)
+        self.properties = properties
+
+
+class SynapseSparkProperties(Model):
+    """AKS properties.
+
+    :param auto_scale_properties: Auto scale properties.
+    :type auto_scale_properties:
+     ~azure.mgmt.machinelearningservices.models.AutoScaleProperties
+    :param auto_pause_properties: Auto pause properties.
+    :type auto_pause_properties:
+     ~azure.mgmt.machinelearningservices.models.AutoPauseProperties
+    :param spark_version: Spark version.
+    :type spark_version: str
+    :param node_count: The number of compute nodes currently assigned to the
+     compute.
+    :type node_count: int
+    :param node_size: Node size.
+    :type node_size: str
+    :param node_size_family: Node size family.
+    :type node_size_family: str
+    :param subscription_id: Azure subscription identifier.
+    :type subscription_id: str
+    :param resource_group: Name of the resource group in which workspace is
+     located.
+    :type resource_group: str
+    :param workspace_name: Name of Azure Machine Learning workspace.
+    :type workspace_name: str
+    :param pool_name: Pool name.
+    :type pool_name: str
+    """
+
+    _attribute_map = {
+        'auto_scale_properties': {'key': 'autoScaleProperties', 'type': 'AutoScaleProperties'},
+        'auto_pause_properties': {'key': 'autoPauseProperties', 'type': 'AutoPauseProperties'},
+        'spark_version': {'key': 'sparkVersion', 'type': 'str'},
+        'node_count': {'key': 'nodeCount', 'type': 'int'},
+        'node_size': {'key': 'nodeSize', 'type': 'str'},
+        'node_size_family': {'key': 'nodeSizeFamily', 'type': 'str'},
+        'subscription_id': {'key': 'subscriptionId', 'type': 'str'},
+        'resource_group': {'key': 'resourceGroup', 'type': 'str'},
+        'workspace_name': {'key': 'workspaceName', 'type': 'str'},
+        'pool_name': {'key': 'poolName', 'type': 'str'},
+    }
+
+    def __init__(self, *, auto_scale_properties=None, auto_pause_properties=None, spark_version: str=None, node_count: int=None, node_size: str=None, node_size_family: str=None, subscription_id: str=None, resource_group: str=None, workspace_name: str=None, pool_name: str=None, **kwargs) -> None:
+        super(SynapseSparkProperties, self).__init__(**kwargs)
+        self.auto_scale_properties = auto_scale_properties
+        self.auto_pause_properties = auto_pause_properties
+        self.spark_version = spark_version
+        self.node_count = node_count
+        self.node_size = node_size
+        self.node_size_family = node_size_family
+        self.subscription_id = subscription_id
+        self.resource_group = resource_group
+        self.workspace_name = workspace_name
+        self.pool_name = pool_name
+
+
+class SystemData(Model):
+    """Read only system data.
+
+    :param created_by: An identifier for the identity that created the
+     resource
+    :type created_by: str
+    :param created_by_type: The type of identity that created the resource.
+     Possible values include: 'User', 'Application', 'ManagedIdentity', 'Key'
+    :type created_by_type: str or
+     ~azure.mgmt.machinelearningservices.models.IdentityType
+    :param created_at: The timestamp of resource creation (UTC)
+    :type created_at: datetime
+    :param last_modified_by: An identifier for the identity that last modified
+     the resource
+    :type last_modified_by: str
+    :param last_modified_by_type: The type of identity that last modified the
+     resource. Possible values include: 'User', 'Application',
+     'ManagedIdentity', 'Key'
+    :type last_modified_by_type: str or
+     ~azure.mgmt.machinelearningservices.models.IdentityType
+    :param last_modified_at: The timestamp of resource last modification (UTC)
+    :type last_modified_at: datetime
+    """
+
+    _attribute_map = {
+        'created_by': {'key': 'createdBy', 'type': 'str'},
+        'created_by_type': {'key': 'createdByType', 'type': 'str'},
+        'created_at': {'key': 'createdAt', 'type': 'iso-8601'},
+        'last_modified_by': {'key': 'lastModifiedBy', 'type': 'str'},
+        'last_modified_by_type': {'key': 'lastModifiedByType', 'type': 'str'},
+        'last_modified_at': {'key': 'lastModifiedAt', 'type': 'iso-8601'},
+    }
+
+    def __init__(self, *, created_by: str=None, created_by_type=None, created_at=None, last_modified_by: str=None, last_modified_by_type=None, last_modified_at=None, **kwargs) -> None:
+        super(SystemData, self).__init__(**kwargs)
+        self.created_by = created_by
+        self.created_by_type = created_by_type
+        self.created_at = created_at
+        self.last_modified_by = last_modified_by
+        self.last_modified_by_type = last_modified_by_type
+        self.last_modified_at = last_modified_at
 
 
 class SystemService(Model):
@@ -1507,6 +5793,83 @@ class SystemService(Model):
         self.version = None
 
 
+class UpdateWorkspaceQuotas(Model):
+    """The properties for update Quota response.
+
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    :ivar id: Specifies the resource ID.
+    :vartype id: str
+    :ivar type: Specifies the resource type.
+    :vartype type: str
+    :param limit: Limit. The maximum permitted quota of the resource.
+    :type limit: long
+    :ivar unit: An enum describing the unit of quota measurement. Possible
+     values include: 'Count'
+    :vartype unit: str or ~azure.mgmt.machinelearningservices.models.QuotaUnit
+    :param status: Update Workspace Quota Status. Status of update workspace
+     quota. Possible values include: 'Undefined', 'Success', 'Failure',
+     'InvalidQuotaBelowClusterMinimum', 'InvalidQuotaExceedsSubscriptionLimit',
+     'InvalidVMFamilyName', 'OperationNotSupportedForSku',
+     'OperationNotEnabledForRegion'
+    :type status: str or ~azure.mgmt.machinelearningservices.models.Status
+    """
+
+    _validation = {
+        'id': {'readonly': True},
+        'type': {'readonly': True},
+        'unit': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'id': {'key': 'id', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
+        'limit': {'key': 'limit', 'type': 'long'},
+        'unit': {'key': 'unit', 'type': 'str'},
+        'status': {'key': 'status', 'type': 'str'},
+    }
+
+    def __init__(self, *, limit: int=None, status=None, **kwargs) -> None:
+        super(UpdateWorkspaceQuotas, self).__init__(**kwargs)
+        self.id = None
+        self.type = None
+        self.limit = limit
+        self.unit = None
+        self.status = status
+
+
+class UpdateWorkspaceQuotasResult(Model):
+    """The result of update workspace quota.
+
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    :ivar value: The list of workspace quota update result.
+    :vartype value:
+     list[~azure.mgmt.machinelearningservices.models.UpdateWorkspaceQuotas]
+    :ivar next_link: The URI to fetch the next page of workspace quota update
+     result. Call ListNext() with this to fetch the next page of Workspace
+     Quota update result.
+    :vartype next_link: str
+    """
+
+    _validation = {
+        'value': {'readonly': True},
+        'next_link': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'value': {'key': 'value', 'type': '[UpdateWorkspaceQuotas]'},
+        'next_link': {'key': 'nextLink', 'type': 'str'},
+    }
+
+    def __init__(self, **kwargs) -> None:
+        super(UpdateWorkspaceQuotasResult, self).__init__(**kwargs)
+        self.value = None
+        self.next_link = None
+
+
 class Usage(Model):
     """Describes AML Resource Usage.
 
@@ -1515,6 +5878,8 @@ class Usage(Model):
 
     :ivar id: Specifies the resource ID.
     :vartype id: str
+    :ivar aml_workspace_location: Region of the AML workspace in the id.
+    :vartype aml_workspace_location: str
     :ivar type: Specifies the resource type.
     :vartype type: str
     :ivar unit: An enum describing the unit of usage measurement. Possible
@@ -1530,6 +5895,7 @@ class Usage(Model):
 
     _validation = {
         'id': {'readonly': True},
+        'aml_workspace_location': {'readonly': True},
         'type': {'readonly': True},
         'unit': {'readonly': True},
         'current_value': {'readonly': True},
@@ -1539,6 +5905,7 @@ class Usage(Model):
 
     _attribute_map = {
         'id': {'key': 'id', 'type': 'str'},
+        'aml_workspace_location': {'key': 'amlWorkspaceLocation', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
         'unit': {'key': 'unit', 'type': 'str'},
         'current_value': {'key': 'currentValue', 'type': 'long'},
@@ -1549,6 +5916,7 @@ class Usage(Model):
     def __init__(self, **kwargs) -> None:
         super(Usage, self).__init__(**kwargs)
         self.id = None
+        self.aml_workspace_location = None
         self.type = None
         self.unit = None
         self.current_value = None
@@ -1618,6 +5986,39 @@ class UserAccountCredentials(Model):
         self.admin_user_password = admin_user_password
 
 
+class UserAssignedIdentity(Model):
+    """User Assigned Identity.
+
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    :ivar principal_id: The principal ID of the user assigned identity.
+    :vartype principal_id: str
+    :ivar tenant_id: The tenant ID of the user assigned identity.
+    :vartype tenant_id: str
+    :ivar client_id: The clientId(aka appId) of the user assigned identity.
+    :vartype client_id: str
+    """
+
+    _validation = {
+        'principal_id': {'readonly': True},
+        'tenant_id': {'readonly': True},
+        'client_id': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'principal_id': {'key': 'principalId', 'type': 'str'},
+        'tenant_id': {'key': 'tenantId', 'type': 'str'},
+        'client_id': {'key': 'clientId', 'type': 'str'},
+    }
+
+    def __init__(self, **kwargs) -> None:
+        super(UserAssignedIdentity, self).__init__(**kwargs)
+        self.principal_id = None
+        self.tenant_id = None
+        self.client_id = None
+
+
 class VirtualMachine(Compute):
     """A Machine Learning compute based on Azure Virtual Machines.
 
@@ -1636,9 +6037,9 @@ class VirtualMachine(Compute):
      ~azure.mgmt.machinelearningservices.models.ProvisioningState
     :param description: The description of the Machine Learning compute.
     :type description: str
-    :ivar created_on: The date and time when the compute was created.
+    :ivar created_on: The time at which the compute was created.
     :vartype created_on: datetime
-    :ivar modified_on: The date and time when the compute was last modified.
+    :ivar modified_on: The time at which the compute was last modified.
     :vartype modified_on: datetime
     :param resource_id: ARM resource id of the underlying compute
     :type resource_id: str
@@ -1649,6 +6050,9 @@ class VirtualMachine(Compute):
      by user and brought from outside if true, or machine learning service
      provisioned it if false.
     :vartype is_attached_compute: bool
+    :param disable_local_auth: Opt-out of local authentication and ensure
+     customers can use only MSI and AAD exclusively for authentication.
+    :type disable_local_auth: bool
     :param compute_type: Required. Constant filled by server.
     :type compute_type: str
     :param properties:
@@ -1674,14 +6078,37 @@ class VirtualMachine(Compute):
         'resource_id': {'key': 'resourceId', 'type': 'str'},
         'provisioning_errors': {'key': 'provisioningErrors', 'type': '[MachineLearningServiceError]'},
         'is_attached_compute': {'key': 'isAttachedCompute', 'type': 'bool'},
+        'disable_local_auth': {'key': 'disableLocalAuth', 'type': 'bool'},
         'compute_type': {'key': 'computeType', 'type': 'str'},
         'properties': {'key': 'properties', 'type': 'VirtualMachineProperties'},
     }
 
-    def __init__(self, *, compute_location: str=None, description: str=None, resource_id: str=None, properties=None, **kwargs) -> None:
-        super(VirtualMachine, self).__init__(compute_location=compute_location, description=description, resource_id=resource_id, **kwargs)
+    def __init__(self, *, compute_location: str=None, description: str=None, resource_id: str=None, disable_local_auth: bool=None, properties=None, **kwargs) -> None:
+        super(VirtualMachine, self).__init__(compute_location=compute_location, description=description, resource_id=resource_id, disable_local_auth=disable_local_auth, **kwargs)
         self.properties = properties
         self.compute_type = 'VirtualMachine'
+
+
+class VirtualMachineImage(Model):
+    """Virtual Machine image for Windows AML Compute.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param id: Required. Virtual Machine image path
+    :type id: str
+    """
+
+    _validation = {
+        'id': {'required': True},
+    }
+
+    _attribute_map = {
+        'id': {'key': 'id', 'type': 'str'},
+    }
+
+    def __init__(self, *, id: str, **kwargs) -> None:
+        super(VirtualMachineImage, self).__init__(**kwargs)
+        self.id = id
 
 
 class VirtualMachineProperties(Model):
@@ -1696,6 +6123,9 @@ class VirtualMachineProperties(Model):
     :param administrator_account: Admin credentials for virtual machine
     :type administrator_account:
      ~azure.mgmt.machinelearningservices.models.VirtualMachineSshCredentials
+    :param is_notebook_instance_compute: Indicates whether this compute will
+     be used for running notebooks.
+    :type is_notebook_instance_compute: bool
     """
 
     _attribute_map = {
@@ -1703,14 +6133,16 @@ class VirtualMachineProperties(Model):
         'ssh_port': {'key': 'sshPort', 'type': 'int'},
         'address': {'key': 'address', 'type': 'str'},
         'administrator_account': {'key': 'administratorAccount', 'type': 'VirtualMachineSshCredentials'},
+        'is_notebook_instance_compute': {'key': 'isNotebookInstanceCompute', 'type': 'bool'},
     }
 
-    def __init__(self, *, virtual_machine_size: str=None, ssh_port: int=None, address: str=None, administrator_account=None, **kwargs) -> None:
+    def __init__(self, *, virtual_machine_size: str=None, ssh_port: int=None, address: str=None, administrator_account=None, is_notebook_instance_compute: bool=None, **kwargs) -> None:
         super(VirtualMachineProperties, self).__init__(**kwargs)
         self.virtual_machine_size = virtual_machine_size
         self.ssh_port = ssh_port
         self.address = address
         self.administrator_account = administrator_account
+        self.is_notebook_instance_compute = is_notebook_instance_compute
 
 
 class VirtualMachineSecrets(ComputeSecrets):
@@ -1755,6 +6187,9 @@ class VirtualMachineSize(Model):
     :ivar v_cp_us: Number of vPUs. The number of vCPUs supported by the
      virtual machine size.
     :vartype v_cp_us: int
+    :ivar gpus: Number of gPUs. The number of gPUs supported by the virtual
+     machine size.
+    :vartype gpus: int
     :ivar os_vhd_size_mb: OS VHD Disk size. The OS VHD disk size, in MB,
      allowed by the virtual machine size.
     :vartype os_vhd_size_mb: int
@@ -1770,12 +6205,17 @@ class VirtualMachineSize(Model):
     :ivar premium_io: Premium IO supported. Specifies if the virtual machine
      size supports premium IO.
     :vartype premium_io: bool
+    :param estimated_vm_prices: Estimated VM prices. The estimated price
+     information for using a VM.
+    :type estimated_vm_prices:
+     ~azure.mgmt.machinelearningservices.models.EstimatedVMPrices
     """
 
     _validation = {
         'name': {'readonly': True},
         'family': {'readonly': True},
         'v_cp_us': {'readonly': True},
+        'gpus': {'readonly': True},
         'os_vhd_size_mb': {'readonly': True},
         'max_resource_volume_mb': {'readonly': True},
         'memory_gb': {'readonly': True},
@@ -1787,23 +6227,27 @@ class VirtualMachineSize(Model):
         'name': {'key': 'name', 'type': 'str'},
         'family': {'key': 'family', 'type': 'str'},
         'v_cp_us': {'key': 'vCPUs', 'type': 'int'},
+        'gpus': {'key': 'gpus', 'type': 'int'},
         'os_vhd_size_mb': {'key': 'osVhdSizeMB', 'type': 'int'},
         'max_resource_volume_mb': {'key': 'maxResourceVolumeMB', 'type': 'int'},
         'memory_gb': {'key': 'memoryGB', 'type': 'float'},
         'low_priority_capable': {'key': 'lowPriorityCapable', 'type': 'bool'},
         'premium_io': {'key': 'premiumIO', 'type': 'bool'},
+        'estimated_vm_prices': {'key': 'estimatedVMPrices', 'type': 'EstimatedVMPrices'},
     }
 
-    def __init__(self, **kwargs) -> None:
+    def __init__(self, *, estimated_vm_prices=None, **kwargs) -> None:
         super(VirtualMachineSize, self).__init__(**kwargs)
         self.name = None
         self.family = None
         self.v_cp_us = None
+        self.gpus = None
         self.os_vhd_size_mb = None
         self.max_resource_volume_mb = None
         self.memory_gb = None
         self.low_priority_capable = None
         self.premium_io = None
+        self.estimated_vm_prices = estimated_vm_prices
 
 
 class VirtualMachineSizeListResult(Model):
@@ -1862,14 +6306,19 @@ class Workspace(Resource):
     :vartype id: str
     :ivar name: Specifies the name of the resource.
     :vartype name: str
-    :ivar identity: The identity of the resource.
-    :vartype identity: ~azure.mgmt.machinelearningservices.models.Identity
+    :param identity: The identity of the resource.
+    :type identity: ~azure.mgmt.machinelearningservices.models.Identity
     :param location: Specifies the location of the resource.
     :type location: str
     :ivar type: Specifies the type of the resource.
     :vartype type: str
     :param tags: Contains resource tags defined as key/value pairs.
     :type tags: dict[str, str]
+    :param sku: The sku of the workspace.
+    :type sku: ~azure.mgmt.machinelearningservices.models.Sku
+    :ivar system_data:
+    :vartype system_data:
+     ~azure.mgmt.machinelearningservices.models.SystemData
     :ivar workspace_id: The immutable id associated with this workspace.
     :vartype workspace_id: str
     :param description: The description of this workspace.
@@ -1877,9 +6326,6 @@ class Workspace(Resource):
     :param friendly_name: The friendly name for this workspace. This name in
      mutable
     :type friendly_name: str
-    :ivar creation_time: The creation time of the machine learning workspace
-     in ISO8601 format.
-    :vartype creation_time: datetime
     :param key_vault: ARM id of the key vault associated with this workspace.
      This cannot be changed once the workspace has been created
     :type key_vault: str
@@ -1903,16 +6349,57 @@ class Workspace(Resource):
      'Deleting', 'Succeeded', 'Failed', 'Canceled'
     :vartype provisioning_state: str or
      ~azure.mgmt.machinelearningservices.models.ProvisioningState
+    :param encryption: The encryption settings of Azure ML workspace.
+    :type encryption:
+     ~azure.mgmt.machinelearningservices.models.EncryptionProperty
+    :param hbi_workspace: The flag to signal HBI data in the workspace and
+     reduce diagnostic data collected by the service. Default value: False .
+    :type hbi_workspace: bool
+    :ivar service_provisioned_resource_group: The name of the managed resource
+     group created by workspace RP in customer subscription if the workspace is
+     CMK workspace
+    :vartype service_provisioned_resource_group: str
+    :ivar private_link_count: Count of private connections in the workspace
+    :vartype private_link_count: int
+    :param image_build_compute: The compute name for image build
+    :type image_build_compute: str
+    :param allow_public_access_when_behind_vnet: The flag to indicate whether
+     to allow public access when behind VNet. Default value: False .
+    :type allow_public_access_when_behind_vnet: bool
+    :ivar private_endpoint_connections: The list of private endpoint
+     connections in the workspace.
+    :vartype private_endpoint_connections:
+     list[~azure.mgmt.machinelearningservices.models.PrivateEndpointConnection]
+    :param shared_private_link_resources: The list of shared private link
+     resources in this workspace.
+    :type shared_private_link_resources:
+     list[~azure.mgmt.machinelearningservices.models.SharedPrivateLinkResource]
+    :ivar notebook_info: The notebook info of Azure ML workspace.
+    :vartype notebook_info:
+     ~azure.mgmt.machinelearningservices.models.NotebookResourceInfo
+    :param service_managed_resources_settings: The service managed resource
+     settings.
+    :type service_managed_resources_settings:
+     ~azure.mgmt.machinelearningservices.models.ServiceManagedResourcesSettings
+    :param primary_user_assigned_identity: The user assigned identity resource
+     id that represents the workspace identity.
+    :type primary_user_assigned_identity: str
+    :ivar tenant_id: The tenant id associated with this workspace.
+    :vartype tenant_id: str
     """
 
     _validation = {
         'id': {'readonly': True},
         'name': {'readonly': True},
-        'identity': {'readonly': True},
         'type': {'readonly': True},
+        'system_data': {'readonly': True},
         'workspace_id': {'readonly': True},
-        'creation_time': {'readonly': True},
         'provisioning_state': {'readonly': True},
+        'service_provisioned_resource_group': {'readonly': True},
+        'private_link_count': {'readonly': True},
+        'private_endpoint_connections': {'readonly': True},
+        'notebook_info': {'readonly': True},
+        'tenant_id': {'readonly': True},
     }
 
     _attribute_map = {
@@ -1922,30 +6409,207 @@ class Workspace(Resource):
         'location': {'key': 'location', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
         'tags': {'key': 'tags', 'type': '{str}'},
+        'sku': {'key': 'sku', 'type': 'Sku'},
+        'system_data': {'key': 'systemData', 'type': 'SystemData'},
         'workspace_id': {'key': 'properties.workspaceId', 'type': 'str'},
         'description': {'key': 'properties.description', 'type': 'str'},
         'friendly_name': {'key': 'properties.friendlyName', 'type': 'str'},
-        'creation_time': {'key': 'properties.creationTime', 'type': 'iso-8601'},
         'key_vault': {'key': 'properties.keyVault', 'type': 'str'},
         'application_insights': {'key': 'properties.applicationInsights', 'type': 'str'},
         'container_registry': {'key': 'properties.containerRegistry', 'type': 'str'},
         'storage_account': {'key': 'properties.storageAccount', 'type': 'str'},
         'discovery_url': {'key': 'properties.discoveryUrl', 'type': 'str'},
         'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
+        'encryption': {'key': 'properties.encryption', 'type': 'EncryptionProperty'},
+        'hbi_workspace': {'key': 'properties.hbiWorkspace', 'type': 'bool'},
+        'service_provisioned_resource_group': {'key': 'properties.serviceProvisionedResourceGroup', 'type': 'str'},
+        'private_link_count': {'key': 'properties.privateLinkCount', 'type': 'int'},
+        'image_build_compute': {'key': 'properties.imageBuildCompute', 'type': 'str'},
+        'allow_public_access_when_behind_vnet': {'key': 'properties.allowPublicAccessWhenBehindVnet', 'type': 'bool'},
+        'private_endpoint_connections': {'key': 'properties.privateEndpointConnections', 'type': '[PrivateEndpointConnection]'},
+        'shared_private_link_resources': {'key': 'properties.sharedPrivateLinkResources', 'type': '[SharedPrivateLinkResource]'},
+        'notebook_info': {'key': 'properties.notebookInfo', 'type': 'NotebookResourceInfo'},
+        'service_managed_resources_settings': {'key': 'properties.serviceManagedResourcesSettings', 'type': 'ServiceManagedResourcesSettings'},
+        'primary_user_assigned_identity': {'key': 'properties.primaryUserAssignedIdentity', 'type': 'str'},
+        'tenant_id': {'key': 'properties.tenantId', 'type': 'str'},
     }
 
-    def __init__(self, *, location: str=None, tags=None, description: str=None, friendly_name: str=None, key_vault: str=None, application_insights: str=None, container_registry: str=None, storage_account: str=None, discovery_url: str=None, **kwargs) -> None:
-        super(Workspace, self).__init__(location=location, tags=tags, **kwargs)
+    def __init__(self, *, identity=None, location: str=None, tags=None, sku=None, description: str=None, friendly_name: str=None, key_vault: str=None, application_insights: str=None, container_registry: str=None, storage_account: str=None, discovery_url: str=None, encryption=None, hbi_workspace: bool=False, image_build_compute: str=None, allow_public_access_when_behind_vnet: bool=False, shared_private_link_resources=None, service_managed_resources_settings=None, primary_user_assigned_identity: str=None, **kwargs) -> None:
+        super(Workspace, self).__init__(identity=identity, location=location, tags=tags, sku=sku, **kwargs)
         self.workspace_id = None
         self.description = description
         self.friendly_name = friendly_name
-        self.creation_time = None
         self.key_vault = key_vault
         self.application_insights = application_insights
         self.container_registry = container_registry
         self.storage_account = storage_account
         self.discovery_url = discovery_url
         self.provisioning_state = None
+        self.encryption = encryption
+        self.hbi_workspace = hbi_workspace
+        self.service_provisioned_resource_group = None
+        self.private_link_count = None
+        self.image_build_compute = image_build_compute
+        self.allow_public_access_when_behind_vnet = allow_public_access_when_behind_vnet
+        self.private_endpoint_connections = None
+        self.shared_private_link_resources = shared_private_link_resources
+        self.notebook_info = None
+        self.service_managed_resources_settings = service_managed_resources_settings
+        self.primary_user_assigned_identity = primary_user_assigned_identity
+        self.tenant_id = None
+
+
+class WorkspaceConnection(Model):
+    """Workspace connection.
+
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    :ivar id: ResourceId of the workspace connection.
+    :vartype id: str
+    :ivar name: Friendly name of the workspace connection.
+    :vartype name: str
+    :ivar type: Resource type of workspace connection.
+    :vartype type: str
+    :param category: Category of the workspace connection.
+    :type category: str
+    :param target: Target of the workspace connection.
+    :type target: str
+    :param auth_type: Authorization type of the workspace connection.
+    :type auth_type: str
+    :param value: Value details of the workspace connection.
+    :type value: str
+    :param value_format: format for the workspace connection value. Possible
+     values include: 'JSON'
+    :type value_format: str or
+     ~azure.mgmt.machinelearningservices.models.ValueFormat
+    """
+
+    _validation = {
+        'id': {'readonly': True},
+        'name': {'readonly': True},
+        'type': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'id': {'key': 'id', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
+        'category': {'key': 'properties.category', 'type': 'str'},
+        'target': {'key': 'properties.target', 'type': 'str'},
+        'auth_type': {'key': 'properties.authType', 'type': 'str'},
+        'value': {'key': 'properties.value', 'type': 'str'},
+        'value_format': {'key': 'properties.valueFormat', 'type': 'str'},
+    }
+
+    def __init__(self, *, category: str=None, target: str=None, auth_type: str=None, value: str=None, value_format=None, **kwargs) -> None:
+        super(WorkspaceConnection, self).__init__(**kwargs)
+        self.id = None
+        self.name = None
+        self.type = None
+        self.category = category
+        self.target = target
+        self.auth_type = auth_type
+        self.value = value
+        self.value_format = value_format
+
+
+class WorkspaceConnectionDto(Model):
+    """object used for creating workspace connection.
+
+    :param name: Friendly name of the workspace connection
+    :type name: str
+    :param category: Category of the workspace connection.
+    :type category: str
+    :param target: Target of the workspace connection.
+    :type target: str
+    :param auth_type: Authorization type of the workspace connection.
+    :type auth_type: str
+    :param value: Value details of the workspace connection.
+    :type value: str
+    :param value_format: format for the workspace connection value. Possible
+     values include: 'JSON'
+    :type value_format: str or
+     ~azure.mgmt.machinelearningservices.models.ValueFormat
+    """
+
+    _attribute_map = {
+        'name': {'key': 'name', 'type': 'str'},
+        'category': {'key': 'properties.category', 'type': 'str'},
+        'target': {'key': 'properties.target', 'type': 'str'},
+        'auth_type': {'key': 'properties.authType', 'type': 'str'},
+        'value': {'key': 'properties.value', 'type': 'str'},
+        'value_format': {'key': 'properties.valueFormat', 'type': 'str'},
+    }
+
+    def __init__(self, *, name: str=None, category: str=None, target: str=None, auth_type: str=None, value: str=None, value_format=None, **kwargs) -> None:
+        super(WorkspaceConnectionDto, self).__init__(**kwargs)
+        self.name = name
+        self.category = category
+        self.target = target
+        self.auth_type = auth_type
+        self.value = value
+        self.value_format = value_format
+
+
+class WorkspaceSku(Model):
+    """Describes Workspace Sku details and features.
+
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    :ivar locations: The set of locations that the SKU is available. This will
+     be supported and registered Azure Geo Regions (e.g. West US, East US,
+     Southeast Asia, etc.).
+    :vartype locations: list[str]
+    :ivar location_info: A list of locations and availability zones in those
+     locations where the SKU is available.
+    :vartype location_info:
+     list[~azure.mgmt.machinelearningservices.models.ResourceSkuLocationInfo]
+    :ivar tier: Sku Tier like Basic or Enterprise
+    :vartype tier: str
+    :ivar resource_type:
+    :vartype resource_type: str
+    :ivar name:
+    :vartype name: str
+    :ivar capabilities: List of features/user capabilities associated with the
+     sku
+    :vartype capabilities:
+     list[~azure.mgmt.machinelearningservices.models.SKUCapability]
+    :param restrictions: The restrictions because of which SKU cannot be used.
+     This is empty if there are no restrictions.
+    :type restrictions:
+     list[~azure.mgmt.machinelearningservices.models.Restriction]
+    """
+
+    _validation = {
+        'locations': {'readonly': True},
+        'location_info': {'readonly': True},
+        'tier': {'readonly': True},
+        'resource_type': {'readonly': True},
+        'name': {'readonly': True},
+        'capabilities': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'locations': {'key': 'locations', 'type': '[str]'},
+        'location_info': {'key': 'locationInfo', 'type': '[ResourceSkuLocationInfo]'},
+        'tier': {'key': 'tier', 'type': 'str'},
+        'resource_type': {'key': 'resourceType', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
+        'capabilities': {'key': 'capabilities', 'type': '[SKUCapability]'},
+        'restrictions': {'key': 'restrictions', 'type': '[Restriction]'},
+    }
+
+    def __init__(self, *, restrictions=None, **kwargs) -> None:
+        super(WorkspaceSku, self).__init__(**kwargs)
+        self.locations = None
+        self.location_info = None
+        self.tier = None
+        self.resource_type = None
+        self.name = None
+        self.capabilities = None
+        self.restrictions = restrictions
 
 
 class WorkspaceUpdateParameters(Model):
@@ -1953,20 +6617,43 @@ class WorkspaceUpdateParameters(Model):
 
     :param tags: The resource tags for the machine learning workspace.
     :type tags: dict[str, str]
+    :param sku: The sku of the workspace.
+    :type sku: ~azure.mgmt.machinelearningservices.models.Sku
+    :param identity: The identity of the resource.
+    :type identity: ~azure.mgmt.machinelearningservices.models.Identity
     :param description: The description of this workspace.
     :type description: str
     :param friendly_name: The friendly name for this workspace.
     :type friendly_name: str
+    :param image_build_compute: The compute name for image build
+    :type image_build_compute: str
+    :param service_managed_resources_settings: The service managed resource
+     settings.
+    :type service_managed_resources_settings:
+     ~azure.mgmt.machinelearningservices.models.ServiceManagedResourcesSettings
+    :param primary_user_assigned_identity: The user assigned identity resource
+     id that represents the workspace identity.
+    :type primary_user_assigned_identity: str
     """
 
     _attribute_map = {
         'tags': {'key': 'tags', 'type': '{str}'},
+        'sku': {'key': 'sku', 'type': 'Sku'},
+        'identity': {'key': 'identity', 'type': 'Identity'},
         'description': {'key': 'properties.description', 'type': 'str'},
         'friendly_name': {'key': 'properties.friendlyName', 'type': 'str'},
+        'image_build_compute': {'key': 'properties.imageBuildCompute', 'type': 'str'},
+        'service_managed_resources_settings': {'key': 'properties.serviceManagedResourcesSettings', 'type': 'ServiceManagedResourcesSettings'},
+        'primary_user_assigned_identity': {'key': 'properties.primaryUserAssignedIdentity', 'type': 'str'},
     }
 
-    def __init__(self, *, tags=None, description: str=None, friendly_name: str=None, **kwargs) -> None:
+    def __init__(self, *, tags=None, sku=None, identity=None, description: str=None, friendly_name: str=None, image_build_compute: str=None, service_managed_resources_settings=None, primary_user_assigned_identity: str=None, **kwargs) -> None:
         super(WorkspaceUpdateParameters, self).__init__(**kwargs)
         self.tags = tags
+        self.sku = sku
+        self.identity = identity
         self.description = description
         self.friendly_name = friendly_name
+        self.image_build_compute = image_build_compute
+        self.service_managed_resources_settings = service_managed_resources_settings
+        self.primary_user_assigned_identity = primary_user_assigned_identity

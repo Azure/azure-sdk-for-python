@@ -26,7 +26,7 @@ class MachineLearningComputeOperations(object):
     :param config: Configuration of service client.
     :param serializer: An object model serializer.
     :param deserializer: An object model deserializer.
-    :ivar api_version: Version of Azure Machine Learning resource provider API. Constant value: "2019-05-01".
+    :ivar api_version: Version of Azure Machine Learning resource provider API. Constant value: "2021-04-01".
     """
 
     models = models
@@ -36,12 +36,12 @@ class MachineLearningComputeOperations(object):
         self._client = client
         self._serialize = serializer
         self._deserialize = deserializer
-        self.api_version = "2019-05-01"
+        self.api_version = "2021-04-01"
 
         self.config = config
 
     def list_by_workspace(
-            self, resource_group_name, workspace_name, skiptoken=None, custom_headers=None, raw=False, **operation_config):
+            self, resource_group_name, workspace_name, skip=None, custom_headers=None, raw=False, **operation_config):
         """Gets computes in specified workspace.
 
         :param resource_group_name: Name of the resource group in which
@@ -49,8 +49,8 @@ class MachineLearningComputeOperations(object):
         :type resource_group_name: str
         :param workspace_name: Name of Azure Machine Learning workspace.
         :type workspace_name: str
-        :param skiptoken: Continuation token for pagination.
-        :type skiptoken: str
+        :param skip: Continuation token for pagination.
+        :type skip: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -76,8 +76,8 @@ class MachineLearningComputeOperations(object):
                 # Construct parameters
                 query_parameters = {}
                 query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
-                if skiptoken is not None:
-                    query_parameters['$skiptoken'] = self._serialize.query("skiptoken", skiptoken, 'str')
+                if skip is not None:
+                    query_parameters['$skip'] = self._serialize.query("skip", skip, 'str')
 
             else:
                 url = next_link
@@ -528,51 +528,61 @@ class MachineLearningComputeOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: AmlComputeNodesInformation or ClientRawResponse if raw=true
+        :return: An iterator like instance of AmlComputeNodeInformation
         :rtype:
-         ~azure.mgmt.machinelearningservices.models.AmlComputeNodesInformation
-         or ~msrest.pipeline.ClientRawResponse
+         ~azure.mgmt.machinelearningservices.models.AmlComputeNodeInformationPaged[~azure.mgmt.machinelearningservices.models.AmlComputeNodeInformation]
         :raises:
          :class:`MachineLearningServiceErrorException<azure.mgmt.machinelearningservices.models.MachineLearningServiceErrorException>`
         """
-        # Construct URL
-        url = self.list_nodes.metadata['url']
-        path_format_arguments = {
-            'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
-            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
-            'workspaceName': self._serialize.url("workspace_name", workspace_name, 'str'),
-            'computeName': self._serialize.url("compute_name", compute_name, 'str')
-        }
-        url = self._client.format_url(url, **path_format_arguments)
+        def prepare_request(next_link=None):
+            if not next_link:
+                # Construct URL
+                url = self.list_nodes.metadata['url']
+                path_format_arguments = {
+                    'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
+                    'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
+                    'workspaceName': self._serialize.url("workspace_name", workspace_name, 'str'),
+                    'computeName': self._serialize.url("compute_name", compute_name, 'str')
+                }
+                url = self._client.format_url(url, **path_format_arguments)
 
-        # Construct parameters
-        query_parameters = {}
-        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
+                # Construct parameters
+                query_parameters = {}
+                query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
 
-        # Construct headers
-        header_parameters = {}
-        header_parameters['Accept'] = 'application/json'
-        if self.config.generate_client_request_id:
-            header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
-        if custom_headers:
-            header_parameters.update(custom_headers)
-        if self.config.accept_language is not None:
-            header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
+            else:
+                url = next_link
+                query_parameters = {}
 
-        # Construct and send request
-        request = self._client.post(url, query_parameters, header_parameters)
-        response = self._client.send(request, stream=False, **operation_config)
+            # Construct headers
+            header_parameters = {}
+            header_parameters['Accept'] = 'application/json'
+            if self.config.generate_client_request_id:
+                header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
+            if custom_headers:
+                header_parameters.update(custom_headers)
+            if self.config.accept_language is not None:
+                header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
 
-        if response.status_code not in [200]:
-            raise models.MachineLearningServiceErrorException(self._deserialize, response)
+            # Construct and send request
+            request = self._client.post(url, query_parameters, header_parameters)
+            return request
 
-        deserialized = None
-        if response.status_code == 200:
-            deserialized = self._deserialize('AmlComputeNodesInformation', response)
+        def internal_paging(next_link=None):
+            request = prepare_request(next_link)
 
+            response = self._client.send(request, stream=False, **operation_config)
+
+            if response.status_code not in [200]:
+                raise models.MachineLearningServiceErrorException(self._deserialize, response)
+
+            return response
+
+        # Deserialize response
+        header_dict = None
         if raw:
-            client_raw_response = ClientRawResponse(deserialized, response)
-            return client_raw_response
+            header_dict = {}
+        deserialized = models.AmlComputeNodeInformationPaged(internal_paging, self._deserialize.dependencies, header_dict)
 
         return deserialized
     list_nodes.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.MachineLearningServices/workspaces/{workspaceName}/computes/{computeName}/listNodes'}
@@ -641,3 +651,225 @@ class MachineLearningComputeOperations(object):
 
         return deserialized
     list_keys.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.MachineLearningServices/workspaces/{workspaceName}/computes/{computeName}/listKeys'}
+
+
+    def _start_initial(
+            self, resource_group_name, workspace_name, compute_name, custom_headers=None, raw=False, **operation_config):
+        # Construct URL
+        url = self.start.metadata['url']
+        path_format_arguments = {
+            'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
+            'workspaceName': self._serialize.url("workspace_name", workspace_name, 'str'),
+            'computeName': self._serialize.url("compute_name", compute_name, 'str')
+        }
+        url = self._client.format_url(url, **path_format_arguments)
+
+        # Construct parameters
+        query_parameters = {}
+        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
+
+        # Construct headers
+        header_parameters = {}
+        if self.config.generate_client_request_id:
+            header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
+        if custom_headers:
+            header_parameters.update(custom_headers)
+        if self.config.accept_language is not None:
+            header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
+
+        # Construct and send request
+        request = self._client.post(url, query_parameters, header_parameters)
+        response = self._client.send(request, stream=False, **operation_config)
+
+        if response.status_code not in [202]:
+            raise models.MachineLearningServiceErrorException(self._deserialize, response)
+
+        if raw:
+            client_raw_response = ClientRawResponse(None, response)
+            return client_raw_response
+
+    def start(
+            self, resource_group_name, workspace_name, compute_name, custom_headers=None, raw=False, polling=True, **operation_config):
+        """Posts a start action to a compute instance.
+
+        :param resource_group_name: Name of the resource group in which
+         workspace is located.
+        :type resource_group_name: str
+        :param workspace_name: Name of Azure Machine Learning workspace.
+        :type workspace_name: str
+        :param compute_name: Name of the Azure Machine Learning compute.
+        :type compute_name: str
+        :param dict custom_headers: headers that will be added to the request
+        :param bool raw: The poller return type is ClientRawResponse, the
+         direct response alongside the deserialized response
+        :param polling: True for ARMPolling, False for no polling, or a
+         polling object for personal polling strategy
+        :return: An instance of LROPoller that returns None or
+         ClientRawResponse<None> if raw==True
+        :rtype: ~msrestazure.azure_operation.AzureOperationPoller[None] or
+         ~msrestazure.azure_operation.AzureOperationPoller[~msrest.pipeline.ClientRawResponse[None]]
+        :raises:
+         :class:`MachineLearningServiceErrorException<azure.mgmt.machinelearningservices.models.MachineLearningServiceErrorException>`
+        """
+        raw_result = self._start_initial(
+            resource_group_name=resource_group_name,
+            workspace_name=workspace_name,
+            compute_name=compute_name,
+            custom_headers=custom_headers,
+            raw=True,
+            **operation_config
+        )
+
+        def get_long_running_output(response):
+            if raw:
+                client_raw_response = ClientRawResponse(None, response)
+                return client_raw_response
+
+        lro_delay = operation_config.get(
+            'long_running_operation_timeout',
+            self.config.long_running_operation_timeout)
+        if polling is True: polling_method = ARMPolling(lro_delay, **operation_config)
+        elif polling is False: polling_method = NoPolling()
+        else: polling_method = polling
+        return LROPoller(self._client, raw_result, get_long_running_output, polling_method)
+    start.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.MachineLearningServices/workspaces/{workspaceName}/computes/{computeName}/start'}
+
+
+    def _stop_initial(
+            self, resource_group_name, workspace_name, compute_name, custom_headers=None, raw=False, **operation_config):
+        # Construct URL
+        url = self.stop.metadata['url']
+        path_format_arguments = {
+            'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
+            'workspaceName': self._serialize.url("workspace_name", workspace_name, 'str'),
+            'computeName': self._serialize.url("compute_name", compute_name, 'str')
+        }
+        url = self._client.format_url(url, **path_format_arguments)
+
+        # Construct parameters
+        query_parameters = {}
+        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
+
+        # Construct headers
+        header_parameters = {}
+        if self.config.generate_client_request_id:
+            header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
+        if custom_headers:
+            header_parameters.update(custom_headers)
+        if self.config.accept_language is not None:
+            header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
+
+        # Construct and send request
+        request = self._client.post(url, query_parameters, header_parameters)
+        response = self._client.send(request, stream=False, **operation_config)
+
+        if response.status_code not in [202]:
+            raise models.MachineLearningServiceErrorException(self._deserialize, response)
+
+        if raw:
+            client_raw_response = ClientRawResponse(None, response)
+            return client_raw_response
+
+    def stop(
+            self, resource_group_name, workspace_name, compute_name, custom_headers=None, raw=False, polling=True, **operation_config):
+        """Posts a stop action to a compute instance.
+
+        :param resource_group_name: Name of the resource group in which
+         workspace is located.
+        :type resource_group_name: str
+        :param workspace_name: Name of Azure Machine Learning workspace.
+        :type workspace_name: str
+        :param compute_name: Name of the Azure Machine Learning compute.
+        :type compute_name: str
+        :param dict custom_headers: headers that will be added to the request
+        :param bool raw: The poller return type is ClientRawResponse, the
+         direct response alongside the deserialized response
+        :param polling: True for ARMPolling, False for no polling, or a
+         polling object for personal polling strategy
+        :return: An instance of LROPoller that returns None or
+         ClientRawResponse<None> if raw==True
+        :rtype: ~msrestazure.azure_operation.AzureOperationPoller[None] or
+         ~msrestazure.azure_operation.AzureOperationPoller[~msrest.pipeline.ClientRawResponse[None]]
+        :raises:
+         :class:`MachineLearningServiceErrorException<azure.mgmt.machinelearningservices.models.MachineLearningServiceErrorException>`
+        """
+        raw_result = self._stop_initial(
+            resource_group_name=resource_group_name,
+            workspace_name=workspace_name,
+            compute_name=compute_name,
+            custom_headers=custom_headers,
+            raw=True,
+            **operation_config
+        )
+
+        def get_long_running_output(response):
+            if raw:
+                client_raw_response = ClientRawResponse(None, response)
+                return client_raw_response
+
+        lro_delay = operation_config.get(
+            'long_running_operation_timeout',
+            self.config.long_running_operation_timeout)
+        if polling is True: polling_method = ARMPolling(lro_delay, **operation_config)
+        elif polling is False: polling_method = NoPolling()
+        else: polling_method = polling
+        return LROPoller(self._client, raw_result, get_long_running_output, polling_method)
+    stop.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.MachineLearningServices/workspaces/{workspaceName}/computes/{computeName}/stop'}
+
+    def restart(
+            self, resource_group_name, workspace_name, compute_name, custom_headers=None, raw=False, **operation_config):
+        """Posts a restart action to a compute instance.
+
+        :param resource_group_name: Name of the resource group in which
+         workspace is located.
+        :type resource_group_name: str
+        :param workspace_name: Name of Azure Machine Learning workspace.
+        :type workspace_name: str
+        :param compute_name: Name of the Azure Machine Learning compute.
+        :type compute_name: str
+        :param dict custom_headers: headers that will be added to the request
+        :param bool raw: returns the direct response alongside the
+         deserialized response
+        :param operation_config: :ref:`Operation configuration
+         overrides<msrest:optionsforoperations>`.
+        :return: None or ClientRawResponse if raw=true
+        :rtype: None or ~msrest.pipeline.ClientRawResponse
+        :raises:
+         :class:`MachineLearningServiceErrorException<azure.mgmt.machinelearningservices.models.MachineLearningServiceErrorException>`
+        """
+        # Construct URL
+        url = self.restart.metadata['url']
+        path_format_arguments = {
+            'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
+            'workspaceName': self._serialize.url("workspace_name", workspace_name, 'str'),
+            'computeName': self._serialize.url("compute_name", compute_name, 'str')
+        }
+        url = self._client.format_url(url, **path_format_arguments)
+
+        # Construct parameters
+        query_parameters = {}
+        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
+
+        # Construct headers
+        header_parameters = {}
+        if self.config.generate_client_request_id:
+            header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
+        if custom_headers:
+            header_parameters.update(custom_headers)
+        if self.config.accept_language is not None:
+            header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
+
+        # Construct and send request
+        request = self._client.post(url, query_parameters, header_parameters)
+        response = self._client.send(request, stream=False, **operation_config)
+
+        if response.status_code not in [200]:
+            raise models.MachineLearningServiceErrorException(self._deserialize, response)
+
+        if raw:
+            client_raw_response = ClientRawResponse(None, response)
+            return client_raw_response
+    restart.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.MachineLearningServices/workspaces/{workspaceName}/computes/{computeName}/restart'}

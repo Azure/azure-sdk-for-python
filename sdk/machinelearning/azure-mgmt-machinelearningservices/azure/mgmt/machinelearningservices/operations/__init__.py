@@ -11,14 +11,32 @@
 
 from ._operations import Operations
 from ._workspaces_operations import WorkspacesOperations
+from ._workspace_features_operations import WorkspaceFeaturesOperations
 from ._usages_operations import UsagesOperations
 from ._virtual_machine_sizes_operations import VirtualMachineSizesOperations
+from ._quotas_operations import QuotasOperations
 from ._machine_learning_compute_operations import MachineLearningComputeOperations
+from ._workspace_operations import WorkspaceOperations
+from ._private_endpoint_connections_operations import PrivateEndpointConnectionsOperations
+from ._private_link_resources_operations import PrivateLinkResourcesOperations
+from ._machine_learning_service_operations import MachineLearningServiceOperations
+from ._notebooks_operations import NotebooksOperations
+from ._storage_account_operations import StorageAccountOperations
+from ._workspace_connections_operations import WorkspaceConnectionsOperations
 
 __all__ = [
     'Operations',
     'WorkspacesOperations',
+    'WorkspaceFeaturesOperations',
     'UsagesOperations',
     'VirtualMachineSizesOperations',
+    'QuotasOperations',
     'MachineLearningComputeOperations',
+    'WorkspaceOperations',
+    'PrivateEndpointConnectionsOperations',
+    'PrivateLinkResourcesOperations',
+    'MachineLearningServiceOperations',
+    'NotebooksOperations',
+    'StorageAccountOperations',
+    'WorkspaceConnectionsOperations',
 ]

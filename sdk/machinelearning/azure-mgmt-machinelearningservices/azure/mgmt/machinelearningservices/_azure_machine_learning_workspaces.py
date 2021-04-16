@@ -15,9 +15,18 @@ from msrest import Serializer, Deserializer
 from ._configuration import AzureMachineLearningWorkspacesConfiguration
 from .operations import Operations
 from .operations import WorkspacesOperations
+from .operations import WorkspaceFeaturesOperations
 from .operations import UsagesOperations
 from .operations import VirtualMachineSizesOperations
+from .operations import QuotasOperations
 from .operations import MachineLearningComputeOperations
+from .operations import WorkspaceOperations
+from .operations import PrivateEndpointConnectionsOperations
+from .operations import PrivateLinkResourcesOperations
+from .operations import MachineLearningServiceOperations
+from .operations import NotebooksOperations
+from .operations import StorageAccountOperations
+from .operations import WorkspaceConnectionsOperations
 from . import models
 
 
@@ -31,12 +40,30 @@ class AzureMachineLearningWorkspaces(SDKClient):
     :vartype operations: azure.mgmt.machinelearningservices.operations.Operations
     :ivar workspaces: Workspaces operations
     :vartype workspaces: azure.mgmt.machinelearningservices.operations.WorkspacesOperations
+    :ivar workspace_features: WorkspaceFeatures operations
+    :vartype workspace_features: azure.mgmt.machinelearningservices.operations.WorkspaceFeaturesOperations
     :ivar usages: Usages operations
     :vartype usages: azure.mgmt.machinelearningservices.operations.UsagesOperations
     :ivar virtual_machine_sizes: VirtualMachineSizes operations
     :vartype virtual_machine_sizes: azure.mgmt.machinelearningservices.operations.VirtualMachineSizesOperations
+    :ivar quotas: Quotas operations
+    :vartype quotas: azure.mgmt.machinelearningservices.operations.QuotasOperations
     :ivar machine_learning_compute: MachineLearningCompute operations
     :vartype machine_learning_compute: azure.mgmt.machinelearningservices.operations.MachineLearningComputeOperations
+    :ivar workspace: Workspace operations
+    :vartype workspace: azure.mgmt.machinelearningservices.operations.WorkspaceOperations
+    :ivar private_endpoint_connections: PrivateEndpointConnections operations
+    :vartype private_endpoint_connections: azure.mgmt.machinelearningservices.operations.PrivateEndpointConnectionsOperations
+    :ivar private_link_resources: PrivateLinkResources operations
+    :vartype private_link_resources: azure.mgmt.machinelearningservices.operations.PrivateLinkResourcesOperations
+    :ivar machine_learning_service: MachineLearningService operations
+    :vartype machine_learning_service: azure.mgmt.machinelearningservices.operations.MachineLearningServiceOperations
+    :ivar notebooks: Notebooks operations
+    :vartype notebooks: azure.mgmt.machinelearningservices.operations.NotebooksOperations
+    :ivar storage_account: StorageAccount operations
+    :vartype storage_account: azure.mgmt.machinelearningservices.operations.StorageAccountOperations
+    :ivar workspace_connections: WorkspaceConnections operations
+    :vartype workspace_connections: azure.mgmt.machinelearningservices.operations.WorkspaceConnectionsOperations
 
     :param credentials: Credentials needed for the client to connect to Azure.
     :type credentials: :mod:`A msrestazure Credentials
@@ -53,7 +80,7 @@ class AzureMachineLearningWorkspaces(SDKClient):
         super(AzureMachineLearningWorkspaces, self).__init__(self.config.credentials, self.config)
 
         client_models = {k: v for k, v in models.__dict__.items() if isinstance(v, type)}
-        self.api_version = '2019-05-01'
+        self.api_version = '2021-04-01'
         self._serialize = Serializer(client_models)
         self._deserialize = Deserializer(client_models)
 
@@ -61,9 +88,27 @@ class AzureMachineLearningWorkspaces(SDKClient):
             self._client, self.config, self._serialize, self._deserialize)
         self.workspaces = WorkspacesOperations(
             self._client, self.config, self._serialize, self._deserialize)
+        self.workspace_features = WorkspaceFeaturesOperations(
+            self._client, self.config, self._serialize, self._deserialize)
         self.usages = UsagesOperations(
             self._client, self.config, self._serialize, self._deserialize)
         self.virtual_machine_sizes = VirtualMachineSizesOperations(
             self._client, self.config, self._serialize, self._deserialize)
+        self.quotas = QuotasOperations(
+            self._client, self.config, self._serialize, self._deserialize)
         self.machine_learning_compute = MachineLearningComputeOperations(
+            self._client, self.config, self._serialize, self._deserialize)
+        self.workspace = WorkspaceOperations(
+            self._client, self.config, self._serialize, self._deserialize)
+        self.private_endpoint_connections = PrivateEndpointConnectionsOperations(
+            self._client, self.config, self._serialize, self._deserialize)
+        self.private_link_resources = PrivateLinkResourcesOperations(
+            self._client, self.config, self._serialize, self._deserialize)
+        self.machine_learning_service = MachineLearningServiceOperations(
+            self._client, self.config, self._serialize, self._deserialize)
+        self.notebooks = NotebooksOperations(
+            self._client, self.config, self._serialize, self._deserialize)
+        self.storage_account = StorageAccountOperations(
+            self._client, self.config, self._serialize, self._deserialize)
+        self.workspace_connections = WorkspaceConnectionsOperations(
             self._client, self.config, self._serialize, self._deserialize)
