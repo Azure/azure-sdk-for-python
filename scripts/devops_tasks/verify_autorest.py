@@ -66,7 +66,7 @@ def check_diff(folder):
         "--",
         "{}".format(dir_changed)
     ]
-    result = run_check_call(command, always_exit=False)
+    result = run_check_call(command, sdk_dir, always_exit=False)
     if result:
     # repo = Repo(root_dir)
     # t = repo.head.commit.tree
