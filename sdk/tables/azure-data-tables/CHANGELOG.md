@@ -11,6 +11,7 @@
 * Removed legacy Storage policies from pipeline.
 * Removed unused legacy client-side encryption attributes from client classes.
 * Fixed sharing of pipeline between service/table clients.
+* Added support for Azurite storage emulator
 
 ## 12.0.0b6 (2021-04-06)
 * Updated deserialization of datetime fields in entities to support preservation of the service format with additional decimal place.
