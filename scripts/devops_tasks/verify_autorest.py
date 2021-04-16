@@ -30,7 +30,7 @@ def run_autorest(service_dir):
 
     for working_dir in swagger_folders:
         os.chdir(working_dir)
-        f = os.path.join(working_dir, "README.md")
+        f = os.path.abspath(os.path.join(working_dir, "README.md"))
         if os.path.exists(f):
             reset_command = ["autorest", "--reset"]
             run_check_call(reset_command, root_dir)
@@ -55,11 +55,23 @@ def find_swagger_folders(directory):
     return ret
 
 
-def check_diff():
-    repo = Repo(root_dir)
-    t = repo.head.commit.tree
-    d = repo.git.diff(t)
-    if d:
+def check_diff(folder):
+    dir_changed = folder.split("/")[:-2]
+    command = [
+        "git",
+        "diff",
+        "--quiet",
+        "HEAD",
+        "master",
+        "--",
+        "{}".format(dir_changed)
+    ]
+    result = run_check_call(command, always_exit=False)
+    if result:
+    # repo = Repo(root_dir)
+    # t = repo.head.commit.tree
+    # d = repo.git.diff(t)
+    # if d:
         command = ["git", "status"]
         run_check_call(command, root_dir)
         raise ValueError(
@@ -79,4 +91,5 @@ if __name__ == "__main__":
     folders = run_autorest(args.service_directory)
 
     if len(folders):
-        check_diff()
+        for folder in folders:
+            check_diff(folder)
