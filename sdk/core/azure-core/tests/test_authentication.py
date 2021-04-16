@@ -11,7 +11,7 @@ from azure.core.exceptions import ServiceRequestError
 from azure.core.pipeline import Pipeline
 from azure.core.pipeline.policies import (
     BearerTokenCredentialPolicy, SansIOHTTPPolicy, AzureKeyCredentialPolicy,
-    AzureSasCredentialPolicy, AzureNamedKeyCredentialPolicy
+    AzureSasCredentialPolicy
 )
 from azure.core.pipeline.transport import HttpRequest
 
@@ -255,19 +255,3 @@ def test_azure_named_key_credential_raises():
 
     with pytest.raises(TypeError, match="Both name and key must be Strings."):
         cred.update(1234, "newkey")
-
-def test_azure_named_key_credential_policy():
-    """Tests to see if we can create an AzureKeyCredentialPolicy"""
-
-    key_name = "api_key"
-    api_key = "test_key"
-
-    def verify_authorization_header(request):
-        assert request.headers[key_name] == api_key
-
-    transport=Mock(send=verify_authorization_header)
-    credential = AzureNamedKeyCredential(key_name, api_key)
-    credential_policy = AzureNamedKeyCredentialPolicy(credential=credential, name=key_name)
-    pipeline = Pipeline(transport=transport, policies=[credential_policy])
-
-    pipeline.run(HttpRequest("GET", "https://test_key_credential"))

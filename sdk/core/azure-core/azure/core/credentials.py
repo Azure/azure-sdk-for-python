@@ -125,15 +125,15 @@ class AzureNamedKeyCredential(object):
     def __init__(self, name, key):
         # type: (str, str) -> None
         if not isinstance(name, six.string_types) or not isinstance(key, six.string_types):
-            raise TypeError("Both name and key must be Strings.")
+            raise TypeError("Both name and key must be strings.")
         self._credential = AzureNamedKey(name, key)
 
     @property
-    def credential(self):
-        # type () -> str
+    def named_key(self):
+        # type () -> AzureNamedKey
         """The value of the configured name.
 
-        :rtype: str
+        :rtype: AzureNamedKey
         """
         return self._credential
 
@@ -145,5 +145,5 @@ class AzureNamedKeyCredential(object):
         Individual attributes cannot be updated.
         """
         if not isinstance(name, six.string_types) or not isinstance(key, six.string_types):
-            raise TypeError("Both name and key must be Strings.")
+            raise TypeError("Both name and key must be strings.")
         self._credential = AzureNamedKey(name, key)

@@ -22,7 +22,6 @@ if TYPE_CHECKING:
         TokenCredential,
         AzureKeyCredential,
         AzureSasCredential,
-        AzureNamedKeyCredential
     )
     from azure.core.pipeline import PipelineRequest
 
@@ -151,20 +150,3 @@ class AzureSasCredentialPolicy(SansIOHTTPPolicy):
             else:
                 url = url + "?" + signature
         request.http_request.url = url
-
-
-class AzureNamedKeyCredentialPolicy(SansIOHTTPPolicy):
-    """Adds a key header for the provided credential.
-
-    :param credential: The credential used to authenticate requests.
-    :type credential: ~azure.core.credentials.AzureNamedKeyCredential
-    :raises: ValueError or TypeError
-    """
-    def __init__(self, credential, name, **kwargs):  # pylint: disable=unused-argument
-        # type: (AzureNamedKeyCredential, str, **Any) -> None
-        super(AzureNamedKeyCredentialPolicy, self).__init__()
-        self._credential = credential
-        self._name = name
-
-    def on_request(self, request):
-        request.http_request.headers[self._name] = self._credential.credential.key
