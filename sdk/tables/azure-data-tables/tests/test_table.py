@@ -136,7 +136,7 @@ class StorageTableTest(AzureTestCase, TableTestCase):
             ts.create_table(table_name)
 
         name_filter = "TableName eq '{}'".format(table_name)
-        existing = list(ts.query_tables(filter=name_filter))
+        existing = list(ts.query_tables(name_filter))
 
         # Assert
         assert created is not None
@@ -156,7 +156,7 @@ class StorageTableTest(AzureTestCase, TableTestCase):
         query_filter = "TableName eq 'mytable0' or TableName eq 'mytable1' or TableName eq 'mytable2'"
         table_count = 0
         page_count = 0
-        for table_page in ts.query_tables(filter=query_filter, results_per_page=2).by_page():
+        for table_page in ts.query_tables(query_filter, results_per_page=2).by_page():
 
             temp_count = 0
             for table in table_page:
@@ -231,7 +231,7 @@ class StorageTableTest(AzureTestCase, TableTestCase):
 
         # Act
         name_filter = "TableName eq '{}'".format(t.table_name)
-        tables = list(ts.query_tables(filter=name_filter))
+        tables = list(ts.query_tables(name_filter))
 
         for table_item in tables:
             assert isinstance(table_item,  TableItem)
@@ -433,7 +433,7 @@ class StorageTableTest(AzureTestCase, TableTestCase):
 
             # Assert
             with pytest.raises(ValueError):
-                table.set_table_access_policy(table_name=table.table_name, signed_identifiers=identifiers)
+                table.set_table_access_policy(signed_identifiers=identifiers)
         finally:
             ts.delete_table(table.table_name)
 

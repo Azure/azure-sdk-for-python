@@ -4,18 +4,7 @@
 # license information.
 # --------------------------------------------------------------------------
 
-from typing import (  # pylint: disable=unused-import
-    Union,
-    Optional,
-    Any,
-    Iterable,
-    Dict,
-    List,
-    Type,
-    Tuple,
-    TYPE_CHECKING,
-)
-import logging
+from typing import Any, List
 from uuid import uuid4
 
 from azure.core.credentials import AzureSasCredential
@@ -28,44 +17,43 @@ from azure.core.pipeline.policies import (
     HttpLoggingPolicy,
     UserAgentPolicy,
     ProxyPolicy,
-    AzureSasCredentialPolicy
+    AzureSasCredentialPolicy,
+    RequestIdPolicy,
+    CustomHookPolicy,
+    NetworkTraceLoggingPolicy
 )
 from azure.core.pipeline.transport import (
     AsyncHttpTransport,
     HttpRequest,
 )
 
+from .._generated.aio import AzureTable
+from .._base_client import AccountHostsMixin, get_api_version
 from .._authentication import SharedKeyCredentialPolicy
-from .._constants import STORAGE_OAUTH_SCOPE, CONNECTION_TIMEOUT, READ_TIMEOUT
-from .._generated.aio._configuration import AzureTableConfiguration
+from .._constants import STORAGE_OAUTH_SCOPE
 from .._models import BatchErrorException, BatchTransactionResult
-from .._policies import (
-    CosmosPatchTransformPolicy,
-    StorageContentValidation,
-    StorageRequestHook,
-    StorageHosts,
-    StorageHeadersPolicy,
-    StorageLoggingPolicy,
-)
+from .._policies import StorageHosts, StorageHeadersPolicy
 from .._sdk_moniker import SDK_MONIKER
-from ._policies_async import (
-    AsyncStorageResponseHook,
-    AsyncTablesRetryPolicy
-)
-
-if TYPE_CHECKING:
-    from azure.core.pipeline import Pipeline
-    from azure.core.configuration import Configuration
-
-_LOGGER = logging.getLogger(__name__)
+from ._policies_async import AsyncTablesRetryPolicy
 
 
-class AsyncStorageAccountHostsMixin(object):
-    def __enter__(self):
-        raise TypeError("Async client only supports 'async with'.")
+class AsyncTablesBaseClient(AccountHostsMixin):
 
-    def __exit__(self, *args):
-        pass
+    def __init__(
+        self,
+        account_url,  # type: str
+        credential=None,  # type: str
+        **kwargs  # type: Any
+    ):
+        # type: (...) -> None
+        super(AsyncTablesBaseClient, self).__init__(account_url, credential=credential, **kwargs)
+        self._client = AzureTable(
+            self.url,
+            policies=kwargs.pop('policies', self._policies),
+            **kwargs
+        )
+        self._client._config.version = get_api_version(kwargs, self._client._config.version)  # pylint: disable=protected-access
+
 
     async def __aenter__(self):
         await self._client.__aenter__()
@@ -74,7 +62,7 @@ class AsyncStorageAccountHostsMixin(object):
     async def __aexit__(self, *args):
         await self._client.__aexit__(*args)
 
-    async def close(self):
+    async def close(self) -> None:
         """This method is to close the sockets opened by the client.
         It need not be used when using with a context manager.
         """
@@ -82,7 +70,6 @@ class AsyncStorageAccountHostsMixin(object):
 
     def _configure_credential(self, credential):
         # type: (Any) -> None
-        self._credential_policy = None
         if hasattr(credential, "get_token"):
             self._credential_policy = AsyncBearerTokenCredentialPolicy(
                 credential, STORAGE_OAUTH_SCOPE
@@ -95,37 +82,21 @@ class AsyncStorageAccountHostsMixin(object):
             raise TypeError("Unsupported credential: {}".format(credential))
 
     def _configure_policies(self, **kwargs):
-        # type: (**Any) -> None
-        try:
-            from azure.core.pipeline.transport import AioHttpTransport
-            if not kwargs.get("transport"):
-                kwargs.setdefault("transport", AioHttpTransport(**kwargs))
-        except ImportError:
-            raise ImportError(
-                "Unable to create async transport. Please check aiohttp is installed."
-            )
-
-        kwargs.setdefault("connection_timeout", CONNECTION_TIMEOUT)
-        kwargs.setdefault("read_timeout", READ_TIMEOUT)
-        self._policies = [
+        return [
+            RequestIdPolicy(**kwargs),
             StorageHeadersPolicy(**kwargs),
-            ProxyPolicy(**kwargs),
             UserAgentPolicy(sdk_moniker=SDK_MONIKER, **kwargs),
-            StorageContentValidation(),
-            StorageRequestHook(**kwargs),
+            ProxyPolicy(**kwargs),
             self._credential_policy,
             ContentDecodePolicy(response_encoding="utf-8"),
             AsyncRedirectPolicy(**kwargs),
-            StorageHosts(hosts=self._hosts, **kwargs),
+            StorageHosts(**kwargs),
             AsyncTablesRetryPolicy(**kwargs),
-            StorageLoggingPolicy(**kwargs),
-            AsyncStorageResponseHook(**kwargs),
+            CustomHookPolicy(**kwargs),
+            NetworkTraceLoggingPolicy(**kwargs),
             DistributedTracingPolicy(**kwargs),
             HttpLoggingPolicy(**kwargs),
         ]
-
-        if self._cosmos_endpoint:
-            self._policies.insert(0, CosmosPatchTransformPolicy())
 
     async def _batch_send(
         self,
@@ -202,7 +173,6 @@ class AsyncTransportWrapper(AsyncHttpTransport):
     by a `get_client` method does not close the outer transport for the parent
     when used in a context manager.
     """
-
     def __init__(self, async_transport):
         self._transport = async_transport
 

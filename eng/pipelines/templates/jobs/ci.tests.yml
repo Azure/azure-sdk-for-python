@@ -67,6 +67,8 @@ jobs:
       parameters:
         AgentImage: $(OSVmImage)
 
+    - template: /eng/common/pipelines/templates/steps/bypass-local-dns.yml
+
     - template: /eng/common/pipelines/templates/steps/set-test-pipeline-version.yml
       parameters:
         PackageName: "azure-template"
