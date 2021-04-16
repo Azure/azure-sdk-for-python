@@ -1,5 +1,11 @@
 # Release History
 
+## 5.4.1 (Unreleased)
+
+**Bug Fixes**
+
+- Fixed bug that custom user agent string should be put in front of the built-in user agent string instead of being appended.
+
 ## 5.4.0 (2021-04-07)
 
 This version follows from version 5.3.1, rather than 5.4.0b1 so that the preview idempotent producer feature is not included.

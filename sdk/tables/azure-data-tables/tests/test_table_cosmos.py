@@ -132,7 +132,7 @@ class StorageTableTest(AzureTestCase, TableTestCase):
         query_filter = "TableName eq 'mytable0' or TableName eq 'mytable1' or TableName eq 'mytable2'"
         table_count = 0
         page_count = 0
-        for table_page in ts.query_tables(filter=query_filter, results_per_page=2).by_page():
+        for table_page in ts.query_tables(query_filter, results_per_page=2).by_page():
 
             temp_count = 0
             for table in table_page:
@@ -176,7 +176,7 @@ class StorageTableTest(AzureTestCase, TableTestCase):
 
         # Act
         name_filter = "TableName eq '{}'".format(table.table_name)
-        tables = list(ts.query_tables(filter=name_filter))
+        tables = list(ts.query_tables(name_filter))
 
         # Assert
         assert tables is not None
@@ -276,7 +276,6 @@ class StorageTableTest(AzureTestCase, TableTestCase):
 
         if self.is_live:
             sleep(SLEEP_DELAY)
-
 
 class TestTableUnitTest(TableTestCase):
     tables_cosmos_account_name = "fake_storage_account"

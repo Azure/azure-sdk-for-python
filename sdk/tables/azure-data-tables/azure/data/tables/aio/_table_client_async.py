@@ -22,26 +22,21 @@ from azure.core.tracing.decorator import distributed_trace
 from azure.core.tracing.decorator_async import distributed_trace_async
 
 from .._base_client import parse_connection_str
-from .._common_conversion import _is_cosmos_endpoint
-from .._constants import CONNECTION_TIMEOUT
 from .._entity import TableEntity
-from .._generated.aio import AzureTable
 from .._generated.models import SignedIdentifier, TableProperties
 from .._models import AccessPolicy, BatchTransactionResult
-from .._serialize import serialize_iso
+from .._serialize import serialize_iso, _parameter_filter_substitution
 from .._deserialize import _return_headers_and_deserialized
-from .._error import _process_table_error
+from .._error import _process_table_error, _validate_table_name
 from .._models import UpdateMode
 from .._deserialize import _convert_to_entity, _trim_service_metadata
 from .._serialize import _add_entity_properties, _get_match_headers
-from .._table_client_base import TableClientBase
-from ._base_client_async import AsyncStorageAccountHostsMixin
+from ._base_client_async import AsyncTablesBaseClient
 from ._models import TableEntityPropertiesPaged
-from ._policies_async import ExponentialRetry
 from ._table_batch_async import TableBatchOperations
 
 
-class TableClient(AsyncStorageAccountHostsMixin, TableClientBase):
+class TableClient(AsyncTablesBaseClient):
     """ :ivar str account_name: Name of the storage account (Cosmos or Azure)"""
 
     def __init__(
@@ -68,29 +63,17 @@ class TableClient(AsyncStorageAccountHostsMixin, TableClientBase):
 
         :returns: None
         """
-        kwargs["retry_policy"] = kwargs.get("retry_policy") or ExponentialRetry(
-            **kwargs
-        )
-        loop = kwargs.pop("loop", None)
+        if not table_name:
+            raise ValueError("Please specify a table name.")
+        _validate_table_name(table_name)
+        self.table_name = table_name
+        super(TableClient, self).__init__(account_url, credential=credential, **kwargs)
 
-        self._cosmos_endpoint = _is_cosmos_endpoint(account_url)
-
-        super(TableClient, self).__init__(
-            account_url,
-            table_name=table_name,
-            credential=credential,
-            loop=loop,
-            **kwargs
-        )
-        kwargs['connection_timeout'] = kwargs.get('connection_timeout') or CONNECTION_TIMEOUT
-        self._configure_policies(**kwargs)
-        self._client = AzureTable(
-            self.url,
-            policies=kwargs.pop('policies', self._policies),
-            loop=loop,
-            **kwargs
-        )
-        self._loop = loop
+    def _format_url(self, hostname):
+        """Format the endpoint URL according to the current location
+        mode hostname.
+        """
+        return "{}://{}{}".format(self.scheme, hostname, self._query_str)
 
     @classmethod
     def from_connection_string(
@@ -120,7 +103,7 @@ class TableClient(AsyncStorageAccountHostsMixin, TableClientBase):
                 :caption: Creating the TableClient from a connection string.
         """
         account_url, credential = parse_connection_str(
-            conn_str=conn_str, credential=None, service="table", keyword_args=kwargs
+            conn_str=conn_str, credential=None, keyword_args=kwargs
         )
         return cls(account_url, table_name=table_name, credential=credential, **kwargs)
 
@@ -210,7 +193,6 @@ class TableClient(AsyncStorageAccountHostsMixin, TableClientBase):
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        self._validate_signed_identifiers(signed_identifiers)
         identifiers = []
         for key, value in signed_identifiers.items():
             if value:
@@ -223,7 +205,16 @@ class TableClient(AsyncStorageAccountHostsMixin, TableClientBase):
                 table=self.table_name, table_acl=signed_identifiers or None, **kwargs
             )
         except HttpResponseError as error:
-            _process_table_error(error)
+            try:
+                _process_table_error(error)
+            except HttpResponseError as table_error:
+                if (table_error.error_code == 'InvalidXmlDocument'
+                and len(signed_identifiers) > 5):
+                    raise ValueError(
+                        'Too many access policies provided. The server does not support setting '
+                        'more than 5 access policies on a single resource.'
+                    )
+                raise
 
     @distributed_trace_async
     async def create_table(
@@ -481,7 +472,7 @@ class TableClient(AsyncStorageAccountHostsMixin, TableClientBase):
     @distributed_trace
     def query_entities(
         self,
-        filter,  # type: str  # pylint: disable=redefined-builtin
+        query_filter,
         **kwargs
     ):
         # type: (...) -> AsyncItemPaged[TableEntity]
@@ -506,9 +497,9 @@ class TableClient(AsyncStorageAccountHostsMixin, TableClientBase):
                 :caption: Querying entities from a TableClient
         """
         parameters = kwargs.pop("parameters", None)
-        filter = self._parameter_filter_substitution(
-            parameters, filter
-        )  # pylint: disable = redefined-builtin
+        query_filter = _parameter_filter_substitution(
+            parameters, query_filter
+        )
         top = kwargs.pop("results_per_page", None)
         user_select = kwargs.pop("select", None)
         if user_select and not isinstance(user_select, str):
@@ -519,7 +510,7 @@ class TableClient(AsyncStorageAccountHostsMixin, TableClientBase):
             command,
             table=self.table_name,
             results_per_page=top,
-            filter=filter,
+            filter=query_filter,
             select=user_select,
             page_iterator_class=TableEntityPropertiesPaged,
         )
