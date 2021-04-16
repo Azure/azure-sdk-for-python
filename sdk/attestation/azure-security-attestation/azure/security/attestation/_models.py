@@ -13,7 +13,7 @@ from cryptography.hazmat.primitives.hashes import HashAlgorithm, SHA256
 from msrest.exceptions import DeserializationError, SerializationError
 from ._common import Base64Url
 from ._generated.models import PolicyResult, PolicyCertificatesModificationResult, AttestationResult, StoredAttestationPolicy
-from typing import Any, Callable, List, Optional, TypeVar, Generic, Union
+from typing import Any, Callable, List, Optional, Type, TypeVar, Generic, Union
 from cryptography.hazmat.primitives.asymmetric.ec import EllipticCurvePrivateKey
 from cryptography.hazmat.primitives.serialization import Encoding, PublicFormat
 from cryptography.x509 import Certificate, load_der_x509_certificate
@@ -147,6 +147,7 @@ class AttestationToken(Generic[T]):
         """
         body = kwargs.get('body')  # type: Any
         signer = kwargs.get('signer')  # type: SigningKey
+        self._body_type = kwargs.get('body_type') #type: Type
         if (body):
             if (signer):
                 token = self._create_secured_jwt(body, signer)
@@ -235,26 +236,31 @@ class AttestationToken(Generic[T]):
     def get_body(self):
         # type: () -> T
 
-        # Start with StoredAttestationPolicy, returning it if we can decode it.
-        stored_policy = StoredAttestationPolicy.deserialize(self._body)
-        # Do a quick sanity check. A StoredAttestationPolicy must have an attestation_policy attribute.
-        if stored_policy.attestation_policy is not None:
-            return stored_policy
+        try:
+            return self._body_type.deserialize(self._body)
+        except AttributeError:
+            return self._body
 
-        # Maybe this is a PolicyResult, try that.
-        policy_result = PolicyResult.deserialize(self._body)
-        # Do a quick sanity check. A PolicyResult must have either a policy or policy_token_hash attribute.
-        if policy_result is not None and (policy_result.policy is not None or policy_result.policy_token_hash is not None):
-            return policy_result
+        # # Start with StoredAttestationPolicy, returning it if we can decode it.
+        # stored_policy = StoredAttestationPolicy.deserialize(self._body)
+        # # Do a quick sanity check. A StoredAttestationPolicy must have an attestation_policy attribute.
+        # if stored_policy.attestation_policy is not None:
+        #     return stored_policy
 
-        # Next try the result of an Attest call.
-        attest_result  = AttestationResult.deserialize(self._body)
-        # Do a quick sanity check. An AttestationResult will always have an sgx_collateral attribute.
-        if attest_result is not None and (attest_result.sgx_collateral is not None):
-            return attest_result
+        # # Maybe this is a PolicyResult, try that.
+        # policy_result = PolicyResult.deserialize(self._body)
+        # # Do a quick sanity check. A PolicyResult must have either a policy or policy_token_hash attribute.
+        # if policy_result is not None and (policy_result.policy is not None or policy_result.policy_token_hash is not None):
+        #     return policy_result
 
-        # Finally, we give up and just return a dictionary.
-        return self._body
+        # # Next try the result of an Attest call.
+        # attest_result  = AttestationResult.deserialize(self._body)
+        # # Do a quick sanity check. An AttestationResult will always have an sgx_collateral attribute.
+        # if attest_result is not None and (attest_result.sgx_collateral is not None):
+        #     return attest_result
+
+        # # Finally, we give up and just return a dictionary.
+        # return self._body
 
     def _get_candidate_signing_certificates(self, signing_certificates):
         # type: (List[AttestationSigner]) -> List[AttestationSigner]

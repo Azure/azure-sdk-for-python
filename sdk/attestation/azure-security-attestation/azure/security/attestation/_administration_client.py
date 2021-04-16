@@ -66,9 +66,9 @@ class AttestationAdministrationClient(object):
         """
         
         policyResult = self._client.policy.get(attestation_type)
-        token = AttestationToken[PolicyResult](token=policyResult.token)
+        token = AttestationToken[PolicyResult](token=policyResult.token, body_type=PolicyResult)
         token_body = token.get_body()
-        stored_policy = AttestationToken[StoredAttestationPolicy](token=token_body.policy)
+        stored_policy = AttestationToken[StoredAttestationPolicy](token=token_body.policy, body_type=StoredAttestationPolicy)
 
         actual_policy = stored_policy.get_body().attestation_policy #type: bytes
 
@@ -80,9 +80,12 @@ class AttestationAdministrationClient(object):
     @distributed_trace
     def set_policy(self, attestation_type, attestation_policy, signing_key=None): 
         #type:(AttestationType, str, SigningKey) -> AttestationResponse[PolicyResult]
-        policy_token = AttestationToken[StoredAttestationPolicy](body=StoredAttestationPolicy(attestation_policy = attestation_policy.encode('ascii')))
+        policy_token = AttestationToken[StoredAttestationPolicy](
+            body=StoredAttestationPolicy(attestation_policy = attestation_policy.encode('ascii')),
+            body_type=StoredAttestationPolicy)
         policyResult = self._client.policy.set(attestation_type=attestation_type, new_attestation_policy=policy_token.serialize())
-        token = AttestationToken[PolicyResult](token=policyResult.token)
+        token = AttestationToken[PolicyResult](token=policyResult.token,
+            body_type=PolicyResult)
         if self._config.token_validation_options.validate_token:
             token.validate_token(self._config.token_validation_options, self._get_signers())
 
