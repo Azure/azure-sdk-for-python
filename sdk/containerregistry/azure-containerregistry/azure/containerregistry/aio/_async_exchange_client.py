@@ -3,6 +3,7 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 # ------------------------------------
+from datetime import datetime, timedelta
 import re
 from typing import TYPE_CHECKING
 
@@ -57,14 +58,23 @@ class ACRExchangeClient(object):
             **kwargs
         )
         self._credential = credential
+        self._refresh_token = None
+        self._refresh_expiry = None
 
     async def get_acr_access_token(self, challenge, **kwargs):
-        # type: (str) -> str
+        # type: (str, Dict[str, Any]) -> str
         parsed_challenge = _parse_challenge(challenge)
-        refresh_token = await self.exchange_aad_token_for_refresh_token(service=parsed_challenge["service"])
+        refresh_token = await self.get_refresh_token(parsed_challenge["service"], **kwargs)
         return await self.exchange_refresh_token_for_access_token(
             refresh_token, service=parsed_challenge["service"], scope=parsed_challenge["scope"], **kwargs
         )
+
+    async def get_refresh_token(self, service, **kwargs):
+        # type: (str, **Any) -> str
+        if not self._refresh_token or datetime.now() - self._refresh_expiry > timedelta(minutes=5):
+            self._refresh_token = await self.exchange_aad_token_for_refresh_token(service, **kwargs)
+            self._refresh_expiry = datetime.now()
+        return self._refresh_token
 
     async def exchange_aad_token_for_refresh_token(self, service=None, **kwargs):
         # type: (str, Dict[str, Any]) -> str
