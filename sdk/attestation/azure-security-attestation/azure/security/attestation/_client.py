@@ -19,13 +19,15 @@ if TYPE_CHECKING:
     from azure.core.pipeline.transport import HttpRequest, HttpResponse
 
 from ._generated import AzureAttestationRestClient
+from ._generated.models import AttestationResult, RuntimeData, InitTimeData, DataType, AttestSgxEnclaveRequest, AttestOpenEnclaveRequest
 from ._configuration import AttestationClientConfiguration
-from ._models import AttestationSigner
+from ._models import AttestationSigner, AttestationToken, AttestationResponse
 import base64
 import cryptography
 import cryptography.x509
 from typing import List, Any
 from azure.core.tracing.decorator import distributed_trace
+from threading import Lock
 
 
 class AttestationClient(object):
@@ -50,6 +52,8 @@ class AttestationClient(object):
             raise ValueError("Missing credential.")
         self._config = AttestationClientConfiguration(credential, instance_url, **kwargs)
         self._client = AzureAttestationRestClient(credential, instance_url, **kwargs)
+        self._statelock = Lock()
+        self._signing_certificates = None
 
     @distributed_trace
     def get_openidmetadata(self):
@@ -75,6 +79,58 @@ class AttestationClient(object):
                 certificates.append(cert)
             signers.append(AttestationSigner(certificates, key.kid))
         return signers
+
+    @distributed_trace
+    def attest_sgx_enclave(self, quote, init_time_data, init_time_data_is_object, runtime_data, runtime_data_is_object, **kwargs):
+        # type(bytes, Any, bool, Any, bool) -> AttestationResponse[AttestationResult]
+        runtime = RuntimeData(
+            data=runtime_data, 
+            data_type=DataType.JSON if runtime_data_is_object else DataType.BINARY) if runtime_data is not None else None
+        inittime = InitTimeData(
+            data=init_time_data, 
+            data_type=DataType.JSON if init_time_data_is_object else DataType.BINARY) if init_time_data is not None else None
+        request = AttestSgxEnclaveRequest(quote=quote, init_time_data = inittime, runtime_data = runtime)
+        result = self._client.attestation.attest_sgx_enclave(request, **kwargs)
+        token = AttestationToken[AttestationResult](token=result.token,
+            body_type=AttestationResult)
+        return AttestationResponse[AttestationResult](token, token.get_body())
+
+    @distributed_trace
+    def attest_open_enclave(self, report, init_time_data, init_time_data_is_object, runtime_data, runtime_data_is_object, **kwargs):
+        # type(bytes, Any, bool, Any, bool) -> AttestationResponse[AttestationResult]
+        runtime = RuntimeData(
+            data=runtime_data, 
+            data_type=DataType.JSON if runtime_data_is_object else DataType.BINARY) if runtime_data is not None else None
+        inittime = InitTimeData(
+            data=init_time_data, 
+            data_type=DataType.JSON if init_time_data_is_object else DataType.BINARY) if init_time_data is not None else None
+        request = AttestOpenEnclaveRequest(report=report, init_time_data = inittime, runtime_data = runtime)
+        result = self._client.attestation.attest_open_enclave(request, **kwargs)
+        token = AttestationToken[AttestationResult](token=result.token,
+            body_type=AttestationResult)
+        token.validate_token(self._config.token_validation_options, self._get_signers())
+        return AttestationResponse[AttestationResult](token, token.get_body())
+
+    def _get_signers(self):
+        #type() -> List[AttestationSigner]
+        """ Returns the set of signing certificates used to sign attestation tokens.
+        """
+
+        with self._statelock:
+            if (self._signing_certificates == None):
+                signing_certificates = self._client.signing_certificates.get()
+                self._signing_certificates = []
+                for key in signing_certificates.keys:
+                    # Convert the returned certificate chain into an array of X.509 Certificates.
+                    certificates = []
+                    for x5c in key.x5_c:
+                        der_cert = base64.b64decode(x5c)
+                        cert = cryptography.x509.load_der_x509_certificate(der_cert)
+                        certificates.append(cert)
+                    self._signing_certificates.append(AttestationSigner(certificates, key.kid))
+            signers = self._signing_certificates
+        return signers
+
 
     def close(self):
         # type: () -> None

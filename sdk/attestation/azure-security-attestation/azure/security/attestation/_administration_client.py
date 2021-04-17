@@ -92,7 +92,6 @@ class AttestationAdministrationClient(object):
         return AttestationResponse[PolicyResult](token, token.get_body())
 
 
-    @distributed_trace
     def _get_signers(self):
         #type() -> List[AttestationSigner]
         """ Returns the set of signing certificates used to sign attestation tokens.

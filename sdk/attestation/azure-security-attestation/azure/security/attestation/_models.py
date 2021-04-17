@@ -12,7 +12,7 @@ from cryptography.hazmat.primitives.asymmetric.padding import AsymmetricPadding,
 from cryptography.hazmat.primitives.hashes import HashAlgorithm, SHA256
 from msrest.exceptions import DeserializationError, SerializationError
 from ._common import Base64Url
-from ._generated.models import PolicyResult, PolicyCertificatesModificationResult, AttestationResult, StoredAttestationPolicy
+from ._generated.models import PolicyResult, PolicyCertificatesModificationResult, AttestationResult, StoredAttestationPolicy, JSONWebKey
 from typing import Any, Callable, List, Optional, Type, TypeVar, Generic, Union
 from cryptography.hazmat.primitives.asymmetric.ec import EllipticCurvePrivateKey
 from cryptography.hazmat.primitives.serialization import Encoding, PublicFormat
@@ -167,38 +167,12 @@ class AttestationToken(Generic[T]):
         self._body = JSONDecoder().decode(self.body_bytes.decode('ascii'))
         self._header = JSONDecoder().decode(self.header_bytes.decode('ascii'))
 
-        # If the caller didn't specify a body when constructing the class, populate the well known attributes from the token.
-        if (body is None):
-            # Populate the standardized fields in the header.
-            self.content_type = self._header.get('cty')
-            self.critical = self._header.get('crit')  # type: Optional[bool]
-            self.key_url = self._header.get('jku')
-            self.type = self._header.get('typ')
-            self.certificate_thumbprint = self._header.get('x5t')
-            self.certificate_sha256_thumbprint = self._header.get('x5t#256')
-            self.x509_url = self._header.get('x5u')
-
-            # Populate the standardized fields from the body.
-            iat = self._body.get('iat')
-            if (iat is not None):
-                self.issuance_time = datetime.fromtimestamp(iat)
-            else:
-                self.issuance_time = None
-
-            nbf = self._body.get('nbf')
-            if (nbf is not None):
-                self.not_before_time = datetime.fromtimestamp(nbf)
-            else:
-                self.not_before_time = None
-
-            self.issuer = self._body.get('iss')
-
     def __str__(self):
         return self._token
 
     @property
     def algorithm(self):
-        #type:() -> str
+        #type:() -> str | None
         """ Json Web Token Header "algorithm". See https://www.rfc-editor.org/rfc/rfc7515.html#section-4.1.1 for details.
         If the value of Algorithm is "none" it indicates that the token is unsecured.
         """
@@ -206,21 +180,107 @@ class AttestationToken(Generic[T]):
 
     @property
     def key_id(self):
-        #type:() -> str
+        #type:() -> str | None
         """ Json Web Token Header "Key ID". See https://www.rfc-editor.org/rfc/rfc7515.html#section-4.1.4 for details.
         """
         return self._header.get('kid')
 
     @property
     def expiration_time(self):
-        #type:() -> datetime
+        #type:() -> datetime | None
         """ Expiration time for the token.
         """
         exp = self._body.get('exp')
         if (exp is not None):
             return datetime.fromtimestamp(exp)
         return None
- 
+
+    @property
+    def not_before_time(self): 
+        #type:() -> datetime | None
+        """ Time before which the token is invalid.
+        """
+        nbf = self._body.get('nbf')
+        if (nbf is not None):
+            return  datetime.fromtimestamp(nbf)
+        return None
+
+    @property
+    def issuance_time(self): 
+        #type:() -> datetime | None
+        """ Time when the token was issued.
+        """
+        iat = self._body.get('iat')
+        if (iat is not None):
+            return  datetime.fromtimestamp(iat)
+        return None
+
+    @property
+    def content_type(self): 
+        #type:() -> str | None
+        """ Json Web Token Header "content type". See https://www.rfc-editor.org/rfc/rfc7515.html#section-4.1.10 for details.
+        """
+        return self._header.get('cty')
+
+    @property
+    def critical(self):
+        #type() -> # type: Optional[bool]
+        """ Json Web Token Header "Critical". See https://www.rfc-editor.org/rfc/rfc7515.html#section-4.1.11 for details."""
+        return self._header.get('crit')
+
+    @property
+    def key_url(self): 
+        #type:() -> str | None
+        """ Json Web Token Header "Key URL". See https://www.rfc-editor.org/rfc/rfc7515.html#section-4.1.2 for details.
+        """
+        return self._header.get('jku')
+
+    @property
+    def x509_url(self): 
+        #type:() -> str | None
+        """  Json Web Token Header "X509 URL". See https://www.rfc-editor.org/rfc/rfc7515.html#section-4.1.5 for details.
+        """
+        return self._header.get('x5u')
+
+    @property
+    def type(self):
+        #type:() -> str | None
+        """ Json Web Token Header "type". See https://www.rfc-editor.org/rfc/rfc7515.html#section-4.1.9 for details."""
+        return self._header.get('typ')
+
+    @property
+    def certificate_thumbprint(self):
+        #type:() -> str | None
+        """ The "thumbprint" of the certificate used to sign the request. See https://www.rfc-editor.org/rfc/rfc7515.html#section-4.1.7 for details. """
+        return self._header.get('x5t')
+
+    @property
+    def certificate_sha256_thumbprint(self):
+        #type:() -> str | None
+        """ The "thumbprint" of the certificate used to sign the request generated using the SHA256 algorithm. See https://www.rfc-editor.org/rfc/rfc7515.html#section-4.1.8 for details."""
+        return self._header.get('x5t#256')
+
+    @property
+    def issuer(self):
+        #type:() -> str
+        """ Json Web Token Body Issuer. See https://www.rfc-editor.org/rfc/rfc7519.html#section-4.1.1 for details.
+        """
+        return self._body.get('iss')
+
+    @property
+    def x509_certificate_chain(self):
+        #type:() -> List[Certificate] | None
+        """ An array of X.509Certificates which represent a certificate chain used to sign the token. See https://www.rfc-editor.org/rfc/rfc7515.html#section-4.1.6 for details."""
+        x5c = self._header.get('x5c')
+        if x5c is not None:
+            return self._get_certificates_from_x5c(x5c)
+        return None
+
+    @property
+    def json_web_key(self):
+        #type:() -> JSONWebKey
+        jwk = self._header.get('jwk')
+        return JSONWebKey.deserialize(jwk)
 
     def serialize(self):
         return self._token
@@ -230,6 +290,8 @@ class AttestationToken(Generic[T]):
 
     def validate_token(self, options=None, signing_certificates=None):
         # type: (TokenValidationOptions, List[AttestationSigner]) -> bool
+        """ Validates the attestation token.
+        """
         if (options is None):
             options = TokenValidationOptions(
                 validate_token=True, validate_signature=True, validate_expiration=True)
@@ -254,7 +316,8 @@ class AttestationToken(Generic[T]):
 
     def get_body(self):
         # type: () -> T
-
+        """ Returns the body of the attestation token.
+        """
         try:
             return self._body_type.deserialize(self._body)
         except AttributeError:
@@ -294,11 +357,11 @@ class AttestationToken(Generic[T]):
             # If we didn't find a matching key ID in the supplied certificates,
             # try the JWS header to see if there might be a corresponding key.
             if (len(candidates) == 0):
-                if self._header['jwk']:
-                    if self._header['jwk']['kid'] == desired_key_id:
-                        if (self._header['jwk']['x5c']):
-                            signers = self._get_signers_from_x5c(
-                                self._header['jwk']['x5c'])
+                jwk = self.json_web_key
+                if jwk is not None:
+                    if jwk.kid  == desired_key_id:
+                        if (jwk.x5_c):
+                            signers = self._get_certificates_from_x5c(jwk.x5_c)
                         candidates.append(AttestationSigner(
                             signers, desired_key_id))
         else:
@@ -309,24 +372,22 @@ class AttestationToken(Generic[T]):
                 for signer in signing_certificates:
                     candidates.append(signer)
             else:
-                if self._header.get('jwk'):
-                    if (self._header['jwk'].get('x5c')):
-                        signers = self._get_signers_from_x5c(
-                            self._header['jwk']['x5c'])
-                        candidates.append(AttestationSigner(signers, None))
-                if self._header.get('x5c'):
-                    signers = self._get_signers_from_x5c(self._header['x5c'])
+                jwk = self.json_web_key
+                if jwk.x5_c is not None:
+                    signers = self._get_certificates_from_x5c(
+                        self.json_web_key.x5_c)
                     candidates.append(AttestationSigner(signers, None))
+                candidates.append(self.x509_certificate_chain)
 
         return candidates
 
-    def _get_signers_from_x5c(self, x5clist):
-        # type:(List[str]) -> List[AttestationSigner]
-        signers = list()
-        for cert in x5clist:
-            signer = load_der_x509_certificate(base64.b64decode(cert))
-            signers.append(signer)
-        return signers
+    def _get_certificates_from_x5c(self, x5clist):
+        # type:(List[str]) -> List[Certificate]
+        certs = list()
+        for b64cert in x5clist:
+            cert = load_der_x509_certificate(base64.b64decode(b64cert))
+            certs.append(cert)
+        return certs
 
     def _validate_signature(self, candidate_certificates):
         # type:(List[AttestationSigner]) -> bool
@@ -403,10 +464,12 @@ class AttestationToken(Generic[T]):
         """
         header = {
             "alg": "RSA256" if isinstance(signer.signing_key, RSAPrivateKey) else "ECDH256",
-            "x5c": [
-                base64.b64encode(signer.certificate.public_bytes(
-                    Encoding.DER)).decode('utf-8')
-            ]
+            "jwk": {
+                "x5c": [
+                    base64.b64encode(signer.certificate.public_bytes(
+                        Encoding.DER)).decode('utf-8')
+                ]
+            }
         }
         json_header = JSONEncoder().encode(header)
         return_value = Base64Url.encode(json_header.encode('utf-8'))
