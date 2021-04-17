@@ -1,0 +1,1460 @@
+feat/regenerate-autorest
+
+
+
+
+
+
+Internet Engineering Task Force (IETF)                        S. Bradner
+Request for Comments: 8179                            Harvard University
+BCP: 79                                                     J. Contreras
+Obsoletes: 3979, 4879                                 University of Utah
+Updates: 2026                                                   May 2017
+Category: Best Current Practice
+ISSN: 2070-1721
+
+
+            Intellectual Property Rights in IETF Technology
+
+Abstract
+
+   The IETF policies about Intellectual Property Rights (IPR), such as
+   patent rights, relative to technologies developed in the IETF are
+   designed to ensure that IETF working groups and participants have as
+   much information as possible about any IPR constraints on a technical
+   proposal as early as possible in the development process.  The
+   policies are intended to benefit the Internet community and the
+   public at large, while respecting the legitimate rights of IPR
+   holders.  This document sets out the IETF policies concerning IPR
+   related to technology worked on within the IETF.  It also describes
+   the objectives that the policies are designed to meet.  This document
+   updates RFC 2026 and, with RFC 5378, replaces Section 10 of RFC 2026.
+   This document also obsoletes RFCs 3979 and 4879.
+
+Status of This Memo
+
+   This memo documents an Internet Best Current Practice.
+
+   This document is a product of the Internet Engineering Task Force
+   (IETF).  It represents the consensus of the IETF community.  It has
+   received public review and has been approved for publication by the
+   Internet Engineering Steering Group (IESG).  Further information on
+   BCPs is available in Section 2 of RFC 7841.
+
+   Information about the current status of this document, any errata,
+   and how to provide feedback on it may be obtained at
+   http://www.rfc-editor.org/info/rfc8179.
+
+
+
+
+
+
+
+
+
+
+
+
+Bradner & Contreras       Best Current Practice                 [Page 1]
+
+RFC 8179                  IP in IETF Technology                 May 2017
+
+
+Copyright Notice
+
+   Copyright (c) 2017 IETF Trust and the persons identified as the
+   document authors.  All rights reserved.
+
+   This document is subject to BCP 78 and the IETF Trust's Legal
+   Provisions Relating to IETF Documents
+   (http://trustee.ietf.org/license-info) in effect on the date of
+   publication of this document.  Please review these documents
+   carefully, as they describe your rights and restrictions with respect
+   to this document.  Code Components extracted from this document must
+   include Simplified BSD License text as described in Section 4.e of
+   the Trust Legal Provisions and are provided without warranty as
+   described in the Simplified BSD License.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+Bradner & Contreras       Best Current Practice                 [Page 2]
+
+RFC 8179                  IP in IETF Technology                 May 2017
+
+
+Table of Contents
+
+   1. Definitions  . . . . . . . . . . . . . . . . . . . . . . . . .  4
+   2. Introduction . . . . . . . . . . . . . . . . . . . . . . . . .  6
+   3. Participation in the IETF  . . . . . . . . . . . . . . . . . .  8
+   3.1. General Policy   . . . . . . . . . . . . . . . . . . . . . .  8
+   3.2. Rights and Permissions in Contributions. . . . . . . . . . .  8
+   3.3. Obligations on Participants  . . . . . . . . . . . . . . . .  8
+   4.  Actions for Documents for Which IPR Disclosure(s)
+       Have Been Received  . . . . . . . . . . . . . . . . . . . . .  8
+   5. IPR Disclosures  . . . . . . . . . . . . . . . . . . . . . . . 10
+   5.1. Who Must Make an IPR Disclosure? . . . . . . . . . . . . . . 10
+   5.1.1.  A Contributor's IPR in His or Her Contribution  . . . . . 10
+   5.1.2. An IETF Participant's IPR in Contributions by Others   . . 10
+   5.1.3. IPR of Others  . . . . . . . . . . . . . . . . . . . . . . 10
+   5.2. The Timing of Providing Disclosure . . . . . . . . . . . . . 11
+   5.2.1. Timing of Disclosure under Section 5.1.1 . . . . . . . . . 11
+   5.2.2. Timing of Disclosure under Section 5.1.2 . . . . . . . . . 11
+   5.2.3. Timing of Disclosure by ADs and Others . . . . . . . . . . 12
+   5.3. How Must an IPR Disclosure be Made?  . . . . . . . . . . . . 12
+   5.4. What Must be in an IPR Disclosure? . . . . . . . . . . . . . 12
+   5.4.1. Content of IPR Disclosures . . . . . . . . . . . . . . . . 12
+   5.4.2. Updating IPR Disclosures . . . . . . . . . . . . . . . . . 12
+   5.4.3. Blanket IPR Statements . . . . . . . . . . . . . . . . . . 13
+   5.5. Licensing Information in an IPR Disclosure . . . . . . . . . 14
+   5.6. Level of Control over IPR Requiring Disclosure . . . . . . . 15
+   5.7. Disclosures for Oral Contributions . . . . . . . . . . . . . 15
+   5.8.  General Disclosures . . . . . . . . . . . . . . . . . . . . 15
+   6. Failure to Disclose  . . . . . . . . . . . . . . . . . . . . . 16
+   7. Evaluating Alternative Technologies in IETF Working Groups . . 17
+   8. Change Control for Technologies  . . . . . . . . . . . . . . . 19
+   9. Licensing Requirements to Advance Standards Track
+      IETF Documents . . . . . . . . . . . . . . . . . . . . . . . . 19
+   10. No IPR Disclosures in IETF Documents  . . . . . . . . . . . . 19
+   11. Application to Non-IETF Stream Documents  . . . . . . . . . . 19
+   12. Security Considerations   . . . . . . . . . . . . . . . . . . 20
+   13. Changes since RFCs 3979 and 4879  . . . . . . . . . . . . . . 20
+   14. References  . . . . . . . . . . . . . . . . . . . . . . . . . 25
+   14.1. Normative References  . . . . . . . . . . . . . . . . . . . 25
+   14.2. Informative References  . . . . . . . . . . . . . . . . . . 26
+   Editors' Addresses  . . . . . . . . . . . . . . . . . . . . . . . 26
+
+
+
+
+
+
+
+
+
+
+Bradner & Contreras       Best Current Practice                 [Page 3]
+
+RFC 8179                  IP in IETF Technology                 May 2017
+
+
+1.  Definitions
+
+   The following definitions are for terms used in the context of this
+   document.  Other terms, including "IESG," "ISOC," "IAB," and "RFC
+   Editor," are defined in [RFC2028].
+
+   a. "Alternate Stream":  the IAB Document Stream, the IRTF Document
+      Stream, and the Independent Submission Stream, each as defined in
+      Section 5.1 of [RFC4844], along with any future non-IETF streams
+      that might be defined.
+
+   b. "Blanket IPR Statement" or "Blanket Disclosure": see Section
+      5.4.3.
+
+   c. "Contribution": any submission to the IETF intended by the
+      Contributor for publication as all or part of an Internet-Draft or
+      RFC and any statement made within the context of an IETF activity,
+      in each case that is intended to affect the IETF Standards Process
+      or that is related to the activity of an Alternate Stream that has
+      adopted this policy.
+
+      Such statements include oral statements, as well as written and
+      electronic communications, which are addressed to:
+
+      o  any IETF plenary session,
+
+      o  any IETF working group (WG; see BCP 25) or portion thereof or
+         any WG chair on behalf of the relevant WG,
+
+      o  any IETF "birds of a feather" (BOF) session or portion thereof,
+
+      o  WG design teams (see BCP 25) and other design teams that intend
+         to deliver an output to IETF, or portions thereof,
+
+      o  the IESG, or any member thereof on behalf of the IESG,
+
+      o  the IAB, or any member thereof on behalf of the IAB,
+
+      o  any IETF mailing list, web site, chat room, or discussion board
+         operated by or under the auspices of the IETF, including the
+         IETF list itself,
+
+      o  the RFC Editor or the Internet-Drafts function.
+
+      Statements made outside of an IETF session, mailing list, or other
+      function, or that are clearly not intended to be input to an IETF
+      activity, group, or function, are not Contributions in the context
+      of this document.  And while the IETF's IPR rules apply in all
+
+
+
+Bradner & Contreras       Best Current Practice                 [Page 4]
+
+RFC 8179                  IP in IETF Technology                 May 2017
+
+
+      cases, not all presentations represent a Contribution.  For
+      example, many invited plenary, area-meeting, or research group
+      presentations will cover useful background material, such as
+      general discussions of existing Internet technology and products,
+      and will not be a Contribution.  (Some such presentations can
+      represent a Contribution as well, of course).  Throughout this
+      document, the term "written Contribution" is used.  For purposes
+      of this document, "written" means reduced to a written or visual
+      form in any language and any media, permanent or temporary,
+      including but not limited to traditional documents, email
+      messages, discussion board postings, slide presentations, text
+      messages, instant messages, and transcriptions of oral statements.
+
+   d. "Contributor": an individual submitting a Contribution
+
+   e. "Covers" or "Covered": a valid claim of a patent or a patent
+      application (including a provisional patent application) in any
+      jurisdiction, or any other Intellectual Property Right, would
+      necessarily be infringed by the exercise of a right (e.g., making,
+      using, selling, importing, distribution, copying, etc.) with
+      respect to an Implementing Technology.  For purposes of this
+      definition, "valid claim" means a claim of any unexpired patent or
+      patent application which shall not have been withdrawn, cancelled,
+      or disclaimed, nor held invalid by a court of competent
+      jurisdiction in an unappealed or unappealable decision.
+
+   f. "General Disclosure": see Section 5.8.
+
+   g. "IETF": In the context of this document, the IETF includes all
+      individuals who participate in meetings, working groups, mailing
+      lists, functions, and other activities that are organized or
+      initiated by ISOC, the IESG, or the IAB under the general
+      designation of the Internet Engineering Task Force, or IETF, but
+      solely to the extent of such participation.
+
+   h. "IETF Documents": RFCs and Internet-Drafts that are published as
+      part of the IETF Standards Process.  These are also referred to as
+      "IETF Stream Documents" as defined in Section 5.1.1 of [RFC4844].
+
+   i. "IETF Standards Process": the activities undertaken by the IETF in
+      any of the settings described in the above definition of
+      Contribution.  The IETF Standards Process may include
+      participation in activities and publication of documents that are
+      not directed toward the development of IETF standards or
+      specifications, such as the development and publication of
+      Informational and Experimental documents (see Section 4 of
+      [RFC2026]).
+
+
+
+
+Bradner & Contreras       Best Current Practice                 [Page 5]
+
+RFC 8179                  IP in IETF Technology                 May 2017
+
+
+   j. "IPR" or "Intellectual Property Rights": means a patent, utility
+      model, or similar right that may Cover an Implementing Technology,
+      whether such rights arise from a registration or renewal thereof,
+      or an application therefore, in each case anywhere in the world.
+      See [RFC5378] for a discussion of trademarks.
+
+   k. "Implementing Technology": a technology that implements an IETF
+      specification or standard.
+
+   l. "Internet-Draft": a document used in the IETF and RFC Editor
+      processes, as described in Section 2.2 of [RFC2026].
+
+   m. "Participating in an IETF discussion or activity": making a
+      Contribution, as described above, or in any other way acting in
+      order to influence the outcome of a discussion relating to the
+      IETF Standards Process.  Without limiting the generality of the
+      foregoing, acting as a Working Group Chair or Area Director
+      constitutes "Participating" in all activities of the relevant
+      working group(s) he or she is responsible for in an area.
+      "Participant" and "IETF Participant" mean any individual
+      Participating in an IETF discussion or activity.
+
+   m. "Reasonably and personally known": something an individual knows
+      personally or, because of the job the individual holds, would
+      reasonably be expected to know.  This wording is used to indicate
+      that an organization cannot purposely keep an individual in the
+      dark about patents or patent applications just to avoid the
+      disclosure requirement.  But this requirement should not be
+      interpreted as requiring the IETF Contributor or Participant (or
+      his or her represented organization, if any) to perform a patent
+      search to find applicable IPR.
+
+   o. "RFC": the basic publication series for the IETF.  RFCs are
+      published by the RFC Editor.  (See Section 2.1 of [RFC2026].)
+
+2.  Introduction
+
+   The IETF policies about Intellectual Property Rights (IPR), such as
+   patent rights, relative to technologies developed in the IETF are
+   designed to ensure that IETF working groups and Participants have as
+   much information as possible about any IPR constraints on a technical
+   proposal as early as possible in the development process.  The
+   policies are intended to benefit the Internet community and the
+   public at large, while respecting the legitimate rights of IPR
+   holders.  This document details the IETF policies concerning IPR
+   related to technology worked on within the IETF.  It also describes
+
+
+
+
+
+Bradner & Contreras       Best Current Practice                 [Page 6]
+
+RFC 8179                  IP in IETF Technology                 May 2017
+
+
+   the objectives that the policies are designed to meet.  This document
+   updates RFC 2026 and, with RFC 5378, replaces Section 10 of RFC 2026.
+   This document also obsoletes RFC 3979 and RFC 4879.
+
+   There are three basic principles regarding how the IETF deals with
+   claims of Intellectual Property Rights (originally outlined in
+   Section 10 of [RFC2026]):
+
+   (a) The IETF will make no determination about the validity of any
+       particular IPR claim.
+
+   (b) The IETF, following normal processes, can decide to use
+       technology for which IPR disclosures have been made if it decides
+       that such a use is warranted.
+
+   (c) In order for a working group and the rest of the IETF to have the
+       information needed to make an informed decision about the use of
+       a particular technology, all those contributing to the working
+       group's discussions must disclose the existence of any IPR the
+       Contributor or any other IETF Participant believes Covers or may
+       ultimately Cover the technology under discussion.  This applies
+       to both Contributors and other Participants, and applies whether
+       they contribute in person, via email, or by other means.  The
+       requirement applies to all IPR of the Participant, the
+       Participant's employer, sponsor, or others represented by the
+       Participant that are reasonably and personally known to the
+       Participant.  No patent search is required.
+
+   Section 1 defines the terms used in this document.  Sections 3
+   through 11 set forth the IETF's policies and procedures relating to
+   IPR.  Section 13 lists the changes between this document and RFCs
+   3979 and 4879.  A separate document [RFC5378] deals with rights (such
+   as copyrights and trademarks) in Contributions, including the right
+   of the IETF and IETF Participants to publish and create derivative
+   works of those Contributions.  This document is not intended to
+   address those issues.  See RFC 6702 [RFC6702] for a discussion of
+   "Promoting Compliance with Intellectual Property Rights (IPR)
+   Disclosure Rules".
+
+   This document is not intended as legal advice.  Readers are advised
+   to consult their own legal advisors if they would like a legal
+   interpretation of their rights or the rights of the IETF in any
+   Contributions they make.
+
+
+
+
+
+
+
+
+Bradner & Contreras       Best Current Practice                 [Page 7]
+
+RFC 8179                  IP in IETF Technology                 May 2017
+
+
+3.  Participation in the IETF
+
+3.1.  General Policy
+
+   In all matters relating to Intellectual Property Rights, the intent
+   is to benefit the Internet community and the public at large, while
+   respecting the legitimate rights of others.  The disclosures required
+   by this policy are intended to help IETF working groups define
+   superior technical solutions with the benefit of as much information
+   as reasonably possible about potential IPR claims relating to
+   technologies under consideration.
+
+3.2.  Rights and Permissions in Contributions
+
+   By submission of a Contribution, each person actually submitting the
+   Contribution, and each named co-Contributor, is deemed to agree to
+   the following terms and conditions on his or her own behalf and on
+   behalf of the organizations the Contributor represents or is
+   sponsored by (if any) when submitting the Contribution.
+
+3.3.  Obligations on Participants
+
+   By Participating in the IETF, each Participant is deemed to agree to
+   comply with all requirements of this RFC that relate to Participation
+   in IETF activities.  Without limiting the foregoing, each Participant
+   that is a Contributor makes the following representations to the
+   IETF:
+
+   A. Such Contributor represents that he or she has made or will
+      promptly make all disclosures required by Section 5.1.1 of this
+      document.
+
+   B. Such Contributor represents that there are no limits to the
+      Contributor's ability to make the grants, acknowledgments, and
+      agreements herein that are reasonably and personally known to the
+      Contributor.
+
+4.  Actions for Documents for Which IPR Disclosure(s) Have Been Received
+
+   A. The IESG, IAB, ISOC, and IETF Trust disclaim any responsibility
+      for identifying the existence of or for evaluating the
+      applicability of any IPR, disclosed or otherwise, to any IETF
+      technology, specification, or standard, and will take no position
+      on the validity or scope of any such IPR.
+
+
+
+
+
+
+
+Bradner & Contreras       Best Current Practice                 [Page 8]
+
+RFC 8179                  IP in IETF Technology                 May 2017
+
+
+   B. When the IETF Secretariat has received a notification under
+      Section 5.1.3 of the existence of non-participant IPR that
+      potentially Covers a technology under discussion at IETF or which
+      is the subject of an IETF Document, the IETF Secretariat shall
+      promptly publish such notification and will request that the
+      identified third party make an IPR disclosure in accordance with
+      the provisions of Section 5.
+
+   C. When an IPR disclosure has been made as provided in Section 5 of
+      this document, the IETF Secretariat may request from the purported
+      holder of such IPR a written assurance that upon approval by the
+      IESG for publication of the relevant IETF specification(s) as one
+      or more RFCs, all persons will be able to obtain the right to
+      implement, use, distribute, and exercise other rights with respect
+      to Implementing Technology under one of the licensing options
+      specified in Section 5.5.A below unless a statement identifying
+      one of the licensing options described in Section 5.5.A has
+      already been received by the IETF Secretariat.  The working group
+      proposing the use of the technology with respect to which the
+      Intellectual Property Rights are disclosed may assist the IETF
+      Secretariat in this effort.
+
+      The results of this procedure shall not, in themselves, block
+      publication of an IETF Document or advancement of an IETF Document
+      along the Standards Track.  A working group may take into
+      consideration the results of this procedure in evaluating the
+      technology, and the IESG may defer approval when a delay may
+      facilitate obtaining such assurances.  The results will, however,
+      be recorded by the IETF Secretariat and be made available online.
+
+   D. The IESG will not make any determination that any terms for the
+      use of an Implementing Technology (e.g., the assurance of
+      reasonable and non-discriminatory terms) have been fulfilled in
+      practice.  It will instead apply the normal requirements for the
+      advancement of Internet Standards (see RFC 6410).  If the two
+      unrelated implementations of the specification that are required
+      to advance from Proposed Standard to Internet Standard have been
+      produced by different organizations or individuals, or if the
+      "significant implementation and successful operational experience"
+      required to advance from Proposed Standard to Internet Standard
+      has been achieved, the IESG will presume that the terms are
+      reasonable and to some degree non-discriminatory.  Note that this
+      also applies to the case where multiple implementers have
+      concluded that no licensing is required.
+
+      This presumption may be challenged at any time, including during
+      the Last Call period by sending email to the IESG.
+
+
+
+
+Bradner & Contreras       Best Current Practice                 [Page 9]
+
+RFC 8179                  IP in IETF Technology                 May 2017
+
+
+5.  IPR Disclosures
+
+   This document refers to the IETF Participant making disclosures,
+   consistent with the general IETF philosophy that Participants in the
+   IETF act as individuals.  A Participant's obligation to make a
+   disclosure is also considered satisfied if the IPR owner, which may
+   be the Participant's employer or sponsor, makes an appropriate
+   disclosure in place of the Participant doing so.
+
+5.1.  Who Must Make an IPR Disclosure?
+
+5.1.1.  A Contributor's IPR in His or Her Contribution
+
+   Any Contributor who reasonably and personally knows of IPR meeting
+   the conditions of Section 5.6 which the Contributor believes Covers
+   or may ultimately Cover his or her written Contribution that is
+   intended to be used as an input into the IETF Standards Process, or
+   which the Contributor reasonably and personally knows his or her
+   employer or sponsor may assert against Implementing Technologies
+   based on such written Contribution, must make a disclosure in
+   accordance with Section 5.
+
+5.1.2.  An IETF Participant's IPR in Contributions by Others
+
+   If an individual's Participation relates to a written Contribution
+   made by somebody else that is intended to be used as an input into
+   the IETF Standards Process, and such Participant reasonably and
+   personally knows of IPR meeting the conditions of Section 5.6 which
+   the Participant believes Covers or may ultimately Cover that
+   Contribution, or which the Participant reasonably and personally
+   knows his or her employer or sponsor may assert against Implementing
+   Technologies based on such written Contribution, then such
+   Participant must make a disclosure in accordance with Section 5.
+
+5.1.3.  Voluntary IPR Disclosures
+
+   If any person has information about IPR that may Cover a technology
+   relevant to the IETF Standards Process, but such person is not
+   required to disclose such IPR under Sections 5.1.1 or 5.1.2 above,
+   such person is nevertheless encouraged to file an IPR disclosure as
+   described in Section 5.3 below.  Such an IPR disclosure should be
+   filed as soon as reasonably possible after the person realizes that
+   such IPR may Cover a Contribution.  Situations in which such
+   voluntary IPR disclosures may be made include when (a) IPR does not
+   meet the criteria in Section 5.6 because it is not owned or
+   controlled by an IETF Participant or his or her sponsor or employer
+   (referred to as third party IPR), (b) an individual is not required
+   to disclose IPR meeting the requirements of Section 5.6 because that
+
+
+
+Bradner & Contreras       Best Current Practice                [Page 10]
+
+RFC 8179                  IP in IETF Technology                 May 2017
+
+
+   individual is not Participating in the relevant IETF activity, or (c)
+   the IPR Covers technology that does not yet meet the criteria for a
+   Contribution hereunder (e.g., it is disclosed in an informal or other
+   non-IETF setting).
+
+5.2.  The Timing of Disclosure
+
+   Timely IPR disclosure is important because working groups need to
+   have as much information as they can while they are evaluating
+   alternative solutions.
+
+5.2.1.  Timing of Disclosure under Section 5.1.1
+
+   A. The IPR disclosure required pursuant to Section 5.1.1 must be made
+      as soon as reasonably possible after the Contribution is submitted
+      or made unless the required disclosure is already on file.  See
+      Section 5.4.2 for a discussion of when updates need to be made for
+      an existing disclosure.
+
+   B. If a Contributor first learns of IPR in its Contribution that
+      meets the conditions of Section 5.6, for example a new patent
+      application or the discovery of a relevant patent in a patent
+      portfolio, after the Contribution is published in an Internet-
+      Draft, a disclosure must be made as soon as reasonably possible
+      after the IPR becomes reasonably and personally known to the
+      Contributor.
+
+5.2.2.  Timing of Disclosure under Section 5.1.2
+
+   The IPR disclosure required pursuant to Section 5.1.2 must be made as
+   soon as reasonably possible after the Contribution is made, unless
+   the required disclosure is already on file.
+
+   Participants who realize that IPR meeting the conditions of Section
+   5.6 may Cover technology that will be or has been incorporated into a
+   Contribution, or is seriously being discussed in a working group, are
+   strongly encouraged to make a preliminary IPR disclosure.  That IPR
+   disclosure should be made as soon after coming to the realization as
+   reasonably possible, not waiting until the Contribution is actually
+   made.
+
+   If an IETF Participant first learns of IPR that meets the conditions
+   of Section 5.6 that may Cover a Contribution by another party, for
+   example a new patent application or the discovery of a relevant
+   patent in a patent portfolio, after the Contribution is made, an IPR
+   disclosure must be made as soon as reasonably possible after the
+   Contribution or IPR becomes reasonably and personally known to the
+   Participant.
+
+
+
+Bradner & Contreras       Best Current Practice                [Page 11]
+
+RFC 8179                  IP in IETF Technology                 May 2017
+
+
+5.2.3.  Timing of Disclosure by ADs and Others
+
+   By the nature of their office, IETF Area Directors or persons
+   assisting them may become aware of Contributions late in the process
+   (for example at IETF Last Call or during IESG review) and, therefore
+   in such cases, cannot reasonably be expected to disclose IPR Covering
+   those Contributions until they become aware of them.
+
+5.3.  How Must an IPR Disclosure be Made?
+
+   IPR disclosures must be made by following the instructions at
+   <https://www.ietf.org/ipr-instructions>.  IPR disclosures and other
+   IPR-related information, including licensing information, must not be
+   included in RFCs or other IETF Contributions.  The RFC Editor will
+   remove any IPR-related information from Contributions prior to
+   publication as an RFC.
+
+5.4.  What Must Be in an IPR Disclosure?
+
+5.4.1.  Content of IPR Disclosures
+
+   An IPR disclosure must include the following information to the
+   extent reasonably available to the discloser: (a) the numbers of any
+   issued patents or published patent applications (or indicate that the
+   disclosure is based on unpublished patent applications), (b) the
+   name(s) of the inventor(s) (with respect to issued patents and
+   published patent applications), (c) the specific IETF Document(s) or
+   activity affected, and (d) if the IETF Document is an Internet-Draft,
+   its specific version number.  In addition, if it is not reasonably
+   apparent which part of an IETF Document is allegedly Covered by
+   disclosed IPR, then it is helpful if the discloser identifies the
+   sections of the IETF Document that are allegedly Covered by such
+   disclosed IPR.
+
+5.4.2.  Updating IPR Disclosures
+
+   Those who disclose IPR should be aware that as Internet-Drafts
+   evolve, text may be added or removed, and it is recommended that they
+   keep this in mind when composing text for disclosures.
+
+   A. Unless sufficient information to identify the issued patent was
+      disclosed when the patent application was disclosed, an IPR
+      disclosure must be updated or a new disclosure made promptly after
+      any of the following has occurred: (1) the publication of a
+      previously unpublished patent application, (2) the abandonment of
+      a patent application, (3) the issuance of a patent on a previously
+      disclosed patent application, or (4) a material change to the IETF
+      Document covered by the Disclosure that causes the Disclosure to
+
+
+
+Bradner & Contreras       Best Current Practice                [Page 12]
+
+RFC 8179                  IP in IETF Technology                 May 2017
+
+
+      be covered by additional IPR.  If the patent application was
+      abandoned, then the new IPR disclosure must explicitly withdraw
+      any earlier IPR disclosures based on the application.  IPR
+      disclosures against a particular Contribution are assumed to be
+      inherited by revisions of the Contribution and by any RFCs that
+      are published from the Contribution unless the disclosure has been
+      updated or withdrawn.
+
+   B. If an IPR holder files patent applications in additional countries
+      which refer to, and the claims of which are substantially
+      identical to, the claims of a patent or patent application
+      previously disclosed in an IPR disclosure, the IPR holder is not
+      required to make a new or updated IPR disclosure as a result of
+      filing such applications or the issuance of patents on such
+      applications.
+
+   C. New or revised IPR disclosures may be made voluntarily at any
+      other time, provided that licensing information may only be
+      updated in accordance with Section 5.5.C.
+
+   D. Any person may submit an update to an existing IPR disclosure.  If
+      such update is submitted by a person other than the submitter of
+      the original IPR disclosure (as identified by name and email
+      address), then the IETF Secretariat shall attempt to contact the
+      original submitter to verify the update.  If the original
+      submitter responds that the proposed update is valid, the
+      Secretariat will update the IPR disclosure accordingly.  If the
+      original submitter responds that the proposed update is not valid,
+      the IETF Secretariat will not update the IPR disclosure.  If the
+      original submitter fails to respond after the IETF Secretariat has
+      made three separate inquiries and at least 30 days have elapsed
+      since the initial inquiry was made, then the IETF Secretariat will
+      inform the submitter of the proposed update that the update was
+      not validated and that the updater must produce legally sufficient
+      evidence that the submitter (or his/her employer) owns or has the
+      legal right to exercise control over the IPR subject to the IPR
+      disclosure.  If such evidence is satisfactory to the IETF
+      Secretariat, after consultation with the IETF legal counsel, then
+      the IETF Secretariat will make the requested update.  If such
+      evidence is not satisfactory, then the IETF Secretariat will not
+      make the requested update.
+
+5.4.3.  Blanket IPR Statements
+
+   The requirement to make an IPR disclosure is not satisfied by the
+   submission of a blanket statement that IPR may exist on every
+   Contribution or a general category of Contributions.  This is the
+   case because the aim of the disclosure requirement is to provide
+
+
+
+Bradner & Contreras       Best Current Practice                [Page 13]
+
+RFC 8179                  IP in IETF Technology                 May 2017
+
+
+   information about specific IPR against specific technology under
+   discussion in the IETF.  The requirement is also not satisfied by a
+   blanket statement of willingness or commitment to license all
+   potential IPR Covering such technology under fair, reasonable, and
+   non-discriminatory terms for the same reason.  However, the
+   requirement for an IPR disclosure is satisfied by a blanket statement
+   of the IPR discloser's commitment to license all of its IPR meeting
+   the requirements of Section 5.6 (and either Section 5.1.1 or 5.1.2)
+   to implementers of an IETF specification on a royalty-free (and
+   otherwise reasonable and non-discriminatory) basis as long as any
+   other terms and conditions are disclosed in the IPR disclosure.
+
+5.5.  Licensing Information in an IPR Disclosure
+
+   A. Since IPR disclosures will be used by IETF working groups during
+      their evaluation of alternative technical solutions, it is helpful
+      if an IPR disclosure includes information about licensing of the
+      IPR in case Implementing Technologies require a license.
+      Specifically, it is helpful to indicate whether, upon approval by
+      the IESG for publication as an RFC of the relevant IETF
+      specification(s), all persons will be able to obtain the right to
+      implement, use, distribute, and exercise other rights with respect
+      to an Implementing Technology a) under a royalty-free and
+      otherwise reasonable and non-discriminatory license, or b) under a
+      license that contains reasonable and non-discriminatory terms and
+      conditions, including a reasonable royalty or other payment, or c)
+      without the need to obtain a license from the IPR holder (e.g., a
+      covenant not to sue with or without defensive suspension, as
+      described in Section 7).
+
+   B. The inclusion of a licensing declaration is not mandatory, but it
+      is encouraged so that the working groups will have as much
+      information as they can during their deliberations.  If the
+      inclusion of a licensing declaration in an IPR disclosure would
+      significantly delay its submission, then the discloser may submit
+      an IPR disclosure without a licensing declaration and then submit
+      a new IPR disclosure when the licensing declaration becomes
+      available.  IPR disclosures that voluntarily provide text that
+      includes licensing information, comments, notes, or URLs for other
+      information may also voluntarily include details regarding
+      specific licensing terms that the IPR holder intends to offer to
+      implementers of Implementing Technologies, including maximum
+      royalties.
+
+   C. It is likely that IETF will rely on licensing declarations and
+      other information that may be contained in an IPR disclosure and
+      that implementers will make technical, legal, and commercial
+      decisions on the basis of such commitments and information.  Thus,
+
+
+
+Bradner & Contreras       Best Current Practice                [Page 14]
+
+RFC 8179                  IP in IETF Technology                 May 2017
+
+
+      when licensing declarations and other information, comments,
+      notes, or URLs for further information are contained in an IPR
+      disclosure, the persons making such disclosure agree and
+      acknowledge that the commitments and information contained in such
+      disclosure shall be irrevocable and will attach, to the extent
+      permissible by law, to the associated IPR, and all implementers of
+      Implementing Technologies will be justified and entitled to rely
+      on such materials in relating to such IPR, whether or not such IPR
+      is subsequently transferred to a third party by the IPR holder
+      making the commitment or providing the information.  IPR holders
+      making IPR disclosures that contain licensing declarations or
+      providing such information, comments, notes, or URLs for further
+      information must ensure that such commitments are binding on any
+      transferee of the relevant IPR, and that such transferee will use
+      reasonable efforts to ensure that such commitments are binding on
+      a subsequent transferee of the relevant IPR, and so on.
+
+   D. Licensing declarations must be made by people who are authorized
+      to make such declarations as discussed in Section 5.6 of this
+      document.
+
+5.6.  Level of Control over IPR Requiring Disclosure
+
+   IPR disclosures under Sections 5.1.1 and 5.1.2 are required with
+   respect to IPR (a) that is owned, directly or indirectly, by the
+   individual Contributor or his/her employer or sponsor (if any), or
+   (b) that such persons otherwise have the right to license or assert,
+   or (c) from which such persons derive a direct or indirect pecuniary
+   benefit, or (d) as to which an individual Contributor is listed as an
+   inventor on the relevant patent or patent application.
+
+5.7.  Disclosures for Oral Contributions
+
+   If a Contribution is oral and is not followed promptly by a written
+   disclosure of the same material, and if such oral Contribution would
+   be subject to a requirement that an IPR Disclosure be made (had such
+   oral Contribution been written), then the Contributor must accompany
+   such oral Contribution with an oral declaration that he/she is aware
+   of relevant IPR in as much detail as reasonably possible or file an
+   IPR Declaration with respect to such oral Contribution that otherwise
+   complies with the provisions of Sections 5.1 to 5.6 above.
+
+5.8.  General Disclosures
+
+   As described in Section 5.3, the IETF will make available a public
+   facility (e.g., a web page and associated database) for the posting
+   of IPR disclosures conforming with the disclosure requirements of
+   this policy.  In addition, the IETF may make available a public
+
+
+
+Bradner & Contreras       Best Current Practice                [Page 15]
+
+RFC 8179                  IP in IETF Technology                 May 2017
+
+
+   facility for the posting of other IPR-related information and
+   disclosures that do not satisfy the requirements of this policy but
+   which may otherwise be informative and relevant to the IETF ("General
+   Disclosures").  Such General Disclosures may include, among other
+   things, "blanket disclosures" that do not contain a royalty-free
+   licensing commitment as described in Section 5.4.3, disclosures of
+   IPR that do not identify the specific IETF Documents Covered by the
+   disclosed IPR, and licensing statements or commitments that are
+   applicable generally and not to specific IPR disclosures.  All of
+   this information may be helpful to the IETF community, and its
+   disclosure is encouraged.  However, General Disclosures do not
+   satisfy an IETF Participant's obligation to make IPR disclosures as
+   required by this policy.
+
+   In some cases, if an IPR disclosure submitted by an IETF Participant
+   does not meet the requirements of this policy, the IETF may elect to
+   post the non-conforming IPR disclosure as a General Disclosure in
+   order to provide the greatest amount of information to the IETF
+   community.  This action does not excuse the IETF Participant from
+   submitting a new IPR disclosure that conforms with the requirements
+   of Sections 5.1 to 5.6.  The IETF reserves the right to decline to
+   publish General Disclosures that are not relevant to IETF activities,
+   that are, or are suspected of being, defamatory, false, misleading,
+   in violation of privacy or other applicable laws or regulations, or
+   that are in a format that is not suitable for posting on the IETF
+   facility that has been designated for General Disclosures.
+
+6.  Failure to Disclose
+
+   There may be cases in which individuals are not permitted by their
+   employers or by other factors to disclose the existence or substance
+   of patent applications or other IPR.  Since disclosure is required
+   for anyone making a Contribution or Participating in IETF activities,
+   a person who is not willing or able to disclose IPR for this reason,
+   or any other reason, must not contribute to or participate in IETF
+   activities with respect to technologies that he or she reasonably and
+   personally knows may be Covered by IPR which he or she will not
+   disclose, unless that person knows that his or her employer or
+   sponsor will make the required disclosures on his or her behalf.
+
+   Contributing to or Participating in IETF activities about a
+   technology without making required IPR disclosures is a violation of
+   IETF policy.
+
+   In addition to any remedies or defenses that may be available to
+   implementers and others under the law with respect to such a
+   violation (e.g., rendering the relevant IPR unenforceable), sanctions
+   are available through the normal IETF processes for handling
+
+
+
+Bradner & Contreras       Best Current Practice                [Page 16]
+
+RFC 8179                  IP in IETF Technology                 May 2017
+
+
+   disruptions to IETF work.  See [RFC6701] for details regarding the
+   sanctions defined in various existing Best Current Practice
+   documents.
+
+7.  Evaluating Alternative Technologies in IETF Working Groups
+
+   In general, IETF working groups prefer technologies with no known IPR
+   claims or, for technologies with claims against them, an offer of
+   royalty-free licensing.  However, to solve a given technical problem,
+   IETF working groups have the discretion to adopt a technology as to
+   which IPR claims have been made if they feel that this technology is
+   superior enough to alternatives with fewer IPR claims or free
+   licensing to outweigh the potential cost of the licenses.  To assist
+   these working groups, it is helpful for the IPR claimants to declare,
+   in their IPR Declarations, the terms, if any, on which they are
+   willing to license their IPR Covering the relevant IETF Documents.
+
+   A. When adopting new technologies, the participants in an IETF
+      working group are expected to evaluate all the relevant tradeoffs
+      from their perspective.  Most of the time these considerations are
+      based purely on technical excellence, but IPR considerations may
+      also affect the evaluation and specific licensing terms may affect
+      the participants' opinion on the desirability of adopting a
+      particular technology.
+
+   B. The IETF has no official preference among different licensing
+      terms beyond what was stated at the beginning of this section.
+      However, for information and to assist participants in
+      understanding what license conditions may imply, what follows are
+      some general observations about some common types of conditions.
+      The following paragraphs are provided for information only:
+
+   C. When there is no commitment to license patents covering the
+      technology, this creates uncertainty that obviously is concerning.
+      These concerns do not exist when there is a commitment to license,
+      but the license terms can still differ greatly.  Some common
+      conditions include 1) terms that are fair, reasonable, and non-
+      discriminatory, and which may bear royalties or other financial
+      obligations (FRAND or RAND); 2) royalty-free terms that are
+      otherwise fair, reasonable, and non-discriminatory (RAND-z); and
+      3) commitments not to assert declared IPR, possibly conditional on
+      reciprocity.  Open source projects, for instance, often prefer the
+      latter two.  Note that licenses often come with complex terms that
+      have to be evaluated in detail, and this crude classification may
+      not be sufficient to make a proper evaluation.  For instance,
+      licenses may also include reciprocity and defensive suspension
+      requirements that require careful evaluation.
+
+
+
+
+Bradner & Contreras       Best Current Practice                [Page 17]
+
+RFC 8179                  IP in IETF Technology                 May 2017
+
+
+   D. The level of use of a technology against which IPR is disclosed is
+      also an important factor in weighing IPR encumbrances and
+      associated licensing conditions against technical merits.  For
+      example, if technologies are being considered for a mandatory-to-
+      implement change to a widely deployed protocol, the hurdle should
+      be very high for encumbered technologies, whereas a similar hurdle
+      for a new protocol could conceivably be lower.
+
+   E. IETF working groups and IETF areas may, however, adopt stricter
+      requirements in specific cases.  For instance, the IETF Security
+      Area has adopted stricter requirements for some security
+      technologies.  It has become common to have a mandatory-to-
+      implement security technology in IETF technology specifications.
+      This is to ensure that there will be at least one common security
+      technology present in all implementations of such a specification
+      that can be used in all cases.  This does not limit the
+      specification from including other security technologies, the use
+      of which could be negotiated between implementations.  An IETF
+      consensus has developed that no mandatory-to-implement security
+      technology can be specified in an IETF specification unless it has
+      no known IPR claims against it or a royalty-free license is
+      available to implementers of the specification.  It is possible to
+      specify such a technology in violation of this principle if there
+      is a very good reason to do so and if that reason is documented
+      and agreed to through IETF consensus.  This limitation does not
+      extend to other security technologies in the same specification if
+      they are not listed as mandatory to implement.
+
+   F. It should also be noted that the absence of IPR disclosures at any
+      given time is not the same thing as the knowledge that there will
+      be no IPR disclosure in the future, or that no IPR Covers the
+      relevant technology.  People or organizations not currently
+      involved in the IETF or people or organizations that discover IPR
+      they feel to be relevant in their patent portfolios can make IPR
+      disclosures at any time.
+
+   G. It should be noted that the validity and enforceability of any IPR
+      may be challenged for legitimate reasons outside the IETF.  The
+      mere existence of an IPR disclosure should not be taken to mean
+      that the disclosed IPR is valid or enforceable or actually Covers
+      a particular Contribution.  Although the IETF can make no actual
+      determination of validity, enforceability, or applicability of any
+      particular IPR, it is reasonable that individuals in a working
+      group or the IESG will take into account their own views of the
+      validity, enforceability, or applicability of IPR in their
+      evaluation of alternative technologies.
+
+
+
+
+
+Bradner & Contreras       Best Current Practice                [Page 18]
+
+RFC 8179                  IP in IETF Technology                 May 2017
+
+
+8.  Change Control for Technologies
+
+   The IETF must have change control over the technology described in
+   any Standards Track IETF Documents in order to fix problems that may
+   be discovered or to produce other derivative works.
+
+   In some cases, the developer of patented or otherwise controlled
+   technology may decide to hand over to the IETF the right to evolve
+   the technology (a.k.a., "change control").  The implementation of an
+   agreement between the IETF and the developer of the technology can be
+   complex.  (See [RFC1790] and [RFC2339] for examples.)
+
+   Note that there is no inherent prohibition against a Standards Track
+   IETF Document making a normative reference to proprietary technology.
+   For example, a number of IETF standards support proprietary
+   cryptographic transforms.
+
+9.  Licensing Requirements to Advance Standards Track IETF Documents
+
+   Section 2.2 of RFC 6410 [RFC6410] states:
+
+      If the technology required to implement the specification requires
+      patented or otherwise controlled technology, then the set of
+      implementations must demonstrate at least two independent,
+      separate and successful uses of the licensing process.
+
+   A key word in this text is "requires".  The mere existence of
+   disclosed IPR does not necessarily mean that licenses are actually
+   required in order to implement the technology.
+
+10.  No IPR Disclosures in IETF Documents
+
+   IETF Documents must not contain any mention of specific IPR.  All
+   specific IPR disclosures must be submitted as described in Section 5.
+   Readers should always refer to the online web page
+   <https://www.ietf.org/ipr/> to get a full list of IPR disclosures
+   received by the IETF concerning any Contribution.
+
+11.  Application to Non-IETF Stream Documents
+
+   This document has been developed for the benefit and use of the IETF
+   community.  As such, the rules set forth herein apply to all
+   Contributions and IETF Documents that are in the "IETF Document
+   Stream" as defined in Section 5.1.1 of [RFC4844] (i.e., those that
+   are contributed, developed, edited, and published as part of the IETF
+   Standards Process).
+
+
+
+
+
+Bradner & Contreras       Best Current Practice                [Page 19]
+
+RFC 8179                  IP in IETF Technology                 May 2017
+
+
+   The rules that apply to documents in Alternate Streams are
+   established by the managers of those Alternate Streams (currently the
+   Internet Architecture Board (IAB), Internet Research Steering Group
+   (IRSG), and Independent Submission Editor, as specified in
+   [RFC4844]).  These managers may elect, through their own internal
+   processes, to cause this document to be applied to documents
+   contributed to them for development, editing, and publication in
+   their respective Alternate Streams.  If an Alternate Stream manager
+   elects to adopt this document, they must do so in a manner that is
+   public and notifies their respective document Contributors that this
+   document applies to their respective Alternate Streams.  In such
+   case, each occurrence of the term "Contribution" and "IETF Document"
+   in this document shall be read to mean a contribution or document in
+   such Alternate Stream, as the case may be.  It would be advisable for
+   such Alternate Stream managers to consider adapting the definitions
+   of "Contribution" and other provisions in this document to suit their
+   particular needs.
+
+12.  Security Considerations
+
+   This document relates to the IETF process, not any particular
+   technology.  There are security considerations when adopting any
+   technology, whether IPR protected or not.  A working group should
+   take those security considerations into account as one part of
+   evaluating the technology, just as IPR is one part, but there are no
+   known issues of security with IPR procedures.
+
+13.  Changes since RFCs 3979 and 4879
+
+   The material in RFC 3979 was significantly reorganized to produce
+   this document.  This section reviews the actual changes in content
+   since RFC 3979 and does not detail the reorganization.  These changes
+   are listed from the point of view of this document with reference to
+   the RFC 3979 section where useful.  This section is intended only as
+   an informational summary of the text contained in Sections 1-12 of
+   this document.  This section does not constitute the official policy
+   of the IETF and should not be referred to or quoted as such.  Any
+   discrepancies or ambiguities shall be resolved in favor of the
+   language contained in Sections 1-12 of this document.
+
+   Boilerplate - Since the document boilerplate formerly in Section 5 of
+      RFC 3979 has been moved to the Trust Legal Provisions since 2009,
+      the boilerplate requirements have been deleted from this document.
+
+
+
+
+
+
+
+
+Bradner & Contreras       Best Current Practice                [Page 20]
+
+RFC 8179                  IP in IETF Technology                 May 2017
+
+
+   1 - Definitions
+
+      1.a - "Alternate Stream" definition (new): Added to enable IRTF,
+         IAB, and Independent Submission streams to adopt and use BCP 79
+         more easily.
+
+      1.c - "Contribution" (was 1.c)
+
+            Removed "IETF" to more easily enable other Streams to adopt
+            this policy.
+
+            Added "intended to affect the IETF Standards Process", which
+            is needed to prevent information presentations (e.g.,
+            plenary guest speakers) from being considered Contributions.
+
+            Added BOF, design team, web site, and chat room.
+            Contributions can be made in any of these places.
+
+      1.e - "Covers" (was 1.n) - Added "provisional patent application"
+         - Required to eliminate ambiguity whether provisional
+         applications are included.
+
+      1.h - "IETF Documents" (was 1.h) - Limited to IETF (not Alternate
+         Stream) documents.
+
+      1.i - "IETF Standards Process" (was 1.b) - Clarify that
+         Contributions can be made in contexts other than traditional
+         IETF standards development.
+
+      1.j - "IPR" (was 1.o) - Removed reference to copyrights, database
+         rights, and data rights.  Copyright in IETF Documents and
+         contributions is addressed under RFC 5378 and is treated very
+         differently than patents, which are the focus of BCP 79.
+         Data/database rights not relevant to IETF standards, and cannot
+         be registered or disclosed in the manner of patents.
+
+      1.l - "Internet-Draft" (was 1.g) - Reduced to reference RFC 2026
+         without additional description for clarity.
+
+      1.m - "Participating in an IETF discussion or activity" (new) -
+         Due to numerous ambiguities over the years, it was necessary to
+         add a section describing what it means to "participate" in an
+         IETF activity.
+
+      1.o - "RFC" (was 1.e) - Added cross-reference to RFC 2026 and
+         eliminated textual description of RFC permanence.
+
+
+
+
+
+Bradner & Contreras       Best Current Practice                [Page 21]
+
+RFC 8179                  IP in IETF Technology                 May 2017
+
+
+   2 - Introduction - Added text that offers an overview of why we have
+      this policy, cut prior discussion of Section 10 of RFC 2026 as no
+      longer necessary, and added references to subsequent RFCs relating
+      to IPR, including RFC 5378 and 6702.
+
+   3 - Participation in the IETF (was "Contributions to the IETF") -
+      Changed focus to participation rather than making of Contributions
+      and explained why we require IPR disclosure.
+
+   old 3.2.1.C - Deleted because all required legends in IETF Documents
+      are now described in RFC 5378 and Trust Legal Provisions.
+
+   3.3 - Obligations on Participants - Added to make clear that
+      participation in IETF obligates the participant to comply with
+      IETF rules.
+
+   old 4.A - Removed because inconsistent with current and historical
+      practice.  Also, all legends in IETF Documents are now addressed
+      in Trust Legal Provisions.
+
+   4.A - "The IESG, IAB..." - Added IAB, ISOC, and IETF Trust to
+      disclaimer.
+
+   4.B - "When the IETF Secretariat..." - Added description of current
+      procedure used to publish third party IPR disclosures.
+
+   4.C - "When an IPR disclosure..." - Updated to reflect current
+      practice and roles (e.g., Secretariat rather than IETF Exec Dir).
+
+   4.D - Determination of Provision of Reasonable and Non-discriminatory
+      Terms (was Section 4.1) - Various edits made to this paragraph to
+      reflect current process for advancement of standards.
+
+   old 5 - Deleted because it was not needed.
+
+   5.1.1 - Contributor's IPR in His or Her Contribution (was Section
+      6.1.1) - Limits disclosure obligation to written Contributions
+      intended to be used as inputs to the IETF Standards Process.  Oral
+      disclosures are now covered in Section 5.7.
+
+   5.1.2 - An IETF Participant's IPR in Contributions by Others (was
+      Section 6.1.2) - Revisions made consistent with Section 5.1.1
+      above.
+
+
+
+
+
+
+
+
+Bradner & Contreras       Best Current Practice                [Page 22]
+
+RFC 8179                  IP in IETF Technology                 May 2017
+
+
+   5.1.3 -  Voluntary IPR Disclosures (was Section 6.1.3) - Fixes
+      procedures for making voluntary IPR disclosures and adds examples
+      of when voluntary disclosures may be appropriate.  In addition to
+      IPR of others, voluntary disclosures are encouraged when an IETF
+      Participant is aware of its own IPR that covers IETF work in which
+      it is not an active participant and when the technology is
+      disclosed in other than an IETF setting.
+
+   5.2.1 - Timing of Disclosure under Section 5.1.1 (was Section 6.2.1)
+      - Trigger for disclosure changed from publication of a
+      Contribution in an I-D to "submitted or made"; lengthy example
+      regarding updates deleted in lieu of cross-reference to Section
+      5.4.2 regarding updates.
+
+   5.2.2 - Timing of Disclosure under Section 5.1.2 (was Section 6.2.2)
+      - Corresponding changes made per Section 5.2.1.
+
+   5.2.3 - Timing of Disclosure by ADs - Added to clarify AD disclosure
+      obligations.
+
+   5.3 - "IPR disclosures and other..." - Reflects current practice
+      regarding prohibition of including IPR information directly in
+      IETF Documents.
+
+   5.4.1 - Content of IPR Disclosures (was Section 6.4.1) - Added
+      requirement to disclose names of inventors - Disclosing the
+      name(s) of inventors on a patent will make it more likely that
+      IETF Participants will recognize whether the inventor is an IETF
+      Participant and what IETF activities that individual participates
+      in.  This information is easy for the discloser to provide and
+      less convenient for every reader of the IPR disclosure to look up
+      in patent office records (if even available).
+
+   5.4.2 - Updating IPR Disclosures (was Section 6.4.2) - Significant
+      revisions and additional detail added regarding updating of IPR
+      disclosures upon events such as issuance of patents, amendment of
+      claims, employee changing jobs, employer acquires another company,
+      etc.
+
+   5.4.2.D - Clarify that additional IPR disclosures are not needed for
+      foreign counterparts.
+
+   5.4.3 - Blanket IPR Statements (was Section 6.4.3) - wording
+      clarifications and changed "willingness" to "commitment".  A
+      blanket IPR disclosure which does not list specific patent numbers
+      is not compliant with this policy unless the discloser commits
+      (and is not just willing) to license such patents on royalty-free
+      and otherwise reasonable terms.
+
+
+
+Bradner & Contreras       Best Current Practice                [Page 23]
+
+RFC 8179                  IP in IETF Technology                 May 2017
+
+
+   5.5.C - "It is likely that IETF will rely ..." (new paragraph) -
+      Makes licensing declarations irrevocable so that they may be
+      relied upon in the future by implementers.
+
+   5.5.D - "Licensing declarations ..." (new paragraph) - Requires that
+      licensing declarations must be made by people authorized to make
+      them.
+
+   5.6 - Level of Control over IPR Requiring Disclosure (was Section
+      6.6) - In addition to ownership of IPR, language added to require
+      disclosure when Participants derive a pecuniary benefit from the
+      IPR, or the individual is a listed inventor - Clarifications to
+      address situations not covered in earlier version.
+
+   5.7 - Disclosures for Oral Contributions (new): Describes procedure
+      for oral Contributions.  Previously, statements regarding oral
+      statements were contradictory.  Some places said that disclosures
+      must be made for oral statements, but others talk about
+      disclosures only being required following publication as an I-D.
+      Under new text, oral statements don't trigger the normal IPR
+      disclosure obligations, as oral statements are inherently
+      imprecise and it's hard to know when they describe something
+      covered by the technical terms of a patent claim.  However, if an
+      oral contribution is made and it is not followed by a written
+      contribution, then the oral discloser must either make a
+      concurrent oral IPR disclosure or file a formal written
+      disclosure.
+
+   5.8 - General Disclosures (new) - Describes the IETF's public
+      disclosure feature, which allows IPR disclosures to be made by
+      anyone, whether or not an IETF Participant.  The feature has been
+      up and running for years, and this language describes its current
+      implementation.
+
+   6 - Failure to Disclose (was Section 7) - Technical and clarity
+      corrections, as well as new language describing potential remedies
+      for failures to disclose IPR in accordance with IETF rules,
+      including IESG actions described in RFC 6701.
+
+   7 - Evaluating Alternative Technologies in IETF Working Groups (was
+      Section 8).
+
+      Paragraph 1 - Minor wording changes for clarity.
+
+      Paragraphs 2-5 (new) - Relate to the considerations made by IETF
+          WGs when evaluating patent and licensing disclosures
+         concerning IETF standards.
+
+
+
+
+Bradner & Contreras       Best Current Practice                [Page 24]
+
+RFC 8179                  IP in IETF Technology                 May 2017
+
+
+      Paragraph 6 - security technologies (new) - Makes clear that
+         security is only one example of stricter requirements.  Also
+         requires that violation of requirements for royalty-free
+         licensing in the security area can be made only with IETF
+         consensus.
+
+      Paragraphs 7-8 (were paragraphs 3-4) - Wording changes for
+         clarity.
+
+   9 - Licensing Requirements to Advance Standards Track IETF Documents
+      (was Section 10) - Wording updated to reflect RFC 6410.
+
+   10 - No IPR Disclosures in IETF Documents (was Section 11) - Wording
+      simplified to refer to Section 5.
+
+   11 - Application to Non-IETF Stream Documents (new) - Adds procedures
+      to be followed by Alternate Stream (IAB, IRTF, Independent
+      Submission) managers to adopt these rules and procedures.
+      Borrowed and adapted the copyright language used in the Trust
+      Legal Provisions.  Each Alternate Stream (Independent Submission,
+      IRTF, and IAB) would need to take some action (preferably issuing
+      an RFC) to adopt BCP 79 for its stream.  This was done with
+      copyright already, and pretty smoothly.
+
+14.  References
+
+14.1.  Normative References
+
+   [RFC2026] Bradner, S., "The Internet Standards Process -- Revision
+             3", BCP 9, RFC 2026, DOI 10.17487/RFC2026, October 1996,
+             <http://www.rfc-editor.org/info/rfc2026>.
+
+   [RFC2028] Hovey, R. and S. Bradner, "The Organizations Involved in
+             the IETF Standards Process", BCP 11, RFC 2028,
+             DOI 10.17487/RFC2028, October 1996,
+             <http://www.rfc-editor.org/info/rfc2028>.
+
+   [RFC4844] Daigle, L., Ed., and Internet Architecture Board, "The RFC
+             Series and RFC Editor", RFC 4844, DOI 10.17487/RFC4844,
+             July 2007, <http://www.rfc-editor.org/info/rfc4844>.
+
+   [RFC6410] Housley, R., Crocker, D., and E. Burger, "Reducing the
+             Standards Track to Two Maturity Levels", BCP 9, RFC 6410,
+             DOI 10.17487/RFC6410, October 2011,
+             <http://www.rfc-editor.org/info/rfc6410>.
+
+
+
+
+
+
+Bradner & Contreras       Best Current Practice                [Page 25]
+
+RFC 8179                  IP in IETF Technology                 May 2017
+
+
+14.2.  Informative References
+
+   [RFC1790] Cerf, V., "An Agreement between the Internet Society and
+             Sun Microsystems, Inc. in the Matter of ONC RPC and XDR
+             Protocols", RFC 1790, DOI 10.17487/RFC1790, April 1995,
+             <http://www.rfc-editor.org/info/rfc1790>.
+
+   [RFC2339] The Internet Society and Sun Microsystems, "An Agreement
+             Between the Internet Society, the IETF, and Sun
+             Microsystems, Inc. in the matter of NFS V.4 Protocols",
+             RFC 2339, DOI 10.17487/RFC2339, May 1998,
+             <http://www.rfc-editor.org/info/rfc2339>.
+
+   [RFC5378] Bradner, S., Ed., and J. Contreras, Ed., "Rights
+             Contributors Provide to the IETF Trust", BCP 78, RFC 5378,
+             DOI 10.17487/RFC5378, November 2008,
+             <http://www.rfc-editor.org/info/rfc5378>.
+
+   [RFC6701] Farrel, A. and P. Resnick, "Sanctions Available for
+             Application to Violators of IETF IPR Policy", RFC 6701,
+             DOI 10.17487/RFC6701, August 2012,
+             <http://www.rfc-editor.org/info/rfc6701>.
+
+   [RFC6702] Polk, T. and P. Saint-Andre, "Promoting Compliance with
+             Intellectual Property Rights (IPR) Disclosure Rules",
+             RFC 6702, DOI 10.17487/RFC6702, August 2012,
+             <http://www.rfc-editor.org/info/rfc6702>.
+
+Editors' Addresses
+
+   Scott Bradner
+   15 High St.
+   Cambridge, MA  02138
+   United States of America
+
+   Phone: +1 202 558 5661
+   Email: sob@sobco.com
+
+
+   Jorge Contreras
+   University of Utah
+   S.J. Quinney College of Law
+   383 South University St.
+   Salt Lake City, UT  84112
+   United States of America
+
+   Email:  cntreras@gmail.com
+
+
+
+
+Bradner & Contreras       Best Current Practice                [Page 26]
+
