@@ -1,5 +1,16 @@
 # Release History
 
+## 3.0.0b3 (2021-04-16)
+
+  **Features**
+  - Added operation AnomalyDetectorClientOperationsMixin.list_multivariate_model
+  - Added operation AnomalyDetectorClientOperationsMixin.train_multivariate_model
+  - Added operation AnomalyDetectorClientOperationsMixin.detect_anomaly
+  - Added operation AnomalyDetectorClientOperationsMixin.get_detection_result
+  - Added operation AnomalyDetectorClientOperationsMixin.get_multivariate_model
+  - Added operation AnomalyDetectorClientOperationsMixin.export_model
+  - Added operation AnomalyDetectorClientOperationsMixin.delete_multivariate_model
+
 ## 3.0.0b2 (2020-08-27)
 
   **Bug Fixes**

@@ -11,8 +11,6 @@ from azure.core.paging import ItemPaged
 from azure.core.tracing.decorator import distributed_trace
 from azure.core.pipeline import Pipeline
 
-from ._constants import CONNECTION_TIMEOUT
-from ._generated import AzureTable
 from ._generated.models import TableProperties, TableServiceProperties
 from ._models import (
     TablePropertiesPaged,
@@ -20,24 +18,15 @@ from ._models import (
     service_properties_deserialize,
     TableItem
 )
-from ._base_client import parse_connection_str
+from ._base_client import parse_connection_str, TablesBaseClient, TransportWrapper
 from ._models import LocationMode
 from ._error import _process_table_error
 from ._table_client import TableClient
-from ._table_service_client_base import TableServiceClientBase
+from ._serialize import _parameter_filter_substitution
 
 
-class TableServiceClient(TableServiceClientBase):
-    """ :ivar str account_name: Name of the storage account (Cosmos or Azure)"""
-
-    def __init__(
-        self,
-        account_url,  # type: str
-        credential=None,  # type: str
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> None
-        """Create TableServiceClient from a Credential.
+class TableServiceClient(TablesBaseClient):
+    """Create TableServiceClient from a Credential.
 
         :param account_url:
             A url to an Azure Storage account.
@@ -66,15 +55,12 @@ class TableServiceClient(TableServiceClientBase):
                 :dedent: 8
                 :caption: Authenticating a TableServiceClient from a Shared Account Key
         """
-        super(TableServiceClient, self).__init__(
-            account_url, service="table", credential=credential, **kwargs
-        )
-        kwargs['connection_timeout'] = kwargs.get('connection_timeout') or CONNECTION_TIMEOUT
-        self._client = AzureTable(
-            self.url,
-            policies=kwargs.pop('policies', self._policies),
-            **kwargs
-        )
+
+    def _format_url(self, hostname):
+        """Format the endpoint URL according to the current location
+        mode hostname.
+        """
+        return "{}://{}{}".format(self.scheme, hostname, self._query_str)
 
     @classmethod
     def from_connection_string(
@@ -100,7 +86,7 @@ class TableServiceClient(TableServiceClientBase):
                 :caption: Authenticating a TableServiceClient from a connection_string
         """
         account_url, credential = parse_connection_str(
-            conn_str=conn_str, credential=None, service="table", keyword_args=kwargs
+            conn_str=conn_str, credential=None, keyword_args=kwargs
         )
         return cls(account_url, credential=credential, **kwargs)
 
@@ -268,7 +254,7 @@ class TableServiceClient(TableServiceClientBase):
     @distributed_trace
     def query_tables(
         self,
-        filter,  # pylint: disable=redefined-builtin
+        query_filter,
         **kwargs  # type: Any
     ):
         # type: (...) -> ItemPaged[TableItem]
@@ -294,9 +280,9 @@ class TableServiceClient(TableServiceClientBase):
                 :caption: Querying tables in a storage account
         """
         parameters = kwargs.pop("parameters", None)
-        filter = self._parameter_filter_substitution(
-            parameters, filter
-        )  # pylint: disable=redefined-builtin
+        query_filter = _parameter_filter_substitution(
+            parameters, query_filter
+        )
         top = kwargs.pop("results_per_page", None)
         user_select = kwargs.pop("select", None)
         if user_select and not isinstance(user_select, str):
@@ -306,7 +292,7 @@ class TableServiceClient(TableServiceClientBase):
         return ItemPaged(
             command,
             results_per_page=top,
-            filter=filter,
+            filter=query_filter,
             select=user_select,
             page_iterator_class=TablePropertiesPaged,
         )
@@ -360,24 +346,17 @@ class TableServiceClient(TableServiceClientBase):
         :rtype: ~azure.data.tables.TableClient
 
         """
-
-        _pipeline = Pipeline(
-            transport=self._client._client._pipeline._transport,  # pylint: disable=protected-access
-            policies=self._policies,  # pylint: disable=protected-access
+        pipeline = Pipeline(
+            transport=TransportWrapper(self._client._client._pipeline._transport), # pylint: disable = protected-access
+            policies=self._policies
         )
-
         return TableClient(
             self.url,
             table_name=table_name,
             credential=self.credential,
-            key_resolver_function=self.key_resolver_function,
-            require_encryption=self.require_encryption,
-            key_encryption_key=self.key_encryption_key,
             api_version=self.api_version,
-            transport=self._client._client._pipeline._transport,  # pylint: disable=protected-access
-            policies=self._policies,
-            _configuration=self._client._config,  # pylint: disable=protected-access
-            _location_mode=self._location_mode,
+            pipeline=pipeline,
+            location_mode=self._location_mode,
             _hosts=self._hosts,
             **kwargs
         )

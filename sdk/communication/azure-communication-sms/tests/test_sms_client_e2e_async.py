@@ -144,7 +144,6 @@ class SMSClientTestAsync(AsyncCommunicationTestCase):
                     to=[self.phone_number],
                     message="Hello World via SMS")
         
-        assert str(ex.value.status_code) == "404"
         assert ex.value.message is not None
 
     @AsyncCommunicationTestCase.await_prepared_test

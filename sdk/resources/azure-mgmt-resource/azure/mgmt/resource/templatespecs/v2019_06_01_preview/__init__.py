@@ -7,6 +7,9 @@
 # --------------------------------------------------------------------------
 
 from ._template_specs_client import TemplateSpecsClient
+from ._version import VERSION
+
+__version__ = VERSION
 __all__ = ['TemplateSpecsClient']
 
 try:

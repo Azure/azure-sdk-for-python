@@ -13,31 +13,33 @@ interactions:
       Content-Type:
       - application/json
       Date:
-      - Fri, 29 Jan 2021 22:23:15 GMT
+      - Tue, 13 Apr 2021 17:54:26 GMT
       User-Agent:
-      - azsdk-python-communication-identity/1.0.0b4 Python/3.9.0 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-communication-identity/1.0.0 Python/3.9.0 (Windows-10-10.0.19041-SP0)
       x-ms-return-client-request-id:
       - 'true'
     method: POST
-    uri: https://communicationegrcrs.communication.azure.com/identities?api-version=2021-03-07
+    uri: https://sanitized.communication.azure.com/identities?api-version=2021-03-07
   response:
     body:
       string: '{"identity": {"id": "sanitized"}}'
     headers:
       api-supported-versions:
-      - 2020-07-20-preview2, 2021-03-07
+      - 2020-07-20-preview2, 2021-02-22-preview1, 2021-03-07
       content-type:
       - application/json; charset=utf-8
       date:
-      - Fri, 29 Jan 2021 22:23:14 GMT
+      - Tue, 13 Apr 2021 17:54:27 GMT
       ms-cv:
-      - TgHUTqnyBk+TTGrk+qGYCg.0
+      - NpGxr/VCv0i3/F8p8B/PEw.0
+      request-context:
+      - appId=
       strict-transport-security:
       - max-age=2592000
       transfer-encoding:
       - chunked
       x-processing-time:
-      - 22ms
+      - 16ms
     status:
       code: 201
       message: Created
@@ -53,27 +55,29 @@ interactions:
       Content-Length:
       - '0'
       Date:
-      - Fri, 29 Jan 2021 22:23:15 GMT
+      - Tue, 13 Apr 2021 17:54:27 GMT
       User-Agent:
-      - azsdk-python-communication-identity/1.0.0b4 Python/3.9.0 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-communication-identity/1.0.0 Python/3.9.0 (Windows-10-10.0.19041-SP0)
       x-ms-return-client-request-id:
       - 'true'
     method: DELETE
-    uri: https://communicationegrcrs.communication.azure.com/identities/sanitized?api-version=2021-03-07
+    uri: https://sanitized.communication.azure.com/identities/sanitized?api-version=2021-03-07
   response:
     body:
       string: ''
     headers:
       api-supported-versions:
-      - 2020-07-20-preview2, 2021-03-07
+      - 2020-07-20-preview2, 2021-02-22-preview1, 2021-03-07
       date:
-      - Fri, 29 Jan 2021 22:23:14 GMT
+      - Tue, 13 Apr 2021 17:54:27 GMT
       ms-cv:
-      - phAKzopa7kCat9napbUQGQ.0
+      - zRztRbFrrEe9RLXIARPN7w.0
+      request-context:
+      - appId=
       strict-transport-security:
       - max-age=2592000
       x-processing-time:
-      - 245ms
+      - 583ms
     status:
       code: 204
       message: No Content
