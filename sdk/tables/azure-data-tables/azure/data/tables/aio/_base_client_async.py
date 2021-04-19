@@ -153,7 +153,6 @@ class AsyncTablesBaseClient(AccountHostsMixin):
         async for p in parts_iter:
             parts.append(p)
         if any(p for p in parts if not 200 <= p.status_code < 300):
-
             if any(p for p in parts if p.status_code == 404):
                 raise ResourceNotFoundError(
                     message="The resource could not be found", response=response
@@ -164,8 +163,7 @@ class AsyncTablesBaseClient(AccountHostsMixin):
                 response=response,
                 parts=parts,
             )
-        else:
-            return list(zip(entities, (extract_batch_part_metadata(p) for p in parts)))
+        return list(zip(entities, (extract_batch_part_metadata(p) for p in parts)))
 
 
 class AsyncTransportWrapper(AsyncHttpTransport):

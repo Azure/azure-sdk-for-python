@@ -301,7 +301,6 @@ class TablesBaseClient(AccountHostsMixin):
                 message="The resource could not be found", response=response
             )
         if response.status_code != 202:
-            
             raise BatchErrorException(
                 message="There is a failure in the batch operation.",
                 response=response,
@@ -310,7 +309,6 @@ class TablesBaseClient(AccountHostsMixin):
 
         parts = list(response.parts())
         if any(p for p in parts if not 200 <= p.status_code < 300):
-
             if any(p for p in parts if p.status_code == 404):
                 raise ResourceNotFoundError(
                     message="The resource could not be found", response=response
@@ -321,8 +319,7 @@ class TablesBaseClient(AccountHostsMixin):
                 response=response,
                 parts=parts,
                 )
-        else:
-            return list(zip(entities, (extract_batch_part_metadata(p) for p in parts)))
+        return list(zip(entities, (extract_batch_part_metadata(p) for p in parts)))
 
     def close(self):
         # type: () -> None

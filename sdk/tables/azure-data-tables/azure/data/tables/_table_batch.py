@@ -78,7 +78,7 @@ class TableBatchOperations(object):
         if self._partition_key is None:
             self._partition_key = entity["PartitionKey"]
         elif entity["PartitionKey"] != self._partition_key:
-                raise ValueError("Partition Keys must all be the same")
+            raise ValueError("Partition Keys must all be the same")
 
     def create_entity(
         self,
