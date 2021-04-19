@@ -8,15 +8,16 @@
 from typing import TYPE_CHECKING
 import warnings
 
-from azure.core.exceptions import HttpResponseError, ResourceExistsError, ResourceNotFoundError, map_error
+from azure.core.exceptions import ClientAuthenticationError, HttpResponseError, ResourceExistsError, ResourceNotFoundError, map_error
+from azure.core.paging import ItemPaged
 from azure.core.pipeline import PipelineResponse
 from azure.core.pipeline.transport import HttpRequest, HttpResponse
 
-from .. import models
+from .. import models as _models
 
 if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
-    from typing import Any, Callable, Dict, Generic, Optional, TypeVar
+    from typing import Any, Callable, Dict, Generic, IO, Iterable, Optional, TypeVar
 
     T = TypeVar('T')
     ClsType = Optional[Callable[[PipelineResponse[HttpRequest, HttpResponse], T, Dict[str, Any]], Any]]
@@ -25,13 +26,13 @@ class AnomalyDetectorClientOperationsMixin(object):
 
     def detect_entire_series(
         self,
-        body,  # type: "models.DetectRequest"
+        body,  # type: "_models.DetectRequest"
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.EntireDetectResponse"
+        # type: (...) -> "_models.EntireDetectResponse"
         """Detect anomalies for the entire series in batch.
 
-        This operation generates a model using an entire series, each point is detected with the same
+        This operation generates a model with an entire series, each point is detected with the same
         model. With this method, points before and after a certain point are used to determine whether
         it is an anomaly. The entire detection can give user an overall status of the time series.
 
@@ -43,10 +44,13 @@ class AnomalyDetectorClientOperationsMixin(object):
         :rtype: ~azure.ai.anomalydetector.models.EntireDetectResponse
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.EntireDetectResponse"]
-        error_map = {404: ResourceNotFoundError, 409: ResourceExistsError}
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.EntireDetectResponse"]
+        error_map = {
+            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
+        }
         error_map.update(kwargs.pop('error_map', {}))
         content_type = kwargs.pop("content_type", "application/json")
+        accept = "application/json"
 
         # Construct URL
         url = self.detect_entire_series.metadata['url']  # type: ignore
@@ -61,19 +65,18 @@ class AnomalyDetectorClientOperationsMixin(object):
         # Construct headers
         header_parameters = {}  # type: Dict[str, Any]
         header_parameters['Content-Type'] = self._serialize.header("content_type", content_type, 'str')
-        header_parameters['Accept'] = 'application/json'
+        header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
 
         body_content_kwargs = {}  # type: Dict[str, Any]
         body_content = self._serialize.body(body, 'DetectRequest')
         body_content_kwargs['content'] = body_content
         request = self._client.post(url, query_parameters, header_parameters, **body_content_kwargs)
-
         pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.AnomalyDetectorError, response)
+            error = self._deserialize.failsafe_deserialize(_models.AnomalyDetectorError, response)
             raise HttpResponseError(response=response, model=error)
 
         deserialized = self._deserialize('EntireDetectResponse', pipeline_response)
@@ -86,10 +89,10 @@ class AnomalyDetectorClientOperationsMixin(object):
 
     def detect_last_point(
         self,
-        body,  # type: "models.DetectRequest"
+        body,  # type: "_models.DetectRequest"
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.LastDetectResponse"
+        # type: (...) -> "_models.LastDetectResponse"
         """Detect anomaly status of the latest point in time series.
 
         This operation generates a model using points before the latest one. With this method, only
@@ -104,10 +107,13 @@ class AnomalyDetectorClientOperationsMixin(object):
         :rtype: ~azure.ai.anomalydetector.models.LastDetectResponse
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.LastDetectResponse"]
-        error_map = {404: ResourceNotFoundError, 409: ResourceExistsError}
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.LastDetectResponse"]
+        error_map = {
+            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
+        }
         error_map.update(kwargs.pop('error_map', {}))
         content_type = kwargs.pop("content_type", "application/json")
+        accept = "application/json"
 
         # Construct URL
         url = self.detect_last_point.metadata['url']  # type: ignore
@@ -122,19 +128,18 @@ class AnomalyDetectorClientOperationsMixin(object):
         # Construct headers
         header_parameters = {}  # type: Dict[str, Any]
         header_parameters['Content-Type'] = self._serialize.header("content_type", content_type, 'str')
-        header_parameters['Accept'] = 'application/json'
+        header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
 
         body_content_kwargs = {}  # type: Dict[str, Any]
         body_content = self._serialize.body(body, 'DetectRequest')
         body_content_kwargs['content'] = body_content
         request = self._client.post(url, query_parameters, header_parameters, **body_content_kwargs)
-
         pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.AnomalyDetectorError, response)
+            error = self._deserialize.failsafe_deserialize(_models.AnomalyDetectorError, response)
             raise HttpResponseError(response=response, model=error)
 
         deserialized = self._deserialize('LastDetectResponse', pipeline_response)
@@ -147,10 +152,10 @@ class AnomalyDetectorClientOperationsMixin(object):
 
     def detect_change_point(
         self,
-        body,  # type: "models.ChangePointDetectRequest"
+        body,  # type: "_models.ChangePointDetectRequest"
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.ChangePointDetectResponse"
+        # type: (...) -> "_models.ChangePointDetectResponse"
         """Detect change point for the entire series.
 
         Evaluate change point score of every series point.
@@ -163,10 +168,13 @@ class AnomalyDetectorClientOperationsMixin(object):
         :rtype: ~azure.ai.anomalydetector.models.ChangePointDetectResponse
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.ChangePointDetectResponse"]
-        error_map = {404: ResourceNotFoundError, 409: ResourceExistsError}
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.ChangePointDetectResponse"]
+        error_map = {
+            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
+        }
         error_map.update(kwargs.pop('error_map', {}))
         content_type = kwargs.pop("content_type", "application/json")
+        accept = "application/json"
 
         # Construct URL
         url = self.detect_change_point.metadata['url']  # type: ignore
@@ -181,19 +189,18 @@ class AnomalyDetectorClientOperationsMixin(object):
         # Construct headers
         header_parameters = {}  # type: Dict[str, Any]
         header_parameters['Content-Type'] = self._serialize.header("content_type", content_type, 'str')
-        header_parameters['Accept'] = 'application/json'
+        header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
 
         body_content_kwargs = {}  # type: Dict[str, Any]
         body_content = self._serialize.body(body, 'ChangePointDetectRequest')
         body_content_kwargs['content'] = body_content
         request = self._client.post(url, query_parameters, header_parameters, **body_content_kwargs)
-
         pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.AnomalyDetectorError, response)
+            error = self._deserialize.failsafe_deserialize(_models.AnomalyDetectorError, response)
             raise HttpResponseError(response=response, model=error)
 
         deserialized = self._deserialize('ChangePointDetectResponse', pipeline_response)
@@ -203,3 +210,442 @@ class AnomalyDetectorClientOperationsMixin(object):
 
         return deserialized
     detect_change_point.metadata = {'url': '/timeseries/changepoint/detect'}  # type: ignore
+
+    def train_multivariate_model(
+        self,
+        model_request,  # type: "_models.ModelInfo"
+        **kwargs  # type: Any
+    ):
+        # type: (...) -> None
+        """Train a Multivariate Anomaly Detection Model.
+
+        Create and train a multivariate anomaly detection model. The request must include a source
+        parameter to indicate an externally accessible Azure storage Uri (preferably a Shared Access
+        Signature Uri). All time-series used in generate the model must be zipped into one single file.
+        Each time-series will be in a single CSV file in which the first column is timestamp and the
+        second column is value.
+
+        :param model_request: Training request.
+        :type model_request: ~azure.ai.anomalydetector.models.ModelInfo
+        :keyword callable cls: A custom type or function that will be passed the direct response
+        :return: None, or the result of cls(response)
+        :rtype: None
+        :raises: ~azure.core.exceptions.HttpResponseError
+        """
+        cls = kwargs.pop('cls', None)  # type: ClsType[None]
+        error_map = {
+            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
+        }
+        error_map.update(kwargs.pop('error_map', {}))
+        content_type = kwargs.pop("content_type", "application/json")
+        accept = "application/json"
+
+        # Construct URL
+        url = self.train_multivariate_model.metadata['url']  # type: ignore
+        path_format_arguments = {
+            'Endpoint': self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
+        }
+        url = self._client.format_url(url, **path_format_arguments)
+
+        # Construct parameters
+        query_parameters = {}  # type: Dict[str, Any]
+
+        # Construct headers
+        header_parameters = {}  # type: Dict[str, Any]
+        header_parameters['Content-Type'] = self._serialize.header("content_type", content_type, 'str')
+        header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
+
+        body_content_kwargs = {}  # type: Dict[str, Any]
+        body_content = self._serialize.body(model_request, 'ModelInfo')
+        body_content_kwargs['content'] = body_content
+        request = self._client.post(url, query_parameters, header_parameters, **body_content_kwargs)
+        pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
+        response = pipeline_response.http_response
+
+        if response.status_code not in [201]:
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, response)
+            raise HttpResponseError(response=response, model=error)
+
+        response_headers = {}
+        response_headers['Location']=self._deserialize('str', response.headers.get('Location'))
+
+        if cls:
+            return cls(pipeline_response, None, response_headers)
+
+    train_multivariate_model.metadata = {'url': '/multivariate/models'}  # type: ignore
+
+    def get_multivariate_model(
+        self,
+        model_id,  # type: str
+        **kwargs  # type: Any
+    ):
+        # type: (...) -> "_models.Model"
+        """Get Multivariate Model.
+
+        Get detailed information of multivariate model, including the training status and variables
+        used in the model.
+
+        :param model_id: Model identifier.
+        :type model_id: str
+        :keyword callable cls: A custom type or function that will be passed the direct response
+        :return: Model, or the result of cls(response)
+        :rtype: ~azure.ai.anomalydetector.models.Model
+        :raises: ~azure.core.exceptions.HttpResponseError
+        """
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.Model"]
+        error_map = {
+            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
+        }
+        error_map.update(kwargs.pop('error_map', {}))
+        accept = "application/json"
+
+        # Construct URL
+        url = self.get_multivariate_model.metadata['url']  # type: ignore
+        path_format_arguments = {
+            'Endpoint': self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
+            'modelId': self._serialize.url("model_id", model_id, 'str'),
+        }
+        url = self._client.format_url(url, **path_format_arguments)
+
+        # Construct parameters
+        query_parameters = {}  # type: Dict[str, Any]
+
+        # Construct headers
+        header_parameters = {}  # type: Dict[str, Any]
+        header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
+
+        request = self._client.get(url, query_parameters, header_parameters)
+        pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, response)
+            raise HttpResponseError(response=response, model=error)
+
+        deserialized = self._deserialize('Model', pipeline_response)
+
+        if cls:
+            return cls(pipeline_response, deserialized, {})
+
+        return deserialized
+    get_multivariate_model.metadata = {'url': '/multivariate/models/{modelId}'}  # type: ignore
+
+    def delete_multivariate_model(
+        self,
+        model_id,  # type: str
+        **kwargs  # type: Any
+    ):
+        # type: (...) -> None
+        """Delete Multivariate Model.
+
+        Delete an existing multivariate model according to the modelId.
+
+        :param model_id: Model identifier.
+        :type model_id: str
+        :keyword callable cls: A custom type or function that will be passed the direct response
+        :return: None, or the result of cls(response)
+        :rtype: None
+        :raises: ~azure.core.exceptions.HttpResponseError
+        """
+        cls = kwargs.pop('cls', None)  # type: ClsType[None]
+        error_map = {
+            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
+        }
+        error_map.update(kwargs.pop('error_map', {}))
+        accept = "application/json"
+
+        # Construct URL
+        url = self.delete_multivariate_model.metadata['url']  # type: ignore
+        path_format_arguments = {
+            'Endpoint': self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
+            'modelId': self._serialize.url("model_id", model_id, 'str'),
+        }
+        url = self._client.format_url(url, **path_format_arguments)
+
+        # Construct parameters
+        query_parameters = {}  # type: Dict[str, Any]
+
+        # Construct headers
+        header_parameters = {}  # type: Dict[str, Any]
+        header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
+
+        request = self._client.delete(url, query_parameters, header_parameters)
+        pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
+        response = pipeline_response.http_response
+
+        if response.status_code not in [204]:
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, response)
+            raise HttpResponseError(response=response, model=error)
+
+        if cls:
+            return cls(pipeline_response, None, {})
+
+    delete_multivariate_model.metadata = {'url': '/multivariate/models/{modelId}'}  # type: ignore
+
+    def detect_anomaly(
+        self,
+        model_id,  # type: str
+        detection_request,  # type: "_models.DetectionRequest"
+        **kwargs  # type: Any
+    ):
+        # type: (...) -> None
+        """Detect Multivariate Anomaly.
+
+        Submit detection multivariate anomaly task with the trained model of modelId, the input schema
+        should be the same with the training request. Thus request will be complete asynchronously and
+        will return a resultId for querying the detection result.The request should be a source link to
+        indicate an externally accessible Azure storage Uri (preferably a Shared Access Signature Uri).
+        All time-series used in generate the model must be zipped into one single file. Each
+        time-series will be as follows: the first column is timestamp and the second column is value.
+
+        :param model_id: Model identifier.
+        :type model_id: str
+        :param detection_request: Detect anomaly request.
+        :type detection_request: ~azure.ai.anomalydetector.models.DetectionRequest
+        :keyword callable cls: A custom type or function that will be passed the direct response
+        :return: None, or the result of cls(response)
+        :rtype: None
+        :raises: ~azure.core.exceptions.HttpResponseError
+        """
+        cls = kwargs.pop('cls', None)  # type: ClsType[None]
+        error_map = {
+            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
+        }
+        error_map.update(kwargs.pop('error_map', {}))
+        content_type = kwargs.pop("content_type", "application/json")
+        accept = "application/json"
+
+        # Construct URL
+        url = self.detect_anomaly.metadata['url']  # type: ignore
+        path_format_arguments = {
+            'Endpoint': self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
+            'modelId': self._serialize.url("model_id", model_id, 'str'),
+        }
+        url = self._client.format_url(url, **path_format_arguments)
+
+        # Construct parameters
+        query_parameters = {}  # type: Dict[str, Any]
+
+        # Construct headers
+        header_parameters = {}  # type: Dict[str, Any]
+        header_parameters['Content-Type'] = self._serialize.header("content_type", content_type, 'str')
+        header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
+
+        body_content_kwargs = {}  # type: Dict[str, Any]
+        body_content = self._serialize.body(detection_request, 'DetectionRequest')
+        body_content_kwargs['content'] = body_content
+        request = self._client.post(url, query_parameters, header_parameters, **body_content_kwargs)
+        pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
+        response = pipeline_response.http_response
+
+        if response.status_code not in [201]:
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, response)
+            raise HttpResponseError(response=response, model=error)
+
+        response_headers = {}
+        response_headers['Location']=self._deserialize('str', response.headers.get('Location'))
+
+        if cls:
+            return cls(pipeline_response, None, response_headers)
+
+    detect_anomaly.metadata = {'url': '/multivariate/models/{modelId}/detect'}  # type: ignore
+
+    def get_detection_result(
+        self,
+        result_id,  # type: str
+        **kwargs  # type: Any
+    ):
+        # type: (...) -> "_models.DetectionResult"
+        """Get Multivariate Anomaly Detection Result.
+
+        Get multivariate anomaly detection result based on resultId returned by the DetectAnomalyAsync
+        api.
+
+        :param result_id: Result identifier.
+        :type result_id: str
+        :keyword callable cls: A custom type or function that will be passed the direct response
+        :return: DetectionResult, or the result of cls(response)
+        :rtype: ~azure.ai.anomalydetector.models.DetectionResult
+        :raises: ~azure.core.exceptions.HttpResponseError
+        """
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.DetectionResult"]
+        error_map = {
+            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
+        }
+        error_map.update(kwargs.pop('error_map', {}))
+        accept = "application/json"
+
+        # Construct URL
+        url = self.get_detection_result.metadata['url']  # type: ignore
+        path_format_arguments = {
+            'Endpoint': self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
+            'resultId': self._serialize.url("result_id", result_id, 'str'),
+        }
+        url = self._client.format_url(url, **path_format_arguments)
+
+        # Construct parameters
+        query_parameters = {}  # type: Dict[str, Any]
+
+        # Construct headers
+        header_parameters = {}  # type: Dict[str, Any]
+        header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
+
+        request = self._client.get(url, query_parameters, header_parameters)
+        pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, response)
+            raise HttpResponseError(response=response, model=error)
+
+        deserialized = self._deserialize('DetectionResult', pipeline_response)
+
+        if cls:
+            return cls(pipeline_response, deserialized, {})
+
+        return deserialized
+    get_detection_result.metadata = {'url': '/multivariate/results/{resultId}'}  # type: ignore
+
+    def export_model(
+        self,
+        model_id,  # type: str
+        **kwargs  # type: Any
+    ):
+        # type: (...) -> IO
+        """Export Multivariate Anomaly Detection Model as Zip file.
+
+        Export multivariate anomaly detection model based on modelId.
+
+        :param model_id: Model identifier.
+        :type model_id: str
+        :keyword callable cls: A custom type or function that will be passed the direct response
+        :return: IO, or the result of cls(response)
+        :rtype: IO
+        :raises: ~azure.core.exceptions.HttpResponseError
+        """
+        cls = kwargs.pop('cls', None)  # type: ClsType[IO]
+        error_map = {
+            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
+        }
+        error_map.update(kwargs.pop('error_map', {}))
+        accept = "application/zip"
+
+        # Construct URL
+        url = self.export_model.metadata['url']  # type: ignore
+        path_format_arguments = {
+            'Endpoint': self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
+            'modelId': self._serialize.url("model_id", model_id, 'str'),
+        }
+        url = self._client.format_url(url, **path_format_arguments)
+
+        # Construct parameters
+        query_parameters = {}  # type: Dict[str, Any]
+
+        # Construct headers
+        header_parameters = {}  # type: Dict[str, Any]
+        header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
+
+        request = self._client.get(url, query_parameters, header_parameters)
+        pipeline_response = self._client._pipeline.run(request, stream=True, **kwargs)
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            raise HttpResponseError(response=response)
+
+        response_headers = {}
+        response_headers['content-type']=self._deserialize('str', response.headers.get('content-type'))
+        deserialized = response.stream_download(self._client._pipeline)
+
+        if cls:
+            return cls(pipeline_response, deserialized, response_headers)
+
+        return deserialized
+    export_model.metadata = {'url': '/multivariate/models/{modelId}/export'}  # type: ignore
+
+    def list_multivariate_model(
+        self,
+        skip=0,  # type: Optional[int]
+        top=5,  # type: Optional[int]
+        **kwargs  # type: Any
+    ):
+        # type: (...) -> Iterable["_models.ModelList"]
+        """List Multivariate Models.
+
+        List models of a subscription.
+
+        :param skip: $skip indicates how many models will be skipped.
+        :type skip: int
+        :param top: $top indicates how many models will be fetched.
+        :type top: int
+        :keyword callable cls: A custom type or function that will be passed the direct response
+        :return: An iterator like instance of either ModelList or the result of cls(response)
+        :rtype: ~azure.core.paging.ItemPaged[~azure.ai.anomalydetector.models.ModelList]
+        :raises: ~azure.core.exceptions.HttpResponseError
+        """
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.ModelList"]
+        error_map = {
+            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
+        }
+        error_map.update(kwargs.pop('error_map', {}))
+        accept = "application/json"
+
+        def prepare_request(next_link=None):
+            # Construct headers
+            header_parameters = {}  # type: Dict[str, Any]
+            header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
+
+            if not next_link:
+                # Construct URL
+                url = self.list_multivariate_model.metadata['url']  # type: ignore
+                path_format_arguments = {
+                    'Endpoint': self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
+                }
+                url = self._client.format_url(url, **path_format_arguments)
+                # Construct parameters
+                query_parameters = {}  # type: Dict[str, Any]
+                if skip is not None:
+                    query_parameters['$skip'] = self._serialize.query("skip", skip, 'int')
+                if top is not None:
+                    query_parameters['$top'] = self._serialize.query("top", top, 'int')
+
+                request = self._client.get(url, query_parameters, header_parameters)
+            else:
+                url = next_link
+                query_parameters = {}  # type: Dict[str, Any]
+                path_format_arguments = {
+                    'Endpoint': self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
+                }
+                url = self._client.format_url(url, **path_format_arguments)
+                request = self._client.get(url, query_parameters, header_parameters)
+            return request
+
+        def extract_data(pipeline_response):
+            deserialized = self._deserialize('ModelList', pipeline_response)
+            list_of_elem = deserialized.models
+            if cls:
+                list_of_elem = cls(list_of_elem)
+            return deserialized.next_link or None, iter(list_of_elem)
+
+        def get_next(next_link=None):
+            request = prepare_request(next_link)
+
+            pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
+            response = pipeline_response.http_response
+
+            if response.status_code not in [200]:
+                error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, response)
+                map_error(status_code=response.status_code, response=response, error_map=error_map)
+                raise HttpResponseError(response=response, model=error)
+
+            return pipeline_response
+
+        return ItemPaged(
+            get_next, extract_data
+        )
+    list_multivariate_model.metadata = {'url': '/multivariate/models'}  # type: ignore
