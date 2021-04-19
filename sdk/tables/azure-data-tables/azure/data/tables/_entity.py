@@ -126,6 +126,10 @@ class EntityProperty(object):
                 )
             )
 
+    def __eq__(self, other):
+        # type: (TableEntity) -> bool
+        return self.value == other.value and self.type == other.type
+
 
 class EdmType(str, Enum):
     """
