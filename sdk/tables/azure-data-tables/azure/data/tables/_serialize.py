@@ -71,6 +71,8 @@ def _parameter_filter_substitution(parameters, query_filter):
                     filter_strings[index] = "datetime'{}'".format(_to_utc_datetime(val))
                 elif isinstance(val, UUID):
                     filter_strings[index] = "guid'{}'".format(str(val))
+                elif isinstance(val, six.binary_type):
+                    filter_strings[index] = "X'{}'".format(val.decode('utf-8'))
                 else:
                     filter_strings[index] = "'{}'".format(val.replace("'", "''"))
         return ' '.join(filter_strings)
