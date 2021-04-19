@@ -83,8 +83,8 @@ def _parse_claims_challenge(challenge):
 
 # these expressions are for challenges with comma delimited parameters having quoted values, e.g.
 # Bearer authorization="https://login.microsoftonline.com/", resource="https://vault.azure.net"
-_AUTHENTICATION_CHALLENGE = re.compile(r'(?:(\w+) ((?:\w+=".*?"(?:, )?)+)(?:, )?)')
-_CHALLENGE_PARAMETER = re.compile(r'(?:(\w+)="([^"]*)")+')
+_AUTHENTICATION_CHALLENGE = re.compile(r'(\w+) ((?:\w+="[^"]*"(?:, )?)+)')
+_CHALLENGE_PARAMETER = re.compile(r'(\w+)="([^"]*)"')
 
 _AuthenticationChallenge = namedtuple("_AuthenticationChallenge", "scheme,parameters")
 
