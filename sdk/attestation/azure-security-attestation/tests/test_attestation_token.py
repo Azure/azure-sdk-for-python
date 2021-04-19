@@ -46,7 +46,7 @@ class TestAzureAttestationToken(unittest.TestCase):
         key2 = self._create_rsa_key()
 
         # This should throw an exception, fail if the exception isn't thrown.
-        with self.assertRaises(Exception):
+        with pytest.raises(Exception):
             signer = SigningKey(key2, cert)
             print(signer) # reference signer so pylint is happy.
 
