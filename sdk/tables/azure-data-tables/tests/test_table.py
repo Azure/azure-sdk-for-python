@@ -472,10 +472,6 @@ class StorageTableTest(AzureTestCase, TableTestCase):
             service = self.create_client_from_credential(TableServiceClient, token, account_url=account_url)
 
             # Act
-            # service = TableServiceClient(
-            #     self.account_url(tables_storage_account_name, "table"),
-            #     credential=token,
-            # )
 
             sas_table = service.get_table_client(table.table_name)
             entities = list(sas_table.list_entities())
@@ -529,3 +525,13 @@ class TestTablesUnitTest(TableTestCase):
 
         assert "Table names must be alphanumeric, cannot begin with a number, and must be between 3-63 characters long.""" in str(
             excinfo)
+
+    def test_azurite_url(self):
+        account_url = "https://127.0.0.1:10002/my_account"
+        tsc = TableServiceClient(account_url, credential=self.tables_primary_storage_account_key)
+
+        assert tsc.account_name == "my_account"
+        assert tsc.url == "https://127.0.0.1:10002/my_account"
+        assert tsc.location_mode == "primary"
+        assert tsc.credential.account_key == self.tables_primary_storage_account_key
+        assert tsc.credential.account_name == "my_account"
