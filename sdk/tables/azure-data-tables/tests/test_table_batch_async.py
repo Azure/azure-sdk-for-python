@@ -588,54 +588,6 @@ class StorageTableBatchTest(AzureTestCase, AsyncTableTestCase):
             await self._tear_down()
 
     @TablesPreparer()
-    async def test_batch_all_operations_together_context_manager(self, tables_storage_account_name, tables_primary_storage_account_key):
-        # Arrange
-        await self._set_up(tables_storage_account_name, tables_primary_storage_account_key)
-        try:
-            # Act
-            entity = TableEntity()
-            entity.PartitionKey = '003'
-            entity.RowKey = 'batch_all_operations_together-1'
-            entity.test = EntityProperty(True)
-            entity.test2 = 'value'
-            entity.test3 = 3
-            entity.test4 = EntityProperty(1234567890)
-            entity.test5 = datetime.utcnow()
-            await self.table.create_entity(entity)
-            entity.RowKey = 'batch_all_operations_together-2'
-            await self.table.create_entity(entity)
-            entity.RowKey = 'batch_all_operations_together-3'
-            await self.table.create_entity(entity)
-            entity.RowKey = 'batch_all_operations_together-4'
-            await self.table.create_entity(entity)
-
-            async with self.table.create_batch() as batch:
-                entity.RowKey = 'batch_all_operations_together'
-                batch.create_entity(entity)
-                entity.RowKey = 'batch_all_operations_together-1'
-                batch.delete_entity(entity.PartitionKey, entity.RowKey)
-                entity.RowKey = 'batch_all_operations_together-2'
-                entity.test3 = 10
-                batch.update_entity(entity)
-                entity.RowKey = 'batch_all_operations_together-3'
-                entity.test3 = 100
-                batch.update_entity(entity, mode=UpdateMode.MERGE)
-                entity.RowKey = 'batch_all_operations_together-4'
-                entity.test3 = 10
-                batch.upsert_entity(entity)
-                entity.RowKey = 'batch_all_operations_together-5'
-                batch.upsert_entity(entity, mode=UpdateMode.MERGE)
-
-            # Assert
-            entities = self.table.query_entities("PartitionKey eq '003'")
-            length = 0
-            async for e in entities:
-                length += 1
-            assert 4 ==  length
-        finally:
-            await self._tear_down()
-
-    @TablesPreparer()
     async def test_batch_same_row_operations_fail(self, tables_storage_account_name, tables_primary_storage_account_key):
         # Arrange
         await self._set_up(tables_storage_account_name, tables_primary_storage_account_key)

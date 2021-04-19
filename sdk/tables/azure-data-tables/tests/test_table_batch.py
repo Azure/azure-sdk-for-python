@@ -641,52 +641,6 @@ class StorageTableBatchTest(AzureTestCase, TableTestCase):
 
     @pytest.mark.skipif(sys.version_info < (3, 0), reason="requires Python3")
     @TablesPreparer()
-    def test_batch_all_operations_together_context_manager(self, tables_storage_account_name, tables_primary_storage_account_key):
-        # Arrange
-        self._set_up(tables_storage_account_name, tables_primary_storage_account_key)
-        try:
-            # Act
-            entity = TableEntity()
-            entity.PartitionKey = '003'
-            entity.RowKey = 'batch_all_operations_together-1'
-            entity.test = EntityProperty(True)
-            entity.test2 = 'value'
-            entity.test3 = 3
-            entity.test4 = EntityProperty(1234567890)
-            entity.test5 = datetime.utcnow()
-            self.table.create_entity(entity)
-            entity.RowKey = 'batch_all_operations_together-2'
-            self.table.create_entity(entity)
-            entity.RowKey = 'batch_all_operations_together-3'
-            self.table.create_entity(entity)
-            entity.RowKey = 'batch_all_operations_together-4'
-            self.table.create_entity(entity)
-
-            with self.table.create_batch() as batch:
-                entity.RowKey = 'batch_all_operations_together'
-                batch.create_entity(entity)
-                entity.RowKey = 'batch_all_operations_together-1'
-                batch.delete_entity(entity.PartitionKey, entity.RowKey)
-                entity.RowKey = 'batch_all_operations_together-2'
-                entity.test3 = 10
-                batch.update_entity(entity)
-                entity.RowKey = 'batch_all_operations_together-3'
-                entity.test3 = 100
-                batch.update_entity(entity, mode=UpdateMode.MERGE)
-                entity.RowKey = 'batch_all_operations_together-4'
-                entity.test3 = 10
-                batch.upsert_entity(entity)
-                entity.RowKey = 'batch_all_operations_together-5'
-                batch.upsert_entity(entity, mode=UpdateMode.MERGE)
-
-            # Assert
-            entities = list(self.table.query_entities("PartitionKey eq '003'"))
-            assert 4 ==  len(entities)
-        finally:
-            self._tear_down()
-
-    @pytest.mark.skipif(sys.version_info < (3, 0), reason="requires Python3")
-    @TablesPreparer()
     def test_batch_reuse(self, tables_storage_account_name, tables_primary_storage_account_key):
         # Arrange
         self._set_up(tables_storage_account_name, tables_primary_storage_account_key)

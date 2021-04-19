@@ -37,7 +37,6 @@ class TableBatchOperations(object):
         deserializer,  # type: msrest.Deserializer
         config,  # type: AzureTableConfiguration
         table_name,  # type: str
-        table_client,  # type: TableClient
         **kwargs  # type: Dict[str, Any]
     ):
         """Create TableClient from a Credential.
@@ -62,7 +61,6 @@ class TableBatchOperations(object):
         self._deserialize = deserializer
         self._config = config
         self.table_name = table_name
-        self._table_client = table_client
 
         self._partition_key = kwargs.pop("partition_key", None)
         self._requests = []
@@ -676,15 +674,3 @@ class TableBatchOperations(object):
                 **kwargs
             )
         self._entities.append(temp_entity)
-
-    def __enter__(self):
-        # type: (...) -> TableBatchOperations
-        return self
-
-    def __exit__(
-        self,
-        *args,  # type: Any
-        **kwargs  # type: Any
-    ):
-        # (...) -> None
-        self._table_client._batch_send(self._entities, *self._requests, **kwargs)

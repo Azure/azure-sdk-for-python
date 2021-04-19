@@ -643,7 +643,6 @@ class TableClient(AsyncTablesBaseClient):
             self._client._deserialize,  # pylint: disable=protected-access
             self._client._config,  # pylint: disable=protected-access
             self.table_name,
-            self,
             **kwargs
         )
 

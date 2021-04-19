@@ -39,7 +39,6 @@ class TableBatchOperations(object):
         deserializer: msrest.Deserializer,
         config: AzureTableConfiguration,
         table_name: str,
-        table_client,  # type: TableClient,
         **kwargs: Dict[str, Any]
     ) -> None:
         self._client = client
@@ -47,7 +46,6 @@ class TableBatchOperations(object):
         self._deserialize = deserializer
         self._config = config
         self.table_name = table_name
-        self._table_client = table_client
 
         self._partition_key = kwargs.pop("partition_key", None)
         self._requests = []
@@ -664,15 +662,3 @@ class TableBatchOperations(object):
                 **kwargs
             )
         self._entities.append(temp_entity)
-
-    async def __aenter__(self):
-        # type: (...) -> TableBatchOperations
-        return self
-
-    async def __aexit__(
-        self,
-        *args,  # type: Any
-        **kwargs  # type: Any
-    ):
-        # (...) -> None
-        await self._table_client._batch_send(self._entities, *self._requests, **kwargs)
