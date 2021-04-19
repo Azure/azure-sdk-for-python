@@ -5,8 +5,8 @@
 """Demonstrates how to authenticate with a certificate stored in Azure Key Vault
 
 To run this script, first set $VAULT_URL and ensure DefaultAzureCredential is able
-to authenticate you. The script create a couple of self-signed certs in the given
-Vault, retrieve their private keys, and construct an instance of CertificateCredential
+to authenticate you. The script creates a couple of self-signed certs in the given
+Vault, retrieves their private keys, and constructs an instance of CertificateCredential
 with each.
 """
 import base64
