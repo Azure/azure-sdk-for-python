@@ -18,19 +18,16 @@ from azure.core.exceptions import HttpResponseError, ResourceNotFoundError
 from azure.core.paging import ItemPaged
 from azure.core.tracing.decorator import distributed_trace
 
-from ._constants import CONNECTION_TIMEOUT
 from ._deserialize import _convert_to_entity, _trim_service_metadata
 from ._entity import TableEntity
-from ._error import _process_table_error
-from ._generated import AzureTable
+from ._error import _process_table_error, _validate_table_name
 from ._generated.models import (
     SignedIdentifier,
     TableProperties,
 )
 from ._serialize import _get_match_headers, _add_entity_properties
-from ._base_client import parse_connection_str
-from ._table_client_base import TableClientBase
-from ._serialize import serialize_iso
+from ._base_client import parse_connection_str, TablesBaseClient
+from ._serialize import serialize_iso, _parameter_filter_substitution
 from ._deserialize import _return_headers_and_deserialized
 from ._table_batch import TableBatchOperations
 from ._models import TableEntityPropertiesPaged, UpdateMode, AccessPolicy
@@ -38,7 +35,8 @@ from ._models import TableEntityPropertiesPaged, UpdateMode, AccessPolicy
 if TYPE_CHECKING:
     from typing import Optional, Any, Union  # pylint: disable=ungrouped-imports
 
-class TableClient(TableClientBase):
+
+class TableClient(TablesBaseClient):
     """ :ivar str account_name: Name of the storage account (Cosmos or Azure)"""
 
     def __init__(
@@ -65,15 +63,17 @@ class TableClient(TableClientBase):
 
         :returns: None
         """
-        super(TableClient, self).__init__(
-            account_url, table_name, credential=credential, **kwargs
-        )
-        kwargs['connection_timeout'] = kwargs.get('connection_timeout') or CONNECTION_TIMEOUT
-        self._client = AzureTable(
-            self.url,
-            policies=kwargs.pop('policies', self._policies),
-            **kwargs
-        )
+        if not table_name:
+            raise ValueError("Please specify a table name.")
+        _validate_table_name(table_name)
+        self.table_name = table_name
+        super(TableClient, self).__init__(account_url, credential=credential, **kwargs)
+
+    def _format_url(self, hostname):
+        """Format the endpoint URL according to the current location
+        mode hostname.
+        """
+        return "{}://{}{}".format(self.scheme, hostname, self._query_str)
 
     @classmethod
     def from_connection_string(
@@ -103,7 +103,7 @@ class TableClient(TableClientBase):
                 :caption: Authenticating a TableServiceClient from a connection_string
         """
         account_url, credential = parse_connection_str(
-            conn_str=conn_str, credential=None, service="table", keyword_args=kwargs
+            conn_str=conn_str, credential=None, keyword_args=kwargs
         )
         return cls(account_url, table_name=table_name, credential=credential, **kwargs)
 
@@ -188,7 +188,6 @@ class TableClient(TableClientBase):
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        self._validate_signed_identifiers(signed_identifiers)
         identifiers = []
         for key, value in signed_identifiers.items():
             if value:
@@ -201,7 +200,16 @@ class TableClient(TableClientBase):
                 table=self.table_name, table_acl=signed_identifiers or None, **kwargs
             )
         except HttpResponseError as error:
-            _process_table_error(error)
+            try:
+                _process_table_error(error)
+            except HttpResponseError as table_error:
+                if (table_error.error_code == 'InvalidXmlDocument'
+                and len(signed_identifiers) > 5):
+                    raise ValueError(
+                        'Too many access policies provided. The server does not support setting '
+                        'more than 5 access policies on a single resource.'
+                    )
+                raise
 
     @distributed_trace
     def create_table(
@@ -447,7 +455,7 @@ class TableClient(TableClientBase):
         """
         user_select = kwargs.pop("select", None)
         if user_select and not isinstance(user_select, str):
-            user_select = ", ".join(user_select)
+            user_select = ",".join(user_select)
         top = kwargs.pop("results_per_page", None)
 
         command = functools.partial(self._client.table.query_entities, **kwargs)
@@ -462,7 +470,7 @@ class TableClient(TableClientBase):
     @distributed_trace
     def query_entities(
         self,
-        filter,  # type: str  pylint: disable=redefined-builtin
+        query_filter,
         **kwargs
     ):
         # type: (...) -> ItemPaged[TableEntity]
@@ -487,8 +495,8 @@ class TableClient(TableClientBase):
                 :caption: Query entities held within a table
         """
         parameters = kwargs.pop("parameters", None)
-        filter = self._parameter_filter_substitution(
-            parameters, filter
+        query_filter = _parameter_filter_substitution(
+            parameters, query_filter
         )
         top = kwargs.pop("results_per_page", None)
         user_select = kwargs.pop("select", None)
@@ -500,7 +508,7 @@ class TableClient(TableClientBase):
             command,
             table=self.table_name,
             results_per_page=top,
-            filter=filter,
+            filter=query_filter,
             select=user_select,
             page_iterator_class=TableEntityPropertiesPaged,
         )

@@ -6,8 +6,6 @@
 from typing import Dict, Any, Optional, Union, TYPE_CHECKING
 import msrest
 
-from azure.core.pipeline import PipelineResponse
-
 from .._common_conversion import _is_cosmos_endpoint, _transform_patch_to_cosmos_post
 from .._models import UpdateMode
 from .._serialize import (
@@ -20,6 +18,7 @@ from .._generated.aio._configuration import AzureTableConfiguration
 
 if TYPE_CHECKING:
     from .._generated.models import QueryOptions
+
 
 class TableBatchOperations(object):
     """

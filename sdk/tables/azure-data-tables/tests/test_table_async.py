@@ -80,7 +80,7 @@ class TableTestAsync(AzureTestCase, AsyncTableTestCase):
             await ts.create_table(table_name=table_name)
 
         name_filter = "TableName eq '{}'".format(table_name)
-        existing = ts.query_tables(filter=name_filter)
+        existing = ts.query_tables(name_filter)
 
         # Assert
         assert isinstance(created,  TableClient)
@@ -100,7 +100,7 @@ class TableTestAsync(AzureTestCase, AsyncTableTestCase):
         query_filter = "TableName eq 'myasynctable0' or TableName eq 'myasynctable1' or TableName eq 'myasynctable2'"
         table_count = 0
         page_count = 0
-        async for table_page in ts.query_tables(filter=query_filter, results_per_page=2).by_page():
+        async for table_page in ts.query_tables(query_filter, results_per_page=2).by_page():
 
             temp_count = 0
             async for table in table_page:
@@ -146,7 +146,7 @@ class TableTestAsync(AzureTestCase, AsyncTableTestCase):
         # Act
         name_filter = "TableName eq '{}'".format(table.table_name)
         tables = []
-        async for t in ts.query_tables(filter=name_filter):
+        async for t in ts.query_tables(name_filter):
             tables.append(t)
 
         # Assert
@@ -342,7 +342,7 @@ class TableTestAsync(AzureTestCase, AsyncTableTestCase):
 
             # Assert
             with pytest.raises(ValueError):
-                await table.set_table_access_policy(table_name=table.table_name, signed_identifiers=identifiers)
+                await table.set_table_access_policy(signed_identifiers=identifiers)
         finally:
             await ts.delete_table(table.table_name)
 
@@ -393,37 +393,6 @@ class TableTestAsync(AzureTestCase, AsyncTableTestCase):
         finally:
             await self._delete_table(table=table, ts=tsc)
 
-    @pytest.mark.skip("Test fails on Linux and in Python2. Throws a locale.Error: unsupported locale setting")
-    @TablesPreparer()
-    async def test_locale(self, tables_storage_account_name, tables_primary_storage_account_key):
-        # Arrange
-        account_url = self.account_url(tables_storage_account_name, "table")
-        ts = self.create_client_from_credential(TableServiceClient, tables_primary_storage_account_key, account_url=account_url)
-        table = (self._get_table_reference())
-        init_locale = locale.getlocale()
-        if os.name == "nt":
-            culture = "Spanish_Spain"
-        elif os.name == 'posix':
-            culture = 'es_ES.UTF-8'
-        else:
-            culture = 'es_ES.utf8'
-
-        locale.setlocale(locale.LC_ALL, culture)
-        e = None
-
-        # Act
-        await ts.create_table(table)
-
-        resp = ts.list_tables()
-
-        e = sys.exc_info()[0]
-
-        # Assert
-        assert e is None
-
-        await ts.delete_table(table)
-        locale.setlocale(locale.LC_ALL, init_locale[0] or 'en_US')
-
 
 class TestTablesUnitTest(AsyncTableTestCase):
     tables_storage_account_name = "fake_storage_account"
@@ -469,3 +438,13 @@ class TestTablesUnitTest(AsyncTableTestCase):
 
         assert "Table names must be alphanumeric, cannot begin with a number, and must be between 3-63 characters long.""" in str(
             excinfo)
+
+    def test_azurite_url(self):
+        account_url = "https://127.0.0.1:10002/my_account"
+        tsc = TableServiceClient(account_url, credential=self.tables_primary_storage_account_key)
+
+        assert tsc.account_name == "my_account"
+        assert tsc.url == "https://127.0.0.1:10002/my_account"
+        assert tsc.location_mode == "primary"
+        assert tsc.credential.account_key == self.tables_primary_storage_account_key
+        assert tsc.credential.account_name == "my_account"

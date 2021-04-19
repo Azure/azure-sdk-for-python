@@ -13,7 +13,7 @@ from typing import (  # pylint: disable=unused-import
 from azure.core.pipeline import AsyncPipeline
 
 from azure.core.tracing.decorator_async import distributed_trace_async
-from azure.core.exceptions import ResourceNotFoundError, HttpResponseError
+from azure.core.exceptions import ResourceNotFoundError, HttpResponseError, ResourceExistsError
 
 from .._shared.base_client_async import AsyncStorageAccountHostsMixin, AsyncTransportWrapper
 from .._shared.policies_async import ExponentialRetry
@@ -582,6 +582,9 @@ class BlobClient(AsyncStorageAccountHostsMixin, BlobClientBase):  # pylint: disa
             await self._client.blob.get_properties(
                 snapshot=self.snapshot,
                 **kwargs)
+            return True
+        # Encrypted with CPK
+        except ResourceExistsError:
             return True
         except HttpResponseError as error:
             try:
