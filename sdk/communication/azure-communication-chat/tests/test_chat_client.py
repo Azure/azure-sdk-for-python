@@ -20,6 +20,7 @@ from azure.communication.chat._shared.models import(
 
 from unittest_helpers import mock_response
 from datetime import datetime
+import calendar
 
 try:
     from unittest.mock import Mock, patch
@@ -27,9 +28,7 @@ except ImportError:  # python < 3.3
     from mock import Mock, patch  # type: ignore
 
 def _convert_datetime_to_utc_int(input):
-    epoch = time.mktime(datetime(1970, 1, 1).timetuple())
-    input_datetime_as_int = epoch - time.mktime(input.timetuple())
-    return input_datetime_as_int
+    return int(calendar.timegm(input.utctimetuple()))
 
 class TestChatClient(unittest.TestCase):
     @classmethod

@@ -6,18 +6,18 @@
 
 import base64
 import json
-import time
 from typing import (  # pylint: disable=unused-import
     cast,
     Tuple,
 )
 from datetime import datetime
+import calendar
 from msrest.serialization import TZ_UTC
 from azure.core.credentials import AccessToken
 
+
 def _convert_datetime_to_utc_int(expires_on):
-    epoch = time.mktime(datetime(1970, 1, 1).timetuple())
-    return epoch-time.mktime(expires_on.timetuple())
+    return int(calendar.timegm(expires_on.utctimetuple()))
 
 def parse_connection_str(conn_str):
     # type: (str) -> Tuple[str, str, str, str]
@@ -49,6 +49,7 @@ def parse_connection_str(conn_str):
 def get_current_utc_time():
     # type: () -> str
     return str(datetime.utcnow().strftime("%a, %d %b %Y %H:%M:%S ")) + "GMT"
+
 
 def get_current_utc_as_int():
     # type: () -> int
@@ -113,7 +114,3 @@ def get_authentication_policy(
 
     raise TypeError("Unsupported credential: {}. Use an access token string to use HMACCredentialsPolicy"
                     "or a token credential from azure.identity".format(type(credential)))
-
-def _convert_expires_on_datetime_to_utc_int(expires_on):
-    epoch = time.mktime(datetime(1970, 1, 1).timetuple())
-    return epoch-time.mktime(expires_on.timetuple())

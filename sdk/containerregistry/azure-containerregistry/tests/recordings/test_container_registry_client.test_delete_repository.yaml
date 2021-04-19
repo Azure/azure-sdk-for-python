@@ -1,5 +1,94 @@
 interactions:
 - request:
+    body: '{"source": {"registryUri": "registry.hub.docker.com", "sourceImage": "library/hello-world"},
+      "targetTags": ["to_be_deleted"], "mode": "Force"}'
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '142'
+      Content-Type:
+      - application/json
+      User-Agent:
+      - azsdk-python-azure-mgmt-containerregistry/8.0.0b1 Python/3.9.0rc1 (Windows-10-10.0.19041-SP0)
+    method: POST
+    uri: https://management.azure.com/subscriptions/2cd617ea-1866-46b1-90e3-fffb087ebf9b/resourceGroups/fake_rg/providers/Microsoft.ContainerRegistry/registries/seankane/importImage?api-version=2019-05-01
+  response:
+    body:
+      string: 'null'
+    headers:
+      cache-control:
+      - no-cache
+      content-length:
+      - '4'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Tue, 13 Apr 2021 15:57:07 GMT
+      expires:
+      - '-1'
+      location:
+      - https://management.azure.com/subscriptions/2cd617ea-1866-46b1-90e3-fffb087ebf9b/providers/Microsoft.ContainerRegistry/locations/WESTUS2/operationResults/registries-e542e949-9c70-11eb-9c3f-002b67128e4c?api-version=2019-05-01
+      pragma:
+      - no-cache
+      server:
+      - Microsoft-HTTPAPI/2.0
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      x-content-type-options:
+      - nosniff
+      x-ms-ratelimit-remaining-subscription-writes:
+      - '1199'
+    status:
+      code: 202
+      message: Accepted
+- request:
+    body: null
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - azsdk-python-azure-mgmt-containerregistry/8.0.0b1 Python/3.9.0rc1 (Windows-10-10.0.19041-SP0)
+    method: GET
+    uri: https://management.azure.com/subscriptions/2cd617ea-1866-46b1-90e3-fffb087ebf9b/providers/Microsoft.ContainerRegistry/locations/WESTUS2/operationResults/registries-e542e949-9c70-11eb-9c3f-002b67128e4c?api-version=2019-05-01
+  response:
+    body:
+      string: '{"status": "Succeeded"}'
+    headers:
+      cache-control:
+      - no-cache
+      content-length:
+      - '22'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Tue, 13 Apr 2021 15:57:20 GMT
+      expires:
+      - '-1'
+      pragma:
+      - no-cache
+      server:
+      - Microsoft-HTTPAPI/2.0
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      transfer-encoding:
+      - chunked
+      vary:
+      - Accept-Encoding
+      x-content-type-options:
+      - nosniff
+    status:
+      code: 200
+      message: OK
+- request:
     body: null
     headers:
       Accept:
@@ -13,11 +102,11 @@ interactions:
       User-Agent:
       - azsdk-python-azure-containerregistry/1.0.0b1 Python/3.9.0rc1 (Windows-10-10.0.19041-SP0)
     method: DELETE
-    uri: https://fake_url.azurecr.io/acr/v1/repo530d1618
+    uri: https://fake_url.azurecr.io/acr/v1/to_be_deleted
   response:
     body:
       string: '{"errors":[{"code":"UNAUTHORIZED","message":"authentication required,
-        visit https://aka.ms/acr/authorization for more information.","detail":[{"Type":"repository","Name":"repo530d1618","Action":"delete"}]}]}
+        visit https://aka.ms/acr/authorization for more information.","detail":[{"Type":"repository","Name":"to_be_deleted","Action":"delete"}]}]}
 
         '
     headers:
@@ -29,11 +118,11 @@ interactions:
       connection:
       - keep-alive
       content-length:
-      - '208'
+      - '209'
       content-type:
       - application/json; charset=utf-8
       date:
-      - Fri, 09 Apr 2021 14:56:09 GMT
+      - Tue, 13 Apr 2021 15:57:21 GMT
       docker-distribution-api-version:
       - registry/2.0
       server:
@@ -42,7 +131,7 @@ interactions:
       - max-age=31536000; includeSubDomains
       - max-age=31536000; includeSubDomains
       www-authenticate:
-      - Bearer realm="https://seankane.azurecr.io/oauth2/token",service="seankane.azurecr.io",scope="repository:repo530d1618:delete"
+      - Bearer realm="https://seankane.azurecr.io/oauth2/token",service="seankane.azurecr.io",scope="repository:to_be_deleted:delete"
       x-content-type-options:
       - nosniff
     status:
@@ -74,7 +163,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Fri, 09 Apr 2021 14:56:11 GMT
+      - Tue, 13 Apr 2021 15:57:22 GMT
       server:
       - openresty
       strict-transport-security:
@@ -82,12 +171,12 @@ interactions:
       transfer-encoding:
       - chunked
       x-ms-ratelimit-remaining-calls-per-second:
-      - '333.183333'
+      - '166.65'
     status:
       code: 200
       message: OK
 - request:
-    body: grant_type=refresh_token&service=fake_url.azurecr.io&scope=repository%3Arepo530d1618%3Adelete&refresh_token=REDACTED
+    body: grant_type=refresh_token&service=fake_url.azurecr.io&scope=repository%3Ato_be_deleted%3Adelete&refresh_token=REDACTED
     headers:
       Accept:
       - application/json
@@ -96,7 +185,7 @@ interactions:
       Connection:
       - keep-alive
       Content-Length:
-      - '1073'
+      - '1074'
       Content-Type:
       - application/x-www-form-urlencoded
       User-Agent:
@@ -112,7 +201,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Fri, 09 Apr 2021 14:56:12 GMT
+      - Tue, 13 Apr 2021 15:57:22 GMT
       server:
       - openresty
       strict-transport-security:
@@ -120,7 +209,7 @@ interactions:
       transfer-encoding:
       - chunked
       x-ms-ratelimit-remaining-calls-per-second:
-      - '332.933333'
+      - '166.633333'
     status:
       code: 200
       message: OK
@@ -138,7 +227,7 @@ interactions:
       User-Agent:
       - azsdk-python-azure-containerregistry/1.0.0b1 Python/3.9.0rc1 (Windows-10-10.0.19041-SP0)
     method: DELETE
-    uri: https://fake_url.azurecr.io/acr/v1/repo530d1618
+    uri: https://fake_url.azurecr.io/acr/v1/to_be_deleted
   response:
     body:
       string: '{"manifestsDeleted": ["sha256:1b26826f602946860c279fce658f31050cff2c596583af237d971f4629b57792",
@@ -165,7 +254,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Fri, 09 Apr 2021 14:56:14 GMT
+      - Tue, 13 Apr 2021 15:57:26 GMT
       docker-distribution-api-version:
       - registry/2.0
       server:
@@ -176,7 +265,7 @@ interactions:
       x-content-type-options:
       - nosniff
       x-ms-ratelimit-remaining-calls-per-second:
-      - '32.000000'
+      - '8.000000'
     status:
       code: 202
       message: Accepted
@@ -212,7 +301,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Fri, 09 Apr 2021 14:56:14 GMT
+      - Tue, 13 Apr 2021 15:57:26 GMT
       docker-distribution-api-version:
       - registry/2.0
       server:
@@ -253,7 +342,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Fri, 09 Apr 2021 14:56:14 GMT
+      - Tue, 13 Apr 2021 15:57:26 GMT
       server:
       - openresty
       strict-transport-security:
@@ -261,7 +350,7 @@ interactions:
       transfer-encoding:
       - chunked
       x-ms-ratelimit-remaining-calls-per-second:
-      - '332.916667'
+      - '166.6'
     status:
       code: 200
       message: OK
@@ -291,7 +380,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Fri, 09 Apr 2021 14:56:15 GMT
+      - Tue, 13 Apr 2021 15:57:26 GMT
       server:
       - openresty
       strict-transport-security:
@@ -299,7 +388,7 @@ interactions:
       transfer-encoding:
       - chunked
       x-ms-ratelimit-remaining-calls-per-second:
-      - '332.9'
+      - '166.583333'
     status:
       code: 200
       message: OK
@@ -318,10 +407,8 @@ interactions:
     uri: https://fake_url.azurecr.io/acr/v1/_catalog
   response:
     body:
-      string: '{"repositories": ["alpine/git", "debian", "hello-world", "library/hello-world",
-        "repo160e197b", "repo2e8319c5", "repo308e19dd", "repo6ce51658", "repo9b321760",
-        "repo_set160e197b", "repo_set_manib7cc1bf8", "repob7cc1bf8", "repod2be1c42",
-        "repoeb7113db", "reposet160e197b", "reposetmanib7cc1bf8", "ubuntu"]}'
+      string: '{"repositories": ["library/alpine", "library/busybox", "library/hello-world",
+        "repo2e8319c5", "repo308e19dd", "repo9b321760", "repod2be1c42", "repoeb7113db"]}'
     headers:
       access-control-expose-headers:
       - Docker-Content-Digest
@@ -331,11 +418,11 @@ interactions:
       connection:
       - keep-alive
       content-length:
-      - '289'
+      - '151'
       content-type:
       - application/json; charset=utf-8
       date:
-      - Fri, 09 Apr 2021 14:56:15 GMT
+      - Tue, 13 Apr 2021 15:57:26 GMT
       docker-distribution-api-version:
       - registry/2.0
       server:

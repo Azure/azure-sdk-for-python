@@ -80,7 +80,7 @@ class TableTestAsync(AzureTestCase, AsyncTableTestCase):
             await ts.create_table(table_name=table_name)
 
         name_filter = "TableName eq '{}'".format(table_name)
-        existing = ts.query_tables(filter=name_filter)
+        existing = ts.query_tables(name_filter)
 
         # Assert
         assert isinstance(created,  TableClient)
@@ -100,7 +100,7 @@ class TableTestAsync(AzureTestCase, AsyncTableTestCase):
         query_filter = "TableName eq 'myasynctable0' or TableName eq 'myasynctable1' or TableName eq 'myasynctable2'"
         table_count = 0
         page_count = 0
-        async for table_page in ts.query_tables(filter=query_filter, results_per_page=2).by_page():
+        async for table_page in ts.query_tables(query_filter, results_per_page=2).by_page():
 
             temp_count = 0
             async for table in table_page:
@@ -146,7 +146,7 @@ class TableTestAsync(AzureTestCase, AsyncTableTestCase):
         # Act
         name_filter = "TableName eq '{}'".format(table.table_name)
         tables = []
-        async for t in ts.query_tables(filter=name_filter):
+        async for t in ts.query_tables(name_filter):
             tables.append(t)
 
         # Assert
@@ -342,7 +342,7 @@ class TableTestAsync(AzureTestCase, AsyncTableTestCase):
 
             # Assert
             with pytest.raises(ValueError):
-                await table.set_table_access_policy(table_name=table.table_name, signed_identifiers=identifiers)
+                await table.set_table_access_policy(signed_identifiers=identifiers)
         finally:
             await ts.delete_table(table.table_name)
 
