@@ -69,7 +69,6 @@ steps:
 
     - bash: |
         conda env create --name ${{ artifact.name }} --file $(Build.SourcesDirectory)/eng/environment.yml
-        conda activate ${{ artifact.name }}
         conda install --yes --quiet --name ${{ artifact.name }} conda-build
       displayName: 'Prepare Conda Environment for building ${{ artifact.name }}'
 
@@ -78,7 +77,7 @@ steps:
       displayName: 'Set Conda Version Variable'
 
     - bash: |
-        conda activate ${{ artifact.name }}
+        source activate ${{ artifact.name }}
         conda-build . --output-folder "$(Agent.BuildDirectory)/conda/output"
       displayName: 'Activate Conda Environment and Build ${{ artifact.name }}'
       workingDirectory: $(Build.SourcesDirectory)/sdk/${{ parameters.ServiceDirectory }}
