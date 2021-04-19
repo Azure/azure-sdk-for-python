@@ -4,7 +4,6 @@ languages:
   - python
 products:
   - azure
-  - azure-core-tracing-opentelemetry
 urlFragment: azure-core-tracing-opentelemetry-samples
 ---
 

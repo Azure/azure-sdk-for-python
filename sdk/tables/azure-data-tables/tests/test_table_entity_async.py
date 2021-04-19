@@ -299,7 +299,7 @@ class StorageTableEntityTest(AzureTestCase, AsyncTableTestCase):
             await self.table.create_entity(entity)
 
             f = u"RowKey eq '{}'".format(entity["RowKey"])
-            entities = self.table.query_entities(filter=f)
+            entities = self.table.query_entities(f)
 
             count = 0
             async for e in entities:
@@ -311,7 +311,7 @@ class StorageTableEntityTest(AzureTestCase, AsyncTableTestCase):
 
             assert count == 1
 
-            entities = self.table.query_entities(filter=f)
+            entities = self.table.query_entities(f)
             count = 0
             async for e in entities:
                 count += 1
@@ -1045,7 +1045,7 @@ class StorageTableEntityTest(AzureTestCase, AsyncTableTestCase):
             await self.table.create_entity(entity=entity2)
             entities = []
             async for e in self.table.query_entities(
-                    filter="PartitionKey eq '{}'".format(entity['PartitionKey'])):
+                    "PartitionKey eq '{}'".format(entity['PartitionKey'])):
                 entities.append(e)
 
             # Assert
@@ -1071,7 +1071,7 @@ class StorageTableEntityTest(AzureTestCase, AsyncTableTestCase):
             await self.table.create_entity(entity=entity2)
             entities = []
             async for e in self.table.query_entities(
-                    filter="PartitionKey eq '{}'".format(entity['PartitionKey'])):
+                    "PartitionKey eq '{}'".format(entity['PartitionKey'])):
                 entities.append(e)
 
             # Assert
@@ -1264,7 +1264,7 @@ class StorageTableEntityTest(AzureTestCase, AsyncTableTestCase):
 
             entity_count = 0
             page_count = 0
-            async for entity_page in self.table.query_entities(filter=query_filter, results_per_page=2).by_page():
+            async for entity_page in self.table.query_entities(query_filter, results_per_page=2).by_page():
 
                 temp_count = 0
                 async for ent in entity_page:
@@ -1383,7 +1383,7 @@ class StorageTableEntityTest(AzureTestCase, AsyncTableTestCase):
             entity = await self._insert_two_opposite_entities()
 
             # Act
-            entities = self.table.query_entities(filter="married eq @my_param", parameters={'my_param': True})
+            entities = self.table.query_entities("married eq @my_param", parameters={'my_param': True})
 
             assert entities is not None
             length = 0
@@ -1407,7 +1407,7 @@ class StorageTableEntityTest(AzureTestCase, AsyncTableTestCase):
                 'my_param': True,
                 'rk': entity['RowKey']
             }
-            entities = self.table.query_entities(filter="married eq @my_param and RowKey eq @rk", parameters=parameters)
+            entities = self.table.query_entities("married eq @my_param and RowKey eq @rk", parameters=parameters)
 
             length = 0
             assert entities is not None
@@ -1430,7 +1430,7 @@ class StorageTableEntityTest(AzureTestCase, AsyncTableTestCase):
             parameters = {
                 'my_param': 40,
             }
-            entities = self.table.query_entities(filter="age lt @my_param", parameters=parameters)
+            entities = self.table.query_entities("age lt @my_param", parameters=parameters)
 
             length = 0
             assert entities is not None
@@ -1453,7 +1453,7 @@ class StorageTableEntityTest(AzureTestCase, AsyncTableTestCase):
             parameters = {
                 'my_param': entity['ratio'] + 1,
             }
-            entities = self.table.query_entities(filter="ratio lt @my_param", parameters=parameters)
+            entities = self.table.query_entities("ratio lt @my_param", parameters=parameters)
 
             length = 0
             assert entities is not None
@@ -1476,7 +1476,7 @@ class StorageTableEntityTest(AzureTestCase, AsyncTableTestCase):
             parameters = {
                 'my_param': entity['birthday'],
             }
-            entities = self.table.query_entities(filter="birthday eq @my_param", parameters=parameters)
+            entities = self.table.query_entities("birthday eq @my_param", parameters=parameters)
 
             length = 0
             assert entities is not None
@@ -1499,7 +1499,7 @@ class StorageTableEntityTest(AzureTestCase, AsyncTableTestCase):
             parameters = {
                 'my_param': entity['clsid']
             }
-            entities = self.table.query_entities(filter="clsid eq @my_param", parameters=parameters)
+            entities = self.table.query_entities("clsid eq @my_param", parameters=parameters)
 
             length = 0
             assert entities is not None
@@ -1578,7 +1578,7 @@ class StorageTableEntityTest(AzureTestCase, AsyncTableTestCase):
             # Act
             entities = []
             async for t in self.table.query_entities(
-                    filter="PartitionKey eq '{}'".format(entity.PartitionKey)):
+                    "PartitionKey eq '{}'".format(entity.PartitionKey)):
                 entities.append(t)
 
             # Assert
@@ -1605,7 +1605,7 @@ class StorageTableEntityTest(AzureTestCase, AsyncTableTestCase):
                 await self.table.create_entity(base_entity)
             # Act
             with pytest.raises(HttpResponseError):
-                async for t in self.table.query_entities(filter="aaa bbb ccc"):
+                async for t in self.table.query_entities("aaa bbb ccc"):
                     _ = t
         finally:
             await self._tear_down()
@@ -1712,7 +1712,7 @@ class StorageTableEntityTest(AzureTestCase, AsyncTableTestCase):
             table = service.get_table_client(self.table_name)
             entities = []
             async for t in table.query_entities(
-                    filter="PartitionKey eq '{}'".format(entity['PartitionKey'])):
+                    "PartitionKey eq '{}'".format(entity['PartitionKey'])):
                 entities.append(t)
 
             # Assert
@@ -1914,7 +1914,7 @@ class StorageTableEntityTest(AzureTestCase, AsyncTableTestCase):
             table = service.get_table_client(self.table_name)
             entities = []
             async for t in table.query_entities(
-                    filter="PartitionKey eq '{}'".format(entity['PartitionKey'])):
+                    "PartitionKey eq '{}'".format(entity['PartitionKey'])):
                 entities.append(t)
 
             # Assert
@@ -1956,7 +1956,7 @@ class StorageTableEntityTest(AzureTestCase, AsyncTableTestCase):
             table = service.get_table_client(table_name=self.table_name)
             entities = []
             async for t in table.query_entities(
-                    filter="PartitionKey eq '{}'".format(entity.PartitionKey)):
+                    "PartitionKey eq '{}'".format(entity.PartitionKey)):
                 entities.append(t)
 
             # Assert
