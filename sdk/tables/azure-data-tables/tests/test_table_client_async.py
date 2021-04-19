@@ -183,7 +183,6 @@ class TestTableClientUnit(AsyncTableTestCase):
     @pytest.mark.asyncio
     async def test_create_service_china_async(self):
         # Arrange
-        # TODO: Confirm regional cloud cosmos URLs
         for service_type in SERVICES.items():
             # Act
             url = self.account_url(self.tables_storage_account_name, "table").replace('core.windows.net', 'core.chinacloudapi.cn')
