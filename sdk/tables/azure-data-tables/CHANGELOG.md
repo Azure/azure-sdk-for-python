@@ -5,6 +5,8 @@
 * Removed explicit `LinearRetry` and `ExponentialRetry` in favor of keyword parameter.
 * Renamed `filter` parameter in query APIs to `query_filter`.
 * The `location_mode` attribute on clients is now read-only. This has been added as a keyword parameter to the constructor.
+* Removed `BatchTransactionResult` object in favor of returning an iterable of batched entities with returned metadata.
+* Removed Batching context-manager behavior
 
 **Fixes**
 * Fixed issue with Cosmos merge operations.
