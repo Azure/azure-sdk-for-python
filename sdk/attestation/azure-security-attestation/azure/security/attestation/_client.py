@@ -62,10 +62,10 @@ class AttestationClient(object):
         return self._client.metadata_configuration.get()
 
     @distributed_trace
-    def get_signing_certificates(self): # type: () ->List[AttestationSigner]
+    def get_signing_certificates(self, **kwargs): # type: (Any) ->List[AttestationSigner]
         """ Returns the set of signing certificates used to sign attestation tokens.
         """
-        signing_certificates = self._client.signing_certificates.get()
+        signing_certificates = self._client.signing_certificates.get(**kwargs)
         assert signing_certificates.keys is not None
         signers = []
         for key in signing_certificates.keys:
@@ -93,6 +93,7 @@ class AttestationClient(object):
         result = self._client.attestation.attest_sgx_enclave(request, **kwargs)
         token = AttestationToken[AttestationResult](token=result.token,
             body_type=AttestationResult)
+        token.validate_token(self._config.token_validation_options, self._get_signers(**kwargs))
         return AttestationResponse[AttestationResult](token, token.get_body())
 
     @distributed_trace
@@ -108,17 +109,17 @@ class AttestationClient(object):
         result = self._client.attestation.attest_open_enclave(request, **kwargs)
         token = AttestationToken[AttestationResult](token=result.token,
             body_type=AttestationResult)
-        token.validate_token(self._config.token_validation_options, self._get_signers())
+        token.validate_token(self._config.token_validation_options, self._get_signers(**kwargs))
         return AttestationResponse[AttestationResult](token, token.get_body())
 
-    def _get_signers(self):
+    def _get_signers(self, **kwargs):
         #type() -> List[AttestationSigner]
         """ Returns the set of signing certificates used to sign attestation tokens.
         """
 
         with self._statelock:
             if (self._signing_certificates == None):
-                signing_certificates = self._client.signing_certificates.get()
+                signing_certificates = self._client.signing_certificates.get(**kwargs)
                 self._signing_certificates = []
                 for key in signing_certificates.keys:
                     # Convert the returned certificate chain into an array of X.509 Certificates.

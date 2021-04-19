@@ -58,14 +58,14 @@ class AttestationAdministrationClient(object):
         self._signing_certificates = None
 
     @distributed_trace
-    def get_policy(self, attestation_type): 
+    def get_policy(self, attestation_type, **kwargs): 
         #type(AttestationType) -> AttestationResult[str]:
         """ Retrieves the attestation policy for a specified attestation type.
         :param attestation_type - The attestation parameter type.
         :type attestation_type: AttestationType
         """
         
-        policyResult = self._client.policy.get(attestation_type)
+        policyResult = self._client.policy.get(attestation_type, **kwargs)
         token = AttestationToken[PolicyResult](token=policyResult.token, body_type=PolicyResult)
         token_body = token.get_body()
         stored_policy = AttestationToken[StoredAttestationPolicy](token=token_body.policy, body_type=StoredAttestationPolicy)
@@ -73,33 +73,33 @@ class AttestationAdministrationClient(object):
         actual_policy = stored_policy.get_body().attestation_policy #type: bytes
 
         if self._config.token_validation_options.validate_token:
-            token.validate_token(self._config.token_validation_options, self._get_signers())
+            token.validate_token(self._config.token_validation_options, self._get_signers(**kwargs))
 
         return AttestationResponse[str](token, actual_policy.decode('utf-8'))
 
     @distributed_trace
-    def set_policy(self, attestation_type, attestation_policy, signing_key=None): 
-        #type:(AttestationType, str, SigningKey) -> AttestationResponse[PolicyResult]
+    def set_policy(self, attestation_type, attestation_policy, signing_key=None, **kwargs): 
+        #type:(AttestationType, str, SigningKey, Any) -> AttestationResponse[PolicyResult]
         policy_token = AttestationToken[StoredAttestationPolicy](
             body=StoredAttestationPolicy(attestation_policy = attestation_policy.encode('ascii')),
             body_type=StoredAttestationPolicy)
-        policyResult = self._client.policy.set(attestation_type=attestation_type, new_attestation_policy=policy_token.serialize())
+        policyResult = self._client.policy.set(attestation_type=attestation_type, new_attestation_policy=policy_token.serialize(), **kwargs)
         token = AttestationToken[PolicyResult](token=policyResult.token,
             body_type=PolicyResult)
         if self._config.token_validation_options.validate_token:
-            token.validate_token(self._config.token_validation_options, self._get_signers())
+            token.validate_token(self._config.token_validation_options, self._get_signers(**kwargs))
 
         return AttestationResponse[PolicyResult](token, token.get_body())
 
 
-    def _get_signers(self):
-        #type() -> List[AttestationSigner]
+    def _get_signers(self, **kwargs):
+        #type(Any) -> List[AttestationSigner]
         """ Returns the set of signing certificates used to sign attestation tokens.
         """
 
         with self._statelock:
             if (self._signing_certificates == None):
-                signing_certificates = self._client.signing_certificates.get()
+                signing_certificates = self._client.signing_certificates.get(**kwargs)
                 self._signing_certificates = []
                 for key in signing_certificates.keys:
                     # Convert the returned certificate chain into an array of X.509 Certificates.
