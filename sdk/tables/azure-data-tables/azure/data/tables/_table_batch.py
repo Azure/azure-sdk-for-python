@@ -6,16 +6,13 @@
 from typing import (
     Union,
     Any,
-    Dict,
-    TYPE_CHECKING
+    Dict
 )
 
 from ._common_conversion import _is_cosmos_endpoint, _transform_patch_to_cosmos_post
 from ._models import UpdateMode
 from ._serialize import _get_match_headers, _add_entity_properties
-
-if TYPE_CHECKING:
-    from ._entity import TableEntity
+from ._entity import TableEntity
 
 
 class TableBatchOperations(object):
@@ -101,14 +98,14 @@ class TableBatchOperations(object):
                 :caption: Creating and adding an entity to a Table
         """
         self._verify_partition_key(entity)
-        temp_entity = entity.copy()
+        temp = entity.copy()
 
-        if "PartitionKey" in entity and "RowKey" in entity:
-            entity = _add_entity_properties(entity)
+        if "PartitionKey" in temp and "RowKey" in temp:
+            temp = _add_entity_properties(temp)
         else:
-            raise ValueError("PartitionKey and RowKey were not provided in entity")
-        self._batch_create_entity(table=self.table_name, entity=entity, **kwargs)
-        self._entities.append(temp_entity)
+            raise ValueError("PartitionKey and/or RowKey were not provided in entity")
+        self._batch_create_entity(table=self.table_name, entity=temp, **kwargs)
+        self._entities.append(TableEntity(**entity.copy()))
 
     def _batch_create_entity(
         self,
@@ -229,7 +226,7 @@ class TableBatchOperations(object):
                 :caption: Creating and adding an entity to a Table
         """
         self._verify_partition_key(entity)
-        temp_entity = entity.copy()
+        temp = entity.copy()
 
         if_match, _ = _get_match_headers(
             kwargs=dict(
@@ -241,16 +238,16 @@ class TableBatchOperations(object):
             match_param="match_condition",
         )
 
-        partition_key = entity["PartitionKey"]
-        row_key = entity["RowKey"]
-        entity = _add_entity_properties(entity)
+        partition_key = temp["PartitionKey"]
+        row_key = temp["RowKey"]
+        temp = _add_entity_properties(temp)
         if mode is UpdateMode.REPLACE:
             self._batch_update_entity(
                 table=self.table_name,
                 partition_key=partition_key,
                 row_key=row_key,
                 if_match=if_match or "*",
-                table_entity_properties=entity,
+                table_entity_properties=temp,
                 **kwargs
             )
         elif mode is UpdateMode.MERGE:
@@ -259,10 +256,10 @@ class TableBatchOperations(object):
                 partition_key=partition_key,
                 row_key=row_key,
                 if_match=if_match or "*",
-                table_entity_properties=entity,
+                table_entity_properties=temp,
                 **kwargs
             )
-        self._entities.append(temp_entity)
+        self._entities.append(TableEntity(**entity.copy()))
 
     def _batch_update_entity(
         self,
@@ -530,9 +527,7 @@ class TableBatchOperations(object):
             if_match=if_match or "*",
             **kwargs
         )
-
-        temp_entity = {"PartitionKey": partition_key, "RowKey": row_key}
-        self._entities.append(temp_entity)
+        self._entities.append(TableEntity(PartitionKey=partition_key, RowKey=row_key))
 
     def _batch_delete_entity(
         self,
@@ -651,18 +646,18 @@ class TableBatchOperations(object):
                 :caption: Creating and adding an entity to a Table
         """
         self._verify_partition_key(entity)
-        temp_entity = entity.copy()
+        temp = entity.copy()
 
-        partition_key = entity["PartitionKey"]
-        row_key = entity["RowKey"]
-        entity = _add_entity_properties(entity)
+        partition_key = temp["PartitionKey"]
+        row_key = temp["RowKey"]
+        temp = _add_entity_properties(temp)
 
         if mode is UpdateMode.MERGE:
             self._batch_merge_entity(
                 table=self.table_name,
                 partition_key=partition_key,
                 row_key=row_key,
-                table_entity_properties=entity,
+                table_entity_properties=temp,
                 **kwargs
             )
         elif mode is UpdateMode.REPLACE:
@@ -670,7 +665,7 @@ class TableBatchOperations(object):
                 table=self.table_name,
                 partition_key=partition_key,
                 row_key=row_key,
-                table_entity_properties=entity,
+                table_entity_properties=temp,
                 **kwargs
             )
-        self._entities.append(temp_entity)
+        self._entities.append(TableEntity(**entity.copy()))
