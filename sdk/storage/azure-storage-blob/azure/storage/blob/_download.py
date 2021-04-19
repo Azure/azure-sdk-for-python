@@ -255,7 +255,7 @@ class _ChunkIterator(object):
                 return self._current_content
             raise e
 
-        # the current content from the first get is still there but smaller than chunk size 
+        # the current content from the first get is still there but smaller than chunk size
         # therefore we want to make sure its also included
         return self._get_chunk_data()
 
