@@ -52,6 +52,10 @@
   "variables": {
     "serviceBusNamespace": "[concat('sb-', parameters('baseName'))]",
     "serviceBusSubscriptionName": "[concat('sb-', parameters('baseName'), '-subscription')]",
+    "serviceBusAllMsgsSubscriptionName": "[concat('sb-', parameters('baseName'), '-allmsgs-sub')]",
+    "serviceBusSqlFilterOnlySubscriptionName": "[concat('sb-', parameters('baseName'), '-sqlfilteronly-sub')]",
+    "serviceBusSqlFilterWithActionSubscriptionName": "[concat('sb-', parameters('baseName'), '-sqlfilteraction-sub')]",
+    "serviceBusCorrFilterSubscriptionName": "[concat('sb-', parameters('baseName'), '-corrfiltersub')]",
     "serviceBusTopicName": "[concat('sb-', parameters('baseName'), '-topic')]",
     "serviceBusQueueName": "[concat('sb-', parameters('baseName'), '-queue')]",
     "serviceBusSessionQueueName": "[concat('sb-', parameters('baseName'), '-session-queue')]",
@@ -74,24 +78,62 @@
       },
       "resources": [
         {
-            "apiVersion": "[variables('sbVersion')]",
-            "name": "[variables('serviceBusTopicName')]",
-            "type": "Topics",
-            "dependsOn": [
-                "[concat('Microsoft.ServiceBus/namespaces/', variables('serviceBusNamespace'))]"
-            ],
-            "properties": {
-                "path": "[variables('serviceBusTopicName')]"
+          "apiVersion": "[variables('sbVersion')]",
+          "name": "[variables('serviceBusTopicName')]",
+          "type": "Topics",
+          "dependsOn": [
+              "[concat('Microsoft.ServiceBus/namespaces/', variables('serviceBusNamespace'))]"
+          ],
+          "properties": {
+              "path": "[variables('serviceBusTopicName')]"
+          },
+          "resources": [
+            {
+              "apiVersion": "[variables('sbVersion')]",
+              "name": "[variables('serviceBusSubscriptionName')]",
+              "type": "Subscriptions",
+              "dependsOn": [
+                  "[variables('serviceBusTopicName')]"
+              ],
+              "properties": {}
             },
-            "resources": [{
-                "apiVersion": "[variables('sbVersion')]",
-                "name": "[variables('serviceBusSubscriptionName')]",
-                "type": "Subscriptions",
-                "dependsOn": [
-                    "[variables('serviceBusTopicName')]"
-                ],
-                "properties": {}
-            }]
+            {
+              "apiVersion": "[variables('sbVersion')]",
+              "name": "[variables('serviceBusAllMsgsSubscriptionName')]",
+              "type": "Subscriptions",
+              "dependsOn": [
+                  "[variables('serviceBusTopicName')]"
+              ],
+              "properties": {}
+            },
+            {
+              "apiVersion": "[variables('sbVersion')]",
+              "name": "[variables('serviceBusSqlFilterOnlySubscriptionName')]",
+              "type": "Subscriptions",
+              "dependsOn": [
+                  "[variables('serviceBusTopicName')]"
+              ],
+              "properties": {}
+            },
+            {
+              "apiVersion": "[variables('sbVersion')]",
+              "name": "[variables('serviceBusSqlFilterWithActionSubscriptionName')]",
+              "type": "Subscriptions",
+              "dependsOn": [
+                  "[variables('serviceBusTopicName')]"
+              ],
+              "properties": {}
+            },
+            {
+              "apiVersion": "[variables('sbVersion')]",
+              "name": "[variables('serviceBusCorrFilterSubscriptionName')]",
+              "type": "Subscriptions",
+              "dependsOn": [
+                  "[variables('serviceBusTopicName')]"
+              ],
+              "properties": {}
+            }
+          ]
         },
         {
           "type": "Queues",
@@ -191,9 +233,25 @@
       "type": "string",
       "value": "[variables('serviceBusTopicName')]"
     },
-    "SERVICE_BUS_SUBSCRIPTION_NAME": {
+    "SERVICE_BUS_SUB_NAME": {
       "type": "string",
       "value": "[variables('serviceBusSubscriptionName')]"
+    },
+    "SERVICE_BUS_ALL_MSGS_SUB_NAME": {
+      "type": "string",
+      "value": "[variables('serviceBusAllMsgsSubscriptionName')]"
+    },
+    "SERVICE_BUS_SQL_FILTER_ONLY_SUB_NAME": {
+      "type": "string",
+      "value": "[variables('serviceBusSqlFilterOnlySubscriptionName')]"
+    },
+    "SERVICE_BUS_SQL_FILTER_ACTION_SUB_NAME": {
+      "type": "string",
+      "value": "[variables('serviceBusSqlFilterWithActionSubscriptionName')]"
+    },
+    "SERVICE_BUS_CORR_FILTER_SUB_NAME": {
+      "type": "string",
+      "value": "[variables('serviceBusCorrFilterSubscriptionName')]"
     },
     "SERVICE_BUS_QUEUE_NAME": {
       "type": "string",
