@@ -432,8 +432,8 @@ class TableSasPermissions(object):
         :param str permission: Specify permissions in
             the string with the first letter of the word.
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: A AccountSasPermissions object
-        :rtype: ~azure.data.tables.AccountSasPermissions
+        :return: An AccountSasPermissions object
+        :rtype: :class:`~azure.data.tables.AccountSasPermissions`
         """
         p_read = "r" in permission
         p_add = "a" in permission
@@ -551,6 +551,8 @@ class BatchErrorException(HttpResponseError):
     :type response: str
     :param parts: A list of the parts in multipart response.
     :type parts: List[str]
+    :param args: Args to be passed to :class:`~azure.core.exceptions.HttpResponseError`
+    :type args: List[str]
     """
 
     def __init__(self, message, response, parts, *args, **kwargs):
@@ -566,11 +568,11 @@ class BatchTransactionResult(object):
     recreate a request in the case of BatchErrorException
 
     :param requests: The requests of the batch
-    :type requests: List[:class:~azure.core.pipeline.HttpRequest]
+    :type requests: List[~azure.core.pipeline.HttpRequest]
     :param results: The HTTP response of each request
-    :type results: List[:class:~azure.core.pipeline.HttpResponse]
+    :type results: List[~azure.core.pipeline.HttpResponse]
     :param entities: Entities submitted for the batch
-    :type entities: List[:class:~azure.data.tables.TableEntity]
+    :type entities: List[~azure.data.tables.TableEntity]
     """
 
     def __init__(self, requests, results, entities):
@@ -667,7 +669,7 @@ class ResourceTypes(object):
         :param str string: Specify service, container, or object in
             in the string with the first letter of the word.
         :return: A ResourceTypes object
-        :rtype: ~azure.data.tables.ResourceTypes
+        :rtype: :class:`~azure.data.tables.ResourceTypes`
         """
         res_service = "s" in string
         res_object = "o" in string
@@ -743,7 +745,7 @@ class AccountSasPermissions(object):
         :param permission: Specify permissions in the string with the first letter of the word.
         :type permission: str
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: A AccountSasPermissions object
+        :return: An AccountSasPermissions object
         :rtype: :class:`~azure.data.tables.AccountSasPermissions`
         """
         p_read = "r" in permission

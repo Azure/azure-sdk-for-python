@@ -70,11 +70,9 @@ class TableServiceClient(TablesBaseClient):
     ):  # type: (...) -> TableServiceClient
         """Create TableServiceClient from a connection string.
 
-        :param conn_str:
-            A connection string to an Azure Storage or Cosmos account.
-        :type conn_str: str
+        :param str conn_str: A connection string to an Azure Storage or Cosmos account.
         :returns: A Table service client.
-        :rtype: ~azure.data.tables.TableServiceClient
+        :rtype: :class:`~azure.data.tables.TableServiceClient`
 
         .. admonition:: Example:
 
@@ -99,7 +97,7 @@ class TableServiceClient(TablesBaseClient):
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: Dictionary of service stats
         :rtype: :class:`~azure.data.tables.models.TableServiceStats`
-        :raises :class:`~azure.core.exceptions.HttpResponseError:`
+        :raises: :class:`~azure.core.exceptions.HttpResponseError:`
         """
         try:
             timeout = kwargs.pop("timeout", None)
@@ -117,8 +115,8 @@ class TableServiceClient(TablesBaseClient):
         including properties for Analytics and CORS (Cross-Origin Resource Sharing) rules.
 
         :return: Dictionary of service properties
-        :rtype: Dict[str, Any]
-        :raises ~azure.core.exceptions.HttpResponseError:
+        :rtype: :class:`~azure.data.tables.models.TableServiceProperties`
+        :raises: :class:`~azure.core.exceptions.HttpResponseError`
         """
         timeout = kwargs.pop("timeout", None)
         try:
@@ -141,16 +139,15 @@ class TableServiceClient(TablesBaseClient):
          including properties for Analytics and CORS (Cross-Origin Resource Sharing) rules.
 
         :param analytics_logging: Properties for analytics
-        :type analytics_logging: ~azure.data.tables.TableAnalyticsLogging
+        :type analytics_logging: :class:`~azure.data.tables.TableAnalyticsLogging`
         :param hour_metrics: Hour level metrics
-        :type hour_metrics: ~azure.data.tables.Metrics
+        :type hour_metrics: :class:`~azure.data.tables.Metrics`
         :param minute_metrics: Minute level metrics
-        :type minute_metrics: ~azure.data.tables.Metrics
+        :type minute_metrics: :class:`~azure.data.tables.Metrics`
         :param cors: Cross-origin resource sharing rules
-        :type cors: ~azure.data.tables.CorsRule
+        :type cors: :class:`~azure.data.tables.CorsRule`
         :return: None
-        :rtype: None
-        :raises ~azure.core.exceptions.HttpResponseError:
+        :raises: :class:`~azure.core.exceptions.HttpResponseError`
         """
         props = TableServiceProperties(
             logging=analytics_logging,
@@ -175,8 +172,8 @@ class TableServiceClient(TablesBaseClient):
         :param table_name: The Table name.
         :type table_name: str
         :return: TableClient
-        :rtype: ~azure.data.tables.TableClient
-        :raises ~azure.core.exceptions.ResourceExistsError:
+        :rtype: :class:`~azure.data.tables.TableClient`
+        :raises: :class:`~azure.core.exceptions.ResourceExistsError`
 
         .. admonition:: Example:
 
@@ -205,8 +202,8 @@ class TableServiceClient(TablesBaseClient):
         :param table_name: The Table name.
         :type table_name: str
         :return: TableClient
-        :rtype: ~azure.data.tables.TableClient
-        :raises ~azure.core.exceptions.HttpResponseError:
+        :rtype: :class:`~azure.data.tables.TableClient`
+        :raises: :class:`~azure.core.exceptions.HttpResponseError`
 
         .. admonition:: Example:
 
@@ -236,8 +233,7 @@ class TableServiceClient(TablesBaseClient):
         :param table_name: The Table name.
         :type table_name: str
         :return: None
-        :rtype: None
-        :raises ~azure.core.exceptions.ResourceNotFoundError:
+        :raises: :class:`~azure.core.exceptions.ResourceNotFoundError`
 
         .. admonition:: Example:
 
@@ -255,20 +251,19 @@ class TableServiceClient(TablesBaseClient):
     def query_tables(
         self,
         query_filter,
-        **kwargs  # type: Any
+        **kwargs
     ):
-        # type: (...) -> ItemPaged[TableItem]
+        # type: (str, **Dict[str, Any]) -> ItemPaged[TableItem]
         """Queries tables under the given account.
 
-        :param filter: Specify a filter to return certain tables.
-        :type filter: str
+        :param str query_filter: Specify a filter to return certain tables.
         :keyword int results_per_page: Number of tables per page in return ItemPaged
         :keyword select: Specify desired properties of a table to return certain tables
-        :paramtype select: str or list[str]
-        :keyword dict[str,str] parameters: Dictionary for formatting query with additional, user defined parameters
-        :return: An ItemPaged of tables
-        :rtype: ~azure.core.paging.ItemPaged[TableItem]
-        :raises ~azure.core.exceptions.HttpResponseError:
+        :paramtype select: str or List[str]
+        :keyword Dict[str, str] parameters: Dictionary for formatting query with additional, user defined parameters
+        :return: ItemPaged[:class:`~azure.data.tables.TableItem`]
+        :rtype: ~azure.core.paging.ItemPaged
+        :raises: :class:`~azure.core.exceptions.HttpResponseError`
 
         .. admonition:: Example:
 
@@ -306,10 +301,10 @@ class TableServiceClient(TablesBaseClient):
 
         :keyword int results_per_page: Number of tables per page in return ItemPaged
         :keyword select: Specify desired properties of a table to return certain tables
-        :paramtype select: str or list[str]
-        :return: A query of tables
-        :rtype: ~azure.core.paging.ItemPaged[TableItem]
-        :raises ~azure.core.exceptions.HttpResponseError:
+        :paramtype select: str or List[str]
+        :return: ItemPaged[:class:`~azure.data.tables.TableItem`]
+        :rtype: ~azure.core.paging.ItemPaged
+        :raises: :class:`~azure.core.exceptions.HttpResponseError`
 
         .. admonition:: Example:
 
@@ -339,11 +334,9 @@ class TableServiceClient(TablesBaseClient):
 
         The table need not already exist.
 
-        :param table_name:
-            The table name
-        :type table_name: str
+        :param str table_name: The table name
         :returns: A :class:`~azure.data.tables.TableClient` object.
-        :rtype: ~azure.data.tables.TableClient
+        :rtype: :class:`~azure.data.tables.TableClient`
 
         """
         pipeline = Pipeline(
