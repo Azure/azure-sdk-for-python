@@ -6,6 +6,7 @@ import asyncio
 import sys
 from typing import cast, TYPE_CHECKING
 
+from .._internal import AsyncContextManager
 from .._internal.decorators import log_get_token_async
 from ... import CredentialUnavailableError
 from ..._credentials.azure_powershell import (
@@ -22,8 +23,7 @@ if TYPE_CHECKING:
     from azure.core.credentials import AccessToken
 
 
-
-class AzurePowerShellCredential:
+class AzurePowerShellCredential(AsyncContextManager):
     """Authenticates by requesting a token from Azure PowerShell.
 
     This requires previously logging in to Azure via "Connect-AzAccount", and will use the currently logged in identity.
@@ -60,6 +60,9 @@ class AzurePowerShellCredential:
         output = await run_command(command_line)
         token = parse_token(output)
         return token
+
+    async def close(self):
+        """Calling this method is unnecessary"""
 
 
 async def run_command(args: "Tuple") -> str:
