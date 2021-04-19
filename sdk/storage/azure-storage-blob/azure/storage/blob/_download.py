@@ -8,9 +8,9 @@ import sys
 import threading
 import time
 
-import requests
 import warnings
 from io import BytesIO
+import requests
 
 from azure.core.exceptions import HttpResponseError, ServiceResponseError
 from azure.core.tracing.common import with_current_context
