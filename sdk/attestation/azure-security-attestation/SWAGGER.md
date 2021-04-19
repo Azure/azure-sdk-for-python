@@ -32,7 +32,7 @@ v3: true
 add-credentials: true
 azure-arm: false
 payload-flattening-threshold: 2
-package-name: azure-attestation
+package-name: azure-security-attestation
 credential-scopes: 'https://attest.azure.net/.default'
 
 #directive:
