@@ -68,7 +68,7 @@ steps:
       displayName: 'Prepend PATH with Conda and INIT'
 
     - bash: |
-        conda env create --yes --quiet --name ${{ artifact.name }} -f $(Build.SourcesDirectory)/eng/environment.yml
+        conda env create --name ${{ artifact.name }} --file $(Build.SourcesDirectory)/eng/environment.yml
         conda activate ${{ artifact.name }}
         conda install --yes --quiet --name ${{ artifact.name }} conda-build
       displayName: 'Prepare Conda Environment for building ${{ artifact.name }}'
