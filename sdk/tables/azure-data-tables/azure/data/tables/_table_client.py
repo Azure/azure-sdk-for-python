@@ -455,7 +455,7 @@ class TableClient(TablesBaseClient):
         """
         user_select = kwargs.pop("select", None)
         if user_select and not isinstance(user_select, str):
-            user_select = ", ".join(user_select)
+            user_select = ",".join(user_select)
         top = kwargs.pop("results_per_page", None)
 
         command = functools.partial(self._client.table.query_entities, **kwargs)

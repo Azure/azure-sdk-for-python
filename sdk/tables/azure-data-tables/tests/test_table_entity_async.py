@@ -1081,11 +1081,8 @@ class StorageTableEntityTest(AzureTestCase, AsyncTableTestCase):
         finally:
             await self._tear_down()
 
-    @pytest.mark.skip("Header authorization error")
     @TablesPreparer()
     async def test_operations_on_entity_with_partition_key_having_single_quote(self, tables_storage_account_name, tables_primary_storage_account_key):
-
-        # Arrange
         partition_key_with_single_quote = u"a''''b"
         row_key_with_single_quote = u"a''''b"
         await self._set_up(tables_storage_account_name, tables_primary_storage_account_key)
@@ -1093,32 +1090,20 @@ class StorageTableEntityTest(AzureTestCase, AsyncTableTestCase):
             entity, _ = await self._insert_random_entity(pk=partition_key_with_single_quote,
                                                          rk=row_key_with_single_quote)
 
-            # Act
             sent_entity = self._create_updated_entity_dict(entity.PartitionKey, entity.RowKey)
             resp = await self.table.upsert_entity(mode=UpdateMode.MERGE, entity=sent_entity)
 
-            # Assert
             self._assert_valid_metadata(resp)
-            # row key here only has 2 quotes
             received_entity = await self.table.get_entity(entity.PartitionKey, entity.RowKey)
             self._assert_updated_entity(received_entity)
 
-            # Act
             sent_entity['newField'] = u'newFieldValue'
             resp = await self.table.update_entity(mode=UpdateMode.MERGE, entity=sent_entity)
 
-
-            # Assert
             self._assert_valid_metadata(resp)
-            received_entity = self.table.get_entity(entity.PartitionKey, entity.RowKey)
+            received_entity = await self.table.get_entity(entity.PartitionKey, entity.RowKey)
             self._assert_updated_entity(received_entity)
             assert received_entity['newField'] ==  'newFieldValue'
-
-            # Act
-            resp = self.table.delete_entity(entity.PartitionKey, entity.RowKey)
-
-            # Assert
-            assert resp is None
         finally:
             await self._tear_down()
 
@@ -1198,7 +1183,6 @@ class StorageTableEntityTest(AzureTestCase, AsyncTableTestCase):
         finally:
             await self._tear_down()
 
-    @pytest.mark.skip("response time is three hours before the given one")
     @TablesPreparer()
     async def test_timezone(self, tables_storage_account_name, tables_primary_storage_account_key):
         # Arrange

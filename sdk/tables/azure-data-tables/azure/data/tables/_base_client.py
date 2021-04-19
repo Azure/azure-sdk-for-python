@@ -96,13 +96,22 @@ class AccountHostsMixin(object):  # pylint: disable=too-many-instance-attributes
         self._hosts = kwargs.get("_hosts")
         self.scheme = parsed_url.scheme
         self._cosmos_endpoint = _is_cosmos_endpoint(parsed_url.hostname)
+        if ".core." in parsed_url.netloc or ".cosmos." in parsed_url.netloc:
+            account = parsed_url.netloc.split(".table.core.")
+            if "cosmos" in parsed_url.netloc:
+                account = parsed_url.netloc.split(".table.cosmos.")
+            self.account_name = account[0] if len(account) > 1 else None
+        else:
+            path_account_name = parsed_url.path.split("/")
+            if len(path_account_name) > 1:
+                self.account_name = path_account_name[1]
+                account = [self.account_name, parsed_url.netloc]
+            else:
+                # If format doesn't fit Azurite, default to standard parsing
+                account = parsed_url.netloc.split(".table.core.")
+                self.account_name = account[0] if len(account) > 1 else None
 
-        account = parsed_url.netloc.split(".table.core.")
-        if "cosmos" in parsed_url.netloc:
-            account = parsed_url.netloc.split(".table.cosmos.")
-        self.account_name = account[0] if len(account) > 1 else None
         secondary_hostname = None
-
         self.credential = format_shared_key_credential(account, credential)
         if self.scheme.lower() != "https" and hasattr(self.credential, "get_token"):
             raise ValueError("Token credential is only supported with HTTPS.")
