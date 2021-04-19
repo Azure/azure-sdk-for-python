@@ -23,6 +23,7 @@ from .._models import (
     FileFormat,
     DocumentStatusResult
 )
+from .._helpers import get_http_logging_policy
 from .._polling import TranslationPolling
 COGNITIVE_KEY_HEADER = "Ocp-Apim-Subscription-Key"
 
@@ -70,6 +71,7 @@ class DocumentTranslationClient(object):
             api_version=self._api_version,
             sdk_moniker=USER_AGENT,
             authentication_policy=authentication_policy,
+            http_logging_policy=get_http_logging_policy(),
             **kwargs
         )
 
