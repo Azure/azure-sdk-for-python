@@ -5,9 +5,12 @@
 # --------------------------------------------------------------------------
 import functools
 from typing import (
+    List,
+    Tuple,
     Union,
     Any,
     Dict,
+    Mapping
 )
 
 try:
@@ -24,7 +27,7 @@ from azure.core.tracing.decorator_async import distributed_trace_async
 from .._base_client import parse_connection_str
 from .._entity import TableEntity
 from .._generated.models import SignedIdentifier, TableProperties
-from .._models import AccessPolicy, BatchTransactionResult
+from .._models import AccessPolicy
 from .._serialize import serialize_iso, _parameter_filter_substitution
 from .._deserialize import _return_headers_and_deserialized
 from .._error import _process_table_error, _validate_table_name
@@ -647,11 +650,12 @@ class TableClient(AsyncTablesBaseClient):
     @distributed_trace_async
     async def send_batch(
         self, batch: TableBatchOperations, **kwargs: Dict[Any, str]
-    ) -> BatchTransactionResult:
+    ) -> List[Tuple[Mapping[str, Any], Mapping[str, Any]]]:
         """Commit a TableBatchOperations to send requests to the server
 
-        :return: Object containing requests and responses
-        :rtype: ~azure.data.tables.BatchTransactionResult
+        :return: A list of tuples, each containing the entity operated on, and a dictionary
+         of metadata returned from the service.
+        :rtype: List[Tuple[Mapping[str, Any], Mapping[str, Any]]]
         :raises ~azure.data.tables.BatchErrorException:
 
         .. admonition:: Example:

@@ -41,7 +41,7 @@ from ._constants import (
     STORAGE_OAUTH_SCOPE,
     SERVICE_HOST_BASE,
 )
-from ._models import LocationMode, BatchTransactionResult
+from ._models import LocationMode
 from ._authentication import SharedKeyCredentialPolicy
 from ._policies import (
     CosmosPatchTransformPolicy,
@@ -263,7 +263,6 @@ class TablesBaseClient(AccountHostsMixin):
         # (...) -> List[HttpResponse]
         """Given a series of request, do a Storage batch call."""
         # Pop it here, so requests doesn't feel bad about additional kwarg
-        raise_on_any_failure = kwargs.pop("raise_on_any_failure", True)
         policies = [StorageHeadersPolicy()]
 
         changeset = HttpRequest("POST", None)
@@ -276,6 +275,8 @@ class TablesBaseClient(AccountHostsMixin):
                 "x-ms-version": self.api_version,
                 "DataServiceVersion": "3.0",
                 "MaxDataServiceVersion": "3.0;NetFx",
+                'Content-Type': 'application/json',
+                'Accept': 'application/json'
             },
         )
         request.set_multipart_mixed(
@@ -284,9 +285,11 @@ class TablesBaseClient(AccountHostsMixin):
             enforce_https=False,
             boundary="batch_{}".format(uuid4()),
         )
-
+        print("OUTGOING HEADERS", request.headers)
         pipeline_response = self._client._client._pipeline.run(request, **kwargs)  # pylint: disable=protected-access
         response = pipeline_response.http_response
+        print("RESPONSE")
+        print(response.status_code, response.body())
 
         if response.status_code == 403:
             raise ClientAuthenticationError(
@@ -298,28 +301,28 @@ class TablesBaseClient(AccountHostsMixin):
                 message="The resource could not be found", response=response
             )
         if response.status_code != 202:
+            
             raise BatchErrorException(
                 message="There is a failure in the batch operation.",
                 response=response,
                 parts=None,
             )
 
-        parts = response.parts()
-        transaction_result = BatchTransactionResult(reqs, parts, entities)
-        if raise_on_any_failure:
-            if any(p for p in parts if not 200 <= p.status_code < 300):
+        parts = list(response.parts())
+        if any(p for p in parts if not 200 <= p.status_code < 300):
 
-                if any(p for p in parts if p.status_code == 404):
-                    raise ResourceNotFoundError(
-                        message="The resource could not be found", response=response
-                    )
-
-                raise BatchErrorException(
-                    message="There is a failure in the batch operation.",
-                    response=response,
-                    parts=parts,
+            if any(p for p in parts if p.status_code == 404):
+                raise ResourceNotFoundError(
+                    message="The resource could not be found", response=response
                 )
-        return transaction_result
+
+            raise BatchErrorException(
+                message="There is a failure in the batch operation.",
+                response=response,
+                parts=parts,
+                )
+        else:
+            return list(zip(entities, (extract_batch_part_metadata(p) for p in parts)))
 
     def close(self):
         # type: () -> None
@@ -412,6 +415,13 @@ def parse_connection_str(conn_str, credential, keyword_args):
         keyword_args["secondary_hostname"] = secondary
 
     return primary, credential
+
+
+def extract_batch_part_metadata(response_part):
+    metadata = {}
+    if 'Etag' in response_part.headers:
+        metadata['etag'] = response_part.headers['Etag']
+    return metadata
 
 
 def format_query_string(sas_token, credential):

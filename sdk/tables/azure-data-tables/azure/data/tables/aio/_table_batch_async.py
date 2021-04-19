@@ -53,15 +53,17 @@ class TableBatchOperations(object):
         self._requests = []
         self._entities = []
 
+    def __len__(self):
+        return len(self._requests)
+
     def _verify_partition_key(
         self, entity  # type: Union[Entity, dict]
     ):
         # (...) -> None
         if self._partition_key is None:
             self._partition_key = entity["PartitionKey"]
-        elif "PartitionKey" in entity:
-            if entity["PartitionKey"] != self._partition_key:
-                raise ValueError("Partition Keys must all be the same")
+        elif entity["PartitionKey"] != self._partition_key:
+            raise ValueError("Partition Keys must all be the same")
 
     def create_entity(
         self,
@@ -86,13 +88,14 @@ class TableBatchOperations(object):
                 :caption: Creating and adding an entity to a Table
         """
         self._verify_partition_key(entity)
+        temp_entity = entity.copy()
 
         if "PartitionKey" in entity and "RowKey" in entity:
             entity = _add_entity_properties(entity)
         else:
             raise ValueError("PartitionKey and RowKey were not provided in entity")
         self._batch_create_entity(table=self.table_name, entity=entity, **kwargs)
-        self._entities.append(entity)
+        self._entities.append(temp_entity)
 
     def _batch_create_entity(
         self,
@@ -213,6 +216,7 @@ class TableBatchOperations(object):
                 :caption: Creating and adding an entity to a Table
         """
         self._verify_partition_key(entity)
+        temp_entity = entity.copy()
 
         if_match, _ = _get_match_headers(
             kwargs=dict(
@@ -245,7 +249,7 @@ class TableBatchOperations(object):
                 table_entity_properties=entity,
                 **kwargs
             )
-        self._entities.append(entity)
+        self._entities.append(temp_entity)
 
     def _batch_update_entity(
         self,
@@ -517,7 +521,7 @@ class TableBatchOperations(object):
         )
 
         temp_entity = {"PartitionKey": partition_key, "RowKey": row_key}
-        self._entities.append(_add_entity_properties(temp_entity))
+        self._entities.append(temp_entity)
 
     def _batch_delete_entity(
         self,
@@ -637,6 +641,7 @@ class TableBatchOperations(object):
                 :caption: Creating and adding an entity to a Table
         """
         self._verify_partition_key(entity)
+        temp_entity = entity.copy()
 
         partition_key = entity["PartitionKey"]
         row_key = entity["RowKey"]
@@ -658,7 +663,7 @@ class TableBatchOperations(object):
                 table_entity_properties=entity,
                 **kwargs
             )
-        self._entities.append(entity)
+        self._entities.append(temp_entity)
 
     async def __aenter__(self):
         # type: (...) -> TableBatchOperations
@@ -670,4 +675,4 @@ class TableBatchOperations(object):
         **kwargs  # type: Any
     ):
         # (...) -> None
-        await self._table_client._batch_send(*self._requests, **kwargs)
+        await self._table_client._batch_send(self._entities, *self._requests, **kwargs)

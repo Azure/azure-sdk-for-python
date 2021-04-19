@@ -5,7 +5,7 @@
 # --------------------------------------------------------------------------
 
 import functools
-from typing import TYPE_CHECKING
+from typing import Optional, Any, Union, List, Tuple, Dict, Mapping
 
 
 try:
@@ -31,9 +31,6 @@ from ._serialize import serialize_iso, _parameter_filter_substitution
 from ._deserialize import _return_headers_and_deserialized
 from ._table_batch import TableBatchOperations
 from ._models import TableEntityPropertiesPaged, UpdateMode, AccessPolicy
-
-if TYPE_CHECKING:
-    from typing import Optional, Any, Union  # pylint: disable=ungrouped-imports
 
 
 class TableClient(TablesBaseClient):
@@ -646,14 +643,15 @@ class TableClient(TablesBaseClient):
 
     def send_batch(
         self,
-        batch,  # type: azure.data.tables.BatchTransactionResult
+        batch,  # type: azure.data.tables.TableBatchOperations
         **kwargs  # type: Any
     ):
-        # type: (...) -> BatchTransactionResult
+        # type: (...) -> List[Tuple[Mapping[str, Any], Mapping[str, Any]]]
         """Commit a TableBatchOperations to send requests to the server
 
-        :return: Object containing requests and responses
-        :rtype: ~azure.data.tables.BatchTransactionResult
+        :return: A list of tuples, each containing the entity operated on, and a dictionary
+         of metadata returned from the service.
+        :rtype: List[Tuple[Mapping[str, Any], Mapping[str, Any]]]
         :raises ~azure.data.tables.BatchErrorException:
 
         .. admonition:: Example:
