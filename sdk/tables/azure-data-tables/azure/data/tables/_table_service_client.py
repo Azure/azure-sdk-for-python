@@ -253,7 +253,7 @@ class TableServiceClient(TablesBaseClient):
         query_filter,
         **kwargs
     ):
-        # type: (str, **Dict[str, Any]) -> ItemPaged[TableItem]
+        # type: (str, Dict[str, Any]) -> ItemPaged[TableItem]
         """Queries tables under the given account.
 
         :param str query_filter: Specify a filter to return certain tables.

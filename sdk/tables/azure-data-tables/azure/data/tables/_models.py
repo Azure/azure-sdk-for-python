@@ -422,7 +422,7 @@ class TableSasPermissions(object):
         permission,
         **kwargs
     ):
-        # Type: (str, **Dict[str]) -> AccountSasPermissions
+        # Type: (str, Dict[str, Any]) -> AccountSasPermissions
         """Create AccountSasPermissions from a string.
 
         To specify read, write, delete, etc. permissions you need only to
@@ -490,14 +490,14 @@ class TableItem(object):
     """
 
     def __init__(self, table_name, **kwargs):
-        # type: (str, **Any) -> None
+        # type: (str, Dict[str, Any]) -> None
         self.table_name = table_name
         self.api_version = kwargs.get("version")
         self.date = kwargs.get("date") or kwargs.get("Date")
 
     @classmethod
     def _from_generated(cls, generated, **kwargs):
-        # type: (obj, **Any) -> cls
+        # type: (obj, Dict[str, Any) -> cls
         return cls(generated.table_name, **kwargs)
 
 
@@ -550,13 +550,13 @@ class BatchErrorException(HttpResponseError):
     :param response: Server response to be deserialized.
     :type response: str
     :param parts: A list of the parts in multipart response.
-    :type parts: List[str]
+    :type parts: :class:`~azure.core.pipeline.transport.HttpResponse`
     :param args: Args to be passed to :class:`~azure.core.exceptions.HttpResponseError`
-    :type args: List[str]
+    :type args: List[:class:`~azure.core.pipeline.transport.HttpResponse`]
     """
 
     def __init__(self, message, response, parts, *args, **kwargs):
-        # type: (str, str, List[str], List[str], Dict[str, Any]) -> None
+        # type: (str, str, HttpResponse, List[HttpResponse], Dict[str, Any]) -> None
         self.parts = parts
         super(BatchErrorException, self).__init__(
             message=message, response=response, *args, **kwargs

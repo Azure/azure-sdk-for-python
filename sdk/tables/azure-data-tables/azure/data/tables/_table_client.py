@@ -471,7 +471,7 @@ class TableClient(TablesBaseClient):
         query_filter,
         **kwargs
     ):
-        # type: (str, **Dict[str, Any]) -> ItemPaged[TableEntity]
+        # type: (str, Dict[str, Any]) -> ItemPaged[TableEntity]
         """Lists entities in a table.
 
         :param str query_filter: Specify a filter to return certain entities

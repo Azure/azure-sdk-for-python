@@ -475,7 +475,7 @@ class TableClient(AsyncTablesBaseClient):
         query_filter,
         **kwargs
     ):
-        # type: (str, **Dict[str, Any]) -> AsyncItemPaged[TableEntity]
+        # type: (str, Dict[str, Any]) -> AsyncItemPaged[TableEntity]
         """Lists entities in a table.
 
         :param str query_filter: Specify a filter to return certain entities

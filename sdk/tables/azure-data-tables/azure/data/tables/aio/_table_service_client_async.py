@@ -309,7 +309,7 @@ class TableServiceClient(AsyncTablesBaseClient):
         query_filter,
         **kwargs
     ):
-        # type: (str, **Dict[str, Any]) -> AsyncItemPaged[TableItem]
+        # type: (str, Dict[str, Any]) -> AsyncItemPaged[TableItem]
         """Queries tables under the given account.
 
         :param str query_filter: Specify a filter to return certain tables.
