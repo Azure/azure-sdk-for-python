@@ -285,11 +285,8 @@ class TablesBaseClient(AccountHostsMixin):
             enforce_https=False,
             boundary="batch_{}".format(uuid4()),
         )
-        print("OUTGOING HEADERS", request.headers)
         pipeline_response = self._client._client._pipeline.run(request, **kwargs)  # pylint: disable=protected-access
         response = pipeline_response.http_response
-        print("RESPONSE")
-        print(response.status_code, response.body())
 
         if response.status_code == 403:
             raise ClientAuthenticationError(
