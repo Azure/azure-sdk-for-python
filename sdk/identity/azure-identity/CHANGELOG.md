@@ -3,7 +3,10 @@
 ## 1.6.0b4 (Unreleased)
 ### Added
 - `AzurePowerShellCredential` authenticates as the identity logged in to Azure
-  PowerShell ([#17341](https://github.com/Azure/azure-sdk-for-python/issues/17341))
+  PowerShell. This credential is part of `DefaultAzureCredential` by default
+  but can be disabled by a keyword argument:
+  `DefaultAzureCredential(exclude_powershell_credential=True)`
+  ([#17341](https://github.com/Azure/azure-sdk-for-python/issues/17341))
 
 ## 1.6.0b3 (2021-04-06)
 ### Breaking Changes
