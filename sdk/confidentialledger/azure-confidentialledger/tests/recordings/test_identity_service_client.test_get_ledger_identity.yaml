@@ -9,7 +9,7 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-azure-confidentialledger/0.1.0 Python/3.8.5 (Linux-5.4.72-microsoft-standard-WSL2-x86_64-with-glibc2.29)
+      - azsdk-python-confidentialledger/0.1 Python/3.8.5 (Linux-5.4.72-microsoft-standard-WSL2-x86_64-with-glibc2.29)
     method: GET
     uri: https://identity.accledger.azure.com/ledgerIdentity/fake-ledger-id?api-version=0.1-preview
   response:
@@ -20,7 +20,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Wed, 14 Apr 2021 22:31:09 GMT
+      - Mon, 19 Apr 2021 19:35:08 GMT
       server:
       - Kestrel
       transfer-encoding:
@@ -30,7 +30,7 @@ interactions:
       x-ms-image-tag:
       - latest-20210408061706412-0bd695e0
       x-ms-machinename:
-      - identityservice-75f9cdb475-jz9rg
+      - identityservice-75f9cdb475-jhq4v
     status:
       code: 200
       message: OK

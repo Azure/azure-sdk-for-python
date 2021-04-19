@@ -8,7 +8,9 @@ from enum import Enum
 from azure.core.pipeline.policies import BearerTokenCredentialPolicy, HttpLoggingPolicy
 from azure.core.pipeline.transport import RequestsTransport
 
-from .._generated_ledger import ConfidentialLedgerClient as _ConfidentialLedgerClient
+from .._generated_ledger.v0_1_preview import (
+    ConfidentialLedgerClient as _ConfidentialLedgerClient,
+)
 from .credential import ConfidentialLedgerCertificateCredential
 
 try:
@@ -98,16 +100,14 @@ class ConfidentialLedgerClientBase(object):
 
         try:
             self._client = _ConfidentialLedgerClient(
+                self._endpoint,
                 api_version=self.api_version,
                 pipeline=pipeline,
                 transport=transport,
                 http_logging_policy=http_logging_policy,
                 **kwargs
             )
-            self._models = _ConfidentialLedgerClient.models(
-                api_version=self.api_version
-            )
-        except NotImplementedError:
+        except NotImplementedError as e:
             raise NotImplementedError(
                 "This package doesn't support API version '{}'. ".format(
                     self.api_version
@@ -115,7 +115,7 @@ class ConfidentialLedgerClientBase(object):
                 + "Supported versions: {}".format(
                     ", ".join(v.value for v in ApiVersion)
                 )
-            )
+            ) from e
 
     @property
     def endpoint(self):

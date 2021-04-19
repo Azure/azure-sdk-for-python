@@ -18,11 +18,17 @@ from .. import models
 
 
 class ConfidentialLedgerClient(ConfidentialLedgerClientOperationsMixin):
-    """The ConfidentialLedgerClient writes and retrieves ledger entries against the Confidential Ledger service."""
+    """The ConfidentialLedgerClient writes and retrieves ledger entries against the Confidential Ledger service.
 
-    def __init__(self, **kwargs: Any) -> None:
+    :param identity_service_base_url: The Identity Service URL, for example https://identity.accledger.azure.com.
+    :type identity_service_base_url: str
+    """
+
+    def __init__(self, identity_service_base_url: str, **kwargs: Any) -> None:
         base_url = "{identityServiceBaseUrl}"
-        self._config = ConfidentialLedgerClientConfiguration(**kwargs)
+        self._config = ConfidentialLedgerClientConfiguration(
+            identity_service_base_url, **kwargs
+        )
         self._client = AsyncPipelineClient(
             base_url=base_url, config=self._config, **kwargs
         )
@@ -45,7 +51,17 @@ class ConfidentialLedgerClient(ConfidentialLedgerClientOperationsMixin):
         :return: The response of your network call. Does not do error handling on your response.
         :rtype: ~azure.core.pipeline.transport.AsyncHttpResponse
         """
-        http_request.url = self._client.format_url(http_request.url)
+        path_format_arguments = {
+            "identityServiceBaseUrl": self._serialize.url(
+                "self._config.identity_service_base_url",
+                self._config.identity_service_base_url,
+                "str",
+                skip_quote=True,
+            ),
+        }
+        http_request.url = self._client.format_url(
+            http_request.url, **path_format_arguments
+        )
         stream = kwargs.pop("stream", True)
         pipeline_response = await self._client._pipeline.run(
             http_request, stream=stream, **kwargs

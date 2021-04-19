@@ -33,7 +33,6 @@ if TYPE_CHECKING:
 class ConfidentialLedgerClientOperationsMixin(object):
     def get_ledger_identity(
         self,
-        identity_service_base_url,  # type: str
         ledger_id,  # type: str
         **kwargs  # type: Any
     ):
@@ -42,9 +41,6 @@ class ConfidentialLedgerClientOperationsMixin(object):
 
         Gets identity information for a Confidential Ledger instance.
 
-        :param identity_service_base_url: The Identity Service URL, for example
-         https://identity.accledger.azure.com.
-        :type identity_service_base_url: str
         :param ledger_id: Id of the Confidential Ledger instance to get information for.
         :type ledger_id: str
         :keyword callable cls: A custom type or function that will be passed the direct response
@@ -68,8 +64,8 @@ class ConfidentialLedgerClientOperationsMixin(object):
         url = self.get_ledger_identity.metadata["url"]  # type: ignore
         path_format_arguments = {
             "identityServiceBaseUrl": self._serialize.url(
-                "identity_service_base_url",
-                identity_service_base_url,
+                "self._config.identity_service_base_url",
+                self._config.identity_service_base_url,
                 "str",
                 skip_quote=True,
             ),

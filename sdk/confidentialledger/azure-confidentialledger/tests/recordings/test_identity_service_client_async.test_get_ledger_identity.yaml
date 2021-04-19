@@ -4,8 +4,12 @@ interactions:
     headers:
       Accept:
       - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
       User-Agent:
-      - azsdk-python-azure-confidentialledger/0.1.0 Python/3.8.5 (Linux-5.4.72-microsoft-standard-WSL2-x86_64-with-glibc2.29)
+      - azsdk-python-confidentialledger/0.1 Python/3.8.5 (Linux-5.4.72-microsoft-standard-WSL2-x86_64-with-glibc2.29)
     method: GET
     uri: https://identity.accledger.azure.com/ledgerIdentity/fake-ledger-id?api-version=0.1-preview
   response:
@@ -13,15 +17,21 @@ interactions:
       string: '{"ledgerTlsCertificate":"-----BEGIN CERTIFICATE-----\nMIIBuTCCAT6gAwIBAgIRAKnpvh1DCEbOmhFwVaxoVYAwCgYIKoZIzj0EAwMwFjEU\nMBIGA1UEAwwLQ0NGIE5ldHdvcmswHhcNMjEwMzExMDAwMDAwWhcNMjMwNjExMjM1\nOTU5WjAWMRQwEgYDVQQDDAtDQ0YgTmV0d29yazB2MBAGByqGSM49AgEGBSuBBAAi\nA2IABM0knFNItUo5ogB/YYedfQZeGz5ZlmnC2pM/hCg19dXZHp4ltpXnflGHvjWr\n2mcPF7XYOgJt66SK/uWCTBuBRsOfXcSa/oUQynZ6ZoqhtESDfbbfxm4iTyVtkQDm\nJJ0Nh6NQME4wDAYDVR0TBAUwAwEB/zAdBgNVHQ4EFgQUh7slqWqCDTyInJvuYFky\n4CD668gwHwYDVR0jBBgwFoAUh7slqWqCDTyInJvuYFky4CD668gwCgYIKoZIzj0E\nAwMDaQAwZgIxAMnaIrcGPyumx5SNXTd8luK0mYNZ6uhvcj4srq1KtLSqwySV4r9R\nyDlCkKvUeXVa8AIxAIXcNlmIsnVYe3RjEiD2CaY8X5LcRtHlO9i+tc4EoB41SI1M\nbkl+GLMSCcinZI872w==\n-----END
         CERTIFICATE-----\n\u0000","ledgerId":"fake-ledger-id"}'
     headers:
-      content-type: application/json; charset=utf-8
-      date: Wed, 14 Apr 2021 22:31:12 GMT
-      server: Kestrel
-      transfer-encoding: chunked
-      x-ms-image-digest: sha256:441ef03425e3f7f2edb0b1e6b89f554443c8cdcdb4fd94bf80b6e2aa78a89f8d
-      x-ms-image-tag: latest-20210408061706412-0bd695e0
-      x-ms-machinename: identityservice-75f9cdb475-jhq4v
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Mon, 19 Apr 2021 19:35:09 GMT
+      server:
+      - Kestrel
+      transfer-encoding:
+      - chunked
+      x-ms-image-digest:
+      - sha256:441ef03425e3f7f2edb0b1e6b89f554443c8cdcdb4fd94bf80b6e2aa78a89f8d
+      x-ms-image-tag:
+      - latest-20210408061706412-0bd695e0
+      x-ms-machinename:
+      - identityservice-75f9cdb475-vnw5c
     status:
       code: 200
       message: OK
-    url: https://identity.accledger.azure.com/ledgerIdentity/lyshi-sdk-ledger-1?api-version=0.1-preview
 version: 1

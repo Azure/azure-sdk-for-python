@@ -11,7 +11,7 @@ from azure.core.pipeline.policies import (
 )
 from azure.core.pipeline.transport import AioHttpTransport
 
-from .._generated_ledger.aio import (
+from .._generated_ledger.v0_1_preview.aio import (
     ConfidentialLedgerClient as _ConfidentialLedgerClient,
 )
 from .confidential_ledger_client_base import DEFAULT_VERSION, ApiVersion
@@ -57,8 +57,8 @@ class AsyncConfidentialLedgerClientBase(object):
                 self._endpoint = "https://" + endpoint
             else:
                 self._endpoint = endpoint
-        except AttributeError:
-            raise ValueError("Confidential Ledger URL must be a string.")
+        except AttributeError as e:
+            raise ValueError("Confidential Ledger URL must be a string.") from e
 
         self.api_version = kwargs.pop("api_version", DEFAULT_VERSION)
 
@@ -67,7 +67,7 @@ class AsyncConfidentialLedgerClientBase(object):
         if transport is None:
             # Customize the transport layer to use client certificate authentication and validate
             # a self-signed TLS certificate.
-            if type(credential) is ConfidentialLedgerCertificateCredential:
+            if isinstance(credential, ConfidentialLedgerCertificateCredential):
                 # The async version of the client seems to expect a sequence of filenames.
                 # azure/core/pipeline/transport/_aiohttp.py:163
                 # > ssl_ctx.load_cert_chain(*cert)
@@ -97,16 +97,14 @@ class AsyncConfidentialLedgerClientBase(object):
 
         try:
             self._client = _ConfidentialLedgerClient(
+                self._endpoint,
                 api_version=self.api_version,
                 pipeline=pipeline,
                 transport=transport,
                 http_logging_policy=http_logging_policy,
                 **kwargs
             )
-            self._models = _ConfidentialLedgerClient.models(
-                api_version=self.api_version
-            )
-        except NotImplementedError:
+        except NotImplementedError as e:
             raise NotImplementedError(
                 "This package doesn't support API version '{}'. ".format(
                     self.api_version
@@ -114,7 +112,7 @@ class AsyncConfidentialLedgerClientBase(object):
                 + "Supported versions: {}".format(
                     ", ".join(v.value for v in ApiVersion)
                 )
-            )
+            ) from e
 
     @property
     def endpoint(self) -> str:

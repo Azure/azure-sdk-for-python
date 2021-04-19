@@ -6,11 +6,11 @@
 from typing import Any
 
 from azure.core.pipeline.policies import HttpLoggingPolicy
-from azure.core.pipeline.transport import AioHttpTransport
+from azure.core.pipeline.transport import AsyncioRequestsTransport
 from azure.core.tracing.decorator_async import distributed_trace_async
 
 from .. import LedgerIdentity
-from ..._generated_identity.aio import (
+from ..._generated_identity.v0_1_preview.aio import (
     ConfidentialLedgerClient as _ConfidentialLedgerClient,
 )
 from ..._shared import DEFAULT_VERSION
@@ -22,7 +22,7 @@ except ImportError:
 
 if TYPE_CHECKING:
     # pylint:disable=unused-import
-    from azure.core.credentials import TokenCredential
+    pass
 
 
 class ConfidentialLedgerIdentityServiceClient(object):
@@ -37,9 +37,7 @@ class ConfidentialLedgerIdentityServiceClient(object):
     :type credential: ~azure.core.credentials.TokenCredential
     """
 
-    def __init__(
-        self, identity_service_url: str, credential: "TokenCredential", **kwargs: Any
-    ) -> None:
+    def __init__(self, identity_service_url: str, **kwargs: Any) -> None:
         client = kwargs.get("generated_client")
         if client:
             # caller provided a configured client -> nothing left to initialize
@@ -52,13 +50,13 @@ class ConfidentialLedgerIdentityServiceClient(object):
                 self._identity_service_url = "https://" + identity_service_url
             else:
                 self._identity_service_url = identity_service_url
-        except AttributeError:
-            raise ValueError("Identity Service URL must be a string.")
+        except AttributeError as e:
+            raise ValueError("Identity Service URL must be a string.") from e
 
         self.api_version = kwargs.pop("api_version", DEFAULT_VERSION)
 
         pipeline = kwargs.pop("pipeline", None)
-        transport = kwargs.pop("transport", AioHttpTransport(**kwargs))
+        transport = kwargs.pop("transport", AsyncioRequestsTransport(**kwargs))
         http_logging_policy = HttpLoggingPolicy(**kwargs)
         http_logging_policy.allowed_header_names.update(
             {
@@ -71,6 +69,7 @@ class ConfidentialLedgerIdentityServiceClient(object):
         authentication_policy = None
 
         self._client = _ConfidentialLedgerClient(
+            self._identity_service_url,
             api_version=self.api_version,
             pipeline=pipeline,
             transport=transport,
@@ -78,7 +77,6 @@ class ConfidentialLedgerIdentityServiceClient(object):
             http_logging_policy=http_logging_policy,
             **kwargs
         )
-        self._models = _ConfidentialLedgerClient.models(api_version=self.api_version)
 
     @property
     def identity_service_url(self):
@@ -102,11 +100,7 @@ class ConfidentialLedgerIdentityServiceClient(object):
         if not ledger_id:
             raise ValueError("ledger_id must be a non-empty string")
 
-        result = await self._client.get_ledger_identity(
-            identity_service_base_url=self._identity_service_url,
-            ledger_id=ledger_id,
-            **kwargs
-        )
+        result = await self._client.get_ledger_identity(ledger_id=ledger_id, **kwargs)
         return LedgerIdentity(
             ledger_id=result.ledger_id,
             ledger_tls_certificate=result.ledger_tls_certificate,

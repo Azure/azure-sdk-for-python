@@ -9,7 +9,7 @@ interactions:
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-azure-confidentialledger/0.1.0 Python/3.8.5 (Linux-5.4.72-microsoft-standard-WSL2-x86_64-with-glibc2.29)
+      - azsdk-python-confidentialledger/0.1 Python/3.8.5 (Linux-5.4.72-microsoft-standard-WSL2-x86_64-with-glibc2.29)
     method: PATCH
     uri: https://fake-confidential-ledger.azure.com/app/users/000000000000000000000000000000000000?api-version=0.1-preview
   response:
@@ -18,7 +18,7 @@ interactions:
     headers:
       content-length: '78'
       content-type: application/json
-      x-ms-ccf-transaction-id: '2.1119'
+      x-ms-ccf-transaction-id: '6.4021'
     status:
       code: 200
       message: OK
@@ -29,7 +29,7 @@ interactions:
       Accept:
       - application/json
       User-Agent:
-      - azsdk-python-azure-confidentialledger/0.1.0 Python/3.8.5 (Linux-5.4.72-microsoft-standard-WSL2-x86_64-with-glibc2.29)
+      - azsdk-python-confidentialledger/0.1 Python/3.8.5 (Linux-5.4.72-microsoft-standard-WSL2-x86_64-with-glibc2.29)
     method: GET
     uri: https://fake-confidential-ledger.azure.com/app/users/000000000000000000000000000000000000?api-version=0.1-preview
   response:
@@ -38,7 +38,7 @@ interactions:
     headers:
       content-length: '78'
       content-type: application/json
-      x-ms-ccf-transaction-id: '2.1120'
+      x-ms-ccf-transaction-id: '6.4021'
     status:
       code: 200
       message: OK
@@ -49,7 +49,7 @@ interactions:
       Accept:
       - application/json
       User-Agent:
-      - azsdk-python-azure-confidentialledger/0.1.0 Python/3.8.5 (Linux-5.4.72-microsoft-standard-WSL2-x86_64-with-glibc2.29)
+      - azsdk-python-confidentialledger/0.1 Python/3.8.5 (Linux-5.4.72-microsoft-standard-WSL2-x86_64-with-glibc2.29)
     method: DELETE
     uri: https://fake-confidential-ledger.azure.com/app/users/000000000000000000000000000000000000?api-version=0.1-preview
   response:
@@ -57,7 +57,7 @@ interactions:
       string: ''
     headers:
       content-length: '0'
-      x-ms-ccf-transaction-id: '2.1121'
+      x-ms-ccf-transaction-id: '6.4023'
     status:
       code: 204
       message: No Content
@@ -72,7 +72,7 @@ interactions:
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-azure-confidentialledger/0.1.0 Python/3.8.5 (Linux-5.4.72-microsoft-standard-WSL2-x86_64-with-glibc2.29)
+      - azsdk-python-confidentialledger/0.1 Python/3.8.5 (Linux-5.4.72-microsoft-standard-WSL2-x86_64-with-glibc2.29)
     method: PATCH
     uri: https://fake-confidential-ledger.azure.com/app/users/000000000000000000000000000000000000?api-version=0.1-preview
   response:
@@ -81,7 +81,7 @@ interactions:
     headers:
       content-length: '73'
       content-type: application/json
-      x-ms-ccf-transaction-id: '2.1122'
+      x-ms-ccf-transaction-id: '6.4024'
     status:
       code: 200
       message: OK
@@ -92,7 +92,7 @@ interactions:
       Accept:
       - application/json
       User-Agent:
-      - azsdk-python-azure-confidentialledger/0.1.0 Python/3.8.5 (Linux-5.4.72-microsoft-standard-WSL2-x86_64-with-glibc2.29)
+      - azsdk-python-confidentialledger/0.1 Python/3.8.5 (Linux-5.4.72-microsoft-standard-WSL2-x86_64-with-glibc2.29)
     method: GET
     uri: https://fake-confidential-ledger.azure.com/app/users/000000000000000000000000000000000000?api-version=0.1-preview
   response:
@@ -101,7 +101,7 @@ interactions:
     headers:
       content-length: '73'
       content-type: application/json
-      x-ms-ccf-transaction-id: '2.1123'
+      x-ms-ccf-transaction-id: '6.4025'
     status:
       code: 200
       message: OK
@@ -112,7 +112,7 @@ interactions:
       Accept:
       - application/json
       User-Agent:
-      - azsdk-python-azure-confidentialledger/0.1.0 Python/3.8.5 (Linux-5.4.72-microsoft-standard-WSL2-x86_64-with-glibc2.29)
+      - azsdk-python-confidentialledger/0.1 Python/3.8.5 (Linux-5.4.72-microsoft-standard-WSL2-x86_64-with-glibc2.29)
     method: DELETE
     uri: https://fake-confidential-ledger.azure.com/app/users/000000000000000000000000000000000000?api-version=0.1-preview
   response:
@@ -120,7 +120,7 @@ interactions:
       string: ''
     headers:
       content-length: '0'
-      x-ms-ccf-transaction-id: '2.1124'
+      x-ms-ccf-transaction-id: '6.4026'
     status:
       code: 204
       message: No Content

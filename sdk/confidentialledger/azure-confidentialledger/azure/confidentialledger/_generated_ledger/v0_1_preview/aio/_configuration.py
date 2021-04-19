@@ -20,11 +20,16 @@ class ConfidentialLedgerClientConfiguration(Configuration):
     Note that all parameters used to create this instance are saved as instance
     attributes.
 
+    :param ledger_base_url: The Confidential Ledger URL, for example https://contoso.eastus.cloudapp.azure.com.
+    :type ledger_base_url: str
     """
 
-    def __init__(self, **kwargs: Any) -> None:
+    def __init__(self, ledger_base_url: str, **kwargs: Any) -> None:
+        if ledger_base_url is None:
+            raise ValueError("Parameter 'ledger_base_url' must not be None.")
         super(ConfidentialLedgerClientConfiguration, self).__init__(**kwargs)
 
+        self.ledger_base_url = ledger_base_url
         self.api_version = "0.1-preview"
         kwargs.setdefault("sdk_moniker", "confidentialledger/{}".format(VERSION))
         self._configure(**kwargs)

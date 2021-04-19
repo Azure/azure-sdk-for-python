@@ -28,16 +28,11 @@ ClsType = Optional[
 
 
 class ConfidentialLedgerClientOperationsMixin:
-    async def get_constitution(
-        self, ledger_base_url: str, **kwargs
-    ) -> "_models.Constitution":
+    async def get_constitution(self, **kwargs) -> "_models.Constitution":
         """Gets the constitution used for governance.
 
         The constitution is a script that assesses and applies proposals from consortium members.
 
-        :param ledger_base_url: The Confidential Ledger URL, for example
-         https://contoso.eastus.cloudapp.azure.com.
-        :type ledger_base_url: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: Constitution, or the result of cls(response)
         :rtype: ~azure.confidentialledger._generated_ledger.v0_1_preview.models.Constitution
@@ -57,7 +52,10 @@ class ConfidentialLedgerClientOperationsMixin:
         url = self.get_constitution.metadata["url"]  # type: ignore
         path_format_arguments = {
             "ledgerBaseUrl": self._serialize.url(
-                "ledger_base_url", ledger_base_url, "str", skip_quote=True
+                "self._config.ledger_base_url",
+                self._config.ledger_base_url,
+                "str",
+                skip_quote=True,
             ),
         }
         url = self._client.format_url(url, **path_format_arguments)
@@ -96,16 +94,11 @@ class ConfidentialLedgerClientOperationsMixin:
 
     get_constitution.metadata = {"url": "/app/governance/constitution"}  # type: ignore
 
-    async def get_consortium_members(
-        self, ledger_base_url: str, **kwargs
-    ) -> "_models.Consortium":
+    async def get_consortium_members(self, **kwargs) -> "_models.Consortium":
         """Gets the consortium members.
 
         Consortium members can manage the Confidential Ledger.
 
-        :param ledger_base_url: The Confidential Ledger URL, for example
-         https://contoso.eastus.cloudapp.azure.com.
-        :type ledger_base_url: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: Consortium, or the result of cls(response)
         :rtype: ~azure.confidentialledger._generated_ledger.v0_1_preview.models.Consortium
@@ -125,7 +118,10 @@ class ConfidentialLedgerClientOperationsMixin:
         url = self.get_consortium_members.metadata["url"]  # type: ignore
         path_format_arguments = {
             "ledgerBaseUrl": self._serialize.url(
-                "ledger_base_url", ledger_base_url, "str", skip_quote=True
+                "self._config.ledger_base_url",
+                self._config.ledger_base_url,
+                "str",
+                skip_quote=True,
             ),
         }
         url = self._client.format_url(url, **path_format_arguments)
@@ -165,16 +161,13 @@ class ConfidentialLedgerClientOperationsMixin:
     get_consortium_members.metadata = {"url": "/app/governance/members"}  # type: ignore
 
     async def get_enclave_quotes(
-        self, ledger_base_url: str, **kwargs
+        self, **kwargs
     ) -> "_models.ConfidentialLedgerEnclaves":
         """Gets quotes for all nodes of the Confidential Ledger.
 
         A quote is an SGX enclave measurement that can be used to verify the validity of a node and its
         enclave.
 
-        :param ledger_base_url: The Confidential Ledger URL, for example
-         https://contoso.eastus.cloudapp.azure.com.
-        :type ledger_base_url: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: ConfidentialLedgerEnclaves, or the result of cls(response)
         :rtype: ~azure.confidentialledger._generated_ledger.v0_1_preview.models.ConfidentialLedgerEnclaves
@@ -196,7 +189,10 @@ class ConfidentialLedgerClientOperationsMixin:
         url = self.get_enclave_quotes.metadata["url"]  # type: ignore
         path_format_arguments = {
             "ledgerBaseUrl": self._serialize.url(
-                "ledger_base_url", ledger_base_url, "str", skip_quote=True
+                "self._config.ledger_base_url",
+                self._config.ledger_base_url,
+                "str",
+                skip_quote=True,
             ),
         }
         url = self._client.format_url(url, **path_format_arguments)
@@ -239,7 +235,6 @@ class ConfidentialLedgerClientOperationsMixin:
 
     def get_ledger_entries(
         self,
-        ledger_base_url: str,
         sub_ledger_id: Optional[str] = None,
         from_transaction_id: Optional[str] = None,
         to_transaction_id: Optional[str] = None,
@@ -247,12 +242,9 @@ class ConfidentialLedgerClientOperationsMixin:
     ) -> AsyncIterable["_models.PagedLedgerEntries"]:
         """Gets ledger entries from a sub-ledger corresponding to a range.
 
-        A sub-ledger id may optionally be specified. Only entries in the specified (or default) sub-
-        ledger will be returned.
+        A sub-ledger id may optionally be specified. Only entries in the specified (or default)
+        sub-ledger will be returned.
 
-        :param ledger_base_url: The Confidential Ledger URL, for example
-         https://contoso.eastus.cloudapp.azure.com.
-        :type ledger_base_url: str
         :param sub_ledger_id: The sub-ledger id.
         :type sub_ledger_id: str
         :param from_transaction_id: Specify the first transaction ID in a range.
@@ -286,7 +278,10 @@ class ConfidentialLedgerClientOperationsMixin:
                 url = self.get_ledger_entries.metadata["url"]  # type: ignore
                 path_format_arguments = {
                     "ledgerBaseUrl": self._serialize.url(
-                        "ledger_base_url", ledger_base_url, "str", skip_quote=True
+                        "self._config.ledger_base_url",
+                        self._config.ledger_base_url,
+                        "str",
+                        skip_quote=True,
                     ),
                 }
                 url = self._client.format_url(url, **path_format_arguments)
@@ -314,7 +309,10 @@ class ConfidentialLedgerClientOperationsMixin:
                 query_parameters = {}  # type: Dict[str, Any]
                 path_format_arguments = {
                     "ledgerBaseUrl": self._serialize.url(
-                        "ledger_base_url", ledger_base_url, "str", skip_quote=True
+                        "self._config.ledger_base_url",
+                        self._config.ledger_base_url,
+                        "str",
+                        skip_quote=True,
                     ),
                 }
                 url = self._client.format_url(url, **path_format_arguments)
@@ -354,19 +352,12 @@ class ConfidentialLedgerClientOperationsMixin:
     get_ledger_entries.metadata = {"url": "/app/transactions"}  # type: ignore
 
     async def post_ledger_entry(
-        self,
-        ledger_base_url: str,
-        contents: str,
-        sub_ledger_id: Optional[str] = None,
-        **kwargs
+        self, contents: str, sub_ledger_id: Optional[str] = None, **kwargs
     ) -> "_models.LedgerWriteResult":
         """Writes a ledger entry.
 
         A sub-ledger id may optionally be specified.
 
-        :param ledger_base_url: The Confidential Ledger URL, for example
-         https://contoso.eastus.cloudapp.azure.com.
-        :type ledger_base_url: str
         :param contents: Contents of the ledger entry.
         :type contents: str
         :param sub_ledger_id: The sub-ledger id.
@@ -393,7 +384,10 @@ class ConfidentialLedgerClientOperationsMixin:
         url = self.post_ledger_entry.metadata["url"]  # type: ignore
         path_format_arguments = {
             "ledgerBaseUrl": self._serialize.url(
-                "ledger_base_url", ledger_base_url, "str", skip_quote=True
+                "self._config.ledger_base_url",
+                self._config.ledger_base_url,
+                "str",
+                skip_quote=True,
             ),
         }
         url = self._client.format_url(url, **path_format_arguments)
@@ -451,12 +445,8 @@ class ConfidentialLedgerClientOperationsMixin:
 
     post_ledger_entry.metadata = {"url": "/app/transactions"}  # type: ignore
 
-    async def get_ledger_entry_for_transaction_id(
-        self,
-        ledger_base_url: str,
-        transaction_id: str,
-        sub_ledger_id: Optional[str] = None,
-        **kwargs
+    async def get_ledger_entry(
+        self, transaction_id: str, sub_ledger_id: Optional[str] = None, **kwargs
     ) -> "_models.LedgerQueryResult":
         """Gets the ledger entry at the specified transaction id. A sub-ledger id may optionally be specified to indicate the sub-ledger from which to fetch the value.
 
@@ -464,9 +454,6 @@ class ConfidentialLedgerClientOperationsMixin:
         validated. To prevent blocking within the enclave, the response will indicate whether the entry
         is ready and part of the response, or if the loading is still ongoing.
 
-        :param ledger_base_url: The Confidential Ledger URL, for example
-         https://contoso.eastus.cloudapp.azure.com.
-        :type ledger_base_url: str
         :param transaction_id: Identifies a write transaction.
         :type transaction_id: str
         :param sub_ledger_id: The sub-ledger id.
@@ -487,10 +474,13 @@ class ConfidentialLedgerClientOperationsMixin:
         accept = "application/json"
 
         # Construct URL
-        url = self.get_ledger_entry_for_transaction_id.metadata["url"]  # type: ignore
+        url = self.get_ledger_entry.metadata["url"]  # type: ignore
         path_format_arguments = {
             "ledgerBaseUrl": self._serialize.url(
-                "ledger_base_url", ledger_base_url, "str", skip_quote=True
+                "self._config.ledger_base_url",
+                self._config.ledger_base_url,
+                "str",
+                skip_quote=True,
             ),
             "transactionId": self._serialize.url(
                 "transaction_id", transaction_id, "str"
@@ -534,18 +524,15 @@ class ConfidentialLedgerClientOperationsMixin:
 
         return deserialized
 
-    get_ledger_entry_for_transaction_id.metadata = {"url": "/app/transactions/{transactionId}"}  # type: ignore
+    get_ledger_entry.metadata = {"url": "/app/transactions/{transactionId}"}  # type: ignore
 
     async def get_receipt(
-        self, ledger_base_url: str, transaction_id: str, **kwargs
+        self, transaction_id: str, **kwargs
     ) -> "_models.TransactionReceipt":
         """Gets a receipt certifying ledger contents at a particular transaction id.
 
         Gets a receipt certifying ledger contents at a particular transaction id.
 
-        :param ledger_base_url: The Confidential Ledger URL, for example
-         https://contoso.eastus.cloudapp.azure.com.
-        :type ledger_base_url: str
         :param transaction_id: Identifies a write transaction.
         :type transaction_id: str
         :keyword callable cls: A custom type or function that will be passed the direct response
@@ -567,7 +554,10 @@ class ConfidentialLedgerClientOperationsMixin:
         url = self.get_receipt.metadata["url"]  # type: ignore
         path_format_arguments = {
             "ledgerBaseUrl": self._serialize.url(
-                "ledger_base_url", ledger_base_url, "str", skip_quote=True
+                "self._config.ledger_base_url",
+                self._config.ledger_base_url,
+                "str",
+                skip_quote=True,
             ),
             "transactionId": self._serialize.url(
                 "transaction_id", transaction_id, "str"
@@ -610,15 +600,12 @@ class ConfidentialLedgerClientOperationsMixin:
     get_receipt.metadata = {"url": "/app/transactions/{transactionId}/receipt"}  # type: ignore
 
     async def get_transaction_status(
-        self, ledger_base_url: str, transaction_id: str, **kwargs
+        self, transaction_id: str, **kwargs
     ) -> "_models.TransactionStatus":
         """Gets the status of an entry identified by a transaction id.
 
         Gets the status of an entry identified by a transaction id.
 
-        :param ledger_base_url: The Confidential Ledger URL, for example
-         https://contoso.eastus.cloudapp.azure.com.
-        :type ledger_base_url: str
         :param transaction_id: Identifies a write transaction.
         :type transaction_id: str
         :keyword callable cls: A custom type or function that will be passed the direct response
@@ -640,7 +627,10 @@ class ConfidentialLedgerClientOperationsMixin:
         url = self.get_transaction_status.metadata["url"]  # type: ignore
         path_format_arguments = {
             "ledgerBaseUrl": self._serialize.url(
-                "ledger_base_url", ledger_base_url, "str", skip_quote=True
+                "self._config.ledger_base_url",
+                self._config.ledger_base_url,
+                "str",
+                skip_quote=True,
             ),
             "transactionId": self._serialize.url(
                 "transaction_id", transaction_id, "str"
@@ -683,15 +673,12 @@ class ConfidentialLedgerClientOperationsMixin:
     get_transaction_status.metadata = {"url": "/app/transactions/{transactionId}/status"}  # type: ignore
 
     async def get_current_ledger_entry(
-        self, ledger_base_url: str, sub_ledger_id: Optional[str] = None, **kwargs
+        self, sub_ledger_id: Optional[str] = None, **kwargs
     ) -> "_models.LedgerEntry":
         """Gets the current value available in the ledger.
 
         A sub-ledger id may optionally be specified.
 
-        :param ledger_base_url: The Confidential Ledger URL, for example
-         https://contoso.eastus.cloudapp.azure.com.
-        :type ledger_base_url: str
         :param sub_ledger_id: The sub-ledger id.
         :type sub_ledger_id: str
         :keyword callable cls: A custom type or function that will be passed the direct response
@@ -713,7 +700,10 @@ class ConfidentialLedgerClientOperationsMixin:
         url = self.get_current_ledger_entry.metadata["url"]  # type: ignore
         path_format_arguments = {
             "ledgerBaseUrl": self._serialize.url(
-                "ledger_base_url", ledger_base_url, "str", skip_quote=True
+                "self._config.ledger_base_url",
+                self._config.ledger_base_url,
+                "str",
+                skip_quote=True,
             ),
         }
         url = self._client.format_url(url, **path_format_arguments)
@@ -756,14 +746,11 @@ class ConfidentialLedgerClientOperationsMixin:
 
     get_current_ledger_entry.metadata = {"url": "/app/transactions/current"}  # type: ignore
 
-    async def delete_user(self, ledger_base_url: str, user_id: str, **kwargs) -> None:
+    async def delete_user(self, user_id: str, **kwargs) -> None:
         """Deletes a user from the Confidential Ledger.
 
         Deletes a user from the Confidential Ledger.
 
-        :param ledger_base_url: The Confidential Ledger URL, for example
-         https://contoso.eastus.cloudapp.azure.com.
-        :type ledger_base_url: str
         :param user_id: The user id, either an AAD object ID or certificate fingerprint.
         :type user_id: str
         :keyword callable cls: A custom type or function that will be passed the direct response
@@ -785,7 +772,10 @@ class ConfidentialLedgerClientOperationsMixin:
         url = self.delete_user.metadata["url"]  # type: ignore
         path_format_arguments = {
             "ledgerBaseUrl": self._serialize.url(
-                "ledger_base_url", ledger_base_url, "str", skip_quote=True
+                "self._config.ledger_base_url",
+                self._config.ledger_base_url,
+                "str",
+                skip_quote=True,
             ),
             "userId": self._serialize.url("user_id", user_id, "str"),
         }
@@ -821,16 +811,11 @@ class ConfidentialLedgerClientOperationsMixin:
 
     delete_user.metadata = {"url": "/app/users/{userId}"}  # type: ignore
 
-    async def get_user(
-        self, ledger_base_url: str, user_id: str, **kwargs
-    ) -> "_models.LedgerUser":
+    async def get_user(self, user_id: str, **kwargs) -> "_models.LedgerUser":
         """Gets a user.
 
         Gets a user.
 
-        :param ledger_base_url: The Confidential Ledger URL, for example
-         https://contoso.eastus.cloudapp.azure.com.
-        :type ledger_base_url: str
         :param user_id: The user id, either an AAD object ID or certificate fingerprint.
         :type user_id: str
         :keyword callable cls: A custom type or function that will be passed the direct response
@@ -852,7 +837,10 @@ class ConfidentialLedgerClientOperationsMixin:
         url = self.get_user.metadata["url"]  # type: ignore
         path_format_arguments = {
             "ledgerBaseUrl": self._serialize.url(
-                "ledger_base_url", ledger_base_url, "str", skip_quote=True
+                "self._config.ledger_base_url",
+                self._config.ledger_base_url,
+                "str",
+                skip_quote=True,
             ),
             "userId": self._serialize.url("user_id", user_id, "str"),
         }
@@ -894,7 +882,6 @@ class ConfidentialLedgerClientOperationsMixin:
 
     async def patch_user(
         self,
-        ledger_base_url: str,
         user_id: str,
         assigned_role: Union[str, "_models.ConfidentialLedgerUserRoleName"],
         **kwargs
@@ -903,9 +890,6 @@ class ConfidentialLedgerClientOperationsMixin:
 
         A JSON merge patch is applied for existing users.
 
-        :param ledger_base_url: The Confidential Ledger URL, for example
-         https://contoso.eastus.cloudapp.azure.com.
-        :type ledger_base_url: str
         :param user_id: The user id, either an AAD object ID or certificate fingerprint.
         :type user_id: str
         :param assigned_role: Represents an assignable role.
@@ -932,7 +916,10 @@ class ConfidentialLedgerClientOperationsMixin:
         url = self.patch_user.metadata["url"]  # type: ignore
         path_format_arguments = {
             "ledgerBaseUrl": self._serialize.url(
-                "ledger_base_url", ledger_base_url, "str", skip_quote=True
+                "self._config.ledger_base_url",
+                self._config.ledger_base_url,
+                "str",
+                skip_quote=True,
             ),
             "userId": self._serialize.url("user_id", user_id, "str"),
         }

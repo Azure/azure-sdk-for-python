@@ -13,7 +13,7 @@ interactions:
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-azure-confidentialledger/0.1.0 Python/3.8.5 (Linux-5.4.72-microsoft-standard-WSL2-x86_64-with-glibc2.29)
+      - azsdk-python-confidentialledger/0.1 Python/3.8.5 (Linux-5.4.72-microsoft-standard-WSL2-x86_64-with-glibc2.29)
     method: PATCH
     uri: https://fake-confidential-ledger.azure.com/app/users/aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa?api-version=0.1-preview
   response:
@@ -25,7 +25,7 @@ interactions:
       content-type:
       - application/json
       x-ms-ccf-transaction-id:
-      - '2.762'
+      - '6.3676'
     status:
       code: 200
       message: OK
@@ -43,7 +43,7 @@ interactions:
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-azure-confidentialledger/0.1.0 Python/3.8.5 (Linux-5.4.72-microsoft-standard-WSL2-x86_64-with-glibc2.29)
+      - azsdk-python-confidentialledger/0.1 Python/3.8.5 (Linux-5.4.72-microsoft-standard-WSL2-x86_64-with-glibc2.29)
     method: PATCH
     uri: https://fake-confidential-ledger.azure.com/app/users/000000000000000000000000000000000000?api-version=0.1-preview
   response:
@@ -55,7 +55,7 @@ interactions:
       content-type:
       - application/json
       x-ms-ccf-transaction-id:
-      - '2.764'
+      - '6.3678'
     status:
       code: 200
       message: OK
@@ -69,7 +69,7 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-azure-confidentialledger/0.1.0 Python/3.8.5 (Linux-5.4.72-microsoft-standard-WSL2-x86_64-with-glibc2.29)
+      - azsdk-python-confidentialledger/0.1 Python/3.8.5 (Linux-5.4.72-microsoft-standard-WSL2-x86_64-with-glibc2.29)
     method: GET
     uri: https://fake-confidential-ledger.azure.com/app/users/000000000000000000000000000000000000?api-version=0.1-preview
   response:
@@ -81,7 +81,7 @@ interactions:
       content-type:
       - application/json
       x-ms-ccf-transaction-id:
-      - '2.764'
+      - '6.3678'
     status:
       code: 200
       message: OK
@@ -97,7 +97,7 @@ interactions:
       Content-Length:
       - '0'
       User-Agent:
-      - azsdk-python-azure-confidentialledger/0.1.0 Python/3.8.5 (Linux-5.4.72-microsoft-standard-WSL2-x86_64-with-glibc2.29)
+      - azsdk-python-confidentialledger/0.1 Python/3.8.5 (Linux-5.4.72-microsoft-standard-WSL2-x86_64-with-glibc2.29)
     method: DELETE
     uri: https://fake-confidential-ledger.azure.com/app/users/000000000000000000000000000000000000?api-version=0.1-preview
   response:
@@ -107,7 +107,7 @@ interactions:
       content-length:
       - '0'
       x-ms-ccf-transaction-id:
-      - '2.766'
+      - '6.3680'
     status:
       code: 204
       message: No Content
@@ -125,7 +125,7 @@ interactions:
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-azure-confidentialledger/0.1.0 Python/3.8.5 (Linux-5.4.72-microsoft-standard-WSL2-x86_64-with-glibc2.29)
+      - azsdk-python-confidentialledger/0.1 Python/3.8.5 (Linux-5.4.72-microsoft-standard-WSL2-x86_64-with-glibc2.29)
     method: PATCH
     uri: https://fake-confidential-ledger.azure.com/app/users/000000000000000000000000000000000000?api-version=0.1-preview
   response:
@@ -137,7 +137,7 @@ interactions:
       content-type:
       - application/json
       x-ms-ccf-transaction-id:
-      - '2.767'
+      - '6.3681'
     status:
       code: 200
       message: OK
@@ -151,7 +151,7 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-azure-confidentialledger/0.1.0 Python/3.8.5 (Linux-5.4.72-microsoft-standard-WSL2-x86_64-with-glibc2.29)
+      - azsdk-python-confidentialledger/0.1 Python/3.8.5 (Linux-5.4.72-microsoft-standard-WSL2-x86_64-with-glibc2.29)
     method: GET
     uri: https://fake-confidential-ledger.azure.com/app/users/000000000000000000000000000000000000?api-version=0.1-preview
   response:
@@ -163,7 +163,7 @@ interactions:
       content-type:
       - application/json
       x-ms-ccf-transaction-id:
-      - '2.767'
+      - '6.3681'
     status:
       code: 200
       message: OK
@@ -179,7 +179,7 @@ interactions:
       Content-Length:
       - '0'
       User-Agent:
-      - azsdk-python-azure-confidentialledger/0.1.0 Python/3.8.5 (Linux-5.4.72-microsoft-standard-WSL2-x86_64-with-glibc2.29)
+      - azsdk-python-confidentialledger/0.1 Python/3.8.5 (Linux-5.4.72-microsoft-standard-WSL2-x86_64-with-glibc2.29)
     method: DELETE
     uri: https://fake-confidential-ledger.azure.com/app/users/000000000000000000000000000000000000?api-version=0.1-preview
   response:
@@ -189,7 +189,7 @@ interactions:
       content-length:
       - '0'
       x-ms-ccf-transaction-id:
-      - '2.768'
+      - '6.3682'
     status:
       code: 204
       message: No Content
