@@ -208,20 +208,12 @@ class TestTableClientUnit(TableTestCase):
                     credential=self.token_credential,
                     table_name="foo")
 
-    @pytest.mark.skip("Testing against a different cloud than the one created in powershell script")
-
     def test_create_service_china(self):
-        # Arrange
-        # TODO: Confirm regional cloud cosmos URLs
         for service_type in SERVICES.items():
-            # Act
-            url = self.account_url(self.tables_cosmos_account_name, "cosmos").replace('core.windows.net', 'core.chinacloudapi.cn')
-            if 'cosmos.azure' in url:
-                pytest.skip("Confirm cosmos national cloud URLs")
+            url = self.account_url(self.tables_cosmos_account_name, "cosmos").replace('cosmos.azure.com', 'core.chinacloudapi.cn')
             service = service_type[0](
                 url, credential=self.tables_primary_cosmos_account_key, table_name='foo')
 
-            # Assert
             assert service is not None
             assert service.account_name ==  self.tables_cosmos_account_name
             assert service.credential.account_name ==  self.tables_cosmos_account_name
@@ -322,18 +314,13 @@ class TestTableClientUnit(TableTestCase):
             assert service._primary_endpoint.startswith('https://' + self.tables_cosmos_account_name + '.table.cosmos.azure.com')
             assert service.scheme ==  'https'
 
-    @pytest.mark.skip("Tests fail with non-standard clouds")
-
     def test_create_service_with_connection_string_endpoint_protocol(self):
-        # Arrange
         conn_string = 'AccountName={};AccountKey={};DefaultEndpointsProtocol=http;EndpointSuffix=core.chinacloudapi.cn;'.format(
             self.tables_cosmos_account_name, self.tables_primary_cosmos_account_key)
 
         for service_type in SERVICES.items():
-            # Act
             service = service_type[0].from_connection_string(conn_string, table_name="foo")
 
-            # Assert
             assert service is not None
             assert service.account_name ==  self.tables_cosmos_account_name
             assert service.credential.account_name ==  self.tables_cosmos_account_name
