@@ -48,7 +48,7 @@ class AttestationAdministrationClient(object):
         instance_url,  # type: str
         **kwargs  # type: Any
     ):
-        # type: (str, Any, dict) -> None
+        # type: (...) -> None
         base_url = '{instanceUrl}'
         if not credential:
             raise ValueError("Missing credential.")
