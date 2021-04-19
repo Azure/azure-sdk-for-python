@@ -563,67 +563,6 @@ class BatchErrorException(HttpResponseError):
         )
 
 
-class BatchTransactionResult(object):
-    """The result of a successful batch operation, can be used by a user to
-    recreate a request in the case of BatchErrorException
-
-    :param requests: The requests of the batch
-    :type requests: List[~azure.core.pipeline.HttpRequest]
-    :param results: The HTTP response of each request
-    :type results: List[~azure.core.pipeline.HttpResponse]
-    :param entities: Entities submitted for the batch
-    :type entities: List[~azure.data.tables.TableEntity]
-    """
-
-    def __init__(self, requests, results, entities):
-        # type: (List[HttpRequest], List[HttpResponse], List[TableEntity]) -> None
-        self.requests = requests
-        self.results = results
-        self.entities = entities
-
-    def get_entity(self, row_key):
-        # type: (str) -> Union[Dict[str], TableEntity]
-        """Get entity for a given row key
-
-        :param row_key: The row_key correlating to an entity
-        :type row_key: str
-        :return: TableEntity or Dictionary submitted
-        :rtype: Union[Dict[str], TableEntity]
-        """
-        for entity in self.entities:
-            if entity["RowKey"] == row_key:
-                return entity
-        return None
-
-    def get_request(self, row_key):
-        # type: (str) -> HttpRequest
-        """Get request for a given row key
-
-        :param row_key: The row_key correlating to an entity
-        :type row_key: str
-        :return: HTTP Request for a row key
-        :rtype: :class:`~azure.core.pipeline.transport.HttpRequest`
-        """
-        for i, entity in enumerate(self.entities):
-            if entity["RowKey"] == row_key:
-                return self.requests[i]
-        return None
-
-    def get_result(self, row_key):
-        # type: (str) -> HttpResponse
-        """Get response for a given row key
-
-        :param row_key: The row_key correlating to an entity
-        :type row_key: str
-        :return: HTTP Response for a row key
-        :rtype: :class:`~azure.core.pipeline.HttpResponse`
-        """
-        for i, entity in enumerate(self.entities):
-            if entity["RowKey"] == row_key:
-                return self.results[i]
-        return None
-
-
 class LocationMode(object):
     """
     Specifies the location the request should be sent to. This mode only applies
