@@ -91,7 +91,7 @@ def process_storage_error(storage_error):
     try:
         error_body = ContentDecodePolicy.deserialize_from_http_generics(storage_error.response)
         if error_body:
-            for info in error_body.iter():
+            for info in error_body:
                 if info.tag.lower() == 'code':
                     error_code = info.text
                 elif info.tag.lower() == 'message':
