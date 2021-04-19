@@ -290,23 +290,25 @@ class AzureAttestationTest(AzureTestCase):
         assert response.value.sgx_collateral is not None
 
 
-#    @AttestationPreparer()
-#    def test_local_attest_open_enclave(self):
-#        attest_client = self.create_client('http://localhost:8080')
-#
-#        oe_report = Base64Url.decode(_open_enclave_report)
-##        # Convert the OE report into an SGX quote by stripping off the first 16 bytes.
-##        quote = oe_report[16:-1]
-#        runtime_data = Base64Url.decode(_runtime_data)
-#        response = attest_client.attest_open_enclave(
-#        oe_report,
-#        None, False,
-#        runtime_data, False, 
-#        enforce_https=False,
-#        headers={"tenantName": "tenant1"})
-#        print(response)
+    """
+        # Commented out call showing the modifications needed to convert this to a call
+        # to an MAA instance running locally for diagnostic purposes.
+        @AttestationPreparer()
+        def test_local_attest_open_enclave(self):
+            attest_client = self.create_client('http://localhost:8080')
 
-
+            oe_report = Base64Url.decode(_open_enclave_report)
+    #        # Convert the OE report into an SGX quote by stripping off the first 16 bytes.
+    #        quote = oe_report[16:-1]
+            runtime_data = Base64Url.decode(_runtime_data)
+            response = attest_client.attest_open_enclave(
+            oe_report,
+            None, False,
+            runtime_data, False, 
+            enforce_https=False,
+            headers={"tenantName": "tenant1"})
+            print(response)
+    """
     @AttestationPreparer()
     def test_shared_get_policy_sgx(self, attestation_location_short_name):
         attest_client = self.shared_admin_client(attestation_location_short_name)
@@ -383,32 +385,32 @@ class AzureAttestationTest(AzureTestCase):
 
 
 
-#     @AttestationPreparer()
-#     def test_aad_get_policy_management_signers(self, attestation_aad_url):
-#         attest_client = self.create_client(attestation_aad_url)
-#         policy_signers = attest_client.policy_certificates.get()
-#         default_signers = policy_signers.token
-#         policy_token = jwt.decode(
-#             default_signers, 
-#             options={"verify_signature":False, 'verify_exp': False},
-#             leeway=10, 
-#             algorithms=["none", "RS256"])
-#         print("{}".format(policy_token))
-#         policy_certificates = policy_token["x-ms-policy-certificates"]
-#         assert len(policy_certificates["keys"])==0
+    # @AttestationPreparer()
+    # def test_aad_get_policy_management_signers(self, attestation_aad_url):
+    #     attest_client = self.create_client(attestation_aad_url)
+    #     policy_signers = attest_client.policy_certificates.get()
+    #     default_signers = policy_signers.token
+    #     policy_token = jwt.decode(
+    #         default_signers, 
+    #         options={"verify_signature":False, 'verify_exp': False},
+    #         leeway=10, 
+    #         algorithms=["none", "RS256"])
+    #     print("{}".format(policy_token))
+    #     policy_certificates = policy_token["x-ms-policy-certificates"]
+    #     assert len(policy_certificates["keys"])==0
 
-#     def test_shared_get_policy_management_signers(self):
-#         attest_client = self.shared_client()
-#         policy_signers = attest_client.policy_certificates.get()
-#         default_signers = policy_signers.token
-#         policy_token = jwt.decode(
-#             default_signers, 
-#             options={"verify_signature":False, 'verify_exp': False},
-#             leeway=10,
-#             algorithms=["none", "RS256"])
-#         print("{}".format(policy_token))
-#         policy_certificates = policy_token["x-ms-policy-certificates"]
-#         assert len(policy_certificates["keys"])==0
+    # def test_shared_get_policy_management_signers(self):
+    #     attest_client = self.shared_client()
+    #     policy_signers = attest_client.policy_certificates.get()
+    #     default_signers = policy_signers.token
+    #     policy_token = jwt.decode(
+    #         default_signers, 
+    #         options={"verify_signature":False, 'verify_exp': False},
+    #         leeway=10,
+    #         algorithms=["none", "RS256"])
+    #     print("{}".format(policy_token))
+    #     policy_certificates = policy_token["x-ms-policy-certificates"]
+    #     assert len(policy_certificates["keys"])==0
 
 #     @AttestationPreparer()
 #     def test_isolated_get_policy_management_signers(self, attestation_isolated_url):
