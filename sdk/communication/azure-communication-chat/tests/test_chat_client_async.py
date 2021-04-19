@@ -24,12 +24,10 @@ except ImportError:  # python < 3.3
 
 import pytest
 import time
-
+import calendar
 
 def _convert_datetime_to_utc_int(input):
-    epoch = time.mktime(datetime(1970, 1, 1).timetuple())
-    input_datetime_as_int = epoch - time.mktime(input.timetuple())
-    return input_datetime_as_int
+    return int(calendar.timegm(input.utctimetuple()))
 
 
 async def mock_get_token():
