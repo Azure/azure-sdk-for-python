@@ -34,7 +34,7 @@ class AttestationClient(object):
     """Describes the interface for the per-tenant enclave service.
     :param str base_url: base url of the service
     :param credential: An object which can provide secrets for the attestation service
-    :type credential: azure.TokenCredentials or azure.AsyncTokenCredentials
+    :type credential: ~azure.core.credentials.TokenCredentials
     :keyword Pipeline pipeline: If omitted, the standard pipeline is used.
     :keyword HttpTransport transport: If omitted, the standard pipeline is used.
     :keyword list[HTTPPolicy] policies: If omitted, the standard pipeline is used.
