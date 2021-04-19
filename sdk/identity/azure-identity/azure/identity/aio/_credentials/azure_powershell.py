@@ -3,7 +3,6 @@
 # Licensed under the MIT License.
 # ------------------------------------
 import asyncio
-import logging
 import sys
 from typing import cast, TYPE_CHECKING
 
@@ -22,7 +21,6 @@ if TYPE_CHECKING:
     from typing import Any, Tuple
     from azure.core.credentials import AccessToken
 
-_LOGGER = logging.getLogger(__name__)
 
 
 class AzurePowerShellCredential:
