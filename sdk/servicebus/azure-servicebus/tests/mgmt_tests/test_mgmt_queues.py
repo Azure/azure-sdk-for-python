@@ -233,6 +233,7 @@ class ServiceBusAdministrationClientQueueTests(AzureMgmtTestCase):
         mgmt_service = ServiceBusAdministrationClient.from_connection_string(servicebus_namespace_connection_string)
         clear_queues(mgmt_service)
         queue_name = "iweidk"
+        queue_name_2 = "vladsk"
         topic_name = "aghadh"
 
         #TODO: Why don't we have an input model (queueOptions? as superclass of QueueProperties?) and output model to not show these params?
@@ -255,6 +256,24 @@ class ServiceBusAdministrationClientQueueTests(AzureMgmtTestCase):
             #requires_duplicate_detection=True,
             requires_session=True
         )
+
+        mgmt_service.create_queue(
+            queue_name_2,
+            auto_delete_on_idle="PT10M1S",
+            dead_lettering_on_message_expiration=True,
+            default_message_time_to_live="PT11M2S",
+            duplicate_detection_history_time_window="PT12M3S",
+            enable_batched_operations=True,
+            enable_express=True,
+            enable_partitioning=True,
+            forward_dead_lettered_messages_to=topic_name,
+            forward_to=topic_name,
+            lock_duration="PT13S",
+            max_delivery_count=14,
+            max_size_in_megabytes=3072,
+            requires_session=True
+        )
+
         try:
             queue = mgmt_service.get_queue(queue_name)
             assert queue.name == queue_name
@@ -275,9 +294,28 @@ class ServiceBusAdministrationClientQueueTests(AzureMgmtTestCase):
             # To know more visit https://aka.ms/sbResourceMgrExceptions. 
             #assert queue.requires_duplicate_detection == True
             assert queue.requires_session == True
+
+            queue2 = mgmt_service.get_queue(queue_name_2)
+            assert queue2.name == queue_name_2
+            assert queue2.auto_delete_on_idle == datetime.timedelta(minutes=10, seconds=1)
+            assert queue2.dead_lettering_on_message_expiration == True
+            assert queue2.default_message_time_to_live == datetime.timedelta(minutes=11, seconds=2)
+            assert queue2.duplicate_detection_history_time_window == datetime.timedelta(minutes=12, seconds=3)
+            assert queue2.enable_batched_operations == True
+            assert queue2.enable_express == True
+            assert queue2.enable_partitioning == True
+            assert queue2.forward_dead_lettered_messages_to.endswith(".servicebus.windows.net/{}".format(topic_name))
+            assert queue2.forward_to.endswith(".servicebus.windows.net/{}".format(topic_name))
+            assert queue2.lock_duration == datetime.timedelta(seconds=13)
+            assert queue2.max_delivery_count == 14
+            assert queue2.max_size_in_megabytes % 3072 == 0
+            assert queue2.requires_session == True
+
         finally:
             mgmt_service.delete_queue(queue_name)
+            mgmt_service.delete_queue(queue_name_2)
             mgmt_service.delete_topic(topic_name)
+            mgmt_service.close()
 
     @pytest.mark.liveTest
     @CachedResourceGroupPreparer(name_prefix='servicebustest')
@@ -363,6 +401,17 @@ class ServiceBusAdministrationClientQueueTests(AzureMgmtTestCase):
             assert queue_description.forward_dead_lettered_messages_to.endswith(".servicebus.windows.net/{}".format(queue_name))
             #assert queue_description.requires_duplicate_detection == True
             #assert queue_description.requires_session == True
+
+            queue_description.auto_delete_on_idle = "PT10M1S"
+            queue_description.default_message_time_to_live = "PT11M2S"
+            queue_description.duplicate_detection_history_time_window = "PT12M3S"
+
+            mgmt_service.update_queue(queue_description)
+            queue_description = mgmt_service.get_queue(queue_name)
+
+            assert queue_description.auto_delete_on_idle == datetime.timedelta(minutes=10, seconds=1)
+            assert queue_description.default_message_time_to_live == datetime.timedelta(minutes=11, seconds=2)
+            assert queue_description.duplicate_detection_history_time_window == datetime.timedelta(minutes=12, seconds=3)
         finally:
             mgmt_service.delete_queue(queue_name)
             mgmt_service.delete_topic(topic_name)
