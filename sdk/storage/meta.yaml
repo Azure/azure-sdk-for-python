@@ -1,9 +1,8 @@
 {% set name = "azure-storage" %}
-{% set version = "2021.05.01" %}
 
 package:
   name: "{{ name|lower }}"
-  version: "{{ version }}"
+  version: {{ environ.get('AZURESDK_CONDA_VERSION', '0.0.0') }}
 
 source:
   url: {{ environ.get('STORAGE_SOURCE_DISTRIBUTION', '') }}
@@ -17,14 +16,14 @@ build:
 
 requirements:
   host:
-    - azure-core >=2021.05.01
+    - azure-core >={{ environ.get('AZURESDK_CONDA_VERSION', '0.0.0') }}
     - cryptography >=2.1.4
     - msrest >=2021.05.01
     - pip
     - python
     - aiohttp
   run:
-    - azure-core >=2021.05.01
+    - azure-core >={{ environ.get('AZURESDK_CONDA_VERSION', '0.0.0') }}
     - cryptography >=2.1.4
     - msrest >=2021.05.01
     - python
@@ -42,8 +41,8 @@ about:
   home: "https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/storage"
   license: MIT
   license_family: MIT
-  license_file: 
-  summary: "Microsoft Azure Storage Client Library for Python"
+  license_file:
+  summary: {{ environ.get('AZURESDK_CONDA_SUMMARY', 'Microsoft Azure Storage Client Library for Python') }}
   doc_url: 
   dev_url: 
 

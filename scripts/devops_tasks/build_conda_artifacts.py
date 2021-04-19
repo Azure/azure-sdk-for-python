@@ -30,7 +30,7 @@ from common_tasks import process_glob_string, run_check_call, str_to_bool, parse
 from subprocess import check_call
 from distutils.dir_util import copy_tree
 
-VERSION_REGEX = re.compile(r"\{\%\s*set\s*version\s*=\s*\"(.*)\"\s*\%\}")
+VERSION_REGEX = re.compile(r"\s*AZURESDK_CONDA_VERSION\s*:\s*[\'](.*)[\']\s*")
 
 NAMESPACE_EXTENSION_TEMPLATE = """__path__ = __import__('pkgutil').extend_path(__path__, __name__)  # type: str
 """
@@ -142,16 +142,14 @@ def create_sdist_skeleton(build_directory, artifact_name, common_root):
                 dest = os.path.join(ns_dir, directory)
                 shutil.copytree(src, dest)
 
-
-def get_version_from_meta(meta_yaml_location):
-    with open(os.path.abspath((meta_yaml_location)), "r") as f:
+def get_version_from_config(environment_config):
+    with open(os.path.abspath((environment_config)), "r") as f:
         lines = f.readlines()
     for line in lines:
         result = VERSION_REGEX.match(line)
         if result:
             return result.group(1)
     return "0.0.0"
-
 
 def get_manifest_includes(common_root):
     levels = common_root.split("/")
@@ -165,7 +163,7 @@ def get_manifest_includes(common_root):
     return breadcrumbs
 
 
-def create_setup_files(build_directory, common_root, artifact_name, service, meta_yaml):
+def create_setup_files(build_directory, common_root, artifact_name, service, meta_yaml, environment_config):
     sdist_directory = os.path.join(build_directory, artifact_name)
     setup_location = os.path.join(sdist_directory, "setup.py")
     manifest_location = os.path.join(sdist_directory, "MANIFEST.in")
@@ -173,7 +171,7 @@ def create_setup_files(build_directory, common_root, artifact_name, service, met
 
     setup_template = CONDA_PKG_SETUP_TEMPLATE.format(
         conda_package_name=artifact_name,
-        version=get_version_from_meta(meta_yaml),
+        version=get_version_from_config(environment_config),
         service=service,
         package_excludes="'azure', 'tests', '{}'".format(common_root.replace("/", ".")),
     )
@@ -193,7 +191,7 @@ def create_setup_files(build_directory, common_root, artifact_name, service, met
 
 
 def create_combined_sdist(
-    output_directory, build_directory, artifact_name, common_root, service, meta_yaml
+    output_directory, build_directory, artifact_name, common_root, service, meta_yaml, environment_config
 ):
     singular_dependency = (
         len(get_pkgs_from_build_directory(build_directory, artifact_name)) == 0
@@ -202,7 +200,7 @@ def create_combined_sdist(
     if not singular_dependency:
         create_sdist_skeleton(build_directory, artifact_name, common_root)
         create_setup_files(
-            build_directory, common_root, artifact_name, service, meta_yaml
+            build_directory, common_root, artifact_name, service, meta_yaml, environment_config
         )
 
     sdist_location = os.path.join(build_directory, artifact_name)
@@ -283,6 +281,15 @@ if __name__ == "__main__":
         required=False,
     )
 
+    parser.add_argument(
+        "-e",
+        "--environment_config",
+        dest="environment_config",
+        help="The location of the environment.yml used to create the conda environments. This file has necessary common configuration information within.",
+        required=False,
+    )
+
+
     args = parser.parse_args()
     output_source_location = create_combined_sdist(
         args.distribution_directory,
@@ -291,6 +298,7 @@ if __name__ == "__main__":
         args.common_root,
         args.service,
         args.meta_yml,
+        args.environment_config
     )
 
     if args.output_var:

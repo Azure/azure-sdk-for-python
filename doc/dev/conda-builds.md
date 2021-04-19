@@ -16,6 +16,20 @@ A Conda Artifact defines:
 
 ## How to Build an Azure SDK Conda Package Locally
 
+### Set up your conda environment
+
+You will notice that all the azure-sdk conda distributions have the **same** version number and requirement set. This is due to the fact that the azure-sdk team pushes our conda packages out in waves. To support this, all versions are set via a common environment variable `AZURESDK_CONDA_VERSION`.
+
+We keep this environment variable set properly across all our builds by using a common `environment.yml` when creating our build environment. This environment definition ensures that 
+
+1. Our channel `https://azuresdkconda.blob.core.windows.net/channel1/` is added to the set to download packages
+2. The environment variable `AZURESDK_CONDA_VERSION` will be set exactly once.
+  
+
+Reference the `environment.yml` in your local build by pass `-f <path to environment.yml>` when you create your conda environment.
+```
+conda env create --yes --quiet --name ${{ artifact.name }} -f $(Build.SourcesDirectory)/eng/environment.yml
+```
 
 ### Create Your Build Directory
 Given how Conda packages are comprised of multiple source distributions _combined_, the buildable source does not exist directly within the azure-sdk-for-python repo. Currently, there is _some_ manual work that needs to be done.
