@@ -472,8 +472,9 @@ class PolicyAssignmentsOperations:
 
         When providing a scope for the assignment, use '/subscriptions/{subscription-id}/' for
         subscriptions, '/subscriptions/{subscription-id}/resourceGroups/{resource-group-name}' for
-        resource groups, and '/subscriptions/{subscription-id}/resourceGroups/{resource-group-
-        name}/providers/{resource-provider-namespace}/{resource-type}/{resource-name}' for resources.
+        resource groups, and
+        '/subscriptions/{subscription-id}/resourceGroups/{resource-group-name}/providers/{resource-provider-namespace}/{resource-type}/{resource-name}'
+        for resources.
 
         :param policy_assignment_id: The ID of the policy assignment to delete. Use the format
          '/{scope}/providers/Microsoft.Authorization/policyAssignments/{policy-assignment-name}'.
@@ -534,8 +535,9 @@ class PolicyAssignmentsOperations:
         resource group that policy is assigned to all resources in the group. When providing a scope
         for the assignment, use '/subscriptions/{subscription-id}/' for subscriptions,
         '/subscriptions/{subscription-id}/resourceGroups/{resource-group-name}' for resource groups,
-        and '/subscriptions/{subscription-id}/resourceGroups/{resource-group-name}/providers/{resource-
-        provider-namespace}/{resource-type}/{resource-name}' for resources.
+        and
+        '/subscriptions/{subscription-id}/resourceGroups/{resource-group-name}/providers/{resource-provider-namespace}/{resource-type}/{resource-name}'
+        for resources.
 
         :param policy_assignment_id: The ID of the policy assignment to create. Use the format
          '/{scope}/providers/Microsoft.Authorization/policyAssignments/{policy-assignment-name}'.
@@ -600,8 +602,9 @@ class PolicyAssignmentsOperations:
 
         When providing a scope for the assignment, use '/subscriptions/{subscription-id}/' for
         subscriptions, '/subscriptions/{subscription-id}/resourceGroups/{resource-group-name}' for
-        resource groups, and '/subscriptions/{subscription-id}/resourceGroups/{resource-group-
-        name}/providers/{resource-provider-namespace}/{resource-type}/{resource-name}' for resources.
+        resource groups, and
+        '/subscriptions/{subscription-id}/resourceGroups/{resource-group-name}/providers/{resource-provider-namespace}/{resource-type}/{resource-name}'
+        for resources.
 
         :param policy_assignment_id: The ID of the policy assignment to get. Use the format
          '/{scope}/providers/Microsoft.Authorization/policyAssignments/{policy-assignment-name}'.

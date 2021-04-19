@@ -20,7 +20,7 @@ except ImportError:
 import six
 from azure.core.pipeline import Pipeline
 from azure.core.tracing.decorator import distributed_trace
-from azure.core.exceptions import ResourceNotFoundError, HttpResponseError
+from azure.core.exceptions import ResourceNotFoundError, HttpResponseError, ResourceExistsError
 
 from ._shared import encode_base64
 from ._shared.base_client import StorageAccountHostsMixin, parse_connection_str, parse_query, TransportWrapper
@@ -1110,6 +1110,9 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
             self._client.blob.get_properties(
                 snapshot=self.snapshot,
                 **kwargs)
+            return True
+        # Encrypted with CPK
+        except ResourceExistsError:
             return True
         except HttpResponseError as error:
             try:

@@ -1036,24 +1036,21 @@ class StorageTableEntityTest(AzureTestCase, AsyncTableTestCase):
         row_key_with_single_quote = "a''''b"
         await self._set_up(tables_cosmos_account_name, tables_primary_cosmos_account_key)
         try:
-            entity, _ = await self._insert_random_entity(pk=partition_key_with_single_quote,
-                                                         rk=row_key_with_single_quote)
+            entity, _ = await self._insert_random_entity(pk=partition_key_with_single_quote, rk=row_key_with_single_quote)
 
             # Act
             sent_entity = self._create_updated_entity_dict(entity.PartitionKey, entity.RowKey)
             await self.table.upsert_entity(mode=UpdateMode.REPLACE, entity=sent_entity)
 
             # row key here only has 2 quotes
-            received_entity = await self.table.get_entity(
-                entity.PartitionKey, entity.RowKey)
+            received_entity = await self.table.get_entity(entity.PartitionKey, entity.RowKey)
             self._assert_updated_entity(received_entity)
 
             # Act
             sent_entity['newField'] = 'newFieldValue'
             await self.table.update_entity(mode=UpdateMode.REPLACE, entity=sent_entity)
 
-            received_entity = await self.table.get_entity(
-                entity.PartitionKey, entity.RowKey)
+            received_entity = await self.table.get_entity(entity.PartitionKey, entity.RowKey)
             self._assert_updated_entity(received_entity)
             assert received_entity['newField'] ==  'newFieldValue'
 
@@ -1138,7 +1135,6 @@ class StorageTableEntityTest(AzureTestCase, AsyncTableTestCase):
         finally:
             await self._tear_down()
 
-    @pytest.mark.skip("response time is three hours before the given one")
     @CosmosPreparer()
     async def test_timezone(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
         # Arrange
@@ -1549,26 +1545,24 @@ class StorageTableEntityTest(AzureTestCase, AsyncTableTestCase):
         finally:
             await self._tear_down()
 
-    @pytest.mark.skip("returns ' sex' instead of deserializing into just 'sex'")
     @CosmosPreparer()
     async def test_query_entities_with_select(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
-        # Arrange
         await self._set_up(tables_cosmos_account_name, tables_primary_cosmos_account_key)
         try:
             table = await self._create_query_table(2)
 
             # Act
             entities = []
-            async for t in table.list_entities(select=["age, sex"]):
-                entities.append(t)
+            async for entity in table.list_entities(select=['age', 'sex']):
+                entities.append(entity)
+                assert entity.age == 39
+                assert entity.sex == 'male'
+                assert not hasattr(entity, "birthday")
+                assert not hasattr(entity, "married")
+                assert not hasattr(entity, "deceased")
 
             # Assert
-            assert len(entities) ==  2
-            assert entities[0].age ==  39
-            assert entities[0].sex ==  'male'
-            assert not hasattr(entities[0], "birthday")
-            assert not hasattr(entities[0], "married")
-            assert not hasattr(entities[0], "deceased")
+            assert len(entities) == 2
         finally:
             await self._tear_down()
 

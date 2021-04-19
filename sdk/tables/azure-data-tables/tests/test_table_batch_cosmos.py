@@ -547,32 +547,6 @@ class StorageTableClientTest(AzureTestCase, TableTestCase):
         finally:
             self._tear_down()
 
-    @pytest.mark.skip("The same row operations do not fail on Cosmos")
-    @pytest.mark.skipif(sys.version_info < (3, 0), reason="requires Python3")
-    @CosmosPreparer()
-    def test_batch_same_row_operations_fail(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
-        # Arrange
-        self._set_up(tables_cosmos_account_name, tables_primary_cosmos_account_key)
-        try:
-            entity = self._create_random_entity_dict('001', 'batch_negative_1')
-            self.table.create_entity(entity)
-
-            # Act
-            batch = self.table.create_batch()
-
-            entity = self._create_updated_entity_dict(
-                '001', 'batch_negative_1')
-            batch.update_entity(entity)
-            entity = self._create_random_entity_dict(
-                '001', 'batch_negative_1')
-            batch.update_entity(entity, mode=UpdateMode.MERGE)
-
-            # Assert
-            with pytest.raises(BatchErrorException):
-                self.table.send_batch(batch)
-        finally:
-            self._tear_down()
-
     @pytest.mark.skipif(sys.version_info < (3, 0), reason="requires Python3")
     @CosmosPreparer()
     def test_batch_different_partition_operations_fail(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
@@ -595,29 +569,6 @@ class StorageTableClientTest(AzureTestCase, TableTestCase):
             # Assert
             with pytest.raises(ValueError):
                 batch.create_entity(entity)
-        finally:
-            self._tear_down()
-
-    @pytest.mark.skip("On Cosmos, the limit is not specified.")
-    @pytest.mark.skipif(sys.version_info < (3, 0), reason="requires Python3")
-    @CosmosPreparer()
-    def test_batch_too_many_ops(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
-        # Arrange
-        self._set_up(tables_cosmos_account_name, tables_primary_cosmos_account_key)
-        try:
-            entity = self._create_random_entity_dict('001', 'batch_negative_1')
-            self.table.create_entity(entity)
-
-            # Act
-            with pytest.raises(BatchErrorException):
-                batch = self.table.create_batch()
-                for i in range(0, 101):
-                    entity = TableEntity()
-                    entity.PartitionKey = 'large'
-                    entity.RowKey = 'item{0}'.format(i)
-                    batch.create_entity(entity)
-
-            # Assert
         finally:
             self._tear_down()
 
