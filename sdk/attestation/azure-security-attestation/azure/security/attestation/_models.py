@@ -1,16 +1,7 @@
-from base64 import b64encode, decode, encode
 import base64
-import json
-import sys
-from cryptography.hazmat.primitives import hashes
-from cryptography.hazmat.primitives import serialization
 
-from cryptography.hazmat.primitives.asymmetric import rsa
 from cryptography.hazmat.primitives.asymmetric import padding
-from cryptography.hazmat.primitives.asymmetric.dsa import DSAPublicKey
-from cryptography.hazmat.primitives.asymmetric.padding import AsymmetricPadding, PKCS1v15
-from cryptography.hazmat.primitives.hashes import HashAlgorithm, SHA256
-from msrest.exceptions import DeserializationError, SerializationError
+from cryptography.hazmat.primitives.hashes import SHA256
 from ._common import Base64Url
 from ._generated.models import PolicyResult, PolicyCertificatesModificationResult, AttestationResult, StoredAttestationPolicy, JSONWebKey
 from typing import Any, Callable, List, Optional, Type, TypeVar, Generic, Union
@@ -68,13 +59,13 @@ class SigningKey(object):
     the public key portion of the private key.
 
     :var signing_key: The RSA or ECDS signing key to sign the token supplied to the customer.
-    :vartype signing_key: (rsa.RSAPrivateKey | EllipticCurvePrivateKey)
+    :vartype signing_key: (rsa.RSAPrivateKey or EllipticCurvePrivateKey)
     :var certificate: An X.509 Certificate whose public key matches the signing_key's public key.
     :vartype certificate: Certificate
     """
 
     def __init__(self, signing_key, certificate):
-    # type: (Union[RSAPrivateKey | EllipticCurvePrivateKey], Certificate) -> None
+    # type: (Union[RSAPrivateKey, EllipticCurvePrivateKey], Certificate) -> None
         self.signing_key = signing_key
         self.certificate = certificate
 
@@ -191,7 +182,7 @@ class AttestationToken(Generic[T]):
         """ Expiration time for the token.
         """
         exp = self._body.get('exp')
-        if (exp is not None):
+        if exp:
             return datetime.fromtimestamp(exp)
         return None
 
@@ -201,7 +192,7 @@ class AttestationToken(Generic[T]):
         """ Time before which the token is invalid.
         """
         nbf = self._body.get('nbf')
-        if (nbf is not None):
+        if nbf:
             return  datetime.fromtimestamp(nbf)
         return None
 
@@ -211,7 +202,7 @@ class AttestationToken(Generic[T]):
         """ Time when the token was issued.
         """
         iat = self._body.get('iat')
-        if (iat is not None):
+        if iat:
             return  datetime.fromtimestamp(iat)
         return None
 
@@ -347,7 +338,7 @@ class AttestationToken(Generic[T]):
     def _get_candidate_signing_certificates(self, signing_certificates):
         # type: (List[AttestationSigner]) -> List[AttestationSigner]
 
-        candidates = list()
+        candidates = []
         desired_key_id = self.key_id
         if desired_key_id is not None:
             for signer in signing_certificates:

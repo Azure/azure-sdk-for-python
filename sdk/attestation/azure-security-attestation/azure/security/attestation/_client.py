@@ -46,7 +46,7 @@ class AttestationClient(object):
         instance_url,  # type: str
         **kwargs  # type: Any
     ):
-        # type: (str, Any, dict) -> None
+        # type: (TokenCredential, str, Any) -> None
         base_url = '{instanceUrl}'
         if not credential:
             raise ValueError("Missing credential.")
@@ -62,11 +62,11 @@ class AttestationClient(object):
         return self._client.metadata_configuration.get()
 
     @distributed_trace
-    def get_signing_certificates(self, **kwargs): # type: (Any) ->List[AttestationSigner]
+    def get_signing_certificates(self, **kwargs): 
+        # type: (Any) ->List[AttestationSigner]
         """ Returns the set of signing certificates used to sign attestation tokens.
         """
         signing_certificates = self._client.signing_certificates.get(**kwargs)
-        assert signing_certificates.keys is not None
         signers = []
         for key in signing_certificates.keys:
             assert key.x5_c is not None
@@ -82,13 +82,15 @@ class AttestationClient(object):
 
     @distributed_trace
     def attest_sgx_enclave(self, quote, init_time_data, init_time_data_is_object, runtime_data, runtime_data_is_object, **kwargs):
-        # type(bytes, Any, bool, Any, bool) -> AttestationResponse[AttestationResult]
-        runtime = RuntimeData(
-            data=runtime_data, 
-            data_type=DataType.JSON if runtime_data_is_object else DataType.BINARY) if runtime_data is not None else None
-        inittime = InitTimeData(
-            data=init_time_data, 
-            data_type=DataType.JSON if init_time_data_is_object else DataType.BINARY) if init_time_data is not None else None
+        # type:(bytes, Any, bool, Any, bool, Any) -> AttestationResponse[AttestationResult]
+        runtime = None
+        if runtime_data:
+            runtime = RuntimeData(data=runtime_data, data_type=DataType.JSON if runtime_data_is_object else DataType.BINARY)
+
+        inittime = None
+        if init_time_data:
+            inittime = InitTimeData(data=init_time_data, data_type=DataType.JSON if init_time_data_is_object else DataType.BINARY)
+
         request = AttestSgxEnclaveRequest(quote=quote, init_time_data = inittime, runtime_data = runtime)
         result = self._client.attestation.attest_sgx_enclave(request, **kwargs)
         token = AttestationToken[AttestationResult](token=result.token,
@@ -98,7 +100,7 @@ class AttestationClient(object):
 
     @distributed_trace
     def attest_open_enclave(self, report, init_time_data, init_time_data_is_object, runtime_data, runtime_data_is_object, **kwargs):
-        # type(bytes, Any, bool, Any, bool) -> AttestationResponse[AttestationResult]
+        # type:(bytes, Any, bool, Any, bool, Any) -> AttestationResponse[AttestationResult]
         runtime = RuntimeData(
             data=runtime_data, 
             data_type=DataType.JSON if runtime_data_is_object else DataType.BINARY) if runtime_data is not None else None
@@ -113,7 +115,7 @@ class AttestationClient(object):
         return AttestationResponse[AttestationResult](token, token.get_body())
 
     def _get_signers(self, **kwargs):
-        #type() -> List[AttestationSigner]
+        # type:(Any) -> List[AttestationSigner]
         """ Returns the set of signing certificates used to sign attestation tokens.
         """
 

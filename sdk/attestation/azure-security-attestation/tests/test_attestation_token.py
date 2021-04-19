@@ -22,7 +22,7 @@ import pytest
 from azure.security.attestation import AttestationToken, AttestationSigner, SigningKey
 
 
-class TestAzureAttestationToken(unittest.TestCase):
+class TestAzureAttestationToken(object):
 
     def setUp(self):
         super(TestAzureAttestationToken, self).setUp()
@@ -36,7 +36,7 @@ class TestAzureAttestationToken(unittest.TestCase):
         cert = self._create_x509_certificate(key, u'test certificate')
 
         signer = SigningKey(key, cert)
-        self.assertEqual(signer.certificate.subject, cert.subject)
+        assert signer.certificate.subject==cert.subject
 
     def test_create_signing_wrong_key(self):
         """ SigningKey should throw if the key and certificate don't match.
@@ -56,7 +56,7 @@ class TestAzureAttestationToken(unittest.TestCase):
         eckey = self._create_ecds_key()
         certificate = self._create_x509_certificate(eckey, u'attestation.test')
         signer = SigningKey(eckey, certificate)
-        self.assertEqual(signer.certificate.subject, x509.Name([x509.NameAttribute(NameOID.COMMON_NAME, u'attestation.test')]))
+        assert signer.certificate.subject== x509.Name([x509.NameAttribute(NameOID.COMMON_NAME, u'attestation.test')])
 
     def test_create_secured_token(self):
         key = self._create_rsa_key()
@@ -65,8 +65,8 @@ class TestAzureAttestationToken(unittest.TestCase):
         signer = SigningKey(key, cert)
 
         token = AttestationToken(body={"val1": [1, 2, 3]}, signer=signer)
-        self.assertEqual(token.get_body(), {"val1": [1, 2, 3]})
-        self.assertTrue(token.validate_token())
+        assert token.get_body()== {"val1": [1, 2, 3]}
+        assert token.validate_token()
 
     # Helper functions to create keys and certificates wrapping those keys.
     @staticmethod
