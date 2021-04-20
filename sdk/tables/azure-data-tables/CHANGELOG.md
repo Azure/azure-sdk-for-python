@@ -8,6 +8,8 @@
 * The `TableItem.table_name` has been renamed to `TableItem.name`.
 * Removed `BatchTransactionResult` object in favor of returning an iterable of batched entities with returned metadata.
 * Removed Batching context-manager behavior
+* Changed optional `value` and `type` arguments of `EntityProperty` to required.
+* Renamed `EntityProperty.type` to `EntityProperty.edm_type`.
 
 **Fixes**
 * Fixed issue with Cosmos merge operations.
