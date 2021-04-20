@@ -6,7 +6,6 @@
 - Make `AccountName`, `AccountKey` etc. in conn_str case insensitive
 - Fixed downloader.chunks() return chunks in different size (#9419, #15648)
 - Enabled exists() for CPK encrypted blobs (#18041)
-- Fix service props Metrics class
 - Fixed the ability to upload from a generator (#17418)
 - Fixed unclosed ThreadPoolExecutor (#8955)
 - Added chunk streaming docstrings and samples (#17149, #11009)
