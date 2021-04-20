@@ -28,9 +28,6 @@ pr:
     include:
     - sdk/tables/
     - sdk/core/
-    - tools/
-    - eng/
-
 
 extends:
   template: ../../eng/pipelines/templates/stages/archetype-sdk-client.yml

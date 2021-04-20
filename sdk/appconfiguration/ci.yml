@@ -28,8 +28,6 @@ pr:
     include:
     - sdk/appconfiguration/
     - sdk/core/
-    - tools/
-    - eng/
 
 extends:
   template: ../../eng/pipelines/templates/stages/archetype-sdk-client.yml
