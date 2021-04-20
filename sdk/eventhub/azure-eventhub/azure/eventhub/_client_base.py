@@ -51,33 +51,20 @@ def _parse_conn_str(conn_str, **kwargs):
     shared_access_key = None
     entity_path = None  # type: Optional[str]
     shared_access_signature = None  # type: Optional[str]
-    shared_access_signature_expiry = None # type: Optional[int]
-    eventhub_name = kwargs.pop("eventhub_name", None)  # type: Optional[str]
-    check_case = kwargs.pop("check_case", False)    # type: Optional[bool]
+    shared_access_signature_expiry = None
+    eventhub_name = kwargs.pop("eventhub_name", None) # type: Optional[str]
+    check_case = kwargs.pop("check_case", False) # type: bool
     conn_settings = core_parse_connection_string(conn_str, case_sensitive_keys=check_case)
     if check_case:
         shared_access_key = conn_settings.get("SharedAccessKey")
         shared_access_key_name = conn_settings.get("SharedAccessKeyName")
         endpoint = conn_settings.get("Endpoint")
         entity_path = conn_settings.get("EntityPath")
-    
         # non case sensitive check when parsing connection string for internal use
         for key, value in conn_settings.items():
             # only sas check is non case sensitive for both conn str properties and internal use
             if key.lower() == "sharedaccesssignature":
                 shared_access_signature = value
-                try:
-                    # Expiry can be stored in the "se=<timestamp>" clause of the token. ('&'-separated key-value pairs)
-                    shared_access_signature_expiry = int(
-                        shared_access_signature.split("se=")[1].split("&")[0]   # type: ignore
-                    )
-                except (
-                    IndexError,
-                    TypeError,
-                    ValueError,
-                ):  # Fallback since technically expiry is optional.
-                    # An arbitrary, absurdly large number, since you can't renew.
-                    shared_access_signature_expiry = int(time.time() * 2)
 
     if not check_case:
         endpoint = conn_settings.get("endpoint") or conn_settings.get("hostname")
@@ -87,6 +74,20 @@ def _parse_conn_str(conn_str, **kwargs):
         shared_access_key = conn_settings.get("sharedaccesskey")
         entity_path = conn_settings.get('entitypath')
         shared_access_signature = conn_settings.get("sharedaccesssignature")
+
+    if shared_access_signature:
+        try:
+            # Expiry can be stored in the "se=<timestamp>" clause of the token. ('&'-separated key-value pairs)
+            shared_access_signature_expiry = int(
+                shared_access_signature.split("se=")[1].split("&")[0]   # type: ignore
+            )
+        except (
+            IndexError,
+            TypeError,
+            ValueError,
+        ):  # Fallback since technically expiry is optional.
+            # An arbitrary, absurdly large number, since you can't renew.
+            shared_access_signature_expiry = int(time.time() * 2)
 
     entity = cast(str, eventhub_name or entity_path)
 
