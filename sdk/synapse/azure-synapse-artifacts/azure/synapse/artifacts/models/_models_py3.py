@@ -3665,9 +3665,9 @@ class AzureDatabricksLinkedService(LinkedService):
     :type new_cluster_version: object
     :param new_cluster_num_of_worker: If not using an existing interactive cluster, this specifies
      the number of worker nodes to use for the new job cluster or instance pool. For new job
-     clusters, this a string-formatted Int32, like '1' means numOfWorker is 1 or '1:10' means auto-
-     scale from 1 (min) to 10 (max). For instance pools, this is a string-formatted Int32, and can
-     only specify a fixed number of worker nodes, such as '2'. Required if newClusterVersion is
+     clusters, this a string-formatted Int32, like '1' means numOfWorker is 1 or '1:10' means
+     auto-scale from 1 (min) to 10 (max). For instance pools, this is a string-formatted Int32, and
+     can only specify a fixed number of worker nodes, such as '2'. Required if newClusterVersion is
      specified. Type: string (or Expression with resultType string).
     :type new_cluster_num_of_worker: object
     :param new_cluster_node_type: The node type of the new job cluster. This property is required
@@ -14854,8 +14854,8 @@ class DynamicsLinkedService(LinkedService):
      not allowed for online. Default is 443. Type: integer (or Expression with resultType integer),
      minimum: 0.
     :type port: object
-    :param service_uri: The URL to the Microsoft Dynamics server. The property is required for on-
-     line and not allowed for on-prem. Type: string (or Expression with resultType string).
+    :param service_uri: The URL to the Microsoft Dynamics server. The property is required for
+     on-line and not allowed for on-prem. Type: string (or Expression with resultType string).
     :type service_uri: object
     :param organization_name: The organization name of the Dynamics instance. The property is
      required for on-prem and required for online when there are more than one Dynamics instances
@@ -18882,8 +18882,8 @@ class HDInsightOnDemandLinkedService(LinkedService):
     :param hive_configuration: Specifies the hive configuration parameters (hive-site.xml) for the
      HDInsight cluster.
     :type hive_configuration: object
-    :param map_reduce_configuration: Specifies the MapReduce configuration parameters (mapred-
-     site.xml) for the HDInsight cluster.
+    :param map_reduce_configuration: Specifies the MapReduce configuration parameters
+     (mapred-site.xml) for the HDInsight cluster.
     :type map_reduce_configuration: object
     :param oozie_configuration: Specifies the Oozie configuration parameters (oozie-site.xml) for
      the HDInsight cluster.
@@ -18906,9 +18906,8 @@ class HDInsightOnDemandLinkedService(LinkedService):
      cluster.
     :type zookeeper_node_size: object
     :param script_actions: Custom script actions to run on HDI ondemand cluster once it's up.
-     Please refer to https://docs.microsoft.com/en-us/azure/hdinsight/hdinsight-hadoop-customize-
-     cluster-linux?toc=%2Fen-us%2Fazure%2Fhdinsight%2Fr-server%2FTOC.json&bc=%2Fen-
-     us%2Fazure%2Fbread%2Ftoc.json#understanding-script-actions.
+     Please refer to
+     https://docs.microsoft.com/en-us/azure/hdinsight/hdinsight-hadoop-customize-cluster-linux?toc=%2Fen-us%2Fazure%2Fhdinsight%2Fr-server%2FTOC.json&bc=%2Fen-us%2Fazure%2Fbread%2Ftoc.json#understanding-script-actions.
     :type script_actions: list[~azure.synapse.artifacts.models.ScriptAction]
     :param virtual_network_id: The ARM resource ID for the vNet to which the cluster should be
      joined after creation. Type: string (or Expression with resultType string).
@@ -19692,8 +19691,8 @@ class HttpDataset(Dataset):
     :param request_body: The body for the HTTP request. Type: string (or Expression with resultType
      string).
     :type request_body: object
-    :param additional_headers: The headers for the HTTP Request. e.g. request-header-
-     name-1:request-header-value-1
+    :param additional_headers: The headers for the HTTP Request. e.g.
+     request-header-name-1:request-header-value-1
      ...
      request-header-name-n:request-header-value-n Type: string (or Expression with resultType
      string).
@@ -20608,8 +20607,8 @@ class InformixLinkedService(LinkedService):
      store. Possible values are: Anonymous and Basic. Type: string (or Expression with resultType
      string).
     :type authentication_type: object
-    :param credential: The access credential portion of the connection string specified in driver-
-     specific property-value format.
+    :param credential: The access credential portion of the connection string specified in
+     driver-specific property-value format.
     :type credential: ~azure.synapse.artifacts.models.SecretBase
     :param user_name: User name for Basic authentication. Type: string (or Expression with
      resultType string).
@@ -20912,8 +20911,8 @@ class IntegrationRuntimeComputeProperties(msrest.serialization.Model):
      collection.
     :type additional_properties: dict[str, object]
     :param location: The location for managed integration runtime. The supported regions could be
-     found on https://docs.microsoft.com/en-us/azure/data-factory/data-factory-data-movement-
-     activities.
+     found on
+     https://docs.microsoft.com/en-us/azure/data-factory/data-factory-data-movement-activities.
     :type location: str
     :param node_size: The node size requirement to managed integration runtime.
     :type node_size: str
@@ -23536,8 +23535,8 @@ class MicrosoftAccessLinkedService(LinkedService):
      ODBC data store. Possible values are: Anonymous and Basic. Type: string (or Expression with
      resultType string).
     :type authentication_type: object
-    :param credential: The access credential portion of the connection string specified in driver-
-     specific property-value format.
+    :param credential: The access credential portion of the connection string specified in
+     driver-specific property-value format.
     :type credential: ~azure.synapse.artifacts.models.SecretBase
     :param user_name: User name for Basic authentication. Type: string (or Expression with
      resultType string).
@@ -25649,8 +25648,8 @@ class OdbcLinkedService(LinkedService):
     :param authentication_type: Type of authentication used to connect to the ODBC data store.
      Possible values are: Anonymous and Basic. Type: string (or Expression with resultType string).
     :type authentication_type: object
-    :param credential: The access credential portion of the connection string specified in driver-
-     specific property-value format.
+    :param credential: The access credential portion of the connection string specified in
+     driver-specific property-value format.
     :type credential: ~azure.synapse.artifacts.models.SecretBase
     :param user_name: User name for Basic authentication. Type: string (or Expression with
      resultType string).
@@ -35798,8 +35797,9 @@ class SqlPartitionSettings(msrest.serialization.Model):
     """The settings that will be leveraged for Sql source partitioning.
 
     :param partition_column_name: The name of the column in integer or datetime type that will be
-     used for proceeding partitioning. If not specified, the primary key of the table is auto-
-     detected and used as the partition column. Type: string (or Expression with resultType string).
+     used for proceeding partitioning. If not specified, the primary key of the table is
+     auto-detected and used as the partition column. Type: string (or Expression with resultType
+     string).
     :type partition_column_name: object
     :param partition_upper_bound: The maximum value of the partition column for partition range
      splitting. This value is used to decide the partition stride, not for filtering the rows in
