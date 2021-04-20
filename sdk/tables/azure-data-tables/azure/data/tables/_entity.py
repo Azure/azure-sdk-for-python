@@ -84,44 +84,14 @@ class EntityProperty(object):
     def __init__(self, value, edm_type):
         # type: (Any, EdmType) -> None
         """
-        Represents an Azure Table. Returned by list_tables.
+        Represents an Azure Table. Returned by list_tables and query_tables.
 
         :param type: The type of the property.
-        :type type: str or EdmType
+        :type type: EdmType
         :param Any value: The value of the property.
         """
         self.value = value
         self.edm_type = edm_type
-        # elif isinstance(value, six.text_type):
-        #     try:
-        #         self.value = UUID(value)
-        #         self.type = EdmType.GUID
-        #     except ValueError:
-        #         self.type = EdmType.STRING
-        # elif isinstance(value, six.binary_type):
-        #     self.type = EdmType.BINARY
-        # elif isinstance(value, bool):
-        #     self.type = EdmType.BOOLEAN
-        # elif isinstance(value, six.integer_types):
-        #     if value.bit_length() <= 32:
-        #         self.type = EdmType.INT32
-        #     else:
-        #         raise TypeError(
-        #             _ERROR_VALUE_TOO_LARGE.format(str(value), EdmType.INT32)
-        #         )
-        # elif isinstance(value, datetime):
-        #     self.type = EdmType.DATETIME
-        # elif isinstance(value, float):
-        #     self.type = EdmType.DOUBLE
-        # else:
-        #     raise ValueError(
-        #         """Type of {} could not be inferred. Acceptable types are bytes, int, uuid.UUID,
-        #         datetime, string, int32, int64, float, and boolean. Refer to
-        #         azure.data.tables.EdmType for more information.
-        #         """.format(
-        #             value
-        #         )
-        #     )
 
 
 class EdmType(str, Enum):
