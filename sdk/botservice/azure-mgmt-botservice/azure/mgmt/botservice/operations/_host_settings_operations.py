@@ -15,8 +15,8 @@ from msrest.pipeline import ClientRawResponse
 from .. import models
 
 
-class DirectLineOperations(object):
-    """DirectLineOperations operations.
+class HostSettingsOperations(object):
+    """HostSettingsOperations operations.
 
     You should not instantiate directly this class, but create a Client instance that will create it for you and attach it as attribute.
 
@@ -38,46 +38,26 @@ class DirectLineOperations(object):
 
         self.config = config
 
-    def regenerate_keys(
-            self, resource_group_name, resource_name, channel_name, site_name, key, custom_headers=None, raw=False, **operation_config):
-        """Regenerates secret keys and returns them for the DirectLine Channel of
-        a particular BotService resource.
+    def get(
+            self, custom_headers=None, raw=False, **operation_config):
+        """Get per subscription settings needed to host bot in compute resource
+        such as Azure App Service.
 
-        :param resource_group_name: The name of the Bot resource group in the
-         user subscription.
-        :type resource_group_name: str
-        :param resource_name: The name of the Bot resource.
-        :type resource_name: str
-        :param channel_name: The name of the Channel resource for which keys
-         are to be regenerated. Possible values include: 'WebChatChannel',
-         'DirectLineChannel'
-        :type channel_name: str or
-         ~azure.mgmt.botservice.models.RegenerateKeysChannelName
-        :param site_name: The site name
-        :type site_name: str
-        :param key: Determines which key is to be regenerated. Possible values
-         include: 'key1', 'key2'
-        :type key: str or ~azure.mgmt.botservice.models.Key
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: BotChannel or ClientRawResponse if raw=true
-        :rtype: ~azure.mgmt.botservice.models.BotChannel or
+        :return: HostSettingsResponse or ClientRawResponse if raw=true
+        :rtype: ~azure.mgmt.botservice.models.HostSettingsResponse or
          ~msrest.pipeline.ClientRawResponse
         :raises:
          :class:`ErrorException<azure.mgmt.botservice.models.ErrorException>`
         """
-        parameters = models.SiteInfo(site_name=site_name, key=key)
-
         # Construct URL
-        url = self.regenerate_keys.metadata['url']
+        url = self.get.metadata['url']
         path_format_arguments = {
-            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=64, min_length=2, pattern=r'^[a-zA-Z0-9][a-zA-Z0-9_.-]*$'),
-            'resourceName': self._serialize.url("resource_name", resource_name, 'str', max_length=64, min_length=2, pattern=r'^[a-zA-Z0-9][a-zA-Z0-9_.-]*$'),
-            'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
-            'channelName': self._serialize.url("channel_name", channel_name, 'RegenerateKeysChannelName')
+            'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -88,7 +68,6 @@ class DirectLineOperations(object):
         # Construct headers
         header_parameters = {}
         header_parameters['Accept'] = 'application/json'
-        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
         if self.config.generate_client_request_id:
             header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
         if custom_headers:
@@ -96,11 +75,8 @@ class DirectLineOperations(object):
         if self.config.accept_language is not None:
             header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
 
-        # Construct body
-        body_content = self._serialize.body(parameters, 'SiteInfo')
-
         # Construct and send request
-        request = self._client.post(url, query_parameters, header_parameters, body_content)
+        request = self._client.get(url, query_parameters, header_parameters)
         response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [200]:
@@ -108,11 +84,11 @@ class DirectLineOperations(object):
 
         deserialized = None
         if response.status_code == 200:
-            deserialized = self._deserialize('BotChannel', response)
+            deserialized = self._deserialize('HostSettingsResponse', response)
 
         if raw:
             client_raw_response = ClientRawResponse(deserialized, response)
             return client_raw_response
 
         return deserialized
-    regenerate_keys.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.BotService/botServices/{resourceName}/channels/{channelName}/regeneratekeys'}
+    get.metadata = {'url': '/subscriptions/{subscriptionId}/providers/Microsoft.BotService/hostSettings'}

@@ -18,6 +18,7 @@ from .operations import ChannelsOperations
 from .operations import DirectLineOperations
 from .operations import Operations
 from .operations import BotConnectionOperations
+from .operations import HostSettingsOperations
 from . import models
 
 
@@ -37,6 +38,8 @@ class AzureBotService(SDKClient):
     :vartype operations: azure.mgmt.botservice.operations.Operations
     :ivar bot_connection: BotConnection operations
     :vartype bot_connection: azure.mgmt.botservice.operations.BotConnectionOperations
+    :ivar host_settings: HostSettings operations
+    :vartype host_settings: azure.mgmt.botservice.operations.HostSettingsOperations
 
     :param credentials: Credentials needed for the client to connect to Azure.
     :type credentials: :mod:`A msrestazure Credentials
@@ -53,7 +56,7 @@ class AzureBotService(SDKClient):
         super(AzureBotService, self).__init__(self.config.credentials, self.config)
 
         client_models = {k: v for k, v in models.__dict__.items() if isinstance(v, type)}
-        self.api_version = '2020-06-02'
+        self.api_version = '2021-03-01'
         self._serialize = Serializer(client_models)
         self._deserialize = Deserializer(client_models)
 
@@ -66,4 +69,6 @@ class AzureBotService(SDKClient):
         self.operations = Operations(
             self._client, self.config, self._serialize, self._deserialize)
         self.bot_connection = BotConnectionOperations(
+            self._client, self.config, self._serialize, self._deserialize)
+        self.host_settings = HostSettingsOperations(
             self._client, self.config, self._serialize, self._deserialize)

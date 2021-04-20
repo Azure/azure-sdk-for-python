@@ -132,7 +132,7 @@ class Resource(Model):
     :param sku: Gets or sets the SKU of the resource.
     :type sku: ~azure.mgmt.botservice.models.Sku
     :param kind: Required. Gets or sets the Kind of the resource. Possible
-     values include: 'sdk', 'designer', 'bot', 'function'
+     values include: 'sdk', 'designer', 'bot', 'function', 'azurebot'
     :type kind: str or ~azure.mgmt.botservice.models.Kind
     :param etag: Entity Tag
     :type etag: str
@@ -186,7 +186,7 @@ class Bot(Resource):
     :param sku: Gets or sets the SKU of the resource.
     :type sku: ~azure.mgmt.botservice.models.Sku
     :param kind: Required. Gets or sets the Kind of the resource. Possible
-     values include: 'sdk', 'designer', 'bot', 'function'
+     values include: 'sdk', 'designer', 'bot', 'function', 'azurebot'
     :type kind: str or ~azure.mgmt.botservice.models.Kind
     :param etag: Entity Tag
     :type etag: str
@@ -236,7 +236,7 @@ class BotChannel(Resource):
     :param sku: Gets or sets the SKU of the resource.
     :type sku: ~azure.mgmt.botservice.models.Sku
     :param kind: Required. Gets or sets the Kind of the resource. Possible
-     values include: 'sdk', 'designer', 'bot', 'function'
+     values include: 'sdk', 'designer', 'bot', 'function', 'azurebot'
     :type kind: str or ~azure.mgmt.botservice.models.Kind
     :param etag: Entity Tag
     :type etag: str
@@ -308,6 +308,11 @@ class BotProperties(Model):
     :type is_cmek_enabled: bool
     :param cmek_key_vault_url: The CMK Url
     :type cmek_key_vault_url: str
+    :param is_isolated: Whether the bot is in an isolated network
+    :type is_isolated: bool
+    :param schema_transformation_version: The channel schema transformation
+     version for the bot
+    :type schema_transformation_version: str
     """
 
     _validation = {
@@ -335,6 +340,8 @@ class BotProperties(Model):
         'luis_key': {'key': 'luisKey', 'type': 'str'},
         'is_cmek_enabled': {'key': 'isCmekEnabled', 'type': 'bool'},
         'cmek_key_vault_url': {'key': 'cmekKeyVaultUrl', 'type': 'str'},
+        'is_isolated': {'key': 'isIsolated', 'type': 'bool'},
+        'schema_transformation_version': {'key': 'schemaTransformationVersion', 'type': 'str'},
     }
 
     def __init__(self, **kwargs):
@@ -354,6 +361,8 @@ class BotProperties(Model):
         self.luis_key = kwargs.get('luis_key', None)
         self.is_cmek_enabled = kwargs.get('is_cmek_enabled', None)
         self.cmek_key_vault_url = kwargs.get('cmek_key_vault_url', None)
+        self.is_isolated = kwargs.get('is_isolated', None)
+        self.schema_transformation_version = kwargs.get('schema_transformation_version', None)
 
 
 class CheckNameAvailabilityRequestBody(Model):
@@ -451,7 +460,7 @@ class ConnectionSetting(Resource):
     :param sku: Gets or sets the SKU of the resource.
     :type sku: ~azure.mgmt.botservice.models.Sku
     :param kind: Required. Gets or sets the Kind of the resource. Possible
-     values include: 'sdk', 'designer', 'bot', 'function'
+     values include: 'sdk', 'designer', 'bot', 'function', 'azurebot'
     :type kind: str or ~azure.mgmt.botservice.models.Kind
     :param etag: Entity Tag
     :type etag: str
@@ -953,6 +962,58 @@ class FacebookPage(Model):
         super(FacebookPage, self).__init__(**kwargs)
         self.id = kwargs.get('id', None)
         self.access_token = kwargs.get('access_token', None)
+
+
+class HostSettingsResponse(Model):
+    """The response body returned for a request to Bot Service Management to check
+    per subscription hostSettings.
+
+    :param oauth_url: For in-conversation bot user authentication
+    :type oauth_url: str
+    :param to_bot_from_channel_open_id_metadata_url: For verifying incoming
+     tokens from the channels
+    :type to_bot_from_channel_open_id_metadata_url: str
+    :param to_bot_from_channel_token_issuer: For verifying incoming tokens
+     from the channels
+    :type to_bot_from_channel_token_issuer: str
+    :param to_bot_from_emulator_open_id_metadata_url: For verifying incoming
+     tokens from bot emulator
+    :type to_bot_from_emulator_open_id_metadata_url: str
+    :param to_channel_from_bot_login_url: For getting access token to channels
+     from bot host
+    :type to_channel_from_bot_login_url: str
+    :param to_channel_from_bot_oauth_scope: For getting access token to
+     channels from bot host
+    :type to_channel_from_bot_oauth_scope: str
+    :param validate_authority: Per cloud OAuth setting on whether authority is
+     validated
+    :type validate_authority: bool
+    :param bot_open_id_metadata: Same as ToBotFromChannelOpenIdMetadataUrl,
+     used by SDK < v4.12
+    :type bot_open_id_metadata: str
+    """
+
+    _attribute_map = {
+        'oauth_url': {'key': 'OAuthUrl', 'type': 'str'},
+        'to_bot_from_channel_open_id_metadata_url': {'key': 'ToBotFromChannelOpenIdMetadataUrl', 'type': 'str'},
+        'to_bot_from_channel_token_issuer': {'key': 'ToBotFromChannelTokenIssuer', 'type': 'str'},
+        'to_bot_from_emulator_open_id_metadata_url': {'key': 'ToBotFromEmulatorOpenIdMetadataUrl', 'type': 'str'},
+        'to_channel_from_bot_login_url': {'key': 'ToChannelFromBotLoginUrl', 'type': 'str'},
+        'to_channel_from_bot_oauth_scope': {'key': 'ToChannelFromBotOAuthScope', 'type': 'str'},
+        'validate_authority': {'key': 'ValidateAuthority', 'type': 'bool'},
+        'bot_open_id_metadata': {'key': 'BotOpenIdMetadata', 'type': 'str'},
+    }
+
+    def __init__(self, **kwargs):
+        super(HostSettingsResponse, self).__init__(**kwargs)
+        self.oauth_url = kwargs.get('oauth_url', None)
+        self.to_bot_from_channel_open_id_metadata_url = kwargs.get('to_bot_from_channel_open_id_metadata_url', None)
+        self.to_bot_from_channel_token_issuer = kwargs.get('to_bot_from_channel_token_issuer', None)
+        self.to_bot_from_emulator_open_id_metadata_url = kwargs.get('to_bot_from_emulator_open_id_metadata_url', None)
+        self.to_channel_from_bot_login_url = kwargs.get('to_channel_from_bot_login_url', None)
+        self.to_channel_from_bot_oauth_scope = kwargs.get('to_channel_from_bot_oauth_scope', None)
+        self.validate_authority = kwargs.get('validate_authority', None)
+        self.bot_open_id_metadata = kwargs.get('bot_open_id_metadata', None)
 
 
 class KikChannel(Channel):

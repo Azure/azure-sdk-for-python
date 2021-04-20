@@ -34,6 +34,7 @@ try:
     from ._models_py3 import FacebookChannel
     from ._models_py3 import FacebookChannelProperties
     from ._models_py3 import FacebookPage
+    from ._models_py3 import HostSettingsResponse
     from ._models_py3 import KikChannel
     from ._models_py3 import KikChannelProperties
     from ._models_py3 import LineChannel
@@ -86,6 +87,7 @@ except (SyntaxError, ImportError):
     from ._models import FacebookChannel
     from ._models import FacebookChannelProperties
     from ._models import FacebookPage
+    from ._models import HostSettingsResponse
     from ._models import KikChannel
     from ._models import KikChannelProperties
     from ._models import LineChannel
@@ -151,6 +153,7 @@ __all__ = [
     'FacebookChannel',
     'FacebookChannelProperties',
     'FacebookPage',
+    'HostSettingsResponse',
     'KikChannel',
     'KikChannelProperties',
     'LineChannel',

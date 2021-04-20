@@ -30,6 +30,7 @@ class Kind(str, Enum):
     designer = "designer"
     bot = "bot"
     function = "function"
+    azurebot = "azurebot"
 
 
 class Key(str, Enum):

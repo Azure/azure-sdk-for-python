@@ -24,7 +24,7 @@ class ChannelsOperations(object):
     :param config: Configuration of service client.
     :param serializer: An object model serializer.
     :param deserializer: An object model deserializer.
-    :ivar api_version: Version of the API to be used with the client request. Constant value: "2020-06-02".
+    :ivar api_version: Version of the API to be used with the client request. Constant value: "2021-03-01".
     """
 
     models = models
@@ -34,7 +34,7 @@ class ChannelsOperations(object):
         self._client = client
         self._serialize = serializer
         self._deserialize = deserializer
-        self.api_version = "2020-06-02"
+        self.api_version = "2021-03-01"
 
         self.config = config
 
@@ -136,7 +136,7 @@ class ChannelsOperations(object):
         :param sku: Gets or sets the SKU of the resource.
         :type sku: ~azure.mgmt.botservice.models.Sku
         :param kind: Required. Gets or sets the Kind of the resource. Possible
-         values include: 'sdk', 'designer', 'bot', 'function'
+         values include: 'sdk', 'designer', 'bot', 'function', 'azurebot'
         :type kind: str or ~azure.mgmt.botservice.models.Kind
         :param etag: Entity Tag
         :type etag: str
