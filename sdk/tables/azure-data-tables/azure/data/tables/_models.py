@@ -553,38 +553,6 @@ class BatchErrorException(HttpResponseError):
         )
 
 
-class BatchTransactionResult(object):
-    """The result of a successful batch operation, can be used by a user to
-    recreate a request in the case of BatchErrorException
-
-    :param List[HttpRequest] requests: The requests of the batch
-    :param List[HttpResponse] results: The HTTP response of each request
-    """
-
-    def __init__(self, requests, results, entities):
-        self.requests = requests
-        self.results = results
-        self.entities = entities
-
-    def get_entity(self, row_key):
-        for entity in self.entities:
-            if entity["RowKey"] == row_key:
-                return entity
-        return None
-
-    def get_request(self, row_key):
-        for i, entity in enumerate(self.entities):
-            if entity["RowKey"] == row_key:
-                return self.requests[i]
-        return None
-
-    def get_result(self, row_key):
-        for i, entity in enumerate(self.entities):
-            if entity["RowKey"] == row_key:
-                return self.results[i]
-        return None
-
-
 class LocationMode(object):
     """
     Specifies the location the request should be sent to. This mode only applies
