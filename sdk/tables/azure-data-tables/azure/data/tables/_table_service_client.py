@@ -94,7 +94,6 @@ class TableServiceClient(TablesBaseClient):
         """Retrieves statistics related to replication for the Table service. It is only available on the secondary
         location endpoint when read-access geo-redundant replication is enabled for the account.
 
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: Dictionary of service stats
         :rtype: :class:`~azure.data.tables.models.TableServiceStats`
         :raises: :class:`~azure.core.exceptions.HttpResponseError:`

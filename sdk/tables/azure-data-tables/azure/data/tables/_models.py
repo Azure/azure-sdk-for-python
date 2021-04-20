@@ -140,7 +140,7 @@ class Metrics(GeneratedMetrics):
 
     :keyword str version: The version of Storage Analytics to configure.
     :keyword bool enabled: Required. Indicates whether metrics are enabled for the service.
-    :keyword bool include_ap_is: Indicates whether metrics should generate summary
+    :keyword bool include_apis: Indicates whether metrics should generate summary
         statistics for called API operations.
     :keyword ~azure.data.tables.RetentionPolicy retention_policy: Required.
         The retention policy for the metrics.

@@ -40,7 +40,10 @@ from ._table_batch_async import TableBatchOperations
 
 
 class TableClient(AsyncTablesBaseClient):
-    """ :ivar str account_name: Name of the storage account (Cosmos or Azure)"""
+    """
+    :ivar str account_name: Name of the storage account (Cosmos or Azure)
+    :ivar str table_name: The name of the table
+    """
 
     def __init__(
         self,
@@ -153,10 +156,7 @@ class TableClient(AsyncTablesBaseClient):
         return cls(account_url, table_name=table_name, credential=credential, **kwargs)
 
     @distributed_trace_async
-    async def get_table_access_policy(
-        self, **kwargs  # type: Any
-    ):
-        # type: (...) -> dict[str,AccessPolicy]
+    async def get_table_access_policy(self, **kwargs: Any) -> Dict[str, AccessPolicy]:
         """
         Retrieves details about any stored access policies specified on the table that may be
         used with Shared Access Signatures.

@@ -34,7 +34,10 @@ from ._models import TableEntityPropertiesPaged, UpdateMode, AccessPolicy
 
 
 class TableClient(TablesBaseClient):
-    """ :ivar str account_name: Name of the storage account (Cosmos or Azure)"""
+    """
+    :ivar str account_name: Name of the storage account (Cosmos or Azure)
+    :ivar str table_name: The name of the table
+    """
 
     def __init__(
         self,
