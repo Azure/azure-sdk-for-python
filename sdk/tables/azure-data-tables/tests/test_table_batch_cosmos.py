@@ -30,7 +30,7 @@ from azure.data.tables import (
     TableEntity,
     UpdateMode,
 
-    RequestEntityTooLargeError
+    RequestTooLargeError
 )
 
 from _shared.testcase import TableTestCase, SLEEP_DELAY
@@ -627,7 +627,7 @@ class StorageTableClientTest(AzureTestCase, TableTestCase):
                 entity['RowKey'] = str(i)
                 batch.create_entity(entity)
 
-            with pytest.raises(RequestEntityTooLargeError):
+            with pytest.raises(RequestTooLargeError):
                 self.table.send_batch(batch)
 
         finally:

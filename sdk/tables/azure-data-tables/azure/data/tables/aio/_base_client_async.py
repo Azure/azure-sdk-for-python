@@ -31,7 +31,7 @@ from .._generated.aio import AzureTable
 from .._base_client import AccountHostsMixin, get_api_version, extract_batch_part_metadata
 from .._authentication import SharedKeyCredentialPolicy
 from .._constants import STORAGE_OAUTH_SCOPE
-from .._error import RequestEntityTooLargeError
+from .._error import RequestTooLargeError
 from .._models import BatchErrorException
 from .._policies import StorageHosts, StorageHeadersPolicy
 from .._sdk_moniker import SDK_MONIKER
@@ -143,7 +143,7 @@ class AsyncTablesBaseClient(AccountHostsMixin):
                 message="The resource could not be found", response=response
             )
         if response.status_code == 413:
-            raise RequestEntityTooLargeError(
+            raise RequestTooLargeError(
                 message="The request was too large", response=response
             )
         if response.status_code != 202:
@@ -163,7 +163,7 @@ class AsyncTablesBaseClient(AccountHostsMixin):
                     message="The resource could not be found", response=response
                 )
             if any(p for p in parts if p.status_code == 413):
-                raise RequestEntityTooLargeError(
+                raise RequestTooLargeError(
                     message="The request was too large", response=response
                 )
 

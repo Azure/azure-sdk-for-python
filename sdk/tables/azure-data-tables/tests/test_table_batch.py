@@ -34,7 +34,7 @@ from azure.data.tables import (
     UpdateMode,
     generate_table_sas,
     TableSasPermissions,
-    RequestEntityTooLargeError
+    RequestTooLargeError
 )
 
 from _shared.testcase import TableTestCase
@@ -889,7 +889,7 @@ class StorageTableBatchTest(AzureTestCase, TableTestCase):
                 entity['RowKey'] = str(i)
                 batch.create_entity(entity)
 
-            with pytest.raises(RequestEntityTooLargeError):
+            with pytest.raises(RequestTooLargeError):
                 self.table.send_batch(batch)
 
         finally:

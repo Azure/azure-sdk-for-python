@@ -6,7 +6,7 @@
 from azure.data.tables._models import TableServiceStats
 
 from ._entity import TableEntity, EntityProperty, EdmType
-from ._error import RequestEntityTooLargeError
+from ._error import RequestTooLargeError
 from ._table_shared_access_signature import generate_table_sas, generate_account_sas
 from ._table_client import TableClient
 from ._table_service_client import TableServiceClient
@@ -55,5 +55,5 @@ __all__ = [
     "SASProtocol",
     "TableBatchOperations",
     "BatchErrorException",
-    "RequestEntityTooLargeError",
+    "RequestTooLargeError",
 ]

@@ -141,7 +141,7 @@ def _process_table_error(storage_error):
     raise error
 
 
-class RequestEntityTooLargeError(HttpResponseError):
+class RequestTooLargeError(HttpResponseError):
     """An error response with status code 413 - Request Entity Too Large"""
 
 

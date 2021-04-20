@@ -33,7 +33,7 @@ from azure.data.tables import (
     BatchErrorException,
     generate_table_sas,
     TableSasPermissions,
-    RequestEntityTooLargeError
+    RequestTooLargeError
 )
 
 from _shared.asynctestcase import AsyncTableTestCase
@@ -769,7 +769,7 @@ class StorageTableBatchTest(AzureTestCase, AsyncTableTestCase):
     async def test_batch_request_too_large(self, tables_storage_account_name, tables_primary_storage_account_key):
         # Arrange
         await self._set_up(tables_storage_account_name, tables_primary_storage_account_key)
-        from azure.data.tables import RequestEntityTooLargeError
+        from azure.data.tables import RequestTooLargeError
         try:
 
             batch = self.table.create_batch()
@@ -783,7 +783,7 @@ class StorageTableBatchTest(AzureTestCase, AsyncTableTestCase):
                 entity['RowKey'] = str(i)
                 batch.create_entity(entity)
 
-            with pytest.raises(RequestEntityTooLargeError):
+            with pytest.raises(RequestTooLargeError):
                 await self.table.send_batch(batch)
 
         finally:

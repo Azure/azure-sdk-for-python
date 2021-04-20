@@ -29,7 +29,7 @@ from azure.data.tables import (
     EntityProperty,
     EdmType,
     BatchErrorException,
-    RequestEntityTooLargeError
+    RequestTooLargeError
 )
 from azure.data.tables.aio import TableServiceClient
 
@@ -686,7 +686,7 @@ class StorageTableBatchTest(AzureTestCase, AsyncTableTestCase):
                 entity['RowKey'] = str(i)
                 batch.create_entity(entity)
 
-            with pytest.raises(RequestEntityTooLargeError):
+            with pytest.raises(RequestTooLargeError):
                 await self.table.send_batch(batch)
 
         finally:
