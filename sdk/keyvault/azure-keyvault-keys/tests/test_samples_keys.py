@@ -8,6 +8,7 @@ import time
 from azure.keyvault.keys import ApiVersion, KeyType
 from parameterized import parameterized, param
 
+from _shared.test_case import KeyVaultTestCase
 from _test_case import KeysTestCase, suffixed_test_name
 
 
@@ -28,9 +29,10 @@ def test_create_key_client():
     # [END create_key_client]
 
 
-class TestExamplesKeyVault(KeysTestCase):
+class TestExamplesKeyVault(KeysTestCase, KeyVaultTestCase):
     @parameterized.expand([param(api_version=api_version) for api_version in ApiVersion], name_func=suffixed_test_name)
     def test_example_key_crud_operations(self, **kwargs):
+        self._skip_if_not_configured(kwargs.get("api_version"), False)
         key_client = self.create_key_client(self.vault_url, **kwargs)
         key_name = self.get_resource_name("key-name")
 
@@ -122,6 +124,7 @@ class TestExamplesKeyVault(KeysTestCase):
 
     @parameterized.expand([param(api_version=api_version) for api_version in ApiVersion], name_func=suffixed_test_name)
     def test_example_key_list_operations(self, **kwargs):
+        self._skip_if_not_configured(kwargs.get("api_version"), False)
         key_client = self.create_key_client(self.vault_url, **kwargs)
 
         for i in range(4):
@@ -163,6 +166,7 @@ class TestExamplesKeyVault(KeysTestCase):
 
     @parameterized.expand([param(api_version=api_version) for api_version in ApiVersion], name_func=suffixed_test_name)
     def test_example_keys_backup_restore(self, **kwargs):
+        self._skip_if_not_configured(kwargs.get("api_version"), False)
         key_client = self.create_key_client(self.vault_url, **kwargs)
         key_name = self.get_resource_name("keyrec")
         key_client.create_key(key_name, "RSA")
@@ -189,6 +193,7 @@ class TestExamplesKeyVault(KeysTestCase):
 
     @parameterized.expand([param(api_version=api_version) for api_version in ApiVersion], name_func=suffixed_test_name)
     def test_example_keys_recover(self, **kwargs):
+        self._skip_if_not_configured(kwargs.get("api_version"), False)
         key_client = self.create_key_client(self.vault_url, **kwargs)
         key_name = self.get_resource_name("key-name")
         created_key = key_client.create_key(key_name, "RSA")

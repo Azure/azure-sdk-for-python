@@ -7,10 +7,11 @@ from azure.keyvault.keys.crypto.aio import CryptographyClient
 from devtools_testutils import PowerShellPreparer
 from parameterized import parameterized, param
 
+from _shared.test_case_async import KeyVaultTestCase
 from _test_case import KeysTestCase, suffixed_test_name
 
 
-class TestCryptoExamples(KeysTestCase):
+class TestCryptoExamples(KeysTestCase, KeyVaultTestCase):
     def __init__(self, *args, **kwargs):
         kwargs["match_body"] = False
         super(TestCryptoExamples, self).__init__(*args, **kwargs)
@@ -18,6 +19,7 @@ class TestCryptoExamples(KeysTestCase):
     @parameterized.expand([param(api_version=api_version) for api_version in ApiVersion], name_func=suffixed_test_name)
     @PowerShellPreparer("keyvault")
     async def test_encrypt_decrypt_async(self, **kwargs):
+        self._skip_if_not_configured(kwargs.get("api_version"), False)
         key_client = self.create_key_client(self.vault_url, is_async=True, **kwargs)
         credential = self.get_credential(CryptographyClient, is_async=True)
         key_name = self.get_resource_name("crypto-test-encrypt-key")
@@ -60,6 +62,7 @@ class TestCryptoExamples(KeysTestCase):
     @parameterized.expand([param(api_version=api_version) for api_version in ApiVersion], name_func=suffixed_test_name)
     @PowerShellPreparer("keyvault")
     async def test_wrap_unwrap_async(self, **kwargs):
+        self._skip_if_not_configured(kwargs.get("api_version"), False)
         key_client = self.create_key_client(self.vault_url, is_async=True, **kwargs)
         credential = self.get_credential(CryptographyClient, is_async=True)
         key_name = self.get_resource_name("crypto-test-wrapping-key")
@@ -87,6 +90,7 @@ class TestCryptoExamples(KeysTestCase):
     @parameterized.expand([param(api_version=api_version) for api_version in ApiVersion], name_func=suffixed_test_name)
     @PowerShellPreparer("keyvault")
     async def test_sign_verify_async(self, **kwargs):
+        self._skip_if_not_configured(kwargs.get("api_version"), False)
         key_client = self.create_key_client(self.vault_url, is_async=True, **kwargs)
         credential = self.get_credential(CryptographyClient, is_async=True)
         key_name = self.get_resource_name("crypto-test-wrapping-key")

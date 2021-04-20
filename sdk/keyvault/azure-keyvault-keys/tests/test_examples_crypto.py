@@ -6,10 +6,11 @@ from azure.keyvault.keys import ApiVersion
 from azure.keyvault.keys.crypto import CryptographyClient
 from parameterized import parameterized, param
 
+from _shared.test_case import KeyVaultTestCase
 from _test_case import KeysTestCase, suffixed_test_name
 
 
-class TestCryptoExamples(KeysTestCase):
+class TestCryptoExamples(KeysTestCase, KeyVaultTestCase):
     def __init__(self, *args, **kwargs):
         kwargs["match_body"] = False
         super(TestCryptoExamples, self).__init__(*args, **kwargs)
@@ -18,6 +19,7 @@ class TestCryptoExamples(KeysTestCase):
 
     @parameterized.expand([param(api_version=api_version) for api_version in ApiVersion], name_func=suffixed_test_name)
     def test_encrypt_decrypt(self, **kwargs):
+        self._skip_if_not_configured(kwargs.get("api_version"), False)
         key_client = self.create_key_client(self.vault_url, **kwargs)
         credential = self.get_credential(CryptographyClient)
         key_name = self.get_resource_name("crypto-test-encrypt-key")
@@ -54,6 +56,7 @@ class TestCryptoExamples(KeysTestCase):
 
     @parameterized.expand([param(api_version=api_version) for api_version in ApiVersion], name_func=suffixed_test_name)
     def test_wrap_unwrap(self, **kwargs):
+        self._skip_if_not_configured(kwargs.get("api_version"), False)
         key_client = self.create_key_client(self.vault_url, **kwargs)
         credential = self.get_credential(CryptographyClient)
         key_name = self.get_resource_name("crypto-test-wrapping-key")
@@ -81,6 +84,7 @@ class TestCryptoExamples(KeysTestCase):
 
     @parameterized.expand([param(api_version=api_version) for api_version in ApiVersion], name_func=suffixed_test_name)
     def test_sign_verify(self, **kwargs):
+        self._skip_if_not_configured(kwargs.get("api_version"), False)
         key_client = self.create_key_client(self.vault_url, **kwargs)
         credential = self.get_credential(CryptographyClient)
         key_name = self.get_resource_name("crypto-test-wrapping-key")

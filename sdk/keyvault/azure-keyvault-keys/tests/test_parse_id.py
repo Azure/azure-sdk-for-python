@@ -4,10 +4,11 @@
 # -------------------------------------
 from azure.keyvault.keys import parse_key_vault_key_id
 
+from _shared.test_case import KeyVaultTestCase
 from _test_case import KeysTestCase
 
 
-class TestParseId(KeysTestCase):
+class TestParseId(KeysTestCase, KeyVaultTestCase):
     def test_parse_key_id_with_version(self):
         client = self.create_key_client(self.vault_url)
         key_name = self.get_resource_name("key")
