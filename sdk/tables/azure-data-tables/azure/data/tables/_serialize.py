@@ -216,7 +216,7 @@ def _add_entity_properties(source):
         elif isinstance(value, datetime):
             mtype, value = _to_entity_datetime(value)
         elif isinstance(value, EntityProperty):
-            conv = _EDM_TO_ENTITY_CONVERSIONS.get(value.type)
+            conv = _EDM_TO_ENTITY_CONVERSIONS.get(value.edm_type)
             if conv is None:
                 raise TypeError(_ERROR_TYPE_NOT_SUPPORTED.format(value.type))
             mtype, value = conv(value.value)
