@@ -523,19 +523,19 @@ class SASProtocol(str, Enum):
     HTTP = "http"
 
 
-class PartialBatchErrorException(HttpResponseError):
-    """There is a partial failure in batch operations.
+# class PartialBatchErrorException(HttpResponseError):
+#     """There is a partial failure in batch operations.
 
-    :param str message: The message of the exception.
-    :param response: Server response to be deserialized.
-    :param list parts: A list of the parts in multipart response.
-    """
+#     :param str message: The message of the exception.
+#     :param response: Server response to be deserialized.
+#     :param list parts: A list of the parts in multipart response.
+#     """
 
-    def __init__(self, message, response, parts):
-        self.parts = parts
-        super(PartialBatchErrorException, self).__init__(
-            message=message, response=response
-        )
+#     def __init__(self, message, response, parts):
+#         self.parts = parts
+#         super(PartialBatchErrorException, self).__init__(
+#             message=message, response=response
+#         )
 
 
 class BatchErrorException(HttpResponseError):
