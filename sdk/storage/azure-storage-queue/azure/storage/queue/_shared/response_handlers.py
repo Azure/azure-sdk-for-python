@@ -8,6 +8,7 @@ from typing import (  # pylint: disable=unused-import
     TYPE_CHECKING
 )
 import logging
+from xml.dom.minidom import Element
 
 from azure.core.pipeline.policies import ContentDecodePolicy
 from azure.core.exceptions import (
@@ -90,16 +91,25 @@ def process_storage_error(storage_error):
     error_code = storage_error.response.headers.get('x-ms-error-code')
     error_message = storage_error.message
     additional_data = {}
+    error_dict = {}
     try:
         error_body = ContentDecodePolicy.deserialize_from_http_generics(storage_error.response)
-        if error_body and hasattr(error_body, "iter"):
-            for info in error_body:
-                if info.tag.lower() == 'code':
-                    error_code = info.text
-                elif info.tag.lower() == 'message':
-                    error_message = info.text
-                else:
-                    additional_data[info.tag] = info.text
+        if isinstance(error_body, Element):
+            error_dict = {
+                child.tag.lower(): child.text
+                for child in error_body
+            }
+        elif isinstance(error_body, dict):
+            error_dict = error_body.get('error', {})
+        elif not error_code:
+            _LOGGER.warning(
+                f'Unexpected return type {type(error_body)} from ContentDecodePolicy.deserialize_from_http_generics.')
+            error_dict = {'message': str(error_body)}
+
+        if error_dict:
+            error_code = error_dict.get('code')
+            error_message = error_dict.get('message')
+            additional_data = {k: v for k, v in error_dict.items() if k not in {'code', 'message'}}
     except DecodeError:
         pass
 
