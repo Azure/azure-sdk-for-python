@@ -6,6 +6,7 @@
 from enum import Enum
 from azure.core.exceptions import HttpResponseError
 from azure.core.paging import PageIterator
+from typing import TYPE_CHECKING
 
 from ._generated.models import TableServiceStats as GenTableServiceStats
 from ._generated.models import AccessPolicy as GenAccessPolicy
@@ -21,6 +22,11 @@ from ._deserialize import (
 )
 from ._error import _process_table_error
 from ._constants import NEXT_PARTITION_KEY, NEXT_ROW_KEY, NEXT_TABLE_NAME
+
+if TYPE_CHECKING:
+    from ._generated.models import TableQueryResponse
+    from azure.core.pipeline.transport import HttpResponse
+    from typing import Any, Dict
 
 
 class TableServiceStats(GenTableServiceStats):
@@ -150,7 +156,7 @@ class Metrics(GeneratedMetrics):
 
     @classmethod
     def _from_generated(cls, generated):
-        # type: (...) -> cls
+        # type: (...) -> Metrics
         """A summary of request statistics grouped by API in hour or minute aggregates.
 
         :param Metrics generated: generated Metrics
@@ -194,7 +200,7 @@ class RetentionPolicy(GeneratedRetentionPolicy):
 
     @classmethod
     def _from_generated(cls, generated, **kwargs):  # pylint: disable=unused-argument
-        # type: (...) -> cls
+        # type: (GeneratedRetentionPolicy, Dict[str, Any]) -> RetentionPolicy
         """The retention policy which determines how long the associated data should
         persist.
 
@@ -497,7 +503,7 @@ class TableItem(object):
 
     @classmethod
     def _from_generated(cls, generated, **kwargs):
-        # type: (obj, Dict[str, Any) -> cls
+        # type: (TableQueryResponse, Dict[str, Any]) -> TableItem
         return cls(generated.table_name, **kwargs)
 
 
@@ -550,8 +556,8 @@ class BatchErrorException(HttpResponseError):
     :param response: Server response to be deserialized.
     :type response: str
     :param parts: A list of the parts in multipart response.
-    :type parts: :class:`~azure.core.pipeline.transport.HttpResponse`
-    :param args: Args to be passed to :class:`~azure.core.exceptions.HttpResponseError`
+    :type parts: ~azure.core.pipeline.transport.HttpResponse
+    :param args: Args to be passed through
     :type args: List[:class:`~azure.core.pipeline.transport.HttpResponse`]
     """
 

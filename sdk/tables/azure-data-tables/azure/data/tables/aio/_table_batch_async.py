@@ -75,6 +75,7 @@ class TableBatchOperations(object):
         :param entity: The properties for the table entity.
         :type entity: TableEntity or dict[str,str]
         :return: None
+        :rtype: None
         :raises ValueError:
 
         .. admonition:: Example:
@@ -199,11 +200,12 @@ class TableBatchOperations(object):
         :param entity: The properties for the table entity.
         :type entity: TableEntity or Dict[str,str]
         :param mode: Merge or Replace entity
-        :type mode: :class:`~azure.data.tables.UpdateMode`
+        :type mode: ~azure.data.tables.UpdateMode
         :keyword str etag: Etag of the entity
         :keyword match_condition: MatchCondition
-        :paramtype match_condition: :class:`~azure.core.MatchConditions`
+        :paramtype match_condition: ~azure.core.MatchCondition
         :return: None
+        :rtype: None
         :raises ValueError:
 
         .. admonition:: Example:
@@ -476,7 +478,7 @@ class TableBatchOperations(object):
         :type row_key: str
         :keyword str etag: Etag of the entity
         :keyword match_condition: MatchCondition
-        :paramtype match_condition: :class:`~azure.core.MatchConditions`
+        :paramtype match_condition: ~azure.core.MatchCondition
 
         .. admonition:: Example:
 
@@ -612,8 +614,9 @@ class TableBatchOperations(object):
         :param entity: The properties for the table entity.
         :type entity: TableEntity or dict[str,str]
         :param mode: Merge or Replace entity
-        :type mode: :class:`~azure.data.tables.UpdateMode`
+        :type mode: ~azure.data.tables.UpdateMode
         :return: None
+        :rtype: None
         :raises ValueError:
 
         .. admonition:: Example:

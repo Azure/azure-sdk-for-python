@@ -181,6 +181,7 @@ class TableClient(TablesBaseClient):
         :param signed_identifiers: Access policies to set for the table
         :type signed_identifiers: Dict[str, :class:`~azure.data.tables.AccessPolicy`]
         :return: None
+        :rtype: None
         :raises: :class:`~azure.core.exceptions.HttpResponseError`
         """
         identifiers = []
@@ -245,6 +246,7 @@ class TableClient(TablesBaseClient):
         """Deletes the table under the current account.
 
         :return: None
+        :rtype: None
         :raises: :class:`~azure.core.exceptions.ResourceNotFoundError` If the table does not exist
 
         .. admonition:: Example:
@@ -277,8 +279,9 @@ class TableClient(TablesBaseClient):
         :type row_key: str
         :keyword str etag: Etag of the entity
         :keyword match_condition: MatchCondition
-        :paramtype match_condition: :class:`~azure.core.MatchConditions`
+        :paramtype match_condition: ~azure.core.MatchConditions
         :return: None
+        :rtype: None
         :raises: :class:`~azure.core.exceptions.ResourceNotFoundError` If the entity already does not exist
 
         .. admonition:: Example:
@@ -322,7 +325,7 @@ class TableClient(TablesBaseClient):
         """Insert entity in a table.
 
         :param entity: The properties for the table entity.
-        :type entity: :class:`~azure.data.tables.TableEntity` or Dict[str,str]
+        :type entity: ~azure.data.tables.TableEntity or Dict[str,str]
         :return: Dictionary mapping operation metadata returned from the service
         :rtype: Dict[str,str]
         :raises: :class:`~azure.core.exceptions.ResourceExistsError` If the entity already exists
@@ -362,14 +365,14 @@ class TableClient(TablesBaseClient):
         """Update entity in a table.
 
         :param entity: The properties for the table entity.
-        :type entity: :class:`~azure.data.tables.TableEntity` or Dict[str,str]
+        :type entity: ~azure.data.tables.TableEntity or Dict[str,str]
         :param mode: Merge or Replace entity
-        :type mode: :class:`~azure.data.tables.UpdateMode`
+        :type mode: ~azure.data.tables.UpdateMode
         :keyword str partition_key: The partition key of the entity.
         :keyword str row_key: The row key of the entity.
         :keyword str etag: Etag of the entity
         :keyword match_condition: MatchCondition
-        :paramtype match_condition: :class:`~azure.core.MatchConditions`
+        :paramtype match_condition: ~azure.core.MatchCondition
         :return: Dictionary mapping operation metadata returned from the service
         :rtype: Dict[str,str]
         :raises: :class:`~azure.core.exceptions.HttpResponseError`
@@ -559,9 +562,9 @@ class TableClient(TablesBaseClient):
         """Update/Merge or Insert entity into table.
 
         :param entity: The properties for the table entity.
-        :type entity: :class:`~azure.data.tables.TableEntity` or Dict[str,str]
+        :type entity: ~azure.data.tables.TableEntity or Dict[str,str]
         :param mode: Merge or Replace entity
-        :type mode: :class:`~azure.data.tables.UpdateMode`
+        :type mode: ~azure.data.tables.UpdateMode
         :return: Dictionary mapping operation metadata returned from the service
         :rtype: Dict[str,str]
         :raises: :class:`~azure.core.exceptions.HttpResponseError`
@@ -641,7 +644,7 @@ class TableClient(TablesBaseClient):
         """Commit a TableBatchOperations to send requests to the server
 
         :param batch: Batch of operations
-        :type batch: :class:`~azure.data.tables.TableBatchOperations`
+        :type batch: ~azure.data.tables.TableBatchOperations
         :return: A list of tuples, each containing the entity operated on, and a dictionary
          of metadata returned from the service.
         :rtype: List[Tuple[Mapping[str, Any], Mapping[str, Any]]]

@@ -161,14 +161,15 @@ class TableServiceClient(AsyncTablesBaseClient):
          including properties for Analytics and CORS (Cross-Origin Resource Sharing) rules.
 
         :param analytics_logging: Properties for analytics
-        :type analytics_logging: :class:`~azure.data.tables.TableAnalyticsLogging`
+        :type analytics_logging: ~azure.data.tables.TableAnalyticsLogging
         :param hour_metrics: Hour level metrics
-        :type hour_metrics: :class:`~azure.data.tables.Metrics`
+        :type hour_metrics: ~azure.data.tables.Metrics
         :param minute_metrics: Minute level metrics
-        :type minute_metrics: :class:`~azure.data.tables.Metrics`
+        :type minute_metrics: ~azure.data.tables.Metrics
         :param cors: Cross-origin resource sharing rules
-        :type cors: :class:`~azure.data.tables.CorsRule`
+        :type cors: ~azure.data.tables.CorsRule
         :return: None
+        :rtype: None
         :raises: :class:`~azure.core.exceptions.HttpResponseError`
         """
         props = TableServiceProperties(
@@ -253,6 +254,7 @@ class TableServiceClient(AsyncTablesBaseClient):
 
         :param str table_name: The Table name.
         :return: None
+        :rtype: None
         :raises: :class:`~azure.core.exceptions.ResourceNotFoundError`
 
         .. admonition:: Example:
