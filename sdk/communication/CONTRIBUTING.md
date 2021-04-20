@@ -14,6 +14,9 @@ Once the package has been installed on your machine, let's jump on how to run th
 
 ## Testing
 
+Make sure to check out the general contributing guide the Azure SDK repo has for a more in-depth look at testing and setting up your dev environment. You can check out the contributing file [here](https://github.com/Azure/azure-sdk-for-python/blob/master/CONTRIBUTING.md)
+
+
 When you go inside the tests folder of the package you are working with, you will see a folder called `recordings`. This folder contains, as its name suggests, recordings of successful calls to the API that allow us to run the tests in PLAYBACK mode and remove the necessity of hitting the actual resources every time we may want to test.
 
 ### Playback mode
@@ -23,8 +26,6 @@ To run the tests in PLAYBACK mode, set an environment variable called `AZURE_TES
 If the tests are successful, we can proceed to run the tests in LIVE mode.
 
 ### Live mode
-
-Make sure to check out the general contributing guide the Azure SDK repo has for a more in-depth look at testing and setting up your dev environment. You can check out the contributing file [here](https://github.com/Azure/azure-sdk-for-python/blob/master/CONTRIBUTING.md)
 
 Because in LIVE mode we are hitting an actual resource, we must set the appropriate environment variable to make sure the code tests against the resource we want. Set up an env variable called `AZURE_COMMUNICATION_SERVICE_CONNECTION_STRING` and set it to the connection string of the resource you want to test against. 
 
@@ -38,7 +39,7 @@ If you ran the tests in LIVE mode, you may have noticed that the files inside th
 
 The most probable thing is that the managed identity tests will fail at first. This is because we haven't set up any managed identity credentials for the DefaultAzureCredential object inside the tests to reference to. There are multiple ways of creating a managed identity credential.
 
-One of the easiest ways is to install the Azure CLI and run the `az login` command. If you are listed as a contributor of the resource you are testing against, this should be enough for the DefaultAzureCredential object to get the corresponding Azure Active Directory credentials you need.
+One of the easiest ways is to install the [Azure CLI](https://docs.microsoft.com/cli/azure/install-azure-cli) and run the `az login` command. If you are listed as a contributor of the resource you are testing against, this should be enough for the DefaultAzureCredential object to get the corresponding Azure Active Directory credentials you need.
 
 Another way to authenticate is to set up 3 environment variables called `AZURE_CLIENT_ID`, `AZURE_TENANT_ID` and `AZURE_CLIENT_SECRET` and set their values to the ones from a registered Azure Active Directory application that is linked to the resource you are testing against.
 
@@ -46,7 +47,7 @@ If you are testing against a personal resource, you can check the [Managed Ident
 
 For a more in-depth look on how to authenticate using managed identity, refer to the [Azure Identity client library for Python](https://docs.microsoft.com/python/api/overview/azure/identity-readme?view=azure-python) documentation. This document also has more ways for you to authenticate using the DefaultAzureCredential object besides the ones we discussed in this contributing file.
 
-## Submitting a PR
+## Submitting a Pull Request
 
 The easiest way for you to test and not worry about any breaking changes you may cause is to create a fork from the [Python Azure SDK repo](https://github.com/Azure/azure-sdk-for-python). After downloading your repo, make sure to add the original repo as an upstream. To do this, use the `git remote add upstream` command followed by the repo's URL. 
 
