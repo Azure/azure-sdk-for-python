@@ -8,27 +8,26 @@ interactions:
       - '49'
       Content-Type:
       - application/merge-patch+json
+      Date:
+      - Mon, 19 Apr 2021 21:51:53 GMT
       User-Agent:
       - azsdk-python-communication-phonenumbers/1.0.0b5 Python/3.9.0 (Windows-10-10.0.19041-SP0)
+      x-ms-return-client-request-id:
+      - 'true'
     method: PATCH
     uri: https://sanitized.communication.azure.com/phoneNumbers/sanitized/capabilities?api-version=2021-03-07
   response:
     body:
-      string: '{"capabilitiesUpdateId": "f5c90484-8de1-4ba2-8f15-42443d061e9e"}'
+      string: ''
     headers:
-      access-control-expose-headers: Operation-Location,Location,operation-id,capabilities-id
       api-supported-versions: '2021-03-07'
-      capabilities-id: f5c90484-8de1-4ba2-8f15-42443d061e9e
-      content-type: application/json; charset=utf-8
+      content-length: '0'
       date: Mon, 19 Apr 2021 21:51:53 GMT
-      ms-cv: 7WC7tbAU/EKNXGTonzoXvQ.0
-      operation-id: capabilities_f5c90484-8de1-4ba2-8f15-42443d061e9e
-      operation-location: /phoneNumbers/operations/capabilities_f5c90484-8de1-4ba2-8f15-42443d061e9e?api-version=2021-03-07
+      ms-cv: dRAXgYYzGUqLkkg9Xi/0JA.0
       request-context: appId=
-      transfer-encoding: chunked
-      x-processing-time: 1131ms
+      x-processing-time: 277ms
     status:
-      code: 202
-      message: Accepted
-    url: sanitized
+      code: 404
+      message: Not Found
+    url: https://sanitized.communication.azure.com/phoneNumbers/sanitized/capabilities?api-version=2021-03-07
 version: 1
