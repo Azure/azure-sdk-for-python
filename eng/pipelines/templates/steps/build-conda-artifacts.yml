@@ -60,8 +60,8 @@ steps:
           -r "${{ artifact.common_root }}"
           -n "${{ artifact.name }}"
           -s "${{ parameters.ServiceDirectory }}"
-          -o "${{ upper(parameters.ServiceDirectory) }}_SOURCE_DISTRIBUTION"
           -e "$(Build.SourcesDirectory)/eng/environment.yml"
+          -c "$(Build.SourcesDirectory)/sdk/${{ parameters.ServiceDirectory }}/ci.yml"
 
     - bash: |
         echo "##vso[task.prependpath]$CONDA/bin"
@@ -72,13 +72,9 @@ steps:
         conda install --yes --quiet --name ${{ artifact.name }} conda-build
       displayName: 'Prepare Conda Environment for building ${{ artifact.name }}'
 
-    - pwsh: |
-
-      displayName: 'Set Conda Version Variable'
-
     - bash: |
         source activate ${{ artifact.name }}
-        conda-build . --output-folder "$(Agent.BuildDirectory)/conda/output" -c https://azuresdkconda.blob.core.windows.net/channel1/
+        conda-build . --output-folder "$(Agent.BuildDirectory)/conda/output" -c $(AzureSDKCondaChannel)
       displayName: 'Activate Conda Environment and Build ${{ artifact.name }}'
       workingDirectory: $(Build.SourcesDirectory)/sdk/${{ parameters.ServiceDirectory }}
   

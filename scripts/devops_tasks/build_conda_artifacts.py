@@ -25,12 +25,17 @@ import sys
 import os
 import shutil
 import re
+import pdb
 
 from common_tasks import process_glob_string, run_check_call, str_to_bool, parse_setup
 from subprocess import check_call
 from distutils.dir_util import copy_tree
 
+import yaml
+
 VERSION_REGEX = re.compile(r"\s*AZURESDK_CONDA_VERSION\s*:\s*[\'](.*)[\']\s*")
+
+SUMMARY_TEMPLATE = "- Generated from {}."
 
 NAMESPACE_EXTENSION_TEMPLATE = """__path__ = __import__('pkgutil').extend_path(__path__, __name__)  # type: str
 """
@@ -219,6 +224,23 @@ def create_combined_sdist(
     )
     return output_location
 
+def get_summary(ci_yml, artifact_name):
+    pkg_list = []
+    with open(ci_yml, 'r') as f:
+        data = f.read()        
+    
+    config = yaml.safe_load(data)
+
+    conda_artifact = [conda_artifact for conda_artifact in config["extends"]["parameters"]["CondaArtifacts"] if conda_artifact["name"] == artifact_name]
+
+    if conda_artifact:
+        dependencies = conda_artifact[0]["checkout"]
+
+    for dep in dependencies:
+        pkg_list.append("{}=={}".format(dep["package"], dep["version"]))
+    
+    return SUMMARY_TEMPLATE.format(", ".join(pkg_list))
+
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(
@@ -274,21 +296,20 @@ if __name__ == "__main__":
     )
 
     parser.add_argument(
-        "-o",
-        "--output_var",
-        dest="output_var",
-        help="The name of the environment variable that will be set in azure devops. The contents will be the final location of the output artifact. Local users will need to grab this value and set their env manually.",
-        required=False,
-    )
-
-    parser.add_argument(
         "-e",
         "--environment_config",
         dest="environment_config",
         help="The location of the environment.yml used to create the conda environments. This file has necessary common configuration information within.",
-        required=False,
+        required=True,
     )
 
+    parser.add_argument(
+        "-c",
+        "--ci_yml",
+        dest="ci_yml",
+        help="The location of the ci.yml that is used to define our conda artifacts. Used when to easily grab summary information.",
+        required=True,
+    )
 
     args = parser.parse_args()
     output_source_location = create_combined_sdist(
@@ -301,9 +322,19 @@ if __name__ == "__main__":
         args.environment_config
     )
 
-    if args.output_var:
+    summary = get_summary(args.ci_yml, args.artifact_name)
+
+    if output_source_location:
         print(
             "##vso[task.setvariable variable={}]{}".format(
-                args.output_var, output_source_location
+                args.service.upper() + "_SOURCE_DISTRIBUTION", output_source_location
             )
         )
+
+    if summary:
+        print(
+            "##vso[task.setvariable variable={}]{}".format(
+                args.service.upper() + "_SUMMARY", summary
+            )
+        )
+

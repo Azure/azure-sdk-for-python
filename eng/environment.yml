@@ -1,6 +1,2 @@
-channels:
-  - https://azuresdkconda.blob.core.windows.net/channel1/
-  - defaults
-
 variables:
   AZURESDK_CONDA_VERSION: '2021.05.01'

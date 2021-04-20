@@ -42,10 +42,10 @@ about:
   license: MIT
   license_family: MIT
   license_file:
-  summary: {{ environ.get('AZURESDK_CONDA_SUMMARY', 'Microsoft Azure Storage Client Library for Python') }}
+  summary: Microsoft Azure Storage Client Library for Python{{ environ.get('STORAGE_SUMMARY', '') }}
   doc_url: 
   dev_url: 
 
 extra:
   recipe-maintainers:
-    - your-github-id-here
+    - lmazuel,xiangyan99,scbedd

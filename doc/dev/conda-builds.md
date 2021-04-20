@@ -99,6 +99,7 @@ python `build_conda_artifacts.py`
     -n "azure-storage"
     -s "storage"
     -e "<resolvable path to repo root>/eng/environment.yml"
+    -c "<resolvable path to sdk/storage/ci.yml>"
 ```
 
 ### Generate the Conda Package

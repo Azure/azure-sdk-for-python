@@ -38,10 +38,10 @@ about:
   license: MIT
   license_family: MIT
   license_file: 
-  summary: {{ environ.get('AZURESDK_CONDA_SUMMARY', 'Microsoft Azure Core Library for Python') }}
+  summary: Microsoft Azure Core Library for Python{{ environ.get('CORE_SUMMARY', '') }}
   doc_url: 
   dev_url: 
 
 extra:
   recipe-maintainers:
-    - lmazuel,xiangyan99
+    - lmazuel,xiangyan99,scbedd

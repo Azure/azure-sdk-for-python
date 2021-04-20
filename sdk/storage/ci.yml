@@ -39,7 +39,6 @@ extends:
     MatrixConfigs:
       - Name: storage_ci_matrix
         Path: eng/pipelines/templates/stages/platform-matrix-cryptography-dependency.json
-        GenerateDocs: False
         Selection: sparse
         GenerateVMJobs: true
     Artifacts:
