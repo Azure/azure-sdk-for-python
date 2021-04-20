@@ -45,7 +45,8 @@ def test_stream_context_manager_error():
         assert e.value.status_code == 404
         assert e.value.reason == "NOT FOUND"
         with pytest.raises(ResponseNotReadError):
-            str(e.value)
+            str(e.value)  # str should not fail. Probably don't show body in str
+            e.value.response.json()
         with pytest.raises(ResponseNotReadError):
             r.json()
         with pytest.raises(ResponseNotReadError):
