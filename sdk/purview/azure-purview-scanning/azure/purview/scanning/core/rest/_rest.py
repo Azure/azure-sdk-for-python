@@ -24,10 +24,7 @@
 #
 # --------------------------------------------------------------------------
 
-__all__ = [
-    "HttpRequest",
-    "HttpResponse",
-]
+from abc import abstractmethod
 import sys
 import six
 import os
@@ -45,7 +42,7 @@ from azure.core.pipeline.transport import (
 
 if TYPE_CHECKING:
     from typing import (
-        Any, Optional, Union, Mapping, Sequence, Tuple,
+        Any, Optional, Union, Mapping, Sequence, Tuple, Iterator
     )
     ByteStream = Iterable[bytes]
 
@@ -57,6 +54,7 @@ if TYPE_CHECKING:
     from azure.core.pipeline.transport._base import (
         _HttpResponseBase as _PipelineTransportHttpResponseBase
     )
+    from azure.core._pipeline_client import PipelineClient as _PipelineClient
 
 class HttpVerbs(str, Enum):
     GET = "GET"
@@ -66,6 +64,7 @@ class HttpVerbs(str, Enum):
     PATCH = "PATCH"
     DELETE = "DELETE"
     MERGE = "MERGE"
+from azure.core.exceptions import HttpResponseError
 
 ########################### UTILS SECTION #################################
 
@@ -150,8 +149,68 @@ def _set_body(content, data, files, json_body, internal_request):
         # don't want to risk changing pipeline.transport, so doing twice here
         _set_content_type_header("application/x-www-form-urlencoded", internal_request)
 
+def _parse_lines_from_text(text):
+    # largely taken from httpx's LineDecoder code
+    lines = []
+    last_chunk_of_text = ""
+    while text:
+        text_length = len(text)
+        for idx in range(text_length):
+            curr_char = text[idx]
+            next_char = None if idx == len(text) - 1 else text[idx + 1]
+            if curr_char == "\n":
+                lines.append(text[: idx + 1])
+                text = text[idx + 1: ]
+                break
+            if curr_char == "\r" and next_char == "\n":
+                # if it ends with \r\n, we only do \n
+                lines.append(text[:idx] + "\n")
+                text = text[idx + 2:]
+                break
+            if curr_char == "\r" and next_char is not None:
+                # if it's \r then a normal character, we switch \r to \n
+                lines.append(text[:idx] + "\n")
+                text = text[idx + 1:]
+                break
+            if next_char is None:
+                text = ""
+                last_chunk_of_text += text
+                break
+    if last_chunk_of_text.endswith("\r"):
+        # if ends with \r, we switch \r to \n
+        lines.append(last_chunk_of_text[:-1] + "\n")
+    elif last_chunk_of_text:
+        lines.append(last_chunk_of_text)
+    return lines
 
 ################################## CLASSES ######################################
+class _StreamContextManager(object):
+    def __init__(self, client, request, **kwargs):
+        # type: (_PipelineClient, HttpRequest, Any) -> None
+        self.client = client
+        self.request = request
+        self.kwargs = kwargs
+
+    def __enter__(self):
+        # type: (...) -> HttpResponse
+        """Actually make the call only when we enter. For sync stream_response calls"""
+        pipeline_transport_response = self.client._pipeline.run(
+            self.request._internal_request,
+            stream=True,
+            **self.kwargs
+        ).http_response
+        self.response = HttpResponse(
+            request=self.request,
+            _internal_response=pipeline_transport_response
+        )
+        return self.response
+
+    def __exit__(self, *args):
+        """Close our stream connection. For sync calls"""
+        self.response.__exit__(*args)
+
+    def close(self):
+        self.response.close()
 
 class HttpRequest(object):
     """Represents an HTTP request.
@@ -277,12 +336,16 @@ class _HttpResponseBase(object):
     :ivar request: The request that resulted in this response.
     :vartype request: ~azure.core.rest.HttpRequest
     :ivar str content_type: The content type of the response
+    :ivar bool is_error: Whether this response is an error.
     """
 
     def __init__(self, **kwargs):
-        # type: (int, Any) -> None
+        # type: (Any) -> None
         self._internal_response = kwargs.pop("_internal_response")  # type: _PipelineTransportHttpResponseBase
         self._request = kwargs.pop("request")
+        self.is_closed = False
+        self.is_stream_consumed = False
+        self._num_bytes_downloaded = 0
 
     @property
     def status_code(self):
@@ -353,6 +416,7 @@ class _HttpResponseBase(object):
     def text(self):
         # type: (...) -> str
         """Returns the response body as a string"""
+        self.content  # access content to make sure we trigger if response not fully read in
         return self._internal_response.text(encoding=self.encoding)
 
     @property
@@ -375,6 +439,21 @@ class _HttpResponseBase(object):
         """Content Type of the response"""
         return self._internal_response.content_type or self.headers.get("Content-Type")
 
+    @property
+    def num_bytes_downloaded(self):
+        # type: (...) -> int
+        """See how many bytes of your stream response have been downloaded"""
+        return self._num_bytes_downloaded
+
+    @property
+    def is_error(self):
+        # type: (...) -> bool
+        """See whether your HttpResponse is an error.
+
+        Use .raise_for_status() if you want to raise if this response is an error.
+        """
+        return self.status_code < 400
+
     def json(self):
         # type: (...) -> Any
         """Returns the whole body as a json object.
@@ -391,7 +470,8 @@ class _HttpResponseBase(object):
 
         If response is good, does nothing.
         """
-        return self._internal_response.raise_for_status()
+        if self.status_code >= 400:
+            raise HttpResponseError(response=self)
 
     def __repr__(self):
         # type: (...) -> str
@@ -402,24 +482,116 @@ class _HttpResponseBase(object):
             type(self).__name__, self.status_code, self.reason, content_type_str
         )
 
-    def stream_download(self, pipeline=None):
-        """Generator for streaming request body data.
-
-        :rtype: iterator[bytes]
-        """
+    def _validate_streaming_access(self):
+        # type: (...) -> None
+        if self.is_closed:
+            raise ResponseClosedError()
+        if self.is_stream_consumed:
+            raise StreamConsumedError()
 
 class HttpResponse(_HttpResponseBase):
 
     @property
     def content(self):
         # type: (...) -> bytes
-        return self._internal_response.body()
+        try:
+            return self._content
+        except AttributeError:
+            raise ResponseNotReadError()
 
-    def stream_download(self, pipeline=None):
-        """Generator for streaming request body data.
+    def close(self):
+        # type: (...) -> None
+        self.is_closed = True
+        self._internal_response.internal_response.close()
 
-        Will remove once we have stream handling worked out.
+    def __exit__(self, *args):
+        # type: (...) -> None
+        self._internal_response.internal_response.__exit__(*args)
 
-        :rtype: iterator[bytes]
+    def read(self):
+        # type: (...) -> bytes
         """
-        return self._internal_response.stream_download(pipeline=pipeline)
+        Read the response's bytes.
+
+        """
+        try:
+            return self._content
+        except AttributeError:
+            self._validate_streaming_access()
+            self._content = (
+                self._internal_response.body() or
+                b"".join(self.iter_raw())
+            )
+            self._close_stream()
+            return self._content
+
+    def iter_bytes(self, chunk_size=None):
+        # type: (int) -> Iterator[bytes]
+        """Iterate over the bytes in the response stream
+        """
+        try:
+            chunk_size = len(self._content) if chunk_size is None else chunk_size
+            for i in range(0, len(self._content), chunk_size):
+                yield self._content[i: i + chunk_size]
+
+        except AttributeError:
+            for raw_bytes in self.iter_raw(chunk_size=chunk_size):
+                yield raw_bytes
+
+    def iter_text(self, chunk_size=None):
+        # type: (int) -> Iterator[str]
+        """Iterate over the response text
+        """
+        for byte in self.iter_bytes(chunk_size):
+            text = byte.decode(self.encoding or "utf-8")
+            yield text
+
+    def iter_lines(self, chunk_size=None):
+        # type: (int) -> Iterator[str]
+        for text in self.iter_text(chunk_size):
+            lines = _parse_lines_from_text(text)
+            for line in lines:
+                yield line
+
+    def _close_stream(self):
+        # type: (...) -> None
+        self.is_stream_consumed = True
+        self.close()
+
+    def iter_raw(self, chunk_size=None):
+        # type: (int) -> Iterator[bytes]
+        """Iterate over the raw response bytes
+        """
+        self._validate_streaming_access()
+        stream_download = self._internal_response.stream_download(None, chunk_size=chunk_size)
+        for raw_bytes in stream_download:
+            self._num_bytes_downloaded += len(raw_bytes)
+            yield raw_bytes
+
+        self._close_stream()
+
+########################### ERRORS SECTION #################################
+
+class StreamConsumedError(Exception):
+    def __init__(self):
+        message = (
+            "You are attempting to read or stream content that has already been streamed. "
+            "You have likely already consumed this stream, so it can not be accessed anymore."
+        )
+        super(StreamConsumedError, self).__init__(message)
+
+class ResponseClosedError(Exception):
+    def __init__(self):
+        message = (
+            "You can not try to read or stream this response's content, since the "
+            "response has been closed."
+        )
+        super(ResponseClosedError, self).__init__(message)
+
+class ResponseNotReadError(Exception):
+
+    def __init__(self):
+        message = (
+            "You have not read in the response's bytes yet. Call response.read() first."
+        )
+        super(ResponseNotReadError, self).__init__(message)

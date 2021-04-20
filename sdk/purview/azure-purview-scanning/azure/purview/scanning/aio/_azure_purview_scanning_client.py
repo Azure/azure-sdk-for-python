@@ -10,7 +10,7 @@ from copy import deepcopy
 from typing import Any, TYPE_CHECKING
 
 from azure.core import AsyncPipelineClient
-from azure.purview.scanning.core.rest import AsyncHttpResponse, HttpRequest
+from azure.purview.scanning.core.rest import AsyncHttpResponse, HttpRequest, _AsyncStreamContextManager
 from msrest import Deserializer, Serializer
 
 if TYPE_CHECKING:
@@ -27,18 +27,18 @@ class AzurePurviewScanningClient(object):
 
     :param credential: Credential needed for the client to connect to Azure.
     :type credential: ~azure.core.credentials_async.AsyncTokenCredential
-    :param account_name: The name of your purview account.
-    :type account_name: str
+    :param endpoint: The scanning endpoint of your purview account. Example: https://{accountName}.scan.purview.azure.com.
+    :type endpoint: str
     """
 
     def __init__(
         self,
         credential: "AsyncTokenCredential",
-        account_name: str,
+        endpoint: str,
         **kwargs: Any
     ) -> None:
-        base_url = 'https://{accountName}.scan.purview.azure.com'
-        self._config = AzurePurviewScanningClientConfiguration(credential, account_name, **kwargs)
+        base_url = '{Endpoint}'
+        self._config = AzurePurviewScanningClientConfiguration(credential, endpoint, **kwargs)
         self._client = AsyncPipelineClient(base_url=base_url, config=self._config, **kwargs)
 
         self._serialize = Serializer()
@@ -50,9 +50,9 @@ class AzurePurviewScanningClient(object):
         We have helper methods to create requests specific to this service in `azure.purview.scanning.rest`.
         Use these helper methods to create the request you pass to this method. See our example below:
 
-        >>> from azure.purview.scanning.rest import build_azurekeyvaults_head_request
-        >>> request = build_azurekeyvaults_head_request(azure_key_vault_name)
-        <HttpRequest [HEAD], url: '/azureKeyVaults/{azureKeyVaultName}'>
+        >>> from azure.purview.scanning.rest import build_get_azure_key_vault_request
+        >>> request = build_get_azure_key_vault_request(azure_key_vault_name)
+        <HttpRequest [GET], url: '/azureKeyVaults/{azureKeyVaultName}'>
         >>> response = await client.send_request(request)
         <AsyncHttpResponse: 200 OK>
 
@@ -69,16 +69,22 @@ class AzurePurviewScanningClient(object):
         """
         request_copy = deepcopy(http_request)
         path_format_arguments = {
-            'accountName': self._serialize.url("self._config.account_name", self._config.account_name, 'str', skip_quote=True),
+            'Endpoint': self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
         }
         request_copy.url = self._client.format_url(request_copy.url, **path_format_arguments)
-        stream_response = kwargs.pop("stream_response", False)
-        pipeline_response = await self._client._pipeline.run(request_copy._internal_request, stream=stream_response, **kwargs)
-        return AsyncHttpResponse(
+        if kwargs.pop("stream_response", False):
+            return _AsyncStreamContextManager(
+                client=self._client,
+                request=request_copy,
+            )
+        pipeline_response = await self._client._pipeline.run(request_copy._internal_request, **kwargs)
+        response = AsyncHttpResponse(
             status_code=pipeline_response.http_response.status_code,
             request=request_copy,
             _internal_response=pipeline_response.http_response
         )
+        await response.read()
+        return response
 
     async def close(self) -> None:
         await self._client.close()
