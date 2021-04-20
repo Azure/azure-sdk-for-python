@@ -143,7 +143,6 @@ def _process_table_error(storage_error):
 
 class RequestEntityTooLargeError(HttpResponseError):
     """An error response with status code 413 - Request Entity Too Large"""
-    
 
 
 class TableErrorCode(str, Enum):
