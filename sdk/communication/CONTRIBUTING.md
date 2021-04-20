@@ -24,6 +24,8 @@ If the tests are successful, we can proceed to run the tests in LIVE mode.
 
 ### Live mode
 
+Make sure to check out the general contributing guide the Azure SDK repo has for a more in-depth look at testing and setting up your dev environment. You can check out the contributing file [here](https://github.com/Azure/azure-sdk-for-python/blob/master/CONTRIBUTING.md)
+
 Because in LIVE mode we are hitting an actual resource, we must set the appropriate environment variable to make sure the code tests against the resource we want. Set up an env variable called `AZURE_COMMUNICATION_SERVICE_CONNECTION_STRING` and set it to the connection string of the resource you want to test against. 
 
 Depending on which package you are testing, it may need special environment variables to test succesfully. The names of these variables can be found inside each test file in the `setUp()` function. Make sure to set these variables before running the tests themselves. You may need to restart your development environment after creating or updating these environment variables.
@@ -53,3 +55,9 @@ Create a branch for any new feature you may want to add and when your changes ar
 Make sure to name your PR with the following format when you are ready to submit it: [Communication] - `package-you-are-updating` - `pr-description`.
 
 Additionally, write a good description about what your PR does in the description section of the PR itself. This will help your reviewers have a better understanding of what you are trying to accomplish in your PR.
+
+## Samples 
+
+Each SDK has a samples folder where you can run example code for every function the SDK you are testing has to offer. These samples may have special requirements such as specific environment variables you may have to setup before running them. Make sure to take a look at these files and setup the environment as it is expected. 
+
+You can run these samples as you would run any other Python code snippet. First, change directory to the samples folder and then use the `python <name-of-the-sample-file>` command to run the code. Running these samples against a real resource may cost money depending on which SDK you are testing.
