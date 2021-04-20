@@ -319,7 +319,7 @@ if __name__ == "__main__":
         "-e",
         "--environment_config",
         dest="environment_config",
-        help="The location of the environment.yml used to create the conda environments. This file has necessary common configuration information within.",
+        help="The location of the yml config file used to create the conda environments. This file has necessary common configuration information within.",
         required=True,
     )
 
