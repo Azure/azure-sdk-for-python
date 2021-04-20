@@ -21,12 +21,41 @@ class UpdateStatus(str, Enum):
     retry_later = "RetryLater"
 
 
+class CreatedByType(str, Enum):
+
+    user = "User"
+    application = "Application"
+    managed_identity = "ManagedIdentity"
+    key = "Key"
+
+
 class MaintenanceScope(str, Enum):
 
-    all = "All"
     host = "Host"
+    os_image = "OSImage"
+    extension = "Extension"
+    in_guest_patch = "InGuestPatch"
+    sqldb = "SQLDB"
+    sql_managed_instance = "SQLManagedInstance"
+
+
+class Visibility(str, Enum):
+
+    custom = "Custom"
+    public = "Public"
+
+
+class RebootOptions(str, Enum):
+
+    never_reboot = "NeverReboot"
+    reboot_if_required = "RebootIfRequired"
+    always_reboot = "AlwaysReboot"
+
+
+class TaskScope(str, Enum):
+
+    global_enum = "Global"
     resource = "Resource"
-    in_resource = "InResource"
 
 
 class ImpactType(str, Enum):

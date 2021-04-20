@@ -25,18 +25,23 @@ class Resource(Model):
     :vartype name: str
     :ivar type: Type of the resource
     :vartype type: str
+    :ivar system_data: Azure Resource Manager metadata containing createdBy
+     and modifiedBy information.
+    :vartype system_data: ~azure.mgmt.maintenance.models.SystemData
     """
 
     _validation = {
         'id': {'readonly': True},
         'name': {'readonly': True},
         'type': {'readonly': True},
+        'system_data': {'readonly': True},
     }
 
     _attribute_map = {
         'id': {'key': 'id', 'type': 'str'},
         'name': {'key': 'name', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
+        'system_data': {'key': 'systemData', 'type': 'SystemData'},
     }
 
     def __init__(self, **kwargs) -> None:
@@ -44,6 +49,7 @@ class Resource(Model):
         self.id = None
         self.name = None
         self.type = None
+        self.system_data = None
 
 
 class ApplyUpdate(Resource):
@@ -58,6 +64,9 @@ class ApplyUpdate(Resource):
     :vartype name: str
     :ivar type: Type of the resource
     :vartype type: str
+    :ivar system_data: Azure Resource Manager metadata containing createdBy
+     and modifiedBy information.
+    :vartype system_data: ~azure.mgmt.maintenance.models.SystemData
     :param status: The status. Possible values include: 'Pending',
      'InProgress', 'Completed', 'RetryNow', 'RetryLater'
     :type status: str or ~azure.mgmt.maintenance.models.UpdateStatus
@@ -71,12 +80,14 @@ class ApplyUpdate(Resource):
         'id': {'readonly': True},
         'name': {'readonly': True},
         'type': {'readonly': True},
+        'system_data': {'readonly': True},
     }
 
     _attribute_map = {
         'id': {'key': 'id', 'type': 'str'},
         'name': {'key': 'name', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
+        'system_data': {'key': 'systemData', 'type': 'SystemData'},
         'status': {'key': 'properties.status', 'type': 'str'},
         'resource_id': {'key': 'properties.resourceId', 'type': 'str'},
         'last_update_time': {'key': 'properties.lastUpdateTime', 'type': 'iso-8601'},
@@ -109,6 +120,9 @@ class ConfigurationAssignment(Resource):
     :vartype name: str
     :ivar type: Type of the resource
     :vartype type: str
+    :ivar system_data: Azure Resource Manager metadata containing createdBy
+     and modifiedBy information.
+    :vartype system_data: ~azure.mgmt.maintenance.models.SystemData
     :param location: Location of the resource
     :type location: str
     :param maintenance_configuration_id: The maintenance configuration Id
@@ -121,12 +135,14 @@ class ConfigurationAssignment(Resource):
         'id': {'readonly': True},
         'name': {'readonly': True},
         'type': {'readonly': True},
+        'system_data': {'readonly': True},
     }
 
     _attribute_map = {
         'id': {'key': 'id', 'type': 'str'},
         'name': {'key': 'name', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
+        'system_data': {'key': 'systemData', 'type': 'SystemData'},
         'location': {'key': 'location', 'type': 'str'},
         'maintenance_configuration_id': {'key': 'properties.maintenanceConfigurationId', 'type': 'str'},
         'resource_id': {'key': 'properties.resourceId', 'type': 'str'},
@@ -160,6 +176,99 @@ class ErrorDetails(Model):
         self.message = message
 
 
+class InputLinuxParameters(Model):
+    """Input properties for patching a Linux machine.
+
+    :param package_name_masks_to_exclude: Package names to be excluded for
+     patching.
+    :type package_name_masks_to_exclude: list[str]
+    :param package_name_masks_to_include: Package names to be included for
+     patching.
+    :type package_name_masks_to_include: list[str]
+    :param classifications_to_include: Classification category of patches to
+     be patched
+    :type classifications_to_include: list[str]
+    """
+
+    _attribute_map = {
+        'package_name_masks_to_exclude': {'key': 'packageNameMasksToExclude', 'type': '[str]'},
+        'package_name_masks_to_include': {'key': 'packageNameMasksToInclude', 'type': '[str]'},
+        'classifications_to_include': {'key': 'classificationsToInclude', 'type': '[str]'},
+    }
+
+    def __init__(self, *, package_name_masks_to_exclude=None, package_name_masks_to_include=None, classifications_to_include=None, **kwargs) -> None:
+        super(InputLinuxParameters, self).__init__(**kwargs)
+        self.package_name_masks_to_exclude = package_name_masks_to_exclude
+        self.package_name_masks_to_include = package_name_masks_to_include
+        self.classifications_to_include = classifications_to_include
+
+
+class InputPatchConfiguration(Model):
+    """Input configuration for a patch run.
+
+    :param reboot_setting: Possible reboot preference as defined by the user
+     based on which it would be decided to reboot the machine or not after the
+     patch operation is completed. Possible values include: 'NeverReboot',
+     'RebootIfRequired', 'AlwaysReboot'
+    :type reboot_setting: str or ~azure.mgmt.maintenance.models.RebootOptions
+    :param windows_parameters: Input parameters specific to patching a Windows
+     machine. For Linux machines, do not pass this property.
+    :type windows_parameters:
+     ~azure.mgmt.maintenance.models.InputWindowsParameters
+    :param linux_parameters: Input parameters specific to patching Linux
+     machine. For Windows machines, do not pass this property.
+    :type linux_parameters:
+     ~azure.mgmt.maintenance.models.InputLinuxParameters
+    :param pre_tasks: List of pre tasks. e.g. [{'source' :'runbook',
+     'taskScope': 'Global', 'parameters': { 'arg1': 'value1'}}]
+    :type pre_tasks: list[~azure.mgmt.maintenance.models.TaskProperties]
+    :param post_tasks: List of post tasks. e.g. [{'source' :'runbook',
+     'taskScope': 'Resource', 'parameters': { 'arg1': 'value1'}}]
+    :type post_tasks: list[~azure.mgmt.maintenance.models.TaskProperties]
+    """
+
+    _attribute_map = {
+        'reboot_setting': {'key': 'rebootSetting', 'type': 'str'},
+        'windows_parameters': {'key': 'windowsParameters', 'type': 'InputWindowsParameters'},
+        'linux_parameters': {'key': 'linuxParameters', 'type': 'InputLinuxParameters'},
+        'pre_tasks': {'key': 'tasks.preTasks', 'type': '[TaskProperties]'},
+        'post_tasks': {'key': 'tasks.postTasks', 'type': '[TaskProperties]'},
+    }
+
+    def __init__(self, *, reboot_setting=None, windows_parameters=None, linux_parameters=None, pre_tasks=None, post_tasks=None, **kwargs) -> None:
+        super(InputPatchConfiguration, self).__init__(**kwargs)
+        self.reboot_setting = reboot_setting
+        self.windows_parameters = windows_parameters
+        self.linux_parameters = linux_parameters
+        self.pre_tasks = pre_tasks
+        self.post_tasks = post_tasks
+
+
+class InputWindowsParameters(Model):
+    """Input properties for patching a Windows machine.
+
+    :param kb_numbers_to_exclude: Windows KBID to be excluded for patching.
+    :type kb_numbers_to_exclude: list[str]
+    :param kb_numbers_to_include: Windows KBID to be included for patching.
+    :type kb_numbers_to_include: list[str]
+    :param classifications_to_include: Classification category of patches to
+     be patched
+    :type classifications_to_include: list[str]
+    """
+
+    _attribute_map = {
+        'kb_numbers_to_exclude': {'key': 'kbNumbersToExclude', 'type': '[str]'},
+        'kb_numbers_to_include': {'key': 'kbNumbersToInclude', 'type': '[str]'},
+        'classifications_to_include': {'key': 'classificationsToInclude', 'type': '[str]'},
+    }
+
+    def __init__(self, *, kb_numbers_to_exclude=None, kb_numbers_to_include=None, classifications_to_include=None, **kwargs) -> None:
+        super(InputWindowsParameters, self).__init__(**kwargs)
+        self.kb_numbers_to_exclude = kb_numbers_to_exclude
+        self.kb_numbers_to_include = kb_numbers_to_include
+        self.classifications_to_include = classifications_to_include
+
+
 class MaintenanceConfiguration(Resource):
     """Maintenance configuration record type.
 
@@ -172,6 +281,9 @@ class MaintenanceConfiguration(Resource):
     :vartype name: str
     :ivar type: Type of the resource
     :vartype type: str
+    :ivar system_data: Azure Resource Manager metadata containing createdBy
+     and modifiedBy information.
+    :vartype system_data: ~azure.mgmt.maintenance.models.SystemData
     :param location: Gets or sets location of the resource
     :type location: str
     :param tags: Gets or sets tags of the resource
@@ -182,36 +294,94 @@ class MaintenanceConfiguration(Resource):
      maintenanceConfiguration
     :type extension_properties: dict[str, str]
     :param maintenance_scope: Gets or sets maintenanceScope of the
-     configuration. Possible values include: 'All', 'Host', 'Resource',
-     'InResource'
+     configuration. Possible values include: 'Host', 'OSImage', 'Extension',
+     'InGuestPatch', 'SQLDB', 'SQLManagedInstance'
     :type maintenance_scope: str or
      ~azure.mgmt.maintenance.models.MaintenanceScope
+    :param start_date_time: Effective start date of the maintenance window in
+     YYYY-MM-DD hh:mm format. The start date can be set to either the current
+     date or future date. The window will be created in the time zone provided
+     and adjusted to daylight savings according to that time zone.
+    :type start_date_time: str
+    :param expiration_date_time: Effective expiration date of the maintenance
+     window in YYYY-MM-DD hh:mm format. The window will be created in the time
+     zone provided and adjusted to daylight savings according to that time
+     zone. Expiration date must be set to a future date. If not provided, it
+     will be set to the maximum datetime 9999-12-31 23:59:59.
+    :type expiration_date_time: str
+    :param duration: Duration of the maintenance window in HH:mm format. If
+     not provided, default value will be used based on maintenance scope
+     provided. Example: 05:00.
+    :type duration: str
+    :param time_zone: Name of the timezone. List of timezones can be obtained
+     by executing [System.TimeZoneInfo]::GetSystemTimeZones() in PowerShell.
+     Example: Pacific Standard Time, UTC, W. Europe Standard Time, Korea
+     Standard Time, Cen. Australia Standard Time.
+    :type time_zone: str
+    :param recur_every: Rate at which a Maintenance window is expected to
+     recur. The rate can be expressed as daily, weekly, or monthly schedules.
+     Daily schedule are formatted as recurEvery: [Frequency as
+     integer]['Day(s)']. If no frequency is provided, the default frequency is
+     1. Daily schedule examples are recurEvery: Day, recurEvery: 3Days.  Weekly
+     schedule are formatted as recurEvery: [Frequency as integer]['Week(s)']
+     [Optional comma separated list of weekdays Monday-Sunday]. Weekly schedule
+     examples are recurEvery: 3Weeks, recurEvery: Week Saturday,Sunday. Monthly
+     schedules are formatted as [Frequency as integer]['Month(s)'] [Comma
+     separated list of month days] or [Frequency as integer]['Month(s)'] [Week
+     of Month (First, Second, Third, Fourth, Last)] [Weekday Monday-Sunday].
+     Monthly schedule examples are recurEvery: Month, recurEvery: 2Months,
+     recurEvery: Month day23,day24, recurEvery: Month Last Sunday, recurEvery:
+     Month Fourth Monday.
+    :type recur_every: str
+    :param visibility: Gets or sets the visibility of the configuration.
+     Possible values include: 'Custom', 'Public'
+    :type visibility: str or ~azure.mgmt.maintenance.models.Visibility
+    :param install_patches: The input parameters to be passed to the patch run
+     operation.
+    :type install_patches:
+     ~azure.mgmt.maintenance.models.InputPatchConfiguration
     """
 
     _validation = {
         'id': {'readonly': True},
         'name': {'readonly': True},
         'type': {'readonly': True},
+        'system_data': {'readonly': True},
     }
 
     _attribute_map = {
         'id': {'key': 'id', 'type': 'str'},
         'name': {'key': 'name', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
+        'system_data': {'key': 'systemData', 'type': 'SystemData'},
         'location': {'key': 'location', 'type': 'str'},
         'tags': {'key': 'tags', 'type': '{str}'},
         'namespace': {'key': 'properties.namespace', 'type': 'str'},
         'extension_properties': {'key': 'properties.extensionProperties', 'type': '{str}'},
         'maintenance_scope': {'key': 'properties.maintenanceScope', 'type': 'str'},
+        'start_date_time': {'key': 'properties.maintenanceWindow.startDateTime', 'type': 'str'},
+        'expiration_date_time': {'key': 'properties.maintenanceWindow.expirationDateTime', 'type': 'str'},
+        'duration': {'key': 'properties.maintenanceWindow.duration', 'type': 'str'},
+        'time_zone': {'key': 'properties.maintenanceWindow.timeZone', 'type': 'str'},
+        'recur_every': {'key': 'properties.maintenanceWindow.recurEvery', 'type': 'str'},
+        'visibility': {'key': 'properties.visibility', 'type': 'str'},
+        'install_patches': {'key': 'properties.installPatches', 'type': 'InputPatchConfiguration'},
     }
 
-    def __init__(self, *, location: str=None, tags=None, namespace: str=None, extension_properties=None, maintenance_scope=None, **kwargs) -> None:
+    def __init__(self, *, location: str=None, tags=None, namespace: str=None, extension_properties=None, maintenance_scope=None, start_date_time: str=None, expiration_date_time: str=None, duration: str=None, time_zone: str=None, recur_every: str=None, visibility=None, install_patches=None, **kwargs) -> None:
         super(MaintenanceConfiguration, self).__init__(**kwargs)
         self.location = location
         self.tags = tags
         self.namespace = namespace
         self.extension_properties = extension_properties
         self.maintenance_scope = maintenance_scope
+        self.start_date_time = start_date_time
+        self.expiration_date_time = expiration_date_time
+        self.duration = duration
+        self.time_zone = time_zone
+        self.recur_every = recur_every
+        self.visibility = visibility
+        self.install_patches = install_patches
 
 
 class MaintenanceError(Model):
@@ -253,6 +423,8 @@ class Operation(Model):
     :type origin: str
     :param properties: Properties of the operation
     :type properties: object
+    :param is_data_action: Indicates whether the operation is a data action
+    :type is_data_action: bool
     """
 
     _attribute_map = {
@@ -260,14 +432,16 @@ class Operation(Model):
         'display': {'key': 'display', 'type': 'OperationInfo'},
         'origin': {'key': 'origin', 'type': 'str'},
         'properties': {'key': 'properties', 'type': 'object'},
+        'is_data_action': {'key': 'isDataAction', 'type': 'bool'},
     }
 
-    def __init__(self, *, name: str=None, display=None, origin: str=None, properties=None, **kwargs) -> None:
+    def __init__(self, *, name: str=None, display=None, origin: str=None, properties=None, is_data_action: bool=None, **kwargs) -> None:
         super(Operation, self).__init__(**kwargs)
         self.name = name
         self.display = display
         self.origin = origin
         self.properties = properties
+        self.is_data_action = is_data_action
 
 
 class OperationInfo(Model):
@@ -298,11 +472,78 @@ class OperationInfo(Model):
         self.description = description
 
 
+class SystemData(Model):
+    """Metadata pertaining to creation and last modification of the resource.
+
+    :param created_by: The identity that created the resource.
+    :type created_by: str
+    :param created_by_type: The type of identity that created the resource.
+     Possible values include: 'User', 'Application', 'ManagedIdentity', 'Key'
+    :type created_by_type: str or ~azure.mgmt.maintenance.models.CreatedByType
+    :param created_at: The timestamp of resource creation (UTC).
+    :type created_at: datetime
+    :param last_modified_by: The identity that last modified the resource.
+    :type last_modified_by: str
+    :param last_modified_by_type: The type of identity that last modified the
+     resource. Possible values include: 'User', 'Application',
+     'ManagedIdentity', 'Key'
+    :type last_modified_by_type: str or
+     ~azure.mgmt.maintenance.models.CreatedByType
+    :param last_modified_at: The timestamp of resource last modification (UTC)
+    :type last_modified_at: datetime
+    """
+
+    _attribute_map = {
+        'created_by': {'key': 'createdBy', 'type': 'str'},
+        'created_by_type': {'key': 'createdByType', 'type': 'str'},
+        'created_at': {'key': 'createdAt', 'type': 'iso-8601'},
+        'last_modified_by': {'key': 'lastModifiedBy', 'type': 'str'},
+        'last_modified_by_type': {'key': 'lastModifiedByType', 'type': 'str'},
+        'last_modified_at': {'key': 'lastModifiedAt', 'type': 'iso-8601'},
+    }
+
+    def __init__(self, *, created_by: str=None, created_by_type=None, created_at=None, last_modified_by: str=None, last_modified_by_type=None, last_modified_at=None, **kwargs) -> None:
+        super(SystemData, self).__init__(**kwargs)
+        self.created_by = created_by
+        self.created_by_type = created_by_type
+        self.created_at = created_at
+        self.last_modified_by = last_modified_by
+        self.last_modified_by_type = last_modified_by_type
+        self.last_modified_at = last_modified_at
+
+
+class TaskProperties(Model):
+    """Task properties of the software update configuration.
+
+    :param parameters: Gets or sets the parameters of the task.
+    :type parameters: dict[str, str]
+    :param source: Gets or sets the name of the runbook.
+    :type source: str
+    :param task_scope: Global Task execute once when schedule trigger.
+     Resource task execute for each VM. Possible values include: 'Global',
+     'Resource'. Default value: "Global" .
+    :type task_scope: str or ~azure.mgmt.maintenance.models.TaskScope
+    """
+
+    _attribute_map = {
+        'parameters': {'key': 'parameters', 'type': '{str}'},
+        'source': {'key': 'source', 'type': 'str'},
+        'task_scope': {'key': 'taskScope', 'type': 'str'},
+    }
+
+    def __init__(self, *, parameters=None, source: str=None, task_scope="Global", **kwargs) -> None:
+        super(TaskProperties, self).__init__(**kwargs)
+        self.parameters = parameters
+        self.source = source
+        self.task_scope = task_scope
+
+
 class Update(Model):
     """Maintenance update on a resource.
 
-    :param maintenance_scope: The impact area. Possible values include: 'All',
-     'Host', 'Resource', 'InResource'
+    :param maintenance_scope: The impact area. Possible values include:
+     'Host', 'OSImage', 'Extension', 'InGuestPatch', 'SQLDB',
+     'SQLManagedInstance'
     :type maintenance_scope: str or
      ~azure.mgmt.maintenance.models.MaintenanceScope
     :param impact_type: The impact type. Possible values include: 'None',

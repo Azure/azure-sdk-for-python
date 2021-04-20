@@ -15,8 +15,8 @@ from msrest.pipeline import ClientRawResponse
 from .. import models
 
 
-class Operations(object):
-    """Operations operations.
+class ApplyUpdateForResourceGroupOperations(object):
+    """ApplyUpdateForResourceGroupOperations operations.
 
     You should not instantiate directly this class, but create a Client instance that will create it for you and attach it as attribute.
 
@@ -39,20 +39,19 @@ class Operations(object):
         self.config = config
 
     def list(
-            self, custom_headers=None, raw=False, **operation_config):
-        """List available operations.
+            self, resource_group_name, custom_headers=None, raw=False, **operation_config):
+        """Get Configuration records within a subscription and resource group.
 
-        List the available operations supported by the Microsoft.Maintenance
-        resource provider.
-
+        :param resource_group_name: Resource Group Name
+        :type resource_group_name: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: An iterator like instance of Operation
+        :return: An iterator like instance of ApplyUpdate
         :rtype:
-         ~azure.mgmt.maintenance.models.OperationPaged[~azure.mgmt.maintenance.models.Operation]
+         ~azure.mgmt.maintenance.models.ApplyUpdatePaged[~azure.mgmt.maintenance.models.ApplyUpdate]
         :raises:
          :class:`MaintenanceErrorException<azure.mgmt.maintenance.models.MaintenanceErrorException>`
         """
@@ -60,6 +59,11 @@ class Operations(object):
             if not next_link:
                 # Construct URL
                 url = self.list.metadata['url']
+                path_format_arguments = {
+                    'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
+                    'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str')
+                }
+                url = self._client.format_url(url, **path_format_arguments)
 
                 # Construct parameters
                 query_parameters = {}
@@ -97,7 +101,7 @@ class Operations(object):
         header_dict = None
         if raw:
             header_dict = {}
-        deserialized = models.OperationPaged(internal_paging, self._deserialize.dependencies, header_dict)
+        deserialized = models.ApplyUpdatePaged(internal_paging, self._deserialize.dependencies, header_dict)
 
         return deserialized
-    list.metadata = {'url': '/providers/Microsoft.Maintenance/operations'}
+    list.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Maintenance/applyUpdates'}

@@ -11,7 +11,6 @@
 
 import uuid
 from msrest.pipeline import ClientRawResponse
-from msrestazure.azure_exceptions import CloudError
 
 from .. import models
 
@@ -25,7 +24,7 @@ class ConfigurationAssignmentsOperations(object):
     :param config: Configuration of service client.
     :param serializer: An object model serializer.
     :param deserializer: An object model deserializer.
-    :ivar api_version: Version of the API to be used with the client request. Constant value: "2018-06-01-preview".
+    :ivar api_version: Version of the API to be used with the client request. Constant value: "2021-04-01-preview".
     """
 
     models = models
@@ -35,9 +34,86 @@ class ConfigurationAssignmentsOperations(object):
         self._client = client
         self._serialize = serializer
         self._deserialize = deserializer
-        self.api_version = "2018-06-01-preview"
+        self.api_version = "2021-04-01-preview"
 
         self.config = config
+
+    def get_parent(
+            self, resource_group_name, provider_name, resource_parent_type, resource_parent_name, resource_type, resource_name, configuration_assignment_name, custom_headers=None, raw=False, **operation_config):
+        """Get configuration assignment.
+
+        Get configuration for resource.
+
+        :param resource_group_name: Resource group name
+        :type resource_group_name: str
+        :param provider_name: Resource provider name
+        :type provider_name: str
+        :param resource_parent_type: Resource parent type
+        :type resource_parent_type: str
+        :param resource_parent_name: Resource parent identifier
+        :type resource_parent_name: str
+        :param resource_type: Resource type
+        :type resource_type: str
+        :param resource_name: Resource identifier
+        :type resource_name: str
+        :param configuration_assignment_name: Configuration assignment name
+        :type configuration_assignment_name: str
+        :param dict custom_headers: headers that will be added to the request
+        :param bool raw: returns the direct response alongside the
+         deserialized response
+        :param operation_config: :ref:`Operation configuration
+         overrides<msrest:optionsforoperations>`.
+        :return: ConfigurationAssignment or ClientRawResponse if raw=true
+        :rtype: ~azure.mgmt.maintenance.models.ConfigurationAssignment or
+         ~msrest.pipeline.ClientRawResponse
+        :raises:
+         :class:`MaintenanceErrorException<azure.mgmt.maintenance.models.MaintenanceErrorException>`
+        """
+        # Construct URL
+        url = self.get_parent.metadata['url']
+        path_format_arguments = {
+            'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
+            'providerName': self._serialize.url("provider_name", provider_name, 'str'),
+            'resourceParentType': self._serialize.url("resource_parent_type", resource_parent_type, 'str'),
+            'resourceParentName': self._serialize.url("resource_parent_name", resource_parent_name, 'str'),
+            'resourceType': self._serialize.url("resource_type", resource_type, 'str'),
+            'resourceName': self._serialize.url("resource_name", resource_name, 'str'),
+            'configurationAssignmentName': self._serialize.url("configuration_assignment_name", configuration_assignment_name, 'str')
+        }
+        url = self._client.format_url(url, **path_format_arguments)
+
+        # Construct parameters
+        query_parameters = {}
+        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
+
+        # Construct headers
+        header_parameters = {}
+        header_parameters['Accept'] = 'application/json'
+        if self.config.generate_client_request_id:
+            header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
+        if custom_headers:
+            header_parameters.update(custom_headers)
+        if self.config.accept_language is not None:
+            header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
+
+        # Construct and send request
+        request = self._client.get(url, query_parameters, header_parameters)
+        response = self._client.send(request, stream=False, **operation_config)
+
+        if response.status_code not in [200]:
+            raise models.MaintenanceErrorException(self._deserialize, response)
+
+        deserialized = None
+        if response.status_code == 200:
+            deserialized = self._deserialize('ConfigurationAssignment', response)
+
+        if raw:
+            client_raw_response = ClientRawResponse(deserialized, response)
+            return client_raw_response
+
+        return deserialized
+    get_parent.metadata = {'url': '/subscriptions/{subscriptionId}/resourcegroups/{resourceGroupName}/providers/{providerName}/{resourceParentType}/{resourceParentName}/{resourceType}/{resourceName}/providers/Microsoft.Maintenance/configurationAssignments/{configurationAssignmentName}'}
 
     def create_or_update_parent(
             self, resource_group_name, provider_name, resource_parent_type, resource_parent_name, resource_type, resource_name, configuration_assignment_name, configuration_assignment, custom_headers=None, raw=False, **operation_config):
@@ -70,7 +146,8 @@ class ConfigurationAssignmentsOperations(object):
         :return: ConfigurationAssignment or ClientRawResponse if raw=true
         :rtype: ~azure.mgmt.maintenance.models.ConfigurationAssignment or
          ~msrest.pipeline.ClientRawResponse
-        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
+        :raises:
+         :class:`MaintenanceErrorException<azure.mgmt.maintenance.models.MaintenanceErrorException>`
         """
         # Construct URL
         url = self.create_or_update_parent.metadata['url']
@@ -109,9 +186,7 @@ class ConfigurationAssignmentsOperations(object):
         response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [200]:
-            exp = CloudError(response)
-            exp.request_id = response.headers.get('x-ms-request-id')
-            raise exp
+            raise models.MaintenanceErrorException(self._deserialize, response)
 
         deserialized = None
         if response.status_code == 200:
@@ -153,7 +228,8 @@ class ConfigurationAssignmentsOperations(object):
         :return: ConfigurationAssignment or ClientRawResponse if raw=true
         :rtype: ~azure.mgmt.maintenance.models.ConfigurationAssignment or
          ~msrest.pipeline.ClientRawResponse
-        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
+        :raises:
+         :class:`MaintenanceErrorException<azure.mgmt.maintenance.models.MaintenanceErrorException>`
         """
         # Construct URL
         url = self.delete_parent.metadata['url']
@@ -187,10 +263,8 @@ class ConfigurationAssignmentsOperations(object):
         request = self._client.delete(url, query_parameters, header_parameters)
         response = self._client.send(request, stream=False, **operation_config)
 
-        if response.status_code not in [200]:
-            exp = CloudError(response)
-            exp.request_id = response.headers.get('x-ms-request-id')
-            raise exp
+        if response.status_code not in [200, 204]:
+            raise models.MaintenanceErrorException(self._deserialize, response)
 
         deserialized = None
         if response.status_code == 200:
@@ -202,6 +276,77 @@ class ConfigurationAssignmentsOperations(object):
 
         return deserialized
     delete_parent.metadata = {'url': '/subscriptions/{subscriptionId}/resourcegroups/{resourceGroupName}/providers/{providerName}/{resourceParentType}/{resourceParentName}/{resourceType}/{resourceName}/providers/Microsoft.Maintenance/configurationAssignments/{configurationAssignmentName}'}
+
+    def get(
+            self, resource_group_name, provider_name, resource_type, resource_name, configuration_assignment_name, custom_headers=None, raw=False, **operation_config):
+        """Get configuration assignment.
+
+        Get configuration for resource.
+
+        :param resource_group_name: Resource group name
+        :type resource_group_name: str
+        :param provider_name: Resource provider name
+        :type provider_name: str
+        :param resource_type: Resource type
+        :type resource_type: str
+        :param resource_name: Resource identifier
+        :type resource_name: str
+        :param configuration_assignment_name: Configuration assignment name
+        :type configuration_assignment_name: str
+        :param dict custom_headers: headers that will be added to the request
+        :param bool raw: returns the direct response alongside the
+         deserialized response
+        :param operation_config: :ref:`Operation configuration
+         overrides<msrest:optionsforoperations>`.
+        :return: ConfigurationAssignment or ClientRawResponse if raw=true
+        :rtype: ~azure.mgmt.maintenance.models.ConfigurationAssignment or
+         ~msrest.pipeline.ClientRawResponse
+        :raises:
+         :class:`MaintenanceErrorException<azure.mgmt.maintenance.models.MaintenanceErrorException>`
+        """
+        # Construct URL
+        url = self.get.metadata['url']
+        path_format_arguments = {
+            'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
+            'providerName': self._serialize.url("provider_name", provider_name, 'str'),
+            'resourceType': self._serialize.url("resource_type", resource_type, 'str'),
+            'resourceName': self._serialize.url("resource_name", resource_name, 'str'),
+            'configurationAssignmentName': self._serialize.url("configuration_assignment_name", configuration_assignment_name, 'str')
+        }
+        url = self._client.format_url(url, **path_format_arguments)
+
+        # Construct parameters
+        query_parameters = {}
+        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
+
+        # Construct headers
+        header_parameters = {}
+        header_parameters['Accept'] = 'application/json'
+        if self.config.generate_client_request_id:
+            header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
+        if custom_headers:
+            header_parameters.update(custom_headers)
+        if self.config.accept_language is not None:
+            header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
+
+        # Construct and send request
+        request = self._client.get(url, query_parameters, header_parameters)
+        response = self._client.send(request, stream=False, **operation_config)
+
+        if response.status_code not in [200]:
+            raise models.MaintenanceErrorException(self._deserialize, response)
+
+        deserialized = None
+        if response.status_code == 200:
+            deserialized = self._deserialize('ConfigurationAssignment', response)
+
+        if raw:
+            client_raw_response = ClientRawResponse(deserialized, response)
+            return client_raw_response
+
+        return deserialized
+    get.metadata = {'url': '/subscriptions/{subscriptionId}/resourcegroups/{resourceGroupName}/providers/{providerName}/{resourceType}/{resourceName}/providers/Microsoft.Maintenance/configurationAssignments/{configurationAssignmentName}'}
 
     def create_or_update(
             self, resource_group_name, provider_name, resource_type, resource_name, configuration_assignment_name, configuration_assignment, custom_headers=None, raw=False, **operation_config):
@@ -230,7 +375,8 @@ class ConfigurationAssignmentsOperations(object):
         :return: ConfigurationAssignment or ClientRawResponse if raw=true
         :rtype: ~azure.mgmt.maintenance.models.ConfigurationAssignment or
          ~msrest.pipeline.ClientRawResponse
-        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
+        :raises:
+         :class:`MaintenanceErrorException<azure.mgmt.maintenance.models.MaintenanceErrorException>`
         """
         # Construct URL
         url = self.create_or_update.metadata['url']
@@ -267,9 +413,7 @@ class ConfigurationAssignmentsOperations(object):
         response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [200]:
-            exp = CloudError(response)
-            exp.request_id = response.headers.get('x-ms-request-id')
-            raise exp
+            raise models.MaintenanceErrorException(self._deserialize, response)
 
         deserialized = None
         if response.status_code == 200:
@@ -307,7 +451,8 @@ class ConfigurationAssignmentsOperations(object):
         :return: ConfigurationAssignment or ClientRawResponse if raw=true
         :rtype: ~azure.mgmt.maintenance.models.ConfigurationAssignment or
          ~msrest.pipeline.ClientRawResponse
-        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
+        :raises:
+         :class:`MaintenanceErrorException<azure.mgmt.maintenance.models.MaintenanceErrorException>`
         """
         # Construct URL
         url = self.delete.metadata['url']
@@ -339,10 +484,8 @@ class ConfigurationAssignmentsOperations(object):
         request = self._client.delete(url, query_parameters, header_parameters)
         response = self._client.send(request, stream=False, **operation_config)
 
-        if response.status_code not in [200]:
-            exp = CloudError(response)
-            exp.request_id = response.headers.get('x-ms-request-id')
-            raise exp
+        if response.status_code not in [200, 204]:
+            raise models.MaintenanceErrorException(self._deserialize, response)
 
         deserialized = None
         if response.status_code == 200:
@@ -381,7 +524,8 @@ class ConfigurationAssignmentsOperations(object):
         :return: An iterator like instance of ConfigurationAssignment
         :rtype:
          ~azure.mgmt.maintenance.models.ConfigurationAssignmentPaged[~azure.mgmt.maintenance.models.ConfigurationAssignment]
-        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
+        :raises:
+         :class:`MaintenanceErrorException<azure.mgmt.maintenance.models.MaintenanceErrorException>`
         """
         def prepare_request(next_link=None):
             if not next_link:
@@ -426,9 +570,7 @@ class ConfigurationAssignmentsOperations(object):
             response = self._client.send(request, stream=False, **operation_config)
 
             if response.status_code not in [200]:
-                exp = CloudError(response)
-                exp.request_id = response.headers.get('x-ms-request-id')
-                raise exp
+                raise models.MaintenanceErrorException(self._deserialize, response)
 
             return response
 
@@ -463,7 +605,8 @@ class ConfigurationAssignmentsOperations(object):
         :return: An iterator like instance of ConfigurationAssignment
         :rtype:
          ~azure.mgmt.maintenance.models.ConfigurationAssignmentPaged[~azure.mgmt.maintenance.models.ConfigurationAssignment]
-        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
+        :raises:
+         :class:`MaintenanceErrorException<azure.mgmt.maintenance.models.MaintenanceErrorException>`
         """
         def prepare_request(next_link=None):
             if not next_link:
@@ -506,9 +649,7 @@ class ConfigurationAssignmentsOperations(object):
             response = self._client.send(request, stream=False, **operation_config)
 
             if response.status_code not in [200]:
-                exp = CloudError(response)
-                exp.request_id = response.headers.get('x-ms-request-id')
-                raise exp
+                raise models.MaintenanceErrorException(self._deserialize, response)
 
             return response
 

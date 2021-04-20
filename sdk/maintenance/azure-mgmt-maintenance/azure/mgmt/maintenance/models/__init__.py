@@ -13,29 +13,44 @@ try:
     from ._models_py3 import ApplyUpdate
     from ._models_py3 import ConfigurationAssignment
     from ._models_py3 import ErrorDetails
+    from ._models_py3 import InputLinuxParameters
+    from ._models_py3 import InputPatchConfiguration
+    from ._models_py3 import InputWindowsParameters
     from ._models_py3 import MaintenanceConfiguration
     from ._models_py3 import MaintenanceError, MaintenanceErrorException
     from ._models_py3 import Operation
     from ._models_py3 import OperationInfo
     from ._models_py3 import Resource
+    from ._models_py3 import SystemData
+    from ._models_py3 import TaskProperties
     from ._models_py3 import Update
 except (SyntaxError, ImportError):
     from ._models import ApplyUpdate
     from ._models import ConfigurationAssignment
     from ._models import ErrorDetails
+    from ._models import InputLinuxParameters
+    from ._models import InputPatchConfiguration
+    from ._models import InputWindowsParameters
     from ._models import MaintenanceConfiguration
     from ._models import MaintenanceError, MaintenanceErrorException
     from ._models import Operation
     from ._models import OperationInfo
     from ._models import Resource
+    from ._models import SystemData
+    from ._models import TaskProperties
     from ._models import Update
+from ._paged_models import ApplyUpdatePaged
 from ._paged_models import ConfigurationAssignmentPaged
 from ._paged_models import MaintenanceConfigurationPaged
 from ._paged_models import OperationPaged
 from ._paged_models import UpdatePaged
-from ._maintenance_management_client_enums import (
+from ._maintenance_client_enums import (
     UpdateStatus,
+    CreatedByType,
     MaintenanceScope,
+    Visibility,
+    RebootOptions,
+    TaskScope,
     ImpactType,
 )
 
@@ -43,17 +58,27 @@ __all__ = [
     'ApplyUpdate',
     'ConfigurationAssignment',
     'ErrorDetails',
+    'InputLinuxParameters',
+    'InputPatchConfiguration',
+    'InputWindowsParameters',
     'MaintenanceConfiguration',
     'MaintenanceError', 'MaintenanceErrorException',
     'Operation',
     'OperationInfo',
     'Resource',
+    'SystemData',
+    'TaskProperties',
     'Update',
-    'ConfigurationAssignmentPaged',
     'MaintenanceConfigurationPaged',
+    'ApplyUpdatePaged',
+    'ConfigurationAssignmentPaged',
     'OperationPaged',
     'UpdatePaged',
     'UpdateStatus',
+    'CreatedByType',
     'MaintenanceScope',
+    'Visibility',
+    'RebootOptions',
+    'TaskScope',
     'ImpactType',
 ]

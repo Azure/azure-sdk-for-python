@@ -15,8 +15,8 @@ from msrest.pipeline import ClientRawResponse
 from .. import models
 
 
-class Operations(object):
-    """Operations operations.
+class ConfigurationAssignmentsWithinSubscriptionOperations(object):
+    """ConfigurationAssignmentsWithinSubscriptionOperations operations.
 
     You should not instantiate directly this class, but create a Client instance that will create it for you and attach it as attribute.
 
@@ -40,19 +40,16 @@ class Operations(object):
 
     def list(
             self, custom_headers=None, raw=False, **operation_config):
-        """List available operations.
-
-        List the available operations supported by the Microsoft.Maintenance
-        resource provider.
+        """Get configuration assignment within a subscription.
 
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: An iterator like instance of Operation
+        :return: An iterator like instance of ConfigurationAssignment
         :rtype:
-         ~azure.mgmt.maintenance.models.OperationPaged[~azure.mgmt.maintenance.models.Operation]
+         ~azure.mgmt.maintenance.models.ConfigurationAssignmentPaged[~azure.mgmt.maintenance.models.ConfigurationAssignment]
         :raises:
          :class:`MaintenanceErrorException<azure.mgmt.maintenance.models.MaintenanceErrorException>`
         """
@@ -60,6 +57,10 @@ class Operations(object):
             if not next_link:
                 # Construct URL
                 url = self.list.metadata['url']
+                path_format_arguments = {
+                    'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
+                }
+                url = self._client.format_url(url, **path_format_arguments)
 
                 # Construct parameters
                 query_parameters = {}
@@ -97,7 +98,7 @@ class Operations(object):
         header_dict = None
         if raw:
             header_dict = {}
-        deserialized = models.OperationPaged(internal_paging, self._deserialize.dependencies, header_dict)
+        deserialized = models.ConfigurationAssignmentPaged(internal_paging, self._deserialize.dependencies, header_dict)
 
         return deserialized
-    list.metadata = {'url': '/providers/Microsoft.Maintenance/operations'}
+    list.metadata = {'url': '/subscriptions/{subscriptionId}/providers/Microsoft.Maintenance/configurationAssignments'}

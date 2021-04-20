@@ -11,7 +11,6 @@
 
 import uuid
 from msrest.pipeline import ClientRawResponse
-from msrestazure.azure_exceptions import CloudError
 
 from .. import models
 
@@ -25,7 +24,7 @@ class UpdatesOperations(object):
     :param config: Configuration of service client.
     :param serializer: An object model serializer.
     :param deserializer: An object model deserializer.
-    :ivar api_version: Version of the API to be used with the client request. Constant value: "2018-06-01-preview".
+    :ivar api_version: Version of the API to be used with the client request. Constant value: "2021-04-01-preview".
     """
 
     models = models
@@ -35,7 +34,7 @@ class UpdatesOperations(object):
         self._client = client
         self._serialize = serializer
         self._deserialize = deserializer
-        self.api_version = "2018-06-01-preview"
+        self.api_version = "2021-04-01-preview"
 
         self.config = config
 
@@ -65,7 +64,8 @@ class UpdatesOperations(object):
         :return: An iterator like instance of Update
         :rtype:
          ~azure.mgmt.maintenance.models.UpdatePaged[~azure.mgmt.maintenance.models.Update]
-        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
+        :raises:
+         :class:`MaintenanceErrorException<azure.mgmt.maintenance.models.MaintenanceErrorException>`
         """
         def prepare_request(next_link=None):
             if not next_link:
@@ -110,9 +110,7 @@ class UpdatesOperations(object):
             response = self._client.send(request, stream=False, **operation_config)
 
             if response.status_code not in [200]:
-                exp = CloudError(response)
-                exp.request_id = response.headers.get('x-ms-request-id')
-                raise exp
+                raise models.MaintenanceErrorException(self._deserialize, response)
 
             return response
 
@@ -147,7 +145,8 @@ class UpdatesOperations(object):
         :return: An iterator like instance of Update
         :rtype:
          ~azure.mgmt.maintenance.models.UpdatePaged[~azure.mgmt.maintenance.models.Update]
-        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
+        :raises:
+         :class:`MaintenanceErrorException<azure.mgmt.maintenance.models.MaintenanceErrorException>`
         """
         def prepare_request(next_link=None):
             if not next_link:
@@ -190,9 +189,7 @@ class UpdatesOperations(object):
             response = self._client.send(request, stream=False, **operation_config)
 
             if response.status_code not in [200]:
-                exp = CloudError(response)
-                exp.request_id = response.headers.get('x-ms-request-id')
-                raise exp
+                raise models.MaintenanceErrorException(self._deserialize, response)
 
             return response
 
