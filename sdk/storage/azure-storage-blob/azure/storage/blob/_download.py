@@ -10,9 +10,9 @@ import time
 
 import warnings
 from io import BytesIO
-import requests
-
 from typing import Iterator
+
+import requests
 from azure.core.exceptions import HttpResponseError, ServiceResponseError
 
 from azure.core.tracing.common import with_current_context
