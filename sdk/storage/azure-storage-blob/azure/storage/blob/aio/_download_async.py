@@ -7,7 +7,6 @@
 
 import asyncio
 import sys
-import time
 from io import BytesIO
 from itertools import islice
 import warnings
@@ -111,7 +110,7 @@ class _AsyncChunkDownloader(_ChunkDownloader):
                     retry_total -= 1
                     if retry_total <= 0:
                         raise ServiceResponseError(error, error=error)
-                    time.sleep(1)
+                    await asyncio.sleep(1)
 
             chunk_data = await process_content(response, offset[0], offset[1], self.encryption_options)
 
@@ -340,7 +339,7 @@ class StorageStreamDownloader(object):  # pylint: disable=too-many-instance-attr
                 retry_total -= 1
                 if retry_total <= 0:
                     raise ServiceResponseError(error, error=error)
-                time.sleep(1)
+                await asyncio.sleep(1)
 
         # get page ranges to optimize downloading sparse page blob
         if response.properties.blob_type == 'PageBlob':
