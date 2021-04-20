@@ -136,7 +136,7 @@ class StorageTableTest(AzureTestCase, TableTestCase):
             ts.create_table(table_name)
 
         name_filter = "TableName eq '{}'".format(table_name)
-        existing = list(ts.query_tables(filter=name_filter))
+        existing = list(ts.query_tables(name_filter))
 
         # Assert
         assert created is not None
@@ -156,7 +156,7 @@ class StorageTableTest(AzureTestCase, TableTestCase):
         query_filter = "TableName eq 'mytable0' or TableName eq 'mytable1' or TableName eq 'mytable2'"
         table_count = 0
         page_count = 0
-        for table_page in ts.query_tables(filter=query_filter, results_per_page=2).by_page():
+        for table_page in ts.query_tables(query_filter, results_per_page=2).by_page():
 
             temp_count = 0
             for table in table_page:
@@ -231,7 +231,7 @@ class StorageTableTest(AzureTestCase, TableTestCase):
 
         # Act
         name_filter = "TableName eq '{}'".format(t.table_name)
-        tables = list(ts.query_tables(filter=name_filter))
+        tables = list(ts.query_tables(name_filter))
 
         for table_item in tables:
             assert isinstance(table_item,  TableItem)
@@ -433,7 +433,7 @@ class StorageTableTest(AzureTestCase, TableTestCase):
 
             # Assert
             with pytest.raises(ValueError):
-                table.set_table_access_policy(table_name=table.table_name, signed_identifiers=identifiers)
+                table.set_table_access_policy(signed_identifiers=identifiers)
         finally:
             ts.delete_table(table.table_name)
 
@@ -472,10 +472,6 @@ class StorageTableTest(AzureTestCase, TableTestCase):
             service = self.create_client_from_credential(TableServiceClient, token, account_url=account_url)
 
             # Act
-            # service = TableServiceClient(
-            #     self.account_url(tables_storage_account_name, "table"),
-            #     credential=token,
-            # )
 
             sas_table = service.get_table_client(table.table_name)
             entities = list(sas_table.list_entities())
@@ -486,37 +482,6 @@ class StorageTableTest(AzureTestCase, TableTestCase):
             assert entities[1].text ==  u'hello'
         finally:
             self._delete_table(table=table, ts=tsc)
-
-    @pytest.mark.skip("Test fails on Linux and in Python2. Throws a locale.Error: unsupported locale setting")
-    @TablesPreparer()
-    def test_locale(self, tables_storage_account_name, tables_primary_storage_account_key):
-        # Arrange
-        account_url = self.account_url(tables_storage_account_name, "table")
-        ts = self.create_client_from_credential(TableServiceClient, tables_primary_storage_account_key, account_url=account_url)
-        table = (self._get_table_reference())
-        init_locale = locale.getlocale()
-        if os.name == "nt":
-            culture = "Spanish_Spain"
-        elif os.name == 'posix':
-            culture = 'es_ES.UTF-8'
-        else:
-            culture = 'es_ES.utf8'
-
-        locale.setlocale(locale.LC_ALL, culture)
-        e = None
-
-        # Act
-        ts.create_table(table)
-
-        resp = ts.list_tables()
-
-        e = sys.exc_info()[0]
-
-        # Assert
-        assert e is None
-
-        ts.delete_table(table)
-        locale.setlocale(locale.LC_ALL, init_locale[0] or 'en_US')
 
 
 class TestTablesUnitTest(TableTestCase):
@@ -560,3 +525,13 @@ class TestTablesUnitTest(TableTestCase):
 
         assert "Table names must be alphanumeric, cannot begin with a number, and must be between 3-63 characters long.""" in str(
             excinfo)
+
+    def test_azurite_url(self):
+        account_url = "https://127.0.0.1:10002/my_account"
+        tsc = TableServiceClient(account_url, credential=self.tables_primary_storage_account_key)
+
+        assert tsc.account_name == "my_account"
+        assert tsc.url == "https://127.0.0.1:10002/my_account"
+        assert tsc.location_mode == "primary"
+        assert tsc.credential.account_key == self.tables_primary_storage_account_key
+        assert tsc.credential.account_name == "my_account"

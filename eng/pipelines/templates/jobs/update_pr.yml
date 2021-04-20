@@ -5,6 +5,7 @@
 
 trigger:
 - master
+- main
 
 variables:
   skipComponentGovernanceDetection: true

@@ -12,7 +12,9 @@ import warnings
 from io import BytesIO
 import requests
 
+from typing import Iterator
 from azure.core.exceptions import HttpResponseError, ServiceResponseError
+
 from azure.core.tracing.common import with_current_context
 from ._shared.encryption import decrypt_blob
 from ._shared.request_handlers import validate_and_format_range_headers
@@ -225,8 +227,9 @@ class _ChunkDownloader(object):  # pylint: disable=too-many-instance-attributes
 class _ChunkIterator(object):
     """Async iterator for chunks in blob download stream."""
 
-    def __init__(self, size, content, downloader):
+    def __init__(self, size, content, downloader, chunk_size):
         self.size = size
+        self._chunk_size = chunk_size
         self._current_content = content
         self._iter_downloader = downloader
         self._iter_chunks = None
@@ -243,20 +246,38 @@ class _ChunkIterator(object):
         if self._complete:
             raise StopIteration("Download complete")
         if not self._iter_downloader:
-            # If no iterator was supplied, the download completed with
-            # the initial GET, so we just return that data
+            # cut the data obtained from initial GET into chunks
+            if len(self._current_content) > self._chunk_size:
+                return self._get_chunk_data()
             self._complete = True
             return self._current_content
 
         if not self._iter_chunks:
             self._iter_chunks = self._iter_downloader.get_chunk_offsets()
-        else:
-            chunk = next(self._iter_chunks)
-            self._current_content = self._iter_downloader.yield_chunk(chunk)
 
-        return self._current_content
+        # initial GET result still has more than _chunk_size bytes of data
+        if len(self._current_content) >= self._chunk_size:
+            return self._get_chunk_data()
+
+        try:
+            chunk = next(self._iter_chunks)
+            self._current_content += self._iter_downloader.yield_chunk(chunk)
+        except StopIteration as e:
+            self._complete = True
+            if self._current_content:
+                return self._current_content
+            raise e
+
+        # the current content from the first get is still there but smaller than chunk size
+        # therefore we want to make sure its also included
+        return self._get_chunk_data()
 
     next = __next__  # Python 2 compatibility.
+
+    def _get_chunk_data(self):
+        chunk_data = self._current_content[: self._chunk_size]
+        self._current_content = self._current_content[self._chunk_size:]
+        return chunk_data
 
 
 class StorageStreamDownloader(object):  # pylint: disable=too-many-instance-attributes
@@ -448,6 +469,20 @@ class StorageStreamDownloader(object):  # pylint: disable=too-many-instance-attr
         return response
 
     def chunks(self):
+        # type: () -> Iterator[bytes]
+        """Iterate over chunks in the download stream.
+
+        :rtype: Iterator[bytes]
+
+        .. admonition:: Example:
+
+            .. literalinclude:: ../samples/blob_samples_hello_world.py
+                :start-after: [START download_a_blob_in_chunk]
+                :end-before: [END download_a_blob_in_chunk]
+                :language: python
+                :dedent: 12
+                :caption: Download a blob using chunks().
+        """
         if self.size == 0 or self._download_complete:
             iter_downloader = None
         else:
@@ -473,7 +508,8 @@ class StorageStreamDownloader(object):  # pylint: disable=too-many-instance-attr
         return _ChunkIterator(
             size=self.size,
             content=self._current_content,
-            downloader=iter_downloader)
+            downloader=iter_downloader,
+            chunk_size=self._config.max_chunk_get_size)
 
     def readall(self):
         """Download the contents of this blob.

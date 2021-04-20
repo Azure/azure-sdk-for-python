@@ -30,12 +30,24 @@ class ChangeType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     """Type of change that will be made to the resource when the deployment is executed.
     """
 
-    CREATE = "Create"  #: The resource does not exist in the current state but is present in the desired state. The resource will be created when the deployment is executed.
-    DELETE = "Delete"  #: The resource exists in the current state and is missing from the desired state. The resource will be deleted when the deployment is executed.
-    IGNORE = "Ignore"  #: The resource exists in the current state and is missing from the desired state. The resource will not be deployed or modified when the deployment is executed.
-    DEPLOY = "Deploy"  #: The resource exists in the current state and the desired state and will be redeployed when the deployment is executed. The properties of the resource may or may not change.
-    NO_CHANGE = "NoChange"  #: The resource exists in the current state and the desired state and will be redeployed when the deployment is executed. The properties of the resource will not change.
-    MODIFY = "Modify"  #: The resource exists in the current state and the desired state and will be redeployed when the deployment is executed. The properties of the resource will change.
+    #: The resource does not exist in the current state but is present in the desired state. The
+    #: resource will be created when the deployment is executed.
+    CREATE = "Create"
+    #: The resource exists in the current state and is missing from the desired state. The resource
+    #: will be deleted when the deployment is executed.
+    DELETE = "Delete"
+    #: The resource exists in the current state and is missing from the desired state. The resource
+    #: will not be deployed or modified when the deployment is executed.
+    IGNORE = "Ignore"
+    #: The resource exists in the current state and the desired state and will be redeployed when the
+    #: deployment is executed. The properties of the resource may or may not change.
+    DEPLOY = "Deploy"
+    #: The resource exists in the current state and the desired state and will be redeployed when the
+    #: deployment is executed. The properties of the resource will not change.
+    NO_CHANGE = "NoChange"
+    #: The resource exists in the current state and the desired state and will be redeployed when the
+    #: deployment is executed. The properties of the resource will change.
+    MODIFY = "Modify"
 
 class DeploymentMode(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     """The mode that is used to deploy resources. This value can be either Incremental or Complete. In
@@ -60,10 +72,17 @@ class PropertyChangeType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     """The type of property change.
     """
 
-    CREATE = "Create"  #: The property does not exist in the current state but is present in the desired state. The property will be created when the deployment is executed.
-    DELETE = "Delete"  #: The property exists in the current state and is missing from the desired state. It will be deleted when the deployment is executed.
-    MODIFY = "Modify"  #: The property exists in both current and desired state and is different. The value of the property will change when the deployment is executed.
-    ARRAY = "Array"  #: The property is an array and contains nested changes.
+    #: The property does not exist in the current state but is present in the desired state. The
+    #: property will be created when the deployment is executed.
+    CREATE = "Create"
+    #: The property exists in the current state and is missing from the desired state. It will be
+    #: deleted when the deployment is executed.
+    DELETE = "Delete"
+    #: The property exists in both current and desired state and is different. The value of the
+    #: property will change when the deployment is executed.
+    MODIFY = "Modify"
+    #: The property is an array and contains nested changes.
+    ARRAY = "Array"
 
 class ResourceIdentityType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     """The identity type.

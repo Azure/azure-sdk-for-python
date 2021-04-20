@@ -33,6 +33,14 @@ class TableTestAsync(AzureTestCase, AsyncTableTestCase):
         table_name = self.get_resource_name(prefix)
         return table_name
 
+    async def _delete_all_tables(self, account_name, key):
+        client = TableServiceClient(self.account_url(account_name, "cosmos"), key)
+        async for table in client.list_tables():
+            await client.delete_table(table.table_name)
+
+        if self.is_live:
+            self.sleep(10)
+
     async def _create_table(self, ts, prefix=TEST_TABLE_PREFIX, table_list=None):
         table_name = self._get_table_reference(prefix)
         try:
@@ -102,7 +110,7 @@ class TableTestAsync(AzureTestCase, AsyncTableTestCase):
         query_filter = "TableName eq 'myasynctable0' or TableName eq 'myasynctable1' or TableName eq 'myasynctable2'"
         table_count = 0
         page_count = 0
-        async for table_page in ts.query_tables(filter=query_filter, results_per_page=2).by_page():
+        async for table_page in ts.query_tables(query_filter, results_per_page=2).by_page():
 
             temp_count = 0
             async for table in table_page:
@@ -148,7 +156,7 @@ class TableTestAsync(AzureTestCase, AsyncTableTestCase):
         # Act
         name_filter = "TableName eq '{}'".format(table.table_name)
         tables = []
-        async for t in ts.query_tables(filter=name_filter):
+        async for t in ts.query_tables(name_filter):
             tables.append(t)
 
         # Assert
@@ -159,10 +167,10 @@ class TableTestAsync(AzureTestCase, AsyncTableTestCase):
         if self.is_live:
             sleep(SLEEP_DELAY)
 
-    @pytest.mark.skip("small page and large page issues, 6 != 3")
     @CosmosPreparer()
     async def test_list_tables_with_num_results(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
         # Arrange
+        await self._delete_all_tables(tables_cosmos_account_name, tables_primary_cosmos_account_key)
         prefix = 'listtable'
         ts = TableServiceClient(self.account_url(tables_cosmos_account_name, "cosmos"), tables_primary_cosmos_account_key)
         table_list = []
@@ -170,19 +178,23 @@ class TableTestAsync(AzureTestCase, AsyncTableTestCase):
             await self._create_table(ts, prefix + str(i), table_list)
 
         # Act
-        big_page = []
+        all_tables = 0
         async for t in ts.list_tables():
-            big_page.append(t)
+            all_tables += 1
 
-        small_page = []
-        async for s in ts.list_tables(results_per_page=3).by_page():
-            small_page.append(s)
+        small_page = 0
+        async for page in ts.list_tables(results_per_page=3).by_page():
+            page_size = 0
+            async for table in page:
+                page_size += 1
+            assert page_size <= 3
+            small_page += 1
 
-        assert len(small_page) ==  2
-        assert len(big_page) >=  4
+        assert small_page == 2
+        assert all_tables == 4
 
-        if self.is_live:
-            sleep(SLEEP_DELAY)
+        # if self.is_live:
+        #     sleep(SLEEP_DELAY)
 
     @CosmosPreparer()
     async def test_list_tables_with_marker(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
@@ -246,204 +258,6 @@ class TableTestAsync(AzureTestCase, AsyncTableTestCase):
         # Act
         with pytest.raises(ResourceNotFoundError):
             await ts.delete_table(table_name)
-
-        if self.is_live:
-            sleep(SLEEP_DELAY)
-
-    @pytest.mark.skip("Cosmos does not support table access policy")
-    @CosmosPreparer()
-    async def test_get_table_acl(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
-        # Arrange
-        url = self.account_url(tables_cosmos_account_name, "cosmos")
-        ts = TableServiceClient(self.account_url(tables_cosmos_account_name, "cosmos"), tables_primary_cosmos_account_key)
-        table = await self._create_table(ts)
-        try:
-            # Act
-            acl = await table.get_table_access_policy()
-
-            # Assert
-            assert acl is not None
-            assert len(acl) ==  0
-        finally:
-            await ts.delete_table(table.table_name)
-
-        if self.is_live:
-            sleep(SLEEP_DELAY)
-
-    @pytest.mark.skip("Cosmos does not support table access policy")
-    @CosmosPreparer()
-    async def test_set_table_acl_with_empty_signed_identifiers(self, tables_cosmos_account_name,
-                                                               tables_primary_cosmos_account_key):
-        # Arrange
-        url = self.account_url(tables_cosmos_account_name, "cosmos")
-        ts = TableServiceClient(url, tables_primary_cosmos_account_key)
-        table = await self._create_table(ts)
-        try:
-            # Act
-            await table.set_table_access_policy(signed_identifiers={})
-
-            # Assert
-            acl = await table.get_table_access_policy()
-            assert acl is not None
-            assert len(acl) ==  0
-        finally:
-            await ts.delete_table(table.table_name)
-
-        if self.is_live:
-            sleep(SLEEP_DELAY)
-
-    @pytest.mark.skip("Cosmos does not support table access policy")
-    @CosmosPreparer()
-    async def test_set_table_acl_with_empty_signed_identifier(self, tables_cosmos_account_name,
-                                                              tables_primary_cosmos_account_key):
-        # Arrange
-        url = self.account_url(tables_cosmos_account_name, "cosmos")
-        ts = TableServiceClient(url, tables_primary_cosmos_account_key)
-        table = await self._create_table(ts)
-        try:
-            # Act
-            await table.set_table_access_policy(signed_identifiers={'empty': None})
-            # Assert
-            acl = await table.get_table_access_policy()
-            assert acl is not None
-            assert len(acl) ==  1
-            assert acl['empty'] is not None
-            assert acl['empty'].permission is None
-            assert acl['empty'].expiry is None
-            assert acl['empty'].start is None
-        finally:
-            await ts.delete_table(table.table_name)
-
-        if self.is_live:
-            sleep(SLEEP_DELAY)
-
-    @pytest.mark.skip("Cosmos does not support table access policy")
-    @CosmosPreparer()
-    async def test_set_table_acl_with_signed_identifiers(self, tables_cosmos_account_name,
-                                                         tables_primary_cosmos_account_key):
-        # Arrange
-        url = self.account_url(tables_cosmos_account_name, "cosmos")
-        ts = TableServiceClient(url, tables_primary_cosmos_account_key)
-        table = await self._create_table(ts)
-        client = ts.get_table_client(table_name=table.table_name)
-
-        # Act
-        identifiers = dict()
-        identifiers['testid'] = AccessPolicy(start=datetime.utcnow() - timedelta(minutes=5),
-                                             expiry=datetime.utcnow() + timedelta(hours=1),
-                                             permission=TableSasPermissions(read=True))
-        try:
-            await client.set_table_access_policy(signed_identifiers=identifiers)
-
-            # Assert
-            acl = await  client.get_table_access_policy()
-            assert acl is not None
-            assert len(acl) ==  1
-            assert 'testid' in acl
-        finally:
-            await ts.delete_table(table.table_name)
-
-        if self.is_live:
-            sleep(SLEEP_DELAY)
-
-    @pytest.mark.skip("Cosmos does not support table access policy")
-    @CosmosPreparer()
-    async def test_set_table_acl_too_many_ids(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
-        # Arrange
-        url = self.account_url(tables_cosmos_account_name, "cosmos")
-        ts = TableServiceClient(url, tables_primary_cosmos_account_key)
-        table = await self._create_table(ts)
-        try:
-            # Act
-            identifiers = dict()
-            for i in range(0, 6):
-                identifiers['id{}'.format(i)] = None
-
-            # Assert
-            with pytest.raises(ValueError):
-                await table.set_table_access_policy(table_name=table.table_name, signed_identifiers=identifiers)
-        finally:
-            await ts.delete_table(table.table_name)
-
-        if self.is_live:
-            sleep(SLEEP_DELAY)
-
-    @pytest.mark.skip("Cosmos does not support table access policy")
-    @pytest.mark.live_test_only
-    @CosmosPreparer()
-    async def test_account_sas(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
-        # SAS URL is calculated from storage key, so this test runs live only
-
-        # Arrange
-        url = self.account_url(tables_cosmos_account_name, "cosmos")
-        tsc = TableServiceClient(url, tables_primary_cosmos_account_key)
-        table = await self._create_table(tsc)
-        try:
-            entity = {
-                'PartitionKey': 'test',
-                'RowKey': 'test1',
-                'text': 'hello',
-            }
-            await table.upsert_insert_merge_entity(table_entity_properties=entity)
-
-            entity['RowKey'] = 'test2'
-            await table.upsert_insert_merge_entity(table_entity_properties=entity)
-
-            token = generate_account_sas(
-                tables_cosmos_account_name,
-                tables_primary_cosmos_account_key,
-                resource_types=ResourceTypes(container=True),
-                permission=AccountSasPermissions(list=True),
-                expiry=datetime.utcnow() + timedelta(hours=1),
-                start=datetime.utcnow() - timedelta(minutes=1),
-            )
-
-            # Act
-            service = TableServiceClient(
-                self.account_url(tables_cosmos_account_name, "cosmos"),
-                credential=token,
-            )
-            entities = []
-            async for e in service.list_tables():
-                entities.append(e)
-
-            # Assert
-            assert len(entities) ==  1
-        finally:
-            await self._delete_table(table=table, ts=tsc)
-
-        if self.is_live:
-            sleep(SLEEP_DELAY)
-
-    @pytest.mark.skip("Test fails on Linux and in Python2. Throws a locale.Error: unsupported locale setting")
-    @CosmosPreparer()
-    async def test_locale(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
-        # Arrange
-        ts = TableServiceClient(self.account_url(tables_cosmos_account_name, "cosmos"), tables_primary_cosmos_account_key)
-        table = (self._get_table_reference())
-        init_locale = locale.getlocale()
-        if os.name == "nt":
-            culture = "Spanish_Spain"
-        elif os.name == 'posix':
-            culture = 'es_ES.UTF-8'
-        else:
-            culture = 'es_ES.utf8'
-
-        locale.setlocale(locale.LC_ALL, culture)
-        e = None
-
-        # Act
-        await ts.create_table(table)
-
-        resp = ts.list_tables()
-
-        e = sys.exc_info()[0]
-
-        # Assert
-        assert e is None
-
-        await ts.delete_table(table)
-        locale.setlocale(locale.LC_ALL, init_locale[0] or 'en_US')
 
         if self.is_live:
             sleep(SLEEP_DELAY)

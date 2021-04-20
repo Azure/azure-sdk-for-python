@@ -119,7 +119,7 @@ jobs:
             Location: ${{ coalesce(parameters.Location, parameters.CloudConfig.Location) }}
             ServiceDirectory: '${{ parameters.ServiceDirectory }}'
             SubscriptionConfiguration: ${{ parameters.CloudConfig.SubscriptionConfiguration }}
-            ArmTemplateParameters: ${{ coalesce(parameters.CloudConfig.ArmTemplateParameters, '@{}') }}
+            ArmTemplateParameters: $(ArmTemplateParameters)
 
       - template: ../steps/build-test.yml
         parameters:
