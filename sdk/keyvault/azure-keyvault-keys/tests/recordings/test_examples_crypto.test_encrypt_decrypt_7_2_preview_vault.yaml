@@ -1,0 +1,195 @@
+interactions:
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '0'
+      Content-Type:
+      - application/json
+      User-Agent:
+      - azsdk-python-keyvault-keys/4.4.0b5 Python/3.5.3 (Windows-10-10.0.19041-SP0)
+    method: POST
+    uri: https://vaultname.vault.azure.net/keys/crypto-test-encrypt-keydc0a183e/create?api-version=7.2-preview
+  response:
+    body:
+      string: '{"error":{"code":"Unauthorized","message":"Request is missing a Bearer
+        or PoP token."}}'
+    headers:
+      cache-control:
+      - no-cache
+      content-length:
+      - '87'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Mon, 19 Apr 2021 22:51:19 GMT
+      expires:
+      - '-1'
+      pragma:
+      - no-cache
+      strict-transport-security:
+      - max-age=31536000;includeSubDomains
+      www-authenticate:
+      - Bearer authorization="https://login.windows.net/72f988bf-86f1-41af-91ab-2d7cd011db47",
+        resource="https://vault.azure.net"
+      x-content-type-options:
+      - nosniff
+      x-ms-keyvault-network-info:
+      - conn_type=Ipv4;addr=172.92.159.124;act_addr_fam=InterNetwork;
+      x-ms-keyvault-region:
+      - eastus2
+      x-ms-keyvault-service-version:
+      - 1.2.236.0
+      x-powered-by:
+      - ASP.NET
+    status:
+      code: 401
+      message: Unauthorized
+- request:
+    body: '{"kty": "RSA"}'
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '14'
+      Content-Type:
+      - application/json
+      User-Agent:
+      - azsdk-python-keyvault-keys/4.4.0b5 Python/3.5.3 (Windows-10-10.0.19041-SP0)
+    method: POST
+    uri: https://vaultname.vault.azure.net/keys/crypto-test-encrypt-keydc0a183e/create?api-version=7.2-preview
+  response:
+    body:
+      string: '{"key":{"kid":"https://vaultname.vault.azure.net/keys/crypto-test-encrypt-keydc0a183e/3164b23fd54d44ecb4f37a2826b0e1c9","kty":"RSA","key_ops":["encrypt","decrypt","sign","verify","wrapKey","unwrapKey"],"n":"pa_Hpeq5TtkrIv29-1M0GCT4SMD0fOE-1Ss9uNFdik3_pxsKmOFEum7oZQkb2nt-_UBtA1uS0CfMhmOwF8-FoKoInBK6dtJkd5ihx6fAptakORlsoYvZL6idqGYXMkv6OFuWNE2p0AaDl96BSZimwXAFROHjSL2v12RIOJ0MOTEgcI0tFXcx_itX3QZhwyM4AW63D8Yyg5QCErW8i-y1T-mm90Ks7gzOXQ0jhzZneaRwpaz7H3U2guk1yOEjQgmcXr3dF2mgeW0Ijc3s64dh4N_ibPiH--QWw989zfAF6B3K2MZH9J3oTcRw3wGxH3PqgAmOrs7ynP-X0r0tJ70UZQ","e":"AQAB"},"attributes":{"enabled":true,"created":1618872680,"updated":1618872680,"recoveryLevel":"Recoverable+Purgeable","recoverableDays":90}}'
+    headers:
+      cache-control:
+      - no-cache
+      content-length:
+      - '699'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Mon, 19 Apr 2021 22:51:20 GMT
+      expires:
+      - '-1'
+      pragma:
+      - no-cache
+      strict-transport-security:
+      - max-age=31536000;includeSubDomains
+      x-content-type-options:
+      - nosniff
+      x-ms-keyvault-network-info:
+      - conn_type=Ipv4;addr=172.92.159.124;act_addr_fam=InterNetwork;
+      x-ms-keyvault-region:
+      - eastus2
+      x-ms-keyvault-service-version:
+      - 1.2.236.0
+      x-powered-by:
+      - ASP.NET
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - azsdk-python-keyvault-keys/4.4.0b5 Python/3.5.3 (Windows-10-10.0.19041-SP0)
+    method: GET
+    uri: https://vaultname.vault.azure.net/keys/crypto-test-encrypt-keydc0a183e/?api-version=7.2-preview
+  response:
+    body:
+      string: '{"key":{"kid":"https://vaultname.vault.azure.net/keys/crypto-test-encrypt-keydc0a183e/3164b23fd54d44ecb4f37a2826b0e1c9","kty":"RSA","key_ops":["encrypt","decrypt","sign","verify","wrapKey","unwrapKey"],"n":"pa_Hpeq5TtkrIv29-1M0GCT4SMD0fOE-1Ss9uNFdik3_pxsKmOFEum7oZQkb2nt-_UBtA1uS0CfMhmOwF8-FoKoInBK6dtJkd5ihx6fAptakORlsoYvZL6idqGYXMkv6OFuWNE2p0AaDl96BSZimwXAFROHjSL2v12RIOJ0MOTEgcI0tFXcx_itX3QZhwyM4AW63D8Yyg5QCErW8i-y1T-mm90Ks7gzOXQ0jhzZneaRwpaz7H3U2guk1yOEjQgmcXr3dF2mgeW0Ijc3s64dh4N_ibPiH--QWw989zfAF6B3K2MZH9J3oTcRw3wGxH3PqgAmOrs7ynP-X0r0tJ70UZQ","e":"AQAB"},"attributes":{"enabled":true,"created":1618872680,"updated":1618872680,"recoveryLevel":"Recoverable+Purgeable","recoverableDays":90}}'
+    headers:
+      cache-control:
+      - no-cache
+      content-length:
+      - '699'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Mon, 19 Apr 2021 22:51:20 GMT
+      expires:
+      - '-1'
+      pragma:
+      - no-cache
+      strict-transport-security:
+      - max-age=31536000;includeSubDomains
+      x-content-type-options:
+      - nosniff
+      x-ms-keyvault-network-info:
+      - conn_type=Ipv4;addr=172.92.159.124;act_addr_fam=InterNetwork;
+      x-ms-keyvault-region:
+      - eastus2
+      x-ms-keyvault-service-version:
+      - 1.2.236.0
+      x-powered-by:
+      - ASP.NET
+    status:
+      code: 200
+      message: OK
+- request:
+    body: '{"value": "paOr32Gt61F6_U3ngVkVtOQOB7wmMkUmQbp8hkMiDH6c3CC8D15Hye7jxhsxhbCgpmkXBeQAgIdJvdpn_I2jdJcddmlwkmNF-JP--kwo6_32asvPEpVrc4NiTE5zLafZffvoGKOb9CrGkx_ZJuyNSmySlKzMvP2d6DIcBX_3FfvkhAsNqysTeL_lJR4UznS6pHAPwj1jI--UsEu-ZMAfs0RIkjdQY-2ik9txyvesHDqqAVYQBURYwgrKdERbfUOH7nVNc7h-FSGsYkBQy9swfk_UutSV5BXDe5AGMgTa7FBNKc5AwrvBIzScpk34ibtWxN-dIyo38bV8_8-NhC4Y3Q",
+      "alg": "RSA-OAEP"}'
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '374'
+      Content-Type:
+      - application/json
+      User-Agent:
+      - azsdk-python-keyvault-keys/4.4.0b5 Python/3.5.3 (Windows-10-10.0.19041-SP0)
+    method: POST
+    uri: https://vaultname.vault.azure.net/keys/crypto-test-encrypt-keydc0a183e/3164b23fd54d44ecb4f37a2826b0e1c9/decrypt?api-version=7.2-preview
+  response:
+    body:
+      string: '{"kid":"https://vaultname.vault.azure.net/keys/crypto-test-encrypt-keydc0a183e/3164b23fd54d44ecb4f37a2826b0e1c9","value":"cGxhaW50ZXh0"}'
+    headers:
+      cache-control:
+      - no-cache
+      content-length:
+      - '139'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Mon, 19 Apr 2021 22:51:21 GMT
+      expires:
+      - '-1'
+      pragma:
+      - no-cache
+      strict-transport-security:
+      - max-age=31536000;includeSubDomains
+      x-content-type-options:
+      - nosniff
+      x-ms-keyvault-network-info:
+      - conn_type=Ipv4;addr=172.92.159.124;act_addr_fam=InterNetwork;
+      x-ms-keyvault-region:
+      - eastus2
+      x-ms-keyvault-service-version:
+      - 1.2.236.0
+      x-powered-by:
+      - ASP.NET
+    status:
+      code: 200
+      message: OK
+version: 1

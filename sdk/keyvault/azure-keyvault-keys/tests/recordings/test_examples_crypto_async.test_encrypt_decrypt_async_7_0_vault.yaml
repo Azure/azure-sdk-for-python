@@ -1,0 +1,133 @@
+interactions:
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      Content-Length:
+      - '0'
+      Content-Type:
+      - application/json
+      User-Agent:
+      - azsdk-python-keyvault-keys/4.4.0b5 Python/3.5.3 (Windows-10-10.0.19041-SP0)
+    method: POST
+    uri: https://vaultname.vault.azure.net/keys/crypto-test-encrypt-key464d19d5/create?api-version=7.0
+  response:
+    body:
+      string: '{"error":{"code":"Unauthorized","message":"Request is missing a Bearer
+        or PoP token."}}'
+    headers:
+      cache-control: no-cache
+      content-length: '87'
+      content-type: application/json; charset=utf-8
+      date: Mon, 19 Apr 2021 22:04:54 GMT
+      expires: '-1'
+      pragma: no-cache
+      strict-transport-security: max-age=31536000;includeSubDomains
+      www-authenticate: Bearer authorization="https://login.windows.net/72f988bf-86f1-41af-91ab-2d7cd011db47",
+        resource="https://vault.azure.net"
+      x-content-type-options: nosniff
+      x-ms-keyvault-network-info: conn_type=Ipv4;addr=172.92.159.124;act_addr_fam=InterNetwork;
+      x-ms-keyvault-region: eastus2
+      x-ms-keyvault-service-version: 1.2.236.0
+      x-powered-by: ASP.NET
+    status:
+      code: 401
+      message: Unauthorized
+    url: https://mcpatinotest.vault.azure.net/keys/crypto-test-encrypt-key464d19d5/create?api-version=7.0
+- request:
+    body: '{"kty": "RSA"}'
+    headers:
+      Accept:
+      - application/json
+      Content-Length:
+      - '14'
+      Content-Type:
+      - application/json
+      User-Agent:
+      - azsdk-python-keyvault-keys/4.4.0b5 Python/3.5.3 (Windows-10-10.0.19041-SP0)
+    method: POST
+    uri: https://vaultname.vault.azure.net/keys/crypto-test-encrypt-key464d19d5/create?api-version=7.0
+  response:
+    body:
+      string: '{"key":{"kid":"https://vaultname.vault.azure.net/keys/crypto-test-encrypt-key464d19d5/a4c1b057dfff4954bec03c8be7a9852b","kty":"RSA","key_ops":["encrypt","decrypt","sign","verify","wrapKey","unwrapKey"],"n":"59qCJ4rVg7d9iJQ_UXVOxoIAq8cBAELuRS-HyAtqesocr5ZsGMb90liW9tTZEkxcQklCJrANp3XfjOTJ_7i-cCszyB9ch0mq2JzAbKnEj_-Xad6ZzYR8uVnmnpRvmTPsb8Bjvlnrv-ehH_8do6xg1mKWtJfu1VY_V52nBuuON-kyGXZr4tc_exAV8E62YliEZAby46n-rFhiO2UuyDzvxpgwZ6CaqEwJEh03mPx-_YxChxEwDlts5TsjqHBBDYFMw8BAGI40SCmI7yTxTpT-2P0RVEK6ZKn60aV5m_5lfQipjMqS9Q5c7Pvcjgck_k7QP68Jfstd_T3QyKM5-h6XNQ","e":"AQAB"},"attributes":{"enabled":true,"created":1618869894,"updated":1618869894,"recoveryLevel":"Recoverable+Purgeable"}}'
+    headers:
+      cache-control: no-cache
+      content-length: '678'
+      content-type: application/json; charset=utf-8
+      date: Mon, 19 Apr 2021 22:04:54 GMT
+      expires: '-1'
+      pragma: no-cache
+      strict-transport-security: max-age=31536000;includeSubDomains
+      x-content-type-options: nosniff
+      x-ms-keyvault-network-info: conn_type=Ipv4;addr=172.92.159.124;act_addr_fam=InterNetwork;
+      x-ms-keyvault-region: eastus2
+      x-ms-keyvault-service-version: 1.2.236.0
+      x-powered-by: ASP.NET
+    status:
+      code: 200
+      message: OK
+    url: https://mcpatinotest.vault.azure.net/keys/crypto-test-encrypt-key464d19d5/create?api-version=7.0
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      User-Agent:
+      - azsdk-python-keyvault-keys/4.4.0b5 Python/3.5.3 (Windows-10-10.0.19041-SP0)
+    method: GET
+    uri: https://vaultname.vault.azure.net/keys/crypto-test-encrypt-key464d19d5/?api-version=7.0
+  response:
+    body:
+      string: '{"key":{"kid":"https://vaultname.vault.azure.net/keys/crypto-test-encrypt-key464d19d5/a4c1b057dfff4954bec03c8be7a9852b","kty":"RSA","key_ops":["encrypt","decrypt","sign","verify","wrapKey","unwrapKey"],"n":"59qCJ4rVg7d9iJQ_UXVOxoIAq8cBAELuRS-HyAtqesocr5ZsGMb90liW9tTZEkxcQklCJrANp3XfjOTJ_7i-cCszyB9ch0mq2JzAbKnEj_-Xad6ZzYR8uVnmnpRvmTPsb8Bjvlnrv-ehH_8do6xg1mKWtJfu1VY_V52nBuuON-kyGXZr4tc_exAV8E62YliEZAby46n-rFhiO2UuyDzvxpgwZ6CaqEwJEh03mPx-_YxChxEwDlts5TsjqHBBDYFMw8BAGI40SCmI7yTxTpT-2P0RVEK6ZKn60aV5m_5lfQipjMqS9Q5c7Pvcjgck_k7QP68Jfstd_T3QyKM5-h6XNQ","e":"AQAB"},"attributes":{"enabled":true,"created":1618869894,"updated":1618869894,"recoveryLevel":"Recoverable+Purgeable"}}'
+    headers:
+      cache-control: no-cache
+      content-length: '678'
+      content-type: application/json; charset=utf-8
+      date: Mon, 19 Apr 2021 22:04:54 GMT
+      expires: '-1'
+      pragma: no-cache
+      strict-transport-security: max-age=31536000;includeSubDomains
+      x-content-type-options: nosniff
+      x-ms-keyvault-network-info: conn_type=Ipv4;addr=172.92.159.124;act_addr_fam=InterNetwork;
+      x-ms-keyvault-region: eastus2
+      x-ms-keyvault-service-version: 1.2.236.0
+      x-powered-by: ASP.NET
+    status:
+      code: 200
+      message: OK
+    url: https://mcpatinotest.vault.azure.net/keys/crypto-test-encrypt-key464d19d5/?api-version=7.0
+- request:
+    body: '{"alg": "RSA-OAEP", "value": "Z-i7Xcu9w7yGdTFi33ISxtEO-QgLyn0T8uA9mJPleisGyh33sW7Ru6pvI0k_OAmWcdsPrBPWnPfTOIKexdt9fQVKzbeEz3NxweNrDibOUjr-Tap_3k0BvSK579Kzb3cZUmY2t8MKT4Et87x9Mr41pEEAvUVkVaUMwa_RF6qzwLRq8jm7Dhqycv_TGfIMmZiZTx7sCJ7J5WGn9-udGcZ3KYS7PPaURx9KlB6xOL2WZy1rDJzhToiEga7kYPuIeA3TBGL03NAYafRL9Ah8BzAMSAA-U1G_0k7sjdsgtordnbOqI9l6n7gP8nVVewufXTAWJXw0LdE0RX8-cGYjg2kFeQ"}'
+    headers:
+      Accept:
+      - application/json
+      Content-Length:
+      - '374'
+      Content-Type:
+      - application/json
+      User-Agent:
+      - azsdk-python-keyvault-keys/4.4.0b5 Python/3.5.3 (Windows-10-10.0.19041-SP0)
+    method: POST
+    uri: https://vaultname.vault.azure.net/keys/crypto-test-encrypt-key464d19d5/a4c1b057dfff4954bec03c8be7a9852b/decrypt?api-version=7.2-preview
+  response:
+    body:
+      string: '{"kid":"https://vaultname.vault.azure.net/keys/crypto-test-encrypt-key464d19d5/a4c1b057dfff4954bec03c8be7a9852b","value":"cGxhaW50ZXh0"}'
+    headers:
+      cache-control: no-cache
+      content-length: '139'
+      content-type: application/json; charset=utf-8
+      date: Mon, 19 Apr 2021 22:04:55 GMT
+      expires: '-1'
+      pragma: no-cache
+      strict-transport-security: max-age=31536000;includeSubDomains
+      x-content-type-options: nosniff
+      x-ms-keyvault-network-info: conn_type=Ipv4;addr=172.92.159.124;act_addr_fam=InterNetwork;
+      x-ms-keyvault-region: eastus2
+      x-ms-keyvault-service-version: 1.2.236.0
+      x-powered-by: ASP.NET
+    status:
+      code: 200
+      message: OK
+    url: https://mcpatinotest.vault.azure.net/keys/crypto-test-encrypt-key464d19d5/a4c1b057dfff4954bec03c8be7a9852b/decrypt?api-version=7.2-preview
+version: 1

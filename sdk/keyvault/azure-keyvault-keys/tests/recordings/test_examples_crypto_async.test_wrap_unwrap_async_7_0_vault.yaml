@@ -1,0 +1,104 @@
+interactions:
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      Content-Length:
+      - '0'
+      Content-Type:
+      - application/json
+      User-Agent:
+      - azsdk-python-keyvault-keys/4.4.0b5 Python/3.5.3 (Windows-10-10.0.19041-SP0)
+    method: POST
+    uri: https://vaultname.vault.azure.net/keys/crypto-test-wrapping-keye068182c/create?api-version=7.0
+  response:
+    body:
+      string: '{"error":{"code":"Unauthorized","message":"Request is missing a Bearer
+        or PoP token."}}'
+    headers:
+      cache-control: no-cache
+      content-length: '87'
+      content-type: application/json; charset=utf-8
+      date: Mon, 19 Apr 2021 22:05:00 GMT
+      expires: '-1'
+      pragma: no-cache
+      strict-transport-security: max-age=31536000;includeSubDomains
+      www-authenticate: Bearer authorization="https://login.windows.net/72f988bf-86f1-41af-91ab-2d7cd011db47",
+        resource="https://vault.azure.net"
+      x-content-type-options: nosniff
+      x-ms-keyvault-network-info: conn_type=Ipv4;addr=172.92.159.124;act_addr_fam=InterNetwork;
+      x-ms-keyvault-region: eastus2
+      x-ms-keyvault-service-version: 1.2.236.0
+      x-powered-by: ASP.NET
+    status:
+      code: 401
+      message: Unauthorized
+    url: https://mcpatinotest.vault.azure.net/keys/crypto-test-wrapping-keye068182c/create?api-version=7.0
+- request:
+    body: '{"kty": "RSA"}'
+    headers:
+      Accept:
+      - application/json
+      Content-Length:
+      - '14'
+      Content-Type:
+      - application/json
+      User-Agent:
+      - azsdk-python-keyvault-keys/4.4.0b5 Python/3.5.3 (Windows-10-10.0.19041-SP0)
+    method: POST
+    uri: https://vaultname.vault.azure.net/keys/crypto-test-wrapping-keye068182c/create?api-version=7.0
+  response:
+    body:
+      string: '{"key":{"kid":"https://vaultname.vault.azure.net/keys/crypto-test-wrapping-keye068182c/f241956ebab242f7a87fa5958953859f","kty":"RSA","key_ops":["encrypt","decrypt","sign","verify","wrapKey","unwrapKey"],"n":"xJ-5y1CHE-zu4SnWpMs1rb-jClwWgsr8hXb3vRzbvQiLVOnEHx1tjIlX_hDf6qMoVfZvtvHiJyY3kYbT8LINra63w5u46lTgNqwi13zQ0XjpYkkCnosNqQ4lSNs4UJke7ZI_D9wMnwgGH5e3bX1DsBe8y2aTQQPlU2_AUaw77ib1S7pir7xr2njFLI2qie7Q6J79ZUxuGvWh4v3fS_XhgYtxRY8cyYMbgLFZH7z_vA3D3PLNmJpI0E8hjj93fGTPUOBO2O39UFDcv7jCNFhk03bJKt78mv09KjtJckG-iB6ZI_RB0htjUWzeT-qWzoxZ3CJnQGfP56SX09KYUL065Q","e":"AQAB"},"attributes":{"enabled":true,"created":1618869901,"updated":1618869901,"recoveryLevel":"Recoverable+Purgeable"}}'
+    headers:
+      cache-control: no-cache
+      content-length: '679'
+      content-type: application/json; charset=utf-8
+      date: Mon, 19 Apr 2021 22:05:00 GMT
+      expires: '-1'
+      pragma: no-cache
+      strict-transport-security: max-age=31536000;includeSubDomains
+      x-content-type-options: nosniff
+      x-ms-keyvault-network-info: conn_type=Ipv4;addr=172.92.159.124;act_addr_fam=InterNetwork;
+      x-ms-keyvault-region: eastus2
+      x-ms-keyvault-service-version: 1.2.236.0
+      x-powered-by: ASP.NET
+    status:
+      code: 200
+      message: OK
+    url: https://mcpatinotest.vault.azure.net/keys/crypto-test-wrapping-keye068182c/create?api-version=7.0
+- request:
+    body: '{"alg": "RSA-OAEP", "value": "EPwft5a9Lb51j7aFRtRq-fpZS1ACyNu97N6B0ul7h2s0uiPE5ERckOb1HuWYdU28vpD5rxnTiXR_4TaZt3tlJqfKlCIRtOFbVGvOm8FYkZTbW-ALLU3NDZ2t3ZDEQvFfVnUUKHN_tEqcX18ua0w73OG8VOopkXKrby2OJAkxAbxInp9eaAnnRk6WetASdn_qMyY45kxJom8aWLCBggPrq7Cg9t3HT4pcgekYzDIphuY6QgTVtH9irN34Ecs83kwYJKjoiwUCmOayt1WoFU_DD4uh4x2rIRVsTh_7t-Uhkf4GtX1rmmy8Sxn4wAihUf6A9mTso29-Gx0HWU9dl3cHsw"}'
+    headers:
+      Accept:
+      - application/json
+      Content-Length:
+      - '374'
+      Content-Type:
+      - application/json
+      User-Agent:
+      - azsdk-python-keyvault-keys/4.4.0b5 Python/3.5.3 (Windows-10-10.0.19041-SP0)
+    method: POST
+    uri: https://vaultname.vault.azure.net/keys/crypto-test-wrapping-keye068182c/f241956ebab242f7a87fa5958953859f/unwrapkey?api-version=7.2-preview
+  response:
+    body:
+      string: '{"kid":"https://vaultname.vault.azure.net/keys/crypto-test-wrapping-keye068182c/f241956ebab242f7a87fa5958953859f","value":"NTA2M2U2YWFhODQ1ZjE1MDIwMDU0Nzk0NGZkMTk5Njc5Yzk4ZWQ2Zjk5ZGEwYTBiMmRhZmVhZjFmNDY4NDQ5NmZkNTMyYzFjMjI5OTY4Y2I5ZGVlNDQ5NTdmY2VmN2NjZWY1OWNlZGEwYjM2MmU1NmJjZDc4ZmQzZmFlZTU3ODFjNjIzYzBiYjIyYjM1YmVhYmRlMDY2NGZkMzBlMGU4MjRhYmEzZGQxYjBhZmZmYzRhM2Q5NTVlZGUyMGNmNmE4NTRkNTJjZmQ"}'
+    headers:
+      cache-control: no-cache
+      content-length: '395'
+      content-type: application/json; charset=utf-8
+      date: Mon, 19 Apr 2021 22:05:02 GMT
+      expires: '-1'
+      pragma: no-cache
+      strict-transport-security: max-age=31536000;includeSubDomains
+      x-content-type-options: nosniff
+      x-ms-keyvault-network-info: conn_type=Ipv4;addr=172.92.159.124;act_addr_fam=InterNetwork;
+      x-ms-keyvault-region: eastus2
+      x-ms-keyvault-service-version: 1.2.236.0
+      x-powered-by: ASP.NET
+    status:
+      code: 200
+      message: OK
+    url: https://mcpatinotest.vault.azure.net/keys/crypto-test-wrapping-keye068182c/f241956ebab242f7a87fa5958953859f/unwrapkey?api-version=7.2-preview
+version: 1
