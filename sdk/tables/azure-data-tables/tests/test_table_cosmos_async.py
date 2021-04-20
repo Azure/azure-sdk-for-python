@@ -36,7 +36,7 @@ class TableTestAsync(AzureTestCase, AsyncTableTestCase):
     async def _delete_all_tables(self, account_name, key):
         client = TableServiceClient(self.account_url(account_name, "cosmos"), key)
         async for table in client.list_tables():
-            await client.delete_table(table.table_name)
+            await client.delete_table(table.name)
 
         if self.is_live:
             self.sleep(10)
@@ -55,7 +55,7 @@ class TableTestAsync(AzureTestCase, AsyncTableTestCase):
         if table is None:
             return
         try:
-            await ts.delete_table(table.table_name)
+            await ts.delete_table(table.name)
         except ResourceNotFoundError:
             pass
 
