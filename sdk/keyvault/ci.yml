@@ -12,8 +12,6 @@ trigger:
     include:
     - sdk/keyvault/
     - sdk/core/
-    - tools/
-    - eng/
 
 pr:
   branches:

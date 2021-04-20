@@ -11,9 +11,6 @@ trigger:
   paths:
     include:
     - sdk/streamanalytics/
-    - sdk/core/
-    - tools/
-    - eng/
 
 pr:
   branches:
