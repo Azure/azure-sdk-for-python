@@ -3,8 +3,8 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 # ------------------------------------
-from datetime import datetime, timedelta
 import re
+import time
 from typing import TYPE_CHECKING
 
 from azure.core.pipeline.policies import SansIOHTTPPolicy
@@ -48,13 +48,13 @@ class ACRExchangeClient(object):
         if not endpoint.startswith("https://") and not endpoint.startswith("http://"):
             endpoint = "https://" + endpoint
         self._endpoint = endpoint
-        self._credential_scope = "https://management.core.windows.net/.default"
+        self.credential_scope = "https://management.core.windows.net/.default"
         self._client = ContainerRegistry(
             credential=credential,
             url=endpoint,
             sdk_moniker=USER_AGENT,
             authentication_policy=ExchangeClientAuthenticationPolicy(),
-            credential_scopes=kwargs.pop("credential_scopes", self._credential_scope),
+            credential_scopes=kwargs.pop("credential_scopes", self.credential_scope),
             **kwargs
         )
         self._credential = credential
@@ -71,15 +71,15 @@ class ACRExchangeClient(object):
 
     def get_refresh_token(self, service, **kwargs):
         # type: (str, **Any) -> str
-        if not self._refresh_token or datetime.now() - self._refresh_expiry > timedelta(minutes=5):
+        if not self._refresh_token or time.time() - self._refresh_expiry > 300:
             self._refresh_token = self.exchange_aad_token_for_refresh_token(service, **kwargs)
-            self._refresh_expiry = datetime.now()
+            self._refresh_expiry = time.time()
         return self._refresh_token
 
     def exchange_aad_token_for_refresh_token(self, service=None, **kwargs):
         # type: (str, Dict[str, Any]) -> str
         refresh_token = self._client.authentication.exchange_aad_access_token_for_acr_refresh_token(
-            service=service, access_token=self._credential.get_token(self._credential_scope).token, **kwargs
+            service=service, access_token=self._credential.get_token(self.credential_scope).token, **kwargs
         )
         return refresh_token.refresh_token
 
