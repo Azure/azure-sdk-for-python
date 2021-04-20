@@ -24,11 +24,11 @@ from azure.servicebus.management import (
 from azure.servicebus import ServiceBusMessage, ServiceBusClient
 
 CONNECTION_STR = os.environ['SERVICE_BUS_CONNECTION_STR']
-TOPIC_NAME = os.environ["SERVICE_BUS_TOPIC_NAME"]
-ALL_MSGS_SUBSCRIPTION_NAME = os.environ["SERVICE_BUS_ALL_MSGS_SUB_NAME"]
-SQL_FILTER_ONLY_SUBSCRIPTION_NAME = os.environ["SERVICE_BUS_SQL_FILTER_ONLY_SUB_NAME"]
-SQL_FILTER_WITH_ACTION_SUBSCRIPTION_NAME = os.environ["SERVICE_BUS_SQL_FILTER_ACTION_SUB_NAME"]
-CORRELATION_FILTER_SUBSCRIPTION_NAME = os.environ["SERVICE_BUS_CORR_FILTER_SUB_NAME"]
+TOPIC_NAME = os.environ['SERVICE_BUS_TOPIC_NAME']
+ALL_MSGS_SUBSCRIPTION_NAME = 'sb-allmsgs-sub'
+SQL_FILTER_ONLY_SUBSCRIPTION_NAME = 'sb-sqlfilteronly-sub'
+SQL_FILTER_WITH_ACTION_SUBSCRIPTION_NAME = 'sb-sqlfilteraction-sub'
+CORRELATION_FILTER_SUBSCRIPTION_NAME = 'sb-corrfiltersub'
 
 def create_rules_with_filter(servicebus_mgmt_client):
     # First subscription is already created with default rule. Leave as is.
