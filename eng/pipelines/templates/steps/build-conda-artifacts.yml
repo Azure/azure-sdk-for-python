@@ -60,7 +60,7 @@ steps:
           -r "${{ artifact.common_root }}"
           -n "${{ artifact.name }}"
           -s "${{ parameters.ServiceDirectory }}"
-          -e "$(Build.SourcesDirectory)/eng/environment.yml"
+          -e "$(Build.SourcesDirectory)/eng/conda_env.yml"
           -c "$(Build.SourcesDirectory)/sdk/${{ parameters.ServiceDirectory }}/ci.yml"
 
     - bash: |
@@ -68,7 +68,7 @@ steps:
       displayName: 'Prepend PATH with Conda and INIT'
 
     - bash: |
-        conda env create --name ${{ artifact.name }} --file $(Build.SourcesDirectory)/eng/environment.yml
+        conda env create --name ${{ artifact.name }} --file $(Build.SourcesDirectory)/eng/conda_env.yml
         conda install --yes --quiet --name ${{ artifact.name }} conda-build
       displayName: 'Prepare Conda Environment for building ${{ artifact.name }}'
 

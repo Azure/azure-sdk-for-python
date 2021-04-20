@@ -25,13 +25,11 @@ import sys
 import os
 import shutil
 import re
-import pdb
+import yaml
 
 from common_tasks import process_glob_string, run_check_call, str_to_bool, parse_setup
 from subprocess import check_call
 from distutils.dir_util import copy_tree
-
-import yaml
 
 VERSION_REGEX = re.compile(r"\s*AZURESDK_CONDA_VERSION\s*:\s*[\'](.*)[\']\s*")
 
@@ -147,6 +145,7 @@ def create_sdist_skeleton(build_directory, artifact_name, common_root):
                 dest = os.path.join(ns_dir, directory)
                 shutil.copytree(src, dest)
 
+
 def get_version_from_config(environment_config):
     with open(os.path.abspath((environment_config)), "r") as f:
         lines = f.readlines()
@@ -155,6 +154,7 @@ def get_version_from_config(environment_config):
         if result:
             return result.group(1)
     return "0.0.0"
+
 
 def get_manifest_includes(common_root):
     levels = common_root.split("/")
@@ -168,7 +168,9 @@ def get_manifest_includes(common_root):
     return breadcrumbs
 
 
-def create_setup_files(build_directory, common_root, artifact_name, service, meta_yaml, environment_config):
+def create_setup_files(
+    build_directory, common_root, artifact_name, service, meta_yaml, environment_config
+):
     sdist_directory = os.path.join(build_directory, artifact_name)
     setup_location = os.path.join(sdist_directory, "setup.py")
     manifest_location = os.path.join(sdist_directory, "MANIFEST.in")
@@ -185,7 +187,9 @@ def create_setup_files(build_directory, common_root, artifact_name, service, met
         f.write(setup_template)
 
     manifest_template = MANIFEST_TEMPLATE.format(
-        namespace_includes="\n".join(["include " + ns for ns in get_manifest_includes(common_root)])
+        namespace_includes="\n".join(
+            ["include " + ns for ns in get_manifest_includes(common_root)]
+        )
     )
 
     with open(manifest_location, "w") as f:
@@ -196,7 +200,13 @@ def create_setup_files(build_directory, common_root, artifact_name, service, met
 
 
 def create_combined_sdist(
-    output_directory, build_directory, artifact_name, common_root, service, meta_yaml, environment_config
+    output_directory,
+    build_directory,
+    artifact_name,
+    common_root,
+    service,
+    meta_yaml,
+    environment_config,
 ):
     singular_dependency = (
         len(get_pkgs_from_build_directory(build_directory, artifact_name)) == 0
@@ -205,7 +215,12 @@ def create_combined_sdist(
     if not singular_dependency:
         create_sdist_skeleton(build_directory, artifact_name, common_root)
         create_setup_files(
-            build_directory, common_root, artifact_name, service, meta_yaml, environment_config
+            build_directory,
+            common_root,
+            artifact_name,
+            service,
+            meta_yaml,
+            environment_config,
         )
 
     sdist_location = os.path.join(build_directory, artifact_name)
@@ -224,21 +239,26 @@ def create_combined_sdist(
     )
     return output_location
 
+
 def get_summary(ci_yml, artifact_name):
     pkg_list = []
-    with open(ci_yml, 'r') as f:
-        data = f.read()        
-    
+    with open(ci_yml, "r") as f:
+        data = f.read()
+
     config = yaml.safe_load(data)
 
-    conda_artifact = [conda_artifact for conda_artifact in config["extends"]["parameters"]["CondaArtifacts"] if conda_artifact["name"] == artifact_name]
+    conda_artifact = [
+        conda_artifact
+        for conda_artifact in config["extends"]["parameters"]["CondaArtifacts"]
+        if conda_artifact["name"] == artifact_name
+    ]
 
     if conda_artifact:
         dependencies = conda_artifact[0]["checkout"]
 
     for dep in dependencies:
         pkg_list.append("{}=={}".format(dep["package"], dep["version"]))
-    
+
     return SUMMARY_TEMPLATE.format(", ".join(pkg_list))
 
 
@@ -319,7 +339,7 @@ if __name__ == "__main__":
         args.common_root,
         args.service,
         args.meta_yml,
-        args.environment_config
+        args.environment_config,
     )
 
     summary = get_summary(args.ci_yml, args.artifact_name)
@@ -337,4 +357,3 @@ if __name__ == "__main__":
                 args.service.upper() + "_SUMMARY", summary
             )
         )
-
