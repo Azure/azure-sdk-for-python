@@ -514,7 +514,7 @@ class ApplicationDataOperations:
         self,
         farmer_id: str,
         application_data_id: str,
-        body: Optional["_models.ApplicationData"] = None,
+        application_data: Optional["_models.ApplicationData"] = None,
         **kwargs
     ) -> "_models.ApplicationData":
         """Creates or updates an application data resource under a particular farmer.
@@ -523,8 +523,8 @@ class ApplicationDataOperations:
         :type farmer_id: str
         :param application_data_id: ID of the application data resource.
         :type application_data_id: str
-        :param body: Application data resource payload to create or update.
-        :type body: ~azure.farmbeats.models.ApplicationData
+        :param application_data: Application data resource payload to create or update.
+        :type application_data: ~azure.farmbeats.models.ApplicationData
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: ApplicationData, or the result of cls(response)
         :rtype: ~azure.farmbeats.models.ApplicationData
@@ -557,8 +557,8 @@ class ApplicationDataOperations:
         header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
 
         body_content_kwargs = {}  # type: Dict[str, Any]
-        if body is not None:
-            body_content = self._serialize.body(body, 'ApplicationData')
+        if application_data is not None:
+            body_content = self._serialize.body(application_data, 'ApplicationData')
         else:
             body_content = None
         body_content_kwargs['content'] = body_content

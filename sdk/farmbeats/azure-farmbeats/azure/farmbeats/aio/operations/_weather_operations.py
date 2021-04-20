@@ -150,7 +150,7 @@ class WeatherOperations:
     async def _create_data_ingestion_job_initial(
         self,
         job_id: str,
-        body: Optional["_models.WeatherIngestionJobRequest"] = None,
+        job: Optional["_models.WeatherIngestionJobRequest"] = None,
         **kwargs
     ) -> "_models.WeatherIngestionJobResponse":
         cls = kwargs.pop('cls', None)  # type: ClsType["_models.WeatherIngestionJobResponse"]
@@ -179,8 +179,8 @@ class WeatherOperations:
         header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
 
         body_content_kwargs = {}  # type: Dict[str, Any]
-        if body is not None:
-            body_content = self._serialize.body(body, 'WeatherIngestionJobRequest')
+        if job is not None:
+            body_content = self._serialize.body(job, 'WeatherIngestionJobRequest')
         else:
             body_content = None
         body_content_kwargs['content'] = body_content
@@ -203,15 +203,15 @@ class WeatherOperations:
     async def begin_create_data_ingestion_job(
         self,
         job_id: str,
-        body: Optional["_models.WeatherIngestionJobRequest"] = None,
+        job: Optional["_models.WeatherIngestionJobRequest"] = None,
         **kwargs
     ) -> AsyncLROPoller["_models.WeatherIngestionJobResponse"]:
         """Create a weather data ingestion job.
 
         :param job_id: Job id supplied by user.
         :type job_id: str
-        :param body: Job parameters supplied by user.
-        :type body: ~azure.farmbeats.models.WeatherIngestionJobRequest
+        :param job: Job parameters supplied by user.
+        :type job: ~azure.farmbeats.models.WeatherIngestionJobRequest
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
         :keyword polling: Pass in True if you'd like the AsyncLROBasePolling polling method,
@@ -232,7 +232,7 @@ class WeatherOperations:
         if cont_token is None:
             raw_result = await self._create_data_ingestion_job_initial(
                 job_id=job_id,
-                body=body,
+                job=job,
                 cls=lambda x,y,z: x,
                 **kwargs
             )
@@ -321,7 +321,7 @@ class WeatherOperations:
     async def _create_data_delete_job_initial(
         self,
         job_id: str,
-        body: Optional["_models.WeatherDataDeleteJobRequest"] = None,
+        job: Optional["_models.WeatherDataDeleteJobRequest"] = None,
         **kwargs
     ) -> "_models.WeatherDataDeleteJobResponse":
         cls = kwargs.pop('cls', None)  # type: ClsType["_models.WeatherDataDeleteJobResponse"]
@@ -350,8 +350,8 @@ class WeatherOperations:
         header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
 
         body_content_kwargs = {}  # type: Dict[str, Any]
-        if body is not None:
-            body_content = self._serialize.body(body, 'WeatherDataDeleteJobRequest')
+        if job is not None:
+            body_content = self._serialize.body(job, 'WeatherDataDeleteJobRequest')
         else:
             body_content = None
         body_content_kwargs['content'] = body_content
@@ -374,15 +374,15 @@ class WeatherOperations:
     async def begin_create_data_delete_job(
         self,
         job_id: str,
-        body: Optional["_models.WeatherDataDeleteJobRequest"] = None,
+        job: Optional["_models.WeatherDataDeleteJobRequest"] = None,
         **kwargs
     ) -> AsyncLROPoller["_models.WeatherDataDeleteJobResponse"]:
         """Create a weather data delete job.
 
         :param job_id: Job Id supplied by end user.
         :type job_id: str
-        :param body: Job parameters supplied by user.
-        :type body: ~azure.farmbeats.models.WeatherDataDeleteJobRequest
+        :param job: Job parameters supplied by user.
+        :type job: ~azure.farmbeats.models.WeatherDataDeleteJobRequest
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
         :keyword polling: Pass in True if you'd like the AsyncLROBasePolling polling method,
@@ -403,7 +403,7 @@ class WeatherOperations:
         if cont_token is None:
             raw_result = await self._create_data_delete_job_initial(
                 job_id=job_id,
-                body=body,
+                job=job,
                 cls=lambda x,y,z: x,
                 **kwargs
             )

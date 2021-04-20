@@ -202,13 +202,13 @@ class OAuthTokensOperations:
 
     async def get_o_auth_connection_link(
         self,
-        body: Optional["_models.OAuthConnectRequest"] = None,
+        oauth_connect_request: Optional["_models.OAuthConnectRequest"] = None,
         **kwargs
     ) -> str:
         """Returns Connection link needed in the OAuth flow.
 
-        :param body: OAuth Connect Request.
-        :type body: ~azure.farmbeats.models.OAuthConnectRequest
+        :param oauth_connect_request: OAuth Connect Request.
+        :type oauth_connect_request: ~azure.farmbeats.models.OAuthConnectRequest
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: str, or the result of cls(response)
         :rtype: str
@@ -236,8 +236,8 @@ class OAuthTokensOperations:
         header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
 
         body_content_kwargs = {}  # type: Dict[str, Any]
-        if body is not None:
-            body_content = self._serialize.body(body, 'OAuthConnectRequest')
+        if oauth_connect_request is not None:
+            body_content = self._serialize.body(oauth_connect_request, 'OAuthConnectRequest')
         else:
             body_content = None
         body_content_kwargs['content'] = body_content

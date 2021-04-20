@@ -42,7 +42,7 @@ class FarmOperationsOperations:
     async def _create_data_ingestion_job_initial(
         self,
         job_id: str,
-        body: Optional["_models.FarmOperationDataIngestionJobRequest"] = None,
+        job: Optional["_models.FarmOperationDataIngestionJobRequest"] = None,
         **kwargs
     ) -> "_models.FarmOperationDataIngestionJobResponse":
         cls = kwargs.pop('cls', None)  # type: ClsType["_models.FarmOperationDataIngestionJobResponse"]
@@ -71,8 +71,8 @@ class FarmOperationsOperations:
         header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
 
         body_content_kwargs = {}  # type: Dict[str, Any]
-        if body is not None:
-            body_content = self._serialize.body(body, 'FarmOperationDataIngestionJobRequest')
+        if job is not None:
+            body_content = self._serialize.body(job, 'FarmOperationDataIngestionJobRequest')
         else:
             body_content = None
         body_content_kwargs['content'] = body_content
@@ -95,15 +95,15 @@ class FarmOperationsOperations:
     async def begin_create_data_ingestion_job(
         self,
         job_id: str,
-        body: Optional["_models.FarmOperationDataIngestionJobRequest"] = None,
+        job: Optional["_models.FarmOperationDataIngestionJobRequest"] = None,
         **kwargs
     ) -> AsyncLROPoller["_models.FarmOperationDataIngestionJobResponse"]:
         """Create a farm operation data ingestion job.
 
         :param job_id: Job Id supplied by user.
         :type job_id: str
-        :param body: Job parameters supplied by user.
-        :type body: ~azure.farmbeats.models.FarmOperationDataIngestionJobRequest
+        :param job: Job parameters supplied by user.
+        :type job: ~azure.farmbeats.models.FarmOperationDataIngestionJobRequest
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
         :keyword polling: Pass in True if you'd like the AsyncLROBasePolling polling method,
@@ -124,7 +124,7 @@ class FarmOperationsOperations:
         if cont_token is None:
             raw_result = await self._create_data_ingestion_job_initial(
                 job_id=job_id,
-                body=body,
+                job=job,
                 cls=lambda x,y,z: x,
                 **kwargs
             )

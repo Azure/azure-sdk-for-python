@@ -238,15 +238,15 @@ class SeasonsOperations:
     async def create_or_update(
         self,
         season_id: str,
-        body: Optional["_models.Season"] = None,
+        season: Optional["_models.Season"] = None,
         **kwargs
     ) -> "_models.Season":
         """Creates or updates a season resource.
 
         :param season_id: Id of the season resource.
         :type season_id: str
-        :param body: Season resource payload to create or update.
-        :type body: ~azure.farmbeats.models.Season
+        :param season: Season resource payload to create or update.
+        :type season: ~azure.farmbeats.models.Season
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: Season, or the result of cls(response)
         :rtype: ~azure.farmbeats.models.Season
@@ -278,8 +278,8 @@ class SeasonsOperations:
         header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
 
         body_content_kwargs = {}  # type: Dict[str, Any]
-        if body is not None:
-            body_content = self._serialize.body(body, 'Season')
+        if season is not None:
+            body_content = self._serialize.body(season, 'Season')
         else:
             body_content = None
         body_content_kwargs['content'] = body_content

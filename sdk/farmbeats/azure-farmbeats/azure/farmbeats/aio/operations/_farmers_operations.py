@@ -215,15 +215,15 @@ class FarmersOperations:
     async def create_or_update(
         self,
         farmer_id: str,
-        body: Optional["_models.Farmer"] = None,
+        farmer: Optional["_models.Farmer"] = None,
         **kwargs
     ) -> "_models.Farmer":
         """Creates or updates a farmer resource.
 
         :param farmer_id: Id of the farmer resource.
         :type farmer_id: str
-        :param body: Farmer resource payload to create or update.
-        :type body: ~azure.farmbeats.models.Farmer
+        :param farmer: Farmer resource payload to create or update.
+        :type farmer: ~azure.farmbeats.models.Farmer
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: Farmer, or the result of cls(response)
         :rtype: ~azure.farmbeats.models.Farmer
@@ -255,8 +255,8 @@ class FarmersOperations:
         header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
 
         body_content_kwargs = {}  # type: Dict[str, Any]
-        if body is not None:
-            body_content = self._serialize.body(body, 'Farmer')
+        if farmer is not None:
+            body_content = self._serialize.body(farmer, 'Farmer')
         else:
             body_content = None
         body_content_kwargs['content'] = body_content

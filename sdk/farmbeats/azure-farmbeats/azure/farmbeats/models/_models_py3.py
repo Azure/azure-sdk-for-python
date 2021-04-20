@@ -2852,9 +2852,9 @@ class SatelliteIngestionJobRequest(msrest.serialization.Model):
     :param end_date_time: Required. End Date.
     :type end_date_time: ~datetime.datetime
     :param provider: Provider of satellite data. Possible values include: "Microsoft".
-    :type provider: str or ~azure.farmbeats.models.DataProvider
+    :type provider: str or ~azure.farmbeats.models.SatelliteDataProvider
     :param source: Source of satellite data. Possible values include: "Sentinel_2_L2A".
-    :type source: str or ~azure.farmbeats.models.Source
+    :type source: str or ~azure.farmbeats.models.SatelliteSource
     :param data: Data Model for SatelliteInjestionJobRequest.
     :type data: ~azure.farmbeats.models.SatelliteData
     :param name: Name to identify resource.
@@ -2898,8 +2898,8 @@ class SatelliteIngestionJobRequest(msrest.serialization.Model):
         boundary_id: str,
         start_date_time: datetime.datetime,
         end_date_time: datetime.datetime,
-        provider: Optional[Union[str, "DataProvider"]] = None,
-        source: Optional[Union[str, "Source"]] = None,
+        provider: Optional[Union[str, "SatelliteDataProvider"]] = None,
+        source: Optional[Union[str, "SatelliteSource"]] = None,
         data: Optional["SatelliteData"] = None,
         name: Optional[str] = None,
         description: Optional[str] = None,

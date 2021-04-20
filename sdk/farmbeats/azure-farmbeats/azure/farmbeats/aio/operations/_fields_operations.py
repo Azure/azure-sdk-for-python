@@ -356,7 +356,7 @@ class FieldsOperations:
         self,
         farmer_id: str,
         field_id: str,
-        body: Optional["_models.Field"] = None,
+        field: Optional["_models.Field"] = None,
         **kwargs
     ) -> "_models.Field":
         """Creates or Updates a field resource under a particular farmer.
@@ -365,8 +365,8 @@ class FieldsOperations:
         :type farmer_id: str
         :param field_id: Id of the field resource.
         :type field_id: str
-        :param body: Field resource payload to create or update.
-        :type body: ~azure.farmbeats.models.Field
+        :param field: Field resource payload to create or update.
+        :type field: ~azure.farmbeats.models.Field
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: Field, or the result of cls(response)
         :rtype: ~azure.farmbeats.models.Field
@@ -399,8 +399,8 @@ class FieldsOperations:
         header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
 
         body_content_kwargs = {}  # type: Dict[str, Any]
-        if body is not None:
-            body_content = self._serialize.body(body, 'Field')
+        if field is not None:
+            body_content = self._serialize.body(field, 'Field')
         else:
             body_content = None
         body_content_kwargs['content'] = body_content

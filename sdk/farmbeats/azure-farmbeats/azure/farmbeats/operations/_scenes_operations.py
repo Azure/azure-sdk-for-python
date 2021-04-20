@@ -178,7 +178,7 @@ class ScenesOperations(object):
     def _create_satellite_data_ingestion_job_initial(
         self,
         job_id,  # type: str
-        body=None,  # type: Optional["_models.SatelliteIngestionJobRequest"]
+        job=None,  # type: Optional["_models.SatelliteIngestionJobRequest"]
         **kwargs  # type: Any
     ):
         # type: (...) -> "_models.SatelliteIngestionJobResponse"
@@ -208,8 +208,8 @@ class ScenesOperations(object):
         header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
 
         body_content_kwargs = {}  # type: Dict[str, Any]
-        if body is not None:
-            body_content = self._serialize.body(body, 'SatelliteIngestionJobRequest')
+        if job is not None:
+            body_content = self._serialize.body(job, 'SatelliteIngestionJobRequest')
         else:
             body_content = None
         body_content_kwargs['content'] = body_content
@@ -232,7 +232,7 @@ class ScenesOperations(object):
     def begin_create_satellite_data_ingestion_job(
         self,
         job_id,  # type: str
-        body=None,  # type: Optional["_models.SatelliteIngestionJobRequest"]
+        job=None,  # type: Optional["_models.SatelliteIngestionJobRequest"]
         **kwargs  # type: Any
     ):
         # type: (...) -> LROPoller["_models.SatelliteIngestionJobResponse"]
@@ -240,8 +240,8 @@ class ScenesOperations(object):
 
         :param job_id: JobId provided by user.
         :type job_id: str
-        :param body: Job parameters supplied by user.
-        :type body: ~azure.farmbeats.models.SatelliteIngestionJobRequest
+        :param job: Job parameters supplied by user.
+        :type job: ~azure.farmbeats.models.SatelliteIngestionJobRequest
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
         :keyword polling: Pass in True if you'd like the LROBasePolling polling method,
@@ -262,7 +262,7 @@ class ScenesOperations(object):
         if cont_token is None:
             raw_result = self._create_satellite_data_ingestion_job_initial(
                 job_id=job_id,
-                body=body,
+                job=job,
                 cls=lambda x,y,z: x,
                 **kwargs
             )

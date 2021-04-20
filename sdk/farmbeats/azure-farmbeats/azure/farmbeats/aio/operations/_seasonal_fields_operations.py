@@ -480,7 +480,7 @@ class SeasonalFieldsOperations:
         self,
         farmer_id: str,
         seasonal_field_id: str,
-        body: Optional["_models.SeasonalField"] = None,
+        seasonal_field: Optional["_models.SeasonalField"] = None,
         **kwargs
     ) -> "_models.SeasonalField":
         """Creates or Updates a seasonal field resource under a particular farmer.
@@ -489,8 +489,8 @@ class SeasonalFieldsOperations:
         :type farmer_id: str
         :param seasonal_field_id: Id of the seasonal field resource.
         :type seasonal_field_id: str
-        :param body: Seasonal field resource payload to create or update.
-        :type body: ~azure.farmbeats.models.SeasonalField
+        :param seasonal_field: Seasonal field resource payload to create or update.
+        :type seasonal_field: ~azure.farmbeats.models.SeasonalField
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: SeasonalField, or the result of cls(response)
         :rtype: ~azure.farmbeats.models.SeasonalField
@@ -523,8 +523,8 @@ class SeasonalFieldsOperations:
         header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
 
         body_content_kwargs = {}  # type: Dict[str, Any]
-        if body is not None:
-            body_content = self._serialize.body(body, 'SeasonalField')
+        if seasonal_field is not None:
+            body_content = self._serialize.body(seasonal_field, 'SeasonalField')
         else:
             body_content = None
         body_content_kwargs['content'] = body_content

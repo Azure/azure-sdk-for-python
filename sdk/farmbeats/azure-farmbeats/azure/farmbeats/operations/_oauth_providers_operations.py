@@ -219,7 +219,7 @@ class OAuthProvidersOperations(object):
     def create_or_update(
         self,
         oauth_provider_id,  # type: str
-        body=None,  # type: Optional["_models.OAuthProvider"]
+        oauth_provider=None,  # type: Optional["_models.OAuthProvider"]
         **kwargs  # type: Any
     ):
         # type: (...) -> "_models.OAuthProvider"
@@ -227,8 +227,8 @@ class OAuthProvidersOperations(object):
 
         :param oauth_provider_id: ID of oauthProvider resource.
         :type oauth_provider_id: str
-        :param body: OauthProvider resource payload to create or update.
-        :type body: ~azure.farmbeats.models.OAuthProvider
+        :param oauth_provider: OauthProvider resource payload to create or update.
+        :type oauth_provider: ~azure.farmbeats.models.OAuthProvider
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: OAuthProvider, or the result of cls(response)
         :rtype: ~azure.farmbeats.models.OAuthProvider
@@ -260,8 +260,8 @@ class OAuthProvidersOperations(object):
         header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
 
         body_content_kwargs = {}  # type: Dict[str, Any]
-        if body is not None:
-            body_content = self._serialize.body(body, 'OAuthProvider')
+        if oauth_provider is not None:
+            body_content = self._serialize.body(oauth_provider, 'OAuthProvider')
         else:
             body_content = None
         body_content_kwargs['content'] = body_content

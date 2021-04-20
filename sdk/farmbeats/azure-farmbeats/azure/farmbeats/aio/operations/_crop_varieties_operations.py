@@ -374,7 +374,7 @@ class CropVarietiesOperations:
         self,
         crop_id: str,
         crop_variety_id: str,
-        body: Optional["_models.CropVariety"] = None,
+        crop_variety: Optional["_models.CropVariety"] = None,
         **kwargs
     ) -> "_models.CropVariety":
         """Creates or updates a crop variety resource.
@@ -383,8 +383,8 @@ class CropVarietiesOperations:
         :type crop_id: str
         :param crop_variety_id: Id of the crop variety resource.
         :type crop_variety_id: str
-        :param body: Crop variety resource payload to create or update.
-        :type body: ~azure.farmbeats.models.CropVariety
+        :param crop_variety: Crop variety resource payload to create or update.
+        :type crop_variety: ~azure.farmbeats.models.CropVariety
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: CropVariety, or the result of cls(response)
         :rtype: ~azure.farmbeats.models.CropVariety
@@ -417,8 +417,8 @@ class CropVarietiesOperations:
         header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
 
         body_content_kwargs = {}  # type: Dict[str, Any]
-        if body is not None:
-            body_content = self._serialize.body(body, 'CropVariety')
+        if crop_variety is not None:
+            body_content = self._serialize.body(crop_variety, 'CropVariety')
         else:
             body_content = None
         body_content_kwargs['content'] = body_content

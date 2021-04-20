@@ -24,12 +24,6 @@ class _CaseInsensitiveEnumMeta(EnumMeta):
             raise AttributeError(name)
 
 
-class DataProvider(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
-    """Provider of satellite data.
-    """
-
-    MICROSOFT = "Microsoft"
-
 class FieldOperationType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     """Operation Types for Field Operation.
     """
@@ -64,7 +58,13 @@ class JobStatus(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     FAILED = "Failed"
     CANCELLED = "Cancelled"
 
-class Source(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class SatelliteDataProvider(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+    """Provider of satellite data.
+    """
+
+    MICROSOFT = "Microsoft"
+
+class SatelliteSource(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     """Source of satellite data.
     """
 

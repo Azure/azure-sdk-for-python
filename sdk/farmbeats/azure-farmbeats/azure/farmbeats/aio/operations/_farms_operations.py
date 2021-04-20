@@ -346,7 +346,7 @@ class FarmsOperations:
         self,
         farmer_id: str,
         farm_id: str,
-        body: Optional["_models.Farm"] = None,
+        farm: Optional["_models.Farm"] = None,
         **kwargs
     ) -> "_models.Farm":
         """Creates or updates a farm resource under a particular farmer.
@@ -355,8 +355,8 @@ class FarmsOperations:
         :type farmer_id: str
         :param farm_id: Id of the farm resource.
         :type farm_id: str
-        :param body: Farm resource payload to create or update.
-        :type body: ~azure.farmbeats.models.Farm
+        :param farm: Farm resource payload to create or update.
+        :type farm: ~azure.farmbeats.models.Farm
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: Farm, or the result of cls(response)
         :rtype: ~azure.farmbeats.models.Farm
@@ -389,8 +389,8 @@ class FarmsOperations:
         header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
 
         body_content_kwargs = {}  # type: Dict[str, Any]
-        if body is not None:
-            body_content = self._serialize.body(body, 'Farm')
+        if farm is not None:
+            body_content = self._serialize.body(farm, 'Farm')
         else:
             body_content = None
         body_content_kwargs['content'] = body_content

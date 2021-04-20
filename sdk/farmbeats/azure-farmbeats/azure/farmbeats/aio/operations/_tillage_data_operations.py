@@ -506,7 +506,7 @@ class TillageDataOperations:
         self,
         farmer_id: str,
         tillage_data_id: str,
-        body: Optional["_models.TillageData"] = None,
+        tillage_data: Optional["_models.TillageData"] = None,
         **kwargs
     ) -> "_models.TillageData":
         """Creates or updates an tillage data resource under a particular farmer.
@@ -515,8 +515,8 @@ class TillageDataOperations:
         :type farmer_id: str
         :param tillage_data_id: ID of the tillage data resource.
         :type tillage_data_id: str
-        :param body: Tillage data resource payload to create or update.
-        :type body: ~azure.farmbeats.models.TillageData
+        :param tillage_data: Tillage data resource payload to create or update.
+        :type tillage_data: ~azure.farmbeats.models.TillageData
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: TillageData, or the result of cls(response)
         :rtype: ~azure.farmbeats.models.TillageData
@@ -549,8 +549,8 @@ class TillageDataOperations:
         header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
 
         body_content_kwargs = {}  # type: Dict[str, Any]
-        if body is not None:
-            body_content = self._serialize.body(body, 'TillageData')
+        if tillage_data is not None:
+            body_content = self._serialize.body(tillage_data, 'TillageData')
         else:
             body_content = None
         body_content_kwargs['content'] = body_content

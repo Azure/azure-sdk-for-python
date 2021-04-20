@@ -2560,9 +2560,9 @@ class SatelliteIngestionJobRequest(msrest.serialization.Model):
     :param end_date_time: Required. End Date.
     :type end_date_time: ~datetime.datetime
     :param provider: Provider of satellite data. Possible values include: "Microsoft".
-    :type provider: str or ~azure.farmbeats.models.DataProvider
+    :type provider: str or ~azure.farmbeats.models.SatelliteDataProvider
     :param source: Source of satellite data. Possible values include: "Sentinel_2_L2A".
-    :type source: str or ~azure.farmbeats.models.Source
+    :type source: str or ~azure.farmbeats.models.SatelliteSource
     :param data: Data Model for SatelliteInjestionJobRequest.
     :type data: ~azure.farmbeats.models.SatelliteData
     :param name: Name to identify resource.

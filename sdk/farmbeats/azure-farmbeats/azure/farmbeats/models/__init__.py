@@ -142,12 +142,12 @@ except (SyntaxError, ImportError):
     from ._models import WeatherIngestionJobResponse  # type: ignore
 
 from ._farm_beats_client_enums import (
-    DataProvider,
     FieldOperationType,
     GeoJsonObjectType,
     ImageFormat,
     JobStatus,
-    Source,
+    SatelliteDataProvider,
+    SatelliteSource,
 )
 
 __all__ = [
@@ -218,10 +218,10 @@ __all__ = [
     'WeatherIngestionJobDetails',
     'WeatherIngestionJobRequest',
     'WeatherIngestionJobResponse',
-    'DataProvider',
     'FieldOperationType',
     'GeoJsonObjectType',
     'ImageFormat',
     'JobStatus',
-    'Source',
+    'SatelliteDataProvider',
+    'SatelliteSource',
 ]
