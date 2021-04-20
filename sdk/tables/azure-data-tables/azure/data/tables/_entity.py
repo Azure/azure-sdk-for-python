@@ -5,11 +5,8 @@
 # --------------------------------------------------------------------------
 from enum import Enum
 from typing import Any, Dict
-# from datetime import datetime
-# import six
-# from uuid import UUID
 
-from ._error import _ERROR_ATTRIBUTE_MISSING, _ERROR_VALUE_TOO_LARGE
+from ._error import _ERROR_ATTRIBUTE_MISSING
 
 
 class TableEntity(dict):
