@@ -19,8 +19,8 @@ from ... import models as _models
 T = TypeVar('T')
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]]
 
-class Operations:
-    """Operations async operations.
+class ConfigurationAssignmentsWithinSubscriptionOperations:
+    """ConfigurationAssignmentsWithinSubscriptionOperations async operations.
 
     You should not instantiate this class directly. Instead, you should create a Client instance that
     instantiates it for you and attaches it as an attribute.
@@ -44,17 +44,17 @@ class Operations:
     def list(
         self,
         **kwargs
-    ) -> AsyncIterable["_models.OperationsListResult"]:
-        """List available operations.
+    ) -> AsyncIterable["_models.ListConfigurationAssignmentsResult"]:
+        """Get configuration assignment within a subscription.
 
-        List the available operations supported by the Microsoft.Maintenance resource provider.
+        Get configuration assignment within a subscription.
 
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: An iterator like instance of either OperationsListResult or the result of cls(response)
-        :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.maintenance.models.OperationsListResult]
+        :return: An iterator like instance of either ListConfigurationAssignmentsResult or the result of cls(response)
+        :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.maintenance.models.ListConfigurationAssignmentsResult]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["_models.OperationsListResult"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.ListConfigurationAssignmentsResult"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -70,6 +70,10 @@ class Operations:
             if not next_link:
                 # Construct URL
                 url = self.list.metadata['url']  # type: ignore
+                path_format_arguments = {
+                    'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
+                }
+                url = self._client.format_url(url, **path_format_arguments)
                 # Construct parameters
                 query_parameters = {}  # type: Dict[str, Any]
                 query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
@@ -82,7 +86,7 @@ class Operations:
             return request
 
         async def extract_data(pipeline_response):
-            deserialized = self._deserialize('OperationsListResult', pipeline_response)
+            deserialized = self._deserialize('ListConfigurationAssignmentsResult', pipeline_response)
             list_of_elem = deserialized.value
             if cls:
                 list_of_elem = cls(list_of_elem)
@@ -104,4 +108,4 @@ class Operations:
         return AsyncItemPaged(
             get_next, extract_data
         )
-    list.metadata = {'url': '/providers/Microsoft.Maintenance/operations'}  # type: ignore
+    list.metadata = {'url': '/subscriptions/{subscriptionId}/providers/Microsoft.Maintenance/configurationAssignments'}  # type: ignore
