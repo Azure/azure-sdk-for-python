@@ -36,6 +36,8 @@ class Protocol(str, Enum):
 
     http = "http"
     https = "https"
+    ws = "ws"
+    wss = "wss"
 
 
 class ContentFormat(str, Enum):
@@ -56,12 +58,14 @@ class SoapApiType(str, Enum):
 
     soap_to_rest = "http"  #: Imports a SOAP API having a RESTful front end.
     soap_pass_through = "soap"  #: Imports the Soap API having a SOAP front end.
+    web_socket = "websocket"  #: Imports the Soap API having a Websocket front end.
 
 
 class ApiType(str, Enum):
 
     http = "http"
     soap = "soap"
+    websocket = "websocket"
 
 
 class State(str, Enum):
@@ -186,6 +190,21 @@ class HostnameType(str, Enum):
     management = "Management"
     scm = "Scm"
     developer_portal = "DeveloperPortal"
+
+
+class CertificateSource(str, Enum):
+
+    managed = "Managed"
+    key_vault = "KeyVault"
+    custom = "Custom"
+    built_in = "BuiltIn"
+
+
+class CertificateStatus(str, Enum):
+
+    completed = "Completed"
+    failed = "Failed"
+    in_progress = "InProgress"
 
 
 class VirtualNetworkType(str, Enum):

@@ -197,6 +197,10 @@ class AdditionalLocation(Model):
      Network in a particular additional location. Available only for Basic,
      Standard, Premium and Isolated SKU.
     :vartype private_ip_addresses: list[str]
+    :param public_ip_address_id: Public Standard SKU IP V4 based IP address to
+     be associated with Virtual Network deployed service in the location.
+     Supported only for Premium SKU being deployed in Virtual Network.
+    :type public_ip_address_id: str
     :param virtual_network_configuration: Virtual network configuration for
      the location.
     :type virtual_network_configuration:
@@ -224,6 +228,7 @@ class AdditionalLocation(Model):
         'zones': {'key': 'zones', 'type': '[str]'},
         'public_ip_addresses': {'key': 'publicIPAddresses', 'type': '[str]'},
         'private_ip_addresses': {'key': 'privateIPAddresses', 'type': '[str]'},
+        'public_ip_address_id': {'key': 'publicIpAddressId', 'type': 'str'},
         'virtual_network_configuration': {'key': 'virtualNetworkConfiguration', 'type': 'VirtualNetworkConfiguration'},
         'gateway_regional_url': {'key': 'gatewayRegionalUrl', 'type': 'str'},
         'disable_gateway': {'key': 'disableGateway', 'type': 'bool'},
@@ -236,9 +241,36 @@ class AdditionalLocation(Model):
         self.zones = kwargs.get('zones', None)
         self.public_ip_addresses = None
         self.private_ip_addresses = None
+        self.public_ip_address_id = kwargs.get('public_ip_address_id', None)
         self.virtual_network_configuration = kwargs.get('virtual_network_configuration', None)
         self.gateway_regional_url = None
         self.disable_gateway = kwargs.get('disable_gateway', False)
+
+
+class ApiContactInformation(Model):
+    """API contact information.
+
+    :param name: The identifying name of the contact person/organization
+    :type name: str
+    :param url: The URL pointing to the contact information. MUST be in the
+     format of a URL
+    :type url: str
+    :param email: The email address of the contact person/organization. MUST
+     be in the format of an email address
+    :type email: str
+    """
+
+    _attribute_map = {
+        'name': {'key': 'name', 'type': 'str'},
+        'url': {'key': 'url', 'type': 'str'},
+        'email': {'key': 'email', 'type': 'str'},
+    }
+
+    def __init__(self, **kwargs):
+        super(ApiContactInformation, self).__init__(**kwargs)
+        self.name = kwargs.get('name', None)
+        self.url = kwargs.get('url', None)
+        self.email = kwargs.get('email', None)
 
 
 class ApiContract(Resource):
@@ -266,7 +298,8 @@ class ApiContract(Resource):
      available.
     :type subscription_key_parameter_names:
      ~azure.mgmt.apimanagement.models.SubscriptionKeyParameterNamesContract
-    :param api_type: Type of API. Possible values include: 'http', 'soap'
+    :param api_type: Type of API. Possible values include: 'http', 'soap',
+     'websocket'
     :type api_type: str or ~azure.mgmt.apimanagement.models.ApiType
     :param api_revision: Describes the Revision of the Api. If no value is
      provided, default revision 1 is created
@@ -288,6 +321,13 @@ class ApiContract(Resource):
     :param subscription_required: Specifies whether an API or Product
      subscription is required for accessing the API.
     :type subscription_required: bool
+    :param terms_of_service_url:  A URL to the Terms of Service for the API.
+     MUST be in the format of a URL.
+    :type terms_of_service_url: str
+    :param contact: Contact information for the API.
+    :type contact: ~azure.mgmt.apimanagement.models.ApiContactInformation
+    :param license: License information for the API.
+    :type license: ~azure.mgmt.apimanagement.models.ApiLicenseInformation
     :param source_api_id: API identifier of the source API.
     :type source_api_id: str
     :param display_name: API name. Must be 1 to 300 characters long.
@@ -338,11 +378,14 @@ class ApiContract(Resource):
         'api_version_description': {'key': 'properties.apiVersionDescription', 'type': 'str'},
         'api_version_set_id': {'key': 'properties.apiVersionSetId', 'type': 'str'},
         'subscription_required': {'key': 'properties.subscriptionRequired', 'type': 'bool'},
+        'terms_of_service_url': {'key': 'properties.termsOfServiceUrl', 'type': 'str'},
+        'contact': {'key': 'properties.contact', 'type': 'ApiContactInformation'},
+        'license': {'key': 'properties.license', 'type': 'ApiLicenseInformation'},
         'source_api_id': {'key': 'properties.sourceApiId', 'type': 'str'},
         'display_name': {'key': 'properties.displayName', 'type': 'str'},
         'service_url': {'key': 'properties.serviceUrl', 'type': 'str'},
         'path': {'key': 'properties.path', 'type': 'str'},
-        'protocols': {'key': 'properties.protocols', 'type': '[Protocol]'},
+        'protocols': {'key': 'properties.protocols', 'type': '[str]'},
         'api_version_set': {'key': 'properties.apiVersionSet', 'type': 'ApiVersionSetContractDetails'},
     }
 
@@ -360,6 +403,9 @@ class ApiContract(Resource):
         self.api_version_description = kwargs.get('api_version_description', None)
         self.api_version_set_id = kwargs.get('api_version_set_id', None)
         self.subscription_required = kwargs.get('subscription_required', None)
+        self.terms_of_service_url = kwargs.get('terms_of_service_url', None)
+        self.contact = kwargs.get('contact', None)
+        self.license = kwargs.get('license', None)
         self.source_api_id = kwargs.get('source_api_id', None)
         self.display_name = kwargs.get('display_name', None)
         self.service_url = kwargs.get('service_url', None)
@@ -385,7 +431,8 @@ class ApiEntityBaseContract(Model):
      available.
     :type subscription_key_parameter_names:
      ~azure.mgmt.apimanagement.models.SubscriptionKeyParameterNamesContract
-    :param api_type: Type of API. Possible values include: 'http', 'soap'
+    :param api_type: Type of API. Possible values include: 'http', 'soap',
+     'websocket'
     :type api_type: str or ~azure.mgmt.apimanagement.models.ApiType
     :param api_revision: Describes the Revision of the Api. If no value is
      provided, default revision 1 is created
@@ -407,6 +454,13 @@ class ApiEntityBaseContract(Model):
     :param subscription_required: Specifies whether an API or Product
      subscription is required for accessing the API.
     :type subscription_required: bool
+    :param terms_of_service_url:  A URL to the Terms of Service for the API.
+     MUST be in the format of a URL.
+    :type terms_of_service_url: str
+    :param contact: Contact information for the API.
+    :type contact: ~azure.mgmt.apimanagement.models.ApiContactInformation
+    :param license: License information for the API.
+    :type license: ~azure.mgmt.apimanagement.models.ApiLicenseInformation
     """
 
     _validation = {
@@ -430,6 +484,9 @@ class ApiEntityBaseContract(Model):
         'api_version_description': {'key': 'apiVersionDescription', 'type': 'str'},
         'api_version_set_id': {'key': 'apiVersionSetId', 'type': 'str'},
         'subscription_required': {'key': 'subscriptionRequired', 'type': 'bool'},
+        'terms_of_service_url': {'key': 'termsOfServiceUrl', 'type': 'str'},
+        'contact': {'key': 'contact', 'type': 'ApiContactInformation'},
+        'license': {'key': 'license', 'type': 'ApiLicenseInformation'},
     }
 
     def __init__(self, **kwargs):
@@ -446,6 +503,9 @@ class ApiEntityBaseContract(Model):
         self.api_version_description = kwargs.get('api_version_description', None)
         self.api_version_set_id = kwargs.get('api_version_set_id', None)
         self.subscription_required = kwargs.get('subscription_required', None)
+        self.terms_of_service_url = kwargs.get('terms_of_service_url', None)
+        self.contact = kwargs.get('contact', None)
+        self.license = kwargs.get('license', None)
 
 
 class ApiContractProperties(ApiEntityBaseContract):
@@ -467,7 +527,8 @@ class ApiContractProperties(ApiEntityBaseContract):
      available.
     :type subscription_key_parameter_names:
      ~azure.mgmt.apimanagement.models.SubscriptionKeyParameterNamesContract
-    :param api_type: Type of API. Possible values include: 'http', 'soap'
+    :param api_type: Type of API. Possible values include: 'http', 'soap',
+     'websocket'
     :type api_type: str or ~azure.mgmt.apimanagement.models.ApiType
     :param api_revision: Describes the Revision of the Api. If no value is
      provided, default revision 1 is created
@@ -489,6 +550,13 @@ class ApiContractProperties(ApiEntityBaseContract):
     :param subscription_required: Specifies whether an API or Product
      subscription is required for accessing the API.
     :type subscription_required: bool
+    :param terms_of_service_url:  A URL to the Terms of Service for the API.
+     MUST be in the format of a URL.
+    :type terms_of_service_url: str
+    :param contact: Contact information for the API.
+    :type contact: ~azure.mgmt.apimanagement.models.ApiContactInformation
+    :param license: License information for the API.
+    :type license: ~azure.mgmt.apimanagement.models.ApiLicenseInformation
     :param source_api_id: API identifier of the source API.
     :type source_api_id: str
     :param display_name: API name. Must be 1 to 300 characters long.
@@ -533,11 +601,14 @@ class ApiContractProperties(ApiEntityBaseContract):
         'api_version_description': {'key': 'apiVersionDescription', 'type': 'str'},
         'api_version_set_id': {'key': 'apiVersionSetId', 'type': 'str'},
         'subscription_required': {'key': 'subscriptionRequired', 'type': 'bool'},
+        'terms_of_service_url': {'key': 'termsOfServiceUrl', 'type': 'str'},
+        'contact': {'key': 'contact', 'type': 'ApiContactInformation'},
+        'license': {'key': 'license', 'type': 'ApiLicenseInformation'},
         'source_api_id': {'key': 'sourceApiId', 'type': 'str'},
         'display_name': {'key': 'displayName', 'type': 'str'},
         'service_url': {'key': 'serviceUrl', 'type': 'str'},
         'path': {'key': 'path', 'type': 'str'},
-        'protocols': {'key': 'protocols', 'type': '[Protocol]'},
+        'protocols': {'key': 'protocols', 'type': '[str]'},
         'api_version_set': {'key': 'apiVersionSet', 'type': 'ApiVersionSetContractDetails'},
     }
 
@@ -570,7 +641,8 @@ class ApiCreateOrUpdateParameter(Model):
      available.
     :type subscription_key_parameter_names:
      ~azure.mgmt.apimanagement.models.SubscriptionKeyParameterNamesContract
-    :param api_type: Type of API. Possible values include: 'http', 'soap'
+    :param api_type: Type of API. Possible values include: 'http', 'soap',
+     'websocket'
     :type api_type: str or ~azure.mgmt.apimanagement.models.ApiType
     :param api_revision: Describes the Revision of the Api. If no value is
      provided, default revision 1 is created
@@ -592,6 +664,13 @@ class ApiCreateOrUpdateParameter(Model):
     :param subscription_required: Specifies whether an API or Product
      subscription is required for accessing the API.
     :type subscription_required: bool
+    :param terms_of_service_url:  A URL to the Terms of Service for the API.
+     MUST be in the format of a URL.
+    :type terms_of_service_url: str
+    :param contact: Contact information for the API.
+    :type contact: ~azure.mgmt.apimanagement.models.ApiContactInformation
+    :param license: License information for the API.
+    :type license: ~azure.mgmt.apimanagement.models.ApiLicenseInformation
     :param source_api_id: API identifier of the source API.
     :type source_api_id: str
     :param display_name: API name. Must be 1 to 300 characters long.
@@ -622,9 +701,10 @@ class ApiCreateOrUpdateParameter(Model):
     :type wsdl_selector:
      ~azure.mgmt.apimanagement.models.ApiCreateOrUpdatePropertiesWsdlSelector
     :param soap_api_type: Type of Api to create.
-     * `http` creates a SOAP to REST API
-     * `soap` creates a SOAP pass-through API. Possible values include:
-     'SoapToRest', 'SoapPassThrough'
+     * `http` creates a REST API
+     * `soap` creates a SOAP pass-through API
+     * `websocket` creates websocket API. Possible values include:
+     'SoapToRest', 'SoapPassThrough', 'WebSocket'
     :type soap_api_type: str or ~azure.mgmt.apimanagement.models.SoapApiType
     """
 
@@ -652,11 +732,14 @@ class ApiCreateOrUpdateParameter(Model):
         'api_version_description': {'key': 'properties.apiVersionDescription', 'type': 'str'},
         'api_version_set_id': {'key': 'properties.apiVersionSetId', 'type': 'str'},
         'subscription_required': {'key': 'properties.subscriptionRequired', 'type': 'bool'},
+        'terms_of_service_url': {'key': 'properties.termsOfServiceUrl', 'type': 'str'},
+        'contact': {'key': 'properties.contact', 'type': 'ApiContactInformation'},
+        'license': {'key': 'properties.license', 'type': 'ApiLicenseInformation'},
         'source_api_id': {'key': 'properties.sourceApiId', 'type': 'str'},
         'display_name': {'key': 'properties.displayName', 'type': 'str'},
         'service_url': {'key': 'properties.serviceUrl', 'type': 'str'},
         'path': {'key': 'properties.path', 'type': 'str'},
-        'protocols': {'key': 'properties.protocols', 'type': '[Protocol]'},
+        'protocols': {'key': 'properties.protocols', 'type': '[str]'},
         'api_version_set': {'key': 'properties.apiVersionSet', 'type': 'ApiVersionSetContractDetails'},
         'value': {'key': 'properties.value', 'type': 'str'},
         'format': {'key': 'properties.format', 'type': 'str'},
@@ -678,6 +761,9 @@ class ApiCreateOrUpdateParameter(Model):
         self.api_version_description = kwargs.get('api_version_description', None)
         self.api_version_set_id = kwargs.get('api_version_set_id', None)
         self.subscription_required = kwargs.get('subscription_required', None)
+        self.terms_of_service_url = kwargs.get('terms_of_service_url', None)
+        self.contact = kwargs.get('contact', None)
+        self.license = kwargs.get('license', None)
         self.source_api_id = kwargs.get('source_api_id', None)
         self.display_name = kwargs.get('display_name', None)
         self.service_url = kwargs.get('service_url', None)
@@ -752,6 +838,27 @@ class ApiExportResultValue(Model):
     def __init__(self, **kwargs):
         super(ApiExportResultValue, self).__init__(**kwargs)
         self.link = kwargs.get('link', None)
+
+
+class ApiLicenseInformation(Model):
+    """API license information.
+
+    :param name: The license name used for the API
+    :type name: str
+    :param url: A URL to the license used for the API. MUST be in the format
+     of a URL
+    :type url: str
+    """
+
+    _attribute_map = {
+        'name': {'key': 'name', 'type': 'str'},
+        'url': {'key': 'url', 'type': 'str'},
+    }
+
+    def __init__(self, **kwargs):
+        super(ApiLicenseInformation, self).__init__(**kwargs)
+        self.name = kwargs.get('name', None)
+        self.url = kwargs.get('url', None)
 
 
 class ApiManagementServiceApplyNetworkConfigurationParameters(Model):
@@ -863,6 +970,11 @@ class ApiManagementServiceBaseProperties(Model):
      Internal Virtual Network. Available only for Basic, Standard, Premium and
      Isolated SKU.
     :vartype private_ip_addresses: list[str]
+    :param public_ip_address_id: Public Standard SKU IP V4 based IP address to
+     be associated with Virtual Network deployed service in the region.
+     Supported only for Developer and Premium SKU being deployed in Virtual
+     Network.
+    :type public_ip_address_id: str
     :param virtual_network_configuration: Virtual network configuration of the
      API Management service.
     :type virtual_network_configuration:
@@ -969,6 +1081,7 @@ class ApiManagementServiceBaseProperties(Model):
         'hostname_configurations': {'key': 'hostnameConfigurations', 'type': '[HostnameConfiguration]'},
         'public_ip_addresses': {'key': 'publicIPAddresses', 'type': '[str]'},
         'private_ip_addresses': {'key': 'privateIPAddresses', 'type': '[str]'},
+        'public_ip_address_id': {'key': 'publicIpAddressId', 'type': 'str'},
         'virtual_network_configuration': {'key': 'virtualNetworkConfiguration', 'type': 'VirtualNetworkConfiguration'},
         'additional_locations': {'key': 'additionalLocations', 'type': '[AdditionalLocation]'},
         'custom_properties': {'key': 'customProperties', 'type': '{str}'},
@@ -995,6 +1108,7 @@ class ApiManagementServiceBaseProperties(Model):
         self.hostname_configurations = kwargs.get('hostname_configurations', None)
         self.public_ip_addresses = None
         self.private_ip_addresses = None
+        self.public_ip_address_id = kwargs.get('public_ip_address_id', None)
         self.virtual_network_configuration = kwargs.get('virtual_network_configuration', None)
         self.additional_locations = kwargs.get('additional_locations', None)
         self.custom_properties = kwargs.get('custom_properties', None)
@@ -1257,6 +1371,11 @@ class ApiManagementServiceResource(ApimResource):
      Internal Virtual Network. Available only for Basic, Standard, Premium and
      Isolated SKU.
     :vartype private_ip_addresses: list[str]
+    :param public_ip_address_id: Public Standard SKU IP V4 based IP address to
+     be associated with Virtual Network deployed service in the region.
+     Supported only for Developer and Premium SKU being deployed in Virtual
+     Network.
+    :type public_ip_address_id: str
     :param virtual_network_configuration: Virtual network configuration of the
      API Management service.
     :type virtual_network_configuration:
@@ -1392,6 +1511,7 @@ class ApiManagementServiceResource(ApimResource):
         'hostname_configurations': {'key': 'properties.hostnameConfigurations', 'type': '[HostnameConfiguration]'},
         'public_ip_addresses': {'key': 'properties.publicIPAddresses', 'type': '[str]'},
         'private_ip_addresses': {'key': 'properties.privateIPAddresses', 'type': '[str]'},
+        'public_ip_address_id': {'key': 'properties.publicIpAddressId', 'type': 'str'},
         'virtual_network_configuration': {'key': 'properties.virtualNetworkConfiguration', 'type': 'VirtualNetworkConfiguration'},
         'additional_locations': {'key': 'properties.additionalLocations', 'type': '[AdditionalLocation]'},
         'custom_properties': {'key': 'properties.customProperties', 'type': '{str}'},
@@ -1425,6 +1545,7 @@ class ApiManagementServiceResource(ApimResource):
         self.hostname_configurations = kwargs.get('hostname_configurations', None)
         self.public_ip_addresses = None
         self.private_ip_addresses = None
+        self.public_ip_address_id = kwargs.get('public_ip_address_id', None)
         self.virtual_network_configuration = kwargs.get('virtual_network_configuration', None)
         self.additional_locations = kwargs.get('additional_locations', None)
         self.custom_properties = kwargs.get('custom_properties', None)
@@ -1531,6 +1652,11 @@ class ApiManagementServiceUpdateParameters(ApimResource):
      Internal Virtual Network. Available only for Basic, Standard, Premium and
      Isolated SKU.
     :vartype private_ip_addresses: list[str]
+    :param public_ip_address_id: Public Standard SKU IP V4 based IP address to
+     be associated with Virtual Network deployed service in the region.
+     Supported only for Developer and Premium SKU being deployed in Virtual
+     Network.
+    :type public_ip_address_id: str
     :param virtual_network_configuration: Virtual network configuration of the
      API Management service.
     :type virtual_network_configuration:
@@ -1659,6 +1785,7 @@ class ApiManagementServiceUpdateParameters(ApimResource):
         'hostname_configurations': {'key': 'properties.hostnameConfigurations', 'type': '[HostnameConfiguration]'},
         'public_ip_addresses': {'key': 'properties.publicIPAddresses', 'type': '[str]'},
         'private_ip_addresses': {'key': 'properties.privateIPAddresses', 'type': '[str]'},
+        'public_ip_address_id': {'key': 'properties.publicIpAddressId', 'type': 'str'},
         'virtual_network_configuration': {'key': 'properties.virtualNetworkConfiguration', 'type': 'VirtualNetworkConfiguration'},
         'additional_locations': {'key': 'properties.additionalLocations', 'type': '[AdditionalLocation]'},
         'custom_properties': {'key': 'properties.customProperties', 'type': '{str}'},
@@ -1690,6 +1817,7 @@ class ApiManagementServiceUpdateParameters(ApimResource):
         self.hostname_configurations = kwargs.get('hostname_configurations', None)
         self.public_ip_addresses = None
         self.private_ip_addresses = None
+        self.public_ip_address_id = kwargs.get('public_ip_address_id', None)
         self.virtual_network_configuration = kwargs.get('virtual_network_configuration', None)
         self.additional_locations = kwargs.get('additional_locations', None)
         self.custom_properties = kwargs.get('custom_properties', None)
@@ -2202,7 +2330,8 @@ class ApiTagResourceContractProperties(ApiEntityBaseContract):
      available.
     :type subscription_key_parameter_names:
      ~azure.mgmt.apimanagement.models.SubscriptionKeyParameterNamesContract
-    :param api_type: Type of API. Possible values include: 'http', 'soap'
+    :param api_type: Type of API. Possible values include: 'http', 'soap',
+     'websocket'
     :type api_type: str or ~azure.mgmt.apimanagement.models.ApiType
     :param api_revision: Describes the Revision of the Api. If no value is
      provided, default revision 1 is created
@@ -2224,6 +2353,13 @@ class ApiTagResourceContractProperties(ApiEntityBaseContract):
     :param subscription_required: Specifies whether an API or Product
      subscription is required for accessing the API.
     :type subscription_required: bool
+    :param terms_of_service_url:  A URL to the Terms of Service for the API.
+     MUST be in the format of a URL.
+    :type terms_of_service_url: str
+    :param contact: Contact information for the API.
+    :type contact: ~azure.mgmt.apimanagement.models.ApiContactInformation
+    :param license: License information for the API.
+    :type license: ~azure.mgmt.apimanagement.models.ApiLicenseInformation
     :param id: API identifier in the form /apis/{apiId}.
     :type id: str
     :param name: API name.
@@ -2265,11 +2401,14 @@ class ApiTagResourceContractProperties(ApiEntityBaseContract):
         'api_version_description': {'key': 'apiVersionDescription', 'type': 'str'},
         'api_version_set_id': {'key': 'apiVersionSetId', 'type': 'str'},
         'subscription_required': {'key': 'subscriptionRequired', 'type': 'bool'},
+        'terms_of_service_url': {'key': 'termsOfServiceUrl', 'type': 'str'},
+        'contact': {'key': 'contact', 'type': 'ApiContactInformation'},
+        'license': {'key': 'license', 'type': 'ApiLicenseInformation'},
         'id': {'key': 'id', 'type': 'str'},
         'name': {'key': 'name', 'type': 'str'},
         'service_url': {'key': 'serviceUrl', 'type': 'str'},
         'path': {'key': 'path', 'type': 'str'},
-        'protocols': {'key': 'protocols', 'type': '[Protocol]'},
+        'protocols': {'key': 'protocols', 'type': '[str]'},
     }
 
     def __init__(self, **kwargs):
@@ -2298,7 +2437,8 @@ class ApiUpdateContract(Model):
      available.
     :type subscription_key_parameter_names:
      ~azure.mgmt.apimanagement.models.SubscriptionKeyParameterNamesContract
-    :param api_type: Type of API. Possible values include: 'http', 'soap'
+    :param api_type: Type of API. Possible values include: 'http', 'soap',
+     'websocket'
     :type api_type: str or ~azure.mgmt.apimanagement.models.ApiType
     :param api_revision: Describes the Revision of the Api. If no value is
      provided, default revision 1 is created
@@ -2320,6 +2460,13 @@ class ApiUpdateContract(Model):
     :param subscription_required: Specifies whether an API or Product
      subscription is required for accessing the API.
     :type subscription_required: bool
+    :param terms_of_service_url:  A URL to the Terms of Service for the API.
+     MUST be in the format of a URL.
+    :type terms_of_service_url: str
+    :param contact: Contact information for the API.
+    :type contact: ~azure.mgmt.apimanagement.models.ApiContactInformation
+    :param license: License information for the API.
+    :type license: ~azure.mgmt.apimanagement.models.ApiLicenseInformation
     :param display_name: API name.
     :type display_name: str
     :param service_url: Absolute URL of the backend service implementing this
@@ -2359,10 +2506,13 @@ class ApiUpdateContract(Model):
         'api_version_description': {'key': 'properties.apiVersionDescription', 'type': 'str'},
         'api_version_set_id': {'key': 'properties.apiVersionSetId', 'type': 'str'},
         'subscription_required': {'key': 'properties.subscriptionRequired', 'type': 'bool'},
+        'terms_of_service_url': {'key': 'properties.termsOfServiceUrl', 'type': 'str'},
+        'contact': {'key': 'properties.contact', 'type': 'ApiContactInformation'},
+        'license': {'key': 'properties.license', 'type': 'ApiLicenseInformation'},
         'display_name': {'key': 'properties.displayName', 'type': 'str'},
         'service_url': {'key': 'properties.serviceUrl', 'type': 'str'},
         'path': {'key': 'properties.path', 'type': 'str'},
-        'protocols': {'key': 'properties.protocols', 'type': '[Protocol]'},
+        'protocols': {'key': 'properties.protocols', 'type': '[str]'},
     }
 
     def __init__(self, **kwargs):
@@ -2379,6 +2529,9 @@ class ApiUpdateContract(Model):
         self.api_version_description = kwargs.get('api_version_description', None)
         self.api_version_set_id = kwargs.get('api_version_set_id', None)
         self.subscription_required = kwargs.get('subscription_required', None)
+        self.terms_of_service_url = kwargs.get('terms_of_service_url', None)
+        self.contact = kwargs.get('contact', None)
+        self.license = kwargs.get('license', None)
         self.display_name = kwargs.get('display_name', None)
         self.service_url = kwargs.get('service_url', None)
         self.path = kwargs.get('path', None)
@@ -4715,6 +4868,14 @@ class HostnameConfiguration(Model):
     :type negotiate_client_certificate: bool
     :param certificate: Certificate information.
     :type certificate: ~azure.mgmt.apimanagement.models.CertificateInformation
+    :param certificate_source: Certificate Source. Possible values include:
+     'Managed', 'KeyVault', 'Custom', 'BuiltIn'
+    :type certificate_source: str or
+     ~azure.mgmt.apimanagement.models.CertificateSource
+    :param certificate_status: Certificate Status. Possible values include:
+     'Completed', 'Failed', 'InProgress'
+    :type certificate_status: str or
+     ~azure.mgmt.apimanagement.models.CertificateStatus
     """
 
     _validation = {
@@ -4732,6 +4893,8 @@ class HostnameConfiguration(Model):
         'default_ssl_binding': {'key': 'defaultSslBinding', 'type': 'bool'},
         'negotiate_client_certificate': {'key': 'negotiateClientCertificate', 'type': 'bool'},
         'certificate': {'key': 'certificate', 'type': 'CertificateInformation'},
+        'certificate_source': {'key': 'certificateSource', 'type': 'str'},
+        'certificate_status': {'key': 'certificateStatus', 'type': 'str'},
     }
 
     def __init__(self, **kwargs):
@@ -4745,6 +4908,8 @@ class HostnameConfiguration(Model):
         self.default_ssl_binding = kwargs.get('default_ssl_binding', False)
         self.negotiate_client_certificate = kwargs.get('negotiate_client_certificate', False)
         self.certificate = kwargs.get('certificate', None)
+        self.certificate_source = kwargs.get('certificate_source', None)
+        self.certificate_status = kwargs.get('certificate_status', None)
 
 
 class HttpMessageDiagnostic(Model):
@@ -6097,14 +6262,20 @@ class OperationEntityBaseContract(Model):
         self.policies = kwargs.get('policies', None)
 
 
-class OperationResultContract(Model):
-    """Operation Result.
+class OperationResultContract(Resource):
+    """Long Running Git Operation Results.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
-    :param id: Operation result identifier.
-    :type id: str
+    :ivar id: Resource ID.
+    :vartype id: str
+    :ivar name: Resource name.
+    :vartype name: str
+    :ivar type: Resource type for API Management resource.
+    :vartype type: str
+    :param operation_result_contract_id: Operation result identifier.
+    :type operation_result_contract_id: str
     :param status: Status of an async operation. Possible values include:
      'Started', 'InProgress', 'Succeeded', 'Failed'
     :type status: str or ~azure.mgmt.apimanagement.models.AsyncOperationStatus
@@ -6129,22 +6300,28 @@ class OperationResultContract(Model):
     """
 
     _validation = {
+        'id': {'readonly': True},
+        'name': {'readonly': True},
+        'type': {'readonly': True},
         'action_log': {'readonly': True},
     }
 
     _attribute_map = {
         'id': {'key': 'id', 'type': 'str'},
-        'status': {'key': 'status', 'type': 'AsyncOperationStatus'},
-        'started': {'key': 'started', 'type': 'iso-8601'},
-        'updated': {'key': 'updated', 'type': 'iso-8601'},
-        'result_info': {'key': 'resultInfo', 'type': 'str'},
-        'error': {'key': 'error', 'type': 'ErrorResponseBody'},
-        'action_log': {'key': 'actionLog', 'type': '[OperationResultLogItemContract]'},
+        'name': {'key': 'name', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
+        'operation_result_contract_id': {'key': 'properties.id', 'type': 'str'},
+        'status': {'key': 'properties.status', 'type': 'AsyncOperationStatus'},
+        'started': {'key': 'properties.started', 'type': 'iso-8601'},
+        'updated': {'key': 'properties.updated', 'type': 'iso-8601'},
+        'result_info': {'key': 'properties.resultInfo', 'type': 'str'},
+        'error': {'key': 'properties.error', 'type': 'ErrorResponseBody'},
+        'action_log': {'key': 'properties.actionLog', 'type': '[OperationResultLogItemContract]'},
     }
 
     def __init__(self, **kwargs):
         super(OperationResultContract, self).__init__(**kwargs)
-        self.id = kwargs.get('id', None)
+        self.operation_result_contract_id = kwargs.get('operation_result_contract_id', None)
         self.status = kwargs.get('status', None)
         self.started = kwargs.get('started', None)
         self.updated = kwargs.get('updated', None)
@@ -6309,6 +6486,10 @@ class ParameterContract(Model):
     :type required: bool
     :param values: Parameter values.
     :type values: list[str]
+    :param schema_id: Schema identifier.
+    :type schema_id: str
+    :param type_name: Type name defined by the schema.
+    :type type_name: str
     """
 
     _validation = {
@@ -6323,6 +6504,8 @@ class ParameterContract(Model):
         'default_value': {'key': 'defaultValue', 'type': 'str'},
         'required': {'key': 'required', 'type': 'bool'},
         'values': {'key': 'values', 'type': '[str]'},
+        'schema_id': {'key': 'schemaId', 'type': 'str'},
+        'type_name': {'key': 'typeName', 'type': 'str'},
     }
 
     def __init__(self, **kwargs):
@@ -6333,6 +6516,8 @@ class ParameterContract(Model):
         self.default_value = kwargs.get('default_value', None)
         self.required = kwargs.get('required', None)
         self.values = kwargs.get('values', None)
+        self.schema_id = kwargs.get('schema_id', None)
+        self.type_name = kwargs.get('type_name', None)
 
 
 class PipelineDiagnosticSettings(Model):
@@ -8451,7 +8636,7 @@ class TagTagResourceContractProperties(Model):
 
 
 class TenantConfigurationSyncStateContract(Model):
-    """Tenant Configuration Synchronization State.
+    """Result of Tenant Configuration Sync State.
 
     :param branch: The name of Git branch.
     :type branch: str
@@ -8474,16 +8659,20 @@ class TenantConfigurationSyncStateContract(Model):
      change. The date conforms to the following format: `yyyy-MM-ddTHH:mm:ssZ`
      as specified by the ISO 8601 standard.
     :type configuration_change_date: datetime
+    :param last_operation_id: Most recent tenant configuration operation
+     identifier
+    :type last_operation_id: str
     """
 
     _attribute_map = {
-        'branch': {'key': 'branch', 'type': 'str'},
-        'commit_id': {'key': 'commitId', 'type': 'str'},
-        'is_export': {'key': 'isExport', 'type': 'bool'},
-        'is_synced': {'key': 'isSynced', 'type': 'bool'},
-        'is_git_enabled': {'key': 'isGitEnabled', 'type': 'bool'},
-        'sync_date': {'key': 'syncDate', 'type': 'iso-8601'},
-        'configuration_change_date': {'key': 'configurationChangeDate', 'type': 'iso-8601'},
+        'branch': {'key': 'properties.branch', 'type': 'str'},
+        'commit_id': {'key': 'properties.commitId', 'type': 'str'},
+        'is_export': {'key': 'properties.isExport', 'type': 'bool'},
+        'is_synced': {'key': 'properties.isSynced', 'type': 'bool'},
+        'is_git_enabled': {'key': 'properties.isGitEnabled', 'type': 'bool'},
+        'sync_date': {'key': 'properties.syncDate', 'type': 'iso-8601'},
+        'configuration_change_date': {'key': 'properties.configurationChangeDate', 'type': 'iso-8601'},
+        'last_operation_id': {'key': 'properties.lastOperationId', 'type': 'str'},
     }
 
     def __init__(self, **kwargs):
@@ -8495,6 +8684,7 @@ class TenantConfigurationSyncStateContract(Model):
         self.is_git_enabled = kwargs.get('is_git_enabled', None)
         self.sync_date = kwargs.get('sync_date', None)
         self.configuration_change_date = kwargs.get('configuration_change_date', None)
+        self.last_operation_id = kwargs.get('last_operation_id', None)
 
 
 class TenantSettingsContract(Resource):

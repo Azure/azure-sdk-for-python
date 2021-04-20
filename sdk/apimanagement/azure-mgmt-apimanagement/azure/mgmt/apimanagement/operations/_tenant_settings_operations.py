@@ -24,7 +24,7 @@ class TenantSettingsOperations(object):
     :param config: Configuration of service client.
     :param serializer: An object model serializer.
     :param deserializer: An object model deserializer.
-    :ivar api_version: Version of the API to be used with the client request. Constant value: "2020-12-01".
+    :ivar api_version: Version of the API to be used with the client request. Constant value: "2021-01-01-preview".
     :ivar settings_type: The identifier of the settings. Constant value: "public".
     """
 
@@ -35,7 +35,7 @@ class TenantSettingsOperations(object):
         self._client = client
         self._serialize = serializer
         self._deserialize = deserializer
-        self.api_version = "2020-12-01"
+        self.api_version = "2021-01-01-preview"
         self.settings_type = "public"
 
         self.config = config

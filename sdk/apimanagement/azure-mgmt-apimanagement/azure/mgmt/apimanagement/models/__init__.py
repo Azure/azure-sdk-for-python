@@ -15,6 +15,7 @@ try:
     from ._models_py3 import AccessInformationSecretsContract
     from ._models_py3 import AccessInformationUpdateParameters
     from ._models_py3 import AdditionalLocation
+    from ._models_py3 import ApiContactInformation
     from ._models_py3 import ApiContract
     from ._models_py3 import ApiContractProperties
     from ._models_py3 import ApiCreateOrUpdateParameter
@@ -22,6 +23,7 @@ try:
     from ._models_py3 import ApiEntityBaseContract
     from ._models_py3 import ApiExportResult
     from ._models_py3 import ApiExportResultValue
+    from ._models_py3 import ApiLicenseInformation
     from ._models_py3 import ApiManagementServiceApplyNetworkConfigurationParameters
     from ._models_py3 import ApiManagementServiceBackupRestoreParameters
     from ._models_py3 import ApiManagementServiceBaseProperties
@@ -212,6 +214,7 @@ except (SyntaxError, ImportError):
     from ._models import AccessInformationSecretsContract
     from ._models import AccessInformationUpdateParameters
     from ._models import AdditionalLocation
+    from ._models import ApiContactInformation
     from ._models import ApiContract
     from ._models import ApiContractProperties
     from ._models import ApiCreateOrUpdateParameter
@@ -219,6 +222,7 @@ except (SyntaxError, ImportError):
     from ._models import ApiEntityBaseContract
     from ._models import ApiExportResult
     from ._models import ApiExportResultValue
+    from ._models import ApiLicenseInformation
     from ._models import ApiManagementServiceApplyNetworkConfigurationParameters
     from ._models import ApiManagementServiceBackupRestoreParameters
     from ._models import ApiManagementServiceBaseProperties
@@ -472,6 +476,8 @@ from ._api_management_client_enums import (
     SkuType,
     ResourceSkuCapacityScaleType,
     HostnameType,
+    CertificateSource,
+    CertificateStatus,
     VirtualNetworkType,
     ApimIdentityType,
     NameAvailabilityReason,
@@ -504,6 +510,7 @@ __all__ = [
     'AccessInformationSecretsContract',
     'AccessInformationUpdateParameters',
     'AdditionalLocation',
+    'ApiContactInformation',
     'ApiContract',
     'ApiContractProperties',
     'ApiCreateOrUpdateParameter',
@@ -511,6 +518,7 @@ __all__ = [
     'ApiEntityBaseContract',
     'ApiExportResult',
     'ApiExportResultValue',
+    'ApiLicenseInformation',
     'ApiManagementServiceApplyNetworkConfigurationParameters',
     'ApiManagementServiceBackupRestoreParameters',
     'ApiManagementServiceBaseProperties',
@@ -763,6 +771,8 @@ __all__ = [
     'SkuType',
     'ResourceSkuCapacityScaleType',
     'HostnameType',
+    'CertificateSource',
+    'CertificateStatus',
     'VirtualNetworkType',
     'ApimIdentityType',
     'NameAvailabilityReason',
