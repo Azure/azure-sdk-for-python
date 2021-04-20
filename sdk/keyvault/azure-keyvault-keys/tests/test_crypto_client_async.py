@@ -12,6 +12,7 @@ from unittest import mock
 from azure.core.exceptions import AzureError, HttpResponseError
 from azure.core.pipeline.policies import SansIOHTTPPolicy
 from azure.keyvault.keys import JsonWebKey, KeyCurveName, KeyOperation, KeyVaultKey
+from azure.keyvault.keys._shared.client_base import DEFAULT_VERSION
 from azure.keyvault.keys.crypto._key_validity import _UTC
 from azure.keyvault.keys.crypto._providers import NoLocalCryptography, get_local_cryptography_provider
 from azure.keyvault.keys.crypto.aio import CryptographyClient, EncryptionAlgorithm, KeyWrapAlgorithm, SignatureAlgorithm
@@ -23,7 +24,7 @@ import pytest
 from _shared.helpers_async  import get_completed_future
 from _shared.json_attribute_matcher import json_attribute_matcher
 from _shared.test_case_async import KeyVaultTestCase
-from _test_case import KeysTestCase, suffixed_test_name
+from _test_case import KeysTestCase, PARAMETER_COMBINATIONS, suffixed_test_name
 
 # without keys/get, a CryptographyClient created with a key ID performs all ops remotely
 NO_GET = Permissions(keys=[p.value for p in KeyPermissions if p.value != "get"])
@@ -134,15 +135,17 @@ class CryptoClientTests(KeysTestCase, KeyVaultTestCase):
         assert key_vault_key.key.kid == imported_key.id == key_vault_key.id
         return key_vault_key
 
-    @parameterized.expand([param(is_hsm=b) for b in [True, False]], name_func=suffixed_test_name)
+    @parameterized.expand(
+        [(param(api_version=p[0], is_hsm=p[1])) for p in PARAMETER_COMBINATIONS], name_func=suffixed_test_name
+    )
     @PowerShellPreparer("keyvault")
     async def test_ec_key_id(self, **kwargs):
         """When initialized with a key ID, the client should retrieve the key and perform public operations locally"""
         is_hsm = kwargs.pop("is_hsm")
-        self._skip_if_not_configured(is_hsm)
+        self._skip_if_not_configured(kwargs.get("api_version"), is_hsm)
         endpoint_url = self.managed_hsm_url if is_hsm else self.vault_url
 
-        key_client = self.create_key_client(endpoint_url, is_async=True)
+        key_client = self.create_key_client(endpoint_url, is_async=True, **kwargs)
         key = await self._create_ec_key(key_client, self.get_resource_name("eckey"), hardware_protected=is_hsm)
 
         crypto_client = self.create_crypto_client(key.id, is_async=True)
@@ -154,15 +157,17 @@ class CryptoClientTests(KeysTestCase, KeyVaultTestCase):
 
         await crypto_client.verify(SignatureAlgorithm.es256, hashlib.sha256(self.plaintext).digest(), self.plaintext)
 
-    @parameterized.expand([param(is_hsm=b) for b in [True, False]], name_func=suffixed_test_name)
+    @parameterized.expand(
+        [(param(api_version=p[0], is_hsm=p[1])) for p in PARAMETER_COMBINATIONS], name_func=suffixed_test_name
+    )
     @PowerShellPreparer("keyvault")
     async def test_rsa_key_id(self, **kwargs):
         """When initialized with a key ID, the client should retrieve the key and perform public operations locally"""
         is_hsm = kwargs.pop("is_hsm")
-        self._skip_if_not_configured(is_hsm)
+        self._skip_if_not_configured(kwargs.get("api_version"), is_hsm)
         endpoint_url = self.managed_hsm_url if is_hsm else self.vault_url
 
-        key_client = self.create_key_client(endpoint_url, is_async=True)
+        key_client = self.create_key_client(endpoint_url, is_async=True, **kwargs)
         key = await self._create_rsa_key(key_client, self.get_resource_name("rsakey"), hardware_protected=is_hsm)
 
         crypto_client = self.create_crypto_client(key.id, is_async=True)
@@ -176,14 +181,16 @@ class CryptoClientTests(KeysTestCase, KeyVaultTestCase):
         await crypto_client.verify(SignatureAlgorithm.rs256, hashlib.sha256(self.plaintext).digest(), self.plaintext)
         await crypto_client.wrap_key(KeyWrapAlgorithm.rsa_oaep, self.plaintext)
 
-    @parameterized.expand([param(is_hsm=b) for b in [True, False]], name_func=suffixed_test_name)
+    @parameterized.expand(
+        [(param(api_version=p[0], is_hsm=p[1])) for p in PARAMETER_COMBINATIONS], name_func=suffixed_test_name
+    )
     @PowerShellPreparer("keyvault")
     async def test_encrypt_and_decrypt(self, **kwargs):
         is_hsm = kwargs.pop("is_hsm")
-        self._skip_if_not_configured(is_hsm)
+        self._skip_if_not_configured(kwargs.get("api_version"), is_hsm)
         endpoint_url = self.managed_hsm_url if is_hsm else self.vault_url
 
-        key_client = self.create_key_client(endpoint_url, permissions=NO_GET, is_async=True)
+        key_client = self.create_key_client(endpoint_url, permissions=NO_GET, is_async=True, **kwargs)
         key_name = self.get_resource_name("keycrypt")
 
         imported_key = await self._import_test_key(key_client, key_name, hardware_protected=is_hsm)
@@ -197,14 +204,16 @@ class CryptoClientTests(KeysTestCase, KeyVaultTestCase):
         self.assertEqual(EncryptionAlgorithm.rsa_oaep, result.algorithm)
         self.assertEqual(self.plaintext, result.plaintext)
 
-    @parameterized.expand([param(is_hsm=b) for b in [True, False]], name_func=suffixed_test_name)
+    @parameterized.expand(
+        [(param(api_version=p[0], is_hsm=p[1])) for p in PARAMETER_COMBINATIONS], name_func=suffixed_test_name
+    )
     @PowerShellPreparer("keyvault")
     async def test_sign_and_verify(self, **kwargs):
         is_hsm = kwargs.pop("is_hsm")
-        self._skip_if_not_configured(is_hsm)
+        self._skip_if_not_configured(kwargs.get("api_version"), is_hsm)
         endpoint_url = self.managed_hsm_url if is_hsm else self.vault_url
 
-        key_client = self.create_key_client(endpoint_url, permissions=NO_GET, is_async=True)
+        key_client = self.create_key_client(endpoint_url, permissions=NO_GET, is_async=True, **kwargs)
         key_name = self.get_resource_name("keysign")
 
         md = hashlib.sha256()
@@ -222,14 +231,16 @@ class CryptoClientTests(KeysTestCase, KeyVaultTestCase):
         self.assertEqual(result.algorithm, SignatureAlgorithm.rs256)
         self.assertTrue(verified.is_valid)
 
-    @parameterized.expand([param(is_hsm=b) for b in [True, False]], name_func=suffixed_test_name)
+    @parameterized.expand(
+        [(param(api_version=p[0], is_hsm=p[1])) for p in PARAMETER_COMBINATIONS], name_func=suffixed_test_name
+    )
     @PowerShellPreparer("keyvault")
     async def test_wrap_and_unwrap(self, **kwargs):
         is_hsm = kwargs.pop("is_hsm")
-        self._skip_if_not_configured(is_hsm)
+        self._skip_if_not_configured(kwargs.get("api_version"), is_hsm)
         endpoint_url = self.managed_hsm_url if is_hsm else self.vault_url
 
-        key_client = self.create_key_client(endpoint_url, permissions=NO_GET, is_async=True)
+        key_client = self.create_key_client(endpoint_url, permissions=NO_GET, is_async=True, **kwargs)
         key_name = self.get_resource_name("keywrap")
 
         created_key = await self._create_rsa_key(key_client, key_name, hardware_protected=is_hsm)
@@ -247,10 +258,10 @@ class CryptoClientTests(KeysTestCase, KeyVaultTestCase):
     @PowerShellPreparer("keyvault")
     async def test_symmetric_encrypt_and_decrypt_mhsm(self, **kwargs):
         """Encrypt and decrypt with the service"""
-        self._skip_if_not_configured(True)
+        self._skip_if_not_configured(DEFAULT_VERSION, True)
         endpoint_url = self.managed_hsm_url
 
-        key_client = self.create_key_client(endpoint_url, is_async=True)
+        key_client = self.create_key_client(endpoint_url, is_async=True, **kwargs)
         key_name = self.get_resource_name("symmetric-encrypt")
 
         imported_key = await self._import_symmetric_test_key(key_client, key_name)
@@ -292,10 +303,10 @@ class CryptoClientTests(KeysTestCase, KeyVaultTestCase):
 
     @PowerShellPreparer("keyvault")
     async def test_symmetric_wrap_and_unwrap_mhsm(self, **kwargs):
-        self._skip_if_not_configured(True)
+        self._skip_if_not_configured(DEFAULT_VERSION, True)
         endpoint_url = self.managed_hsm_url
 
-        key_client = self.create_key_client(endpoint_url, is_async=True)
+        key_client = self.create_key_client(endpoint_url, is_async=True, **kwargs)
         key_name = self.get_resource_name("symmetric-kw")
 
         imported_key = await self._import_symmetric_test_key(key_client, key_name)
@@ -308,15 +319,17 @@ class CryptoClientTests(KeysTestCase, KeyVaultTestCase):
         result = await crypto_client.unwrap_key(result.algorithm, result.encrypted_key)
         assert result.key == self.plaintext
 
-    @parameterized.expand([param(is_hsm=b) for b in [True, False]], name_func=suffixed_test_name)
+    @parameterized.expand(
+        [(param(api_version=p[0], is_hsm=p[1])) for p in PARAMETER_COMBINATIONS], name_func=suffixed_test_name
+    )
     @PowerShellPreparer("keyvault")
     async def test_encrypt_local(self, **kwargs):
         """Encrypt locally, decrypt with Key Vault"""
         is_hsm = kwargs.pop("is_hsm")
-        self._skip_if_not_configured(is_hsm)
+        self._skip_if_not_configured(kwargs.get("api_version"), is_hsm)
         endpoint_url = self.managed_hsm_url if is_hsm else self.vault_url
 
-        key_client = self.create_key_client(endpoint_url, is_async=True)
+        key_client = self.create_key_client(endpoint_url, is_async=True, **kwargs)
         key_name = self.get_resource_name("encrypt-local")
         key = await self._create_rsa_key(key_client, key_name, size=4096, hardware_protected=is_hsm)
         crypto_client = self.create_crypto_client(key, is_async=True)
@@ -329,15 +342,17 @@ class CryptoClientTests(KeysTestCase, KeyVaultTestCase):
             result = await crypto_client.decrypt(result.algorithm, result.ciphertext)
             self.assertEqual(result.plaintext, self.plaintext)
 
-    @parameterized.expand([param(is_hsm=b) for b in [True, False]], name_func=suffixed_test_name)
+    @parameterized.expand(
+        [(param(api_version=p[0], is_hsm=p[1])) for p in PARAMETER_COMBINATIONS], name_func=suffixed_test_name
+    )
     @PowerShellPreparer("keyvault")
     async def test_encrypt_local_from_jwk(self, **kwargs):
         """Encrypt locally, decrypt with Key Vault"""
         is_hsm = kwargs.pop("is_hsm")
-        self._skip_if_not_configured(is_hsm)
+        self._skip_if_not_configured(kwargs.get("api_version"), is_hsm)
         endpoint_url = self.managed_hsm_url if is_hsm else self.vault_url
 
-        key_client = self.create_key_client(endpoint_url, is_async=True)
+        key_client = self.create_key_client(endpoint_url, is_async=True, **kwargs)
         key_name = self.get_resource_name("encrypt-local")
         key = await self._create_rsa_key(key_client, key_name, size=4096, hardware_protected=is_hsm)
         crypto_client = self.create_crypto_client(key, is_async=True)
@@ -354,10 +369,10 @@ class CryptoClientTests(KeysTestCase, KeyVaultTestCase):
     @PowerShellPreparer("keyvault")
     async def test_symmetric_encrypt_local_mhsm(self, **kwargs):
         """Encrypt locally, decrypt with the service"""
-        self._skip_if_not_configured(True)
+        self._skip_if_not_configured(DEFAULT_VERSION, True)
         endpoint_url = self.managed_hsm_url
 
-        key_client = self.create_key_client(endpoint_url, is_async=True)
+        key_client = self.create_key_client(endpoint_url, is_async=True, **kwargs)
         key_name = self.get_resource_name("symmetric-encrypt")
 
         imported_key = await self._import_symmetric_test_key(key_client, key_name)
@@ -386,10 +401,10 @@ class CryptoClientTests(KeysTestCase, KeyVaultTestCase):
     @PowerShellPreparer("keyvault")
     async def test_symmetric_decrypt_local_mhsm(self, **kwargs):
         """Encrypt with the service, decrypt locally"""
-        self._skip_if_not_configured(True)
+        self._skip_if_not_configured(DEFAULT_VERSION, True)
         endpoint_url = self.managed_hsm_url
 
-        key_client = self.create_key_client(endpoint_url, is_async=True)
+        key_client = self.create_key_client(endpoint_url, is_async=True, **kwargs)
         key_name = self.get_resource_name("symmetric-encrypt")
 
         imported_key = await self._import_symmetric_test_key(key_client, key_name)
@@ -416,15 +431,17 @@ class CryptoClientTests(KeysTestCase, KeyVaultTestCase):
         assert decrypt_result.algorithm == algorithm
         assert decrypt_result.plaintext == self.plaintext
 
-    @parameterized.expand([param(is_hsm=b) for b in [True, False]], name_func=suffixed_test_name)
+    @parameterized.expand(
+        [(param(api_version=p[0], is_hsm=p[1])) for p in PARAMETER_COMBINATIONS], name_func=suffixed_test_name
+    )
     @PowerShellPreparer("keyvault")
     async def test_wrap_local(self, **kwargs):
         """Wrap locally, unwrap with Key Vault"""
         is_hsm = kwargs.pop("is_hsm")
-        self._skip_if_not_configured(is_hsm)
+        self._skip_if_not_configured(kwargs.get("api_version"), is_hsm)
         endpoint_url = self.managed_hsm_url if is_hsm else self.vault_url
 
-        key_client = self.create_key_client(endpoint_url, is_async=True)
+        key_client = self.create_key_client(endpoint_url, is_async=True, **kwargs)
         key_name = self.get_resource_name("wrap-local")
         key = await self._create_rsa_key(key_client, key_name, size=4096, hardware_protected=is_hsm)
         crypto_client = self.create_crypto_client(key, is_async=True)
@@ -436,15 +453,17 @@ class CryptoClientTests(KeysTestCase, KeyVaultTestCase):
             result = await crypto_client.unwrap_key(result.algorithm, result.encrypted_key)
             self.assertEqual(result.key, self.plaintext)
 
-    @parameterized.expand([param(is_hsm=b) for b in [True, False]], name_func=suffixed_test_name)
+    @parameterized.expand(
+        [(param(api_version=p[0], is_hsm=p[1])) for p in PARAMETER_COMBINATIONS], name_func=suffixed_test_name
+    )
     @PowerShellPreparer("keyvault")
     async def test_wrap_local_from_jwk(self, **kwargs):
         """Wrap locally, unwrap with Key Vault"""
         is_hsm = kwargs.pop("is_hsm")
-        self._skip_if_not_configured(is_hsm)
+        self._skip_if_not_configured(kwargs.get("api_version"), is_hsm)
         endpoint_url = self.managed_hsm_url if is_hsm else self.vault_url
 
-        key_client = self.create_key_client(endpoint_url, is_async=True)
+        key_client = self.create_key_client(endpoint_url, is_async=True, **kwargs)
         key_name = self.get_resource_name("wrap-local")
         key = await self._create_rsa_key(key_client, key_name, size=4096, hardware_protected=is_hsm)
         crypto_client = self.create_crypto_client(key, is_async=True)
@@ -457,15 +476,17 @@ class CryptoClientTests(KeysTestCase, KeyVaultTestCase):
             result = await crypto_client.unwrap_key(result.algorithm, result.encrypted_key)
             self.assertEqual(result.key, self.plaintext)
 
-    @parameterized.expand([param(is_hsm=b) for b in [True, False]], name_func=suffixed_test_name)
+    @parameterized.expand(
+        [(param(api_version=p[0], is_hsm=p[1])) for p in PARAMETER_COMBINATIONS], name_func=suffixed_test_name
+    )
     @PowerShellPreparer("keyvault")
     async def test_rsa_verify_local(self, **kwargs):
         """Sign with Key Vault, verify locally"""
         is_hsm = kwargs.pop("is_hsm")
-        self._skip_if_not_configured(is_hsm)
+        self._skip_if_not_configured(kwargs.get("api_version"), is_hsm)
         endpoint_url = self.managed_hsm_url if is_hsm else self.vault_url
 
-        key_client = self.create_key_client(endpoint_url, is_async=True)
+        key_client = self.create_key_client(endpoint_url, is_async=True, **kwargs)
         for size in (2048, 3072, 4096):
             key_name = self.get_resource_name("rsa-verify-{}".format(size))
             key = await self._create_rsa_key(key_client, key_name, size=size, hardware_protected=is_hsm)
@@ -486,15 +507,17 @@ class CryptoClientTests(KeysTestCase, KeyVaultTestCase):
                 result = await crypto_client.verify(result.algorithm, digest, result.signature)
                 self.assertTrue(result.is_valid)
 
-    @parameterized.expand([param(is_hsm=b) for b in [True, False]], name_func=suffixed_test_name)
+    @parameterized.expand(
+        [(param(api_version=p[0], is_hsm=p[1])) for p in PARAMETER_COMBINATIONS], name_func=suffixed_test_name
+    )
     @PowerShellPreparer("keyvault")
     async def test_rsa_verify_local_from_jwk(self, **kwargs):
         """Sign with Key Vault, verify locally"""
         is_hsm = kwargs.pop("is_hsm")
-        self._skip_if_not_configured(is_hsm)
+        self._skip_if_not_configured(kwargs.get("api_version"), is_hsm)
         endpoint_url = self.managed_hsm_url if is_hsm else self.vault_url
 
-        key_client = self.create_key_client(endpoint_url, is_async=True)
+        key_client = self.create_key_client(endpoint_url, is_async=True, **kwargs)
         for size in (2048, 3072, 4096):
             key_name = self.get_resource_name("rsa-verify-{}".format(size))
             key = await self._create_rsa_key(key_client, key_name, size=size, hardware_protected=is_hsm)
@@ -516,15 +539,17 @@ class CryptoClientTests(KeysTestCase, KeyVaultTestCase):
                 result = await local_client.verify(result.algorithm, digest, result.signature)
                 self.assertTrue(result.is_valid)
 
-    @parameterized.expand([param(is_hsm=b) for b in [True, False]], name_func=suffixed_test_name)
+    @parameterized.expand(
+        [(param(api_version=p[0], is_hsm=p[1])) for p in PARAMETER_COMBINATIONS], name_func=suffixed_test_name
+    )
     @PowerShellPreparer("keyvault")
     async def test_ec_verify_local(self, **kwargs):
         """Sign with Key Vault, verify locally"""
         is_hsm = kwargs.pop("is_hsm")
-        self._skip_if_not_configured(is_hsm)
+        self._skip_if_not_configured(kwargs.get("api_version"), is_hsm)
         endpoint_url = self.managed_hsm_url if is_hsm else self.vault_url
 
-        key_client = self.create_key_client(endpoint_url, is_async=True)
+        key_client = self.create_key_client(endpoint_url, is_async=True, **kwargs)
         matrix = {
             KeyCurveName.p_256: (SignatureAlgorithm.es256, hashlib.sha256),
             KeyCurveName.p_256_k: (SignatureAlgorithm.es256_k, hashlib.sha256),
@@ -545,15 +570,17 @@ class CryptoClientTests(KeysTestCase, KeyVaultTestCase):
             result = await crypto_client.verify(result.algorithm, digest, result.signature)
             self.assertTrue(result.is_valid)
 
-    @parameterized.expand([param(is_hsm=b) for b in [True, False]], name_func=suffixed_test_name)
+    @parameterized.expand(
+        [(param(api_version=p[0], is_hsm=p[1])) for p in PARAMETER_COMBINATIONS], name_func=suffixed_test_name
+    )
     @PowerShellPreparer("keyvault")
     async def test_ec_verify_local_from_jwk(self, **kwargs):
         """Sign with Key Vault, verify locally"""
         is_hsm = kwargs.pop("is_hsm")
-        self._skip_if_not_configured(is_hsm)
+        self._skip_if_not_configured(kwargs.get("api_version"), is_hsm)
         endpoint_url = self.managed_hsm_url if is_hsm else self.vault_url
 
-        key_client = self.create_key_client(endpoint_url, is_async=True)
+        key_client = self.create_key_client(endpoint_url, is_async=True, **kwargs)
         matrix = {
             KeyCurveName.p_256: (SignatureAlgorithm.es256, hashlib.sha256),
             KeyCurveName.p_256_k: (SignatureAlgorithm.es256_k, hashlib.sha256),
@@ -575,15 +602,17 @@ class CryptoClientTests(KeysTestCase, KeyVaultTestCase):
             result = await local_client.verify(result.algorithm, digest, result.signature)
             self.assertTrue(result.is_valid)
 
-    @parameterized.expand([param(is_hsm=b) for b in [True, False]], name_func=suffixed_test_name)
+    @parameterized.expand(
+        [(param(api_version=p[0], is_hsm=p[1])) for p in PARAMETER_COMBINATIONS], name_func=suffixed_test_name
+    )
     @PowerShellPreparer("keyvault")
     async def test_local_validity_period_enforcement(self, **kwargs):
         """Local crypto operations should respect a key's nbf and exp properties"""
         is_hsm = kwargs.pop("is_hsm")
-        self._skip_if_not_configured(is_hsm)
+        self._skip_if_not_configured(kwargs.get("api_version"), is_hsm)
         endpoint_url = self.managed_hsm_url if is_hsm else self.vault_url
 
-        key_client = self.create_key_client(endpoint_url, permissions=NO_GET, is_async=True)
+        key_client = self.create_key_client(endpoint_url, permissions=NO_GET, is_async=True, **kwargs)
         async def test_operations(key, expected_error_substrings, encrypt_algorithms, wrap_algorithms):
             crypto_client = self.create_crypto_client(key, is_async=True)
             for algorithm in encrypt_algorithms:

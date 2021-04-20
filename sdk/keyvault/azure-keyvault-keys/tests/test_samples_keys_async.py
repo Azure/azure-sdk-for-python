@@ -3,22 +3,13 @@
 # Licensed under the MIT License.
 # ------------------------------------
 import asyncio
-import functools
 
-from azure.keyvault.keys import KeyType
-from azure.keyvault.keys.aio import KeyClient
-from azure.keyvault.keys._shared import HttpChallengeCache
+from azure.keyvault.keys import ApiVersion, KeyType
 from devtools_testutils import PowerShellPreparer
+from parameterized import parameterized, param
 import pytest
 
-from _shared.test_case_async import KeyVaultTestCase
-
-
-KeyVaultPreparer = functools.partial(
-    PowerShellPreparer,
-    "keyvault",
-    azure_keyvault_url="https://vaultname.vault.azure.net"
-)
+from _test_case import KeysTestCase, suffixed_test_name
 
 
 def print(*args):
@@ -44,19 +35,11 @@ async def test_create_key_client():
     # [END create_key_client]
 
 
-class TestExamplesKeyVault(KeyVaultTestCase):
-    def tearDown(self):
-        HttpChallengeCache.clear()
-        assert len(HttpChallengeCache._cache) == 0
-        super(TestExamplesKeyVault, self).tearDown()
-
-    def create_client(self, vault_uri, **kwargs):
-        credential = self.get_credential(KeyClient, is_async=True)
-        return self.create_client_from_credential(KeyClient, credential=credential, vault_url=vault_uri, **kwargs)
-
-    @KeyVaultPreparer()
-    async def test_example_key_crud_operations(self, azure_keyvault_url, **kwargs):
-        key_client = self.create_client(azure_keyvault_url)
+class TestExamplesKeyVault(KeysTestCase):
+    @parameterized.expand([param(api_version=api_version) for api_version in ApiVersion], name_func=suffixed_test_name)
+    @PowerShellPreparer("keyvault")
+    async def test_example_key_crud_operations(self, **kwargs):
+        key_client = self.create_key_client(self.vault_url, is_async=True, **kwargs)
         key_name = self.get_resource_name("key-name")
 
         # [START create_key]
@@ -139,9 +122,10 @@ class TestExamplesKeyVault(KeyVaultTestCase):
         print(deleted_key.recovery_id)
         # [END delete_key]
 
-    @KeyVaultPreparer()
-    async def test_example_key_list_operations(self, azure_keyvault_url, **kwargs):
-        key_client = self.create_client(azure_keyvault_url)
+    @parameterized.expand([param(api_version=api_version) for api_version in ApiVersion], name_func=suffixed_test_name)
+    @PowerShellPreparer("keyvault")
+    async def test_example_key_list_operations(self, **kwargs):
+        key_client = self.create_key_client(self.vault_url, is_async=True, **kwargs)
 
         for i in range(4):
             key_name = self.get_resource_name("key{}".format(i))
@@ -185,9 +169,10 @@ class TestExamplesKeyVault(KeyVaultTestCase):
             print(key.deleted_date)
         # [END list_deleted_keys]
 
-    @KeyVaultPreparer()
-    async def test_example_keys_backup_restore(self, azure_keyvault_url, **kwargs):
-        key_client = self.create_client(azure_keyvault_url)
+    @parameterized.expand([param(api_version=api_version) for api_version in ApiVersion], name_func=suffixed_test_name)
+    @PowerShellPreparer("keyvault")
+    async def test_example_keys_backup_restore(self, **kwargs):
+        key_client = self.create_key_client(self.vault_url, is_async=True, **kwargs)
         key_name = self.get_resource_name("key-name")
         await key_client.create_key(key_name, "RSA")
         # [START backup_key]
@@ -212,9 +197,10 @@ class TestExamplesKeyVault(KeyVaultTestCase):
         print(restored_key.properties.version)
         # [END restore_key_backup]
 
-    @KeyVaultPreparer()
-    async def test_example_keys_recover(self, azure_keyvault_url, **kwargs):
-        key_client = self.create_client(azure_keyvault_url)
+    @parameterized.expand([param(api_version=api_version) for api_version in ApiVersion], name_func=suffixed_test_name)
+    @PowerShellPreparer("keyvault")
+    async def test_example_keys_recover(self, **kwargs):
+        key_client = self.create_key_client(self.vault_url, is_async=True, **kwargs)
         key_name = self.get_resource_name("key-name")
         created_key = await key_client.create_key(key_name, "RSA")
 

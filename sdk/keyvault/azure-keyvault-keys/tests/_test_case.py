@@ -5,15 +5,33 @@
 import os
 
 from azure.keyvault.keys._shared import HttpChallengeCache
+from azure.keyvault.keys._shared.client_base import ApiVersion, DEFAULT_VERSION
 from devtools_testutils import AzureTestCase
 from parameterized import parameterized
 import pytest
 from six.moves.urllib_parse import urlparse
 
 
+def _get_test_parameters():
+    combinations = []
+    hsm_supported_versions = {ApiVersion.V7_2_preview}
+    for api_version in ApiVersion:
+        if api_version in hsm_supported_versions:
+            combinations.append([api_version, True])
+        combinations.append([api_version, False])
+    return combinations
+
+
 def suffixed_test_name(testcase_func, param_num, param):
+    api_version = param.kwargs.get("api_version")
     suffix = "mhsm" if param.kwargs.get("is_hsm") else "vault"
-    return "{}_{}".format(testcase_func.__name__, parameterized.to_safe_name(suffix))
+    return "{}_{}_{}".format(
+        testcase_func.__name__, parameterized.to_safe_name(api_version), parameterized.to_safe_name(suffix)
+    )
+
+
+# parameters for test case parameterization, where [x, y] = [api_version, is_hsm]
+PARAMETER_COMBINATIONS = _get_test_parameters()
 
 
 class KeysTestCase(AzureTestCase):
@@ -69,6 +87,8 @@ class KeysTestCase(AzureTestCase):
             os.environ["AZURE_CLIENT_ID"] = os.environ["KEYVAULT_CLIENT_ID"]
             os.environ["AZURE_CLIENT_SECRET"] = os.environ["KEYVAULT_CLIENT_SECRET"]
 
-    def _skip_if_not_configured(self, is_hsm):
+    def _skip_if_not_configured(self, api_version, is_hsm):
+        if self.is_live and api_version != DEFAULT_VERSION:
+            pytest.skip("This test only uses the default API version for live tests")
         if self.is_live and is_hsm and self.managed_hsm_url is None:
             pytest.skip("No HSM endpoint for live testing")

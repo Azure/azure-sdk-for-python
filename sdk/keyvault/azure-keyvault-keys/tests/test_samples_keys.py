@@ -3,21 +3,12 @@
 # Licensed under the MIT License.
 # ------------------------------------
 from __future__ import print_function
-import functools
 import time
 
-from azure.keyvault.keys import KeyClient, KeyType
-from azure.keyvault.keys._shared import HttpChallengeCache
-from devtools_testutils import PowerShellPreparer
+from azure.keyvault.keys import ApiVersion, KeyType
+from parameterized import parameterized, param
 
-from _shared.test_case import KeyVaultTestCase
-
-
-KeyVaultPreparer = functools.partial(
-    PowerShellPreparer,
-    "keyvault",
-    azure_keyvault_url="https://vaultname.vault.azure.net"
-)
+from _test_case import KeysTestCase, suffixed_test_name
 
 
 def print(*args):
@@ -37,19 +28,10 @@ def test_create_key_client():
     # [END create_key_client]
 
 
-class TestExamplesKeyVault(KeyVaultTestCase):
-    def tearDown(self):
-        HttpChallengeCache.clear()
-        assert len(HttpChallengeCache._cache) == 0
-        super(TestExamplesKeyVault, self).tearDown()
-
-    def create_client(self, vault_uri, **kwargs):
-        credential = self.get_credential(KeyClient)
-        return self.create_client_from_credential(KeyClient, credential=credential, vault_url=vault_uri, **kwargs)
-
-    @KeyVaultPreparer()
-    def test_example_key_crud_operations(self, azure_keyvault_url, **kwargs):
-        key_client = self.create_client(azure_keyvault_url)
+class TestExamplesKeyVault(KeysTestCase):
+    @parameterized.expand([param(api_version=api_version) for api_version in ApiVersion], name_func=suffixed_test_name)
+    def test_example_key_crud_operations(self, **kwargs):
+        key_client = self.create_key_client(self.vault_url, **kwargs)
         key_name = self.get_resource_name("key-name")
 
         # [START create_key]
@@ -138,9 +120,9 @@ class TestExamplesKeyVault(KeyVaultTestCase):
         deleted_key_poller.wait()
         # [END delete_key]
 
-    @KeyVaultPreparer()
-    def test_example_key_list_operations(self, azure_keyvault_url, **kwargs):
-        key_client = self.create_client(azure_keyvault_url)
+    @parameterized.expand([param(api_version=api_version) for api_version in ApiVersion], name_func=suffixed_test_name)
+    def test_example_key_list_operations(self, **kwargs):
+        key_client = self.create_key_client(self.vault_url, **kwargs)
 
         for i in range(4):
             key_name = self.get_resource_name("key{}".format(i))
@@ -179,9 +161,9 @@ class TestExamplesKeyVault(KeyVaultTestCase):
             print(key.deleted_date)
         # [END list_deleted_keys]
 
-    @KeyVaultPreparer()
-    def test_example_keys_backup_restore(self, azure_keyvault_url, **kwargs):
-        key_client = self.create_client(azure_keyvault_url)
+    @parameterized.expand([param(api_version=api_version) for api_version in ApiVersion], name_func=suffixed_test_name)
+    def test_example_keys_backup_restore(self, **kwargs):
+        key_client = self.create_key_client(self.vault_url, **kwargs)
         key_name = self.get_resource_name("keyrec")
         key_client.create_key(key_name, "RSA")
         # [START backup_key]
@@ -205,9 +187,9 @@ class TestExamplesKeyVault(KeyVaultTestCase):
         print(restored_key.properties.version)
         # [END restore_key_backup]
 
-    @KeyVaultPreparer()
-    def test_example_keys_recover(self, azure_keyvault_url, **kwargs):
-        key_client = self.create_client(azure_keyvault_url)
+    @parameterized.expand([param(api_version=api_version) for api_version in ApiVersion], name_func=suffixed_test_name)
+    def test_example_keys_recover(self, **kwargs):
+        key_client = self.create_key_client(self.vault_url, **kwargs)
         key_name = self.get_resource_name("key-name")
         created_key = key_client.create_key(key_name, "RSA")
         key_client.begin_delete_key(created_key.name).wait()

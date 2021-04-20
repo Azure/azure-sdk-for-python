@@ -2,44 +2,24 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 # ------------------------------------
-import functools
-
-from azure.keyvault.keys.aio import KeyClient
+from azure.keyvault.keys import ApiVersion
 from azure.keyvault.keys.crypto.aio import CryptographyClient
-from azure.keyvault.keys._shared import HttpChallengeCache
 from devtools_testutils import PowerShellPreparer
-from _shared.test_case_async import KeyVaultTestCase
+from parameterized import parameterized, param
 
-KeyVaultPreparer = functools.partial(
-    PowerShellPreparer,
-    "keyvault",
-    azure_keyvault_url="https://vaultname.vault.azure.net"
-)
+from _test_case import KeysTestCase, suffixed_test_name
 
 
-class TestCryptoExamples(KeyVaultTestCase):
+class TestCryptoExamples(KeysTestCase):
     def __init__(self, *args, **kwargs):
         kwargs["match_body"] = False
         super(TestCryptoExamples, self).__init__(*args, **kwargs)
 
-    def tearDown(self):
-        HttpChallengeCache.clear()
-        assert len(HttpChallengeCache._cache) == 0
-        super(TestCryptoExamples, self).tearDown()
-
-    def create_key_client(self, vault_uri, **kwargs):
-        credential = self.get_credential(KeyClient, is_async=True)
-        return self.create_client_from_credential(KeyClient, credential=credential, vault_url=vault_uri, **kwargs)
-
-    def get_crypto_client_credential(self):
-        return self.get_credential(CryptographyClient, is_async=True)
-
-    # pylint:disable=unused-variable
-
-    @KeyVaultPreparer()
-    async def test_encrypt_decrypt_async(self, azure_keyvault_url, **kwargs):
-        key_client = self.create_key_client(azure_keyvault_url)
-        credential = self.get_crypto_client_credential()
+    @parameterized.expand([param(api_version=api_version) for api_version in ApiVersion], name_func=suffixed_test_name)
+    @PowerShellPreparer("keyvault")
+    async def test_encrypt_decrypt_async(self, **kwargs):
+        key_client = self.create_key_client(self.vault_url, is_async=True, **kwargs)
+        credential = self.get_credential(CryptographyClient, is_async=True)
         key_name = self.get_resource_name("crypto-test-encrypt-key")
         await key_client.create_rsa_key(key_name)
 
@@ -77,10 +57,11 @@ class TestCryptoExamples(KeyVaultTestCase):
         print(result.plaintext)
         # [END decrypt]
 
-    @KeyVaultPreparer()
-    async def test_wrap_unwrap_async(self, azure_keyvault_url, **kwargs):
-        key_client = self.create_key_client(azure_keyvault_url)
-        credential = self.get_crypto_client_credential()
+    @parameterized.expand([param(api_version=api_version) for api_version in ApiVersion], name_func=suffixed_test_name)
+    @PowerShellPreparer("keyvault")
+    async def test_wrap_unwrap_async(self, **kwargs):
+        key_client = self.create_key_client(self.vault_url, is_async=True, **kwargs)
+        credential = self.get_credential(CryptographyClient, is_async=True)
         key_name = self.get_resource_name("crypto-test-wrapping-key")
         key = await key_client.create_rsa_key(key_name)
         client = CryptographyClient(key, credential)
@@ -103,10 +84,11 @@ class TestCryptoExamples(KeyVaultTestCase):
         result = await client.unwrap_key(KeyWrapAlgorithm.rsa_oaep, encrypted_key)
         # [END unwrap_key]
 
-    @KeyVaultPreparer()
-    async def test_sign_verify_async(self, azure_keyvault_url, **kwargs):
-        key_client = self.create_key_client(azure_keyvault_url)
-        credential = self.get_crypto_client_credential()
+    @parameterized.expand([param(api_version=api_version) for api_version in ApiVersion], name_func=suffixed_test_name)
+    @PowerShellPreparer("keyvault")
+    async def test_sign_verify_async(self, **kwargs):
+        key_client = self.create_key_client(self.vault_url, is_async=True, **kwargs)
+        credential = self.get_credential(CryptographyClient, is_async=True)
         key_name = self.get_resource_name("crypto-test-wrapping-key")
         key = await key_client.create_rsa_key(key_name)
         client = CryptographyClient(key, credential)
