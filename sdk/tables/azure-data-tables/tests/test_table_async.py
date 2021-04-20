@@ -155,7 +155,7 @@ class TableTestAsync(AzureTestCase, AsyncTableTestCase):
         for table_item in tables:
             assert isinstance(table_item,  TableItem)
             assert table_item.date is not None
-            assert table_item.table_name is not None
+            assert table_item.name is not None
         await ts.delete_table(table.table_name)
 
     @TablesPreparer()
@@ -167,7 +167,7 @@ class TableTestAsync(AzureTestCase, AsyncTableTestCase):
 
         # Delete any existing tables
         async for table in ts.list_tables():
-            await ts.delete_table(table.table_name)
+            await ts.delete_table(table.name)
 
         table_list = []
         for i in range(0, 4):
