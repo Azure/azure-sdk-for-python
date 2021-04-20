@@ -72,7 +72,7 @@ def _parse_conn_str(conn_str, **kwargs):
             endpoint = endpoint.rstrip("/")
         shared_access_key_name = conn_settings.get("sharedaccesskeyname")
         shared_access_key = conn_settings.get("sharedaccesskey")
-        entity_path = conn_settings.get('entitypath')
+        entity_path = conn_settings.get("entitypath")
         shared_access_signature = conn_settings.get("sharedaccesssignature")
 
     if shared_access_signature:
@@ -103,7 +103,8 @@ def _parse_conn_str(conn_str, **kwargs):
         [shared_access_key, shared_access_key_name]
     ):
         raise ValueError(
-            "Connection string must have both SharedAccessKeyName and SharedAccessKey."
+            "Invalid connection string. Should be in the format: "
+            "Endpoint=sb://<FQDN>/;SharedAccessKeyName=<KeyName>;SharedAccessKey=<KeyValue>"
         )
     if shared_access_signature and shared_access_key:
         raise ValueError(

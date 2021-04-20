@@ -84,13 +84,13 @@ class EventHubConnectionStringParserTests(AzureMgmtTestCase):
         conn_str = 'Endpoint=sb://eh-namespace.servicebus.windows.net/;SharedAccessKey=THISISATESTKEYXXXXXXXXXXXXXXXXXXXXXXXXXXXX='
         with pytest.raises(ValueError) as e:
             parse_result = parse_connection_string(conn_str)
-        assert str(e.value) == 'Connection string must have both SharedAccessKeyName and SharedAccessKey.'
+        assert "Invalid connection string" in str(e.value)
 
     def test_eh_parse_conn_str_no_key(self, **kwargs):
         conn_str = 'Endpoint=sb://eh-namespace.servicebus.windows.net/;SharedAccessKeyName=test-policy'
         with pytest.raises(ValueError) as e:
             parse_result = parse_connection_string(conn_str)
-        assert str(e.value) == 'Connection string must have both SharedAccessKeyName and SharedAccessKey.'
+        assert "Invalid connection string" in str(e.value)
 
     def test_eh_parse_conn_str_no_key_or_sas(self, **kwargs):
         conn_str = 'Endpoint=sb://resourcename.servicebus.windows.net/'
@@ -108,10 +108,10 @@ class EventHubConnectionStringParserTests(AzureMgmtTestCase):
         conn_str = 'Endpoint=sb://resourcename.servicebus.windows.net/;sharedaccesskeyname=test;SharedAccessKey=THISISATESTKEYXXXXXXXXXXXXXXXXXXXXXXXXXXXX='
         with pytest.raises(ValueError) as e:
             parse_result = parse_connection_string(conn_str)
-        assert str(e.value) == 'Connection string must have both SharedAccessKeyName and SharedAccessKey.'
+        assert "Invalid connection string" in str(e.value)
 
     def test_eh_parse_malformed_conn_str_lowercase_sa_key_name(self, **kwargs):
         conn_str = 'Endpoint=sb://resourcename.servicebus.windows.net/;SharedAccessKeyName=test;sharedaccesskey=THISISATESTKEYXXXXXXXXXXXXXXXXXXXXXXXXXXXX='
         with pytest.raises(ValueError) as e:
             parse_result = parse_connection_string(conn_str)
-        assert str(e.value) == 'Connection string must have both SharedAccessKeyName and SharedAccessKey.' 
+        assert "Invalid connection string" in str(e.value)
