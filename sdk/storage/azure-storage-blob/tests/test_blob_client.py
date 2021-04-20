@@ -15,7 +15,7 @@ from azure.storage.blob import (
     ContainerClient,
     BlobClient,
 )
-from devtools_testutils import ResourceGroupPreparer, StorageAccountPreparer
+from devtools_testutils import ResourceGroupPreparer, StorageAccountPreparer, RecordedByProxy
 from _shared.testcase import StorageTestCase, GlobalStorageAccountPreparer
 #from azure.storage.common import TokenCredential
 
@@ -48,9 +48,9 @@ class StorageClientTest(StorageTestCase):
 
     # --Direct Parameters Test Cases --------------------------------------------
     @GlobalStorageAccountPreparer()
+    @RecordedByProxy
     def test_create_service_with_key(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
-
         for client, url in SERVICES.items():
             # Act
             service = client(

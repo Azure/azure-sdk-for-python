@@ -13,6 +13,7 @@ from .storage_testcase import (
 )
 from .keyvault_preparer import KeyVaultPreparer
 from .powershell_preparer import PowerShellPreparer
+from .proxy_testcase import RecordedByProxy
 
 __all__ = [
     "AzureMgmtTestCase",
@@ -29,4 +30,5 @@ __all__ = [
     "RandomNameResourceGroupPreparer",
     "CachedResourceGroupPreparer",
     "PowerShellPreparer",
+    "RecordedByProxy"
 ]
