@@ -10,10 +10,9 @@ import sys
 from io import BytesIO
 from itertools import islice
 import warnings
-
-from aiohttp import ClientPayloadError
 from typing import AsyncIterator
 
+from aiohttp import ClientPayloadError
 from azure.core.exceptions import HttpResponseError, ServiceResponseError
 from .._shared.encryption import decrypt_blob
 from .._shared.request_handlers import validate_and_format_range_headers
