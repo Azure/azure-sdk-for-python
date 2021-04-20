@@ -4,9 +4,10 @@
 # license information.
 # --------------------------------------------------------------------------
 from enum import Enum
+from typing import TYPE_CHECKING
+
 from azure.core.exceptions import HttpResponseError
 from azure.core.paging import PageIterator
-from typing import TYPE_CHECKING
 
 from ._generated.models import TableServiceStats as GenTableServiceStats
 from ._generated.models import AccessPolicy as GenAccessPolicy
@@ -26,7 +27,7 @@ from ._constants import NEXT_PARTITION_KEY, NEXT_ROW_KEY, NEXT_TABLE_NAME
 if TYPE_CHECKING:
     from ._generated.models import TableQueryResponse
     from azure.core.pipeline.transport import HttpResponse
-    from typing import Any, Dict
+    from typing import Any, Dict, List
 
 
 class TableServiceStats(GenTableServiceStats):
@@ -487,16 +488,21 @@ def service_properties_deserialize(generated):
 
 class TableItem(object):
     """
-    Represents an Azure TableItem. Returned by TableServiceClient.list_tables
-    and TableServiceClient.query_tables.
+    Represents an Azure TableItem.
+    Returned by TableServiceClient.list_tables and TableServiceClient.query_tables.
 
-    :param str name: The name of the table.
+    :ivar str name: The name of the table.
     :ivar str api_version: The API version included in the service call
     :ivar str date: The date the service call was made
     """
 
     def __init__(self, name, **kwargs):
         # type: (str, Dict[str, Any]) -> None
+        """
+        :param str name: Name of the Table
+        :keyword str api_version: The API version included in the service call
+        :keyword str date: The date the service call was made
+        """
         self.name = name
         self.api_version = kwargs.get("version")
         self.date = kwargs.get("date") or kwargs.get("Date")
