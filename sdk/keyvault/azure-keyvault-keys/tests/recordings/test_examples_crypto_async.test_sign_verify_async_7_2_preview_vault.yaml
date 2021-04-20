@@ -11,7 +11,7 @@ interactions:
       User-Agent:
       - azsdk-python-keyvault-keys/4.4.0b5 Python/3.5.3 (Windows-10-10.0.19041-SP0)
     method: POST
-    uri: https://vaultname.vault.azure.net/keys/crypto-test-wrapping-keyaea91b7e/create?api-version=7.2-preview
+    uri: https://vaultname.vault.azure.net/keys/livekvtestcrypto-test-wrapping-keyaea91b7e/create?api-version=7.2-preview
   response:
     body:
       string: '{"error":{"code":"Unauthorized","message":"Request is missing a Bearer
@@ -20,7 +20,7 @@ interactions:
       cache-control: no-cache
       content-length: '87'
       content-type: application/json; charset=utf-8
-      date: Mon, 19 Apr 2021 22:04:58 GMT
+      date: Tue, 20 Apr 2021 20:12:01 GMT
       expires: '-1'
       pragma: no-cache
       strict-transport-security: max-age=31536000;includeSubDomains
@@ -34,7 +34,7 @@ interactions:
     status:
       code: 401
       message: Unauthorized
-    url: https://mcpatinotest.vault.azure.net/keys/crypto-test-wrapping-keyaea91b7e/create?api-version=7.2-preview
+    url: https://mcpatinotest.vault.azure.net/keys/livekvtestcrypto-test-wrapping-keyaea91b7e/create?api-version=7.2-preview
 - request:
     body: '{"kty": "RSA"}'
     headers:
@@ -47,15 +47,15 @@ interactions:
       User-Agent:
       - azsdk-python-keyvault-keys/4.4.0b5 Python/3.5.3 (Windows-10-10.0.19041-SP0)
     method: POST
-    uri: https://vaultname.vault.azure.net/keys/crypto-test-wrapping-keyaea91b7e/create?api-version=7.2-preview
+    uri: https://vaultname.vault.azure.net/keys/livekvtestcrypto-test-wrapping-keyaea91b7e/create?api-version=7.2-preview
   response:
     body:
-      string: '{"key":{"kid":"https://vaultname.vault.azure.net/keys/crypto-test-wrapping-keyaea91b7e/5c9dc1f3d8a546f2aa5e496020e653d3","kty":"RSA","key_ops":["encrypt","decrypt","sign","verify","wrapKey","unwrapKey"],"n":"plFJNrk8eBEbKo179WCuANkKQpZxLlluuN6J0Ly5bC1sWLEpzzx2ddO6oLFTJ7wvwia3aBg0MSI0_9UHM6k6AQ557TUq-YNLbpo3L3NJ7eYMuNAU9B21z0JNObETK_acP5GjtbbDM8gWrPwM-b7AEC6ekBiQBvITvbevB4_IO2XtwNDxNq2id04xj3vmfE5X_pXczCcF86Vg7bhqnyr3Ho8SXZRs3nm29KjA4XgczgHxuAQNpAGlnzXJ34YpsrRFhAmwgigCo2qctZ91rSL0VQv1GS6qXiEd7z2mqDrAqoRC2lIULo0lTgODqpTa4XYwM0yl5frpv5ftEzrpuuOjtQ","e":"AQAB"},"attributes":{"enabled":true,"created":1618869899,"updated":1618869899,"recoveryLevel":"Recoverable+Purgeable","recoverableDays":90}}'
+      string: '{"key":{"kid":"https://vaultname.vault.azure.net/keys/livekvtestcrypto-test-wrapping-keyaea91b7e/c78eb7309c104fb08093b8ea8d83f238","kty":"RSA","key_ops":["encrypt","decrypt","sign","verify","wrapKey","unwrapKey"],"n":"tUm6rD7fa2jEiSGZW1bgEj0a8pWb1YO3tSq4PzJ3_pl4ywsBHEBFT5Wh2AuerQYKrYTWyj_2YzEQ7smxVyQrf7RbLT6jT0S2HZNEah0n1rXXJTkq8BZFb5Hud7HrvDUmj1VzKy0pZNHfj2d-ojw1V0U0HV4uyNA-B04vGnKY6u6gHUOkciZNXdzPtHc_q2DO8k3An0nmM-7rZVfs2YjHIE5kMVpCHgm55SlUAjczS9OFLHe-J5z6z_kRhUYKW3XZwuzxacvO6AyKLfPbJZK02gHfIfaoSbJGkgKxFMAQ9JlvjvzK-_c_JYQb8Hu0IRp0W_GJcYy9RIuN3KiBuPYfdQ","e":"AQAB"},"attributes":{"enabled":true,"created":1618949522,"updated":1618949522,"recoveryLevel":"Recoverable+Purgeable","recoverableDays":90}}'
     headers:
       cache-control: no-cache
-      content-length: '700'
+      content-length: '710'
       content-type: application/json; charset=utf-8
-      date: Mon, 19 Apr 2021 22:04:59 GMT
+      date: Tue, 20 Apr 2021 20:12:02 GMT
       expires: '-1'
       pragma: no-cache
       strict-transport-security: max-age=31536000;includeSubDomains
@@ -67,7 +67,7 @@ interactions:
     status:
       code: 200
       message: OK
-    url: https://mcpatinotest.vault.azure.net/keys/crypto-test-wrapping-keyaea91b7e/create?api-version=7.2-preview
+    url: https://mcpatinotest.vault.azure.net/keys/livekvtestcrypto-test-wrapping-keyaea91b7e/create?api-version=7.2-preview
 - request:
     body: '{"alg": "RS256", "value": "ltYuKr0-Qt5fUDMPuO_ExVmYNSeAd7IemqCzPB3wehw"}'
     headers:
@@ -80,15 +80,15 @@ interactions:
       User-Agent:
       - azsdk-python-keyvault-keys/4.4.0b5 Python/3.5.3 (Windows-10-10.0.19041-SP0)
     method: POST
-    uri: https://vaultname.vault.azure.net/keys/crypto-test-wrapping-keyaea91b7e/5c9dc1f3d8a546f2aa5e496020e653d3/sign?api-version=7.2-preview
+    uri: https://vaultname.vault.azure.net/keys/livekvtestcrypto-test-wrapping-keyaea91b7e/c78eb7309c104fb08093b8ea8d83f238/sign?api-version=7.2-preview
   response:
     body:
-      string: '{"kid":"https://vaultname.vault.azure.net/keys/crypto-test-wrapping-keyaea91b7e/5c9dc1f3d8a546f2aa5e496020e653d3","value":"o26eLGXqbjzuiOnz9bazAIl-kGb1DsUNi9swbVia7FQtdPmP_DOKSua9IV-38NrvETuMSQwmoyfdTT3NFRPjxNyJNyIQ9XgC3jtf9zBOACNeV8ORdJRRFIuVIvKIwY0kYqOui7YOaApuphsTjdgrhWbYsIAyHggWVVyQzRw-61BXAfTXShwqUqADDCwEMjyCvYgQRj71SqcxyJ50-q01a69RpIize6hbkglL_lURXsv8OLP-VwZYLrmb5n4ZXSSaF8LKPeStCAAZBkOz55-R2JCDMhpeqR0RCAc6lHjWL9Rcr_JQw-Z1Gq6R_BOPlnZL49hPoZ0pgZ9ytoldy1WQ1Q"}'
+      string: '{"kid":"https://vaultname.vault.azure.net/keys/livekvtestcrypto-test-wrapping-keyaea91b7e/c78eb7309c104fb08093b8ea8d83f238","value":"CEv3rLtFdPR3fcca4VTu6MCVKRcKQ1IycdNAOOCU8Jlo4AJKcdV__ake1T7xRQjncX42lF1cgmkxaPZNpYgl23Et7s67HrTUt0-gcKmP72e48-0hvURepJeWpEToyQsKFFW-Ayat453rISDYYP5cCXyKYfzgI8RBW7AZDrDKJWOgl-0cJ7ZjHv9f5yWAVB6cqBXke2uD9WInstp6AfqAkvmbVxnD8dKVLrTl424iVBMBfUjx79Ubv2gUkpPphgOoEt-AcniH1NkpVcYk70UafDSZ9Le230yfA5BGqhaqCKkmbTfjMCn24tJjwpBMAs6WYK5c4Mi70P10Y8E33TrjLQ"}'
     headers:
       cache-control: no-cache
-      content-length: '470'
+      content-length: '480'
       content-type: application/json; charset=utf-8
-      date: Mon, 19 Apr 2021 22:04:59 GMT
+      date: Tue, 20 Apr 2021 20:12:03 GMT
       expires: '-1'
       pragma: no-cache
       strict-transport-security: max-age=31536000;includeSubDomains
@@ -100,5 +100,5 @@ interactions:
     status:
       code: 200
       message: OK
-    url: https://mcpatinotest.vault.azure.net/keys/crypto-test-wrapping-keyaea91b7e/5c9dc1f3d8a546f2aa5e496020e653d3/sign?api-version=7.2-preview
+    url: https://mcpatinotest.vault.azure.net/keys/livekvtestcrypto-test-wrapping-keyaea91b7e/c78eb7309c104fb08093b8ea8d83f238/sign?api-version=7.2-preview
 version: 1

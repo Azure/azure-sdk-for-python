@@ -11,7 +11,7 @@ interactions:
       User-Agent:
       - azsdk-python-keyvault-keys/4.4.0b5 Python/3.5.3 (Windows-10-10.0.19041-SP0)
     method: POST
-    uri: https://vaultname.vault.azure.net/keys/crypto-test-encrypt-key24111d38/create?api-version=7.2-preview
+    uri: https://vaultname.vault.azure.net/keys/livekvtestcrypto-test-encrypt-key24111d38/create?api-version=7.2-preview
   response:
     body:
       string: '{"error":{"code":"Unauthorized","message":"Request is missing a Bearer
@@ -20,7 +20,7 @@ interactions:
       cache-control: no-cache
       content-length: '87'
       content-type: application/json; charset=utf-8
-      date: Mon, 19 Apr 2021 22:04:55 GMT
+      date: Tue, 20 Apr 2021 20:11:54 GMT
       expires: '-1'
       pragma: no-cache
       strict-transport-security: max-age=31536000;includeSubDomains
@@ -34,7 +34,7 @@ interactions:
     status:
       code: 401
       message: Unauthorized
-    url: https://mcpatinotest.vault.azure.net/keys/crypto-test-encrypt-key24111d38/create?api-version=7.2-preview
+    url: https://mcpatinotest.vault.azure.net/keys/livekvtestcrypto-test-encrypt-key24111d38/create?api-version=7.2-preview
 - request:
     body: '{"kty": "RSA"}'
     headers:
@@ -47,15 +47,15 @@ interactions:
       User-Agent:
       - azsdk-python-keyvault-keys/4.4.0b5 Python/3.5.3 (Windows-10-10.0.19041-SP0)
     method: POST
-    uri: https://vaultname.vault.azure.net/keys/crypto-test-encrypt-key24111d38/create?api-version=7.2-preview
+    uri: https://vaultname.vault.azure.net/keys/livekvtestcrypto-test-encrypt-key24111d38/create?api-version=7.2-preview
   response:
     body:
-      string: '{"key":{"kid":"https://vaultname.vault.azure.net/keys/crypto-test-encrypt-key24111d38/6a07d2bcfe2d43ffa69c5be3f8323a4e","kty":"RSA","key_ops":["encrypt","decrypt","sign","verify","wrapKey","unwrapKey"],"n":"yRPUl-g8L0MrAGWSib-8sqbt8_VRX_sR3Db9GY1vYBAEXZ7rlCU7G29MQvBKo95XFKibGyCt1vd1J0QhGvf_tkpOxlKnwjITHMXVvtnUhGSa-Be-p58u1m0ry2zWpSqUnL0xCGBoFPOorZYpWcTdbhLYMcphx4ji6TrYGh0bl2BZbjDlDFJTm3vk3LAZXcz9sHwQ5NpL-n2Q8acR4451lKTChTqBOymbEyqvmgTYNGhj1fU4_e3Xg-UHgBt7BNCUjjK2PeOUjZjHAyn3ARH_XeLUKYmpcSlcvJEGXn4T0lfFASbdXtYEwz-zeiEr5AuYvJAcLcqxb1Qw7MxDS4-ZcQ","e":"AQAB"},"attributes":{"enabled":true,"created":1618869896,"updated":1618869896,"recoveryLevel":"Recoverable+Purgeable","recoverableDays":90}}'
+      string: '{"key":{"kid":"https://vaultname.vault.azure.net/keys/livekvtestcrypto-test-encrypt-key24111d38/e97c1240ccd140c0af8dbc7be3bf6623","kty":"RSA","key_ops":["encrypt","decrypt","sign","verify","wrapKey","unwrapKey"],"n":"rq9_DLZ8ZR5gRLcF7K75B2Z7oSugO6t7YhLstltYsjH3BtVhw6Brm1qEzXtYDT1Zl606jowSLvXAaHQBJSlOaesV-lVgm6Byo5ikwR8krrgjeIwoEaJcHa2o5aDzyrKWnIYlocli5xllRXUZytWTDpYEd7OPLxwmDDiPprSAk-NHaoaiGZ0WmXj7vZmHBNJVpF2kdfqQP_A0BmZSnGepnSOo49L4DCY-8mL1Nz_AE0T24S-eaO-Bb4IQLP7FAAaunN8rTkxTk6ewbJrGq2dgtsgJTJRR4mFHWCjDeFR2V1CUBKWpnUhP1OMUX-SB7WRm6Ssb9Znic-cPeYS-YPRizQ","e":"AQAB"},"attributes":{"enabled":true,"created":1618949515,"updated":1618949515,"recoveryLevel":"Recoverable+Purgeable","recoverableDays":90}}'
     headers:
       cache-control: no-cache
-      content-length: '699'
+      content-length: '709'
       content-type: application/json; charset=utf-8
-      date: Mon, 19 Apr 2021 22:04:55 GMT
+      date: Tue, 20 Apr 2021 20:11:54 GMT
       expires: '-1'
       pragma: no-cache
       strict-transport-security: max-age=31536000;includeSubDomains
@@ -67,7 +67,7 @@ interactions:
     status:
       code: 200
       message: OK
-    url: https://mcpatinotest.vault.azure.net/keys/crypto-test-encrypt-key24111d38/create?api-version=7.2-preview
+    url: https://mcpatinotest.vault.azure.net/keys/livekvtestcrypto-test-encrypt-key24111d38/create?api-version=7.2-preview
 - request:
     body: null
     headers:
@@ -76,15 +76,15 @@ interactions:
       User-Agent:
       - azsdk-python-keyvault-keys/4.4.0b5 Python/3.5.3 (Windows-10-10.0.19041-SP0)
     method: GET
-    uri: https://vaultname.vault.azure.net/keys/crypto-test-encrypt-key24111d38/?api-version=7.2-preview
+    uri: https://vaultname.vault.azure.net/keys/livekvtestcrypto-test-encrypt-key24111d38/?api-version=7.2-preview
   response:
     body:
-      string: '{"key":{"kid":"https://vaultname.vault.azure.net/keys/crypto-test-encrypt-key24111d38/6a07d2bcfe2d43ffa69c5be3f8323a4e","kty":"RSA","key_ops":["encrypt","decrypt","sign","verify","wrapKey","unwrapKey"],"n":"yRPUl-g8L0MrAGWSib-8sqbt8_VRX_sR3Db9GY1vYBAEXZ7rlCU7G29MQvBKo95XFKibGyCt1vd1J0QhGvf_tkpOxlKnwjITHMXVvtnUhGSa-Be-p58u1m0ry2zWpSqUnL0xCGBoFPOorZYpWcTdbhLYMcphx4ji6TrYGh0bl2BZbjDlDFJTm3vk3LAZXcz9sHwQ5NpL-n2Q8acR4451lKTChTqBOymbEyqvmgTYNGhj1fU4_e3Xg-UHgBt7BNCUjjK2PeOUjZjHAyn3ARH_XeLUKYmpcSlcvJEGXn4T0lfFASbdXtYEwz-zeiEr5AuYvJAcLcqxb1Qw7MxDS4-ZcQ","e":"AQAB"},"attributes":{"enabled":true,"created":1618869896,"updated":1618869896,"recoveryLevel":"Recoverable+Purgeable","recoverableDays":90}}'
+      string: '{"key":{"kid":"https://vaultname.vault.azure.net/keys/livekvtestcrypto-test-encrypt-key24111d38/e97c1240ccd140c0af8dbc7be3bf6623","kty":"RSA","key_ops":["encrypt","decrypt","sign","verify","wrapKey","unwrapKey"],"n":"rq9_DLZ8ZR5gRLcF7K75B2Z7oSugO6t7YhLstltYsjH3BtVhw6Brm1qEzXtYDT1Zl606jowSLvXAaHQBJSlOaesV-lVgm6Byo5ikwR8krrgjeIwoEaJcHa2o5aDzyrKWnIYlocli5xllRXUZytWTDpYEd7OPLxwmDDiPprSAk-NHaoaiGZ0WmXj7vZmHBNJVpF2kdfqQP_A0BmZSnGepnSOo49L4DCY-8mL1Nz_AE0T24S-eaO-Bb4IQLP7FAAaunN8rTkxTk6ewbJrGq2dgtsgJTJRR4mFHWCjDeFR2V1CUBKWpnUhP1OMUX-SB7WRm6Ssb9Znic-cPeYS-YPRizQ","e":"AQAB"},"attributes":{"enabled":true,"created":1618949515,"updated":1618949515,"recoveryLevel":"Recoverable+Purgeable","recoverableDays":90}}'
     headers:
       cache-control: no-cache
-      content-length: '699'
+      content-length: '709'
       content-type: application/json; charset=utf-8
-      date: Mon, 19 Apr 2021 22:04:55 GMT
+      date: Tue, 20 Apr 2021 20:11:54 GMT
       expires: '-1'
       pragma: no-cache
       strict-transport-security: max-age=31536000;includeSubDomains
@@ -96,9 +96,9 @@ interactions:
     status:
       code: 200
       message: OK
-    url: https://mcpatinotest.vault.azure.net/keys/crypto-test-encrypt-key24111d38/?api-version=7.2-preview
+    url: https://mcpatinotest.vault.azure.net/keys/livekvtestcrypto-test-encrypt-key24111d38/?api-version=7.2-preview
 - request:
-    body: '{"alg": "RSA-OAEP", "value": "K4WnKUqtw9q3ytdWrdck7cs8frXk7XvInK2m_8qFymYa1ecS2EktlECMjIZZPbFsaFMvX4k-KSNYQT6N0jAaUYiagZXWnLl35JRZZAw6a5un2y_O7ru01sckum_EY0T3ea-5nXxqc9sTuDnPELPkP79FuPHr7BaB1UBBsb3752JDfNjyMlsNstj-KpQlV_GbGBBJ2ou_D8ydIOwnRI_ojscfPsMD596YTIH3euY7AY2S3gJCbQt_9EK_mpYABxbK10M0WIZXnM3sD22o2-t752-9IAejIwY3uv8Jm8xMPT5H-7zSjGJGG_1wesQDld_9qvApKWzg2cklCHWBcKaBkw"}'
+    body: '{"alg": "RSA-OAEP", "value": "JbyAwdyawWCpveUpS7iJbgiSWnBT54QIEPGwBCEWytTiubyXNsyzhgdz-OSFF2FGO6_36qE7toW5urGWnwzAcgINvelCVHDWgNzVToe-pXxpWyeM-0rKO5Ye_typ-Ay4ivi4Jorl-IITcpIRjc5_5F0w-VxvtyTqHWBtKUgNH-NqA8JKHMVb04DOWM5VlLyvogIYjdBYc1N5K9lBGtTZHsnnSG09AA-rnOHNPA0iEMrY3W0_x35mha4wUaeaNu9Lk-gJw43nHiqYuikx_TCi9RpQaKFT4BPsObPuC64XUoBh58cMkVqFPW16RrNggrIUx_QrNzcHMk1pSGcOY1uh_w"}'
     headers:
       Accept:
       - application/json
@@ -109,15 +109,15 @@ interactions:
       User-Agent:
       - azsdk-python-keyvault-keys/4.4.0b5 Python/3.5.3 (Windows-10-10.0.19041-SP0)
     method: POST
-    uri: https://vaultname.vault.azure.net/keys/crypto-test-encrypt-key24111d38/6a07d2bcfe2d43ffa69c5be3f8323a4e/decrypt?api-version=7.2-preview
+    uri: https://vaultname.vault.azure.net/keys/livekvtestcrypto-test-encrypt-key24111d38/e97c1240ccd140c0af8dbc7be3bf6623/decrypt?api-version=7.2-preview
   response:
     body:
-      string: '{"kid":"https://vaultname.vault.azure.net/keys/crypto-test-encrypt-key24111d38/6a07d2bcfe2d43ffa69c5be3f8323a4e","value":"cGxhaW50ZXh0"}'
+      string: '{"kid":"https://vaultname.vault.azure.net/keys/livekvtestcrypto-test-encrypt-key24111d38/e97c1240ccd140c0af8dbc7be3bf6623","value":"cGxhaW50ZXh0"}'
     headers:
       cache-control: no-cache
-      content-length: '139'
+      content-length: '149'
       content-type: application/json; charset=utf-8
-      date: Mon, 19 Apr 2021 22:04:56 GMT
+      date: Tue, 20 Apr 2021 20:11:55 GMT
       expires: '-1'
       pragma: no-cache
       strict-transport-security: max-age=31536000;includeSubDomains
@@ -129,5 +129,5 @@ interactions:
     status:
       code: 200
       message: OK
-    url: https://mcpatinotest.vault.azure.net/keys/crypto-test-encrypt-key24111d38/6a07d2bcfe2d43ffa69c5be3f8323a4e/decrypt?api-version=7.2-preview
+    url: https://mcpatinotest.vault.azure.net/keys/livekvtestcrypto-test-encrypt-key24111d38/e97c1240ccd140c0af8dbc7be3bf6623/decrypt?api-version=7.2-preview
 version: 1
