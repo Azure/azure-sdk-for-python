@@ -5,6 +5,7 @@
 - Fixed recursive=True on file deletion
 - Make `AccountName`, `AccountKey` etc. in conn_str case insensitive
 - Fixed downloader.chunks() return chunks in different size (#9419, #15648)
+- Optimized memory usage for datalake file uploads large chunks (#16890)
 - Fixed unclosed ThreadPoolExecutor (#8955)
 
 **New Features**
