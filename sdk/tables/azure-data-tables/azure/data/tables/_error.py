@@ -141,6 +141,11 @@ def _process_table_error(storage_error):
     raise error
 
 
+class RequestEntityTooLargeError(HttpResponseError):
+    """An error response with status code 413 - Request Entity Too Large"""
+    
+
+
 class TableErrorCode(str, Enum):
     # Generic storage values
     account_already_exists = "AccountAlreadyExists"

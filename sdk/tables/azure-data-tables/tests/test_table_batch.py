@@ -10,6 +10,7 @@ import pytest
 
 from datetime import datetime, timedelta
 from dateutil.tz import tzutc
+import os
 import sys
 import uuid
 
@@ -20,7 +21,6 @@ from azure.core.credentials import AzureSasCredential
 from azure.core.exceptions import (
     ResourceExistsError,
     ResourceNotFoundError,
-    HttpResponseError,
     ClientAuthenticationError
 )
 from azure.data.tables import (
@@ -34,7 +34,7 @@ from azure.data.tables import (
     UpdateMode,
     generate_table_sas,
     TableSasPermissions,
-    TableClient
+    RequestEntityTooLargeError
 )
 
 from _shared.testcase import TableTestCase
@@ -867,6 +867,31 @@ class StorageTableBatchTest(AzureTestCase, TableTestCase):
                 total_entities += 1
 
             assert total_entities == transaction_count
+        finally:
+            self._tear_down()
+
+    @pytest.mark.skipif(sys.version_info < (3, 0), reason="requires Python3")
+    @pytest.mark.live_test_only  # Request bodies are very large
+    @TablesPreparer()
+    def test_batch_request_too_large(self, tables_storage_account_name, tables_primary_storage_account_key):
+        # Arrange
+        self._set_up(tables_storage_account_name, tables_primary_storage_account_key)
+        try:
+
+            batch = self.table.create_batch()
+            entity = {
+                'PartitionKey': 'pk001',
+                'Foo': os.urandom(1024*64),
+                'Bar': os.urandom(1024*64),
+                'Baz': os.urandom(1024*64)
+            }
+            for i in range(50):
+                entity['RowKey'] = str(i)
+                batch.create_entity(entity)
+
+            with pytest.raises(RequestEntityTooLargeError):
+                self.table.send_batch(batch)
+
         finally:
             self._tear_down()
 

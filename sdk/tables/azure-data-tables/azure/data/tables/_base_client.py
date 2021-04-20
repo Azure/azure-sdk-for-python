@@ -41,6 +41,7 @@ from ._constants import (
     STORAGE_OAUTH_SCOPE,
     SERVICE_HOST_BASE,
 )
+from ._error import RequestEntityTooLargeError
 from ._models import LocationMode
 from ._authentication import SharedKeyCredentialPolicy
 from ._policies import (
@@ -306,6 +307,10 @@ class TablesBaseClient(AccountHostsMixin):
             raise ResourceNotFoundError(
                 message="The resource could not be found", response=response
             )
+        if response.status_code == 413:
+            raise RequestEntityTooLargeError(
+                message="The request was too large", response=response
+            )
         if response.status_code != 202:
             raise BatchErrorException(
                 message="There is a failure in the batch operation.",
@@ -318,6 +323,10 @@ class TablesBaseClient(AccountHostsMixin):
             if any(p for p in parts if p.status_code == 404):
                 raise ResourceNotFoundError(
                     message="The resource could not be found", response=response
+                )
+            if any(p for p in parts if p.status_code == 413):
+                raise RequestEntityTooLargeError(
+                    message="The request was too large", response=response
                 )
 
             raise BatchErrorException(

@@ -8,8 +8,8 @@
 
 from datetime import datetime
 from dateutil.tz import tzutc
+import os
 import sys
-from time import sleep
 import uuid
 
 import pytest
@@ -28,7 +28,8 @@ from azure.data.tables import (
     UpdateMode,
     EntityProperty,
     EdmType,
-    BatchErrorException
+    BatchErrorException,
+    RequestEntityTooLargeError
 )
 from azure.data.tables.aio import TableServiceClient
 
@@ -666,3 +667,28 @@ class StorageTableBatchTest(AzureTestCase, AsyncTableTestCase):
 
         finally:
             await self._tear_down()
+
+    @pytest.mark.live_test_only  # Request bodies are very large
+    @CosmosPreparer()
+    async def test_batch_request_too_large(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
+        # Arrange
+        await self._set_up(tables_cosmos_account_name, tables_primary_cosmos_account_key)
+        try:
+
+            batch = self.table.create_batch()
+            entity = {
+                'PartitionKey': 'pk001',
+                'Foo': os.urandom(1024*64),
+                'Bar': os.urandom(1024*64),
+                'Baz': os.urandom(1024*64)
+            }
+            for i in range(20):
+                entity['RowKey'] = str(i)
+                batch.create_entity(entity)
+
+            with pytest.raises(RequestEntityTooLargeError):
+                await self.table.send_batch(batch)
+
+        finally:
+            await self._tear_down()
+
