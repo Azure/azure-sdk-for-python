@@ -22,7 +22,6 @@ from ._models import (
     LocationMode,
     ResourceTypes,
     AccountSasPermissions,
-    BatchTransactionResult,
     BatchErrorException,
 )
 from ._version import VERSION
@@ -53,7 +52,6 @@ __all__ = [
     "RetentionPolicy",
     "generate_table_sas",
     "SASProtocol",
-    "BatchTransactionResult",
     "TableBatchOperations",
     "BatchErrorException",
 ]
