@@ -1,0 +1,35 @@
+# coding: utf-8
+# -------------------------------------------------------------------------
+# Copyright (c) Microsoft Corporation. All rights reserved.
+# Licensed under the MIT License. See License.txt in the project root for
+# license information.
+# --------------------------------------------------------------------------
+import functools
+from devtools_testutils import AzureTestCase, PowerShellPreparer
+from azure.purview.scanning import AzurePurviewScanningClient
+from azure.purview.scanning.aio import AzurePurviewScanningClient as AsyncAzurePurviewScanningClient
+
+
+class PurviewScanningTest(AzureTestCase):
+
+    def create_client(self, endpoint):
+        credential = self.get_credential(AzurePurviewScanningClient)
+        return self.create_client_from_credential(
+            AzurePurviewScanningClient,
+            credential=credential,
+            endpoint=endpoint,
+        )
+
+    def create_async_client(self, endpoint):
+        credential = self.get_credential(AsyncAzurePurviewScanningClient, is_async=True)
+        return self.create_client_from_credential(
+            AsyncAzurePurviewScanningClient,
+            credential=credential,
+            endpoint=endpoint,
+        )
+
+PurviewScanningPowerShellPreparer = functools.partial(
+    PowerShellPreparer,
+    "purviewscanning",
+    purviewscanning_endpoint="https://fake_account.scan.purview.azure.com"
+)

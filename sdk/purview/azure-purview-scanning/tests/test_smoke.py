@@ -4,18 +4,19 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # -------------------------------------------------------------------------
-
-from azure.identity import DefaultAzureCredential
+from testcase import PurviewScanningTest, PurviewScanningPowerShellPreparer
 from azure.purview.scanning import AzurePurviewScanningClient
-from azure.purview.scanning.rest import *
+from azure.purview.scanning.rest import data_sources
 
-client = AzurePurviewScanningClient(credential=DefaultAzureCredential(), account_name="llcpurview")
+class PurviewScanningSmokeTest(PurviewScanningTest):
 
-def test_basic_smoke_test():
-    request = build_datasources_list_by_account_request()
-    response = client.send_request(request)
-    response.raise_for_status()
-    assert response.status_code == 200
-    json_response = response.json()
-    assert set(json_response.keys()) == set(['value', 'count'])
-    assert len(json_response['value']) == json_response['count']
+    @PurviewScanningPowerShellPreparer()
+    def test_basic_smoke_test(self, purviewscanning_endpoint):
+        client = self.create_client(endpoint=purviewscanning_endpoint)
+        request = data_sources.build_list_by_account_request()
+        response = client.send_request(request)
+        response.raise_for_status()
+        assert response.status_code == 200
+        json_response = response.json()
+        assert set(json_response.keys()) == set(['value', 'count'])
+        assert len(json_response['value']) == json_response['count']
