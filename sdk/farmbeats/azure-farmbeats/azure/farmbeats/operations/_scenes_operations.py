@@ -18,7 +18,7 @@ from .. import models as _models
 
 if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
-    from typing import Any, Callable, Dict, Generic, Iterable, List, Optional, TypeVar, Union
+    from typing import Any, Callable, Dict, Generic, IO, Iterable, List, Optional, TypeVar, Union
 
     T = TypeVar('T')
     ClsType = Optional[Callable[[PipelineResponse[HttpRequest, HttpResponse], T, Dict[str, Any]], Any]]
@@ -51,13 +51,13 @@ class ScenesOperations(object):
         boundary_id,  # type: str
         provider="Microsoft",  # type: str
         source="Sentinel_2_L2A",  # type: Optional[str]
-        start_date=None,  # type: Optional[datetime.datetime]
-        end_date=None,  # type: Optional[datetime.datetime]
+        start_date_time=None,  # type: Optional[datetime.datetime]
+        end_date_time=None,  # type: Optional[datetime.datetime]
         max_cloud_coverage_percentage=100,  # type: Optional[float]
         max_dark_pixel_coverage_percentage=100,  # type: Optional[float]
-        image_names=None,  # type: Optional[List[Union[str, "_models.ImageName"]]]
+        image_names=None,  # type: Optional[List[str]]
         image_resolutions=None,  # type: Optional[List[float]]
-        image_formats=None,  # type: Optional[List[Union[str, "_models.ImageFormat"]]]
+        image_formats=None,  # type: Optional[List[str]]
         max_page_size=50,  # type: Optional[int]
         skip_token=None,  # type: Optional[str]
         **kwargs  # type: Any
@@ -73,10 +73,11 @@ class ScenesOperations(object):
         :type provider: str
         :param source: Source name of scene data, default value Sentinel_2_L2A (Sentinel 2 L2A).
         :type source: str
-        :param start_date: Scene start UTC date (inclusive), sample format: yyyy-MM-ddZ.
-        :type start_date: ~datetime.datetime
-        :param end_date: Scene end UTC date (inclusive), sample format: yyyy-MM-ddZ.
-        :type end_date: ~datetime.datetime
+        :param start_date_time: Scene start UTC datetime (inclusive), sample format:
+         yyyy-MM-ddThh:mm:ssZ.
+        :type start_date_time: ~datetime.datetime
+        :param end_date_time: Scene end UTC datetime (inclusive), sample format: yyyy-MM-dThh:mm:ssZ.
+        :type end_date_time: ~datetime.datetime
         :param max_cloud_coverage_percentage: Filter scenes with cloud coverage percentage less than
          max value. Range [0 to 100.0].
         :type max_cloud_coverage_percentage: float
@@ -84,11 +85,11 @@ class ScenesOperations(object):
          less than max value. Range [0 to 100.0].
         :type max_dark_pixel_coverage_percentage: float
         :param image_names: List of image names to be filtered.
-        :type image_names: list[str or ~azure.farmbeats.models.ImageName]
+        :type image_names: list[str]
         :param image_resolutions: List of image resolutions in meters to be filtered.
         :type image_resolutions: list[float]
         :param image_formats: List of image formats to be filtered.
-        :type image_formats: list[str or ~azure.farmbeats.models.ImageFormat]
+        :type image_formats: list[str]
         :param max_page_size: Maximum number of items needed (inclusive).
          Minimum = 10, Maximum = 1000, Default value = 50.
         :type max_page_size: int
@@ -122,10 +123,10 @@ class ScenesOperations(object):
                 query_parameters['boundaryId'] = self._serialize.query("boundary_id", boundary_id, 'str')
                 if source is not None:
                     query_parameters['source'] = self._serialize.query("source", source, 'str')
-                if start_date is not None:
-                    query_parameters['startDate'] = self._serialize.query("start_date", start_date, 'iso-8601')
-                if end_date is not None:
-                    query_parameters['endDate'] = self._serialize.query("end_date", end_date, 'iso-8601')
+                if start_date_time is not None:
+                    query_parameters['startDateTime'] = self._serialize.query("start_date_time", start_date_time, 'iso-8601')
+                if end_date_time is not None:
+                    query_parameters['endDateTime'] = self._serialize.query("end_date_time", end_date_time, 'iso-8601')
                 if max_cloud_coverage_percentage is not None:
                     query_parameters['maxCloudCoveragePercentage'] = self._serialize.query("max_cloud_coverage_percentage", max_cloud_coverage_percentage, 'float', maximum=100, minimum=0)
                 if max_dark_pixel_coverage_percentage is not None:
@@ -353,23 +354,23 @@ class ScenesOperations(object):
         file_path,  # type: str
         **kwargs  # type: Any
     ):
-        # type: (...) -> bytearray
+        # type: (...) -> IO
         """Downloads and returns file content as response for the given input filePath.
 
         :param file_path: cloud storage path of scene file.
         :type file_path: str
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: bytearray, or the result of cls(response)
-        :rtype: bytearray
+        :return: IO, or the result of cls(response)
+        :rtype: IO
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType[bytearray]
+        cls = kwargs.pop('cls', None)  # type: ClsType[IO]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
         api_version = "2021-03-31-preview"
-        accept = "application/json"
+        accept = "application/octet-stream, application/json"
 
         # Construct URL
         url = self.download.metadata['url']  # type: ignore
@@ -384,7 +385,7 @@ class ScenesOperations(object):
         header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
 
         request = self._client.get(url, query_parameters, header_parameters)
-        pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
+        pipeline_response = self._client._pipeline.run(request, stream=True, **kwargs)
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
@@ -392,7 +393,7 @@ class ScenesOperations(object):
             error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error)
 
-        deserialized = self._deserialize('bytearray', pipeline_response)
+        deserialized = response.stream_download(self._client._pipeline)
 
         if cls:
             return cls(pipeline_response, deserialized, {})

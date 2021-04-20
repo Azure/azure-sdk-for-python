@@ -54,39 +54,6 @@ class ImageFormat(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
 
     TIF = "TIF"
 
-class ImageName(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
-    """ImageName for satellite data.
-    """
-
-    B01 = "B01"
-    B02 = "B02"
-    B03 = "B03"
-    B04 = "B04"
-    B05 = "B05"
-    B06 = "B06"
-    B07 = "B07"
-    B08 = "B08"
-    B8_A = "B8A"
-    B09 = "B09"
-    B11 = "B11"
-    B12 = "B12"
-    AOT = "AOT"
-    SCL = "SCL"
-    SNW = "SNW"
-    CLD = "CLD"
-    CLP = "CLP"
-    CLM = "CLM"
-    DATA_MASK = "dataMask"
-    EVI = "EVI"
-    NDVI = "NDVI"
-    NDWI = "NDWI"
-    SUN_AZIMUTH_ANGLES = "sunAzimuthAngles"
-    SUN_ZENITH_ANGLES = "sunZenithAngles"
-    VIEW_AZIMUTH_MEAN = "viewAzimuthMean"
-    VIEW_ZENITH_MEAN = "viewZenithMean"
-    LAI = "LAI"
-    LAI_MASK = "LAIMask"
-
 class JobStatus(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     """Various states a job can be in.
     """

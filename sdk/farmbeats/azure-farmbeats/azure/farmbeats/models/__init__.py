@@ -146,7 +146,6 @@ from ._farm_beats_client_enums import (
     FieldOperationType,
     GeoJsonObjectType,
     ImageFormat,
-    ImageName,
     JobStatus,
     Source,
 )
@@ -223,7 +222,6 @@ __all__ = [
     'FieldOperationType',
     'GeoJsonObjectType',
     'ImageFormat',
-    'ImageName',
     'JobStatus',
     'Source',
 ]

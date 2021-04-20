@@ -507,9 +507,9 @@ class CascadeDeleteJobDetails(msrest.serialization.Model):
     :type duration_in_seconds: str
     :param id: Unique job id.
     :type id: str
-    :param job_status: Various states a job can be in. Possible values include: "Waiting",
-     "Running", "Succeeded", "Failed", "Cancelled".
-    :type job_status: str or ~azure.farmbeats.models.JobStatus
+    :param status: Various states a job can be in. Possible values include: "Waiting", "Running",
+     "Succeeded", "Failed", "Cancelled".
+    :type status: str or ~azure.farmbeats.models.JobStatus
     :param message: Status message to capture more details of the job.
     :type message: str
     :ivar created_date_time: Job created at dateTime. Sample format: yyyy-MM-ddTHH:mm:ssZ.
@@ -551,7 +551,7 @@ class CascadeDeleteJobDetails(msrest.serialization.Model):
     _attribute_map = {
         'duration_in_seconds': {'key': 'durationInSeconds', 'type': 'str'},
         'id': {'key': 'id', 'type': 'str'},
-        'job_status': {'key': 'jobStatus', 'type': 'str'},
+        'status': {'key': 'status', 'type': 'str'},
         'message': {'key': 'message', 'type': 'str'},
         'created_date_time': {'key': 'createdDateTime', 'type': 'iso-8601'},
         'last_action_date_time': {'key': 'lastActionDateTime', 'type': 'iso-8601'},
@@ -569,7 +569,7 @@ class CascadeDeleteJobDetails(msrest.serialization.Model):
         *,
         duration_in_seconds: Optional[str] = None,
         id: Optional[str] = None,
-        job_status: Optional[Union[str, "JobStatus"]] = None,
+        status: Optional[Union[str, "JobStatus"]] = None,
         message: Optional[str] = None,
         name: Optional[str] = None,
         description: Optional[str] = None,
@@ -580,7 +580,7 @@ class CascadeDeleteJobDetails(msrest.serialization.Model):
         super(CascadeDeleteJobDetails, self).__init__(**kwargs)
         self.duration_in_seconds = duration_in_seconds
         self.id = id
-        self.job_status = job_status
+        self.status = status
         self.message = message
         self.created_date_time = None
         self.last_action_date_time = None
@@ -662,9 +662,9 @@ class CascadeDeleteJobResponse(msrest.serialization.Model):
     :type duration_in_seconds: str
     :param id: Unique job id.
     :type id: str
-    :param job_status: Various states a job can be in. Possible values include: "Waiting",
-     "Running", "Succeeded", "Failed", "Cancelled".
-    :type job_status: str or ~azure.farmbeats.models.JobStatus
+    :param status: Various states a job can be in. Possible values include: "Waiting", "Running",
+     "Succeeded", "Failed", "Cancelled".
+    :type status: str or ~azure.farmbeats.models.JobStatus
     :param message: Status message to capture more details of the job.
     :type message: str
     :ivar created_date_time: Job created at dateTime. Sample format: yyyy-MM-ddTHH:mm:ssZ.
@@ -704,7 +704,7 @@ class CascadeDeleteJobResponse(msrest.serialization.Model):
     _attribute_map = {
         'duration_in_seconds': {'key': 'durationInSeconds', 'type': 'str'},
         'id': {'key': 'id', 'type': 'str'},
-        'job_status': {'key': 'jobStatus', 'type': 'str'},
+        'status': {'key': 'status', 'type': 'str'},
         'message': {'key': 'message', 'type': 'str'},
         'created_date_time': {'key': 'createdDateTime', 'type': 'iso-8601'},
         'last_action_date_time': {'key': 'lastActionDateTime', 'type': 'iso-8601'},
@@ -721,7 +721,7 @@ class CascadeDeleteJobResponse(msrest.serialization.Model):
         *,
         duration_in_seconds: Optional[str] = None,
         id: Optional[str] = None,
-        job_status: Optional[Union[str, "JobStatus"]] = None,
+        status: Optional[Union[str, "JobStatus"]] = None,
         message: Optional[str] = None,
         name: Optional[str] = None,
         description: Optional[str] = None,
@@ -731,7 +731,7 @@ class CascadeDeleteJobResponse(msrest.serialization.Model):
         super(CascadeDeleteJobResponse, self).__init__(**kwargs)
         self.duration_in_seconds = duration_in_seconds
         self.id = id
-        self.job_status = job_status
+        self.status = status
         self.message = message
         self.created_date_time = None
         self.last_action_date_time = None
@@ -1330,9 +1330,9 @@ class FarmOperationDataIngestionJobResponse(msrest.serialization.Model):
     :type duration_in_seconds: str
     :param id: Unique job id.
     :type id: str
-    :param job_status: Various states a job can be in. Possible values include: "Waiting",
-     "Running", "Succeeded", "Failed", "Cancelled".
-    :type job_status: str or ~azure.farmbeats.models.JobStatus
+    :param status: Various states a job can be in. Possible values include: "Waiting", "Running",
+     "Succeeded", "Failed", "Cancelled".
+    :type status: str or ~azure.farmbeats.models.JobStatus
     :param message: Status message to capture more details of the job.
     :type message: str
     :ivar created_date_time: Job created at dateTime. Sample format: yyyy-MM-ddTHH:mm:ssZ.
@@ -1374,7 +1374,7 @@ class FarmOperationDataIngestionJobResponse(msrest.serialization.Model):
         'start_year': {'key': 'startYear', 'type': 'int'},
         'duration_in_seconds': {'key': 'durationInSeconds', 'type': 'str'},
         'id': {'key': 'id', 'type': 'str'},
-        'job_status': {'key': 'jobStatus', 'type': 'str'},
+        'status': {'key': 'status', 'type': 'str'},
         'message': {'key': 'message', 'type': 'str'},
         'created_date_time': {'key': 'createdDateTime', 'type': 'iso-8601'},
         'last_action_date_time': {'key': 'lastActionDateTime', 'type': 'iso-8601'},
@@ -1393,7 +1393,7 @@ class FarmOperationDataIngestionJobResponse(msrest.serialization.Model):
         start_year: Optional[int] = None,
         duration_in_seconds: Optional[str] = None,
         id: Optional[str] = None,
-        job_status: Optional[Union[str, "JobStatus"]] = None,
+        status: Optional[Union[str, "JobStatus"]] = None,
         message: Optional[str] = None,
         name: Optional[str] = None,
         description: Optional[str] = None,
@@ -1405,7 +1405,7 @@ class FarmOperationDataIngestionJobResponse(msrest.serialization.Model):
         self.start_year = start_year
         self.duration_in_seconds = duration_in_seconds
         self.id = id
-        self.job_status = job_status
+        self.status = status
         self.message = message
         self.created_date_time = None
         self.last_action_date_time = None
@@ -1426,9 +1426,9 @@ class FarmOperationsDataIngestionJobDetails(msrest.serialization.Model):
     :type duration_in_seconds: str
     :param id: Unique job id.
     :type id: str
-    :param job_status: Various states a job can be in. Possible values include: "Waiting",
-     "Running", "Succeeded", "Failed", "Cancelled".
-    :type job_status: str or ~azure.farmbeats.models.JobStatus
+    :param status: Various states a job can be in. Possible values include: "Waiting", "Running",
+     "Succeeded", "Failed", "Cancelled".
+    :type status: str or ~azure.farmbeats.models.JobStatus
     :param message: Status message to capture more details of the job.
     :type message: str
     :ivar created_date_time: Job created at dateTime. Sample format: yyyy-MM-ddTHH:mm:ssZ.
@@ -1470,7 +1470,7 @@ class FarmOperationsDataIngestionJobDetails(msrest.serialization.Model):
     _attribute_map = {
         'duration_in_seconds': {'key': 'durationInSeconds', 'type': 'str'},
         'id': {'key': 'id', 'type': 'str'},
-        'job_status': {'key': 'jobStatus', 'type': 'str'},
+        'status': {'key': 'status', 'type': 'str'},
         'message': {'key': 'message', 'type': 'str'},
         'created_date_time': {'key': 'createdDateTime', 'type': 'iso-8601'},
         'last_action_date_time': {'key': 'lastActionDateTime', 'type': 'iso-8601'},
@@ -1488,7 +1488,7 @@ class FarmOperationsDataIngestionJobDetails(msrest.serialization.Model):
         *,
         duration_in_seconds: Optional[str] = None,
         id: Optional[str] = None,
-        job_status: Optional[Union[str, "JobStatus"]] = None,
+        status: Optional[Union[str, "JobStatus"]] = None,
         message: Optional[str] = None,
         name: Optional[str] = None,
         description: Optional[str] = None,
@@ -1499,7 +1499,7 @@ class FarmOperationsDataIngestionJobDetails(msrest.serialization.Model):
         super(FarmOperationsDataIngestionJobDetails, self).__init__(**kwargs)
         self.duration_in_seconds = duration_in_seconds
         self.id = id
-        self.job_status = job_status
+        self.status = status
         self.message = message
         self.created_date_time = None
         self.last_action_date_time = None
@@ -2715,9 +2715,9 @@ class SatelliteData(msrest.serialization.Model):
     """Data Model for SatelliteInjestionJobRequest.
 
     :param image_names: List of ImageNames.
-    :type image_names: list[str or ~azure.farmbeats.models.ImageName]
+    :type image_names: list[str]
     :param image_formats: List of ImageFormats. Available value: TIF.
-    :type image_formats: list[str or ~azure.farmbeats.models.ImageFormat]
+    :type image_formats: list[str]
     :param image_resolutions: List of ImageResolutions in meters. Available values: 10, 20, 60.
     :type image_resolutions: list[float]
     """
@@ -2731,8 +2731,8 @@ class SatelliteData(msrest.serialization.Model):
     def __init__(
         self,
         *,
-        image_names: Optional[List[Union[str, "ImageName"]]] = None,
-        image_formats: Optional[List[Union[str, "ImageFormat"]]] = None,
+        image_names: Optional[List[str]] = None,
+        image_formats: Optional[List[str]] = None,
         image_resolutions: Optional[List[float]] = None,
         **kwargs
     ):
@@ -2751,9 +2751,9 @@ class SatelliteIngestionJobDetails(msrest.serialization.Model):
     :type duration_in_seconds: str
     :param id: Unique job id.
     :type id: str
-    :param job_status: Various states a job can be in. Possible values include: "Waiting",
-     "Running", "Succeeded", "Failed", "Cancelled".
-    :type job_status: str or ~azure.farmbeats.models.JobStatus
+    :param status: Various states a job can be in. Possible values include: "Waiting", "Running",
+     "Succeeded", "Failed", "Cancelled".
+    :type status: str or ~azure.farmbeats.models.JobStatus
     :param message: Status message to capture more details of the job.
     :type message: str
     :ivar created_date_time: Job created at dateTime. Sample format: yyyy-MM-ddTHH:mm:ssZ.
@@ -2795,7 +2795,7 @@ class SatelliteIngestionJobDetails(msrest.serialization.Model):
     _attribute_map = {
         'duration_in_seconds': {'key': 'durationInSeconds', 'type': 'str'},
         'id': {'key': 'id', 'type': 'str'},
-        'job_status': {'key': 'jobStatus', 'type': 'str'},
+        'status': {'key': 'status', 'type': 'str'},
         'message': {'key': 'message', 'type': 'str'},
         'created_date_time': {'key': 'createdDateTime', 'type': 'iso-8601'},
         'last_action_date_time': {'key': 'lastActionDateTime', 'type': 'iso-8601'},
@@ -2813,7 +2813,7 @@ class SatelliteIngestionJobDetails(msrest.serialization.Model):
         *,
         duration_in_seconds: Optional[str] = None,
         id: Optional[str] = None,
-        job_status: Optional[Union[str, "JobStatus"]] = None,
+        status: Optional[Union[str, "JobStatus"]] = None,
         message: Optional[str] = None,
         name: Optional[str] = None,
         description: Optional[str] = None,
@@ -2824,7 +2824,7 @@ class SatelliteIngestionJobDetails(msrest.serialization.Model):
         super(SatelliteIngestionJobDetails, self).__init__(**kwargs)
         self.duration_in_seconds = duration_in_seconds
         self.id = id
-        self.job_status = job_status
+        self.status = status
         self.message = message
         self.created_date_time = None
         self.last_action_date_time = None
@@ -2847,10 +2847,10 @@ class SatelliteIngestionJobRequest(msrest.serialization.Model):
     :param boundary_id: Required. The id of the boundary object for which satellite data is being
      fetched.
     :type boundary_id: str
-    :param start_date: Required. Start Date.
-    :type start_date: ~datetime.datetime
-    :param end_date: Required. End Date.
-    :type end_date: ~datetime.datetime
+    :param start_date_time: Required. Start Date.
+    :type start_date_time: ~datetime.datetime
+    :param end_date_time: Required. End Date.
+    :type end_date_time: ~datetime.datetime
     :param provider: Provider of satellite data. Possible values include: "Microsoft".
     :type provider: str or ~azure.farmbeats.models.DataProvider
     :param source: Source of satellite data. Possible values include: "Sentinel_2_L2A".
@@ -2872,8 +2872,8 @@ class SatelliteIngestionJobRequest(msrest.serialization.Model):
     _validation = {
         'farmer_id': {'required': True},
         'boundary_id': {'required': True},
-        'start_date': {'required': True},
-        'end_date': {'required': True},
+        'start_date_time': {'required': True},
+        'end_date_time': {'required': True},
         'name': {'max_length': 100, 'min_length': 0},
         'description': {'max_length': 500, 'min_length': 0},
     }
@@ -2881,8 +2881,8 @@ class SatelliteIngestionJobRequest(msrest.serialization.Model):
     _attribute_map = {
         'farmer_id': {'key': 'farmerId', 'type': 'str'},
         'boundary_id': {'key': 'boundaryId', 'type': 'str'},
-        'start_date': {'key': 'startDate', 'type': 'iso-8601'},
-        'end_date': {'key': 'endDate', 'type': 'iso-8601'},
+        'start_date_time': {'key': 'startDateTime', 'type': 'iso-8601'},
+        'end_date_time': {'key': 'endDateTime', 'type': 'iso-8601'},
         'provider': {'key': 'provider', 'type': 'str'},
         'source': {'key': 'source', 'type': 'str'},
         'data': {'key': 'data', 'type': 'SatelliteData'},
@@ -2896,8 +2896,8 @@ class SatelliteIngestionJobRequest(msrest.serialization.Model):
         *,
         farmer_id: str,
         boundary_id: str,
-        start_date: datetime.datetime,
-        end_date: datetime.datetime,
+        start_date_time: datetime.datetime,
+        end_date_time: datetime.datetime,
         provider: Optional[Union[str, "DataProvider"]] = None,
         source: Optional[Union[str, "Source"]] = None,
         data: Optional["SatelliteData"] = None,
@@ -2909,8 +2909,8 @@ class SatelliteIngestionJobRequest(msrest.serialization.Model):
         super(SatelliteIngestionJobRequest, self).__init__(**kwargs)
         self.farmer_id = farmer_id
         self.boundary_id = boundary_id
-        self.start_date = start_date
-        self.end_date = end_date
+        self.start_date_time = start_date_time
+        self.end_date_time = end_date_time
         self.provider = provider
         self.source = source
         self.data = data
@@ -2928,9 +2928,9 @@ class SatelliteIngestionJobResponse(msrest.serialization.Model):
     :type duration_in_seconds: str
     :param id: Unique job id.
     :type id: str
-    :param job_status: Various states a job can be in. Possible values include: "Waiting",
-     "Running", "Succeeded", "Failed", "Cancelled".
-    :type job_status: str or ~azure.farmbeats.models.JobStatus
+    :param status: Various states a job can be in. Possible values include: "Waiting", "Running",
+     "Succeeded", "Failed", "Cancelled".
+    :type status: str or ~azure.farmbeats.models.JobStatus
     :param message: Status message to capture more details of the job.
     :type message: str
     :ivar created_date_time: Job created at dateTime. Sample format: yyyy-MM-ddTHH:mm:ssZ.
@@ -2970,7 +2970,7 @@ class SatelliteIngestionJobResponse(msrest.serialization.Model):
     _attribute_map = {
         'duration_in_seconds': {'key': 'durationInSeconds', 'type': 'str'},
         'id': {'key': 'id', 'type': 'str'},
-        'job_status': {'key': 'jobStatus', 'type': 'str'},
+        'status': {'key': 'status', 'type': 'str'},
         'message': {'key': 'message', 'type': 'str'},
         'created_date_time': {'key': 'createdDateTime', 'type': 'iso-8601'},
         'last_action_date_time': {'key': 'lastActionDateTime', 'type': 'iso-8601'},
@@ -2987,7 +2987,7 @@ class SatelliteIngestionJobResponse(msrest.serialization.Model):
         *,
         duration_in_seconds: Optional[str] = None,
         id: Optional[str] = None,
-        job_status: Optional[Union[str, "JobStatus"]] = None,
+        status: Optional[Union[str, "JobStatus"]] = None,
         message: Optional[str] = None,
         name: Optional[str] = None,
         description: Optional[str] = None,
@@ -2997,7 +2997,7 @@ class SatelliteIngestionJobResponse(msrest.serialization.Model):
         super(SatelliteIngestionJobResponse, self).__init__(**kwargs)
         self.duration_in_seconds = duration_in_seconds
         self.id = id
-        self.job_status = job_status
+        self.status = status
         self.message = message
         self.created_date_time = None
         self.last_action_date_time = None
@@ -3873,9 +3873,9 @@ class WeatherDataDeleteJobDetails(msrest.serialization.Model):
     :type duration_in_seconds: str
     :param id: Unique job id.
     :type id: str
-    :param job_status: Various states a job can be in. Possible values include: "Waiting",
-     "Running", "Succeeded", "Failed", "Cancelled".
-    :type job_status: str or ~azure.farmbeats.models.JobStatus
+    :param status: Various states a job can be in. Possible values include: "Waiting", "Running",
+     "Succeeded", "Failed", "Cancelled".
+    :type status: str or ~azure.farmbeats.models.JobStatus
     :param message: Status message to capture more details of the job.
     :type message: str
     :ivar created_date_time: Job created at dateTime. Sample format: yyyy-MM-ddTHH:mm:ssZ.
@@ -3917,7 +3917,7 @@ class WeatherDataDeleteJobDetails(msrest.serialization.Model):
     _attribute_map = {
         'duration_in_seconds': {'key': 'durationInSeconds', 'type': 'str'},
         'id': {'key': 'id', 'type': 'str'},
-        'job_status': {'key': 'jobStatus', 'type': 'str'},
+        'status': {'key': 'status', 'type': 'str'},
         'message': {'key': 'message', 'type': 'str'},
         'created_date_time': {'key': 'createdDateTime', 'type': 'iso-8601'},
         'last_action_date_time': {'key': 'lastActionDateTime', 'type': 'iso-8601'},
@@ -3935,7 +3935,7 @@ class WeatherDataDeleteJobDetails(msrest.serialization.Model):
         *,
         duration_in_seconds: Optional[str] = None,
         id: Optional[str] = None,
-        job_status: Optional[Union[str, "JobStatus"]] = None,
+        status: Optional[Union[str, "JobStatus"]] = None,
         message: Optional[str] = None,
         name: Optional[str] = None,
         description: Optional[str] = None,
@@ -3946,7 +3946,7 @@ class WeatherDataDeleteJobDetails(msrest.serialization.Model):
         super(WeatherDataDeleteJobDetails, self).__init__(**kwargs)
         self.duration_in_seconds = duration_in_seconds
         self.id = id
-        self.job_status = job_status
+        self.status = status
         self.message = message
         self.created_date_time = None
         self.last_action_date_time = None
@@ -4054,9 +4054,9 @@ class WeatherDataDeleteJobResponse(msrest.serialization.Model):
     :type duration_in_seconds: str
     :param id: Unique job id.
     :type id: str
-    :param job_status: Various states a job can be in. Possible values include: "Waiting",
-     "Running", "Succeeded", "Failed", "Cancelled".
-    :type job_status: str or ~azure.farmbeats.models.JobStatus
+    :param status: Various states a job can be in. Possible values include: "Waiting", "Running",
+     "Succeeded", "Failed", "Cancelled".
+    :type status: str or ~azure.farmbeats.models.JobStatus
     :param message: Status message to capture more details of the job.
     :type message: str
     :ivar created_date_time: Job created at dateTime. Sample format: yyyy-MM-ddTHH:mm:ssZ.
@@ -4096,7 +4096,7 @@ class WeatherDataDeleteJobResponse(msrest.serialization.Model):
     _attribute_map = {
         'duration_in_seconds': {'key': 'durationInSeconds', 'type': 'str'},
         'id': {'key': 'id', 'type': 'str'},
-        'job_status': {'key': 'jobStatus', 'type': 'str'},
+        'status': {'key': 'status', 'type': 'str'},
         'message': {'key': 'message', 'type': 'str'},
         'created_date_time': {'key': 'createdDateTime', 'type': 'iso-8601'},
         'last_action_date_time': {'key': 'lastActionDateTime', 'type': 'iso-8601'},
@@ -4113,7 +4113,7 @@ class WeatherDataDeleteJobResponse(msrest.serialization.Model):
         *,
         duration_in_seconds: Optional[str] = None,
         id: Optional[str] = None,
-        job_status: Optional[Union[str, "JobStatus"]] = None,
+        status: Optional[Union[str, "JobStatus"]] = None,
         message: Optional[str] = None,
         name: Optional[str] = None,
         description: Optional[str] = None,
@@ -4123,7 +4123,7 @@ class WeatherDataDeleteJobResponse(msrest.serialization.Model):
         super(WeatherDataDeleteJobResponse, self).__init__(**kwargs)
         self.duration_in_seconds = duration_in_seconds
         self.id = id
-        self.job_status = job_status
+        self.status = status
         self.message = message
         self.created_date_time = None
         self.last_action_date_time = None
@@ -4176,9 +4176,9 @@ class WeatherIngestionJobDetails(msrest.serialization.Model):
     :type duration_in_seconds: str
     :param id: Unique job id.
     :type id: str
-    :param job_status: Various states a job can be in. Possible values include: "Waiting",
-     "Running", "Succeeded", "Failed", "Cancelled".
-    :type job_status: str or ~azure.farmbeats.models.JobStatus
+    :param status: Various states a job can be in. Possible values include: "Waiting", "Running",
+     "Succeeded", "Failed", "Cancelled".
+    :type status: str or ~azure.farmbeats.models.JobStatus
     :param message: Status message to capture more details of the job.
     :type message: str
     :ivar created_date_time: Job created at dateTime. Sample format: yyyy-MM-ddTHH:mm:ssZ.
@@ -4220,7 +4220,7 @@ class WeatherIngestionJobDetails(msrest.serialization.Model):
     _attribute_map = {
         'duration_in_seconds': {'key': 'durationInSeconds', 'type': 'str'},
         'id': {'key': 'id', 'type': 'str'},
-        'job_status': {'key': 'jobStatus', 'type': 'str'},
+        'status': {'key': 'status', 'type': 'str'},
         'message': {'key': 'message', 'type': 'str'},
         'created_date_time': {'key': 'createdDateTime', 'type': 'iso-8601'},
         'last_action_date_time': {'key': 'lastActionDateTime', 'type': 'iso-8601'},
@@ -4238,7 +4238,7 @@ class WeatherIngestionJobDetails(msrest.serialization.Model):
         *,
         duration_in_seconds: Optional[str] = None,
         id: Optional[str] = None,
-        job_status: Optional[Union[str, "JobStatus"]] = None,
+        status: Optional[Union[str, "JobStatus"]] = None,
         message: Optional[str] = None,
         name: Optional[str] = None,
         description: Optional[str] = None,
@@ -4249,7 +4249,7 @@ class WeatherIngestionJobDetails(msrest.serialization.Model):
         super(WeatherIngestionJobDetails, self).__init__(**kwargs)
         self.duration_in_seconds = duration_in_seconds
         self.id = id
-        self.job_status = job_status
+        self.status = status
         self.message = message
         self.created_date_time = None
         self.last_action_date_time = None
@@ -4359,9 +4359,9 @@ class WeatherIngestionJobResponse(msrest.serialization.Model):
     :type duration_in_seconds: str
     :param id: Unique job id.
     :type id: str
-    :param job_status: Various states a job can be in. Possible values include: "Waiting",
-     "Running", "Succeeded", "Failed", "Cancelled".
-    :type job_status: str or ~azure.farmbeats.models.JobStatus
+    :param status: Various states a job can be in. Possible values include: "Waiting", "Running",
+     "Succeeded", "Failed", "Cancelled".
+    :type status: str or ~azure.farmbeats.models.JobStatus
     :param message: Status message to capture more details of the job.
     :type message: str
     :ivar created_date_time: Job created at dateTime. Sample format: yyyy-MM-ddTHH:mm:ssZ.
@@ -4401,7 +4401,7 @@ class WeatherIngestionJobResponse(msrest.serialization.Model):
     _attribute_map = {
         'duration_in_seconds': {'key': 'durationInSeconds', 'type': 'str'},
         'id': {'key': 'id', 'type': 'str'},
-        'job_status': {'key': 'jobStatus', 'type': 'str'},
+        'status': {'key': 'status', 'type': 'str'},
         'message': {'key': 'message', 'type': 'str'},
         'created_date_time': {'key': 'createdDateTime', 'type': 'iso-8601'},
         'last_action_date_time': {'key': 'lastActionDateTime', 'type': 'iso-8601'},
@@ -4418,7 +4418,7 @@ class WeatherIngestionJobResponse(msrest.serialization.Model):
         *,
         duration_in_seconds: Optional[str] = None,
         id: Optional[str] = None,
-        job_status: Optional[Union[str, "JobStatus"]] = None,
+        status: Optional[Union[str, "JobStatus"]] = None,
         message: Optional[str] = None,
         name: Optional[str] = None,
         description: Optional[str] = None,
@@ -4428,7 +4428,7 @@ class WeatherIngestionJobResponse(msrest.serialization.Model):
         super(WeatherIngestionJobResponse, self).__init__(**kwargs)
         self.duration_in_seconds = duration_in_seconds
         self.id = id
-        self.job_status = job_status
+        self.status = status
         self.message = message
         self.created_date_time = None
         self.last_action_date_time = None
