@@ -1,6 +1,14 @@
 # Release History
 
-## 12.3.1b1 (Unreleased)
+## 12.3.1 (2021-04-20)
+**Fixes**
+- Fixed recursive=True on file deletion
+- Make `AccountName`, `AccountKey` etc. in conn_str case insensitive
+- Fixed downloader.chunks() return chunks in different size (#9419, #15648)
+- Fixed unclosed ThreadPoolExecutor (#8955)
+
+**New Features**
+- Added get_account_information API
 
 
 ## 12.3.0 (2021-03-01)

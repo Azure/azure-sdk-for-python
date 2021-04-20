@@ -1,6 +1,10 @@
 # Release History
 
-## 12.1.6 (Unreleased)
+## 12.1.6 (2021-04-20)
+**Fixes**
+- Make `AccountName`, `AccountKey` etc. in conn_str case insensitive
+- Fixed unclosed ThreadPoolExecutor (#8955)
+- Optimized memory usage for datalake file uploads large chunks (#16890)
 
 
 ## 12.1.5 (2021-01-13)

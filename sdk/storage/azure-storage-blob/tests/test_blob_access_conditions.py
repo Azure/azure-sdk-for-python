@@ -44,7 +44,7 @@ class StorageBlobAccessConditionsTest(StorageTestCase):
 
     def _create_container(self, container_name, bsc):
         container = bsc.get_container_client(container_name)
-        container.create_container()
+        # container.create_container()
         return container
 
     def _create_container_and_block_blob(self, container_name, blob_name,
