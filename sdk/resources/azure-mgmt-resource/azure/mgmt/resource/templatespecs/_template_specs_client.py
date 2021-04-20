@@ -9,12 +9,21 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from azure.mgmt.core import ARMPipelineClient
-from msrest import Serializer, Deserializer
+from typing import TYPE_CHECKING
 
+from azure.mgmt.core import ARMPipelineClient
 from azure.profiles import KnownProfiles, ProfileDefinition
 from azure.profiles.multiapiclient import MultiApiClientMixin
+from msrest import Deserializer, Serializer
+
 from ._configuration import TemplateSpecsClientConfiguration
+
+if TYPE_CHECKING:
+    # pylint: disable=unused-import,ungrouped-imports
+    from typing import Any, Optional
+
+    from azure.core.credentials import TokenCredential
+    from azure.core.pipeline.transport import HttpRequest, HttpResponse
 
 class _SDKClient(object):
     def __init__(self, *args, **kwargs):
@@ -38,15 +47,16 @@ class TemplateSpecsClient(MultiApiClientMixin, _SDKClient):
     :type credential: ~azure.core.credentials.TokenCredential
     :param subscription_id: Subscription Id which forms part of the URI for every service call.
     :type subscription_id: str
-    :param str api_version: API version to use if no profile is provided, or if
-     missing in profile.
-    :param str base_url: Service URL
+    :param api_version: API version to use if no profile is provided, or if missing in profile.
+    :type api_version: str
+    :param base_url: Service URL
+    :type base_url: str
     :param profile: A profile definition, from KnownProfiles to dict.
     :type profile: azure.profiles.KnownProfiles
     """
 
     DEFAULT_API_VERSION = '2019-06-01-preview'
-    _PROFILE_TAG = "azure.mgmt.resource.TemplateSpecsClient"
+    _PROFILE_TAG = "azure.mgmt.resource.templatespecs.TemplateSpecsClient"
     LATEST_PROFILE = ProfileDefinition({
         _PROFILE_TAG: {
             None: DEFAULT_API_VERSION,
@@ -58,9 +68,9 @@ class TemplateSpecsClient(MultiApiClientMixin, _SDKClient):
         self,
         credential,  # type: "TokenCredential"
         subscription_id,  # type: str
-        api_version=None,
-        base_url=None,
-        profile=KnownProfiles.default,
+        api_version=None, # type: Optional[str]
+        base_url=None,  # type: Optional[str]
+        profile=KnownProfiles.default, # type: KnownProfiles
         **kwargs  # type: Any
     ):
         if not base_url:
@@ -80,7 +90,7 @@ class TemplateSpecsClient(MultiApiClientMixin, _SDKClient):
     def models(cls, api_version=DEFAULT_API_VERSION):
         """Module depends on the API version:
 
-           * 2019-06-01-preview: :mod:`v2019_06_01_preview.models<azure.mgmt.resource.v2019_06_01_preview.models>`
+           * 2019-06-01-preview: :mod:`v2019_06_01_preview.models<azure.mgmt.resource.templatespecs.v2019_06_01_preview.models>`
         """
         if api_version == '2019-06-01-preview':
             from .v2019_06_01_preview import models
@@ -91,7 +101,7 @@ class TemplateSpecsClient(MultiApiClientMixin, _SDKClient):
     def template_spec_versions(self):
         """Instance depends on the API version:
 
-           * 2019-06-01-preview: :class:`TemplateSpecVersionsOperations<azure.mgmt.resource.v2019_06_01_preview.operations.TemplateSpecVersionsOperations>`
+           * 2019-06-01-preview: :class:`TemplateSpecVersionsOperations<azure.mgmt.resource.templatespecs.v2019_06_01_preview.operations.TemplateSpecVersionsOperations>`
         """
         api_version = self._get_api_version('template_spec_versions')
         if api_version == '2019-06-01-preview':
@@ -104,7 +114,7 @@ class TemplateSpecsClient(MultiApiClientMixin, _SDKClient):
     def template_specs(self):
         """Instance depends on the API version:
 
-           * 2019-06-01-preview: :class:`TemplateSpecsOperations<azure.mgmt.resource.v2019_06_01_preview.operations.TemplateSpecsOperations>`
+           * 2019-06-01-preview: :class:`TemplateSpecsOperations<azure.mgmt.resource.templatespecs.v2019_06_01_preview.operations.TemplateSpecsOperations>`
         """
         api_version = self._get_api_version('template_specs')
         if api_version == '2019-06-01-preview':

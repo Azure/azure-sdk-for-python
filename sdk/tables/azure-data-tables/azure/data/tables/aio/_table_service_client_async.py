@@ -17,21 +17,18 @@ from azure.core.tracing.decorator import distributed_trace
 from azure.core.tracing.decorator_async import distributed_trace_async
 
 from .. import LocationMode
-from .._constants import CONNECTION_TIMEOUT
 from .._base_client import parse_connection_str
-from .._generated.aio._azure_table import AzureTable
-from .._generated.models import TableServiceProperties, TableProperties
+from .._generated.models import TableServiceProperties
 from .._models import service_stats_deserialize, service_properties_deserialize
 from .._error import _process_table_error
-from .._table_service_client_base import TableServiceClientBase
 from .._models import TableItem
-from ._policies_async import ExponentialRetry
+from .._serialize import _parameter_filter_substitution
 from ._table_client_async import TableClient
-from ._base_client_async import AsyncStorageAccountHostsMixin
+from ._base_client_async import AsyncTablesBaseClient, AsyncTransportWrapper
 from ._models import TablePropertiesPaged
 
 
-class TableServiceClient(AsyncStorageAccountHostsMixin, TableServiceClientBase):
+class TableServiceClient(AsyncTablesBaseClient):
     """A client to interact with the Table Service at the account level.
 
     This client provides operations to retrieve and configure the account properties
@@ -76,28 +73,11 @@ class TableServiceClient(AsyncStorageAccountHostsMixin, TableServiceClientBase):
             :caption: Creating the tableServiceClient with Shared Access Signature.
     """
 
-    def __init__(
-        self,
-        account_url,  # type: str
-        credential=None,  # type: str
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> None
-        kwargs["retry_policy"] = kwargs.get("retry_policy") or ExponentialRetry(
-            **kwargs
-        )
-        loop = kwargs.pop("loop", None)
-        super(TableServiceClient, self).__init__(  # type: ignore
-            account_url, service="table", credential=credential, loop=loop, **kwargs
-        )
-        kwargs['connection_timeout'] = kwargs.get('connection_timeout') or CONNECTION_TIMEOUT
-        self._configure_policies(**kwargs)
-        self._client = AzureTable(
-            self.url,
-            policies=kwargs.pop('policies', self._policies),
-            **kwargs
-        )
-        self._loop = loop
+    def _format_url(self, hostname):
+        """Format the endpoint URL according to the current location
+        mode hostname.
+        """
+        return "{}://{}{}".format(self.scheme, hostname, self._query_str)
 
     @classmethod
     def from_connection_string(
@@ -124,7 +104,7 @@ class TableServiceClient(AsyncStorageAccountHostsMixin, TableServiceClientBase):
 
         """
         account_url, credential = parse_connection_str(
-            conn_str=conn_str, credential=None, service="table", keyword_args=kwargs
+            conn_str=conn_str, credential=None, keyword_args=kwargs
         )
         return cls(account_url, credential=credential, **kwargs)
 
@@ -330,14 +310,14 @@ class TableServiceClient(AsyncStorageAccountHostsMixin, TableServiceClientBase):
     @distributed_trace
     def query_tables(
         self,
-        filter,  # type: str    pylint: disable=redefined-builtin
+        query_filter,  # type: str
         **kwargs  # type: Any
     ):
         # type: (...) -> AsyncItemPaged[TableItem]
         """Queries tables under the given account.
 
-        :param filter: Specify a filter to return certain tables.
-        :type filter: str
+        :param query_filter: Specify a filter to return certain tables.
+        :type query_filter: str
         :keyword int results_per_page: Number of tables per page in return ItemPaged
         :keyword select: Specify desired properties of a table to return certain tables
         :paramtype select: str or list[str]
@@ -356,20 +336,19 @@ class TableServiceClient(AsyncStorageAccountHostsMixin, TableServiceClientBase):
                 :caption: Querying tables in an account given specific parameters
         """
         parameters = kwargs.pop("parameters", None)
-        filter = self._parameter_filter_substitution(
-            parameters, filter
-        )  # pylint: disable=redefined-builtin
+        query_filter = _parameter_filter_substitution(
+            parameters, query_filter
+        )
         user_select = kwargs.pop("select", None)
         if user_select and not isinstance(user_select, str):
             user_select = ", ".join(user_select)
         top = kwargs.pop("results_per_page", None)
-
         command = functools.partial(self._client.table.query, **kwargs)
         return AsyncItemPaged(
             command,
             results_per_page=top,
             select=user_select,
-            filter=filter,
+            filter=query_filter,
             page_iterator_class=TablePropertiesPaged,
         )
 
@@ -391,23 +370,17 @@ class TableServiceClient(AsyncStorageAccountHostsMixin, TableServiceClientBase):
         :rtype: ~azure.data.tables.TableClient
 
         """
-        _pipeline = AsyncPipeline(
-            transport=self._client._client._pipeline._transport,  # pylint: disable=protected-access
-            policies=self._policies,  # pylint: disable = protected-access
+        pipeline = AsyncPipeline(
+            transport=AsyncTransportWrapper(self._client._client._pipeline._transport), # pylint:disable=protected-access
+            policies=self._policies,
         )
-
         return TableClient(
             self.url,
             table_name=table_name,
             credential=self.credential,
-            key_resolver_function=self.key_resolver_function,
-            require_encryption=self.require_encryption,
-            key_encryption_key=self.key_encryption_key,
             api_version=self.api_version,
-            transport=self._client._client._pipeline._transport,  # pylint: disable=protected-access
-            policies=self._policies,
-            _configuration=self._client._config,  # pylint: disable=protected-access
-            _location_mode=self._location_mode,
+            pipeline=pipeline,
+            location_mode=self._location_mode,
             _hosts=self._hosts,
             **kwargs
         )

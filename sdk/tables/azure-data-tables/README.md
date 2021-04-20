@@ -199,7 +199,7 @@ Querying entities in the table:
 from azure.data.tables import TableClient
 my_filter = "PartitionKey eq 'RedMarker'"
 table_client = TableClient.from_connection_string(conn_str="<connection_string>", table_name="mytable")
-entities = table_client.query_entities(filter=my_filter)
+entities = table_client.query_entities(my_filter)
 for entity in entities:
     for key in entity.keys():
         print("Key: {}, Value: {}".format(key, entity[key]))
