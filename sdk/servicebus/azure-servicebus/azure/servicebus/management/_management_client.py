@@ -6,6 +6,7 @@
 # pylint:disable=specify-parameter-names-in-call
 # pylint:disable=too-many-lines
 import functools
+from copy import deepcopy
 from typing import TYPE_CHECKING, Dict, Any, Union, cast, Mapping
 from xml.etree.ElementTree import ElementTree
 
@@ -47,6 +48,7 @@ from ._utils import (
     serialize_rule_key_values,
     extract_rule_data_template,
     create_properties_from_dict_if_needed,
+    override_properties_with_keyword_arguments,
     _normalize_entity_path_to_full_path_if_needed,
     _validate_entity_name_type,
     _validate_topic_and_subscription_types,
@@ -416,7 +418,8 @@ class ServiceBusAdministrationClient:  # pylint:disable=too-many-public-methods
         :type queue: ~azure.servicebus.management.QueueProperties
         :rtype: None
         """
-        queue = create_properties_from_dict_if_needed(queue, QueueProperties)
+        # we should not mutate the input, making a copy first for update
+        queue = deepcopy(create_properties_from_dict_if_needed(queue, QueueProperties))
         queue.forward_to = _normalize_entity_path_to_full_path_if_needed(
             queue.forward_to, self.fully_qualified_namespace
         )
@@ -426,8 +429,14 @@ class ServiceBusAdministrationClient:  # pylint:disable=too-many-public-methods
                 self.fully_qualified_namespace,
             )
         )
-        to_update = queue._to_internal_entity()
 
+        property_keyword_arguments = {key: kwargs.pop(key) for key in set(kwargs.keys()) if key in queue.keys()}
+        override_properties_with_keyword_arguments(
+            queue,
+            **property_keyword_arguments
+        )
+
+        to_update = queue._to_internal_entity()
         to_update.default_message_time_to_live = avoid_timedelta_overflow(
             to_update.default_message_time_to_live
         )
@@ -656,18 +665,14 @@ class ServiceBusAdministrationClient:  # pylint:disable=too-many-public-methods
         :type topic: ~azure.servicebus.management.TopicProperties
         :rtype: None
         """
-
-        topic = create_properties_from_dict_if_needed(topic, TopicProperties)
+        # we should not mutate the input, making a copy first for update
+        topic = deepcopy(create_properties_from_dict_if_needed(topic, TopicProperties))
+        property_keyword_arguments = {key: kwargs.pop(key) for key in set(kwargs.keys()) if key in topic.keys()}
+        override_properties_with_keyword_arguments(
+            topic,
+            **property_keyword_arguments
+        )
         to_update = topic._to_internal_entity()
-
-        to_update.default_message_time_to_live = (
-            kwargs.get("default_message_time_to_live")
-            or topic.default_message_time_to_live
-        )
-        to_update.duplicate_detection_history_time_window = (
-            kwargs.get("duplicate_detection_history_time_window")
-            or topic.duplicate_detection_history_time_window
-        )
 
         to_update.default_message_time_to_live = avoid_timedelta_overflow(  # type: ignore
             to_update.default_message_time_to_live
@@ -920,9 +925,11 @@ class ServiceBusAdministrationClient:  # pylint:disable=too-many-public-methods
          from `get_subscription`, `update_subscription` or `list_subscription` and has the updated properties.
         :rtype: None
         """
-
         _validate_entity_name_type(topic_name, display_name="topic_name")
-        subscription = create_properties_from_dict_if_needed(subscription, SubscriptionProperties)  # type: ignore
+        # we should not mutate the input, making a copy first for update
+        subscription = deepcopy(
+            create_properties_from_dict_if_needed(subscription, SubscriptionProperties)  # type: ignore
+        )
         subscription.forward_to = _normalize_entity_path_to_full_path_if_needed(
             subscription.forward_to, self.fully_qualified_namespace
         )
@@ -932,6 +939,10 @@ class ServiceBusAdministrationClient:  # pylint:disable=too-many-public-methods
                 self.fully_qualified_namespace,
             )
         )
+
+        property_keyword_arguments = {key: kwargs.pop(key) for key in set(kwargs.keys()) if key in subscription.keys()}
+        override_properties_with_keyword_arguments(subscription, **property_keyword_arguments)
+
         to_update = subscription._to_internal_entity()
 
         to_update.default_message_time_to_live = avoid_timedelta_overflow(  # type: ignore
@@ -1121,8 +1132,13 @@ class ServiceBusAdministrationClient:  # pylint:disable=too-many-public-methods
         :rtype: None
         """
         _validate_topic_and_subscription_types(topic_name, subscription_name)
-
-        rule = create_properties_from_dict_if_needed(rule, RuleProperties)
+        # we should not mutate the input, making a copy first for update
+        rule = deepcopy(create_properties_from_dict_if_needed(rule, RuleProperties))
+        property_keyword_arguments = {key: kwargs.pop(key) for key in set(kwargs.keys()) if key in rule.keys()}
+        override_properties_with_keyword_arguments(
+            rule,
+            **property_keyword_arguments
+        )
         to_update = rule._to_internal_entity()
 
         create_entity_body = CreateRuleBody(

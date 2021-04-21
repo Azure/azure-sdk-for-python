@@ -368,3 +368,12 @@ def create_properties_from_dict_if_needed(properties, sb_resource_type):
                 sb_resource_type.__name__
             )
         )
+
+
+def override_properties_with_keyword_arguments(properties, **kwargs):
+    # type: (PropertiesType, Any) -> None
+    if not kwargs:
+        return
+    intersection_keys = set.intersection(set(properties.keys()), set(kwargs.keys()))
+    for key in intersection_keys:
+        properties[key] = kwargs.get(key)

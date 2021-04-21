@@ -6,6 +6,7 @@
 # pylint:disable=specify-parameter-names-in-call
 # pylint:disable=too-many-lines
 import functools
+from copy import deepcopy
 from typing import TYPE_CHECKING, Any, Union, cast, Mapping
 from xml.etree.ElementTree import ElementTree
 
@@ -78,6 +79,7 @@ from ...management._utils import (
     deserialize_rule_key_values,
     serialize_rule_key_values,
     create_properties_from_dict_if_needed,
+    override_properties_with_keyword_arguments,
     _normalize_entity_path_to_full_path_if_needed,
     _validate_entity_name_type,
     _validate_topic_and_subscription_types,
@@ -425,8 +427,8 @@ class ServiceBusAdministrationClient:  # pylint:disable=too-many-public-methods
         :type queue: ~azure.servicebus.management.QueueProperties
         :rtype: None
         """
-
-        queue = create_properties_from_dict_if_needed(queue, QueueProperties)
+        # we should not mutate the input, making a copy first for update
+        queue = deepcopy(create_properties_from_dict_if_needed(queue, QueueProperties))
         queue.forward_to = _normalize_entity_path_to_full_path_if_needed(
             queue.forward_to, self.fully_qualified_namespace
         )
@@ -436,6 +438,9 @@ class ServiceBusAdministrationClient:  # pylint:disable=too-many-public-methods
                 self.fully_qualified_namespace,
             )
         )
+
+        override_properties_with_keyword_arguments(queue, **kwargs)
+
         to_update = queue._to_internal_entity()
 
         to_update.default_message_time_to_live = avoid_timedelta_overflow(
@@ -667,7 +672,8 @@ class ServiceBusAdministrationClient:  # pylint:disable=too-many-public-methods
         :rtype: None
         """
 
-        topic = create_properties_from_dict_if_needed(topic, TopicProperties)
+        topic = deepcopy(create_properties_from_dict_if_needed(topic, TopicProperties))
+        override_properties_with_keyword_arguments(topic, **kwargs)
         to_update = topic._to_internal_entity()
 
         to_update.default_message_time_to_live = avoid_timedelta_overflow(  # type: ignore
@@ -927,10 +933,8 @@ class ServiceBusAdministrationClient:  # pylint:disable=too-many-public-methods
         """
 
         _validate_entity_name_type(topic_name, display_name="topic_name")
-
-        subscription = create_properties_from_dict_if_needed(
-            subscription, SubscriptionProperties
-        )
+        # we should not mutate the input, making a copy first for update
+        subscription = deepcopy(create_properties_from_dict_if_needed(subscription, SubscriptionProperties))
         subscription.forward_to = _normalize_entity_path_to_full_path_if_needed(
             subscription.forward_to, self.fully_qualified_namespace
         )
@@ -939,6 +943,10 @@ class ServiceBusAdministrationClient:  # pylint:disable=too-many-public-methods
                 subscription.forward_dead_lettered_messages_to,
                 self.fully_qualified_namespace,
             )
+        )
+        override_properties_with_keyword_arguments(
+            subscription,
+            **kwargs
         )
         to_update = subscription._to_internal_entity()
 
@@ -1140,8 +1148,9 @@ class ServiceBusAdministrationClient:  # pylint:disable=too-many-public-methods
         :rtype: None
         """
         _validate_topic_and_subscription_types(topic_name, subscription_name)
-
-        rule = create_properties_from_dict_if_needed(rule, RuleProperties)
+        # we should not mutate the input, making a copy first for update
+        rule = deepcopy(create_properties_from_dict_if_needed(rule, RuleProperties))
+        override_properties_with_keyword_arguments(rule, **kwargs)
         to_update = rule._to_internal_entity()
 
         create_entity_body = CreateRuleBody(
