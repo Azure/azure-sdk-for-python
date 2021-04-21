@@ -273,7 +273,9 @@ class HttpResponseError(AzureError):
 
         # old autorest are setting "error" before calling __init__, so it might be there already
         # transferring into self.model
-        self._model = kwargs.pop("model", None)  # type: Optional[msrest.serialization.Model]
+        self._model = (
+            kwargs.pop("model", None) or getattr(self, "error", None)
+        )
         self._error = None
 
         # By priority, message is:
@@ -301,6 +303,8 @@ class HttpResponseError(AzureError):
         If a streamed response is resulting in an error, please
         make sure you read in your response before accessing this property.
         """
+        if not self.response:
+            return None
         if not self._error:
             self._error = self._parse_odata_body(self.response.text())
         return self._error
