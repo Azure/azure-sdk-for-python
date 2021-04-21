@@ -204,7 +204,7 @@ class ClientBase(object):  # pylint:disable=too-many-instance-attributes
             self._credential = AzureSasTokenCredential(credential)
         elif isinstance(credential, AzureNamedKeyCredential):
             name, key = credential.named_key
-            self._credential = EventHubSharedKeyCredential(name, key)
+            self._credential = EventHubSharedKeyCredential(name, key) # type: ignore
         else:
             self._credential = credential #type: ignore
         self._keep_alive = kwargs.get("keep_alive", 30)

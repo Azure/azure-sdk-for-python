@@ -19,7 +19,7 @@ from uamqp import (
     Message,
     AMQPClientAsync,
 )
-from azure.core.credentials import AccessToken, AzureSasCredential
+from azure.core.credentials import AccessToken, AzureSasCredential, AzureNamedKeyCredential
 
 from .._client_base import ClientBase, _generate_sas_token, _parse_conn_str
 from .._utils import utc_from_timestamp, parse_sas_credential
@@ -107,12 +107,15 @@ class ClientBaseAsync(ClientBase):
         self,
         fully_qualified_namespace: str,
         eventhub_name: str,
-        credential: Union["AsyncTokenCredential", AzureSasCredential],
+        credential: Union["AsyncTokenCredential", AzureSasCredential, AzureNamedKeyCredential],
         **kwargs: Any
     ) -> None:
         self._loop = kwargs.pop("loop", None)
         if isinstance(credential, AzureSasCredential):
             self._credential = AzureSasTokenCredentialAsync(credential) # type: ignore
+        elif isinstance(credential, AzureNamedKeyCredential):
+            name, key = credential.named_key
+            self._credential = EventHubSharedKeyCredential(name, key) # type: ignore
         else:
             self._credential = credential # type: ignore
         super(ClientBaseAsync, self).__init__(

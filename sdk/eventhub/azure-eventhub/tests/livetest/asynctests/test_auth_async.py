@@ -9,7 +9,7 @@ import asyncio
 import datetime
 import time
 
-from azure.core.credentials import AzureSasCredential
+from azure.core.credentials import AzureSasCredential, AzureNamedKeyCredential
 from azure.identity.aio import EnvironmentCredential
 from azure.eventhub import EventData
 from azure.eventhub.aio import EventHubConsumerClient, EventHubProducerClient, EventHubSharedKeyCredential
@@ -128,6 +128,32 @@ class AsyncEventHubAuthTests(AzureMgmtTestCase):
         producer_client = EventHubProducerClient(fully_qualified_namespace=hostname,
                                                  eventhub_name=eventhub.name,
                                                  credential=AzureSasCredential(token))
+
+        async with producer_client:
+            batch = await producer_client.create_batch(partition_id='0')
+            batch.add(EventData(body='A single message'))
+            await producer_client.send_batch(batch)
+
+    @pytest.mark.liveTest
+    @pytest.mark.live_test_only
+    @CachedResourceGroupPreparer(name_prefix='eventhubtest')
+    @CachedEventHubNamespacePreparer(name_prefix='eventhubtest')
+    @CachedEventHubPreparer(name_prefix='eventhubtest')
+    async def test_client_azure_sas_credential_async(self,
+                                   eventhub,
+                                   eventhub_namespace,
+                                   eventhub_namespace_key_name,
+                                   eventhub_namespace_primary_key,
+                                   eventhub_namespace_connection_string,
+                                   **kwargs):
+
+        hostname = "{}.servicebus.windows.net".format(eventhub_namespace.name)
+        producer_client = EventHubProducerClient(fully_qualified_namespace=hostname,
+                                                 eventhub_name=eventhub.name,
+                                                 credential=AzureNamedKeyCredential(
+                                                     eventhub_namespace_key_name,
+                                                     eventhub_namespace_primary_key
+                                                     ))
 
         async with producer_client:
             batch = await producer_client.create_batch(partition_id='0')

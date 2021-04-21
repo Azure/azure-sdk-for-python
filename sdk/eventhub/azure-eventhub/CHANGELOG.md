@@ -1,5 +1,9 @@
 # Release History
 
+## 5.5.0 (Unreleased)
+
+- Added support for using `azure.core.credentials.AzureNamedKeyCredential` as credential for authenticating producer and consumer clients.
+
 ## 5.4.0 (2021-04-07)
 
 This version follows from version 5.3.1, rather than 5.4.0b1 so that the preview idempotent producer feature is not included.

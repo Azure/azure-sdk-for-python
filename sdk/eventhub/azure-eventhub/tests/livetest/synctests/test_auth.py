@@ -11,7 +11,7 @@ import datetime
 from azure.identity import EnvironmentCredential
 from azure.eventhub import EventData, EventHubProducerClient, EventHubConsumerClient, EventHubSharedKeyCredential
 from azure.eventhub._client_base import EventHubSASTokenCredential
-from azure.core.credentials import AzureSasCredential
+from azure.core.credentials import AzureSasCredential, AzureNamedKeyCredential
 
 @pytest.mark.liveTest
 def test_client_secret_credential(live_eventhub):
@@ -102,6 +102,20 @@ def test_client_azure_sas_credential(live_eventhub):
     producer_client = EventHubProducerClient(fully_qualified_namespace=hostname,
                                              eventhub_name=live_eventhub['event_hub'],
                                              credential=AzureSasCredential(token))
+
+    with producer_client:
+        batch = producer_client.create_batch(partition_id='0')
+        batch.add(EventData(body='A single message'))
+        producer_client.send_batch(batch)
+
+@pytest.mark.liveTest
+def test_client_azure_named_key_credential(live_eventhub):
+    hostname = live_eventhub['hostname']
+
+    credential = AzureNamedKeyCredential(live_eventhub['key_name'], live_eventhub['access_key'])
+    producer_client = EventHubProducerClient(fully_qualified_namespace=hostname,
+                                             eventhub_name=live_eventhub['event_hub'],
+                                             credential=credential)
 
     with producer_client:
         batch = producer_client.create_batch(partition_id='0')
