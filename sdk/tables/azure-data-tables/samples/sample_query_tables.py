@@ -61,7 +61,7 @@ class QueryTables(object):
                 # [START tsc_query_tables]
                 table_name = "mytable1"
                 name_filter = "TableName eq '{}'".format(table_name)
-                queried_tables = table_service.query_tables(filter=name_filter)
+                queried_tables = table_service.query_tables(name_filter)
 
                 print("Queried_tables")
                 for table in queried_tables:

@@ -11,8 +11,9 @@ import json
 
 from azure.core.exceptions import ResourceExistsError, ResourceNotFoundError
 from azure.core.pipeline.policies import SansIOHTTPPolicy
-from azure.keyvault.keys import JsonWebKey, KeyClient, KeyCurveName
+from azure.keyvault.keys import JsonWebKey, KeyClient
 from parameterized import parameterized, param
+from six import byte2int
 
 from _shared.test_case import KeyVaultTestCase
 from _test_case import KeysTestCase, suffixed_test_name
@@ -195,6 +196,19 @@ class KeyClientTests(KeysTestCase, KeyVaultTestCase):
         deleted_key = client.get_deleted_key(rsa_key.name)
         self.assertIsNotNone(deleted_key)
         self.assertEqual(rsa_key.id, deleted_key.id)
+
+    def test_rsa_public_exponent_mhsm(self, **kwargs):
+        """The public exponent of a Managed HSM RSA key can be specified during creation"""
+        self._skip_if_not_configured(True)
+        endpoint_url = self.managed_hsm_url
+
+        client = self.create_key_client(endpoint_url)
+        self.assertIsNotNone(client)
+
+        key_name = self.get_resource_name("rsa-key")
+        key = self._create_rsa_key(client, key_name, hardware_protected=True, public_exponent=17)
+        public_exponent = byte2int(key.key.e)
+        assert public_exponent == 17
 
     @parameterized.expand([param(is_hsm=b) for b in [True, False]], name_func=suffixed_test_name)
     def test_backup_restore(self, **kwargs):

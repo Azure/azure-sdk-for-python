@@ -1,7 +1,21 @@
 # Release History
 
 ## 12.0.0b7 (Unreleased)
+**Breaking**
+* Removed explicit `LinearRetry` and `ExponentialRetry` in favor of keyword parameter.
+* Renamed `filter` parameter in query APIs to `query_filter`.
+* The `location_mode` attribute on clients is now read-only. This has been added as a keyword parameter to the constructor.
+* The `TableItem.table_name` has been renamed to `TableItem.name`.
+* Removed `BatchTransactionResult` object in favor of returning an iterable of batched entities with returned metadata.
+* Removed Batching context-manager behavior
 
+**Fixes**
+* Fixed issue with Cosmos merge operations.
+* Removed legacy Storage policies from pipeline.
+* Removed unused legacy client-side encryption attributes from client classes.
+* Fixed sharing of pipeline between service/table clients.
+* Added support for Azurite storage emulator
+* Throws a `RequestTooLargeError` on batch requests that return a 413 error code
 
 ## 12.0.0b6 (2021-04-06)
 * Updated deserialization of datetime fields in entities to support preservation of the service format with additional decimal place.

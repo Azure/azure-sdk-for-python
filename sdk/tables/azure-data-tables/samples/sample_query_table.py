@@ -84,7 +84,7 @@ class SampleTablesQuery(object):
                 }
                 name_filter = u"Name eq @name"
                 queried_entities = table_client.query_entities(
-                    filter=name_filter, select=[u"Brand",u"Color"], parameters=parameters)
+                    query_filter=name_filter, select=[u"Brand",u"Color"], parameters=parameters)
 
                 for entity_chosen in queried_entities:
                     print(entity_chosen)
@@ -107,7 +107,7 @@ class SampleTablesQuery(object):
                 }
                 name_filter = u"Name eq @name and Brand eq @brand"
                 queried_entities = table_client.query_entities(
-                    filter=name_filter, select=[u"Brand",u"Color"], parameters=parameters)
+                    query_filter=name_filter, select=[u"Brand",u"Color"], parameters=parameters)
 
                 for entity_chosen in queried_entities:
                     print(entity_chosen)
@@ -131,7 +131,7 @@ class SampleTablesQuery(object):
                 }
                 name_filter = u"Value gt @lower and Value lt @upper"
                 queried_entities = table_client.query_entities(
-                    filter=name_filter, select=[u"Value"], parameters=parameters)
+                    query_filter=name_filter, select=[u"Value"], parameters=parameters)
 
                 for entity_chosen in queried_entities:
                     print(entity_chosen)

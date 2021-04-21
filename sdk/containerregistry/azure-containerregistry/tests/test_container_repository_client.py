@@ -23,7 +23,7 @@ from azure.core.exceptions import ResourceNotFoundError
 from azure.core.paging import ItemPaged
 
 from testcase import ContainerRegistryTestClass, AcrBodyReplacer, FakeTokenCredential
-from constants import TO_BE_DELETED, DOES_NOT_EXIST
+from constants import TO_BE_DELETED, DOES_NOT_EXIST, HELLO_WORLD
 from preparer import acr_preparer
 
 
@@ -32,9 +32,7 @@ class TestContainerRepositoryClient(ContainerRegistryTestClass):
     def test_delete_tag(self, containerregistry_endpoint, containerregistry_resource_group):
         repo = self.get_resource_name("repo")
         tag = self.get_resource_name("tag")
-        self._import_tag_to_be_deleted(
-            containerregistry_endpoint, resource_group=containerregistry_resource_group, repository=repo, tag=tag
-        )
+        self.import_image(HELLO_WORLD, ["{}:{}".format(repo, tag)])
 
         client = self.create_repository_client(containerregistry_endpoint, repo)
 
@@ -42,20 +40,20 @@ class TestContainerRepositoryClient(ContainerRegistryTestClass):
         assert tag_props is not None
 
         client.delete_tag(tag)
-        self.sleep(10)
+        self.sleep(5)
         with pytest.raises(ResourceNotFoundError):
             client.get_tag_properties(tag)
 
     @acr_preparer()
     def test_delete_tag_does_not_exist(self, containerregistry_endpoint):
-        client = self.create_repository_client(containerregistry_endpoint, "hello-world")
+        client = self.create_repository_client(containerregistry_endpoint, HELLO_WORLD)
 
         with pytest.raises(ResourceNotFoundError):
             client.delete_tag(TO_BE_DELETED)
 
     @acr_preparer()
     def test_get_properties(self, containerregistry_endpoint):
-        repo_client = self.create_repository_client(containerregistry_endpoint, "hello-world")
+        repo_client = self.create_repository_client(containerregistry_endpoint, HELLO_WORLD)
 
         properties = repo_client.get_properties()
         assert isinstance(properties.content_permissions, ContentPermissions)
@@ -196,17 +194,11 @@ class TestContainerRepositoryClient(ContainerRegistryTestClass):
 
         assert count > 0
 
-    @pytest.mark.live_test_only  # Recordings error, recieves more than 100 headers, not that many present
     @acr_preparer()
     def test_set_tag_properties(self, containerregistry_endpoint, containerregistry_resource_group):
         repository = self.get_resource_name("repo")
         tag_identifier = self.get_resource_name("tag")
-        self.import_repo_to_be_deleted(
-            containerregistry_endpoint,
-            resource_group=containerregistry_resource_group,
-            tag=tag_identifier,
-            repository=repository,
-        )
+        self.import_image(HELLO_WORLD, ["{}:{}".format(repository, tag_identifier)])
 
         client = self.create_repository_client(containerregistry_endpoint, repository)
 
@@ -228,25 +220,28 @@ class TestContainerRepositoryClient(ContainerRegistryTestClass):
         assert not received.content_permissions.can_list
         assert not received.content_permissions.can_delete
 
-    @pytest.mark.live_test_only  # Recordings error, recieves more than 100 headers, not that many present
+        client.set_tag_properties(
+            tag_identifier,
+            ContentPermissions(
+                can_delete=True,
+                can_list=True,
+                can_read=True,
+                can_write=True,
+            ),
+        )
+
     @acr_preparer()
     def test_set_tag_properties_does_not_exist(self, containerregistry_endpoint):
         client = self.create_repository_client(containerregistry_endpoint, self.get_resource_name("repo"))
 
         with pytest.raises(ResourceNotFoundError):
-            client.set_tag_properties("does_not_exist", ContentPermissions(can_delete=False))
+            client.set_tag_properties(DOES_NOT_EXIST, ContentPermissions(can_delete=False))
 
-    @pytest.mark.live_test_only  # Recordings error, recieves more than 100 headers, not that many present
     @acr_preparer()
     def test_set_manifest_properties(self, containerregistry_endpoint, containerregistry_resource_group):
-        repository = self.get_resource_name("repo_set")
+        repository = self.get_resource_name("reposetmani")
         tag_identifier = self.get_resource_name("tag")
-        self.import_repo_to_be_deleted(
-            containerregistry_endpoint,
-            resource_group=containerregistry_resource_group,
-            tag=tag_identifier,
-            repository=repository,
-        )
+        self.import_image(HELLO_WORLD, ["{}:{}".format(repository, tag_identifier)])
 
         client = self.create_repository_client(containerregistry_endpoint, repository)
 
@@ -268,9 +263,19 @@ class TestContainerRepositoryClient(ContainerRegistryTestClass):
             assert not received_permissions.content_permissions.can_list
             assert not received_permissions.content_permissions.can_write
 
+            # Reset and delete
+            client.set_manifest_properties(
+                artifact.digest,
+                ContentPermissions(
+                    can_delete=True,
+                    can_list=True,
+                    can_read=True,
+                    can_write=True,
+                ),
+            )
+            client.delete()
             break
 
-    @pytest.mark.live_test_only  # Recordings error, recieves more than 100 headers, not that many present
     @acr_preparer()
     def test_set_manifest_properties_does_not_exist(self, containerregistry_endpoint):
         client = self.create_repository_client(containerregistry_endpoint, self.get_resource_name("repo"))
@@ -280,9 +285,7 @@ class TestContainerRepositoryClient(ContainerRegistryTestClass):
 
     @acr_preparer()
     def test_delete_repository(self, containerregistry_endpoint, containerregistry_resource_group):
-        self.import_repo_to_be_deleted(
-            containerregistry_endpoint, resource_group=containerregistry_resource_group, repository=TO_BE_DELETED
-        )
+        self.import_image(HELLO_WORLD, [TO_BE_DELETED])
 
         reg_client = self.create_registry_client(containerregistry_endpoint)
         existing_repos = list(reg_client.list_repositories())
@@ -293,7 +296,6 @@ class TestContainerRepositoryClient(ContainerRegistryTestClass):
         assert isinstance(result, DeletedRepositoryResult)
         assert result.deleted_registry_artifact_digests is not None
         assert result.deleted_tags is not None
-        self.sleep(5)
 
         existing_repos = list(reg_client.list_repositories())
         assert TO_BE_DELETED not in existing_repos
@@ -307,9 +309,7 @@ class TestContainerRepositoryClient(ContainerRegistryTestClass):
     @acr_preparer()
     def test_delete_registry_artifact(self, containerregistry_endpoint, containerregistry_resource_group):
         repository = self.get_resource_name("repo")
-        self.import_repo_to_be_deleted(
-            containerregistry_endpoint, resource_group=containerregistry_resource_group, repository=repository
-        )
+        self.import_image(HELLO_WORLD, [repository])
 
         repo_client = self.create_repository_client(containerregistry_endpoint, repository)
 

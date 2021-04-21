@@ -1,16 +1,32 @@
 trigger: none
 
+parameters:
+  - name: TestPackagesEnabled 
+    type: object
+    default:
+      - identity
+      - chat
+      - phonenumbers
+      - sms
+      - mgmt
+
 stages:
-  - template: ../../eng/pipelines/templates/stages/archetype-sdk-tests.yml
-    parameters:
-      AllocateResourceGroup: 'false'
-      BuildTargetingString: $(BuildTargetingString)
-      ServiceDirectory: communication
-      EnvVars:
-        AZURE_TEST_RUN_LIVE: 'true'
-        AZURE_TENANT_ID: $(aad-azure-sdk-test-tenant-id)
-        AZURE_SUBSCRIPTION_ID: $(acs-subscription-id)
-        AZURE_CLIENT_SECRET: $(aad-azure-sdk-test-client-secret)
-        AZURE_CLIENT_ID: $(aad-azure-sdk-test-client-id)
-        AZURE_COMMUNICATION_SERVICE_CONNECTION_STRING: $(communication-livetest-connection-string)
-        AZURE_COMMUNICATION_SERVICE_PHONE_NUMBER: $(communication-livetest-phone-number)
+  - ${{ each package in parameters.TestPackagesEnabled }}:
+    - template: ../../eng/pipelines/templates/stages/archetype-sdk-tests.yml
+      parameters:
+        AllocateResourceGroup: 'false'
+        ${{ if ne(package, 'mgmt') }}:
+          BuildTargetingString: ${{ format('azure-communication-{0}', package) }}
+        ${{ if eq(package, 'mgmt') }}:
+          BuildTargetingString: 'azure-mgmt-communication'
+        JobName: ${{ package }}
+        ServiceDirectory: communication
+        DeployArmTemplate: true
+        EnvVars:
+          AZURE_TEST_RUN_LIVE: 'true'
+          AZURE_TENANT_ID: $(aad-azure-sdk-test-tenant-id)
+          AZURE_SUBSCRIPTION_ID: $(acs-subscription-id)
+          AZURE_CLIENT_SECRET: $(aad-azure-sdk-test-client-secret)
+          AZURE_CLIENT_ID: $(aad-azure-sdk-test-client-id)
+          AZURE_COMMUNICATION_SERVICE_CONNECTION_STRING: $(communication-livetest-connection-string)
+          AZURE_COMMUNICATION_SERVICE_PHONE_NUMBER: $(communication-livetest-phone-number)

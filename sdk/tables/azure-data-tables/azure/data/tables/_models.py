@@ -480,14 +480,14 @@ class TableItem(object):
     Represents an Azure TableItem. Returned by TableServiceClient.list_tables
     and TableServiceClient.query_tables.
 
-    :param str table_name: The name of the table.
+    :param str name: The name of the table.
     :ivar str api_version: The API version included in the service call
     :ivar str date: The date the service call was made
     """
 
-    def __init__(self, table_name, **kwargs):
+    def __init__(self, name, **kwargs):
         # type: (str, **Any) -> None
-        self.table_name = table_name
+        self.name = name
         self.api_version = kwargs.get("version")
         self.date = kwargs.get("date") or kwargs.get("Date")
 
@@ -523,19 +523,19 @@ class SASProtocol(str, Enum):
     HTTP = "http"
 
 
-class PartialBatchErrorException(HttpResponseError):
-    """There is a partial failure in batch operations.
+# class PartialBatchErrorException(HttpResponseError):
+#     """There is a partial failure in batch operations.
 
-    :param str message: The message of the exception.
-    :param response: Server response to be deserialized.
-    :param list parts: A list of the parts in multipart response.
-    """
+#     :param str message: The message of the exception.
+#     :param response: Server response to be deserialized.
+#     :param list parts: A list of the parts in multipart response.
+#     """
 
-    def __init__(self, message, response, parts):
-        self.parts = parts
-        super(PartialBatchErrorException, self).__init__(
-            message=message, response=response
-        )
+#     def __init__(self, message, response, parts):
+#         self.parts = parts
+#         super(PartialBatchErrorException, self).__init__(
+#             message=message, response=response
+#         )
 
 
 class BatchErrorException(HttpResponseError):
@@ -551,38 +551,6 @@ class BatchErrorException(HttpResponseError):
         super(BatchErrorException, self).__init__(
             message=message, response=response, *args, **kwargs
         )
-
-
-class BatchTransactionResult(object):
-    """The result of a successful batch operation, can be used by a user to
-    recreate a request in the case of BatchErrorException
-
-    :param List[HttpRequest] requests: The requests of the batch
-    :param List[HttpResponse] results: The HTTP response of each request
-    """
-
-    def __init__(self, requests, results, entities):
-        self.requests = requests
-        self.results = results
-        self.entities = entities
-
-    def get_entity(self, row_key):
-        for entity in self.entities:
-            if entity["RowKey"] == row_key:
-                return entity
-        return None
-
-    def get_request(self, row_key):
-        for i, entity in enumerate(self.entities):
-            if entity["RowKey"] == row_key:
-                return self.requests[i]
-        return None
-
-    def get_result(self, row_key):
-        for i, entity in enumerate(self.entities):
-            if entity["RowKey"] == row_key:
-                return self.results[i]
-        return None
 
 
 class LocationMode(object):

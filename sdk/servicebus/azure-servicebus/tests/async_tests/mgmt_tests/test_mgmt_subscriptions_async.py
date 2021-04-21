@@ -51,6 +51,7 @@ class ServiceBusAdministrationClientSubscriptionAsyncTests(AzureMgmtTestCase):
         await clear_topics(mgmt_service)
         topic_name = "iweidk"
         subscription_name = "kdosako"
+        subscription_name_2 = "owazmq"
         try:
             await mgmt_service.create_topic(topic_name)
             await mgmt_service.create_subscription(
@@ -73,8 +74,30 @@ class ServiceBusAdministrationClientSubscriptionAsyncTests(AzureMgmtTestCase):
             assert subscription.lock_duration == datetime.timedelta(seconds=13)
             assert subscription.max_delivery_count == 14
             assert subscription.requires_session == True
+
+            await mgmt_service.create_subscription(
+                topic_name,
+                subscription_name=subscription_name_2,
+                auto_delete_on_idle="PT10M",
+                dead_lettering_on_message_expiration=True,
+                default_message_time_to_live="PT11M",
+                enable_batched_operations=True,
+                lock_duration="PT13S",
+                max_delivery_count=14,
+                requires_session=True
+            )
+            subscription_2 = await mgmt_service.get_subscription(topic_name, subscription_name_2)
+            assert subscription_2.name == subscription_name_2
+            assert subscription_2.auto_delete_on_idle == datetime.timedelta(minutes=10)
+            assert subscription_2.dead_lettering_on_message_expiration == True
+            assert subscription_2.default_message_time_to_live == datetime.timedelta(minutes=11)
+            assert subscription_2.enable_batched_operations == True
+            assert subscription_2.lock_duration == datetime.timedelta(seconds=13)
+            assert subscription_2.max_delivery_count == 14
+            assert subscription_2.requires_session == True
         finally:
             await mgmt_service.delete_subscription(topic_name, subscription_name)
+            await mgmt_service.delete_subscription(topic_name, subscription_name_2)
             await mgmt_service.delete_topic(topic_name)
 
     @CachedResourceGroupPreparer(name_prefix='servicebustest')
@@ -188,6 +211,15 @@ class ServiceBusAdministrationClientSubscriptionAsyncTests(AzureMgmtTestCase):
             # Note: We endswith to avoid the fact that the servicebus_namespace_name is replacered locally but not in the properties bag, and still test this.
             assert subscription_description.forward_to is None
             assert subscription_description.forward_dead_lettered_messages_to is None
+
+            subscription_description.auto_delete_on_idle = "PT10M1S"
+            subscription_description.default_message_time_to_live = "PT11M2S"
+            subscription_description.lock_duration = "PT3M3S"
+            await mgmt_service.update_subscription(topic_description.name, subscription_description)
+            subscription_description = await mgmt_service.get_subscription(topic_description.name, subscription_name)
+            assert subscription_description.auto_delete_on_idle == datetime.timedelta(minutes=10, seconds=1)
+            assert subscription_description.default_message_time_to_live == datetime.timedelta(minutes=11, seconds=2)
+            assert subscription_description.lock_duration == datetime.timedelta(minutes=3, seconds=3)
 
         finally:
             await mgmt_service.delete_subscription(topic_name, subscription_name)

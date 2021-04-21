@@ -213,7 +213,18 @@ class TestTableUnitTests(TableTestCase):
             # Assert
             self.validate_standard_account_endpoints(service, self.tables_storage_account_name, self.tables_primary_storage_account_key)
             assert service._client._client._pipeline._transport.connection_config.timeout == 22
-            assert default_service._client._client._pipeline._transport.connection_config.timeout in [20, (20, 2000)]
+            assert default_service._client._client._pipeline._transport.connection_config.timeout == 300
+        
+        # Assert Parent transport is shared with child client
+        service = TableServiceClient(
+            self.account_url(self.tables_storage_account_name, "table"),
+            credential=self.tables_primary_storage_account_key,
+            connection_timeout=22)
+        assert service._client._client._pipeline._transport.connection_config.timeout == 22
+        table = service.get_table_client('tablename')
+        assert table._client._client._pipeline._transport._transport.connection_config.timeout == 22
+        
+
 
     # --Connection String Test Cases --------------------------------------------
     def test_create_service_with_connection_string_key(self):
@@ -388,20 +399,20 @@ class TestTableUnitTests(TableTestCase):
             assert service._primary_hostname ==  'local-machine:11002/custom/account/path'
 
         service = TableServiceClient(account_url=custom_account_url)
-        assert service.account_name ==  None
+        assert service.account_name == "custom"
         assert service.credential ==  None
         assert service._primary_hostname ==  'local-machine:11002/custom/account/path'
         assert service.url.startswith('http://local-machine:11002/custom/account/path')
 
         service = TableClient(account_url=custom_account_url, table_name="foo")
-        assert service.account_name ==  None
+        assert service.account_name == "custom"
         assert service.table_name ==  "foo"
         assert service.credential ==  None
         assert service._primary_hostname ==  'local-machine:11002/custom/account/path'
         assert service.url.startswith('http://local-machine:11002/custom/account/path')
 
         service = TableClient.from_table_url("http://local-machine:11002/custom/account/path/foo" + token)
-        assert service.account_name ==  None
+        assert service.account_name == "custom"
         assert service.table_name ==  "foo"
         assert service.credential ==  None
         assert service._primary_hostname ==  'local-machine:11002/custom/account/path'
@@ -447,10 +458,10 @@ class TestTableUnitTests(TableTestCase):
                 with pytest.raises(ValueError) as e:
                     service = service_type[0].from_connection_string(conn_str, table_name="test")
 
-                if conn_str in("", "foobar", "foo;bar;baz", ";"):
+                if conn_str in("", "foobar", "foo;bar;baz", ";", "foo=;bar=;", "=", "=;=="):
                     assert str(e.value) == "Connection string is either blank or malformed."
-                elif conn_str in ("foobar=baz=foo" , "foo=;bar=;", "=", "=;=="):
-                    assert str(e.value) == "Connection string missing required connection details."
+                elif conn_str in ("foobar=baz=foo"):
+                   assert str(e.value) == "Connection string missing required connection details."
 
     def test_closing_pipeline_client(self):
         # Arrange
@@ -503,3 +514,18 @@ class TestTableUnitTests(TableTestCase):
         assert service.credential ==  self.token_credential
         assert not hasattr(service.credential, 'account_key')
         assert hasattr(service.credential, 'get_token')
+
+    def test_create_client_with_api_version(self):
+        url = self.account_url(self.tables_storage_account_name, "table")
+        client = TableServiceClient(url, credential=self.tables_primary_storage_account_key)
+        assert client._client._config.version == "2019-02-02"
+        table = client.get_table_client('tablename')
+        assert table._client._config.version == "2019-02-02"
+
+        client = TableServiceClient(url, credential=self.tables_primary_storage_account_key, api_version="2019-07-07")
+        assert client._client._config.version == "2019-07-07"
+        table = client.get_table_client('tablename')
+        assert table._client._config.version == "2019-07-07"
+
+        with pytest.raises(ValueError):
+            TableServiceClient(url, credential=self.tables_primary_storage_account_key, api_version="foo")
