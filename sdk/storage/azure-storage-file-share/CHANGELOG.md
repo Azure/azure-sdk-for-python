@@ -3,8 +3,8 @@
 ## 12.4.2 (2021-04-20)
 **Fixes**
 - Make `AccountName`, `AccountKey` etc. in conn_str case insensitive
-- Fixed downloader.chunks() return chunks in different size (#9419, #15648)
-- Fixed unclosed ThreadPoolExecutor (#8955)
+- Fixed `downloader.chunks()` return chunks in different size (#9419, #15648)
+- Fixed unclosed `ThreadPoolExecutor` (#8955)
 
 
 ## 12.4.1 (2021-01-20)

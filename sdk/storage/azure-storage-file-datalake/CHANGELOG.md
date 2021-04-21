@@ -2,14 +2,14 @@
 
 ## 12.3.1 (2021-04-20)
 **Fixes**
-- Fixed recursive=True on file deletion
+- Fixed `recursive=True` on file deletion
 - Make `AccountName`, `AccountKey` etc. in conn_str case insensitive
-- Fixed downloader.chunks() return chunks in different size (#9419, #15648)
+- Fixed `downloader.chunks()` return chunks in different size (#9419, #15648)
 - Optimized memory usage for datalake file uploads large chunks (#16890)
-- Fixed unclosed ThreadPoolExecutor (#8955)
+- Fixed unclosed `ThreadPoolExecutor` (#8955)
 
 **New Features**
-- Added get_account_information API
+- Added `get_account_information()` API
 
 
 ## 12.3.0 (2021-03-01)
