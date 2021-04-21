@@ -37,14 +37,17 @@ directive:
     if ($["x-ms-pageable"]) { delete $["x-ms-pageable"]; }
 ```
 
-### BlobTagFilter
+### THIS TRANSFORM IS PYTHON SPECIFIC
+### Use strings for dates when python doesn't have enough precision
 ``` yaml
 directive:
 - from: swagger-document
-  where: $.parameters.BlobTagFilter
+  where: $.definitions.AccessPolicy.properties
   transform: >
-    $["x-ms-parameter-location"] = "method";
+    $.Start.format = "str";
+    $.Expiry.format = "str";
 ```
+
 
 ### PathRenameMode
 ``` yaml

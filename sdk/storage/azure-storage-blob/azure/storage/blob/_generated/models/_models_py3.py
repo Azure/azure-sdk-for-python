@@ -19,24 +19,24 @@ class AccessPolicy(msrest.serialization.Model):
     """An Access policy.
 
     :param start: the date-time the policy is active.
-    :type start: ~datetime.datetime
+    :type start: str
     :param expiry: the date-time the policy expires.
-    :type expiry: ~datetime.datetime
+    :type expiry: str
     :param permission: the permissions for the acl policy.
     :type permission: str
     """
 
     _attribute_map = {
-        'start': {'key': 'Start', 'type': 'iso-8601'},
-        'expiry': {'key': 'Expiry', 'type': 'iso-8601'},
+        'start': {'key': 'Start', 'type': 'str'},
+        'expiry': {'key': 'Expiry', 'type': 'str'},
         'permission': {'key': 'Permission', 'type': 'str'},
     }
 
     def __init__(
         self,
         *,
-        start: Optional[datetime.datetime] = None,
-        expiry: Optional[datetime.datetime] = None,
+        start: Optional[str] = None,
+        expiry: Optional[str] = None,
         permission: Optional[str] = None,
         **kwargs
     ):
