@@ -16,6 +16,7 @@ from typing import TYPE_CHECKING
 
 import jwt
 
+import azure.core.credentials as corecredentials
 import azure.core.pipeline as corepipeline
 import azure.core.pipeline.policies as corepolicies
 import azure.core.pipeline.transport as coretransport
@@ -23,14 +24,14 @@ import azure.core.pipeline.transport as coretransport
 
 # Temporary location for types that eventually graduate to Azure Core
 from .core import rest as corerest
-
+from ._version import VERSION as _VERSION
 from ._policies import JwtCredentialPolicy
 from ._utils import UTC as _UTC
 
 if TYPE_CHECKING:
-    import azure.core.credentials as corecredentials
     from azure.core.pipeline.policies import HTTPPolicy, SansIOHTTPPolicy
-    from typing import Any, List, cast
+    from typing import Any, List, cast, Type, TypeVar
+    ClientType = TypeVar('ClientType', bound='WebPubSubServiceClient')
 
 
 def build_authentication_token(endpoint, hub, key, **kwargs):
@@ -111,6 +112,7 @@ class WebPubSubServiceClient(object):
         transport = kwargs.pop("transport", None) or coretransport.RequestsTransport(
             **kwargs
         )
+        kwargs.setdefault('sdk_moniker', 'messaging-webpubsubservice/{}'.format(_VERSION))
         policies = [
             corepolicies.HeadersPolicy(**kwargs),
             corepolicies.UserAgentPolicy(**kwargs),
@@ -125,6 +127,35 @@ class WebPubSubServiceClient(object):
             transport,
             policies,
         )  # type: corepipeline.Pipeline
+
+
+    @classmethod
+    def from_connection_string(cls, connection_string, **kwargs):
+        # type: (Type[ClientType], str, Any) -> ClientType
+        for invalid_keyword_arg in ('endpoint', 'accesskey'):
+            if invalid_keyword_arg in kwargs:
+                raise TypeError('Unknown argument {}'.format(invalid_keyword_arg))
+
+        for segment in connection_string.split(";"):
+            if '=' in segment:
+                key, value = segment.split('=', maxsplit=1)
+                key = key.lower()
+                if key == 'version':
+                    # The name in the connection string != the name for the constructor.
+                    # Let's map it to whatthe constructor actually wants...
+                    key = 'api_version'
+                kwargs[key] = value
+            else:
+                raise ValueError("Malformed connection string - expected 'key=value', got {}".format(segment))
+
+        if 'endpoint' not in kwargs:
+            raise ValueError("connection_string missing 'endpoint' field")
+
+        if 'accesskey' not in kwargs:
+            raise ValueError("connection_string missing 'accesskey' field")
+
+        kwargs['credential'] = corecredentials.AzureKeyCredential(kwargs.pop('accesskey'))
+        return cls(**kwargs)
 
     def __repr__(self):
         return "<WebPubSubServiceClient> endpoint:'{}'".format(self.endpoint)
