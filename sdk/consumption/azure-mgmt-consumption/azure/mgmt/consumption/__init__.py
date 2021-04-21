@@ -9,10 +9,11 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .consumption_management_client import ConsumptionManagementClient
-from .version import VERSION
+from ._configuration import ConsumptionManagementClientConfiguration
+from ._consumption_management_client import ConsumptionManagementClient
+__all__ = ['ConsumptionManagementClient', 'ConsumptionManagementClientConfiguration']
 
-__all__ = ['ConsumptionManagementClient']
+from .version import VERSION
 
 __version__ = VERSION
 
