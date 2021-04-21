@@ -437,6 +437,12 @@ class BlobPropertiesInternal(msrest.serialization.Model):
     :type rehydrate_priority: str or ~azure.storage.blob.models.RehydratePriority
     :param last_accessed_on:
     :type last_accessed_on: ~datetime.datetime
+    :param immutability_policy_expires_on:
+    :type immutability_policy_expires_on: ~datetime.datetime
+    :param immutability_policy_mode:  Possible values include: "Unlocked", "Locked", "Mutable".
+    :type immutability_policy_mode: str or ~azure.storage.blob.models.BlobImmutabilityPolicyMode
+    :param legal_hold:
+    :type legal_hold: bool
     """
 
     _validation = {
@@ -482,6 +488,9 @@ class BlobPropertiesInternal(msrest.serialization.Model):
         'is_sealed': {'key': 'Sealed', 'type': 'bool'},
         'rehydrate_priority': {'key': 'RehydratePriority', 'type': 'str'},
         'last_accessed_on': {'key': 'LastAccessTime', 'type': 'rfc-1123'},
+        'immutability_policy_expires_on': {'key': 'ImmutabilityPolicyUntilDate', 'type': 'rfc-1123'},
+        'immutability_policy_mode': {'key': 'ImmutabilityPolicyMode', 'type': 'str'},
+        'legal_hold': {'key': 'LegalHold', 'type': 'bool'},
     }
     _xml_map = {
         'name': 'Properties'
@@ -529,6 +538,9 @@ class BlobPropertiesInternal(msrest.serialization.Model):
         self.is_sealed = kwargs.get('is_sealed', None)
         self.rehydrate_priority = kwargs.get('rehydrate_priority', None)
         self.last_accessed_on = kwargs.get('last_accessed_on', None)
+        self.immutability_policy_expires_on = kwargs.get('immutability_policy_expires_on', None)
+        self.immutability_policy_mode = kwargs.get('immutability_policy_mode', None)
+        self.legal_hold = kwargs.get('legal_hold', None)
 
 
 class BlobTag(msrest.serialization.Model):
@@ -809,6 +821,9 @@ class ContainerProperties(msrest.serialization.Model):
     :type deleted_time: ~datetime.datetime
     :param remaining_retention_days:
     :type remaining_retention_days: int
+    :param is_version_level_worm_enabled: Indicates if version level worm is enabled on this
+     container.
+    :type is_version_level_worm_enabled: bool
     """
 
     _validation = {
@@ -829,6 +844,7 @@ class ContainerProperties(msrest.serialization.Model):
         'prevent_encryption_scope_override': {'key': 'DenyEncryptionScopeOverride', 'type': 'bool'},
         'deleted_time': {'key': 'DeletedTime', 'type': 'rfc-1123'},
         'remaining_retention_days': {'key': 'RemainingRetentionDays', 'type': 'int'},
+        'is_version_level_worm_enabled': {'key': 'VersionLevelWormEnabled', 'type': 'bool'},
     }
 
     def __init__(
@@ -848,6 +864,7 @@ class ContainerProperties(msrest.serialization.Model):
         self.prevent_encryption_scope_override = kwargs.get('prevent_encryption_scope_override', None)
         self.deleted_time = kwargs.get('deleted_time', None)
         self.remaining_retention_days = kwargs.get('remaining_retention_days', None)
+        self.is_version_level_worm_enabled = kwargs.get('is_version_level_worm_enabled', None)
 
 
 class CorsRule(msrest.serialization.Model):

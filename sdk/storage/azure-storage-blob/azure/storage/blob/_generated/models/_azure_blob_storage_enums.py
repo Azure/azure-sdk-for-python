@@ -97,6 +97,12 @@ class BlobExpiryOptions(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     RELATIVE_TO_NOW = "RelativeToNow"
     ABSOLUTE = "Absolute"
 
+class BlobImmutabilityPolicyMode(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+
+    UNLOCKED = "Unlocked"
+    LOCKED = "Locked"
+    MUTABLE = "Mutable"
+
 class BlobType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
 
     BLOCK_BLOB = "BlockBlob"
@@ -156,6 +162,8 @@ class ListBlobsIncludeItem(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     UNCOMMITTEDBLOBS = "uncommittedblobs"
     VERSIONS = "versions"
     TAGS = "tags"
+    IMMUTABILITYPOLICY = "immutabilitypolicy"
+    LEGALHOLD = "legalhold"
 
 class ListContainersIncludeType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
 

@@ -483,6 +483,12 @@ class BlobPropertiesInternal(msrest.serialization.Model):
     :type rehydrate_priority: str or ~azure.storage.blob.models.RehydratePriority
     :param last_accessed_on:
     :type last_accessed_on: ~datetime.datetime
+    :param immutability_policy_expires_on:
+    :type immutability_policy_expires_on: ~datetime.datetime
+    :param immutability_policy_mode:  Possible values include: "Unlocked", "Locked", "Mutable".
+    :type immutability_policy_mode: str or ~azure.storage.blob.models.BlobImmutabilityPolicyMode
+    :param legal_hold:
+    :type legal_hold: bool
     """
 
     _validation = {
@@ -528,6 +534,9 @@ class BlobPropertiesInternal(msrest.serialization.Model):
         'is_sealed': {'key': 'Sealed', 'type': 'bool'},
         'rehydrate_priority': {'key': 'RehydratePriority', 'type': 'str'},
         'last_accessed_on': {'key': 'LastAccessTime', 'type': 'rfc-1123'},
+        'immutability_policy_expires_on': {'key': 'ImmutabilityPolicyUntilDate', 'type': 'rfc-1123'},
+        'immutability_policy_mode': {'key': 'ImmutabilityPolicyMode', 'type': 'str'},
+        'legal_hold': {'key': 'LegalHold', 'type': 'bool'},
     }
     _xml_map = {
         'name': 'Properties'
@@ -573,6 +582,9 @@ class BlobPropertiesInternal(msrest.serialization.Model):
         is_sealed: Optional[bool] = None,
         rehydrate_priority: Optional[Union[str, "RehydratePriority"]] = None,
         last_accessed_on: Optional[datetime.datetime] = None,
+        immutability_policy_expires_on: Optional[datetime.datetime] = None,
+        immutability_policy_mode: Optional[Union[str, "BlobImmutabilityPolicyMode"]] = None,
+        legal_hold: Optional[bool] = None,
         **kwargs
     ):
         super(BlobPropertiesInternal, self).__init__(**kwargs)
@@ -613,6 +625,9 @@ class BlobPropertiesInternal(msrest.serialization.Model):
         self.is_sealed = is_sealed
         self.rehydrate_priority = rehydrate_priority
         self.last_accessed_on = last_accessed_on
+        self.immutability_policy_expires_on = immutability_policy_expires_on
+        self.immutability_policy_mode = immutability_policy_mode
+        self.legal_hold = legal_hold
 
 
 class BlobTag(msrest.serialization.Model):
@@ -920,6 +935,9 @@ class ContainerProperties(msrest.serialization.Model):
     :type deleted_time: ~datetime.datetime
     :param remaining_retention_days:
     :type remaining_retention_days: int
+    :param is_version_level_worm_enabled: Indicates if version level worm is enabled on this
+     container.
+    :type is_version_level_worm_enabled: bool
     """
 
     _validation = {
@@ -940,6 +958,7 @@ class ContainerProperties(msrest.serialization.Model):
         'prevent_encryption_scope_override': {'key': 'DenyEncryptionScopeOverride', 'type': 'bool'},
         'deleted_time': {'key': 'DeletedTime', 'type': 'rfc-1123'},
         'remaining_retention_days': {'key': 'RemainingRetentionDays', 'type': 'int'},
+        'is_version_level_worm_enabled': {'key': 'VersionLevelWormEnabled', 'type': 'bool'},
     }
 
     def __init__(
@@ -957,6 +976,7 @@ class ContainerProperties(msrest.serialization.Model):
         prevent_encryption_scope_override: Optional[bool] = None,
         deleted_time: Optional[datetime.datetime] = None,
         remaining_retention_days: Optional[int] = None,
+        is_version_level_worm_enabled: Optional[bool] = None,
         **kwargs
     ):
         super(ContainerProperties, self).__init__(**kwargs)
@@ -972,6 +992,7 @@ class ContainerProperties(msrest.serialization.Model):
         self.prevent_encryption_scope_override = prevent_encryption_scope_override
         self.deleted_time = deleted_time
         self.remaining_retention_days = remaining_retention_days
+        self.is_version_level_worm_enabled = is_version_level_worm_enabled
 
 
 class CorsRule(msrest.serialization.Model):
