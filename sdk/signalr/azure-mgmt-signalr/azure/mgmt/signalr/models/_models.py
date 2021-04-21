@@ -42,15 +42,90 @@ class Dimension(msrest.serialization.Model):
         self.to_be_exported_for_shoebox = kwargs.get('to_be_exported_for_shoebox', None)
 
 
-class ErrorResponse(msrest.serialization.Model):
-    """Contains information about an API error.
+class ErrorAdditionalInfo(msrest.serialization.Model):
+    """The resource management error additional info.
 
-    :param error: Describes a particular API error with an error code and a message.
-    :type error: ~azure.mgmt.signalr.models.ErrorResponseBody
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar type: The additional info type.
+    :vartype type: str
+    :ivar info: The additional info.
+    :vartype info: object
+    """
+
+    _validation = {
+        'type': {'readonly': True},
+        'info': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'type': {'key': 'type', 'type': 'str'},
+        'info': {'key': 'info', 'type': 'object'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(ErrorAdditionalInfo, self).__init__(**kwargs)
+        self.type = None
+        self.info = None
+
+
+class ErrorDetail(msrest.serialization.Model):
+    """The error detail.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar code: The error code.
+    :vartype code: str
+    :ivar message: The error message.
+    :vartype message: str
+    :ivar target: The error target.
+    :vartype target: str
+    :ivar details: The error details.
+    :vartype details: list[~azure.mgmt.signalr.models.ErrorDetail]
+    :ivar additional_info: The error additional info.
+    :vartype additional_info: list[~azure.mgmt.signalr.models.ErrorAdditionalInfo]
+    """
+
+    _validation = {
+        'code': {'readonly': True},
+        'message': {'readonly': True},
+        'target': {'readonly': True},
+        'details': {'readonly': True},
+        'additional_info': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'code': {'key': 'code', 'type': 'str'},
+        'message': {'key': 'message', 'type': 'str'},
+        'target': {'key': 'target', 'type': 'str'},
+        'details': {'key': 'details', 'type': '[ErrorDetail]'},
+        'additional_info': {'key': 'additionalInfo', 'type': '[ErrorAdditionalInfo]'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(ErrorDetail, self).__init__(**kwargs)
+        self.code = None
+        self.message = None
+        self.target = None
+        self.details = None
+        self.additional_info = None
+
+
+class ErrorResponse(msrest.serialization.Model):
+    """Common error response for all Azure Resource Manager APIs to return error details for failed operations. (This also follows the OData error response format.).
+
+    :param error: The error object.
+    :type error: ~azure.mgmt.signalr.models.ErrorDetail
     """
 
     _attribute_map = {
-        'error': {'key': 'error', 'type': 'ErrorResponseBody'},
+        'error': {'key': 'error', 'type': 'ErrorDetail'},
     }
 
     def __init__(
@@ -59,48 +134,6 @@ class ErrorResponse(msrest.serialization.Model):
     ):
         super(ErrorResponse, self).__init__(**kwargs)
         self.error = kwargs.get('error', None)
-
-
-class ErrorResponseBody(msrest.serialization.Model):
-    """Describes a particular API error with an error code and a message.
-
-    All required parameters must be populated in order to send to Azure.
-
-    :param code: Required. An error code that describes the error condition more precisely than an
-     HTTP status code.
-     Can be used to programmatically handle specific error cases.
-    :type code: str
-    :param message: Required. A message that describes the error in detail and provides debugging
-     information.
-    :type message: str
-    :param target: The target of the particular error (for example, the name of the property in
-     error).
-    :type target: str
-    :param details: Contains nested errors that are related to this error.
-    :type details: list[~azure.mgmt.signalr.models.ErrorResponseBody]
-    """
-
-    _validation = {
-        'code': {'required': True},
-        'message': {'required': True},
-    }
-
-    _attribute_map = {
-        'code': {'key': 'code', 'type': 'str'},
-        'message': {'key': 'message', 'type': 'str'},
-        'target': {'key': 'target', 'type': 'str'},
-        'details': {'key': 'details', 'type': '[ErrorResponseBody]'},
-    }
-
-    def __init__(
-        self,
-        **kwargs
-    ):
-        super(ErrorResponseBody, self).__init__(**kwargs)
-        self.code = kwargs['code']
-        self.message = kwargs['message']
-        self.target = kwargs.get('target', None)
-        self.details = kwargs.get('details', None)
 
 
 class LogSpecification(msrest.serialization.Model):
@@ -274,9 +307,10 @@ class NameAvailabilityParameters(msrest.serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param type: Required. The resource type. Should be always "Microsoft.SignalRService/SignalR".
+    :param type: Required. The resource type. Can be "Microsoft.SignalRService/SignalR" or
+     "Microsoft.SignalRService/webPubSub".
     :type type: str
-    :param name: Required. The SignalR service name to validate. e.g."my-signalR-name-here".
+    :param name: Required. The resource name to validate. e.g."my-resource-name".
     :type name: str
     """
 
@@ -325,7 +359,7 @@ class NetworkACL(msrest.serialization.Model):
 
 
 class Operation(msrest.serialization.Model):
-    """REST API operation supported by SignalR resource provider.
+    """REST API operation supported by resource provider.
 
     :param name: Name of the operation with format: {provider}/{resource}/{operation}.
     :type name: str
@@ -522,8 +556,8 @@ class Resource(msrest.serialization.Model):
         self.type = None
 
 
-class PrivateEndpointConnection(Resource):
-    """A private endpoint connection to SignalR resource.
+class ProxyResource(Resource):
+    """The resource model definition for a ARM proxy resource. It will have everything other than required location and tags.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
@@ -533,6 +567,40 @@ class PrivateEndpointConnection(Resource):
     :vartype name: str
     :ivar type: The type of the resource - e.g. "Microsoft.SignalRService/SignalR".
     :vartype type: str
+    """
+
+    _validation = {
+        'id': {'readonly': True},
+        'name': {'readonly': True},
+        'type': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'id': {'key': 'id', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(ProxyResource, self).__init__(**kwargs)
+
+
+class PrivateEndpointConnection(ProxyResource):
+    """A private endpoint connection to an azure resource.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar id: Fully qualified resource Id for the resource.
+    :vartype id: str
+    :ivar name: The name of the resource.
+    :vartype name: str
+    :ivar type: The type of the resource - e.g. "Microsoft.SignalRService/SignalR".
+    :vartype type: str
+    :ivar system_data: Metadata pertaining to creation and last modification of the resource.
+    :vartype system_data: ~azure.mgmt.signalr.models.SystemData
     :ivar provisioning_state: Provisioning state of the private endpoint connection. Possible
      values include: "Unknown", "Succeeded", "Failed", "Canceled", "Running", "Creating",
      "Updating", "Deleting", "Moving".
@@ -548,6 +616,7 @@ class PrivateEndpointConnection(Resource):
         'id': {'readonly': True},
         'name': {'readonly': True},
         'type': {'readonly': True},
+        'system_data': {'readonly': True},
         'provisioning_state': {'readonly': True},
     }
 
@@ -555,6 +624,7 @@ class PrivateEndpointConnection(Resource):
         'id': {'key': 'id', 'type': 'str'},
         'name': {'key': 'name', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
+        'system_data': {'key': 'systemData', 'type': 'SystemData'},
         'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
         'private_endpoint': {'key': 'properties.privateEndpoint', 'type': 'PrivateEndpoint'},
         'private_link_service_connection_state': {'key': 'properties.privateLinkServiceConnectionState', 'type': 'PrivateLinkServiceConnectionState'},
@@ -565,12 +635,38 @@ class PrivateEndpointConnection(Resource):
         **kwargs
     ):
         super(PrivateEndpointConnection, self).__init__(**kwargs)
+        self.system_data = None
         self.provisioning_state = None
         self.private_endpoint = kwargs.get('private_endpoint', None)
         self.private_link_service_connection_state = kwargs.get('private_link_service_connection_state', None)
 
 
-class PrivateLinkResource(Resource):
+class PrivateEndpointConnectionList(msrest.serialization.Model):
+    """A list of private endpoint connections.
+
+    :param value: The list of the private endpoint connections.
+    :type value: list[~azure.mgmt.signalr.models.PrivateEndpointConnection]
+    :param next_link: Request URL that can be used to query next page of private endpoint
+     connections. Returned when the total number of requested private endpoint connections exceed
+     maximum page size.
+    :type next_link: str
+    """
+
+    _attribute_map = {
+        'value': {'key': 'value', 'type': '[PrivateEndpointConnection]'},
+        'next_link': {'key': 'nextLink', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(PrivateEndpointConnectionList, self).__init__(**kwargs)
+        self.value = kwargs.get('value', None)
+        self.next_link = kwargs.get('next_link', None)
+
+
+class PrivateLinkResource(ProxyResource):
     """Private link resource.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -587,6 +683,10 @@ class PrivateLinkResource(Resource):
     :type required_members: list[str]
     :param required_zone_names: Required private DNS zone names.
     :type required_zone_names: list[str]
+    :param shareable_private_link_resource_types: The list of resources that are onboarded to
+     private link service.
+    :type shareable_private_link_resource_types:
+     list[~azure.mgmt.signalr.models.ShareablePrivateLinkResourceType]
     """
 
     _validation = {
@@ -602,6 +702,7 @@ class PrivateLinkResource(Resource):
         'group_id': {'key': 'properties.groupId', 'type': 'str'},
         'required_members': {'key': 'properties.requiredMembers', 'type': '[str]'},
         'required_zone_names': {'key': 'properties.requiredZoneNames', 'type': '[str]'},
+        'shareable_private_link_resource_types': {'key': 'properties.shareablePrivateLinkResourceTypes', 'type': '[ShareablePrivateLinkResourceType]'},
     }
 
     def __init__(
@@ -612,10 +713,11 @@ class PrivateLinkResource(Resource):
         self.group_id = kwargs.get('group_id', None)
         self.required_members = kwargs.get('required_members', None)
         self.required_zone_names = kwargs.get('required_zone_names', None)
+        self.shareable_private_link_resource_types = kwargs.get('shareable_private_link_resource_types', None)
 
 
 class PrivateLinkResourceList(msrest.serialization.Model):
-    """Contains a list of AzSignalR.Models.Response.PrivateLink.PrivateLinkResource and a possible link to query more results.
+    """Contains a list of PrivateLinkResource and a possible link to query more results.
 
     :param value: List of PrivateLinkResource.
     :type value: list[~azure.mgmt.signalr.models.PrivateLinkResource]
@@ -668,43 +770,11 @@ class PrivateLinkServiceConnectionState(msrest.serialization.Model):
         self.actions_required = kwargs.get('actions_required', None)
 
 
-class ProxyResource(Resource):
-    """The resource model definition for a ARM proxy resource. It will have everything other than required location and tags.
-
-    Variables are only populated by the server, and will be ignored when sending a request.
-
-    :ivar id: Fully qualified resource Id for the resource.
-    :vartype id: str
-    :ivar name: The name of the resource.
-    :vartype name: str
-    :ivar type: The type of the resource - e.g. "Microsoft.SignalRService/SignalR".
-    :vartype type: str
-    """
-
-    _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
-    }
-
-    _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-    }
-
-    def __init__(
-        self,
-        **kwargs
-    ):
-        super(ProxyResource, self).__init__(**kwargs)
-
-
 class RegenerateKeyParameters(msrest.serialization.Model):
     """Parameters describes the request to regenerate access keys.
 
-    :param key_type: The keyType to regenerate. Must be either 'primary' or 'secondary'(case-
-     insensitive). Possible values include: "Primary", "Secondary".
+    :param key_type: The keyType to regenerate. Must be either 'primary' or
+     'secondary'(case-insensitive). Possible values include: "Primary", "Secondary".
     :type key_type: str or ~azure.mgmt.signalr.models.KeyType
     """
 
@@ -721,7 +791,9 @@ class RegenerateKeyParameters(msrest.serialization.Model):
 
 
 class ResourceSku(msrest.serialization.Model):
-    """The billing information of the SignalR resource.
+    """The billing information of the resource.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
 
     All required parameters must be populated in order to send to Azure.
 
@@ -734,11 +806,11 @@ class ResourceSku(msrest.serialization.Model):
      ``Basic`` is deprecated, use ``Standard`` instead. Possible values include: "Free", "Basic",
      "Standard", "Premium".
     :type tier: str or ~azure.mgmt.signalr.models.SignalRSkuTier
-    :param size: Optional string. For future use.
-    :type size: str
-    :param family: Optional string. For future use.
-    :type family: str
-    :param capacity: Optional, integer. The unit count of SignalR resource. 1 by default.
+    :ivar size: Not used. Retained for future use.
+    :vartype size: str
+    :ivar family: Not used. Retained for future use.
+    :vartype family: str
+    :param capacity: Optional, integer. The unit count of the resource. 1 by default.
     
      If present, following values are allowed:
          Free: 1
@@ -748,6 +820,8 @@ class ResourceSku(msrest.serialization.Model):
 
     _validation = {
         'name': {'required': True},
+        'size': {'readonly': True},
+        'family': {'readonly': True},
     }
 
     _attribute_map = {
@@ -765,13 +839,13 @@ class ResourceSku(msrest.serialization.Model):
         super(ResourceSku, self).__init__(**kwargs)
         self.name = kwargs['name']
         self.tier = kwargs.get('tier', None)
-        self.size = kwargs.get('size', None)
-        self.family = kwargs.get('family', None)
+        self.size = None
+        self.family = None
         self.capacity = kwargs.get('capacity', None)
 
 
 class ServerlessUpstreamSettings(msrest.serialization.Model):
-    """The settings for the Upstream when the Azure SignalR is in server-less mode.
+    """The settings for the Upstream when the service is in server-less mode.
 
     :param templates: Gets or sets the list of Upstream URL templates. Order matters, and the first
      matching template takes effects.
@@ -813,12 +887,156 @@ class ServiceSpecification(msrest.serialization.Model):
         self.log_specifications = kwargs.get('log_specifications', None)
 
 
+class ShareablePrivateLinkResourceProperties(msrest.serialization.Model):
+    """Describes the properties of a resource type that has been onboarded to private link service.
+
+    :param description: The description of the resource type that has been onboarded to private
+     link service.
+    :type description: str
+    :param group_id: The resource provider group id for the resource that has been onboarded to
+     private link service.
+    :type group_id: str
+    :param type: The resource provider type for the resource that has been onboarded to private
+     link service.
+    :type type: str
+    """
+
+    _attribute_map = {
+        'description': {'key': 'description', 'type': 'str'},
+        'group_id': {'key': 'groupId', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(ShareablePrivateLinkResourceProperties, self).__init__(**kwargs)
+        self.description = kwargs.get('description', None)
+        self.group_id = kwargs.get('group_id', None)
+        self.type = kwargs.get('type', None)
+
+
+class ShareablePrivateLinkResourceType(msrest.serialization.Model):
+    """Describes a  resource type that has been onboarded to private link service.
+
+    :param name: The name of the resource type that has been onboarded to private link service.
+    :type name: str
+    :param properties: Describes the properties of a resource type that has been onboarded to
+     private link service.
+    :type properties: ~azure.mgmt.signalr.models.ShareablePrivateLinkResourceProperties
+    """
+
+    _attribute_map = {
+        'name': {'key': 'name', 'type': 'str'},
+        'properties': {'key': 'properties', 'type': 'ShareablePrivateLinkResourceProperties'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(ShareablePrivateLinkResourceType, self).__init__(**kwargs)
+        self.name = kwargs.get('name', None)
+        self.properties = kwargs.get('properties', None)
+
+
+class SharedPrivateLinkResource(ProxyResource):
+    """Describes a Shared Private Link Resource.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar id: Fully qualified resource Id for the resource.
+    :vartype id: str
+    :ivar name: The name of the resource.
+    :vartype name: str
+    :ivar type: The type of the resource - e.g. "Microsoft.SignalRService/SignalR".
+    :vartype type: str
+    :ivar system_data: Metadata pertaining to creation and last modification of the resource.
+    :vartype system_data: ~azure.mgmt.signalr.models.SystemData
+    :param group_id: The group id from the provider of resource the shared private link resource is
+     for.
+    :type group_id: str
+    :param private_link_resource_id: The resource id of the resource the shared private link
+     resource is for.
+    :type private_link_resource_id: str
+    :ivar provisioning_state: Provisioning state of the shared private link resource. Possible
+     values include: "Unknown", "Succeeded", "Failed", "Canceled", "Running", "Creating",
+     "Updating", "Deleting", "Moving".
+    :vartype provisioning_state: str or ~azure.mgmt.signalr.models.ProvisioningState
+    :param request_message: The request message for requesting approval of the shared private link
+     resource.
+    :type request_message: str
+    :ivar status: Status of the shared private link resource. Possible values include: "Pending",
+     "Approved", "Rejected", "Disconnected", "Timeout".
+    :vartype status: str or ~azure.mgmt.signalr.models.SharedPrivateLinkResourceStatus
+    """
+
+    _validation = {
+        'id': {'readonly': True},
+        'name': {'readonly': True},
+        'type': {'readonly': True},
+        'system_data': {'readonly': True},
+        'provisioning_state': {'readonly': True},
+        'status': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'id': {'key': 'id', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
+        'system_data': {'key': 'systemData', 'type': 'SystemData'},
+        'group_id': {'key': 'properties.groupId', 'type': 'str'},
+        'private_link_resource_id': {'key': 'properties.privateLinkResourceId', 'type': 'str'},
+        'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
+        'request_message': {'key': 'properties.requestMessage', 'type': 'str'},
+        'status': {'key': 'properties.status', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(SharedPrivateLinkResource, self).__init__(**kwargs)
+        self.system_data = None
+        self.group_id = kwargs.get('group_id', None)
+        self.private_link_resource_id = kwargs.get('private_link_resource_id', None)
+        self.provisioning_state = None
+        self.request_message = kwargs.get('request_message', None)
+        self.status = None
+
+
+class SharedPrivateLinkResourceList(msrest.serialization.Model):
+    """A list of shared private link resources.
+
+    :param value: The list of the shared private link resources.
+    :type value: list[~azure.mgmt.signalr.models.SharedPrivateLinkResource]
+    :param next_link: Request URL that can be used to query next page of private endpoint
+     connections. Returned when the total number of requested private endpoint connections exceed
+     maximum page size.
+    :type next_link: str
+    """
+
+    _attribute_map = {
+        'value': {'key': 'value', 'type': '[SharedPrivateLinkResource]'},
+        'next_link': {'key': 'nextLink', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(SharedPrivateLinkResourceList, self).__init__(**kwargs)
+        self.value = kwargs.get('value', None)
+        self.next_link = kwargs.get('next_link', None)
+
+
 class SignalRCorsSettings(msrest.serialization.Model):
     """Cross-Origin Resource Sharing (CORS) settings.
 
-    :param allowed_origins: Gets or sets the list of origins that should be allowed to make cross-
-     origin calls (for example: http://example.com:12345). Use "*" to allow all. If omitted, allow
-     all by default.
+    :param allowed_origins: Gets or sets the list of origins that should be allowed to make
+     cross-origin calls (for example: http://example.com:12345). Use "*" to allow all. If omitted,
+     allow all by default.
     :type allowed_origins: list[str]
     """
 
@@ -834,44 +1052,6 @@ class SignalRCorsSettings(msrest.serialization.Model):
         self.allowed_origins = kwargs.get('allowed_origins', None)
 
 
-class SignalRCreateOrUpdateProperties(msrest.serialization.Model):
-    """Settings used to provision or configure the resource.
-
-    :param features: List of SignalR featureFlags. e.g. ServiceMode.
-    
-     FeatureFlags that are not included in the parameters for the update operation will not be
-     modified.
-     And the response will only include featureFlags that are explicitly set.
-     When a featureFlag is not explicitly set, SignalR service will use its globally default value.
-     But keep in mind, the default value doesn't mean "false". It varies in terms of different
-     FeatureFlags.
-    :type features: list[~azure.mgmt.signalr.models.SignalRFeature]
-    :param cors: Cross-Origin Resource Sharing (CORS) settings.
-    :type cors: ~azure.mgmt.signalr.models.SignalRCorsSettings
-    :param upstream: Upstream settings when the Azure SignalR is in server-less mode.
-    :type upstream: ~azure.mgmt.signalr.models.ServerlessUpstreamSettings
-    :param network_ac_ls: Network ACLs.
-    :type network_ac_ls: ~azure.mgmt.signalr.models.SignalRNetworkACLs
-    """
-
-    _attribute_map = {
-        'features': {'key': 'features', 'type': '[SignalRFeature]'},
-        'cors': {'key': 'cors', 'type': 'SignalRCorsSettings'},
-        'upstream': {'key': 'upstream', 'type': 'ServerlessUpstreamSettings'},
-        'network_ac_ls': {'key': 'networkACLs', 'type': 'SignalRNetworkACLs'},
-    }
-
-    def __init__(
-        self,
-        **kwargs
-    ):
-        super(SignalRCreateOrUpdateProperties, self).__init__(**kwargs)
-        self.features = kwargs.get('features', None)
-        self.cors = kwargs.get('cors', None)
-        self.upstream = kwargs.get('upstream', None)
-        self.network_ac_ls = kwargs.get('network_ac_ls', None)
-
-
 class SignalRFeature(msrest.serialization.Model):
     """Feature of a SignalR resource, which controls the SignalR runtime behavior.
 
@@ -885,8 +1065,15 @@ class SignalRFeature(msrest.serialization.Model):
      "Classic": for backward compatibility. Support both Default and Serverless mode but not
      recommended; "PredefinedOnly": for future use.
      * EnableConnectivityLogs: "true"/"false", to enable/disable the connectivity log category
-     respectively. Possible values include: "ServiceMode", "EnableConnectivityLogs",
-     "EnableMessagingLogs".
+     respectively.
+     * EnableMessagingLogs: "true"/"false", to enable/disable the connectivity log category
+     respectively.
+     * EnableLiveTrace: Live Trace allows you to know what's happening inside Azure SignalR
+     service, it will give you live traces in real time, it will be helpful when you developing your
+     own Azure SignalR based web application or self-troubleshooting some issues. Please note that
+     live traces are counted as outbound messages that will be charged. Values allowed:
+     "true"/"false", to enable/disable live trace feature. Possible values include: "ServiceMode",
+     "EnableConnectivityLogs", "EnableMessagingLogs", "EnableLiveTrace".
     :type flag: str or ~azure.mgmt.signalr.models.FeatureFlags
     :param value: Required. Value of the feature flag. See Azure SignalR service document
      https://docs.microsoft.com/azure/azure-signalr/ for allowed values.
@@ -917,15 +1104,15 @@ class SignalRFeature(msrest.serialization.Model):
 
 
 class SignalRKeys(msrest.serialization.Model):
-    """A class represents the access keys of SignalR service.
+    """A class represents the access keys of the resource.
 
     :param primary_key: The primary access key.
     :type primary_key: str
     :param secondary_key: The secondary access key.
     :type secondary_key: str
-    :param primary_connection_string: SignalR connection string constructed via the primaryKey.
+    :param primary_connection_string: Connection string constructed via the primaryKey.
     :type primary_connection_string: str
-    :param secondary_connection_string: SignalR connection string constructed via the secondaryKey.
+    :param secondary_connection_string: Connection string constructed via the secondaryKey.
     :type secondary_connection_string: str
     """
 
@@ -948,7 +1135,7 @@ class SignalRKeys(msrest.serialization.Model):
 
 
 class SignalRNetworkACLs(msrest.serialization.Model):
-    """Network ACLs for SignalR.
+    """Network ACLs for the resource.
 
     :param default_action: Default action when no other rule matches. Possible values include:
      "Allow", "Deny".
@@ -975,90 +1162,6 @@ class SignalRNetworkACLs(msrest.serialization.Model):
         self.private_endpoints = kwargs.get('private_endpoints', None)
 
 
-class SignalRProperties(SignalRCreateOrUpdateProperties):
-    """A class that describes the properties of the SignalR service that should contain more read-only properties than AzSignalR.Models.SignalRCreateOrUpdateProperties.
-
-    Variables are only populated by the server, and will be ignored when sending a request.
-
-    :param features: List of SignalR featureFlags. e.g. ServiceMode.
-    
-     FeatureFlags that are not included in the parameters for the update operation will not be
-     modified.
-     And the response will only include featureFlags that are explicitly set.
-     When a featureFlag is not explicitly set, SignalR service will use its globally default value.
-     But keep in mind, the default value doesn't mean "false". It varies in terms of different
-     FeatureFlags.
-    :type features: list[~azure.mgmt.signalr.models.SignalRFeature]
-    :param cors: Cross-Origin Resource Sharing (CORS) settings.
-    :type cors: ~azure.mgmt.signalr.models.SignalRCorsSettings
-    :param upstream: Upstream settings when the Azure SignalR is in server-less mode.
-    :type upstream: ~azure.mgmt.signalr.models.ServerlessUpstreamSettings
-    :param network_ac_ls: Network ACLs.
-    :type network_ac_ls: ~azure.mgmt.signalr.models.SignalRNetworkACLs
-    :ivar provisioning_state: Provisioning state of the resource. Possible values include:
-     "Unknown", "Succeeded", "Failed", "Canceled", "Running", "Creating", "Updating", "Deleting",
-     "Moving".
-    :vartype provisioning_state: str or ~azure.mgmt.signalr.models.ProvisioningState
-    :ivar external_ip: The publicly accessible IP of the SignalR service.
-    :vartype external_ip: str
-    :ivar host_name: FQDN of the SignalR service instance. Format: xxx.service.signalr.net.
-    :vartype host_name: str
-    :ivar public_port: The publicly accessible port of the SignalR service which is designed for
-     browser/client side usage.
-    :vartype public_port: int
-    :ivar server_port: The publicly accessible port of the SignalR service which is designed for
-     customer server side usage.
-    :vartype server_port: int
-    :ivar version: Version of the SignalR resource. Probably you need the same or higher version of
-     client SDKs.
-    :vartype version: str
-    :ivar private_endpoint_connections: Private endpoint connections to the SignalR resource.
-    :vartype private_endpoint_connections:
-     list[~azure.mgmt.signalr.models.PrivateEndpointConnection]
-    :param tls: TLS settings.
-    :type tls: ~azure.mgmt.signalr.models.SignalRTlsSettings
-    """
-
-    _validation = {
-        'provisioning_state': {'readonly': True},
-        'external_ip': {'readonly': True},
-        'host_name': {'readonly': True},
-        'public_port': {'readonly': True},
-        'server_port': {'readonly': True},
-        'version': {'readonly': True},
-        'private_endpoint_connections': {'readonly': True},
-    }
-
-    _attribute_map = {
-        'features': {'key': 'features', 'type': '[SignalRFeature]'},
-        'cors': {'key': 'cors', 'type': 'SignalRCorsSettings'},
-        'upstream': {'key': 'upstream', 'type': 'ServerlessUpstreamSettings'},
-        'network_ac_ls': {'key': 'networkACLs', 'type': 'SignalRNetworkACLs'},
-        'provisioning_state': {'key': 'provisioningState', 'type': 'str'},
-        'external_ip': {'key': 'externalIP', 'type': 'str'},
-        'host_name': {'key': 'hostName', 'type': 'str'},
-        'public_port': {'key': 'publicPort', 'type': 'int'},
-        'server_port': {'key': 'serverPort', 'type': 'int'},
-        'version': {'key': 'version', 'type': 'str'},
-        'private_endpoint_connections': {'key': 'privateEndpointConnections', 'type': '[PrivateEndpointConnection]'},
-        'tls': {'key': 'tls', 'type': 'SignalRTlsSettings'},
-    }
-
-    def __init__(
-        self,
-        **kwargs
-    ):
-        super(SignalRProperties, self).__init__(**kwargs)
-        self.provisioning_state = None
-        self.external_ip = None
-        self.host_name = None
-        self.public_port = None
-        self.server_port = None
-        self.version = None
-        self.private_endpoint_connections = None
-        self.tls = kwargs.get('tls', None)
-
-
 class TrackedResource(Resource):
     """The resource model definition for a ARM tracked top level resource.
 
@@ -1070,8 +1173,8 @@ class TrackedResource(Resource):
     :vartype name: str
     :ivar type: The type of the resource - e.g. "Microsoft.SignalRService/SignalR".
     :vartype type: str
-    :param location: The GEO location of the SignalR service. e.g. West US | East US | North
-     Central US | South Central US.
+    :param location: The GEO location of the resource. e.g. West US | East US | North Central US |
+     South Central US.
     :type location: str
     :param tags: A set of tags. Tags of the service which is a list of key value pairs that
      describe the resource.
@@ -1102,7 +1205,7 @@ class TrackedResource(Resource):
 
 
 class SignalRResource(TrackedResource):
-    """A class represent a SignalR service resource.
+    """A class represent a resource.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
@@ -1112,62 +1215,68 @@ class SignalRResource(TrackedResource):
     :vartype name: str
     :ivar type: The type of the resource - e.g. "Microsoft.SignalRService/SignalR".
     :vartype type: str
-    :param location: The GEO location of the SignalR service. e.g. West US | East US | North
-     Central US | South Central US.
+    :param location: The GEO location of the resource. e.g. West US | East US | North Central US |
+     South Central US.
     :type location: str
     :param tags: A set of tags. Tags of the service which is a list of key value pairs that
      describe the resource.
     :type tags: dict[str, str]
     :param sku: The billing information of the resource.(e.g. Free, Standard).
     :type sku: ~azure.mgmt.signalr.models.ResourceSku
-    :param kind: The kind of the service - e.g. "SignalR", or "RawWebSockets" for
-     "Microsoft.SignalRService/SignalR". Possible values include: "SignalR", "RawWebSockets".
+    :param kind: The kind of the service - e.g. "SignalR" for "Microsoft.SignalRService/SignalR".
+     Possible values include: "SignalR", "RawWebSockets".
     :type kind: str or ~azure.mgmt.signalr.models.ServiceKind
     :param identity: The managed identity response.
     :type identity: ~azure.mgmt.signalr.models.ManagedIdentity
-    :param features: List of SignalR featureFlags. e.g. ServiceMode.
+    :ivar system_data: Metadata pertaining to creation and last modification of the resource.
+    :vartype system_data: ~azure.mgmt.signalr.models.SystemData
+    :ivar provisioning_state: Provisioning state of the resource. Possible values include:
+     "Unknown", "Succeeded", "Failed", "Canceled", "Running", "Creating", "Updating", "Deleting",
+     "Moving".
+    :vartype provisioning_state: str or ~azure.mgmt.signalr.models.ProvisioningState
+    :ivar external_ip: The publicly accessible IP of the resource.
+    :vartype external_ip: str
+    :ivar host_name: FQDN of the service instance.
+    :vartype host_name: str
+    :ivar public_port: The publicly accessible port of the resource which is designed for
+     browser/client side usage.
+    :vartype public_port: int
+    :ivar server_port: The publicly accessible port of the resource which is designed for customer
+     server side usage.
+    :vartype server_port: int
+    :ivar version: Version of the resource. Probably you need the same or higher version of client
+     SDKs.
+    :vartype version: str
+    :ivar private_endpoint_connections: Private endpoint connections to the resource.
+    :vartype private_endpoint_connections:
+     list[~azure.mgmt.signalr.models.PrivateEndpointConnection]
+    :ivar shared_private_link_resources: The list of shared private link resources.
+    :vartype shared_private_link_resources:
+     list[~azure.mgmt.signalr.models.SharedPrivateLinkResource]
+    :param tls: TLS settings.
+    :type tls: ~azure.mgmt.signalr.models.SignalRTlsSettings
+    :param features: List of the featureFlags.
     
      FeatureFlags that are not included in the parameters for the update operation will not be
      modified.
      And the response will only include featureFlags that are explicitly set.
-     When a featureFlag is not explicitly set, SignalR service will use its globally default value.
+     When a featureFlag is not explicitly set, its globally default value will be used
      But keep in mind, the default value doesn't mean "false". It varies in terms of different
      FeatureFlags.
     :type features: list[~azure.mgmt.signalr.models.SignalRFeature]
     :param cors: Cross-Origin Resource Sharing (CORS) settings.
     :type cors: ~azure.mgmt.signalr.models.SignalRCorsSettings
-    :param upstream: Upstream settings when the Azure SignalR is in server-less mode.
+    :param upstream: Upstream settings when the service is in server-less mode.
     :type upstream: ~azure.mgmt.signalr.models.ServerlessUpstreamSettings
     :param network_ac_ls: Network ACLs.
     :type network_ac_ls: ~azure.mgmt.signalr.models.SignalRNetworkACLs
-    :ivar provisioning_state: Provisioning state of the resource. Possible values include:
-     "Unknown", "Succeeded", "Failed", "Canceled", "Running", "Creating", "Updating", "Deleting",
-     "Moving".
-    :vartype provisioning_state: str or ~azure.mgmt.signalr.models.ProvisioningState
-    :ivar external_ip: The publicly accessible IP of the SignalR service.
-    :vartype external_ip: str
-    :ivar host_name: FQDN of the SignalR service instance. Format: xxx.service.signalr.net.
-    :vartype host_name: str
-    :ivar public_port: The publicly accessible port of the SignalR service which is designed for
-     browser/client side usage.
-    :vartype public_port: int
-    :ivar server_port: The publicly accessible port of the SignalR service which is designed for
-     customer server side usage.
-    :vartype server_port: int
-    :ivar version: Version of the SignalR resource. Probably you need the same or higher version of
-     client SDKs.
-    :vartype version: str
-    :ivar private_endpoint_connections: Private endpoint connections to the SignalR resource.
-    :vartype private_endpoint_connections:
-     list[~azure.mgmt.signalr.models.PrivateEndpointConnection]
-    :param tls: TLS settings.
-    :type tls: ~azure.mgmt.signalr.models.SignalRTlsSettings
     """
 
     _validation = {
         'id': {'readonly': True},
         'name': {'readonly': True},
         'type': {'readonly': True},
+        'system_data': {'readonly': True},
         'provisioning_state': {'readonly': True},
         'external_ip': {'readonly': True},
         'host_name': {'readonly': True},
@@ -1175,6 +1284,7 @@ class SignalRResource(TrackedResource):
         'server_port': {'readonly': True},
         'version': {'readonly': True},
         'private_endpoint_connections': {'readonly': True},
+        'shared_private_link_resources': {'readonly': True},
     }
 
     _attribute_map = {
@@ -1186,10 +1296,7 @@ class SignalRResource(TrackedResource):
         'sku': {'key': 'sku', 'type': 'ResourceSku'},
         'kind': {'key': 'kind', 'type': 'str'},
         'identity': {'key': 'identity', 'type': 'ManagedIdentity'},
-        'features': {'key': 'properties.features', 'type': '[SignalRFeature]'},
-        'cors': {'key': 'properties.cors', 'type': 'SignalRCorsSettings'},
-        'upstream': {'key': 'properties.upstream', 'type': 'ServerlessUpstreamSettings'},
-        'network_ac_ls': {'key': 'properties.networkACLs', 'type': 'SignalRNetworkACLs'},
+        'system_data': {'key': 'systemData', 'type': 'SystemData'},
         'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
         'external_ip': {'key': 'properties.externalIP', 'type': 'str'},
         'host_name': {'key': 'properties.hostName', 'type': 'str'},
@@ -1197,7 +1304,12 @@ class SignalRResource(TrackedResource):
         'server_port': {'key': 'properties.serverPort', 'type': 'int'},
         'version': {'key': 'properties.version', 'type': 'str'},
         'private_endpoint_connections': {'key': 'properties.privateEndpointConnections', 'type': '[PrivateEndpointConnection]'},
+        'shared_private_link_resources': {'key': 'properties.sharedPrivateLinkResources', 'type': '[SharedPrivateLinkResource]'},
         'tls': {'key': 'properties.tls', 'type': 'SignalRTlsSettings'},
+        'features': {'key': 'properties.features', 'type': '[SignalRFeature]'},
+        'cors': {'key': 'properties.cors', 'type': 'SignalRCorsSettings'},
+        'upstream': {'key': 'properties.upstream', 'type': 'ServerlessUpstreamSettings'},
+        'network_ac_ls': {'key': 'properties.networkACLs', 'type': 'SignalRNetworkACLs'},
     }
 
     def __init__(
@@ -1208,10 +1320,7 @@ class SignalRResource(TrackedResource):
         self.sku = kwargs.get('sku', None)
         self.kind = kwargs.get('kind', None)
         self.identity = kwargs.get('identity', None)
-        self.features = kwargs.get('features', None)
-        self.cors = kwargs.get('cors', None)
-        self.upstream = kwargs.get('upstream', None)
-        self.network_ac_ls = kwargs.get('network_ac_ls', None)
+        self.system_data = None
         self.provisioning_state = None
         self.external_ip = None
         self.host_name = None
@@ -1219,13 +1328,18 @@ class SignalRResource(TrackedResource):
         self.server_port = None
         self.version = None
         self.private_endpoint_connections = None
+        self.shared_private_link_resources = None
         self.tls = kwargs.get('tls', None)
+        self.features = kwargs.get('features', None)
+        self.cors = kwargs.get('cors', None)
+        self.upstream = kwargs.get('upstream', None)
+        self.network_ac_ls = kwargs.get('network_ac_ls', None)
 
 
 class SignalRResourceList(msrest.serialization.Model):
-    """Object that includes an array of SignalR services and a possible link for next set.
+    """Object that includes an array of resources and a possible link for next set.
 
-    :param value: List of SignalR services.
+    :param value: List of the resources.
     :type value: list[~azure.mgmt.signalr.models.SignalRResource]
     :param next_link: The URL the client should use to fetch the next page (per server side
      paging).
@@ -1248,7 +1362,7 @@ class SignalRResourceList(msrest.serialization.Model):
 
 
 class SignalRTlsSettings(msrest.serialization.Model):
-    """TLS settings for SignalR.
+    """TLS settings for the resource.
 
     :param client_cert_enabled: Request client certificate during TLS handshake if enabled.
     :type client_cert_enabled: bool
@@ -1267,7 +1381,7 @@ class SignalRTlsSettings(msrest.serialization.Model):
 
 
 class SignalRUsage(msrest.serialization.Model):
-    """Object that describes a specific usage of SignalR resources.
+    """Object that describes a specific usage of the resources.
 
     :param id: Fully qualified ARM resource id.
     :type id: str
@@ -1304,9 +1418,9 @@ class SignalRUsage(msrest.serialization.Model):
 
 
 class SignalRUsageList(msrest.serialization.Model):
-    """Object that includes an array of SignalR resource usages and a possible link for next set.
+    """Object that includes an array of the resource usages and a possible link for next set.
 
-    :param value: List of SignalR usages.
+    :param value: List of the resource usages.
     :type value: list[~azure.mgmt.signalr.models.SignalRUsage]
     :param next_link: The URL the client should use to fetch the next page (per server side
      paging).
@@ -1349,6 +1463,47 @@ class SignalRUsageName(msrest.serialization.Model):
         super(SignalRUsageName, self).__init__(**kwargs)
         self.value = kwargs.get('value', None)
         self.localized_value = kwargs.get('localized_value', None)
+
+
+class SystemData(msrest.serialization.Model):
+    """Metadata pertaining to creation and last modification of the resource.
+
+    :param created_by: The identity that created the resource.
+    :type created_by: str
+    :param created_by_type: The type of identity that created the resource. Possible values
+     include: "User", "Application", "ManagedIdentity", "Key".
+    :type created_by_type: str or ~azure.mgmt.signalr.models.CreatedByType
+    :param created_at: The timestamp of resource creation (UTC).
+    :type created_at: ~datetime.datetime
+    :param last_modified_by: The identity that last modified the resource.
+    :type last_modified_by: str
+    :param last_modified_by_type: The type of identity that last modified the resource. Possible
+     values include: "User", "Application", "ManagedIdentity", "Key".
+    :type last_modified_by_type: str or ~azure.mgmt.signalr.models.CreatedByType
+    :param last_modified_at: The timestamp of resource last modification (UTC).
+    :type last_modified_at: ~datetime.datetime
+    """
+
+    _attribute_map = {
+        'created_by': {'key': 'createdBy', 'type': 'str'},
+        'created_by_type': {'key': 'createdByType', 'type': 'str'},
+        'created_at': {'key': 'createdAt', 'type': 'iso-8601'},
+        'last_modified_by': {'key': 'lastModifiedBy', 'type': 'str'},
+        'last_modified_by_type': {'key': 'lastModifiedByType', 'type': 'str'},
+        'last_modified_at': {'key': 'lastModifiedAt', 'type': 'iso-8601'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(SystemData, self).__init__(**kwargs)
+        self.created_by = kwargs.get('created_by', None)
+        self.created_by_type = kwargs.get('created_by_type', None)
+        self.created_at = kwargs.get('created_at', None)
+        self.last_modified_by = kwargs.get('last_modified_by', None)
+        self.last_modified_by_type = kwargs.get('last_modified_by_type', None)
+        self.last_modified_at = kwargs.get('last_modified_at', None)
 
 
 class UpstreamAuthSettings(msrest.serialization.Model):

@@ -47,12 +47,12 @@ class SignalRPrivateLinkResourcesOperations:
         resource_name: str,
         **kwargs
     ) -> AsyncIterable["_models.PrivateLinkResourceList"]:
-        """Get the private link resources that need to be created for a SignalR resource.
+        """Get the private link resources that need to be created for a resource.
 
         :param resource_group_name: The name of the resource group that contains the resource. You can
          obtain this value from the Azure Resource Manager API or the portal.
         :type resource_group_name: str
-        :param resource_name: The name of the SignalR resource.
+        :param resource_name: The name of the resource.
         :type resource_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: An iterator like instance of either PrivateLinkResourceList or the result of cls(response)
@@ -64,7 +64,7 @@ class SignalRPrivateLinkResourcesOperations:
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2020-07-01-preview"
+        api_version = "2021-04-01-preview"
         accept = "application/json"
 
         def prepare_request(next_link=None):
@@ -106,7 +106,7 @@ class SignalRPrivateLinkResourcesOperations:
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
-                error = self._deserialize(_models.ErrorResponse, response)
+                error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, response)
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
