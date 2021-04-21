@@ -296,7 +296,11 @@ class HttpResponseError(AzureError):
     @property
     def error(self):
         # type: (...) -> Optional[ODataV4Format]
-        """Return the parsed error body"""
+        """Return the parsed error body
+
+        If a streamed response is resulting in an error, please
+        make sure you read in your response before accessing this property.
+        """
         if not self._error:
             self._error = self._parse_odata_body(self.response.text())
         return self._error

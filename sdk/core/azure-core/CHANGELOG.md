@@ -2,6 +2,11 @@
 
 ## 1.13.1 (Unreleased)
 
+### Bug fixes
+
+- In case of an error response with a streamed body, allow `error` and `model` properties of `HttpResponseError` to
+update with values if users read in response body
+
 
 ## 1.13.0 (2021-04-02)
 
