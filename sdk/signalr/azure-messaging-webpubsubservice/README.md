@@ -32,12 +32,12 @@ In order to interact with the Azure WebPubSub service, you'll need to create an 
 ```python
 >>> from azure.messaging.webpubsubservice import WebPubSubServiceClient
 >>> from azure.core.credentials import AzureKeyCredential
->>> from azure.messaging.webpubsubservicerest import build_send_to_all
+>>> from azure.messaging.webpubsubservice.rest import build_send_to_all_request
 >>> client = WebPubSubServiceClient(endpoint='<endpoint>', credential=AzureKeyCredential('somesecret'))
 >>> request = build_send_to_all_request('default', json={ 'Hello':  'webpubsub!' })
 >>> request
 <HttpRequest [POST], url: '/api/hubs/default/:send?api-version=2020-10-01'>
->>> response = client.send_request()
+>>> response = client.send_request(request)
 >>> response
 <RequestsTransportResponse: 202 Accepted>
 >>> response.status_code 
@@ -52,8 +52,6 @@ In order to interact with the Azure WebPubSub service, you'll need to create an 
 ## Key concepts
 
 ### Hubs, groups, connections and users
-
-TODO: add conceptual docs
 
 ## Troubleshooting
 
