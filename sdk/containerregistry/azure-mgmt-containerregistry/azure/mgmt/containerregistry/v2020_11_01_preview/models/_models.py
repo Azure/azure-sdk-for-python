@@ -3261,7 +3261,7 @@ class Registry(Resource):
     :type zone_redundancy: str or
      ~azure.mgmt.containerregistry.v2020_11_01_preview.models.ZoneRedundancy
     :param anonymous_pull_enabled: Enables registry-wide pull from
-     unauthenticated clients.
+     unauthenticated clients. Default value: False .
     :type anonymous_pull_enabled: bool
     """
 
@@ -3324,7 +3324,7 @@ class Registry(Resource):
         self.public_network_access = kwargs.get('public_network_access', "Enabled")
         self.network_rule_bypass_options = kwargs.get('network_rule_bypass_options', "AzureServices")
         self.zone_redundancy = kwargs.get('zone_redundancy', "Disabled")
-        self.anonymous_pull_enabled = kwargs.get('anonymous_pull_enabled', None)
+        self.anonymous_pull_enabled = kwargs.get('anonymous_pull_enabled', False)
 
 
 class RegistryListCredentialsResult(Model):
