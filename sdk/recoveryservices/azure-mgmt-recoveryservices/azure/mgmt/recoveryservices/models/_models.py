@@ -10,6 +10,7 @@
 # --------------------------------------------------------------------------
 
 from msrest.serialization import Model
+from msrest.exceptions import HttpOperationError
 
 
 class CertificateRequest(Model):
@@ -195,10 +196,143 @@ class ClientDiscoveryValueForSingleApi(Model):
 
 class CloudError(Model):
     """CloudError.
+
+    An error response from Azure Backup.
+
+    :param error:
+    :type error: ~azure.mgmt.recoveryservices.models.Error
     """
 
     _attribute_map = {
+        'error': {'key': 'error', 'type': 'Error'},
     }
+
+    def __init__(self, **kwargs):
+        super(CloudError, self).__init__(**kwargs)
+        self.error = kwargs.get('error', None)
+
+
+class CloudErrorException(HttpOperationError):
+    """Server responsed with exception of type: 'CloudError'.
+
+    :param deserialize: A deserializer
+    :param response: Server response to be deserialized.
+    """
+
+    def __init__(self, deserialize, response, *args):
+
+        super(CloudErrorException, self).__init__(deserialize, response, 'CloudError', *args)
+
+
+class CmkKekIdentity(Model):
+    """The details of the identity used for CMK.
+
+    :param use_system_assigned_identity: Indicate that system assigned
+     identity should be used. Mutually exclusive with 'userAssignedIdentity'
+     field
+    :type use_system_assigned_identity: bool
+    :param user_assigned_identity: The user assigned identity to be used to
+     grant permissions in case the type of identity used is UserAssigned
+    :type user_assigned_identity: str
+    """
+
+    _attribute_map = {
+        'use_system_assigned_identity': {'key': 'useSystemAssignedIdentity', 'type': 'bool'},
+        'user_assigned_identity': {'key': 'userAssignedIdentity', 'type': 'str'},
+    }
+
+    def __init__(self, **kwargs):
+        super(CmkKekIdentity, self).__init__(**kwargs)
+        self.use_system_assigned_identity = kwargs.get('use_system_assigned_identity', None)
+        self.user_assigned_identity = kwargs.get('user_assigned_identity', None)
+
+
+class CmkKeyVaultProperties(Model):
+    """The properties of the Key Vault which hosts CMK.
+
+    :param key_uri: The key uri of the Customer Managed Key
+    :type key_uri: str
+    """
+
+    _attribute_map = {
+        'key_uri': {'key': 'keyUri', 'type': 'str'},
+    }
+
+    def __init__(self, **kwargs):
+        super(CmkKeyVaultProperties, self).__init__(**kwargs)
+        self.key_uri = kwargs.get('key_uri', None)
+
+
+class Error(Model):
+    """The resource management error response.
+
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    :ivar additional_info: The error additional info.
+    :vartype additional_info:
+     list[~azure.mgmt.recoveryservices.models.ErrorAdditionalInfo]
+    :ivar code: The error code.
+    :vartype code: str
+    :ivar details: The error details.
+    :vartype details: list[~azure.mgmt.recoveryservices.models.Error]
+    :ivar message: The error message.
+    :vartype message: str
+    :ivar target: The error target.
+    :vartype target: str
+    """
+
+    _validation = {
+        'additional_info': {'readonly': True},
+        'code': {'readonly': True},
+        'details': {'readonly': True},
+        'message': {'readonly': True},
+        'target': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'additional_info': {'key': 'additionalInfo', 'type': '[ErrorAdditionalInfo]'},
+        'code': {'key': 'code', 'type': 'str'},
+        'details': {'key': 'details', 'type': '[Error]'},
+        'message': {'key': 'message', 'type': 'str'},
+        'target': {'key': 'target', 'type': 'str'},
+    }
+
+    def __init__(self, **kwargs):
+        super(Error, self).__init__(**kwargs)
+        self.additional_info = None
+        self.code = None
+        self.details = None
+        self.message = None
+        self.target = None
+
+
+class ErrorAdditionalInfo(Model):
+    """The resource management error additional info.
+
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    :ivar info: The additional info.
+    :vartype info: object
+    :ivar type: The additional info type.
+    :vartype type: str
+    """
+
+    _validation = {
+        'info': {'readonly': True},
+        'type': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'info': {'key': 'info', 'type': 'object'},
+        'type': {'key': 'type', 'type': 'str'},
+    }
+
+    def __init__(self, **kwargs):
+        super(ErrorAdditionalInfo, self).__init__(**kwargs)
+        self.info = None
+        self.type = None
 
 
 class IdentityData(Model):
@@ -213,10 +347,19 @@ class IdentityData(Model):
     :vartype principal_id: str
     :ivar tenant_id: The tenant ID of resource.
     :vartype tenant_id: str
-    :param type: Required. The identity type. Possible values include:
-     'SystemAssigned', 'None'
+    :param type: Required. The type of managed identity used. The type
+     'SystemAssigned, UserAssigned' includes both an implicitly created
+     identity and a set of user-assigned identities. The type 'None' will
+     remove any identities. Possible values include: 'SystemAssigned', 'None',
+     'UserAssigned', 'SystemAssigned, UserAssigned'
     :type type: str or
      ~azure.mgmt.recoveryservices.models.ResourceIdentityType
+    :param user_assigned_identities: The list of user-assigned identities
+     associated with the resource. The user-assigned identity dictionary keys
+     will be ARM resource ids in the form:
+     '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ManagedIdentity/userAssignedIdentities/{identityName}'.
+    :type user_assigned_identities: dict[str,
+     ~azure.mgmt.recoveryservices.models.UserIdentity]
     """
 
     _validation = {
@@ -229,6 +372,7 @@ class IdentityData(Model):
         'principal_id': {'key': 'principalId', 'type': 'str'},
         'tenant_id': {'key': 'tenantId', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
+        'user_assigned_identities': {'key': 'userAssignedIdentities', 'type': '{UserIdentity}'},
     }
 
     def __init__(self, **kwargs):
@@ -236,6 +380,7 @@ class IdentityData(Model):
         self.principal_id = None
         self.tenant_id = None
         self.type = kwargs.get('type', None)
+        self.user_assigned_identities = kwargs.get('user_assigned_identities', None)
 
 
 class JobsSummary(Model):
@@ -322,6 +467,46 @@ class NameInfo(Model):
         self.localized_value = kwargs.get('localized_value', None)
 
 
+class OperationResource(Model):
+    """Operation Resource.
+
+    :param end_time: End time of the operation
+    :type end_time: datetime
+    :param error: Required if status == failed or status == canceled. This is
+     the OData v4 error format, used by the RPC and will go into the v2.2 Azure
+     REST API guidelines.
+    :type error: ~azure.mgmt.recoveryservices.models.Error
+    :param id: It should match what is used to GET the operation result
+    :type id: str
+    :param name: It must match the last segment of the "id" field, and will
+     typically be a GUID / system generated value
+    :type name: str
+    :param status: The status of the operation.
+     (InProgress/Success/Failed/Cancelled)
+    :type status: str
+    :param start_time: Start time of the operation
+    :type start_time: datetime
+    """
+
+    _attribute_map = {
+        'end_time': {'key': 'endTime', 'type': 'iso-8601'},
+        'error': {'key': 'error', 'type': 'Error'},
+        'id': {'key': 'id', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
+        'status': {'key': 'status', 'type': 'str'},
+        'start_time': {'key': 'startTime', 'type': 'iso-8601'},
+    }
+
+    def __init__(self, **kwargs):
+        super(OperationResource, self).__init__(**kwargs)
+        self.end_time = kwargs.get('end_time', None)
+        self.error = kwargs.get('error', None)
+        self.id = kwargs.get('id', None)
+        self.name = kwargs.get('name', None)
+        self.status = kwargs.get('status', None)
+        self.start_time = kwargs.get('start_time', None)
+
+
 class Resource(Model):
     """ARM Resource.
 
@@ -335,8 +520,8 @@ class Resource(Model):
     :ivar type: Resource type represents the complete path of the form
      Namespace/ResourceType/ResourceType/...
     :vartype type: str
-    :param e_tag: Optional ETag.
-    :type e_tag: str
+    :param etag: Optional ETag.
+    :type etag: str
     """
 
     _validation = {
@@ -349,7 +534,7 @@ class Resource(Model):
         'id': {'key': 'id', 'type': 'str'},
         'name': {'key': 'name', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
-        'e_tag': {'key': 'eTag', 'type': 'str'},
+        'etag': {'key': 'etag', 'type': 'str'},
     }
 
     def __init__(self, **kwargs):
@@ -357,7 +542,7 @@ class Resource(Model):
         self.id = None
         self.name = None
         self.type = None
-        self.e_tag = kwargs.get('e_tag', None)
+        self.etag = kwargs.get('etag', None)
 
 
 class PatchTrackedResource(Resource):
@@ -373,8 +558,8 @@ class PatchTrackedResource(Resource):
     :ivar type: Resource type represents the complete path of the form
      Namespace/ResourceType/ResourceType/...
     :vartype type: str
-    :param e_tag: Optional ETag.
-    :type e_tag: str
+    :param etag: Optional ETag.
+    :type etag: str
     :param location: Resource location.
     :type location: str
     :param tags: Resource tags.
@@ -391,7 +576,7 @@ class PatchTrackedResource(Resource):
         'id': {'key': 'id', 'type': 'str'},
         'name': {'key': 'name', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
-        'e_tag': {'key': 'eTag', 'type': 'str'},
+        'etag': {'key': 'etag', 'type': 'str'},
         'location': {'key': 'location', 'type': 'str'},
         'tags': {'key': 'tags', 'type': '{str}'},
     }
@@ -415,8 +600,8 @@ class PatchVault(PatchTrackedResource):
     :ivar type: Resource type represents the complete path of the form
      Namespace/ResourceType/ResourceType/...
     :vartype type: str
-    :param e_tag: Optional ETag.
-    :type e_tag: str
+    :param etag: Optional ETag.
+    :type etag: str
     :param location: Resource location.
     :type location: str
     :param tags: Resource tags.
@@ -439,7 +624,7 @@ class PatchVault(PatchTrackedResource):
         'id': {'key': 'id', 'type': 'str'},
         'name': {'key': 'name', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
-        'e_tag': {'key': 'eTag', 'type': 'str'},
+        'etag': {'key': 'etag', 'type': 'str'},
         'location': {'key': 'location', 'type': 'str'},
         'tags': {'key': 'tags', 'type': '{str}'},
         'properties': {'key': 'properties', 'type': 'VaultProperties'},
@@ -792,6 +977,8 @@ class ResourceCertificateAndAadDetails(ResourceCertificateDetails):
     :param azure_management_endpoint_audience: Required. Azure Management
      Endpoint Audience.
     :type azure_management_endpoint_audience: str
+    :param service_resource_id: Service Resource Id.
+    :type service_resource_id: str
     """
 
     _validation = {
@@ -818,6 +1005,7 @@ class ResourceCertificateAndAadDetails(ResourceCertificateDetails):
         'service_principal_client_id': {'key': 'servicePrincipalClientId', 'type': 'str'},
         'service_principal_object_id': {'key': 'servicePrincipalObjectId', 'type': 'str'},
         'azure_management_endpoint_audience': {'key': 'azureManagementEndpointAudience', 'type': 'str'},
+        'service_resource_id': {'key': 'serviceResourceId', 'type': 'str'},
     }
 
     def __init__(self, **kwargs):
@@ -827,6 +1015,7 @@ class ResourceCertificateAndAadDetails(ResourceCertificateDetails):
         self.service_principal_client_id = kwargs.get('service_principal_client_id', None)
         self.service_principal_object_id = kwargs.get('service_principal_object_id', None)
         self.azure_management_endpoint_audience = kwargs.get('azure_management_endpoint_audience', None)
+        self.service_resource_id = kwargs.get('service_resource_id', None)
         self.auth_type = 'AzureActiveDirectory'
 
 
@@ -900,6 +1089,8 @@ class Sku(Model):
     :param name: Required. The Sku name. Possible values include: 'Standard',
      'RS0'
     :type name: str or ~azure.mgmt.recoveryservices.models.SkuName
+    :param tier: The Sku tier.
+    :type tier: str
     """
 
     _validation = {
@@ -908,11 +1099,55 @@ class Sku(Model):
 
     _attribute_map = {
         'name': {'key': 'name', 'type': 'str'},
+        'tier': {'key': 'tier', 'type': 'str'},
     }
 
     def __init__(self, **kwargs):
         super(Sku, self).__init__(**kwargs)
         self.name = kwargs.get('name', None)
+        self.tier = kwargs.get('tier', None)
+
+
+class SystemData(Model):
+    """Metadata pertaining to creation and last modification of the resource.
+
+    :param created_by: The identity that created the resource.
+    :type created_by: str
+    :param created_by_type: The type of identity that created the resource.
+     Possible values include: 'User', 'Application', 'ManagedIdentity', 'Key'
+    :type created_by_type: str or
+     ~azure.mgmt.recoveryservices.models.CreatedByType
+    :param created_at: The timestamp of resource creation (UTC).
+    :type created_at: datetime
+    :param last_modified_by: The identity that last modified the resource.
+    :type last_modified_by: str
+    :param last_modified_by_type: The type of identity that last modified the
+     resource. Possible values include: 'User', 'Application',
+     'ManagedIdentity', 'Key'
+    :type last_modified_by_type: str or
+     ~azure.mgmt.recoveryservices.models.CreatedByType
+    :param last_modified_at: The type of identity that last modified the
+     resource.
+    :type last_modified_at: datetime
+    """
+
+    _attribute_map = {
+        'created_by': {'key': 'createdBy', 'type': 'str'},
+        'created_by_type': {'key': 'createdByType', 'type': 'str'},
+        'created_at': {'key': 'createdAt', 'type': 'iso-8601'},
+        'last_modified_by': {'key': 'lastModifiedBy', 'type': 'str'},
+        'last_modified_by_type': {'key': 'lastModifiedByType', 'type': 'str'},
+        'last_modified_at': {'key': 'lastModifiedAt', 'type': 'iso-8601'},
+    }
+
+    def __init__(self, **kwargs):
+        super(SystemData, self).__init__(**kwargs)
+        self.created_by = kwargs.get('created_by', None)
+        self.created_by_type = kwargs.get('created_by_type', None)
+        self.created_at = kwargs.get('created_at', None)
+        self.last_modified_by = kwargs.get('last_modified_by', None)
+        self.last_modified_by_type = kwargs.get('last_modified_by_type', None)
+        self.last_modified_at = kwargs.get('last_modified_at', None)
 
 
 class TrackedResource(Resource):
@@ -930,8 +1165,8 @@ class TrackedResource(Resource):
     :ivar type: Resource type represents the complete path of the form
      Namespace/ResourceType/ResourceType/...
     :vartype type: str
-    :param e_tag: Optional ETag.
-    :type e_tag: str
+    :param etag: Optional ETag.
+    :type etag: str
     :param location: Required. Resource location.
     :type location: str
     :param tags: Resource tags.
@@ -949,7 +1184,7 @@ class TrackedResource(Resource):
         'id': {'key': 'id', 'type': 'str'},
         'name': {'key': 'name', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
-        'e_tag': {'key': 'eTag', 'type': 'str'},
+        'etag': {'key': 'etag', 'type': 'str'},
         'location': {'key': 'location', 'type': 'str'},
         'tags': {'key': 'tags', 'type': '{str}'},
     }
@@ -1029,6 +1264,34 @@ class UpgradeDetails(Model):
         self.previous_resource_id = None
 
 
+class UserIdentity(Model):
+    """A resource identity that is managed by the user of the service.
+
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    :ivar principal_id: The principal ID of the user-assigned identity.
+    :vartype principal_id: str
+    :ivar client_id: The client ID of the user-assigned identity.
+    :vartype client_id: str
+    """
+
+    _validation = {
+        'principal_id': {'readonly': True},
+        'client_id': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'principal_id': {'key': 'principalId', 'type': 'str'},
+        'client_id': {'key': 'clientId', 'type': 'str'},
+    }
+
+    def __init__(self, **kwargs):
+        super(UserIdentity, self).__init__(**kwargs)
+        self.principal_id = None
+        self.client_id = None
+
+
 class Vault(TrackedResource):
     """Resource information, as returned by the resource provider.
 
@@ -1044,8 +1307,8 @@ class Vault(TrackedResource):
     :ivar type: Resource type represents the complete path of the form
      Namespace/ResourceType/ResourceType/...
     :vartype type: str
-    :param e_tag: Optional ETag.
-    :type e_tag: str
+    :param etag: Optional ETag.
+    :type etag: str
     :param location: Required. Resource location.
     :type location: str
     :param tags: Resource tags.
@@ -1056,6 +1319,8 @@ class Vault(TrackedResource):
     :type properties: ~azure.mgmt.recoveryservices.models.VaultProperties
     :param sku:
     :type sku: ~azure.mgmt.recoveryservices.models.Sku
+    :param system_data:
+    :type system_data: ~azure.mgmt.recoveryservices.models.SystemData
     """
 
     _validation = {
@@ -1069,12 +1334,13 @@ class Vault(TrackedResource):
         'id': {'key': 'id', 'type': 'str'},
         'name': {'key': 'name', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
-        'e_tag': {'key': 'eTag', 'type': 'str'},
+        'etag': {'key': 'etag', 'type': 'str'},
         'location': {'key': 'location', 'type': 'str'},
         'tags': {'key': 'tags', 'type': '{str}'},
         'identity': {'key': 'identity', 'type': 'IdentityData'},
         'properties': {'key': 'properties', 'type': 'VaultProperties'},
         'sku': {'key': 'sku', 'type': 'Sku'},
+        'system_data': {'key': 'systemData', 'type': 'SystemData'},
     }
 
     def __init__(self, **kwargs):
@@ -1082,6 +1348,7 @@ class Vault(TrackedResource):
         self.identity = kwargs.get('identity', None)
         self.properties = kwargs.get('properties', None)
         self.sku = kwargs.get('sku', None)
+        self.system_data = kwargs.get('system_data', None)
 
 
 class VaultCertificateResponse(Model):
@@ -1137,8 +1404,8 @@ class VaultExtendedInfoResource(Resource):
     :ivar type: Resource type represents the complete path of the form
      Namespace/ResourceType/ResourceType/...
     :vartype type: str
-    :param e_tag: Optional ETag.
-    :type e_tag: str
+    :param etag: Optional ETag.
+    :type etag: str
     :param integrity_key: Integrity key.
     :type integrity_key: str
     :param encryption_key: Encryption key.
@@ -1159,7 +1426,7 @@ class VaultExtendedInfoResource(Resource):
         'id': {'key': 'id', 'type': 'str'},
         'name': {'key': 'name', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
-        'e_tag': {'key': 'eTag', 'type': 'str'},
+        'etag': {'key': 'etag', 'type': 'str'},
         'integrity_key': {'key': 'properties.integrityKey', 'type': 'str'},
         'encryption_key': {'key': 'properties.encryptionKey', 'type': 'str'},
         'encryption_key_thumbprint': {'key': 'properties.encryptionKeyThumbprint', 'type': 'str'},
@@ -1195,6 +1462,9 @@ class VaultProperties(Model):
      site recovery. Possible values include: 'None', 'Enabled'
     :vartype private_endpoint_state_for_site_recovery: str or
      ~azure.mgmt.recoveryservices.models.VaultPrivateEndpointState
+    :param encryption: Customer Managed Key details of the resource.
+    :type encryption:
+     ~azure.mgmt.recoveryservices.models.VaultPropertiesEncryption
     """
 
     _validation = {
@@ -1210,6 +1480,7 @@ class VaultProperties(Model):
         'private_endpoint_connections': {'key': 'privateEndpointConnections', 'type': '[PrivateEndpointConnectionVaultProperties]'},
         'private_endpoint_state_for_backup': {'key': 'privateEndpointStateForBackup', 'type': 'str'},
         'private_endpoint_state_for_site_recovery': {'key': 'privateEndpointStateForSiteRecovery', 'type': 'str'},
+        'encryption': {'key': 'encryption', 'type': 'VaultPropertiesEncryption'},
     }
 
     def __init__(self, **kwargs):
@@ -1219,6 +1490,34 @@ class VaultProperties(Model):
         self.private_endpoint_connections = None
         self.private_endpoint_state_for_backup = None
         self.private_endpoint_state_for_site_recovery = None
+        self.encryption = kwargs.get('encryption', None)
+
+
+class VaultPropertiesEncryption(Model):
+    """Customer Managed Key details of the resource.
+
+    :param key_vault_properties:
+    :type key_vault_properties:
+     ~azure.mgmt.recoveryservices.models.CmkKeyVaultProperties
+    :param kek_identity:
+    :type kek_identity: ~azure.mgmt.recoveryservices.models.CmkKekIdentity
+    :param infrastructure_encryption: Enabling/Disabling the Double Encryption
+     state. Possible values include: 'Enabled', 'Disabled'
+    :type infrastructure_encryption: str or
+     ~azure.mgmt.recoveryservices.models.InfrastructureEncryptionState
+    """
+
+    _attribute_map = {
+        'key_vault_properties': {'key': 'keyVaultProperties', 'type': 'CmkKeyVaultProperties'},
+        'kek_identity': {'key': 'kekIdentity', 'type': 'CmkKekIdentity'},
+        'infrastructure_encryption': {'key': 'infrastructureEncryption', 'type': 'str'},
+    }
+
+    def __init__(self, **kwargs):
+        super(VaultPropertiesEncryption, self).__init__(**kwargs)
+        self.key_vault_properties = kwargs.get('key_vault_properties', None)
+        self.kek_identity = kwargs.get('kek_identity', None)
+        self.infrastructure_encryption = kwargs.get('infrastructure_encryption', None)
 
 
 class VaultUsage(Model):

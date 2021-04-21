@@ -13,6 +13,7 @@ from msrest.service_client import SDKClient
 from msrest import Serializer, Deserializer
 
 from ._configuration import RecoveryServicesClientConfiguration
+from .operations import RecoveryServicesClientOperationsMixin
 from .operations import VaultCertificatesOperations
 from .operations import RegisteredIdentitiesOperations
 from .operations import ReplicationUsagesOperations
@@ -25,7 +26,7 @@ from .operations import UsagesOperations
 from . import models
 
 
-class RecoveryServicesClient(SDKClient):
+class RecoveryServicesClient(RecoveryServicesClientOperationsMixin, SDKClient):
     """Recovery Services Client
 
     :ivar config: Configuration for client.
@@ -65,7 +66,7 @@ class RecoveryServicesClient(SDKClient):
         super(RecoveryServicesClient, self).__init__(self.config.credentials, self.config)
 
         client_models = {k: v for k, v in models.__dict__.items() if isinstance(v, type)}
-        self.api_version = '2016-06-01'
+        self.api_version = '2021-03-01'
         self._serialize = Serializer(client_models)
         self._deserialize = Deserializer(client_models)
 

@@ -88,14 +88,18 @@ try:
     from ._models_py3 import AzureWorkloadRestoreRequest
     from ._models_py3 import AzureWorkloadSAPHanaPointInTimeRecoveryPoint
     from ._models_py3 import AzureWorkloadSAPHanaPointInTimeRestoreRequest
+    from ._models_py3 import AzureWorkloadSAPHanaPointInTimeRestoreWithRehydrateRequest
     from ._models_py3 import AzureWorkloadSAPHanaRecoveryPoint
     from ._models_py3 import AzureWorkloadSAPHanaRestoreRequest
+    from ._models_py3 import AzureWorkloadSAPHanaRestoreWithRehydrateRequest
     from ._models_py3 import AzureWorkloadSQLAutoProtectionIntent
     from ._models_py3 import AzureWorkloadSQLPointInTimeRecoveryPoint
     from ._models_py3 import AzureWorkloadSQLPointInTimeRestoreRequest
+    from ._models_py3 import AzureWorkloadSQLPointInTimeRestoreWithRehydrateRequest
     from ._models_py3 import AzureWorkloadSQLRecoveryPoint
     from ._models_py3 import AzureWorkloadSQLRecoveryPointExtendedInfo
     from ._models_py3 import AzureWorkloadSQLRestoreRequest
+    from ._models_py3 import AzureWorkloadSQLRestoreWithRehydrateRequest
     from ._models_py3 import BackupEngineBase
     from ._models_py3 import BackupEngineBaseResource
     from ._models_py3 import BackupEngineExtendedInfo
@@ -111,6 +115,7 @@ try:
     from ._models_py3 import BackupStatusRequest
     from ._models_py3 import BackupStatusResponse
     from ._models_py3 import BEKDetails
+    from ._models_py3 import BMSAADPropertiesQueryObject
     from ._models_py3 import BMSBackupEngineQueryObject
     from ._models_py3 import BMSBackupEnginesQueryObject
     from ._models_py3 import BMSBackupSummariesQueryObject
@@ -151,7 +156,6 @@ try:
     from ._models_py3 import EncryptionDetails
     from ._models_py3 import ErrorAdditionalInfo
     from ._models_py3 import ErrorDetail
-    from ._models_py3 import ErrorResponse, ErrorResponseException
     from ._models_py3 import ExportJobsOperationResultInfo
     from ._models_py3 import ExtendedProperties
     from ._models_py3 import FeatureSupportRequest
@@ -167,6 +171,7 @@ try:
     from ._models_py3 import IaaSVMProtectableItem
     from ._models_py3 import IaasVMRecoveryPoint
     from ._models_py3 import IaasVMRestoreRequest
+    from ._models_py3 import IaasVMRestoreWithRehydrationRequest
     from ._models_py3 import ILRRequest
     from ._models_py3 import ILRRequestResource
     from ._models_py3 import InquiryInfo
@@ -179,6 +184,7 @@ try:
     from ._models_py3 import KEKDetails
     from ._models_py3 import KeyAndSecretDetails
     from ._models_py3 import KPIResourceHealthDetails
+    from ._models_py3 import ListRecoveryPointsRecommendedForMoveRequest
     from ._models_py3 import LogSchedulePolicy
     from ._models_py3 import LongTermRetentionPolicy
     from ._models_py3 import LongTermSchedulePolicy
@@ -193,6 +199,7 @@ try:
     from ._models_py3 import MabJobTaskDetails
     from ._models_py3 import MabProtectionPolicy
     from ._models_py3 import MonthlyRetentionSchedule
+    from ._models_py3 import MoveRPAcrossTiersRequest
     from ._models_py3 import NameInfo
     from ._models_py3 import NewErrorResponse, NewErrorResponseException
     from ._models_py3 import NewErrorResponseError
@@ -232,6 +239,8 @@ try:
     from ._models_py3 import ProtectionPolicyResource
     from ._models_py3 import RecoveryPoint
     from ._models_py3 import RecoveryPointDiskConfiguration
+    from ._models_py3 import RecoveryPointMoveReadinessInfo
+    from ._models_py3 import RecoveryPointRehydrationInfo
     from ._models_py3 import RecoveryPointResource
     from ._models_py3 import RecoveryPointTierInformation
     from ._models_py3 import Resource
@@ -350,14 +359,18 @@ except (SyntaxError, ImportError):
     from ._models import AzureWorkloadRestoreRequest
     from ._models import AzureWorkloadSAPHanaPointInTimeRecoveryPoint
     from ._models import AzureWorkloadSAPHanaPointInTimeRestoreRequest
+    from ._models import AzureWorkloadSAPHanaPointInTimeRestoreWithRehydrateRequest
     from ._models import AzureWorkloadSAPHanaRecoveryPoint
     from ._models import AzureWorkloadSAPHanaRestoreRequest
+    from ._models import AzureWorkloadSAPHanaRestoreWithRehydrateRequest
     from ._models import AzureWorkloadSQLAutoProtectionIntent
     from ._models import AzureWorkloadSQLPointInTimeRecoveryPoint
     from ._models import AzureWorkloadSQLPointInTimeRestoreRequest
+    from ._models import AzureWorkloadSQLPointInTimeRestoreWithRehydrateRequest
     from ._models import AzureWorkloadSQLRecoveryPoint
     from ._models import AzureWorkloadSQLRecoveryPointExtendedInfo
     from ._models import AzureWorkloadSQLRestoreRequest
+    from ._models import AzureWorkloadSQLRestoreWithRehydrateRequest
     from ._models import BackupEngineBase
     from ._models import BackupEngineBaseResource
     from ._models import BackupEngineExtendedInfo
@@ -373,6 +386,7 @@ except (SyntaxError, ImportError):
     from ._models import BackupStatusRequest
     from ._models import BackupStatusResponse
     from ._models import BEKDetails
+    from ._models import BMSAADPropertiesQueryObject
     from ._models import BMSBackupEngineQueryObject
     from ._models import BMSBackupEnginesQueryObject
     from ._models import BMSBackupSummariesQueryObject
@@ -413,7 +427,6 @@ except (SyntaxError, ImportError):
     from ._models import EncryptionDetails
     from ._models import ErrorAdditionalInfo
     from ._models import ErrorDetail
-    from ._models import ErrorResponse, ErrorResponseException
     from ._models import ExportJobsOperationResultInfo
     from ._models import ExtendedProperties
     from ._models import FeatureSupportRequest
@@ -429,6 +442,7 @@ except (SyntaxError, ImportError):
     from ._models import IaaSVMProtectableItem
     from ._models import IaasVMRecoveryPoint
     from ._models import IaasVMRestoreRequest
+    from ._models import IaasVMRestoreWithRehydrationRequest
     from ._models import ILRRequest
     from ._models import ILRRequestResource
     from ._models import InquiryInfo
@@ -441,6 +455,7 @@ except (SyntaxError, ImportError):
     from ._models import KEKDetails
     from ._models import KeyAndSecretDetails
     from ._models import KPIResourceHealthDetails
+    from ._models import ListRecoveryPointsRecommendedForMoveRequest
     from ._models import LogSchedulePolicy
     from ._models import LongTermRetentionPolicy
     from ._models import LongTermSchedulePolicy
@@ -455,6 +470,7 @@ except (SyntaxError, ImportError):
     from ._models import MabJobTaskDetails
     from ._models import MabProtectionPolicy
     from ._models import MonthlyRetentionSchedule
+    from ._models import MoveRPAcrossTiersRequest
     from ._models import NameInfo
     from ._models import NewErrorResponse, NewErrorResponseException
     from ._models import NewErrorResponseError
@@ -494,6 +510,8 @@ except (SyntaxError, ImportError):
     from ._models import ProtectionPolicyResource
     from ._models import RecoveryPoint
     from ._models import RecoveryPointDiskConfiguration
+    from ._models import RecoveryPointMoveReadinessInfo
+    from ._models import RecoveryPointRehydrationInfo
     from ._models import RecoveryPointResource
     from ._models import RecoveryPointTierInformation
     from ._models import Resource
@@ -564,13 +582,13 @@ from ._recovery_services_backup_client_enums import (
     LastBackupStatus,
     ProtectedItemHealthStatus,
     RestorePointType,
+    RecoveryPointTierType,
+    RecoveryPointTierStatus,
     OverwriteOptions,
     RecoveryMode,
     SQLDataDirectoryType,
     RestorePointQueryType,
     RetentionDurationType,
-    RecoveryPointTierType,
-    RecoveryPointTierStatus,
     BackupManagementType,
     JobStatus,
     JobOperationType,
@@ -592,18 +610,19 @@ from ._recovery_services_backup_client_enums import (
     AzureFileShareType,
     InquiryStatus,
     BackupType,
-    OperationType,
-    ContainerType,
-    WorkloadItemType,
-    ProtectionStatus,
-    BackupItemType,
-    OperationStatusValues,
     SupportStatus,
+    WorkloadItemType,
     UsagesUnit,
+    ProtectionStatus,
     FabricName,
     Type,
     ValidationStatus,
     IntentItemType,
+    OperationType,
+    ContainerType,
+    BackupItemType,
+    OperationStatusValues,
+    RehydrationPriority,
 )
 
 __all__ = [
@@ -685,14 +704,18 @@ __all__ = [
     'AzureWorkloadRestoreRequest',
     'AzureWorkloadSAPHanaPointInTimeRecoveryPoint',
     'AzureWorkloadSAPHanaPointInTimeRestoreRequest',
+    'AzureWorkloadSAPHanaPointInTimeRestoreWithRehydrateRequest',
     'AzureWorkloadSAPHanaRecoveryPoint',
     'AzureWorkloadSAPHanaRestoreRequest',
+    'AzureWorkloadSAPHanaRestoreWithRehydrateRequest',
     'AzureWorkloadSQLAutoProtectionIntent',
     'AzureWorkloadSQLPointInTimeRecoveryPoint',
     'AzureWorkloadSQLPointInTimeRestoreRequest',
+    'AzureWorkloadSQLPointInTimeRestoreWithRehydrateRequest',
     'AzureWorkloadSQLRecoveryPoint',
     'AzureWorkloadSQLRecoveryPointExtendedInfo',
     'AzureWorkloadSQLRestoreRequest',
+    'AzureWorkloadSQLRestoreWithRehydrateRequest',
     'BackupEngineBase',
     'BackupEngineBaseResource',
     'BackupEngineExtendedInfo',
@@ -708,6 +731,7 @@ __all__ = [
     'BackupStatusRequest',
     'BackupStatusResponse',
     'BEKDetails',
+    'BMSAADPropertiesQueryObject',
     'BMSBackupEngineQueryObject',
     'BMSBackupEnginesQueryObject',
     'BMSBackupSummariesQueryObject',
@@ -748,7 +772,6 @@ __all__ = [
     'EncryptionDetails',
     'ErrorAdditionalInfo',
     'ErrorDetail',
-    'ErrorResponse', 'ErrorResponseException',
     'ExportJobsOperationResultInfo',
     'ExtendedProperties',
     'FeatureSupportRequest',
@@ -764,6 +787,7 @@ __all__ = [
     'IaaSVMProtectableItem',
     'IaasVMRecoveryPoint',
     'IaasVMRestoreRequest',
+    'IaasVMRestoreWithRehydrationRequest',
     'ILRRequest',
     'ILRRequestResource',
     'InquiryInfo',
@@ -776,6 +800,7 @@ __all__ = [
     'KEKDetails',
     'KeyAndSecretDetails',
     'KPIResourceHealthDetails',
+    'ListRecoveryPointsRecommendedForMoveRequest',
     'LogSchedulePolicy',
     'LongTermRetentionPolicy',
     'LongTermSchedulePolicy',
@@ -790,6 +815,7 @@ __all__ = [
     'MabJobTaskDetails',
     'MabProtectionPolicy',
     'MonthlyRetentionSchedule',
+    'MoveRPAcrossTiersRequest',
     'NameInfo',
     'NewErrorResponse', 'NewErrorResponseException',
     'NewErrorResponseError',
@@ -829,6 +855,8 @@ __all__ = [
     'ProtectionPolicyResource',
     'RecoveryPoint',
     'RecoveryPointDiskConfiguration',
+    'RecoveryPointMoveReadinessInfo',
+    'RecoveryPointRehydrationInfo',
     'RecoveryPointResource',
     'RecoveryPointTierInformation',
     'Resource',
@@ -868,6 +896,9 @@ __all__ = [
     'WorkloadProtectableItem',
     'WorkloadProtectableItemResource',
     'YearlyRetentionSchedule',
+    'ProtectionIntentResourcePaged',
+    'BackupManagementUsagePaged',
+    'ClientDiscoveryValueForSingleApiPaged',
     'RecoveryPointResourcePaged',
     'ProtectionPolicyResourcePaged',
     'JobResourcePaged',
@@ -877,9 +908,6 @@ __all__ = [
     'WorkloadItemResourcePaged',
     'WorkloadProtectableItemResourcePaged',
     'ProtectionContainerResourcePaged',
-    'ProtectionIntentResourcePaged',
-    'BackupManagementUsagePaged',
-    'ClientDiscoveryValueForSingleApiPaged',
     'EncryptionAtRestType',
     'LastUpdateStatus',
     'InfrastructureEncryptionState',
@@ -898,13 +926,13 @@ __all__ = [
     'LastBackupStatus',
     'ProtectedItemHealthStatus',
     'RestorePointType',
+    'RecoveryPointTierType',
+    'RecoveryPointTierStatus',
     'OverwriteOptions',
     'RecoveryMode',
     'SQLDataDirectoryType',
     'RestorePointQueryType',
     'RetentionDurationType',
-    'RecoveryPointTierType',
-    'RecoveryPointTierStatus',
     'BackupManagementType',
     'JobStatus',
     'JobOperationType',
@@ -926,16 +954,17 @@ __all__ = [
     'AzureFileShareType',
     'InquiryStatus',
     'BackupType',
-    'OperationType',
-    'ContainerType',
-    'WorkloadItemType',
-    'ProtectionStatus',
-    'BackupItemType',
-    'OperationStatusValues',
     'SupportStatus',
+    'WorkloadItemType',
     'UsagesUnit',
+    'ProtectionStatus',
     'FabricName',
     'Type',
     'ValidationStatus',
     'IntentItemType',
+    'OperationType',
+    'ContainerType',
+    'BackupItemType',
+    'OperationStatusValues',
+    'RehydrationPriority',
 ]
