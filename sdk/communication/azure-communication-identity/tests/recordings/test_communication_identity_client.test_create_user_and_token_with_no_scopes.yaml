@@ -12,8 +12,12 @@ interactions:
       - '2'
       Content-Type:
       - application/json
+      Date:
+      - Wed, 21 Apr 2021 01:03:38 GMT
       User-Agent:
       - azsdk-python-communication-identity/1.0.0 Python/3.9.0 (Windows-10-10.0.19041-SP0)
+      x-ms-return-client-request-id:
+      - 'true'
     method: POST
     uri: https://sanitized.communication.azure.com/identities?api-version=2021-03-07
   response:
@@ -25,9 +29,9 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Wed, 21 Apr 2021 01:03:38 GMT
+      - Wed, 21 Apr 2021 01:03:37 GMT
       ms-cv:
-      - /0cdgYWzkUSJN8NGVXbzww.0
+      - vm3Y63QS2E2q02bPpNW/pw.0
       request-context:
       - appId=
       strict-transport-security:
@@ -35,7 +39,7 @@ interactions:
       transfer-encoding:
       - chunked
       x-processing-time:
-      - 12ms
+      - 13ms
     status:
       code: 201
       message: Created
