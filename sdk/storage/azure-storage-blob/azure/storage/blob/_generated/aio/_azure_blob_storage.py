@@ -6,7 +6,7 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-from typing import Any
+from typing import Any, Optional, Union
 
 from azure.core import AsyncPipelineClient
 from azure.core.pipeline.transport import AsyncHttpResponse, HttpRequest
@@ -42,15 +42,18 @@ class AzureBlobStorage(object):
     :vartype block_blob: azure.storage.blob.aio.operations.BlockBlobOperations
     :param url: The URL of the service account, container, or blob that is the targe of the desired operation.
     :type url: str
+    :param path_rename_mode: Determines the behavior of the rename operation.
+    :type path_rename_mode: str or ~azure.storage.blob.models.PathRenameMode
     """
 
     def __init__(
         self,
         url: str,
+        path_rename_mode: Optional[Union[str, "_models.PathRenameMode"]] = None,
         **kwargs: Any
     ) -> None:
         base_url = '{url}'
-        self._config = AzureBlobStorageConfiguration(url, **kwargs)
+        self._config = AzureBlobStorageConfiguration(url, path_rename_mode, **kwargs)
         self._client = AsyncPipelineClient(base_url=base_url, config=self._config, **kwargs)
 
         client_models = {k: v for k, v in models.__dict__.items() if isinstance(v, type)}

@@ -13,7 +13,7 @@ from azure.core.pipeline import policies
 
 if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
-    from typing import Any
+    from typing import Any, Optional, Union
 
 VERSION = "unknown"
 
@@ -25,11 +25,14 @@ class AzureBlobStorageConfiguration(Configuration):
 
     :param url: The URL of the service account, container, or blob that is the targe of the desired operation.
     :type url: str
+    :param path_rename_mode: Determines the behavior of the rename operation.
+    :type path_rename_mode: str or ~azure.storage.blob.models.PathRenameMode
     """
 
     def __init__(
         self,
         url,  # type: str
+        path_rename_mode=None,  # type: Optional[Union[str, "_models.PathRenameMode"]]
         **kwargs  # type: Any
     ):
         # type: (...) -> None
@@ -38,6 +41,7 @@ class AzureBlobStorageConfiguration(Configuration):
         super(AzureBlobStorageConfiguration, self).__init__(**kwargs)
 
         self.url = url
+        self.path_rename_mode = path_rename_mode
         self.version = "2020-06-12"
         kwargs.setdefault('sdk_moniker', 'azureblobstorage/{}'.format(VERSION))
         self._configure(**kwargs)

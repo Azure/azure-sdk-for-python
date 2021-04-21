@@ -204,7 +204,6 @@ class DirectoryOperations(object):
         rename_source,  # type: str
         timeout=None,  # type: Optional[int]
         marker=None,  # type: Optional[str]
-        path_rename_mode=None,  # type: Optional[Union[str, "_models.PathRenameMode"]]
         directory_properties=None,  # type: Optional[str]
         posix_permissions=None,  # type: Optional[str]
         posix_umask=None,  # type: Optional[str]
@@ -238,8 +237,6 @@ class DirectoryOperations(object):
          response, it must be specified in a subsequent invocation of the rename operation to continue
          renaming the directory.
         :type marker: str
-        :param path_rename_mode: Determines the behavior of the rename operation.
-        :type path_rename_mode: str or ~azure.storage.blob.models.PathRenameMode
         :param directory_properties: Optional.  User-defined properties to be stored with the file or
          directory, in the format of a comma-separated list of name and value pairs "n1=v1, n2=v2, ...",
          where each value is base64 encoded.
@@ -328,8 +325,8 @@ class DirectoryOperations(object):
             query_parameters['timeout'] = self._serialize.query("timeout", timeout, 'int', minimum=0)
         if marker is not None:
             query_parameters['continuation'] = self._serialize.query("marker", marker, 'str')
-        if path_rename_mode is not None:
-            query_parameters['mode'] = self._serialize.query("path_rename_mode", path_rename_mode, 'str')
+        if self._config.path_rename_mode is not None:
+            query_parameters['mode'] = self._serialize.query("self._config.path_rename_mode", self._config.path_rename_mode, 'str')
 
         # Construct headers
         header_parameters = {}  # type: Dict[str, Any]

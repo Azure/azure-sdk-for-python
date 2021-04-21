@@ -49,15 +49,6 @@ directive:
 ```
 
 
-### PathRenameMode
-``` yaml
-directive:
-- from: swagger-document
-  where: $.parameters.PathRenameMode
-  transform: >
-    $["x-ms-parameter-location"] = "method";
-```
-
 ### BlobHierarchyListSegment
 ``` yaml
 directive:

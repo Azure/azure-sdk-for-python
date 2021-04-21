@@ -841,7 +841,6 @@ class BlobOperations:
         self,
         rename_source: str,
         timeout: Optional[int] = None,
-        path_rename_mode: Optional[Union[str, "_models.PathRenameMode"]] = None,
         directory_properties: Optional[str] = None,
         posix_permissions: Optional[str] = None,
         posix_umask: Optional[str] = None,
@@ -868,8 +867,6 @@ class BlobOperations:
          href="https://docs.microsoft.com/en-us/rest/api/storageservices/fileservices/setting-timeouts-for-blob-service-operations">Setting
          Timeouts for Blob Service Operations.</a>`.
         :type timeout: int
-        :param path_rename_mode: Determines the behavior of the rename operation.
-        :type path_rename_mode: str or ~azure.storage.blob.models.PathRenameMode
         :param directory_properties: Optional.  User-defined properties to be stored with the file or
          directory, in the format of a comma-separated list of name and value pairs "n1=v1, n2=v2, ...",
          where each value is base64 encoded.
@@ -956,8 +953,8 @@ class BlobOperations:
         query_parameters = {}  # type: Dict[str, Any]
         if timeout is not None:
             query_parameters['timeout'] = self._serialize.query("timeout", timeout, 'int', minimum=0)
-        if path_rename_mode is not None:
-            query_parameters['mode'] = self._serialize.query("path_rename_mode", path_rename_mode, 'str')
+        if self._config.path_rename_mode is not None:
+            query_parameters['mode'] = self._serialize.query("self._config.path_rename_mode", self._config.path_rename_mode, 'str')
 
         # Construct headers
         header_parameters = {}  # type: Dict[str, Any]

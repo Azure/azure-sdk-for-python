@@ -6,7 +6,7 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-from typing import Any
+from typing import Any, Optional, Union
 
 from azure.core.configuration import Configuration
 from azure.core.pipeline import policies
@@ -21,11 +21,14 @@ class AzureBlobStorageConfiguration(Configuration):
 
     :param url: The URL of the service account, container, or blob that is the targe of the desired operation.
     :type url: str
+    :param path_rename_mode: Determines the behavior of the rename operation.
+    :type path_rename_mode: str or ~azure.storage.blob.models.PathRenameMode
     """
 
     def __init__(
         self,
         url: str,
+        path_rename_mode: Optional[Union[str, "_models.PathRenameMode"]] = None,
         **kwargs: Any
     ) -> None:
         if url is None:
@@ -33,6 +36,7 @@ class AzureBlobStorageConfiguration(Configuration):
         super(AzureBlobStorageConfiguration, self).__init__(**kwargs)
 
         self.url = url
+        self.path_rename_mode = path_rename_mode
         self.version = "2020-06-12"
         kwargs.setdefault('sdk_moniker', 'azureblobstorage/{}'.format(VERSION))
         self._configure(**kwargs)
