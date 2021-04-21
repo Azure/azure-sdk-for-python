@@ -14,16 +14,16 @@ class AccessPolicy(msrest.serialization.Model):
     """An Access policy.
 
     :param start: the date-time the policy is active.
-    :type start: str
+    :type start: ~datetime.datetime
     :param expiry: the date-time the policy expires.
-    :type expiry: str
+    :type expiry: ~datetime.datetime
     :param permission: the permissions for the acl policy.
     :type permission: str
     """
 
     _attribute_map = {
-        'start': {'key': 'Start', 'type': 'str'},
-        'expiry': {'key': 'Expiry', 'type': 'str'},
+        'start': {'key': 'Start', 'type': 'iso-8601'},
+        'expiry': {'key': 'Expiry', 'type': 'iso-8601'},
         'permission': {'key': 'Permission', 'type': 'str'},
     }
 

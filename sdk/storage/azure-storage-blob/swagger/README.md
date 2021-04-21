@@ -37,16 +37,6 @@ directive:
     if ($["x-ms-pageable"]) { delete $["x-ms-pageable"]; }
 ```
 
-### Use strings for dates when python doesn't have enough precision
-``` yaml
-directive:
-- from: swagger-document
-  where: $.definitions.AccessPolicy.properties
-  transform: >
-    $.Start.format = "str";
-    $.Expiry.format = "str";
-```
-
 ### BlobTagFilter
 ``` yaml
 directive:
