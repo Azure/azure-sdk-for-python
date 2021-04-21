@@ -18,6 +18,10 @@ from parameterized import parameterized, param
 from _shared.test_case_async import KeyVaultTestCase
 from _test_case import SecretsTestCase, suffixed_test_name
 
+
+PARAMS = [param(api_version=api_version) for api_version in ApiVersion]
+test_all_versions = functools.partial(parameterized.expand, PARAMS, name_func=suffixed_test_name)
+
 KeyVaultPreparer = functools.partial(
     PowerShellPreparer,
     "keyvault",
@@ -70,7 +74,7 @@ class KeyVaultSecretTest(SecretsTestCase, KeyVaultTestCase):
                 del expected[secret.name]
         self.assertEqual(len(expected), 0)
 
-    @parameterized.expand([param(api_version=api_version) for api_version in ApiVersion], name_func=suffixed_test_name)
+    @test_all_versions()
     @KeyVaultPreparer()
     async def test_secret_crud_operations(self, azure_keyvault_url, **kwargs):
         self._skip_if_not_configured(**kwargs)
@@ -135,7 +139,7 @@ class KeyVaultSecretTest(SecretsTestCase, KeyVaultTestCase):
         deleted = await client.delete_secret(updated.name)
         self.assertIsNotNone(deleted)
 
-    @parameterized.expand([param(api_version=api_version) for api_version in ApiVersion], name_func=suffixed_test_name)
+    @test_all_versions()
     @KeyVaultPreparer()
     async def test_secret_list(self, azure_keyvault_url, **kwargs):
         self._skip_if_not_configured(**kwargs)
@@ -157,7 +161,7 @@ class KeyVaultSecretTest(SecretsTestCase, KeyVaultTestCase):
         result = client.list_properties_of_secrets(max_page_size=max_secrets - 1)
         await self._validate_secret_list(result, expected)
 
-    @parameterized.expand([param(api_version=api_version) for api_version in ApiVersion], name_func=suffixed_test_name)
+    @test_all_versions()
     @KeyVaultPreparer()
     async def test_list_deleted_secrets(self, azure_keyvault_url, **kwargs):
         self._skip_if_not_configured(**kwargs)
@@ -184,7 +188,7 @@ class KeyVaultSecretTest(SecretsTestCase, KeyVaultTestCase):
                 expected_secret = expected[deleted_secret.name]
                 self._assert_secret_attributes_equal(expected_secret.properties, deleted_secret.properties)
 
-    @parameterized.expand([param(api_version=api_version) for api_version in ApiVersion], name_func=suffixed_test_name)
+    @test_all_versions()
     @KeyVaultPreparer()
     async def test_list_versions(self, azure_keyvault_url, **kwargs):
         self._skip_if_not_configured(**kwargs)
@@ -214,7 +218,7 @@ class KeyVaultSecretTest(SecretsTestCase, KeyVaultTestCase):
                 self._assert_secret_attributes_equal(expected_secret.properties, secret)
         self.assertEqual(len(expected), 0)
 
-    @parameterized.expand([param(api_version=api_version) for api_version in ApiVersion], name_func=suffixed_test_name)
+    @test_all_versions()
     @KeyVaultPreparer()
     async def test_backup_restore(self, azure_keyvault_url, **kwargs):
         self._skip_if_not_configured(**kwargs)
@@ -241,7 +245,7 @@ class KeyVaultSecretTest(SecretsTestCase, KeyVaultTestCase):
         restored_secret = await self._poll_until_no_exception(restore_function, expected_exception=ResourceExistsError)
         self._assert_secret_attributes_equal(created_bundle.properties, restored_secret)
 
-    @parameterized.expand([param(api_version=api_version) for api_version in ApiVersion], name_func=suffixed_test_name)
+    @test_all_versions()
     @KeyVaultPreparer()
     async def test_recover(self, azure_keyvault_url, **kwargs):
         self._skip_if_not_configured(**kwargs)
@@ -274,7 +278,7 @@ class KeyVaultSecretTest(SecretsTestCase, KeyVaultTestCase):
             get_function = functools.partial(client.get_secret, secret)
             await self._poll_until_no_exception(get_function, expected_exception=ResourceNotFoundError)
 
-    @parameterized.expand([param(api_version=api_version) for api_version in ApiVersion], name_func=suffixed_test_name)
+    @test_all_versions()
     @KeyVaultPreparer()
     async def test_purge(self, azure_keyvault_url, **kwargs):
         self._skip_if_not_configured(**kwargs)
@@ -302,7 +306,7 @@ class KeyVaultSecretTest(SecretsTestCase, KeyVaultTestCase):
         for secret_name in secrets.keys():
             await client.purge_deleted_secret(secret_name)
 
-    @parameterized.expand([param(api_version=api_version) for api_version in ApiVersion], name_func=suffixed_test_name)
+    @test_all_versions()
     @KeyVaultPreparer()
     async def test_logging_enabled(self, azure_keyvault_url, **kwargs):
         self._skip_if_not_configured(**kwargs)
@@ -328,7 +332,7 @@ class KeyVaultSecretTest(SecretsTestCase, KeyVaultTestCase):
 
         assert False, "Expected request body wasn't logged"
 
-    @parameterized.expand([param(api_version=api_version) for api_version in ApiVersion], name_func=suffixed_test_name)
+    @test_all_versions()
     @KeyVaultPreparer()
     async def test_logging_disabled(self, azure_keyvault_url, **kwargs):
         self._skip_if_not_configured(**kwargs)

@@ -13,6 +13,10 @@ import pytest
 from _shared.test_case_async import KeyVaultTestCase
 from _test_case import SecretsTestCase, suffixed_test_name
 
+
+PARAMS = [param(api_version=api_version) for api_version in ApiVersion]
+test_all_versions = functools.partial(parameterized.expand, PARAMS, name_func=suffixed_test_name)
+
 KeyVaultPreparer = functools.partial(
     PowerShellPreparer,
     "keyvault",
@@ -44,7 +48,7 @@ async def test_create_secret_client():
 
 
 class TestExamplesKeyVault(SecretsTestCase, KeyVaultTestCase):
-    @parameterized.expand([param(api_version=api_version) for api_version in ApiVersion], name_func=suffixed_test_name)
+    @test_all_versions()
     @KeyVaultPreparer()
     async def test_example_secret_crud_operations(self, azure_keyvault_url, **kwargs):
         self._skip_if_not_configured(**kwargs)
@@ -107,7 +111,7 @@ class TestExamplesKeyVault(SecretsTestCase, KeyVaultTestCase):
         print(deleted_secret.recovery_id)
         # [END delete_secret]
 
-    @parameterized.expand([param(api_version=api_version) for api_version in ApiVersion], name_func=suffixed_test_name)
+    @test_all_versions()
     @KeyVaultPreparer()
     async def test_example_secret_list_operations(self, azure_keyvault_url, **kwargs):
         self._skip_if_not_configured(**kwargs)
@@ -153,7 +157,7 @@ class TestExamplesKeyVault(SecretsTestCase, KeyVaultTestCase):
             print(secret.deleted_date)
         # [END list_deleted_secrets]
 
-    @parameterized.expand([param(api_version=api_version) for api_version in ApiVersion], name_func=suffixed_test_name)
+    @test_all_versions()
     @KeyVaultPreparer()
     async def test_example_secrets_backup_restore(self, azure_keyvault_url, **kwargs):
         self._skip_if_not_configured(**kwargs)
@@ -182,7 +186,7 @@ class TestExamplesKeyVault(SecretsTestCase, KeyVaultTestCase):
         print(restored_secret.version)
         # [END restore_secret_backup]
 
-    @parameterized.expand([param(api_version=api_version) for api_version in ApiVersion], name_func=suffixed_test_name)
+    @test_all_versions()
     @KeyVaultPreparer()
     async def test_example_secrets_recover(self, azure_keyvault_url, **kwargs):
         self._skip_if_not_configured(**kwargs)
