@@ -177,6 +177,23 @@ class RestorePointType(str, Enum):
     incremental = "Incremental"
 
 
+class RecoveryPointTierType(str, Enum):
+
+    invalid = "Invalid"
+    instant_rp = "InstantRP"
+    hardened_rp = "HardenedRP"
+    archived_rp = "ArchivedRP"
+
+
+class RecoveryPointTierStatus(str, Enum):
+
+    invalid = "Invalid"
+    valid = "Valid"
+    disabled = "Disabled"
+    deleted = "Deleted"
+    rehydrated = "Rehydrated"
+
+
 class OverwriteOptions(str, Enum):
 
     invalid = "Invalid"
@@ -216,21 +233,6 @@ class RetentionDurationType(str, Enum):
     weeks = "Weeks"
     months = "Months"
     years = "Years"
-
-
-class RecoveryPointTierType(str, Enum):
-
-    invalid = "Invalid"
-    instant_rp = "InstantRP"
-    hardened_rp = "HardenedRP"
-
-
-class RecoveryPointTierStatus(str, Enum):
-
-    invalid = "Invalid"
-    valid = "Valid"
-    disabled = "Disabled"
-    deleted = "Deleted"
 
 
 class BackupManagementType(str, Enum):
@@ -489,6 +491,72 @@ class BackupType(str, Enum):
     incremental = "Incremental"
 
 
+class SupportStatus(str, Enum):
+
+    invalid = "Invalid"
+    supported = "Supported"
+    default_off = "DefaultOFF"
+    default_on = "DefaultON"
+    not_supported = "NotSupported"
+
+
+class WorkloadItemType(str, Enum):
+
+    invalid = "Invalid"
+    sql_instance = "SQLInstance"
+    sql_data_base = "SQLDataBase"
+    sap_hana_system = "SAPHanaSystem"
+    sap_hana_database = "SAPHanaDatabase"
+    sap_ase_system = "SAPAseSystem"
+    sap_ase_database = "SAPAseDatabase"
+
+
+class UsagesUnit(str, Enum):
+
+    count = "Count"
+    bytes = "Bytes"
+    seconds = "Seconds"
+    percent = "Percent"
+    count_per_second = "CountPerSecond"
+    bytes_per_second = "BytesPerSecond"
+
+
+class ProtectionStatus(str, Enum):
+
+    invalid = "Invalid"
+    not_protected = "NotProtected"
+    protecting = "Protecting"
+    protected = "Protected"
+    protection_failed = "ProtectionFailed"
+
+
+class FabricName(str, Enum):
+
+    invalid = "Invalid"
+    azure = "Azure"
+
+
+class Type(str, Enum):
+
+    invalid = "Invalid"
+    backup_protected_item_count_summary = "BackupProtectedItemCountSummary"
+    backup_protection_container_count_summary = "BackupProtectionContainerCountSummary"
+
+
+class ValidationStatus(str, Enum):
+
+    invalid = "Invalid"
+    succeeded = "Succeeded"
+    failed = "Failed"
+
+
+class IntentItemType(str, Enum):
+
+    invalid = "Invalid"
+    sql_instance = "SQLInstance"
+    sql_availability_group_container = "SQLAvailabilityGroupContainer"
+
+
 class OperationType(str, Enum):
 
     invalid = "Invalid"
@@ -513,26 +581,6 @@ class ContainerType(str, Enum):
     sqlag_work_load_container = "SQLAGWorkLoadContainer"
     storage_container = "StorageContainer"
     generic_container = "GenericContainer"
-
-
-class WorkloadItemType(str, Enum):
-
-    invalid = "Invalid"
-    sql_instance = "SQLInstance"
-    sql_data_base = "SQLDataBase"
-    sap_hana_system = "SAPHanaSystem"
-    sap_hana_database = "SAPHanaDatabase"
-    sap_ase_system = "SAPAseSystem"
-    sap_ase_database = "SAPAseDatabase"
-
-
-class ProtectionStatus(str, Enum):
-
-    invalid = "Invalid"
-    not_protected = "NotProtected"
-    protecting = "Protecting"
-    protected = "Protected"
-    protection_failed = "ProtectionFailed"
 
 
 class BackupItemType(str, Enum):
@@ -563,47 +611,7 @@ class OperationStatusValues(str, Enum):
     canceled = "Canceled"
 
 
-class SupportStatus(str, Enum):
+class RehydrationPriority(str, Enum):
 
-    invalid = "Invalid"
-    supported = "Supported"
-    default_off = "DefaultOFF"
-    default_on = "DefaultON"
-    not_supported = "NotSupported"
-
-
-class UsagesUnit(str, Enum):
-
-    count = "Count"
-    bytes = "Bytes"
-    seconds = "Seconds"
-    percent = "Percent"
-    count_per_second = "CountPerSecond"
-    bytes_per_second = "BytesPerSecond"
-
-
-class FabricName(str, Enum):
-
-    invalid = "Invalid"
-    azure = "Azure"
-
-
-class Type(str, Enum):
-
-    invalid = "Invalid"
-    backup_protected_item_count_summary = "BackupProtectedItemCountSummary"
-    backup_protection_container_count_summary = "BackupProtectionContainerCountSummary"
-
-
-class ValidationStatus(str, Enum):
-
-    invalid = "Invalid"
-    succeeded = "Succeeded"
-    failed = "Failed"
-
-
-class IntentItemType(str, Enum):
-
-    invalid = "Invalid"
-    sql_instance = "SQLInstance"
-    sql_availability_group_container = "SQLAvailabilityGroupContainer"
+    standard = "Standard"
+    high = "High"

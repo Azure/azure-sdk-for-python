@@ -16,8 +16,8 @@ from msrestazure.azure_exceptions import CloudError
 from .. import models
 
 
-class BackupUsageSummariesOperations(object):
-    """BackupUsageSummariesOperations operations.
+class RecoveryPointsRecommendedForMoveOperations(object):
+    """RecoveryPointsRecommendedForMoveOperations operations.
 
     You should not instantiate directly this class, but create a Client instance that will create it for you and attach it as attribute.
 
@@ -40,28 +40,36 @@ class BackupUsageSummariesOperations(object):
         self.config = config
 
     def list(
-            self, vault_name, resource_group_name, filter=None, skip_token=None, custom_headers=None, raw=False, **operation_config):
-        """Fetches the backup management usage summaries of the vault.
+            self, vault_name, resource_group_name, fabric_name, container_name, protected_item_name, object_type=None, excluded_rp_list=None, custom_headers=None, raw=False, **operation_config):
+        """Lists the recovery points recommended for move to another tier.
 
         :param vault_name: The name of the recovery services vault.
         :type vault_name: str
         :param resource_group_name: The name of the resource group where the
          recovery services vault is present.
         :type resource_group_name: str
-        :param filter: OData filter options.
-        :type filter: str
-        :param skip_token: skipToken Filter.
-        :type skip_token: str
+        :param fabric_name:
+        :type fabric_name: str
+        :param container_name:
+        :type container_name: str
+        :param protected_item_name:
+        :type protected_item_name: str
+        :param object_type: Gets the class type.
+        :type object_type: str
+        :param excluded_rp_list: List of Recovery Points excluded from Move
+        :type excluded_rp_list: list[str]
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: An iterator like instance of BackupManagementUsage
+        :return: An iterator like instance of RecoveryPointResource
         :rtype:
-         ~azure.mgmt.recoveryservicesbackup.models.BackupManagementUsagePaged[~azure.mgmt.recoveryservicesbackup.models.BackupManagementUsage]
+         ~azure.mgmt.recoveryservicesbackup.models.RecoveryPointResourcePaged[~azure.mgmt.recoveryservicesbackup.models.RecoveryPointResource]
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
+        parameters = models.ListRecoveryPointsRecommendedForMoveRequest(object_type=object_type, excluded_rp_list=excluded_rp_list)
+
         def prepare_request(next_link=None):
             if not next_link:
                 # Construct URL
@@ -69,17 +77,16 @@ class BackupUsageSummariesOperations(object):
                 path_format_arguments = {
                     'vaultName': self._serialize.url("vault_name", vault_name, 'str'),
                     'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
-                    'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
+                    'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
+                    'fabricName': self._serialize.url("fabric_name", fabric_name, 'str'),
+                    'containerName': self._serialize.url("container_name", container_name, 'str'),
+                    'protectedItemName': self._serialize.url("protected_item_name", protected_item_name, 'str')
                 }
                 url = self._client.format_url(url, **path_format_arguments)
 
                 # Construct parameters
                 query_parameters = {}
                 query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
-                if filter is not None:
-                    query_parameters['$filter'] = self._serialize.query("filter", filter, 'str')
-                if skip_token is not None:
-                    query_parameters['$skipToken'] = self._serialize.query("skip_token", skip_token, 'str')
 
             else:
                 url = next_link
@@ -88,6 +95,7 @@ class BackupUsageSummariesOperations(object):
             # Construct headers
             header_parameters = {}
             header_parameters['Accept'] = 'application/json'
+            header_parameters['Content-Type'] = 'application/json; charset=utf-8'
             if self.config.generate_client_request_id:
                 header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
             if custom_headers:
@@ -95,8 +103,11 @@ class BackupUsageSummariesOperations(object):
             if self.config.accept_language is not None:
                 header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
 
+            # Construct body
+            body_content = self._serialize.body(parameters, 'ListRecoveryPointsRecommendedForMoveRequest')
+
             # Construct and send request
-            request = self._client.get(url, query_parameters, header_parameters)
+            request = self._client.post(url, query_parameters, header_parameters, body_content)
             return request
 
         def internal_paging(next_link=None):
@@ -115,7 +126,7 @@ class BackupUsageSummariesOperations(object):
         header_dict = None
         if raw:
             header_dict = {}
-        deserialized = models.BackupManagementUsagePaged(internal_paging, self._deserialize.dependencies, header_dict)
+        deserialized = models.RecoveryPointResourcePaged(internal_paging, self._deserialize.dependencies, header_dict)
 
         return deserialized
-    list.metadata = {'url': '/Subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.RecoveryServices/vaults/{vaultName}/backupUsageSummaries'}
+    list.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.RecoveryServices/vaults/{vaultName}/backupFabrics/{fabricName}/protectionContainers/{containerName}/protectedItems/{protectedItemName}/recoveryPointsRecommendedForMove'}

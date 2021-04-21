@@ -12,6 +12,8 @@
 import uuid
 from msrest.pipeline import ClientRawResponse
 from msrestazure.azure_exceptions import CloudError
+from msrest.polling import LROPoller, NoPolling
+from msrestazure.polling.arm_polling import ARMPolling
 
 from .. import models
 
@@ -25,7 +27,7 @@ class VaultsOperations(object):
     :param config: Configuration of service client.
     :param serializer: An object model serializer.
     :param deserializer: An object model deserializer.
-    :ivar api_version: Client Api Version. Constant value: "2016-06-01".
+    :ivar api_version: Client Api Version. Constant value: "2021-03-01".
     """
 
     models = models
@@ -35,7 +37,7 @@ class VaultsOperations(object):
         self._client = client
         self._serialize = serializer
         self._deserialize = deserializer
-        self.api_version = "2016-06-01"
+        self.api_version = "2021-03-01"
 
         self.config = config
 
@@ -237,27 +239,9 @@ class VaultsOperations(object):
         return deserialized
     get.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.RecoveryServices/vaults/{vaultName}'}
 
-    def create_or_update(
-            self, resource_group_name, vault_name, vault, custom_headers=None, raw=False, **operation_config):
-        """Creates or updates a Recovery Services vault.
 
-        :param resource_group_name: The name of the resource group where the
-         recovery services vault is present.
-        :type resource_group_name: str
-        :param vault_name: The name of the recovery services vault.
-        :type vault_name: str
-        :param vault: Recovery Services Vault to be created.
-        :type vault: ~azure.mgmt.recoveryservices.models.Vault
-        :param dict custom_headers: headers that will be added to the request
-        :param bool raw: returns the direct response alongside the
-         deserialized response
-        :param operation_config: :ref:`Operation configuration
-         overrides<msrest:optionsforoperations>`.
-        :return: Vault or ClientRawResponse if raw=true
-        :rtype: ~azure.mgmt.recoveryservices.models.Vault or
-         ~msrest.pipeline.ClientRawResponse
-        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
-        """
+    def _create_or_update_initial(
+            self, resource_group_name, vault_name, vault, custom_headers=None, raw=False, **operation_config):
         # Construct URL
         url = self.create_or_update.metadata['url']
         path_format_arguments = {
@@ -295,6 +279,7 @@ class VaultsOperations(object):
             raise exp
 
         deserialized = None
+
         if response.status_code == 200:
             deserialized = self._deserialize('Vault', response)
         if response.status_code == 201:
@@ -305,6 +290,56 @@ class VaultsOperations(object):
             return client_raw_response
 
         return deserialized
+
+    def create_or_update(
+            self, resource_group_name, vault_name, vault, custom_headers=None, raw=False, polling=True, **operation_config):
+        """Creates or updates a Recovery Services vault.
+
+        :param resource_group_name: The name of the resource group where the
+         recovery services vault is present.
+        :type resource_group_name: str
+        :param vault_name: The name of the recovery services vault.
+        :type vault_name: str
+        :param vault: Recovery Services Vault to be created.
+        :type vault: ~azure.mgmt.recoveryservices.models.Vault
+        :param dict custom_headers: headers that will be added to the request
+        :param bool raw: The poller return type is ClientRawResponse, the
+         direct response alongside the deserialized response
+        :param polling: True for ARMPolling, False for no polling, or a
+         polling object for personal polling strategy
+        :return: An instance of LROPoller that returns Vault or
+         ClientRawResponse<Vault> if raw==True
+        :rtype:
+         ~msrestazure.azure_operation.AzureOperationPoller[~azure.mgmt.recoveryservices.models.Vault]
+         or
+         ~msrestazure.azure_operation.AzureOperationPoller[~msrest.pipeline.ClientRawResponse[~azure.mgmt.recoveryservices.models.Vault]]
+        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
+        """
+        raw_result = self._create_or_update_initial(
+            resource_group_name=resource_group_name,
+            vault_name=vault_name,
+            vault=vault,
+            custom_headers=custom_headers,
+            raw=True,
+            **operation_config
+        )
+
+        def get_long_running_output(response):
+            deserialized = self._deserialize('Vault', response)
+
+            if raw:
+                client_raw_response = ClientRawResponse(deserialized, response)
+                return client_raw_response
+
+            return deserialized
+
+        lro_delay = operation_config.get(
+            'long_running_operation_timeout',
+            self.config.long_running_operation_timeout)
+        if polling is True: polling_method = ARMPolling(lro_delay, **operation_config)
+        elif polling is False: polling_method = NoPolling()
+        else: polling_method = polling
+        return LROPoller(self._client, raw_result, get_long_running_output, polling_method)
     create_or_update.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.RecoveryServices/vaults/{vaultName}'}
 
     def delete(
@@ -361,27 +396,9 @@ class VaultsOperations(object):
             return client_raw_response
     delete.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.RecoveryServices/vaults/{vaultName}'}
 
-    def update(
-            self, resource_group_name, vault_name, vault, custom_headers=None, raw=False, **operation_config):
-        """Updates the vault.
 
-        :param resource_group_name: The name of the resource group where the
-         recovery services vault is present.
-        :type resource_group_name: str
-        :param vault_name: The name of the recovery services vault.
-        :type vault_name: str
-        :param vault: Recovery Services Vault to be created.
-        :type vault: ~azure.mgmt.recoveryservices.models.PatchVault
-        :param dict custom_headers: headers that will be added to the request
-        :param bool raw: returns the direct response alongside the
-         deserialized response
-        :param operation_config: :ref:`Operation configuration
-         overrides<msrest:optionsforoperations>`.
-        :return: Vault or ClientRawResponse if raw=true
-        :rtype: ~azure.mgmt.recoveryservices.models.Vault or
-         ~msrest.pipeline.ClientRawResponse
-        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
-        """
+    def _update_initial(
+            self, resource_group_name, vault_name, vault, custom_headers=None, raw=False, **operation_config):
         # Construct URL
         url = self.update.metadata['url']
         path_format_arguments = {
@@ -413,15 +430,14 @@ class VaultsOperations(object):
         request = self._client.patch(url, query_parameters, header_parameters, body_content)
         response = self._client.send(request, stream=False, **operation_config)
 
-        if response.status_code not in [200, 201]:
+        if response.status_code not in [200, 202]:
             exp = CloudError(response)
             exp.request_id = response.headers.get('x-ms-request-id')
             raise exp
 
         deserialized = None
+
         if response.status_code == 200:
-            deserialized = self._deserialize('Vault', response)
-        if response.status_code == 201:
             deserialized = self._deserialize('Vault', response)
 
         if raw:
@@ -429,4 +445,54 @@ class VaultsOperations(object):
             return client_raw_response
 
         return deserialized
+
+    def update(
+            self, resource_group_name, vault_name, vault, custom_headers=None, raw=False, polling=True, **operation_config):
+        """Updates the vault.
+
+        :param resource_group_name: The name of the resource group where the
+         recovery services vault is present.
+        :type resource_group_name: str
+        :param vault_name: The name of the recovery services vault.
+        :type vault_name: str
+        :param vault: Recovery Services Vault to be created.
+        :type vault: ~azure.mgmt.recoveryservices.models.PatchVault
+        :param dict custom_headers: headers that will be added to the request
+        :param bool raw: The poller return type is ClientRawResponse, the
+         direct response alongside the deserialized response
+        :param polling: True for ARMPolling, False for no polling, or a
+         polling object for personal polling strategy
+        :return: An instance of LROPoller that returns Vault or
+         ClientRawResponse<Vault> if raw==True
+        :rtype:
+         ~msrestazure.azure_operation.AzureOperationPoller[~azure.mgmt.recoveryservices.models.Vault]
+         or
+         ~msrestazure.azure_operation.AzureOperationPoller[~msrest.pipeline.ClientRawResponse[~azure.mgmt.recoveryservices.models.Vault]]
+        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
+        """
+        raw_result = self._update_initial(
+            resource_group_name=resource_group_name,
+            vault_name=vault_name,
+            vault=vault,
+            custom_headers=custom_headers,
+            raw=True,
+            **operation_config
+        )
+
+        def get_long_running_output(response):
+            deserialized = self._deserialize('Vault', response)
+
+            if raw:
+                client_raw_response = ClientRawResponse(deserialized, response)
+                return client_raw_response
+
+            return deserialized
+
+        lro_delay = operation_config.get(
+            'long_running_operation_timeout',
+            self.config.long_running_operation_timeout)
+        if polling is True: polling_method = ARMPolling(lro_delay, **operation_config)
+        elif polling is False: polling_method = NoPolling()
+        else: polling_method = polling
+        return LROPoller(self._client, raw_result, get_long_running_output, polling_method)
     update.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.RecoveryServices/vaults/{vaultName}'}

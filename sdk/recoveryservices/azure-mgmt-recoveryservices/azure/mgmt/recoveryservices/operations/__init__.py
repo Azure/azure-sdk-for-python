@@ -18,6 +18,7 @@ from ._vaults_operations import VaultsOperations
 from ._operations import Operations
 from ._vault_extended_info_operations import VaultExtendedInfoOperations
 from ._usages_operations import UsagesOperations
+from ._recovery_services_client_operations import RecoveryServicesClientOperationsMixin
 
 __all__ = [
     'VaultCertificatesOperations',
@@ -29,4 +30,5 @@ __all__ = [
     'Operations',
     'VaultExtendedInfoOperations',
     'UsagesOperations',
+    'RecoveryServicesClientOperationsMixin',
 ]

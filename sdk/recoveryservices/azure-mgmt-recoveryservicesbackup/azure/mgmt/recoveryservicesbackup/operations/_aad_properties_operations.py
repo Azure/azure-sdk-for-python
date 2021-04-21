@@ -39,11 +39,13 @@ class AadPropertiesOperations(object):
         self.config = config
 
     def get(
-            self, azure_region, custom_headers=None, raw=False, **operation_config):
+            self, azure_region, filter=None, custom_headers=None, raw=False, **operation_config):
         """Fetches the AAD properties from target region BCM stamp.
 
         :param azure_region: Azure region to hit Api
         :type azure_region: str
+        :param filter: OData filter options.
+        :type filter: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -67,6 +69,8 @@ class AadPropertiesOperations(object):
         # Construct parameters
         query_parameters = {}
         query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
+        if filter is not None:
+            query_parameters['$filter'] = self._serialize.query("filter", filter, 'str')
 
         # Construct headers
         header_parameters = {}

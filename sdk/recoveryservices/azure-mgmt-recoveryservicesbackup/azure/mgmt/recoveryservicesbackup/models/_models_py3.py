@@ -5216,6 +5216,13 @@ class AzureWorkloadRecoveryPoint(RecoveryPoint):
      'Full', 'Log', 'Differential', 'Incremental'
     :vartype type: str or
      ~azure.mgmt.recoveryservicesbackup.models.RestorePointType
+    :param recovery_point_tier_details: Recovery point tier information.
+    :type recovery_point_tier_details:
+     list[~azure.mgmt.recoveryservicesbackup.models.RecoveryPointTierInformation]
+    :param recovery_point_move_readiness_info: Eligibility of RP to be moved
+     to another tier
+    :type recovery_point_move_readiness_info: dict[str,
+     ~azure.mgmt.recoveryservicesbackup.models.RecoveryPointMoveReadinessInfo]
     """
 
     _validation = {
@@ -5228,16 +5235,20 @@ class AzureWorkloadRecoveryPoint(RecoveryPoint):
         'object_type': {'key': 'objectType', 'type': 'str'},
         'recovery_point_time_in_utc': {'key': 'recoveryPointTimeInUTC', 'type': 'iso-8601'},
         'type': {'key': 'type', 'type': 'str'},
+        'recovery_point_tier_details': {'key': 'recoveryPointTierDetails', 'type': '[RecoveryPointTierInformation]'},
+        'recovery_point_move_readiness_info': {'key': 'recoveryPointMoveReadinessInfo', 'type': '{RecoveryPointMoveReadinessInfo}'},
     }
 
     _subtype_map = {
         'object_type': {'AzureWorkloadPointInTimeRecoveryPoint': 'AzureWorkloadPointInTimeRecoveryPoint', 'AzureWorkloadSAPHanaRecoveryPoint': 'AzureWorkloadSAPHanaRecoveryPoint', 'AzureWorkloadSQLRecoveryPoint': 'AzureWorkloadSQLRecoveryPoint'}
     }
 
-    def __init__(self, **kwargs) -> None:
+    def __init__(self, *, recovery_point_tier_details=None, recovery_point_move_readiness_info=None, **kwargs) -> None:
         super(AzureWorkloadRecoveryPoint, self).__init__(**kwargs)
         self.recovery_point_time_in_utc = None
         self.type = None
+        self.recovery_point_tier_details = recovery_point_tier_details
+        self.recovery_point_move_readiness_info = recovery_point_move_readiness_info
         self.object_type = 'AzureWorkloadRecoveryPoint'
 
 
@@ -5261,6 +5272,13 @@ class AzureWorkloadPointInTimeRecoveryPoint(AzureWorkloadRecoveryPoint):
      'Full', 'Log', 'Differential', 'Incremental'
     :vartype type: str or
      ~azure.mgmt.recoveryservicesbackup.models.RestorePointType
+    :param recovery_point_tier_details: Recovery point tier information.
+    :type recovery_point_tier_details:
+     list[~azure.mgmt.recoveryservicesbackup.models.RecoveryPointTierInformation]
+    :param recovery_point_move_readiness_info: Eligibility of RP to be moved
+     to another tier
+    :type recovery_point_move_readiness_info: dict[str,
+     ~azure.mgmt.recoveryservicesbackup.models.RecoveryPointMoveReadinessInfo]
     :param time_ranges: List of log ranges
     :type time_ranges:
      list[~azure.mgmt.recoveryservicesbackup.models.PointInTimeRange]
@@ -5276,6 +5294,8 @@ class AzureWorkloadPointInTimeRecoveryPoint(AzureWorkloadRecoveryPoint):
         'object_type': {'key': 'objectType', 'type': 'str'},
         'recovery_point_time_in_utc': {'key': 'recoveryPointTimeInUTC', 'type': 'iso-8601'},
         'type': {'key': 'type', 'type': 'str'},
+        'recovery_point_tier_details': {'key': 'recoveryPointTierDetails', 'type': '[RecoveryPointTierInformation]'},
+        'recovery_point_move_readiness_info': {'key': 'recoveryPointMoveReadinessInfo', 'type': '{RecoveryPointMoveReadinessInfo}'},
         'time_ranges': {'key': 'timeRanges', 'type': '[PointInTimeRange]'},
     }
 
@@ -5283,8 +5303,8 @@ class AzureWorkloadPointInTimeRecoveryPoint(AzureWorkloadRecoveryPoint):
         'object_type': {'AzureWorkloadSAPHanaPointInTimeRecoveryPoint': 'AzureWorkloadSAPHanaPointInTimeRecoveryPoint'}
     }
 
-    def __init__(self, *, time_ranges=None, **kwargs) -> None:
-        super(AzureWorkloadPointInTimeRecoveryPoint, self).__init__(**kwargs)
+    def __init__(self, *, recovery_point_tier_details=None, recovery_point_move_readiness_info=None, time_ranges=None, **kwargs) -> None:
+        super(AzureWorkloadPointInTimeRecoveryPoint, self).__init__(recovery_point_tier_details=recovery_point_tier_details, recovery_point_move_readiness_info=recovery_point_move_readiness_info, **kwargs)
         self.time_ranges = time_ranges
         self.object_type = 'AzureWorkloadPointInTimeRecoveryPoint'
 
@@ -5318,6 +5338,11 @@ class AzureWorkloadRestoreRequest(RestoreRequest):
      'FileRecovery', 'WorkloadRecovery'
     :type recovery_mode: str or
      ~azure.mgmt.recoveryservicesbackup.models.RecoveryMode
+    :param target_virtual_machine_id: This is the complete ARM Id of the
+     target VM
+     For e.g.
+     /subscriptions/{subId}/resourcegroups/{rg}/provider/Microsoft.Compute/virtualmachines/{vm}
+    :type target_virtual_machine_id: str
     """
 
     _validation = {
@@ -5331,19 +5356,21 @@ class AzureWorkloadRestoreRequest(RestoreRequest):
         'property_bag': {'key': 'propertyBag', 'type': '{str}'},
         'target_info': {'key': 'targetInfo', 'type': 'TargetRestoreInfo'},
         'recovery_mode': {'key': 'recoveryMode', 'type': 'str'},
+        'target_virtual_machine_id': {'key': 'targetVirtualMachineId', 'type': 'str'},
     }
 
     _subtype_map = {
         'object_type': {'AzureWorkloadPointInTimeRestoreRequest': 'AzureWorkloadPointInTimeRestoreRequest', 'AzureWorkloadSAPHanaRestoreRequest': 'AzureWorkloadSAPHanaRestoreRequest', 'AzureWorkloadSQLRestoreRequest': 'AzureWorkloadSQLRestoreRequest'}
     }
 
-    def __init__(self, *, recovery_type=None, source_resource_id: str=None, property_bag=None, target_info=None, recovery_mode=None, **kwargs) -> None:
+    def __init__(self, *, recovery_type=None, source_resource_id: str=None, property_bag=None, target_info=None, recovery_mode=None, target_virtual_machine_id: str=None, **kwargs) -> None:
         super(AzureWorkloadRestoreRequest, self).__init__(**kwargs)
         self.recovery_type = recovery_type
         self.source_resource_id = source_resource_id
         self.property_bag = property_bag
         self.target_info = target_info
         self.recovery_mode = recovery_mode
+        self.target_virtual_machine_id = target_virtual_machine_id
         self.object_type = 'AzureWorkloadRestoreRequest'
 
 
@@ -5373,6 +5400,11 @@ class AzureWorkloadPointInTimeRestoreRequest(AzureWorkloadRestoreRequest):
      'FileRecovery', 'WorkloadRecovery'
     :type recovery_mode: str or
      ~azure.mgmt.recoveryservicesbackup.models.RecoveryMode
+    :param target_virtual_machine_id: This is the complete ARM Id of the
+     target VM
+     For e.g.
+     /subscriptions/{subId}/resourcegroups/{rg}/provider/Microsoft.Compute/virtualmachines/{vm}
+    :type target_virtual_machine_id: str
     :param point_in_time: PointInTime value
     :type point_in_time: datetime
     """
@@ -5388,11 +5420,12 @@ class AzureWorkloadPointInTimeRestoreRequest(AzureWorkloadRestoreRequest):
         'property_bag': {'key': 'propertyBag', 'type': '{str}'},
         'target_info': {'key': 'targetInfo', 'type': 'TargetRestoreInfo'},
         'recovery_mode': {'key': 'recoveryMode', 'type': 'str'},
+        'target_virtual_machine_id': {'key': 'targetVirtualMachineId', 'type': 'str'},
         'point_in_time': {'key': 'pointInTime', 'type': 'iso-8601'},
     }
 
-    def __init__(self, *, recovery_type=None, source_resource_id: str=None, property_bag=None, target_info=None, recovery_mode=None, point_in_time=None, **kwargs) -> None:
-        super(AzureWorkloadPointInTimeRestoreRequest, self).__init__(recovery_type=recovery_type, source_resource_id=source_resource_id, property_bag=property_bag, target_info=target_info, recovery_mode=recovery_mode, **kwargs)
+    def __init__(self, *, recovery_type=None, source_resource_id: str=None, property_bag=None, target_info=None, recovery_mode=None, target_virtual_machine_id: str=None, point_in_time=None, **kwargs) -> None:
+        super(AzureWorkloadPointInTimeRestoreRequest, self).__init__(recovery_type=recovery_type, source_resource_id=source_resource_id, property_bag=property_bag, target_info=target_info, recovery_mode=recovery_mode, target_virtual_machine_id=target_virtual_machine_id, **kwargs)
         self.point_in_time = point_in_time
         self.object_type = 'AzureWorkloadPointInTimeRestoreRequest'
 
@@ -5414,6 +5447,13 @@ class AzureWorkloadSAPHanaPointInTimeRecoveryPoint(AzureWorkloadPointInTimeRecov
      'Full', 'Log', 'Differential', 'Incremental'
     :vartype type: str or
      ~azure.mgmt.recoveryservicesbackup.models.RestorePointType
+    :param recovery_point_tier_details: Recovery point tier information.
+    :type recovery_point_tier_details:
+     list[~azure.mgmt.recoveryservicesbackup.models.RecoveryPointTierInformation]
+    :param recovery_point_move_readiness_info: Eligibility of RP to be moved
+     to another tier
+    :type recovery_point_move_readiness_info: dict[str,
+     ~azure.mgmt.recoveryservicesbackup.models.RecoveryPointMoveReadinessInfo]
     :param time_ranges: List of log ranges
     :type time_ranges:
      list[~azure.mgmt.recoveryservicesbackup.models.PointInTimeRange]
@@ -5429,11 +5469,13 @@ class AzureWorkloadSAPHanaPointInTimeRecoveryPoint(AzureWorkloadPointInTimeRecov
         'object_type': {'key': 'objectType', 'type': 'str'},
         'recovery_point_time_in_utc': {'key': 'recoveryPointTimeInUTC', 'type': 'iso-8601'},
         'type': {'key': 'type', 'type': 'str'},
+        'recovery_point_tier_details': {'key': 'recoveryPointTierDetails', 'type': '[RecoveryPointTierInformation]'},
+        'recovery_point_move_readiness_info': {'key': 'recoveryPointMoveReadinessInfo', 'type': '{RecoveryPointMoveReadinessInfo}'},
         'time_ranges': {'key': 'timeRanges', 'type': '[PointInTimeRange]'},
     }
 
-    def __init__(self, *, time_ranges=None, **kwargs) -> None:
-        super(AzureWorkloadSAPHanaPointInTimeRecoveryPoint, self).__init__(time_ranges=time_ranges, **kwargs)
+    def __init__(self, *, recovery_point_tier_details=None, recovery_point_move_readiness_info=None, time_ranges=None, **kwargs) -> None:
+        super(AzureWorkloadSAPHanaPointInTimeRecoveryPoint, self).__init__(recovery_point_tier_details=recovery_point_tier_details, recovery_point_move_readiness_info=recovery_point_move_readiness_info, time_ranges=time_ranges, **kwargs)
         self.object_type = 'AzureWorkloadSAPHanaPointInTimeRecoveryPoint'
 
 
@@ -5441,7 +5483,8 @@ class AzureWorkloadSAPHanaRestoreRequest(AzureWorkloadRestoreRequest):
     """AzureWorkload SAP Hana-specific restore.
 
     You probably want to use the sub-classes and not this class directly. Known
-    sub-classes are: AzureWorkloadSAPHanaPointInTimeRestoreRequest
+    sub-classes are: AzureWorkloadSAPHanaPointInTimeRestoreRequest,
+    AzureWorkloadSAPHanaRestoreWithRehydrateRequest
 
     All required parameters must be populated in order to send to Azure.
 
@@ -5465,6 +5508,11 @@ class AzureWorkloadSAPHanaRestoreRequest(AzureWorkloadRestoreRequest):
      'FileRecovery', 'WorkloadRecovery'
     :type recovery_mode: str or
      ~azure.mgmt.recoveryservicesbackup.models.RecoveryMode
+    :param target_virtual_machine_id: This is the complete ARM Id of the
+     target VM
+     For e.g.
+     /subscriptions/{subId}/resourcegroups/{rg}/provider/Microsoft.Compute/virtualmachines/{vm}
+    :type target_virtual_machine_id: str
     """
 
     _validation = {
@@ -5478,20 +5526,24 @@ class AzureWorkloadSAPHanaRestoreRequest(AzureWorkloadRestoreRequest):
         'property_bag': {'key': 'propertyBag', 'type': '{str}'},
         'target_info': {'key': 'targetInfo', 'type': 'TargetRestoreInfo'},
         'recovery_mode': {'key': 'recoveryMode', 'type': 'str'},
+        'target_virtual_machine_id': {'key': 'targetVirtualMachineId', 'type': 'str'},
     }
 
     _subtype_map = {
-        'object_type': {'AzureWorkloadSAPHanaPointInTimeRestoreRequest': 'AzureWorkloadSAPHanaPointInTimeRestoreRequest'}
+        'object_type': {'AzureWorkloadSAPHanaPointInTimeRestoreRequest': 'AzureWorkloadSAPHanaPointInTimeRestoreRequest', 'AzureWorkloadSAPHanaRestoreWithRehydrateRequest': 'AzureWorkloadSAPHanaRestoreWithRehydrateRequest'}
     }
 
-    def __init__(self, *, recovery_type=None, source_resource_id: str=None, property_bag=None, target_info=None, recovery_mode=None, **kwargs) -> None:
-        super(AzureWorkloadSAPHanaRestoreRequest, self).__init__(recovery_type=recovery_type, source_resource_id=source_resource_id, property_bag=property_bag, target_info=target_info, recovery_mode=recovery_mode, **kwargs)
+    def __init__(self, *, recovery_type=None, source_resource_id: str=None, property_bag=None, target_info=None, recovery_mode=None, target_virtual_machine_id: str=None, **kwargs) -> None:
+        super(AzureWorkloadSAPHanaRestoreRequest, self).__init__(recovery_type=recovery_type, source_resource_id=source_resource_id, property_bag=property_bag, target_info=target_info, recovery_mode=recovery_mode, target_virtual_machine_id=target_virtual_machine_id, **kwargs)
         self.object_type = 'AzureWorkloadSAPHanaRestoreRequest'
 
 
 class AzureWorkloadSAPHanaPointInTimeRestoreRequest(AzureWorkloadSAPHanaRestoreRequest):
     """AzureWorkload SAP Hana -specific restore. Specifically for PointInTime/Log
     restore.
+
+    You probably want to use the sub-classes and not this class directly. Known
+    sub-classes are: AzureWorkloadSAPHanaPointInTimeRestoreWithRehydrateRequest
 
     All required parameters must be populated in order to send to Azure.
 
@@ -5515,6 +5567,11 @@ class AzureWorkloadSAPHanaPointInTimeRestoreRequest(AzureWorkloadSAPHanaRestoreR
      'FileRecovery', 'WorkloadRecovery'
     :type recovery_mode: str or
      ~azure.mgmt.recoveryservicesbackup.models.RecoveryMode
+    :param target_virtual_machine_id: This is the complete ARM Id of the
+     target VM
+     For e.g.
+     /subscriptions/{subId}/resourcegroups/{rg}/provider/Microsoft.Compute/virtualmachines/{vm}
+    :type target_virtual_machine_id: str
     :param point_in_time: PointInTime value
     :type point_in_time: datetime
     """
@@ -5530,13 +5587,78 @@ class AzureWorkloadSAPHanaPointInTimeRestoreRequest(AzureWorkloadSAPHanaRestoreR
         'property_bag': {'key': 'propertyBag', 'type': '{str}'},
         'target_info': {'key': 'targetInfo', 'type': 'TargetRestoreInfo'},
         'recovery_mode': {'key': 'recoveryMode', 'type': 'str'},
+        'target_virtual_machine_id': {'key': 'targetVirtualMachineId', 'type': 'str'},
         'point_in_time': {'key': 'pointInTime', 'type': 'iso-8601'},
     }
 
-    def __init__(self, *, recovery_type=None, source_resource_id: str=None, property_bag=None, target_info=None, recovery_mode=None, point_in_time=None, **kwargs) -> None:
-        super(AzureWorkloadSAPHanaPointInTimeRestoreRequest, self).__init__(recovery_type=recovery_type, source_resource_id=source_resource_id, property_bag=property_bag, target_info=target_info, recovery_mode=recovery_mode, **kwargs)
+    _subtype_map = {
+        'object_type': {'AzureWorkloadSAPHanaPointInTimeRestoreWithRehydrateRequest': 'AzureWorkloadSAPHanaPointInTimeRestoreWithRehydrateRequest'}
+    }
+
+    def __init__(self, *, recovery_type=None, source_resource_id: str=None, property_bag=None, target_info=None, recovery_mode=None, target_virtual_machine_id: str=None, point_in_time=None, **kwargs) -> None:
+        super(AzureWorkloadSAPHanaPointInTimeRestoreRequest, self).__init__(recovery_type=recovery_type, source_resource_id=source_resource_id, property_bag=property_bag, target_info=target_info, recovery_mode=recovery_mode, target_virtual_machine_id=target_virtual_machine_id, **kwargs)
         self.point_in_time = point_in_time
         self.object_type = 'AzureWorkloadSAPHanaPointInTimeRestoreRequest'
+
+
+class AzureWorkloadSAPHanaPointInTimeRestoreWithRehydrateRequest(AzureWorkloadSAPHanaPointInTimeRestoreRequest):
+    """AzureWorkload SAP Hana-specific restore with integrated rehydration of
+    recovery point.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param object_type: Required. Constant filled by server.
+    :type object_type: str
+    :param recovery_type: Type of this recovery. Possible values include:
+     'Invalid', 'OriginalLocation', 'AlternateLocation', 'RestoreDisks',
+     'Offline'
+    :type recovery_type: str or
+     ~azure.mgmt.recoveryservicesbackup.models.RecoveryType
+    :param source_resource_id: Fully qualified ARM ID of the VM on which
+     workload that was running is being recovered.
+    :type source_resource_id: str
+    :param property_bag: Workload specific property bag.
+    :type property_bag: dict[str, str]
+    :param target_info: Details of target database
+    :type target_info:
+     ~azure.mgmt.recoveryservicesbackup.models.TargetRestoreInfo
+    :param recovery_mode: Defines whether the current recovery mode is file
+     restore or database restore. Possible values include: 'Invalid',
+     'FileRecovery', 'WorkloadRecovery'
+    :type recovery_mode: str or
+     ~azure.mgmt.recoveryservicesbackup.models.RecoveryMode
+    :param target_virtual_machine_id: This is the complete ARM Id of the
+     target VM
+     For e.g.
+     /subscriptions/{subId}/resourcegroups/{rg}/provider/Microsoft.Compute/virtualmachines/{vm}
+    :type target_virtual_machine_id: str
+    :param point_in_time: PointInTime value
+    :type point_in_time: datetime
+    :param recovery_point_rehydration_info: RP Rehydration Info
+    :type recovery_point_rehydration_info:
+     ~azure.mgmt.recoveryservicesbackup.models.RecoveryPointRehydrationInfo
+    """
+
+    _validation = {
+        'object_type': {'required': True},
+    }
+
+    _attribute_map = {
+        'object_type': {'key': 'objectType', 'type': 'str'},
+        'recovery_type': {'key': 'recoveryType', 'type': 'str'},
+        'source_resource_id': {'key': 'sourceResourceId', 'type': 'str'},
+        'property_bag': {'key': 'propertyBag', 'type': '{str}'},
+        'target_info': {'key': 'targetInfo', 'type': 'TargetRestoreInfo'},
+        'recovery_mode': {'key': 'recoveryMode', 'type': 'str'},
+        'target_virtual_machine_id': {'key': 'targetVirtualMachineId', 'type': 'str'},
+        'point_in_time': {'key': 'pointInTime', 'type': 'iso-8601'},
+        'recovery_point_rehydration_info': {'key': 'recoveryPointRehydrationInfo', 'type': 'RecoveryPointRehydrationInfo'},
+    }
+
+    def __init__(self, *, recovery_type=None, source_resource_id: str=None, property_bag=None, target_info=None, recovery_mode=None, target_virtual_machine_id: str=None, point_in_time=None, recovery_point_rehydration_info=None, **kwargs) -> None:
+        super(AzureWorkloadSAPHanaPointInTimeRestoreWithRehydrateRequest, self).__init__(recovery_type=recovery_type, source_resource_id=source_resource_id, property_bag=property_bag, target_info=target_info, recovery_mode=recovery_mode, target_virtual_machine_id=target_virtual_machine_id, point_in_time=point_in_time, **kwargs)
+        self.recovery_point_rehydration_info = recovery_point_rehydration_info
+        self.object_type = 'AzureWorkloadSAPHanaPointInTimeRestoreWithRehydrateRequest'
 
 
 class AzureWorkloadSAPHanaRecoveryPoint(AzureWorkloadRecoveryPoint):
@@ -5557,6 +5679,13 @@ class AzureWorkloadSAPHanaRecoveryPoint(AzureWorkloadRecoveryPoint):
      'Full', 'Log', 'Differential', 'Incremental'
     :vartype type: str or
      ~azure.mgmt.recoveryservicesbackup.models.RestorePointType
+    :param recovery_point_tier_details: Recovery point tier information.
+    :type recovery_point_tier_details:
+     list[~azure.mgmt.recoveryservicesbackup.models.RecoveryPointTierInformation]
+    :param recovery_point_move_readiness_info: Eligibility of RP to be moved
+     to another tier
+    :type recovery_point_move_readiness_info: dict[str,
+     ~azure.mgmt.recoveryservicesbackup.models.RecoveryPointMoveReadinessInfo]
     """
 
     _validation = {
@@ -5569,11 +5698,70 @@ class AzureWorkloadSAPHanaRecoveryPoint(AzureWorkloadRecoveryPoint):
         'object_type': {'key': 'objectType', 'type': 'str'},
         'recovery_point_time_in_utc': {'key': 'recoveryPointTimeInUTC', 'type': 'iso-8601'},
         'type': {'key': 'type', 'type': 'str'},
+        'recovery_point_tier_details': {'key': 'recoveryPointTierDetails', 'type': '[RecoveryPointTierInformation]'},
+        'recovery_point_move_readiness_info': {'key': 'recoveryPointMoveReadinessInfo', 'type': '{RecoveryPointMoveReadinessInfo}'},
     }
 
-    def __init__(self, **kwargs) -> None:
-        super(AzureWorkloadSAPHanaRecoveryPoint, self).__init__(**kwargs)
+    def __init__(self, *, recovery_point_tier_details=None, recovery_point_move_readiness_info=None, **kwargs) -> None:
+        super(AzureWorkloadSAPHanaRecoveryPoint, self).__init__(recovery_point_tier_details=recovery_point_tier_details, recovery_point_move_readiness_info=recovery_point_move_readiness_info, **kwargs)
         self.object_type = 'AzureWorkloadSAPHanaRecoveryPoint'
+
+
+class AzureWorkloadSAPHanaRestoreWithRehydrateRequest(AzureWorkloadSAPHanaRestoreRequest):
+    """AzureWorkload SAP Hana-specific restore with integrated rehydration of
+    recovery point.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param object_type: Required. Constant filled by server.
+    :type object_type: str
+    :param recovery_type: Type of this recovery. Possible values include:
+     'Invalid', 'OriginalLocation', 'AlternateLocation', 'RestoreDisks',
+     'Offline'
+    :type recovery_type: str or
+     ~azure.mgmt.recoveryservicesbackup.models.RecoveryType
+    :param source_resource_id: Fully qualified ARM ID of the VM on which
+     workload that was running is being recovered.
+    :type source_resource_id: str
+    :param property_bag: Workload specific property bag.
+    :type property_bag: dict[str, str]
+    :param target_info: Details of target database
+    :type target_info:
+     ~azure.mgmt.recoveryservicesbackup.models.TargetRestoreInfo
+    :param recovery_mode: Defines whether the current recovery mode is file
+     restore or database restore. Possible values include: 'Invalid',
+     'FileRecovery', 'WorkloadRecovery'
+    :type recovery_mode: str or
+     ~azure.mgmt.recoveryservicesbackup.models.RecoveryMode
+    :param target_virtual_machine_id: This is the complete ARM Id of the
+     target VM
+     For e.g.
+     /subscriptions/{subId}/resourcegroups/{rg}/provider/Microsoft.Compute/virtualmachines/{vm}
+    :type target_virtual_machine_id: str
+    :param recovery_point_rehydration_info: RP Rehydration Info
+    :type recovery_point_rehydration_info:
+     ~azure.mgmt.recoveryservicesbackup.models.RecoveryPointRehydrationInfo
+    """
+
+    _validation = {
+        'object_type': {'required': True},
+    }
+
+    _attribute_map = {
+        'object_type': {'key': 'objectType', 'type': 'str'},
+        'recovery_type': {'key': 'recoveryType', 'type': 'str'},
+        'source_resource_id': {'key': 'sourceResourceId', 'type': 'str'},
+        'property_bag': {'key': 'propertyBag', 'type': '{str}'},
+        'target_info': {'key': 'targetInfo', 'type': 'TargetRestoreInfo'},
+        'recovery_mode': {'key': 'recoveryMode', 'type': 'str'},
+        'target_virtual_machine_id': {'key': 'targetVirtualMachineId', 'type': 'str'},
+        'recovery_point_rehydration_info': {'key': 'recoveryPointRehydrationInfo', 'type': 'RecoveryPointRehydrationInfo'},
+    }
+
+    def __init__(self, *, recovery_type=None, source_resource_id: str=None, property_bag=None, target_info=None, recovery_mode=None, target_virtual_machine_id: str=None, recovery_point_rehydration_info=None, **kwargs) -> None:
+        super(AzureWorkloadSAPHanaRestoreWithRehydrateRequest, self).__init__(recovery_type=recovery_type, source_resource_id=source_resource_id, property_bag=property_bag, target_info=target_info, recovery_mode=recovery_mode, target_virtual_machine_id=target_virtual_machine_id, **kwargs)
+        self.recovery_point_rehydration_info = recovery_point_rehydration_info
+        self.object_type = 'AzureWorkloadSAPHanaRestoreWithRehydrateRequest'
 
 
 class AzureWorkloadSQLAutoProtectionIntent(AzureWorkloadAutoProtectionIntent):
@@ -5651,6 +5839,13 @@ class AzureWorkloadSQLRecoveryPoint(AzureWorkloadRecoveryPoint):
      'Full', 'Log', 'Differential', 'Incremental'
     :vartype type: str or
      ~azure.mgmt.recoveryservicesbackup.models.RestorePointType
+    :param recovery_point_tier_details: Recovery point tier information.
+    :type recovery_point_tier_details:
+     list[~azure.mgmt.recoveryservicesbackup.models.RecoveryPointTierInformation]
+    :param recovery_point_move_readiness_info: Eligibility of RP to be moved
+     to another tier
+    :type recovery_point_move_readiness_info: dict[str,
+     ~azure.mgmt.recoveryservicesbackup.models.RecoveryPointMoveReadinessInfo]
     :param extended_info: Extended Info that provides data directory details.
      Will be populated in two cases:
      When a specific recovery point is accessed using GetRecoveryPoint
@@ -5670,6 +5865,8 @@ class AzureWorkloadSQLRecoveryPoint(AzureWorkloadRecoveryPoint):
         'object_type': {'key': 'objectType', 'type': 'str'},
         'recovery_point_time_in_utc': {'key': 'recoveryPointTimeInUTC', 'type': 'iso-8601'},
         'type': {'key': 'type', 'type': 'str'},
+        'recovery_point_tier_details': {'key': 'recoveryPointTierDetails', 'type': '[RecoveryPointTierInformation]'},
+        'recovery_point_move_readiness_info': {'key': 'recoveryPointMoveReadinessInfo', 'type': '{RecoveryPointMoveReadinessInfo}'},
         'extended_info': {'key': 'extendedInfo', 'type': 'AzureWorkloadSQLRecoveryPointExtendedInfo'},
     }
 
@@ -5677,8 +5874,8 @@ class AzureWorkloadSQLRecoveryPoint(AzureWorkloadRecoveryPoint):
         'object_type': {'AzureWorkloadSQLPointInTimeRecoveryPoint': 'AzureWorkloadSQLPointInTimeRecoveryPoint'}
     }
 
-    def __init__(self, *, extended_info=None, **kwargs) -> None:
-        super(AzureWorkloadSQLRecoveryPoint, self).__init__(**kwargs)
+    def __init__(self, *, recovery_point_tier_details=None, recovery_point_move_readiness_info=None, extended_info=None, **kwargs) -> None:
+        super(AzureWorkloadSQLRecoveryPoint, self).__init__(recovery_point_tier_details=recovery_point_tier_details, recovery_point_move_readiness_info=recovery_point_move_readiness_info, **kwargs)
         self.extended_info = extended_info
         self.object_type = 'AzureWorkloadSQLRecoveryPoint'
 
@@ -5700,6 +5897,13 @@ class AzureWorkloadSQLPointInTimeRecoveryPoint(AzureWorkloadSQLRecoveryPoint):
      'Full', 'Log', 'Differential', 'Incremental'
     :vartype type: str or
      ~azure.mgmt.recoveryservicesbackup.models.RestorePointType
+    :param recovery_point_tier_details: Recovery point tier information.
+    :type recovery_point_tier_details:
+     list[~azure.mgmt.recoveryservicesbackup.models.RecoveryPointTierInformation]
+    :param recovery_point_move_readiness_info: Eligibility of RP to be moved
+     to another tier
+    :type recovery_point_move_readiness_info: dict[str,
+     ~azure.mgmt.recoveryservicesbackup.models.RecoveryPointMoveReadinessInfo]
     :param extended_info: Extended Info that provides data directory details.
      Will be populated in two cases:
      When a specific recovery point is accessed using GetRecoveryPoint
@@ -5722,12 +5926,14 @@ class AzureWorkloadSQLPointInTimeRecoveryPoint(AzureWorkloadSQLRecoveryPoint):
         'object_type': {'key': 'objectType', 'type': 'str'},
         'recovery_point_time_in_utc': {'key': 'recoveryPointTimeInUTC', 'type': 'iso-8601'},
         'type': {'key': 'type', 'type': 'str'},
+        'recovery_point_tier_details': {'key': 'recoveryPointTierDetails', 'type': '[RecoveryPointTierInformation]'},
+        'recovery_point_move_readiness_info': {'key': 'recoveryPointMoveReadinessInfo', 'type': '{RecoveryPointMoveReadinessInfo}'},
         'extended_info': {'key': 'extendedInfo', 'type': 'AzureWorkloadSQLRecoveryPointExtendedInfo'},
         'time_ranges': {'key': 'timeRanges', 'type': '[PointInTimeRange]'},
     }
 
-    def __init__(self, *, extended_info=None, time_ranges=None, **kwargs) -> None:
-        super(AzureWorkloadSQLPointInTimeRecoveryPoint, self).__init__(extended_info=extended_info, **kwargs)
+    def __init__(self, *, recovery_point_tier_details=None, recovery_point_move_readiness_info=None, extended_info=None, time_ranges=None, **kwargs) -> None:
+        super(AzureWorkloadSQLPointInTimeRecoveryPoint, self).__init__(recovery_point_tier_details=recovery_point_tier_details, recovery_point_move_readiness_info=recovery_point_move_readiness_info, extended_info=extended_info, **kwargs)
         self.time_ranges = time_ranges
         self.object_type = 'AzureWorkloadSQLPointInTimeRecoveryPoint'
 
@@ -5736,7 +5942,8 @@ class AzureWorkloadSQLRestoreRequest(AzureWorkloadRestoreRequest):
     """AzureWorkload SQL -specific restore. Specifically for full/diff restore.
 
     You probably want to use the sub-classes and not this class directly. Known
-    sub-classes are: AzureWorkloadSQLPointInTimeRestoreRequest
+    sub-classes are: AzureWorkloadSQLPointInTimeRestoreRequest,
+    AzureWorkloadSQLRestoreWithRehydrateRequest
 
     All required parameters must be populated in order to send to Azure.
 
@@ -5760,6 +5967,11 @@ class AzureWorkloadSQLRestoreRequest(AzureWorkloadRestoreRequest):
      'FileRecovery', 'WorkloadRecovery'
     :type recovery_mode: str or
      ~azure.mgmt.recoveryservicesbackup.models.RecoveryMode
+    :param target_virtual_machine_id: This is the complete ARM Id of the
+     target VM
+     For e.g.
+     /subscriptions/{subId}/resourcegroups/{rg}/provider/Microsoft.Compute/virtualmachines/{vm}
+    :type target_virtual_machine_id: str
     :param should_use_alternate_target_location: Default option set to true.
      If this is set to false, alternate data directory must be provided
     :type should_use_alternate_target_location: bool
@@ -5782,17 +5994,18 @@ class AzureWorkloadSQLRestoreRequest(AzureWorkloadRestoreRequest):
         'property_bag': {'key': 'propertyBag', 'type': '{str}'},
         'target_info': {'key': 'targetInfo', 'type': 'TargetRestoreInfo'},
         'recovery_mode': {'key': 'recoveryMode', 'type': 'str'},
+        'target_virtual_machine_id': {'key': 'targetVirtualMachineId', 'type': 'str'},
         'should_use_alternate_target_location': {'key': 'shouldUseAlternateTargetLocation', 'type': 'bool'},
         'is_non_recoverable': {'key': 'isNonRecoverable', 'type': 'bool'},
         'alternate_directory_paths': {'key': 'alternateDirectoryPaths', 'type': '[SQLDataDirectoryMapping]'},
     }
 
     _subtype_map = {
-        'object_type': {'AzureWorkloadSQLPointInTimeRestoreRequest': 'AzureWorkloadSQLPointInTimeRestoreRequest'}
+        'object_type': {'AzureWorkloadSQLPointInTimeRestoreRequest': 'AzureWorkloadSQLPointInTimeRestoreRequest', 'AzureWorkloadSQLRestoreWithRehydrateRequest': 'AzureWorkloadSQLRestoreWithRehydrateRequest'}
     }
 
-    def __init__(self, *, recovery_type=None, source_resource_id: str=None, property_bag=None, target_info=None, recovery_mode=None, should_use_alternate_target_location: bool=None, is_non_recoverable: bool=None, alternate_directory_paths=None, **kwargs) -> None:
-        super(AzureWorkloadSQLRestoreRequest, self).__init__(recovery_type=recovery_type, source_resource_id=source_resource_id, property_bag=property_bag, target_info=target_info, recovery_mode=recovery_mode, **kwargs)
+    def __init__(self, *, recovery_type=None, source_resource_id: str=None, property_bag=None, target_info=None, recovery_mode=None, target_virtual_machine_id: str=None, should_use_alternate_target_location: bool=None, is_non_recoverable: bool=None, alternate_directory_paths=None, **kwargs) -> None:
+        super(AzureWorkloadSQLRestoreRequest, self).__init__(recovery_type=recovery_type, source_resource_id=source_resource_id, property_bag=property_bag, target_info=target_info, recovery_mode=recovery_mode, target_virtual_machine_id=target_virtual_machine_id, **kwargs)
         self.should_use_alternate_target_location = should_use_alternate_target_location
         self.is_non_recoverable = is_non_recoverable
         self.alternate_directory_paths = alternate_directory_paths
@@ -5802,6 +6015,9 @@ class AzureWorkloadSQLRestoreRequest(AzureWorkloadRestoreRequest):
 class AzureWorkloadSQLPointInTimeRestoreRequest(AzureWorkloadSQLRestoreRequest):
     """AzureWorkload SQL -specific restore. Specifically for PointInTime/Log
     restore.
+
+    You probably want to use the sub-classes and not this class directly. Known
+    sub-classes are: AzureWorkloadSQLPointInTimeRestoreWithRehydrateRequest
 
     All required parameters must be populated in order to send to Azure.
 
@@ -5825,6 +6041,11 @@ class AzureWorkloadSQLPointInTimeRestoreRequest(AzureWorkloadSQLRestoreRequest):
      'FileRecovery', 'WorkloadRecovery'
     :type recovery_mode: str or
      ~azure.mgmt.recoveryservicesbackup.models.RecoveryMode
+    :param target_virtual_machine_id: This is the complete ARM Id of the
+     target VM
+     For e.g.
+     /subscriptions/{subId}/resourcegroups/{rg}/provider/Microsoft.Compute/virtualmachines/{vm}
+    :type target_virtual_machine_id: str
     :param should_use_alternate_target_location: Default option set to true.
      If this is set to false, alternate data directory must be provided
     :type should_use_alternate_target_location: bool
@@ -5849,16 +6070,93 @@ class AzureWorkloadSQLPointInTimeRestoreRequest(AzureWorkloadSQLRestoreRequest):
         'property_bag': {'key': 'propertyBag', 'type': '{str}'},
         'target_info': {'key': 'targetInfo', 'type': 'TargetRestoreInfo'},
         'recovery_mode': {'key': 'recoveryMode', 'type': 'str'},
+        'target_virtual_machine_id': {'key': 'targetVirtualMachineId', 'type': 'str'},
         'should_use_alternate_target_location': {'key': 'shouldUseAlternateTargetLocation', 'type': 'bool'},
         'is_non_recoverable': {'key': 'isNonRecoverable', 'type': 'bool'},
         'alternate_directory_paths': {'key': 'alternateDirectoryPaths', 'type': '[SQLDataDirectoryMapping]'},
         'point_in_time': {'key': 'pointInTime', 'type': 'iso-8601'},
     }
 
-    def __init__(self, *, recovery_type=None, source_resource_id: str=None, property_bag=None, target_info=None, recovery_mode=None, should_use_alternate_target_location: bool=None, is_non_recoverable: bool=None, alternate_directory_paths=None, point_in_time=None, **kwargs) -> None:
-        super(AzureWorkloadSQLPointInTimeRestoreRequest, self).__init__(recovery_type=recovery_type, source_resource_id=source_resource_id, property_bag=property_bag, target_info=target_info, recovery_mode=recovery_mode, should_use_alternate_target_location=should_use_alternate_target_location, is_non_recoverable=is_non_recoverable, alternate_directory_paths=alternate_directory_paths, **kwargs)
+    _subtype_map = {
+        'object_type': {'AzureWorkloadSQLPointInTimeRestoreWithRehydrateRequest': 'AzureWorkloadSQLPointInTimeRestoreWithRehydrateRequest'}
+    }
+
+    def __init__(self, *, recovery_type=None, source_resource_id: str=None, property_bag=None, target_info=None, recovery_mode=None, target_virtual_machine_id: str=None, should_use_alternate_target_location: bool=None, is_non_recoverable: bool=None, alternate_directory_paths=None, point_in_time=None, **kwargs) -> None:
+        super(AzureWorkloadSQLPointInTimeRestoreRequest, self).__init__(recovery_type=recovery_type, source_resource_id=source_resource_id, property_bag=property_bag, target_info=target_info, recovery_mode=recovery_mode, target_virtual_machine_id=target_virtual_machine_id, should_use_alternate_target_location=should_use_alternate_target_location, is_non_recoverable=is_non_recoverable, alternate_directory_paths=alternate_directory_paths, **kwargs)
         self.point_in_time = point_in_time
         self.object_type = 'AzureWorkloadSQLPointInTimeRestoreRequest'
+
+
+class AzureWorkloadSQLPointInTimeRestoreWithRehydrateRequest(AzureWorkloadSQLPointInTimeRestoreRequest):
+    """AzureWorkload SQL-specific restore with integrated rehydration of recovery
+    point.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param object_type: Required. Constant filled by server.
+    :type object_type: str
+    :param recovery_type: Type of this recovery. Possible values include:
+     'Invalid', 'OriginalLocation', 'AlternateLocation', 'RestoreDisks',
+     'Offline'
+    :type recovery_type: str or
+     ~azure.mgmt.recoveryservicesbackup.models.RecoveryType
+    :param source_resource_id: Fully qualified ARM ID of the VM on which
+     workload that was running is being recovered.
+    :type source_resource_id: str
+    :param property_bag: Workload specific property bag.
+    :type property_bag: dict[str, str]
+    :param target_info: Details of target database
+    :type target_info:
+     ~azure.mgmt.recoveryservicesbackup.models.TargetRestoreInfo
+    :param recovery_mode: Defines whether the current recovery mode is file
+     restore or database restore. Possible values include: 'Invalid',
+     'FileRecovery', 'WorkloadRecovery'
+    :type recovery_mode: str or
+     ~azure.mgmt.recoveryservicesbackup.models.RecoveryMode
+    :param target_virtual_machine_id: This is the complete ARM Id of the
+     target VM
+     For e.g.
+     /subscriptions/{subId}/resourcegroups/{rg}/provider/Microsoft.Compute/virtualmachines/{vm}
+    :type target_virtual_machine_id: str
+    :param should_use_alternate_target_location: Default option set to true.
+     If this is set to false, alternate data directory must be provided
+    :type should_use_alternate_target_location: bool
+    :param is_non_recoverable: SQL specific property where user can chose to
+     set no-recovery when restore operation is tried
+    :type is_non_recoverable: bool
+    :param alternate_directory_paths: Data directory details
+    :type alternate_directory_paths:
+     list[~azure.mgmt.recoveryservicesbackup.models.SQLDataDirectoryMapping]
+    :param point_in_time: PointInTime value
+    :type point_in_time: datetime
+    :param recovery_point_rehydration_info: RP Rehydration Info
+    :type recovery_point_rehydration_info:
+     ~azure.mgmt.recoveryservicesbackup.models.RecoveryPointRehydrationInfo
+    """
+
+    _validation = {
+        'object_type': {'required': True},
+    }
+
+    _attribute_map = {
+        'object_type': {'key': 'objectType', 'type': 'str'},
+        'recovery_type': {'key': 'recoveryType', 'type': 'str'},
+        'source_resource_id': {'key': 'sourceResourceId', 'type': 'str'},
+        'property_bag': {'key': 'propertyBag', 'type': '{str}'},
+        'target_info': {'key': 'targetInfo', 'type': 'TargetRestoreInfo'},
+        'recovery_mode': {'key': 'recoveryMode', 'type': 'str'},
+        'target_virtual_machine_id': {'key': 'targetVirtualMachineId', 'type': 'str'},
+        'should_use_alternate_target_location': {'key': 'shouldUseAlternateTargetLocation', 'type': 'bool'},
+        'is_non_recoverable': {'key': 'isNonRecoverable', 'type': 'bool'},
+        'alternate_directory_paths': {'key': 'alternateDirectoryPaths', 'type': '[SQLDataDirectoryMapping]'},
+        'point_in_time': {'key': 'pointInTime', 'type': 'iso-8601'},
+        'recovery_point_rehydration_info': {'key': 'recoveryPointRehydrationInfo', 'type': 'RecoveryPointRehydrationInfo'},
+    }
+
+    def __init__(self, *, recovery_type=None, source_resource_id: str=None, property_bag=None, target_info=None, recovery_mode=None, target_virtual_machine_id: str=None, should_use_alternate_target_location: bool=None, is_non_recoverable: bool=None, alternate_directory_paths=None, point_in_time=None, recovery_point_rehydration_info=None, **kwargs) -> None:
+        super(AzureWorkloadSQLPointInTimeRestoreWithRehydrateRequest, self).__init__(recovery_type=recovery_type, source_resource_id=source_resource_id, property_bag=property_bag, target_info=target_info, recovery_mode=recovery_mode, target_virtual_machine_id=target_virtual_machine_id, should_use_alternate_target_location=should_use_alternate_target_location, is_non_recoverable=is_non_recoverable, alternate_directory_paths=alternate_directory_paths, point_in_time=point_in_time, **kwargs)
+        self.recovery_point_rehydration_info = recovery_point_rehydration_info
+        self.object_type = 'AzureWorkloadSQLPointInTimeRestoreWithRehydrateRequest'
 
 
 class AzureWorkloadSQLRecoveryPointExtendedInfo(Model):
@@ -5890,6 +6188,75 @@ class AzureWorkloadSQLRecoveryPointExtendedInfo(Model):
         super(AzureWorkloadSQLRecoveryPointExtendedInfo, self).__init__(**kwargs)
         self.data_directory_time_in_utc = None
         self.data_directory_paths = None
+
+
+class AzureWorkloadSQLRestoreWithRehydrateRequest(AzureWorkloadSQLRestoreRequest):
+    """AzureWorkload SQL-specific restore with integrated rehydration of recovery
+    point.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param object_type: Required. Constant filled by server.
+    :type object_type: str
+    :param recovery_type: Type of this recovery. Possible values include:
+     'Invalid', 'OriginalLocation', 'AlternateLocation', 'RestoreDisks',
+     'Offline'
+    :type recovery_type: str or
+     ~azure.mgmt.recoveryservicesbackup.models.RecoveryType
+    :param source_resource_id: Fully qualified ARM ID of the VM on which
+     workload that was running is being recovered.
+    :type source_resource_id: str
+    :param property_bag: Workload specific property bag.
+    :type property_bag: dict[str, str]
+    :param target_info: Details of target database
+    :type target_info:
+     ~azure.mgmt.recoveryservicesbackup.models.TargetRestoreInfo
+    :param recovery_mode: Defines whether the current recovery mode is file
+     restore or database restore. Possible values include: 'Invalid',
+     'FileRecovery', 'WorkloadRecovery'
+    :type recovery_mode: str or
+     ~azure.mgmt.recoveryservicesbackup.models.RecoveryMode
+    :param target_virtual_machine_id: This is the complete ARM Id of the
+     target VM
+     For e.g.
+     /subscriptions/{subId}/resourcegroups/{rg}/provider/Microsoft.Compute/virtualmachines/{vm}
+    :type target_virtual_machine_id: str
+    :param should_use_alternate_target_location: Default option set to true.
+     If this is set to false, alternate data directory must be provided
+    :type should_use_alternate_target_location: bool
+    :param is_non_recoverable: SQL specific property where user can chose to
+     set no-recovery when restore operation is tried
+    :type is_non_recoverable: bool
+    :param alternate_directory_paths: Data directory details
+    :type alternate_directory_paths:
+     list[~azure.mgmt.recoveryservicesbackup.models.SQLDataDirectoryMapping]
+    :param recovery_point_rehydration_info: RP Rehydration Info
+    :type recovery_point_rehydration_info:
+     ~azure.mgmt.recoveryservicesbackup.models.RecoveryPointRehydrationInfo
+    """
+
+    _validation = {
+        'object_type': {'required': True},
+    }
+
+    _attribute_map = {
+        'object_type': {'key': 'objectType', 'type': 'str'},
+        'recovery_type': {'key': 'recoveryType', 'type': 'str'},
+        'source_resource_id': {'key': 'sourceResourceId', 'type': 'str'},
+        'property_bag': {'key': 'propertyBag', 'type': '{str}'},
+        'target_info': {'key': 'targetInfo', 'type': 'TargetRestoreInfo'},
+        'recovery_mode': {'key': 'recoveryMode', 'type': 'str'},
+        'target_virtual_machine_id': {'key': 'targetVirtualMachineId', 'type': 'str'},
+        'should_use_alternate_target_location': {'key': 'shouldUseAlternateTargetLocation', 'type': 'bool'},
+        'is_non_recoverable': {'key': 'isNonRecoverable', 'type': 'bool'},
+        'alternate_directory_paths': {'key': 'alternateDirectoryPaths', 'type': '[SQLDataDirectoryMapping]'},
+        'recovery_point_rehydration_info': {'key': 'recoveryPointRehydrationInfo', 'type': 'RecoveryPointRehydrationInfo'},
+    }
+
+    def __init__(self, *, recovery_type=None, source_resource_id: str=None, property_bag=None, target_info=None, recovery_mode=None, target_virtual_machine_id: str=None, should_use_alternate_target_location: bool=None, is_non_recoverable: bool=None, alternate_directory_paths=None, recovery_point_rehydration_info=None, **kwargs) -> None:
+        super(AzureWorkloadSQLRestoreWithRehydrateRequest, self).__init__(recovery_type=recovery_type, source_resource_id=source_resource_id, property_bag=property_bag, target_info=target_info, recovery_mode=recovery_mode, target_virtual_machine_id=target_virtual_machine_id, should_use_alternate_target_location=should_use_alternate_target_location, is_non_recoverable=is_non_recoverable, alternate_directory_paths=alternate_directory_paths, **kwargs)
+        self.recovery_point_rehydration_info = recovery_point_rehydration_info
+        self.object_type = 'AzureWorkloadSQLRestoreWithRehydrateRequest'
 
 
 class BackupEngineBaseResource(Resource):
@@ -6433,6 +6800,26 @@ class BEKDetails(Model):
         self.secret_data = secret_data
 
 
+class BMSAADPropertiesQueryObject(Model):
+    """Filters to list backup items.
+
+    :param backup_management_type: Backup management type for the backed up
+     item. Possible values include: 'Invalid', 'AzureIaasVM', 'MAB', 'DPM',
+     'AzureBackupServer', 'AzureSql', 'AzureStorage', 'AzureWorkload',
+     'DefaultBackup'
+    :type backup_management_type: str or
+     ~azure.mgmt.recoveryservicesbackup.models.BackupManagementType
+    """
+
+    _attribute_map = {
+        'backup_management_type': {'key': 'backupManagementType', 'type': 'str'},
+    }
+
+    def __init__(self, *, backup_management_type=None, **kwargs) -> None:
+        super(BMSAADPropertiesQueryObject, self).__init__(**kwargs)
+        self.backup_management_type = backup_management_type
+
+
 class BMSBackupEngineQueryObject(Model):
     """Query parameters to fetch list of backup engines.
 
@@ -6651,6 +7038,8 @@ class BMSRPQueryObject(Model):
     :param extended_info: In Get Recovery Point, it tells whether extended
      information about recovery point is asked.
     :type extended_info: bool
+    :param move_ready_rp_only: Whether the RP can be moved to another tier
+    :type move_ready_rp_only: bool
     """
 
     _attribute_map = {
@@ -6658,14 +7047,16 @@ class BMSRPQueryObject(Model):
         'end_date': {'key': 'endDate', 'type': 'iso-8601'},
         'restore_point_query_type': {'key': 'restorePointQueryType', 'type': 'str'},
         'extended_info': {'key': 'extendedInfo', 'type': 'bool'},
+        'move_ready_rp_only': {'key': 'moveReadyRPOnly', 'type': 'bool'},
     }
 
-    def __init__(self, *, start_date=None, end_date=None, restore_point_query_type=None, extended_info: bool=None, **kwargs) -> None:
+    def __init__(self, *, start_date=None, end_date=None, restore_point_query_type=None, extended_info: bool=None, move_ready_rp_only: bool=None, **kwargs) -> None:
         super(BMSRPQueryObject, self).__init__(**kwargs)
         self.start_date = start_date
         self.end_date = end_date
         self.restore_point_query_type = restore_point_query_type
         self.extended_info = extended_info
+        self.move_ready_rp_only = move_ready_rp_only
 
 
 class BMSWorkloadItemQueryObject(Model):
@@ -6867,11 +7258,79 @@ class ClientScriptForConnect(Model):
 
 
 class CloudError(Model):
-    """CloudError.
+    """An error response from the Container Instance service.
+
+    :param error: The error object.
+    :type error: ~azure.mgmt.recoveryservicesbackup.models.CloudErrorBody
     """
 
     _attribute_map = {
+        'error': {'key': 'error', 'type': 'CloudErrorBody'},
     }
+
+    def __init__(self, *, error=None, **kwargs) -> None:
+        super(CloudError, self).__init__(**kwargs)
+        self.error = error
+
+
+class CloudErrorException(HttpOperationError):
+    """Server responsed with exception of type: 'CloudError'.
+
+    :param deserialize: A deserializer
+    :param response: Server response to be deserialized.
+    """
+
+    def __init__(self, deserialize, response, *args):
+
+        super(CloudErrorException, self).__init__(deserialize, response, 'CloudError', *args)
+
+
+class CloudErrorBody(Model):
+    """An error response from the Container Instance service.
+
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    :ivar code: An identifier for the error. Codes are invariant and are
+     intended to be consumed programmatically.
+    :vartype code: str
+    :ivar message: A message describing the error, intended to be suitable for
+     display in a user interface.
+    :vartype message: str
+    :ivar target: The target of the particular error. For example, the name of
+     the property in error.
+    :vartype target: str
+    :ivar details: A list of additional details about the error.
+    :vartype details:
+     list[~azure.mgmt.recoveryservicesbackup.models.CloudErrorBody]
+    :ivar additional_info: The error additional info.
+    :vartype additional_info:
+     list[~azure.mgmt.recoveryservicesbackup.models.ErrorAdditionalInfo]
+    """
+
+    _validation = {
+        'code': {'readonly': True},
+        'message': {'readonly': True},
+        'target': {'readonly': True},
+        'details': {'readonly': True},
+        'additional_info': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'code': {'key': 'code', 'type': 'str'},
+        'message': {'key': 'message', 'type': 'str'},
+        'target': {'key': 'target', 'type': 'str'},
+        'details': {'key': 'details', 'type': '[CloudErrorBody]'},
+        'additional_info': {'key': 'additionalInfo', 'type': '[ErrorAdditionalInfo]'},
+    }
+
+    def __init__(self, **kwargs) -> None:
+        super(CloudErrorBody, self).__init__(**kwargs)
+        self.code = None
+        self.message = None
+        self.target = None
+        self.details = None
+        self.additional_info = None
 
 
 class ContainerIdentityInfo(Model):
@@ -7853,67 +8312,6 @@ class ErrorDetail(Model):
         self.recommendations = None
 
 
-class ErrorResponse(Model):
-    """Error Response.
-
-    Common error response for all Azure Resource Manager APIs to return error
-    details for failed operations. (This also follows the OData error response
-    format.).
-
-    Variables are only populated by the server, and will be ignored when
-    sending a request.
-
-    :ivar code: The error code.
-    :vartype code: str
-    :ivar message: The error message.
-    :vartype message: str
-    :ivar target: The error target.
-    :vartype target: str
-    :ivar details: The error details.
-    :vartype details:
-     list[~azure.mgmt.recoveryservicesbackup.models.ErrorResponse]
-    :ivar additional_info: The error additional info.
-    :vartype additional_info:
-     list[~azure.mgmt.recoveryservicesbackup.models.ErrorAdditionalInfo]
-    """
-
-    _validation = {
-        'code': {'readonly': True},
-        'message': {'readonly': True},
-        'target': {'readonly': True},
-        'details': {'readonly': True},
-        'additional_info': {'readonly': True},
-    }
-
-    _attribute_map = {
-        'code': {'key': 'code', 'type': 'str'},
-        'message': {'key': 'message', 'type': 'str'},
-        'target': {'key': 'target', 'type': 'str'},
-        'details': {'key': 'details', 'type': '[ErrorResponse]'},
-        'additional_info': {'key': 'additionalInfo', 'type': '[ErrorAdditionalInfo]'},
-    }
-
-    def __init__(self, **kwargs) -> None:
-        super(ErrorResponse, self).__init__(**kwargs)
-        self.code = None
-        self.message = None
-        self.target = None
-        self.details = None
-        self.additional_info = None
-
-
-class ErrorResponseException(HttpOperationError):
-    """Server responsed with exception of type: 'ErrorResponse'.
-
-    :param deserialize: A deserializer
-    :param response: Server response to be deserialized.
-    """
-
-    def __init__(self, deserialize, response, *args):
-
-        super(ErrorResponseException, self).__init__(deserialize, response, 'ErrorResponse', *args)
-
-
 class OperationResultInfoBase(Model):
     """Base class for operation result info.
 
@@ -8394,6 +8792,10 @@ class IaasVMRecoveryPoint(RecoveryPoint):
     :param zones: Identifies the zone of the VM at the time of backup.
      Applicable only for zone-pinned Vms
     :type zones: list[str]
+    :param recovery_point_move_readiness_info: Eligibility of RP to be moved
+     to another tier
+    :type recovery_point_move_readiness_info: dict[str,
+     ~azure.mgmt.recoveryservicesbackup.models.RecoveryPointMoveReadinessInfo]
     """
 
     _validation = {
@@ -8421,9 +8823,10 @@ class IaasVMRecoveryPoint(RecoveryPoint):
         'os_type': {'key': 'osType', 'type': 'str'},
         'recovery_point_disk_configuration': {'key': 'recoveryPointDiskConfiguration', 'type': 'RecoveryPointDiskConfiguration'},
         'zones': {'key': 'zones', 'type': '[str]'},
+        'recovery_point_move_readiness_info': {'key': 'recoveryPointMoveReadinessInfo', 'type': '{RecoveryPointMoveReadinessInfo}'},
     }
 
-    def __init__(self, *, key_and_secret=None, is_instant_ilr_session_active: bool=None, recovery_point_tier_details=None, is_managed_virtual_machine: bool=None, virtual_machine_size: str=None, original_storage_account_option: bool=None, os_type: str=None, recovery_point_disk_configuration=None, zones=None, **kwargs) -> None:
+    def __init__(self, *, key_and_secret=None, is_instant_ilr_session_active: bool=None, recovery_point_tier_details=None, is_managed_virtual_machine: bool=None, virtual_machine_size: str=None, original_storage_account_option: bool=None, os_type: str=None, recovery_point_disk_configuration=None, zones=None, recovery_point_move_readiness_info=None, **kwargs) -> None:
         super(IaasVMRecoveryPoint, self).__init__(**kwargs)
         self.recovery_point_type = None
         self.recovery_point_time = None
@@ -8439,11 +8842,15 @@ class IaasVMRecoveryPoint(RecoveryPoint):
         self.os_type = os_type
         self.recovery_point_disk_configuration = recovery_point_disk_configuration
         self.zones = zones
+        self.recovery_point_move_readiness_info = recovery_point_move_readiness_info
         self.object_type = 'IaasVMRecoveryPoint'
 
 
 class IaasVMRestoreRequest(RestoreRequest):
     """IaaS VM workload-specific restore.
+
+    You probably want to use the sub-classes and not this class directly. Known
+    sub-classes are: IaasVMRestoreWithRehydrationRequest
 
     All required parameters must be populated in order to send to Azure.
 
@@ -8538,6 +8945,10 @@ class IaasVMRestoreRequest(RestoreRequest):
         'zones': {'key': 'zones', 'type': '[str]'},
     }
 
+    _subtype_map = {
+        'object_type': {'IaasVMRestoreWithRehydrationRequest': 'IaasVMRestoreWithRehydrationRequest'}
+    }
+
     def __init__(self, *, recovery_point_id: str=None, recovery_type=None, source_resource_id: str=None, target_virtual_machine_id: str=None, target_resource_group_id: str=None, storage_account_id: str=None, virtual_network_id: str=None, subnet_id: str=None, target_domain_name_id: str=None, region: str=None, affinity_group: str=None, create_new_cloud_service: bool=None, original_storage_account_option: bool=None, encryption_details=None, restore_disk_lun_list=None, restore_with_managed_disks: bool=None, disk_encryption_set_id: str=None, zones=None, **kwargs) -> None:
         super(IaasVMRestoreRequest, self).__init__(**kwargs)
         self.recovery_point_id = recovery_point_id
@@ -8559,6 +8970,113 @@ class IaasVMRestoreRequest(RestoreRequest):
         self.disk_encryption_set_id = disk_encryption_set_id
         self.zones = zones
         self.object_type = 'IaasVMRestoreRequest'
+
+
+class IaasVMRestoreWithRehydrationRequest(IaasVMRestoreRequest):
+    """IaaS VM workload-specific restore with integrated rehydration of recovery
+    point.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param object_type: Required. Constant filled by server.
+    :type object_type: str
+    :param recovery_point_id: ID of the backup copy to be recovered.
+    :type recovery_point_id: str
+    :param recovery_type: Type of this recovery. Possible values include:
+     'Invalid', 'OriginalLocation', 'AlternateLocation', 'RestoreDisks',
+     'Offline'
+    :type recovery_type: str or
+     ~azure.mgmt.recoveryservicesbackup.models.RecoveryType
+    :param source_resource_id: Fully qualified ARM ID of the VM which is being
+     recovered.
+    :type source_resource_id: str
+    :param target_virtual_machine_id: This is the complete ARM Id of the VM
+     that will be created.
+     For e.g.
+     /subscriptions/{subId}/resourcegroups/{rg}/provider/Microsoft.Compute/virtualmachines/{vm}
+    :type target_virtual_machine_id: str
+    :param target_resource_group_id: This is the ARM Id of the resource group
+     that you want to create for this Virtual machine and other artifacts.
+     For e.g. /subscriptions/{subId}/resourcegroups/{rg}
+    :type target_resource_group_id: str
+    :param storage_account_id: Fully qualified ARM ID of the storage account
+     to which the VM has to be restored.
+    :type storage_account_id: str
+    :param virtual_network_id: This is the virtual network Id of the vnet that
+     will be attached to the virtual machine.
+     User will be validated for join action permissions in the linked access.
+    :type virtual_network_id: str
+    :param subnet_id: Subnet ID, is the subnet ID associated with the to be
+     restored VM. For Classic VMs it would be
+     {VnetID}/Subnet/{SubnetName} and, for the Azure Resource Manager VMs it
+     would be ARM resource ID used to represent
+     the subnet.
+    :type subnet_id: str
+    :param target_domain_name_id: Fully qualified ARM ID of the domain name to
+     be associated to the VM being restored. This applies only to Classic
+     Virtual Machines.
+    :type target_domain_name_id: str
+    :param region: Region in which the virtual machine is restored.
+    :type region: str
+    :param affinity_group: Affinity group associated to VM to be restored.
+     Used only for Classic Compute Virtual Machines.
+    :type affinity_group: str
+    :param create_new_cloud_service: Should a new cloud service be created
+     while restoring the VM. If this is false, VM will be restored to the same
+     cloud service as it was at the time of backup.
+    :type create_new_cloud_service: bool
+    :param original_storage_account_option: Original Storage Account Option
+    :type original_storage_account_option: bool
+    :param encryption_details: Details needed if the VM was encrypted at the
+     time of backup.
+    :type encryption_details:
+     ~azure.mgmt.recoveryservicesbackup.models.EncryptionDetails
+    :param restore_disk_lun_list: List of Disk LUNs for partial restore
+    :type restore_disk_lun_list: list[int]
+    :param restore_with_managed_disks: Flag to denote of an Unmanaged disk VM
+     should be restored with Managed disks.
+    :type restore_with_managed_disks: bool
+    :param disk_encryption_set_id: DiskEncryptionSet's ID - needed if the VM
+     needs to be encrypted at rest during restore with customer managed key.
+    :type disk_encryption_set_id: str
+    :param zones: Target zone where the VM and its disks should be restored.
+    :type zones: list[str]
+    :param recovery_point_rehydration_info: RP Rehydration Info
+    :type recovery_point_rehydration_info:
+     ~azure.mgmt.recoveryservicesbackup.models.RecoveryPointRehydrationInfo
+    """
+
+    _validation = {
+        'object_type': {'required': True},
+    }
+
+    _attribute_map = {
+        'object_type': {'key': 'objectType', 'type': 'str'},
+        'recovery_point_id': {'key': 'recoveryPointId', 'type': 'str'},
+        'recovery_type': {'key': 'recoveryType', 'type': 'str'},
+        'source_resource_id': {'key': 'sourceResourceId', 'type': 'str'},
+        'target_virtual_machine_id': {'key': 'targetVirtualMachineId', 'type': 'str'},
+        'target_resource_group_id': {'key': 'targetResourceGroupId', 'type': 'str'},
+        'storage_account_id': {'key': 'storageAccountId', 'type': 'str'},
+        'virtual_network_id': {'key': 'virtualNetworkId', 'type': 'str'},
+        'subnet_id': {'key': 'subnetId', 'type': 'str'},
+        'target_domain_name_id': {'key': 'targetDomainNameId', 'type': 'str'},
+        'region': {'key': 'region', 'type': 'str'},
+        'affinity_group': {'key': 'affinityGroup', 'type': 'str'},
+        'create_new_cloud_service': {'key': 'createNewCloudService', 'type': 'bool'},
+        'original_storage_account_option': {'key': 'originalStorageAccountOption', 'type': 'bool'},
+        'encryption_details': {'key': 'encryptionDetails', 'type': 'EncryptionDetails'},
+        'restore_disk_lun_list': {'key': 'restoreDiskLunList', 'type': '[int]'},
+        'restore_with_managed_disks': {'key': 'restoreWithManagedDisks', 'type': 'bool'},
+        'disk_encryption_set_id': {'key': 'diskEncryptionSetId', 'type': 'str'},
+        'zones': {'key': 'zones', 'type': '[str]'},
+        'recovery_point_rehydration_info': {'key': 'recoveryPointRehydrationInfo', 'type': 'RecoveryPointRehydrationInfo'},
+    }
+
+    def __init__(self, *, recovery_point_id: str=None, recovery_type=None, source_resource_id: str=None, target_virtual_machine_id: str=None, target_resource_group_id: str=None, storage_account_id: str=None, virtual_network_id: str=None, subnet_id: str=None, target_domain_name_id: str=None, region: str=None, affinity_group: str=None, create_new_cloud_service: bool=None, original_storage_account_option: bool=None, encryption_details=None, restore_disk_lun_list=None, restore_with_managed_disks: bool=None, disk_encryption_set_id: str=None, zones=None, recovery_point_rehydration_info=None, **kwargs) -> None:
+        super(IaasVMRestoreWithRehydrationRequest, self).__init__(recovery_point_id=recovery_point_id, recovery_type=recovery_type, source_resource_id=source_resource_id, target_virtual_machine_id=target_virtual_machine_id, target_resource_group_id=target_resource_group_id, storage_account_id=storage_account_id, virtual_network_id=virtual_network_id, subnet_id=subnet_id, target_domain_name_id=target_domain_name_id, region=region, affinity_group=affinity_group, create_new_cloud_service=create_new_cloud_service, original_storage_account_option=original_storage_account_option, encryption_details=encryption_details, restore_disk_lun_list=restore_disk_lun_list, restore_with_managed_disks=restore_with_managed_disks, disk_encryption_set_id=disk_encryption_set_id, zones=zones, **kwargs)
+        self.recovery_point_rehydration_info = recovery_point_rehydration_info
+        self.object_type = 'IaasVMRestoreWithRehydrationRequest'
 
 
 class ILRRequestResource(Resource):
@@ -8869,6 +9387,26 @@ class KPIResourceHealthDetails(Model):
         super(KPIResourceHealthDetails, self).__init__(**kwargs)
         self.resource_health_status = resource_health_status
         self.resource_health_details = resource_health_details
+
+
+class ListRecoveryPointsRecommendedForMoveRequest(Model):
+    """ListRecoveryPointsRecommendedForMoveRequest Request.
+
+    :param object_type: Gets the class type.
+    :type object_type: str
+    :param excluded_rp_list: List of Recovery Points excluded from Move
+    :type excluded_rp_list: list[str]
+    """
+
+    _attribute_map = {
+        'object_type': {'key': 'objectType', 'type': 'str'},
+        'excluded_rp_list': {'key': 'excludedRPList', 'type': '[str]'},
+    }
+
+    def __init__(self, *, object_type: str=None, excluded_rp_list=None, **kwargs) -> None:
+        super(ListRecoveryPointsRecommendedForMoveRequest, self).__init__(**kwargs)
+        self.object_type = object_type
+        self.excluded_rp_list = excluded_rp_list
 
 
 class SchedulePolicy(Model):
@@ -9544,6 +10082,35 @@ class MonthlyRetentionSchedule(Model):
         self.retention_schedule_weekly = retention_schedule_weekly
         self.retention_times = retention_times
         self.retention_duration = retention_duration
+
+
+class MoveRPAcrossTiersRequest(Model):
+    """MoveRPAcrossTiersRequest.
+
+    :param object_type: Gets the class type.
+    :type object_type: str
+    :param source_tier_type: Source tier from where RP needs to be moved.
+     Possible values include: 'Invalid', 'InstantRP', 'HardenedRP',
+     'ArchivedRP'
+    :type source_tier_type: str or
+     ~azure.mgmt.recoveryservicesbackup.models.RecoveryPointTierType
+    :param target_tier_type: Target tier where RP needs to be moved. Possible
+     values include: 'Invalid', 'InstantRP', 'HardenedRP', 'ArchivedRP'
+    :type target_tier_type: str or
+     ~azure.mgmt.recoveryservicesbackup.models.RecoveryPointTierType
+    """
+
+    _attribute_map = {
+        'object_type': {'key': 'objectType', 'type': 'str'},
+        'source_tier_type': {'key': 'sourceTierType', 'type': 'RecoveryPointTierType'},
+        'target_tier_type': {'key': 'targetTierType', 'type': 'RecoveryPointTierType'},
+    }
+
+    def __init__(self, *, object_type: str=None, source_tier_type=None, target_tier_type=None, **kwargs) -> None:
+        super(MoveRPAcrossTiersRequest, self).__init__(**kwargs)
+        self.object_type = object_type
+        self.source_tier_type = source_tier_type
+        self.target_tier_type = target_tier_type
 
 
 class NameInfo(Model):
@@ -10679,6 +11246,50 @@ class RecoveryPointDiskConfiguration(Model):
         self.excluded_disk_list = excluded_disk_list
 
 
+class RecoveryPointMoveReadinessInfo(Model):
+    """RecoveryPointMoveReadinessInfo.
+
+    :param is_ready_for_move:
+    :type is_ready_for_move: bool
+    :param additional_info:
+    :type additional_info: str
+    """
+
+    _attribute_map = {
+        'is_ready_for_move': {'key': 'isReadyForMove', 'type': 'bool'},
+        'additional_info': {'key': 'additionalInfo', 'type': 'str'},
+    }
+
+    def __init__(self, *, is_ready_for_move: bool=None, additional_info: str=None, **kwargs) -> None:
+        super(RecoveryPointMoveReadinessInfo, self).__init__(**kwargs)
+        self.is_ready_for_move = is_ready_for_move
+        self.additional_info = additional_info
+
+
+class RecoveryPointRehydrationInfo(Model):
+    """RP Rehydration Info.
+
+    :param rehydration_retention_duration: How long the rehydrated RP should
+     be kept
+     Should be ISO8601 Duration format e.g. "P7D"
+    :type rehydration_retention_duration: str
+    :param rehydration_priority: Rehydration Priority. Possible values
+     include: 'Standard', 'High'
+    :type rehydration_priority: str or
+     ~azure.mgmt.recoveryservicesbackup.models.RehydrationPriority
+    """
+
+    _attribute_map = {
+        'rehydration_retention_duration': {'key': 'rehydrationRetentionDuration', 'type': 'str'},
+        'rehydration_priority': {'key': 'rehydrationPriority', 'type': 'str'},
+    }
+
+    def __init__(self, *, rehydration_retention_duration: str=None, rehydration_priority=None, **kwargs) -> None:
+        super(RecoveryPointRehydrationInfo, self).__init__(**kwargs)
+        self.rehydration_retention_duration = rehydration_retention_duration
+        self.rehydration_priority = rehydration_priority
+
+
 class RecoveryPointResource(Resource):
     """Base class for backup copies. Workload-specific backup copies are derived
     from this class.
@@ -10728,24 +11339,28 @@ class RecoveryPointTierInformation(Model):
     """Recovery point tier information.
 
     :param type: Recovery point tier type. Possible values include: 'Invalid',
-     'InstantRP', 'HardenedRP'
+     'InstantRP', 'HardenedRP', 'ArchivedRP'
     :type type: str or
      ~azure.mgmt.recoveryservicesbackup.models.RecoveryPointTierType
     :param status: Recovery point tier status. Possible values include:
-     'Invalid', 'Valid', 'Disabled', 'Deleted'
+     'Invalid', 'Valid', 'Disabled', 'Deleted', 'Rehydrated'
     :type status: str or
      ~azure.mgmt.recoveryservicesbackup.models.RecoveryPointTierStatus
+    :param extended_info: Recovery point tier status.
+    :type extended_info: dict[str, str]
     """
 
     _attribute_map = {
         'type': {'key': 'type', 'type': 'RecoveryPointTierType'},
         'status': {'key': 'status', 'type': 'RecoveryPointTierStatus'},
+        'extended_info': {'key': 'extendedInfo', 'type': '{str}'},
     }
 
-    def __init__(self, *, type=None, status=None, **kwargs) -> None:
+    def __init__(self, *, type=None, status=None, extended_info=None, **kwargs) -> None:
         super(RecoveryPointTierInformation, self).__init__(**kwargs)
         self.type = type
         self.status = status
+        self.extended_info = extended_info
 
 
 class ResourceList(Model):
