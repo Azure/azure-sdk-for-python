@@ -20,7 +20,7 @@ except ImportError:
 
 from uamqp import AMQPClient, Message, authentication, constants, errors, compat, utils
 import six
-from azure.core.credentials import AccessToken, AzureSasCredential
+from azure.core.credentials import AccessToken, AzureSasCredential, AzureNamedKeyCredential
 
 from .exceptions import _handle_exception, ClientClosedError, ConnectError
 from ._configuration import Configuration
@@ -193,7 +193,7 @@ class AzureSasTokenCredential(object):
 
 class ClientBase(object):  # pylint:disable=too-many-instance-attributes
     def __init__(self, fully_qualified_namespace, eventhub_name, credential, **kwargs):
-        # type: (str, str, Union[AzureSasCredential, TokenCredential], Any) -> None
+        # type: (str, str, Union[AzureSasCredential, TokenCredential, AzureNamedKeyCredential], Any) -> None
         self.eventhub_name = eventhub_name
         if not eventhub_name:
             raise ValueError("The eventhub name can not be None or empty.")
@@ -202,6 +202,9 @@ class ClientBase(object):  # pylint:disable=too-many-instance-attributes
         self._container_id = CONTAINER_PREFIX + str(uuid.uuid4())[:8]
         if isinstance(credential, AzureSasCredential):
             self._credential = AzureSasTokenCredential(credential)
+        elif isinstance(credential, AzureNamedKeyCredential):
+            name, key = credential.named_key
+            self._credential = EventHubSharedKeyCredential(name, key)
         else:
             self._credential = credential #type: ignore
         self._keep_alive = kwargs.get("keep_alive", 30)
