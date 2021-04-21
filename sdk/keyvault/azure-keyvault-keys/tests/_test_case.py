@@ -12,7 +12,8 @@ import pytest
 from six.moves.urllib_parse import urlparse
 
 
-def _get_test_parameters():
+def get_test_parameters():
+    """generates a list of parameter pairs for test case parameterization, where [x, y] = [api_version, is_hsm]"""
     combinations = []
     hsm_supported_versions = {ApiVersion.V7_2_preview}
     for api_version in ApiVersion:
@@ -28,10 +29,6 @@ def suffixed_test_name(testcase_func, param_num, param):
     return "{}_{}_{}".format(
         testcase_func.__name__, parameterized.to_safe_name(api_version), parameterized.to_safe_name(suffix)
     )
-
-
-# parameters for test case parameterization, where [x, y] = [api_version, is_hsm]
-PARAMETER_COMBINATIONS = _get_test_parameters()
 
 
 class KeysTestCase(AzureTestCase):

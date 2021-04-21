@@ -2,6 +2,8 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 # ------------------------------------
+import functools
+
 from azure.keyvault.keys import ApiVersion
 from azure.keyvault.keys.crypto.aio import CryptographyClient
 from devtools_testutils import PowerShellPreparer
@@ -11,12 +13,16 @@ from _shared.test_case_async import KeyVaultTestCase
 from _test_case import KeysTestCase, suffixed_test_name
 
 
+PARAMS = [param(api_version=api_version) for api_version in ApiVersion]
+test_all_versions = functools.partial(parameterized.expand, PARAMS, name_func=suffixed_test_name)
+
+
 class TestCryptoExamples(KeysTestCase, KeyVaultTestCase):
     def __init__(self, *args, **kwargs):
         kwargs["match_body"] = False
         super(TestCryptoExamples, self).__init__(*args, **kwargs)
 
-    @parameterized.expand([param(api_version=api_version) for api_version in ApiVersion], name_func=suffixed_test_name)
+    @test_all_versions()
     @PowerShellPreparer("keyvault")
     async def test_encrypt_decrypt_async(self, **kwargs):
         self._skip_if_not_configured(kwargs.get("api_version"), False)
@@ -59,7 +65,7 @@ class TestCryptoExamples(KeysTestCase, KeyVaultTestCase):
         print(result.plaintext)
         # [END decrypt]
 
-    @parameterized.expand([param(api_version=api_version) for api_version in ApiVersion], name_func=suffixed_test_name)
+    @test_all_versions()
     @PowerShellPreparer("keyvault")
     async def test_wrap_unwrap_async(self, **kwargs):
         self._skip_if_not_configured(kwargs.get("api_version"), False)
@@ -87,7 +93,7 @@ class TestCryptoExamples(KeysTestCase, KeyVaultTestCase):
         result = await client.unwrap_key(KeyWrapAlgorithm.rsa_oaep, encrypted_key)
         # [END unwrap_key]
 
-    @parameterized.expand([param(api_version=api_version) for api_version in ApiVersion], name_func=suffixed_test_name)
+    @test_all_versions()
     @PowerShellPreparer("keyvault")
     async def test_sign_verify_async(self, **kwargs):
         self._skip_if_not_configured(kwargs.get("api_version"), False)

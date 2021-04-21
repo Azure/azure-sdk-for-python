@@ -17,7 +17,11 @@ from parameterized import parameterized, param
 from six import byte2int
 
 from _shared.test_case import KeyVaultTestCase
-from _test_case import KeysTestCase, PARAMETER_COMBINATIONS, suffixed_test_name
+from _test_case import get_test_parameters, KeysTestCase, suffixed_test_name
+
+
+PARAMS = [param(api_version=p[0], is_hsm=p[1]) for p in get_test_parameters()]
+test_all_versions = functools.partial(parameterized.expand, PARAMS, name_func=suffixed_test_name)
 
 # used for logging tests
 class MockHandler(logging.Handler):
@@ -135,9 +139,7 @@ class KeyClientTests(KeysTestCase, KeyVaultTestCase):
         self._validate_rsa_key_bundle(imported_key, client.vault_url, name, key.kty, key.key_ops)
         return imported_key
 
-    @parameterized.expand(
-        [(param(api_version=p[0], is_hsm=p[1])) for p in PARAMETER_COMBINATIONS], name_func=suffixed_test_name
-    )
+    @test_all_versions()
     def test_key_crud_operations(self, **kwargs):
         is_hsm = kwargs.pop("is_hsm")
         self._skip_if_not_configured(kwargs.get("api_version"), is_hsm)
@@ -213,9 +215,7 @@ class KeyClientTests(KeysTestCase, KeyVaultTestCase):
         public_exponent = byte2int(key.key.e)
         assert public_exponent == 17
 
-    @parameterized.expand(
-        [(param(api_version=p[0], is_hsm=p[1])) for p in PARAMETER_COMBINATIONS], name_func=suffixed_test_name
-    )
+    @test_all_versions()
     def test_backup_restore(self, **kwargs):
         is_hsm = kwargs.pop("is_hsm")
         self._skip_if_not_configured(kwargs.get("api_version"), is_hsm)
@@ -244,9 +244,7 @@ class KeyClientTests(KeysTestCase, KeyVaultTestCase):
         restored_key = self._poll_until_no_exception(restore_function, ResourceExistsError)
         self._assert_key_attributes_equal(created_bundle.properties, restored_key.properties)
 
-    @parameterized.expand(
-        [(param(api_version=p[0], is_hsm=p[1])) for p in PARAMETER_COMBINATIONS], name_func=suffixed_test_name
-    )
+    @test_all_versions()
     def test_key_list(self, **kwargs):
         is_hsm = kwargs.pop("is_hsm")
         self._skip_if_not_configured(kwargs.get("api_version"), is_hsm)
@@ -272,9 +270,7 @@ class KeyClientTests(KeysTestCase, KeyVaultTestCase):
                 del expected[key.name]
         self.assertEqual(len(expected), 0)
 
-    @parameterized.expand(
-        [(param(api_version=p[0], is_hsm=p[1])) for p in PARAMETER_COMBINATIONS], name_func=suffixed_test_name
-    )
+    @test_all_versions()
     def test_list_versions(self, **kwargs):
         is_hsm = kwargs.pop("is_hsm")
         self._skip_if_not_configured(kwargs.get("api_version"), is_hsm)
@@ -303,9 +299,7 @@ class KeyClientTests(KeysTestCase, KeyVaultTestCase):
                 self._assert_key_attributes_equal(expected_key.properties, key)
         self.assertEqual(0, len(expected))
 
-    @parameterized.expand(
-        [(param(api_version=p[0], is_hsm=p[1])) for p in PARAMETER_COMBINATIONS], name_func=suffixed_test_name
-    )
+    @test_all_versions()
     def test_list_deleted_keys(self, **kwargs):
         is_hsm = kwargs.pop("is_hsm")
         self._skip_if_not_configured(kwargs.get("api_version"), is_hsm)
@@ -338,9 +332,7 @@ class KeyClientTests(KeysTestCase, KeyVaultTestCase):
                 self._assert_key_attributes_equal(expected[key.name].properties, key.properties)
                 del expected[key.name]
 
-    @parameterized.expand(
-        [(param(api_version=p[0], is_hsm=p[1])) for p in PARAMETER_COMBINATIONS], name_func=suffixed_test_name
-    )
+    @test_all_versions()
     def test_recover(self, **kwargs):
         is_hsm = kwargs.pop("is_hsm")
         self._skip_if_not_configured(kwargs.get("api_version"), is_hsm)
@@ -369,9 +361,7 @@ class KeyClientTests(KeysTestCase, KeyVaultTestCase):
             expected_key = keys[key_name]
             self._assert_key_attributes_equal(expected_key.properties, recovered_key.properties)
 
-    @parameterized.expand(
-        [(param(api_version=p[0], is_hsm=p[1])) for p in PARAMETER_COMBINATIONS], name_func=suffixed_test_name
-    )
+    @test_all_versions()
     def test_purge(self, **kwargs):
         is_hsm = kwargs.pop("is_hsm")
         self._skip_if_not_configured(kwargs.get("api_version"), is_hsm)
@@ -405,9 +395,7 @@ class KeyClientTests(KeysTestCase, KeyVaultTestCase):
         deleted = [s.name for s in client.list_deleted_keys()]
         self.assertTrue(not any(s in deleted for s in key_names))
 
-    @parameterized.expand(
-        [(param(api_version=p[0], is_hsm=p[1])) for p in PARAMETER_COMBINATIONS], name_func=suffixed_test_name
-    )
+    @test_all_versions()
     def test_logging_enabled(self, **kwargs):
         is_hsm = kwargs.pop("is_hsm")
         self._skip_if_not_configured(kwargs.get("api_version"), is_hsm)
@@ -436,9 +424,7 @@ class KeyClientTests(KeysTestCase, KeyVaultTestCase):
 
         assert False, "Expected request body wasn't logged"
 
-    @parameterized.expand(
-        [(param(api_version=p[0], is_hsm=p[1])) for p in PARAMETER_COMBINATIONS], name_func=suffixed_test_name
-    )
+    @test_all_versions()
     def test_logging_disabled(self, **kwargs):
         is_hsm = kwargs.pop("is_hsm")
         self._skip_if_not_configured(kwargs.get("api_version"), is_hsm)

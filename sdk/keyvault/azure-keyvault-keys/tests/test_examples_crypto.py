@@ -2,12 +2,18 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 # ------------------------------------
+import functools
+
 from azure.keyvault.keys import ApiVersion
 from azure.keyvault.keys.crypto import CryptographyClient
 from parameterized import parameterized, param
 
 from _shared.test_case import KeyVaultTestCase
 from _test_case import KeysTestCase, suffixed_test_name
+
+
+PARAMS = [param(api_version=api_version) for api_version in ApiVersion]
+test_all_versions = functools.partial(parameterized.expand, PARAMS, name_func=suffixed_test_name)
 
 
 class TestCryptoExamples(KeysTestCase, KeyVaultTestCase):
@@ -17,7 +23,7 @@ class TestCryptoExamples(KeysTestCase, KeyVaultTestCase):
 
     # pylint:disable=unused-variable
 
-    @parameterized.expand([param(api_version=api_version) for api_version in ApiVersion], name_func=suffixed_test_name)
+    @test_all_versions()
     def test_encrypt_decrypt(self, **kwargs):
         self._skip_if_not_configured(kwargs.get("api_version"), False)
         key_client = self.create_key_client(self.vault_url, **kwargs)
@@ -54,7 +60,7 @@ class TestCryptoExamples(KeysTestCase, KeyVaultTestCase):
         print(result.plaintext)
         # [END decrypt]
 
-    @parameterized.expand([param(api_version=api_version) for api_version in ApiVersion], name_func=suffixed_test_name)
+    @test_all_versions()
     def test_wrap_unwrap(self, **kwargs):
         self._skip_if_not_configured(kwargs.get("api_version"), False)
         key_client = self.create_key_client(self.vault_url, **kwargs)
@@ -82,7 +88,7 @@ class TestCryptoExamples(KeysTestCase, KeyVaultTestCase):
         key = result.key
         # [END unwrap_key]
 
-    @parameterized.expand([param(api_version=api_version) for api_version in ApiVersion], name_func=suffixed_test_name)
+    @test_all_versions()
     def test_sign_verify(self, **kwargs):
         self._skip_if_not_configured(kwargs.get("api_version"), False)
         key_client = self.create_key_client(self.vault_url, **kwargs)

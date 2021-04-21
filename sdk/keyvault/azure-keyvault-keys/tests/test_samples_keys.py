@@ -3,6 +3,7 @@
 # Licensed under the MIT License.
 # ------------------------------------
 from __future__ import print_function
+import functools
 import time
 
 from azure.keyvault.keys import ApiVersion, KeyType
@@ -10,6 +11,10 @@ from parameterized import parameterized, param
 
 from _shared.test_case import KeyVaultTestCase
 from _test_case import KeysTestCase, suffixed_test_name
+
+
+PARAMS = [param(api_version=api_version) for api_version in ApiVersion]
+test_all_versions = functools.partial(parameterized.expand, PARAMS, name_func=suffixed_test_name)
 
 
 def print(*args):
@@ -30,7 +35,7 @@ def test_create_key_client():
 
 
 class TestExamplesKeyVault(KeysTestCase, KeyVaultTestCase):
-    @parameterized.expand([param(api_version=api_version) for api_version in ApiVersion], name_func=suffixed_test_name)
+    @test_all_versions()
     def test_example_key_crud_operations(self, **kwargs):
         self._skip_if_not_configured(kwargs.get("api_version"), False)
         key_client = self.create_key_client(self.vault_url, **kwargs)
@@ -122,7 +127,7 @@ class TestExamplesKeyVault(KeysTestCase, KeyVaultTestCase):
         deleted_key_poller.wait()
         # [END delete_key]
 
-    @parameterized.expand([param(api_version=api_version) for api_version in ApiVersion], name_func=suffixed_test_name)
+    @test_all_versions()
     def test_example_key_list_operations(self, **kwargs):
         self._skip_if_not_configured(kwargs.get("api_version"), False)
         key_client = self.create_key_client(self.vault_url, **kwargs)
@@ -164,7 +169,7 @@ class TestExamplesKeyVault(KeysTestCase, KeyVaultTestCase):
             print(key.deleted_date)
         # [END list_deleted_keys]
 
-    @parameterized.expand([param(api_version=api_version) for api_version in ApiVersion], name_func=suffixed_test_name)
+    @test_all_versions()
     def test_example_keys_backup_restore(self, **kwargs):
         self._skip_if_not_configured(kwargs.get("api_version"), False)
         key_client = self.create_key_client(self.vault_url, **kwargs)
@@ -191,7 +196,7 @@ class TestExamplesKeyVault(KeysTestCase, KeyVaultTestCase):
         print(restored_key.properties.version)
         # [END restore_key_backup]
 
-    @parameterized.expand([param(api_version=api_version) for api_version in ApiVersion], name_func=suffixed_test_name)
+    @test_all_versions()
     def test_example_keys_recover(self, **kwargs):
         self._skip_if_not_configured(kwargs.get("api_version"), False)
         key_client = self.create_key_client(self.vault_url, **kwargs)

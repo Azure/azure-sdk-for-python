@@ -5,6 +5,7 @@
 import asyncio
 import codecs
 from datetime import datetime
+import functools
 import hashlib
 import os
 from unittest import mock
@@ -24,7 +25,11 @@ import pytest
 from _shared.helpers_async  import get_completed_future
 from _shared.json_attribute_matcher import json_attribute_matcher
 from _shared.test_case_async import KeyVaultTestCase
-from _test_case import KeysTestCase, PARAMETER_COMBINATIONS, suffixed_test_name
+from _test_case import get_test_parameters, KeysTestCase, suffixed_test_name
+
+
+PARAMS = [param(api_version=p[0], is_hsm=p[1]) for p in get_test_parameters()]
+test_all_versions = functools.partial(parameterized.expand, PARAMS, name_func=suffixed_test_name)
 
 # without keys/get, a CryptographyClient created with a key ID performs all ops remotely
 NO_GET = Permissions(keys=[p.value for p in KeyPermissions if p.value != "get"])
@@ -135,9 +140,7 @@ class CryptoClientTests(KeysTestCase, KeyVaultTestCase):
         assert key_vault_key.key.kid == imported_key.id == key_vault_key.id
         return key_vault_key
 
-    @parameterized.expand(
-        [(param(api_version=p[0], is_hsm=p[1])) for p in PARAMETER_COMBINATIONS], name_func=suffixed_test_name
-    )
+    @test_all_versions()
     @PowerShellPreparer("keyvault")
     async def test_ec_key_id(self, **kwargs):
         """When initialized with a key ID, the client should retrieve the key and perform public operations locally"""
@@ -157,9 +160,7 @@ class CryptoClientTests(KeysTestCase, KeyVaultTestCase):
 
         await crypto_client.verify(SignatureAlgorithm.es256, hashlib.sha256(self.plaintext).digest(), self.plaintext)
 
-    @parameterized.expand(
-        [(param(api_version=p[0], is_hsm=p[1])) for p in PARAMETER_COMBINATIONS], name_func=suffixed_test_name
-    )
+    @test_all_versions()
     @PowerShellPreparer("keyvault")
     async def test_rsa_key_id(self, **kwargs):
         """When initialized with a key ID, the client should retrieve the key and perform public operations locally"""
@@ -181,9 +182,7 @@ class CryptoClientTests(KeysTestCase, KeyVaultTestCase):
         await crypto_client.verify(SignatureAlgorithm.rs256, hashlib.sha256(self.plaintext).digest(), self.plaintext)
         await crypto_client.wrap_key(KeyWrapAlgorithm.rsa_oaep, self.plaintext)
 
-    @parameterized.expand(
-        [(param(api_version=p[0], is_hsm=p[1])) for p in PARAMETER_COMBINATIONS], name_func=suffixed_test_name
-    )
+    @test_all_versions()
     @PowerShellPreparer("keyvault")
     async def test_encrypt_and_decrypt(self, **kwargs):
         is_hsm = kwargs.pop("is_hsm")
@@ -204,9 +203,7 @@ class CryptoClientTests(KeysTestCase, KeyVaultTestCase):
         self.assertEqual(EncryptionAlgorithm.rsa_oaep, result.algorithm)
         self.assertEqual(self.plaintext, result.plaintext)
 
-    @parameterized.expand(
-        [(param(api_version=p[0], is_hsm=p[1])) for p in PARAMETER_COMBINATIONS], name_func=suffixed_test_name
-    )
+    @test_all_versions()
     @PowerShellPreparer("keyvault")
     async def test_sign_and_verify(self, **kwargs):
         is_hsm = kwargs.pop("is_hsm")
@@ -231,9 +228,7 @@ class CryptoClientTests(KeysTestCase, KeyVaultTestCase):
         self.assertEqual(result.algorithm, SignatureAlgorithm.rs256)
         self.assertTrue(verified.is_valid)
 
-    @parameterized.expand(
-        [(param(api_version=p[0], is_hsm=p[1])) for p in PARAMETER_COMBINATIONS], name_func=suffixed_test_name
-    )
+    @test_all_versions()
     @PowerShellPreparer("keyvault")
     async def test_wrap_and_unwrap(self, **kwargs):
         is_hsm = kwargs.pop("is_hsm")
@@ -319,9 +314,7 @@ class CryptoClientTests(KeysTestCase, KeyVaultTestCase):
         result = await crypto_client.unwrap_key(result.algorithm, result.encrypted_key)
         assert result.key == self.plaintext
 
-    @parameterized.expand(
-        [(param(api_version=p[0], is_hsm=p[1])) for p in PARAMETER_COMBINATIONS], name_func=suffixed_test_name
-    )
+    @test_all_versions()
     @PowerShellPreparer("keyvault")
     async def test_encrypt_local(self, **kwargs):
         """Encrypt locally, decrypt with Key Vault"""
@@ -342,9 +335,7 @@ class CryptoClientTests(KeysTestCase, KeyVaultTestCase):
             result = await crypto_client.decrypt(result.algorithm, result.ciphertext)
             self.assertEqual(result.plaintext, self.plaintext)
 
-    @parameterized.expand(
-        [(param(api_version=p[0], is_hsm=p[1])) for p in PARAMETER_COMBINATIONS], name_func=suffixed_test_name
-    )
+    @test_all_versions()
     @PowerShellPreparer("keyvault")
     async def test_encrypt_local_from_jwk(self, **kwargs):
         """Encrypt locally, decrypt with Key Vault"""
@@ -431,9 +422,7 @@ class CryptoClientTests(KeysTestCase, KeyVaultTestCase):
         assert decrypt_result.algorithm == algorithm
         assert decrypt_result.plaintext == self.plaintext
 
-    @parameterized.expand(
-        [(param(api_version=p[0], is_hsm=p[1])) for p in PARAMETER_COMBINATIONS], name_func=suffixed_test_name
-    )
+    @test_all_versions()
     @PowerShellPreparer("keyvault")
     async def test_wrap_local(self, **kwargs):
         """Wrap locally, unwrap with Key Vault"""
@@ -453,9 +442,7 @@ class CryptoClientTests(KeysTestCase, KeyVaultTestCase):
             result = await crypto_client.unwrap_key(result.algorithm, result.encrypted_key)
             self.assertEqual(result.key, self.plaintext)
 
-    @parameterized.expand(
-        [(param(api_version=p[0], is_hsm=p[1])) for p in PARAMETER_COMBINATIONS], name_func=suffixed_test_name
-    )
+    @test_all_versions()
     @PowerShellPreparer("keyvault")
     async def test_wrap_local_from_jwk(self, **kwargs):
         """Wrap locally, unwrap with Key Vault"""
@@ -476,9 +463,7 @@ class CryptoClientTests(KeysTestCase, KeyVaultTestCase):
             result = await crypto_client.unwrap_key(result.algorithm, result.encrypted_key)
             self.assertEqual(result.key, self.plaintext)
 
-    @parameterized.expand(
-        [(param(api_version=p[0], is_hsm=p[1])) for p in PARAMETER_COMBINATIONS], name_func=suffixed_test_name
-    )
+    @test_all_versions()
     @PowerShellPreparer("keyvault")
     async def test_rsa_verify_local(self, **kwargs):
         """Sign with Key Vault, verify locally"""
@@ -507,9 +492,7 @@ class CryptoClientTests(KeysTestCase, KeyVaultTestCase):
                 result = await crypto_client.verify(result.algorithm, digest, result.signature)
                 self.assertTrue(result.is_valid)
 
-    @parameterized.expand(
-        [(param(api_version=p[0], is_hsm=p[1])) for p in PARAMETER_COMBINATIONS], name_func=suffixed_test_name
-    )
+    @test_all_versions()
     @PowerShellPreparer("keyvault")
     async def test_rsa_verify_local_from_jwk(self, **kwargs):
         """Sign with Key Vault, verify locally"""
@@ -539,9 +522,7 @@ class CryptoClientTests(KeysTestCase, KeyVaultTestCase):
                 result = await local_client.verify(result.algorithm, digest, result.signature)
                 self.assertTrue(result.is_valid)
 
-    @parameterized.expand(
-        [(param(api_version=p[0], is_hsm=p[1])) for p in PARAMETER_COMBINATIONS], name_func=suffixed_test_name
-    )
+    @test_all_versions()
     @PowerShellPreparer("keyvault")
     async def test_ec_verify_local(self, **kwargs):
         """Sign with Key Vault, verify locally"""
@@ -570,9 +551,7 @@ class CryptoClientTests(KeysTestCase, KeyVaultTestCase):
             result = await crypto_client.verify(result.algorithm, digest, result.signature)
             self.assertTrue(result.is_valid)
 
-    @parameterized.expand(
-        [(param(api_version=p[0], is_hsm=p[1])) for p in PARAMETER_COMBINATIONS], name_func=suffixed_test_name
-    )
+    @test_all_versions()
     @PowerShellPreparer("keyvault")
     async def test_ec_verify_local_from_jwk(self, **kwargs):
         """Sign with Key Vault, verify locally"""
@@ -602,9 +581,7 @@ class CryptoClientTests(KeysTestCase, KeyVaultTestCase):
             result = await local_client.verify(result.algorithm, digest, result.signature)
             self.assertTrue(result.is_valid)
 
-    @parameterized.expand(
-        [(param(api_version=p[0], is_hsm=p[1])) for p in PARAMETER_COMBINATIONS], name_func=suffixed_test_name
-    )
+    @test_all_versions()
     @PowerShellPreparer("keyvault")
     async def test_local_validity_period_enforcement(self, **kwargs):
         """Local crypto operations should respect a key's nbf and exp properties"""
