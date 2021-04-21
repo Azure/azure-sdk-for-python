@@ -36,8 +36,9 @@ except ImportError:
     from mock import Mock
 
 # module under test
+from azure.core.pipeline import Pipeline
 from azure.core.exceptions import HttpResponseError, ODataV4Error, ODataV4Format
-from azure.core.pipeline.transport import RequestsTransportResponse
+from azure.core.pipeline.transport import RequestsTransportResponse, HttpRequest, RequestsTransport, HttpResponse, HttpTransport
 from azure.core.pipeline.transport._base import _HttpResponseBase
 
 
@@ -250,3 +251,23 @@ class TestExceptions(object):
         }
         exp = HttpResponseError(response=_build_response(json.dumps(message).encode("utf-8")))
         assert exp.error.code == "Conflict"
+
+    def test_http_response_error_stream(self):
+        request = HttpRequest('GET', 'http://httpbin.org/stream/2')
+        with Pipeline(RequestsTransport()) as pipeline:
+            response = pipeline.run(request, stream=True).http_response
+            response.status_code = 400
+            with pytest.raises(HttpResponseError) as error:
+                response.raise_for_status()
+            e = error.value
+            assert e.message == "Operation returned an invalid status 'OK'"
+            assert e.error is None # sync doesn't raise in this situation
+            assert e.model is None # sync doesn't raise in this situation
+
+            # There's not read() for pipeline.transport.HttpResponse, so I'm just
+            # going to mock calling read by setting the content of the internal response to an odata error
+            e.response.internal_response._content = b'{"error": {"code": "NotSupportedLanguage", "message": "The requested operation is not supported in the language specified."}}'
+            assert isinstance(e.error, ODataV4Format)
+            assert e.error.code == "NotSupportedLanguage"
+            assert e.error.message == "The requested operation is not supported in the language specified."
+            assert isinstance(e.model, ODataV4Format)

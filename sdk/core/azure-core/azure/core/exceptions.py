@@ -254,13 +254,15 @@ class HttpResponseError(AzureError):
     :vartype response: ~azure.core.pipeline.transport.HttpResponse or ~azure.core.pipeline.transport.AsyncHttpResponse
     :ivar model: The request body/response body model
     :vartype model: ~msrest.serialization.Model
-    :ivar error: The formatted error
+    :ivar error: The formatted error. If you are streaming your response, make sure you've
+     read all of your response into memory to get an error body.
     :vartype error: ODataV4Format
     """
 
     def __init__(self, message=None, response=None, **kwargs):
         # Don't want to document this one yet.
-        error_format = kwargs.get("error_format", ODataV4Format)
+        self._error_format = kwargs.get("error_format", ODataV4Format)
+        self._kwargs = kwargs
 
         self.reason = None
         self.status_code = None
@@ -271,34 +273,58 @@ class HttpResponseError(AzureError):
 
         # old autorest are setting "error" before calling __init__, so it might be there already
         # transferring into self.model
-        model = kwargs.pop("model", None)  # type: Optional[msrest.serialization.Model]
-        if model is not None:  # autorest v5
-            self.model = model
-        else:  # autorest azure-core, for KV 1.0, Storage 12.0, etc.
-            self.model = getattr(
-                self, "error", None
-            )  # type: Optional[msrest.serialization.Model]
-        self.error = self._parse_odata_body(error_format, response)  # type: Optional[ODataV4Format]
+        self._model = kwargs.pop("model", None)  # type: Optional[msrest.serialization.Model]
+        self._error = None
 
         # By priority, message is:
         # - odatav4 message, OR
         # - parameter "message", OR
         # - generic meassage using "reason"
-        if self.error:
-            message = str(self.error)
-        else:
+        try:
+            parsed_body = self._parse_odata_body(response.text())
+            if not parsed_body:
+                # want same behavior as in exception handling, so throwing
+                raise Exception
+            message = str(parsed_body)
+        except Exception:  # pylint: disable=broad-except
             message = message or "Operation returned an invalid status '{}'".format(
                 self.reason
             )
 
         super(HttpResponseError, self).__init__(message=message, **kwargs)
 
-    @staticmethod
-    def _parse_odata_body(error_format, response):
-        # type: (Type[ODataV4Format], _HttpResponseBase) -> Optional[ODataV4Format]
+    @property
+    def error(self):
+        # type: (...) -> Optional[ODataV4Format]
+        """Return the parsed error body"""
+        if not self._error:
+            self._error = self._parse_odata_body(self.response.text())
+        return self._error
+
+    @error.setter
+    def error(self, val):
+        # type: (ODataV4Format) -> None
+        self._error = val
+
+    @property
+    def model(self):
+        """Return the deserialized body of the error."""
+        return self._model or self.error
+
+    @model.setter
+    def model(self, val):
+        self._model = val
+
+    def _parse_odata_body(self, body):
+        # type: (str) -> Optional[ODataV4Format]
+        """Pass in body to parse into error format.
+
+        This way, we can cleanly raise any errors that come from accessing
+        the response's body before it's ready to consume.
+        """
         try:
-            odata_json = json.loads(response.text())
-            return error_format(odata_json)
+            odata_json = json.loads(body)
+            return self._error_format(odata_json)
         except Exception:  # pylint: disable=broad-except
             # If the body is not JSON valid, just stop now
             pass
