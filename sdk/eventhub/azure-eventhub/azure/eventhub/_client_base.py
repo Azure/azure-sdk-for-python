@@ -106,7 +106,9 @@ def _parse_conn_str(conn_str, **kwargs):
             "Invalid connection string. Should be in the format: "
             "Endpoint=sb://<FQDN>/;SharedAccessKeyName=<KeyName>;SharedAccessKey=<KeyValue>"
         )
-    if shared_access_signature and shared_access_key:
+    # Only connection string parser should check that only one of sas and shared access
+    # key exists. For backwards compatibility, client construction should not have this check.
+    if check_case and shared_access_signature and shared_access_key:
         raise ValueError(
             "Only one of the SharedAccessKey or SharedAccessSignature must be present."
         )
