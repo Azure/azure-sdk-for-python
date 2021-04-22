@@ -133,7 +133,7 @@ class TestOpencensusWrapper(unittest.TestCase):
         with ContextHelper():
             trace = tracer_module.Tracer(sampler=AlwaysOnSampler())
             parent = trace.start_span()
-            wrapped_class = OpenCensusSpan(span=parent)
+            wrapped_class = OpenCensusSpan(span=parent, kind=SpanKind.CLIENT)
             request = mock.Mock()
             setattr(request, "method", "GET")
             setattr(request, "url", "some url")
