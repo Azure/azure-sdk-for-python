@@ -225,11 +225,11 @@
           "type": "string",
           "value": "[concat(reference(parameters('blobResourceId'), '2019-06-01').primaryEndpoints.blob, parameters('selectionMarkTrainingDataContainer'), '?', listServiceSas(parameters('blobResourceId'), '2019-06-01', parameters('selectionMarkTrainingDataSasProperties')).serviceSasToken)]"
         },
-        "FORMRECOGNIZER_LABEL_TABLE_VARIABLE_ROWS_STORAGE_CONTAINER_SAS_URL": {
+        "FORMRECOGNIZER_TABLE_VARIABLE_ROWS_CONTAINER_SAS_URL": {
           "type": "string",
           "value": "[concat(reference(parameters('blobResourceId'), '2019-06-01').primaryEndpoints.blob, parameters('labelTablesVariableRowsContainer'), '?', listServiceSas(parameters('blobResourceId'), '2019-06-01', parameters('labelTablesVariableRowsSasProperties')).serviceSasToken)]"
         },
-        "FORMRECOGNIZER_LABEL_TABLE_FIXED_ROWS_STORAGE_CONTAINER_SAS_URL": {
+        "FORMRECOGNIZER_TABLE_FIXED_ROWS_CONTAINER_SAS_URL": {
           "type": "string",
           "value": "[concat(reference(parameters('blobResourceId'), '2019-06-01').primaryEndpoints.blob, parameters('labelTablesFixedRowsContainer'), '?', listServiceSas(parameters('blobResourceId'), '2019-06-01', parameters('labelTablesFixedRowsSasProperties')).serviceSasToken)]"
         },
