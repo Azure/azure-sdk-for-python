@@ -2412,39 +2412,6 @@ class SkuCost(Model):
         self.extended_unit = None
 
 
-class SKUCost(Model):
-    """The cost of the SKU.
-
-    Variables are only populated by the server, and will be ignored when
-    sending a request.
-
-    :ivar meter_id: The meter id
-    :vartype meter_id: str
-    :ivar quantity: The quantity
-    :vartype quantity: int
-    :ivar extended_unit: The extended unit
-    :vartype extended_unit: str
-    """
-
-    _validation = {
-        'meter_id': {'readonly': True},
-        'quantity': {'readonly': True},
-        'extended_unit': {'readonly': True},
-    }
-
-    _attribute_map = {
-        'meter_id': {'key': 'meterId', 'type': 'str'},
-        'quantity': {'key': 'quantity', 'type': 'int'},
-        'extended_unit': {'key': 'extendedUnit', 'type': 'str'},
-    }
-
-    def __init__(self, **kwargs) -> None:
-        super(SKUCost, self).__init__(**kwargs)
-        self.meter_id = None
-        self.quantity = None
-        self.extended_unit = None
-
-
 class SkuInformation(Model):
     """Sku information.
 
@@ -2476,7 +2443,7 @@ class SkuInformation(Model):
      available.
     :vartype required_features: list[str]
     :ivar costs: The cost of the SKU
-    :vartype costs: list[~azure.mgmt.databoxedge.models.SKUCost]
+    :vartype costs: list[~azure.mgmt.databoxedge.models.SkuCost]
     :ivar capabilities: The capabilities of the SKU
     :vartype capabilities: list[~azure.mgmt.databoxedge.models.SKUCapability]
     """
@@ -2507,7 +2474,7 @@ class SkuInformation(Model):
         'location_info': {'key': 'locationInfo', 'type': '[SkuLocationInfo]'},
         'required_quota_ids': {'key': 'requiredQuotaIds', 'type': '[str]'},
         'required_features': {'key': 'requiredFeatures', 'type': '[str]'},
-        'costs': {'key': 'costs', 'type': '[SKUCost]'},
+        'costs': {'key': 'costs', 'type': '[SkuCost]'},
         'capabilities': {'key': 'capabilities', 'type': '[SKUCapability]'},
     }
 

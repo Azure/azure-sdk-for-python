@@ -13,56 +13,6 @@ from msrest.serialization import Model
 from msrest.exceptions import HttpOperationError
 
 
-class Address(Model):
-    """The shipping address of the customer.
-
-    All required parameters must be populated in order to send to Azure.
-
-    :param address_line1: Required. The address line1.
-    :type address_line1: str
-    :param address_line2: The address line2.
-    :type address_line2: str
-    :param address_line3: The address line3.
-    :type address_line3: str
-    :param postal_code: Required. The postal code.
-    :type postal_code: str
-    :param city: Required. The city name.
-    :type city: str
-    :param state: Required. The state name.
-    :type state: str
-    :param country: Required. The country name.
-    :type country: str
-    """
-
-    _validation = {
-        'address_line1': {'required': True},
-        'postal_code': {'required': True},
-        'city': {'required': True},
-        'state': {'required': True},
-        'country': {'required': True},
-    }
-
-    _attribute_map = {
-        'address_line1': {'key': 'addressLine1', 'type': 'str'},
-        'address_line2': {'key': 'addressLine2', 'type': 'str'},
-        'address_line3': {'key': 'addressLine3', 'type': 'str'},
-        'postal_code': {'key': 'postalCode', 'type': 'str'},
-        'city': {'key': 'city', 'type': 'str'},
-        'state': {'key': 'state', 'type': 'str'},
-        'country': {'key': 'country', 'type': 'str'},
-    }
-
-    def __init__(self, **kwargs):
-        super(Address, self).__init__(**kwargs)
-        self.address_line1 = kwargs.get('address_line1', None)
-        self.address_line2 = kwargs.get('address_line2', None)
-        self.address_line3 = kwargs.get('address_line3', None)
-        self.postal_code = kwargs.get('postal_code', None)
-        self.city = kwargs.get('city', None)
-        self.state = kwargs.get('state', None)
-        self.country = kwargs.get('country', None)
-
-
 class ARMBaseModel(Model):
     """Represents the base class for all object models.
 
@@ -89,11 +39,106 @@ class ARMBaseModel(Model):
         'type': {'key': 'type', 'type': 'str'},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs) -> None:
         super(ARMBaseModel, self).__init__(**kwargs)
         self.id = None
         self.name = None
         self.type = None
+
+
+class Addon(ARMBaseModel):
+    """Role Addon.
+
+    You probably want to use the sub-classes and not this class directly. Known
+    sub-classes are: ArcAddon, IoTAddon
+
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar id: The path ID that uniquely identifies the object.
+    :vartype id: str
+    :ivar name: The object name.
+    :vartype name: str
+    :ivar type: The hierarchical type of the object.
+    :vartype type: str
+    :param system_data: Addon type
+    :type system_data: ~azure.mgmt.databoxedge.models.SystemData
+    :param kind: Required. Constant filled by server.
+    :type kind: str
+    """
+
+    _validation = {
+        'id': {'readonly': True},
+        'name': {'readonly': True},
+        'type': {'readonly': True},
+        'kind': {'required': True},
+    }
+
+    _attribute_map = {
+        'id': {'key': 'id', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
+        'system_data': {'key': 'systemData', 'type': 'SystemData'},
+        'kind': {'key': 'kind', 'type': 'str'},
+    }
+
+    _subtype_map = {
+        'kind': {'ArcForKubernetes': 'ArcAddon', 'IotEdge': 'IoTAddon'}
+    }
+
+    def __init__(self, *, system_data=None, **kwargs) -> None:
+        super(Addon, self).__init__(**kwargs)
+        self.system_data = system_data
+        self.kind = None
+        self.kind = 'Addon'
+
+
+class Address(Model):
+    """The shipping address of the customer.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param address_line1: The address line1.
+    :type address_line1: str
+    :param address_line2: The address line2.
+    :type address_line2: str
+    :param address_line3: The address line3.
+    :type address_line3: str
+    :param postal_code: The postal code.
+    :type postal_code: str
+    :param city: The city name.
+    :type city: str
+    :param state: The state name.
+    :type state: str
+    :param country: Required. The country name.
+    :type country: str
+    """
+
+    _validation = {
+        'country': {'required': True},
+    }
+
+    _attribute_map = {
+        'address_line1': {'key': 'addressLine1', 'type': 'str'},
+        'address_line2': {'key': 'addressLine2', 'type': 'str'},
+        'address_line3': {'key': 'addressLine3', 'type': 'str'},
+        'postal_code': {'key': 'postalCode', 'type': 'str'},
+        'city': {'key': 'city', 'type': 'str'},
+        'state': {'key': 'state', 'type': 'str'},
+        'country': {'key': 'country', 'type': 'str'},
+    }
+
+    def __init__(self, *, country: str, address_line1: str=None, address_line2: str=None, address_line3: str=None, postal_code: str=None, city: str=None, state: str=None, **kwargs) -> None:
+        super(Address, self).__init__(**kwargs)
+        self.address_line1 = address_line1
+        self.address_line2 = address_line2
+        self.address_line3 = address_line3
+        self.postal_code = postal_code
+        self.city = city
+        self.state = state
+        self.country = country
 
 
 class Alert(ARMBaseModel):
@@ -108,6 +153,8 @@ class Alert(ARMBaseModel):
     :vartype name: str
     :ivar type: The hierarchical type of the object.
     :vartype type: str
+    :param system_data: Alert generated in the resource
+    :type system_data: ~azure.mgmt.databoxedge.models.SystemData
     :ivar title: Alert title.
     :vartype title: str
     :ivar alert_type: Alert type.
@@ -142,6 +189,7 @@ class Alert(ARMBaseModel):
         'id': {'key': 'id', 'type': 'str'},
         'name': {'key': 'name', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
+        'system_data': {'key': 'systemData', 'type': 'SystemData'},
         'title': {'key': 'properties.title', 'type': 'str'},
         'alert_type': {'key': 'properties.alertType', 'type': 'str'},
         'appeared_at_date_time': {'key': 'properties.appearedAtDateTime', 'type': 'iso-8601'},
@@ -151,8 +199,9 @@ class Alert(ARMBaseModel):
         'detailed_information': {'key': 'properties.detailedInformation', 'type': '{str}'},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, *, system_data=None, **kwargs) -> None:
         super(Alert, self).__init__(**kwargs)
+        self.system_data = system_data
         self.title = None
         self.alert_type = None
         self.appeared_at_date_time = None
@@ -188,11 +237,97 @@ class AlertErrorDetails(Model):
         'occurrences': {'key': 'occurrences', 'type': 'int'},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs) -> None:
         super(AlertErrorDetails, self).__init__(**kwargs)
         self.error_code = None
         self.error_message = None
         self.occurrences = None
+
+
+class ArcAddon(Addon):
+    """Arc Addon.
+
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar id: The path ID that uniquely identifies the object.
+    :vartype id: str
+    :ivar name: The object name.
+    :vartype name: str
+    :ivar type: The hierarchical type of the object.
+    :vartype type: str
+    :param system_data: Addon type
+    :type system_data: ~azure.mgmt.databoxedge.models.SystemData
+    :param kind: Required. Constant filled by server.
+    :type kind: str
+    :param subscription_id: Required. Arc resource subscription Id
+    :type subscription_id: str
+    :param resource_group_name: Required. Arc resource group name
+    :type resource_group_name: str
+    :param resource_name: Required. Arc resource Name
+    :type resource_name: str
+    :param resource_location: Required. Arc resource location
+    :type resource_location: str
+    :ivar version: Arc resource version
+    :vartype version: str
+    :ivar host_platform: Host OS supported by the Arc addon. Possible values
+     include: 'Windows', 'Linux'
+    :vartype host_platform: str or ~azure.mgmt.databoxedge.models.PlatformType
+    :ivar host_platform_type: Platform where the runtime is hosted. Possible
+     values include: 'KubernetesCluster', 'LinuxVM'
+    :vartype host_platform_type: str or
+     ~azure.mgmt.databoxedge.models.HostPlatformType
+    :ivar provisioning_state: Addon Provisioning State. Possible values
+     include: 'Invalid', 'Creating', 'Created', 'Updating', 'Reconfiguring',
+     'Failed', 'Deleting'
+    :vartype provisioning_state: str or
+     ~azure.mgmt.databoxedge.models.AddonState
+    """
+
+    _validation = {
+        'id': {'readonly': True},
+        'name': {'readonly': True},
+        'type': {'readonly': True},
+        'kind': {'required': True},
+        'subscription_id': {'required': True},
+        'resource_group_name': {'required': True},
+        'resource_name': {'required': True},
+        'resource_location': {'required': True},
+        'version': {'readonly': True},
+        'host_platform': {'readonly': True},
+        'host_platform_type': {'readonly': True},
+        'provisioning_state': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'id': {'key': 'id', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
+        'system_data': {'key': 'systemData', 'type': 'SystemData'},
+        'kind': {'key': 'kind', 'type': 'str'},
+        'subscription_id': {'key': 'properties.subscriptionId', 'type': 'str'},
+        'resource_group_name': {'key': 'properties.resourceGroupName', 'type': 'str'},
+        'resource_name': {'key': 'properties.resourceName', 'type': 'str'},
+        'resource_location': {'key': 'properties.resourceLocation', 'type': 'str'},
+        'version': {'key': 'properties.version', 'type': 'str'},
+        'host_platform': {'key': 'properties.hostPlatform', 'type': 'str'},
+        'host_platform_type': {'key': 'properties.hostPlatformType', 'type': 'str'},
+        'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
+    }
+
+    def __init__(self, *, subscription_id: str, resource_group_name: str, resource_name: str, resource_location: str, system_data=None, **kwargs) -> None:
+        super(ArcAddon, self).__init__(system_data=system_data, **kwargs)
+        self.subscription_id = subscription_id
+        self.resource_group_name = resource_group_name
+        self.resource_name = resource_name
+        self.resource_location = resource_location
+        self.version = None
+        self.host_platform = None
+        self.host_platform_type = None
+        self.provisioning_state = None
+        self.kind = 'ArcForKubernetes'
 
 
 class AsymmetricEncryptedSecret(Model):
@@ -222,11 +357,11 @@ class AsymmetricEncryptedSecret(Model):
         'encryption_algorithm': {'key': 'encryptionAlgorithm', 'type': 'str'},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, *, value: str, encryption_algorithm, encryption_cert_thumbprint: str=None, **kwargs) -> None:
         super(AsymmetricEncryptedSecret, self).__init__(**kwargs)
-        self.value = kwargs.get('value', None)
-        self.encryption_cert_thumbprint = kwargs.get('encryption_cert_thumbprint', None)
-        self.encryption_algorithm = kwargs.get('encryption_algorithm', None)
+        self.value = value
+        self.encryption_cert_thumbprint = encryption_cert_thumbprint
+        self.encryption_algorithm = encryption_algorithm
 
 
 class Authentication(Model):
@@ -240,9 +375,9 @@ class Authentication(Model):
         'symmetric_key': {'key': 'symmetricKey', 'type': 'SymmetricKey'},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, *, symmetric_key=None, **kwargs) -> None:
         super(Authentication, self).__init__(**kwargs)
-        self.symmetric_key = kwargs.get('symmetric_key', None)
+        self.symmetric_key = symmetric_key
 
 
 class AzureContainerInfo(Model):
@@ -275,11 +410,11 @@ class AzureContainerInfo(Model):
         'data_format': {'key': 'dataFormat', 'type': 'str'},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, *, storage_account_credential_id: str, container_name: str, data_format, **kwargs) -> None:
         super(AzureContainerInfo, self).__init__(**kwargs)
-        self.storage_account_credential_id = kwargs.get('storage_account_credential_id', None)
-        self.container_name = kwargs.get('container_name', None)
-        self.data_format = kwargs.get('data_format', None)
+        self.storage_account_credential_id = storage_account_credential_id
+        self.container_name = container_name
+        self.data_format = data_format
 
 
 class BandwidthSchedule(ARMBaseModel):
@@ -296,6 +431,8 @@ class BandwidthSchedule(ARMBaseModel):
     :vartype name: str
     :ivar type: The hierarchical type of the object.
     :vartype type: str
+    :param system_data: Bandwidth object related to ASE resource
+    :type system_data: ~azure.mgmt.databoxedge.models.SystemData
     :param start: Required. The start time of the schedule in UTC.
     :type start: str
     :param stop: Required. The stop time of the schedule in UTC.
@@ -321,18 +458,20 @@ class BandwidthSchedule(ARMBaseModel):
         'id': {'key': 'id', 'type': 'str'},
         'name': {'key': 'name', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
+        'system_data': {'key': 'systemData', 'type': 'SystemData'},
         'start': {'key': 'properties.start', 'type': 'str'},
         'stop': {'key': 'properties.stop', 'type': 'str'},
         'rate_in_mbps': {'key': 'properties.rateInMbps', 'type': 'int'},
         'days': {'key': 'properties.days', 'type': '[str]'},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, *, start: str, stop: str, rate_in_mbps: int, days, system_data=None, **kwargs) -> None:
         super(BandwidthSchedule, self).__init__(**kwargs)
-        self.start = kwargs.get('start', None)
-        self.stop = kwargs.get('stop', None)
-        self.rate_in_mbps = kwargs.get('rate_in_mbps', None)
-        self.days = kwargs.get('days', None)
+        self.system_data = system_data
+        self.start = start
+        self.stop = stop
+        self.rate_in_mbps = rate_in_mbps
+        self.days = days
 
 
 class ClientAccessRight(Model):
@@ -359,10 +498,117 @@ class ClientAccessRight(Model):
         'access_permission': {'key': 'accessPermission', 'type': 'str'},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, *, client: str, access_permission, **kwargs) -> None:
         super(ClientAccessRight, self).__init__(**kwargs)
-        self.client = kwargs.get('client', None)
-        self.access_permission = kwargs.get('access_permission', None)
+        self.client = client
+        self.access_permission = access_permission
+
+
+class Role(ARMBaseModel):
+    """Compute role.
+
+    You probably want to use the sub-classes and not this class directly. Known
+    sub-classes are: CloudEdgeManagementRole, IoTRole, KubernetesRole, MECRole
+
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar id: The path ID that uniquely identifies the object.
+    :vartype id: str
+    :ivar name: The object name.
+    :vartype name: str
+    :ivar type: The hierarchical type of the object.
+    :vartype type: str
+    :param system_data: Role configured on ASE resource
+    :type system_data: ~azure.mgmt.databoxedge.models.SystemData
+    :param kind: Required. Constant filled by server.
+    :type kind: str
+    """
+
+    _validation = {
+        'id': {'readonly': True},
+        'name': {'readonly': True},
+        'type': {'readonly': True},
+        'kind': {'required': True},
+    }
+
+    _attribute_map = {
+        'id': {'key': 'id', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
+        'system_data': {'key': 'systemData', 'type': 'SystemData'},
+        'kind': {'key': 'kind', 'type': 'str'},
+    }
+
+    _subtype_map = {
+        'kind': {'CloudEdgeManagement': 'CloudEdgeManagementRole', 'IOT': 'IoTRole', 'Kubernetes': 'KubernetesRole', 'MEC': 'MECRole'}
+    }
+
+    def __init__(self, *, system_data=None, **kwargs) -> None:
+        super(Role, self).__init__(**kwargs)
+        self.system_data = system_data
+        self.kind = None
+        self.kind = 'Role'
+
+
+class CloudEdgeManagementRole(Role):
+    """CloudEdgeManagementRole role.
+
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar id: The path ID that uniquely identifies the object.
+    :vartype id: str
+    :ivar name: The object name.
+    :vartype name: str
+    :ivar type: The hierarchical type of the object.
+    :vartype type: str
+    :param system_data: Role configured on ASE resource
+    :type system_data: ~azure.mgmt.databoxedge.models.SystemData
+    :param kind: Required. Constant filled by server.
+    :type kind: str
+    :ivar local_management_status: Local Edge Management Status. Possible
+     values include: 'Enabled', 'Disabled'
+    :vartype local_management_status: str or
+     ~azure.mgmt.databoxedge.models.RoleStatus
+    :ivar edge_profile: Edge Profile of the resource
+    :vartype edge_profile: ~azure.mgmt.databoxedge.models.EdgeProfile
+    :param role_status: Required. Role status. Possible values include:
+     'Enabled', 'Disabled'
+    :type role_status: str or ~azure.mgmt.databoxedge.models.RoleStatus
+    """
+
+    _validation = {
+        'id': {'readonly': True},
+        'name': {'readonly': True},
+        'type': {'readonly': True},
+        'kind': {'required': True},
+        'local_management_status': {'readonly': True},
+        'edge_profile': {'readonly': True},
+        'role_status': {'required': True},
+    }
+
+    _attribute_map = {
+        'id': {'key': 'id', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
+        'system_data': {'key': 'systemData', 'type': 'SystemData'},
+        'kind': {'key': 'kind', 'type': 'str'},
+        'local_management_status': {'key': 'properties.localManagementStatus', 'type': 'str'},
+        'edge_profile': {'key': 'properties.edgeProfile', 'type': 'EdgeProfile'},
+        'role_status': {'key': 'properties.roleStatus', 'type': 'str'},
+    }
+
+    def __init__(self, *, role_status, system_data=None, **kwargs) -> None:
+        super(CloudEdgeManagementRole, self).__init__(system_data=system_data, **kwargs)
+        self.local_management_status = None
+        self.edge_profile = None
+        self.role_status = role_status
+        self.kind = 'CloudEdgeManagement'
 
 
 class CloudError(Model):
@@ -376,9 +622,9 @@ class CloudError(Model):
         'error': {'key': 'error', 'type': 'CloudErrorBody'},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, *, error=None, **kwargs) -> None:
         super(CloudError, self).__init__(**kwargs)
-        self.error = kwargs.get('error', None)
+        self.error = error
 
 
 class CloudErrorException(HttpOperationError):
@@ -412,11 +658,76 @@ class CloudErrorBody(Model):
         'details': {'key': 'details', 'type': '[CloudErrorBody]'},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, *, code: str=None, message: str=None, details=None, **kwargs) -> None:
         super(CloudErrorBody, self).__init__(**kwargs)
-        self.code = kwargs.get('code', None)
-        self.message = kwargs.get('message', None)
-        self.details = kwargs.get('details', None)
+        self.code = code
+        self.message = message
+        self.details = details
+
+
+class CniConfig(Model):
+    """Cni configuration.
+
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    :ivar type: Cni type
+    :vartype type: str
+    :ivar version: Cni version
+    :vartype version: str
+    :ivar pod_subnet: Pod Subnet
+    :vartype pod_subnet: str
+    :ivar service_subnet: Service subnet
+    :vartype service_subnet: str
+    """
+
+    _validation = {
+        'type': {'readonly': True},
+        'version': {'readonly': True},
+        'pod_subnet': {'readonly': True},
+        'service_subnet': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'type': {'key': 'type', 'type': 'str'},
+        'version': {'key': 'version', 'type': 'str'},
+        'pod_subnet': {'key': 'podSubnet', 'type': 'str'},
+        'service_subnet': {'key': 'serviceSubnet', 'type': 'str'},
+    }
+
+    def __init__(self, **kwargs) -> None:
+        super(CniConfig, self).__init__(**kwargs)
+        self.type = None
+        self.version = None
+        self.pod_subnet = None
+        self.service_subnet = None
+
+
+class ComputeResource(Model):
+    """Compute infrastructure Resource.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param processor_count: Required. Processor count
+    :type processor_count: int
+    :param memory_in_gb: Required. Memory in GB
+    :type memory_in_gb: long
+    """
+
+    _validation = {
+        'processor_count': {'required': True},
+        'memory_in_gb': {'required': True},
+    }
+
+    _attribute_map = {
+        'processor_count': {'key': 'processorCount', 'type': 'int'},
+        'memory_in_gb': {'key': 'memoryInGB', 'type': 'long'},
+    }
+
+    def __init__(self, *, processor_count: int, memory_in_gb: int, **kwargs) -> None:
+        super(ComputeResource, self).__init__(**kwargs)
+        self.processor_count = processor_count
+        self.memory_in_gb = memory_in_gb
 
 
 class ContactDetails(Model):
@@ -448,12 +759,12 @@ class ContactDetails(Model):
         'email_list': {'key': 'emailList', 'type': '[str]'},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, *, contact_person: str, company_name: str, phone: str, email_list, **kwargs) -> None:
         super(ContactDetails, self).__init__(**kwargs)
-        self.contact_person = kwargs.get('contact_person', None)
-        self.company_name = kwargs.get('company_name', None)
-        self.phone = kwargs.get('phone', None)
-        self.email_list = kwargs.get('email_list', None)
+        self.contact_person = contact_person
+        self.company_name = company_name
+        self.phone = phone
+        self.email_list = email_list
 
 
 class Container(ARMBaseModel):
@@ -470,6 +781,8 @@ class Container(ARMBaseModel):
     :vartype name: str
     :ivar type: The hierarchical type of the object.
     :vartype type: str
+    :param system_data: Container in DataBoxEdge Resource
+    :type system_data: ~azure.mgmt.databoxedge.models.SystemData
     :ivar container_status: Current status of the container. Possible values
      include: 'OK', 'Offline', 'Unknown', 'Updating', 'NeedsAttention'
     :vartype container_status: str or
@@ -498,16 +811,18 @@ class Container(ARMBaseModel):
         'id': {'key': 'id', 'type': 'str'},
         'name': {'key': 'name', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
+        'system_data': {'key': 'systemData', 'type': 'SystemData'},
         'container_status': {'key': 'properties.containerStatus', 'type': 'str'},
         'data_format': {'key': 'properties.dataFormat', 'type': 'str'},
         'refresh_details': {'key': 'properties.refreshDetails', 'type': 'RefreshDetails'},
         'created_date_time': {'key': 'properties.createdDateTime', 'type': 'iso-8601'},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, *, data_format, system_data=None, **kwargs) -> None:
         super(Container, self).__init__(**kwargs)
+        self.system_data = system_data
         self.container_status = None
-        self.data_format = kwargs.get('data_format', None)
+        self.data_format = data_format
         self.refresh_details = None
         self.created_date_time = None
 
@@ -539,6 +854,14 @@ class DataBoxEdgeDevice(ARMBaseModel):
     :type sku: ~azure.mgmt.databoxedge.models.Sku
     :param etag: The etag for the devices.
     :type etag: str
+    :param identity: Msi identity of the resource
+    :type identity: ~azure.mgmt.databoxedge.models.ResourceIdentity
+    :ivar kind: The etag for the devices. Possible values include:
+     'AzureDataBoxGateway', 'AzureStackEdge', 'AzureStackHub',
+     'AzureModularDataCentre'
+    :vartype kind: str or ~azure.mgmt.databoxedge.models.DataBoxEdgeDeviceKind
+    :param system_data: DataBoxEdge Resource
+    :type system_data: ~azure.mgmt.databoxedge.models.SystemData
     :param data_box_edge_device_status: The status of the Data Box
      Edge/Gateway device. Possible values include: 'ReadyToSetup', 'Online',
      'Offline', 'NeedsAttention', 'Disconnected', 'PartiallyDisconnected',
@@ -547,16 +870,16 @@ class DataBoxEdgeDevice(ARMBaseModel):
      ~azure.mgmt.databoxedge.models.DataBoxEdgeDeviceStatus
     :ivar serial_number: The Serial Number of Data Box Edge/Gateway device.
     :vartype serial_number: str
-    :param description: The Description of the Data Box Edge/Gateway device.
-    :type description: str
-    :param model_description: The description of the Data Box Edge/Gateway
+    :ivar description: The Description of the Data Box Edge/Gateway device.
+    :vartype description: str
+    :ivar model_description: The description of the Data Box Edge/Gateway
      device model.
-    :type model_description: str
+    :vartype model_description: str
     :ivar device_type: The type of the Data Box Edge/Gateway device. Possible
      values include: 'DataBoxEdgeDevice'
     :vartype device_type: str or ~azure.mgmt.databoxedge.models.DeviceType
-    :param friendly_name: The Data Box Edge/Gateway device name.
-    :type friendly_name: str
+    :ivar friendly_name: The Data Box Edge/Gateway device name.
+    :vartype friendly_name: str
     :ivar culture: The Data Box Edge/Gateway device culture.
     :vartype culture: str
     :ivar device_model: The Data Box Edge/Gateway device model.
@@ -577,6 +900,12 @@ class DataBoxEdgeDevice(ARMBaseModel):
      ~azure.mgmt.databoxedge.models.RoleTypes]
     :ivar node_count: The number of nodes in the cluster.
     :vartype node_count: int
+    :ivar resource_move_details: The details of the move operation on this
+     resource.
+    :vartype resource_move_details:
+     ~azure.mgmt.databoxedge.models.ResourceMoveDetails
+    :ivar edge_profile: The details of Edge Profile for this resource
+    :vartype edge_profile: ~azure.mgmt.databoxedge.models.EdgeProfile
     """
 
     _validation = {
@@ -584,8 +913,12 @@ class DataBoxEdgeDevice(ARMBaseModel):
         'name': {'readonly': True},
         'type': {'readonly': True},
         'location': {'required': True},
+        'kind': {'readonly': True},
         'serial_number': {'readonly': True},
+        'description': {'readonly': True},
+        'model_description': {'readonly': True},
         'device_type': {'readonly': True},
+        'friendly_name': {'readonly': True},
         'culture': {'readonly': True},
         'device_model': {'readonly': True},
         'device_software_version': {'readonly': True},
@@ -594,6 +927,8 @@ class DataBoxEdgeDevice(ARMBaseModel):
         'device_hcs_version': {'readonly': True},
         'configured_role_types': {'readonly': True},
         'node_count': {'readonly': True},
+        'resource_move_details': {'readonly': True},
+        'edge_profile': {'readonly': True},
     }
 
     _attribute_map = {
@@ -604,6 +939,9 @@ class DataBoxEdgeDevice(ARMBaseModel):
         'tags': {'key': 'tags', 'type': '{str}'},
         'sku': {'key': 'sku', 'type': 'Sku'},
         'etag': {'key': 'etag', 'type': 'str'},
+        'identity': {'key': 'identity', 'type': 'ResourceIdentity'},
+        'kind': {'key': 'kind', 'type': 'str'},
+        'system_data': {'key': 'systemData', 'type': 'SystemData'},
         'data_box_edge_device_status': {'key': 'properties.dataBoxEdgeDeviceStatus', 'type': 'str'},
         'serial_number': {'key': 'properties.serialNumber', 'type': 'str'},
         'description': {'key': 'properties.description', 'type': 'str'},
@@ -618,20 +956,25 @@ class DataBoxEdgeDevice(ARMBaseModel):
         'device_hcs_version': {'key': 'properties.deviceHcsVersion', 'type': 'str'},
         'configured_role_types': {'key': 'properties.configuredRoleTypes', 'type': '[str]'},
         'node_count': {'key': 'properties.nodeCount', 'type': 'int'},
+        'resource_move_details': {'key': 'properties.resourceMoveDetails', 'type': 'ResourceMoveDetails'},
+        'edge_profile': {'key': 'properties.edgeProfile', 'type': 'EdgeProfile'},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, *, location: str, tags=None, sku=None, etag: str=None, identity=None, system_data=None, data_box_edge_device_status=None, **kwargs) -> None:
         super(DataBoxEdgeDevice, self).__init__(**kwargs)
-        self.location = kwargs.get('location', None)
-        self.tags = kwargs.get('tags', None)
-        self.sku = kwargs.get('sku', None)
-        self.etag = kwargs.get('etag', None)
-        self.data_box_edge_device_status = kwargs.get('data_box_edge_device_status', None)
+        self.location = location
+        self.tags = tags
+        self.sku = sku
+        self.etag = etag
+        self.identity = identity
+        self.kind = None
+        self.system_data = system_data
+        self.data_box_edge_device_status = data_box_edge_device_status
         self.serial_number = None
-        self.description = kwargs.get('description', None)
-        self.model_description = kwargs.get('model_description', None)
+        self.description = None
+        self.model_description = None
         self.device_type = None
-        self.friendly_name = kwargs.get('friendly_name', None)
+        self.friendly_name = None
         self.culture = None
         self.device_model = None
         self.device_software_version = None
@@ -640,6 +983,8 @@ class DataBoxEdgeDevice(ARMBaseModel):
         self.device_hcs_version = None
         self.configured_role_types = None
         self.node_count = None
+        self.resource_move_details = None
+        self.edge_profile = None
 
 
 class DataBoxEdgeDeviceExtendedInfo(ARMBaseModel):
@@ -662,6 +1007,16 @@ class DataBoxEdgeDeviceExtendedInfo(ARMBaseModel):
     :type encryption_key: str
     :ivar resource_key: The Resource ID of the Resource.
     :vartype resource_key: str
+    :param client_secret_store_id: The Key Vault ARM Id for client secrets
+    :type client_secret_store_id: str
+    :param client_secret_store_url: The url to access the Client Key Vault
+    :type client_secret_store_url: str
+    :param channel_integrity_key_name: The name of Channel Integrity Key
+     stored in the Client Key Vault
+    :type channel_integrity_key_name: str
+    :param channel_integrity_key_version: The version of Channel Integrity Key
+     stored in the Client Key Vault
+    :type channel_integrity_key_version: str
     """
 
     _validation = {
@@ -678,13 +1033,51 @@ class DataBoxEdgeDeviceExtendedInfo(ARMBaseModel):
         'encryption_key_thumbprint': {'key': 'properties.encryptionKeyThumbprint', 'type': 'str'},
         'encryption_key': {'key': 'properties.encryptionKey', 'type': 'str'},
         'resource_key': {'key': 'properties.resourceKey', 'type': 'str'},
+        'client_secret_store_id': {'key': 'properties.clientSecretStoreId', 'type': 'str'},
+        'client_secret_store_url': {'key': 'properties.clientSecretStoreUrl', 'type': 'str'},
+        'channel_integrity_key_name': {'key': 'properties.channelIntegrityKeyName', 'type': 'str'},
+        'channel_integrity_key_version': {'key': 'properties.channelIntegrityKeyVersion', 'type': 'str'},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, *, encryption_key_thumbprint: str=None, encryption_key: str=None, client_secret_store_id: str=None, client_secret_store_url: str=None, channel_integrity_key_name: str=None, channel_integrity_key_version: str=None, **kwargs) -> None:
         super(DataBoxEdgeDeviceExtendedInfo, self).__init__(**kwargs)
-        self.encryption_key_thumbprint = kwargs.get('encryption_key_thumbprint', None)
-        self.encryption_key = kwargs.get('encryption_key', None)
+        self.encryption_key_thumbprint = encryption_key_thumbprint
+        self.encryption_key = encryption_key
         self.resource_key = None
+        self.client_secret_store_id = client_secret_store_id
+        self.client_secret_store_url = client_secret_store_url
+        self.channel_integrity_key_name = channel_integrity_key_name
+        self.channel_integrity_key_version = channel_integrity_key_version
+
+
+class DataBoxEdgeDeviceExtendedInfoPatch(Model):
+    """The Data Box Edge/Gateway device extended info patch.
+
+    :param client_secret_store_id: The Key Vault ARM Id for client secrets
+    :type client_secret_store_id: str
+    :param client_secret_store_url: The url to access the Client Key Vault
+    :type client_secret_store_url: str
+    :param channel_integrity_key_name: The name for Channel Integrity Key
+     stored in the Client Key Vault
+    :type channel_integrity_key_name: str
+    :param channel_integrity_key_version: The version of Channel Integrity Key
+     stored in the Client Key Vault
+    :type channel_integrity_key_version: str
+    """
+
+    _attribute_map = {
+        'client_secret_store_id': {'key': 'clientSecretStoreId', 'type': 'str'},
+        'client_secret_store_url': {'key': 'clientSecretStoreUrl', 'type': 'str'},
+        'channel_integrity_key_name': {'key': 'channelIntegrityKeyName', 'type': 'str'},
+        'channel_integrity_key_version': {'key': 'channelIntegrityKeyVersion', 'type': 'str'},
+    }
+
+    def __init__(self, *, client_secret_store_id: str=None, client_secret_store_url: str=None, channel_integrity_key_name: str=None, channel_integrity_key_version: str=None, **kwargs) -> None:
+        super(DataBoxEdgeDeviceExtendedInfoPatch, self).__init__(**kwargs)
+        self.client_secret_store_id = client_secret_store_id
+        self.client_secret_store_url = client_secret_store_url
+        self.channel_integrity_key_name = channel_integrity_key_name
+        self.channel_integrity_key_version = channel_integrity_key_version
 
 
 class DataBoxEdgeDevicePatch(Model):
@@ -692,15 +1085,51 @@ class DataBoxEdgeDevicePatch(Model):
 
     :param tags: The tags attached to the Data Box Edge/Gateway resource.
     :type tags: dict[str, str]
+    :param identity: Msi identity of the resource
+    :type identity: ~azure.mgmt.databoxedge.models.ResourceIdentity
+    :param edge_profile: Edge Profile property of the Data Box Edge/Gateway
+     device
+    :type edge_profile: ~azure.mgmt.databoxedge.models.EdgeProfilePatch
     """
 
     _attribute_map = {
         'tags': {'key': 'tags', 'type': '{str}'},
+        'identity': {'key': 'identity', 'type': 'ResourceIdentity'},
+        'edge_profile': {'key': 'properties.edgeProfile', 'type': 'EdgeProfilePatch'},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, *, tags=None, identity=None, edge_profile=None, **kwargs) -> None:
         super(DataBoxEdgeDevicePatch, self).__init__(**kwargs)
-        self.tags = kwargs.get('tags', None)
+        self.tags = tags
+        self.identity = identity
+        self.edge_profile = edge_profile
+
+
+class DataBoxEdgeMoveRequest(Model):
+    """Resource Move details.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param target_resource_group: Required. Target resource group ARMId
+    :type target_resource_group: str
+    :param resources: Required. List of resources to be moved
+    :type resources: list[str]
+    """
+
+    _validation = {
+        'target_resource_group': {'required': True},
+        'resources': {'required': True},
+    }
+
+    _attribute_map = {
+        'target_resource_group': {'key': 'targetResourceGroup', 'type': 'str'},
+        'resources': {'key': 'resources', 'type': '[str]'},
+    }
+
+    def __init__(self, *, target_resource_group: str, resources, **kwargs) -> None:
+        super(DataBoxEdgeMoveRequest, self).__init__(**kwargs)
+        self.target_resource_group = target_resource_group
+        self.resources = resources
 
 
 class DataBoxEdgeSku(Model):
@@ -713,8 +1142,9 @@ class DataBoxEdgeSku(Model):
     :vartype resource_type: str
     :ivar name: The Sku name. Possible values include: 'Gateway', 'Edge',
      'TEA_1Node', 'TEA_1Node_UPS', 'TEA_1Node_Heater', 'TEA_1Node_UPS_Heater',
-     'TEA_4Node_Heater', 'TEA_4Node_UPS_Heater', 'TMA', 'TDC', 'TCA_Large',
-     'TCA_Small', 'GPU'
+     'TEA_4Node_Heater', 'TEA_4Node_UPS_Heater', 'TMA', 'TDC', 'TCA_Small',
+     'GPU', 'TCA_Large', 'EdgeP_Base', 'EdgeP_High', 'EdgePR_Base',
+     'EdgePR_Base_UPS', 'EdgeMR_Mini', 'RCA_Small', 'RCA_Large', 'RDC'
     :vartype name: str or ~azure.mgmt.databoxedge.models.SkuName
     :ivar kind: The Sku kind.
     :vartype kind: str
@@ -733,18 +1163,20 @@ class DataBoxEdgeSku(Model):
      list[~azure.mgmt.databoxedge.models.SkuLocationInfo]
     :ivar costs: The pricing info of the Sku.
     :vartype costs: list[~azure.mgmt.databoxedge.models.SkuCost]
-    :ivar restrictions: Restriction info of the SKU.
-    :vartype restrictions: list[~azure.mgmt.databoxedge.models.SkuRestriction]
-    :ivar signup_option: Can the SKU be signed up. Possible values include:
-     'None', 'Available'
+    :ivar signup_option: Sku can be signed up by customer or not. Possible
+     values include: 'None', 'Available'
     :vartype signup_option: str or
      ~azure.mgmt.databoxedge.models.SkuSignupOption
-    :ivar version: Sku version. Possible values include: 'Stable', 'Preview'
+    :ivar version: Availability of the Sku as preview/stable. Possible values
+     include: 'Stable', 'Preview'
     :vartype version: str or ~azure.mgmt.databoxedge.models.SkuVersion
-    :ivar availability: Is SKU available. Possible values include:
-     'Available', 'Unavailable'
+    :ivar availability: Links to the next set of results. Possible values
+     include: 'Available', 'Unavailable'
     :vartype availability: str or
      ~azure.mgmt.databoxedge.models.SkuAvailability
+    :ivar shipment_types: List of Shipment Types supported by this SKU
+    :vartype shipment_types: list[str or
+     ~azure.mgmt.databoxedge.models.ShipmentType]
     """
 
     _validation = {
@@ -758,10 +1190,10 @@ class DataBoxEdgeSku(Model):
         'api_versions': {'readonly': True},
         'location_info': {'readonly': True},
         'costs': {'readonly': True},
-        'restrictions': {'readonly': True},
         'signup_option': {'readonly': True},
         'version': {'readonly': True},
         'availability': {'readonly': True},
+        'shipment_types': {'readonly': True},
     }
 
     _attribute_map = {
@@ -775,13 +1207,13 @@ class DataBoxEdgeSku(Model):
         'api_versions': {'key': 'apiVersions', 'type': '[str]'},
         'location_info': {'key': 'locationInfo', 'type': '[SkuLocationInfo]'},
         'costs': {'key': 'costs', 'type': '[SkuCost]'},
-        'restrictions': {'key': 'restrictions', 'type': '[SkuRestriction]'},
         'signup_option': {'key': 'signupOption', 'type': 'str'},
         'version': {'key': 'version', 'type': 'str'},
         'availability': {'key': 'availability', 'type': 'str'},
+        'shipment_types': {'key': 'shipmentTypes', 'type': '[str]'},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs) -> None:
         super(DataBoxEdgeSku, self).__init__(**kwargs)
         self.resource_type = None
         self.name = None
@@ -793,10 +1225,159 @@ class DataBoxEdgeSku(Model):
         self.api_versions = None
         self.location_info = None
         self.costs = None
-        self.restrictions = None
         self.signup_option = None
         self.version = None
         self.availability = None
+        self.shipment_types = None
+
+
+class DCAccessCode(Model):
+    """DC Access code in the case of Self Managed Shipping.
+
+    :param auth_code: DCAccess Code for the Self Managed shipment.
+    :type auth_code: str
+    """
+
+    _attribute_map = {
+        'auth_code': {'key': 'properties.authCode', 'type': 'str'},
+    }
+
+    def __init__(self, *, auth_code: str=None, **kwargs) -> None:
+        super(DCAccessCode, self).__init__(**kwargs)
+        self.auth_code = auth_code
+
+
+class EdgeProfile(Model):
+    """Details about Edge Profile for the resource.
+
+    :param subscription: Edge Profile Subscription
+    :type subscription: ~azure.mgmt.databoxedge.models.EdgeProfileSubscription
+    """
+
+    _attribute_map = {
+        'subscription': {'key': 'subscription', 'type': 'EdgeProfileSubscription'},
+    }
+
+    def __init__(self, *, subscription=None, **kwargs) -> None:
+        super(EdgeProfile, self).__init__(**kwargs)
+        self.subscription = subscription
+
+
+class EdgeProfilePatch(Model):
+    """The Data Box Edge/Gateway Edge Profile patch.
+
+    :param subscription: The Data Box Edge/Gateway Edge Profile Subscription
+     patch
+    :type subscription:
+     ~azure.mgmt.databoxedge.models.EdgeProfileSubscriptionPatch
+    """
+
+    _attribute_map = {
+        'subscription': {'key': 'subscription', 'type': 'EdgeProfileSubscriptionPatch'},
+    }
+
+    def __init__(self, *, subscription=None, **kwargs) -> None:
+        super(EdgeProfilePatch, self).__init__(**kwargs)
+        self.subscription = subscription
+
+
+class EdgeProfileSubscription(Model):
+    """Subscription details for the Edge Profile.
+
+    :param registration_id: Edge Subscription Registration ID
+    :type registration_id: str
+    :param id: ARM ID of the subscription
+    :type id: str
+    :param state: Possible values include: 'Registered', 'Warned',
+     'Suspended', 'Deleted', 'Unregistered'
+    :type state: str or ~azure.mgmt.databoxedge.models.SubscriptionState
+    :param registration_date:
+    :type registration_date: str
+    :param subscription_id:
+    :type subscription_id: str
+    :param tenant_id:
+    :type tenant_id: str
+    :param location_placement_id:
+    :type location_placement_id: str
+    :param quota_id:
+    :type quota_id: str
+    :param serialized_details:
+    :type serialized_details: str
+    :param registered_features:
+    :type registered_features:
+     list[~azure.mgmt.databoxedge.models.SubscriptionRegisteredFeatures]
+    """
+
+    _attribute_map = {
+        'registration_id': {'key': 'registrationId', 'type': 'str'},
+        'id': {'key': 'id', 'type': 'str'},
+        'state': {'key': 'state', 'type': 'str'},
+        'registration_date': {'key': 'registrationDate', 'type': 'str'},
+        'subscription_id': {'key': 'subscriptionId', 'type': 'str'},
+        'tenant_id': {'key': 'properties.tenantId', 'type': 'str'},
+        'location_placement_id': {'key': 'properties.locationPlacementId', 'type': 'str'},
+        'quota_id': {'key': 'properties.quotaId', 'type': 'str'},
+        'serialized_details': {'key': 'properties.serializedDetails', 'type': 'str'},
+        'registered_features': {'key': 'properties.registeredFeatures', 'type': '[SubscriptionRegisteredFeatures]'},
+    }
+
+    def __init__(self, *, registration_id: str=None, id: str=None, state=None, registration_date: str=None, subscription_id: str=None, tenant_id: str=None, location_placement_id: str=None, quota_id: str=None, serialized_details: str=None, registered_features=None, **kwargs) -> None:
+        super(EdgeProfileSubscription, self).__init__(**kwargs)
+        self.registration_id = registration_id
+        self.id = id
+        self.state = state
+        self.registration_date = registration_date
+        self.subscription_id = subscription_id
+        self.tenant_id = tenant_id
+        self.location_placement_id = location_placement_id
+        self.quota_id = quota_id
+        self.serialized_details = serialized_details
+        self.registered_features = registered_features
+
+
+class EdgeProfileSubscriptionPatch(Model):
+    """The Data Box Edge/Gateway Edge Profile Subscription patch.
+
+    :param id: The path ID that uniquely identifies the subscription of the
+     edge profile.
+    :type id: str
+    """
+
+    _attribute_map = {
+        'id': {'key': 'id', 'type': 'str'},
+    }
+
+    def __init__(self, *, id: str=None, **kwargs) -> None:
+        super(EdgeProfileSubscriptionPatch, self).__init__(**kwargs)
+        self.id = id
+
+
+class EtcdInfo(Model):
+    """Etcd configuration.
+
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    :ivar type: Etcd type
+    :vartype type: str
+    :ivar version: Etcd version
+    :vartype version: str
+    """
+
+    _validation = {
+        'type': {'readonly': True},
+        'version': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'type': {'key': 'type', 'type': 'str'},
+        'version': {'key': 'version', 'type': 'str'},
+    }
+
+    def __init__(self, **kwargs) -> None:
+        super(EtcdInfo, self).__init__(**kwargs)
+        self.type = None
+        self.version = None
 
 
 class Trigger(ARMBaseModel):
@@ -816,6 +1397,8 @@ class Trigger(ARMBaseModel):
     :vartype name: str
     :ivar type: The hierarchical type of the object.
     :vartype type: str
+    :param system_data: Trigger in DataBoxEdge Resource
+    :type system_data: ~azure.mgmt.databoxedge.models.SystemData
     :param kind: Required. Constant filled by server.
     :type kind: str
     """
@@ -831,6 +1414,7 @@ class Trigger(ARMBaseModel):
         'id': {'key': 'id', 'type': 'str'},
         'name': {'key': 'name', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
+        'system_data': {'key': 'systemData', 'type': 'SystemData'},
         'kind': {'key': 'kind', 'type': 'str'},
     }
 
@@ -838,8 +1422,9 @@ class Trigger(ARMBaseModel):
         'kind': {'FileEvent': 'FileEventTrigger', 'PeriodicTimerEvent': 'PeriodicTimerEventTrigger'}
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, *, system_data=None, **kwargs) -> None:
         super(Trigger, self).__init__(**kwargs)
+        self.system_data = system_data
         self.kind = None
         self.kind = 'Trigger'
 
@@ -858,6 +1443,8 @@ class FileEventTrigger(Trigger):
     :vartype name: str
     :ivar type: The hierarchical type of the object.
     :vartype type: str
+    :param system_data: Trigger in DataBoxEdge Resource
+    :type system_data: ~azure.mgmt.databoxedge.models.SystemData
     :param kind: Required. Constant filled by server.
     :type kind: str
     :param source_info: Required. File event source details.
@@ -878,23 +1465,25 @@ class FileEventTrigger(Trigger):
         'kind': {'required': True},
         'source_info': {'required': True},
         'sink_info': {'required': True},
+        'custom_context_tag': {'max_length': 192},
     }
 
     _attribute_map = {
         'id': {'key': 'id', 'type': 'str'},
         'name': {'key': 'name', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
+        'system_data': {'key': 'systemData', 'type': 'SystemData'},
         'kind': {'key': 'kind', 'type': 'str'},
         'source_info': {'key': 'properties.sourceInfo', 'type': 'FileSourceInfo'},
         'sink_info': {'key': 'properties.sinkInfo', 'type': 'RoleSinkInfo'},
         'custom_context_tag': {'key': 'properties.customContextTag', 'type': 'str'},
     }
 
-    def __init__(self, **kwargs):
-        super(FileEventTrigger, self).__init__(**kwargs)
-        self.source_info = kwargs.get('source_info', None)
-        self.sink_info = kwargs.get('sink_info', None)
-        self.custom_context_tag = kwargs.get('custom_context_tag', None)
+    def __init__(self, *, source_info, sink_info, system_data=None, custom_context_tag: str=None, **kwargs) -> None:
+        super(FileEventTrigger, self).__init__(system_data=system_data, **kwargs)
+        self.source_info = source_info
+        self.sink_info = sink_info
+        self.custom_context_tag = custom_context_tag
         self.kind = 'FileEvent'
 
 
@@ -915,9 +1504,36 @@ class FileSourceInfo(Model):
         'share_id': {'key': 'shareId', 'type': 'str'},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, *, share_id: str, **kwargs) -> None:
         super(FileSourceInfo, self).__init__(**kwargs)
-        self.share_id = kwargs.get('share_id', None)
+        self.share_id = share_id
+
+
+class GenerateCertResponse(Model):
+    """Used in activation key generation flow.
+
+    :param public_key: Gets or sets base64 encoded certificate raw data,
+     this is the public part needed to be uploaded to cert vault
+    :type public_key: str
+    :param private_key: Gets or sets base64 encoded private part of the
+     certificate,
+     needed to form the activation key
+    :type private_key: str
+    :param expiry_time_in_utc: Gets or sets expiry time in UTC
+    :type expiry_time_in_utc: str
+    """
+
+    _attribute_map = {
+        'public_key': {'key': 'publicKey', 'type': 'str'},
+        'private_key': {'key': 'privateKey', 'type': 'str'},
+        'expiry_time_in_utc': {'key': 'expiryTimeInUTC', 'type': 'str'},
+    }
+
+    def __init__(self, *, public_key: str=None, private_key: str=None, expiry_time_in_utc: str=None, **kwargs) -> None:
+        super(GenerateCertResponse, self).__init__(**kwargs)
+        self.public_key = public_key
+        self.private_key = private_key
+        self.expiry_time_in_utc = expiry_time_in_utc
 
 
 class ImageRepositoryCredential(Model):
@@ -945,11 +1561,90 @@ class ImageRepositoryCredential(Model):
         'password': {'key': 'password', 'type': 'AsymmetricEncryptedSecret'},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, *, image_repository_url: str, user_name: str, password=None, **kwargs) -> None:
         super(ImageRepositoryCredential, self).__init__(**kwargs)
-        self.image_repository_url = kwargs.get('image_repository_url', None)
-        self.user_name = kwargs.get('user_name', None)
-        self.password = kwargs.get('password', None)
+        self.image_repository_url = image_repository_url
+        self.user_name = user_name
+        self.password = password
+
+
+class IoTAddon(Addon):
+    """IoT Addon.
+
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar id: The path ID that uniquely identifies the object.
+    :vartype id: str
+    :ivar name: The object name.
+    :vartype name: str
+    :ivar type: The hierarchical type of the object.
+    :vartype type: str
+    :param system_data: Addon type
+    :type system_data: ~azure.mgmt.databoxedge.models.SystemData
+    :param kind: Required. Constant filled by server.
+    :type kind: str
+    :param io_tdevice_details: Required. IoT device metadata to which
+     appliance needs to be connected.
+    :type io_tdevice_details: ~azure.mgmt.databoxedge.models.IoTDeviceInfo
+    :param io_tedge_device_details: Required. IoT edge device to which the IoT
+     Addon needs to be configured.
+    :type io_tedge_device_details:
+     ~azure.mgmt.databoxedge.models.IoTDeviceInfo
+    :ivar version: Version of IoT running on the appliance.
+    :vartype version: str
+    :ivar host_platform: Host OS supported by the IoT addon. Possible values
+     include: 'Windows', 'Linux'
+    :vartype host_platform: str or ~azure.mgmt.databoxedge.models.PlatformType
+    :ivar host_platform_type: Platform where the runtime is hosted. Possible
+     values include: 'KubernetesCluster', 'LinuxVM'
+    :vartype host_platform_type: str or
+     ~azure.mgmt.databoxedge.models.HostPlatformType
+    :ivar provisioning_state: Addon Provisioning State. Possible values
+     include: 'Invalid', 'Creating', 'Created', 'Updating', 'Reconfiguring',
+     'Failed', 'Deleting'
+    :vartype provisioning_state: str or
+     ~azure.mgmt.databoxedge.models.AddonState
+    """
+
+    _validation = {
+        'id': {'readonly': True},
+        'name': {'readonly': True},
+        'type': {'readonly': True},
+        'kind': {'required': True},
+        'io_tdevice_details': {'required': True},
+        'io_tedge_device_details': {'required': True},
+        'version': {'readonly': True},
+        'host_platform': {'readonly': True},
+        'host_platform_type': {'readonly': True},
+        'provisioning_state': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'id': {'key': 'id', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
+        'system_data': {'key': 'systemData', 'type': 'SystemData'},
+        'kind': {'key': 'kind', 'type': 'str'},
+        'io_tdevice_details': {'key': 'properties.ioTDeviceDetails', 'type': 'IoTDeviceInfo'},
+        'io_tedge_device_details': {'key': 'properties.ioTEdgeDeviceDetails', 'type': 'IoTDeviceInfo'},
+        'version': {'key': 'properties.version', 'type': 'str'},
+        'host_platform': {'key': 'properties.hostPlatform', 'type': 'str'},
+        'host_platform_type': {'key': 'properties.hostPlatformType', 'type': 'str'},
+        'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
+    }
+
+    def __init__(self, *, io_tdevice_details, io_tedge_device_details, system_data=None, **kwargs) -> None:
+        super(IoTAddon, self).__init__(system_data=system_data, **kwargs)
+        self.io_tdevice_details = io_tdevice_details
+        self.io_tedge_device_details = io_tedge_device_details
+        self.version = None
+        self.host_platform = None
+        self.host_platform_type = None
+        self.provisioning_state = None
+        self.kind = 'IotEdge'
 
 
 class IoTDeviceInfo(Model):
@@ -981,12 +1676,12 @@ class IoTDeviceInfo(Model):
         'authentication': {'key': 'authentication', 'type': 'Authentication'},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, *, device_id: str, io_thost_hub: str, io_thost_hub_id: str=None, authentication=None, **kwargs) -> None:
         super(IoTDeviceInfo, self).__init__(**kwargs)
-        self.device_id = kwargs.get('device_id', None)
-        self.io_thost_hub = kwargs.get('io_thost_hub', None)
-        self.io_thost_hub_id = kwargs.get('io_thost_hub_id', None)
-        self.authentication = kwargs.get('authentication', None)
+        self.device_id = device_id
+        self.io_thost_hub = io_thost_hub
+        self.io_thost_hub_id = io_thost_hub_id
+        self.authentication = authentication
 
 
 class IoTEdgeAgentInfo(Model):
@@ -1015,56 +1710,11 @@ class IoTEdgeAgentInfo(Model):
         'image_repository': {'key': 'imageRepository', 'type': 'ImageRepositoryCredential'},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, *, image_name: str, tag: str, image_repository=None, **kwargs) -> None:
         super(IoTEdgeAgentInfo, self).__init__(**kwargs)
-        self.image_name = kwargs.get('image_name', None)
-        self.tag = kwargs.get('tag', None)
-        self.image_repository = kwargs.get('image_repository', None)
-
-
-class Role(ARMBaseModel):
-    """Compute role.
-
-    You probably want to use the sub-classes and not this class directly. Known
-    sub-classes are: IoTRole
-
-    Variables are only populated by the server, and will be ignored when
-    sending a request.
-
-    All required parameters must be populated in order to send to Azure.
-
-    :ivar id: The path ID that uniquely identifies the object.
-    :vartype id: str
-    :ivar name: The object name.
-    :vartype name: str
-    :ivar type: The hierarchical type of the object.
-    :vartype type: str
-    :param kind: Required. Constant filled by server.
-    :type kind: str
-    """
-
-    _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
-        'kind': {'required': True},
-    }
-
-    _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'kind': {'key': 'kind', 'type': 'str'},
-    }
-
-    _subtype_map = {
-        'kind': {'IOT': 'IoTRole'}
-    }
-
-    def __init__(self, **kwargs):
-        super(Role, self).__init__(**kwargs)
-        self.kind = None
-        self.kind = 'Role'
+        self.image_name = image_name
+        self.tag = tag
+        self.image_repository = image_repository
 
 
 class IoTRole(Role):
@@ -1081,6 +1731,8 @@ class IoTRole(Role):
     :vartype name: str
     :ivar type: The hierarchical type of the object.
     :vartype type: str
+    :param system_data: Role configured on ASE resource
+    :type system_data: ~azure.mgmt.databoxedge.models.SystemData
     :param kind: Required. Constant filled by server.
     :type kind: str
     :param host_platform: Required. Host OS supported by the IoT role.
@@ -1102,6 +1754,8 @@ class IoTRole(Role):
      Possible values include: 'KubernetesCluster', 'LinuxVM'
     :vartype host_platform_type: str or
      ~azure.mgmt.databoxedge.models.HostPlatformType
+    :param compute_resource: Resource allocation
+    :type compute_resource: ~azure.mgmt.databoxedge.models.ComputeResource
     :param role_status: Required. Role status. Possible values include:
      'Enabled', 'Disabled'
     :type role_status: str or ~azure.mgmt.databoxedge.models.RoleStatus
@@ -1123,6 +1777,7 @@ class IoTRole(Role):
         'id': {'key': 'id', 'type': 'str'},
         'name': {'key': 'name', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
+        'system_data': {'key': 'systemData', 'type': 'SystemData'},
         'kind': {'key': 'kind', 'type': 'str'},
         'host_platform': {'key': 'properties.hostPlatform', 'type': 'str'},
         'io_tdevice_details': {'key': 'properties.ioTDeviceDetails', 'type': 'IoTDeviceInfo'},
@@ -1130,18 +1785,20 @@ class IoTRole(Role):
         'share_mappings': {'key': 'properties.shareMappings', 'type': '[MountPointMap]'},
         'io_tedge_agent_info': {'key': 'properties.ioTEdgeAgentInfo', 'type': 'IoTEdgeAgentInfo'},
         'host_platform_type': {'key': 'properties.hostPlatformType', 'type': 'str'},
+        'compute_resource': {'key': 'properties.computeResource', 'type': 'ComputeResource'},
         'role_status': {'key': 'properties.roleStatus', 'type': 'str'},
     }
 
-    def __init__(self, **kwargs):
-        super(IoTRole, self).__init__(**kwargs)
-        self.host_platform = kwargs.get('host_platform', None)
-        self.io_tdevice_details = kwargs.get('io_tdevice_details', None)
-        self.io_tedge_device_details = kwargs.get('io_tedge_device_details', None)
-        self.share_mappings = kwargs.get('share_mappings', None)
-        self.io_tedge_agent_info = kwargs.get('io_tedge_agent_info', None)
+    def __init__(self, *, host_platform, io_tdevice_details, io_tedge_device_details, role_status, system_data=None, share_mappings=None, io_tedge_agent_info=None, compute_resource=None, **kwargs) -> None:
+        super(IoTRole, self).__init__(system_data=system_data, **kwargs)
+        self.host_platform = host_platform
+        self.io_tdevice_details = io_tdevice_details
+        self.io_tedge_device_details = io_tedge_device_details
+        self.share_mappings = share_mappings
+        self.io_tedge_agent_info = io_tedge_agent_info
         self.host_platform_type = None
-        self.role_status = kwargs.get('role_status', None)
+        self.compute_resource = compute_resource
+        self.role_status = role_status
         self.kind = 'IOT'
 
 
@@ -1171,7 +1828,7 @@ class Ipv4Config(Model):
         'gateway': {'key': 'gateway', 'type': 'str'},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs) -> None:
         super(Ipv4Config, self).__init__(**kwargs)
         self.ip_address = None
         self.subnet = None
@@ -1204,7 +1861,7 @@ class Ipv6Config(Model):
         'gateway': {'key': 'gateway', 'type': 'str'},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs) -> None:
         super(Ipv6Config, self).__init__(**kwargs)
         self.ip_address = None
         self.prefix_length = None
@@ -1237,7 +1894,7 @@ class Job(Model):
     :vartype error: ~azure.mgmt.databoxedge.models.JobErrorDetails
     :ivar job_type: The type of the job. Possible values include: 'Invalid',
      'ScanForUpdates', 'DownloadUpdates', 'InstallUpdates', 'RefreshShare',
-     'RefreshContainer'
+     'RefreshContainer', 'Backup', 'Restore', 'TriggerSupportPackage'
     :vartype job_type: str or ~azure.mgmt.databoxedge.models.JobType
     :ivar current_stage: Current stage of the update operation. Possible
      values include: 'Unknown', 'Initial', 'ScanStarted', 'ScanComplete',
@@ -1303,7 +1960,7 @@ class Job(Model):
         'folder': {'key': 'properties.folder', 'type': 'str'},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, *, folder: str=None, **kwargs) -> None:
         super(Job, self).__init__(**kwargs)
         self.id = None
         self.name = None
@@ -1320,7 +1977,7 @@ class Job(Model):
         self.total_refresh_errors = None
         self.error_manifest_file = None
         self.refreshed_entity_id = None
-        self.folder = kwargs.get('folder', None)
+        self.folder = folder
 
 
 class JobErrorDetails(Model):
@@ -1349,7 +2006,7 @@ class JobErrorDetails(Model):
         'message': {'key': 'message', 'type': 'str'},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs) -> None:
         super(JobErrorDetails, self).__init__(**kwargs)
         self.error_details = None
         self.code = None
@@ -1382,11 +2039,518 @@ class JobErrorItem(Model):
         'message': {'key': 'message', 'type': 'str'},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs) -> None:
         super(JobErrorItem, self).__init__(**kwargs)
         self.recommendations = None
         self.code = None
         self.message = None
+
+
+class KubernetesClusterInfo(Model):
+    """Kubernetes cluster configuration.
+
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar etcd_info: Etcd configuration
+    :vartype etcd_info: ~azure.mgmt.databoxedge.models.EtcdInfo
+    :ivar nodes: Kubernetes cluster nodes
+    :vartype nodes: list[~azure.mgmt.databoxedge.models.NodeInfo]
+    :param version: Required. Kubernetes cluster version
+    :type version: str
+    """
+
+    _validation = {
+        'etcd_info': {'readonly': True},
+        'nodes': {'readonly': True},
+        'version': {'required': True},
+    }
+
+    _attribute_map = {
+        'etcd_info': {'key': 'etcdInfo', 'type': 'EtcdInfo'},
+        'nodes': {'key': 'nodes', 'type': '[NodeInfo]'},
+        'version': {'key': 'version', 'type': 'str'},
+    }
+
+    def __init__(self, *, version: str, **kwargs) -> None:
+        super(KubernetesClusterInfo, self).__init__(**kwargs)
+        self.etcd_info = None
+        self.nodes = None
+        self.version = version
+
+
+class KubernetesIPConfiguration(Model):
+    """Kubernetes node IP configuration.
+
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    :ivar port: Port of the Kubernetes node.
+    :vartype port: str
+    :param ip_address: IP address of the Kubernetes node.
+    :type ip_address: str
+    """
+
+    _validation = {
+        'port': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'port': {'key': 'port', 'type': 'str'},
+        'ip_address': {'key': 'ipAddress', 'type': 'str'},
+    }
+
+    def __init__(self, *, ip_address: str=None, **kwargs) -> None:
+        super(KubernetesIPConfiguration, self).__init__(**kwargs)
+        self.port = None
+        self.ip_address = ip_address
+
+
+class KubernetesRole(Role):
+    """Kubernetes role.
+
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar id: The path ID that uniquely identifies the object.
+    :vartype id: str
+    :ivar name: The object name.
+    :vartype name: str
+    :ivar type: The hierarchical type of the object.
+    :vartype type: str
+    :param system_data: Role configured on ASE resource
+    :type system_data: ~azure.mgmt.databoxedge.models.SystemData
+    :param kind: Required. Constant filled by server.
+    :type kind: str
+    :param host_platform: Required. Host OS supported by the Kubernetes role.
+     Possible values include: 'Windows', 'Linux'
+    :type host_platform: str or ~azure.mgmt.databoxedge.models.PlatformType
+    :ivar provisioning_state: State of Kubernetes deployment. Possible values
+     include: 'Invalid', 'Creating', 'Created', 'Updating', 'Reconfiguring',
+     'Failed', 'Deleting'
+    :vartype provisioning_state: str or
+     ~azure.mgmt.databoxedge.models.KubernetesState
+    :ivar host_platform_type: Platform where the runtime is hosted. Possible
+     values include: 'KubernetesCluster', 'LinuxVM'
+    :vartype host_platform_type: str or
+     ~azure.mgmt.databoxedge.models.HostPlatformType
+    :param kubernetes_cluster_info: Required. Kubernetes cluster configuration
+    :type kubernetes_cluster_info:
+     ~azure.mgmt.databoxedge.models.KubernetesClusterInfo
+    :param kubernetes_role_resources: Required. Kubernetes role resources
+    :type kubernetes_role_resources:
+     ~azure.mgmt.databoxedge.models.KubernetesRoleResources
+    :param role_status: Required. Role status. Possible values include:
+     'Enabled', 'Disabled'
+    :type role_status: str or ~azure.mgmt.databoxedge.models.RoleStatus
+    """
+
+    _validation = {
+        'id': {'readonly': True},
+        'name': {'readonly': True},
+        'type': {'readonly': True},
+        'kind': {'required': True},
+        'host_platform': {'required': True},
+        'provisioning_state': {'readonly': True},
+        'host_platform_type': {'readonly': True},
+        'kubernetes_cluster_info': {'required': True},
+        'kubernetes_role_resources': {'required': True},
+        'role_status': {'required': True},
+    }
+
+    _attribute_map = {
+        'id': {'key': 'id', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
+        'system_data': {'key': 'systemData', 'type': 'SystemData'},
+        'kind': {'key': 'kind', 'type': 'str'},
+        'host_platform': {'key': 'properties.hostPlatform', 'type': 'str'},
+        'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
+        'host_platform_type': {'key': 'properties.hostPlatformType', 'type': 'str'},
+        'kubernetes_cluster_info': {'key': 'properties.kubernetesClusterInfo', 'type': 'KubernetesClusterInfo'},
+        'kubernetes_role_resources': {'key': 'properties.kubernetesRoleResources', 'type': 'KubernetesRoleResources'},
+        'role_status': {'key': 'properties.roleStatus', 'type': 'str'},
+    }
+
+    def __init__(self, *, host_platform, kubernetes_cluster_info, kubernetes_role_resources, role_status, system_data=None, **kwargs) -> None:
+        super(KubernetesRole, self).__init__(system_data=system_data, **kwargs)
+        self.host_platform = host_platform
+        self.provisioning_state = None
+        self.host_platform_type = None
+        self.kubernetes_cluster_info = kubernetes_cluster_info
+        self.kubernetes_role_resources = kubernetes_role_resources
+        self.role_status = role_status
+        self.kind = 'Kubernetes'
+
+
+class KubernetesRoleCompute(Model):
+    """Kubernetes role compute resource.
+
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param vm_profile: Required. VM profile
+    :type vm_profile: str
+    :ivar memory_in_bytes: Memory in bytes
+    :vartype memory_in_bytes: long
+    :ivar processor_count: Processor count
+    :vartype processor_count: int
+    """
+
+    _validation = {
+        'vm_profile': {'required': True},
+        'memory_in_bytes': {'readonly': True},
+        'processor_count': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'vm_profile': {'key': 'vmProfile', 'type': 'str'},
+        'memory_in_bytes': {'key': 'memoryInBytes', 'type': 'long'},
+        'processor_count': {'key': 'processorCount', 'type': 'int'},
+    }
+
+    def __init__(self, *, vm_profile: str, **kwargs) -> None:
+        super(KubernetesRoleCompute, self).__init__(**kwargs)
+        self.vm_profile = vm_profile
+        self.memory_in_bytes = None
+        self.processor_count = None
+
+
+class KubernetesRoleNetwork(Model):
+    """Kubernetes role network resource.
+
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    :ivar cni_config: Cni configuration
+    :vartype cni_config: ~azure.mgmt.databoxedge.models.CniConfig
+    :ivar load_balancer_config: Load balancer configuration
+    :vartype load_balancer_config:
+     ~azure.mgmt.databoxedge.models.LoadBalancerConfig
+    """
+
+    _validation = {
+        'cni_config': {'readonly': True},
+        'load_balancer_config': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'cni_config': {'key': 'cniConfig', 'type': 'CniConfig'},
+        'load_balancer_config': {'key': 'loadBalancerConfig', 'type': 'LoadBalancerConfig'},
+    }
+
+    def __init__(self, **kwargs) -> None:
+        super(KubernetesRoleNetwork, self).__init__(**kwargs)
+        self.cni_config = None
+        self.load_balancer_config = None
+
+
+class KubernetesRoleResources(Model):
+    """Kubernetes role resources.
+
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param storage: Kubernetes role storage resource
+    :type storage: ~azure.mgmt.databoxedge.models.KubernetesRoleStorage
+    :param compute: Required. Kubernetes role compute resource
+    :type compute: ~azure.mgmt.databoxedge.models.KubernetesRoleCompute
+    :ivar network: Kubernetes role network resource
+    :vartype network: ~azure.mgmt.databoxedge.models.KubernetesRoleNetwork
+    """
+
+    _validation = {
+        'compute': {'required': True},
+        'network': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'storage': {'key': 'storage', 'type': 'KubernetesRoleStorage'},
+        'compute': {'key': 'compute', 'type': 'KubernetesRoleCompute'},
+        'network': {'key': 'network', 'type': 'KubernetesRoleNetwork'},
+    }
+
+    def __init__(self, *, compute, storage=None, **kwargs) -> None:
+        super(KubernetesRoleResources, self).__init__(**kwargs)
+        self.storage = storage
+        self.compute = compute
+        self.network = None
+
+
+class KubernetesRoleStorage(Model):
+    """Kubernetes role storage resource.
+
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    :ivar storage_classes: Kubernetes storage class info.
+    :vartype storage_classes:
+     list[~azure.mgmt.databoxedge.models.KubernetesRoleStorageClassInfo]
+    :param endpoints: Mount points of shares in role(s).
+    :type endpoints: list[~azure.mgmt.databoxedge.models.MountPointMap]
+    """
+
+    _validation = {
+        'storage_classes': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'storage_classes': {'key': 'storageClasses', 'type': '[KubernetesRoleStorageClassInfo]'},
+        'endpoints': {'key': 'endpoints', 'type': '[MountPointMap]'},
+    }
+
+    def __init__(self, *, endpoints=None, **kwargs) -> None:
+        super(KubernetesRoleStorage, self).__init__(**kwargs)
+        self.storage_classes = None
+        self.endpoints = endpoints
+
+
+class KubernetesRoleStorageClassInfo(Model):
+    """Kubernetes storage class info.
+
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    :ivar name: Storage class name.
+    :vartype name: str
+    :ivar type: Storage class type.
+    :vartype type: str
+    :ivar posix_compliant: If provisioned storage is posix compliant. Possible
+     values include: 'Invalid', 'Enabled', 'Disabled'
+    :vartype posix_compliant: str or
+     ~azure.mgmt.databoxedge.models.PosixComplianceStatus
+    """
+
+    _validation = {
+        'name': {'readonly': True},
+        'type': {'readonly': True},
+        'posix_compliant': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'name': {'key': 'name', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
+        'posix_compliant': {'key': 'posixCompliant', 'type': 'str'},
+    }
+
+    def __init__(self, **kwargs) -> None:
+        super(KubernetesRoleStorageClassInfo, self).__init__(**kwargs)
+        self.name = None
+        self.type = None
+        self.posix_compliant = None
+
+
+class LoadBalancerConfig(Model):
+    """Load balancer configuration.
+
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    :ivar type: Load balancer type
+    :vartype type: str
+    :ivar version: Load balancer version
+    :vartype version: str
+    """
+
+    _validation = {
+        'type': {'readonly': True},
+        'version': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'type': {'key': 'type', 'type': 'str'},
+        'version': {'key': 'version', 'type': 'str'},
+    }
+
+    def __init__(self, **kwargs) -> None:
+        super(LoadBalancerConfig, self).__init__(**kwargs)
+        self.type = None
+        self.version = None
+
+
+class MECRole(Role):
+    """MEC role.
+
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar id: The path ID that uniquely identifies the object.
+    :vartype id: str
+    :ivar name: The object name.
+    :vartype name: str
+    :ivar type: The hierarchical type of the object.
+    :vartype type: str
+    :param system_data: Role configured on ASE resource
+    :type system_data: ~azure.mgmt.databoxedge.models.SystemData
+    :param kind: Required. Constant filled by server.
+    :type kind: str
+    :param connection_string: Activation key of the MEC.
+    :type connection_string:
+     ~azure.mgmt.databoxedge.models.AsymmetricEncryptedSecret
+    :param role_status: Required. Role status. Possible values include:
+     'Enabled', 'Disabled'
+    :type role_status: str or ~azure.mgmt.databoxedge.models.RoleStatus
+    """
+
+    _validation = {
+        'id': {'readonly': True},
+        'name': {'readonly': True},
+        'type': {'readonly': True},
+        'kind': {'required': True},
+        'role_status': {'required': True},
+    }
+
+    _attribute_map = {
+        'id': {'key': 'id', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
+        'system_data': {'key': 'systemData', 'type': 'SystemData'},
+        'kind': {'key': 'kind', 'type': 'str'},
+        'connection_string': {'key': 'properties.connectionString', 'type': 'AsymmetricEncryptedSecret'},
+        'role_status': {'key': 'properties.roleStatus', 'type': 'str'},
+    }
+
+    def __init__(self, *, role_status, system_data=None, connection_string=None, **kwargs) -> None:
+        super(MECRole, self).__init__(system_data=system_data, **kwargs)
+        self.connection_string = connection_string
+        self.role_status = role_status
+        self.kind = 'MEC'
+
+
+class MetricConfiguration(Model):
+    """Metric configuration.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param resource_id: Required. The Resource ID on which the metrics should
+     be pushed.
+    :type resource_id: str
+    :param mdm_account: The MDM account to which the counters should be
+     pushed.
+    :type mdm_account: str
+    :param metric_name_space: The MDM namespace to which the counters should
+     be pushed. This is required if MDMAccount is specified
+    :type metric_name_space: str
+    :param counter_sets: Required. Host name for the IoT hub associated to the
+     device.
+    :type counter_sets: list[~azure.mgmt.databoxedge.models.MetricCounterSet]
+    """
+
+    _validation = {
+        'resource_id': {'required': True},
+        'counter_sets': {'required': True},
+    }
+
+    _attribute_map = {
+        'resource_id': {'key': 'resourceId', 'type': 'str'},
+        'mdm_account': {'key': 'mdmAccount', 'type': 'str'},
+        'metric_name_space': {'key': 'metricNameSpace', 'type': 'str'},
+        'counter_sets': {'key': 'counterSets', 'type': '[MetricCounterSet]'},
+    }
+
+    def __init__(self, *, resource_id: str, counter_sets, mdm_account: str=None, metric_name_space: str=None, **kwargs) -> None:
+        super(MetricConfiguration, self).__init__(**kwargs)
+        self.resource_id = resource_id
+        self.mdm_account = mdm_account
+        self.metric_name_space = metric_name_space
+        self.counter_sets = counter_sets
+
+
+class MetricCounter(Model):
+    """The metric counter.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param name: Required. The counter name.
+    :type name: str
+    :param instance: The instance from which counter should be collected.
+    :type instance: str
+    :param dimension_filter: The dimension filter.
+    :type dimension_filter:
+     list[~azure.mgmt.databoxedge.models.MetricDimension]
+    :param additional_dimensions: The additional dimensions to be added to
+     metric.
+    :type additional_dimensions:
+     list[~azure.mgmt.databoxedge.models.MetricDimension]
+    """
+
+    _validation = {
+        'name': {'required': True},
+    }
+
+    _attribute_map = {
+        'name': {'key': 'name', 'type': 'str'},
+        'instance': {'key': 'instance', 'type': 'str'},
+        'dimension_filter': {'key': 'dimensionFilter', 'type': '[MetricDimension]'},
+        'additional_dimensions': {'key': 'additionalDimensions', 'type': '[MetricDimension]'},
+    }
+
+    def __init__(self, *, name: str, instance: str=None, dimension_filter=None, additional_dimensions=None, **kwargs) -> None:
+        super(MetricCounter, self).__init__(**kwargs)
+        self.name = name
+        self.instance = instance
+        self.dimension_filter = dimension_filter
+        self.additional_dimensions = additional_dimensions
+
+
+class MetricCounterSet(Model):
+    """The metric counter set.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param counters: Required. The counters that should be collected in this
+     set.
+    :type counters: list[~azure.mgmt.databoxedge.models.MetricCounter]
+    """
+
+    _validation = {
+        'counters': {'required': True},
+    }
+
+    _attribute_map = {
+        'counters': {'key': 'counters', 'type': '[MetricCounter]'},
+    }
+
+    def __init__(self, *, counters, **kwargs) -> None:
+        super(MetricCounterSet, self).__init__(**kwargs)
+        self.counters = counters
+
+
+class MetricDimension(Model):
+    """The metric dimension.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param source_type: Required. The dimension type.
+    :type source_type: str
+    :param source_name: Required. The dimension value.
+    :type source_name: str
+    """
+
+    _validation = {
+        'source_type': {'required': True},
+        'source_name': {'required': True},
+    }
+
+    _attribute_map = {
+        'source_type': {'key': 'sourceType', 'type': 'str'},
+        'source_name': {'key': 'sourceName', 'type': 'str'},
+    }
+
+    def __init__(self, *, source_type: str, source_name: str, **kwargs) -> None:
+        super(MetricDimension, self).__init__(**kwargs)
+        self.source_type = source_type
+        self.source_name = source_name
 
 
 class MetricDimensionV1(Model):
@@ -1406,11 +2570,11 @@ class MetricDimensionV1(Model):
         'to_be_exported_for_shoebox': {'key': 'toBeExportedForShoebox', 'type': 'bool'},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, *, name: str=None, display_name: str=None, to_be_exported_for_shoebox: bool=None, **kwargs) -> None:
         super(MetricDimensionV1, self).__init__(**kwargs)
-        self.name = kwargs.get('name', None)
-        self.display_name = kwargs.get('display_name', None)
-        self.to_be_exported_for_shoebox = kwargs.get('to_be_exported_for_shoebox', None)
+        self.name = name
+        self.display_name = display_name
+        self.to_be_exported_for_shoebox = to_be_exported_for_shoebox
 
 
 class MetricSpecificationV1(Model):
@@ -1462,19 +2626,57 @@ class MetricSpecificationV1(Model):
         'supported_aggregation_types': {'key': 'supportedAggregationTypes', 'type': '[str]'},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, *, name: str=None, display_name: str=None, display_description: str=None, unit=None, aggregation_type=None, dimensions=None, fill_gap_with_zero: bool=None, category=None, resource_id_dimension_name_override: str=None, supported_time_grain_types=None, supported_aggregation_types=None, **kwargs) -> None:
         super(MetricSpecificationV1, self).__init__(**kwargs)
-        self.name = kwargs.get('name', None)
-        self.display_name = kwargs.get('display_name', None)
-        self.display_description = kwargs.get('display_description', None)
-        self.unit = kwargs.get('unit', None)
-        self.aggregation_type = kwargs.get('aggregation_type', None)
-        self.dimensions = kwargs.get('dimensions', None)
-        self.fill_gap_with_zero = kwargs.get('fill_gap_with_zero', None)
-        self.category = kwargs.get('category', None)
-        self.resource_id_dimension_name_override = kwargs.get('resource_id_dimension_name_override', None)
-        self.supported_time_grain_types = kwargs.get('supported_time_grain_types', None)
-        self.supported_aggregation_types = kwargs.get('supported_aggregation_types', None)
+        self.name = name
+        self.display_name = display_name
+        self.display_description = display_description
+        self.unit = unit
+        self.aggregation_type = aggregation_type
+        self.dimensions = dimensions
+        self.fill_gap_with_zero = fill_gap_with_zero
+        self.category = category
+        self.resource_id_dimension_name_override = resource_id_dimension_name_override
+        self.supported_time_grain_types = supported_time_grain_types
+        self.supported_aggregation_types = supported_aggregation_types
+
+
+class MonitoringMetricConfiguration(ARMBaseModel):
+    """The metric setting details for the role.
+
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar id: The path ID that uniquely identifies the object.
+    :vartype id: str
+    :ivar name: The object name.
+    :vartype name: str
+    :ivar type: The hierarchical type of the object.
+    :vartype type: str
+    :param metric_configurations: Required. The metrics configuration details
+    :type metric_configurations:
+     list[~azure.mgmt.databoxedge.models.MetricConfiguration]
+    """
+
+    _validation = {
+        'id': {'readonly': True},
+        'name': {'readonly': True},
+        'type': {'readonly': True},
+        'metric_configurations': {'required': True},
+    }
+
+    _attribute_map = {
+        'id': {'key': 'id', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
+        'metric_configurations': {'key': 'properties.metricConfigurations', 'type': '[MetricConfiguration]'},
+    }
+
+    def __init__(self, *, metric_configurations, **kwargs) -> None:
+        super(MonitoringMetricConfiguration, self).__init__(**kwargs)
+        self.metric_configurations = metric_configurations
 
 
 class MountPointMap(Model):
@@ -1495,7 +2697,7 @@ class MountPointMap(Model):
      'HostPath'
     :vartype mount_type: str or ~azure.mgmt.databoxedge.models.MountType
     :ivar role_type: Role type. Possible values include: 'IOT', 'ASA',
-     'Functions', 'Cognitive'
+     'Functions', 'Cognitive', 'MEC', 'CloudEdgeManagement', 'Kubernetes'
     :vartype role_type: str or ~azure.mgmt.databoxedge.models.RoleTypes
     """
 
@@ -1515,9 +2717,9 @@ class MountPointMap(Model):
         'role_type': {'key': 'roleType', 'type': 'str'},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, *, share_id: str, **kwargs) -> None:
         super(MountPointMap, self).__init__(**kwargs)
-        self.share_id = kwargs.get('share_id', None)
+        self.share_id = share_id
         self.role_id = None
         self.mount_point = None
         self.mount_type = None
@@ -1603,7 +2805,7 @@ class NetworkAdapter(Model):
         'dns_servers': {'key': 'dnsServers', 'type': '[str]'},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, *, rdma_status=None, dhcp_status=None, **kwargs) -> None:
         super(NetworkAdapter, self).__init__(**kwargs)
         self.adapter_id = None
         self.adapter_position = None
@@ -1614,8 +2816,8 @@ class NetworkAdapter(Model):
         self.mac_address = None
         self.link_speed = None
         self.status = None
-        self.rdma_status = kwargs.get('rdma_status', None)
-        self.dhcp_status = kwargs.get('dhcp_status', None)
+        self.rdma_status = rdma_status
+        self.dhcp_status = dhcp_status
         self.ipv4_configuration = None
         self.ipv6_configuration = None
         self.ipv6_link_local_address = None
@@ -1645,7 +2847,7 @@ class NetworkAdapterPosition(Model):
         'port': {'key': 'port', 'type': 'int'},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs) -> None:
         super(NetworkAdapterPosition, self).__init__(**kwargs)
         self.network_group = None
         self.port = None
@@ -1682,7 +2884,7 @@ class NetworkSettings(ARMBaseModel):
         'network_adapters': {'key': 'properties.networkAdapters', 'type': '[NetworkAdapter]'},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs) -> None:
         super(NetworkSettings, self).__init__(**kwargs)
         self.network_adapters = None
 
@@ -1747,7 +2949,7 @@ class Node(ARMBaseModel):
         'node_instance_id': {'key': 'properties.nodeInstanceId', 'type': 'str'},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs) -> None:
         super(Node, self).__init__(**kwargs)
         self.node_status = None
         self.node_chassis_serial_number = None
@@ -1756,6 +2958,40 @@ class Node(ARMBaseModel):
         self.node_friendly_software_version = None
         self.node_hcs_version = None
         self.node_instance_id = None
+
+
+class NodeInfo(Model):
+    """Kubernetes node info.
+
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    :ivar name: Node name.
+    :vartype name: str
+    :ivar type: Node type - Master/Worker. Possible values include: 'Invalid',
+     'Master', 'Worker'
+    :vartype type: str or ~azure.mgmt.databoxedge.models.KubernetesNodeType
+    :param ip_configuration: IP Configuration of the Kubernetes node.
+    :type ip_configuration:
+     list[~azure.mgmt.databoxedge.models.KubernetesIPConfiguration]
+    """
+
+    _validation = {
+        'name': {'readonly': True},
+        'type': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'name': {'key': 'name', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
+        'ip_configuration': {'key': 'ipConfiguration', 'type': '[KubernetesIPConfiguration]'},
+    }
+
+    def __init__(self, *, ip_configuration=None, **kwargs) -> None:
+        super(NodeInfo, self).__init__(**kwargs)
+        self.name = None
+        self.type = None
+        self.ip_configuration = ip_configuration
 
 
 class Operation(Model):
@@ -1767,6 +3003,8 @@ class Operation(Model):
     :type display: ~azure.mgmt.databoxedge.models.OperationDisplay
     :param origin: Origin of the operation.
     :type origin: str
+    :param is_data_action: Indicates whether the operation is a data action
+    :type is_data_action: bool
     :param service_specification: Service specification.
     :type service_specification:
      ~azure.mgmt.databoxedge.models.ServiceSpecification
@@ -1776,15 +3014,17 @@ class Operation(Model):
         'name': {'key': 'name', 'type': 'str'},
         'display': {'key': 'display', 'type': 'OperationDisplay'},
         'origin': {'key': 'origin', 'type': 'str'},
+        'is_data_action': {'key': 'isDataAction', 'type': 'bool'},
         'service_specification': {'key': 'properties.serviceSpecification', 'type': 'ServiceSpecification'},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, *, name: str=None, display=None, origin: str=None, is_data_action: bool=None, service_specification=None, **kwargs) -> None:
         super(Operation, self).__init__(**kwargs)
-        self.name = kwargs.get('name', None)
-        self.display = kwargs.get('display', None)
-        self.origin = kwargs.get('origin', None)
-        self.service_specification = kwargs.get('service_specification', None)
+        self.name = name
+        self.display = display
+        self.origin = origin
+        self.is_data_action = is_data_action
+        self.service_specification = service_specification
 
 
 class OperationDisplay(Model):
@@ -1807,12 +3047,12 @@ class OperationDisplay(Model):
         'description': {'key': 'description', 'type': 'str'},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, *, provider: str=None, resource: str=None, operation: str=None, description: str=None, **kwargs) -> None:
         super(OperationDisplay, self).__init__(**kwargs)
-        self.provider = kwargs.get('provider', None)
-        self.resource = kwargs.get('resource', None)
-        self.operation = kwargs.get('operation', None)
-        self.description = kwargs.get('description', None)
+        self.provider = provider
+        self.resource = resource
+        self.operation = operation
+        self.description = description
 
 
 class Order(ARMBaseModel):
@@ -1831,10 +3071,10 @@ class Order(ARMBaseModel):
     :vartype type: str
     :param contact_information: Required. The contact details.
     :type contact_information: ~azure.mgmt.databoxedge.models.ContactDetails
-    :param shipping_address: Required. The shipping address.
+    :param shipping_address: The shipping address.
     :type shipping_address: ~azure.mgmt.databoxedge.models.Address
-    :param current_status: Current status of the order.
-    :type current_status: ~azure.mgmt.databoxedge.models.OrderStatus
+    :ivar current_status: Current status of the order.
+    :vartype current_status: ~azure.mgmt.databoxedge.models.OrderStatus
     :ivar order_history: List of status changes in the order.
     :vartype order_history: list[~azure.mgmt.databoxedge.models.OrderStatus]
     :ivar serial_number: Serial number of the device.
@@ -1848,6 +3088,9 @@ class Order(ARMBaseModel):
      from the customer whether it has an original or a replacement device.
     :vartype return_tracking_info:
      list[~azure.mgmt.databoxedge.models.TrackingInfo]
+    :param shipment_type: ShipmentType of the order. Possible values include:
+     'NotApplicable', 'ShippedToCustomer', 'SelfPickup'
+    :type shipment_type: str or ~azure.mgmt.databoxedge.models.ShipmentType
     """
 
     _validation = {
@@ -1855,7 +3098,7 @@ class Order(ARMBaseModel):
         'name': {'readonly': True},
         'type': {'readonly': True},
         'contact_information': {'required': True},
-        'shipping_address': {'required': True},
+        'current_status': {'readonly': True},
         'order_history': {'readonly': True},
         'serial_number': {'readonly': True},
         'delivery_tracking_info': {'readonly': True},
@@ -1873,17 +3116,19 @@ class Order(ARMBaseModel):
         'serial_number': {'key': 'properties.serialNumber', 'type': 'str'},
         'delivery_tracking_info': {'key': 'properties.deliveryTrackingInfo', 'type': '[TrackingInfo]'},
         'return_tracking_info': {'key': 'properties.returnTrackingInfo', 'type': '[TrackingInfo]'},
+        'shipment_type': {'key': 'properties.shipmentType', 'type': 'str'},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, *, contact_information, shipping_address=None, shipment_type=None, **kwargs) -> None:
         super(Order, self).__init__(**kwargs)
-        self.contact_information = kwargs.get('contact_information', None)
-        self.shipping_address = kwargs.get('shipping_address', None)
-        self.current_status = kwargs.get('current_status', None)
+        self.contact_information = contact_information
+        self.shipping_address = shipping_address
+        self.current_status = None
         self.order_history = None
         self.serial_number = None
         self.delivery_tracking_info = None
         self.return_tracking_info = None
+        self.shipment_type = shipment_type
 
 
 class OrderStatus(Model):
@@ -1899,12 +3144,16 @@ class OrderStatus(Model):
      'AwaitingPreparation', 'AwaitingShipment', 'Shipped', 'Arriving',
      'Delivered', 'ReplacementRequested', 'LostDevice', 'Declined',
      'ReturnInitiated', 'AwaitingReturnShipment', 'ShippedBack',
-     'CollectedAtMicrosoft'
+     'CollectedAtMicrosoft', 'AwaitingPickup', 'PickupCompleted',
+     'AwaitingDrop'
     :type status: str or ~azure.mgmt.databoxedge.models.OrderState
     :ivar update_date_time: Time of status update.
     :vartype update_date_time: datetime
     :param comments: Comments related to this status change.
     :type comments: str
+    :ivar tracking_information: Tracking information related to the state in
+     the ordering flow
+    :vartype tracking_information: ~azure.mgmt.databoxedge.models.TrackingInfo
     :ivar additional_order_details: Dictionary to hold generic information
      which is not stored
      by the already existing properties
@@ -1914,6 +3163,7 @@ class OrderStatus(Model):
     _validation = {
         'status': {'required': True},
         'update_date_time': {'readonly': True},
+        'tracking_information': {'readonly': True},
         'additional_order_details': {'readonly': True},
     }
 
@@ -1921,14 +3171,16 @@ class OrderStatus(Model):
         'status': {'key': 'status', 'type': 'str'},
         'update_date_time': {'key': 'updateDateTime', 'type': 'iso-8601'},
         'comments': {'key': 'comments', 'type': 'str'},
+        'tracking_information': {'key': 'trackingInformation', 'type': 'TrackingInfo'},
         'additional_order_details': {'key': 'additionalOrderDetails', 'type': '{str}'},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, *, status, comments: str=None, **kwargs) -> None:
         super(OrderStatus, self).__init__(**kwargs)
-        self.status = kwargs.get('status', None)
+        self.status = status
         self.update_date_time = None
-        self.comments = kwargs.get('comments', None)
+        self.comments = comments
+        self.tracking_information = None
         self.additional_order_details = None
 
 
@@ -1946,6 +3198,8 @@ class PeriodicTimerEventTrigger(Trigger):
     :vartype name: str
     :ivar type: The hierarchical type of the object.
     :vartype type: str
+    :param system_data: Trigger in DataBoxEdge Resource
+    :type system_data: ~azure.mgmt.databoxedge.models.SystemData
     :param kind: Required. Constant filled by server.
     :type kind: str
     :param source_info: Required. Periodic timer details.
@@ -1966,23 +3220,25 @@ class PeriodicTimerEventTrigger(Trigger):
         'kind': {'required': True},
         'source_info': {'required': True},
         'sink_info': {'required': True},
+        'custom_context_tag': {'max_length': 192},
     }
 
     _attribute_map = {
         'id': {'key': 'id', 'type': 'str'},
         'name': {'key': 'name', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
+        'system_data': {'key': 'systemData', 'type': 'SystemData'},
         'kind': {'key': 'kind', 'type': 'str'},
         'source_info': {'key': 'properties.sourceInfo', 'type': 'PeriodicTimerSourceInfo'},
         'sink_info': {'key': 'properties.sinkInfo', 'type': 'RoleSinkInfo'},
         'custom_context_tag': {'key': 'properties.customContextTag', 'type': 'str'},
     }
 
-    def __init__(self, **kwargs):
-        super(PeriodicTimerEventTrigger, self).__init__(**kwargs)
-        self.source_info = kwargs.get('source_info', None)
-        self.sink_info = kwargs.get('sink_info', None)
-        self.custom_context_tag = kwargs.get('custom_context_tag', None)
+    def __init__(self, *, source_info, sink_info, system_data=None, custom_context_tag: str=None, **kwargs) -> None:
+        super(PeriodicTimerEventTrigger, self).__init__(system_data=system_data, **kwargs)
+        self.source_info = source_info
+        self.sink_info = sink_info
+        self.custom_context_tag = custom_context_tag
         self.kind = 'PeriodicTimerEvent'
 
 
@@ -2014,11 +3270,11 @@ class PeriodicTimerSourceInfo(Model):
         'topic': {'key': 'topic', 'type': 'str'},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, *, start_time, schedule: str, topic: str=None, **kwargs) -> None:
         super(PeriodicTimerSourceInfo, self).__init__(**kwargs)
-        self.start_time = kwargs.get('start_time', None)
-        self.schedule = kwargs.get('schedule', None)
-        self.topic = kwargs.get('topic', None)
+        self.start_time = start_time
+        self.schedule = schedule
+        self.topic = topic
 
 
 class RefreshDetails(Model):
@@ -2049,84 +3305,97 @@ class RefreshDetails(Model):
         'last_job': {'key': 'lastJob', 'type': 'str'},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, *, in_progress_refresh_job_id: str=None, last_completed_refresh_job_time_in_utc=None, error_manifest_file: str=None, last_job: str=None, **kwargs) -> None:
         super(RefreshDetails, self).__init__(**kwargs)
-        self.in_progress_refresh_job_id = kwargs.get('in_progress_refresh_job_id', None)
-        self.last_completed_refresh_job_time_in_utc = kwargs.get('last_completed_refresh_job_time_in_utc', None)
-        self.error_manifest_file = kwargs.get('error_manifest_file', None)
-        self.last_job = kwargs.get('last_job', None)
+        self.in_progress_refresh_job_id = in_progress_refresh_job_id
+        self.last_completed_refresh_job_time_in_utc = last_completed_refresh_job_time_in_utc
+        self.error_manifest_file = error_manifest_file
+        self.last_job = last_job
 
 
-class ResourceTypeSku(Model):
-    """SkuInformation object.
+class ResourceIdentity(Model):
+    """Msi identity details of the resource.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
-    :ivar resource_type: The type of the resource
+    :param type: Identity type. Possible values include: 'None',
+     'SystemAssigned', 'UserAssigned'
+    :type type: str or ~azure.mgmt.databoxedge.models.MsiIdentityType
+    :ivar principal_id: Service Principal Id backing the Msi
+    :vartype principal_id: str
+    :ivar tenant_id: Home Tenant Id
+    :vartype tenant_id: str
+    """
+
+    _validation = {
+        'principal_id': {'readonly': True},
+        'tenant_id': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'type': {'key': 'type', 'type': 'str'},
+        'principal_id': {'key': 'principalId', 'type': 'str'},
+        'tenant_id': {'key': 'tenantId', 'type': 'str'},
+    }
+
+    def __init__(self, *, type=None, **kwargs) -> None:
+        super(ResourceIdentity, self).__init__(**kwargs)
+        self.type = type
+        self.principal_id = None
+        self.tenant_id = None
+
+
+class ResourceMoveDetails(Model):
+    """Fields for tracking resource move.
+
+    :param operation_in_progress: Denotes whether move operation is in
+     progress. Possible values include: 'None', 'ResourceMoveInProgress',
+     'ResourceMoveFailed'
+    :type operation_in_progress: str or
+     ~azure.mgmt.databoxedge.models.ResourceMoveStatus
+    :param operation_in_progress_lock_timeout_in_utc: Denotes the timeout of
+     the operation to finish
+    :type operation_in_progress_lock_timeout_in_utc: datetime
+    """
+
+    _attribute_map = {
+        'operation_in_progress': {'key': 'operationInProgress', 'type': 'str'},
+        'operation_in_progress_lock_timeout_in_utc': {'key': 'operationInProgressLockTimeoutInUTC', 'type': 'iso-8601'},
+    }
+
+    def __init__(self, *, operation_in_progress=None, operation_in_progress_lock_timeout_in_utc=None, **kwargs) -> None:
+        super(ResourceMoveDetails, self).__init__(**kwargs)
+        self.operation_in_progress = operation_in_progress
+        self.operation_in_progress_lock_timeout_in_utc = operation_in_progress_lock_timeout_in_utc
+
+
+class ResourceTypeSku(Model):
+    """Resource type Sku object.
+
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    :ivar resource_type: The resource type.
     :vartype resource_type: str
-    :ivar name: The Sku name. Possible values include: 'Gateway', 'Edge',
-     'TEA_1Node', 'TEA_1Node_UPS', 'TEA_1Node_Heater', 'TEA_1Node_UPS_Heater',
-     'TEA_4Node_Heater', 'TEA_4Node_UPS_Heater', 'TMA', 'TDC', 'TCA_Large',
-     'TCA_Small', 'GPU'
-    :vartype name: str or ~azure.mgmt.databoxedge.models.SkuName
-    :ivar kind: The Sku kind
-    :vartype kind: str
-    :ivar tier: The Sku tier. Possible values include: 'Standard'
-    :vartype tier: str or ~azure.mgmt.databoxedge.models.SkuTier
-    :ivar family: The Sku family
-    :vartype family: str
-    :ivar locations: Availability of the SKU for the region
-    :vartype locations: list[str]
-    :ivar api_versions: The API versions in which SKU is available
-    :vartype api_versions: list[str]
-    :ivar location_info: Availability of the SKU for the location/zone
-    :vartype location_info:
-     list[~azure.mgmt.databoxedge.models.SkuLocationInfo]
-    :ivar costs: The pricing info of the Sku.
-    :vartype costs: list[~azure.mgmt.databoxedge.models.SkuCost]
-    :ivar restrictions: Restrictions of the SKU availability.
-    :vartype restrictions: list[~azure.mgmt.databoxedge.models.SkuRestriction]
+    :ivar skus: The skus.
+    :vartype skus: list[~azure.mgmt.databoxedge.models.SkuInformation]
     """
 
     _validation = {
         'resource_type': {'readonly': True},
-        'name': {'readonly': True},
-        'kind': {'readonly': True},
-        'tier': {'readonly': True},
-        'family': {'readonly': True},
-        'locations': {'readonly': True},
-        'api_versions': {'readonly': True},
-        'location_info': {'readonly': True},
-        'costs': {'readonly': True},
-        'restrictions': {'readonly': True},
+        'skus': {'readonly': True},
     }
 
     _attribute_map = {
         'resource_type': {'key': 'resourceType', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'kind': {'key': 'kind', 'type': 'str'},
-        'tier': {'key': 'tier', 'type': 'str'},
-        'family': {'key': 'family', 'type': 'str'},
-        'locations': {'key': 'locations', 'type': '[str]'},
-        'api_versions': {'key': 'apiVersions', 'type': '[str]'},
-        'location_info': {'key': 'locationInfo', 'type': '[SkuLocationInfo]'},
-        'costs': {'key': 'costs', 'type': '[SkuCost]'},
-        'restrictions': {'key': 'restrictions', 'type': '[SkuRestriction]'},
+        'skus': {'key': 'skus', 'type': '[SkuInformation]'},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs) -> None:
         super(ResourceTypeSku, self).__init__(**kwargs)
         self.resource_type = None
-        self.name = None
-        self.kind = None
-        self.tier = None
-        self.family = None
-        self.locations = None
-        self.api_versions = None
-        self.location_info = None
-        self.costs = None
-        self.restrictions = None
+        self.skus = None
 
 
 class RoleSinkInfo(Model):
@@ -2146,9 +3415,9 @@ class RoleSinkInfo(Model):
         'role_id': {'key': 'roleId', 'type': 'str'},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, *, role_id: str, **kwargs) -> None:
         super(RoleSinkInfo, self).__init__(**kwargs)
-        self.role_id = kwargs.get('role_id', None)
+        self.role_id = role_id
 
 
 class SecuritySettings(ARMBaseModel):
@@ -2188,9 +3457,9 @@ class SecuritySettings(ARMBaseModel):
         'device_admin_password': {'key': 'properties.deviceAdminPassword', 'type': 'AsymmetricEncryptedSecret'},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, *, device_admin_password, **kwargs) -> None:
         super(SecuritySettings, self).__init__(**kwargs)
-        self.device_admin_password = kwargs.get('device_admin_password', None)
+        self.device_admin_password = device_admin_password
 
 
 class ServiceSpecification(Model):
@@ -2205,9 +3474,9 @@ class ServiceSpecification(Model):
         'metric_specifications': {'key': 'metricSpecifications', 'type': '[MetricSpecificationV1]'},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, *, metric_specifications=None, **kwargs) -> None:
         super(ServiceSpecification, self).__init__(**kwargs)
-        self.metric_specifications = kwargs.get('metric_specifications', None)
+        self.metric_specifications = metric_specifications
 
 
 class Share(ARMBaseModel):
@@ -2224,6 +3493,8 @@ class Share(ARMBaseModel):
     :vartype name: str
     :ivar type: The hierarchical type of the object.
     :vartype type: str
+    :param system_data: Share on ASE device
+    :type system_data: ~azure.mgmt.databoxedge.models.SystemData
     :param description: Description for the share.
     :type description: str
     :param share_status: Required. Current status of the share. Possible
@@ -2272,6 +3543,7 @@ class Share(ARMBaseModel):
         'id': {'key': 'id', 'type': 'str'},
         'name': {'key': 'name', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
+        'system_data': {'key': 'systemData', 'type': 'SystemData'},
         'description': {'key': 'properties.description', 'type': 'str'},
         'share_status': {'key': 'properties.shareStatus', 'type': 'str'},
         'monitoring_status': {'key': 'properties.monitoringStatus', 'type': 'str'},
@@ -2284,18 +3556,19 @@ class Share(ARMBaseModel):
         'data_policy': {'key': 'properties.dataPolicy', 'type': 'str'},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, *, share_status, monitoring_status, access_protocol, system_data=None, description: str=None, azure_container_info=None, user_access_rights=None, client_access_rights=None, refresh_details=None, data_policy=None, **kwargs) -> None:
         super(Share, self).__init__(**kwargs)
-        self.description = kwargs.get('description', None)
-        self.share_status = kwargs.get('share_status', None)
-        self.monitoring_status = kwargs.get('monitoring_status', None)
-        self.azure_container_info = kwargs.get('azure_container_info', None)
-        self.access_protocol = kwargs.get('access_protocol', None)
-        self.user_access_rights = kwargs.get('user_access_rights', None)
-        self.client_access_rights = kwargs.get('client_access_rights', None)
-        self.refresh_details = kwargs.get('refresh_details', None)
+        self.system_data = system_data
+        self.description = description
+        self.share_status = share_status
+        self.monitoring_status = monitoring_status
+        self.azure_container_info = azure_container_info
+        self.access_protocol = access_protocol
+        self.user_access_rights = user_access_rights
+        self.client_access_rights = client_access_rights
+        self.refresh_details = refresh_details
         self.share_mappings = None
-        self.data_policy = kwargs.get('data_policy', None)
+        self.data_policy = data_policy
 
 
 class ShareAccessRight(Model):
@@ -2321,10 +3594,10 @@ class ShareAccessRight(Model):
         'access_type': {'key': 'accessType', 'type': 'str'},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, *, share_id: str, access_type, **kwargs) -> None:
         super(ShareAccessRight, self).__init__(**kwargs)
-        self.share_id = kwargs.get('share_id', None)
-        self.access_type = kwargs.get('access_type', None)
+        self.share_id = share_id
+        self.access_type = access_type
 
 
 class Sku(Model):
@@ -2332,8 +3605,9 @@ class Sku(Model):
 
     :param name: SKU name. Possible values include: 'Gateway', 'Edge',
      'TEA_1Node', 'TEA_1Node_UPS', 'TEA_1Node_Heater', 'TEA_1Node_UPS_Heater',
-     'TEA_4Node_Heater', 'TEA_4Node_UPS_Heater', 'TMA', 'TDC', 'TCA_Large',
-     'TCA_Small', 'GPU'
+     'TEA_4Node_Heater', 'TEA_4Node_UPS_Heater', 'TMA', 'TDC', 'TCA_Small',
+     'GPU', 'TCA_Large', 'EdgeP_Base', 'EdgeP_High', 'EdgePR_Base',
+     'EdgePR_Base_UPS', 'EdgeMR_Mini', 'RCA_Small', 'RCA_Large', 'RDC'
     :type name: str or ~azure.mgmt.databoxedge.models.SkuName
     :param tier: The SKU tier. This is based on the SKU name. Possible values
      include: 'Standard'
@@ -2345,38 +3619,10 @@ class Sku(Model):
         'tier': {'key': 'tier', 'type': 'str'},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, *, name=None, tier=None, **kwargs) -> None:
         super(Sku, self).__init__(**kwargs)
-        self.name = kwargs.get('name', None)
-        self.tier = kwargs.get('tier', None)
-
-
-class SKUCapability(Model):
-    """The capabilities of the SKU.
-
-    Variables are only populated by the server, and will be ignored when
-    sending a request.
-
-    :ivar name: The capability name
-    :vartype name: str
-    :ivar value: The capability value
-    :vartype value: str
-    """
-
-    _validation = {
-        'name': {'readonly': True},
-        'value': {'readonly': True},
-    }
-
-    _attribute_map = {
-        'name': {'key': 'name', 'type': 'str'},
-        'value': {'key': 'value', 'type': 'str'},
-    }
-
-    def __init__(self, **kwargs):
-        super(SKUCapability, self).__init__(**kwargs)
-        self.name = None
-        self.value = None
+        self.name = name
+        self.tier = tier
 
 
 class SkuCost(Model):
@@ -2405,7 +3651,7 @@ class SkuCost(Model):
         'extended_unit': {'key': 'extendedUnit', 'type': 'str'},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs) -> None:
         super(SkuCost, self).__init__(**kwargs)
         self.meter_id = None
         self.quantity = None
@@ -2418,18 +3664,16 @@ class SkuInformation(Model):
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
-    :ivar resource_type: The resource type.
-    :vartype resource_type: str
     :ivar name: The sku name.
     :vartype name: str
     :ivar tier: The sku tier.
     :vartype tier: str
     :ivar kind: The sku kind.
     :vartype kind: str
-    :ivar size: The sku size.
-    :vartype size: str
-    :ivar family: The sku family.
+    :ivar family: The Sku family.
     :vartype family: str
+    :ivar costs: The pricing info of the Sku.
+    :vartype costs: list[~azure.mgmt.databoxedge.models.SkuCost]
     :ivar locations: The locations where Sku is available.
     :vartype locations: list[str]
     :ivar location_info: The locations where Sku is available with zones and
@@ -2442,56 +3686,71 @@ class SkuInformation(Model):
     :ivar required_features: The required features for the sku to be
      available.
     :vartype required_features: list[str]
-    :ivar costs: The cost of the SKU
-    :vartype costs: list[~azure.mgmt.databoxedge.models.SkuCost]
-    :ivar capabilities: The capabilities of the SKU
-    :vartype capabilities: list[~azure.mgmt.databoxedge.models.SKUCapability]
     """
 
     _validation = {
-        'resource_type': {'readonly': True},
         'name': {'readonly': True},
         'tier': {'readonly': True},
         'kind': {'readonly': True},
-        'size': {'readonly': True},
         'family': {'readonly': True},
+        'costs': {'readonly': True},
         'locations': {'readonly': True},
         'location_info': {'readonly': True},
         'required_quota_ids': {'readonly': True},
         'required_features': {'readonly': True},
-        'costs': {'readonly': True},
-        'capabilities': {'readonly': True},
     }
 
     _attribute_map = {
-        'resource_type': {'key': 'resourceType', 'type': 'str'},
         'name': {'key': 'name', 'type': 'str'},
         'tier': {'key': 'tier', 'type': 'str'},
         'kind': {'key': 'kind', 'type': 'str'},
-        'size': {'key': 'size', 'type': 'str'},
         'family': {'key': 'family', 'type': 'str'},
+        'costs': {'key': 'costs', 'type': '[SkuCost]'},
         'locations': {'key': 'locations', 'type': '[str]'},
         'location_info': {'key': 'locationInfo', 'type': '[SkuLocationInfo]'},
         'required_quota_ids': {'key': 'requiredQuotaIds', 'type': '[str]'},
         'required_features': {'key': 'requiredFeatures', 'type': '[str]'},
-        'costs': {'key': 'costs', 'type': '[SkuCost]'},
-        'capabilities': {'key': 'capabilities', 'type': '[SKUCapability]'},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs) -> None:
         super(SkuInformation, self).__init__(**kwargs)
-        self.resource_type = None
         self.name = None
         self.tier = None
         self.kind = None
-        self.size = None
         self.family = None
+        self.costs = None
         self.locations = None
         self.location_info = None
         self.required_quota_ids = None
         self.required_features = None
-        self.costs = None
-        self.capabilities = None
+
+
+class SkuInformationList(Model):
+    """List of SKU Information objects.
+
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    :ivar value: List of ResourceTypeSku objects
+    :vartype value: list[~azure.mgmt.databoxedge.models.ResourceTypeSku]
+    :ivar next_link: Links to the next set of results
+    :vartype next_link: str
+    """
+
+    _validation = {
+        'value': {'readonly': True},
+        'next_link': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'value': {'key': 'value', 'type': '[ResourceTypeSku]'},
+        'next_link': {'key': 'nextLink', 'type': 'str'},
+    }
+
+    def __init__(self, **kwargs) -> None:
+        super(SkuInformationList, self).__init__(**kwargs)
+        self.value = None
+        self.next_link = None
 
 
 class SkuLocationInfo(Model):
@@ -2520,80 +3779,11 @@ class SkuLocationInfo(Model):
         'sites': {'key': 'sites', 'type': '[str]'},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs) -> None:
         super(SkuLocationInfo, self).__init__(**kwargs)
         self.location = None
         self.zones = None
         self.sites = None
-
-
-class SkuRestriction(Model):
-    """The restrictions because of which SKU cannot be used.
-
-    Variables are only populated by the server, and will be ignored when
-    sending a request.
-
-    :ivar type: The type of the restriction.
-    :vartype type: str
-    :ivar values: The locations where sku is restricted.
-    :vartype values: list[str]
-    :ivar reason_code: The SKU restriction reason. Possible values include:
-     'NotAvailableForSubscription', 'QuotaId'
-    :vartype reason_code: str or
-     ~azure.mgmt.databoxedge.models.SkuRestrictionReasonCode
-    :ivar restriction_info: Restriction of the SKU for the location/zone
-    :vartype restriction_info:
-     ~azure.mgmt.databoxedge.models.SkuRestrictionInfo
-    """
-
-    _validation = {
-        'type': {'readonly': True},
-        'values': {'readonly': True},
-        'reason_code': {'readonly': True},
-        'restriction_info': {'readonly': True},
-    }
-
-    _attribute_map = {
-        'type': {'key': 'type', 'type': 'str'},
-        'values': {'key': 'values', 'type': '[str]'},
-        'reason_code': {'key': 'reasonCode', 'type': 'str'},
-        'restriction_info': {'key': 'restrictionInfo', 'type': 'SkuRestrictionInfo'},
-    }
-
-    def __init__(self, **kwargs):
-        super(SkuRestriction, self).__init__(**kwargs)
-        self.type = None
-        self.values = None
-        self.reason_code = None
-        self.restriction_info = None
-
-
-class SkuRestrictionInfo(Model):
-    """The restriction info with locations and zones.
-
-    Variables are only populated by the server, and will be ignored when
-    sending a request.
-
-    :ivar locations: The locations.
-    :vartype locations: list[str]
-    :ivar zones: The zones.
-    :vartype zones: list[str]
-    """
-
-    _validation = {
-        'locations': {'readonly': True},
-        'zones': {'readonly': True},
-    }
-
-    _attribute_map = {
-        'locations': {'key': 'locations', 'type': '[str]'},
-        'zones': {'key': 'zones', 'type': '[str]'},
-    }
-
-    def __init__(self, **kwargs):
-        super(SkuRestrictionInfo, self).__init__(**kwargs)
-        self.locations = None
-        self.zones = None
 
 
 class StorageAccount(ARMBaseModel):
@@ -2602,12 +3792,16 @@ class StorageAccount(ARMBaseModel):
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
+    All required parameters must be populated in order to send to Azure.
+
     :ivar id: The path ID that uniquely identifies the object.
     :vartype id: str
     :ivar name: The object name.
     :vartype name: str
     :ivar type: The hierarchical type of the object.
     :vartype type: str
+    :param system_data: StorageAccount object on ASE device
+    :type system_data: ~azure.mgmt.databoxedge.models.SystemData
     :param description: Description for the storage Account.
     :type description: str
     :param storage_account_status: Current status of the storage account.
@@ -2615,8 +3809,8 @@ class StorageAccount(ARMBaseModel):
      'NeedsAttention'
     :type storage_account_status: str or
      ~azure.mgmt.databoxedge.models.StorageAccountStatus
-    :param data_policy: Data policy of the storage Account. Possible values
-     include: 'Cloud', 'Local'
+    :param data_policy: Required. Data policy of the storage Account. Possible
+     values include: 'Cloud', 'Local'
     :type data_policy: str or ~azure.mgmt.databoxedge.models.DataPolicy
     :param storage_account_credential_id: Storage Account Credential Id
     :type storage_account_credential_id: str
@@ -2631,6 +3825,7 @@ class StorageAccount(ARMBaseModel):
         'id': {'readonly': True},
         'name': {'readonly': True},
         'type': {'readonly': True},
+        'data_policy': {'required': True},
         'blob_endpoint': {'readonly': True},
         'container_count': {'readonly': True},
     }
@@ -2639,6 +3834,7 @@ class StorageAccount(ARMBaseModel):
         'id': {'key': 'id', 'type': 'str'},
         'name': {'key': 'name', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
+        'system_data': {'key': 'systemData', 'type': 'SystemData'},
         'description': {'key': 'properties.description', 'type': 'str'},
         'storage_account_status': {'key': 'properties.storageAccountStatus', 'type': 'str'},
         'data_policy': {'key': 'properties.dataPolicy', 'type': 'str'},
@@ -2647,12 +3843,13 @@ class StorageAccount(ARMBaseModel):
         'container_count': {'key': 'properties.containerCount', 'type': 'int'},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, *, data_policy, system_data=None, description: str=None, storage_account_status=None, storage_account_credential_id: str=None, **kwargs) -> None:
         super(StorageAccount, self).__init__(**kwargs)
-        self.description = kwargs.get('description', None)
-        self.storage_account_status = kwargs.get('storage_account_status', None)
-        self.data_policy = kwargs.get('data_policy', None)
-        self.storage_account_credential_id = kwargs.get('storage_account_credential_id', None)
+        self.system_data = system_data
+        self.description = description
+        self.storage_account_status = storage_account_status
+        self.data_policy = data_policy
+        self.storage_account_credential_id = storage_account_credential_id
         self.blob_endpoint = None
         self.container_count = None
 
@@ -2671,6 +3868,8 @@ class StorageAccountCredential(ARMBaseModel):
     :vartype name: str
     :ivar type: The hierarchical type of the object.
     :vartype type: str
+    :param system_data: StorageAccountCredential object
+    :type system_data: ~azure.mgmt.databoxedge.models.SystemData
     :param alias: Required. Alias for the storage account.
     :type alias: str
     :param user_name: Username for the storage account.
@@ -2706,6 +3905,7 @@ class StorageAccountCredential(ARMBaseModel):
         'id': {'key': 'id', 'type': 'str'},
         'name': {'key': 'name', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
+        'system_data': {'key': 'systemData', 'type': 'SystemData'},
         'alias': {'key': 'properties.alias', 'type': 'str'},
         'user_name': {'key': 'properties.userName', 'type': 'str'},
         'account_key': {'key': 'properties.accountKey', 'type': 'AsymmetricEncryptedSecret'},
@@ -2716,16 +3916,37 @@ class StorageAccountCredential(ARMBaseModel):
         'storage_account_id': {'key': 'properties.storageAccountId', 'type': 'str'},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, *, alias: str, ssl_status, account_type, system_data=None, user_name: str=None, account_key=None, connection_string: str=None, blob_domain_name: str=None, storage_account_id: str=None, **kwargs) -> None:
         super(StorageAccountCredential, self).__init__(**kwargs)
-        self.alias = kwargs.get('alias', None)
-        self.user_name = kwargs.get('user_name', None)
-        self.account_key = kwargs.get('account_key', None)
-        self.connection_string = kwargs.get('connection_string', None)
-        self.ssl_status = kwargs.get('ssl_status', None)
-        self.blob_domain_name = kwargs.get('blob_domain_name', None)
-        self.account_type = kwargs.get('account_type', None)
-        self.storage_account_id = kwargs.get('storage_account_id', None)
+        self.system_data = system_data
+        self.alias = alias
+        self.user_name = user_name
+        self.account_key = account_key
+        self.connection_string = connection_string
+        self.ssl_status = ssl_status
+        self.blob_domain_name = blob_domain_name
+        self.account_type = account_type
+        self.storage_account_id = storage_account_id
+
+
+class SubscriptionRegisteredFeatures(Model):
+    """SubscriptionRegisteredFeatures.
+
+    :param name:
+    :type name: str
+    :param state:
+    :type state: str
+    """
+
+    _attribute_map = {
+        'name': {'key': 'name', 'type': 'str'},
+        'state': {'key': 'state', 'type': 'str'},
+    }
+
+    def __init__(self, *, name: str=None, state: str=None, **kwargs) -> None:
+        super(SubscriptionRegisteredFeatures, self).__init__(**kwargs)
+        self.name = name
+        self.state = state
 
 
 class SymmetricKey(Model):
@@ -2740,9 +3961,50 @@ class SymmetricKey(Model):
         'connection_string': {'key': 'connectionString', 'type': 'AsymmetricEncryptedSecret'},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, *, connection_string=None, **kwargs) -> None:
         super(SymmetricKey, self).__init__(**kwargs)
-        self.connection_string = kwargs.get('connection_string', None)
+        self.connection_string = connection_string
+
+
+class SystemData(Model):
+    """Metadata pertaining to creation and last modification of the resource.
+
+    :param created_by: The identity that created the resource.
+    :type created_by: str
+    :param created_by_type: The type of identity that created the resource.
+     Possible values include: 'User', 'Application', 'ManagedIdentity', 'Key'
+    :type created_by_type: str or ~azure.mgmt.databoxedge.models.CreatedByType
+    :param created_at: The timestamp of resource creation (UTC).
+    :type created_at: datetime
+    :param last_modified_by: The identity that last modified the resource.
+    :type last_modified_by: str
+    :param last_modified_by_type: The type of identity that last modified the
+     resource. Possible values include: 'User', 'Application',
+     'ManagedIdentity', 'Key'
+    :type last_modified_by_type: str or
+     ~azure.mgmt.databoxedge.models.CreatedByType
+    :param last_modified_at: The type of identity that last modified the
+     resource.
+    :type last_modified_at: datetime
+    """
+
+    _attribute_map = {
+        'created_by': {'key': 'createdBy', 'type': 'str'},
+        'created_by_type': {'key': 'createdByType', 'type': 'str'},
+        'created_at': {'key': 'createdAt', 'type': 'iso-8601'},
+        'last_modified_by': {'key': 'lastModifiedBy', 'type': 'str'},
+        'last_modified_by_type': {'key': 'lastModifiedByType', 'type': 'str'},
+        'last_modified_at': {'key': 'lastModifiedAt', 'type': 'iso-8601'},
+    }
+
+    def __init__(self, *, created_by: str=None, created_by_type=None, created_at=None, last_modified_by: str=None, last_modified_by_type=None, last_modified_at=None, **kwargs) -> None:
+        super(SystemData, self).__init__(**kwargs)
+        self.created_by = created_by
+        self.created_by_type = created_by_type
+        self.created_at = created_at
+        self.last_modified_by = last_modified_by
+        self.last_modified_by_type = last_modified_by_type
+        self.last_modified_at = last_modified_at
 
 
 class TrackingInfo(Model):
@@ -2765,12 +4027,12 @@ class TrackingInfo(Model):
         'tracking_url': {'key': 'trackingUrl', 'type': 'str'},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, *, serial_number: str=None, carrier_name: str=None, tracking_id: str=None, tracking_url: str=None, **kwargs) -> None:
         super(TrackingInfo, self).__init__(**kwargs)
-        self.serial_number = kwargs.get('serial_number', None)
-        self.carrier_name = kwargs.get('carrier_name', None)
-        self.tracking_id = kwargs.get('tracking_id', None)
-        self.tracking_url = kwargs.get('tracking_url', None)
+        self.serial_number = serial_number
+        self.carrier_name = carrier_name
+        self.tracking_id = tracking_id
+        self.tracking_url = tracking_url
 
 
 class UpdateDownloadProgress(Model):
@@ -2813,7 +4075,7 @@ class UpdateDownloadProgress(Model):
         'number_of_updates_downloaded': {'key': 'numberOfUpdatesDownloaded', 'type': 'int'},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs) -> None:
         super(UpdateDownloadProgress, self).__init__(**kwargs)
         self.download_phase = None
         self.percent_complete = None
@@ -2849,7 +4111,7 @@ class UpdateInstallProgress(Model):
         'number_of_updates_installed': {'key': 'numberOfUpdatesInstalled', 'type': 'int'},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs) -> None:
         super(UpdateInstallProgress, self).__init__(**kwargs)
         self.percent_complete = None
         self.number_of_updates_to_install = None
@@ -2965,12 +4227,12 @@ class UpdateSummary(ARMBaseModel):
         'total_update_size_in_bytes': {'key': 'properties.totalUpdateSizeInBytes', 'type': 'float'},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, *, device_version_number: str=None, friendly_device_version_name: str=None, device_last_scanned_date_time=None, last_completed_scan_job_date_time=None, **kwargs) -> None:
         super(UpdateSummary, self).__init__(**kwargs)
-        self.device_version_number = kwargs.get('device_version_number', None)
-        self.friendly_device_version_name = kwargs.get('friendly_device_version_name', None)
-        self.device_last_scanned_date_time = kwargs.get('device_last_scanned_date_time', None)
-        self.last_completed_scan_job_date_time = kwargs.get('last_completed_scan_job_date_time', None)
+        self.device_version_number = device_version_number
+        self.friendly_device_version_name = friendly_device_version_name
+        self.device_last_scanned_date_time = device_last_scanned_date_time
+        self.last_completed_scan_job_date_time = last_completed_scan_job_date_time
         self.last_completed_download_job_date_time = None
         self.last_completed_install_job_date_time = None
         self.total_number_of_updates_available = None
@@ -3008,10 +4270,10 @@ class UploadCertificateRequest(Model):
         'certificate': {'key': 'properties.certificate', 'type': 'str'},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, *, certificate: str, authentication_type=None, **kwargs) -> None:
         super(UploadCertificateRequest, self).__init__(**kwargs)
-        self.authentication_type = kwargs.get('authentication_type', None)
-        self.certificate = kwargs.get('certificate', None)
+        self.authentication_type = authentication_type
+        self.certificate = certificate
 
 
 class UploadCertificateResponse(Model):
@@ -3064,9 +4326,9 @@ class UploadCertificateResponse(Model):
         'aad_audience': {'key': 'aadAudience', 'type': 'str'},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, *, auth_type=None, **kwargs) -> None:
         super(UploadCertificateResponse, self).__init__(**kwargs)
-        self.auth_type = kwargs.get('auth_type', None)
+        self.auth_type = auth_type
         self.resource_id = None
         self.aad_authority = None
         self.aad_tenant_id = None
@@ -3083,14 +4345,14 @@ class User(ARMBaseModel):
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
-    All required parameters must be populated in order to send to Azure.
-
     :ivar id: The path ID that uniquely identifies the object.
     :vartype id: str
     :ivar name: The object name.
     :vartype name: str
     :ivar type: The hierarchical type of the object.
     :vartype type: str
+    :param system_data: User in DataBoxEdge Resource
+    :type system_data: ~azure.mgmt.databoxedge.models.SystemData
     :param encrypted_password: The password details.
     :type encrypted_password:
      ~azure.mgmt.databoxedge.models.AsymmetricEncryptedSecret
@@ -3098,8 +4360,8 @@ class User(ARMBaseModel):
      This field should not be specified during user creation.
     :vartype share_access_rights:
      list[~azure.mgmt.databoxedge.models.ShareAccessRight]
-    :param user_type: Required. Type of the user. Possible values include:
-     'Share', 'LocalManagement', 'ARM'
+    :param user_type: Type of the user. Possible values include: 'Share',
+     'LocalManagement', 'ARM'
     :type user_type: str or ~azure.mgmt.databoxedge.models.UserType
     """
 
@@ -3108,23 +4370,24 @@ class User(ARMBaseModel):
         'name': {'readonly': True},
         'type': {'readonly': True},
         'share_access_rights': {'readonly': True},
-        'user_type': {'required': True},
     }
 
     _attribute_map = {
         'id': {'key': 'id', 'type': 'str'},
         'name': {'key': 'name', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
+        'system_data': {'key': 'systemData', 'type': 'SystemData'},
         'encrypted_password': {'key': 'properties.encryptedPassword', 'type': 'AsymmetricEncryptedSecret'},
         'share_access_rights': {'key': 'properties.shareAccessRights', 'type': '[ShareAccessRight]'},
         'user_type': {'key': 'properties.userType', 'type': 'str'},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, *, system_data=None, encrypted_password=None, user_type=None, **kwargs) -> None:
         super(User, self).__init__(**kwargs)
-        self.encrypted_password = kwargs.get('encrypted_password', None)
+        self.system_data = system_data
+        self.encrypted_password = encrypted_password
         self.share_access_rights = None
-        self.user_type = kwargs.get('user_type', None)
+        self.user_type = user_type
 
 
 class UserAccessRight(Model):
@@ -3149,7 +4412,7 @@ class UserAccessRight(Model):
         'access_type': {'key': 'accessType', 'type': 'str'},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, *, user_id: str, access_type, **kwargs) -> None:
         super(UserAccessRight, self).__init__(**kwargs)
-        self.user_id = kwargs.get('user_id', None)
-        self.access_type = kwargs.get('access_type', None)
+        self.user_id = user_id
+        self.access_type = access_type

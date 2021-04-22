@@ -1,0 +1,8 @@
+{
+  "autorest": "V2",
+  "use": "@microsoft.azure/autorest.python@~4.0.71",
+  "commit": "cc247b28bd6dc94786fb18e691d6331a168985f6",
+  "repository_url": "https://github.com/Azure/azure-rest-api-specs",
+  "autorest_command": "autorest specification/databoxedge/resource-manager/readme.md --keep-version-file --multiapi --no-async --python --python-mode=update --python-sdks-folder=/home/vsts/work/1/s/azure-sdk-for-python/sdk --use=@microsoft.azure/autorest.python@~4.0.71 --version=V2",
+  "readme": "specification/databoxedge/resource-manager/readme.md"
+}
