@@ -1,5 +1,8 @@
 # Release History
 
+## 12.3.2 (Unreleased)
+
+
 ## 12.3.1 (2021-04-20)
 **Fixes**
 - Fixed `recursive=True` on file deletion
@@ -76,13 +79,6 @@
 **New Feature**
 - Block size is increased to 4GB at maximum, max single put size is increased to 5GB.
 
-## 12.0.2 
-**Fixes**
-- Improve the performance of upload when using max_concurrency
-
-**Notes**
-- Updated dependency from azure-core<2.0.0,>=1.2.2 to azure-core<2.0.0,>=1.6.0
-
 ## 12.0.1 (2020-04-29)
 **Fixes**
 - Fixed rename_directory and rename_file doc
@@ -127,3 +123,10 @@ This package's
 [documentation](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/storage/azure-storage-file-datalake/README.md)
 and
 [samples](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/storage/azure-storage-file-datalake/samples)
+## 12.0.2 
+**Fixes**
+- Improve the performance of upload when using max_concurrency
+
+**Notes**
+- Updated dependency from azure-core<2.0.0,>=1.2.2 to azure-core<2.0.0,>=1.6.0
+
