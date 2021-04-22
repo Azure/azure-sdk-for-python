@@ -451,10 +451,10 @@ class TestCustomFormsFromUrl(FormRecognizerTest):
 
     @FormRecognizerPreparer()
     @GlobalClientPreparer()
-    def test_label_tables_variable_rows(self, client, formrecognizer_label_table_variable_rows_storage_container_sas_url):
+    def test_label_tables_variable_rows(self, client, formrecognizer_table_variable_rows_container_sas_url):
         fr_client = client.get_form_recognizer_client()
 
-        training_poller = client.begin_training(formrecognizer_label_table_variable_rows_storage_container_sas_url, use_training_labels=True)
+        training_poller = client.begin_training(formrecognizer_table_variable_rows_container_sas_url, use_training_labels=True)
         model = training_poller.result()
 
         responses = []
@@ -487,10 +487,10 @@ class TestCustomFormsFromUrl(FormRecognizerTest):
 
     @FormRecognizerPreparer()
     @GlobalClientPreparer()
-    def test_label_tables_fixed_rows(self, client, formrecognizer_label_table_fixed_rows_storage_container_sas_url):
+    def test_label_tables_fixed_rows(self, client, formrecognizer_table_fixed_rows_container_sas_url):
         fr_client = client.get_form_recognizer_client()
 
-        training_poller = client.begin_training(formrecognizer_label_table_fixed_rows_storage_container_sas_url, use_training_labels=True)
+        training_poller = client.begin_training(formrecognizer_table_fixed_rows_container_sas_url, use_training_labels=True)
         model = training_poller.result()
 
         responses = []

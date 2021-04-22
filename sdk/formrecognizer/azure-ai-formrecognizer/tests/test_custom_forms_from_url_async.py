@@ -490,7 +490,7 @@ class TestCustomFormsFromUrlAsync(AsyncFormRecognizerTest):
 
     @FormRecognizerPreparer()
     @GlobalClientPreparer()
-    async def test_label_tables_variable_rows(self, client, formrecognizer_label_table_variable_rows_storage_container_sas_url):
+    async def test_label_tables_variable_rows(self, client, formrecognizer_table_variable_rows_container_sas_url):
         fr_client = client.get_form_recognizer_client()
 
         responses = []
@@ -503,7 +503,7 @@ class TestCustomFormsFromUrlAsync(AsyncFormRecognizerTest):
 
         async with client:
             training_poller = await client.begin_training(
-                formrecognizer_label_table_variable_rows_storage_container_sas_url, use_training_labels=True)
+                formrecognizer_table_variable_rows_container_sas_url, use_training_labels=True)
             model = await training_poller.result()
 
             poller = await fr_client.begin_recognize_custom_forms_from_url(
@@ -529,7 +529,7 @@ class TestCustomFormsFromUrlAsync(AsyncFormRecognizerTest):
 
     @FormRecognizerPreparer()
     @GlobalClientPreparer()
-    async def test_label_tables_fixed_rows(self, client, formrecognizer_label_table_fixed_rows_storage_container_sas_url):
+    async def test_label_tables_fixed_rows(self, client, formrecognizer_table_fixed_rows_container_sas_url):
         fr_client = client.get_form_recognizer_client()
 
         responses = []
@@ -541,7 +541,7 @@ class TestCustomFormsFromUrlAsync(AsyncFormRecognizerTest):
             responses.append(form)
 
         async with client:
-            training_poller = await client.begin_training(formrecognizer_label_table_fixed_rows_storage_container_sas_url, use_training_labels=True)
+            training_poller = await client.begin_training(formrecognizer_table_fixed_rows_container_sas_url, use_training_labels=True)
             model = await training_poller.result()
 
             poller = await fr_client.begin_recognize_custom_forms_from_url(
