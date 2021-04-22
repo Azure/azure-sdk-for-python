@@ -431,10 +431,7 @@ class ServiceBusAdministrationClient:  # pylint:disable=too-many-public-methods
         )
 
         property_keyword_arguments = {key: kwargs.pop(key) for key in set(kwargs.keys()) if key in queue.keys()}
-        override_properties_with_keyword_arguments(
-            queue,
-            **property_keyword_arguments
-        )
+        override_properties_with_keyword_arguments(queue, **property_keyword_arguments)
 
         to_update = queue._to_internal_entity()
         to_update.default_message_time_to_live = avoid_timedelta_overflow(
@@ -668,10 +665,7 @@ class ServiceBusAdministrationClient:  # pylint:disable=too-many-public-methods
         # we should not mutate the input, making a copy first for update
         topic = deepcopy(create_properties_from_dict_if_needed(topic, TopicProperties))
         property_keyword_arguments = {key: kwargs.pop(key) for key in set(kwargs.keys()) if key in topic.keys()}
-        override_properties_with_keyword_arguments(
-            topic,
-            **property_keyword_arguments
-        )
+        override_properties_with_keyword_arguments(topic, **property_keyword_arguments)
         to_update = topic._to_internal_entity()
 
         to_update.default_message_time_to_live = avoid_timedelta_overflow(  # type: ignore
@@ -939,7 +933,6 @@ class ServiceBusAdministrationClient:  # pylint:disable=too-many-public-methods
                 self.fully_qualified_namespace,
             )
         )
-
         property_keyword_arguments = {key: kwargs.pop(key) for key in set(kwargs.keys()) if key in subscription.keys()}
         override_properties_with_keyword_arguments(subscription, **property_keyword_arguments)
 
@@ -1135,10 +1128,7 @@ class ServiceBusAdministrationClient:  # pylint:disable=too-many-public-methods
         # we should not mutate the input, making a copy first for update
         rule = deepcopy(create_properties_from_dict_if_needed(rule, RuleProperties))
         property_keyword_arguments = {key: kwargs.pop(key) for key in set(kwargs.keys()) if key in rule.keys()}
-        override_properties_with_keyword_arguments(
-            rule,
-            **property_keyword_arguments
-        )
+        override_properties_with_keyword_arguments(rule, **property_keyword_arguments)
         to_update = rule._to_internal_entity()
 
         create_entity_body = CreateRuleBody(

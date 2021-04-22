@@ -374,6 +374,6 @@ def override_properties_with_keyword_arguments(properties, **kwargs):
     # type: (PropertiesType, Any) -> None
     if not kwargs:
         return
-    intersection_keys = set.intersection(set(properties.keys()), set(kwargs.keys()))
-    for key in intersection_keys:
-        properties[key] = kwargs.get(key)
+    for key in kwargs.keys():
+        if key in properties.keys():
+            properties[key] = kwargs.get(key)
