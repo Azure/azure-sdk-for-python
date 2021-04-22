@@ -250,3 +250,39 @@ class TestExceptions(object):
         }
         exp = HttpResponseError(response=_build_response(json.dumps(message).encode("utf-8")))
         assert exp.error.code == "Conflict"
+
+    def test_str_empty_response_error(self):
+        error = HttpResponseError()
+        assert str(error) == "HttpResponseError: Operation returned an invalid status 'None'"
+
+    def test_str_with_message(self):
+        message = {
+            "error": {
+                "code": "FakeErrorOne",
+                "message": "A fake error",
+            }
+        }
+        error = HttpResponseError(message=message)
+        assert str(error) == "HttpResponseError: {'error': {'code': 'FakeErrorOne', 'message': 'A fake error'}}"
+
+    def test_str_with_error_code_and_message(self):
+        message = {
+            "error": {
+                "code": "FakeErrorOne",
+                "message": "A fake error",
+            }
+        }
+        error = HttpResponseError(message=message)
+        error.error = FakeErrorTwo()
+        assert str(error) == "HttpResponseError: (FakeErrorTwo) {'error': {'code': 'FakeErrorOne', 'message': 'A fake error'}}"
+
+    def test_str_with_response(self):
+        message = {
+            "error": {
+                "code": "FakeErrorOne",
+                "message": "A fake error",
+            }
+        }
+        response = _build_response(json.dumps(message).encode("utf-8"))
+        error = HttpResponseError(response=response)
+        assert str(error) == "HttpResponseError <MockResponse: 400 Bad Request, Content-Type: application/json>: (FakeErrorOne) A fake error"
