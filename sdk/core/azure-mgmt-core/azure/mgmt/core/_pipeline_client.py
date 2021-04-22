@@ -47,23 +47,8 @@ class ARMPipelineClient(PipelineClient):
                 raise ValueError(
                     "Current implementation requires to pass 'config' if you don't pass 'policies'"
                 )
-            kwargs["policies"] = self._default_policies(**kwargs)
+            per_call_policies = kwargs.get('per_call_policies', [])
+            per_call_policies.append(ARMAutoResourceProviderRegistrationPolicy())
+            http_logging_policy = kwargs.get('http_logging_policy', ARMHttpLoggingPolicy(**kwargs))
+            kwargs["http_logging_policy"] = http_logging_policy
         super(ARMPipelineClient, self).__init__(base_url, **kwargs)
-
-    @staticmethod
-    def _default_policies(config, **kwargs):
-        return [
-            RequestIdPolicy(**kwargs),
-            ARMAutoResourceProviderRegistrationPolicy(),
-            config.headers_policy,
-            config.user_agent_policy,
-            config.proxy_policy,
-            ContentDecodePolicy(**kwargs),
-            config.redirect_policy,
-            config.retry_policy,
-            config.authentication_policy,
-            config.custom_hook_policy,
-            config.logging_policy,
-            DistributedTracingPolicy(**kwargs),
-            config.http_logging_policy or ARMHttpLoggingPolicy(**kwargs),
-        ]
