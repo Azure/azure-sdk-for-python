@@ -199,8 +199,8 @@ class BlobHierarchyListSegment(msrest.serialization.Model):
     }
 
     _attribute_map = {
-        'blob_prefixes': {'key': 'BlobPrefixes', 'type': '[BlobPrefix]', 'xml': {'name': 'BlobPrefix'}},
-        'blob_items': {'key': 'BlobItems', 'type': '[BlobItemInternal]', 'xml': {'name': 'Blob', 'itemsName': 'Blob'}},
+        'blob_prefixes': {'key': 'BlobPrefixes', 'type': '[BlobPrefix]'},
+        'blob_items': {'key': 'BlobItems', 'type': '[BlobItemInternal]'},
     }
     _xml_map = {
         'name': 'Blobs'

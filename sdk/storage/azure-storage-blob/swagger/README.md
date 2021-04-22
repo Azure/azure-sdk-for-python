@@ -48,17 +48,6 @@ directive:
     $.Expiry.format = "str";
 ```
 
-
-### BlobHierarchyListSegment
-``` yaml
-directive:
-- from: swagger-document
-  where: $.definitions.BlobHierarchyListSegment
-  transform: >
-    $.properties.BlobPrefixes.xml = { "name": "BlobPrefix" };
-    $.properties.BlobItems.xml = { "name": "Blob" };
-```
-
 ### SignedIdentifier shouldn't require an AccessPolicy, only ID
 ``` yaml
 directive:
