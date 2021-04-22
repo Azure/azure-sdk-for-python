@@ -1,8 +1,10 @@
 # Release History
 
-## 7.1.2 (Unreleased)
+## 7.2.0 (Unreleased)
 
+**New Features**
 
+* `ServiceBusAdministrationClient.update_*` methods now accept keyword arguments to override the properties specified in the model instance.
 
 ## 7.1.1 (2021-04-07)
 
