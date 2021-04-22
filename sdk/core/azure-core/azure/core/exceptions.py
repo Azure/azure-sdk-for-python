@@ -303,9 +303,9 @@ class HttpResponseError(AzureError):
         If a streamed response is resulting in an error, please
         make sure you read in your response before accessing this property.
         """
-        if not self.response:
-            return None
         if not self._error:
+            if not self.response:
+                return None
             self._error = self._parse_odata_body(self.response.text())
         return self._error
 

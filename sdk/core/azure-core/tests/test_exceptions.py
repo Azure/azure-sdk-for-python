@@ -271,3 +271,8 @@ class TestExceptions(object):
             assert e.error.code == "NotSupportedLanguage"
             assert e.error.message == "The requested operation is not supported in the language specified."
             assert isinstance(e.model, ODataV4Format)
+
+    def test_no_response_but_set_error(self):
+        error = HttpResponseError()
+        error.error = FakeErrorOne()
+        assert isinstance(error.error, FakeErrorOne)
