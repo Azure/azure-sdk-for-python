@@ -42,6 +42,7 @@ from azure.storage.blob.aio import (
 #------------------------------------------------------------------------------
 TEST_BLOB_PREFIX = 'blob'
 LARGE_BLOB_SIZE = 64 * 1024 + 5
+ENCRYPTION_SCOPE = "testscope1"
 #------------------------------------------------------------------------------
 
 class AiohttpTestTransport(AioHttpTransport):
@@ -184,7 +185,30 @@ class StorageBlockBlobTestAsync(AsyncStorageTestCase):
         self.assertEqual(new_blob_content, b'source blob data')
 
     @BlobPreparer()
-    @AsyncStorageTestCase.await_prepared_test
+    async def test_upload_blob_from_url_with_encryption_scope(
+            self, storage_account_name, storage_account_key):
+        await self._setup(storage_account_name, storage_account_key)
+        source_container_name = self.get_resource_name("publiccontainername")
+        source_container_client = self.bsc.get_container_client(source_container_name)
+        try:
+            await source_container_client.create_container(public_access='blob')
+        except:
+            pass
+
+        blob = source_container_client.get_blob_client('sourceblob')
+        await blob.upload_blob(b'sourceblobdata', encryption_scope=ENCRYPTION_SCOPE, overwrite=True)
+
+        blob_name = self.get_resource_name("blobcopy")
+        new_blob_client = self.bsc.get_blob_client(self.container_name, blob_name)
+
+        new_blob = await new_blob_client.upload_blob_from_url(blob.url, overwrite=True, encryption_scope=ENCRYPTION_SCOPE)
+        self.assertIsNotNone(new_blob)
+        downloader = await new_blob_client.download_blob()
+        new_blob_content = await downloader.readall()
+        self.assertEqual(downloader.properties['encryption_scope'], ENCRYPTION_SCOPE)
+        self.assertEqual(new_blob_content, b'sourceblobdata')
+
+    @BlobPreparer()
     async def test_upload_blob_from_url_with_existing_blob(
             self, storage_account_name, storage_account_key):
         await self._setup(storage_account_name, storage_account_key, container_name="testcontainer")

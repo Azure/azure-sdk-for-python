@@ -33,6 +33,7 @@ from devtools_testutils.storage import StorageTestCase
 #------------------------------------------------------------------------------
 TEST_BLOB_PREFIX = 'blob'
 LARGE_BLOB_SIZE = 64 * 1024 + 5
+ENCRYPTION_SCOPE = "testscope1"
 #------------------------------------------------------------------------------
 
 
@@ -78,9 +79,9 @@ class StorageBlockBlobTest(StorageTestCase):
         blob.upload_blob(data, tags=tags, overwrite=True, **kwargs)
         return blob
 
-    def _create_source_blob(self, data):
+    def _create_source_blob(self, data, **kwargs):
         blob_client = self.bsc.get_blob_client(self.source_container_name, self.get_resource_name(TEST_BLOB_PREFIX+"1"))
-        blob_client.upload_blob(data, overwrite=True)
+        blob_client.upload_blob(data, overwrite=True, **kwargs)
         return blob_client
 
     def assertBlobEqual(self, container_name, blob_name, expected_data):
@@ -137,6 +138,30 @@ class StorageBlockBlobTest(StorageTestCase):
         self.assertIsNotNone(new_blob)
         new_blob_content = new_blob_client.download_blob().readall()
         self.assertEqual(new_blob_content, b'source blob data')
+
+    @BlobPreparer()
+    def test_upload_blob_from_url_with_encryption_scope(
+            self, storage_account_name, storage_account_key):
+        self._setup(storage_account_name, storage_account_key)
+        source_container_name = self.get_resource_name("publiccontainername")
+        source_container_client = self.bsc.get_container_client(source_container_name)
+        try:
+            source_container_client.create_container(public_access='blob')
+        except:
+            pass
+
+        blob = source_container_client.get_blob_client('sourceblob')
+        blob.upload_blob(b'sourceblobdata', encryption_scope=ENCRYPTION_SCOPE, overwrite=True)
+
+        blob_name = self.get_resource_name("blobcopy")
+        new_blob_client = self.bsc.get_blob_client(self.container_name, blob_name)
+
+        new_blob = new_blob_client.upload_blob_from_url(blob.url, overwrite=True, encryption_scope=ENCRYPTION_SCOPE)
+        self.assertIsNotNone(new_blob)
+        downloader = new_blob_client.download_blob()
+        new_blob_content = downloader.readall()
+        self.assertEqual(downloader.properties['encryption_scope'], ENCRYPTION_SCOPE)
+        self.assertEqual(new_blob_content, b'sourceblobdata')
 
     @BlobPreparer()
     def test_upload_blob_from_url_with_existing_blob(
