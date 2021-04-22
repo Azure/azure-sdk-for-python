@@ -24,11 +24,6 @@
 #
 # --------------------------------------------------------------------------
 from azure.core import PipelineClient
-from azure.core.pipeline.policies import (
-    ContentDecodePolicy,
-    DistributedTracingPolicy,
-    RequestIdPolicy,
-)
 from .policies import ARMAutoResourceProviderRegistrationPolicy, ARMHttpLoggingPolicy
 
 
