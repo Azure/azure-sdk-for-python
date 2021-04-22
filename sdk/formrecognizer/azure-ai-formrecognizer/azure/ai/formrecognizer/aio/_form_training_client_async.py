@@ -129,7 +129,7 @@ class FormTrainingClient(FormRecognizerClientBaseAsync):
         model_name = kwargs.pop("model_name", None)
         if model_name and self._api_version == "2.0":
             raise ValueError(
-                "'model_name' is only available for API version V2_1_PREVIEW and up"
+                "'model_name' is only available for API version V2_1 and up"
             )
         continuation_token = kwargs.pop("continuation_token", None)
         polling_interval = kwargs.pop(
@@ -481,7 +481,7 @@ class FormTrainingClient(FormRecognizerClientBaseAsync):
             )
         except ValueError:
             raise ValueError(
-                "Method 'begin_create_composed_model' is only available for API version V2_1_PREVIEW and up"
+                "Method 'begin_create_composed_model' is only available for API version V2_1 and up"
             )
 
     def get_form_recognizer_client(self, **kwargs: Any) -> FormRecognizerClient:

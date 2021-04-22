@@ -345,7 +345,7 @@ class TestInvoice(FormRecognizerTest):
             invoice = fd.read()
         with pytest.raises(ValueError) as e:
             client.begin_recognize_invoices(invoice)
-        assert "Method 'begin_recognize_invoices' is only available for API version V2_1_PREVIEW and up" in str(e.value)
+        assert "Method 'begin_recognize_invoices' is only available for API version V2_1 and up" in str(e.value)
 
     @FormRecognizerPreparer()
     @GlobalClientPreparer()

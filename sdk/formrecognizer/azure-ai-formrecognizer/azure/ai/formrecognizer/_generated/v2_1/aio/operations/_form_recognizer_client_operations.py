@@ -88,18 +88,18 @@ class FormRecognizerClientOperationsMixin:
         or 'image/bmp'. Other type of content is ignored.
 
         :param train_request: Training request parameters.
-        :type train_request: ~azure.ai.formrecognizer.v2_1_preview_3.models.TrainRequest
+        :type train_request: ~azure.ai.formrecognizer.v2_1.models.TrainRequest
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: Pass in True if you'd like the AsyncLROBasePolling polling method,
-         False for no polling, or your own initialized polling object for a personal polling strategy.
+        :keyword polling: By default, your polling method will be AsyncLROBasePolling.
+         Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either None or the result of cls(response)
         :rtype: ~azure.core.polling.AsyncLROPoller[None]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        polling = kwargs.pop('polling', False)  # type: Union[bool, AsyncPollingMethod]
+        polling = kwargs.pop('polling', True)  # type: Union[bool, AsyncPollingMethod]
         cls = kwargs.pop('cls', None)  # type: ClsType[None]
         lro_delay = kwargs.pop(
             'polling_interval',
@@ -154,7 +154,7 @@ class FormRecognizerClientOperationsMixin:
         :type include_keys: bool
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: Model, or the result of cls(response)
-        :rtype: ~azure.ai.formrecognizer.v2_1_preview_3.models.Model
+        :rtype: ~azure.ai.formrecognizer.v2_1.models.Model
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType["_models.Model"]
@@ -342,20 +342,20 @@ class FormRecognizerClientOperationsMixin:
          range with a comma.
         :type pages: list[str]
         :param file_stream: .json, .pdf, .jpg, .png, .tiff or .bmp type file stream.
-        :type file_stream: IO or ~azure.ai.formrecognizer.v2_1_preview_3.models.SourcePath
+        :type file_stream: IO or ~azure.ai.formrecognizer.v2_1.models.SourcePath
         :keyword str content_type: Media type of the body sent to the API. Default value is "application/json".
          Allowed values are: "application/pdf", "image/bmp", "image/jpeg", "image/png", "image/tiff", "application/json".
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: Pass in True if you'd like the AsyncLROBasePolling polling method,
-         False for no polling, or your own initialized polling object for a personal polling strategy.
+        :keyword polling: By default, your polling method will be AsyncLROBasePolling.
+         Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either None or the result of cls(response)
         :rtype: ~azure.core.polling.AsyncLROPoller[None]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        polling = kwargs.pop('polling', False)  # type: Union[bool, AsyncPollingMethod]
+        polling = kwargs.pop('polling', True)  # type: Union[bool, AsyncPollingMethod]
         cls = kwargs.pop('cls', None)  # type: ClsType[None]
         lro_delay = kwargs.pop(
             'polling_interval',
@@ -414,7 +414,7 @@ class FormRecognizerClientOperationsMixin:
         :type result_id: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: AnalyzeOperationResult, or the result of cls(response)
-        :rtype: ~azure.ai.formrecognizer.v2_1_preview_3.models.AnalyzeOperationResult
+        :rtype: ~azure.ai.formrecognizer.v2_1.models.AnalyzeOperationResult
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType["_models.AnalyzeOperationResult"]
@@ -521,18 +521,18 @@ class FormRecognizerClientOperationsMixin:
         :param model_id: Model identifier.
         :type model_id: str
         :param copy_request: Copy request parameters.
-        :type copy_request: ~azure.ai.formrecognizer.v2_1_preview_3.models.CopyRequest
+        :type copy_request: ~azure.ai.formrecognizer.v2_1.models.CopyRequest
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: Pass in True if you'd like the AsyncLROBasePolling polling method,
-         False for no polling, or your own initialized polling object for a personal polling strategy.
+        :keyword polling: By default, your polling method will be AsyncLROBasePolling.
+         Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either None or the result of cls(response)
         :rtype: ~azure.core.polling.AsyncLROPoller[None]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        polling = kwargs.pop('polling', False)  # type: Union[bool, AsyncPollingMethod]
+        polling = kwargs.pop('polling', True)  # type: Union[bool, AsyncPollingMethod]
         cls = kwargs.pop('cls', None)  # type: ClsType[None]
         lro_delay = kwargs.pop(
             'polling_interval',
@@ -589,7 +589,7 @@ class FormRecognizerClientOperationsMixin:
         :type result_id: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: CopyOperationResult, or the result of cls(response)
-        :rtype: ~azure.ai.formrecognizer.v2_1_preview_3.models.CopyOperationResult
+        :rtype: ~azure.ai.formrecognizer.v2_1.models.CopyOperationResult
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType["_models.CopyOperationResult"]
@@ -642,7 +642,7 @@ class FormRecognizerClientOperationsMixin:
 
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: CopyAuthorizationResult, or the result of cls(response)
-        :rtype: ~azure.ai.formrecognizer.v2_1_preview_3.models.CopyAuthorizationResult
+        :rtype: ~azure.ai.formrecognizer.v2_1.models.CopyAuthorizationResult
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType["_models.CopyAuthorizationResult"]
@@ -745,18 +745,18 @@ class FormRecognizerClientOperationsMixin:
         It would validate limit of models put together.
 
         :param compose_request: Compose models.
-        :type compose_request: ~azure.ai.formrecognizer.v2_1_preview_3.models.ComposeRequest
+        :type compose_request: ~azure.ai.formrecognizer.v2_1.models.ComposeRequest
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: Pass in True if you'd like the AsyncLROBasePolling polling method,
-         False for no polling, or your own initialized polling object for a personal polling strategy.
+        :keyword polling: By default, your polling method will be AsyncLROBasePolling.
+         Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either None or the result of cls(response)
         :rtype: ~azure.core.polling.AsyncLROPoller[None]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        polling = kwargs.pop('polling', False)  # type: Union[bool, AsyncPollingMethod]
+        polling = kwargs.pop('polling', True)  # type: Union[bool, AsyncPollingMethod]
         cls = kwargs.pop('cls', None)  # type: ClsType[None]
         lro_delay = kwargs.pop(
             'polling_interval',
@@ -882,26 +882,26 @@ class FormRecognizerClientOperationsMixin:
         :type include_text_details: bool
         :param locale: Locale of the input document. Supported locales include: en-AU, en-CA, en-GB,
          en-IN, en-US(default).
-        :type locale: str or ~azure.ai.formrecognizer.v2_1_preview_3.models.Locale
+        :type locale: str or ~azure.ai.formrecognizer.v2_1.models.Locale
         :param pages: Custom page numbers for multi-page documents(PDF/TIFF), input the number of the
          pages you want to get OCR result. For a range of pages, use a hyphen. Separate each page or
          range with a comma.
         :type pages: list[str]
         :param file_stream: .json, .pdf, .jpg, .png, .tiff or .bmp type file stream.
-        :type file_stream: IO or ~azure.ai.formrecognizer.v2_1_preview_3.models.SourcePath
+        :type file_stream: IO or ~azure.ai.formrecognizer.v2_1.models.SourcePath
         :keyword str content_type: Media type of the body sent to the API. Default value is "application/json".
          Allowed values are: "application/pdf", "image/bmp", "image/jpeg", "image/png", "image/tiff", "application/json".
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: Pass in True if you'd like the AsyncLROBasePolling polling method,
-         False for no polling, or your own initialized polling object for a personal polling strategy.
+        :keyword polling: By default, your polling method will be AsyncLROBasePolling.
+         Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either None or the result of cls(response)
         :rtype: ~azure.core.polling.AsyncLROPoller[None]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        polling = kwargs.pop('polling', False)  # type: Union[bool, AsyncPollingMethod]
+        polling = kwargs.pop('polling', True)  # type: Union[bool, AsyncPollingMethod]
         cls = kwargs.pop('cls', None)  # type: ClsType[None]
         lro_delay = kwargs.pop(
             'polling_interval',
@@ -956,7 +956,7 @@ class FormRecognizerClientOperationsMixin:
         :type result_id: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: AnalyzeOperationResult, or the result of cls(response)
-        :rtype: ~azure.ai.formrecognizer.v2_1_preview_3.models.AnalyzeOperationResult
+        :rtype: ~azure.ai.formrecognizer.v2_1.models.AnalyzeOperationResult
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType["_models.AnalyzeOperationResult"]
@@ -1085,26 +1085,26 @@ class FormRecognizerClientOperationsMixin:
         :type include_text_details: bool
         :param locale: Locale of the input document. Supported locales include: en-AU, en-CA, en-GB,
          en-IN, en-US(default).
-        :type locale: str or ~azure.ai.formrecognizer.v2_1_preview_3.models.Locale
+        :type locale: str or ~azure.ai.formrecognizer.v2_1.models.Locale
         :param pages: Custom page numbers for multi-page documents(PDF/TIFF), input the number of the
          pages you want to get OCR result. For a range of pages, use a hyphen. Separate each page or
          range with a comma.
         :type pages: list[str]
         :param file_stream: .json, .pdf, .jpg, .png, .tiff or .bmp type file stream.
-        :type file_stream: IO or ~azure.ai.formrecognizer.v2_1_preview_3.models.SourcePath
+        :type file_stream: IO or ~azure.ai.formrecognizer.v2_1.models.SourcePath
         :keyword str content_type: Media type of the body sent to the API. Default value is "application/json".
          Allowed values are: "application/pdf", "image/bmp", "image/jpeg", "image/png", "image/tiff", "application/json".
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: Pass in True if you'd like the AsyncLROBasePolling polling method,
-         False for no polling, or your own initialized polling object for a personal polling strategy.
+        :keyword polling: By default, your polling method will be AsyncLROBasePolling.
+         Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either None or the result of cls(response)
         :rtype: ~azure.core.polling.AsyncLROPoller[None]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        polling = kwargs.pop('polling', False)  # type: Union[bool, AsyncPollingMethod]
+        polling = kwargs.pop('polling', True)  # type: Union[bool, AsyncPollingMethod]
         cls = kwargs.pop('cls', None)  # type: ClsType[None]
         lro_delay = kwargs.pop(
             'polling_interval',
@@ -1159,7 +1159,7 @@ class FormRecognizerClientOperationsMixin:
         :type result_id: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: AnalyzeOperationResult, or the result of cls(response)
-        :rtype: ~azure.ai.formrecognizer.v2_1_preview_3.models.AnalyzeOperationResult
+        :rtype: ~azure.ai.formrecognizer.v2_1.models.AnalyzeOperationResult
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType["_models.AnalyzeOperationResult"]
@@ -1287,20 +1287,20 @@ class FormRecognizerClientOperationsMixin:
          range with a comma.
         :type pages: list[str]
         :param file_stream: .json, .pdf, .jpg, .png, .tiff or .bmp type file stream.
-        :type file_stream: IO or ~azure.ai.formrecognizer.v2_1_preview_3.models.SourcePath
+        :type file_stream: IO or ~azure.ai.formrecognizer.v2_1.models.SourcePath
         :keyword str content_type: Media type of the body sent to the API. Default value is "application/json".
          Allowed values are: "application/pdf", "image/bmp", "image/jpeg", "image/png", "image/tiff", "application/json".
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: Pass in True if you'd like the AsyncLROBasePolling polling method,
-         False for no polling, or your own initialized polling object for a personal polling strategy.
+        :keyword polling: By default, your polling method will be AsyncLROBasePolling.
+         Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either None or the result of cls(response)
         :rtype: ~azure.core.polling.AsyncLROPoller[None]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        polling = kwargs.pop('polling', False)  # type: Union[bool, AsyncPollingMethod]
+        polling = kwargs.pop('polling', True)  # type: Union[bool, AsyncPollingMethod]
         cls = kwargs.pop('cls', None)  # type: ClsType[None]
         lro_delay = kwargs.pop(
             'polling_interval',
@@ -1354,7 +1354,7 @@ class FormRecognizerClientOperationsMixin:
         :type result_id: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: AnalyzeOperationResult, or the result of cls(response)
-        :rtype: ~azure.ai.formrecognizer.v2_1_preview_3.models.AnalyzeOperationResult
+        :rtype: ~azure.ai.formrecognizer.v2_1.models.AnalyzeOperationResult
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType["_models.AnalyzeOperationResult"]
@@ -1483,26 +1483,26 @@ class FormRecognizerClientOperationsMixin:
         :type include_text_details: bool
         :param locale: Locale of the input document. Supported locales include: en-AU, en-CA, en-GB,
          en-IN, en-US(default).
-        :type locale: str or ~azure.ai.formrecognizer.v2_1_preview_3.models.Locale
+        :type locale: str or ~azure.ai.formrecognizer.v2_1.models.Locale
         :param pages: Custom page numbers for multi-page documents(PDF/TIFF), input the number of the
          pages you want to get OCR result. For a range of pages, use a hyphen. Separate each page or
          range with a comma.
         :type pages: list[str]
         :param file_stream: .json, .pdf, .jpg, .png, .tiff or .bmp type file stream.
-        :type file_stream: IO or ~azure.ai.formrecognizer.v2_1_preview_3.models.SourcePath
+        :type file_stream: IO or ~azure.ai.formrecognizer.v2_1.models.SourcePath
         :keyword str content_type: Media type of the body sent to the API. Default value is "application/json".
          Allowed values are: "application/pdf", "image/bmp", "image/jpeg", "image/png", "image/tiff", "application/json".
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: Pass in True if you'd like the AsyncLROBasePolling polling method,
-         False for no polling, or your own initialized polling object for a personal polling strategy.
+        :keyword polling: By default, your polling method will be AsyncLROBasePolling.
+         Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either None or the result of cls(response)
         :rtype: ~azure.core.polling.AsyncLROPoller[None]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        polling = kwargs.pop('polling', False)  # type: Union[bool, AsyncPollingMethod]
+        polling = kwargs.pop('polling', True)  # type: Union[bool, AsyncPollingMethod]
         cls = kwargs.pop('cls', None)  # type: ClsType[None]
         lro_delay = kwargs.pop(
             'polling_interval',
@@ -1557,7 +1557,7 @@ class FormRecognizerClientOperationsMixin:
         :type result_id: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: AnalyzeOperationResult, or the result of cls(response)
-        :rtype: ~azure.ai.formrecognizer.v2_1_preview_3.models.AnalyzeOperationResult
+        :rtype: ~azure.ai.formrecognizer.v2_1.models.AnalyzeOperationResult
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType["_models.AnalyzeOperationResult"]
@@ -1704,25 +1704,25 @@ class FormRecognizerClientOperationsMixin:
          seventy-three languages and handwritten – English only). Layout supports auto language
          identification and multi language documents, so only provide a language code if you would like
          to force the documented to be processed as that specific language.
-        :type language: str or ~azure.ai.formrecognizer.v2_1_preview_3.models.Language
+        :type language: str or ~azure.ai.formrecognizer.v2_1.models.Language
         :param reading_order: Reading order algorithm to sort the text lines returned. Supported
          reading orders include: basic(default), natural.
-        :type reading_order: str or ~azure.ai.formrecognizer.v2_1_preview_3.models.ReadingOrder
+        :type reading_order: str or ~azure.ai.formrecognizer.v2_1.models.ReadingOrder
         :param file_stream: .json, .pdf, .jpg, .png, .tiff or .bmp type file stream.
-        :type file_stream: IO or ~azure.ai.formrecognizer.v2_1_preview_3.models.SourcePath
+        :type file_stream: IO or ~azure.ai.formrecognizer.v2_1.models.SourcePath
         :keyword str content_type: Media type of the body sent to the API. Default value is "application/json".
          Allowed values are: "application/pdf", "image/bmp", "image/jpeg", "image/png", "image/tiff", "application/json".
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: Pass in True if you'd like the AsyncLROBasePolling polling method,
-         False for no polling, or your own initialized polling object for a personal polling strategy.
+        :keyword polling: By default, your polling method will be AsyncLROBasePolling.
+         Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either None or the result of cls(response)
         :rtype: ~azure.core.polling.AsyncLROPoller[None]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        polling = kwargs.pop('polling', False)  # type: Union[bool, AsyncPollingMethod]
+        polling = kwargs.pop('polling', True)  # type: Union[bool, AsyncPollingMethod]
         cls = kwargs.pop('cls', None)  # type: ClsType[None]
         lro_delay = kwargs.pop(
             'polling_interval',
@@ -1777,7 +1777,7 @@ class FormRecognizerClientOperationsMixin:
         :type result_id: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: AnalyzeOperationResult, or the result of cls(response)
-        :rtype: ~azure.ai.formrecognizer.v2_1_preview_3.models.AnalyzeOperationResult
+        :rtype: ~azure.ai.formrecognizer.v2_1.models.AnalyzeOperationResult
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType["_models.AnalyzeOperationResult"]
@@ -1829,7 +1829,7 @@ class FormRecognizerClientOperationsMixin:
 
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: An iterator like instance of either Models or the result of cls(response)
-        :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.ai.formrecognizer.v2_1_preview_3.models.Models]
+        :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.ai.formrecognizer.v2_1.models.Models]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType["_models.Models"]
@@ -1902,7 +1902,7 @@ class FormRecognizerClientOperationsMixin:
 
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: Models, or the result of cls(response)
-        :rtype: ~azure.ai.formrecognizer.v2_1_preview_3.models.Models
+        :rtype: ~azure.ai.formrecognizer.v2_1.models.Models
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType["_models.Models"]
