@@ -6,6 +6,10 @@
 
 * `ServiceBusAdministrationClient.update_*` methods now accept keyword arguments to override the properties specified in the model instance.
 
+**Bug Fixes**
+
+* Fixed a bug that `update_queue` and `update_subscription` mutating the properties `forward_to` and `forward_dead_lettered_messages_to` of the model instance when those properties are entities instead of full paths.
+
 ## 7.1.1 (2021-04-07)
 
 This version and all future versions will require Python 2.7 or Python 3.6+, Python 3.5 is no longer supported.
