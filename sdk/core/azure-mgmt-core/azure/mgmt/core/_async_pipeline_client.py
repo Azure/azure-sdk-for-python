@@ -49,6 +49,9 @@ class AsyncARMPipelineClient(AsyncPipelineClient):
                 )
             per_call_policies = kwargs.get('per_call_policies', [])
             per_call_policies.append(AsyncARMAutoResourceProviderRegistrationPolicy())
-            http_logging_policy = kwargs.get('http_logging_policy', ARMHttpLoggingPolicy(**kwargs))
-            kwargs["http_logging_policy"] = http_logging_policy
+            kwargs["per_call_policies"] = per_call_policies
+            config = kwargs.get('config')
+            if not config.http_logging_policy:
+                config.http_logging_policy = kwargs.get('http_logging_policy', ARMHttpLoggingPolicy(**kwargs))
+            kwargs["config"] = config
         super(AsyncARMPipelineClient, self).__init__(base_url, **kwargs)
