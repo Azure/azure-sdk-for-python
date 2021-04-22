@@ -157,7 +157,7 @@ class RequestsTransportResponse(HttpResponse, _RequestsTransportResponseBase):
     """Streaming of data from the response.
     """
     def stream_download(self, pipeline):
-        # type: (PipelineType, bool) -> Iterator[bytes]
+        # type: (PipelineType) -> Iterator[bytes]
         """Generator for streaming request body data."""
         return StreamDownloadGenerator(pipeline, self)
 
