@@ -184,6 +184,7 @@ class ServiceBusAdministrationClientRuleTests(AzureMgmtTestCase):
             mgmt_service.delete_rule(topic_name, subscription_name, rule_name)
             mgmt_service.delete_subscription(topic_name, subscription_name)
             mgmt_service.delete_topic(topic_name)
+            mgmt_service.close()
 
     @CachedResourceGroupPreparer(name_prefix='servicebustest')
     @CachedServiceBusNamespacePreparer(name_prefix='servicebustest')
@@ -331,6 +332,7 @@ class ServiceBusAdministrationClientRuleTests(AzureMgmtTestCase):
             mgmt_service.delete_rule(topic_name, subscription_name, rule_name)
             mgmt_service.delete_subscription(topic_name, subscription_name)
             mgmt_service.delete_topic(topic_name)
+            mgmt_service.close()
 
     @CachedResourceGroupPreparer(name_prefix='servicebustest')
     @CachedServiceBusNamespacePreparer(name_prefix='servicebustest')

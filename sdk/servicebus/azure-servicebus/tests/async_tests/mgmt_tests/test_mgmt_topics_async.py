@@ -182,6 +182,7 @@ class ServiceBusAdministrationClientTopicAsyncTests(AzureMgmtTestCase):
 
         finally:
             await mgmt_service.delete_topic(topic_name)
+            await mgmt_service.close()
 
     @CachedResourceGroupPreparer(name_prefix='servicebustest')
     @CachedServiceBusNamespacePreparer(name_prefix='servicebustest')
@@ -383,6 +384,7 @@ class ServiceBusAdministrationClientTopicAsyncTests(AzureMgmtTestCase):
             assert topic_description.support_ordering == False
         finally:
             await mgmt_service.delete_topic(topic_name)
+            await mgmt_service.close()
 
     @pytest.mark.liveTest
     @CachedResourceGroupPreparer(name_prefix='servicebustest')

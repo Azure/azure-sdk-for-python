@@ -448,6 +448,7 @@ class ServiceBusAdministrationClientQueueTests(AzureMgmtTestCase):
         finally:
             mgmt_service.delete_queue(queue_name)
             mgmt_service.delete_topic(topic_name)
+            mgmt_service.close()
 
     @pytest.mark.liveTest
     @CachedResourceGroupPreparer(name_prefix='servicebustest')
@@ -671,6 +672,7 @@ class ServiceBusAdministrationClientQueueTests(AzureMgmtTestCase):
 
         finally:
             mgmt_service.delete_queue(queue_name)
+            mgmt_service.close()
 
     @pytest.mark.liveTest
     @CachedResourceGroupPreparer(name_prefix='servicebustest')

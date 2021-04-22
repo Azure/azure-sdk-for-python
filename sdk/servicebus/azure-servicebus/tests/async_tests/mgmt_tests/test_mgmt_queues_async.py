@@ -643,6 +643,7 @@ class ServiceBusAdministrationClientQueueAsyncTests(AzureMgmtTestCase):
 
         finally:
             await mgmt_service.delete_queue(queue_name)
+            await mgmt_service.close()
     
     @pytest.mark.liveTest
     @CachedResourceGroupPreparer(name_prefix='servicebustest')

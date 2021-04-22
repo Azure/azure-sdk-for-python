@@ -421,6 +421,9 @@ class ServiceBusAdministrationClient:  # pylint:disable=too-many-public-methods
         Before calling this method, you should use `get_queue`, `create_queue` or `list_queues` to get a
         `QueueProperties` instance, then update the properties. Only a portion of properties can
         be updated. Refer to https://docs.microsoft.com/en-us/rest/api/servicebus/update-queue.
+        You could also pass keyword arguments for updating properties in the form of
+        `<property_name>=<property_value>` which will override whatever was specified in
+        the `QueueProperties` instance. Refer to ~azure.servicebus.management.QueueProperties for names of properties.
 
         :param queue: The queue that is returned from `get_queue`, `create_queue` or `list_queues` and
          has the updated properties.
@@ -666,6 +669,9 @@ class ServiceBusAdministrationClient:  # pylint:disable=too-many-public-methods
         Before calling this method, you should use `get_topic`, `create_topic` or `list_topics` to get a
         `TopicProperties` instance, then update the properties. Only a portion of properties can be updated.
         Refer to https://docs.microsoft.com/en-us/rest/api/servicebus/update-topic.
+        You could also pass keyword arguments for updating properties in the form of
+        `<property_name>=<property_value>` which will override whatever was specified in
+        the `TopicProperties` instance. Refer to ~azure.servicebus.management.TopicProperties for names of properties.
 
         :param topic: The topic that is returned from `get_topic`, `create_topic`, or `list_topics`
          and has the updated properties.
@@ -927,6 +933,10 @@ class ServiceBusAdministrationClient:  # pylint:disable=too-many-public-methods
 
         Before calling this method, you should use `get_subscription`, `update_subscription` or `list_subscription`
         to get a `SubscriptionProperties` instance, then update the properties.
+        You could also pass keyword arguments for updating properties in the form of
+        `<property_name>=<property_value>` which will override whatever was specified in
+        the `SubscriptionProperties` instance.
+        Refer to ~azure.servicebus.management.SubscriptionProperties for names of properties.
 
         :param str topic_name: The topic that owns the subscription.
         :param ~azure.servicebus.management.SubscriptionProperties subscription: The subscription that is returned
@@ -1139,6 +1149,9 @@ class ServiceBusAdministrationClient:  # pylint:disable=too-many-public-methods
 
         Before calling this method, you should use `get_rule`, `create_rule` or `list_rules` to get a `RuleProperties`
         instance, then update the properties.
+        You could also pass keyword arguments for updating properties in the form of
+        `<property_name>=<property_value>` which will override whatever was specified in
+        the `RuleProperties` instance. Refer to ~azure.servicebus.management.RuleProperties for names of properties.
 
         :param str topic_name: The topic that owns the subscription.
         :param str subscription_name: The subscription that

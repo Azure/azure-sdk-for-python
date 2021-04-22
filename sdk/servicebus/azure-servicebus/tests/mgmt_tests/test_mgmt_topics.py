@@ -182,6 +182,7 @@ class ServiceBusAdministrationClientTopicTests(AzureMgmtTestCase):
             assert topic_description.support_ordering == False
         finally:
             mgmt_service.delete_topic(topic_name)
+            mgmt_service.close()
 
     @CachedResourceGroupPreparer(name_prefix='servicebustest')
     @CachedServiceBusNamespacePreparer(name_prefix='servicebustest')
@@ -387,6 +388,7 @@ class ServiceBusAdministrationClientTopicTests(AzureMgmtTestCase):
 
         finally:
             mgmt_service.delete_topic(topic_name)
+            mgmt_service.close()
 
     @CachedResourceGroupPreparer(name_prefix='servicebustest')
     @CachedServiceBusNamespacePreparer(name_prefix='servicebustest')

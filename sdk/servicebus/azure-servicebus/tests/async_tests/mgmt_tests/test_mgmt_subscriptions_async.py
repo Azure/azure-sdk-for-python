@@ -485,6 +485,7 @@ class ServiceBusAdministrationClientSubscriptionAsyncTests(AzureMgmtTestCase):
         finally:
             await mgmt_service.delete_subscription(topic_name, subscription_name)
             await mgmt_service.delete_topic(topic_name)
+            await mgmt_service.close()
 
     @CachedResourceGroupPreparer(name_prefix='servicebustest')
     @CachedServiceBusNamespacePreparer(name_prefix='servicebustest')

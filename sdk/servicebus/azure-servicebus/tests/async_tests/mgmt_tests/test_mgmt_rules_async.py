@@ -167,6 +167,7 @@ class ServiceBusAdministrationClientRuleAsyncTests(AzureMgmtTestCase):
             await mgmt_service.delete_rule(topic_name, subscription_name, rule_name)
             await mgmt_service.delete_subscription(topic_name, subscription_name)
             await mgmt_service.delete_topic(topic_name)
+            await mgmt_service.close()
 
     @CachedResourceGroupPreparer(name_prefix='servicebustest')
     @CachedServiceBusNamespacePreparer(name_prefix='servicebustest')
@@ -310,6 +311,7 @@ class ServiceBusAdministrationClientRuleAsyncTests(AzureMgmtTestCase):
             await mgmt_service.delete_rule(topic_name, subscription_name, rule_name)
             await mgmt_service.delete_subscription(topic_name, subscription_name)
             await mgmt_service.delete_topic(topic_name)
+            await mgmt_service.close()
 
     @CachedResourceGroupPreparer(name_prefix='servicebustest')
     @CachedServiceBusNamespacePreparer(name_prefix='servicebustest')
