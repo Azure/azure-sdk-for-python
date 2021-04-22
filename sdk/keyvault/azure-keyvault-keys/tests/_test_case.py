@@ -22,15 +22,12 @@ def client_setup(testcase_func):
         client = test_class_instance.create_key_client(endpoint_url, api_version=api_version, **kwargs)
 
         if kwargs.get("is_async"):
-            try:
-                import asyncio
-            except ImportError:
-                pytest.mark.skip("Couldn't import asyncio")
-            else:
-                coro = asyncio.coroutine(testcase_func)
-                future = coro(test_class_instance, client, is_hsm=is_hsm)
-                loop = asyncio.get_event_loop()
-                loop.run_until_complete(future)
+            import asyncio
+
+            coroutine = asyncio.coroutine(testcase_func)
+            future = coroutine(test_class_instance, client, is_hsm=is_hsm)
+            loop = asyncio.get_event_loop()
+            loop.run_until_complete(future)
         else:
             testcase_func(test_class_instance, client, is_hsm=is_hsm)
     return wrapper
