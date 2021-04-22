@@ -173,7 +173,7 @@ class TestIdDocumentsFromUrl(FormRecognizerTest):
     def test_id_document_v2(self, client):
         with pytest.raises(ValueError) as e:
             client.begin_recognize_id_documents_from_url(self.id_document_url_jpg)
-        assert "Method 'begin_recognize_id_documents_from_url' is only available for API version V2_1_PREVIEW and up" in str(e.value)
+        assert "Method 'begin_recognize_id_documents_from_url' is only available for API version V2_1 and up" in str(e.value)
 
     @FormRecognizerPreparer()
     @GlobalClientPreparer()

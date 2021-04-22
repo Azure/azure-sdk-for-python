@@ -305,7 +305,7 @@ class TestContentFromUrlAsync(AsyncFormRecognizerTest):
         async with client:
             with pytest.raises(ValueError) as e:
                 await client.begin_recognize_content_from_url(self.form_url_jpg, language="en")
-            assert "'language' is only available for API version V2_1_PREVIEW and up" in str(e.value)
+            assert "'language' is only available for API version V2_1 and up" in str(e.value)
 
     @FormRecognizerPreparer()
     @GlobalClientPreparer()

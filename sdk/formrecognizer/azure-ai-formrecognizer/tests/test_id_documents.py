@@ -250,7 +250,7 @@ class TestIdDocument(FormRecognizerTest):
             id_document = fd.read()
         with pytest.raises(ValueError) as e:
             client.begin_recognize_id_documents(id_document)
-        assert "Method 'begin_recognize_id_documents' is only available for API version V2_1_PREVIEW and up" in str(e.value)
+        assert "Method 'begin_recognize_id_documents' is only available for API version V2_1 and up" in str(e.value)
 
     @FormRecognizerPreparer()
     @GlobalClientPreparer()
