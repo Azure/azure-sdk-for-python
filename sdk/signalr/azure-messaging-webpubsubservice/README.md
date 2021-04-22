@@ -1,5 +1,30 @@
 # AzureWebPubSub Service client library for Python
 
+[Azure Web PubSub Service](https://aka.ms/awps/doc) is a service that enables you to build real-time messaging web applications using WebSockets and the publish-subscribe pattern. Any platform supporting WebSocket APIs can connect to the service easily, e.g. web pages, mobile applications, edge devices, etc. The service manages the WebSocket connections for you and allows up to 100K \*concurrent connections. It provides powerful APIs for you to manage these clients and deliver real-time messages.
+
+Any scenario that requires real-time publish-subscribe messaging between server and clients or among clients, can use Azure Web PubSub service. Traditional real-time features that often require polling from server or submitting HTTP requests, can also use Azure Web PubSub service.
+
+We list some examples that are good to use Azure Web PubSub service:
+
+- **High frequency data updates:** gaming, voting, polling, auction.
+- **Live dashboards and monitoring:** company dashboard, financial market data, instant sales update, multi-player game leader board, and IoT monitoring.
+- **Cross-platform live chat:** live chat room, chat bot, on-line customer support, real-time shopping assistant, messenger, in-game chat, and so on.
+- **Real-time location on map:** logistic tracking, delivery status tracking, transportation status updates, GPS apps.
+- **Real-time targeted ads:** personalized real-time push ads and offers, interactive ads.
+- **Collaborative apps:** coauthoring, whiteboard apps and team meeting software.
+- **Push instant notifications:** social network, email, game, travel alert.
+- **Real-time broadcasting:** live audio/video broadcasting, live captioning, translating, events/news broadcasting.
+- **IoT and connected devices:** real-time IoT metrics, remote control, real-time status, and location tracking.
+- **Automation:** real-time trigger from upstream events.
+
+Use the client library to:
+
+- Send messages to hubs and groups.
+- Send messages to particular users and connections.
+- Organize users and connections into groups.
+- Close connections
+- Grant/revoke/check permissions for an existing connection
+
 [Source code](https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/signalr/azure-messaging-webpubsubservice) | [Package (Pypi)][package] | [API reference documentation](https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/signalr/azure-messaging-webpubsubservice) | [Product documentation][webpubsubservice_docs]
 
 ## Getting started
@@ -12,8 +37,8 @@ python -m pip install azure-messaging-webpubsubservice
 
 #### Prequisites
 
-* Python 2.7, or 3.6 or later is required to use this package.
-* You need an [Azure subscription][azure_sub], and a [Azure WebPubSub service instance][webpubsubservice] to use this package.
+- Python 2.7, or 3.6 or later is required to use this package.
+- You need an [Azure subscription][azure_sub], and a [Azure WebPubSub service instance][webpubsubservice] to use this package.
 
 ### Authenticating the client
 
@@ -51,7 +76,25 @@ In order to interact with the Azure WebPubSub service, you'll need to create an 
 
 ## Key concepts
 
-### Hubs, groups, connections and users
+### Hub
+
+Hub is a logical set of connections. All connections to Web PubSub connect to a specific hub. Messages that are broadcast to the hub are dispatched to all connections to that hub. For example, hub can be used for different applications, different applications can share one Azure Web PubSub service by using different hub names.
+
+### Group
+
+Group allow broadcast messages to a subset of connections to the hub. You can add and remove users and connections as needed. A client can join multiple groups, and a group can contain multiple clients.
+
+### User
+
+Connections to Web PubSub can belong to one user. A user might have multiple connections, for example when a single user is connected across multiple devices or multiple browser tabs.
+
+### Connection
+
+Connections, represented by a connection id, represent an individual websocket connection to the Web PubSub service. Connection id is always unique.
+
+### Message
+
+A message is either a UTF-8 encoded string or raw binary data.
 
 ## Troubleshooting
 
