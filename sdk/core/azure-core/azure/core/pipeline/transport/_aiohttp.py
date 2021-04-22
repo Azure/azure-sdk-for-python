@@ -89,7 +89,8 @@ class AioHttpTransport(AsyncHttpTransport):
             self.session = aiohttp.ClientSession(
                 loop=self._loop,
                 trust_env=self._use_env_settings,
-                cookie_jar=jar
+                cookie_jar=jar,
+                auto_decompress=False,
             )
         if self.session is not None:
             await self.session.__aenter__()
