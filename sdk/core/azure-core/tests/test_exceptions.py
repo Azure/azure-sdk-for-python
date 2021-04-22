@@ -83,7 +83,7 @@ class TestExceptions(object):
 
     def test_empty_httpresponse_error(self):
         error = HttpResponseError()
-        assert str(error) == "Operation returned an invalid status 'None'"
+        assert str(error) == "HttpResponseError: Operation returned an invalid status 'None'"
         assert error.message == "Operation returned an invalid status 'None'"
         assert error.response is None
         assert error.reason is None
@@ -92,7 +92,7 @@ class TestExceptions(object):
 
     def test_message_httpresponse_error(self):
         error = HttpResponseError(message="Specific error message")
-        assert str(error) == "Specific error message"
+        assert str(error) == "HttpResponseError: Specific error message"
         assert error.message == "Specific error message"
         assert error.response is None
         assert error.reason is None
@@ -101,7 +101,7 @@ class TestExceptions(object):
 
     def test_error_continuation_token(self):
         error = HttpResponseError(message="Specific error message", continuation_token='foo')
-        assert str(error) == "Specific error message"
+        assert str(error) == "HttpResponseError: Specific error message"
         assert error.message == "Specific error message"
         assert error.response is None
         assert error.reason is None
@@ -203,7 +203,7 @@ class TestExceptions(object):
 
         exp = ODataV4Error(_build_response(b""))
         assert exp.message == "Operation returned an invalid status 'Bad Request'"
-        assert str(exp) == "Operation returned an invalid status 'Bad Request'"
+        assert str(exp) == "HttpResponseError <MockResponse: 400 Bad Request, Content-Type: application/json>: Operation returned an invalid status 'Bad Request'"
 
     def test_odata_v4_minimal(self):
         """Minimal valid OData v4 is code/message and nothing else.
