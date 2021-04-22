@@ -12,6 +12,12 @@
 from enum import Enum
 
 
+class MultiFactorAuthProvider(str, Enum):
+
+    azure = "Azure"
+    none = "None"
+
+
 class ProvisioningState(str, Enum):
 
     not_specified = "NotSpecified"

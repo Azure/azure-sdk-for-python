@@ -9,10 +9,11 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .managed_services_client import ManagedServicesClient
-from .version import VERSION
+from ._configuration import ManagedServicesClientConfiguration
+from ._managed_services_client import ManagedServicesClient
+__all__ = ['ManagedServicesClient', 'ManagedServicesClientConfiguration']
 
-__all__ = ['ManagedServicesClient']
+from .version import VERSION
 
 __version__ = VERSION
 
