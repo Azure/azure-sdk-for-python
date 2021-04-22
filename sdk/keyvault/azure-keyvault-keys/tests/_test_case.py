@@ -2,7 +2,6 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 # ------------------------------------
-import asyncio
 import functools
 import os
 
@@ -23,10 +22,15 @@ def client_setup(testcase_func):
         client = test_class_instance.create_key_client(endpoint_url, api_version=api_version, **kwargs)
 
         if kwargs.get("is_async"):
-            coro = asyncio.coroutine(testcase_func)
-            future = coro(test_class_instance, client, is_hsm=is_hsm)
-            loop = asyncio.get_event_loop()
-            loop.run_until_complete(future)
+            try:
+                import asyncio
+            except ImportError:
+                pytest.mark.skip("Couldn't import asyncio")
+            else:
+                coro = asyncio.coroutine(testcase_func)
+                future = coro(test_class_instance, client, is_hsm=is_hsm)
+                loop = asyncio.get_event_loop()
+                loop.run_until_complete(future)
         else:
             testcase_func(test_class_instance, client, is_hsm=is_hsm)
     return wrapper
