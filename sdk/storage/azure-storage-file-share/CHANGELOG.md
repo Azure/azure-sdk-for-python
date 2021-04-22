@@ -1,5 +1,8 @@
 # Release History
 
+## 12.4.3 (Unreleased)
+
+
 ## 12.4.2 (2021-04-20)
 **Fixes**
 - Make `AccountName`, `AccountKey` etc. in conn_str case insensitive
@@ -47,14 +50,14 @@
 **New features**
 - Added `undelete_share` on FileShareServiceClient so that users can restore deleted share on share soft delete enabled account. Users can also list deleted shares when `list_shares` by specifying `include_deleted=True`.
 
-## 12.1.2 
-**Fixes**
-- Improve the performance of upload when using max_concurrency
-
 ## 12.1.1 (2020-03-10)
 
 **Notes**
 - The `StorageUserAgentPolicy` is now replaced with the `UserAgentPolicy` from azure-core. With this, the custom user agents are now added as a prefix instead of being appended.
+
+## 12.1.2 
+**Fixes**
+- Improve the performance of upload when using max_concurrency
 
 ## 12.1.0 
 
