@@ -2449,7 +2449,7 @@ class BlobClient(AsyncStorageAccountHostsMixin, BlobClientBase):  # pylint: disa
         except HttpResponseError as error:
             process_storage_error(error)
 
-    def get_container_client(self): # pylint: disable=client-method-missing-kwargs
+    def _get_container_client(self): # pylint: disable=client-method-missing-kwargs
         # type: (...) -> ContainerClient
         """Get a client to interact with the blob's parent container.
 
