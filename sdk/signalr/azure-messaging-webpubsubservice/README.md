@@ -38,7 +38,8 @@ python -m pip install azure-messaging-webpubsubservice
 #### Prequisites
 
 - Python 2.7, or 3.6 or later is required to use this package.
-- You need an [Azure subscription][azure_sub], and a [Azure WebPubSub service instance][webpubsubservice] to use this package.
+- You need an [Azure subscription][azure_sub], and a [Azure WebPubSub service instance][webpubsubservice_docs] to use this package.
+- An existing Azure Web PubSub service instance.
 
 ### Authenticating the client
 
@@ -94,7 +95,7 @@ Connections, represented by a connection id, represent an individual websocket c
 
 ### Message
 
-A message is either a UTF-8 encoded string or raw binary data.
+A message is either a UTF-8 encoded string, json or raw binary data.
 
 ## Troubleshooting
 
@@ -129,12 +130,11 @@ see the Code of Conduct FAQ or contact opencode@microsoft.com with any
 additional questions or comments.
 
 <!-- LINKS -->
-[webpubsubservice_docs]: https://docs.microsoft.com/azure/azure-messaging-webpubsubservice/
+[webpubsubservice_docs]: https://aka.ms/awps/doc
 [azure_cli]: https://docs.microsoft.com/cli/azure
 [azure_sub]: https://azure.microsoft.com/free/
 [webpubsubservice_client_class]: https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/signalr/azure-messaging-webpubsubservice/azure/messaging/webpubsubservice/__init__.py
 [package]: https://pypi.org/project/azure-messaging-webpubsubservice/
-[webpubsubservice]: https://azure.microsoft.com/services/webpubsubservice/
 [default_cred_ref]: https://aka.ms/azsdk-python-identity-default-cred-ref
 [cla]: https://cla.microsoft.com
 [code_of_conduct]: https://opensource.microsoft.com/codeofconduct/
