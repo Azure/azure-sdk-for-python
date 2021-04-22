@@ -2,24 +2,51 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 # ------------------------------------
+import asyncio
+import functools
 import os
 
 from azure.keyvault.keys._shared import HttpChallengeCache
 from azure.keyvault.keys._shared.client_base import ApiVersion, DEFAULT_VERSION
 from devtools_testutils import AzureTestCase
-from parameterized import parameterized
+from parameterized import parameterized, param
 import pytest
 from six.moves.urllib_parse import urlparse
 
 
-def get_test_parameters():
+def client_setup(testcase_func):
+    """decorator that creates a client to be passed in to a test method"""
+    @functools.wraps(testcase_func)
+    def wrapper(test_class_instance, api_version, is_hsm=False, **kwargs):
+        test_class_instance._skip_if_not_configured(api_version, is_hsm)
+        endpoint_url = test_class_instance.managed_hsm_url if is_hsm else test_class_instance.vault_url
+        client = test_class_instance.create_key_client(endpoint_url, api_version=api_version, **kwargs)
+
+        if kwargs.get("is_async"):
+            coro = asyncio.coroutine(testcase_func)
+            future = coro(test_class_instance, client, is_hsm=is_hsm)
+            loop = asyncio.get_event_loop()
+            loop.run_until_complete(future)
+        else:
+            testcase_func(test_class_instance, client, is_hsm=is_hsm)
+    return wrapper
+
+
+def get_decorator(hsm_only=False, vault_only=False, **kwargs):
+    """returns a test decorator for test parameterization"""
+    params = [param(api_version=p[0], is_hsm=p[1], **kwargs) for p in get_test_parameters(hsm_only, vault_only)]
+    return functools.partial(parameterized.expand, params, name_func=suffixed_test_name)
+
+
+def get_test_parameters(hsm_only=False, vault_only=False):
     """generates a list of parameter pairs for test case parameterization, where [x, y] = [api_version, is_hsm]"""
     combinations = []
     hsm_supported_versions = {ApiVersion.V7_2_preview}
     for api_version in ApiVersion:
-        if api_version in hsm_supported_versions:
+        if not vault_only and api_version in hsm_supported_versions:
             combinations.append([api_version, True])
-        combinations.append([api_version, False])
+        if not hsm_only:
+            combinations.append([api_version, False])
     return combinations
 
 

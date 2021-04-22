@@ -2,18 +2,13 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 # ------------------------------------
-import functools
-
-from azure.keyvault.keys import ApiVersion
 from azure.keyvault.keys.crypto import CryptographyClient
-from parameterized import parameterized, param
 
 from _shared.test_case import KeyVaultTestCase
-from _test_case import KeysTestCase, suffixed_test_name
+from _test_case import client_setup, get_decorator, KeysTestCase
 
 
-PARAMS = [param(api_version=api_version) for api_version in ApiVersion]
-test_all_versions = functools.partial(parameterized.expand, PARAMS, name_func=suffixed_test_name)
+all_api_versions = get_decorator(vault_only=True)
 
 
 class TestCryptoExamples(KeysTestCase, KeyVaultTestCase):
@@ -23,10 +18,9 @@ class TestCryptoExamples(KeysTestCase, KeyVaultTestCase):
 
     # pylint:disable=unused-variable
 
-    @test_all_versions()
-    def test_encrypt_decrypt(self, **kwargs):
-        self._skip_if_not_configured(kwargs.get("api_version"), False)
-        key_client = self.create_key_client(self.vault_url, **kwargs)
+    @all_api_versions()
+    @client_setup
+    def test_encrypt_decrypt(self, key_client, **kwargs):
         credential = self.get_credential(CryptographyClient)
         key_name = self.get_resource_name("crypto-test-encrypt-key")
         key_client.create_rsa_key(key_name)
@@ -60,10 +54,9 @@ class TestCryptoExamples(KeysTestCase, KeyVaultTestCase):
         print(result.plaintext)
         # [END decrypt]
 
-    @test_all_versions()
-    def test_wrap_unwrap(self, **kwargs):
-        self._skip_if_not_configured(kwargs.get("api_version"), False)
-        key_client = self.create_key_client(self.vault_url, **kwargs)
+    @all_api_versions()
+    @client_setup
+    def test_wrap_unwrap(self, key_client, **kwargs):
         credential = self.get_credential(CryptographyClient)
         key_name = self.get_resource_name("crypto-test-wrapping-key")
         key = key_client.create_rsa_key(key_name)
@@ -88,10 +81,9 @@ class TestCryptoExamples(KeysTestCase, KeyVaultTestCase):
         key = result.key
         # [END unwrap_key]
 
-    @test_all_versions()
-    def test_sign_verify(self, **kwargs):
-        self._skip_if_not_configured(kwargs.get("api_version"), False)
-        key_client = self.create_key_client(self.vault_url, **kwargs)
+    @all_api_versions()
+    @client_setup
+    def test_sign_verify(self, key_client, **kwargs):
         credential = self.get_credential(CryptographyClient)
         key_name = self.get_resource_name("crypto-test-wrapping-key")
         key = key_client.create_rsa_key(key_name)

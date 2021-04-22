@@ -3,18 +3,15 @@
 # Licensed under the MIT License.
 # ------------------------------------
 from __future__ import print_function
-import functools
 import time
 
-from azure.keyvault.keys import ApiVersion, KeyType
-from parameterized import parameterized, param
+from azure.keyvault.keys import KeyType
 
 from _shared.test_case import KeyVaultTestCase
-from _test_case import KeysTestCase, suffixed_test_name
+from _test_case import client_setup, get_decorator, KeysTestCase
 
 
-PARAMS = [param(api_version=api_version) for api_version in ApiVersion]
-test_all_versions = functools.partial(parameterized.expand, PARAMS, name_func=suffixed_test_name)
+all_api_versions = get_decorator(vault_only=True)
 
 
 def print(*args):
@@ -35,10 +32,9 @@ def test_create_key_client():
 
 
 class TestExamplesKeyVault(KeysTestCase, KeyVaultTestCase):
-    @test_all_versions()
-    def test_example_key_crud_operations(self, **kwargs):
-        self._skip_if_not_configured(kwargs.get("api_version"), False)
-        key_client = self.create_key_client(self.vault_url, **kwargs)
+    @all_api_versions()
+    @client_setup
+    def test_example_key_crud_operations(self, key_client, **kwargs):
         key_name = self.get_resource_name("key-name")
 
         # [START create_key]
@@ -127,11 +123,9 @@ class TestExamplesKeyVault(KeysTestCase, KeyVaultTestCase):
         deleted_key_poller.wait()
         # [END delete_key]
 
-    @test_all_versions()
-    def test_example_key_list_operations(self, **kwargs):
-        self._skip_if_not_configured(kwargs.get("api_version"), False)
-        key_client = self.create_key_client(self.vault_url, **kwargs)
-
+    @all_api_versions()
+    @client_setup
+    def test_example_key_list_operations(self, key_client, **kwargs):
         for i in range(4):
             key_name = self.get_resource_name("key{}".format(i))
             key_client.create_ec_key(key_name)
@@ -169,10 +163,9 @@ class TestExamplesKeyVault(KeysTestCase, KeyVaultTestCase):
             print(key.deleted_date)
         # [END list_deleted_keys]
 
-    @test_all_versions()
-    def test_example_keys_backup_restore(self, **kwargs):
-        self._skip_if_not_configured(kwargs.get("api_version"), False)
-        key_client = self.create_key_client(self.vault_url, **kwargs)
+    @all_api_versions()
+    @client_setup
+    def test_example_keys_backup_restore(self, key_client, **kwargs):
         key_name = self.get_resource_name("keyrec")
         key_client.create_key(key_name, "RSA")
         # [START backup_key]
@@ -196,10 +189,9 @@ class TestExamplesKeyVault(KeysTestCase, KeyVaultTestCase):
         print(restored_key.properties.version)
         # [END restore_key_backup]
 
-    @test_all_versions()
-    def test_example_keys_recover(self, **kwargs):
-        self._skip_if_not_configured(kwargs.get("api_version"), False)
-        key_client = self.create_key_client(self.vault_url, **kwargs)
+    @all_api_versions()
+    @client_setup
+    def test_example_keys_recover(self, key_client, **kwargs):
         key_name = self.get_resource_name("key-name")
         created_key = key_client.create_key(key_name, "RSA")
         key_client.begin_delete_key(created_key.name).wait()

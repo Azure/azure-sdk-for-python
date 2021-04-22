@@ -2,19 +2,13 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 # ------------------------------------
-import functools
-
-from azure.keyvault.keys import ApiVersion
 from azure.keyvault.keys.crypto.aio import CryptographyClient
-from devtools_testutils import PowerShellPreparer
-from parameterized import parameterized, param
 
 from _shared.test_case_async import KeyVaultTestCase
-from _test_case import KeysTestCase, suffixed_test_name
+from _test_case import client_setup, get_decorator, KeysTestCase
 
 
-PARAMS = [param(api_version=api_version) for api_version in ApiVersion]
-test_all_versions = functools.partial(parameterized.expand, PARAMS, name_func=suffixed_test_name)
+all_api_versions = get_decorator(is_async=True, vault_only=True)
 
 
 class TestCryptoExamples(KeysTestCase, KeyVaultTestCase):
@@ -22,11 +16,9 @@ class TestCryptoExamples(KeysTestCase, KeyVaultTestCase):
         kwargs["match_body"] = False
         super(TestCryptoExamples, self).__init__(*args, **kwargs)
 
-    @test_all_versions()
-    @PowerShellPreparer("keyvault")
-    async def test_encrypt_decrypt_async(self, **kwargs):
-        self._skip_if_not_configured(kwargs.get("api_version"), False)
-        key_client = self.create_key_client(self.vault_url, is_async=True, **kwargs)
+    @all_api_versions()
+    @client_setup
+    async def test_encrypt_decrypt_async(self, key_client, **kwargs):
         credential = self.get_credential(CryptographyClient, is_async=True)
         key_name = self.get_resource_name("crypto-test-encrypt-key")
         await key_client.create_rsa_key(key_name)
@@ -65,11 +57,9 @@ class TestCryptoExamples(KeysTestCase, KeyVaultTestCase):
         print(result.plaintext)
         # [END decrypt]
 
-    @test_all_versions()
-    @PowerShellPreparer("keyvault")
-    async def test_wrap_unwrap_async(self, **kwargs):
-        self._skip_if_not_configured(kwargs.get("api_version"), False)
-        key_client = self.create_key_client(self.vault_url, is_async=True, **kwargs)
+    @all_api_versions()
+    @client_setup
+    async def test_wrap_unwrap_async(self, key_client, **kwargs):
         credential = self.get_credential(CryptographyClient, is_async=True)
         key_name = self.get_resource_name("crypto-test-wrapping-key")
         key = await key_client.create_rsa_key(key_name)
@@ -93,11 +83,9 @@ class TestCryptoExamples(KeysTestCase, KeyVaultTestCase):
         result = await client.unwrap_key(KeyWrapAlgorithm.rsa_oaep, encrypted_key)
         # [END unwrap_key]
 
-    @test_all_versions()
-    @PowerShellPreparer("keyvault")
-    async def test_sign_verify_async(self, **kwargs):
-        self._skip_if_not_configured(kwargs.get("api_version"), False)
-        key_client = self.create_key_client(self.vault_url, is_async=True, **kwargs)
+    @all_api_versions()
+    @client_setup
+    async def test_sign_verify_async(self, key_client, **kwargs):
         credential = self.get_credential(CryptographyClient, is_async=True)
         key_name = self.get_resource_name("crypto-test-wrapping-key")
         key = await key_client.create_rsa_key(key_name)
