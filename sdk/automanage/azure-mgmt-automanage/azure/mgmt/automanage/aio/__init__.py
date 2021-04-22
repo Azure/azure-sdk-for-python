@@ -6,5 +6,5 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-from ._automanage_client_async import AutomanageClient
+from ._automanage_client import AutomanageClient
 __all__ = ['AutomanageClient']

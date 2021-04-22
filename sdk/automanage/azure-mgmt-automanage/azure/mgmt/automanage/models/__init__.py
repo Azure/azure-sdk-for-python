@@ -22,8 +22,8 @@ try:
     from ._models_py3 import ConfigurationProfilePreferenceUpdate
     from ._models_py3 import ConfigurationProfilePreferenceVmBackup
     from ._models_py3 import ErrorAdditionalInfo
+    from ._models_py3 import ErrorDetail
     from ._models_py3 import ErrorResponse
-    from ._models_py3 import ErrorResponseError
     from ._models_py3 import Operation
     from ._models_py3 import OperationDisplay
     from ._models_py3 import OperationList
@@ -47,8 +47,8 @@ except (SyntaxError, ImportError):
     from ._models import ConfigurationProfilePreferenceUpdate  # type: ignore
     from ._models import ConfigurationProfilePreferenceVmBackup  # type: ignore
     from ._models import ErrorAdditionalInfo  # type: ignore
+    from ._models import ErrorDetail  # type: ignore
     from ._models import ErrorResponse  # type: ignore
-    from ._models import ErrorResponseError  # type: ignore
     from ._models import Operation  # type: ignore
     from ._models import OperationDisplay  # type: ignore
     from ._models import OperationList  # type: ignore
@@ -60,7 +60,7 @@ except (SyntaxError, ImportError):
 from ._automanage_client_enums import (
     ConfigurationProfile,
     EnableRealTimeProtection,
-    ProvisioningStatus,
+    ProvisioningState,
     ResourceIdentityType,
     RunScheduledScan,
     ScanType,
@@ -83,8 +83,8 @@ __all__ = [
     'ConfigurationProfilePreferenceUpdate',
     'ConfigurationProfilePreferenceVmBackup',
     'ErrorAdditionalInfo',
+    'ErrorDetail',
     'ErrorResponse',
-    'ErrorResponseError',
     'Operation',
     'OperationDisplay',
     'OperationList',
@@ -94,7 +94,7 @@ __all__ = [
     'UpdateResource',
     'ConfigurationProfile',
     'EnableRealTimeProtection',
-    'ProvisioningStatus',
+    'ProvisioningState',
     'ResourceIdentityType',
     'RunScheduledScan',
     'ScanType',
