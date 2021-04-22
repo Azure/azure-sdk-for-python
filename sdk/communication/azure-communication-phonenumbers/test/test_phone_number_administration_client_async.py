@@ -17,9 +17,6 @@ from phone_number_helper import PhoneNumberUriReplacer
 SKIP_PURCHASE_PHONE_NUMBER_TESTS = True
 PURCHASE_PHONE_NUMBER_TEST_SKIP_REASON = "Phone numbers shouldn't be purchased in live tests"
 
-SKIP_SEARCH_AVAILABLE_PHONE_NUMBER_TESTS = True
-SEARCH_AVAILABLE_PHONE_NUMBER_TEST_SKIP_REASON = "Temporarily skipping test"
-
 
 class PhoneNumbersClientTestAsync(AsyncCommunicationTestCase):
     def setUp(self):
@@ -74,7 +71,6 @@ class PhoneNumbersClientTestAsync(AsyncCommunicationTestCase):
             phone_number = await self.phone_number_client.get_purchased_phone_number(self.phone_number)
         assert phone_number.phone_number == self.phone_number
 
-    @pytest.mark.skipif(SKIP_SEARCH_AVAILABLE_PHONE_NUMBER_TESTS, reason=SEARCH_AVAILABLE_PHONE_NUMBER_TEST_SKIP_REASON)
     @AsyncCommunicationTestCase.await_prepared_test
     async def test_search_available_phone_numbers_from_managed_identity(self):
         endpoint, access_key = parse_connection_str(self.connection_str)
@@ -94,7 +90,6 @@ class PhoneNumbersClientTestAsync(AsyncCommunicationTestCase):
             )
         assert poller.result()
 
-    @pytest.mark.skipif(SKIP_SEARCH_AVAILABLE_PHONE_NUMBER_TESTS, reason=SEARCH_AVAILABLE_PHONE_NUMBER_TEST_SKIP_REASON)
     @AsyncCommunicationTestCase.await_prepared_test
     async def test_search_available_phone_numbers(self):
         capabilities = PhoneNumberCapabilities(
