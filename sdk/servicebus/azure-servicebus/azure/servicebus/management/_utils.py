@@ -374,6 +374,6 @@ def override_properties_with_keyword_arguments(properties, **kwargs):
     # type: (PropertiesType, Any) -> None
     if not kwargs:
         return
-    for key in kwargs.keys():
-        if key in properties.keys():
+    for key, _ in kwargs:
+        if key in properties:
             properties[key] = kwargs.get(key)
