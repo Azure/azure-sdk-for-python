@@ -25,8 +25,8 @@ if TYPE_CHECKING:
     T = TypeVar('T')
     ClsType = Optional[Callable[[PipelineResponse[HttpRequest, HttpResponse], T, Dict[str, Any]], Any]]
 
-class DatabasesOperations(object):
-    """DatabasesOperations operations.
+class ScriptsOperations(object):
+    """ScriptsOperations operations.
 
     You should not instantiate this class directly. Instead, you should create a Client instance that
     instantiates it for you and attaches it as an attribute.
@@ -47,92 +47,28 @@ class DatabasesOperations(object):
         self._deserialize = deserializer
         self._config = config
 
-    def check_name_availability(
+    def list_by_database(
         self,
         resource_group_name,  # type: str
         cluster_name,  # type: str
-        resource_name,  # type: "_models.CheckNameRequest"
+        database_name,  # type: str
         **kwargs  # type: Any
     ):
-        # type: (...) -> "_models.CheckNameResult"
-        """Checks that the database name is valid and is not already in use.
+        # type: (...) -> Iterable["_models.ScriptListResult"]
+        """Returns the list of database scripts for given database.
 
         :param resource_group_name: The name of the resource group containing the Kusto cluster.
         :type resource_group_name: str
         :param cluster_name: The name of the Kusto cluster.
         :type cluster_name: str
-        :param resource_name: The name of the resource.
-        :type resource_name: ~azure.mgmt.kusto.models.CheckNameRequest
+        :param database_name: The name of the database in the Kusto cluster.
+        :type database_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: CheckNameResult, or the result of cls(response)
-        :rtype: ~azure.mgmt.kusto.models.CheckNameResult
+        :return: An iterator like instance of either ScriptListResult or the result of cls(response)
+        :rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.kusto.models.ScriptListResult]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["_models.CheckNameResult"]
-        error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
-        }
-        error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2021-01-01"
-        content_type = kwargs.pop("content_type", "application/json")
-        accept = "application/json"
-
-        # Construct URL
-        url = self.check_name_availability.metadata['url']  # type: ignore
-        path_format_arguments = {
-            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
-            'clusterName': self._serialize.url("cluster_name", cluster_name, 'str'),
-            'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
-        }
-        url = self._client.format_url(url, **path_format_arguments)
-
-        # Construct parameters
-        query_parameters = {}  # type: Dict[str, Any]
-        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
-
-        # Construct headers
-        header_parameters = {}  # type: Dict[str, Any]
-        header_parameters['Content-Type'] = self._serialize.header("content_type", content_type, 'str')
-        header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
-
-        body_content_kwargs = {}  # type: Dict[str, Any]
-        body_content = self._serialize.body(resource_name, 'CheckNameRequest')
-        body_content_kwargs['content'] = body_content
-        request = self._client.post(url, query_parameters, header_parameters, **body_content_kwargs)
-        pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
-        response = pipeline_response.http_response
-
-        if response.status_code not in [200]:
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise HttpResponseError(response=response, error_format=ARMErrorFormat)
-
-        deserialized = self._deserialize('CheckNameResult', pipeline_response)
-
-        if cls:
-            return cls(pipeline_response, deserialized, {})
-
-        return deserialized
-    check_name_availability.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Kusto/clusters/{clusterName}/checkNameAvailability'}  # type: ignore
-
-    def list_by_cluster(
-        self,
-        resource_group_name,  # type: str
-        cluster_name,  # type: str
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> Iterable["_models.DatabaseListResult"]
-        """Returns the list of databases of the given Kusto cluster.
-
-        :param resource_group_name: The name of the resource group containing the Kusto cluster.
-        :type resource_group_name: str
-        :param cluster_name: The name of the Kusto cluster.
-        :type cluster_name: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: An iterator like instance of either DatabaseListResult or the result of cls(response)
-        :rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.kusto.models.DatabaseListResult]
-        :raises: ~azure.core.exceptions.HttpResponseError
-        """
-        cls = kwargs.pop('cls', None)  # type: ClsType["_models.DatabaseListResult"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.ScriptListResult"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -147,11 +83,12 @@ class DatabasesOperations(object):
 
             if not next_link:
                 # Construct URL
-                url = self.list_by_cluster.metadata['url']  # type: ignore
+                url = self.list_by_database.metadata['url']  # type: ignore
                 path_format_arguments = {
+                    'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
                     'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
                     'clusterName': self._serialize.url("cluster_name", cluster_name, 'str'),
-                    'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
+                    'databaseName': self._serialize.url("database_name", database_name, 'str'),
                 }
                 url = self._client.format_url(url, **path_format_arguments)
                 # Construct parameters
@@ -166,7 +103,7 @@ class DatabasesOperations(object):
             return request
 
         def extract_data(pipeline_response):
-            deserialized = self._deserialize('DatabaseListResult', pipeline_response)
+            deserialized = self._deserialize('ScriptListResult', pipeline_response)
             list_of_elem = deserialized.value
             if cls:
                 list_of_elem = cls(list_of_elem)
@@ -187,17 +124,18 @@ class DatabasesOperations(object):
         return ItemPaged(
             get_next, extract_data
         )
-    list_by_cluster.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Kusto/clusters/{clusterName}/databases'}  # type: ignore
+    list_by_database.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Kusto/clusters/{clusterName}/databases/{databaseName}/scripts'}  # type: ignore
 
     def get(
         self,
         resource_group_name,  # type: str
         cluster_name,  # type: str
         database_name,  # type: str
+        script_name,  # type: str
         **kwargs  # type: Any
     ):
-        # type: (...) -> "_models.Database"
-        """Returns a database.
+        # type: (...) -> "_models.Script"
+        """Gets a Kusto cluster database script.
 
         :param resource_group_name: The name of the resource group containing the Kusto cluster.
         :type resource_group_name: str
@@ -205,12 +143,14 @@ class DatabasesOperations(object):
         :type cluster_name: str
         :param database_name: The name of the database in the Kusto cluster.
         :type database_name: str
+        :param script_name: The name of the Kusto database script.
+        :type script_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: Database, or the result of cls(response)
-        :rtype: ~azure.mgmt.kusto.models.Database
+        :return: Script, or the result of cls(response)
+        :rtype: ~azure.mgmt.kusto.models.Script
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["_models.Database"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.Script"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -221,10 +161,11 @@ class DatabasesOperations(object):
         # Construct URL
         url = self.get.metadata['url']  # type: ignore
         path_format_arguments = {
+            'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
             'clusterName': self._serialize.url("cluster_name", cluster_name, 'str'),
             'databaseName': self._serialize.url("database_name", database_name, 'str'),
-            'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
+            'scriptName': self._serialize.url("script_name", script_name, 'str'),
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -244,24 +185,25 @@ class DatabasesOperations(object):
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             raise HttpResponseError(response=response, error_format=ARMErrorFormat)
 
-        deserialized = self._deserialize('Database', pipeline_response)
+        deserialized = self._deserialize('Script', pipeline_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})
 
         return deserialized
-    get.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Kusto/clusters/{clusterName}/databases/{databaseName}'}  # type: ignore
+    get.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Kusto/clusters/{clusterName}/databases/{databaseName}/scripts/{scriptName}'}  # type: ignore
 
     def _create_or_update_initial(
         self,
         resource_group_name,  # type: str
         cluster_name,  # type: str
         database_name,  # type: str
-        parameters,  # type: "_models.Database"
+        script_name,  # type: str
+        parameters,  # type: "_models.Script"
         **kwargs  # type: Any
     ):
-        # type: (...) -> "_models.Database"
-        cls = kwargs.pop('cls', None)  # type: ClsType["_models.Database"]
+        # type: (...) -> "_models.Script"
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.Script"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -273,10 +215,11 @@ class DatabasesOperations(object):
         # Construct URL
         url = self._create_or_update_initial.metadata['url']  # type: ignore
         path_format_arguments = {
+            'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
             'clusterName': self._serialize.url("cluster_name", cluster_name, 'str'),
             'databaseName': self._serialize.url("database_name", database_name, 'str'),
-            'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
+            'scriptName': self._serialize.url("script_name", script_name, 'str'),
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -290,7 +233,7 @@ class DatabasesOperations(object):
         header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
 
         body_content_kwargs = {}  # type: Dict[str, Any]
-        body_content = self._serialize.body(parameters, 'Database')
+        body_content = self._serialize.body(parameters, 'Script')
         body_content_kwargs['content'] = body_content
         request = self._client.put(url, query_parameters, header_parameters, **body_content_kwargs)
         pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
@@ -301,30 +244,31 @@ class DatabasesOperations(object):
             raise HttpResponseError(response=response, error_format=ARMErrorFormat)
 
         if response.status_code == 200:
-            deserialized = self._deserialize('Database', pipeline_response)
+            deserialized = self._deserialize('Script', pipeline_response)
 
         if response.status_code == 201:
-            deserialized = self._deserialize('Database', pipeline_response)
+            deserialized = self._deserialize('Script', pipeline_response)
 
         if response.status_code == 202:
-            deserialized = self._deserialize('Database', pipeline_response)
+            deserialized = self._deserialize('Script', pipeline_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})
 
         return deserialized
-    _create_or_update_initial.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Kusto/clusters/{clusterName}/databases/{databaseName}'}  # type: ignore
+    _create_or_update_initial.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Kusto/clusters/{clusterName}/databases/{databaseName}/scripts/{scriptName}'}  # type: ignore
 
     def begin_create_or_update(
         self,
         resource_group_name,  # type: str
         cluster_name,  # type: str
         database_name,  # type: str
-        parameters,  # type: "_models.Database"
+        script_name,  # type: str
+        parameters,  # type: "_models.Script"
         **kwargs  # type: Any
     ):
-        # type: (...) -> LROPoller["_models.Database"]
-        """Creates or updates a database.
+        # type: (...) -> LROPoller["_models.Script"]
+        """Creates a Kusto database script.
 
         :param resource_group_name: The name of the resource group containing the Kusto cluster.
         :type resource_group_name: str
@@ -332,20 +276,22 @@ class DatabasesOperations(object):
         :type cluster_name: str
         :param database_name: The name of the database in the Kusto cluster.
         :type database_name: str
-        :param parameters: The database parameters supplied to the CreateOrUpdate operation.
-        :type parameters: ~azure.mgmt.kusto.models.Database
+        :param script_name: The name of the Kusto database script.
+        :type script_name: str
+        :param parameters: The Kusto Script parameters contains the KQL to run.
+        :type parameters: ~azure.mgmt.kusto.models.Script
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
         :keyword polling: Pass in True if you'd like the ARMPolling polling method,
          False for no polling, or your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.PollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
-        :return: An instance of LROPoller that returns either Database or the result of cls(response)
-        :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.kusto.models.Database]
+        :return: An instance of LROPoller that returns either Script or the result of cls(response)
+        :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.kusto.models.Script]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         polling = kwargs.pop('polling', True)  # type: Union[bool, PollingMethod]
-        cls = kwargs.pop('cls', None)  # type: ClsType["_models.Database"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.Script"]
         lro_delay = kwargs.pop(
             'polling_interval',
             self._config.polling_interval
@@ -356,6 +302,7 @@ class DatabasesOperations(object):
                 resource_group_name=resource_group_name,
                 cluster_name=cluster_name,
                 database_name=database_name,
+                script_name=script_name,
                 parameters=parameters,
                 cls=lambda x,y,z: x,
                 **kwargs
@@ -365,17 +312,18 @@ class DatabasesOperations(object):
         kwargs.pop('content_type', None)
 
         def get_long_running_output(pipeline_response):
-            deserialized = self._deserialize('Database', pipeline_response)
+            deserialized = self._deserialize('Script', pipeline_response)
 
             if cls:
                 return cls(pipeline_response, deserialized, {})
             return deserialized
 
         path_format_arguments = {
+            'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
             'clusterName': self._serialize.url("cluster_name", cluster_name, 'str'),
             'databaseName': self._serialize.url("database_name", database_name, 'str'),
-            'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
+            'scriptName': self._serialize.url("script_name", script_name, 'str'),
         }
 
         if polling is True: polling_method = ARMPolling(lro_delay, path_format_arguments=path_format_arguments,  **kwargs)
@@ -390,18 +338,19 @@ class DatabasesOperations(object):
             )
         else:
             return LROPoller(self._client, raw_result, get_long_running_output, polling_method)
-    begin_create_or_update.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Kusto/clusters/{clusterName}/databases/{databaseName}'}  # type: ignore
+    begin_create_or_update.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Kusto/clusters/{clusterName}/databases/{databaseName}/scripts/{scriptName}'}  # type: ignore
 
     def _update_initial(
         self,
         resource_group_name,  # type: str
         cluster_name,  # type: str
         database_name,  # type: str
-        parameters,  # type: "_models.Database"
+        script_name,  # type: str
+        parameters,  # type: "_models.Script"
         **kwargs  # type: Any
     ):
-        # type: (...) -> "_models.Database"
-        cls = kwargs.pop('cls', None)  # type: ClsType["_models.Database"]
+        # type: (...) -> "_models.Script"
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.Script"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -413,10 +362,11 @@ class DatabasesOperations(object):
         # Construct URL
         url = self._update_initial.metadata['url']  # type: ignore
         path_format_arguments = {
+            'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
             'clusterName': self._serialize.url("cluster_name", cluster_name, 'str'),
             'databaseName': self._serialize.url("database_name", database_name, 'str'),
-            'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
+            'scriptName': self._serialize.url("script_name", script_name, 'str'),
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -430,41 +380,39 @@ class DatabasesOperations(object):
         header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
 
         body_content_kwargs = {}  # type: Dict[str, Any]
-        body_content = self._serialize.body(parameters, 'Database')
+        body_content = self._serialize.body(parameters, 'Script')
         body_content_kwargs['content'] = body_content
         request = self._client.patch(url, query_parameters, header_parameters, **body_content_kwargs)
         pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
 
-        if response.status_code not in [200, 201, 202]:
+        if response.status_code not in [200, 202]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             raise HttpResponseError(response=response, error_format=ARMErrorFormat)
 
         if response.status_code == 200:
-            deserialized = self._deserialize('Database', pipeline_response)
-
-        if response.status_code == 201:
-            deserialized = self._deserialize('Database', pipeline_response)
+            deserialized = self._deserialize('Script', pipeline_response)
 
         if response.status_code == 202:
-            deserialized = self._deserialize('Database', pipeline_response)
+            deserialized = self._deserialize('Script', pipeline_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})
 
         return deserialized
-    _update_initial.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Kusto/clusters/{clusterName}/databases/{databaseName}'}  # type: ignore
+    _update_initial.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Kusto/clusters/{clusterName}/databases/{databaseName}/scripts/{scriptName}'}  # type: ignore
 
     def begin_update(
         self,
         resource_group_name,  # type: str
         cluster_name,  # type: str
         database_name,  # type: str
-        parameters,  # type: "_models.Database"
+        script_name,  # type: str
+        parameters,  # type: "_models.Script"
         **kwargs  # type: Any
     ):
-        # type: (...) -> LROPoller["_models.Database"]
-        """Updates a database.
+        # type: (...) -> LROPoller["_models.Script"]
+        """Updates a database script.
 
         :param resource_group_name: The name of the resource group containing the Kusto cluster.
         :type resource_group_name: str
@@ -472,20 +420,22 @@ class DatabasesOperations(object):
         :type cluster_name: str
         :param database_name: The name of the database in the Kusto cluster.
         :type database_name: str
-        :param parameters: The database parameters supplied to the Update operation.
-        :type parameters: ~azure.mgmt.kusto.models.Database
+        :param script_name: The name of the Kusto database script.
+        :type script_name: str
+        :param parameters: The Kusto Script parameters contains to the KQL to run.
+        :type parameters: ~azure.mgmt.kusto.models.Script
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
         :keyword polling: Pass in True if you'd like the ARMPolling polling method,
          False for no polling, or your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.PollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
-        :return: An instance of LROPoller that returns either Database or the result of cls(response)
-        :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.kusto.models.Database]
+        :return: An instance of LROPoller that returns either Script or the result of cls(response)
+        :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.kusto.models.Script]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         polling = kwargs.pop('polling', True)  # type: Union[bool, PollingMethod]
-        cls = kwargs.pop('cls', None)  # type: ClsType["_models.Database"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.Script"]
         lro_delay = kwargs.pop(
             'polling_interval',
             self._config.polling_interval
@@ -496,6 +446,7 @@ class DatabasesOperations(object):
                 resource_group_name=resource_group_name,
                 cluster_name=cluster_name,
                 database_name=database_name,
+                script_name=script_name,
                 parameters=parameters,
                 cls=lambda x,y,z: x,
                 **kwargs
@@ -505,17 +456,18 @@ class DatabasesOperations(object):
         kwargs.pop('content_type', None)
 
         def get_long_running_output(pipeline_response):
-            deserialized = self._deserialize('Database', pipeline_response)
+            deserialized = self._deserialize('Script', pipeline_response)
 
             if cls:
                 return cls(pipeline_response, deserialized, {})
             return deserialized
 
         path_format_arguments = {
+            'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
             'clusterName': self._serialize.url("cluster_name", cluster_name, 'str'),
             'databaseName': self._serialize.url("database_name", database_name, 'str'),
-            'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
+            'scriptName': self._serialize.url("script_name", script_name, 'str'),
         }
 
         if polling is True: polling_method = ARMPolling(lro_delay, path_format_arguments=path_format_arguments,  **kwargs)
@@ -530,13 +482,14 @@ class DatabasesOperations(object):
             )
         else:
             return LROPoller(self._client, raw_result, get_long_running_output, polling_method)
-    begin_update.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Kusto/clusters/{clusterName}/databases/{databaseName}'}  # type: ignore
+    begin_update.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Kusto/clusters/{clusterName}/databases/{databaseName}/scripts/{scriptName}'}  # type: ignore
 
     def _delete_initial(
         self,
         resource_group_name,  # type: str
         cluster_name,  # type: str
         database_name,  # type: str
+        script_name,  # type: str
         **kwargs  # type: Any
     ):
         # type: (...) -> None
@@ -551,10 +504,11 @@ class DatabasesOperations(object):
         # Construct URL
         url = self._delete_initial.metadata['url']  # type: ignore
         path_format_arguments = {
+            'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
             'clusterName': self._serialize.url("cluster_name", cluster_name, 'str'),
             'databaseName': self._serialize.url("database_name", database_name, 'str'),
-            'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
+            'scriptName': self._serialize.url("script_name", script_name, 'str'),
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -577,17 +531,18 @@ class DatabasesOperations(object):
         if cls:
             return cls(pipeline_response, None, {})
 
-    _delete_initial.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Kusto/clusters/{clusterName}/databases/{databaseName}'}  # type: ignore
+    _delete_initial.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Kusto/clusters/{clusterName}/databases/{databaseName}/scripts/{scriptName}'}  # type: ignore
 
     def begin_delete(
         self,
         resource_group_name,  # type: str
         cluster_name,  # type: str
         database_name,  # type: str
+        script_name,  # type: str
         **kwargs  # type: Any
     ):
         # type: (...) -> LROPoller[None]
-        """Deletes the database with the given name.
+        """Deletes a Kusto principalAssignment.
 
         :param resource_group_name: The name of the resource group containing the Kusto cluster.
         :type resource_group_name: str
@@ -595,6 +550,8 @@ class DatabasesOperations(object):
         :type cluster_name: str
         :param database_name: The name of the database in the Kusto cluster.
         :type database_name: str
+        :param script_name: The name of the Kusto database script.
+        :type script_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
         :keyword polling: Pass in True if you'd like the ARMPolling polling method,
@@ -617,6 +574,7 @@ class DatabasesOperations(object):
                 resource_group_name=resource_group_name,
                 cluster_name=cluster_name,
                 database_name=database_name,
+                script_name=script_name,
                 cls=lambda x,y,z: x,
                 **kwargs
             )
@@ -629,10 +587,11 @@ class DatabasesOperations(object):
                 return cls(pipeline_response, None, {})
 
         path_format_arguments = {
+            'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
             'clusterName': self._serialize.url("cluster_name", cluster_name, 'str'),
             'databaseName': self._serialize.url("database_name", database_name, 'str'),
-            'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
+            'scriptName': self._serialize.url("script_name", script_name, 'str'),
         }
 
         if polling is True: polling_method = ARMPolling(lro_delay, path_format_arguments=path_format_arguments,  **kwargs)
@@ -647,17 +606,18 @@ class DatabasesOperations(object):
             )
         else:
             return LROPoller(self._client, raw_result, get_long_running_output, polling_method)
-    begin_delete.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Kusto/clusters/{clusterName}/databases/{databaseName}'}  # type: ignore
+    begin_delete.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Kusto/clusters/{clusterName}/databases/{databaseName}/scripts/{scriptName}'}  # type: ignore
 
-    def list_principals(
+    def check_name_availability(
         self,
         resource_group_name,  # type: str
         cluster_name,  # type: str
         database_name,  # type: str
+        script_name,  # type: "_models.ScriptCheckNameRequest"
         **kwargs  # type: Any
     ):
-        # type: (...) -> Iterable["_models.DatabasePrincipalListResult"]
-        """Returns a list of database principals of the given Kusto cluster and database.
+        # type: (...) -> "_models.CheckNameResult"
+        """Checks that the script name is valid and is not already in use.
 
         :param resource_group_name: The name of the resource group containing the Kusto cluster.
         :type resource_group_name: str
@@ -665,94 +625,14 @@ class DatabasesOperations(object):
         :type cluster_name: str
         :param database_name: The name of the database in the Kusto cluster.
         :type database_name: str
+        :param script_name: The name of the script.
+        :type script_name: ~azure.mgmt.kusto.models.ScriptCheckNameRequest
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: An iterator like instance of either DatabasePrincipalListResult or the result of cls(response)
-        :rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.kusto.models.DatabasePrincipalListResult]
+        :return: CheckNameResult, or the result of cls(response)
+        :rtype: ~azure.mgmt.kusto.models.CheckNameResult
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["_models.DatabasePrincipalListResult"]
-        error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
-        }
-        error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2021-01-01"
-        accept = "application/json"
-
-        def prepare_request(next_link=None):
-            # Construct headers
-            header_parameters = {}  # type: Dict[str, Any]
-            header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
-
-            if not next_link:
-                # Construct URL
-                url = self.list_principals.metadata['url']  # type: ignore
-                path_format_arguments = {
-                    'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
-                    'clusterName': self._serialize.url("cluster_name", cluster_name, 'str'),
-                    'databaseName': self._serialize.url("database_name", database_name, 'str'),
-                    'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
-                }
-                url = self._client.format_url(url, **path_format_arguments)
-                # Construct parameters
-                query_parameters = {}  # type: Dict[str, Any]
-                query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
-
-                request = self._client.post(url, query_parameters, header_parameters)
-            else:
-                url = next_link
-                query_parameters = {}  # type: Dict[str, Any]
-                request = self._client.get(url, query_parameters, header_parameters)
-            return request
-
-        def extract_data(pipeline_response):
-            deserialized = self._deserialize('DatabasePrincipalListResult', pipeline_response)
-            list_of_elem = deserialized.value
-            if cls:
-                list_of_elem = cls(list_of_elem)
-            return None, iter(list_of_elem)
-
-        def get_next(next_link=None):
-            request = prepare_request(next_link)
-
-            pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
-            response = pipeline_response.http_response
-
-            if response.status_code not in [200]:
-                map_error(status_code=response.status_code, response=response, error_map=error_map)
-                raise HttpResponseError(response=response, error_format=ARMErrorFormat)
-
-            return pipeline_response
-
-        return ItemPaged(
-            get_next, extract_data
-        )
-    list_principals.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Kusto/clusters/{clusterName}/databases/{databaseName}/listPrincipals'}  # type: ignore
-
-    def add_principals(
-        self,
-        resource_group_name,  # type: str
-        cluster_name,  # type: str
-        database_name,  # type: str
-        database_principals_to_add,  # type: "_models.DatabasePrincipalListRequest"
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> "_models.DatabasePrincipalListResult"
-        """Add Database principals permissions.
-
-        :param resource_group_name: The name of the resource group containing the Kusto cluster.
-        :type resource_group_name: str
-        :param cluster_name: The name of the Kusto cluster.
-        :type cluster_name: str
-        :param database_name: The name of the database in the Kusto cluster.
-        :type database_name: str
-        :param database_principals_to_add: List of database principals to add.
-        :type database_principals_to_add: ~azure.mgmt.kusto.models.DatabasePrincipalListRequest
-        :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: DatabasePrincipalListResult, or the result of cls(response)
-        :rtype: ~azure.mgmt.kusto.models.DatabasePrincipalListResult
-        :raises: ~azure.core.exceptions.HttpResponseError
-        """
-        cls = kwargs.pop('cls', None)  # type: ClsType["_models.DatabasePrincipalListResult"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.CheckNameResult"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -762,7 +642,7 @@ class DatabasesOperations(object):
         accept = "application/json"
 
         # Construct URL
-        url = self.add_principals.metadata['url']  # type: ignore
+        url = self.check_name_availability.metadata['url']  # type: ignore
         path_format_arguments = {
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
             'clusterName': self._serialize.url("cluster_name", cluster_name, 'str'),
@@ -781,7 +661,7 @@ class DatabasesOperations(object):
         header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
 
         body_content_kwargs = {}  # type: Dict[str, Any]
-        body_content = self._serialize.body(database_principals_to_add, 'DatabasePrincipalListRequest')
+        body_content = self._serialize.body(script_name, 'ScriptCheckNameRequest')
         body_content_kwargs['content'] = body_content
         request = self._client.post(url, query_parameters, header_parameters, **body_content_kwargs)
         pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
@@ -791,81 +671,10 @@ class DatabasesOperations(object):
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             raise HttpResponseError(response=response, error_format=ARMErrorFormat)
 
-        deserialized = self._deserialize('DatabasePrincipalListResult', pipeline_response)
+        deserialized = self._deserialize('CheckNameResult', pipeline_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})
 
         return deserialized
-    add_principals.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Kusto/clusters/{clusterName}/databases/{databaseName}/addPrincipals'}  # type: ignore
-
-    def remove_principals(
-        self,
-        resource_group_name,  # type: str
-        cluster_name,  # type: str
-        database_name,  # type: str
-        database_principals_to_remove,  # type: "_models.DatabasePrincipalListRequest"
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> "_models.DatabasePrincipalListResult"
-        """Remove Database principals permissions.
-
-        :param resource_group_name: The name of the resource group containing the Kusto cluster.
-        :type resource_group_name: str
-        :param cluster_name: The name of the Kusto cluster.
-        :type cluster_name: str
-        :param database_name: The name of the database in the Kusto cluster.
-        :type database_name: str
-        :param database_principals_to_remove: List of database principals to remove.
-        :type database_principals_to_remove: ~azure.mgmt.kusto.models.DatabasePrincipalListRequest
-        :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: DatabasePrincipalListResult, or the result of cls(response)
-        :rtype: ~azure.mgmt.kusto.models.DatabasePrincipalListResult
-        :raises: ~azure.core.exceptions.HttpResponseError
-        """
-        cls = kwargs.pop('cls', None)  # type: ClsType["_models.DatabasePrincipalListResult"]
-        error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
-        }
-        error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2021-01-01"
-        content_type = kwargs.pop("content_type", "application/json")
-        accept = "application/json"
-
-        # Construct URL
-        url = self.remove_principals.metadata['url']  # type: ignore
-        path_format_arguments = {
-            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
-            'clusterName': self._serialize.url("cluster_name", cluster_name, 'str'),
-            'databaseName': self._serialize.url("database_name", database_name, 'str'),
-            'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
-        }
-        url = self._client.format_url(url, **path_format_arguments)
-
-        # Construct parameters
-        query_parameters = {}  # type: Dict[str, Any]
-        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
-
-        # Construct headers
-        header_parameters = {}  # type: Dict[str, Any]
-        header_parameters['Content-Type'] = self._serialize.header("content_type", content_type, 'str')
-        header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
-
-        body_content_kwargs = {}  # type: Dict[str, Any]
-        body_content = self._serialize.body(database_principals_to_remove, 'DatabasePrincipalListRequest')
-        body_content_kwargs['content'] = body_content
-        request = self._client.post(url, query_parameters, header_parameters, **body_content_kwargs)
-        pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
-        response = pipeline_response.http_response
-
-        if response.status_code not in [200]:
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise HttpResponseError(response=response, error_format=ARMErrorFormat)
-
-        deserialized = self._deserialize('DatabasePrincipalListResult', pipeline_response)
-
-        if cls:
-            return cls(pipeline_response, deserialized, {})
-
-        return deserialized
-    remove_principals.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Kusto/clusters/{clusterName}/databases/{databaseName}/removePrincipals'}  # type: ignore
+    check_name_availability.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Kusto/clusters/{clusterName}/databases/{databaseName}/scriptsCheckNameAvailability'}  # type: ignore
