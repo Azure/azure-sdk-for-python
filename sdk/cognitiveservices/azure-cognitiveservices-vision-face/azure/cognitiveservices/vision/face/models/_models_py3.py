@@ -153,7 +153,8 @@ class DetectedFace(Model):
     :param face_id:
     :type face_id: str
     :param recognition_model: Possible values include: 'recognition_01',
-     'recognition_02'. Default value: "recognition_01" .
+     'recognition_02', 'recognition_03', 'recognition_04'. Default value:
+     "recognition_01" .
     :type recognition_model: str or
      ~azure.cognitiveservices.vision.face.models.RecognitionModel
     :param face_rectangle: Required.
@@ -300,7 +301,8 @@ class FaceAttributes(Model):
     :type emotion: ~azure.cognitiveservices.vision.face.models.Emotion
     :param hair: Properties describing hair attributes.
     :type hair: ~azure.cognitiveservices.vision.face.models.Hair
-    :param makeup: Properties describing present makeups on a given face.
+    :param makeup: Properties describing the presence of makeup on a given
+     face.
     :type makeup: ~azure.cognitiveservices.vision.face.models.Makeup
     :param occlusion: Properties describing occlusions on a given face.
     :type occlusion: ~azure.cognitiveservices.vision.face.models.Occlusion
@@ -313,6 +315,8 @@ class FaceAttributes(Model):
     :type exposure: ~azure.cognitiveservices.vision.face.models.Exposure
     :param noise: Properties describing noise level of the image.
     :type noise: ~azure.cognitiveservices.vision.face.models.Noise
+    :param mask: Properties describing the presence of a mask on a given face.
+    :type mask: ~azure.cognitiveservices.vision.face.models.Mask
     """
 
     _attribute_map = {
@@ -330,9 +334,10 @@ class FaceAttributes(Model):
         'blur': {'key': 'blur', 'type': 'Blur'},
         'exposure': {'key': 'exposure', 'type': 'Exposure'},
         'noise': {'key': 'noise', 'type': 'Noise'},
+        'mask': {'key': 'mask', 'type': 'Mask'},
     }
 
-    def __init__(self, *, age: float=None, gender=None, smile: float=None, facial_hair=None, glasses=None, head_pose=None, emotion=None, hair=None, makeup=None, occlusion=None, accessories=None, blur=None, exposure=None, noise=None, **kwargs) -> None:
+    def __init__(self, *, age: float=None, gender=None, smile: float=None, facial_hair=None, glasses=None, head_pose=None, emotion=None, hair=None, makeup=None, occlusion=None, accessories=None, blur=None, exposure=None, noise=None, mask=None, **kwargs) -> None:
         super(FaceAttributes, self).__init__(**kwargs)
         self.age = age
         self.gender = gender
@@ -348,6 +353,7 @@ class FaceAttributes(Model):
         self.blur = blur
         self.exposure = exposure
         self.noise = noise
+        self.mask = mask
 
 
 class FaceLandmarks(Model):
@@ -527,7 +533,8 @@ class MetaDataContract(NameAndUserDataContract):
     :param user_data: User specified data. Length should not exceed 16KB.
     :type user_data: str
     :param recognition_model: Possible values include: 'recognition_01',
-     'recognition_02'. Default value: "recognition_01" .
+     'recognition_02', 'recognition_03', 'recognition_04'. Default value:
+     "recognition_01" .
     :type recognition_model: str or
      ~azure.cognitiveservices.vision.face.models.RecognitionModel
     """
@@ -558,7 +565,8 @@ class FaceList(MetaDataContract):
     :param user_data: User specified data. Length should not exceed 16KB.
     :type user_data: str
     :param recognition_model: Possible values include: 'recognition_01',
-     'recognition_02'. Default value: "recognition_01" .
+     'recognition_02', 'recognition_03', 'recognition_04'. Default value:
+     "recognition_01" .
     :type recognition_model: str or
      ~azure.cognitiveservices.vision.face.models.RecognitionModel
     :param face_list_id: Required. FaceListId of the target face list.
@@ -658,7 +666,8 @@ class FindSimilarRequest(Model):
 
     :param face_id: Required. FaceId of the query face. User needs to call
      Face - Detect first to get a valid faceId. Note that this faceId is not
-     persisted and will expire 24 hours after the detection call
+     persisted and will expire at the time specified by faceIdTimeToLive after
+     the detection call
     :type face_id: str
     :param face_list_id: An existing user-specified unique candidate face
      list, created in Face List - Create a Face List. Face list contains a set
@@ -673,9 +682,10 @@ class FindSimilarRequest(Model):
      provided at the same time.
     :type large_face_list_id: str
     :param face_ids: An array of candidate faceIds. All of them are created by
-     Face - Detect and the faceIds will expire 24 hours after the detection
-     call. The number of faceIds is limited to 1000. Parameter faceListId,
-     largeFaceListId and faceIds should not be provided at the same time.
+     Face - Detect and the faceIds will expire at the time specified by
+     faceIdTimeToLive after the detection call. The number of faceIds is
+     limited to 1000. Parameter faceListId, largeFaceListId and faceIds should
+     not be provided at the same time.
     :type face_ids: list[str]
     :param max_num_of_candidates_returned: The number of top similar faces
      returned. The valid range is [1, 1000]. Default value: 20 .
@@ -983,7 +993,8 @@ class LargeFaceList(MetaDataContract):
     :param user_data: User specified data. Length should not exceed 16KB.
     :type user_data: str
     :param recognition_model: Possible values include: 'recognition_01',
-     'recognition_02'. Default value: "recognition_01" .
+     'recognition_02', 'recognition_03', 'recognition_04'. Default value:
+     "recognition_01" .
     :type recognition_model: str or
      ~azure.cognitiveservices.vision.face.models.RecognitionModel
     :param large_face_list_id: Required. LargeFaceListId of the target large
@@ -1019,7 +1030,8 @@ class LargePersonGroup(MetaDataContract):
     :param user_data: User specified data. Length should not exceed 16KB.
     :type user_data: str
     :param recognition_model: Possible values include: 'recognition_01',
-     'recognition_02'. Default value: "recognition_01" .
+     'recognition_02', 'recognition_03', 'recognition_04'. Default value:
+     "recognition_01" .
     :type recognition_model: str or
      ~azure.cognitiveservices.vision.face.models.RecognitionModel
     :param large_person_group_id: Required. LargePersonGroupId of the target
@@ -1046,7 +1058,7 @@ class LargePersonGroup(MetaDataContract):
 
 
 class Makeup(Model):
-    """Properties describing present makeups on a given face.
+    """Properties describing the presence of makeup on a given face.
 
     :param eye_makeup: A boolean value describing whether eye makeup is
      present on a face.
@@ -1065,6 +1077,28 @@ class Makeup(Model):
         super(Makeup, self).__init__(**kwargs)
         self.eye_makeup = eye_makeup
         self.lip_makeup = lip_makeup
+
+
+class Mask(Model):
+    """Properties describing the presence of a mask on a given face.
+
+    :param type: Mask type if any of the face. Possible values include:
+     'noMask', 'faceMask', 'otherMaskOrOcclusion', 'uncertain'
+    :type type: str or ~azure.cognitiveservices.vision.face.models.MaskType
+    :param nose_and_mouth_covered: A boolean value indicating whether nose and
+     mouth are covered.
+    :type nose_and_mouth_covered: bool
+    """
+
+    _attribute_map = {
+        'type': {'key': 'type', 'type': 'MaskType'},
+        'nose_and_mouth_covered': {'key': 'noseAndMouthCovered', 'type': 'bool'},
+    }
+
+    def __init__(self, *, type=None, nose_and_mouth_covered: bool=None, **kwargs) -> None:
+        super(Mask, self).__init__(**kwargs)
+        self.type = type
+        self.nose_and_mouth_covered = nose_and_mouth_covered
 
 
 class Noise(Model):
@@ -1186,8 +1220,8 @@ class PersistedFace(Model):
 
     :param persisted_face_id: Required. The persistedFaceId of the target
      face, which is persisted and will not expire. Different from faceId
-     created by Face - Detect and will expire in 24 hours after the detection
-     call.
+     created by Face - Detect and will expire in at the time specified by
+     faceIdTimeToLive after the detection call.
     :type persisted_face_id: str
     :param user_data: User-provided data attached to the face. The size limit
      is 1KB.
@@ -1256,7 +1290,8 @@ class PersonGroup(MetaDataContract):
     :param user_data: User specified data. Length should not exceed 16KB.
     :type user_data: str
     :param recognition_model: Possible values include: 'recognition_01',
-     'recognition_02'. Default value: "recognition_01" .
+     'recognition_02', 'recognition_03', 'recognition_04'. Default value:
+     "recognition_01" .
     :type recognition_model: str or
      ~azure.cognitiveservices.vision.face.models.RecognitionModel
     :param person_group_id: Required. PersonGroupId of the target person
@@ -1288,7 +1323,8 @@ class SimilarFace(Model):
     All required parameters must be populated in order to send to Azure.
 
     :param face_id: FaceId of candidate face when find by faceIds. faceId is
-     created by Face - Detect and will expire 24 hours after the detection call
+     created by Face - Detect and will expire at the time specified by
+     faceIdTimeToLive after the detection call
     :type face_id: str
     :param persisted_face_id: PersistedFaceId of candidate face when find by
      faceListId. persistedFaceId in face list is persisted and will not expire.
