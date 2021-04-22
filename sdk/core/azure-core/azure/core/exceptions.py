@@ -160,13 +160,14 @@ class ODataV4Format(object):
         return self
 
     def __str__(self):
-        return "({}) {}".format(self.code, self.message)
+        return self.message_details()
 
     def message_details(self):
         """Return a detailled string of the error.
         """
         # () -> str
-        error_str = "Code: {}".format(self.code)
+        error_str = "({}) {}".format(self.code, self.message)
+        error_str += "\nCode: {}".format(self.code)
         error_str += "\nMessage: {}".format(self.message)
         if self.target:
             error_str += "\nTarget: {}".format(self.target)
