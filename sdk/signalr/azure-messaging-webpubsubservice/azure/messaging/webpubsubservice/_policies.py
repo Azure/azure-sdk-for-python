@@ -63,7 +63,7 @@ class JwtCredentialPolicy(SansIOHTTPPolicy):
         request.http_request.headers["Authorization"] = "Bearer " + self._encode(
             request.http_request.url
         )
-        return super(JwtCredentialPolicy, self).on_request( # pylint: disable=super-with-arguments
+        return super(JwtCredentialPolicy, self).on_request( # pylint: disable=R1725
             request
         )
 
