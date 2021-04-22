@@ -270,18 +270,15 @@ class ConfidentialLedgerClient(ConfidentialLedgerClientBase):
     @distributed_trace
     def get_ledger_entry(
         self,
-        interval=0.5,  # type: float
-        max_tries=6,  # type: int
         **kwargs,  # type: Any
     ):
         # type: (...) -> LedgerEntry
         """Gets an entry in the ledger.
 
-        :param interval: Interval, in seconds, between retries while waiting for results.
-        :type interval: float
-        :param max_tries: Maximum number of times to try the query. Retries are attempted if the
-            result is not Ready.
-        :type max_tries: int
+        :keyword float interval: Interval, in seconds, between retries while waiting for results,
+            defaults to 0.5.
+        :keyword int max_tries: Maximum number of times to try the query, defaults to 6. Retries are
+            attempted if the result is not Ready.
         :keyword str transaction_id: A transaction identifier. If not specified, the latest
             transaction is fetched.
         :keyword sub_ledger_id: Identifies the sub-ledger to fetch the ledger entry from.
@@ -290,6 +287,8 @@ class ConfidentialLedgerClient(ConfidentialLedgerClientBase):
         :raises: ~azure.core.exceptions.HttpResponseError
         """
 
+        interval = kwargs.pop("interval", 0.5)
+        max_tries = kwargs.pop("max_tries", 6)
         transaction_id = kwargs.pop("transaction_id", None)
 
         if transaction_id is not None:
@@ -337,8 +336,6 @@ class ConfidentialLedgerClient(ConfidentialLedgerClientBase):
     def get_transaction_receipt(
         self,
         transaction_id,  # type: str
-        interval=0.5,  # type: float
-        max_tries=6,  # type: int
         **kwargs,  # type: Any
     ):
         # type: (...) -> TransactionReceipt
@@ -346,11 +343,10 @@ class ConfidentialLedgerClient(ConfidentialLedgerClientBase):
 
         :param transaction_id: Transaction identifier.
         :type transaction_id: str
-        :param interval: Interval, in seconds, between retries while waiting for results.
-        :type interval: float
-        :param max_tries: Maximum number of times to try the query. Retries are attempted if the
-            result is not Ready.
-        :type max_tries: int
+        :keyword float interval: Interval, in seconds, between retries while waiting for results,
+            defaults to 0.5.
+        :keyword int max_tries: Maximum number of times to try the query, defaults to 6. Retries are
+            attempted if the result is not Ready.
         :return: Receipt certifying the specified transaction.
         :rtype: ~azure.confidentialledger.TransactionReceipt
         :raises: ~azure.core.exceptions.HttpResponseError
@@ -358,6 +354,9 @@ class ConfidentialLedgerClient(ConfidentialLedgerClientBase):
 
         if transaction_id is None:
             raise ValueError("transaction_id cannot be None")
+
+        interval = kwargs.pop("interval", 0.5)
+        max_tries = kwargs.pop("max_tries", 6)
 
         ready = False
         result = None
@@ -440,8 +439,6 @@ class ConfidentialLedgerClient(ConfidentialLedgerClientBase):
     def wait_until_durable(
         self,
         transaction_id,  # type: str
-        interval=0.5,  # type: float
-        max_queries=3,  # type: int
         **kwargs,  # type: Any
     ):
         # type: (...) -> None
@@ -451,14 +448,17 @@ class ConfidentialLedgerClient(ConfidentialLedgerClientBase):
 
         :param transaction_id: Identifies the transaction to wait for.
         :type transaction_id: str
-        :param interval: Time, in seconds, to wait between queries.
-        :type interval: float
-        :param max_queries: The maximum amount of queries to make before raising an exception.
-        :type max_queries: int
+        :keyword float interval: Interval, in seconds, between retries while waiting for results,
+            defaults to 0.5.
+        :keyword int max_queries: Maximum number of queries to make for durability, defaults to 3.
         :return: None.
         :rtype: None
         :raises: ~azure.core.exceptions.HttpResponseError
+        :raises: TimeoutError
         """
+
+        interval = kwargs.pop("interval", 0.5)
+        max_queries = kwargs.pop("max_queries", 3)
 
         for attempt_num in range(max_queries):
             transaction_status = self.get_transaction_status(
