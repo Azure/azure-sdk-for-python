@@ -503,7 +503,7 @@ class TestCustomFormsFromUrl(FormRecognizerTest):
 
         poller = fr_client.begin_recognize_custom_forms_from_url(
             model.model_id,
-            self.label_table_variable_row_url_pdf,
+            self.label_table_fixed_row_url_pdf,
             cls=callback
         )
         form = poller.result()
