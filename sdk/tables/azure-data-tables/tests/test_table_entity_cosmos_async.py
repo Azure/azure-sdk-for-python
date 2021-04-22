@@ -70,6 +70,7 @@ class StorageTableEntityTest(AzureTestCase, AsyncTableTestCase):
                         await t.delete_table(table_name)
                     except:
                         pass
+            self.sleep(SLEEP_DELAY)
 
     # --Helpers-----------------------------------------------------------------
     async def _create_query_table(self, entity_count):
@@ -285,7 +286,6 @@ class StorageTableEntityTest(AzureTestCase, AsyncTableTestCase):
         assert len(keys) ==  3
 
     # --Test cases for entities ------------------------------------------
-    @pytest.mark.skip("Forbidden operation")
     @CosmosPreparer()
     async def test_url_encoding_at_symbol(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
 
@@ -300,7 +300,7 @@ class StorageTableEntityTest(AzureTestCase, AsyncTableTestCase):
             await self.table.create_entity(entity)
 
             f = u"RowKey eq '{}'".format(entity["RowKey"])
-            entities = self.table.query_entities(filter=f)
+            entities = self.table.query_entities(f)
 
             count = 0
             async for e in entities:
@@ -312,7 +312,7 @@ class StorageTableEntityTest(AzureTestCase, AsyncTableTestCase):
 
             assert count == 1
 
-            entities = self.table.query_entities(filter=f)
+            entities = self.table.query_entities(f)
             count = 0
             async for e in entities:
                 count += 1
@@ -320,10 +320,7 @@ class StorageTableEntityTest(AzureTestCase, AsyncTableTestCase):
 
         finally:
             await self._tear_down()
-            if self.is_live:
-                sleep(SLEEP_DELAY)
 
-    @pytest.mark.skip("Merge operation fails from Tables SDK, issue #13844")
     @CosmosPreparer()
     async def test_insert_entity_dictionary(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
         # Arrange
@@ -332,15 +329,12 @@ class StorageTableEntityTest(AzureTestCase, AsyncTableTestCase):
             entity = self._create_random_entity_dict()
 
             # Act
-            # resp = self.table.create_item(entity)
             resp = await self.table.create_entity(entity=entity)
 
-            # Assert  --- Does this mean insert returns nothing?
+            # Assert
             assert resp is not None
         finally:
             await self._tear_down()
-            if self.is_live:
-                sleep(SLEEP_DELAY)
 
     @CosmosPreparer()
     async def test_insert_entity_with_hook(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
@@ -360,8 +354,6 @@ class StorageTableEntityTest(AzureTestCase, AsyncTableTestCase):
             self._assert_default_entity(received_entity)
         finally:
             await self._tear_down()
-            if self.is_live:
-                sleep(SLEEP_DELAY)
 
     @CosmosPreparer()
     async def test_insert_entity_with_no_metadata(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
@@ -387,8 +379,6 @@ class StorageTableEntityTest(AzureTestCase, AsyncTableTestCase):
             self._assert_default_entity_json_no_metadata(received_entity)
         finally:
             await self._tear_down()
-            if self.is_live:
-                sleep(SLEEP_DELAY)
 
     @CosmosPreparer()
     async def test_insert_entity_with_full_metadata(self, tables_cosmos_account_name,
@@ -415,8 +405,6 @@ class StorageTableEntityTest(AzureTestCase, AsyncTableTestCase):
             self._assert_default_entity_json_full_metadata(received_entity)
         finally:
             await self._tear_down()
-            if self.is_live:
-                sleep(SLEEP_DELAY)
 
     @CosmosPreparer()
     async def test_insert_entity_conflict(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
@@ -427,14 +415,11 @@ class StorageTableEntityTest(AzureTestCase, AsyncTableTestCase):
 
             # Act
             with pytest.raises(ResourceExistsError):
-                # self.table.create_item(entity)
                 await self.table.create_entity(entity=entity)
 
             # Assert
         finally:
             await self._tear_down()
-            if self.is_live:
-                sleep(SLEEP_DELAY)
 
     @CosmosPreparer()
     async def test_insert_entity_with_large_int32_value_throws(self, tables_cosmos_account_name,
@@ -455,8 +440,6 @@ class StorageTableEntityTest(AzureTestCase, AsyncTableTestCase):
                 await self.table.create_entity(entity=dict32)
         finally:
             await self._tear_down()
-            if self.is_live:
-                sleep(SLEEP_DELAY)
 
     @CosmosPreparer()
     async def test_insert_entity_with_large_int64_value_throws(self, tables_cosmos_account_name,
@@ -477,8 +460,6 @@ class StorageTableEntityTest(AzureTestCase, AsyncTableTestCase):
                 await self.table.create_entity(entity=dict64)
         finally:
             await self._tear_down()
-            if self.is_live:
-                sleep(SLEEP_DELAY)
 
     @CosmosPreparer()
     async def test_insert_entity_with_large_int_success(self, tables_cosmos_account_name,
@@ -505,8 +486,6 @@ class StorageTableEntityTest(AzureTestCase, AsyncTableTestCase):
 
         finally:
             await self._tear_down()
-            if self.is_live:
-                sleep(SLEEP_DELAY)
 
     @CosmosPreparer()
     async def test_insert_entity_missing_pk(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
@@ -517,13 +496,10 @@ class StorageTableEntityTest(AzureTestCase, AsyncTableTestCase):
 
             # Act
             with pytest.raises(ValueError):
-                # resp = self.table.create_item(entity)
-                resp = await self.table.create_entity(entity=entity)
+                await self.table.create_entity(entity=entity)
             # Assert
         finally:
             await self._tear_down()
-            if self.is_live:
-                sleep(SLEEP_DELAY)
 
     @CosmosPreparer()
     async def test_insert_entity_empty_string_pk(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
@@ -535,13 +511,8 @@ class StorageTableEntityTest(AzureTestCase, AsyncTableTestCase):
             # Act
             with pytest.raises(HttpResponseError):
                 await self.table.create_entity(entity=entity)
-
-                # Assert
-            #  assert resp is None
         finally:
             await self._tear_down()
-            if self.is_live:
-                sleep(SLEEP_DELAY)
 
     @CosmosPreparer()
     async def test_insert_entity_missing_rk(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
@@ -557,8 +528,6 @@ class StorageTableEntityTest(AzureTestCase, AsyncTableTestCase):
             # Assert
         finally:
             await self._tear_down()
-            if self.is_live:
-                sleep(SLEEP_DELAY)
 
     @CosmosPreparer()
     async def test_insert_entity_empty_string_rk(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
@@ -571,53 +540,8 @@ class StorageTableEntityTest(AzureTestCase, AsyncTableTestCase):
             with pytest.raises(HttpResponseError):
                 await self.table.create_entity(entity=entity)
 
-                # Assert
-            #  assert resp is None
         finally:
             await self._tear_down()
-            if self.is_live:
-                sleep(SLEEP_DELAY)
-
-    @pytest.mark.skip("Cosmos does not have this limitation")
-    @CosmosPreparer()
-    async def test_insert_entity_too_many_properties(self, tables_cosmos_account_name,
-                                                     tables_primary_cosmos_account_key):
-        # Arrange
-        await self._set_up(tables_cosmos_account_name, tables_primary_cosmos_account_key)
-        try:
-            entity = self._create_random_base_entity_dict()
-            for i in range(255):
-                entity['key{0}'.format(i)] = 'value{0}'.format(i)
-
-            # Act
-            with pytest.raises(HttpResponseError):
-                resp = await self.table.create_entity(entity=entity)
-
-            # Assert
-        finally:
-            await self._tear_down()
-            if self.is_live:
-                sleep(SLEEP_DELAY)
-
-    @pytest.mark.skip("Cosmos does not have this limitation")
-    @CosmosPreparer()
-    async def test_insert_entity_property_name_too_long(self, tables_cosmos_account_name,
-                                                        tables_primary_cosmos_account_key):
-        # Arrange
-        await self._set_up(tables_cosmos_account_name, tables_primary_cosmos_account_key)
-        try:
-            entity = self._create_random_base_entity_dict()
-            entity['a' * 256] = 'badval'
-
-            # Act
-            with pytest.raises(HttpResponseError):
-                resp = await self.table.create_entity(entity=entity)
-
-            # Assert
-        finally:
-            await self._tear_down()
-            if self.is_live:
-                sleep(SLEEP_DELAY)
 
     @CosmosPreparer()
     async def test_get_entity(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
@@ -636,8 +560,6 @@ class StorageTableEntityTest(AzureTestCase, AsyncTableTestCase):
             self._assert_default_entity(resp)
         finally:
             await self._tear_down()
-            if self.is_live:
-                sleep(SLEEP_DELAY)
 
     @CosmosPreparer()
     async def test_get_entity_with_hook(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
@@ -647,8 +569,6 @@ class StorageTableEntityTest(AzureTestCase, AsyncTableTestCase):
             entity, _ = await self._insert_random_entity()
 
             # Act
-            # resp, headers
-            # response_hook=lambda e, h: (e, h)
             resp = await self.table.get_entity(
                 partition_key=entity['PartitionKey'],
                 row_key=entity['RowKey'],
@@ -660,8 +580,6 @@ class StorageTableEntityTest(AzureTestCase, AsyncTableTestCase):
             self._assert_default_entity(resp)
         finally:
             await self._tear_down()
-            if self.is_live:
-                sleep(SLEEP_DELAY)
 
     @CosmosPreparer()
     async def test_get_entity_if_match(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
@@ -671,8 +589,6 @@ class StorageTableEntityTest(AzureTestCase, AsyncTableTestCase):
             entity, etag = await self._insert_random_entity()
 
             # Act
-            # Do a get and confirm the etag is parsed correctly by using it
-            # as a condition to delete.
             resp = await self.table.get_entity(partition_key=entity['PartitionKey'],
                                                row_key=entity['RowKey'])
 
@@ -686,8 +602,6 @@ class StorageTableEntityTest(AzureTestCase, AsyncTableTestCase):
             # Assert
         finally:
             await self._tear_down()
-            if self.is_live:
-                sleep(SLEEP_DELAY)
 
     @CosmosPreparer()
     async def test_get_entity_full_metadata(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
@@ -708,8 +622,6 @@ class StorageTableEntityTest(AzureTestCase, AsyncTableTestCase):
             self._assert_default_entity_json_full_metadata(resp)
         finally:
             await self._tear_down()
-            if self.is_live:
-                sleep(SLEEP_DELAY)
 
     @CosmosPreparer()
     async def test_get_entity_no_metadata(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
@@ -730,8 +642,6 @@ class StorageTableEntityTest(AzureTestCase, AsyncTableTestCase):
             self._assert_default_entity_json_no_metadata(resp)
         finally:
             await self._tear_down()
-            if self.is_live:
-                sleep(SLEEP_DELAY)
 
     @CosmosPreparer()
     async def test_get_entity_not_existing(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
@@ -748,8 +658,6 @@ class StorageTableEntityTest(AzureTestCase, AsyncTableTestCase):
             # Assert
         finally:
             await self._tear_down()
-            if self.is_live:
-                sleep(SLEEP_DELAY)
 
     @CosmosPreparer()
     async def test_get_entity_with_special_doubles(self, tables_cosmos_account_name,
@@ -775,8 +683,6 @@ class StorageTableEntityTest(AzureTestCase, AsyncTableTestCase):
             assert isnan(resp.nan)
         finally:
             await self._tear_down()
-            if self.is_live:
-                sleep(SLEEP_DELAY)
 
     @CosmosPreparer()
     async def test_update_entity(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
@@ -788,7 +694,6 @@ class StorageTableEntityTest(AzureTestCase, AsyncTableTestCase):
             # Act
             sent_entity = self._create_updated_entity_dict(entity.PartitionKey, entity.RowKey)
 
-            # resp = self.table.update_item(sent_entity, response_hook=lambda e, h: h)
             resp = await self.table.update_entity(mode=UpdateMode.REPLACE, entity=sent_entity)
 
             # Assert
@@ -800,8 +705,6 @@ class StorageTableEntityTest(AzureTestCase, AsyncTableTestCase):
             self._assert_updated_entity(received_entity)
         finally:
             await self._tear_down()
-            if self.is_live:
-                sleep(SLEEP_DELAY)
 
     @CosmosPreparer()
     async def test_update_entity_not_existing(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
@@ -818,8 +721,6 @@ class StorageTableEntityTest(AzureTestCase, AsyncTableTestCase):
             # Assert
         finally:
             await self._tear_down()
-            if self.is_live:
-                sleep(SLEEP_DELAY)
 
     @CosmosPreparer()
     async def test_update_entity_with_if_matches(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
@@ -829,7 +730,6 @@ class StorageTableEntityTest(AzureTestCase, AsyncTableTestCase):
             entity, etag = await self._insert_random_entity()
 
             # Act
-            #, response_hook=lambda e, h: h)
             sent_entity = self._create_updated_entity_dict(entity.PartitionKey, entity.RowKey)
             await self.table.update_entity(
                 mode=UpdateMode.REPLACE,
@@ -843,8 +743,6 @@ class StorageTableEntityTest(AzureTestCase, AsyncTableTestCase):
             self._assert_updated_entity(received_entity)
         finally:
             await self._tear_down()
-            if self.is_live:
-                sleep(SLEEP_DELAY)
 
     @CosmosPreparer()
     async def test_update_entity_with_if_doesnt_match(self, tables_cosmos_account_name,
@@ -866,10 +764,7 @@ class StorageTableEntityTest(AzureTestCase, AsyncTableTestCase):
             # Assert
         finally:
             await self._tear_down()
-            if self.is_live:
-                sleep(SLEEP_DELAY)
 
-    @pytest.mark.skip("Merge operation fails from Tables SDK, issue #13844")
     @CosmosPreparer()
     async def test_insert_or_merge_entity_with_existing_entity(self, tables_cosmos_account_name,
                                                                tables_primary_cosmos_account_key):
@@ -880,19 +775,15 @@ class StorageTableEntityTest(AzureTestCase, AsyncTableTestCase):
 
             # Act
             sent_entity = self._create_updated_entity_dict(entity.PartitionKey, entity.RowKey)
-            resp = await self.table.upsert_entity(mode=UpdateMode.MERGE, entity=sent_entity)
+            await self.table.upsert_entity(mode=UpdateMode.MERGE, entity=sent_entity)
 
             # Assert
-            assert resp is None
             received_entity = await self.table.get_entity(entity.PartitionKey,
                                                           entity.RowKey)
             self._assert_merged_entity(received_entity)
         finally:
             await self._tear_down()
-            if self.is_live:
-                sleep(SLEEP_DELAY)
 
-    @pytest.mark.skip("Merge operation fails from Tables SDK, issue #13844")
     @CosmosPreparer()
     async def test_insert_or_merge_entity_with_non_existing_entity(self, tables_cosmos_account_name,
                                                                    tables_primary_cosmos_account_key):
@@ -903,19 +794,14 @@ class StorageTableEntityTest(AzureTestCase, AsyncTableTestCase):
 
             # Act
             sent_entity = self._create_updated_entity_dict(entity['PartitionKey'], entity['RowKey'])
-            resp = await self.table.upsert_entity(mode=UpdateMode.MERGE, entity=sent_entity)
+            await self.table.upsert_entity(mode=UpdateMode.MERGE, entity=sent_entity)
 
-            # Assert
-            assert resp is None
             received_entity = await self.table.get_entity(entity['PartitionKey'],
                                                           entity['RowKey'])
             self._assert_updated_entity(received_entity)
         finally:
             await self._tear_down()
-            if self.is_live:
-                sleep(SLEEP_DELAY)
 
-    @pytest.mark.skip("Merge operation fails from Tables SDK, issue #13844")
     @CosmosPreparer()
     async def test_insert_or_replace_entity_with_existing_entity(self, tables_cosmos_account_name,
                                                                  tables_primary_cosmos_account_key):
@@ -929,16 +815,12 @@ class StorageTableEntityTest(AzureTestCase, AsyncTableTestCase):
             resp = await self.table.upsert_entity(mode=UpdateMode.REPLACE, entity=sent_entity)
 
             # Assert
-            # assert resp is None
             received_entity = await self.table.get_entity(entity.PartitionKey,
                                                           entity.RowKey)
             self._assert_updated_entity(received_entity)
         finally:
             await self._tear_down()
-            if self.is_live:
-                sleep(SLEEP_DELAY)
 
-    @pytest.mark.skip("Merge operation fails from Tables SDK, issue #13844")
     @CosmosPreparer()
     async def test_insert_or_replace_entity_with_non_existing_entity(self, tables_cosmos_account_name,
                                                                      tables_primary_cosmos_account_key):
@@ -949,19 +831,13 @@ class StorageTableEntityTest(AzureTestCase, AsyncTableTestCase):
 
             # Act
             sent_entity = self._create_updated_entity_dict(entity['PartitionKey'], entity['RowKey'])
-            resp = await self.table.upsert_entity(mode=UpdateMode.REPLACE, entity=sent_entity)
+            await self.table.upsert_entity(mode=UpdateMode.REPLACE, entity=sent_entity)
 
-            # Assert
-            assert resp is None
-            received_entity = await self.table.get_entity(entity['PartitionKey'],
-                                                          entity['RowKey'])
+            received_entity = await self.table.get_entity(entity['PartitionKey'], entity['RowKey'])
             self._assert_updated_entity(received_entity)
         finally:
             await self._tear_down()
-            if self.is_live:
-                sleep(SLEEP_DELAY)
 
-    @pytest.mark.skip("Merge operation fails from Tables SDK, issue #13844")
     @CosmosPreparer()
     async def test_merge_entity(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
         # Arrange
@@ -971,19 +847,14 @@ class StorageTableEntityTest(AzureTestCase, AsyncTableTestCase):
 
             # Act
             sent_entity = self._create_updated_entity_dict(entity.PartitionKey, entity.RowKey)
-            resp = await self.table.update_entity(mode=UpdateMode.MERGE, entity=sent_entity)
+            await self.table.update_entity(mode=UpdateMode.MERGE, entity=sent_entity)
 
-            # Assert
-            assert resp is None
             received_entity = await self.table.get_entity(entity.PartitionKey,
                                                           entity.RowKey)
             self._assert_merged_entity(received_entity)
         finally:
             await self._tear_down()
-            if self.is_live:
-                sleep(SLEEP_DELAY)
 
-    @pytest.mark.skip("Merge operation fails from Tables SDK, issue #13844")
     @CosmosPreparer()
     async def test_merge_entity_not_existing(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
         # Arrange
@@ -999,10 +870,7 @@ class StorageTableEntityTest(AzureTestCase, AsyncTableTestCase):
             # Assert
         finally:
             await self._tear_down()
-            if self.is_live:
-                sleep(SLEEP_DELAY)
 
-    @pytest.mark.skip("Merge operation fails from Tables SDK, issue #13844")
     @CosmosPreparer()
     async def test_merge_entity_with_if_matches(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
         # Arrange
@@ -1016,17 +884,12 @@ class StorageTableEntityTest(AzureTestCase, AsyncTableTestCase):
                                                   entity=sent_entity, etag=etag,
                                                   match_condition=MatchConditions.IfNotModified)
 
-            # Assert
-            assert resp is None
             received_entity = await self.table.get_entity(entity.PartitionKey,
                                                           entity.RowKey)
             self._assert_merged_entity(received_entity)
         finally:
             await self._tear_down()
-            if self.is_live:
-                sleep(SLEEP_DELAY)
 
-    @pytest.mark.skip("Merge operation fails from Tables SDK, issue #13844")
     @CosmosPreparer()
     async def test_merge_entity_with_if_doesnt_match(self, tables_cosmos_account_name,
                                                      tables_primary_cosmos_account_key):
@@ -1046,8 +909,6 @@ class StorageTableEntityTest(AzureTestCase, AsyncTableTestCase):
             # Assert
         finally:
             await self._tear_down()
-            if self.is_live:
-                sleep(SLEEP_DELAY)
 
     @CosmosPreparer()
     async def test_delete_entity(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
@@ -1057,16 +918,12 @@ class StorageTableEntityTest(AzureTestCase, AsyncTableTestCase):
             entity, _ = await self._insert_random_entity()
 
             # Act
-            resp = await self.table.delete_entity(partition_key=entity.PartitionKey, row_key=entity.RowKey)
+            await self.table.delete_entity(partition_key=entity.PartitionKey, row_key=entity.RowKey)
 
-            # Assert
-            assert resp is None
             with pytest.raises(ResourceNotFoundError):
                 await self.table.get_entity(entity.PartitionKey, entity.RowKey)
         finally:
             await self._tear_down()
-            if self.is_live:
-                sleep(SLEEP_DELAY)
 
     @CosmosPreparer()
     async def test_delete_entity_not_existing(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
@@ -1082,8 +939,6 @@ class StorageTableEntityTest(AzureTestCase, AsyncTableTestCase):
             # Assert
         finally:
             await self._tear_down()
-            if self.is_live:
-                sleep(SLEEP_DELAY)
 
     @CosmosPreparer()
     async def test_delete_entity_with_if_matches(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
@@ -1093,17 +948,13 @@ class StorageTableEntityTest(AzureTestCase, AsyncTableTestCase):
             entity, etag = await self._insert_random_entity()
 
             # Act
-            resp = await self.table.delete_entity(entity.PartitionKey, entity.RowKey, etag=etag,
+            await self.table.delete_entity(entity.PartitionKey, entity.RowKey, etag=etag,
                                                   match_condition=MatchConditions.IfNotModified)
 
-            # Assert
-            assert resp is None
             with pytest.raises(ResourceNotFoundError):
                 await self.table.get_entity(entity.PartitionKey, entity.RowKey)
         finally:
             await self._tear_down()
-            if self.is_live:
-                sleep(SLEEP_DELAY)
 
     @CosmosPreparer()
     async def test_delete_entity_with_if_doesnt_match(self, tables_cosmos_account_name,
@@ -1123,8 +974,6 @@ class StorageTableEntityTest(AzureTestCase, AsyncTableTestCase):
             # Assert
         finally:
             await self._tear_down()
-            if self.is_live:
-                sleep(SLEEP_DELAY)
 
     @CosmosPreparer()
     async def test_unicode_property_value(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
@@ -1143,7 +992,7 @@ class StorageTableEntityTest(AzureTestCase, AsyncTableTestCase):
             await self.table.create_entity(entity=entity2)
             entities = []
             async for e in self.table.query_entities(
-                    filter="PartitionKey eq '{}'".format(entity['PartitionKey'])):
+                    "PartitionKey eq '{}'".format(entity['PartitionKey'])):
                 entities.append(e)
 
             # Assert
@@ -1152,8 +1001,6 @@ class StorageTableEntityTest(AzureTestCase, AsyncTableTestCase):
             assert entities[1].Description ==  u'ꀕ'
         finally:
             await self._tear_down()
-            if self.is_live:
-                sleep(SLEEP_DELAY)
 
     @CosmosPreparer()
     async def test_unicode_property_name(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
@@ -1171,7 +1018,7 @@ class StorageTableEntityTest(AzureTestCase, AsyncTableTestCase):
             await self.table.create_entity(entity=entity2)
             entities = []
             async for e in self.table.query_entities(
-                    filter="PartitionKey eq '{}'".format(entity['PartitionKey'])):
+                    "PartitionKey eq '{}'".format(entity['PartitionKey'])):
                 entities.append(e)
 
             # Assert
@@ -1180,8 +1027,6 @@ class StorageTableEntityTest(AzureTestCase, AsyncTableTestCase):
             assert entities[1][u'啊齄丂狛狜'] ==  u'hello'
         finally:
             await self._tear_down()
-            if self.is_live:
-                sleep(SLEEP_DELAY)
 
     @pytest.mark.skip("Bad Request: Cosmos cannot handle single quotes in a PK/RK (confirm)")
     @CosmosPreparer()
@@ -1191,40 +1036,28 @@ class StorageTableEntityTest(AzureTestCase, AsyncTableTestCase):
         row_key_with_single_quote = "a''''b"
         await self._set_up(tables_cosmos_account_name, tables_primary_cosmos_account_key)
         try:
-            entity, _ = await self._insert_random_entity(pk=partition_key_with_single_quote,
-                                                         rk=row_key_with_single_quote)
+            entity, _ = await self._insert_random_entity(pk=partition_key_with_single_quote, rk=row_key_with_single_quote)
 
             # Act
             sent_entity = self._create_updated_entity_dict(entity.PartitionKey, entity.RowKey)
-            resp = await self.table.upsert_entity(mode=UpdateMode.REPLACE, entity=sent_entity)
+            await self.table.upsert_entity(mode=UpdateMode.REPLACE, entity=sent_entity)
 
-            # Assert
-            assert resp is None
             # row key here only has 2 quotes
-            received_entity = await self.table.get_entity(
-                entity.PartitionKey, entity.RowKey)
+            received_entity = await self.table.get_entity(entity.PartitionKey, entity.RowKey)
             self._assert_updated_entity(received_entity)
 
             # Act
             sent_entity['newField'] = 'newFieldValue'
-            resp = await self.table.update_entity(mode=UpdateMode.REPLACE, entity=sent_entity)
+            await self.table.update_entity(mode=UpdateMode.REPLACE, entity=sent_entity)
 
-            # Assert
-            assert resp is None
-            received_entity = await self.table.get_entity(
-                entity.PartitionKey, entity.RowKey)
+            received_entity = await self.table.get_entity(entity.PartitionKey, entity.RowKey)
             self._assert_updated_entity(received_entity)
             assert received_entity['newField'] ==  'newFieldValue'
 
             # Act
-            resp = await self.table.delete_entity(entity.PartitionKey, entity.RowKey)
-
-            # Assert
-            assert resp is None
+            await self.table.delete_entity(entity.PartitionKey, entity.RowKey)
         finally:
             await self._tear_down()
-            if self.is_live:
-                sleep(SLEEP_DELAY)
 
     @CosmosPreparer()
     async def test_empty_and_spaces_property_value(self, tables_cosmos_account_name,
@@ -1264,8 +1097,6 @@ class StorageTableEntityTest(AzureTestCase, AsyncTableTestCase):
             assert resp.SpacesBeforeAndAfterUnicode ==  u'   Text   '
         finally:
             await self._tear_down()
-            if self.is_live:
-                sleep(SLEEP_DELAY)
 
     @CosmosPreparer()
     async def test_none_property_value(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
@@ -1284,8 +1115,6 @@ class StorageTableEntityTest(AzureTestCase, AsyncTableTestCase):
             assert not hasattr(resp, 'NoneValue')
         finally:
             await self._tear_down()
-            if self.is_live:
-                sleep(SLEEP_DELAY)
 
     @CosmosPreparer()
     async def test_binary_property_value(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
@@ -1305,10 +1134,7 @@ class StorageTableEntityTest(AzureTestCase, AsyncTableTestCase):
             assert resp.binary.value ==  binary_data
         finally:
             await self._tear_down()
-            if self.is_live:
-                sleep(SLEEP_DELAY)
 
-    @pytest.mark.skip("response time is three hours before the given one")
     @CosmosPreparer()
     async def test_timezone(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
         # Arrange
@@ -1326,12 +1152,10 @@ class StorageTableEntityTest(AzureTestCase, AsyncTableTestCase):
             # Assert
             assert resp is not None
             # times are not equal because request is made after
-        #  assert resp.date.astimezone(tzutc()) ==  local_date.astimezone(tzutc())
-        # assert resp.date.astimezone(local_tz) ==  local_date
+            #  assert resp.date.astimezone(tzutc()) ==  local_date.astimezone(tzutc())
+            # assert resp.date.astimezone(local_tz) ==  local_date
         finally:
             await self._tear_down()
-            if self.is_live:
-                sleep(SLEEP_DELAY)
 
     @CosmosPreparer()
     async def test_query_entities(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
@@ -1351,8 +1175,6 @@ class StorageTableEntityTest(AzureTestCase, AsyncTableTestCase):
                 self._assert_default_entity(entity)
         finally:
             await self._tear_down()
-            if self.is_live:
-                sleep(SLEEP_DELAY)
 
     @CosmosPreparer()
     async def test_query_entities_each_page(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
@@ -1378,7 +1200,7 @@ class StorageTableEntityTest(AzureTestCase, AsyncTableTestCase):
 
             entity_count = 0
             page_count = 0
-            async for entity_page in self.table.query_entities(filter=query_filter, results_per_page=2).by_page():
+            async for entity_page in self.table.query_entities(query_filter, results_per_page=2).by_page():
 
                 temp_count = 0
                 async for ent in entity_page:
@@ -1393,8 +1215,6 @@ class StorageTableEntityTest(AzureTestCase, AsyncTableTestCase):
 
         finally:
             await self._tear_down()
-            if self.is_live:
-                sleep(SLEEP_DELAY)
 
     @CosmosPreparer()
     async def test_query_user_filter(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
@@ -1404,7 +1224,7 @@ class StorageTableEntityTest(AzureTestCase, AsyncTableTestCase):
             entity = await self._insert_two_opposite_entities()
 
             # Act
-            entities = self.table.query_entities(filter="married eq @my_param", parameters={'my_param': True})
+            entities = self.table.query_entities("married eq @my_param", parameters={'my_param': True})
 
             length = 0
             assert entities is not None
@@ -1416,7 +1236,6 @@ class StorageTableEntityTest(AzureTestCase, AsyncTableTestCase):
 
         finally:
             await self._tear_down()
-            self.sleep(SLEEP_DELAY)
 
     @CosmosPreparer()
     async def test_query_user_filter_multiple_params(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
@@ -1430,7 +1249,7 @@ class StorageTableEntityTest(AzureTestCase, AsyncTableTestCase):
                 'my_param': True,
                 'rk': entity['RowKey']
             }
-            entities = self.table.query_entities(filter="married eq @my_param and RowKey eq @rk", parameters=parameters)
+            entities = self.table.query_entities("married eq @my_param and RowKey eq @rk", parameters=parameters)
 
             length = 0
             assert entities is not None
@@ -1441,7 +1260,6 @@ class StorageTableEntityTest(AzureTestCase, AsyncTableTestCase):
             assert length == 1
         finally:
             await self._tear_down()
-            self.sleep(SLEEP_DELAY)
 
     @CosmosPreparer()
     async def test_query_user_filter_integers(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
@@ -1454,7 +1272,7 @@ class StorageTableEntityTest(AzureTestCase, AsyncTableTestCase):
             parameters = {
                 'my_param': 40,
             }
-            entities = self.table.query_entities(filter="age lt @my_param", parameters=parameters)
+            entities = self.table.query_entities("age lt @my_param", parameters=parameters)
 
             length = 0
             assert entities is not None
@@ -1465,7 +1283,6 @@ class StorageTableEntityTest(AzureTestCase, AsyncTableTestCase):
             assert length == 1
         finally:
             await self._tear_down()
-            self.sleep(SLEEP_DELAY)
 
     @CosmosPreparer()
     async def test_query_user_filter_floats(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
@@ -1478,7 +1295,7 @@ class StorageTableEntityTest(AzureTestCase, AsyncTableTestCase):
             parameters = {
                 'my_param': entity['ratio'] + 1.0,
             }
-            entities = self.table.query_entities(filter="ratio lt @my_param", parameters=parameters)
+            entities = self.table.query_entities("ratio lt @my_param", parameters=parameters)
 
             length = 0
             assert entities is not None
@@ -1489,7 +1306,6 @@ class StorageTableEntityTest(AzureTestCase, AsyncTableTestCase):
             assert length == 1
         finally:
             await self._tear_down()
-            self.sleep(SLEEP_DELAY)
 
     @CosmosPreparer()
     async def test_query_user_filter_datetimes(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
@@ -1502,7 +1318,7 @@ class StorageTableEntityTest(AzureTestCase, AsyncTableTestCase):
             parameters = {
                 'my_param': entity['birthday'],
             }
-            entities = self.table.query_entities(filter="birthday eq @my_param", parameters=parameters)
+            entities = self.table.query_entities("birthday eq @my_param", parameters=parameters)
 
             length = 0
             assert entities is not None
@@ -1513,7 +1329,6 @@ class StorageTableEntityTest(AzureTestCase, AsyncTableTestCase):
             assert length == 1
         finally:
             await self._tear_down()
-            self.sleep(SLEEP_DELAY)
 
     @CosmosPreparer()
     async def test_query_user_filter_guids(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
@@ -1526,7 +1341,7 @@ class StorageTableEntityTest(AzureTestCase, AsyncTableTestCase):
             parameters = {
                 'my_param': entity['clsid']
             }
-            entities = self.table.query_entities(filter="clsid eq @my_param", parameters=parameters)
+            entities = self.table.query_entities("clsid eq @my_param", parameters=parameters)
 
             length = 0
             assert entities is not None
@@ -1537,7 +1352,6 @@ class StorageTableEntityTest(AzureTestCase, AsyncTableTestCase):
             assert length == 1
         finally:
             await self._tear_down()
-            self.sleep(SLEEP_DELAY)
 
     @CosmosPreparer()
     async def test_query_zero_entities(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
@@ -1555,8 +1369,6 @@ class StorageTableEntityTest(AzureTestCase, AsyncTableTestCase):
             assert len(entities) ==  0
         finally:
             await self._tear_down()
-            if self.is_live:
-                sleep(SLEEP_DELAY)
 
     @CosmosPreparer()
     async def test_query_entities_full_metadata(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
@@ -1576,8 +1388,6 @@ class StorageTableEntityTest(AzureTestCase, AsyncTableTestCase):
                 self._assert_default_entity_json_full_metadata(entity)
         finally:
             await self._tear_down()
-            if self.is_live:
-                sleep(SLEEP_DELAY)
 
     @CosmosPreparer()
     async def test_query_entities_no_metadata(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
@@ -1597,8 +1407,6 @@ class StorageTableEntityTest(AzureTestCase, AsyncTableTestCase):
                 self._assert_default_entity_json_no_metadata(entity)
         finally:
             await self._tear_down()
-            if self.is_live:
-                sleep(SLEEP_DELAY)
 
     @CosmosPreparer()
     async def test_query_entities_with_filter(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
@@ -1612,7 +1420,7 @@ class StorageTableEntityTest(AzureTestCase, AsyncTableTestCase):
             # Act
             entities = []
             async for t in self.table.query_entities(
-                    filter="PartitionKey eq '{}'".format(entity.PartitionKey)):
+                    "PartitionKey eq '{}'".format(entity.PartitionKey)):
                 entities.append(t)
 
             # Assert
@@ -1621,11 +1429,9 @@ class StorageTableEntityTest(AzureTestCase, AsyncTableTestCase):
             self._assert_default_entity(entities[0])
         finally:
             await self._tear_down()
-            if self.is_live:
-                sleep(SLEEP_DELAY)
 
     @CosmosPreparer()
-    async def test_query_injection(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
+    async def test_query_injection_async(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
         # Arrange
         await self._set_up(tables_cosmos_account_name, tables_primary_cosmos_account_key)
         try:
@@ -1651,14 +1457,13 @@ class StorageTableEntityTest(AzureTestCase, AsyncTableTestCase):
                 entities.append(e)
             assert len(entities) ==  2
 
-            entity_query = table.query_entities(is_user_admin, parameters={'first': injection})           
+            entity_query = table.query_entities(is_user_admin, parameters={'first': injection})
             entities = []
             async for e in entity_query:
                 entities.append(e)
             assert len(entities) ==  0
         finally:
-            self.ts.delete_table(table_name)
-            self._tear_down()
+            await self._tear_down()
 
     @CosmosPreparer()
     async def test_query_special_chars(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
@@ -1677,14 +1482,14 @@ class StorageTableEntityTest(AzureTestCase, AsyncTableTestCase):
             async for e in all_entities:
                 entities.append(e)
             assert len(entities) == 2
-        
+
             entities = []
             parameters = {'key': 'foo'}
             all_entities = table.query_entities("PartitionKey eq @key", parameters=parameters)
             async for e in all_entities:
                 entities.append(e)
             assert len(entities) == 2
-            
+
             entities = []
             query = "PartitionKey eq 'foo' and RowKey eq 'bar1' and Chars eq ':@?''/!_^#+,$'"
             query_entities = table.query_entities(query)
@@ -1716,7 +1521,6 @@ class StorageTableEntityTest(AzureTestCase, AsyncTableTestCase):
             assert len(entities) == 1
 
         finally:
-            await self.ts.delete_table(table_name)
             await self._tear_down()
 
     @CosmosPreparer()
@@ -1736,37 +1540,31 @@ class StorageTableEntityTest(AzureTestCase, AsyncTableTestCase):
                 await self.table.create_entity(base_entity)
             # Act
             with pytest.raises(HttpResponseError):
-                async for t in self.table.query_entities(filter="aaa bbb ccc"):
+                async for t in self.table.query_entities("aaa bbb ccc"):
                     _ = t
         finally:
             await self._tear_down()
-            if self.is_live:
-                sleep(SLEEP_DELAY)
 
-    @pytest.mark.skip("returns ' sex' instead of deserializing into just 'sex'")
     @CosmosPreparer()
     async def test_query_entities_with_select(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
-        # Arrange
         await self._set_up(tables_cosmos_account_name, tables_primary_cosmos_account_key)
         try:
             table = await self._create_query_table(2)
 
             # Act
             entities = []
-            async for t in table.list_entities(select=["age, sex"]):
-                entities.append(t)
+            async for entity in table.list_entities(select=['age', 'sex']):
+                entities.append(entity)
+                assert entity.age == 39
+                assert entity.sex == 'male'
+                assert not hasattr(entity, "birthday")
+                assert not hasattr(entity, "married")
+                assert not hasattr(entity, "deceased")
 
             # Assert
-            assert len(entities) ==  2
-            assert entities[0].age ==  39
-            assert entities[0].sex ==  'male'
-            assert not hasattr(entities[0], "birthday")
-            assert not hasattr(entities[0], "married")
-            assert not hasattr(entities[0], "deceased")
+            assert len(entities) == 2
         finally:
             await self._tear_down()
-            if self.is_live:
-                sleep(SLEEP_DELAY)
 
     @CosmosPreparer()
     async def test_query_entities_with_top(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
@@ -1782,8 +1580,6 @@ class StorageTableEntityTest(AzureTestCase, AsyncTableTestCase):
             assert len(entities) ==  2
         finally:
             await self._tear_down()
-            if self.is_live:
-                sleep(SLEEP_DELAY)
 
     @CosmosPreparer()
     async def test_query_entities_with_top_and_next(self, tables_cosmos_account_name,
@@ -1820,271 +1616,9 @@ class StorageTableEntityTest(AzureTestCase, AsyncTableTestCase):
             self._assert_default_entity(entities3[0])
         finally:
             await self._tear_down()
-            if self.is_live:
-                sleep(SLEEP_DELAY)
-
-    @pytest.mark.skip("Cosmos Tables does not yet support sas")
-    @pytest.mark.live_test_only
-    @CosmosPreparer()
-    async def test_sas_query(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
-        # SAS URL is calculated from storage key, so this test runs live only
-        url = self.account_url(tables_cosmos_account_name, "cosmos")
-
-        await self._set_up(tables_cosmos_account_name, tables_primary_cosmos_account_key)
-        try:
-            # Arrange
-            entity, _ = await self._insert_random_entity()
-            token = generate_table_sas(
-                tables_cosmos_account_name,
-                tables_primary_cosmos_account_key,
-                self.table_name,
-                permission=TableSasPermissions(read=True),
-                expiry=datetime.utcnow() + timedelta(hours=1),
-                start=datetime.utcnow() - timedelta(minutes=1),
-            )
-
-            # Act
-            service = TableServiceClient(
-                self.account_url(tables_cosmos_account_name, "cosmos"),
-                credential=token,
-            )
-            table = service.get_table_client(self.table_name)
-            entities = []
-            async for t in table.query_entities(
-                    filter="PartitionKey eq '{}'".format(entity['PartitionKey'])):
-                entities.append(t)
-
-            # Assert
-            assert len(entities) ==  1
-            self._assert_default_entity(entities[0])
-        finally:
-            await self._tear_down()
-            if self.is_live:
-                sleep(SLEEP_DELAY)
-
-
-    @pytest.mark.skip("Cosmos Tables does not yet support sas")
-    @pytest.mark.live_test_only
-    @CosmosPreparer()
-    async def test_sas_add(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
-        # SAS URL is calculated from storage key, so this test runs live only
-        url = self.account_url(tables_cosmos_account_name, "cosmos")
-        await self._set_up(tables_cosmos_account_name, tables_primary_cosmos_account_key)
-        try:
-            # Arrange
-            token = generate_table_sas(
-                tables_cosmos_account_name,
-                tables_primary_cosmos_account_key,
-                self.table_name,
-                permission=TableSasPermissions(add=True),
-                expiry=datetime.utcnow() + timedelta(hours=1),
-                start=datetime.utcnow() - timedelta(minutes=1),
-            )
-
-            # Act
-            service = TableServiceClient(
-                self.account_url(tables_cosmos_account_name, "cosmos"),
-                credential=token,
-            )
-            table = service.get_table_client(self.table_name)
-
-            entity = self._create_random_entity_dict()
-            await table.create_entity(entity=entity)
-
-            # Assert
-            resp = await self.table.get_entity(partition_key=entity['PartitionKey'],
-                                               row_key=entity['RowKey'])
-            self._assert_default_entity(resp)
-        finally:
-            await self._tear_down()
-            if self.is_live:
-                sleep(SLEEP_DELAY)
-
-    @pytest.mark.skip("Cosmos Tables does not yet support sas")
-    @pytest.mark.live_test_only
-    @CosmosPreparer()
-    async def test_sas_add_inside_range(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
-        # SAS URL is calculated from storage key, so this test runs live only
-        url = self.account_url(tables_cosmos_account_name, "cosmos")
-        await self._set_up(tables_cosmos_account_name, tables_primary_cosmos_account_key)
-        try:
-            # Arrange
-            token = generate_table_sas(
-                tables_cosmos_account_name,
-                tables_primary_cosmos_account_key,
-                self.table_name,
-                permission=TableSasPermissions(add=True),
-                expiry=datetime.utcnow() + timedelta(hours=1),
-                start_pk='test', start_rk='test1',
-                end_pk='test', end_rk='test1',
-            )
-
-            # Act
-            service = TableServiceClient(
-                self.account_url(tables_cosmos_account_name, "cosmos"),
-                credential=token,
-            )
-            table = service.get_table_client(self.table_name)
-            entity = self._create_random_entity_dict('test', 'test1')
-            await table.create_entity(entity=entity)
-
-            # Assert
-            resp = await self.table.get_entity('test', 'test1')
-            self._assert_default_entity(resp)
-        finally:
-            await self._tear_down()
-            if self.is_live:
-                sleep(SLEEP_DELAY)
-
-    @pytest.mark.skip("Cosmos Tables does not yet support sas")
-    @pytest.mark.live_test_only
-    @CosmosPreparer()
-    async def test_sas_add_outside_range(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
-        # SAS URL is calculated from storage key, so this test runs live only
-        url = self.account_url(tables_cosmos_account_name, "cosmos")
-        await self._set_up(tables_cosmos_account_name, tables_primary_cosmos_account_key)
-        try:
-            # Arrange
-            token = generate_table_sas(
-                tables_cosmos_account_name,
-                tables_primary_cosmos_account_key,
-                self.table_name,
-                permission=TableSasPermissions(add=True),
-                expiry=datetime.utcnow() + timedelta(hours=1),
-                start_pk='test', start_rk='test1',
-                end_pk='test', end_rk='test1',
-            )
-
-            # Act
-            service = TableServiceClient(
-                self.account_url(tables_cosmos_account_name, "cosmos"),
-                credential=token,
-            )
-            table = service.get_table_client(self.table_name)
-            with pytest.raises(HttpResponseError):
-                entity = self._create_random_entity_dict()
-                await table.create_entity(entity=entity)
-
-            # Assert
-        finally:
-            await self._tear_down()
-            if self.is_live:
-                sleep(SLEEP_DELAY)
-
-    @pytest.mark.skip("Cosmos Tables does not yet support sas")
-    @pytest.mark.live_test_only
-    @CosmosPreparer()
-    async def test_sas_update(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
-        # SAS URL is calculated from storage key, so this test runs live only
-        url = self.account_url(tables_cosmos_account_name, "cosmos")
-        await self._set_up(tables_cosmos_account_name, tables_primary_cosmos_account_key)
-        try:
-            # Arrange
-            entity, _ = await self._insert_random_entity()
-            token = generate_table_sas(
-                tables_cosmos_account_name,
-                tables_primary_cosmos_account_key,
-                self.table_name,
-                permission=TableSasPermissions(update=True),
-                expiry=datetime.utcnow() + timedelta(hours=1),
-            )
-
-            # Act
-            service = TableServiceClient(
-                self.account_url(tables_cosmos_account_name, "cosmos"),
-                credential=token,
-            )
-            table = service.get_table_client(self.table_name)
-            updated_entity = self._create_updated_entity_dict(entity.PartitionKey, entity.RowKey)
-            await table.update_entity(mode=UpdateMode.REPLACE, entity=updated_entity)
-
-            # Assert
-            received_entity = await self.table.get_entity(entity.PartitionKey,
-                                                          entity.RowKey)
-            self._assert_updated_entity(received_entity)
-        finally:
-            await self._tear_down()
-            if self.is_live:
-                sleep(SLEEP_DELAY)
-
-    @pytest.mark.skip("Cosmos Tables does not yet support sas")
-    @pytest.mark.live_test_only
-    @CosmosPreparer()
-    async def test_sas_delete(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
-        # SAS URL is calculated from storage key, so this test runs live only
-        url = self.account_url(tables_cosmos_account_name, "cosmos")
-        await self._set_up(tables_cosmos_account_name, tables_primary_cosmos_account_key)
-        try:
-            # Arrange
-            entity, _ = await self._insert_random_entity()
-            token = generate_table_sas(
-                tables_cosmos_account_name,
-                tables_primary_cosmos_account_key,
-                self.table_name,
-                permission=TableSasPermissions(delete=True),
-                expiry=datetime.utcnow() + timedelta(hours=1),
-            )
-
-            # Act
-            service = TableServiceClient(
-                self.account_url(tables_cosmos_account_name, "cosmos"),
-                credential=token,
-            )
-            table = service.get_table_client(self.table_name)
-            await table.delete_entity(entity.PartitionKey, entity.RowKey)
-
-            # Assert
-            with pytest.raises(ResourceNotFoundError):
-                await self.table.get_entity(entity.PartitionKey, entity.RowKey)
-        finally:
-            await self._tear_down()
-            if self.is_live:
-                sleep(SLEEP_DELAY)
-
-    @pytest.mark.skip("Cosmos Tables does not yet support sas")
-    @pytest.mark.live_test_only
-    @CosmosPreparer()
-    async def test_sas_upper_case_table_name(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
-        # SAS URL is calculated from storage key, so this test runs live only
-        url = self.account_url(tables_cosmos_account_name, "cosmos")
-        await self._set_up(tables_cosmos_account_name, tables_primary_cosmos_account_key)
-        try:
-            # Arrange
-            entity, _ = await self._insert_random_entity()
-
-            # Table names are case insensitive, so simply upper case our existing table name to test
-            token = generate_table_sas(
-                tables_cosmos_account_name,
-                tables_primary_cosmos_account_key,
-                self.table_name.upper(),
-                permission=TableSasPermissions(read=True),
-                expiry=datetime.utcnow() + timedelta(hours=1),
-                start=datetime.utcnow() - timedelta(minutes=1),
-            )
-
-            # Act
-            service = TableServiceClient(
-                self.account_url(tables_cosmos_account_name, "cosmos"),
-                credential=token,
-            )
-            table = service.get_table_client(self.table_name)
-            entities = []
-            async for t in table.query_entities(
-                    filter="PartitionKey eq '{}'".format(entity['PartitionKey'])):
-                entities.append(t)
-
-            # Assert
-            assert len(entities) ==  1
-            self._assert_default_entity(entities[0])
-        finally:
-            await self._tear_down()
-            if self.is_live:
-                sleep(SLEEP_DELAY)
 
     @CosmosPreparer()
     async def test_datetime_milliseconds(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
-        # SAS URL is calculated from storage key, so this test runs live only
-        url = self.account_url(tables_cosmos_account_name, "table")
         await self._set_up(tables_cosmos_account_name, tables_primary_cosmos_account_key)
         try:
             entity = self._create_random_entity_dict()
@@ -2102,4 +1636,31 @@ class StorageTableEntityTest(AzureTestCase, AsyncTableTestCase):
 
         finally:
             await self._tear_down()
-            self.sleep(SLEEP_DELAY)
+
+    @CosmosPreparer()
+    async def test_datetime_str_passthrough(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
+        await self._set_up(tables_cosmos_account_name, tables_primary_cosmos_account_key)
+        partition, row = self._create_pk_rk(None, None)
+
+        dotnet_timestamp = "2013-08-22T01:12:06.2608595Z"
+        entity = {
+            'PartitionKey': partition,
+            'RowKey': row,
+            'datetime1': EntityProperty(dotnet_timestamp, EdmType.DATETIME)
+        }
+        try:
+            await self.table.create_entity(entity)
+            received = await self.table.get_entity(partition, row)
+            assert isinstance(received['datetime1'], datetime)
+            assert received.datetime1.tables_service_value == dotnet_timestamp
+
+            received['datetime2'] = received.datetime1.replace(year=2020)
+            assert received['datetime2'].tables_service_value == ""
+
+            await self.table.update_entity(received, mode=UpdateMode.REPLACE)
+            updated = await self.table.get_entity(partition, row)
+            assert isinstance(updated['datetime1'], datetime)
+            assert isinstance(updated['datetime2'], datetime)
+            assert updated.datetime1.tables_service_value == dotnet_timestamp
+        finally:
+            await self._tear_down()

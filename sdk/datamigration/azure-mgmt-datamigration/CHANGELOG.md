@@ -1,5 +1,28 @@
 # Release History
 
+## 9.0.0 (2021-04-07)
+
+**Features**
+
+  - Model AvailableServiceSku has a new parameter sku
+
+**Breaking changes**
+
+  - Operation ServiceTasksOperations.update has a new signature
+  - Operation TasksOperations.create_or_update has a new signature
+  - Operation TasksOperations.update has a new signature
+  - Operation FilesOperations.create_or_update has a new signature
+  - Operation FilesOperations.update has a new signature
+  - Operation TasksOperations.update has a new signature
+  - Operation TasksOperations.create_or_update has a new signature
+  - Operation ServiceTasksOperations.update has a new signature
+  - Operation FilesOperations.update has a new signature
+  - Operation FilesOperations.create_or_update has a new signature
+  - Operation ServicesOperations.check_children_name_availability has a new signature
+  - Operation ServicesOperations.check_name_availability has a new signature
+  - Operation ServiceTasksOperations.create_or_update has a new signature
+  - Model AvailableServiceSku no longer has parameter available_service_sku
+
 ## 9.0.0b1 (2020-12-21)
 
 This is beta preview version.

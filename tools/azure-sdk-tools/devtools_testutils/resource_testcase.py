@@ -11,8 +11,6 @@ import time
 import logging
 from functools import partial
 
-from azure.core.exceptions import HttpResponseError
-
 from azure_devtools.scenario_tests import AzureTestError, ReservedResourceNameError
 
 from azure.mgmt.resource import ResourceManagementClient
@@ -71,10 +69,11 @@ class ResourceGroupPreparer(AzureMgmtPreparer):
             parameters = {"location": self.location}
             expiry = datetime.datetime.utcnow() + self.delete_after_tag_timedelta
             parameters["tags"] = {"DeleteAfter": expiry.replace(microsecond=0).isoformat()}
-            parameters["tags"]["BuildId"] = os.environ.get("BUILD_BUILDID", None)
-            parameters["tags"]["BuildJob"] = os.environ.get("AGENT_JOBNAME", None)
-            parameters["tags"]["BuildNumber"] = os.environ.get("BUILD_BUILDNUMBER", None)
-            parameters["tags"]["BuildReason"] = os.environ.get("BUILD_REASON", None)
+
+            parameters["tags"]["BuildId"] = os.environ.get("BUILD_BUILDID", "local")
+            parameters["tags"]["BuildJob"] = os.environ.get("AGENT_JOBNAME", "local")
+            parameters["tags"]["BuildNumber"] = os.environ.get("BUILD_BUILDNUMBER", "local")
+            parameters["tags"]["BuildReason"] = os.environ.get("BUILD_REASON", "local")
             try:
                 logging.info(
                     "Attempting to create a Resource Group with name {} and parameters {}".format(name, parameters)
@@ -111,9 +110,9 @@ class ResourceGroupPreparer(AzureMgmtPreparer):
                     raise AzureTestError("Timed out waiting for resource group to be deleted.")
                 else:
                     self.client.resource_groups.begin_delete(name, polling=False)
-            except HttpResponseError as err:
+            except Exception as err:  # NOTE: some track 1 libraries do not have azure-core installed. Cannot use HttpResponseError here
                 logging.info("Failed to delete resource group with name {}".format(name))
-                logging.info("{}".format(err.response))
+                logging.info("{}".format(err))
                 pass
 
 

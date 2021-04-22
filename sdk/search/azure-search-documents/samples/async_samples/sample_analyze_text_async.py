@@ -7,11 +7,11 @@
 # --------------------------------------------------------------------------
 
 """
-FILE: sample_analyze_text.py
+FILE: sample_analyze_text_async.py
 DESCRIPTION:
     This sample demonstrates how to analyze text.
 USAGE:
-    python sample_analyze_text.py
+    python sample_analyze_text_async.py
 
     Set the environment variables with your own values before running the sample:
     1) AZURE_SEARCH_SERVICE_ENDPOINT - the endpoint of your Azure Cognitive Search service

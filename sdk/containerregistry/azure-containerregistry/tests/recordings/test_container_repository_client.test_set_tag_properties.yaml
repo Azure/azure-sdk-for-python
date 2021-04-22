@@ -1,5 +1,94 @@
 interactions:
 - request:
+    body: '{"source": {"registryUri": "registry.hub.docker.com", "sourceImage": "library/hello-world"},
+      "targetTags": ["repo9b321760:tag9b321760"], "mode": "Force"}'
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '153'
+      Content-Type:
+      - application/json
+      User-Agent:
+      - azsdk-python-azure-mgmt-containerregistry/8.0.0b1 Python/3.9.0rc1 (Windows-10-10.0.19041-SP0)
+    method: POST
+    uri: https://management.azure.com/subscriptions/2cd617ea-1866-46b1-90e3-fffb087ebf9b/resourceGroups/fake_rg/providers/Microsoft.ContainerRegistry/registries/seankane/importImage?api-version=2019-05-01
+  response:
+    body:
+      string: 'null'
+    headers:
+      cache-control:
+      - no-cache
+      content-length:
+      - '4'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Tue, 13 Apr 2021 16:00:16 GMT
+      expires:
+      - '-1'
+      location:
+      - https://management.azure.com/subscriptions/2cd617ea-1866-46b1-90e3-fffb087ebf9b/providers/Microsoft.ContainerRegistry/locations/WESTUS2/operationResults/registries-5623b8fd-9c71-11eb-bbf8-002b67128e4c?api-version=2019-05-01
+      pragma:
+      - no-cache
+      server:
+      - Microsoft-HTTPAPI/2.0
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      x-content-type-options:
+      - nosniff
+      x-ms-ratelimit-remaining-subscription-writes:
+      - '1199'
+    status:
+      code: 202
+      message: Accepted
+- request:
+    body: null
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - azsdk-python-azure-mgmt-containerregistry/8.0.0b1 Python/3.9.0rc1 (Windows-10-10.0.19041-SP0)
+    method: GET
+    uri: https://management.azure.com/subscriptions/2cd617ea-1866-46b1-90e3-fffb087ebf9b/providers/Microsoft.ContainerRegistry/locations/WESTUS2/operationResults/registries-5623b8fd-9c71-11eb-bbf8-002b67128e4c?api-version=2019-05-01
+  response:
+    body:
+      string: '{"status": "Succeeded"}'
+    headers:
+      cache-control:
+      - no-cache
+      content-length:
+      - '22'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Tue, 13 Apr 2021 16:00:29 GMT
+      expires:
+      - '-1'
+      pragma:
+      - no-cache
+      server:
+      - Microsoft-HTTPAPI/2.0
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      transfer-encoding:
+      - chunked
+      vary:
+      - Accept-Encoding
+      x-content-type-options:
+      - nosniff
+    status:
+      code: 200
+      message: OK
+- request:
     body: null
     headers:
       Accept:
@@ -31,7 +120,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Fri, 02 Apr 2021 17:53:47 GMT
+      - Tue, 13 Apr 2021 16:00:30 GMT
       docker-distribution-api-version:
       - registry/2.0
       server:
@@ -39,14 +128,15 @@ interactions:
       strict-transport-security:
       - max-age=31536000; includeSubDomains
       - max-age=31536000; includeSubDomains
-      www-authenticate: Bearer realm="https://fake_url.azurecr.io/oauth2/token",service="fake_url.azurecr.io",scope="fake_scope",error="invalid_token"
+      www-authenticate:
+      - Bearer realm="https://seankane.azurecr.io/oauth2/token",service="seankane.azurecr.io",scope="repository:repo9b321760:metadata_read"
       x-content-type-options:
       - nosniff
     status:
       code: 401
       message: Unauthorized
 - request:
-    body: grant_type=access_token&service=seankane.azurecr.io&access_token=REDACTED
+    body: grant_type=access_token&service=fake_url.azurecr.io&access_token=REDACTED
     headers:
       Accept:
       - application/json
@@ -71,7 +161,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Fri, 02 Apr 2021 17:53:49 GMT
+      - Tue, 13 Apr 2021 16:00:31 GMT
       server:
       - openresty
       strict-transport-security:
@@ -79,12 +169,12 @@ interactions:
       transfer-encoding:
       - chunked
       x-ms-ratelimit-remaining-calls-per-second:
-      - '333.283333'
+      - '165.9'
     status:
       code: 200
       message: OK
 - request:
-    body: grant_type=refresh_token&service=seankane.azurecr.io&scope=repository%3Arepo9b321760%3Ametadata_read&refresh_token=REDACTED
+    body: grant_type=refresh_token&service=fake_url.azurecr.io&scope=repository%3Arepo9b321760%3Ametadata_read&refresh_token=REDACTED
     headers:
       Accept:
       - application/json
@@ -109,7 +199,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Fri, 02 Apr 2021 17:53:50 GMT
+      - Tue, 13 Apr 2021 16:00:32 GMT
       server:
       - openresty
       strict-transport-security:
@@ -117,7 +207,7 @@ interactions:
       transfer-encoding:
       - chunked
       x-ms-ratelimit-remaining-calls-per-second:
-      - '333.266667'
+      - '165.883333'
     status:
       code: 200
       message: OK
@@ -136,9 +226,11 @@ interactions:
     uri: https://fake_url.azurecr.io/acr/v1/repo9b321760/_tags/tag9b321760
   response:
     body:
-      string: '{"registry":"fake_url.azurecr.io","imageName":"repo9b321760","tag":{"name":"tag9b321760","digest":"sha256:308866a43596e83578c7dfa15e27a73011bdd402185a84c5cd7f32a88b501a24","createdTime":"2021-03-31T13:29:13.7769359Z","lastUpdateTime":"2021-03-31T13:29:13.7769359Z","signed":false,"changeableAttributes":{"deleteEnabled":false,"writeEnabled":false,"readEnabled":false,"listEnabled":false}}}
-
-        '
+      string: '{"registry": "fake_url.azurecr.io", "imageName": "repo9b321760", "tag":
+        {"name": "tag9b321760", "digest": "sha256:308866a43596e83578c7dfa15e27a73011bdd402185a84c5cd7f32a88b501a24",
+        "createdTime": "2021-04-13T15:25:07.1063989Z", "lastUpdateTime": "2021-04-13T15:25:07.1063989Z",
+        "signed": false, "changeableAttributes": {"deleteEnabled": true, "writeEnabled":
+        true, "readEnabled": true, "listEnabled": true}}}'
     headers:
       access-control-expose-headers:
       - Docker-Content-Digest
@@ -148,11 +240,11 @@ interactions:
       connection:
       - keep-alive
       content-length:
-      - '390'
+      - '386'
       content-type:
       - application/json; charset=utf-8
       date:
-      - Fri, 02 Apr 2021 17:53:50 GMT
+      - Tue, 13 Apr 2021 16:00:32 GMT
       docker-distribution-api-version:
       - registry/2.0
       server:
@@ -202,7 +294,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Fri, 02 Apr 2021 17:53:50 GMT
+      - Tue, 13 Apr 2021 16:00:32 GMT
       docker-distribution-api-version:
       - registry/2.0
       server:
@@ -210,14 +302,15 @@ interactions:
       strict-transport-security:
       - max-age=31536000; includeSubDomains
       - max-age=31536000; includeSubDomains
-      www-authenticate: Bearer realm="https://fake_url.azurecr.io/oauth2/token",service="fake_url.azurecr.io",scope="fake_scope",error="invalid_token"
+      www-authenticate:
+      - Bearer realm="https://seankane.azurecr.io/oauth2/token",service="seankane.azurecr.io",scope="repository:repo9b321760:metadata_write"
       x-content-type-options:
       - nosniff
     status:
       code: 401
       message: Unauthorized
 - request:
-    body: grant_type=access_token&service=seankane.azurecr.io&access_token=REDACTED
+    body: grant_type=access_token&service=fake_url.azurecr.io&access_token=REDACTED
     headers:
       Accept:
       - application/json
@@ -242,7 +335,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Fri, 02 Apr 2021 17:53:50 GMT
+      - Tue, 13 Apr 2021 16:00:32 GMT
       server:
       - openresty
       strict-transport-security:
@@ -250,12 +343,12 @@ interactions:
       transfer-encoding:
       - chunked
       x-ms-ratelimit-remaining-calls-per-second:
-      - '333.25'
+      - '165.866667'
     status:
       code: 200
       message: OK
 - request:
-    body: grant_type=refresh_token&service=seankane.azurecr.io&scope=repository%3Arepo9b321760%3Ametadata_write&refresh_token=REDACTED
+    body: grant_type=refresh_token&service=fake_url.azurecr.io&scope=repository%3Arepo9b321760%3Ametadata_write&refresh_token=REDACTED
     headers:
       Accept:
       - application/json
@@ -280,7 +373,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Fri, 02 Apr 2021 17:53:50 GMT
+      - Tue, 13 Apr 2021 16:00:32 GMT
       server:
       - openresty
       strict-transport-security:
@@ -288,7 +381,7 @@ interactions:
       transfer-encoding:
       - chunked
       x-ms-ratelimit-remaining-calls-per-second:
-      - '333.233333'
+      - '165.85'
     status:
       code: 200
       message: OK
@@ -312,9 +405,11 @@ interactions:
     uri: https://fake_url.azurecr.io/acr/v1/repo9b321760/_tags/tag9b321760
   response:
     body:
-      string: '{"registry":"fake_url.azurecr.io","imageName":"repo9b321760","tag":{"name":"tag9b321760","digest":"sha256:308866a43596e83578c7dfa15e27a73011bdd402185a84c5cd7f32a88b501a24","createdTime":"2021-03-31T13:29:13.7769359Z","lastUpdateTime":"2021-03-31T13:29:13.7769359Z","signed":false,"changeableAttributes":{"deleteEnabled":false,"writeEnabled":false,"readEnabled":false,"listEnabled":false}}}
-
-        '
+      string: '{"registry": "fake_url.azurecr.io", "imageName": "repo9b321760", "tag":
+        {"name": "tag9b321760", "digest": "sha256:308866a43596e83578c7dfa15e27a73011bdd402185a84c5cd7f32a88b501a24",
+        "createdTime": "2021-04-13T15:25:07.1063989Z", "lastUpdateTime": "2021-04-13T15:25:07.1063989Z",
+        "signed": false, "changeableAttributes": {"deleteEnabled": false, "writeEnabled":
+        false, "readEnabled": false, "listEnabled": false}}}'
     headers:
       access-control-expose-headers:
       - Docker-Content-Digest
@@ -328,7 +423,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Fri, 02 Apr 2021 17:53:51 GMT
+      - Tue, 13 Apr 2021 16:00:32 GMT
       docker-distribution-api-version:
       - registry/2.0
       server:
@@ -342,7 +437,8 @@ interactions:
       code: 200
       message: OK
 - request:
-    body: null
+    body: '{"deleteEnabled": true, "writeEnabled": true, "listEnabled": true, "readEnabled":
+      true}'
     headers:
       Accept:
       - application/json
@@ -350,14 +446,18 @@ interactions:
       - gzip, deflate
       Connection:
       - keep-alive
+      Content-Length:
+      - '87'
+      Content-Type:
+      - application/json
       User-Agent:
       - azsdk-python-azure-containerregistry/1.0.0b1 Python/3.9.0rc1 (Windows-10-10.0.19041-SP0)
-    method: GET
+    method: PATCH
     uri: https://fake_url.azurecr.io/acr/v1/repo9b321760/_tags/tag9b321760
   response:
     body:
       string: '{"errors":[{"code":"UNAUTHORIZED","message":"authentication required,
-        visit https://aka.ms/acr/authorization for more information.","detail":[{"Type":"repository","Name":"repo9b321760","Action":"metadata_read"}]}]}
+        visit https://aka.ms/acr/authorization for more information.","detail":[{"Type":"repository","Name":"repo9b321760","Action":"metadata_write"}]}]}
 
         '
     headers:
@@ -369,11 +469,11 @@ interactions:
       connection:
       - keep-alive
       content-length:
-      - '215'
+      - '216'
       content-type:
       - application/json; charset=utf-8
       date:
-      - Fri, 02 Apr 2021 17:54:01 GMT
+      - Tue, 13 Apr 2021 16:00:33 GMT
       docker-distribution-api-version:
       - registry/2.0
       server:
@@ -381,14 +481,15 @@ interactions:
       strict-transport-security:
       - max-age=31536000; includeSubDomains
       - max-age=31536000; includeSubDomains
-      www-authenticate: Bearer realm="https://fake_url.azurecr.io/oauth2/token",service="fake_url.azurecr.io",scope="fake_scope",error="invalid_token"
+      www-authenticate:
+      - Bearer realm="https://seankane.azurecr.io/oauth2/token",service="seankane.azurecr.io",scope="repository:repo9b321760:metadata_write"
       x-content-type-options:
       - nosniff
     status:
       code: 401
       message: Unauthorized
 - request:
-    body: grant_type=access_token&service=seankane.azurecr.io&access_token=REDACTED
+    body: grant_type=access_token&service=fake_url.azurecr.io&access_token=REDACTED
     headers:
       Accept:
       - application/json
@@ -413,7 +514,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Fri, 02 Apr 2021 17:54:01 GMT
+      - Tue, 13 Apr 2021 16:00:33 GMT
       server:
       - openresty
       strict-transport-security:
@@ -421,12 +522,12 @@ interactions:
       transfer-encoding:
       - chunked
       x-ms-ratelimit-remaining-calls-per-second:
-      - '333.216667'
+      - '165.833333'
     status:
       code: 200
       message: OK
 - request:
-    body: grant_type=refresh_token&service=seankane.azurecr.io&scope=repository%3Arepo9b321760%3Ametadata_read&refresh_token=REDACTED
+    body: grant_type=refresh_token&service=fake_url.azurecr.io&scope=repository%3Arepo9b321760%3Ametadata_write&refresh_token=REDACTED
     headers:
       Accept:
       - application/json
@@ -435,7 +536,7 @@ interactions:
       Connection:
       - keep-alive
       Content-Length:
-      - '1080'
+      - '1081'
       Content-Type:
       - application/x-www-form-urlencoded
       User-Agent:
@@ -451,7 +552,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Fri, 02 Apr 2021 17:54:01 GMT
+      - Tue, 13 Apr 2021 16:00:33 GMT
       server:
       - openresty
       strict-transport-security:
@@ -459,12 +560,13 @@ interactions:
       transfer-encoding:
       - chunked
       x-ms-ratelimit-remaining-calls-per-second:
-      - '333.15'
+      - '165.816667'
     status:
       code: 200
       message: OK
 - request:
-    body: null
+    body: '{"deleteEnabled": true, "writeEnabled": true, "listEnabled": true, "readEnabled":
+      true}'
     headers:
       Accept:
       - application/json
@@ -472,15 +574,21 @@ interactions:
       - gzip, deflate
       Connection:
       - keep-alive
+      Content-Length:
+      - '87'
+      Content-Type:
+      - application/json
       User-Agent:
       - azsdk-python-azure-containerregistry/1.0.0b1 Python/3.9.0rc1 (Windows-10-10.0.19041-SP0)
-    method: GET
+    method: PATCH
     uri: https://fake_url.azurecr.io/acr/v1/repo9b321760/_tags/tag9b321760
   response:
     body:
-      string: '{"registry":"fake_url.azurecr.io","imageName":"repo9b321760","tag":{"name":"tag9b321760","digest":"sha256:308866a43596e83578c7dfa15e27a73011bdd402185a84c5cd7f32a88b501a24","createdTime":"2021-03-31T13:29:13.7769359Z","lastUpdateTime":"2021-03-31T13:29:13.7769359Z","signed":false,"changeableAttributes":{"deleteEnabled":false,"writeEnabled":false,"readEnabled":false,"listEnabled":false}}}
-
-        '
+      string: '{"registry": "fake_url.azurecr.io", "imageName": "repo9b321760", "tag":
+        {"name": "tag9b321760", "digest": "sha256:308866a43596e83578c7dfa15e27a73011bdd402185a84c5cd7f32a88b501a24",
+        "createdTime": "2021-04-13T15:25:07.1063989Z", "lastUpdateTime": "2021-04-13T15:25:07.1063989Z",
+        "signed": false, "changeableAttributes": {"deleteEnabled": true, "writeEnabled":
+        true, "readEnabled": true, "listEnabled": true}}}'
     headers:
       access-control-expose-headers:
       - Docker-Content-Digest
@@ -490,11 +598,11 @@ interactions:
       connection:
       - keep-alive
       content-length:
-      - '390'
+      - '386'
       content-type:
       - application/json; charset=utf-8
       date:
-      - Fri, 02 Apr 2021 17:54:01 GMT
+      - Tue, 13 Apr 2021 16:00:33 GMT
       docker-distribution-api-version:
       - registry/2.0
       server:

@@ -19,21 +19,21 @@ interactions:
       connection: keep-alive
       content-length: '209'
       content-type: application/json; charset=utf-8
-      date: Fri, 02 Apr 2021 17:47:27 GMT
+      date: Tue, 13 Apr 2021 15:57:58 GMT
       docker-distribution-api-version: registry/2.0
       server: openresty
       strict-transport-security: max-age=31536000; includeSubDomains
-      www-authenticate: Bearer realm="https://fake_url.azurecr.io/oauth2/token",service="fake_url.azurecr.io",scope="fake_scope",error="invalid_token"
+      www-authenticate: Bearer realm="https://seankane.azurecr.io/oauth2/token",service="seankane.azurecr.io",scope="repository:not_real_repo:delete"
       x-content-type-options: nosniff
     status:
       code: 401
       message: Unauthorized
-    url: https://seankane.azurecr.io/acr/v1/not_real_repo
+    url: https://fake_url.azurecr.io/acr/v1/not_real_repo
 - request:
     body:
       access_token: REDACTED
       grant_type: access_token
-      service: seankane.azurecr.io
+      service: fake_url.azurecr.io
     headers:
       Accept:
       - application/json
@@ -47,21 +47,21 @@ interactions:
     headers:
       connection: keep-alive
       content-type: application/json; charset=utf-8
-      date: Fri, 02 Apr 2021 17:47:28 GMT
+      date: Tue, 13 Apr 2021 15:57:59 GMT
       server: openresty
       strict-transport-security: max-age=31536000; includeSubDomains
       transfer-encoding: chunked
-      x-ms-ratelimit-remaining-calls-per-second: '332.666667'
+      x-ms-ratelimit-remaining-calls-per-second: '166'
     status:
       code: 200
       message: OK
-    url: https://seankane.azurecr.io/oauth2/exchange
+    url: https://fake_url.azurecr.io/oauth2/exchange
 - request:
     body:
       grant_type: refresh_token
       refresh_token: REDACTED
       scope: repository:not_real_repo:delete
-      service: seankane.azurecr.io
+      service: fake_url.azurecr.io
     headers:
       Accept:
       - application/json
@@ -75,15 +75,15 @@ interactions:
     headers:
       connection: keep-alive
       content-type: application/json; charset=utf-8
-      date: Fri, 02 Apr 2021 17:47:28 GMT
+      date: Tue, 13 Apr 2021 15:57:59 GMT
       server: openresty
       strict-transport-security: max-age=31536000; includeSubDomains
       transfer-encoding: chunked
-      x-ms-ratelimit-remaining-calls-per-second: '332.583333'
+      x-ms-ratelimit-remaining-calls-per-second: '165.983333'
     status:
       code: 200
       message: OK
-    url: https://seankane.azurecr.io/oauth2/token
+    url: https://fake_url.azurecr.io/oauth2/token
 - request:
     body: null
     headers:
@@ -95,23 +95,21 @@ interactions:
     uri: https://fake_url.azurecr.io/acr/v1/not_real_repo
   response:
     body:
-      string: '{"errors":[{"code":"NAME_UNKNOWN","message":"repository name not known
-        to registry","detail":{"name":"not_real_repo"}}]}
-
-        '
+      string: '{"errors": [{"code": "NAME_UNKNOWN", "message": "repository name not
+        known to registry", "detail": {"name": "not_real_repo"}}]}'
     headers:
       access-control-expose-headers: X-Ms-Correlation-Request-Id
       connection: keep-alive
       content-length: '121'
       content-type: application/json; charset=utf-8
-      date: Fri, 02 Apr 2021 17:47:28 GMT
+      date: Tue, 13 Apr 2021 15:57:59 GMT
       docker-distribution-api-version: registry/2.0
       server: openresty
       strict-transport-security: max-age=31536000; includeSubDomains
       x-content-type-options: nosniff
-      x-ms-ratelimit-remaining-calls-per-second: '32.000000'
+      x-ms-ratelimit-remaining-calls-per-second: '8.000000'
     status:
       code: 404
       message: Not Found
-    url: https://seankane.azurecr.io/acr/v1/not_real_repo
+    url: https://fake_url.azurecr.io/acr/v1/not_real_repo
 version: 1

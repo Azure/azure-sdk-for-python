@@ -507,7 +507,7 @@ class BaseManagedCluster(msrest.serialization.Model):
     :type disk_encryption_set_id: str
     :param identity_profile: Identities associated with the cluster.
     :type identity_profile: dict[str,
-     ~azure.mgmt.containerservice.v2020_09_01.models.UserAssignedIdentity]
+     ~azure.mgmt.containerservice.v2020_09_01.models.ManagedClusterPropertiesIdentityProfileValue]
     """
 
     _validation = {
@@ -540,7 +540,7 @@ class BaseManagedCluster(msrest.serialization.Model):
         'auto_scaler_profile': {'key': 'properties.autoScalerProfile', 'type': 'ManagedClusterPropertiesAutoScalerProfile'},
         'api_server_access_profile': {'key': 'properties.apiServerAccessProfile', 'type': 'ManagedClusterAPIServerAccessProfile'},
         'disk_encryption_set_id': {'key': 'properties.diskEncryptionSetID', 'type': 'str'},
-        'identity_profile': {'key': 'properties.identityProfile', 'type': '{UserAssignedIdentity}'},
+        'identity_profile': {'key': 'properties.identityProfile', 'type': '{ManagedClusterPropertiesIdentityProfileValue}'},
     }
 
     def __init__(
@@ -1086,7 +1086,7 @@ class ManagedCluster(Resource, BaseManagedCluster):
     :type disk_encryption_set_id: str
     :param identity_profile: Identities associated with the cluster.
     :type identity_profile: dict[str,
-     ~azure.mgmt.containerservice.v2020_09_01.models.UserAssignedIdentity]
+     ~azure.mgmt.containerservice.v2020_09_01.models.ManagedClusterPropertiesIdentityProfileValue]
     :ivar id: Resource Id.
     :vartype id: str
     :ivar name: Resource name.
@@ -1135,7 +1135,7 @@ class ManagedCluster(Resource, BaseManagedCluster):
         'auto_scaler_profile': {'key': 'properties.autoScalerProfile', 'type': 'ManagedClusterPropertiesAutoScalerProfile'},
         'api_server_access_profile': {'key': 'properties.apiServerAccessProfile', 'type': 'ManagedClusterAPIServerAccessProfile'},
         'disk_encryption_set_id': {'key': 'properties.diskEncryptionSetID', 'type': 'str'},
-        'identity_profile': {'key': 'properties.identityProfile', 'type': '{UserAssignedIdentity}'},
+        'identity_profile': {'key': 'properties.identityProfile', 'type': '{ManagedClusterPropertiesIdentityProfileValue}'},
         'id': {'key': 'id', 'type': 'str'},
         'name': {'key': 'name', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
@@ -1281,7 +1281,8 @@ class ManagedClusterAddonProfile(msrest.serialization.Model):
     :param config: Key-value pairs for configuring an add-on.
     :type config: dict[str, str]
     :ivar identity: Information of user assigned identity used by this add-on.
-    :vartype identity: ~azure.mgmt.containerservice.v2020_09_01.models.UserAssignedIdentity
+    :vartype identity:
+     ~azure.mgmt.containerservice.v2020_09_01.models.ManagedClusterAddonProfileIdentity
     """
 
     _validation = {
@@ -1292,7 +1293,7 @@ class ManagedClusterAddonProfile(msrest.serialization.Model):
     _attribute_map = {
         'enabled': {'key': 'enabled', 'type': 'bool'},
         'config': {'key': 'config', 'type': '{str}'},
-        'identity': {'key': 'identity', 'type': 'UserAssignedIdentity'},
+        'identity': {'key': 'identity', 'type': 'ManagedClusterAddonProfileIdentity'},
     }
 
     def __init__(

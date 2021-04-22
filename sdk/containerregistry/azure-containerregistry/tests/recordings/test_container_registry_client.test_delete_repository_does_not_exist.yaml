@@ -33,7 +33,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Fri, 02 Apr 2021 17:46:50 GMT
+      - Tue, 13 Apr 2021 15:57:27 GMT
       docker-distribution-api-version:
       - registry/2.0
       server:
@@ -41,14 +41,15 @@ interactions:
       strict-transport-security:
       - max-age=31536000; includeSubDomains
       - max-age=31536000; includeSubDomains
-      www-authenticate: Bearer realm="https://fake_url.azurecr.io/oauth2/token",service="fake_url.azurecr.io",scope="fake_scope",error="invalid_token"
+      www-authenticate:
+      - Bearer realm="https://seankane.azurecr.io/oauth2/token",service="seankane.azurecr.io",scope="repository:not_real_repo:delete"
       x-content-type-options:
       - nosniff
     status:
       code: 401
       message: Unauthorized
 - request:
-    body: grant_type=access_token&service=seankane.azurecr.io&access_token=REDACTED
+    body: grant_type=access_token&service=fake_url.azurecr.io&access_token=REDACTED
     headers:
       Accept:
       - application/json
@@ -73,7 +74,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Fri, 02 Apr 2021 17:46:51 GMT
+      - Tue, 13 Apr 2021 15:57:28 GMT
       server:
       - openresty
       strict-transport-security:
@@ -81,12 +82,12 @@ interactions:
       transfer-encoding:
       - chunked
       x-ms-ratelimit-remaining-calls-per-second:
-      - '333.3'
+      - '166.55'
     status:
       code: 200
       message: OK
 - request:
-    body: grant_type=refresh_token&service=seankane.azurecr.io&scope=repository%3Anot_real_repo%3Adelete&refresh_token=REDACTED
+    body: grant_type=refresh_token&service=fake_url.azurecr.io&scope=repository%3Anot_real_repo%3Adelete&refresh_token=REDACTED
     headers:
       Accept:
       - application/json
@@ -111,7 +112,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Fri, 02 Apr 2021 17:46:51 GMT
+      - Tue, 13 Apr 2021 15:57:28 GMT
       server:
       - openresty
       strict-transport-security:
@@ -119,7 +120,7 @@ interactions:
       transfer-encoding:
       - chunked
       x-ms-ratelimit-remaining-calls-per-second:
-      - '333.283333'
+      - '166.2'
     status:
       code: 200
       message: OK
@@ -140,10 +141,8 @@ interactions:
     uri: https://fake_url.azurecr.io/acr/v1/not_real_repo
   response:
     body:
-      string: '{"errors":[{"code":"NAME_UNKNOWN","message":"repository name not known
-        to registry","detail":{"name":"not_real_repo"}}]}
-
-        '
+      string: '{"errors": [{"code": "NAME_UNKNOWN", "message": "repository name not
+        known to registry", "detail": {"name": "not_real_repo"}}]}'
     headers:
       access-control-expose-headers:
       - Docker-Content-Digest
@@ -157,7 +156,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Fri, 02 Apr 2021 17:46:51 GMT
+      - Tue, 13 Apr 2021 15:57:29 GMT
       docker-distribution-api-version:
       - registry/2.0
       server:
@@ -168,7 +167,7 @@ interactions:
       x-content-type-options:
       - nosniff
       x-ms-ratelimit-remaining-calls-per-second:
-      - '32.000000'
+      - '8.000000'
     status:
       code: 404
       message: Not Found

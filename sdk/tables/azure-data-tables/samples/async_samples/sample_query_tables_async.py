@@ -61,7 +61,7 @@ class QueryTables(object):
                 table_name = "mytableasync1"
                 name_filter = "TableName eq '{}'".format(table_name)
                 print("Queried_tables")
-                async for table in table_service.query_tables(filter=name_filter):
+                async for table in table_service.query_tables(name_filter):
                     print("\t{}".format(table.table_name))
                 # [END tsc_query_tables]
 

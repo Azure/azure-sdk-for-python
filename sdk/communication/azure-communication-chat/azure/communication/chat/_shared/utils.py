@@ -6,23 +6,32 @@
 
 import base64
 import json
-import time
 from typing import (  # pylint: disable=unused-import
     cast,
     Tuple,
 )
 from datetime import datetime
+import calendar
 from msrest.serialization import TZ_UTC
 from azure.core.credentials import AccessToken
 
-
 def _convert_datetime_to_utc_int(expires_on):
-    epoch = time.mktime(datetime(1970, 1, 1).timetuple())
-    return epoch-time.mktime(expires_on.timetuple())
+    """
+    Converts DateTime in local time to the Epoch in UTC in second.
 
+    :param input_datetime: Input datetime
+    :type input_datetime: datetime
+    :return: Integer
+    :rtype: int
+    """
+    return int(calendar.timegm(expires_on.utctimetuple()))
 
 def parse_connection_str(conn_str):
     # type: (str) -> Tuple[str, str, str, str]
+    if conn_str is None:
+        raise ValueError(
+            "Connection string is undefined."
+        )
     endpoint = None
     shared_access_key = None
     for element in conn_str.split(";"):
@@ -33,8 +42,8 @@ def parse_connection_str(conn_str):
             shared_access_key = value
     if not all([endpoint, shared_access_key]):
         raise ValueError(
-            "Invalid connection string. Should be in the format: "
-            "endpoint=sb://<FQDN>/;accesskey=<KeyValue>"
+            "Invalid connection string. You can get the connection string from your resource page in the Azure Portal. "
+            "The format should be as follows: endpoint=https://<ResourceUrl>/;accesskey=<KeyValue>"
         )
     left_slash_pos = cast(str, endpoint).find("//")
     if left_slash_pos != -1:
@@ -44,7 +53,6 @@ def parse_connection_str(conn_str):
 
     return host, str(shared_access_key)
 
-
 def get_current_utc_time():
     # type: () -> str
     return str(datetime.utcnow().strftime("%a, %d %b %Y %H:%M:%S ")) + "GMT"
@@ -52,9 +60,8 @@ def get_current_utc_time():
 
 def get_current_utc_as_int():
     # type: () -> int
-    current_utc_datetime = datetime.utcnow().replace(tzinfo=TZ_UTC)
+    current_utc_datetime = datetime.utcnow()
     return _convert_datetime_to_utc_int(current_utc_datetime)
-
 
 def create_access_token(token):
     # type: (str) -> azure.core.credentials.AccessToken
@@ -83,7 +90,6 @@ def create_access_token(token):
                            _convert_datetime_to_utc_int(datetime.fromtimestamp(payload['exp']).replace(tzinfo=TZ_UTC)))
     except ValueError:
         raise ValueError(token_parse_err_msg)
-
 
 def get_authentication_policy(
         endpoint, # type: str

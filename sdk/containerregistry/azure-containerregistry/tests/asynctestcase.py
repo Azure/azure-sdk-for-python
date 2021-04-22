@@ -32,6 +32,7 @@ class AsyncFakeTokenCredential(object):
     """Protocol for classes able to provide OAuth tokens.
     :param str scopes: Lets you specify the type of access needed.
     """
+
     def __init__(self):
         self.token = AccessToken("YOU SHALL NOT PASS", 0)
 
@@ -40,7 +41,6 @@ class AsyncFakeTokenCredential(object):
 
 
 class AsyncContainerRegistryTestClass(ContainerRegistryTestClass):
-
     def __init__(self, method_name):
         super(AsyncContainerRegistryTestClass, self).__init__(method_name)
 
@@ -49,15 +49,17 @@ class AsyncContainerRegistryTestClass(ContainerRegistryTestClass):
             return DefaultAzureCredential()
         return AsyncFakeTokenCredential()
 
-    def create_registry_client(self, endpoint):
+    def create_registry_client(self, endpoint, **kwargs):
         return ContainerRegistryClient(
             endpoint=endpoint,
             credential=self.get_credential(),
+            **kwargs,
         )
 
-    def create_repository_client(self, endpoint, name):
+    def create_repository_client(self, endpoint, name, **kwargs):
         return ContainerRepositoryClient(
             endpoint=endpoint,
             repository=name,
             credential=self.get_credential(),
+            **kwargs,
         )

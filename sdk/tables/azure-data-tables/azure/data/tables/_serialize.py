@@ -4,24 +4,20 @@
 # license information.
 # --------------------------------------------------------------------------
 
+from typing import Dict
 from uuid import UUID
 from datetime import datetime
 from math import isnan
 from enum import Enum
 import sys
-import uuid
-import isodate
 
+import six
 from azure.core import MatchConditions
 from azure.core.exceptions import raise_with_traceback
 
 from ._entity import EdmType, EntityProperty
-from ._models import TablePayloadFormat
-from ._common_conversion import _to_str, _encode_base64, _to_utc_datetime
+from ._common_conversion import _encode_base64, _to_utc_datetime
 from ._error import _ERROR_VALUE_TOO_LARGE, _ERROR_TYPE_NOT_SUPPORTED
-
-
-_SUPPORTED_API_VERSIONS = ["2019-02-02", "2019-07-07"]
 
 
 def _get_match_headers(kwargs, match_param, etag_param):
@@ -56,51 +52,29 @@ def _get_match_headers(kwargs, match_param, etag_param):
     return if_match, if_none_match
 
 
-def get_api_version(kwargs, default):
-    # type: (Dict[str, Any]) -> str
-    api_version = kwargs.pop("api_version", None)
-    if api_version and api_version not in _SUPPORTED_API_VERSIONS:
-        versions = "\n".join(_SUPPORTED_API_VERSIONS)
-        raise ValueError(
-            "Unsupported API version '{}'. Please select from:\n{}".format(
-                api_version, versions
-            )
-        )
-    return api_version or default
-
-
-if sys.version_info < (3,):
-
-    def _new_boundary():
-        return str(uuid.uuid1())
-
-
-else:
-
-    def _new_boundary():
-        return str(uuid.uuid1()).encode("utf-8")
-
-
-_DEFAULT_ACCEPT_HEADER = ("Accept", TablePayloadFormat.JSON_MINIMAL_METADATA)
-_DEFAULT_CONTENT_TYPE_HEADER = ("Content-Type", "application/json")
-_DEFAULT_PREFER_HEADER = ("Prefer", "return-no-content")
-_SUB_HEADERS = ["If-Match", "Prefer", "Accept", "Content-Type", "DataServiceVersion"]
-
-
-def _get_entity_path(table_name, partition_key, row_key):
-    return "/{0}(PartitionKey='{1}',RowKey='{2}')".format(
-        _to_str(table_name),
-        _to_str(partition_key.replace("'", "''")),
-        _to_str(row_key.replace("'", "''")),
-    )
-
-
-def _update_storage_table_header(request):
-    """ add additional headers for storage table request. """
-
-    # set service version
-    request.headers["DataServiceVersion"] = "3.0;NetFx"
-    request.headers["MaxDataServiceVersion"] = "3.0"
+def _parameter_filter_substitution(parameters, query_filter):
+    # type: (Dict[str, str], str) -> str
+    """Replace user defined parameter in filter
+    :param parameters: User defined parameters
+    :param filter: Filter for querying
+    """
+    if parameters:
+        filter_strings = query_filter.split(' ')
+        for index, word in enumerate(filter_strings):
+            if word[0] == u'@':
+                val = parameters[word[1:]]
+                if val in [True, False]:
+                    filter_strings[index] = str(val).lower()
+                elif isinstance(val, (float, six.integer_types)):
+                    filter_strings[index] = str(val)
+                elif isinstance(val, datetime):
+                    filter_strings[index] = "datetime'{}'".format(_to_utc_datetime(val))
+                elif isinstance(val, UUID):
+                    filter_strings[index] = "guid'{}'".format(str(val))
+                else:
+                    filter_strings[index] = "'{}'".format(val.replace("'", "''"))
+        return ' '.join(filter_strings)
+    return query_filter
 
 
 def _to_entity_binary(value):
@@ -112,6 +86,16 @@ def _to_entity_bool(value):
 
 
 def _to_entity_datetime(value):
+    if isinstance(value, str):
+        # Pass a serialized datetime straight through
+        return EdmType.DATETIME, value
+    try:
+        # Check is this is a 'round-trip' datetime, and if so
+        # pass through the original value.
+        if value.tables_service_value:
+            return EdmType.DATETIME, value.tables_service_value
+    except AttributeError:
+        pass
     return EdmType.DATETIME, _to_utc_datetime(value)
 
 
@@ -144,15 +128,6 @@ def _to_entity_int64(value):
     if ivalue >= 2 ** 63 or ivalue < -(2 ** 63):
         raise TypeError(_ERROR_VALUE_TOO_LARGE.format(str(value), EdmType.INT64))
     return EdmType.INT64, str(value)
-
-
-def _to_entity_int(value):
-    ivalue = int(value)
-    if ivalue.bit_length() <= 32:
-        return _to_entity_int32(value)
-    if ivalue.bit_length() <= 64:
-        return _to_entity_int64(value)
-    raise TypeError(_ERROR_VALUE_TOO_LARGE.format(str(value), EdmType.INT64))
 
 
 def _to_entity_str(value):
@@ -238,6 +213,8 @@ def _add_entity_properties(source):
             except NameError:
                 conv = _PYTHON_TO_ENTITY_CONVERSIONS.get(str)
             mtype, value = conv(value)
+        elif isinstance(value, datetime):
+            mtype, value = _to_entity_datetime(value)
         elif isinstance(value, EntityProperty):
             conv = _EDM_TO_ENTITY_CONVERSIONS.get(value.type)
             if conv is None:
@@ -272,7 +249,8 @@ def serialize_iso(attr):
     if not attr:
         return None
     if isinstance(attr, str):
-        attr = isodate.parse_datetime(attr)
+        # Pass a string through unaltered
+        return attr
     try:
         utc = attr.utctimetuple()
         if utc.tm_year > 9999 or utc.tm_year < 1:

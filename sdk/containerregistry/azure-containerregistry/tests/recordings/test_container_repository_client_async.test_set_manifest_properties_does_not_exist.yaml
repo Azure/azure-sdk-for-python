@@ -23,21 +23,21 @@ interactions:
       connection: keep-alive
       content-length: '216'
       content-type: application/json; charset=utf-8
-      date: Fri, 02 Apr 2021 17:52:06 GMT
+      date: Tue, 13 Apr 2021 16:02:08 GMT
       docker-distribution-api-version: registry/2.0
       server: openresty
       strict-transport-security: max-age=31536000; includeSubDomains
-      www-authenticate: Bearer realm="https://fake_url.azurecr.io/oauth2/token",service="fake_url.azurecr.io",scope="fake_scope",error="invalid_token"
+      www-authenticate: Bearer realm="https://seankane.azurecr.io/oauth2/token",service="seankane.azurecr.io",scope="repository:repo8cab223e:metadata_write"
       x-content-type-options: nosniff
     status:
       code: 401
       message: Unauthorized
-    url: https://seankane.azurecr.io/acr/v1/repo8cab223e/_manifests/sha256:abcdef
+    url: https://fake_url.azurecr.io/acr/v1/repo8cab223e/_manifests/sha256:abcdef
 - request:
     body:
       access_token: REDACTED
       grant_type: access_token
-      service: seankane.azurecr.io
+      service: fake_url.azurecr.io
     headers:
       Accept:
       - application/json
@@ -51,21 +51,21 @@ interactions:
     headers:
       connection: keep-alive
       content-type: application/json; charset=utf-8
-      date: Fri, 02 Apr 2021 17:52:07 GMT
+      date: Tue, 13 Apr 2021 16:02:09 GMT
       server: openresty
       strict-transport-security: max-age=31536000; includeSubDomains
       transfer-encoding: chunked
-      x-ms-ratelimit-remaining-calls-per-second: '332.433333'
+      x-ms-ratelimit-remaining-calls-per-second: '166.316667'
     status:
       code: 200
       message: OK
-    url: https://seankane.azurecr.io/oauth2/exchange
+    url: https://fake_url.azurecr.io/oauth2/exchange
 - request:
     body:
       grant_type: refresh_token
       refresh_token: REDACTED
       scope: repository:repo8cab223e:metadata_write
-      service: seankane.azurecr.io
+      service: fake_url.azurecr.io
     headers:
       Accept:
       - application/json
@@ -79,15 +79,15 @@ interactions:
     headers:
       connection: keep-alive
       content-type: application/json; charset=utf-8
-      date: Fri, 02 Apr 2021 17:52:08 GMT
+      date: Tue, 13 Apr 2021 16:02:09 GMT
       server: openresty
       strict-transport-security: max-age=31536000; includeSubDomains
       transfer-encoding: chunked
-      x-ms-ratelimit-remaining-calls-per-second: '332.416667'
+      x-ms-ratelimit-remaining-calls-per-second: '166.3'
     status:
       code: 200
       message: OK
-    url: https://seankane.azurecr.io/oauth2/token
+    url: https://fake_url.azurecr.io/oauth2/token
 - request:
     body: '{"deleteEnabled": false}'
     headers:
@@ -103,15 +103,13 @@ interactions:
     uri: https://fake_url.azurecr.io/acr/v1/repo8cab223e/_manifests/sha256:abcdef
   response:
     body:
-      string: '{"errors":[{"code":"MANIFEST_UNKNOWN","message":"manifest unknown"}]}
-
-        '
+      string: '{"errors": [{"code": "MANIFEST_UNKNOWN", "message": "manifest unknown"}]}'
     headers:
       access-control-expose-headers: X-Ms-Correlation-Request-Id
       connection: keep-alive
       content-length: '70'
       content-type: application/json; charset=utf-8
-      date: Fri, 02 Apr 2021 17:52:08 GMT
+      date: Tue, 13 Apr 2021 16:02:09 GMT
       docker-distribution-api-version: registry/2.0
       server: openresty
       strict-transport-security: max-age=31536000; includeSubDomains
@@ -119,5 +117,5 @@ interactions:
     status:
       code: 404
       message: Not Found
-    url: https://seankane.azurecr.io/acr/v1/repo8cab223e/_manifests/sha256:abcdef
+    url: https://fake_url.azurecr.io/acr/v1/repo8cab223e/_manifests/sha256:abcdef
 version: 1
