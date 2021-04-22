@@ -8,7 +8,11 @@ from typing import Any, List
 from uuid import uuid4
 
 from azure.core.credentials import AzureSasCredential
-from azure.core.exceptions import ResourceNotFoundError, ClientAuthenticationError
+from azure.core.exceptions import (
+    ResourceNotFoundError,
+    ClientAuthenticationError,
+    HttpResponseError
+)
 from azure.core.pipeline.policies import (
     ContentDecodePolicy,
     AsyncBearerTokenCredentialPolicy,
@@ -31,8 +35,9 @@ from .._generated.aio import AzureTable
 from .._base_client import AccountHostsMixin, get_api_version, extract_batch_part_metadata
 from .._authentication import SharedKeyCredentialPolicy
 from .._constants import STORAGE_OAUTH_SCOPE
-from .._error import RequestTooLargeError
+from .._error import RequestTooLargeError, _process_table_error
 from .._models import BatchErrorException
+from .._entity import TableEntity
 from .._policies import StorageHosts, StorageHeadersPolicy
 from .._sdk_moniker import SDK_MONIKER
 from ._policies_async import AsyncTablesRetryPolicy
@@ -101,7 +106,7 @@ class AsyncTablesBaseClient(AccountHostsMixin):
 
     async def _batch_send(
         self,
-        entities,  # type: List[TableEntity]
+        entities: List[TableEntity],
         *reqs: "HttpRequest",
         **kwargs
     ):
@@ -132,7 +137,7 @@ class AsyncTablesBaseClient(AccountHostsMixin):
 
         pipeline_response = await self._client._client._pipeline.run(request, **kwargs)  # pylint: disable=protected-access
         response = pipeline_response.http_response
-
+        # TODO: Check for proper error model deserialization
         if response.status_code == 403:
             raise ClientAuthenticationError(
                 message="There was an error authenticating with the service",
@@ -144,13 +149,11 @@ class AsyncTablesBaseClient(AccountHostsMixin):
             )
         if response.status_code == 413:
             raise RequestTooLargeError(
-                message="The request was too large", response=response
+                message="The batch request was too large", response=response
             )
         if response.status_code != 202:
-            raise BatchErrorException(
-                message="There is a failure in the batch operation.",
+            raise HttpResponseError(
                 response=response,
-                parts=None,
             )
 
         parts_iter = response.parts()
@@ -158,20 +161,15 @@ class AsyncTablesBaseClient(AccountHostsMixin):
         async for p in parts_iter:
             parts.append(p)
         if any(p for p in parts if not 200 <= p.status_code < 300):
-            if any(p for p in parts if p.status_code == 404):
-                raise ResourceNotFoundError(
-                    message="The resource could not be found", response=response
-                )
             if any(p for p in parts if p.status_code == 413):
                 raise RequestTooLargeError(
-                    message="The request was too large", response=response
+                    message="The batch request was too large", response=response
                 )
-
-
             raise BatchErrorException(
                 message="There is a failure in the batch operation.",
                 response=response,
                 parts=parts,
+                entities=entities
             )
         return list(zip(entities, (extract_batch_part_metadata(p) for p in parts)))
 

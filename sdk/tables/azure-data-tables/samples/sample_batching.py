@@ -90,12 +90,12 @@ class CreateClients(object):
         self.table_client.create_entity(entity3)
         self.table_client.create_entity(entity4)
 
-        batch = self.table_client.create_batch()
-        batch.create_entity(entity1)
-        batch.delete_entity(entity2['PartitionKey'], entity2['RowKey'])
-        batch.upsert_entity(entity3)
-        batch.update_entity(entity4, mode=UpdateMode.REPLACE)
-
+        batch = [
+            ('create', entity1),
+            ('delete', entity2),
+            ('upsert', entity3),
+            ('update', entity4, {'mode': UpdateMode.REPLACE})
+        ]
         try:
             self.table_client.send_batch(batch)
         except BatchErrorException as e:

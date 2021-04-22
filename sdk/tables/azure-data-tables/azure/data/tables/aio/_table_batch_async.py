@@ -64,7 +64,7 @@ class TableBatchOperations(object):
         elif entity["PartitionKey"] != self._partition_key:
             raise ValueError("Partition Keys must all be the same")
 
-    def create_entity(
+    def create(
         self,
         entity,  # type: Union[TableEntity, Dict[str,str]]
         **kwargs  # type: Any
@@ -186,7 +186,7 @@ class TableBatchOperations(object):
 
     _batch_create_entity.metadata = {"url": "/{table}"}  # type: ignore
 
-    def update_entity(
+    def update(
         self,
         entity,  # type: Union[TableEntity, Dict[str,str]]
         mode=UpdateMode.MERGE,  # type: UpdateMode
@@ -468,10 +468,9 @@ class TableBatchOperations(object):
         "url": "/{table}(PartitionKey='{partitionKey}',RowKey='{rowKey}')"
     }
 
-    def delete_entity(
+    def delete(
         self,
-        partition_key,  # type: str
-        row_key,  # type: str
+        entity,  # type: Union[TableEntity, Dict[str,str]]
         **kwargs  # type: Any
     ):
         # type: (...) -> None
@@ -495,12 +494,10 @@ class TableBatchOperations(object):
                 :dedent: 8
                 :caption: Creating and adding an entity to a Table
         """
-        if self._partition_key:
-            if partition_key != self._partition_key:
-                raise ValueError("Partition Keys must all be the same")
-        else:
-            self._partition_key = partition_key
-
+        self._verify_partition_key(entity)
+        temp = entity.copy()
+        partition_key = temp["PartitionKey"]
+        row_key = temp["RowKey"]
         if_match, _ = _get_match_headers(
             kwargs=dict(
                 kwargs,
@@ -518,7 +515,7 @@ class TableBatchOperations(object):
             if_match=if_match or "*",
             **kwargs
         )
-        self._entities.append(TableEntity(PartitionKey=partition_key, RowKey=row_key))
+        self._entities.append(TableEntity(**entity.copy()))
 
     def _batch_delete_entity(
         self,
@@ -612,7 +609,7 @@ class TableBatchOperations(object):
         "url": "/{table}(PartitionKey='{partitionKey}',RowKey='{rowKey}')"
     }
 
-    def upsert_entity(
+    def upsert(
         self,
         entity,  # type: Union[TableEntity, Dict[str,str]]
         mode=UpdateMode.MERGE,  # type: UpdateMode

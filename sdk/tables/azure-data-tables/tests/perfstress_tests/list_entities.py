@@ -17,14 +17,14 @@ class ListEntitiesTest(_TableTest):
     async def global_setup(self):
         await super().global_setup()
         batch_size = 0
-        batch = self.async_table_client.create_batch()
+        batch = []
         for row in range(self.args.count):
             self.base_entity['RowKey'] = str(row)
-            batch.create_entity(self.base_entity)
+            batch.append(('create', self.base_entity))
             batch_size += 1
             if batch_size >= 100:
                 await self.async_table_client.send_batch(batch)
-                batch = self.async_table_client.create_batch()
+                batch = []
                 batch_size = 0
         if batch_size:
             await self.async_table_client.send_batch(batch)

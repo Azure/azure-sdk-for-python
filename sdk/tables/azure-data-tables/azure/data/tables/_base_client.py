@@ -15,7 +15,11 @@ except ImportError:
 import six
 from azure.core.credentials import AzureSasCredential
 from azure.core.utils import parse_connection_string
-from azure.core.exceptions import ClientAuthenticationError, ResourceNotFoundError
+from azure.core.exceptions import (
+    ClientAuthenticationError,
+    ResourceNotFoundError,
+    HttpResponseError
+)
 from azure.core.pipeline.transport import (
     HttpTransport,
     HttpRequest,
@@ -297,7 +301,6 @@ class TablesBaseClient(AccountHostsMixin):
         )
         pipeline_response = self._client._client._pipeline.run(request, **kwargs)  # pylint: disable=protected-access
         response = pipeline_response.http_response
-
         if response.status_code == 403:
             raise ClientAuthenticationError(
                 message="There was an error authenticating with the service",
@@ -309,30 +312,25 @@ class TablesBaseClient(AccountHostsMixin):
             )
         if response.status_code == 413:
             raise RequestTooLargeError(
-                message="The request was too large", response=response
+                message="The batch request was too large", response=response
             )
         if response.status_code != 202:
-            raise BatchErrorException(
-                message="There is a failure in the batch operation.",
+            raise HttpResponseError(
                 response=response,
-                parts=None,
             )
 
         parts = list(response.parts())
         if any(p for p in parts if not 200 <= p.status_code < 300):
-            if any(p for p in parts if p.status_code == 404):
-                raise ResourceNotFoundError(
-                    message="The resource could not be found", response=response
-                )
             if any(p for p in parts if p.status_code == 413):
                 raise RequestTooLargeError(
-                    message="The request was too large", response=response
+                    message="The batch request was too large", response=response
                 )
 
             raise BatchErrorException(
                 message="There is a failure in the batch operation.",
                 response=response,
                 parts=parts,
+                entities=entities
                 )
         return list(zip(entities, (extract_batch_part_metadata(p) for p in parts)))
 

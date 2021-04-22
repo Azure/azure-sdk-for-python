@@ -5,8 +5,8 @@
 # --------------------------------------------------------------------------
 
 import functools
-from typing import Optional, Any, Union, List, Tuple, Dict, Mapping
-
+from typing import Optional, Any, Union, List, Tuple, Dict, Literal
+from collections.abc import Sequence, Iterable, Mapping
 
 try:
     from urllib.parse import urlparse, unquote
@@ -31,6 +31,10 @@ from ._serialize import serialize_iso, _parameter_filter_substitution
 from ._deserialize import _return_headers_and_deserialized
 from ._table_batch import TableBatchOperations
 from ._models import TableEntityPropertiesPaged, UpdateMode, AccessPolicy
+
+EntityType = Union[TableEntity, Mapping[str, Any]]
+OperationType = Literal['create', 'delete', 'update', 'upsert']
+BatchOperationType = Union[Sequence[EntityType, OperationType], Sequence[EntityType, OperationType, Mapping[str, Any]]]
 
 
 class TableClient(TablesBaseClient):
@@ -318,7 +322,7 @@ class TableClient(TablesBaseClient):
     @distributed_trace
     def create_entity(
         self,
-        entity,  # type: Union[TableEntity, Dict[str,str]]
+        entity,  # type: EntityType
         **kwargs  # type: Any
     ):
         # type: (...) -> Dict[str,str]
@@ -357,7 +361,7 @@ class TableClient(TablesBaseClient):
     @distributed_trace
     def update_entity(
         self,
-        entity,  # type: Union[TableEntity, Dict[str,str]]
+        entity,  # type: EntityType
         mode=UpdateMode.MERGE,  # type: UpdateMode
         **kwargs  # type: Any
     ):
@@ -553,7 +557,7 @@ class TableClient(TablesBaseClient):
     @distributed_trace
     def upsert_entity(
         self,
-        entity,  # type: Union[TableEntity, Dict[str,str]]
+        entity,  # type: EntityType
         mode=UpdateMode.MERGE,  # type: UpdateMode
         **kwargs  # type: Any
     ):
@@ -612,40 +616,12 @@ class TableClient(TablesBaseClient):
         except HttpResponseError as error:
             _process_table_error(error)
 
-    def create_batch(
-        self, **kwargs  # type: Dict[str, Any]
-    ):
-        # type: (...) -> azure.data.tables.TableBatchOperations
-        """Create a Batching object from a Table Client
-
-        :return: Object containing requests and responses
-        :rtype: ~azure.data.tables.TableBatchOperations
-
-        .. admonition:: Example:
-
-            .. literalinclude:: ../samples/sample_batching.py
-                :start-after: [START batching]
-                :end-before: [END batching]
-                :language: python
-                :dedent: 8
-                :caption: Using batches to send multiple requests at once
-        :raises None:
-        """
-        return TableBatchOperations(
-            self._client,
-            self._client._serialize,  # pylint: disable=protected-access
-            self._client._deserialize,  # pylint: disable=protected-access
-            self._client._config,  # pylint: disable=protected-access
-            self.table_name,
-            **kwargs
-        )
-
     def send_batch(
         self,
-        batch,  # type: azure.data.tables.TableBatchOperations
+        batch,  # type: Iterable[BatchOperationType]
         **kwargs  # type: Any
     ):
-        # type: (...) -> List[Tuple[Mapping[str, Any], Mapping[str, Any]]]
+        # type: (...) -> List[Tuple[TableEntity, Mapping[str, Any]]]
         """Commit a TableBatchOperations to send requests to the server
 
         :return: A list of tuples, each containing the entity operated on, and a dictionary
@@ -662,6 +638,24 @@ class TableClient(TablesBaseClient):
                 :dedent: 8
                 :caption: Using batches to send multiple requests at once
         """
+        batch = TableBatchOperations(
+            self._client,
+            self._client._serialize,  # pylint: disable=protected-access
+            self._client._deserialize,  # pylint: disable=protected-access
+            self._client._config,  # pylint: disable=protected-access
+            self.table_name,
+            **kwargs
+        )
+        for operation in batch:
+            operation_name = operation[1].lower()
+            try:
+                operation_kwargs = operation[2]
+            except IndexError:
+                operation_kwargs = {}
+            try:
+                getattr(batch, operation_name)(operation[0], **operation_kwargs)
+            except AttributeError:
+                raise ValueError("Unrecognized operation: {}".format(operation))
         return self._batch_send(  # pylint: disable=protected-access
             batch._entities, *batch._requests, **kwargs  # pylint: disable=protected-access
         )
