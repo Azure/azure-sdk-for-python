@@ -1,5 +1,8 @@
 # Release History
 
+## 12.1.7 (Unreleased)
+
+
 ## 12.1.6 (2021-04-20)
 **Fixes**
 - Make `AccountName`, `AccountKey` etc. in conn_str case insensitive
@@ -20,10 +23,6 @@
 ## 12.1.3 (2020-09-10)
 **Fixes**
 - Fixed QueueClient type declaration (#11392). 
-
-## 12.1.2 
-**Notes**
-- Updated dependency from azure-core<2.0.0,>=1.2.2 to azure-core<2.0.0,>=1.6.0
 
 ## 12.1.1 (2020-03-10)
 
@@ -154,6 +153,10 @@ https://aka.ms/azure-sdk-preview1-python.
 - Operations `get_queue_acl` and `set_queue_acl` have been renamed to `get_queue_access_policy` and `set_queue_access_policy`.
 - Operation `put_message` has been renamed to `enqueue_message`.
 - Operation `get_messages` has been renamed to `receive_messages`.
+
+## 12.1.2 
+**Notes**
+- Updated dependency from azure-core<2.0.0,>=1.2.2 to azure-core<2.0.0,>=1.6.0
 
 ## 2.0.1 
 - Updated dependency on azure-storage-common.
