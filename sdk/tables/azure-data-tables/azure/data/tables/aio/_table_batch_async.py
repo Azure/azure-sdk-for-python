@@ -49,11 +49,11 @@ class TableBatchOperations(object):
         self.table_name = table_name
 
         self._partition_key = kwargs.pop("partition_key", None)
-        self._requests = []
-        self._entities = []
+        self.requests = []
+        self.entities = []
 
     def __len__(self):
-        return len(self._requests)
+        return len(self.requests)
 
     def _verify_partition_key(
         self, entity  # type: Union[TableEntity, dict]
@@ -94,7 +94,7 @@ class TableBatchOperations(object):
         else:
             raise ValueError("PartitionKey and/or RowKey were not provided in entity")
         self._batch_create_entity(table=self.table_name, entity=temp, **kwargs)
-        self._entities.append(TableEntity(**entity.copy()))
+        self.entities.append(TableEntity(**entity.copy()))
 
     def _batch_create_entity(
         self,
@@ -182,7 +182,7 @@ class TableBatchOperations(object):
         request = self._client._client.post(  # pylint: disable=protected-access
             url, query_parameters, header_parameters, **body_content_kwargs
         )
-        self._requests.append(request)
+        self.requests.append(request)
 
     _batch_create_entity.metadata = {"url": "/{table}"}  # type: ignore
 
@@ -248,7 +248,7 @@ class TableBatchOperations(object):
                 table_entity_properties=temp,
                 **kwargs
             )
-        self._entities.append(TableEntity(**entity.copy()))
+        self.entities.append(TableEntity(**entity.copy()))
 
     def _batch_update_entity(
         self,
@@ -352,7 +352,7 @@ class TableBatchOperations(object):
         request = self._client._client.put(  # pylint: disable=protected-access
             url, query_parameters, header_parameters, **body_content_kwargs
         )
-        self._requests.append(request)
+        self.requests.append(request)
 
     _batch_update_entity.metadata = {
         "url": "/{table}(PartitionKey='{partitionKey}',RowKey='{rowKey}')"
@@ -462,7 +462,7 @@ class TableBatchOperations(object):
         )
         if _is_cosmos_endpoint(url):
             _transform_patch_to_cosmos_post(request)
-        self._requests.append(request)
+        self.requests.append(request)
 
     _batch_merge_entity.metadata = {
         "url": "/{table}(PartitionKey='{partitionKey}',RowKey='{rowKey}')"
@@ -515,7 +515,7 @@ class TableBatchOperations(object):
             if_match=if_match or "*",
             **kwargs
         )
-        self._entities.append(TableEntity(**entity.copy()))
+        self.entities.append(TableEntity(**entity.copy()))
 
     def _batch_delete_entity(
         self,
@@ -603,7 +603,7 @@ class TableBatchOperations(object):
         request = self._client._client.delete(  # pylint: disable=protected-access
             url, query_parameters, header_parameters
         )
-        self._requests.append(request)
+        self.requests.append(request)
 
     _batch_delete_entity.metadata = {
         "url": "/{table}(PartitionKey='{partitionKey}',RowKey='{rowKey}')"
@@ -657,4 +657,4 @@ class TableBatchOperations(object):
                 table_entity_properties=temp,
                 **kwargs
             )
-        self._entities.append(TableEntity(**entity.copy()))
+        self.entities.append(TableEntity(**entity.copy()))

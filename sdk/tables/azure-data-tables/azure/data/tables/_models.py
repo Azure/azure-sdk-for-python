@@ -523,21 +523,6 @@ class SASProtocol(str, Enum):
     HTTP = "http"
 
 
-# class PartialBatchErrorException(HttpResponseError):
-#     """There is a partial failure in batch operations.
-
-#     :param str message: The message of the exception.
-#     :param response: Server response to be deserialized.
-#     :param list parts: A list of the parts in multipart response.
-#     """
-
-#     def __init__(self, message, response, parts):
-#         self.parts = parts
-#         super(PartialBatchErrorException, self).__init__(
-#             message=message, response=response
-#         )
-
-
 class BatchErrorException(HttpResponseError):
     """There is a failure in batch operations.
 
@@ -546,11 +531,18 @@ class BatchErrorException(HttpResponseError):
     :param list parts: A list of the parts in multipart response.
     """
 
-    def __init__(self, message, response, parts, *args, **kwargs):
-        self.parts = parts
-        super(BatchErrorException, self).__init__(
-            message=message, response=response, *args, **kwargs
-        )
+    def __init__(self, **kwargs):
+        self.parts = kwargs.get('parts')
+        self.entities = kwargs.get('entities')
+        super(BatchErrorException, self).__init__(**kwargs)
+        self.index = self._extract_index()
+    
+    def _extract_index(self):
+        try:
+            message_sections = self.message.split(':', 1)
+            return int(message_sections[0])
+        except:
+            return 0
 
 
 class LocationMode(object):

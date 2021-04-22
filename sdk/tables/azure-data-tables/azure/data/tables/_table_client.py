@@ -5,9 +5,7 @@
 # --------------------------------------------------------------------------
 
 import functools
-from typing import Optional, Any, Union, List, Tuple, Dict, Literal
-from collections.abc import Sequence, Iterable, Mapping
-
+from typing import Optional, Any, Union, List, Tuple, Dict, Mapping, Iterable  #, Literal
 try:
     from urllib.parse import urlparse, unquote
 except ImportError:
@@ -33,8 +31,8 @@ from ._table_batch import TableBatchOperations
 from ._models import TableEntityPropertiesPaged, UpdateMode, AccessPolicy
 
 EntityType = Union[TableEntity, Mapping[str, Any]]
-OperationType = Literal['create', 'delete', 'update', 'upsert']
-BatchOperationType = Union[Sequence[EntityType, OperationType], Sequence[EntityType, OperationType, Mapping[str, Any]]]
+OperationType = str  # Literal['create', 'delete', 'update', 'upsert']
+BatchOperationType = Union[Tuple[EntityType, OperationType], Tuple[EntityType, OperationType, Mapping[str, Any]]]
 
 
 class TableClient(TablesBaseClient):
@@ -638,7 +636,7 @@ class TableClient(TablesBaseClient):
                 :dedent: 8
                 :caption: Using batches to send multiple requests at once
         """
-        batch = TableBatchOperations(
+        batched_requests = TableBatchOperations(
             self._client,
             self._client._serialize,  # pylint: disable=protected-access
             self._client._deserialize,  # pylint: disable=protected-access
@@ -647,15 +645,16 @@ class TableClient(TablesBaseClient):
             **kwargs
         )
         for operation in batch:
-            operation_name = operation[1].lower()
             try:
                 operation_kwargs = operation[2]
             except IndexError:
                 operation_kwargs = {}
             try:
-                getattr(batch, operation_name)(operation[0], **operation_kwargs)
+                getattr(batched_requests, operation[0].lower())(operation[1], **operation_kwargs)
             except AttributeError:
-                raise ValueError("Unrecognized operation: {}".format(operation))
-        return self._batch_send(  # pylint: disable=protected-access
-            batch._entities, *batch._requests, **kwargs  # pylint: disable=protected-access
+                raise ValueError("Unrecognized operation: {}".format(operation[0]))
+        return self._batch_send(
+            batched_requests.entities,
+            *batched_requests.requests,
+            **kwargs
         )

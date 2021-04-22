@@ -35,7 +35,7 @@ from .._generated.aio import AzureTable
 from .._base_client import AccountHostsMixin, get_api_version, extract_batch_part_metadata
 from .._authentication import SharedKeyCredentialPolicy
 from .._constants import STORAGE_OAUTH_SCOPE
-from .._error import RequestTooLargeError, _process_table_error
+from .._error import RequestTooLargeError, _decode_error
 from .._models import BatchErrorException
 from .._entity import TableEntity
 from .._policies import StorageHosts, StorageHeadersPolicy
@@ -138,36 +138,28 @@ class AsyncTablesBaseClient(AccountHostsMixin):
         pipeline_response = await self._client._client._pipeline.run(request, **kwargs)  # pylint: disable=protected-access
         response = pipeline_response.http_response
         # TODO: Check for proper error model deserialization
-        if response.status_code == 403:
-            raise ClientAuthenticationError(
-                message="There was an error authenticating with the service",
-                response=response,
-            )
-        if response.status_code == 404:
-            raise ResourceNotFoundError(
-                message="The resource could not be found", response=response
-            )
         if response.status_code == 413:
-            raise RequestTooLargeError(
-                message="The batch request was too large", response=response
-            )
-        if response.status_code != 202:
-            raise HttpResponseError(
-                response=response,
-            )
+            raise _decode_error(
+                response,
+                error_message="The batch request was too large",
+                error_type=RequestTooLargeError)
+        elif response.status_code != 202:
+            raise _decode_error(response)
 
         parts_iter = response.parts()
         parts = []
         async for p in parts_iter:
             parts.append(p)
-        if any(p for p in parts if not 200 <= p.status_code < 300):
-            if any(p for p in parts if p.status_code == 413):
-                raise RequestTooLargeError(
-                    message="The batch request was too large", response=response
-                )
-            raise BatchErrorException(
-                message="There is a failure in the batch operation.",
-                response=response,
+        error_parts = [p for p in parts if not 200 <= p.status_code < 300]
+        if any(error_parts):
+            if error_parts[0].status_code == 413:
+                raise _decode_error(
+                    response,
+                    error_message="The batch request was too large",
+                    error_type=RequestTooLargeError)
+            raise _decode_error(
+                response=error_parts[0],
+                error_type=BatchErrorException,
                 parts=parts,
                 entities=entities
             )

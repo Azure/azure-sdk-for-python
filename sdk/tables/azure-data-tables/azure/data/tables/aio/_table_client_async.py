@@ -621,7 +621,7 @@ class TableClient(AsyncTablesBaseClient):
                 :dedent: 8
                 :caption: Using batches to send multiple requests at once
         """
-        batch = TableBatchOperations(
+        batched_requests = TableBatchOperations(
             self._client,
             self._client._serialize,  # pylint: disable=protected-access
             self._client._deserialize,  # pylint: disable=protected-access
@@ -630,15 +630,14 @@ class TableClient(AsyncTablesBaseClient):
             **kwargs
         )
         for operation in batch:
-            operation_name = operation[1].lower()
             try:
                 operation_kwargs = operation[2]
             except IndexError:
                 operation_kwargs = {}
             try:
-                getattr(batch, operation_name)(operation[0], **operation_kwargs)
+                getattr(batched_requests, operation[0].lower())(operation[1], **operation_kwargs)
             except AttributeError:
                 raise ValueError("Unrecognized operation: {}".format(operation))
         return await self._batch_send(
-            batch._entities, *batch._requests, **kwargs  # pylint: disable=protected-access
+            batched_requests.entities, *batched_requests.requests, **kwargs
         )
