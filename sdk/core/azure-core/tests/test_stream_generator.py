@@ -43,10 +43,17 @@ def test_connection_error_response():
             if self._count == 0:
                 self._count += 1
                 raise requests.exceptions.ConnectionError
+        
+        def stream(self, chunk_size, decode_content=False):
+            if self._count == 0:
+                self._count += 1
+                raise requests.exceptions.ConnectionError
+            while True:
+                yield b"test"
 
     class MockInternalResponse():
-        def iter_content(self, block_size):
-            return MockTransport()
+        def __init__(self):
+            self.raw = MockTransport()
 
         def close(self):
             pass
