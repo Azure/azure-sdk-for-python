@@ -10,6 +10,9 @@ import os
 import requests
 from contextlib import contextmanager
 
+import subprocess
+
+
 # the functions we patch
 from azure.core.pipeline.transport import RequestsTransport, AsyncioRequestsTransport
 
@@ -25,6 +28,7 @@ PLAYBACK_STOP_URL = "{}/playback/stop".format(PROXY_URL)
 
 # TODO, create a pytest scope="session" implementation that can be added to a fixture such that that can 
 # unit tests can startup/shutdown the local test proxy
+# this should also fire the admin mapping updates, and start/end the session for commiting recording updates
 
 @contextmanager
 def patch_requests_func(request_transform):
@@ -56,10 +60,16 @@ def get_test_id():
     # pytest sets the current running test in an environment variable
     return os.getenv('PYTEST_CURRENT_TEST').split(" ")[0].replace("::",".")
 
+def get_current_sha():
+    result = subprocess.check_output(["git", "rev-parse", "HEAD"])
+
+    #TODO: is this compatible with py27?
+    return result.decode('utf-8').strip()
+
 def start_record_or_playback(test_id):
     if os.getenv("AZURE_RECORD_MODE") == "record":
         result = requests.post(
-            RECORDING_START_URL, headers={"x-recording-file": test_id}, verify=False
+            RECORDING_START_URL, headers={"x-recording-file": test_id, "x-recording-sha": get_current_sha() }, verify=False
         )
         recording_id = result.headers["x-recording-id"]
     elif os.getenv("AZURE_RECORD_MODE") == "playback":
