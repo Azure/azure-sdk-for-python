@@ -553,7 +553,8 @@ class HttpResponse(_HttpResponseBase):
         self._internal_response.internal_response.close()
 
     def __exit__(self, *args) -> None:
-        self.close()
+        self.is_closed = True
+        self._internal_response.internal_response.__exit__(*args)
 
     def read(self) -> bytes:
         """
@@ -674,7 +675,8 @@ class AsyncHttpResponse(_HttpResponseBase):
         await asyncio.sleep(0)
 
     async def __aexit__(self, *args) -> None:
-        await self.close()
+        self.is_closed = True
+        await self._internal_response.internal_response.__aexit__(*args)
 
 
 ########################### ERRORS SECTION #################################
