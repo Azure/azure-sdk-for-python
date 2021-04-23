@@ -267,8 +267,7 @@ class TableClient(TablesBaseClient):
     @distributed_trace
     def delete_entity(
         self,
-        partition_key,  # type: str
-        row_key,  # type: str
+        entity,  # type: Union[TableEntity, Dict[str, Any]]
         **kwargs  # type: Any
     ):
         # type: (...) -> None
@@ -307,8 +306,8 @@ class TableClient(TablesBaseClient):
         try:
             self._client.table.delete_entity(
                 table=self.table_name,
-                partition_key=partition_key,
-                row_key=row_key,
+                partition_key=entity["PartitionKey"],
+                row_key=entity["RowKey"],
                 if_match=if_match or "*",
                 **kwargs
             )

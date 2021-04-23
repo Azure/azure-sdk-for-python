@@ -278,8 +278,7 @@ class TableClient(AsyncTablesBaseClient):
     @distributed_trace_async
     async def delete_entity(
         self,
-        partition_key,  # type: str
-        row_key,  # type: str
+        entity, # type: Union[TableEntity, Mapping[str, Any]]
         **kwargs  # type: Any
     ):
         # type: (...) -> None
@@ -316,8 +315,8 @@ class TableClient(AsyncTablesBaseClient):
         try:
             await self._client.table.delete_entity(
                 table=self.table_name,
-                partition_key=partition_key,
-                row_key=row_key,
+                partition_key=entity["PartitionKey"],
+                row_key=entity["RowKey"],
                 if_match=if_match or "*",
                 **kwargs
             )

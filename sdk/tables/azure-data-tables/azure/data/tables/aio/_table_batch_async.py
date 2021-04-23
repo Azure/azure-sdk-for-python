@@ -470,8 +470,9 @@ class TableBatchOperations(object):
 
     def delete_entity(
         self,
-        partition_key,  # type: str
-        row_key,  # type: str
+        entity,  # type: Union[TableEntity, Mapping[str, Any]]
+        # partition_key,  # type: str
+        # row_key,  # type: str
         **kwargs  # type: Any
     ):
         # type: (...) -> None
@@ -495,11 +496,11 @@ class TableBatchOperations(object):
                 :dedent: 8
                 :caption: Creating and adding an entity to a Table
         """
-        if self._partition_key:
-            if partition_key != self._partition_key:
-                raise ValueError("Partition Keys must all be the same")
-        else:
-            self._partition_key = partition_key
+        # if self._partition_key:
+        #     if partition_key != self._partition_key:
+        #         raise ValueError("Partition Keys must all be the same")
+        # else:
+        #     self._partition_key = partition_key
 
         if_match, _ = _get_match_headers(
             kwargs=dict(
@@ -513,12 +514,12 @@ class TableBatchOperations(object):
 
         self._batch_delete_entity(
             table=self.table_name,
-            partition_key=partition_key,
-            row_key=row_key,
+            partition_key=entity["PartitionKey"],
+            row_key=entity["RowKey"],
             if_match=if_match or "*",
             **kwargs
         )
-        self._entities.append(TableEntity(PartitionKey=partition_key, RowKey=row_key))
+        self._entities.append(entity)
 
     def _batch_delete_entity(
         self,

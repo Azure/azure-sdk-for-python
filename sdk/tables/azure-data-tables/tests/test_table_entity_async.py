@@ -306,7 +306,7 @@ class StorageTableEntityTest(AzureTestCase, AsyncTableTestCase):
                 assert e.PartitionKey == entity[u"PartitionKey"]
                 assert e.RowKey == entity[u"RowKey"]
                 assert e.Value == entity[u"Value"]
-                await self.table.delete_entity(e.PartitionKey, e.RowKey)
+                await self.table.delete_entity({"PartitionKey": e.PartitionKey, "RowKey": e.RowKey})
                 count += 1
 
             assert count == 1
@@ -631,8 +631,7 @@ class StorageTableEntityTest(AzureTestCase, AsyncTableTestCase):
                                                row_key=entity['RowKey'])
 
             await self.table.delete_entity(
-                partition_key=resp['PartitionKey'],
-                row_key=resp['RowKey'],
+                {"PartitionKey": resp['PartitionKey'], "RowKey": resp['RowKey']},
                 etag=etag,
                 match_condition=MatchConditions.IfNotModified
             )
@@ -967,7 +966,7 @@ class StorageTableEntityTest(AzureTestCase, AsyncTableTestCase):
             entity, _ = await self._insert_random_entity()
 
             # Act
-            resp = await self.table.delete_entity(partition_key=entity.PartitionKey, row_key=entity.RowKey)
+            resp = await self.table.delete_entity({"PartitionKey": entity.PartitionKey, "RowKey": entity.RowKey})
 
             # Assert
             assert resp is None
@@ -985,7 +984,7 @@ class StorageTableEntityTest(AzureTestCase, AsyncTableTestCase):
 
             # Act
             with pytest.raises(ResourceNotFoundError):
-                await self.table.delete_entity(entity['PartitionKey'], entity['RowKey'])
+                await self.table.delete_entity({"PartitionKey": entity['PartitionKey'], "RowKey": entity['RowKey']})
 
             # Assert
         finally:
@@ -999,8 +998,11 @@ class StorageTableEntityTest(AzureTestCase, AsyncTableTestCase):
             entity, etag = await self._insert_random_entity()
 
             # Act
-            resp = await self.table.delete_entity(entity.PartitionKey, entity.RowKey, etag=etag,
-                                                  match_condition=MatchConditions.IfNotModified)
+            resp = await self.table.delete_entity(
+                {"PartitionKey": entity.PartitionKey, "RowKey": entity.RowKey},
+                etag=etag,
+                match_condition=MatchConditions.IfNotModified
+            )
 
             # Assert
             assert resp is None
@@ -1020,9 +1022,10 @@ class StorageTableEntityTest(AzureTestCase, AsyncTableTestCase):
             # Act
             with pytest.raises(HttpResponseError):
                 await self.table.delete_entity(
-                    entity.PartitionKey, entity.RowKey,
+                    {"PartitionKey": entity.PartitionKey, "RowKey": entity.RowKey},
                     etag=u'W/"datetime\'2012-06-15T22%3A51%3A44.9662825Z\'"',
-                    match_condition=MatchConditions.IfNotModified)
+                    match_condition=MatchConditions.IfNotModified
+                )
 
             # Assert
         finally:
@@ -1862,7 +1865,7 @@ class StorageTableEntityTest(AzureTestCase, AsyncTableTestCase):
                 credential=AzureSasCredential(token),
             )
             table = service.get_table_client(self.table_name)
-            await table.delete_entity(entity.PartitionKey, entity.RowKey)
+            await table.delete_entity({"PartitionKey": entity.PartitionKey, "RowKey": entity.RowKey})
 
             # Assert
             with pytest.raises(ResourceNotFoundError):

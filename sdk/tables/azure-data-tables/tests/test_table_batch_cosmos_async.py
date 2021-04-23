@@ -458,7 +458,7 @@ class StorageTableBatchTest(AzureTestCase, AsyncTableTestCase):
             assert 3 ==  entity.test3
 
             batch = self.table.create_batch()
-            batch.delete_entity(partition_key=entity.PartitionKey, row_key=entity.RowKey)
+            batch.delete_entity({"PartitionKey": entity.PartitionKey, "RowKey": entity.RowKey})
             transaction_result = await self.table.send_batch(batch)
 
             # Assert
@@ -467,7 +467,7 @@ class StorageTableBatchTest(AzureTestCase, AsyncTableTestCase):
             assert 'etag' not in transaction_result[0][1]
 
             with pytest.raises(ResourceNotFoundError):
-                entity = await self.table.get_entity(partition_key=entity.PartitionKey, row_key=entity.RowKey)
+                entity = await self.table.get_entity(entity.PartitionKey, entity.RowKey)
         finally:
             await self._tear_down()
 
@@ -540,7 +540,7 @@ class StorageTableBatchTest(AzureTestCase, AsyncTableTestCase):
             transaction_count += 1
 
             entity.RowKey = 'batch_all_operations_together-1'
-            batch.delete_entity(entity.PartitionKey, entity.RowKey)
+            batch.delete_entity({"PartitionKey": entity.PartitionKey, "RowKey": entity.RowKey})
             transaction_count += 1
 
             entity.RowKey = 'batch_all_operations_together-2'
@@ -659,7 +659,7 @@ class StorageTableBatchTest(AzureTestCase, AsyncTableTestCase):
             entity = self._create_random_entity_dict('001', 'batch_negative_1')
 
             batch = self.table.create_batch()
-            batch.delete_entity(entity['PartitionKey'], entity['RowKey'])
+            batch.delete_entity({"PartitionKey": entity['PartitionKey'], "RowKey": entity['RowKey']})
 
             with pytest.raises(ResourceNotFoundError):
                 resp = await self.table.send_batch(batch)
