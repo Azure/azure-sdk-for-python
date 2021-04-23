@@ -77,6 +77,7 @@ class ContainerRepositoryClient(ContainerRegistryBaseClient):
         Example
 
         .. code-block:: python
+
             from azure.containerregistry.aio import ContainerRepositoryClient
             from azure.identity.aio import DefaultAzureCredential
 
@@ -100,6 +101,7 @@ class ContainerRepositoryClient(ContainerRegistryBaseClient):
         Example
 
         .. code-block:: python
+
             from azure.containerregistry.aio import ContainerRepositoryClient
             from azure.identity.aio import DefaultAzureCredential
 
@@ -121,6 +123,7 @@ class ContainerRepositoryClient(ContainerRegistryBaseClient):
         Example
 
         .. code-block:: python
+
             from azure.containerregistry.aio import ContainerRepositoryClient
             from azure.identity.aio import DefaultAzureCredential
 
@@ -141,6 +144,7 @@ class ContainerRepositoryClient(ContainerRegistryBaseClient):
         Example
 
         .. code-block:: python
+
             from azure.containerregistry.aio import ContainerRepositoryClient
             from azure.identity.aio import DefaultAzureCredential
 
@@ -173,6 +177,7 @@ class ContainerRepositoryClient(ContainerRegistryBaseClient):
         Example
 
         .. code-block:: python
+
             from azure.containerregistry.aio import ContainerRepositoryClient
             from azure.identity.aio import DefaultAzureCredential
 
@@ -202,6 +207,7 @@ class ContainerRepositoryClient(ContainerRegistryBaseClient):
         Example
 
         .. code-block:: python
+
             from azure.containerregistry.aio import ContainerRepositoryClient
             from azure.identity.aio import DefaultAzureCredential
 
@@ -228,9 +234,11 @@ class ContainerRepositoryClient(ContainerRegistryBaseClient):
         :return: ItemPaged[:class:`~azure.containerregistry.RegistryArtifactProperties`]
         :rtype: :class:`~azure.core.async_paging.AsyncItemPaged`
         :raises: :class:`~azure.core.exceptions.ResourceNotFoundError`
+
         Example
 
         .. code-block:: python
+
             from azure.containerregistry.aio import ContainerRepositoryClient
             from azure.identity.aio import DefaultAzureCredential
 
@@ -359,6 +367,7 @@ class ContainerRepositoryClient(ContainerRegistryBaseClient):
         Example
 
         .. code-block:: python
+
             from azure.containerregistry.aio import ContainerRepositoryClient
             from azure.identity.aio import DefaultAzureCredential
 
@@ -485,6 +494,7 @@ class ContainerRepositoryClient(ContainerRegistryBaseClient):
         Example
 
         .. code-block:: python
+
             from azure.containerregistry.aio import ContainerRepositoryClient
             from azure.identity.aio import DefaultAzureCredential
 
@@ -523,6 +533,7 @@ class ContainerRepositoryClient(ContainerRegistryBaseClient):
         Example
 
         .. code-block:: python
+
             from azure.containerregistry.aio import ContainerRepositoryClient
             from azure.identity.aio import DefaultAzureCredential
 

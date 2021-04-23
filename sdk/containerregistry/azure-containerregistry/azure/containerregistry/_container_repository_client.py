@@ -77,6 +77,7 @@ class ContainerRepositoryClient(ContainerRegistryBaseClient):
         Example
 
         .. code-block:: python
+
             from azure.containerregistry import ContainerRepositoryClient
             from azure.identity import DefaultAzureCredential
 
@@ -101,6 +102,7 @@ class ContainerRepositoryClient(ContainerRegistryBaseClient):
         Example
 
         .. code-block:: python
+
             from azure.containerregistry import ContainerRepositoryClient
             from azure.identity import DefaultAzureCredential
 
@@ -123,6 +125,7 @@ class ContainerRepositoryClient(ContainerRegistryBaseClient):
         Example
 
         .. code-block:: python
+
             from azure.containerregistry import ContainerRepositoryClient
             from azure.identity import DefaultAzureCredential
 
@@ -144,6 +147,7 @@ class ContainerRepositoryClient(ContainerRegistryBaseClient):
         Example
 
         .. code-block:: python
+
             from azure.containerregistry import ContainerRepositoryClient
             from azure.identity import DefaultAzureCredential
 
@@ -175,6 +179,7 @@ class ContainerRepositoryClient(ContainerRegistryBaseClient):
         Example
 
         .. code-block:: python
+
             from azure.containerregistry import ContainerRepositoryClient
             from azure.identity import DefaultAzureCredential
 
@@ -205,6 +210,7 @@ class ContainerRepositoryClient(ContainerRegistryBaseClient):
         Example
 
         .. code-block:: python
+
             from azure.containerregistry import ContainerRepositoryClient
             from azure.identity import DefaultAzureCredential
 
@@ -236,6 +242,7 @@ class ContainerRepositoryClient(ContainerRegistryBaseClient):
         Example
 
         .. code-block:: python
+
             from azure.containerregistry import ContainerRepositoryClient
             from azure.identity import DefaultAzureCredential
 
@@ -365,6 +372,7 @@ class ContainerRepositoryClient(ContainerRegistryBaseClient):
         Example
 
         .. code-block:: python
+
             from azure.containerregistry import ContainerRepositoryClient
             from azure.identity import DefaultAzureCredential
 
@@ -490,6 +498,7 @@ class ContainerRepositoryClient(ContainerRegistryBaseClient):
         Example
 
         .. code-block:: python
+
             from azure.containerregistry import ContainerRepositoryClient
             from azure.identity import DefaultAzureCredential
 
@@ -527,6 +536,7 @@ class ContainerRepositoryClient(ContainerRegistryBaseClient):
         Example
 
         .. code-block:: python
+
             from azure.containerregistry import ContainerRepositoryClient
             from azure.identity import DefaultAzureCredential
 

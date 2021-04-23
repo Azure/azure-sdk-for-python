@@ -40,7 +40,7 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
 
         .. admonition:: Example:
 
-            .. literalinclude:: ../samples/async_samples/sample_create_client.py
+            .. literalinclude:: ../samples/async_samples/sample_create_client_async.py
                 :start-after: [START create_registry_client]
                 :end-before: [END create_registry_client]
                 :language: python
@@ -65,7 +65,7 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
 
         .. admonition:: Example:
 
-            .. literalinclude:: ../samples/async_samples/sample_create_client.py
+            .. literalinclude:: ../samples/async_samples/sample_create_client_async.py
                 :start-after: [START delete_repository]
                 :end-before: [END delete_repository]
                 :language: python
@@ -92,7 +92,7 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
 
         .. admonition:: Example:
 
-            .. literalinclude:: ../samples//async_samples/sample_delete_old_tags.py
+            .. literalinclude:: ../samples//async_samples/sample_delete_old_tags_async.py
                 :start-after: [START list_repositories]
                 :end-before: [END list_repositories]
                 :language: python
@@ -199,6 +199,7 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
         Example
 
         .. code-block:: python
+
             from azure.containerregistry.aio import ContainerRepositoryClient
             from azure.identity.aio import DefaultAzureCredential
 
