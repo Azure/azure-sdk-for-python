@@ -52,9 +52,7 @@ class AzureArcCredential(AsyncContextManager, GetTokenMixin):
                 **kwargs
             )
 
-    async def get_token(  # pylint:disable=invalid-overridden-method
-        self, *scopes: str, **kwargs: "Any"
-    ) -> "AccessToken":
+    async def get_token(self, *scopes: str, **kwargs: "Any") -> "AccessToken":
         if not self._available:
             raise CredentialUnavailableError(
                 message="Service Fabric managed identity configuration not found in environment"
@@ -63,7 +61,7 @@ class AzureArcCredential(AsyncContextManager, GetTokenMixin):
         return await super().get_token(*scopes, **kwargs)
 
     async def close(self) -> None:
-        await self._client.close()  # pylint:disable=no-member
+        await self._client.close()
 
     async def _acquire_token_silently(self, *scopes: str) -> "Optional[AccessToken]":
         return self._client.get_cached_token(*scopes)
