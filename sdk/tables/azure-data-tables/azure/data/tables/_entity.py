@@ -44,7 +44,7 @@ class TableEntity(dict):
         :param name:name of entity entry
         :type name: str
         :return: TableEntity dictionary
-        :rtype: dict[str,str]
+        :rtype: Dict[str,str]
         """
         try:
             return self[name]
