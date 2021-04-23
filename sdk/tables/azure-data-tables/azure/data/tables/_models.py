@@ -4,8 +4,11 @@
 # license information.
 # --------------------------------------------------------------------------
 from enum import Enum
+
 from azure.core.exceptions import HttpResponseError
 from azure.core.paging import PageIterator
+from azure.core import CaseInsensitiveEnumMeta
+from six import with_metaclass
 
 from ._generated.models import TableServiceStats as GenTableServiceStats
 from ._generated.models import AccessPolicy as GenAccessPolicy
@@ -513,12 +516,19 @@ class TablePayloadFormat(object):
     """Returns minimal type information for the entity properties plus some extra odata properties."""
 
 
-class UpdateMode(str, Enum):
+class UpdateMode(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     REPLACE = "replace"
     MERGE = "merge"
 
 
-class SASProtocol(str, Enum):
+class TransactionOperation(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+    CREATE = "create"
+    UPSERT = "upsert"
+    UPDATE = "update"
+    DELETE = "delete"
+
+
+class SASProtocol(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     HTTPS = "https"
     HTTP = "http"
 
@@ -545,7 +555,7 @@ class TableTransactionError(HttpResponseError):
             return 0
 
 
-class LocationMode(object):
+class LocationMode(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """
     Specifies the location the request should be sent to. This mode only applies
     for RA-GRS accounts which allow secondary read access. All other account types

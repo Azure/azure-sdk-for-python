@@ -71,7 +71,7 @@ class StorageTableTest(AzureTestCase, TableTestCase):
         if table is None:
             return
         try:
-            ts.delete_table(table.name)
+            ts.delete_table(table.table_name)
         except ResourceNotFoundError:
             pass
 

@@ -24,6 +24,7 @@ from ._models import (
     ResourceTypes,
     AccountSasPermissions,
     TableTransactionError,
+    TransactionOperation
 )
 from ._version import VERSION
 from ._deserialize import TableErrorCode
@@ -53,5 +54,6 @@ __all__ = [
     "generate_table_sas",
     "SASProtocol",
     "TableTransactionError",
+    "TransactionOperation",
     "RequestTooLargeError",
 ]

@@ -34,7 +34,8 @@ from azure.data.tables import (
     UpdateMode,
     generate_table_sas,
     TableSasPermissions,
-    RequestTooLargeError
+    RequestTooLargeError,
+    TransactionOperation
 )
 
 from _shared.testcase import TableTestCase
@@ -578,30 +579,30 @@ class StorageTableBatchTest(AzureTestCase, TableTestCase):
 
             batch = []
             entity.RowKey = 'batch_all_operations_together'
-            batch.append(('create', entity.copy()))
+            batch.append((TransactionOperation.CREATE, entity.copy()))
             transaction_count += 1
 
             entity.RowKey = 'batch_all_operations_together-1'
-            batch.append(('delete', entity.copy()))
+            batch.append((TransactionOperation.DELETE, entity.copy()))
             transaction_count += 1
 
             entity.RowKey = 'batch_all_operations_together-2'
             entity.test3 = 10
-            batch.append(('update', entity.copy()))
+            batch.append((TransactionOperation.UPDATE, entity.copy()))
             transaction_count += 1
 
             entity.RowKey = 'batch_all_operations_together-3'
             entity.test3 = 100
-            batch.append(('update', entity.copy(), {'mode': UpdateMode.REPLACE}))
+            batch.append((TransactionOperation.UPDATE, entity.copy(), {'mode': UpdateMode.REPLACE}))
             transaction_count += 1
 
             entity.RowKey = 'batch_all_operations_together-4'
             entity.test3 = 10
-            batch.append(('upsert', entity.copy()))
+            batch.append((TransactionOperation.UPSERT, entity.copy()))
             transaction_count += 1
 
             entity.RowKey = 'batch_all_operations_together-5'
-            batch.append(('upsert', entity.copy(), {'mode': UpdateMode.REPLACE}))
+            batch.append((TransactionOperation.UPSERT, entity.copy(), {'mode': UpdateMode.REPLACE}))
             transaction_count += 1
 
             transaction_result = self.table.submit_transaction(batch)

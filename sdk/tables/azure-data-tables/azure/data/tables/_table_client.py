@@ -5,7 +5,7 @@
 # --------------------------------------------------------------------------
 
 import functools
-from typing import Optional, Any, Union, List, Tuple, Dict, Mapping, Iterable  #, Literal
+from typing import Optional, Any, Union, List, Tuple, Dict, Mapping, Iterable
 try:
     from urllib.parse import urlparse, unquote
 except ImportError:
@@ -28,11 +28,16 @@ from ._base_client import parse_connection_str, TablesBaseClient
 from ._serialize import serialize_iso, _parameter_filter_substitution
 from ._deserialize import _return_headers_and_deserialized
 from ._table_batch import TableBatchOperations
-from ._models import TableEntityPropertiesPaged, UpdateMode, AccessPolicy
+from ._models import (
+    TableEntityPropertiesPaged,
+    UpdateMode,
+    AccessPolicy,
+    TransactionOperation
+)
 
 EntityType = Union[TableEntity, Mapping[str, Any]]
-OperationType = str  # Literal['create', 'delete', 'update', 'upsert']
-TransactionOperationType = Union[Tuple[EntityType, OperationType], Tuple[EntityType, OperationType, Mapping[str, Any]]]
+OperationType = Union[TransactionOperation, str]
+TransactionOperationType = Union[Tuple[OperationType, EntityType], Tuple[OperationType, EntityType, Mapping[str, Any]]]
 
 
 class TableClient(TablesBaseClient):
