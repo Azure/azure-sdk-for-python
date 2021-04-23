@@ -19,6 +19,7 @@ USAGE:
     1) AZURE_CONTAINERREGISTRY_URL - The URL of you Container Registry account
 """
 
+import asyncio
 from dotenv import find_dotenv, load_dotenv
 import os
 
@@ -65,8 +66,17 @@ class CreateClients(object):
                         async for tag in repository_client.list_tags():
                             print(tag.digest)
 
+                    # [START delete_repository]
+                    await client.delete_repository("hello-world")
+                    # [END delete_repository]
 
-if __name__ == "__main__":
+
+async def main():
     sample = CreateClients()
     sample.create_registry_client()
     sample.create_repository_client()
+
+
+if __name__ == '__main__':
+    loop = asyncio.get_event_loop()
+    loop.run_until_complete(main())
