@@ -123,6 +123,7 @@ class WebPubSubServiceClient(object):
             corepolicies.CustomHookPolicy(**kwargs),
             corepolicies.RedirectPolicy(**kwargs),
             JwtCredentialPolicy(credential, kwargs.get("user", None)),
+            corepolicies.ContentDecodePolicy(**kwargs),
             corepolicies.NetworkTraceLoggingPolicy(**kwargs),
         ]  # type: Any
         self._pipeline = corepipeline.Pipeline(
