@@ -496,8 +496,9 @@ class StorageTableEntityTest(AzureTestCase, AsyncTableTestCase):
             entity = {'RowKey': 'rk'}
 
             # Act
-            with pytest.raises(ValueError):
+            with pytest.raises(ValueError) as error:
                 resp = await self.table.create_entity(entity=entity)
+                assert str(error).contains("PartitionKey must be present in an entity")
         finally:
             await self._tear_down()
 
@@ -522,10 +523,9 @@ class StorageTableEntityTest(AzureTestCase, AsyncTableTestCase):
             entity = {'PartitionKey': 'pk'}
 
             # Act
-            with pytest.raises(ValueError):
+            with pytest.raises(ValueError) as error:
                 resp = await self.table.create_entity(entity=entity)
-
-            # Assert
+                assert str(error).contains("PartitionKey must be present in an entity")
         finally:
             await self._tear_down()
 

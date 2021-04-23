@@ -339,10 +339,11 @@ class TableClient(TablesBaseClient):
                 :dedent: 8
                 :caption: Creating and adding an entity to a Table
         """
-        if "PartitionKey" in entity and "RowKey" in entity:
-            entity = _add_entity_properties(entity)
-        else:
-            raise ValueError("PartitionKey and RowKey were not provided in entity")
+        entity = _add_entity_properties(entity)
+        # if "PartitionKey" in entity and "RowKey" in entity:
+        #     entity = _add_entity_properties(entity)
+        # else:
+        #     raise ValueError("PartitionKey and RowKey were not provided in entity")
         try:
             metadata, _ = self._client.table.insert_entity(
                 table=self.table_name,
@@ -353,6 +354,16 @@ class TableClient(TablesBaseClient):
             return _trim_service_metadata(metadata)
         except ResourceNotFoundError as error:
             _process_table_error(error)
+        except HttpResponseError as error:
+            try:
+                if error.model.additional_properties["odata.error"]["code"] == "PropertiesNeedValue":
+                    if entity.get("PartitionKey") is None:
+                        raise ValueError("PartitionKey must be present in an entity")
+                    if entity.get("RowKey") is None:
+                        raise ValueError("RowKey must be present in an entity")
+                raise error
+            except AttributeError:
+                raise error
 
     @distributed_trace
     def update_entity(
