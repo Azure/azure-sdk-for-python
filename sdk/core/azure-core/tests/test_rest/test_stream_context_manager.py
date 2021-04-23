@@ -36,7 +36,7 @@ def test_stream_context_manager():
     # assert actual response from requests etc is closed
     internal_response_mock_calls = response._internal_response.internal_response.mock_calls
     assert len(internal_response_mock_calls) == 1
-    assert internal_response_mock_calls[0][0] == '__exit__'  # assert exit was called
+    assert internal_response_mock_calls[0][0] == 'close'  # assert exit was called
 
 def test_stream_context_manager_error():
     pipeline = Pipeline(transport=RequestsTransport())
