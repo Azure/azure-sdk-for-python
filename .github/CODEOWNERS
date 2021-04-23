@@ -72,7 +72,7 @@
 /sdk/hdinsight/                                                      @idear1203
 
 # PRLabel: %Models repository
-/sdk/iot/azure-iot-modelsrepository                                  @cartertinney @digimaun
+/sdk/modelsrepository/                                               @cartertinney @digimaun
 
 # PRLabel: %Machine Learning Compute
 /sdk/machinelearningcompute/                                         @shutchings

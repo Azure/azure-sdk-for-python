@@ -5,6 +5,6 @@ stages:
     parameters:
       AllocateResourceGroup: 'false'
       BuildTargetingString: $(BuildTargetingString)
-      ServiceDirectory: iot
+      ServiceDirectory: modelsrepository
       EnvVars:
         TEST_MODE: 'RunLiveNoRecord'

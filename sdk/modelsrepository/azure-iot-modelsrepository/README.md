@@ -46,10 +46,10 @@ Several samples are available in the Azure SDK for Python GitHub repository. The
 
 <!-- LINKS -->
 [azure_core_exceptions]: https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/core/azure-core#azure-core-library-exceptions
-[client_configuration_sample]: https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/iot/azure-iot-modelsrepository/samples/client_configuration_sample.py
+[client_configuration_sample]: https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/modelsrepository/azure-iot-modelsrepository/samples/client_configuration_sample.py
 [dtdl_spec]: https://github.com/Azure/opendigitaltwins-dtdl/blob/master/DTDL/v2/dtdlv2.md
-[dtmi_conventions_sample]: https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/iot/azure-iot-modelsrepository/samples/dtmi_conventions_sample.py
-[get_models_sample]: https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/iot/azure-iot-modelsrepository/samples/get_models_sample.py
+[dtmi_conventions_sample]: https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/modelsrepository/azure-iot-modelsrepository/samples/dtmi_conventions_sample.py
+[get_models_sample]: https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/modelsrepository/azure-iot-modelsrepository/samples/get_models_sample.py
 [global_azure_repo]: https://devicemodels.azure.com/
 [json_ld]: https://json-ld.org/
 [logging_doc]: https://docs.python.org/3.5/library/logging.html
