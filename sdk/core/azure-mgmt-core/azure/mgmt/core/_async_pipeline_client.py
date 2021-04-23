@@ -33,8 +33,14 @@ class AsyncARMPipelineClient(AsyncPipelineClient):
 
     :param str base_url: URL for the request.
     :keyword AsyncPipeline pipeline: If omitted, a Pipeline object is created and returned.
-    :keyword list[HTTPPolicy] policies: If omitted, the standard policies of the configuration object is used.
-    :keyword HttpTransport transport: If omitted, RequestsTransport is used for synchronous transport.
+    :keyword list[AsyncHTTPPolicy] policies: If omitted, the standard policies of the configuration object is used.
+    :keyword per_call_policies: If specified, the policies will be added into the policy list before RetryPolicy
+    :paramtype per_call_policies: Union[AsyncHTTPPolicy, SansIOHTTPPolicy,
+        list[AsyncHTTPPolicy], list[SansIOHTTPPolicy]]
+    :keyword per_retry_policies: If specified, the policies will be added into the policy list after RetryPolicy
+    :paramtype per_retry_policies: Union[AsyncHTTPPolicy, SansIOHTTPPolicy,
+        list[AsyncHTTPPolicy], list[SansIOHTTPPolicy]]
+    :keyword AsyncHttpTransport transport: If omitted, AioHttpTransport is used for asynchronous transport.
     """
 
     def __init__(self, base_url, **kwargs):

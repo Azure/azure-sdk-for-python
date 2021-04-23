@@ -37,6 +37,10 @@ class ARMPipelineClient(PipelineClient):
     :param str base_url: URL for the request.
     :keyword Pipeline pipeline: If omitted, a Pipeline object is created and returned.
     :keyword list[HTTPPolicy] policies: If omitted, the standard policies of the configuration object is used.
+    :keyword per_call_policies: If specified, the policies will be added into the policy list before RetryPolicy
+    :paramtype per_call_policies: Union[HTTPPolicy, SansIOHTTPPolicy, list[HTTPPolicy], list[SansIOHTTPPolicy]]
+    :keyword per_retry_policies: If specified, the policies will be added into the policy list after RetryPolicy
+    :paramtype per_retry_policies: Union[HTTPPolicy, SansIOHTTPPolicy, list[HTTPPolicy], list[SansIOHTTPPolicy]]
     :keyword HttpTransport transport: If omitted, RequestsTransport is used for synchronous transport.
     """
 
