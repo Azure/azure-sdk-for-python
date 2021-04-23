@@ -4,8 +4,7 @@
 # license information.
 # --------------------------------------------------------------------------
 import functools
-from typing import List, Tuple, Union, Any, Optional
-from collections.abc import Mapping, Iterable
+from typing import List, Tuple, Union, Any, Optional, Mapping, Iterable
 try:
     from urllib.parse import urlparse, unquote
 except ImportError:
