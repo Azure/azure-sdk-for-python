@@ -9,8 +9,7 @@ from typing import (
     Any,
     Dict,
     Mapping,
-    Optional,
-    Union
+    Optional
 )
 
 from ._common_conversion import _is_cosmos_endpoint, _transform_patch_to_cosmos_post
