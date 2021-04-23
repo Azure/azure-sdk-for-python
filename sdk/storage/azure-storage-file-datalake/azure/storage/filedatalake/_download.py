@@ -3,6 +3,8 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
+from typing import Iterator
+
 from ._deserialize import from_blob_properties
 
 
@@ -29,6 +31,11 @@ class StorageStreamDownloader(object):
         return self.size
 
     def chunks(self):
+        # type: () -> Iterator[bytes]
+        """Iterate over chunks in the download stream.
+
+        :rtype: Iterator[bytes]
+        """
         return self._downloader.chunks()
 
     def readall(self):

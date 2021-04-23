@@ -28,10 +28,11 @@ from azure.core.pipeline.transport import (
 )
 
 from .._generated.aio import AzureTable
-from .._base_client import AccountHostsMixin, get_api_version
+from .._base_client import AccountHostsMixin, get_api_version, extract_batch_part_metadata
 from .._authentication import SharedKeyCredentialPolicy
 from .._constants import STORAGE_OAUTH_SCOPE
-from .._models import BatchErrorException, BatchTransactionResult
+from .._error import RequestTooLargeError
+from .._models import BatchErrorException
 from .._policies import StorageHosts, StorageHeadersPolicy
 from .._sdk_moniker import SDK_MONIKER
 from ._policies_async import AsyncTablesRetryPolicy
@@ -106,7 +107,6 @@ class AsyncTablesBaseClient(AccountHostsMixin):
     ):
         """Given a series of request, do a Storage batch call."""
         # Pop it here, so requests doesn't feel bad about additional kwarg
-        raise_on_any_failure = kwargs.pop("raise_on_any_failure", True)
         policies = [StorageHeadersPolicy()]
 
         changeset = HttpRequest("POST", None)
@@ -119,6 +119,8 @@ class AsyncTablesBaseClient(AccountHostsMixin):
                 "x-ms-version": self.api_version,
                 "DataServiceVersion": "3.0",
                 "MaxDataServiceVersion": "3.0;NetFx",
+                "Content-Type": "application/json",
+                "Accept": "application/json"
             },
         )
         request.set_multipart_mixed(
@@ -140,6 +142,10 @@ class AsyncTablesBaseClient(AccountHostsMixin):
             raise ResourceNotFoundError(
                 message="The resource could not be found", response=response
             )
+        if response.status_code == 413:
+            raise RequestTooLargeError(
+                message="The request was too large", response=response
+            )
         if response.status_code != 202:
             raise BatchErrorException(
                 message="There is a failure in the batch operation.",
@@ -151,21 +157,23 @@ class AsyncTablesBaseClient(AccountHostsMixin):
         parts = []
         async for p in parts_iter:
             parts.append(p)
-        transaction_result = BatchTransactionResult(reqs, parts, entities)
-        if raise_on_any_failure:
-            if any(p for p in parts if not 200 <= p.status_code < 300):
-
-                if any(p for p in parts if p.status_code == 404):
-                    raise ResourceNotFoundError(
-                        message="The resource could not be found", response=response
-                    )
-
-                raise BatchErrorException(
-                    message="There is a failure in the batch operation.",
-                    response=response,
-                    parts=parts,
+        if any(p for p in parts if not 200 <= p.status_code < 300):
+            if any(p for p in parts if p.status_code == 404):
+                raise ResourceNotFoundError(
+                    message="The resource could not be found", response=response
                 )
-        return transaction_result
+            if any(p for p in parts if p.status_code == 413):
+                raise RequestTooLargeError(
+                    message="The request was too large", response=response
+                )
+
+
+            raise BatchErrorException(
+                message="There is a failure in the batch operation.",
+                response=response,
+                parts=parts,
+            )
+        return list(zip(entities, (extract_batch_part_metadata(p) for p in parts)))
 
 
 class AsyncTransportWrapper(AsyncHttpTransport):

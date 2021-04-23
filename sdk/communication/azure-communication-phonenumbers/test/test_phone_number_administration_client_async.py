@@ -181,3 +181,53 @@ class PhoneNumbersClientTestAsync(AsyncCommunicationTestCase):
             await purchase_poller.result()
             release_poller = await self.phone_number_client.begin_release_phone_number(phone_number_to_buy.phone_numbers[0])
         assert release_poller.status() == PhoneNumberOperationStatus.SUCCEEDED.value
+    
+    @AsyncCommunicationTestCase.await_prepared_test
+    async def test_get_purchased_phone_number_with_invalid_phone_number(self):
+        if self.is_playback():
+            phone_number = "sanitized"
+        else:
+            phone_number = "+14255550123"
+
+        with pytest.raises(Exception) as ex:
+            async with self.phone_number_client:
+                await self.phone_number_client.get_purchased_phone_number(phone_number)
+        
+        assert str(ex.value.status_code) == "404"
+        assert ex.value.message is not None
+    
+    @AsyncCommunicationTestCase.await_prepared_test
+    async def test_search_available_phone_numbers_with_no_country_code(self):
+        capabilities = PhoneNumberCapabilities(
+            calling = PhoneNumberCapabilityType.INBOUND,
+            sms = PhoneNumberCapabilityType.INBOUND_OUTBOUND
+        )
+
+        with pytest.raises(Exception) as ex:
+            async with self.phone_number_client:
+                await self.phone_number_client.begin_search_available_phone_numbers(
+                    None,
+                    PhoneNumberType.TOLL_FREE,
+                    PhoneNumberAssignmentType.APPLICATION,
+                    capabilities,
+                    polling = True
+                )
+    
+    @AsyncCommunicationTestCase.await_prepared_test
+    async def test_update_phone_number_capabilities_with_invalid_phone_number(self):
+        if self.is_playback():
+            phone_number = "sanitized"
+        else:
+            phone_number = "+14255550123"
+
+        with pytest.raises(Exception) as ex:
+            async with self.phone_number_client:
+                await self.phone_number_client.begin_update_phone_number_capabilities(
+                    phone_number,
+                    PhoneNumberCapabilityType.INBOUND_OUTBOUND,
+                    PhoneNumberCapabilityType.INBOUND,
+                    polling = True
+                )
+        
+        assert str(ex.value.status_code) == "404"
+        assert ex.value.message is not None
