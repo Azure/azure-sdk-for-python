@@ -8,8 +8,7 @@
 
 **Bug Fixes**
 
-* Fixed a bug where `update_queue` and `update_subscription` methods were mutating the properties `forward_to` and `forward_dead_lettered_messages_to` of
-  the model instance when those properties are entities instead of full paths.
+* Fixed a bug where `update_queue` and `update_subscription` methods were mutating the properties `forward_to` and `forward_dead_lettered_messages_to` of the model instance when those properties are entities instead of full paths.
 
 ## 7.1.1 (2021-04-07)
 
