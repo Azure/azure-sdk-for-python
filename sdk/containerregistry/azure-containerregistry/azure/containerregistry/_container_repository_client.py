@@ -542,7 +542,6 @@ class ContainerRepositoryClient(ContainerRegistryBaseClient):
                     can_write=False,
                 ),
             )
-
         """
         return TagProperties._from_generated(  # pylint: disable=protected-access
             self._client.container_registry_repository.update_tag_attributes(

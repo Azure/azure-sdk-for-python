@@ -73,6 +73,16 @@ class ContainerRepositoryClient(ContainerRegistryBaseClient):
         :returns: Object containing information about the deleted repository
         :rtype: :class:`~azure.containerregistry.DeletedRepositoryResult`
         :raises: :class:`~azure.core.exceptions.ResourceNotFoundError`
+
+        Example
+
+        .. code-block:: python
+            from azure.containerregistry.aio import ContainerRepositoryClient
+            from azure.identity.aio import DefaultAzureCredential
+
+            account_url = os.environ["CONTAINERREGISTRY_ENDPOINT"]
+            client = ContainerRepositoryClient(account_url, "my_repository", DefaultAzureCredential())
+            await client.delete()
         """
         return DeletedRepositoryResult._from_generated(  # pylint: disable=protected-access
             await self._client.container_registry.delete_repository(self.repository, **kwargs)
@@ -86,6 +96,17 @@ class ContainerRepositoryClient(ContainerRegistryBaseClient):
         :type digest: str
         :returns: None
         :raises: :class:`~azure.core.exceptions.ResourceNotFoundError`
+
+        Example
+
+        .. code-block:: python
+            from azure.containerregistry.aio import ContainerRepositoryClient
+            from azure.identity.aio import DefaultAzureCredential
+
+            account_url = os.environ["CONTAINERREGISTRY_ENDPOINT"]
+            client = ContainerRepositoryClient(account_url, "my_repository", DefaultAzureCredential())
+            async for artifact in client.list_registry_artifacts():
+                await client.delete_registry_artifact(artifact.digest)
         """
         await self._client.container_registry_repository.delete_manifest(self.repository, digest, **kwargs)
 
@@ -96,6 +117,17 @@ class ContainerRepositoryClient(ContainerRegistryBaseClient):
         :param str tag: The tag to be deleted
         :returns: None
         :raises: :class:`~azure.core.exceptions.ResourceNotFoundError`
+
+        Example
+
+        .. code-block:: python
+            from azure.containerregistry.aio import ContainerRepositoryClient
+            from azure.identity.aio import DefaultAzureCredential
+
+            account_url = os.environ["CONTAINERREGISTRY_ENDPOINT"]
+            client = ContainerRepositoryClient(account_url, "my_repository", DefaultAzureCredential())
+            async for artifact in client.list_tags():
+                await client.delete_tag(tag.name)
         """
         await self._client.container_registry_repository.delete_tag(self.repository, tag, **kwargs)
 
@@ -105,6 +137,23 @@ class ContainerRepositoryClient(ContainerRegistryBaseClient):
 
         :returns: :class:`~azure.containerregistry.RepositoryProperties`
         :raises: :class:`~azure.core.exceptions.ResourceNotFoundError`
+
+        Example
+
+        .. code-block:: python
+            from azure.containerregistry.aio import ContainerRepositoryClient
+            from azure.identity.aio import DefaultAzureCredential
+
+            account_url = os.environ["CONTAINERREGISTRY_ENDPOINT"]
+            client = ContainerRepositoryClient(account_url, "my_repository", DefaultAzureCredential())
+            repository_properties = await client.get_properties()
+            print(repository_properties.name)
+            print(repository_properties.content_permissions)
+            print(repository_properties.created_on)
+            print(repository_properties.last_updated_on)
+            print(repository_properties.manifest_count)
+            print(repository_properties.registry)
+            print(repository_properties.tag_count)
         """
         return RepositoryProperties._from_generated(  # pylint: disable=protected-access
             await self._client.container_registry_repository.get_properties(self.repository, **kwargs)
@@ -120,6 +169,17 @@ class ContainerRepositoryClient(ContainerRegistryBaseClient):
         :type tag_or_digest: str
         :returns: :class:`~azure.containerregistry.RegistryArtifactProperties`
         :raises: :class:`~azure.core.exceptions.ResourceNotFoundError`
+
+        Example
+
+        .. code-block:: python
+            from azure.containerregistry.aio import ContainerRepositoryClient
+            from azure.identity.aio import DefaultAzureCredential
+
+            account_url = os.environ["CONTAINERREGISTRY_ENDPOINT"]
+            client = ContainerRepositoryClient(account_url, "my_repository", DefaultAzureCredential())
+            async for artifact in client.list_registry_artifacts():
+                properties = await client.get_registry_artifact_properties(artifact.digest)
         """
         if _is_tag(tag_or_digest):
             tag_or_digest = self._get_digest_from_tag(tag_or_digest)
@@ -138,6 +198,17 @@ class ContainerRepositoryClient(ContainerRegistryBaseClient):
         :type tag: str
         :returns: :class:`~azure.containerregistry.TagProperties`
         :raises: :class:`~azure.core.exceptions.ResourceNotFoundError`
+
+        Example
+
+        .. code-block:: python
+            from azure.containerregistry.aio import ContainerRepositoryClient
+            from azure.identity.aio import DefaultAzureCredential
+
+            account_url = os.environ["CONTAINERREGISTRY_ENDPOINT"]
+            client = ContainerRepositoryClient(account_url, "my_repository", DefaultAzureCredential())
+            async for tag in client.list_tags():
+                tag_properties = await client.get_tag_properties(tag.name)
         """
         return TagProperties._from_generated(  # pylint: disable=protected-access
             await self._client.container_registry_repository.get_tag_properties(self.repository, tag, **kwargs)
@@ -157,6 +228,16 @@ class ContainerRepositoryClient(ContainerRegistryBaseClient):
         :return: ItemPaged[:class:`~azure.containerregistry.RegistryArtifactProperties`]
         :rtype: :class:`~azure.core.async_paging.AsyncItemPaged`
         :raises: :class:`~azure.core.exceptions.ResourceNotFoundError`
+        Example
+
+        .. code-block:: python
+            from azure.containerregistry.aio import ContainerRepositoryClient
+            from azure.identity.aio import DefaultAzureCredential
+
+            account_url = os.environ["CONTAINERREGISTRY_ENDPOINT"]
+            client = ContainerRepositoryClient(account_url, "my_repository", DefaultAzureCredential())
+            async for artifact in client.list_registry_artifacts():
+                print(artifact.digest)
         """
         name = self.repository
         last = kwargs.pop("last", None)
@@ -274,6 +355,17 @@ class ContainerRepositoryClient(ContainerRegistryBaseClient):
         :return: ItemPaged[:class:`~azure.containerregistry.TagProperties`]
         :rtype: :class:`~azure.core.async_paging.AsyncItemPaged`
         :raises: :class:`~azure.core.exceptions.ResourceNotFoundError`
+
+        Example
+
+        .. code-block:: python
+            from azure.containerregistry.aio import ContainerRepositoryClient
+            from azure.identity.aio import DefaultAzureCredential
+
+            account_url = os.environ["CONTAINERREGISTRY_ENDPOINT"]
+            client = ContainerRepositoryClient(account_url, "my_repository", DefaultAzureCredential())
+            async for tag in client.list_tags():
+                tag_properties = await client.get_tag_properties(tag.name)
         """
         name = self.repository
         last = kwargs.pop("last", None)
@@ -389,6 +481,25 @@ class ContainerRepositoryClient(ContainerRegistryBaseClient):
         :type permissions: ContentPermissions
         :returns: :class:`~azure.containerregistry.RegistryArtifactProperties`
         :raises: :class:`~azure.core.exceptions.ResourceNotFoundError`
+
+        Example
+
+        .. code-block:: python
+            from azure.containerregistry.aio import ContainerRepositoryClient
+            from azure.identity.aio import DefaultAzureCredential
+
+            account_url = os.environ["CONTAINERREGISTRY_ENDPOINT"]
+            client = ContainerRepositoryClient(account_url, "my_repository", DefaultAzureCredential())
+            async for artifact in client.list_registry_artifacts():
+                received_permissions = await client.set_manifest_properties(
+                    artifact.digest,
+                    ContentPermissions(
+                        can_delete=False,
+                        can_list=False,
+                        can_read=False,
+                        can_write=False,
+                    ),
+                )
         """
         return RegistryArtifactProperties._from_generated(  # pylint: disable=protected-access
             await self._client.container_registry_repository.update_manifest_attributes(
@@ -408,6 +519,25 @@ class ContainerRepositoryClient(ContainerRegistryBaseClient):
         :type permissions: ContentPermissions
         :returns: :class:`~azure.containerregistry.TagProperties`
         :raises: :class:`~azure.core.exceptions.ResourceNotFoundError`
+
+        Example
+
+        .. code-block:: python
+            from azure.containerregistry.aio import ContainerRepositoryClient
+            from azure.identity.aio import DefaultAzureCredential
+
+            account_url = os.environ["CONTAINERREGISTRY_ENDPOINT"]
+            client = ContainerRepositoryClient(account_url, "my_repository", DefaultAzureCredential())
+            tag_identifier = "latest"
+            received = await client.set_tag_properties(
+                tag_identifier,
+                ContentPermissions(
+                    can_delete=False,
+                    can_list=False,
+                    can_read=False,
+                    can_write=False,
+                ),
+            )
         """
         return TagProperties._from_generated(  # pylint: disable=protected-access
             await self._client.container_registry_repository.update_tag_attributes(
