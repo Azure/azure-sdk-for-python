@@ -9,6 +9,7 @@ import msrest
 from .._common_conversion import _is_cosmos_endpoint, _transform_patch_to_cosmos_post
 from .._models import UpdateMode
 from .._entity import TableEntity
+from .._table_batch import EntityType
 from .._serialize import (
     _get_match_headers,
     _add_entity_properties,
@@ -18,7 +19,7 @@ from .._generated.aio._azure_table import AzureTable
 from .._generated.aio._configuration import AzureTableConfiguration
 
 if TYPE_CHECKING:
-    from .._generated.models import QueryOptions
+    from .._generated import models
 
 
 class TableBatchOperations(object):
@@ -56,9 +57,8 @@ class TableBatchOperations(object):
         return len(self.requests)
 
     def _verify_partition_key(
-        self, entity  # type: Union[TableEntity, dict]
-    ):
-        # (...) -> None
+        self, entity: EntityType
+    ) -> None:
         if self._partition_key is None:
             self._partition_key = entity["PartitionKey"]
         elif entity["PartitionKey"] != self._partition_key:
@@ -66,10 +66,9 @@ class TableBatchOperations(object):
 
     def create(
         self,
-        entity,  # type: Union[TableEntity, Dict[str,str]]
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> None
+        entity: EntityType,
+        **kwargs
+    ) -> None:
         """Insert entity in a table.
 
         :param entity: The properties for the table entity.
@@ -98,15 +97,14 @@ class TableBatchOperations(object):
 
     def _batch_create_entity(
         self,
-        table,  # type: str
-        entity,  # type: Union[TableEntity, Dict[str,str]]
-        timeout=None,  # type: Optional[int]
-        request_id_parameter=None,  # type: Optional[str]
-        response_preference="return-no-content",  # type: Optional[Union[str, "models.ResponseFormat"]]
-        query_options=None,  # type: Optional["models.QueryOptions"]
-        **kwargs  # type: Any
-    ):
-        # (...) -> None
+        table: str,
+        entity: EntityType,
+        timeout: Optional[int] = None,
+        request_id_parameter: Optional[str] = None,
+        response_preference: Optional[Union[str, "models.ResponseFormat"]] = "return-no-content",
+        query_options: Optional["models.QueryOptions"] = None,
+        **kwargs: Any
+    ) -> None:
         """
         Adds an insert operation to the batch. See
         :func:`azure.data.tables.TableClient.insert_entity` for more information
@@ -188,12 +186,10 @@ class TableBatchOperations(object):
 
     def update(
         self,
-        entity,  # type: Union[TableEntity, Dict[str,str]]
-        mode=UpdateMode.MERGE,  # type: UpdateMode
-        **kwargs  # type: Any
-    ):
-        # (...) -> None
-
+        entity: EntityType,
+        mode: Union[str, UpdateMode] = UpdateMode.MERGE,
+        **kwargs: Any
+    ) -> None:
         """Adds an update operation to the current batch.
 
         :param entity: The properties for the table entity.
@@ -255,12 +251,12 @@ class TableBatchOperations(object):
         table: str,
         partition_key: str,
         row_key: str,
-        timeout=None,  # type: Optional[int]
-        request_id_parameter=None,  # type: Optional[str]
-        if_match=None,  # type: Optional[str]
-        table_entity_properties=None,  # type: Optional[Dict[str, object]]
-        query_options=None,  # type: Optional["models.QueryOptions"]
-        **kwargs
+        timeout: Optional[int] = None,
+        request_id_parameter: Optional[str] = None,
+        if_match: Optional[str] = None,
+        table_entity_properties: Optional[EntityType] = None,
+        query_options: Optional["models.QueryOptions"] = None,
+        **kwargs: Any
     ) -> None:
         """Update entity in a table.
 
@@ -363,11 +359,11 @@ class TableBatchOperations(object):
         table: str,
         partition_key: str,
         row_key: str,
-        timeout=None,  # type: Optional[int]
-        request_id_parameter=None,  # type: Optional[str]
-        if_match=None,  # type: Optional[str]
-        table_entity_properties=None,  # type: Optional[Dict[str, object]]
-        query_options=None,  # type: Optional["models.QueryOptions"]
+        timeout: Optional[int] = None,
+        request_id_parameter: Optional[str] = None,
+        if_match: Optional[str] = None,
+        table_entity_properties: Optional[EntityType] = None,
+        query_options: Optional["models.QueryOptions"] = None,
         **kwargs
     ) -> None:
         """Merge entity in a table.
@@ -470,10 +466,9 @@ class TableBatchOperations(object):
 
     def delete(
         self,
-        entity,  # type: Union[TableEntity, Dict[str,str]]
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> None
+        entity: EntityType,
+        **kwargs
+    ) -> None:
         """Deletes the specified entity in a table.
 
         :param partition_key: The partition key of the entity.
@@ -523,9 +518,9 @@ class TableBatchOperations(object):
         partition_key: str,
         row_key: str,
         if_match: str,
-        timeout=None,  # type: Optional[int]
-        request_id_parameter=None,  # type: Optional[str]
-        query_options=None,  # type: Optional["models.QueryOptions"]
+        timeout: Optional[int] = None,
+        request_id_parameter: Optional[str] = None,
+        query_options: Optional["models.QueryOptions"] = None,
     ) -> None:
         """Deletes the specified entity in a table.
 
@@ -611,11 +606,10 @@ class TableBatchOperations(object):
 
     def upsert(
         self,
-        entity,  # type: Union[TableEntity, Dict[str,str]]
-        mode=UpdateMode.MERGE,  # type: UpdateMode
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> None
+        entity: EntityType,
+        mode: Union[str, UpdateMode] = UpdateMode.MERGE,
+        **kwargs
+    ) -> None:
         """Update/Merge or Insert entity into table.
 
         :param entity: The properties for the table entity.

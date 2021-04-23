@@ -4,15 +4,25 @@
 # license information.
 # --------------------------------------------------------------------------
 from typing import (
+    TYPE_CHECKING,
     Union,
     Any,
-    Dict
+    Dict,
+    Mapping,
+    Optional,
+    Union
 )
 
 from ._common_conversion import _is_cosmos_endpoint, _transform_patch_to_cosmos_post
 from ._models import UpdateMode
 from ._serialize import _get_match_headers, _add_entity_properties
 from ._entity import TableEntity
+
+if TYPE_CHECKING:
+    from ._generated import models
+
+EntityType = Union[TableEntity, Mapping[str, Any]]
+
 
 
 class TableBatchOperations(object):
@@ -67,7 +77,7 @@ class TableBatchOperations(object):
         return len(self.requests)
 
     def _verify_partition_key(
-        self, entity  # type: Union[TableEntity, dict]
+        self, entity  # type: EntityType
     ):
         # (...) -> None
         if self._partition_key is None:
@@ -77,7 +87,7 @@ class TableBatchOperations(object):
 
     def create(
         self,
-        entity,  # type: Union[TableEntity, Dict[str,str]]
+        entity,  # type: EntityType
         **kwargs  # type: Any
     ):
         # type: (...) -> None
@@ -110,7 +120,7 @@ class TableBatchOperations(object):
     def _batch_create_entity(
         self,
         table,  # type: str
-        entity,  # type: Union[TableEntity, Dict[str,str]]
+        entity,  # type: EntityType
         timeout=None,  # type: Optional[int]
         request_id_parameter=None,  # type: Optional[str]
         response_preference="return-no-content",  # type: Optional[Union[str, "models.ResponseFormat"]]
@@ -199,8 +209,8 @@ class TableBatchOperations(object):
 
     def update(
         self,
-        entity,  # type: Union[TableEntity, Dict[str,str]]
-        mode=UpdateMode.MERGE,  # type: UpdateMode
+        entity,  # type: EntityType
+        mode=UpdateMode.MERGE,  # type: Union[str, UpdateMode]
         **kwargs  # type: Any
     ):
         # (...) -> None
@@ -269,7 +279,7 @@ class TableBatchOperations(object):
         timeout=None,  # type: Optional[int]
         request_id_parameter=None,  # type: Optional[str]
         if_match=None,  # type: Optional[str]
-        table_entity_properties=None,  # type: Optional[Dict[str, object]]
+        table_entity_properties=None,  # type: Optional[EntityType]
         query_options=None,  # type: Optional["models.QueryOptions"]
         **kwargs  # type: Any
     ):
@@ -377,7 +387,7 @@ class TableBatchOperations(object):
         timeout=None,  # type: Optional[int]
         request_id_parameter=None,  # type: Optional[str]
         if_match=None,  # type: Optional[str]
-        table_entity_properties=None,  # type: Optional[Dict[str, object]]
+        table_entity_properties=None,  # type: Optional[EntityType]
         query_options=None,  # type: Optional["models.QueryOptions"]
         **kwargs  # type: Any
     ):
@@ -480,7 +490,7 @@ class TableBatchOperations(object):
 
     def delete(
         self,
-        entity,  # type: Union[TableEntity, Dict[str,str]]
+        entity,  # type: EntityType
         **kwargs  # type: Any
     ):
         # type: (...) -> None
@@ -621,8 +631,8 @@ class TableBatchOperations(object):
 
     def upsert(
         self,
-        entity,  # type: Union[TableEntity, Dict[str,str]]
-        mode=UpdateMode.MERGE,  # type: UpdateMode
+        entity,  # type: EntityType
+        mode=UpdateMode.MERGE,  # type: Union[str, UpdateMode]
         **kwargs  # type: Any
     ):
         # type: (...) -> None
