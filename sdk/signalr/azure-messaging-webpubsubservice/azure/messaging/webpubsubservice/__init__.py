@@ -214,4 +214,5 @@ class WebPubSubServiceClient(object):
             request=request_copy,
             _internal_response=pipeline_response.http_response
         )
+        response.read()
         return response

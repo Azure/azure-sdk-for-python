@@ -23,11 +23,6 @@
 # IN THE SOFTWARE.
 #
 # --------------------------------------------------------------------------
-
-__all__ = [
-    "HttpRequest",
-    "HttpResponse",
-]
 import asyncio
 import os
 import binascii
@@ -50,6 +45,7 @@ from typing import (
     List,
 )
 from abc import abstractmethod
+from azure.core.exceptions import HttpResponseError
 
 ################################### TYPES SECTION #########################
 
@@ -491,6 +487,7 @@ class _HttpResponseBase:
     @property
     def text(self) -> str:
         """Returns the response body as a string"""
+        self.content  # access content to make sure we trigger if response not fully read in
         return self._internal_response.text(encoding=self.encoding)
 
     @property
@@ -529,7 +526,8 @@ class _HttpResponseBase:
 
         If response is good, does nothing.
         """
-        return self._internal_response.raise_for_status()
+        if self.status_code >= 400:
+            raise HttpResponseError(response=self)
 
     def __repr__(self) -> str:
         content_type_str = (
@@ -541,9 +539,9 @@ class _HttpResponseBase:
 
     def _validate_streaming_access(self) -> None:
         if self.is_closed:
-            raise TypeError("Can not iterate over stream, it is closed.")
+            raise ResponseClosedError()
         if self.is_stream_consumed:
-            raise TypeError("Can not iterate over stream, it has been fully consumed")
+            raise StreamConsumedError()
 
 class HttpResponse(_HttpResponseBase):
 
@@ -553,7 +551,7 @@ class HttpResponse(_HttpResponseBase):
         try:
             return self._content
         except AttributeError:
-            raise TypeError("You have not read in the response's bytes yet. Call response.read() first.")
+            raise ResponseNotReadError()
 
     def close(self) -> None:
         self.is_closed = True
@@ -611,7 +609,7 @@ class HttpResponse(_HttpResponseBase):
         """Iterate over the raw response bytes
         """
         self._validate_streaming_access()
-        stream_download = self._internal_response.stream_download(None, chunk_size=chunk_size)
+        stream_download = self._internal_response.stream_download(None)
         for raw_bytes in stream_download:
             self._num_bytes_downloaded += len(raw_bytes)
             yield raw_bytes
@@ -626,7 +624,7 @@ class AsyncHttpResponse(_HttpResponseBase):
         try:
             return self._content
         except AttributeError:
-            raise TypeError("You have not read in the response's bytes yet. Call response.read() first.")
+            raise ResponseNotReadError()
 
     async def _close_stream(self) -> None:
         self.is_stream_consumed = True
@@ -675,7 +673,7 @@ class AsyncHttpResponse(_HttpResponseBase):
         """Iterate over the raw response bytes
         """
         self._validate_streaming_access()
-        stream_download = self._internal_response.stream_download(None, chunk_size=chunk_size)
+        stream_download = self._internal_response.stream_download(None)
         async for raw_bytes in stream_download:
             self._num_bytes_downloaded += len(raw_bytes)
             yield raw_bytes
@@ -689,3 +687,30 @@ class AsyncHttpResponse(_HttpResponseBase):
 
     async def __aexit__(self, *args) -> None:
         await self._internal_response.internal_response.__aexit__(*args)
+
+
+########################### ERRORS SECTION #################################
+
+class StreamConsumedError(Exception):
+    def __init__(self) -> None:
+        message = (
+            "You are attempting to read or stream content that has already been streamed. "
+            "You have likely already consumed this stream, so it can not be accessed anymore."
+        )
+        super().__init__(message)
+
+class ResponseClosedError(Exception):
+    def __init__(self) -> None:
+        message = (
+            "You can not try to read or stream this response's content, since the "
+            "response has been closed."
+        )
+        super().__init__(message)
+
+class ResponseNotReadError(Exception):
+
+    def __init__(self) -> None:
+        message = (
+            "You have not read in the response's bytes yet. Call response.read() first."
+        )
+        super().__init__(message)
