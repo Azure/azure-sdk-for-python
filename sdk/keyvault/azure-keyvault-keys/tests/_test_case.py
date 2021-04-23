@@ -24,10 +24,9 @@ def client_setup(testcase_func):
         if kwargs.get("is_async"):
             import asyncio
 
-            coroutine = asyncio.coroutine(testcase_func)
-            future = coroutine(test_class_instance, client, is_hsm=is_hsm)
+            coroutine = testcase_func(test_class_instance, client, is_hsm=is_hsm)
             loop = asyncio.get_event_loop()
-            loop.run_until_complete(future)
+            loop.run_until_complete(coroutine)
         else:
             testcase_func(test_class_instance, client, is_hsm=is_hsm)
     return wrapper
