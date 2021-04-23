@@ -13,7 +13,6 @@ __all__ = [
     'build_group_exists_request',
     'build_check_permission_request',
     'build_user_exists_request',
-    'build_user_exists_in_group_request',
     'build_close_client_connection_request',
     'build_grant_permission_request',
     'build_healthapi_get_health_status_request',
@@ -48,15 +47,15 @@ def build_healthapi_get_health_status_request(
 
     Get service health status.
 
-    See https://aka.ms/azsdk/python/llcwiki for how to incorporate this request_builder into your code flow.
+    See https://aka.ms/azsdk/python/llcwiki for how to incorporate this request builder into your code flow.
 
     :keyword api_version: Api Version.
     :paramtype api_version: str
-    :return: Returns an :class:`~azure.core.rest.HttpRequest` that you will pass to the client's `send_request` method.
+    :return: Returns an :class:`~azure.messaging.webpubsubservice.core.rest.HttpRequest` that you will pass to the client's `send_request` method.
      See https://aka.ms/azsdk/python/llcwiki for how to incorporate this response into your code flow.
-    :rtype: ~azure.core.rest.HttpRequest
+    :rtype: ~azure.messaging.webpubsubservice.core.rest.HttpRequest
     """
-    api_version = kwargs.pop('api_version', "2020-10-01")  # type: Optional[str]
+    api_version = kwargs.pop('api_version', "2021-05-01-preview")  # type: Optional[str]
 
     # Construct URL
     url = kwargs.pop("template_url", '/api/health')
@@ -83,40 +82,45 @@ def build_send_to_all_request(
 
     Broadcast content inside request body to all the connected client connections.
 
-    See https://aka.ms/azsdk/python/llcwiki for how to incorporate this request_builder into your code flow.
+    See https://aka.ms/azsdk/python/llcwiki for how to incorporate this request builder into your code flow.
 
     :param hub: Target hub name, which should start with alphabetic characters and only contain
      alpha-numeric characters or underscore.
     :type hub: str
     :keyword json: The payload body.
-    :paramtype json: any
+    :paramtype json: Any
     :keyword content: The payload body.
     :paramtype content: IO
     :keyword excluded: Excluded connection Ids.
     :paramtype excluded: list[str]
     :keyword api_version: Api Version.
     :paramtype api_version: str
-    :return: Returns an :class:`~azure.core.rest.HttpRequest` that you will pass to the client's `send_request` method.
+    :return: Returns an :class:`~azure.messaging.webpubsubservice.core.rest.HttpRequest` that you will pass to the client's `send_request` method.
      See https://aka.ms/azsdk/python/llcwiki for how to incorporate this response into your code flow.
-    :rtype: ~azure.core.rest.HttpRequest
+    :rtype: ~azure.messaging.webpubsubservice.core.rest.HttpRequest
+
+    Example:
+        .. code-block:: python
+
+            # JSON input template you can fill out and use as your `json` input.
+            json = "Any (optional)"
     """
     excluded = kwargs.pop('excluded', None)  # type: Optional[List[str]]
-    api_version = kwargs.pop('api_version', "2020-10-01")  # type: Optional[str]
+    api_version = kwargs.pop('api_version', "2021-05-01-preview")  # type: Optional[str]
     content_type = kwargs.pop("content_type", None)
 
     # Construct URL
     url = kwargs.pop("template_url", '/api/hubs/{hub}/:send')
     path_format_arguments = {
-        'hub': _SERIALIZER.url("hub", hub, 'str'),
+        'hub': _SERIALIZER.url("hub", hub, 'str', pattern=r'^[A-Za-z][A-Za-z0-9_`,.[\]]{0,127}$'),
     }
     url = _format_url_section(url, **path_format_arguments)
 
     # Construct parameters
     query_parameters = kwargs.pop("params", {})  # type: Dict[str, Any]
     if excluded is not None:
-        query_parameters['excluded'] = [_SERIALIZER.query("excluded", q, 'str')
-                                        if q is not None else '' for q in excluded]
-
+        query_parameters['excluded'] = [_SERIALIZER.query("excluded", q, 'str') if q is not None else '' for q in excluded]
+    if api_version is not None:
         query_parameters['api-version'] = _SERIALIZER.query("api_version", api_version, 'str')
 
     # Construct headers
@@ -143,7 +147,7 @@ def build_connection_exists_request(
 
     Check if the connection with the given connectionId exists.
 
-    See https://aka.ms/azsdk/python/llcwiki for how to incorporate this request_builder into your code flow.
+    See https://aka.ms/azsdk/python/llcwiki for how to incorporate this request builder into your code flow.
 
     :param hub: Target hub name, which should start with alphabetic characters and only contain
      alpha-numeric characters or underscore.
@@ -152,17 +156,17 @@ def build_connection_exists_request(
     :type connection_id: str
     :keyword api_version: Api Version.
     :paramtype api_version: str
-    :return: Returns an :class:`~azure.core.rest.HttpRequest` that you will pass to the client's `send_request` method.
+    :return: Returns an :class:`~azure.messaging.webpubsubservice.core.rest.HttpRequest` that you will pass to the client's `send_request` method.
      See https://aka.ms/azsdk/python/llcwiki for how to incorporate this response into your code flow.
-    :rtype: ~azure.core.rest.HttpRequest
+    :rtype: ~azure.messaging.webpubsubservice.core.rest.HttpRequest
     """
-    api_version = kwargs.pop('api_version', "2020-10-01")  # type: Optional[str]
+    api_version = kwargs.pop('api_version', "2021-05-01-preview")  # type: Optional[str]
 
     # Construct URL
     url = kwargs.pop("template_url", '/api/hubs/{hub}/connections/{connectionId}')
     path_format_arguments = {
-        'hub': _SERIALIZER.url("hub", hub, 'str'),
-        'connectionId': _SERIALIZER.url("connection_id", connection_id, 'str'),
+        'hub': _SERIALIZER.url("hub", hub, 'str', pattern=r'^[A-Za-z][A-Za-z0-9_`,.[\]]{0,127}$'),
+        'connectionId': _SERIALIZER.url("connection_id", connection_id, 'str', min_length=1),
     }
     url = _format_url_section(url, **path_format_arguments)
 
@@ -189,7 +193,7 @@ def build_close_client_connection_request(
 
     Close the client connection.
 
-    See https://aka.ms/azsdk/python/llcwiki for how to incorporate this request_builder into your code flow.
+    See https://aka.ms/azsdk/python/llcwiki for how to incorporate this request builder into your code flow.
 
     :param hub: Target hub name, which should start with alphabetic characters and only contain
      alpha-numeric characters or underscore.
@@ -200,18 +204,18 @@ def build_close_client_connection_request(
     :paramtype reason: str
     :keyword api_version: Api Version.
     :paramtype api_version: str
-    :return: Returns an :class:`~azure.core.rest.HttpRequest` that you will pass to the client's `send_request` method.
+    :return: Returns an :class:`~azure.messaging.webpubsubservice.core.rest.HttpRequest` that you will pass to the client's `send_request` method.
      See https://aka.ms/azsdk/python/llcwiki for how to incorporate this response into your code flow.
-    :rtype: ~azure.core.rest.HttpRequest
+    :rtype: ~azure.messaging.webpubsubservice.core.rest.HttpRequest
     """
     reason = kwargs.pop('reason', None)  # type: Optional[str]
-    api_version = kwargs.pop('api_version', "2020-10-01")  # type: Optional[str]
+    api_version = kwargs.pop('api_version', "2021-05-01-preview")  # type: Optional[str]
 
     # Construct URL
     url = kwargs.pop("template_url", '/api/hubs/{hub}/connections/{connectionId}')
     path_format_arguments = {
-        'hub': _SERIALIZER.url("hub", hub, 'str'),
-        'connectionId': _SERIALIZER.url("connection_id", connection_id, 'str'),
+        'hub': _SERIALIZER.url("hub", hub, 'str', pattern=r'^[A-Za-z][A-Za-z0-9_`,.[\]]{0,127}$'),
+        'connectionId': _SERIALIZER.url("connection_id", connection_id, 'str', min_length=1),
     }
     url = _format_url_section(url, **path_format_arguments)
 
@@ -240,7 +244,7 @@ def build_send_to_connection_request(
 
     Send content inside request body to the specific connection.
 
-    See https://aka.ms/azsdk/python/llcwiki for how to incorporate this request_builder into your code flow.
+    See https://aka.ms/azsdk/python/llcwiki for how to incorporate this request builder into your code flow.
 
     :param hub: Target hub name, which should start with alphabetic characters and only contain
      alpha-numeric characters or underscore.
@@ -248,23 +252,29 @@ def build_send_to_connection_request(
     :param connection_id: The connection Id.
     :type connection_id: str
     :keyword json: The payload body.
-    :paramtype json: any
+    :paramtype json: Any
     :keyword content: The payload body.
     :paramtype content: IO
     :keyword api_version: Api Version.
     :paramtype api_version: str
-    :return: Returns an :class:`~azure.core.rest.HttpRequest` that you will pass to the client's `send_request` method.
+    :return: Returns an :class:`~azure.messaging.webpubsubservice.core.rest.HttpRequest` that you will pass to the client's `send_request` method.
      See https://aka.ms/azsdk/python/llcwiki for how to incorporate this response into your code flow.
-    :rtype: ~azure.core.rest.HttpRequest
+    :rtype: ~azure.messaging.webpubsubservice.core.rest.HttpRequest
+
+    Example:
+        .. code-block:: python
+
+            # JSON input template you can fill out and use as your `json` input.
+            json = "Any (optional)"
     """
-    api_version = kwargs.pop('api_version', "2020-10-01")  # type: Optional[str]
+    api_version = kwargs.pop('api_version', "2021-05-01-preview")  # type: Optional[str]
     content_type = kwargs.pop("content_type", None)
 
     # Construct URL
     url = kwargs.pop("template_url", '/api/hubs/{hub}/connections/{connectionId}/:send')
     path_format_arguments = {
-        'hub': _SERIALIZER.url("hub", hub, 'str'),
-        'connectionId': _SERIALIZER.url("connection_id", connection_id, 'str'),
+        'hub': _SERIALIZER.url("hub", hub, 'str', pattern=r'^[A-Za-z][A-Za-z0-9_`,.[\]]{0,127}$'),
+        'connectionId': _SERIALIZER.url("connection_id", connection_id, 'str', min_length=1),
     }
     url = _format_url_section(url, **path_format_arguments)
 
@@ -297,7 +307,7 @@ def build_group_exists_request(
 
     Check if there are any client connections inside the given group.
 
-    See https://aka.ms/azsdk/python/llcwiki for how to incorporate this request_builder into your code flow.
+    See https://aka.ms/azsdk/python/llcwiki for how to incorporate this request builder into your code flow.
 
     :param hub: Target hub name, which should start with alphabetic characters and only contain
      alpha-numeric characters or underscore.
@@ -306,17 +316,17 @@ def build_group_exists_request(
     :type group: str
     :keyword api_version: Api Version.
     :paramtype api_version: str
-    :return: Returns an :class:`~azure.core.rest.HttpRequest` that you will pass to the client's `send_request` method.
+    :return: Returns an :class:`~azure.messaging.webpubsubservice.core.rest.HttpRequest` that you will pass to the client's `send_request` method.
      See https://aka.ms/azsdk/python/llcwiki for how to incorporate this response into your code flow.
-    :rtype: ~azure.core.rest.HttpRequest
+    :rtype: ~azure.messaging.webpubsubservice.core.rest.HttpRequest
     """
-    api_version = kwargs.pop('api_version', "2020-10-01")  # type: Optional[str]
+    api_version = kwargs.pop('api_version', "2021-05-01-preview")  # type: Optional[str]
 
     # Construct URL
     url = kwargs.pop("template_url", '/api/hubs/{hub}/groups/{group}')
     path_format_arguments = {
-        'hub': _SERIALIZER.url("hub", hub, 'str'),
-        'group': _SERIALIZER.url("group", group, 'str'),
+        'hub': _SERIALIZER.url("hub", hub, 'str', pattern=r'^[A-Za-z][A-Za-z0-9_`,.[\]]{0,127}$'),
+        'group': _SERIALIZER.url("group", group, 'str', max_length=1024, min_length=1),
     }
     url = _format_url_section(url, **path_format_arguments)
 
@@ -343,7 +353,7 @@ def build_send_to_group_request(
 
     Send content inside request body to a group of connections.
 
-    See https://aka.ms/azsdk/python/llcwiki for how to incorporate this request_builder into your code flow.
+    See https://aka.ms/azsdk/python/llcwiki for how to incorporate this request builder into your code flow.
 
     :param hub: Target hub name, which should start with alphabetic characters and only contain
      alpha-numeric characters or underscore.
@@ -351,39 +361,44 @@ def build_send_to_group_request(
     :param group: Target group name, which length should be greater than 0 and less than 1025.
     :type group: str
     :keyword json: The payload body.
-    :paramtype json: any
+    :paramtype json: Any
     :keyword content: The payload body.
     :paramtype content: IO
     :keyword excluded: Excluded connection Ids.
     :paramtype excluded: list[str]
     :keyword api_version: Api Version.
     :paramtype api_version: str
-    :return: Returns an :class:`~azure.core.rest.HttpRequest` that you will pass to the client's `send_request` method.
+    :return: Returns an :class:`~azure.messaging.webpubsubservice.core.rest.HttpRequest` that you will pass to the client's `send_request` method.
      See https://aka.ms/azsdk/python/llcwiki for how to incorporate this response into your code flow.
-    :rtype: ~azure.core.rest.HttpRequest
+    :rtype: ~azure.messaging.webpubsubservice.core.rest.HttpRequest
+
+    Example:
+        .. code-block:: python
+
+            # JSON input template you can fill out and use as your `json` input.
+            json = "Any (optional)"
     """
     excluded = kwargs.pop('excluded', None)  # type: Optional[List[str]]
-    api_version = kwargs.pop('api_version', "2020-10-01")  # type: Optional[str]
+    api_version = kwargs.pop('api_version', "2021-05-01-preview")  # type: Optional[str]
     content_type = kwargs.pop("content_type", None)
 
     # Construct URL
     url = kwargs.pop("template_url", '/api/hubs/{hub}/groups/{group}/:send')
     path_format_arguments = {
-        'hub': _SERIALIZER.url("hub", hub, 'str'),
-        'group': _SERIALIZER.url("group", group, 'str'),
+        'hub': _SERIALIZER.url("hub", hub, 'str', pattern=r'^[A-Za-z][A-Za-z0-9_`,.[\]]{0,127}$'),
+        'group': _SERIALIZER.url("group", group, 'str', max_length=1024, min_length=1),
     }
     url = _format_url_section(url, **path_format_arguments)
 
     # Construct parameters
     query_parameters = kwargs.pop("params", {})  # type: Dict[str, Any]
     if excluded is not None:
-        query_parameters['excluded'] = [_SERIALIZER.query("excluded", q, 'str')
-                                        if q is not None else '' for q in excluded]
+        query_parameters['excluded'] = [_SERIALIZER.query("excluded", q, 'str') if q is not None else '' for q in excluded]
     if api_version is not None:
         query_parameters['api-version'] = _SERIALIZER.query("api_version", api_version, 'str')
 
     # Construct headers
-    header_parameters = kwargs.get("headers", {})  # type: Dict[str, Any]
+    header_parameters = kwargs.pop("headers", {})  # type: Dict[str, Any]
     if content_type is not None:
         header_parameters['Content-Type'] = _SERIALIZER.header("content_type", content_type, 'str')
 
@@ -407,7 +422,7 @@ def build_add_connection_to_group_request(
 
     Add a connection to the target group.
 
-    See https://aka.ms/azsdk/python/llcwiki for how to incorporate this request_builder into your code flow.
+    See https://aka.ms/azsdk/python/llcwiki for how to incorporate this request builder into your code flow.
 
     :param hub: Target hub name, which should start with alphabetic characters and only contain
      alpha-numeric characters or underscore.
@@ -418,18 +433,18 @@ def build_add_connection_to_group_request(
     :type connection_id: str
     :keyword api_version: Api Version.
     :paramtype api_version: str
-    :return: Returns an :class:`~azure.core.rest.HttpRequest` that you will pass to the client's `send_request` method.
+    :return: Returns an :class:`~azure.messaging.webpubsubservice.core.rest.HttpRequest` that you will pass to the client's `send_request` method.
      See https://aka.ms/azsdk/python/llcwiki for how to incorporate this response into your code flow.
-    :rtype: ~azure.core.rest.HttpRequest
+    :rtype: ~azure.messaging.webpubsubservice.core.rest.HttpRequest
     """
-    api_version = kwargs.pop('api_version', "2020-10-01")  # type: Optional[str]
+    api_version = kwargs.pop('api_version', "2021-05-01-preview")  # type: Optional[str]
 
     # Construct URL
     url = kwargs.pop("template_url", '/api/hubs/{hub}/groups/{group}/connections/{connectionId}')
     path_format_arguments = {
-        'hub': _SERIALIZER.url("hub", hub, 'str'),
-        'group': _SERIALIZER.url("group", group, 'str'),
-        'connectionId': _SERIALIZER.url("connection_id", connection_id, 'str'),
+        'hub': _SERIALIZER.url("hub", hub, 'str', pattern=r'^[A-Za-z][A-Za-z0-9_`,.[\]]{0,127}$'),
+        'group': _SERIALIZER.url("group", group, 'str', max_length=1024, min_length=1),
+        'connectionId': _SERIALIZER.url("connection_id", connection_id, 'str', min_length=1),
     }
     url = _format_url_section(url, **path_format_arguments)
 
@@ -457,7 +472,7 @@ def build_remove_connection_from_group_request(
 
     Remove a connection from the target group.
 
-    See https://aka.ms/azsdk/python/llcwiki for how to incorporate this request_builder into your code flow.
+    See https://aka.ms/azsdk/python/llcwiki for how to incorporate this request builder into your code flow.
 
     :param hub: Target hub name, which should start with alphabetic characters and only contain
      alpha-numeric characters or underscore.
@@ -468,18 +483,18 @@ def build_remove_connection_from_group_request(
     :type connection_id: str
     :keyword api_version: Api Version.
     :paramtype api_version: str
-    :return: Returns an :class:`~azure.core.rest.HttpRequest` that you will pass to the client's `send_request` method.
+    :return: Returns an :class:`~azure.messaging.webpubsubservice.core.rest.HttpRequest` that you will pass to the client's `send_request` method.
      See https://aka.ms/azsdk/python/llcwiki for how to incorporate this response into your code flow.
-    :rtype: ~azure.core.rest.HttpRequest
+    :rtype: ~azure.messaging.webpubsubservice.core.rest.HttpRequest
     """
-    api_version = kwargs.pop('api_version', "2020-10-01")  # type: Optional[str]
+    api_version = kwargs.pop('api_version', "2021-05-01-preview")  # type: Optional[str]
 
     # Construct URL
     url = kwargs.pop("template_url", '/api/hubs/{hub}/groups/{group}/connections/{connectionId}')
     path_format_arguments = {
-        'hub': _SERIALIZER.url("hub", hub, 'str'),
-        'group': _SERIALIZER.url("group", group, 'str'),
-        'connectionId': _SERIALIZER.url("connection_id", connection_id, 'str'),
+        'hub': _SERIALIZER.url("hub", hub, 'str', pattern=r'^[A-Za-z][A-Za-z0-9_`,.[\]]{0,127}$'),
+        'group': _SERIALIZER.url("group", group, 'str', max_length=1024, min_length=1),
+        'connectionId': _SERIALIZER.url("connection_id", connection_id, 'str', min_length=1),
     }
     url = _format_url_section(url, **path_format_arguments)
 
@@ -506,7 +521,7 @@ def build_user_exists_request(
 
     Check if there are any client connections connected for the given user.
 
-    See https://aka.ms/azsdk/python/llcwiki for how to incorporate this request_builder into your code flow.
+    See https://aka.ms/azsdk/python/llcwiki for how to incorporate this request builder into your code flow.
 
     :param hub: Target hub name, which should start with alphabetic characters and only contain
      alpha-numeric characters or underscore.
@@ -515,17 +530,17 @@ def build_user_exists_request(
     :type user_id: str
     :keyword api_version: Api Version.
     :paramtype api_version: str
-    :return: Returns an :class:`~azure.core.rest.HttpRequest` that you will pass to the client's `send_request` method.
+    :return: Returns an :class:`~azure.messaging.webpubsubservice.core.rest.HttpRequest` that you will pass to the client's `send_request` method.
      See https://aka.ms/azsdk/python/llcwiki for how to incorporate this response into your code flow.
-    :rtype: ~azure.core.rest.HttpRequest
+    :rtype: ~azure.messaging.webpubsubservice.core.rest.HttpRequest
     """
-    api_version = kwargs.pop('api_version', "2020-10-01")  # type: Optional[str]
+    api_version = kwargs.pop('api_version', "2021-05-01-preview")  # type: Optional[str]
 
     # Construct URL
     url = kwargs.pop("template_url", '/api/hubs/{hub}/users/{userId}')
     path_format_arguments = {
-        'hub': _SERIALIZER.url("hub", hub, 'str'),
-        'userId': _SERIALIZER.url("user_id", user_id, 'str'),
+        'hub': _SERIALIZER.url("hub", hub, 'str', pattern=r'^[A-Za-z][A-Za-z0-9_`,.[\]]{0,127}$'),
+        'userId': _SERIALIZER.url("user_id", user_id, 'str', min_length=1),
     }
     url = _format_url_section(url, **path_format_arguments)
 
@@ -552,7 +567,7 @@ def build_send_to_user_request(
 
     Send content inside request body to the specific user.
 
-    See https://aka.ms/azsdk/python/llcwiki for how to incorporate this request_builder into your code flow.
+    See https://aka.ms/azsdk/python/llcwiki for how to incorporate this request builder into your code flow.
 
     :param hub: Target hub name, which should start with alphabetic characters and only contain
      alpha-numeric characters or underscore.
@@ -560,23 +575,29 @@ def build_send_to_user_request(
     :param user_id: The user Id.
     :type user_id: str
     :keyword json: The payload body.
-    :paramtype json: any
+    :paramtype json: Any
     :keyword content: The payload body.
     :paramtype content: IO
     :keyword api_version: Api Version.
     :paramtype api_version: str
-    :return: Returns an :class:`~azure.core.rest.HttpRequest` that you will pass to the client's `send_request` method.
+    :return: Returns an :class:`~azure.messaging.webpubsubservice.core.rest.HttpRequest` that you will pass to the client's `send_request` method.
      See https://aka.ms/azsdk/python/llcwiki for how to incorporate this response into your code flow.
-    :rtype: ~azure.core.rest.HttpRequest
+    :rtype: ~azure.messaging.webpubsubservice.core.rest.HttpRequest
+
+    Example:
+        .. code-block:: python
+
+            # JSON input template you can fill out and use as your `json` input.
+            json = "Any (optional)"
     """
-    api_version = kwargs.pop('api_version', "2020-10-01")  # type: Optional[str]
+    api_version = kwargs.pop('api_version', "2021-05-01-preview")  # type: Optional[str]
     content_type = kwargs.pop("content_type", None)
 
     # Construct URL
     url = kwargs.pop("template_url", '/api/hubs/{hub}/users/{userId}/:send')
     path_format_arguments = {
-        'hub': _SERIALIZER.url("hub", hub, 'str'),
-        'userId': _SERIALIZER.url("user_id", user_id, 'str'),
+        'hub': _SERIALIZER.url("hub", hub, 'str', pattern=r'^[A-Za-z][A-Za-z0-9_`,.[\]]{0,127}$'),
+        'userId': _SERIALIZER.url("user_id", user_id, 'str', min_length=1),
     }
     url = _format_url_section(url, **path_format_arguments)
 
@@ -599,56 +620,6 @@ def build_send_to_user_request(
     )
 
 
-def build_user_exists_in_group_request(
-    hub,  # type: str
-    group,  # type: str
-    user_id,  # type: str
-    **kwargs  # type: Any
-):
-    # type: (...) -> HttpRequest
-    """Check whether a user exists in the target group.
-
-    Check whether a user exists in the target group.
-
-    See https://aka.ms/azsdk/python/llcwiki for how to incorporate this request_builder into your code flow.
-
-    :param hub: Target hub name, which should start with alphabetic characters and only contain
-     alpha-numeric characters or underscore.
-    :type hub: str
-    :param group: Target group name, which length should be greater than 0 and less than 1025.
-    :type group: str
-    :param user_id: Target user Id.
-    :type user_id: str
-    :keyword api_version: Api Version.
-    :paramtype api_version: str
-    :return: Returns an :class:`~azure.core.rest.HttpRequest` that you will pass to the client's `send_request` method.
-     See https://aka.ms/azsdk/python/llcwiki for how to incorporate this response into your code flow.
-    :rtype: ~azure.core.rest.HttpRequest
-    """
-    api_version = kwargs.pop('api_version', "2020-10-01")  # type: Optional[str]
-
-    # Construct URL
-    url = kwargs.pop("template_url", '/api/hubs/{hub}/users/{userId}/groups/{group}')
-    path_format_arguments = {
-        'hub': _SERIALIZER.url("hub", hub, 'str'),
-        'group': _SERIALIZER.url("group", group, 'str'),
-        'userId': _SERIALIZER.url("user_id", user_id, 'str'),
-    }
-    url = _format_url_section(url, **path_format_arguments)
-
-    # Construct parameters
-    query_parameters = kwargs.pop("params", {})  # type: Dict[str, Any]
-    if api_version is not None:
-        query_parameters['api-version'] = _SERIALIZER.query("api_version", api_version, 'str')
-
-    return HttpRequest(
-        method="HEAD",
-        url=url,
-        params=query_parameters,
-        **kwargs
-    )
-
-
 def build_add_user_to_group_request(
     hub,  # type: str
     group,  # type: str
@@ -660,7 +631,7 @@ def build_add_user_to_group_request(
 
     Add a user to the target group.
 
-    See https://aka.ms/azsdk/python/llcwiki for how to incorporate this request_builder into your code flow.
+    See https://aka.ms/azsdk/python/llcwiki for how to incorporate this request builder into your code flow.
 
     :param hub: Target hub name, which should start with alphabetic characters and only contain
      alpha-numeric characters or underscore.
@@ -671,18 +642,18 @@ def build_add_user_to_group_request(
     :type user_id: str
     :keyword api_version: Api Version.
     :paramtype api_version: str
-    :return: Returns an :class:`~azure.core.rest.HttpRequest` that you will pass to the client's `send_request` method.
+    :return: Returns an :class:`~azure.messaging.webpubsubservice.core.rest.HttpRequest` that you will pass to the client's `send_request` method.
      See https://aka.ms/azsdk/python/llcwiki for how to incorporate this response into your code flow.
-    :rtype: ~azure.core.rest.HttpRequest
+    :rtype: ~azure.messaging.webpubsubservice.core.rest.HttpRequest
     """
-    api_version = kwargs.pop('api_version', "2020-10-01")  # type: Optional[str]
+    api_version = kwargs.pop('api_version', "2021-05-01-preview")  # type: Optional[str]
 
     # Construct URL
     url = kwargs.pop("template_url", '/api/hubs/{hub}/users/{userId}/groups/{group}')
     path_format_arguments = {
-        'hub': _SERIALIZER.url("hub", hub, 'str'),
-        'group': _SERIALIZER.url("group", group, 'str'),
-        'userId': _SERIALIZER.url("user_id", user_id, 'str'),
+        'hub': _SERIALIZER.url("hub", hub, 'str', pattern=r'^[A-Za-z][A-Za-z0-9_`,.[\]]{0,127}$'),
+        'group': _SERIALIZER.url("group", group, 'str', max_length=1024, min_length=1),
+        'userId': _SERIALIZER.url("user_id", user_id, 'str', min_length=1),
     }
     url = _format_url_section(url, **path_format_arguments)
 
@@ -710,7 +681,7 @@ def build_remove_user_from_group_request(
 
     Remove a user from the target group.
 
-    See https://aka.ms/azsdk/python/llcwiki for how to incorporate this request_builder into your code flow.
+    See https://aka.ms/azsdk/python/llcwiki for how to incorporate this request builder into your code flow.
 
     :param hub: Target hub name, which should start with alphabetic characters and only contain
      alpha-numeric characters or underscore.
@@ -721,18 +692,18 @@ def build_remove_user_from_group_request(
     :type user_id: str
     :keyword api_version: Api Version.
     :paramtype api_version: str
-    :return: Returns an :class:`~azure.core.rest.HttpRequest` that you will pass to the client's `send_request` method.
+    :return: Returns an :class:`~azure.messaging.webpubsubservice.core.rest.HttpRequest` that you will pass to the client's `send_request` method.
      See https://aka.ms/azsdk/python/llcwiki for how to incorporate this response into your code flow.
-    :rtype: ~azure.core.rest.HttpRequest
+    :rtype: ~azure.messaging.webpubsubservice.core.rest.HttpRequest
     """
-    api_version = kwargs.pop('api_version', "2020-10-01")  # type: Optional[str]
+    api_version = kwargs.pop('api_version', "2021-05-01-preview")  # type: Optional[str]
 
     # Construct URL
     url = kwargs.pop("template_url", '/api/hubs/{hub}/users/{userId}/groups/{group}')
     path_format_arguments = {
-        'hub': _SERIALIZER.url("hub", hub, 'str'),
-        'group': _SERIALIZER.url("group", group, 'str'),
-        'userId': _SERIALIZER.url("user_id", user_id, 'str'),
+        'hub': _SERIALIZER.url("hub", hub, 'str', pattern=r'^[A-Za-z][A-Za-z0-9_`,.[\]]{0,127}$'),
+        'group': _SERIALIZER.url("group", group, 'str', max_length=1024, min_length=1),
+        'userId': _SERIALIZER.url("user_id", user_id, 'str', min_length=1),
     }
     url = _format_url_section(url, **path_format_arguments)
 
@@ -759,7 +730,7 @@ def build_remove_user_from_all_groups_request(
 
     Remove a user from all groups.
 
-    See https://aka.ms/azsdk/python/llcwiki for how to incorporate this request_builder into your code flow.
+    See https://aka.ms/azsdk/python/llcwiki for how to incorporate this request builder into your code flow.
 
     :param hub: Target hub name, which should start with alphabetic characters and only contain
      alpha-numeric characters or underscore.
@@ -768,17 +739,17 @@ def build_remove_user_from_all_groups_request(
     :type user_id: str
     :keyword api_version: Api Version.
     :paramtype api_version: str
-    :return: Returns an :class:`~azure.core.rest.HttpRequest` that you will pass to the client's `send_request` method.
+    :return: Returns an :class:`~azure.messaging.webpubsubservice.core.rest.HttpRequest` that you will pass to the client's `send_request` method.
      See https://aka.ms/azsdk/python/llcwiki for how to incorporate this response into your code flow.
-    :rtype: ~azure.core.rest.HttpRequest
+    :rtype: ~azure.messaging.webpubsubservice.core.rest.HttpRequest
     """
-    api_version = kwargs.pop('api_version', "2020-10-01")  # type: Optional[str]
+    api_version = kwargs.pop('api_version', "2021-05-01-preview")  # type: Optional[str]
 
     # Construct URL
     url = kwargs.pop("template_url", '/api/hubs/{hub}/users/{userId}/groups')
     path_format_arguments = {
-        'hub': _SERIALIZER.url("hub", hub, 'str'),
-        'userId': _SERIALIZER.url("user_id", user_id, 'str'),
+        'hub': _SERIALIZER.url("hub", hub, 'str', pattern=r'^[A-Za-z][A-Za-z0-9_`,.[\]]{0,127}$'),
+        'userId': _SERIALIZER.url("user_id", user_id, 'str', min_length=1),
     }
     url = _format_url_section(url, **path_format_arguments)
 
@@ -806,7 +777,7 @@ def build_grant_permission_request(
 
     Grant permission to the connection.
 
-    See https://aka.ms/azsdk/python/llcwiki for how to incorporate this request_builder into your code flow.
+    See https://aka.ms/azsdk/python/llcwiki for how to incorporate this request builder into your code flow.
 
     :param hub: Target hub name, which should start with alphabetic characters and only contain
      alpha-numeric characters or underscore.
@@ -822,19 +793,19 @@ def build_grant_permission_request(
     :paramtype target_name: str
     :keyword api_version: Api Version.
     :paramtype api_version: str
-    :return: Returns an :class:`~azure.core.rest.HttpRequest` that you will pass to the client's `send_request` method.
+    :return: Returns an :class:`~azure.messaging.webpubsubservice.core.rest.HttpRequest` that you will pass to the client's `send_request` method.
      See https://aka.ms/azsdk/python/llcwiki for how to incorporate this response into your code flow.
-    :rtype: ~azure.core.rest.HttpRequest
+    :rtype: ~azure.messaging.webpubsubservice.core.rest.HttpRequest
     """
     target_name = kwargs.pop('target_name', None)  # type: Optional[str]
-    api_version = kwargs.pop('api_version', "2020-10-01")  # type: Optional[str]
+    api_version = kwargs.pop('api_version', "2021-05-01-preview")  # type: Optional[str]
 
     # Construct URL
     url = kwargs.pop("template_url", '/api/hubs/{hub}/permissions/{permission}/connections/{connectionId}')
     path_format_arguments = {
-        'hub': _SERIALIZER.url("hub", hub, 'str'),
+        'hub': _SERIALIZER.url("hub", hub, 'str', pattern=r'^[A-Za-z][A-Za-z0-9_`,.[\]]{0,127}$'),
         'permission': _SERIALIZER.url("permission", permission, 'str'),
-        'connectionId': _SERIALIZER.url("connection_id", connection_id, 'str'),
+        'connectionId': _SERIALIZER.url("connection_id", connection_id, 'str', min_length=1),
     }
     url = _format_url_section(url, **path_format_arguments)
 
@@ -864,14 +835,14 @@ def build_revoke_permission_request(
 
     Revoke permission for the connection.
 
-    See https://aka.ms/azsdk/python/llcwiki for how to incorporate this request_builder into your code flow.
+    See https://aka.ms/azsdk/python/llcwiki for how to incorporate this request builder into your code flow.
 
     :param hub: Target hub name, which should start with alphabetic characters and only contain
      alpha-numeric characters or underscore.
     :type hub: str
     :param permission: The permission: current supported actions are joinLeaveGroup and
      sendToGroup.
-    :type permission: ~Permissions
+    :type permission: str or ~Permissions
     :param connection_id: Target connection Id.
     :type connection_id: str
     :keyword target_name: Optional. If not set, revoke the permission for all targets. If set,
@@ -880,19 +851,19 @@ def build_revoke_permission_request(
     :paramtype target_name: str
     :keyword api_version: Api Version.
     :paramtype api_version: str
-    :return: Returns an :class:`~azure.core.rest.HttpRequest` that you will pass to the client's `send_request` method.
+    :return: Returns an :class:`~azure.messaging.webpubsubservice.core.rest.HttpRequest` that you will pass to the client's `send_request` method.
      See https://aka.ms/azsdk/python/llcwiki for how to incorporate this response into your code flow.
-    :rtype: ~azure.core.rest.HttpRequest
+    :rtype: ~azure.messaging.webpubsubservice.core.rest.HttpRequest
     """
     target_name = kwargs.pop('target_name', None)  # type: Optional[str]
-    api_version = kwargs.pop('api_version', "2020-10-01")  # type: Optional[str]
+    api_version = kwargs.pop('api_version', "2021-05-01-preview")  # type: Optional[str]
 
     # Construct URL
     url = kwargs.pop("template_url", '/api/hubs/{hub}/permissions/{permission}/connections/{connectionId}')
     path_format_arguments = {
-        'hub': _SERIALIZER.url("hub", hub, 'str'),
+        'hub': _SERIALIZER.url("hub", hub, 'str', pattern=r'^[A-Za-z][A-Za-z0-9_`,.[\]]{0,127}$'),
         'permission': _SERIALIZER.url("permission", permission, 'str'),
-        'connectionId': _SERIALIZER.url("connection_id", connection_id, 'str'),
+        'connectionId': _SERIALIZER.url("connection_id", connection_id, 'str', min_length=1),
     }
     url = _format_url_section(url, **path_format_arguments)
 
@@ -922,9 +893,9 @@ def build_check_permission_request(
 
     Check if a connection has permission to the specified action.
 
-    See https://aka.ms/azsdk/python/llcwiki for how to incorporate this request_builder into your code flow.
+    See https://aka.ms/azsdk/python/llcwiki for how to incorporate this request builder into your code flow.
 
-    :param hub: Target hub name,q which should start with alphabetic characters and only contain
+    :param hub: Target hub name, which should start with alphabetic characters and only contain
      alpha-numeric characters or underscore.
     :type hub: str
     :param permission: The permission: current supported actions are joinLeaveGroup and
@@ -938,19 +909,19 @@ def build_check_permission_request(
     :paramtype target_name: str
     :keyword api_version: Api Version.
     :paramtype api_version: str
-    :return: Returns an :class:`~azure.core.rest.HttpRequest` that you will pass to the client's `send_request` method.
+    :return: Returns an :class:`~azure.messaging.webpubsubservice.core.rest.HttpRequest` that you will pass to the client's `send_request` method.
      See https://aka.ms/azsdk/python/llcwiki for how to incorporate this response into your code flow.
-    :rtype: ~azure.core.rest.HttpRequest
+    :rtype: ~azure.messaging.webpubsubservice.core.rest.HttpRequest
     """
     target_name = kwargs.pop('target_name', None)  # type: Optional[str]
-    api_version = kwargs.pop('api_version', "2020-10-01")  # type: Optional[str]
+    api_version = kwargs.pop('api_version', "2021-05-01-preview")  # type: Optional[str]
 
     # Construct URL
     url = kwargs.pop("template_url", '/api/hubs/{hub}/permissions/{permission}/connections/{connectionId}')
     path_format_arguments = {
-        'hub': _SERIALIZER.url("hub", hub, 'str'),
+        'hub': _SERIALIZER.url("hub", hub, 'str', pattern=r'^[A-Za-z][A-Za-z0-9_`,.[\]]{0,127}$'),
         'permission': _SERIALIZER.url("permission", permission, 'str'),
-        'connectionId': _SERIALIZER.url("connection_id", connection_id, 'str'),
+        'connectionId': _SERIALIZER.url("connection_id", connection_id, 'str', min_length=1),
     }
     url = _format_url_section(url, **path_format_arguments)
 
