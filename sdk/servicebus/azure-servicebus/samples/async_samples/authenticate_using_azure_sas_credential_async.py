@@ -18,10 +18,11 @@ try:
     from urllib.parse import quote as url_parse_quote
 except ImportError:
     from urllib import pathname2url as url_parse_quote
-from azure.core.credentials import AccessToken, AzureSasCredential
+from azure.core.credentials import AzureSasCredential
 
 from azure.servicebus import ServiceBusMessage
 from azure.servicebus.aio import ServiceBusClient
+
 
 def generate_sas_token(uri, sas_name, sas_value, token_ttl):
     """Performs the signing and encoding needed to generate a sas token from a sas key."""
@@ -32,15 +33,17 @@ def generate_sas_token(uri, sas_name, sas_value, token_ttl):
     signature = url_parse_quote(base64.b64encode(signed_hmac_sha256.digest()))
     return 'SharedAccessSignature sr={}&sig={}&se={}&skn={}'.format(uri, signature, expiry, sas_name)
 
+
 FULLY_QUALIFIED_NAMESPACE = os.environ['SERVICE_BUS_FULLY_QUALIFIED_NAMESPACE']
 QUEUE_NAME = os.environ["SERVICE_BUS_QUEUE_NAME"]
 SAS_POLICY = os.environ['SERVICE_BUS_SAS_POLICY']
-SERVICEBUS_SAS_KEY = os.environ['SERVICEBUS_SAS_KEY']
+SERVICEBUS_SAS_KEY = os.environ['SERVICE_BUS_SAS_KEY']
 
 auth_uri = "sb://{}/{}".format(FULLY_QUALIFIED_NAMESPACE, QUEUE_NAME)
 token_ttl = 3000  # seconds
 
 sas_token = generate_sas_token(auth_uri, SAS_POLICY, SERVICEBUS_SAS_KEY, token_ttl)
+
 
 async def send_message():
     credential=AzureSasCredential(sas_token)
