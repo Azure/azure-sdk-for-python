@@ -24,7 +24,7 @@ class SignalRPrivateLinkResourcesOperations(object):
     :param config: Configuration of service client.
     :param serializer: An object model serializer.
     :param deserializer: An object model deserializer.
-    :ivar api_version: Client Api Version. Constant value: "2020-05-01".
+    :ivar api_version: Client Api Version. Constant value: "2021-04-01-preview".
     """
 
     models = models
@@ -34,20 +34,19 @@ class SignalRPrivateLinkResourcesOperations(object):
         self._client = client
         self._serialize = serializer
         self._deserialize = deserializer
-        self.api_version = "2020-05-01"
+        self.api_version = "2021-04-01-preview"
 
         self.config = config
 
     def list(
             self, resource_group_name, resource_name, custom_headers=None, raw=False, **operation_config):
-        """Get the private link resources that need to be created for a SignalR
-        resource.
+        """Get the private link resources that need to be created for a resource.
 
         :param resource_group_name: The name of the resource group that
          contains the resource. You can obtain this value from the Azure
          Resource Manager API or the portal.
         :type resource_group_name: str
-        :param resource_name: The name of the SignalR resource.
+        :param resource_name: The name of the resource.
         :type resource_name: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the

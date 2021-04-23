@@ -12,12 +12,47 @@
 from enum import Enum
 
 
-class SignalRSkuTier(str, Enum):
+class ACLAction(str, Enum):
 
-    free = "Free"
-    basic = "Basic"
-    standard = "Standard"
-    premium = "Premium"
+    allow = "Allow"
+    deny = "Deny"
+
+
+class FeatureFlags(str, Enum):
+
+    service_mode = "ServiceMode"
+    enable_connectivity_logs = "EnableConnectivityLogs"
+    enable_messaging_logs = "EnableMessagingLogs"
+    enable_live_trace = "EnableLiveTrace"
+
+
+class KeyType(str, Enum):
+
+    primary = "Primary"
+    secondary = "Secondary"
+
+
+class ManagedIdentityType(str, Enum):
+
+    none = "None"
+    system_assigned = "SystemAssigned"
+    user_assigned = "UserAssigned"
+
+
+class SignalRRequestType(str, Enum):
+
+    client_connection = "ClientConnection"
+    server_connection = "ServerConnection"
+    restapi = "RESTAPI"
+    trace = "Trace"
+
+
+class CreatedByType(str, Enum):
+
+    user = "User"
+    application = "Application"
+    managed_identity = "ManagedIdentity"
+    key = "Key"
 
 
 class ProvisioningState(str, Enum):
@@ -41,33 +76,30 @@ class PrivateLinkServiceConnectionStatus(str, Enum):
     disconnected = "Disconnected"
 
 
+class SignalRSkuTier(str, Enum):
+
+    free = "Free"
+    basic = "Basic"
+    standard = "Standard"
+    premium = "Premium"
+
+
+class UpstreamAuthType(str, Enum):
+
+    none = "None"
+    managed_identity = "ManagedIdentity"
+
+
 class ServiceKind(str, Enum):
 
     signal_r = "SignalR"
     raw_web_sockets = "RawWebSockets"
 
 
-class FeatureFlags(str, Enum):
+class SharedPrivateLinkResourceStatus(str, Enum):
 
-    service_mode = "ServiceMode"
-    enable_connectivity_logs = "EnableConnectivityLogs"
-    enable_messaging_logs = "EnableMessagingLogs"
-
-
-class ACLAction(str, Enum):
-
-    allow = "Allow"
-    deny = "Deny"
-
-
-class SignalRRequestType(str, Enum):
-
-    client_connection = "ClientConnection"
-    server_connection = "ServerConnection"
-    restapi = "RESTAPI"
-
-
-class KeyType(str, Enum):
-
-    primary = "Primary"
-    secondary = "Secondary"
+    pending = "Pending"
+    approved = "Approved"
+    rejected = "Rejected"
+    disconnected = "Disconnected"
+    timeout = "Timeout"

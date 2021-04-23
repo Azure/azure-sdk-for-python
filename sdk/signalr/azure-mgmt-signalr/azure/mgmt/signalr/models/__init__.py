@@ -11,9 +11,12 @@
 
 try:
     from ._models_py3 import Dimension
+    from ._models_py3 import ErrorAdditionalInfo
+    from ._models_py3 import ErrorDetail
     from ._models_py3 import ErrorResponse, ErrorResponseException
-    from ._models_py3 import ErrorResponseBody
     from ._models_py3 import LogSpecification
+    from ._models_py3 import ManagedIdentity
+    from ._models_py3 import ManagedIdentitySettings
     from ._models_py3 import MetricSpecification
     from ._models_py3 import NameAvailability
     from ._models_py3 import NameAvailabilityParameters
@@ -32,21 +35,30 @@ try:
     from ._models_py3 import ResourceSku
     from ._models_py3 import ServerlessUpstreamSettings
     from ._models_py3 import ServiceSpecification
+    from ._models_py3 import ShareablePrivateLinkResourceProperties
+    from ._models_py3 import ShareablePrivateLinkResourceType
+    from ._models_py3 import SharedPrivateLinkResource
     from ._models_py3 import SignalRCorsSettings
-    from ._models_py3 import SignalRCreateOrUpdateProperties
     from ._models_py3 import SignalRFeature
     from ._models_py3 import SignalRKeys
     from ._models_py3 import SignalRNetworkACLs
     from ._models_py3 import SignalRResource
+    from ._models_py3 import SignalRTlsSettings
     from ._models_py3 import SignalRUsage
     from ._models_py3 import SignalRUsageName
+    from ._models_py3 import SystemData
     from ._models_py3 import TrackedResource
+    from ._models_py3 import UpstreamAuthSettings
     from ._models_py3 import UpstreamTemplate
+    from ._models_py3 import UserAssignedIdentityProperty
 except (SyntaxError, ImportError):
     from ._models import Dimension
+    from ._models import ErrorAdditionalInfo
+    from ._models import ErrorDetail
     from ._models import ErrorResponse, ErrorResponseException
-    from ._models import ErrorResponseBody
     from ._models import LogSpecification
+    from ._models import ManagedIdentity
+    from ._models import ManagedIdentitySettings
     from ._models import MetricSpecification
     from ._models import NameAvailability
     from ._models import NameAvailabilityParameters
@@ -65,36 +77,51 @@ except (SyntaxError, ImportError):
     from ._models import ResourceSku
     from ._models import ServerlessUpstreamSettings
     from ._models import ServiceSpecification
+    from ._models import ShareablePrivateLinkResourceProperties
+    from ._models import ShareablePrivateLinkResourceType
+    from ._models import SharedPrivateLinkResource
     from ._models import SignalRCorsSettings
-    from ._models import SignalRCreateOrUpdateProperties
     from ._models import SignalRFeature
     from ._models import SignalRKeys
     from ._models import SignalRNetworkACLs
     from ._models import SignalRResource
+    from ._models import SignalRTlsSettings
     from ._models import SignalRUsage
     from ._models import SignalRUsageName
+    from ._models import SystemData
     from ._models import TrackedResource
+    from ._models import UpstreamAuthSettings
     from ._models import UpstreamTemplate
+    from ._models import UserAssignedIdentityProperty
 from ._paged_models import OperationPaged
+from ._paged_models import PrivateEndpointConnectionPaged
 from ._paged_models import PrivateLinkResourcePaged
+from ._paged_models import SharedPrivateLinkResourcePaged
 from ._paged_models import SignalRResourcePaged
 from ._paged_models import SignalRUsagePaged
 from ._signal_rmanagement_client_enums import (
-    SignalRSkuTier,
+    ACLAction,
+    FeatureFlags,
+    KeyType,
+    ManagedIdentityType,
+    SignalRRequestType,
+    CreatedByType,
     ProvisioningState,
     PrivateLinkServiceConnectionStatus,
+    SignalRSkuTier,
+    UpstreamAuthType,
     ServiceKind,
-    FeatureFlags,
-    ACLAction,
-    SignalRRequestType,
-    KeyType,
+    SharedPrivateLinkResourceStatus,
 )
 
 __all__ = [
     'Dimension',
+    'ErrorAdditionalInfo',
+    'ErrorDetail',
     'ErrorResponse', 'ErrorResponseException',
-    'ErrorResponseBody',
     'LogSpecification',
+    'ManagedIdentity',
+    'ManagedIdentitySettings',
     'MetricSpecification',
     'NameAvailability',
     'NameAvailabilityParameters',
@@ -113,26 +140,38 @@ __all__ = [
     'ResourceSku',
     'ServerlessUpstreamSettings',
     'ServiceSpecification',
+    'ShareablePrivateLinkResourceProperties',
+    'ShareablePrivateLinkResourceType',
+    'SharedPrivateLinkResource',
     'SignalRCorsSettings',
-    'SignalRCreateOrUpdateProperties',
     'SignalRFeature',
     'SignalRKeys',
     'SignalRNetworkACLs',
     'SignalRResource',
+    'SignalRTlsSettings',
     'SignalRUsage',
     'SignalRUsageName',
+    'SystemData',
     'TrackedResource',
+    'UpstreamAuthSettings',
     'UpstreamTemplate',
+    'UserAssignedIdentityProperty',
     'OperationPaged',
     'SignalRResourcePaged',
-    'PrivateLinkResourcePaged',
     'SignalRUsagePaged',
-    'SignalRSkuTier',
+    'PrivateEndpointConnectionPaged',
+    'PrivateLinkResourcePaged',
+    'SharedPrivateLinkResourcePaged',
+    'ACLAction',
+    'FeatureFlags',
+    'KeyType',
+    'ManagedIdentityType',
+    'SignalRRequestType',
+    'CreatedByType',
     'ProvisioningState',
     'PrivateLinkServiceConnectionStatus',
+    'SignalRSkuTier',
+    'UpstreamAuthType',
     'ServiceKind',
-    'FeatureFlags',
-    'ACLAction',
-    'SignalRRequestType',
-    'KeyType',
+    'SharedPrivateLinkResourceStatus',
 ]
