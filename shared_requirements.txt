@@ -134,6 +134,7 @@ avro<2.0.0,>=1.10.0
 #override azure-keyvault-certificates msrest>=0.6.0
 #override azure-keyvault-keys msrest>=0.6.21
 #override azure-keyvault-secrets msrest>=0.6.0
+#override azure-mgmt-keyvault msrest>=0.6.21
 #override azure-keyvault-certificates azure-core<2.0.0,>=1.7.0
 #override azure-keyvault-keys azure-core<2.0.0,>=1.7.0
 #override azure-keyvault-secrets azure-core<2.0.0,>=1.7.0
