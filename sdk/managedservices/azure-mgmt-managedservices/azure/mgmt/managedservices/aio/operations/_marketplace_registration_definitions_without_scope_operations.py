@@ -19,8 +19,8 @@ from ... import models as _models
 T = TypeVar('T')
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]]
 
-class MarketplaceRegistrationDefinitionsOperations:
-    """MarketplaceRegistrationDefinitionsOperations async operations.
+class MarketplaceRegistrationDefinitionsWithoutScopeOperations:
+    """MarketplaceRegistrationDefinitionsWithoutScopeOperations async operations.
 
     You should not instantiate this class directly. Instead, you should create a Client instance that
     instantiates it for you and attaches it as an attribute.
@@ -43,14 +43,11 @@ class MarketplaceRegistrationDefinitionsOperations:
 
     def list(
         self,
-        scope: str,
         filter: Optional[str] = None,
         **kwargs
     ) -> AsyncIterable["_models.MarketplaceRegistrationDefinitionList"]:
         """Gets a list of the marketplace registration definitions for the marketplace identifier.
 
-        :param scope: Scope of the resource.
-        :type scope: str
         :param filter: The filter query parameter. Might be used to filter marketplace registration
          definition by plan identifier, publisher, version etc.
         :type filter: str
@@ -75,10 +72,6 @@ class MarketplaceRegistrationDefinitionsOperations:
             if not next_link:
                 # Construct URL
                 url = self.list.metadata['url']  # type: ignore
-                path_format_arguments = {
-                    'scope': self._serialize.url("scope", scope, 'str', skip_quote=True),
-                }
-                url = self._client.format_url(url, **path_format_arguments)
                 # Construct parameters
                 query_parameters = {}  # type: Dict[str, Any]
                 if filter is not None:
@@ -115,18 +108,15 @@ class MarketplaceRegistrationDefinitionsOperations:
         return AsyncItemPaged(
             get_next, extract_data
         )
-    list.metadata = {'url': '/{scope}/providers/Microsoft.ManagedServices/marketplaceRegistrationDefinitions'}  # type: ignore
+    list.metadata = {'url': '/providers/Microsoft.ManagedServices/marketplaceRegistrationDefinitions'}  # type: ignore
 
     async def get(
         self,
-        scope: str,
         marketplace_identifier: str,
         **kwargs
     ) -> "_models.MarketplaceRegistrationDefinition":
         """Get the marketplace registration definition for the marketplace identifier.
 
-        :param scope: Scope of the resource.
-        :type scope: str
         :param marketplace_identifier: Market place identifier. Expected Formats -
          {publisher}.{product[-preview]}.{planName}.{version} or
          {publisher}.{product[-preview]}.{planName} or {publisher}.{product[-preview]} or {publisher}).
@@ -147,7 +137,6 @@ class MarketplaceRegistrationDefinitionsOperations:
         # Construct URL
         url = self.get.metadata['url']  # type: ignore
         path_format_arguments = {
-            'scope': self._serialize.url("scope", scope, 'str', skip_quote=True),
             'marketplaceIdentifier': self._serialize.url("marketplace_identifier", marketplace_identifier, 'str'),
         }
         url = self._client.format_url(url, **path_format_arguments)
@@ -175,4 +164,4 @@ class MarketplaceRegistrationDefinitionsOperations:
             return cls(pipeline_response, deserialized, {})
 
         return deserialized
-    get.metadata = {'url': '/{scope}/providers/Microsoft.ManagedServices/marketplaceRegistrationDefinitions/{marketplaceIdentifier}'}  # type: ignore
+    get.metadata = {'url': '/providers/Microsoft.ManagedServices/marketplaceRegistrationDefinitions/{marketplaceIdentifier}'}  # type: ignore
