@@ -1,5 +1,11 @@
 # Release History
 
+## 6.0.0 (2021-04-22)
+
+**Features**
+
+  - Added operation group MarketplaceRegistrationDefinitionsWithoutScopeOperations
+
 ## 6.0.0b1 (2020-12-07)
 
 This is beta preview version.

@@ -50,7 +50,7 @@ async def exceed_max_delivery(servicebus_client):
             received_msgs = await receiver.receive_messages(max_wait_time=5)
 
     async with dlq_receiver:
-        received_msgs = await dlq_receiver.receive_messages(max_message_count=10)
+        received_msgs = await dlq_receiver.receive_messages(max_message_count=10, max_wait_time=5)
         for msg in received_msgs:
             print("Deadletter message:")
             print(msg)
@@ -59,7 +59,7 @@ async def exceed_max_delivery(servicebus_client):
 async def receive_messages(servicebus_client):
     receiver = servicebus_client.get_queue_receiver(queue_name=QUEUE_NAME)
     async with receiver:
-        received_msgs = await receiver.receive_messages(max_message_count=10)
+        received_msgs = await receiver.receive_messages(max_message_count=10, max_wait_time=5)
         for msg in received_msgs:
             if msg.subject and msg.subject == "Good":
                 await receiver.complete_message(msg)
@@ -77,7 +77,7 @@ async def fix_deadletters(servicebus_client):
                                                         sub_queue=ServiceBusSubQueue.DEAD_LETTER)
     msgs_to_send = []
     async with dlq_receiver:
-        received_dlq_msgs = await dlq_receiver.receive_messages(max_message_count=10)
+        received_dlq_msgs = await dlq_receiver.receive_messages(max_message_count=10, max_wait_time=5)
         for msg in received_dlq_msgs:
             if msg.subject and msg.subject == "Bad":
                 msg_copy = ServiceBusMessage(str(msg), subject="Good")
@@ -88,7 +88,7 @@ async def fix_deadletters(servicebus_client):
         print("Resending fixed messages")
         await sender.send_messages(msgs_to_send)
     async with receiver:
-        received_msgs = await receiver.receive_messages(max_message_count=10)
+        received_msgs = await receiver.receive_messages(max_message_count=10, max_wait_time=5)
         for msg in received_msgs:
             if msg.subject and msg.subject == "Good":
                 print("Received fixed message: Body={}, Subject={}".format(next(msg.body), msg.subject))
