@@ -13,8 +13,10 @@ LOG = logging.basicConfig(level=logging.DEBUG)
 
 client = WebPubSubServiceClient(endpoint, credential=AzureKeyCredential(api_key), tracing_enabled=True)
 
+
 # Send message to everybody on the given hub...
-request = build_send_to_all_request('ahub', json={ 'Hello': 'all!' })
+request = build_send_to_all_request('skalman', json={ 'Hello': 'all!' })
+print(request.headers)
 response = client.send_request(request)
 try:
     response.raise_for_status()
@@ -41,11 +43,9 @@ try:
 except:
     print('Failed to add user to group: {}'.format(response))
 
-request = build_user_exists_in_group_request('ahub', 'someGroup', 'me')
-response = client.send_request(request)
-
 request = build_add_connection_to_group_request('ahub', 'someGroup', '7')
 response = client.send_request(request)
+response.read()
 print(response.content)
 
 # Add a connection to a group
@@ -62,6 +62,14 @@ else:
     print('The group exists!')
 
 
+request = build_grant_permission_request('skalman', 'sendToGroup', '7')
+response = client.send_request(request)
+response.read()
+print(response.content)
+
+
+
 request = build_grant_permission_request('ahub', 'sendToGroup', '7')
 response = client.send_request(request)
 print(response.content)
+

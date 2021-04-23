@@ -11,6 +11,7 @@
 
 __all__ = ["build_authentication_token", "WebPubSubServiceClient"]
 
+from copy import deepcopy
 from datetime import datetime, timedelta
 from typing import TYPE_CHECKING
 
@@ -102,7 +103,7 @@ class WebPubSubServiceClient(object):
         :param endpoint: Endpoint to connect to.
         :type endpoint: ~str
         :param credential: Credentials to use to connect to endpoint.
-        :type credential: ~azure.core.credentials.AzureKeyCredentials
+        :type credential: ~azure.core.credentials.AzureKeyCredential
         :keyword api_version: Api version to use when communicating with the service.
         :type api_version: str
         :keyword user: User to connect as. Optional.
@@ -121,6 +122,7 @@ class WebPubSubServiceClient(object):
             corepolicies.CustomHookPolicy(**kwargs),
             corepolicies.RedirectPolicy(**kwargs),
             JwtCredentialPolicy(credential, kwargs.get("user", None)),
+            corepolicies.ContentDecodePolicy(**kwargs),
             corepolicies.NetworkTraceLoggingPolicy(**kwargs),
         ]  # type: Any
         self._pipeline = corepipeline.Pipeline(
@@ -132,6 +134,12 @@ class WebPubSubServiceClient(object):
     @classmethod
     def from_connection_string(cls, connection_string, **kwargs):
         # type: (Type[ClientType], str, Any) -> ClientType
+        """Create a new WebPubSubServiceClient from a connection string.
+
+        :param connection_string: Connection string
+        :type connection_string: ~str
+        :rtype: WebPubSubServiceClient
+        """
         for invalid_keyword_arg in ('endpoint', 'accesskey'):
             if invalid_keyword_arg in kwargs:
                 raise TypeError('Unknown argument {}'.format(invalid_keyword_arg))
@@ -145,8 +153,9 @@ class WebPubSubServiceClient(object):
                     # Let's map it to whatthe constructor actually wants...
                     key = 'api_version'
                 kwargs[key] = value
-            else:
-                raise ValueError("Malformed connection string - expected 'key=value', got {}".format(segment))
+            elif segment:
+                raise ValueError("Malformed connection string - expected 'key=value', found segment '{}' in '{}'"
+                                    .format(segment, connection_string))
 
         if 'endpoint' not in kwargs:
             raise ValueError("connection_string missing 'endpoint' field")
@@ -165,24 +174,44 @@ class WebPubSubServiceClient(object):
         assert self.endpoint[-1] != "/", "My endpoint should not have a trailing slash"
         return "/".join([self.endpoint, url.lstrip("/")])
 
-    def send_request(self, request, **kwargs):
+    def send_request(self, http_request, **kwargs):
         # type: (corerest.HttpRequest, Any) -> corerest.HttpResponse
         """Runs the network request through the client's chained policies.
 
-        :param request: The network request you want to make. Required.
-        :type request: ~corerest.HttpRequest
-        :keyword bool stream: Whether the response payload will be streamed. Defaults to False
-        :return: The response of your network call.
-        :rtype: ~corerest.HttpResponse
+        We have helper methods to create requests specific to this service in `azure.messaging.webpubsub.rest`.
+        Use these helper methods to create the request you pass to this method. See our example below:
+
+        >>> from azure.messaging.webpubsub.rest import build_healthapi_get_health_status_request
+        >>> request = build_healthapi_get_health_status_request(api_version)
+        <HttpRequest [HEAD], url: '/api/health'>
+        >>> response = client.send_request(request)
+        <HttpResponse: 200 OK>
+
+        For more information on this code flow, see https://aka.ms/azsdk/python/llcwiki
+
+        For advanced cases, you can also create your own :class:`~azure.messaging.webpubsub.core.rest.HttpRequest`
+        and pass it in.
+
+        :param http_request: The network request you want to make. Required.
+        :type http_request: ~azure.messaging.webpubsub.core.rest.HttpRequest
+        :keyword bool stream_response: Whether the response payload will be streamed. Defaults to False.
+        :return: The response of your network call. Does not do error handling on your response.
+        :rtype: ~azure.messaging.webpubsub.core.rest.HttpResponse
         """
-        kwargs.setdefault("stream", False)
-        request.url = self._format_url(
-            request.url
-        )  # BUGBUG - should create new request, not mutate the existing one...
-        pipeline_response = self._pipeline.run(
-            request._internal_request, **kwargs # pylint: disable=W0212
+        request_copy = deepcopy(http_request)
+        request_copy.url = self._format_url(request_copy.url)
+
+        # can't do StreamCOntextManager yet. This client doesn't have a pipeline client,
+        # StreamContextManager requires a pipeline client. WIll look more into it
+        # if kwargs.pop("stream_response", False):
+        #     return corerest._StreamContextManager(
+        #         client=self._client,
+        #         request=request_copy,
+        #     )
+        pipeline_response = self._pipeline.run(request_copy._internal_request, **kwargs)
+        response = corerest.HttpResponse(
+            status_code=pipeline_response.http_response.status_code,
+            request=request_copy,
+            _internal_response=pipeline_response.http_response
         )
-        return corerest.HttpResponse(
-            request=request,
-            _internal_response=pipeline_response.http_response,
-        )
+        return response
