@@ -260,7 +260,7 @@ class _AsyncStreamContextManager(_StreamContextManagerBase):
         """Actually make the call only when we enter. For async stream_response calls."""
         if not isinstance(self.pipeline, AsyncPipeline):
             raise TypeError(
-                "Only sync calls should enter here. If you mean to do a sync call, "
+                "Only async calls should enter here. If you mean to do a sync call, "
                 "make sure to use 'with' instead."
             )
         pipeline_transport_response = (await self.pipeline.run(
@@ -447,11 +447,6 @@ class _HttpResponseBase:
         return self._internal_response.reason
 
     @property
-    def content(self) -> bytes:
-        """Returns the response content in bytes"""
-        raise NotImplementedError()
-
-    @property
     def url(self) -> str:
         """Returns the URL that resulted in this response"""
         return self._internal_response.request.url
@@ -529,6 +524,14 @@ class _HttpResponseBase:
         if self.status_code >= 400:
             raise HttpResponseError(response=self)
 
+    @property
+    def content(self) -> bytes:
+        """Return the response's content in bytes."""
+        try:
+            return self._content
+        except AttributeError:
+            raise ResponseNotReadError()
+
     def __repr__(self) -> str:
         content_type_str = (
             ", Content-Type: {}".format(self.content_type) if self.content_type else ""
@@ -545,20 +548,12 @@ class _HttpResponseBase:
 
 class HttpResponse(_HttpResponseBase):
 
-    @property
-    def content(self):
-        # type: (...) -> bytes
-        try:
-            return self._content
-        except AttributeError:
-            raise ResponseNotReadError()
-
     def close(self) -> None:
         self.is_closed = True
         self._internal_response.internal_response.close()
 
     def __exit__(self, *args) -> None:
-        self._internal_response.internal_response.__exit__(*args)
+        self.close()
 
     def read(self) -> bytes:
         """
@@ -618,13 +613,6 @@ class HttpResponse(_HttpResponseBase):
 
 
 class AsyncHttpResponse(_HttpResponseBase):
-
-    @property
-    def content(self) -> bytes:
-        try:
-            return self._content
-        except AttributeError:
-            raise ResponseNotReadError()
 
     async def _close_stream(self) -> None:
         self.is_stream_consumed = True
@@ -686,7 +674,7 @@ class AsyncHttpResponse(_HttpResponseBase):
         await asyncio.sleep(0)
 
     async def __aexit__(self, *args) -> None:
-        await self._internal_response.internal_response.__aexit__(*args)
+        await self.close()
 
 
 ########################### ERRORS SECTION #################################
