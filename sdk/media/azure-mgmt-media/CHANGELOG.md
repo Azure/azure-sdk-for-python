@@ -1,5 +1,27 @@
 # Release History
 
+## 7.0.0b2 (2021-04-23)
+
+**Features**
+
+  - Model MetricSpecification has a new parameter lock_aggregation_type
+  - Model StreamingEndpoint has a new parameter system_data
+  - Model Asset has a new parameter system_data
+  - Model AccountFilter has a new parameter system_data
+  - Model StreamingPolicy has a new parameter system_data
+  - Model AssetFilter has a new parameter system_data
+  - Model LiveEvent has a new parameter system_data
+  - Model ContentKeyPolicy has a new parameter system_data
+  - Model MediaService has a new parameter system_data
+  - Model JobInputClip has a new parameter input_definitions
+  - Model Transform has a new parameter system_data
+  - Model StreamingLocator has a new parameter system_data
+  - Model FaceDetectorPreset has a new parameter blur_type
+  - Model FaceDetectorPreset has a new parameter mode
+  - Model Job has a new parameter system_data
+  - Model JobInputAsset has a new parameter input_definitions
+  - Model JobInputHttp has a new parameter input_definitions
+
 ## 7.0.0b1 (2020-12-01)
 
 This is beta preview version.
