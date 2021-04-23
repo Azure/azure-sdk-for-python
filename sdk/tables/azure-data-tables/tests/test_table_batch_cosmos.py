@@ -448,7 +448,6 @@ class StorageTableClientTest(AzureTestCase, TableTestCase):
             transaction_result = self.table.submit_transaction(batch)
 
             # Assert
-            transaction_count = 20  # TODO: Follow up with service team!!
             self._assert_valid_batch_transaction(transaction_result, transaction_count)
             assert transaction_result[0][0]['RowKey'] == u'0'
             assert transaction_result[transaction_count - 1][0]['RowKey'] == str(transaction_count-1)
