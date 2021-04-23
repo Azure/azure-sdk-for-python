@@ -181,6 +181,7 @@ try:
     from ._models_py3 import DataFlowSourceSetting
     from ._models_py3 import DataFlowStagingInfo
     from ._models_py3 import DataLakeAnalyticsUSQLActivity
+    from ._models_py3 import DataLakeAnalyticsScopeLActivity
     from ._models_py3 import DatabricksNotebookActivity
     from ._models_py3 import DatabricksSparkJarActivity
     from ._models_py3 import DatabricksSparkPythonActivity
@@ -835,6 +836,7 @@ except (SyntaxError, ImportError):
     from ._models import DataFlowSourceSetting  # type: ignore
     from ._models import DataFlowStagingInfo  # type: ignore
     from ._models import DataLakeAnalyticsUSQLActivity  # type: ignore
+    from ._models import DataLakeAnalyticsScopeActivity  # type: ignore
     from ._models import DatabricksNotebookActivity  # type: ignore
     from ._models import DatabricksSparkJarActivity  # type: ignore
     from ._models import DatabricksSparkPythonActivity  # type: ignore
@@ -1584,6 +1586,7 @@ __all__ = [
     'DataFlowSourceSetting',
     'DataFlowStagingInfo',
     'DataLakeAnalyticsUSQLActivity',
+    'DataLakeAnalyticsScopeActivity',
     'DatabricksNotebookActivity',
     'DatabricksSparkJarActivity',
     'DatabricksSparkPythonActivity',
