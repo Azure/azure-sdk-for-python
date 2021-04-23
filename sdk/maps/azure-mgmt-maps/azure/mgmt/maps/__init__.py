@@ -9,10 +9,11 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .maps_management_client import MapsManagementClient
-from .version import VERSION
+from ._configuration import MapsManagementClientConfiguration
+from ._maps_management_client import MapsManagementClient
+__all__ = ['MapsManagementClient', 'MapsManagementClientConfiguration']
 
-__all__ = ['MapsManagementClient']
+from .version import VERSION
 
 __version__ = VERSION
 
