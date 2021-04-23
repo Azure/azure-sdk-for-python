@@ -1612,10 +1612,10 @@ class StorageTableEntityTest(AzureTestCase, TableTestCase):
             table.create_entity(entity_b)
 
             is_user_admin = "PartitionKey eq @first and IsAdmin eq 'admin'"
-            entities = list(table.query_entities(is_user_admin, parameters={'first': 'foo'}))
+            entities = list(table.query_entities(is_user_admin, parameters={'first': u'foo'}))
             assert len(entities) ==  1
 
-            injection = "foo' or RowKey eq 'bar2"
+            injection = u"foo' or RowKey eq 'bar2"
             injected_query = "PartitionKey eq '{}' and IsAdmin eq 'admin'".format(injection)
             entities = list(table.query_entities(injected_query))
             assert len(entities) ==  2
@@ -1641,7 +1641,7 @@ class StorageTableEntityTest(AzureTestCase, TableTestCase):
             all_entities = list(table.query_entities("PartitionKey eq ':@'"))
             assert len(all_entities) == 2
 
-            parameters = {'key': ':@'}
+            parameters = {'key': u':@'}
             all_entities = list(table.query_entities("PartitionKey eq @key", parameters=parameters))
             assert len(all_entities) == 2
 
@@ -1650,7 +1650,7 @@ class StorageTableEntityTest(AzureTestCase, TableTestCase):
             assert len(entities) == 1
 
             query = "PartitionKey eq @key and RowKey eq @row and Chars eq @quote"
-            parameters = {'key': ':@', 'row': '+,$', 'quote': "?'/!_^#"}
+            parameters = {'key': u':@', 'row': u'+,$', 'quote': u"?'/!_^#"}
             entities = list(table.query_entities(query, parameters=parameters))
             assert len(entities) ==  1
 
@@ -1659,7 +1659,7 @@ class StorageTableEntityTest(AzureTestCase, TableTestCase):
             assert len(entities) == 1
 
             query = "PartitionKey eq @key and RowKey eq @row and Chars eq @quote"
-            parameters = {'key': ':@', 'row': '=& ', 'quote': r'?"\{}<>%'}
+            parameters = {'key': u':@', 'row': u'=& ', 'quote': u'?"\\{}<>%'}
             entities = list(table.query_entities(query, parameters=parameters))
             assert len(entities) ==  1
 

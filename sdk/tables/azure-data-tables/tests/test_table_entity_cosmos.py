@@ -1607,21 +1607,22 @@ class StorageTableEntityTest(AzureTestCase, TableTestCase):
             table.create_entity(entity_a)
             table.create_entity(entity_b)
 
-            is_user_admin = "PartitionKey eq @first and IsAdmin eq 'admin'"
-            entities = list(table.query_entities(is_user_admin, parameters={'first': 'foo'}))
+            is_user_admin = u"PartitionKey eq @first and IsAdmin eq 'admin'"
+            entities = list(table.query_entities(is_user_admin, parameters={u'first': u'foo'}))
             assert len(entities) ==  1
 
-            injection = "foo' or RowKey eq 'bar2"
+            injection = u"foo' or RowKey eq 'bar2"
             injected_query = "PartitionKey eq '{}' and IsAdmin eq 'admin'".format(injection)
             entities = list(table.query_entities(injected_query))
             assert len(entities) ==  2
 
-            entities = list(table.query_entities(is_user_admin, parameters={'first': injection}))
+            entities = list(table.query_entities(is_user_admin, parameters={u'first': injection}))
             assert len(entities) ==  0
         finally:
             self.ts.delete_table(table_name)
             self._tear_down()
 
+    @pytest.mark.live_test_only
     @CosmosPreparer()
     def test_query_special_chars(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
         # Arrange
