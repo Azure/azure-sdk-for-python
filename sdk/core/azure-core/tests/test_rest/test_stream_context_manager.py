@@ -13,12 +13,13 @@ try:
 except (ImportError, SyntaxError):
     from azure.core.rest._rest import _StreamContextManager
 
-from azure.core._pipeline_client import PipelineClient
+from azure.core.pipeline import Pipeline, transport
+from azure.core.pipeline.transport import RequestsTransport
 
 def test_stream_context_manager():
     transport = mock.MagicMock()
-    client = PipelineClient(base_url="", transport=transport)
-    with _StreamContextManager(client=client, request=HttpRequest(method="GET", url="https://httpbin.org/get")) as r:
+    pipeline = Pipeline(transport=transport)
+    with _StreamContextManager(pipeline=pipeline, request=HttpRequest(method="GET", url="https://httpbin.org/get")) as r:
         response = r
 
         assert len(transport.method_calls) == 1
@@ -38,8 +39,8 @@ def test_stream_context_manager():
     assert internal_response_mock_calls[0][0] == '__exit__'  # assert exit was called
 
 def test_stream_context_manager_error():
-    client = PipelineClient(base_url="")
-    with _StreamContextManager(client=client, request=HttpRequest(method="GET", url="https://httpbin.org/status/404")) as r:
+    pipeline = Pipeline(transport=RequestsTransport())
+    with _StreamContextManager(pipeline=pipeline, request=HttpRequest(method="GET", url="https://httpbin.org/status/404")) as r:
         with pytest.raises(HttpResponseError) as e:
             r.raise_for_status()
         assert e.value.status_code == 404

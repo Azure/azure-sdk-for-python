@@ -11,15 +11,16 @@ from azure.core.exceptions import HttpResponseError
 from azure.core.rest import HttpRequest, ResponseNotReadError
 from azure.core.rest._rest_py3 import _AsyncStreamContextManager
 
-from azure.core._pipeline_client_async import AsyncPipelineClient
+from azure.core.pipeline import AsyncPipeline
+from azure.core.pipeline.transport import AioHttpTransport
 
 @pytest.mark.asyncio
 async def test_stream_context_manager():
     async def monkey_patch_magic_mock():
         pass
     transport = AsyncMock()
-    async with AsyncPipelineClient(base_url="", transport=transport) as client:
-        async with _AsyncStreamContextManager(client=client, request=HttpRequest(method="GET", url="https://httpbin.org/get")) as r:
+    async with AsyncPipeline(transport=transport) as pipeline:
+        async with _AsyncStreamContextManager(pipeline=pipeline, request=HttpRequest(method="GET", url="https://httpbin.org/get")) as r:
             response = r
 
             assert len(transport.method_calls) == 1
@@ -40,8 +41,8 @@ async def test_stream_context_manager():
 
 @pytest.mark.asyncio
 async def test_stream_context_manager_error():
-    async with AsyncPipelineClient(base_url="") as client:
-        async with _AsyncStreamContextManager(client=client, request=HttpRequest(method="GET", url="https://httpbin.org/status/404")) as r:
+    async with AsyncPipeline(transport=AioHttpTransport()) as pipeline:
+        async with _AsyncStreamContextManager(pipeline=pipeline, request=HttpRequest(method="GET", url="https://httpbin.org/status/404")) as r:
             with pytest.raises(HttpResponseError) as e:
                 r.raise_for_status()
             assert e.value.status_code == 404
