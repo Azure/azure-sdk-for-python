@@ -1081,7 +1081,6 @@ class GenericResource(Resource):
         'id': {'readonly': True},
         'name': {'readonly': True},
         'type': {'readonly': True},
-        'kind': {'pattern': r'^[-\w\._,\(\)]+$'},
     }
 
     _attribute_map = {
@@ -1153,7 +1152,6 @@ class GenericResourceExpanded(GenericResource):
         'id': {'readonly': True},
         'name': {'readonly': True},
         'type': {'readonly': True},
-        'kind': {'pattern': r'^[-\w\._,\(\)]+$'},
         'created_time': {'readonly': True},
         'changed_time': {'readonly': True},
         'provisioning_state': {'readonly': True},
