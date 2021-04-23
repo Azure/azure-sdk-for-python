@@ -16,6 +16,7 @@ from datetime import datetime, timedelta
 from typing import TYPE_CHECKING
 
 import jwt
+import six
 
 import azure.core.credentials as corecredentials
 import azure.core.pipeline as corepipeline
@@ -87,7 +88,7 @@ def build_authentication_token(endpoint, hub, key, **kwargs):
     if roles:
         payload["role"] = roles
 
-    token = jwt.encode(payload, key, algorithm="HS256")
+    token = six.ensure_str(jwt.encode(payload, key, algorithm="HS256"))
     return {
         "baseUrl": client_url,
         "token": token,
@@ -122,7 +123,6 @@ class WebPubSubServiceClient(object):
             corepolicies.CustomHookPolicy(**kwargs),
             corepolicies.RedirectPolicy(**kwargs),
             JwtCredentialPolicy(credential, kwargs.get("user", None)),
-            corepolicies.ContentDecodePolicy(**kwargs),
             corepolicies.NetworkTraceLoggingPolicy(**kwargs),
         ]  # type: Any
         self._pipeline = corepipeline.Pipeline(

@@ -27,6 +27,7 @@
 import datetime
 import typing
 import jwt
+import six
 
 from azure.core.pipeline.policies import SansIOHTTPPolicy
 
@@ -81,6 +82,4 @@ class JwtCredentialPolicy(SansIOHTTPPolicy):
             key=self._credential.key,
             algorithm="HS256",
         )
-        if isinstance(encoded, bytes):
-            encoded = encoded.decode("utf8")
-        return typing.cast(str, encoded)  # jwt's typing is incorrect...
+        return six.ensure_str(encoded)
