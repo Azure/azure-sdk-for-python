@@ -6,8 +6,10 @@
 * Renamed `filter` parameter in query APIs to `query_filter`.
 * The `location_mode` attribute on clients is now read-only. This has been added as a keyword parameter to the constructor.
 * The `TableItem.table_name` has been renamed to `TableItem.name`.
+* Removed the `TableClient.create_batch` method along with the `TableBatchOperations` object. The transactional batching is now supported via a simple Python list of tuples.
+* `TableClient.send_batch` has been renamed to `TableClient.submit_transaction`.
 * Removed `BatchTransactionResult` object in favor of returning an iterable of batched entities with returned metadata.
-* Removed Batching context-manager behavior
+* `BatchErrorException` has been renamed to `TableTransactionError`.
 
 **Fixes**
 * Fixed issue with Cosmos merge operations.
@@ -15,7 +17,7 @@
 * Removed unused legacy client-side encryption attributes from client classes.
 * Fixed sharing of pipeline between service/table clients.
 * Added support for Azurite storage emulator
-* Throws a `RequestTooLargeError` on batch requests that return a 413 error code
+* Throws a `RequestTooLargeError` on transaction requests that return a 413 error code
 
 ## 12.0.0b6 (2021-04-06)
 * Updated deserialization of datetime fields in entities to support preservation of the service format with additional decimal place.

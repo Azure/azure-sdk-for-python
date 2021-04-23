@@ -25,7 +25,7 @@ from azure.data.tables import (
     TableEntity,
     EntityProperty,
     UpdateMode,
-    BatchErrorException,
+    TableTransactionError,
     TableServiceClient,
     TableEntity,
     UpdateMode,
@@ -185,7 +185,7 @@ class StorageTableClientTest(AzureTestCase, TableTestCase):
             entity.test5 = datetime.utcnow()
 
             batch = [('upsert', entity)]
-            transaction_result = self.table.send_batch(batch)
+            transaction_result = self.table.submit_transaction(batch)
 
             # Assert
             self._assert_valid_batch_transaction(transaction_result, 1)
@@ -221,7 +221,7 @@ class StorageTableClientTest(AzureTestCase, TableTestCase):
             entity.test2 = u'value1'
 
             batch = [('update', entity)]
-            transaction_result = self.table.send_batch(batch)
+            transaction_result = self.table.submit_transaction(batch)
 
             # Assert
             self._assert_valid_batch_transaction(transaction_result, 1)
@@ -260,7 +260,7 @@ class StorageTableClientTest(AzureTestCase, TableTestCase):
             entity.test2 = u'value1'
 
             batch = [('update', entity, {'mode': UpdateMode.MERGE})]
-            transaction_result = self.table.send_batch(batch)
+            transaction_result = self.table.submit_transaction(batch)
 
             # Assert
             self._assert_valid_batch_transaction(transaction_result, 1)
@@ -292,7 +292,7 @@ class StorageTableClientTest(AzureTestCase, TableTestCase):
                 sent_entity,
                 {'mode': UpdateMode.REPLACE, 'etag': etag, 'match_condition':MatchConditions.IfNotModified, 'mode':UpdateMode.REPLACE}
             )]
-            transaction_result = self.table.send_batch(batch)
+            transaction_result = self.table.submit_transaction(batch)
 
             # Assert
             self._assert_valid_batch_transaction(transaction_result, 1)
@@ -321,8 +321,8 @@ class StorageTableClientTest(AzureTestCase, TableTestCase):
                 sent_entity1,
                 {'etag': u'W/"datetime\'2012-06-15T22%3A51%3A44.9662825Z\'"', 'match_condition':MatchConditions.IfNotModified}
             )]
-            with pytest.raises(BatchErrorException):
-                self.table.send_batch(batch)
+            with pytest.raises(TableTransactionError):
+                self.table.submit_transaction(batch)
 
             # Assert
             received_entity = self.table.get_entity(entity['PartitionKey'], entity['RowKey'])
@@ -347,7 +347,7 @@ class StorageTableClientTest(AzureTestCase, TableTestCase):
             entity.test5 = datetime.utcnow()
 
             batch = [('upsert', entity, {'mode': UpdateMode.REPLACE})]
-            transaction_result = self.table.send_batch(batch)
+            transaction_result = self.table.submit_transaction(batch)
 
             # Assert
             self._assert_valid_batch_transaction(transaction_result, 1)
@@ -378,7 +378,7 @@ class StorageTableClientTest(AzureTestCase, TableTestCase):
             entity.test5 = datetime.utcnow()
 
             batch = [('upsert', entity, {'mode': UpdateMode.MERGE})]
-            transaction_result = self.table.send_batch(batch)
+            transaction_result = self.table.submit_transaction(batch)
 
             # Assert
             self._assert_valid_batch_transaction(transaction_result, 1)
@@ -413,7 +413,7 @@ class StorageTableClientTest(AzureTestCase, TableTestCase):
             assert 3 ==  entity.test3
 
             batch = [('delete', entity)]
-            transaction_result = self.table.send_batch(batch)
+            transaction_result = self.table.submit_transaction(batch)
 
             # Assert
             self._assert_valid_batch_transaction(transaction_result, 1)
@@ -445,7 +445,7 @@ class StorageTableClientTest(AzureTestCase, TableTestCase):
                 entity.RowKey = str(i)
                 batch.append(('create', entity.copy()))
                 transaction_count += 1
-            transaction_result = self.table.send_batch(batch)
+            transaction_result = self.table.submit_transaction(batch)
 
             # Assert
             transaction_count = 20  # TODO: Follow up with service team!!
@@ -515,7 +515,7 @@ class StorageTableClientTest(AzureTestCase, TableTestCase):
             batch.append(('upsert', entity.copy(), {'mode': UpdateMode.REPLACE}))
             transaction_count += 1
 
-            transaction_result = self.table.send_batch(batch)
+            transaction_result = self.table.submit_transaction(batch)
 
             # Assert
             self._assert_valid_batch_transaction(transaction_result, transaction_count)
@@ -559,7 +559,7 @@ class StorageTableClientTest(AzureTestCase, TableTestCase):
             batch.append(('update', entity.copy()))
 
             with pytest.raises(ValueError):
-                self.table.send_batch(batch)
+                self.table.submit_transaction(batch)
         finally:
             self._tear_down()
 
@@ -575,8 +575,8 @@ class StorageTableClientTest(AzureTestCase, TableTestCase):
 
             batch = [('create', entity)]
 
-            with pytest.raises(BatchErrorException):
-                resp = tc.send_batch(batch)
+            with pytest.raises(TableTransactionError):
+                resp = tc.submit_transaction(batch)
             # Assert
         finally:
             self._tear_down()
@@ -590,8 +590,8 @@ class StorageTableClientTest(AzureTestCase, TableTestCase):
             entity = self._create_random_entity_dict('001', 'batch_negative_1')
 
             batch = [('delete', entity)]
-            with pytest.raises(BatchErrorException):
-                resp = self.table.send_batch(batch)
+            with pytest.raises(TableTransactionError):
+                resp = self.table.submit_transaction(batch)
 
         finally:
             self._tear_down()
@@ -615,7 +615,7 @@ class StorageTableClientTest(AzureTestCase, TableTestCase):
                 batch.append(('create', entity.copy()))
 
             with pytest.raises(RequestTooLargeError):
-                self.table.send_batch(batch)
+                self.table.submit_transaction(batch)
 
         finally:
             self._tear_down()

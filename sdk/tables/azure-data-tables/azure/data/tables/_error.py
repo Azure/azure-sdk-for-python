@@ -34,7 +34,6 @@ def _to_str(value):
 
 
 _ERROR_ATTRIBUTE_MISSING = "'{0}' object has no attribute '{1}'"
-_ERROR_BATCH_COMMIT_FAIL = "Batch Commit Fail"
 _ERROR_TYPE_NOT_SUPPORTED = "Type not supported when sending data to the service: {0}."
 _ERROR_VALUE_TOO_LARGE = "{0} is too large to be cast to type {1}."
 _ERROR_ATTRIBUTE_MISSING = "'{0}' object has no attribute '{1}'"

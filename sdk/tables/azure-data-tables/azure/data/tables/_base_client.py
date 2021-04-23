@@ -54,7 +54,7 @@ from ._policies import (
     StorageHosts,
     TablesRetryPolicy,
 )
-from ._models import BatchErrorException
+from ._models import TableTransactionError
 from ._sdk_moniker import SDK_MONIKER
 
 _SUPPORTED_API_VERSIONS = ["2019-02-02", "2019-07-07"]
@@ -304,7 +304,7 @@ class TablesBaseClient(AccountHostsMixin):
         if response.status_code == 413:
             raise _decode_error(
                 response,
-                error_message="The batch request was too large",
+                error_message="The transaction request was too large",
                 error_type=RequestTooLargeError)
         elif response.status_code != 202:
             raise _decode_error(response)
@@ -315,11 +315,11 @@ class TablesBaseClient(AccountHostsMixin):
             if error_parts[0].status_code == 413:
                 raise _decode_error(
                     response,
-                    error_message="The batch request was too large",
+                    error_message="The transaction request was too large",
                     error_type=RequestTooLargeError)
             raise _decode_error(
                 response=error_parts[0],
-                error_type=BatchErrorException,
+                error_type=TableTransactionError,
                 parts=parts,
                 entities=entities
             )

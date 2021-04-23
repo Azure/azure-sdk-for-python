@@ -30,7 +30,7 @@ from azure.data.tables import (
     UpdateMode,
     EntityProperty,
     EdmType,
-    BatchErrorException,
+    TableTransactionError,
     generate_table_sas,
     TableSasPermissions,
     RequestTooLargeError
@@ -188,7 +188,7 @@ class StorageTableBatchTest(AzureTestCase, AsyncTableTestCase):
             entity.test5 = datetime.utcnow()
 
             batch = [('create', entity)]
-            transaction_result = await self.table.send_batch(batch)
+            transaction_result = await self.table.submit_transaction(batch)
 
             # Assert
             self._assert_valid_batch_transaction(transaction_result, 1)
@@ -228,7 +228,7 @@ class StorageTableBatchTest(AzureTestCase, AsyncTableTestCase):
             entity.test5 = datetime.utcnow()
 
             batch = [('update', entity, {'mode':UpdateMode.MERGE})]
-            transaction_result = await self.table.send_batch(batch)
+            transaction_result = await self.table.submit_transaction(batch)
 
             # Assert
             self._assert_valid_batch_transaction(transaction_result, 1)
@@ -263,7 +263,7 @@ class StorageTableBatchTest(AzureTestCase, AsyncTableTestCase):
             entity.test2 = u'value1'
 
             batch = [('update', entity)]
-            transaction_result = await self.table.send_batch(batch)
+            transaction_result = await self.table.submit_transaction(batch)
 
             # Assert
             self._assert_valid_batch_transaction(transaction_result, 1)
@@ -301,7 +301,7 @@ class StorageTableBatchTest(AzureTestCase, AsyncTableTestCase):
             entity.test2 = u'value1'
 
             batch = [('update', entity, {'mode': UpdateMode.MERGE})]
-            transaction_result = await self.table.send_batch(batch)
+            transaction_result = await self.table.submit_transaction(batch)
 
             # Assert
             self._assert_valid_batch_transaction(transaction_result, 1)
@@ -332,7 +332,7 @@ class StorageTableBatchTest(AzureTestCase, AsyncTableTestCase):
                 sent_entity,
                 {'etag': etag, 'match_condition':MatchConditions.IfNotModified, 'mode':UpdateMode.REPLACE}
             )]
-            transaction_result = await self.table.send_batch(batch)
+            transaction_result = await self.table.submit_transaction(batch)
 
             # Assert
             self._assert_valid_batch_transaction(transaction_result, 1)
@@ -361,8 +361,8 @@ class StorageTableBatchTest(AzureTestCase, AsyncTableTestCase):
                 sent_entity1,
                 {'etag': u'W/"datetime\'2012-06-15T22%3A51%3A44.9662825Z\'"', 'match_condition':MatchConditions.IfNotModified}
             )]
-            with pytest.raises(BatchErrorException) as error:
-                await self.table.send_batch(batch)
+            with pytest.raises(TableTransactionError) as error:
+                await self.table.submit_transaction(batch)
 
             # Assert
             received_entity = await self.table.get_entity(entity['PartitionKey'], entity['RowKey'])
@@ -386,7 +386,7 @@ class StorageTableBatchTest(AzureTestCase, AsyncTableTestCase):
             entity.test5 = datetime.utcnow()
 
             batch = [('upsert', entity, {'mode': UpdateMode.REPLACE})]
-            transaction_result = await self.table.send_batch(batch)
+            transaction_result = await self.table.submit_transaction(batch)
 
             # Assert
             self._assert_valid_batch_transaction(transaction_result, 1)
@@ -416,7 +416,7 @@ class StorageTableBatchTest(AzureTestCase, AsyncTableTestCase):
             entity.test5 = datetime.utcnow()
 
             batch = [('upsert', entity, {'mode':UpdateMode.MERGE})]
-            transaction_result = await self.table.send_batch(batch)
+            transaction_result = await self.table.submit_transaction(batch)
 
             # Assert
             self._assert_valid_batch_transaction(transaction_result, 1)
@@ -450,7 +450,7 @@ class StorageTableBatchTest(AzureTestCase, AsyncTableTestCase):
             assert 3 ==  entity.test3
 
             batch = [('delete', entity)]
-            transaction_result = await self.table.send_batch(batch)
+            transaction_result = await self.table.submit_transaction(batch)
 
             # Assert
             self._assert_valid_batch_transaction(transaction_result, 1)
@@ -481,7 +481,7 @@ class StorageTableBatchTest(AzureTestCase, AsyncTableTestCase):
                 entity.RowKey = str(i)
                 batch.append(('create', entity.copy()))
                 transaction_count += 1
-            transaction_result = await self.table.send_batch(batch)
+            transaction_result = await self.table.submit_transaction(batch)
 
             # Assert
             self._assert_valid_batch_transaction(transaction_result, transaction_count)
@@ -553,7 +553,7 @@ class StorageTableBatchTest(AzureTestCase, AsyncTableTestCase):
             batch.append(('upsert', entity.copy(), {'mode': UpdateMode.REPLACE}))
             transaction_count += 1
 
-            transaction_result = await self.table.send_batch(batch)
+            transaction_result = await self.table.submit_transaction(batch)
 
             # Assert
             self._assert_valid_batch_transaction(transaction_result, transaction_count)
@@ -598,8 +598,8 @@ class StorageTableBatchTest(AzureTestCase, AsyncTableTestCase):
             batch.append(('update', entity.copy(), {'mode': UpdateMode.REPLACE}))
 
             # Assert
-            with pytest.raises(BatchErrorException):
-                await self.table.send_batch(batch)
+            with pytest.raises(TableTransactionError):
+                await self.table.submit_transaction(batch)
         finally:
             await self._tear_down()
 
@@ -624,7 +624,7 @@ class StorageTableBatchTest(AzureTestCase, AsyncTableTestCase):
 
             # Assert
             with pytest.raises(ValueError):
-                await self.table.send_batch(batch)
+                await self.table.submit_transaction(batch)
         finally:
             await self._tear_down()
 
@@ -637,14 +637,14 @@ class StorageTableBatchTest(AzureTestCase, AsyncTableTestCase):
             await self.table.create_entity(entity)
 
             # Act
-            with pytest.raises(BatchErrorException):
+            with pytest.raises(TableTransactionError):
                 batch = []
                 for i in range(0, 101):
                     entity = TableEntity()
                     entity.PartitionKey = 'large'
                     entity.RowKey = 'item{0}'.format(i)
                     batch.append(('create', entity.copy()))
-                await self.table.send_batch(batch)
+                await self.table.submit_transaction(batch)
 
             # Assert
         finally:
@@ -661,8 +661,8 @@ class StorageTableBatchTest(AzureTestCase, AsyncTableTestCase):
 
             batch = [('create', entity)]
 
-            with pytest.raises(BatchErrorException):
-                resp = await tc.send_batch(batch)
+            with pytest.raises(TableTransactionError):
+                resp = await tc.submit_transaction(batch)
             # Assert
         finally:
             await self._tear_down()
@@ -684,7 +684,7 @@ class StorageTableBatchTest(AzureTestCase, AsyncTableTestCase):
 
         batch = [('create', entity)]
         with pytest.raises(ClientAuthenticationError):
-            resp = await self.table.send_batch(batch)
+            resp = await self.table.submit_transaction(batch)
 
     @TablesPreparer()
     async def test_new_delete_nonexistent_entity(self, tables_storage_account_name, tables_primary_storage_account_key):
@@ -694,8 +694,8 @@ class StorageTableBatchTest(AzureTestCase, AsyncTableTestCase):
             entity = self._create_random_entity_dict('001', 'batch_negative_1')
 
             batch = [('delete', entity)]
-            with pytest.raises(BatchErrorException):
-                resp = await self.table.send_batch(batch)
+            with pytest.raises(TableTransactionError):
+                resp = await self.table.submit_transaction(batch)
 
         finally:
             await self._tear_down()
@@ -737,7 +737,7 @@ class StorageTableBatchTest(AzureTestCase, AsyncTableTestCase):
                 entity.RowKey = str(i)
                 batch.append(('create', entity.copy()))
                 transaction_count += 1
-            transaction_result = await table.send_batch(batch)
+            transaction_result = await table.submit_transaction(batch)
 
             assert transaction_result is not None
 
@@ -769,7 +769,7 @@ class StorageTableBatchTest(AzureTestCase, AsyncTableTestCase):
                 batch.append(('create', entity.copy()))
 
             with pytest.raises(RequestTooLargeError):
-                await self.table.send_batch(batch)
+                await self.table.submit_transaction(batch)
 
         finally:
             await self._tear_down()

@@ -523,8 +523,8 @@ class SASProtocol(str, Enum):
     HTTP = "http"
 
 
-class BatchErrorException(HttpResponseError):
-    """There is a failure in batch operations.
+class TableTransactionError(HttpResponseError):
+    """There is a failure in the transaction operations.
 
     :param str message: The message of the exception.
     :param response: Server response to be deserialized.
@@ -534,7 +534,7 @@ class BatchErrorException(HttpResponseError):
     def __init__(self, **kwargs):
         self.parts = kwargs.get('parts')
         self.entities = kwargs.get('entities')
-        super(BatchErrorException, self).__init__(**kwargs)
+        super(TableTransactionError, self).__init__(**kwargs)
         self.index = self._extract_index()
     
     def _extract_index(self):

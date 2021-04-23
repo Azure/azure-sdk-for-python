@@ -23,7 +23,7 @@ from ._models import (
     LocationMode,
     ResourceTypes,
     AccountSasPermissions,
-    BatchErrorException,
+    TableTransactionError,
 )
 from ._version import VERSION
 from ._deserialize import TableErrorCode
@@ -52,6 +52,6 @@ __all__ = [
     "RetentionPolicy",
     "generate_table_sas",
     "SASProtocol",
-    "BatchErrorException",
+    "TableTransactionError",
     "RequestTooLargeError",
 ]

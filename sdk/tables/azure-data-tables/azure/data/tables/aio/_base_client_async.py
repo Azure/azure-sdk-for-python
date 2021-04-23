@@ -36,7 +36,7 @@ from .._base_client import AccountHostsMixin, get_api_version, extract_batch_par
 from .._authentication import SharedKeyCredentialPolicy
 from .._constants import STORAGE_OAUTH_SCOPE
 from .._error import RequestTooLargeError, _decode_error
-from .._models import BatchErrorException
+from .._models import TableTransactionError
 from .._entity import TableEntity
 from .._policies import StorageHosts, StorageHeadersPolicy
 from .._sdk_moniker import SDK_MONIKER
@@ -141,7 +141,7 @@ class AsyncTablesBaseClient(AccountHostsMixin):
         if response.status_code == 413:
             raise _decode_error(
                 response,
-                error_message="The batch request was too large",
+                error_message="The transaction request was too large",
                 error_type=RequestTooLargeError)
         elif response.status_code != 202:
             raise _decode_error(response)
@@ -155,11 +155,11 @@ class AsyncTablesBaseClient(AccountHostsMixin):
             if error_parts[0].status_code == 413:
                 raise _decode_error(
                     response,
-                    error_message="The batch request was too large",
+                    error_message="The transaction request was too large",
                     error_type=RequestTooLargeError)
             raise _decode_error(
                 response=error_parts[0],
-                error_type=BatchErrorException,
+                error_type=TableTransactionError,
                 parts=parts,
                 entities=entities
             )

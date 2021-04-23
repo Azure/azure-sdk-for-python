@@ -30,7 +30,7 @@ from .._serialize import _add_entity_properties, _get_match_headers
 from ._base_client_async import AsyncTablesBaseClient
 from ._models import TableEntityPropertiesPaged
 from ._table_batch_async import TableBatchOperations
-from .._table_client import EntityType, BatchOperationType
+from .._table_client import EntityType, TransactionOperationType
 
 
 class TableClient(AsyncTablesBaseClient):
@@ -599,17 +599,23 @@ class TableClient(AsyncTablesBaseClient):
             _process_table_error(error)
 
     @distributed_trace_async
-    async def send_batch(
+    async def submit_transaction(
         self,
-        batch: Iterable[BatchOperationType],
+        operations: Iterable[TransactionOperationType],
         **kwargs
     ) -> List[Tuple[TableEntity, Mapping[str, Any]]]:
-        """Commit a TableBatchOperations to send requests to the server
+        """Commit a list of operations as a single transaction.
 
+        If any one of these operations fails, the entire transaction will be rejected.
+
+        :param operations: The list of operations to commit in a transaction. This should be a list of
+         tuples containing an operation name, the entity on which to operate, and optionally, a dict of additional
+         kwargs for that operation.
+        :type operations: Iterable[Tuple[str, EntityType]]
         :return: A list of tuples, each containing the entity operated on, and a dictionary
          of metadata returned from the service.
-        :rtype: List[Tuple[Mapping[str, Any], Mapping[str, Any]]]
-        :raises ~azure.data.tables.BatchErrorException:
+        :rtype: List[Tuple[TableEntity, Mapping[str, Any]]]
+        :raises ~azure.data.tables.TableTransactionError:
 
         .. admonition:: Example:
 
@@ -618,7 +624,7 @@ class TableClient(AsyncTablesBaseClient):
                 :end-before: [END batching]
                 :language: python
                 :dedent: 8
-                :caption: Using batches to send multiple requests at once
+                :caption: Using transactions to send multiple requests at once
         """
         batched_requests = TableBatchOperations(
             self._client,
@@ -628,7 +634,7 @@ class TableClient(AsyncTablesBaseClient):
             self.table_name,
             **kwargs
         )
-        for operation in batch:
+        for operation in operations:
             try:
                 operation_kwargs = operation[2]
             except IndexError:
