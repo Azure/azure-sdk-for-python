@@ -536,12 +536,12 @@ class TableTransactionError(HttpResponseError):
         self.entities = kwargs.get('entities')
         super(TableTransactionError, self).__init__(**kwargs)
         self.index = self._extract_index()
-    
+
     def _extract_index(self):
         try:
             message_sections = self.message.split(':', 1)
             return int(message_sections[0])
-        except:
+        except:  # pylint: disable=bare-except
             return 0
 
 

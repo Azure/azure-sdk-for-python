@@ -8,11 +8,6 @@ from typing import Any, List
 from uuid import uuid4
 
 from azure.core.credentials import AzureSasCredential
-from azure.core.exceptions import (
-    ResourceNotFoundError,
-    ClientAuthenticationError,
-    HttpResponseError
-)
 from azure.core.pipeline.policies import (
     ContentDecodePolicy,
     AsyncBearerTokenCredentialPolicy,
@@ -143,7 +138,7 @@ class AsyncTablesBaseClient(AccountHostsMixin):
                 response,
                 error_message="The transaction request was too large",
                 error_type=RequestTooLargeError)
-        elif response.status_code != 202:
+        if response.status_code != 202:
             raise _decode_error(response)
 
         parts_iter = response.parts()

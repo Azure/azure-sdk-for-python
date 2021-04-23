@@ -15,11 +15,6 @@ except ImportError:
 import six
 from azure.core.credentials import AzureSasCredential
 from azure.core.utils import parse_connection_string
-from azure.core.exceptions import (
-    ClientAuthenticationError,
-    ResourceNotFoundError,
-    HttpResponseError
-)
 from azure.core.pipeline.transport import (
     HttpTransport,
     HttpRequest,
@@ -306,7 +301,7 @@ class TablesBaseClient(AccountHostsMixin):
                 response,
                 error_message="The transaction request was too large",
                 error_type=RequestTooLargeError)
-        elif response.status_code != 202:
+        if response.status_code != 202:
             raise _decode_error(response)
 
         parts = list(response.parts())
