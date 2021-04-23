@@ -10,8 +10,6 @@ __all__ = ["WebPubSubServiceClient"]
 from typing import TYPE_CHECKING
 from copy import deepcopy
 
-import jwt
-
 import azure.core.pipeline as corepipeline
 import azure.core.pipeline.policies as corepolicies
 import azure.core.pipeline.transport as coretransport
@@ -24,7 +22,7 @@ from ._policies import JwtCredentialPolicy
 if TYPE_CHECKING:
     import azure.core.credentials as corecredentials
     from azure.core.pipeline.policies import HTTPPolicy, SansIOHTTPPolicy
-    from typing import Any, List, cast
+    from typing import Any, List, cast # pylint: disable=ungrouped-imports
 
 
 class WebPubSubServiceClient(object):
@@ -65,7 +63,9 @@ class WebPubSubServiceClient(object):
         assert self.endpoint[-1] != "/", "My endpoint should not have a trailing slash"
         return "/".join([self.endpoint, url.lstrip("/")])
 
-    async def send_request(self, http_request: corerest.HttpRequest, **kwargs: Any) -> corerest.AsyncHttpResponse:
+    async def send_request(
+        self, http_request: corerest.HttpRequest, **kwargs: "Any"
+    ) -> corerest.AsyncHttpResponse:
         """Runs the network request through the client's chained policies.
 
         We have helper methods to create requests specific to this service in `azure.messaging.webpubsub.rest`.
@@ -98,11 +98,13 @@ class WebPubSubServiceClient(object):
         #         client=self._client,
         #         request=request_copy,
         #     )
-        pipeline_response = await self._pipeline.run(request_copy._internal_request, **kwargs)
+        pipeline_response = await self._pipeline.run(
+            request_copy._internal_request, **kwargs # pylint: disable=protected-access
+        )
         response = corerest.AsyncHttpResponse(
             status_code=pipeline_response.http_response.status_code,
             request=request_copy,
-            _internal_response=pipeline_response.http_response
+            _internal_response=pipeline_response.http_response,
         )
         await response.read()
         return response

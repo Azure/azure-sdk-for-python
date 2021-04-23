@@ -24,37 +24,44 @@
 #
 # --------------------------------------------------------------------------
 
-from abc import abstractmethod
-import sys
-import six
-import os
-import binascii
+# pylint currently complains about typing.Union not being subscriptable
+# pylint: disable=unsubscriptable-object
+
 import codecs
-import cgi
 import json
 from enum import Enum
 import xml.etree.ElementTree as ET
 from typing import TYPE_CHECKING, Iterable
 
+import cgi
+import six
+
+from azure.core.exceptions import HttpResponseError
 from azure.core.pipeline.transport import (
     HttpRequest as _PipelineTransportHttpRequest,
 )
 
+
 if TYPE_CHECKING:
-    from typing import (
-        Any, Optional, Union, Mapping, Sequence, Tuple, Iterator
+    from typing import (  # pylint: disable=ungrouped-imports
+        Any,
+        Optional,
+        Union,
+        Mapping,
+        Sequence,
+        Tuple,
+        Iterator,
     )
+
     ByteStream = Iterable[bytes]
 
-    HeadersType = Union[
-        Mapping[str, str],
-        Sequence[Tuple[str, str]]
-    ]
+    HeadersType = Union[Mapping[str, str], Sequence[Tuple[str, str]]]
     ContentType = Union[str, bytes, ByteStream]
     from azure.core.pipeline.transport._base import (
-        _HttpResponseBase as _PipelineTransportHttpResponseBase
+        _HttpResponseBase as _PipelineTransportHttpResponseBase,
     )
     from azure.core._pipeline_client import PipelineClient as _PipelineClient
+
 
 class HttpVerbs(str, Enum):
     GET = "GET"
@@ -64,14 +71,16 @@ class HttpVerbs(str, Enum):
     PATCH = "PATCH"
     DELETE = "DELETE"
     MERGE = "MERGE"
-from azure.core.exceptions import HttpResponseError
+
 
 ########################### UTILS SECTION #################################
+
 
 def _is_stream_or_str_bytes(content):
     return isinstance(content, (str, bytes)) or any(
         hasattr(content, attr) for attr in ["read", "__iter__", "__aiter__"]
     )
+
 
 def _lookup_encoding(encoding):
     # type: (str) -> bool
@@ -82,20 +91,22 @@ def _lookup_encoding(encoding):
     except LookupError:
         return False
 
+
 def _set_content_length_header(header_name, header_value, internal_request):
     # type: (str, str, _PipelineTransportHttpRequest) -> None
     valid_methods = ["put", "post", "patch"]
     content_length_headers = ["Content-Length", "Transfer-Encoding"]
-    if (
-        internal_request.method.lower() in valid_methods and
-        not any([c for c in content_length_headers if c in internal_request.headers])
+    if internal_request.method.lower() in valid_methods and not any(
+        [c for c in content_length_headers if c in internal_request.headers]
     ):
         internal_request.headers[header_name] = header_value
+
 
 def _set_content_type_header(header_value, internal_request):
     # type: (str, _PipelineTransportHttpRequest) -> None
     if not internal_request.headers.get("Content-Type"):
         internal_request.headers["Content-Type"] = header_value
+
 
 def _set_content_body(content, internal_request):
     # type: (ContentType, _PipelineTransportHttpRequest) -> None
@@ -105,27 +116,36 @@ def _set_content_body(content, internal_request):
         # stream will be bytes / str, or iterator of bytes / str
         internal_request.set_streamed_data_body(content)
         if isinstance(content, (str, bytes)) and content:
-            _set_content_length_header("Content-Length", str(len(internal_request.data)), internal_request)
+            _set_content_length_header(
+                "Content-Length", str(len(internal_request.data)), internal_request
+            )
             if isinstance(content, six.string_types):
                 _set_content_type_header("text/plain", internal_request)
             else:
                 _set_content_type_header("application/octet-stream", internal_request)
-        elif isinstance(content, Iterable):
+        elif isinstance( # pylint: disable=isinstance-second-argument-not-valid-type
+            content, Iterable
+        ):
             _set_content_length_header("Transfer-Encoding", "chunked", internal_request)
             _set_content_type_header("application/octet-stream", internal_request)
     elif isinstance(content, ET.Element):
         # XML body
         internal_request.set_xml_body(content)
         _set_content_type_header("application/xml", internal_request)
-        _set_content_length_header("Content-Length", str(len(internal_request.data)), internal_request)
+        _set_content_length_header(
+            "Content-Length", str(len(internal_request.data)), internal_request
+        )
     elif content_type and content_type.startswith("text/"):
         # Text body
         internal_request.set_text_body(content)
-        _set_content_length_header("Content-Length", str(len(internal_request.data)), internal_request)
+        _set_content_length_header(
+            "Content-Length", str(len(internal_request.data)), internal_request
+        )
     else:
         # Other body
         internal_request.data = content
     internal_request.headers = headers
+
 
 def _set_body(content, data, files, json_body, internal_request):
     # type: (ContentType, dict, Any, Any, _PipelineTransportHttpRequest) -> None
@@ -140,7 +160,7 @@ def _set_body(content, data, files, json_body, internal_request):
     elif files is not None:
         internal_request.set_formdata_body(files)
         # if you don't supply your content type, we'll create a boundary for you with multipart/form-data
-        boundary = binascii.hexlify(os.urandom(16)).decode("ascii")  # got logic from httpx, thanks httpx!
+        # boundary = binascii.hexlify(os.urandom(16)).decode("ascii")  # got logic from httpx, thanks httpx!
         # _set_content_type_header("multipart/form-data; boundary={}".format(boundary), internal_request)
     elif data:
         _set_content_type_header("application/x-www-form-urlencoded", internal_request)
@@ -148,6 +168,7 @@ def _set_body(content, data, files, json_body, internal_request):
         # need to set twice because Content-Type is being popped in set_formdata_body
         # don't want to risk changing pipeline.transport, so doing twice here
         _set_content_type_header("application/x-www-form-urlencoded", internal_request)
+
 
 def _parse_lines_from_text(text):
     # largely taken from httpx's LineDecoder code
@@ -160,17 +181,17 @@ def _parse_lines_from_text(text):
             next_char = None if idx == len(text) - 1 else text[idx + 1]
             if curr_char == "\n":
                 lines.append(text[: idx + 1])
-                text = text[idx + 1: ]
+                text = text[idx + 1 :]
                 break
             if curr_char == "\r" and next_char == "\n":
                 # if it ends with \r\n, we only do \n
                 lines.append(text[:idx] + "\n")
-                text = text[idx + 2:]
+                text = text[idx + 2 :]
                 break
             if curr_char == "\r" and next_char is not None:
                 # if it's \r then a normal character, we switch \r to \n
                 lines.append(text[:idx] + "\n")
-                text = text[idx + 1:]
+                text = text[idx + 1 :]
                 break
             if next_char is None:
                 text = ""
@@ -182,6 +203,7 @@ def _parse_lines_from_text(text):
     elif last_chunk_of_text:
         lines.append(last_chunk_of_text)
     return lines
+
 
 ################################## CLASSES ######################################
 class _StreamContextManager(object):
@@ -195,13 +217,10 @@ class _StreamContextManager(object):
         # type: (...) -> HttpResponse
         """Actually make the call only when we enter. For sync stream_response calls"""
         pipeline_transport_response = self.client._pipeline.run(
-            self.request._internal_request,
-            stream=True,
-            **self.kwargs
+            self.request._internal_request, stream=True, **self.kwargs
         ).http_response
-        self.response = HttpResponse(
-            request=self.request,
-            _internal_response=pipeline_transport_response
+        self.response = HttpResponse(  # pylint: disable=attribute-defined-outside-init
+            request=self.request, _internal_response=pipeline_transport_response
         )
         return self.response
 
@@ -211,6 +230,7 @@ class _StreamContextManager(object):
 
     def close(self):
         self.response.close()
+
 
 class HttpRequest(object):
     """Represents an HTTP request.
@@ -251,11 +271,14 @@ class HttpRequest(object):
         json_body = kwargs.pop("json", None)
         files = kwargs.pop("files", None)
 
-        self._internal_request = kwargs.pop("_internal_request", _PipelineTransportHttpRequest(
-            method=method,
-            url=url,
-            headers=kwargs.pop("headers", None),
-        ))
+        self._internal_request = kwargs.pop(
+            "_internal_request",
+            _PipelineTransportHttpRequest(
+                method=method,
+                url=url,
+                headers=kwargs.pop("headers", None),
+            ),
+        )
         params = kwargs.pop("params", None)
 
         if params:
@@ -266,7 +289,7 @@ class HttpRequest(object):
             data=data,
             files=files,
             json_body=json_body,
-            internal_request=self._internal_request
+            internal_request=self._internal_request,
         )
 
         if kwargs:
@@ -280,7 +303,9 @@ class HttpRequest(object):
         method_check = self._internal_request.method.lower() in ["put", "post", "patch"]
         content_length_unset = "Content-Length" not in self._internal_request.headers
         if method_check and content_length_unset:
-            self._internal_request.headers["Content-Length"] = str(len(self._internal_request.data))
+            self._internal_request.headers["Content-Length"] = str(
+                len(self._internal_request.data)
+            )
 
     @property
     def url(self):
@@ -305,8 +330,7 @@ class HttpRequest(object):
     @property
     def content(self):
         # type: (...) -> Any
-        """Gets the request content.
-        """
+        """Gets the request content."""
         return self._internal_request.data or self._internal_request.files
 
     def __repr__(self):
@@ -316,8 +340,9 @@ class HttpRequest(object):
         return HttpRequest(
             self.method,
             self.url,
-            _internal_request=self._internal_request.__deepcopy__(memo)
+            _internal_request=self._internal_request.__deepcopy__(memo),
         )
+
 
 class _HttpResponseBase(object):
     """Base class for HttpResponse and AsyncHttpResponse.
@@ -341,7 +366,9 @@ class _HttpResponseBase(object):
 
     def __init__(self, **kwargs):
         # type: (Any) -> None
-        self._internal_response = kwargs.pop("_internal_response")  # type: _PipelineTransportHttpResponseBase
+        self._internal_response = kwargs.pop(
+            "_internal_response"
+        )  # type: _PipelineTransportHttpResponseBase
         self._request = kwargs.pop("request")
         self.is_closed = False
         self.is_stream_consumed = False
@@ -401,7 +428,7 @@ class _HttpResponseBase(object):
         if not content_type:
             return None
         _, params = cgi.parse_header(content_type)
-        encoding = params.get('charset') # -> utf-8
+        encoding = params.get("charset")  # -> utf-8
         if encoding is None or not _lookup_encoding(encoding):
             return None
         return encoding
@@ -416,7 +443,9 @@ class _HttpResponseBase(object):
     def text(self):
         # type: (...) -> str
         """Returns the response body as a string"""
-        self.content  # access content to make sure we trigger if response not fully read in
+        _ = (
+            self.content
+        )  # access content to make sure we trigger if response not fully read in
         return self._internal_response.text(encoding=self.encoding)
 
     @property
@@ -489,8 +518,8 @@ class _HttpResponseBase(object):
         if self.is_stream_consumed:
             raise StreamConsumedError()
 
-class HttpResponse(_HttpResponseBase):
 
+class HttpResponse(_HttpResponseBase):
     @property
     def content(self):
         # type: (...) -> bytes
@@ -518,21 +547,19 @@ class HttpResponse(_HttpResponseBase):
             return self._content
         except AttributeError:
             self._validate_streaming_access()
-            self._content = (
-                self._internal_response.body() or
-                b"".join(self.iter_raw())
+            self._content = (  # pylint: disable=attribute-defined-outside-init
+                self._internal_response.body() or b"".join(self.iter_raw())
             )
             self._close_stream()
             return self._content
 
     def iter_bytes(self, chunk_size=None):
         # type: (int) -> Iterator[bytes]
-        """Iterate over the bytes in the response stream
-        """
+        """Iterate over the bytes in the response stream"""
         try:
             chunk_size = len(self._content) if chunk_size is None else chunk_size
             for i in range(0, len(self._content), chunk_size):
-                yield self._content[i: i + chunk_size]
+                yield self._content[i : i + chunk_size]
 
         except AttributeError:
             for raw_bytes in self.iter_raw(chunk_size=chunk_size):
@@ -540,8 +567,7 @@ class HttpResponse(_HttpResponseBase):
 
     def iter_text(self, chunk_size=None):
         # type: (int) -> Iterator[str]
-        """Iterate over the response text
-        """
+        """Iterate over the response text"""
         for byte in self.iter_bytes(chunk_size):
             text = byte.decode(self.encoding or "utf-8")
             yield text
@@ -558,10 +584,9 @@ class HttpResponse(_HttpResponseBase):
         self.is_stream_consumed = True
         self.close()
 
-    def iter_raw(self, chunk_size=None):
+    def iter_raw(self, **_):
         # type: (int) -> Iterator[bytes]
-        """Iterate over the raw response bytes
-        """
+        """Iterate over the raw response bytes"""
         self._validate_streaming_access()
         stream_download = self._internal_response.stream_download(None)
         for raw_bytes in stream_download:
@@ -570,7 +595,9 @@ class HttpResponse(_HttpResponseBase):
 
         self._close_stream()
 
+
 ########################### ERRORS SECTION #################################
+
 
 class StreamConsumedError(Exception):
     def __init__(self):
@@ -580,6 +607,7 @@ class StreamConsumedError(Exception):
         )
         super(StreamConsumedError, self).__init__(message)
 
+
 class ResponseClosedError(Exception):
     def __init__(self):
         message = (
@@ -588,8 +616,8 @@ class ResponseClosedError(Exception):
         )
         super(ResponseClosedError, self).__init__(message)
 
-class ResponseNotReadError(Exception):
 
+class ResponseNotReadError(Exception):
     def __init__(self):
         message = (
             "You have not read in the response's bytes yet. Call response.read() first."

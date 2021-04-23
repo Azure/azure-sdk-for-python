@@ -33,7 +33,8 @@ from ._utils import UTC as _UTC
 if TYPE_CHECKING:
     from azure.core.pipeline.policies import HTTPPolicy, SansIOHTTPPolicy
     from typing import Any, List, cast, Type, TypeVar
-    ClientType = TypeVar('ClientType', bound='WebPubSubServiceClient')
+
+    ClientType = TypeVar("ClientType", bound="WebPubSubServiceClient")
 
 
 def build_authentication_token(endpoint, hub, key, **kwargs):
@@ -65,7 +66,7 @@ def build_authentication_token(endpoint, hub, key, **kwargs):
     """
     user = kwargs.pop("user", None)
     ttl = kwargs.pop("ttl", timedelta(hours=1))
-    roles = kwargs.pop('roles', [])
+    roles = kwargs.pop("roles", [])
     endpoint = endpoint.lower()
     if not endpoint.startswith("http://") and not endpoint.startswith("https://"):
         raise ValueError(
@@ -82,7 +83,11 @@ def build_authentication_token(endpoint, hub, key, **kwargs):
     client_url = "{}/client/hubs/{}".format(client_endpoint, hub)
     audience = "{}/client/hubs/{}".format(endpoint, hub)
 
-    payload = {"aud": audience, "iat": datetime.now(tz=_UTC), "exp": datetime.now(tz=_UTC) + ttl}
+    payload = {
+        "aud": audience,
+        "iat": datetime.now(tz=_UTC),
+        "exp": datetime.now(tz=_UTC) + ttl,
+    }
     if user:
         payload["sub"] = user
     if roles:
@@ -114,7 +119,9 @@ class WebPubSubServiceClient(object):
         transport = kwargs.pop("transport", None) or coretransport.RequestsTransport(
             **kwargs
         )
-        kwargs.setdefault('sdk_moniker', 'messaging-webpubsubservice/{}'.format(_VERSION))
+        kwargs.setdefault(
+            "sdk_moniker", "messaging-webpubsubservice/{}".format(_VERSION)
+        )
         policies = [
             corepolicies.HeadersPolicy(**kwargs),
             corepolicies.UserAgentPolicy(**kwargs),
@@ -130,7 +137,6 @@ class WebPubSubServiceClient(object):
             policies,
         )  # type: corepipeline.Pipeline
 
-
     @classmethod
     def from_connection_string(cls, connection_string, **kwargs):
         # type: (Type[ClientType], str, Any) -> ClientType
@@ -140,30 +146,35 @@ class WebPubSubServiceClient(object):
         :type connection_string: ~str
         :rtype: WebPubSubServiceClient
         """
-        for invalid_keyword_arg in ('endpoint', 'accesskey'):
+        for invalid_keyword_arg in ("endpoint", "accesskey"):
             if invalid_keyword_arg in kwargs:
-                raise TypeError('Unknown argument {}'.format(invalid_keyword_arg))
+                raise TypeError("Unknown argument {}".format(invalid_keyword_arg))
 
         for segment in connection_string.split(";"):
-            if '=' in segment:
-                key, value = segment.split('=', maxsplit=1)
+            if "=" in segment:
+                key, value = segment.split("=", maxsplit=1)
                 key = key.lower()
-                if key == 'version':
+                if key == "version":
                     # The name in the connection string != the name for the constructor.
                     # Let's map it to whatthe constructor actually wants...
-                    key = 'api_version'
+                    key = "api_version"
                 kwargs[key] = value
             elif segment:
-                raise ValueError("Malformed connection string - expected 'key=value', found segment '{}' in '{}'"
-                                    .format(segment, connection_string))
+                raise ValueError(
+                    "Malformed connection string - expected 'key=value', found segment '{}' in '{}'".format(
+                        segment, connection_string
+                    )
+                )
 
-        if 'endpoint' not in kwargs:
+        if "endpoint" not in kwargs:
             raise ValueError("connection_string missing 'endpoint' field")
 
-        if 'accesskey' not in kwargs:
+        if "accesskey" not in kwargs:
             raise ValueError("connection_string missing 'accesskey' field")
 
-        kwargs['credential'] = corecredentials.AzureKeyCredential(kwargs.pop('accesskey'))
+        kwargs["credential"] = corecredentials.AzureKeyCredential(
+            kwargs.pop("accesskey")
+        )
         return cls(**kwargs)
 
     def __repr__(self):
@@ -208,11 +219,11 @@ class WebPubSubServiceClient(object):
         #         client=self._client,
         #         request=request_copy,
         #     )
-        pipeline_response = self._pipeline.run(request_copy._internal_request, **kwargs)
+        pipeline_response = self._pipeline.run(request_copy._internal_request, **kwargs) # pylint: disable=protected-access
         response = corerest.HttpResponse(
             status_code=pipeline_response.http_response.status_code,
             request=request_copy,
-            _internal_response=pipeline_response.http_response
+            _internal_response=pipeline_response.http_response,
         )
         response.read()
         return response

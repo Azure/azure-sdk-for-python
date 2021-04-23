@@ -6,6 +6,8 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
+# pylint: disable=line-too-long
+
 __all__ = [
     'build_add_connection_to_group_request',
     'build_add_user_to_group_request',
@@ -34,7 +36,7 @@ if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
     from typing import Any, IO, List, Optional, Union, Dict
     from typing_extensions import Literal
-    Permissions = Union[Literal['joinLeaveGroup'], Literal['sendToGroup']]
+    Permissions = Union[Literal['joinLeaveGroup'], Literal['sendToGroup']] # pylint: disable=unsubscriptable-object
 
 _SERIALIZER = Serializer()
 

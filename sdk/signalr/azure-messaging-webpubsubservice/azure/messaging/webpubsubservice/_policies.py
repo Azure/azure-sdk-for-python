@@ -64,9 +64,7 @@ class JwtCredentialPolicy(SansIOHTTPPolicy):
         request.http_request.headers["Authorization"] = "Bearer " + self._encode(
             request.http_request.url
         )
-        return super(JwtCredentialPolicy, self).on_request(
-            request
-        )
+        return super(JwtCredentialPolicy, self).on_request(request)
 
     def _encode(self, url):
         # type: (AzureKeyCredential) -> str
