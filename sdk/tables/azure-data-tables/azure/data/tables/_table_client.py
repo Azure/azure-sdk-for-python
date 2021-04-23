@@ -293,6 +293,10 @@ class TableClient(TablesBaseClient):
                 :dedent: 8
                 :caption: Deleting an entity to a Table
         """
+        # match_condition = kwargs.pop("match_condition", None)
+        # etag = kwargs.pop("etag", None)
+        # if match_condition:
+        #     etag = entity.metadata["etag"]
 
         if_match, _ = _get_match_headers(
             kwargs=dict(
@@ -385,12 +389,16 @@ class TableClient(TablesBaseClient):
                 :dedent: 8
                 :caption: Updating an already exiting entity in a Table
         """
+        match_condition = kwargs.pop("match_condition", None)
+        etag = kwargs.pop("etag", None)
+        if match_condition:
+            etag = entity.metadata["etag"]
 
         if_match, _ = _get_match_headers(
             kwargs=dict(
                 kwargs,
-                etag=kwargs.pop("etag", None),
-                match_condition=kwargs.pop("match_condition", None),
+                etag=etag,
+                match_condition=match_condition,
             ),
             etag_param="etag",
             match_param="match_condition",
