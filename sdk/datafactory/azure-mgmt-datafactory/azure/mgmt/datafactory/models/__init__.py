@@ -181,7 +181,7 @@ try:
     from ._models_py3 import DataFlowSourceSetting
     from ._models_py3 import DataFlowStagingInfo
     from ._models_py3 import DataLakeAnalyticsUSQLActivity
-    from ._models_py3 import DataLakeAnalyticsScopeLActivity
+    from ._models_py3 import DataLakeAnalyticsScopeActivity
     from ._models_py3 import DatabricksNotebookActivity
     from ._models_py3 import DatabricksSparkJarActivity
     from ._models_py3 import DatabricksSparkPythonActivity
