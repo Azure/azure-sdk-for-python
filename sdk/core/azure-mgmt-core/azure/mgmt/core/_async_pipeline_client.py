@@ -23,6 +23,7 @@
 # IN THE SOFTWARE.
 #
 # --------------------------------------------------------------------------
+from collections.abc import Iterable
 from azure.core import AsyncPipelineClient
 from .policies import AsyncARMAutoResourceProviderRegistrationPolicy, ARMHttpLoggingPolicy
 
@@ -43,7 +44,11 @@ class AsyncARMPipelineClient(AsyncPipelineClient):
                     "Current implementation requires to pass 'config' if you don't pass 'policies'"
                 )
             per_call_policies = kwargs.get('per_call_policies', [])
-            per_call_policies.append(AsyncARMAutoResourceProviderRegistrationPolicy())
+            if isinstance(per_call_policies, Iterable):
+                per_call_policies.append(AsyncARMAutoResourceProviderRegistrationPolicy())
+            else:
+                per_call_policies = [per_call_policies,
+                                     ARMAutoResourceProviderRegistrationPolicy()]
             kwargs["per_call_policies"] = per_call_policies
             config = kwargs.get('config')
             if not config.http_logging_policy:

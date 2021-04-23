@@ -23,6 +23,10 @@
 # IN THE SOFTWARE.
 #
 # --------------------------------------------------------------------------
+try:
+    from collections.abc import Iterable
+except ImportError:
+    from collections import Iterable
 from azure.core import PipelineClient
 from .policies import ARMAutoResourceProviderRegistrationPolicy, ARMHttpLoggingPolicy
 
@@ -43,7 +47,11 @@ class ARMPipelineClient(PipelineClient):
                     "Current implementation requires to pass 'config' if you don't pass 'policies'"
                 )
             per_call_policies = kwargs.get('per_call_policies', [])
-            per_call_policies.append(ARMAutoResourceProviderRegistrationPolicy())
+            if isinstance(per_call_policies, Iterable):
+                per_call_policies.append(ARMAutoResourceProviderRegistrationPolicy())
+            else:
+                per_call_policies = [per_call_policies,
+                                     ARMAutoResourceProviderRegistrationPolicy()]
             kwargs["per_call_policies"] = per_call_policies
             config = kwargs.get('config')
             if not config.http_logging_policy:
