@@ -12443,6 +12443,10 @@ class DataLakeAnalyticsScopeActivity(ExecutionActivity):
     :param degree_of_parallelism: The maximum number of nodes simultaneously used to run the job.
      Default value is 1. Type: integer (or Expression with resultType integer), minimum: 1.
     :type degree_of_parallelism: object
+    :param degree_of_parallelism_percent: The maximum percentage of nodes simultaneously used to run 
+     the job. At most one of degreeOfParallelism and degreeOfParallelismPercent should be specified.
+     If none, a default value of 1 will be used for degreeOfParallelism.
+    :type degree_of_parallelism: object
     :param priority: Determines which jobs out of all that are queued should be selected to run
      first. The lower the number, the higher the priority. Default value is 1000. Type: integer (or
      Expression with resultType integer), minimum: 1.
@@ -12452,6 +12456,15 @@ class DataLakeAnalyticsScopeActivity(ExecutionActivity):
     :param runtime_version: Runtime version of the U-SQL engine to use. Type: string (or Expression
      with resultType string).
     :type runtime_version: object
+    :param job_owner: Custom tag to be added to scope job to indicate job owner alias.
+    :type job_owner: object
+    :param job_name: Azure Data Lake Analytics job name. Default value is ActivityName_{TimeStamp}.
+    :type job_name: object
+    :param notifier: List of email addresses to be notified when the job reaches a terminal state.
+    :type notifier: object
+    :param scope_script_inclusion_set: List of script resource file extensions separated by semi-colons. 
+     Only these files will be uploaded to ADLA as scope job resources.
+    :type scope_script_inclusion_set: object
     :param compilation_mode: Compilation mode of U-SQL. Must be one of these values : Semantic,
      Full and SingleBox. Type: string (or Expression with resultType string).
     :type compilation_mode: object
@@ -12474,12 +12487,15 @@ class DataLakeAnalyticsScopeActivity(ExecutionActivity):
         'user_properties': {'key': 'userProperties', 'type': '[UserProperty]'},
         'linked_service_name': {'key': 'linkedServiceName', 'type': 'LinkedServiceReference'},
         'policy': {'key': 'policy', 'type': 'ActivityPolicy'},
-        # Type Props
-        'script_file_name': {'key': 'typeProperties.scriptFilePath', 'type': 'object'},
+        'script_file_name': {'key': 'typeProperties.scriptFileName', 'type': 'object'},
         'script_folder_path': {'key': 'typeProperties.scriptFolderPath', 'type': 'object'},
         'script_linked_service': {'key': 'typeProperties.scriptLinkedService', 'type': 'LinkedServiceReference'},
         'degree_of_parallelism': {'key': 'typeProperties.degreeOfParallelism', 'type': 'object'},
-        # End Type Props
+        'degree_of_parallelism_percent': {'key': 'typeProperties.degreeOfParallelismPercent', 'type': 'object'},
+        'job_owner': {'key': 'typeProperties.jobOwner', 'type': 'object'},
+        'job_name': {'key': 'typeProperties.jobName', 'type': 'object'},
+        'notifier': {'key': 'typeProperties.notifier', 'type': 'object'},
+        'scope_script_inclusion_set': {'key': 'typeProperties.scopeScriptInclusionSet', 'type': 'object'},
         'priority': {'key': 'typeProperties.priority', 'type': 'object'},
         'parameters': {'key': 'typeProperties.parameters', 'type': '{object}'},
         'runtime_version': {'key': 'typeProperties.runtimeVersion', 'type': 'object'},
@@ -12499,7 +12515,12 @@ class DataLakeAnalyticsScopeActivity(ExecutionActivity):
         user_properties: Optional[List["UserProperty"]] = None,
         linked_service_name: Optional["LinkedServiceReference"] = None,
         policy: Optional["ActivityPolicy"] = None,
+        job_owner: Optional[object] = None,
+        job_name: Optional[object] = None,
+        notifier: Optional[object] = None,
+        scope_script_inclusion_set: Optional[object] = None,
         degree_of_parallelism: Optional[object] = None,
+        degree_of_parallelism_percent: Optional[object] = None,
         priority: Optional[object] = None,
         parameters: Optional[Dict[str, object]] = None,
         runtime_version: Optional[object] = None,
@@ -12513,6 +12534,11 @@ class DataLakeAnalyticsScopeActivity(ExecutionActivity):
         self.script_folder_path = script_folder_path
         self.script_linked_service = script_linked_service
         self.degree_of_parallelism = degree_of_parallelism
+        self.degree_of_parallelism_percent = degree_of_parallelism_percent
+        self.job_owner = job_owner
+        self.job_name = job_name
+        self.notifier = notifier
+        self.scope_script_inclusion_set = scope_script_inclusion_set
         self.priority = priority
         self.parameters = parameters
         self.runtime_version = runtime_version
