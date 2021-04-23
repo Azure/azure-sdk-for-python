@@ -3,25 +3,14 @@
 # Licensed under the MIT License.
 # -------------------------------------
 import asyncio
-import functools
 
-from azure.keyvault.secrets import ApiVersion
-from devtools_testutils import PowerShellPreparer
-from parameterized import parameterized, param
 import pytest
 
 from _shared.test_case_async import KeyVaultTestCase
-from _test_case import SecretsTestCase, suffixed_test_name
+from _test_case import client_setup, get_decorator, SecretsTestCase
 
 
-PARAMS = [param(api_version=api_version) for api_version in ApiVersion]
-test_all_versions = functools.partial(parameterized.expand, PARAMS, name_func=suffixed_test_name)
-
-KeyVaultPreparer = functools.partial(
-    PowerShellPreparer,
-    "keyvault",
-    azure_keyvault_url="https://vaultname.vault.azure.net"
-)
+all_api_versions = get_decorator(is_async=True)
 
 
 def print(*args):
@@ -48,11 +37,9 @@ async def test_create_secret_client():
 
 
 class TestExamplesKeyVault(SecretsTestCase, KeyVaultTestCase):
-    @test_all_versions()
-    @KeyVaultPreparer()
-    async def test_example_secret_crud_operations(self, azure_keyvault_url, **kwargs):
-        self._skip_if_not_configured(**kwargs)
-        client = self.create_client(azure_keyvault_url, is_async=True, **kwargs)
+    @all_api_versions()
+    @client_setup
+    async def test_example_secret_crud_operations(self, client, **kwargs):
         secret_client = client
         secret_name = self.get_resource_name("secret-name")
 
@@ -111,11 +98,9 @@ class TestExamplesKeyVault(SecretsTestCase, KeyVaultTestCase):
         print(deleted_secret.recovery_id)
         # [END delete_secret]
 
-    @test_all_versions()
-    @KeyVaultPreparer()
-    async def test_example_secret_list_operations(self, azure_keyvault_url, **kwargs):
-        self._skip_if_not_configured(**kwargs)
-        client = self.create_client(azure_keyvault_url, is_async=True, **kwargs)
+    @all_api_versions()
+    @client_setup
+    async def test_example_secret_list_operations(self, client, **kwargs):
         secret_client = client
 
         for i in range(7):
@@ -157,11 +142,9 @@ class TestExamplesKeyVault(SecretsTestCase, KeyVaultTestCase):
             print(secret.deleted_date)
         # [END list_deleted_secrets]
 
-    @test_all_versions()
-    @KeyVaultPreparer()
-    async def test_example_secrets_backup_restore(self, azure_keyvault_url, **kwargs):
-        self._skip_if_not_configured(**kwargs)
-        client = self.create_client(azure_keyvault_url, is_async=True, **kwargs)
+    @all_api_versions()
+    @client_setup
+    async def test_example_secrets_backup_restore(self, client, **kwargs):
         secret_client = client
         secret_name = self.get_resource_name("secret-name")
         await secret_client.set_secret(secret_name, "secret-value")
@@ -186,11 +169,9 @@ class TestExamplesKeyVault(SecretsTestCase, KeyVaultTestCase):
         print(restored_secret.version)
         # [END restore_secret_backup]
 
-    @test_all_versions()
-    @KeyVaultPreparer()
-    async def test_example_secrets_recover(self, azure_keyvault_url, **kwargs):
-        self._skip_if_not_configured(**kwargs)
-        client = self.create_client(azure_keyvault_url, is_async=True, **kwargs)
+    @all_api_versions()
+    @client_setup
+    async def test_example_secrets_recover(self, client, **kwargs):
         secret_client = client
         secret_name = self.get_resource_name("secret-name")
         await secret_client.set_secret(secret_name, "secret-value")
