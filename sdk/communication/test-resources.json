@@ -46,14 +46,14 @@
         "type": "String",
           "metadata": {
               "description": "The application client id used to run tests."
-          }
-      },
-      "testApplicationSecret": {
-        "type": "String",
-          "metadata": {
-              "description": "The application client secret used to run tests."
-          }
-      }
+            }
+        },
+        "testApplicationSecret": {
+            "type": "String",
+            "metadata": {
+                "description": "The application client secret used to run tests."
+            }
+        }
     },
     "variables": {
         "uniqueSubDomainName": "[format('{0}-{1}', parameters('baseName'), parameters('endpointPrefix'))]",
@@ -96,6 +96,6 @@
         "COMMUNICATION_CONNECTION_STRING": {
             "type": "string",
             "value": "[listKeys(resourceId('Microsoft.Communication/CommunicationServices',variables('uniqueSubDomainName')), '2020-08-20-preview').primaryConnectionString]"
-        }
+      }
     }
 }
