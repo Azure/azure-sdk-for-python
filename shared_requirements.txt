@@ -252,4 +252,5 @@ opentelemetry-sdk<2.0.0,>=1.0.0
 #override azure-template azure-core<2.0.0,>=1.10.0
 #override azure-mgmt-managedservices msrest>=0.6.21
 #override azure-purview-scanning azure-core<2.0.0,>=1.8.2 msrest>=0.6.21
-#override azure-purview-catalog azure-core<2.0.0,>=1.8.2 msrest>=0.6.21
+#override azure-purview-catalog azure-core<2.0.0,>=1.8.2
+#override azure-purview-catalog msrest>=0.6.21
