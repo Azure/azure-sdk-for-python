@@ -123,6 +123,7 @@ python-dateutil>=2.8.0
 six>=1.11.0
 isodate>=0.6.0
 avro<2.0.0,>=1.10.0
+pyjwt>=1.7.1
 #override azure azure-keyvault~=1.0
 #override azure-mgmt-core azure-core<2.0.0,>=1.9.0
 #override azure-containerregistry azure-core>=1.4.0,<2.0.0
