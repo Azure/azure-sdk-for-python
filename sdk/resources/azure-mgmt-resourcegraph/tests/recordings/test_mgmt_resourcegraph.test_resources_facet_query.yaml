@@ -16,23 +16,25 @@ interactions:
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-mgmt-resourcegraph/7.0.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+      - azsdk-python-mgmt-resourcegraph/8.0.0 Python/3.8.8 (Linux-5.4.0-1041-azure-x86_64-with-glibc2.2.5)
+        VSTS_0fb41ef4-5012-48a9-bf39-4ee3de03ee35_build_2384_0
     method: POST
-    uri: https://management.azure.com/providers/Microsoft.ResourceGraph/resources?api-version=2020-04-01-preview
+    uri: https://management.azure.com/providers/Microsoft.ResourceGraph/resources?api-version=2021-03-01
   response:
     body:
-      string: '{"totalRecords":8,"count":8,"data":{"columns":[{"name":"id","type":"string"},{"name":"location","type":"string"}],"rows":[["/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/move_resource_name/providers/Microsoft.Migrate/moveCollections/move-collection-test6","eastus2"],["/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/sdk-net-test-qa2/providers/Microsoft.Network/networkInterfaces/anf-sdknettestqa2vnet464-nic-2JBDNX","eastus"],["/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/sdk-net-test-qa2/providers/Microsoft.Network/virtualNetworks/sdknettestqa2vnet464","eastus"],["/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/lianwrs/providers/Microsoft.RecoveryServices/vaults/lianwvault0727","eastus"],["/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/iyljd2wtoqh43dern43sawzmqxkeari3bcqiadgfste4outj7cdmmslvr4yfw2vmrsqeiogmitj/providers/Microsoft.ServiceBus/namespaces/myNamespacexxyyzsecond","southcentralus"],["/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_compute_test_computef5f00e12/providers/Microsoft.Compute/galleries/galleryname","eastus"],["/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/iyljd2wtoqh43dern43sawzmqxkeari3bcqiadgfste4outj7cdmmslvr4yfw2vmrsqeiogmitj/providers/Microsoft.ServiceBus/namespaces/myNamespacexxyyz","eastus"],["/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/qiaozhatest/providers/Microsoft.RecoveryServices/vaults/vault886","eastus"]]},"facets":[{"expression":"location","totalRecords":3,"count":1,"data":{"columns":[{"name":"location","type":"string"},{"name":"count","type":"integer"}],"rows":[["eastus",6]]},"resultType":"FacetResult"},{"expression":"nonExistingColumn","errors":[{"code":"NoValidColumns","message":"No
+      string: '{"totalRecords":10,"count":10,"data":[{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/clitest.rgc5n3jqpfxbfwma5wufo7spusf5iy7t7ridd2enjhhcl7exugqooidgqgi5ydpuwds/providers/Microsoft.KeyVault/vaults/clitestv4dmu76nmw72mcmoj","location":"eastus2euap"},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/yyc-eastus2/providers/Microsoft.MixedReality/spatialAnchorsAccounts/saa000","location":"eastus2"},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/clitest.rghmrbdqapsaiszhwm4l4j7jyzloxjgo7pmyecpikn7zpklq3e5xutgbn6fdki35lzd/providers/Microsoft.ManagedIdentity/userAssignedIdentities/newidokzvcpauxwmpivwpcv6","location":"eastus2euap"},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/clitest.rghmrbdqapsaiszhwm4l4j7jyzloxjgo7pmyecpikn7zpklq3e5xutgbn6fdki35lzd/providers/Microsoft.ManagedIdentity/userAssignedIdentities/idc3xqqmpokyvcbr2a73q6qf","location":"eastus2euap"},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/ch4-rg/providers/Microsoft.Storage/storageAccounts/cdnstorage03082020","location":"westus"},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/clitest.rghmrbdqapsaiszhwm4l4j7jyzloxjgo7pmyecpikn7zpklq3e5xutgbn6fdki35lzd/providers/Microsoft.KeyVault/vaults/clitesttrinw2ehtbjlc4tyb","location":"eastus2euap"},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/resttocli/providers/microsoft.alertsmanagement/smartDetectorAlertRules/Failure
+        Anomalies - resttocli","location":"global"},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/resttocli/providers/Microsoft.Web/sites/RestToCLI","location":"eastus"},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/resttocli/providers/Microsoft.Insights/components/resttocli","location":"eastus"},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/resttocli/providers/Microsoft.Storage/storageAccounts/resttocli","location":"eastus"}],"facets":[{"expression":"location","totalRecords":5,"count":1,"data":[{"location":"eastus2euap","count":4}],"resultType":"FacetResult"},{"expression":"nonExistingColumn","errors":[{"code":"NoValidColumns","message":"No
         valid columns in facet expression."},{"code":"InvalidColumnNames","message":"Invalid
         column names: [nonExistingColumn]."}],"resultType":"FacetError"}],"resultTruncated":"false"}'
     headers:
       cache-control:
       - no-cache
       content-length:
-      - '2003'
+      - '2430'
       content-type:
       - application/json; charset=utf-8
       date:
-      - Tue, 15 Dec 2020 09:46:56 GMT
+      - Wed, 31 Mar 2021 05:52:18 GMT
       expires:
       - '-1'
       pragma:

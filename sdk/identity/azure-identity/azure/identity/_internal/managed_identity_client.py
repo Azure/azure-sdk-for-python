@@ -104,12 +104,12 @@ class ManagedIdentityClientBase(ABC):
 
 
 class ManagedIdentityClient(ManagedIdentityClientBase):
-    def request_token(self, *scopes, **kwargs):  # pylint:disable=unused-argument
+    def request_token(self, *scopes, **kwargs):
         # type: (*str, **Any) -> AccessToken
         resource = _scopes_to_resource(*scopes)
         request = self._request_factory(resource, self._identity_config)
         request_time = int(time.time())
-        response = self._pipeline.run(request, retry_on_methods=[request.method])
+        response = self._pipeline.run(request, retry_on_methods=[request.method], **kwargs)
         token = self._process_response(response, request_time)
         return token
 

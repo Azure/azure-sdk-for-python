@@ -63,7 +63,7 @@ class ProductsOperations:
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2017-06-01"
+        api_version = "2020-06-01-preview"
         accept = "application/json"
 
         def prepare_request(next_link=None):
@@ -105,7 +105,7 @@ class ProductsOperations:
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
-                error = self._deserialize(_models.ErrorResponse, response)
+                error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, response)
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
@@ -141,7 +141,7 @@ class ProductsOperations:
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2017-06-01"
+        api_version = "2020-06-01-preview"
         accept = "application/json"
 
         # Construct URL
@@ -168,7 +168,7 @@ class ProductsOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.ErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('Product', pipeline_response)
@@ -204,7 +204,7 @@ class ProductsOperations:
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2017-06-01"
+        api_version = "2020-06-01-preview"
         accept = "application/json"
 
         # Construct URL
@@ -231,7 +231,8 @@ class ProductsOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise HttpResponseError(response=response, error_format=ARMErrorFormat)
+            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, response)
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('ExtendedProduct', pipeline_response)
 
@@ -245,6 +246,7 @@ class ProductsOperations:
         self,
         resource_group: str,
         registration_name: str,
+        product_name: str,
         device_configuration: Optional["_models.DeviceConfiguration"] = None,
         **kwargs
     ) -> "_models.ProductList":
@@ -254,6 +256,8 @@ class ProductsOperations:
         :type resource_group: str
         :param registration_name: Name of the Azure Stack registration.
         :type registration_name: str
+        :param product_name: Name of the product.
+        :type product_name: str
         :param device_configuration: Device configuration.
         :type device_configuration: ~azure.mgmt.azurestack.models.DeviceConfiguration
         :keyword callable cls: A custom type or function that will be passed the direct response
@@ -266,7 +270,7 @@ class ProductsOperations:
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2017-06-01"
+        api_version = "2020-06-01-preview"
         content_type = kwargs.pop("content_type", "application/json")
         accept = "application/json"
 
@@ -276,6 +280,7 @@ class ProductsOperations:
             'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
             'resourceGroup': self._serialize.url("resource_group", resource_group, 'str'),
             'registrationName': self._serialize.url("registration_name", registration_name, 'str'),
+            'productName': self._serialize.url("product_name", product_name, 'str'),
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -300,7 +305,7 @@ class ProductsOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.ErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('ProductList', pipeline_response)
@@ -309,7 +314,7 @@ class ProductsOperations:
             return cls(pipeline_response, deserialized, {})
 
         return deserialized
-    get_products.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroup}/providers/Microsoft.AzureStack/registrations/{registrationName}/products/_all/GetProducts'}  # type: ignore
+    get_products.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroup}/providers/Microsoft.AzureStack/registrations/{registrationName}/products/{productName}/getProducts'}  # type: ignore
 
     async def get_product(
         self,
@@ -339,7 +344,7 @@ class ProductsOperations:
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2017-06-01"
+        api_version = "2020-06-01-preview"
         content_type = kwargs.pop("content_type", "application/json")
         accept = "application/json"
 
@@ -374,7 +379,7 @@ class ProductsOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.ErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('Product', pipeline_response)
@@ -383,7 +388,7 @@ class ProductsOperations:
             return cls(pipeline_response, deserialized, {})
 
         return deserialized
-    get_product.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroup}/providers/Microsoft.AzureStack/registrations/{registrationName}/products/{productName}/GetProduct'}  # type: ignore
+    get_product.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroup}/providers/Microsoft.AzureStack/registrations/{registrationName}/products/{productName}/getProduct'}  # type: ignore
 
     async def upload_log(
         self,
@@ -413,7 +418,7 @@ class ProductsOperations:
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2017-06-01"
+        api_version = "2020-06-01-preview"
         content_type = kwargs.pop("content_type", "application/json")
         accept = "application/json"
 
@@ -448,7 +453,7 @@ class ProductsOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.ErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('ProductLog', pipeline_response)

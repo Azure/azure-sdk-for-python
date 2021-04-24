@@ -86,3 +86,18 @@ def _sign_string(key, string_to_sign, key_is_base64=True):
     digest = signed_hmac_sha256.digest()
     encoded_digest = _encode_base64(digest)
     return encoded_digest
+
+
+def _is_cosmos_endpoint(url):
+    if ".table.cosmodb." in url:
+        return True
+
+    if ".table.cosmos." in url:
+        return True
+
+    return False
+
+
+def _transform_patch_to_cosmos_post(request):
+    request.method = "POST"
+    request.headers["X-HTTP-Method"] = "MERGE"

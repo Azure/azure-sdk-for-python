@@ -7,13 +7,13 @@
 # --------------------------------------------------------------------------
 
 """
-FILE: sample_authentication.py
+FILE: sample_authentication_async.py
 DESCRIPTION:
     This sample demonstrates how to authenticate with the Azure Congnitive Search
     service with an API key. See more details about authentication here:
     https://docs.microsoft.com/en-us/azure.search.documents/search-security-api-keys
 USAGE:
-    python sample_authentication.py
+    python sample_authentication_async.py
     Set the environment variables with your own values before running the sample:
     1) AZURE_SEARCH_SERVICE_ENDPOINT - the endpoint of your Azure Cognitive Search service
     2) AZURE_SEARCH_INDEX_NAME - the name of your search index (e.g. "hotels-sample-index")

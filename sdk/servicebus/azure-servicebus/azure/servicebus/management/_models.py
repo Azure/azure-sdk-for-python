@@ -1062,6 +1062,20 @@ class SqlRuleFilter(object):
     """Represents a filter which is a composition of an expression and an action
     that is executed in the pub/sub pipeline.
 
+    .. admonition:: Example:
+
+        .. code-block:: python
+            :caption: Create SqlRuleFilter.
+
+            sql_filter = SqlRuleFilter("property1 = 'value'")
+            sql_filter_parametrized = SqlRuleFilter(
+                "property1 = @param1 AND property2 = @param2",
+                parameters={
+                    "@param1": "value",
+                    "@param2" : 1
+                }
+            )
+
     :param sql_expression: The SQL expression. e.g. MyProperty='ABC'
     :type sql_expression: str
     :param parameters: Sets the value of the sql expression parameters if any.

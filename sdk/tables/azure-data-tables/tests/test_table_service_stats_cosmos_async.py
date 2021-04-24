@@ -50,29 +50,17 @@ class TableServiceStatsTest(AzureTestCase, AsyncTableTestCase):
     @pytest.mark.skip("JSON is invalid for cosmos")
     @CosmosPreparer()
     async def test_table_service_stats_f(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
-        # Arrange
         tsc = TableServiceClient(self.account_url(tables_cosmos_account_name, "cosmos"), tables_primary_cosmos_account_key)
-
-        # Act
         stats = await tsc.get_service_stats(raw_response_hook=self.override_response_body_with_live_status)
-        # Assert
         self._assert_stats_default(stats)
 
-        if self.is_live:
-            sleep(SLEEP_DELAY)
+        self.sleep(SLEEP_DELAY)
 
     @pytest.mark.skip("JSON is invalid for cosmos")
     @CosmosPreparer()
     async def test_table_service_stats_when_unavailable(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
-        # Arrange
         tsc = TableServiceClient(self.account_url(tables_cosmos_account_name, "cosmos"), tables_primary_cosmos_account_key)
-
-        # Act
-        stats = await tsc.get_service_stats(
-            raw_response_hook=self.override_response_body_with_unavailable_status)
-
-        # Assert
+        stats = await tsc.get_service_stats(raw_response_hook=self.override_response_body_with_unavailable_status)
         self._assert_stats_unavailable(stats)
 
-        if self.is_live:
-            sleep(SLEEP_DELAY)
+        self.sleep(SLEEP_DELAY)

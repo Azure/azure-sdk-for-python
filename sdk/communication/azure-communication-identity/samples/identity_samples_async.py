@@ -11,11 +11,14 @@ FILE: identity_sample_async.py
 DESCRIPTION:
     These async samples demonstrate creating a user, issuing a token, revoking a token and deleting a user.
 
-    ///authenticating a client via a connection string
 USAGE:
     python identity_samples_async.py
     Set the environment variables with your own values before running the sample:
     1) AZURE_COMMUNICATION_SERVICE_ENDPOINT - Communication Service endpoint url
+    2) AZURE_COMMUNICATION_SERVICE_CONNECTION_STRING - the connection string in your ACS account
+    3) AZURE_CLIENT_ID - the client ID of your active directory application
+    4) AZURE_CLIENT_SECRET - the secret of your active directory application
+    5) AZURE_TENANT_ID - the tenant ID of your active directory application
 """
 
 import asyncio
@@ -42,7 +45,7 @@ class CommunicationIdentityClientSamples(object):
 
         async with identity_client:
             user = await identity_client.create_user()
-            print("Issuing token for: " + user.identifier)
+            print("Issuing token for: " + user.properties.get('id'))
             tokenresponse = await identity_client.get_token(user, scopes=[CommunicationTokenScope.CHAT])
             print("Token issued with value: " + tokenresponse.token)
 
@@ -73,7 +76,7 @@ class CommunicationIdentityClientSamples(object):
         async with identity_client:
             print("Creating new user")
             user = await identity_client.create_user()
-            print("User created with id:" + user.identifier)
+            print("User created with id:" + user.properties.get('id'))
 
     async def create_user_and_token(self):
         from azure.communication.identity.aio import CommunicationIdentityClient
@@ -87,7 +90,7 @@ class CommunicationIdentityClientSamples(object):
         async with identity_client:
             print("Creating new user with token")
             user, tokenresponse = await identity_client.create_user_and_token(scopes=[CommunicationTokenScope.CHAT])
-            print("User created with id:" + user.identifier)
+            print("User created with id:" + user.properties.get('id'))
             print("Token issued with value: " + tokenresponse.token)
 
     async def delete_user(self):
@@ -100,9 +103,9 @@ class CommunicationIdentityClientSamples(object):
 
         async with identity_client:
             user = await identity_client.create_user()
-            print("Deleting user: " + user.identifier)
+            print("Deleting user: " + user.properties.get('id'))
             await identity_client.delete_user(user)
-            print(user.identifier + " deleted")
+            print(user.properties.get('id') + " deleted")
 
 async def main():
     sample = CommunicationIdentityClientSamples()

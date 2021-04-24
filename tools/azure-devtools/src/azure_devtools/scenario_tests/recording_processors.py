@@ -148,7 +148,7 @@ class OAuthRequestResponsesFilter(RecordingProcessor):
         # GET https://login.microsoftonline.com/72f988bf-86f1-41af-91ab-2d7cd011db47/oauth2/token
         # POST https://login.microsoftonline.com/72f988bf-86f1-41af-91ab-2d7cd011db47/oauth2/v2.0/token
         import re
-        if not re.match('https://login.microsoftonline.com/([^/]+)/oauth2(?:/v2.0)?/token', request.uri):
+        if not re.search('/oauth2(?:/v2.0)?/token', request.uri):
             return request
         return None
 

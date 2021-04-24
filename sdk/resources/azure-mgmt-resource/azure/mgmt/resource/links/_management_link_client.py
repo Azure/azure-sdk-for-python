@@ -9,12 +9,21 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from azure.mgmt.core import ARMPipelineClient
-from msrest import Serializer, Deserializer
+from typing import TYPE_CHECKING
 
+from azure.mgmt.core import ARMPipelineClient
 from azure.profiles import KnownProfiles, ProfileDefinition
 from azure.profiles.multiapiclient import MultiApiClientMixin
+from msrest import Deserializer, Serializer
+
 from ._configuration import ManagementLinkClientConfiguration
+
+if TYPE_CHECKING:
+    # pylint: disable=unused-import,ungrouped-imports
+    from typing import Any, Optional
+
+    from azure.core.credentials import TokenCredential
+    from azure.core.pipeline.transport import HttpRequest, HttpResponse
 
 class _SDKClient(object):
     def __init__(self, *args, **kwargs):
@@ -38,15 +47,16 @@ class ManagementLinkClient(MultiApiClientMixin, _SDKClient):
     :type credential: ~azure.core.credentials.TokenCredential
     :param subscription_id: The ID of the target subscription.
     :type subscription_id: str
-    :param str api_version: API version to use if no profile is provided, or if
-     missing in profile.
-    :param str base_url: Service URL
+    :param api_version: API version to use if no profile is provided, or if missing in profile.
+    :type api_version: str
+    :param base_url: Service URL
+    :type base_url: str
     :param profile: A profile definition, from KnownProfiles to dict.
     :type profile: azure.profiles.KnownProfiles
     """
 
     DEFAULT_API_VERSION = '2016-09-01'
-    _PROFILE_TAG = "azure.mgmt.resource.ManagementLinkClient"
+    _PROFILE_TAG = "azure.mgmt.resource.links.ManagementLinkClient"
     LATEST_PROFILE = ProfileDefinition({
         _PROFILE_TAG: {
             None: DEFAULT_API_VERSION,
@@ -58,9 +68,9 @@ class ManagementLinkClient(MultiApiClientMixin, _SDKClient):
         self,
         credential,  # type: "TokenCredential"
         subscription_id,  # type: str
-        api_version=None,
-        base_url=None,
-        profile=KnownProfiles.default,
+        api_version=None, # type: Optional[str]
+        base_url=None,  # type: Optional[str]
+        profile=KnownProfiles.default, # type: KnownProfiles
         **kwargs  # type: Any
     ):
         if not base_url:
@@ -80,7 +90,7 @@ class ManagementLinkClient(MultiApiClientMixin, _SDKClient):
     def models(cls, api_version=DEFAULT_API_VERSION):
         """Module depends on the API version:
 
-           * 2016-09-01: :mod:`v2016_09_01.models<azure.mgmt.resource.v2016_09_01.models>`
+           * 2016-09-01: :mod:`v2016_09_01.models<azure.mgmt.resource.links.v2016_09_01.models>`
         """
         if api_version == '2016-09-01':
             from .v2016_09_01 import models
@@ -91,7 +101,7 @@ class ManagementLinkClient(MultiApiClientMixin, _SDKClient):
     def operations(self):
         """Instance depends on the API version:
 
-           * 2016-09-01: :class:`Operations<azure.mgmt.resource.v2016_09_01.operations.Operations>`
+           * 2016-09-01: :class:`Operations<azure.mgmt.resource.links.v2016_09_01.operations.Operations>`
         """
         api_version = self._get_api_version('operations')
         if api_version == '2016-09-01':
@@ -104,7 +114,7 @@ class ManagementLinkClient(MultiApiClientMixin, _SDKClient):
     def resource_links(self):
         """Instance depends on the API version:
 
-           * 2016-09-01: :class:`ResourceLinksOperations<azure.mgmt.resource.v2016_09_01.operations.ResourceLinksOperations>`
+           * 2016-09-01: :class:`ResourceLinksOperations<azure.mgmt.resource.links.v2016_09_01.operations.ResourceLinksOperations>`
         """
         api_version = self._get_api_version('resource_links')
         if api_version == '2016-09-01':
