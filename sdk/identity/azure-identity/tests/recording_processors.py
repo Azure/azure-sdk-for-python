@@ -45,7 +45,7 @@ class RecordingRedactor(RecordingProcessor):
                 # record a hash of the secret instead of a simple replacement like "redacted"
                 # because some tests (e.g. for CAE) require unique, consistent values
                 digest = hashlib.sha256(six.ensure_binary(body[field])).digest()
-                body[field] = six.ensure_str(binascii.hexlify(digest))
+                body[field] = "redacted-" + six.ensure_str(binascii.hexlify(digest))[:6]
 
         response["body"]["string"] = json.dumps(body)
         return response
