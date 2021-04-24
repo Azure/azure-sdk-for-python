@@ -153,7 +153,7 @@ def _set_content_body(
             )
             _set_content_type_header("application/octet-stream", internal_request)
         elif isinstance(content, (Iterable, AsyncIterable)): # pylint: disable=isinstance-second-argument-not-valid-type
-            _set_content_length_header("Transfer-Encoding", "chunked", internal_request)
+            # _set_content_length_header("Transfer-Encoding", "chunked", internal_request)
             _set_content_type_header("application/octet-stream", internal_request)
     elif isinstance(content, ET.Element):
         # XML body

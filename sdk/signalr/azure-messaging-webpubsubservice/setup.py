@@ -58,8 +58,6 @@ setup(
             # Exclude packages that will be covered by PEP420 or nspkg
             "azure",
             "azure.messaging",
-            "tests",
-            "examples",
         ]
     ),
     install_requires=[
