@@ -62,10 +62,11 @@ setup(
     ]),
     install_requires=[
         'msrest>=0.5.0',
-        'azure-core<2.0.0,>=1.9.0'
+        'azure-core<2.0.0,>=1.11.0'
     ],
     extras_require={
         ":python_version<'3.0'": ['azure-communication-nspkg'],
+        ":python_version<'3.8'": ["typing-extensions"]
     },
     project_urls={
         'Bug Reports': 'https://github.com/Azure/azure-sdk-for-python/issues',

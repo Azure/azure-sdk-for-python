@@ -211,8 +211,8 @@ class ResourcesOperations:
         :type parameters: ~azure.mgmt.resource.resources.v2019_10_01.models.ResourcesMoveInfo
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: True for ARMPolling, False for no polling, or a
-         polling object for personal polling strategy
+        :keyword polling: Pass in True if you'd like the AsyncARMPolling polling method,
+         False for no polling, or your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either None or the result of cls(response)
@@ -330,8 +330,8 @@ class ResourcesOperations:
         :type parameters: ~azure.mgmt.resource.resources.v2019_10_01.models.ResourcesMoveInfo
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: True for ARMPolling, False for no polling, or a
-         polling object for personal polling strategy
+        :keyword polling: Pass in True if you'd like the AsyncARMPolling polling method,
+         False for no polling, or your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either None or the result of cls(response)
@@ -623,8 +623,8 @@ class ResourcesOperations:
         :type api_version: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: True for ARMPolling, False for no polling, or a
-         polling object for personal polling strategy
+        :keyword polling: Pass in True if you'd like the AsyncARMPolling polling method,
+         False for no polling, or your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either None or the result of cls(response)
@@ -774,8 +774,8 @@ class ResourcesOperations:
         :type parameters: ~azure.mgmt.resource.resources.v2019_10_01.models.GenericResource
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: True for ARMPolling, False for no polling, or a
-         polling object for personal polling strategy
+        :keyword polling: Pass in True if you'd like the AsyncARMPolling polling method,
+         False for no polling, or your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either GenericResource or the result of cls(response)
@@ -926,8 +926,8 @@ class ResourcesOperations:
         :type parameters: ~azure.mgmt.resource.resources.v2019_10_01.models.GenericResource
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: True for ARMPolling, False for no polling, or a
-         polling object for personal polling strategy
+        :keyword polling: Pass in True if you'd like the AsyncARMPolling polling method,
+         False for no polling, or your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either GenericResource or the result of cls(response)
@@ -1069,8 +1069,8 @@ class ResourcesOperations:
         """Checks by ID whether a resource exists.
 
         :param resource_id: The fully qualified ID of the resource, including the resource name and
-         resource type. Use the format, /subscriptions/{guid}/resourceGroups/{resource-group-
-         name}/{resource-provider-namespace}/{resource-type}/{resource-name}.
+         resource type. Use the format,
+         /subscriptions/{guid}/resourceGroups/{resource-group-name}/{resource-provider-namespace}/{resource-type}/{resource-name}.
         :type resource_id: str
         :param api_version: The API version to use for the operation.
         :type api_version: str
@@ -1165,15 +1165,15 @@ class ResourcesOperations:
         """Deletes a resource by ID.
 
         :param resource_id: The fully qualified ID of the resource, including the resource name and
-         resource type. Use the format, /subscriptions/{guid}/resourceGroups/{resource-group-
-         name}/{resource-provider-namespace}/{resource-type}/{resource-name}.
+         resource type. Use the format,
+         /subscriptions/{guid}/resourceGroups/{resource-group-name}/{resource-provider-namespace}/{resource-type}/{resource-name}.
         :type resource_id: str
         :param api_version: The API version to use for the operation.
         :type api_version: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: True for ARMPolling, False for no polling, or a
-         polling object for personal polling strategy
+        :keyword polling: Pass in True if you'd like the AsyncARMPolling polling method,
+         False for no polling, or your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either None or the result of cls(response)
@@ -1285,8 +1285,8 @@ class ResourcesOperations:
         """Create a resource by ID.
 
         :param resource_id: The fully qualified ID of the resource, including the resource name and
-         resource type. Use the format, /subscriptions/{guid}/resourceGroups/{resource-group-
-         name}/{resource-provider-namespace}/{resource-type}/{resource-name}.
+         resource type. Use the format,
+         /subscriptions/{guid}/resourceGroups/{resource-group-name}/{resource-provider-namespace}/{resource-type}/{resource-name}.
         :type resource_id: str
         :param api_version: The API version to use for the operation.
         :type api_version: str
@@ -1294,8 +1294,8 @@ class ResourcesOperations:
         :type parameters: ~azure.mgmt.resource.resources.v2019_10_01.models.GenericResource
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: True for ARMPolling, False for no polling, or a
-         polling object for personal polling strategy
+        :keyword polling: Pass in True if you'd like the AsyncARMPolling polling method,
+         False for no polling, or your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either GenericResource or the result of cls(response)
@@ -1408,8 +1408,8 @@ class ResourcesOperations:
         """Updates a resource by ID.
 
         :param resource_id: The fully qualified ID of the resource, including the resource name and
-         resource type. Use the format, /subscriptions/{guid}/resourceGroups/{resource-group-
-         name}/{resource-provider-namespace}/{resource-type}/{resource-name}.
+         resource type. Use the format,
+         /subscriptions/{guid}/resourceGroups/{resource-group-name}/{resource-provider-namespace}/{resource-type}/{resource-name}.
         :type resource_id: str
         :param api_version: The API version to use for the operation.
         :type api_version: str
@@ -1417,8 +1417,8 @@ class ResourcesOperations:
         :type parameters: ~azure.mgmt.resource.resources.v2019_10_01.models.GenericResource
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: True for ARMPolling, False for no polling, or a
-         polling object for personal polling strategy
+        :keyword polling: Pass in True if you'd like the AsyncARMPolling polling method,
+         False for no polling, or your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either GenericResource or the result of cls(response)
@@ -1478,8 +1478,8 @@ class ResourcesOperations:
         """Gets a resource by ID.
 
         :param resource_id: The fully qualified ID of the resource, including the resource name and
-         resource type. Use the format, /subscriptions/{guid}/resourceGroups/{resource-group-
-         name}/{resource-provider-namespace}/{resource-type}/{resource-name}.
+         resource type. Use the format,
+         /subscriptions/{guid}/resourceGroups/{resource-group-name}/{resource-provider-namespace}/{resource-type}/{resource-name}.
         :type resource_id: str
         :param api_version: The API version to use for the operation.
         :type api_version: str

@@ -30,9 +30,9 @@ def generate_account_sas(
     Use the returned signature with the sas_token parameter of TableService.
 
     :param account_name: Account name
-    :type account_name:str
+    :type account_name: str
     :param account_key: Account key
-    :type account_key:str
+    :type account_key: str
     :param resource_types:
         Specifies the resource types that are accessible with the account SAS.
     :type resource_types: ResourceTypes

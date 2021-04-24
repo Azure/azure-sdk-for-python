@@ -185,6 +185,7 @@ class MgmtComputeTest(AzureMgmtTestCase):
         else:
             return ('000', '000')
 
+    @unittest.skip("The KEY_VAULT_NAME need artificially generated,skip for now")
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     def test_compute_disk_encryption(self, resource_group):
         SUBSCRIPTION_ID = self.settings.SUBSCRIPTION_ID

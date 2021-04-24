@@ -51,4 +51,7 @@ PYLINT_ACCEPTABLE_FAILURES = [
     "azure-ai-anomalydetector",
     "azure-security-attestation",
     "azure-iot-deviceupdate",
+    "azure-purview-nspkg",
+    "azure-purview-scanning",
+    "azure-purview-catalog",
 ]

@@ -41,7 +41,8 @@ trace.get_tracer_provider().add_span_processor(
 
 # Example with Eventgrid SDKs
 import os
-from azure.eventgrid import EventGridPublisherClient, CloudEvent
+from azure.core.messaging import CloudEvent
+from azure.eventgrid import EventGridPublisherClient
 from azure.core.credentials import AzureKeyCredential
 
 hostname = os.environ['CLOUD_TOPIC_HOSTNAME']

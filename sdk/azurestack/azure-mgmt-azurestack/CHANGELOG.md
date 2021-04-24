@@ -1,5 +1,22 @@
 # Release History
 
+## 1.0.0 (2021-04-08)
+
+**Features**
+
+  - Model Registration has a new parameter system_data
+  - Model Registration has a new parameter kind
+  - Model TrackedResource has a new parameter system_data
+  - Model TrackedResource has a new parameter kind
+  - Model CustomerSubscription has a new parameter system_data
+  - Model Product has a new parameter system_data
+  - Added operation RegistrationsOperations.enable_remote_management
+  - Added operation group LinkedSubscriptionsOperations
+
+**Breaking changes**
+
+  - Operation ProductsOperations.get_products has a new signature
+
 ## 1.0.0b1 (2020-12-03)
 
 This is beta preview version.
