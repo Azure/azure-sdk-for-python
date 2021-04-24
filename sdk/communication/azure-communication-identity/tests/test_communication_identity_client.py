@@ -14,8 +14,7 @@ from _shared.testcase import (
     CommunicationTestCase,
     BodyReplacerProcessor
 )
-from devtools_testutils import ResourceGroupPreparer
-from _shared.communication_service_preparer import CommunicationServicePreparer 
+from _shared.communication_service_preparer import CommunicationPreparer
 from azure.identity import DefaultAzureCredential
 from azure.communication.identity._shared.utils import parse_connection_str
 
@@ -33,10 +32,9 @@ class CommunicationIdentityClientTest(CommunicationTestCase):
             BodyReplacerProcessor(keys=["id", "token"]),
             URIIdentityReplacer()])
     
-    @ResourceGroupPreparer(random_name_enabled=True, delete_after_tag_timedelta=datetime.timedelta(hours=2))
-    @CommunicationServicePreparer()
-    def test_create_user_from_managed_identity(self, connection_string):
-        endpoint, access_key = parse_connection_str(connection_string)
+    @CommunicationPreparer()
+    def test_create_user_from_managed_identity(self, communication_connection_string):
+        endpoint, access_key = parse_connection_str(communication_connection_string)
         from devtools_testutils import is_live
         if not is_live():
             credential = FakeTokenCredential()
@@ -47,28 +45,23 @@ class CommunicationIdentityClientTest(CommunicationTestCase):
 
         assert user.properties.get('id') is not None
 
-    @ResourceGroupPreparer(random_name_enabled=True, delete_after_tag_timedelta=datetime.timedelta(hours=2))
-    @CommunicationServicePreparer()
-    def test_create_user(self, connection_string):
+    @CommunicationPreparer()
+    def test_create_user(self, communication_connection_string):
         identity_client = CommunicationIdentityClient.from_connection_string(
-            connection_string)
+            communication_connection_string)
         user = identity_client.create_user()
 
-        assert user.properties.get('id') is not None
-
-    @ResourceGroupPreparer(random_name_enabled=True, delete_after_tag_timedelta=datetime.timedelta(hours=2))
-    @CommunicationServicePreparer()
-    def test_create_user_and_token(self, connection_string):
-        identity_client = CommunicationIdentityClient.from_connection_string(connection_string)
+    @CommunicationPreparer()
+    def test_create_user_and_token(self, communication_connection_string):
+        identity_client = CommunicationIdentityClient.from_connection_string(communication_connection_string)
         user, token_response = identity_client.create_user_and_token(scopes=[CommunicationTokenScope.CHAT])
 
         assert user.properties.get('id') is not None
         assert token_response.token is not None
 
-    @ResourceGroupPreparer(random_name_enabled=True, delete_after_tag_timedelta=datetime.timedelta(hours=2))
-    @CommunicationServicePreparer()
-    def test_get_token_from_managed_identity(self, connection_string):
-        endpoint, access_key = parse_connection_str(connection_string)
+    @CommunicationPreparer()
+    def test_get_token_from_managed_identity(self, communication_connection_string):
+        endpoint, access_key = parse_connection_str(communication_connection_string)
         from devtools_testutils import is_live
         if not is_live():
             credential = FakeTokenCredential()
@@ -82,11 +75,10 @@ class CommunicationIdentityClientTest(CommunicationTestCase):
         assert user.properties.get('id') is not None
         assert token_response.token is not None
 
-    @ResourceGroupPreparer(random_name_enabled=True, delete_after_tag_timedelta=datetime.timedelta(hours=2))
-    @CommunicationServicePreparer()
-    def test_get_token(self, connection_string):
+    @CommunicationPreparer()
+    def test_get_token(self, communication_connection_string):
         identity_client = CommunicationIdentityClient.from_connection_string(
-            connection_string)
+            communication_connection_string)
         user = identity_client.create_user()
 
         token_response = identity_client.get_token(user, scopes=[CommunicationTokenScope.CHAT])
@@ -94,10 +86,9 @@ class CommunicationIdentityClientTest(CommunicationTestCase):
         assert user.properties.get('id') is not None
         assert token_response.token is not None
 
-    @ResourceGroupPreparer(random_name_enabled=True, delete_after_tag_timedelta=datetime.timedelta(hours=2))
-    @CommunicationServicePreparer()
-    def test_revoke_tokens_from_managed_identity(self, connection_string):
-        endpoint, access_key = parse_connection_str(connection_string)
+    @CommunicationPreparer()
+    def test_revoke_tokens_from_managed_identity(self, communication_connection_string):
+        endpoint, access_key = parse_connection_str(communication_connection_string)
         from devtools_testutils import is_live
         if not is_live():
             credential = FakeTokenCredential()
@@ -112,11 +103,10 @@ class CommunicationIdentityClientTest(CommunicationTestCase):
         assert user.properties.get('id') is not None
         assert token_response.token is not None
 
-    @ResourceGroupPreparer(random_name_enabled=True, delete_after_tag_timedelta=datetime.timedelta(hours=2))
-    @CommunicationServicePreparer()
-    def test_revoke_tokens(self, connection_string):
+    @CommunicationPreparer()
+    def test_revoke_tokens(self, communication_connection_string):
         identity_client = CommunicationIdentityClient.from_connection_string(
-            connection_string)
+            communication_connection_string)
         user = identity_client.create_user()
 
         token_response = identity_client.get_token(user, scopes=[CommunicationTokenScope.CHAT])
@@ -125,10 +115,9 @@ class CommunicationIdentityClientTest(CommunicationTestCase):
         assert user.properties.get('id') is not None
         assert token_response.token is not None
 
-    @ResourceGroupPreparer(random_name_enabled=True, delete_after_tag_timedelta=datetime.timedelta(hours=2))
-    @CommunicationServicePreparer()
-    def test_delete_user_from_managed_identity(self, connection_string):
-        endpoint, access_key = parse_connection_str(connection_string)
+    @CommunicationPreparer()
+    def test_delete_user_from_managed_identity(self, communication_connection_string):
+        endpoint, access_key = parse_connection_str(communication_connection_string)
         from devtools_testutils import is_live
         if not is_live():
             credential = FakeTokenCredential()
@@ -141,13 +130,52 @@ class CommunicationIdentityClientTest(CommunicationTestCase):
 
         assert user.properties.get('id') is not None
 
-    @ResourceGroupPreparer(random_name_enabled=True, delete_after_tag_timedelta=datetime.timedelta(hours=2))
-    @CommunicationServicePreparer()
-    def test_delete_user(self, connection_string):
+    @CommunicationPreparer()
+    def test_delete_user(self, communication_connection_string):
         identity_client = CommunicationIdentityClient.from_connection_string(
-            connection_string)
+            communication_connection_string)
         user = identity_client.create_user()
 
         identity_client.delete_user(user)
 
         assert user.properties.get('id') is not None
+
+    @CommunicationPreparer()
+    def test_create_user_and_token_with_no_scopes(self, communication_connection_string):
+        identity_client = CommunicationIdentityClient.from_connection_string(communication_connection_string)
+
+        with pytest.raises(Exception) as ex:
+            user, token_response = identity_client.create_user_and_token(scopes=None)
+
+    @CommunicationPreparer()
+    def test_delete_user_with_no_user(self, communication_connection_string):
+        identity_client = CommunicationIdentityClient.from_connection_string(
+            communication_connection_string)
+
+        with pytest.raises(Exception) as ex:
+            identity_client.delete_user(user=None)
+
+    @CommunicationPreparer()
+    def test_revoke_tokens_with_no_user(self, communication_connection_string):
+        identity_client = CommunicationIdentityClient.from_connection_string(
+            communication_connection_string)
+        
+        with pytest.raises(Exception) as ex:
+            identity_client.revoke_tokens(user=None)
+    
+    @CommunicationPreparer()
+    def test_get_token_with_no_user(self, communication_connection_string):
+        identity_client = CommunicationIdentityClient.from_connection_string(
+            communication_connection_string)
+
+        with pytest.raises(Exception) as ex:
+            token_response = identity_client.get_token(user=None, scopes=[CommunicationTokenScope.CHAT])
+    
+    @CommunicationPreparer()
+    def test_get_token_with_no_scopes(self, communication_connection_string):
+        identity_client = CommunicationIdentityClient.from_connection_string(
+            communication_connection_string)
+        user = identity_client.create_user()
+
+        with pytest.raises(Exception) as ex:
+            token_response = identity_client.get_token(user, scopes=None)

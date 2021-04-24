@@ -1,0 +1,31 @@
+interactions:
+- request:
+    body: ''
+    headers:
+      Accept:
+      - application/json
+      Date:
+      - Mon, 19 Apr 2021 21:51:00 GMT
+      User-Agent:
+      - azsdk-python-communication-phonenumbers/1.0.0b5 Python/3.9.0 (Windows-10-10.0.19041-SP0)
+      x-ms-return-client-request-id:
+      - 'true'
+    method: GET
+    uri: https://sanitized.communication.azure.com/phoneNumbers/sanitized?api-version=2021-03-07
+  response:
+    body:
+      string: '{"error": {"code": "PhoneNumberNotFound", "message": "The specified
+        phone number +14255550123 cannot be found.", "target": "phonenumber"}}'
+    headers:
+      api-supported-versions: '2021-03-07'
+      content-type: application/json
+      date: Mon, 19 Apr 2021 21:51:00 GMT
+      ms-cv: mIQqzEwXO0ix/6wyl5JeaA.0
+      request-context: appId=
+      transfer-encoding: chunked
+      x-processing-time: 370ms
+    status:
+      code: 404
+      message: Not Found
+    url: sanitized
+version: 1

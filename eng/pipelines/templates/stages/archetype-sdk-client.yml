@@ -5,6 +5,9 @@ parameters:
 - name: Artifacts
   type: object
   default: []
+- name: CondaArtifacts
+  type: object
+  default: []
 - name: TestPipeline
   type: boolean
   default: false
@@ -62,6 +65,7 @@ stages:
       parameters:
         ServiceDirectory: ${{ parameters.ServiceDirectory }}
         Artifacts: ${{ parameters.Artifacts }}
+        CondaArtifacts: ${{ parameters.CondaArtifacts }}
         ${{ if eq(parameters.ServiceDirectory, 'template') }}:
           TestPipeline: true
         BeforePublishSteps: ${{ parameters.BeforePublishSteps }}
@@ -78,7 +82,13 @@ stages:
           - ${{ each config in parameters.AdditionalMatrixConfigs }}:
             -  ${{ config }}
         MatrixFilters: ${{ parameters.MatrixFilters }}
-        MatrixReplace: ${{ parameters.MatrixReplace }}
+        MatrixReplace:
+          # Temporarily replace macOS agents with ubuntu agents because of ongoing pool capacity issues
+          - Pool=Azure.Pipelines/azsdk-pool-mms-ubuntu-1804-general
+          - OsVmImage=macOS-10.15/MMSUbuntu18.04
+          - ${{ each replacement in parameters.MatrixReplace }}:
+            - ${{ replacement }}
+
 
   # The Prerelease and Release stages are conditioned on whether we are building a pull request and the branch.
   - ${{if and(ne(variables['Build.Reason'], 'PullRequest'), eq(variables['System.TeamProject'], 'internal'))}}:
@@ -94,3 +104,15 @@ stages:
         TargetDocRepoOwner: ${{ parameters.TargetDocRepoOwner }}
         TargetDocRepoName: ${{ parameters.TargetDocRepoName }}
         DevFeedName: ${{ parameters.DevFeedName }}
+
+  # The Prerelease and Release stages are conditioned on whether we are building a pull request and the branch.
+  - ${{if and(ne(variables['Build.Reason'], 'PullRequest'), eq(variables['System.TeamProject'], 'internal'))}}:
+    - template: archetype-conda-release.yml
+      parameters:
+        DependsOn: Build
+        ServiceDirectory: ${{ parameters.ServiceDirectory }}
+        CondaArtifacts: ${{ parameters.CondaArtifacts }}
+        ArtifactName: conda
+        ${{ if eq(parameters.ServiceDirectory, 'template') }}:
+          TestPipeline: true
+        

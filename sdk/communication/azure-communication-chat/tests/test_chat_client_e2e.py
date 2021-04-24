@@ -15,7 +15,7 @@ from azure.communication.identity import CommunicationIdentityClient
 from azure.communication.chat import (
     ChatClient,
     CommunicationTokenCredential,
-    ChatThreadParticipant
+    ChatParticipant
 )
 from azure.communication.chat._shared.utils import parse_connection_str
 
@@ -56,16 +56,16 @@ class ChatClientTest(CommunicationTestCase):
 
         # delete created users and chat threads
         if not self.is_playback():
-            self.identity_client.delete_user(self.user)
             self.chat_client.delete_chat_thread(self.thread_id)
+            self.identity_client.delete_user(self.user)
 
     def _create_thread(self, idempotency_token=None):
         # create chat thread
         topic = "test topic"
         share_history_time = datetime.utcnow()
         share_history_time = share_history_time.replace(tzinfo=TZ_UTC)
-        participants = [ChatThreadParticipant(
-            user=self.user,
+        participants = [ChatParticipant(
+            identifier=self.user,
             display_name='name',
             share_history_time=share_history_time
         )]

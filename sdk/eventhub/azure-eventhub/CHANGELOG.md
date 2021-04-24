@@ -1,12 +1,18 @@
 # Release History
 
+## 5.4.1 (Unreleased)
+
+**Bug Fixes**
+
+- Fixed bug that custom user agent string should be put in front of the built-in user agent string instead of being appended.
+
 ## 5.4.0 (2021-04-07)
 
 This version follows from version 5.3.1, rather than 5.4.0b1 so that the preview idempotent producer feature is not included.
 
 **New Features**
 
-- Added support for using `~azure.core.credentials.AzureSasCredential` as credential for authenticating producer and consumer clients.
+- Added support for using `azure.core.credentials.AzureSasCredential` as credential for authenticating producer and consumer clients.
 - Updated `list_ownership`, `claim_ownership`, `update_checkpoint`, `list_checkpoints` on sync and async `CheckpointStore` to support taking `**kwargs`.
   - WARNING: Implementing a custom checkpointstore that does not support taking `**kwargs` in the methods listed previously will result in the following pylint error: `W0221: Parameters differ from overridden ________ method (arguments-differ)`.
 - Updated `update_checkpoint` on sync and async `PartitionContext` to support taking `**kwargs`.

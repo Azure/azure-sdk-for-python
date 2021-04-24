@@ -288,17 +288,20 @@ class ServiceBusAdministrationClient:  # pylint:disable=too-many-public-methods
         :type authorization_rules: list[~azure.servicebus.management.AuthorizationRule]
         :keyword auto_delete_on_idle: ISO 8601 timeSpan idle interval after which the queue is
          automatically deleted. The minimum duration is 5 minutes.
-        :type auto_delete_on_idle: ~datetime.timedelta
+         Input value of either type ~datetime.timedelta or string in ISO 8601 duration format like "PT300S" is accepted.
+        :type auto_delete_on_idle: Union[~datetime.timedelta, str]
         :keyword dead_lettering_on_message_expiration: A value that indicates whether this queue has dead
          letter support when a message expires.
         :type dead_lettering_on_message_expiration: bool
         :keyword default_message_time_to_live: ISO 8601 default message timespan to live value. This is
          the duration after which the message expires, starting from when the message is sent to Service
          Bus. This is the default value used when TimeToLive is not set on a message itself.
-        :type default_message_time_to_live: ~datetime.timedelta
+         Input value of either type ~datetime.timedelta or string in ISO 8601 duration format like "PT300S" is accepted.
+        :type default_message_time_to_live: Union[~datetime.timedelta, str]
         :keyword duplicate_detection_history_time_window: ISO 8601 timeSpan structure that defines the
          duration of the duplicate detection history. The default value is 10 minutes.
-        :type duplicate_detection_history_time_window: ~datetime.timedelta
+         Input value of either type ~datetime.timedelta or string in ISO 8601 duration format like "PT300S" is accepted.
+        :type duplicate_detection_history_time_window: Union[~datetime.timedelta, str]
         :keyword enable_batched_operations: Value that indicates whether server-side batched operations
          are enabled.
         :type enable_batched_operations: bool
@@ -311,7 +314,8 @@ class ServiceBusAdministrationClient:  # pylint:disable=too-many-public-methods
         :keyword lock_duration: ISO 8601 timespan duration of a peek-lock; that is, the amount of time
          that the message is locked for other receivers. The maximum value for LockDuration is 5
          minutes; the default value is 1 minute.
-        :type lock_duration: ~datetime.timedelta
+         Input value of either type ~datetime.timedelta or string in ISO 8601 duration format like "PT300S" is accepted.
+        :type lock_duration: Union[~datetime.timedelta, str]
         :keyword max_delivery_count: The maximum delivery count. A message is automatically deadlettered
          after this number of deliveries. Default value is 10.
         :type max_delivery_count: int
@@ -553,7 +557,8 @@ class ServiceBusAdministrationClient:  # pylint:disable=too-many-public-methods
         :keyword default_message_time_to_live: ISO 8601 default message timespan to live value. This is
          the duration after which the message expires, starting from when the message is sent to Service
          Bus. This is the default value used when TimeToLive is not set on a message itself.
-        :type default_message_time_to_live: ~datetime.timedelta
+         Input value of either type ~datetime.timedelta or string in ISO 8601 duration format like "PT300S" is accepted.
+        :type default_message_time_to_live: Union[~datetime.timedelta, str]
         :keyword max_size_in_megabytes: The maximum size of the topic in megabytes, which is the size of
          memory allocated for the topic.
         :type max_size_in_megabytes: long
@@ -562,7 +567,8 @@ class ServiceBusAdministrationClient:  # pylint:disable=too-many-public-methods
         :type requires_duplicate_detection: bool
         :keyword duplicate_detection_history_time_window: ISO 8601 timeSpan structure that defines the
          duration of the duplicate detection history. The default value is 10 minutes.
-        :type duplicate_detection_history_time_window: ~datetime.timedelta
+         Input value of either type ~datetime.timedelta or string in ISO 8601 duration format like "PT300S" is accepted.
+        :type duplicate_detection_history_time_window: Union[~datetime.timedelta, str]
         :keyword enable_batched_operations: Value that indicates whether server-side batched operations
          are enabled.
         :type enable_batched_operations: bool
@@ -577,7 +583,8 @@ class ServiceBusAdministrationClient:  # pylint:disable=too-many-public-methods
         :type support_ordering: bool
         :keyword auto_delete_on_idle: ISO 8601 timeSpan idle interval after which the topic is
          automatically deleted. The minimum duration is 5 minutes.
-        :type auto_delete_on_idle: ~datetime.timedelta
+         Input value of either type ~datetime.timedelta or string in ISO 8601 duration format like "PT300S" is accepted.
+        :type auto_delete_on_idle: Union[~datetime.timedelta, str]
         :keyword enable_partitioning: A value that indicates whether the topic is to be partitioned
          across multiple message brokers.
         :type enable_partitioning: bool
@@ -662,10 +669,10 @@ class ServiceBusAdministrationClient:  # pylint:disable=too-many-public-methods
             or topic.duplicate_detection_history_time_window
         )
 
-        to_update.default_message_time_to_live = avoid_timedelta_overflow(
+        to_update.default_message_time_to_live = avoid_timedelta_overflow(  # type: ignore
             to_update.default_message_time_to_live
         )
-        to_update.auto_delete_on_idle = avoid_timedelta_overflow(
+        to_update.auto_delete_on_idle = avoid_timedelta_overflow(  # type: ignore
             to_update.auto_delete_on_idle
         )
 
@@ -804,14 +811,16 @@ class ServiceBusAdministrationClient:  # pylint:disable=too-many-public-methods
         :keyword lock_duration: ISO 8601 timespan duration of a peek-lock; that is, the amount of time
          that the message is locked for other receivers. The maximum value for LockDuration is 5
          minutes; the default value is 1 minute.
-        :type lock_duration: ~datetime.timedelta
+         Input value of either type ~datetime.timedelta or string in ISO 8601 duration format like "PT300S" is accepted.
+        :type lock_duration: Union[~datetime.timedelta, str]
         :keyword requires_session: A value that indicates whether the queue supports the concept of
          sessions.
         :type requires_session: bool
         :keyword default_message_time_to_live: ISO 8601 default message timespan to live value. This is
          the duration after which the message expires, starting from when the message is sent to Service
          Bus. This is the default value used when TimeToLive is not set on a message itself.
-        :type default_message_time_to_live: ~datetime.timedelta
+         Input value of either type ~datetime.timedelta or string in ISO 8601 duration format like "PT300S" is accepted.
+        :type default_message_time_to_live: Union[~datetime.timedelta, str]
         :keyword dead_lettering_on_message_expiration: A value that indicates whether this subscription
          has dead letter support when a message expires.
         :type dead_lettering_on_message_expiration: bool
@@ -835,7 +844,8 @@ class ServiceBusAdministrationClient:  # pylint:disable=too-many-public-methods
         :type forward_dead_lettered_messages_to: str
         :keyword auto_delete_on_idle: ISO 8601 timeSpan idle interval after which the subscription is
          automatically deleted. The minimum duration is 5 minutes.
-        :type auto_delete_on_idle: ~datetime.timedelta
+         Input value of either type ~datetime.timedelta or string in ISO 8601 duration format like "PT300S" is accepted.
+        :type auto_delete_on_idle: Union[~datetime.timedelta, str]
         :rtype:  ~azure.servicebus.management.SubscriptionProperties
         """
         _validate_entity_name_type(topic_name, display_name="topic_name")
@@ -924,10 +934,10 @@ class ServiceBusAdministrationClient:  # pylint:disable=too-many-public-methods
         )
         to_update = subscription._to_internal_entity()
 
-        to_update.default_message_time_to_live = avoid_timedelta_overflow(
+        to_update.default_message_time_to_live = avoid_timedelta_overflow(  # type: ignore
             to_update.default_message_time_to_live
         )
-        to_update.auto_delete_on_idle = avoid_timedelta_overflow(
+        to_update.auto_delete_on_idle = avoid_timedelta_overflow(  # type: ignore
             to_update.auto_delete_on_idle
         )
         create_entity_body = CreateSubscriptionBody(

@@ -240,9 +240,9 @@ class SearchField(msrest.serialization.Model):
             if search_field.fields else None
         hidden = not search_field.retrievable if search_field.retrievable is not None else None
         try:
-            normalizers = search_field.normalizers
+            normalizer = search_field.normalizer
         except AttributeError:
-            normalizers = None
+            normalizer = None
         return cls(
             name=search_field.name,
             type=search_field.type,
@@ -255,7 +255,7 @@ class SearchField(msrest.serialization.Model):
             analyzer_name=search_field.analyzer,
             search_analyzer_name=search_field.search_analyzer,
             index_analyzer_name=search_field.index_analyzer,
-            normalizers=normalizers,
+            normalizer=normalizer,
             synonym_map_names=search_field.synonym_maps,
             fields=fields
         )

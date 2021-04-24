@@ -16,11 +16,13 @@ if TYPE_CHECKING:
     from typing import Any, Optional
 
     from azure.core.credentials import TokenCredential
+    from azure.core.pipeline.transport import HttpRequest, HttpResponse
 
 from ._configuration import ManagedServicesClientConfiguration
 from .operations import RegistrationDefinitionsOperations
 from .operations import RegistrationAssignmentsOperations
 from .operations import MarketplaceRegistrationDefinitionsOperations
+from .operations import MarketplaceRegistrationDefinitionsWithoutScopeOperations
 from .operations import Operations
 from . import models
 
@@ -34,6 +36,8 @@ class ManagedServicesClient(object):
     :vartype registration_assignments: azure.mgmt.managedservices.operations.RegistrationAssignmentsOperations
     :ivar marketplace_registration_definitions: MarketplaceRegistrationDefinitionsOperations operations
     :vartype marketplace_registration_definitions: azure.mgmt.managedservices.operations.MarketplaceRegistrationDefinitionsOperations
+    :ivar marketplace_registration_definitions_without_scope: MarketplaceRegistrationDefinitionsWithoutScopeOperations operations
+    :vartype marketplace_registration_definitions_without_scope: azure.mgmt.managedservices.operations.MarketplaceRegistrationDefinitionsWithoutScopeOperations
     :ivar operations: Operations operations
     :vartype operations: azure.mgmt.managedservices.operations.Operations
     :param credential: Credential needed for the client to connect to Azure.
@@ -65,8 +69,25 @@ class ManagedServicesClient(object):
             self._client, self._config, self._serialize, self._deserialize)
         self.marketplace_registration_definitions = MarketplaceRegistrationDefinitionsOperations(
             self._client, self._config, self._serialize, self._deserialize)
+        self.marketplace_registration_definitions_without_scope = MarketplaceRegistrationDefinitionsWithoutScopeOperations(
+            self._client, self._config, self._serialize, self._deserialize)
         self.operations = Operations(
             self._client, self._config, self._serialize, self._deserialize)
+
+    def _send_request(self, http_request, **kwargs):
+        # type: (HttpRequest, Any) -> HttpResponse
+        """Runs the network request through the client's chained policies.
+
+        :param http_request: The network request you want to make. Required.
+        :type http_request: ~azure.core.pipeline.transport.HttpRequest
+        :keyword bool stream: Whether the response payload will be streamed. Defaults to True.
+        :return: The response of your network call. Does not do error handling on your response.
+        :rtype: ~azure.core.pipeline.transport.HttpResponse
+        """
+        http_request.url = self._client.format_url(http_request.url)
+        stream = kwargs.pop("stream", True)
+        pipeline_response = self._client._pipeline.run(http_request, stream=stream, **kwargs)
+        return pipeline_response.http_response
 
     def close(self):
         # type: () -> None

@@ -9,8 +9,8 @@
 try:
     from ._models_py3 import ApiError
     from ._models_py3 import AvailableServiceSku
-    from ._models_py3 import AvailableServiceSkuSku
     from ._models_py3 import AvailableServiceSkuCapacity
+    from ._models_py3 import AvailableServiceSkuSku
     from ._models_py3 import AzureActiveDirectoryApp
     from ._models_py3 import BackupFileInfo
     from ._models_py3 import BackupSetInfo
@@ -277,8 +277,8 @@ try:
 except (SyntaxError, ImportError):
     from ._models import ApiError  # type: ignore
     from ._models import AvailableServiceSku  # type: ignore
-    from ._models import AvailableServiceSkuSku  # type: ignore
     from ._models import AvailableServiceSkuCapacity  # type: ignore
+    from ._models import AvailableServiceSkuSku  # type: ignore
     from ._models import AzureActiveDirectoryApp  # type: ignore
     from ._models import BackupFileInfo  # type: ignore
     from ._models import BackupSetInfo  # type: ignore
@@ -598,8 +598,8 @@ from ._data_migration_management_client_enums import (
 __all__ = [
     'ApiError',
     'AvailableServiceSku',
-    'AvailableServiceSkuSku',
     'AvailableServiceSkuCapacity',
+    'AvailableServiceSkuSku',
     'AzureActiveDirectoryApp',
     'BackupFileInfo',
     'BackupSetInfo',

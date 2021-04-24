@@ -183,6 +183,7 @@ class TestTranslation(AsyncDocumentTranslationTest):
             job = await client.wait_until_done(job.id)
         assert e.value.error.code == "InvalidDocumentAccessLevel"
 
+    @pytest.mark.skip("https://github.com/Azure/azure-sdk-for-python/issues/17914")
     @DocumentTranslationPreparer()
     @DocumentTranslationClientPreparer()
     async def test_bad_input_target(self, client):

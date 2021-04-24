@@ -138,7 +138,7 @@ class SqlPoolTablesOperations:
         schema_name: str,
         table_name: str,
         **kwargs
-    ) -> "_models.Resource":
+    ) -> "_models.SqlPoolTable":
         """Get Sql pool table.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
@@ -152,11 +152,11 @@ class SqlPoolTablesOperations:
         :param table_name: The name of the table.
         :type table_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: Resource, or the result of cls(response)
-        :rtype: ~azure.mgmt.synapse.models.Resource
+        :return: SqlPoolTable, or the result of cls(response)
+        :rtype: ~azure.mgmt.synapse.models.SqlPoolTable
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["_models.Resource"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.SqlPoolTable"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -192,7 +192,7 @@ class SqlPoolTablesOperations:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             raise HttpResponseError(response=response, error_format=ARMErrorFormat)
 
-        deserialized = self._deserialize('Resource', pipeline_response)
+        deserialized = self._deserialize('SqlPoolTable', pipeline_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})

@@ -15,11 +15,11 @@ interactions:
       DataServiceVersion:
       - '3.0'
       Date:
-      - Fri, 18 Dec 2020 16:32:11 GMT
+      - Wed, 07 Apr 2021 21:52:39 GMT
       User-Agent:
-      - azsdk-python-data-tables/12.0.0b4 Python/3.9.0rc1 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-data-tables/12.0.0b7 Python/3.9.0rc1 (Windows-10-10.0.19041-SP0)
       x-ms-date:
-      - Fri, 18 Dec 2020 16:32:11 GMT
+      - Wed, 07 Apr 2021 21:52:39 GMT
       x-ms-version:
       - '2019-02-02'
     method: POST
@@ -31,9 +31,9 @@ interactions:
       content-type:
       - application/json;odata=minimalmetadata
       date:
-      - Fri, 18 Dec 2020 16:32:12 GMT
+      - Wed, 07 Apr 2021 21:52:41 GMT
       etag:
-      - W/"datetime'2020-12-18T16%3A32%3A12.6360584Z'"
+      - W/"datetime'2021-04-07T21%3A52%3A40.5169160Z'"
       location:
       - https://fake_cosmos_account.table.cosmos.azure.com/Tables('uttable5f481a84')
       server:
@@ -47,10 +47,11 @@ interactions:
     body: '{"PartitionKey": "pk5f481a84", "PartitionKey@odata.type": "Edm.String",
       "RowKey": "rk5f481a84", "RowKey@odata.type": "Edm.String", "age": 39, "sex":
       "male", "sex@odata.type": "Edm.String", "married": true, "deceased": false,
-      "ratio": 3.1, "evenratio": 3.0, "large": 933311100, "Birthday": "1973-10-04T00:00:00Z",
-      "Birthday@odata.type": "Edm.DateTime", "birthday": "1970-10-04T00:00:00Z", "birthday@odata.type":
-      "Edm.DateTime", "binary": "YmluYXJ5", "binary@odata.type": "Edm.Binary", "other":
-      20, "clsid": "c9da6455-213d-42c9-9a79-3e9149a57833", "clsid@odata.type": "Edm.Guid"}'
+      "ratio": 3.1, "evenratio": 3.0, "large": 933311100, "Birthday": "1973-10-04T00:00:00.000000Z",
+      "Birthday@odata.type": "Edm.DateTime", "birthday": "1970-10-04T00:00:00.000000Z",
+      "birthday@odata.type": "Edm.DateTime", "binary": "YmluYXJ5", "binary@odata.type":
+      "Edm.Binary", "other": 20, "clsid": "c9da6455-213d-42c9-9a79-3e9149a57833",
+      "clsid@odata.type": "Edm.Guid"}'
     headers:
       Accept:
       - application/json;odata=minimalmetadata
@@ -59,31 +60,31 @@ interactions:
       Connection:
       - keep-alive
       Content-Length:
-      - '577'
+      - '591'
       Content-Type:
       - application/json;odata=nometadata
       DataServiceVersion:
       - '3.0'
       Date:
-      - Fri, 18 Dec 2020 16:32:12 GMT
+      - Wed, 07 Apr 2021 21:52:40 GMT
       User-Agent:
-      - azsdk-python-data-tables/12.0.0b4 Python/3.9.0rc1 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-data-tables/12.0.0b7 Python/3.9.0rc1 (Windows-10-10.0.19041-SP0)
       x-ms-date:
-      - Fri, 18 Dec 2020 16:32:12 GMT
+      - Wed, 07 Apr 2021 21:52:40 GMT
       x-ms-version:
       - '2019-02-02'
     method: POST
     uri: https://fake_cosmos_account.table.cosmos.azure.com/uttable5f481a84
   response:
     body:
-      string: '{"odata.metadata":"https://fake_cosmos_account.table.cosmos.azure.com/uttable5f481a84/$metadata#uttable5f481a84/@Element","odata.etag":"W/\"datetime''2020-12-18T16%3A32%3A13.4324232Z''\"","PartitionKey":"pk5f481a84","RowKey":"rk5f481a84","age":39,"sex":"male","married":true,"deceased":false,"ratio":3.1,"evenratio":3.0,"large":933311100,"Birthday@odata.type":"Edm.DateTime","Birthday":"1973-10-04T00:00:00.0000000Z","birthday@odata.type":"Edm.DateTime","birthday":"1970-10-04T00:00:00.0000000Z","binary@odata.type":"Edm.Binary","binary":"YmluYXJ5","other":20,"clsid@odata.type":"Edm.Guid","clsid":"c9da6455-213d-42c9-9a79-3e9149a57833","Timestamp":"2020-12-18T16:32:13.4324232Z"}'
+      string: '{"odata.metadata":"https://fake_cosmos_account.table.cosmos.azure.com/uttable5f481a84/$metadata#uttable5f481a84/@Element","odata.etag":"W/\"datetime''2021-04-07T21%3A52%3A41.2467208Z''\"","PartitionKey":"pk5f481a84","RowKey":"rk5f481a84","age":39,"sex":"male","married":true,"deceased":false,"ratio":3.1,"evenratio":3.0,"large":933311100,"Birthday@odata.type":"Edm.DateTime","Birthday":"1973-10-04T00:00:00.0000000Z","birthday@odata.type":"Edm.DateTime","birthday":"1970-10-04T00:00:00.0000000Z","binary@odata.type":"Edm.Binary","binary":"YmluYXJ5","other":20,"clsid@odata.type":"Edm.Guid","clsid":"c9da6455-213d-42c9-9a79-3e9149a57833","Timestamp":"2021-04-07T21:52:41.2467208Z"}'
     headers:
       content-type:
       - application/json;odata=minimalmetadata
       date:
-      - Fri, 18 Dec 2020 16:32:13 GMT
+      - Wed, 07 Apr 2021 21:52:41 GMT
       etag:
-      - W/"datetime'2020-12-18T16%3A32%3A13.4324232Z'"
+      - W/"datetime'2021-04-07T21%3A52%3A41.2467208Z'"
       location:
       - https://fake_cosmos_account.table.cosmos.azure.com/uttable5f481a84(PartitionKey='pk5f481a84',RowKey='rk5f481a84')
       server:
@@ -97,8 +98,8 @@ interactions:
     body: '{"PartitionKey": "pk5f481a84", "PartitionKey@odata.type": "Edm.String",
       "RowKey": "rk5f481a84", "RowKey@odata.type": "Edm.String", "age": "abc", "age@odata.type":
       "Edm.String", "sex": "female", "sex@odata.type": "Edm.String", "sign": "aquarius",
-      "sign@odata.type": "Edm.String", "birthday": "1991-10-04T00:00:00Z", "birthday@odata.type":
-      "Edm.DateTime"}'
+      "sign@odata.type": "Edm.String", "birthday": "1991-10-04T00:00:00.000000Z",
+      "birthday@odata.type": "Edm.DateTime"}'
     headers:
       Accept:
       - application/json
@@ -107,41 +108,43 @@ interactions:
       Connection:
       - keep-alive
       Content-Length:
-      - '353'
+      - '360'
       Content-Type:
       - application/json
       DataServiceVersion:
       - '3.0'
       Date:
-      - Fri, 18 Dec 2020 16:32:13 GMT
+      - Wed, 07 Apr 2021 21:52:41 GMT
       If-Match:
       - W/"datetime'2012-06-15T22%3A51%3A44.9662825Z'"
       User-Agent:
-      - azsdk-python-data-tables/12.0.0b4 Python/3.9.0rc1 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-data-tables/12.0.0b7 Python/3.9.0rc1 (Windows-10-10.0.19041-SP0)
+      X-HTTP-Method:
+      - MERGE
       x-ms-date:
-      - Fri, 18 Dec 2020 16:32:13 GMT
+      - Wed, 07 Apr 2021 21:52:41 GMT
       x-ms-version:
       - '2019-02-02'
-    method: PATCH
+    method: POST
     uri: https://fake_cosmos_account.table.cosmos.azure.com/uttable5f481a84(PartitionKey='pk5f481a84',RowKey='rk5f481a84')
   response:
     body:
-      string: "{\"odata.error\":{\"code\":\"InvalidInput\",\"message\":{\"lang\":\"\
-        en-us\",\"value\":\"One of the input values is invalid.\\r\\nActivityId: 9533a6dd-414e-11eb-abee-58961df361d1,\
-        \ documentdb-dotnet-sdk/2.11.0 Host/64-bit MicrosoftWindowsNT/6.2.9200.0\\\
-        nRequestID:9533a6dd-414e-11eb-abee-58961df361d1\\n\"}}}\r\n"
+      string: "{\"odata.error\":{\"code\":\"UpdateConditionNotSatisfied\",\"message\"\
+        :{\"lang\":\"en-us\",\"value\":\"The update condition specified in the request\
+        \ was not satisfied.\\nRequestID:935cfd6c-97eb-11eb-9272-58961df361ce\\n\"\
+        }}}\r\n"
     headers:
       content-type:
       - application/json;odata=fullmetadata
       date:
-      - Fri, 18 Dec 2020 16:32:13 GMT
+      - Wed, 07 Apr 2021 21:52:41 GMT
       server:
       - Microsoft-HTTPAPI/2.0
       transfer-encoding:
       - chunked
     status:
-      code: 400
-      message: Bad Request
+      code: 412
+      message: Precondition Failed
 - request:
     body: null
     headers:
@@ -154,11 +157,11 @@ interactions:
       Content-Length:
       - '0'
       Date:
-      - Fri, 18 Dec 2020 16:32:13 GMT
+      - Wed, 07 Apr 2021 21:52:41 GMT
       User-Agent:
-      - azsdk-python-data-tables/12.0.0b4 Python/3.9.0rc1 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-data-tables/12.0.0b7 Python/3.9.0rc1 (Windows-10-10.0.19041-SP0)
       x-ms-date:
-      - Fri, 18 Dec 2020 16:32:13 GMT
+      - Wed, 07 Apr 2021 21:52:41 GMT
       x-ms-version:
       - '2019-02-02'
     method: DELETE
@@ -170,7 +173,7 @@ interactions:
       content-length:
       - '0'
       date:
-      - Fri, 18 Dec 2020 16:32:13 GMT
+      - Wed, 07 Apr 2021 21:52:41 GMT
       server:
       - Microsoft-HTTPAPI/2.0
     status:
@@ -188,11 +191,11 @@ interactions:
       DataServiceVersion:
       - '3.0'
       Date:
-      - Fri, 18 Dec 2020 16:32:13 GMT
+      - Wed, 07 Apr 2021 21:52:41 GMT
       User-Agent:
-      - azsdk-python-data-tables/12.0.0b4 Python/3.9.0rc1 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-data-tables/12.0.0b7 Python/3.9.0rc1 (Windows-10-10.0.19041-SP0)
       x-ms-date:
-      - Fri, 18 Dec 2020 16:32:13 GMT
+      - Wed, 07 Apr 2021 21:52:41 GMT
       x-ms-version:
       - '2019-02-02'
     method: GET
@@ -204,7 +207,7 @@ interactions:
       content-type:
       - application/json;odata=minimalmetadata
       date:
-      - Fri, 18 Dec 2020 16:32:13 GMT
+      - Wed, 07 Apr 2021 21:52:41 GMT
       server:
       - Microsoft-HTTPAPI/2.0
       transfer-encoding:

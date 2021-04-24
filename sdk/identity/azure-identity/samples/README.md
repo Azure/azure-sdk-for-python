@@ -4,7 +4,7 @@ languages:
   - python
 products:
   - azure
-  - azure-identity
+  - azure-sdks
 urlFragment: identity-samples
 ---
 
