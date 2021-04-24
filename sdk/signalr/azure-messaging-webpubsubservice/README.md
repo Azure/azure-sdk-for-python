@@ -1,4 +1,4 @@
-# AzureWebPubSub Service client library for Python
+# Azure WebPubSubService client library for Python
 
 [Azure Web PubSub Service](https://aka.ms/awps/doc) is a service that enables you to build real-time messaging web applications using WebSockets and the publish-subscribe pattern. Any platform supporting WebSocket APIs can connect to the service easily, e.g. web pages, mobile applications, edge devices, etc. The service manages the WebSocket connections for you and allows up to 100K \*concurrent connections. It provides powerful APIs for you to manage these clients and deliver real-time messages.
 
@@ -52,6 +52,8 @@ In order to interact with the Azure WebPubSub service, you'll need to create an 
 >>> client
 <WebPubSubServiceClient endpoint:'<endpoint>'>
 ```
+
+## Examples
 
 ### Sending a request
 
@@ -111,6 +113,10 @@ logging.basicConfig(level=logging.DEBUG)
 ````
 
 Http request and response details are printed to stdout with this logging config.
+
+## Next steps
+
+More examples are coming soon...
 
 ## Contributing
 
