@@ -239,11 +239,12 @@ def test_azure_named_key_credential():
 
     assert cred.named_key.name == "sample_name"
     assert cred.named_key.key == "samplekey"
+    assert isinstance(cred.named_key, tuple)
 
     cred.update("newname", "newkey")
     assert cred.named_key.name == "newname"
     assert cred.named_key.key == "newkey"
-
+    assert isinstance(cred.named_key, tuple)
 
 def test_azure_named_key_credential_raises():
     with pytest.raises(TypeError, match="Both name and key must be strings."):
