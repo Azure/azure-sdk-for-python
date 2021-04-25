@@ -30,6 +30,9 @@ from .operations import DataFlowsOperations
 from .operations import DataFlowDebugSessionOperations
 from .operations import ManagedVirtualNetworksOperations
 from .operations import ManagedPrivateEndpointsOperations
+from .operations import PrivateEndPointConnectionsOperations
+from .operations import PrivateEndpointConnectionOperations
+from .operations import PrivateLinkResourcesOperations
 from . import models
 
 
@@ -73,6 +76,12 @@ class DataFactoryManagementClient(SDKClient):
     :vartype managed_virtual_networks: azure.mgmt.datafactory.operations.ManagedVirtualNetworksOperations
     :ivar managed_private_endpoints: ManagedPrivateEndpoints operations
     :vartype managed_private_endpoints: azure.mgmt.datafactory.operations.ManagedPrivateEndpointsOperations
+    :ivar private_end_point_connections: PrivateEndPointConnections operations
+    :vartype private_end_point_connections: azure.mgmt.datafactory.operations.PrivateEndPointConnectionsOperations
+    :ivar private_endpoint_connection: PrivateEndpointConnection operations
+    :vartype private_endpoint_connection: azure.mgmt.datafactory.operations.PrivateEndpointConnectionOperations
+    :ivar private_link_resources: PrivateLinkResources operations
+    :vartype private_link_resources: azure.mgmt.datafactory.operations.PrivateLinkResourcesOperations
 
     :param credentials: Credentials needed for the client to connect to Azure.
     :type credentials: :mod:`A msrestazure Credentials
@@ -126,4 +135,10 @@ class DataFactoryManagementClient(SDKClient):
         self.managed_virtual_networks = ManagedVirtualNetworksOperations(
             self._client, self.config, self._serialize, self._deserialize)
         self.managed_private_endpoints = ManagedPrivateEndpointsOperations(
+            self._client, self.config, self._serialize, self._deserialize)
+        self.private_end_point_connections = PrivateEndPointConnectionsOperations(
+            self._client, self.config, self._serialize, self._deserialize)
+        self.private_endpoint_connection = PrivateEndpointConnectionOperations(
+            self._client, self.config, self._serialize, self._deserialize)
+        self.private_link_resources = PrivateLinkResourcesOperations(
             self._client, self.config, self._serialize, self._deserialize)

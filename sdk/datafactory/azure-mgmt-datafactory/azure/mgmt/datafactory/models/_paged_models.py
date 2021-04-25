@@ -155,3 +155,16 @@ class ManagedPrivateEndpointResourcePaged(Paged):
     def __init__(self, *args, **kwargs):
 
         super(ManagedPrivateEndpointResourcePaged, self).__init__(*args, **kwargs)
+class PrivateEndpointConnectionResourcePaged(Paged):
+    """
+    A paging container for iterating over a list of :class:`PrivateEndpointConnectionResource <azure.mgmt.datafactory.models.PrivateEndpointConnectionResource>` object
+    """
+
+    _attribute_map = {
+        'next_link': {'key': 'nextLink', 'type': 'str'},
+        'current_page': {'key': 'value', 'type': '[PrivateEndpointConnectionResource]'}
+    }
+
+    def __init__(self, *args, **kwargs):
+
+        super(PrivateEndpointConnectionResourcePaged, self).__init__(*args, **kwargs)

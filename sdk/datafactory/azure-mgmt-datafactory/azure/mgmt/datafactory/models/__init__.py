@@ -24,11 +24,15 @@ try:
     from ._models_py3 import AmazonRedshiftLinkedService
     from ._models_py3 import AmazonRedshiftSource
     from ._models_py3 import AmazonRedshiftTableDataset
+    from ._models_py3 import AmazonS3CompatibleLinkedService
+    from ._models_py3 import AmazonS3CompatibleLocation
+    from ._models_py3 import AmazonS3CompatibleReadSettings
     from ._models_py3 import AmazonS3Dataset
     from ._models_py3 import AmazonS3LinkedService
     from ._models_py3 import AmazonS3Location
     from ._models_py3 import AmazonS3ReadSettings
     from ._models_py3 import AppendVariableActivity
+    from ._models_py3 import ArmIdWrapper
     from ._models_py3 import AvroDataset
     from ._models_py3 import AvroFormat
     from ._models_py3 import AvroSink
@@ -387,6 +391,7 @@ try:
     from ._models_py3 import MicrosoftAccessTableDataset
     from ._models_py3 import MongoDbAtlasCollectionDataset
     from ._models_py3 import MongoDbAtlasLinkedService
+    from ._models_py3 import MongoDbAtlasSink
     from ._models_py3 import MongoDbAtlasSource
     from ._models_py3 import MongoDbCollectionDataset
     from ._models_py3 import MongoDbCursorMethodsProperties
@@ -394,6 +399,7 @@ try:
     from ._models_py3 import MongoDbSource
     from ._models_py3 import MongoDbV2CollectionDataset
     from ._models_py3 import MongoDbV2LinkedService
+    from ._models_py3 import MongoDbV2Sink
     from ._models_py3 import MongoDbV2Source
     from ._models_py3 import MultiplePipelineTrigger
     from ._models_py3 import MySqlLinkedService
@@ -420,6 +426,9 @@ try:
     from ._models_py3 import OperationMetricDimension
     from ._models_py3 import OperationMetricSpecification
     from ._models_py3 import OperationServiceSpecification
+    from ._models_py3 import OracleCloudStorageLinkedService
+    from ._models_py3 import OracleCloudStorageLocation
+    from ._models_py3 import OracleCloudStorageReadSettings
     from ._models_py3 import OracleLinkedService
     from ._models_py3 import OraclePartitionSettings
     from ._models_py3 import OracleServiceCloudLinkedService
@@ -461,6 +470,13 @@ try:
     from ._models_py3 import PrestoLinkedService
     from ._models_py3 import PrestoObjectDataset
     from ._models_py3 import PrestoSource
+    from ._models_py3 import PrivateEndpointConnectionResource
+    from ._models_py3 import PrivateLinkConnectionApprovalRequest
+    from ._models_py3 import PrivateLinkConnectionApprovalRequestResource
+    from ._models_py3 import PrivateLinkConnectionState
+    from ._models_py3 import PrivateLinkResource
+    from ._models_py3 import PrivateLinkResourceProperties
+    from ._models_py3 import PrivateLinkResourcesWrapper
     from ._models_py3 import QuickBooksLinkedService
     from ._models_py3 import QuickBooksObjectDataset
     from ._models_py3 import QuickBooksSource
@@ -470,6 +486,7 @@ try:
     from ._models_py3 import RedshiftUnloadSettings
     from ._models_py3 import RelationalSource
     from ._models_py3 import RelationalTableDataset
+    from ._models_py3 import RemotePrivateEndpointConnection
     from ._models_py3 import RerunTumblingWindowTrigger
     from ._models_py3 import Resource
     from ._models_py3 import ResponsysLinkedService
@@ -548,6 +565,7 @@ try:
     from ._models_py3 import SparkLinkedService
     from ._models_py3 import SparkObjectDataset
     from ._models_py3 import SparkSource
+    from ._models_py3 import SqlAlwaysEncryptedProperties
     from ._models_py3 import SqlDWSink
     from ._models_py3 import SqlDWSource
     from ._models_py3 import SqlMISink
@@ -660,11 +678,15 @@ except (SyntaxError, ImportError):
     from ._models import AmazonRedshiftLinkedService
     from ._models import AmazonRedshiftSource
     from ._models import AmazonRedshiftTableDataset
+    from ._models import AmazonS3CompatibleLinkedService
+    from ._models import AmazonS3CompatibleLocation
+    from ._models import AmazonS3CompatibleReadSettings
     from ._models import AmazonS3Dataset
     from ._models import AmazonS3LinkedService
     from ._models import AmazonS3Location
     from ._models import AmazonS3ReadSettings
     from ._models import AppendVariableActivity
+    from ._models import ArmIdWrapper
     from ._models import AvroDataset
     from ._models import AvroFormat
     from ._models import AvroSink
@@ -1023,6 +1045,7 @@ except (SyntaxError, ImportError):
     from ._models import MicrosoftAccessTableDataset
     from ._models import MongoDbAtlasCollectionDataset
     from ._models import MongoDbAtlasLinkedService
+    from ._models import MongoDbAtlasSink
     from ._models import MongoDbAtlasSource
     from ._models import MongoDbCollectionDataset
     from ._models import MongoDbCursorMethodsProperties
@@ -1030,6 +1053,7 @@ except (SyntaxError, ImportError):
     from ._models import MongoDbSource
     from ._models import MongoDbV2CollectionDataset
     from ._models import MongoDbV2LinkedService
+    from ._models import MongoDbV2Sink
     from ._models import MongoDbV2Source
     from ._models import MultiplePipelineTrigger
     from ._models import MySqlLinkedService
@@ -1056,6 +1080,9 @@ except (SyntaxError, ImportError):
     from ._models import OperationMetricDimension
     from ._models import OperationMetricSpecification
     from ._models import OperationServiceSpecification
+    from ._models import OracleCloudStorageLinkedService
+    from ._models import OracleCloudStorageLocation
+    from ._models import OracleCloudStorageReadSettings
     from ._models import OracleLinkedService
     from ._models import OraclePartitionSettings
     from ._models import OracleServiceCloudLinkedService
@@ -1097,6 +1124,13 @@ except (SyntaxError, ImportError):
     from ._models import PrestoLinkedService
     from ._models import PrestoObjectDataset
     from ._models import PrestoSource
+    from ._models import PrivateEndpointConnectionResource
+    from ._models import PrivateLinkConnectionApprovalRequest
+    from ._models import PrivateLinkConnectionApprovalRequestResource
+    from ._models import PrivateLinkConnectionState
+    from ._models import PrivateLinkResource
+    from ._models import PrivateLinkResourceProperties
+    from ._models import PrivateLinkResourcesWrapper
     from ._models import QuickBooksLinkedService
     from ._models import QuickBooksObjectDataset
     from ._models import QuickBooksSource
@@ -1106,6 +1140,7 @@ except (SyntaxError, ImportError):
     from ._models import RedshiftUnloadSettings
     from ._models import RelationalSource
     from ._models import RelationalTableDataset
+    from ._models import RemotePrivateEndpointConnection
     from ._models import RerunTumblingWindowTrigger
     from ._models import Resource
     from ._models import ResponsysLinkedService
@@ -1184,6 +1219,7 @@ except (SyntaxError, ImportError):
     from ._models import SparkLinkedService
     from ._models import SparkObjectDataset
     from ._models import SparkSource
+    from ._models import SqlAlwaysEncryptedProperties
     from ._models import SqlDWSink
     from ._models import SqlDWSource
     from ._models import SqlMISink
@@ -1291,6 +1327,7 @@ from ._paged_models import ManagedPrivateEndpointResourcePaged
 from ._paged_models import ManagedVirtualNetworkResourcePaged
 from ._paged_models import OperationPaged
 from ._paged_models import PipelineResourcePaged
+from ._paged_models import PrivateEndpointConnectionResourcePaged
 from ._paged_models import TriggerResourcePaged
 from ._data_factory_management_client_enums import (
     FactoryIdentityType,
@@ -1337,6 +1374,7 @@ from ._data_factory_management_client_enums import (
     DynamicsAuthenticationType,
     CosmosDbServicePrincipalCredentialType,
     CosmosDbConnectionMode,
+    SqlAlwaysEncryptedAkvAuthType,
     OrcCompressionCodec,
     AvroCompressionCodec,
     TumblingWindowFrequency,
@@ -1394,11 +1432,15 @@ __all__ = [
     'AmazonRedshiftLinkedService',
     'AmazonRedshiftSource',
     'AmazonRedshiftTableDataset',
+    'AmazonS3CompatibleLinkedService',
+    'AmazonS3CompatibleLocation',
+    'AmazonS3CompatibleReadSettings',
     'AmazonS3Dataset',
     'AmazonS3LinkedService',
     'AmazonS3Location',
     'AmazonS3ReadSettings',
     'AppendVariableActivity',
+    'ArmIdWrapper',
     'AvroDataset',
     'AvroFormat',
     'AvroSink',
@@ -1757,6 +1799,7 @@ __all__ = [
     'MicrosoftAccessTableDataset',
     'MongoDbAtlasCollectionDataset',
     'MongoDbAtlasLinkedService',
+    'MongoDbAtlasSink',
     'MongoDbAtlasSource',
     'MongoDbCollectionDataset',
     'MongoDbCursorMethodsProperties',
@@ -1764,6 +1807,7 @@ __all__ = [
     'MongoDbSource',
     'MongoDbV2CollectionDataset',
     'MongoDbV2LinkedService',
+    'MongoDbV2Sink',
     'MongoDbV2Source',
     'MultiplePipelineTrigger',
     'MySqlLinkedService',
@@ -1790,6 +1834,9 @@ __all__ = [
     'OperationMetricDimension',
     'OperationMetricSpecification',
     'OperationServiceSpecification',
+    'OracleCloudStorageLinkedService',
+    'OracleCloudStorageLocation',
+    'OracleCloudStorageReadSettings',
     'OracleLinkedService',
     'OraclePartitionSettings',
     'OracleServiceCloudLinkedService',
@@ -1831,6 +1878,13 @@ __all__ = [
     'PrestoLinkedService',
     'PrestoObjectDataset',
     'PrestoSource',
+    'PrivateEndpointConnectionResource',
+    'PrivateLinkConnectionApprovalRequest',
+    'PrivateLinkConnectionApprovalRequestResource',
+    'PrivateLinkConnectionState',
+    'PrivateLinkResource',
+    'PrivateLinkResourceProperties',
+    'PrivateLinkResourcesWrapper',
     'QuickBooksLinkedService',
     'QuickBooksObjectDataset',
     'QuickBooksSource',
@@ -1840,6 +1894,7 @@ __all__ = [
     'RedshiftUnloadSettings',
     'RelationalSource',
     'RelationalTableDataset',
+    'RemotePrivateEndpointConnection',
     'RerunTumblingWindowTrigger',
     'Resource',
     'ResponsysLinkedService',
@@ -1918,6 +1973,7 @@ __all__ = [
     'SparkLinkedService',
     'SparkObjectDataset',
     'SparkSource',
+    'SqlAlwaysEncryptedProperties',
     'SqlDWSink',
     'SqlDWSource',
     'SqlMISink',
@@ -2026,6 +2082,7 @@ __all__ = [
     'DataFlowDebugSessionInfoPaged',
     'ManagedVirtualNetworkResourcePaged',
     'ManagedPrivateEndpointResourcePaged',
+    'PrivateEndpointConnectionResourcePaged',
     'FactoryIdentityType',
     'GlobalParameterType',
     'PublicNetworkAccess',
@@ -2070,6 +2127,7 @@ __all__ = [
     'DynamicsAuthenticationType',
     'CosmosDbServicePrincipalCredentialType',
     'CosmosDbConnectionMode',
+    'SqlAlwaysEncryptedAkvAuthType',
     'OrcCompressionCodec',
     'AvroCompressionCodec',
     'TumblingWindowFrequency',

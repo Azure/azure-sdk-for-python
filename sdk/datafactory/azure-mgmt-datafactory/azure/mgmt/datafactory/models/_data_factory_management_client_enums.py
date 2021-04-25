@@ -341,6 +341,12 @@ class CosmosDbConnectionMode(str, Enum):
     direct = "Direct"
 
 
+class SqlAlwaysEncryptedAkvAuthType(str, Enum):
+
+    service_principal = "ServicePrincipal"
+    managed_identity = "ManagedIdentity"
+
+
 class OrcCompressionCodec(str, Enum):
 
     none = "none"
