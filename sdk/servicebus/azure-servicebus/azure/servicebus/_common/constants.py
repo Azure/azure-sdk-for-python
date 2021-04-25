@@ -5,6 +5,8 @@
 # -------------------------------------------------------------------------
 from enum import Enum
 
+from datetime import datetime
+from msrest.serialization import UTC
 from uamqp import constants, types
 
 VENDOR = b"com.microsoft"
@@ -161,7 +163,10 @@ TRACE_PROPERTY_ENCODING = "ascii"
 
 
 MESSAGE_PROPERTY_MAX_LENGTH = 128
-
+# .NET TimeSpan.MaxValue: 10675199.02:48:05.4775807
+MAX_DURATION_VALUE = 922337203685477
+# equivalent to .NET Date("9999-12-31T07:59:59.000Z").getTime() in ms
+MAX_ABSOLUTE_EXPIRY_TIME = 253402243199000
 
 class ServiceBusReceiveMode(str, Enum):
     PEEK_LOCK = "peeklock"
