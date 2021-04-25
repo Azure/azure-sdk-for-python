@@ -214,7 +214,6 @@ opentelemetry-sdk<2.0.0,>=1.0.0
 #override azure-mgmt-customproviders msrest>=0.6.21
 #override azure-mgmt-azurestack msrest>=0.6.21
 #override azure-mgmt-storagesync msrest>=0.6.21
-#override azure-mgmt-resourcegraph msrest>=0.6.21
 #override azure-mgmt-containerservice msrest>=0.6.21
 #override azure-mgmt-hybridnetwork msrest>=0.6.21
 #override azure-mgmt-datashare msrest>=0.6.21
@@ -224,7 +223,6 @@ opentelemetry-sdk<2.0.0,>=1.0.0
 #override azure-mgmt-dns msrest>=0.6.21
 #override azure-mgmt-maintenance msrest>=0.6.21
 #override azure-mgmt-mixedreality msrest>=0.6.21
-#override azure-mgmt-peering msrest>=0.6.21
 #override azure-mgmt-automanage msrest>=0.6.21
 #override azure-mgmt-azurestackhci msrest>=0.6.21
 #override azure-mgmt-hybridkubernetes msrest>=0.6.21
@@ -248,9 +246,10 @@ opentelemetry-sdk<2.0.0,>=1.0.0
 #override azure-mgmt-reservations msrest>=0.6.21
 #override azure-mgmt-webpubsub msrest>=0.6.21
 #override azure-mgmt-keyvault msrest>=0.6.21
-#override azure-mgmt-resource msrest>=0.6.21
 #override azure-template azure-core<2.0.0,>=1.10.0
 #override azure-mgmt-managedservices msrest>=0.6.21
+#override azure-mgmt-resourcegraph msrest>=0.6.21
 #override azure-purview-scanning azure-core<2.0.0,>=1.8.2 msrest>=0.6.21
 #override azure-purview-catalog azure-core<2.0.0,>=1.8.2 msrest>=0.6.21
 #override azure-mgmt-resource msrest>=0.6.21
+#override azure-mgmt-peering msrest>=0.6.21
