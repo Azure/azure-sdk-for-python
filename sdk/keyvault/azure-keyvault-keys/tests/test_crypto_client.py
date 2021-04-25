@@ -20,15 +20,19 @@ from azure.keyvault.keys.crypto import CryptographyClient, EncryptionAlgorithm, 
 from azure.keyvault.keys.crypto._key_validity import _UTC
 from azure.keyvault.keys.crypto._providers import NoLocalCryptography, get_local_cryptography_provider
 from azure.mgmt.keyvault.models import KeyPermissions, Permissions
-from parameterized import parameterized, param
 import pytest
 
 from _shared.json_attribute_matcher import json_attribute_matcher
 from _shared.test_case import KeyVaultTestCase
-from _test_case import KeysTestCase, suffixed_test_name
+from _test_case import client_setup, get_decorator, KeysTestCase
+
 
 # without keys/get, a CryptographyClient created with a key ID performs all ops remotely
 NO_GET = Permissions(keys=[p.value for p in KeyPermissions if p.value != "get"])
+
+all_api_versions = get_decorator()
+hsm_only = get_decorator(hsm_only=True)
+no_get = get_decorator(permissions=NO_GET)
 
 
 class CryptoClientTests(KeysTestCase, KeyVaultTestCase):
@@ -138,14 +142,10 @@ class CryptoClientTests(KeysTestCase, KeyVaultTestCase):
         assert key_vault_key.key.kid == imported_key.id == key_vault_key.id
         return key_vault_key
 
-    @parameterized.expand([param(is_hsm=b) for b in [True, False]], name_func=suffixed_test_name)
-    def test_ec_key_id(self, **kwargs):
+    @all_api_versions()
+    @client_setup
+    def test_ec_key_id(self, key_client, is_hsm, **kwargs):
         """When initialized with a key ID, the client should retrieve the key and perform public operations locally"""
-        is_hsm = kwargs.pop("is_hsm")
-        self._skip_if_not_configured(is_hsm)
-        endpoint_url = self.managed_hsm_url if is_hsm else self.vault_url
-
-        key_client = self.create_key_client(endpoint_url)
         key = self._create_ec_key(key_client, self.get_resource_name("eckey"), hardware_protected=is_hsm)
 
         crypto_client = self.create_crypto_client(key.id)
@@ -157,14 +157,10 @@ class CryptoClientTests(KeysTestCase, KeyVaultTestCase):
 
         crypto_client.verify(SignatureAlgorithm.es256_k, hashlib.sha256(self.plaintext).digest(), self.plaintext)
 
-    @parameterized.expand([param(is_hsm=b) for b in [True, False]], name_func=suffixed_test_name)
-    def test_rsa_key_id(self, **kwargs):
+    @all_api_versions()
+    @client_setup
+    def test_rsa_key_id(self, key_client, is_hsm, **kwargs):
         """When initialized with a key ID, the client should retrieve the key and perform public operations locally"""
-        is_hsm = kwargs.pop("is_hsm")
-        self._skip_if_not_configured(is_hsm)
-        endpoint_url = self.managed_hsm_url if is_hsm else self.vault_url
-
-        key_client = self.create_key_client(endpoint_url)
         key = self._create_rsa_key(key_client, self.get_resource_name("rsakey"), hardware_protected=is_hsm)
 
         crypto_client = self.create_crypto_client(key.id)
@@ -178,13 +174,9 @@ class CryptoClientTests(KeysTestCase, KeyVaultTestCase):
         crypto_client.verify(SignatureAlgorithm.rs256, hashlib.sha256(self.plaintext).digest(), self.plaintext)
         crypto_client.wrap_key(KeyWrapAlgorithm.rsa_oaep, self.plaintext)
 
-    @parameterized.expand([param(is_hsm=b) for b in [True, False]], name_func=suffixed_test_name)
-    def test_encrypt_and_decrypt(self, **kwargs):
-        is_hsm = kwargs.pop("is_hsm")
-        self._skip_if_not_configured(is_hsm)
-        endpoint_url = self.managed_hsm_url if is_hsm else self.vault_url
-
-        key_client = self.create_key_client(endpoint_url, permissions=NO_GET)
+    @no_get()
+    @client_setup
+    def test_encrypt_and_decrypt(self, key_client, is_hsm, **kwargs):
         key_name = self.get_resource_name("keycrypt")
 
         imported_key = self._import_test_key(key_client, key_name, hardware_protected=is_hsm)
@@ -198,13 +190,9 @@ class CryptoClientTests(KeysTestCase, KeyVaultTestCase):
         self.assertEqual(EncryptionAlgorithm.rsa_oaep, result.algorithm)
         self.assertEqual(self.plaintext, result.plaintext)
 
-    @parameterized.expand([param(is_hsm=b) for b in [True, False]], name_func=suffixed_test_name)
-    def test_sign_and_verify(self, **kwargs):
-        is_hsm = kwargs.pop("is_hsm")
-        self._skip_if_not_configured(is_hsm)
-        endpoint_url = self.managed_hsm_url if is_hsm else self.vault_url
-
-        key_client = self.create_key_client(endpoint_url, permissions=NO_GET)
+    @no_get()
+    @client_setup
+    def test_sign_and_verify(self, key_client, is_hsm, **kwargs):
         key_name = self.get_resource_name("keysign")
 
         md = hashlib.sha256()
@@ -222,13 +210,9 @@ class CryptoClientTests(KeysTestCase, KeyVaultTestCase):
         self.assertEqual(result.algorithm, SignatureAlgorithm.rs256)
         self.assertTrue(verified.is_valid)
 
-    @parameterized.expand([param(is_hsm=b) for b in [True, False]], name_func=suffixed_test_name)
-    def test_wrap_and_unwrap(self, **kwargs):
-        is_hsm = kwargs.pop("is_hsm")
-        self._skip_if_not_configured(is_hsm)
-        endpoint_url = self.managed_hsm_url if is_hsm else self.vault_url
-
-        key_client = self.create_key_client(endpoint_url, permissions=NO_GET)
+    @no_get()
+    @client_setup
+    def test_wrap_and_unwrap(self, key_client, is_hsm, **kwargs):
         key_name = self.get_resource_name("keywrap")
 
         created_key = self._create_rsa_key(key_client, key_name, hardware_protected=is_hsm)
@@ -243,12 +227,10 @@ class CryptoClientTests(KeysTestCase, KeyVaultTestCase):
         result = crypto_client.unwrap_key(result.algorithm, result.encrypted_key)
         self.assertEqual(key_bytes, result.key)
 
-    def test_symmetric_encrypt_and_decrypt_mhsm(self, **kwargs):
+    @hsm_only()
+    @client_setup
+    def test_symmetric_encrypt_and_decrypt(self, key_client, **kwargs):
         """Encrypt and decrypt with the service"""
-        self._skip_if_not_configured(True)
-        endpoint_url = self.managed_hsm_url
-
-        key_client = self.create_key_client(endpoint_url)
         key_name = self.get_resource_name("symmetric-encrypt")
 
         imported_key = self._import_symmetric_test_key(key_client, key_name)
@@ -291,11 +273,9 @@ class CryptoClientTests(KeysTestCase, KeyVaultTestCase):
                 else:
                     assert decrypt_result.plaintext == self.plaintext
 
-    def test_symmetric_wrap_and_unwrap_mhsm(self, **kwargs):
-        self._skip_if_not_configured(True)
-        endpoint_url = self.managed_hsm_url
-
-        key_client = self.create_key_client(endpoint_url)
+    @hsm_only()
+    @client_setup
+    def test_symmetric_wrap_and_unwrap(self, key_client, **kwargs):
         key_name = self.get_resource_name("symmetric-kw")
 
         imported_key = self._import_symmetric_test_key(key_client, key_name)
@@ -308,14 +288,10 @@ class CryptoClientTests(KeysTestCase, KeyVaultTestCase):
         result = crypto_client.unwrap_key(result.algorithm, result.encrypted_key)
         assert result.key == self.plaintext
 
-    @parameterized.expand([param(is_hsm=b) for b in [True, False]], name_func=suffixed_test_name)
-    def test_encrypt_local(self, **kwargs):
+    @all_api_versions()
+    @client_setup
+    def test_encrypt_local(self, key_client, is_hsm, **kwargs):
         """Encrypt locally, decrypt with Key Vault"""
-        is_hsm = kwargs.pop("is_hsm")
-        self._skip_if_not_configured(is_hsm)
-        endpoint_url = self.managed_hsm_url if is_hsm else self.vault_url
-
-        key_client = self.create_key_client(endpoint_url)
         key_name = self.get_resource_name("encrypt-local")
         key = self._create_rsa_key(key_client, key_name, size=4096, hardware_protected=is_hsm)
         crypto_client = self.create_crypto_client(key)
@@ -328,14 +304,10 @@ class CryptoClientTests(KeysTestCase, KeyVaultTestCase):
             result = crypto_client.decrypt(result.algorithm, result.ciphertext)
             self.assertEqual(result.plaintext, self.plaintext)
 
-    @parameterized.expand([param(is_hsm=b) for b in [True, False]], name_func=suffixed_test_name)
-    def test_encrypt_local_from_jwk(self, **kwargs):
+    @all_api_versions()
+    @client_setup
+    def test_encrypt_local_from_jwk(self, key_client, is_hsm, **kwargs):
         """Encrypt locally, decrypt with Key Vault"""
-        is_hsm = kwargs.pop("is_hsm")
-        self._skip_if_not_configured(is_hsm)
-        endpoint_url = self.managed_hsm_url if is_hsm else self.vault_url
-
-        key_client = self.create_key_client(endpoint_url)
         key_name = self.get_resource_name("encrypt-local")
         key = self._create_rsa_key(key_client, key_name, size=4096, hardware_protected=is_hsm)
         crypto_client = self.create_crypto_client(key)
@@ -349,12 +321,10 @@ class CryptoClientTests(KeysTestCase, KeyVaultTestCase):
             result = crypto_client.decrypt(result.algorithm, result.ciphertext)
             self.assertEqual(result.plaintext, self.plaintext)
     
-    def test_symmetric_encrypt_local_mhsm(self, **kwargs):
+    @hsm_only()
+    @client_setup
+    def test_symmetric_encrypt_local(self, key_client, **kwargs):
         """Encrypt locally, decrypt with the service"""
-        self._skip_if_not_configured(True)
-        endpoint_url = self.managed_hsm_url
-
-        key_client = self.create_key_client(endpoint_url)
         key_name = self.get_resource_name("symmetric-encrypt")
 
         imported_key = self._import_symmetric_test_key(key_client, key_name)
@@ -380,12 +350,10 @@ class CryptoClientTests(KeysTestCase, KeyVaultTestCase):
         assert decrypt_result.algorithm == algorithm
         assert decrypt_result.plaintext == self.plaintext
     
-    def test_symmetric_decrypt_local_mhsm(self, **kwargs):
+    @hsm_only()
+    @client_setup
+    def test_symmetric_decrypt_local(self, key_client, **kwargs):
         """Encrypt with the service, decrypt locally"""
-        self._skip_if_not_configured(True)
-        endpoint_url = self.managed_hsm_url
-
-        key_client = self.create_key_client(endpoint_url)
         key_name = self.get_resource_name("symmetric-encrypt")
 
         imported_key = self._import_symmetric_test_key(key_client, key_name)
@@ -412,14 +380,10 @@ class CryptoClientTests(KeysTestCase, KeyVaultTestCase):
         assert decrypt_result.algorithm == algorithm
         assert decrypt_result.plaintext == self.plaintext
 
-    @parameterized.expand([param(is_hsm=b) for b in [True, False]], name_func=suffixed_test_name)
-    def test_wrap_local(self, **kwargs):
+    @all_api_versions()
+    @client_setup
+    def test_wrap_local(self, key_client, is_hsm, **kwargs):
         """Wrap locally, unwrap with Key Vault"""
-        is_hsm = kwargs.pop("is_hsm")
-        self._skip_if_not_configured(is_hsm)
-        endpoint_url = self.managed_hsm_url if is_hsm else self.vault_url
-
-        key_client = self.create_key_client(endpoint_url)
         key_name = self.get_resource_name("wrap-local")
         key = self._create_rsa_key(key_client, key_name, size=4096, hardware_protected=is_hsm)
         crypto_client = self.create_crypto_client(key)
@@ -431,14 +395,10 @@ class CryptoClientTests(KeysTestCase, KeyVaultTestCase):
             result = crypto_client.unwrap_key(result.algorithm, result.encrypted_key)
             self.assertEqual(result.key, self.plaintext)
 
-    @parameterized.expand([param(is_hsm=b) for b in [True, False]], name_func=suffixed_test_name)
-    def test_wrap_local_from_jwk(self, **kwargs):
+    @all_api_versions()
+    @client_setup
+    def test_wrap_local_from_jwk(self, key_client, is_hsm, **kwargs):
         """Wrap locally, unwrap with Key Vault"""
-        is_hsm = kwargs.pop("is_hsm")
-        self._skip_if_not_configured(is_hsm)
-        endpoint_url = self.managed_hsm_url if is_hsm else self.vault_url
-
-        key_client = self.create_key_client(endpoint_url)
         key_name = self.get_resource_name("wrap-local")
         key = self._create_rsa_key(key_client, key_name, size=4096, hardware_protected=is_hsm)
         crypto_client = self.create_crypto_client(key)
@@ -451,14 +411,10 @@ class CryptoClientTests(KeysTestCase, KeyVaultTestCase):
             result = crypto_client.unwrap_key(result.algorithm, result.encrypted_key)
             self.assertEqual(result.key, self.plaintext)
 
-    @parameterized.expand([param(is_hsm=b) for b in [True, False]], name_func=suffixed_test_name)
-    def test_rsa_verify_local(self, **kwargs):
+    @all_api_versions()
+    @client_setup
+    def test_rsa_verify_local(self, key_client, is_hsm, **kwargs):
         """Sign with Key Vault, verify locally"""
-        is_hsm = kwargs.pop("is_hsm")
-        self._skip_if_not_configured(is_hsm)
-        endpoint_url = self.managed_hsm_url if is_hsm else self.vault_url
-
-        key_client = self.create_key_client(endpoint_url)
         for size in (2048, 3072, 4096):
             key_name = self.get_resource_name("rsa-verify-{}".format(size))
             key = self._create_rsa_key(key_client, key_name, size=size, hardware_protected=is_hsm)
@@ -479,14 +435,10 @@ class CryptoClientTests(KeysTestCase, KeyVaultTestCase):
                 result = crypto_client.verify(result.algorithm, digest, result.signature)
                 self.assertTrue(result.is_valid)
 
-    @parameterized.expand([param(is_hsm=b) for b in [True, False]], name_func=suffixed_test_name)
-    def test_rsa_verify_local_from_jwk(self, **kwargs):
+    @all_api_versions()
+    @client_setup
+    def test_rsa_verify_local_from_jwk(self, key_client, is_hsm, **kwargs):
         """Sign with Key Vault, verify locally"""
-        is_hsm = kwargs.pop("is_hsm")
-        self._skip_if_not_configured(is_hsm)
-        endpoint_url = self.managed_hsm_url if is_hsm else self.vault_url
-
-        key_client = self.create_key_client(endpoint_url)
         for size in (2048, 3072, 4096):
             key_name = self.get_resource_name("rsa-verify-{}".format(size))
             key = self._create_rsa_key(key_client, key_name, size=size, hardware_protected=is_hsm)
@@ -508,14 +460,10 @@ class CryptoClientTests(KeysTestCase, KeyVaultTestCase):
                 result = local_client.verify(result.algorithm, digest, result.signature)
                 self.assertTrue(result.is_valid)
 
-    @parameterized.expand([param(is_hsm=b) for b in [True, False]], name_func=suffixed_test_name)
-    def test_ec_verify_local(self, **kwargs):
+    @all_api_versions()
+    @client_setup
+    def test_ec_verify_local(self, key_client, is_hsm, **kwargs):
         """Sign with Key Vault, verify locally"""
-        is_hsm = kwargs.pop("is_hsm")
-        self._skip_if_not_configured(is_hsm)
-        endpoint_url = self.managed_hsm_url if is_hsm else self.vault_url
-
-        key_client = self.create_key_client(endpoint_url)
         matrix = {
             KeyCurveName.p_256: (SignatureAlgorithm.es256, hashlib.sha256),
             KeyCurveName.p_256_k: (SignatureAlgorithm.es256_k, hashlib.sha256),
@@ -536,14 +484,10 @@ class CryptoClientTests(KeysTestCase, KeyVaultTestCase):
             result = crypto_client.verify(result.algorithm, digest, result.signature)
             self.assertTrue(result.is_valid)
 
-    @parameterized.expand([param(is_hsm=b) for b in [True, False]], name_func=suffixed_test_name)
-    def test_ec_verify_local_from_jwk(self, **kwargs):
+    @all_api_versions()
+    @client_setup
+    def test_ec_verify_local_from_jwk(self, key_client, is_hsm, **kwargs):
         """Sign with Key Vault, verify locally"""
-        is_hsm = kwargs.pop("is_hsm")
-        self._skip_if_not_configured(is_hsm)
-        endpoint_url = self.managed_hsm_url if is_hsm else self.vault_url
-
-        key_client = self.create_key_client(endpoint_url)
         matrix = {
             KeyCurveName.p_256: (SignatureAlgorithm.es256, hashlib.sha256),
             KeyCurveName.p_256_k: (SignatureAlgorithm.es256_k, hashlib.sha256),
@@ -565,14 +509,10 @@ class CryptoClientTests(KeysTestCase, KeyVaultTestCase):
             result = local_client.verify(result.algorithm, digest, result.signature)
             self.assertTrue(result.is_valid)
 
-    @parameterized.expand([param(is_hsm=b) for b in [True, False]], name_func=suffixed_test_name)
-    def test_local_validity_period_enforcement(self, **kwargs):
+    @all_api_versions()
+    @client_setup
+    def test_local_validity_period_enforcement(self, key_client, is_hsm, **kwargs):
         """Local crypto operations should respect a key's nbf and exp properties"""
-        is_hsm = kwargs.pop("is_hsm")
-        self._skip_if_not_configured(is_hsm)
-        endpoint_url = self.managed_hsm_url if is_hsm else self.vault_url
-
-        key_client = self.create_key_client(endpoint_url, permissions=NO_GET)
         def test_operations(key, expected_error_substrings, encrypt_algorithms, wrap_algorithms):
             crypto_client = self.create_crypto_client(key)
             for algorithm in encrypt_algorithms:
