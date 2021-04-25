@@ -198,7 +198,8 @@ class DocumentTranslationTest(AzureTestCase):
         return job_details.id
         
 
-    def _create_and_submit_sample_translation_jobs(self, client, jobs_count):
+    def _create_and_submit_sample_translation_jobs(self, client, jobs_count, **kwargs):
+        wait_for_job = kwargs.pop('wait', True)
         result_job_ids = []
         for i in range(jobs_count):
             # prepare containers and test data
@@ -228,7 +229,8 @@ class DocumentTranslationTest(AzureTestCase):
             # submit multiple jobs
             job_details = client.create_translation_job(translation_inputs)
             self.assertIsNotNone(job_details.id)
-            client.wait_until_done(job_details.id)
+            if wait_for_job:
+                client.wait_until_done(job_details.id)
             result_job_ids.append(job_details.id)
 
         return result_job_ids
