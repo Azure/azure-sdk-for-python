@@ -37,15 +37,13 @@ if TYPE_CHECKING:
     ClientType = TypeVar("ClientType", bound="WebPubSubServiceClient")
 
 
-def build_authentication_token(endpoint, hub, key, **kwargs):
+def build_authentication_token(connection_string, hub, **kwargs):
     """Build an authentication token for the given endpoint, hub using the provided key.
 
-    :param endpoint: HTTP or HTTPS endpoint for the WebPubSub service instance.
-    :type endpoint: ~str
+    :param connection_string: Connection string
+    :type connection_string: ~str
     :param hub: The hub to give access to.
     :type hub: ~str
-    :param key: Key to sign the token with.
-    :type key: ~str
     :keyword ttl: Optional ttl timedelta for the token. Default is 1 hour.
     :type ttl: ~datetime.timedelta
     :keyword user: Optional user name (subject) for the token. Default is no user.
@@ -57,7 +55,7 @@ def build_authentication_token(endpoint, hub, key, **kwargs):
 
 
     Example:
-    >>> build_authentication_token('https://contoso.com/api/webpubsub', hub='theHub', key='123')
+    >>> build_authentication_token('Endpoint=https://contoso.com/api/webpubsub;Accesskey=123;', hub='theHub')
     {
         'baseUrl': 'wss://contoso.com/api/webpubsub/client/hubs/theHub',
         'token': 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ...',
@@ -67,7 +65,8 @@ def build_authentication_token(endpoint, hub, key, **kwargs):
     user = kwargs.pop("user", None)
     ttl = kwargs.pop("ttl", timedelta(hours=1))
     roles = kwargs.pop("roles", [])
-    endpoint = endpoint.lower()
+    args = _parse_connection_string(connection_string)
+    endpoint = args['endpoint']
     if not endpoint.startswith("http://") and not endpoint.startswith("https://"):
         raise ValueError(
             "Invalid endpoint: '{}' has unknown scheme - expected 'http://' or 'https://'".format(
@@ -93,13 +92,45 @@ def build_authentication_token(endpoint, hub, key, **kwargs):
     if roles:
         payload["role"] = roles
 
-    token = six.ensure_str(jwt.encode(payload, key, algorithm="HS256"))
+    token = six.ensure_str(jwt.encode(payload, args['accesskey'], algorithm="HS256"))
     return {
         "baseUrl": client_url,
         "token": token,
         "url": "{}?access_token={}".format(client_url, token),
     }
 
+def _parse_connection_string(connection_string, **kwargs):
+    for invalid_keyword_arg in ("endpoint", "accesskey"):
+        if invalid_keyword_arg in kwargs:
+            raise TypeError("Unknown argument {}".format(invalid_keyword_arg))
+
+    for segment in connection_string.split(";"):
+        if "=" in segment:
+            key, value = segment.split("=", maxsplit=1)
+            key = key.lower()
+            if key == "version":
+                # The name in the connection string != the name for the constructor.
+                # Let's map it to whatthe constructor actually wants...
+                key = "api_version"
+            kwargs[key] = value
+        elif segment:
+            raise ValueError(
+                "Malformed connection string - expected 'key=value', found segment '{}' in '{}'".format(
+                    segment, connection_string
+                )
+            )
+
+    if "endpoint" not in kwargs:
+        raise ValueError("connection_string missing 'endpoint' field")
+
+    if "accesskey" not in kwargs:
+        raise ValueError("connection_string missing 'accesskey' field")
+
+    kwargs["credential"] = corecredentials.AzureKeyCredential(
+        kwargs["accesskey"]
+    )
+    
+    return kwargs
 
 class WebPubSubServiceClient(object):
     def __init__(self, endpoint, credential, **kwargs):
@@ -146,36 +177,7 @@ class WebPubSubServiceClient(object):
         :type connection_string: ~str
         :rtype: WebPubSubServiceClient
         """
-        for invalid_keyword_arg in ("endpoint", "accesskey"):
-            if invalid_keyword_arg in kwargs:
-                raise TypeError("Unknown argument {}".format(invalid_keyword_arg))
-
-        for segment in connection_string.split(";"):
-            if "=" in segment:
-                key, value = segment.split("=", maxsplit=1)
-                key = key.lower()
-                if key == "version":
-                    # The name in the connection string != the name for the constructor.
-                    # Let's map it to whatthe constructor actually wants...
-                    key = "api_version"
-                kwargs[key] = value
-            elif segment:
-                raise ValueError(
-                    "Malformed connection string - expected 'key=value', found segment '{}' in '{}'".format(
-                        segment, connection_string
-                    )
-                )
-
-        if "endpoint" not in kwargs:
-            raise ValueError("connection_string missing 'endpoint' field")
-
-        if "accesskey" not in kwargs:
-            raise ValueError("connection_string missing 'accesskey' field")
-
-        kwargs["credential"] = corecredentials.AzureKeyCredential(
-            kwargs.pop("accesskey")
-        )
-        return cls(**kwargs)
+        return cls(**_parse_connection_string(connection_string, **kwargs))
 
     def __repr__(self):
         return "<WebPubSubServiceClient> endpoint:'{}'".format(self.endpoint)
