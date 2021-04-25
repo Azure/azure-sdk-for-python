@@ -68,7 +68,7 @@ setup(
         "six>=1.12.0",
     ],
     extras_require={
-        ":python_version<'3.0'": ["futures", "azure-messaging-nspkg<2.0.0,>=1.0.0"],
+        ":python_version<'3.0'": ["futures", "azure-messaging-nspkg"],
         ":python_version<'3.5'": ["typing"],
     },
 )
