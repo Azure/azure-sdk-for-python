@@ -46,13 +46,18 @@ try:
     from ._models_py3 import LanguageExtensionsList
     from ._models_py3 import Operation
     from ._models_py3 import OperationDisplay
+    from ._models_py3 import OperationResult
     from ._models_py3 import OptimizedAutoscale
     from ._models_py3 import ProxyResource
     from ._models_py3 import ReadOnlyFollowingDatabase
     from ._models_py3 import ReadWriteDatabase
     from ._models_py3 import Resource
+    from ._models_py3 import Script
+    from ._models_py3 import ScriptCheckNameRequest
     from ._models_py3 import SkuDescription
     from ._models_py3 import SkuLocationInfoItem
+    from ._models_py3 import SystemData
+    from ._models_py3 import TableLevelSharingProperties
     from ._models_py3 import TrackedResource
     from ._models_py3 import TrustedExternalTenant
     from ._models_py3 import VirtualNetworkConfiguration
@@ -93,13 +98,18 @@ except (SyntaxError, ImportError):
     from ._models import LanguageExtensionsList
     from ._models import Operation
     from ._models import OperationDisplay
+    from ._models import OperationResult
     from ._models import OptimizedAutoscale
     from ._models import ProxyResource
     from ._models import ReadOnlyFollowingDatabase
     from ._models import ReadWriteDatabase
     from ._models import Resource
+    from ._models import Script
+    from ._models import ScriptCheckNameRequest
     from ._models import SkuDescription
     from ._models import SkuLocationInfoItem
+    from ._models import SystemData
+    from ._models import TableLevelSharingProperties
     from ._models import TrackedResource
     from ._models import TrustedExternalTenant
     from ._models import VirtualNetworkConfiguration
@@ -114,6 +124,7 @@ from ._paged_models import DataConnectionPaged
 from ._paged_models import FollowerDatabaseDefinitionPaged
 from ._paged_models import LanguageExtensionPaged
 from ._paged_models import OperationPaged
+from ._paged_models import ScriptPaged
 from ._paged_models import SkuDescriptionPaged
 from ._kusto_management_client_enums import (
     State,
@@ -135,8 +146,10 @@ from ._kusto_management_client_enums import (
     DatabasePrincipalType,
     PrincipalType,
     ClusterPrincipalRole,
+    CreatedByType,
     Type,
     Reason,
+    Status,
 )
 
 __all__ = [
@@ -176,13 +189,18 @@ __all__ = [
     'LanguageExtensionsList',
     'Operation',
     'OperationDisplay',
+    'OperationResult',
     'OptimizedAutoscale',
     'ProxyResource',
     'ReadOnlyFollowingDatabase',
     'ReadWriteDatabase',
     'Resource',
+    'Script',
+    'ScriptCheckNameRequest',
     'SkuDescription',
     'SkuLocationInfoItem',
+    'SystemData',
+    'TableLevelSharingProperties',
     'TrackedResource',
     'TrustedExternalTenant',
     'VirtualNetworkConfiguration',
@@ -195,6 +213,7 @@ __all__ = [
     'DatabasePaged',
     'DatabasePrincipalPaged',
     'DatabasePrincipalAssignmentPaged',
+    'ScriptPaged',
     'AttachedDatabaseConfigurationPaged',
     'DataConnectionPaged',
     'OperationPaged',
@@ -217,6 +236,8 @@ __all__ = [
     'DatabasePrincipalType',
     'PrincipalType',
     'ClusterPrincipalRole',
+    'CreatedByType',
     'Type',
     'Reason',
+    'Status',
 ]

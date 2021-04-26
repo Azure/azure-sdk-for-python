@@ -129,6 +129,19 @@ class DatabasePrincipalAssignmentPaged(Paged):
     def __init__(self, *args, **kwargs):
 
         super(DatabasePrincipalAssignmentPaged, self).__init__(*args, **kwargs)
+class ScriptPaged(Paged):
+    """
+    A paging container for iterating over a list of :class:`Script <azure.mgmt.kusto.models.Script>` object
+    """
+
+    _attribute_map = {
+        'next_link': {'key': 'nextLink', 'type': 'str'},
+        'current_page': {'key': 'value', 'type': '[Script]'}
+    }
+
+    def __init__(self, *args, **kwargs):
+
+        super(ScriptPaged, self).__init__(*args, **kwargs)
 class AttachedDatabaseConfigurationPaged(Paged):
     """
     A paging container for iterating over a list of :class:`AttachedDatabaseConfiguration <azure.mgmt.kusto.models.AttachedDatabaseConfiguration>` object
