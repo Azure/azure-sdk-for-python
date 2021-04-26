@@ -43,6 +43,9 @@ parameters:
   - name: MatrixReplace
     type: object
     default: []
+  - name: VerifyAutorest
+    type: boolean
+    default: false
 
 jobs:
   - job: 'Build'
@@ -100,6 +103,7 @@ jobs:
         AdditionalTestArgs: '--wheel_dir="$(Build.ArtifactStagingDirectory)"'
         TestPipeline: ${{ parameters.TestPipeline }}
         Artifacts: ${{ parameters.Artifacts }}
+        VerifyAutorest: ${{ parameters.VerifyAutorest }}
 
   - template: /eng/common/pipelines/templates/jobs/archetype-sdk-tests-generate.yml
     parameters:

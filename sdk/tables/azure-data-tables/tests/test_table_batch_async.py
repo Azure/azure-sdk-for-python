@@ -8,10 +8,11 @@
 
 import pytest
 
-import uuid
 from datetime import datetime, timedelta
 from dateutil.tz import tzutc
+import os
 import sys
+import uuid
 
 from devtools_testutils import AzureTestCase
 
@@ -31,7 +32,8 @@ from azure.data.tables import (
     EdmType,
     BatchErrorException,
     generate_table_sas,
-    TableSasPermissions
+    TableSasPermissions,
+    RequestTooLargeError
 )
 
 from _shared.asynctestcase import AsyncTableTestCase
@@ -761,3 +763,29 @@ class StorageTableBatchTest(AzureTestCase, AsyncTableTestCase):
             assert total_entities == transaction_count
         finally:
             await self._tear_down()
+
+    @pytest.mark.live_test_only  # Request bodies are very large
+    @TablesPreparer()
+    async def test_batch_request_too_large(self, tables_storage_account_name, tables_primary_storage_account_key):
+        # Arrange
+        await self._set_up(tables_storage_account_name, tables_primary_storage_account_key)
+        from azure.data.tables import RequestTooLargeError
+        try:
+
+            batch = self.table.create_batch()
+            entity = {
+                'PartitionKey': 'pk001',
+                'Foo': os.urandom(1024*64),
+                'Bar': os.urandom(1024*64),
+                'Baz': os.urandom(1024*64)
+            }
+            for i in range(50):
+                entity['RowKey'] = str(i)
+                batch.create_entity(entity)
+
+            with pytest.raises(RequestTooLargeError):
+                await self.table.send_batch(batch)
+
+        finally:
+            await self._tear_down()
+

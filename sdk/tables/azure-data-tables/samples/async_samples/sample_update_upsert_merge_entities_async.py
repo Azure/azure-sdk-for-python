@@ -161,7 +161,7 @@ class TableEntitySamples(object):
 
         async with tsc:
             async for table in tsc.list_tables():
-                await tsc.delete_table(table.table_name)
+                await tsc.delete_table(table.name)
 
         print("Cleaned up")
 

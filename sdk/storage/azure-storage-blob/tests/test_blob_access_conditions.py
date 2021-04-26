@@ -90,7 +90,7 @@ class StorageBlobAccessConditionsTest(StorageTestCase):
 
         # Get blob service client from container client
         bsc_props1 = bsc1.get_service_properties()
-        bsc2 = container_client1.get_blob_service_client()
+        bsc2 = container_client1._get_blob_service_client()
         bsc_props2 = bsc2.get_service_properties()
         self.assertDictEqual(bsc_props1, bsc_props2)
 
@@ -123,7 +123,7 @@ class StorageBlobAccessConditionsTest(StorageTestCase):
         # Upload data to blob and get container_client again
         blob_client1.upload_blob(b"this is test data")
         blob_client1_data = blob_client1.download_blob().readall()
-        container_client2 = blob_client1.get_container_client()
+        container_client2 = blob_client1._get_container_client()
 
         md2 = container_client2.get_container_properties().metadata
         self.assertEqual(md1, md2)
