@@ -25,6 +25,9 @@ SECRETS = frozenset({
 })
 
 
+MGMT_SETTINGS_REAL = "_mgmt_settings_real_identity.py"
+
+
 class RecordingRedactor(RecordingProcessor):
     """Removes authentication secrets from recordings"""
 
@@ -40,12 +43,19 @@ class RecordingRedactor(RecordingProcessor):
         except (KeyError, ValueError):
             return response
 
-        for field in body:
-            if field in SECRETS:
-                # record a hash of the secret instead of a simple replacement like "redacted"
-                # because some tests (e.g. for CAE) require unique, consistent values
-                digest = hashlib.sha256(six.ensure_binary(body[field])).digest()
-                body[field] = six.ensure_str(binascii.hexlify(digest))
+        with open(MGMT_SETTINGS_REAL, "w+") as outfile:
+
+            for field in body:
+                if field in SECRETS:
+                    # record a hash of the secret instead of a simple replacement like "redacted"
+                    # because some tests (e.g. for CAE) require unique, consistent values
+                    digest = hashlib.sha256(six.ensure_binary(body[field])).digest()
+                    body[field] = six.ensure_str(binascii.hexlify(digest))
+
+            outfile.write("# ------------------------------------\n# Copyright (c) Microsoft Corporation.\n# Licensed under the MIT License\n# ------------------------------------\n")
+
+            for k, v in body.items():
+                outfile.write("{}={}".format(k.upper(), v))
 
         response["body"]["string"] = json.dumps(body)
         return response
