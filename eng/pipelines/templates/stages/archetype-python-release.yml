@@ -31,7 +31,7 @@ stages:
                 deploy:
                   steps:
                     - checkout: self
-
+                    - template: /eng/common/pipelines/templates/steps/retain-run.yml
                     - template: /eng/common/pipelines/templates/steps/set-test-pipeline-version.yml
                       parameters:
                         PackageName: "azure-template"
@@ -56,7 +56,7 @@ stages:
                         ReleaseSha: $(Build.SourceVersion)
                         RepoId: Azure/azure-sdk-for-python
                         WorkingDirectory: $(System.DefaultWorkingDirectory)
-                    
+
           - ${{if ne(artifact.skipPublishPackage, 'true')}}:
             - deployment: PublishPackage
               displayName: "Publish to PyPI"
@@ -161,7 +161,7 @@ stages:
                   deploy:
                     steps:
                       - checkout: self
-                      
+
                       - pwsh: |
                           Get-ChildItem -Recurse $(Pipeline.Workspace)/${{parameters.ArtifactName}}/${{artifact.name}}
                         workingDirectory: $(Pipeline.Workspace)
@@ -228,7 +228,7 @@ stages:
     - stage: SmokeTest_Release_Packages
       displayName: Smoke Test Release Packages
       jobs:
-        - template: /eng/pipelines/templates/jobs/smoke-test.yml
+        - template: /eng/pipelines/templates/jobs/smoke.tests.yml
           parameters:
             Daily: false
             ArtifactName: ${{ parameters.ArtifactName }}
@@ -240,7 +240,7 @@ stages:
     jobs:
     - job: PublishPackages
       displayName: "Publish package to daily feed"
-      condition: and(eq(variables['SetDevVersion'], 'true'), eq(variables['System.TeamProject'], 'internal'))
+      condition: or(eq(variables['SetDevVersion'], 'true'), and(eq(variables['Build.Reason'],'Schedule'), eq(variables['System.TeamProject'], 'internal')))
       pool:
         name: azsdk-pool-mms-ubuntu-1804-general
         vmImage: MMSUbuntu18.04
