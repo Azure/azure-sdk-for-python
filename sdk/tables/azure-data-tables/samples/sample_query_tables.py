@@ -55,7 +55,7 @@ class QueryTables(object):
                 list_tables = table_service.list_tables()
                 print("Listing tables:")
                 for table in list_tables:
-                    print("\t{}".format(table.table_name))
+                    print("\t{}".format(table.name))
                 # [END tsc_list_tables]
 
                 # [START tsc_query_tables]
@@ -65,7 +65,7 @@ class QueryTables(object):
 
                 print("Queried_tables")
                 for table in queried_tables:
-                    print("\t{}".format(table.table_name))
+                    print("\t{}".format(table.name))
                 # [END tsc_query_tables]
 
             finally:
