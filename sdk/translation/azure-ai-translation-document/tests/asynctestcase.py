@@ -68,11 +68,6 @@ class AsyncDocumentTranslationTest(DocumentTranslationTest):
 
 
     async def _create_translation_job_with_dummy_docs_async(self, async_client, docs_count, **kwargs):
-        '''
-            appropriated this method from another PR! #18302
-            please resolve conflict before merge
-            keep in mind it's the exact same method
-        '''
         # get input parms
         wait_for_job = kwargs.pop('wait', False)
         language_code = kwargs.pop('language_code', "es")

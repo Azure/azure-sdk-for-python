@@ -19,27 +19,11 @@ class TestAllDocumentStatuses(AsyncDocumentTranslationTest):
     @DocumentTranslationPreparer()
     @DocumentTranslationClientPreparer()
     async def test_list_statuses(self, client):
-        # prepare containers and test data
-        blob_data = [Document(data=b'This is some text')]
-        source_container_sas_url = self.create_source_container(data=blob_data)
-        target_container_sas_url = self.create_target_container()
+        docs_count = 5
         target_language = "es"
 
-        # prepare translation inputs
-        translation_inputs = [
-            DocumentTranslationInput(
-                source_url=source_container_sas_url,
-                targets=[
-                    TranslationTarget(
-                        target_url=target_container_sas_url,
-                        language_code=target_language
-                    )
-                ]
-            )
-        ]
-
         # submit and validate job
-        job_id = await self._submit_and_validate_translation_job_async(client, translation_inputs, len(blob_data))
+        job_id = await self._create_translation_job_with_dummy_docs_async(client, docs_count, language_code=target_language, wait=False)
 
         # check doc statuses
         doc_statuses = client.list_all_document_statuses(job_id)
@@ -49,7 +33,7 @@ class TestAllDocumentStatuses(AsyncDocumentTranslationTest):
             doc_statuses_list.append(document)
             self._validate_doc_status(document, target_language)
 
-        self.assertEqual(len(doc_statuses_list), len(blob_data))
+        self.assertEqual(len(doc_statuses_list), docs_count)
 
 
 
@@ -57,31 +41,13 @@ class TestAllDocumentStatuses(AsyncDocumentTranslationTest):
     @DocumentTranslationPreparer()
     @DocumentTranslationClientPreparer()
     async def test_list_statuses_with_pagination(self, client):
-        # prepare containers and test data
-        blob_text = b'blob text'
-        blob_data = [Document(data=blob_text), Document(data=blob_text), Document(data=blob_text),
-                     Document(data=blob_text), Document(data=blob_text), Document(data=blob_text)]
-        source_container_sas_url = self.create_source_container(data=blob_data)
-        target_container_sas_url = self.create_target_container()
+        docs_count = 5
         result_per_page = 2
-        no_of_pages = len(blob_data) // result_per_page
+        no_of_pages = docs_count // result_per_page
         target_language = "es"
 
-        # prepare translation inputs
-        translation_inputs = [
-            DocumentTranslationInput(
-                source_url=source_container_sas_url,
-                targets=[
-                    TranslationTarget(
-                        target_url=target_container_sas_url,
-                        language_code=target_language
-                    )
-                ]
-            )
-        ]
-
         # submit and validate job
-        job_id = await self._submit_and_validate_translation_job_async(client, translation_inputs, len(blob_data))
+        job_id = await self._create_translation_job_with_dummy_docs_async(client, docs_count, language_code=target_language, wait=False)
 
         # check doc statuses
         doc_statuses_pages = client.list_all_document_statuses(job_id=job_id, results_per_page=result_per_page)
@@ -104,31 +70,12 @@ class TestAllDocumentStatuses(AsyncDocumentTranslationTest):
     @DocumentTranslationPreparer()
     @DocumentTranslationClientPreparer()
     async def test_list_statuses_with_skip(self, client):
-        # prepare containers and test data
-        blob_text = b'blob text'
-        blob_data = [Document(data=blob_text), Document(data=blob_text), Document(data=blob_text),
-                     Document(data=blob_text), Document(data=blob_text), Document(data=blob_text)]
-        source_container_sas_url = self.create_source_container(data=blob_data)
-        target_container_sas_url = self.create_target_container()
-        docs_len = len(blob_data)
+        docs_count = 5
         skip = 2
         target_language = "es"
 
-        # prepare translation inputs
-        translation_inputs = [
-            DocumentTranslationInput(
-                source_url=source_container_sas_url,
-                targets=[
-                    TranslationTarget(
-                        target_url=target_container_sas_url,
-                        language_code=target_language
-                    )
-                ]
-            )
-        ]
-
         # submit and validate job
-        job_id = await self._submit_and_validate_translation_job_async(client, translation_inputs, len(blob_data))
+        job_id = await self._create_translation_job_with_dummy_docs_async(client, docs_count, language_code=target_language, wait=False)
 
         # check doc statuses
         doc_statuses = client.list_all_document_statuses(job_id=job_id, skip=skip)
@@ -139,4 +86,4 @@ class TestAllDocumentStatuses(AsyncDocumentTranslationTest):
             doc_statuses_list.append(document)
             self._validate_doc_status(document, target_language)
 
-        self.assertEqual(len(doc_statuses_list), docs_len - skip)
+        self.assertEqual(len(doc_statuses_list), docs_count - skip)
