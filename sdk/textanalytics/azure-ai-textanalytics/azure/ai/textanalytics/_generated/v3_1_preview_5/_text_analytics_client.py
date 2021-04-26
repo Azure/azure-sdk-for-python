@@ -40,7 +40,7 @@ class TextAnalyticsClient(TextAnalyticsClientOperationsMixin):
         **kwargs  # type: Any
     ):
         # type: (...) -> None
-        base_url = '{Endpoint}/text/analytics/v3.1-preview.4'
+        base_url = '{Endpoint}/text/analytics/v3.1-preview.5'
         self._config = TextAnalyticsClientConfiguration(credential, endpoint, **kwargs)
         self._client = PipelineClient(base_url=base_url, config=self._config, **kwargs)
 

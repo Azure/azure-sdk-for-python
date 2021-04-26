@@ -37,18 +37,18 @@ class Certainty(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     """Describes the entities certainty and polarity.
     """
 
-    POSITIVE = "Positive"
-    POSITIVE_POSSIBLE = "Positive Possible"
-    NEUTRAL_POSSIBLE = "Neutral Possible"
-    NEGATIVE_POSSIBLE = "Negative Possible"
-    NEGATIVE = "Negative"
+    POSITIVE = "positive"
+    POSITIVE_POSSIBLE = "positivePossible"
+    NEUTRAL_POSSIBLE = "neutralPossible"
+    NEGATIVE_POSSIBLE = "negativePossible"
+    NEGATIVE = "negative"
 
 class Conditionality(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     """Describes any conditionality on the entity.
     """
 
-    HYPOTHETICAL = "Hypothetical"
-    CONDITIONAL = "Conditional"
+    HYPOTHETICAL = "hypothetical"
+    CONDITIONAL = "conditional"
 
 class DocumentSentimentValue(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     """Predicted sentiment for document (Negative, Neutral, Positive, or Mixed).
@@ -314,7 +314,7 @@ class StringIndexType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     #: Returned offset and length values will correspond to TextElements (Graphemes and Grapheme
     #: clusters) confirming to the Unicode 8.0.0 standard. Use this option if your application is
     #: written in .Net Framework or .Net Core and you will be using StringInfo.
-    TEXT_ELEMENTS_V8 = "TextElements_v8"
+    TEXT_ELEMENT_V8 = "TextElement_v8"
     #: Returned offset and length values will correspond to Unicode code points. Use this option if
     #: your application is written in a language that support Unicode, for example Python.
     UNICODE_CODE_POINT = "UnicodeCodePoint"

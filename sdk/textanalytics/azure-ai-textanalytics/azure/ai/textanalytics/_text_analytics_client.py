@@ -449,7 +449,7 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
 
     def _healthcare_result_callback(self, doc_id_order, raw_response, _, headers, show_stats=False):
         healthcare_result = self._deserialize(
-            self._client.models(api_version="v3.1-preview.4").HealthcareJobState,
+            self._client.models(api_version="v3.1-preview.5").HealthcareJobState,
             raw_response
         )
         return healthcare_paged_result(
@@ -730,7 +730,7 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
 
     def _analyze_result_callback(self, doc_id_order, task_order, raw_response, _, headers, show_stats=False):
         analyze_result = self._deserialize(
-            self._client.models(api_version="v3.1-preview.4").AnalyzeJobState, # pylint: disable=protected-access
+            self._client.models(api_version="v3.1-preview.5").AnalyzeJobState, # pylint: disable=protected-access
             raw_response
         )
         return analyze_paged_result(
@@ -798,7 +798,7 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
         display_name = kwargs.pop("display_name", None)
         language_arg = kwargs.pop("language", None)
         language = language_arg if language_arg is not None else self._default_language
-        docs = self._client.models(api_version="v3.1-preview.4").MultiLanguageBatchInput(
+        docs = self._client.models(api_version="v3.1-preview.5").MultiLanguageBatchInput(
             documents=_validate_input(documents, "language", language)
         )
         show_stats = kwargs.pop("show_stats", False)
@@ -809,7 +809,7 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
         task_order = [_determine_action_type(action) for action in actions]
 
         try:
-            analyze_tasks = self._client.models(api_version='v3.1-preview.4').JobManifestTasks(
+            analyze_tasks = self._client.models(api_version='v3.1-preview.5').JobManifestTasks(
                 entity_recognition_tasks=[
                     t.to_generated() for t in
                     [a for a in actions if _determine_action_type(a) == AnalyzeBatchActionsType.RECOGNIZE_ENTITIES]
@@ -830,7 +830,7 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
                     ]
                 ]
             )
-            analyze_body = self._client.models(api_version='v3.1-preview.4').AnalyzeBatchInput(
+            analyze_body = self._client.models(api_version='v3.1-preview.5').AnalyzeBatchInput(
                 display_name=display_name,
                 tasks=analyze_tasks,
                 analysis_input=docs

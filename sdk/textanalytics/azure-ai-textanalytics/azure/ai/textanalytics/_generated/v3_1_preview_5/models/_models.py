@@ -17,7 +17,7 @@ class JobManifest(msrest.serialization.Model):
 
     :param tasks: Required. The set of tasks to execute on the input documents. Cannot specify the
      same task more than once.
-    :type tasks: ~azure.ai.textanalytics.v3_1_preview_4.models.JobManifestTasks
+    :type tasks: ~azure.ai.textanalytics.v3_1_preview_5.models.JobManifestTasks
     """
 
     _validation = {
@@ -62,12 +62,12 @@ class AnalyzeBatchInput(JobDescriptor, JobManifest):
 
     :param tasks: Required. The set of tasks to execute on the input documents. Cannot specify the
      same task more than once.
-    :type tasks: ~azure.ai.textanalytics.v3_1_preview_4.models.JobManifestTasks
+    :type tasks: ~azure.ai.textanalytics.v3_1_preview_5.models.JobManifestTasks
     :param display_name: Optional display name for the analysis job.
     :type display_name: str
     :param analysis_input: Required. Contains a set of input documents to be analyzed by the
      service.
-    :type analysis_input: ~azure.ai.textanalytics.v3_1_preview_4.models.MultiLanguageBatchInput
+    :type analysis_input: ~azure.ai.textanalytics.v3_1_preview_5.models.MultiLanguageBatchInput
     """
 
     _validation = {
@@ -107,7 +107,7 @@ class JobMetadata(msrest.serialization.Model):
     :type last_update_date_time: ~datetime.datetime
     :param status: Required.  Possible values include: "notStarted", "running", "succeeded",
      "failed", "rejected", "cancelled", "cancelling", "partiallyCompleted".
-    :type status: str or ~azure.ai.textanalytics.v3_1_preview_4.models.State
+    :type status: str or ~azure.ai.textanalytics.v3_1_preview_5.models.State
     """
 
     _validation = {
@@ -152,7 +152,7 @@ class AnalyzeJobMetadata(JobMetadata):
     :type last_update_date_time: ~datetime.datetime
     :param status: Required.  Possible values include: "notStarted", "running", "succeeded",
      "failed", "rejected", "cancelled", "cancelling", "partiallyCompleted".
-    :type status: str or ~azure.ai.textanalytics.v3_1_preview_4.models.State
+    :type status: str or ~azure.ai.textanalytics.v3_1_preview_5.models.State
     :param display_name:
     :type display_name: str
     """
@@ -206,7 +206,7 @@ class TasksState(msrest.serialization.Model):
     All required parameters must be populated in order to send to Azure.
 
     :param tasks: Required.
-    :type tasks: ~azure.ai.textanalytics.v3_1_preview_4.models.TasksStateTasks
+    :type tasks: ~azure.ai.textanalytics.v3_1_preview_5.models.TasksStateTasks
     """
 
     _validation = {
@@ -233,7 +233,7 @@ class AnalyzeJobState(AnalyzeJobMetadata, TasksState, Pagination):
     :param next_link:
     :type next_link: str
     :param tasks: Required.
-    :type tasks: ~azure.ai.textanalytics.v3_1_preview_4.models.TasksStateTasks
+    :type tasks: ~azure.ai.textanalytics.v3_1_preview_5.models.TasksStateTasks
     :param created_date_time: Required.
     :type created_date_time: ~datetime.datetime
     :param expiration_date_time:
@@ -244,14 +244,14 @@ class AnalyzeJobState(AnalyzeJobMetadata, TasksState, Pagination):
     :type last_update_date_time: ~datetime.datetime
     :param status: Required.  Possible values include: "notStarted", "running", "succeeded",
      "failed", "rejected", "cancelled", "cancelling", "partiallyCompleted".
-    :type status: str or ~azure.ai.textanalytics.v3_1_preview_4.models.State
+    :type status: str or ~azure.ai.textanalytics.v3_1_preview_5.models.State
     :param display_name:
     :type display_name: str
     :param errors:
-    :type errors: list[~azure.ai.textanalytics.v3_1_preview_4.models.TextAnalyticsError]
+    :type errors: list[~azure.ai.textanalytics.v3_1_preview_5.models.TextAnalyticsError]
     :param statistics: if showStats=true was specified in the request this field will contain
      information about the request payload.
-    :type statistics: ~azure.ai.textanalytics.v3_1_preview_4.models.RequestStatistics
+    :type statistics: ~azure.ai.textanalytics.v3_1_preview_5.models.RequestStatistics
     """
 
     _validation = {
@@ -308,7 +308,7 @@ class Components15Gvwi3SchemasTasksstatePropertiesTasksPropertiesEntityrecogniti
     """Components15Gvwi3SchemasTasksstatePropertiesTasksPropertiesEntityrecognitiontasksItemsAllof1.
 
     :param results:
-    :type results: ~azure.ai.textanalytics.v3_1_preview_4.models.EntitiesResult
+    :type results: ~azure.ai.textanalytics.v3_1_preview_5.models.EntitiesResult
     """
 
     _attribute_map = {
@@ -327,7 +327,7 @@ class Components15X8E9LSchemasTasksstatePropertiesTasksPropertiesEntityrecogniti
     """Components15X8E9LSchemasTasksstatePropertiesTasksPropertiesEntityrecognitionpiitasksItemsAllof1.
 
     :param results:
-    :type results: ~azure.ai.textanalytics.v3_1_preview_4.models.PiiResult
+    :type results: ~azure.ai.textanalytics.v3_1_preview_5.models.PiiResult
     """
 
     _attribute_map = {
@@ -342,11 +342,30 @@ class Components15X8E9LSchemasTasksstatePropertiesTasksPropertiesEntityrecogniti
         self.results = kwargs.get('results', None)
 
 
+class Components1C6O47FSchemasTasksstatePropertiesTasksPropertiesSentimentanalysistasksItemsAllof1(msrest.serialization.Model):
+    """Components1C6O47FSchemasTasksstatePropertiesTasksPropertiesSentimentanalysistasksItemsAllof1.
+
+    :param results:
+    :type results: ~azure.ai.textanalytics.v3_1_preview_5.models.SentimentResponse
+    """
+
+    _attribute_map = {
+        'results': {'key': 'results', 'type': 'SentimentResponse'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(Components1C6O47FSchemasTasksstatePropertiesTasksPropertiesSentimentanalysistasksItemsAllof1, self).__init__(**kwargs)
+        self.results = kwargs.get('results', None)
+
+
 class Components1D9IzucSchemasTasksstatePropertiesTasksPropertiesKeyphraseextractiontasksItemsAllof1(msrest.serialization.Model):
     """Components1D9IzucSchemasTasksstatePropertiesTasksPropertiesKeyphraseextractiontasksItemsAllof1.
 
     :param results:
-    :type results: ~azure.ai.textanalytics.v3_1_preview_4.models.KeyPhraseResult
+    :type results: ~azure.ai.textanalytics.v3_1_preview_5.models.KeyPhraseResult
     """
 
     _attribute_map = {
@@ -365,7 +384,7 @@ class ComponentsIfu7BjSchemasTasksstatePropertiesTasksPropertiesEntitylinkingtas
     """ComponentsIfu7BjSchemasTasksstatePropertiesTasksPropertiesEntitylinkingtasksItemsAllof1.
 
     :param results:
-    :type results: ~azure.ai.textanalytics.v3_1_preview_4.models.EntityLinkingResult
+    :type results: ~azure.ai.textanalytics.v3_1_preview_5.models.EntityLinkingResult
     """
 
     _attribute_map = {
@@ -425,12 +444,12 @@ class DocumentEntities(msrest.serialization.Model):
     :param id: Required. Unique, non-empty document identifier.
     :type id: str
     :param entities: Required. Recognized entities in the document.
-    :type entities: list[~azure.ai.textanalytics.v3_1_preview_4.models.Entity]
+    :type entities: list[~azure.ai.textanalytics.v3_1_preview_5.models.Entity]
     :param warnings: Required. Warnings encountered while processing document.
-    :type warnings: list[~azure.ai.textanalytics.v3_1_preview_4.models.TextAnalyticsWarning]
+    :type warnings: list[~azure.ai.textanalytics.v3_1_preview_5.models.TextAnalyticsWarning]
     :param statistics: if showStats=true was specified in the request this field will contain
      information about the document payload.
-    :type statistics: ~azure.ai.textanalytics.v3_1_preview_4.models.DocumentStatistics
+    :type statistics: ~azure.ai.textanalytics.v3_1_preview_5.models.DocumentStatistics
     """
 
     _validation = {
@@ -465,7 +484,7 @@ class DocumentError(msrest.serialization.Model):
     :param id: Required. Document Id.
     :type id: str
     :param error: Required. Document Error.
-    :type error: ~azure.ai.textanalytics.v3_1_preview_4.models.TextAnalyticsError
+    :type error: ~azure.ai.textanalytics.v3_1_preview_5.models.TextAnalyticsError
     """
 
     _validation = {
@@ -495,14 +514,14 @@ class DocumentHealthcareEntities(msrest.serialization.Model):
     :param id: Required. Unique, non-empty document identifier.
     :type id: str
     :param entities: Required. Healthcare entities.
-    :type entities: list[~azure.ai.textanalytics.v3_1_preview_4.models.HealthcareEntity]
+    :type entities: list[~azure.ai.textanalytics.v3_1_preview_5.models.HealthcareEntity]
     :param relations: Required. Healthcare entity relations.
-    :type relations: list[~azure.ai.textanalytics.v3_1_preview_4.models.HealthcareRelation]
+    :type relations: list[~azure.ai.textanalytics.v3_1_preview_5.models.HealthcareRelation]
     :param warnings: Required. Warnings encountered while processing document.
-    :type warnings: list[~azure.ai.textanalytics.v3_1_preview_4.models.TextAnalyticsWarning]
+    :type warnings: list[~azure.ai.textanalytics.v3_1_preview_5.models.TextAnalyticsWarning]
     :param statistics: if showStats=true was specified in the request this field will contain
      information about the document payload.
-    :type statistics: ~azure.ai.textanalytics.v3_1_preview_4.models.DocumentStatistics
+    :type statistics: ~azure.ai.textanalytics.v3_1_preview_5.models.DocumentStatistics
     """
 
     _validation = {
@@ -543,10 +562,10 @@ class DocumentKeyPhrases(msrest.serialization.Model):
      phrases returned is proportional to the number of words in the input document.
     :type key_phrases: list[str]
     :param warnings: Required. Warnings encountered while processing document.
-    :type warnings: list[~azure.ai.textanalytics.v3_1_preview_4.models.TextAnalyticsWarning]
+    :type warnings: list[~azure.ai.textanalytics.v3_1_preview_5.models.TextAnalyticsWarning]
     :param statistics: if showStats=true was specified in the request this field will contain
      information about the document payload.
-    :type statistics: ~azure.ai.textanalytics.v3_1_preview_4.models.DocumentStatistics
+    :type statistics: ~azure.ai.textanalytics.v3_1_preview_5.models.DocumentStatistics
     """
 
     _validation = {
@@ -581,12 +600,12 @@ class DocumentLanguage(msrest.serialization.Model):
     :param id: Required. Unique, non-empty document identifier.
     :type id: str
     :param detected_language: Required. Detected Language.
-    :type detected_language: ~azure.ai.textanalytics.v3_1_preview_4.models.DetectedLanguage
+    :type detected_language: ~azure.ai.textanalytics.v3_1_preview_5.models.DetectedLanguage
     :param warnings: Required. Warnings encountered while processing document.
-    :type warnings: list[~azure.ai.textanalytics.v3_1_preview_4.models.TextAnalyticsWarning]
+    :type warnings: list[~azure.ai.textanalytics.v3_1_preview_5.models.TextAnalyticsWarning]
     :param statistics: if showStats=true was specified in the request this field will contain
      information about the document payload.
-    :type statistics: ~azure.ai.textanalytics.v3_1_preview_4.models.DocumentStatistics
+    :type statistics: ~azure.ai.textanalytics.v3_1_preview_5.models.DocumentStatistics
     """
 
     _validation = {
@@ -621,12 +640,12 @@ class DocumentLinkedEntities(msrest.serialization.Model):
     :param id: Required. Unique, non-empty document identifier.
     :type id: str
     :param entities: Required. Recognized well known entities in the document.
-    :type entities: list[~azure.ai.textanalytics.v3_1_preview_4.models.LinkedEntity]
+    :type entities: list[~azure.ai.textanalytics.v3_1_preview_5.models.LinkedEntity]
     :param warnings: Required. Warnings encountered while processing document.
-    :type warnings: list[~azure.ai.textanalytics.v3_1_preview_4.models.TextAnalyticsWarning]
+    :type warnings: list[~azure.ai.textanalytics.v3_1_preview_5.models.TextAnalyticsWarning]
     :param statistics: if showStats=true was specified in the request this field will contain
      information about the document payload.
-    :type statistics: ~azure.ai.textanalytics.v3_1_preview_4.models.DocumentStatistics
+    :type statistics: ~azure.ai.textanalytics.v3_1_preview_5.models.DocumentStatistics
     """
 
     _validation = {
@@ -662,18 +681,18 @@ class DocumentSentiment(msrest.serialization.Model):
     :type id: str
     :param sentiment: Required. Predicted sentiment for document (Negative, Neutral, Positive, or
      Mixed). Possible values include: "positive", "neutral", "negative", "mixed".
-    :type sentiment: str or ~azure.ai.textanalytics.v3_1_preview_4.models.DocumentSentimentValue
+    :type sentiment: str or ~azure.ai.textanalytics.v3_1_preview_5.models.DocumentSentimentValue
     :param statistics: if showStats=true was specified in the request this field will contain
      information about the document payload.
-    :type statistics: ~azure.ai.textanalytics.v3_1_preview_4.models.DocumentStatistics
+    :type statistics: ~azure.ai.textanalytics.v3_1_preview_5.models.DocumentStatistics
     :param confidence_scores: Required. Document level sentiment confidence scores between 0 and 1
      for each sentiment class.
     :type confidence_scores:
-     ~azure.ai.textanalytics.v3_1_preview_4.models.SentimentConfidenceScorePerLabel
+     ~azure.ai.textanalytics.v3_1_preview_5.models.SentimentConfidenceScorePerLabel
     :param sentences: Required. Sentence level sentiment analysis.
-    :type sentences: list[~azure.ai.textanalytics.v3_1_preview_4.models.SentenceSentiment]
+    :type sentences: list[~azure.ai.textanalytics.v3_1_preview_5.models.SentenceSentiment]
     :param warnings: Required. Warnings encountered while processing document.
-    :type warnings: list[~azure.ai.textanalytics.v3_1_preview_4.models.TextAnalyticsWarning]
+    :type warnings: list[~azure.ai.textanalytics.v3_1_preview_5.models.TextAnalyticsWarning]
     """
 
     _validation = {
@@ -742,12 +761,12 @@ class EntitiesResult(msrest.serialization.Model):
     All required parameters must be populated in order to send to Azure.
 
     :param documents: Required. Response by document.
-    :type documents: list[~azure.ai.textanalytics.v3_1_preview_4.models.DocumentEntities]
+    :type documents: list[~azure.ai.textanalytics.v3_1_preview_5.models.DocumentEntities]
     :param errors: Required. Errors by document id.
-    :type errors: list[~azure.ai.textanalytics.v3_1_preview_4.models.DocumentError]
+    :type errors: list[~azure.ai.textanalytics.v3_1_preview_5.models.DocumentError]
     :param statistics: if showStats=true was specified in the request this field will contain
      information about the request payload.
-    :type statistics: ~azure.ai.textanalytics.v3_1_preview_4.models.RequestStatistics
+    :type statistics: ~azure.ai.textanalytics.v3_1_preview_5.models.RequestStatistics
     :param model_version: Required. This field indicates which model is used for scoring.
     :type model_version: str
     """
@@ -780,7 +799,7 @@ class EntitiesTask(msrest.serialization.Model):
     """EntitiesTask.
 
     :param parameters:
-    :type parameters: ~azure.ai.textanalytics.v3_1_preview_4.models.EntitiesTaskParameters
+    :type parameters: ~azure.ai.textanalytics.v3_1_preview_5.models.EntitiesTaskParameters
     """
 
     _attribute_map = {
@@ -800,13 +819,16 @@ class EntitiesTaskParameters(msrest.serialization.Model):
 
     :param model_version:
     :type model_version: str
-    :param string_index_type:  Possible values include: "TextElements_v8", "UnicodeCodePoint",
+    :param logging_opt_out:
+    :type logging_opt_out: bool
+    :param string_index_type:  Possible values include: "TextElement_v8", "UnicodeCodePoint",
      "Utf16CodeUnit".
-    :type string_index_type: str or ~azure.ai.textanalytics.v3_1_preview_4.models.StringIndexType
+    :type string_index_type: str or ~azure.ai.textanalytics.v3_1_preview_5.models.StringIndexType
     """
 
     _attribute_map = {
         'model_version': {'key': 'model-version', 'type': 'str'},
+        'logging_opt_out': {'key': 'loggingOptOut', 'type': 'bool'},
         'string_index_type': {'key': 'stringIndexType', 'type': 'str'},
     }
 
@@ -816,6 +838,7 @@ class EntitiesTaskParameters(msrest.serialization.Model):
     ):
         super(EntitiesTaskParameters, self).__init__(**kwargs)
         self.model_version = kwargs.get('model_version', "latest")
+        self.logging_opt_out = kwargs.get('logging_opt_out', false)
         self.string_index_type = kwargs.get('string_index_type', None)
 
 
@@ -876,12 +899,12 @@ class EntityLinkingResult(msrest.serialization.Model):
     All required parameters must be populated in order to send to Azure.
 
     :param documents: Required. Response by document.
-    :type documents: list[~azure.ai.textanalytics.v3_1_preview_4.models.DocumentLinkedEntities]
+    :type documents: list[~azure.ai.textanalytics.v3_1_preview_5.models.DocumentLinkedEntities]
     :param errors: Required. Errors by document id.
-    :type errors: list[~azure.ai.textanalytics.v3_1_preview_4.models.DocumentError]
+    :type errors: list[~azure.ai.textanalytics.v3_1_preview_5.models.DocumentError]
     :param statistics: if showStats=true was specified in the request this field will contain
      information about the request payload.
-    :type statistics: ~azure.ai.textanalytics.v3_1_preview_4.models.RequestStatistics
+    :type statistics: ~azure.ai.textanalytics.v3_1_preview_5.models.RequestStatistics
     :param model_version: Required. This field indicates which model is used for scoring.
     :type model_version: str
     """
@@ -914,7 +937,7 @@ class EntityLinkingTask(msrest.serialization.Model):
     """EntityLinkingTask.
 
     :param parameters:
-    :type parameters: ~azure.ai.textanalytics.v3_1_preview_4.models.EntityLinkingTaskParameters
+    :type parameters: ~azure.ai.textanalytics.v3_1_preview_5.models.EntityLinkingTaskParameters
     """
 
     _attribute_map = {
@@ -934,13 +957,16 @@ class EntityLinkingTaskParameters(msrest.serialization.Model):
 
     :param model_version:
     :type model_version: str
-    :param string_index_type:  Possible values include: "TextElements_v8", "UnicodeCodePoint",
+    :param logging_opt_out:
+    :type logging_opt_out: bool
+    :param string_index_type:  Possible values include: "TextElement_v8", "UnicodeCodePoint",
      "Utf16CodeUnit".
-    :type string_index_type: str or ~azure.ai.textanalytics.v3_1_preview_4.models.StringIndexType
+    :type string_index_type: str or ~azure.ai.textanalytics.v3_1_preview_5.models.StringIndexType
     """
 
     _attribute_map = {
         'model_version': {'key': 'model-version', 'type': 'str'},
+        'logging_opt_out': {'key': 'loggingOptOut', 'type': 'bool'},
         'string_index_type': {'key': 'stringIndexType', 'type': 'str'},
     }
 
@@ -950,6 +976,7 @@ class EntityLinkingTaskParameters(msrest.serialization.Model):
     ):
         super(EntityLinkingTaskParameters, self).__init__(**kwargs)
         self.model_version = kwargs.get('model_version', "latest")
+        self.logging_opt_out = kwargs.get('logging_opt_out', false)
         self.string_index_type = kwargs.get('string_index_type', None)
 
 
@@ -959,7 +986,7 @@ class ErrorResponse(msrest.serialization.Model):
     All required parameters must be populated in order to send to Azure.
 
     :param error: Required. Document Error.
-    :type error: ~azure.ai.textanalytics.v3_1_preview_4.models.TextAnalyticsError
+    :type error: ~azure.ai.textanalytics.v3_1_preview_5.models.TextAnalyticsError
     """
 
     _validation = {
@@ -982,14 +1009,14 @@ class HealthcareAssertion(msrest.serialization.Model):
     """HealthcareAssertion.
 
     :param conditionality: Describes any conditionality on the entity. Possible values include:
-     "Hypothetical", "Conditional".
-    :type conditionality: str or ~azure.ai.textanalytics.v3_1_preview_4.models.Conditionality
+     "hypothetical", "conditional".
+    :type conditionality: str or ~azure.ai.textanalytics.v3_1_preview_5.models.Conditionality
     :param certainty: Describes the entities certainty and polarity. Possible values include:
-     "Positive", "Positive Possible", "Neutral Possible", "Negative Possible", "Negative".
-    :type certainty: str or ~azure.ai.textanalytics.v3_1_preview_4.models.Certainty
+     "positive", "positivePossible", "neutralPossible", "negativePossible", "negative".
+    :type certainty: str or ~azure.ai.textanalytics.v3_1_preview_5.models.Certainty
     :param association: Describes if the entity is the subject of the text or if it describes
      someone else. Possible values include: "subject", "other".
-    :type association: str or ~azure.ai.textanalytics.v3_1_preview_4.models.Association
+    :type association: str or ~azure.ai.textanalytics.v3_1_preview_5.models.Association
     """
 
     _attribute_map = {
@@ -1028,12 +1055,12 @@ class HealthcareEntity(Entity):
     :param confidence_score: Required. Confidence score between 0 and 1 of the extracted entity.
     :type confidence_score: float
     :param assertion:
-    :type assertion: ~azure.ai.textanalytics.v3_1_preview_4.models.HealthcareAssertion
+    :type assertion: ~azure.ai.textanalytics.v3_1_preview_5.models.HealthcareAssertion
     :param name: Preferred name for the entity. Example: 'histologically' would have a 'name' of
      'histologic'.
     :type name: str
     :param links: Entity references in known data sources.
-    :type links: list[~azure.ai.textanalytics.v3_1_preview_4.models.HealthcareEntityLink]
+    :type links: list[~azure.ai.textanalytics.v3_1_preview_5.models.HealthcareEntityLink]
     """
 
     _validation = {
@@ -1113,11 +1140,11 @@ class HealthcareJobState(JobMetadata, Pagination):
     :type last_update_date_time: ~datetime.datetime
     :param status: Required.  Possible values include: "notStarted", "running", "succeeded",
      "failed", "rejected", "cancelled", "cancelling", "partiallyCompleted".
-    :type status: str or ~azure.ai.textanalytics.v3_1_preview_4.models.State
+    :type status: str or ~azure.ai.textanalytics.v3_1_preview_5.models.State
     :param results:
-    :type results: ~azure.ai.textanalytics.v3_1_preview_4.models.HealthcareResult
+    :type results: ~azure.ai.textanalytics.v3_1_preview_5.models.HealthcareResult
     :param errors:
-    :type errors: list[~azure.ai.textanalytics.v3_1_preview_4.models.TextAnalyticsError]
+    :type errors: list[~azure.ai.textanalytics.v3_1_preview_5.models.TextAnalyticsError]
     """
 
     _validation = {
@@ -1167,9 +1194,9 @@ class HealthcareRelation(msrest.serialization.Model):
      "FrequencyOfTreatment", "QualifierOfCondition", "RelationOfExamination", "RouteOfMedication",
      "TimeOfCondition", "TimeOfEvent", "TimeOfExamination", "TimeOfMedication", "TimeOfTreatment",
      "UnitOfCondition", "UnitOfExamination", "ValueOfCondition", "ValueOfExamination".
-    :type relation_type: str or ~azure.ai.textanalytics.v3_1_preview_4.models.RelationType
+    :type relation_type: str or ~azure.ai.textanalytics.v3_1_preview_5.models.RelationType
     :param entities: Required. The entities in the relation.
-    :type entities: list[~azure.ai.textanalytics.v3_1_preview_4.models.HealthcareRelationEntity]
+    :type entities: list[~azure.ai.textanalytics.v3_1_preview_5.models.HealthcareRelationEntity]
     """
 
     _validation = {
@@ -1230,12 +1257,12 @@ class HealthcareResult(msrest.serialization.Model):
     All required parameters must be populated in order to send to Azure.
 
     :param documents: Required. Response by document.
-    :type documents: list[~azure.ai.textanalytics.v3_1_preview_4.models.DocumentHealthcareEntities]
+    :type documents: list[~azure.ai.textanalytics.v3_1_preview_5.models.DocumentHealthcareEntities]
     :param errors: Required. Errors by document id.
-    :type errors: list[~azure.ai.textanalytics.v3_1_preview_4.models.DocumentError]
+    :type errors: list[~azure.ai.textanalytics.v3_1_preview_5.models.DocumentError]
     :param statistics: if showStats=true was specified in the request this field will contain
      information about the request payload.
-    :type statistics: ~azure.ai.textanalytics.v3_1_preview_4.models.RequestStatistics
+    :type statistics: ~azure.ai.textanalytics.v3_1_preview_5.models.RequestStatistics
     :param model_version: Required. This field indicates which model is used for scoring.
     :type model_version: str
     """
@@ -1273,7 +1300,7 @@ class InnerError(msrest.serialization.Model):
      "InvalidRequestBodyFormat", "EmptyRequest", "MissingInputRecords", "InvalidDocument",
      "ModelVersionIncorrect", "InvalidDocumentBatch", "UnsupportedLanguageCode",
      "InvalidCountryHint".
-    :type code: str or ~azure.ai.textanalytics.v3_1_preview_4.models.InnerErrorCodeValue
+    :type code: str or ~azure.ai.textanalytics.v3_1_preview_5.models.InnerErrorCodeValue
     :param message: Required. Error message.
     :type message: str
     :param details: Error details.
@@ -1281,7 +1308,7 @@ class InnerError(msrest.serialization.Model):
     :param target: Error target.
     :type target: str
     :param innererror: Inner error contains more specific information.
-    :type innererror: ~azure.ai.textanalytics.v3_1_preview_4.models.InnerError
+    :type innererror: ~azure.ai.textanalytics.v3_1_preview_5.models.InnerError
     """
 
     _validation = {
@@ -1314,15 +1341,18 @@ class JobManifestTasks(msrest.serialization.Model):
 
     :param entity_recognition_tasks:
     :type entity_recognition_tasks:
-     list[~azure.ai.textanalytics.v3_1_preview_4.models.EntitiesTask]
+     list[~azure.ai.textanalytics.v3_1_preview_5.models.EntitiesTask]
     :param entity_recognition_pii_tasks:
-    :type entity_recognition_pii_tasks: list[~azure.ai.textanalytics.v3_1_preview_4.models.PiiTask]
+    :type entity_recognition_pii_tasks: list[~azure.ai.textanalytics.v3_1_preview_5.models.PiiTask]
     :param key_phrase_extraction_tasks:
     :type key_phrase_extraction_tasks:
-     list[~azure.ai.textanalytics.v3_1_preview_4.models.KeyPhrasesTask]
+     list[~azure.ai.textanalytics.v3_1_preview_5.models.KeyPhrasesTask]
     :param entity_linking_tasks:
     :type entity_linking_tasks:
-     list[~azure.ai.textanalytics.v3_1_preview_4.models.EntityLinkingTask]
+     list[~azure.ai.textanalytics.v3_1_preview_5.models.EntityLinkingTask]
+    :param sentiment_analysis_tasks:
+    :type sentiment_analysis_tasks:
+     list[~azure.ai.textanalytics.v3_1_preview_5.models.SentimentAnalysisTask]
     """
 
     _attribute_map = {
@@ -1330,6 +1360,7 @@ class JobManifestTasks(msrest.serialization.Model):
         'entity_recognition_pii_tasks': {'key': 'entityRecognitionPiiTasks', 'type': '[PiiTask]'},
         'key_phrase_extraction_tasks': {'key': 'keyPhraseExtractionTasks', 'type': '[KeyPhrasesTask]'},
         'entity_linking_tasks': {'key': 'entityLinkingTasks', 'type': '[EntityLinkingTask]'},
+        'sentiment_analysis_tasks': {'key': 'sentimentAnalysisTasks', 'type': '[SentimentAnalysisTask]'},
     }
 
     def __init__(
@@ -1341,6 +1372,7 @@ class JobManifestTasks(msrest.serialization.Model):
         self.entity_recognition_pii_tasks = kwargs.get('entity_recognition_pii_tasks', None)
         self.key_phrase_extraction_tasks = kwargs.get('key_phrase_extraction_tasks', None)
         self.entity_linking_tasks = kwargs.get('entity_linking_tasks', None)
+        self.sentiment_analysis_tasks = kwargs.get('sentiment_analysis_tasks', None)
 
 
 class KeyPhraseResult(msrest.serialization.Model):
@@ -1349,12 +1381,12 @@ class KeyPhraseResult(msrest.serialization.Model):
     All required parameters must be populated in order to send to Azure.
 
     :param documents: Required. Response by document.
-    :type documents: list[~azure.ai.textanalytics.v3_1_preview_4.models.DocumentKeyPhrases]
+    :type documents: list[~azure.ai.textanalytics.v3_1_preview_5.models.DocumentKeyPhrases]
     :param errors: Required. Errors by document id.
-    :type errors: list[~azure.ai.textanalytics.v3_1_preview_4.models.DocumentError]
+    :type errors: list[~azure.ai.textanalytics.v3_1_preview_5.models.DocumentError]
     :param statistics: if showStats=true was specified in the request this field will contain
      information about the request payload.
-    :type statistics: ~azure.ai.textanalytics.v3_1_preview_4.models.RequestStatistics
+    :type statistics: ~azure.ai.textanalytics.v3_1_preview_5.models.RequestStatistics
     :param model_version: Required. This field indicates which model is used for scoring.
     :type model_version: str
     """
@@ -1387,7 +1419,7 @@ class KeyPhrasesTask(msrest.serialization.Model):
     """KeyPhrasesTask.
 
     :param parameters:
-    :type parameters: ~azure.ai.textanalytics.v3_1_preview_4.models.KeyPhrasesTaskParameters
+    :type parameters: ~azure.ai.textanalytics.v3_1_preview_5.models.KeyPhrasesTaskParameters
     """
 
     _attribute_map = {
@@ -1407,10 +1439,13 @@ class KeyPhrasesTaskParameters(msrest.serialization.Model):
 
     :param model_version:
     :type model_version: str
+    :param logging_opt_out:
+    :type logging_opt_out: bool
     """
 
     _attribute_map = {
         'model_version': {'key': 'model-version', 'type': 'str'},
+        'logging_opt_out': {'key': 'loggingOptOut', 'type': 'bool'},
     }
 
     def __init__(
@@ -1419,6 +1454,7 @@ class KeyPhrasesTaskParameters(msrest.serialization.Model):
     ):
         super(KeyPhrasesTaskParameters, self).__init__(**kwargs)
         self.model_version = kwargs.get('model_version', "latest")
+        self.logging_opt_out = kwargs.get('logging_opt_out', false)
 
 
 class LanguageBatchInput(msrest.serialization.Model):
@@ -1427,7 +1463,7 @@ class LanguageBatchInput(msrest.serialization.Model):
     All required parameters must be populated in order to send to Azure.
 
     :param documents: Required.
-    :type documents: list[~azure.ai.textanalytics.v3_1_preview_4.models.LanguageInput]
+    :type documents: list[~azure.ai.textanalytics.v3_1_preview_5.models.LanguageInput]
     """
 
     _validation = {
@@ -1486,12 +1522,12 @@ class LanguageResult(msrest.serialization.Model):
     All required parameters must be populated in order to send to Azure.
 
     :param documents: Required. Response by document.
-    :type documents: list[~azure.ai.textanalytics.v3_1_preview_4.models.DocumentLanguage]
+    :type documents: list[~azure.ai.textanalytics.v3_1_preview_5.models.DocumentLanguage]
     :param errors: Required. Errors by document id.
-    :type errors: list[~azure.ai.textanalytics.v3_1_preview_4.models.DocumentError]
+    :type errors: list[~azure.ai.textanalytics.v3_1_preview_5.models.DocumentError]
     :param statistics: if showStats=true was specified in the request this field will contain
      information about the request payload.
-    :type statistics: ~azure.ai.textanalytics.v3_1_preview_4.models.RequestStatistics
+    :type statistics: ~azure.ai.textanalytics.v3_1_preview_5.models.RequestStatistics
     :param model_version: Required. This field indicates which model is used for scoring.
     :type model_version: str
     """
@@ -1528,7 +1564,7 @@ class LinkedEntity(msrest.serialization.Model):
     :param name: Required. Entity Linking formal name.
     :type name: str
     :param matches: Required. List of instances this entity appears in the text.
-    :type matches: list[~azure.ai.textanalytics.v3_1_preview_4.models.Match]
+    :type matches: list[~azure.ai.textanalytics.v3_1_preview_5.models.Match]
     :param language: Required. Language used in the data source.
     :type language: str
     :param id: Unique identifier of the recognized entity from the data source.
@@ -1621,7 +1657,7 @@ class MultiLanguageBatchInput(msrest.serialization.Model):
     All required parameters must be populated in order to send to Azure.
 
     :param documents: Required. The set of documents to process as part of this batch.
-    :type documents: list[~azure.ai.textanalytics.v3_1_preview_4.models.MultiLanguageInput]
+    :type documents: list[~azure.ai.textanalytics.v3_1_preview_5.models.MultiLanguageInput]
     """
 
     _validation = {
@@ -1686,12 +1722,12 @@ class PiiDocumentEntities(msrest.serialization.Model):
     :param redacted_text: Required. Returns redacted text.
     :type redacted_text: str
     :param entities: Required. Recognized entities in the document.
-    :type entities: list[~azure.ai.textanalytics.v3_1_preview_4.models.Entity]
+    :type entities: list[~azure.ai.textanalytics.v3_1_preview_5.models.Entity]
     :param warnings: Required. Warnings encountered while processing document.
-    :type warnings: list[~azure.ai.textanalytics.v3_1_preview_4.models.TextAnalyticsWarning]
+    :type warnings: list[~azure.ai.textanalytics.v3_1_preview_5.models.TextAnalyticsWarning]
     :param statistics: if showStats=true was specified in the request this field will contain
      information about the document payload.
-    :type statistics: ~azure.ai.textanalytics.v3_1_preview_4.models.DocumentStatistics
+    :type statistics: ~azure.ai.textanalytics.v3_1_preview_5.models.DocumentStatistics
     """
 
     _validation = {
@@ -1727,12 +1763,12 @@ class PiiResult(msrest.serialization.Model):
     All required parameters must be populated in order to send to Azure.
 
     :param documents: Required. Response by document.
-    :type documents: list[~azure.ai.textanalytics.v3_1_preview_4.models.PiiDocumentEntities]
+    :type documents: list[~azure.ai.textanalytics.v3_1_preview_5.models.PiiDocumentEntities]
     :param errors: Required. Errors by document id.
-    :type errors: list[~azure.ai.textanalytics.v3_1_preview_4.models.DocumentError]
+    :type errors: list[~azure.ai.textanalytics.v3_1_preview_5.models.DocumentError]
     :param statistics: if showStats=true was specified in the request this field will contain
      information about the request payload.
-    :type statistics: ~azure.ai.textanalytics.v3_1_preview_4.models.RequestStatistics
+    :type statistics: ~azure.ai.textanalytics.v3_1_preview_5.models.RequestStatistics
     :param model_version: Required. This field indicates which model is used for scoring.
     :type model_version: str
     """
@@ -1765,7 +1801,7 @@ class PiiTask(msrest.serialization.Model):
     """PiiTask.
 
     :param parameters:
-    :type parameters: ~azure.ai.textanalytics.v3_1_preview_4.models.PiiTaskParameters
+    :type parameters: ~azure.ai.textanalytics.v3_1_preview_5.models.PiiTaskParameters
     """
 
     _attribute_map = {
@@ -1784,14 +1820,16 @@ class PiiTaskParameters(msrest.serialization.Model):
     """PiiTaskParameters.
 
     :param domain:  Possible values include: "phi", "none". Default value: "none".
-    :type domain: str or ~azure.ai.textanalytics.v3_1_preview_4.models.PiiTaskParametersDomain
+    :type domain: str or ~azure.ai.textanalytics.v3_1_preview_5.models.PiiTaskParametersDomain
     :param model_version:
     :type model_version: str
+    :param logging_opt_out:
+    :type logging_opt_out: bool
     :param pii_categories: (Optional) describes the PII categories to return.
-    :type pii_categories: list[str or ~azure.ai.textanalytics.v3_1_preview_4.models.PiiCategory]
-    :param string_index_type:  Possible values include: "TextElements_v8", "UnicodeCodePoint",
+    :type pii_categories: list[str or ~azure.ai.textanalytics.v3_1_preview_5.models.PiiCategory]
+    :param string_index_type:  Possible values include: "TextElement_v8", "UnicodeCodePoint",
      "Utf16CodeUnit".
-    :type string_index_type: str or ~azure.ai.textanalytics.v3_1_preview_4.models.StringIndexType
+    :type string_index_type: str or ~azure.ai.textanalytics.v3_1_preview_5.models.StringIndexType
     """
 
     _validation = {
@@ -1801,6 +1839,7 @@ class PiiTaskParameters(msrest.serialization.Model):
     _attribute_map = {
         'domain': {'key': 'domain', 'type': 'str'},
         'model_version': {'key': 'model-version', 'type': 'str'},
+        'logging_opt_out': {'key': 'loggingOptOut', 'type': 'bool'},
         'pii_categories': {'key': 'pii-categories', 'type': '[str]'},
         'string_index_type': {'key': 'stringIndexType', 'type': 'str'},
     }
@@ -1812,6 +1851,7 @@ class PiiTaskParameters(msrest.serialization.Model):
         super(PiiTaskParameters, self).__init__(**kwargs)
         self.domain = kwargs.get('domain', "none")
         self.model_version = kwargs.get('model_version', "latest")
+        self.logging_opt_out = kwargs.get('logging_opt_out', true)
         self.pii_categories = kwargs.get('pii_categories', None)
         self.string_index_type = kwargs.get('string_index_type', None)
 
@@ -1823,8 +1863,8 @@ class RequestStatistics(msrest.serialization.Model):
 
     :param documents_count: Required. Number of documents submitted in the request.
     :type documents_count: int
-    :param valid_documents_count: Required. Number of valid documents. This excludes empty, over-
-     size limit or non-supported languages documents.
+    :param valid_documents_count: Required. Number of valid documents. This excludes empty,
+     over-size limit or non-supported languages documents.
     :type valid_documents_count: int
     :param erroneous_documents_count: Required. Number of invalid documents. This includes empty,
      over-size limit or non-supported languages documents.
@@ -1865,10 +1905,10 @@ class SentenceAssessment(msrest.serialization.Model):
 
     :param sentiment: Required. Assessment sentiment in the sentence. Possible values include:
      "positive", "mixed", "negative".
-    :type sentiment: str or ~azure.ai.textanalytics.v3_1_preview_4.models.TokenSentimentValue
+    :type sentiment: str or ~azure.ai.textanalytics.v3_1_preview_5.models.TokenSentimentValue
     :param confidence_scores: Required. Assessment sentiment confidence scores in the sentence.
     :type confidence_scores:
-     ~azure.ai.textanalytics.v3_1_preview_4.models.TargetConfidenceScoreLabel
+     ~azure.ai.textanalytics.v3_1_preview_5.models.TargetConfidenceScoreLabel
     :param offset: Required. The assessment offset from the start of the sentence.
     :type offset: int
     :param length: Required. The length of the assessment.
@@ -1919,19 +1959,19 @@ class SentenceSentiment(msrest.serialization.Model):
     :type text: str
     :param sentiment: Required. The predicted Sentiment for the sentence. Possible values include:
      "positive", "neutral", "negative".
-    :type sentiment: str or ~azure.ai.textanalytics.v3_1_preview_4.models.SentenceSentimentValue
+    :type sentiment: str or ~azure.ai.textanalytics.v3_1_preview_5.models.SentenceSentimentValue
     :param confidence_scores: Required. The sentiment confidence score between 0 and 1 for the
      sentence for all classes.
     :type confidence_scores:
-     ~azure.ai.textanalytics.v3_1_preview_4.models.SentimentConfidenceScorePerLabel
+     ~azure.ai.textanalytics.v3_1_preview_5.models.SentimentConfidenceScorePerLabel
     :param offset: Required. The sentence offset from the start of the document.
     :type offset: int
     :param length: Required. The length of the sentence.
     :type length: int
     :param targets: The array of sentence targets for the sentence.
-    :type targets: list[~azure.ai.textanalytics.v3_1_preview_4.models.SentenceTarget]
+    :type targets: list[~azure.ai.textanalytics.v3_1_preview_5.models.SentenceTarget]
     :param assessments: The array of assessments for the sentence.
-    :type assessments: list[~azure.ai.textanalytics.v3_1_preview_4.models.SentenceAssessment]
+    :type assessments: list[~azure.ai.textanalytics.v3_1_preview_5.models.SentenceAssessment]
     """
 
     _validation = {
@@ -1973,11 +2013,11 @@ class SentenceTarget(msrest.serialization.Model):
 
     :param sentiment: Required. Targeted sentiment in the sentence. Possible values include:
      "positive", "mixed", "negative".
-    :type sentiment: str or ~azure.ai.textanalytics.v3_1_preview_4.models.TokenSentimentValue
+    :type sentiment: str or ~azure.ai.textanalytics.v3_1_preview_5.models.TokenSentimentValue
     :param confidence_scores: Required. Target sentiment confidence scores for the target in the
      sentence.
     :type confidence_scores:
-     ~azure.ai.textanalytics.v3_1_preview_4.models.TargetConfidenceScoreLabel
+     ~azure.ai.textanalytics.v3_1_preview_5.models.TargetConfidenceScoreLabel
     :param offset: Required. The target offset from the start of the sentence.
     :type offset: int
     :param length: Required. The length of the target.
@@ -1986,7 +2026,7 @@ class SentenceTarget(msrest.serialization.Model):
     :type text: str
     :param relations: Required. The array of either assessment or target objects which is related
      to the target.
-    :type relations: list[~azure.ai.textanalytics.v3_1_preview_4.models.TargetRelation]
+    :type relations: list[~azure.ai.textanalytics.v3_1_preview_5.models.TargetRelation]
     """
 
     _validation = {
@@ -2018,6 +2058,57 @@ class SentenceTarget(msrest.serialization.Model):
         self.length = kwargs['length']
         self.text = kwargs['text']
         self.relations = kwargs['relations']
+
+
+class SentimentAnalysisTask(msrest.serialization.Model):
+    """SentimentAnalysisTask.
+
+    :param parameters:
+    :type parameters: ~azure.ai.textanalytics.v3_1_preview_5.models.SentimentAnalysisTaskParameters
+    """
+
+    _attribute_map = {
+        'parameters': {'key': 'parameters', 'type': 'SentimentAnalysisTaskParameters'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(SentimentAnalysisTask, self).__init__(**kwargs)
+        self.parameters = kwargs.get('parameters', None)
+
+
+class SentimentAnalysisTaskParameters(msrest.serialization.Model):
+    """SentimentAnalysisTaskParameters.
+
+    :param model_version:
+    :type model_version: str
+    :param logging_opt_out:
+    :type logging_opt_out: bool
+    :param opinion_mining:
+    :type opinion_mining: bool
+    :param string_index_type:  Possible values include: "TextElement_v8", "UnicodeCodePoint",
+     "Utf16CodeUnit".
+    :type string_index_type: str or ~azure.ai.textanalytics.v3_1_preview_5.models.StringIndexType
+    """
+
+    _attribute_map = {
+        'model_version': {'key': 'model-version', 'type': 'str'},
+        'logging_opt_out': {'key': 'loggingOptOut', 'type': 'bool'},
+        'opinion_mining': {'key': 'opinionMining', 'type': 'bool'},
+        'string_index_type': {'key': 'stringIndexType', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(SentimentAnalysisTaskParameters, self).__init__(**kwargs)
+        self.model_version = kwargs.get('model_version', "latest")
+        self.logging_opt_out = kwargs.get('logging_opt_out', false)
+        self.opinion_mining = kwargs.get('opinion_mining', False)
+        self.string_index_type = kwargs.get('string_index_type', None)
 
 
 class SentimentConfidenceScorePerLabel(msrest.serialization.Model):
@@ -2061,12 +2152,12 @@ class SentimentResponse(msrest.serialization.Model):
     All required parameters must be populated in order to send to Azure.
 
     :param documents: Required. Sentiment analysis per document.
-    :type documents: list[~azure.ai.textanalytics.v3_1_preview_4.models.DocumentSentiment]
+    :type documents: list[~azure.ai.textanalytics.v3_1_preview_5.models.DocumentSentiment]
     :param errors: Required. Errors by document id.
-    :type errors: list[~azure.ai.textanalytics.v3_1_preview_4.models.DocumentError]
+    :type errors: list[~azure.ai.textanalytics.v3_1_preview_5.models.DocumentError]
     :param statistics: if showStats=true was specified in the request this field will contain
      information about the request payload.
-    :type statistics: ~azure.ai.textanalytics.v3_1_preview_4.models.RequestStatistics
+    :type statistics: ~azure.ai.textanalytics.v3_1_preview_5.models.RequestStatistics
     :param model_version: Required. This field indicates which model is used for scoring.
     :type model_version: str
     """
@@ -2132,7 +2223,7 @@ class TargetRelation(msrest.serialization.Model):
 
     :param relation_type: Required. The type related to the target. Possible values include:
      "assessment", "target".
-    :type relation_type: str or ~azure.ai.textanalytics.v3_1_preview_4.models.TargetRelationType
+    :type relation_type: str or ~azure.ai.textanalytics.v3_1_preview_5.models.TargetRelationType
     :param ref: Required. The JSON pointer indicating the linked object.
     :type ref: str
     """
@@ -2162,7 +2253,7 @@ class TasksStateTasks(msrest.serialization.Model):
     All required parameters must be populated in order to send to Azure.
 
     :param details:
-    :type details: ~azure.ai.textanalytics.v3_1_preview_4.models.TasksStateTasksDetails
+    :type details: ~azure.ai.textanalytics.v3_1_preview_5.models.TasksStateTasksDetails
     :param completed: Required.
     :type completed: int
     :param failed: Required.
@@ -2173,16 +2264,19 @@ class TasksStateTasks(msrest.serialization.Model):
     :type total: int
     :param entity_recognition_tasks:
     :type entity_recognition_tasks:
-     list[~azure.ai.textanalytics.v3_1_preview_4.models.TasksStateTasksEntityRecognitionTasksItem]
+     list[~azure.ai.textanalytics.v3_1_preview_5.models.TasksStateTasksEntityRecognitionTasksItem]
     :param entity_recognition_pii_tasks:
     :type entity_recognition_pii_tasks:
-     list[~azure.ai.textanalytics.v3_1_preview_4.models.TasksStateTasksEntityRecognitionPiiTasksItem]
+     list[~azure.ai.textanalytics.v3_1_preview_5.models.TasksStateTasksEntityRecognitionPiiTasksItem]
     :param key_phrase_extraction_tasks:
     :type key_phrase_extraction_tasks:
-     list[~azure.ai.textanalytics.v3_1_preview_4.models.TasksStateTasksKeyPhraseExtractionTasksItem]
+     list[~azure.ai.textanalytics.v3_1_preview_5.models.TasksStateTasksKeyPhraseExtractionTasksItem]
     :param entity_linking_tasks:
     :type entity_linking_tasks:
-     list[~azure.ai.textanalytics.v3_1_preview_4.models.TasksStateTasksEntityLinkingTasksItem]
+     list[~azure.ai.textanalytics.v3_1_preview_5.models.TasksStateTasksEntityLinkingTasksItem]
+    :param sentiment_analysis_tasks:
+    :type sentiment_analysis_tasks:
+     list[~azure.ai.textanalytics.v3_1_preview_5.models.TasksStateTasksSentimentAnalysisTasksItem]
     """
 
     _validation = {
@@ -2202,6 +2296,7 @@ class TasksStateTasks(msrest.serialization.Model):
         'entity_recognition_pii_tasks': {'key': 'entityRecognitionPiiTasks', 'type': '[TasksStateTasksEntityRecognitionPiiTasksItem]'},
         'key_phrase_extraction_tasks': {'key': 'keyPhraseExtractionTasks', 'type': '[TasksStateTasksKeyPhraseExtractionTasksItem]'},
         'entity_linking_tasks': {'key': 'entityLinkingTasks', 'type': '[TasksStateTasksEntityLinkingTasksItem]'},
+        'sentiment_analysis_tasks': {'key': 'sentimentAnalysisTasks', 'type': '[TasksStateTasksSentimentAnalysisTasksItem]'},
     }
 
     def __init__(
@@ -2218,6 +2313,7 @@ class TasksStateTasks(msrest.serialization.Model):
         self.entity_recognition_pii_tasks = kwargs.get('entity_recognition_pii_tasks', None)
         self.key_phrase_extraction_tasks = kwargs.get('key_phrase_extraction_tasks', None)
         self.entity_linking_tasks = kwargs.get('entity_linking_tasks', None)
+        self.sentiment_analysis_tasks = kwargs.get('sentiment_analysis_tasks', None)
 
 
 class TaskState(msrest.serialization.Model):
@@ -2231,7 +2327,7 @@ class TaskState(msrest.serialization.Model):
     :type name: str
     :param status: Required.  Possible values include: "notStarted", "running", "succeeded",
      "failed", "rejected", "cancelled", "cancelling", "partiallyCompleted".
-    :type status: str or ~azure.ai.textanalytics.v3_1_preview_4.models.State
+    :type status: str or ~azure.ai.textanalytics.v3_1_preview_5.models.State
     """
 
     _validation = {
@@ -2266,7 +2362,7 @@ class TasksStateTasksDetails(TaskState):
     :type name: str
     :param status: Required.  Possible values include: "notStarted", "running", "succeeded",
      "failed", "rejected", "cancelled", "cancelling", "partiallyCompleted".
-    :type status: str or ~azure.ai.textanalytics.v3_1_preview_4.models.State
+    :type status: str or ~azure.ai.textanalytics.v3_1_preview_5.models.State
     """
 
     _validation = {
@@ -2293,14 +2389,14 @@ class TasksStateTasksEntityLinkingTasksItem(TaskState, ComponentsIfu7BjSchemasTa
     All required parameters must be populated in order to send to Azure.
 
     :param results:
-    :type results: ~azure.ai.textanalytics.v3_1_preview_4.models.EntityLinkingResult
+    :type results: ~azure.ai.textanalytics.v3_1_preview_5.models.EntityLinkingResult
     :param last_update_date_time: Required.
     :type last_update_date_time: ~datetime.datetime
     :param name:
     :type name: str
     :param status: Required.  Possible values include: "notStarted", "running", "succeeded",
      "failed", "rejected", "cancelled", "cancelling", "partiallyCompleted".
-    :type status: str or ~azure.ai.textanalytics.v3_1_preview_4.models.State
+    :type status: str or ~azure.ai.textanalytics.v3_1_preview_5.models.State
     """
 
     _validation = {
@@ -2332,14 +2428,14 @@ class TasksStateTasksEntityRecognitionPiiTasksItem(TaskState, Components15X8E9LS
     All required parameters must be populated in order to send to Azure.
 
     :param results:
-    :type results: ~azure.ai.textanalytics.v3_1_preview_4.models.PiiResult
+    :type results: ~azure.ai.textanalytics.v3_1_preview_5.models.PiiResult
     :param last_update_date_time: Required.
     :type last_update_date_time: ~datetime.datetime
     :param name:
     :type name: str
     :param status: Required.  Possible values include: "notStarted", "running", "succeeded",
      "failed", "rejected", "cancelled", "cancelling", "partiallyCompleted".
-    :type status: str or ~azure.ai.textanalytics.v3_1_preview_4.models.State
+    :type status: str or ~azure.ai.textanalytics.v3_1_preview_5.models.State
     """
 
     _validation = {
@@ -2371,14 +2467,14 @@ class TasksStateTasksEntityRecognitionTasksItem(TaskState, Components15Gvwi3Sche
     All required parameters must be populated in order to send to Azure.
 
     :param results:
-    :type results: ~azure.ai.textanalytics.v3_1_preview_4.models.EntitiesResult
+    :type results: ~azure.ai.textanalytics.v3_1_preview_5.models.EntitiesResult
     :param last_update_date_time: Required.
     :type last_update_date_time: ~datetime.datetime
     :param name:
     :type name: str
     :param status: Required.  Possible values include: "notStarted", "running", "succeeded",
      "failed", "rejected", "cancelled", "cancelling", "partiallyCompleted".
-    :type status: str or ~azure.ai.textanalytics.v3_1_preview_4.models.State
+    :type status: str or ~azure.ai.textanalytics.v3_1_preview_5.models.State
     """
 
     _validation = {
@@ -2410,14 +2506,14 @@ class TasksStateTasksKeyPhraseExtractionTasksItem(TaskState, Components1D9IzucSc
     All required parameters must be populated in order to send to Azure.
 
     :param results:
-    :type results: ~azure.ai.textanalytics.v3_1_preview_4.models.KeyPhraseResult
+    :type results: ~azure.ai.textanalytics.v3_1_preview_5.models.KeyPhraseResult
     :param last_update_date_time: Required.
     :type last_update_date_time: ~datetime.datetime
     :param name:
     :type name: str
     :param status: Required.  Possible values include: "notStarted", "running", "succeeded",
      "failed", "rejected", "cancelled", "cancelling", "partiallyCompleted".
-    :type status: str or ~azure.ai.textanalytics.v3_1_preview_4.models.State
+    :type status: str or ~azure.ai.textanalytics.v3_1_preview_5.models.State
     """
 
     _validation = {
@@ -2443,6 +2539,45 @@ class TasksStateTasksKeyPhraseExtractionTasksItem(TaskState, Components1D9IzucSc
         self.status = kwargs['status']
 
 
+class TasksStateTasksSentimentAnalysisTasksItem(TaskState, Components1C6O47FSchemasTasksstatePropertiesTasksPropertiesSentimentanalysistasksItemsAllof1):
+    """TasksStateTasksSentimentAnalysisTasksItem.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param results:
+    :type results: ~azure.ai.textanalytics.v3_1_preview_5.models.SentimentResponse
+    :param last_update_date_time: Required.
+    :type last_update_date_time: ~datetime.datetime
+    :param name:
+    :type name: str
+    :param status: Required.  Possible values include: "notStarted", "running", "succeeded",
+     "failed", "rejected", "cancelled", "cancelling", "partiallyCompleted".
+    :type status: str or ~azure.ai.textanalytics.v3_1_preview_5.models.State
+    """
+
+    _validation = {
+        'last_update_date_time': {'required': True},
+        'status': {'required': True},
+    }
+
+    _attribute_map = {
+        'results': {'key': 'results', 'type': 'SentimentResponse'},
+        'last_update_date_time': {'key': 'lastUpdateDateTime', 'type': 'iso-8601'},
+        'name': {'key': 'name', 'type': 'str'},
+        'status': {'key': 'status', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(TasksStateTasksSentimentAnalysisTasksItem, self).__init__(**kwargs)
+        self.results = kwargs.get('results', None)
+        self.last_update_date_time = kwargs['last_update_date_time']
+        self.name = kwargs.get('name', None)
+        self.status = kwargs['status']
+
+
 class TextAnalyticsError(msrest.serialization.Model):
     """TextAnalyticsError.
 
@@ -2450,15 +2585,15 @@ class TextAnalyticsError(msrest.serialization.Model):
 
     :param code: Required. Error code. Possible values include: "InvalidRequest",
      "InvalidArgument", "InternalServerError", "ServiceUnavailable", "NotFound".
-    :type code: str or ~azure.ai.textanalytics.v3_1_preview_4.models.ErrorCodeValue
+    :type code: str or ~azure.ai.textanalytics.v3_1_preview_5.models.ErrorCodeValue
     :param message: Required. Error message.
     :type message: str
     :param target: Error target.
     :type target: str
     :param innererror: Inner error contains more specific information.
-    :type innererror: ~azure.ai.textanalytics.v3_1_preview_4.models.InnerError
+    :type innererror: ~azure.ai.textanalytics.v3_1_preview_5.models.InnerError
     :param details: Details about specific errors that led to this reported error.
-    :type details: list[~azure.ai.textanalytics.v3_1_preview_4.models.TextAnalyticsError]
+    :type details: list[~azure.ai.textanalytics.v3_1_preview_5.models.TextAnalyticsError]
     """
 
     _validation = {
@@ -2493,7 +2628,7 @@ class TextAnalyticsWarning(msrest.serialization.Model):
 
     :param code: Required. Error code. Possible values include: "LongWordsInDocument",
      "DocumentTruncated".
-    :type code: str or ~azure.ai.textanalytics.v3_1_preview_4.models.WarningCodeValue
+    :type code: str or ~azure.ai.textanalytics.v3_1_preview_5.models.WarningCodeValue
     :param message: Required. Warning message.
     :type message: str
     :param target_ref: A JSON pointer reference indicating the target object.

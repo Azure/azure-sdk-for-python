@@ -11,7 +11,7 @@ from ._generated.models import (
 )
 
 from ._generated.v3_0 import models as _v3_0_models
-from ._generated.v3_1_preview_4 import models as _latest_preview_models
+from ._generated.v3_1_preview_5 import models as _latest_preview_models
 
 def _get_indices(relation):
     return [int(s) for s in re.findall(r"\d+", relation)]
