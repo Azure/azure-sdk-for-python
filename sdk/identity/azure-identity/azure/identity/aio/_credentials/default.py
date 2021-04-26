@@ -17,6 +17,7 @@ from .vscode import VisualStudioCodeCredential
 
 if TYPE_CHECKING:
     from typing import Any, List
+    from azure.core.credentials import AccessToken
     from azure.core.credentials_async import AsyncTokenCredential
 
 _LOGGER = logging.getLogger(__name__)
@@ -99,7 +100,6 @@ class DefaultAzureCredential(ChainedTokenCredential):
                 )
                 credentials.append(shared_cache)
             except Exception as ex:  # pylint:disable=broad-except
-                # transitive dependency pywin32 doesn't support 3.8 (https://github.com/mhammond/pywin32/issues/1431)
                 _LOGGER.info("Shared token cache is unavailable: '%s'", ex)
         if not exclude_visual_studio_code_credential:
             credentials.append(VisualStudioCodeCredential(tenant_id=vscode_tenant_id))
@@ -108,7 +108,7 @@ class DefaultAzureCredential(ChainedTokenCredential):
 
         super().__init__(*credentials)
 
-    async def get_token(self, *scopes: str, **kwargs: "Any"):
+    async def get_token(self, *scopes: str, **kwargs: "Any") -> "AccessToken":
         """Asynchronously request an access token for `scopes`.
 
         This method is called automatically by Azure SDK clients.
