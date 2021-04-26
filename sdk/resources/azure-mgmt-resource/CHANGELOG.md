@@ -1,5 +1,24 @@
 # Release History
 
+## 17.0.0 (2021-04-26)
+
+**Features**
+
+  - Model GenericResource has a new parameter extended_location
+  - Model TemplateSpecVersion has a new parameter ui_form_definition
+  - Model TemplateSpecVersion has a new parameter main_template
+  - Model TemplateSpecVersion has a new parameter linked_templates
+  - Model TemplateSpecVersion has a new parameter metadata
+  - Model WhatIfChange has a new parameter unsupported_reason
+  - Model Resource has a new parameter extended_location
+  - Model GenericResourceExpanded has a new parameter extended_location
+  - Model TemplateSpec has a new parameter metadata
+
+**Breaking changes**
+
+  - Model TemplateSpecVersion no longer has parameter artifacts
+  - Model TemplateSpecVersion no longer has parameter template
+
 ## 16.1.0 (2021-04-16)
 
 **Features**
