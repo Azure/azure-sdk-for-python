@@ -64,6 +64,7 @@ if sys.version_info < (3, 5, 3):
 setup(
     name=PACKAGE_NAME,
     version=version,
+    include_package_data=True,
     description="Microsoft {} Library for Python".format(PACKAGE_PPRINT_NAME),
     long_description=readme + "\n\n" + changelog,
     long_description_content_type="text/markdown",
@@ -86,6 +87,9 @@ setup(
     ],
     zip_safe=False,
     packages=find_packages(exclude=exclude_packages),
+    package_data={
+        'pytyped': ['py.typed'],
+    },
     install_requires=[
         "msrest>=0.6.10",
         "azure-core<2.0.0,>=1.2.2",
