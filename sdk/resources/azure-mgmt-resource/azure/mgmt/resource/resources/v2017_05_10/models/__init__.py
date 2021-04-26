@@ -56,6 +56,7 @@ try:
     from ._models_py3 import TargetResource
     from ._models_py3 import TemplateHashResult
     from ._models_py3 import TemplateLink
+    from ._models_py3 import ZoneMapping
 except (SyntaxError, ImportError):
     from ._models import AliasPathType  # type: ignore
     from ._models import AliasType  # type: ignore
@@ -106,6 +107,7 @@ except (SyntaxError, ImportError):
     from ._models import TargetResource  # type: ignore
     from ._models import TemplateHashResult  # type: ignore
     from ._models import TemplateLink  # type: ignore
+    from ._models import ZoneMapping  # type: ignore
 
 from ._resource_management_client_enums import (
     DeploymentMode,
@@ -161,5 +163,6 @@ __all__ = [
     'TargetResource',
     'TemplateHashResult',
     'TemplateLink',
+    'ZoneMapping',
     'DeploymentMode',
 ]

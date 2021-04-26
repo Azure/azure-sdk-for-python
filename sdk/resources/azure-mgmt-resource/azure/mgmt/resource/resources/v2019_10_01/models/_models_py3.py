@@ -1598,6 +1598,8 @@ class ProviderResourceType(msrest.serialization.Model):
     :type aliases: list[~azure.mgmt.resource.resources.v2019_10_01.models.Alias]
     :param api_versions: The API version.
     :type api_versions: list[str]
+    :param zone_mappings:
+    :type zone_mappings: list[~azure.mgmt.resource.resources.v2019_10_01.models.ZoneMapping]
     :param capabilities: The additional capabilities offered by this resource type.
     :type capabilities: str
     :param properties: The properties.
@@ -1609,6 +1611,7 @@ class ProviderResourceType(msrest.serialization.Model):
         'locations': {'key': 'locations', 'type': '[str]'},
         'aliases': {'key': 'aliases', 'type': '[Alias]'},
         'api_versions': {'key': 'apiVersions', 'type': '[str]'},
+        'zone_mappings': {'key': 'zoneMappings', 'type': '[ZoneMapping]'},
         'capabilities': {'key': 'capabilities', 'type': 'str'},
         'properties': {'key': 'properties', 'type': '{str}'},
     }
@@ -1620,6 +1623,7 @@ class ProviderResourceType(msrest.serialization.Model):
         locations: Optional[List[str]] = None,
         aliases: Optional[List["Alias"]] = None,
         api_versions: Optional[List[str]] = None,
+        zone_mappings: Optional[List["ZoneMapping"]] = None,
         capabilities: Optional[str] = None,
         properties: Optional[Dict[str, str]] = None,
         **kwargs
@@ -1629,6 +1633,7 @@ class ProviderResourceType(msrest.serialization.Model):
         self.locations = locations
         self.aliases = aliases
         self.api_versions = api_versions
+        self.zone_mappings = zone_mappings
         self.capabilities = capabilities
         self.properties = properties
 
@@ -2543,3 +2548,29 @@ class WhatIfPropertyChange(msrest.serialization.Model):
         self.before = before
         self.after = after
         self.children = children
+
+
+class ZoneMapping(msrest.serialization.Model):
+    """ZoneMapping.
+
+    :param location: The location of the zone mapping.
+    :type location: str
+    :param zones:
+    :type zones: list[str]
+    """
+
+    _attribute_map = {
+        'location': {'key': 'location', 'type': 'str'},
+        'zones': {'key': 'zones', 'type': '[str]'},
+    }
+
+    def __init__(
+        self,
+        *,
+        location: Optional[str] = None,
+        zones: Optional[List[str]] = None,
+        **kwargs
+    ):
+        super(ZoneMapping, self).__init__(**kwargs)
+        self.location = location
+        self.zones = zones
