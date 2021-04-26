@@ -240,7 +240,7 @@ stages:
     jobs:
     - job: PublishPackages
       displayName: "Publish package to daily feed"
-      condition: and(eq(variables['SetDevVersion'], 'true'), eq(variables['System.TeamProject'], 'internal'))
+      condition: or(eq(variables['SetDevVersion'], 'true'), and(eq(variables['Build.Reason'],'Schedule'), eq(variables['System.TeamProject'], 'internal')))
       pool:
         name: azsdk-pool-mms-ubuntu-1804-general
         vmImage: MMSUbuntu18.04
