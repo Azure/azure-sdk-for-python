@@ -37,15 +37,37 @@ if TYPE_CHECKING:
     ClientType = TypeVar("ClientType", bound="WebPubSubServiceClient")
 
 
-def build_authentication_token(endpoint, hub, key, **kwargs):
+def _parse_connection_string(connection_string, **kwargs):
+    for segment in connection_string.split(";"):
+        if "=" in segment:
+            key, value = segment.split("=", maxsplit=1)
+            key = key.lower()
+            if key not in ("version", ):
+                kwargs.setdefault(key, value)
+        elif segment:
+            raise ValueError(
+                "Malformed connection string - expected 'key=value', found segment '{}' in '{}'".format(
+                    segment, connection_string
+                )
+            )
+
+    if "endpoint" not in kwargs:
+        raise ValueError("connection_string missing 'endpoint' field")
+
+    if "accesskey" not in kwargs:
+        raise ValueError("connection_string missing 'accesskey' field")
+
+    return kwargs
+
+def build_authentication_token(endpoint, hub, **kwargs):
     """Build an authentication token for the given endpoint, hub using the provided key.
 
-    :param endpoint: HTTP or HTTPS endpoint for the WebPubSub service instance.
+    :keyword endpoint: connetion string or HTTP or HTTPS endpoint for the WebPubSub service instance.
     :type endpoint: ~str
-    :param hub: The hub to give access to.
+    :keyword hub: The hub to give access to.
     :type hub: ~str
-    :param key: Key to sign the token with.
-    :type key: ~str
+    :keyword accesskey: Key to sign the token with. Required if endpoint is not a connection string
+    :type accesskey: ~str
     :keyword ttl: Optional ttl timedelta for the token. Default is 1 hour.
     :type ttl: ~datetime.timedelta
     :keyword user: Optional user name (subject) for the token. Default is no user.
@@ -57,14 +79,19 @@ def build_authentication_token(endpoint, hub, key, **kwargs):
 
 
     Example:
-    >>> build_authentication_token('https://contoso.com/api/webpubsub', hub='theHub', key='123')
+    >>> build_authentication_token(endpoint='https://contoso.com/api/webpubsub', hub='theHub', key='123')
     {
         'baseUrl': 'wss://contoso.com/api/webpubsub/client/hubs/theHub',
         'token': 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ...',
         'url': 'wss://contoso.com/api/webpubsub/client/hubs/theHub?access_token=eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ...'
     }
     """
+    if 'accesskey' not in kwargs:
+        kwargs = _parse_connection_string(endpoint, **kwargs)
+        endpoint = kwargs.pop('endpoint')
+
     user = kwargs.pop("user", None)
+    key = kwargs.pop("accesskey")
     ttl = kwargs.pop("ttl", timedelta(hours=1))
     roles = kwargs.pop("roles", [])
     endpoint = endpoint.lower()
@@ -146,31 +173,7 @@ class WebPubSubServiceClient(object):
         :type connection_string: ~str
         :rtype: WebPubSubServiceClient
         """
-        for invalid_keyword_arg in ("endpoint", "accesskey"):
-            if invalid_keyword_arg in kwargs:
-                raise TypeError("Unknown argument {}".format(invalid_keyword_arg))
-
-        for segment in connection_string.split(";"):
-            if "=" in segment:
-                key, value = segment.split("=", maxsplit=1)
-                key = key.lower()
-                if key == "version":
-                    # The name in the connection string != the name for the constructor.
-                    # Let's map it to whatthe constructor actually wants...
-                    key = "api_version"
-                kwargs[key] = value
-            elif segment:
-                raise ValueError(
-                    "Malformed connection string - expected 'key=value', found segment '{}' in '{}'".format(
-                        segment, connection_string
-                    )
-                )
-
-        if "endpoint" not in kwargs:
-            raise ValueError("connection_string missing 'endpoint' field")
-
-        if "accesskey" not in kwargs:
-            raise ValueError("connection_string missing 'accesskey' field")
+        kwargs = _parse_connection_string(connection_string, **kwargs)
 
         kwargs["credential"] = corecredentials.AzureKeyCredential(
             kwargs.pop("accesskey")
