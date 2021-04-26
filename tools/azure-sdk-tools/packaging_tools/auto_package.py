@@ -47,7 +47,7 @@ def change_log_generate(package_name, last_version):
 def _extract_breaking_change(changelog):
     log = changelog.split('\n')
     breaking_change = []
-    for i in len(0, len(log)):
+    for i in range(0, len(log)):
         if log[i].find('Breaking changes') > -1:
             breaking_change = log[min(i + 2, len(log) - 1):]
             break
