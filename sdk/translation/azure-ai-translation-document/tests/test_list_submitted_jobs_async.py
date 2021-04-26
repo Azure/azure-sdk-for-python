@@ -37,7 +37,6 @@ class TestSubmittedJobs(AsyncDocumentTranslationTest):
                 self._validate_translation_job(job)
 
 
-    @pytest.mark.skip("top not exposed yet")
     @DocumentTranslationPreparer()
     @DocumentTranslationClientPreparer()
     async def test_list_submitted_jobs_with_pagination(self, client):
@@ -66,7 +65,6 @@ class TestSubmittedJobs(AsyncDocumentTranslationTest):
             self.assertEqual(len(page_jobs), result_per_page)
 
 
-    @pytest.mark.skip("skip not exposed yet")
     @DocumentTranslationPreparer()
     @DocumentTranslationClientPreparer()
     async def test_list_submitted_jobs_with_skip(self, client):
@@ -105,8 +103,7 @@ class TestSubmittedJobs(AsyncDocumentTranslationTest):
 
         # list jobs
         statuses = ["Running"]
-        submitted_jobs = list(client.list_submitted_jobs(statuses=statuses))
-        self.assertIsNotNone(submitted_jobs)
+        submitted_jobs = client.list_submitted_jobs(statuses=statuses)
 
         # check statuses
         async for job in submitted_jobs:
@@ -120,8 +117,7 @@ class TestSubmittedJobs(AsyncDocumentTranslationTest):
         job_ids = self._create_and_submit_sample_translation_jobs_async(client, 3)
 
         # list jobs
-        submitted_jobs = list(client.list_submitted_jobs(ids=job_ids))
-        self.assertIsNotNone(submitted_jobs)
+        submitted_jobs = client.list_submitted_jobs(ids=job_ids)
 
         # check statuses
         async for job in submitted_jobs:
@@ -136,8 +132,7 @@ class TestSubmittedJobs(AsyncDocumentTranslationTest):
         self._create_and_submit_sample_translation_jobs_async(client, 3)
 
         # list jobs
-        submitted_jobs = list(client.list_submitted_jobs(created_date_time_utc_start=start))
-        self.assertIsNotNone(submitted_jobs)
+        submitted_jobs = client.list_submitted_jobs(created_date_time_utc_start=start)
 
         # check statuses
         async for job in submitted_jobs:
@@ -152,8 +147,7 @@ class TestSubmittedJobs(AsyncDocumentTranslationTest):
         self._create_and_submit_sample_translation_jobs_async(client, 3)
 
         # list jobs
-        submitted_jobs = list(client.list_submitted_jobs(created_date_time_utc_end=end))
-        self.assertIsNotNone(submitted_jobs)
+        submitted_jobs = client.list_submitted_jobs(created_date_time_utc_end=end)
 
         # check statuses
         async for job in submitted_jobs:
@@ -167,8 +161,7 @@ class TestSubmittedJobs(AsyncDocumentTranslationTest):
         self._create_and_submit_sample_translation_jobs_async(client, 3)
 
         # list jobs
-        submitted_jobs = list(client.list_submitted_jobs(order_by=["CreatedDateTimeUtc", "asc"]))
-        self.assertIsNotNone(submitted_jobs)
+        submitted_jobs = client.list_submitted_jobs(order_by=["CreatedDateTimeUtc", "asc"])
 
         # check statuses
         curr = date.min
@@ -184,8 +177,7 @@ class TestSubmittedJobs(AsyncDocumentTranslationTest):
         self._create_and_submit_sample_translation_jobs_async(client, 3)
 
         # list jobs
-        submitted_jobs = list(client.list_submitted_jobs(order_by=["CreatedDateTimeUtc", "desc"]))
-        self.assertIsNotNone(submitted_jobs)
+        submitted_jobs = client.list_submitted_jobs(order_by=["CreatedDateTimeUtc", "desc"])
 
         # check statuses
         curr = date.max
@@ -216,8 +208,6 @@ class TestSubmittedJobs(AsyncDocumentTranslationTest):
             skip=1,
             results_per_page=results_per_page
         )
-        submitted_jobs = list(submitted_jobs)
-        self.assertIsNotNone(submitted_jobs)
 
         # check statuses
         curr_time = date.max
@@ -255,8 +245,6 @@ class TestSubmittedJobs(AsyncDocumentTranslationTest):
             skip=1,
             results_per_page=results_per_page
         )
-        submitted_jobs = list(submitted_jobs)
-        self.assertIsNotNone(submitted_jobs)
 
         # check statuses
         curr_time = date.max
