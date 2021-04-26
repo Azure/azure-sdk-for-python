@@ -139,3 +139,43 @@ class CommunicationIdentityClientTest(CommunicationTestCase):
         identity_client.delete_user(user)
 
         assert user.properties.get('id') is not None
+
+    @CommunicationPreparer()
+    def test_create_user_and_token_with_no_scopes(self, communication_connection_string):
+        identity_client = CommunicationIdentityClient.from_connection_string(communication_connection_string)
+
+        with pytest.raises(Exception) as ex:
+            user, token_response = identity_client.create_user_and_token(scopes=None)
+
+    @CommunicationPreparer()
+    def test_delete_user_with_no_user(self, communication_connection_string):
+        identity_client = CommunicationIdentityClient.from_connection_string(
+            communication_connection_string)
+
+        with pytest.raises(Exception) as ex:
+            identity_client.delete_user(user=None)
+
+    @CommunicationPreparer()
+    def test_revoke_tokens_with_no_user(self, communication_connection_string):
+        identity_client = CommunicationIdentityClient.from_connection_string(
+            communication_connection_string)
+        
+        with pytest.raises(Exception) as ex:
+            identity_client.revoke_tokens(user=None)
+    
+    @CommunicationPreparer()
+    def test_get_token_with_no_user(self, communication_connection_string):
+        identity_client = CommunicationIdentityClient.from_connection_string(
+            communication_connection_string)
+
+        with pytest.raises(Exception) as ex:
+            token_response = identity_client.get_token(user=None, scopes=[CommunicationTokenScope.CHAT])
+    
+    @CommunicationPreparer()
+    def test_get_token_with_no_scopes(self, communication_connection_string):
+        identity_client = CommunicationIdentityClient.from_connection_string(
+            communication_connection_string)
+        user = identity_client.create_user()
+
+        with pytest.raises(Exception) as ex:
+            token_response = identity_client.get_token(user, scopes=None)

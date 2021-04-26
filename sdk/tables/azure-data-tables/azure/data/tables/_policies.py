@@ -184,7 +184,7 @@ class TablesRetryPolicy(RetryPolicy):
         :param request: The PipelineRequest object
         :type request: ~azure.core.pipeline.PipelineRequest
         :return: Returns the PipelineResponse or raises error if maximum retries exceeded.
-        :rtype: ~azure.core.pipeline.PipelineResponse
+        :rtype: :class:`~azure.core.pipeline.PipelineResponse`
         :raises: ~azure.core.exceptions.AzureError if maximum retries exceeded.
         :raises: ~azure.core.exceptions.ClientAuthenticationError if authentication
         """
