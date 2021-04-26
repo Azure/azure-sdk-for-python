@@ -123,24 +123,22 @@ class PipelineClient(PipelineClientBase):
                 ContentDecodePolicy(**kwargs)
             ]
             if isinstance(per_call_policies, Iterable):
-                for policy in per_call_policies:
-                    policies.append(policy)
+                policies.extend(per_call_policies)
             else:
                 policies.append(per_call_policies)
 
-            policies = policies + [config.redirect_policy,
-                               config.retry_policy,
-                               config.authentication_policy,
-                               config.custom_hook_policy]
+            policies.extend([config.redirect_policy,
+                             config.retry_policy,
+                             config.authentication_policy,
+                             config.custom_hook_policy])
             if isinstance(per_retry_policies, Iterable):
-                for policy in per_retry_policies:
-                    policies.append(policy)
+                policies.extend(per_retry_policies)
             else:
                 policies.append(per_retry_policies)
 
-            policies = policies + [config.logging_policy,
-                               DistributedTracingPolicy(**kwargs),
-                               config.http_logging_policy or HttpLoggingPolicy(**kwargs)]
+            policies.extend([config.logging_policy,
+                             DistributedTracingPolicy(**kwargs),
+                             config.http_logging_policy or HttpLoggingPolicy(**kwargs)])
 
         if not transport:
             transport = RequestsTransport(**kwargs)
