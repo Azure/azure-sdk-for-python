@@ -23,7 +23,9 @@ class AsyncDocumentTranslationTest(DocumentTranslationTest):
         return job_details.id
 
     # client helpers
-    async def _create_and_submit_sample_translation_jobs_async(self, async_client, jobs_count):
+    async def _create_and_submit_sample_translation_jobs_async(self, async_client, jobs_count, **kwargs):
+        wait_for_job = kwargs.pop('wait', True)
+        language_code = kwargs.pop('language_code', "es")
         result_job_ids = []
         for i in range(jobs_count):
             # prepare containers and test data
@@ -49,7 +51,7 @@ class AsyncDocumentTranslationTest(DocumentTranslationTest):
                     targets=[
                         TranslationTarget(
                             target_url=target_container_sas_url,
-                            language_code="es"
+                            language_code=language_code
                         )
                     ]
                 )
@@ -58,7 +60,8 @@ class AsyncDocumentTranslationTest(DocumentTranslationTest):
             # submit multiple jobs
             job_details = await async_client.create_translation_job(translation_inputs)
             self.assertIsNotNone(job_details.id)
-            await async_client.wait_until_done(job_details.id)
+            if wait_for_job:
+                await async_client.wait_until_done(job_details.id)
             result_job_ids.append(job_details.id)
 
         return result_job_ids
