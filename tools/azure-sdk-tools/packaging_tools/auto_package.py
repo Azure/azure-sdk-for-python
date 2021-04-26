@@ -51,7 +51,7 @@ def _extract_breaking_change(changelog):
         if log[i].find('Breaking changes') > -1:
             breaking_change = log[min(i + 2, len(log) - 1):]
             break
-    return [x.replace('  - ', '') for x in breaking_change].sort()
+    return sorted([x.replace('  - ', '') for x in breaking_change])
 
 
 def main(generate_input, generate_output):
