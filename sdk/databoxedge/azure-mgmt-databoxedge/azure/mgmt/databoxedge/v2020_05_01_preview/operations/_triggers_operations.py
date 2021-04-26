@@ -32,7 +32,7 @@ class TriggersOperations(object):
     instantiates it for you and attaches it as an attribute.
 
     :ivar models: Alias to model classes used in this operation group.
-    :type models: ~azure.mgmt.databoxedge.models
+    :type models: ~azure.mgmt.databoxedge.v2020_05_01_preview.models
     :param client: Client for service requests.
     :param config: Configuration of service client.
     :param serializer: An object model serializer.
@@ -66,7 +66,7 @@ class TriggersOperations(object):
         :type filter: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: An iterator like instance of either TriggerList or the result of cls(response)
-        :rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.databoxedge.models.TriggerList]
+        :rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.databoxedge.v2020_05_01_preview.models.TriggerList]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType["_models.TriggerList"]
@@ -146,7 +146,7 @@ class TriggersOperations(object):
         :type resource_group_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: Trigger, or the result of cls(response)
-        :rtype: ~azure.mgmt.databoxedge.models.Trigger
+        :rtype: ~azure.mgmt.databoxedge.v2020_05_01_preview.models.Trigger
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType["_models.Trigger"]
@@ -267,15 +267,15 @@ class TriggersOperations(object):
         :param resource_group_name: The resource group name.
         :type resource_group_name: str
         :param trigger: The trigger.
-        :type trigger: ~azure.mgmt.databoxedge.models.Trigger
+        :type trigger: ~azure.mgmt.databoxedge.v2020_05_01_preview.models.Trigger
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: True for ARMPolling, False for no polling, or a
-         polling object for personal polling strategy
+        :keyword polling: Pass in True if you'd like the ARMPolling polling method,
+         False for no polling, or your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.PollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of LROPoller that returns either Trigger or the result of cls(response)
-        :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.databoxedge.models.Trigger]
+        :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.databoxedge.v2020_05_01_preview.models.Trigger]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         polling = kwargs.pop('polling', True)  # type: Union[bool, PollingMethod]
@@ -391,8 +391,8 @@ class TriggersOperations(object):
         :type resource_group_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: True for ARMPolling, False for no polling, or a
-         polling object for personal polling strategy
+        :keyword polling: Pass in True if you'd like the ARMPolling polling method,
+         False for no polling, or your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.PollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of LROPoller that returns either None or the result of cls(response)
