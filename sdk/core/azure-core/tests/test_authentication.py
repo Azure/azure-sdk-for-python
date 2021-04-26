@@ -6,10 +6,13 @@
 import time
 
 import azure.core
-from azure.core.credentials import AccessToken, AzureKeyCredential, AzureSasCredential
+from azure.core.credentials import AccessToken, AzureKeyCredential, AzureSasCredential, AzureNamedKeyCredential
 from azure.core.exceptions import ServiceRequestError
 from azure.core.pipeline import Pipeline
-from azure.core.pipeline.policies import BearerTokenCredentialPolicy, SansIOHTTPPolicy, AzureKeyCredentialPolicy, AzureSasCredentialPolicy
+from azure.core.pipeline.policies import (
+    BearerTokenCredentialPolicy, SansIOHTTPPolicy, AzureKeyCredentialPolicy,
+    AzureSasCredentialPolicy
+)
 from azure.core.pipeline.transport import HttpRequest
 
 import pytest
@@ -230,3 +233,26 @@ def test_azure_sas_credential_policy_raises():
     sas = 1234
     with pytest.raises(TypeError):
         credential = AzureSasCredential(sas)
+
+def test_azure_named_key_credential():
+    cred = AzureNamedKeyCredential("sample_name", "samplekey")
+
+    assert cred.named_key.name == "sample_name"
+    assert cred.named_key.key == "samplekey"
+    assert isinstance(cred.named_key, tuple)
+
+    cred.update("newname", "newkey")
+    assert cred.named_key.name == "newname"
+    assert cred.named_key.key == "newkey"
+    assert isinstance(cred.named_key, tuple)
+
+def test_azure_named_key_credential_raises():
+    with pytest.raises(TypeError, match="Both name and key must be strings."):
+        cred = AzureNamedKeyCredential("sample_name", 123345)
+
+    cred = AzureNamedKeyCredential("sample_name", "samplekey")
+    assert cred.named_key.name == "sample_name"
+    assert cred.named_key.key == "samplekey"
+
+    with pytest.raises(TypeError, match="Both name and key must be strings."):
+        cred.update(1234, "newkey")
