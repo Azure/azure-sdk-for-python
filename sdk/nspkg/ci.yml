@@ -32,5 +32,29 @@ extends:
     ServiceDirectory: nspkg
     BuildDocs: False
     Artifacts:
+    - name: azure-ai-nspkg
+      safeName: azureainspkg
+    - name: azure-ai-translation-nspkg
+      safeName: azureaitranslationnspkg
+    - name: azure-communication-nspkg
+      safeName: azurecommunicationnspkg
+    - name: azure-data-nspkg
+      safeName: azuredatanspkg
+    - name: azure-digitaltwins-nspkg
+      safeName: azuredigitaltwinsnspkg
+    - name: azure_iot_nspkg
+      safeName: azureiotnspkg
+    - name: azure-media-nspkg
+      safeName: azuremedianspkg
     - name: azure-messaging-nspkg
       safeName: azuremessagingnspkg
+    - name: azure-search-nspkg
+      safeName: azuresearchnspkg
+    - name: azure-mixedreality-nspkg
+      safeName: azuremixedrealitynspkg
+    - name: azure-search-nspkg
+      safeName: azuresearchnspkg
+    - name: azure-security-nspkg
+      safeName: azuresecuritynspkg
+    - name: azure-synapse-nspkg
+      safeName: azuresynapsenspkg
