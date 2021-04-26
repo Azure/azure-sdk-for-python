@@ -838,7 +838,7 @@ class EntitiesTaskParameters(msrest.serialization.Model):
     ):
         super(EntitiesTaskParameters, self).__init__(**kwargs)
         self.model_version = kwargs.get('model_version', "latest")
-        self.logging_opt_out = kwargs.get('logging_opt_out', false)
+        self.logging_opt_out = kwargs.get('logging_opt_out', False)
         self.string_index_type = kwargs.get('string_index_type', None)
 
 
@@ -976,7 +976,7 @@ class EntityLinkingTaskParameters(msrest.serialization.Model):
     ):
         super(EntityLinkingTaskParameters, self).__init__(**kwargs)
         self.model_version = kwargs.get('model_version', "latest")
-        self.logging_opt_out = kwargs.get('logging_opt_out', false)
+        self.logging_opt_out = kwargs.get('logging_opt_out', False)
         self.string_index_type = kwargs.get('string_index_type', None)
 
 
@@ -1454,7 +1454,7 @@ class KeyPhrasesTaskParameters(msrest.serialization.Model):
     ):
         super(KeyPhrasesTaskParameters, self).__init__(**kwargs)
         self.model_version = kwargs.get('model_version', "latest")
-        self.logging_opt_out = kwargs.get('logging_opt_out', false)
+        self.logging_opt_out = kwargs.get('logging_opt_out', False)
 
 
 class LanguageBatchInput(msrest.serialization.Model):
@@ -1851,7 +1851,7 @@ class PiiTaskParameters(msrest.serialization.Model):
         super(PiiTaskParameters, self).__init__(**kwargs)
         self.domain = kwargs.get('domain', "none")
         self.model_version = kwargs.get('model_version', "latest")
-        self.logging_opt_out = kwargs.get('logging_opt_out', true)
+        self.logging_opt_out = kwargs.get('logging_opt_out', True)
         self.pii_categories = kwargs.get('pii_categories', None)
         self.string_index_type = kwargs.get('string_index_type', None)
 
@@ -2106,7 +2106,7 @@ class SentimentAnalysisTaskParameters(msrest.serialization.Model):
     ):
         super(SentimentAnalysisTaskParameters, self).__init__(**kwargs)
         self.model_version = kwargs.get('model_version', "latest")
-        self.logging_opt_out = kwargs.get('logging_opt_out', false)
+        self.logging_opt_out = kwargs.get('logging_opt_out', False)
         self.opinion_mining = kwargs.get('opinion_mining', False)
         self.string_index_type = kwargs.get('string_index_type', None)
 

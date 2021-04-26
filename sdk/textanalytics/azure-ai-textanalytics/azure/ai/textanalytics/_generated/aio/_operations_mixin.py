@@ -80,8 +80,8 @@ class TextAnalyticsClientOperationsMixin(object):
         :type body: ~azure.ai.textanalytics.v3_1_preview_5.models.AnalyzeBatchInput
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: Pass in True if you'd like the AsyncAnalyzeBatchActionsLROPollingMethod polling method,
-         False for no polling, or your own initialized polling object for a personal polling strategy.
+        :keyword polling: By default, your polling method will be AsyncAnalyzeBatchActionsLROPollingMethod.
+         Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of AsyncAnalyzeBatchActionsLROPoller that returns either AnalyzeJobState or the result of cls(response)
@@ -114,8 +114,8 @@ class TextAnalyticsClientOperationsMixin(object):
         :type job_id: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: Pass in True if you'd like the AsyncLROBasePolling polling method,
-         False for no polling, or your own initialized polling object for a personal polling strategy.
+        :keyword polling: By default, your polling method will be AsyncLROBasePolling.
+         Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either None or the result of cls(response)
@@ -140,6 +140,7 @@ class TextAnalyticsClientOperationsMixin(object):
         documents: List["_models.MultiLanguageInput"],
         model_version: Optional[str] = None,
         string_index_type: Optional[Union[str, "_models.StringIndexType"]] = None,
+        logging_opt_out: Optional[bool] = None,
         **kwargs
     ) -> AnalyzeHealthcareEntitiesAsyncLROPoller["_models.HealthcareJobState"]:
         """Submit healthcare analysis job.
@@ -156,10 +157,18 @@ class TextAnalyticsClientOperationsMixin(object):
          Defaults to Text Elements (Graphemes) according to Unicode v8.0.0. For additional information
          see https://aka.ms/text-analytics-offsets.
         :type string_index_type: str or ~azure.ai.textanalytics.v3_1_preview_5.models.StringIndexType
+        :param logging_opt_out: (Optional) If set to true, you opt-out of having your text input logged
+         for troubleshooting. By default, Text Analytics logs your input text for 48 hours, solely to
+         allow for troubleshooting issues in providing you with the Text Analytics natural language
+         processing functions. Setting this parameter to true, disables input logging and may limit our
+         ability to remediate issues that occur.  Please see Cognitive Services Compliance and Privacy
+         notes at https://aka.ms/cs-compliance for additional details, and Microsoft Responsible AI
+         principles at https://www.microsoft.com/en-us/ai/responsible-ai.
+        :type logging_opt_out: bool
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: Pass in True if you'd like the AnalyzeHealthcareEntitiesAsyncLROPollingMethod polling method,
-         False for no polling, or your own initialized polling object for a personal polling strategy.
+        :keyword polling: By default, your polling method will be AnalyzeHealthcareEntitiesAsyncLROPollingMethod.
+         Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of AnalyzeHealthcareEntitiesAsyncLROPoller that returns either HealthcareJobState or the result of cls(response)
@@ -177,7 +186,7 @@ class TextAnalyticsClientOperationsMixin(object):
         mixin_instance._serialize = Serializer(self._models_dict(api_version))
         mixin_instance._serialize.client_side_validation = False
         mixin_instance._deserialize = Deserializer(self._models_dict(api_version))
-        return await mixin_instance.begin_health(documents, model_version, string_index_type, **kwargs)
+        return await mixin_instance.begin_health(documents, model_version, string_index_type, logging_opt_out, **kwargs)
 
     async def entities_linking(
         self,
@@ -267,6 +276,7 @@ class TextAnalyticsClientOperationsMixin(object):
         documents: List["_models.MultiLanguageInput"],
         model_version: Optional[str] = None,
         show_stats: Optional[bool] = None,
+        logging_opt_out: Optional[bool] = None,
         domain: Optional[str] = None,
         string_index_type: Optional[Union[str, "_models.StringIndexType"]] = None,
         pii_categories: Optional[List[Union[str, "_models.PiiCategory"]]] = None,
@@ -288,6 +298,14 @@ class TextAnalyticsClientOperationsMixin(object):
         :param show_stats: (Optional) if set to true, response will contain request and document level
          statistics.
         :type show_stats: bool
+        :param logging_opt_out: (Optional) If set to true, you opt-out of having your text input logged
+         for troubleshooting. By default, Text Analytics logs your input text for 48 hours, solely to
+         allow for troubleshooting issues in providing you with the Text Analytics natural language
+         processing functions. Setting this parameter to true, disables input logging and may limit our
+         ability to remediate issues that occur.  Please see Cognitive Services Compliance and Privacy
+         notes at https://aka.ms/cs-compliance for additional details, and Microsoft Responsible AI
+         principles at https://www.microsoft.com/en-us/ai/responsible-ai.
+        :type logging_opt_out: bool
         :param domain: (Optional) if specified, will set the PII domain to include only a subset of the
          entity categories. Possible values include: 'PHI', 'none'.
         :type domain: str
@@ -313,7 +331,7 @@ class TextAnalyticsClientOperationsMixin(object):
         mixin_instance._serialize = Serializer(self._models_dict(api_version))
         mixin_instance._serialize.client_side_validation = False
         mixin_instance._deserialize = Deserializer(self._models_dict(api_version))
-        return await mixin_instance.entities_recognition_pii(documents, model_version, show_stats, domain, string_index_type, pii_categories, **kwargs)
+        return await mixin_instance.entities_recognition_pii(documents, model_version, show_stats, logging_opt_out, domain, string_index_type, pii_categories, **kwargs)
 
     async def health_status(
         self,

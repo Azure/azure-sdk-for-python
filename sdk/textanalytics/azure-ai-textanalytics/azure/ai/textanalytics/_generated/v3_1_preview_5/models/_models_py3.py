@@ -937,7 +937,7 @@ class EntitiesTaskParameters(msrest.serialization.Model):
         self,
         *,
         model_version: Optional[str] = "latest",
-        logging_opt_out: Optional[bool] = false,
+        logging_opt_out: Optional[bool] = False,
         string_index_type: Optional[Union[str, "StringIndexType"]] = None,
         **kwargs
     ):
@@ -1093,7 +1093,7 @@ class EntityLinkingTaskParameters(msrest.serialization.Model):
         self,
         *,
         model_version: Optional[str] = "latest",
-        logging_opt_out: Optional[bool] = false,
+        logging_opt_out: Optional[bool] = False,
         string_index_type: Optional[Union[str, "StringIndexType"]] = None,
         **kwargs
     ):
@@ -1633,7 +1633,7 @@ class KeyPhrasesTaskParameters(msrest.serialization.Model):
         self,
         *,
         model_version: Optional[str] = "latest",
-        logging_opt_out: Optional[bool] = false,
+        logging_opt_out: Optional[bool] = False,
         **kwargs
     ):
         super(KeyPhrasesTaskParameters, self).__init__(**kwargs)
@@ -2076,7 +2076,7 @@ class PiiTaskParameters(msrest.serialization.Model):
         *,
         domain: Optional[Union[str, "PiiTaskParametersDomain"]] = "none",
         model_version: Optional[str] = "latest",
-        logging_opt_out: Optional[bool] = true,
+        logging_opt_out: Optional[bool] = True,
         pii_categories: Optional[List[Union[str, "PiiCategory"]]] = None,
         string_index_type: Optional[Union[str, "StringIndexType"]] = None,
         **kwargs
@@ -2366,7 +2366,7 @@ class SentimentAnalysisTaskParameters(msrest.serialization.Model):
         self,
         *,
         model_version: Optional[str] = "latest",
-        logging_opt_out: Optional[bool] = false,
+        logging_opt_out: Optional[bool] = False,
         opinion_mining: Optional[bool] = False,
         string_index_type: Optional[Union[str, "StringIndexType"]] = None,
         **kwargs
