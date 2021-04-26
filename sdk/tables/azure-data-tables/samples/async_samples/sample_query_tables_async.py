@@ -53,7 +53,7 @@ class QueryTables(object):
                 # List all the tables in the service
                 print("Listing tables:")
                 async for table in table_service.list_tables():
-                    print("\t{}".format(table.table_name))
+                    print("\t{}".format(table.name))
                 # [END tsc_list_tables]
 
                 # [START tsc_query_tables]
@@ -62,7 +62,7 @@ class QueryTables(object):
                 name_filter = "TableName eq '{}'".format(table_name)
                 print("Queried_tables")
                 async for table in table_service.query_tables(name_filter):
-                    print("\t{}".format(table.table_name))
+                    print("\t{}".format(table.name))
                 # [END tsc_query_tables]
 
             finally:
@@ -84,7 +84,7 @@ class QueryTables(object):
         tsc = TableServiceClient.from_connection_string(self.connection_string)
         async with tsc:
             async for table in tsc.list_tables():
-                await tsc.delete_table(table.table_name)
+                await tsc.delete_table(table.name)
 
             print("Cleaned up")
 
