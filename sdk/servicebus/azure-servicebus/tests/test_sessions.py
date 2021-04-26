@@ -714,6 +714,23 @@ class ServiceBusSessionTests(AzureMgmtTestCase):
                                 assert isinstance(e.inner_exception, AutoLockRenewTimeout)
                             messages.append(message)
 
+            # While we're testing autolockrenew and sessions, let's make sure we don't call the lock-lost callback when a session exits.
+            renewer._renew_period = 1
+            session = None
+
+            with sb_client.get_queue_receiver(servicebus_queue.name,
+                                            session_id=session_id,
+                                            max_wait_time=5,
+                                            receive_mode=ServiceBusReceiveMode.PEEK_LOCK,
+                                            prefetch_count=10,
+                                            auto_lock_renewer=renewer) as receiver:
+                session = receiver.session
+            sleep_until_expired(receiver.session)
+            assert not results
+
+            renewer.close()
+            assert len(messages) == 2
+
         # test voluntary halt of auto lock renewer when session is closed
         session_id = str(uuid.uuid4())
         with sb_client.get_queue_sender(servicebus_queue.name) as sender:
@@ -729,6 +746,8 @@ class ServiceBusSessionTests(AzureMgmtTestCase):
 
         with receiver:
             received_msgs = receiver.receive_messages(max_wait_time=5)
+            for msg in received_msgs:
+                receiver.complete_message(msg)
 
         receiver.close()
         assert not renewer._renewable(receiver._session)
