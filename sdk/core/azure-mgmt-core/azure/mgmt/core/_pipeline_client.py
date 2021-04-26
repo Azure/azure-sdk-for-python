@@ -52,13 +52,13 @@ class ARMPipelineClient(PipelineClient):
                 )
             per_call_policies = kwargs.get('per_call_policies', [])
             if isinstance(per_call_policies, Iterable):
-                per_call_policies.append(ARMAutoResourceProviderRegistrationPolicy())
+                per_call_policies = list(per_call_policies).append(ARMAutoResourceProviderRegistrationPolicy())
             else:
                 per_call_policies = [per_call_policies,
                                      ARMAutoResourceProviderRegistrationPolicy()]
             kwargs["per_call_policies"] = per_call_policies
             config = kwargs.get('config')
             if not config.http_logging_policy:
-                config.http_logging_policy = kwargs.get('http_logging_policy', ARMHttpLoggingPolicy(**kwargs))
+                config.http_logging_policy = ARMHttpLoggingPolicy(**kwargs)
             kwargs["config"] = config
         super(ARMPipelineClient, self).__init__(base_url, **kwargs)
