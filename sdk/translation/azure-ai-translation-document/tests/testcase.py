@@ -137,12 +137,15 @@ class DocumentTranslationTest(AzureTestCase):
 
 
     # model helpers
-    def _validate_doc_status(self, doc_details, target_language):
+    def _validate_doc_status(self, doc_details, target_language, **kwargs):
+        status = kwargs.pop("statuses", ["Succeeded"])
+        ids = kwargs.pop("statuses", None)
         # specific assertions
-        self.assertEqual(doc_details.status, "Succeeded")
+        self.assertIn(doc_details.status, status)
         self.assertEqual(doc_details.has_completed, True)
         self.assertIsNotNone(doc_details.translate_to, target_language)
         # generic assertions
+        self.assertIn(doc_details.id, ids) if ids else self.assertIsNotNone(doc_details.id)
         self.assertIsNotNone(doc_details.id)
         self.assertIsNotNone(doc_details.source_document_url)
         self.assertIsNotNone(doc_details.translated_document_url)
@@ -200,6 +203,7 @@ class DocumentTranslationTest(AzureTestCase):
 
     def _create_and_submit_sample_translation_jobs(self, client, jobs_count, **kwargs):
         wait_for_job = kwargs.pop('wait', True)
+        language_code = kwargs.pop('language_code', "es")
         result_job_ids = []
         for i in range(jobs_count):
             # prepare containers and test data
@@ -220,7 +224,7 @@ class DocumentTranslationTest(AzureTestCase):
                     targets=[
                         TranslationTarget(
                             target_url=target_container_sas_url,
-                            language_code="es"
+                            language_code=language_code
                         )
                     ]
                 )
@@ -235,13 +239,8 @@ class DocumentTranslationTest(AzureTestCase):
 
         return result_job_ids
 
-    
+
     def _create_translation_job_with_dummy_docs(self, client, docs_count, **kwargs):
-        '''
-            appropriated this method from another PR! #18302
-            please resolve conflict before merge
-            keep in mind it's the exact same method
-        '''
         # get input parms
         wait_for_job = kwargs.pop('wait', False)
         language_code = kwargs.pop('language_code', "es")
