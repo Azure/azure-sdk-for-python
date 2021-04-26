@@ -719,11 +719,11 @@ class ServiceBusSessionTests(AzureMgmtTestCase):
             session = None
 
             with sb_client.get_queue_receiver(servicebus_queue.name,
-                                            session_id=session_id,
-                                            max_wait_time=5,
-                                            receive_mode=ServiceBusReceiveMode.PEEK_LOCK,
-                                            prefetch_count=10,
-                                            auto_lock_renewer=renewer) as receiver:
+                                              session_id=session_id,
+                                              max_wait_time=5,
+                                              receive_mode=ServiceBusReceiveMode.PEEK_LOCK,
+                                              prefetch_count=10,
+                                              auto_lock_renewer=renewer) as receiver:
                 session = receiver.session
             sleep_until_expired(receiver.session)
             assert not results
