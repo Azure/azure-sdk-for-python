@@ -140,7 +140,7 @@ class TestAllDocumentStatuses(DocumentTranslationTest):
         job_id = self._create_translation_job_with_dummy_docs(client, docs_count, language_code=target_language, wait=False)
 
         # check doc statuses
-        doc_statuses = list(client.list_all_document_statuses(job_id), order_by=["CreatedDateTimeUtc", "asc"]) # convert from generic iterator to list
+        doc_statuses = list(client.list_all_document_statuses(job_id, order_by=["CreatedDateTimeUtc", "asc"])) # convert from generic iterator to list
         self.assertEqual(len(doc_statuses), docs_count)
 
         curr = date.min
@@ -159,7 +159,7 @@ class TestAllDocumentStatuses(DocumentTranslationTest):
         job_id = self._create_translation_job_with_dummy_docs(client, docs_count, language_code=target_language, wait=False)
 
         # check doc statuses
-        doc_statuses = list(client.list_all_document_statuses(job_id), order_by=["CreatedDateTimeUtc", "desc"]) # convert from generic iterator to list
+        doc_statuses = list(client.list_all_document_statuses(job_id, order_by=["CreatedDateTimeUtc", "desc"])) # convert from generic iterator to list
         self.assertEqual(len(doc_statuses), docs_count)
 
         curr = date.max
