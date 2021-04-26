@@ -1,5 +1,20 @@
 # Release History
 
+## 0.11.0 (2021-04-26)
+
+**Features**
+
+  - Model AttachedDatabaseConfiguration has a new parameter table_level_sharing_properties
+  - Model EventHubDataConnection has a new parameter managed_identity_resource_id
+  - Model Cluster has a new parameter etag
+  - Added operation group OperationsResultsOperations
+  - Added operation group ScriptsOperations
+
+**Breaking changes**
+
+  - Operation ClustersOperations.update has a new signature
+  - Operation ClustersOperations.create_or_update has a new signature
+
 ## 0.10.0 (2020-10-23)
 
 **Features**
