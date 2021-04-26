@@ -101,6 +101,9 @@ class ResourceGroupPreparer(AzureMgmtPreparer):
 
     def remove_resource(self, name, **kwargs):
         if self.is_live and self._need_creation:
+            name = u"rgpy-" + name
+            if len(name) > 90:
+                name = name[:90]
             try:
                 if "wait_timeout" in kwargs:
                     azure_poller = self.client.resource_groups.begin_delete(name)
