@@ -16,6 +16,9 @@ try:
     from ._models_py3 import ComponentPurgeResponse
     from ._models_py3 import ComponentPurgeStatusResponse
     from ._models_py3 import ComponentsResource
+    from ._models_py3 import ErrorAdditionalInfo
+    from ._models_py3 import ErrorDetail
+    from ._models_py3 import ErrorResponse, ErrorResponseException
     from ._models_py3 import PrivateLinkScopedResource
     from ._models_py3 import TagsResource
 except (SyntaxError, ImportError):
@@ -25,6 +28,9 @@ except (SyntaxError, ImportError):
     from ._models import ComponentPurgeResponse
     from ._models import ComponentPurgeStatusResponse
     from ._models import ComponentsResource
+    from ._models import ErrorAdditionalInfo
+    from ._models import ErrorDetail
+    from ._models import ErrorResponse, ErrorResponseException
     from ._models import PrivateLinkScopedResource
     from ._models import TagsResource
 from ._paged_models import ApplicationInsightsComponentPaged
@@ -33,6 +39,7 @@ from ._application_insights_management_client_enums import (
     FlowType,
     RequestSource,
     PublicNetworkAccessType,
+    IngestionMode,
     PurgeState,
 )
 
@@ -43,6 +50,9 @@ __all__ = [
     'ComponentPurgeResponse',
     'ComponentPurgeStatusResponse',
     'ComponentsResource',
+    'ErrorAdditionalInfo',
+    'ErrorDetail',
+    'ErrorResponse', 'ErrorResponseException',
     'PrivateLinkScopedResource',
     'TagsResource',
     'ApplicationInsightsComponentPaged',
@@ -50,5 +60,6 @@ __all__ = [
     'FlowType',
     'RequestSource',
     'PublicNetworkAccessType',
+    'IngestionMode',
     'PurgeState',
 ]

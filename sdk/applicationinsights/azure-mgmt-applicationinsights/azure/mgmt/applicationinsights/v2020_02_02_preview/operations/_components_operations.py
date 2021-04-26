@@ -11,7 +11,6 @@
 
 import uuid
 from msrest.pipeline import ClientRawResponse
-from msrestazure.azure_exceptions import CloudError
 
 from .. import models
 
@@ -52,7 +51,8 @@ class ComponentsOperations(object):
         :return: An iterator like instance of ApplicationInsightsComponent
         :rtype:
          ~azure.mgmt.applicationinsights.v2020_02_02_preview.models.ApplicationInsightsComponentPaged[~azure.mgmt.applicationinsights.v2020_02_02_preview.models.ApplicationInsightsComponent]
-        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
+        :raises:
+         :class:`ErrorResponseException<azure.mgmt.applicationinsights.v2020_02_02_preview.models.ErrorResponseException>`
         """
         def prepare_request(next_link=None):
             if not next_link:
@@ -91,9 +91,7 @@ class ComponentsOperations(object):
             response = self._client.send(request, stream=False, **operation_config)
 
             if response.status_code not in [200]:
-                exp = CloudError(response)
-                exp.request_id = response.headers.get('x-ms-request-id')
-                raise exp
+                raise models.ErrorResponseException(self._deserialize, response)
 
             return response
 
@@ -121,7 +119,8 @@ class ComponentsOperations(object):
         :return: An iterator like instance of ApplicationInsightsComponent
         :rtype:
          ~azure.mgmt.applicationinsights.v2020_02_02_preview.models.ApplicationInsightsComponentPaged[~azure.mgmt.applicationinsights.v2020_02_02_preview.models.ApplicationInsightsComponent]
-        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
+        :raises:
+         :class:`ErrorResponseException<azure.mgmt.applicationinsights.v2020_02_02_preview.models.ErrorResponseException>`
         """
         def prepare_request(next_link=None):
             if not next_link:
@@ -161,9 +160,7 @@ class ComponentsOperations(object):
             response = self._client.send(request, stream=False, **operation_config)
 
             if response.status_code not in [200]:
-                exp = CloudError(response)
-                exp.request_id = response.headers.get('x-ms-request-id')
-                raise exp
+                raise models.ErrorResponseException(self._deserialize, response)
 
             return response
 
@@ -193,7 +190,8 @@ class ComponentsOperations(object):
          overrides<msrest:optionsforoperations>`.
         :return: None or ClientRawResponse if raw=true
         :rtype: None or ~msrest.pipeline.ClientRawResponse
-        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
+        :raises:
+         :class:`ErrorResponseException<azure.mgmt.applicationinsights.v2020_02_02_preview.models.ErrorResponseException>`
         """
         # Construct URL
         url = self.delete.metadata['url']
@@ -222,9 +220,7 @@ class ComponentsOperations(object):
         response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [200, 204]:
-            exp = CloudError(response)
-            exp.request_id = response.headers.get('x-ms-request-id')
-            raise exp
+            raise models.ErrorResponseException(self._deserialize, response)
 
         if raw:
             client_raw_response = ClientRawResponse(None, response)
@@ -250,7 +246,8 @@ class ComponentsOperations(object):
         :rtype:
          ~azure.mgmt.applicationinsights.v2020_02_02_preview.models.ApplicationInsightsComponent
          or ~msrest.pipeline.ClientRawResponse
-        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
+        :raises:
+         :class:`ErrorResponseException<azure.mgmt.applicationinsights.v2020_02_02_preview.models.ErrorResponseException>`
         """
         # Construct URL
         url = self.get.metadata['url']
@@ -280,9 +277,7 @@ class ComponentsOperations(object):
         response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [200]:
-            exp = CloudError(response)
-            exp.request_id = response.headers.get('x-ms-request-id')
-            raise exp
+            raise models.ErrorResponseException(self._deserialize, response)
 
         deserialized = None
         if response.status_code == 200:
@@ -320,7 +315,8 @@ class ComponentsOperations(object):
         :rtype:
          ~azure.mgmt.applicationinsights.v2020_02_02_preview.models.ApplicationInsightsComponent
          or ~msrest.pipeline.ClientRawResponse
-        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
+        :raises:
+         :class:`ErrorResponseException<azure.mgmt.applicationinsights.v2020_02_02_preview.models.ErrorResponseException>`
         """
         # Construct URL
         url = self.create_or_update.metadata['url']
@@ -354,9 +350,7 @@ class ComponentsOperations(object):
         response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [200]:
-            exp = CloudError(response)
-            exp.request_id = response.headers.get('x-ms-request-id')
-            raise exp
+            raise models.ErrorResponseException(self._deserialize, response)
 
         deserialized = None
         if response.status_code == 200:
@@ -391,7 +385,8 @@ class ComponentsOperations(object):
         :rtype:
          ~azure.mgmt.applicationinsights.v2020_02_02_preview.models.ApplicationInsightsComponent
          or ~msrest.pipeline.ClientRawResponse
-        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
+        :raises:
+         :class:`ErrorResponseException<azure.mgmt.applicationinsights.v2020_02_02_preview.models.ErrorResponseException>`
         """
         component_tags = models.TagsResource(tags=tags)
 
@@ -427,9 +422,7 @@ class ComponentsOperations(object):
         response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [200]:
-            exp = CloudError(response)
-            exp.request_id = response.headers.get('x-ms-request-id')
-            raise exp
+            raise models.ErrorResponseException(self._deserialize, response)
 
         deserialized = None
         if response.status_code == 200:
@@ -474,7 +467,8 @@ class ComponentsOperations(object):
         :rtype:
          ~azure.mgmt.applicationinsights.v2020_02_02_preview.models.ComponentPurgeResponse
          or ~msrest.pipeline.ClientRawResponse
-        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
+        :raises:
+         :class:`ErrorResponseException<azure.mgmt.applicationinsights.v2020_02_02_preview.models.ErrorResponseException>`
         """
         body = models.ComponentPurgeBody(table=table, filters=filters)
 
@@ -510,9 +504,7 @@ class ComponentsOperations(object):
         response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [202]:
-            exp = CloudError(response)
-            exp.request_id = response.headers.get('x-ms-request-id')
-            raise exp
+            raise models.ErrorResponseException(self._deserialize, response)
 
         deserialized = None
         if response.status_code == 202:
@@ -547,7 +539,8 @@ class ComponentsOperations(object):
         :rtype:
          ~azure.mgmt.applicationinsights.v2020_02_02_preview.models.ComponentPurgeStatusResponse
          or ~msrest.pipeline.ClientRawResponse
-        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
+        :raises:
+         :class:`ErrorResponseException<azure.mgmt.applicationinsights.v2020_02_02_preview.models.ErrorResponseException>`
         """
         # Construct URL
         url = self.get_purge_status.metadata['url']
@@ -578,9 +571,7 @@ class ComponentsOperations(object):
         response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [200]:
-            exp = CloudError(response)
-            exp.request_id = response.headers.get('x-ms-request-id')
-            raise exp
+            raise models.ErrorResponseException(self._deserialize, response)
 
         deserialized = None
         if response.status_code == 200:

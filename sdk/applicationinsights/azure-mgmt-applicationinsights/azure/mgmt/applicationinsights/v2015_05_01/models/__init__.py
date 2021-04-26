@@ -39,6 +39,9 @@ try:
     from ._models_py3 import ErrorResponse, ErrorResponseException
     from ._models_py3 import InnerError
     from ._models_py3 import LinkProperties
+    from ._models_py3 import MyWorkbook
+    from ._models_py3 import MyWorkbookError, MyWorkbookErrorException
+    from ._models_py3 import MyWorkbookResource
     from ._models_py3 import Operation
     from ._models_py3 import OperationDisplay
     from ._models_py3 import PrivateLinkScopedResource
@@ -83,6 +86,9 @@ except (SyntaxError, ImportError):
     from ._models import ErrorResponse, ErrorResponseException
     from ._models import InnerError
     from ._models import LinkProperties
+    from ._models import MyWorkbook
+    from ._models import MyWorkbookError, MyWorkbookErrorException
+    from ._models import MyWorkbookResource
     from ._models import Operation
     from ._models import OperationDisplay
     from ._models import PrivateLinkScopedResource
@@ -101,6 +107,7 @@ from ._paged_models import AnnotationPaged
 from ._paged_models import ApplicationInsightsComponentAPIKeyPaged
 from ._paged_models import ApplicationInsightsComponentPaged
 from ._paged_models import ApplicationInsightsComponentWebTestLocationPaged
+from ._paged_models import MyWorkbookPaged
 from ._paged_models import OperationPaged
 from ._paged_models import WebTestPaged
 from ._paged_models import WorkbookPaged
@@ -109,6 +116,7 @@ from ._application_insights_management_client_enums import (
     ApplicationType,
     FlowType,
     RequestSource,
+    IngestionMode,
     PurgeState,
     FavoriteType,
     WebTestKind,
@@ -151,6 +159,9 @@ __all__ = [
     'ErrorResponse', 'ErrorResponseException',
     'InnerError',
     'LinkProperties',
+    'MyWorkbook',
+    'MyWorkbookError', 'MyWorkbookErrorException',
+    'MyWorkbookResource',
     'Operation',
     'OperationDisplay',
     'PrivateLinkScopedResource',
@@ -173,9 +184,11 @@ __all__ = [
     'ApplicationInsightsComponentWebTestLocationPaged',
     'WebTestPaged',
     'WorkbookPaged',
+    'MyWorkbookPaged',
     'ApplicationType',
     'FlowType',
     'RequestSource',
+    'IngestionMode',
     'PurgeState',
     'FavoriteType',
     'WebTestKind',

@@ -10,6 +10,7 @@
 # --------------------------------------------------------------------------
 
 from msrest.serialization import Model
+from msrest.exceptions import HttpOperationError
 
 
 class ComponentsResource(Model):
@@ -78,11 +79,15 @@ class ApplicationInsightsComponent(ComponentsResource):
      to, used to customize UI. This value is a freeform string, values should
      typically be one of the following: web, ios, other, store, java, phone.
     :type kind: str
+    :param etag: Resource etag
+    :type etag: str
     :ivar application_id: The unique ID of your application. This field
      mirrors the 'Name' field and cannot be changed.
     :vartype application_id: str
     :ivar app_id: Application Insights Unique ID for your Application.
     :vartype app_id: str
+    :ivar application_insights_component_name: Application name.
+    :vartype application_insights_component_name: str
     :param application_type: Required. Type of application being monitored.
      Possible values include: 'web', 'other'. Default value: "web" .
     :type application_type: str or
@@ -132,9 +137,14 @@ class ApplicationInsightsComponent(ComponentsResource):
     :param immediate_purge_data_on30_days: Purge data immediately after 30
      days.
     :type immediate_purge_data_on30_days: bool
-    :param workspace_resource_id: Required. ResourceId of the log analytics
-     workspace which the data will be ingested to.
+    :param workspace_resource_id: Resource Id of the log analytics workspace
+     which the data will be ingested to. This property is required to create an
+     application with this API version. Applications from older versions will
+     not have this property.
     :type workspace_resource_id: str
+    :ivar la_migration_date: The date which the component got migrated to LA,
+     in ISO 8601 format.
+    :vartype la_migration_date: datetime
     :ivar private_link_scoped_resources: List of linked private link scope
      resources.
     :vartype private_link_scoped_resources:
@@ -149,6 +159,12 @@ class ApplicationInsightsComponent(ComponentsResource):
      'Disabled'. Default value: "Enabled" .
     :type public_network_access_for_query: str or
      ~azure.mgmt.applicationinsights.v2020_02_02_preview.models.PublicNetworkAccessType
+    :param ingestion_mode: Indicates the flow of the ingestion. Possible
+     values include: 'ApplicationInsights',
+     'ApplicationInsightsWithDiagnosticSettings', 'LogAnalytics'. Default
+     value: "LogAnalytics" .
+    :type ingestion_mode: str or
+     ~azure.mgmt.applicationinsights.v2020_02_02_preview.models.IngestionMode
     """
 
     _validation = {
@@ -159,6 +175,7 @@ class ApplicationInsightsComponent(ComponentsResource):
         'kind': {'required': True},
         'application_id': {'readonly': True},
         'app_id': {'readonly': True},
+        'application_insights_component_name': {'readonly': True},
         'application_type': {'required': True},
         'instrumentation_key': {'readonly': True},
         'creation_date': {'readonly': True},
@@ -167,7 +184,7 @@ class ApplicationInsightsComponent(ComponentsResource):
         'provisioning_state': {'readonly': True},
         'connection_string': {'readonly': True},
         'retention_in_days': {'readonly': True},
-        'workspace_resource_id': {'required': True},
+        'la_migration_date': {'readonly': True},
         'private_link_scoped_resources': {'readonly': True},
     }
 
@@ -178,8 +195,10 @@ class ApplicationInsightsComponent(ComponentsResource):
         'location': {'key': 'location', 'type': 'str'},
         'tags': {'key': 'tags', 'type': '{str}'},
         'kind': {'key': 'kind', 'type': 'str'},
+        'etag': {'key': 'etag', 'type': 'str'},
         'application_id': {'key': 'properties.ApplicationId', 'type': 'str'},
         'app_id': {'key': 'properties.AppId', 'type': 'str'},
+        'application_insights_component_name': {'key': 'properties.Name', 'type': 'str'},
         'application_type': {'key': 'properties.Application_Type', 'type': 'str'},
         'flow_type': {'key': 'properties.Flow_Type', 'type': 'str'},
         'request_source': {'key': 'properties.Request_Source', 'type': 'str'},
@@ -195,16 +214,20 @@ class ApplicationInsightsComponent(ComponentsResource):
         'disable_ip_masking': {'key': 'properties.DisableIpMasking', 'type': 'bool'},
         'immediate_purge_data_on30_days': {'key': 'properties.ImmediatePurgeDataOn30Days', 'type': 'bool'},
         'workspace_resource_id': {'key': 'properties.WorkspaceResourceId', 'type': 'str'},
+        'la_migration_date': {'key': 'properties.LaMigrationDate', 'type': 'iso-8601'},
         'private_link_scoped_resources': {'key': 'properties.PrivateLinkScopedResources', 'type': '[PrivateLinkScopedResource]'},
         'public_network_access_for_ingestion': {'key': 'properties.publicNetworkAccessForIngestion', 'type': 'str'},
         'public_network_access_for_query': {'key': 'properties.publicNetworkAccessForQuery', 'type': 'str'},
+        'ingestion_mode': {'key': 'properties.IngestionMode', 'type': 'str'},
     }
 
     def __init__(self, **kwargs):
         super(ApplicationInsightsComponent, self).__init__(**kwargs)
         self.kind = kwargs.get('kind', None)
+        self.etag = kwargs.get('etag', None)
         self.application_id = None
         self.app_id = None
+        self.application_insights_component_name = None
         self.application_type = kwargs.get('application_type', "web")
         self.flow_type = kwargs.get('flow_type', "Bluefield")
         self.request_source = kwargs.get('request_source', "rest")
@@ -220,9 +243,11 @@ class ApplicationInsightsComponent(ComponentsResource):
         self.disable_ip_masking = kwargs.get('disable_ip_masking', None)
         self.immediate_purge_data_on30_days = kwargs.get('immediate_purge_data_on30_days', None)
         self.workspace_resource_id = kwargs.get('workspace_resource_id', None)
+        self.la_migration_date = None
         self.private_link_scoped_resources = None
         self.public_network_access_for_ingestion = kwargs.get('public_network_access_for_ingestion', "Enabled")
         self.public_network_access_for_query = kwargs.get('public_network_access_for_query', "Enabled")
+        self.ingestion_mode = kwargs.get('ingestion_mode', "LogAnalytics")
 
 
 class CloudError(Model):
@@ -341,6 +366,112 @@ class ComponentPurgeStatusResponse(Model):
     def __init__(self, **kwargs):
         super(ComponentPurgeStatusResponse, self).__init__(**kwargs)
         self.status = kwargs.get('status', None)
+
+
+class ErrorAdditionalInfo(Model):
+    """The resource management error additional info.
+
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    :ivar type: The additional info type.
+    :vartype type: str
+    :ivar info: The additional info.
+    :vartype info: object
+    """
+
+    _validation = {
+        'type': {'readonly': True},
+        'info': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'type': {'key': 'type', 'type': 'str'},
+        'info': {'key': 'info', 'type': 'object'},
+    }
+
+    def __init__(self, **kwargs):
+        super(ErrorAdditionalInfo, self).__init__(**kwargs)
+        self.type = None
+        self.info = None
+
+
+class ErrorDetail(Model):
+    """The error detail.
+
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    :ivar code: The error code.
+    :vartype code: str
+    :ivar message: The error message.
+    :vartype message: str
+    :ivar target: The error target.
+    :vartype target: str
+    :ivar details: The error details.
+    :vartype details:
+     list[~azure.mgmt.applicationinsights.v2020_02_02_preview.models.ErrorDetail]
+    :ivar additional_info: The error additional info.
+    :vartype additional_info:
+     list[~azure.mgmt.applicationinsights.v2020_02_02_preview.models.ErrorAdditionalInfo]
+    """
+
+    _validation = {
+        'code': {'readonly': True},
+        'message': {'readonly': True},
+        'target': {'readonly': True},
+        'details': {'readonly': True},
+        'additional_info': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'code': {'key': 'code', 'type': 'str'},
+        'message': {'key': 'message', 'type': 'str'},
+        'target': {'key': 'target', 'type': 'str'},
+        'details': {'key': 'details', 'type': '[ErrorDetail]'},
+        'additional_info': {'key': 'additionalInfo', 'type': '[ErrorAdditionalInfo]'},
+    }
+
+    def __init__(self, **kwargs):
+        super(ErrorDetail, self).__init__(**kwargs)
+        self.code = None
+        self.message = None
+        self.target = None
+        self.details = None
+        self.additional_info = None
+
+
+class ErrorResponse(Model):
+    """Error response.
+
+    Common error response for all Azure Resource Manager APIs to return error
+    details for failed operations. (This also follows the OData error response
+    format.).
+
+    :param error: The error object.
+    :type error:
+     ~azure.mgmt.applicationinsights.v2020_02_02_preview.models.ErrorDetail
+    """
+
+    _attribute_map = {
+        'error': {'key': 'error', 'type': 'ErrorDetail'},
+    }
+
+    def __init__(self, **kwargs):
+        super(ErrorResponse, self).__init__(**kwargs)
+        self.error = kwargs.get('error', None)
+
+
+class ErrorResponseException(HttpOperationError):
+    """Server responsed with exception of type: 'ErrorResponse'.
+
+    :param deserialize: A deserializer
+    :param response: Server response to be deserialized.
+    """
+
+    def __init__(self, deserialize, response, *args):
+
+        super(ErrorResponseException, self).__init__(deserialize, response, 'ErrorResponse', *args)
 
 
 class PrivateLinkScopedResource(Model):

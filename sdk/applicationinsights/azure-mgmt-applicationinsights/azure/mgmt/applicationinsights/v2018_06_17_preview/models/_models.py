@@ -136,9 +136,11 @@ class Workbook(Resource):
     :param workbook_tags: A list of 0 or more tags that are associated with
      this workbook definition
     :type workbook_tags: list[str]
-    :param user_id: Required. Unique user id of the specific user that owns
-     this workbook.
-    :type user_id: str
+    :ivar user_id: Unique user id of the specific user that owns this
+     workbook.
+    :vartype user_id: str
+    :param source_id: ResourceId for a source resource.
+    :type source_id: str
     """
 
     _validation = {
@@ -150,7 +152,7 @@ class Workbook(Resource):
         'serialized_data': {'required': True},
         'time_modified': {'readonly': True},
         'category': {'required': True},
-        'user_id': {'required': True},
+        'user_id': {'readonly': True},
     }
 
     _attribute_map = {
@@ -167,6 +169,7 @@ class Workbook(Resource):
         'version': {'key': 'properties.version', 'type': 'str'},
         'workbook_tags': {'key': 'properties.tags', 'type': '[str]'},
         'user_id': {'key': 'properties.userId', 'type': 'str'},
+        'source_id': {'key': 'properties.sourceId', 'type': 'str'},
     }
 
     def __init__(self, **kwargs):
@@ -177,7 +180,8 @@ class Workbook(Resource):
         self.category = kwargs.get('category', None)
         self.version = kwargs.get('version', None)
         self.workbook_tags = kwargs.get('workbook_tags', None)
-        self.user_id = kwargs.get('user_id', None)
+        self.user_id = None
+        self.source_id = kwargs.get('source_id', None)
 
 
 class WorkbookError(Model):

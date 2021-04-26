@@ -236,6 +236,12 @@ class ApplicationInsightsComponent(ComponentsResource):
      resources.
     :vartype private_link_scoped_resources:
      list[~azure.mgmt.applicationinsights.v2015_05_01.models.PrivateLinkScopedResource]
+    :param ingestion_mode: Indicates the flow of the ingestion. Possible
+     values include: 'ApplicationInsights',
+     'ApplicationInsightsWithDiagnosticSettings', 'LogAnalytics'. Default
+     value: "ApplicationInsights" .
+    :type ingestion_mode: str or
+     ~azure.mgmt.applicationinsights.v2015_05_01.models.IngestionMode
     """
 
     _validation = {
@@ -280,6 +286,7 @@ class ApplicationInsightsComponent(ComponentsResource):
         'disable_ip_masking': {'key': 'properties.DisableIpMasking', 'type': 'bool'},
         'immediate_purge_data_on30_days': {'key': 'properties.ImmediatePurgeDataOn30Days', 'type': 'bool'},
         'private_link_scoped_resources': {'key': 'properties.PrivateLinkScopedResources', 'type': '[PrivateLinkScopedResource]'},
+        'ingestion_mode': {'key': 'properties.IngestionMode', 'type': 'str'},
     }
 
     def __init__(self, **kwargs):
@@ -302,6 +309,7 @@ class ApplicationInsightsComponent(ComponentsResource):
         self.disable_ip_masking = kwargs.get('disable_ip_masking', None)
         self.immediate_purge_data_on30_days = kwargs.get('immediate_purge_data_on30_days', None)
         self.private_link_scoped_resources = None
+        self.ingestion_mode = kwargs.get('ingestion_mode', "ApplicationInsights")
 
 
 class ApplicationInsightsComponentAnalyticsItem(Model):
@@ -1379,6 +1387,162 @@ class LinkProperties(Model):
         self.source_id = kwargs.get('source_id', None)
         self.target_id = kwargs.get('target_id', None)
         self.category = kwargs.get('category', None)
+
+
+class MyWorkbookResource(Model):
+    """An azure resource object.
+
+    :param id: Azure resource Id
+    :type id: str
+    :param name: Azure resource name
+    :type name: str
+    :param type: Azure resource type
+    :type type: str
+    :param location: Resource location
+    :type location: str
+    :param tags: Resource tags
+    :type tags: dict[str, str]
+    """
+
+    _attribute_map = {
+        'id': {'key': 'id', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
+        'location': {'key': 'location', 'type': 'str'},
+        'tags': {'key': 'tags', 'type': '{str}'},
+    }
+
+    def __init__(self, **kwargs):
+        super(MyWorkbookResource, self).__init__(**kwargs)
+        self.id = kwargs.get('id', None)
+        self.name = kwargs.get('name', None)
+        self.type = kwargs.get('type', None)
+        self.location = kwargs.get('location', None)
+        self.tags = kwargs.get('tags', None)
+
+
+class MyWorkbook(MyWorkbookResource):
+    """An Application Insights private workbook definition.
+
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param id: Azure resource Id
+    :type id: str
+    :param name: Azure resource name
+    :type name: str
+    :param type: Azure resource type
+    :type type: str
+    :param location: Resource location
+    :type location: str
+    :param tags: Resource tags
+    :type tags: dict[str, str]
+    :param kind: The kind of workbook. Choices are user and shared. Possible
+     values include: 'user', 'shared'
+    :type kind: str or
+     ~azure.mgmt.applicationinsights.v2015_05_01.models.SharedTypeKind
+    :param display_name: Required. The user-defined name of the private
+     workbook.
+    :type display_name: str
+    :param serialized_data: Required. Configuration of this particular private
+     workbook. Configuration data is a string containing valid JSON
+    :type serialized_data: str
+    :param version: This instance's version of the data model. This can change
+     as new features are added that can be marked private workbook.
+    :type version: str
+    :ivar time_modified: Date and time in UTC of the last modification that
+     was made to this private workbook definition.
+    :vartype time_modified: str
+    :param category: Required. Workbook category, as defined by the user at
+     creation time.
+    :type category: str
+    :param my_workbook_tags: A list of 0 or more tags that are associated with
+     this private workbook definition
+    :type my_workbook_tags: list[str]
+    :ivar user_id: Unique user id of the specific user that owns this private
+     workbook.
+    :vartype user_id: str
+    :param source_id: Optional resourceId for a source resource.
+    :type source_id: str
+    """
+
+    _validation = {
+        'display_name': {'required': True},
+        'serialized_data': {'required': True},
+        'time_modified': {'readonly': True},
+        'category': {'required': True},
+        'user_id': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'id': {'key': 'id', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
+        'location': {'key': 'location', 'type': 'str'},
+        'tags': {'key': 'tags', 'type': '{str}'},
+        'kind': {'key': 'kind', 'type': 'str'},
+        'display_name': {'key': 'properties.displayName', 'type': 'str'},
+        'serialized_data': {'key': 'properties.serializedData', 'type': 'str'},
+        'version': {'key': 'properties.version', 'type': 'str'},
+        'time_modified': {'key': 'properties.timeModified', 'type': 'str'},
+        'category': {'key': 'properties.category', 'type': 'str'},
+        'my_workbook_tags': {'key': 'properties.tags', 'type': '[str]'},
+        'user_id': {'key': 'properties.userId', 'type': 'str'},
+        'source_id': {'key': 'properties.sourceId', 'type': 'str'},
+    }
+
+    def __init__(self, **kwargs):
+        super(MyWorkbook, self).__init__(**kwargs)
+        self.kind = kwargs.get('kind', None)
+        self.display_name = kwargs.get('display_name', None)
+        self.serialized_data = kwargs.get('serialized_data', None)
+        self.version = kwargs.get('version', None)
+        self.time_modified = None
+        self.category = kwargs.get('category', None)
+        self.my_workbook_tags = kwargs.get('my_workbook_tags', None)
+        self.user_id = None
+        self.source_id = kwargs.get('source_id', None)
+
+
+class MyWorkbookError(Model):
+    """Error message body that will indicate why the operation failed.
+
+    :param code: Service-defined error code. This code serves as a sub-status
+     for the HTTP error code specified in the response.
+    :type code: str
+    :param message: Human-readable representation of the error.
+    :type message: str
+    :param details: The list of invalid fields send in request, in case of
+     validation error.
+    :type details:
+     list[~azure.mgmt.applicationinsights.v2015_05_01.models.ErrorFieldContract]
+    """
+
+    _attribute_map = {
+        'code': {'key': 'code', 'type': 'str'},
+        'message': {'key': 'message', 'type': 'str'},
+        'details': {'key': 'details', 'type': '[ErrorFieldContract]'},
+    }
+
+    def __init__(self, **kwargs):
+        super(MyWorkbookError, self).__init__(**kwargs)
+        self.code = kwargs.get('code', None)
+        self.message = kwargs.get('message', None)
+        self.details = kwargs.get('details', None)
+
+
+class MyWorkbookErrorException(HttpOperationError):
+    """Server responsed with exception of type: 'MyWorkbookError'.
+
+    :param deserialize: A deserializer
+    :param response: Server response to be deserialized.
+    """
+
+    def __init__(self, deserialize, response, *args):
+
+        super(MyWorkbookErrorException, self).__init__(deserialize, response, 'MyWorkbookError', *args)
 
 
 class Operation(Model):
