@@ -59,7 +59,7 @@ class ACRExchangeClient(object):
         )
         self._credential = credential
         self._refresh_token = None
-        self._last_refresh_time = None
+        self._last_refresh_time = 0
 
     def get_acr_access_token(self, challenge, **kwargs):
         # type: (str, Dict[str, Any]) -> str
