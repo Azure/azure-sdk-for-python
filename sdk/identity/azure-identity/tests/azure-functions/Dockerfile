@@ -4,7 +4,7 @@
 # ------------------------------------
 # docker can't tell when the repo has changed and will therefore cache this layer
 FROM alpine/git as repo
-RUN git clone https://github.com/Azure/azure-sdk-for-python --single-branch --branch master --depth 1 /azure-sdk-for-python
+RUN git clone https://github.com/Azure/azure-sdk-for-python --single-branch --depth 1 /azure-sdk-for-python
 
 
 FROM mcr.microsoft.com/azure-functions/python:3.0
