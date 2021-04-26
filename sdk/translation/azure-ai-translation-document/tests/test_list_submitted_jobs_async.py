@@ -96,10 +96,10 @@ class TestSubmittedJobs(AsyncDocumentTranslationTest):
             else:
                 self._validate_translation_job(job)
 
-############################################
+
     @DocumentTranslationPreparer()
     @DocumentTranslationClientPreparer()
-    def test_list_submitted_jobs_filter_by_status(self, client):
+    async def test_list_submitted_jobs_filter_by_status(self, client):
         # create some jobs
         self._create_and_submit_sample_translation_jobs_async(client, 10, wait=False)
 
@@ -115,7 +115,7 @@ class TestSubmittedJobs(AsyncDocumentTranslationTest):
 
     @DocumentTranslationPreparer()
     @DocumentTranslationClientPreparer()
-    def test_list_submitted_jobs_filter_by_ids(self, client):
+    async def test_list_submitted_jobs_filter_by_ids(self, client):
         # create some jobs
         job_ids = self._create_and_submit_sample_translation_jobs_async(client, 3)
 
@@ -130,7 +130,7 @@ class TestSubmittedJobs(AsyncDocumentTranslationTest):
 
     @DocumentTranslationPreparer()
     @DocumentTranslationClientPreparer()
-    def test_list_submitted_jobs_filter_by_created_start(self, client):
+    async def test_list_submitted_jobs_filter_by_created_start(self, client):
         # create some jobs
         start = datetime.now()
         self._create_and_submit_sample_translation_jobs_async(client, 3)
@@ -146,7 +146,7 @@ class TestSubmittedJobs(AsyncDocumentTranslationTest):
 
     @DocumentTranslationPreparer()
     @DocumentTranslationClientPreparer()
-    def test_list_submitted_jobs_filter_by_created_end(self, client):
+    async def test_list_submitted_jobs_filter_by_created_end(self, client):
         # create some jobs
         end = datetime.now()
         self._create_and_submit_sample_translation_jobs_async(client, 3)
@@ -162,7 +162,7 @@ class TestSubmittedJobs(AsyncDocumentTranslationTest):
 
     @DocumentTranslationPreparer()
     @DocumentTranslationClientPreparer()
-    def test_list_submitted_jobs_order_by_creation_time_asc(self, client):
+    async def test_list_submitted_jobs_order_by_creation_time_asc(self, client):
         # create some jobs
         self._create_and_submit_sample_translation_jobs_async(client, 3)
 
@@ -179,7 +179,7 @@ class TestSubmittedJobs(AsyncDocumentTranslationTest):
 
     @DocumentTranslationPreparer()
     @DocumentTranslationClientPreparer()
-    def test_list_submitted_jobs_order_by_creation_time_desc(self, client):
+    async def test_list_submitted_jobs_order_by_creation_time_desc(self, client):
         # create some jobs
         self._create_and_submit_sample_translation_jobs_async(client, 3)
 
@@ -196,7 +196,7 @@ class TestSubmittedJobs(AsyncDocumentTranslationTest):
 
     @DocumentTranslationPreparer()
     @DocumentTranslationClientPreparer()
-    def test_list_submitted_jobs_mixed_filters(self, client):
+    async def test_list_submitted_jobs_mixed_filters(self, client):
         # create some jobs
         start = datetime.now()
         self._create_and_submit_sample_translation_jobs_async(client, 20, wait=False)
@@ -238,7 +238,7 @@ class TestSubmittedJobs(AsyncDocumentTranslationTest):
 
     @DocumentTranslationPreparer()
     @DocumentTranslationClientPreparer()
-    def test_list_submitted_jobs_mixed_filters_more(self, client):
+    async def test_list_submitted_jobs_mixed_filters_more(self, client):
         # create some jobs
         job_ids = self._create_and_submit_sample_translation_jobs_async(client, 20, wait=False)
         results_per_page = 2
