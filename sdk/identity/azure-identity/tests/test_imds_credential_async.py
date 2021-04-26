@@ -9,9 +9,9 @@ from unittest import mock
 from azure.core.credentials import AccessToken
 from azure.core.exceptions import ClientAuthenticationError
 from azure.identity import CredentialUnavailableError
-from azure.identity._constants import Endpoints
 from azure.identity._internal.user_agent import USER_AGENT
-from azure.identity.aio._credentials.managed_identity import ImdsCredential
+from azure.identity.aio._credentials.imds import ImdsCredential, PIPELINE_SETTINGS
+from azure.identity._credentials.imds import IMDS_URL
 import pytest
 
 from helpers import mock_response, Request
@@ -148,7 +148,7 @@ async def test_retries():
     )
     mock_send = mock.Mock(return_value=mock_response)
 
-    total_retries = ImdsCredential._create_config().retry_policy.total_retries
+    total_retries = PIPELINE_SETTINGS["retry_total"]
 
     for status_code in (404, 429, 500):
         mock_send.reset_mock()
@@ -174,9 +174,9 @@ async def test_identity_config():
 
     transport = async_validating_transport(
         requests=[
-            Request(base_url=Endpoints.IMDS),
+            Request(base_url=IMDS_URL),
             Request(
-                base_url=Endpoints.IMDS,
+                base_url=IMDS_URL,
                 method="GET",
                 required_headers={"Metadata": "true", "User-Agent": USER_AGENT},
                 required_params={"api-version": "2018-02-01", "resource": scope, param_name: param_value},

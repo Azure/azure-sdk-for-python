@@ -1,0 +1,170 @@
+interactions:
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      Content-Length:
+      - '0'
+      Content-Type:
+      - application/json
+      User-Agent:
+      - azsdk-python-keyvault-keys/4.4.0b5 Python/3.5.3 (Windows-10-10.0.19041-SP0)
+    method: POST
+    uri: https://vaultname.vault.azure.net/keys/livekvtestwrap-localdba317fb/create?api-version=7.0
+  response:
+    body:
+      string: '{"error":{"code":"Unauthorized","message":"Request is missing a Bearer
+        or PoP token."}}'
+    headers:
+      cache-control: no-cache
+      content-length: '87'
+      content-type: application/json; charset=utf-8
+      date: Mon, 19 Apr 2021 20:44:54 GMT
+      expires: '-1'
+      pragma: no-cache
+      strict-transport-security: max-age=31536000;includeSubDomains
+      www-authenticate: Bearer authorization="https://login.windows.net/72f988bf-86f1-41af-91ab-2d7cd011db47",
+        resource="https://vault.azure.net"
+      x-content-type-options: nosniff
+      x-ms-keyvault-network-info: conn_type=Ipv4;addr=172.92.159.124;act_addr_fam=InterNetwork;
+      x-ms-keyvault-region: eastus2
+      x-ms-keyvault-service-version: 1.2.236.0
+      x-powered-by: ASP.NET
+    status:
+      code: 401
+      message: Unauthorized
+    url: https://mcpatinotest.vault.azure.net/keys/livekvtestwrap-localdba317fb/create?api-version=7.0
+- request:
+    body: '{"key_size": 4096, "kty": "RSA"}'
+    headers:
+      Accept:
+      - application/json
+      Content-Length:
+      - '32'
+      Content-Type:
+      - application/json
+      User-Agent:
+      - azsdk-python-keyvault-keys/4.4.0b5 Python/3.5.3 (Windows-10-10.0.19041-SP0)
+    method: POST
+    uri: https://vaultname.vault.azure.net/keys/livekvtestwrap-localdba317fb/create?api-version=7.0
+  response:
+    body:
+      string: '{"key":{"kid":"https://vaultname.vault.azure.net/keys/livekvtestwrap-localdba317fb/7f135d8c08e748a7a693a7a386208aca","kty":"RSA","key_ops":["encrypt","decrypt","sign","verify","wrapKey","unwrapKey"],"n":"rOGpkpwA5h2hE9ToVdYRDmjWSonilNX_NsGm7yUdswM8tO59svUaHeKp4bbctfKTZDmrCzA9MRIe9JOCdWfTAevFpWWl-SlocqLR7i9qAZlpa1yxA9sw13sY5dv-Kto3qfv6SIkZY-OoM1bEGQvRt0KzXr9MJ2r8ywzT8VeRnaA9NnIe1MAbsr5PQcBC3TXuT_eg3izBItm0BYlr1sGV5Hv3VBFE9prfdDJdByQBF3L09ZU6L7JASq8tHG9WM26h8HCcdjXIkhIjXmmee7wuZ4zy_78DLpacMjAs2MSqW87jXH6YalHWUXyVhGeaQ3a6m5XqB1No7mggmSh3YOkbsHWeB79x5MF5uHjBugRMTvSdQPZFz6_hqsto-hsC3d7mmmobRXzVv_9oasM1iWAkJ2MDW2lvpERIWNvyRRIE3Y3fjgojshUuyZilTE21uVjqiGiQwUuy2-01_pt921slYB6K6iSAK2w70Fm5kcuP90pk7pHKpzuYewFZyXgRUd9Ry5A95Z_Li0Rtagy9XGO-u3DyGuagw6T0VzvL6W8O6O86-xyPqNCz-qFqU3Mr92BslerXYnP_pLgCACHNOjynM0rMK6ZFm2wL6wohO1iyfKyV11GGs4XpjATIvJyyWAmGyjEKDmFA-br_c1LE3oXo36JHgMpVxgEjamnh9JkXnAE","e":"AQAB"},"attributes":{"enabled":true,"created":1618865095,"updated":1618865095,"recoveryLevel":"Recoverable+Purgeable"}}'
+    headers:
+      cache-control: no-cache
+      content-length: '1016'
+      content-type: application/json; charset=utf-8
+      date: Mon, 19 Apr 2021 20:44:55 GMT
+      expires: '-1'
+      pragma: no-cache
+      strict-transport-security: max-age=31536000;includeSubDomains
+      x-content-type-options: nosniff
+      x-ms-keyvault-network-info: conn_type=Ipv4;addr=172.92.159.124;act_addr_fam=InterNetwork;
+      x-ms-keyvault-region: eastus2
+      x-ms-keyvault-service-version: 1.2.236.0
+      x-powered-by: ASP.NET
+    status:
+      code: 200
+      message: OK
+    url: https://mcpatinotest.vault.azure.net/keys/livekvtestwrap-localdba317fb/create?api-version=7.0
+- request:
+    body: '{"alg": "RSA-OAEP", "value": "LhThvDkAt_etJC0Lhr7Qy3L_DvMp11ScEDiChglK8FULdYtvCtzmumzBfPNgi-UzhPZm4PIBJ1yLKLtPVgFZPxz_hUqy_WJz7Xyyvpv7lD3CynJT_0ElW1NjOaWCcgb57oQsy-bId17IOI8UbUX0kskPEiq198zpUe0G3vp3seSzjfPClVyMlzee9sdDIBJw_O10TKo44kJfVYodrapx6nXM1Ch54VL0no-44HR0CGJl9YXaLjux-fga02sC9hjcJKfahyX7Eo5v4AlBt3hJ2FcZLA7YCuGNgmC7nN2nKMFJxrZGrtT2iodROPT_ItKSK3FXblJrus6dOgEho88r-fsgQqvdCanhA84AZdwFKPLQhfOlhQHxdLS2l0OGleb99R1X2a0W1slzrgDg2rVWOAku4-4W-D6LqFEwr3jAloXf7Vnd_kANYZPYWc6vTbADUxL8Q-pGFoRqMtonvJJ5fP-DdbVPJAafjF8moU6bbf0TqeJcvHSq7TZcRPwMdkHhGSjs-g3GuBf9ImNLXzGjTzs1ntHl_71tTKs_rEPrCpg5QTB3VSB09Q1wx-z4maDClza2_0FUuSLDSfZdshnyk7W_OvbZCz629hpflmTv3S31bupEWhEPMBq6JK712ZPwYAsmBZMjda7djQNrObEYNXvA-ZW71A2M1ipafXrvxp4"}'
+    headers:
+      Accept:
+      - application/json
+      Content-Length:
+      - '715'
+      Content-Type:
+      - application/json
+      User-Agent:
+      - azsdk-python-keyvault-keys/4.4.0b5 Python/3.5.3 (Windows-10-10.0.19041-SP0)
+    method: POST
+    uri: https://vaultname.vault.azure.net/keys/livekvtestwrap-localdba317fb/7f135d8c08e748a7a693a7a386208aca/unwrapkey?api-version=7.2-preview
+  response:
+    body:
+      string: '{"kid":"https://vaultname.vault.azure.net/keys/livekvtestwrap-localdba317fb/7f135d8c08e748a7a693a7a386208aca","value":"NTA2M2U2YWFhODQ1ZjE1MDIwMDU0Nzk0NGZkMTk5Njc5Yzk4ZWQ2Zjk5ZGEwYTBiMmRhZmVhZjFmNDY4NDQ5NmZkNTMyYzFjMjI5OTY4Y2I5ZGVlNDQ5NTdmY2VmN2NjZWY1OWNlZGEwYjM2MmU1NmJjZDc4ZmQzZmFlZTU3ODFjNjIzYzBiYjIyYjM1YmVhYmRlMDY2NGZkMzBlMGU4MjRhYmEzZGQxYjBhZmZmYzRhM2Q5NTVlZGUyMGNmNmE4NTRkNTJjZmQ"}'
+    headers:
+      cache-control: no-cache
+      content-length: '391'
+      content-type: application/json; charset=utf-8
+      date: Mon, 19 Apr 2021 20:44:55 GMT
+      expires: '-1'
+      pragma: no-cache
+      strict-transport-security: max-age=31536000;includeSubDomains
+      x-content-type-options: nosniff
+      x-ms-keyvault-network-info: conn_type=Ipv4;addr=172.92.159.124;act_addr_fam=InterNetwork;
+      x-ms-keyvault-region: eastus2
+      x-ms-keyvault-service-version: 1.2.236.0
+      x-powered-by: ASP.NET
+    status:
+      code: 200
+      message: OK
+    url: https://mcpatinotest.vault.azure.net/keys/livekvtestwrap-localdba317fb/7f135d8c08e748a7a693a7a386208aca/unwrapkey?api-version=7.2-preview
+- request:
+    body: '{"alg": "RSA-OAEP-256", "value": "PC7mzhh8ADe4NiGMPJPDHq4efdmmUMf_TwC3YQAv650xdtfk-L9vUrHjXK0WzDB6-6dwvx0NX7_CHp1xGio5VoBh8hnT8o0vJflIV8x5gaALywLketcbYvV_mO5rvI11AnK-M6UkbrdPGdDCw1K0rixo5BfK168frQcKR5xsyacKLAWcjZmngOhKdLWB2vzjdgRHY6FUHAZaTsDoGQBXPnUztdUgDXLIzDADufN3VmfTNoRB4H6XXa6hFnqwv-wQaK9hPCeDurs4gnVuTuX-jI19pZ_PLBQMhI2umEBmESObHFxwnYytTymDjWlkWzWqA9s1tj0thvThfE4qvUdEKsSlXqnr6BdUx9mlRiUlhtBIQq8_S23suOARHKILaRgLWpiUSRASOoDJzrpRfKwA8iglkPB2tdaKa1msWT0J5DgqtAsFaU52YeZZnISOKj4hJReChi-p1wWBWoaPXaPSdjySxG_hUZkbRMVlOFQ4s2v52qjLzLTQoyJ3MdEFk_d64c72pQvtzHkxAqYS6CdRLBvXq75xKH7jNTkEiYwwhgjXPuuHAZtmMRx3osiTt0SVMBk-sZoEp2pliv8JQ3F2oeQv0ziLCVpFQFdBfxhEUijrfiRsDFb8Fziq1t38PY34pmgxkiE_gi14plhPQtEYXY_0QBrFB_IaMJc10ZWPuJM"}'
+    headers:
+      Accept:
+      - application/json
+      Content-Length:
+      - '719'
+      Content-Type:
+      - application/json
+      User-Agent:
+      - azsdk-python-keyvault-keys/4.4.0b5 Python/3.5.3 (Windows-10-10.0.19041-SP0)
+    method: POST
+    uri: https://vaultname.vault.azure.net/keys/livekvtestwrap-localdba317fb/7f135d8c08e748a7a693a7a386208aca/unwrapkey?api-version=7.2-preview
+  response:
+    body:
+      string: '{"kid":"https://vaultname.vault.azure.net/keys/livekvtestwrap-localdba317fb/7f135d8c08e748a7a693a7a386208aca","value":"NTA2M2U2YWFhODQ1ZjE1MDIwMDU0Nzk0NGZkMTk5Njc5Yzk4ZWQ2Zjk5ZGEwYTBiMmRhZmVhZjFmNDY4NDQ5NmZkNTMyYzFjMjI5OTY4Y2I5ZGVlNDQ5NTdmY2VmN2NjZWY1OWNlZGEwYjM2MmU1NmJjZDc4ZmQzZmFlZTU3ODFjNjIzYzBiYjIyYjM1YmVhYmRlMDY2NGZkMzBlMGU4MjRhYmEzZGQxYjBhZmZmYzRhM2Q5NTVlZGUyMGNmNmE4NTRkNTJjZmQ"}'
+    headers:
+      cache-control: no-cache
+      content-length: '391'
+      content-type: application/json; charset=utf-8
+      date: Mon, 19 Apr 2021 20:44:56 GMT
+      expires: '-1'
+      pragma: no-cache
+      strict-transport-security: max-age=31536000;includeSubDomains
+      x-content-type-options: nosniff
+      x-ms-keyvault-network-info: conn_type=Ipv4;addr=172.92.159.124;act_addr_fam=InterNetwork;
+      x-ms-keyvault-region: eastus2
+      x-ms-keyvault-service-version: 1.2.236.0
+      x-powered-by: ASP.NET
+    status:
+      code: 200
+      message: OK
+    url: https://mcpatinotest.vault.azure.net/keys/livekvtestwrap-localdba317fb/7f135d8c08e748a7a693a7a386208aca/unwrapkey?api-version=7.2-preview
+- request:
+    body: '{"alg": "RSA1_5", "value": "VntRJM8oBE6f0WR0GcwjBJl9sfnhwEJciJCuYK-ZU_rtWxzdl0CB4lTSELKbRq6j-xn0Ato74OSCeISOPcFuyv7pYl0tE64_jQKMaaAczBZ9GhekFaFdLU0sDDyb53ZQhnuaYRWh1jymgUn5IaXipEt8nH8tS0oZ2LQy7HYlyrS62fiwDItko-0G4Hil7kcXO3XR7S0B_UA28K03l7Lbfo9LzdHuzTSEYBjRW7JmwSSmAYfGDu95OrdVqvjsYy9dWfnahHaRKidSQgQQYwJWtdUrx4PgcVPNn0VBlOM69DM8SyvIhL3v7ZaBBlQ22jaE9c08vAQoxkY5O9sd66lYNRosZxyVL7jkZQ-QgqVEmxX9sgO9JrY0a5BiTtPuIyhQyUiPi9_g1VHZyvk5XYx7JovqsxlOk0sE46UW7apYhd7q9l2ZEnQpfJf23jFS4qs_iR0CcJ0UqriaQ8btXYXyVz0ZfjQf8QvL66I1LMBIfOPTM2qduCWCUOFPsCFTdspUealG8vxXFG67cMlz5Map75qgFHQs8aheo1nu4Z1UikqExNcxb3hRRhYKTlq7H6rKVxfX_v0Mu7LNHccxg7NEKIRkCsyzY_3tp9XG3PsIorVUtXI2zCwmWAVCqmrwes__FMh97gDp0u1tIS6W1qodyXodZJqJpLFGJOPm6NkWsBs"}'
+    headers:
+      Accept:
+      - application/json
+      Content-Length:
+      - '713'
+      Content-Type:
+      - application/json
+      User-Agent:
+      - azsdk-python-keyvault-keys/4.4.0b5 Python/3.5.3 (Windows-10-10.0.19041-SP0)
+    method: POST
+    uri: https://vaultname.vault.azure.net/keys/livekvtestwrap-localdba317fb/7f135d8c08e748a7a693a7a386208aca/unwrapkey?api-version=7.2-preview
+  response:
+    body:
+      string: '{"kid":"https://vaultname.vault.azure.net/keys/livekvtestwrap-localdba317fb/7f135d8c08e748a7a693a7a386208aca","value":"NTA2M2U2YWFhODQ1ZjE1MDIwMDU0Nzk0NGZkMTk5Njc5Yzk4ZWQ2Zjk5ZGEwYTBiMmRhZmVhZjFmNDY4NDQ5NmZkNTMyYzFjMjI5OTY4Y2I5ZGVlNDQ5NTdmY2VmN2NjZWY1OWNlZGEwYjM2MmU1NmJjZDc4ZmQzZmFlZTU3ODFjNjIzYzBiYjIyYjM1YmVhYmRlMDY2NGZkMzBlMGU4MjRhYmEzZGQxYjBhZmZmYzRhM2Q5NTVlZGUyMGNmNmE4NTRkNTJjZmQ"}'
+    headers:
+      cache-control: no-cache
+      content-length: '391'
+      content-type: application/json; charset=utf-8
+      date: Mon, 19 Apr 2021 20:44:56 GMT
+      expires: '-1'
+      pragma: no-cache
+      strict-transport-security: max-age=31536000;includeSubDomains
+      x-content-type-options: nosniff
+      x-ms-keyvault-network-info: conn_type=Ipv4;addr=172.92.159.124;act_addr_fam=InterNetwork;
+      x-ms-keyvault-region: eastus2
+      x-ms-keyvault-service-version: 1.2.236.0
+      x-powered-by: ASP.NET
+    status:
+      code: 200
+      message: OK
+    url: https://mcpatinotest.vault.azure.net/keys/livekvtestwrap-localdba317fb/7f135d8c08e748a7a693a7a386208aca/unwrapkey?api-version=7.2-preview
+version: 1

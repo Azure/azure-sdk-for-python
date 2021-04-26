@@ -75,6 +75,7 @@ class TableBatchOperations(object):
         :param entity: The properties for the table entity.
         :type entity: TableEntity or dict[str,str]
         :return: None
+        :rtype: None
         :raises ValueError:
 
         .. admonition:: Example:
@@ -197,12 +198,14 @@ class TableBatchOperations(object):
         """Adds an update operation to the current batch.
 
         :param entity: The properties for the table entity.
-        :type entity: TableEntity or dict[str,str]
+        :type entity: TableEntity or Dict[str,str]
         :param mode: Merge or Replace entity
         :type mode: ~azure.data.tables.UpdateMode
         :keyword str etag: Etag of the entity
-        :keyword ~azure.core.MatchConditions match_condition: MatchCondition
+        :keyword match_condition: MatchCondition
+        :paramtype match_condition: ~azure.core.MatchCondition
         :return: None
+        :rtype: None
         :raises ValueError:
 
         .. admonition:: Example:
@@ -284,10 +287,6 @@ class TableBatchOperations(object):
         :type table_entity_properties: dict[str, object]
         :param query_options: Parameter group.
         :type query_options: ~azure.data.tables.models.QueryOptions
-        :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: None, or the result of cls(response)
-        :rtype: None
-        :raises ~azure.core.exceptions.HttpResponseError:
         """
 
         _format = None
@@ -392,10 +391,6 @@ class TableBatchOperations(object):
         :type table_entity_properties: dict[str, object]
         :param query_options: Parameter group.
         :type query_options: ~azure.data.tables.models.QueryOptions
-        :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: None, or the result of cls(response)
-        :rtype: None
-        :raises ~azure.core.exceptions.HttpResponseError:
         """
 
         _format = None
@@ -482,9 +477,8 @@ class TableBatchOperations(object):
         :param row_key: The row key of the entity.
         :type row_key: str
         :keyword str etag: Etag of the entity
-        :keyword ~azure.core.MatchConditions match_condition: MatchCondition
-        :return: None
-        :raises ValueError:
+        :keyword match_condition: MatchCondition
+        :paramtype match_condition: ~azure.core.MatchCondition
 
         .. admonition:: Example:
 
@@ -549,10 +543,6 @@ class TableBatchOperations(object):
         :type request_id_parameter: str
         :param query_options: Parameter group.
         :type query_options: ~azure.data.tables.models.QueryOptions
-        :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: None, or the result of cls(response)
-        :rtype: None
-        :raises ~azure.core.exceptions.HttpResponseError:
         """
 
         _format = None
@@ -623,9 +613,10 @@ class TableBatchOperations(object):
 
         :param entity: The properties for the table entity.
         :type entity: TableEntity or dict[str,str]
-        :param mode: Merge or Replace and Insert on fail
+        :param mode: Merge or Replace entity
         :type mode: ~azure.data.tables.UpdateMode
         :return: None
+        :rtype: None
         :raises ValueError:
 
         .. admonition:: Example:

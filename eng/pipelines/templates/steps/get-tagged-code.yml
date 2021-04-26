@@ -15,9 +15,7 @@ parameters:
 steps:
   - pwsh: |
       $targetPath = "$(Agent.TempDirectory)/${{ parameters.Package }}"
-      if (!(Test-Path $targetPath)) {
-        mkdir $targetPath
-      }
+      mkdir -p $targetPath
 
       Write-Host "##vso[task.setvariable variable=Package.Clone]$targetPath"
     displayName: 'Prep for Sparse Checkout'

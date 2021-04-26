@@ -121,6 +121,11 @@ class DeleteSnapshotsOptionType(with_metaclass(_CaseInsensitiveEnumMeta, str, En
     INCLUDE = "include"
     ONLY = "only"
 
+class EncryptionAlgorithmType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+
+    NONE = "None"
+    AES256 = "AES256"
+
 class GeoReplicationStatusType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     """The status of the secondary location
     """
