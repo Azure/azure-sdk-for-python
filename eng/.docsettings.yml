@@ -103,6 +103,7 @@ known_content_issues:
   - ['sdk/storage/azure-storage-queue/samples/README.md', 'common']
   - ['sdk/eventhub/azure-eventhub/samples/README.md', 'common']
   - ['sdk/cosmos/README.md', 'common']
+  - ['sdk/iot/azure-iot-nspkg/README.md', 'common']
   # HISTORY.rst
   - ['sdk/core/azure/HISTORY.rst','common']
   # root readme
