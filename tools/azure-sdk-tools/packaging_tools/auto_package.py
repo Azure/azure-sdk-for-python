@@ -37,7 +37,7 @@ def change_log_generate(package_name, last_version):
     from pypi_tools.pypi import PyPIClient
     client = PyPIClient()
     try:
-        last_version[-1] = client.get_ordered_versions(package_name)[-1]
+        last_version[-1] = str(client.get_ordered_versions(package_name)[-1])
     except:
         return "  - Initial Release"
     else:
