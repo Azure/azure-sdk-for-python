@@ -90,6 +90,7 @@ azure-mixedreality-nspkg
 azure-nspkg
 azure-keyvault-nspkg
 azure-media-nspkg
+azure-purview-nspkg
 azure-schemaregistry==1.0.0b1
 azure-search-nspkg
 azure-security-nspkg
@@ -215,6 +216,7 @@ opentelemetry-sdk<2.0.0,>=1.0.0
 #override azure-mgmt-storagesync msrest>=0.6.21
 #override azure-mgmt-resourcegraph msrest>=0.6.21
 #override azure-mgmt-containerservice msrest>=0.6.21
+#override azure-mgmt-hybridnetwork msrest>=0.6.21
 #override azure-mgmt-datashare msrest>=0.6.21
 #override azure-mgmt-storage msrest>=0.6.21
 #override azure-mgmt-hanaonazure msrest>=0.6.21
@@ -248,3 +250,6 @@ opentelemetry-sdk<2.0.0,>=1.0.0
 #override azure-mgmt-keyvault msrest>=0.6.21
 #override azure-mgmt-resource msrest>=0.6.21
 #override azure-template azure-core<2.0.0,>=1.10.0
+#override azure-mgmt-managedservices msrest>=0.6.21
+#override azure-purview-scanning azure-core<2.0.0,>=1.8.2 msrest>=0.6.21
+#override azure-purview-catalog azure-core<2.0.0,>=1.8.2 msrest>=0.6.21

@@ -1,9 +1,6 @@
 # Release History
 
 ## 12.8.1 (2021-04-20)
-**New Features**
-- Added support for `BlobClient -> ContainerClient -> BlobServiceClient` Traversal
-
 **Fixes**
 - Fixed retry on large block upload 
 - Make `AccountName`, `AccountKey` etc. in conn_str case insensitive
@@ -14,6 +11,7 @@
 - Fixed retries for blob download streams (#18164, #17974, #10572 (comment))
 - Added chunk streaming docstrings and samples (#17149, #11009)
 - Added retry for blob download (#17974, #10572)
+- Fixed encryption algorithm hardcoded setting (#17835)
 
 
 ## 12.8.0 (2021-03-01)

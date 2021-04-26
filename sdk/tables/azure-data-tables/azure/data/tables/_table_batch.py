@@ -95,6 +95,7 @@ class TableBatchOperations(object):
         :param entity: The properties for the table entity.
         :type entity: TableEntity or dict[str,str]
         :return: None
+        :rtype: None
         :raises ValueError:
 
         .. admonition:: Example:
@@ -221,8 +222,10 @@ class TableBatchOperations(object):
         :param mode: Merge or Replace entity
         :type mode: ~azure.data.tables.UpdateMode
         :keyword str etag: Etag of the entity
-        :keyword ~azure.core.MatchConditions match_condition: MatchCondition
+        :keyword match_condition: MatchCondition
+        :paramtype match_condition: ~azure.core.MatchCondition
         :return: None
+        :rtype: None
         :raises ValueError:
 
         .. admonition:: Example:
@@ -307,7 +310,6 @@ class TableBatchOperations(object):
         :type query_options: ~azure.data.tables.models.QueryOptions
         :return: None
         :rtype: None
-        :raises ~azure.core.exceptions.HttpResponseError:
         """
 
         _format = None
@@ -415,7 +417,6 @@ class TableBatchOperations(object):
         :type query_options: ~azure.data.tables.models.QueryOptions
         :return: None
         :rtype: None
-        :raises ~azure.core.exceptions.HttpResponseError:
         """
 
         _format = None
@@ -500,7 +501,8 @@ class TableBatchOperations(object):
         :param row_key: The row key of the entity.
         :type row_key: str
         :keyword str etag: Etag of the entity
-        :keyword ~azure.core.MatchConditions match_condition: MatchCondition
+        :keyword match_condition: MatchCondition
+        :paramtype match_condition: ~azure.core.MatchCondition
         :raises ValueError:
 
         .. admonition:: Example:
@@ -568,7 +570,6 @@ class TableBatchOperations(object):
         :type query_options: ~azure.data.tables.models.QueryOptions
         :return: None
         :rtype: None
-        :raises ~azure.core.exceptions.HttpResponseError:
         """
 
         _format = None
@@ -639,7 +640,7 @@ class TableBatchOperations(object):
 
         :param entity: The properties for the table entity.
         :type entity: TableEntity or dict[str,str]
-        :param mode: Merge or Replace and Insert on fail
+        :param mode: Merge or Replace entity
         :type mode: ~azure.data.tables.UpdateMode
         :raises ValueError:
 
