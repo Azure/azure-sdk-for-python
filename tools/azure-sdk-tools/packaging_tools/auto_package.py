@@ -33,15 +33,25 @@ def get_package_names(sdk_folder):
     return package_names
 
 
-def change_log_generate(package_name):
+def change_log_generate(package_name, last_version):
     from pypi_tools.pypi import PyPIClient
     client = PyPIClient()
     try:
-        client.get_ordered_versions(package_name)
+        last_version = client.get_ordered_versions(package_name)
     except:
         return "  - Initial Release"
     else:
         return change_log_main(f"{package_name}:pypi", f"{package_name}:latest")
+
+
+def _extract_breaking_change(changelog):
+    log = changelog.split('\n')
+    breaking_change = []
+    for i in len(0, len(log)):
+        if log[i].find('Breaking changes') > -1:
+            breaking_change = log[min(i + 2, len(log) - 1):]
+            break
+    return [x.replace('  - ', '') for x in breaking_change].sort()
 
 
 def main(generate_input, generate_output):
@@ -55,11 +65,16 @@ def main(generate_input, generate_output):
     for package in data.values():
         package_name = package['packageName']
         # Changelog
-        md_output = change_log_generate(package_name)
+        last_version = ['0.0.0']
+        md_output = change_log_generate(package_name, last_version)
         package["changelog"] = {
             "content": md_output,
-            "hasBreakingChange": "Breaking changes" in md_output
+            "hasBreakingChange": "Breaking changes" in md_output,
+            "breakingChangeItems": _extract_breaking_change(md_output)
         }
+        if package["changelog"]["hasBreakingChange"]:
+            package["version"] = last_version[-1]
+
         _LOGGER.info(f'[PACKAGE]({package_name})[CHANGELOG]:{md_output}')
         # Built package
         create_package(package_name)
