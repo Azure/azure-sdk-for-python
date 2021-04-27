@@ -31,6 +31,7 @@ from ._models import (
     DelimitedJsonDialect,
     ArrowDialect,
     ArrowType,
+    QuickQueryDialect,
     ParquetDialect,
     DataLakeFileQueryError,
     AccessControlChangeResult,
@@ -41,7 +42,8 @@ from ._models import (
     Metrics,
     RetentionPolicy,
     StaticWebsite,
-    CorsRule
+    CorsRule,
+    DeletedPathProperties
 )
 
 from ._shared_access_signature import generate_account_sas, generate_file_system_sas, generate_directory_sas, \
@@ -92,6 +94,7 @@ __all__ = [
     'DelimitedJsonDialect',
     'DataLakeFileQueryError',
     'ParquetDialect',
+    'QuickQueryDialect',
     'ArrowDialect',
     'ArrowType',
     'DataLakeFileQueryError',
@@ -99,5 +102,6 @@ __all__ = [
     'Metrics',
     'RetentionPolicy',
     'StaticWebsite',
-    'CorsRule'
+    'CorsRule',
+    'DeletedPathProperties'
 ]

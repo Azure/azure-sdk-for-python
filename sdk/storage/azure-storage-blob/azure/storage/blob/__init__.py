@@ -57,6 +57,7 @@ from ._models import (
     ParquetDialect,
     ArrowDialect,
     ArrowType,
+    QuickQueryDialect,
     ObjectReplicationPolicy,
     ObjectReplicationRule
 )
@@ -229,6 +230,7 @@ __all__ = [
     'ParquetDialect',
     'ArrowDialect',
     'ArrowType',
+    'QuickQueryDialect',
     'BlobQueryReader',
     'ObjectReplicationPolicy',
     'ObjectReplicationRule'

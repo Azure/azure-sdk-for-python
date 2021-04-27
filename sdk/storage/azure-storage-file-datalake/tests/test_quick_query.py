@@ -23,7 +23,7 @@ from testcase import (
 )
 # ------------------------------------------------------------------------------
 from azure.storage.filedatalake import DataLakeServiceClient
-from azure.storage.filedatalake._models import ParquetDialect
+from azure.storage.filedatalake._models import ParquetDialect, QuickQueryDialect
 
 CSV_DATA = b'Service,Package,Version,RepoPath,MissingDocs\r\nApp Configuration,' \
            b'azure-data-appconfiguration,1,appconfiguration,FALSE\r\nEvent Hubs' \
@@ -863,7 +863,7 @@ class StorageQuickQueryTest(StorageTestCase):
         with open(parquet_path, "rb") as parquet_data:
             file_client.upload_data(parquet_data, overwrite=True)
 
-        reader = file_client.query_file(expression, file_format=ParquetDialect(), on_error=on_error)
+        reader = file_client.query_file(expression, file_format=QuickQueryDialect.ParquetDialect, on_error=on_error)
         real_data = reader.readall()
 
         self.assertEqual(real_data, expected_data)
@@ -885,6 +885,7 @@ class StorageQuickQueryTest(StorageTestCase):
 
         with self.assertRaises(ValueError):
             file_client.query_file(
-                expression, file_format=ParquetDialect(), output_format=ParquetDialect(), on_error=on_error)
+                expression, file_format=QuickQueryDialect.ParquetDialect,
+                output_format=QuickQueryDialect.ParquetDialect, on_error=on_error)
 
 # ------------------------------------------------------------------------------
