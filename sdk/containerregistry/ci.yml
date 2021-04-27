@@ -11,6 +11,7 @@ trigger:
   paths:
     include:
     - sdk/containerregistry/
+    - sdk/core/
 
 pr:
   branches:
@@ -24,6 +25,7 @@ pr:
   paths:
     include:
     - sdk/containerregistry/
+    - sdk/core/
 
 extends:
   template: ../../eng/pipelines/templates/stages/archetype-sdk-client.yml
@@ -32,3 +34,5 @@ extends:
     Artifacts:
     - name: azure-mgmt-containerregistry
       safeName: azuremgmtcontainerregistry
+    - name: azure-containerregistry
+      safeName: azurecontainerregistry

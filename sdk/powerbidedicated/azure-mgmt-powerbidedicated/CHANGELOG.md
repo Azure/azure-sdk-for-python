@@ -1,5 +1,22 @@
 # Release History
 
+## 1.0.0 (2021-03-26)
+
+**Features**
+
+  - Model DedicatedCapacityProperties has a new parameter mode
+  - Model DedicatedCapacityMutableProperties has a new parameter mode
+  - Model DedicatedCapacityUpdateParameters has a new parameter mode
+  - Model DedicatedCapacity has a new parameter system_data
+  - Model DedicatedCapacity has a new parameter mode
+  - Model Resource has a new parameter system_data
+  - Added operation group AutoScaleVCoresOperations
+
+**Breaking changes**
+
+  - Model Resource no longer has parameter sku
+  - Model ErrorResponse has a new signature
+
 ## 1.0.0b1 (2020-12-02)
 
 This is beta preview version.

@@ -6,7 +6,7 @@
 # --------------------------------------------------------------------------------------------
 
 """
-Example to demonstrate utilizing SAS (Shared Access Signature) tokens to authenticate with EventHub
+Example to demonstrate utilizing SAS (Shared Access Signature) tokens to authenticate with Event Hubs.
 """
 
 # pylint: disable=C0111
@@ -22,7 +22,7 @@ except ImportError:
     from urllib import pathname2url as url_parse_quote
 
 from azure.core.credentials import AccessToken
-from azure.eventhub import EventHubConsumerClient
+from azure.eventhub import EventHubProducerClient, EventData
 
 
 def generate_sas_token(uri, sas_name, sas_value, token_ttl):
@@ -33,9 +33,6 @@ def generate_sas_token(uri, sas_name, sas_value, token_ttl):
     signed_hmac_sha256 = hmac.HMAC(sas, string_to_sign, hashlib.sha256)
     signature = url_parse_quote(base64.b64encode(signed_hmac_sha256.digest()))
     return 'SharedAccessSignature sr={}&sig={}&se={}&skn={}'.format(uri, signature, expiry, sas_name)
-
-def on_event(context, event):
-    print(context.partition_id, ":", event)
 
 
 class CustomizedSASCredential(object):
@@ -59,7 +56,6 @@ class CustomizedSASCredential(object):
 # Target namespace and hub must also be specified.  Consumer group is set to default unless required otherwise.
 FULLY_QUALIFIED_NAMESPACE = os.environ['EVENT_HUB_HOSTNAME']
 EVENTHUB_NAME = os.environ['EVENT_HUB_NAME']
-CONSUMER_GROUP = "$Default"
 
 # The following part creates a SAS token. Users can use any way to create a SAS token.
 SAS_POLICY = os.environ['EVENT_HUB_SAS_POLICY']
@@ -70,16 +66,17 @@ token_ttl = 3000  # seconds
 sas_token = generate_sas_token(uri, SAS_POLICY, SAS_KEY, token_ttl)
 # end of creating a SAS token
 
-consumer_client = EventHubConsumerClient(
+producer_client = EventHubProducerClient(
     fully_qualified_namespace=FULLY_QUALIFIED_NAMESPACE,
     eventhub_name=EVENTHUB_NAME,
-    consumer_group=CONSUMER_GROUP,
     credential=CustomizedSASCredential(sas_token, time.time() + token_ttl),
     logging_enable=True
 )
 
-with consumer_client:
-    consumer_client.receive(
-        on_event,
-        starting_position=-1
-    )
+start_time = time.time()
+with producer_client:
+    event_data_batch = producer_client.create_batch()
+    event_data_batch.add(EventData('Single message'))
+    producer_client.send_batch(event_data_batch)
+
+print("Send messages in {} seconds.".format(time.time() - start_time))

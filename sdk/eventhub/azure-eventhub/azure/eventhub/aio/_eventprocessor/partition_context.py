@@ -56,7 +56,7 @@ class PartitionContext(object):
             return get_last_enqueued_event_properties(self._last_received_event)
         return None
 
-    async def update_checkpoint(self, event: Optional["EventData"] = None) -> None:
+    async def update_checkpoint(self, event: Optional["EventData"] = None, **kwargs: Any) -> None:
         """Updates the receive checkpoint to the given events offset.
 
         :param ~azure.eventhub.EventData event: The EventData instance which contains the offset and
@@ -74,7 +74,19 @@ class PartitionContext(object):
                     "offset": checkpoint_event.offset,
                     "sequence_number": checkpoint_event.sequence_number,
                 }
-                await self._checkpoint_store.update_checkpoint(checkpoint)
+                try:
+                    await self._checkpoint_store.update_checkpoint(checkpoint, **kwargs)
+                except TypeError as e:
+                    if "update_checkpoint() got an unexpected keyword argument" in str(
+                        e
+                    ):
+                        _LOGGER.info(
+                            "The provided checkpointstore method 'update_checkpoint' does not accept keyword arguments,"
+                            " so keyword arguments will be ignored. Please update method signature to support kwargs."
+                        )
+                        await self._checkpoint_store.update_checkpoint(checkpoint)
+                    else:
+                        raise e
         else:
             _LOGGER.warning(
                 "namespace %r, eventhub %r, consumer_group %r, partition_id %r "

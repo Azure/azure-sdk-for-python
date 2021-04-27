@@ -42,7 +42,7 @@ class FormRecognizerClientBase(object):
             }
         )
         http_logging_policy.allowed_query_params.update(
-            {"includeTextDetails", "locale", "language", "includeKeys", "op", "pages"}
+            {"includeTextDetails", "locale", "language", "includeKeys", "op", "pages", "readingOrder"}
         )
 
         self._client = FormRecognizer(

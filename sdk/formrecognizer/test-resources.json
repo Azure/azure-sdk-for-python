@@ -62,7 +62,7 @@
             "type": "object",
             "defaultValue": {
                 "canonicalizedResource": "[concat('/blob/', parameters('blobStorageAccount'), '/', parameters('trainingDataContainer'))]",
-                "signedExpiry": "[dateTimeAdd(utcNow('u'), 'PT2H')]",
+                "signedExpiry": "[dateTimeAdd(utcNow('u'), 'PT3H')]",
                 "signedPermission": "rl",
                 "signedResource": "c"
             }
@@ -71,15 +71,11 @@
             "type": "string",
             "defaultValue": "testingdata"
         },
-        "selectionMarkTrainingDataContainer": {
-            "type": "string",
-            "defaultValue": "selectionmark"
-        },
         "testingDataSasProperties": {
             "type": "object",
             "defaultValue": {
                 "canonicalizedResource": "[concat('/blob/', parameters('blobStorageAccount'), '/', parameters('testingDataContainer'))]",
-                "signedExpiry": "[dateTimeAdd(utcNow('u'), 'PT2H')]",
+                "signedExpiry": "[dateTimeAdd(utcNow('u'), 'PT3H')]",
                 "signedPermission": "rl",
                 "signedResource": "c"
             }
@@ -92,7 +88,7 @@
             "type": "object",
             "defaultValue": {
                 "canonicalizedResource": "[concat('/blob/', parameters('blobStorageAccount'), '/', parameters('multiPageTestingDataContainer'))]",
-                "signedExpiry": "[dateTimeAdd(utcNow('u'), 'PT2H')]",
+                "signedExpiry": "[dateTimeAdd(utcNow('u'), 'PT3H')]",
                 "signedPermission": "rl",
                 "signedResource": "c"
             }
@@ -105,16 +101,46 @@
             "type": "object",
             "defaultValue": {
                 "canonicalizedResource": "[concat('/blob/', parameters('blobStorageAccount'), '/', parameters('multiPageTestingDataContainer2'))]",
-                "signedExpiry": "[dateTimeAdd(utcNow('u'), 'PT2H')]",
+                "signedExpiry": "[dateTimeAdd(utcNow('u'), 'PT3H')]",
                 "signedPermission": "rl",
                 "signedResource": "c"
             }
+        },
+        "selectionMarkTrainingDataContainer": {
+            "type": "string",
+            "defaultValue": "selectionmark"
         },
         "selectionMarkTrainingDataSasProperties": {
             "type": "object",
             "defaultValue": {
                 "canonicalizedResource": "[concat('/blob/', parameters('blobStorageAccount'), '/', parameters('selectionMarkTrainingDataContainer'))]",
-                "signedExpiry": "[dateTimeAdd(utcNow('u'), 'PT2H')]",
+                "signedExpiry": "[dateTimeAdd(utcNow('u'), 'PT3H')]",
+                "signedPermission": "rl",
+                "signedResource": "c"
+            }
+        },
+        "labelTablesVariableRowsContainer": {
+            "type": "string",
+            "defaultValue": "labeled-tables-variable-rows"
+        },
+        "labelTablesVariableRowsSasProperties": {
+            "type": "object",
+            "defaultValue": {
+                "canonicalizedResource": "[concat('/blob/', parameters('blobStorageAccount'), '/', parameters('labelTablesVariableRowsContainer'))]",
+                "signedExpiry": "[dateTimeAdd(utcNow('u'), 'PT3H')]",
+                "signedPermission": "rl",
+                "signedResource": "c"
+            }
+        },
+        "labelTablesFixedRowsContainer": {
+            "type": "string",
+            "defaultValue": "labeled-tables-fixed-rows"
+        },
+        "labelTablesFixedRowsSasProperties": {
+            "type": "object",
+            "defaultValue": {
+                "canonicalizedResource": "[concat('/blob/', parameters('blobStorageAccount'), '/', parameters('labelTablesFixedRowsContainer'))]",
+                "signedExpiry": "[dateTimeAdd(utcNow('u'), 'PT3H')]",
                 "signedPermission": "rl",
                 "signedResource": "c"
             }
@@ -198,6 +224,14 @@
         "FORMRECOGNIZER_SELECTION_MARK_STORAGE_CONTAINER_SAS_URL": {
           "type": "string",
           "value": "[concat(reference(parameters('blobResourceId'), '2019-06-01').primaryEndpoints.blob, parameters('selectionMarkTrainingDataContainer'), '?', listServiceSas(parameters('blobResourceId'), '2019-06-01', parameters('selectionMarkTrainingDataSasProperties')).serviceSasToken)]"
+        },
+        "FORMRECOGNIZER_TABLE_VARIABLE_ROWS_CONTAINER_SAS_URL": {
+          "type": "string",
+          "value": "[concat(reference(parameters('blobResourceId'), '2019-06-01').primaryEndpoints.blob, parameters('labelTablesVariableRowsContainer'), '?', listServiceSas(parameters('blobResourceId'), '2019-06-01', parameters('labelTablesVariableRowsSasProperties')).serviceSasToken)]"
+        },
+        "FORMRECOGNIZER_TABLE_FIXED_ROWS_CONTAINER_SAS_URL": {
+          "type": "string",
+          "value": "[concat(reference(parameters('blobResourceId'), '2019-06-01').primaryEndpoints.blob, parameters('labelTablesFixedRowsContainer'), '?', listServiceSas(parameters('blobResourceId'), '2019-06-01', parameters('labelTablesFixedRowsSasProperties')).serviceSasToken)]"
         },
         "FORMRECOGNIZER_REGION": {
             "type": "string",

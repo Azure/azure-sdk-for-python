@@ -15,7 +15,7 @@ from azure.core.exceptions import HttpResponseError
 #
 # 2. azure-keyvault-certificates and azure-identity packages (pip install these)
 #
-# 3. Set Environment variables AZURE_CLIENT_ID, AZURE_TENANT_ID, AZURE_CLIENT_SECRET, vault_url
+# 3. Set Environment variables AZURE_CLIENT_ID, AZURE_TENANT_ID, AZURE_CLIENT_SECRET, VAULT_URL
 #    (See https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/keyvault/azure-keyvault-keys#authenticate-the-client)
 #
 # ----------------------------------------------------------------------------------------------------------
@@ -27,7 +27,9 @@ from azure.core.exceptions import HttpResponseError
 #
 # 3. Delete a certificate (delete_certificate)
 #
-# 4. Restore a certificate (restore_certificate_backup)
+# 4. Purge a certificate (purge_deleted_certificate)
+#
+# 5. Restore a certificate (restore_certificate_backup)
 # ----------------------------------------------------------------------------------------------------------
 
 
@@ -62,12 +64,19 @@ async def run_sample():
         # The storage account certificate is no longer in use, so you can delete it.
         print("\n.. Delete the certificate")
         await client.delete_certificate(cert_name)
-        print("Deleted Certificate with name '{0}'".format(cert_name))
+        print("Deleted certificate with name '{0}'".format(cert_name))
 
-        # In future, if the certificate is required again, we can use the backup value to restore it in the Key Vault.
+        # Purge the deleted certificate.
+        # The purge will take some time, so wait before restoring the backup to avoid a conflict.
+        print("\n.. Purge the certificate")
+        await client.purge_deleted_certificate(cert_name)
+        await asyncio.sleep(60)
+        print("Purged certificate with name '{0}'".format(cert_name))
+
+        # In the future, if the certificate is required again, we can use the backup value to restore it in the Key Vault.
         print("\n.. Restore the certificate using the backed up certificate bytes")
         certificate = await client.restore_certificate_backup(certificate_backup)
-        print("Restored Certificate with name '{0}'".format(certificate.name))
+        print("Restored certificate with name '{0}'".format(certificate.name))
 
     except HttpResponseError as e:
         print("\nrun_sample has caught an error. {0}".format(e.message))

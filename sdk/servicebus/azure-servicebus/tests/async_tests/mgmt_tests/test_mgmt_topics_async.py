@@ -47,6 +47,7 @@ class ServiceBusAdministrationClientTopicAsyncTests(AzureMgmtTestCase):
         mgmt_service = ServiceBusAdministrationClient.from_connection_string(servicebus_namespace_connection_string)
         await clear_topics(mgmt_service)
         topic_name = "iweidk"
+        topic_name_2 = "dkozq"
         try:
             await mgmt_service.create_topic(
                 topic_name=topic_name,
@@ -67,8 +68,29 @@ class ServiceBusAdministrationClientTopicAsyncTests(AzureMgmtTestCase):
             assert topic.enable_express
             assert topic.enable_partitioning
             assert topic.max_size_in_megabytes % 3072 == 0
+
+            await mgmt_service.create_topic(
+                topic_name=topic_name_2,
+                auto_delete_on_idle="PT10M",
+                default_message_time_to_live="PT11M",
+                duplicate_detection_history_time_window="PT12M",
+                enable_batched_operations=True,
+                enable_express=True,
+                enable_partitioning=True,
+                max_size_in_megabytes=3072
+            )
+            topic_2 = await mgmt_service.get_topic(topic_name_2)
+            assert topic_2.name == topic_name_2
+            assert topic_2.auto_delete_on_idle == datetime.timedelta(minutes=10)
+            assert topic_2.default_message_time_to_live == datetime.timedelta(minutes=11)
+            assert topic_2.duplicate_detection_history_time_window == datetime.timedelta(minutes=12)
+            assert topic_2.enable_batched_operations
+            assert topic_2.enable_express
+            assert topic_2.enable_partitioning
+            assert topic_2.max_size_in_megabytes % 3072 == 0
         finally:
             await mgmt_service.delete_topic(topic_name)
+            await mgmt_service.delete_topic(topic_name_2)
 
     @CachedResourceGroupPreparer(name_prefix='servicebustest')
     @CachedServiceBusNamespacePreparer(name_prefix='servicebustest')
@@ -123,6 +145,17 @@ class ServiceBusAdministrationClientTopicAsyncTests(AzureMgmtTestCase):
             # assert topic_description.requires_duplicate_detection == True
             # assert topic_description.requires_session == True
             assert topic_description.support_ordering == True
+
+            topic_description.auto_delete_on_idle = "PT10M1S"
+            topic_description.default_message_time_to_live = "PT11M2S"
+            topic_description.duplicate_detection_history_time_window = "PT12M3S"
+            await mgmt_service.update_topic(topic_description)
+            topic_description = await mgmt_service.get_topic(topic_name)
+
+            assert topic_description.auto_delete_on_idle == datetime.timedelta(minutes=10, seconds=1)
+            assert topic_description.default_message_time_to_live == datetime.timedelta(minutes=11, seconds=2)
+            assert topic_description.duplicate_detection_history_time_window == datetime.timedelta(minutes=12, seconds=3)
+
         finally:
             await mgmt_service.delete_topic(topic_name)
 

@@ -193,6 +193,10 @@ def parse_setup_requires(setup_path):
     return python_requires
 
 
+def get_name_from_specifier(version):
+    return re.split(r'[><=]', version)[0]
+
+
 def filter_for_compatibility(package_set):
     collected_packages = []
     v = sys.version_info

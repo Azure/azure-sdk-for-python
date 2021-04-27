@@ -32,6 +32,8 @@ try:
     from ._models_py3 import ResourceChangesRequestParametersInterval
     from ._models_py3 import ResourcePropertyChange
     from ._models_py3 import ResourceSnapshotData
+    from ._models_py3 import ResourcesHistoryRequest
+    from ._models_py3 import ResourcesHistoryRequestOptions
     from ._models_py3 import Table
 except (SyntaxError, ImportError):
     from ._models import Column  # type: ignore
@@ -59,6 +61,8 @@ except (SyntaxError, ImportError):
     from ._models import ResourceChangesRequestParametersInterval  # type: ignore
     from ._models import ResourcePropertyChange  # type: ignore
     from ._models import ResourceSnapshotData  # type: ignore
+    from ._models import ResourcesHistoryRequest  # type: ignore
+    from ._models import ResourcesHistoryRequestOptions  # type: ignore
     from ._models import Table  # type: ignore
 
 from ._resource_graph_client_enums import (
@@ -67,6 +71,7 @@ from ._resource_graph_client_enums import (
     ColumnDataType,
     FacetSortOrder,
     PropertyChangeType,
+    ResourcesHistoryRequestOptionsResultFormat,
     ResultFormat,
     ResultTruncated,
 )
@@ -97,12 +102,15 @@ __all__ = [
     'ResourceChangesRequestParametersInterval',
     'ResourcePropertyChange',
     'ResourceSnapshotData',
+    'ResourcesHistoryRequest',
+    'ResourcesHistoryRequestOptions',
     'Table',
     'ChangeCategory',
     'ChangeType',
     'ColumnDataType',
     'FacetSortOrder',
     'PropertyChangeType',
+    'ResourcesHistoryRequestOptionsResultFormat',
     'ResultFormat',
     'ResultTruncated',
 ]

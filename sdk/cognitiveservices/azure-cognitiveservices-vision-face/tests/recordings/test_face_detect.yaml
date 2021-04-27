@@ -261,28 +261,43 @@ interactions:
       JJb4sucXDqPYAcD8KqXK7Fkx2Y/yp2Pt0rF/Q7si4it4yrMw5Ab1/wD1V0CeKY9PHkt5m6M4bKnr
       +Vc18PEWTxFIzAMVVCM9jurCj1KeTczSsSzEnn3qeW7N4yaVz//ZDQowDQoNCg==
     headers:
-      Accept: [application/json]
-      Accept-Encoding: ['gzip, deflate']
-      Connection: [keep-alive]
-      Content-Type: [application/octet-stream]
-      Transfer-Encoding: [chunked]
-      User-Agent: [python/3.6.3 (Windows-10-10.0.18362-SP0) msrest/0.6.6 azure-cognitiveservices-vision-face/0.4.0]
-      X-BingApis-SDK-Client: [Python-SDK]
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Type:
+      - application/octet-stream
+      Transfer-Encoding:
+      - chunked
+      User-Agent:
+      - python/3.9.2 (Windows-10-10.0.19041-SP0) msrest/0.6.21 azure-cognitiveservices-vision-face/0.5.0
+      X-BingApis-SDK-Client:
+      - Python-SDK
     method: POST
-    uri: https://westus2.api.cognitive.microsoft.com/face/v1.0/detect?returnFaceId=true&returnFaceLandmarks=false&returnFaceAttributes=age%2Cgender%2CheadPose%2Csmile%2CfacialHair%2Cglasses%2Cemotion%2Chair%2Cmakeup%2Cocclusion%2Caccessories%2Cblur%2Cexposure%2Cnoise&recognitionModel=recognition_01&returnRecognitionModel=false&detectionModel=detection_01
+    uri: https://westus2.api.cognitive.microsoft.com/face/v1.0/detect?returnFaceId=true&returnFaceLandmarks=false&returnFaceAttributes=age,gender,headPose,smile,facialHair,glasses,emotion,hair,makeup,occlusion,accessories,blur,exposure,noise&recognitionModel=recognition_01&returnRecognitionModel=false&detectionModel=detection_01&faceIdTimeToLive=86400
   response:
-    body: {string: '[{"faceId":"26a0df3a-75a8-4d0b-a48d-aa50ba21f381","faceRectangle":{"top":84,"left":31,"width":97,"height":97},"faceAttributes":{"smile":1.0,"headPose":{"pitch":0.7,"roll":0.6,"yaw":-7.4},"gender":"female","age":51.0,"facialHair":{"moustache":0.0,"beard":0.0,"sideburns":0.0},"glasses":"NoGlasses","emotion":{"anger":0.0,"contempt":0.0,"disgust":0.0,"fear":0.0,"happiness":1.0,"neutral":0.0,"sadness":0.0,"surprise":0.0},"blur":{"blurLevel":"low","value":0.0},"exposure":{"exposureLevel":"goodExposure","value":0.72},"noise":{"noiseLevel":"low","value":0.03},"makeup":{"eyeMakeup":true,"lipMakeup":true},"accessories":[],"occlusion":{"foreheadOccluded":false,"eyeOccluded":false,"mouthOccluded":false},"hair":{"bald":0.66,"invisible":false,"hairColor":[{"color":"blond","confidence":1.0},{"color":"gray","confidence":0.93},{"color":"other","confidence":0.48},{"color":"red","confidence":0.05},{"color":"black","confidence":0.04},{"color":"brown","confidence":0.02}]}}}]'}
+    body:
+      string: '[{"faceId":"f0957113-5ce4-435b-a715-2f2ea5384f41","faceRectangle":{"top":84,"left":31,"width":97,"height":97},"faceAttributes":{"smile":1.0,"headPose":{"pitch":0.7,"roll":0.6,"yaw":-7.4},"gender":"female","age":53.0,"facialHair":{"moustache":0.0,"beard":0.0,"sideburns":0.0},"glasses":"NoGlasses","emotion":{"anger":0.0,"contempt":0.0,"disgust":0.0,"fear":0.0,"happiness":1.0,"neutral":0.0,"sadness":0.0,"surprise":0.0},"blur":{"blurLevel":"low","value":0.0},"exposure":{"exposureLevel":"goodExposure","value":0.72},"noise":{"noiseLevel":"low","value":0.03},"makeup":{"eyeMakeup":true,"lipMakeup":true},"accessories":[],"occlusion":{"foreheadOccluded":false,"eyeOccluded":false,"mouthOccluded":false},"hair":{"bald":0.66,"invisible":false,"hairColor":[{"color":"blond","confidence":1.0},{"color":"gray","confidence":0.93},{"color":"other","confidence":0.48},{"color":"red","confidence":0.05},{"color":"black","confidence":0.04},{"color":"brown","confidence":0.02},{"color":"white","confidence":0.0}]}}}]'
     headers:
-      apim-request-id: [f017e164-cf85-471b-8bd5-65f037520c36]
-      cache-control: [no-cache]
-      content-length: ['968']
-      content-type: [application/json; charset=utf-8]
-      date: ['Thu, 27 Jun 2019 21:22:54 GMT']
-      expires: ['-1']
-      pragma: [no-cache]
-      strict-transport-security: [max-age=31536000; includeSubDomains; preload]
-      x-aspnet-version: [4.0.30319]
-      x-content-type-options: [nosniff]
-      x-powered-by: [ASP.NET]
-    status: {code: 200, message: OK}
+      apim-request-id:
+      - 6238b55a-680c-4fb9-b3bd-0f2c6b8ee9d8
+      content-length:
+      - '1003'
+      content-type:
+      - application/json; charset=utf-8
+      csp-billing-usage:
+      - CognitiveServices.Face.Transaction=1
+      date:
+      - Mon, 15 Mar 2021 18:54:57 GMT
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains; preload
+      x-content-type-options:
+      - nosniff
+      x-envoy-upstream-service-time:
+      - '188'
+    status:
+      code: 200
+      message: OK
 version: 1

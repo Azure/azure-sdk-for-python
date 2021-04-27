@@ -13,28 +13,28 @@ interactions:
       Content-Type:
       - application/pdf
       User-Agent:
-      - azsdk-python-ai-formrecognizer/3.1.0b1 Python/3.9.0 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-ai-formrecognizer/3.1.0b4 Python/3.8.5 (Windows-10-10.0.19041-SP0)
     method: POST
-    uri: https://centraluseuap.api.cognitive.microsoft.com/formrecognizer/v2.1-preview.2/prebuilt/businessCard/analyze?includeTextDetails=false
+    uri: https://region.api.cognitive.microsoft.com/formrecognizer/v2.1-preview.3/prebuilt/businessCard/analyze?includeTextDetails=false
   response:
     body:
-      string: '{"error": {"code": "BadArgument", "innerError": {"requestId": "2c115161-4074-45e4-a1b4-0e45c89ce2bc"},
+      string: '{"error": {"code": "BadArgument", "innerError": {"requestId": "fb6f6782-4b0b-4645-be37-98dcba41311e"},
         "message": "Bad or unrecognizable request JSON or binary file."}}'
     headers:
       apim-request-id:
-      - 2c115161-4074-45e4-a1b4-0e45c89ce2bc
+      - fb6f6782-4b0b-4645-be37-98dcba41311e
       content-length:
       - '161'
       content-type:
       - application/json; charset=utf-8
       date:
-      - Wed, 11 Nov 2020 17:51:21 GMT
+      - Thu, 18 Mar 2021 03:17:46 GMT
       strict-transport-security:
       - max-age=31536000; includeSubDomains; preload
       x-content-type-options:
       - nosniff
       x-envoy-upstream-service-time:
-      - '4'
+      - '3'
     status:
       code: 400
       message: Bad Request

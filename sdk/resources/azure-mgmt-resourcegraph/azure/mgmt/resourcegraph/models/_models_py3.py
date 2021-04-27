@@ -354,8 +354,8 @@ class FacetResult(Facet):
     :type total_records: long
     :param count: Required. Number of records returned in the facet response.
     :type count: int
-    :param data: Required. A table containing the desired facets. Only present if the facet is
-     valid.
+    :param data: Required. A JObject array or Table containing the desired facets. Only present if
+     the facet is valid.
     :type data: object
     """
 
@@ -487,8 +487,9 @@ class QueryRequest(msrest.serialization.Model):
 
     :param subscriptions: Azure subscriptions against which to execute the query.
     :type subscriptions: list[str]
-    :param management_group_id: The management group identifier.
-    :type management_group_id: str
+    :param management_groups: Azure management groups against which to execute the query. Example:
+     [ 'mg1', 'mg2' ].
+    :type management_groups: list[str]
     :param query: Required. The resources query.
     :type query: str
     :param options: The query evaluation options.
@@ -503,7 +504,7 @@ class QueryRequest(msrest.serialization.Model):
 
     _attribute_map = {
         'subscriptions': {'key': 'subscriptions', 'type': '[str]'},
-        'management_group_id': {'key': 'managementGroupId', 'type': 'str'},
+        'management_groups': {'key': 'managementGroups', 'type': '[str]'},
         'query': {'key': 'query', 'type': 'str'},
         'options': {'key': 'options', 'type': 'QueryRequestOptions'},
         'facets': {'key': 'facets', 'type': '[FacetRequest]'},
@@ -514,14 +515,14 @@ class QueryRequest(msrest.serialization.Model):
         *,
         query: str,
         subscriptions: Optional[List[str]] = None,
-        management_group_id: Optional[str] = None,
+        management_groups: Optional[List[str]] = None,
         options: Optional["QueryRequestOptions"] = None,
         facets: Optional[List["FacetRequest"]] = None,
         **kwargs
     ):
         super(QueryRequest, self).__init__(**kwargs)
         self.subscriptions = subscriptions
-        self.management_group_id = management_group_id
+        self.management_groups = management_groups
         self.query = query
         self.options = options
         self.facets = facets
@@ -540,8 +541,12 @@ class QueryRequestOptions(msrest.serialization.Model):
      page offset when ``$skipToken`` property is present.
     :type skip: int
     :param result_format: Defines in which format query result returned. Possible values include:
-     "table", "objectArray".
+     "table", "objectArray". Default value: "objectArray".
     :type result_format: str or ~azure.mgmt.resourcegraph.models.ResultFormat
+    :param allow_partial_scopes: Only applicable for tenant and management group level queries to
+     decide whether to allow partial scopes for result in case the number of subscriptions exceed
+     allowed limits.
+    :type allow_partial_scopes: bool
     """
 
     _validation = {
@@ -554,6 +559,7 @@ class QueryRequestOptions(msrest.serialization.Model):
         'top': {'key': '$top', 'type': 'int'},
         'skip': {'key': '$skip', 'type': 'int'},
         'result_format': {'key': 'resultFormat', 'type': 'str'},
+        'allow_partial_scopes': {'key': 'allowPartialScopes', 'type': 'bool'},
     }
 
     def __init__(
@@ -562,7 +568,8 @@ class QueryRequestOptions(msrest.serialization.Model):
         skip_token: Optional[str] = None,
         top: Optional[int] = None,
         skip: Optional[int] = None,
-        result_format: Optional[Union[str, "ResultFormat"]] = None,
+        result_format: Optional[Union[str, "ResultFormat"]] = "objectArray",
+        allow_partial_scopes: Optional[bool] = False,
         **kwargs
     ):
         super(QueryRequestOptions, self).__init__(**kwargs)
@@ -570,6 +577,7 @@ class QueryRequestOptions(msrest.serialization.Model):
         self.top = top
         self.skip = skip
         self.result_format = result_format
+        self.allow_partial_scopes = allow_partial_scopes
 
 
 class QueryResponse(msrest.serialization.Model):
@@ -586,10 +594,9 @@ class QueryResponse(msrest.serialization.Model):
      values include: "true", "false".
     :type result_truncated: str or ~azure.mgmt.resourcegraph.models.ResultTruncated
     :param skip_token: When present, the value can be passed to a subsequent query call (together
-     with the same query and subscriptions used in the current request) to retrieve the next page of
-     data.
+     with the same query and scopes used in the current request) to retrieve the next page of data.
     :type skip_token: str
-    :param data: Required. Query output in tabular format.
+    :param data: Required. Query output in JObject array or Table format.
     :type data: object
     :param facets: Query facets.
     :type facets: list[~azure.mgmt.resourcegraph.models.Facet]
@@ -636,12 +643,14 @@ class ResourceChangeData(msrest.serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
+    :param resource_id: The resource for a change.
+    :type resource_id: str
     :param change_id: Required. The change ID. Valid and unique within the specified resource only.
     :type change_id: str
     :param before_snapshot: Required. The snapshot before the change.
-    :type before_snapshot: ~azure.mgmt.resourcegraph.models.ResourceSnapshotData
+    :type before_snapshot: ~azure.mgmt.resourcegraph.models.ResourceChangeDataBeforeSnapshot
     :param after_snapshot: Required. The snapshot after the change.
-    :type after_snapshot: ~azure.mgmt.resourcegraph.models.ResourceSnapshotData
+    :type after_snapshot: ~azure.mgmt.resourcegraph.models.ResourceChangeDataAfterSnapshot
     :param change_type: The change type for snapshot. PropertyChanges will be provided in case of
      Update change type. Possible values include: "Create", "Update", "Delete".
     :type change_type: str or ~azure.mgmt.resourcegraph.models.ChangeType
@@ -656,9 +665,10 @@ class ResourceChangeData(msrest.serialization.Model):
     }
 
     _attribute_map = {
+        'resource_id': {'key': 'resourceId', 'type': 'str'},
         'change_id': {'key': 'changeId', 'type': 'str'},
-        'before_snapshot': {'key': 'beforeSnapshot', 'type': 'ResourceSnapshotData'},
-        'after_snapshot': {'key': 'afterSnapshot', 'type': 'ResourceSnapshotData'},
+        'before_snapshot': {'key': 'beforeSnapshot', 'type': 'ResourceChangeDataBeforeSnapshot'},
+        'after_snapshot': {'key': 'afterSnapshot', 'type': 'ResourceChangeDataAfterSnapshot'},
         'change_type': {'key': 'changeType', 'type': 'str'},
         'property_changes': {'key': 'propertyChanges', 'type': '[ResourcePropertyChange]'},
     }
@@ -667,13 +677,15 @@ class ResourceChangeData(msrest.serialization.Model):
         self,
         *,
         change_id: str,
-        before_snapshot: "ResourceSnapshotData",
-        after_snapshot: "ResourceSnapshotData",
+        before_snapshot: "ResourceChangeDataBeforeSnapshot",
+        after_snapshot: "ResourceChangeDataAfterSnapshot",
+        resource_id: Optional[str] = None,
         change_type: Optional[Union[str, "ChangeType"]] = None,
         property_changes: Optional[List["ResourcePropertyChange"]] = None,
         **kwargs
     ):
         super(ResourceChangeData, self).__init__(**kwargs)
+        self.resource_id = resource_id
         self.change_id = change_id
         self.before_snapshot = before_snapshot
         self.after_snapshot = after_snapshot
@@ -686,6 +698,8 @@ class ResourceSnapshotData(msrest.serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
+    :param snapshot_id: The ID of the snapshot.
+    :type snapshot_id: str
     :param timestamp: Required. The time when the snapshot was created.
      The snapshot timestamp provides an approximation as to when a modification to a resource was
      detected.  There can be a difference between the actual modification time and the detection
@@ -701,6 +715,7 @@ class ResourceSnapshotData(msrest.serialization.Model):
     }
 
     _attribute_map = {
+        'snapshot_id': {'key': 'snapshotId', 'type': 'str'},
         'timestamp': {'key': 'timestamp', 'type': 'iso-8601'},
         'content': {'key': 'content', 'type': 'object'},
     }
@@ -709,10 +724,12 @@ class ResourceSnapshotData(msrest.serialization.Model):
         self,
         *,
         timestamp: datetime.datetime,
+        snapshot_id: Optional[str] = None,
         content: Optional[object] = None,
         **kwargs
     ):
         super(ResourceSnapshotData, self).__init__(**kwargs)
+        self.snapshot_id = snapshot_id
         self.timestamp = timestamp
         self.content = content
 
@@ -722,6 +739,8 @@ class ResourceChangeDataAfterSnapshot(ResourceSnapshotData):
 
     All required parameters must be populated in order to send to Azure.
 
+    :param snapshot_id: The ID of the snapshot.
+    :type snapshot_id: str
     :param timestamp: Required. The time when the snapshot was created.
      The snapshot timestamp provides an approximation as to when a modification to a resource was
      detected.  There can be a difference between the actual modification time and the detection
@@ -737,6 +756,7 @@ class ResourceChangeDataAfterSnapshot(ResourceSnapshotData):
     }
 
     _attribute_map = {
+        'snapshot_id': {'key': 'snapshotId', 'type': 'str'},
         'timestamp': {'key': 'timestamp', 'type': 'iso-8601'},
         'content': {'key': 'content', 'type': 'object'},
     }
@@ -745,10 +765,11 @@ class ResourceChangeDataAfterSnapshot(ResourceSnapshotData):
         self,
         *,
         timestamp: datetime.datetime,
+        snapshot_id: Optional[str] = None,
         content: Optional[object] = None,
         **kwargs
     ):
-        super(ResourceChangeDataAfterSnapshot, self).__init__(timestamp=timestamp, content=content, **kwargs)
+        super(ResourceChangeDataAfterSnapshot, self).__init__(snapshot_id=snapshot_id, timestamp=timestamp, content=content, **kwargs)
 
 
 class ResourceChangeDataBeforeSnapshot(ResourceSnapshotData):
@@ -756,6 +777,8 @@ class ResourceChangeDataBeforeSnapshot(ResourceSnapshotData):
 
     All required parameters must be populated in order to send to Azure.
 
+    :param snapshot_id: The ID of the snapshot.
+    :type snapshot_id: str
     :param timestamp: Required. The time when the snapshot was created.
      The snapshot timestamp provides an approximation as to when a modification to a resource was
      detected.  There can be a difference between the actual modification time and the detection
@@ -771,6 +794,7 @@ class ResourceChangeDataBeforeSnapshot(ResourceSnapshotData):
     }
 
     _attribute_map = {
+        'snapshot_id': {'key': 'snapshotId', 'type': 'str'},
         'timestamp': {'key': 'timestamp', 'type': 'iso-8601'},
         'content': {'key': 'content', 'type': 'object'},
     }
@@ -779,10 +803,11 @@ class ResourceChangeDataBeforeSnapshot(ResourceSnapshotData):
         self,
         *,
         timestamp: datetime.datetime,
+        snapshot_id: Optional[str] = None,
         content: Optional[object] = None,
         **kwargs
     ):
-        super(ResourceChangeDataBeforeSnapshot, self).__init__(timestamp=timestamp, content=content, **kwargs)
+        super(ResourceChangeDataBeforeSnapshot, self).__init__(snapshot_id=snapshot_id, timestamp=timestamp, content=content, **kwargs)
 
 
 class ResourceChangeDetailsRequestParameters(msrest.serialization.Model):
@@ -790,32 +815,32 @@ class ResourceChangeDetailsRequestParameters(msrest.serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param resource_id: Required. Specifies the resource for a change details request.
-    :type resource_id: str
-    :param change_id: Required. Specifies the change ID.
-    :type change_id: str
+    :param resource_ids: Required. Specifies the list of resources for a change details request.
+    :type resource_ids: list[str]
+    :param change_ids: Required. Specifies the list of change IDs for a change details request.
+    :type change_ids: list[str]
     """
 
     _validation = {
-        'resource_id': {'required': True},
-        'change_id': {'required': True},
+        'resource_ids': {'required': True},
+        'change_ids': {'required': True},
     }
 
     _attribute_map = {
-        'resource_id': {'key': 'resourceId', 'type': 'str'},
-        'change_id': {'key': 'changeId', 'type': 'str'},
+        'resource_ids': {'key': 'resourceIds', 'type': '[str]'},
+        'change_ids': {'key': 'changeIds', 'type': '[str]'},
     }
 
     def __init__(
         self,
         *,
-        resource_id: str,
-        change_id: str,
+        resource_ids: List[str],
+        change_ids: List[str],
         **kwargs
     ):
         super(ResourceChangeDetailsRequestParameters, self).__init__(**kwargs)
-        self.resource_id = resource_id
-        self.change_id = change_id
+        self.resource_ids = resource_ids
+        self.change_ids = change_ids
 
 
 class ResourceChangeList(msrest.serialization.Model):
@@ -857,48 +882,62 @@ class ResourceChangesRequestParameters(msrest.serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param resource_id: Required. Specifies the resource for a changes request.
-    :type resource_id: str
+    :param resource_ids: Specifies the list of resources for a changes request.
+    :type resource_ids: list[str]
+    :param subscription_id: The subscription id of resources to query the changes from.
+    :type subscription_id: str
     :param interval: Required. Specifies the date and time interval for a changes request.
-    :type interval: ~azure.mgmt.resourcegraph.models.DateTimeInterval
+    :type interval: ~azure.mgmt.resourcegraph.models.ResourceChangesRequestParametersInterval
     :param skip_token: Acts as the continuation token for paged responses.
     :type skip_token: str
     :param top: The maximum number of changes the client can accept in a paged response.
     :type top: int
+    :param table: The table name to query resources from.
+    :type table: str
     :param fetch_property_changes: The flag if set to true will fetch property changes.
     :type fetch_property_changes: bool
+    :param fetch_snapshots: The flag if set to true will fetch change snapshots.
+    :type fetch_snapshots: bool
     """
 
     _validation = {
-        'resource_id': {'required': True},
         'interval': {'required': True},
         'top': {'maximum': 1000, 'minimum': 1},
     }
 
     _attribute_map = {
-        'resource_id': {'key': 'resourceId', 'type': 'str'},
-        'interval': {'key': 'interval', 'type': 'DateTimeInterval'},
+        'resource_ids': {'key': 'resourceIds', 'type': '[str]'},
+        'subscription_id': {'key': 'subscriptionId', 'type': 'str'},
+        'interval': {'key': 'interval', 'type': 'ResourceChangesRequestParametersInterval'},
         'skip_token': {'key': '$skipToken', 'type': 'str'},
         'top': {'key': '$top', 'type': 'int'},
+        'table': {'key': 'table', 'type': 'str'},
         'fetch_property_changes': {'key': 'fetchPropertyChanges', 'type': 'bool'},
+        'fetch_snapshots': {'key': 'fetchSnapshots', 'type': 'bool'},
     }
 
     def __init__(
         self,
         *,
-        resource_id: str,
-        interval: "DateTimeInterval",
+        interval: "ResourceChangesRequestParametersInterval",
+        resource_ids: Optional[List[str]] = None,
+        subscription_id: Optional[str] = None,
         skip_token: Optional[str] = None,
         top: Optional[int] = None,
+        table: Optional[str] = None,
         fetch_property_changes: Optional[bool] = None,
+        fetch_snapshots: Optional[bool] = None,
         **kwargs
     ):
         super(ResourceChangesRequestParameters, self).__init__(**kwargs)
-        self.resource_id = resource_id
+        self.resource_ids = resource_ids
+        self.subscription_id = subscription_id
         self.interval = interval
         self.skip_token = skip_token
         self.top = top
+        self.table = table
         self.fetch_property_changes = fetch_property_changes
+        self.fetch_snapshots = fetch_snapshots
 
 
 class ResourceChangesRequestParametersInterval(DateTimeInterval):
@@ -985,6 +1024,85 @@ class ResourcePropertyChange(msrest.serialization.Model):
         self.after_value = after_value
         self.change_category = change_category
         self.property_change_type = property_change_type
+
+
+class ResourcesHistoryRequest(msrest.serialization.Model):
+    """ResourcesHistoryRequest.
+
+    :param subscriptions:
+    :type subscriptions: list[str]
+    :param query:
+    :type query: str
+    :param options:
+    :type options: ~azure.mgmt.resourcegraph.models.ResourcesHistoryRequestOptions
+    :param management_group_id:
+    :type management_group_id: str
+    """
+
+    _attribute_map = {
+        'subscriptions': {'key': 'subscriptions', 'type': '[str]'},
+        'query': {'key': 'query', 'type': 'str'},
+        'options': {'key': 'options', 'type': 'ResourcesHistoryRequestOptions'},
+        'management_group_id': {'key': 'managementGroupId', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        *,
+        subscriptions: Optional[List[str]] = None,
+        query: Optional[str] = None,
+        options: Optional["ResourcesHistoryRequestOptions"] = None,
+        management_group_id: Optional[str] = None,
+        **kwargs
+    ):
+        super(ResourcesHistoryRequest, self).__init__(**kwargs)
+        self.subscriptions = subscriptions
+        self.query = query
+        self.options = options
+        self.management_group_id = management_group_id
+
+
+class ResourcesHistoryRequestOptions(msrest.serialization.Model):
+    """ResourcesHistoryRequestOptions.
+
+    :param interval: An interval in time specifying the date and time for the inclusive start and
+     exclusive end, i.e. ``[start, end)``.
+    :type interval: ~azure.mgmt.resourcegraph.models.DateTimeInterval
+    :param top:
+    :type top: int
+    :param skip:
+    :type skip: int
+    :param skip_token:
+    :type skip_token: str
+    :param result_format:  Possible values include: "table", "objectArray".
+    :type result_format: str or
+     ~azure.mgmt.resourcegraph.models.ResourcesHistoryRequestOptionsResultFormat
+    """
+
+    _attribute_map = {
+        'interval': {'key': 'interval', 'type': 'DateTimeInterval'},
+        'top': {'key': '$top', 'type': 'int'},
+        'skip': {'key': '$skip', 'type': 'int'},
+        'skip_token': {'key': '$skipToken', 'type': 'str'},
+        'result_format': {'key': 'resultFormat', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        *,
+        interval: Optional["DateTimeInterval"] = None,
+        top: Optional[int] = None,
+        skip: Optional[int] = None,
+        skip_token: Optional[str] = None,
+        result_format: Optional[Union[str, "ResourcesHistoryRequestOptionsResultFormat"]] = None,
+        **kwargs
+    ):
+        super(ResourcesHistoryRequestOptions, self).__init__(**kwargs)
+        self.interval = interval
+        self.top = top
+        self.skip = skip
+        self.skip_token = skip_token
+        self.result_format = result_format
 
 
 class Table(msrest.serialization.Model):

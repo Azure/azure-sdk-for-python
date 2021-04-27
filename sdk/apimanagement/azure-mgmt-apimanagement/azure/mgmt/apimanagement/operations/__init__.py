@@ -38,6 +38,7 @@ from ._email_template_operations import EmailTemplateOperations
 from ._gateway_operations import GatewayOperations
 from ._gateway_hostname_configuration_operations import GatewayHostnameConfigurationOperations
 from ._gateway_api_operations import GatewayApiOperations
+from ._gateway_certificate_authority_operations import GatewayCertificateAuthorityOperations
 from ._group_operations import GroupOperations
 from ._group_user_operations import GroupUserOperations
 from ._identity_provider_operations import IdentityProviderOperations
@@ -52,6 +53,7 @@ from ._open_id_connect_provider_operations import OpenIdConnectProviderOperation
 from ._policy_operations import PolicyOperations
 from ._policy_description_operations import PolicyDescriptionOperations
 from ._portal_revision_operations import PortalRevisionOperations
+from ._portal_settings_operations import PortalSettingsOperations
 from ._sign_in_settings_operations import SignInSettingsOperations
 from ._sign_up_settings_operations import SignUpSettingsOperations
 from ._delegation_settings_operations import DelegationSettingsOperations
@@ -64,6 +66,8 @@ from ._quota_by_counter_keys_operations import QuotaByCounterKeysOperations
 from ._quota_by_period_keys_operations import QuotaByPeriodKeysOperations
 from ._region_operations import RegionOperations
 from ._reports_operations import ReportsOperations
+from ._tenant_settings_operations import TenantSettingsOperations
+from ._api_management_skus_operations import ApiManagementSkusOperations
 from ._subscription_operations import SubscriptionOperations
 from ._tag_resource_operations import TagResourceOperations
 from ._tenant_access_operations import TenantAccessOperations
@@ -108,6 +112,7 @@ __all__ = [
     'GatewayOperations',
     'GatewayHostnameConfigurationOperations',
     'GatewayApiOperations',
+    'GatewayCertificateAuthorityOperations',
     'GroupOperations',
     'GroupUserOperations',
     'IdentityProviderOperations',
@@ -122,6 +127,7 @@ __all__ = [
     'PolicyOperations',
     'PolicyDescriptionOperations',
     'PortalRevisionOperations',
+    'PortalSettingsOperations',
     'SignInSettingsOperations',
     'SignUpSettingsOperations',
     'DelegationSettingsOperations',
@@ -134,6 +140,8 @@ __all__ = [
     'QuotaByPeriodKeysOperations',
     'RegionOperations',
     'ReportsOperations',
+    'TenantSettingsOperations',
+    'ApiManagementSkusOperations',
     'SubscriptionOperations',
     'TagResourceOperations',
     'TenantAccessOperations',

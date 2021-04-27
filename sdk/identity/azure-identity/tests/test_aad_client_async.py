@@ -6,14 +6,18 @@ import functools
 from unittest.mock import Mock, patch
 from urllib.parse import urlparse
 import time
-from azure.core.exceptions import ClientAuthenticationError
+
+from azure.core.exceptions import ClientAuthenticationError, ServiceRequestError
 from azure.identity._constants import EnvironmentVariables, DEFAULT_REFRESH_OFFSET, DEFAULT_TOKEN_REFRESH_RETRY_DELAY
+from azure.identity._internal import AadClientCertificate
 from azure.identity.aio._internal.aad_client import AadClient
 from azure.core.credentials import AccessToken
 from msal import TokenCache
 import pytest
 
 from helpers import build_aad_response, mock_response
+from helpers_async import get_completed_future
+from test_certificate_credential import CERT_PATH
 
 pytestmark = pytest.mark.asyncio
 
@@ -211,22 +215,29 @@ async def test_evicts_invalid_refresh_token():
     assert len(cache.find(TokenCache.CredentialType.REFRESH_TOKEN, query={"secret": invalid_token})) == 0
 
 
-async def test_should_refresh():
-    client = AadClient("test", "test")
-    now = int(time.time())
+async def test_retries_token_requests():
+    """The client should retry token requests"""
 
-    # do not need refresh
-    token = AccessToken("token", now + DEFAULT_REFRESH_OFFSET + 1)
-    should_refresh = client.should_refresh(token)
-    assert not should_refresh
+    message = "can't connect"
+    transport = Mock(send=Mock(side_effect=ServiceRequestError(message)), sleep=get_completed_future)
+    client = AadClient("tenant-id", "client-id", transport=transport)
 
-    # need refresh
-    token = AccessToken("token", now + DEFAULT_REFRESH_OFFSET - 1)
-    should_refresh = client.should_refresh(token)
-    assert should_refresh
+    with pytest.raises(ServiceRequestError, match=message):
+        await client.obtain_token_by_authorization_code("", "", "")
+    assert transport.send.call_count > 1
+    transport.send.reset_mock()
 
-    # not exceed cool down time, do not refresh
-    token = AccessToken("token", now + DEFAULT_REFRESH_OFFSET - 1)
-    client._last_refresh_time = now - DEFAULT_TOKEN_REFRESH_RETRY_DELAY + 1
-    should_refresh = client.should_refresh(token)
-    assert not should_refresh
+    with pytest.raises(ServiceRequestError, match=message):
+        await client.obtain_token_by_client_certificate("", AadClientCertificate(open(CERT_PATH, "rb").read()))
+    assert transport.send.call_count > 1
+    transport.send.reset_mock()
+
+    with pytest.raises(ServiceRequestError, match=message):
+        await client.obtain_token_by_client_secret("", "")
+    assert transport.send.call_count > 1
+    transport.send.reset_mock()
+
+    with pytest.raises(ServiceRequestError, match=message):
+        await client.obtain_token_by_refresh_token("", "")
+    assert transport.send.call_count > 1
+    transport.send.reset_mock()

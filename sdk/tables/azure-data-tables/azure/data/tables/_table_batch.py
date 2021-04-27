@@ -6,11 +6,13 @@
 from typing import (
     Union,
     Any,
-    Dict,
+    Dict
 )
 
+from ._common_conversion import _is_cosmos_endpoint, _transform_patch_to_cosmos_post
 from ._models import UpdateMode
 from ._serialize import _get_match_headers, _add_entity_properties
+from ._entity import TableEntity
 
 
 class TableBatchOperations(object):
@@ -32,7 +34,6 @@ class TableBatchOperations(object):
         deserializer,  # type: msrest.Deserializer
         config,  # type: AzureTableConfiguration
         table_name,  # type: str
-        table_client,  # type: TableClient
         **kwargs  # type: Dict[str, Any]
     ):
         """Create TableClient from a Credential.
@@ -57,21 +58,22 @@ class TableBatchOperations(object):
         self._deserialize = deserializer
         self._config = config
         self.table_name = table_name
-        self._table_client = table_client
 
         self._partition_key = kwargs.pop("partition_key", None)
         self._requests = []
         self._entities = []
 
+    def __len__(self):
+        return len(self._requests)
+
     def _verify_partition_key(
-        self, entity  # type: Union[Entity, dict]
+        self, entity  # type: Union[TableEntity, dict]
     ):
         # (...) -> None
         if self._partition_key is None:
             self._partition_key = entity["PartitionKey"]
-        elif "PartitionKey" in entity:
-            if entity["PartitionKey"] != self._partition_key:
-                raise ValueError("Partition Keys must all be the same")
+        elif entity["PartitionKey"] != self._partition_key:
+            raise ValueError("Partition Keys must all be the same")
 
     def create_entity(
         self,
@@ -84,6 +86,7 @@ class TableBatchOperations(object):
         :param entity: The properties for the table entity.
         :type entity: TableEntity or dict[str,str]
         :return: None
+        :rtype: None
         :raises ValueError:
 
         .. admonition:: Example:
@@ -96,13 +99,14 @@ class TableBatchOperations(object):
                 :caption: Creating and adding an entity to a Table
         """
         self._verify_partition_key(entity)
+        temp = entity.copy()
 
-        if "PartitionKey" in entity and "RowKey" in entity:
-            entity = _add_entity_properties(entity)
+        if "PartitionKey" in temp and "RowKey" in temp:
+            temp = _add_entity_properties(temp)
         else:
-            raise ValueError("PartitionKey and RowKey were not provided in entity")
-        self._batch_create_entity(table=self.table_name, entity=entity, **kwargs)
-        self._entities.append(entity)
+            raise ValueError("PartitionKey and/or RowKey were not provided in entity")
+        self._batch_create_entity(table=self.table_name, entity=temp, **kwargs)
+        self._entities.append(TableEntity(**entity.copy()))
 
     def _batch_create_entity(
         self,
@@ -209,8 +213,10 @@ class TableBatchOperations(object):
         :param mode: Merge or Replace entity
         :type mode: ~azure.data.tables.UpdateMode
         :keyword str etag: Etag of the entity
-        :keyword ~azure.core.MatchConditions match_condition: MatchCondition
+        :keyword match_condition: MatchCondition
+        :paramtype match_condition: ~azure.core.MatchCondition
         :return: None
+        :rtype: None
         :raises ValueError:
 
         .. admonition:: Example:
@@ -223,6 +229,7 @@ class TableBatchOperations(object):
                 :caption: Creating and adding an entity to a Table
         """
         self._verify_partition_key(entity)
+        temp = entity.copy()
 
         if_match, _ = _get_match_headers(
             kwargs=dict(
@@ -234,16 +241,16 @@ class TableBatchOperations(object):
             match_param="match_condition",
         )
 
-        partition_key = entity["PartitionKey"]
-        row_key = entity["RowKey"]
-        entity = _add_entity_properties(entity)
+        partition_key = temp["PartitionKey"]
+        row_key = temp["RowKey"]
+        temp = _add_entity_properties(temp)
         if mode is UpdateMode.REPLACE:
             self._batch_update_entity(
                 table=self.table_name,
                 partition_key=partition_key,
                 row_key=row_key,
                 if_match=if_match or "*",
-                table_entity_properties=entity,
+                table_entity_properties=temp,
                 **kwargs
             )
         elif mode is UpdateMode.MERGE:
@@ -252,10 +259,10 @@ class TableBatchOperations(object):
                 partition_key=partition_key,
                 row_key=row_key,
                 if_match=if_match or "*",
-                table_entity_properties=entity,
+                table_entity_properties=temp,
                 **kwargs
             )
-        self._entities.append(entity)
+        self._entities.append(TableEntity(**entity.copy()))
 
     def _batch_update_entity(
         self,
@@ -294,7 +301,6 @@ class TableBatchOperations(object):
         :type query_options: ~azure.data.tables.models.QueryOptions
         :return: None
         :rtype: None
-        :raises ~azure.core.exceptions.HttpResponseError:
         """
 
         _format = None
@@ -402,7 +408,6 @@ class TableBatchOperations(object):
         :type query_options: ~azure.data.tables.models.QueryOptions
         :return: None
         :rtype: None
-        :raises ~azure.core.exceptions.HttpResponseError:
         """
 
         _format = None
@@ -457,7 +462,6 @@ class TableBatchOperations(object):
             "content_type", content_type, "str"
         )
         header_parameters["Accept"] = self._serialize.header("accept", accept, "str")
-
         body_content_kwargs = {}  # type: Dict[str, Any]
         if table_entity_properties is not None:
             body_content = self._serialize.body(table_entity_properties, "{object}")
@@ -467,6 +471,8 @@ class TableBatchOperations(object):
         request = self._client._client.patch(  # pylint: disable=protected-access
             url, query_parameters, header_parameters, **body_content_kwargs
         )
+        if _is_cosmos_endpoint(url):
+            _transform_patch_to_cosmos_post(request)
         self._requests.append(request)
 
     _batch_merge_entity.metadata = {
@@ -487,7 +493,8 @@ class TableBatchOperations(object):
         :param row_key: The row key of the entity.
         :type row_key: str
         :keyword str etag: Etag of the entity
-        :keyword ~azure.core.MatchConditions match_condition: MatchCondition
+        :keyword match_condition: MatchCondition
+        :paramtype match_condition: ~azure.core.MatchCondition
         :raises ValueError:
 
         .. admonition:: Example:
@@ -522,9 +529,7 @@ class TableBatchOperations(object):
             if_match=if_match or "*",
             **kwargs
         )
-
-        temp_entity = {"PartitionKey": partition_key, "RowKey": row_key}
-        self._entities.append(_add_entity_properties(temp_entity))
+        self._entities.append(TableEntity(PartitionKey=partition_key, RowKey=row_key))
 
     def _batch_delete_entity(
         self,
@@ -558,7 +563,6 @@ class TableBatchOperations(object):
         :type query_options: ~azure.data.tables.models.QueryOptions
         :return: None
         :rtype: None
-        :raises ~azure.core.exceptions.HttpResponseError:
         """
 
         _format = None
@@ -629,7 +633,7 @@ class TableBatchOperations(object):
 
         :param entity: The properties for the table entity.
         :type entity: TableEntity or dict[str,str]
-        :param mode: Merge or Replace and Insert on fail
+        :param mode: Merge or Replace entity
         :type mode: ~azure.data.tables.UpdateMode
         :raises ValueError:
 
@@ -643,17 +647,18 @@ class TableBatchOperations(object):
                 :caption: Creating and adding an entity to a Table
         """
         self._verify_partition_key(entity)
+        temp = entity.copy()
 
-        partition_key = entity["PartitionKey"]
-        row_key = entity["RowKey"]
-        entity = _add_entity_properties(entity)
+        partition_key = temp["PartitionKey"]
+        row_key = temp["RowKey"]
+        temp = _add_entity_properties(temp)
 
         if mode is UpdateMode.MERGE:
             self._batch_merge_entity(
                 table=self.table_name,
                 partition_key=partition_key,
                 row_key=row_key,
-                table_entity_properties=entity,
+                table_entity_properties=temp,
                 **kwargs
             )
         elif mode is UpdateMode.REPLACE:
@@ -661,19 +666,7 @@ class TableBatchOperations(object):
                 table=self.table_name,
                 partition_key=partition_key,
                 row_key=row_key,
-                table_entity_properties=entity,
+                table_entity_properties=temp,
                 **kwargs
             )
-        self._entities.append(entity)
-
-    def __enter__(self):
-        # type: (...) -> TableBatchOperations
-        return self
-
-    def __exit__(
-        self,
-        *args,  # type: Any
-        **kwargs  # type: Any
-    ):
-        # (...) -> None
-        self._table_client._batch_send(*self._requests, **kwargs)
+        self._entities.append(TableEntity(**entity.copy()))

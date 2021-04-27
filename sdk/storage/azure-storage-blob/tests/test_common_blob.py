@@ -51,6 +51,8 @@ TEST_CONTAINER_PREFIX = 'container'
 TEST_BLOB_PREFIX = 'blob'
 
 # ------------------------------------------------------------------------------
+
+
 class StorageCommonBlobTest(StorageTestCase):
     def _setup(self, storage_account, key, **kwargs):
         self.bsc = BlobServiceClient(self.account_url(storage_account, "blob"), credential=key)
@@ -197,7 +199,6 @@ class StorageCommonBlobTest(StorageTestCase):
         self.assertTrue(prop)
         self.assertEqual(snapshot['snapshot'], prop.snapshot)
 
-
     @GlobalStorageAccountPreparer()
     def test_blob_snapshot_not_exists(self, resource_group, location, storage_account, storage_account_key):
         self._setup(storage_account, storage_account_key)
@@ -207,7 +208,6 @@ class StorageCommonBlobTest(StorageTestCase):
         blob = self.bsc.get_blob_client(self.container_name, blob_name, snapshot="1988-08-18T07:52:31.6690068Z")
         with self.assertRaises(ResourceNotFoundError):
             blob.get_blob_properties()
-
 
     @GlobalStorageAccountPreparer()
     def test_blob_container_not_exists(self, resource_group, location, storage_account, storage_account_key):
@@ -219,7 +219,6 @@ class StorageCommonBlobTest(StorageTestCase):
         blob = self.bsc.get_blob_client(self._get_container_reference(), blob_name)
         with self.assertRaises(ResourceNotFoundError):
             blob.get_blob_properties()
-
 
     @GlobalStorageAccountPreparer()
     def test_create_blob_with_question_mark(self, resource_group, location, storage_account, storage_account_key):
@@ -348,6 +347,23 @@ class StorageCommonBlobTest(StorageTestCase):
         md = blob.get_blob_properties().metadata
         self.assertDictEqual(md, metadata)
 
+    @GlobalStorageAccountPreparer()
+    def test_upload_blob_from_generator(self, resource_group, location, storage_account, storage_account_key):
+        self._setup(storage_account, storage_account_key)
+        blob_name = self._get_blob_reference()
+        # Act
+        raw_data = self.get_random_bytes(3 * 1024 * 1024) + b"hello random text"
+
+        def data_generator():
+            for i in range(0, 2):
+                yield raw_data
+
+        blob = self.bsc.get_blob_client(self.container_name, blob_name)
+        blob.upload_blob(data=data_generator())
+        data = blob.download_blob().readall()
+
+        # Assert
+        self.assertEqual(data, raw_data*2)
 
     @GlobalStorageAccountPreparer()
     def test_get_blob_with_existing_blob(self, resource_group, location, storage_account, storage_account_key):
@@ -361,7 +377,6 @@ class StorageCommonBlobTest(StorageTestCase):
         # Assert
         content = data.readall()
         self.assertEqual(content, self.byte_data)
-
 
     @GlobalStorageAccountPreparer()
     def test_get_blob_with_snapshot(self, resource_group, location, storage_account, storage_account_key):
@@ -377,7 +392,6 @@ class StorageCommonBlobTest(StorageTestCase):
         # Assert
         content = data.readall()
         self.assertEqual(content, self.byte_data)
-
 
     @GlobalStorageAccountPreparer()
     def test_get_blob_with_snapshot_previous(self, resource_group, location, storage_account, storage_account_key):
@@ -398,7 +412,6 @@ class StorageCommonBlobTest(StorageTestCase):
         self.assertEqual(blob_previous.readall(), self.byte_data)
         self.assertEqual(blob_latest.readall(), b'hello world again')
 
-
     @GlobalStorageAccountPreparer()
     def test_get_blob_with_range(self, resource_group, location, storage_account, storage_account_key):
         self._setup(storage_account, storage_account_key)
@@ -410,7 +423,6 @@ class StorageCommonBlobTest(StorageTestCase):
 
         # Assert
         self.assertEqual(data.readall(), self.byte_data[:5])
-
 
     @GlobalStorageAccountPreparer()
     def test_get_blob_with_lease(self, resource_group, location, storage_account, storage_account_key):
@@ -425,7 +437,6 @@ class StorageCommonBlobTest(StorageTestCase):
 
         # Assert
         self.assertEqual(data.readall(), self.byte_data)
-
 
     @GlobalStorageAccountPreparer()
     def test_get_blob_with_non_existing_blob(self, resource_group, location, storage_account, storage_account_key):

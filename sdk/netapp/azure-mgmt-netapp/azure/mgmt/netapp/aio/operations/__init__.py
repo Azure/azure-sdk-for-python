@@ -13,6 +13,7 @@ from ._pools_operations import PoolsOperations
 from ._volumes_operations import VolumesOperations
 from ._snapshots_operations import SnapshotsOperations
 from ._snapshot_policies_operations import SnapshotPoliciesOperations
+from ._volume_backup_status_operations import VolumeBackupStatusOperations
 from ._account_backups_operations import AccountBackupsOperations
 from ._backups_operations import BackupsOperations
 from ._backup_policies_operations import BackupPoliciesOperations
@@ -26,6 +27,7 @@ __all__ = [
     'VolumesOperations',
     'SnapshotsOperations',
     'SnapshotPoliciesOperations',
+    'VolumeBackupStatusOperations',
     'AccountBackupsOperations',
     'BackupsOperations',
     'BackupPoliciesOperations',

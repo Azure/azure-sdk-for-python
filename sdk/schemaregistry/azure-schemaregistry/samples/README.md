@@ -4,7 +4,7 @@ languages:
   - python
 products:
   - azure
-  - azure-schema-registry
+  - azure-event-hubs
 urlFragment: schemaregistry-samples
 ---
 

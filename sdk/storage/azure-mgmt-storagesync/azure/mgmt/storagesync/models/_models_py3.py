@@ -148,7 +148,41 @@ class Resource(msrest.serialization.Model):
         self.type = None
 
 
-class CloudEndpoint(Resource):
+class ProxyResource(Resource):
+    """The resource model definition for a Azure Resource Manager proxy resource. It will not have tags and a location.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar id: Fully qualified resource ID for the resource. Ex -
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
+    :vartype id: str
+    :ivar name: The name of the resource.
+    :vartype name: str
+    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
+     "Microsoft.Storage/storageAccounts".
+    :vartype type: str
+    """
+
+    _validation = {
+        'id': {'readonly': True},
+        'name': {'readonly': True},
+        'type': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'id': {'key': 'id', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(ProxyResource, self).__init__(**kwargs)
+
+
+class CloudEndpoint(ProxyResource):
     """Cloud Endpoint object.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -249,7 +283,7 @@ class CloudEndpointArray(msrest.serialization.Model):
         self.value = value
 
 
-class CloudEndpointCreateParameters(Resource):
+class CloudEndpointCreateParameters(ProxyResource):
     """The parameters used when creating a cloud endpoint.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -1179,40 +1213,6 @@ class PrivateLinkServiceConnectionState(msrest.serialization.Model):
         self.actions_required = actions_required
 
 
-class ProxyResource(Resource):
-    """The resource model definition for a Azure Resource Manager proxy resource. It will not have tags and a location.
-
-    Variables are only populated by the server, and will be ignored when sending a request.
-
-    :ivar id: Fully qualified resource ID for the resource. Ex -
-     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
-    :vartype id: str
-    :ivar name: The name of the resource.
-    :vartype name: str
-    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
-     "Microsoft.Storage/storageAccounts".
-    :vartype type: str
-    """
-
-    _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
-    }
-
-    _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-    }
-
-    def __init__(
-        self,
-        **kwargs
-    ):
-        super(ProxyResource, self).__init__(**kwargs)
-
-
 class RecallActionParameters(msrest.serialization.Model):
     """The parameters used when calling recall action on server endpoint.
 
@@ -1239,7 +1239,7 @@ class RecallActionParameters(msrest.serialization.Model):
         self.recall_path = recall_path
 
 
-class RegisteredServer(Resource):
+class RegisteredServer(ProxyResource):
     """Registered Server resource.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -1412,7 +1412,7 @@ class RegisteredServerArray(msrest.serialization.Model):
         self.value = value
 
 
-class RegisteredServerCreateParameters(Resource):
+class RegisteredServerCreateParameters(ProxyResource):
     """The parameters used when creating a registered server.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -1544,7 +1544,7 @@ class RestoreFileSpec(msrest.serialization.Model):
         self.isdir = isdir
 
 
-class ServerEndpoint(Resource):
+class ServerEndpoint(ProxyResource):
     """Server Endpoint object.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -1811,7 +1811,7 @@ class ServerEndpointCloudTieringStatus(msrest.serialization.Model):
         self.date_policy_status = None
 
 
-class ServerEndpointCreateParameters(Resource):
+class ServerEndpointCreateParameters(ProxyResource):
     """The parameters used when creating a server endpoint.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -2682,7 +2682,7 @@ class SubscriptionState(msrest.serialization.Model):
         self.properties = properties
 
 
-class SyncGroup(Resource):
+class SyncGroup(ProxyResource):
     """Sync Group object.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -2747,7 +2747,7 @@ class SyncGroupArray(msrest.serialization.Model):
         self.value = value
 
 
-class SyncGroupCreateParameters(Resource):
+class SyncGroupCreateParameters(ProxyResource):
     """The parameters used when creating a sync group.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -2842,7 +2842,7 @@ class TriggerRolloverRequest(msrest.serialization.Model):
         self.server_certificate = server_certificate
 
 
-class Workflow(Resource):
+class Workflow(ProxyResource):
     """Workflow resource.
 
     Variables are only populated by the server, and will be ignored when sending a request.

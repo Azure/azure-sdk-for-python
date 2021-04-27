@@ -16,6 +16,7 @@ if TYPE_CHECKING:
     from typing import Any, Optional
 
     from azure.core.credentials import TokenCredential
+    from azure.core.pipeline.transport import HttpRequest, HttpResponse
 
 from ._configuration import DataBoxEdgeManagementClientConfiguration
 from .operations import Operations
@@ -42,39 +43,39 @@ class DataBoxEdgeManagementClient(object):
     """The DataBoxEdge Client.
 
     :ivar operations: Operations operations
-    :vartype operations: azure.mgmt.databoxedge.operations.Operations
+    :vartype operations: azure.mgmt.databoxedge.v2020_05_01_preview.operations.Operations
     :ivar available_skus: AvailableSkusOperations operations
-    :vartype available_skus: azure.mgmt.databoxedge.operations.AvailableSkusOperations
+    :vartype available_skus: azure.mgmt.databoxedge.v2020_05_01_preview.operations.AvailableSkusOperations
     :ivar devices: DevicesOperations operations
-    :vartype devices: azure.mgmt.databoxedge.operations.DevicesOperations
+    :vartype devices: azure.mgmt.databoxedge.v2020_05_01_preview.operations.DevicesOperations
     :ivar alerts: AlertsOperations operations
-    :vartype alerts: azure.mgmt.databoxedge.operations.AlertsOperations
+    :vartype alerts: azure.mgmt.databoxedge.v2020_05_01_preview.operations.AlertsOperations
     :ivar bandwidth_schedules: BandwidthSchedulesOperations operations
-    :vartype bandwidth_schedules: azure.mgmt.databoxedge.operations.BandwidthSchedulesOperations
+    :vartype bandwidth_schedules: azure.mgmt.databoxedge.v2020_05_01_preview.operations.BandwidthSchedulesOperations
     :ivar jobs: JobsOperations operations
-    :vartype jobs: azure.mgmt.databoxedge.operations.JobsOperations
+    :vartype jobs: azure.mgmt.databoxedge.v2020_05_01_preview.operations.JobsOperations
     :ivar nodes: NodesOperations operations
-    :vartype nodes: azure.mgmt.databoxedge.operations.NodesOperations
+    :vartype nodes: azure.mgmt.databoxedge.v2020_05_01_preview.operations.NodesOperations
     :ivar operations_status: OperationsStatusOperations operations
-    :vartype operations_status: azure.mgmt.databoxedge.operations.OperationsStatusOperations
+    :vartype operations_status: azure.mgmt.databoxedge.v2020_05_01_preview.operations.OperationsStatusOperations
     :ivar orders: OrdersOperations operations
-    :vartype orders: azure.mgmt.databoxedge.operations.OrdersOperations
+    :vartype orders: azure.mgmt.databoxedge.v2020_05_01_preview.operations.OrdersOperations
     :ivar roles: RolesOperations operations
-    :vartype roles: azure.mgmt.databoxedge.operations.RolesOperations
+    :vartype roles: azure.mgmt.databoxedge.v2020_05_01_preview.operations.RolesOperations
     :ivar shares: SharesOperations operations
-    :vartype shares: azure.mgmt.databoxedge.operations.SharesOperations
+    :vartype shares: azure.mgmt.databoxedge.v2020_05_01_preview.operations.SharesOperations
     :ivar storage_account_credentials: StorageAccountCredentialsOperations operations
-    :vartype storage_account_credentials: azure.mgmt.databoxedge.operations.StorageAccountCredentialsOperations
+    :vartype storage_account_credentials: azure.mgmt.databoxedge.v2020_05_01_preview.operations.StorageAccountCredentialsOperations
     :ivar storage_accounts: StorageAccountsOperations operations
-    :vartype storage_accounts: azure.mgmt.databoxedge.operations.StorageAccountsOperations
+    :vartype storage_accounts: azure.mgmt.databoxedge.v2020_05_01_preview.operations.StorageAccountsOperations
     :ivar containers: ContainersOperations operations
-    :vartype containers: azure.mgmt.databoxedge.operations.ContainersOperations
+    :vartype containers: azure.mgmt.databoxedge.v2020_05_01_preview.operations.ContainersOperations
     :ivar triggers: TriggersOperations operations
-    :vartype triggers: azure.mgmt.databoxedge.operations.TriggersOperations
+    :vartype triggers: azure.mgmt.databoxedge.v2020_05_01_preview.operations.TriggersOperations
     :ivar users: UsersOperations operations
-    :vartype users: azure.mgmt.databoxedge.operations.UsersOperations
+    :vartype users: azure.mgmt.databoxedge.v2020_05_01_preview.operations.UsersOperations
     :ivar skus: SkusOperations operations
-    :vartype skus: azure.mgmt.databoxedge.operations.SkusOperations
+    :vartype skus: azure.mgmt.databoxedge.v2020_05_01_preview.operations.SkusOperations
     :param credential: Credential needed for the client to connect to Azure.
     :type credential: ~azure.core.credentials.TokenCredential
     :param subscription_id: The subscription ID.
@@ -135,6 +136,24 @@ class DataBoxEdgeManagementClient(object):
             self._client, self._config, self._serialize, self._deserialize)
         self.skus = SkusOperations(
             self._client, self._config, self._serialize, self._deserialize)
+
+    def _send_request(self, http_request, **kwargs):
+        # type: (HttpRequest, Any) -> HttpResponse
+        """Runs the network request through the client's chained policies.
+
+        :param http_request: The network request you want to make. Required.
+        :type http_request: ~azure.core.pipeline.transport.HttpRequest
+        :keyword bool stream: Whether the response payload will be streamed. Defaults to True.
+        :return: The response of your network call. Does not do error handling on your response.
+        :rtype: ~azure.core.pipeline.transport.HttpResponse
+        """
+        path_format_arguments = {
+            'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
+        }
+        http_request.url = self._client.format_url(http_request.url, **path_format_arguments)
+        stream = kwargs.pop("stream", True)
+        pipeline_response = self._client._pipeline.run(http_request, stream=stream, **kwargs)
+        return pipeline_response.http_response
 
     def close(self):
         # type: () -> None

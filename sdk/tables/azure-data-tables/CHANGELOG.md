@@ -1,9 +1,28 @@
 # Release History
 
-## 12.0.0b6 (Unreleased)
+## 12.0.0b7 (Unreleased)
+**Breaking**
+* Removed explicit `LinearRetry` and `ExponentialRetry` in favor of keyword parameter.
+* Renamed `filter` parameter in query APIs to `query_filter`.
+* The `location_mode` attribute on clients is now read-only. This has been added as a keyword parameter to the constructor.
+* The `TableItem.table_name` has been renamed to `TableItem.name`.
+* Removed `BatchTransactionResult` object in favor of returning an iterable of batched entities with returned metadata.
+* Removed Batching context-manager behavior
 
+**Fixes**
+* Fixed issue with Cosmos merge operations.
+* Removed legacy Storage policies from pipeline.
+* Removed unused legacy client-side encryption attributes from client classes.
+* Fixed sharing of pipeline between service/table clients.
+* Added support for Azurite storage emulator
+* Throws a `RequestTooLargeError` on batch requests that return a 413 error code
 
-## 12.0.0b5 (2020-03-09)
+## 12.0.0b6 (2021-04-06)
+* Updated deserialization of datetime fields in entities to support preservation of the service format with additional decimal place.
+* Passing a string parameter into a query filter will now be escaped to protect against injection.
+* Fixed bug in incrementing retries in async retry policy
+
+## 12.0.0b5 (2021-03-09)
 * This version and all future versions will require Python 2.7 or Python 3.6+, Python 3.5 is no longer supported.
 * Adds SAS credential as an authentication option
 * Bumps minimum requirement of `azure-core` to 1.10.0
@@ -11,7 +30,7 @@
 * Adds support for datetime entities with milliseconds
 * Adds support for Shared Access Signature authentication
 
-## 12.0.0b4 (2020-01-12)
+## 12.0.0b4 (2021-01-12)
 * Fixes an [issue](https://github.com/Azure/azure-sdk-for-python/issues/15554) where `query_entities` kwarg `parameters` would not work with multiple parameters or with non-string parameters. This now works with multiple parameters and numeric, string, boolean, UUID, and datetime objects.
 * Fixes an [issue](https://github.com/Azure/azure-sdk-for-python/issues/15653) where `delete_entity` will return a `ClientAuthenticationError` when the '@' symbol is included in the entity.
 
@@ -26,6 +45,3 @@
 
 ## 12.0.0b1 (2020-09-08)
 This is the first beta of the `azure-data-tables` client library. The Azure Tables client library can seamlessly target either Azure Table storage or Azure Cosmos DB table service endpoints with no code changes.
-
-
-
