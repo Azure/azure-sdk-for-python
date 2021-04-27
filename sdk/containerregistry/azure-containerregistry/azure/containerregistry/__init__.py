@@ -7,7 +7,7 @@
 # --------------------------------------------------------------------------
 
 from ._container_registry_client import ContainerRegistryClient
-from ._container_repository_client import ContainerRepository
+from ._container_repository import ContainerRepository
 from ._models import (
     ContentPermissions,
     DeletedRepositoryResult,

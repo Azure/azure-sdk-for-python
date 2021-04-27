@@ -18,7 +18,7 @@ from azure.core.tracing.decorator import distributed_trace
 from azure.core.tracing.decorator_async import distributed_trace_async
 
 from ._async_base_client import ContainerRegistryBaseClient, AsyncTransportWrapper
-from ._async_container_repository_client import ContainerRepository
+from ._async_container_repository import ContainerRepository
 from .._generated.models import AcrErrors
 from .._helpers import _parse_next_link
 from .._models import RepositoryProperties, DeletedRepositoryResult

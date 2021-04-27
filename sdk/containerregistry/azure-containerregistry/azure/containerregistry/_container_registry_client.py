@@ -16,7 +16,7 @@ from azure.core.pipeline import Pipeline
 from azure.core.tracing.decorator import distributed_trace
 
 from ._base_client import ContainerRegistryBaseClient, TransportWrapper
-from ._container_repository_client import ContainerRepository
+from ._container_repository import ContainerRepository
 from ._generated.models import AcrErrors
 from ._helpers import _parse_next_link
 from ._models import DeletedRepositoryResult
