@@ -14,7 +14,7 @@ no-namespace-folders: true
 output-folder: ../azure/monitor/query/_generated
 source-code-folder-path: ./azure/monitor/query/_generated
 input-file: 
-    - https://raw.githubusercontent.com/Azure/azure-sdk-for-java/b5e7e8fc5b37cc09d657033b373fcdbf48117f34/sdk/monitor/azure-monitor-query/swagger/log_query_swagger.json
+    - https://github.com/Azure/azure-sdk-for-java/blob/1d14101ba93c6e616899c2ded93fbecb54699f84/sdk/monitor/azure-monitor-query/swagger/log_query_swagger.json
     - https://raw.githubusercontent.com/Azure/azure-rest-api-specs/ca0869b49176e7bc3866debbab9d32999661c4cb/specification/monitor/resource-manager/Microsoft.Insights/stable/2018-01-01/metrics_API.json
     - https://raw.githubusercontent.com/Azure/azure-rest-api-specs/cf33826d06605cde127d2241e54dd6df55e9145f/specification/monitor/resource-manager/Microsoft.Insights/stable/2018-01-01/metricDefinitions_API.json
     - https://raw.githubusercontent.com/Azure/azure-rest-api-specs/cf33826d06605cde127d2241e54dd6df55e9145f/specification/monitor/resource-manager/Microsoft.Insights/preview/2017-12-01-preview/metricNamespaces_API.json

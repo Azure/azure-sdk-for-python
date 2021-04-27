@@ -7,7 +7,7 @@
 # --------------------------------------------------------------------------
 
 import datetime
-from typing import List, Optional, Union
+from typing import Dict, List, Optional, Union
 
 from azure.core.exceptions import HttpResponseError
 import msrest.serialization
@@ -376,6 +376,8 @@ class LogQueryRequest(msrest.serialization.Model):
 
     :param id: The error details.
     :type id: str
+    :param headers: Dictionary of :code:`<string>`.
+    :type headers: dict[str, str]
     :param body: The Analytics query. Learn more about the `Analytics query syntax
      <https://azure.microsoft.com/documentation/articles/app-insights-analytics-reference/>`_.
     :type body: ~monitor_query_client.models.QueryBody
@@ -383,7 +385,7 @@ class LogQueryRequest(msrest.serialization.Model):
     :vartype path: str
     :ivar method:  Default value: "POST".
     :vartype method: str
-    :param workspace: Workspace name.
+    :param workspace: Workspace Id to be included in the query.
     :type workspace: str
     """
 
@@ -394,6 +396,7 @@ class LogQueryRequest(msrest.serialization.Model):
 
     _attribute_map = {
         'id': {'key': 'id', 'type': 'str'},
+        'headers': {'key': 'headers', 'type': '{str}'},
         'body': {'key': 'body', 'type': 'QueryBody'},
         'path': {'key': 'path', 'type': 'str'},
         'method': {'key': 'method', 'type': 'str'},
@@ -407,12 +410,14 @@ class LogQueryRequest(msrest.serialization.Model):
         self,
         *,
         id: Optional[str] = None,
+        headers: Optional[Dict[str, str]] = None,
         body: Optional["QueryBody"] = None,
         workspace: Optional[str] = None,
         **kwargs
     ):
         super(LogQueryRequest, self).__init__(**kwargs)
         self.id = id
+        self.headers = headers
         self.body = body
         self.workspace = workspace
 
@@ -1859,6 +1864,12 @@ class QueryBody(msrest.serialization.Model):
     :type timespan: str
     :param workspaces: A list of workspaces that are included in the query.
     :type workspaces: list[str]
+    :param qualified_names: A list of qualified workspace names that are included in the query.
+    :type qualified_names: list[str]
+    :param workspace_ids: A list of workspace IDs that are included in the query.
+    :type workspace_ids: list[str]
+    :param azure_resource_ids: A list of Azure resource IDs that are included in the query.
+    :type azure_resource_ids: list[str]
     """
 
     _validation = {
@@ -1869,6 +1880,9 @@ class QueryBody(msrest.serialization.Model):
         'query': {'key': 'query', 'type': 'str'},
         'timespan': {'key': 'timespan', 'type': 'str'},
         'workspaces': {'key': 'workspaces', 'type': '[str]'},
+        'qualified_names': {'key': 'qualifiedNames', 'type': '[str]'},
+        'workspace_ids': {'key': 'workspaceIds', 'type': '[str]'},
+        'azure_resource_ids': {'key': 'azureResourceIds', 'type': '[str]'},
     }
 
     def __init__(
@@ -1877,39 +1891,44 @@ class QueryBody(msrest.serialization.Model):
         query: str,
         timespan: Optional[str] = None,
         workspaces: Optional[List[str]] = None,
+        qualified_names: Optional[List[str]] = None,
+        workspace_ids: Optional[List[str]] = None,
+        azure_resource_ids: Optional[List[str]] = None,
         **kwargs
     ):
         super(QueryBody, self).__init__(**kwargs)
         self.query = query
         self.timespan = timespan
         self.workspaces = workspaces
+        self.qualified_names = qualified_names
+        self.workspace_ids = workspace_ids
+        self.azure_resource_ids = azure_resource_ids
 
 
 class QueryResults(msrest.serialization.Model):
     """Contains the tables, columns & rows resulting from a query.
 
-    All required parameters must be populated in order to send to Azure.
-
-    :param tables: Required. The list of tables, columns and rows.
+    :param tables: The list of tables, columns and rows.
     :type tables: list[~monitor_query_client.models.Table]
+    :param errors:
+    :type errors: ~monitor_query_client.models.ErrorDetails
     """
-
-    _validation = {
-        'tables': {'required': True},
-    }
 
     _attribute_map = {
         'tables': {'key': 'tables', 'type': '[Table]'},
+        'errors': {'key': 'errors', 'type': 'ErrorDetails'},
     }
 
     def __init__(
         self,
         *,
-        tables: List["Table"],
+        tables: Optional[List["Table"]] = None,
+        errors: Optional["ErrorDetails"] = None,
         **kwargs
     ):
         super(QueryResults, self).__init__(**kwargs)
         self.tables = tables
+        self.errors = errors
 
 
 class Response(msrest.serialization.Model):
