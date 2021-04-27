@@ -135,7 +135,7 @@ class TestAllDocumentStatuses(AsyncDocumentTranslationTest):
         job_id = await self._create_translation_job_with_dummy_docs_async(client, docs_count, language_code=target_language, wait=False)
 
         # check doc statuses
-        doc_statuses = client.list_all_document_statuses(job_id, order_by=["CreatedDateTimeUtc", "asc"])
+        doc_statuses = client.list_all_document_statuses(job_id, order_by=["CreatedDateTimeUtc asc"])
 
         curr = date.min
         docs = []
@@ -157,7 +157,7 @@ class TestAllDocumentStatuses(AsyncDocumentTranslationTest):
         job_id = await self._create_translation_job_with_dummy_docs_async(client, docs_count, language_code=target_language, wait=False)
 
         # check doc statuses
-        doc_statuses = client.list_all_document_statuses(job_id, order_by=["CreatedDateTimeUtc", "desc"])
+        doc_statuses = client.list_all_document_statuses(job_id, order_by=["CreatedDateTimeUtc desc"])
 
         curr = date.max
         docs = []

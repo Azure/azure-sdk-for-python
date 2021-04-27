@@ -161,7 +161,7 @@ class TestSubmittedJobs(AsyncDocumentTranslationTest):
         self._create_and_submit_sample_translation_jobs_async(client, 3)
 
         # list jobs
-        submitted_jobs = client.list_submitted_jobs(order_by=["CreatedDateTimeUtc", "asc"])
+        submitted_jobs = client.list_submitted_jobs(order_by=["CreatedDateTimeUtc asc"])
 
         # check statuses
         curr = date.min
@@ -177,7 +177,7 @@ class TestSubmittedJobs(AsyncDocumentTranslationTest):
         self._create_and_submit_sample_translation_jobs_async(client, 3)
 
         # list jobs
-        submitted_jobs = client.list_submitted_jobs(order_by=["CreatedDateTimeUtc", "desc"])
+        submitted_jobs = client.list_submitted_jobs(order_by=["CreatedDateTimeUtc desc"])
 
         # check statuses
         curr = date.max

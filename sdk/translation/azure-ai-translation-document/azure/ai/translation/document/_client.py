@@ -226,7 +226,7 @@ class DocumentTranslationClient(object):  # pylint: disable=r0205
         :keyword Union[str, datetime.datetime] created_after: get jobs created after certian timedate.
         :keyword Union[str, datetime.datetime] created_before: get jobs created before certian timedate.
         :keyword list[str] order_by: the sorting query for the jobs returned.
-            format: [parameter, asc/desc]
+            format: ["parm1 asc/desc", "parm2 asc/desc", ...]
             (ex: 'CreatedDateTimeUtc asc', 'CreatedDateTimeUtc desc').
         :return: ~azure.core.paging.ItemPaged[:class:`~azure.ai.translation.document.JobStatusResult`]
         :rtype: ~azure.core.paging.ItemPaged
@@ -279,7 +279,7 @@ class DocumentTranslationClient(object):  # pylint: disable=r0205
         :keyword Union[str, datetime.datetime] translated_after: get document translated after certian timedate.
         :keyword Union[str, datetime.datetime] translated_before: get document translated before certian timedate.
         :keyword list[str] order_by: the sorting query for the documents.
-            format: [parameter, asc/desc]
+            format: ["parm1 asc/desc", "parm2 asc/desc", ...]
             (ex: 'CreatedDateTimeUtc asc', 'CreatedDateTimeUtc desc').
         :return: ~azure.core.paging.ItemPaged[:class:`~azure.ai.translation.document.DocumentStatusResult`]
         :rtype: ~azure.core.paging.ItemPaged

@@ -156,7 +156,7 @@ class TestSubmittedJobs(DocumentTranslationTest):
         self._create_and_submit_sample_translation_jobs(client, 3)
 
         # list jobs
-        submitted_jobs = list(client.list_submitted_jobs(order_by=["CreatedDateTimeUtc", "asc"]))
+        submitted_jobs = list(client.list_submitted_jobs(order_by=["CreatedDateTimeUtc asc"]))
         self.assertIsNotNone(submitted_jobs)
 
         # check statuses
@@ -173,7 +173,7 @@ class TestSubmittedJobs(DocumentTranslationTest):
         self._create_and_submit_sample_translation_jobs(client, 3)
 
         # list jobs
-        submitted_jobs = list(client.list_submitted_jobs(order_by=["CreatedDateTimeUtc", "desc"]))
+        submitted_jobs = list(client.list_submitted_jobs(order_by=["CreatedDateTimeUtc desc"]))
         self.assertIsNotNone(submitted_jobs)
 
         # check statuses
