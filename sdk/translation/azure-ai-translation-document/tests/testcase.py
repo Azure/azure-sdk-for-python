@@ -139,7 +139,7 @@ class DocumentTranslationTest(AzureTestCase):
     # model helpers
     def _validate_doc_status(self, doc_details, target_language, **kwargs):
         status = kwargs.pop("statuses", ["Succeeded"])
-        ids = kwargs.pop("statuses", None)
+        ids = kwargs.pop("ids", None)
         # specific assertions
         self.assertIn(doc_details.status, status)
         self.assertEqual(doc_details.has_completed, True)
