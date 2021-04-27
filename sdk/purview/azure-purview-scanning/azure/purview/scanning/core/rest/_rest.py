@@ -375,7 +375,10 @@ class _HttpResponseBase(object):
     def content(self):
         # type: (...) -> bytes
         """Returns the response content in bytes"""
-        raise NotImplementedError()
+        try:
+            return self._content
+        except AttributeError:
+            raise ResponseNotReadError()
 
     @property
     def url(self):
@@ -491,14 +494,6 @@ class _HttpResponseBase(object):
 
 class HttpResponse(_HttpResponseBase):
 
-    @property
-    def content(self):
-        # type: (...) -> bytes
-        try:
-            return self._content
-        except AttributeError:
-            raise ResponseNotReadError()
-
     def close(self):
         # type: (...) -> None
         self.is_closed = True
@@ -506,7 +501,7 @@ class HttpResponse(_HttpResponseBase):
 
     def __exit__(self, *args):
         # type: (...) -> None
-        self._internal_response.internal_response.__exit__(*args)
+        self.close()
 
     def read(self):
         # type: (...) -> bytes

@@ -75,7 +75,7 @@ FilesType = Union[
     Sequence[Tuple[str, FileType]]
 ]
 
-from azure.core.pipeline import Pipeline
+from azure.core.pipeline import Pipeline, AsyncPipeline
 from azure.core.pipeline.transport import (
     HttpRequest as _PipelineTransportHttpRequest,
 )
@@ -214,7 +214,7 @@ def _parse_lines_from_text(text):
 class _StreamContextManagerBase:
     def __init__(
         self,
-        client: Union[_PipelineClient, _AsyncPipelineClient],
+        pipeline: Union[Pipeline, AsyncPipeline],
         request: "HttpRequest",
         **kwargs
     ):
@@ -226,7 +226,7 @@ class _StreamContextManagerBase:
 
         Heavily inspired from httpx, we want the same behavior for it to feel consistent for users
         """
-        self.client = client
+        self.pipeline = pipeline
         self.request = request
         self.kwargs = kwargs
 
@@ -237,7 +237,7 @@ class _StreamContextManagerBase:
 class _StreamContextManager(_StreamContextManagerBase):
     def __enter__(self) -> "HttpResponse":
         """Actually make the call only when we enter. For sync stream_response calls"""
-        pipeline_transport_response = self.client._pipeline.run(
+        pipeline_transport_response = self.pipeline.run(
             self.request._internal_request,
             stream=True,
             **self.kwargs
@@ -258,12 +258,12 @@ class _StreamContextManager(_StreamContextManagerBase):
 class _AsyncStreamContextManager(_StreamContextManagerBase):
     async def __aenter__(self) -> "AsyncHttpResponse":
         """Actually make the call only when we enter. For async stream_response calls."""
-        if not isinstance(self.client, _AsyncPipelineClient):
+        if not isinstance(self.pipeline, AsyncPipeline):
             raise TypeError(
-                "Only sync calls should enter here. If you mean to do a sync call, "
+                "Only async calls should enter here. If you mean to do a sync call, "
                 "make sure to use 'with' instead."
             )
-        pipeline_transport_response = (await self.client._pipeline.run(
+        pipeline_transport_response = (await self.pipeline.run(
             self.request._internal_request,
             stream=True,
             **self.kwargs
@@ -447,11 +447,6 @@ class _HttpResponseBase:
         return self._internal_response.reason
 
     @property
-    def content(self) -> bytes:
-        """Returns the response content in bytes"""
-        raise NotImplementedError()
-
-    @property
     def url(self) -> str:
         """Returns the URL that resulted in this response"""
         return self._internal_response.request.url
@@ -529,6 +524,14 @@ class _HttpResponseBase:
         if self.status_code >= 400:
             raise HttpResponseError(response=self)
 
+    @property
+    def content(self) -> bytes:
+        """Return the response's content in bytes."""
+        try:
+            return self._content
+        except AttributeError:
+            raise ResponseNotReadError()
+
     def __repr__(self) -> str:
         content_type_str = (
             ", Content-Type: {}".format(self.content_type) if self.content_type else ""
@@ -545,19 +548,12 @@ class _HttpResponseBase:
 
 class HttpResponse(_HttpResponseBase):
 
-    @property
-    def content(self):
-        # type: (...) -> bytes
-        try:
-            return self._content
-        except AttributeError:
-            raise ResponseNotReadError()
-
     def close(self) -> None:
         self.is_closed = True
         self._internal_response.internal_response.close()
 
     def __exit__(self, *args) -> None:
+        self.is_closed = True
         self._internal_response.internal_response.__exit__(*args)
 
     def read(self) -> bytes:
@@ -619,13 +615,6 @@ class HttpResponse(_HttpResponseBase):
 
 class AsyncHttpResponse(_HttpResponseBase):
 
-    @property
-    def content(self) -> bytes:
-        try:
-            return self._content
-        except AttributeError:
-            raise ResponseNotReadError()
-
     async def _close_stream(self) -> None:
         self.is_stream_consumed = True
         await self.close()
@@ -686,6 +675,7 @@ class AsyncHttpResponse(_HttpResponseBase):
         await asyncio.sleep(0)
 
     async def __aexit__(self, *args) -> None:
+        self.is_closed = True
         await self._internal_response.internal_response.__aexit__(*args)
 
 
