@@ -4,6 +4,9 @@
 # Licensed under the MIT License.
 # ------------------------------------
 
+from datetime import datetime
+from typing import Union
+import six
 from azure.core.pipeline.policies import HttpLoggingPolicy
 
 
@@ -35,3 +38,18 @@ def get_http_logging_policy(**kwargs):
         }
     )
     return http_logging_policy
+
+
+def convert_datetime(date_time):
+    # type: (Union[str, datetime.datetime]) -> datetime.datetime
+    if isinstance(date_time, datetime.datetime):
+        return date_time
+    if isinstance(date_time, six.string_types):
+        try:
+            return datetime.datetime.strptime(date_time, "%Y-%m-%d")
+        except ValueError:
+            try:
+                return datetime.datetime.strptime(date_time, "%Y-%m-%dT%H:%M:%SZ")
+            except ValueError:
+                return datetime.datetime.strptime(date_time, "%Y-%m-%d %H:%M:%S")
+    raise TypeError("Bad datetime type")
