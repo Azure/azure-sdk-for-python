@@ -63,6 +63,7 @@ try:
     from ._models_py3 import WhatIfChange
     from ._models_py3 import WhatIfOperationResult
     from ._models_py3 import WhatIfPropertyChange
+    from ._models_py3 import ZoneMapping
 except (SyntaxError, ImportError):
     from ._models import AliasPathType
     from ._models import AliasType
@@ -117,6 +118,7 @@ except (SyntaxError, ImportError):
     from ._models import WhatIfChange
     from ._models import WhatIfOperationResult
     from ._models import WhatIfPropertyChange
+    from ._models import ZoneMapping
 from ._paged_models import DeploymentExtendedPaged
 from ._paged_models import DeploymentOperationPaged
 from ._paged_models import GenericResourceExpandedPaged
@@ -187,6 +189,7 @@ __all__ = [
     'WhatIfChange',
     'WhatIfOperationResult',
     'WhatIfPropertyChange',
+    'ZoneMapping',
     'OperationPaged',
     'DeploymentExtendedPaged',
     'ProviderPaged',

@@ -964,6 +964,9 @@ class ProviderResourceType(Model):
      list[~azure.mgmt.resource.resources.v2016_09_01.models.AliasType]
     :param api_versions: The API version.
     :type api_versions: list[str]
+    :param zone_mappings:
+    :type zone_mappings:
+     list[~azure.mgmt.resource.resources.v2016_09_01.models.ZoneMapping]
     :param properties: The properties.
     :type properties: dict[str, str]
     """
@@ -973,15 +976,17 @@ class ProviderResourceType(Model):
         'locations': {'key': 'locations', 'type': '[str]'},
         'aliases': {'key': 'aliases', 'type': '[AliasType]'},
         'api_versions': {'key': 'apiVersions', 'type': '[str]'},
+        'zone_mappings': {'key': 'zoneMappings', 'type': '[ZoneMapping]'},
         'properties': {'key': 'properties', 'type': '{str}'},
     }
 
-    def __init__(self, *, resource_type: str=None, locations=None, aliases=None, api_versions=None, properties=None, **kwargs) -> None:
+    def __init__(self, *, resource_type: str=None, locations=None, aliases=None, api_versions=None, zone_mappings=None, properties=None, **kwargs) -> None:
         super(ProviderResourceType, self).__init__(**kwargs)
         self.resource_type = resource_type
         self.locations = locations
         self.aliases = aliases
         self.api_versions = api_versions
+        self.zone_mappings = zone_mappings
         self.properties = properties
 
 
@@ -1401,3 +1406,23 @@ class TemplateLink(Model):
         super(TemplateLink, self).__init__(**kwargs)
         self.uri = uri
         self.content_version = content_version
+
+
+class ZoneMapping(Model):
+    """ZoneMapping.
+
+    :param location: The location of the zone mapping.
+    :type location: str
+    :param zones:
+    :type zones: list[str]
+    """
+
+    _attribute_map = {
+        'location': {'key': 'location', 'type': 'str'},
+        'zones': {'key': 'zones', 'type': '[str]'},
+    }
+
+    def __init__(self, *, location: str=None, zones=None, **kwargs) -> None:
+        super(ZoneMapping, self).__init__(**kwargs)
+        self.location = location
+        self.zones = zones

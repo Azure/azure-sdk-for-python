@@ -1051,7 +1051,6 @@ class GenericResource(Resource):
         'id': {'readonly': True},
         'name': {'readonly': True},
         'type': {'readonly': True},
-        'kind': {'pattern': r'^[-\w\._,\(\)]+$'},
     }
 
     _attribute_map = {
@@ -1121,7 +1120,6 @@ class GenericResourceExpanded(GenericResource):
         'id': {'readonly': True},
         'name': {'readonly': True},
         'type': {'readonly': True},
-        'kind': {'pattern': r'^[-\w\._,\(\)]+$'},
         'created_time': {'readonly': True},
         'changed_time': {'readonly': True},
         'provisioning_state': {'readonly': True},
@@ -1490,6 +1488,9 @@ class ProviderResourceType(Model):
     :type api_versions: list[str]
     :ivar default_api_version: The default API version.
     :vartype default_api_version: str
+    :param zone_mappings:
+    :type zone_mappings:
+     list[~azure.mgmt.resource.resources.v2020_06_01.models.ZoneMapping]
     :ivar api_profiles: The API profiles for the resource provider.
     :vartype api_profiles:
      list[~azure.mgmt.resource.resources.v2020_06_01.models.ApiProfile]
@@ -1511,18 +1512,20 @@ class ProviderResourceType(Model):
         'aliases': {'key': 'aliases', 'type': '[Alias]'},
         'api_versions': {'key': 'apiVersions', 'type': '[str]'},
         'default_api_version': {'key': 'defaultApiVersion', 'type': 'str'},
+        'zone_mappings': {'key': 'zoneMappings', 'type': '[ZoneMapping]'},
         'api_profiles': {'key': 'apiProfiles', 'type': '[ApiProfile]'},
         'capabilities': {'key': 'capabilities', 'type': 'str'},
         'properties': {'key': 'properties', 'type': '{str}'},
     }
 
-    def __init__(self, *, resource_type: str=None, locations=None, aliases=None, api_versions=None, capabilities: str=None, properties=None, **kwargs) -> None:
+    def __init__(self, *, resource_type: str=None, locations=None, aliases=None, api_versions=None, zone_mappings=None, capabilities: str=None, properties=None, **kwargs) -> None:
         super(ProviderResourceType, self).__init__(**kwargs)
         self.resource_type = resource_type
         self.locations = locations
         self.aliases = aliases
         self.api_versions = api_versions
         self.default_api_version = None
+        self.zone_mappings = zone_mappings
         self.api_profiles = None
         self.capabilities = capabilities
         self.properties = properties
@@ -2244,3 +2247,23 @@ class WhatIfPropertyChange(Model):
         self.before = before
         self.after = after
         self.children = children
+
+
+class ZoneMapping(Model):
+    """ZoneMapping.
+
+    :param location: The location of the zone mapping.
+    :type location: str
+    :param zones:
+    :type zones: list[str]
+    """
+
+    _attribute_map = {
+        'location': {'key': 'location', 'type': 'str'},
+        'zones': {'key': 'zones', 'type': '[str]'},
+    }
+
+    def __init__(self, *, location: str=None, zones=None, **kwargs) -> None:
+        super(ZoneMapping, self).__init__(**kwargs)
+        self.location = location
+        self.zones = zones
