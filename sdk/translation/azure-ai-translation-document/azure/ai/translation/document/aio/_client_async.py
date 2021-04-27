@@ -225,7 +225,7 @@ class DocumentTranslationClient(object):
         :keyword list[str] statuses: job statuses to filter by.
         :keyword Union[str, datetime.datetime] created_after: get jobs created after certian timedate.
         :keyword Union[str, datetime.datetime] created_before: get jobs created before certian timedate.
-        :keyword list[str] order_by: the sorting query for the collection.
+        :keyword list[str] order_by: the sorting query for the jobs returned.
             format: [parameter, asc/desc]
             (ex: 'CreatedDateTimeUtc asc', 'CreatedDateTimeUtc desc').
         :return: ~azure.core.paging.AsyncItemPaged[:class:`~azure.ai.translation.document.JobStatusResult`]
@@ -246,6 +246,7 @@ class DocumentTranslationClient(object):
         created_before=kwargs.pop("created_before", None),
         created_after = convert_datetime(created_after) if created_after else None
         created_before = convert_datetime(created_before) if created_before else None
+        results_per_page = kwargs.pop("results_per_page", None)
 
         def _convert_from_generated_model(generated_model):
             # pylint: disable=protected-access
@@ -258,18 +259,29 @@ class DocumentTranslationClient(object):
 
         return self._client.document_translation.get_operations(
             cls=model_conversion_function,
-            maxpagesize=kwargs.pop("results_per_page", None),
-            created_date_time_utc_start=kwargs.pop("created_after", None),
-            created_date_time_utc_end=kwargs.pop("created_before", None),
+            maxpagesize=results_per_page,
+            created_date_time_utc_start=created_after,
+            created_date_time_utc_end=created_before,
             **kwargs
         )
 
     @distributed_trace
     def list_all_document_statuses(self, job_id, **kwargs):
         # type: (str, **Any) -> AsyncItemPaged[DocumentStatusResult]
-        """List all the document statuses under a translation job.
+        """List all the document statuses for a given translation job.
 
-        :param str job_id: The translation job ID.
+        :param str job_id: ID of translation job to list documents for.
+        :keyword int top: the total number of documents to return (across all pages).
+        :keyword int skip: the number of documents to skip (from beginning).
+            By default, we sort by all documents descendingly by start time.
+        :keyword int results_per_page: is the number of documents returned per page.
+        :keyword list[str] ids: document IDs to filter by.
+        :keyword list[str] statuses: document statuses to filter by.
+        :keyword Union[str, datetime.datetime] translated_after: get document translated after certian timedate.
+        :keyword Union[str, datetime.datetime] translated_before: get document translated before certian timedate.
+        :keyword list[str] order_by: the sorting query for the documents.
+            format: [parameter, asc/desc]
+            (ex: 'CreatedDateTimeUtc asc', 'CreatedDateTimeUtc desc').
         :return: ~azure.core.paging.AsyncItemPaged[:class:`~azure.ai.translation.document.DocumentStatusResult`]
         :rtype: ~azure.core.paging.AsyncItemPaged
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -283,6 +295,11 @@ class DocumentTranslationClient(object):
                 :dedent: 8
                 :caption: List all the document statuses under the translation job.
         """
+        translated_after=kwargs.pop("translated_after", None),
+        translated_before=kwargs.pop("translated_before", None),
+        translated_after = convert_datetime(translated_after) if translated_after else None
+        translated_before = convert_datetime(translated_before) if translated_before else None
+        results_per_page = kwargs.pop("results_per_page", None)
 
         def _convert_from_generated_model(generated_model):
             # pylint: disable=protected-access
@@ -296,6 +313,9 @@ class DocumentTranslationClient(object):
         return self._client.document_translation.get_operation_documents_status(
             id=job_id,
             cls=model_conversion_function,
+            maxpagesize=results_per_page,
+            created_date_time_utc_start=translated_after,
+            created_date_time_utc_end=translated_before,
             **kwargs
         )
 
