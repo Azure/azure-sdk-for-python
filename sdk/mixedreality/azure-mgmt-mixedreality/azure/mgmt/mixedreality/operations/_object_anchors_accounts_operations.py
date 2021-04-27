@@ -23,8 +23,8 @@ if TYPE_CHECKING:
     T = TypeVar('T')
     ClsType = Optional[Callable[[PipelineResponse[HttpRequest, HttpResponse], T, Dict[str, Any]], Any]]
 
-class RemoteRenderingAccountsOperations(object):
-    """RemoteRenderingAccountsOperations operations.
+class ObjectAnchorsAccountsOperations(object):
+    """ObjectAnchorsAccountsOperations operations.
 
     You should not instantiate this class directly. Instead, you should create a Client instance that
     instantiates it for you and attaches it as an attribute.
@@ -49,15 +49,15 @@ class RemoteRenderingAccountsOperations(object):
         self,
         **kwargs  # type: Any
     ):
-        # type: (...) -> Iterable["_models.RemoteRenderingAccountPage"]
-        """List Remote Rendering Accounts by Subscription.
+        # type: (...) -> Iterable["_models.ObjectAnchorsAccountPage"]
+        """List Object Anchors Accounts by Subscription.
 
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: An iterator like instance of either RemoteRenderingAccountPage or the result of cls(response)
-        :rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.mixedreality.models.RemoteRenderingAccountPage]
+        :return: An iterator like instance of either ObjectAnchorsAccountPage or the result of cls(response)
+        :rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.mixedreality.models.ObjectAnchorsAccountPage]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["_models.RemoteRenderingAccountPage"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.ObjectAnchorsAccountPage"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -89,7 +89,7 @@ class RemoteRenderingAccountsOperations(object):
             return request
 
         def extract_data(pipeline_response):
-            deserialized = self._deserialize('RemoteRenderingAccountPage', pipeline_response)
+            deserialized = self._deserialize('ObjectAnchorsAccountPage', pipeline_response)
             list_of_elem = deserialized.value
             if cls:
                 list_of_elem = cls(list_of_elem)
@@ -110,24 +110,24 @@ class RemoteRenderingAccountsOperations(object):
         return ItemPaged(
             get_next, extract_data
         )
-    list_by_subscription.metadata = {'url': '/subscriptions/{subscriptionId}/providers/Microsoft.MixedReality/remoteRenderingAccounts'}  # type: ignore
+    list_by_subscription.metadata = {'url': '/subscriptions/{subscriptionId}/providers/Microsoft.MixedReality/objectAnchorsAccounts'}  # type: ignore
 
     def list_by_resource_group(
         self,
         resource_group_name,  # type: str
         **kwargs  # type: Any
     ):
-        # type: (...) -> Iterable["_models.RemoteRenderingAccountPage"]
+        # type: (...) -> Iterable["_models.ObjectAnchorsAccountPage"]
         """List Resources by Resource Group.
 
         :param resource_group_name: Name of an Azure resource group.
         :type resource_group_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: An iterator like instance of either RemoteRenderingAccountPage or the result of cls(response)
-        :rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.mixedreality.models.RemoteRenderingAccountPage]
+        :return: An iterator like instance of either ObjectAnchorsAccountPage or the result of cls(response)
+        :rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.mixedreality.models.ObjectAnchorsAccountPage]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["_models.RemoteRenderingAccountPage"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.ObjectAnchorsAccountPage"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -160,7 +160,7 @@ class RemoteRenderingAccountsOperations(object):
             return request
 
         def extract_data(pipeline_response):
-            deserialized = self._deserialize('RemoteRenderingAccountPage', pipeline_response)
+            deserialized = self._deserialize('ObjectAnchorsAccountPage', pipeline_response)
             list_of_elem = deserialized.value
             if cls:
                 list_of_elem = cls(list_of_elem)
@@ -181,7 +181,7 @@ class RemoteRenderingAccountsOperations(object):
         return ItemPaged(
             get_next, extract_data
         )
-    list_by_resource_group.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.MixedReality/remoteRenderingAccounts'}  # type: ignore
+    list_by_resource_group.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.MixedReality/objectAnchorsAccounts'}  # type: ignore
 
     def delete(
         self,
@@ -190,7 +190,7 @@ class RemoteRenderingAccountsOperations(object):
         **kwargs  # type: Any
     ):
         # type: (...) -> None
-        """Delete a Remote Rendering Account.
+        """Delete an Object Anchors Account.
 
         :param resource_group_name: Name of an Azure resource group.
         :type resource_group_name: str
@@ -237,7 +237,7 @@ class RemoteRenderingAccountsOperations(object):
         if cls:
             return cls(pipeline_response, None, {})
 
-    delete.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.MixedReality/remoteRenderingAccounts/{accountName}'}  # type: ignore
+    delete.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.MixedReality/objectAnchorsAccounts/{accountName}'}  # type: ignore
 
     def get(
         self,
@@ -245,19 +245,19 @@ class RemoteRenderingAccountsOperations(object):
         account_name,  # type: str
         **kwargs  # type: Any
     ):
-        # type: (...) -> "_models.RemoteRenderingAccount"
-        """Retrieve a Remote Rendering Account.
+        # type: (...) -> "_models.ObjectAnchorsAccount"
+        """Retrieve an Object Anchors Account.
 
         :param resource_group_name: Name of an Azure resource group.
         :type resource_group_name: str
         :param account_name: Name of an Mixed Reality Account.
         :type account_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: RemoteRenderingAccount, or the result of cls(response)
-        :rtype: ~azure.mgmt.mixedreality.models.RemoteRenderingAccount
+        :return: ObjectAnchorsAccount, or the result of cls(response)
+        :rtype: ~azure.mgmt.mixedreality.models.ObjectAnchorsAccount
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["_models.RemoteRenderingAccount"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.ObjectAnchorsAccount"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -290,36 +290,36 @@ class RemoteRenderingAccountsOperations(object):
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             raise HttpResponseError(response=response, error_format=ARMErrorFormat)
 
-        deserialized = self._deserialize('RemoteRenderingAccount', pipeline_response)
+        deserialized = self._deserialize('ObjectAnchorsAccount', pipeline_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})
 
         return deserialized
-    get.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.MixedReality/remoteRenderingAccounts/{accountName}'}  # type: ignore
+    get.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.MixedReality/objectAnchorsAccounts/{accountName}'}  # type: ignore
 
     def update(
         self,
         resource_group_name,  # type: str
         account_name,  # type: str
-        remote_rendering_account,  # type: "_models.RemoteRenderingAccount"
+        object_anchors_account,  # type: "_models.ObjectAnchorsAccount"
         **kwargs  # type: Any
     ):
-        # type: (...) -> "_models.RemoteRenderingAccount"
-        """Updating a Remote Rendering Account.
+        # type: (...) -> "_models.ObjectAnchorsAccount"
+        """Updating an Object Anchors Account.
 
         :param resource_group_name: Name of an Azure resource group.
         :type resource_group_name: str
         :param account_name: Name of an Mixed Reality Account.
         :type account_name: str
-        :param remote_rendering_account: Remote Rendering Account parameter.
-        :type remote_rendering_account: ~azure.mgmt.mixedreality.models.RemoteRenderingAccount
+        :param object_anchors_account: Object Anchors Account parameter.
+        :type object_anchors_account: ~azure.mgmt.mixedreality.models.ObjectAnchorsAccount
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: RemoteRenderingAccount, or the result of cls(response)
-        :rtype: ~azure.mgmt.mixedreality.models.RemoteRenderingAccount
+        :return: ObjectAnchorsAccount, or the result of cls(response)
+        :rtype: ~azure.mgmt.mixedreality.models.ObjectAnchorsAccount
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["_models.RemoteRenderingAccount"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.ObjectAnchorsAccount"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -347,7 +347,7 @@ class RemoteRenderingAccountsOperations(object):
         header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
 
         body_content_kwargs = {}  # type: Dict[str, Any]
-        body_content = self._serialize.body(remote_rendering_account, 'RemoteRenderingAccount')
+        body_content = self._serialize.body(object_anchors_account, 'ObjectAnchorsAccount')
         body_content_kwargs['content'] = body_content
         request = self._client.patch(url, query_parameters, header_parameters, **body_content_kwargs)
         pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
@@ -357,36 +357,36 @@ class RemoteRenderingAccountsOperations(object):
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             raise HttpResponseError(response=response, error_format=ARMErrorFormat)
 
-        deserialized = self._deserialize('RemoteRenderingAccount', pipeline_response)
+        deserialized = self._deserialize('ObjectAnchorsAccount', pipeline_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})
 
         return deserialized
-    update.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.MixedReality/remoteRenderingAccounts/{accountName}'}  # type: ignore
+    update.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.MixedReality/objectAnchorsAccounts/{accountName}'}  # type: ignore
 
     def create(
         self,
         resource_group_name,  # type: str
         account_name,  # type: str
-        remote_rendering_account,  # type: "_models.RemoteRenderingAccount"
+        object_anchors_account,  # type: "_models.ObjectAnchorsAccount"
         **kwargs  # type: Any
     ):
-        # type: (...) -> "_models.RemoteRenderingAccount"
-        """Creating or Updating a Remote Rendering Account.
+        # type: (...) -> "_models.ObjectAnchorsAccount"
+        """Creating or Updating an object anchors Account.
 
         :param resource_group_name: Name of an Azure resource group.
         :type resource_group_name: str
         :param account_name: Name of an Mixed Reality Account.
         :type account_name: str
-        :param remote_rendering_account: Remote Rendering Account parameter.
-        :type remote_rendering_account: ~azure.mgmt.mixedreality.models.RemoteRenderingAccount
+        :param object_anchors_account: Object Anchors Account parameter.
+        :type object_anchors_account: ~azure.mgmt.mixedreality.models.ObjectAnchorsAccount
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: RemoteRenderingAccount, or the result of cls(response)
-        :rtype: ~azure.mgmt.mixedreality.models.RemoteRenderingAccount
+        :return: ObjectAnchorsAccount, or the result of cls(response)
+        :rtype: ~azure.mgmt.mixedreality.models.ObjectAnchorsAccount
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["_models.RemoteRenderingAccount"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.ObjectAnchorsAccount"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -414,7 +414,7 @@ class RemoteRenderingAccountsOperations(object):
         header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
 
         body_content_kwargs = {}  # type: Dict[str, Any]
-        body_content = self._serialize.body(remote_rendering_account, 'RemoteRenderingAccount')
+        body_content = self._serialize.body(object_anchors_account, 'ObjectAnchorsAccount')
         body_content_kwargs['content'] = body_content
         request = self._client.put(url, query_parameters, header_parameters, **body_content_kwargs)
         pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
@@ -425,16 +425,16 @@ class RemoteRenderingAccountsOperations(object):
             raise HttpResponseError(response=response, error_format=ARMErrorFormat)
 
         if response.status_code == 200:
-            deserialized = self._deserialize('RemoteRenderingAccount', pipeline_response)
+            deserialized = self._deserialize('ObjectAnchorsAccount', pipeline_response)
 
         if response.status_code == 201:
-            deserialized = self._deserialize('RemoteRenderingAccount', pipeline_response)
+            deserialized = self._deserialize('ObjectAnchorsAccount', pipeline_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})
 
         return deserialized
-    create.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.MixedReality/remoteRenderingAccounts/{accountName}'}  # type: ignore
+    create.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.MixedReality/objectAnchorsAccounts/{accountName}'}  # type: ignore
 
     def list_keys(
         self,
@@ -443,7 +443,7 @@ class RemoteRenderingAccountsOperations(object):
         **kwargs  # type: Any
     ):
         # type: (...) -> "_models.AccountKeys"
-        """List Both of the 2 Keys of a Remote Rendering Account.
+        """List Both of the 2 Keys of an object anchors Account.
 
         :param resource_group_name: Name of an Azure resource group.
         :type resource_group_name: str
@@ -493,7 +493,7 @@ class RemoteRenderingAccountsOperations(object):
             return cls(pipeline_response, deserialized, {})
 
         return deserialized
-    list_keys.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.MixedReality/remoteRenderingAccounts/{accountName}/listKeys'}  # type: ignore
+    list_keys.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.MixedReality/objectAnchorsAccounts/{accountName}/listKeys'}  # type: ignore
 
     def regenerate_keys(
         self,
@@ -503,7 +503,7 @@ class RemoteRenderingAccountsOperations(object):
         **kwargs  # type: Any
     ):
         # type: (...) -> "_models.AccountKeys"
-        """Regenerate specified Key of a Remote Rendering Account.
+        """Regenerate specified Key of an object anchors Account.
 
         :param resource_group_name: Name of an Azure resource group.
         :type resource_group_name: str
@@ -560,4 +560,4 @@ class RemoteRenderingAccountsOperations(object):
             return cls(pipeline_response, deserialized, {})
 
         return deserialized
-    regenerate_keys.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.MixedReality/remoteRenderingAccounts/{accountName}/regenerateKeys'}  # type: ignore
+    regenerate_keys.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.MixedReality/objectAnchorsAccounts/{accountName}/regenerateKeys'}  # type: ignore
