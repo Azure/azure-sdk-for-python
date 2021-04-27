@@ -75,13 +75,13 @@ class CreateDeleteTable(object):
         # [END delete_table_from_tc]
 
     def create_from_table_client(self):
-        from azure.data.table import TableClient
+        from azure.data.tables import TableClient
 
         # [START create_table_from_table_client]
         with TableClient.from_connection_string(conn_str=self.connection_string, table_name="myTable") as table_client:
             try:
                 table_item = table_client.create_table()
-                print("Created table {}!".format(table_item.table_name))
+                print("Created table {}!".format(table_item.name))
             except ResourceExistsError:
                 print("Table already exists")
         # [END create_table_from_table_client]
