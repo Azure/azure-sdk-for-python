@@ -32,26 +32,3 @@ stages:
                         Get-ChildItem -Recurse $(Pipeline.Workspace)/${{parameters.ArtifactName}}/${{artifact.name}}
                       workingDirectory: $(Pipeline.Workspace)
                       displayName: Output Visible Conda Artifacts
-      - stage: Test_${{ replace(artifact.name, '-', '_') }}_Distribution
-        displayName: 'Conda Release: ${{artifact.name}}'
-        dependsOn: Release_${{ replace(artifact.name, '-', '_') }}_To_Blob
-        condition: and(succeeded(), ne(variables['SetDevVersion'], 'true'), ne(variables['Skip.Release'], 'true'), ne(variables['Build.Repository.Name'], 'Azure/azure-sdk-for-python-pr'))
-        jobs:
-          - deployment: CondaTest
-            displayName: "Test"
-            condition: ne(variables['Skip.TagRepository'], 'true')
-            environment: pypi
-
-            pool:
-              name: azsdk-pool-mms-ubuntu-1804-general
-              vmImage: MMSUbuntu18.04
-
-            strategy:
-              runOnce:
-                deploy:
-                  steps:
-                    - checkout: self
-                    - pwsh: |
-                        Get-ChildItem -Recurse $(Pipeline.Workspace)/${{parameters.ArtifactName}}/${{artifact.name}}
-                      workingDirectory: $(Pipeline.Workspace)
-                      displayName: Output Visible Conda Artifacts
