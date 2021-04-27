@@ -20,7 +20,7 @@ except ImportError:
     from urllib2 import unquote  # type: ignore
 
 from azure.core.async_paging import AsyncItemPaged
-from azure.core.exceptions import ResourceNotFoundError, HttpResponseError
+from azure.core.exceptions import HttpResponseError
 from azure.core.tracing.decorator import distributed_trace
 from azure.core.tracing.decorator_async import distributed_trace_async
 
@@ -361,8 +361,6 @@ class TableClient(AsyncTablesBaseClient):
                 **kwargs
             )
             return _trim_service_metadata(metadata)
-        except ResourceNotFoundError as error:
-            _process_table_error(error)
         except HttpResponseError as error:
             try:
                 if error.model.additional_properties["odata.error"]["code"] == "PropertiesNeedValue":
@@ -370,9 +368,9 @@ class TableClient(AsyncTablesBaseClient):
                         raise ValueError("PartitionKey must be present in an entity")
                     if entity.get("RowKey") is None:
                         raise ValueError("RowKey must be present in an entity")
-                raise error
             except AttributeError:
                 raise error
+            _process_table_error(error)
 
 
     @distributed_trace_async

@@ -14,7 +14,7 @@ except ImportError:
     from urlparse import urlparse  # type: ignore
     from urllib2 import unquote  # type: ignore
 
-from azure.core.exceptions import HttpResponseError, ResourceNotFoundError
+from azure.core.exceptions import HttpResponseError
 from azure.core.paging import ItemPaged
 from azure.core.tracing.decorator import distributed_trace
 
@@ -340,10 +340,6 @@ class TableClient(TablesBaseClient):
                 :caption: Creating and adding an entity to a Table
         """
         entity = _add_entity_properties(entity)
-        # if "PartitionKey" in entity and "RowKey" in entity:
-        #     entity = _add_entity_properties(entity)
-        # else:
-        #     raise ValueError("PartitionKey and RowKey were not provided in entity")
         try:
             metadata, _ = self._client.table.insert_entity(
                 table=self.table_name,
@@ -352,8 +348,6 @@ class TableClient(TablesBaseClient):
                 **kwargs
             )
             return _trim_service_metadata(metadata)
-        except ResourceNotFoundError as error:
-            _process_table_error(error)
         except HttpResponseError as error:
             try:
                 if error.model.additional_properties["odata.error"]["code"] == "PropertiesNeedValue":
@@ -361,9 +355,9 @@ class TableClient(TablesBaseClient):
                         raise ValueError("PartitionKey must be present in an entity")
                     if entity.get("RowKey") is None:
                         raise ValueError("RowKey must be present in an entity")
-                raise error
             except AttributeError:
                 raise error
+            _process_table_error(error)
 
     @distributed_trace
     def update_entity(
