@@ -32,6 +32,10 @@ class MgmtAutomationClientTest(AzureMgmtTestCase):
         super(MgmtAutomationClientTest, self).setUp()
         self.re_replacer.register_pattern_pair('"value": ".{64}"', '"value": "FakeValue"')
         self.re_replacer.register_pattern_pair('"Value":".{88}"', '"Value":"FakeValue"')
+        self.re_replacer.register_pattern_pair(
+            '"RegistrationUrl":"https://.*/accounts/[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}"',
+            '"RegistrationUrl":"FakeUrl"'
+        )
         self.mgmt_client = self.create_mgmt_client(
             azure.mgmt.automation.AutomationClient
         )

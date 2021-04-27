@@ -20,7 +20,7 @@ interactions:
   response:
     body:
       string: '{"name":"myAutomationAccount9","id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_automation_test_automation53db109a/providers/Microsoft.Automation/automationAccounts/myAutomationAccount9","type":"Microsoft.Automation/AutomationAccounts","location":"East
-        US 2","tags":{},"etag":null,"properties":{"sku":{"name":"Basic","family":null,"capacity":null},"state":"Ok","RegistrationUrl":"https://b2be1457-9afa-4398-8c77-0e9aa7479152.agentsvc.eus2.azure-automation.net/accounts/b2be1457-9afa-4398-8c77-0e9aa7479152","creationTime":"2021-04-26T06:16:28.93+00:00","lastModifiedBy":null,"lastModifiedTime":"2021-04-26T06:16:28.93+00:00"}}'
+        US 2","tags":{},"etag":null,"properties":{"sku":{"name":"Basic","family":null,"capacity":null},"state":"Ok","RegistrationUrl":"FakeUrl","creationTime":"2021-04-27T03:37:55.95+00:00","lastModifiedBy":null,"lastModifiedTime":"2021-04-27T03:37:55.95+00:00"}}'
     headers:
       cache-control:
       - no-cache
@@ -29,7 +29,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Mon, 26 Apr 2021 06:16:31 GMT
+      - Tue, 27 Apr 2021 03:37:58 GMT
       expires:
       - '-1'
       location:
@@ -78,19 +78,19 @@ interactions:
   response:
     body:
       string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_automation_test_automation53db109a/providers/Microsoft.Automation/automationAccounts/myAutomationAccount9/runbooks/runbook_draft","name":"runbook_draft","type":"Microsoft.Automation/AutomationAccounts/Runbooks","location":"East
-        US 2","tags":{"tag01":"value01","tag02":"value02"},"etag":"\"637550145955600000\"","properties":{"description":"Description
-        of the Runbook","logVerbose":false,"logProgress":false,"logActivityTrace":0,"runbookType":"PowerShellWorkflow","parameters":{},"state":"New","jobCount":0,"provisioningState":"Succeeded","serviceManagementTags":null,"outputTypes":[],"creationTime":"2021-04-26T06:16:35.56+00:00","lastModifiedBy":null,"lastModifiedTime":"2021-04-26T06:16:35.56+00:00"}}'
+        US 2","tags":{"tag01":"value01","tag02":"value02"},"etag":"\"637550914814530000\"","properties":{"description":"Description
+        of the Runbook","logVerbose":false,"logProgress":false,"logActivityTrace":0,"runbookType":"PowerShellWorkflow","parameters":{},"state":"New","jobCount":0,"provisioningState":"Succeeded","serviceManagementTags":null,"outputTypes":[],"creationTime":"2021-04-27T03:38:01.453+00:00","lastModifiedBy":null,"lastModifiedTime":"2021-04-27T03:38:01.453+00:00"}}'
     headers:
       cache-control:
       - no-cache
       content-length:
-      - '796'
+      - '798'
       content-type:
       - application/json; charset=utf-8
       date:
-      - Mon, 26 Apr 2021 06:16:36 GMT
+      - Tue, 27 Apr 2021 03:38:02 GMT
       etag:
-      - '"637550145955600000"'
+      - '"637550914814530000"'
       expires:
       - '-1'
       location:
@@ -137,16 +137,16 @@ interactions:
   response:
     body:
       string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_automation_test_automation53db109a/providers/Microsoft.Automation/automationAccounts/myAutomationAccount9/modules/module1","name":"module1","type":"Microsoft.Automation/AutomationAccounts/Modules","location":"East
-        US 2","tags":{},"etag":null,"properties":{"isGlobal":false,"version":null,"sizeInBytes":0,"activityCount":0,"creationTime":"2021-04-26T06:16:38.167+00:00","lastModifiedTime":"2021-04-26T06:16:38.317+00:00","error":{"code":null,"message":null},"provisioningState":"Creating","isComposite":false}}'
+        US 2","tags":{},"etag":null,"properties":{"isGlobal":false,"version":null,"sizeInBytes":0,"activityCount":0,"creationTime":"2021-04-27T03:38:03.92+00:00","lastModifiedTime":"2021-04-27T03:38:04.013+00:00","error":{"code":null,"message":null},"provisioningState":"Creating","isComposite":false}}'
     headers:
       cache-control:
       - no-cache
       content-length:
-      - '602'
+      - '601'
       content-type:
       - application/json; charset=utf-8
       date:
-      - Mon, 26 Apr 2021 06:16:37 GMT
+      - Tue, 27 Apr 2021 03:38:03 GMT
       expires:
       - '-1'
       location:
@@ -196,19 +196,19 @@ interactions:
   response:
     body:
       string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_automation_test_automation53db109a/providers/Microsoft.Automation/automationAccounts/myAutomationAccount9/runbooks/Get-AzureVMTutorial","name":"Get-AzureVMTutorial","type":"Microsoft.Automation/AutomationAccounts/Runbooks","location":"East
-        US 2","tags":{"tag01":"value01","tag02":"value02"},"etag":"\"637550146008800000\"","properties":{"description":"Description
-        of the Runbook","logVerbose":false,"logProgress":true,"logActivityTrace":1,"runbookType":"PowerShellWorkflow","parameters":{},"state":"Published","jobCount":0,"provisioningState":"Succeeded","serviceManagementTags":null,"outputTypes":[],"creationTime":"2021-04-26T06:16:40.877+00:00","lastModifiedBy":null,"lastModifiedTime":"2021-04-26T06:16:40.88+00:00"}}'
+        US 2","tags":{"tag01":"value01","tag02":"value02"},"etag":"\"637550914867070000\"","properties":{"description":"Description
+        of the Runbook","logVerbose":false,"logProgress":true,"logActivityTrace":1,"runbookType":"PowerShellWorkflow","parameters":{},"state":"Published","jobCount":0,"provisioningState":"Succeeded","serviceManagementTags":null,"outputTypes":[],"creationTime":"2021-04-27T03:38:06.7+00:00","lastModifiedBy":null,"lastModifiedTime":"2021-04-27T03:38:06.707+00:00"}}'
     headers:
       cache-control:
       - no-cache
       content-length:
-      - '814'
+      - '813'
       content-type:
       - application/json; charset=utf-8
       date:
-      - Mon, 26 Apr 2021 06:16:42 GMT
+      - Tue, 27 Apr 2021 03:38:08 GMT
       etag:
-      - '"637550146008800000"'
+      - '"637550914867070000"'
       expires:
       - '-1'
       location:
@@ -254,7 +254,7 @@ interactions:
     uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_automation_test_automation53db109a/providers/Microsoft.Automation/automationAccounts/myAutomationAccount9/jobs/job1?api-version=2019-06-01
   response:
     body:
-      string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_automation_test_automation53db109a/providers/Microsoft.Automation/automationAccounts/myAutomationAccount9/jobs/job1","name":"job1","type":"Microsoft.Automation/AutomationAccounts/Jobs","properties":{"jobId":"c2e58ce8-404f-44ea-9198-34a2e9540d00","creationTime":"2021-04-26T06:16:43.227+00:00","provisioningState":"Processing","status":"New","statusDetails":"None","startedBy":null,"startTime":null,"endTime":null,"lastModifiedTime":"2021-04-26T06:16:43.227+00:00","lastStatusModifiedTime":"2021-04-26T06:16:43.227+00:00","exception":null,"parameters":{"key01":"value01","key02":"value02"},"runOn":"","runbook":{"name":"Get-AzureVMTutorial"}}}'
+      string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_automation_test_automation53db109a/providers/Microsoft.Automation/automationAccounts/myAutomationAccount9/jobs/job1","name":"job1","type":"Microsoft.Automation/AutomationAccounts/Jobs","properties":{"jobId":"72051f57-a11f-4558-a795-70f741e6c298","creationTime":"2021-04-27T03:38:09.127+00:00","provisioningState":"Processing","status":"New","statusDetails":"None","startedBy":null,"startTime":null,"endTime":null,"lastModifiedTime":"2021-04-27T03:38:09.127+00:00","lastStatusModifiedTime":"2021-04-27T03:38:09.127+00:00","exception":null,"parameters":{"key01":"value01","key02":"value02"},"runOn":"","runbook":{"name":"Get-AzureVMTutorial"}}}'
     headers:
       cache-control:
       - no-cache
@@ -263,7 +263,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Mon, 26 Apr 2021 06:16:42 GMT
+      - Tue, 27 Apr 2021 03:38:08 GMT
       expires:
       - '-1'
       location:
@@ -309,7 +309,7 @@ interactions:
     uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_automation_test_automation53db109a/providers/Microsoft.Automation/automationAccounts/myAutomationAccount9/webhooks/webhook1?api-version=2015-10-31
   response:
     body:
-      string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_automation_test_automation53db109a/providers/Microsoft.Automation/automationAccounts/myAutomationAccount9/webhooks/webhook1","name":"webhook1","type":"Microsoft.Automation/AutomationAccounts/Webhooks","properties":{"isEnabled":true,"expiryTime":"2021-12-29T22:18:13.700287+00:00","runbook":{"name":"Get-AzureVMTutorial"},"lastInvokedTime":null,"runOn":null,"parameters":null,"uri":"https://s1events.azure-automation.net/webhooks?token=7u3KfQvM1vUPWaDMFRv2%2fAA4Jqx8QwS8aBuyO6Xsdcw%3d","creationTime":"2021-04-26T06:16:45.1536344+00:00","lastModifiedBy":"","lastModifiedTime":"2021-04-26T06:16:45.1536344+00:00"}}'
+      string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_automation_test_automation53db109a/providers/Microsoft.Automation/automationAccounts/myAutomationAccount9/webhooks/webhook1","name":"webhook1","type":"Microsoft.Automation/AutomationAccounts/Webhooks","properties":{"isEnabled":true,"expiryTime":"2021-12-29T22:18:13.700287+00:00","runbook":{"name":"Get-AzureVMTutorial"},"lastInvokedTime":null,"runOn":null,"parameters":null,"uri":"https://s1events.azure-automation.net/webhooks?token=7u3KfQvM1vUPWaDMFRv2%2fAA4Jqx8QwS8aBuyO6Xsdcw%3d","creationTime":"2021-04-27T03:38:11.0968621+00:00","lastModifiedBy":"","lastModifiedTime":"2021-04-27T03:38:11.0968621+00:00"}}'
     headers:
       cache-control:
       - no-cache
@@ -318,7 +318,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Mon, 26 Apr 2021 06:16:44 GMT
+      - Tue, 27 Apr 2021 03:38:10 GMT
       expires:
       - '-1'
       location:
@@ -360,16 +360,16 @@ interactions:
   response:
     body:
       string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_automation_test_automation53db109a/providers/Microsoft.Automation/automationAccounts/myAutomationAccount9/schedules/mySchedule","name":"mySchedule","type":"Microsoft.Automation/AutomationAccounts/Schedules","properties":{"description":"my
-        description of schedule goes here","startTime":"2021-06-27T17:28:00+00:00","startTimeOffsetMinutes":0.0,"expiryTime":"2022-01-01T17:28:00+00:00","expiryTimeOffsetMinutes":0.0,"isEnabled":true,"nextRun":"2021-06-27T17:28:00+00:00","nextRunOffsetMinutes":0.0,"interval":1,"frequency":"Hour","creationTime":"2021-04-26T06:16:45.79+00:00","lastModifiedTime":"2021-04-26T06:16:45.79+00:00","timeZone":"UTC","advancedSchedule":null}}'
+        description of schedule goes here","startTime":"2021-06-27T17:28:00+00:00","startTimeOffsetMinutes":0.0,"expiryTime":"2022-01-01T17:28:00+00:00","expiryTimeOffsetMinutes":0.0,"isEnabled":true,"nextRun":"2021-06-27T17:28:00+00:00","nextRunOffsetMinutes":0.0,"interval":1,"frequency":"Hour","creationTime":"2021-04-27T03:38:11.703+00:00","lastModifiedTime":"2021-04-27T03:38:11.703+00:00","timeZone":"UTC","advancedSchedule":null}}'
     headers:
       cache-control:
       - no-cache
       content-length:
-      - '759'
+      - '761'
       content-type:
       - application/json; charset=utf-8
       date:
-      - Mon, 26 Apr 2021 06:16:45 GMT
+      - Tue, 27 Apr 2021 03:38:11 GMT
       expires:
       - '-1'
       location:
@@ -415,17 +415,17 @@ interactions:
     uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_automation_test_automation53db109a/providers/Microsoft.Automation/automationAccounts/myAutomationAccount9/variables/sampleVariable?api-version=2019-06-01
   response:
     body:
-      string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_automation_test_automation53db109a/providers/Microsoft.Automation/automationAccounts/myAutomationAccount9/variables/sampleVariable","name":"sampleVariable","type":"Microsoft.Automation/AutomationAccounts/Variables","properties":{"creationTime":"2021-04-26T06:16:46.42+00:00","lastModifiedTime":"2021-04-26T06:16:46.42+00:00","isEncrypted":false,"value":"\"ComputerName.domain.com\"","description":"my
+      string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_automation_test_automation53db109a/providers/Microsoft.Automation/automationAccounts/myAutomationAccount9/variables/sampleVariable","name":"sampleVariable","type":"Microsoft.Automation/AutomationAccounts/Variables","properties":{"creationTime":"2021-04-27T03:38:12.347+00:00","lastModifiedTime":"2021-04-27T03:38:12.347+00:00","isEncrypted":false,"value":"\"ComputerName.domain.com\"","description":"my
         description"}}'
     headers:
       cache-control:
       - no-cache
       content-length:
-      - '508'
+      - '510'
       content-type:
       - application/json; charset=utf-8
       date:
-      - Mon, 26 Apr 2021 06:16:45 GMT
+      - Tue, 27 Apr 2021 03:38:12 GMT
       expires:
       - '-1'
       location:
@@ -472,7 +472,7 @@ interactions:
   response:
     body:
       string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_automation_test_automation53db109a/providers/Microsoft.Automation/automationAccounts/myAutomationAccount9/credentials/myCredential","name":"myCredential","type":"Microsoft.Automation/AutomationAccounts/Credentials","properties":{"userName":"mylingaiah","description":"my
-        description goes here","creationTime":"2021-04-26T06:16:47.057+00:00","lastModifiedTime":"2021-04-26T06:16:47.057+00:00"}}'
+        description goes here","creationTime":"2021-04-27T03:38:13.037+00:00","lastModifiedTime":"2021-04-27T03:38:13.037+00:00"}}'
     headers:
       cache-control:
       - no-cache
@@ -481,7 +481,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Mon, 26 Apr 2021 06:16:46 GMT
+      - Tue, 27 Apr 2021 03:38:12 GMT
       expires:
       - '-1'
       location:
@@ -531,7 +531,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Mon, 26 Apr 2021 06:16:46 GMT
+      - Tue, 27 Apr 2021 03:38:13 GMT
       expires:
       - '-1'
       pragma:
@@ -577,7 +577,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Mon, 26 Apr 2021 06:16:47 GMT
+      - Tue, 27 Apr 2021 03:38:13 GMT
       expires:
       - '-1'
       pragma:
@@ -614,7 +614,7 @@ interactions:
     uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_automation_test_automation53db109a/providers/Microsoft.Automation/automationAccounts/myAutomationAccount9/runbooks/runbook_draft/draft?api-version=2019-06-01
   response:
     body:
-      string: '{"creationTime":"2021-04-26T06:16:35.563+00:00","lastModifiedTime":"2021-04-26T06:16:35.563+00:00","inEdit":true,"parameters":{},"outputTypes":[]}'
+      string: '{"creationTime":"2021-04-27T03:38:01.453+00:00","lastModifiedTime":"2021-04-27T03:38:01.453+00:00","inEdit":true,"parameters":{},"outputTypes":[]}'
     headers:
       cache-control:
       - no-cache
@@ -623,7 +623,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Mon, 26 Apr 2021 06:16:47 GMT
+      - Tue, 27 Apr 2021 03:38:13 GMT
       expires:
       - '-1'
       pragma:
@@ -661,7 +661,7 @@ interactions:
   response:
     body:
       string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_automation_test_automation53db109a/providers/Microsoft.Automation/automationAccounts/myAutomationAccount9/credentials/myCredential","name":"myCredential","type":"Microsoft.Automation/AutomationAccounts/Credentials","properties":{"userName":"mylingaiah","description":"my
-        description goes here","creationTime":"2021-04-26T06:16:47.057+00:00","lastModifiedTime":"2021-04-26T06:16:47.057+00:00"}}'
+        description goes here","creationTime":"2021-04-27T03:38:13.037+00:00","lastModifiedTime":"2021-04-27T03:38:13.037+00:00"}}'
     headers:
       cache-control:
       - no-cache
@@ -670,7 +670,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Mon, 26 Apr 2021 06:16:47 GMT
+      - Tue, 27 Apr 2021 03:38:14 GMT
       expires:
       - '-1'
       pragma:
@@ -716,7 +716,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Mon, 26 Apr 2021 06:16:48 GMT
+      - Tue, 27 Apr 2021 03:38:14 GMT
       expires:
       - '-1'
       pragma:
@@ -762,7 +762,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Mon, 26 Apr 2021 06:16:48 GMT
+      - Tue, 27 Apr 2021 03:38:14 GMT
       expires:
       - '-1'
       pragma:
@@ -799,17 +799,17 @@ interactions:
     uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_automation_test_automation53db109a/providers/Microsoft.Automation/automationAccounts/myAutomationAccount9/variables/sampleVariable?api-version=2019-06-01
   response:
     body:
-      string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_automation_test_automation53db109a/providers/Microsoft.Automation/automationAccounts/myAutomationAccount9/variables/sampleVariable","name":"sampleVariable","type":"Microsoft.Automation/AutomationAccounts/Variables","properties":{"creationTime":"2021-04-26T06:16:46.42+00:00","lastModifiedTime":"2021-04-26T06:16:46.42+00:00","isEncrypted":false,"value":"\"ComputerName.domain.com\"","description":"my
+      string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_automation_test_automation53db109a/providers/Microsoft.Automation/automationAccounts/myAutomationAccount9/variables/sampleVariable","name":"sampleVariable","type":"Microsoft.Automation/AutomationAccounts/Variables","properties":{"creationTime":"2021-04-27T03:38:12.347+00:00","lastModifiedTime":"2021-04-27T03:38:12.347+00:00","isEncrypted":false,"value":"\"ComputerName.domain.com\"","description":"my
         description"}}'
     headers:
       cache-control:
       - no-cache
       content-length:
-      - '508'
+      - '510'
       content-type:
       - application/json; charset=utf-8
       date:
-      - Mon, 26 Apr 2021 06:16:48 GMT
+      - Tue, 27 Apr 2021 03:38:15 GMT
       expires:
       - '-1'
       pragma:
@@ -847,16 +847,16 @@ interactions:
   response:
     body:
       string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_automation_test_automation53db109a/providers/Microsoft.Automation/automationAccounts/myAutomationAccount9/schedules/mySchedule","name":"mySchedule","type":"Microsoft.Automation/AutomationAccounts/Schedules","properties":{"description":"my
-        description of schedule goes here","startTime":"2021-06-27T17:28:00+00:00","startTimeOffsetMinutes":0.0,"expiryTime":"2022-01-01T17:28:00+00:00","expiryTimeOffsetMinutes":0.0,"isEnabled":true,"nextRun":"2021-06-27T17:28:00+00:00","nextRunOffsetMinutes":0.0,"interval":1,"frequency":"Hour","creationTime":"2021-04-26T06:16:45.79+00:00","lastModifiedTime":"2021-04-26T06:16:45.79+00:00","timeZone":"UTC","advancedSchedule":null}}'
+        description of schedule goes here","startTime":"2021-06-27T17:28:00+00:00","startTimeOffsetMinutes":0.0,"expiryTime":"2022-01-01T17:28:00+00:00","expiryTimeOffsetMinutes":0.0,"isEnabled":true,"nextRun":"2021-06-27T17:28:00+00:00","nextRunOffsetMinutes":0.0,"interval":1,"frequency":"Hour","creationTime":"2021-04-27T03:38:11.703+00:00","lastModifiedTime":"2021-04-27T03:38:11.703+00:00","timeZone":"UTC","advancedSchedule":null}}'
     headers:
       cache-control:
       - no-cache
       content-length:
-      - '759'
+      - '761'
       content-type:
       - application/json; charset=utf-8
       date:
-      - Mon, 26 Apr 2021 06:16:49 GMT
+      - Tue, 27 Apr 2021 03:38:15 GMT
       expires:
       - '-1'
       pragma:
@@ -894,19 +894,19 @@ interactions:
   response:
     body:
       string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_automation_test_automation53db109a/providers/Microsoft.Automation/automationAccounts/myAutomationAccount9/runbooks/Get-AzureVMTutorial","name":"Get-AzureVMTutorial","type":"Microsoft.Automation/AutomationAccounts/Runbooks","location":"East
-        US 2","tags":{"tag01":"value01","tag02":"value02"},"etag":"\"637550146008800000\"","properties":{"description":"Description
-        of the Runbook","logVerbose":false,"logProgress":true,"logActivityTrace":1,"runbookType":"PowerShellWorkflow","parameters":{},"state":"Published","jobCount":0,"provisioningState":"Succeeded","serviceManagementTags":null,"outputTypes":[],"creationTime":"2021-04-26T06:16:40.877+00:00","lastModifiedBy":null,"lastModifiedTime":"2021-04-26T06:16:40.88+00:00"}}'
+        US 2","tags":{"tag01":"value01","tag02":"value02"},"etag":"\"637550914867070000\"","properties":{"description":"Description
+        of the Runbook","logVerbose":false,"logProgress":true,"logActivityTrace":1,"runbookType":"PowerShellWorkflow","parameters":{},"state":"Published","jobCount":0,"provisioningState":"Succeeded","serviceManagementTags":null,"outputTypes":[],"creationTime":"2021-04-27T03:38:06.7+00:00","lastModifiedBy":null,"lastModifiedTime":"2021-04-27T03:38:06.707+00:00"}}'
     headers:
       cache-control:
       - no-cache
       content-length:
-      - '814'
+      - '813'
       content-type:
       - application/json; charset=utf-8
       date:
-      - Mon, 26 Apr 2021 06:16:49 GMT
+      - Tue, 27 Apr 2021 03:38:15 GMT
       etag:
-      - '"637550146008800000"'
+      - '"637550914867070000"'
       expires:
       - '-1'
       pragma:
@@ -943,7 +943,7 @@ interactions:
     uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_automation_test_automation53db109a/providers/Microsoft.Automation/automationAccounts/myAutomationAccount9/webhooks/webhook1?api-version=2015-10-31
   response:
     body:
-      string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_automation_test_automation53db109a/providers/Microsoft.Automation/automationAccounts/myAutomationAccount9/webhooks/webhook1","name":"webhook1","type":"Microsoft.Automation/AutomationAccounts/Webhooks","properties":{"isEnabled":true,"expiryTime":"2021-12-29T22:18:13.700287+00:00","runbook":{"name":"Get-AzureVMTutorial"},"lastInvokedTime":null,"runOn":null,"parameters":null,"uri":"","creationTime":"2021-04-26T06:16:45.1536344+00:00","lastModifiedBy":"","lastModifiedTime":"2021-04-26T06:16:45.1536344+00:00"}}'
+      string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_automation_test_automation53db109a/providers/Microsoft.Automation/automationAccounts/myAutomationAccount9/webhooks/webhook1","name":"webhook1","type":"Microsoft.Automation/AutomationAccounts/Webhooks","properties":{"isEnabled":true,"expiryTime":"2021-12-29T22:18:13.700287+00:00","runbook":{"name":"Get-AzureVMTutorial"},"lastInvokedTime":null,"runOn":null,"parameters":null,"uri":"","creationTime":"2021-04-27T03:38:11.0968621+00:00","lastModifiedBy":"","lastModifiedTime":"2021-04-27T03:38:11.0968621+00:00"}}'
     headers:
       cache-control:
       - no-cache
@@ -952,7 +952,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Mon, 26 Apr 2021 06:16:49 GMT
+      - Tue, 27 Apr 2021 03:38:16 GMT
       expires:
       - '-1'
       pragma:
@@ -996,7 +996,7 @@ interactions:
       content-type:
       - text/plain
       date:
-      - Mon, 26 Apr 2021 06:16:50 GMT
+      - Tue, 27 Apr 2021 03:38:16 GMT
       expires:
       - '-1'
       pragma:
@@ -1030,16 +1030,16 @@ interactions:
   response:
     body:
       string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_automation_test_automation53db109a/providers/Microsoft.Automation/automationAccounts/myAutomationAccount9/modules/module1","name":"module1","type":"Microsoft.Automation/AutomationAccounts/Modules","location":"East
-        US 2","tags":{},"etag":null,"properties":{"isGlobal":false,"version":null,"sizeInBytes":0,"activityCount":0,"creationTime":"2021-04-26T06:16:38.167+00:00","lastModifiedTime":"2021-04-26T06:16:38.317+00:00","error":{"code":null,"message":""},"provisioningState":"Creating","isComposite":false}}'
+        US 2","tags":{},"etag":null,"properties":{"isGlobal":false,"version":null,"sizeInBytes":0,"activityCount":0,"creationTime":"2021-04-27T03:38:03.92+00:00","lastModifiedTime":"2021-04-27T03:38:04.013+00:00","error":{"code":null,"message":""},"provisioningState":"Creating","isComposite":false}}'
     headers:
       cache-control:
       - no-cache
       content-length:
-      - '600'
+      - '599'
       content-type:
       - application/json; charset=utf-8
       date:
-      - Mon, 26 Apr 2021 06:16:50 GMT
+      - Tue, 27 Apr 2021 03:38:17 GMT
       expires:
       - '-1'
       pragma:
@@ -1076,16 +1076,16 @@ interactions:
     uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_automation_test_automation53db109a/providers/Microsoft.Automation/automationAccounts/myAutomationAccount9/jobs/job1?api-version=2019-06-01
   response:
     body:
-      string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_automation_test_automation53db109a/providers/Microsoft.Automation/automationAccounts/myAutomationAccount9/jobs/job1","name":"job1","type":"Microsoft.Automation/AutomationAccounts/Jobs","properties":{"jobId":"c2e58ce8-404f-44ea-9198-34a2e9540d00","creationTime":"2021-04-26T06:16:43.2302084+00:00","provisioningState":"Processing","status":"Activating","statusDetails":"None","startedBy":"{scrubbed}","startTime":null,"endTime":null,"lastModifiedTime":"2021-04-26T06:16:48.6510374+00:00","lastStatusModifiedTime":"2021-04-26T06:16:48.6510374+00:00","exception":null,"parameters":{"key01":"value01","key02":"value02"},"runOn":"","runbook":{"name":"Get-AzureVMTutorial"}}}'
+      string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_automation_test_automation53db109a/providers/Microsoft.Automation/automationAccounts/myAutomationAccount9/jobs/job1","name":"job1","type":"Microsoft.Automation/AutomationAccounts/Jobs","properties":{"jobId":"72051f57-a11f-4558-a795-70f741e6c298","creationTime":"2021-04-27T03:38:09.1442931+00:00","provisioningState":"Processing","status":"Activating","statusDetails":"None","startedBy":"{scrubbed}","startTime":null,"endTime":null,"lastModifiedTime":"2021-04-27T03:38:14.547144+00:00","lastStatusModifiedTime":"2021-04-27T03:38:14.547144+00:00","exception":null,"parameters":{"key01":"value01","key02":"value02"},"runOn":"","runbook":{"name":"Get-AzureVMTutorial"}}}'
     headers:
       cache-control:
       - no-cache
       content-length:
-      - '762'
+      - '760'
       content-type:
       - application/json; charset=utf-8
       date:
-      - Mon, 26 Apr 2021 06:16:51 GMT
+      - Tue, 27 Apr 2021 03:38:17 GMT
       expires:
       - '-1'
       pragma:
@@ -1133,7 +1133,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Mon, 26 Apr 2021 06:16:51 GMT
+      - Tue, 27 Apr 2021 03:38:17 GMT
       expires:
       - '-1'
       pragma:
@@ -1171,7 +1171,7 @@ interactions:
   response:
     body:
       string: '{"name":"myAutomationAccount9","id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_automation_test_automation53db109a/providers/Microsoft.Automation/automationAccounts/myAutomationAccount9","type":"Microsoft.Automation/AutomationAccounts","location":"East
-        US 2","tags":{},"etag":null,"properties":{"sku":{"name":"Basic","family":null,"capacity":null},"state":"Ok","RegistrationUrl":"https://b2be1457-9afa-4398-8c77-0e9aa7479152.agentsvc.eus2.azure-automation.net/accounts/b2be1457-9afa-4398-8c77-0e9aa7479152","creationTime":"2021-04-26T06:16:28.93+00:00","lastModifiedBy":null,"lastModifiedTime":"2021-04-26T06:16:28.93+00:00"}}'
+        US 2","tags":{},"etag":null,"properties":{"sku":{"name":"Basic","family":null,"capacity":null},"state":"Ok","RegistrationUrl":"FakeUrl","creationTime":"2021-04-27T03:37:55.95+00:00","lastModifiedBy":null,"lastModifiedTime":"2021-04-27T03:37:55.95+00:00"}}'
     headers:
       cache-control:
       - no-cache
@@ -1180,11 +1180,11 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Mon, 26 Apr 2021 06:16:51 GMT
+      - Tue, 27 Apr 2021 03:38:18 GMT
       expires:
       - '-1'
       ocp-automation-accountid:
-      - b2be1457-9afa-4398-8c77-0e9aa7479152
+      - f11fb34f-9f0d-4cb8-bd61-851806901599
       pragma:
       - no-cache
       server:
@@ -1225,16 +1225,16 @@ interactions:
   response:
     body:
       string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_automation_test_automation53db109a/providers/Microsoft.Automation/automationAccounts/myAutomationAccount9/modules/module1","name":"module1","type":"Microsoft.Automation/AutomationAccounts/Modules","location":"East
-        US 2","tags":{},"etag":null,"properties":{"isGlobal":false,"version":null,"sizeInBytes":0,"activityCount":0,"creationTime":"2021-04-26T06:16:38.167+00:00","lastModifiedTime":"2021-04-26T06:16:38.317+00:00","error":{"code":null,"message":null},"provisioningState":"Creating","isComposite":false}}'
+        US 2","tags":{},"etag":null,"properties":{"isGlobal":false,"version":null,"sizeInBytes":0,"activityCount":0,"creationTime":"2021-04-27T03:38:03.92+00:00","lastModifiedTime":"2021-04-27T03:38:04.013+00:00","error":{"code":null,"message":null},"provisioningState":"Creating","isComposite":false}}'
     headers:
       cache-control:
       - no-cache
       content-length:
-      - '602'
+      - '601'
       content-type:
       - application/json; charset=utf-8
       date:
-      - Mon, 26 Apr 2021 06:16:52 GMT
+      - Tue, 27 Apr 2021 03:38:18 GMT
       expires:
       - '-1'
       pragma:
@@ -1282,16 +1282,16 @@ interactions:
       content-length:
       - '0'
       date:
-      - Mon, 26 Apr 2021 06:16:53 GMT
+      - Tue, 27 Apr 2021 03:38:19 GMT
       expires:
       - '-1'
       location:
-      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_automation_test_automation53db109a/providers/Microsoft.Automation/automationAccounts/myAutomationAccount9/runbooks/runbook_draft/publish/operationResults/2fbf3aa3-4869-453f-89c5-e5c2447c4e66?api-version=2019-06-01
+      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_automation_test_automation53db109a/providers/Microsoft.Automation/automationAccounts/myAutomationAccount9/runbooks/runbook_draft/publish/operationResults/0e6796fb-3b8c-4c76-9e82-4003fcb0f752?api-version=2019-06-01
       ocp-automation-operationresultid:
-      - 2fbf3aa3-4869-453f-89c5-e5c2447c4e66
-      - 2fbf3aa3-4869-453f-89c5-e5c2447c4e66
+      - 0e6796fb-3b8c-4c76-9e82-4003fcb0f752
+      - 0e6796fb-3b8c-4c76-9e82-4003fcb0f752
       ocp-location:
-      - https://management.azure.com/subscriptions/92f95d8f-3c67-4124-91c7-8cf07cdbf241/resourceGroups/rgpy-test_cli_mgmt_automation_test_automation53db109a/providers/Microsoft.Automation/automationAccounts/myAutomationAccount9/runbooks/runbook_draft/publish/operationResults/2fbf3aa3-4869-453f-89c5-e5c2447c4e66?api-version=2019-06-01
+      - https://management.azure.com/subscriptions/92f95d8f-3c67-4124-91c7-8cf07cdbf241/resourceGroups/rgpy-test_cli_mgmt_automation_test_automation53db109a/providers/Microsoft.Automation/automationAccounts/myAutomationAccount9/runbooks/runbook_draft/publish/operationResults/0e6796fb-3b8c-4c76-9e82-4003fcb0f752?api-version=2019-06-01
       pragma:
       - no-cache
       server:
@@ -1303,7 +1303,7 @@ interactions:
       x-content-type-options:
       - nosniff
       x-ms-location:
-      - https://management.azure.com/subscriptions/92f95d8f-3c67-4124-91c7-8cf07cdbf241/resourceGroups/rgpy-test_cli_mgmt_automation_test_automation53db109a/providers/Microsoft.Automation/automationAccounts/myAutomationAccount9/runbooks/runbook_draft/publish/operationResults/2fbf3aa3-4869-453f-89c5-e5c2447c4e66?api-version=2019-06-01
+      - https://management.azure.com/subscriptions/92f95d8f-3c67-4124-91c7-8cf07cdbf241/resourceGroups/rgpy-test_cli_mgmt_automation_test_automation53db109a/providers/Microsoft.Automation/automationAccounts/myAutomationAccount9/runbooks/runbook_draft/publish/operationResults/0e6796fb-3b8c-4c76-9e82-4003fcb0f752?api-version=2019-06-01
       x-ms-ratelimit-remaining-subscription-writes:
       - '1199'
       x-powered-by:
@@ -1323,7 +1323,7 @@ interactions:
       User-Agent:
       - azsdk-python-mgmt-automation/1.1.0b1 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_automation_test_automation53db109a/providers/Microsoft.Automation/automationAccounts/myAutomationAccount9/runbooks/runbook_draft/publish/operationResults/2fbf3aa3-4869-453f-89c5-e5c2447c4e66?api-version=2019-06-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_automation_test_automation53db109a/providers/Microsoft.Automation/automationAccounts/myAutomationAccount9/runbooks/runbook_draft/publish/operationResults/0e6796fb-3b8c-4c76-9e82-4003fcb0f752?api-version=2019-06-01
   response:
     body:
       string: ''
@@ -1335,7 +1335,7 @@ interactions:
       content-type:
       - text/plain; charset=utf-8
       date:
-      - Mon, 26 Apr 2021 06:17:24 GMT
+      - Tue, 27 Apr 2021 03:38:49 GMT
       expires:
       - '-1'
       pragma:
@@ -1374,7 +1374,7 @@ interactions:
   response:
     body:
       string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_automation_test_automation53db109a/providers/Microsoft.Automation/automationAccounts/myAutomationAccount9/credentials/myCredential","name":"myCredential","type":"Microsoft.Automation/AutomationAccounts/Credentials","properties":{"userName":"mylingaiah","description":"my
-        description goes here","creationTime":"2021-04-26T06:16:47.057+00:00","lastModifiedTime":"2021-04-26T06:16:47.057+00:00"}}'
+        description goes here","creationTime":"2021-04-27T03:38:13.037+00:00","lastModifiedTime":"2021-04-27T03:38:13.037+00:00"}}'
     headers:
       cache-control:
       - no-cache
@@ -1383,7 +1383,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Mon, 26 Apr 2021 06:17:24 GMT
+      - Tue, 27 Apr 2021 03:38:50 GMT
       expires:
       - '-1'
       pragma:
@@ -1426,7 +1426,7 @@ interactions:
     uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_automation_test_automation53db109a/providers/Microsoft.Automation/automationAccounts/myAutomationAccount9/variables/sampleVariable?api-version=2019-06-01
   response:
     body:
-      string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_automation_test_automation53db109a/providers/Microsoft.Automation/automationAccounts/myAutomationAccount9/variables/sampleVariable","name":"sampleVariable","type":"Microsoft.Automation/AutomationAccounts/Variables","properties":{"creationTime":"2021-04-26T06:16:46.42+00:00","lastModifiedTime":"2021-04-26T06:17:25.667+00:00","isEncrypted":false,"value":"\"ComputerName3.domain.com\"","description":"my
+      string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_automation_test_automation53db109a/providers/Microsoft.Automation/automationAccounts/myAutomationAccount9/variables/sampleVariable","name":"sampleVariable","type":"Microsoft.Automation/AutomationAccounts/Variables","properties":{"creationTime":"2021-04-27T03:38:12.347+00:00","lastModifiedTime":"2021-04-27T03:38:51.76+00:00","isEncrypted":false,"value":"\"ComputerName3.domain.com\"","description":"my
         description"}}'
     headers:
       cache-control:
@@ -1436,7 +1436,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Mon, 26 Apr 2021 06:17:25 GMT
+      - Tue, 27 Apr 2021 03:38:51 GMT
       expires:
       - '-1'
       pragma:
@@ -1481,16 +1481,16 @@ interactions:
   response:
     body:
       string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_automation_test_automation53db109a/providers/Microsoft.Automation/automationAccounts/myAutomationAccount9/schedules/mySchedule","name":"mySchedule","type":"Microsoft.Automation/AutomationAccounts/Schedules","properties":{"description":"my
-        updated description of schedule goes here","startTime":"2021-06-27T17:28:00+00:00","startTimeOffsetMinutes":0.0,"expiryTime":"2022-01-01T17:28:00+00:00","expiryTimeOffsetMinutes":0.0,"isEnabled":false,"nextRun":"2021-06-27T17:28:00+00:00","nextRunOffsetMinutes":0.0,"interval":1,"frequency":"Hour","creationTime":"2021-04-26T06:16:45.79+00:00","lastModifiedTime":"2021-04-26T06:16:45.79+00:00","timeZone":"UTC","advancedSchedule":null}}'
+        updated description of schedule goes here","startTime":"2021-06-27T17:28:00+00:00","startTimeOffsetMinutes":0.0,"expiryTime":"2022-01-01T17:28:00+00:00","expiryTimeOffsetMinutes":0.0,"isEnabled":false,"nextRun":"2021-06-27T17:28:00+00:00","nextRunOffsetMinutes":0.0,"interval":1,"frequency":"Hour","creationTime":"2021-04-27T03:38:11.703+00:00","lastModifiedTime":"2021-04-27T03:38:11.703+00:00","timeZone":"UTC","advancedSchedule":null}}'
     headers:
       cache-control:
       - no-cache
       content-length:
-      - '768'
+      - '770'
       content-type:
       - application/json; charset=utf-8
       date:
-      - Mon, 26 Apr 2021 06:17:26 GMT
+      - Tue, 27 Apr 2021 03:38:51 GMT
       expires:
       - '-1'
       pragma:
@@ -1535,19 +1535,19 @@ interactions:
   response:
     body:
       string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_automation_test_automation53db109a/providers/Microsoft.Automation/automationAccounts/myAutomationAccount9/runbooks/Get-AzureVMTutorial","name":"Get-AzureVMTutorial","type":"Microsoft.Automation/AutomationAccounts/Runbooks","location":"East
-        US 2","tags":{"tag01":"value01","tag02":"value02"},"etag":"\"637550146469030000\"","properties":{"description":"Updated
-        Description of the Runbook","logVerbose":false,"logProgress":true,"logActivityTrace":1,"runbookType":"PowerShellWorkflow","parameters":{},"state":"Published","jobCount":0,"provisioningState":"Succeeded","serviceManagementTags":null,"outputTypes":[],"creationTime":"2021-04-26T06:16:40.877+00:00","lastModifiedBy":"{scrubbed}","lastModifiedTime":"2021-04-26T06:17:26.903+00:00"}}'
+        US 2","tags":{"tag01":"value01","tag02":"value02"},"etag":"\"637550915330670000\"","properties":{"description":"Updated
+        Description of the Runbook","logVerbose":false,"logProgress":true,"logActivityTrace":1,"runbookType":"PowerShellWorkflow","parameters":{},"state":"Published","jobCount":0,"provisioningState":"Succeeded","serviceManagementTags":null,"outputTypes":[],"creationTime":"2021-04-27T03:38:06.7+00:00","lastModifiedBy":"{scrubbed}","lastModifiedTime":"2021-04-27T03:38:53.067+00:00"}}'
     headers:
       cache-control:
       - no-cache
       content-length:
-      - '831'
+      - '829'
       content-type:
       - application/json; charset=utf-8
       date:
-      - Mon, 26 Apr 2021 06:17:26 GMT
+      - Tue, 27 Apr 2021 03:38:52 GMT
       etag:
-      - '"637550146469030000"'
+      - '"637550915330670000"'
       expires:
       - '-1'
       pragma:
@@ -1595,7 +1595,7 @@ interactions:
       content-length:
       - '0'
       date:
-      - Mon, 26 Apr 2021 06:17:27 GMT
+      - Tue, 27 Apr 2021 03:38:52 GMT
       expires:
       - '-1'
       pragma:
@@ -1635,7 +1635,7 @@ interactions:
     uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_automation_test_automation53db109a/providers/Microsoft.Automation/automationAccounts/myAutomationAccount9/webhooks/webhook1?api-version=2015-10-31
   response:
     body:
-      string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_automation_test_automation53db109a/providers/Microsoft.Automation/automationAccounts/myAutomationAccount9/webhooks/webhook1","name":"webhook1","type":"Microsoft.Automation/AutomationAccounts/Webhooks","properties":{"isEnabled":false,"expiryTime":"2021-12-29T22:18:13.700287+00:00","runbook":{"name":"Get-AzureVMTutorial"},"lastInvokedTime":null,"runOn":null,"parameters":null,"uri":"","creationTime":"2021-04-26T06:16:45.1536344+00:00","lastModifiedBy":"","lastModifiedTime":"2021-04-26T06:17:28.1445247+00:00"}}'
+      string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_automation_test_automation53db109a/providers/Microsoft.Automation/automationAccounts/myAutomationAccount9/webhooks/webhook1","name":"webhook1","type":"Microsoft.Automation/AutomationAccounts/Webhooks","properties":{"isEnabled":false,"expiryTime":"2021-12-29T22:18:13.700287+00:00","runbook":{"name":"Get-AzureVMTutorial"},"lastInvokedTime":null,"runOn":null,"parameters":null,"uri":"","creationTime":"2021-04-27T03:38:11.0968621+00:00","lastModifiedBy":"","lastModifiedTime":"2021-04-27T03:38:54.2752991+00:00"}}'
     headers:
       cache-control:
       - no-cache
@@ -1644,7 +1644,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Mon, 26 Apr 2021 06:17:28 GMT
+      - Tue, 27 Apr 2021 03:38:53 GMT
       expires:
       - '-1'
       pragma:
@@ -1687,16 +1687,16 @@ interactions:
   response:
     body:
       string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_automation_test_automation53db109a/providers/Microsoft.Automation/automationAccounts/myAutomationAccount9/modules/module1","name":"module1","type":"Microsoft.Automation/AutomationAccounts/Modules","location":"East
-        US 2","tags":{},"etag":null,"properties":{"isGlobal":false,"version":null,"sizeInBytes":0,"activityCount":0,"creationTime":"2021-04-26T06:16:38.167+00:00","lastModifiedTime":"2021-04-26T06:16:38.317+00:00","error":{"code":null,"message":null},"provisioningState":"Creating","isComposite":false}}'
+        US 2","tags":{},"etag":null,"properties":{"isGlobal":false,"version":null,"sizeInBytes":0,"activityCount":0,"creationTime":"2021-04-27T03:38:03.92+00:00","lastModifiedTime":"2021-04-27T03:38:04.013+00:00","error":{"code":null,"message":null},"provisioningState":"Creating","isComposite":false}}'
     headers:
       cache-control:
       - no-cache
       content-length:
-      - '602'
+      - '601'
       content-type:
       - application/json; charset=utf-8
       date:
-      - Mon, 26 Apr 2021 06:17:28 GMT
+      - Tue, 27 Apr 2021 03:38:54 GMT
       expires:
       - '-1'
       pragma:
@@ -1744,7 +1744,7 @@ interactions:
       content-length:
       - '0'
       date:
-      - Mon, 26 Apr 2021 06:18:30 GMT
+      - Tue, 27 Apr 2021 03:39:55 GMT
       expires:
       - '-1'
       pragma:
@@ -1790,7 +1790,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Mon, 26 Apr 2021 06:18:31 GMT
+      - Tue, 27 Apr 2021 03:39:55 GMT
       expires:
       - '-1'
       pragma:
@@ -1835,7 +1835,7 @@ interactions:
   response:
     body:
       string: '{"name":"myAutomationAccount9","id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_automation_test_automation53db109a/providers/Microsoft.Automation/automationAccounts/myAutomationAccount9","type":"Microsoft.Automation/AutomationAccounts","location":"East
-        US 2","tags":{},"etag":null,"properties":{"sku":{"name":"Basic","family":null,"capacity":null},"state":"Ok","RegistrationUrl":"https://b2be1457-9afa-4398-8c77-0e9aa7479152.agentsvc.eus2.azure-automation.net/accounts/b2be1457-9afa-4398-8c77-0e9aa7479152","creationTime":"2021-04-26T06:16:28.93+00:00","lastModifiedBy":null,"lastModifiedTime":"2021-04-26T06:18:31.48+00:00"}}'
+        US 2","tags":{},"etag":null,"properties":{"sku":{"name":"Basic","family":null,"capacity":null},"state":"Ok","RegistrationUrl":"FakeUrl","creationTime":"2021-04-27T03:37:55.95+00:00","lastModifiedBy":null,"lastModifiedTime":"2021-04-27T03:39:56.42+00:00"}}'
     headers:
       cache-control:
       - no-cache
@@ -1844,7 +1844,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Mon, 26 Apr 2021 06:18:31 GMT
+      - Tue, 27 Apr 2021 03:39:56 GMT
       expires:
       - '-1'
       pragma:
@@ -1892,7 +1892,7 @@ interactions:
       content-length:
       - '0'
       date:
-      - Mon, 26 Apr 2021 06:18:32 GMT
+      - Tue, 27 Apr 2021 03:39:56 GMT
       expires:
       - '-1'
       pragma:
@@ -1936,7 +1936,7 @@ interactions:
       content-length:
       - '0'
       date:
-      - Mon, 26 Apr 2021 06:18:35 GMT
+      - Tue, 27 Apr 2021 03:40:00 GMT
       expires:
       - '-1'
       pragma:
@@ -1980,7 +1980,7 @@ interactions:
       content-length:
       - '0'
       date:
-      - Mon, 26 Apr 2021 06:18:35 GMT
+      - Tue, 27 Apr 2021 03:40:00 GMT
       expires:
       - '-1'
       pragma:
@@ -2024,7 +2024,7 @@ interactions:
       content-length:
       - '0'
       date:
-      - Mon, 26 Apr 2021 06:18:37 GMT
+      - Tue, 27 Apr 2021 03:40:02 GMT
       expires:
       - '-1'
       pragma:
@@ -2066,7 +2066,7 @@ interactions:
       content-length:
       - '0'
       date:
-      - Mon, 26 Apr 2021 06:18:42 GMT
+      - Tue, 27 Apr 2021 03:40:08 GMT
       expires:
       - '-1'
       pragma:
@@ -2110,7 +2110,7 @@ interactions:
       content-length:
       - '0'
       date:
-      - Mon, 26 Apr 2021 06:18:43 GMT
+      - Tue, 27 Apr 2021 03:40:08 GMT
       expires:
       - '-1'
       pragma:
@@ -2154,7 +2154,7 @@ interactions:
       content-length:
       - '0'
       date:
-      - Mon, 26 Apr 2021 06:18:48 GMT
+      - Tue, 27 Apr 2021 03:40:13 GMT
       expires:
       - '-1'
       pragma:

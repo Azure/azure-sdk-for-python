@@ -187,7 +187,7 @@ class RENameReplacer(GeneralNameReplacer):
 
     def __init__(self):
         super(RENameReplacer, self).__init__()
-        self.patterns = list()
+        self.patterns = []
 
     def register_pattern_pair(self, expr, new):
         self.patterns.append((expr, new))
