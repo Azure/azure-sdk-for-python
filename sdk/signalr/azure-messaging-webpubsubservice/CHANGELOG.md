@@ -1,4 +1,8 @@
-## 1.0.0b1
+# Release History
 
-Initial version
+## 1.0.0b1 (2021-04-26)
+
+### Features
+
+Initial version of Azure WebPubSub service client library
 
