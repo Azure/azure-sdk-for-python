@@ -12497,7 +12497,7 @@ class DataLakeAnalyticsScopeActivity(ExecutionActivity):
         'notifier': {'key': 'typeProperties.notifier', 'type': 'object'},
         'scope_script_inclusion_set': {'key': 'typeProperties.scopeScriptInclusionSet', 'type': 'object'},
         'priority': {'key': 'typeProperties.priority', 'type': 'object'},
-        'parameters': {'key': 'typeProperties.parameters', 'type': '{object}'},
+        'parameters': {'key': 'typeProperties.parameters', 'type': 'object'},
         'runtime_version': {'key': 'typeProperties.runtimeVersion', 'type': 'object'},
         'compilation_mode': {'key': 'typeProperties.compilationMode', 'type': 'object'},
     }
