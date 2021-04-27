@@ -11,4 +11,4 @@ __all__ = [
     "MonitorQueryClient",
 ]
 
-__version__ == VERSION
+__version__ = VERSION
