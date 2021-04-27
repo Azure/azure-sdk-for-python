@@ -121,5 +121,4 @@ jobs:
         TestMarkArgument: ${{ parameters.TestMarkArgument }}
         OSVmImage: $(OSVmImage)
         PythonVersion: $(PythonVersion)
-        CondaArtifacts: ${{ parameters.CondaArtifacts }}
 
