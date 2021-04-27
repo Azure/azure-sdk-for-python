@@ -23,7 +23,7 @@ from .._models import (
     FileFormat,
     DocumentStatusResult
 )
-from .._helpers import get_http_logging_policy
+from .._helpers import get_http_logging_policy, convert_datetime
 from .._polling import TranslationPolling
 COGNITIVE_KEY_HEADER = "Ocp-Apim-Subscription-Key"
 
@@ -242,6 +242,11 @@ class DocumentTranslationClient(object):
                 :caption: List all submitted jobs under the resource.
         """
 
+        created_after=kwargs.pop("created_after", None),
+        created_before=kwargs.pop("created_before", None),
+        created_after = convert_datetime(created_after) if created_after else None
+        created_before = convert_datetime(created_before) if created_before else None
+
         def _convert_from_generated_model(generated_model):
             # pylint: disable=protected-access
             return JobStatusResult._from_generated(generated_model)
@@ -253,6 +258,9 @@ class DocumentTranslationClient(object):
 
         return self._client.document_translation.get_operations(
             cls=model_conversion_function,
+            maxpagesize=kwargs.pop("results_per_page", None),
+            created_date_time_utc_start=kwargs.pop("created_after", None),
+            created_date_time_utc_end=kwargs.pop("created_before", None),
             **kwargs
         )
 
