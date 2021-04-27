@@ -305,6 +305,8 @@ def lro_get_next_page(lro_status_callback, first_page, continuation_token, show_
     parsed_url = urlparse(continuation_token)
     job_id = parsed_url.path.split("/")[-1]
     query_params = dict(parse_qsl(parsed_url.query.replace("$", "")))
+    if "showStats" in query_params:
+        query_params.pop("showStats")
     query_params["show_stats"] = show_stats
 
     return lro_status_callback(job_id, **query_params)
