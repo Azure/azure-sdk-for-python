@@ -1,5 +1,5 @@
 # Release History
 
-## 1.0.0b1 (April 27th 2020)
+## 1.0.0b1 (2020-04-27)
 
 * Initial (Preview) Release

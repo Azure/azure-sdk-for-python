@@ -40,7 +40,7 @@ The following sections provide several snippets covering common Models Repositor
 ### Initializing the ModelsRepositoryClient
 
 #### Repository Location
-When no repsository location is provided during instantiation, the Azure IoT Models Repository global endpoint (https://devicemodels.azure.com/) is used
+When no repository location is provided during instantiation, the Azure IoT Models Repository global endpoint (https://devicemodels.azure.com/) is used
 
 ```python
 client = ModelsRepositoryClient()
@@ -107,7 +107,7 @@ with ModelsRepositoryClient() as client:
 print("{} resolved in {} interfaces".format(dtmi, len(models)))
 ```
 
-By default the client will use whichever [dependency resolution mode](#dependency-resolution-mode, "Dependency resolution mode") it was configured with at instantiation when retreiving models. However, this behaviour can be overridden by passing any of the valid options in as an optional keyword argument to `.get_models()`
+By default the client will use whichever [dependency resolution mode](#dependency-resolution-mode, "Dependency resolution mode") it was configured with at instantiation when retrieving models. However, this behavior can be overridden by passing any of the valid options in as an optional keyword argument to `.get_models()`
 
 ```python
 dtmi = "dtmi:com:example:TemperatureController;1"
@@ -154,7 +154,7 @@ This library uses the standard [logging][logging_doc] library for logging. Infor
 Models Repository APIs may raise exceptions defined in [azure-core][azure_core_exceptions].
 
 Additionally, they may raise exceptions defined in the `azure-iot-modelsrepository`:
-* `ModelError` - Indicates an error occured while trying to parse/resolve a model definition. This generally means that there is a malformed model that does not comply with the [model DTDL specification][dtdl_spec]
+* `ModelError` - Indicates an error occurred while trying to parse/resolve a model definition. This generally means that there is a malformed model that does not comply with the [model DTDL specification][dtdl_spec]
 
 ### Provide Feedback
 If you encounter bugs or have suggestions, please
