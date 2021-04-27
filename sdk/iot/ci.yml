@@ -29,3 +29,6 @@ extends:
   template: ../../eng/pipelines/templates/stages/archetype-sdk-client.yml
   parameters:
     ServiceDirectory: iot
+    Artifacts:
+    - name: azure_iot_nspkg
+      safeName: azureiotnspkg
