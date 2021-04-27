@@ -34,29 +34,28 @@ The repository defines a pattern to store DTDL interfaces in a directory structu
 ## Examples
 The following sections provide several snippets covering common Models Repository tasks:
 * [Initializing the ModelsRepositoryClient](#initializing-the-modelsrepositoryclient, "Initializing the ModelsRepositoryClient")
-* [Get Models](#get-models, "Get models")
+* [Get Models](#modelsrepositoryclient---get-models, "Get models")
 * [DTMI Conventions](#dtmi-conventions, "DTMI Conventions")
 
 ### Initializing the ModelsRepositoryClient
+
+#### Repository Location
 When no repsository location is provided during instantiation, the Azure IoT Models Repository global endpoint (https://devicemodels.azure.com/) is used
 
 ```python
 client = ModelsRepositoryClient()
 ```
 
-Alternatively, you can provide a custom URL where your repository is located
-
+Alternatively, you can provide a custom location for where your repository is located via the optional `repository_location` keyword. The client accepts the following location formats:
+* Web URL - e.g. `"https://contoso.com/models/"`
+* Local Filesystem URI - e.g. `"file:///path/to/repository/"`
+* POSIX filepath - e.g. `"/path/to/repository/"`
+* Drive letter filepath - e.g. `"C:/path/to/repository/"`
 ```python
-client = ModelsRepositoryClient(repository_location="https://fake.myrepository.com/")
+client = ModelsRepositoryClient(repository_location="https://contoso.com/models/")
 ```
 
-The client will also work with a local filesystem path if your repository is set up locally
-
-```python
-client = ModelsRepositoryClient(repository_location="file:///home/fake/myrepository")
-```
-
-#### Additional options
+#### Dependency Resolution Mode
 The client can be configured with an optional `dependency_resolution` mode at instantiation, using one of the following values:
 * `'disabled'` - The client will not resolve model dependencies
 * `'enabled'` - The client will resolve any model dependencies
@@ -70,6 +69,7 @@ If the `dependency_resolution` mode is not specified:
 * Clients configured for the Azure IoT Models Repository global endpoint will default to using `'tryFromExpanded'`
 * Clients configured for a custom location (remote or local) will default to using `'enabled'`
 
+#### Additional Options
 If you need to override default pipeline behavior from the [azure-core library][azure_core_docs], you can provide various [keyword arguments][azure_core_kwargs] during instantiation.
 
 #### Client cleanup
@@ -107,7 +107,7 @@ with ModelsRepositoryClient() as client:
 print("{} resolved in {} interfaces".format(dtmi, len(models)))
 ```
 
-By default the client will use whichever [dependency resolution mode](#additional-options, "Dependency resolution mode") it was configured with at instantiation when retreiving models. However, this behaviour can be overridden by passing any of the valid options in as an optional keyword argument to `.get_models()`
+By default the client will use whichever [dependency resolution mode](#dependency-resolution-mode, "Dependency resolution mode") it was configured with at instantiation when retreiving models. However, this behaviour can be overridden by passing any of the valid options in as an optional keyword argument to `.get_models()`
 
 ```python
 dtmi = "dtmi:com:example:TemperatureController;1"
