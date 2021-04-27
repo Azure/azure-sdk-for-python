@@ -31,11 +31,11 @@ if TYPE_CHECKING:
     from azure.core.credentials_async import AsyncTokenCredential
 
 
-class ContainerRepositoryClient(ContainerRegistryBaseClient):
+class ContainerRepository(ContainerRegistryBaseClient):
     def __init__(
         self, endpoint: str, repository: str, credential: "AsyncTokenCredential", **kwargs: Dict[str, Any]
     ) -> None:
-        """Create a ContainerRepositoryClient from an endpoint, repository name, and credential
+        """Create a ContainerRepository from an endpoint, repository name, and credential
 
         :param endpoint: An ACR endpoint
         :type endpoint: str
@@ -51,7 +51,7 @@ class ContainerRepositoryClient(ContainerRegistryBaseClient):
         self._endpoint = endpoint
         self._credential = credential
         self.repository = repository
-        super(ContainerRepositoryClient, self).__init__(endpoint=self._endpoint, credential=credential, **kwargs)
+        super(ContainerRepository, self).__init__(endpoint=self._endpoint, credential=credential, **kwargs)
 
     async def _get_digest_from_tag(self, tag: str) -> None:
         tag_props = await self.get_tag_properties(tag)
@@ -404,4 +404,16 @@ class ContainerRepositoryClient(ContainerRegistryBaseClient):
             await self._client.container_registry.update_tag_attributes(
                 self.repository, tag, value=permissions._to_generated(), **kwargs  # pylint: disable=protected-access
             )
+        )
+
+    @distributed_trace_async
+    async def set_properties(self, properties, **kwargs):
+        # type: (RepositoryProperties, Dict[str, Any]) -> RepositoryProperties
+        """Set the properties of a repository
+
+        :returns: :class:`~azure.containerregistry.RepositoryProperties`
+        :raises: :class:`~azure.core.exceptions.ResourceNotFoundError`
+        """
+        return RepositoryProperties._from_generated(  # pylint: disable=protected-access
+            await self._client.container_registry.set_properties(self.repository, properties._to_generated(), **kwargs)
         )

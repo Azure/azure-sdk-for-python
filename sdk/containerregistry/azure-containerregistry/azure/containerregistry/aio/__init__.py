@@ -7,9 +7,9 @@
 # --------------------------------------------------------------------------
 
 from ._async_container_registry_client import ContainerRegistryClient
-from ._async_container_repository_client import ContainerRepositoryClient
+from ._async_container_repository_client import ContainerRepository
 
 __all__ = [
     "ContainerRegistryClient",
-    "ContainerRepositoryClient",
+    "ContainerRepository",
 ]

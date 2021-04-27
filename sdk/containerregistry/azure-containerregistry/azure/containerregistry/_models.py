@@ -7,10 +7,10 @@
 from enum import Enum
 from typing import TYPE_CHECKING
 from ._generated.models import ContentProperties
+from ._generated.models import RepositoryProperties as GeneratedRepositoryProperties
 
 if TYPE_CHECKING:
     from ._generated.models import ManifestAttributesBase
-    from ._generated.models import RepositoryProperties as GeneratedRepositoryProperties
     from ._generated.models import ArtifactTagProperties as GeneratedTagProperties
 
 
@@ -150,6 +150,17 @@ class RepositoryProperties(object):
             tag_count=generated.tag_count,
             content_permissions=generated.writeable_properties,
             registry=generated.additional_properties.get("registry", None),
+        )
+
+    def _to_generated(self):
+        # type: () -> GeneratedRepositoryProperties
+        return GeneratedRepositoryProperties(
+            name=self.name,
+            created_on=self.created_on,
+            last_updated_on=self.last_updated_on,
+            manifest_count=self.manifest_count,
+            tag_count=self.tag_count,
+            writeable_propertie=self.content_permissions._to_generated()
         )
 
 

@@ -18,7 +18,7 @@ from azure.core.tracing.decorator import distributed_trace
 from azure.core.tracing.decorator_async import distributed_trace_async
 
 from ._async_base_client import ContainerRegistryBaseClient, AsyncTransportWrapper
-from ._async_container_repository_client import ContainerRepositoryClient
+from ._async_container_repository_client import ContainerRepository
 from .._generated.models import AcrErrors
 from .._helpers import _parse_next_link
 from .._models import RepositoryProperties, DeletedRepositoryResult
@@ -162,12 +162,12 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
         return AsyncItemPaged(get_next, extract_data)
 
     @distributed_trace
-    def get_repository_client(self, repository: str, **kwargs: Dict[str, Any]) -> ContainerRepositoryClient:
+    def get_repository_client(self, repository: str, **kwargs: Dict[str, Any]) -> ContainerRepository:
         """Get a repository client
 
         :param repository: The repository to create a client for
         :type repository: str
-        :returns: :class:`~azure.containerregistry.aio.ContainerRepositoryClient`
+        :returns: :class:`~azure.containerregistry.aio.ContainerRepository`
         """
         _pipeline = AsyncPipeline(
             transport=AsyncTransportWrapper(
@@ -175,6 +175,6 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
             ),
             policies=self._client._client._pipeline._impl_policies,  # pylint: disable=protected-access
         )
-        return ContainerRepositoryClient(
+        return ContainerRepository(
             self._endpoint, repository, credential=self._credential, pipeline=_pipeline, **kwargs
         )

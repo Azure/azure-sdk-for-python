@@ -10,7 +10,7 @@
 FILE: sample_create_client.py
 
 DESCRIPTION:
-    These samples demonstrate creating a ContainerRegistryClient and a ContainerRepositoryClient
+    These samples demonstrate creating a ContainerRegistryClient and a ContainerRepository
 
 USAGE:
     python sample_create_client.py
@@ -40,10 +40,10 @@ class CreateClients(object):
     def create_repository_client(self):
         # Instantiate the ContainerRegistryClient
         # [START create_repository_client]
-        from azure.containerregistry import ContainerRepositoryClient
+        from azure.containerregistry import ContainerRepository
         from azure.identity import DefaultAzureCredential
 
-        client = ContainerRepositoryClient(self.account_url, "my_repository", DefaultAzureCredential())
+        client = ContainerRepository(self.account_url, "my_repository", DefaultAzureCredential())
         # [END create_repository_client]
 
     def basic_sample(self):

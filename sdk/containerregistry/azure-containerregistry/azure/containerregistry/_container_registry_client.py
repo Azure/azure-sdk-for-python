@@ -16,7 +16,7 @@ from azure.core.pipeline import Pipeline
 from azure.core.tracing.decorator import distributed_trace
 
 from ._base_client import ContainerRegistryBaseClient, TransportWrapper
-from ._container_repository_client import ContainerRepositoryClient
+from ._container_repository_client import ContainerRepository
 from ._generated.models import AcrErrors
 from ._helpers import _parse_next_link
 from ._models import DeletedRepositoryResult
@@ -166,17 +166,17 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
 
     @distributed_trace
     def get_repository_client(self, repository, **kwargs):
-        # type: (str, Dict[str, Any]) -> ContainerRepositoryClient
+        # type: (str, Dict[str, Any]) -> ContainerRepository
         """Get a repository client
 
         :param str repository: The repository to create a client for
-        :returns: :class:`~azure.containerregistry.ContainerRepositoryClient`
+        :returns: :class:`~azure.containerregistry.ContainerRepository`
         :raises: None
         """
         _pipeline = Pipeline(
             transport=TransportWrapper(self._client._client._pipeline._transport),  # pylint: disable=protected-access
             policies=self._client._client._pipeline._impl_policies,  # pylint: disable=protected-access
         )
-        return ContainerRepositoryClient(
+        return ContainerRepository(
             self._endpoint, repository, credential=self._credential, pipeline=_pipeline, **kwargs
         )

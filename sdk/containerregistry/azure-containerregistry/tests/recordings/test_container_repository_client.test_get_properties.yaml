@@ -31,7 +31,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Tue, 13 Apr 2021 15:59:17 GMT
+      - Tue, 27 Apr 2021 21:52:55 GMT
       docker-distribution-api-version:
       - registry/2.0
       server:
@@ -72,7 +72,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Tue, 13 Apr 2021 15:59:19 GMT
+      - Tue, 27 Apr 2021 21:52:57 GMT
       server:
       - openresty
       strict-transport-security:
@@ -80,45 +80,7 @@ interactions:
       transfer-encoding:
       - chunked
       x-ms-ratelimit-remaining-calls-per-second:
-      - '165.883333'
-    status:
-      code: 200
-      message: OK
-- request:
-    body: grant_type=refresh_token&service=fake_url.azurecr.io&scope=repository%3Alibrary%2Fhello-world%3Ametadata_read&refresh_token=REDACTED
-    headers:
-      Accept:
-      - application/json
-      Accept-Encoding:
-      - gzip, deflate
-      Connection:
-      - keep-alive
-      Content-Length:
-      - '1089'
-      Content-Type:
-      - application/x-www-form-urlencoded
-      User-Agent:
-      - azsdk-python-azure-containerregistry/1.0.0b1 Python/3.9.0rc1 (Windows-10-10.0.19041-SP0)
-    method: POST
-    uri: https://fake_url.azurecr.io/oauth2/token
-  response:
-    body:
-      string: '{"access_token": "REDACTED"}'
-    headers:
-      connection:
-      - keep-alive
-      content-type:
-      - application/json; charset=utf-8
-      date:
-      - Tue, 13 Apr 2021 15:59:19 GMT
-      server:
-      - openresty
-      strict-transport-security:
-      - max-age=31536000; includeSubDomains
-      transfer-encoding:
-      - chunked
-      x-ms-ratelimit-remaining-calls-per-second:
-      - '165.766667'
+      - '166.65'
     status:
       code: 200
       message: OK
@@ -138,9 +100,10 @@ interactions:
   response:
     body:
       string: '{"registry": "fake_url.azurecr.io", "imageName": "library/hello-world",
-        "createdTime": "2021-04-13T15:10:43.6788287Z", "lastUpdateTime": "2021-04-13T15:26:48.3839908Z",
-        "manifestCount": 10, "tagCount": 5, "changeableAttributes": {"deleteEnabled":
-        true, "writeEnabled": true, "readEnabled": true, "listEnabled": true}}'
+        "createdTime": "2021-04-13T15:10:43.6788287Z", "lastUpdateTime": "2021-04-20T12:50:15.1385136Z",
+        "manifestCount": 12, "tagCount": 5, "changeableAttributes": {"deleteEnabled":
+        false, "writeEnabled": false, "readEnabled": false, "listEnabled": false,
+        "teleportEnabled": false}}'
     headers:
       access-control-expose-headers:
       - Docker-Content-Digest
@@ -150,11 +113,11 @@ interactions:
       connection:
       - keep-alive
       content-length:
-      - '298'
+      - '326'
       content-type:
       - application/json; charset=utf-8
       date:
-      - Tue, 13 Apr 2021 15:59:19 GMT
+      - Tue, 27 Apr 2021 21:52:57 GMT
       docker-distribution-api-version:
       - registry/2.0
       server:

@@ -12,7 +12,6 @@ from azure.containerregistry import (
     DeletedRepositoryResult,
     RepositoryProperties,
 )
-from azure.containerregistry.aio import ContainerRegistryClient, ContainerRepositoryClient
 from azure.core.exceptions import ResourceNotFoundError
 from azure.core.paging import ItemPaged
 from azure.core.pipeline.transport import AioHttpTransport

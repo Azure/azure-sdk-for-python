@@ -10,7 +10,7 @@ import re
 import six
 
 from azure.containerregistry.aio import (
-    ContainerRepositoryClient,
+    ContainerRepository,
     ContainerRegistryClient,
 )
 from azure.containerregistry import (
@@ -56,8 +56,8 @@ class AsyncContainerRegistryTestClass(ContainerRegistryTestClass):
             **kwargs,
         )
 
-    def create_repository_client(self, endpoint, name, **kwargs):
-        return ContainerRepositoryClient(
+    def create_container_repository(self, endpoint, name, **kwargs):
+        return ContainerRepository(
             endpoint=endpoint,
             repository=name,
             credential=self.get_credential(),

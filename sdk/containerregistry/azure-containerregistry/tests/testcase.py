@@ -13,7 +13,7 @@ import six
 import time
 
 from azure.containerregistry import (
-    ContainerRepositoryClient,
+    ContainerRepository,
     ContainerRegistryClient,
     TagProperties,
     ContentPermissions,
@@ -156,7 +156,7 @@ class ContainerRegistryTestClass(AzureTestCase):
         reg_client = self.create_registry_client(endpoint)
         for repo in reg_client.list_repositories():
             if repo.startswith("repo"):
-                repo_client = self.create_repository_client(endpoint, repo)
+                repo_client = self.create_container_repository(endpoint, repo)
                 for tag in repo_client.list_tags():
 
                     try:
@@ -188,8 +188,8 @@ class ContainerRegistryTestClass(AzureTestCase):
     def create_registry_client(self, endpoint, **kwargs):
         return ContainerRegistryClient(endpoint=endpoint, credential=self.get_credential(), **kwargs)
 
-    def create_repository_client(self, endpoint, name, **kwargs):
-        return ContainerRepositoryClient(endpoint=endpoint, repository=name, credential=self.get_credential(), **kwargs)
+    def create_container_repository(self, endpoint, name, **kwargs):
+        return ContainerRepository(endpoint=endpoint, repository=name, credential=self.get_credential(), **kwargs)
 
     def assert_content_permission(self, content_perm, content_perm2):
         assert isinstance(content_perm, ContentPermissions)

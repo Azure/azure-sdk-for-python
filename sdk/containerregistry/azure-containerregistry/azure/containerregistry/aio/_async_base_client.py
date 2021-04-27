@@ -22,7 +22,7 @@ class ContainerRegistryApiVersion(str, Enum):
 
 
 class ContainerRegistryBaseClient(object):
-    """Base class for ContainerRegistryClient and ContainerRepositoryClient
+    """Base class for ContainerRegistryClient and ContainerRepository
 
     :param endpoint: Azure Container Registry endpoint
     :type endpoint: str

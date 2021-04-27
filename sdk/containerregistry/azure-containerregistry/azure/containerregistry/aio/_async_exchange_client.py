@@ -61,7 +61,8 @@ class ACRExchangeClient(object):
 
     async def get_acr_access_token(self, challenge: str, **kwargs: Dict[str, Any]) -> str:
         parsed_challenge = _parse_challenge(challenge)
-        refresh_token = await self.get_refresh_token(parsed_challenge["service"], **kwargs)
+        # refresh_token = await self.get_refresh_token(parsed_challenge["service"], **kwargs)  # TODO: This is interfering with recordings
+        refresh_token = await self.exchange_aad_token_for_refresh_token(parsed_challenge["service"], **kwargs)
         return await self.exchange_refresh_token_for_access_token(
             refresh_token, service=parsed_challenge["service"], scope=parsed_challenge["scope"], **kwargs
         )
