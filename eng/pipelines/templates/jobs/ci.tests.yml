@@ -31,6 +31,9 @@ parameters:
   - name: CloudConfig
     type: object
     default: {}
+  - name: CondaArtifacts
+    type: object
+    default: []
 
 jobs:
   - job:
@@ -110,3 +113,17 @@ jobs:
             parameters:
               ServiceDirectory: ${{ parameters.ServiceDirectory }}
               BuildTargetingString: ${{ parameters.BuildTargetingString }}
+
+    - template: ../steps/test-conda.yml
+      parameters:
+        CondaArtifacts: ${{ parameters.CondaArtifacts }}
+        ServiceDirectory: ${{ parameters.ServiceDirectory }}
+        TestMarkArgument: ${{ parameters.TestMarkArgument }}
+        OSVmImage: $(OSVmImage)
+        PythonVersion: $(PythonVersion)
+        CondaArtifacts: ${{ parameters.CondaArtifacts }}
+        BeforeTestSteps:
+          - task: DownloadPipelineArtifact@2
+            inputs:
+              artifactName: 'conda'
+              targetPath: $(Build.ArtifactStagingDirectory)
