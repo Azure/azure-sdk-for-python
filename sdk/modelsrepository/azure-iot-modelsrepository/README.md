@@ -147,23 +147,14 @@ print(dtmi_conventions.get_model_uri(dtmi, repo_uri, expanded=True))
 
 ## Troubleshooting
 
-### General
-Models Repository clients raise exceptions defined in [azure-core][azure_core_exceptions].
-
 ### Logging
 This library uses the standard [logging][logging_doc] library for logging. Information about HTTP sessions (URLs, headers, etc.) is logged at `DEBUG` level.
 
 ### Exceptions
-Models Repository APIs may generate the following exceptions from the following packages:
+Models Repository APIs may raise exceptions defined in [azure-core][azure_core_exceptions].
 
-#### azure.iot.modelsrepository
+Additionally, they may raise exceptions defined in the `azure-iot-modelsrepository`:
 * `ModelError` - Indicates an error occured while trying to parse/resolve a model definition. This generally means that there is a malformed model that does not comply with the [model DTDL specification][dtdl_spec]
-
-#### azure.core.exceptions
-* `ResourceNotFoundError` - Indicates a model could not be found in the repository
-* `ServiceRequestError` - Indicates there was an error in making a request to the repository for a model
-* `ServiceResponseError` - Indicates that a request to the repository could not be completed
-* `HttpResponseError` - Indicates that an unexpected failure response was received from the service 
 
 ### Provide Feedback
 If you encounter bugs or have suggestions, please
