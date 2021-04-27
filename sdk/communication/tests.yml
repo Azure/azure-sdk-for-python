@@ -1,7 +1,7 @@
 trigger: none
 
 parameters:
-  - name: TestPackagesEnabled
+  - name: TestPackagesEnabled 
     type: object
     default:
       - identity
@@ -25,6 +25,7 @@ stages:
         EnvVars:
           AZURE_TEST_RUN_LIVE: 'true'
           AZURE_TENANT_ID: $(aad-azure-sdk-test-tenant-id)
+          AZURE_SUBSCRIPTION_ID: $(acs-subscription-id)
           AZURE_CLIENT_SECRET: $(aad-azure-sdk-test-client-secret)
           AZURE_CLIENT_ID: $(aad-azure-sdk-test-client-id)
           AZURE_COMMUNICATION_SERVICE_CONNECTION_STRING: $(communication-livetest-connection-string)
