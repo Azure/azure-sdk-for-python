@@ -9,27 +9,25 @@
 try:
     from ._models_py3 import AssetSink
     from ._models_py3 import CertificateSource
-    from ._models_py3 import CognitiveServicesVisionExtension
-    from ._models_py3 import Credentials
-    from ._models_py3 import Endpoint
+    from ._models_py3 import CognitiveServicesVisionProcessor
+    from ._models_py3 import CredentialsBase
+    from ._models_py3 import EndpointBase
     from ._models_py3 import ExtensionProcessorBase
     from ._models_py3 import FileSink
     from ._models_py3 import GrpcExtension
     from ._models_py3 import GrpcExtensionDataTransfer
     from ._models_py3 import HttpExtension
     from ._models_py3 import HttpHeaderCredentials
-    from ._models_py3 import Image
-    from ._models_py3 import ImageFormat
     from ._models_py3 import ImageFormatBmp
     from ._models_py3 import ImageFormatJpeg
     from ._models_py3 import ImageFormatPng
+    from ._models_py3 import ImageFormatProperties
     from ._models_py3 import ImageFormatRaw
+    from ._models_py3 import ImageProperties
     from ._models_py3 import ImageScale
     from ._models_py3 import IotHubMessageSink
     from ._models_py3 import IotHubMessageSource
     from ._models_py3 import ItemNonSetRequestBase
-    from ._models_py3 import Line
-    from ._models_py3 import LineCoordinates
     from ._models_py3 import LineCrossingProcessor
     from ._models_py3 import LivePipeline
     from ._models_py3 import LivePipelineActivateRequest
@@ -43,6 +41,10 @@ try:
     from ._models_py3 import LivePipelineSetRequestBody
     from ._models_py3 import MethodRequest
     from ._models_py3 import MotionDetectionProcessor
+    from ._models_py3 import NamedLineBase
+    from ._models_py3 import NamedLineString
+    from ._models_py3 import NamedPolygonBase
+    from ._models_py3 import NamedPolygonString
     from ._models_py3 import NodeInput
     from ._models_py3 import ObjectTrackingProcessor
     from ._models_py3 import OutputSelector
@@ -57,43 +59,58 @@ try:
     from ._models_py3 import PipelineTopologyProperties
     from ._models_py3 import PipelineTopologySetRequest
     from ._models_py3 import PipelineTopologySetRequestBody
-    from ._models_py3 import Point
-    from ._models_py3 import Processor
+    from ._models_py3 import ProcessorNodeBase
     from ._models_py3 import RtspSource
     from ._models_py3 import SamplingOptions
     from ._models_py3 import SignalGateProcessor
-    from ._models_py3 import Sink
-    from ._models_py3 import Source
+    from ._models_py3 import SinkNodeBase
+    from ._models_py3 import SourceNodeBase
+    from ._models_py3 import SpatialAnalysisCustomOperation
+    from ._models_py3 import SpatialAnalysisOperationBase
+    from ._models_py3 import SpatialAnalysisOperationEventBase
+    from ._models_py3 import SpatialAnalysisPersonCountEvent
+    from ._models_py3 import SpatialAnalysisPersonCountOperation
+    from ._models_py3 import SpatialAnalysisPersonCountZoneEvents
+    from ._models_py3 import SpatialAnalysisPersonDistanceEvent
+    from ._models_py3 import SpatialAnalysisPersonDistanceOperation
+    from ._models_py3 import SpatialAnalysisPersonDistanceZoneEvents
+    from ._models_py3 import SpatialAnalysisPersonLineCrossingEvent
+    from ._models_py3 import SpatialAnalysisPersonLineCrossingLineEvents
+    from ._models_py3 import SpatialAnalysisPersonLineCrossingOperation
+    from ._models_py3 import SpatialAnalysisPersonZoneCrossingEvent
+    from ._models_py3 import SpatialAnalysisPersonZoneCrossingOperation
+    from ._models_py3 import SpatialAnalysisPersonZoneCrossingZoneEvents
+    from ._models_py3 import SpatialAnalysisTypedOperationBase
     from ._models_py3 import SymmetricKeyCredentials
     from ._models_py3 import SystemData
     from ._models_py3 import TlsEndpoint
     from ._models_py3 import TlsValidationOptions
     from ._models_py3 import UnsecuredEndpoint
     from ._models_py3 import UsernamePasswordCredentials
+    from ._models_py3 import VideoCreationProperties
+    from ._models_py3 import VideoSink
 except (SyntaxError, ImportError):
     from ._models import AssetSink  # type: ignore
     from ._models import CertificateSource  # type: ignore
-    from ._models import CognitiveServicesVisionExtension  # type: ignore
-    from ._models import Credentials  # type: ignore
-    from ._models import Endpoint  # type: ignore
+    from ._models import CognitiveServicesVisionProcessor  # type: ignore
+    from ._models import CredentialsBase  # type: ignore
+    from ._models import EndpointBase  # type: ignore
     from ._models import ExtensionProcessorBase  # type: ignore
     from ._models import FileSink  # type: ignore
     from ._models import GrpcExtension  # type: ignore
     from ._models import GrpcExtensionDataTransfer  # type: ignore
     from ._models import HttpExtension  # type: ignore
     from ._models import HttpHeaderCredentials  # type: ignore
-    from ._models import Image  # type: ignore
-    from ._models import ImageFormat  # type: ignore
     from ._models import ImageFormatBmp  # type: ignore
     from ._models import ImageFormatJpeg  # type: ignore
     from ._models import ImageFormatPng  # type: ignore
+    from ._models import ImageFormatProperties  # type: ignore
     from ._models import ImageFormatRaw  # type: ignore
+    from ._models import ImageProperties  # type: ignore
     from ._models import ImageScale  # type: ignore
     from ._models import IotHubMessageSink  # type: ignore
     from ._models import IotHubMessageSource  # type: ignore
     from ._models import ItemNonSetRequestBase  # type: ignore
-    from ._models import Line  # type: ignore
-    from ._models import LineCoordinates  # type: ignore
     from ._models import LineCrossingProcessor  # type: ignore
     from ._models import LivePipeline  # type: ignore
     from ._models import LivePipelineActivateRequest  # type: ignore
@@ -107,6 +124,10 @@ except (SyntaxError, ImportError):
     from ._models import LivePipelineSetRequestBody  # type: ignore
     from ._models import MethodRequest  # type: ignore
     from ._models import MotionDetectionProcessor  # type: ignore
+    from ._models import NamedLineBase  # type: ignore
+    from ._models import NamedLineString  # type: ignore
+    from ._models import NamedPolygonBase  # type: ignore
+    from ._models import NamedPolygonString  # type: ignore
     from ._models import NodeInput  # type: ignore
     from ._models import ObjectTrackingProcessor  # type: ignore
     from ._models import OutputSelector  # type: ignore
@@ -121,19 +142,36 @@ except (SyntaxError, ImportError):
     from ._models import PipelineTopologyProperties  # type: ignore
     from ._models import PipelineTopologySetRequest  # type: ignore
     from ._models import PipelineTopologySetRequestBody  # type: ignore
-    from ._models import Point  # type: ignore
-    from ._models import Processor  # type: ignore
+    from ._models import ProcessorNodeBase  # type: ignore
     from ._models import RtspSource  # type: ignore
     from ._models import SamplingOptions  # type: ignore
     from ._models import SignalGateProcessor  # type: ignore
-    from ._models import Sink  # type: ignore
-    from ._models import Source  # type: ignore
+    from ._models import SinkNodeBase  # type: ignore
+    from ._models import SourceNodeBase  # type: ignore
+    from ._models import SpatialAnalysisCustomOperation  # type: ignore
+    from ._models import SpatialAnalysisOperationBase  # type: ignore
+    from ._models import SpatialAnalysisOperationEventBase  # type: ignore
+    from ._models import SpatialAnalysisPersonCountEvent  # type: ignore
+    from ._models import SpatialAnalysisPersonCountOperation  # type: ignore
+    from ._models import SpatialAnalysisPersonCountZoneEvents  # type: ignore
+    from ._models import SpatialAnalysisPersonDistanceEvent  # type: ignore
+    from ._models import SpatialAnalysisPersonDistanceOperation  # type: ignore
+    from ._models import SpatialAnalysisPersonDistanceZoneEvents  # type: ignore
+    from ._models import SpatialAnalysisPersonLineCrossingEvent  # type: ignore
+    from ._models import SpatialAnalysisPersonLineCrossingLineEvents  # type: ignore
+    from ._models import SpatialAnalysisPersonLineCrossingOperation  # type: ignore
+    from ._models import SpatialAnalysisPersonZoneCrossingEvent  # type: ignore
+    from ._models import SpatialAnalysisPersonZoneCrossingOperation  # type: ignore
+    from ._models import SpatialAnalysisPersonZoneCrossingZoneEvents  # type: ignore
+    from ._models import SpatialAnalysisTypedOperationBase  # type: ignore
     from ._models import SymmetricKeyCredentials  # type: ignore
     from ._models import SystemData  # type: ignore
     from ._models import TlsEndpoint  # type: ignore
     from ._models import TlsValidationOptions  # type: ignore
     from ._models import UnsecuredEndpoint  # type: ignore
     from ._models import UsernamePasswordCredentials  # type: ignore
+    from ._models import VideoCreationProperties  # type: ignore
+    from ._models import VideoSink  # type: ignore
 
 from ._direct_methodsfor_azure_video_analyzeron_io_tedge_enums import (
     GrpcExtensionDataTransferMode,
@@ -146,32 +184,34 @@ from ._direct_methodsfor_azure_video_analyzeron_io_tedge_enums import (
     OutputSelectorProperty,
     ParameterType,
     RtspTransport,
+    SpatialAnalysisOperationFocus,
+    SpatialAnalysisPersonCountEventTrigger,
+    SpatialAnalysisPersonDistanceEventTrigger,
+    SpatialAnalysisPersonZoneCrossingEventType,
 )
 
 __all__ = [
     'AssetSink',
     'CertificateSource',
-    'CognitiveServicesVisionExtension',
-    'Credentials',
-    'Endpoint',
+    'CognitiveServicesVisionProcessor',
+    'CredentialsBase',
+    'EndpointBase',
     'ExtensionProcessorBase',
     'FileSink',
     'GrpcExtension',
     'GrpcExtensionDataTransfer',
     'HttpExtension',
     'HttpHeaderCredentials',
-    'Image',
-    'ImageFormat',
     'ImageFormatBmp',
     'ImageFormatJpeg',
     'ImageFormatPng',
+    'ImageFormatProperties',
     'ImageFormatRaw',
+    'ImageProperties',
     'ImageScale',
     'IotHubMessageSink',
     'IotHubMessageSource',
     'ItemNonSetRequestBase',
-    'Line',
-    'LineCoordinates',
     'LineCrossingProcessor',
     'LivePipeline',
     'LivePipelineActivateRequest',
@@ -185,6 +225,10 @@ __all__ = [
     'LivePipelineSetRequestBody',
     'MethodRequest',
     'MotionDetectionProcessor',
+    'NamedLineBase',
+    'NamedLineString',
+    'NamedPolygonBase',
+    'NamedPolygonString',
     'NodeInput',
     'ObjectTrackingProcessor',
     'OutputSelector',
@@ -199,19 +243,36 @@ __all__ = [
     'PipelineTopologyProperties',
     'PipelineTopologySetRequest',
     'PipelineTopologySetRequestBody',
-    'Point',
-    'Processor',
+    'ProcessorNodeBase',
     'RtspSource',
     'SamplingOptions',
     'SignalGateProcessor',
-    'Sink',
-    'Source',
+    'SinkNodeBase',
+    'SourceNodeBase',
+    'SpatialAnalysisCustomOperation',
+    'SpatialAnalysisOperationBase',
+    'SpatialAnalysisOperationEventBase',
+    'SpatialAnalysisPersonCountEvent',
+    'SpatialAnalysisPersonCountOperation',
+    'SpatialAnalysisPersonCountZoneEvents',
+    'SpatialAnalysisPersonDistanceEvent',
+    'SpatialAnalysisPersonDistanceOperation',
+    'SpatialAnalysisPersonDistanceZoneEvents',
+    'SpatialAnalysisPersonLineCrossingEvent',
+    'SpatialAnalysisPersonLineCrossingLineEvents',
+    'SpatialAnalysisPersonLineCrossingOperation',
+    'SpatialAnalysisPersonZoneCrossingEvent',
+    'SpatialAnalysisPersonZoneCrossingOperation',
+    'SpatialAnalysisPersonZoneCrossingZoneEvents',
+    'SpatialAnalysisTypedOperationBase',
     'SymmetricKeyCredentials',
     'SystemData',
     'TlsEndpoint',
     'TlsValidationOptions',
     'UnsecuredEndpoint',
     'UsernamePasswordCredentials',
+    'VideoCreationProperties',
+    'VideoSink',
     'GrpcExtensionDataTransferMode',
     'ImageFormatRawPixelFormat',
     'ImageScaleMode',
@@ -222,4 +283,8 @@ __all__ = [
     'OutputSelectorProperty',
     'ParameterType',
     'RtspTransport',
+    'SpatialAnalysisOperationFocus',
+    'SpatialAnalysisPersonCountEventTrigger',
+    'SpatialAnalysisPersonDistanceEventTrigger',
+    'SpatialAnalysisPersonZoneCrossingEventType',
 ]

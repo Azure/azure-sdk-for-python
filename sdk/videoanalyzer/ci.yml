@@ -30,6 +30,6 @@ extends:
   parameters:
     ServiceDirectory: videoanalyzer
     Artifacts:
-    - name: azure-media-video-analyzer-edge
+    - name: azure-media-videoanalyzer-edge
       safeName: azuremediavideoanalyzeredge
 

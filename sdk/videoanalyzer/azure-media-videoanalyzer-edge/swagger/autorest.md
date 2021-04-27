@@ -13,8 +13,8 @@ autorest --v3 --python
 input-file:
 - C:\Azure-Media-LiveVideoAnalytics\src\Edge\Client\AzureVideoAnalyzer.Edge\preview\1.0\AzureVideoAnalyzer.json
 - C:\Azure-Media-LiveVideoAnalytics\src\Edge\Client\AzureVideoAnalyzer.Edge\preview\1.0\AzureVideoAnalyzerSdkDefinitions.json
-output-folder: ../azure/media/video/analyzeredge/_generated
-namespace: azure.media.video.analyzer.edge
+output-folder: ../azure/media/videoanalyzer/edge/_generated
+namespace: azure.media.videoanalyzer.edge
 no-namespace-folders: true
 license-header: MICROSOFT_MIT_NO_VERSION
 enable-xml: false

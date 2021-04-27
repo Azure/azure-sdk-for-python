@@ -1,7 +1,7 @@
 
 import json
 import os 
-from azure.media.video.analyzeredge import *
+from azure.media.videoanalyzer.edge import *
 from azure.iot.hub import IoTHubRegistryManager #run pip install azure-iot-hub to get this package
 from azure.iot.hub.models import CloudToDeviceMethod, CloudToDeviceMethodResult
 from datetime import time
@@ -22,7 +22,7 @@ def build_pipeline_topology():
 
     source = RtspSource(name="rtspSource", endpoint=UnsecuredEndpoint(url="${rtspUrl}",credentials=UsernamePasswordCredentials(username="${rtspUserName}",password="${rtspPassword}")))
     node = NodeInput(node_name="rtspSource")
-    sink = AssetSink(name="assetsink", inputs=[node],asset_container_sas_url='sampleAsset-${System.GraphTopologyName}-${System.GraphInstanceName}', segment_length="PT0H0M30S",local_media_cache_maximum_size_mi_b=2048,local_media_cache_path="/var/lib/azuremediaservices/tmp/")
+    sink = AssetSink(name="assetsink", inputs=[node],asset_container_sas_url='https://sampleAsset-${System.PipelineTopologyName}-${System.LivePipelineName}.com', segment_length="PT0H0M30S",local_media_cache_maximum_size_mi_b=2048,local_media_cache_path="/var/lib/azuremediaservices/tmp/")
     pipeline_topology_properties.parameters = [user_name_param, password_param, url_param]
     pipeline_topology_properties.sources = [source]
     pipeline_topology_properties.sinks = [sink]
@@ -30,14 +30,14 @@ def build_pipeline_topology():
 
     return pipeline_topology
 
-def build_graph_instance():
+def build_live_pipeline():
     url_param = ParameterDefinition(name="rtspUrl", value=graph_url)
     pass_param = ParameterDefinition(name="rtspPassword", value='testpass')
-    graph_instance_properties = LivePipelineProperties(description="Sample graph description", topology_name=pipeline_topology_name, parameters=[url_param])
+    live_pipeline_properties = LivePipelineProperties(description="Sample graph description", topology_name=pipeline_topology_name, parameters=[url_param])
 
-    graph_instance = LivePipeline(name=live_pipeline_name, properties=graph_instance_properties)
+    live_pipeline = LivePipeline(name=live_pipeline_name, properties=live_pipeline_properties)
 
-    return graph_instance
+    return live_pipeline
 
 def invoke_method_helper(method):
     direct_method = CloudToDeviceMethod(method_name=method.method_name, payload=method.serialize())
@@ -52,10 +52,11 @@ def invoke_method_helper(method):
 
 def main():
     pipeline_topology = build_pipeline_topology()
-    live_pipeline = build_graph_instance()
+    live_pipeline = build_live_pipeline()
 
     try:
         set_pipeline_top_response = invoke_method_helper(PipelineTopologySetRequest(pipeline_topology=pipeline_topology))
+        print(set_pipeline_top_response)
         
         list_pipeline_top_response = invoke_method_helper(PipelineTopologyListRequest())
         if list_pipeline_top_response:

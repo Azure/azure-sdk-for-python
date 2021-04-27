@@ -1,5 +1,5 @@
 import pytest
-from azure.media.video.analyzeredge import *
+from azure.media.videoanalyzer.edge import *
 
 class TestGraphBuildSerialize():
     def test_build_graph_serialize(self):

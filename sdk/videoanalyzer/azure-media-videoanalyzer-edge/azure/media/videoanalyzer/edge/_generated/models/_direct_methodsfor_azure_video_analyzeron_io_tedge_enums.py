@@ -148,3 +148,41 @@ class RtspTransport(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     HTTP = "http"
     #: TCP transport. This should be used when HTTP tunneling is NOT desired.
     TCP = "tcp"
+
+class SpatialAnalysisOperationFocus(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+    """The operation focus type.
+    """
+
+    #: The center of the object.
+    CENTER = "center"
+    #: The bottom center of the object.
+    BOTTOM_CENTER = "bottomCenter"
+    #: The footprint.
+    FOOTPRINT = "footprint"
+
+class SpatialAnalysisPersonCountEventTrigger(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+    """The event trigger type.
+    """
+
+    #: Event trigger.
+    EVENT = "event"
+    #: Interval trigger.
+    INTERVAL = "interval"
+
+class SpatialAnalysisPersonDistanceEventTrigger(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+    """The event trigger type.
+    """
+
+    #: Event trigger.
+    EVENT = "event"
+    #: Interval trigger.
+    INTERVAL = "interval"
+
+class SpatialAnalysisPersonZoneCrossingEventType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+    """The event type.
+    """
+
+    #: Zone crossing event type.
+    ZONE_CROSSING = "zoneCrossing"
+    #: Zone dwell time event type.
+    ZONE_DWELL_TIME = "zoneDwellTime"

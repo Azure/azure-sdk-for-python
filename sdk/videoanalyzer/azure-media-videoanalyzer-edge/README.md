@@ -7,7 +7,7 @@ Use the client library for Live Video Analytics on IoT Edge to:
 - Simplify interactions with the [Microsoft Azure IoT SDKs](https://github.com/azure/azure-iot-sdks) 
 - Programatically construct media graph topologies and instances
 
-[Package (PyPI)][package] | [Product documentation][doc_product] | [Direct methods][doc_direct_methods] | [Media graphs][doc_media_graph] | [Source code][source] | [Samples][samples]
+[Package (PyPI)][package] | [Product documentation][doc_product] | [Direct methods][doc_direct_methods] | [Media graphs][doc_media_pipeline] | [Source code][source] | [Samples][samples]
 
 ## Getting started
 
@@ -28,56 +28,56 @@ pip install azure-media-analytics-edge
     | SDK  | LVA Edge Module  |
     |---|---|
     | 1.0.0b1  | 2.0  |
-### Creating a graph topology and making requests
+### Creating a pipline topology and making requests
 Please visit the [Examples](#examples) for starter code
 ## Key concepts
 
-### MediaGraph Topology vs MediaGraph Instance
-A _graph topology_ is a blueprint or template of a graph. It defines the parameters of the graph using placeholders as values for them. A _graph instance_ references a graph topology and specifies the parameters. This way you are able to have multiple graph instances referencing the same topology but with different values for parameters. For more information please visit [Media graph topologies and instances][doc_media_graph] 
+### Pipeline Topology vs Live Pipeline Instance
+A _pipeline topology_ is a blueprint or template of a graph. It defines the parameters of the graph using placeholders as values for them. A _live pipeline_ references a pipeline topology and specifies the parameters. This way you are able to have multiple live pipelines referencing the same topology but with different values for parameters. For more information please visit [Live pipeline and pipeline topologies][doc_media_pipeline] 
 
 ### CloudToDeviceMethod
 
-The `CloudToDeviceMethod` is part of the [azure-iot-hub SDk][iot-hub-sdk]. This method allows you to communicate one way notifications to a device in your IoT hub. In our case, we want to communicate various graph methods such as `MediaGraphTopologySetRequest` and `MediaGraphTopologyGetRequest`. To use `CloudToDeviceMethod` you need to pass in two parameters: `method_name` and `payload`. 
+The `CloudToDeviceMethod` is part of the [azure-iot-hub SDk][iot-hub-sdk]. This method allows you to communicate one way notifications to a device in your IoT hub. In our case, we want to communicate various graph methods such as `PipelineTopologySetRequest` and `PipelineTopologyGetRequest`. To use `CloudToDeviceMethod` you need to pass in two parameters: `method_name` and `payload`. 
 
-The first parameter, `method_name`, is the name of the media graph request you are sending. Make sure to use each method's predefined `method_name` property. For example, `MediaGraphTopologySetRequest.method_name`. 
+The first parameter, `method_name`, is the name of the pipeline topology request you are sending. Make sure to use each method's predefined `method_name` property. For example, `PipelineTopologySetRequest.method_name`. 
 
-The second parameter, `payload`, sends the entire serialization of the media graph request. For example, `MediaGraphTopologySetRequest.serialize()`
+The second parameter, `payload`, sends the entire serialization of the pipeline topology request. For example, `PipelineTopologySetRequest.serialize()`
 
 ## Examples
 
-### Creating a graph topology
-To create a graph topology you need to define parameters, sources, and sinks.
+### Creating a pipeline topology
+To create a pipeline topology you need to define parameters, sources, and sinks.
 ```
 #Parameters
-user_name_param = MediaGraphParameterDeclaration(name="rtspUserName",type="String",default="dummyusername")
-password_param = MediaGraphParameterDeclaration(name="rtspPassword",type="String",default="dummypassword")
-url_param = MediaGraphParameterDeclaration(name="rtspUrl",type="String",default="rtsp://rtspsim:554/media/camera-300s.mkv")
+user_name_param = ParameterDeclaration(name="rtspUserName",type="String",default="dummyusername")
+password_param = ParameterDeclaration(name="rtspPassword",type="SecretString",default="dummypassword")
+url_param = ParameterDeclaration(name="rtspUrl",type="String",default="rtsp://www.sample.com")
 
 #Source and Sink
-source = MediaGraphRtspSource(name="rtspSource", endpoint=MediaGraphUnsecuredEndpoint(url="${rtspUrl}",credentials=MediaGraphUsernamePasswordCredentials(username="${rtspUserName}",password="${rtspPassword}")))
-node = MediaGraphNodeInput(node_name="rtspSource")
-sink = MediaGraphAssetSink(name="assetsink", inputs=[node],asset_name_pattern='sampleAsset-${System.GraphTopologyName}-${System.GraphInstanceName}', segment_length="PT0H0M30S",local_media_cache_maximum_size_mi_b=2048,local_media_cache_path="/var/lib/azuremediaservices/tmp/")
+source = RtspSource(name="rtspSource", endpoint=UnsecuredEndpoint(url="${rtspUrl}",credentials=UsernamePasswordCredentials(username="${rtspUserName}",password="${rtspPassword}")))
+node = NodeInput(node_name="rtspSource")
+sink = AssetSink(name="assetsink", inputs=[node],asset_container_sas_url='https://sampleAsset-${System.PipelineTopologyName}-${System.LivePipelineName}.com', segment_length="PT0H0M30S",local_media_cache_maximum_size_mi_b=2048,local_media_cache_path="/var/lib/azuremediaservices/tmp/")
 
-graph_properties = MediaGraphTopologyProperties(parameters=[user_name_param, password_param, url_param], sources=[source], sinks=[sink], description="Continuous video recording to an Azure Media Services Asset")
-
-graph_topology = MediaGraphTopology(name=graph_topology_name,properties=graph_properties)
-
-```
-
-### Creating a graph instance 
-To create a graph instance, you need to have an existing graph topology.
-```
-url_param = MediaGraphParameterDefinition(name="rtspUrl", value=graph_url)
-graph_instance_properties = MediaGraphInstanceProperties(description="Sample graph description", topology_name=graph_topology_name, parameters=[url_param])
-
-graph_instance = MediaGraphInstance(name=graph_instance_name, properties=graph_instance_properties)
+pipeline_topology_properties = PipelineTopologyProperties()
+pipeline_topology = PipelineTopology(name=pipeline_topology_name,properties=pipeline_topology_properties)
 
 ```
 
-### Invoking a graph method request
-To invoke a graph method on your device you need to first define the request using the lva sdk. Then send that method request using the iot sdk's `CloudToDeviceMethod`
+### Creating a live pipeline 
+To create a live pipeline, you need to have an existing pipeline topology.
 ```
-set_method_request = MediaGraphTopologySetRequest(graph=graph_topology)
+url_param = ParameterDefinition(name="rtspUrl", value=graph_url)
+pass_param = ParameterDefinition(name="rtspPassword", value='testpass')
+live_pipeline_properties = LivePipelineProperties(description="Sample graph description", topology_name=pipeline_topology_name, parameters=[url_param])
+
+live_pipeline = LivePipeline(name=live_pipeline_name, properties=live_pipeline_properties)
+
+```
+
+### Invoking a pipeline topology method request
+To invoke a pipeline topology method on your device you need to first define the request using the lva sdk. Then send that method request using the iot sdk's `CloudToDeviceMethod`
+```
+set_method_request = PipelineTopologySetRequest(pipeline_topology=pipeline_topology)
 direct_method = CloudToDeviceMethod(method_name=set_method_request.method_name, payload=set_method_request.serialize())
 registry_manager = IoTHubRegistryManager(connection_string)
 
@@ -126,11 +126,11 @@ additional questions or comments.
 [coc_contact]: mailto:opencode@microsoft.com
 
 [package]: TODO://link-to-published-package
-[source]: https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/media
+[source]: https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/videoanalyzer
 [samples]: https://github.com/Azure-Samples/live-video-analytics-iot-edge-python
 
 [doc_direct_methods]: https://docs.microsoft.com/azure/media-services/live-video-analytics-edge/direct-methods
-[doc_media_graph]: https://docs.microsoft.com/azure/media-services/live-video-analytics-edge/media-graph-concept#media-graph-topologies-and-instances
+[doc_media_pipeline]: https://docs.microsoft.com/azure/media-services/live-video-analytics-edge/media-graph-concept#media-graph-topologies-and-instances
 [doc_product]: https://docs.microsoft.com/azure/media-services/live-video-analytics-edge/
 
 [iot-device-sdk]: https://pypi.org/project/azure-iot-device/
