@@ -75,13 +75,13 @@ class ResourceGroupPreparer(AzureMgmtPreparer):
             parameters["tags"]["BuildNumber"] = os.environ.get("BUILD_BUILDNUMBER", "local")
             parameters["tags"]["BuildReason"] = os.environ.get("BUILD_REASON", "local")
             try:
-                logging.info(
-                    "Attempting to create a Resource Group with name {} and parameters {}".format(name, parameters)
-                )
                 # Prefixing all RGs created here with 'rgpy-' for tracing purposes
                 name = u"rgpy-" + name
                 if len(name) > 90:
                     name = name[:90]
+                logging.info(
+                    "Attempting to create a Resource Group with name {} and parameters {}".format(name, parameters)
+                )
                 self.resource = self.client.resource_groups.create_or_update(name, parameters)
             except Exception as ex:
                 if "ReservedResourceName" in str(ex):
