@@ -56,7 +56,7 @@ def _parameter_filter_substitution(parameters, query_filter):
     # type: (Dict[str, str], str) -> str
     """Replace user defined parameter in filter
     :param parameters: User defined parameters
-    :param filter: Filter for querying
+    :param str query_filter: Filter for querying
     """
     if parameters:
         filter_strings = query_filter.split(' ')

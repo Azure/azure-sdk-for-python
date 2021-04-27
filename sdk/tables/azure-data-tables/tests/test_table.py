@@ -68,18 +68,16 @@ class StorageTableTest(AzureTestCase, TableTestCase):
         return table
 
     def _delete_table(self, ts, table):
-        if table is None:
-            return
-        try:
-            ts.delete_table(table.table_name)
-        except ResourceNotFoundError:
-            pass
-
-    def _delete_all_tables(self, ts):
-        tables = ts.list_tables()
-        for table in tables:
+        if table:
             try:
                 ts.delete_table(table.table_name)
+            except ResourceNotFoundError:
+                pass
+
+    def _delete_all_tables(self, ts):
+        for table in ts.list_tables():
+            try:
+                ts.delete_table(table.name)
             except ResourceNotFoundError:
                 pass
 
@@ -185,7 +183,7 @@ class StorageTableTest(AzureTestCase, TableTestCase):
 
         assert t0 is not None
         assert t1 is not None
-        assert t0.table_name ==  t1.table_name
+        assert t0.table_name == t1.table_name
         ts.delete_table(table_name)
 
     @TablesPreparer()
@@ -261,10 +259,10 @@ class StorageTableTest(AzureTestCase, TableTestCase):
         big_page = []
         for s in next(ts.list_tables(results_per_page=3).by_page()):
             small_page.append(s)
-            assert s.table_name.startswith(prefix)
+            assert s.name.startswith(prefix)
         for t in next(ts.list_tables().by_page()):
             big_page.append(t)
-            assert t.table_name.startswith(prefix)
+            assert t.name.startswith(prefix)
 
         # Assert
         assert len(small_page) ==  3
@@ -349,8 +347,7 @@ class StorageTableTest(AzureTestCase, TableTestCase):
             ts.delete_table(table.table_name)
 
     @TablesPreparer()
-    def test_set_table_acl_with_empty_signed_identifiers(self, tables_storage_account_name,
-                                                         tables_primary_storage_account_key):
+    def test_set_table_acl_with_empty_signed_identifiers(self, tables_storage_account_name, tables_primary_storage_account_key):
         # Arrange
         account_url = self.account_url(tables_storage_account_name, "table")
 
@@ -369,8 +366,7 @@ class StorageTableTest(AzureTestCase, TableTestCase):
             ts.delete_table(table.table_name)
 
     @TablesPreparer()
-    def test_set_table_acl_with_empty_signed_identifier(self, tables_storage_account_name,
-                                                        tables_primary_storage_account_key):
+    def test_set_table_acl_with_empty_signed_identifier(self, tables_storage_account_name, tables_primary_storage_account_key):
         # Arrange
         account_url = self.account_url(tables_storage_account_name, "table")
 
@@ -392,8 +388,7 @@ class StorageTableTest(AzureTestCase, TableTestCase):
             ts.delete_table(table.table_name)
 
     @TablesPreparer()
-    def test_set_table_acl_with_signed_identifiers(self, tables_storage_account_name,
-                                                   tables_primary_storage_account_key):
+    def test_set_table_acl_with_signed_identifiers(self, tables_storage_account_name, tables_primary_storage_account_key):
         # Arrange
         account_url = self.account_url(tables_storage_account_name, "table")
 

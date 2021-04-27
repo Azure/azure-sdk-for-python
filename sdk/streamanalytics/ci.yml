@@ -11,9 +11,6 @@ trigger:
   paths:
     include:
     - sdk/streamanalytics/
-    - sdk/core/
-    - tools/
-    - eng/
 
 pr:
   branches:
@@ -27,9 +24,6 @@ pr:
   paths:
     include:
     - sdk/streamanalytics/
-    - sdk/core/
-    - tools/
-    - eng/
 
 extends:
   template: ../../eng/pipelines/templates/stages/archetype-sdk-client.yml

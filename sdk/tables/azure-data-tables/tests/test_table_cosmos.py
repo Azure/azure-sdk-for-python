@@ -71,7 +71,7 @@ class StorageTableTest(AzureTestCase, TableTestCase):
         if table is None:
             return
         try:
-            ts.delete_table(table.table_name)
+            ts.delete_table(table.name)
         except ResourceNotFoundError:
             pass
 
@@ -79,7 +79,7 @@ class StorageTableTest(AzureTestCase, TableTestCase):
         tables = ts.list_tables()
         for table in tables:
             try:
-                ts.delete_table(table.table_name)
+                ts.delete_table(table.name)
             except ResourceNotFoundError:
                 pass
 
@@ -202,10 +202,10 @@ class StorageTableTest(AzureTestCase, TableTestCase):
         big_page = []
         for s in next(ts.list_tables(results_per_page=3).by_page()):
             small_page.append(s)
-            assert s.table_name.startswith(prefix)
+            assert s.name.startswith(prefix)
         for t in next(ts.list_tables().by_page()):
             big_page.append(t)
-            assert t.table_name.startswith(prefix)
+            assert t.name.startswith(prefix)
 
         # Assert
         assert len(small_page) ==  3
@@ -276,6 +276,7 @@ class StorageTableTest(AzureTestCase, TableTestCase):
 
         if self.is_live:
             sleep(SLEEP_DELAY)
+
 
 class TestTableUnitTest(TableTestCase):
     tables_cosmos_account_name = "fake_storage_account"

@@ -26,6 +26,21 @@ class _CaseInsensitiveEnumMeta(EnumMeta):
             raise AttributeError(name)
 
 
+class ChangeCategory(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+    """The change category.
+    """
+
+    USER = "User"
+    SYSTEM = "System"
+
+class ChangeType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+    """The change type for snapshot. PropertyChanges will be provided in case of Update change type
+    """
+
+    CREATE = "Create"
+    UPDATE = "Update"
+    DELETE = "Delete"
+
 class ColumnDataType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     """Data type of a column in a table.
     """
@@ -42,6 +57,19 @@ class FacetSortOrder(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
 
     ASC = "asc"
     DESC = "desc"
+
+class PropertyChangeType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+    """The property change Type
+    """
+
+    INSERT = "Insert"
+    UPDATE = "Update"
+    REMOVE = "Remove"
+
+class ResourcesHistoryRequestOptionsResultFormat(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+
+    TABLE = "table"
+    OBJECT_ARRAY = "objectArray"
 
 class ResultFormat(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     """Defines in which format query result returned.

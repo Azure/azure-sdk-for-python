@@ -165,7 +165,7 @@ class BlobServiceSamplesAsync(object):
         await container_client1.create_container()
 
         # [START get_blob_service_client_from_container_client]
-        blob_service_client = container_client1.get_blob_service_client()
+        blob_service_client = container_client1._get_blob_service_client()
         print(await blob_service_client.get_service_properties())
         container_client2 = blob_service_client.get_container_client("container")
 

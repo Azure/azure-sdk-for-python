@@ -118,9 +118,9 @@ class Alert(ARMBaseModel):
     :vartype recommendation: str
     :ivar severity: Severity of the alert. Possible values include: "Informational", "Warning",
      "Critical".
-    :vartype severity: str or ~azure.mgmt.databoxedge.models.AlertSeverity
+    :vartype severity: str or ~azure.mgmt.databoxedge.v2019_08_01.models.AlertSeverity
     :ivar error_details: Error details of the alert.
-    :vartype error_details: ~azure.mgmt.databoxedge.models.AlertErrorDetails
+    :vartype error_details: ~azure.mgmt.databoxedge.v2019_08_01.models.AlertErrorDetails
     :ivar detailed_information: Alert details.
     :vartype detailed_information: dict[str, str]
     """
@@ -206,7 +206,7 @@ class AlertList(msrest.serialization.Model):
     Variables are only populated by the server, and will be ignored when sending a request.
 
     :ivar value: The value.
-    :vartype value: list[~azure.mgmt.databoxedge.models.Alert]
+    :vartype value: list[~azure.mgmt.databoxedge.v2019_08_01.models.Alert]
     :ivar next_link: Link to the next set of results.
     :vartype next_link: str
     """
@@ -242,7 +242,8 @@ class AsymmetricEncryptedSecret(msrest.serialization.Model):
     :type encryption_cert_thumbprint: str
     :param encryption_algorithm: Required. The algorithm used to encrypt "Value". Possible values
      include: "None", "AES256", "RSAES_PKCS1_v_1_5".
-    :type encryption_algorithm: str or ~azure.mgmt.databoxedge.models.EncryptionAlgorithm
+    :type encryption_algorithm: str or
+     ~azure.mgmt.databoxedge.v2019_08_01.models.EncryptionAlgorithm
     """
 
     _validation = {
@@ -270,7 +271,7 @@ class Authentication(msrest.serialization.Model):
     """Authentication mechanism for IoT devices.
 
     :param symmetric_key: Symmetric key for authentication.
-    :type symmetric_key: ~azure.mgmt.databoxedge.models.SymmetricKey
+    :type symmetric_key: ~azure.mgmt.databoxedge.v2019_08_01.models.SymmetricKey
     """
 
     _attribute_map = {
@@ -298,7 +299,7 @@ class AzureContainerInfo(msrest.serialization.Model):
     :type container_name: str
     :param data_format: Required. Storage format used for the file represented by the share.
      Possible values include: "BlockBlob", "PageBlob", "AzureFile".
-    :type data_format: str or ~azure.mgmt.databoxedge.models.AzureContainerDataFormat
+    :type data_format: str or ~azure.mgmt.databoxedge.v2019_08_01.models.AzureContainerDataFormat
     """
 
     _validation = {
@@ -343,7 +344,7 @@ class BandwidthSchedule(ARMBaseModel):
     :param rate_in_mbps: Required. The bandwidth rate in Mbps.
     :type rate_in_mbps: int
     :param days: Required. The days of the week when this schedule is applicable.
-    :type days: list[str or ~azure.mgmt.databoxedge.models.DayOfWeek]
+    :type days: list[str or ~azure.mgmt.databoxedge.v2019_08_01.models.DayOfWeek]
     """
 
     _validation = {
@@ -383,7 +384,7 @@ class BandwidthSchedulesList(msrest.serialization.Model):
     Variables are only populated by the server, and will be ignored when sending a request.
 
     :ivar value: The list of bandwidth schedules.
-    :vartype value: list[~azure.mgmt.databoxedge.models.BandwidthSchedule]
+    :vartype value: list[~azure.mgmt.databoxedge.v2019_08_01.models.BandwidthSchedule]
     :ivar next_link: Link to the next set of results.
     :vartype next_link: str
     """
@@ -416,7 +417,7 @@ class ClientAccessRight(msrest.serialization.Model):
     :type client: str
     :param access_permission: Required. Type of access to be allowed for the client. Possible
      values include: "NoAccess", "ReadOnly", "ReadWrite".
-    :type access_permission: str or ~azure.mgmt.databoxedge.models.ClientPermissionType
+    :type access_permission: str or ~azure.mgmt.databoxedge.v2019_08_01.models.ClientPermissionType
     """
 
     _validation = {
@@ -448,7 +449,7 @@ class CloudErrorBody(msrest.serialization.Model):
      interface.
     :type message: str
     :param details: A list of additional details about the error.
-    :type details: list[~azure.mgmt.databoxedge.models.CloudErrorBody]
+    :type details: list[~azure.mgmt.databoxedge.v2019_08_01.models.CloudErrorBody]
     """
 
     _attribute_map = {
@@ -522,12 +523,12 @@ class Container(ARMBaseModel):
     :vartype type: str
     :ivar container_status: Current status of the container. Possible values include: "OK",
      "Offline", "Unknown", "Updating", "NeedsAttention".
-    :vartype container_status: str or ~azure.mgmt.databoxedge.models.ContainerStatus
+    :vartype container_status: str or ~azure.mgmt.databoxedge.v2019_08_01.models.ContainerStatus
     :param data_format: Required. DataFormat for Container. Possible values include: "BlockBlob",
      "PageBlob", "AzureFile".
-    :type data_format: str or ~azure.mgmt.databoxedge.models.AzureContainerDataFormat
+    :type data_format: str or ~azure.mgmt.databoxedge.v2019_08_01.models.AzureContainerDataFormat
     :ivar refresh_details: Details of the refresh job on this container.
-    :vartype refresh_details: ~azure.mgmt.databoxedge.models.RefreshDetails
+    :vartype refresh_details: ~azure.mgmt.databoxedge.v2019_08_01.models.RefreshDetails
     :ivar created_date_time: The UTC time when container got created.
     :vartype created_date_time: ~datetime.datetime
     """
@@ -569,7 +570,7 @@ class ContainerList(msrest.serialization.Model):
     Variables are only populated by the server, and will be ignored when sending a request.
 
     :ivar value: The list of containers.
-    :vartype value: list[~azure.mgmt.databoxedge.models.Container]
+    :vartype value: list[~azure.mgmt.databoxedge.v2019_08_01.models.Container]
     :ivar next_link: Link to the next set of results.
     :vartype next_link: str
     """
@@ -615,14 +616,14 @@ class DataBoxEdgeDevice(ARMBaseModel):
      to view and group this device (across resource groups).
     :type tags: dict[str, str]
     :param sku: The SKU type.
-    :type sku: ~azure.mgmt.databoxedge.models.Sku
+    :type sku: ~azure.mgmt.databoxedge.v2019_08_01.models.Sku
     :param etag: The etag for the devices.
     :type etag: str
     :param data_box_edge_device_status: The status of the Data Box Edge/Gateway device. Possible
      values include: "ReadyToSetup", "Online", "Offline", "NeedsAttention", "Disconnected",
      "PartiallyDisconnected", "Maintenance".
     :type data_box_edge_device_status: str or
-     ~azure.mgmt.databoxedge.models.DataBoxEdgeDeviceStatus
+     ~azure.mgmt.databoxedge.v2019_08_01.models.DataBoxEdgeDeviceStatus
     :ivar serial_number: The Serial Number of Data Box Edge/Gateway device.
     :vartype serial_number: str
     :param description: The Description of the Data Box Edge/Gateway device.
@@ -631,7 +632,7 @@ class DataBoxEdgeDevice(ARMBaseModel):
     :type model_description: str
     :ivar device_type: The type of the Data Box Edge/Gateway device. Possible values include:
      "DataBoxEdgeDevice".
-    :vartype device_type: str or ~azure.mgmt.databoxedge.models.DeviceType
+    :vartype device_type: str or ~azure.mgmt.databoxedge.v2019_08_01.models.DeviceType
     :param friendly_name: The Data Box Edge/Gateway device name.
     :type friendly_name: str
     :ivar culture: The Data Box Edge/Gateway device culture.
@@ -647,7 +648,8 @@ class DataBoxEdgeDevice(ARMBaseModel):
     :ivar device_hcs_version: The device software version number of the device (eg: 1.2.18105.6).
     :vartype device_hcs_version: str
     :ivar configured_role_types: Type of compute roles configured.
-    :vartype configured_role_types: list[str or ~azure.mgmt.databoxedge.models.RoleTypes]
+    :vartype configured_role_types: list[str or
+     ~azure.mgmt.databoxedge.v2019_08_01.models.RoleTypes]
     :ivar node_count: The number of nodes in the cluster.
     :vartype node_count: int
     """
@@ -770,7 +772,7 @@ class DataBoxEdgeDeviceList(msrest.serialization.Model):
     Variables are only populated by the server, and will be ignored when sending a request.
 
     :ivar value: The list of Data Box Edge/Gateway devices.
-    :vartype value: list[~azure.mgmt.databoxedge.models.DataBoxEdgeDevice]
+    :vartype value: list[~azure.mgmt.databoxedge.v2019_08_01.models.DataBoxEdgeDevice]
     :ivar next_link: Link to the next set of results.
     :vartype next_link: str
     """
@@ -831,7 +833,7 @@ class Trigger(ARMBaseModel):
     :vartype type: str
     :param kind: Required. Trigger Kind.Constant filled by server.  Possible values include:
      "FileEvent", "PeriodicTimerEvent".
-    :type kind: str or ~azure.mgmt.databoxedge.models.TriggerEventType
+    :type kind: str or ~azure.mgmt.databoxedge.v2019_08_01.models.TriggerEventType
     """
 
     _validation = {
@@ -875,11 +877,11 @@ class FileEventTrigger(Trigger):
     :vartype type: str
     :param kind: Required. Trigger Kind.Constant filled by server.  Possible values include:
      "FileEvent", "PeriodicTimerEvent".
-    :type kind: str or ~azure.mgmt.databoxedge.models.TriggerEventType
+    :type kind: str or ~azure.mgmt.databoxedge.v2019_08_01.models.TriggerEventType
     :param source_info: Required. File event source details.
-    :type source_info: ~azure.mgmt.databoxedge.models.FileSourceInfo
+    :type source_info: ~azure.mgmt.databoxedge.v2019_08_01.models.FileSourceInfo
     :param sink_info: Required. Role sink info.
-    :type sink_info: ~azure.mgmt.databoxedge.models.RoleSinkInfo
+    :type sink_info: ~azure.mgmt.databoxedge.v2019_08_01.models.RoleSinkInfo
     :param custom_context_tag: A custom context tag typically used to correlate the trigger against
      its usage. For example, if a periodic timer trigger is intended for certain specific IoT
      modules in the device, the tag can be the name or the image URL of the module.
@@ -953,7 +955,7 @@ class IoTDeviceInfo(msrest.serialization.Model):
     :param io_t_host_hub_id: Id for the IoT hub associated to the device.
     :type io_t_host_hub_id: str
     :param authentication: IoT device authentication info.
-    :type authentication: ~azure.mgmt.databoxedge.models.Authentication
+    :type authentication: ~azure.mgmt.databoxedge.v2019_08_01.models.Authentication
     """
 
     _validation = {
@@ -997,7 +999,7 @@ class Role(ARMBaseModel):
     :vartype type: str
     :param kind: Required. Role type.Constant filled by server.  Possible values include: "IOT",
      "ASA", "Functions", "Cognitive".
-    :type kind: str or ~azure.mgmt.databoxedge.models.RoleTypes
+    :type kind: str or ~azure.mgmt.databoxedge.v2019_08_01.models.RoleTypes
     """
 
     _validation = {
@@ -1041,19 +1043,19 @@ class IoTRole(Role):
     :vartype type: str
     :param kind: Required. Role type.Constant filled by server.  Possible values include: "IOT",
      "ASA", "Functions", "Cognitive".
-    :type kind: str or ~azure.mgmt.databoxedge.models.RoleTypes
+    :type kind: str or ~azure.mgmt.databoxedge.v2019_08_01.models.RoleTypes
     :param host_platform: Host OS supported by the IoT role. Possible values include: "Windows",
      "Linux".
-    :type host_platform: str or ~azure.mgmt.databoxedge.models.PlatformType
+    :type host_platform: str or ~azure.mgmt.databoxedge.v2019_08_01.models.PlatformType
     :param io_t_device_details: IoT device metadata to which data box edge device needs to be
      connected.
-    :type io_t_device_details: ~azure.mgmt.databoxedge.models.IoTDeviceInfo
+    :type io_t_device_details: ~azure.mgmt.databoxedge.v2019_08_01.models.IoTDeviceInfo
     :param io_t_edge_device_details: IoT edge device to which the IoT role needs to be configured.
-    :type io_t_edge_device_details: ~azure.mgmt.databoxedge.models.IoTDeviceInfo
+    :type io_t_edge_device_details: ~azure.mgmt.databoxedge.v2019_08_01.models.IoTDeviceInfo
     :param share_mappings: Mount points of shares in role(s).
-    :type share_mappings: list[~azure.mgmt.databoxedge.models.MountPointMap]
+    :type share_mappings: list[~azure.mgmt.databoxedge.v2019_08_01.models.MountPointMap]
     :param role_status: Role status. Possible values include: "Enabled", "Disabled".
-    :type role_status: str or ~azure.mgmt.databoxedge.models.RoleStatus
+    :type role_status: str or ~azure.mgmt.databoxedge.v2019_08_01.models.RoleStatus
     """
 
     _validation = {
@@ -1171,7 +1173,7 @@ class Job(msrest.serialization.Model):
     :vartype type: str
     :ivar status: The current status of the job. Possible values include: "Invalid", "Running",
      "Succeeded", "Failed", "Canceled", "Paused", "Scheduled".
-    :vartype status: str or ~azure.mgmt.databoxedge.models.JobStatus
+    :vartype status: str or ~azure.mgmt.databoxedge.v2019_08_01.models.JobStatus
     :ivar start_time: The UTC date and time at which the job started.
     :vartype start_time: ~datetime.datetime
     :ivar end_time: The UTC date and time at which the job completed.
@@ -1179,19 +1181,19 @@ class Job(msrest.serialization.Model):
     :ivar percent_complete: The percentage of the job that is complete.
     :vartype percent_complete: int
     :ivar error: The error details.
-    :vartype error: ~azure.mgmt.databoxedge.models.JobErrorDetails
+    :vartype error: ~azure.mgmt.databoxedge.v2019_08_01.models.JobErrorDetails
     :ivar job_type: The type of the job. Possible values include: "Invalid", "ScanForUpdates",
      "DownloadUpdates", "InstallUpdates", "RefreshShare", "RefreshContainer".
-    :vartype job_type: str or ~azure.mgmt.databoxedge.models.JobType
+    :vartype job_type: str or ~azure.mgmt.databoxedge.v2019_08_01.models.JobType
     :ivar current_stage: Current stage of the update operation. Possible values include: "Unknown",
      "Initial", "ScanStarted", "ScanComplete", "ScanFailed", "DownloadStarted", "DownloadComplete",
      "DownloadFailed", "InstallStarted", "InstallComplete", "InstallFailed", "RebootInitiated",
      "Success", "Failure", "RescanStarted", "RescanComplete", "RescanFailed".
-    :vartype current_stage: str or ~azure.mgmt.databoxedge.models.UpdateOperationStage
+    :vartype current_stage: str or ~azure.mgmt.databoxedge.v2019_08_01.models.UpdateOperationStage
     :ivar download_progress: The download progress.
-    :vartype download_progress: ~azure.mgmt.databoxedge.models.UpdateDownloadProgress
+    :vartype download_progress: ~azure.mgmt.databoxedge.v2019_08_01.models.UpdateDownloadProgress
     :ivar install_progress: The install progress.
-    :vartype install_progress: ~azure.mgmt.databoxedge.models.UpdateInstallProgress
+    :vartype install_progress: ~azure.mgmt.databoxedge.v2019_08_01.models.UpdateInstallProgress
     :ivar total_refresh_errors: Total number of errors encountered during the refresh process.
     :vartype total_refresh_errors: int
     :ivar error_manifest_file: Local share/remote container relative path to the error manifest
@@ -1270,7 +1272,7 @@ class JobErrorDetails(msrest.serialization.Model):
     Variables are only populated by the server, and will be ignored when sending a request.
 
     :ivar error_details: The error details.
-    :vartype error_details: list[~azure.mgmt.databoxedge.models.JobErrorItem]
+    :vartype error_details: list[~azure.mgmt.databoxedge.v2019_08_01.models.JobErrorItem]
     :ivar code: The code intended for programmatic access.
     :vartype code: str
     :ivar message: The message that describes the error in detail.
@@ -1372,23 +1374,24 @@ class MetricSpecificationV1(msrest.serialization.Model):
     :type display_description: str
     :param unit: Metric units. Possible values include: "NotSpecified", "Percent", "Count",
      "Seconds", "Milliseconds", "Bytes", "BytesPerSecond", "CountPerSecond".
-    :type unit: str or ~azure.mgmt.databoxedge.models.MetricUnit
+    :type unit: str or ~azure.mgmt.databoxedge.v2019_08_01.models.MetricUnit
     :param aggregation_type: Metric aggregation type. Possible values include: "NotSpecified",
      "None", "Average", "Minimum", "Maximum", "Total", "Count".
-    :type aggregation_type: str or ~azure.mgmt.databoxedge.models.MetricAggregationType
+    :type aggregation_type: str or ~azure.mgmt.databoxedge.v2019_08_01.models.MetricAggregationType
     :param dimensions: Metric dimensions, other than default dimension which is resource.
-    :type dimensions: list[~azure.mgmt.databoxedge.models.MetricDimensionV1]
+    :type dimensions: list[~azure.mgmt.databoxedge.v2019_08_01.models.MetricDimensionV1]
     :param fill_gap_with_zero: Set true to fill the gaps with zero.
     :type fill_gap_with_zero: bool
     :param category: Metric category. Possible values include: "Capacity", "Transaction".
-    :type category: str or ~azure.mgmt.databoxedge.models.MetricCategory
+    :type category: str or ~azure.mgmt.databoxedge.v2019_08_01.models.MetricCategory
     :param resource_id_dimension_name_override: Resource name override.
     :type resource_id_dimension_name_override: str
     :param supported_time_grain_types: Support granularity of metrics.
-    :type supported_time_grain_types: list[str or ~azure.mgmt.databoxedge.models.TimeGrain]
+    :type supported_time_grain_types: list[str or
+     ~azure.mgmt.databoxedge.v2019_08_01.models.TimeGrain]
     :param supported_aggregation_types: Support metric aggregation type.
     :type supported_aggregation_types: list[str or
-     ~azure.mgmt.databoxedge.models.MetricAggregationType]
+     ~azure.mgmt.databoxedge.v2019_08_01.models.MetricAggregationType]
     """
 
     _attribute_map = {
@@ -1437,7 +1440,7 @@ class MountPointMap(msrest.serialization.Model):
     :ivar mount_point: Mount point for the share.
     :vartype mount_point: str
     :ivar role_type: Role type. Possible values include: "IOT", "ASA", "Functions", "Cognitive".
-    :vartype role_type: str or ~azure.mgmt.databoxedge.models.RoleTypes
+    :vartype role_type: str or ~azure.mgmt.databoxedge.v2019_08_01.models.RoleTypes
     """
 
     _validation = {
@@ -1473,7 +1476,7 @@ class NetworkAdapter(msrest.serialization.Model):
     :ivar adapter_id: Instance ID of network adapter.
     :vartype adapter_id: str
     :ivar adapter_position: Hardware position of network adapter.
-    :vartype adapter_position: ~azure.mgmt.databoxedge.models.NetworkAdapterPosition
+    :vartype adapter_position: ~azure.mgmt.databoxedge.v2019_08_01.models.NetworkAdapterPosition
     :ivar index: Logical index of the adapter.
     :vartype index: int
     :ivar node_id: Node ID of the network adapter.
@@ -1488,17 +1491,17 @@ class NetworkAdapter(msrest.serialization.Model):
     :vartype link_speed: long
     :ivar status: Value indicating whether this adapter is valid. Possible values include:
      "Inactive", "Active".
-    :vartype status: str or ~azure.mgmt.databoxedge.models.NetworkAdapterStatus
+    :vartype status: str or ~azure.mgmt.databoxedge.v2019_08_01.models.NetworkAdapterStatus
     :param rdma_status: Value indicating whether this adapter is RDMA capable. Possible values
      include: "Incapable", "Capable".
-    :type rdma_status: str or ~azure.mgmt.databoxedge.models.NetworkAdapterRDMAStatus
+    :type rdma_status: str or ~azure.mgmt.databoxedge.v2019_08_01.models.NetworkAdapterRDMAStatus
     :param dhcp_status: Value indicating whether this adapter has DHCP enabled. Possible values
      include: "Disabled", "Enabled".
-    :type dhcp_status: str or ~azure.mgmt.databoxedge.models.NetworkAdapterDHCPStatus
+    :type dhcp_status: str or ~azure.mgmt.databoxedge.v2019_08_01.models.NetworkAdapterDHCPStatus
     :ivar ipv4_configuration: The IPv4 configuration of the network adapter.
-    :vartype ipv4_configuration: ~azure.mgmt.databoxedge.models.Ipv4Config
+    :vartype ipv4_configuration: ~azure.mgmt.databoxedge.v2019_08_01.models.Ipv4Config
     :ivar ipv6_configuration: The IPv6 configuration of the network adapter.
-    :vartype ipv6_configuration: ~azure.mgmt.databoxedge.models.Ipv6Config
+    :vartype ipv6_configuration: ~azure.mgmt.databoxedge.v2019_08_01.models.Ipv6Config
     :ivar ipv6_link_local_address: The IPv6 local address.
     :vartype ipv6_link_local_address: str
     :ivar dns_servers: The list of DNS Servers of the device.
@@ -1567,7 +1570,7 @@ class NetworkAdapterPosition(msrest.serialization.Model):
     Variables are only populated by the server, and will be ignored when sending a request.
 
     :ivar network_group: The network group. Possible values include: "None", "NonRDMA", "RDMA".
-    :vartype network_group: str or ~azure.mgmt.databoxedge.models.NetworkGroup
+    :vartype network_group: str or ~azure.mgmt.databoxedge.v2019_08_01.models.NetworkGroup
     :ivar port: The port.
     :vartype port: int
     """
@@ -1603,7 +1606,7 @@ class NetworkSettings(ARMBaseModel):
     :ivar type: The hierarchical type of the object.
     :vartype type: str
     :ivar network_adapters: The network adapter list on the device.
-    :vartype network_adapters: list[~azure.mgmt.databoxedge.models.NetworkAdapter]
+    :vartype network_adapters: list[~azure.mgmt.databoxedge.v2019_08_01.models.NetworkAdapter]
     """
 
     _validation = {
@@ -1643,7 +1646,7 @@ Multi-node Edge devices will have more than 1 nodes.
     :vartype type: str
     :ivar node_status: The current status of the individual node. Possible values include:
      "Unknown", "Up", "Down", "Rebooting", "ShuttingDown".
-    :vartype node_status: str or ~azure.mgmt.databoxedge.models.NodeStatus
+    :vartype node_status: str or ~azure.mgmt.databoxedge.v2019_08_01.models.NodeStatus
     :ivar node_chassis_serial_number: Serial number of the Chassis.
     :vartype node_chassis_serial_number: str
     :ivar node_serial_number: Serial number of the individual node.
@@ -1705,7 +1708,7 @@ class NodeList(msrest.serialization.Model):
     Variables are only populated by the server, and will be ignored when sending a request.
 
     :ivar value: The list of Nodes.
-    :vartype value: list[~azure.mgmt.databoxedge.models.Node]
+    :vartype value: list[~azure.mgmt.databoxedge.v2019_08_01.models.Node]
     """
 
     _validation = {
@@ -1730,11 +1733,11 @@ class Operation(msrest.serialization.Model):
     :param name: Name of the operation.
     :type name: str
     :param display: Properties displayed for the operation.
-    :type display: ~azure.mgmt.databoxedge.models.OperationDisplay
+    :type display: ~azure.mgmt.databoxedge.v2019_08_01.models.OperationDisplay
     :param origin: Origin of the operation.
     :type origin: str
     :param service_specification: Service specification.
-    :type service_specification: ~azure.mgmt.databoxedge.models.ServiceSpecification
+    :type service_specification: ~azure.mgmt.databoxedge.v2019_08_01.models.ServiceSpecification
     """
 
     _attribute_map = {
@@ -1792,7 +1795,7 @@ class OperationsList(msrest.serialization.Model):
     All required parameters must be populated in order to send to Azure.
 
     :param value: Required. The value.
-    :type value: list[~azure.mgmt.databoxedge.models.Operation]
+    :type value: list[~azure.mgmt.databoxedge.v2019_08_01.models.Operation]
     :param next_link: Link to the next set of results.
     :type next_link: str
     """
@@ -1827,21 +1830,21 @@ class Order(ARMBaseModel):
     :ivar type: The hierarchical type of the object.
     :vartype type: str
     :param contact_information: The contact details.
-    :type contact_information: ~azure.mgmt.databoxedge.models.ContactDetails
+    :type contact_information: ~azure.mgmt.databoxedge.v2019_08_01.models.ContactDetails
     :param shipping_address: The shipping address.
-    :type shipping_address: ~azure.mgmt.databoxedge.models.Address
+    :type shipping_address: ~azure.mgmt.databoxedge.v2019_08_01.models.Address
     :param current_status: Current status of the order.
-    :type current_status: ~azure.mgmt.databoxedge.models.OrderStatus
+    :type current_status: ~azure.mgmt.databoxedge.v2019_08_01.models.OrderStatus
     :ivar order_history: List of status changes in the order.
-    :vartype order_history: list[~azure.mgmt.databoxedge.models.OrderStatus]
+    :vartype order_history: list[~azure.mgmt.databoxedge.v2019_08_01.models.OrderStatus]
     :ivar serial_number: Serial number of the device.
     :vartype serial_number: str
     :ivar delivery_tracking_info: Tracking information for the package delivered to the customer
      whether it has an original or a replacement device.
-    :vartype delivery_tracking_info: list[~azure.mgmt.databoxedge.models.TrackingInfo]
+    :vartype delivery_tracking_info: list[~azure.mgmt.databoxedge.v2019_08_01.models.TrackingInfo]
     :ivar return_tracking_info: Tracking information for the package returned from the customer
      whether it has an original or a replacement device.
-    :vartype return_tracking_info: list[~azure.mgmt.databoxedge.models.TrackingInfo]
+    :vartype return_tracking_info: list[~azure.mgmt.databoxedge.v2019_08_01.models.TrackingInfo]
     """
 
     _validation = {
@@ -1887,7 +1890,7 @@ class OrderList(msrest.serialization.Model):
     Variables are only populated by the server, and will be ignored when sending a request.
 
     :ivar value: The list of orders.
-    :vartype value: list[~azure.mgmt.databoxedge.models.Order]
+    :vartype value: list[~azure.mgmt.databoxedge.v2019_08_01.models.Order]
     :ivar next_link: Link to the next set of results.
     :vartype next_link: str
     """
@@ -1922,7 +1925,7 @@ class OrderStatus(msrest.serialization.Model):
      include: "Untracked", "AwaitingFulfilment", "AwaitingPreparation", "AwaitingShipment",
      "Shipped", "Arriving", "Delivered", "ReplacementRequested", "LostDevice", "Declined",
      "ReturnInitiated", "AwaitingReturnShipment", "ShippedBack", "CollectedAtMicrosoft".
-    :type status: str or ~azure.mgmt.databoxedge.models.OrderState
+    :type status: str or ~azure.mgmt.databoxedge.v2019_08_01.models.OrderState
     :ivar update_date_time: Time of status update.
     :vartype update_date_time: ~datetime.datetime
     :param comments: Comments related to this status change.
@@ -1971,11 +1974,11 @@ class PeriodicTimerEventTrigger(Trigger):
     :vartype type: str
     :param kind: Required. Trigger Kind.Constant filled by server.  Possible values include:
      "FileEvent", "PeriodicTimerEvent".
-    :type kind: str or ~azure.mgmt.databoxedge.models.TriggerEventType
+    :type kind: str or ~azure.mgmt.databoxedge.v2019_08_01.models.TriggerEventType
     :param source_info: Required. Periodic timer details.
-    :type source_info: ~azure.mgmt.databoxedge.models.PeriodicTimerSourceInfo
+    :type source_info: ~azure.mgmt.databoxedge.v2019_08_01.models.PeriodicTimerSourceInfo
     :param sink_info: Required. Role Sink information.
-    :type sink_info: ~azure.mgmt.databoxedge.models.RoleSinkInfo
+    :type sink_info: ~azure.mgmt.databoxedge.v2019_08_01.models.RoleSinkInfo
     :param custom_context_tag: A custom context tag typically used to correlate the trigger against
      its usage. For example, if a periodic timer trigger is intended for certain specific IoT
      modules in the device, the tag can be the name or the image URL of the module.
@@ -2097,11 +2100,11 @@ class ResourceTypeSku(msrest.serialization.Model):
     :ivar name: The Sku name. Possible values include: "Gateway", "Edge", "TEA_1Node",
      "TEA_1Node_UPS", "TEA_1Node_Heater", "TEA_1Node_UPS_Heater", "TEA_4Node_Heater",
      "TEA_4Node_UPS_Heater", "TMA".
-    :vartype name: str or ~azure.mgmt.databoxedge.models.SkuName
+    :vartype name: str or ~azure.mgmt.databoxedge.v2019_08_01.models.SkuName
     :ivar kind: The Sku kind.
     :vartype kind: str
     :ivar tier: The Sku tier. Possible values include: "Standard".
-    :vartype tier: str or ~azure.mgmt.databoxedge.models.SkuTier
+    :vartype tier: str or ~azure.mgmt.databoxedge.v2019_08_01.models.SkuTier
     :ivar family: The Sku family.
     :vartype family: str
     :ivar locations: Availability of the SKU for the region.
@@ -2109,11 +2112,11 @@ class ResourceTypeSku(msrest.serialization.Model):
     :ivar api_versions: The API versions in which SKU is available.
     :vartype api_versions: list[str]
     :ivar location_info: Availability of the SKU for the location/zone.
-    :vartype location_info: list[~azure.mgmt.databoxedge.models.SkuLocationInfo]
+    :vartype location_info: list[~azure.mgmt.databoxedge.v2019_08_01.models.SkuLocationInfo]
     :ivar costs: The pricing info of the Sku.
-    :vartype costs: list[~azure.mgmt.databoxedge.models.SkuCost]
+    :vartype costs: list[~azure.mgmt.databoxedge.v2019_08_01.models.SkuCost]
     :ivar restrictions: Restrictions of the SKU availability.
-    :vartype restrictions: list[~azure.mgmt.databoxedge.models.SkuRestriction]
+    :vartype restrictions: list[~azure.mgmt.databoxedge.v2019_08_01.models.SkuRestriction]
     """
 
     _validation = {
@@ -2165,7 +2168,7 @@ class RoleList(msrest.serialization.Model):
     Variables are only populated by the server, and will be ignored when sending a request.
 
     :ivar value: The Value.
-    :vartype value: list[~azure.mgmt.databoxedge.models.Role]
+    :vartype value: list[~azure.mgmt.databoxedge.v2019_08_01.models.Role]
     :ivar next_link: Link to the next set of results.
     :vartype next_link: str
     """
@@ -2231,7 +2234,8 @@ class SecuritySettings(ARMBaseModel):
      (encrypted using RSA PKCS #1) is used to sign into the  local web UI of the device. The Actual
      password should have at least 8 characters that are a combination of  uppercase, lowercase,
      numeric, and special characters.
-    :type device_admin_password: ~azure.mgmt.databoxedge.models.AsymmetricEncryptedSecret
+    :type device_admin_password:
+     ~azure.mgmt.databoxedge.v2019_08_01.models.AsymmetricEncryptedSecret
     """
 
     _validation = {
@@ -2260,7 +2264,8 @@ class ServiceSpecification(msrest.serialization.Model):
     """Service specification.
 
     :param metric_specifications: Metric specification as defined by shoebox.
-    :type metric_specifications: list[~azure.mgmt.databoxedge.models.MetricSpecificationV1]
+    :type metric_specifications:
+     list[~azure.mgmt.databoxedge.v2019_08_01.models.MetricSpecificationV1]
     """
 
     _attribute_map = {
@@ -2292,27 +2297,27 @@ class Share(ARMBaseModel):
     :type description: str
     :param share_status: Required. Current status of the share. Possible values include: "Offline",
      "Unknown", "OK", "Updating", "NeedsAttention".
-    :type share_status: str or ~azure.mgmt.databoxedge.models.ShareStatus
+    :type share_status: str or ~azure.mgmt.databoxedge.v2019_08_01.models.ShareStatus
     :param monitoring_status: Required. Current monitoring status of the share. Possible values
      include: "Enabled", "Disabled".
-    :type monitoring_status: str or ~azure.mgmt.databoxedge.models.MonitoringStatus
+    :type monitoring_status: str or ~azure.mgmt.databoxedge.v2019_08_01.models.MonitoringStatus
     :param azure_container_info: Azure container mapping for the share.
-    :type azure_container_info: ~azure.mgmt.databoxedge.models.AzureContainerInfo
+    :type azure_container_info: ~azure.mgmt.databoxedge.v2019_08_01.models.AzureContainerInfo
     :param access_protocol: Required. Access protocol to be used by the share. Possible values
      include: "SMB", "NFS".
-    :type access_protocol: str or ~azure.mgmt.databoxedge.models.ShareAccessProtocol
+    :type access_protocol: str or ~azure.mgmt.databoxedge.v2019_08_01.models.ShareAccessProtocol
     :param user_access_rights: Mapping of users and corresponding access rights on the share
      (required for SMB protocol).
-    :type user_access_rights: list[~azure.mgmt.databoxedge.models.UserAccessRight]
+    :type user_access_rights: list[~azure.mgmt.databoxedge.v2019_08_01.models.UserAccessRight]
     :param client_access_rights: List of IP addresses and corresponding access rights on the
      share(required for NFS protocol).
-    :type client_access_rights: list[~azure.mgmt.databoxedge.models.ClientAccessRight]
+    :type client_access_rights: list[~azure.mgmt.databoxedge.v2019_08_01.models.ClientAccessRight]
     :param refresh_details: Details of the refresh job on this share.
-    :type refresh_details: ~azure.mgmt.databoxedge.models.RefreshDetails
+    :type refresh_details: ~azure.mgmt.databoxedge.v2019_08_01.models.RefreshDetails
     :ivar share_mappings: Share mount point to the role.
-    :vartype share_mappings: list[~azure.mgmt.databoxedge.models.MountPointMap]
+    :vartype share_mappings: list[~azure.mgmt.databoxedge.v2019_08_01.models.MountPointMap]
     :param data_policy: Data policy of the share. Possible values include: "Cloud", "Local".
-    :type data_policy: str or ~azure.mgmt.databoxedge.models.DataPolicy
+    :type data_policy: str or ~azure.mgmt.databoxedge.v2019_08_01.models.DataPolicy
     """
 
     _validation = {
@@ -2367,7 +2372,7 @@ class ShareAccessRight(msrest.serialization.Model):
     :type share_id: str
     :param access_type: Required. Type of access to be allowed on the share for this user. Possible
      values include: "Change", "Read", "Custom".
-    :type access_type: str or ~azure.mgmt.databoxedge.models.ShareAccessType
+    :type access_type: str or ~azure.mgmt.databoxedge.v2019_08_01.models.ShareAccessType
     """
 
     _validation = {
@@ -2395,7 +2400,7 @@ class ShareList(msrest.serialization.Model):
     Variables are only populated by the server, and will be ignored when sending a request.
 
     :ivar value: The list of shares.
-    :vartype value: list[~azure.mgmt.databoxedge.models.Share]
+    :vartype value: list[~azure.mgmt.databoxedge.v2019_08_01.models.Share]
     :ivar next_link: Link to the next set of results.
     :vartype next_link: str
     """
@@ -2425,9 +2430,9 @@ class Sku(msrest.serialization.Model):
     :param name: SKU name. Possible values include: "Gateway", "Edge", "TEA_1Node",
      "TEA_1Node_UPS", "TEA_1Node_Heater", "TEA_1Node_UPS_Heater", "TEA_4Node_Heater",
      "TEA_4Node_UPS_Heater", "TMA".
-    :type name: str or ~azure.mgmt.databoxedge.models.SkuName
+    :type name: str or ~azure.mgmt.databoxedge.v2019_08_01.models.SkuName
     :param tier: The SKU tier. This is based on the SKU name. Possible values include: "Standard".
-    :type tier: str or ~azure.mgmt.databoxedge.models.SkuTier
+    :type tier: str or ~azure.mgmt.databoxedge.v2019_08_01.models.SkuTier
     """
 
     _attribute_map = {
@@ -2485,7 +2490,7 @@ class SkuInformationList(msrest.serialization.Model):
     Variables are only populated by the server, and will be ignored when sending a request.
 
     :ivar value: List of ResourceType Sku.
-    :vartype value: list[~azure.mgmt.databoxedge.models.ResourceTypeSku]
+    :vartype value: list[~azure.mgmt.databoxedge.v2019_08_01.models.ResourceTypeSku]
     :ivar next_link: Links to the next set of results.
     :vartype next_link: str
     """
@@ -2555,9 +2560,10 @@ class SkuRestriction(msrest.serialization.Model):
     :vartype values: list[str]
     :ivar reason_code: The SKU restriction reason. Possible values include:
      "NotAvailableForSubscription", "QuotaId".
-    :vartype reason_code: str or ~azure.mgmt.databoxedge.models.SkuRestrictionReasonCode
+    :vartype reason_code: str or
+     ~azure.mgmt.databoxedge.v2019_08_01.models.SkuRestrictionReasonCode
     :ivar restriction_info: Restriction of the SKU for the location/zone.
-    :vartype restriction_info: ~azure.mgmt.databoxedge.models.SkuRestrictionInfo
+    :vartype restriction_info: ~azure.mgmt.databoxedge.v2019_08_01.models.SkuRestrictionInfo
     """
 
     _validation = {
@@ -2630,10 +2636,11 @@ class StorageAccount(ARMBaseModel):
     :type description: str
     :param storage_account_status: Current status of the storage account. Possible values include:
      "OK", "Offline", "Unknown", "Updating", "NeedsAttention".
-    :type storage_account_status: str or ~azure.mgmt.databoxedge.models.StorageAccountStatus
+    :type storage_account_status: str or
+     ~azure.mgmt.databoxedge.v2019_08_01.models.StorageAccountStatus
     :param data_policy: Data policy of the storage Account. Possible values include: "Cloud",
      "Local".
-    :type data_policy: str or ~azure.mgmt.databoxedge.models.DataPolicy
+    :type data_policy: str or ~azure.mgmt.databoxedge.v2019_08_01.models.DataPolicy
     :param storage_account_credential_id: Storage Account Credential Id.
     :type storage_account_credential_id: str
     :ivar blob_endpoint: BlobEndpoint of Storage Account.
@@ -2694,18 +2701,18 @@ class StorageAccountCredential(ARMBaseModel):
     :param user_name: Username for the storage account.
     :type user_name: str
     :param account_key: Encrypted storage key.
-    :type account_key: ~azure.mgmt.databoxedge.models.AsymmetricEncryptedSecret
+    :type account_key: ~azure.mgmt.databoxedge.v2019_08_01.models.AsymmetricEncryptedSecret
     :param connection_string: Connection string for the storage account. Use this string if
      username and account key are not specified.
     :type connection_string: str
     :param ssl_status: Required. Signifies whether SSL needs to be enabled or not. Possible values
      include: "Enabled", "Disabled".
-    :type ssl_status: str or ~azure.mgmt.databoxedge.models.SSLStatus
+    :type ssl_status: str or ~azure.mgmt.databoxedge.v2019_08_01.models.SSLStatus
     :param blob_domain_name: Blob end point for private clouds.
     :type blob_domain_name: str
     :param account_type: Required. Type of storage accessed on the storage account. Possible values
      include: "GeneralPurposeStorage", "BlobStorage".
-    :type account_type: str or ~azure.mgmt.databoxedge.models.AccountType
+    :type account_type: str or ~azure.mgmt.databoxedge.v2019_08_01.models.AccountType
     :param storage_account_id: Id of the storage account.
     :type storage_account_id: str
     """
@@ -2754,7 +2761,7 @@ class StorageAccountCredentialList(msrest.serialization.Model):
     Variables are only populated by the server, and will be ignored when sending a request.
 
     :ivar value: The value.
-    :vartype value: list[~azure.mgmt.databoxedge.models.StorageAccountCredential]
+    :vartype value: list[~azure.mgmt.databoxedge.v2019_08_01.models.StorageAccountCredential]
     :ivar next_link: Link to the next set of results.
     :vartype next_link: str
     """
@@ -2784,7 +2791,7 @@ class StorageAccountList(msrest.serialization.Model):
     Variables are only populated by the server, and will be ignored when sending a request.
 
     :ivar value: The list of storageAccounts.
-    :vartype value: list[~azure.mgmt.databoxedge.models.StorageAccount]
+    :vartype value: list[~azure.mgmt.databoxedge.v2019_08_01.models.StorageAccount]
     :ivar next_link: Link to the next set of results.
     :vartype next_link: str
     """
@@ -2812,7 +2819,7 @@ class SymmetricKey(msrest.serialization.Model):
     """Symmetric key for authentication.
 
     :param connection_string: Connection string based on the symmetric key.
-    :type connection_string: ~azure.mgmt.databoxedge.models.AsymmetricEncryptedSecret
+    :type connection_string: ~azure.mgmt.databoxedge.v2019_08_01.models.AsymmetricEncryptedSecret
     """
 
     _attribute_map = {
@@ -2864,7 +2871,7 @@ class TriggerList(msrest.serialization.Model):
     Variables are only populated by the server, and will be ignored when sending a request.
 
     :ivar value: The list of triggers.
-    :vartype value: list[~azure.mgmt.databoxedge.models.Trigger]
+    :vartype value: list[~azure.mgmt.databoxedge.v2019_08_01.models.Trigger]
     :ivar next_link: Link to the next set of results.
     :vartype next_link: str
     """
@@ -2895,7 +2902,7 @@ class UpdateDownloadProgress(msrest.serialization.Model):
 
     :ivar download_phase: The download phase. Possible values include: "Unknown", "Initializing",
      "Downloading", "Verifying".
-    :vartype download_phase: str or ~azure.mgmt.databoxedge.models.DownloadPhase
+    :vartype download_phase: str or ~azure.mgmt.databoxedge.v2019_08_01.models.DownloadPhase
     :ivar percent_complete: Percentage of completion.
     :vartype percent_complete: int
     :ivar total_bytes_to_download: Total bytes to download.
@@ -3009,10 +3016,12 @@ class UpdateSummary(ARMBaseModel):
     :vartype total_number_of_updates_pending_install: int
     :ivar reboot_behavior: Indicates if updates are available and at least one of the updates needs
      a reboot. Possible values include: "NeverReboots", "RequiresReboot", "RequestReboot".
-    :vartype reboot_behavior: str or ~azure.mgmt.databoxedge.models.InstallRebootBehavior
+    :vartype reboot_behavior: str or
+     ~azure.mgmt.databoxedge.v2019_08_01.models.InstallRebootBehavior
     :ivar ongoing_update_operation: The current update operation. Possible values include: "None",
      "Scan", "Download", "Install".
-    :vartype ongoing_update_operation: str or ~azure.mgmt.databoxedge.models.UpdateOperation
+    :vartype ongoing_update_operation: str or
+     ~azure.mgmt.databoxedge.v2019_08_01.models.UpdateOperation
     :ivar in_progress_download_job_id: The job ID of the download job in progress.
     :vartype in_progress_download_job_id: str
     :ivar in_progress_install_job_id: The job ID of the install job in progress.
@@ -3102,7 +3111,7 @@ class UploadCertificateRequest(msrest.serialization.Model):
 
     :param authentication_type: The authentication type. Possible values include: "Invalid",
      "AzureActiveDirectory".
-    :type authentication_type: str or ~azure.mgmt.databoxedge.models.AuthenticationType
+    :type authentication_type: str or ~azure.mgmt.databoxedge.v2019_08_01.models.AuthenticationType
     :param certificate: Required. The base64 encoded certificate raw data.
     :type certificate: str
     """
@@ -3132,7 +3141,7 @@ class UploadCertificateResponse(msrest.serialization.Model):
 
     :param auth_type: Specifies authentication type. Possible values include: "Invalid",
      "AzureActiveDirectory".
-    :type auth_type: str or ~azure.mgmt.databoxedge.models.AuthenticationType
+    :type auth_type: str or ~azure.mgmt.databoxedge.v2019_08_01.models.AuthenticationType
     :ivar resource_id: The resource ID of the Data Box Edge/Gateway device.
     :vartype resource_id: str
     :ivar aad_authority: Azure Active Directory tenant authority.
@@ -3200,13 +3209,13 @@ class User(ARMBaseModel):
     :ivar type: The hierarchical type of the object.
     :vartype type: str
     :param encrypted_password: The password details.
-    :type encrypted_password: ~azure.mgmt.databoxedge.models.AsymmetricEncryptedSecret
+    :type encrypted_password: ~azure.mgmt.databoxedge.v2019_08_01.models.AsymmetricEncryptedSecret
     :param share_access_rights: List of shares that the user has rights on. This field should not
      be specified during user creation.
-    :type share_access_rights: list[~azure.mgmt.databoxedge.models.ShareAccessRight]
+    :type share_access_rights: list[~azure.mgmt.databoxedge.v2019_08_01.models.ShareAccessRight]
     :param user_type: Required. Type of the user. Possible values include: "Share",
      "LocalManagement", "ARM".
-    :type user_type: str or ~azure.mgmt.databoxedge.models.UserType
+    :type user_type: str or ~azure.mgmt.databoxedge.v2019_08_01.models.UserType
     """
 
     _validation = {
@@ -3244,7 +3253,7 @@ class UserAccessRight(msrest.serialization.Model):
     :type user_id: str
     :param access_type: Required. Type of access to be allowed for the user. Possible values
      include: "Change", "Read", "Custom".
-    :type access_type: str or ~azure.mgmt.databoxedge.models.ShareAccessType
+    :type access_type: str or ~azure.mgmt.databoxedge.v2019_08_01.models.ShareAccessType
     """
 
     _validation = {
@@ -3272,7 +3281,7 @@ class UserList(msrest.serialization.Model):
     Variables are only populated by the server, and will be ignored when sending a request.
 
     :ivar value: The list of users.
-    :vartype value: list[~azure.mgmt.databoxedge.models.User]
+    :vartype value: list[~azure.mgmt.databoxedge.v2019_08_01.models.User]
     :ivar next_link: Link to the next set of results.
     :vartype next_link: str
     """

@@ -133,6 +133,7 @@ class SMSClientTest(CommunicationTestCase):
                 to=[self.phone_number],
                 message="Hello World via SMS")
         
+        assert str(ex.value.status_code) == "401"
         assert ex.value.message is not None
 
     @pytest.mark.live_test_only
