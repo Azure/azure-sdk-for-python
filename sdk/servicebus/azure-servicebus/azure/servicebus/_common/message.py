@@ -130,10 +130,51 @@ class ServiceBusMessage(
 
     def __repr__(self):
         # type: () -> str
-        rec_repr = "body={}".format(
-            self.body
+        # pylint: disable=bare-except
+        message_repr = "body={}".format(
+            str(self.body)
         )
-        return "ServiceBusMessage({})".format(rec_repr)[:1024]
+        try:
+            message_repr += ", application_properties={}".format(self.application_properties)
+        except:
+            pass
+        try:
+            message_repr += ", session_id={}".format(self.session_id)
+        except:
+            pass
+        try:
+            message_repr += ", message_id={}".format(self.message_id)
+        except:
+            pass
+        try:
+            message_repr += ", content_type={}".format(self.content_type)
+        except:
+            pass
+        try:
+            message_repr += ", correlation_id={}".format(self.correlation_id)
+        except:
+            pass
+        try:
+            message_repr += ", to={}".format(self.to)
+        except:
+            pass
+        try:
+            message_repr += ", reply_to={}".format(self.reply_to)
+        except:
+            pass
+        try:
+            message_repr += ", reply_to_session_id={}".format(self.reply_to_session_id)
+        except:
+            pass
+        try:
+            message_repr += ", subject={}".format(self.subject)
+        except:
+            pass
+        try:
+            message_repr += ", scheduled_enqueue_time_utc={}".format(self.scheduled_enqueue_time_utc)
+        except:
+            pass
+        return "ServiceBusMessage({})".format(message_repr)[:1024]
 
     def _build_message(self, body):
         if not (
@@ -700,10 +741,55 @@ class ServiceBusReceivedMessage(ServiceBusMessage):
 
     def __repr__(self):
         # type: () -> str
-        rec_repr = "received_timestamp_utc={}, settled={}, body={}".format(
-            self._received_timestamp_utc, self._settled, self.message._body # pylint: disable=protected-access
+        # pylint: disable=bare-except
+        message_repr = "body={}".format(
+            str(self.body)
         )
-        return "ServiceBusReceivedMessage({})".format(rec_repr)[:1024]
+        try:
+            message_repr += ", application_properties={}".format(self.application_properties)
+        except:
+            pass
+        try:
+            message_repr += ", session_id={}".format(self.session_id)
+        except:
+            pass
+        try:
+            message_repr += ", message_id={}".format(self.message_id)
+        except:
+            pass
+        try:
+            message_repr += ", content_type={}".format(self.content_type)
+        except:
+            pass
+        try:
+            message_repr += ", correlation_id={}".format(self.correlation_id)
+        except:
+            pass
+        try:
+            message_repr += ", to={}".format(self.to)
+        except:
+            pass
+        try:
+            message_repr += ", reply_to={}".format(self.reply_to)
+        except:
+            pass
+        try:
+            message_repr += ", reply_to_session_id={}".format(self.reply_to_session_id)
+        except:
+            pass
+        try:
+            message_repr += ", subject={}".format(self.subject)
+        except:
+            pass
+        try:
+            message_repr += ", scheduled_enqueue_time_utc={}".format(self.scheduled_enqueue_time_utc)
+        except:
+            pass
+        try:
+            message_repr += ", auto_renew_error={}".format(self.auto_renew_error)
+        except:
+            pass
+        return "ServiceBusReceivedMessage({})".format(message_repr)[:1024]
 
     @property
     def dead_letter_error_description(self):

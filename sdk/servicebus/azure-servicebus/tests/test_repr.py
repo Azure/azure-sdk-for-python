@@ -9,7 +9,8 @@ from azure.servicebus._common.constants import (
 
 def test_servicebus_message_repr():
     message = ServiceBusMessage("hello")
-    assert message.__repr__() == "ServiceBusMessage(body=hello)"
+    assert "application_properties=None, session_id=None," in message.__repr__()
+    assert "content_type=None, correlation_id=None, to=None, reply_to=None, reply_to_session_id=None, subject=None, scheduled_enqueue_time_utc" in message.__repr__()
 
 def test_servicebus_received_message_repr():
     uamqp_received_message = uamqp.message.Message(
@@ -22,5 +23,5 @@ def test_servicebus_received_message_repr():
         properties=uamqp.message.MessageProperties()
     )
     received_message = ServiceBusReceivedMessage(uamqp_received_message, receiver=None)
-    assert "ServiceBusReceivedMessage(received_timestamp_utc=" in received_message.__repr__()
-    assert "settled=False, body=data)" in received_message.__repr__()
+    assert "application_properties=None, session_id=None" in received_message.__repr__()
+    assert "content_type=None, correlation_id=None, to=None, reply_to=None, reply_to_session_id=None, subject=None, scheduled_enqueue_time_utc" in received_message.__repr__()
