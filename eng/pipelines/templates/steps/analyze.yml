@@ -5,6 +5,7 @@ parameters:
   AdditionalTestArgs: ''
   Artifacts: []
   TestPipeline: false
+  VerifyAutorest: false
 
 steps:
   - template: /eng/pipelines/templates/steps/analyze_dependency.yml
@@ -56,6 +57,11 @@ steps:
   - template: /eng/common/pipelines/templates/steps/verify-path-length.yml
     parameters:
       SourceDirectory: $(Build.SourcesDirectory)
+
+  - template: ../steps/verify-autorest.yml
+    parameters:
+      ServiceDirectory: ${{ parameters.ServiceDirectory }}
+      VerifyAutorest: ${{ parameters.VerifyAutorest }}
 
   - task: ms.vss-governance-buildtask.governance-build-task-component-detection.ComponentGovernanceComponentDetection@0
     # ComponentGovernance is currently unable to run on pull requests of public projects. Running on non-PR
