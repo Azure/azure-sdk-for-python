@@ -79,10 +79,13 @@ class AuthenticationOperations:
         header_parameters['Content-Type'] = self._serialize.header("content_type", content_type, 'str')
         header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
 
-        body_content_kwargs = {}  # type: Dict[str, Any]
-        body_content = self._serialize.body(grant_type, 'str')
-        body_content_kwargs['content'] = body_content
-        request = self._client.post(url, query_parameters, header_parameters, **body_content_kwargs)
+        # Construct form data
+        _form_content = {
+            'grant_type': grant_type,
+            'service': service,
+            'access_token': access_token,
+        }
+        request = self._client.post(url, query_parameters, header_parameters, form_content=_form_content)
         pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
 
@@ -145,10 +148,14 @@ class AuthenticationOperations:
         header_parameters['Content-Type'] = self._serialize.header("content_type", content_type, 'str')
         header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
 
-        body_content_kwargs = {}  # type: Dict[str, Any]
-        body_content = self._serialize.body(grant_type, 'str')
-        body_content_kwargs['content'] = body_content
-        request = self._client.post(url, query_parameters, header_parameters, **body_content_kwargs)
+        # Construct form data
+        _form_content = {
+            'grant_type': grant_type,
+            'service': service,
+            'scope': scope,
+            'refresh_token': refresh_token,
+        }
+        request = self._client.post(url, query_parameters, header_parameters, form_content=_form_content)
         pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
 
