@@ -17,7 +17,7 @@ _CONFIG = {
     "package_doc_id": "",
     "is_stable": False,
     "is_arm": True,
-    "need_msrestazure": True
+    "need_azuremgmtcore": True
 }
 
 def read_conf(folder: Path) -> Dict[str, Any]:
