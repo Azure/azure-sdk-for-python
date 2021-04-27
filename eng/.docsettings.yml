@@ -137,6 +137,8 @@ known_content_issues:
   - ['sdk/core/azure/HISTORY.rst','nspkg and common']
   - ['sdk/digitaltwins/azure-digitaltwins-nspkg/README.md', 'nspkg and common']
   - ['sdk/nspkg/azure-messaging-nspkg/README.md', '#4554']
+  - ['sdk/signalr/azure-mgmt-signalr/README.md', '#4554']
+  - ['sdk/webpubsub/azure-messaging-webpubsubservice/README.md', '#4554']
 
   # root readme
   - ['README.md', 'root readme']
