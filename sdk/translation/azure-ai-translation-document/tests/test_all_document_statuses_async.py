@@ -19,7 +19,7 @@ class TestAllDocumentStatuses(AsyncDocumentTranslationTest):
 
     @DocumentTranslationPreparer()
     @DocumentTranslationClientPreparer()
-    async def test_list_statuses(self, client):
+    async def test_list_document_statuses(self, client):
         docs_count = 5
         target_language = "es"
 
@@ -39,7 +39,7 @@ class TestAllDocumentStatuses(AsyncDocumentTranslationTest):
 
     @DocumentTranslationPreparer()
     @DocumentTranslationClientPreparer()
-    async def test_list_statuses_with_pagination(self, client):
+    async def test_list_document_statuses_with_pagination(self, client):
         docs_count = 5
         results_per_page = 2
         no_of_pages = docs_count // results_per_page
@@ -66,7 +66,7 @@ class TestAllDocumentStatuses(AsyncDocumentTranslationTest):
 
     @DocumentTranslationPreparer()
     @DocumentTranslationClientPreparer()
-    async def test_list_statuses_with_skip(self, client):
+    async def test_list_document_statuses_with_skip(self, client):
         docs_count = 5
         skip = 2
         target_language = "es"
@@ -88,7 +88,7 @@ class TestAllDocumentStatuses(AsyncDocumentTranslationTest):
 
     @DocumentTranslationPreparer()
     @DocumentTranslationClientPreparer()
-    async def test_list_submitted_jobs_filter_by_status(self, client):
+    async def test_list_document_statuses_filter_by_status(self, client):
         docs_count = 10
         target_language = "es"
 
@@ -106,7 +106,7 @@ class TestAllDocumentStatuses(AsyncDocumentTranslationTest):
 
     @DocumentTranslationPreparer()
     @DocumentTranslationClientPreparer()
-    async def test_list_submitted_jobs_filter_by_ids(self, client):
+    async def test_list_document_statuses_filter_by_ids(self, client):
         docs_count = 5
         target_language = "es"
 
@@ -127,7 +127,7 @@ class TestAllDocumentStatuses(AsyncDocumentTranslationTest):
 
     @DocumentTranslationPreparer()
     @DocumentTranslationClientPreparer()
-    async def test_list_submitted_jobs_order_by_creation_time_asc(self, client):
+    async def test_list_document_statuses_order_by_creation_time_asc(self, client):
         docs_count = 5
         target_language = "es"
 
@@ -149,7 +149,7 @@ class TestAllDocumentStatuses(AsyncDocumentTranslationTest):
 
     @DocumentTranslationPreparer()
     @DocumentTranslationClientPreparer()
-    async def test_list_submitted_jobs_order_by_creation_time_desc(self, client):
+    async def test_list_document_statuses_order_by_creation_time_desc(self, client):
         docs_count = 5
         target_language = "es"
 
@@ -171,7 +171,7 @@ class TestAllDocumentStatuses(AsyncDocumentTranslationTest):
 
     @DocumentTranslationPreparer()
     @DocumentTranslationClientPreparer()
-    async def test_list_submitted_jobs_mixed_filters(self, client):
+    async def test_list_document_statuses_mixed_filters(self, client):
         docs_count = 15
         target_language = "es"
 

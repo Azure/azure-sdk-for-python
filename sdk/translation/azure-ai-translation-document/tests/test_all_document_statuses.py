@@ -18,7 +18,7 @@ class TestAllDocumentStatuses(DocumentTranslationTest):
 
     @DocumentTranslationPreparer()
     @DocumentTranslationClientPreparer()
-    def test_list_statuses(self, client):
+    def test_list_document_statuses(self, client):
         docs_count = 5
         target_language = "es"
 
@@ -35,7 +35,7 @@ class TestAllDocumentStatuses(DocumentTranslationTest):
 
     @DocumentTranslationPreparer()
     @DocumentTranslationClientPreparer()
-    def test_list_statuses_with_pagination(self, client):
+    def test_list_document_statuses_with_pagination(self, client):
         docs_count = 10
         results_per_page = 2
         no_of_pages = docs_count // results_per_page
@@ -58,7 +58,7 @@ class TestAllDocumentStatuses(DocumentTranslationTest):
 
     @DocumentTranslationPreparer()
     @DocumentTranslationClientPreparer()
-    def test_list_statuses_with_skip(self, client):
+    def test_list_document_statuses_with_skip(self, client):
         docs_count = 10
         skip = 2
         target_language = "es"
@@ -77,7 +77,7 @@ class TestAllDocumentStatuses(DocumentTranslationTest):
 
     @DocumentTranslationPreparer()
     @DocumentTranslationClientPreparer()
-    def test_list_submitted_jobs_filter_by_status(self, client):
+    def test_list_document_statuses_filter_by_status(self, client):
         docs_count = 10
         target_language = "es"
 
@@ -96,7 +96,7 @@ class TestAllDocumentStatuses(DocumentTranslationTest):
 
     @DocumentTranslationPreparer()
     @DocumentTranslationClientPreparer()
-    def test_list_submitted_jobs_filter_by_ids(self, client):
+    def test_list_document_statuses_filter_by_ids(self, client):
         docs_count = 5
         target_language = "es"
 
@@ -118,7 +118,7 @@ class TestAllDocumentStatuses(DocumentTranslationTest):
 
     @DocumentTranslationPreparer()
     @DocumentTranslationClientPreparer()
-    def test_list_submitted_jobs_order_by_creation_time_asc(self, client):
+    def test_list_document_statuses_order_by_creation_time_asc(self, client):
         docs_count = 5
         target_language = "es"
 
@@ -137,7 +137,7 @@ class TestAllDocumentStatuses(DocumentTranslationTest):
 
     @DocumentTranslationPreparer()
     @DocumentTranslationClientPreparer()
-    def test_list_submitted_jobs_order_by_creation_time_desc(self, client):
+    def test_list_document_statuses_order_by_creation_time_desc(self, client):
         docs_count = 5
         target_language = "es"
 
@@ -156,7 +156,7 @@ class TestAllDocumentStatuses(DocumentTranslationTest):
 
     @DocumentTranslationPreparer()
     @DocumentTranslationClientPreparer()
-    def test_list_submitted_jobs_mixed_filters(self, client):
+    def test_list_document_statuses_mixed_filters(self, client):
         docs_count = 15
         target_language = "es"
 
