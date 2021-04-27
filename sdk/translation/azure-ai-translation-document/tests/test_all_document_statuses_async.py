@@ -41,15 +41,15 @@ class TestAllDocumentStatuses(AsyncDocumentTranslationTest):
     @DocumentTranslationClientPreparer()
     async def test_list_statuses_with_pagination(self, client):
         docs_count = 5
-        result_per_page = 2
-        no_of_pages = docs_count // result_per_page
+        results_per_page = 2
+        no_of_pages = docs_count // results_per_page
         target_language = "es"
 
         # submit and validate job
         job_id = await self._create_translation_job_with_dummy_docs_async(client, docs_count, language_code=target_language, wait=False)
 
         # check doc statuses
-        doc_statuses_pages = client.list_all_document_statuses(job_id=job_id, results_per_page=result_per_page).by_page()
+        doc_statuses_pages = client.list_all_document_statuses(job_id=job_id, results_per_page=results_per_page).by_page()
         pages_list = []
 
         # iterate by page
@@ -59,7 +59,7 @@ class TestAllDocumentStatuses(AsyncDocumentTranslationTest):
             async for document in page:
                 page_docs_list.append(document)
                 self._validate_doc_status(document, target_language)
-            self.assertEqual(len(page_docs_list), result_per_page)
+            self.assertEqual(len(page_docs_list), results_per_page)
 
         self.assertEqual(len(pages_list), no_of_pages)
 
@@ -127,14 +127,14 @@ class TestAllDocumentStatuses(AsyncDocumentTranslationTest):
 
     @DocumentTranslationPreparer()
     @DocumentTranslationClientPreparer()
-    async def test_list_submitted_jobs_filter_by_created_start(self, client):
+    async def test_list_submitted_jobs_filter_by_translated_after(self, client):
         # it's not practical to test for created time filter
         pass
 
 
     @DocumentTranslationPreparer()
     @DocumentTranslationClientPreparer()
-    async def test_list_submitted_jobs_filter_by_created_end(self, client):
+    async def test_list_submitted_jobs_filter_by_translated_before(self, client):
         # it's not practical to test for created time filter
         pass
 

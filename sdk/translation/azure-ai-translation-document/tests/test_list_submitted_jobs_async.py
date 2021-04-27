@@ -42,14 +42,14 @@ class TestSubmittedJobs(AsyncDocumentTranslationTest):
     async def test_list_submitted_jobs_with_pagination(self, client):
         # prepare data
         jobs_count = 6
-        result_per_page = 2
-        no_of_pages = jobs_count // result_per_page
+        results_per_page = 2
+        no_of_pages = jobs_count // results_per_page
 
         # create some jobs
         job_ids = await self._create_and_submit_sample_translation_jobs_async(client, jobs_count)
 
         # list jobs
-        submitted_jobs_pages = client.list_submitted_jobs(results_per_page=result_per_page).by_page()
+        submitted_jobs_pages = client.list_submitted_jobs(results_per_page=results_per_page).by_page()
 
         # iterate by page
         async for page in submitted_jobs_pages:
@@ -62,7 +62,7 @@ class TestSubmittedJobs(AsyncDocumentTranslationTest):
                 else:
                     self._validate_translation_job(job)
 
-            self.assertEqual(len(page_jobs), result_per_page)
+            self.assertEqual(len(page_jobs), results_per_page)
 
 
     @DocumentTranslationPreparer()
@@ -126,13 +126,13 @@ class TestSubmittedJobs(AsyncDocumentTranslationTest):
 
     @DocumentTranslationPreparer()
     @DocumentTranslationClientPreparer()
-    async def test_list_submitted_jobs_filter_by_created_start(self, client):
+    async def test_list_submitted_jobs_filter_by_created_after(self, client):
         # create some jobs
         start = datetime.now()
         self._create_and_submit_sample_translation_jobs_async(client, 3)
 
         # list jobs
-        submitted_jobs = client.list_submitted_jobs(created_date_time_utc_start=start)
+        submitted_jobs = client.list_submitted_jobs(created_after=start)
 
         # check statuses
         async for job in submitted_jobs:
@@ -141,13 +141,13 @@ class TestSubmittedJobs(AsyncDocumentTranslationTest):
 
     @DocumentTranslationPreparer()
     @DocumentTranslationClientPreparer()
-    async def test_list_submitted_jobs_filter_by_created_end(self, client):
+    async def test_list_submitted_jobs_filter_by_created_before(self, client):
         # create some jobs
         end = datetime.now()
         self._create_and_submit_sample_translation_jobs_async(client, 3)
 
         # list jobs
-        submitted_jobs = client.list_submitted_jobs(created_date_time_utc_end=end)
+        submitted_jobs = client.list_submitted_jobs(created_before=end)
 
         # check statuses
         async for job in submitted_jobs:

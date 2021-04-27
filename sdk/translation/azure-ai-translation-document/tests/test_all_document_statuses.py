@@ -37,21 +37,21 @@ class TestAllDocumentStatuses(DocumentTranslationTest):
     @DocumentTranslationClientPreparer()
     def test_list_statuses_with_pagination(self, client):
         docs_count = 10
-        result_per_page = 2
-        no_of_pages = docs_count // result_per_page
+        results_per_page = 2
+        no_of_pages = docs_count // results_per_page
         target_language = "es"
 
         # submit and validate job
         job_id = self._create_translation_job_with_dummy_docs(client, docs_count, language_code=target_language, wait=False)
 
         # check doc statuses
-        doc_statuses_pages = client.list_all_document_statuses(job_id=job_id, results_per_page=result_per_page).by_page()
+        doc_statuses_pages = client.list_all_document_statuses(job_id=job_id, results_per_page=results_per_page).by_page()
         self.assertEqual(len(doc_statuses_pages), no_of_pages)
 
         # iterate by page
         for page in doc_statuses_pages:
             page_items = list(page)
-            self.assertEqual(len(page_items), result_per_page)
+            self.assertEqual(len(page_items), results_per_page)
             for document in page:
                 self._validate_doc_status(document, target_language)
 
@@ -118,14 +118,14 @@ class TestAllDocumentStatuses(DocumentTranslationTest):
 
     @DocumentTranslationPreparer()
     @DocumentTranslationClientPreparer()
-    def test_list_submitted_jobs_filter_by_created_start(self, client):
+    def test_list_submitted_jobs_filter_by_translated_after(self, client):
         # it's not practical to test for created time filter
         pass
 
 
     @DocumentTranslationPreparer()
     @DocumentTranslationClientPreparer()
-    def test_list_submitted_jobs_filter_by_created_end(self, client):
+    def test_list_submitted_jobs_filter_by_translated_before(self, client):
         # it's not practical to test for created time filter
         pass
 

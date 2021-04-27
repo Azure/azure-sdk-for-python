@@ -37,19 +37,19 @@ class TestSubmittedJobs(DocumentTranslationTest):
     @DocumentTranslationClientPreparer()
     def test_list_submitted_jobs_with_pagination(self, client):
         # prepare data
-        result_per_page = 2
+        results_per_page = 2
 
         # create some jobs
         job_ids = self._create_and_submit_sample_translation_jobs(client, 6)
 
         # list jobs
-        submitted_jobs_pages = client.list_submitted_jobs(results_per_page=result_per_page).by_page()
+        submitted_jobs_pages = client.list_submitted_jobs(results_per_page=results_per_page).by_page()
         self.assertIsNotNone(submitted_jobs_pages)
 
         # iterate by page
         for page in submitted_jobs_pages:
             page_jobs = list(page)
-            self.assertEqual(len(page_jobs), result_per_page)
+            self.assertEqual(len(page_jobs), results_per_page)
             for job in page:
                 if job.id in job_ids:
                     self._validate_translation_job(job, status="Succeeded", total=TOTAL_DOC_COUNT_IN_JOB, succeeded=TOTAL_DOC_COUNT_IN_JOB)
@@ -119,13 +119,13 @@ class TestSubmittedJobs(DocumentTranslationTest):
 
     @DocumentTranslationPreparer()
     @DocumentTranslationClientPreparer()
-    def test_list_submitted_jobs_filter_by_created_start(self, client):
+    def test_list_submitted_jobs_filter_by_created_after(self, client):
         # create some jobs
         start = datetime.now()
         self._create_and_submit_sample_translation_jobs(client, 3)
 
         # list jobs
-        submitted_jobs = list(client.list_submitted_jobs(created_date_time_utc_start=start))
+        submitted_jobs = list(client.list_submitted_jobs(created_after=start))
         self.assertIsNotNone(submitted_jobs)
 
         # check statuses
@@ -135,13 +135,13 @@ class TestSubmittedJobs(DocumentTranslationTest):
 
     @DocumentTranslationPreparer()
     @DocumentTranslationClientPreparer()
-    def test_list_submitted_jobs_filter_by_created_end(self, client):
+    def test_list_submitted_jobs_filter_by_created_before(self, client):
         # create some jobs
         end = datetime.now()
         self._create_and_submit_sample_translation_jobs(client, 3)
 
         # list jobs
-        submitted_jobs = list(client.list_submitted_jobs(created_date_time_utc_end=end))
+        submitted_jobs = list(client.list_submitted_jobs(created_before=end))
         self.assertIsNotNone(submitted_jobs)
 
         # check statuses
@@ -197,8 +197,8 @@ class TestSubmittedJobs(DocumentTranslationTest):
         submitted_jobs = client.list_submitted_jobs(
             # filters
             statuses=statuses,
-            created_date_time_utc_start=start,
-            created_date_time_utc_end=end,
+            created_after=start,
+            created_before=end,
             # ordering
             order_by=["CreatedDateTimeUtc", "desc"],
             # paging
