@@ -37,7 +37,7 @@
             "file":[
                 "sdk/keyvault/azure-keyvault-certificates/tests/ca.key",
                 "sdk/identity/azure-identity/tests/ec-certificate.pem",
-                "sdk/identity/azure-identity/tests/_mgmt_settings_real_identity.py",
+                "sdk/identity/azure-identity/tests/mgmt_settings_fake_identity.py",
                 "sdk/core/azure-servicemanagement-legacy/tests/legacy_mgmt_settings_fake.py",
                 "sdk/storage/azure-storage-blob/tests/blob_settings_fake.py",
                 "sdk/storage/azure-storage-file-datalake/tests/data_lake_settings_fake.py",

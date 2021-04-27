@@ -25,7 +25,7 @@ SECRETS = frozenset({
 })
 
 
-MGMT_SETTINGS_REAL = "_mgmt_settings_real_identity.py"
+MGMT_SETTINGS_FAKE_IDENTITY = "mgmt_settings_fake_identity.py"
 
 
 class RecordingRedactor(RecordingProcessor):
@@ -43,7 +43,7 @@ class RecordingRedactor(RecordingProcessor):
         except (KeyError, ValueError):
             return response
 
-        with open(MGMT_SETTINGS_REAL, "w+") as outfile:
+        with open(MGMT_SETTINGS_FAKE_IDENTITY, "w+") as outfile:
 
             for field in body:
                 if field in SECRETS:
