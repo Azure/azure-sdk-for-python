@@ -1373,6 +1373,8 @@ class ProviderResourceType(msrest.serialization.Model):
     :type aliases: list[~azure.mgmt.resource.resources.v2019_07_01.models.AliasType]
     :param api_versions: The API version.
     :type api_versions: list[str]
+    :param zone_mappings:
+    :type zone_mappings: list[~azure.mgmt.resource.resources.v2019_07_01.models.ZoneMapping]
     :param capabilities: The additional capabilities offered by this resource type.
     :type capabilities: str
     :param properties: The properties.
@@ -1384,6 +1386,7 @@ class ProviderResourceType(msrest.serialization.Model):
         'locations': {'key': 'locations', 'type': '[str]'},
         'aliases': {'key': 'aliases', 'type': '[AliasType]'},
         'api_versions': {'key': 'apiVersions', 'type': '[str]'},
+        'zone_mappings': {'key': 'zoneMappings', 'type': '[ZoneMapping]'},
         'capabilities': {'key': 'capabilities', 'type': 'str'},
         'properties': {'key': 'properties', 'type': '{str}'},
     }
@@ -1397,6 +1400,7 @@ class ProviderResourceType(msrest.serialization.Model):
         self.locations = kwargs.get('locations', None)
         self.aliases = kwargs.get('aliases', None)
         self.api_versions = kwargs.get('api_versions', None)
+        self.zone_mappings = kwargs.get('zone_mappings', None)
         self.capabilities = kwargs.get('capabilities', None)
         self.properties = kwargs.get('properties', None)
 
@@ -2047,3 +2051,26 @@ class WhatIfPropertyChange(msrest.serialization.Model):
         self.before = kwargs.get('before', None)
         self.after = kwargs.get('after', None)
         self.children = kwargs.get('children', None)
+
+
+class ZoneMapping(msrest.serialization.Model):
+    """ZoneMapping.
+
+    :param location: The location of the zone mapping.
+    :type location: str
+    :param zones:
+    :type zones: list[str]
+    """
+
+    _attribute_map = {
+        'location': {'key': 'location', 'type': 'str'},
+        'zones': {'key': 'zones', 'type': '[str]'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(ZoneMapping, self).__init__(**kwargs)
+        self.location = kwargs.get('location', None)
+        self.zones = kwargs.get('zones', None)

@@ -1590,6 +1590,8 @@ class ProviderResourceType(msrest.serialization.Model):
     :type api_versions: list[str]
     :ivar default_api_version: The default API version.
     :vartype default_api_version: str
+    :param zone_mappings:
+    :type zone_mappings: list[~azure.mgmt.resource.resources.v2020_06_01.models.ZoneMapping]
     :ivar api_profiles: The API profiles for the resource provider.
     :vartype api_profiles: list[~azure.mgmt.resource.resources.v2020_06_01.models.ApiProfile]
     :param capabilities: The additional capabilities offered by this resource type.
@@ -1609,6 +1611,7 @@ class ProviderResourceType(msrest.serialization.Model):
         'aliases': {'key': 'aliases', 'type': '[Alias]'},
         'api_versions': {'key': 'apiVersions', 'type': '[str]'},
         'default_api_version': {'key': 'defaultApiVersion', 'type': 'str'},
+        'zone_mappings': {'key': 'zoneMappings', 'type': '[ZoneMapping]'},
         'api_profiles': {'key': 'apiProfiles', 'type': '[ApiProfile]'},
         'capabilities': {'key': 'capabilities', 'type': 'str'},
         'properties': {'key': 'properties', 'type': '{str}'},
@@ -1624,6 +1627,7 @@ class ProviderResourceType(msrest.serialization.Model):
         self.aliases = kwargs.get('aliases', None)
         self.api_versions = kwargs.get('api_versions', None)
         self.default_api_version = None
+        self.zone_mappings = kwargs.get('zone_mappings', None)
         self.api_profiles = None
         self.capabilities = kwargs.get('capabilities', None)
         self.properties = kwargs.get('properties', None)
@@ -2475,3 +2479,26 @@ class WhatIfPropertyChange(msrest.serialization.Model):
         self.before = kwargs.get('before', None)
         self.after = kwargs.get('after', None)
         self.children = kwargs.get('children', None)
+
+
+class ZoneMapping(msrest.serialization.Model):
+    """ZoneMapping.
+
+    :param location: The location of the zone mapping.
+    :type location: str
+    :param zones:
+    :type zones: list[str]
+    """
+
+    _attribute_map = {
+        'location': {'key': 'location', 'type': 'str'},
+        'zones': {'key': 'zones', 'type': '[str]'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(ZoneMapping, self).__init__(**kwargs)
+        self.location = kwargs.get('location', None)
+        self.zones = kwargs.get('zones', None)

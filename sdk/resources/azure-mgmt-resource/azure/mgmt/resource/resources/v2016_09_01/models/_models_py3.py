@@ -1151,6 +1151,8 @@ class ProviderResourceType(msrest.serialization.Model):
     :type aliases: list[~azure.mgmt.resource.resources.v2016_09_01.models.AliasType]
     :param api_versions: The API version.
     :type api_versions: list[str]
+    :param zone_mappings:
+    :type zone_mappings: list[~azure.mgmt.resource.resources.v2016_09_01.models.ZoneMapping]
     :param properties: The properties.
     :type properties: dict[str, str]
     """
@@ -1160,6 +1162,7 @@ class ProviderResourceType(msrest.serialization.Model):
         'locations': {'key': 'locations', 'type': '[str]'},
         'aliases': {'key': 'aliases', 'type': '[AliasType]'},
         'api_versions': {'key': 'apiVersions', 'type': '[str]'},
+        'zone_mappings': {'key': 'zoneMappings', 'type': '[ZoneMapping]'},
         'properties': {'key': 'properties', 'type': '{str}'},
     }
 
@@ -1170,6 +1173,7 @@ class ProviderResourceType(msrest.serialization.Model):
         locations: Optional[List[str]] = None,
         aliases: Optional[List["AliasType"]] = None,
         api_versions: Optional[List[str]] = None,
+        zone_mappings: Optional[List["ZoneMapping"]] = None,
         properties: Optional[Dict[str, str]] = None,
         **kwargs
     ):
@@ -1178,6 +1182,7 @@ class ProviderResourceType(msrest.serialization.Model):
         self.locations = locations
         self.aliases = aliases
         self.api_versions = api_versions
+        self.zone_mappings = zone_mappings
         self.properties = properties
 
 
@@ -1773,3 +1778,29 @@ class TemplateLink(msrest.serialization.Model):
         super(TemplateLink, self).__init__(**kwargs)
         self.uri = uri
         self.content_version = content_version
+
+
+class ZoneMapping(msrest.serialization.Model):
+    """ZoneMapping.
+
+    :param location: The location of the zone mapping.
+    :type location: str
+    :param zones:
+    :type zones: list[str]
+    """
+
+    _attribute_map = {
+        'location': {'key': 'location', 'type': 'str'},
+        'zones': {'key': 'zones', 'type': '[str]'},
+    }
+
+    def __init__(
+        self,
+        *,
+        location: Optional[str] = None,
+        zones: Optional[List[str]] = None,
+        **kwargs
+    ):
+        super(ZoneMapping, self).__init__(**kwargs)
+        self.location = location
+        self.zones = zones
