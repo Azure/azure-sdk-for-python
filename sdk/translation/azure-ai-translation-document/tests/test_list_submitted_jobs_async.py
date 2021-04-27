@@ -9,7 +9,6 @@ import functools
 from asynctestcase import AsyncDocumentTranslationTest
 from preparer import DocumentTranslationPreparer, DocumentTranslationClientPreparer as _DocumentTranslationClientPreparer
 from azure.ai.translation.document.aio import DocumentTranslationClient
-import pytest
 DocumentTranslationClientPreparer = functools.partial(_DocumentTranslationClientPreparer, DocumentTranslationClient)
 
 TOTAL_DOC_COUNT_IN_JOB = 1

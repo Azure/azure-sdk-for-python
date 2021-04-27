@@ -4,14 +4,12 @@
 # Licensed under the MIT License.
 # ------------------------------------
 
-from datetime import datetime, date
+from datetime import date
 import functools
-from testcase import Document
 from asynctestcase import AsyncDocumentTranslationTest
 from preparer import DocumentTranslationPreparer, DocumentTranslationClientPreparer as _DocumentTranslationClientPreparer
-from azure.ai.translation.document import DocumentTranslationInput, TranslationTarget
 from azure.ai.translation.document.aio import DocumentTranslationClient
-import pytest
+
 DocumentTranslationClientPreparer = functools.partial(_DocumentTranslationClientPreparer, DocumentTranslationClient)
 
 

@@ -9,6 +9,7 @@ import functools
 from testcase import DocumentTranslationTest
 from preparer import DocumentTranslationPreparer, DocumentTranslationClientPreparer as _DocumentTranslationClientPreparer
 from azure.ai.translation.document import DocumentTranslationClient
+
 DocumentTranslationClientPreparer = functools.partial(_DocumentTranslationClientPreparer, DocumentTranslationClient)
 
 TOTAL_DOC_COUNT_IN_JOB = 1
