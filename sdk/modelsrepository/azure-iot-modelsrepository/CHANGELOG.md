@@ -1,6 +1,6 @@
 # Release History
 
-## 1.0.0b2 (unreleased)
+## 1.0.0b2 (Unreleased)
 
 * TBD
 
