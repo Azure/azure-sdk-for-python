@@ -254,5 +254,5 @@ opentelemetry-sdk<2.0.0,>=1.0.0
 #override azure-mgmt-resourcegraph msrest>=0.6.21
 #override azure-purview-scanning azure-core<2.0.0,>=1.8.2 msrest>=0.6.21
 #override azure-purview-catalog azure-core<2.0.0,>=1.8.2 msrest>=0.6.21
-#override azure-mgmt-peering msrest>=0.6.21
 #override azure-mgmt-rdbms msrest>=0.6.21
+#override azure-mgmt-peering msrest>=0.6.21
