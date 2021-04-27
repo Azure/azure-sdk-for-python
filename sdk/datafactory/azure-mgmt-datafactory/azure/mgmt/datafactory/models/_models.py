@@ -10938,7 +10938,7 @@ class DataLakeAnalyticsScopeActivity(ExecutionActivity):
         degree_of_parallelism: Optional[object] = None,
         degree_of_parallelism_percent: Optional[object] = None,
         priority: Optional[object] = None,
-        parameters: Optional[Dict[str, object]] = None,
+        parameters: Optional[object] = None,
         runtime_version: Optional[object] = None,
         compilation_mode: Optional[object] = None,
         **kwargs
