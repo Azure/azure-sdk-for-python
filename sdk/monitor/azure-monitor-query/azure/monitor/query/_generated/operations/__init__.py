@@ -8,14 +8,14 @@
 
 from ._query_operations import QueryOperations
 from ._metadata_operations import MetadataOperations
-from ._metrics_operations import MetricsOperations
 from ._metric_definitions_operations import MetricDefinitionsOperations
 from ._metric_namespaces_operations import MetricNamespacesOperations
+from ._metrics_operations import MetricsOperations
 
 __all__ = [
     'QueryOperations',
     'MetadataOperations',
-    'MetricsOperations',
     'MetricDefinitionsOperations',
     'MetricNamespacesOperations',
+    'MetricsOperations',
 ]
