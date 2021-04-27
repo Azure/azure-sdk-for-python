@@ -1434,12 +1434,12 @@ class RecognizeEntitiesAction(DictMixin):
     :keyword str model_version: The model version to use for the analysis.
     :keyword str string_index_type: Specifies the method used to interpret string offsets.
         `UnicodeCodePoint`, the Python encoding, is the default. To override the Python default,
-        you can also pass in `Utf16CodePoint` or TextElements_v8`. For additional information
+        you can also pass in `Utf16CodePoint` or TextElement_v8`. For additional information
         see https://aka.ms/text-analytics-offsets
     :ivar str model_version: The model version to use for the analysis.
     :ivar str string_index_type: Specifies the method used to interpret string offsets.
         `UnicodeCodePoint`, the Python encoding, is the default. To override the Python default,
-        you can also pass in `Utf16CodePoint` or TextElements_v8`. For additional information
+        you can also pass in `Utf16CodePoint` or TextElement_v8`. For additional information
         see https://aka.ms/text-analytics-offsets
     """
 
@@ -1473,14 +1473,14 @@ class RecognizePiiEntitiesAction(DictMixin):
         subset of the PII entity categories. Possible values include 'phi' or None.
     :keyword str string_index_type: Specifies the method used to interpret string offsets.
         `UnicodeCodePoint`, the Python encoding, is the default. To override the Python default,
-        you can also pass in `Utf16CodePoint` or TextElements_v8`. For additional information
+        you can also pass in `Utf16CodePoint` or TextElement_v8`. For additional information
         see https://aka.ms/text-analytics-offsets
     :ivar str model_version: The model version to use for the analysis.
     :ivar str domain_filter: An optional string to set the PII domain to include only a
         subset of the PII entity categories. Possible values include 'phi' or None.
     :ivar str string_index_type: Specifies the method used to interpret string offsets.
         `UnicodeCodePoint`, the Python encoding, is the default. To override the Python default,
-        you can also pass in `Utf16CodePoint` or TextElements_v8`. For additional information
+        you can also pass in `Utf16CodePoint` or TextElement_v8`. For additional information
         see https://aka.ms/text-analytics-offsets
     """
 
@@ -1544,12 +1544,12 @@ class RecognizeLinkedEntitiesAction(DictMixin):
     :keyword str model_version: The model version to use for the analysis.
     :keyword str string_index_type: Specifies the method used to interpret string offsets.
         `UnicodeCodePoint`, the Python encoding, is the default. To override the Python default,
-        you can also pass in `Utf16CodePoint` or TextElements_v8`. For additional information
+        you can also pass in `Utf16CodePoint` or TextElement_v8`. For additional information
         see https://aka.ms/text-analytics-offsets
     :ivar str model_version: The model version to use for the analysis.
     :ivar str string_index_type: Specifies the method used to interpret string offsets.
         `UnicodeCodePoint`, the Python encoding, is the default. To override the Python default,
-        you can also pass in `Utf16CodePoint` or TextElements_v8`. For additional information
+        you can also pass in `Utf16CodePoint` or TextElement_v8`. For additional information
         see https://aka.ms/text-analytics-offsets
     """
 
