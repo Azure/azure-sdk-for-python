@@ -59,9 +59,6 @@ setup(
             "azure",
         ]
     ),
-    package_data={
-        'pytyped': ['py.typed'],
-    },
     install_requires=[
         "azure-core>=1.4.0,<2.0.0",
         "msrest>=0.5.0",
