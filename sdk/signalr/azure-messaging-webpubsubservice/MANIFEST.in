@@ -1,6 +1,5 @@
+recursive-include tests *.py *.yaml
 include *.md
 include azure/__init__.py
 include azure/messaging/__init__.py
-include LICENSE.txt
-recursive-include tests *.py
-recursive-include examples *.py *.md
+
