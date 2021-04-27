@@ -30,6 +30,7 @@ with open("README.md", encoding="utf-8") as f:
 setup(
     name=PACKAGE_NAME,
     version=version,
+    include_package_data=True,
     description="Microsoft Azure {} Client Library for Python".format(PACKAGE_PPRINT_NAME),
     # ensure that these are updated to reflect the package owners' information
     long_description=long_description,
@@ -58,6 +59,9 @@ setup(
             "azure",
         ]
     ),
+    package_data={
+        'pytyped': ['py.typed'],
+    },
     install_requires=[
         "azure-core>=1.4.0,<2.0.0",
         "msrest>=0.5.0",
