@@ -84,6 +84,20 @@ class ConfidentialLedgerIdentityServiceClient(object):
         """The URL this client is connected to."""
         return self._identity_service_url
 
+    async def __aenter__(self) -> "ConfidentialLedgerIdentityServiceClient":
+        await self._client.__aenter__()
+        return self
+
+    async def __aexit__(self, *args: Any) -> None:
+        await self._client.__aexit__(*args)
+
+    async def close(self) -> None:
+        """Close sockets opened by the client.
+
+        Calling this method is unnecessary when using the client as a context manager.
+        """
+        await self._client.close()
+
     @distributed_trace_async
     async def get_ledger_identity(
         self, ledger_id: str, **kwargs: Any

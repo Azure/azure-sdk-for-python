@@ -20,7 +20,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Thu, 22 Apr 2021 18:41:13 GMT
+      - Tue, 27 Apr 2021 00:40:22 GMT
       server:
       - Kestrel
       transfer-encoding:
@@ -30,7 +30,7 @@ interactions:
       x-ms-image-tag:
       - latest-20210408061706412-0bd695e0
       x-ms-machinename:
-      - identityservice-75f9cdb475-jz9rg
+      - identityservice-75f9cdb475-vnw5c
     status:
       code: 200
       message: OK

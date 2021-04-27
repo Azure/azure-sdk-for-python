@@ -1,3 +1,6 @@
+import asyncio
+import time
+
 from azure.confidentialledger import (
     ConfidentialLedgerCertificateCredential,
     LedgerUserRole,
@@ -33,4 +36,10 @@ class AsyncAadCredentialClientTest(
         aad_object_id = self.set_value_to_scrub(
             "CONFIDENTIAL_LEDGER_AAD_USER_OBJECT_ID", AAD_USER_OBJECT_ID
         )
-        client.create_or_update_user(aad_object_id, LedgerUserRole.ADMINISTRATOR)
+
+        # Since setUp cannot be async
+        task = asyncio.ensure_future(
+            client.create_or_update_user(aad_object_id, LedgerUserRole.ADMINISTRATOR)
+        )
+        while not task.done:
+            time.sleep(0.5)

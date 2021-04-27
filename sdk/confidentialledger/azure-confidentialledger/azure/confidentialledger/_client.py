@@ -273,7 +273,8 @@ class ConfidentialLedgerClient(ConfidentialLedgerClientBase):
         **kwargs,  # type: Any
     ):
         # type: (...) -> LedgerEntry
-        """Gets an entry in the ledger.
+        """Gets an entry in the ledger. The query may need to be retried while the
+        service is loading results.
 
         :keyword float interval: Interval, in seconds, between retries while waiting for results,
             defaults to 0.5.
@@ -339,7 +340,8 @@ class ConfidentialLedgerClient(ConfidentialLedgerClientBase):
         **kwargs,  # type: Any
     ):
         # type: (...) -> TransactionReceipt
-        """Get a receipt for a specific transaction.
+        """Get a receipt for a specific transaction. The query may need to be retried while the
+        service is loading results.
 
         :param transaction_id: Transaction identifier.
         :type transaction_id: str

@@ -1,4 +1,6 @@
+import asyncio
 import hashlib
+import time
 
 from devtools_testutils import AzureTestCase
 
@@ -28,6 +30,14 @@ class AsyncConfidentialLedgerClientTestMixin:
             self.user_certificate_path = self.set_value_to_scrub(
                 "CONFIDENTIAL_LEDGER_USER_CERTIFICATE_PATH", USER_CERTIFICATE_PATH
             )
+
+        def tearDown(self):
+            # Since tearDown cannot be async
+            task = asyncio.ensure_future(self.client.close())
+            while not task.done:
+                time.sleep(0.5)
+
+            return super().tearDown()
 
         @AzureTestCase.await_prepared_test
         async def test_append_entry_flow(self):

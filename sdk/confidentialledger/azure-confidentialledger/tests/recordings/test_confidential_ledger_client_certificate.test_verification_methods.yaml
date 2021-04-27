@@ -22,7 +22,7 @@ interactions:
       content-type:
       - application/json
       x-ms-ccf-transaction-id:
-      - '8.5803'
+      - '13.9073'
     status:
       code: 200
       message: OK
@@ -93,7 +93,7 @@ interactions:
       content-type:
       - application/json
       x-ms-ccf-transaction-id:
-      - '8.5803'
+      - '13.9074'
     status:
       code: 200
       message: OK
@@ -119,7 +119,7 @@ interactions:
       content-type:
       - application/json
       x-ms-ccf-transaction-id:
-      - '8.5803'
+      - '13.9074'
     status:
       code: 200
       message: OK

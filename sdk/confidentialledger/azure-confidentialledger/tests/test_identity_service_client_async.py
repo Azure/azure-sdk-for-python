@@ -37,3 +37,5 @@ class ConfidentialLedgerIdentityServiceClientTest(AsyncConfidentialLedgerTestCas
             network_identity.ledger_tls_certificate.strip("\n\u0000"),
             self.network_certificate,
         )
+
+        await client.close()
