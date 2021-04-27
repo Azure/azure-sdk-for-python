@@ -1,0 +1,191 @@
+{
+    "chosen_version": "2020-12-16-preview",
+    "total_api_version_list": ["2020-12-16-preview"],
+    "client": {
+        "name": "RESTAPIForTestBase",
+        "filename": "_restap_ifor_test_base",
+        "description": "REST API for Test Base.",
+        "base_url": "\u0027https://management.azure.com\u0027",
+        "custom_base_url": null,
+        "azure_arm": true,
+        "has_lro_operations": true,
+        "client_side_validation": false,
+        "sync_imports": "{\"typing\": {\"azurecore\": {\"azure.core.credentials\": [\"TokenCredential\"]}}, \"regular\": {\"azurecore\": {\"azure.profiles\": [\"KnownProfiles\", \"ProfileDefinition\"], \"azure.profiles.multiapiclient\": [\"MultiApiClientMixin\"], \"msrest\": [\"Deserializer\", \"Serializer\"], \"azure.mgmt.core\": [\"ARMPipelineClient\"]}, \"local\": {\"._configuration\": [\"RESTAPIForTestBaseConfiguration\"], \"._operations_mixin\": [\"RESTAPIForTestBaseOperationsMixin\"]}}, \"conditional\": {\"stdlib\": {\"typing\": [\"Any\", \"Optional\"]}, \"azurecore\": {\"azure.core.pipeline.transport\": [\"HttpRequest\", \"HttpResponse\"]}}}",
+        "async_imports": "{\"typing\": {\"azurecore\": {\"azure.core.credentials_async\": [\"AsyncTokenCredential\"]}}, \"regular\": {\"azurecore\": {\"azure.profiles\": [\"KnownProfiles\", \"ProfileDefinition\"], \"azure.profiles.multiapiclient\": [\"MultiApiClientMixin\"], \"msrest\": [\"Deserializer\", \"Serializer\"], \"azure.mgmt.core\": [\"AsyncARMPipelineClient\"]}, \"local\": {\"._configuration\": [\"RESTAPIForTestBaseConfiguration\"], \"._operations_mixin\": [\"RESTAPIForTestBaseOperationsMixin\"]}}, \"conditional\": {\"stdlib\": {\"typing\": [\"Any\", \"Optional\"]}, \"azurecore\": {\"azure.core.pipeline.transport\": [\"AsyncHttpResponse\", \"HttpRequest\"]}}}"
+    },
+    "global_parameters": {
+        "sync": {
+            "credential": {
+                "signature": "credential,  # type: \"TokenCredential\"",
+                "description": "Credential needed for the client to connect to Azure.",
+                "docstring_type": "~azure.core.credentials.TokenCredential",
+                "required": true
+            },
+            "subscription_id": {
+                "signature": "subscription_id,  # type: str",
+                "description": "The Azure subscription ID. This is a GUID-formatted string.",
+                "docstring_type": "str",
+                "required": true
+            }
+        },
+        "async": {
+            "credential": {
+                "signature": "credential: \"AsyncTokenCredential\",",
+                "description": "Credential needed for the client to connect to Azure.",
+                "docstring_type": "~azure.core.credentials_async.AsyncTokenCredential",
+                "required": true
+            },
+            "subscription_id": {
+                "signature": "subscription_id: str,",
+                "description": "The Azure subscription ID. This is a GUID-formatted string.",
+                "docstring_type": "str",
+                "required": true
+            }
+        },
+        "constant": {
+        },
+        "call": "credential, subscription_id",
+        "service_client_specific": {
+            "sync": {
+                "api_version": {
+                    "signature": "api_version=None, # type: Optional[str]",
+                    "description": "API version to use if no profile is provided, or if missing in profile.",
+                    "docstring_type": "str",
+                    "required": false
+                },
+                "base_url": {
+                    "signature": "base_url=None,  # type: Optional[str]",
+                    "description": "Service URL",
+                    "docstring_type": "str",
+                    "required": false
+                },
+                "profile": {
+                    "signature": "profile=KnownProfiles.default, # type: KnownProfiles",
+                    "description": "A profile definition, from KnownProfiles to dict.",
+                    "docstring_type": "azure.profiles.KnownProfiles",
+                    "required": false
+                }
+            },
+            "async": {
+                "api_version": {
+                    "signature": "api_version: Optional[str] = None,",
+                    "description": "API version to use if no profile is provided, or if missing in profile.",
+                    "docstring_type": "str",
+                    "required": false
+                },
+                "base_url": {
+                    "signature": "base_url: Optional[str] = None,",
+                    "description": "Service URL",
+                    "docstring_type": "str",
+                    "required": false
+                },
+                "profile": {
+                    "signature": "profile: KnownProfiles = KnownProfiles.default,",
+                    "description": "A profile definition, from KnownProfiles to dict.",
+                    "docstring_type": "azure.profiles.KnownProfiles",
+                    "required": false
+                }
+            }
+        }
+    },
+    "config": {
+        "credential": true,
+        "credential_scopes": ["https://management.azure.com/.default"],
+        "credential_default_policy_type": "BearerTokenCredentialPolicy",
+        "credential_default_policy_type_has_async_version": true,
+        "credential_key_header_name": null,
+        "sync_imports": "{\"regular\": {\"azurecore\": {\"azure.core.configuration\": [\"Configuration\"], \"azure.core.pipeline\": [\"policies\"], \"azure.mgmt.core.policies\": [\"ARMHttpLoggingPolicy\"]}, \"local\": {\"._version\": [\"VERSION\"]}}, \"conditional\": {\"stdlib\": {\"typing\": [\"Any\"]}}, \"typing\": {\"azurecore\": {\"azure.core.credentials\": [\"TokenCredential\"]}}}",
+        "async_imports": "{\"regular\": {\"azurecore\": {\"azure.core.configuration\": [\"Configuration\"], \"azure.core.pipeline\": [\"policies\"], \"azure.mgmt.core.policies\": [\"ARMHttpLoggingPolicy\"]}, \"local\": {\".._version\": [\"VERSION\"]}}, \"conditional\": {\"stdlib\": {\"typing\": [\"Any\"]}}, \"typing\": {\"azurecore\": {\"azure.core.credentials_async\": [\"AsyncTokenCredential\"]}}}"
+    },
+    "operation_groups": {
+        "skus": "SKUsOperations",
+        "test_base_accounts": "TestBaseAccountsOperations",
+        "test_base_account": "TestBaseAccountOperations",
+        "test_base_account_usage": "TestBaseAccountUsageOperations",
+        "test_base_account_available_oss": "TestBaseAccountAvailableOSsOperations",
+        "test_base_account_available_os": "TestBaseAccountAvailableOSOperations",
+        "test_base_account_flighting_rings": "TestBaseAccountFlightingRingsOperations",
+        "test_base_account_flighting_ring": "TestBaseAccountFlightingRingOperations",
+        "test_base_account_test_types": "TestBaseAccountTestTypesOperations",
+        "test_base_account_test_type": "TestBaseAccountTestTypeOperations",
+        "packages": "PackagesOperations",
+        "package": "PackageOperations",
+        "test_summaries": "TestSummariesOperations",
+        "test_summary": "TestSummaryOperations",
+        "test_results": "TestResultsOperations",
+        "test_result": "TestResultOperations",
+        "os_updates": "OSUpdatesOperations",
+        "os_update": "OSUpdateOperations",
+        "favorite_processes": "FavoriteProcessesOperations",
+        "favorite_process": "FavoriteProcessOperations",
+        "analysis_results": "AnalysisResultsOperations",
+        "analysis_result": "AnalysisResultOperations",
+        "operations": "Operations"
+    },
+    "operation_mixins": {
+        "sync_imports": "{\"regular\": {\"azurecore\": {\"azure.core.exceptions\": [\"ClientAuthenticationError\", \"HttpResponseError\", \"ResourceExistsError\", \"ResourceNotFoundError\", \"map_error\"], \"azure.mgmt.core.exceptions\": [\"ARMErrorFormat\"], \"azure.core.pipeline\": [\"PipelineResponse\"], \"azure.core.pipeline.transport\": [\"HttpRequest\", \"HttpResponse\"]}, \"stdlib\": {\"warnings\": [null]}}, \"conditional\": {\"stdlib\": {\"typing\": [\"Any\", \"Callable\", \"Dict\", \"Generic\", \"Optional\", \"TypeVar\"]}}}",
+        "async_imports": "{\"regular\": {\"azurecore\": {\"azure.core.exceptions\": [\"ClientAuthenticationError\", \"HttpResponseError\", \"ResourceExistsError\", \"ResourceNotFoundError\", \"map_error\"], \"azure.mgmt.core.exceptions\": [\"ARMErrorFormat\"], \"azure.core.pipeline\": [\"PipelineResponse\"], \"azure.core.pipeline.transport\": [\"AsyncHttpResponse\", \"HttpRequest\"]}, \"stdlib\": {\"warnings\": [null]}}, \"conditional\": {\"stdlib\": {\"typing\": [\"Any\", \"Callable\", \"Dict\", \"Generic\", \"Optional\", \"TypeVar\"]}}}",
+        "operations": {
+            "test_base_account_get_file_upload_url" : {
+                "sync": {
+                    "signature": "def test_base_account_get_file_upload_url(\n    self,\n    resource_group_name,  # type: str\n    test_base_account_name,  # type: str\n    parameters=None,  # type: Optional[\"_models.GetFileUploadURLParameters\"]\n    **kwargs  # type: Any\n):\n",
+                    "doc": "\"\"\"Gets the file upload URL of a Test Base Account.\n\n:param resource_group_name: The name of the resource group that contains the resource.\n:type resource_group_name: str\n:param test_base_account_name: The resource name of the Test Base Account.\n:type test_base_account_name: str\n:param parameters: Parameters supplied to the Test Base Account GetFileUploadURL operation.\n:type parameters: ~restap_ifor_test_base.models.GetFileUploadURLParameters\n:keyword callable cls: A custom type or function that will be passed the direct response\n:return: FileUploadURLResponse, or the result of cls(response)\n:rtype: ~restap_ifor_test_base.models.FileUploadURLResponse\n:raises: ~azure.core.exceptions.HttpResponseError\n\"\"\""
+                },
+                "async": {
+                    "coroutine": true,
+                    "signature": "async def test_base_account_get_file_upload_url(\n    self,\n    resource_group_name: str,\n    test_base_account_name: str,\n    parameters: Optional[\"_models.GetFileUploadURLParameters\"] = None,\n    **kwargs\n) -\u003e \"_models.FileUploadURLResponse\":\n",
+                    "doc": "\"\"\"Gets the file upload URL of a Test Base Account.\n\n:param resource_group_name: The name of the resource group that contains the resource.\n:type resource_group_name: str\n:param test_base_account_name: The resource name of the Test Base Account.\n:type test_base_account_name: str\n:param parameters: Parameters supplied to the Test Base Account GetFileUploadURL operation.\n:type parameters: ~restap_ifor_test_base.models.GetFileUploadURLParameters\n:keyword callable cls: A custom type or function that will be passed the direct response\n:return: FileUploadURLResponse, or the result of cls(response)\n:rtype: ~restap_ifor_test_base.models.FileUploadURLResponse\n:raises: ~azure.core.exceptions.HttpResponseError\n\"\"\""
+                },
+                "call": "resource_group_name, test_base_account_name, parameters"
+            },
+            "check_package_name_availability" : {
+                "sync": {
+                    "signature": "def check_package_name_availability(\n    self,\n    resource_group_name,  # type: str\n    test_base_account_name,  # type: str\n    parameters,  # type: \"_models.PackageCheckNameAvailabilityParameters\"\n    **kwargs  # type: Any\n):\n",
+                    "doc": "\"\"\"Checks that the Test Base Package name and version is valid and is not already in use.\n\n:param resource_group_name: The name of the resource group that contains the resource.\n:type resource_group_name: str\n:param test_base_account_name: The resource name of the Test Base Account.\n:type test_base_account_name: str\n:param parameters: Parameters supplied to the Test Base Package CheckNameAvailability\n operation.\n:type parameters: ~restap_ifor_test_base.models.PackageCheckNameAvailabilityParameters\n:keyword callable cls: A custom type or function that will be passed the direct response\n:return: CheckNameAvailabilityResult, or the result of cls(response)\n:rtype: ~restap_ifor_test_base.models.CheckNameAvailabilityResult\n:raises: ~azure.core.exceptions.HttpResponseError\n\"\"\""
+                },
+                "async": {
+                    "coroutine": true,
+                    "signature": "async def check_package_name_availability(\n    self,\n    resource_group_name: str,\n    test_base_account_name: str,\n    parameters: \"_models.PackageCheckNameAvailabilityParameters\",\n    **kwargs\n) -\u003e \"_models.CheckNameAvailabilityResult\":\n",
+                    "doc": "\"\"\"Checks that the Test Base Package name and version is valid and is not already in use.\n\n:param resource_group_name: The name of the resource group that contains the resource.\n:type resource_group_name: str\n:param test_base_account_name: The resource name of the Test Base Account.\n:type test_base_account_name: str\n:param parameters: Parameters supplied to the Test Base Package CheckNameAvailability\n operation.\n:type parameters: ~restap_ifor_test_base.models.PackageCheckNameAvailabilityParameters\n:keyword callable cls: A custom type or function that will be passed the direct response\n:return: CheckNameAvailabilityResult, or the result of cls(response)\n:rtype: ~restap_ifor_test_base.models.CheckNameAvailabilityResult\n:raises: ~azure.core.exceptions.HttpResponseError\n\"\"\""
+                },
+                "call": "resource_group_name, test_base_account_name, parameters"
+            },
+            "package_get_download_url" : {
+                "sync": {
+                    "signature": "def package_get_download_url(\n    self,\n    resource_group_name,  # type: str\n    test_base_account_name,  # type: str\n    package_name,  # type: str\n    **kwargs  # type: Any\n):\n",
+                    "doc": "\"\"\"Gets the download URL of a package.\n\n:param resource_group_name: The name of the resource group that contains the resource.\n:type resource_group_name: str\n:param test_base_account_name: The resource name of the Test Base Account.\n:type test_base_account_name: str\n:param package_name: The resource name of the Test Base Package.\n:type package_name: str\n:keyword callable cls: A custom type or function that will be passed the direct response\n:return: DownloadURLResponse, or the result of cls(response)\n:rtype: ~restap_ifor_test_base.models.DownloadURLResponse\n:raises: ~azure.core.exceptions.HttpResponseError\n\"\"\""
+                },
+                "async": {
+                    "coroutine": true,
+                    "signature": "async def package_get_download_url(\n    self,\n    resource_group_name: str,\n    test_base_account_name: str,\n    package_name: str,\n    **kwargs\n) -\u003e \"_models.DownloadURLResponse\":\n",
+                    "doc": "\"\"\"Gets the download URL of a package.\n\n:param resource_group_name: The name of the resource group that contains the resource.\n:type resource_group_name: str\n:param test_base_account_name: The resource name of the Test Base Account.\n:type test_base_account_name: str\n:param package_name: The resource name of the Test Base Package.\n:type package_name: str\n:keyword callable cls: A custom type or function that will be passed the direct response\n:return: DownloadURLResponse, or the result of cls(response)\n:rtype: ~restap_ifor_test_base.models.DownloadURLResponse\n:raises: ~azure.core.exceptions.HttpResponseError\n\"\"\""
+                },
+                "call": "resource_group_name, test_base_account_name, package_name"
+            },
+            "test_result_get_download_url" : {
+                "sync": {
+                    "signature": "def test_result_get_download_url(\n    self,\n    resource_group_name,  # type: str\n    test_base_account_name,  # type: str\n    package_name,  # type: str\n    test_result_name,  # type: str\n    **kwargs  # type: Any\n):\n",
+                    "doc": "\"\"\"Gets the download URL or the test result.\n\n:param resource_group_name: The name of the resource group that contains the resource.\n:type resource_group_name: str\n:param test_base_account_name: The resource name of the Test Base Account.\n:type test_base_account_name: str\n:param package_name: The resource name of the Test Base Package.\n:type package_name: str\n:param test_result_name: The Test Result Name. It equals to {osName}-{TestResultId} string.\n:type test_result_name: str\n:keyword callable cls: A custom type or function that will be passed the direct response\n:return: DownloadURLResponse, or the result of cls(response)\n:rtype: ~restap_ifor_test_base.models.DownloadURLResponse\n:raises: ~azure.core.exceptions.HttpResponseError\n\"\"\""
+                },
+                "async": {
+                    "coroutine": true,
+                    "signature": "async def test_result_get_download_url(\n    self,\n    resource_group_name: str,\n    test_base_account_name: str,\n    package_name: str,\n    test_result_name: str,\n    **kwargs\n) -\u003e \"_models.DownloadURLResponse\":\n",
+                    "doc": "\"\"\"Gets the download URL or the test result.\n\n:param resource_group_name: The name of the resource group that contains the resource.\n:type resource_group_name: str\n:param test_base_account_name: The resource name of the Test Base Account.\n:type test_base_account_name: str\n:param package_name: The resource name of the Test Base Package.\n:type package_name: str\n:param test_result_name: The Test Result Name. It equals to {osName}-{TestResultId} string.\n:type test_result_name: str\n:keyword callable cls: A custom type or function that will be passed the direct response\n:return: DownloadURLResponse, or the result of cls(response)\n:rtype: ~restap_ifor_test_base.models.DownloadURLResponse\n:raises: ~azure.core.exceptions.HttpResponseError\n\"\"\""
+                },
+                "call": "resource_group_name, test_base_account_name, package_name, test_result_name"
+            },
+            "test_result_get_video_download_url" : {
+                "sync": {
+                    "signature": "def test_result_get_video_download_url(\n    self,\n    resource_group_name,  # type: str\n    test_base_account_name,  # type: str\n    package_name,  # type: str\n    test_result_name,  # type: str\n    **kwargs  # type: Any\n):\n",
+                    "doc": "\"\"\"Gets the download URL of the test execution screen recording.\n\n:param resource_group_name: The name of the resource group that contains the resource.\n:type resource_group_name: str\n:param test_base_account_name: The resource name of the Test Base Account.\n:type test_base_account_name: str\n:param package_name: The resource name of the Test Base Package.\n:type package_name: str\n:param test_result_name: The Test Result Name. It equals to {osName}-{TestResultId} string.\n:type test_result_name: str\n:keyword callable cls: A custom type or function that will be passed the direct response\n:return: DownloadURLResponse, or the result of cls(response)\n:rtype: ~restap_ifor_test_base.models.DownloadURLResponse\n:raises: ~azure.core.exceptions.HttpResponseError\n\"\"\""
+                },
+                "async": {
+                    "coroutine": true,
+                    "signature": "async def test_result_get_video_download_url(\n    self,\n    resource_group_name: str,\n    test_base_account_name: str,\n    package_name: str,\n    test_result_name: str,\n    **kwargs\n) -\u003e \"_models.DownloadURLResponse\":\n",
+                    "doc": "\"\"\"Gets the download URL of the test execution screen recording.\n\n:param resource_group_name: The name of the resource group that contains the resource.\n:type resource_group_name: str\n:param test_base_account_name: The resource name of the Test Base Account.\n:type test_base_account_name: str\n:param package_name: The resource name of the Test Base Package.\n:type package_name: str\n:param test_result_name: The Test Result Name. It equals to {osName}-{TestResultId} string.\n:type test_result_name: str\n:keyword callable cls: A custom type or function that will be passed the direct response\n:return: DownloadURLResponse, or the result of cls(response)\n:rtype: ~restap_ifor_test_base.models.DownloadURLResponse\n:raises: ~azure.core.exceptions.HttpResponseError\n\"\"\""
+                },
+                "call": "resource_group_name, test_base_account_name, package_name, test_result_name"
+            }
+        }
+    }
+}
