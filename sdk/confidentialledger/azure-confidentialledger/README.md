@@ -83,7 +83,7 @@ assert ledger_client.get_transaction_status(
 #### Receipts
 State changes to the Confidential Ledger are saved in a data structure called a Merkle tree. To cryptographically verify that writes were correctly saved, a Merkle proof, or receipt, can be retrieved for any transaction id.
 ```python
-receipt = self.client.get_transaction_receipt(
+receipt = ledger_client.get_transaction_receipt(
     transaction_id=append_result.transaction_id
 )
 print(receipt.contents)
@@ -92,52 +92,52 @@ print(receipt.contents)
 #### Sub-ledgers
 While most use cases will involve one ledger, we provide the sub-ledger feature in case different logical groups of data need to be stored in the same Confidential Ledger.
 ```python
-self.client.append_to_ledger(
+ledger_client.append_to_ledger(
     entry_contents="Hello from Alice", sub_ledger_id="Alice's messages"
 )
-self.client.append_to_ledger(
+ledger_client.append_to_ledger(
     entry_contents="Hello from Bob", sub_ledger_id="Bob's messages"
 )
 ```
 
 When no sub-ledger id is specified on method calls, the Confidential Ledger service will assume a constant, service-determined sub-ledger id.
 ```python
-append_result = self.client.append_to_ledger(entry_contents="Hello world?")
+append_result = ledger_client.append_to_ledger(entry_contents="Hello world?")
 
-entry_by_subledger = self.client.get_ledger_entry(
+entry_by_subledger = ledger_client.get_ledger_entry(
     transaction_id=append_result.transaction_id,
     sub_ledger_id=append_result.sub_ledger_id
 )
 assert entry_by_subledger.contents == "Hello world?"
 
-entry = self.client.get_ledger_entry(transaction_id=append_result.transaction_id)
+entry = ledger_client.get_ledger_entry(transaction_id=append_result.transaction_id)
 assert entry.contents == entry_by_subledger.contents
 assert entry.sub_ledger_id == entry_by_subledger.sub_ledger_id
 ```
 
 Ledger entries are retrieved from sub-ledgers. When a transaction id is specified, the returned value is the value contained in the specified sub-ledger at the point in time identified by the transaction id. If no transaction id is specified, the latest available value is returned.
 ```python
-append_result = self.client.append_to_ledger(entry_contents="Hello world 0")
-self.client.append_to_ledger(entry_contents="Hello world 1")
+append_result = ledger_client.append_to_ledger(entry_contents="Hello world 0")
+ledger_client.append_to_ledger(entry_contents="Hello world 1")
 
-subledger_append_result = self.client.append_to_ledger(
+subledger_append_result = ledger_client.append_to_ledger(
     entry_contents="Hello world sub-ledger 0"
 )
-self.client.append_to_ledger(entry_contents="Hello world sub-ledger 1")
+ledger_client.append_to_ledger(entry_contents="Hello world sub-ledger 1")
 
-entry = self.client.get_ledger_entry(transaction_id=append_result.transaction_id)
+entry = ledger_client.get_ledger_entry(transaction_id=append_result.transaction_id)
 assert entry.contents == "Hello world 0"
 
-latest_entry = self.client.get_ledger_entry()
+latest_entry = ledger_client.get_ledger_entry()
 assert latest_entry.contents == "Hello world 1"
 
-subledger_entry = self.client.get_ledger_entry(
+subledger_entry = ledger_client.get_ledger_entry(
     transaction_id=append_result.transaction_id,
     sub_ledger_id=append_result.sub_ledger_id
 )
 assert subledger_entry.contents == "Hello world sub-ledger 0"
 
-subledger_latest_entry = self.client.get_ledger_entry(
+subledger_latest_entry = ledger_client.get_ledger_entry(
     sub_ledger_id=subledger_append_result.sub_ledger_id
 )
 assert subledger_latest_entry.contents == "Hello world sub-ledger 1"
@@ -146,7 +146,7 @@ assert subledger_latest_entry.contents == "Hello world sub-ledger 1"
 ##### Ranged queries
 Ledger entries in a sub-ledger may be retrieved over a range of transaction ids.
 ```python
-ranged_result = self.client.get_ledger_entries(
+ranged_result = ledger_client.get_ledger_entries(
     from_transaction_id="12.3"
 )
 for entry in ranged_result:
@@ -154,10 +154,82 @@ for entry in ranged_result:
 ```
 
 ### User management
-TODO
+Users are managed directly with the Confidential Ledger instead of through Azure. New users may be AAD-based or certificate-based.
+```python
+from azure.confidentialledger import LedgerUserRole
+user_id = "some AAD object id"
+user = ledger_client.create_or_update_user(
+    user_id, LedgerUserRole.CONTRIBUTOR
+)
+# A client may now be created and used with AAD credentials for the user identified by `user_id`.
+
+user = ledger_client.get_user(user_id)
+assert user.id == user_id
+assert user.role == LedgerUserRole.CONTRIBUTOR
+
+ledger_client.delete_user(user_id)
+
+# For a certificated-based user, their user ID is the fingerprint for their PEM certificate.
+user_id = "PEM certificate fingerprint"
+user = ledger_client.create_or_update_user(
+    user_id, LedgerUserRole.READER
+)
+```
+
+#### Certificate-based users
+Clients may authenticate with a client certificate in mutual TLS instead of via Azure Active Directory. `ConfidentialLedgerCertificateCredential` is provided for such clients.
+```python
+from azure.confidentialledger import ConfidentialLedgerClient, ConfidentialLedgerCertificateCredential
+from azure.confidentialledger.identity_service import ConfidentialLedgerIdentityServiceClient
+
+identity_client = ConfidentialLedgerIdentityServiceClient("https://identity.accledger.azure.com")
+network_identity = identity_client.get_ledger_identity(
+    ledger_id="my-ledger-id"
+)
+
+ledger_tls_cert_file_name = "ledger_certificate.pem"
+with open(ledger_tls_cert_file_name, "w") as cert_file:
+    cert_file.write(network_identity.ledger_tls_certificate)
+
+credential = ConfidentialLedgerCertificateCredential("path to user certificate PEM")
+ledger_client = ConfidentialLedgerClient(
+    endpoint="https://my-ledger-url.confidential-ledger.azure.com", 
+    credential=credential,
+    ledger_certificate_path=ledger_tls_cert_file_name
+)
+```
 
 ### Confidential consortium and enclave verifications
-TODO
+One may want to validate details about the Confidential Ledger for a variety of reasons. For example, you may want to view details about how Microsoft may manage your Confidential Ledger as part of [Confidential Consortium Framework governance](https://microsoft.github.io/CCF/main/governance/index.html), or verify that your Confidential Ledger is indeed running in SGX enclaves. A number of client methods are provided for these use cases.
+```python
+consortium = ledger_client.get_consortium()
+# Consortium members can manage and alter the Confidential Ledger, such as by replacing unhealthy
+# nodes.
+for member in consortium.members:
+    print(member.certificate)
+    print(member.id)
+
+import hashlib
+# The constitution is a collection of JavaScript code that defines actions available to members,
+# and vets proposals by members to execute those actions.
+constitution = ledger_client.get_constitution()
+assert constitution.digest.lower() == hashlib.sha256(constitution.contents.encode()).hexdigest().lower()
+print(constitution.contents)
+print(constitution.digest)
+
+# SGX enclave quotes contain material that can be used to cryptographically verify the validity and
+# contents of an enclave.
+ledger_enclaves = ledger_client.get_enclave_quotes()
+assert ledger_enclaves.source_node in ledger_enclaves.quotes
+for node_id, quote in ledger_enclaves.quotes.items():
+    assert node_id == quote.node_id
+    print(quote.node_id)
+    print(quote.mrenclave)
+    print(quote.raw_quote)
+    print(quote.version)
+```
+
+[Microsoft Azure Attestation Service](https://azure.microsoft.com/en-us/services/azure-attestation/) is one provider of SGX enclave quotes.
 
 ### Async API
 This library includes a complete async API supported on Python 3.5+. To use it, you must first install an async transport, such as [aiohttp](https://pypi.org/project/aiohttp). See [azure-core documentation](https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/core/azure-core/CLIENT_LIBRARY_DEVELOPER.md#transport) for more information.
@@ -280,7 +352,7 @@ ledger_client.get_ledger_entry(transaction_id="12.3", logging_enable=True)
 ## Next steps
 ###  Additional Documentation
 For more extensive documentation on Azure Confidential Ledger, see the
-[API reference documentation][reference_docs].
+[API reference documentation][reference_docs]. You may also read more about Microsoft Research's open-source [Confidential Consortium Framework][ccf].
 
 ## Contributing
 This project welcomes contributions and suggestions. Most contributions require
