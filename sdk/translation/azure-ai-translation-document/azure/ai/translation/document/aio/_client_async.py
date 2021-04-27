@@ -217,6 +217,17 @@ class DocumentTranslationClient(object):
         # type: (**Any) -> AsyncItemPaged[JobStatusResult]
         """List all the submitted translation jobs under the Document Translation resource.
 
+        :keyword int top: the total number of jobs to return (across all pages) from all submitted jobs.
+        :keyword int skip: the number of jobs to skip (from beginning of the all submitted jobs).
+            By default, we sort by all submitted jobs descendingly by start time.
+        :keyword int results_per_page: is the number of jobs returned per page.
+        :keyword list[str] ids: job ids to filter by.
+        :keyword list[str] statuses: job statuses to filter by.
+        :keyword Union[str, datetime.datetime] created_after: get jobs created after certian timedate.
+        :keyword Union[str, datetime.datetime] created_before: get jobs created before certian timedate.
+        :keyword list[str] order_by: the sorting query for the collection.
+            format: [parameter, asc/desc]
+            (ex: 'CreatedDateTimeUtc asc', 'CreatedDateTimeUtc desc').
         :return: ~azure.core.paging.AsyncItemPaged[:class:`~azure.ai.translation.document.JobStatusResult`]
         :rtype: ~azure.core.paging.AsyncItemPaged
         :raises ~azure.core.exceptions.HttpResponseError:

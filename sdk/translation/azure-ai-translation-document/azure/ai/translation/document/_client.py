@@ -20,7 +20,7 @@ from ._models import (
 )
 from ._user_agent import USER_AGENT
 from ._polling import TranslationPolling
-from ._helpers import get_http_logging_policy
+from ._helpers import get_http_logging_policy, convert_datetime
 if TYPE_CHECKING:
     from azure.core.paging import ItemPaged
 
@@ -217,18 +217,17 @@ class DocumentTranslationClient(object):  # pylint: disable=r0205
         # type: (**Any) -> ItemPaged[JobStatusResult]
         """List all the submitted translation jobs under the Document Translation resource.
 
-        :keyword int top: indicates the total number of records the user wants to be returned across all pages.
-        :keyword int skip: indicates the number of records to skip from the list of batches based on the sorting
-            method specified. By default, we sort by descending start time.
-        :keyword int maxpagesize: is the maximum items returned in a page.  If more items are requested via top (or
-            top is not specified and there are more items to be returned), @nextLink will contain the link
-            to the next page.
-        :keyword list[str] ids: Ids to use in filtering.
-        :keyword list[str] statuses: Statuses to use in filtering.
-        :keyword ~datetime.datetime created_date_time_utc_start: the start datetime to get items after.
-        :keyword ~datetime.datetime created_date_time_utc_end: the end datetime to get items before.
-        :keyword list[str] order_by: the sorting query for the collection (ex: 'CreatedDateTimeUtc asc',
-         'CreatedDateTimeUtc desc').
+        :keyword int top: the total number of jobs to return (across all pages) from all submitted jobs.
+        :keyword int skip: the number of jobs to skip (from beginning of the all submitted jobs).
+            By default, we sort by all submitted jobs descendingly by start time.
+        :keyword int results_per_page: is the number of jobs returned per page.
+        :keyword list[str] ids: job ids to filter by.
+        :keyword list[str] statuses: job statuses to filter by.
+        :keyword Union[str, datetime.datetime] created_after: get jobs created after certian timedate.
+        :keyword Union[str, datetime.datetime] created_before: get jobs created before certian timedate.
+        :keyword list[str] order_by: the sorting query for the collection.
+            format: [parameter, asc/desc]
+            (ex: 'CreatedDateTimeUtc asc', 'CreatedDateTimeUtc desc').
         :return: ~azure.core.paging.ItemPaged[:class:`~azure.ai.translation.document.JobStatusResult`]
         :rtype: ~azure.core.paging.ItemPaged
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -242,6 +241,10 @@ class DocumentTranslationClient(object):  # pylint: disable=r0205
                 :dedent: 4
                 :caption: List all submitted jobs under the resource.
         """
+        created_after=kwargs.pop("created_after", None),
+        created_before=kwargs.pop("created_before", None),
+        created_after = convert_datetime(created_after) if created_after else None
+        created_before = convert_datetime(created_before) if created_before else None
 
         def _convert_from_generated_model(generated_model):  # pylint: disable=protected-access
             return JobStatusResult._from_generated(generated_model)  # pylint: disable=protected-access
@@ -254,6 +257,9 @@ class DocumentTranslationClient(object):  # pylint: disable=r0205
 
         return self._client.document_translation.get_operations(
             cls=model_conversion_function,
+            maxpagesize=kwargs.pop("results_per_page", None),
+            created_date_time_utc_start=kwargs.pop("created_after", None),
+            created_date_time_utc_end=kwargs.pop("created_before", None),
             **kwargs
         )
 
