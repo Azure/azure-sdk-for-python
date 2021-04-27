@@ -122,8 +122,4 @@ jobs:
         OSVmImage: $(OSVmImage)
         PythonVersion: $(PythonVersion)
         CondaArtifacts: ${{ parameters.CondaArtifacts }}
-        BeforeTestSteps:
-          - task: DownloadPipelineArtifact@2
-            inputs:
-              artifactName: 'conda'
-              targetPath: $(Build.ArtifactStagingDirectory)
+
