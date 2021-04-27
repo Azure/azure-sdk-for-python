@@ -11,7 +11,7 @@ from ._generated.models import ContentProperties
 if TYPE_CHECKING:
     from ._generated.models import ManifestAttributesBase
     from ._generated.models import RepositoryProperties as GeneratedRepositoryProperties
-    from ._generated.models import TagProperties as GeneratedTagProperties
+    from ._generated.models import ArtifactTagProperties as GeneratedTagProperties
 
 
 class ContentPermissions(object):
