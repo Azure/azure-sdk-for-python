@@ -18,7 +18,7 @@ pip install azure-iot-modelsrepository
     * Azure IoT hosts the global [Azure IoT Models Repository][global_azure_repo] which the client will use if no custom location is provided
 
 ### Publishing Models
-Follow the [guide](https://docs.microsoft.com/en-us/azure/iot-pnp/concepts-model-repository#publish-a-model) to publish models to the global Azure IoT Models Repository.
+Follow the [guide](https://docs.microsoft.com/azure/iot-pnp/concepts-model-repository#publish-a-model) to publish models to the global Azure IoT Models Repository.
 
 If using a custom local or remote repository, you can simply add your model files to a directory structure in the repository location, e.g. `dtmi/com/example/thermostat-1.json`
 
