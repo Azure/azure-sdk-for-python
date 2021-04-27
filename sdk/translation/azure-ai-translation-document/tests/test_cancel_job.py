@@ -27,7 +27,7 @@ class TestCancelJob(DocumentTranslationTest):
         '''
         # submit translation job
         docs_count = 20 # large number of docs 
-        job_id = self._create_translation_job_with_dummy_docs(self, client, docs_count, wait=False)
+        job_id = self._create_translation_job_with_dummy_docs(client, docs_count, wait=False)
 
         # cancel job
         client.cancel_job(job_id)

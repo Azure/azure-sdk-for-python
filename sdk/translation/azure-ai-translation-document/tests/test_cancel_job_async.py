@@ -28,7 +28,7 @@ class TestCancelJob(AsyncDocumentTranslationTest):
         '''
         # submit translation job
         docs_count = 20 # large number of docs 
-        job_id = await self._create_translation_job_with_dummy_docs_async(self, client, docs_count, wait=False)
+        job_id = await self._create_translation_job_with_dummy_docs_async(client, docs_count, wait=False)
 
         # cancel job
         await client.cancel_job(job_id)
