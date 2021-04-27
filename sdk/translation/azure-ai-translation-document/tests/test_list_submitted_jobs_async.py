@@ -49,7 +49,7 @@ class TestSubmittedJobs(AsyncDocumentTranslationTest):
         job_ids = await self._create_and_submit_sample_translation_jobs_async(client, jobs_count)
 
         # list jobs
-        submitted_jobs_pages = client.list_submitted_jobs(results_per_page=result_per_page)
+        submitted_jobs_pages = client.list_submitted_jobs(results_per_page=result_per_page).by_page()
 
         # iterate by page
         async for page in submitted_jobs_pages:
@@ -244,7 +244,7 @@ class TestSubmittedJobs(AsyncDocumentTranslationTest):
             # paging
             skip=1,
             results_per_page=results_per_page
-        )
+        ).by_page()
 
         # check statuses
         curr_time = date.max

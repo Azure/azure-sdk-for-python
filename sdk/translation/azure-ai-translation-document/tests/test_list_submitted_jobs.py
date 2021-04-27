@@ -43,7 +43,7 @@ class TestSubmittedJobs(DocumentTranslationTest):
         job_ids = self._create_and_submit_sample_translation_jobs(client, 6)
 
         # list jobs
-        submitted_jobs_pages = list(client.list_submitted_jobs(results_per_page=result_per_page))
+        submitted_jobs_pages = client.list_submitted_jobs(results_per_page=result_per_page).by_page()
         self.assertIsNotNone(submitted_jobs_pages)
 
         # iterate by page
@@ -204,8 +204,7 @@ class TestSubmittedJobs(DocumentTranslationTest):
             # paging
             skip=1,
             results_per_page=results_per_page
-        )
-        submitted_jobs = list(submitted_jobs)
+        ).by_page()
         self.assertIsNotNone(submitted_jobs)
 
         # check statuses
@@ -241,8 +240,7 @@ class TestSubmittedJobs(DocumentTranslationTest):
             # paging
             skip=1,
             results_per_page=results_per_page
-        )
-        submitted_jobs = list(submitted_jobs)
+        ).by_page()
         self.assertIsNotNone(submitted_jobs)
 
         # check statuses

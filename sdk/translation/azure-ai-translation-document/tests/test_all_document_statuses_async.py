@@ -49,7 +49,7 @@ class TestAllDocumentStatuses(AsyncDocumentTranslationTest):
         job_id = await self._create_translation_job_with_dummy_docs_async(client, docs_count, language_code=target_language, wait=False)
 
         # check doc statuses
-        doc_statuses_pages = client.list_all_document_statuses(job_id=job_id, results_per_page=result_per_page)
+        doc_statuses_pages = client.list_all_document_statuses(job_id=job_id, results_per_page=result_per_page).by_page()
         pages_list = []
 
         # iterate by page
@@ -175,7 +175,7 @@ class TestAllDocumentStatuses(AsyncDocumentTranslationTest):
 
         curr = date.max
         docs = []
-        for document in doc_statuses:
+        async for document in doc_statuses:
             docs.append(document)
             self.assert(document.created_on < curr)
             curr = document.created_on
@@ -213,13 +213,13 @@ class TestAllDocumentStatuses(AsyncDocumentTranslationTest):
             # paging
             skip=1,
             results_per_page=results_per_page
-        )
+        ).by_page()
 
         # check statuses
         curr_time = date.max
-        for page in filtered_docs:
+        async for page in filtered_docs:
             page_docs = []
-            for doc in page:
+            async for doc in page:
                 page_docs.append(doc)
                 # assert ordering
                 self.assert(doc.created_on < curr_time)

@@ -45,7 +45,7 @@ class TestAllDocumentStatuses(DocumentTranslationTest):
         job_id = self._create_translation_job_with_dummy_docs(client, docs_count, language_code=target_language, wait=False)
 
         # check doc statuses
-        doc_statuses_pages = list(client.list_all_document_statuses(job_id=job_id, results_per_page=result_per_page))
+        doc_statuses_pages = client.list_all_document_statuses(job_id=job_id, results_per_page=result_per_page).by_page()
         self.assertEqual(len(doc_statuses_pages), no_of_pages)
 
         # iterate by page
@@ -198,8 +198,7 @@ class TestAllDocumentStatuses(DocumentTranslationTest):
             # paging
             skip=1,
             results_per_page=results_per_page
-        )
-        filtered_docs = list(filtered_docs)
+        ).by_page()
         self.assertIsNotNone(filtered_docs)
 
         # check statuses
