@@ -1,6 +1,6 @@
 interactions:
 - request:
-    body: '{"deleteEnabled": false}'
+    body: null
     headers:
       Accept:
       - application/json
@@ -9,17 +9,15 @@ interactions:
       Connection:
       - keep-alive
       Content-Length:
-      - '24'
-      Content-Type:
-      - application/json
+      - '0'
       User-Agent:
       - azsdk-python-azure-containerregistry/1.0.0b1 Python/3.9.0rc1 (Windows-10-10.0.19041-SP0)
-    method: PATCH
-    uri: https://fake_url.azurecr.io/acr/v1/repoc58b1fc1/_manifests/sha256%3Aabcdef
+    method: DELETE
+    uri: https://fake_url.azurecr.io/acr/v1/does_not_exist
   response:
     body:
       string: '{"errors":[{"code":"UNAUTHORIZED","message":"authentication required,
-        visit https://aka.ms/acr/authorization for more information.","detail":[{"Type":"repository","Name":"repoc58b1fc1","Action":"metadata_write"}]}]}
+        visit https://aka.ms/acr/authorization for more information.","detail":[{"Type":"repository","Name":"does_not_exist","Action":"delete"}]}]}
 
         '
     headers:
@@ -31,11 +29,11 @@ interactions:
       connection:
       - keep-alive
       content-length:
-      - '216'
+      - '210'
       content-type:
       - application/json; charset=utf-8
       date:
-      - Tue, 13 Apr 2021 16:00:13 GMT
+      - Tue, 27 Apr 2021 22:44:23 GMT
       docker-distribution-api-version:
       - registry/2.0
       server:
@@ -44,7 +42,7 @@ interactions:
       - max-age=31536000; includeSubDomains
       - max-age=31536000; includeSubDomains
       www-authenticate:
-      - Bearer realm="https://seankane.azurecr.io/oauth2/token",service="seankane.azurecr.io",scope="repository:repoc58b1fc1:metadata_write"
+      - Bearer realm="https://seankane.azurecr.io/oauth2/token",service="seankane.azurecr.io",scope="repository:does_not_exist:delete"
       x-content-type-options:
       - nosniff
     status:
@@ -76,7 +74,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Tue, 13 Apr 2021 16:00:14 GMT
+      - Tue, 27 Apr 2021 22:44:24 GMT
       server:
       - openresty
       strict-transport-security:
@@ -84,12 +82,12 @@ interactions:
       transfer-encoding:
       - chunked
       x-ms-ratelimit-remaining-calls-per-second:
-      - '166.616667'
+      - '166.183333'
     status:
       code: 200
       message: OK
 - request:
-    body: grant_type=refresh_token&service=fake_url.azurecr.io&scope=repository%3Arepoc58b1fc1%3Ametadata_write&refresh_token=REDACTED
+    body: null
     headers:
       Accept:
       - application/json
@@ -98,54 +96,15 @@ interactions:
       Connection:
       - keep-alive
       Content-Length:
-      - '1081'
-      Content-Type:
-      - application/x-www-form-urlencoded
+      - '0'
       User-Agent:
       - azsdk-python-azure-containerregistry/1.0.0b1 Python/3.9.0rc1 (Windows-10-10.0.19041-SP0)
-    method: POST
-    uri: https://fake_url.azurecr.io/oauth2/token
+    method: DELETE
+    uri: https://fake_url.azurecr.io/acr/v1/does_not_exist
   response:
     body:
-      string: '{"access_token": "REDACTED"}'
-    headers:
-      connection:
-      - keep-alive
-      content-type:
-      - application/json; charset=utf-8
-      date:
-      - Tue, 13 Apr 2021 16:00:14 GMT
-      server:
-      - openresty
-      strict-transport-security:
-      - max-age=31536000; includeSubDomains
-      transfer-encoding:
-      - chunked
-      x-ms-ratelimit-remaining-calls-per-second:
-      - '166.6'
-    status:
-      code: 200
-      message: OK
-- request:
-    body: '{"deleteEnabled": false}'
-    headers:
-      Accept:
-      - application/json
-      Accept-Encoding:
-      - gzip, deflate
-      Connection:
-      - keep-alive
-      Content-Length:
-      - '24'
-      Content-Type:
-      - application/json
-      User-Agent:
-      - azsdk-python-azure-containerregistry/1.0.0b1 Python/3.9.0rc1 (Windows-10-10.0.19041-SP0)
-    method: PATCH
-    uri: https://fake_url.azurecr.io/acr/v1/repoc58b1fc1/_manifests/sha256%3Aabcdef
-  response:
-    body:
-      string: '{"errors": [{"code": "MANIFEST_UNKNOWN", "message": "manifest unknown"}]}'
+      string: '{"errors": [{"code": "NAME_UNKNOWN", "message": "repository name not
+        known to registry", "detail": {"name": "does_not_exist"}}]}'
     headers:
       access-control-expose-headers:
       - Docker-Content-Digest
@@ -155,11 +114,11 @@ interactions:
       connection:
       - keep-alive
       content-length:
-      - '70'
+      - '122'
       content-type:
       - application/json; charset=utf-8
       date:
-      - Tue, 13 Apr 2021 16:00:14 GMT
+      - Tue, 27 Apr 2021 22:44:24 GMT
       docker-distribution-api-version:
       - registry/2.0
       server:
@@ -169,6 +128,8 @@ interactions:
       - max-age=31536000; includeSubDomains
       x-content-type-options:
       - nosniff
+      x-ms-ratelimit-remaining-calls-per-second:
+      - '8.000000'
     status:
       code: 404
       message: Not Found

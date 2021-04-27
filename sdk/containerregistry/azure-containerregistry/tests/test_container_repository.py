@@ -83,6 +83,15 @@ class TestContainerRepository(ContainerRegistryTestClass):
         assert c.can_list == new_properties.content_permissions.can_list
         assert c.can_write == new_properties.content_permissions.can_write
 
+        c = ContentPermissions(can_delete=True, can_read=True, can_list=True, can_write=True)
+        properties.content_permissions = c
+        new_properties = repo_client.set_properties(c)
+
+        assert c.can_delete == new_properties.content_permissions.can_delete
+        assert c.can_read == new_properties.content_permissions.can_read
+        assert c.can_list == new_properties.content_permissions.can_list
+        assert c.can_write == new_properties.content_permissions.can_write
+
     # @acr_preparer()
     # def test_get_tag(self, containerregistry_endpoint):
     #     client = self.create_container_repository(containerregistry_endpoint, self.repository)
@@ -94,7 +103,7 @@ class TestContainerRepository(ContainerRegistryTestClass):
 
     @acr_preparer()
     def test_list_registry_artifacts(self, containerregistry_endpoint):
-        client = self.create_container_repository(containerregistry_endpoint, self.repository)
+        client = self.create_container_repository(containerregistry_endpoint, "library/busybox")
 
         count = 0
         for artifact in client.list_registry_artifacts():
@@ -110,7 +119,7 @@ class TestContainerRepository(ContainerRegistryTestClass):
 
     @acr_preparer()
     def test_list_registry_artifacts_by_page(self, containerregistry_endpoint):
-        client = self.create_container_repository(containerregistry_endpoint, self.repository)
+        client = self.create_container_repository(containerregistry_endpoint, "library/busybox")
         results_per_page = 2
 
         pages = client.list_registry_artifacts(results_per_page=results_per_page)
@@ -126,7 +135,7 @@ class TestContainerRepository(ContainerRegistryTestClass):
 
     @acr_preparer()
     def test_list_registry_artifacts_descending(self, containerregistry_endpoint):
-        client = self.create_container_repository(containerregistry_endpoint, self.repository)
+        client = self.create_container_repository(containerregistry_endpoint, "library/busybox")
 
         prev_last_updated_on = None
         count = 0
@@ -140,7 +149,7 @@ class TestContainerRepository(ContainerRegistryTestClass):
 
     @acr_preparer()
     def test_list_registry_artifacts_ascending(self, containerregistry_endpoint):
-        client = self.create_container_repository(containerregistry_endpoint, self.repository)
+        client = self.create_container_repository(containerregistry_endpoint, "library/busybox")
 
         prev_last_updated_on = None
         count = 0

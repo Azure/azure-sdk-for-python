@@ -26,62 +26,35 @@ from constants import TO_BE_DELETED, DOES_NOT_EXIST, HELLO_WORLD
 
 
 class TestContainerRepository(AsyncContainerRegistryTestClass):
-    @acr_preparer()
-    async def test_list_registry_artifacts(self, containerregistry_endpoint):
-        client = self.create_container_repository(containerregistry_endpoint, self.repository)
 
-        async for artifact in client.list_registry_artifacts():
-            assert artifact is not None
-            assert isinstance(artifact, RegistryArtifactProperties)
-            assert artifact.created_on is not None
-            assert isinstance(artifact.created_on, datetime)
-            assert artifact.last_updated_on is not None
-            assert isinstance(artifact.last_updated_on, datetime)
+    # @acr_preparer()
+    # async def test_list_tags(self, containerregistry_endpoint):
+    #     client = self.create_container_repository(containerregistry_endpoint, self.repository)
 
-    @acr_preparer()
-    async def test_list_registry_artifacts_by_page(self, containerregistry_endpoint):
-        client = self.create_container_repository(containerregistry_endpoint, self.repository)
-        results_per_page = 2
+    #     tags = client.list_tags()
+    #     assert isinstance(tags, AsyncItemPaged)
+    #     count = 0
+    #     async for tag in tags:
+    #         count += 1
 
-        pages = client.list_registry_artifacts(results_per_page=results_per_page)
-        page_count = 0
-        async for page in pages.by_page():
-            reg_count = 0
-            async for tag in page:
-                reg_count += 1
-            assert reg_count <= results_per_page
-            page_count += 1
+    #     assert count > 0
 
-        assert page_count >= 1
+    # @acr_preparer()
+    # async def test_list_tags_by_page(self, containerregistry_endpoint):
+    #     client = self.create_container_repository(containerregistry_endpoint, self.repository)
 
-    @acr_preparer()
-    async def test_list_tags(self, containerregistry_endpoint):
-        client = self.create_container_repository(containerregistry_endpoint, self.repository)
+    #     results_per_page = 2
 
-        tags = client.list_tags()
-        assert isinstance(tags, AsyncItemPaged)
-        count = 0
-        async for tag in tags:
-            count += 1
+    #     pages = client.list_tags(results_per_page=results_per_page)
+    #     page_count = 0
+    #     async for page in pages.by_page():
+    #         tag_count = 0
+    #         async for tag in page:
+    #             tag_count += 1
+    #         assert tag_count <= results_per_page
+    #         page_count += 1
 
-        assert count > 0
-
-    @acr_preparer()
-    async def test_list_tags_by_page(self, containerregistry_endpoint):
-        client = self.create_container_repository(containerregistry_endpoint, self.repository)
-
-        results_per_page = 2
-
-        pages = client.list_tags(results_per_page=results_per_page)
-        page_count = 0
-        async for page in pages.by_page():
-            tag_count = 0
-            async for tag in page:
-                tag_count += 1
-            assert tag_count <= results_per_page
-            page_count += 1
-
-        assert page_count >= 1
+    #     assert page_count >= 1
 
     # @acr_preparer()
     # async def test_delete_tag(self, containerregistry_endpoint, containerregistry_resource_group):
@@ -153,127 +126,127 @@ class TestContainerRepository(AsyncContainerRegistryTestClass):
     #     assert len(artifacts) > 0
     #     assert len(artifacts) == count - 1
 
-    @acr_preparer()
-    async def test_set_tag_properties(self, containerregistry_endpoint, containerregistry_resource_group):
-        repository = self.get_resource_name("repo")
-        tag_identifier = self.get_resource_name("tag")
-        self.import_image(HELLO_WORLD, ["{}:{}".format(repository, tag_identifier)])
+    # @acr_preparer()
+    # async def test_set_tag_properties(self, containerregistry_endpoint, containerregistry_resource_group):
+    #     repository = self.get_resource_name("repo")
+    #     tag_identifier = self.get_resource_name("tag")
+    #     self.import_image(HELLO_WORLD, ["{}:{}".format(repository, tag_identifier)])
 
-        client = self.create_container_repository(containerregistry_endpoint, repository)
+    #     client = self.create_container_repository(containerregistry_endpoint, repository)
 
-        tag_props = await client.get_tag_properties(tag_identifier)
-        permissions = tag_props.content_permissions
+    #     tag_props = await client.get_tag_properties(tag_identifier)
+    #     permissions = tag_props.content_permissions
 
-        received = await client.set_tag_properties(
-            tag_identifier,
-            ContentPermissions(
-                can_delete=False,
-                can_list=False,
-                can_read=False,
-                can_write=False,
-            ),
-        )
+    #     received = await client.set_tag_properties(
+    #         tag_identifier,
+    #         ContentPermissions(
+    #             can_delete=False,
+    #             can_list=False,
+    #             can_read=False,
+    #             can_write=False,
+    #         ),
+    #     )
 
-        assert not received.content_permissions.can_write
-        assert not received.content_permissions.can_read
-        assert not received.content_permissions.can_list
-        assert not received.content_permissions.can_delete
+    #     assert not received.content_permissions.can_write
+    #     assert not received.content_permissions.can_read
+    #     assert not received.content_permissions.can_list
+    #     assert not received.content_permissions.can_delete
 
-        # Reset them
-        await client.set_tag_properties(
-            tag_identifier,
-            ContentPermissions(
-                can_delete=True,
-                can_list=True,
-                can_read=True,
-                can_write=True,
-            ),
-        )
+    #     # Reset them
+    #     await client.set_tag_properties(
+    #         tag_identifier,
+    #         ContentPermissions(
+    #             can_delete=True,
+    #             can_list=True,
+    #             can_read=True,
+    #             can_write=True,
+    #         ),
+    #     )
 
-    @acr_preparer()
-    async def test_set_tag_properties_does_not_exist(self, containerregistry_endpoint):
-        client = self.create_container_repository(containerregistry_endpoint, self.get_resource_name("repo"))
+    # @acr_preparer()
+    # async def test_set_tag_properties_does_not_exist(self, containerregistry_endpoint):
+    #     client = self.create_container_repository(containerregistry_endpoint, self.get_resource_name("repo"))
 
-        with pytest.raises(ResourceNotFoundError):
-            await client.set_tag_properties(DOES_NOT_EXIST, ContentPermissions(can_delete=False))
+    #     with pytest.raises(ResourceNotFoundError):
+    #         await client.set_tag_properties(DOES_NOT_EXIST, ContentPermissions(can_delete=False))
 
-    @acr_preparer()
-    async def test_set_manifest_properties(self, containerregistry_endpoint, containerregistry_resource_group):
-        repository = self.get_resource_name("reposet")
-        tag_identifier = self.get_resource_name("tag")
-        self.import_image(HELLO_WORLD, ["{}:{}".format(repository, tag_identifier)])
+    # @acr_preparer()
+    # async def test_set_manifest_properties(self, containerregistry_endpoint, containerregistry_resource_group):
+    #     repository = self.get_resource_name("reposet")
+    #     tag_identifier = self.get_resource_name("tag")
+    #     self.import_image(HELLO_WORLD, ["{}:{}".format(repository, tag_identifier)])
 
-        client = self.create_container_repository(containerregistry_endpoint, repository)
+    #     client = self.create_container_repository(containerregistry_endpoint, repository)
 
-        async for artifact in client.list_registry_artifacts():
-            permissions = artifact.content_permissions
+    #     async for artifact in client.list_registry_artifacts():
+    #         permissions = artifact.content_permissions
 
-            received_permissions = await client.set_manifest_properties(
-                artifact.digest,
-                ContentPermissions(
-                    can_delete=False,
-                    can_list=False,
-                    can_read=False,
-                    can_write=False,
-                ),
-            )
-            assert not received_permissions.content_permissions.can_delete
-            assert not received_permissions.content_permissions.can_read
-            assert not received_permissions.content_permissions.can_list
-            assert not received_permissions.content_permissions.can_write
+    #         received_permissions = await client.set_manifest_properties(
+    #             artifact.digest,
+    #             ContentPermissions(
+    #                 can_delete=False,
+    #                 can_list=False,
+    #                 can_read=False,
+    #                 can_write=False,
+    #             ),
+    #         )
+    #         assert not received_permissions.content_permissions.can_delete
+    #         assert not received_permissions.content_permissions.can_read
+    #         assert not received_permissions.content_permissions.can_list
+    #         assert not received_permissions.content_permissions.can_write
 
-            # Reset and delete
-            await client.set_manifest_properties(
-                artifact.digest,
-                ContentPermissions(
-                    can_delete=True,
-                    can_list=True,
-                    can_read=True,
-                    can_write=True,
-                ),
-            )
-            await client.delete()
+    #         # Reset and delete
+    #         await client.set_manifest_properties(
+    #             artifact.digest,
+    #             ContentPermissions(
+    #                 can_delete=True,
+    #                 can_list=True,
+    #                 can_read=True,
+    #                 can_write=True,
+    #             ),
+    #         )
+    #         await client.delete()
 
-            break
+    #         break
 
-    @acr_preparer()
-    async def test_set_manifest_properties_does_not_exist(self, containerregistry_endpoint):
-        client = self.create_container_repository(containerregistry_endpoint, self.get_resource_name("repo"))
+    # @acr_preparer()
+    # async def test_set_manifest_properties_does_not_exist(self, containerregistry_endpoint):
+    #     client = self.create_container_repository(containerregistry_endpoint, self.get_resource_name("repo"))
 
-        with pytest.raises(ResourceNotFoundError):
-            await client.set_manifest_properties("sha256:abcdef", ContentPermissions(can_delete=False))
+    #     with pytest.raises(ResourceNotFoundError):
+    #         await client.set_manifest_properties("sha256:abcdef", ContentPermissions(can_delete=False))
 
-    @acr_preparer()
-    async def test_list_tags_descending(self, containerregistry_endpoint):
-        client = self.create_container_repository(containerregistry_endpoint, self.repository)
+    # @acr_preparer()
+    # async def test_list_tags_descending(self, containerregistry_endpoint):
+    #     client = self.create_container_repository(containerregistry_endpoint, self.repository)
 
-        prev_last_updated_on = None
-        count = 0
-        async for tag in client.list_tags(order_by=TagOrderBy.LAST_UPDATE_TIME_DESCENDING):
-            if prev_last_updated_on:
-                assert tag.last_updated_on < prev_last_updated_on
-            prev_last_updated_on = tag.last_updated_on
-            count += 1
+    #     prev_last_updated_on = None
+    #     count = 0
+    #     async for tag in client.list_tags(order_by=TagOrderBy.LAST_UPDATE_TIME_DESCENDING):
+    #         if prev_last_updated_on:
+    #             assert tag.last_updated_on < prev_last_updated_on
+    #         prev_last_updated_on = tag.last_updated_on
+    #         count += 1
 
-        assert count > 0
+    #     assert count > 0
 
-    @acr_preparer()
-    async def test_list_tags_ascending(self, containerregistry_endpoint):
-        client = self.create_container_repository(containerregistry_endpoint, self.repository)
+    # @acr_preparer()
+    # async def test_list_tags_ascending(self, containerregistry_endpoint):
+    #     client = self.create_container_repository(containerregistry_endpoint, self.repository)
 
-        prev_last_updated_on = None
-        count = 0
-        async for tag in client.list_tags(order_by=TagOrderBy.LAST_UPDATE_TIME_ASCENDING):
-            if prev_last_updated_on:
-                assert tag.last_updated_on > prev_last_updated_on
-            prev_last_updated_on = tag.last_updated_on
-            count += 1
+    #     prev_last_updated_on = None
+    #     count = 0
+    #     async for tag in client.list_tags(order_by=TagOrderBy.LAST_UPDATE_TIME_ASCENDING):
+    #         if prev_last_updated_on:
+    #             assert tag.last_updated_on > prev_last_updated_on
+    #         prev_last_updated_on = tag.last_updated_on
+    #         count += 1
 
-        assert count > 0
+    #     assert count > 0
 
     @acr_preparer()
     async def test_list_registry_artifacts(self, containerregistry_endpoint):
-        client = self.create_container_repository(containerregistry_endpoint, self.repository)
+        client = self.create_container_repository(containerregistry_endpoint, "library/busybox")
 
         count = 0
         async for artifact in client.list_registry_artifacts():
@@ -288,8 +261,24 @@ class TestContainerRepository(AsyncContainerRegistryTestClass):
         assert count > 0
 
     @acr_preparer()
+    async def test_list_registry_artifacts_by_page(self, containerregistry_endpoint):
+        client = self.create_container_repository(containerregistry_endpoint, "library/busybox")
+        results_per_page = 2
+
+        pages = client.list_registry_artifacts(results_per_page=results_per_page)
+        page_count = 0
+        async for page in pages.by_page():
+            reg_count = 0
+            async for tag in page:
+                reg_count += 1
+            assert reg_count <= results_per_page
+            page_count += 1
+
+        assert page_count >= 1
+
+    @acr_preparer()
     async def test_list_registry_artifacts_descending(self, containerregistry_endpoint):
-        client = self.create_container_repository(containerregistry_endpoint, self.repository)
+        client = self.create_container_repository(containerregistry_endpoint, "library/busybox")
 
         prev_last_updated_on = None
         count = 0
@@ -305,7 +294,7 @@ class TestContainerRepository(AsyncContainerRegistryTestClass):
 
     @acr_preparer()
     async def test_list_registry_artifacts_ascending(self, containerregistry_endpoint):
-        client = self.create_container_repository(containerregistry_endpoint, self.repository)
+        client = self.create_container_repository(containerregistry_endpoint, "library/busybox")
 
         prev_last_updated_on = None
         count = 0
@@ -342,6 +331,15 @@ class TestContainerRepository(AsyncContainerRegistryTestClass):
         assert isinstance(properties.content_permissions, ContentPermissions)
 
         c = ContentPermissions(can_delete=False, can_read=False, can_list=False, can_write=False)
+        properties.content_permissions = c
+        new_properties = await repo_client.set_properties(c)
+
+        assert c.can_delete == new_properties.content_permissions.can_delete
+        assert c.can_read == new_properties.content_permissions.can_read
+        assert c.can_list == new_properties.content_permissions.can_list
+        assert c.can_write == new_properties.content_permissions.can_write
+
+        c = ContentPermissions(can_delete=True, can_read=True, can_list=True, can_write=True)
         properties.content_permissions = c
         new_properties = await repo_client.set_properties(c)
 
