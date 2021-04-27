@@ -127,20 +127,6 @@ class TestAllDocumentStatuses(AsyncDocumentTranslationTest):
 
     @DocumentTranslationPreparer()
     @DocumentTranslationClientPreparer()
-    async def test_list_submitted_jobs_filter_by_translated_after(self, client):
-        # it's not practical to test for created time filter
-        pass
-
-
-    @DocumentTranslationPreparer()
-    @DocumentTranslationClientPreparer()
-    async def test_list_submitted_jobs_filter_by_translated_before(self, client):
-        # it's not practical to test for created time filter
-        pass
-
-
-    @DocumentTranslationPreparer()
-    @DocumentTranslationClientPreparer()
     async def test_list_submitted_jobs_order_by_creation_time_asc(self, client):
         docs_count = 5
         target_language = "es"
