@@ -78,9 +78,6 @@ setup(
         # Exclude packages that will be covered by PEP420 or nspkg
         'azure',
     ]),
-    package_data={
-        'pytyped': ['py.typed'],
-    },
     install_requires=[
         "uamqp>=1.3.0,<2.0.0",
         'azure-common~=1.1',

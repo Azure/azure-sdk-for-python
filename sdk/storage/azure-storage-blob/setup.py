@@ -93,9 +93,6 @@ setup(
         'tests.blob',
         'tests.common'
     ]),
-    package_data={
-        'pytyped': ['py.typed'],
-    },
     install_requires=[
         "azure-core<2.0.0,>=1.10.0",
         "msrest>=0.6.18",

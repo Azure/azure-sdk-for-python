@@ -80,9 +80,6 @@ setup(
         # Exclude packages that will be covered by PEP420 or nspkg
         'azure',
     ]),
-    package_data={
-        'pytyped': ['py.typed'],
-    },
     install_requires=[
         'msrest>=0.6.19',
         'azure-core<2.0.0,>=1.12.0',

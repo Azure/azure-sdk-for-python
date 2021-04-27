@@ -78,9 +78,6 @@ setup(
         'tests',
         'azure.data',
     ]),
-    package_data={
-        'pytyped': ['py.typed'],
-    },
     install_requires=[
         "azure-core<2.0.0,>=1.13.0",
         "msrest>=0.6.19"

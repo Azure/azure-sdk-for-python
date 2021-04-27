@@ -72,9 +72,6 @@ setup(
             "azure",
         ]
     ),
-    package_data={
-        'pytyped': ['py.typed'],
-    },
     install_requires=[
         "azure-core<2.0.0,>=1.0.0",
         "cryptography>=2.1.4",

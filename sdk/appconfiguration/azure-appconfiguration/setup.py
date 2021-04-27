@@ -87,9 +87,6 @@ setup(
     ],
     zip_safe=False,
     packages=find_packages(exclude=exclude_packages),
-    package_data={
-        'pytyped': ['py.typed'],
-    },
     install_requires=[
         "msrest>=0.6.10",
         "azure-core<2.0.0,>=1.2.2",

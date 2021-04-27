@@ -68,9 +68,6 @@ setup(
     ],
     zip_safe=False,
     packages=find_packages(exclude=exclude_packages),
-    package_data={
-        'pytyped': ['py.typed'],
-    },
     install_requires=[
         "azure-core<2.0.0,>=1.13.0",
         "uamqp>=1.3.0,<2.0.0",
