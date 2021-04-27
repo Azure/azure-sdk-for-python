@@ -65,15 +65,14 @@ def main(generate_input, generate_output):
     for package in data.values():
         package_name = package['packageName']
         # Changelog
-        last_version = ['0.0.0']
+        last_version = ['first release']
         md_output = change_log_generate(package_name, last_version)
         package["changelog"] = {
             "content": md_output,
             "hasBreakingChange": "Breaking changes" in md_output,
             "breakingChangeItems": _extract_breaking_change(md_output)
         }
-        if package["changelog"]["hasBreakingChange"]:
-            package["version"] = last_version[-1]
+        package["version"] = last_version[-1]
 
         _LOGGER.info(f'[PACKAGE]({package_name})[CHANGELOG]:{md_output}')
         # Built package
