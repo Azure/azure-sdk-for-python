@@ -64,7 +64,7 @@ setup(
         "azure-core<2.0.0,>=1.10.0",
         "msrest>=0.6.18",
         "cryptography>=2.1.4",
-        "pyjwt>=1.7.1",
+        "PyJWT>=1.7.1",
         "six>=1.12.0",
     ],
     extras_require={
