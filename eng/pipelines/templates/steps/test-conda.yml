@@ -67,7 +67,7 @@ steps:
       - template: /eng/common/pipelines/templates/steps/sparse-checkout.yml
         parameters:
           Paths:
-            - "${{ checkout.CheckoutPath }}/${{ checkout.Package }}"
+            - "${{ checkout.checkout_path }}/${{ checkout.package }}"
           Repositories:
             - Name: "Azure/azure-sdk-for-python"
               Commitish: "${{ checkout.Package }}_${{ checkout.Version }}"
