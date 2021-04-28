@@ -130,8 +130,8 @@ class ShareClient(AsyncStorageAccountHostsMixin, ShareClientBase):
             _pipeline=_pipeline, _location_mode=self._location_mode, loop=self._loop)
 
     @distributed_trace_async()
-    async def acquire_lease(self, lease_duration=-1, lease_id=None, **kwargs):
-        # type: (int, Optional[str], **Any) -> ShareLeaseClient
+    async def acquire_lease(self, **kwargs):
+        # type: (**Any) -> ShareLeaseClient
         """Requests a new lease.
 
         If the share does not have an active lease, the Share
@@ -139,12 +139,12 @@ class ShareClient(AsyncStorageAccountHostsMixin, ShareClientBase):
 
         .. versionadded:: 12.5.0
 
-        :param int lease_duration:
+        :keyword int lease_duration:
             Specifies the duration of the lease, in seconds, or negative one
             (-1) for a lease that never expires. A non-infinite lease can be
             between 15 and 60 seconds. A lease duration cannot be changed
             using renew or change. Default is -1 (infinite lease).
-        :param str lease_id:
+        :keyword str lease_id:
             Proposed lease ID, in a GUID string format. The Share Service
             returns 400 (Invalid request) if the proposed lease ID is not
             in the correct format.
@@ -162,7 +162,8 @@ class ShareClient(AsyncStorageAccountHostsMixin, ShareClientBase):
                 :dedent: 8
                 :caption: Acquiring a lease on a share.
         """
-        kwargs['lease_duration'] = lease_duration
+        kwargs['lease_duration'] = kwargs.pop('lease_duration', -1)
+        lease_id = kwargs.pop('lease_id', None)
         lease = ShareLeaseClient(self, lease_id=lease_id)  # type: ignore
         await lease.acquire(**kwargs)
         return lease

@@ -1011,7 +1011,7 @@ class ContainerEncryptionScope(object):
         return None
 
 
-class DelimitedJsonDialect(object):
+class DelimitedJsonDialect(DictMixin):
     """Defines the input or output JSON serialization for a blob data query.
 
     :keyword str delimiter: The line separator character, default value is '\n'
@@ -1021,7 +1021,7 @@ class DelimitedJsonDialect(object):
         self.delimiter = kwargs.pop('delimiter', '\n')
 
 
-class DelimitedTextDialect(object):
+class DelimitedTextDialect(DictMixin):
     """Defines the input or output delimited (CSV) serialization for a blob query request.
 
     :keyword str delimiter:
@@ -1045,7 +1045,7 @@ class DelimitedTextDialect(object):
         self.has_header = kwargs.pop('has_header', False)
 
 
-class ParquetDialect(object):
+class ParquetDialect(DictMixin):
     """Defines parquet input serialization for a blob query request."""
     pass
 
