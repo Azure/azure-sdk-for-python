@@ -48,7 +48,7 @@ steps:
         conda env create --name ${{ artifact.name }} --file $(Build.SourcesDirectory)/eng/conda_env.yml
         conda install --name ${{ artifact.name }} --yes --quiet conda-build
         source activate ${{ artifact.name }}
-        conda index $(Build.ArtifactStagingDirectory)/conda/${{ artifact.name }}
+        conda index $(Build.ArtifactStagingDirectory)/${{ artifact.name }}
       displayName: 'Prepare Conda Environment for Testing ${{ artifact.name }}, Index the Target Artifact'
 
     - bash: |
