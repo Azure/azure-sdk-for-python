@@ -228,7 +228,7 @@ def _map_architecture(arch):
         "mips": ArtifactArchitecture.MIPS,
         "mips64": ArtifactArchitecture.MIPS64,
         "mips64le": ArtifactArchitecture.MIPS64LE,
-        "mips64le": ArtifactArchitecture.MIPSLE,
+        "mipsle": ArtifactArchitecture.MIPSLE,
         "ppc64": ArtifactArchitecture.PPC64,
         "ppc64le": ArtifactArchitecture.PPC64LE,
         "riscv64": ArtifactArchitecture.RISCV64,
@@ -265,11 +265,11 @@ class ArtifactArchitecture(str, Enum):
     AMD64 = "amd64"
     ARM = "arm"
     ARM64 = "arm64"
-    I386 = "i386"
+    I386 = "386"
     MIPS = "mips"
     MIPS64 = "mips64"
     MIPS64LE = "mips64le"
-    MIPSLE = "mips64le"
+    MIPSLE = "mipsle"
     PPC64 = "ppc64"
     PPC64LE = "ppc64le"
     RISCV64 = "riscv64"
