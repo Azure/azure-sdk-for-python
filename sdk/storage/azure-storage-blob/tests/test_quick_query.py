@@ -949,7 +949,7 @@ class StorageQuickQueryTest(StorageTestCase):
 
         blob_name = self._get_blob_reference()
         blob_client = bsc.get_blob_client(self.container_name, blob_name)
-        parquet_path = os.path.abspath(os.path.join(os.path.abspath(__file__), "..", "./parquet.parquet"))
+        parquet_path = os.path.abspath(os.path.join(os.path.abspath(__file__), "..", "./resources/parquet.parquet"))
         with open(parquet_path, "rb") as parquet_data:
             blob_client.upload_blob(parquet_data, overwrite=True)
         errors = []
