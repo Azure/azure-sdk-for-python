@@ -7,16 +7,13 @@
 # --------------------------------------------------------------------------
 import unittest
 
-from msrest.exceptions import ValidationError
-
 from azure.core.exceptions import HttpResponseError
 
 
 from azure.storage.filedatalake import DataLakeServiceClient
 from testcase import (
     StorageTestCase,
-    record,
-)
+    DataLakePreparer)
 
 # ------------------------------------------------------------------------------
 from azure.storage.filedatalake._models import AnalyticsLogging, Metrics, RetentionPolicy, \
@@ -26,10 +23,9 @@ from azure.storage.filedatalake._models import AnalyticsLogging, Metrics, Retent
 
 
 class DatalakeServiceTest(StorageTestCase):
-    def setUp(self):
-        super(DatalakeServiceTest, self).setUp()
-        url = self._get_account_url()
-        self.dsc = DataLakeServiceClient(url, credential=self.settings.STORAGE_DATA_LAKE_ACCOUNT_KEY, logging_enable=True)
+    def _setUp(self, account_name, account_key):
+        url = self._get_account_url(account_name)
+        self.dsc = DataLakeServiceClient(url, account_key)
         self.config = self.dsc._config
 
     # --Helpers-----------------------------------------------------------------
@@ -108,8 +104,9 @@ class DatalakeServiceTest(StorageTestCase):
         self.assertEqual(ret1.days, ret2.days)
 
     # --Test cases per service ---------------------------------------
-    @record
-    def test_datalake_service_properties(self):
+    @DataLakePreparer()
+    def test_datalake_service_properties(self, datalake_storage_account_name, datalake_storage_account_key):
+        self._setUp(datalake_storage_account_name, datalake_storage_account_key)
         # Act
         resp = self.dsc.set_service_properties(
             analytics_logging=AnalyticsLogging(),
@@ -125,13 +122,15 @@ class DatalakeServiceTest(StorageTestCase):
         self._assert_properties_default(props)
         self.assertEqual('2014-02-14', props['target_version'])
 
-    @record
-    def test_empty_set_service_properties_exception(self):
+    @DataLakePreparer()
+    def test_empty_set_service_properties_exception(self, datalake_storage_account_name, datalake_storage_account_key):
+        self._setUp(datalake_storage_account_name, datalake_storage_account_key)
         with self.assertRaises(ValueError):
             self.dsc.set_service_properties()
 
-    @record
-    def test_set_default_service_version(self):
+    @DataLakePreparer()
+    def test_set_default_service_version(self, datalake_storage_account_name, datalake_storage_account_key):
+        self._setUp(datalake_storage_account_name, datalake_storage_account_key)
         # Act
         self.dsc.set_service_properties(target_version='2014-02-14')
 
@@ -139,8 +138,9 @@ class DatalakeServiceTest(StorageTestCase):
         received_props = self.dsc.get_service_properties()
         self.assertEqual(received_props['target_version'], '2014-02-14')
 
-    @record
-    def test_set_delete_retention_policy(self):
+    @DataLakePreparer()
+    def test_set_delete_retention_policy(self, datalake_storage_account_name, datalake_storage_account_key):
+        self._setUp(datalake_storage_account_name, datalake_storage_account_key)
         delete_retention_policy = RetentionPolicy(enabled=True, days=2)
 
         # Act
@@ -150,8 +150,9 @@ class DatalakeServiceTest(StorageTestCase):
         received_props = self.dsc.get_service_properties()
         self._assert_delete_retention_policy_equal(received_props['delete_retention_policy'], delete_retention_policy)
 
-    @record
-    def test_set_delete_retention_policy_edge_cases(self):
+    @DataLakePreparer()
+    def test_set_delete_retention_policy_edge_cases(self, datalake_storage_account_name, datalake_storage_account_key):
+        self._setUp(datalake_storage_account_name, datalake_storage_account_key)
         delete_retention_policy = RetentionPolicy(enabled=True, days=1)
         self.dsc.set_service_properties(delete_retention_policy=delete_retention_policy)
 
@@ -175,7 +176,8 @@ class DatalakeServiceTest(StorageTestCase):
 
         # Assert
         received_props = self.dsc.get_service_properties()
-        self._assert_delete_retention_policy_not_equal(received_props['delete_retention_policy'], delete_retention_policy)
+        self._assert_delete_retention_policy_not_equal(
+            received_props['delete_retention_policy'], delete_retention_policy)
 
         # Should not work with 366 days
         delete_retention_policy = RetentionPolicy(enabled=True, days=366)
@@ -185,10 +187,12 @@ class DatalakeServiceTest(StorageTestCase):
 
         # Assert
         received_props = self.dsc.get_service_properties()
-        self._assert_delete_retention_policy_not_equal(received_props['delete_retention_policy'], delete_retention_policy)
+        self._assert_delete_retention_policy_not_equal(
+            received_props['delete_retention_policy'], delete_retention_policy)
 
-    @record
-    def test_set_static_website_properties(self):
+    @DataLakePreparer()
+    def test_set_static_website_properties(self, datalake_storage_account_name, datalake_storage_account_key):
+        self._setUp(datalake_storage_account_name, datalake_storage_account_key)
         static_website = StaticWebsite(
             enabled=True,
             index_document="index.html",
@@ -201,8 +205,9 @@ class DatalakeServiceTest(StorageTestCase):
         received_props = self.dsc.get_service_properties()
         self._assert_static_website_equal(received_props['static_website'], static_website)
 
-    @record
-    def test_disabled_static_website_properties(self):
+    @DataLakePreparer()
+    def test_disabled_static_website_properties(self, datalake_storage_account_name, datalake_storage_account_key):
+        self._setUp(datalake_storage_account_name, datalake_storage_account_key)
         static_website = StaticWebsite(enabled=False, index_document="index.html",
                                        error_document404_path="errors/error/404error.html")
 
@@ -213,8 +218,10 @@ class DatalakeServiceTest(StorageTestCase):
         received_props = self.dsc.get_service_properties()
         self._assert_static_website_equal(received_props['static_website'], StaticWebsite(enabled=False))
 
-    @record
-    def test_set_static_website_props_dont_impact_other_props(self):
+    @DataLakePreparer()
+    def test_set_static_website_props_dont_impact_other_props(
+            self, datalake_storage_account_name, datalake_storage_account_key):
+        self._setUp(datalake_storage_account_name, datalake_storage_account_key)
         cors_rule1 = CorsRule(['www.xyz.com'], ['GET'])
 
         allowed_origins = ['www.xyz.com', "www.ab.com", "www.bc.com"]
@@ -250,9 +257,11 @@ class DatalakeServiceTest(StorageTestCase):
         self._assert_static_website_equal(received_props['static_website'], static_website)
         self._assert_cors_equal(received_props['cors'], cors)
 
-    @record
-    def test_set_logging(self):
-        logging = AnalyticsLogging(read=True, write=True, delete=True, retention_policy=RetentionPolicy(enabled=True, days=5))
+    @DataLakePreparer()
+    def test_set_logging(self, datalake_storage_account_name, datalake_storage_account_key):
+        self._setUp(datalake_storage_account_name, datalake_storage_account_key)
+        logging = AnalyticsLogging(read=True, write=True, delete=True,
+                                   retention_policy=RetentionPolicy(enabled=True, days=5))
 
         # Act
         self.dsc.set_service_properties(analytics_logging=logging)
@@ -261,8 +270,9 @@ class DatalakeServiceTest(StorageTestCase):
         received_props = self.dsc.get_service_properties()
         self._assert_logging_equal(received_props['analytics_logging'], logging)
 
-    @record
-    def test_set_hour_metrics(self):
+    @DataLakePreparer()
+    def test_set_hour_metrics(self, datalake_storage_account_name, datalake_storage_account_key):
+        self._setUp(datalake_storage_account_name, datalake_storage_account_key)
         hour_metrics = Metrics(
             include_apis=False, enabled=True, retention_policy=RetentionPolicy(enabled=True, days=5))
 
@@ -273,8 +283,9 @@ class DatalakeServiceTest(StorageTestCase):
         received_props = self.dsc.get_service_properties()
         self._assert_metrics_equal(received_props['hour_metrics'], hour_metrics)
 
-    @record
-    def test_set_minute_metrics(self):
+    @DataLakePreparer()
+    def test_set_minute_metrics(self, datalake_storage_account_name, datalake_storage_account_key):
+        self._setUp(datalake_storage_account_name, datalake_storage_account_key)
         minute_metrics = Metrics(enabled=True, include_apis=True,
                                  retention_policy=RetentionPolicy(enabled=True, days=5))
 
@@ -285,8 +296,9 @@ class DatalakeServiceTest(StorageTestCase):
         received_props = self.dsc.get_service_properties()
         self._assert_metrics_equal(received_props['minute_metrics'], minute_metrics)
 
-    @record
-    def test_set_cors(self):
+    @DataLakePreparer()
+    def test_set_cors(self, datalake_storage_account_name, datalake_storage_account_key):
+        self._setUp(datalake_storage_account_name, datalake_storage_account_key)
         cors_rule1 = CorsRule(['www.xyz.com'], ['GET'])
 
         allowed_origins = ['www.xyz.com', "www.ab.com", "www.bc.com"]

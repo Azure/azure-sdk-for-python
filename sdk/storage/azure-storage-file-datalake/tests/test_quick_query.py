@@ -868,8 +868,9 @@ class StorageQuickQueryTest(StorageTestCase):
                 on_error=on_error,
                 file_format=input_format)
 
-    @record
-    def test_quick_query_input_in_parquet_format(self):
+    @DataLakePreparer()
+    def test_quick_query_input_in_parquet_format(self, datalake_storage_account_name, datalake_storage_account_key):
+        self._setUp(datalake_storage_account_name, datalake_storage_account_key)
         # Arrange
         file_name = self._get_file_reference()
         file_client = self.dsc.get_file_client(self.filesystem_name, file_name)
@@ -889,8 +890,9 @@ class StorageQuickQueryTest(StorageTestCase):
 
         self.assertEqual(real_data, expected_data)
 
-    @record
-    def test_quick_query_output_in_parquet_format(self):
+    @DataLakePreparer()
+    def test_quick_query_output_in_parquet_format(self, datalake_storage_account_name, datalake_storage_account_key):
+        self._setUp(datalake_storage_account_name, datalake_storage_account_key)
         # Arrange
         file_name = self._get_file_reference()
         file_client = self.dsc.get_file_client(self.filesystem_name, file_name)
