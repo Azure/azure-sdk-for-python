@@ -55,10 +55,10 @@ class CreateClients(object):
         client = ContainerRegistryClient(self.account_url, DefaultAzureCredential())
         async with client:
             # Iterate through all the repositories
-            async for repository_name in client.list_repositories():
+            async for repository_name in client.list_repository_names():
                 if repository_name == "hello-world":
                     # Create a repository client from the registry client
-                    repository_client = client.get_repository_client(repository_name)
+                    repository_client = client.get_repository(repository_name)
 
                     async with repository_client:
                         # Show all tags

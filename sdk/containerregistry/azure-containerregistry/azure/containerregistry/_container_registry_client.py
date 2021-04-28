@@ -59,7 +59,7 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
         )
 
     @distributed_trace
-    def list_repositories(self, **kwargs):
+    def list_repository_names(self, **kwargs):
         # type: (Dict[str, Any]) -> ItemPaged[str]
         """List all repositories
 
@@ -166,7 +166,7 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
         return ItemPaged(get_next, extract_data)
 
     @distributed_trace
-    def get_repository_client(self, repository, **kwargs):
+    def get_repository(self, repository, **kwargs):
         # type: (str, Dict[str, Any]) -> ContainerRepository
         """Get a Container Repository object
 

@@ -82,7 +82,7 @@ class TestContainerRepository(AsyncContainerRegistryTestClass):
 
         reg_client = self.create_registry_client(containerregistry_endpoint)
         existing_repos = []
-        async for repo in reg_client.list_repositories():
+        async for repo in reg_client.list_repository_names():
             existing_repos.append(repo)
         assert TO_BE_DELETED in existing_repos
 
@@ -93,7 +93,7 @@ class TestContainerRepository(AsyncContainerRegistryTestClass):
         assert result.deleted_tags is not None
 
         existing_repos = []
-        async for repo in reg_client.list_repositories():
+        async for repo in reg_client.list_repository_names():
             existing_repos.append(repo)
         assert TO_BE_DELETED not in existing_repos
 

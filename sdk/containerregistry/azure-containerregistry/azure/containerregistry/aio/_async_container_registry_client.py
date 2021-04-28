@@ -59,7 +59,7 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
         return DeletedRepositoryResult._from_generated(result)  # pylint: disable=protected-access
 
     @distributed_trace
-    def list_repositories(self, **kwargs: Dict[str, Any]) -> AsyncItemPaged[str]:
+    def list_repository_names(self, **kwargs: Dict[str, Any]) -> AsyncItemPaged[str]:
         """List all repositories
 
         :keyword last: Query parameter for the last item in the previous call. Ensuing
@@ -163,7 +163,7 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
         return AsyncItemPaged(get_next, extract_data)
 
     @distributed_trace
-    def get_repository_client(self, repository: str, **kwargs: Dict[str, Any]) -> ContainerRepository:
+    def get_repository(self, repository: str, **kwargs: Dict[str, Any]) -> ContainerRepository:
         """Get a repository client
 
         :param repository: The repository to create a client for

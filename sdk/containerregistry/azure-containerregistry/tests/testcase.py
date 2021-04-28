@@ -190,7 +190,7 @@ class ContainerRegistryTestClass(AzureTestCase):
             return
 
         reg_client = self.create_registry_client(endpoint)
-        for repo in reg_client.list_repositories():
+        for repo in reg_client.list_repository_names():
             if repo.startswith("repo"):
                 repo_client = self.create_container_repository(endpoint, repo)
                 for tag in repo_client.list_tags():
@@ -210,7 +210,7 @@ class ContainerRegistryTestClass(AzureTestCase):
                     except:
                         pass
 
-        for repo in reg_client.list_repositories():
+        for repo in reg_client.list_repository_names():
             try:
                 reg_client.delete_repository(repo)
             except:

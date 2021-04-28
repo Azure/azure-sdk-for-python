@@ -314,7 +314,7 @@ class TestContainerRepository(ContainerRegistryTestClass):
         self.import_image(HELLO_WORLD, [TO_BE_DELETED])
 
         reg_client = self.create_registry_client(containerregistry_endpoint)
-        existing_repos = list(reg_client.list_repositories())
+        existing_repos = list(reg_client.list_repository_names())
         assert TO_BE_DELETED in existing_repos
 
         repo_client = self.create_container_repository(containerregistry_endpoint, TO_BE_DELETED)
@@ -323,7 +323,7 @@ class TestContainerRepository(ContainerRegistryTestClass):
         assert result.deleted_registry_artifact_digests is not None
         assert result.deleted_tags is not None
 
-        existing_repos = list(reg_client.list_repositories())
+        existing_repos = list(reg_client.list_repository_names())
         assert TO_BE_DELETED not in existing_repos
 
     @acr_preparer()
