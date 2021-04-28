@@ -147,8 +147,9 @@ class OAuthRequestResponsesFilter(RecordingProcessor):
         # filter request like:
         # GET https://login.microsoftonline.com/72f988bf-86f1-41af-91ab-2d7cd011db47/oauth2/token
         # POST https://login.microsoftonline.com/72f988bf-86f1-41af-91ab-2d7cd011db47/oauth2/v2.0/token
+        # But we want to leave Azure Container Registry challenge auth requests alone
         import re
-        if not re.search('/oauth2(?:/v2.0)?/token', request.uri):
+        if not re.search('/oauth2(?:/v2.0)?/token', request.uri) or "azurecr.io" in request.uri:
             return request
         return None
 
