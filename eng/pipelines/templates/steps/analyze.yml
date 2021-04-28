@@ -9,16 +9,6 @@ parameters:
 steps:
   - template: /eng/pipelines/templates/steps/analyze_dependency.yml
 
-  - template: /eng/common/pipelines/templates/steps/verify-links.yml
-    parameters:
-      ${{ if eq(variables['Build.Reason'], 'PullRequest') }}:
-        Directory: ''
-        Urls: (eng/common/scripts/get-markdown-files-from-changed-files.ps1)
-      ${{ if ne(variables['Build.Reason'], 'PullRequest') }}:
-        Directory: sdk/${{ parameters.ServiceDirectory }}
-      CheckLinkGuidance: $true
-      Condition: succeededOrFailed()
-
   - template: /eng/common/pipelines/templates/steps/set-test-pipeline-version.yml
     parameters:
       PackageName: "azure-template"
@@ -41,11 +31,7 @@ steps:
     # target is based on data available per-package the --always-succeed should
     # be removed so this script can help enforce correct practices
     # (https://github.com/Azure/azure-sdk-for-python/issues/8697)
-  - script: |
-      cd eng/versioning
-      pip install -r requirements.txt
-      python find_invalid_versions.py --always-succeed --service=${{parameters.ServiceDirectory}}
-    displayName: Find Invalid Versions
+
 
   - pwsh: |
       Get-ChildItem $(Build.SourcesDirectory) -Filter "*.py" |
@@ -72,6 +58,12 @@ steps:
     # builds should be sufficient.
     condition: and(succeededOrFailed(), ne(variables['Build.Reason'],'PullRequest'))
     displayName: 'Component Detection'
+
+  - pwsh: |
+     pip install -r eng/ci_tools.txt $(if($IsWindows) {"--user" })
+     ward scan -d $(Build.SourcesDirectory) -c $(Build.SourcesDirectory)/eng/.docsettings.yml
+    displayName: 'Install Necessary Dependencies'
+    condition: succeededOrFailed()
 
   - task: PythonScript@0
     displayName: 'Verify sdist'
