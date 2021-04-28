@@ -68,6 +68,7 @@ steps:
         parameters:
           Paths:
             - "${{ checkout.checkout_path }}/${{ checkout.package }}"
+            - "tools/"
           Repositories:
             - Name: "Azure/azure-sdk-for-python"
               Commitish: "${{ checkout.Package }}_${{ checkout.Version }}"
