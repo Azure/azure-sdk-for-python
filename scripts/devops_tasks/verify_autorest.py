@@ -6,9 +6,10 @@
 # --------------------------------------------------------------------------------------------
 
 import argparse
-import os
 import logging
-import sys
+import json
+import os
+import requests
 
 from common_tasks import run_check_call
 
@@ -54,7 +55,31 @@ def find_swagger_folders(directory):
     return ret
 
 
-def check_diff(folder):
+def check_for_open_pr(service_directory):
+    # Return True if there is an OPEN PR of the format ""Automated autorest generation for {service_directory}""
+    # Return False otherwise
+
+    pr_title = "Automated autorest generation for {}".format(service_directory)
+
+    page_size = 50
+    page_number = 1
+    request_url = "https://api.github.com/repos/Azure/azure-sdk-for-python/pulls?state=open&per_page={}&page={}"
+
+    s = requests.session()
+    response = s.get(request_url.format(page_size, page_number))
+    while "next" in response.links:
+        body = response.content.decode("utf-8")
+        body = json.loads(body)
+        for link in body:
+            if link["title"] == pr_title:
+                return True
+
+        next_page = response.links["next"]["url"]
+        response = s.get(next_page)
+    return False
+
+
+def check_diff(folder, service_dir):
     # We don't care about changes to txt files (dev_requirements change)
     run_check_call(["git", "status"], sdk_dir, always_exit=False)
 
@@ -87,9 +112,10 @@ def check_diff(folder):
     if result:
         command = ["git", "status"]
         run_check_call(command, root_dir)
-        raise ValueError(
-            "Found difference between re-generated code and current commit. Please re-generate with the latest autorest."
-        )
+        if not check_for_open_pr(service_dir):
+            raise ValueError(
+                "Found difference between re-generated code and current commit. Please re-generate with the latest autorest."
+            )
 
 
 if __name__ == "__main__":
@@ -105,4 +131,4 @@ if __name__ == "__main__":
 
     if len(folders):
         for folder in folders:
-            check_diff(folder)
+            check_diff(folder, args.service_directory)

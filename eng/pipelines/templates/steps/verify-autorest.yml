@@ -60,5 +60,5 @@ steps:
       - template: /eng/common/pipelines/templates/steps/create-pull-request.yml
         parameters:
           CommitMsg: "Regenerated code from nightly builds"
-          PRTitle: "Automated autorest generation"
+          PRTitle: "Automated autorest generation for ${{ parameters.ServiceDirectory }}"
           PRBranchName: 'autorest-${{ parameters.ServiceDirectory }}'
