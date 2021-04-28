@@ -37,9 +37,14 @@ steps:
 
   - pwsh: |
       $activateMethod = "source"
-      if ($IsWindows) { $activateMethod = "call" }
-
+      $requirementSuffix = ""
+      if ($IsWindows) { 
+        $activateMethod = "call" 
+        $requirementSuffix = " --user"
+      }
+      
       Write-Host "##vso[task.setvariable variable=activate.method]$activateMethod"
+      Write-Host "##vso[task.setvariable variable=requirement.suffix]$requirementSuffix"
     displayName: 'Evaluate OS Specific Activate Parameter'
 
   - ${{ each artifact in parameters.CondaArtifacts }}:
@@ -64,7 +69,7 @@ steps:
 
     - script: |
         $(activate.method) activate ${{ artifact.name }}
-        pip install -r eng/ci_tools.txt
+        pip install -r eng/ci_tools.txt $(requirement.suffix)
       displayName: 'Activate Conda Environment and Install General Dependencies ${{ artifact.name }}'
 
     - pwsh: |
