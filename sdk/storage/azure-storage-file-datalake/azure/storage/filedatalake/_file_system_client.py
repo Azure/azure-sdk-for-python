@@ -900,7 +900,7 @@ class FileSystemClient(StorageAccountHostsMixin):
             If omitted or greater than 5,000, the response will include up to 5,000 items per page.
         :keyword int timeout:
             The timeout parameter is expressed in seconds.
-        :returns: An iterable (auto-paging) response of PathProperties.
+        :returns: An iterable (auto-paging) response of DeletedPathProperties.
         :rtype:
             ~azure.core.paging.ItemPaged[~azure.storage.filedatalake.DeletedPathProperties]
         """
