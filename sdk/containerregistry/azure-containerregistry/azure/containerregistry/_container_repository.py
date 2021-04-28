@@ -204,7 +204,11 @@ class ContainerRepository(ContainerRegistryBaseClient):
         :raises: :class:`~azure.core.exceptions.ResourceNotFoundError`
         """
         return RepositoryProperties._from_generated(  # pylint: disable=protected-access
-            self._client.container_registry.set_properties(self.repository, properties._to_generated(), **kwargs)
+            self._client.container_registry.set_properties(
+                self.repository,
+                properties._to_generated(),  # pylint: disable=protected-access
+                **kwargs
+            )
         )
 
     @distributed_trace
