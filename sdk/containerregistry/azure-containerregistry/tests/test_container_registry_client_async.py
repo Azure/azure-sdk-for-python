@@ -22,7 +22,6 @@ from preparer import acr_preparer
 
 
 class TestContainerRegistryClient(AsyncContainerRegistryTestClass):
-    @pytest.mark.live_test_only
     @acr_preparer()
     async def test_list_repository_names(self, containerregistry_endpoint):
         client = self.create_registry_client(containerregistry_endpoint)
@@ -39,7 +38,6 @@ class TestContainerRegistryClient(AsyncContainerRegistryTestClass):
 
         assert count > 0
 
-    @pytest.mark.live_test_only
     @acr_preparer()
     async def test_list_repository_names_by_page(self, containerregistry_endpoint):
         client = self.create_registry_client(containerregistry_endpoint)

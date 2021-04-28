@@ -8,6 +8,7 @@ from datetime import datetime
 import json
 import logging
 import os
+from azure_devtools.scenario_tests.recording_processors import SubscriptionRecordingProcessor
 import pytest
 import re
 import six
@@ -49,6 +50,15 @@ class OAuthRequestResponsesFilterACR(RecordingProcessor):
         import re
 
         if not re.search("/oauth2(?:/v2.0)?/token", request.uri) or "azurecr.io" in request.uri:
+            return request
+        return None
+
+
+class ManagementRequestReplacer(RecordingProcessor):
+    """Remove oauth authentication requests and responses from recording."""
+
+    def process_request(self, request):
+        if "management.azure.com" not in request.uri:
             return request
         return None
 
@@ -169,6 +179,7 @@ class ContainerRegistryTestClass(AzureTestCase):
                 AuthenticationMetadataFilter(),
                 RequestUrlNormalizer(),
                 AcrBodyReplacer(),
+                ManagementRequestReplacer(),
             ],
         )
         self.repository = "library/hello-world"

@@ -30,7 +30,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Wed, 28 Apr 2021 21:00:37 GMT
+      - Wed, 28 Apr 2021 21:16:04 GMT
       docker-distribution-api-version:
       - registry/2.0
       server:
@@ -71,7 +71,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Wed, 28 Apr 2021 21:00:38 GMT
+      - Wed, 28 Apr 2021 21:16:06 GMT
       server:
       - openresty
       strict-transport-security:
@@ -79,7 +79,7 @@ interactions:
       transfer-encoding:
       - chunked
       x-ms-ratelimit-remaining-calls-per-second:
-      - '166.483333'
+      - '166.633333'
     status:
       code: 200
       message: OK
@@ -109,7 +109,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Wed, 28 Apr 2021 21:00:38 GMT
+      - Wed, 28 Apr 2021 21:16:06 GMT
       server:
       - openresty
       strict-transport-security:
@@ -117,7 +117,7 @@ interactions:
       transfer-encoding:
       - chunked
       x-ms-ratelimit-remaining-calls-per-second:
-      - '166.466667'
+      - '166.616667'
     status:
       code: 200
       message: OK
@@ -150,7 +150,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Wed, 28 Apr 2021 21:00:38 GMT
+      - Wed, 28 Apr 2021 21:16:06 GMT
       docker-distribution-api-version:
       - registry/2.0
       link:
@@ -196,7 +196,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Wed, 28 Apr 2021 21:00:39 GMT
+      - Wed, 28 Apr 2021 21:16:06 GMT
       docker-distribution-api-version:
       - registry/2.0
       server:
@@ -237,7 +237,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Wed, 28 Apr 2021 21:00:39 GMT
+      - Wed, 28 Apr 2021 21:16:06 GMT
       server:
       - openresty
       strict-transport-security:
@@ -245,7 +245,7 @@ interactions:
       transfer-encoding:
       - chunked
       x-ms-ratelimit-remaining-calls-per-second:
-      - '166.45'
+      - '166.6'
     status:
       code: 200
       message: OK
@@ -278,7 +278,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Wed, 28 Apr 2021 21:00:39 GMT
+      - Wed, 28 Apr 2021 21:16:06 GMT
       docker-distribution-api-version:
       - registry/2.0
       link:
@@ -324,7 +324,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Wed, 28 Apr 2021 21:00:39 GMT
+      - Wed, 28 Apr 2021 21:16:06 GMT
       docker-distribution-api-version:
       - registry/2.0
       server:
@@ -365,7 +365,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Wed, 28 Apr 2021 21:00:39 GMT
+      - Wed, 28 Apr 2021 21:16:07 GMT
       server:
       - openresty
       strict-transport-security:
@@ -373,7 +373,7 @@ interactions:
       transfer-encoding:
       - chunked
       x-ms-ratelimit-remaining-calls-per-second:
-      - '166.433333'
+      - '166.583333'
     status:
       code: 200
       message: OK
@@ -406,7 +406,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Wed, 28 Apr 2021 21:00:39 GMT
+      - Wed, 28 Apr 2021 21:16:07 GMT
       docker-distribution-api-version:
       - registry/2.0
       link:
@@ -452,7 +452,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Wed, 28 Apr 2021 21:00:40 GMT
+      - Wed, 28 Apr 2021 21:16:07 GMT
       docker-distribution-api-version:
       - registry/2.0
       server:
@@ -493,7 +493,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Wed, 28 Apr 2021 21:00:40 GMT
+      - Wed, 28 Apr 2021 21:16:07 GMT
       server:
       - openresty
       strict-transport-security:
@@ -501,7 +501,7 @@ interactions:
       transfer-encoding:
       - chunked
       x-ms-ratelimit-remaining-calls-per-second:
-      - '166.416667'
+      - '166.566667'
     status:
       code: 200
       message: OK
@@ -534,7 +534,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Wed, 28 Apr 2021 21:00:40 GMT
+      - Wed, 28 Apr 2021 21:16:07 GMT
       docker-distribution-api-version:
       - registry/2.0
       link:
@@ -580,7 +580,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Wed, 28 Apr 2021 21:00:40 GMT
+      - Wed, 28 Apr 2021 21:16:07 GMT
       docker-distribution-api-version:
       - registry/2.0
       server:
@@ -621,7 +621,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Wed, 28 Apr 2021 21:00:40 GMT
+      - Wed, 28 Apr 2021 21:16:07 GMT
       server:
       - openresty
       strict-transport-security:
@@ -629,7 +629,7 @@ interactions:
       transfer-encoding:
       - chunked
       x-ms-ratelimit-remaining-calls-per-second:
-      - '166.4'
+      - '166.55'
     status:
       code: 200
       message: OK
@@ -662,7 +662,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Wed, 28 Apr 2021 21:00:40 GMT
+      - Wed, 28 Apr 2021 21:16:08 GMT
       docker-distribution-api-version:
       - registry/2.0
       link:
@@ -708,7 +708,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Wed, 28 Apr 2021 21:00:41 GMT
+      - Wed, 28 Apr 2021 21:16:08 GMT
       docker-distribution-api-version:
       - registry/2.0
       server:
@@ -749,7 +749,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Wed, 28 Apr 2021 21:00:41 GMT
+      - Wed, 28 Apr 2021 21:16:08 GMT
       server:
       - openresty
       strict-transport-security:
@@ -757,7 +757,7 @@ interactions:
       transfer-encoding:
       - chunked
       x-ms-ratelimit-remaining-calls-per-second:
-      - '166.383333'
+      - '166.533333'
     status:
       code: 200
       message: OK
@@ -790,7 +790,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Wed, 28 Apr 2021 21:00:41 GMT
+      - Wed, 28 Apr 2021 21:16:08 GMT
       docker-distribution-api-version:
       - registry/2.0
       link:
@@ -836,7 +836,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Wed, 28 Apr 2021 21:00:41 GMT
+      - Wed, 28 Apr 2021 21:16:08 GMT
       docker-distribution-api-version:
       - registry/2.0
       server:
@@ -877,7 +877,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Wed, 28 Apr 2021 21:00:41 GMT
+      - Wed, 28 Apr 2021 21:16:08 GMT
       server:
       - openresty
       strict-transport-security:
@@ -885,7 +885,7 @@ interactions:
       transfer-encoding:
       - chunked
       x-ms-ratelimit-remaining-calls-per-second:
-      - '166.366667'
+      - '166.516667'
     status:
       code: 200
       message: OK
@@ -918,7 +918,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Wed, 28 Apr 2021 21:00:41 GMT
+      - Wed, 28 Apr 2021 21:16:09 GMT
       docker-distribution-api-version:
       - registry/2.0
       link:
@@ -964,7 +964,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Wed, 28 Apr 2021 21:00:41 GMT
+      - Wed, 28 Apr 2021 21:16:09 GMT
       docker-distribution-api-version:
       - registry/2.0
       server:
@@ -1005,7 +1005,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Wed, 28 Apr 2021 21:00:42 GMT
+      - Wed, 28 Apr 2021 21:16:09 GMT
       server:
       - openresty
       strict-transport-security:
@@ -1013,7 +1013,7 @@ interactions:
       transfer-encoding:
       - chunked
       x-ms-ratelimit-remaining-calls-per-second:
-      - '166.35'
+      - '166.5'
     status:
       code: 200
       message: OK
@@ -1046,7 +1046,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Wed, 28 Apr 2021 21:00:42 GMT
+      - Wed, 28 Apr 2021 21:16:09 GMT
       docker-distribution-api-version:
       - registry/2.0
       link:
@@ -1092,7 +1092,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Wed, 28 Apr 2021 21:00:42 GMT
+      - Wed, 28 Apr 2021 21:16:09 GMT
       docker-distribution-api-version:
       - registry/2.0
       server:
@@ -1133,7 +1133,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Wed, 28 Apr 2021 21:00:42 GMT
+      - Wed, 28 Apr 2021 21:16:09 GMT
       server:
       - openresty
       strict-transport-security:
@@ -1141,7 +1141,7 @@ interactions:
       transfer-encoding:
       - chunked
       x-ms-ratelimit-remaining-calls-per-second:
-      - '166.333333'
+      - '166.483333'
     status:
       code: 200
       message: OK
@@ -1174,7 +1174,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Wed, 28 Apr 2021 21:00:42 GMT
+      - Wed, 28 Apr 2021 21:16:10 GMT
       docker-distribution-api-version:
       - registry/2.0
       link:
@@ -1220,7 +1220,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Wed, 28 Apr 2021 21:00:42 GMT
+      - Wed, 28 Apr 2021 21:16:10 GMT
       docker-distribution-api-version:
       - registry/2.0
       server:
@@ -1261,7 +1261,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Wed, 28 Apr 2021 21:00:43 GMT
+      - Wed, 28 Apr 2021 21:16:10 GMT
       server:
       - openresty
       strict-transport-security:
@@ -1269,7 +1269,7 @@ interactions:
       transfer-encoding:
       - chunked
       x-ms-ratelimit-remaining-calls-per-second:
-      - '166.316667'
+      - '166.466667'
     status:
       code: 200
       message: OK
@@ -1302,7 +1302,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Wed, 28 Apr 2021 21:00:43 GMT
+      - Wed, 28 Apr 2021 21:16:10 GMT
       docker-distribution-api-version:
       - registry/2.0
       link:
@@ -1348,7 +1348,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Wed, 28 Apr 2021 21:00:43 GMT
+      - Wed, 28 Apr 2021 21:16:10 GMT
       docker-distribution-api-version:
       - registry/2.0
       server:
@@ -1389,7 +1389,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Wed, 28 Apr 2021 21:00:43 GMT
+      - Wed, 28 Apr 2021 21:16:10 GMT
       server:
       - openresty
       strict-transport-security:
@@ -1397,7 +1397,7 @@ interactions:
       transfer-encoding:
       - chunked
       x-ms-ratelimit-remaining-calls-per-second:
-      - '166.3'
+      - '166.45'
     status:
       code: 200
       message: OK
@@ -1430,7 +1430,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Wed, 28 Apr 2021 21:00:43 GMT
+      - Wed, 28 Apr 2021 21:16:11 GMT
       docker-distribution-api-version:
       - registry/2.0
       link:
@@ -1476,7 +1476,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Wed, 28 Apr 2021 21:00:43 GMT
+      - Wed, 28 Apr 2021 21:16:11 GMT
       docker-distribution-api-version:
       - registry/2.0
       server:
@@ -1517,7 +1517,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Wed, 28 Apr 2021 21:00:44 GMT
+      - Wed, 28 Apr 2021 21:16:11 GMT
       server:
       - openresty
       strict-transport-security:
@@ -1525,7 +1525,7 @@ interactions:
       transfer-encoding:
       - chunked
       x-ms-ratelimit-remaining-calls-per-second:
-      - '166.283333'
+      - '166.433333'
     status:
       code: 200
       message: OK
@@ -1558,7 +1558,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Wed, 28 Apr 2021 21:00:44 GMT
+      - Wed, 28 Apr 2021 21:16:11 GMT
       docker-distribution-api-version:
       - registry/2.0
       server:
