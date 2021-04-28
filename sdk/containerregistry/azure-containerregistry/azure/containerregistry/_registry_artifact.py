@@ -113,7 +113,6 @@ class RegistryArtifact(ContainerRegistryBaseClient):
             self._client.container_registry.get_tag_properties(self.repository, tag, **kwargs)
         )
 
-    # TODO: this needs to only look up for one artifact
     @distributed_trace
     def list_tags(self, **kwargs):
         # type: (Dict[str, Any]) -> ItemPaged[TagProperties]
