@@ -22,7 +22,7 @@ from .._helpers import _is_tag, _parse_next_link
 from .._models import (
     ContentPermissions,
     DeletedRepositoryResult,
-    RegistryArtifactProperties,
+    ArtifactManifestProperties,
     RepositoryProperties,
     TagProperties,
 )
@@ -104,18 +104,18 @@ class ContainerRepository(ContainerRegistryBaseClient):
     # @distributed_trace_async
     # async def get_registry_artifact_properties(
     #     self, tag_or_digest: str, **kwargs: Dict[str, Any]
-    # ) -> RegistryArtifactProperties:
+    # ) -> ArtifactManifestProperties:
     #     """Get the properties of a registry artifact
 
     #     :param tag_or_digest: The tag/digest of a registry artifact
     #     :type tag_or_digest: str
-    #     :returns: :class:`~azure.containerregistry.RegistryArtifactProperties`
+    #     :returns: :class:`~azure.containerregistry.ArtifactManifestProperties`
     #     :raises: :class:`~azure.core.exceptions.ResourceNotFoundError`
     #     """
     #     if _is_tag(tag_or_digest):
     #         tag_or_digest = self._get_digest_from_tag(tag_or_digest)
 
-    #     return RegistryArtifactProperties._from_generated(  # pylint: disable=protected-access
+    #     return ArtifactManifestProperties._from_generated(  # pylint: disable=protected-access
     #         await self._client.container_registry.get_manifest_properties(
     #             self.repository, tag_or_digest, **kwargs
     #         )
@@ -135,7 +135,7 @@ class ContainerRepository(ContainerRegistryBaseClient):
     #     )
 
     @distributed_trace
-    def list_registry_artifacts(self, **kwargs: Dict[str, Any]) -> AsyncItemPaged[RegistryArtifactProperties]:
+    def list_registry_artifacts(self, **kwargs: Dict[str, Any]) -> AsyncItemPaged[ArtifactManifestProperties]:
         """List the artifacts for a repository
 
         :keyword last: Query parameter for the last item in the previous call. Ensuing
@@ -145,7 +145,7 @@ class ContainerRepository(ContainerRegistryBaseClient):
         :paramtype order_by: :class:`~azure.containerregistry.RegistryArtifactOrderBy`
         :keyword results_per_page: Number of repositories to return per page
         :paramtype results_per_page: int
-        :return: ItemPaged[:class:`~azure.containerregistry.RegistryArtifactProperties`]
+        :return: ItemPaged[:class:`~azure.containerregistry.ArtifactManifestProperties`]
         :rtype: :class:`~azure.core.async_paging.AsyncItemPaged`
         :raises: :class:`~azure.core.exceptions.ResourceNotFoundError`
         """
@@ -156,7 +156,7 @@ class ContainerRepository(ContainerRegistryBaseClient):
         cls = kwargs.pop(
             "cls",
             lambda objs: [
-                RegistryArtifactProperties._from_generated(x) for x in objs  # pylint: disable=protected-access
+                ArtifactManifestProperties._from_generated(x) for x in objs  # pylint: disable=protected-access
             ],
         )
 
@@ -378,10 +378,10 @@ class ContainerRepository(ContainerRegistryBaseClient):
     #     :type digest: str
     #     :param permissions: The property's values to be set
     #     :type permissions: ContentPermissions
-    #     :returns: :class:`~azure.containerregistry.RegistryArtifactProperties`
+    #     :returns: :class:`~azure.containerregistry.ArtifactManifestProperties`
     #     :raises: :class:`~azure.core.exceptions.ResourceNotFoundError`
     #     """
-    #     return RegistryArtifactProperties._from_generated(  # pylint: disable=protected-access
+    #     return ArtifactManifestProperties._from_generated(  # pylint: disable=protected-access
     #         await self._client.container_registry.update_manifest_properties(
     #             self.repository, digest, value=permissions._to_generated(), **kwargs  # pylint: disable=protected-access
     #         )

@@ -15,7 +15,7 @@ from azure.containerregistry import (
     DeletedRepositoryResult,
     RepositoryProperties,
     RegistryArtifactOrderBy,
-    RegistryArtifactProperties,
+    ArtifactManifestProperties,
     TagProperties,
     TagOrderBy,
 )
@@ -108,7 +108,7 @@ class TestContainerRepository(ContainerRegistryTestClass):
         count = 0
         for artifact in client.list_registry_artifacts():
             assert artifact is not None
-            assert isinstance(artifact, RegistryArtifactProperties)
+            assert isinstance(artifact, ArtifactManifestProperties)
             assert artifact.created_on is not None
             assert isinstance(artifact.created_on, datetime)
             assert artifact.last_updated_on is not None
@@ -167,7 +167,7 @@ class TestContainerRepository(ContainerRegistryTestClass):
 
     #     properties = client.get_registry_artifact_properties("latest")
 
-    #     assert isinstance(properties, RegistryArtifactProperties)
+    #     assert isinstance(properties, ArtifactManifestProperties)
     #     assert isinstance(properties.created_on, datetime)
     #     assert isinstance(properties.last_updated_on, datetime)
 

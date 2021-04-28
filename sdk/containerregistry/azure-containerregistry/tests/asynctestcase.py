@@ -16,7 +16,7 @@ from azure.containerregistry.aio import (
 from azure.containerregistry import (
     TagProperties,
     ContentPermissions,
-    RegistryArtifactProperties,
+    ArtifactManifestProperties,
 )
 
 from azure.core.credentials import AccessToken

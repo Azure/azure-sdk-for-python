@@ -13,7 +13,7 @@ from azure.containerregistry import (
     RepositoryProperties,
     ContentPermissions,
     RegistryArtifactOrderBy,
-    RegistryArtifactProperties,
+    ArtifactManifestProperties,
     TagOrderBy,
 )
 from azure.containerregistry.aio import ContainerRegistryClient, ContainerRepository
@@ -251,7 +251,7 @@ class TestContainerRepository(AsyncContainerRegistryTestClass):
         count = 0
         async for artifact in client.list_registry_artifacts():
             assert artifact is not None
-            assert isinstance(artifact, RegistryArtifactProperties)
+            assert isinstance(artifact, ArtifactManifestProperties)
             assert artifact.created_on is not None
             assert isinstance(artifact.created_on, datetime)
             assert artifact.last_updated_on is not None

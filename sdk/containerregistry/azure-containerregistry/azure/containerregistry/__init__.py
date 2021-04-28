@@ -12,11 +12,12 @@ from ._models import (
     ContentPermissions,
     DeletedRepositoryResult,
     RegistryArtifactOrderBy,
-    RegistryArtifactProperties,
+    ArtifactManifestProperties,
     RepositoryProperties,
     TagOrderBy,
     TagProperties,
 )
+from ._registry_artifact import RegistryArtifact
 from ._version import VERSION
 
 __version__ = VERSION
@@ -26,8 +27,9 @@ __all__ = [
     "ContainerRepository",
     "ContentPermissions",
     "DeletedRepositoryResult",
+    "RegistryArtifact",
     "RegistryArtifactOrderBy",
-    "RegistryArtifactProperties",
+    "ArtifactManifestProperties",
     "RepositoryProperties",
     "TagOrderBy",
     "TagProperties",

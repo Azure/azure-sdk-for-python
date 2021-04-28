@@ -17,7 +17,7 @@ from azure.containerregistry import (
     ContainerRegistryClient,
     TagProperties,
     ContentPermissions,
-    RegistryArtifactProperties,
+    ArtifactManifestProperties,
 )
 
 from azure.core.credentials import AccessToken
@@ -228,7 +228,7 @@ class ContainerRegistryTestClass(AzureTestCase):
             assert tag.repository == repository
 
     def assert_registry_artifact(self, tag_or_digest, expected_tag_or_digest):
-        assert isinstance(tag_or_digest, RegistryArtifactProperties)
+        assert isinstance(tag_or_digest, ArtifactManifestProperties)
         assert tag_or_digest == expected_tag_or_digest
 
 

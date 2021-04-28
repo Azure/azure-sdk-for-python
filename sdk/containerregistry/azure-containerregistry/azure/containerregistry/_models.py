@@ -68,7 +68,7 @@ class DeletedRepositoryResult(object):
         )
 
 
-class RegistryArtifactProperties(object):
+class ArtifactManifestProperties(object):
     """Represents properties of a registry artifact
 
     :ivar str cpu_architecture: CPU Architecture of an artifact
@@ -100,7 +100,7 @@ class RegistryArtifactProperties(object):
 
     @classmethod
     def _from_generated(cls, generated):
-        # type: (ManifestAttributesBase) -> RegistryArtifactProperties
+        # type: (ManifestAttributesBase) -> ArtifactManifestProperties
         return cls(
             cpu_architecture=generated.architecture,
             created_on=generated.created_on,
