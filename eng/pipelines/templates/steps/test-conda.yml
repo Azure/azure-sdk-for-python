@@ -53,7 +53,7 @@ steps:
           echo "##vso[task.prependpath]$CONDA/bin"
         displayName: 'Prepend PATH with Conda and INIT'
     - ${{ if contains(parameters.OSVmImage, 'windows') }}:
-      - pwsh: |
+      - powershell: |
           Write-Host "##vso[task.prependpath]$env:CONDA\Scripts"
         displayName: 'Prepend PATH with Conda and INIT'
 
