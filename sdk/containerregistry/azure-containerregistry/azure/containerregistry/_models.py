@@ -160,7 +160,7 @@ class RepositoryProperties(object):
             last_updated_on=self.last_updated_on,
             manifest_count=self.manifest_count,
             tag_count=self.tag_count,
-            writeable_propertie=self.content_permissions._to_generated()
+            writeable_properties=self.content_permissions._to_generated(),  # pylint: disable=protected-access
         )
 
 

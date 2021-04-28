@@ -18,7 +18,7 @@ from azure.core.tracing.decorator_async import distributed_trace_async
 
 from ._async_base_client import ContainerRegistryBaseClient
 from .._generated.models import AcrErrors
-from .._helpers import _is_tag, _parse_next_link
+from .._helpers import _parse_next_link
 from .._models import (
     ContentPermissions,
     DeletedRepositoryResult,
@@ -54,9 +54,9 @@ class ContainerRepository(ContainerRegistryBaseClient):
         self.repository = repository
         super(ContainerRepository, self).__init__(endpoint=self._endpoint, credential=credential, **kwargs)
 
-    async def _get_digest_from_tag(self, tag: str) -> None:
-        tag_props = await self.get_tag_properties(tag)
-        return tag_props.digest
+    # async def _get_digest_from_tag(self, tag: str) -> None:
+    #     tag_props = await self.get_tag_properties(tag)
+    #     return tag_props.digest
 
     @distributed_trace_async
     async def delete(self, **kwargs: Dict[str, Any]) -> DeletedRepositoryResult:

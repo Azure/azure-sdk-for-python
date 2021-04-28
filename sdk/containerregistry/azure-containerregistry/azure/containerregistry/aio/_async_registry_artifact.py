@@ -26,13 +26,18 @@ from .._models import (
 )
 
 if TYPE_CHECKING:
-    from typing import Any, Dict
-    from azure.core.credentials import AsyncTokenCredential
-    from ._models import ContentPermissions
+    from azure.core.credentials_async import AsyncTokenCredential
 
 
 class RegistryArtifact(ContainerRegistryBaseClient):
-    def __init__(self, endpoint: str, repository: str, tag_or_digest: str, credential: "AsyncTokenCredential", **kwargs: Dict[str, Any]) -> None:
+    def __init__(
+        self,
+        endpoint: str,
+        repository: str,
+        tag_or_digest: str,
+        credential: "AsyncTokenCredential",
+        **kwargs: Dict[str, Any]
+    ) -> None:
         """Create a RegistryArtifact from an endpoint, repository, a tag or digest, and a credential
 
         :param endpoint: An ACR endpoint
@@ -94,9 +99,7 @@ class RegistryArtifact(ContainerRegistryBaseClient):
             self._digest = self.tag_or_digest if not _is_tag(self.tag_or_digest) else await self._get_digest_from_tag()
 
         return ArtifactManifestProperties._from_generated(  # pylint: disable=protected-access
-            await self._client.container_registry.get_manifest_properties(
-                self.repository, self._digest, **kwargs
-            )
+            await self._client.container_registry.get_manifest_properties(self.repository, self._digest, **kwargs)
         )
 
     @distributed_trace_async
@@ -230,7 +233,9 @@ class RegistryArtifact(ContainerRegistryBaseClient):
         return AsyncItemPaged(get_next, extract_data)
 
     @distributed_trace_async
-    async def set_manifest_properties(self, permissions: ContentPermissions, **kwargs: Dict[str, Any]) -> ArtifactManifestProperties:
+    async def set_manifest_properties(
+        self, permissions: ContentPermissions, **kwargs: Dict[str, Any]
+    ) -> ArtifactManifestProperties:
         """Set the properties for a manifest
 
         :param permissions: The property's values to be set
@@ -243,12 +248,17 @@ class RegistryArtifact(ContainerRegistryBaseClient):
 
         return ArtifactManifestProperties._from_generated(  # pylint: disable=protected-access
             await self._client.container_registry.update_manifest_properties(
-                self.repository, self._digest, value=permissions._to_generated(), **kwargs  # pylint: disable=protected-access
+                self.repository,
+                self._digest,
+                value=permissions._to_generated(),  # pylint: disable=protected-access
+                **kwargs
             )
         )
 
     @distributed_trace_async
-    async def set_tag_properties(self, tag: str, permissions: ContentPermissions, **kwargs: Dict[str, Any]) -> TagProperties:
+    async def set_tag_properties(
+        self, tag: str, permissions: ContentPermissions, **kwargs: Dict[str, Any]
+    ) -> TagProperties:
         """Set the properties for a tag
 
         :param tag: Tag to set properties for

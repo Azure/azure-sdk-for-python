@@ -40,9 +40,7 @@ class ACRExchangeClient(object):
     BEARER = "Bearer"
     AUTHENTICATION_CHALLENGE_PARAMS_PATTERN = re.compile('(?:(\\w+)="([^""]*)")+')
 
-    def __init__(
-        self, endpoint: str, credential: "AsyncTokencredential", **kwargs: Dict[str, Any]
-    ) -> None:
+    def __init__(self, endpoint: str, credential: "AsyncTokencredential", **kwargs: Dict[str, Any]) -> None:
         if not endpoint.startswith("https://") and not endpoint.startswith("http://"):
             endpoint = "https://" + endpoint
         self._endpoint = endpoint
@@ -61,7 +59,8 @@ class ACRExchangeClient(object):
 
     async def get_acr_access_token(self, challenge: str, **kwargs: Dict[str, Any]) -> str:
         parsed_challenge = _parse_challenge(challenge)
-        # refresh_token = await self.get_refresh_token(parsed_challenge["service"], **kwargs)  # TODO: This is interfering with recordings
+        # refresh_token = await self.get_refresh_token(parsed_challenge["service"], **kwargs)
+        # TODO: This is interfering with recordings
         refresh_token = await self.exchange_aad_token_for_refresh_token(parsed_challenge["service"], **kwargs)
         return await self.exchange_refresh_token_for_access_token(
             refresh_token, service=parsed_challenge["service"], scope=parsed_challenge["scope"], **kwargs

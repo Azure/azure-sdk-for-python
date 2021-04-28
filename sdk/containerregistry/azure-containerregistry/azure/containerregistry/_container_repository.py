@@ -17,12 +17,11 @@ from azure.core.tracing.decorator import distributed_trace
 
 from ._base_client import ContainerRegistryBaseClient
 from ._generated.models import AcrErrors
-from ._helpers import _is_tag, _parse_next_link
+from ._helpers import _parse_next_link
 from ._models import (
     DeletedRepositoryResult,
     ArtifactManifestProperties,
     RepositoryProperties,
-    TagProperties,
 )
 from ._registry_artifact import RegistryArtifact
 
@@ -53,10 +52,10 @@ class ContainerRepository(ContainerRegistryBaseClient):
         self._credential = credential
         super(ContainerRepository, self).__init__(endpoint=self._endpoint, credential=credential, **kwargs)
 
-    def _get_digest_from_tag(self, tag):
-        # type: (str) -> str
-        tag_props = self.get_tag_properties(tag)
-        return tag_props.digest
+    # def _get_digest_from_tag(self, tag):
+    #     # type: (str) -> str
+    #     tag_props = self.get_tag_properties(tag)
+    #     return tag_props.digest
 
     @distributed_trace
     def delete(self, **kwargs):

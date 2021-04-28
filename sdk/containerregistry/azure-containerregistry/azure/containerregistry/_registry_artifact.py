@@ -96,9 +96,7 @@ class RegistryArtifact(ContainerRegistryBaseClient):
             self._digest = self.tag_or_digest if not _is_tag(self.tag_or_digest) else self._get_digest_from_tag()
 
         return ArtifactManifestProperties._from_generated(  # pylint: disable=protected-access
-            self._client.container_registry.get_manifest_properties(
-                self.repository, self._digest, **kwargs
-            )
+            self._client.container_registry.get_manifest_properties(self.repository, self._digest, **kwargs)
         )
 
     @distributed_trace
@@ -249,7 +247,10 @@ class RegistryArtifact(ContainerRegistryBaseClient):
 
         return ArtifactManifestProperties._from_generated(  # pylint: disable=protected-access
             self._client.container_registry.update_manifest_properties(
-                self.repository, self._digest, value=permissions._to_generated(), **kwargs  # pylint: disable=protected-access
+                self.repository,
+                self._digest,
+                value=permissions._to_generated(),  # pylint: disable=protected-access
+                **kwargs
             )
         )
 
