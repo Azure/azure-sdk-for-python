@@ -144,6 +144,11 @@ class Point(namedtuple("Point", "x y")):
     def __new__(cls, x, y):
         return super(Point, cls).__new__(cls, x, y)
 
+    def to_dict(self):
+        return {
+            "x": self.x,
+            "y": self.y
+        }
 
 class FormPageRange(namedtuple("FormPageRange", "first_page_number last_page_number")):
     """The 1-based page range of the form.
@@ -183,6 +188,13 @@ class FormElement(object):
         self.text = kwargs.get("text", None)
         self.kind = kwargs.get("kind", None)
 
+    def to_dict(self):
+        return {
+            "text": self.text,
+            "bounding_box": [f.to_dict() for f in self.bounding_box],
+            "page_number": self.page_number,
+            "kind": self.kind
+        }
 
 class RecognizedForm(object):
     """Represents a form that has been recognized by a trained or prebuilt model.
@@ -231,6 +243,15 @@ class RecognizedForm(object):
             )[:1024]
         )
 
+    def to_dict(self):
+        return {
+            "fields": [v.to_dict() for k, v in self.fields.items()],
+            "form_type": self.form_type,
+            "page_range": self.page_range,
+            # "pages": [v.to_dict() for v in self.pages],
+            "model_id": self.model_id,
+            "form_type_confidence": self.form_type_confidence
+        }
 
 class FormField(object):
     """Represents a field recognized in an input form.
@@ -302,6 +323,21 @@ class FormField(object):
             :1024
         ]
 
+    def to_dict(self):
+        d = {
+            "value_type": self.value_type,
+            "name": self.name,
+            "value": self.value,
+            "confidence": self.confidence
+        }
+
+        if self.label_data is not None:
+            d["label_data"] = self.label_data.to_dict()
+
+        if self.value_data is not None:
+            d["value_data"] = self.value_data.to_dict()
+
+        return d
 
 class FieldData(object):
     """Contains the data for the form field. This includes the text,
@@ -371,6 +407,13 @@ class FieldData(object):
             :1024
         ]
 
+    def to_dict(self):
+        return {
+            "text": self.text,
+            "bounding_box": [f.to_dict() for f in self.bounding_box],
+            "field_elements": self.field_elements,
+            "page_number": self.page_number
+        }
 
 class FormPage(object):
     """Represents a page recognized from the input document. Contains lines,
@@ -486,6 +529,15 @@ class FormLine(FormElement):
             :1024
         ]
 
+    def to_dict(self):
+        return {
+            "text": self.text,
+            "bounding_box": [f.to_dict() for f in self.bounding_box],
+            "words": [f.to_dict() for f in self.words],
+            "page_number": self.page_number,
+            "kind": self.kind,
+            "appearance": [f.to_dict() for f in self.appearance]
+        }
 
 class FormWord(FormElement):
     """Represents a word recognized from the input document.
@@ -523,6 +575,14 @@ class FormWord(FormElement):
             :1024
         ]
 
+    def to_dict(self):
+        return {
+            "text": self.text,
+            "bounding_box": [f.to_dict() for f in self.bounding_box],
+            "confidence": self.confidence,
+            "page_number": self.page_number,
+            "kind": self.kind
+        }
 
 class FormSelectionMark(FormElement):
     """Information about the extracted selection mark.
@@ -563,6 +623,15 @@ class FormSelectionMark(FormElement):
             :1024
         ]
 
+    def to_dict(self):
+        return {
+            "text": self.text,
+            "bounding_box": [f.to_dict() for f in self.bounding_box],
+            "confidence": self.confidence,
+            "state": self.state,
+            "page_number": self.page_number,
+            "kind": self.kind
+        }
 
 class FormTable(object):
     """Information about the extracted table contained on a page.
@@ -1147,6 +1216,11 @@ class TextAppearance(object):
     def __repr__(self):
         return "TextAppearance(style={})".format(repr(self.style))
 
+    def to_dict(self):
+        if self.style is not None:
+            return {
+                "style": self.style.to_dict()
+            }
 
 class TextStyle(object):
     """An object representing the style of the text line.
@@ -1164,3 +1238,9 @@ class TextStyle(object):
 
     def __repr__(self):
         return "TextStyle(name={}, confidence={})".format(self.name, self.confidence)
+
+    def to_dict(self):
+        return {
+            "name": self.name,
+            "confidence": self.confidence
+        }
