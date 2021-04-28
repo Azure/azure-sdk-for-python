@@ -6,23 +6,16 @@
 from datetime import datetime
 import pytest
 
-from devtools_testutils import AzureTestCase
-
 from azure.containerregistry import (
-    ContainerRepository,
-    ContainerRegistryClient,
     ContentPermissions,
     DeletedRepositoryResult,
     RepositoryProperties,
     RegistryArtifactOrderBy,
     ArtifactManifestProperties,
-    TagProperties,
-    TagOrderBy,
 )
 from azure.core.exceptions import ResourceNotFoundError
-from azure.core.paging import ItemPaged
 
-from testcase import ContainerRegistryTestClass, AcrBodyReplacer, FakeTokenCredential
+from testcase import ContainerRegistryTestClass
 from constants import TO_BE_DELETED, DOES_NOT_EXIST, HELLO_WORLD
 from preparer import acr_preparer
 
@@ -51,7 +44,7 @@ class TestContainerRepository(ContainerRegistryTestClass):
     #     with pytest.raises(ResourceNotFoundError):
     #         client.delete_tag(TO_BE_DELETED)
 
-    @pytest.mark.live_test_only # This needs to be removed in the future
+    # @pytest.mark.live_test_only  # This needs to be removed in the future
     @acr_preparer()
     def test_get_properties(self, containerregistry_endpoint):
         repo_client = self.create_container_repository(containerregistry_endpoint, HELLO_WORLD)
@@ -62,8 +55,7 @@ class TestContainerRepository(ContainerRegistryTestClass):
         assert properties.name == u"library/hello-world"
         assert properties.registry == containerregistry_endpoint
 
-
-    @pytest.mark.live_test_only # This needs to be removed in the future
+    # @pytest.mark.live_test_only  # This needs to be removed in the future
     @acr_preparer()
     def test_set_properties(self, containerregistry_endpoint):
         repository = self.get_resource_name("repo")

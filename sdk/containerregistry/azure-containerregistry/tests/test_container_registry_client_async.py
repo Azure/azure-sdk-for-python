@@ -79,7 +79,7 @@ class TestContainerRegistryClient(AsyncContainerRegistryTestClass):
         client = self.create_registry_client(containerregistry_endpoint)
 
         with pytest.raises(ResourceNotFoundError):
-            deleted_result = await client.delete_repository("not_real_repo")
+            await client.delete_repository("not_real_repo")
 
     @acr_preparer()
     async def test_transport_closed_only_once(self, containerregistry_endpoint):

@@ -3,27 +3,17 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 # ------------------------------------
-from datetime import datetime
 import pytest
 
-from devtools_testutils import AzureTestCase
-
 from azure.containerregistry import (
-    ContainerRepository,
-    ContainerRegistryClient,
     ContentPermissions,
-    DeletedRepositoryResult,
-    RepositoryProperties,
-    RegistryArtifactOrderBy,
     ArtifactManifestProperties,
     TagProperties,
-    TagOrderBy,
 )
 from azure.core.exceptions import ResourceNotFoundError
-from azure.core.paging import ItemPaged
 
-from testcase import ContainerRegistryTestClass, AcrBodyReplacer, FakeTokenCredential
-from constants import TO_BE_DELETED, DOES_NOT_EXIST, HELLO_WORLD
+from testcase import ContainerRegistryTestClass
+from constants import DOES_NOT_EXIST, HELLO_WORLD
 from preparer import acr_preparer
 
 
@@ -40,7 +30,7 @@ class TestContainerRepository(ContainerRegistryTestClass):
         tag = self.get_resource_name("tag")
         self.import_image(HELLO_WORLD, ["{}:{}".format(repo, tag)])
 
-        reg_artifact = self.set_up(containerregistry_endpoint, name=repo)
+        reg_artifact = self.set_up(containerregistry_endpoint, repo)
 
         properties = reg_artifact.get_manifest_properties()
 

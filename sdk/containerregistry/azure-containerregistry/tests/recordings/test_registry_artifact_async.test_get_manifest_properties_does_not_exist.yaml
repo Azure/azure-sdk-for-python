@@ -7,7 +7,7 @@ interactions:
       User-Agent:
       - azsdk-python-azure-containerregistry/1.0.0b1 Python/3.9.0rc1 (Windows-10-10.0.19041-SP0)
     method: GET
-    uri: https://seankane.azurecr.io/acr/v1/hello-world/_manifests/sha256:abcdefghijkl
+    uri: https://fake_url.azurecr.io/acr/v1/hello-world/_manifests/sha256:abcdefghijkl
   response:
     body:
       string: '404 page not found
@@ -17,7 +17,7 @@ interactions:
       connection: keep-alive
       content-length: '19'
       content-type: text/plain; charset=utf-8
-      date: Wed, 28 Apr 2021 16:14:43 GMT
+      date: Wed, 28 Apr 2021 18:04:56 GMT
       docker-distribution-api-version: registry/2.0
       server: openresty
       strict-transport-security: max-age=31536000; includeSubDomains

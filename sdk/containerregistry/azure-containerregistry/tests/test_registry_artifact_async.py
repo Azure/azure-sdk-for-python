@@ -3,10 +3,7 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 # ------------------------------------
-from datetime import datetime
 import pytest
-
-from devtools_testutils import AzureTestCase
 
 from azure.containerregistry import (
     ContentPermissions,

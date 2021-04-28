@@ -29,12 +29,25 @@ from azure_devtools.scenario_tests import (
     GeneralNameReplacer,
     RequestUrlNormalizer,
     AuthenticationMetadataFilter,
-    RecordingProcessor
+    RecordingProcessor,
 )
 from devtools_testutils import AzureTestCase
 
 
 REDACTED = "REDACTED"
+
+class OAuthRequestResponsesFilterACR(RecordingProcessor):
+    """Remove oauth authentication requests and responses from recording."""
+
+    def process_request(self, request):
+        # filter request like:
+        # GET https://login.microsoftonline.com/72f988bf-86f1-41af-91ab-2d7cd011db47/oauth2/token
+        # POST https://login.microsoftonline.com/72f988bf-86f1-41af-91ab-2d7cd011db47/oauth2/v2.0/token
+        # But we want to leave Azure Container Registry challenge auth requests alone
+        import re
+        if not re.search('/oauth2(?:/v2.0)?/token', request.uri) or "azurecr.io" in request.uri:
+            return request
+        return None
 
 
 class AcrBodyReplacer(RecordingProcessor):
@@ -79,6 +92,11 @@ class AcrBodyReplacer(RecordingProcessor):
         if request.body:
             request.body = self._scrub_body(request.body)
 
+        if "seankane.azurecr.io" in request.uri:
+            request.uri = request.uri.replace("seankane.azurecr.io", "fake_url.azurecr.io")
+        if "seankane.azurecr.io" in request.url:
+            request.url = request.url.replace("seankane.azurecr.io", "fake_url.azurecr.io")
+
         return request
 
     def process_response(self, response):
@@ -88,13 +106,16 @@ class AcrBodyReplacer(RecordingProcessor):
 
             if "www-authenticate" in headers:
                 headers["www-authenticate"] = (
-                    [self._401_replacement] if isinstance(headers["www-authenticeate"], list) else self._401_replacement
+                    [self._401_replacement] if isinstance(headers["www-authenticate"], list) else self._401_replacement
                 )
 
             body = response["body"]
             try:
                 if body["string"] == b"" or body["string"] == "null":
                     return response
+
+                if "seankane.azurecr.io" in body["string"]:
+                    body["string"] = body["string"].replace("seankane.azurecr.io", "fake_url.azurecr.io")
 
                 refresh = json.loads(body["string"])
                 if "refresh_token" in refresh.keys():
@@ -137,14 +158,16 @@ class FakeTokenCredential(object):
 
 class ContainerRegistryTestClass(AzureTestCase):
     def __init__(self, method_name):
-        super(ContainerRegistryTestClass, self).__init__(method_name,
-        recording_processors=[
-            GeneralNameReplacer(),
-            AuthenticationMetadataFilter(),
-            RequestUrlNormalizer(),
-            AcrBodyReplacer(),
-        ])
-        # self.recording_processors.append(AcrBodyReplacer())
+        super(ContainerRegistryTestClass, self).__init__(
+            method_name,
+            recording_processors=[
+                GeneralNameReplacer(),
+                OAuthRequestResponsesFilterACR(),
+                AuthenticationMetadataFilter(),
+                RequestUrlNormalizer(),
+                AcrBodyReplacer(),
+            ],
+        )
         self.repository = "library/hello-world"
 
     def sleep(self, t):
