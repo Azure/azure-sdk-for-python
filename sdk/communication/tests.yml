@@ -28,5 +28,5 @@ stages:
           AZURE_SUBSCRIPTION_ID: $(acs-subscription-id)
           AZURE_CLIENT_SECRET: $(aad-azure-sdk-test-client-secret)
           AZURE_CLIENT_ID: $(aad-azure-sdk-test-client-id)
-          AZURE_COMMUNICATION_SERVICE_CONNECTION_STRING: $(communication-livetest-connection-string)
+          AZURE_COMMUNICATION_SERVICE_CONNECTION_STRING: $(python-communication-livetest-connection-string)
           AZURE_COMMUNICATION_SERVICE_PHONE_NUMBER: $(communication-livetest-phone-number)
