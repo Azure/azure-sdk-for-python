@@ -174,10 +174,7 @@ The following section provides several code snippets covering some of the most c
 
 * [Recognize Forms Using a Custom Model](#recognize-forms-using-a-custom-model "Recognize Forms Using a Custom Model")
 * [Recognize Content](#recognize-content "Recognize Content")
-* [Recognize Receipts](#recognize-receipts "Recognize receipts")
-* [Recognize Business Cards](#recognize-business-cards "Recognize business cards")
-* [Recognize Invoices](#recognize-invoices "Recognize invoices")
-* [Recognize ID Documents](#recognize-id-documents "Recognize ID documents")
+* [Using Prebuilt Models](#using-prebuilt-models "Using Prebuilt Models")
 * [Train a Model](#train-a-model "Train a model")
 * [Manage Your Models](#manage-your-models "Manage Your Models")
 
