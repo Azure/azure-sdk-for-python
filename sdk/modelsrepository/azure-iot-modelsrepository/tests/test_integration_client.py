@@ -28,9 +28,11 @@ class RemoteRepositoryMixin(object):
     def setUp(self):
         self.client = ModelsRepositoryClient()
         self.client_type = REMOTE_REPO
+        super(RemoteRepositoryMixin, self).setUp()
 
     def tearDown(self):
         self.client.close()
+        super(RemoteRepositoryMixin, self).tearDown()
 
 
 class LocalRepositoryMixin(object):
@@ -39,9 +41,11 @@ class LocalRepositoryMixin(object):
         local_repo = os.path.join(test_dir, "local_repository")
         self.client = ModelsRepositoryClient(repository_location=local_repo)
         self.client_type = LOCAL_REPO
+        super(LocalRepositoryMixin, self).setUp()
 
     def tearDown(self):
         self.client.close()
+        super(LocalRepositoryMixin, self).tearDown()
 
 
 ###########################
@@ -520,7 +524,6 @@ class TestIntegrationGetModelsDependencyModeEnabledRemoteRepository(
     GetModelsDependencyModeEnabledIntegrationTestCaseMixin, RemoteRepositoryMixin, AzureTestCase
 ):
     pass
-
 
 class TestIntegrationGetModelsDependencyModeDisabledRemoteRepository(
     GetModelsDependencyModeDisabledIntegrationTestCaseMixin, RemoteRepositoryMixin, AzureTestCase

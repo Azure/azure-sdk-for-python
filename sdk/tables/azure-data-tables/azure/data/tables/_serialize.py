@@ -3,7 +3,7 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
-
+from binascii import hexlify
 from typing import Dict
 from uuid import UUID
 from datetime import datetime
@@ -65,12 +65,22 @@ def _parameter_filter_substitution(parameters, query_filter):
                 val = parameters[word[1:]]
                 if val in [True, False]:
                     filter_strings[index] = str(val).lower()
-                elif isinstance(val, (float, six.integer_types)):
+                elif isinstance(val, (float)):
                     filter_strings[index] = str(val)
+                elif isinstance(val, six.integer_types):
+                    if val.bit_length() <= 32:
+                        filter_strings[index] = str(val)
+                    else:
+                        filter_strings[index] = "{}L".format(str(val))
                 elif isinstance(val, datetime):
                     filter_strings[index] = "datetime'{}'".format(_to_utc_datetime(val))
                 elif isinstance(val, UUID):
                     filter_strings[index] = "guid'{}'".format(str(val))
+                elif isinstance(val, six.binary_type):
+                    v = str(hexlify(val))
+                    if v[0] == 'b': # Python 3 adds a 'b' and quotations, python 2.7 does neither
+                        v = v[2:-1]
+                    filter_strings[index] = "X'{}'".format(v)
                 else:
                     filter_strings[index] = "'{}'".format(val.replace("'", "''"))
         return ' '.join(filter_strings)
