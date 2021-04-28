@@ -31,7 +31,6 @@ pr:
 
 extends:
   template: ../../eng/pipelines/templates/stages/archetype-sdk-client.yml
-  GenerateDocs: false
   parameters:
     ServiceDirectory: core
     Artifacts:
