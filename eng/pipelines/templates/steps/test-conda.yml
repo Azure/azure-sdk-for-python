@@ -36,19 +36,25 @@ steps:
       versionSpec: $(PythonVersion)
 
   - ${{ each artifact in parameters.CondaArtifacts }}:
-    - bash: |
+    - script: |
         echo "##vso[task.prependpath]$CONDA/bin"
       displayName: 'Prepend PATH with Conda and INIT'
 
-    - bash: |
+    - script: |
         conda env create --name ${{ artifact.name }} --file $(Build.SourcesDirectory)/eng/conda_env.yml
         conda install --name ${{ artifact.name }} --yes --quiet conda-build
-        source activate ${{ artifact.name }}
+        ${{ if not(contains(parameters.OSVmImage, 'windows')) }}:
+          source activate ${{ artifact.name }}
+        ${{ if contains(parameters.OSVmImage, 'windows') }}:
+          call activate ${{ artifact.name }}
         conda index $(Build.ArtifactStagingDirectory)/${{ artifact.name }}
       displayName: 'Prepare Conda Environment for Testing ${{ artifact.name }}, Index the Target Local Artifact'
 
-    - bash: |
-        source activate ${{ artifact.name }}
+    - script: |
+        ${{ if not(contains(parameters.OSVmImage, 'windows')) }}:
+          source activate ${{ artifact.name }}
+        ${{ if contains(parameters.OSVmImage, 'windows') }}:
+          call activate ${{ artifact.name }}
         pip install -r eng/ci_tools.txt
       displayName: 'Activate Conda Environment and Install General Dependencies ${{ artifact.name }}'
 
@@ -74,19 +80,21 @@ steps:
               WorkingDirectory: "$(conda.build)"
           SkipDefaultCheckout: true
 
-      - pwsh: |
-          Get-ChildItem $(conda.build) -R
-        displayName: 'Dump contents of the artifact staging directory'
-
-      - bash: |
-          source activate ${{ artifact.name }}
+      - script: |
+          ${{ if not(contains(parameters.OSVmImage, 'windows')) }}:
+            source activate ${{ artifact.name }}
+          ${{ if contains(parameters.OSVmImage, 'windows') }}:
+            call activate ${{ artifact.name }}
           pip install -r dev_requirements.txt
           conda install --name ${{ artifact.name }} ${{ artifact.name }} -c $(Build.ArtifactStagingDirectory)/${{ artifact.name }} --yes
         displayName: 'Install ${{ checkout.package }} Conda Package and Dev Requirements'
         workingDirectory: $(conda.build)/${{ checkout.checkout_path }}/${{ checkout.package }}
 
-      - bash: |
-          source activate ${{ artifact.name }}
+      - script: |
+          ${{ if not(contains(parameters.OSVmImage, 'windows')) }}:
+            source activate ${{ artifact.name }}
+          ${{ if contains(parameters.OSVmImage, 'windows') }}:
+            call activate ${{ artifact.name }}
           pytest .
         displayName: 'Run Tests for ${{ checkout.package }}'
         workingDirectory: $(conda.build)/${{ checkout.checkout_path }}/${{ checkout.package }}
