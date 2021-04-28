@@ -91,7 +91,7 @@ jobs:
         ${{ if ne(variables['Build.Reason'], 'PullRequest') }}:
           Directory: sdk/${{ parameters.ServiceDirectory }}
         CheckLinkGuidance: $true
-        
+
     - template: ../steps/analyze.yml
       parameters:
         ServiceDirectory: ${{ parameters.ServiceDirectory }}
