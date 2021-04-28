@@ -35,13 +35,13 @@ steps:
     inputs:
       versionSpec: $(PythonVersion)
 
+  - pwsh: |
+      Get-ChildItem $(Build.ArtifactStagingDirectory) -R
+    displayName: 'Dump contents of the artifact staging directory'
+
   - ${{ each artifact in parameters.CondaArtifacts }}:
     - bash: |
         echo "##vso[task.prependpath]$CONDA/bin"
-      displayName: 'Prepend PATH with Conda and INIT'
-
-    - pwsh: |
-        Write-Host Get-ChildItem $(Build.ArtifactStagingDirectory)/conda -R
       displayName: 'Prepend PATH with Conda and INIT'
 
     - bash: |
@@ -55,7 +55,6 @@ steps:
         pip install -r eng/ci_tools.txt
         conda install {{ artifact.name }} -c $(Build.ArtifactStagingDirectory)/conda/${{ artifact.name }}
       displayName: 'Activate Conda Environment and Install General Dependencies ${{ artifact.name }}'
-      workingDirectory: $(Build.SourcesDirectory)/sdk/${{ parameters.ServiceDirectory }}
 
     - ${{ each checkout in artifact.checkout }}:
       - bash: |
@@ -64,9 +63,3 @@ steps:
           pytest .
         displayName: 'Run tests for '
         workingDirectory: $(Build.SourcesDirectory)/sdk/${{ checkout.path }}/${{ checkout.package }}
-
-    - bash: |
-        source activate ${{ artifact.name }}
-      displayName: 'Activate Conda Environment and Build ${{ artifact.name }}'
-      workingDirectory: $(Build.SourcesDirectory)
-
