@@ -35,10 +35,6 @@ steps:
     inputs:
       versionSpec: $(PythonVersion)
 
-  - pwsh: |
-      Get-ChildItem $(Build.ArtifactStagingDirectory) -R
-    displayName: 'Dump contents of the artifact staging directory'
-
   - ${{ each artifact in parameters.CondaArtifacts }}:
     - bash: |
         echo "##vso[task.prependpath]$CONDA/bin"
@@ -77,6 +73,10 @@ steps:
               Commitish: "${{ checkout.Package }}_${{ checkout.Version }}"
               WorkingDirectory: "$(conda.build)"
           SkipDefaultCheckout: true
+
+      - pwsh: |
+          Get-ChildItem $(conda.build) -R
+        displayName: 'Dump contents of the artifact staging directory'
 
       - bash: |
           source activate ${{ artifact.name }}
