@@ -34,6 +34,18 @@ steps:
 
 
   - pwsh: |
+     pip install -r eng/ci_tools.txt $(if($IsWindows) {"--user" })
+    displayName: 'Install Necessary Dependencies'
+    condition: succeededOrFailed()
+
+  - script: |
+      cd eng/versioning
+      pip install -r requirements.txt
+      python find_invalid_versions.py --always-succeed --service=${{parameters.ServiceDirectory}}
+    displayName: Find Invalid Versions
+    condition: succeededOrFailed()
+
+  - pwsh: |
       Get-ChildItem $(Build.SourcesDirectory) -Filter "*.py" |
       Foreach-Object {
         if ((Get-Content $_ -Raw) -match "\r\n") {
@@ -58,12 +70,6 @@ steps:
     # builds should be sufficient.
     condition: and(succeededOrFailed(), ne(variables['Build.Reason'],'PullRequest'))
     displayName: 'Component Detection'
-
-  - pwsh: |
-     pip install -r eng/ci_tools.txt $(if($IsWindows) {"--user" })
-     ward scan -d $(Build.SourcesDirectory) -c $(Build.SourcesDirectory)/eng/.docsettings.yml
-    displayName: 'Install Necessary Dependencies'
-    condition: succeededOrFailed()
 
   - task: PythonScript@0
     displayName: 'Verify sdist'
