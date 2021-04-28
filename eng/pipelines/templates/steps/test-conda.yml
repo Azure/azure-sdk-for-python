@@ -54,7 +54,7 @@ steps:
     - bash: |
         source activate ${{ artifact.name }}
         pip install -r eng/ci_tools.txt
-        conda install {{ artifact.name }} -c $(Build.ArtifactStagingDirectory)/conda/${{ artifact.name }}
+        conda install {{ artifact.name }} -c $(Build.ArtifactStagingDirectory)/${{ artifact.name }}
       displayName: 'Activate Conda Environment and Install General Dependencies ${{ artifact.name }}'
 
     - ${{ each checkout in artifact.checkout }}:
