@@ -45,17 +45,23 @@ steps:
       
       Write-Host "##vso[task.setvariable variable=activate.method]$activateMethod"
       Write-Host "##vso[task.setvariable variable=requirement.suffix]$requirementSuffix"
-    displayName: 'Evaluate OS Specific Activate Parameter'
+    displayName: 'Evaluate OS Specific Parameters'
 
   - ${{ each artifact in parameters.CondaArtifacts }}:
     - ${{ if not(contains(parameters.OSVmImage, 'windows')) }}:
       - script: |
+          echo "Prepending with $($CONDA/bin)"
           echo "##vso[task.prependpath]$CONDA/bin"
         displayName: 'Prepend PATH with Conda and INIT'
     - ${{ if contains(parameters.OSVmImage, 'windows') }}:
       - powershell: |
+          Write-Host "Prepending with $($env:CONDA\Scripts)"
           Write-Host "##vso[task.prependpath]$env:CONDA\Scripts"
         displayName: 'Prepend PATH with Conda and INIT'
+
+    - powershell: |
+        Write-Host "##vso[task.prependpath]$env:CONDA\Scripts"
+      displayName: 'Prepend PATH with Conda and INIT'
 
     - script: |
         conda env create --name ${{ artifact.name }} python=$(PythonVersion) --file $(Build.SourcesDirectory)/eng/conda_env.yml
