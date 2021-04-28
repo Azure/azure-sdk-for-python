@@ -125,6 +125,22 @@ class PhoneNumbersClientTestAsync(AsyncCommunicationTestCase):
         assert poller.result()
 
     @AsyncCommunicationTestCase.await_prepared_test
+    async def test_update_phone_number_capabilities(self):
+        async with self.phone_number_client:
+            current_phone_number = await self.phone_number_client.get_purchased_phone_number(self.phone_number)
+            calling_capabilities = PhoneNumberCapabilityType.INBOUND if current_phone_number.capabilities.calling == PhoneNumberCapabilityType.OUTBOUND else PhoneNumberCapabilityType.OUTBOUND
+            sms_capabilities = PhoneNumberCapabilityType.INBOUND_OUTBOUND if current_phone_number.capabilities.sms == PhoneNumberCapabilityType.OUTBOUND else PhoneNumberCapabilityType.OUTBOUND
+            poller = await self.phone_number_client.begin_update_phone_number_capabilities(
+                self.phone_number,
+                sms_capabilities,
+                calling_capabilities,
+                polling = True
+            )
+            updated_phone_number = await poller.result()
+            assert updated_phone_number.capabilities.calling == calling_capabilities
+            assert updated_phone_number.capabilities.sms == sms_capabilities
+
+    @AsyncCommunicationTestCase.await_prepared_test
     async def test_update_phone_number_capabilities_from_managed_identity(self):
         endpoint, access_key = parse_connection_str(self.connection_str)
         credential = create_token_credential()
@@ -134,24 +150,18 @@ class PhoneNumbersClientTestAsync(AsyncCommunicationTestCase):
             http_logging_policy=get_http_logging_policy()
         )
         async with phone_number_client:
+            current_phone_number = await phone_number_client.get_purchased_phone_number(self.phone_number)
+            calling_capabilities = PhoneNumberCapabilityType.INBOUND if current_phone_number.capabilities.calling == PhoneNumberCapabilityType.OUTBOUND else PhoneNumberCapabilityType.OUTBOUND
+            sms_capabilities = PhoneNumberCapabilityType.INBOUND_OUTBOUND if current_phone_number.capabilities.sms == PhoneNumberCapabilityType.OUTBOUND else PhoneNumberCapabilityType.OUTBOUND
             poller = await phone_number_client.begin_update_phone_number_capabilities(
                 self.phone_number,
-                PhoneNumberCapabilityType.INBOUND_OUTBOUND,
-                PhoneNumberCapabilityType.INBOUND,
+                sms_capabilities,
+                calling_capabilities,
                 polling = True
             )
-        assert poller.result()
-    
-    @AsyncCommunicationTestCase.await_prepared_test
-    async def test_update_phone_number_capabilities(self):
-        async with self.phone_number_client:
-            poller = await self.phone_number_client.begin_update_phone_number_capabilities(
-                self.phone_number,
-                PhoneNumberCapabilityType.INBOUND_OUTBOUND,
-                PhoneNumberCapabilityType.INBOUND,
-                polling = True
-            )
-        assert poller.result()
+            updated_phone_number = await poller.result()
+            assert updated_phone_number.capabilities.calling == calling_capabilities
+            assert updated_phone_number.capabilities.sms == sms_capabilities
 
     @pytest.mark.skipif(SKIP_PURCHASE_PHONE_NUMBER_TESTS, reason=PURCHASE_PHONE_NUMBER_TEST_SKIP_REASON)
     @AsyncCommunicationTestCase.await_prepared_test

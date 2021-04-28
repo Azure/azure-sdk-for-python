@@ -113,23 +113,33 @@ class PhoneNumbersClientTest(CommunicationTestCase):
             credential, 
             http_logging_policy=get_http_logging_policy()
         )
+        current_phone_number = phone_number_client.get_purchased_phone_number(self.phone_number)
+        calling_capabilities = PhoneNumberCapabilityType.INBOUND if current_phone_number.capabilities.calling == PhoneNumberCapabilityType.OUTBOUND else PhoneNumberCapabilityType.OUTBOUND
+        sms_capabilities = PhoneNumberCapabilityType.INBOUND_OUTBOUND if current_phone_number.capabilities.sms == PhoneNumberCapabilityType.OUTBOUND else PhoneNumberCapabilityType.OUTBOUND
         poller = phone_number_client.begin_update_phone_number_capabilities(
             self.phone_number,
-            PhoneNumberCapabilityType.INBOUND_OUTBOUND,
-            PhoneNumberCapabilityType.INBOUND,
+            sms_capabilities,
+            calling_capabilities,
             polling = True
         )
-        poller.result()
+        updated_phone_number = poller.result()
+        assert updated_phone_number.capabilities.calling == calling_capabilities
+        assert updated_phone_number.capabilities.sms == sms_capabilities
         assert poller.status() == PhoneNumberOperationStatus.SUCCEEDED.value
 
     def test_update_phone_number_capabilities(self):
+        current_phone_number = self.phone_number_client.get_purchased_phone_number(self.phone_number)
+        calling_capabilities = PhoneNumberCapabilityType.INBOUND if current_phone_number.capabilities.calling == PhoneNumberCapabilityType.OUTBOUND else PhoneNumberCapabilityType.OUTBOUND
+        sms_capabilities = PhoneNumberCapabilityType.INBOUND_OUTBOUND if current_phone_number.capabilities.sms == PhoneNumberCapabilityType.OUTBOUND else PhoneNumberCapabilityType.OUTBOUND
         poller = self.phone_number_client.begin_update_phone_number_capabilities(
             self.phone_number,
-            PhoneNumberCapabilityType.INBOUND_OUTBOUND,
-            PhoneNumberCapabilityType.INBOUND,
+            sms_capabilities,
+            calling_capabilities,
             polling = True
         )
-        poller.result()
+        updated_phone_number = poller.result()
+        assert updated_phone_number.capabilities.calling == calling_capabilities
+        assert updated_phone_number.capabilities.sms == sms_capabilities
         assert poller.status() == PhoneNumberOperationStatus.SUCCEEDED.value
 
     @pytest.mark.skipif(SKIP_PURCHASE_PHONE_NUMBER_TESTS, reason=PURCHASE_PHONE_NUMBER_TEST_SKIP_REASON)
