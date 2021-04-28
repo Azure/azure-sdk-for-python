@@ -12,6 +12,7 @@ try:
     from ._models_py3 import AnalyzeJobState
     from ._models_py3 import Components15Gvwi3SchemasTasksstatePropertiesTasksPropertiesEntityrecognitiontasksItemsAllof1
     from ._models_py3 import Components15X8E9LSchemasTasksstatePropertiesTasksPropertiesEntityrecognitionpiitasksItemsAllof1
+    from ._models_py3 import Components1C6O47FSchemasTasksstatePropertiesTasksPropertiesSentimentanalysistasksItemsAllof1
     from ._models_py3 import Components1D9IzucSchemasTasksstatePropertiesTasksPropertiesKeyphraseextractiontasksItemsAllof1
     from ._models_py3 import ComponentsIfu7BjSchemasTasksstatePropertiesTasksPropertiesEntitylinkingtasksItemsAllof1
     from ._models_py3 import DetectedLanguage
@@ -62,6 +63,8 @@ try:
     from ._models_py3 import SentenceAssessment
     from ._models_py3 import SentenceSentiment
     from ._models_py3 import SentenceTarget
+    from ._models_py3 import SentimentAnalysisTask
+    from ._models_py3 import SentimentAnalysisTaskParameters
     from ._models_py3 import SentimentConfidenceScorePerLabel
     from ._models_py3 import SentimentResponse
     from ._models_py3 import TargetConfidenceScoreLabel
@@ -74,6 +77,7 @@ try:
     from ._models_py3 import TasksStateTasksEntityRecognitionPiiTasksItem
     from ._models_py3 import TasksStateTasksEntityRecognitionTasksItem
     from ._models_py3 import TasksStateTasksKeyPhraseExtractionTasksItem
+    from ._models_py3 import TasksStateTasksSentimentAnalysisTasksItem
     from ._models_py3 import TextAnalyticsError
     from ._models_py3 import TextAnalyticsWarning
 except (SyntaxError, ImportError):
@@ -82,6 +86,7 @@ except (SyntaxError, ImportError):
     from ._models import AnalyzeJobState  # type: ignore
     from ._models import Components15Gvwi3SchemasTasksstatePropertiesTasksPropertiesEntityrecognitiontasksItemsAllof1  # type: ignore
     from ._models import Components15X8E9LSchemasTasksstatePropertiesTasksPropertiesEntityrecognitionpiitasksItemsAllof1  # type: ignore
+    from ._models import Components1C6O47FSchemasTasksstatePropertiesTasksPropertiesSentimentanalysistasksItemsAllof1  # type: ignore
     from ._models import Components1D9IzucSchemasTasksstatePropertiesTasksPropertiesKeyphraseextractiontasksItemsAllof1  # type: ignore
     from ._models import ComponentsIfu7BjSchemasTasksstatePropertiesTasksPropertiesEntitylinkingtasksItemsAllof1  # type: ignore
     from ._models import DetectedLanguage  # type: ignore
@@ -132,6 +137,8 @@ except (SyntaxError, ImportError):
     from ._models import SentenceAssessment  # type: ignore
     from ._models import SentenceSentiment  # type: ignore
     from ._models import SentenceTarget  # type: ignore
+    from ._models import SentimentAnalysisTask  # type: ignore
+    from ._models import SentimentAnalysisTaskParameters  # type: ignore
     from ._models import SentimentConfidenceScorePerLabel  # type: ignore
     from ._models import SentimentResponse  # type: ignore
     from ._models import TargetConfidenceScoreLabel  # type: ignore
@@ -144,6 +151,7 @@ except (SyntaxError, ImportError):
     from ._models import TasksStateTasksEntityRecognitionPiiTasksItem  # type: ignore
     from ._models import TasksStateTasksEntityRecognitionTasksItem  # type: ignore
     from ._models import TasksStateTasksKeyPhraseExtractionTasksItem  # type: ignore
+    from ._models import TasksStateTasksSentimentAnalysisTasksItem  # type: ignore
     from ._models import TextAnalyticsError  # type: ignore
     from ._models import TextAnalyticsWarning  # type: ignore
 
@@ -171,6 +179,7 @@ __all__ = [
     'AnalyzeJobState',
     'Components15Gvwi3SchemasTasksstatePropertiesTasksPropertiesEntityrecognitiontasksItemsAllof1',
     'Components15X8E9LSchemasTasksstatePropertiesTasksPropertiesEntityrecognitionpiitasksItemsAllof1',
+    'Components1C6O47FSchemasTasksstatePropertiesTasksPropertiesSentimentanalysistasksItemsAllof1',
     'Components1D9IzucSchemasTasksstatePropertiesTasksPropertiesKeyphraseextractiontasksItemsAllof1',
     'ComponentsIfu7BjSchemasTasksstatePropertiesTasksPropertiesEntitylinkingtasksItemsAllof1',
     'DetectedLanguage',
@@ -221,6 +230,8 @@ __all__ = [
     'SentenceAssessment',
     'SentenceSentiment',
     'SentenceTarget',
+    'SentimentAnalysisTask',
+    'SentimentAnalysisTaskParameters',
     'SentimentConfidenceScorePerLabel',
     'SentimentResponse',
     'TargetConfidenceScoreLabel',
@@ -233,6 +244,7 @@ __all__ = [
     'TasksStateTasksEntityRecognitionPiiTasksItem',
     'TasksStateTasksEntityRecognitionTasksItem',
     'TasksStateTasksKeyPhraseExtractionTasksItem',
+    'TasksStateTasksSentimentAnalysisTasksItem',
     'TextAnalyticsError',
     'TextAnalyticsWarning',
     'Association',
