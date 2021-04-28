@@ -71,9 +71,18 @@ class RecognizeCustomFormsSampleAsync(object):
                     print("...Label '{}' has value '{}' with a confidence score of {}".format(
                         field.label_data.text if field.label_data else name, field.value, field.confidence
                     ))
+                # [END recognize_custom_forms_async]
+
+                # iterate over tables on each page
+                for page in form.pages:
+                    for i, table in enumerate(page.tables):
+                        print("\nTable {} on page {}".format(i + 1, table.page_number))
+                        for cell in table.cells:
+                            print("...Cell[{}][{}] has text '{}' with confidence {}".format(
+                                cell.row_index, cell.column_index, cell.text, cell.confidence
+                            ))
 
                 print("-----------------------------------")
-        # [END recognize_custom_forms_async]
 
 
 async def main():
