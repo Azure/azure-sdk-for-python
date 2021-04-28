@@ -1,6 +1,6 @@
 # Azure WebPubSubService client library for Python
 
-[Azure Web PubSub Service](https://aka.ms/awps/doc) is a service that enables you to build real-time messaging web applications using WebSockets and the publish-subscribe pattern. Any platform supporting WebSocket APIs can connect to the service easily, e.g. web pages, mobile applications, edge devices, etc. The service manages the WebSocket connections for you and allows up to 100K \*concurrent connections. It provides powerful APIs for you to manage these clients and deliver real-time messages.
+[Azure Web PubSub Service](https://aka.ms/awps/doc) is a service that enables you to build real-time messaging web applications using WebSockets and the publish-subscribe pattern. Any platform supporting WebSocket APIs can connect to the service easily, e.g. web pages, mobile applications, edge devices, etc. The service manages the WebSocket connections for you and allows up to 100K concurrent connections. It provides powerful APIs for you to manage these clients and deliver real-time messages.
 
 Any scenario that requires real-time publish-subscribe messaging between server and clients or among clients, can use Azure Web PubSub service. Traditional real-time features that often require polling from server or submitting HTTP requests, can also use Azure Web PubSub service.
 
@@ -79,9 +79,13 @@ In order to interact with the Azure WebPubSub service, you'll need to create an 
 
 ## Key concepts
 
+### Connection
+
+Connections, represented by a connection id, represent an individual websocket connection to the Web PubSub service. Connection id is always unique.
+
 ### Hub
 
-Hub is a logical set of connections. All connections to Web PubSub connect to a specific hub. Messages that are broadcast to the hub are dispatched to all connections to that hub. For example, hub can be used for different applications, different applications can share one Azure Web PubSub service by using different hub names.
+Hub is a logical concept for a set of connections. Connections are always connected to a specific hub. Messages that are broadcast to the hub are dispatched to all connections to that hub. Hub can be used for different applications, different applications can share one Azure Web PubSub service by using different hub names.
 
 ### Group
 
@@ -91,13 +95,9 @@ Group allow broadcast messages to a subset of connections to the hub. You can ad
 
 Connections to Web PubSub can belong to one user. A user might have multiple connections, for example when a single user is connected across multiple devices or multiple browser tabs.
 
-### Connection
-
-Connections, represented by a connection id, represent an individual websocket connection to the Web PubSub service. Connection id is always unique.
-
 ### Message
 
-A message is either a UTF-8 encoded string, json or raw binary data.
+Using this library, you can send messages to the client connections. A message can either be string text, JSON or binary payload.
 
 ## Troubleshooting
 
