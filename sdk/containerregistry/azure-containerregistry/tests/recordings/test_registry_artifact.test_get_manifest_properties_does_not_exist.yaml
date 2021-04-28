@@ -25,7 +25,7 @@ interactions:
       content-type:
       - text/plain; charset=utf-8
       date:
-      - Wed, 28 Apr 2021 18:02:23 GMT
+      - Wed, 28 Apr 2021 21:04:28 GMT
       docker-distribution-api-version:
       - registry/2.0
       server:

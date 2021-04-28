@@ -29,11 +29,11 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Wed, 28 Apr 2021 18:02:45 GMT
+      - Wed, 28 Apr 2021 21:04:53 GMT
       expires:
       - '-1'
       location:
-      - https://management.azure.com/subscriptions/2cd617ea-1866-46b1-90e3-fffb087ebf9b/providers/Microsoft.ContainerRegistry/locations/WESTUS2/operationResults/registries-ef86e155-a84b-11eb-8c4b-002b67128e4c?api-version=2019-05-01
+      - https://management.azure.com/subscriptions/2cd617ea-1866-46b1-90e3-fffb087ebf9b/providers/Microsoft.ContainerRegistry/locations/WESTUS2/operationResults/registries-604cbd4e-a865-11eb-82c7-002b67128e4c?api-version=2019-05-01
       pragma:
       - no-cache
       server:
@@ -43,7 +43,7 @@ interactions:
       x-content-type-options:
       - nosniff
       x-ms-ratelimit-remaining-subscription-writes:
-      - '1199'
+      - '1198'
     status:
       code: 202
       message: Accepted
@@ -59,7 +59,7 @@ interactions:
       User-Agent:
       - azsdk-python-azure-mgmt-containerregistry/8.0.0b1 Python/3.9.0rc1 (Windows-10-10.0.19041-SP0)
     method: GET
-    uri: https://management.azure.com/subscriptions/2cd617ea-1866-46b1-90e3-fffb087ebf9b/providers/Microsoft.ContainerRegistry/locations/WESTUS2/operationResults/registries-ef86e155-a84b-11eb-8c4b-002b67128e4c?api-version=2019-05-01
+    uri: https://management.azure.com/subscriptions/2cd617ea-1866-46b1-90e3-fffb087ebf9b/providers/Microsoft.ContainerRegistry/locations/WESTUS2/operationResults/registries-604cbd4e-a865-11eb-82c7-002b67128e4c?api-version=2019-05-01
   response:
     body:
       string: '{"status": "Succeeded"}'
@@ -71,7 +71,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Wed, 28 Apr 2021 18:02:58 GMT
+      - Wed, 28 Apr 2021 21:05:05 GMT
       expires:
       - '-1'
       pragma:
@@ -120,7 +120,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Wed, 28 Apr 2021 18:02:59 GMT
+      - Wed, 28 Apr 2021 21:05:06 GMT
       docker-distribution-api-version:
       - registry/2.0
       server:
@@ -161,7 +161,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Wed, 28 Apr 2021 18:03:01 GMT
+      - Wed, 28 Apr 2021 21:05:08 GMT
       server:
       - openresty
       strict-transport-security:
@@ -169,7 +169,7 @@ interactions:
       transfer-encoding:
       - chunked
       x-ms-ratelimit-remaining-calls-per-second:
-      - '166.65'
+      - '165.933333'
     status:
       code: 200
       message: OK
@@ -199,7 +199,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Wed, 28 Apr 2021 18:03:01 GMT
+      - Wed, 28 Apr 2021 21:05:09 GMT
       server:
       - openresty
       strict-transport-security:
@@ -207,7 +207,7 @@ interactions:
       transfer-encoding:
       - chunked
       x-ms-ratelimit-remaining-calls-per-second:
-      - '166.633333'
+      - '165.816667'
     status:
       code: 200
       message: OK
@@ -289,7 +289,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Wed, 28 Apr 2021 18:03:01 GMT
+      - Wed, 28 Apr 2021 21:05:09 GMT
       docker-distribution-api-version:
       - registry/2.0
       server:
@@ -335,7 +335,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Wed, 28 Apr 2021 18:03:02 GMT
+      - Wed, 28 Apr 2021 21:05:10 GMT
       docker-distribution-api-version:
       - registry/2.0
       server:
@@ -376,7 +376,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Wed, 28 Apr 2021 18:03:03 GMT
+      - Wed, 28 Apr 2021 21:05:10 GMT
       server:
       - openresty
       strict-transport-security:
@@ -384,7 +384,7 @@ interactions:
       transfer-encoding:
       - chunked
       x-ms-ratelimit-remaining-calls-per-second:
-      - '166.2'
+      - '165.633333'
     status:
       code: 200
       message: OK
@@ -414,7 +414,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Wed, 28 Apr 2021 18:03:03 GMT
+      - Wed, 28 Apr 2021 21:05:11 GMT
       server:
       - openresty
       strict-transport-security:
@@ -422,7 +422,7 @@ interactions:
       transfer-encoding:
       - chunked
       x-ms-ratelimit-remaining-calls-per-second:
-      - '166.183333'
+      - '165.5'
     status:
       code: 200
       message: OK
@@ -471,7 +471,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Wed, 28 Apr 2021 18:03:03 GMT
+      - Wed, 28 Apr 2021 21:05:11 GMT
       docker-distribution-api-version:
       - registry/2.0
       server:

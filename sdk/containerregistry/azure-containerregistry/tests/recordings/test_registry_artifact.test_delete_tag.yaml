@@ -29,11 +29,11 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Wed, 28 Apr 2021 18:01:44 GMT
+      - Wed, 28 Apr 2021 21:03:47 GMT
       expires:
       - '-1'
       location:
-      - https://management.azure.com/subscriptions/2cd617ea-1866-46b1-90e3-fffb087ebf9b/providers/Microsoft.ContainerRegistry/locations/WESTUS2/operationResults/registries-cb679a0a-a84b-11eb-9d88-002b67128e4c?api-version=2019-05-01
+      - https://management.azure.com/subscriptions/2cd617ea-1866-46b1-90e3-fffb087ebf9b/providers/Microsoft.ContainerRegistry/locations/WESTUS2/operationResults/registries-39af5569-a865-11eb-b817-002b67128e4c?api-version=2019-05-01
       pragma:
       - no-cache
       server:
@@ -43,7 +43,7 @@ interactions:
       x-content-type-options:
       - nosniff
       x-ms-ratelimit-remaining-subscription-writes:
-      - '1197'
+      - '1199'
     status:
       code: 202
       message: Accepted
@@ -59,7 +59,7 @@ interactions:
       User-Agent:
       - azsdk-python-azure-mgmt-containerregistry/8.0.0b1 Python/3.9.0rc1 (Windows-10-10.0.19041-SP0)
     method: GET
-    uri: https://management.azure.com/subscriptions/2cd617ea-1866-46b1-90e3-fffb087ebf9b/providers/Microsoft.ContainerRegistry/locations/WESTUS2/operationResults/registries-cb679a0a-a84b-11eb-9d88-002b67128e4c?api-version=2019-05-01
+    uri: https://management.azure.com/subscriptions/2cd617ea-1866-46b1-90e3-fffb087ebf9b/providers/Microsoft.ContainerRegistry/locations/WESTUS2/operationResults/registries-39af5569-a865-11eb-b817-002b67128e4c?api-version=2019-05-01
   response:
     body:
       string: '{"status": "Succeeded"}'
@@ -71,7 +71,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Wed, 28 Apr 2021 18:01:58 GMT
+      - Wed, 28 Apr 2021 21:04:00 GMT
       expires:
       - '-1'
       pragma:
@@ -122,7 +122,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Wed, 28 Apr 2021 18:01:58 GMT
+      - Wed, 28 Apr 2021 21:04:01 GMT
       docker-distribution-api-version:
       - registry/2.0
       server:
@@ -163,7 +163,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Wed, 28 Apr 2021 18:02:00 GMT
+      - Wed, 28 Apr 2021 21:04:02 GMT
       server:
       - openresty
       strict-transport-security:
@@ -171,7 +171,7 @@ interactions:
       transfer-encoding:
       - chunked
       x-ms-ratelimit-remaining-calls-per-second:
-      - '166.066667'
+      - '166.466667'
     status:
       code: 200
       message: OK
@@ -201,7 +201,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Wed, 28 Apr 2021 18:02:00 GMT
+      - Wed, 28 Apr 2021 21:04:03 GMT
       server:
       - openresty
       strict-transport-security:
@@ -209,7 +209,7 @@ interactions:
       transfer-encoding:
       - chunked
       x-ms-ratelimit-remaining-calls-per-second:
-      - '166.05'
+      - '166.35'
     status:
       code: 200
       message: OK
@@ -242,7 +242,7 @@ interactions:
       content-length:
       - '0'
       date:
-      - Wed, 28 Apr 2021 18:02:00 GMT
+      - Wed, 28 Apr 2021 21:04:03 GMT
       docker-distribution-api-version:
       - registry/2.0
       server:
@@ -290,7 +290,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Wed, 28 Apr 2021 18:02:00 GMT
+      - Wed, 28 Apr 2021 21:04:03 GMT
       docker-distribution-api-version:
       - registry/2.0
       server:
@@ -305,44 +305,6 @@ interactions:
     status:
       code: 401
       message: Unauthorized
-- request:
-    body: grant_type=access_token&service=fake_url.azurecr.io&access_token=REDACTED
-    headers:
-      Accept:
-      - application/json
-      Accept-Encoding:
-      - gzip, deflate
-      Connection:
-      - keep-alive
-      Content-Length:
-      - '1343'
-      Content-Type:
-      - application/x-www-form-urlencoded
-      User-Agent:
-      - azsdk-python-azure-containerregistry/1.0.0b1 Python/3.9.0rc1 (Windows-10-10.0.19041-SP0)
-    method: POST
-    uri: https://fake_url.azurecr.io/oauth2/exchange
-  response:
-    body:
-      string: '{"refresh_token": "REDACTED"}'
-    headers:
-      connection:
-      - keep-alive
-      content-type:
-      - application/json; charset=utf-8
-      date:
-      - Wed, 28 Apr 2021 18:02:01 GMT
-      server:
-      - openresty
-      strict-transport-security:
-      - max-age=31536000; includeSubDomains
-      transfer-encoding:
-      - chunked
-      x-ms-ratelimit-remaining-calls-per-second:
-      - '166.033333'
-    status:
-      code: 200
-      message: OK
 - request:
     body: grant_type=refresh_token&service=fake_url.azurecr.io&scope=repository%3Arepo34ab0fa1%3Ametadata_read&refresh_token=REDACTED
     headers:
@@ -369,7 +331,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Wed, 28 Apr 2021 18:02:01 GMT
+      - Wed, 28 Apr 2021 21:04:03 GMT
       server:
       - openresty
       strict-transport-security:
@@ -377,7 +339,7 @@ interactions:
       transfer-encoding:
       - chunked
       x-ms-ratelimit-remaining-calls-per-second:
-      - '166.016667'
+      - '166.333333'
     status:
       code: 200
       message: OK
@@ -422,7 +384,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Wed, 28 Apr 2021 18:02:01 GMT
+      - Wed, 28 Apr 2021 21:04:04 GMT
       docker-distribution-api-version:
       - registry/2.0
       server:

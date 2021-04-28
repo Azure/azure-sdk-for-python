@@ -78,7 +78,7 @@ class ContainerRepository(ContainerRegistryBaseClient):
         )
 
     @distributed_trace
-    def list_registry_artifacts(self, **kwargs: Dict[str, Any]) -> AsyncItemPaged[ArtifactManifestProperties]:
+    def list_manifests(self, **kwargs: Dict[str, Any]) -> AsyncItemPaged[ArtifactManifestProperties]:
         """List the artifacts for a repository
 
         :keyword last: Query parameter for the last item in the previous call. Ensuing
@@ -99,7 +99,7 @@ class ContainerRepository(ContainerRegistryBaseClient):
         cls = kwargs.pop(
             "cls",
             lambda objs: [
-                ArtifactManifestProperties._from_generated(x) for x in objs  # pylint: disable=protected-access
+                ArtifactManifestProperties._from_generated(x, repository_name=self.repository) for x in objs  # pylint: disable=protected-access
             ],
         )
 

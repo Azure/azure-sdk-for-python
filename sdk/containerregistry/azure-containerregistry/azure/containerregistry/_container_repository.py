@@ -54,7 +54,7 @@ class ContainerRepository(ContainerRegistryBaseClient):
 
     @distributed_trace
     def delete(self, **kwargs):
-        # type: (Dict[str, Any]) -> None
+        # type: (Dict[str, Any]) -> DeletedRepositoryResult
         """Delete a repository
 
         :returns: Object containing information about the deleted repository
@@ -78,7 +78,7 @@ class ContainerRepository(ContainerRegistryBaseClient):
         )
 
     @distributed_trace
-    def list_registry_artifacts(self, **kwargs):
+    def list_manifests(self, **kwargs):
         # type: (Dict[str, Any]) -> ItemPaged[ArtifactManifestProperties]
         """List the artifacts for a repository
 
@@ -100,7 +100,7 @@ class ContainerRepository(ContainerRegistryBaseClient):
         cls = kwargs.pop(
             "cls",
             lambda objs: [
-                ArtifactManifestProperties._from_generated(x) for x in objs  # pylint: disable=protected-access
+                ArtifactManifestProperties._from_generated(x, repository_name=self.repository) for x in objs  # pylint: disable=protected-access
             ],
         )
 
