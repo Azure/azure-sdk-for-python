@@ -18,7 +18,6 @@ from azure.storage.blob import DelimitedTextDialect as BlobDelimitedTextDialect
 from azure.storage.blob import DelimitedJsonDialect as BlobDelimitedJSON
 from azure.storage.blob import ParquetDialect as BlobParquetDialect
 from azure.storage.blob import ArrowDialect as BlobArrowDialect
-from azure.storage.blob import QuickQueryDialect as BlobQuickQueryDialect
 from azure.storage.blob._models import ContainerPropertiesPaged
 from azure.storage.blob._generated.models import Logging as GenLogging, Metrics as GenMetrics, \
     RetentionPolicy as GenRetentionPolicy, StaticWebsite as GenStaticWebsite, CorsRule as GenCorsRule
@@ -914,8 +913,8 @@ class Metrics(GenMetrics):
 
     def __init__(self, **kwargs):
         self.version = kwargs.get('version', u'1.0')
-        self.enabled = False
-        self.include_apis = None
+        self.enabled = kwargs.get('enabled', False)
+        self.include_apis = kwargs.get('include_apis')
         self.retention_policy = kwargs.get('retention_policy') or RetentionPolicy()
 
     @classmethod
