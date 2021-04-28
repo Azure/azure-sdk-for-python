@@ -123,7 +123,6 @@ class BlobQueryReader(object):  # pylint: disable=too-many-instance-attributes
                     yield record
 
 
-
 class QuickQueryStreamer(object):
     """
     File-like streaming iterator.

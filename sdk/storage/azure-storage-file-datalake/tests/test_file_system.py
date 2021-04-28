@@ -417,8 +417,8 @@ class FileSystemTest(StorageTestCase):
         dir2.delete_directory()
         file_in_dir3.delete_file()
         file_in_subdir.delete_file()
-        deleted_paths = list(file_system.get_deleted_paths())
-        dir3_paths = list(file_system.get_deleted_paths(name_starts_with="dir3/"))
+        deleted_paths = list(file_system.list_deleted_paths())
+        dir3_paths = list(file_system.list_deleted_paths(path_prefix="dir3/"))
 
         # Assert
         self.assertEqual(len(deleted_paths), 6)
@@ -428,10 +428,10 @@ class FileSystemTest(StorageTestCase):
         self.assertEqual(dir3_paths[0].name, 'dir3/file_in_dir3')
         self.assertEqual(dir3_paths[1].name, 'dir3/subdir/file_in_subdir')
 
-        paths_generator1 = file_system.get_deleted_paths(max_results=2).by_page()
+        paths_generator1 = file_system.list_deleted_paths(max_results=2).by_page()
         paths1 = list(next(paths_generator1))
 
-        paths_generator2 = file_system.get_deleted_paths(max_results=4).by_page(
+        paths_generator2 = file_system.list_deleted_paths(max_results=4).by_page(
             continuation_token=paths_generator1.continuation_token)
         paths2 = list(next(paths_generator2))
 

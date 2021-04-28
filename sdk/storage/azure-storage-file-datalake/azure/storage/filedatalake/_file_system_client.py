@@ -884,18 +884,16 @@ class FileSystemClient(StorageAccountHostsMixin):
             key_encryption_key=self.key_encryption_key,
             key_resolver_function=self.key_resolver_function)
 
-    def get_deleted_paths(self,
-                          name_starts_with=None,    # type: Optional[str],
-                          **kwargs):
-        # type: (...) -> ItemPaged[DeletedPathProperties]
-        """Returns a generator to list the paths(could be files or directories) under the specified file system.
+    def list_deleted_paths(self, **kwargs):
+        # type: (Any) -> ItemPaged[DeletedPathProperties]
+        """Returns a generator to list the deleted (file or directory) paths under the specified file system.
         The generator will lazily follow the continuation tokens returned by
         the service.
 
         .. versionadded:: 12.4.0
             This operation was introduced in API version '2020-06-12'.
 
-        :param str name_starts_with:
+        :keyword str path_prefix:
             Filters the results to return only paths under the specified path.
         :keyword int max_results:
             An optional value that specifies the maximum number of items to return per page.
@@ -906,6 +904,7 @@ class FileSystemClient(StorageAccountHostsMixin):
         :rtype:
             ~azure.core.paging.ItemPaged[~azure.storage.filedatalake.DeletedPathProperties]
         """
+        path_prefix = kwargs.pop('path_prefix', None)
         results_per_page = kwargs.pop('max_results', None)
         timeout = kwargs.pop('timeout', None)
         command = functools.partial(
@@ -914,5 +913,5 @@ class FileSystemClient(StorageAccountHostsMixin):
             timeout=timeout,
             **kwargs)
         return ItemPaged(
-            command, prefix=name_starts_with, page_iterator_class=DeletedPathPropertiesPaged,
+            command, prefix=path_prefix, page_iterator_class=DeletedPathPropertiesPaged,
             results_per_page=results_per_page, **kwargs)

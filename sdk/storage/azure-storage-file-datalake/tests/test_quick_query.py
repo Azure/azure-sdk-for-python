@@ -6,6 +6,7 @@
 # license information.
 # --------------------------------------------------------------------------
 import base64
+import os
 
 import pytest
 
@@ -22,6 +23,7 @@ from testcase import (
 )
 # ------------------------------------------------------------------------------
 from azure.storage.filedatalake import DataLakeServiceClient
+from azure.storage.filedatalake import QuickQueryDialect
 
 CSV_DATA = b'Service,Package,Version,RepoPath,MissingDocs\r\nApp Configuration,' \
            b'azure-data-appconfiguration,1,appconfiguration,FALSE\r\nEvent Hubs' \
@@ -844,5 +846,46 @@ class StorageQuickQueryTest(StorageTestCase):
                 "SELECT _2 from BlobStorage WHERE _1 > 250",
                 on_error=on_error,
                 file_format=input_format)
+
+    @record
+    def test_quick_query_input_in_parquet_format(self):
+        # Arrange
+        file_name = self._get_file_reference()
+        file_client = self.dsc.get_file_client(self.filesystem_name, file_name)
+        errors = []
+
+        def on_error(error):
+            errors.append(error)
+        expression = "select * from blobstorage where id < 1;"
+        expected_data = b"0,mdifjt55.ea3,mdifjt55.ea3\n"
+
+        parquet_path = "parquet.parquet"
+        with open(parquet_path, "rb") as parquet_data:
+            file_client.upload_data(parquet_data, overwrite=True)
+
+        reader = file_client.query_file(expression, file_format=QuickQueryDialect.ParquetDialect, on_error=on_error)
+        real_data = reader.readall()
+
+        self.assertEqual(real_data, expected_data)
+
+    @record
+    def test_quick_query_output_in_parquet_format(self):
+        # Arrange
+        file_name = self._get_file_reference()
+        file_client = self.dsc.get_file_client(self.filesystem_name, file_name)
+        errors = []
+
+        def on_error(error):
+            errors.append(error)
+
+        expression = "SELECT * from BlobStorage"
+        parquet_path = "parquet.parquet"
+        with open(parquet_path, "rb") as parquet_data:
+            file_client.upload_data(parquet_data, overwrite=True)
+
+        with self.assertRaises(ValueError):
+            file_client.query_file(
+                expression, file_format=QuickQueryDialect.ParquetDialect,
+                output_format=QuickQueryDialect.ParquetDialect, on_error=on_error)
 
 # ------------------------------------------------------------------------------

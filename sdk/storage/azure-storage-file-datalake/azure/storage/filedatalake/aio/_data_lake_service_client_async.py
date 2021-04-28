@@ -19,8 +19,7 @@ from .._shared.policies_async import ExponentialRetry
 from ._data_lake_directory_client_async import DataLakeDirectoryClient
 from ._data_lake_file_client_async import DataLakeFileClient
 from ._models import FileSystemPropertiesPaged
-from .._models import UserDelegationKey, LocationMode, AnalyticsLogging, Metrics, CorsRule, \
-    RetentionPolicy, StaticWebsite
+from .._models import UserDelegationKey, LocationMode
 
 
 class DataLakeServiceClient(AsyncStorageAccountHostsMixin, DataLakeServiceClientBase):
@@ -444,17 +443,8 @@ class DataLakeServiceClient(AsyncStorageAccountHostsMixin, DataLakeServiceClient
             key_encryption_key=self.key_encryption_key,
             key_resolver_function=self.key_resolver_function)
 
-    async def set_service_properties(
-            self, analytics_logging=None,  # type: Optional[AnalyticsLogging]
-            hour_metrics=None,  # type: Optional[Metrics]
-            minute_metrics=None,  # type: Optional[Metrics]
-            cors=None,  # type: Optional[List[CorsRule]]
-            target_version=None,  # type: Optional[str]
-            delete_retention_policy=None,  # type: Optional[RetentionPolicy]
-            static_website=None,  # type: Optional[StaticWebsite]
-            **kwargs
-    ):
-        # type: (...) -> None
+    async def set_service_properties(self, **kwargs):
+        # type: (Any) -> None
         """Sets the properties of a storage account's Datalake service, including
         Azure Storage Analytics.
 
@@ -464,30 +454,30 @@ class DataLakeServiceClient(AsyncStorageAccountHostsMixin, DataLakeServiceClient
         .. versionadded:: 12.4.0
             This operation was introduced in API version '2020-06-12'.
 
-        :param analytics_logging:
+        :keyword analytics_logging:
             Groups the Azure Analytics Logging settings.
         :type analytics_logging: ~azure.storage.filedatalake.AnalyticsLogging
-        :param hour_metrics:
+        :keyword hour_metrics:
             The hour metrics settings provide a summary of request
             statistics grouped by API in hourly aggregates.
         :type hour_metrics: ~azure.storage.filedatalake.Metrics
-        :param minute_metrics:
+        :keyword minute_metrics:
             The minute metrics settings provide request statistics
             for each minute.
         :type minute_metrics: ~azure.storage.filedatalake.Metrics
-        :param cors:
+        :keyword cors:
             You can include up to five CorsRule elements in the
             list. If an empty list is specified, all CORS rules will be deleted,
             and CORS will be disabled for the service.
         :type cors: list[~azure.storage.filedatalake.CorsRule]
-        :param str target_version:
+        :keyword str target_version:
             Indicates the default version to use for requests if an incoming
             request's version is not specified.
-        :param delete_retention_policy:
+        :keyword delete_retention_policy:
             The delete retention policy specifies whether to retain deleted files/directories.
             It also specifies the number of days and versions of file/directory to keep.
         :type delete_retention_policy: ~azure.storage.filedatalake.RetentionPolicy
-        :param static_website:
+        :keyword static_website:
             Specifies whether the static website feature is enabled,
             and if yes, indicates the index document and 404 error document to use.
         :type static_website: ~azure.storage.filedatalake.StaticWebsite
@@ -495,14 +485,7 @@ class DataLakeServiceClient(AsyncStorageAccountHostsMixin, DataLakeServiceClient
             The timeout parameter is expressed in seconds.
         :rtype: None
         """
-        return await self._blob_service_client.set_service_properties(analytics_logging=analytics_logging,
-                                                                hour_metrics=hour_metrics,
-                                                                minute_metrics=minute_metrics,
-                                                                cors=cors,
-                                                                target_version=target_version,
-                                                                delete_retention_policy=delete_retention_policy,
-                                                                static_website=static_website,
-                                                                **kwargs)  # pylint: disable=protected-access
+        return await self._blob_service_client.set_service_properties(**kwargs)  # pylint: disable=protected-access
 
     async def get_service_properties(self, **kwargs):
         # type: (Any) -> Dict[str, Any]
