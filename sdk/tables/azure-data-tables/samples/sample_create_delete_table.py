@@ -47,7 +47,7 @@ class CreateDeleteTable(object):
         with TableServiceClient.from_connection_string(self.connection_string) as table_service_client:
             try:
                 table_item = table_service_client.create_table(table_name="myTable")
-                print("Created table {}!".format(table_item.table_name))
+                print("Created table {}!".format(table_item.name))
             except ResourceExistsError:
                 print("Table already exists")
         # [END create_table_from_tc]
@@ -58,7 +58,7 @@ class CreateDeleteTable(object):
         # [START create_table_if_not_exists]
         with TableServiceClient.from_connection_string(self.connection_string) as table_service_client:
             table_item = TableServiceClient.create_table_if_not_exists(table_name="myTable")
-            print("Table name: {}".format(table_item.table_name))
+            print("Table name: {}".format(table_item.name))
         # [END create_table_if_not_exists]
 
     def delete_table(self):
@@ -75,13 +75,13 @@ class CreateDeleteTable(object):
         # [END delete_table_from_tc]
 
     def create_from_table_client(self):
-        from azure.data.table import TableClient
+        from azure.data.tables import TableClient
 
         # [START create_table_from_table_client]
         with TableClient.from_connection_string(conn_str=self.connection_string, table_name="myTable") as table_client:
             try:
                 table_item = table_client.create_table()
-                print("Created table {}!".format(table_item.table_name))
+                print("Created table {}!".format(table_item.name))
             except ResourceExistsError:
                 print("Table already exists")
         # [END create_table_from_table_client]

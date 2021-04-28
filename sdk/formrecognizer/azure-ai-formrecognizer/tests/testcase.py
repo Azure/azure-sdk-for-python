@@ -152,6 +152,8 @@ class FormRecognizerTest(AzureTestCase):
         self.multipage_url_pdf = self.get_blob_url(testing_container_sas_url, "testingdata", "multipage_invoice1.pdf")
         self.multipage_table_url_pdf = self.get_blob_url(testing_container_sas_url, "testingdata", "multipagelayout.pdf")
         self.selection_mark_url_pdf = self.get_blob_url(testing_container_sas_url, "testingdata", "selection_mark_form.pdf")
+        self.label_table_variable_row_url_pdf = self.get_blob_url(testing_container_sas_url, "testingdata", "label_table_variable_rows1.pdf")
+        self.label_table_fixed_row_url_pdf = self.get_blob_url(testing_container_sas_url, "testingdata", "label_table_fixed_rows1.pdf")
 
         # file stream samples
         self.receipt_jpg = os.path.abspath(os.path.join(os.path.abspath(__file__), "..", "./sample_forms/receipt/contoso-allinone.jpg"))
@@ -353,6 +355,8 @@ class FormRecognizerTest(AzureTestCase):
             return
 
         for label, expected in generated_fields.items():
+            if expected is None:  # None value occurs with labeled tables and empty cells
+                continue
             field_type = expected.type
             self.assertEqual(adjust_value_type(field_type), form_fields[label].value_type)
             self.assertEqual(label, form_fields[label].name)

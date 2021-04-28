@@ -7,8 +7,8 @@
 # --------------------------------------------------------------------------
 from datetime import datetime
 from dateutil.tz import tzutc
+import os
 import sys
-from time import sleep
 import uuid
 
 import pytest
@@ -19,8 +19,6 @@ from azure.core import MatchConditions
 from azure.core.exceptions import (
     ResourceExistsError,
     ResourceNotFoundError,
-    HttpResponseError,
-    ClientAuthenticationError
 )
 from azure.data.tables import (
     EdmType,
@@ -30,7 +28,9 @@ from azure.data.tables import (
     BatchErrorException,
     TableServiceClient,
     TableEntity,
-    UpdateMode
+    UpdateMode,
+
+    RequestTooLargeError
 )
 
 from _shared.testcase import TableTestCase, SLEEP_DELAY
@@ -66,7 +66,7 @@ class StorageTableClientTest(AzureTestCase, TableTestCase):
                     self.ts.delete_table(table_name)
                 except:
                     pass
-            sleep(SLEEP_DELAY)
+            self.sleep(SLEEP_DELAY)
 
     #--Helpers-----------------------------------------------------------------
 
@@ -604,6 +604,31 @@ class StorageTableClientTest(AzureTestCase, TableTestCase):
 
             with pytest.raises(ResourceNotFoundError):
                 resp = self.table.send_batch(batch)
+
+        finally:
+            self._tear_down()
+
+    @pytest.mark.skipif(sys.version_info < (3, 0), reason="requires Python3")
+    @pytest.mark.live_test_only  # Request bodies are very large
+    @CosmosPreparer()
+    def test_batch_request_too_large(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
+        # Arrange
+        self._set_up(tables_cosmos_account_name, tables_primary_cosmos_account_key)
+        try:
+
+            batch = self.table.create_batch()
+            entity = {
+                'PartitionKey': 'pk001',
+                'Foo': os.urandom(1024*64),
+                'Bar': os.urandom(1024*64),
+                'Baz': os.urandom(1024*64)
+            }
+            for i in range(20):
+                entity['RowKey'] = str(i)
+                batch.create_entity(entity)
+
+            with pytest.raises(RequestTooLargeError):
+                self.table.send_batch(batch)
 
         finally:
             self._tear_down()

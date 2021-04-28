@@ -1,5 +1,65 @@
 # Guide for migrating to azure-identity from azure-common
 
+The newest Azure SDK libraries (the "client" and "management" libraries
+[listed here](https://azure.github.io/azure-sdk/releases/latest/python.html))
+use credentials from `azure-identity` to authenticate requests. Older versions
+of these libraries typically used credentials from `azure-common`. Credential
+types from these two libraries have different APIs, causing clients to raise
+`AttributeError` when given a credential from the wrong library. For example, a
+client expecting an `azure-identity` credential will raise an error like
+`'ServicePrincipalCredentials' object has no attribute 'get_token'` when given a
+credential from `azure-common`. A client expecting an `azure-common` credential
+will raise an error like
+`'ClientSecretCredential' object has no attribute 'signed_session'` when given
+an `azure-identity` credential.
+
+This document shows common authentication code using `azure-common`, and its
+equivalent using `azure-identity`.
+
+## Service principal authentication
+
+`azure-common` uses `ServicePrincipalCredentials` to authenticate a service principal:
+
+```py
+from azure.common.credentials import ServicePrincipalCredentials
+
+credential = ServicePrincipalCredentials(client_id, client_secret, tenant=tenant_id)
+```
+
+`azure-identity` uses [`ClientSecretCredential`][client_secret_cred] :
+
+```py
+from azure.identity import ClientSecretCredential
+
+credential = ClientSecretCredential(tenant_id, client_id, client_secret)
+```
+
+## Authenticating through the Azure CLI
+
+`azure-common` provides the
+[`get_client_from_cli_profile`][get_client_from_cli_profile] function to
+integrate with the Azure CLI for authentication. This code works with older
+versions of `azure-mgmt-resource` such as 10.0.0:
+
+```py
+from azure.common.client_factory import get_client_from_cli_profile
+from azure.mgmt.resource import SubscriptionClient
+
+subscription_client = get_client_from_cli_profile(SubscriptionClient)
+```
+
+`azure-identity` integrates with the Azure CLI through its
+[`AzureCliCredential`][cli_cred]. This code works with newer versions of
+`azure-mgmt-resource`, starting with 15.0.0:
+
+```py
+from azure.identity import AzureCliCredential
+from azure.mgmt.resource import SubscriptionClient
+
+credential = AzureCliCredential()
+subscription_client = SubscriptionClient(credential)
+```
+
 ## JSON- and file-based authentication
 
 To encourage best security practices, `azure-identity` does not support JSON- and file-based authentication in the same
@@ -34,7 +94,7 @@ from azure.mgmt.keyvault import KeyVaultManagementClient
 
 with open("credentials.json") as json_file:
     json_dict = json.load(json_file)
-    
+
 credential = ClientSecretCredential(
     tenant_id=json_dict["tenantId"],
     client_id=json_dict["clientId"],
@@ -55,7 +115,11 @@ control -- for example, by adding the credential file name to your project's `.g
 The global documentation for authenticating Python apps on Azure is available [here][authenticate_docs].
 
 [authenticate_docs]: https://docs.microsoft.com/azure/developer/python/azure-sdk-authenticate?tabs=cmd
+[cli_cred]: https://aka.ms/azsdk/python/identity/docs#azure.identity.AzureCliCredential
 [client_from_json]: https://docs.microsoft.com/python/api/azure-common/azure.common.client_factory?view=azure-python#get-client-from-json-dict-client-class--config-dict----kwargs-
 [client_from_auth_file]: https://docs.microsoft.com/python/api/azure-common/azure.common.client_factory?view=azure-python#get-client-from-auth-file-client-class--auth-path-none----kwargs-
-[client_secret_cred]: https://docs.microsoft.com/python/api/azure-identity/azure.identity.clientsecretcredential?view=azure-python
+[client_secret_cred]: https://aka.ms/azsdk/python/identity/docs#azure.identity.ClientSecretCredential
+[get_client_from_cli_profile]: https://docs.microsoft.com/python/api/azure-common/azure.common.client_factory?view=azure-python#get-client-from-cli-profile-client-class----kwargs-
 [json]: https://docs.python.org/3/library/json.html#json.load
+
+![Impressions](https://azure-sdk-impressions.azurewebsites.net/api/impressions/azure-sdk-for-python%2Fsdk%2Fidentity%2Fazure-identity%2Fmigration_guide.png)

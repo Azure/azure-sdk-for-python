@@ -34,5 +34,3 @@ extends:
     Artifacts:
     - name: azure-ai-translation-document
       safeName: azureaitranslationdocument
-    - name: azure-ai-translation-nspkg
-      safeName: azureaitranslationnspkg
