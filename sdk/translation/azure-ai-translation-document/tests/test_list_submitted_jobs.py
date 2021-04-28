@@ -138,6 +138,7 @@ class TestSubmittedJobs(DocumentTranslationTest):
     @DocumentTranslationClientPreparer()
     def test_list_submitted_jobs_filter_by_created_before(self, client):
         # create some jobs
+        self._create_and_submit_sample_translation_jobs(client, 3)
         end = datetime.now()
         self._create_and_submit_sample_translation_jobs(client, 3)
 
