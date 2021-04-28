@@ -181,8 +181,7 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
         )
 
     @distributed_trace
-    def get_artifact(self, repository_name, tag_or_digest, **kwargs):
-        # type: (str, str, Dict[str, Any]) -> RegistryArtifact
+    def get_artifact(self, repository_name: str, tag_or_digest: str, **kwargs: Dict[str, Any]) -> RegistryArtifact:
         """Get a Registry Artifact object
 
         :param str repository_name: Name of the repository

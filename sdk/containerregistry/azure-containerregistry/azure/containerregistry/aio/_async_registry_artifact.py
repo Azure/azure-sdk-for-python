@@ -62,8 +62,7 @@ class RegistryArtifact(ContainerRegistryBaseClient):
         self._tag = None
         super(RegistryArtifact, self).__init__(endpoint=self._endpoint, credential=credential, **kwargs)
 
-    async def _get_digest_from_tag(self):
-        # type: () -> str
+    async def _get_digest_from_tag(self) -> str:
         tag_props = await self.get_tag_properties(self.tag_or_digest)
         return tag_props.digest
 
