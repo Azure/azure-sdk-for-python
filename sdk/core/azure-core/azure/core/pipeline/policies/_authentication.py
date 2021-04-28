@@ -3,14 +3,10 @@
 # Licensed under the MIT License. See LICENSE.txt in the project root for
 # license information.
 # -------------------------------------------------------------------------
-import base64
-from collections import namedtuple
-import re
 import time
 import six
 
 from . import HTTPPolicy, SansIOHTTPPolicy
-from .._tools import await_result as _await_result
 from ...exceptions import ServiceRequestError
 
 try:
@@ -86,15 +82,27 @@ class BearerTokenCredentialPolicy(_BearerTokenCredentialPolicyBase, SansIOHTTPPo
 
     def on_request(self, request):
         # type: (PipelineRequest) -> None
-        """Adds a bearer token Authorization header to request and sends request to next policy.
+        """Called before the policy sends a request.
 
-        :param request: The pipeline request object
-        :type request: ~azure.core.pipeline.PipelineRequest
+        The base implementation authorizes the request with a bearer token.
+
+        :param ~azure.core.pipeline.PipelineRequest request: the request
         """
-        self._enforce_https(request)
-
         if self._token is None or self._need_new_token:
             self._token = self._credential.get_token(*self._scopes)
+        self._update_headers(request.http_request.headers, self._token.token)
+
+    def authorize_request(self, request, *scopes, **kwargs):
+        # type: (PipelineRequest, *str, **Any) -> None
+        """Acquire a token from the credential and authorize the request with it.
+
+        Keyword arguments are passed to the credential's get_token method. The token will be cached and used to
+        authorize future requests.
+
+        :param ~azure.core.pipeline.PipelineRequest request: the request
+        :param str scopes: required scopes of authentication
+        """
+        self._token = self._credential.get_token(*scopes, **kwargs)
         self._update_headers(request.http_request.headers, self._token.token)
 
     def send(self, request):
@@ -104,69 +112,38 @@ class BearerTokenCredentialPolicy(_BearerTokenCredentialPolicyBase, SansIOHTTPPo
         :param request: The pipeline request object
         :type request: ~azure.core.pipeline.PipelineRequest
         """
-
-        _await_result(self.on_request, request)
+        self._enforce_https(request)
+        self.on_request(request)
         try:
             response = self.next.send(request)
-            _await_result(self.on_response, request, response)
+            self.on_response(request, response)
         except Exception:  # pylint:disable=broad-except
-            if not _await_result(self.on_exception, request):
+            handled = self.on_exception(request)
+            if not handled:
                 raise
         else:
             if response.http_response.status_code == 401:
                 self._token = None  # any cached token is invalid
-                challenge = response.http_response.headers.get("WWW-Authenticate")
-                if challenge and self.on_challenge(request, challenge):
-                    response = self.next.send(request)
-                    _await_result(self.on_response, request, response)
+                if "WWW-Authenticate" in response.http_response.headers:
+                    request_authorized = self.on_challenge(request, response)
+                    if request_authorized:
+                        response = self.next.send(request)
+                        self.on_response(request, response)
 
         return response
 
-    def on_challenge(self, request, challenge):
-        # type: (PipelineRequest, str) -> bool
-        """Authorize request according to an authentication challenge.
+    def on_challenge(self, request, response):
+        # type: (PipelineRequest, PipelineResponse) -> bool
+        """Authorize request according to an authentication challenge
 
-        Base implementation handles CAE claims directives. Clients expecting other challenges must override.
+        This method is called when the resource provider responds 401 with a WWW-Authenticate header.
 
         :param ~azure.core.pipeline.PipelineRequest request: the request which elicited an authentication challenge
-        :param str challenge: the response's WWW-Authenticate header, unparsed. It may contain multiple challenges.
-        :return: a bool indicating whether the method satisfied the challenge
+        :param ~azure.core.pipeline.PipelineResponse response: the resource provider's response
+        :returns: a bool indicating whether the policy should send the request
         """
-
-        parsed_challenges = _parse_challenges(challenge)
-        if len(parsed_challenges) != 1 or "claims" not in parsed_challenges[0].parameters:
-            # no or multiple challenges, or no claims directive
-            return False
-
-        encoded_claims = parsed_challenges[0].parameters["claims"]
-        padding_needed = 4 - len(encoded_claims) % 4
-        try:
-            claims = base64.urlsafe_b64decode(encoded_claims + "=" * padding_needed).decode()
-        except Exception:  # pylint:disable=broad-except
-            return False
-
-        self._token = self._credential.get_token(*self._scopes, claims=claims)
-        self._update_headers(request.http_request.headers, self._token.token)
-        return True
-
-
-# these expressions are for challenges with comma delimited parameters having quoted values, e.g.
-# Bearer authorization="https://login.microsoftonline.com/", resource="https://vault.azure.net"
-_AUTHENTICATION_CHALLENGE = re.compile(r'(?:(\w+) ((?:\w+=".*?"(?:, )?)+)(?:, )?)')
-_CHALLENGE_PARAMETER = re.compile(r'(?:(\w+)="([^"]*)")+')
-
-_AuthenticationChallenge = namedtuple("_AuthenticationChallenge", "scheme,parameters")
-
-
-def _parse_challenges(header):
-    # type: (str) -> List[_AuthenticationChallenge]
-    result = []
-    challenges = re.findall(_AUTHENTICATION_CHALLENGE, header)
-    for scheme, parameter_list in challenges:
-        parameters = re.findall(_CHALLENGE_PARAMETER, parameter_list)
-        challenge = _AuthenticationChallenge(scheme, dict(parameters))
-        result.append(challenge)
-    return result
+        # pylint:disable=unused-argument,no-self-use
+        return False
 
 
 class AzureKeyCredentialPolicy(SansIOHTTPPolicy):
