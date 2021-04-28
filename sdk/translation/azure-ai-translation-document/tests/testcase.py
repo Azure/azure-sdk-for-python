@@ -204,17 +204,12 @@ class DocumentTranslationTest(AzureTestCase):
     def _create_and_submit_sample_translation_jobs(self, client, jobs_count, **kwargs):
         wait_for_job = kwargs.pop('wait', True)
         language_code = kwargs.pop('language_code', "es")
+        docs_per_job = kwargs.pop('docs_per_job', 2)
         result_job_ids = []
         for i in range(jobs_count):
             # prepare containers and test data
-            '''
-                WARNING!!
-                TOTAL_DOC_COUNT_IN_JOB = 1
-                if you plan to create more docs in the job,
-                please update this variable TOTAL_DOC_COUNT_IN_JOB in respective test
-            '''
-            blob_data = b'This is some text'  # TOTAL_DOC_COUNT_IN_JOB = 1
-            source_container_sas_url = self.create_source_container(data=Document(data=blob_data))
+            blob_data = Document.create_dummy_docs(docs_per_job)
+            source_container_sas_url = self.create_source_container(data=blob_data)
             target_container_sas_url = self.create_target_container()
 
             # prepare translation inputs

@@ -4,7 +4,7 @@
 # Licensed under the MIT License.
 # ------------------------------------
 
-from datetime import datetime
+import datetime
 from typing import Union
 import six
 from azure.core.pipeline.policies import HttpLoggingPolicy

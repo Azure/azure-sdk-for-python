@@ -10,11 +10,14 @@ from asynctestcase import AsyncDocumentTranslationTest
 from preparer import DocumentTranslationPreparer, DocumentTranslationClientPreparer as _DocumentTranslationClientPreparer
 from azure.ai.translation.document.aio import DocumentTranslationClient
 DocumentTranslationClientPreparer = functools.partial(_DocumentTranslationClientPreparer, DocumentTranslationClient)
+import pytest
 
 TOTAL_DOC_COUNT_IN_JOB = 1
 
 class TestSubmittedJobs(AsyncDocumentTranslationTest):
 
+
+    @pytest.mark.skip(reason="no way of currently testing this")
     @DocumentTranslationPreparer()
     @DocumentTranslationClientPreparer()
     async def test_list_submitted_jobs(self, client):
@@ -36,6 +39,7 @@ class TestSubmittedJobs(AsyncDocumentTranslationTest):
                 self._validate_translation_job(job)
 
 
+    @pytest.mark.skip(reason="no way of currently testing this")
     @DocumentTranslationPreparer()
     @DocumentTranslationClientPreparer()
     async def test_list_submitted_jobs_with_pagination(self, client):
@@ -64,7 +68,9 @@ class TestSubmittedJobs(AsyncDocumentTranslationTest):
             self.assertEqual(len(page_jobs), results_per_page)
 
 
+    @pytest.mark.skip(reason="no way of currently testing this")
     @DocumentTranslationPreparer()
+
     @DocumentTranslationClientPreparer()
     async def test_list_submitted_jobs_with_skip(self, client):
         '''
@@ -94,6 +100,7 @@ class TestSubmittedJobs(AsyncDocumentTranslationTest):
                 self._validate_translation_job(job)
 
 
+    @pytest.mark.skip(reason="no way of currently testing this")
     @DocumentTranslationPreparer()
     @DocumentTranslationClientPreparer()
     async def test_list_submitted_jobs_filter_by_status(self, client):
@@ -109,6 +116,7 @@ class TestSubmittedJobs(AsyncDocumentTranslationTest):
             self.assertIn(job.status, statuses)
 
 
+    @pytest.mark.skip(reason="no way of currently testing this")
     @DocumentTranslationPreparer()
     @DocumentTranslationClientPreparer()
     async def test_list_submitted_jobs_filter_by_ids(self, client):
@@ -123,6 +131,7 @@ class TestSubmittedJobs(AsyncDocumentTranslationTest):
             self.assertIn(job.id, job_ids)
 
 
+    @pytest.mark.skip(reason="no way of currently testing this")
     @DocumentTranslationPreparer()
     @DocumentTranslationClientPreparer()
     async def test_list_submitted_jobs_filter_by_created_after(self, client):
@@ -135,9 +144,10 @@ class TestSubmittedJobs(AsyncDocumentTranslationTest):
 
         # check statuses
         async for job in submitted_jobs:
-            self.assert(job.created_on > start)
+            assert(job.created_on > start)
 
 
+    @pytest.mark.skip(reason="no way of currently testing this")
     @DocumentTranslationPreparer()
     @DocumentTranslationClientPreparer()
     async def test_list_submitted_jobs_filter_by_created_before(self, client):
@@ -151,9 +161,10 @@ class TestSubmittedJobs(AsyncDocumentTranslationTest):
 
         # check statuses
         async for job in submitted_jobs:
-            self.assert(job.created_on < end)
+            assert(job.created_on < end)
 
 
+    @pytest.mark.skip(reason="no way of currently testing this")
     @DocumentTranslationPreparer()
     @DocumentTranslationClientPreparer()
     async def test_list_submitted_jobs_order_by_creation_time_asc(self, client):
@@ -166,10 +177,11 @@ class TestSubmittedJobs(AsyncDocumentTranslationTest):
         # check statuses
         curr = date.min
         async for job in submitted_jobs:
-            self.assert(job.created_on > curr)
+            assert(job.created_on > curr)
             curr = job.created_on
 
 
+    @pytest.mark.skip(reason="no way of currently testing this")
     @DocumentTranslationPreparer()
     @DocumentTranslationClientPreparer()
     async def test_list_submitted_jobs_order_by_creation_time_desc(self, client):
@@ -182,10 +194,11 @@ class TestSubmittedJobs(AsyncDocumentTranslationTest):
         # check statuses
         curr = date.max
         async for job in submitted_jobs:
-            self.assert(job.created_on < curr)
+            assert(job.created_on < curr)
             curr = job.created_on
 
 
+    @pytest.mark.skip(reason="no way of currently testing this")
     @DocumentTranslationPreparer()
     @DocumentTranslationClientPreparer()
     async def test_list_submitted_jobs_mixed_filters(self, client):
@@ -216,16 +229,17 @@ class TestSubmittedJobs(AsyncDocumentTranslationTest):
             async for job in page:
                 page_jobs.append(job)
                 # assert ordering
-                self.assert(job.created_on < curr_time)
+                assert(job.created_on < curr_time)
                 curr_time = job.created_on
                 # assert filters
-                self.assert(job.created_on < end)
-                self.assert(job.created_on > start)
-                self.assertIn(job.status, statuses)
+                assert(job.created_on < end)
+                assert(job.created_on > start)
+                assertIn(job.status, statuses)
 
             self.assertEqual(len(page_jobs), results_per_page)
 
 
+    @pytest.mark.skip(reason="no way of currently testing this")
     @DocumentTranslationPreparer()
     @DocumentTranslationClientPreparer()
     async def test_list_submitted_jobs_mixed_filters_more(self, client):
@@ -253,7 +267,7 @@ class TestSubmittedJobs(AsyncDocumentTranslationTest):
             async for job in page:
                 page_jobs.append(job)
                 # assert ordering
-                self.assert(job.created_on < curr_time)
+                assert(job.created_on < curr_time)
                 curr_time = job.created_on
                 # assert filters
                 self.assertIn(job.status, statuses)

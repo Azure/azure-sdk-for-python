@@ -30,11 +30,6 @@ class AsyncDocumentTranslationTest(DocumentTranslationTest):
         for i in range(jobs_count):
             # prepare containers and test data
             '''
-                # WARNING!!
-                TOTAL_DOC_COUNT_IN_JOB = 1
-                if you plan to create more docs in the job,
-                please update this variable TOTAL_DOC_COUNT_IN_JOB in respective test
-
                 # note
                 since we're only testing the client library
                 we can use sync container calls in here
