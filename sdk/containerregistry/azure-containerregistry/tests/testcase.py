@@ -6,6 +6,7 @@
 import copy
 from datetime import datetime
 import json
+import logging
 import os
 import pytest
 import re
@@ -36,6 +37,7 @@ from devtools_testutils import AzureTestCase
 
 REDACTED = "REDACTED"
 
+
 class OAuthRequestResponsesFilterACR(RecordingProcessor):
     """Remove oauth authentication requests and responses from recording."""
 
@@ -45,7 +47,8 @@ class OAuthRequestResponsesFilterACR(RecordingProcessor):
         # POST https://login.microsoftonline.com/72f988bf-86f1-41af-91ab-2d7cd011db47/oauth2/v2.0/token
         # But we want to leave Azure Container Registry challenge auth requests alone
         import re
-        if not re.search('/oauth2(?:/v2.0)?/token', request.uri) or "azurecr.io" in request.uri:
+
+        if not re.search("/oauth2(?:/v2.0)?/token", request.uri) or "azurecr.io" in request.uri:
             return request
         return None
 
@@ -219,10 +222,18 @@ class ContainerRegistryTestClass(AzureTestCase):
         return FakeTokenCredential()
 
     def create_registry_client(self, endpoint, **kwargs):
-        return ContainerRegistryClient(endpoint=endpoint, credential=self.get_credential(), **kwargs)
+        c = ContainerRegistryClient(endpoint=endpoint, credential=self.get_credential(), **kwargs)
+        logger = logging.getLogger("azure")
+        logger.setLevel(logging.WARNING)
+        logger.propagate = True
+        return c
 
     def create_container_repository(self, endpoint, name, **kwargs):
-        return ContainerRepository(endpoint=endpoint, repository=name, credential=self.get_credential(), **kwargs)
+        c = ContainerRepository(endpoint=endpoint, repository=name, credential=self.get_credential(), **kwargs)
+        logger = logging.getLogger("azure")
+        logger.setLevel(logging.WARNING)
+        logger.propagate = True
+        return c
 
     def assert_content_permission(self, content_perm, content_perm2):
         assert isinstance(content_perm, ContentPermissions)
