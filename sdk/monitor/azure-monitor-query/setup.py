@@ -61,7 +61,7 @@ setup(
     author_email='azpysdkhelp@microsoft.com',
     url='https://github.com/Azure/azure-sdk-for-python',
     classifiers=[
-        "Development Status :: 5 - Production/Stable",
+        "Development Status :: 4 - Beta",
         'Programming Language :: Python',
         'Programming Language :: Python :: 2',
         'Programming Language :: Python :: 2.7',
@@ -78,6 +78,7 @@ setup(
         'samples',
         # Exclude packages that will be covered by PEP420 or nspkg
         'azure',
+        'azure.monitor',
     ]),
     install_requires=[
         'msrest>=0.6.19',
