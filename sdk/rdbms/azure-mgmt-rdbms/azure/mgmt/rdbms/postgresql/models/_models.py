@@ -9,6 +9,67 @@
 import msrest.serialization
 
 
+class CapabilitiesListResult(msrest.serialization.Model):
+    """location capability.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar value: A list of supported capabilities.
+    :vartype value: list[~azure.mgmt.rdbms.postgresql.models.CapabilityProperties]
+    :ivar next_link: Link to retrieve next page of results.
+    :vartype next_link: str
+    """
+
+    _validation = {
+        'value': {'readonly': True},
+        'next_link': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'value': {'key': 'value', 'type': '[CapabilityProperties]'},
+        'next_link': {'key': 'nextLink', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(CapabilitiesListResult, self).__init__(**kwargs)
+        self.value = None
+        self.next_link = None
+
+
+class CapabilityProperties(msrest.serialization.Model):
+    """Location capabilities.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar zone: zone name.
+    :vartype zone: str
+    :ivar supported_flexible_server_editions:
+    :vartype supported_flexible_server_editions:
+     list[~azure.mgmt.rdbms.postgresql.models.ServerEditionCapability]
+    """
+
+    _validation = {
+        'zone': {'readonly': True},
+        'supported_flexible_server_editions': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'zone': {'key': 'zone', 'type': 'str'},
+        'supported_flexible_server_editions': {'key': 'supportedFlexibleServerEditions', 'type': '[ServerEditionCapability]'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(CapabilityProperties, self).__init__(**kwargs)
+        self.zone = None
+        self.supported_flexible_server_editions = None
+
+
 class Resource(msrest.serialization.Model):
     """Common fields that are returned in the response for all Azure Resource Manager resources.
 
@@ -46,7 +107,41 @@ class Resource(msrest.serialization.Model):
         self.type = None
 
 
-class Configuration(Resource):
+class ProxyResource(Resource):
+    """The resource model definition for a Azure Resource Manager proxy resource. It will not have tags and a location.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar id: Fully qualified resource ID for the resource. Ex -
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
+    :vartype id: str
+    :ivar name: The name of the resource.
+    :vartype name: str
+    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
+     "Microsoft.Storage/storageAccounts".
+    :vartype type: str
+    """
+
+    _validation = {
+        'id': {'readonly': True},
+        'name': {'readonly': True},
+        'type': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'id': {'key': 'id', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(ProxyResource, self).__init__(**kwargs)
+
+
+class Configuration(ProxyResource):
     """Represents a Configuration.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -65,8 +160,9 @@ class Configuration(Resource):
     :vartype description: str
     :ivar default_value: Default value of the configuration.
     :vartype default_value: str
-    :ivar data_type: Data type of the configuration.
-    :vartype data_type: str
+    :ivar data_type: Data type of the configuration. Possible values include: "Boolean", "Numeric",
+     "Integer", "Enumeration".
+    :vartype data_type: str or ~azure.mgmt.rdbms.postgresql.models.ConfigurationDataType
     :ivar allowed_values: Allowed values of the configuration.
     :vartype allowed_values: str
     :param source: Source of the configuration.
@@ -113,10 +209,13 @@ class ConfigurationListResult(msrest.serialization.Model):
 
     :param value: The list of server configurations.
     :type value: list[~azure.mgmt.rdbms.postgresql.models.Configuration]
+    :param next_link: The link used to get the next page of operations.
+    :type next_link: str
     """
 
     _attribute_map = {
         'value': {'key': 'value', 'type': '[Configuration]'},
+        'next_link': {'key': 'nextLink', 'type': 'str'},
     }
 
     def __init__(
@@ -125,9 +224,10 @@ class ConfigurationListResult(msrest.serialization.Model):
     ):
         super(ConfigurationListResult, self).__init__(**kwargs)
         self.value = kwargs.get('value', None)
+        self.next_link = kwargs.get('next_link', None)
 
 
-class Database(Resource):
+class Database(ProxyResource):
     """Represents a Database.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -174,10 +274,13 @@ class DatabaseListResult(msrest.serialization.Model):
 
     :param value: The list of databases housed in a server.
     :type value: list[~azure.mgmt.rdbms.postgresql.models.Database]
+    :param next_link: The link used to get the next page of databases.
+    :type next_link: str
     """
 
     _attribute_map = {
         'value': {'key': 'value', 'type': '[Database]'},
+        'next_link': {'key': 'nextLink', 'type': 'str'},
     }
 
     def __init__(
@@ -186,6 +289,37 @@ class DatabaseListResult(msrest.serialization.Model):
     ):
         super(DatabaseListResult, self).__init__(**kwargs)
         self.value = kwargs.get('value', None)
+        self.next_link = kwargs.get('next_link', None)
+
+
+class DelegatedSubnetUsage(msrest.serialization.Model):
+    """Delegated subnet usage data.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar subnet_name: name of the subnet.
+    :vartype subnet_name: str
+    :ivar usage: Number of used delegated subnets.
+    :vartype usage: long
+    """
+
+    _validation = {
+        'subnet_name': {'readonly': True},
+        'usage': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'subnet_name': {'key': 'subnetName', 'type': 'str'},
+        'usage': {'key': 'usage', 'type': 'long'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(DelegatedSubnetUsage, self).__init__(**kwargs)
+        self.subnet_name = None
+        self.usage = None
 
 
 class ErrorAdditionalInfo(msrest.serialization.Model):
@@ -263,7 +397,7 @@ class ErrorResponse(msrest.serialization.Model):
         self.additional_info = None
 
 
-class FirewallRule(Resource):
+class FirewallRule(ProxyResource):
     """Represents a server firewall rule.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -316,10 +450,13 @@ class FirewallRuleListResult(msrest.serialization.Model):
 
     :param value: The list of firewall rules in a server.
     :type value: list[~azure.mgmt.rdbms.postgresql.models.FirewallRule]
+    :param next_link: The link used to get the next page of operations.
+    :type next_link: str
     """
 
     _attribute_map = {
         'value': {'key': 'value', 'type': '[FirewallRule]'},
+        'next_link': {'key': 'nextLink', 'type': 'str'},
     }
 
     def __init__(
@@ -328,81 +465,74 @@ class FirewallRuleListResult(msrest.serialization.Model):
     ):
         super(FirewallRuleListResult, self).__init__(**kwargs)
         self.value = kwargs.get('value', None)
+        self.next_link = kwargs.get('next_link', None)
 
 
-class LogFile(Resource):
-    """Represents a log file.
+class Identity(msrest.serialization.Model):
+    """Identity for the resource.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    :ivar id: Fully qualified resource ID for the resource. Ex -
-     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
-    :vartype id: str
-    :ivar name: The name of the resource.
-    :vartype name: str
-    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
-     "Microsoft.Storage/storageAccounts".
+    :ivar principal_id: The principal ID of resource identity.
+    :vartype principal_id: str
+    :ivar tenant_id: The tenant ID of resource.
+    :vartype tenant_id: str
+    :ivar type: The identity type. Default value: "SystemAssigned".
     :vartype type: str
-    :param size_in_kb: Size of the log file.
-    :type size_in_kb: long
-    :ivar created_time: Creation timestamp of the log file.
-    :vartype created_time: ~datetime.datetime
-    :ivar last_modified_time: Last modified timestamp of the log file.
-    :vartype last_modified_time: ~datetime.datetime
-    :param type_properties_type: Type of the log file.
-    :type type_properties_type: str
-    :param url: The url to download the log file from.
-    :type url: str
     """
 
     _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
-        'created_time': {'readonly': True},
-        'last_modified_time': {'readonly': True},
+        'principal_id': {'readonly': True},
+        'tenant_id': {'readonly': True},
+        'type': {'constant': True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
+        'principal_id': {'key': 'principalId', 'type': 'str'},
+        'tenant_id': {'key': 'tenantId', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
-        'size_in_kb': {'key': 'properties.sizeInKB', 'type': 'long'},
-        'created_time': {'key': 'properties.createdTime', 'type': 'iso-8601'},
-        'last_modified_time': {'key': 'properties.lastModifiedTime', 'type': 'iso-8601'},
-        'type_properties_type': {'key': 'properties.type', 'type': 'str'},
-        'url': {'key': 'properties.url', 'type': 'str'},
     }
+
+    type = "SystemAssigned"
 
     def __init__(
         self,
         **kwargs
     ):
-        super(LogFile, self).__init__(**kwargs)
-        self.size_in_kb = kwargs.get('size_in_kb', None)
-        self.created_time = None
-        self.last_modified_time = None
-        self.type_properties_type = kwargs.get('type_properties_type', None)
-        self.url = kwargs.get('url', None)
+        super(Identity, self).__init__(**kwargs)
+        self.principal_id = None
+        self.tenant_id = None
 
 
-class LogFileListResult(msrest.serialization.Model):
-    """A list of log files.
+class MaintenanceWindow(msrest.serialization.Model):
+    """Maintenance window of a server.
 
-    :param value: The list of log files.
-    :type value: list[~azure.mgmt.rdbms.postgresql.models.LogFile]
+    :param custom_window: indicates whether custom window is enabled or disabled.
+    :type custom_window: str
+    :param start_hour: start hour for maintenance window.
+    :type start_hour: int
+    :param start_minute: start minute for maintenance window.
+    :type start_minute: int
+    :param day_of_week: day of week for maintenance window.
+    :type day_of_week: int
     """
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': '[LogFile]'},
+        'custom_window': {'key': 'customWindow', 'type': 'str'},
+        'start_hour': {'key': 'startHour', 'type': 'int'},
+        'start_minute': {'key': 'startMinute', 'type': 'int'},
+        'day_of_week': {'key': 'dayOfWeek', 'type': 'int'},
     }
 
     def __init__(
         self,
         **kwargs
     ):
-        super(LogFileListResult, self).__init__(**kwargs)
-        self.value = kwargs.get('value', None)
+        super(MaintenanceWindow, self).__init__(**kwargs)
+        self.custom_window = kwargs.get('custom_window', None)
+        self.start_hour = kwargs.get('start_hour', None)
+        self.start_minute = kwargs.get('start_minute', None)
+        self.day_of_week = kwargs.get('day_of_week', None)
 
 
 class NameAvailability(msrest.serialization.Model):
@@ -412,14 +542,17 @@ class NameAvailability(msrest.serialization.Model):
     :type message: str
     :param name_available: Indicates whether the resource name is available.
     :type name_available: bool
-    :param reason: Reason for name being unavailable.
-    :type reason: str
+    :param name: name of the PostgreSQL server.
+    :type name: str
+    :param type: type of the server.
+    :type type: str
     """
 
     _attribute_map = {
         'message': {'key': 'message', 'type': 'str'},
         'name_available': {'key': 'nameAvailable', 'type': 'bool'},
-        'reason': {'key': 'reason', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
     }
 
     def __init__(
@@ -429,7 +562,8 @@ class NameAvailability(msrest.serialization.Model):
         super(NameAvailability, self).__init__(**kwargs)
         self.message = kwargs.get('message', None)
         self.name_available = kwargs.get('name_available', None)
-        self.reason = kwargs.get('reason', None)
+        self.name = kwargs.get('name', None)
+        self.type = kwargs.get('type', None)
 
 
 class NameAvailabilityRequest(msrest.serialization.Model):
@@ -470,6 +604,8 @@ class Operation(msrest.serialization.Model):
     :vartype name: str
     :ivar display: The localized display information for this particular operation or action.
     :vartype display: ~azure.mgmt.rdbms.postgresql.models.OperationDisplay
+    :param is_data_action: Indicates whether the operation is a data action.
+    :type is_data_action: bool
     :ivar origin: The intended executor of the operation. Possible values include: "NotSpecified",
      "user", "system".
     :vartype origin: str or ~azure.mgmt.rdbms.postgresql.models.OperationOrigin
@@ -487,6 +623,7 @@ class Operation(msrest.serialization.Model):
     _attribute_map = {
         'name': {'key': 'name', 'type': 'str'},
         'display': {'key': 'display', 'type': 'OperationDisplay'},
+        'is_data_action': {'key': 'isDataAction', 'type': 'bool'},
         'origin': {'key': 'origin', 'type': 'str'},
         'properties': {'key': 'properties', 'type': '{object}'},
     }
@@ -498,6 +635,7 @@ class Operation(msrest.serialization.Model):
         super(Operation, self).__init__(**kwargs)
         self.name = None
         self.display = None
+        self.is_data_action = kwargs.get('is_data_action', None)
         self.origin = None
         self.properties = None
 
@@ -545,12 +683,16 @@ class OperationDisplay(msrest.serialization.Model):
 class OperationListResult(msrest.serialization.Model):
     """A list of resource provider operations.
 
-    :param value: The list of resource provider operations.
+    :param value: Collection of available operation details.
     :type value: list[~azure.mgmt.rdbms.postgresql.models.Operation]
+    :param next_link: URL client should use to fetch the next page (per server side paging).
+     It's null for now, added for future use.
+    :type next_link: str
     """
 
     _attribute_map = {
         'value': {'key': 'value', 'type': '[Operation]'},
+        'next_link': {'key': 'nextLink', 'type': 'str'},
     }
 
     def __init__(
@@ -559,492 +701,7 @@ class OperationListResult(msrest.serialization.Model):
     ):
         super(OperationListResult, self).__init__(**kwargs)
         self.value = kwargs.get('value', None)
-
-
-class PerformanceTierListResult(msrest.serialization.Model):
-    """A list of performance tiers.
-
-    :param value: The list of performance tiers.
-    :type value: list[~azure.mgmt.rdbms.postgresql.models.PerformanceTierProperties]
-    """
-
-    _attribute_map = {
-        'value': {'key': 'value', 'type': '[PerformanceTierProperties]'},
-    }
-
-    def __init__(
-        self,
-        **kwargs
-    ):
-        super(PerformanceTierListResult, self).__init__(**kwargs)
-        self.value = kwargs.get('value', None)
-
-
-class PerformanceTierProperties(msrest.serialization.Model):
-    """Performance tier properties.
-
-    :param id: ID of the performance tier.
-    :type id: str
-    :param max_backup_retention_days: Maximum Backup retention in days for the performance tier
-     edition.
-    :type max_backup_retention_days: int
-    :param min_backup_retention_days: Minimum Backup retention in days for the performance tier
-     edition.
-    :type min_backup_retention_days: int
-    :param max_storage_mb: Max storage allowed for a server.
-    :type max_storage_mb: int
-    :param min_large_storage_mb: Max storage allowed for a server.
-    :type min_large_storage_mb: int
-    :param max_large_storage_mb: Max storage allowed for a server.
-    :type max_large_storage_mb: int
-    :param min_storage_mb: Max storage allowed for a server.
-    :type min_storage_mb: int
-    :param service_level_objectives: Service level objectives associated with the performance tier.
-    :type service_level_objectives:
-     list[~azure.mgmt.rdbms.postgresql.models.PerformanceTierServiceLevelObjectives]
-    """
-
-    _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'max_backup_retention_days': {'key': 'maxBackupRetentionDays', 'type': 'int'},
-        'min_backup_retention_days': {'key': 'minBackupRetentionDays', 'type': 'int'},
-        'max_storage_mb': {'key': 'maxStorageMB', 'type': 'int'},
-        'min_large_storage_mb': {'key': 'minLargeStorageMB', 'type': 'int'},
-        'max_large_storage_mb': {'key': 'maxLargeStorageMB', 'type': 'int'},
-        'min_storage_mb': {'key': 'minStorageMB', 'type': 'int'},
-        'service_level_objectives': {'key': 'serviceLevelObjectives', 'type': '[PerformanceTierServiceLevelObjectives]'},
-    }
-
-    def __init__(
-        self,
-        **kwargs
-    ):
-        super(PerformanceTierProperties, self).__init__(**kwargs)
-        self.id = kwargs.get('id', None)
-        self.max_backup_retention_days = kwargs.get('max_backup_retention_days', None)
-        self.min_backup_retention_days = kwargs.get('min_backup_retention_days', None)
-        self.max_storage_mb = kwargs.get('max_storage_mb', None)
-        self.min_large_storage_mb = kwargs.get('min_large_storage_mb', None)
-        self.max_large_storage_mb = kwargs.get('max_large_storage_mb', None)
-        self.min_storage_mb = kwargs.get('min_storage_mb', None)
-        self.service_level_objectives = kwargs.get('service_level_objectives', None)
-
-
-class PerformanceTierServiceLevelObjectives(msrest.serialization.Model):
-    """Service level objectives for performance tier.
-
-    :param id: ID for the service level objective.
-    :type id: str
-    :param edition: Edition of the performance tier.
-    :type edition: str
-    :param v_core: vCore associated with the service level objective.
-    :type v_core: int
-    :param hardware_generation: Hardware generation associated with the service level objective.
-    :type hardware_generation: str
-    :param max_backup_retention_days: Maximum Backup retention in days for the performance tier
-     edition.
-    :type max_backup_retention_days: int
-    :param min_backup_retention_days: Minimum Backup retention in days for the performance tier
-     edition.
-    :type min_backup_retention_days: int
-    :param max_storage_mb: Max storage allowed for a server.
-    :type max_storage_mb: int
-    :param min_storage_mb: Max storage allowed for a server.
-    :type min_storage_mb: int
-    """
-
-    _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'edition': {'key': 'edition', 'type': 'str'},
-        'v_core': {'key': 'vCore', 'type': 'int'},
-        'hardware_generation': {'key': 'hardwareGeneration', 'type': 'str'},
-        'max_backup_retention_days': {'key': 'maxBackupRetentionDays', 'type': 'int'},
-        'min_backup_retention_days': {'key': 'minBackupRetentionDays', 'type': 'int'},
-        'max_storage_mb': {'key': 'maxStorageMB', 'type': 'int'},
-        'min_storage_mb': {'key': 'minStorageMB', 'type': 'int'},
-    }
-
-    def __init__(
-        self,
-        **kwargs
-    ):
-        super(PerformanceTierServiceLevelObjectives, self).__init__(**kwargs)
-        self.id = kwargs.get('id', None)
-        self.edition = kwargs.get('edition', None)
-        self.v_core = kwargs.get('v_core', None)
-        self.hardware_generation = kwargs.get('hardware_generation', None)
-        self.max_backup_retention_days = kwargs.get('max_backup_retention_days', None)
-        self.min_backup_retention_days = kwargs.get('min_backup_retention_days', None)
-        self.max_storage_mb = kwargs.get('max_storage_mb', None)
-        self.min_storage_mb = kwargs.get('min_storage_mb', None)
-
-
-class PrivateEndpointConnection(Resource):
-    """A private endpoint connection.
-
-    Variables are only populated by the server, and will be ignored when sending a request.
-
-    :ivar id: Fully qualified resource ID for the resource. Ex -
-     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
-    :vartype id: str
-    :ivar name: The name of the resource.
-    :vartype name: str
-    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
-     "Microsoft.Storage/storageAccounts".
-    :vartype type: str
-    :param private_endpoint: Private endpoint which the connection belongs to.
-    :type private_endpoint: ~azure.mgmt.rdbms.postgresql.models.PrivateEndpointProperty
-    :param private_link_service_connection_state: Connection state of the private endpoint
-     connection.
-    :type private_link_service_connection_state:
-     ~azure.mgmt.rdbms.postgresql.models.PrivateLinkServiceConnectionStateProperty
-    :ivar provisioning_state: State of the private endpoint connection.
-    :vartype provisioning_state: str
-    """
-
-    _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
-        'provisioning_state': {'readonly': True},
-    }
-
-    _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'private_endpoint': {'key': 'properties.privateEndpoint', 'type': 'PrivateEndpointProperty'},
-        'private_link_service_connection_state': {'key': 'properties.privateLinkServiceConnectionState', 'type': 'PrivateLinkServiceConnectionStateProperty'},
-        'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
-    }
-
-    def __init__(
-        self,
-        **kwargs
-    ):
-        super(PrivateEndpointConnection, self).__init__(**kwargs)
-        self.private_endpoint = kwargs.get('private_endpoint', None)
-        self.private_link_service_connection_state = kwargs.get('private_link_service_connection_state', None)
-        self.provisioning_state = None
-
-
-class PrivateEndpointConnectionListResult(msrest.serialization.Model):
-    """A list of private endpoint connections.
-
-    Variables are only populated by the server, and will be ignored when sending a request.
-
-    :ivar value: Array of results.
-    :vartype value: list[~azure.mgmt.rdbms.postgresql.models.PrivateEndpointConnection]
-    :ivar next_link: Link to retrieve next page of results.
-    :vartype next_link: str
-    """
-
-    _validation = {
-        'value': {'readonly': True},
-        'next_link': {'readonly': True},
-    }
-
-    _attribute_map = {
-        'value': {'key': 'value', 'type': '[PrivateEndpointConnection]'},
-        'next_link': {'key': 'nextLink', 'type': 'str'},
-    }
-
-    def __init__(
-        self,
-        **kwargs
-    ):
-        super(PrivateEndpointConnectionListResult, self).__init__(**kwargs)
-        self.value = None
-        self.next_link = None
-
-
-class PrivateEndpointProperty(msrest.serialization.Model):
-    """PrivateEndpointProperty.
-
-    :param id: Resource id of the private endpoint.
-    :type id: str
-    """
-
-    _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-    }
-
-    def __init__(
-        self,
-        **kwargs
-    ):
-        super(PrivateEndpointProperty, self).__init__(**kwargs)
-        self.id = kwargs.get('id', None)
-
-
-class PrivateLinkResource(Resource):
-    """A private link resource.
-
-    Variables are only populated by the server, and will be ignored when sending a request.
-
-    :ivar id: Fully qualified resource ID for the resource. Ex -
-     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
-    :vartype id: str
-    :ivar name: The name of the resource.
-    :vartype name: str
-    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
-     "Microsoft.Storage/storageAccounts".
-    :vartype type: str
-    :ivar properties: The private link resource group id.
-    :vartype properties: ~azure.mgmt.rdbms.postgresql.models.PrivateLinkResourceProperties
-    """
-
-    _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
-        'properties': {'readonly': True},
-    }
-
-    _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'properties': {'key': 'properties', 'type': 'PrivateLinkResourceProperties'},
-    }
-
-    def __init__(
-        self,
-        **kwargs
-    ):
-        super(PrivateLinkResource, self).__init__(**kwargs)
-        self.properties = None
-
-
-class PrivateLinkResourceListResult(msrest.serialization.Model):
-    """A list of private link resources.
-
-    Variables are only populated by the server, and will be ignored when sending a request.
-
-    :ivar value: Array of results.
-    :vartype value: list[~azure.mgmt.rdbms.postgresql.models.PrivateLinkResource]
-    :ivar next_link: Link to retrieve next page of results.
-    :vartype next_link: str
-    """
-
-    _validation = {
-        'value': {'readonly': True},
-        'next_link': {'readonly': True},
-    }
-
-    _attribute_map = {
-        'value': {'key': 'value', 'type': '[PrivateLinkResource]'},
-        'next_link': {'key': 'nextLink', 'type': 'str'},
-    }
-
-    def __init__(
-        self,
-        **kwargs
-    ):
-        super(PrivateLinkResourceListResult, self).__init__(**kwargs)
-        self.value = None
-        self.next_link = None
-
-
-class PrivateLinkResourceProperties(msrest.serialization.Model):
-    """Properties of a private link resource.
-
-    Variables are only populated by the server, and will be ignored when sending a request.
-
-    :ivar group_id: The private link resource group id.
-    :vartype group_id: str
-    :ivar required_members: The private link resource required member names.
-    :vartype required_members: list[str]
-    """
-
-    _validation = {
-        'group_id': {'readonly': True},
-        'required_members': {'readonly': True},
-    }
-
-    _attribute_map = {
-        'group_id': {'key': 'groupId', 'type': 'str'},
-        'required_members': {'key': 'requiredMembers', 'type': '[str]'},
-    }
-
-    def __init__(
-        self,
-        **kwargs
-    ):
-        super(PrivateLinkResourceProperties, self).__init__(**kwargs)
-        self.group_id = None
-        self.required_members = None
-
-
-class PrivateLinkServiceConnectionStateProperty(msrest.serialization.Model):
-    """PrivateLinkServiceConnectionStateProperty.
-
-    Variables are only populated by the server, and will be ignored when sending a request.
-
-    All required parameters must be populated in order to send to Azure.
-
-    :param status: Required. The private link service connection status.
-    :type status: str
-    :param description: Required. The private link service connection description.
-    :type description: str
-    :ivar actions_required: The actions required for private link service connection.
-    :vartype actions_required: str
-    """
-
-    _validation = {
-        'status': {'required': True},
-        'description': {'required': True},
-        'actions_required': {'readonly': True},
-    }
-
-    _attribute_map = {
-        'status': {'key': 'status', 'type': 'str'},
-        'description': {'key': 'description', 'type': 'str'},
-        'actions_required': {'key': 'actionsRequired', 'type': 'str'},
-    }
-
-    def __init__(
-        self,
-        **kwargs
-    ):
-        super(PrivateLinkServiceConnectionStateProperty, self).__init__(**kwargs)
-        self.status = kwargs['status']
-        self.description = kwargs['description']
-        self.actions_required = None
-
-
-class ProxyResource(Resource):
-    """The resource model definition for a Azure Resource Manager proxy resource. It will not have tags and a location.
-
-    Variables are only populated by the server, and will be ignored when sending a request.
-
-    :ivar id: Fully qualified resource ID for the resource. Ex -
-     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
-    :vartype id: str
-    :ivar name: The name of the resource.
-    :vartype name: str
-    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
-     "Microsoft.Storage/storageAccounts".
-    :vartype type: str
-    """
-
-    _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
-    }
-
-    _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-    }
-
-    def __init__(
-        self,
-        **kwargs
-    ):
-        super(ProxyResource, self).__init__(**kwargs)
-
-
-class RecoverableServerResource(Resource):
-    """A recoverable server resource.
-
-    Variables are only populated by the server, and will be ignored when sending a request.
-
-    :ivar id: Fully qualified resource ID for the resource. Ex -
-     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
-    :vartype id: str
-    :ivar name: The name of the resource.
-    :vartype name: str
-    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
-     "Microsoft.Storage/storageAccounts".
-    :vartype type: str
-    :ivar last_available_backup_date_time: The last available backup date time.
-    :vartype last_available_backup_date_time: str
-    :ivar service_level_objective: The service level objective.
-    :vartype service_level_objective: str
-    :ivar edition: Edition of the performance tier.
-    :vartype edition: str
-    :ivar v_core: vCore associated with the service level objective.
-    :vartype v_core: int
-    :ivar hardware_generation: Hardware generation associated with the service level objective.
-    :vartype hardware_generation: str
-    :ivar version: The PostgreSQL version.
-    :vartype version: str
-    """
-
-    _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
-        'last_available_backup_date_time': {'readonly': True},
-        'service_level_objective': {'readonly': True},
-        'edition': {'readonly': True},
-        'v_core': {'readonly': True},
-        'hardware_generation': {'readonly': True},
-        'version': {'readonly': True},
-    }
-
-    _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'last_available_backup_date_time': {'key': 'properties.lastAvailableBackupDateTime', 'type': 'str'},
-        'service_level_objective': {'key': 'properties.serviceLevelObjective', 'type': 'str'},
-        'edition': {'key': 'properties.edition', 'type': 'str'},
-        'v_core': {'key': 'properties.vCore', 'type': 'int'},
-        'hardware_generation': {'key': 'properties.hardwareGeneration', 'type': 'str'},
-        'version': {'key': 'properties.version', 'type': 'str'},
-    }
-
-    def __init__(
-        self,
-        **kwargs
-    ):
-        super(RecoverableServerResource, self).__init__(**kwargs)
-        self.last_available_backup_date_time = None
-        self.service_level_objective = None
-        self.edition = None
-        self.v_core = None
-        self.hardware_generation = None
-        self.version = None
-
-
-class ResourceIdentity(msrest.serialization.Model):
-    """Azure Active Directory identity configuration for a resource.
-
-    Variables are only populated by the server, and will be ignored when sending a request.
-
-    :ivar principal_id: The Azure Active Directory principal id.
-    :vartype principal_id: str
-    :param type: The identity type. Set this to 'SystemAssigned' in order to automatically create
-     and assign an Azure Active Directory principal for the resource. Possible values include:
-     "SystemAssigned".
-    :type type: str or ~azure.mgmt.rdbms.postgresql.models.IdentityType
-    :ivar tenant_id: The Azure Active Directory tenant id.
-    :vartype tenant_id: str
-    """
-
-    _validation = {
-        'principal_id': {'readonly': True},
-        'tenant_id': {'readonly': True},
-    }
-
-    _attribute_map = {
-        'principal_id': {'key': 'principalId', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'tenant_id': {'key': 'tenantId', 'type': 'str'},
-    }
-
-    def __init__(
-        self,
-        **kwargs
-    ):
-        super(ResourceIdentity, self).__init__(**kwargs)
-        self.principal_id = None
-        self.type = kwargs.get('type', None)
-        self.tenant_id = None
+        self.next_link = kwargs.get('next_link', None)
 
 
 class TrackedResource(Resource):
@@ -1112,50 +769,68 @@ class Server(TrackedResource):
     :param location: Required. The geo-location where the resource lives.
     :type location: str
     :param identity: The Azure Active Directory identity of the server.
-    :type identity: ~azure.mgmt.rdbms.postgresql.models.ResourceIdentity
+    :type identity: ~azure.mgmt.rdbms.postgresql.models.Identity
     :param sku: The SKU (pricing tier) of the server.
     :type sku: ~azure.mgmt.rdbms.postgresql.models.Sku
     :param administrator_login: The administrator's login name of a server. Can only be specified
      when the server is being created (and is required for creation).
     :type administrator_login: str
-    :param version: Server version. Possible values include: "9.5", "9.6", "10", "10.0", "10.2",
-     "11".
+    :param administrator_login_password: The administrator login password (required for server
+     creation).
+    :type administrator_login_password: str
+    :param version: PostgreSQL Server version. Possible values include: "12", "11".
     :type version: str or ~azure.mgmt.rdbms.postgresql.models.ServerVersion
-    :param ssl_enforcement: Enable ssl enforcement or not when connect to server. Possible values
-     include: "Enabled", "Disabled".
-    :type ssl_enforcement: str or ~azure.mgmt.rdbms.postgresql.models.SslEnforcementEnum
-    :param minimal_tls_version: Enforce a minimal Tls version for the server. Possible values
-     include: "TLS1_0", "TLS1_1", "TLS1_2", "TLSEnforcementDisabled".
-    :type minimal_tls_version: str or ~azure.mgmt.rdbms.postgresql.models.MinimalTlsVersionEnum
-    :ivar byok_enforcement: Status showing whether the server data encryption is enabled with
-     customer-managed keys.
-    :vartype byok_enforcement: str
-    :param infrastructure_encryption: Status showing whether the server enabled infrastructure
-     encryption. Possible values include: "Enabled", "Disabled".
-    :type infrastructure_encryption: str or
-     ~azure.mgmt.rdbms.postgresql.models.InfrastructureEncryption
-    :param user_visible_state: A state of a server that is visible to user. Possible values
-     include: "Ready", "Dropping", "Disabled", "Inaccessible".
-    :type user_visible_state: str or ~azure.mgmt.rdbms.postgresql.models.ServerState
-    :param fully_qualified_domain_name: The fully qualified domain name of a server.
-    :type fully_qualified_domain_name: str
-    :param earliest_restore_date: Earliest restore point creation time (ISO8601 format).
-    :type earliest_restore_date: ~datetime.datetime
+    :ivar state: A state of a server that is visible to user. Possible values include: "Ready",
+     "Dropping", "Disabled", "Starting", "Stopping", "Stopped", "Updating".
+    :vartype state: str or ~azure.mgmt.rdbms.postgresql.models.ServerState
+    :ivar ha_state: A state of a HA server that is visible to user. Possible values include:
+     "NotEnabled", "CreatingStandby", "ReplicatingData", "FailingOver", "Healthy",
+     "RemovingStandby".
+    :vartype ha_state: str or ~azure.mgmt.rdbms.postgresql.models.ServerHAState
+    :ivar fully_qualified_domain_name: The fully qualified domain name of a server.
+    :vartype fully_qualified_domain_name: str
+    :param display_name: The display name of a server.
+    :type display_name: str
     :param storage_profile: Storage profile of a server.
     :type storage_profile: ~azure.mgmt.rdbms.postgresql.models.StorageProfile
-    :param replication_role: The replication role of the server.
-    :type replication_role: str
-    :param master_server_id: The master server id of a replica server.
-    :type master_server_id: str
-    :param replica_capacity: The maximum number of replicas that a master server can have.
-    :type replica_capacity: int
-    :param public_network_access: Whether or not public network access is allowed for this server.
-     Value is optional but if passed in, must be 'Enabled' or 'Disabled'. Possible values include:
+    :ivar public_network_access: public network access is enabled or not. Possible values include:
      "Enabled", "Disabled".
-    :type public_network_access: str or ~azure.mgmt.rdbms.postgresql.models.PublicNetworkAccessEnum
-    :ivar private_endpoint_connections: List of private endpoint connections on a server.
-    :vartype private_endpoint_connections:
-     list[~azure.mgmt.rdbms.postgresql.models.ServerPrivateEndpointConnection]
+    :vartype public_network_access: str or
+     ~azure.mgmt.rdbms.postgresql.models.ServerPublicNetworkAccessState
+    :param maintenance_window: Maintenance window of a server.
+    :type maintenance_window: ~azure.mgmt.rdbms.postgresql.models.MaintenanceWindow
+    :param ha_enabled: stand by count value can be either enabled or disabled. Possible values
+     include: "Enabled", "Disabled".
+    :type ha_enabled: str or ~azure.mgmt.rdbms.postgresql.models.HAEnabledEnum
+    :param source_server_name: The source PostgreSQL server name to restore from.
+    :type source_server_name: str
+    :param source_subscription_id: The subscription id of source serve PostgreSQL server name to
+     restore from.
+    :type source_subscription_id: str
+    :param source_resource_group_name: The resource group name of source serve PostgreSQL server
+     name to restore from.
+    :type source_resource_group_name: str
+    :param point_in_time_utc: Restore point creation time (ISO8601 format), specifying the time to
+     restore from.
+    :type point_in_time_utc: ~datetime.datetime
+    :param availability_zone: availability Zone information of the server.
+    :type availability_zone: str
+    :ivar standby_availability_zone: availability Zone information of the server.
+    :vartype standby_availability_zone: str
+    :ivar byok_enforcement: Status showing whether the data encryption is enabled with
+     customer-managed keys.
+    :vartype byok_enforcement: str
+    :param delegated_subnet_arguments:
+    :type delegated_subnet_arguments:
+     ~azure.mgmt.rdbms.postgresql.models.ServerPropertiesDelegatedSubnetArguments
+    :param private_dns_zone_arguments:
+    :type private_dns_zone_arguments:
+     ~azure.mgmt.rdbms.postgresql.models.ServerPropertiesPrivateDnsZoneArguments
+    :param create_mode: The mode to create a new PostgreSQL server. Possible values include:
+     "Default", "PointInTimeRestore".
+    :type create_mode: str or ~azure.mgmt.rdbms.postgresql.models.CreateMode
+    :param tags_properties_tags: Application-specific metadata in the form of key-value pairs.
+    :type tags_properties_tags: dict[str, str]
     """
 
     _validation = {
@@ -1163,9 +838,12 @@ class Server(TrackedResource):
         'name': {'readonly': True},
         'type': {'readonly': True},
         'location': {'required': True},
+        'state': {'readonly': True},
+        'ha_state': {'readonly': True},
+        'fully_qualified_domain_name': {'readonly': True},
+        'public_network_access': {'readonly': True},
+        'standby_availability_zone': {'readonly': True},
         'byok_enforcement': {'readonly': True},
-        'replica_capacity': {'minimum': 0},
-        'private_endpoint_connections': {'readonly': True},
     }
 
     _attribute_map = {
@@ -1174,23 +852,30 @@ class Server(TrackedResource):
         'type': {'key': 'type', 'type': 'str'},
         'tags': {'key': 'tags', 'type': '{str}'},
         'location': {'key': 'location', 'type': 'str'},
-        'identity': {'key': 'identity', 'type': 'ResourceIdentity'},
+        'identity': {'key': 'identity', 'type': 'Identity'},
         'sku': {'key': 'sku', 'type': 'Sku'},
         'administrator_login': {'key': 'properties.administratorLogin', 'type': 'str'},
+        'administrator_login_password': {'key': 'properties.administratorLoginPassword', 'type': 'str'},
         'version': {'key': 'properties.version', 'type': 'str'},
-        'ssl_enforcement': {'key': 'properties.sslEnforcement', 'type': 'str'},
-        'minimal_tls_version': {'key': 'properties.minimalTlsVersion', 'type': 'str'},
-        'byok_enforcement': {'key': 'properties.byokEnforcement', 'type': 'str'},
-        'infrastructure_encryption': {'key': 'properties.infrastructureEncryption', 'type': 'str'},
-        'user_visible_state': {'key': 'properties.userVisibleState', 'type': 'str'},
+        'state': {'key': 'properties.state', 'type': 'str'},
+        'ha_state': {'key': 'properties.haState', 'type': 'str'},
         'fully_qualified_domain_name': {'key': 'properties.fullyQualifiedDomainName', 'type': 'str'},
-        'earliest_restore_date': {'key': 'properties.earliestRestoreDate', 'type': 'iso-8601'},
+        'display_name': {'key': 'properties.displayName', 'type': 'str'},
         'storage_profile': {'key': 'properties.storageProfile', 'type': 'StorageProfile'},
-        'replication_role': {'key': 'properties.replicationRole', 'type': 'str'},
-        'master_server_id': {'key': 'properties.masterServerId', 'type': 'str'},
-        'replica_capacity': {'key': 'properties.replicaCapacity', 'type': 'int'},
         'public_network_access': {'key': 'properties.publicNetworkAccess', 'type': 'str'},
-        'private_endpoint_connections': {'key': 'properties.privateEndpointConnections', 'type': '[ServerPrivateEndpointConnection]'},
+        'maintenance_window': {'key': 'properties.maintenanceWindow', 'type': 'MaintenanceWindow'},
+        'ha_enabled': {'key': 'properties.haEnabled', 'type': 'str'},
+        'source_server_name': {'key': 'properties.sourceServerName', 'type': 'str'},
+        'source_subscription_id': {'key': 'properties.sourceSubscriptionId', 'type': 'str'},
+        'source_resource_group_name': {'key': 'properties.sourceResourceGroupName', 'type': 'str'},
+        'point_in_time_utc': {'key': 'properties.pointInTimeUTC', 'type': 'iso-8601'},
+        'availability_zone': {'key': 'properties.availabilityZone', 'type': 'str'},
+        'standby_availability_zone': {'key': 'properties.standbyAvailabilityZone', 'type': 'str'},
+        'byok_enforcement': {'key': 'properties.byokEnforcement', 'type': 'str'},
+        'delegated_subnet_arguments': {'key': 'properties.delegatedSubnetArguments', 'type': 'ServerPropertiesDelegatedSubnetArguments'},
+        'private_dns_zone_arguments': {'key': 'properties.privateDnsZoneArguments', 'type': 'ServerPropertiesPrivateDnsZoneArguments'},
+        'create_mode': {'key': 'properties.createMode', 'type': 'str'},
+        'tags_properties_tags': {'key': 'properties.tags', 'type': '{str}'},
     }
 
     def __init__(
@@ -1201,227 +886,122 @@ class Server(TrackedResource):
         self.identity = kwargs.get('identity', None)
         self.sku = kwargs.get('sku', None)
         self.administrator_login = kwargs.get('administrator_login', None)
+        self.administrator_login_password = kwargs.get('administrator_login_password', None)
         self.version = kwargs.get('version', None)
-        self.ssl_enforcement = kwargs.get('ssl_enforcement', None)
-        self.minimal_tls_version = kwargs.get('minimal_tls_version', None)
-        self.byok_enforcement = None
-        self.infrastructure_encryption = kwargs.get('infrastructure_encryption', None)
-        self.user_visible_state = kwargs.get('user_visible_state', None)
-        self.fully_qualified_domain_name = kwargs.get('fully_qualified_domain_name', None)
-        self.earliest_restore_date = kwargs.get('earliest_restore_date', None)
+        self.state = None
+        self.ha_state = None
+        self.fully_qualified_domain_name = None
+        self.display_name = kwargs.get('display_name', None)
         self.storage_profile = kwargs.get('storage_profile', None)
-        self.replication_role = kwargs.get('replication_role', None)
-        self.master_server_id = kwargs.get('master_server_id', None)
-        self.replica_capacity = kwargs.get('replica_capacity', None)
-        self.public_network_access = kwargs.get('public_network_access', None)
-        self.private_endpoint_connections = None
+        self.public_network_access = None
+        self.maintenance_window = kwargs.get('maintenance_window', None)
+        self.ha_enabled = kwargs.get('ha_enabled', None)
+        self.source_server_name = kwargs.get('source_server_name', None)
+        self.source_subscription_id = kwargs.get('source_subscription_id', None)
+        self.source_resource_group_name = kwargs.get('source_resource_group_name', None)
+        self.point_in_time_utc = kwargs.get('point_in_time_utc', None)
+        self.availability_zone = kwargs.get('availability_zone', None)
+        self.standby_availability_zone = None
+        self.byok_enforcement = None
+        self.delegated_subnet_arguments = kwargs.get('delegated_subnet_arguments', None)
+        self.private_dns_zone_arguments = kwargs.get('private_dns_zone_arguments', None)
+        self.create_mode = kwargs.get('create_mode', None)
+        self.tags_properties_tags = kwargs.get('tags_properties_tags', None)
 
 
-class ServerAdministratorResource(Resource):
-    """Represents a and external administrator to be created.
+class ServerEditionCapability(msrest.serialization.Model):
+    """Server edition capabilities.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    :ivar id: Fully qualified resource ID for the resource. Ex -
-     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
-    :vartype id: str
-    :ivar name: The name of the resource.
+    :ivar name: Server edition name.
     :vartype name: str
-    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
-     "Microsoft.Storage/storageAccounts".
-    :vartype type: str
-    :ivar administrator_type: The type of administrator. Default value: "ActiveDirectory".
-    :vartype administrator_type: str
-    :param login: The server administrator login account name.
-    :type login: str
-    :param sid: The server administrator Sid (Secure ID).
-    :type sid: str
-    :param tenant_id: The server Active Directory Administrator tenant id.
-    :type tenant_id: str
+    :ivar supported_storage_editions:
+    :vartype supported_storage_editions:
+     list[~azure.mgmt.rdbms.postgresql.models.StorageEditionCapability]
+    :ivar supported_server_versions:
+    :vartype supported_server_versions:
+     list[~azure.mgmt.rdbms.postgresql.models.ServerVersionCapability]
     """
 
     _validation = {
-        'id': {'readonly': True},
         'name': {'readonly': True},
-        'type': {'readonly': True},
-        'administrator_type': {'constant': True},
+        'supported_storage_editions': {'readonly': True},
+        'supported_server_versions': {'readonly': True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
         'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'administrator_type': {'key': 'properties.administratorType', 'type': 'str'},
-        'login': {'key': 'properties.login', 'type': 'str'},
-        'sid': {'key': 'properties.sid', 'type': 'str'},
-        'tenant_id': {'key': 'properties.tenantId', 'type': 'str'},
-    }
-
-    administrator_type = "ActiveDirectory"
-
-    def __init__(
-        self,
-        **kwargs
-    ):
-        super(ServerAdministratorResource, self).__init__(**kwargs)
-        self.login = kwargs.get('login', None)
-        self.sid = kwargs.get('sid', None)
-        self.tenant_id = kwargs.get('tenant_id', None)
-
-
-class ServerAdministratorResourceListResult(msrest.serialization.Model):
-    """The response to a list Active Directory Administrators request.
-
-    :param value: The list of server Active Directory Administrators for the server.
-    :type value: list[~azure.mgmt.rdbms.postgresql.models.ServerAdministratorResource]
-    """
-
-    _attribute_map = {
-        'value': {'key': 'value', 'type': '[ServerAdministratorResource]'},
+        'supported_storage_editions': {'key': 'supportedStorageEditions', 'type': '[StorageEditionCapability]'},
+        'supported_server_versions': {'key': 'supportedServerVersions', 'type': '[ServerVersionCapability]'},
     }
 
     def __init__(
         self,
         **kwargs
     ):
-        super(ServerAdministratorResourceListResult, self).__init__(**kwargs)
-        self.value = kwargs.get('value', None)
+        super(ServerEditionCapability, self).__init__(**kwargs)
+        self.name = None
+        self.supported_storage_editions = None
+        self.supported_server_versions = None
 
 
-class ServerForCreate(msrest.serialization.Model):
-    """Represents a server to be created.
+class ServerForUpdate(msrest.serialization.Model):
+    """Represents a server to be updated.
 
-    All required parameters must be populated in order to send to Azure.
-
-    :param identity: The Azure Active Directory identity of the server.
-    :type identity: ~azure.mgmt.rdbms.postgresql.models.ResourceIdentity
+    :param location: The location the resource resides in.
+    :type location: str
     :param sku: The SKU (pricing tier) of the server.
     :type sku: ~azure.mgmt.rdbms.postgresql.models.Sku
-    :param properties: Required. Properties of the server.
-    :type properties: ~azure.mgmt.rdbms.postgresql.models.ServerPropertiesForCreate
-    :param location: Required. The location the resource resides in.
-    :type location: str
     :param tags: A set of tags. Application-specific metadata in the form of key-value pairs.
     :type tags: dict[str, str]
+    :param administrator_login_password: The password of the administrator login.
+    :type administrator_login_password: str
+    :param storage_profile: Storage profile of a server.
+    :type storage_profile: ~azure.mgmt.rdbms.postgresql.models.StorageProfile
+    :param ha_enabled: stand by count value can be either enabled or disabled. Possible values
+     include: "Enabled", "Disabled".
+    :type ha_enabled: str or ~azure.mgmt.rdbms.postgresql.models.HAEnabledEnum
+    :param maintenance_window: Maintenance window of a server.
+    :type maintenance_window: ~azure.mgmt.rdbms.postgresql.models.MaintenanceWindow
     """
 
-    _validation = {
-        'properties': {'required': True},
-        'location': {'required': True},
-    }
-
     _attribute_map = {
-        'identity': {'key': 'identity', 'type': 'ResourceIdentity'},
-        'sku': {'key': 'sku', 'type': 'Sku'},
-        'properties': {'key': 'properties', 'type': 'ServerPropertiesForCreate'},
         'location': {'key': 'location', 'type': 'str'},
+        'sku': {'key': 'sku', 'type': 'Sku'},
         'tags': {'key': 'tags', 'type': '{str}'},
+        'administrator_login_password': {'key': 'properties.administratorLoginPassword', 'type': 'str'},
+        'storage_profile': {'key': 'properties.storageProfile', 'type': 'StorageProfile'},
+        'ha_enabled': {'key': 'properties.haEnabled', 'type': 'str'},
+        'maintenance_window': {'key': 'properties.maintenanceWindow', 'type': 'MaintenanceWindow'},
     }
 
     def __init__(
         self,
         **kwargs
     ):
-        super(ServerForCreate, self).__init__(**kwargs)
-        self.identity = kwargs.get('identity', None)
+        super(ServerForUpdate, self).__init__(**kwargs)
+        self.location = kwargs.get('location', None)
         self.sku = kwargs.get('sku', None)
-        self.properties = kwargs['properties']
-        self.location = kwargs['location']
         self.tags = kwargs.get('tags', None)
-
-
-class ServerKey(Resource):
-    """A PostgreSQL Server key.
-
-    Variables are only populated by the server, and will be ignored when sending a request.
-
-    :ivar id: Fully qualified resource ID for the resource. Ex -
-     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
-    :vartype id: str
-    :ivar name: The name of the resource.
-    :vartype name: str
-    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
-     "Microsoft.Storage/storageAccounts".
-    :vartype type: str
-    :ivar kind: Kind of encryption protector used to protect the key.
-    :vartype kind: str
-    :param server_key_type: The key type like 'AzureKeyVault'. Possible values include:
-     "AzureKeyVault".
-    :type server_key_type: str or ~azure.mgmt.rdbms.postgresql.models.ServerKeyType
-    :param uri: The URI of the key.
-    :type uri: str
-    :ivar creation_date: The key creation date.
-    :vartype creation_date: ~datetime.datetime
-    """
-
-    _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
-        'kind': {'readonly': True},
-        'creation_date': {'readonly': True},
-    }
-
-    _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'kind': {'key': 'kind', 'type': 'str'},
-        'server_key_type': {'key': 'properties.serverKeyType', 'type': 'str'},
-        'uri': {'key': 'properties.uri', 'type': 'str'},
-        'creation_date': {'key': 'properties.creationDate', 'type': 'iso-8601'},
-    }
-
-    def __init__(
-        self,
-        **kwargs
-    ):
-        super(ServerKey, self).__init__(**kwargs)
-        self.kind = None
-        self.server_key_type = kwargs.get('server_key_type', None)
-        self.uri = kwargs.get('uri', None)
-        self.creation_date = None
-
-
-class ServerKeyListResult(msrest.serialization.Model):
-    """A list of PostgreSQL Server keys.
-
-    Variables are only populated by the server, and will be ignored when sending a request.
-
-    :ivar value: A list of PostgreSQL Server keys.
-    :vartype value: list[~azure.mgmt.rdbms.postgresql.models.ServerKey]
-    :ivar next_link: Link to retrieve next page of results.
-    :vartype next_link: str
-    """
-
-    _validation = {
-        'value': {'readonly': True},
-        'next_link': {'readonly': True},
-    }
-
-    _attribute_map = {
-        'value': {'key': 'value', 'type': '[ServerKey]'},
-        'next_link': {'key': 'nextLink', 'type': 'str'},
-    }
-
-    def __init__(
-        self,
-        **kwargs
-    ):
-        super(ServerKeyListResult, self).__init__(**kwargs)
-        self.value = None
-        self.next_link = None
+        self.administrator_login_password = kwargs.get('administrator_login_password', None)
+        self.storage_profile = kwargs.get('storage_profile', None)
+        self.ha_enabled = kwargs.get('ha_enabled', None)
+        self.maintenance_window = kwargs.get('maintenance_window', None)
 
 
 class ServerListResult(msrest.serialization.Model):
     """A list of servers.
 
-    :param value: The list of servers.
+    :param value: The list of flexible servers.
     :type value: list[~azure.mgmt.rdbms.postgresql.models.Server]
+    :param next_link: The link used to get the next page of operations.
+    :type next_link: str
     """
 
     _attribute_map = {
         'value': {'key': 'value', 'type': '[Server]'},
+        'next_link': {'key': 'nextLink', 'type': 'str'},
     }
 
     def __init__(
@@ -1430,604 +1010,98 @@ class ServerListResult(msrest.serialization.Model):
     ):
         super(ServerListResult, self).__init__(**kwargs)
         self.value = kwargs.get('value', None)
+        self.next_link = kwargs.get('next_link', None)
 
 
-class ServerPrivateEndpointConnection(msrest.serialization.Model):
-    """A private endpoint connection under a server.
+class ServerPropertiesDelegatedSubnetArguments(msrest.serialization.Model):
+    """ServerPropertiesDelegatedSubnetArguments.
+
+    :param subnet_arm_resource_id: delegated subnet arm resource id.
+    :type subnet_arm_resource_id: str
+    """
+
+    _attribute_map = {
+        'subnet_arm_resource_id': {'key': 'subnetArmResourceId', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(ServerPropertiesDelegatedSubnetArguments, self).__init__(**kwargs)
+        self.subnet_arm_resource_id = kwargs.get('subnet_arm_resource_id', None)
+
+
+class ServerPropertiesPrivateDnsZoneArguments(msrest.serialization.Model):
+    """ServerPropertiesPrivateDnsZoneArguments.
+
+    :param private_dns_zone_arm_resource_id: private dns zone arm resource id.
+    :type private_dns_zone_arm_resource_id: str
+    """
+
+    _attribute_map = {
+        'private_dns_zone_arm_resource_id': {'key': 'privateDnsZoneArmResourceId', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(ServerPropertiesPrivateDnsZoneArguments, self).__init__(**kwargs)
+        self.private_dns_zone_arm_resource_id = kwargs.get('private_dns_zone_arm_resource_id', None)
+
+
+class ServerVersionCapability(msrest.serialization.Model):
+    """Server version capabilities.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    :ivar id: Resource ID of the Private Endpoint Connection.
-    :vartype id: str
-    :ivar properties: Private endpoint connection properties.
-    :vartype properties:
-     ~azure.mgmt.rdbms.postgresql.models.ServerPrivateEndpointConnectionProperties
-    """
-
-    _validation = {
-        'id': {'readonly': True},
-        'properties': {'readonly': True},
-    }
-
-    _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'properties': {'key': 'properties', 'type': 'ServerPrivateEndpointConnectionProperties'},
-    }
-
-    def __init__(
-        self,
-        **kwargs
-    ):
-        super(ServerPrivateEndpointConnection, self).__init__(**kwargs)
-        self.id = None
-        self.properties = None
-
-
-class ServerPrivateEndpointConnectionProperties(msrest.serialization.Model):
-    """Properties of a private endpoint connection.
-
-    Variables are only populated by the server, and will be ignored when sending a request.
-
-    :param private_endpoint: Private endpoint which the connection belongs to.
-    :type private_endpoint: ~azure.mgmt.rdbms.postgresql.models.PrivateEndpointProperty
-    :param private_link_service_connection_state: Connection state of the private endpoint
-     connection.
-    :type private_link_service_connection_state:
-     ~azure.mgmt.rdbms.postgresql.models.ServerPrivateLinkServiceConnectionStateProperty
-    :ivar provisioning_state: State of the private endpoint connection. Possible values include:
-     "Approving", "Ready", "Dropping", "Failed", "Rejecting".
-    :vartype provisioning_state: str or
-     ~azure.mgmt.rdbms.postgresql.models.PrivateEndpointProvisioningState
-    """
-
-    _validation = {
-        'provisioning_state': {'readonly': True},
-    }
-
-    _attribute_map = {
-        'private_endpoint': {'key': 'privateEndpoint', 'type': 'PrivateEndpointProperty'},
-        'private_link_service_connection_state': {'key': 'privateLinkServiceConnectionState', 'type': 'ServerPrivateLinkServiceConnectionStateProperty'},
-        'provisioning_state': {'key': 'provisioningState', 'type': 'str'},
-    }
-
-    def __init__(
-        self,
-        **kwargs
-    ):
-        super(ServerPrivateEndpointConnectionProperties, self).__init__(**kwargs)
-        self.private_endpoint = kwargs.get('private_endpoint', None)
-        self.private_link_service_connection_state = kwargs.get('private_link_service_connection_state', None)
-        self.provisioning_state = None
-
-
-class ServerPrivateLinkServiceConnectionStateProperty(msrest.serialization.Model):
-    """ServerPrivateLinkServiceConnectionStateProperty.
-
-    Variables are only populated by the server, and will be ignored when sending a request.
-
-    All required parameters must be populated in order to send to Azure.
-
-    :param status: Required. The private link service connection status. Possible values include:
-     "Approved", "Pending", "Rejected", "Disconnected".
-    :type status: str or
-     ~azure.mgmt.rdbms.postgresql.models.PrivateLinkServiceConnectionStateStatus
-    :param description: Required. The private link service connection description.
-    :type description: str
-    :ivar actions_required: The actions required for private link service connection. Possible
-     values include: "None".
-    :vartype actions_required: str or
-     ~azure.mgmt.rdbms.postgresql.models.PrivateLinkServiceConnectionStateActionsRequire
-    """
-
-    _validation = {
-        'status': {'required': True},
-        'description': {'required': True},
-        'actions_required': {'readonly': True},
-    }
-
-    _attribute_map = {
-        'status': {'key': 'status', 'type': 'str'},
-        'description': {'key': 'description', 'type': 'str'},
-        'actions_required': {'key': 'actionsRequired', 'type': 'str'},
-    }
-
-    def __init__(
-        self,
-        **kwargs
-    ):
-        super(ServerPrivateLinkServiceConnectionStateProperty, self).__init__(**kwargs)
-        self.status = kwargs['status']
-        self.description = kwargs['description']
-        self.actions_required = None
-
-
-class ServerPropertiesForCreate(msrest.serialization.Model):
-    """The properties used to create a new server.
-
-    You probably want to use the sub-classes and not this class directly. Known
-    sub-classes are: ServerPropertiesForDefaultCreate, ServerPropertiesForGeoRestore, ServerPropertiesForRestore, ServerPropertiesForReplica.
-
-    All required parameters must be populated in order to send to Azure.
-
-    :param version: Server version. Possible values include: "9.5", "9.6", "10", "10.0", "10.2",
-     "11".
-    :type version: str or ~azure.mgmt.rdbms.postgresql.models.ServerVersion
-    :param ssl_enforcement: Enable ssl enforcement or not when connect to server. Possible values
-     include: "Enabled", "Disabled".
-    :type ssl_enforcement: str or ~azure.mgmt.rdbms.postgresql.models.SslEnforcementEnum
-    :param minimal_tls_version: Enforce a minimal Tls version for the server. Possible values
-     include: "TLS1_0", "TLS1_1", "TLS1_2", "TLSEnforcementDisabled".
-    :type minimal_tls_version: str or ~azure.mgmt.rdbms.postgresql.models.MinimalTlsVersionEnum
-    :param infrastructure_encryption: Status showing whether the server enabled infrastructure
-     encryption. Possible values include: "Enabled", "Disabled".
-    :type infrastructure_encryption: str or
-     ~azure.mgmt.rdbms.postgresql.models.InfrastructureEncryption
-    :param public_network_access: Whether or not public network access is allowed for this server.
-     Value is optional but if passed in, must be 'Enabled' or 'Disabled'. Possible values include:
-     "Enabled", "Disabled".
-    :type public_network_access: str or ~azure.mgmt.rdbms.postgresql.models.PublicNetworkAccessEnum
-    :param storage_profile: Storage profile of a server.
-    :type storage_profile: ~azure.mgmt.rdbms.postgresql.models.StorageProfile
-    :param create_mode: Required. The mode to create a new server.Constant filled by server.
-     Possible values include: "Default", "PointInTimeRestore", "GeoRestore", "Replica".
-    :type create_mode: str or ~azure.mgmt.rdbms.postgresql.models.CreateMode
-    """
-
-    _validation = {
-        'create_mode': {'required': True},
-    }
-
-    _attribute_map = {
-        'version': {'key': 'version', 'type': 'str'},
-        'ssl_enforcement': {'key': 'sslEnforcement', 'type': 'str'},
-        'minimal_tls_version': {'key': 'minimalTlsVersion', 'type': 'str'},
-        'infrastructure_encryption': {'key': 'infrastructureEncryption', 'type': 'str'},
-        'public_network_access': {'key': 'publicNetworkAccess', 'type': 'str'},
-        'storage_profile': {'key': 'storageProfile', 'type': 'StorageProfile'},
-        'create_mode': {'key': 'createMode', 'type': 'str'},
-    }
-
-    _subtype_map = {
-        'create_mode': {'Default': 'ServerPropertiesForDefaultCreate', 'GeoRestore': 'ServerPropertiesForGeoRestore', 'PointInTimeRestore': 'ServerPropertiesForRestore', 'Replica': 'ServerPropertiesForReplica'}
-    }
-
-    def __init__(
-        self,
-        **kwargs
-    ):
-        super(ServerPropertiesForCreate, self).__init__(**kwargs)
-        self.version = kwargs.get('version', None)
-        self.ssl_enforcement = kwargs.get('ssl_enforcement', None)
-        self.minimal_tls_version = kwargs.get('minimal_tls_version', None)
-        self.infrastructure_encryption = kwargs.get('infrastructure_encryption', None)
-        self.public_network_access = kwargs.get('public_network_access', None)
-        self.storage_profile = kwargs.get('storage_profile', None)
-        self.create_mode = None  # type: Optional[str]
-
-
-class ServerPropertiesForDefaultCreate(ServerPropertiesForCreate):
-    """The properties used to create a new server.
-
-    All required parameters must be populated in order to send to Azure.
-
-    :param version: Server version. Possible values include: "9.5", "9.6", "10", "10.0", "10.2",
-     "11".
-    :type version: str or ~azure.mgmt.rdbms.postgresql.models.ServerVersion
-    :param ssl_enforcement: Enable ssl enforcement or not when connect to server. Possible values
-     include: "Enabled", "Disabled".
-    :type ssl_enforcement: str or ~azure.mgmt.rdbms.postgresql.models.SslEnforcementEnum
-    :param minimal_tls_version: Enforce a minimal Tls version for the server. Possible values
-     include: "TLS1_0", "TLS1_1", "TLS1_2", "TLSEnforcementDisabled".
-    :type minimal_tls_version: str or ~azure.mgmt.rdbms.postgresql.models.MinimalTlsVersionEnum
-    :param infrastructure_encryption: Status showing whether the server enabled infrastructure
-     encryption. Possible values include: "Enabled", "Disabled".
-    :type infrastructure_encryption: str or
-     ~azure.mgmt.rdbms.postgresql.models.InfrastructureEncryption
-    :param public_network_access: Whether or not public network access is allowed for this server.
-     Value is optional but if passed in, must be 'Enabled' or 'Disabled'. Possible values include:
-     "Enabled", "Disabled".
-    :type public_network_access: str or ~azure.mgmt.rdbms.postgresql.models.PublicNetworkAccessEnum
-    :param storage_profile: Storage profile of a server.
-    :type storage_profile: ~azure.mgmt.rdbms.postgresql.models.StorageProfile
-    :param create_mode: Required. The mode to create a new server.Constant filled by server.
-     Possible values include: "Default", "PointInTimeRestore", "GeoRestore", "Replica".
-    :type create_mode: str or ~azure.mgmt.rdbms.postgresql.models.CreateMode
-    :param administrator_login: Required. The administrator's login name of a server. Can only be
-     specified when the server is being created (and is required for creation).
-    :type administrator_login: str
-    :param administrator_login_password: Required. The password of the administrator login.
-    :type administrator_login_password: str
-    """
-
-    _validation = {
-        'create_mode': {'required': True},
-        'administrator_login': {'required': True},
-        'administrator_login_password': {'required': True},
-    }
-
-    _attribute_map = {
-        'version': {'key': 'version', 'type': 'str'},
-        'ssl_enforcement': {'key': 'sslEnforcement', 'type': 'str'},
-        'minimal_tls_version': {'key': 'minimalTlsVersion', 'type': 'str'},
-        'infrastructure_encryption': {'key': 'infrastructureEncryption', 'type': 'str'},
-        'public_network_access': {'key': 'publicNetworkAccess', 'type': 'str'},
-        'storage_profile': {'key': 'storageProfile', 'type': 'StorageProfile'},
-        'create_mode': {'key': 'createMode', 'type': 'str'},
-        'administrator_login': {'key': 'administratorLogin', 'type': 'str'},
-        'administrator_login_password': {'key': 'administratorLoginPassword', 'type': 'str'},
-    }
-
-    def __init__(
-        self,
-        **kwargs
-    ):
-        super(ServerPropertiesForDefaultCreate, self).__init__(**kwargs)
-        self.create_mode = 'Default'  # type: str
-        self.administrator_login = kwargs['administrator_login']
-        self.administrator_login_password = kwargs['administrator_login_password']
-
-
-class ServerPropertiesForGeoRestore(ServerPropertiesForCreate):
-    """The properties used to create a new server by restoring to a different region from a geo replicated backup.
-
-    All required parameters must be populated in order to send to Azure.
-
-    :param version: Server version. Possible values include: "9.5", "9.6", "10", "10.0", "10.2",
-     "11".
-    :type version: str or ~azure.mgmt.rdbms.postgresql.models.ServerVersion
-    :param ssl_enforcement: Enable ssl enforcement or not when connect to server. Possible values
-     include: "Enabled", "Disabled".
-    :type ssl_enforcement: str or ~azure.mgmt.rdbms.postgresql.models.SslEnforcementEnum
-    :param minimal_tls_version: Enforce a minimal Tls version for the server. Possible values
-     include: "TLS1_0", "TLS1_1", "TLS1_2", "TLSEnforcementDisabled".
-    :type minimal_tls_version: str or ~azure.mgmt.rdbms.postgresql.models.MinimalTlsVersionEnum
-    :param infrastructure_encryption: Status showing whether the server enabled infrastructure
-     encryption. Possible values include: "Enabled", "Disabled".
-    :type infrastructure_encryption: str or
-     ~azure.mgmt.rdbms.postgresql.models.InfrastructureEncryption
-    :param public_network_access: Whether or not public network access is allowed for this server.
-     Value is optional but if passed in, must be 'Enabled' or 'Disabled'. Possible values include:
-     "Enabled", "Disabled".
-    :type public_network_access: str or ~azure.mgmt.rdbms.postgresql.models.PublicNetworkAccessEnum
-    :param storage_profile: Storage profile of a server.
-    :type storage_profile: ~azure.mgmt.rdbms.postgresql.models.StorageProfile
-    :param create_mode: Required. The mode to create a new server.Constant filled by server.
-     Possible values include: "Default", "PointInTimeRestore", "GeoRestore", "Replica".
-    :type create_mode: str or ~azure.mgmt.rdbms.postgresql.models.CreateMode
-    :param source_server_id: Required. The source server id to restore from.
-    :type source_server_id: str
-    """
-
-    _validation = {
-        'create_mode': {'required': True},
-        'source_server_id': {'required': True},
-    }
-
-    _attribute_map = {
-        'version': {'key': 'version', 'type': 'str'},
-        'ssl_enforcement': {'key': 'sslEnforcement', 'type': 'str'},
-        'minimal_tls_version': {'key': 'minimalTlsVersion', 'type': 'str'},
-        'infrastructure_encryption': {'key': 'infrastructureEncryption', 'type': 'str'},
-        'public_network_access': {'key': 'publicNetworkAccess', 'type': 'str'},
-        'storage_profile': {'key': 'storageProfile', 'type': 'StorageProfile'},
-        'create_mode': {'key': 'createMode', 'type': 'str'},
-        'source_server_id': {'key': 'sourceServerId', 'type': 'str'},
-    }
-
-    def __init__(
-        self,
-        **kwargs
-    ):
-        super(ServerPropertiesForGeoRestore, self).__init__(**kwargs)
-        self.create_mode = 'GeoRestore'  # type: str
-        self.source_server_id = kwargs['source_server_id']
-
-
-class ServerPropertiesForReplica(ServerPropertiesForCreate):
-    """The properties to create a new replica.
-
-    All required parameters must be populated in order to send to Azure.
-
-    :param version: Server version. Possible values include: "9.5", "9.6", "10", "10.0", "10.2",
-     "11".
-    :type version: str or ~azure.mgmt.rdbms.postgresql.models.ServerVersion
-    :param ssl_enforcement: Enable ssl enforcement or not when connect to server. Possible values
-     include: "Enabled", "Disabled".
-    :type ssl_enforcement: str or ~azure.mgmt.rdbms.postgresql.models.SslEnforcementEnum
-    :param minimal_tls_version: Enforce a minimal Tls version for the server. Possible values
-     include: "TLS1_0", "TLS1_1", "TLS1_2", "TLSEnforcementDisabled".
-    :type minimal_tls_version: str or ~azure.mgmt.rdbms.postgresql.models.MinimalTlsVersionEnum
-    :param infrastructure_encryption: Status showing whether the server enabled infrastructure
-     encryption. Possible values include: "Enabled", "Disabled".
-    :type infrastructure_encryption: str or
-     ~azure.mgmt.rdbms.postgresql.models.InfrastructureEncryption
-    :param public_network_access: Whether or not public network access is allowed for this server.
-     Value is optional but if passed in, must be 'Enabled' or 'Disabled'. Possible values include:
-     "Enabled", "Disabled".
-    :type public_network_access: str or ~azure.mgmt.rdbms.postgresql.models.PublicNetworkAccessEnum
-    :param storage_profile: Storage profile of a server.
-    :type storage_profile: ~azure.mgmt.rdbms.postgresql.models.StorageProfile
-    :param create_mode: Required. The mode to create a new server.Constant filled by server.
-     Possible values include: "Default", "PointInTimeRestore", "GeoRestore", "Replica".
-    :type create_mode: str or ~azure.mgmt.rdbms.postgresql.models.CreateMode
-    :param source_server_id: Required. The master server id to create replica from.
-    :type source_server_id: str
-    """
-
-    _validation = {
-        'create_mode': {'required': True},
-        'source_server_id': {'required': True},
-    }
-
-    _attribute_map = {
-        'version': {'key': 'version', 'type': 'str'},
-        'ssl_enforcement': {'key': 'sslEnforcement', 'type': 'str'},
-        'minimal_tls_version': {'key': 'minimalTlsVersion', 'type': 'str'},
-        'infrastructure_encryption': {'key': 'infrastructureEncryption', 'type': 'str'},
-        'public_network_access': {'key': 'publicNetworkAccess', 'type': 'str'},
-        'storage_profile': {'key': 'storageProfile', 'type': 'StorageProfile'},
-        'create_mode': {'key': 'createMode', 'type': 'str'},
-        'source_server_id': {'key': 'sourceServerId', 'type': 'str'},
-    }
-
-    def __init__(
-        self,
-        **kwargs
-    ):
-        super(ServerPropertiesForReplica, self).__init__(**kwargs)
-        self.create_mode = 'Replica'  # type: str
-        self.source_server_id = kwargs['source_server_id']
-
-
-class ServerPropertiesForRestore(ServerPropertiesForCreate):
-    """The properties used to create a new server by restoring from a backup.
-
-    All required parameters must be populated in order to send to Azure.
-
-    :param version: Server version. Possible values include: "9.5", "9.6", "10", "10.0", "10.2",
-     "11".
-    :type version: str or ~azure.mgmt.rdbms.postgresql.models.ServerVersion
-    :param ssl_enforcement: Enable ssl enforcement or not when connect to server. Possible values
-     include: "Enabled", "Disabled".
-    :type ssl_enforcement: str or ~azure.mgmt.rdbms.postgresql.models.SslEnforcementEnum
-    :param minimal_tls_version: Enforce a minimal Tls version for the server. Possible values
-     include: "TLS1_0", "TLS1_1", "TLS1_2", "TLSEnforcementDisabled".
-    :type minimal_tls_version: str or ~azure.mgmt.rdbms.postgresql.models.MinimalTlsVersionEnum
-    :param infrastructure_encryption: Status showing whether the server enabled infrastructure
-     encryption. Possible values include: "Enabled", "Disabled".
-    :type infrastructure_encryption: str or
-     ~azure.mgmt.rdbms.postgresql.models.InfrastructureEncryption
-    :param public_network_access: Whether or not public network access is allowed for this server.
-     Value is optional but if passed in, must be 'Enabled' or 'Disabled'. Possible values include:
-     "Enabled", "Disabled".
-    :type public_network_access: str or ~azure.mgmt.rdbms.postgresql.models.PublicNetworkAccessEnum
-    :param storage_profile: Storage profile of a server.
-    :type storage_profile: ~azure.mgmt.rdbms.postgresql.models.StorageProfile
-    :param create_mode: Required. The mode to create a new server.Constant filled by server.
-     Possible values include: "Default", "PointInTimeRestore", "GeoRestore", "Replica".
-    :type create_mode: str or ~azure.mgmt.rdbms.postgresql.models.CreateMode
-    :param source_server_id: Required. The source server id to restore from.
-    :type source_server_id: str
-    :param restore_point_in_time: Required. Restore point creation time (ISO8601 format),
-     specifying the time to restore from.
-    :type restore_point_in_time: ~datetime.datetime
-    """
-
-    _validation = {
-        'create_mode': {'required': True},
-        'source_server_id': {'required': True},
-        'restore_point_in_time': {'required': True},
-    }
-
-    _attribute_map = {
-        'version': {'key': 'version', 'type': 'str'},
-        'ssl_enforcement': {'key': 'sslEnforcement', 'type': 'str'},
-        'minimal_tls_version': {'key': 'minimalTlsVersion', 'type': 'str'},
-        'infrastructure_encryption': {'key': 'infrastructureEncryption', 'type': 'str'},
-        'public_network_access': {'key': 'publicNetworkAccess', 'type': 'str'},
-        'storage_profile': {'key': 'storageProfile', 'type': 'StorageProfile'},
-        'create_mode': {'key': 'createMode', 'type': 'str'},
-        'source_server_id': {'key': 'sourceServerId', 'type': 'str'},
-        'restore_point_in_time': {'key': 'restorePointInTime', 'type': 'iso-8601'},
-    }
-
-    def __init__(
-        self,
-        **kwargs
-    ):
-        super(ServerPropertiesForRestore, self).__init__(**kwargs)
-        self.create_mode = 'PointInTimeRestore'  # type: str
-        self.source_server_id = kwargs['source_server_id']
-        self.restore_point_in_time = kwargs['restore_point_in_time']
-
-
-class ServerSecurityAlertPolicy(Resource):
-    """A server security alert policy.
-
-    Variables are only populated by the server, and will be ignored when sending a request.
-
-    :ivar id: Fully qualified resource ID for the resource. Ex -
-     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
-    :vartype id: str
-    :ivar name: The name of the resource.
+    :ivar name: server version.
     :vartype name: str
-    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
-     "Microsoft.Storage/storageAccounts".
-    :vartype type: str
-    :param state: Specifies the state of the policy, whether it is enabled or disabled. Possible
-     values include: "Enabled", "Disabled".
-    :type state: str or ~azure.mgmt.rdbms.postgresql.models.ServerSecurityAlertPolicyState
-    :param disabled_alerts: Specifies an array of alerts that are disabled. Allowed values are:
-     Sql_Injection, Sql_Injection_Vulnerability, Access_Anomaly.
-    :type disabled_alerts: list[str]
-    :param email_addresses: Specifies an array of e-mail addresses to which the alert is sent.
-    :type email_addresses: list[str]
-    :param email_account_admins: Specifies that the alert is sent to the account administrators.
-    :type email_account_admins: bool
-    :param storage_endpoint: Specifies the blob storage endpoint (e.g.
-     https://MyAccount.blob.core.windows.net). This blob storage will hold all Threat Detection
-     audit logs.
-    :type storage_endpoint: str
-    :param storage_account_access_key: Specifies the identifier key of the Threat Detection audit
-     storage account.
-    :type storage_account_access_key: str
-    :param retention_days: Specifies the number of days to keep in the Threat Detection audit logs.
-    :type retention_days: int
+    :ivar supported_vcores:
+    :vartype supported_vcores: list[~azure.mgmt.rdbms.postgresql.models.VcoreCapability]
     """
 
     _validation = {
-        'id': {'readonly': True},
         'name': {'readonly': True},
-        'type': {'readonly': True},
+        'supported_vcores': {'readonly': True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
         'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'state': {'key': 'properties.state', 'type': 'str'},
-        'disabled_alerts': {'key': 'properties.disabledAlerts', 'type': '[str]'},
-        'email_addresses': {'key': 'properties.emailAddresses', 'type': '[str]'},
-        'email_account_admins': {'key': 'properties.emailAccountAdmins', 'type': 'bool'},
-        'storage_endpoint': {'key': 'properties.storageEndpoint', 'type': 'str'},
-        'storage_account_access_key': {'key': 'properties.storageAccountAccessKey', 'type': 'str'},
-        'retention_days': {'key': 'properties.retentionDays', 'type': 'int'},
+        'supported_vcores': {'key': 'supportedVcores', 'type': '[VcoreCapability]'},
     }
 
     def __init__(
         self,
         **kwargs
     ):
-        super(ServerSecurityAlertPolicy, self).__init__(**kwargs)
-        self.state = kwargs.get('state', None)
-        self.disabled_alerts = kwargs.get('disabled_alerts', None)
-        self.email_addresses = kwargs.get('email_addresses', None)
-        self.email_account_admins = kwargs.get('email_account_admins', None)
-        self.storage_endpoint = kwargs.get('storage_endpoint', None)
-        self.storage_account_access_key = kwargs.get('storage_account_access_key', None)
-        self.retention_days = kwargs.get('retention_days', None)
-
-
-class ServerSecurityAlertPolicyListResult(msrest.serialization.Model):
-    """A list of the server's security alert policies.
-
-    Variables are only populated by the server, and will be ignored when sending a request.
-
-    :ivar value: Array of results.
-    :vartype value: list[~azure.mgmt.rdbms.postgresql.models.ServerSecurityAlertPolicy]
-    :ivar next_link: Link to retrieve next page of results.
-    :vartype next_link: str
-    """
-
-    _validation = {
-        'value': {'readonly': True},
-        'next_link': {'readonly': True},
-    }
-
-    _attribute_map = {
-        'value': {'key': 'value', 'type': '[ServerSecurityAlertPolicy]'},
-        'next_link': {'key': 'nextLink', 'type': 'str'},
-    }
-
-    def __init__(
-        self,
-        **kwargs
-    ):
-        super(ServerSecurityAlertPolicyListResult, self).__init__(**kwargs)
-        self.value = None
-        self.next_link = None
-
-
-class ServerUpdateParameters(msrest.serialization.Model):
-    """Parameters allowed to update for a server.
-
-    :param identity: The Azure Active Directory identity of the server.
-    :type identity: ~azure.mgmt.rdbms.postgresql.models.ResourceIdentity
-    :param sku: The SKU (pricing tier) of the server.
-    :type sku: ~azure.mgmt.rdbms.postgresql.models.Sku
-    :param tags: A set of tags. Application-specific metadata in the form of key-value pairs.
-    :type tags: dict[str, str]
-    :param storage_profile: Storage profile of a server.
-    :type storage_profile: ~azure.mgmt.rdbms.postgresql.models.StorageProfile
-    :param administrator_login_password: The password of the administrator login.
-    :type administrator_login_password: str
-    :param version: The version of a server. Possible values include: "9.5", "9.6", "10", "10.0",
-     "10.2", "11".
-    :type version: str or ~azure.mgmt.rdbms.postgresql.models.ServerVersion
-    :param ssl_enforcement: Enable ssl enforcement or not when connect to server. Possible values
-     include: "Enabled", "Disabled".
-    :type ssl_enforcement: str or ~azure.mgmt.rdbms.postgresql.models.SslEnforcementEnum
-    :param minimal_tls_version: Enforce a minimal Tls version for the server. Possible values
-     include: "TLS1_0", "TLS1_1", "TLS1_2", "TLSEnforcementDisabled".
-    :type minimal_tls_version: str or ~azure.mgmt.rdbms.postgresql.models.MinimalTlsVersionEnum
-    :param public_network_access: Whether or not public network access is allowed for this server.
-     Value is optional but if passed in, must be 'Enabled' or 'Disabled'. Possible values include:
-     "Enabled", "Disabled".
-    :type public_network_access: str or ~azure.mgmt.rdbms.postgresql.models.PublicNetworkAccessEnum
-    :param replication_role: The replication role of the server.
-    :type replication_role: str
-    """
-
-    _attribute_map = {
-        'identity': {'key': 'identity', 'type': 'ResourceIdentity'},
-        'sku': {'key': 'sku', 'type': 'Sku'},
-        'tags': {'key': 'tags', 'type': '{str}'},
-        'storage_profile': {'key': 'properties.storageProfile', 'type': 'StorageProfile'},
-        'administrator_login_password': {'key': 'properties.administratorLoginPassword', 'type': 'str'},
-        'version': {'key': 'properties.version', 'type': 'str'},
-        'ssl_enforcement': {'key': 'properties.sslEnforcement', 'type': 'str'},
-        'minimal_tls_version': {'key': 'properties.minimalTlsVersion', 'type': 'str'},
-        'public_network_access': {'key': 'properties.publicNetworkAccess', 'type': 'str'},
-        'replication_role': {'key': 'properties.replicationRole', 'type': 'str'},
-    }
-
-    def __init__(
-        self,
-        **kwargs
-    ):
-        super(ServerUpdateParameters, self).__init__(**kwargs)
-        self.identity = kwargs.get('identity', None)
-        self.sku = kwargs.get('sku', None)
-        self.tags = kwargs.get('tags', None)
-        self.storage_profile = kwargs.get('storage_profile', None)
-        self.administrator_login_password = kwargs.get('administrator_login_password', None)
-        self.version = kwargs.get('version', None)
-        self.ssl_enforcement = kwargs.get('ssl_enforcement', None)
-        self.minimal_tls_version = kwargs.get('minimal_tls_version', None)
-        self.public_network_access = kwargs.get('public_network_access', None)
-        self.replication_role = kwargs.get('replication_role', None)
+        super(ServerVersionCapability, self).__init__(**kwargs)
+        self.name = None
+        self.supported_vcores = None
 
 
 class Sku(msrest.serialization.Model):
-    """Billing information related properties of a server.
+    """Sku information related properties of a server.
 
     All required parameters must be populated in order to send to Azure.
 
-    :param name: Required. The name of the sku, typically, tier + family + cores, e.g. B_Gen4_1,
-     GP_Gen5_8.
+    :param name: Required. The name of the sku, typically, tier + family + cores, e.g.
+     Standard_D4s_v3.
     :type name: str
-    :param tier: The tier of the particular SKU, e.g. Basic. Possible values include: "Basic",
-     "GeneralPurpose", "MemoryOptimized".
+    :param tier: Required. The tier of the particular SKU, e.g. Burstable. Possible values include:
+     "Burstable", "GeneralPurpose", "MemoryOptimized".
     :type tier: str or ~azure.mgmt.rdbms.postgresql.models.SkuTier
-    :param capacity: The scale up/out capacity, representing server's compute units.
-    :type capacity: int
-    :param size: The size code, to be interpreted by resource as appropriate.
-    :type size: str
-    :param family: The family of hardware.
-    :type family: str
     """
 
     _validation = {
         'name': {'required': True},
-        'capacity': {'minimum': 0},
+        'tier': {'required': True},
     }
 
     _attribute_map = {
         'name': {'key': 'name', 'type': 'str'},
         'tier': {'key': 'tier', 'type': 'str'},
-        'capacity': {'key': 'capacity', 'type': 'int'},
-        'size': {'key': 'size', 'type': 'str'},
-        'family': {'key': 'family', 'type': 'str'},
     }
 
     def __init__(
@@ -2036,10 +1110,72 @@ class Sku(msrest.serialization.Model):
     ):
         super(Sku, self).__init__(**kwargs)
         self.name = kwargs['name']
-        self.tier = kwargs.get('tier', None)
-        self.capacity = kwargs.get('capacity', None)
-        self.size = kwargs.get('size', None)
-        self.family = kwargs.get('family', None)
+        self.tier = kwargs['tier']
+
+
+class StorageEditionCapability(msrest.serialization.Model):
+    """storage edition capability.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar name: storage edition name.
+    :vartype name: str
+    :ivar supported_storage_mb:
+    :vartype supported_storage_mb: list[~azure.mgmt.rdbms.postgresql.models.StorageMBCapability]
+    """
+
+    _validation = {
+        'name': {'readonly': True},
+        'supported_storage_mb': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'name': {'key': 'name', 'type': 'str'},
+        'supported_storage_mb': {'key': 'supportedStorageMB', 'type': '[StorageMBCapability]'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(StorageEditionCapability, self).__init__(**kwargs)
+        self.name = None
+        self.supported_storage_mb = None
+
+
+class StorageMBCapability(msrest.serialization.Model):
+    """storage size in MB capability.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar name: storage MB name.
+    :vartype name: str
+    :ivar supported_iops: supported IOPS.
+    :vartype supported_iops: long
+    :ivar storage_size_mb: storage size in MB.
+    :vartype storage_size_mb: long
+    """
+
+    _validation = {
+        'name': {'readonly': True},
+        'supported_iops': {'readonly': True},
+        'storage_size_mb': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'name': {'key': 'name', 'type': 'str'},
+        'supported_iops': {'key': 'supportedIops', 'type': 'long'},
+        'storage_size_mb': {'key': 'storageSizeMB', 'type': 'long'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(StorageMBCapability, self).__init__(**kwargs)
+        self.name = None
+        self.supported_iops = None
+        self.storage_size_mb = None
 
 
 class StorageProfile(msrest.serialization.Model):
@@ -2047,21 +1183,13 @@ class StorageProfile(msrest.serialization.Model):
 
     :param backup_retention_days: Backup retention days for the server.
     :type backup_retention_days: int
-    :param geo_redundant_backup: Enable Geo-redundant or not for server backup. Possible values
-     include: "Enabled", "Disabled".
-    :type geo_redundant_backup: str or ~azure.mgmt.rdbms.postgresql.models.GeoRedundantBackup
     :param storage_mb: Max storage allowed for a server.
     :type storage_mb: int
-    :param storage_autogrow: Enable Storage Auto Grow. Possible values include: "Enabled",
-     "Disabled".
-    :type storage_autogrow: str or ~azure.mgmt.rdbms.postgresql.models.StorageAutogrow
     """
 
     _attribute_map = {
         'backup_retention_days': {'key': 'backupRetentionDays', 'type': 'int'},
-        'geo_redundant_backup': {'key': 'geoRedundantBackup', 'type': 'str'},
         'storage_mb': {'key': 'storageMB', 'type': 'int'},
-        'storage_autogrow': {'key': 'storageAutogrow', 'type': 'str'},
     }
 
     def __init__(
@@ -2070,104 +1198,89 @@ class StorageProfile(msrest.serialization.Model):
     ):
         super(StorageProfile, self).__init__(**kwargs)
         self.backup_retention_days = kwargs.get('backup_retention_days', None)
-        self.geo_redundant_backup = kwargs.get('geo_redundant_backup', None)
         self.storage_mb = kwargs.get('storage_mb', None)
-        self.storage_autogrow = kwargs.get('storage_autogrow', None)
 
 
-class TagsObject(msrest.serialization.Model):
-    """Tags object for patch operations.
-
-    :param tags: A set of tags. Resource tags.
-    :type tags: dict[str, str]
-    """
-
-    _attribute_map = {
-        'tags': {'key': 'tags', 'type': '{str}'},
-    }
-
-    def __init__(
-        self,
-        **kwargs
-    ):
-        super(TagsObject, self).__init__(**kwargs)
-        self.tags = kwargs.get('tags', None)
-
-
-class VirtualNetworkRule(Resource):
-    """A virtual network rule.
+class VcoreCapability(msrest.serialization.Model):
+    """Vcores capability.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    :ivar id: Fully qualified resource ID for the resource. Ex -
-     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
-    :vartype id: str
-    :ivar name: The name of the resource.
+    :ivar name: vCore name.
     :vartype name: str
-    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
-     "Microsoft.Storage/storageAccounts".
-    :vartype type: str
-    :param virtual_network_subnet_id: The ARM resource id of the virtual network subnet.
-    :type virtual_network_subnet_id: str
-    :param ignore_missing_vnet_service_endpoint: Create firewall rule before the virtual network
-     has vnet service endpoint enabled.
-    :type ignore_missing_vnet_service_endpoint: bool
-    :ivar state: Virtual Network Rule State. Possible values include: "Initializing", "InProgress",
-     "Ready", "Deleting", "Unknown".
-    :vartype state: str or ~azure.mgmt.rdbms.postgresql.models.VirtualNetworkRuleState
+    :ivar v_cores: supported vCores.
+    :vartype v_cores: long
+    :ivar supported_iops: supported IOPS.
+    :vartype supported_iops: long
+    :ivar supported_memory_per_vcore_mb: supported memory per vCore in MB.
+    :vartype supported_memory_per_vcore_mb: long
     """
 
     _validation = {
-        'id': {'readonly': True},
         'name': {'readonly': True},
-        'type': {'readonly': True},
-        'state': {'readonly': True},
+        'v_cores': {'readonly': True},
+        'supported_iops': {'readonly': True},
+        'supported_memory_per_vcore_mb': {'readonly': True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
         'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'virtual_network_subnet_id': {'key': 'properties.virtualNetworkSubnetId', 'type': 'str'},
-        'ignore_missing_vnet_service_endpoint': {'key': 'properties.ignoreMissingVnetServiceEndpoint', 'type': 'bool'},
-        'state': {'key': 'properties.state', 'type': 'str'},
+        'v_cores': {'key': 'vCores', 'type': 'long'},
+        'supported_iops': {'key': 'supportedIops', 'type': 'long'},
+        'supported_memory_per_vcore_mb': {'key': 'supportedMemoryPerVcoreMB', 'type': 'long'},
     }
 
     def __init__(
         self,
         **kwargs
     ):
-        super(VirtualNetworkRule, self).__init__(**kwargs)
-        self.virtual_network_subnet_id = kwargs.get('virtual_network_subnet_id', None)
-        self.ignore_missing_vnet_service_endpoint = kwargs.get('ignore_missing_vnet_service_endpoint', None)
-        self.state = None
+        super(VcoreCapability, self).__init__(**kwargs)
+        self.name = None
+        self.v_cores = None
+        self.supported_iops = None
+        self.supported_memory_per_vcore_mb = None
 
 
-class VirtualNetworkRuleListResult(msrest.serialization.Model):
-    """A list of virtual network rules.
+class VirtualNetworkSubnetUsageParameter(msrest.serialization.Model):
+    """Virtual network subnet usage parameter.
+
+    :param virtual_network_arm_resource_id: Virtual network resource id.
+    :type virtual_network_arm_resource_id: str
+    """
+
+    _attribute_map = {
+        'virtual_network_arm_resource_id': {'key': 'virtualNetworkArmResourceId', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(VirtualNetworkSubnetUsageParameter, self).__init__(**kwargs)
+        self.virtual_network_arm_resource_id = kwargs.get('virtual_network_arm_resource_id', None)
+
+
+class VirtualNetworkSubnetUsageResult(msrest.serialization.Model):
+    """Virtual network subnet usage data.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    :ivar value: Array of results.
-    :vartype value: list[~azure.mgmt.rdbms.postgresql.models.VirtualNetworkRule]
-    :ivar next_link: Link to retrieve next page of results.
-    :vartype next_link: str
+    :ivar delegated_subnets_usage:
+    :vartype delegated_subnets_usage:
+     list[~azure.mgmt.rdbms.postgresql.models.DelegatedSubnetUsage]
     """
 
     _validation = {
-        'value': {'readonly': True},
-        'next_link': {'readonly': True},
+        'delegated_subnets_usage': {'readonly': True},
     }
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': '[VirtualNetworkRule]'},
-        'next_link': {'key': 'nextLink', 'type': 'str'},
+        'delegated_subnets_usage': {'key': 'delegatedSubnetsUsage', 'type': '[DelegatedSubnetUsage]'},
     }
 
     def __init__(
         self,
         **kwargs
     ):
-        super(VirtualNetworkRuleListResult, self).__init__(**kwargs)
-        self.value = None
-        self.next_link = None
+        super(VirtualNetworkSubnetUsageResult, self).__init__(**kwargs)
+        self.delegated_subnets_usage = None

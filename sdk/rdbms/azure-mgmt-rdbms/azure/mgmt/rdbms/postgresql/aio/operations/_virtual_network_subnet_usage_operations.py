@@ -18,8 +18,8 @@ from ... import models as _models
 T = TypeVar('T')
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]]
 
-class CheckNameAvailabilityOperations:
-    """CheckNameAvailabilityOperations async operations.
+class VirtualNetworkSubnetUsageOperations:
+    """VirtualNetworkSubnetUsageOperations async operations.
 
     You should not instantiate this class directly. Instead, you should create a Client instance that
     instantiates it for you and attaches it as an attribute.
@@ -42,20 +42,22 @@ class CheckNameAvailabilityOperations:
 
     async def execute(
         self,
-        name_availability_request: "_models.NameAvailabilityRequest",
+        location_name: str,
+        parameters: "_models.VirtualNetworkSubnetUsageParameter",
         **kwargs
-    ) -> "_models.NameAvailability":
-        """Check the availability of name for resource.
+    ) -> "_models.VirtualNetworkSubnetUsageResult":
+        """Get virtual network subnet usage for a given vNet resource id.
 
-        :param name_availability_request: The required parameters for checking if resource name is
-         available.
-        :type name_availability_request: ~azure.mgmt.rdbms.postgresql.models.NameAvailabilityRequest
+        :param location_name: The name of the location.
+        :type location_name: str
+        :param parameters: The required parameters for creating or updating a server.
+        :type parameters: ~azure.mgmt.rdbms.postgresql.models.VirtualNetworkSubnetUsageParameter
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: NameAvailability, or the result of cls(response)
-        :rtype: ~azure.mgmt.rdbms.postgresql.models.NameAvailability
+        :return: VirtualNetworkSubnetUsageResult, or the result of cls(response)
+        :rtype: ~azure.mgmt.rdbms.postgresql.models.VirtualNetworkSubnetUsageResult
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["_models.NameAvailability"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.VirtualNetworkSubnetUsageResult"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -68,6 +70,7 @@ class CheckNameAvailabilityOperations:
         url = self.execute.metadata['url']  # type: ignore
         path_format_arguments = {
             'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str', min_length=1),
+            'locationName': self._serialize.url("location_name", location_name, 'str'),
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -81,7 +84,7 @@ class CheckNameAvailabilityOperations:
         header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
 
         body_content_kwargs = {}  # type: Dict[str, Any]
-        body_content = self._serialize.body(name_availability_request, 'NameAvailabilityRequest')
+        body_content = self._serialize.body(parameters, 'VirtualNetworkSubnetUsageParameter')
         body_content_kwargs['content'] = body_content
         request = self._client.post(url, query_parameters, header_parameters, **body_content_kwargs)
         pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
@@ -91,10 +94,10 @@ class CheckNameAvailabilityOperations:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             raise HttpResponseError(response=response, error_format=ARMErrorFormat)
 
-        deserialized = self._deserialize('NameAvailability', pipeline_response)
+        deserialized = self._deserialize('VirtualNetworkSubnetUsageResult', pipeline_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})
 
         return deserialized
-    execute.metadata = {'url': '/subscriptions/{subscriptionId}/providers/Microsoft.DBForPostgreSql/checkNameAvailability'}  # type: ignore
+    execute.metadata = {'url': '/subscriptions/{subscriptionId}/providers/Microsoft.DBForPostgreSql/locations/{locationName}/checkVirtualNetworkSubnetUsage'}  # type: ignore

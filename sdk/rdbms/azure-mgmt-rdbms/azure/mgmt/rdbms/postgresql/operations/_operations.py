@@ -61,7 +61,7 @@ class Operations(object):
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2017-12-01"
+        api_version = "2020-02-14-preview"
         accept = "application/json"
 
         # Construct URL
@@ -89,4 +89,4 @@ class Operations(object):
             return cls(pipeline_response, deserialized, {})
 
         return deserialized
-    list.metadata = {'url': '/providers/Microsoft.DBForPostgreSQL/operations'}  # type: ignore
+    list.metadata = {'url': '/providers/Microsoft.DBForPostgreSql/operations'}  # type: ignore
