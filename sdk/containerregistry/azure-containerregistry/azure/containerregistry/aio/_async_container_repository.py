@@ -26,6 +26,7 @@ from .._models import (
     RepositoryProperties,
     TagProperties,
 )
+from ._async_registry_artifact import RegistryArtifact
 
 if TYPE_CHECKING:
     from azure.core.credentials_async import AsyncTokenCredential
@@ -417,3 +418,14 @@ class ContainerRepository(ContainerRegistryBaseClient):
         return RepositoryProperties._from_generated(  # pylint: disable=protected-access
             await self._client.container_registry.set_properties(self.repository, properties._to_generated(), **kwargs)
         )
+
+    @distributed_trace
+    def get_artifact(self, tag_or_digest: str, **kwargs: Dict[str, Any]) -> RegistryArtifact:
+        """Get a Registry Artifact object
+
+        :param str repository_name: Name of the repository
+        :param str tag_or_digest: The tag or digest of the artifact
+        :returns: :class:`~azure.containerregistry.RegistryArtifact`
+        :raises: None
+        """
+        return RegistryArtifact(self._endpoint, self.repository, tag_or_digest, self._credential, **kwargs)

@@ -8,8 +8,10 @@
 
 from ._async_container_registry_client import ContainerRegistryClient
 from ._async_container_repository import ContainerRepository
+from ._async_registry_artifact import RegistryArtifact
 
 __all__ = [
     "ContainerRegistryClient",
     "ContainerRepository",
+    "RegistryArtifact"
 ]
