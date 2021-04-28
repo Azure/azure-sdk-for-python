@@ -45,12 +45,11 @@ steps:
         conda install --name ${{ artifact.name }} --yes --quiet conda-build
         source activate ${{ artifact.name }}
         conda index $(Build.ArtifactStagingDirectory)/${{ artifact.name }}
-      displayName: 'Prepare Conda Environment for Testing ${{ artifact.name }}, Index the Target Artifact'
+      displayName: 'Prepare Conda Environment for Testing ${{ artifact.name }}, Index the Target Local Artifact'
 
     - bash: |
         source activate ${{ artifact.name }}
         pip install -r eng/ci_tools.txt
-        conda install --name ${{ artifact.name }} ${{ artifact.name }} -c $(Build.ArtifactStagingDirectory)/${{ artifact.name }} --yes
       displayName: 'Activate Conda Environment and Install General Dependencies ${{ artifact.name }}'
 
     - pwsh: |
@@ -82,6 +81,12 @@ steps:
       - bash: |
           source activate ${{ artifact.name }}
           pip install -r dev_requirements.txt
+          conda install --name ${{ artifact.name }} ${{ artifact.name }} -c $(Build.ArtifactStagingDirectory)/${{ artifact.name }} --yes
+        displayName: 'Install ${{ checkout.package }} Conda Package and Dev Requirements'
+        workingDirectory: $(conda.build)/${{ checkout.checkout_path }}/${{ checkout.package }}
+
+      - bash: |
+          source activate ${{ artifact.name }}
           pytest .
-        displayName: 'Run tests for ${{ checkout.package }}'
+        displayName: 'Run Tests for ${{ checkout.package }}'
         workingDirectory: $(conda.build)/${{ checkout.checkout_path }}/${{ checkout.package }}
