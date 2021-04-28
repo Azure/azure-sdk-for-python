@@ -6,6 +6,7 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
+import datetime
 from typing import Dict, List, Optional, Union
 
 from azure.core.exceptions import HttpResponseError
@@ -374,24 +375,80 @@ class PrivateEndpointConnection(Resource):
         self.provisioning_state = None
 
 
-class PrivateEndpointConnectionListResult(msrest.serialization.Model):
-    """List of private endpoint connection associated with the specified storage account.
+class PrivateEndpointConnectionDescription(PrivateEndpointConnection):
+    """The Private Endpoint Connection resource.
 
-    :param value: Array of private endpoint connections.
-    :type value: list[~azure.mgmt.healthcareapis.models.PrivateEndpointConnection]
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar id: Fully qualified resource ID for the resource. Ex -
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
+    :vartype id: str
+    :ivar name: The name of the resource.
+    :vartype name: str
+    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
+     "Microsoft.Storage/storageAccounts".
+    :vartype type: str
+    :param private_endpoint: The resource of private end point.
+    :type private_endpoint: ~azure.mgmt.healthcareapis.models.PrivateEndpoint
+    :param private_link_service_connection_state: A collection of information about the state of
+     the connection between service consumer and provider.
+    :type private_link_service_connection_state:
+     ~azure.mgmt.healthcareapis.models.PrivateLinkServiceConnectionState
+    :ivar provisioning_state: The provisioning state of the private endpoint connection resource.
+     Possible values include: "Succeeded", "Creating", "Deleting", "Failed".
+    :vartype provisioning_state: str or
+     ~azure.mgmt.healthcareapis.models.PrivateEndpointConnectionProvisioningState
+    :ivar system_data: System metadata for this resource.
+    :vartype system_data: ~azure.mgmt.healthcareapis.models.SystemData
     """
 
+    _validation = {
+        'id': {'readonly': True},
+        'name': {'readonly': True},
+        'type': {'readonly': True},
+        'provisioning_state': {'readonly': True},
+        'system_data': {'readonly': True},
+    }
+
     _attribute_map = {
-        'value': {'key': 'value', 'type': '[PrivateEndpointConnection]'},
+        'id': {'key': 'id', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
+        'private_endpoint': {'key': 'properties.privateEndpoint', 'type': 'PrivateEndpoint'},
+        'private_link_service_connection_state': {'key': 'properties.privateLinkServiceConnectionState', 'type': 'PrivateLinkServiceConnectionState'},
+        'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
+        'system_data': {'key': 'systemData', 'type': 'SystemData'},
     }
 
     def __init__(
         self,
         *,
-        value: Optional[List["PrivateEndpointConnection"]] = None,
+        private_endpoint: Optional["PrivateEndpoint"] = None,
+        private_link_service_connection_state: Optional["PrivateLinkServiceConnectionState"] = None,
         **kwargs
     ):
-        super(PrivateEndpointConnectionListResult, self).__init__(**kwargs)
+        super(PrivateEndpointConnectionDescription, self).__init__(private_endpoint=private_endpoint, private_link_service_connection_state=private_link_service_connection_state, **kwargs)
+        self.system_data = None
+
+
+class PrivateEndpointConnectionListResultDescription(msrest.serialization.Model):
+    """List of private endpoint connection associated with the specified storage account.
+
+    :param value: Array of private endpoint connections.
+    :type value: list[~azure.mgmt.healthcareapis.models.PrivateEndpointConnectionDescription]
+    """
+
+    _attribute_map = {
+        'value': {'key': 'value', 'type': '[PrivateEndpointConnectionDescription]'},
+    }
+
+    def __init__(
+        self,
+        *,
+        value: Optional[List["PrivateEndpointConnectionDescription"]] = None,
+        **kwargs
+    ):
+        super(PrivateEndpointConnectionListResultDescription, self).__init__(**kwargs)
         self.value = value
 
 
@@ -445,24 +502,76 @@ class PrivateLinkResource(Resource):
         self.required_zone_names = required_zone_names
 
 
-class PrivateLinkResourceListResult(msrest.serialization.Model):
-    """A list of private link resources.
+class PrivateLinkResourceDescription(PrivateLinkResource):
+    """The Private Endpoint Connection resource.
 
-    :param value: Array of private link resources.
-    :type value: list[~azure.mgmt.healthcareapis.models.PrivateLinkResource]
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar id: Fully qualified resource ID for the resource. Ex -
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
+    :vartype id: str
+    :ivar name: The name of the resource.
+    :vartype name: str
+    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
+     "Microsoft.Storage/storageAccounts".
+    :vartype type: str
+    :ivar group_id: The private link resource group id.
+    :vartype group_id: str
+    :ivar required_members: The private link resource required member names.
+    :vartype required_members: list[str]
+    :param required_zone_names: The private link resource Private link DNS zone name.
+    :type required_zone_names: list[str]
+    :ivar system_data: System metadata for this resource.
+    :vartype system_data: ~azure.mgmt.healthcareapis.models.SystemData
     """
 
+    _validation = {
+        'id': {'readonly': True},
+        'name': {'readonly': True},
+        'type': {'readonly': True},
+        'group_id': {'readonly': True},
+        'required_members': {'readonly': True},
+        'system_data': {'readonly': True},
+    }
+
     _attribute_map = {
-        'value': {'key': 'value', 'type': '[PrivateLinkResource]'},
+        'id': {'key': 'id', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
+        'group_id': {'key': 'properties.groupId', 'type': 'str'},
+        'required_members': {'key': 'properties.requiredMembers', 'type': '[str]'},
+        'required_zone_names': {'key': 'properties.requiredZoneNames', 'type': '[str]'},
+        'system_data': {'key': 'systemData', 'type': 'SystemData'},
     }
 
     def __init__(
         self,
         *,
-        value: Optional[List["PrivateLinkResource"]] = None,
+        required_zone_names: Optional[List[str]] = None,
         **kwargs
     ):
-        super(PrivateLinkResourceListResult, self).__init__(**kwargs)
+        super(PrivateLinkResourceDescription, self).__init__(required_zone_names=required_zone_names, **kwargs)
+        self.system_data = None
+
+
+class PrivateLinkResourceListResultDescription(msrest.serialization.Model):
+    """A list of private link resources.
+
+    :param value: Array of private link resources.
+    :type value: list[~azure.mgmt.healthcareapis.models.PrivateLinkResourceDescription]
+    """
+
+    _attribute_map = {
+        'value': {'key': 'value', 'type': '[PrivateLinkResourceDescription]'},
+    }
+
+    def __init__(
+        self,
+        *,
+        value: Optional[List["PrivateLinkResourceDescription"]] = None,
+        **kwargs
+    ):
+        super(PrivateLinkResourceListResultDescription, self).__init__(**kwargs)
         self.value = value
 
 
@@ -525,6 +634,27 @@ class ServiceAccessPolicyEntry(msrest.serialization.Model):
     ):
         super(ServiceAccessPolicyEntry, self).__init__(**kwargs)
         self.object_id = object_id
+
+
+class ServiceAcrConfigurationInfo(msrest.serialization.Model):
+    """Azure container registry configuration information.
+
+    :param login_servers: The list of the ACR login servers.
+    :type login_servers: list[str]
+    """
+
+    _attribute_map = {
+        'login_servers': {'key': 'loginServers', 'type': '[str]'},
+    }
+
+    def __init__(
+        self,
+        *,
+        login_servers: Optional[List[str]] = None,
+        **kwargs
+    ):
+        super(ServiceAcrConfigurationInfo, self).__init__(**kwargs)
+        self.login_servers = login_servers
 
 
 class ServiceAuthenticationConfigurationInfo(msrest.serialization.Model):
@@ -750,6 +880,8 @@ class ServicesDescription(ServicesResource):
     :type identity: ~azure.mgmt.healthcareapis.models.ServicesResourceIdentity
     :param properties: The common properties of a service.
     :type properties: ~azure.mgmt.healthcareapis.models.ServicesProperties
+    :ivar system_data: Metadata pertaining to creation and last modification of the resource.
+    :vartype system_data: ~azure.mgmt.healthcareapis.models.SystemData
     """
 
     _validation = {
@@ -758,6 +890,7 @@ class ServicesDescription(ServicesResource):
         'type': {'readonly': True},
         'kind': {'required': True},
         'location': {'required': True},
+        'system_data': {'readonly': True},
     }
 
     _attribute_map = {
@@ -770,6 +903,7 @@ class ServicesDescription(ServicesResource):
         'etag': {'key': 'etag', 'type': 'str'},
         'identity': {'key': 'identity', 'type': 'ServicesResourceIdentity'},
         'properties': {'key': 'properties', 'type': 'ServicesProperties'},
+        'system_data': {'key': 'systemData', 'type': 'SystemData'},
     }
 
     def __init__(
@@ -785,6 +919,7 @@ class ServicesDescription(ServicesResource):
     ):
         super(ServicesDescription, self).__init__(kind=kind, location=location, tags=tags, etag=etag, identity=identity, **kwargs)
         self.properties = properties
+        self.system_data = None
 
 
 class ServicesDescriptionListResult(msrest.serialization.Model):
@@ -905,6 +1040,9 @@ class ServicesProperties(msrest.serialization.Model):
     :param public_network_access: Control permission for data plane traffic coming from public
      networks while private endpoint is enabled. Possible values include: "Enabled", "Disabled".
     :type public_network_access: str or ~azure.mgmt.healthcareapis.models.PublicNetworkAccess
+    :param acr_configuration: The azure container registry settings used for convert data operation
+     of the service instance.
+    :type acr_configuration: ~azure.mgmt.healthcareapis.models.ServiceAcrConfigurationInfo
     """
 
     _validation = {
@@ -920,6 +1058,7 @@ class ServicesProperties(msrest.serialization.Model):
         'export_configuration': {'key': 'exportConfiguration', 'type': 'ServiceExportConfigurationInfo'},
         'private_endpoint_connections': {'key': 'privateEndpointConnections', 'type': '[PrivateEndpointConnection]'},
         'public_network_access': {'key': 'publicNetworkAccess', 'type': 'str'},
+        'acr_configuration': {'key': 'acrConfiguration', 'type': 'ServiceAcrConfigurationInfo'},
     }
 
     def __init__(
@@ -932,6 +1071,7 @@ class ServicesProperties(msrest.serialization.Model):
         export_configuration: Optional["ServiceExportConfigurationInfo"] = None,
         private_endpoint_connections: Optional[List["PrivateEndpointConnection"]] = None,
         public_network_access: Optional[Union[str, "PublicNetworkAccess"]] = None,
+        acr_configuration: Optional["ServiceAcrConfigurationInfo"] = None,
         **kwargs
     ):
         super(ServicesProperties, self).__init__(**kwargs)
@@ -943,6 +1083,7 @@ class ServicesProperties(msrest.serialization.Model):
         self.export_configuration = export_configuration
         self.private_endpoint_connections = private_endpoint_connections
         self.public_network_access = public_network_access
+        self.acr_configuration = acr_configuration
 
 
 class ServicesResourceIdentity(msrest.serialization.Model):
@@ -980,3 +1121,51 @@ class ServicesResourceIdentity(msrest.serialization.Model):
         self.principal_id = None
         self.tenant_id = None
         self.type = type
+
+
+class SystemData(msrest.serialization.Model):
+    """Metadata pertaining to creation and last modification of the resource.
+
+    :param created_by: The identity that created the resource.
+    :type created_by: str
+    :param created_by_type: The type of identity that created the resource. Possible values
+     include: "User", "Application", "ManagedIdentity", "Key".
+    :type created_by_type: str or ~azure.mgmt.healthcareapis.models.CreatedByType
+    :param created_at: The timestamp of resource creation (UTC).
+    :type created_at: ~datetime.datetime
+    :param last_modified_by: The identity that last modified the resource.
+    :type last_modified_by: str
+    :param last_modified_by_type: The type of identity that last modified the resource. Possible
+     values include: "User", "Application", "ManagedIdentity", "Key".
+    :type last_modified_by_type: str or ~azure.mgmt.healthcareapis.models.CreatedByType
+    :param last_modified_at: The timestamp of resource last modification (UTC).
+    :type last_modified_at: ~datetime.datetime
+    """
+
+    _attribute_map = {
+        'created_by': {'key': 'createdBy', 'type': 'str'},
+        'created_by_type': {'key': 'createdByType', 'type': 'str'},
+        'created_at': {'key': 'createdAt', 'type': 'iso-8601'},
+        'last_modified_by': {'key': 'lastModifiedBy', 'type': 'str'},
+        'last_modified_by_type': {'key': 'lastModifiedByType', 'type': 'str'},
+        'last_modified_at': {'key': 'lastModifiedAt', 'type': 'iso-8601'},
+    }
+
+    def __init__(
+        self,
+        *,
+        created_by: Optional[str] = None,
+        created_by_type: Optional[Union[str, "CreatedByType"]] = None,
+        created_at: Optional[datetime.datetime] = None,
+        last_modified_by: Optional[str] = None,
+        last_modified_by_type: Optional[Union[str, "CreatedByType"]] = None,
+        last_modified_at: Optional[datetime.datetime] = None,
+        **kwargs
+    ):
+        super(SystemData, self).__init__(**kwargs)
+        self.created_by = created_by
+        self.created_by_type = created_by_type
+        self.created_at = created_at
+        self.last_modified_by = last_modified_by
+        self.last_modified_by_type = last_modified_by_type
+        self.last_modified_at = last_modified_at

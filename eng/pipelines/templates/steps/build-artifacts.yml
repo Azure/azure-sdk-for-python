@@ -24,11 +24,11 @@ steps:
       PackageName: "azure-template"
       ServiceDirectory: "template"
       TestPipeline: ${{ parameters.TestPipeline }}
-
+  - template: /eng/common/pipelines/templates/steps/set-default-branch.yml
   - script: |
       echo "##vso[build.addbuildtag]Scheduled"
     displayName: 'Tag scheduled builds'
-    condition: and(eq(variables['Build.SourceBranchName'],'master'),eq(variables['Build.Reason'],'Schedule'))
+    condition: and(eq(variables['Build.SourceBranchName'], variables['DefaultBranch']), eq(variables['Build.Reason'],'Schedule'))
 
   - task: UsePythonVersion@0
     displayName: 'Use Python 2.7'
@@ -92,7 +92,3 @@ steps:
       ArtifactPath: '$(Build.SourcesDirectory)/_docs'
       CustomCondition: ${{ parameters.BuildDocs }}
       ArtifactName: 'documentation'
-
-  - template: /eng/common/pipelines/templates/steps/create-apireview.yml
-    parameters:
-      Artifacts: ${{ parameters.Artifacts }}

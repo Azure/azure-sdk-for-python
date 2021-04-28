@@ -11,23 +11,23 @@ interactions:
       DataServiceVersion:
       - '3.0'
       Date:
-      - Sat, 07 Nov 2020 01:38:29 GMT
+      - Thu, 15 Apr 2021 16:27:13 GMT
       User-Agent:
-      - azsdk-python-data-tables/12.0.0b3 Python/3.5.3 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-data-tables/12.0.0b7 Python/3.9.0rc1 (Windows-10-10.0.19041-SP0)
       x-ms-date:
-      - Sat, 07 Nov 2020 01:38:29 GMT
+      - Thu, 15 Apr 2021 16:27:13 GMT
       x-ms-version:
       - '2019-02-02'
     method: POST
-    uri: https://tablesteststorname.table.core.windows.net/Tables
+    uri: https://fake_table_account.table.core.windows.net/Tables
   response:
     body:
-      string: '{"odata.metadata":"https://tablesteststorname.table.core.windows.net/$metadata#Tables/@Element","TableName":"uttable23a30f59"}'
+      string: '{"odata.metadata":"https://fake_table_account.table.core.windows.net/$metadata#Tables/@Element","TableName":"uttable23a30f59"}'
     headers:
       cache-control: no-cache
       content-type: application/json;odata=minimalmetadata;streaming=true;charset=utf-8
-      date: Sat, 07 Nov 2020 01:38:30 GMT
-      location: https://tablesteststorname.table.core.windows.net/Tables('uttable23a30f59')
+      date: Thu, 15 Apr 2021 16:27:13 GMT
+      location: https://fake_table_account.table.core.windows.net/Tables('uttable23a30f59')
       server: Windows-Azure-Table/1.0 Microsoft-HTTPAPI/2.0
       transfer-encoding: chunked
       x-content-type-options: nosniff
@@ -35,39 +35,39 @@ interactions:
     status:
       code: 201
       message: Created
-    url: https://tablestestxjz4vq7ewcdgud.table.core.windows.net/Tables
+    url: https://seankaneprim.table.core.windows.net/Tables
 - request:
-    body: '{"date": "2003-09-27T09:52:43Z", "date@odata.type": "Edm.DateTime", "PartitionKey":
-      "pk23a30f59", "RowKey@odata.type": "Edm.String", "RowKey": "rk23a30f59", "PartitionKey@odata.type":
-      "Edm.String"}'
+    body: '{"PartitionKey": "pk23a30f59", "PartitionKey@odata.type": "Edm.String",
+      "RowKey": "rk23a30f59", "RowKey@odata.type": "Edm.String", "date": "2003-09-27T12:52:43.000000Z",
+      "date@odata.type": "Edm.DateTime"}'
     headers:
       Accept:
       - application/json;odata=minimalmetadata
       Content-Length:
-      - '197'
+      - '204'
       Content-Type:
       - application/json;odata=nometadata
       DataServiceVersion:
       - '3.0'
       Date:
-      - Sat, 07 Nov 2020 01:38:29 GMT
+      - Thu, 15 Apr 2021 16:27:14 GMT
       User-Agent:
-      - azsdk-python-data-tables/12.0.0b3 Python/3.5.3 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-data-tables/12.0.0b7 Python/3.9.0rc1 (Windows-10-10.0.19041-SP0)
       x-ms-date:
-      - Sat, 07 Nov 2020 01:38:29 GMT
+      - Thu, 15 Apr 2021 16:27:14 GMT
       x-ms-version:
       - '2019-02-02'
     method: POST
-    uri: https://tablesteststorname.table.core.windows.net/uttable23a30f59
+    uri: https://fake_table_account.table.core.windows.net/uttable23a30f59
   response:
     body:
-      string: '{"odata.metadata":"https://tablesteststorname.table.core.windows.net/$metadata#uttable23a30f59/@Element","odata.etag":"W/\"datetime''2020-11-07T01%3A38%3A30.6911348Z''\"","PartitionKey":"pk23a30f59","RowKey":"rk23a30f59","Timestamp":"2020-11-07T01:38:30.6911348Z","date@odata.type":"Edm.DateTime","date":"2003-09-27T09:52:43Z"}'
+      string: '{"odata.metadata":"https://fake_table_account.table.core.windows.net/$metadata#uttable23a30f59/@Element","odata.etag":"W/\"datetime''2021-04-15T16%3A27%3A14.364486Z''\"","PartitionKey":"pk23a30f59","RowKey":"rk23a30f59","Timestamp":"2021-04-15T16:27:14.364486Z","date@odata.type":"Edm.DateTime","date":"2003-09-27T12:52:43Z"}'
     headers:
       cache-control: no-cache
       content-type: application/json;odata=minimalmetadata;streaming=true;charset=utf-8
-      date: Sat, 07 Nov 2020 01:38:30 GMT
-      etag: W/"datetime'2020-11-07T01%3A38%3A30.6911348Z'"
-      location: https://tablesteststorname.table.core.windows.net/uttable23a30f59(PartitionKey='pk23a30f59',RowKey='rk23a30f59')
+      date: Thu, 15 Apr 2021 16:27:13 GMT
+      etag: W/"datetime'2021-04-15T16%3A27%3A14.364486Z'"
+      location: https://fake_table_account.table.core.windows.net/uttable23a30f59(PartitionKey='pk23a30f59',RowKey='rk23a30f59')
       server: Windows-Azure-Table/1.0 Microsoft-HTTPAPI/2.0
       transfer-encoding: chunked
       x-content-type-options: nosniff
@@ -75,7 +75,7 @@ interactions:
     status:
       code: 201
       message: Created
-    url: https://tablestestxjz4vq7ewcdgud.table.core.windows.net/uttable23a30f59
+    url: https://seankaneprim.table.core.windows.net/uttable23a30f59
 - request:
     body: null
     headers:
@@ -84,23 +84,23 @@ interactions:
       DataServiceVersion:
       - '3.0'
       Date:
-      - Sat, 07 Nov 2020 01:38:29 GMT
+      - Thu, 15 Apr 2021 16:27:14 GMT
       User-Agent:
-      - azsdk-python-data-tables/12.0.0b3 Python/3.5.3 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-data-tables/12.0.0b7 Python/3.9.0rc1 (Windows-10-10.0.19041-SP0)
       x-ms-date:
-      - Sat, 07 Nov 2020 01:38:29 GMT
+      - Thu, 15 Apr 2021 16:27:14 GMT
       x-ms-version:
       - '2019-02-02'
     method: GET
-    uri: https://tablesteststorname.table.core.windows.net/uttable23a30f59(PartitionKey='pk23a30f59',RowKey='rk23a30f59')
+    uri: https://fake_table_account.table.core.windows.net/uttable23a30f59(PartitionKey='pk23a30f59',RowKey='rk23a30f59')
   response:
     body:
-      string: '{"odata.metadata":"https://tablesteststorname.table.core.windows.net/$metadata#uttable23a30f59/@Element","odata.etag":"W/\"datetime''2020-11-07T01%3A38%3A30.6911348Z''\"","PartitionKey":"pk23a30f59","RowKey":"rk23a30f59","Timestamp":"2020-11-07T01:38:30.6911348Z","date@odata.type":"Edm.DateTime","date":"2003-09-27T09:52:43Z"}'
+      string: '{"odata.metadata":"https://fake_table_account.table.core.windows.net/$metadata#uttable23a30f59/@Element","odata.etag":"W/\"datetime''2021-04-15T16%3A27%3A14.364486Z''\"","PartitionKey":"pk23a30f59","RowKey":"rk23a30f59","Timestamp":"2021-04-15T16:27:14.364486Z","date@odata.type":"Edm.DateTime","date":"2003-09-27T12:52:43Z"}'
     headers:
       cache-control: no-cache
       content-type: application/json;odata=minimalmetadata;streaming=true;charset=utf-8
-      date: Sat, 07 Nov 2020 01:38:30 GMT
-      etag: W/"datetime'2020-11-07T01%3A38%3A30.6911348Z'"
+      date: Thu, 15 Apr 2021 16:27:14 GMT
+      etag: W/"datetime'2021-04-15T16%3A27%3A14.364486Z'"
       server: Windows-Azure-Table/1.0 Microsoft-HTTPAPI/2.0
       transfer-encoding: chunked
       x-content-type-options: nosniff
@@ -108,34 +108,34 @@ interactions:
     status:
       code: 200
       message: OK
-    url: https://tablestestxjz4vq7ewcdgud.table.core.windows.net/uttable23a30f59(PartitionKey='pk23a30f59',RowKey='rk23a30f59')
+    url: https://seankaneprim.table.core.windows.net/uttable23a30f59(PartitionKey='pk23a30f59',RowKey='rk23a30f59')
 - request:
     body: null
     headers:
       Accept:
       - application/json
       Date:
-      - Sat, 07 Nov 2020 01:38:29 GMT
+      - Thu, 15 Apr 2021 16:27:14 GMT
       User-Agent:
-      - azsdk-python-data-tables/12.0.0b3 Python/3.5.3 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-data-tables/12.0.0b7 Python/3.9.0rc1 (Windows-10-10.0.19041-SP0)
       x-ms-date:
-      - Sat, 07 Nov 2020 01:38:29 GMT
+      - Thu, 15 Apr 2021 16:27:14 GMT
       x-ms-version:
       - '2019-02-02'
     method: DELETE
-    uri: https://tablesteststorname.table.core.windows.net/Tables('uttable23a30f59')
+    uri: https://fake_table_account.table.core.windows.net/Tables('uttable23a30f59')
   response:
     body:
       string: ''
     headers:
       cache-control: no-cache
       content-length: '0'
-      date: Sat, 07 Nov 2020 01:38:30 GMT
+      date: Thu, 15 Apr 2021 16:27:14 GMT
       server: Windows-Azure-Table/1.0 Microsoft-HTTPAPI/2.0
       x-content-type-options: nosniff
       x-ms-version: '2019-02-02'
     status:
       code: 204
       message: No Content
-    url: https://tablestestxjz4vq7ewcdgud.table.core.windows.net/Tables('uttable23a30f59')
+    url: https://seankaneprim.table.core.windows.net/Tables('uttable23a30f59')
 version: 1

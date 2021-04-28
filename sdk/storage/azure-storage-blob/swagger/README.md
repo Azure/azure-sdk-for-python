@@ -97,3 +97,16 @@ directive:
   transform: >
     $["x-ms-enum"].name = "AccessTierOptional";
 ```
+
+### EncryptionAlgorithm workaround until Modeler is fixed
+``` yaml
+directive:
+- from: swagger-document
+  where: $.parameters
+  transform: >
+    delete $.EncryptionAlgorithm.enum;
+    $.EncryptionAlgorithm.enum = [
+      "None",
+      "AES256"
+    ];
+```

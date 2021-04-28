@@ -9,22 +9,22 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-azure-mgmt-resource/16.0.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+      - azsdk-python-azure-mgmt-resource/16.1.0 Python/3.8.9 (Linux-5.4.0-1043-azure-x86_64-with-glibc2.2.5)
+        VSTS_0fb41ef4-5012-48a9-bf39-4ee3de03ee35_build_2384_0
     method: GET
     uri: https://management.azure.com/subscriptions?api-version=2019-11-01
   response:
     body:
-      string: '{"value":[{"id":"/subscriptions/00000000-0000-0000-0000-000000000000","authorizationSource":"RoleBased","managedByTenants":[{"tenantId":"2f4a9838-26b7-47ee-be60-ccc1fdec5953"}],"tags":{},"subscriptionId":"00000000-0000-0000-0000-000000000000","tenantId":"00000000-0000-0000-0000-000000000000","displayName":"Python
-        NodeJS Test with TTL = 7 days","state":"Enabled","subscriptionPolicies":{"locationPlacementId":"Internal_2014-09-01","quotaId":"Internal_2014-09-01","spendingLimit":"Off"}}],"count":{"type":"Total","value":1}}'
+      string: '{"value":[{"id":"/subscriptions/00000000-0000-0000-0000-000000000000","authorizationSource":"RoleBased","managedByTenants":[{"tenantId":"2f4a9838-26b7-47ee-be60-ccc1fdec5953"}],"tags":{},"subscriptionId":"00000000-0000-0000-0000-000000000000","tenantId":"00000000-0000-0000-0000-000000000000","displayName":"AzureSDKTest","state":"Enabled","subscriptionPolicies":{"locationPlacementId":"Internal_2014-09-01","quotaId":"Internal_2014-09-01","spendingLimit":"Off"}}],"count":{"type":"Total","value":1}}'
     headers:
       cache-control:
       - no-cache
       content-length:
-      - '524'
+      - '500'
       content-type:
       - application/json; charset=utf-8
       date:
-      - Fri, 26 Feb 2021 07:40:58 GMT
+      - Fri, 16 Apr 2021 08:29:16 GMT
       expires:
       - '-1'
       pragma:
@@ -48,7 +48,8 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-azure-mgmt-resource/16.0.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+      - azsdk-python-azure-mgmt-resource/16.1.0 Python/3.8.9 (Linux-5.4.0-1043-azure-x86_64-with-glibc2.2.5)
+        VSTS_0fb41ef4-5012-48a9-bf39-4ee3de03ee35_build_2384_0
     method: GET
     uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/locations?api-version=2019-11-01
   response:
@@ -77,7 +78,9 @@ interactions:
         Kong","pairedRegion":[{"name":"southeastasia","id":"/subscriptions/00000000-0000-0000-0000-000000000000/locations/southeastasia"}]}},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/locations/japaneast","name":"japaneast","displayName":"Japan
         East","regionalDisplayName":"(Asia Pacific) Japan East","metadata":{"regionType":"Physical","regionCategory":"Recommended","geographyGroup":"Asia
         Pacific","longitude":"139.77","latitude":"35.68","physicalLocation":"Tokyo,
-        Saitama","pairedRegion":[{"name":"japanwest","id":"/subscriptions/00000000-0000-0000-0000-000000000000/locations/japanwest"}]}},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/locations/koreacentral","name":"koreacentral","displayName":"Korea
+        Saitama","pairedRegion":[{"name":"japanwest","id":"/subscriptions/00000000-0000-0000-0000-000000000000/locations/japanwest"}]}},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/locations/jioindiawest","name":"jioindiawest","displayName":"JIO
+        India West","regionalDisplayName":"(Asia Pacific) JIO India West","metadata":{"regionType":"Physical","regionCategory":"Recommended","geographyGroup":"Asia
+        Pacific","longitude":"70.05773","latitude":"22.470701","physicalLocation":"Jamnagar","pairedRegion":[{"name":"jioindiacentral","id":"/subscriptions/00000000-0000-0000-0000-000000000000/locations/jioindiacentral"}]}},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/locations/koreacentral","name":"koreacentral","displayName":"Korea
         Central","regionalDisplayName":"(Asia Pacific) Korea Central","metadata":{"regionType":"Physical","regionCategory":"Recommended","geographyGroup":"Asia
         Pacific","longitude":"126.9780","latitude":"37.5665","physicalLocation":"Seoul","pairedRegion":[{"name":"koreasouth","id":"/subscriptions/00000000-0000-0000-0000-000000000000/locations/koreasouth"}]}},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/locations/canadacentral","name":"canadacentral","displayName":"Canada
         Central","regionalDisplayName":"(Canada) Canada Central","metadata":{"regionType":"Physical","regionCategory":"Recommended","geographyGroup":"Canada","longitude":"-79.383","latitude":"43.653","physicalLocation":"Toronto","pairedRegion":[{"name":"canadaeast","id":"/subscriptions/00000000-0000-0000-0000-000000000000/locations/canadaeast"}]}},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/locations/francecentral","name":"francecentral","displayName":"France
@@ -117,7 +120,9 @@ interactions:
         Southeast","regionalDisplayName":"(Asia Pacific) Australia Southeast","metadata":{"regionType":"Physical","regionCategory":"Other","geographyGroup":"Asia
         Pacific","longitude":"144.9631","latitude":"-37.8136","physicalLocation":"Victoria","pairedRegion":[{"name":"australiaeast","id":"/subscriptions/00000000-0000-0000-0000-000000000000/locations/australiaeast"}]}},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/locations/japanwest","name":"japanwest","displayName":"Japan
         West","regionalDisplayName":"(Asia Pacific) Japan West","metadata":{"regionType":"Physical","regionCategory":"Other","geographyGroup":"Asia
-        Pacific","longitude":"135.5022","latitude":"34.6939","physicalLocation":"Osaka","pairedRegion":[{"name":"japaneast","id":"/subscriptions/00000000-0000-0000-0000-000000000000/locations/japaneast"}]}},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/locations/koreasouth","name":"koreasouth","displayName":"Korea
+        Pacific","longitude":"135.5022","latitude":"34.6939","physicalLocation":"Osaka","pairedRegion":[{"name":"japaneast","id":"/subscriptions/00000000-0000-0000-0000-000000000000/locations/japaneast"}]}},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/locations/jioindiacentral","name":"jioindiacentral","displayName":"JIO
+        India Central","regionalDisplayName":"(Asia Pacific) JIO India Central","metadata":{"regionType":"Physical","regionCategory":"Other","geographyGroup":"Asia
+        Pacific","longitude":"79.08886","latitude":"21.146633","physicalLocation":"Nagpur","pairedRegion":[{"name":"jioindiawest","id":"/subscriptions/00000000-0000-0000-0000-000000000000/locations/jioindiawest"}]}},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/locations/koreasouth","name":"koreasouth","displayName":"Korea
         South","regionalDisplayName":"(Asia Pacific) Korea South","metadata":{"regionType":"Physical","regionCategory":"Other","geographyGroup":"Asia
         Pacific","longitude":"129.0756","latitude":"35.1796","physicalLocation":"Busan","pairedRegion":[{"name":"koreacentral","id":"/subscriptions/00000000-0000-0000-0000-000000000000/locations/koreacentral"}]}},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/locations/southindia","name":"southindia","displayName":"South
         India","regionalDisplayName":"(Asia Pacific) South India","metadata":{"regionType":"Physical","regionCategory":"Other","geographyGroup":"Asia
@@ -134,16 +139,18 @@ interactions:
         East","longitude":"54.366669","latitude":"24.466667","physicalLocation":"Abu
         Dhabi","pairedRegion":[{"name":"uaenorth","id":"/subscriptions/00000000-0000-0000-0000-000000000000/locations/uaenorth"}]}},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/locations/brazilsoutheast","name":"brazilsoutheast","displayName":"Brazil
         Southeast","regionalDisplayName":"(South America) Brazil Southeast","metadata":{"regionType":"Physical","regionCategory":"Other","geographyGroup":"South
-        America","longitude":"-43.2075","latitude":"-22.90278","physicalLocation":"Rio","pairedRegion":[{"name":"brazilsouth","id":"/subscriptions/00000000-0000-0000-0000-000000000000/locations/brazilsouth"}]}}]}'
+        America","longitude":"-43.2075","latitude":"-22.90278","physicalLocation":"Rio","pairedRegion":[{"name":"brazilsouth","id":"/subscriptions/00000000-0000-0000-0000-000000000000/locations/brazilsouth"}]}},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/locations/eastusslv","name":"eastusslv","displayName":"East
+        US SLV","regionalDisplayName":"(South America) East US SLV","metadata":{"regionType":"Physical","regionCategory":"Other","geographyGroup":"South
+        America","longitude":"-43.2075","latitude":"-22.90278","physicalLocation":"Silverstone","pairedRegion":[{"name":"eastusslv","id":"/subscriptions/00000000-0000-0000-0000-000000000000/locations/eastusslv"}]}}]}'
     headers:
       cache-control:
       - no-cache
       content-length:
-      - '25532'
+      - '26993'
       content-type:
       - application/json; charset=utf-8
       date:
-      - Fri, 26 Feb 2021 07:40:59 GMT
+      - Fri, 16 Apr 2021 08:29:17 GMT
       expires:
       - '-1'
       pragma:
@@ -167,22 +174,22 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-azure-mgmt-resource/16.0.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+      - azsdk-python-azure-mgmt-resource/16.1.0 Python/3.8.9 (Linux-5.4.0-1043-azure-x86_64-with-glibc2.2.5)
+        VSTS_0fb41ef4-5012-48a9-bf39-4ee3de03ee35_build_2384_0
     method: GET
     uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000?api-version=2019-11-01
   response:
     body:
-      string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000","authorizationSource":"RoleBased","managedByTenants":[{"tenantId":"2f4a9838-26b7-47ee-be60-ccc1fdec5953"}],"tags":{},"subscriptionId":"00000000-0000-0000-0000-000000000000","tenantId":"00000000-0000-0000-0000-000000000000","displayName":"Python
-        NodeJS Test with TTL = 7 days","state":"Enabled","subscriptionPolicies":{"locationPlacementId":"Internal_2014-09-01","quotaId":"Internal_2014-09-01","spendingLimit":"Off"}}'
+      string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000","authorizationSource":"RoleBased","managedByTenants":[{"tenantId":"2f4a9838-26b7-47ee-be60-ccc1fdec5953"}],"tags":{},"subscriptionId":"00000000-0000-0000-0000-000000000000","tenantId":"00000000-0000-0000-0000-000000000000","displayName":"AzureSDKTest","state":"Enabled","subscriptionPolicies":{"locationPlacementId":"Internal_2014-09-01","quotaId":"Internal_2014-09-01","spendingLimit":"Off"}}'
     headers:
       cache-control:
       - no-cache
       content-length:
-      - '477'
+      - '453'
       content-type:
       - application/json; charset=utf-8
       date:
-      - Fri, 26 Feb 2021 07:40:59 GMT
+      - Fri, 16 Apr 2021 08:29:17 GMT
       expires:
       - '-1'
       pragma:

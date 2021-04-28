@@ -13,35 +13,35 @@ interactions:
       Content-Type:
       - application/merge-patch+json
       User-Agent:
-      - azsdk-python-communication-phonenumbers/1.0.0b5 Python/3.8.5 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-communication-phonenumbers/1.0.0b5 Python/3.9.0 (Windows-10-10.0.19041-SP0)
     method: PATCH
     uri: https://sanitized.communication.azure.com/phoneNumbers/sanitized/capabilities?api-version=2021-03-07
   response:
     body:
-      string: '{"capabilitiesUpdateId": "a24bc761-9a22-4e36-a502-abb51076ab6d"}'
+      string: '{"capabilitiesUpdateId": "9b84d514-8d47-4b9a-a1e9-b7fc1c3e8885"}'
     headers:
       access-control-expose-headers:
       - Operation-Location,Location,operation-id,capabilities-id
       api-supported-versions:
       - '2021-03-07'
       capabilities-id:
-      - a24bc761-9a22-4e36-a502-abb51076ab6d
+      - 9b84d514-8d47-4b9a-a1e9-b7fc1c3e8885
       content-type:
       - application/json; charset=utf-8
       date:
-      - Wed, 07 Apr 2021 18:31:27 GMT
+      - Mon, 19 Apr 2021 21:50:21 GMT
       ms-cv:
-      - iDACypoIUE2WthXtmGuO2Q.0
+      - IpJ20W6gNkucOBv8vAJwEw.0
       operation-id:
-      - capabilities_a24bc761-9a22-4e36-a502-abb51076ab6d
+      - capabilities_9b84d514-8d47-4b9a-a1e9-b7fc1c3e8885
       operation-location:
-      - /phoneNumbers/operations/capabilities_a24bc761-9a22-4e36-a502-abb51076ab6d?api-version=2021-03-07
+      - /phoneNumbers/operations/capabilities_9b84d514-8d47-4b9a-a1e9-b7fc1c3e8885?api-version=2021-03-07
       request-context:
       - appId=
       transfer-encoding:
       - chunked
       x-processing-time:
-      - 824ms
+      - 3399ms
     status:
       code: 202
       message: Accepted
@@ -56,13 +56,13 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-communication-phonenumbers/1.0.0b5 Python/3.8.5 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-communication-phonenumbers/1.0.0b5 Python/3.9.0 (Windows-10-10.0.19041-SP0)
     method: GET
-    uri: https://sanitized.communication.azure.com/phoneNumbers/operations/capabilities_a24bc761-9a22-4e36-a502-abb51076ab6d?api-version=2021-03-07
+    uri: https://sanitized.communication.azure.com/phoneNumbers/operations/capabilities_9b84d514-8d47-4b9a-a1e9-b7fc1c3e8885?api-version=2021-03-07
   response:
     body:
       string: '{"status": "succeeded", "resourceLocation": "/phoneNumbers/+18335260208?api-version=2021-03-07",
-        "createdDateTime": "2021-04-07T18:31:27.9282199+00:00", "id": "sanitized",
+        "createdDateTime": "2021-04-19T21:50:20.6043067+00:00", "id": "sanitized",
         "operationType": "updatePhoneNumberCapabilities", "lastActionDateTime": "0001-01-01T00:00:00+00:00"}'
     headers:
       access-control-expose-headers:
@@ -72,15 +72,15 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Wed, 07 Apr 2021 18:31:57 GMT
+      - Mon, 19 Apr 2021 21:50:52 GMT
       ms-cv:
-      - I76d5LxW0ketAoe4F4RO8Q.0
+      - dWIWVzuGZkel4nGVYuM/5A.0
       request-context:
       - appId=
       transfer-encoding:
       - chunked
       x-processing-time:
-      - 448ms
+      - 842ms
     status:
       code: 200
       message: OK
@@ -95,7 +95,7 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-communication-phonenumbers/1.0.0b5 Python/3.8.5 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-communication-phonenumbers/1.0.0b5 Python/3.9.0 (Windows-10-10.0.19041-SP0)
     method: GET
     uri: https://sanitized.communication.azure.com/phoneNumbers/+18335260208?api-version=2021-03-07
   response:
@@ -110,15 +110,15 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Wed, 07 Apr 2021 18:31:59 GMT
+      - Mon, 19 Apr 2021 21:50:54 GMT
       ms-cv:
-      - kqMpe0hr80K6Iiv/Zc7ALQ.0
+      - xCrBEogHmUKngopg0ACAEA.0
       request-context:
       - appId=
       transfer-encoding:
       - chunked
       x-processing-time:
-      - 1392ms
+      - 1874ms
     status:
       code: 200
       message: OK

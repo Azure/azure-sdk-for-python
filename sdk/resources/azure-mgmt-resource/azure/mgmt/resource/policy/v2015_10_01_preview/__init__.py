@@ -7,6 +7,9 @@
 # --------------------------------------------------------------------------
 
 from ._policy_client import PolicyClient
+from ._version import VERSION
+
+__version__ = VERSION
 __all__ = ['PolicyClient']
 
 try:

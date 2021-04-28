@@ -264,7 +264,6 @@ class AppConfigurationClientTest(AzureTestCase):
         resered_char_kv = client.add_configuration_setting(
             resered_char_kv
         )
-        self._delete_setting(client, resered_char_kv)
         escaped_label = re.sub(r"((?!^)\*(?!$)|\\|,)", r"\\\1", LABEL_RESERVED_CHARS)
         items = client.list_configuration_settings(
             label_filter=escaped_label
@@ -272,11 +271,10 @@ class AppConfigurationClientTest(AzureTestCase):
         assert len(items) == 1
         assert all(x.label == LABEL_RESERVED_CHARS for x in items)
 
-    @pytest.mark.skip("Bad Request")
     @app_config_decorator
     def test_list_configuration_settings_contains(self, client, appconfiguration_connection_string, test_config_setting, test_config_setting_no_label):
         items = client.list_configuration_settings(
-            label_filter="*" + LABEL + "*"
+            label_filter=LABEL + "*"
         )
         assert len(items) == 1
         assert all(x.label == LABEL for x in items)

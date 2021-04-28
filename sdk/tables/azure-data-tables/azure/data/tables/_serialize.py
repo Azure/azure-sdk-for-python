@@ -3,23 +3,21 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
-
-from typing import Dict, Any
+from binascii import hexlify
+from typing import Dict
 from uuid import UUID
 from datetime import datetime
 from math import isnan
 from enum import Enum
 import sys
 
+import six
 from azure.core import MatchConditions
 from azure.core.exceptions import raise_with_traceback
 
 from ._entity import EdmType, EntityProperty
 from ._common_conversion import _encode_base64, _to_utc_datetime
 from ._error import _ERROR_VALUE_TOO_LARGE, _ERROR_TYPE_NOT_SUPPORTED
-
-
-_SUPPORTED_API_VERSIONS = ["2019-02-02", "2019-07-07"]
 
 
 def _get_match_headers(kwargs, match_param, etag_param):
@@ -54,17 +52,39 @@ def _get_match_headers(kwargs, match_param, etag_param):
     return if_match, if_none_match
 
 
-def get_api_version(kwargs, default):
-    # type: (Dict[str, Any], str) -> str
-    api_version = kwargs.pop("api_version", None)
-    if api_version and api_version not in _SUPPORTED_API_VERSIONS:
-        versions = "\n".join(_SUPPORTED_API_VERSIONS)
-        raise ValueError(
-            "Unsupported API version '{}'. Please select from:\n{}".format(
-                api_version, versions
-            )
-        )
-    return api_version or default
+def _parameter_filter_substitution(parameters, query_filter):
+    # type: (Dict[str, str], str) -> str
+    """Replace user defined parameter in filter
+    :param parameters: User defined parameters
+    :param str query_filter: Filter for querying
+    """
+    if parameters:
+        filter_strings = query_filter.split(' ')
+        for index, word in enumerate(filter_strings):
+            if word[0] == u'@':
+                val = parameters[word[1:]]
+                if val in [True, False]:
+                    filter_strings[index] = str(val).lower()
+                elif isinstance(val, (float)):
+                    filter_strings[index] = str(val)
+                elif isinstance(val, six.integer_types):
+                    if val.bit_length() <= 32:
+                        filter_strings[index] = str(val)
+                    else:
+                        filter_strings[index] = "{}L".format(str(val))
+                elif isinstance(val, datetime):
+                    filter_strings[index] = "datetime'{}'".format(_to_utc_datetime(val))
+                elif isinstance(val, UUID):
+                    filter_strings[index] = "guid'{}'".format(str(val))
+                elif isinstance(val, six.binary_type):
+                    v = str(hexlify(val))
+                    if v[0] == 'b': # Python 3 adds a 'b' and quotations, python 2.7 does neither
+                        v = v[2:-1]
+                    filter_strings[index] = "X'{}'".format(v)
+                else:
+                    filter_strings[index] = "'{}'".format(val.replace("'", "''"))
+        return ' '.join(filter_strings)
+    return query_filter
 
 
 def _to_entity_binary(value):

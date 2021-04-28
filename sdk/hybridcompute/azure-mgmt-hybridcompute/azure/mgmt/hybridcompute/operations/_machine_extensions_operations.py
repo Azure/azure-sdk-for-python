@@ -50,7 +50,7 @@ class MachineExtensionsOperations(object):
     def _create_or_update_initial(
         self,
         resource_group_name,  # type: str
-        name,  # type: str
+        machine_name,  # type: str
         extension_name,  # type: str
         extension_parameters,  # type: "_models.MachineExtension"
         **kwargs  # type: Any
@@ -61,17 +61,17 @@ class MachineExtensionsOperations(object):
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2020-08-02"
+        api_version = "2021-03-25-preview"
         content_type = kwargs.pop("content_type", "application/json")
         accept = "application/json"
 
         # Construct URL
         url = self._create_or_update_initial.metadata['url']  # type: ignore
         path_format_arguments = {
-            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
-            'name': self._serialize.url("name", name, 'str'),
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
+            'machineName': self._serialize.url("machine_name", machine_name, 'str'),
             'extensionName': self._serialize.url("extension_name", extension_name, 'str'),
-            'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
+            'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str', min_length=1),
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -93,7 +93,8 @@ class MachineExtensionsOperations(object):
 
         if response.status_code not in [200, 202]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise HttpResponseError(response=response, error_format=ARMErrorFormat)
+            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, response)
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = None
         if response.status_code == 200:
@@ -103,12 +104,12 @@ class MachineExtensionsOperations(object):
             return cls(pipeline_response, deserialized, {})
 
         return deserialized
-    _create_or_update_initial.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.HybridCompute/machines/{name}/extensions/{extensionName}'}  # type: ignore
+    _create_or_update_initial.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.HybridCompute/machines/{machineName}/extensions/{extensionName}'}  # type: ignore
 
     def begin_create_or_update(
         self,
         resource_group_name,  # type: str
-        name,  # type: str
+        machine_name,  # type: str
         extension_name,  # type: str
         extension_parameters,  # type: "_models.MachineExtension"
         **kwargs  # type: Any
@@ -116,18 +117,18 @@ class MachineExtensionsOperations(object):
         # type: (...) -> LROPoller["_models.MachineExtension"]
         """The operation to create or update the extension.
 
-        :param resource_group_name: The name of the resource group.
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
         :type resource_group_name: str
-        :param name: The name of the machine where the extension should be created or updated.
-        :type name: str
+        :param machine_name: The name of the machine where the extension should be created or updated.
+        :type machine_name: str
         :param extension_name: The name of the machine extension.
         :type extension_name: str
         :param extension_parameters: Parameters supplied to the Create Machine Extension operation.
         :type extension_parameters: ~azure.mgmt.hybridcompute.models.MachineExtension
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: True for ARMPolling, False for no polling, or a
-         polling object for personal polling strategy
+        :keyword polling: Pass in True if you'd like the ARMPolling polling method,
+         False for no polling, or your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.PollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of LROPoller that returns either MachineExtension or the result of cls(response)
@@ -144,7 +145,7 @@ class MachineExtensionsOperations(object):
         if cont_token is None:
             raw_result = self._create_or_update_initial(
                 resource_group_name=resource_group_name,
-                name=name,
+                machine_name=machine_name,
                 extension_name=extension_name,
                 extension_parameters=extension_parameters,
                 cls=lambda x,y,z: x,
@@ -162,10 +163,10 @@ class MachineExtensionsOperations(object):
             return deserialized
 
         path_format_arguments = {
-            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
-            'name': self._serialize.url("name", name, 'str'),
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
+            'machineName': self._serialize.url("machine_name", machine_name, 'str'),
             'extensionName': self._serialize.url("extension_name", extension_name, 'str'),
-            'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
+            'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str', min_length=1),
         }
 
         if polling is True: polling_method = ARMPolling(lro_delay, path_format_arguments=path_format_arguments,  **kwargs)
@@ -180,12 +181,12 @@ class MachineExtensionsOperations(object):
             )
         else:
             return LROPoller(self._client, raw_result, get_long_running_output, polling_method)
-    begin_create_or_update.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.HybridCompute/machines/{name}/extensions/{extensionName}'}  # type: ignore
+    begin_create_or_update.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.HybridCompute/machines/{machineName}/extensions/{extensionName}'}  # type: ignore
 
     def _update_initial(
         self,
         resource_group_name,  # type: str
-        name,  # type: str
+        machine_name,  # type: str
         extension_name,  # type: str
         extension_parameters,  # type: "_models.MachineExtensionUpdate"
         **kwargs  # type: Any
@@ -196,17 +197,17 @@ class MachineExtensionsOperations(object):
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2020-08-02"
+        api_version = "2021-03-25-preview"
         content_type = kwargs.pop("content_type", "application/json")
         accept = "application/json"
 
         # Construct URL
         url = self._update_initial.metadata['url']  # type: ignore
         path_format_arguments = {
-            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
-            'name': self._serialize.url("name", name, 'str'),
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
+            'machineName': self._serialize.url("machine_name", machine_name, 'str'),
             'extensionName': self._serialize.url("extension_name", extension_name, 'str'),
-            'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
+            'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str', min_length=1),
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -228,7 +229,8 @@ class MachineExtensionsOperations(object):
 
         if response.status_code not in [200, 202]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise HttpResponseError(response=response, error_format=ARMErrorFormat)
+            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, response)
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = None
         if response.status_code == 200:
@@ -238,31 +240,31 @@ class MachineExtensionsOperations(object):
             return cls(pipeline_response, deserialized, {})
 
         return deserialized
-    _update_initial.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.HybridCompute/machines/{name}/extensions/{extensionName}'}  # type: ignore
+    _update_initial.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.HybridCompute/machines/{machineName}/extensions/{extensionName}'}  # type: ignore
 
     def begin_update(
         self,
         resource_group_name,  # type: str
-        name,  # type: str
+        machine_name,  # type: str
         extension_name,  # type: str
         extension_parameters,  # type: "_models.MachineExtensionUpdate"
         **kwargs  # type: Any
     ):
         # type: (...) -> LROPoller["_models.MachineExtension"]
-        """The operation to update the extension.
+        """The operation to create or update the extension.
 
-        :param resource_group_name: The name of the resource group.
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
         :type resource_group_name: str
-        :param name: The name of the machine where the extension should be created or updated.
-        :type name: str
+        :param machine_name: The name of the machine where the extension should be created or updated.
+        :type machine_name: str
         :param extension_name: The name of the machine extension.
         :type extension_name: str
         :param extension_parameters: Parameters supplied to the Create Machine Extension operation.
         :type extension_parameters: ~azure.mgmt.hybridcompute.models.MachineExtensionUpdate
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: True for ARMPolling, False for no polling, or a
-         polling object for personal polling strategy
+        :keyword polling: Pass in True if you'd like the ARMPolling polling method,
+         False for no polling, or your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.PollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of LROPoller that returns either MachineExtension or the result of cls(response)
@@ -279,7 +281,7 @@ class MachineExtensionsOperations(object):
         if cont_token is None:
             raw_result = self._update_initial(
                 resource_group_name=resource_group_name,
-                name=name,
+                machine_name=machine_name,
                 extension_name=extension_name,
                 extension_parameters=extension_parameters,
                 cls=lambda x,y,z: x,
@@ -297,10 +299,10 @@ class MachineExtensionsOperations(object):
             return deserialized
 
         path_format_arguments = {
-            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
-            'name': self._serialize.url("name", name, 'str'),
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
+            'machineName': self._serialize.url("machine_name", machine_name, 'str'),
             'extensionName': self._serialize.url("extension_name", extension_name, 'str'),
-            'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
+            'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str', min_length=1),
         }
 
         if polling is True: polling_method = ARMPolling(lro_delay, path_format_arguments=path_format_arguments,  **kwargs)
@@ -315,12 +317,12 @@ class MachineExtensionsOperations(object):
             )
         else:
             return LROPoller(self._client, raw_result, get_long_running_output, polling_method)
-    begin_update.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.HybridCompute/machines/{name}/extensions/{extensionName}'}  # type: ignore
+    begin_update.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.HybridCompute/machines/{machineName}/extensions/{extensionName}'}  # type: ignore
 
     def _delete_initial(
         self,
         resource_group_name,  # type: str
-        name,  # type: str
+        machine_name,  # type: str
         extension_name,  # type: str
         **kwargs  # type: Any
     ):
@@ -330,15 +332,16 @@ class MachineExtensionsOperations(object):
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2020-08-02"
+        api_version = "2021-03-25-preview"
+        accept = "application/json"
 
         # Construct URL
         url = self._delete_initial.metadata['url']  # type: ignore
         path_format_arguments = {
-            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
-            'name': self._serialize.url("name", name, 'str'),
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
+            'machineName': self._serialize.url("machine_name", machine_name, 'str'),
             'extensionName': self._serialize.url("extension_name", extension_name, 'str'),
-            'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
+            'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str', min_length=1),
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -348,6 +351,7 @@ class MachineExtensionsOperations(object):
 
         # Construct headers
         header_parameters = {}  # type: Dict[str, Any]
+        header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
 
         request = self._client.delete(url, query_parameters, header_parameters)
         pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
@@ -355,33 +359,34 @@ class MachineExtensionsOperations(object):
 
         if response.status_code not in [200, 202, 204]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise HttpResponseError(response=response, error_format=ARMErrorFormat)
+            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, response)
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if cls:
             return cls(pipeline_response, None, {})
 
-    _delete_initial.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.HybridCompute/machines/{name}/extensions/{extensionName}'}  # type: ignore
+    _delete_initial.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.HybridCompute/machines/{machineName}/extensions/{extensionName}'}  # type: ignore
 
     def begin_delete(
         self,
         resource_group_name,  # type: str
-        name,  # type: str
+        machine_name,  # type: str
         extension_name,  # type: str
         **kwargs  # type: Any
     ):
         # type: (...) -> LROPoller[None]
         """The operation to delete the extension.
 
-        :param resource_group_name: The name of the resource group.
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
         :type resource_group_name: str
-        :param name: The name of the machine where the extension should be deleted.
-        :type name: str
+        :param machine_name: The name of the machine where the extension should be deleted.
+        :type machine_name: str
         :param extension_name: The name of the machine extension.
         :type extension_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: True for ARMPolling, False for no polling, or a
-         polling object for personal polling strategy
+        :keyword polling: Pass in True if you'd like the ARMPolling polling method,
+         False for no polling, or your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.PollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of LROPoller that returns either None or the result of cls(response)
@@ -398,7 +403,7 @@ class MachineExtensionsOperations(object):
         if cont_token is None:
             raw_result = self._delete_initial(
                 resource_group_name=resource_group_name,
-                name=name,
+                machine_name=machine_name,
                 extension_name=extension_name,
                 cls=lambda x,y,z: x,
                 **kwargs
@@ -412,10 +417,10 @@ class MachineExtensionsOperations(object):
                 return cls(pipeline_response, None, {})
 
         path_format_arguments = {
-            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
-            'name': self._serialize.url("name", name, 'str'),
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
+            'machineName': self._serialize.url("machine_name", machine_name, 'str'),
             'extensionName': self._serialize.url("extension_name", extension_name, 'str'),
-            'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
+            'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str', min_length=1),
         }
 
         if polling is True: polling_method = ARMPolling(lro_delay, path_format_arguments=path_format_arguments,  **kwargs)
@@ -430,22 +435,22 @@ class MachineExtensionsOperations(object):
             )
         else:
             return LROPoller(self._client, raw_result, get_long_running_output, polling_method)
-    begin_delete.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.HybridCompute/machines/{name}/extensions/{extensionName}'}  # type: ignore
+    begin_delete.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.HybridCompute/machines/{machineName}/extensions/{extensionName}'}  # type: ignore
 
     def get(
         self,
         resource_group_name,  # type: str
-        name,  # type: str
+        machine_name,  # type: str
         extension_name,  # type: str
         **kwargs  # type: Any
     ):
         # type: (...) -> "_models.MachineExtension"
         """The operation to get the extension.
 
-        :param resource_group_name: The name of the resource group.
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
         :type resource_group_name: str
-        :param name: The name of the machine containing the extension.
-        :type name: str
+        :param machine_name: The name of the machine containing the extension.
+        :type machine_name: str
         :param extension_name: The name of the machine extension.
         :type extension_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
@@ -458,16 +463,16 @@ class MachineExtensionsOperations(object):
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2020-08-02"
+        api_version = "2021-03-25-preview"
         accept = "application/json"
 
         # Construct URL
         url = self.get.metadata['url']  # type: ignore
         path_format_arguments = {
-            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
-            'name': self._serialize.url("name", name, 'str'),
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
+            'machineName': self._serialize.url("machine_name", machine_name, 'str'),
             'extensionName': self._serialize.url("extension_name", extension_name, 'str'),
-            'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
+            'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str', min_length=1),
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -485,7 +490,8 @@ class MachineExtensionsOperations(object):
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise HttpResponseError(response=response, error_format=ARMErrorFormat)
+            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, response)
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('MachineExtension', pipeline_response)
 
@@ -493,22 +499,22 @@ class MachineExtensionsOperations(object):
             return cls(pipeline_response, deserialized, {})
 
         return deserialized
-    get.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.HybridCompute/machines/{name}/extensions/{extensionName}'}  # type: ignore
+    get.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.HybridCompute/machines/{machineName}/extensions/{extensionName}'}  # type: ignore
 
     def list(
         self,
         resource_group_name,  # type: str
-        name,  # type: str
+        machine_name,  # type: str
         expand=None,  # type: Optional[str]
         **kwargs  # type: Any
     ):
         # type: (...) -> Iterable["_models.MachineExtensionsListResult"]
         """The operation to get all extensions of a non-Azure machine.
 
-        :param resource_group_name: The name of the resource group.
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
         :type resource_group_name: str
-        :param name: The name of the machine containing the extension.
-        :type name: str
+        :param machine_name: The name of the machine containing the extension.
+        :type machine_name: str
         :param expand: The expand expression to apply on the operation.
         :type expand: str
         :keyword callable cls: A custom type or function that will be passed the direct response
@@ -521,7 +527,7 @@ class MachineExtensionsOperations(object):
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2020-08-02"
+        api_version = "2021-03-25-preview"
         accept = "application/json"
 
         def prepare_request(next_link=None):
@@ -533,9 +539,9 @@ class MachineExtensionsOperations(object):
                 # Construct URL
                 url = self.list.metadata['url']  # type: ignore
                 path_format_arguments = {
-                    'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
-                    'name': self._serialize.url("name", name, 'str'),
-                    'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
+                    'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
+                    'machineName': self._serialize.url("machine_name", machine_name, 'str'),
+                    'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str', min_length=1),
                 }
                 url = self._client.format_url(url, **path_format_arguments)
                 # Construct parameters
@@ -565,12 +571,13 @@ class MachineExtensionsOperations(object):
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
+                error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, response)
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
-                raise HttpResponseError(response=response, error_format=ARMErrorFormat)
+                raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
             return pipeline_response
 
         return ItemPaged(
             get_next, extract_data
         )
-    list.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.HybridCompute/machines/{name}/extensions'}  # type: ignore
+    list.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.HybridCompute/machines/{machineName}/extensions'}  # type: ignore
