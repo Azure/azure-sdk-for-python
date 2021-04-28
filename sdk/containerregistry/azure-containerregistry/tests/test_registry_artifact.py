@@ -6,9 +6,9 @@
 import pytest
 
 from azure.containerregistry import (
-    ContentPermissions,
+    ContentProperties,
     ArtifactManifestProperties,
-    TagProperties,
+    ArtifactTagProperties,
 )
 from azure.core.exceptions import ResourceNotFoundError
 
@@ -35,7 +35,7 @@ class TestContainerRepository(ContainerRegistryTestClass):
         properties = reg_artifact.get_manifest_properties()
 
         assert isinstance(properties, ArtifactManifestProperties)
-        assert isinstance(properties.content_permissions, ContentPermissions)
+        assert isinstance(properties.writeable_properties, ContentProperties)
 
     @acr_preparer()
     def test_get_manifest_properties_does_not_exist(self, containerregistry_endpoint):
@@ -55,22 +55,22 @@ class TestContainerRepository(ContainerRegistryTestClass):
         reg_artifact = self.set_up(containerregistry_endpoint, name=repo)
 
         properties = reg_artifact.get_manifest_properties()
-        c = ContentPermissions(can_delete=False, can_read=False, can_write=False, can_list=False)
+        c = ContentProperties(can_delete=False, can_read=False, can_write=False, can_list=False)
 
         received = reg_artifact.set_manifest_properties(c)
 
-        assert received.content_permissions.can_delete == c.can_delete
-        assert received.content_permissions.can_read == c.can_read
-        assert received.content_permissions.can_write == c.can_write
-        assert received.content_permissions.can_list == c.can_list
+        assert received.writeable_properties.can_delete == c.can_delete
+        assert received.writeable_properties.can_read == c.can_read
+        assert received.writeable_properties.can_write == c.can_write
+        assert received.writeable_properties.can_list == c.can_list
 
-        c = ContentPermissions(can_delete=True, can_read=True, can_write=True, can_list=True)
+        c = ContentProperties(can_delete=True, can_read=True, can_write=True, can_list=True)
         received = reg_artifact.set_manifest_properties(c)
 
-        assert received.content_permissions.can_delete == c.can_delete
-        assert received.content_permissions.can_read == c.can_read
-        assert received.content_permissions.can_write == c.can_write
-        assert received.content_permissions.can_list == c.can_list
+        assert received.writeable_properties.can_delete == c.can_delete
+        assert received.writeable_properties.can_read == c.can_read
+        assert received.writeable_properties.can_write == c.can_write
+        assert received.writeable_properties.can_list == c.can_list
 
     @acr_preparer()
     def test_get_tag_properties(self, containerregistry_endpoint):
@@ -82,7 +82,7 @@ class TestContainerRepository(ContainerRegistryTestClass):
 
         properties = reg_artifact.get_tag_properties(tag)
 
-        assert isinstance(properties, TagProperties)
+        assert isinstance(properties, ArtifactTagProperties)
         assert properties.name == tag
 
     @acr_preparer()
@@ -103,22 +103,22 @@ class TestContainerRepository(ContainerRegistryTestClass):
         reg_artifact = self.set_up(containerregistry_endpoint, name=repo)
 
         properties = reg_artifact.get_tag_properties(tag)
-        c = ContentPermissions(can_delete=False, can_read=False, can_write=False, can_list=False)
+        c = ContentProperties(can_delete=False, can_read=False, can_write=False, can_list=False)
 
         received = reg_artifact.set_tag_properties(tag, c)
 
-        assert received.content_permissions.can_delete == c.can_delete
-        assert received.content_permissions.can_read == c.can_read
-        assert received.content_permissions.can_write == c.can_write
-        assert received.content_permissions.can_list == c.can_list
+        assert received.writeable_properties.can_delete == c.can_delete
+        assert received.writeable_properties.can_read == c.can_read
+        assert received.writeable_properties.can_write == c.can_write
+        assert received.writeable_properties.can_list == c.can_list
 
-        c = ContentPermissions(can_delete=True, can_read=True, can_write=True, can_list=True)
+        c = ContentProperties(can_delete=True, can_read=True, can_write=True, can_list=True)
         received = reg_artifact.set_tag_properties(tag, c)
 
-        assert received.content_permissions.can_delete == c.can_delete
-        assert received.content_permissions.can_read == c.can_read
-        assert received.content_permissions.can_write == c.can_write
-        assert received.content_permissions.can_list == c.can_list
+        assert received.writeable_properties.can_delete == c.can_delete
+        assert received.writeable_properties.can_read == c.can_read
+        assert received.writeable_properties.can_write == c.can_write
+        assert received.writeable_properties.can_list == c.can_list
 
     @acr_preparer()
     def test_list_tags(self, containerregistry_endpoint):

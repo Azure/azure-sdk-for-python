@@ -14,8 +14,8 @@ from azure.containerregistry.aio import (
     ContainerRegistryClient,
 )
 from azure.containerregistry import (
-    TagProperties,
-    ContentPermissions,
+    ArtifactTagProperties,
+    ContentProperties,
     ArtifactManifestProperties,
 )
 

@@ -9,13 +9,13 @@
 from ._container_registry_client import ContainerRegistryClient
 from ._container_repository import ContainerRepository
 from ._models import (
-    ContentPermissions,
+    ContentProperties,
     DeletedRepositoryResult,
-    RegistryArtifactOrderBy,
+    ManifestOrderBy,
     ArtifactManifestProperties,
     RepositoryProperties,
     TagOrderBy,
-    TagProperties,
+    ArtifactTagProperties,
 )
 from ._registry_artifact import RegistryArtifact
 from ._version import VERSION
@@ -25,12 +25,12 @@ __version__ = VERSION
 __all__ = [
     "ContainerRegistryClient",
     "ContainerRepository",
-    "ContentPermissions",
+    "ContentProperties",
     "DeletedRepositoryResult",
     "RegistryArtifact",
-    "RegistryArtifactOrderBy",
+    "ManifestOrderBy",
     "ArtifactManifestProperties",
     "RepositoryProperties",
     "TagOrderBy",
-    "TagProperties",
+    "ArtifactTagProperties",
 ]

@@ -22,6 +22,7 @@ from preparer import acr_preparer
 
 
 class TestContainerRegistryClient(ContainerRegistryTestClass):
+    @pytest.mark.live_test_only
     @acr_preparer()
     def test_list_repository_names(self, containerregistry_endpoint):
         client = self.create_registry_client(containerregistry_endpoint)
@@ -39,6 +40,7 @@ class TestContainerRegistryClient(ContainerRegistryTestClass):
 
         assert count > 0
 
+    @pytest.mark.live_test_only
     @acr_preparer()
     def test_list_repository_names_by_page(self, containerregistry_endpoint):
         client = self.create_registry_client(containerregistry_endpoint)
@@ -67,7 +69,7 @@ class TestContainerRegistryClient(ContainerRegistryTestClass):
 
         result = client.delete_repository(TO_BE_DELETED)
         assert isinstance(result, DeletedRepositoryResult)
-        assert result.deleted_registry_artifact_digests is not None
+        assert result.deleted_manifests is not None
         assert result.deleted_tags is not None
 
         for repo in client.list_repository_names():

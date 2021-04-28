@@ -16,8 +16,8 @@ import time
 from azure.containerregistry import (
     ContainerRepository,
     ContainerRegistryClient,
-    TagProperties,
-    ContentPermissions,
+    ArtifactTagProperties,
+    ContentProperties,
     ArtifactManifestProperties,
 )
 
@@ -196,7 +196,7 @@ class ContainerRegistryTestClass(AzureTestCase):
                 for tag in repo_client.list_tags():
 
                     try:
-                        p = tag.content_permissions
+                        p = tag.writeable_properties
                         p.can_delete = True
                         repo_client.set_tag_properties(tag.digest, p)
                     except:
@@ -204,7 +204,7 @@ class ContainerRegistryTestClass(AzureTestCase):
 
                 for manifest in repo_client.list_registry_artifacts():
                     try:
-                        p = manifest.content_permissions
+                        p = manifest.writeable_properties
                         p.can_delete = True
                         repo_client.set_manifest_properties(tag.digest, p)
                     except:
@@ -236,8 +236,8 @@ class ContainerRegistryTestClass(AzureTestCase):
         return c
 
     def assert_content_permission(self, content_perm, content_perm2):
-        assert isinstance(content_perm, ContentPermissions)
-        assert isinstance(content_perm2, ContentPermissions)
+        assert isinstance(content_perm, ContentProperties)
+        assert isinstance(content_perm2, ContentProperties)
         assert content_perm.can_delete == content_perm2.can_delete
         assert content_perm.can_list == content_perm2.can_list
         assert content_perm.can_read == content_perm2.can_read
@@ -254,8 +254,8 @@ class ContainerRegistryTestClass(AzureTestCase):
         registry=None,
         repository=None,
     ):
-        assert isinstance(tag, TagProperties)
-        assert isinstance(tag.writeable_permissions, ContentPermissions)
+        assert isinstance(tag, ArtifactTagProperties)
+        assert isinstance(tag.writeable_permissions, ContentProperties)
         assert isinstance(tag.created_on, datetime)
         assert isinstance(tag.last_updated_on, datetime)
         if content_permission:

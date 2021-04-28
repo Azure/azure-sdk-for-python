@@ -28,7 +28,7 @@ from ._registry_artifact import RegistryArtifact
 if TYPE_CHECKING:
     from typing import Any, Dict
     from azure.core.credentials import TokenCredential
-    from ._models import ContentPermissions
+    from ._models import ContentProperties
 
 
 class ContainerRepository(ContainerRegistryBaseClient):
@@ -86,7 +86,7 @@ class ContainerRepository(ContainerRegistryBaseClient):
             call will return values after last lexically
         :paramtype last: str
         :keyword order_by: Query parameter for ordering by time ascending or descending
-        :paramtype order_by: :class:`~azure.containerregistry.RegistryArtifactOrderBy`
+        :paramtype order_by: :class:`~azure.containerregistry.ManifestOrderBy`
         :keyword results_per_page: Number of repositories to return per page
         :paramtype results_per_page: int
         :return: ItemPaged[:class:`ArtifactManifestProperties`]

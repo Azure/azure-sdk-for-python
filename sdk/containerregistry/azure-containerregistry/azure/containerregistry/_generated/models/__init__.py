@@ -12,7 +12,7 @@ try:
     from ._models_py3 import AcrRefreshToken
     from ._models_py3 import Annotations
     from ._models_py3 import ArtifactManifestProperties
-    from ._models_py3 import ArtifactTagProperties
+    from ._models_py3 import ArtifactArtifactTagProperties
     from ._models_py3 import ContentProperties
     from ._models_py3 import DeleteRepositoryResult
     from ._models_py3 import Descriptor
@@ -50,7 +50,7 @@ except (SyntaxError, ImportError):
     from ._models import AcrRefreshToken  # type: ignore
     from ._models import Annotations  # type: ignore
     from ._models import ArtifactManifestProperties  # type: ignore
-    from ._models import ArtifactTagProperties  # type: ignore
+    from ._models import ArtifactArtifactTagProperties  # type: ignore
     from ._models import ContentProperties  # type: ignore
     from ._models import DeleteRepositoryResult  # type: ignore
     from ._models import Descriptor  # type: ignore
@@ -96,7 +96,7 @@ __all__ = [
     'AcrRefreshToken',
     'Annotations',
     'ArtifactManifestProperties',
-    'ArtifactTagProperties',
+    'ArtifactArtifactTagProperties',
     'ContentProperties',
     'DeleteRepositoryResult',
     'Descriptor',

@@ -20,11 +20,11 @@ from ._async_base_client import ContainerRegistryBaseClient
 from .._generated.models import AcrErrors
 from .._helpers import _parse_next_link
 from .._models import (
-    ContentPermissions,
+    ContentProperties,
     DeletedRepositoryResult,
     ArtifactManifestProperties,
     RepositoryProperties,
-    TagProperties,
+    ArtifactTagProperties,
 )
 from ._async_registry_artifact import RegistryArtifact
 
@@ -85,7 +85,7 @@ class ContainerRepository(ContainerRegistryBaseClient):
             call will return values after last lexically
         :paramtype last: str
         :keyword order_by: Query parameter for ordering by time ascending or descending
-        :paramtype order_by: :class:`~azure.containerregistry.RegistryArtifactOrderBy`
+        :paramtype order_by: :class:`~azure.containerregistry.ManifestOrderBy`
         :keyword results_per_page: Number of repositories to return per page
         :paramtype results_per_page: int
         :return: ItemPaged[:class:`~azure.containerregistry.ArtifactManifestProperties`]
@@ -195,7 +195,7 @@ class ContainerRepository(ContainerRegistryBaseClient):
         return AsyncItemPaged(get_next, extract_data)
 
     @distributed_trace_async
-    async def set_properties(self, properties: ContentPermissions, **kwargs: Dict[str, Any]) -> RepositoryProperties:
+    async def set_properties(self, properties: ContentProperties, **kwargs: Dict[str, Any]) -> RepositoryProperties:
         """Set the properties of a repository
 
         :returns: :class:`~azure.containerregistry.RepositoryProperties`
