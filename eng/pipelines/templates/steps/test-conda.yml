@@ -53,12 +53,9 @@ steps:
           echo "##vso[task.prependpath]$CONDA/bin"
         displayName: 'Prepend PATH with Conda and INIT'
     - ${{ if contains(parameters.OSVmImage, 'windows') }}:
-      - powershell: |
+      - pwsh: |
           Write-Host "##vso[task.prependpath]$env:CONDA\Scripts"
         displayName: 'Prepend PATH with Conda and INIT'
-
-    - powershell: Write-Host "##vso[task.prependpath]$env:CONDA\Scripts"
-      displayName: Add conda to PATH
 
     - script: |
         conda env create --name ${{ artifact.name }} --file $(Build.SourcesDirectory)/eng/conda_env.yml
@@ -69,7 +66,7 @@ steps:
 
     - script: |
         $(activate.method) activate ${{ artifact.name }}
-        pip install -r eng/ci_tools.txt $(requirement.suffix)
+        python -m pip install -r eng/ci_tools.txt $(requirement.suffix)
       displayName: 'Activate Conda Environment and Install General Dependencies ${{ artifact.name }}'
 
     - pwsh: |
@@ -96,7 +93,7 @@ steps:
 
       - script: |
           $(activate.method) activate ${{ artifact.name }}
-          pip install -r dev_requirements.txt
+          python -m pip install -r dev_requirements.txt
           conda install --name ${{ artifact.name }} ${{ artifact.name }} -c $(Build.ArtifactStagingDirectory)/${{ artifact.name }} --yes
         displayName: 'Install ${{ checkout.package }} Conda Package and Dev Requirements'
         workingDirectory: $(conda.build)/${{ checkout.checkout_path }}/${{ checkout.package }}
