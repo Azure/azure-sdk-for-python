@@ -6,6 +6,7 @@
 
 from enum import Enum
 from typing import TYPE_CHECKING
+
 from ._generated.models import ContentProperties
 from ._generated.models import RepositoryProperties as GeneratedRepositoryProperties
 
@@ -71,13 +72,15 @@ class DeletedRepositoryResult(object):
 class ArtifactManifestProperties(object):
     """Represents properties of a registry artifact
 
-    :ivar str cpu_architecture: CPU Architecture of an artifact
+    :ivar architecture: CPU Architecture of an artifact
+    :vartype architecture: :class:`azure.containerregistry.ArtifactArchitecture`
     :ivar created_on: Time and date an artifact was created
     :vartype created_on: :class:`~datetime.datetime`
     :ivar str digest: Digest for the artifact
     :ivar last_updated_on: Time and date an artifact was last updated
     :vartype last_updated_on: :class:`~datetime.datetime`
-    :ivar str operating_system: Operating system for the artifact
+    :ivar operating_system: Operating system for the artifact
+    :vartype operating_system: :class:`azure.containerregistry.ArtifactOperatingSystem`
     :ivar List[str] references: References for the artifact
     :ivar str size: Size of the artifact
     :ivar List[str] tags: Tags associated with a registry artifact
@@ -86,11 +89,11 @@ class ArtifactManifestProperties(object):
     """
 
     def __init__(self, **kwargs):
-        self.cpu_architecture = kwargs.get("cpu_architecture", None)
+        self.architecture = _map_architecture(kwargs.get("cpu_architecture", None))
         self.created_on = kwargs.get("created_on", None)
         self.digest = kwargs.get("digest", None)
         self.last_updated_on = kwargs.get("last_updated_on", None)
-        self.operating_system = kwargs.get("operating_system", None)
+        self.operating_system = _map_operating_system(kwargs.get("operating_system", None))
         self.references = kwargs.get("references", None)
         self.size = kwargs.get("size", None)
         self.tags = kwargs.get("tags", None)
@@ -211,3 +214,82 @@ class TagProperties(object):
             name=generated.name,
             writeable_properties=generated.writeable_properties,
         )
+
+
+def _map_architecture(arch):
+    # type: (str) -> ArtifactArchitecture
+    if arch is None:
+        return None
+    m = {
+        "amd64": ArtifactArchitecture.AMD64,
+        "arm": ArtifactArchitecture.ARM,
+        "arm64": ArtifactArchitecture.ARM64,
+        "386": ArtifactArchitecture.I386,
+        "mips": ArtifactArchitecture.MIPS,
+        "mips64": ArtifactArchitecture.MIPS64,
+        "mips64le": ArtifactArchitecture.MIPS64LE,
+        "mips64le": ArtifactArchitecture.MIPSLE,
+        "ppc64": ArtifactArchitecture.PPC64,
+        "ppc64le": ArtifactArchitecture.PPC64LE,
+        "riscv64": ArtifactArchitecture.RISCV64,
+        "s390x": ArtifactArchitecture.S390X,
+        "wasm": ArtifactArchitecture.WASM,
+    }
+    return m[arch]
+
+
+def _map_operating_system(os):
+    # type: (str) -> ArtifactOperatingSystem
+    if os is None:
+        return None
+    m = {
+        "aix": ArtifactOperatingSystem.AIX,
+        "android": ArtifactOperatingSystem.ANDROID,
+        "darwin": ArtifactOperatingSystem.DARWIN,
+        "dragonfly": ArtifactOperatingSystem.DRAGONFLY,
+        "freebsd": ArtifactOperatingSystem.FREEBSD,
+        "illumos": ArtifactOperatingSystem.ILLUMOS,
+        "ios": ArtifactOperatingSystem.IOS,
+        "js": ArtifactOperatingSystem.JS,
+        "linux": ArtifactOperatingSystem.LINUX,
+        "netbsd": ArtifactOperatingSystem.NETBSD,
+        "openbsd": ArtifactOperatingSystem.OPENBSD,
+        "plan9": ArtifactOperatingSystem.PLAN9,
+        "solaris": ArtifactOperatingSystem.SOLARIS,
+        "windows": ArtifactOperatingSystem.WINDOWS,
+    }
+    return m[os]
+
+class ArtifactArchitecture(str, Enum):
+
+    AMD64 = "amd64"
+    ARM = "arm"
+    ARM64 = "arm64"
+    I386 = "i386"
+    MIPS = "mips"
+    MIPS64 = "mips64"
+    MIPS64LE = "mips64le"
+    MIPSLE = "mips64le"
+    PPC64 = "ppc64"
+    PPC64LE = "ppc64le"
+    RISCV64 = "riscv64"
+    S390X = "s390x"
+    WASM = "wasm"
+
+
+class ArtifactOperatingSystem(str, Enum):
+
+    AIX = "aix"
+    ANDROID = "android"
+    DARWIN = "darwin"
+    DRAGONFLY = "dragonfly"
+    FREEBSD = "freebsd"
+    ILLUMOS = "illumos"
+    IOS = "ios"
+    JS = "js"
+    LINUX = "linux"
+    NETBSD = "netbsd"
+    OPENBSD = "openbsd"
+    PLAN9 = "plan9"
+    SOLARIS = "solaris"
+    WINDOWS = "windows"

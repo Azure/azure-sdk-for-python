@@ -6,8 +6,10 @@
 import pytest
 
 from azure.containerregistry import (
-    ContentPermissions,
+    ArtifactArchitecture,
     ArtifactManifestProperties,
+    ArtifactOperatingSystem,
+    ContentPermissions,
     TagProperties,
 )
 from azure.core.exceptions import ResourceNotFoundError
@@ -36,6 +38,8 @@ class TestContainerRepository(ContainerRegistryTestClass):
 
         assert isinstance(properties, ArtifactManifestProperties)
         assert isinstance(properties.content_permissions, ContentPermissions)
+        assert isinstance(properties.architecture, ArtifactArchitecture)
+        assert isinstance(properties.operating_system, ArtifactOperatingSystem)
 
     @acr_preparer()
     def test_get_manifest_properties_does_not_exist(self, containerregistry_endpoint):
