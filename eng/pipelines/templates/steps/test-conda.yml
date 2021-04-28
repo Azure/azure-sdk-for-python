@@ -61,7 +61,7 @@ steps:
 
     - powershell: |
         Write-Host "##vso[task.prependpath]$env:CONDA\Scripts"
-      displayName: 'Prepend PATH with Conda and INIT'
+      displayName: 'Prepend PATH with Conda Script Directory'
 
     - script: |
         conda env create --name ${{ artifact.name }} python=$(PythonVersion) --file $(Build.SourcesDirectory)/eng/conda_env.yml
