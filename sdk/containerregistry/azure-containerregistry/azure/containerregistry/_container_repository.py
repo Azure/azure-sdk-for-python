@@ -100,7 +100,8 @@ class ContainerRepository(ContainerRegistryBaseClient):
         cls = kwargs.pop(
             "cls",
             lambda objs: [
-                ArtifactManifestProperties._from_generated(x, repository_name=self.repository) for x in objs  # pylint: disable=protected-access
+                ArtifactManifestProperties._from_generated(x, repository_name=self.repository)  # pylint: disable=protected-access
+                for x in objs
             ],
         )
 
@@ -205,9 +206,7 @@ class ContainerRepository(ContainerRegistryBaseClient):
         """
         return RepositoryProperties._from_generated(  # pylint: disable=protected-access
             self._client.container_registry.set_properties(
-                self.repository,
-                properties._to_generated(),  # pylint: disable=protected-access
-                **kwargs
+                self.repository, properties._to_generated(), **kwargs  # pylint: disable=protected-access
             )
         )
 

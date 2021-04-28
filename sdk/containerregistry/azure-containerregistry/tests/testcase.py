@@ -57,6 +57,8 @@ class OAuthRequestResponsesFilterACR(RecordingProcessor):
 class ManagementRequestReplacer(RecordingProcessor):
     """Remove oauth authentication requests and responses from recording."""
 
+    # Don't need to save the import image requests
+
     def process_request(self, request):
         if "management.azure.com" not in request.uri:
             return request

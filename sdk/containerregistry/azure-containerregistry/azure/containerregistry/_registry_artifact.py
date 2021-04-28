@@ -136,7 +136,8 @@ class RegistryArtifact(ContainerRegistryBaseClient):
         orderby = kwargs.pop("order_by", None)
         digest = kwargs.pop("digest", None)
         cls = kwargs.pop(
-            "cls", lambda objs: [ArtifactTagProperties._from_generated(o) for o in objs]  # pylint: disable=protected-access
+            "cls",
+            lambda objs: [ArtifactTagProperties._from_generated(o) for o in objs],  # pylint: disable=protected-access
         )
 
         error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
