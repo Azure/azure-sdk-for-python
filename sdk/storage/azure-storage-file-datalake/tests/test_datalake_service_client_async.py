@@ -316,7 +316,8 @@ class DatalakeServiceTest(StorageTestCase):
         loop.run_until_complete(self._test_set_hour_metrics())
 
     async def _test_set_minute_metrics(self):
-        minute_metrics = Metrics(retention_policy=RetentionPolicy(enabled=True, days=5))
+        minute_metrics = Metrics(
+            enabled=True, include_apis=True, retention_policy=RetentionPolicy(enabled=True, days=5))
 
         # Act
         await self.dsc.set_service_properties(minute_metrics=minute_metrics)
