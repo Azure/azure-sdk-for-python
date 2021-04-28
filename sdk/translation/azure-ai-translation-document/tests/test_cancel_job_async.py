@@ -27,7 +27,7 @@ class TestCancelJob(AsyncDocumentTranslationTest):
                 - in order for the cancel status to propagate
         '''
         # submit translation job
-        docs_count = 20 # large number of docs 
+        docs_count = 8 # large number of docs 
         job_id = await self._create_translation_job_with_dummy_docs_async(client, docs_count, wait=False)
 
         # cancel job

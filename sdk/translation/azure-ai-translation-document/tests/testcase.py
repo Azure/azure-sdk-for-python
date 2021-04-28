@@ -27,6 +27,13 @@ class Document(object):
         self.prefix = kwargs.get("prefix", "")
         self.data = kwargs.get("data", b'This is written in english.')
 
+    @classmethod
+    def create_dummy_docs(cls, docs_count):
+        result = []
+        for i in range(docs_count):
+            result.append(cls())
+        return result
+
 
 class OperationLocationReplacer(RecordingProcessor):
     """Replace the location/operation location uri in a request/response body."""
@@ -238,8 +245,7 @@ class DocumentTranslationTest(AzureTestCase):
         language_code = kwargs.pop('language_code', "es")
 
         # prepare containers and test data
-        blob_text = b'blob text'
-        blob_data = [Document(data=blob_text)] * docs_count
+        blob_data = Document.create_dummy_docs(docs_count=docs_count)
         source_container_sas_url = self.create_source_container(data=blob_data)
         target_container_sas_url = self.create_target_container()
 
