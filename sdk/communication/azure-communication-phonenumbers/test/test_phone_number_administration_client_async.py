@@ -3,7 +3,10 @@ import pytest
 from azure.communication.phonenumbers.aio import PhoneNumbersClient
 from _shared.asynctestcase import AsyncCommunicationTestCase
 from _shared.testcase import ResponseReplacerProcessor, BodyReplacerProcessor
-from _shared.utils import create_token_credential
+from _shared.utils import (
+    create_token_credential, 
+    get_http_logging_policy
+)
 from azure.communication.phonenumbers import (
     PhoneNumberAssignmentType, 
     PhoneNumberCapabilities, 
@@ -27,7 +30,10 @@ class PhoneNumbersClientTestAsync(AsyncCommunicationTestCase):
         else:
             self.phone_number = os.getenv("AZURE_COMMUNICATION_SERVICE_PHONE_NUMBER")
             self.country_code = os.getenv("AZURE_COMMUNICATION_SERVICE_COUNTRY_CODE", "US")
-        self.phone_number_client = PhoneNumbersClient.from_connection_string(self.connection_str)
+        self.phone_number_client = PhoneNumbersClient.from_connection_string(
+            self.connection_str, 
+            http_logging_policy=get_http_logging_policy()
+        )
         self.recording_processors.extend([
             BodyReplacerProcessor(
                 keys=["id", "token", "phoneNumber", "searchId"]
@@ -39,7 +45,11 @@ class PhoneNumbersClientTestAsync(AsyncCommunicationTestCase):
     async def test_list_purchased_phone_numbers_from_managed_identity(self):
         endpoint, access_key = parse_connection_str(self.connection_str)
         credential = create_token_credential()
-        phone_number_client = PhoneNumbersClient(endpoint, credential)
+        phone_number_client = PhoneNumbersClient(
+            endpoint, 
+            credential, 
+            http_logging_policy=get_http_logging_policy()
+        )
         async with phone_number_client:
             phone_numbers = phone_number_client.list_purchased_phone_numbers()
             items = []
@@ -60,7 +70,11 @@ class PhoneNumbersClientTestAsync(AsyncCommunicationTestCase):
     async def test_get_purchased_phone_number_from_managed_identity(self):
         endpoint, access_key = parse_connection_str(self.connection_str)
         credential = create_token_credential()
-        phone_number_client = PhoneNumbersClient(endpoint, credential)
+        phone_number_client = PhoneNumbersClient(
+            endpoint, 
+            credential, 
+            http_logging_policy=get_http_logging_policy()
+        )
         async with phone_number_client:
             phone_number = await phone_number_client.get_purchased_phone_number(self.phone_number)
         assert phone_number.phone_number == self.phone_number
@@ -75,7 +89,11 @@ class PhoneNumbersClientTestAsync(AsyncCommunicationTestCase):
     async def test_search_available_phone_numbers_from_managed_identity(self):
         endpoint, access_key = parse_connection_str(self.connection_str)
         credential = create_token_credential()
-        phone_number_client = PhoneNumbersClient(endpoint, credential)
+        phone_number_client = PhoneNumbersClient(
+            endpoint, 
+            credential, 
+            http_logging_policy=get_http_logging_policy()
+        )
         capabilities = PhoneNumberCapabilities(
             calling = PhoneNumberCapabilityType.INBOUND,
             sms = PhoneNumberCapabilityType.INBOUND_OUTBOUND
@@ -110,7 +128,11 @@ class PhoneNumbersClientTestAsync(AsyncCommunicationTestCase):
     async def test_update_phone_number_capabilities_from_managed_identity(self):
         endpoint, access_key = parse_connection_str(self.connection_str)
         credential = create_token_credential()
-        phone_number_client = PhoneNumbersClient(endpoint, credential)
+        phone_number_client = PhoneNumbersClient(
+            endpoint, 
+            credential, 
+            http_logging_policy=get_http_logging_policy()
+        )
         async with phone_number_client:
             poller = await phone_number_client.begin_update_phone_number_capabilities(
                 self.phone_number,
@@ -136,7 +158,11 @@ class PhoneNumbersClientTestAsync(AsyncCommunicationTestCase):
     async def test_purchase_phone_numbers_from_managed_identity(self):
         endpoint, access_key = parse_connection_str(self.connection_str)
         credential = create_token_credential()
-        phone_number_client = PhoneNumbersClient(endpoint, credential)
+        phone_number_client = PhoneNumbersClient(
+            endpoint, 
+            credential, 
+            http_logging_policy=get_http_logging_policy()
+        )
         capabilities = PhoneNumberCapabilities(
             calling = PhoneNumberCapabilityType.INBOUND,
             sms = PhoneNumberCapabilityType.INBOUND_OUTBOUND

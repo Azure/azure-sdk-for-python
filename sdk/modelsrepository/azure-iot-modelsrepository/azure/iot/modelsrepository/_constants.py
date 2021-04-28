@@ -4,8 +4,8 @@
 # license information.
 # --------------------------------------------------------------------------
 import platform
+from ._version import VERSION
 
-VERSION = "1.0.0b1"
 USER_AGENT = "azsdk-python-modelsrepository/{pkg_version} Python/{py_version} ({platform})".format(
     pkg_version=VERSION, py_version=(platform.python_version()), platform=platform.platform()
 )
