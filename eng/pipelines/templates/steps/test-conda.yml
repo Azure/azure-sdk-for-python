@@ -43,9 +43,17 @@ steps:
     displayName: 'Evaluate OS Specific Activate Parameter'
 
   - ${{ each artifact in parameters.CondaArtifacts }}:
-    - script: |
-        echo "##vso[task.prependpath]$CONDA/bin"
-      displayName: 'Prepend PATH with Conda and INIT'
+    - ${{ if not(contains(parameters.OSVmImage, 'windows')) }}:
+      - script: |
+          echo "##vso[task.prependpath]$CONDA/bin"
+        displayName: 'Prepend PATH with Conda and INIT'
+    - ${{ if contains(parameters.OSVmImage, 'windows') }}:
+      - powershell: |
+          Write-Host "##vso[task.prependpath]$env:CONDA\Scripts"
+        displayName: 'Prepend PATH with Conda and INIT'
+
+    - powershell: Write-Host "##vso[task.prependpath]$env:CONDA\Scripts"
+      displayName: Add conda to PATH
 
     - script: |
         conda env create --name ${{ artifact.name }} --file $(Build.SourcesDirectory)/eng/conda_env.yml
@@ -90,6 +98,6 @@ steps:
 
       - script: |
           $(activate.method) activate ${{ artifact.name }}
-          pytest .
+          python -m pytest .
         displayName: 'Run Tests for ${{ checkout.package }}'
         workingDirectory: $(conda.build)/${{ checkout.checkout_path }}/${{ checkout.package }}
