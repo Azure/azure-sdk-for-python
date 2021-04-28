@@ -57,10 +57,30 @@ steps:
         conda install --name ${{ artifact.name }} ${{ artifact.name }} -c $(Build.ArtifactStagingDirectory)/${{ artifact.name }} --yes
       displayName: 'Activate Conda Environment and Install General Dependencies ${{ artifact.name }}'
 
+    - pwsh: |
+        mkdir $(Agent.BuildDirectory)/conda/
+        Write-Host "##vso[task.setvariable variable=conda.build]$(Agent.BuildDirectory)/conda_checkout"
+      displayName: 'Create Conda Working Directory for Testing'
+
     - ${{ each checkout in artifact.checkout }}:
+      - pwsh:
+          Write-Host "Clean up Conda Build Directory $(conda.build)"
+          Remove-Item $(conda.build)/* -Recurse -Force
+        displayName: 'Clean Up Before Testing ${{ artifact.name }}'
+
+      - template: /eng/common/pipelines/templates/steps/sparse-checkout.yml
+        parameters:
+          Paths:
+            - "${{ checkout.CheckoutPath }}/${{ checkout.Package }}"
+          Repositories:
+            - Name: "Azure/azure-sdk-for-python"
+              Commitish: "${{ checkout.Package }}_${{ checkout.Version }}"
+              WorkingDirectory: "$(conda.build)"
+          SkipDefaultCheckout: true
+
       - bash: |
           source activate ${{ artifact.name }}
           pip install -r dev_requirements.txt
           pytest .
         displayName: 'Run tests for ${{ checkout.package }}'
-        workingDirectory: $(Build.SourcesDirectory)/${{ checkout.checkout_path }}/${{ checkout.package }}
+        workingDirectory: $(conda.build)/${{ checkout.checkout_path }}/${{ checkout.package }}
