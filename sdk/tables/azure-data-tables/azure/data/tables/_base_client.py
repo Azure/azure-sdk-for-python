@@ -315,7 +315,6 @@ class TablesBaseClient(AccountHostsMixin):
             raise _decode_error(
                 response=error_parts[0],
                 error_type=TableTransactionError,
-                parts=parts,
                 entities=entities
             )
         return list(zip(entities, (extract_batch_part_metadata(p) for p in parts)))
