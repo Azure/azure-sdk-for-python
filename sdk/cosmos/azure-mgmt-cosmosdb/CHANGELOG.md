@@ -1,5 +1,18 @@
 # Release History
 
+## 6.3.0 (2021-04-28)
+
+**Features**
+
+  - Added operation SqlResourcesOperations.begin_delete_sql_role_assignment
+  - Added operation SqlResourcesOperations.list_sql_role_definitions
+  - Added operation SqlResourcesOperations.begin_create_update_sql_role_definition
+  - Added operation SqlResourcesOperations.begin_delete_sql_role_definition
+  - Added operation SqlResourcesOperations.begin_create_update_sql_role_assignment
+  - Added operation SqlResourcesOperations.get_sql_role_assignment
+  - Added operation SqlResourcesOperations.get_sql_role_definition
+  - Added operation SqlResourcesOperations.list_sql_role_assignments
+
 ## 6.2.0 (2021-04-06)
 
 **Features**
