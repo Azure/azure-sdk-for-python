@@ -135,7 +135,7 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
             deserialized = self._client._deserialize(  # pylint: disable=protected-access
                 "Repositories", pipeline_response
             )
-            list_of_elem = deserialized.repositories
+            list_of_elem = deserialized.repositories or []
             if cls:
                 list_of_elem = cls(list_of_elem)
             link = None

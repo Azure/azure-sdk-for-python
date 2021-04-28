@@ -25,7 +25,12 @@ from azure.mgmt.containerregistry import ContainerRegistryManagementClient
 from azure.mgmt.containerregistry.models import ImportImageParameters, ImportSource, ImportMode
 from azure.identity import DefaultAzureCredential
 
-from azure_devtools.scenario_tests import RecordingProcessor
+from azure_devtools.scenario_tests import (
+    GeneralNameReplacer,
+    RequestUrlNormalizer,
+    AuthenticationMetadataFilter,
+    RecordingProcessor
+)
 from devtools_testutils import AzureTestCase
 
 
@@ -132,8 +137,14 @@ class FakeTokenCredential(object):
 
 class ContainerRegistryTestClass(AzureTestCase):
     def __init__(self, method_name):
-        super(ContainerRegistryTestClass, self).__init__(method_name)
-        self.recording_processors.append(AcrBodyReplacer())
+        super(ContainerRegistryTestClass, self).__init__(method_name,
+        recording_processors=[
+            GeneralNameReplacer(),
+            AuthenticationMetadataFilter(),
+            RequestUrlNormalizer(),
+            AcrBodyReplacer(),
+        ])
+        # self.recording_processors.append(AcrBodyReplacer())
         self.repository = "library/hello-world"
 
     def sleep(self, t):
@@ -141,7 +152,6 @@ class ContainerRegistryTestClass(AzureTestCase):
             time.sleep(t)
 
     def import_image(self, repository, tags):
-        # type: (str, List[str]) -> None
         # repository must be a docker hub repository
         # tags is a List of repository/tag combos in the format <repository>:<tag>
         if not self.is_live:

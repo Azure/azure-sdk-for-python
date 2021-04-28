@@ -11,7 +11,7 @@ interactions:
       User-Agent:
       - azsdk-python-azure-containerregistry/1.0.0b1 Python/3.9.0rc1 (Windows-10-10.0.19041-SP0)
     method: GET
-    uri: https://fake_url.azurecr.io/acr/v1/library%2Fbusybox/_manifests?orderby=timeasc
+    uri: https://seankane.azurecr.io/acr/v1/library%2Fbusybox/_manifests?orderby=timeasc
   response:
     body:
       string: '{"errors":[{"code":"UNAUTHORIZED","message":"authentication required,
@@ -31,7 +31,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Tue, 27 Apr 2021 22:44:30 GMT
+      - Wed, 28 Apr 2021 16:09:35 GMT
       docker-distribution-api-version:
       - registry/2.0
       server:
@@ -46,6 +46,71 @@ interactions:
     status:
       code: 401
       message: Unauthorized
+- request:
+    body: client_id=f850650c-1fcf-4489-b46f-71af2e30d360&grant_type=client_credentials&client_info=1&client_secret=s%3F%3Dq2ZAdO%3D-Vn8ecVgo0Hv64-%3D4ril2t&scope=https%3A%2F%2Fmanagement.core.windows.net%2F.default
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '204'
+      Content-Type:
+      - application/x-www-form-urlencoded
+      Cookie:
+      - esctx=AQABAAAAAAD--DLA3VO7QrddgJg7WevrLGCstDGQBWe_GDeH8R5bxLulCzdtTMV7ejqkavcVY1x-J6NviZz_AX5LvyQPB4yx-Zd0vNTJKh_gSUyGIKOPRr5-grUx6CQtzHsjrEnuMNqxjQZHyQVXJPnGYkGpngtQKdAYcAUffV_w5wEP6LxfKccX1AVDR7oDQQWVJTNXCBAgAA;
+        fpc=ArskO1OIHLxPt_OTKqt1HPY; stsservicecookie=estsfd; x-ms-gateway-slice=estsfd
+      User-Agent:
+      - azsdk-python-identity/1.6.0b4 Python/3.9.0rc1 (Windows-10-10.0.19041-SP0)
+      x-client-cpu:
+      - x64
+      x-client-current-telemetry:
+      - 1|730,0|
+      x-client-os:
+      - win32
+      x-client-sku:
+      - MSAL.Python
+      x-client-ver:
+      - 1.9.0
+    method: POST
+    uri: https://login.microsoftonline.com/72f988bf-86f1-41af-91ab-2d7cd011db47/oauth2/v2.0/token
+  response:
+    body:
+      string: '{"token_type": "Bearer", "expires_in": 86399, "ext_expires_in": 86399,
+        "access_token": "REDACTED"}'
+    headers:
+      cache-control:
+      - no-store, no-cache
+      content-length:
+      - '1361'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Wed, 28 Apr 2021 16:09:35 GMT
+      expires:
+      - '-1'
+      p3p:
+      - CP="DSP CUR OTPi IND OTRi ONL FIN"
+      pragma:
+      - no-cache
+      set-cookie:
+      - fpc=ArskO1OIHLxPt_OTKqt1HPYvu5CIAQAAAL9_G9gOAAAA; expires=Fri, 28-May-2021
+        16:09:35 GMT; path=/; secure; HttpOnly; SameSite=None
+      - x-ms-gateway-slice=estsfd; path=/; secure; samesite=none; httponly
+      - stsservicecookie=estsfd; path=/; secure; samesite=none; httponly
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      x-content-type-options:
+      - nosniff
+      x-ms-clitelem:
+      - 1,0,0,,
+      x-ms-ests-server:
+      - 2.1.11654.16 - WUS2 ProdSlices
+    status:
+      code: 200
+      message: OK
 - request:
     body: grant_type=access_token&service=fake_url.azurecr.io&access_token=REDACTED
     headers:
@@ -62,7 +127,7 @@ interactions:
       User-Agent:
       - azsdk-python-azure-containerregistry/1.0.0b1 Python/3.9.0rc1 (Windows-10-10.0.19041-SP0)
     method: POST
-    uri: https://fake_url.azurecr.io/oauth2/exchange
+    uri: https://seankane.azurecr.io/oauth2/exchange
   response:
     body:
       string: '{"refresh_token": "REDACTED"}'
@@ -72,7 +137,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Tue, 27 Apr 2021 22:44:32 GMT
+      - Wed, 28 Apr 2021 16:09:36 GMT
       server:
       - openresty
       strict-transport-security:
@@ -80,7 +145,45 @@ interactions:
       transfer-encoding:
       - chunked
       x-ms-ratelimit-remaining-calls-per-second:
-      - '166.583333'
+      - '166.616667'
+    status:
+      code: 200
+      message: OK
+- request:
+    body: grant_type=refresh_token&service=fake_url.azurecr.io&scope=repository%3Alibrary%2Fbusybox%3Ametadata_read&refresh_token=REDACTED
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '1085'
+      Content-Type:
+      - application/x-www-form-urlencoded
+      User-Agent:
+      - azsdk-python-azure-containerregistry/1.0.0b1 Python/3.9.0rc1 (Windows-10-10.0.19041-SP0)
+    method: POST
+    uri: https://seankane.azurecr.io/oauth2/token
+  response:
+    body:
+      string: '{"access_token": "REDACTED"}'
+    headers:
+      connection:
+      - keep-alive
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Wed, 28 Apr 2021 16:09:36 GMT
+      server:
+      - openresty
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      transfer-encoding:
+      - chunked
+      x-ms-ratelimit-remaining-calls-per-second:
+      - '166.216667'
     status:
       code: 200
       message: OK
@@ -96,10 +199,10 @@ interactions:
       User-Agent:
       - azsdk-python-azure-containerregistry/1.0.0b1 Python/3.9.0rc1 (Windows-10-10.0.19041-SP0)
     method: GET
-    uri: https://fake_url.azurecr.io/acr/v1/library%2Fbusybox/_manifests?orderby=timeasc
+    uri: https://seankane.azurecr.io/acr/v1/library%2Fbusybox/_manifests?orderby=timeasc
   response:
     body:
-      string: '{"registry": "fake_url.azurecr.io", "imageName": "library/busybox",
+      string: '{"registry": "seankane.azurecr.io", "imageName": "library/busybox",
         "manifests": [{"digest": "sha256:ae39a6f5c07297d7ab64dbd4f82c77c874cc6a94cea29fdec309d0992574b4f7",
         "imageSize": 0, "createdTime": "2021-04-13T15:11:15.1951619Z", "lastUpdateTime":
         "2021-04-13T15:11:15.1951619Z", "mediaType": "application/vnd.docker.distribution.manifest.list.v2+json",
@@ -161,7 +264,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Tue, 27 Apr 2021 22:44:33 GMT
+      - Wed, 28 Apr 2021 16:09:37 GMT
       docker-distribution-api-version:
       - registry/2.0
       server:
