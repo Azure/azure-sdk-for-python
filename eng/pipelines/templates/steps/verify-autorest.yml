@@ -59,7 +59,6 @@ steps:
     - ${{ if and(ne(variables['Build.Reason'], 'PullRequest'), eq(variables['System.TeamProject'], 'internal')) }}:
       - template: /eng/common/pipelines/templates/steps/create-pull-request.yml
     #   # displayName: Create PR for ${{ parameters.ServiceDirectory }}
-    #   condition: and(ne(variables['Build.Reason'],'PullRequest'), eq(variables['System.TeamProject'], 'internal'))
         parameters:
           CommitMsg: "Regenerated code from nightly builds"
           PRTitle: "Automated autorest generation"
