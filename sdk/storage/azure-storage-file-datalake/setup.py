@@ -64,6 +64,7 @@ if not version:
 setup(
     name=PACKAGE_NAME,
     version=version,
+    include_package_data=True,
     description='Microsoft {} Client Library for Python'.format(PACKAGE_PPRINT_NAME),
     long_description=open('README.md', 'r').read(),
     long_description_content_type='text/markdown',

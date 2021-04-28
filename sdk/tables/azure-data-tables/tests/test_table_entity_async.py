@@ -1496,6 +1496,59 @@ class StorageTableEntityTest(AzureTestCase, AsyncTableTestCase):
             await self._tear_down()
 
     @TablesPreparer()
+    async def test_query_user_filter_binary(self, tables_storage_account_name, tables_primary_storage_account_key):
+        # Arrange
+        await self._set_up(tables_storage_account_name, tables_primary_storage_account_key)
+        try:
+            entity, _ = await self._insert_two_opposite_entities()
+
+            # Act
+            parameters = {
+                'my_param': entity['binary']
+            }
+            entities = self.table.query_entities("binary eq @my_param", parameters=parameters)
+
+            length = 0
+            assert entities is not None
+            async for entity in entities:
+                self._assert_default_entity(entity)
+                length += 1
+
+            assert length == 1
+        finally:
+            self._tear_down()
+
+    @TablesPreparer()
+    async def test_query_user_filter_int64(self, tables_storage_account_name, tables_primary_storage_account_key):
+        # Arrange
+        await self._set_up(tables_storage_account_name, tables_primary_storage_account_key)
+        try:
+            entity, _ = await self._insert_two_opposite_entities()
+            large_entity = {
+                u"PartitionKey": u"pk001",
+                u"RowKey": u"rk001",
+                u"large_int": EntityProperty(2 ** 40, EdmType.INT64),
+            }
+            await self.table.create_entity(large_entity)
+
+            # Act
+            parameters = {
+                'my_param': large_entity['large_int'].value
+            }
+            entities = self.table.query_entities("large_int eq @my_param", parameters=parameters)
+
+            length = 0
+            assert entities is not None
+            async for entity in entities:
+                # self._assert_default_entity(entity)
+                assert large_entity['large_int'] == entity['large_int']
+                length += 1
+
+            assert length == 1
+        finally:
+            await self._tear_down()
+
+    @TablesPreparer()
     async def test_query_zero_entities(self, tables_storage_account_name, tables_primary_storage_account_key):
         # Arrange
         await self._set_up(tables_storage_account_name, tables_primary_storage_account_key)

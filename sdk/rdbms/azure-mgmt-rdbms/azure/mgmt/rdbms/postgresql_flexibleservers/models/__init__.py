@@ -32,6 +32,7 @@ try:
     from ._models_py3 import ServerForUpdate
     from ._models_py3 import ServerListResult
     from ._models_py3 import ServerPropertiesDelegatedSubnetArguments
+    from ._models_py3 import ServerPropertiesPrivateDnsZoneArguments
     from ._models_py3 import ServerVersionCapability
     from ._models_py3 import Sku
     from ._models_py3 import StorageEditionCapability
@@ -67,6 +68,7 @@ except (SyntaxError, ImportError):
     from ._models import ServerForUpdate  # type: ignore
     from ._models import ServerListResult  # type: ignore
     from ._models import ServerPropertiesDelegatedSubnetArguments  # type: ignore
+    from ._models import ServerPropertiesPrivateDnsZoneArguments  # type: ignore
     from ._models import ServerVersionCapability  # type: ignore
     from ._models import Sku  # type: ignore
     from ._models import StorageEditionCapability  # type: ignore
@@ -115,6 +117,7 @@ __all__ = [
     'ServerForUpdate',
     'ServerListResult',
     'ServerPropertiesDelegatedSubnetArguments',
+    'ServerPropertiesPrivateDnsZoneArguments',
     'ServerVersionCapability',
     'Sku',
     'StorageEditionCapability',
