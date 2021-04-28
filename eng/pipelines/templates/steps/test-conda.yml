@@ -40,9 +40,14 @@ steps:
         echo "##vso[task.prependpath]$CONDA/bin"
       displayName: 'Prepend PATH with Conda and INIT'
 
+    - pwsh: |
+        Write-Host Get-ChildItem $(Build.ArtifactStagingDirectory)/conda -R
+      displayName: 'Prepend PATH with Conda and INIT'
+
     - bash: |
+        conda env create --name ${{ artifact.name }} --file $(Build.SourcesDirectory)/eng/conda_env.yml
+        conda install --yes --quiet --name ${{ artifact.name }} conda-build
         conda index $(Build.ArtifactStagingDirectory)/conda/${{ artifact.name }}
-        conda env create --name ${{ artifact.name }} python=$(PythonVersion) --file $(Build.SourcesDirectory)/eng/conda_env.yml 
       displayName: 'Prepare Conda Environment for Testing ${{ artifact.name }}, Index the Target Artifact'
 
     - bash: |
