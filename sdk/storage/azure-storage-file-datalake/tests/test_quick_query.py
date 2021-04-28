@@ -23,7 +23,7 @@ from testcase import (
 )
 # ------------------------------------------------------------------------------
 from azure.storage.filedatalake import DataLakeServiceClient
-from azure.storage.filedatalake._models import ParquetDialect, QuickQueryDialect
+from azure.storage.filedatalake import QuickQueryDialect
 
 CSV_DATA = b'Service,Package,Version,RepoPath,MissingDocs\r\nApp Configuration,' \
            b'azure-data-appconfiguration,1,appconfiguration,FALSE\r\nEvent Hubs' \
@@ -859,7 +859,7 @@ class StorageQuickQueryTest(StorageTestCase):
         expression = "select * from blobstorage where id < 1;"
         expected_data = b"0,mdifjt55.ea3,mdifjt55.ea3\n"
 
-        parquet_path = os.path.abspath("parquet.parquet")
+        parquet_path = "parquet.parquet"
         with open(parquet_path, "rb") as parquet_data:
             file_client.upload_data(parquet_data, overwrite=True)
 
@@ -879,7 +879,7 @@ class StorageQuickQueryTest(StorageTestCase):
             errors.append(error)
 
         expression = "SELECT * from BlobStorage"
-        parquet_path = os.path.abspath("parquet.parquet")
+        parquet_path = "parquet.parquet"
         with open(parquet_path, "rb") as parquet_data:
             file_client.upload_data(parquet_data, overwrite=True)
 

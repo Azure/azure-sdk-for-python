@@ -19,7 +19,7 @@ from azure.storage.blob import (
 )
 
 # ------------------------------------------------------------------------------
-from azure.storage.blob._models import ArrowDialect, ArrowType, ParquetDialect, QuickQueryDialect
+from azure.storage.blob import ArrowDialect, ArrowType, ParquetDialect, QuickQueryDialect
 
 CSV_DATA = b'Service,Package,Version,RepoPath,MissingDocs\r\nApp Configuration,' \
            b'azure-data-appconfiguration,1,appconfiguration,FALSE\r\nEvent Hubs' \
@@ -949,7 +949,7 @@ class StorageQuickQueryTest(StorageTestCase):
 
         blob_name = self._get_blob_reference()
         blob_client = bsc.get_blob_client(self.container_name, blob_name)
-        parquet_path = os.path.abspath("parquet.parquet")
+        parquet_path = "parquet.parquet"
         with open(parquet_path, "rb") as parquet_data:
             blob_client.upload_blob(parquet_data, overwrite=True)
         errors = []
@@ -973,7 +973,7 @@ class StorageQuickQueryTest(StorageTestCase):
 
         blob_name = self._get_blob_reference()
         blob_client = bsc.get_blob_client(self.container_name, blob_name)
-        parquet_path = os.path.abspath("parquet.parquet")
+        parquet_path = "parquet.parquet"
         with open(parquet_path, "rb") as parquet_data:
             blob_client.upload_blob(parquet_data, overwrite=True)
         errors = []
