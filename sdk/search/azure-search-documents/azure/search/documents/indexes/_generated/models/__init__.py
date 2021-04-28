@@ -100,6 +100,13 @@ try:
     from ._models_py3 import SearchIndexerDataContainer
     from ._models_py3 import SearchIndexerDataSource
     from ._models_py3 import SearchIndexerError
+    from ._models_py3 import SearchIndexerKnowledgeStore
+    from ._models_py3 import SearchIndexerKnowledgeStoreBlobProjectionSelector
+    from ._models_py3 import SearchIndexerKnowledgeStoreFileProjectionSelector
+    from ._models_py3 import SearchIndexerKnowledgeStoreObjectProjectionSelector
+    from ._models_py3 import SearchIndexerKnowledgeStoreProjection
+    from ._models_py3 import SearchIndexerKnowledgeStoreProjectionSelector
+    from ._models_py3 import SearchIndexerKnowledgeStoreTableProjectionSelector
     from ._models_py3 import SearchIndexerLimits
     from ._models_py3 import SearchIndexerSkill
     from ._models_py3 import SearchIndexerSkillset
@@ -228,6 +235,13 @@ except (SyntaxError, ImportError):
     from ._models import SearchIndexerDataContainer  # type: ignore
     from ._models import SearchIndexerDataSource  # type: ignore
     from ._models import SearchIndexerError  # type: ignore
+    from ._models import SearchIndexerKnowledgeStore  # type: ignore
+    from ._models import SearchIndexerKnowledgeStoreBlobProjectionSelector  # type: ignore
+    from ._models import SearchIndexerKnowledgeStoreFileProjectionSelector  # type: ignore
+    from ._models import SearchIndexerKnowledgeStoreObjectProjectionSelector  # type: ignore
+    from ._models import SearchIndexerKnowledgeStoreProjection  # type: ignore
+    from ._models import SearchIndexerKnowledgeStoreProjectionSelector  # type: ignore
+    from ._models import SearchIndexerKnowledgeStoreTableProjectionSelector  # type: ignore
     from ._models import SearchIndexerLimits  # type: ignore
     from ._models import SearchIndexerSkill  # type: ignore
     from ._models import SearchIndexerSkillset  # type: ignore
@@ -398,6 +412,13 @@ __all__ = [
     'SearchIndexerDataContainer',
     'SearchIndexerDataSource',
     'SearchIndexerError',
+    'SearchIndexerKnowledgeStore',
+    'SearchIndexerKnowledgeStoreBlobProjectionSelector',
+    'SearchIndexerKnowledgeStoreFileProjectionSelector',
+    'SearchIndexerKnowledgeStoreObjectProjectionSelector',
+    'SearchIndexerKnowledgeStoreProjection',
+    'SearchIndexerKnowledgeStoreProjectionSelector',
+    'SearchIndexerKnowledgeStoreTableProjectionSelector',
     'SearchIndexerLimits',
     'SearchIndexerSkill',
     'SearchIndexerSkillset',
