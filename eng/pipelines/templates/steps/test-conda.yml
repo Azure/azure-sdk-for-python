@@ -62,5 +62,5 @@ steps:
           source activate ${{ artifact.name }}
           pip install -r dev_requirements.txt
           pytest .
-        displayName: 'Run tests for '
-        workingDirectory: $(Build.SourcesDirectory)/sdk/${{ checkout.path }}/${{ checkout.package }}
+        displayName: 'Run tests for ${{ checkout.package }}'
+        workingDirectory: $(Build.SourcesDirectory)/${{ checkout.checkout_path }}/${{ checkout.package }}
