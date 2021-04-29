@@ -236,7 +236,7 @@ def _get_task_type_from_error(error):
         return AnalyzeBatchActionsType.RECOGNIZE_ENTITIES
     if "entitylinking" in error.target.lower():
         return AnalyzeBatchActionsType.RECOGNIZE_LINKED_ENTITIES
-    if "sentimentanalysis" in error.target.lower():  # TODO is this correct?
+    if "sentiment" in error.target.lower():
         return AnalyzeBatchActionsType.ANALYZE_SENTIMENT
     return AnalyzeBatchActionsType.EXTRACT_KEY_PHRASES
 
