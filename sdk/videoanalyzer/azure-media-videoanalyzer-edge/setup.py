@@ -84,10 +84,10 @@ setup(
     ),
     install_requires=[
         "msrest>=0.5.0",
-        "azure-core<2.0.0,>=1.10.0",
+        "azure-core<2.0.0,>=1.2.2",
     ],
     extras_require={
-        ":python_version<'3.0'": ['azure-media-video-nspkg'],
+        ":python_version<'3.0'": ['azure-media-nspkg'],
         ":python_version<'3.4'": ['enum34>=1.0.4'],
         ":python_version<'3.5'": ['typing'],
     }
