@@ -26,6 +26,15 @@ class _CaseInsensitiveEnumMeta(EnumMeta):
             raise AttributeError(name)
 
 
+class CreatedByType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+    """The type of identity that created the resource.
+    """
+
+    USER = "User"
+    APPLICATION = "Application"
+    MANAGED_IDENTITY = "ManagedIdentity"
+    KEY = "Key"
+
 class ImpactType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     """The impact type
     """
@@ -39,15 +48,28 @@ class MaintenanceScope(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     """Gets or sets maintenanceScope of the configuration
     """
 
-    ALL = "All"
     HOST = "Host"
-    RESOURCE = "Resource"
-    IN_RESOURCE = "InResource"
     OS_IMAGE = "OSImage"
     EXTENSION = "Extension"
     IN_GUEST_PATCH = "InGuestPatch"
     SQLDB = "SQLDB"
     SQL_MANAGED_INSTANCE = "SQLManagedInstance"
+
+class RebootOptions(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+    """Possible reboot preference as defined by the user based on which it would be decided to reboot
+    the machine or not after the patch operation is completed.
+    """
+
+    NEVER_REBOOT = "NeverReboot"
+    REBOOT_IF_REQUIRED = "RebootIfRequired"
+    ALWAYS_REBOOT = "AlwaysReboot"
+
+class TaskScope(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+    """Global Task execute once when schedule trigger. Resource task execute for each VM.
+    """
+
+    GLOBAL_ENUM = "Global"
+    RESOURCE = "Resource"
 
 class UpdateStatus(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     """The status

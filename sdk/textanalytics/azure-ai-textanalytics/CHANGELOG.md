@@ -2,6 +2,8 @@
 
 ## 5.1.0b7 (Unreleased)
 
+**New Features**
+- Added enums `EntityConditionality`, `EntityCertainty`, and `EntityAssociation`.
 
 ## 5.1.0b6 (2021-03-09)
 
