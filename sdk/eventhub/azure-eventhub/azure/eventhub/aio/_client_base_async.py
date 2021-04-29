@@ -83,6 +83,25 @@ class EventHubSASTokenCredential(object):
         """
         return AccessToken(self.token, self.expiry)
 
+class AzureNamedKeyTokenCredentialAsync(object):
+    """The named key credential used for authentication.
+
+    :param str credential: The AzureNamedKeyCredential that should be used
+    """
+
+    def __init__(self, credential):
+        # type: (AzureNamedKeyCredential) -> None
+        self.credential = credential
+        self.token_type = b"servicebus.windows.net:sastoken"
+
+    async def get_token(self, *scopes, **kwargs):  # pylint:disable=unused-argument
+        # type: (str, Any) -> _AccessToken
+        if not scopes:
+            raise ValueError("No token scope provided.")
+        name, key = self.credential.named_key
+        return _generate_sas_token(scopes[0], name, key)
+
+
 class AzureSasTokenCredentialAsync(object):
     """The shared access token credential used for authentication
     when AzureSasCredential is provided.
@@ -114,8 +133,7 @@ class ClientBaseAsync(ClientBase):
         if isinstance(credential, AzureSasCredential):
             self._credential = AzureSasTokenCredentialAsync(credential) # type: ignore
         elif isinstance(credential, AzureNamedKeyCredential):
-            name, key = credential.named_key
-            self._credential = EventHubSharedKeyCredential(name, key) # type: ignore
+            self._credential = AzureNamedKeyTokenCredentialAsync(credential) # type: ignore
         else:
             self._credential = credential # type: ignore
         super(ClientBaseAsync, self).__init__(
