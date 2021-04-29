@@ -1022,8 +1022,8 @@ class RuleProperties(DictMixin):
         if not self._internal_rule:
             self._internal_rule = InternalRuleDescription()
 
-        filter = kwargs.pop("filter", self.filter)
-        self._internal_rule.filter = filter._to_internal_entity() if filter else TRUE_FILTER  # type: ignore
+        rule_filter = kwargs.pop("filter", self.filter)
+        self._internal_rule.filter = rule_filter._to_internal_entity() if rule_filter else TRUE_FILTER  # type: ignore
 
         action = kwargs.pop("action", self.action)
         self._internal_rule.action = (
