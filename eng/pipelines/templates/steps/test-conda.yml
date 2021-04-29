@@ -48,24 +48,22 @@ steps:
     displayName: 'Evaluate OS Specific Parameters'
 
   - ${{ each artifact in parameters.CondaArtifacts }}:
-    - ${{ if not(contains(parameters.OSVmImage, 'windows')) }}:
+    - ${{ if not(contains(parameters.OSVmImage, 'MMS2019')) }}:
       - script: |
           echo "Prepending with $($CONDA/bin)"
           echo "##vso[task.prependpath]$CONDA/bin"
         displayName: 'Prepend PATH with Conda and INIT'
-    - ${{ if contains(parameters.OSVmImage, 'windows') }}:
+    - ${{ if contains(parameters.OSVmImage, 'MMS2019') }}:
       - powershell: |
           Write-Host "Prepending with $($env:CONDA\Scripts)"
           Write-Host "##vso[task.prependpath]$env:CONDA\Scripts"
         displayName: 'Prepend PATH with Conda and INIT'
 
     - powershell: |
-        Write-Host "##vso[task.prependpath]$env:CONDA\Scripts"
-      displayName: 'Prepend PATH with Conda Script Directory'
-
-    - powershell: |
         Write-Host "$(PythonVersion)"
-        Write-Host $(OSVmImage)
+        Write-Host "$(OSVmImage)""
+        Write Host "$(activate.method)"
+        Write-Host "$(requirement.suffix)"
       displayName: 'Dump Python Version Info'
 
     - script: |
