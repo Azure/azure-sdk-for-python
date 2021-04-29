@@ -5,7 +5,7 @@
 # -------------------------------------------------------------------------
 from enum import Enum
 
-from uamqp import constants, types, MessageBodyType
+from uamqp import constants, types
 
 VENDOR = b"com.microsoft"
 DATETIMEOFFSET_EPOCH = 621355968000000000
@@ -198,16 +198,3 @@ ANNOTATION_SYMBOL_KEY_MAP = {
 
 
 NEXT_AVAILABLE_SESSION = ServiceBusSessionFilter.NEXT_AVAILABLE
-
-
-class AMQPMessageBodyType(str, Enum):
-    DATA = "data"
-    SEQUENCE = "sequence"
-    VALUE = "value"
-
-
-AMQP_MESSAGE_BODY_TYPE_MAP = {
-    MessageBodyType.Data.value: AMQPMessageBodyType.DATA,
-    MessageBodyType.Sequence.value: AMQPMessageBodyType.SEQUENCE,
-    MessageBodyType.Value.value: AMQPMessageBodyType.VALUE,
-}

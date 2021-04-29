@@ -54,12 +54,12 @@ from .constants import (
     SPAN_ENQUEUED_TIME_PROPERTY,
     SPAN_NAME_RECEIVE,
 )
+from ..amqp import AMQPAnnotatedMessage
 
 if TYPE_CHECKING:
     from .message import (
         ServiceBusReceivedMessage,
         ServiceBusMessage,
-        AMQPAnnotatedMessage,
     )
     from azure.core.tracing import AbstractSpan
     from azure.core.credentials import AzureSasCredential
@@ -228,11 +228,8 @@ def transform_messages_to_sendable_if_needed(messages):
 
 def _convert_to_single_service_bus_message(message, message_type):
     # type: (SingleMessageType, Type[ServiceBusMessage]) -> ServiceBusMessage
-    try:
-        # Handle AMQPAnnotatedMessage
-        message = message._to_service_bus_message()  # type: ignore  # pylint: disable=protected-access
-    except AttributeError:
-        pass
+    if isinstance(message, AMQPAnnotatedMessage):
+        message = message_type(body=None, message=message._message)  # pylint: disable=protected-access
 
     if isinstance(message, message_type):
         return message
