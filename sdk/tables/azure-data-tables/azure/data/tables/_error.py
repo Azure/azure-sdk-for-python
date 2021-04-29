@@ -138,17 +138,43 @@ def _decode_error(response, error_message=None, error_type=None, **kwargs):
     return error
 
 
-def _process_table_error(storage_error):
-    raise_error = _decode_error(storage_error.response, storage_error.message)
+def _reraise_error(decoded_error):
     _, _, exc_traceback = sys.exc_info()
     try:
-        raise raise_error.with_traceback(exc_traceback)
+        raise decoded_error.with_traceback(exc_traceback)
     except AttributeError:
-        raise_error.__traceback__ = exc_traceback
-        raise raise_error
+        decoded_error.__traceback__ = exc_traceback
+        raise decoded_error
 
 
-class RequestTooLargeError(HttpResponseError):
+def _process_table_error(storage_error):
+    decoded_error = _decode_error(storage_error.response, storage_error.message)
+    _reraise_error(decoded_error)
+
+
+class TableTransactionError(HttpResponseError):
+    """There is a failure in the transaction operations.
+
+    :ivar int index: If available, the index of the operation in the transaction that caused the error.
+     Defaults to 0 in the case where an index was not provided, or the error applies across operations.
+    :ivar ~azure.data.tables.TableErrorCode error_code: The error code.
+    :ivar str message: The error message.
+    :ivar Mapping[str, Any] additional_info: Any additional data for the error.
+    """
+
+    def __init__(self, **kwargs):
+        super(TableTransactionError, self).__init__(**kwargs)
+        self.index = kwargs.get('index', self._extract_index())
+
+    def _extract_index(self):
+        try:
+            message_sections = self.message.split(':', 1)
+            return int(message_sections[0])
+        except:  # pylint: disable=bare-except
+            return 0
+
+
+class RequestTooLargeError(TableTransactionError):
     """An error response with status code 413 - Request Entity Too Large"""
 
 

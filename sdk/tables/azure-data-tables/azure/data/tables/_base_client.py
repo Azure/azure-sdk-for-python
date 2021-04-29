@@ -4,7 +4,7 @@
 # license information.
 # --------------------------------------------------------------------------
 
-from typing import Dict, Optional, Any, List
+from typing import Dict, Optional, Any, List, Mapping
 from uuid import uuid4
 try:
     from urllib.parse import parse_qs, quote, urlparse
@@ -40,7 +40,7 @@ from ._constants import (
     STORAGE_OAUTH_SCOPE,
     SERVICE_HOST_BASE,
 )
-from ._error import RequestTooLargeError, _decode_error
+from ._error import RequestTooLargeError, TableTransactionError, _decode_error
 from ._models import LocationMode
 from ._authentication import SharedKeyCredentialPolicy
 from ._policies import (
@@ -49,7 +49,6 @@ from ._policies import (
     StorageHosts,
     TablesRetryPolicy,
 )
-from ._models import TableTransactionError
 from ._sdk_moniker import SDK_MONIKER
 
 _SUPPORTED_API_VERSIONS = ["2019-02-02", "2019-07-07"]
@@ -263,13 +262,8 @@ class TablesBaseClient(AccountHostsMixin):
         elif credential is not None:
             raise TypeError("Unsupported credential: {}".format(credential))
 
-    def _batch_send(
-        self,
-        entities,  # type: List[TableEntity]
-        *reqs,  # type: List[HttpRequest]
-        **kwargs
-    ):
-        # (...) -> List[HttpResponse]
+    def _batch_send(self, *reqs, **kwargs):
+        # type: (List[HttpRequest], Any) -> List[Mapping[str, Any]]
         """Given a series of request, do a Storage batch call."""
         # Pop it here, so requests doesn't feel bad about additional kwarg
         policies = [StorageHeadersPolicy()]
@@ -314,10 +308,9 @@ class TablesBaseClient(AccountHostsMixin):
                     error_type=RequestTooLargeError)
             raise _decode_error(
                 response=error_parts[0],
-                error_type=TableTransactionError,
-                entities=entities
+                error_type=TableTransactionError
             )
-        return list(zip(entities, (extract_batch_part_metadata(p) for p in parts)))
+        return [extract_batch_part_metadata(p) for p in parts]
 
     def close(self):
         # type: () -> None

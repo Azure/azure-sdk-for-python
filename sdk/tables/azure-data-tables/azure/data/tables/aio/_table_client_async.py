@@ -607,7 +607,7 @@ class TableClient(AsyncTablesBaseClient):
         self,
         operations: Iterable[TransactionOperationType],
         **kwargs
-    ) -> List[Tuple[TableEntity, Mapping[str, Any]]]:
+    ) -> List[Mapping[str, Any]]:
         """Commit a list of operations as a single transaction.
 
         If any one of these operations fails, the entire transaction will be rejected.
@@ -616,9 +616,8 @@ class TableClient(AsyncTablesBaseClient):
          tuples containing an operation name, the entity on which to operate, and optionally, a dict of additional
          kwargs for that operation.
         :type operations: Iterable[Tuple[str, EntityType]]
-        :return: A list of tuples, each containing the entity operated on, and a dictionary
-         of metadata returned from the service.
-        :rtype: List[Tuple[TableEntity, Mapping[str, Any]]]
+        :return: A list of mappings with response metadata for each operation in the transaction.
+        :rtype: List[Mapping[str, Any]]
         :raises ~azure.data.tables.TableTransactionError:
 
         .. admonition:: Example:
@@ -647,6 +646,4 @@ class TableClient(AsyncTablesBaseClient):
                 getattr(batched_requests, operation[0].lower())(operation[1], **operation_kwargs)
             except AttributeError:
                 raise ValueError("Unrecognized operation: {}".format(operation))
-        return await self._batch_send(
-            batched_requests.entities, *batched_requests.requests, **kwargs
-        )
+        return await self._batch_send(*batched_requests.requests, **kwargs)

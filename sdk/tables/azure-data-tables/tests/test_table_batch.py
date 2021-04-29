@@ -194,18 +194,13 @@ class StorageTableBatchTest(AzureTestCase, TableTestCase):
 
             # Assert
             self._assert_valid_batch_transaction(transaction_result, 1)
-            sent_entity = transaction_result[0][0]
-            assert 'etag' in transaction_result[0][1]
-            assert sent_entity is not None
+            assert 'etag' in transaction_result[0]
 
             e = self.table.get_entity(row_key=entity.RowKey, partition_key=entity.PartitionKey)
-
             assert e.test ==  entity.test.value
             assert e.test2 ==  entity.test2
             assert e.test3 ==  entity.test3
             assert e.test4 ==  entity.test4.value
-
-            assert sent_entity == entity
         finally:
             self._tear_down()
 
@@ -236,8 +231,7 @@ class StorageTableBatchTest(AzureTestCase, TableTestCase):
 
             # Assert
             self._assert_valid_batch_transaction(transaction_result, 1)
-            assert transaction_result[0][0]['RowKey'] == u'batch_insert'
-            assert 'etag' in transaction_result[0][1]
+            assert 'etag' in transaction_result[0]
             result = self.table.get_entity(row_key=entity.RowKey, partition_key=entity.PartitionKey)
             assert result.PartitionKey ==  u'001'
             assert result.RowKey ==  u'batch_insert'
@@ -271,8 +265,7 @@ class StorageTableBatchTest(AzureTestCase, TableTestCase):
 
             # Assert
             self._assert_valid_batch_transaction(transaction_result, 1)
-            assert transaction_result[0][0]['RowKey'] == u'batch_update'
-            assert 'etag' in transaction_result[0][1]
+            assert 'etag' in transaction_result[0]
 
             result = self.table.get_entity('001', 'batch_update')
 
@@ -311,8 +304,7 @@ class StorageTableBatchTest(AzureTestCase, TableTestCase):
 
             # Assert
             self._assert_valid_batch_transaction(transaction_result, 1)
-            assert transaction_result[0][0]['RowKey'] == u'batch_merge'
-            assert 'etag' in transaction_result[0][1]
+            assert 'etag' in transaction_result[0]
 
             resp_entity = self.table.get_entity(partition_key=u'001', row_key=u'batch_merge')
             assert entity.test2 ==  resp_entity.test2
@@ -343,10 +335,7 @@ class StorageTableBatchTest(AzureTestCase, TableTestCase):
 
             # Assert
             self._assert_valid_batch_transaction(transaction_result, 1)
-            print(transaction_result[0][0])
-            print(sent_entity)
-            assert transaction_result[0][0] == sent_entity
-            assert 'etag' in transaction_result[0][1]
+            assert 'etag' in transaction_result[0]
 
             entity = self.table.get_entity(partition_key=entity['PartitionKey'], row_key=entity['RowKey'])
             self._assert_updated_entity(entity)
@@ -442,8 +431,7 @@ class StorageTableBatchTest(AzureTestCase, TableTestCase):
 
             # Assert
             self._assert_valid_batch_transaction(transaction_result, 1)
-            assert transaction_result[0][0]['RowKey'] == u'batch_insert_replace'
-            assert 'etag' in transaction_result[0][1]
+            assert 'etag' in transaction_result[0]
 
             entity = self.table.get_entity('001', 'batch_insert_replace')
             assert entity is not None
@@ -473,8 +461,7 @@ class StorageTableBatchTest(AzureTestCase, TableTestCase):
 
             # Assert
             self._assert_valid_batch_transaction(transaction_result, 1)
-            assert transaction_result[0][0]['RowKey'] == u'batch_insert_merge'
-            assert 'etag' in transaction_result[0][1]
+            assert 'etag' in transaction_result[0]
 
             entity = self.table.get_entity('001', 'batch_insert_merge')
             assert entity is not None
@@ -508,8 +495,7 @@ class StorageTableBatchTest(AzureTestCase, TableTestCase):
 
             # Assert
             self._assert_valid_batch_transaction(transaction_result, 1)
-            assert transaction_result[0][0]['RowKey'] == u'batch_delete'
-            assert 'etag' not in transaction_result[0][1]
+            assert 'etag' not in transaction_result[0]
 
             with pytest.raises(ResourceNotFoundError):
                 entity = self.table.get_entity(partition_key=entity.PartitionKey, row_key=entity.RowKey)
@@ -540,9 +526,7 @@ class StorageTableBatchTest(AzureTestCase, TableTestCase):
 
             # Assert
             self._assert_valid_batch_transaction(transaction_result, transaction_count)
-            assert transaction_result[0][0]['RowKey'] == '0'
-            assert transaction_result[transaction_count - 1][0]['RowKey'] == '99'
-            assert 'etag' in transaction_result[0][1]
+            assert 'etag' in transaction_result[0]
 
             entities = list(self.table.query_entities("PartitionKey eq 'batch_inserts'"))
 
@@ -609,18 +593,12 @@ class StorageTableBatchTest(AzureTestCase, TableTestCase):
 
             # Assert
             self._assert_valid_batch_transaction(transaction_result, transaction_count)
-            assert transaction_result[0][0]['RowKey'] == 'batch_all_operations_together'
-            assert 'etag' in transaction_result[0][1]
-            assert transaction_result[1][0]['RowKey'] == 'batch_all_operations_together-1'
-            assert 'etag' not in transaction_result[1][1]
-            assert transaction_result[2][0]['RowKey'] == 'batch_all_operations_together-2'
-            assert 'etag' in transaction_result[2][1]
-            assert transaction_result[3][0]['RowKey'] == 'batch_all_operations_together-3'
-            assert 'etag' in transaction_result[3][1]
-            assert transaction_result[4][0]['RowKey'] == 'batch_all_operations_together-4'
-            assert 'etag' in transaction_result[4][1]
-            assert transaction_result[5][0]['RowKey'] == 'batch_all_operations_together-5'
-            assert 'etag' in transaction_result[5][1]
+            assert 'etag' in transaction_result[0]
+            assert 'etag' not in transaction_result[1]
+            assert 'etag' in transaction_result[2]
+            assert 'etag' in transaction_result[3]
+            assert 'etag' in transaction_result[4]
+            assert 'etag' in transaction_result[5]
 
             # Assert
             entities = list(self.table.query_entities("PartitionKey eq '003'"))
@@ -849,7 +827,7 @@ class StorageTableBatchTest(AzureTestCase, TableTestCase):
                 transaction_count += 1
             transaction_result = table.submit_transaction(batch)
 
-            assert transaction_result is not None
+            assert transaction_result
 
             total_entities = 0
             for e in table.list_entities():

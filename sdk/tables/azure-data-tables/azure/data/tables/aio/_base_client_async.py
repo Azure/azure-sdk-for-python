@@ -4,7 +4,7 @@
 # license information.
 # --------------------------------------------------------------------------
 
-from typing import Any, List
+from typing import Any, List, Mapping
 from uuid import uuid4
 
 from azure.core.credentials import AzureSasCredential
@@ -30,9 +30,7 @@ from .._generated.aio import AzureTable
 from .._base_client import AccountHostsMixin, get_api_version, extract_batch_part_metadata
 from .._authentication import SharedKeyCredentialPolicy
 from .._constants import STORAGE_OAUTH_SCOPE
-from .._error import RequestTooLargeError, _decode_error
-from .._models import TableTransactionError
-from .._entity import TableEntity
+from .._error import RequestTooLargeError, TableTransactionError, _decode_error
 from .._policies import StorageHosts, StorageHeadersPolicy
 from .._sdk_moniker import SDK_MONIKER
 from ._policies_async import AsyncTablesRetryPolicy
@@ -99,12 +97,7 @@ class AsyncTablesBaseClient(AccountHostsMixin):
             HttpLoggingPolicy(**kwargs),
         ]
 
-    async def _batch_send(
-        self,
-        entities: List[TableEntity],
-        *reqs: "HttpRequest",
-        **kwargs
-    ):
+    async def _batch_send(self, *reqs: "HttpRequest", **kwargs) -> List[Mapping[str, Any]]:
         """Given a series of request, do a Storage batch call."""
         # Pop it here, so requests doesn't feel bad about additional kwarg
         policies = [StorageHeadersPolicy()]
@@ -155,9 +148,8 @@ class AsyncTablesBaseClient(AccountHostsMixin):
             raise _decode_error(
                 response=error_parts[0],
                 error_type=TableTransactionError,
-                entities=entities
             )
-        return list(zip(entities, (extract_batch_part_metadata(p) for p in parts)))
+        return [extract_batch_part_metadata(p) for p in parts]
 
 
 class AsyncTransportWrapper(AsyncHttpTransport):

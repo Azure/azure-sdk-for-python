@@ -546,28 +546,6 @@ class SASProtocol(str, Enum):
     HTTP = "http"
 
 
-class TableTransactionError(HttpResponseError):
-    """There is a failure in the transaction operations.
-
-    :keyword message: The message of the exception.
-    :type message: str
-    :keyword response: Server response to be deserialized.
-    :type response: ~azure.core.pipeline.transport.HttpResponse
-    """
-
-    def __init__(self, **kwargs):
-        self.entities = kwargs.get('entities')
-        super(TableTransactionError, self).__init__(**kwargs)
-        self.index = self._extract_index()
-
-    def _extract_index(self):
-        try:
-            message_sections = self.message.split(':', 1)
-            return int(message_sections[0])
-        except:  # pylint: disable=bare-except
-            return 0
-
-
 class LocationMode(str, Enum):
     """
     Specifies the location the request should be sent to. This mode only applies

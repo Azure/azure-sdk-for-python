@@ -51,7 +51,6 @@ class TableBatchOperations(object):
 
         self._partition_key = kwargs.pop("partition_key", None)
         self.requests = []
-        self.entities = []
 
     def __len__(self):
         return len(self.requests)
@@ -94,7 +93,6 @@ class TableBatchOperations(object):
         else:
             raise ValueError("PartitionKey and/or RowKey were not provided in entity")
         self._batch_create_entity(table=self.table_name, entity=temp, **kwargs)
-        self.entities.append(TableEntity(**entity.copy()))
 
     def _batch_create_entity(
         self,
@@ -247,7 +245,6 @@ class TableBatchOperations(object):
                 table_entity_properties=temp,
                 **kwargs
             )
-        self.entities.append(TableEntity(**entity.copy()))
 
     def _batch_update_entity(
         self,
@@ -504,7 +501,6 @@ class TableBatchOperations(object):
             if_match=if_match or "*",
             **kwargs
         )
-        self.entities.append(TableEntity(**entity.copy()))
 
     def _batch_delete_entity(
         self,
@@ -642,4 +638,3 @@ class TableBatchOperations(object):
                 table_entity_properties=temp,
                 **kwargs
             )
-        self.entities.append(TableEntity(**entity.copy()))
