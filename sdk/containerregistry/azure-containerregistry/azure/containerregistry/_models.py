@@ -24,6 +24,13 @@ class ContentProperties(object):
     """
 
     def __init__(self, **kwargs):
+        """Create ContentPermissions for an artifact, tag, or manifest
+
+        :keyword bool can_delete: Delete operation status for the object
+        :keyword bool can_list: List operation status for the object
+        :keyword bool can_read: Read operation status for the object
+        :keyword bool can_write: Write operation status for the object
+        """
         self.can_delete = kwargs.get("can_delete")
         self.can_list = kwargs.get("can_list")
         self.can_read = kwargs.get("can_read")
