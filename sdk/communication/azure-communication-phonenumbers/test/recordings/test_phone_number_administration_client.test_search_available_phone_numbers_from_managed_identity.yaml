@@ -1,0 +1,125 @@
+interactions:
+- request:
+    body: '{"phoneNumberType": "tollFree", "assignmentType": "application", "capabilities":
+      {"calling": "inbound", "sms": "inbound+outbound"}}'
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '131'
+      Content-Type:
+      - application/json
+      User-Agent:
+      - azsdk-python-communication-phonenumbers/1.0.0b5 Python/3.8.5 (Windows-10-10.0.19041-SP0)
+    method: POST
+    uri: https://sanitized.communication.azure.com/availablePhoneNumbers/countries/US/:search?api-version=2021-03-07
+  response:
+    body:
+      string: ''
+    headers:
+      access-control-expose-headers:
+      - Location,Operation-Location,operation-id,search-id
+      api-supported-versions:
+      - '2021-03-07'
+      content-length:
+      - '0'
+      date:
+      - Wed, 07 Apr 2021 18:30:21 GMT
+      ms-cv:
+      - N1sHbasufkeD6OIvutgLVg.0
+      operation-id:
+      - search_d637d7ed-1486-4b9e-b9cb-aaa8521538de
+      operation-location:
+      - /phoneNumbers/operations/search_d637d7ed-1486-4b9e-b9cb-aaa8521538de?api-version=2021-03-07
+      request-context:
+      - appId=
+      search-id:
+      - d637d7ed-1486-4b9e-b9cb-aaa8521538de
+      x-processing-time:
+      - 2587ms
+    status:
+      code: 202
+      message: Accepted
+- request:
+    body: null
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - azsdk-python-communication-phonenumbers/1.0.0b5 Python/3.8.5 (Windows-10-10.0.19041-SP0)
+    method: GET
+    uri: https://sanitized.communication.azure.com/phoneNumbers/operations/search_d637d7ed-1486-4b9e-b9cb-aaa8521538de?api-version=2021-03-07
+  response:
+    body:
+      string: '{"status": "succeeded", "resourceLocation": "/availablePhoneNumbers/searchResults/d637d7ed-1486-4b9e-b9cb-aaa8521538de?api-version=2021-03-07",
+        "createdDateTime": "2021-04-07T18:30:20.8854076+00:00", "id": "sanitized",
+        "operationType": "search", "lastActionDateTime": "0001-01-01T00:00:00+00:00"}'
+    headers:
+      access-control-expose-headers:
+      - Location
+      api-supported-versions:
+      - '2021-03-07'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Wed, 07 Apr 2021 18:30:51 GMT
+      ms-cv:
+      - /QYgPFGEcUK285lLkY7iXg.0
+      request-context:
+      - appId=
+      transfer-encoding:
+      - chunked
+      x-processing-time:
+      - 424ms
+    status:
+      code: 200
+      message: OK
+    url: sanitized
+- request:
+    body: null
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - azsdk-python-communication-phonenumbers/1.0.0b5 Python/3.8.5 (Windows-10-10.0.19041-SP0)
+    method: GET
+    uri: https://sanitized.communication.azure.com/availablePhoneNumbers/searchResults/d637d7ed-1486-4b9e-b9cb-aaa8521538de?api-version=2021-03-07
+  response:
+    body:
+      string: '{"searchId": "d637d7ed-1486-4b9e-b9cb-aaa8521538de", "phoneNumbers":
+        ["sanitized"], "phoneNumberType": "tollFree", "assignmentType": "application",
+        "capabilities": {"calling": "inbound", "sms": "inbound+outbound"}, "cost":
+        {"amount": 2.0, "currencyCode": "USD", "billingFrequency": "monthly"}, "searchExpiresBy":
+        "2021-04-07T18:46:26.1636769+00:00"}'
+    headers:
+      api-supported-versions:
+      - '2021-03-07'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Wed, 07 Apr 2021 18:30:52 GMT
+      ms-cv:
+      - CIYMmIMnzUipb7frdCigqQ.0
+      request-context:
+      - appId=
+      transfer-encoding:
+      - chunked
+      x-processing-time:
+      - 885ms
+    status:
+      code: 200
+      message: OK
+    url: sanitized
+version: 1

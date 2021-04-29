@@ -1,5 +1,3 @@
-[![Build Status](https://dev.azure.com/azure-sdk/public/_apis/build/status/azure-sdk-for-python.client?branchName=master)](https://dev.azure.com/azure-sdk/public/_build/latest?definitionId=46?branchName=master)
-
 # Azure Communication Identity Package client library for Python
 
 Azure Communication Identity client package is intended to be used to setup the basics for opening a way to use Azure Communication Service offerings. This package helps to create identity user tokens to be used by other client packages such as chat, calling, sms.
@@ -60,7 +58,7 @@ The following section provides several code snippets covering some of the most c
 Use the `create_user` method to create a new user.
 ```python
 user = identity_client.create_user()
-print("User created with id:" + user.identifier)
+print("User created with id:" + user.properties['id'])
 ```
 
 ### Issuing or Refreshing an access token for a user
@@ -79,7 +77,7 @@ For convenience, use `create_user_and_token` to create a new user and issue a to
 
 ```python
 user, tokenresponse = identity_client.create_user_and_token(scopes=[CommunicationTokenScope.CHAT])
-print("User id:" + user.identifier)
+print("User id:" + user.properties['id'])
 print("Token issued with value: " + tokenresponse.token)
 ```
 

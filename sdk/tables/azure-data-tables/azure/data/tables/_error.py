@@ -80,7 +80,7 @@ def _process_table_error(storage_error):
             storage_error.response
         )
         if isinstance(error_body, dict):
-            for info in error_body["odata.error"]:
+            for info in error_body.get("odata.error", {}):
                 if info == "code":
                     error_code = error_body["odata.error"][info]
                 elif info == "message":
@@ -139,6 +139,10 @@ def _process_table_error(storage_error):
     error.error_code = error_code
     error.additional_info = additional_data
     raise error
+
+
+class RequestTooLargeError(HttpResponseError):
+    """An error response with status code 413 - Request Entity Too Large"""
 
 
 class TableErrorCode(str, Enum):

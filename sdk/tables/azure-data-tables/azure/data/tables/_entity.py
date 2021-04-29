@@ -44,7 +44,7 @@ class TableEntity(dict):
         :param name:name of entity entry
         :type name: str
         :return: TableEntity dictionary
-        :rtype: dict[str,str]
+        :rtype: Dict[str,str]
         """
         try:
             return self[name]
@@ -125,6 +125,10 @@ class EntityProperty(object):
                     value
                 )
             )
+
+    def __eq__(self, other):
+        # type: (TableEntity) -> bool
+        return self.value == other.value and self.type == other.type
 
 
 class EdmType(str, Enum):

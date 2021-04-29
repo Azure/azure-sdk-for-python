@@ -275,6 +275,7 @@ class FileSystemClient(StorageAccountHostsMixin):
         :rtype: ~azure.storage.filedatalake.FileSystemClient
         """
         self._container_client._rename_container(new_name, **kwargs)   # pylint: disable=protected-access
+        #TODO: self._raw_credential would not work with SAS tokens
         renamed_file_system = FileSystemClient(
                 "{}://{}".format(self.scheme, self.primary_hostname), file_system_name=new_name,
                 credential=self._raw_credential, api_version=self.api_version, _configuration=self._config,

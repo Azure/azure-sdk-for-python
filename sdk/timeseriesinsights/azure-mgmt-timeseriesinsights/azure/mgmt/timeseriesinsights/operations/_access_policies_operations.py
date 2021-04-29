@@ -17,7 +17,7 @@ from .. import models as _models
 
 if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
-    from typing import Any, Callable, Dict, Generic, List, Optional, TypeVar, Union
+    from typing import Any, Callable, Dict, Generic, Optional, TypeVar, Union
 
     T = TypeVar('T')
     ClsType = Optional[Callable[[PipelineResponse[HttpRequest, HttpResponse], T, Dict[str, Any]], Any]]
@@ -190,8 +190,7 @@ class AccessPoliciesOperations(object):
         resource_group_name,  # type: str
         environment_name,  # type: str
         access_policy_name,  # type: str
-        description=None,  # type: Optional[str]
-        roles=None,  # type: Optional[List[Union[str, "_models.AccessPolicyRole"]]]
+        access_policy_update_parameters,  # type: "_models.AccessPolicyUpdateParameters"
         **kwargs  # type: Any
     ):
         # type: (...) -> "_models.AccessPolicyResource"
@@ -206,10 +205,9 @@ class AccessPoliciesOperations(object):
         :param access_policy_name: The name of the Time Series Insights access policy associated with
          the specified environment.
         :type access_policy_name: str
-        :param description: An description of the access policy.
-        :type description: str
-        :param roles: The list of roles the principal is assigned on the environment.
-        :type roles: list[str or ~azure.mgmt.timeseriesinsights.models.AccessPolicyRole]
+        :param access_policy_update_parameters: Request object that contains the updated information
+         for the access policy.
+        :type access_policy_update_parameters: ~azure.mgmt.timeseriesinsights.models.AccessPolicyUpdateParameters
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: AccessPolicyResource, or the result of cls(response)
         :rtype: ~azure.mgmt.timeseriesinsights.models.AccessPolicyResource
@@ -220,8 +218,6 @@ class AccessPoliciesOperations(object):
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-
-        _access_policy_update_parameters = _models.AccessPolicyUpdateParameters(description=description, roles=roles)
         api_version = "2020-05-15"
         content_type = kwargs.pop("content_type", "application/json")
         accept = "application/json"
@@ -246,7 +242,7 @@ class AccessPoliciesOperations(object):
         header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
 
         body_content_kwargs = {}  # type: Dict[str, Any]
-        body_content = self._serialize.body(_access_policy_update_parameters, 'AccessPolicyUpdateParameters')
+        body_content = self._serialize.body(access_policy_update_parameters, 'AccessPolicyUpdateParameters')
         body_content_kwargs['content'] = body_content
         request = self._client.patch(url, query_parameters, header_parameters, **body_content_kwargs)
         pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)

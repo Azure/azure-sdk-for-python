@@ -55,17 +55,17 @@ class QueryTables(object):
                 list_tables = table_service.list_tables()
                 print("Listing tables:")
                 for table in list_tables:
-                    print("\t{}".format(table.table_name))
+                    print("\t{}".format(table.name))
                 # [END tsc_list_tables]
 
                 # [START tsc_query_tables]
                 table_name = "mytable1"
                 name_filter = "TableName eq '{}'".format(table_name)
-                queried_tables = table_service.query_tables(filter=name_filter)
+                queried_tables = table_service.query_tables(name_filter)
 
                 print("Queried_tables")
                 for table in queried_tables:
-                    print("\t{}".format(table.table_name))
+                    print("\t{}".format(table.name))
                 # [END tsc_query_tables]
 
             finally:

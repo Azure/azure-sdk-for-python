@@ -15,7 +15,7 @@ from ._eventprocessor.common import LoadBalancingStrategy
 
 if TYPE_CHECKING:
     import datetime
-    from azure.core.credentials import TokenCredential
+    from azure.core.credentials import TokenCredential, AzureSasCredential
     from typing import (  # pylint: disable=ungrouped-imports
         Any,
         Union,
@@ -54,14 +54,15 @@ class EventHubConsumerClient(ClientBase):
      The namespace format is: `<yournamespace>.servicebus.windows.net`.
     :param str eventhub_name: The path of the specific Event Hub to connect the client to.
     :param str consumer_group: Receive events from the event hub for this consumer group.
-    :param ~azure.core.credentials.TokenCredential credential: The credential object used for authentication which
+    :param credential: The credential object used for authentication which
      implements a particular interface for getting tokens. It accepts
      :class:`EventHubSharedKeyCredential<azure.eventhub.EventHubSharedKeyCredential>`, or credential objects generated
      by the azure-identity library and objects that implement the `get_token(self, *scopes)` method.
+    :type credential: ~azure.core.credentials.TokenCredential or ~azure.core.credentials.AzureSasCredential
     :keyword bool logging_enable: Whether to output network trace logs to the logger. Default is `False`.
     :keyword float auth_timeout: The time in seconds to wait for a token to be authorized by the service.
      The default value is 60 seconds. If set to 0, no timeout will be enforced from the client.
-    :keyword str user_agent: The user agent that should be appended to the built-in user agent string.
+    :keyword str user_agent: If specified, this will be added in front of the user agent string.
     :keyword int retry_total: The total number of attempts to redo a failed operation when an error occurs.
      Default value is 3. The context of `retry_total` in receiving is special: The `receive` method is implemented
      by a while-loop calling internal receive method in each iteration. In the `receive` case,
@@ -74,7 +75,9 @@ class EventHubConsumerClient(ClientBase):
      if there is no further activity. By default the value is None, meaning that the client will not shutdown due to
      inactivity unless initiated by the service.
     :keyword transport_type: The type of transport protocol that will be used for communicating with
-     the Event Hubs service. Default is `TransportType.Amqp`.
+     the Event Hubs service. Default is `TransportType.Amqp` in which case port 5671 is used.
+     If the port 5671 is unavailable/blocked in the network environment, `TransportType.AmqpOverWebsocket` could
+     be used instead which uses port 443 for communication.
     :paramtype transport_type: ~azure.eventhub.TransportType
     :keyword dict http_proxy: HTTP proxy settings. This must be a dictionary with the following
      keys: `'proxy_hostname'` (str value) and `'proxy_port'` (int value).
@@ -126,7 +129,7 @@ class EventHubConsumerClient(ClientBase):
         fully_qualified_namespace,  # type: str
         eventhub_name,  # type: str
         consumer_group,  # type: str
-        credential,  # type: TokenCredential
+        credential,  # type: Union[AzureSasCredential, TokenCredential]
         **kwargs  # type: Any
     ):
         # type: (...) -> None
@@ -206,7 +209,7 @@ class EventHubConsumerClient(ClientBase):
          Additionally the following keys may also be present: `'username', 'password'`.
         :keyword float auth_timeout: The time in seconds to wait for a token to be authorized by the service.
          The default value is 60 seconds. If set to 0, no timeout will be enforced from the client.
-        :keyword str user_agent: The user agent that should be appended to the built-in user agent string.
+        :keyword str user_agent: If specified, this will be added in front of the user agent string.
         :keyword int retry_total: The total number of attempts to redo a failed operation when an error occurs.
          Default value is 3. The context of `retry_total` in receiving is special: The `receive` method is implemented
          by a while-loop calling internal receive method in each iteration. In the `receive` case,
@@ -219,7 +222,9 @@ class EventHubConsumerClient(ClientBase):
          if there is no furthur activity. By default the value is None, meaning that the client will not shutdown due
          to inactivity unless initiated by the service.
         :keyword transport_type: The type of transport protocol that will be used for communicating with
-         the Event Hubs service. Default is `TransportType.Amqp`.
+         the Event Hubs service. Default is `TransportType.Amqp` in which case port 5671 is used.
+         If the port 5671 is unavailable/blocked in the network environment, `TransportType.AmqpOverWebsocket` could
+         be used instead which uses port 443 for communication.
         :paramtype transport_type: ~azure.eventhub.TransportType
         :keyword checkpoint_store: A manager that stores the partition load-balancing and checkpoint data
          when receiving events. The checkpoint store will be used in both cases of receiving from all partitions

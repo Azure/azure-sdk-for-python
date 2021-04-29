@@ -2,7 +2,7 @@
 
 Azure Cosmos DB is a globally distributed, multi-model database service that supports document, key-value, wide-column, and graph databases.
 
-Use the Azure Cosmos DB SQL API SDK for Python to manage databases and the JSON documents they contain in this NoSQL database service.
+Use the Azure Cosmos DB SQL API SDK for Python to manage databases and the JSON documents they contain in this NoSQL database service. High level capabilities are:
 
 * Create Cosmos DB **databases** and modify their settings
 * Create and modify **containers** to store collections of JSON documents
@@ -19,7 +19,7 @@ Use the Azure Cosmos DB SQL API SDK for Python to manage databases and the JSON 
 
 * Azure subscription - [Create a free account][azure_sub]
 * Azure [Cosmos DB account][cosmos_account] - SQL API
-* [Python 2.7 or 3.5.3+][python]
+* [Python 2.7 or 3.6+][python]
 
 If you need a Cosmos DB SQL API account, you can create one with this [Azure CLI][azure_cli] command:
 
@@ -83,7 +83,9 @@ For more information about these resources, see [Working with Azure Cosmos datab
 
 ## Limitations
 
-As of August 2020 the features below are **not supported**.
+Currently the features below are **not supported**.
+
+**Data Plane Limitations:**
 
 * Group By queries (in roadmap for 2021)
 * Language Native async i/o (in roadmap for 2021)
@@ -96,18 +98,26 @@ As of August 2020 the features below are **not supported**.
 * Change Feed: Read specific time 
 * Change Feed: Read from the beggining
 * Change Feed: Pull model
+* Cross-partition ORDER BY for mixed types
+
+**Control Plane Limitations:**
+
 * Get CollectionSizeUsage, DatabaseUsage, and DocumentUsage metrics
-* Create User
 * Create Geospatial Index
 * Provision Autoscale DBs or containers
-* Cross-partition ORDER BY for mixed types
+* Update Autoscale throughput
 * Update analytical store ttl (time to live)
 * Get the connection string
-* Get the minimum RU/s of a container. For more information, click [here](https://docs.microsoft.com/azure/cosmos-db/concepts-limits#minimum-throughput-limits) or use [Azure CLI](https://docs.microsoft.com/azure/cosmos-db/scripts/cli/sql/throughput#sample-script) examples for Cosmos DB.
+* Get the minimum RU/s of a container. 
 
-## Bulk processing limitation workaround
+## Bulk processing Limitation Workaround
 
 If you want to use Python SDK to perform bulk inserts to Cosmos DB, the best alternative is to use [stored procedures](https://docs.microsoft.com/azure/cosmos-db/how-to-write-stored-procedures-triggers-udfs) to write multiple items with the same partition key.
+
+## Control Plane Limitations Workaround
+
+Typically you can use [Azure Portal](https://portal.azure.com/), [Azure CLI](https://docs.microsoft.com/azure/cosmos-db/manage-with-cli) or [PowerShell](https://docs.microsoft.com/azure/cosmos-db/manage-with-powershell) for the control plane unsupported limitations.
+
 
 ## Boolean Data Type
 
@@ -203,9 +213,7 @@ except exceptions.CosmosHttpResponseError:
     raise
 ```
 
-The preceding snippet also handles the [CosmosHttpResponseError][ref_httpfailure] exception if the container creation failed. For more information on error handling and troubleshooting, see the [Troubleshooting](#troubleshooting "Troubleshooting") section.
-
-The preceding snippet also handles the [CosmosHttpResponseError][ref_httpfailure] exception if the container creation failed. For more information on error handling and troubleshooting, see the [Troubleshooting](#troubleshooting "Troubleshooting") section.
+The preceding snippets also handle the [CosmosHttpResponseError][ref_httpfailure] exception if the container creation failed. For more information on error handling and troubleshooting, see the [Troubleshooting](#troubleshooting "Troubleshooting") section.
 
 ### Get an existing container
 
@@ -359,7 +367,7 @@ print('Found Offer \'{0}\' for Database \'{1}\' and its throughput is \'{2}\''.f
 # Container with dedicated throughput only. Will return error "offer not found" for containers without dedicated throughput
 container_name = 'testContainer'
 container = database.get_container_client(container_name)
-container_offer = database.read_offer()
+container_offer = container.read_offer()
 print('Found Offer \'{0}\' for Container \'{1}\' and its throughput is \'{2}\''.format(container_offer.properties['id'], container.id, container_offer.properties['content']['offerThroughput'])) 
 ```
 
