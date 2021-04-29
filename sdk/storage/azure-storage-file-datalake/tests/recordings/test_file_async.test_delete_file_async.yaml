@@ -2,12 +2,14 @@ interactions:
 - request:
     body: null
     headers:
+      Accept:
+      - application/json
       User-Agent:
-      - azsdk-python-storage-dfs/12.1.2 Python/3.7.3 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-storage-dfs/12.3.0 Python/3.7.3 (Windows-10-10.0.19041-SP0)
       x-ms-client-request-id:
-      - e85d7480-fdd7-11ea-bd83-001a7dda7113
+      - aa60a2a4-919b-11eb-b010-001a7dda7113
       x-ms-date:
-      - Wed, 23 Sep 2020 20:03:54 GMT
+      - Tue, 30 Mar 2021 21:05:32 GMT
       x-ms-properties:
       - ''
       x-ms-version:
@@ -19,11 +21,11 @@ interactions:
       string: ''
     headers:
       Content-Length: '0'
-      Date: Wed, 23 Sep 2020 20:03:54 GMT
-      Etag: '"0x8D85FFBCCA8DCE4"'
-      Last-Modified: Wed, 23 Sep 2020 20:03:54 GMT
+      Date: Tue, 30 Mar 2021 21:05:32 GMT
+      Etag: '"0x8D8F3BF8EB9BE26"'
+      Last-Modified: Tue, 30 Mar 2021 21:05:33 GMT
       Server: Windows-Azure-HDFS/1.0 Microsoft-HTTPAPI/2.0
-      x-ms-request-id: 19dca297-801f-0063-17e4-91d06f000000
+      x-ms-request-id: a66b1f51-a01f-0029-27a8-2573e0000000
       x-ms-version: '2020-02-10'
     status:
       code: 201
@@ -32,52 +34,59 @@ interactions:
 - request:
     body: null
     headers:
+      Accept:
+      - application/json
       User-Agent:
-      - azsdk-python-storage-dfs/12.1.2 Python/3.7.3 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-storage-dfs/12.3.0 Python/3.7.3 (Windows-10-10.0.19041-SP0)
       x-ms-client-request-id:
-      - e87d7258-fdd7-11ea-8f0b-001a7dda7113
+      - aa8dd026-919b-11eb-9293-001a7dda7113
       x-ms-date:
-      - Wed, 23 Sep 2020 20:03:54 GMT
+      - Tue, 30 Mar 2021 21:05:33 GMT
       x-ms-version:
       - '2020-02-10'
     method: DELETE
-    uri: https://storagename.dfs.core.windows.net/filesystem2e3d0f79/file2e3d0f79?recursive=true
+    uri: https://storagename.dfs.core.windows.net/filesystem2e3d0f79/file2e3d0f79
   response:
     body:
       string: ''
     headers:
       Content-Length: '0'
-      Date: Wed, 23 Sep 2020 20:03:54 GMT
+      Date: Tue, 30 Mar 2021 21:05:32 GMT
       Server: Windows-Azure-HDFS/1.0 Microsoft-HTTPAPI/2.0
-      x-ms-request-id: 19dca298-801f-0063-18e4-91d06f000000
+      x-ms-request-id: a66b1f52-a01f-0029-28a8-2573e0000000
       x-ms-version: '2020-02-10'
     status:
       code: 200
       message: OK
-    url: https://xiafuhns.dfs.core.windows.net/filesystem2e3d0f79/file2e3d0f79?recursive=true
+    url: https://xiafuhns.dfs.core.windows.net/filesystem2e3d0f79/file2e3d0f79
 - request:
     body: null
     headers:
+      Accept:
+      - application/xml
       User-Agent:
-      - azsdk-python-storage-dfs/12.1.2 Python/3.7.3 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-storage-dfs/12.3.0 Python/3.7.3 (Windows-10-10.0.19041-SP0)
       x-ms-client-request-id:
-      - e8856038-fdd7-11ea-8b2c-001a7dda7113
+      - aa952812-919b-11eb-9083-001a7dda7113
       x-ms-date:
-      - Wed, 23 Sep 2020 20:03:54 GMT
+      - Tue, 30 Mar 2021 21:05:33 GMT
+      x-ms-encryption-algorithm:
+      - AES256
       x-ms-version:
-      - '2020-02-10'
+      - '2020-06-12'
     method: HEAD
     uri: https://storagename.blob.core.windows.net/filesystem2e3d0f79//file2e3d0f79
   response:
     body:
       string: ''
     headers:
-      Date: Wed, 23 Sep 2020 20:03:54 GMT
+      Date: Tue, 30 Mar 2021 21:05:33 GMT
       Server: Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
       Transfer-Encoding: chunked
+      Vary: Origin
       x-ms-error-code: BlobNotFound
-      x-ms-request-id: 0b12149d-101e-0061-31e4-916ed7000000
-      x-ms-version: '2020-02-10'
+      x-ms-request-id: 409b955a-c01e-002f-40a8-25405f000000
+      x-ms-version: '2020-06-12'
     status:
       code: 404
       message: The specified blob does not exist.

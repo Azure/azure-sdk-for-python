@@ -57,7 +57,7 @@ class TestIdDocumentsFromUrl(FormRecognizerTest):
     @FormRecognizerPreparer()
     @GlobalClientPreparer()
     def test_id_document_url_pass_stream(self, client):
-        with open(self.id_document_jpg, "rb") as id_document:
+        with open(self.id_document_license_jpg, "rb") as id_document:
             with self.assertRaises(HttpResponseError):
                 poller = client.begin_recognize_id_documents_from_url(id_document)
 
@@ -98,6 +98,26 @@ class TestIdDocumentsFromUrl(FormRecognizerTest):
 
     @FormRecognizerPreparer()
     @GlobalClientPreparer()
+    def test_id_document_jpg_passport(self, client):
+        poller = client.begin_recognize_id_documents_from_url(self.id_document_url_jpg_passport)
+
+        result = poller.result()
+        self.assertEqual(len(result), 1)
+    
+        id_document = result[0]
+        # check dict values
+
+        passport = id_document.fields.get("MachineReadableZone").value
+        self.assertEqual(passport["LastName"].value, "MARTIN")
+        self.assertEqual(passport["FirstName"].value, "SARAH")
+        self.assertEqual(passport["DocumentNumber"].value, "ZE000509")
+        self.assertEqual(passport["DateOfBirth"].value, date(1985,1,1))
+        self.assertEqual(passport["DateOfExpiration"].value, date(2023,1,14))
+        self.assertEqual(passport["Sex"].value, "F")
+        self.assertEqual(passport["Country"].value, "CAN")
+
+    @FormRecognizerPreparer()
+    @GlobalClientPreparer()
     def test_id_document_jpg(self, client):
         poller = client.begin_recognize_id_documents_from_url(self.id_document_url_jpg)
 
@@ -106,17 +126,16 @@ class TestIdDocumentsFromUrl(FormRecognizerTest):
         id_document = result[0]
 
         # check dict values
-        self.assertEqual(id_document.fields.get("LastName").value, "SAMPLE")
-        self.assertEqual(id_document.fields.get("FirstName").value, "JANICE ANN")
-        self.assertEqual(id_document.fields.get("DocumentNumber").value, "99 999 999")
-        self.assertEqual(id_document.fields.get("DateOfBirth").value, date(1975,8,4))
-        self.assertEqual(id_document.fields.get("DateOfExpiration").value, date(2023,8,5))
-        # FIXME: this is different than the other field values
-        self.assertEqual(id_document.fields.get("Sex").value_data.text, "F")
-        self.assertEqual(id_document.fields.get("Address").value, "123 MAIN STREET APT. 1 HARRISBURG, PA 17101-0000")
-        # FIXME: this is different than the other field values
-        # self.assertEqual(id_document.fields.get("Country").value_data.text, "United States")
-        self.assertEqual(id_document.fields.get("Region").value, "Pennsylvania")
+        self.assertEqual(id_document.fields.get("LastName").value, "TALBOT")
+        self.assertEqual(id_document.fields.get("FirstName").value, "LIAM R.")
+        # FIXME service error when reading the license number returns 'LICWDLACD5DG'
+        # self.assertEqual(id_document.fields.get("DocumentNumber").value, "WDLABCD456DG")
+        self.assertEqual(id_document.fields.get("DateOfBirth").value, date(1958,1,6))
+        self.assertEqual(id_document.fields.get("DateOfExpiration").value, date(2020,8,12))
+        self.assertEqual(id_document.fields.get("Sex").value, "M")
+        self.assertEqual(id_document.fields.get("Address").value, "123 STREET ADDRESS YOUR CITY WA 99999-1234")
+        self.assertEqual(id_document.fields.get("Country").value, "USA")
+        self.assertEqual(id_document.fields.get("Region").value, "Washington")
 
     @FormRecognizerPreparer()
     @GlobalClientPreparer()
@@ -131,12 +150,11 @@ class TestIdDocumentsFromUrl(FormRecognizerTest):
 
         for field in id_document.fields.values():
             if field.name == "Country":
-                # FIXME: this is different than the other field values
-                # self.assertEqual(field.value_data.text, "United States")
+                self.assertEqual(field.value, "USA")
                 continue
             elif field.name == "Region":
-                self.assertEqual(field.value, "Pennsylvania")
-            else: 
+                self.assertEqual(field.value, "Washington")
+            else:
                 self.assertFieldElementsHasValues(field.value_data.field_elements, id_document.page_range.first_page_number)
 
     @FormRecognizerPreparer()

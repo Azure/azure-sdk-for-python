@@ -1,6 +1,6 @@
 # Release History
 
-## 1.0.0b6 (Unreleased)
+## 1.0.0 (2021-03-29)
 ### Breaking Changes
 - Renamed `ChatThread` to `ChatThreadProperties`.
 - Renamed `get_chat_thread` to `get_properties`.
@@ -11,6 +11,10 @@
 - Changed return type of `send_message` to `SendChatMessageResult`.
 - Replaced `CommunicationError` with `ChatError`.
 - Refactored `CommunicationTokenCredential` constructor to accept `token` instead of `CommunicationTokenRefreshOptions`.
+- Renamed `ChatThreadParticipant` to `ChatParticipant`.
+- Renamed attribute `ChatParticipant.user` to `ChatParticipant.identifier`.
+- Renamed argument `user` to `identifier` in `ChatThreadClient.remove_participant`.
+- Refactored implementation of `CommunicationUserIdentifier`, `PhoneNumberIdentifier`, `MicrosoftTeamsUserIdentifier`, `UnknownIdentifier` to use a `dict` property bag.
 
 ## 1.0.0b5 (2021-03-09)
 ### Breaking Changes

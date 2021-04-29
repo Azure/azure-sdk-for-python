@@ -5,6 +5,7 @@ pr:
   branches:
     include:
     - master
+    - main
     - feature/*
     - hotfix/*
     - release/*

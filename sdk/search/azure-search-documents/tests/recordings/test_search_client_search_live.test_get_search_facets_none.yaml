@@ -13,12 +13,12 @@ interactions:
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-search-documents/11.1.0b2 Python/3.8.5 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-search-documents/11.1.1 Python/3.8.6 (Windows-10-10.0.19041-SP0)
     method: POST
     uri: https://searchbad5179e.search.windows.net/indexes('drgqefsg')/docs/search.post.search?api-version=2020-06-30-Preview
   response:
     body:
-      string: '{"value":[{"@search.score":2.3832736,"hotelName":"Countryside Hotel","description":"Save
+      string: '{"value":[{"@search.score":2.534638,"hotelName":"Countryside Hotel","description":"Save
         up to 50% off traditional hotels.  Free WiFi, great location near downtown,
         full kitchen, washer & dryer, 24/7 support, bowling alley, fitness center
         and more.","category":"Budget"},{"@search.score":1.0225849,"hotelName":"EconoStay","description":"Very
@@ -33,13 +33,13 @@ interactions:
       cache-control:
       - no-cache
       content-length:
-      - '929'
+      - '928'
       content-type:
       - application/json; odata.metadata=none
       date:
-      - Fri, 28 Aug 2020 19:26:03 GMT
+      - Thu, 25 Mar 2021 20:06:10 GMT
       elapsed-time:
-      - '91'
+      - '337'
       expires:
       - '-1'
       odata-version:
@@ -49,7 +49,7 @@ interactions:
       preference-applied:
       - odata.include-annotations="*"
       request-id:
-      - 508c5e04-e964-11ea-82ec-5cf37071153c
+      - 8a7ddfca-8da5-11eb-9ba0-a0481ca055a9
       strict-transport-security:
       - max-age=15724800; includeSubDomains
       vary:

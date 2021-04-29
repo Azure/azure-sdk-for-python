@@ -303,3 +303,12 @@ def test_cache_multiple_clients(cert_path, cert_password):
     assert transport_b.send.call_count == 3
 
     assert len(cache.find(TokenCache.CredentialType.ACCESS_TOKEN)) == 2
+
+
+def test_certificate_arguments():
+    """The credential should raise ValueError for mutually exclusive arguments"""
+
+    with pytest.raises(ValueError) as ex:
+        CertificateCredential("tenant-id", "client-id", certificate_path="...", certificate_data="...")
+    message = str(ex.value)
+    assert "certificate_data" in message and "certificate_path" in message

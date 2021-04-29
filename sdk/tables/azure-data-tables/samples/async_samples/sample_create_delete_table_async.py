@@ -103,7 +103,7 @@ class CreateDeleteTable(object):
                 await table_client.delete_table()
                 print("Deleted table {}!".format(self.table_name))
             except ResourceNotFoundError:
-                print("Table already exists")
+                print("Table could not be found")
         # [END delete_from_table_client]
 
 

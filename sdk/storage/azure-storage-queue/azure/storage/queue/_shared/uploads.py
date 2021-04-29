@@ -77,13 +77,13 @@ def upload_data_chunks(
         validate_content=validate_content,
         **kwargs)
     if parallel:
-        executor = futures.ThreadPoolExecutor(max_concurrency)
-        upload_tasks = uploader.get_chunk_streams()
-        running_futures = [
-            executor.submit(with_current_context(uploader.process_chunk), u)
-            for u in islice(upload_tasks, 0, max_concurrency)
-        ]
-        range_ids = _parallel_uploads(executor, uploader.process_chunk, upload_tasks, running_futures)
+        with futures.ThreadPoolExecutor(max_concurrency) as executor:
+            upload_tasks = uploader.get_chunk_streams()
+            running_futures = [
+                executor.submit(with_current_context(uploader.process_chunk), u)
+                for u in islice(upload_tasks, 0, max_concurrency)
+            ]
+            range_ids = _parallel_uploads(executor, uploader.process_chunk, upload_tasks, running_futures)
     else:
         range_ids = [uploader.process_chunk(result) for result in uploader.get_chunk_streams()]
     if any(range_ids):
@@ -112,16 +112,18 @@ def upload_substream_blocks(
         **kwargs)
 
     if parallel:
-        executor = futures.ThreadPoolExecutor(max_concurrency)
-        upload_tasks = uploader.get_substream_blocks()
-        running_futures = [
-            executor.submit(with_current_context(uploader.process_substream_block), u)
-            for u in islice(upload_tasks, 0, max_concurrency)
-        ]
-        range_ids = _parallel_uploads(executor, uploader.process_substream_block, upload_tasks, running_futures)
+        with futures.ThreadPoolExecutor(max_concurrency) as executor:
+            upload_tasks = uploader.get_substream_blocks()
+            running_futures = [
+                executor.submit(with_current_context(uploader.process_substream_block), u)
+                for u in islice(upload_tasks, 0, max_concurrency)
+            ]
+            range_ids = _parallel_uploads(executor, uploader.process_substream_block, upload_tasks, running_futures)
     else:
         range_ids = [uploader.process_substream_block(b) for b in uploader.get_substream_blocks()]
-    return sorted(range_ids)
+    if any(range_ids):
+        return sorted(range_ids)
+    return []
 
 
 class _ChunkUploader(object):  # pylint: disable=too-many-instance-attributes
@@ -221,16 +223,16 @@ class _ChunkUploader(object):  # pylint: disable=too-many-instance-attributes
         for i in range(blocks):
             index = i * self.chunk_size
             length = last_block_size if i == blocks - 1 else self.chunk_size
-            yield ('BlockId{}'.format("%05d" % i), SubStream(self.stream, index, length, lock))
+            yield index, SubStream(self.stream, index, length, lock)
 
     def process_substream_block(self, block_data):
         return self._upload_substream_block_with_progress(block_data[0], block_data[1])
 
-    def _upload_substream_block(self, block_id, block_stream):
+    def _upload_substream_block(self, index, block_stream):
         raise NotImplementedError("Must be implemented by child class.")
 
-    def _upload_substream_block_with_progress(self, block_id, block_stream):
-        range_id = self._upload_substream_block(block_id, block_stream)
+    def _upload_substream_block_with_progress(self, index, block_stream):
+        range_id = self._upload_substream_block(index, block_stream)
         self._update_progress(len(block_stream))
         return range_id
 
@@ -260,8 +262,9 @@ class BlockBlobChunkUploader(_ChunkUploader):
         )
         return index, block_id
 
-    def _upload_substream_block(self, block_id, block_stream):
+    def _upload_substream_block(self, index, block_stream):
         try:
+            block_id = 'BlockId{}'.format("%05d" % (index/self.chunk_size))
             self.service.stage_block(
                 block_id,
                 len(block_stream),
@@ -289,7 +292,7 @@ class PageBlobChunkUploader(_ChunkUploader):  # pylint: disable=abstract-method
             content_range = "bytes={0}-{1}".format(chunk_offset, chunk_end)
             computed_md5 = None
             self.response_headers = self.service.upload_pages(
-                chunk_data,
+                body=chunk_data,
                 content_length=len(chunk_data),
                 transactional_content_md5=computed_md5,
                 range=content_range,
@@ -302,6 +305,9 @@ class PageBlobChunkUploader(_ChunkUploader):  # pylint: disable=abstract-method
             if not self.parallel and self.request_options.get('modified_access_conditions'):
                 self.request_options['modified_access_conditions'].if_match = self.response_headers['etag']
 
+    def _upload_substream_block(self, index, block_stream):
+        pass
+
 
 class AppendBlobChunkUploader(_ChunkUploader):  # pylint: disable=abstract-method
 
@@ -312,7 +318,7 @@ class AppendBlobChunkUploader(_ChunkUploader):  # pylint: disable=abstract-metho
     def _upload_chunk(self, chunk_offset, chunk_data):
         if self.current_length is None:
             self.response_headers = self.service.append_block(
-                chunk_data,
+                body=chunk_data,
                 content_length=len(chunk_data),
                 cls=return_response_headers,
                 data_stream_total=self.total_size,
@@ -324,13 +330,48 @@ class AppendBlobChunkUploader(_ChunkUploader):  # pylint: disable=abstract-metho
             self.request_options['append_position_access_conditions'].append_position = \
                 self.current_length + chunk_offset
             self.response_headers = self.service.append_block(
-                chunk_data,
+                body=chunk_data,
                 content_length=len(chunk_data),
                 cls=return_response_headers,
                 data_stream_total=self.total_size,
                 upload_stream_current=self.progress_total,
                 **self.request_options
             )
+
+    def _upload_substream_block(self, index, block_stream):
+        pass
+
+
+class DataLakeFileChunkUploader(_ChunkUploader):  # pylint: disable=abstract-method
+
+    def _upload_chunk(self, chunk_offset, chunk_data):
+        # avoid uploading the empty pages
+        self.response_headers = self.service.append_data(
+            body=chunk_data,
+            position=chunk_offset,
+            content_length=len(chunk_data),
+            cls=return_response_headers,
+            data_stream_total=self.total_size,
+            upload_stream_current=self.progress_total,
+            **self.request_options
+        )
+
+        if not self.parallel and self.request_options.get('modified_access_conditions'):
+            self.request_options['modified_access_conditions'].if_match = self.response_headers['etag']
+
+    def _upload_substream_block(self, index, block_stream):
+        try:
+            self.service.append_data(
+                body=block_stream,
+                position=index,
+                content_length=len(block_stream),
+                cls=return_response_headers,
+                data_stream_total=self.total_size,
+                upload_stream_current=self.progress_total,
+                **self.request_options
+            )
+        finally:
+            block_stream.close()
 
 
 class FileChunkUploader(_ChunkUploader):  # pylint: disable=abstract-method
@@ -347,6 +388,10 @@ class FileChunkUploader(_ChunkUploader):  # pylint: disable=abstract-method
             **self.request_options
         )
         return 'bytes={0}-{1}'.format(chunk_offset, chunk_end), response
+
+    # TODO: Implement this method.
+    def _upload_substream_block(self, index, block_stream):
+        pass
 
 
 class SubStream(IOBase):
@@ -432,6 +477,13 @@ class SubStream(IOBase):
                             raise IOError("Stream failed to seek to the desired location.")
                         buffer_from_stream = self._wrapped_stream.read(current_max_buffer_size)
                 else:
+                    absolute_position = self._stream_begin_index + self._position
+                    # It's possible that there's connection problem during data transfer,
+                    # so when we retry we don't want to read from current position of wrapped stream,
+                    # instead we should seek to where we want to read from.
+                    if self._wrapped_stream.tell() != absolute_position:
+                        self._wrapped_stream.seek(absolute_position, SEEK_SET)
+
                     buffer_from_stream = self._wrapped_stream.read(current_max_buffer_size)
 
             if buffer_from_stream:

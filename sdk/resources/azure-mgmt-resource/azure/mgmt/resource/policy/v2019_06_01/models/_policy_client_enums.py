@@ -30,8 +30,10 @@ class EnforcementMode(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     """The policy assignment enforcement mode. Possible values are Default and DoNotEnforce.
     """
 
-    DEFAULT = "Default"  #: The policy effect is enforced during resource creation or update.
-    DO_NOT_ENFORCE = "DoNotEnforce"  #: The policy effect is not enforced during resource creation or update.
+    #: The policy effect is enforced during resource creation or update.
+    DEFAULT = "Default"
+    #: The policy effect is not enforced during resource creation or update.
+    DO_NOT_ENFORCE = "DoNotEnforce"
 
 class PolicyType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     """The type of policy definition. Possible values are NotSpecified, BuiltIn, and Custom.

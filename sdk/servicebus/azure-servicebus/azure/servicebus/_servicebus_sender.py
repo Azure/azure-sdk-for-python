@@ -24,7 +24,6 @@ from ._common.utils import (
     create_messages_from_dicts_if_needed,
     send_trace_context_manager,
     trace_message,
-    add_link_to_send,
 )
 from ._common.constants import (
     REQUEST_RESPONSE_CANCEL_SCHEDULED_MESSAGE_OPERATION,
@@ -97,7 +96,6 @@ class SenderMixin(object):
                 )
             message = transform_messages_to_sendable_if_needed(message)
             trace_message(message, send_span)
-            add_link_to_send(message, send_span)
             message.scheduled_enqueue_time_utc = schedule_time_utc
             message_data = {}
             message_data[MGMT_REQUEST_MESSAGE_ID] = message.message_id
@@ -385,25 +383,17 @@ class ServiceBusSender(BaseHandler, SenderMixin):
 
         with send_trace_context_manager() as send_span:
             if isinstance(message, ServiceBusMessageBatch):
-                for (
-                    batch_message
-                ) in message.message._body_gen:  # pylint: disable=protected-access
-                    add_link_to_send(batch_message, send_span)
                 obj_message = message  # type: MessageObjTypes
             else:
                 obj_message = create_messages_from_dicts_if_needed(message, ServiceBusMessage)
                 # Ensure message is sendable (not a ReceivedMessage), and if needed (a list) is batched. Adds tracing.
                 obj_message = transform_messages_to_sendable_if_needed(obj_message)
                 try:
-                    # Ignore type (and below) as it will except if wrong.
-                    for each_message in iter(obj_message):  # type: ignore
-                        add_link_to_send(each_message, send_span)
                     batch = self.create_message_batch()
                     batch._from_list(obj_message, send_span)  # type: ignore # pylint: disable=protected-access
                     obj_message = batch
                 except TypeError:  # Message was not a list or generator. Do needed tracing.
                     trace_message(cast(ServiceBusMessage, obj_message), send_span)
-                    add_link_to_send(obj_message, send_span)
 
             if (
                 isinstance(obj_message, ServiceBusMessageBatch) and len(obj_message) == 0

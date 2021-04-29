@@ -1,5 +1,61 @@
 # Release History
 
+## 2.0.0 (2021-03-25)
+
+**Features**
+
+  - Model TagCollection has a new parameter count
+  - Model OpenIdConnectProviderCollection has a new parameter count
+  - Model TagResourceCollection has a new parameter count
+  - Model CertificateCollection has a new parameter count
+  - Model PolicyCollection has a new parameter count
+  - Model IssueAttachmentCollection has a new parameter count
+  - Model BackendServiceFabricClusterProperties has a new parameter client_certificate_id
+  - Model BackendCollection has a new parameter count
+  - Model SubscriptionCollection has a new parameter count
+  - Model RecipientEmailCollection has a new parameter count
+  - Model GatewayCollection has a new parameter count
+  - Model IssueCommentCollection has a new parameter count
+  - Model OperationCollection has a new parameter count
+  - Model DiagnosticCollection has a new parameter count
+  - Model ApiVersionSetCollection has a new parameter count
+  - Model ProductCollection has a new parameter count
+  - Model IssueCollection has a new parameter count
+  - Model NotificationCollection has a new parameter count
+  - Model UserCollection has a new parameter count
+  - Model IdentityProviderList has a new parameter count
+  - Model ApiReleaseCollection has a new parameter count
+  - Model TagDescriptionCollection has a new parameter count
+  - Model ApiRevisionCollection has a new parameter count
+  - Model CacheCollection has a new parameter count
+  - Model RecipientUserCollection has a new parameter count
+  - Model NamedValueCollection has a new parameter count
+  - Model EmailTemplateCollection has a new parameter count
+  - Model BackendCredentialsContract has a new parameter certificate_ids
+  - Model ApiCollection has a new parameter count
+  - Model GroupCollection has a new parameter count
+  - Model SchemaCollection has a new parameter count
+  - Added operation TenantAccessOperations.list_by_service
+  - Added operation TenantAccessOperations.create
+  - Added operation ApiManagementServiceOperations.get_domain_ownership_identifier
+  - Added operation NamedValueOperations.begin_refresh_secret
+  - Added operation CertificateOperations.refresh_secret
+  - Added operation DeletedServicesOperations.begin_purge
+  - Added operation UserSubscriptionOperations.get
+  - Added operation group PortalSettingsOperations
+  - Added operation group TenantSettingsOperations
+  - Added operation group GatewayCertificateAuthorityOperations
+  - Added operation group ApiManagementSkusOperations
+
+**Breaking changes**
+
+  - Operation CertificateOperations.list_by_service has a new signature
+  - Operation NamedValueOperations.list_by_service has a new signature
+  - Removed operation DeletedServicesOperations.purge
+  - Removed operation TenantAccessGitOperations.list_secrets
+  - Removed operation TenantAccessGitOperations.get
+  - Model AccessInformationContract has a new signature
+
 ## 1.0.0 (2020-12-21)
 
 **Features**

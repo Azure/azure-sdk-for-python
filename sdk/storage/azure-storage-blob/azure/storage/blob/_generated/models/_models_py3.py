@@ -1043,11 +1043,16 @@ class CpkInfo(msrest.serialization.Model):
     :param encryption_key_sha256: The SHA-256 hash of the provided encryption key. Must be provided
      if the x-ms-encryption-key header is provided.
     :type encryption_key_sha256: str
+    :param encryption_algorithm: The algorithm used to produce the encryption key hash. Currently,
+     the only accepted value is "AES256". Must be provided if the x-ms-encryption-key header is
+     provided. Possible values include: "None", "AES256".
+    :type encryption_algorithm: str or ~azure.storage.blob.models.EncryptionAlgorithmType
     """
 
     _attribute_map = {
         'encryption_key': {'key': 'encryptionKey', 'type': 'str'},
         'encryption_key_sha256': {'key': 'encryptionKeySha256', 'type': 'str'},
+        'encryption_algorithm': {'key': 'encryptionAlgorithm', 'type': 'str'},
     }
 
     def __init__(
@@ -1055,11 +1060,13 @@ class CpkInfo(msrest.serialization.Model):
         *,
         encryption_key: Optional[str] = None,
         encryption_key_sha256: Optional[str] = None,
+        encryption_algorithm: Optional[Union[str, "EncryptionAlgorithmType"]] = None,
         **kwargs
     ):
         super(CpkInfo, self).__init__(**kwargs)
         self.encryption_key = encryption_key
         self.encryption_key_sha256 = encryption_key_sha256
+        self.encryption_algorithm = encryption_algorithm
 
 
 class CpkScopeInfo(msrest.serialization.Model):

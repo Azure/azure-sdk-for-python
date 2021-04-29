@@ -106,8 +106,10 @@ class AgentPool(SubResource):
      according to the vmSize specified.
     :type os_disk_size_gb: int
     :param os_disk_type: OS disk type to be used for machines in a given agent pool. Allowed values
-     are 'Ephemeral' and 'Managed'. Defaults to 'Managed'. May not be changed after creation.
-     Possible values include: "Managed", "Ephemeral".
+     are 'Ephemeral' and 'Managed'. If unspecified, defaults to 'Ephemeral' when the VM supports
+     ephemeral OS and has a cache disk larger than the requested OSDiskSizeGB. Otherwise, defaults
+     to 'Managed'. May not be changed after creation. Possible values include: "Managed",
+     "Ephemeral".
     :type os_disk_type: str or ~azure.mgmt.containerservice.v2020_11_01.models.OSDiskType
     :param vnet_subnet_id: VNet SubnetID specifies the VNet's subnet identifier for nodes and maybe
      pods.
@@ -579,7 +581,7 @@ class Components1Q1Og48SchemasManagedclusterAllof1(msrest.serialization.Model):
     :type disk_encryption_set_id: str
     :param identity_profile: Identities associated with the cluster.
     :type identity_profile: dict[str,
-     ~azure.mgmt.containerservice.v2020_11_01.models.UserAssignedIdentity]
+     ~azure.mgmt.containerservice.v2020_11_01.models.ComponentsQit0EtSchemasManagedclusterpropertiesPropertiesIdentityprofileAdditionalproperties]
     """
 
     _validation = {
@@ -614,7 +616,7 @@ class Components1Q1Og48SchemasManagedclusterAllof1(msrest.serialization.Model):
         'auto_scaler_profile': {'key': 'properties.autoScalerProfile', 'type': 'ManagedClusterPropertiesAutoScalerProfile'},
         'api_server_access_profile': {'key': 'properties.apiServerAccessProfile', 'type': 'ManagedClusterAPIServerAccessProfile'},
         'disk_encryption_set_id': {'key': 'properties.diskEncryptionSetID', 'type': 'str'},
-        'identity_profile': {'key': 'properties.identityProfile', 'type': '{UserAssignedIdentity}'},
+        'identity_profile': {'key': 'properties.identityProfile', 'type': '{ComponentsQit0EtSchemasManagedclusterpropertiesPropertiesIdentityprofileAdditionalproperties}'},
     }
 
     def __init__(
@@ -1298,7 +1300,7 @@ class ManagedCluster(Resource, Components1Q1Og48SchemasManagedclusterAllof1):
     :type disk_encryption_set_id: str
     :param identity_profile: Identities associated with the cluster.
     :type identity_profile: dict[str,
-     ~azure.mgmt.containerservice.v2020_11_01.models.UserAssignedIdentity]
+     ~azure.mgmt.containerservice.v2020_11_01.models.ComponentsQit0EtSchemasManagedclusterpropertiesPropertiesIdentityprofileAdditionalproperties]
     :ivar id: Resource Id.
     :vartype id: str
     :ivar name: Resource name.
@@ -1349,7 +1351,7 @@ class ManagedCluster(Resource, Components1Q1Og48SchemasManagedclusterAllof1):
         'auto_scaler_profile': {'key': 'properties.autoScalerProfile', 'type': 'ManagedClusterPropertiesAutoScalerProfile'},
         'api_server_access_profile': {'key': 'properties.apiServerAccessProfile', 'type': 'ManagedClusterAPIServerAccessProfile'},
         'disk_encryption_set_id': {'key': 'properties.diskEncryptionSetID', 'type': 'str'},
-        'identity_profile': {'key': 'properties.identityProfile', 'type': '{UserAssignedIdentity}'},
+        'identity_profile': {'key': 'properties.identityProfile', 'type': '{ComponentsQit0EtSchemasManagedclusterpropertiesPropertiesIdentityprofileAdditionalproperties}'},
         'id': {'key': 'id', 'type': 'str'},
         'name': {'key': 'name', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
@@ -1497,7 +1499,8 @@ class ManagedClusterAddonProfile(msrest.serialization.Model):
     :param config: Key-value pairs for configuring an add-on.
     :type config: dict[str, str]
     :ivar identity: Information of user assigned identity used by this add-on.
-    :vartype identity: ~azure.mgmt.containerservice.v2020_11_01.models.UserAssignedIdentity
+    :vartype identity:
+     ~azure.mgmt.containerservice.v2020_11_01.models.ManagedClusterAddonProfileIdentity
     """
 
     _validation = {
@@ -1508,7 +1511,7 @@ class ManagedClusterAddonProfile(msrest.serialization.Model):
     _attribute_map = {
         'enabled': {'key': 'enabled', 'type': 'bool'},
         'config': {'key': 'config', 'type': '{str}'},
-        'identity': {'key': 'identity', 'type': 'UserAssignedIdentity'},
+        'identity': {'key': 'identity', 'type': 'ManagedClusterAddonProfileIdentity'},
     }
 
     def __init__(
@@ -1599,8 +1602,10 @@ class ManagedClusterAgentPoolProfileProperties(msrest.serialization.Model):
      according to the vmSize specified.
     :type os_disk_size_gb: int
     :param os_disk_type: OS disk type to be used for machines in a given agent pool. Allowed values
-     are 'Ephemeral' and 'Managed'. Defaults to 'Managed'. May not be changed after creation.
-     Possible values include: "Managed", "Ephemeral".
+     are 'Ephemeral' and 'Managed'. If unspecified, defaults to 'Ephemeral' when the VM supports
+     ephemeral OS and has a cache disk larger than the requested OSDiskSizeGB. Otherwise, defaults
+     to 'Managed'. May not be changed after creation. Possible values include: "Managed",
+     "Ephemeral".
     :type os_disk_type: str or ~azure.mgmt.containerservice.v2020_11_01.models.OSDiskType
     :param vnet_subnet_id: VNet SubnetID specifies the VNet's subnet identifier for nodes and maybe
      pods.
@@ -1803,8 +1808,10 @@ class ManagedClusterAgentPoolProfile(ManagedClusterAgentPoolProfileProperties):
      according to the vmSize specified.
     :type os_disk_size_gb: int
     :param os_disk_type: OS disk type to be used for machines in a given agent pool. Allowed values
-     are 'Ephemeral' and 'Managed'. Defaults to 'Managed'. May not be changed after creation.
-     Possible values include: "Managed", "Ephemeral".
+     are 'Ephemeral' and 'Managed'. If unspecified, defaults to 'Ephemeral' when the VM supports
+     ephemeral OS and has a cache disk larger than the requested OSDiskSizeGB. Otherwise, defaults
+     to 'Managed'. May not be changed after creation. Possible values include: "Managed",
+     "Ephemeral".
     :type os_disk_type: str or ~azure.mgmt.containerservice.v2020_11_01.models.OSDiskType
     :param vnet_subnet_id: VNet SubnetID specifies the VNet's subnet identifier for nodes and maybe
      pods.

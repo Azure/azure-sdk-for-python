@@ -13,7 +13,7 @@ from msrest.serialization import TZ_UTC
 from azure.communication.identity import CommunicationIdentityClient
 from azure.communication.chat import (
     ChatClient,
-    ChatThreadParticipant,
+    ChatParticipant,
     ChatMessageType,
     CommunicationTokenCredential
 )
@@ -26,6 +26,7 @@ from _shared.testcase import (
     CommunicationTestCase,
     BodyReplacerProcessor
 )
+from _shared.utils import get_http_logging_policy
 
 
 class ChatThreadClientTest(CommunicationTestCase):
@@ -53,17 +54,25 @@ class ChatThreadClientTest(CommunicationTestCase):
         self.token_new_user = tokenresponse.token
 
         # create ChatClient
-        self.chat_client = ChatClient(self.endpoint, CommunicationTokenCredential(self.token))
-        self.chat_client_new_user = ChatClient(self.endpoint, CommunicationTokenCredential(self.token_new_user))
+        self.chat_client = ChatClient(
+            self.endpoint, 
+            CommunicationTokenCredential(self.token),
+            http_logging_policy=get_http_logging_policy()
+        )
+        self.chat_client_new_user = ChatClient(
+            self.endpoint, 
+            CommunicationTokenCredential(self.token_new_user),
+            http_logging_policy=get_http_logging_policy()
+        )
 
     def tearDown(self):
         super(ChatThreadClientTest, self).tearDown()
 
         # delete created users and chat threads
         if not self.is_playback():
+            self.chat_client.delete_chat_thread(self.thread_id)
             self.identity_client.delete_user(self.user)
             self.identity_client.delete_user(self.new_user)
-            self.chat_client.delete_chat_thread(self.thread_id)
 
     def _create_thread(
             self,
@@ -73,8 +82,8 @@ class ChatThreadClientTest(CommunicationTestCase):
         topic = "test topic"
         share_history_time = datetime.utcnow()
         share_history_time = share_history_time.replace(tzinfo=TZ_UTC)
-        participants = [ChatThreadParticipant(
-            user=self.user,
+        participants = [ChatParticipant(
+            identifier=self.user,
             display_name='name',
             share_history_time=share_history_time
         )]
@@ -91,13 +100,13 @@ class ChatThreadClientTest(CommunicationTestCase):
         share_history_time = datetime.utcnow()
         share_history_time = share_history_time.replace(tzinfo=TZ_UTC)
         participants = [
-            ChatThreadParticipant(
-                user=self.user,
+            ChatParticipant(
+                identifier=self.user,
                 display_name='name',
                 share_history_time=share_history_time
             ),
-            ChatThreadParticipant(
-                user=self.new_user,
+            ChatParticipant(
+                identifier=self.new_user,
                 display_name='name',
                 share_history_time=share_history_time
             )
@@ -178,8 +187,8 @@ class ChatThreadClientTest(CommunicationTestCase):
         # add another participant
         share_history_time = datetime.utcnow()
         share_history_time = share_history_time.replace(tzinfo=TZ_UTC)
-        new_participant = ChatThreadParticipant(
-            user=self.new_user,
+        new_participant = ChatParticipant(
+            identifier=self.new_user,
             display_name='name',
             share_history_time=share_history_time)
 
@@ -194,7 +203,7 @@ class ChatThreadClientTest(CommunicationTestCase):
             li = list(chat_thread_participant_page)
             assert len(li) <= 1
             participant_count += len(li)
-            li[0].user.id = self.user.identifier
+            li[0].identifier.properties['id'] = self.user.properties['id']
         assert participant_count == 1
 
 
@@ -204,8 +213,8 @@ class ChatThreadClientTest(CommunicationTestCase):
 
         share_history_time = datetime.utcnow()
         share_history_time = share_history_time.replace(tzinfo=TZ_UTC)
-        new_participant = ChatThreadParticipant(
-                user=self.new_user,
+        new_participant = ChatParticipant(
+                identifier=self.new_user,
                 display_name='name',
                 share_history_time=share_history_time)
         participants = [new_participant]
@@ -223,8 +232,8 @@ class ChatThreadClientTest(CommunicationTestCase):
         # add participant first
         share_history_time = datetime.utcnow()
         share_history_time = share_history_time.replace(tzinfo=TZ_UTC)
-        new_participant = ChatThreadParticipant(
-                user=self.new_user,
+        new_participant = ChatParticipant(
+                identifier=self.new_user,
                 display_name='name',
                 share_history_time=share_history_time)
         participants = [new_participant]

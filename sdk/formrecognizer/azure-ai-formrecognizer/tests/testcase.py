@@ -143,7 +143,8 @@ class FormRecognizerTest(AzureTestCase):
         self.business_card_url_jpg = self.get_blob_url(testing_container_sas_url, "testingdata", "businessCard.jpg")
         self.business_card_url_png = self.get_blob_url(testing_container_sas_url, "testingdata", "businessCard.png")
         self.business_card_multipage_url_pdf = self.get_blob_url(testing_container_sas_url, "testingdata", "business-card-multipage.pdf")
-        self.id_document_url_jpg = self.get_blob_url(testing_container_sas_url, "testingdata", "license_2.jpg")
+        self.id_document_url_jpg = self.get_blob_url(testing_container_sas_url, "testingdata", "license.jpg")
+        self.id_document_url_jpg_passport = self.get_blob_url(testing_container_sas_url, "testingdata", "passport_1.jpg")
         self.invoice_url_pdf = self.get_blob_url(testing_container_sas_url, "testingdata", "Invoice_1.pdf")
         self.invoice_url_tiff = self.get_blob_url(testing_container_sas_url, "testingdata", "Invoice_1.tiff")
         self.multipage_vendor_url_pdf = self.get_blob_url(testing_container_sas_url, "testingdata", "multi1.pdf")
@@ -151,6 +152,8 @@ class FormRecognizerTest(AzureTestCase):
         self.multipage_url_pdf = self.get_blob_url(testing_container_sas_url, "testingdata", "multipage_invoice1.pdf")
         self.multipage_table_url_pdf = self.get_blob_url(testing_container_sas_url, "testingdata", "multipagelayout.pdf")
         self.selection_mark_url_pdf = self.get_blob_url(testing_container_sas_url, "testingdata", "selection_mark_form.pdf")
+        self.label_table_variable_row_url_pdf = self.get_blob_url(testing_container_sas_url, "testingdata", "label_table_variable_rows1.pdf")
+        self.label_table_fixed_row_url_pdf = self.get_blob_url(testing_container_sas_url, "testingdata", "label_table_fixed_rows1.pdf")
 
         # file stream samples
         self.receipt_jpg = os.path.abspath(os.path.join(os.path.abspath(__file__), "..", "./sample_forms/receipt/contoso-allinone.jpg"))
@@ -158,7 +161,8 @@ class FormRecognizerTest(AzureTestCase):
         self.business_card_jpg = os.path.abspath(os.path.join(os.path.abspath(__file__), "..", "./sample_forms/business_cards/business-card-english.jpg"))
         self.business_card_png = os.path.abspath(os.path.join(os.path.abspath(__file__), "..", "./sample_forms/business_cards/business-card-english.png"))
         self.business_card_multipage_pdf = os.path.abspath(os.path.join(os.path.abspath(__file__), "..", "./sample_forms/business_cards/business-card-multipage.pdf"))
-        self.id_document_jpg = os.path.abspath(os.path.join(os.path.abspath(__file__), "..", "./sample_forms/id_documents/license.jpg"))
+        self.id_document_license_jpg = os.path.abspath(os.path.join(os.path.abspath(__file__), "..", "./sample_forms/id_documents/license.jpg"))
+        self.id_document_passport_jpg = os.path.abspath(os.path.join(os.path.abspath(__file__), "..", "./sample_forms/id_documents/passport_1.jpg"))
         self.invoice_pdf = os.path.abspath(os.path.join(os.path.abspath(__file__), "..", "./sample_forms/forms/Invoice_1.pdf"))
         self.invoice_tiff = os.path.abspath(os.path.join(os.path.abspath(__file__), "..", "./sample_forms/forms/Invoice_1.tiff"))
         self.form_jpg = os.path.abspath(os.path.join(os.path.abspath(__file__), "..", "./sample_forms/forms/Form_1.jpg"))
@@ -351,6 +355,8 @@ class FormRecognizerTest(AzureTestCase):
             return
 
         for label, expected in generated_fields.items():
+            if expected is None:  # None value occurs with labeled tables and empty cells
+                continue
             field_type = expected.type
             self.assertEqual(adjust_value_type(field_type), form_fields[label].value_type)
             self.assertEqual(label, form_fields[label].name)

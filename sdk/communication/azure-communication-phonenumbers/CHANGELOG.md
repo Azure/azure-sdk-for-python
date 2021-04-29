@@ -1,6 +1,11 @@
 # Release History
 
-## 1.0.0b5 (Unreleased)
+## 1.0.1 (Unreleased)
+
+## 1.0.0 (2021-04-26)
+- Stable release of `azure-communication-phonenumbers`.
+
+## 1.0.0b5 (2021-03-29)
 
 ### Breaking Changes
 - Renamed AcquiredPhoneNumber to PurchasedPhoneNumber
@@ -13,7 +18,7 @@ and PhoneNumbersAsyncClient.list_purchased_phone_numbers
 - Dropped support for Python 3.5
 
 ### Added
-- Added PhoneNumbersAdministrationClient (originally was part of the azure.communication.administration package).
+- Added PhoneNumbersClient (originally was part of the azure.communication.administration package).
 
 
 

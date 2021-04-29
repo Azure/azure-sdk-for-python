@@ -7,7 +7,7 @@ from azure.core.credentials import AccessToken
 from azure.communication.chat.aio import (
     ChatClient
 )
-from azure.communication.chat import ChatThreadParticipant
+from azure.communication.chat import ChatParticipant
 
 from azure.communication.chat._shared.models import(
     CommunicationUserIdentifier
@@ -24,12 +24,10 @@ except ImportError:  # python < 3.3
 
 import pytest
 import time
-
+import calendar
 
 def _convert_datetime_to_utc_int(input):
-    epoch = time.mktime(datetime(1970, 1, 1).timetuple())
-    input_datetime_as_int = epoch - time.mktime(input.timetuple())
-    return input_datetime_as_int
+    return int(calendar.timegm(input.utctimetuple()))
 
 
 async def mock_get_token():
@@ -56,8 +54,8 @@ async def test_create_chat_thread():
 
     topic="test topic"
     user = CommunicationUserIdentifier("8:acs:57b9bac9-df6c-4d39-a73b-26e944adf6ea_9b0110-08007f1041")
-    participants=[ChatThreadParticipant(
-        user=user,
+    participants=[ChatParticipant(
+        identifier=user,
         display_name='name',
         share_history_time=datetime.utcnow()
     )]
@@ -82,8 +80,8 @@ async def test_create_chat_thread_w_repeatability_request_id():
 
     topic="test topic"
     user = CommunicationUserIdentifier("8:acs:57b9bac9-df6c-4d39-a73b-26e944adf6ea_9b0110-08007f1041")
-    participants=[ChatThreadParticipant(
-        user=user,
+    participants=[ChatParticipant(
+        identifier=user,
         display_name='name',
         share_history_time=datetime.utcnow()
     )]
@@ -100,8 +98,8 @@ async def test_create_chat_thread_raises_error():
 
     topic="test topic",
     user = CommunicationUserIdentifier("8:acs:57b9bac9-df6c-4d39-a73b-26e944adf6ea_9b0110-08007f1041")
-    participants=[ChatThreadParticipant(
-        user=user,
+    participants=[ChatParticipant(
+        identifier=user,
         display_name='name',
         share_history_time=datetime.utcnow()
     )]

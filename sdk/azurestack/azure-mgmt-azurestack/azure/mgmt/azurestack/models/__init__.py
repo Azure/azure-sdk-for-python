@@ -22,6 +22,9 @@ try:
     from ._models_py3 import ExtendedProduct
     from ._models_py3 import ExtendedProductProperties
     from ._models_py3 import IconUris
+    from ._models_py3 import LinkedSubscription
+    from ._models_py3 import LinkedSubscriptionParameter
+    from ._models_py3 import LinkedSubscriptionsList
     from ._models_py3 import MarketplaceProductLogUpdate
     from ._models_py3 import Operation
     from ._models_py3 import OperationList
@@ -35,6 +38,7 @@ try:
     from ._models_py3 import RegistrationList
     from ._models_py3 import RegistrationParameter
     from ._models_py3 import Resource
+    from ._models_py3 import SystemData
     from ._models_py3 import TrackedResource
     from ._models_py3 import VirtualMachineExtensionProductProperties
     from ._models_py3 import VirtualMachineProductProperties
@@ -54,6 +58,9 @@ except (SyntaxError, ImportError):
     from ._models import ExtendedProduct  # type: ignore
     from ._models import ExtendedProductProperties  # type: ignore
     from ._models import IconUris  # type: ignore
+    from ._models import LinkedSubscription  # type: ignore
+    from ._models import LinkedSubscriptionParameter  # type: ignore
+    from ._models import LinkedSubscriptionsList  # type: ignore
     from ._models import MarketplaceProductLogUpdate  # type: ignore
     from ._models import Operation  # type: ignore
     from ._models import OperationList  # type: ignore
@@ -67,6 +74,7 @@ except (SyntaxError, ImportError):
     from ._models import RegistrationList  # type: ignore
     from ._models import RegistrationParameter  # type: ignore
     from ._models import Resource  # type: ignore
+    from ._models import SystemData  # type: ignore
     from ._models import TrackedResource  # type: ignore
     from ._models import VirtualMachineExtensionProductProperties  # type: ignore
     from ._models import VirtualMachineProductProperties  # type: ignore
@@ -75,6 +83,7 @@ from ._azure_stack_management_client_enums import (
     Category,
     CompatibilityIssue,
     ComputeRole,
+    CreatedByType,
     Location,
     OperatingSystem,
     ProvisioningState,
@@ -96,6 +105,9 @@ __all__ = [
     'ExtendedProduct',
     'ExtendedProductProperties',
     'IconUris',
+    'LinkedSubscription',
+    'LinkedSubscriptionParameter',
+    'LinkedSubscriptionsList',
     'MarketplaceProductLogUpdate',
     'Operation',
     'OperationList',
@@ -109,12 +121,14 @@ __all__ = [
     'RegistrationList',
     'RegistrationParameter',
     'Resource',
+    'SystemData',
     'TrackedResource',
     'VirtualMachineExtensionProductProperties',
     'VirtualMachineProductProperties',
     'Category',
     'CompatibilityIssue',
     'ComputeRole',
+    'CreatedByType',
     'Location',
     'OperatingSystem',
     'ProvisioningState',

@@ -9,7 +9,7 @@ from ._generated.models import (
 )
 
 from ._models import (
-    ChatThreadParticipant,
+    ChatParticipant,
     ChatMessage,
     ChatThreadProperties,
     ChatMessageReadReceipt,
@@ -18,6 +18,17 @@ from ._models import (
 )
 
 from ._shared.user_credential import CommunicationTokenCredential
+from ._shared.models import (
+    CommunicationIdentifier,
+    CommunicationIdentifierKind,
+    CommunicationUserIdentifier,
+    CommunicationUserProperties,
+    PhoneNumberIdentifier,
+    PhoneNumberProperties,
+    MicrosoftTeamsUserIdentifier,
+    MicrosoftTeamsUserProperties,
+    UnknownIdentifier
+)
 
 __all__ = [
     'ChatClient',
@@ -28,10 +39,19 @@ __all__ = [
     'SendChatMessageResult',
     'ChatThreadProperties',
     'ChatThreadItem',
-    'ChatThreadParticipant',
+    'ChatParticipant',
     'ChatMessageType',
     'CreateChatThreadResult',
     'ChatError',
-    'CommunicationTokenCredential'
+    'CommunicationTokenCredential',
+    'CommunicationIdentifier',
+    'CommunicationIdentifierKind',
+    'CommunicationUserIdentifier',
+    'CommunicationUserProperties',
+    'PhoneNumberIdentifier',
+    'PhoneNumberProperties',
+    'MicrosoftTeamsUserIdentifier',
+    'MicrosoftTeamsUserProperties',
+    'UnknownIdentifier'
 ]
 __version__ = VERSION

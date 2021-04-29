@@ -190,7 +190,6 @@ class TestTableClientUnit(AsyncTableTestCase):
                 url = self.account_url(self.tables_cosmos_account_name, "cosmos").replace('https', 'http')
                 service_type(url, credential=self.token_credential, table_name='foo')
 
-    @pytest.mark.skip("Confirm cosmos national cloud URLs")
     @pytest.mark.asyncio
     async def test_create_service_china_async(self):
         # Arrange
@@ -206,7 +205,7 @@ class TestTableClientUnit(AsyncTableTestCase):
             assert service.account_name ==  self.tables_cosmos_account_name
             assert service.credential.account_name ==  self.tables_cosmos_account_name
             assert service.credential.account_key ==  self.tables_primary_cosmos_account_key
-            assert service._primary_endpoint.startswith('https://{}.{}.core.chinacloudapi.cn'.format(self.tables_cosmos_account_name, "cosmos"))
+            assert service._primary_endpoint.startswith('https://{}.{}.core.chinacloudapi.cn'.format(self.tables_cosmos_account_name, "table"))
 
     @pytest.mark.asyncio
     async def test_create_service_protocol_async(self):
@@ -249,7 +248,7 @@ class TestTableClientUnit(AsyncTableTestCase):
             # Assert
             self.validate_standard_account_endpoints(service, self.tables_cosmos_account_name, self.tables_primary_cosmos_account_key)
             assert service._client._client._pipeline._transport.connection_config.timeout == 22
-            assert default_service._client._client._pipeline._transport.connection_config.timeout in [20, (20, 2000)]
+            assert default_service._client._client._pipeline._transport.connection_config.timeout == 300
 
     # --Connection String Test Cases --------------------------------------------
     @pytest.mark.asyncio
@@ -425,30 +424,30 @@ class TestTableClientUnit(AsyncTableTestCase):
             service = service_type[0].from_connection_string(conn_string, table_name="foo")
 
             # Assert
-            assert service.account_name ==  self.tables_cosmos_account_name
-            assert service.credential.account_name ==  self.tables_cosmos_account_name
-            assert service.credential.account_key ==  self.tables_primary_cosmos_account_key
-            assert service._primary_hostname ==  'local-machine:11002/custom/account/path'
+            assert service.account_name == self.tables_cosmos_account_name
+            assert service.credential.account_name == self.tables_cosmos_account_name
+            assert service.credential.account_key == self.tables_primary_cosmos_account_key
+            assert service._primary_hostname == 'local-machine:11002/custom/account/path'
 
         service = TableServiceClient(account_url=custom_account_url)
-        assert service.account_name ==  None
-        assert service.credential ==  None
-        assert service._primary_hostname ==  'local-machine:11002/custom/account/path'
+        assert service.account_name == "custom"
+        assert service.credential == None
+        assert service._primary_hostname == 'local-machine:11002/custom/account/path'
         # mine doesnt have a question mark at the end
         assert service.url.startswith('http://local-machine:11002/custom/account/path')
 
         service = TableClient(account_url=custom_account_url, table_name="foo")
-        assert service.account_name ==  None
-        assert service.table_name ==  "foo"
-        assert service.credential ==  None
-        assert service._primary_hostname ==  'local-machine:11002/custom/account/path'
+        assert service.account_name == "custom"
+        assert service.table_name == "foo"
+        assert service.credential == None
+        assert service._primary_hostname == 'local-machine:11002/custom/account/path'
         assert service.url.startswith('http://local-machine:11002/custom/account/path')
 
         service = TableClient.from_table_url("http://local-machine:11002/custom/account/path/foo" + self.sas_token)
-        assert service.account_name ==  None
-        assert service.table_name ==  "foo"
-        assert service.credential ==  None
-        assert service._primary_hostname ==  'local-machine:11002/custom/account/path'
+        assert service.account_name == "custom"
+        assert service.table_name == "foo"
+        assert service.credential == None
+        assert service._primary_hostname == 'local-machine:11002/custom/account/path'
         assert service.url.startswith('http://local-machine:11002/custom/account/path')
 
     @pytest.mark.asyncio
@@ -495,10 +494,10 @@ class TestTableClientUnit(AsyncTableTestCase):
                 with pytest.raises(ValueError) as e:
                     service = service_type[0].from_connection_string(conn_str, table_name="test")
 
-                if conn_str in("", "foobar", "foo;bar;baz", ";"):
+                if conn_str in("", "foobar", "foo;bar;baz", ";", "foo=;bar=;", "=", "=;=="):
                     assert str(e.value) == "Connection string is either blank or malformed."
-                elif conn_str in ("foobar=baz=foo" , "foo=;bar=;", "=", "=;=="):
-                    assert str(e.value) == "Connection string missing required connection details."
+                elif conn_str in ("foobar=baz=foo"):
+                   assert str(e.value) == "Connection string missing required connection details."
 
     @pytest.mark.asyncio
     async def test_closing_pipeline_client_async(self):
