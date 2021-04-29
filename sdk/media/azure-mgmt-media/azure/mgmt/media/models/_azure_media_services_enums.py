@@ -50,6 +50,11 @@ class MetricAggregationType(str, Enum):
     total = "Total"  #: The sum.
 
 
+class ActionType(str, Enum):
+
+    internal = "Internal"  #: An internal action.
+
+
 class StorageAccountType(str, Enum):
 
     primary = "Primary"  #: The primary storage account for the Media Services account.
@@ -66,6 +71,12 @@ class AccountEncryptionKeyType(str, Enum):
 
     system_key = "SystemKey"  #: The Account Key is encrypted with a System Key.
     customer_key = "CustomerKey"  #: The Account Key is encrypted with a Customer Key.
+
+
+class DefaultAction(str, Enum):
+
+    allow = "Allow"  #: All public IP addresses are allowed.
+    deny = "Deny"  #: Public IP addresses are blocked.
 
 
 class ManagedIdentityType(str, Enum):

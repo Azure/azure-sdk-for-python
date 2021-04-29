@@ -24,7 +24,7 @@ class MediaservicesOperations(object):
     :param config: Configuration of service client.
     :param serializer: An object model serializer.
     :param deserializer: An object model deserializer.
-    :ivar api_version: The version of the API to be used with the client request. Constant value: "2020-05-01".
+    :ivar api_version: The version of the API to be used with the client request. Constant value: "2021-05-01".
     """
 
     models = models
@@ -34,7 +34,7 @@ class MediaservicesOperations(object):
         self._client = client
         self._serialize = serializer
         self._deserialize = deserializer
-        self.api_version = "2020-05-01"
+        self.api_version = "2021-05-01"
 
         self.config = config
 
@@ -310,7 +310,7 @@ class MediaservicesOperations(object):
         :param account_name: The Media Services account name.
         :type account_name: str
         :param parameters: The request parameters
-        :type parameters: ~azure.mgmt.media.models.MediaService
+        :type parameters: ~azure.mgmt.media.models.MediaServiceUpdate
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -347,7 +347,7 @@ class MediaservicesOperations(object):
             header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
 
         # Construct body
-        body_content = self._serialize.body(parameters, 'MediaService')
+        body_content = self._serialize.body(parameters, 'MediaServiceUpdate')
 
         # Construct and send request
         request = self._client.patch(url, query_parameters, header_parameters, body_content)
@@ -570,62 +570,3 @@ class MediaservicesOperations(object):
 
         return deserialized
     list_by_subscription.metadata = {'url': '/subscriptions/{subscriptionId}/providers/Microsoft.Media/mediaservices'}
-
-    def get_by_subscription(
-            self, account_name, custom_headers=None, raw=False, **operation_config):
-        """Get a Media Services account.
-
-        Get the details of a Media Services account.
-
-        :param account_name: The Media Services account name.
-        :type account_name: str
-        :param dict custom_headers: headers that will be added to the request
-        :param bool raw: returns the direct response alongside the
-         deserialized response
-        :param operation_config: :ref:`Operation configuration
-         overrides<msrest:optionsforoperations>`.
-        :return: MediaService or ClientRawResponse if raw=true
-        :rtype: ~azure.mgmt.media.models.MediaService or
-         ~msrest.pipeline.ClientRawResponse
-        :raises:
-         :class:`ApiErrorException<azure.mgmt.media.models.ApiErrorException>`
-        """
-        # Construct URL
-        url = self.get_by_subscription.metadata['url']
-        path_format_arguments = {
-            'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
-            'accountName': self._serialize.url("account_name", account_name, 'str')
-        }
-        url = self._client.format_url(url, **path_format_arguments)
-
-        # Construct parameters
-        query_parameters = {}
-        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
-
-        # Construct headers
-        header_parameters = {}
-        header_parameters['Accept'] = 'application/json'
-        if self.config.generate_client_request_id:
-            header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
-        if custom_headers:
-            header_parameters.update(custom_headers)
-        if self.config.accept_language is not None:
-            header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
-
-        # Construct and send request
-        request = self._client.get(url, query_parameters, header_parameters)
-        response = self._client.send(request, stream=False, **operation_config)
-
-        if response.status_code not in [200]:
-            raise models.ApiErrorException(self._deserialize, response)
-
-        deserialized = None
-        if response.status_code == 200:
-            deserialized = self._deserialize('MediaService', response)
-
-        if raw:
-            client_raw_response = ClientRawResponse(deserialized, response)
-            return client_raw_response
-
-        return deserialized
-    get_by_subscription.metadata = {'url': '/subscriptions/{subscriptionId}/providers/Microsoft.Media/mediaservices/{accountName}'}
