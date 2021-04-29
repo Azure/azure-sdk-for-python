@@ -79,16 +79,19 @@ class FarmBeatsClient(object):
     :vartype weather: azure.farmbeats.aio.operations.WeatherOperations
     :param credential: Credential needed for the client to connect to Azure.
     :type credential: ~azure.core.credentials_async.AsyncTokenCredential
+    :param endpoint: The endpoint of your FarmBeats resource (protocol and hostname, for example: https://{vaultName}.farmbeats.azure.net).
+    :type endpoint: str
     :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
     """
 
     def __init__(
         self,
         credential: "AsyncTokenCredential",
+        endpoint: str,
         **kwargs: Any
     ) -> None:
-        base_url = 'None'
-        self._config = FarmBeatsClientConfiguration(credential, **kwargs)
+        base_url = '{Endpoint}'
+        self._config = FarmBeatsClientConfiguration(credential, endpoint, **kwargs)
         self._client = AsyncPipelineClient(base_url=base_url, config=self._config, **kwargs)
 
         self._serialize = Serializer()
@@ -118,7 +121,10 @@ class FarmBeatsClient(object):
         :rtype: ~azure.farmbeats.core.rest.AsyncHttpResponse
         """
         request_copy = deepcopy(http_request)
-        request_copy.url = self._client.format_url(request_copy.url)
+        path_format_arguments = {
+            'Endpoint': self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
+        }
+        request_copy.url = self._client.format_url(request_copy.url, **path_format_arguments)
         if kwargs.pop("stream_response", False):
             return _AsyncStreamContextManager(
                 client=self._client._pipeline,

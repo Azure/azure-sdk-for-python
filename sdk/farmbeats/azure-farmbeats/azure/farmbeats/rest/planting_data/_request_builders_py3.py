@@ -6,11 +6,15 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 import datetime
-from typing import Any, Dict, List, Optional
+from typing import Any, IO, List, Optional, TYPE_CHECKING
 
 from azure.core.pipeline.transport._base import _format_url_section
 from azure.farmbeats.core.rest import HttpRequest
 from msrest import Serializer
+
+if TYPE_CHECKING:
+    # pylint: disable=unused-import,ungrouped-imports
+    from typing import Any
 
 _SERIALIZER = Serializer()
 

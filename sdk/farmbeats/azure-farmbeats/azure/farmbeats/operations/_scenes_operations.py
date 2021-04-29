@@ -86,6 +86,20 @@ class ScenesOperations(object):
         :rtype: ~azure.core.paging.ItemPaged[Any]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
+
+        farmer_id = kwargs.pop('farmer_id')  # type: str
+        boundary_id = kwargs.pop('boundary_id')  # type: str
+        provider = kwargs.pop('provider', "Microsoft")  # type: str
+        source = kwargs.pop('source', "Sentinel_2_L2A")  # type: Optional[str]
+        start_date_time = kwargs.pop('start_date_time', None)  # type: Optional[datetime.datetime]
+        end_date_time = kwargs.pop('end_date_time', None)  # type: Optional[datetime.datetime]
+        max_cloud_coverage_percentage = kwargs.pop('max_cloud_coverage_percentage', 100)  # type: Optional[float]
+        max_dark_pixel_coverage_percentage = kwargs.pop('max_dark_pixel_coverage_percentage', 100)  # type: Optional[float]
+        image_names = kwargs.pop('image_names', None)  # type: Optional[List[str]]
+        image_resolutions = kwargs.pop('image_resolutions', None)  # type: Optional[List[float]]
+        image_formats = kwargs.pop('image_formats', None)  # type: Optional[List[str]]
+        max_page_size = kwargs.pop('max_page_size', 50)  # type: Optional[int]
+        skip_token = kwargs.pop('skip_token', None)  # type: Optional[str]
         cls = kwargs.pop('cls', None)  # type: ClsType[Any]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
@@ -94,19 +108,6 @@ class ScenesOperations(object):
 
         def prepare_request(next_link=None):
             if not next_link:
-                farmer_id = kwargs.pop('farmer_id')  # type: str
-                boundary_id = kwargs.pop('boundary_id')  # type: str
-                provider = kwargs.pop('provider', "Microsoft")  # type: str
-                source = kwargs.pop('source', "Sentinel_2_L2A")  # type: Optional[str]
-                start_date_time = kwargs.pop('start_date_time', None)  # type: Optional[datetime.datetime]
-                end_date_time = kwargs.pop('end_date_time', None)  # type: Optional[datetime.datetime]
-                max_cloud_coverage_percentage = kwargs.pop('max_cloud_coverage_percentage', 100)  # type: Optional[float]
-                max_dark_pixel_coverage_percentage = kwargs.pop('max_dark_pixel_coverage_percentage', 100)  # type: Optional[float]
-                image_names = kwargs.pop('image_names', None)  # type: Optional[List[str]]
-                image_resolutions = kwargs.pop('image_resolutions', None)  # type: Optional[List[float]]
-                image_formats = kwargs.pop('image_formats', None)  # type: Optional[List[str]]
-                max_page_size = kwargs.pop('max_page_size', 50)  # type: Optional[int]
-                skip_token = kwargs.pop('skip_token', None)  # type: Optional[str]
                 request = rest_scenes.build_list_request(
                     farmer_id=farmer_id,
                     boundary_id=boundary_id,
@@ -124,22 +125,12 @@ class ScenesOperations(object):
                     template_url=self.list.metadata['url'],
                     **kwargs
                 )._internal_request
-                request.url = self._client.format_url(request.url)
+                path_format_arguments = {
+                    'Endpoint': self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
+                }
+                request.url = self._client.format_url(request.url, **path_format_arguments)
                 kwargs.pop("content_type", None)
             else:
-                farmer_id = kwargs.pop('farmer_id')  # type: str
-                boundary_id = kwargs.pop('boundary_id')  # type: str
-                provider = kwargs.pop('provider', "Microsoft")  # type: str
-                source = kwargs.pop('source', "Sentinel_2_L2A")  # type: Optional[str]
-                start_date_time = kwargs.pop('start_date_time', None)  # type: Optional[datetime.datetime]
-                end_date_time = kwargs.pop('end_date_time', None)  # type: Optional[datetime.datetime]
-                max_cloud_coverage_percentage = kwargs.pop('max_cloud_coverage_percentage', 100)  # type: Optional[float]
-                max_dark_pixel_coverage_percentage = kwargs.pop('max_dark_pixel_coverage_percentage', 100)  # type: Optional[float]
-                image_names = kwargs.pop('image_names', None)  # type: Optional[List[str]]
-                image_resolutions = kwargs.pop('image_resolutions', None)  # type: Optional[List[float]]
-                image_formats = kwargs.pop('image_formats', None)  # type: Optional[List[str]]
-                max_page_size = kwargs.pop('max_page_size', 50)  # type: Optional[int]
-                skip_token = kwargs.pop('skip_token', None)  # type: Optional[str]
                 request = rest_scenes.build_list_request(
                     farmer_id=farmer_id,
                     boundary_id=boundary_id,
@@ -157,11 +148,17 @@ class ScenesOperations(object):
                     template_url=self.list.metadata['url'],
                     **kwargs
                 )._internal_request
-                request.url = self._client.format_url(request.url)
+                path_format_arguments = {
+                    'Endpoint': self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
+                }
+                request.url = self._client.format_url(request.url, **path_format_arguments)
                 kwargs.pop("content_type", None)
                 # little hacky, but this code will soon be replaced with code that won't need the hack
+                path_format_arguments = {
+                    'Endpoint': self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
+                }
                 request._internal_request.method = "GET"
-                request.url = self._client.format_url(next_link)
+                request.url = self._client.format_url(next_link, **path_format_arguments)
             return request
 
         def extract_data(pipeline_response):
@@ -201,8 +198,9 @@ class ScenesOperations(object):
         }
         error_map.update(kwargs.pop('error_map', {}))
 
-        content_type = kwargs.pop("content_type", "application/json")
         job = kwargs.pop('job', None)  # type: Any
+
+        content_type = kwargs.pop("content_type", "application/json")
         if job is not None:
             json = self._serialize.body(job, 'SatelliteDataIngestionJob')
         else:
@@ -216,7 +214,10 @@ class ScenesOperations(object):
             template_url=self._create_satellite_data_ingestion_jo_initial.metadata['url'],
             **kwargs
         )._internal_request
-        request.url = self._client.format_url(request.url)
+        path_format_arguments = {
+            'Endpoint': self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
+        }
+        request.url = self._client.format_url(request.url, **path_format_arguments)
         kwargs.pop("content_type", None)
 
         pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
@@ -257,6 +258,8 @@ class ScenesOperations(object):
         :rtype: ~azure.core.polling.LROPoller[Any]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
+
+        job = kwargs.pop('job', None)  # type: Any
         polling = kwargs.pop('polling', False)  # type: Union[bool, PollingMethod]
         cls = kwargs.pop('cls', None)  # type: ClsType[Any]
         lro_delay = kwargs.pop(
@@ -285,7 +288,11 @@ class ScenesOperations(object):
                 return cls(pipeline_response, deserialized, {})
             return deserialized
 
-        if polling is True: polling_method = LROBasePolling(lro_delay, lro_options={'final-state-via': 'location'},  **kwargs)
+        path_format_arguments = {
+            'Endpoint': self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
+        }
+
+        if polling is True: polling_method = LROBasePolling(lro_delay, lro_options={'final-state-via': 'location'}, path_format_arguments=path_format_arguments,  **kwargs)
         elif polling is False: polling_method = NoPolling()
         else: polling_method = polling
         if cont_token:
@@ -326,7 +333,10 @@ class ScenesOperations(object):
             template_url=self.get_satellite_data_ingestion_job_details.metadata['url'],
             **kwargs
         )._internal_request
-        request.url = self._client.format_url(request.url)
+        path_format_arguments = {
+            'Endpoint': self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
+        }
+        request.url = self._client.format_url(request.url, **path_format_arguments)
         kwargs.pop("content_type", None)
 
         pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
@@ -366,12 +376,16 @@ class ScenesOperations(object):
         error_map.update(kwargs.pop('error_map', {}))
 
         file_path = kwargs.pop('file_path')  # type: str
+
         request = rest_scenes.build_download_request(
             file_path=file_path,
             template_url=self.download.metadata['url'],
             **kwargs
         )._internal_request
-        request.url = self._client.format_url(request.url)
+        path_format_arguments = {
+            'Endpoint': self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
+        }
+        request.url = self._client.format_url(request.url, **path_format_arguments)
         kwargs.pop("content_type", None)
 
         pipeline_response = self._client._pipeline.run(request, stream=True, **kwargs)

@@ -91,6 +91,22 @@ class BoundariesOperations(object):
         :rtype: ~azure.core.paging.ItemPaged[Any]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
+
+        is_primary = kwargs.pop('is_primary', None)  # type: Optional[bool]
+        parent_type = kwargs.pop('parent_type', None)  # type: Optional[str]
+        parent_ids = kwargs.pop('parent_ids', None)  # type: Optional[List[str]]
+        min_acreage = kwargs.pop('min_acreage', None)  # type: Optional[float]
+        max_acreage = kwargs.pop('max_acreage', None)  # type: Optional[float]
+        ids = kwargs.pop('ids', None)  # type: Optional[List[str]]
+        names = kwargs.pop('names', None)  # type: Optional[List[str]]
+        property_filters = kwargs.pop('property_filters', None)  # type: Optional[List[str]]
+        statuses = kwargs.pop('statuses', None)  # type: Optional[List[str]]
+        min_created_date_time = kwargs.pop('min_created_date_time', None)  # type: Optional[datetime.datetime]
+        max_created_date_time = kwargs.pop('max_created_date_time', None)  # type: Optional[datetime.datetime]
+        min_last_modified_date_time = kwargs.pop('min_last_modified_date_time', None)  # type: Optional[datetime.datetime]
+        max_last_modified_date_time = kwargs.pop('max_last_modified_date_time', None)  # type: Optional[datetime.datetime]
+        max_page_size = kwargs.pop('max_page_size', 50)  # type: Optional[int]
+        skip_token = kwargs.pop('skip_token', None)  # type: Optional[str]
         cls = kwargs.pop('cls', None)  # type: ClsType[Any]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
@@ -99,21 +115,6 @@ class BoundariesOperations(object):
 
         def prepare_request(next_link=None):
             if not next_link:
-                is_primary = kwargs.pop('is_primary', None)  # type: Optional[bool]
-                parent_type = kwargs.pop('parent_type', None)  # type: Optional[str]
-                parent_ids = kwargs.pop('parent_ids', None)  # type: Optional[List[str]]
-                min_acreage = kwargs.pop('min_acreage', None)  # type: Optional[float]
-                max_acreage = kwargs.pop('max_acreage', None)  # type: Optional[float]
-                ids = kwargs.pop('ids', None)  # type: Optional[List[str]]
-                names = kwargs.pop('names', None)  # type: Optional[List[str]]
-                property_filters = kwargs.pop('property_filters', None)  # type: Optional[List[str]]
-                statuses = kwargs.pop('statuses', None)  # type: Optional[List[str]]
-                min_created_date_time = kwargs.pop('min_created_date_time', None)  # type: Optional[datetime.datetime]
-                max_created_date_time = kwargs.pop('max_created_date_time', None)  # type: Optional[datetime.datetime]
-                min_last_modified_date_time = kwargs.pop('min_last_modified_date_time', None)  # type: Optional[datetime.datetime]
-                max_last_modified_date_time = kwargs.pop('max_last_modified_date_time', None)  # type: Optional[datetime.datetime]
-                max_page_size = kwargs.pop('max_page_size', 50)  # type: Optional[int]
-                skip_token = kwargs.pop('skip_token', None)  # type: Optional[str]
                 request = rest_boundaries.build_list_by_farmer_id_request(
                     farmer_id=farmer_id,
                     is_primary=is_primary,
@@ -134,24 +135,12 @@ class BoundariesOperations(object):
                     template_url=self.list_by_farmer_id.metadata['url'],
                     **kwargs
                 )._internal_request
-                request.url = self._client.format_url(request.url)
+                path_format_arguments = {
+                    'Endpoint': self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
+                }
+                request.url = self._client.format_url(request.url, **path_format_arguments)
                 kwargs.pop("content_type", None)
             else:
-                is_primary = kwargs.pop('is_primary', None)  # type: Optional[bool]
-                parent_type = kwargs.pop('parent_type', None)  # type: Optional[str]
-                parent_ids = kwargs.pop('parent_ids', None)  # type: Optional[List[str]]
-                min_acreage = kwargs.pop('min_acreage', None)  # type: Optional[float]
-                max_acreage = kwargs.pop('max_acreage', None)  # type: Optional[float]
-                ids = kwargs.pop('ids', None)  # type: Optional[List[str]]
-                names = kwargs.pop('names', None)  # type: Optional[List[str]]
-                property_filters = kwargs.pop('property_filters', None)  # type: Optional[List[str]]
-                statuses = kwargs.pop('statuses', None)  # type: Optional[List[str]]
-                min_created_date_time = kwargs.pop('min_created_date_time', None)  # type: Optional[datetime.datetime]
-                max_created_date_time = kwargs.pop('max_created_date_time', None)  # type: Optional[datetime.datetime]
-                min_last_modified_date_time = kwargs.pop('min_last_modified_date_time', None)  # type: Optional[datetime.datetime]
-                max_last_modified_date_time = kwargs.pop('max_last_modified_date_time', None)  # type: Optional[datetime.datetime]
-                max_page_size = kwargs.pop('max_page_size', 50)  # type: Optional[int]
-                skip_token = kwargs.pop('skip_token', None)  # type: Optional[str]
                 request = rest_boundaries.build_list_by_farmer_id_request(
                     farmer_id=farmer_id,
                     is_primary=is_primary,
@@ -172,11 +161,17 @@ class BoundariesOperations(object):
                     template_url=self.list_by_farmer_id.metadata['url'],
                     **kwargs
                 )._internal_request
-                request.url = self._client.format_url(request.url)
+                path_format_arguments = {
+                    'Endpoint': self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
+                }
+                request.url = self._client.format_url(request.url, **path_format_arguments)
                 kwargs.pop("content_type", None)
                 # little hacky, but this code will soon be replaced with code that won't need the hack
+                path_format_arguments = {
+                    'Endpoint': self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
+                }
                 request._internal_request.method = "GET"
-                request.url = self._client.format_url(next_link)
+                request.url = self._client.format_url(next_link, **path_format_arguments)
             return request
 
         def extract_data(pipeline_response):
@@ -221,6 +216,8 @@ class BoundariesOperations(object):
         :rtype: ~azure.core.paging.ItemPaged[Any]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
+
+        query = kwargs.pop('query', None)  # type: Any
         cls = kwargs.pop('cls', None)  # type: ClsType[Any]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
@@ -230,7 +227,6 @@ class BoundariesOperations(object):
         def prepare_request(next_link=None):
             if not next_link:
                 content_type = kwargs.pop("content_type", "application/json")
-                query = kwargs.pop('query', None)  # type: Any
                 if query is not None:
                     json = query
                 else:
@@ -244,11 +240,13 @@ class BoundariesOperations(object):
                     template_url=self.search_by_farmer_id.metadata['url'],
                     **kwargs
                 )._internal_request
-                request.url = self._client.format_url(request.url)
+                path_format_arguments = {
+                    'Endpoint': self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
+                }
+                request.url = self._client.format_url(request.url, **path_format_arguments)
                 kwargs.pop("content_type", None)
             else:
                 content_type = kwargs.pop("content_type", "application/json")
-                query = kwargs.pop('query', None)  # type: Any
                 if query is not None:
                     json = query
                 else:
@@ -262,11 +260,17 @@ class BoundariesOperations(object):
                     template_url=self.search_by_farmer_id.metadata['url'],
                     **kwargs
                 )._internal_request
-                request.url = self._client.format_url(request.url)
+                path_format_arguments = {
+                    'Endpoint': self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
+                }
+                request.url = self._client.format_url(request.url, **path_format_arguments)
                 kwargs.pop("content_type", None)
                 # little hacky, but this code will soon be replaced with code that won't need the hack
+                path_format_arguments = {
+                    'Endpoint': self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
+                }
                 request._internal_request.method = "GET"
-                request.url = self._client.format_url(next_link)
+                request.url = self._client.format_url(next_link, **path_format_arguments)
             return request
 
         def extract_data(pipeline_response):
@@ -338,6 +342,22 @@ class BoundariesOperations(object):
         :rtype: ~azure.core.paging.ItemPaged[Any]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
+
+        is_primary = kwargs.pop('is_primary', None)  # type: Optional[bool]
+        parent_type = kwargs.pop('parent_type', None)  # type: Optional[str]
+        parent_ids = kwargs.pop('parent_ids', None)  # type: Optional[List[str]]
+        min_acreage = kwargs.pop('min_acreage', None)  # type: Optional[float]
+        max_acreage = kwargs.pop('max_acreage', None)  # type: Optional[float]
+        ids = kwargs.pop('ids', None)  # type: Optional[List[str]]
+        names = kwargs.pop('names', None)  # type: Optional[List[str]]
+        property_filters = kwargs.pop('property_filters', None)  # type: Optional[List[str]]
+        statuses = kwargs.pop('statuses', None)  # type: Optional[List[str]]
+        min_created_date_time = kwargs.pop('min_created_date_time', None)  # type: Optional[datetime.datetime]
+        max_created_date_time = kwargs.pop('max_created_date_time', None)  # type: Optional[datetime.datetime]
+        min_last_modified_date_time = kwargs.pop('min_last_modified_date_time', None)  # type: Optional[datetime.datetime]
+        max_last_modified_date_time = kwargs.pop('max_last_modified_date_time', None)  # type: Optional[datetime.datetime]
+        max_page_size = kwargs.pop('max_page_size', 50)  # type: Optional[int]
+        skip_token = kwargs.pop('skip_token', None)  # type: Optional[str]
         cls = kwargs.pop('cls', None)  # type: ClsType[Any]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
@@ -346,21 +366,6 @@ class BoundariesOperations(object):
 
         def prepare_request(next_link=None):
             if not next_link:
-                is_primary = kwargs.pop('is_primary', None)  # type: Optional[bool]
-                parent_type = kwargs.pop('parent_type', None)  # type: Optional[str]
-                parent_ids = kwargs.pop('parent_ids', None)  # type: Optional[List[str]]
-                min_acreage = kwargs.pop('min_acreage', None)  # type: Optional[float]
-                max_acreage = kwargs.pop('max_acreage', None)  # type: Optional[float]
-                ids = kwargs.pop('ids', None)  # type: Optional[List[str]]
-                names = kwargs.pop('names', None)  # type: Optional[List[str]]
-                property_filters = kwargs.pop('property_filters', None)  # type: Optional[List[str]]
-                statuses = kwargs.pop('statuses', None)  # type: Optional[List[str]]
-                min_created_date_time = kwargs.pop('min_created_date_time', None)  # type: Optional[datetime.datetime]
-                max_created_date_time = kwargs.pop('max_created_date_time', None)  # type: Optional[datetime.datetime]
-                min_last_modified_date_time = kwargs.pop('min_last_modified_date_time', None)  # type: Optional[datetime.datetime]
-                max_last_modified_date_time = kwargs.pop('max_last_modified_date_time', None)  # type: Optional[datetime.datetime]
-                max_page_size = kwargs.pop('max_page_size', 50)  # type: Optional[int]
-                skip_token = kwargs.pop('skip_token', None)  # type: Optional[str]
                 request = rest_boundaries.build_list_request(
                     is_primary=is_primary,
                     parent_type=parent_type,
@@ -380,24 +385,12 @@ class BoundariesOperations(object):
                     template_url=self.list.metadata['url'],
                     **kwargs
                 )._internal_request
-                request.url = self._client.format_url(request.url)
+                path_format_arguments = {
+                    'Endpoint': self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
+                }
+                request.url = self._client.format_url(request.url, **path_format_arguments)
                 kwargs.pop("content_type", None)
             else:
-                is_primary = kwargs.pop('is_primary', None)  # type: Optional[bool]
-                parent_type = kwargs.pop('parent_type', None)  # type: Optional[str]
-                parent_ids = kwargs.pop('parent_ids', None)  # type: Optional[List[str]]
-                min_acreage = kwargs.pop('min_acreage', None)  # type: Optional[float]
-                max_acreage = kwargs.pop('max_acreage', None)  # type: Optional[float]
-                ids = kwargs.pop('ids', None)  # type: Optional[List[str]]
-                names = kwargs.pop('names', None)  # type: Optional[List[str]]
-                property_filters = kwargs.pop('property_filters', None)  # type: Optional[List[str]]
-                statuses = kwargs.pop('statuses', None)  # type: Optional[List[str]]
-                min_created_date_time = kwargs.pop('min_created_date_time', None)  # type: Optional[datetime.datetime]
-                max_created_date_time = kwargs.pop('max_created_date_time', None)  # type: Optional[datetime.datetime]
-                min_last_modified_date_time = kwargs.pop('min_last_modified_date_time', None)  # type: Optional[datetime.datetime]
-                max_last_modified_date_time = kwargs.pop('max_last_modified_date_time', None)  # type: Optional[datetime.datetime]
-                max_page_size = kwargs.pop('max_page_size', 50)  # type: Optional[int]
-                skip_token = kwargs.pop('skip_token', None)  # type: Optional[str]
                 request = rest_boundaries.build_list_request(
                     is_primary=is_primary,
                     parent_type=parent_type,
@@ -417,11 +410,17 @@ class BoundariesOperations(object):
                     template_url=self.list.metadata['url'],
                     **kwargs
                 )._internal_request
-                request.url = self._client.format_url(request.url)
+                path_format_arguments = {
+                    'Endpoint': self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
+                }
+                request.url = self._client.format_url(request.url, **path_format_arguments)
                 kwargs.pop("content_type", None)
                 # little hacky, but this code will soon be replaced with code that won't need the hack
+                path_format_arguments = {
+                    'Endpoint': self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
+                }
                 request._internal_request.method = "GET"
-                request.url = self._client.format_url(next_link)
+                request.url = self._client.format_url(next_link, **path_format_arguments)
             return request
 
         def extract_data(pipeline_response):
@@ -463,6 +462,8 @@ class BoundariesOperations(object):
         :rtype: ~azure.core.paging.ItemPaged[Any]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
+
+        query = kwargs.pop('query', None)  # type: Any
         cls = kwargs.pop('cls', None)  # type: ClsType[Any]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
@@ -472,7 +473,6 @@ class BoundariesOperations(object):
         def prepare_request(next_link=None):
             if not next_link:
                 content_type = kwargs.pop("content_type", "application/json")
-                query = kwargs.pop('query', None)  # type: Any
                 if query is not None:
                     json = query
                 else:
@@ -485,11 +485,13 @@ class BoundariesOperations(object):
                     template_url=self.search.metadata['url'],
                     **kwargs
                 )._internal_request
-                request.url = self._client.format_url(request.url)
+                path_format_arguments = {
+                    'Endpoint': self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
+                }
+                request.url = self._client.format_url(request.url, **path_format_arguments)
                 kwargs.pop("content_type", None)
             else:
                 content_type = kwargs.pop("content_type", "application/json")
-                query = kwargs.pop('query', None)  # type: Any
                 if query is not None:
                     json = query
                 else:
@@ -502,11 +504,17 @@ class BoundariesOperations(object):
                     template_url=self.search.metadata['url'],
                     **kwargs
                 )._internal_request
-                request.url = self._client.format_url(request.url)
+                path_format_arguments = {
+                    'Endpoint': self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
+                }
+                request.url = self._client.format_url(request.url, **path_format_arguments)
                 kwargs.pop("content_type", None)
                 # little hacky, but this code will soon be replaced with code that won't need the hack
+                path_format_arguments = {
+                    'Endpoint': self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
+                }
                 request._internal_request.method = "GET"
-                request.url = self._client.format_url(next_link)
+                request.url = self._client.format_url(next_link, **path_format_arguments)
             return request
 
         def extract_data(pipeline_response):
@@ -560,7 +568,10 @@ class BoundariesOperations(object):
             template_url=self.get_cascade_delete_job_details.metadata['url'],
             **kwargs
         )._internal_request
-        request.url = self._client.format_url(request.url)
+        path_format_arguments = {
+            'Endpoint': self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
+        }
+        request.url = self._client.format_url(request.url, **path_format_arguments)
         kwargs.pop("content_type", None)
 
         pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
@@ -595,6 +606,7 @@ class BoundariesOperations(object):
 
         farmer_id = kwargs.pop('farmer_id')  # type: str
         boundary_id = kwargs.pop('boundary_id')  # type: str
+
         request = rest_boundaries.build_create_cascade_delete_job_request_initial(
             job_id=job_id,
             farmer_id=farmer_id,
@@ -602,7 +614,10 @@ class BoundariesOperations(object):
             template_url=self._create_cascade_delete_jo_initial.metadata['url'],
             **kwargs
         )._internal_request
-        request.url = self._client.format_url(request.url)
+        path_format_arguments = {
+            'Endpoint': self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
+        }
+        request.url = self._client.format_url(request.url, **path_format_arguments)
         kwargs.pop("content_type", None)
 
         pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
@@ -645,6 +660,9 @@ class BoundariesOperations(object):
         :rtype: ~azure.core.polling.LROPoller[Any]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
+
+        farmer_id = kwargs.pop('farmer_id')  # type: str
+        boundary_id = kwargs.pop('boundary_id')  # type: str
         polling = kwargs.pop('polling', False)  # type: Union[bool, PollingMethod]
         cls = kwargs.pop('cls', None)  # type: ClsType[Any]
         lro_delay = kwargs.pop(
@@ -675,7 +693,11 @@ class BoundariesOperations(object):
                 return cls(pipeline_response, deserialized, {})
             return deserialized
 
-        if polling is True: polling_method = LROBasePolling(lro_delay, lro_options={'final-state-via': 'location'},  **kwargs)
+        path_format_arguments = {
+            'Endpoint': self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
+        }
+
+        if polling is True: polling_method = LROBasePolling(lro_delay, lro_options={'final-state-via': 'location'}, path_format_arguments=path_format_arguments,  **kwargs)
         elif polling is False: polling_method = NoPolling()
         else: polling_method = polling
         if cont_token:
@@ -720,7 +742,10 @@ class BoundariesOperations(object):
             template_url=self.get.metadata['url'],
             **kwargs
         )._internal_request
-        request.url = self._client.format_url(request.url)
+        path_format_arguments = {
+            'Endpoint': self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
+        }
+        request.url = self._client.format_url(request.url, **path_format_arguments)
         kwargs.pop("content_type", None)
 
         pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
@@ -767,8 +792,9 @@ class BoundariesOperations(object):
         }
         error_map.update(kwargs.pop('error_map', {}))
 
-        content_type = kwargs.pop("content_type", "application/merge-patch+json")
         boundary = kwargs.pop('boundary', None)  # type: Any
+
+        content_type = kwargs.pop("content_type", "application/merge-patch+json")
         if boundary is not None:
             json = boundary
         else:
@@ -783,7 +809,10 @@ class BoundariesOperations(object):
             template_url=self.create_or_update.metadata['url'],
             **kwargs
         )._internal_request
-        request.url = self._client.format_url(request.url)
+        path_format_arguments = {
+            'Endpoint': self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
+        }
+        request.url = self._client.format_url(request.url, **path_format_arguments)
         kwargs.pop("content_type", None)
 
         pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
@@ -836,7 +865,10 @@ class BoundariesOperations(object):
             template_url=self.delete.metadata['url'],
             **kwargs
         )._internal_request
-        request.url = self._client.format_url(request.url)
+        path_format_arguments = {
+            'Endpoint': self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
+        }
+        request.url = self._client.format_url(request.url, **path_format_arguments)
         kwargs.pop("content_type", None)
 
         pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
@@ -881,6 +913,7 @@ class BoundariesOperations(object):
 
         other_farmer_id = kwargs.pop('other_farmer_id')  # type: str
         other_boundary_id = kwargs.pop('other_boundary_id')  # type: str
+
         request = rest_boundaries.build_get_overlap_request(
             farmer_id=farmer_id,
             boundary_id=boundary_id,
@@ -889,7 +922,10 @@ class BoundariesOperations(object):
             template_url=self.get_overlap.metadata['url'],
             **kwargs
         )._internal_request
-        request.url = self._client.format_url(request.url)
+        path_format_arguments = {
+            'Endpoint': self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
+        }
+        request.url = self._client.format_url(request.url, **path_format_arguments)
         kwargs.pop("content_type", None)
 
         pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)

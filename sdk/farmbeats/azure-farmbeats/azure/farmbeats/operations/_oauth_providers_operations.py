@@ -76,6 +76,17 @@ class OAuthProvidersOperations(object):
         :rtype: ~azure.core.paging.ItemPaged[Any]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
+
+        ids = kwargs.pop('ids', None)  # type: Optional[List[str]]
+        names = kwargs.pop('names', None)  # type: Optional[List[str]]
+        property_filters = kwargs.pop('property_filters', None)  # type: Optional[List[str]]
+        statuses = kwargs.pop('statuses', None)  # type: Optional[List[str]]
+        min_created_date_time = kwargs.pop('min_created_date_time', None)  # type: Optional[datetime.datetime]
+        max_created_date_time = kwargs.pop('max_created_date_time', None)  # type: Optional[datetime.datetime]
+        min_last_modified_date_time = kwargs.pop('min_last_modified_date_time', None)  # type: Optional[datetime.datetime]
+        max_last_modified_date_time = kwargs.pop('max_last_modified_date_time', None)  # type: Optional[datetime.datetime]
+        max_page_size = kwargs.pop('max_page_size', 50)  # type: Optional[int]
+        skip_token = kwargs.pop('skip_token', None)  # type: Optional[str]
         cls = kwargs.pop('cls', None)  # type: ClsType[Any]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
@@ -84,16 +95,6 @@ class OAuthProvidersOperations(object):
 
         def prepare_request(next_link=None):
             if not next_link:
-                ids = kwargs.pop('ids', None)  # type: Optional[List[str]]
-                names = kwargs.pop('names', None)  # type: Optional[List[str]]
-                property_filters = kwargs.pop('property_filters', None)  # type: Optional[List[str]]
-                statuses = kwargs.pop('statuses', None)  # type: Optional[List[str]]
-                min_created_date_time = kwargs.pop('min_created_date_time', None)  # type: Optional[datetime.datetime]
-                max_created_date_time = kwargs.pop('max_created_date_time', None)  # type: Optional[datetime.datetime]
-                min_last_modified_date_time = kwargs.pop('min_last_modified_date_time', None)  # type: Optional[datetime.datetime]
-                max_last_modified_date_time = kwargs.pop('max_last_modified_date_time', None)  # type: Optional[datetime.datetime]
-                max_page_size = kwargs.pop('max_page_size', 50)  # type: Optional[int]
-                skip_token = kwargs.pop('skip_token', None)  # type: Optional[str]
                 request = rest_oauth_providers.build_list_request(
                     ids=ids,
                     names=names,
@@ -108,19 +109,12 @@ class OAuthProvidersOperations(object):
                     template_url=self.list.metadata['url'],
                     **kwargs
                 )._internal_request
-                request.url = self._client.format_url(request.url)
+                path_format_arguments = {
+                    'Endpoint': self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
+                }
+                request.url = self._client.format_url(request.url, **path_format_arguments)
                 kwargs.pop("content_type", None)
             else:
-                ids = kwargs.pop('ids', None)  # type: Optional[List[str]]
-                names = kwargs.pop('names', None)  # type: Optional[List[str]]
-                property_filters = kwargs.pop('property_filters', None)  # type: Optional[List[str]]
-                statuses = kwargs.pop('statuses', None)  # type: Optional[List[str]]
-                min_created_date_time = kwargs.pop('min_created_date_time', None)  # type: Optional[datetime.datetime]
-                max_created_date_time = kwargs.pop('max_created_date_time', None)  # type: Optional[datetime.datetime]
-                min_last_modified_date_time = kwargs.pop('min_last_modified_date_time', None)  # type: Optional[datetime.datetime]
-                max_last_modified_date_time = kwargs.pop('max_last_modified_date_time', None)  # type: Optional[datetime.datetime]
-                max_page_size = kwargs.pop('max_page_size', 50)  # type: Optional[int]
-                skip_token = kwargs.pop('skip_token', None)  # type: Optional[str]
                 request = rest_oauth_providers.build_list_request(
                     ids=ids,
                     names=names,
@@ -135,11 +129,17 @@ class OAuthProvidersOperations(object):
                     template_url=self.list.metadata['url'],
                     **kwargs
                 )._internal_request
-                request.url = self._client.format_url(request.url)
+                path_format_arguments = {
+                    'Endpoint': self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
+                }
+                request.url = self._client.format_url(request.url, **path_format_arguments)
                 kwargs.pop("content_type", None)
                 # little hacky, but this code will soon be replaced with code that won't need the hack
+                path_format_arguments = {
+                    'Endpoint': self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
+                }
                 request._internal_request.method = "GET"
-                request.url = self._client.format_url(next_link)
+                request.url = self._client.format_url(next_link, **path_format_arguments)
             return request
 
         def extract_data(pipeline_response):
@@ -193,7 +193,10 @@ class OAuthProvidersOperations(object):
             template_url=self.get.metadata['url'],
             **kwargs
         )._internal_request
-        request.url = self._client.format_url(request.url)
+        path_format_arguments = {
+            'Endpoint': self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
+        }
+        request.url = self._client.format_url(request.url, **path_format_arguments)
         kwargs.pop("content_type", None)
 
         pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
@@ -237,8 +240,9 @@ class OAuthProvidersOperations(object):
         }
         error_map.update(kwargs.pop('error_map', {}))
 
-        content_type = kwargs.pop("content_type", "application/merge-patch+json")
         oauth_provider = kwargs.pop('oauth_provider', None)  # type: Any
+
+        content_type = kwargs.pop("content_type", "application/merge-patch+json")
         if oauth_provider is not None:
             json = oauth_provider
         else:
@@ -252,7 +256,10 @@ class OAuthProvidersOperations(object):
             template_url=self.create_or_update.metadata['url'],
             **kwargs
         )._internal_request
-        request.url = self._client.format_url(request.url)
+        path_format_arguments = {
+            'Endpoint': self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
+        }
+        request.url = self._client.format_url(request.url, **path_format_arguments)
         kwargs.pop("content_type", None)
 
         pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
@@ -301,7 +308,10 @@ class OAuthProvidersOperations(object):
             template_url=self.delete.metadata['url'],
             **kwargs
         )._internal_request
-        request.url = self._client.format_url(request.url)
+        path_format_arguments = {
+            'Endpoint': self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
+        }
+        request.url = self._client.format_url(request.url, **path_format_arguments)
         kwargs.pop("content_type", None)
 
         pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)

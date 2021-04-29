@@ -88,6 +88,22 @@ class SeasonsOperations(object):
         :rtype: ~azure.core.paging.ItemPaged[Any]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
+
+        min_start_date_time = kwargs.pop('min_start_date_time', None)  # type: Optional[datetime.datetime]
+        max_start_date_time = kwargs.pop('max_start_date_time', None)  # type: Optional[datetime.datetime]
+        min_end_date_time = kwargs.pop('min_end_date_time', None)  # type: Optional[datetime.datetime]
+        max_end_date_time = kwargs.pop('max_end_date_time', None)  # type: Optional[datetime.datetime]
+        years = kwargs.pop('years', None)  # type: Optional[List[int]]
+        ids = kwargs.pop('ids', None)  # type: Optional[List[str]]
+        names = kwargs.pop('names', None)  # type: Optional[List[str]]
+        property_filters = kwargs.pop('property_filters', None)  # type: Optional[List[str]]
+        statuses = kwargs.pop('statuses', None)  # type: Optional[List[str]]
+        min_created_date_time = kwargs.pop('min_created_date_time', None)  # type: Optional[datetime.datetime]
+        max_created_date_time = kwargs.pop('max_created_date_time', None)  # type: Optional[datetime.datetime]
+        min_last_modified_date_time = kwargs.pop('min_last_modified_date_time', None)  # type: Optional[datetime.datetime]
+        max_last_modified_date_time = kwargs.pop('max_last_modified_date_time', None)  # type: Optional[datetime.datetime]
+        max_page_size = kwargs.pop('max_page_size', 50)  # type: Optional[int]
+        skip_token = kwargs.pop('skip_token', None)  # type: Optional[str]
         cls = kwargs.pop('cls', None)  # type: ClsType[Any]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
@@ -96,21 +112,6 @@ class SeasonsOperations(object):
 
         def prepare_request(next_link=None):
             if not next_link:
-                min_start_date_time = kwargs.pop('min_start_date_time', None)  # type: Optional[datetime.datetime]
-                max_start_date_time = kwargs.pop('max_start_date_time', None)  # type: Optional[datetime.datetime]
-                min_end_date_time = kwargs.pop('min_end_date_time', None)  # type: Optional[datetime.datetime]
-                max_end_date_time = kwargs.pop('max_end_date_time', None)  # type: Optional[datetime.datetime]
-                years = kwargs.pop('years', None)  # type: Optional[List[int]]
-                ids = kwargs.pop('ids', None)  # type: Optional[List[str]]
-                names = kwargs.pop('names', None)  # type: Optional[List[str]]
-                property_filters = kwargs.pop('property_filters', None)  # type: Optional[List[str]]
-                statuses = kwargs.pop('statuses', None)  # type: Optional[List[str]]
-                min_created_date_time = kwargs.pop('min_created_date_time', None)  # type: Optional[datetime.datetime]
-                max_created_date_time = kwargs.pop('max_created_date_time', None)  # type: Optional[datetime.datetime]
-                min_last_modified_date_time = kwargs.pop('min_last_modified_date_time', None)  # type: Optional[datetime.datetime]
-                max_last_modified_date_time = kwargs.pop('max_last_modified_date_time', None)  # type: Optional[datetime.datetime]
-                max_page_size = kwargs.pop('max_page_size', 50)  # type: Optional[int]
-                skip_token = kwargs.pop('skip_token', None)  # type: Optional[str]
                 request = rest_seasons.build_list_request(
                     min_start_date_time=min_start_date_time,
                     max_start_date_time=max_start_date_time,
@@ -130,24 +131,12 @@ class SeasonsOperations(object):
                     template_url=self.list.metadata['url'],
                     **kwargs
                 )._internal_request
-                request.url = self._client.format_url(request.url)
+                path_format_arguments = {
+                    'Endpoint': self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
+                }
+                request.url = self._client.format_url(request.url, **path_format_arguments)
                 kwargs.pop("content_type", None)
             else:
-                min_start_date_time = kwargs.pop('min_start_date_time', None)  # type: Optional[datetime.datetime]
-                max_start_date_time = kwargs.pop('max_start_date_time', None)  # type: Optional[datetime.datetime]
-                min_end_date_time = kwargs.pop('min_end_date_time', None)  # type: Optional[datetime.datetime]
-                max_end_date_time = kwargs.pop('max_end_date_time', None)  # type: Optional[datetime.datetime]
-                years = kwargs.pop('years', None)  # type: Optional[List[int]]
-                ids = kwargs.pop('ids', None)  # type: Optional[List[str]]
-                names = kwargs.pop('names', None)  # type: Optional[List[str]]
-                property_filters = kwargs.pop('property_filters', None)  # type: Optional[List[str]]
-                statuses = kwargs.pop('statuses', None)  # type: Optional[List[str]]
-                min_created_date_time = kwargs.pop('min_created_date_time', None)  # type: Optional[datetime.datetime]
-                max_created_date_time = kwargs.pop('max_created_date_time', None)  # type: Optional[datetime.datetime]
-                min_last_modified_date_time = kwargs.pop('min_last_modified_date_time', None)  # type: Optional[datetime.datetime]
-                max_last_modified_date_time = kwargs.pop('max_last_modified_date_time', None)  # type: Optional[datetime.datetime]
-                max_page_size = kwargs.pop('max_page_size', 50)  # type: Optional[int]
-                skip_token = kwargs.pop('skip_token', None)  # type: Optional[str]
                 request = rest_seasons.build_list_request(
                     min_start_date_time=min_start_date_time,
                     max_start_date_time=max_start_date_time,
@@ -167,11 +156,17 @@ class SeasonsOperations(object):
                     template_url=self.list.metadata['url'],
                     **kwargs
                 )._internal_request
-                request.url = self._client.format_url(request.url)
+                path_format_arguments = {
+                    'Endpoint': self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
+                }
+                request.url = self._client.format_url(request.url, **path_format_arguments)
                 kwargs.pop("content_type", None)
                 # little hacky, but this code will soon be replaced with code that won't need the hack
+                path_format_arguments = {
+                    'Endpoint': self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
+                }
                 request._internal_request.method = "GET"
-                request.url = self._client.format_url(next_link)
+                request.url = self._client.format_url(next_link, **path_format_arguments)
             return request
 
         def extract_data(pipeline_response):
@@ -225,7 +220,10 @@ class SeasonsOperations(object):
             template_url=self.get.metadata['url'],
             **kwargs
         )._internal_request
-        request.url = self._client.format_url(request.url)
+        path_format_arguments = {
+            'Endpoint': self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
+        }
+        request.url = self._client.format_url(request.url, **path_format_arguments)
         kwargs.pop("content_type", None)
 
         pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
@@ -269,8 +267,9 @@ class SeasonsOperations(object):
         }
         error_map.update(kwargs.pop('error_map', {}))
 
-        content_type = kwargs.pop("content_type", "application/merge-patch+json")
         season = kwargs.pop('season', None)  # type: Any
+
+        content_type = kwargs.pop("content_type", "application/merge-patch+json")
         if season is not None:
             json = season
         else:
@@ -284,7 +283,10 @@ class SeasonsOperations(object):
             template_url=self.create_or_update.metadata['url'],
             **kwargs
         )._internal_request
-        request.url = self._client.format_url(request.url)
+        path_format_arguments = {
+            'Endpoint': self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
+        }
+        request.url = self._client.format_url(request.url, **path_format_arguments)
         kwargs.pop("content_type", None)
 
         pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
@@ -333,7 +335,10 @@ class SeasonsOperations(object):
             template_url=self.delete.metadata['url'],
             **kwargs
         )._internal_request
-        request.url = self._client.format_url(request.url)
+        path_format_arguments = {
+            'Endpoint': self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
+        }
+        request.url = self._client.format_url(request.url, **path_format_arguments)
         kwargs.pop("content_type", None)
 
         pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)

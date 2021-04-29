@@ -131,6 +131,40 @@ class HarvestDataOperations(object):
         :rtype: ~azure.core.paging.ItemPaged[Any]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
+
+        min_total_yield = kwargs.pop('min_total_yield', None)  # type: Optional[float]
+        max_total_yield = kwargs.pop('max_total_yield', None)  # type: Optional[float]
+        min_avg_yield = kwargs.pop('min_avg_yield', None)  # type: Optional[float]
+        max_avg_yield = kwargs.pop('max_avg_yield', None)  # type: Optional[float]
+        min_total_wet_mass = kwargs.pop('min_total_wet_mass', None)  # type: Optional[float]
+        max_total_wet_mass = kwargs.pop('max_total_wet_mass', None)  # type: Optional[float]
+        min_avg_wet_mass = kwargs.pop('min_avg_wet_mass', None)  # type: Optional[float]
+        max_avg_wet_mass = kwargs.pop('max_avg_wet_mass', None)  # type: Optional[float]
+        min_avg_moisture = kwargs.pop('min_avg_moisture', None)  # type: Optional[float]
+        max_avg_moisture = kwargs.pop('max_avg_moisture', None)  # type: Optional[float]
+        min_avg_speed = kwargs.pop('min_avg_speed', None)  # type: Optional[float]
+        max_avg_speed = kwargs.pop('max_avg_speed', None)  # type: Optional[float]
+        sources = kwargs.pop('sources', None)  # type: Optional[List[str]]
+        associated_boundary_ids = kwargs.pop('associated_boundary_ids', None)  # type: Optional[List[str]]
+        operation_boundary_ids = kwargs.pop('operation_boundary_ids', None)  # type: Optional[List[str]]
+        min_operation_start_date_time = kwargs.pop('min_operation_start_date_time', None)  # type: Optional[datetime.datetime]
+        max_operation_start_date_time = kwargs.pop('max_operation_start_date_time', None)  # type: Optional[datetime.datetime]
+        min_operation_end_date_time = kwargs.pop('min_operation_end_date_time', None)  # type: Optional[datetime.datetime]
+        max_operation_end_date_time = kwargs.pop('max_operation_end_date_time', None)  # type: Optional[datetime.datetime]
+        min_operation_modified_date_time = kwargs.pop('min_operation_modified_date_time', None)  # type: Optional[datetime.datetime]
+        max_operation_modified_date_time = kwargs.pop('max_operation_modified_date_time', None)  # type: Optional[datetime.datetime]
+        min_area = kwargs.pop('min_area', None)  # type: Optional[float]
+        max_area = kwargs.pop('max_area', None)  # type: Optional[float]
+        ids = kwargs.pop('ids', None)  # type: Optional[List[str]]
+        names = kwargs.pop('names', None)  # type: Optional[List[str]]
+        property_filters = kwargs.pop('property_filters', None)  # type: Optional[List[str]]
+        statuses = kwargs.pop('statuses', None)  # type: Optional[List[str]]
+        min_created_date_time = kwargs.pop('min_created_date_time', None)  # type: Optional[datetime.datetime]
+        max_created_date_time = kwargs.pop('max_created_date_time', None)  # type: Optional[datetime.datetime]
+        min_last_modified_date_time = kwargs.pop('min_last_modified_date_time', None)  # type: Optional[datetime.datetime]
+        max_last_modified_date_time = kwargs.pop('max_last_modified_date_time', None)  # type: Optional[datetime.datetime]
+        max_page_size = kwargs.pop('max_page_size', 50)  # type: Optional[int]
+        skip_token = kwargs.pop('skip_token', None)  # type: Optional[str]
         cls = kwargs.pop('cls', None)  # type: ClsType[Any]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
@@ -139,39 +173,6 @@ class HarvestDataOperations(object):
 
         def prepare_request(next_link=None):
             if not next_link:
-                min_total_yield = kwargs.pop('min_total_yield', None)  # type: Optional[float]
-                max_total_yield = kwargs.pop('max_total_yield', None)  # type: Optional[float]
-                min_avg_yield = kwargs.pop('min_avg_yield', None)  # type: Optional[float]
-                max_avg_yield = kwargs.pop('max_avg_yield', None)  # type: Optional[float]
-                min_total_wet_mass = kwargs.pop('min_total_wet_mass', None)  # type: Optional[float]
-                max_total_wet_mass = kwargs.pop('max_total_wet_mass', None)  # type: Optional[float]
-                min_avg_wet_mass = kwargs.pop('min_avg_wet_mass', None)  # type: Optional[float]
-                max_avg_wet_mass = kwargs.pop('max_avg_wet_mass', None)  # type: Optional[float]
-                min_avg_moisture = kwargs.pop('min_avg_moisture', None)  # type: Optional[float]
-                max_avg_moisture = kwargs.pop('max_avg_moisture', None)  # type: Optional[float]
-                min_avg_speed = kwargs.pop('min_avg_speed', None)  # type: Optional[float]
-                max_avg_speed = kwargs.pop('max_avg_speed', None)  # type: Optional[float]
-                sources = kwargs.pop('sources', None)  # type: Optional[List[str]]
-                associated_boundary_ids = kwargs.pop('associated_boundary_ids', None)  # type: Optional[List[str]]
-                operation_boundary_ids = kwargs.pop('operation_boundary_ids', None)  # type: Optional[List[str]]
-                min_operation_start_date_time = kwargs.pop('min_operation_start_date_time', None)  # type: Optional[datetime.datetime]
-                max_operation_start_date_time = kwargs.pop('max_operation_start_date_time', None)  # type: Optional[datetime.datetime]
-                min_operation_end_date_time = kwargs.pop('min_operation_end_date_time', None)  # type: Optional[datetime.datetime]
-                max_operation_end_date_time = kwargs.pop('max_operation_end_date_time', None)  # type: Optional[datetime.datetime]
-                min_operation_modified_date_time = kwargs.pop('min_operation_modified_date_time', None)  # type: Optional[datetime.datetime]
-                max_operation_modified_date_time = kwargs.pop('max_operation_modified_date_time', None)  # type: Optional[datetime.datetime]
-                min_area = kwargs.pop('min_area', None)  # type: Optional[float]
-                max_area = kwargs.pop('max_area', None)  # type: Optional[float]
-                ids = kwargs.pop('ids', None)  # type: Optional[List[str]]
-                names = kwargs.pop('names', None)  # type: Optional[List[str]]
-                property_filters = kwargs.pop('property_filters', None)  # type: Optional[List[str]]
-                statuses = kwargs.pop('statuses', None)  # type: Optional[List[str]]
-                min_created_date_time = kwargs.pop('min_created_date_time', None)  # type: Optional[datetime.datetime]
-                max_created_date_time = kwargs.pop('max_created_date_time', None)  # type: Optional[datetime.datetime]
-                min_last_modified_date_time = kwargs.pop('min_last_modified_date_time', None)  # type: Optional[datetime.datetime]
-                max_last_modified_date_time = kwargs.pop('max_last_modified_date_time', None)  # type: Optional[datetime.datetime]
-                max_page_size = kwargs.pop('max_page_size', 50)  # type: Optional[int]
-                skip_token = kwargs.pop('skip_token', None)  # type: Optional[str]
                 request = rest_harvest_data.build_list_by_farmer_id_request(
                     farmer_id=farmer_id,
                     min_total_yield=min_total_yield,
@@ -210,42 +211,12 @@ class HarvestDataOperations(object):
                     template_url=self.list_by_farmer_id.metadata['url'],
                     **kwargs
                 )._internal_request
-                request.url = self._client.format_url(request.url)
+                path_format_arguments = {
+                    'Endpoint': self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
+                }
+                request.url = self._client.format_url(request.url, **path_format_arguments)
                 kwargs.pop("content_type", None)
             else:
-                min_total_yield = kwargs.pop('min_total_yield', None)  # type: Optional[float]
-                max_total_yield = kwargs.pop('max_total_yield', None)  # type: Optional[float]
-                min_avg_yield = kwargs.pop('min_avg_yield', None)  # type: Optional[float]
-                max_avg_yield = kwargs.pop('max_avg_yield', None)  # type: Optional[float]
-                min_total_wet_mass = kwargs.pop('min_total_wet_mass', None)  # type: Optional[float]
-                max_total_wet_mass = kwargs.pop('max_total_wet_mass', None)  # type: Optional[float]
-                min_avg_wet_mass = kwargs.pop('min_avg_wet_mass', None)  # type: Optional[float]
-                max_avg_wet_mass = kwargs.pop('max_avg_wet_mass', None)  # type: Optional[float]
-                min_avg_moisture = kwargs.pop('min_avg_moisture', None)  # type: Optional[float]
-                max_avg_moisture = kwargs.pop('max_avg_moisture', None)  # type: Optional[float]
-                min_avg_speed = kwargs.pop('min_avg_speed', None)  # type: Optional[float]
-                max_avg_speed = kwargs.pop('max_avg_speed', None)  # type: Optional[float]
-                sources = kwargs.pop('sources', None)  # type: Optional[List[str]]
-                associated_boundary_ids = kwargs.pop('associated_boundary_ids', None)  # type: Optional[List[str]]
-                operation_boundary_ids = kwargs.pop('operation_boundary_ids', None)  # type: Optional[List[str]]
-                min_operation_start_date_time = kwargs.pop('min_operation_start_date_time', None)  # type: Optional[datetime.datetime]
-                max_operation_start_date_time = kwargs.pop('max_operation_start_date_time', None)  # type: Optional[datetime.datetime]
-                min_operation_end_date_time = kwargs.pop('min_operation_end_date_time', None)  # type: Optional[datetime.datetime]
-                max_operation_end_date_time = kwargs.pop('max_operation_end_date_time', None)  # type: Optional[datetime.datetime]
-                min_operation_modified_date_time = kwargs.pop('min_operation_modified_date_time', None)  # type: Optional[datetime.datetime]
-                max_operation_modified_date_time = kwargs.pop('max_operation_modified_date_time', None)  # type: Optional[datetime.datetime]
-                min_area = kwargs.pop('min_area', None)  # type: Optional[float]
-                max_area = kwargs.pop('max_area', None)  # type: Optional[float]
-                ids = kwargs.pop('ids', None)  # type: Optional[List[str]]
-                names = kwargs.pop('names', None)  # type: Optional[List[str]]
-                property_filters = kwargs.pop('property_filters', None)  # type: Optional[List[str]]
-                statuses = kwargs.pop('statuses', None)  # type: Optional[List[str]]
-                min_created_date_time = kwargs.pop('min_created_date_time', None)  # type: Optional[datetime.datetime]
-                max_created_date_time = kwargs.pop('max_created_date_time', None)  # type: Optional[datetime.datetime]
-                min_last_modified_date_time = kwargs.pop('min_last_modified_date_time', None)  # type: Optional[datetime.datetime]
-                max_last_modified_date_time = kwargs.pop('max_last_modified_date_time', None)  # type: Optional[datetime.datetime]
-                max_page_size = kwargs.pop('max_page_size', 50)  # type: Optional[int]
-                skip_token = kwargs.pop('skip_token', None)  # type: Optional[str]
                 request = rest_harvest_data.build_list_by_farmer_id_request(
                     farmer_id=farmer_id,
                     min_total_yield=min_total_yield,
@@ -284,11 +255,17 @@ class HarvestDataOperations(object):
                     template_url=self.list_by_farmer_id.metadata['url'],
                     **kwargs
                 )._internal_request
-                request.url = self._client.format_url(request.url)
+                path_format_arguments = {
+                    'Endpoint': self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
+                }
+                request.url = self._client.format_url(request.url, **path_format_arguments)
                 kwargs.pop("content_type", None)
                 # little hacky, but this code will soon be replaced with code that won't need the hack
+                path_format_arguments = {
+                    'Endpoint': self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
+                }
                 request._internal_request.method = "GET"
-                request.url = self._client.format_url(next_link)
+                request.url = self._client.format_url(next_link, **path_format_arguments)
             return request
 
         def extract_data(pipeline_response):
@@ -402,6 +379,40 @@ class HarvestDataOperations(object):
         :rtype: ~azure.core.paging.ItemPaged[Any]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
+
+        min_total_yield = kwargs.pop('min_total_yield', None)  # type: Optional[float]
+        max_total_yield = kwargs.pop('max_total_yield', None)  # type: Optional[float]
+        min_avg_yield = kwargs.pop('min_avg_yield', None)  # type: Optional[float]
+        max_avg_yield = kwargs.pop('max_avg_yield', None)  # type: Optional[float]
+        min_total_wet_mass = kwargs.pop('min_total_wet_mass', None)  # type: Optional[float]
+        max_total_wet_mass = kwargs.pop('max_total_wet_mass', None)  # type: Optional[float]
+        min_avg_wet_mass = kwargs.pop('min_avg_wet_mass', None)  # type: Optional[float]
+        max_avg_wet_mass = kwargs.pop('max_avg_wet_mass', None)  # type: Optional[float]
+        min_avg_moisture = kwargs.pop('min_avg_moisture', None)  # type: Optional[float]
+        max_avg_moisture = kwargs.pop('max_avg_moisture', None)  # type: Optional[float]
+        min_avg_speed = kwargs.pop('min_avg_speed', None)  # type: Optional[float]
+        max_avg_speed = kwargs.pop('max_avg_speed', None)  # type: Optional[float]
+        sources = kwargs.pop('sources', None)  # type: Optional[List[str]]
+        associated_boundary_ids = kwargs.pop('associated_boundary_ids', None)  # type: Optional[List[str]]
+        operation_boundary_ids = kwargs.pop('operation_boundary_ids', None)  # type: Optional[List[str]]
+        min_operation_start_date_time = kwargs.pop('min_operation_start_date_time', None)  # type: Optional[datetime.datetime]
+        max_operation_start_date_time = kwargs.pop('max_operation_start_date_time', None)  # type: Optional[datetime.datetime]
+        min_operation_end_date_time = kwargs.pop('min_operation_end_date_time', None)  # type: Optional[datetime.datetime]
+        max_operation_end_date_time = kwargs.pop('max_operation_end_date_time', None)  # type: Optional[datetime.datetime]
+        min_operation_modified_date_time = kwargs.pop('min_operation_modified_date_time', None)  # type: Optional[datetime.datetime]
+        max_operation_modified_date_time = kwargs.pop('max_operation_modified_date_time', None)  # type: Optional[datetime.datetime]
+        min_area = kwargs.pop('min_area', None)  # type: Optional[float]
+        max_area = kwargs.pop('max_area', None)  # type: Optional[float]
+        ids = kwargs.pop('ids', None)  # type: Optional[List[str]]
+        names = kwargs.pop('names', None)  # type: Optional[List[str]]
+        property_filters = kwargs.pop('property_filters', None)  # type: Optional[List[str]]
+        statuses = kwargs.pop('statuses', None)  # type: Optional[List[str]]
+        min_created_date_time = kwargs.pop('min_created_date_time', None)  # type: Optional[datetime.datetime]
+        max_created_date_time = kwargs.pop('max_created_date_time', None)  # type: Optional[datetime.datetime]
+        min_last_modified_date_time = kwargs.pop('min_last_modified_date_time', None)  # type: Optional[datetime.datetime]
+        max_last_modified_date_time = kwargs.pop('max_last_modified_date_time', None)  # type: Optional[datetime.datetime]
+        max_page_size = kwargs.pop('max_page_size', 50)  # type: Optional[int]
+        skip_token = kwargs.pop('skip_token', None)  # type: Optional[str]
         cls = kwargs.pop('cls', None)  # type: ClsType[Any]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
@@ -410,39 +421,6 @@ class HarvestDataOperations(object):
 
         def prepare_request(next_link=None):
             if not next_link:
-                min_total_yield = kwargs.pop('min_total_yield', None)  # type: Optional[float]
-                max_total_yield = kwargs.pop('max_total_yield', None)  # type: Optional[float]
-                min_avg_yield = kwargs.pop('min_avg_yield', None)  # type: Optional[float]
-                max_avg_yield = kwargs.pop('max_avg_yield', None)  # type: Optional[float]
-                min_total_wet_mass = kwargs.pop('min_total_wet_mass', None)  # type: Optional[float]
-                max_total_wet_mass = kwargs.pop('max_total_wet_mass', None)  # type: Optional[float]
-                min_avg_wet_mass = kwargs.pop('min_avg_wet_mass', None)  # type: Optional[float]
-                max_avg_wet_mass = kwargs.pop('max_avg_wet_mass', None)  # type: Optional[float]
-                min_avg_moisture = kwargs.pop('min_avg_moisture', None)  # type: Optional[float]
-                max_avg_moisture = kwargs.pop('max_avg_moisture', None)  # type: Optional[float]
-                min_avg_speed = kwargs.pop('min_avg_speed', None)  # type: Optional[float]
-                max_avg_speed = kwargs.pop('max_avg_speed', None)  # type: Optional[float]
-                sources = kwargs.pop('sources', None)  # type: Optional[List[str]]
-                associated_boundary_ids = kwargs.pop('associated_boundary_ids', None)  # type: Optional[List[str]]
-                operation_boundary_ids = kwargs.pop('operation_boundary_ids', None)  # type: Optional[List[str]]
-                min_operation_start_date_time = kwargs.pop('min_operation_start_date_time', None)  # type: Optional[datetime.datetime]
-                max_operation_start_date_time = kwargs.pop('max_operation_start_date_time', None)  # type: Optional[datetime.datetime]
-                min_operation_end_date_time = kwargs.pop('min_operation_end_date_time', None)  # type: Optional[datetime.datetime]
-                max_operation_end_date_time = kwargs.pop('max_operation_end_date_time', None)  # type: Optional[datetime.datetime]
-                min_operation_modified_date_time = kwargs.pop('min_operation_modified_date_time', None)  # type: Optional[datetime.datetime]
-                max_operation_modified_date_time = kwargs.pop('max_operation_modified_date_time', None)  # type: Optional[datetime.datetime]
-                min_area = kwargs.pop('min_area', None)  # type: Optional[float]
-                max_area = kwargs.pop('max_area', None)  # type: Optional[float]
-                ids = kwargs.pop('ids', None)  # type: Optional[List[str]]
-                names = kwargs.pop('names', None)  # type: Optional[List[str]]
-                property_filters = kwargs.pop('property_filters', None)  # type: Optional[List[str]]
-                statuses = kwargs.pop('statuses', None)  # type: Optional[List[str]]
-                min_created_date_time = kwargs.pop('min_created_date_time', None)  # type: Optional[datetime.datetime]
-                max_created_date_time = kwargs.pop('max_created_date_time', None)  # type: Optional[datetime.datetime]
-                min_last_modified_date_time = kwargs.pop('min_last_modified_date_time', None)  # type: Optional[datetime.datetime]
-                max_last_modified_date_time = kwargs.pop('max_last_modified_date_time', None)  # type: Optional[datetime.datetime]
-                max_page_size = kwargs.pop('max_page_size', 50)  # type: Optional[int]
-                skip_token = kwargs.pop('skip_token', None)  # type: Optional[str]
                 request = rest_harvest_data.build_list_request(
                     min_total_yield=min_total_yield,
                     max_total_yield=max_total_yield,
@@ -480,42 +458,12 @@ class HarvestDataOperations(object):
                     template_url=self.list.metadata['url'],
                     **kwargs
                 )._internal_request
-                request.url = self._client.format_url(request.url)
+                path_format_arguments = {
+                    'Endpoint': self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
+                }
+                request.url = self._client.format_url(request.url, **path_format_arguments)
                 kwargs.pop("content_type", None)
             else:
-                min_total_yield = kwargs.pop('min_total_yield', None)  # type: Optional[float]
-                max_total_yield = kwargs.pop('max_total_yield', None)  # type: Optional[float]
-                min_avg_yield = kwargs.pop('min_avg_yield', None)  # type: Optional[float]
-                max_avg_yield = kwargs.pop('max_avg_yield', None)  # type: Optional[float]
-                min_total_wet_mass = kwargs.pop('min_total_wet_mass', None)  # type: Optional[float]
-                max_total_wet_mass = kwargs.pop('max_total_wet_mass', None)  # type: Optional[float]
-                min_avg_wet_mass = kwargs.pop('min_avg_wet_mass', None)  # type: Optional[float]
-                max_avg_wet_mass = kwargs.pop('max_avg_wet_mass', None)  # type: Optional[float]
-                min_avg_moisture = kwargs.pop('min_avg_moisture', None)  # type: Optional[float]
-                max_avg_moisture = kwargs.pop('max_avg_moisture', None)  # type: Optional[float]
-                min_avg_speed = kwargs.pop('min_avg_speed', None)  # type: Optional[float]
-                max_avg_speed = kwargs.pop('max_avg_speed', None)  # type: Optional[float]
-                sources = kwargs.pop('sources', None)  # type: Optional[List[str]]
-                associated_boundary_ids = kwargs.pop('associated_boundary_ids', None)  # type: Optional[List[str]]
-                operation_boundary_ids = kwargs.pop('operation_boundary_ids', None)  # type: Optional[List[str]]
-                min_operation_start_date_time = kwargs.pop('min_operation_start_date_time', None)  # type: Optional[datetime.datetime]
-                max_operation_start_date_time = kwargs.pop('max_operation_start_date_time', None)  # type: Optional[datetime.datetime]
-                min_operation_end_date_time = kwargs.pop('min_operation_end_date_time', None)  # type: Optional[datetime.datetime]
-                max_operation_end_date_time = kwargs.pop('max_operation_end_date_time', None)  # type: Optional[datetime.datetime]
-                min_operation_modified_date_time = kwargs.pop('min_operation_modified_date_time', None)  # type: Optional[datetime.datetime]
-                max_operation_modified_date_time = kwargs.pop('max_operation_modified_date_time', None)  # type: Optional[datetime.datetime]
-                min_area = kwargs.pop('min_area', None)  # type: Optional[float]
-                max_area = kwargs.pop('max_area', None)  # type: Optional[float]
-                ids = kwargs.pop('ids', None)  # type: Optional[List[str]]
-                names = kwargs.pop('names', None)  # type: Optional[List[str]]
-                property_filters = kwargs.pop('property_filters', None)  # type: Optional[List[str]]
-                statuses = kwargs.pop('statuses', None)  # type: Optional[List[str]]
-                min_created_date_time = kwargs.pop('min_created_date_time', None)  # type: Optional[datetime.datetime]
-                max_created_date_time = kwargs.pop('max_created_date_time', None)  # type: Optional[datetime.datetime]
-                min_last_modified_date_time = kwargs.pop('min_last_modified_date_time', None)  # type: Optional[datetime.datetime]
-                max_last_modified_date_time = kwargs.pop('max_last_modified_date_time', None)  # type: Optional[datetime.datetime]
-                max_page_size = kwargs.pop('max_page_size', 50)  # type: Optional[int]
-                skip_token = kwargs.pop('skip_token', None)  # type: Optional[str]
                 request = rest_harvest_data.build_list_request(
                     min_total_yield=min_total_yield,
                     max_total_yield=max_total_yield,
@@ -553,11 +501,17 @@ class HarvestDataOperations(object):
                     template_url=self.list.metadata['url'],
                     **kwargs
                 )._internal_request
-                request.url = self._client.format_url(request.url)
+                path_format_arguments = {
+                    'Endpoint': self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
+                }
+                request.url = self._client.format_url(request.url, **path_format_arguments)
                 kwargs.pop("content_type", None)
                 # little hacky, but this code will soon be replaced with code that won't need the hack
+                path_format_arguments = {
+                    'Endpoint': self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
+                }
                 request._internal_request.method = "GET"
-                request.url = self._client.format_url(next_link)
+                request.url = self._client.format_url(next_link, **path_format_arguments)
             return request
 
         def extract_data(pipeline_response):
@@ -615,7 +569,10 @@ class HarvestDataOperations(object):
             template_url=self.get.metadata['url'],
             **kwargs
         )._internal_request
-        request.url = self._client.format_url(request.url)
+        path_format_arguments = {
+            'Endpoint': self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
+        }
+        request.url = self._client.format_url(request.url, **path_format_arguments)
         kwargs.pop("content_type", None)
 
         pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
@@ -662,8 +619,9 @@ class HarvestDataOperations(object):
         }
         error_map.update(kwargs.pop('error_map', {}))
 
-        content_type = kwargs.pop("content_type", "application/merge-patch+json")
         harvest_data = kwargs.pop('harvest_data', None)  # type: Any
+
+        content_type = kwargs.pop("content_type", "application/merge-patch+json")
         if harvest_data is not None:
             json = harvest_data
         else:
@@ -678,7 +636,10 @@ class HarvestDataOperations(object):
             template_url=self.create_or_update.metadata['url'],
             **kwargs
         )._internal_request
-        request.url = self._client.format_url(request.url)
+        path_format_arguments = {
+            'Endpoint': self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
+        }
+        request.url = self._client.format_url(request.url, **path_format_arguments)
         kwargs.pop("content_type", None)
 
         pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
@@ -731,7 +692,10 @@ class HarvestDataOperations(object):
             template_url=self.delete.metadata['url'],
             **kwargs
         )._internal_request
-        request.url = self._client.format_url(request.url)
+        path_format_arguments = {
+            'Endpoint': self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
+        }
+        request.url = self._client.format_url(request.url, **path_format_arguments)
         kwargs.pop("content_type", None)
 
         pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)

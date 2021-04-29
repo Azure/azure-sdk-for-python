@@ -54,8 +54,9 @@ class FarmOperationsOperations(object):
         }
         error_map.update(kwargs.pop('error_map', {}))
 
-        content_type = kwargs.pop("content_type", "application/json")
         job = kwargs.pop('job', None)  # type: Any
+
+        content_type = kwargs.pop("content_type", "application/json")
         if job is not None:
             json = self._serialize.body(job, 'FarmOperationDataIngestionJob')
         else:
@@ -69,7 +70,10 @@ class FarmOperationsOperations(object):
             template_url=self._create_data_ingestion_jo_initial.metadata['url'],
             **kwargs
         )._internal_request
-        request.url = self._client.format_url(request.url)
+        path_format_arguments = {
+            'Endpoint': self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
+        }
+        request.url = self._client.format_url(request.url, **path_format_arguments)
         kwargs.pop("content_type", None)
 
         pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
@@ -110,6 +114,8 @@ class FarmOperationsOperations(object):
         :rtype: ~azure.core.polling.LROPoller[Any]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
+
+        job = kwargs.pop('job', None)  # type: Any
         polling = kwargs.pop('polling', False)  # type: Union[bool, PollingMethod]
         cls = kwargs.pop('cls', None)  # type: ClsType[Any]
         lro_delay = kwargs.pop(
@@ -138,7 +144,11 @@ class FarmOperationsOperations(object):
                 return cls(pipeline_response, deserialized, {})
             return deserialized
 
-        if polling is True: polling_method = LROBasePolling(lro_delay, lro_options={'final-state-via': 'location'},  **kwargs)
+        path_format_arguments = {
+            'Endpoint': self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
+        }
+
+        if polling is True: polling_method = LROBasePolling(lro_delay, lro_options={'final-state-via': 'location'}, path_format_arguments=path_format_arguments,  **kwargs)
         elif polling is False: polling_method = NoPolling()
         else: polling_method = polling
         if cont_token:
@@ -179,7 +189,10 @@ class FarmOperationsOperations(object):
             template_url=self.get_data_ingestion_job_details.metadata['url'],
             **kwargs
         )._internal_request
-        request.url = self._client.format_url(request.url)
+        path_format_arguments = {
+            'Endpoint': self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
+        }
+        request.url = self._client.format_url(request.url, **path_format_arguments)
         kwargs.pop("content_type", None)
 
         pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)

@@ -5,6 +5,15 @@
         "description": "APIs documentation for Azure AgPlatform DataPlane Service.",
         "version": "2021-03-31-preview"
     },
+    "x-ms-parameterized-host": {
+        "hostTemplate": "{Endpoint}",
+        "useSchemePrefix": false,
+        "parameters": [
+            {
+                "$ref": "#/parameters/Endpoint"
+            }
+        ]
+    },
     "paths": {
         "/farmers/{farmerId}/application-data": {
             "get": {
@@ -8190,6 +8199,17 @@
                     "final-state-via": "location"
                 }
             }
+        }
+    },
+    "parameters": {
+        "Endpoint": {
+            "name": "Endpoint",
+            "description": "The endpoint of your FarmBeats resource (protocol and hostname, for example: https://{vaultName}.farmbeats.azure.net).",
+            "x-ms-parameter-location": "client",
+            "required": true,
+            "type": "string",
+            "in": "path",
+            "x-ms-skip-url-encoding": true
         }
     },
     "definitions": {

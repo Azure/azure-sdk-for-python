@@ -111,6 +111,30 @@ class SeasonalFieldsOperations(object):
         :rtype: ~azure.core.paging.ItemPaged[Any]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
+
+        farm_ids = kwargs.pop('farm_ids', None)  # type: Optional[List[str]]
+        field_ids = kwargs.pop('field_ids', None)  # type: Optional[List[str]]
+        season_ids = kwargs.pop('season_ids', None)  # type: Optional[List[str]]
+        crop_variety_ids = kwargs.pop('crop_variety_ids', None)  # type: Optional[List[str]]
+        crop_ids = kwargs.pop('crop_ids', None)  # type: Optional[List[str]]
+        min_avg_yield_value = kwargs.pop('min_avg_yield_value', None)  # type: Optional[float]
+        max_avg_yield_value = kwargs.pop('max_avg_yield_value', None)  # type: Optional[float]
+        avg_yield_unit = kwargs.pop('avg_yield_unit', None)  # type: Optional[str]
+        min_avg_seed_population_value = kwargs.pop('min_avg_seed_population_value', None)  # type: Optional[float]
+        max_avg_seed_population_value = kwargs.pop('max_avg_seed_population_value', None)  # type: Optional[float]
+        avg_seed_population_unit = kwargs.pop('avg_seed_population_unit', None)  # type: Optional[str]
+        min_planting_date_time = kwargs.pop('min_planting_date_time', None)  # type: Optional[datetime.datetime]
+        max_planting_date_time = kwargs.pop('max_planting_date_time', None)  # type: Optional[datetime.datetime]
+        ids = kwargs.pop('ids', None)  # type: Optional[List[str]]
+        names = kwargs.pop('names', None)  # type: Optional[List[str]]
+        property_filters = kwargs.pop('property_filters', None)  # type: Optional[List[str]]
+        statuses = kwargs.pop('statuses', None)  # type: Optional[List[str]]
+        min_created_date_time = kwargs.pop('min_created_date_time', None)  # type: Optional[datetime.datetime]
+        max_created_date_time = kwargs.pop('max_created_date_time', None)  # type: Optional[datetime.datetime]
+        min_last_modified_date_time = kwargs.pop('min_last_modified_date_time', None)  # type: Optional[datetime.datetime]
+        max_last_modified_date_time = kwargs.pop('max_last_modified_date_time', None)  # type: Optional[datetime.datetime]
+        max_page_size = kwargs.pop('max_page_size', 50)  # type: Optional[int]
+        skip_token = kwargs.pop('skip_token', None)  # type: Optional[str]
         cls = kwargs.pop('cls', None)  # type: ClsType[Any]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
@@ -119,29 +143,6 @@ class SeasonalFieldsOperations(object):
 
         def prepare_request(next_link=None):
             if not next_link:
-                farm_ids = kwargs.pop('farm_ids', None)  # type: Optional[List[str]]
-                field_ids = kwargs.pop('field_ids', None)  # type: Optional[List[str]]
-                season_ids = kwargs.pop('season_ids', None)  # type: Optional[List[str]]
-                crop_variety_ids = kwargs.pop('crop_variety_ids', None)  # type: Optional[List[str]]
-                crop_ids = kwargs.pop('crop_ids', None)  # type: Optional[List[str]]
-                min_avg_yield_value = kwargs.pop('min_avg_yield_value', None)  # type: Optional[float]
-                max_avg_yield_value = kwargs.pop('max_avg_yield_value', None)  # type: Optional[float]
-                avg_yield_unit = kwargs.pop('avg_yield_unit', None)  # type: Optional[str]
-                min_avg_seed_population_value = kwargs.pop('min_avg_seed_population_value', None)  # type: Optional[float]
-                max_avg_seed_population_value = kwargs.pop('max_avg_seed_population_value', None)  # type: Optional[float]
-                avg_seed_population_unit = kwargs.pop('avg_seed_population_unit', None)  # type: Optional[str]
-                min_planting_date_time = kwargs.pop('min_planting_date_time', None)  # type: Optional[datetime.datetime]
-                max_planting_date_time = kwargs.pop('max_planting_date_time', None)  # type: Optional[datetime.datetime]
-                ids = kwargs.pop('ids', None)  # type: Optional[List[str]]
-                names = kwargs.pop('names', None)  # type: Optional[List[str]]
-                property_filters = kwargs.pop('property_filters', None)  # type: Optional[List[str]]
-                statuses = kwargs.pop('statuses', None)  # type: Optional[List[str]]
-                min_created_date_time = kwargs.pop('min_created_date_time', None)  # type: Optional[datetime.datetime]
-                max_created_date_time = kwargs.pop('max_created_date_time', None)  # type: Optional[datetime.datetime]
-                min_last_modified_date_time = kwargs.pop('min_last_modified_date_time', None)  # type: Optional[datetime.datetime]
-                max_last_modified_date_time = kwargs.pop('max_last_modified_date_time', None)  # type: Optional[datetime.datetime]
-                max_page_size = kwargs.pop('max_page_size', 50)  # type: Optional[int]
-                skip_token = kwargs.pop('skip_token', None)  # type: Optional[str]
                 request = rest_seasonal_fields.build_list_by_farmer_id_request(
                     farmer_id=farmer_id,
                     farm_ids=farm_ids,
@@ -170,32 +171,12 @@ class SeasonalFieldsOperations(object):
                     template_url=self.list_by_farmer_id.metadata['url'],
                     **kwargs
                 )._internal_request
-                request.url = self._client.format_url(request.url)
+                path_format_arguments = {
+                    'Endpoint': self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
+                }
+                request.url = self._client.format_url(request.url, **path_format_arguments)
                 kwargs.pop("content_type", None)
             else:
-                farm_ids = kwargs.pop('farm_ids', None)  # type: Optional[List[str]]
-                field_ids = kwargs.pop('field_ids', None)  # type: Optional[List[str]]
-                season_ids = kwargs.pop('season_ids', None)  # type: Optional[List[str]]
-                crop_variety_ids = kwargs.pop('crop_variety_ids', None)  # type: Optional[List[str]]
-                crop_ids = kwargs.pop('crop_ids', None)  # type: Optional[List[str]]
-                min_avg_yield_value = kwargs.pop('min_avg_yield_value', None)  # type: Optional[float]
-                max_avg_yield_value = kwargs.pop('max_avg_yield_value', None)  # type: Optional[float]
-                avg_yield_unit = kwargs.pop('avg_yield_unit', None)  # type: Optional[str]
-                min_avg_seed_population_value = kwargs.pop('min_avg_seed_population_value', None)  # type: Optional[float]
-                max_avg_seed_population_value = kwargs.pop('max_avg_seed_population_value', None)  # type: Optional[float]
-                avg_seed_population_unit = kwargs.pop('avg_seed_population_unit', None)  # type: Optional[str]
-                min_planting_date_time = kwargs.pop('min_planting_date_time', None)  # type: Optional[datetime.datetime]
-                max_planting_date_time = kwargs.pop('max_planting_date_time', None)  # type: Optional[datetime.datetime]
-                ids = kwargs.pop('ids', None)  # type: Optional[List[str]]
-                names = kwargs.pop('names', None)  # type: Optional[List[str]]
-                property_filters = kwargs.pop('property_filters', None)  # type: Optional[List[str]]
-                statuses = kwargs.pop('statuses', None)  # type: Optional[List[str]]
-                min_created_date_time = kwargs.pop('min_created_date_time', None)  # type: Optional[datetime.datetime]
-                max_created_date_time = kwargs.pop('max_created_date_time', None)  # type: Optional[datetime.datetime]
-                min_last_modified_date_time = kwargs.pop('min_last_modified_date_time', None)  # type: Optional[datetime.datetime]
-                max_last_modified_date_time = kwargs.pop('max_last_modified_date_time', None)  # type: Optional[datetime.datetime]
-                max_page_size = kwargs.pop('max_page_size', 50)  # type: Optional[int]
-                skip_token = kwargs.pop('skip_token', None)  # type: Optional[str]
                 request = rest_seasonal_fields.build_list_by_farmer_id_request(
                     farmer_id=farmer_id,
                     farm_ids=farm_ids,
@@ -224,11 +205,17 @@ class SeasonalFieldsOperations(object):
                     template_url=self.list_by_farmer_id.metadata['url'],
                     **kwargs
                 )._internal_request
-                request.url = self._client.format_url(request.url)
+                path_format_arguments = {
+                    'Endpoint': self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
+                }
+                request.url = self._client.format_url(request.url, **path_format_arguments)
                 kwargs.pop("content_type", None)
                 # little hacky, but this code will soon be replaced with code that won't need the hack
+                path_format_arguments = {
+                    'Endpoint': self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
+                }
                 request._internal_request.method = "GET"
-                request.url = self._client.format_url(next_link)
+                request.url = self._client.format_url(next_link, **path_format_arguments)
             return request
 
         def extract_data(pipeline_response):
@@ -320,6 +307,30 @@ class SeasonalFieldsOperations(object):
         :rtype: ~azure.core.paging.ItemPaged[Any]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
+
+        farm_ids = kwargs.pop('farm_ids', None)  # type: Optional[List[str]]
+        field_ids = kwargs.pop('field_ids', None)  # type: Optional[List[str]]
+        season_ids = kwargs.pop('season_ids', None)  # type: Optional[List[str]]
+        crop_variety_ids = kwargs.pop('crop_variety_ids', None)  # type: Optional[List[str]]
+        crop_ids = kwargs.pop('crop_ids', None)  # type: Optional[List[str]]
+        min_avg_yield_value = kwargs.pop('min_avg_yield_value', None)  # type: Optional[float]
+        max_avg_yield_value = kwargs.pop('max_avg_yield_value', None)  # type: Optional[float]
+        avg_yield_unit = kwargs.pop('avg_yield_unit', None)  # type: Optional[str]
+        min_avg_seed_population_value = kwargs.pop('min_avg_seed_population_value', None)  # type: Optional[float]
+        max_avg_seed_population_value = kwargs.pop('max_avg_seed_population_value', None)  # type: Optional[float]
+        avg_seed_population_unit = kwargs.pop('avg_seed_population_unit', None)  # type: Optional[str]
+        min_planting_date_time = kwargs.pop('min_planting_date_time', None)  # type: Optional[datetime.datetime]
+        max_planting_date_time = kwargs.pop('max_planting_date_time', None)  # type: Optional[datetime.datetime]
+        ids = kwargs.pop('ids', None)  # type: Optional[List[str]]
+        names = kwargs.pop('names', None)  # type: Optional[List[str]]
+        property_filters = kwargs.pop('property_filters', None)  # type: Optional[List[str]]
+        statuses = kwargs.pop('statuses', None)  # type: Optional[List[str]]
+        min_created_date_time = kwargs.pop('min_created_date_time', None)  # type: Optional[datetime.datetime]
+        max_created_date_time = kwargs.pop('max_created_date_time', None)  # type: Optional[datetime.datetime]
+        min_last_modified_date_time = kwargs.pop('min_last_modified_date_time', None)  # type: Optional[datetime.datetime]
+        max_last_modified_date_time = kwargs.pop('max_last_modified_date_time', None)  # type: Optional[datetime.datetime]
+        max_page_size = kwargs.pop('max_page_size', 50)  # type: Optional[int]
+        skip_token = kwargs.pop('skip_token', None)  # type: Optional[str]
         cls = kwargs.pop('cls', None)  # type: ClsType[Any]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
@@ -328,29 +339,6 @@ class SeasonalFieldsOperations(object):
 
         def prepare_request(next_link=None):
             if not next_link:
-                farm_ids = kwargs.pop('farm_ids', None)  # type: Optional[List[str]]
-                field_ids = kwargs.pop('field_ids', None)  # type: Optional[List[str]]
-                season_ids = kwargs.pop('season_ids', None)  # type: Optional[List[str]]
-                crop_variety_ids = kwargs.pop('crop_variety_ids', None)  # type: Optional[List[str]]
-                crop_ids = kwargs.pop('crop_ids', None)  # type: Optional[List[str]]
-                min_avg_yield_value = kwargs.pop('min_avg_yield_value', None)  # type: Optional[float]
-                max_avg_yield_value = kwargs.pop('max_avg_yield_value', None)  # type: Optional[float]
-                avg_yield_unit = kwargs.pop('avg_yield_unit', None)  # type: Optional[str]
-                min_avg_seed_population_value = kwargs.pop('min_avg_seed_population_value', None)  # type: Optional[float]
-                max_avg_seed_population_value = kwargs.pop('max_avg_seed_population_value', None)  # type: Optional[float]
-                avg_seed_population_unit = kwargs.pop('avg_seed_population_unit', None)  # type: Optional[str]
-                min_planting_date_time = kwargs.pop('min_planting_date_time', None)  # type: Optional[datetime.datetime]
-                max_planting_date_time = kwargs.pop('max_planting_date_time', None)  # type: Optional[datetime.datetime]
-                ids = kwargs.pop('ids', None)  # type: Optional[List[str]]
-                names = kwargs.pop('names', None)  # type: Optional[List[str]]
-                property_filters = kwargs.pop('property_filters', None)  # type: Optional[List[str]]
-                statuses = kwargs.pop('statuses', None)  # type: Optional[List[str]]
-                min_created_date_time = kwargs.pop('min_created_date_time', None)  # type: Optional[datetime.datetime]
-                max_created_date_time = kwargs.pop('max_created_date_time', None)  # type: Optional[datetime.datetime]
-                min_last_modified_date_time = kwargs.pop('min_last_modified_date_time', None)  # type: Optional[datetime.datetime]
-                max_last_modified_date_time = kwargs.pop('max_last_modified_date_time', None)  # type: Optional[datetime.datetime]
-                max_page_size = kwargs.pop('max_page_size', 50)  # type: Optional[int]
-                skip_token = kwargs.pop('skip_token', None)  # type: Optional[str]
                 request = rest_seasonal_fields.build_list_request(
                     farm_ids=farm_ids,
                     field_ids=field_ids,
@@ -378,32 +366,12 @@ class SeasonalFieldsOperations(object):
                     template_url=self.list.metadata['url'],
                     **kwargs
                 )._internal_request
-                request.url = self._client.format_url(request.url)
+                path_format_arguments = {
+                    'Endpoint': self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
+                }
+                request.url = self._client.format_url(request.url, **path_format_arguments)
                 kwargs.pop("content_type", None)
             else:
-                farm_ids = kwargs.pop('farm_ids', None)  # type: Optional[List[str]]
-                field_ids = kwargs.pop('field_ids', None)  # type: Optional[List[str]]
-                season_ids = kwargs.pop('season_ids', None)  # type: Optional[List[str]]
-                crop_variety_ids = kwargs.pop('crop_variety_ids', None)  # type: Optional[List[str]]
-                crop_ids = kwargs.pop('crop_ids', None)  # type: Optional[List[str]]
-                min_avg_yield_value = kwargs.pop('min_avg_yield_value', None)  # type: Optional[float]
-                max_avg_yield_value = kwargs.pop('max_avg_yield_value', None)  # type: Optional[float]
-                avg_yield_unit = kwargs.pop('avg_yield_unit', None)  # type: Optional[str]
-                min_avg_seed_population_value = kwargs.pop('min_avg_seed_population_value', None)  # type: Optional[float]
-                max_avg_seed_population_value = kwargs.pop('max_avg_seed_population_value', None)  # type: Optional[float]
-                avg_seed_population_unit = kwargs.pop('avg_seed_population_unit', None)  # type: Optional[str]
-                min_planting_date_time = kwargs.pop('min_planting_date_time', None)  # type: Optional[datetime.datetime]
-                max_planting_date_time = kwargs.pop('max_planting_date_time', None)  # type: Optional[datetime.datetime]
-                ids = kwargs.pop('ids', None)  # type: Optional[List[str]]
-                names = kwargs.pop('names', None)  # type: Optional[List[str]]
-                property_filters = kwargs.pop('property_filters', None)  # type: Optional[List[str]]
-                statuses = kwargs.pop('statuses', None)  # type: Optional[List[str]]
-                min_created_date_time = kwargs.pop('min_created_date_time', None)  # type: Optional[datetime.datetime]
-                max_created_date_time = kwargs.pop('max_created_date_time', None)  # type: Optional[datetime.datetime]
-                min_last_modified_date_time = kwargs.pop('min_last_modified_date_time', None)  # type: Optional[datetime.datetime]
-                max_last_modified_date_time = kwargs.pop('max_last_modified_date_time', None)  # type: Optional[datetime.datetime]
-                max_page_size = kwargs.pop('max_page_size', 50)  # type: Optional[int]
-                skip_token = kwargs.pop('skip_token', None)  # type: Optional[str]
                 request = rest_seasonal_fields.build_list_request(
                     farm_ids=farm_ids,
                     field_ids=field_ids,
@@ -431,11 +399,17 @@ class SeasonalFieldsOperations(object):
                     template_url=self.list.metadata['url'],
                     **kwargs
                 )._internal_request
-                request.url = self._client.format_url(request.url)
+                path_format_arguments = {
+                    'Endpoint': self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
+                }
+                request.url = self._client.format_url(request.url, **path_format_arguments)
                 kwargs.pop("content_type", None)
                 # little hacky, but this code will soon be replaced with code that won't need the hack
+                path_format_arguments = {
+                    'Endpoint': self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
+                }
                 request._internal_request.method = "GET"
-                request.url = self._client.format_url(next_link)
+                request.url = self._client.format_url(next_link, **path_format_arguments)
             return request
 
         def extract_data(pipeline_response):
@@ -493,7 +467,10 @@ class SeasonalFieldsOperations(object):
             template_url=self.get.metadata['url'],
             **kwargs
         )._internal_request
-        request.url = self._client.format_url(request.url)
+        path_format_arguments = {
+            'Endpoint': self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
+        }
+        request.url = self._client.format_url(request.url, **path_format_arguments)
         kwargs.pop("content_type", None)
 
         pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
@@ -540,8 +517,9 @@ class SeasonalFieldsOperations(object):
         }
         error_map.update(kwargs.pop('error_map', {}))
 
-        content_type = kwargs.pop("content_type", "application/merge-patch+json")
         seasonal_field = kwargs.pop('seasonal_field', None)  # type: Any
+
+        content_type = kwargs.pop("content_type", "application/merge-patch+json")
         if seasonal_field is not None:
             json = seasonal_field
         else:
@@ -556,7 +534,10 @@ class SeasonalFieldsOperations(object):
             template_url=self.create_or_update.metadata['url'],
             **kwargs
         )._internal_request
-        request.url = self._client.format_url(request.url)
+        path_format_arguments = {
+            'Endpoint': self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
+        }
+        request.url = self._client.format_url(request.url, **path_format_arguments)
         kwargs.pop("content_type", None)
 
         pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
@@ -609,7 +590,10 @@ class SeasonalFieldsOperations(object):
             template_url=self.delete.metadata['url'],
             **kwargs
         )._internal_request
-        request.url = self._client.format_url(request.url)
+        path_format_arguments = {
+            'Endpoint': self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
+        }
+        request.url = self._client.format_url(request.url, **path_format_arguments)
         kwargs.pop("content_type", None)
 
         pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
@@ -650,7 +634,10 @@ class SeasonalFieldsOperations(object):
             template_url=self.get_cascade_delete_job_details.metadata['url'],
             **kwargs
         )._internal_request
-        request.url = self._client.format_url(request.url)
+        path_format_arguments = {
+            'Endpoint': self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
+        }
+        request.url = self._client.format_url(request.url, **path_format_arguments)
         kwargs.pop("content_type", None)
 
         pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
@@ -685,6 +672,7 @@ class SeasonalFieldsOperations(object):
 
         farmer_id = kwargs.pop('farmer_id')  # type: str
         seasonal_field_id = kwargs.pop('seasonal_field_id')  # type: str
+
         request = rest_seasonal_fields.build_create_cascade_delete_job_request_initial(
             job_id=job_id,
             farmer_id=farmer_id,
@@ -692,7 +680,10 @@ class SeasonalFieldsOperations(object):
             template_url=self._create_cascade_delete_jo_initial.metadata['url'],
             **kwargs
         )._internal_request
-        request.url = self._client.format_url(request.url)
+        path_format_arguments = {
+            'Endpoint': self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
+        }
+        request.url = self._client.format_url(request.url, **path_format_arguments)
         kwargs.pop("content_type", None)
 
         pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
@@ -735,6 +726,9 @@ class SeasonalFieldsOperations(object):
         :rtype: ~azure.core.polling.LROPoller[Any]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
+
+        farmer_id = kwargs.pop('farmer_id')  # type: str
+        seasonal_field_id = kwargs.pop('seasonal_field_id')  # type: str
         polling = kwargs.pop('polling', False)  # type: Union[bool, PollingMethod]
         cls = kwargs.pop('cls', None)  # type: ClsType[Any]
         lro_delay = kwargs.pop(
@@ -765,7 +759,11 @@ class SeasonalFieldsOperations(object):
                 return cls(pipeline_response, deserialized, {})
             return deserialized
 
-        if polling is True: polling_method = LROBasePolling(lro_delay, lro_options={'final-state-via': 'location'},  **kwargs)
+        path_format_arguments = {
+            'Endpoint': self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
+        }
+
+        if polling is True: polling_method = LROBasePolling(lro_delay, lro_options={'final-state-via': 'location'}, path_format_arguments=path_format_arguments,  **kwargs)
         elif polling is False: polling_method = NoPolling()
         else: polling_method = polling
         if cont_token:

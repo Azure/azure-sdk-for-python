@@ -28,19 +28,25 @@ class FarmBeatsClientConfiguration(Configuration):
 
     :param credential: Credential needed for the client to connect to Azure.
     :type credential: ~azure.core.credentials.TokenCredential
+    :param endpoint: The endpoint of your FarmBeats resource (protocol and hostname, for example: https://{vaultName}.farmbeats.azure.net).
+    :type endpoint: str
     """
 
     def __init__(
         self,
         credential,  # type: "TokenCredential"
+        endpoint,  # type: str
         **kwargs  # type: Any
     ):
         # type: (...) -> None
         if credential is None:
             raise ValueError("Parameter 'credential' must not be None.")
+        if endpoint is None:
+            raise ValueError("Parameter 'endpoint' must not be None.")
         super(FarmBeatsClientConfiguration, self).__init__(**kwargs)
 
         self.credential = credential
+        self.endpoint = endpoint
         self.api_version = "2021-03-31-preview"
         self.credential_scopes = kwargs.pop('credential_scopes', ['https://farmbeats-dogfood.azure.net/.default'])
         kwargs.setdefault('sdk_moniker', 'farmbeats/{}'.format(VERSION))
