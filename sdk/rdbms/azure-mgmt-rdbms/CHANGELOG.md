@@ -1,5 +1,16 @@
 # Release History
 
+## 8.1.0b4 (2021-04-29)
+
+**Features**
+
+  - Added operation ServerSecurityAlertPoliciesOperations.list_by_server
+  - Added operation ServerKeysOperations.list
+
+**Breaking changes**
+
+  - Removed operation ServerKeysOperations.list_by_server
+
 ## 8.1.0b3 (2021-04-27)
 
 **Features**
