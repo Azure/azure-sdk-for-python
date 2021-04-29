@@ -101,9 +101,9 @@ steps:
           SkipDefaultCheckout: true
 
       - script: |
+          conda install --name ${{ artifact.name }} ${{ artifact.name }} -c $(Build.ArtifactStagingDirectory)/${{ artifact.name }} --yes
           $(activate.method) activate ${{ artifact.name }}
           python -m pip install -r dev_requirements.txt
-          conda install --name ${{ artifact.name }} ${{ artifact.name }} -c $(Build.ArtifactStagingDirectory)/${{ artifact.name }} --yes
         displayName: 'Install ${{ checkout.package }} Conda Package and Dev Requirements'
         workingDirectory: $(conda.build)/${{ checkout.checkout_path }}/${{ checkout.package }}
 
