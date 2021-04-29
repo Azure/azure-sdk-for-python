@@ -83,6 +83,7 @@ class RecognizeCustomFormsSampleAsync(object):
                             ))
 
                 print("-----------------------------------")
+        # [END recognize_custom_forms_async]
 
 
 async def main():

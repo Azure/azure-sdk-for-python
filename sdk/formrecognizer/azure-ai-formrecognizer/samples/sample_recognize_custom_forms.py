@@ -70,7 +70,6 @@ class RecognizeCustomForms(object):
                 print("...Label '{}' has value '{}' with a confidence score of {}".format(
                     field.label_data.text if field.label_data else name, field.value, field.confidence
                 ))
-            # [END recognize_custom_forms]
 
             # iterate over tables on each page
             for page in form.pages:
@@ -82,6 +81,7 @@ class RecognizeCustomForms(object):
                         ))
 
             print("-----------------------------------")
+        # [END recognize_custom_forms]
 
 
 if __name__ == '__main__':
