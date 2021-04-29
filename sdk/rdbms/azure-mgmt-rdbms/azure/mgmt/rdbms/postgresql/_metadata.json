@@ -1,6 +1,6 @@
 {
     "chosen_version": "",
-    "total_api_version_list": ["2020-02-14-preview", "2020-11-05-preview", "2021-03-31-privatepreview"],
+    "total_api_version_list": ["2017-12-01", "2018-06-01", "2020-01-01"],
     "client": {
         "name": "PostgreSQLManagementClient",
         "filename": "_postgre_sql_management_client",
@@ -99,13 +99,22 @@
     },
     "operation_groups": {
         "servers": "ServersOperations",
+        "replicas": "ReplicasOperations",
         "firewall_rules": "FirewallRulesOperations",
-        "configurations": "ConfigurationsOperations",
-        "check_name_availability": "CheckNameAvailabilityOperations",
-        "location_based_capabilities": "LocationBasedCapabilitiesOperations",
-        "virtual_network_subnet_usage": "VirtualNetworkSubnetUsageOperations",
-        "operations": "Operations",
+        "virtual_network_rules": "VirtualNetworkRulesOperations",
         "databases": "DatabasesOperations",
-        "get_private_dns_zone_suffix": "GetPrivateDnsZoneSuffixOperations"
+        "configurations": "ConfigurationsOperations",
+        "server_parameters": "ServerParametersOperations",
+        "log_files": "LogFilesOperations",
+        "server_administrators": "ServerAdministratorsOperations",
+        "recoverable_servers": "RecoverableServersOperations",
+        "server_based_performance_tier": "ServerBasedPerformanceTierOperations",
+        "location_based_performance_tier": "LocationBasedPerformanceTierOperations",
+        "check_name_availability": "CheckNameAvailabilityOperations",
+        "operations": "Operations",
+        "server_security_alert_policies": "ServerSecurityAlertPoliciesOperations",
+        "private_endpoint_connections": "PrivateEndpointConnectionsOperations",
+        "private_link_resources": "PrivateLinkResourcesOperations",
+        "server_keys": "ServerKeysOperations"
     }
 }
