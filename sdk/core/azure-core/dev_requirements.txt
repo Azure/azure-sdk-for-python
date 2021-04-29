@@ -1,5 +1,6 @@
 trio; python_version >= '3.5'
 aiohttp>=3.0; python_version >= '3.5'
+isodate>=0.6.0
 typing_extensions>=3.7.2
 opencensus>=0.6.0
 opencensus-ext-azure
