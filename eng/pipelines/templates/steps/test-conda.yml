@@ -61,7 +61,7 @@ steps:
 
     - powershell: |
         Write-Host "$(PythonVersion)"
-        Write-Host "$(OSVmImage)""
+        Write-Host "$(OSVmImage)"
         Write Host "$(activate.method)"
         Write-Host "$(requirement.suffix)"
       displayName: 'Dump Python Version Info'
