@@ -23,14 +23,14 @@ if TYPE_CHECKING:
     T = TypeVar('T')
     ClsType = Optional[Callable[[PipelineResponse[HttpRequest, HttpResponse], T, Dict[str, Any]], Any]]
 
-class LocationBasedCapabilitiesOperations(object):
-    """LocationBasedCapabilitiesOperations operations.
+class Operations(object):
+    """Operations operations.
 
     You should not instantiate this class directly. Instead, you should create a Client instance that
     instantiates it for you and attaches it as an attribute.
 
     :ivar models: Alias to model classes used in this operation group.
-    :type models: ~azure.mgmt.rdbms.postgresql.models
+    :type models: ~confidential_ledger.models
     :param client: Client for service requests.
     :param config: Configuration of service client.
     :param serializer: An object model serializer.
@@ -45,27 +45,26 @@ class LocationBasedCapabilitiesOperations(object):
         self._deserialize = deserializer
         self._config = config
 
-    def execute(
+    def list(
         self,
-        location_name,  # type: str
         **kwargs  # type: Any
     ):
-        # type: (...) -> Iterable["_models.CapabilitiesListResult"]
-        """Get capabilities at specified location in a given subscription.
+        # type: (...) -> Iterable["_models.ResourceProviderOperationList"]
+        """Retrieves a list of available API operations under this Resource Provider.
 
-        :param location_name: The name of the location.
-        :type location_name: str
+        Retrieves a list of available API operations.
+
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: An iterator like instance of either CapabilitiesListResult or the result of cls(response)
-        :rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.rdbms.postgresql.models.CapabilitiesListResult]
+        :return: An iterator like instance of either ResourceProviderOperationList or the result of cls(response)
+        :rtype: ~azure.core.paging.ItemPaged[~confidential_ledger.models.ResourceProviderOperationList]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["_models.CapabilitiesListResult"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.ResourceProviderOperationList"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2020-02-14-preview"
+        api_version = "2020-12-01-preview"
         accept = "application/json"
 
         def prepare_request(next_link=None):
@@ -75,12 +74,7 @@ class LocationBasedCapabilitiesOperations(object):
 
             if not next_link:
                 # Construct URL
-                url = self.execute.metadata['url']  # type: ignore
-                path_format_arguments = {
-                    'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str', min_length=1),
-                    'locationName': self._serialize.url("location_name", location_name, 'str'),
-                }
-                url = self._client.format_url(url, **path_format_arguments)
+                url = self.list.metadata['url']  # type: ignore
                 # Construct parameters
                 query_parameters = {}  # type: Dict[str, Any]
                 query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
@@ -93,7 +87,7 @@ class LocationBasedCapabilitiesOperations(object):
             return request
 
         def extract_data(pipeline_response):
-            deserialized = self._deserialize('CapabilitiesListResult', pipeline_response)
+            deserialized = self._deserialize('ResourceProviderOperationList', pipeline_response)
             list_of_elem = deserialized.value
             if cls:
                 list_of_elem = cls(list_of_elem)
@@ -106,12 +100,13 @@ class LocationBasedCapabilitiesOperations(object):
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
+                error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, response)
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
-                raise HttpResponseError(response=response, error_format=ARMErrorFormat)
+                raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
             return pipeline_response
 
         return ItemPaged(
             get_next, extract_data
         )
-    execute.metadata = {'url': '/subscriptions/{subscriptionId}/providers/Microsoft.DBForPostgreSql/locations/{locationName}/capabilities'}  # type: ignore
+    list.metadata = {'url': '/providers/Microsoft.ConfidentialLedger/operations'}  # type: ignore

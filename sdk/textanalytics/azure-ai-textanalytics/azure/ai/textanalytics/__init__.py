@@ -52,7 +52,10 @@ from ._models import (
 from ._paging import AnalyzeHealthcareEntitiesResult
 from ._generated.v3_1_preview_5.models import (
     PiiCategory as PiiEntityCategoryType,
-    RelationType as HealthcareEntityRelationType
+    RelationType as HealthcareEntityRelationType,
+    Conditionality as EntityConditionality,
+    Certainty as EntityCertainty,
+    Association as EntityAssociation
 )
 
 __all__ = [
@@ -100,6 +103,9 @@ __all__ = [
     "HealthcareRelation",
     "HealthcareRelationRole",
     "HealthcareEntityAssertion",
+    "EntityConditionality",
+    "EntityCertainty",
+    "EntityAssociation",
     "AnalyzeSentimentAction"
 ]
 
