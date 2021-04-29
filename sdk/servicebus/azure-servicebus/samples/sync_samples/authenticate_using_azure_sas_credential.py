@@ -5,7 +5,7 @@
 # Licensed under the MIT License. See License.txt in the project root for license information.
 # --------------------------------------------------------------------------------------------
 """
-An example to show authentication using a SAS token generated from a SAS key, as well as the generation process.
+An example to show authentication using AzureSasCredential.
 """
 
 import os
@@ -17,9 +17,10 @@ try:
     from urllib.parse import quote as url_parse_quote
 except ImportError:
     from urllib import pathname2url as url_parse_quote
-from azure.core.credentials import AccessToken
 
-from azure.servicebus import ServiceBusClient
+from azure.core.credentials import AzureSasCredential
+from azure.servicebus import ServiceBusClient, ServiceBusMessage
+
 
 def generate_sas_token(uri, sas_name, sas_value, token_ttl):
     """Performs the signing and encoding needed to generate a sas token from a sas key."""
@@ -30,33 +31,19 @@ def generate_sas_token(uri, sas_name, sas_value, token_ttl):
     signature = url_parse_quote(base64.b64encode(signed_hmac_sha256.digest()))
     return 'SharedAccessSignature sr={}&sig={}&se={}&skn={}'.format(uri, signature, expiry, sas_name)
 
-class CustomizedSASCredential(object):
-    def __init__(self, token, expiry):
-        """
-        :param str token: The token string
-        :param float expiry: The epoch timestamp
-        """
-        self.token = token
-        self.expiry = expiry
-        self.token_type = b"servicebus.windows.net:sastoken"
-
-    def get_token(self, *scopes, **kwargs):
-        """
-        This method is automatically called when token is about to expire.
-        """
-        return AccessToken(self.token, self.expiry)
 
 FULLY_QUALIFIED_NAMESPACE = os.environ['SERVICE_BUS_FULLY_QUALIFIED_NAMESPACE']
 QUEUE_NAME = os.environ["SERVICE_BUS_QUEUE_NAME"]
 SAS_POLICY = os.environ['SERVICE_BUS_SAS_POLICY']
-SAS_KEY = os.environ['SERVICE_BUS_SAS_KEY']
+SERVICEBUS_SAS_KEY = os.environ['SERVICE_BUS_SAS_KEY']
 
 auth_uri = "sb://{}/{}".format(FULLY_QUALIFIED_NAMESPACE, QUEUE_NAME)
 token_ttl = 3000  # seconds
 
-sas_token = generate_sas_token(auth_uri, SAS_POLICY, SAS_KEY, token_ttl)
+sas_token = generate_sas_token(auth_uri, SAS_POLICY, SERVICEBUS_SAS_KEY, token_ttl)
 
-credential=CustomizedSASCredential(sas_token, time.time() + token_ttl)
+credential=AzureSasCredential(sas_token)
 
 with ServiceBusClient(FULLY_QUALIFIED_NAMESPACE, credential) as client:
-    pass # client now connected, your logic goes here.
+    with client.get_queue_sender(QUEUE_NAME) as sender:
+        sender.send_messages([ServiceBusMessage("hello")])
