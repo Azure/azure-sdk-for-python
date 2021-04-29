@@ -63,9 +63,7 @@ def get_field_value(
             for key, value in value.value_object.items()
         }
     if value.type == "selectionMark":
-        return (
-            value.text
-        )  # FIXME https://github.com/Azure/azure-sdk-for-python/issues/15276
+        return value.value_selection_mark
     if value.type == "gender":
         return value.value_gender
     if value.type == "country":
