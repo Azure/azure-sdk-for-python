@@ -368,12 +368,3 @@ def create_properties_from_dict_if_needed(properties, sb_resource_type):
                 sb_resource_type.__name__
             )
         )
-
-
-def override_properties_with_keyword_arguments(properties, **kwargs):
-    # type: (PropertiesType, Any) -> None
-    if not kwargs:
-        return
-    for key, _ in kwargs.items():
-        if key in properties.keys():
-            properties[key] = kwargs.get(key)

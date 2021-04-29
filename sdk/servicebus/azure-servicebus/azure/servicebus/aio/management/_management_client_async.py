@@ -73,13 +73,11 @@ from ...management._models import (
 )
 from ...management._xml_workaround_policy import ServiceBusXMLWorkaroundPolicy
 from ...management._handle_response_error import _handle_response_error
-from ...management._model_workaround import avoid_timedelta_overflow
 from ._utils import extract_data_template, extract_rule_data_template, get_next_template
 from ...management._utils import (
     deserialize_rule_key_values,
     serialize_rule_key_values,
     create_properties_from_dict_if_needed,
-    override_properties_with_keyword_arguments,
     _normalize_entity_path_to_full_path_if_needed,
     _validate_entity_name_type,
     _validate_topic_and_subscription_types,
@@ -432,27 +430,7 @@ class ServiceBusAdministrationClient:  # pylint:disable=too-many-public-methods
         """
         # we should not mutate the input, making a copy first for update
         queue = deepcopy(create_properties_from_dict_if_needed(queue, QueueProperties))
-        queue.forward_to = _normalize_entity_path_to_full_path_if_needed(
-            queue.forward_to, self.fully_qualified_namespace
-        )
-        queue.forward_dead_lettered_messages_to = (
-            _normalize_entity_path_to_full_path_if_needed(
-                queue.forward_dead_lettered_messages_to,
-                self.fully_qualified_namespace,
-            )
-        )
-
-        property_keyword_arguments = {key: kwargs.pop(key) for key in set(kwargs.keys()) if key in queue.keys()}
-        override_properties_with_keyword_arguments(queue, **property_keyword_arguments)
-
-        to_update = queue._to_internal_entity()
-
-        to_update.default_message_time_to_live = avoid_timedelta_overflow(
-            to_update.default_message_time_to_live
-        )
-        to_update.auto_delete_on_idle = avoid_timedelta_overflow(
-            to_update.auto_delete_on_idle
-        )
+        to_update = queue._to_internal_entity(self.fully_qualified_namespace, kwargs)
 
         create_entity_body = CreateQueueBody(
             content=CreateQueueBodyContent(
@@ -680,16 +658,7 @@ class ServiceBusAdministrationClient:  # pylint:disable=too-many-public-methods
         """
 
         topic = deepcopy(create_properties_from_dict_if_needed(topic, TopicProperties))
-        property_keyword_arguments = {key: kwargs.pop(key) for key in set(kwargs.keys()) if key in topic.keys()}
-        override_properties_with_keyword_arguments(topic, **property_keyword_arguments)
-        to_update = topic._to_internal_entity()
-
-        to_update.default_message_time_to_live = avoid_timedelta_overflow(  # type: ignore
-            to_update.default_message_time_to_live
-        )
-        to_update.auto_delete_on_idle = avoid_timedelta_overflow(  # type: ignore
-            to_update.auto_delete_on_idle
-        )
+        to_update = topic._to_internal_entity(kwargs)
 
         create_entity_body = CreateTopicBody(
             content=CreateTopicBodyContent(
@@ -947,26 +916,7 @@ class ServiceBusAdministrationClient:  # pylint:disable=too-many-public-methods
         _validate_entity_name_type(topic_name, display_name="topic_name")
         # we should not mutate the input, making a copy first for update
         subscription = deepcopy(create_properties_from_dict_if_needed(subscription, SubscriptionProperties))
-        subscription.forward_to = _normalize_entity_path_to_full_path_if_needed(
-            subscription.forward_to, self.fully_qualified_namespace
-        )
-        subscription.forward_dead_lettered_messages_to = (
-            _normalize_entity_path_to_full_path_if_needed(
-                subscription.forward_dead_lettered_messages_to,
-                self.fully_qualified_namespace,
-            )
-        )
-        property_keyword_arguments = {key: kwargs.pop(key) for key in set(kwargs.keys()) if key in subscription.keys()}
-        override_properties_with_keyword_arguments(subscription, **property_keyword_arguments)
-
-        to_update = subscription._to_internal_entity()
-
-        to_update.default_message_time_to_live = avoid_timedelta_overflow(  # type: ignore
-            to_update.default_message_time_to_live
-        )
-        to_update.auto_delete_on_idle = avoid_timedelta_overflow(  # type: ignore
-            to_update.auto_delete_on_idle
-        )
+        to_update = subscription._to_internal_entity(self.fully_qualified_namespace, kwargs)
 
         create_entity_body = CreateSubscriptionBody(
             content=CreateSubscriptionBodyContent(
@@ -1164,9 +1114,7 @@ class ServiceBusAdministrationClient:  # pylint:disable=too-many-public-methods
         _validate_topic_and_subscription_types(topic_name, subscription_name)
         # we should not mutate the input, making a copy first for update
         rule = deepcopy(create_properties_from_dict_if_needed(rule, RuleProperties))
-        property_keyword_arguments = {key: kwargs.pop(key) for key in set(kwargs.keys()) if key in rule.keys()}
-        override_properties_with_keyword_arguments(rule, **property_keyword_arguments)
-        to_update = rule._to_internal_entity()
+        to_update = rule._to_internal_entity(kwargs)
 
         create_entity_body = CreateRuleBody(
             content=CreateRuleBodyContent(
