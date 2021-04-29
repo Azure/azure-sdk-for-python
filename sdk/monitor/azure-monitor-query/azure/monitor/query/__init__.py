@@ -5,11 +5,13 @@
 # --------------------------------------------------------------------------
 
 from ._log_query_client import LogQueryClient
+from ._metrics_query_client import MetricsQueryClient
 from ._generated.models import QueryResults
 from ._version import VERSION
 
 __all__ = [
     "LogQueryClient",
+    "MetricsQueryClient",
     "QueryResults"
 ]
 

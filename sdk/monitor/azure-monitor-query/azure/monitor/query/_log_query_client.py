@@ -5,7 +5,7 @@
 # license information.
 # --------------------------------------------------------------------------
 
-from typing import TYPE_CHECKING, cast, Dict, List, Any, Union
+from typing import TYPE_CHECKING, Any, Union
 
 from ._generated._monitor_query_client import (
     MonitorQueryClient,
@@ -14,7 +14,8 @@ from ._generated._monitor_query_client import (
 from ._helpers import get_authentication_policy
 
 if TYPE_CHECKING:
-    from azure.identity import DefaultAzureCredential, TokenCredential
+    from azure.identity import DefaultAzureCredential
+    from azure.core.credentials import TokenCredential
 
 class LogQueryClient(object):
     """LogQueryClient
@@ -37,7 +38,7 @@ class LogQueryClient(object):
         """
         return self._query_op.get(workspace_id, query, **kwargs)
 
-    def batch_query(self, batch, **kwargs):
+    def batch_query(self, workspace_id, batch, **kwargs):
         # type: (str, Any) -> None
         """Execute an Analytics query.
 

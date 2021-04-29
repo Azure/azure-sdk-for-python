@@ -11,7 +11,7 @@ def get_authentication_policy(
         credential, # type: TokenCredential
 ):
     # type: (...) -> BearerTokenCredentialPolicy
-    """
+    """Returns the correct authentication policy
     """
 
     if credential is None:
