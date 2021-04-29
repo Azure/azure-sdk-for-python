@@ -133,7 +133,7 @@ class ClientBaseAsync(ClientBase):
 
     @staticmethod
     def _from_connection_string(conn_str: str, **kwargs) -> Dict[str, Any]:
-        host, policy, key, entity, token, token_expiry = _parse_conn_str(conn_str, kwargs)
+        host, policy, key, entity, token, token_expiry = _parse_conn_str(conn_str, **kwargs)
         kwargs["fully_qualified_namespace"] = host
         kwargs["eventhub_name"] = entity
         if token and token_expiry:

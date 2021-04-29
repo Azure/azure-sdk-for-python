@@ -9,24 +9,24 @@ interactions:
       Content-Type:
       - application/merge-patch+json
       User-Agent:
-      - azsdk-python-communication-phonenumbers/1.0.0b5 Python/3.8.5 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-communication-phonenumbers/1.0.0b5 Python/3.9.0 (Windows-10-10.0.19041-SP0)
     method: PATCH
     uri: https://sanitized.communication.azure.com/phoneNumbers/sanitized/capabilities?api-version=2021-03-07
   response:
     body:
-      string: '{"capabilitiesUpdateId": "5ef72f01-7bc5-4e4a-be22-ab771e7362af"}'
+      string: '{"capabilitiesUpdateId": "f5c90484-8de1-4ba2-8f15-42443d061e9e"}'
     headers:
       access-control-expose-headers: Operation-Location,Location,operation-id,capabilities-id
       api-supported-versions: '2021-03-07'
-      capabilities-id: 5ef72f01-7bc5-4e4a-be22-ab771e7362af
+      capabilities-id: f5c90484-8de1-4ba2-8f15-42443d061e9e
       content-type: application/json; charset=utf-8
-      date: Wed, 07 Apr 2021 18:49:04 GMT
-      ms-cv: pTS3qXShWECyniA8BhvmTA.0
-      operation-id: capabilities_5ef72f01-7bc5-4e4a-be22-ab771e7362af
-      operation-location: /phoneNumbers/operations/capabilities_5ef72f01-7bc5-4e4a-be22-ab771e7362af?api-version=2021-03-07
+      date: Mon, 19 Apr 2021 21:51:53 GMT
+      ms-cv: 7WC7tbAU/EKNXGTonzoXvQ.0
+      operation-id: capabilities_f5c90484-8de1-4ba2-8f15-42443d061e9e
+      operation-location: /phoneNumbers/operations/capabilities_f5c90484-8de1-4ba2-8f15-42443d061e9e?api-version=2021-03-07
       request-context: appId=
       transfer-encoding: chunked
-      x-processing-time: 914ms
+      x-processing-time: 1131ms
     status:
       code: 202
       message: Accepted

@@ -94,110 +94,6 @@ class TableServicePropertiesTest(AzureTestCase, AsyncTableTestCase):
         assert ret1.enabled ==  ret2.enabled
         assert ret1.days ==  ret2.days
 
-    # --Test cases per service ---------------------------------------
-    @pytest.mark.skip("Cosmos Tables does not yet support service properties")
-    @CosmosPreparer()
-    async def test_table_service_properties_async(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
-        # Arrange
-        url = self.account_url(tables_cosmos_account_name, "cosmos")
-        tsc = TableServiceClient(url, tables_primary_cosmos_account_key, logging_enable=True)
-        # Act
-        resp = await tsc.set_service_properties(
-            analytics_logging=TableAnalyticsLogging(),
-            hour_metrics=Metrics(),
-            minute_metrics=Metrics(),
-            cors=list())
-
-        # Assert
-        assert resp is None
-        self._assert_properties_default(await tsc.get_service_properties())
-        if self.is_live:
-            sleep(SLEEP_DELAY)
-
-    # --Test cases per feature ---------------------------------------
-    @pytest.mark.skip("Cosmos Tables does not yet support service properties")
-    @CosmosPreparer()
-    async def test_set_logging_async(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
-        # Arrange
-        url = self.account_url(tables_cosmos_account_name, "cosmos")
-        tsc = TableServiceClient(url, tables_primary_cosmos_account_key)
-        logging = TableAnalyticsLogging(read=True, write=True, delete=True, retention_policy=RetentionPolicy(enabled=True, days=5))
-
-        # Act
-        await tsc.set_service_properties(analytics_logging=logging)
-
-        # Assert
-        received_props = await tsc.get_service_properties()
-        self._assert_logging_equal(received_props['analytics_logging'], logging)
-        if self.is_live:
-            sleep(SLEEP_DELAY)
-
-    @pytest.mark.skip("Cosmos Tables does not yet support service properties")
-    @CosmosPreparer()
-    async def test_set_hour_metrics_async(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
-        # Arrange
-        url = self.account_url(tables_cosmos_account_name, "cosmos")
-        tsc = TableServiceClient(url, tables_primary_cosmos_account_key)
-        hour_metrics = Metrics(enabled=True, include_apis=True, retention_policy=RetentionPolicy(enabled=True, days=5))
-
-        # Act
-        await tsc.set_service_properties(hour_metrics=hour_metrics)
-
-        # Assert
-        received_props = await tsc.get_service_properties()
-        self._assert_metrics_equal(received_props['hour_metrics'], hour_metrics)
-        if self.is_live:
-            sleep(SLEEP_DELAY)
-
-    @pytest.mark.skip("Cosmos Tables does not yet support service properties")
-    @CosmosPreparer()
-    async def test_set_minute_metrics_async(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
-        # Arrange
-        url = self.account_url(tables_cosmos_account_name, "cosmos")
-        tsc = TableServiceClient(url, tables_primary_cosmos_account_key)
-        minute_metrics = Metrics(enabled=True, include_apis=True,
-                                 retention_policy=RetentionPolicy(enabled=True, days=5))
-
-        # Act
-        await tsc.set_service_properties(minute_metrics=minute_metrics)
-
-        # Assert
-        received_props = await tsc.get_service_properties()
-        self._assert_metrics_equal(received_props['minute_metrics'], minute_metrics)
-        if self.is_live:
-            sleep(SLEEP_DELAY)
-
-    @pytest.mark.skip("Cosmos Tables does not yet support service properties")
-    @CosmosPreparer()
-    async def test_set_cors_async(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
-        # Arrange
-        url = self.account_url(tables_cosmos_account_name, "cosmos")
-        tsc = TableServiceClient(url, tables_primary_cosmos_account_key)
-        cors_rule1 = CorsRule(['www.xyz.com'], ['GET'])
-
-        allowed_origins = ['www.xyz.com', "www.ab.com", "www.bc.com"]
-        allowed_methods = ['GET', 'PUT']
-        max_age_in_seconds = 500
-        exposed_headers = ["x-ms-meta-data*", "x-ms-meta-source*", "x-ms-meta-abc", "x-ms-meta-bcd"]
-        allowed_headers = ["x-ms-meta-data*", "x-ms-meta-target*", "x-ms-meta-xyz", "x-ms-meta-foo"]
-        cors_rule2 = CorsRule(
-            allowed_origins,
-            allowed_methods,
-            max_age_in_seconds=max_age_in_seconds,
-            exposed_headers=exposed_headers,
-            allowed_headers=allowed_headers)
-
-        cors = [cors_rule1, cors_rule2]
-
-        # Act
-        await tsc.set_service_properties(cors=cors)
-
-        # Assert
-        received_props = await tsc.get_service_properties()
-        self._assert_cors_equal(received_props['cors'], cors)
-        if self.is_live:
-            sleep(SLEEP_DELAY)
-
     # --Test cases for errors ---------------------------------------
     @CosmosPreparer()
     async def test_too_many_cors_rules_async(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
@@ -210,8 +106,7 @@ class TableServicePropertiesTest(AzureTestCase, AsyncTableTestCase):
         # Assert
         with pytest.raises(HttpResponseError):
             await tsc.set_service_properties(None, None, None, cors)
-        if self.is_live:
-            sleep(SLEEP_DELAY)
+        self.sleep(SLEEP_DELAY)
 
     @CosmosPreparer()
     async def test_retention_too_long_async(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
@@ -223,8 +118,7 @@ class TableServicePropertiesTest(AzureTestCase, AsyncTableTestCase):
         # Assert
         with pytest.raises(HttpResponseError):
             await tsc.set_service_properties(None, None, minute_metrics)
-        if self.is_live:
-            sleep(SLEEP_DELAY)
+        self.sleep(SLEEP_DELAY)
 
 
 class TestTableUnitTest(AsyncTableTestCase):

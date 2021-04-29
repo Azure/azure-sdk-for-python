@@ -9,12 +9,19 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from azure.mgmt.core import AsyncARMPipelineClient
-from msrest import Serializer, Deserializer
+from typing import Any, Optional, TYPE_CHECKING
 
+from azure.core.pipeline.transport import AsyncHttpResponse, HttpRequest
+from azure.mgmt.core import AsyncARMPipelineClient
 from azure.profiles import KnownProfiles, ProfileDefinition
 from azure.profiles.multiapiclient import MultiApiClientMixin
+from msrest import Deserializer, Serializer
+
 from ._configuration import ResourceManagementClientConfiguration
+
+if TYPE_CHECKING:
+    # pylint: disable=unused-import,ungrouped-imports
+    from azure.core.credentials_async import AsyncTokenCredential
 
 class _SDKClient(object):
     def __init__(self, *args, **kwargs):
@@ -38,16 +45,17 @@ class ResourceManagementClient(MultiApiClientMixin, _SDKClient):
     :type credential: ~azure.core.credentials_async.AsyncTokenCredential
     :param subscription_id: The ID of the target subscription.
     :type subscription_id: str
-    :param str api_version: API version to use if no profile is provided, or if
-     missing in profile.
-    :param str base_url: Service URL
+    :param api_version: API version to use if no profile is provided, or if missing in profile.
+    :type api_version: str
+    :param base_url: Service URL
+    :type base_url: str
     :param profile: A profile definition, from KnownProfiles to dict.
     :type profile: azure.profiles.KnownProfiles
     :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
     """
 
     DEFAULT_API_VERSION = '2020-10-01'
-    _PROFILE_TAG = "azure.mgmt.resource.ResourceManagementClient"
+    _PROFILE_TAG = "azure.mgmt.resource.resources.ResourceManagementClient"
     LATEST_PROFILE = ProfileDefinition({
         _PROFILE_TAG: {
             None: DEFAULT_API_VERSION,
@@ -57,11 +65,11 @@ class ResourceManagementClient(MultiApiClientMixin, _SDKClient):
 
     def __init__(
         self,
-        credential,  # type: "AsyncTokenCredential"
-        subscription_id,  # type: str
-        api_version=None,
-        base_url=None,
-        profile=KnownProfiles.default,
+        credential: "AsyncTokenCredential",
+        subscription_id: str,
+        api_version: Optional[str] = None,
+        base_url: Optional[str] = None,
+        profile: KnownProfiles = KnownProfiles.default,
         **kwargs  # type: Any
     ) -> None:
         if not base_url:
@@ -81,19 +89,19 @@ class ResourceManagementClient(MultiApiClientMixin, _SDKClient):
     def models(cls, api_version=DEFAULT_API_VERSION):
         """Module depends on the API version:
 
-           * 2016-02-01: :mod:`v2016_02_01.models<azure.mgmt.resource.v2016_02_01.models>`
-           * 2016-09-01: :mod:`v2016_09_01.models<azure.mgmt.resource.v2016_09_01.models>`
-           * 2017-05-10: :mod:`v2017_05_10.models<azure.mgmt.resource.v2017_05_10.models>`
-           * 2018-02-01: :mod:`v2018_02_01.models<azure.mgmt.resource.v2018_02_01.models>`
-           * 2018-05-01: :mod:`v2018_05_01.models<azure.mgmt.resource.v2018_05_01.models>`
-           * 2019-03-01: :mod:`v2019_03_01.models<azure.mgmt.resource.v2019_03_01.models>`
-           * 2019-05-01: :mod:`v2019_05_01.models<azure.mgmt.resource.v2019_05_01.models>`
-           * 2019-05-10: :mod:`v2019_05_10.models<azure.mgmt.resource.v2019_05_10.models>`
-           * 2019-07-01: :mod:`v2019_07_01.models<azure.mgmt.resource.v2019_07_01.models>`
-           * 2019-08-01: :mod:`v2019_08_01.models<azure.mgmt.resource.v2019_08_01.models>`
-           * 2019-10-01: :mod:`v2019_10_01.models<azure.mgmt.resource.v2019_10_01.models>`
-           * 2020-06-01: :mod:`v2020_06_01.models<azure.mgmt.resource.v2020_06_01.models>`
-           * 2020-10-01: :mod:`v2020_10_01.models<azure.mgmt.resource.v2020_10_01.models>`
+           * 2016-02-01: :mod:`v2016_02_01.models<azure.mgmt.resource.resources.v2016_02_01.models>`
+           * 2016-09-01: :mod:`v2016_09_01.models<azure.mgmt.resource.resources.v2016_09_01.models>`
+           * 2017-05-10: :mod:`v2017_05_10.models<azure.mgmt.resource.resources.v2017_05_10.models>`
+           * 2018-02-01: :mod:`v2018_02_01.models<azure.mgmt.resource.resources.v2018_02_01.models>`
+           * 2018-05-01: :mod:`v2018_05_01.models<azure.mgmt.resource.resources.v2018_05_01.models>`
+           * 2019-03-01: :mod:`v2019_03_01.models<azure.mgmt.resource.resources.v2019_03_01.models>`
+           * 2019-05-01: :mod:`v2019_05_01.models<azure.mgmt.resource.resources.v2019_05_01.models>`
+           * 2019-05-10: :mod:`v2019_05_10.models<azure.mgmt.resource.resources.v2019_05_10.models>`
+           * 2019-07-01: :mod:`v2019_07_01.models<azure.mgmt.resource.resources.v2019_07_01.models>`
+           * 2019-08-01: :mod:`v2019_08_01.models<azure.mgmt.resource.resources.v2019_08_01.models>`
+           * 2019-10-01: :mod:`v2019_10_01.models<azure.mgmt.resource.resources.v2019_10_01.models>`
+           * 2020-06-01: :mod:`v2020_06_01.models<azure.mgmt.resource.resources.v2020_06_01.models>`
+           * 2020-10-01: :mod:`v2020_10_01.models<azure.mgmt.resource.resources.v2020_10_01.models>`
         """
         if api_version == '2016-02-01':
             from ..v2016_02_01 import models
@@ -140,19 +148,19 @@ class ResourceManagementClient(MultiApiClientMixin, _SDKClient):
     def deployment_operations(self):
         """Instance depends on the API version:
 
-           * 2016-02-01: :class:`DeploymentOperationsOperations<azure.mgmt.resource.v2016_02_01.aio.operations.DeploymentOperationsOperations>`
-           * 2016-09-01: :class:`DeploymentOperationsOperations<azure.mgmt.resource.v2016_09_01.aio.operations.DeploymentOperationsOperations>`
-           * 2017-05-10: :class:`DeploymentOperationsOperations<azure.mgmt.resource.v2017_05_10.aio.operations.DeploymentOperationsOperations>`
-           * 2018-02-01: :class:`DeploymentOperationsOperations<azure.mgmt.resource.v2018_02_01.aio.operations.DeploymentOperationsOperations>`
-           * 2018-05-01: :class:`DeploymentOperationsOperations<azure.mgmt.resource.v2018_05_01.aio.operations.DeploymentOperationsOperations>`
-           * 2019-03-01: :class:`DeploymentOperationsOperations<azure.mgmt.resource.v2019_03_01.aio.operations.DeploymentOperationsOperations>`
-           * 2019-05-01: :class:`DeploymentOperationsOperations<azure.mgmt.resource.v2019_05_01.aio.operations.DeploymentOperationsOperations>`
-           * 2019-05-10: :class:`DeploymentOperationsOperations<azure.mgmt.resource.v2019_05_10.aio.operations.DeploymentOperationsOperations>`
-           * 2019-07-01: :class:`DeploymentOperationsOperations<azure.mgmt.resource.v2019_07_01.aio.operations.DeploymentOperationsOperations>`
-           * 2019-08-01: :class:`DeploymentOperationsOperations<azure.mgmt.resource.v2019_08_01.aio.operations.DeploymentOperationsOperations>`
-           * 2019-10-01: :class:`DeploymentOperationsOperations<azure.mgmt.resource.v2019_10_01.aio.operations.DeploymentOperationsOperations>`
-           * 2020-06-01: :class:`DeploymentOperationsOperations<azure.mgmt.resource.v2020_06_01.aio.operations.DeploymentOperationsOperations>`
-           * 2020-10-01: :class:`DeploymentOperationsOperations<azure.mgmt.resource.v2020_10_01.aio.operations.DeploymentOperationsOperations>`
+           * 2016-02-01: :class:`DeploymentOperationsOperations<azure.mgmt.resource.resources.v2016_02_01.aio.operations.DeploymentOperationsOperations>`
+           * 2016-09-01: :class:`DeploymentOperationsOperations<azure.mgmt.resource.resources.v2016_09_01.aio.operations.DeploymentOperationsOperations>`
+           * 2017-05-10: :class:`DeploymentOperationsOperations<azure.mgmt.resource.resources.v2017_05_10.aio.operations.DeploymentOperationsOperations>`
+           * 2018-02-01: :class:`DeploymentOperationsOperations<azure.mgmt.resource.resources.v2018_02_01.aio.operations.DeploymentOperationsOperations>`
+           * 2018-05-01: :class:`DeploymentOperationsOperations<azure.mgmt.resource.resources.v2018_05_01.aio.operations.DeploymentOperationsOperations>`
+           * 2019-03-01: :class:`DeploymentOperationsOperations<azure.mgmt.resource.resources.v2019_03_01.aio.operations.DeploymentOperationsOperations>`
+           * 2019-05-01: :class:`DeploymentOperationsOperations<azure.mgmt.resource.resources.v2019_05_01.aio.operations.DeploymentOperationsOperations>`
+           * 2019-05-10: :class:`DeploymentOperationsOperations<azure.mgmt.resource.resources.v2019_05_10.aio.operations.DeploymentOperationsOperations>`
+           * 2019-07-01: :class:`DeploymentOperationsOperations<azure.mgmt.resource.resources.v2019_07_01.aio.operations.DeploymentOperationsOperations>`
+           * 2019-08-01: :class:`DeploymentOperationsOperations<azure.mgmt.resource.resources.v2019_08_01.aio.operations.DeploymentOperationsOperations>`
+           * 2019-10-01: :class:`DeploymentOperationsOperations<azure.mgmt.resource.resources.v2019_10_01.aio.operations.DeploymentOperationsOperations>`
+           * 2020-06-01: :class:`DeploymentOperationsOperations<azure.mgmt.resource.resources.v2020_06_01.aio.operations.DeploymentOperationsOperations>`
+           * 2020-10-01: :class:`DeploymentOperationsOperations<azure.mgmt.resource.resources.v2020_10_01.aio.operations.DeploymentOperationsOperations>`
         """
         api_version = self._get_api_version('deployment_operations')
         if api_version == '2016-02-01':
@@ -189,19 +197,19 @@ class ResourceManagementClient(MultiApiClientMixin, _SDKClient):
     def deployments(self):
         """Instance depends on the API version:
 
-           * 2016-02-01: :class:`DeploymentsOperations<azure.mgmt.resource.v2016_02_01.aio.operations.DeploymentsOperations>`
-           * 2016-09-01: :class:`DeploymentsOperations<azure.mgmt.resource.v2016_09_01.aio.operations.DeploymentsOperations>`
-           * 2017-05-10: :class:`DeploymentsOperations<azure.mgmt.resource.v2017_05_10.aio.operations.DeploymentsOperations>`
-           * 2018-02-01: :class:`DeploymentsOperations<azure.mgmt.resource.v2018_02_01.aio.operations.DeploymentsOperations>`
-           * 2018-05-01: :class:`DeploymentsOperations<azure.mgmt.resource.v2018_05_01.aio.operations.DeploymentsOperations>`
-           * 2019-03-01: :class:`DeploymentsOperations<azure.mgmt.resource.v2019_03_01.aio.operations.DeploymentsOperations>`
-           * 2019-05-01: :class:`DeploymentsOperations<azure.mgmt.resource.v2019_05_01.aio.operations.DeploymentsOperations>`
-           * 2019-05-10: :class:`DeploymentsOperations<azure.mgmt.resource.v2019_05_10.aio.operations.DeploymentsOperations>`
-           * 2019-07-01: :class:`DeploymentsOperations<azure.mgmt.resource.v2019_07_01.aio.operations.DeploymentsOperations>`
-           * 2019-08-01: :class:`DeploymentsOperations<azure.mgmt.resource.v2019_08_01.aio.operations.DeploymentsOperations>`
-           * 2019-10-01: :class:`DeploymentsOperations<azure.mgmt.resource.v2019_10_01.aio.operations.DeploymentsOperations>`
-           * 2020-06-01: :class:`DeploymentsOperations<azure.mgmt.resource.v2020_06_01.aio.operations.DeploymentsOperations>`
-           * 2020-10-01: :class:`DeploymentsOperations<azure.mgmt.resource.v2020_10_01.aio.operations.DeploymentsOperations>`
+           * 2016-02-01: :class:`DeploymentsOperations<azure.mgmt.resource.resources.v2016_02_01.aio.operations.DeploymentsOperations>`
+           * 2016-09-01: :class:`DeploymentsOperations<azure.mgmt.resource.resources.v2016_09_01.aio.operations.DeploymentsOperations>`
+           * 2017-05-10: :class:`DeploymentsOperations<azure.mgmt.resource.resources.v2017_05_10.aio.operations.DeploymentsOperations>`
+           * 2018-02-01: :class:`DeploymentsOperations<azure.mgmt.resource.resources.v2018_02_01.aio.operations.DeploymentsOperations>`
+           * 2018-05-01: :class:`DeploymentsOperations<azure.mgmt.resource.resources.v2018_05_01.aio.operations.DeploymentsOperations>`
+           * 2019-03-01: :class:`DeploymentsOperations<azure.mgmt.resource.resources.v2019_03_01.aio.operations.DeploymentsOperations>`
+           * 2019-05-01: :class:`DeploymentsOperations<azure.mgmt.resource.resources.v2019_05_01.aio.operations.DeploymentsOperations>`
+           * 2019-05-10: :class:`DeploymentsOperations<azure.mgmt.resource.resources.v2019_05_10.aio.operations.DeploymentsOperations>`
+           * 2019-07-01: :class:`DeploymentsOperations<azure.mgmt.resource.resources.v2019_07_01.aio.operations.DeploymentsOperations>`
+           * 2019-08-01: :class:`DeploymentsOperations<azure.mgmt.resource.resources.v2019_08_01.aio.operations.DeploymentsOperations>`
+           * 2019-10-01: :class:`DeploymentsOperations<azure.mgmt.resource.resources.v2019_10_01.aio.operations.DeploymentsOperations>`
+           * 2020-06-01: :class:`DeploymentsOperations<azure.mgmt.resource.resources.v2020_06_01.aio.operations.DeploymentsOperations>`
+           * 2020-10-01: :class:`DeploymentsOperations<azure.mgmt.resource.resources.v2020_10_01.aio.operations.DeploymentsOperations>`
         """
         api_version = self._get_api_version('deployments')
         if api_version == '2016-02-01':
@@ -238,15 +246,15 @@ class ResourceManagementClient(MultiApiClientMixin, _SDKClient):
     def operations(self):
         """Instance depends on the API version:
 
-           * 2018-05-01: :class:`Operations<azure.mgmt.resource.v2018_05_01.aio.operations.Operations>`
-           * 2019-03-01: :class:`Operations<azure.mgmt.resource.v2019_03_01.aio.operations.Operations>`
-           * 2019-05-01: :class:`Operations<azure.mgmt.resource.v2019_05_01.aio.operations.Operations>`
-           * 2019-05-10: :class:`Operations<azure.mgmt.resource.v2019_05_10.aio.operations.Operations>`
-           * 2019-07-01: :class:`Operations<azure.mgmt.resource.v2019_07_01.aio.operations.Operations>`
-           * 2019-08-01: :class:`Operations<azure.mgmt.resource.v2019_08_01.aio.operations.Operations>`
-           * 2019-10-01: :class:`Operations<azure.mgmt.resource.v2019_10_01.aio.operations.Operations>`
-           * 2020-06-01: :class:`Operations<azure.mgmt.resource.v2020_06_01.aio.operations.Operations>`
-           * 2020-10-01: :class:`Operations<azure.mgmt.resource.v2020_10_01.aio.operations.Operations>`
+           * 2018-05-01: :class:`Operations<azure.mgmt.resource.resources.v2018_05_01.aio.operations.Operations>`
+           * 2019-03-01: :class:`Operations<azure.mgmt.resource.resources.v2019_03_01.aio.operations.Operations>`
+           * 2019-05-01: :class:`Operations<azure.mgmt.resource.resources.v2019_05_01.aio.operations.Operations>`
+           * 2019-05-10: :class:`Operations<azure.mgmt.resource.resources.v2019_05_10.aio.operations.Operations>`
+           * 2019-07-01: :class:`Operations<azure.mgmt.resource.resources.v2019_07_01.aio.operations.Operations>`
+           * 2019-08-01: :class:`Operations<azure.mgmt.resource.resources.v2019_08_01.aio.operations.Operations>`
+           * 2019-10-01: :class:`Operations<azure.mgmt.resource.resources.v2019_10_01.aio.operations.Operations>`
+           * 2020-06-01: :class:`Operations<azure.mgmt.resource.resources.v2020_06_01.aio.operations.Operations>`
+           * 2020-10-01: :class:`Operations<azure.mgmt.resource.resources.v2020_10_01.aio.operations.Operations>`
         """
         api_version = self._get_api_version('operations')
         if api_version == '2018-05-01':
@@ -275,7 +283,7 @@ class ResourceManagementClient(MultiApiClientMixin, _SDKClient):
     def provider_resource_types(self):
         """Instance depends on the API version:
 
-           * 2020-10-01: :class:`ProviderResourceTypesOperations<azure.mgmt.resource.v2020_10_01.aio.operations.ProviderResourceTypesOperations>`
+           * 2020-10-01: :class:`ProviderResourceTypesOperations<azure.mgmt.resource.resources.v2020_10_01.aio.operations.ProviderResourceTypesOperations>`
         """
         api_version = self._get_api_version('provider_resource_types')
         if api_version == '2020-10-01':
@@ -288,19 +296,19 @@ class ResourceManagementClient(MultiApiClientMixin, _SDKClient):
     def providers(self):
         """Instance depends on the API version:
 
-           * 2016-02-01: :class:`ProvidersOperations<azure.mgmt.resource.v2016_02_01.aio.operations.ProvidersOperations>`
-           * 2016-09-01: :class:`ProvidersOperations<azure.mgmt.resource.v2016_09_01.aio.operations.ProvidersOperations>`
-           * 2017-05-10: :class:`ProvidersOperations<azure.mgmt.resource.v2017_05_10.aio.operations.ProvidersOperations>`
-           * 2018-02-01: :class:`ProvidersOperations<azure.mgmt.resource.v2018_02_01.aio.operations.ProvidersOperations>`
-           * 2018-05-01: :class:`ProvidersOperations<azure.mgmt.resource.v2018_05_01.aio.operations.ProvidersOperations>`
-           * 2019-03-01: :class:`ProvidersOperations<azure.mgmt.resource.v2019_03_01.aio.operations.ProvidersOperations>`
-           * 2019-05-01: :class:`ProvidersOperations<azure.mgmt.resource.v2019_05_01.aio.operations.ProvidersOperations>`
-           * 2019-05-10: :class:`ProvidersOperations<azure.mgmt.resource.v2019_05_10.aio.operations.ProvidersOperations>`
-           * 2019-07-01: :class:`ProvidersOperations<azure.mgmt.resource.v2019_07_01.aio.operations.ProvidersOperations>`
-           * 2019-08-01: :class:`ProvidersOperations<azure.mgmt.resource.v2019_08_01.aio.operations.ProvidersOperations>`
-           * 2019-10-01: :class:`ProvidersOperations<azure.mgmt.resource.v2019_10_01.aio.operations.ProvidersOperations>`
-           * 2020-06-01: :class:`ProvidersOperations<azure.mgmt.resource.v2020_06_01.aio.operations.ProvidersOperations>`
-           * 2020-10-01: :class:`ProvidersOperations<azure.mgmt.resource.v2020_10_01.aio.operations.ProvidersOperations>`
+           * 2016-02-01: :class:`ProvidersOperations<azure.mgmt.resource.resources.v2016_02_01.aio.operations.ProvidersOperations>`
+           * 2016-09-01: :class:`ProvidersOperations<azure.mgmt.resource.resources.v2016_09_01.aio.operations.ProvidersOperations>`
+           * 2017-05-10: :class:`ProvidersOperations<azure.mgmt.resource.resources.v2017_05_10.aio.operations.ProvidersOperations>`
+           * 2018-02-01: :class:`ProvidersOperations<azure.mgmt.resource.resources.v2018_02_01.aio.operations.ProvidersOperations>`
+           * 2018-05-01: :class:`ProvidersOperations<azure.mgmt.resource.resources.v2018_05_01.aio.operations.ProvidersOperations>`
+           * 2019-03-01: :class:`ProvidersOperations<azure.mgmt.resource.resources.v2019_03_01.aio.operations.ProvidersOperations>`
+           * 2019-05-01: :class:`ProvidersOperations<azure.mgmt.resource.resources.v2019_05_01.aio.operations.ProvidersOperations>`
+           * 2019-05-10: :class:`ProvidersOperations<azure.mgmt.resource.resources.v2019_05_10.aio.operations.ProvidersOperations>`
+           * 2019-07-01: :class:`ProvidersOperations<azure.mgmt.resource.resources.v2019_07_01.aio.operations.ProvidersOperations>`
+           * 2019-08-01: :class:`ProvidersOperations<azure.mgmt.resource.resources.v2019_08_01.aio.operations.ProvidersOperations>`
+           * 2019-10-01: :class:`ProvidersOperations<azure.mgmt.resource.resources.v2019_10_01.aio.operations.ProvidersOperations>`
+           * 2020-06-01: :class:`ProvidersOperations<azure.mgmt.resource.resources.v2020_06_01.aio.operations.ProvidersOperations>`
+           * 2020-10-01: :class:`ProvidersOperations<azure.mgmt.resource.resources.v2020_10_01.aio.operations.ProvidersOperations>`
         """
         api_version = self._get_api_version('providers')
         if api_version == '2016-02-01':
@@ -337,19 +345,19 @@ class ResourceManagementClient(MultiApiClientMixin, _SDKClient):
     def resource_groups(self):
         """Instance depends on the API version:
 
-           * 2016-02-01: :class:`ResourceGroupsOperations<azure.mgmt.resource.v2016_02_01.aio.operations.ResourceGroupsOperations>`
-           * 2016-09-01: :class:`ResourceGroupsOperations<azure.mgmt.resource.v2016_09_01.aio.operations.ResourceGroupsOperations>`
-           * 2017-05-10: :class:`ResourceGroupsOperations<azure.mgmt.resource.v2017_05_10.aio.operations.ResourceGroupsOperations>`
-           * 2018-02-01: :class:`ResourceGroupsOperations<azure.mgmt.resource.v2018_02_01.aio.operations.ResourceGroupsOperations>`
-           * 2018-05-01: :class:`ResourceGroupsOperations<azure.mgmt.resource.v2018_05_01.aio.operations.ResourceGroupsOperations>`
-           * 2019-03-01: :class:`ResourceGroupsOperations<azure.mgmt.resource.v2019_03_01.aio.operations.ResourceGroupsOperations>`
-           * 2019-05-01: :class:`ResourceGroupsOperations<azure.mgmt.resource.v2019_05_01.aio.operations.ResourceGroupsOperations>`
-           * 2019-05-10: :class:`ResourceGroupsOperations<azure.mgmt.resource.v2019_05_10.aio.operations.ResourceGroupsOperations>`
-           * 2019-07-01: :class:`ResourceGroupsOperations<azure.mgmt.resource.v2019_07_01.aio.operations.ResourceGroupsOperations>`
-           * 2019-08-01: :class:`ResourceGroupsOperations<azure.mgmt.resource.v2019_08_01.aio.operations.ResourceGroupsOperations>`
-           * 2019-10-01: :class:`ResourceGroupsOperations<azure.mgmt.resource.v2019_10_01.aio.operations.ResourceGroupsOperations>`
-           * 2020-06-01: :class:`ResourceGroupsOperations<azure.mgmt.resource.v2020_06_01.aio.operations.ResourceGroupsOperations>`
-           * 2020-10-01: :class:`ResourceGroupsOperations<azure.mgmt.resource.v2020_10_01.aio.operations.ResourceGroupsOperations>`
+           * 2016-02-01: :class:`ResourceGroupsOperations<azure.mgmt.resource.resources.v2016_02_01.aio.operations.ResourceGroupsOperations>`
+           * 2016-09-01: :class:`ResourceGroupsOperations<azure.mgmt.resource.resources.v2016_09_01.aio.operations.ResourceGroupsOperations>`
+           * 2017-05-10: :class:`ResourceGroupsOperations<azure.mgmt.resource.resources.v2017_05_10.aio.operations.ResourceGroupsOperations>`
+           * 2018-02-01: :class:`ResourceGroupsOperations<azure.mgmt.resource.resources.v2018_02_01.aio.operations.ResourceGroupsOperations>`
+           * 2018-05-01: :class:`ResourceGroupsOperations<azure.mgmt.resource.resources.v2018_05_01.aio.operations.ResourceGroupsOperations>`
+           * 2019-03-01: :class:`ResourceGroupsOperations<azure.mgmt.resource.resources.v2019_03_01.aio.operations.ResourceGroupsOperations>`
+           * 2019-05-01: :class:`ResourceGroupsOperations<azure.mgmt.resource.resources.v2019_05_01.aio.operations.ResourceGroupsOperations>`
+           * 2019-05-10: :class:`ResourceGroupsOperations<azure.mgmt.resource.resources.v2019_05_10.aio.operations.ResourceGroupsOperations>`
+           * 2019-07-01: :class:`ResourceGroupsOperations<azure.mgmt.resource.resources.v2019_07_01.aio.operations.ResourceGroupsOperations>`
+           * 2019-08-01: :class:`ResourceGroupsOperations<azure.mgmt.resource.resources.v2019_08_01.aio.operations.ResourceGroupsOperations>`
+           * 2019-10-01: :class:`ResourceGroupsOperations<azure.mgmt.resource.resources.v2019_10_01.aio.operations.ResourceGroupsOperations>`
+           * 2020-06-01: :class:`ResourceGroupsOperations<azure.mgmt.resource.resources.v2020_06_01.aio.operations.ResourceGroupsOperations>`
+           * 2020-10-01: :class:`ResourceGroupsOperations<azure.mgmt.resource.resources.v2020_10_01.aio.operations.ResourceGroupsOperations>`
         """
         api_version = self._get_api_version('resource_groups')
         if api_version == '2016-02-01':
@@ -386,19 +394,19 @@ class ResourceManagementClient(MultiApiClientMixin, _SDKClient):
     def resources(self):
         """Instance depends on the API version:
 
-           * 2016-02-01: :class:`ResourcesOperations<azure.mgmt.resource.v2016_02_01.aio.operations.ResourcesOperations>`
-           * 2016-09-01: :class:`ResourcesOperations<azure.mgmt.resource.v2016_09_01.aio.operations.ResourcesOperations>`
-           * 2017-05-10: :class:`ResourcesOperations<azure.mgmt.resource.v2017_05_10.aio.operations.ResourcesOperations>`
-           * 2018-02-01: :class:`ResourcesOperations<azure.mgmt.resource.v2018_02_01.aio.operations.ResourcesOperations>`
-           * 2018-05-01: :class:`ResourcesOperations<azure.mgmt.resource.v2018_05_01.aio.operations.ResourcesOperations>`
-           * 2019-03-01: :class:`ResourcesOperations<azure.mgmt.resource.v2019_03_01.aio.operations.ResourcesOperations>`
-           * 2019-05-01: :class:`ResourcesOperations<azure.mgmt.resource.v2019_05_01.aio.operations.ResourcesOperations>`
-           * 2019-05-10: :class:`ResourcesOperations<azure.mgmt.resource.v2019_05_10.aio.operations.ResourcesOperations>`
-           * 2019-07-01: :class:`ResourcesOperations<azure.mgmt.resource.v2019_07_01.aio.operations.ResourcesOperations>`
-           * 2019-08-01: :class:`ResourcesOperations<azure.mgmt.resource.v2019_08_01.aio.operations.ResourcesOperations>`
-           * 2019-10-01: :class:`ResourcesOperations<azure.mgmt.resource.v2019_10_01.aio.operations.ResourcesOperations>`
-           * 2020-06-01: :class:`ResourcesOperations<azure.mgmt.resource.v2020_06_01.aio.operations.ResourcesOperations>`
-           * 2020-10-01: :class:`ResourcesOperations<azure.mgmt.resource.v2020_10_01.aio.operations.ResourcesOperations>`
+           * 2016-02-01: :class:`ResourcesOperations<azure.mgmt.resource.resources.v2016_02_01.aio.operations.ResourcesOperations>`
+           * 2016-09-01: :class:`ResourcesOperations<azure.mgmt.resource.resources.v2016_09_01.aio.operations.ResourcesOperations>`
+           * 2017-05-10: :class:`ResourcesOperations<azure.mgmt.resource.resources.v2017_05_10.aio.operations.ResourcesOperations>`
+           * 2018-02-01: :class:`ResourcesOperations<azure.mgmt.resource.resources.v2018_02_01.aio.operations.ResourcesOperations>`
+           * 2018-05-01: :class:`ResourcesOperations<azure.mgmt.resource.resources.v2018_05_01.aio.operations.ResourcesOperations>`
+           * 2019-03-01: :class:`ResourcesOperations<azure.mgmt.resource.resources.v2019_03_01.aio.operations.ResourcesOperations>`
+           * 2019-05-01: :class:`ResourcesOperations<azure.mgmt.resource.resources.v2019_05_01.aio.operations.ResourcesOperations>`
+           * 2019-05-10: :class:`ResourcesOperations<azure.mgmt.resource.resources.v2019_05_10.aio.operations.ResourcesOperations>`
+           * 2019-07-01: :class:`ResourcesOperations<azure.mgmt.resource.resources.v2019_07_01.aio.operations.ResourcesOperations>`
+           * 2019-08-01: :class:`ResourcesOperations<azure.mgmt.resource.resources.v2019_08_01.aio.operations.ResourcesOperations>`
+           * 2019-10-01: :class:`ResourcesOperations<azure.mgmt.resource.resources.v2019_10_01.aio.operations.ResourcesOperations>`
+           * 2020-06-01: :class:`ResourcesOperations<azure.mgmt.resource.resources.v2020_06_01.aio.operations.ResourcesOperations>`
+           * 2020-10-01: :class:`ResourcesOperations<azure.mgmt.resource.resources.v2020_10_01.aio.operations.ResourcesOperations>`
         """
         api_version = self._get_api_version('resources')
         if api_version == '2016-02-01':
@@ -435,19 +443,19 @@ class ResourceManagementClient(MultiApiClientMixin, _SDKClient):
     def tags(self):
         """Instance depends on the API version:
 
-           * 2016-02-01: :class:`TagsOperations<azure.mgmt.resource.v2016_02_01.aio.operations.TagsOperations>`
-           * 2016-09-01: :class:`TagsOperations<azure.mgmt.resource.v2016_09_01.aio.operations.TagsOperations>`
-           * 2017-05-10: :class:`TagsOperations<azure.mgmt.resource.v2017_05_10.aio.operations.TagsOperations>`
-           * 2018-02-01: :class:`TagsOperations<azure.mgmt.resource.v2018_02_01.aio.operations.TagsOperations>`
-           * 2018-05-01: :class:`TagsOperations<azure.mgmt.resource.v2018_05_01.aio.operations.TagsOperations>`
-           * 2019-03-01: :class:`TagsOperations<azure.mgmt.resource.v2019_03_01.aio.operations.TagsOperations>`
-           * 2019-05-01: :class:`TagsOperations<azure.mgmt.resource.v2019_05_01.aio.operations.TagsOperations>`
-           * 2019-05-10: :class:`TagsOperations<azure.mgmt.resource.v2019_05_10.aio.operations.TagsOperations>`
-           * 2019-07-01: :class:`TagsOperations<azure.mgmt.resource.v2019_07_01.aio.operations.TagsOperations>`
-           * 2019-08-01: :class:`TagsOperations<azure.mgmt.resource.v2019_08_01.aio.operations.TagsOperations>`
-           * 2019-10-01: :class:`TagsOperations<azure.mgmt.resource.v2019_10_01.aio.operations.TagsOperations>`
-           * 2020-06-01: :class:`TagsOperations<azure.mgmt.resource.v2020_06_01.aio.operations.TagsOperations>`
-           * 2020-10-01: :class:`TagsOperations<azure.mgmt.resource.v2020_10_01.aio.operations.TagsOperations>`
+           * 2016-02-01: :class:`TagsOperations<azure.mgmt.resource.resources.v2016_02_01.aio.operations.TagsOperations>`
+           * 2016-09-01: :class:`TagsOperations<azure.mgmt.resource.resources.v2016_09_01.aio.operations.TagsOperations>`
+           * 2017-05-10: :class:`TagsOperations<azure.mgmt.resource.resources.v2017_05_10.aio.operations.TagsOperations>`
+           * 2018-02-01: :class:`TagsOperations<azure.mgmt.resource.resources.v2018_02_01.aio.operations.TagsOperations>`
+           * 2018-05-01: :class:`TagsOperations<azure.mgmt.resource.resources.v2018_05_01.aio.operations.TagsOperations>`
+           * 2019-03-01: :class:`TagsOperations<azure.mgmt.resource.resources.v2019_03_01.aio.operations.TagsOperations>`
+           * 2019-05-01: :class:`TagsOperations<azure.mgmt.resource.resources.v2019_05_01.aio.operations.TagsOperations>`
+           * 2019-05-10: :class:`TagsOperations<azure.mgmt.resource.resources.v2019_05_10.aio.operations.TagsOperations>`
+           * 2019-07-01: :class:`TagsOperations<azure.mgmt.resource.resources.v2019_07_01.aio.operations.TagsOperations>`
+           * 2019-08-01: :class:`TagsOperations<azure.mgmt.resource.resources.v2019_08_01.aio.operations.TagsOperations>`
+           * 2019-10-01: :class:`TagsOperations<azure.mgmt.resource.resources.v2019_10_01.aio.operations.TagsOperations>`
+           * 2020-06-01: :class:`TagsOperations<azure.mgmt.resource.resources.v2020_06_01.aio.operations.TagsOperations>`
+           * 2020-10-01: :class:`TagsOperations<azure.mgmt.resource.resources.v2020_10_01.aio.operations.TagsOperations>`
         """
         api_version = self._get_api_version('tags')
         if api_version == '2016-02-01':

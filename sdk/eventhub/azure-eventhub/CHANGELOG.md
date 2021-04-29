@@ -2,7 +2,12 @@
 
 ## 5.5.0 (Unreleased)
 
+**New Features**
 - Added support for using `azure.core.credentials.AzureNamedKeyCredential` as credential for authenticating producer and consumer clients.
+
+**Bug Fixes**
+
+- Fixed bug that custom user agent string should be put in front of the built-in user agent string instead of being appended.
 
 ## 5.4.0 (2021-04-07)
 

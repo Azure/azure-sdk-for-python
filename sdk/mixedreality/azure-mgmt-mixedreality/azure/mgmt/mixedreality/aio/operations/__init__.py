@@ -10,10 +10,12 @@ from ._operations import Operations
 from ._mixed_reality_client_operations import MixedRealityClientOperationsMixin
 from ._spatial_anchors_accounts_operations import SpatialAnchorsAccountsOperations
 from ._remote_rendering_accounts_operations import RemoteRenderingAccountsOperations
+from ._object_anchors_accounts_operations import ObjectAnchorsAccountsOperations
 
 __all__ = [
     'Operations',
     'MixedRealityClientOperationsMixin',
     'SpatialAnchorsAccountsOperations',
     'RemoteRenderingAccountsOperations',
+    'ObjectAnchorsAccountsOperations',
 ]

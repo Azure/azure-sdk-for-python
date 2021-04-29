@@ -48,8 +48,7 @@ class VisualStudioCodeCredential(AsyncContextManager, GetTokenMixin):
         if self._client:
             await self._client.__aexit__()
 
-    async def get_token(self, *scopes, **kwargs):
-        # type: (*str, **Any) -> AccessToken
+    async def get_token(self, *scopes: str, **kwargs: "Any") -> "AccessToken":
         """Request an access token for `scopes` as the user currently signed in to Visual Studio Code.
 
         This method is called automatically by Azure SDK clients.
