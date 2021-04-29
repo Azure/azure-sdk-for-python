@@ -41,24 +41,19 @@ steps:
       if ($IsWindows) { 
         $activateMethod = "call" 
         $requirementSuffix = " --user"
+        Write-Host "Prepending with $($env:CONDA\Scripts)"
+        Write-Host "##vso[task.prependpath]$env:CONDA\Scripts"
+      }
+      else {
+        Write-Host "Prepending with $($CONDA/bin)"
+        Write-Host "##vso[task.prependpath]$CONDA/bin"
       }
       
       Write-Host "##vso[task.setvariable variable=activate.method]$activateMethod"
       Write-Host "##vso[task.setvariable variable=requirement.suffix]$requirementSuffix"
-    displayName: 'Evaluate OS Specific Parameters'
+    displayName: 'Evaluate OS Specific PATH and Parameters'
 
   - ${{ each artifact in parameters.CondaArtifacts }}:
-    - ${{ if not(eq(parameters.OSVmImage, 'MMS2019')) }}:
-      - script: |
-          echo "Prepending with $($CONDA/bin)"
-          echo "##vso[task.prependpath]$CONDA/bin"
-        displayName: 'Prepend PATH with Conda and INIT'
-    - ${{ if eq(parameters.OSVmImage, 'MMS2019') }}:
-      - powershell: |
-          Write-Host "Prepending with $($env:CONDA\Scripts)"
-          Write-Host "##vso[task.prependpath]$env:CONDA\Scripts"
-        displayName: 'Prepend PATH with Conda and INIT'
-
     - powershell: |
         Write-Host "$(PythonVersion)"
         Write-Host "${{ parameters.OSVmImage }}"
