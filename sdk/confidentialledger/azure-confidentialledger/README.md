@@ -27,7 +27,13 @@ This document demonstrates using [DefaultAzureCredential][default_cred_ref] to a
 As an alternative to Azure Active Directory, clients may choose to use a client certificate to authenticate via mutual TLS. `azure.confidentialledger.ConfidentialLedgerCertificateCredential` may be used for this purpose.
 
 ### Create a client
-`DefaultAzureCredential` will automatically handle most Azure SDK client scenarios. The easiest way to get started is to be logged in via the [Azure CLI](azure_cli). Then, `DefaultAzureCredential` will be able to authenticate the `ConfidentialLedgerClient`.
+`DefaultAzureCredential` will automatically handle most Azure SDK client scenarios. To get started, set environment variables for the AAD identity registered with your Confidential Ledger.
+```bash
+export AZURE_CLIENT_ID="generated app id"
+export AZURE_CLIENT_SECRET="random password"
+export AZURE_TENANT_ID="tenant id"
+```
+Then, `DefaultAzureCredential` will be able to authenticate the `ConfidentialLedgerClient`.
 
 Constructing the client also requires your Confidential Ledger's URL and id, which you can get from the Azure CLI or the Azure Portal. When you have retrieved those values, please replace instances of `"my-ledger-id"` and `"https://my-ledger-url.confidential-ledger.azure.com"` in the examples below
 
