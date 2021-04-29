@@ -196,7 +196,8 @@ class ServiceBusSharedKeyCredential(object):
             raise ValueError("No token scope provided.")
         return _generate_sas_token(scopes[0], self.policy, self.key)
 
-class AzureSasTokenCredential(object):
+
+class ServiceBusAzureSasTokenCredential(object):
     """The shared access token credential used for authentication
     when AzureSasCredential is provided.
     :param azure_sas_credential: The credential to be used for authentication.
@@ -215,6 +216,7 @@ class AzureSasTokenCredential(object):
         signature, expiry = parse_sas_credential(self._credential)
         return AccessToken(signature, expiry)
 
+
 class BaseHandler:  # pylint:disable=too-many-instance-attributes
     def __init__(self, fully_qualified_namespace, entity_name, credential, **kwargs):
         # type: (str, str, Union[TokenCredential, AzureSasCredential], Any) -> None
@@ -230,7 +232,7 @@ class BaseHandler:  # pylint:disable=too-many-instance-attributes
         )
         self._mgmt_target = "{}{}".format(self._entity_path, MANAGEMENT_PATH_SUFFIX)
         if isinstance(credential, AzureSasCredential):
-            self._credential = AzureSasTokenCredential(credential)
+            self._credential = ServiceBusAzureSasTokenCredential(credential)
         else:
             self._credential = credential # type: ignore
         self._container_id = CONTAINER_PREFIX + str(uuid.uuid4())[:8]
