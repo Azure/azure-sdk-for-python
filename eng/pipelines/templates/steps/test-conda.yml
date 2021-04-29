@@ -48,12 +48,12 @@ steps:
     displayName: 'Evaluate OS Specific Parameters'
 
   - ${{ each artifact in parameters.CondaArtifacts }}:
-    - ${{ if not(contains(variables.OSVmImage, 'MMS2019')) }}:
+    - ${{ if not(contains(parameters.OSVmImage, 'MMS2019')) }}:
       - script: |
           echo "Prepending with $($CONDA/bin)"
           echo "##vso[task.prependpath]$CONDA/bin"
         displayName: 'Prepend PATH with Conda and INIT'
-    - ${{ if contains(variables.OSVmImage, 'MMS2019') }}:
+    - ${{ if contains(parameters.OSVmImage, 'MMS2019') }}:
       - powershell: |
           Write-Host "Prepending with $($env:CONDA\Scripts)"
           Write-Host "##vso[task.prependpath]$env:CONDA\Scripts"
@@ -61,12 +61,14 @@ steps:
 
     - powershell: |
         Write-Host "$(PythonVersion)"
+        Write-Host "${{ parameters.OSVmImage }}"
         Write-Host "$(OSVmImage)"
         Write-Host "$(activate.method)"
         Write-Host "$(requirement.suffix)"
       displayName: 'Dump Python Version Info'
 
     - script: |
+        echo "conda env create --name ${{ artifact.name }} python=$(PythonVersion) --file $(Build.SourcesDirectory)/eng/conda_env.yml"
         conda env create --name ${{ artifact.name }} python=$(PythonVersion) --file $(Build.SourcesDirectory)/eng/conda_env.yml
         conda install --name ${{ artifact.name }} --yes --quiet conda-build
         $(activate.method) activate ${{ artifact.name }}
