@@ -264,3 +264,4 @@ opentelemetry-sdk<2.0.0,>=1.0.0
 #override azure-mgmt-rdbms msrest>=0.6.21
 #override azure-mgmt-peering msrest>=0.6.21
 #override azure-mgmt-mixedreality msrest>=0.6.21
+#override azure-mgmt-rdbms msrest>=0.6.21
