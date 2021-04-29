@@ -12,13 +12,13 @@ interactions:
     body:
       string: '{"errors": [{"code": "UNAUTHORIZED", "message": "authentication required,
         visit https://aka.ms/acr/authorization for more information.", "detail": [{"Type":
-        "repository", "Name": "repo61301e4e", "Action": "metadata_read"}]}]}'
+        "repository", "Name": "repoe5c92023", "Action": "metadata_write"}]}]}'
     headers:
       access-control-expose-headers: X-Ms-Correlation-Request-Id
       connection: keep-alive
       content-length: '215'
       content-type: application/json; charset=utf-8
-      date: Wed, 28 Apr 2021 21:21:35 GMT
+      date: Wed, 28 Apr 2021 22:08:36 GMT
       docker-distribution-api-version: registry/2.0
       server: openresty
       strict-transport-security: max-age=31536000; includeSubDomains
@@ -46,11 +46,11 @@ interactions:
     headers:
       connection: keep-alive
       content-type: application/json; charset=utf-8
-      date: Wed, 28 Apr 2021 21:21:36 GMT
+      date: Wed, 28 Apr 2021 22:08:37 GMT
       server: openresty
       strict-transport-security: max-age=31536000; includeSubDomains
       transfer-encoding: chunked
-      x-ms-ratelimit-remaining-calls-per-second: '166.15'
+      x-ms-ratelimit-remaining-calls-per-second: '166.183333'
     status:
       code: 200
       message: OK
@@ -74,11 +74,11 @@ interactions:
     headers:
       connection: keep-alive
       content-type: application/json; charset=utf-8
-      date: Wed, 28 Apr 2021 21:21:37 GMT
+      date: Wed, 28 Apr 2021 22:08:37 GMT
       server: openresty
       strict-transport-security: max-age=31536000; includeSubDomains
       transfer-encoding: chunked
-      x-ms-ratelimit-remaining-calls-per-second: '166.133333'
+      x-ms-ratelimit-remaining-calls-per-second: '165.983333'
     status:
       code: 200
       message: OK
@@ -101,7 +101,7 @@ interactions:
       connection: keep-alive
       content-length: '81'
       content-type: application/json; charset=utf-8
-      date: Wed, 28 Apr 2021 21:21:37 GMT
+      date: Wed, 28 Apr 2021 22:08:37 GMT
       docker-distribution-api-version: registry/2.0
       server: openresty
       strict-transport-security: max-age=31536000; includeSubDomains

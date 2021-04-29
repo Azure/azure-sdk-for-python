@@ -205,6 +205,8 @@ def _get_deserialization_callback_from_task_type(task_type):
         return pii_entities_result
     if task_type == AnalyzeBatchActionsType.RECOGNIZE_LINKED_ENTITIES:
         return linked_entities_result
+    if task_type == AnalyzeBatchActionsType.ANALYZE_SENTIMENT:
+        return sentiment_result
     return key_phrases_result
 
 def _get_property_name_from_task_type(task_type):
@@ -214,6 +216,8 @@ def _get_property_name_from_task_type(task_type):
         return "entity_recognition_pii_tasks"
     if task_type == AnalyzeBatchActionsType.RECOGNIZE_LINKED_ENTITIES:
         return "entity_linking_tasks"
+    if task_type == AnalyzeBatchActionsType.ANALYZE_SENTIMENT:
+        return "sentiment_analysis_tasks"
     return "key_phrase_extraction_tasks"
 
 def _num_tasks_in_current_page(returned_tasks_object):
@@ -221,7 +225,8 @@ def _num_tasks_in_current_page(returned_tasks_object):
         len(returned_tasks_object.entity_recognition_tasks or []) +
         len(returned_tasks_object.entity_recognition_pii_tasks or []) +
         len(returned_tasks_object.key_phrase_extraction_tasks or []) +
-        len(returned_tasks_object.entity_linking_tasks or [])
+        len(returned_tasks_object.entity_linking_tasks or []) +
+        len(returned_tasks_object.sentiment_analysis_tasks or [])
     )
 
 def _get_task_type_from_error(error):
@@ -231,6 +236,8 @@ def _get_task_type_from_error(error):
         return AnalyzeBatchActionsType.RECOGNIZE_ENTITIES
     if "entitylinking" in error.target.lower():
         return AnalyzeBatchActionsType.RECOGNIZE_LINKED_ENTITIES
+    if "sentiment" in error.target.lower():
+        return AnalyzeBatchActionsType.ANALYZE_SENTIMENT
     return AnalyzeBatchActionsType.EXTRACT_KEY_PHRASES
 
 def _get_mapped_errors(analyze_job_state):
@@ -305,6 +312,8 @@ def lro_get_next_page(lro_status_callback, first_page, continuation_token, show_
     parsed_url = urlparse(continuation_token)
     job_id = parsed_url.path.split("/")[-1]
     query_params = dict(parse_qsl(parsed_url.query.replace("$", "")))
+    if "showStats" in query_params:
+        query_params.pop("showStats")
     query_params["show_stats"] = show_stats
 
     return lro_status_callback(job_id, **query_params)
@@ -325,5 +334,5 @@ def analyze_paged_result(doc_id_order, task_order, analyze_status_callback, _, o
     )
 
 def _get_deserialize():
-    from ._generated.v3_1_preview_4 import TextAnalyticsClient
+    from ._generated.v3_1_preview_5 import TextAnalyticsClient
     return TextAnalyticsClient("dummy", "dummy")._deserialize  # pylint: disable=protected-access

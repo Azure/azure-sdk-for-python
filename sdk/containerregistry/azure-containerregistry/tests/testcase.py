@@ -27,13 +27,13 @@ from azure.mgmt.containerregistry import ContainerRegistryManagementClient
 from azure.mgmt.containerregistry.models import ImportImageParameters, ImportSource, ImportMode
 from azure.identity import DefaultAzureCredential
 
+from devtools_testutils import AzureTestCase
 from azure_devtools.scenario_tests import (
     GeneralNameReplacer,
     RequestUrlNormalizer,
     AuthenticationMetadataFilter,
     RecordingProcessor,
 )
-from devtools_testutils import AzureTestCase
 
 
 REDACTED = "REDACTED"
@@ -184,7 +184,7 @@ class ContainerRegistryTestClass(AzureTestCase):
                 ManagementRequestReplacer(),
             ],
         )
-        self.repository = "library/hello-world"
+        self.repository = "library/busybox"
 
     def sleep(self, t):
         if self.is_live:

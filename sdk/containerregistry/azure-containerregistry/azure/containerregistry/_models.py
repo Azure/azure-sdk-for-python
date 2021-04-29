@@ -24,6 +24,13 @@ class ContentProperties(object):
     """
 
     def __init__(self, **kwargs):
+        """Create ContentPermissions for an artifact, tag, or manifest
+
+        :keyword bool can_delete: Delete operation status for the object
+        :keyword bool can_list: List operation status for the object
+        :keyword bool can_read: Read operation status for the object
+        :keyword bool can_write: Write operation status for the object
+        """
         self.can_delete = kwargs.get("can_delete")
         self.can_list = kwargs.get("can_list")
         self.can_read = kwargs.get("can_read")
@@ -31,7 +38,7 @@ class ContentProperties(object):
 
     @classmethod
     def _from_generated(cls, generated):
-        # type: (ContentProperties) -> ContentProperties
+        # type: (GeneratedContentProperties) -> ContentProperties
         return cls(
             can_delete=generated.can_delete,
             can_list=generated.can_list,
@@ -81,8 +88,8 @@ class ArtifactManifestProperties(object):
     :ivar str repository_name: Repository name the artifact belongs to
     :ivar str size: Size of the artifact
     :ivar List[str] tags: Tags associated with a registry artifact
-    :ivar content_permissions: Permissions for an artifact
-    :vartype content_permissions: :class:`~azure.containerregistry.ContentProperties`
+    :ivar writeable_properties: Permissions for an artifact
+    :vartype writeable_properties: :class:`~azure.containerregistry.ContentProperties`
     """
 
     def __init__(self, **kwargs):
@@ -117,8 +124,8 @@ class ArtifactManifestProperties(object):
 class RepositoryProperties(object):
     """Model for storing properties of a single repository
 
-    :ivar content_permissions: Read/Write/List/Delete permissions for the repository
-    :vartype content_permissions: :class:`~azure.containerregistry.ContentProperties`
+    :ivar writeable_properties: Read/Write/List/Delete permissions for the repository
+    :vartype writeable_properties: :class:`~azure.containerregistry.ContentProperties`
     :ivar created_on: Time the repository was created
     :vartype created_on: :class:`datetime.datetime`
     :ivar last_updated_on: Time the repository was last updated
@@ -179,8 +186,8 @@ class TagOrderBy(str, Enum):
 class ArtifactTagProperties(object):
     """Model for storing properties of a single tag
 
-    :ivar content_permissions: Read/Write/List/Delete permissions for the tag
-    :vartype content_permissions: :class:`~azure.containerregistry.ContentProperties`
+    :ivar writeable_properties: Read/Write/List/Delete permissions for the tag
+    :vartype writeable_properties: :class:`~azure.containerregistry.ContentProperties`
     :ivar created_on: Time the tag was created
     :vartype created_on: :class:`datetime.datetime`
     :ivar str digest: Digest for the tag

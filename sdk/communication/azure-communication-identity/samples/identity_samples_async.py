@@ -20,7 +20,7 @@ USAGE:
     4) AZURE_CLIENT_SECRET - the secret of your active directory application
     5) AZURE_TENANT_ID - the tenant ID of your active directory application
 """
-
+from azure.communication.identity._shared.utils import parse_connection_str
 import asyncio
 import os
 
@@ -39,7 +39,8 @@ class CommunicationIdentityClientSamples(object):
         from azure.communication.identity import CommunicationTokenScope
         if self.client_id is not None and self.client_secret is not None and self.tenant_id is not None:
             from azure.identity import DefaultAzureCredential
-            identity_client = CommunicationIdentityClient(self.endpoint, DefaultAzureCredential())
+            endpoint, _ = parse_connection_str(self.connection_string)
+            identity_client = CommunicationIdentityClient(endpoint, DefaultAzureCredential())
         else:
             identity_client = CommunicationIdentityClient.from_connection_string(self.connection_string)
 
@@ -54,7 +55,8 @@ class CommunicationIdentityClientSamples(object):
         from azure.communication.identity import CommunicationTokenScope
         if self.client_id is not None and self.client_secret is not None and self.tenant_id is not None:
             from azure.identity import DefaultAzureCredential
-            identity_client = CommunicationIdentityClient(self.endpoint, DefaultAzureCredential())
+            endpoint, _ = parse_connection_str(self.connection_string)
+            identity_client = CommunicationIdentityClient(endpoint, DefaultAzureCredential())
         else:
             identity_client = CommunicationIdentityClient.from_connection_string(self.connection_string)
 
@@ -69,7 +71,8 @@ class CommunicationIdentityClientSamples(object):
         from azure.communication.identity.aio import CommunicationIdentityClient
         if self.client_id is not None and self.client_secret is not None and self.tenant_id is not None:
             from azure.identity import DefaultAzureCredential
-            identity_client = CommunicationIdentityClient(self.endpoint, DefaultAzureCredential())
+            endpoint, _ = parse_connection_str(self.connection_string)
+            identity_client = CommunicationIdentityClient(endpoint, DefaultAzureCredential())
         else:
             identity_client = CommunicationIdentityClient.from_connection_string(self.connection_string)
 
@@ -83,7 +86,8 @@ class CommunicationIdentityClientSamples(object):
         from azure.communication.identity import CommunicationTokenScope
         if self.client_id is not None and self.client_secret is not None and self.tenant_id is not None:
             from azure.identity import DefaultAzureCredential
-            identity_client = CommunicationIdentityClient(self.endpoint, DefaultAzureCredential())
+            endpoint, _ = parse_connection_str(self.connection_string)
+            identity_client = CommunicationIdentityClient(endpoint, DefaultAzureCredential())
         else:
             identity_client = CommunicationIdentityClient.from_connection_string(self.connection_string)
 
@@ -97,7 +101,8 @@ class CommunicationIdentityClientSamples(object):
         from azure.communication.identity.aio import CommunicationIdentityClient
         if self.client_id is not None and self.client_secret is not None and self.tenant_id is not None:
             from azure.identity import DefaultAzureCredential
-            identity_client = CommunicationIdentityClient(self.endpoint, DefaultAzureCredential())
+            endpoint, _ = parse_connection_str(self.connection_string)
+            identity_client = CommunicationIdentityClient(endpoint, DefaultAzureCredential())
         else:
             identity_client = CommunicationIdentityClient.from_connection_string(self.connection_string)
 
