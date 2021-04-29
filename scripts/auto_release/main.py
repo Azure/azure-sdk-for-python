@@ -155,7 +155,7 @@ def edit_file_setup():
         list_in = file_in.readlines()
     new_line = f'#override azure-mgmt-{SERVICE_NAME} msrest>=0.6.21'
     for i in range(0, len(list_in)):
-        if list_in[i].find('new_line') > -1:
+        if list_in[i].find(f'{new_line}') > -1:
             return
     list_in.append(f'{new_line}\n')
     with open(f'shared_requirements.txt', 'w') as file_out:

@@ -1,0 +1,9 @@
+[packaging]
+package_name = "azure-messaging-webpubsubservice"
+package_nspkg = "azure-messaging-nspkg"
+package_pprint_name = "Azure Web PubSub Service"
+package_doc_id = ""
+is_stable = false
+is_arm = false
+need_msrestazure = false
+auto_update = false

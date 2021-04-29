@@ -31,6 +31,7 @@ extends:
   template: ../../eng/pipelines/templates/stages/archetype-sdk-client.yml
   parameters:
     ServiceDirectory: appconfiguration
+    VerifyAutorest: true
     Artifacts:
     - name: azure-appconfiguration
       safeName: azureappconfiguration

@@ -32,8 +32,6 @@ extends:
     Artifacts:
     - name: azure-search-documents
       safeName: azuresearchdocuments
-    - name: azure-search-nspkg
-      safeName: azuresearchnspkg
     - name: azure-mgmt-search
       safeName: azuremgmtsearch
 
