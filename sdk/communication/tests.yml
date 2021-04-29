@@ -22,6 +22,7 @@ stages:
         JobName: ${{ package }}
         ServiceDirectory: communication
         DeployArmTemplate: true
+        TestSamples: true
         EnvVars:
           AZURE_TEST_RUN_LIVE: 'true'
           AZURE_TENANT_ID: $(aad-azure-sdk-test-tenant-id)
