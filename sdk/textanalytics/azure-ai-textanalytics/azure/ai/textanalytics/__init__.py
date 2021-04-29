@@ -47,6 +47,7 @@ from ._models import (
     HealthcareRelation,
     HealthcareRelationRole,
     HealthcareEntityAssertion,
+    AnalyzeSentimentAction
 )
 from ._paging import AnalyzeHealthcareEntitiesResult
 from ._generated.v3_1_preview_5.models import (
@@ -99,6 +100,7 @@ __all__ = [
     "HealthcareRelation",
     "HealthcareRelationRole",
     "HealthcareEntityAssertion",
+    "AnalyzeSentimentAction"
 ]
 
 __version__ = VERSION
