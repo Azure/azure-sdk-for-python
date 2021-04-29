@@ -17,7 +17,7 @@ from azure.core.credentials import AzureNamedKeyCredential
 from azure.eventhub.aio import EventHubProducerClient
 from azure.eventhub import EventData
 
-# Target namespace and hub must also be specified.  Consumer group is set to default unless required otherwise.
+# Target namespace and hub must also be specified.
 FULLY_QUALIFIED_NAMESPACE = os.environ['EVENT_HUB_HOSTNAME']
 EVENTHUB_NAME = os.environ['EVENT_HUB_NAME']
 
