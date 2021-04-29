@@ -5,14 +5,17 @@ interactions:
       "entityRecognitionPiiTasks": [{"parameters": {"model-version": "latest", "loggingOptOut":
       true, "stringIndexType": "UnicodeCodePoint"}}], "keyPhraseExtractionTasks":
       [{"parameters": {"model-version": "latest", "loggingOptOut": false}}], "entityLinkingTasks":
-      []}, "analysisInput": {"documents": [{"id": "0", "text": "input document", "language":
-      "en"}, {"id": "1", "text": "input document", "language": "en"}, {"id": "2",
-      "text": "input document", "language": "en"}, {"id": "3", "text": "input document",
-      "language": "en"}, {"id": "4", "text": "input document", "language": "en"},
-      {"id": "5", "text": "input document", "language": "en"}, {"id": "6", "text":
-      "input document", "language": "en"}, {"id": "7", "text": "input document", "language":
-      "en"}, {"id": "8", "text": "input document", "language": "en"}, {"id": "9",
-      "text": "input document", "language": "en"}, {"id": "10", "text": "input document",
+      [{"parameters": {"model-version": "latest", "loggingOptOut": false, "stringIndexType":
+      "UnicodeCodePoint"}}], "sentimentAnalysisTasks": [{"parameters": {"model-version":
+      "latest", "loggingOptOut": false, "opinionMining": false}}]}, "analysisInput":
+      {"documents": [{"id": "0", "text": "input document", "language": "en"}, {"id":
+      "1", "text": "input document", "language": "en"}, {"id": "2", "text": "input
+      document", "language": "en"}, {"id": "3", "text": "input document", "language":
+      "en"}, {"id": "4", "text": "input document", "language": "en"}, {"id": "5",
+      "text": "input document", "language": "en"}, {"id": "6", "text": "input document",
+      "language": "en"}, {"id": "7", "text": "input document", "language": "en"},
+      {"id": "8", "text": "input document", "language": "en"}, {"id": "9", "text":
+      "input document", "language": "en"}, {"id": "10", "text": "input document",
       "language": "en"}, {"id": "11", "text": "input document", "language": "en"},
       {"id": "12", "text": "input document", "language": "en"}, {"id": "13", "text":
       "input document", "language": "en"}, {"id": "14", "text": "input document",
@@ -33,7 +36,7 @@ interactions:
       Connection:
       - keep-alive
       Content-Length:
-      - '1942'
+      - '2169'
       Content-Type:
       - application/json
       User-Agent:
@@ -46,11 +49,11 @@ interactions:
         request contains too many records. Max 25 records are permitted."}}}'
     headers:
       apim-request-id:
-      - 20644198-6aa3-4a43-b7ea-1cf24815b2ba
+      - 5d45fd34-7223-4f3c-bf51-a58bc02f46ed
       content-type:
       - application/json; charset=utf-8
       date:
-      - Tue, 27 Apr 2021 19:36:21 GMT
+      - Thu, 29 Apr 2021 03:37:35 GMT
       strict-transport-security:
       - max-age=31536000; includeSubDomains; preload
       transfer-encoding:
@@ -58,7 +61,7 @@ interactions:
       x-content-type-options:
       - nosniff
       x-envoy-upstream-service-time:
-      - '6'
+      - '5'
     status:
       code: 400
       message: Bad Request

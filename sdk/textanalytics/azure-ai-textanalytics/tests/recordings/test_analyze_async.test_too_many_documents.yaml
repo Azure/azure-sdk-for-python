@@ -5,14 +5,17 @@ interactions:
       "entityRecognitionPiiTasks": [{"parameters": {"model-version": "latest", "loggingOptOut":
       true, "stringIndexType": "UnicodeCodePoint"}}], "keyPhraseExtractionTasks":
       [{"parameters": {"model-version": "latest", "loggingOptOut": false}}], "entityLinkingTasks":
-      []}, "analysisInput": {"documents": [{"id": "0", "text": "input document", "language":
-      "en"}, {"id": "1", "text": "input document", "language": "en"}, {"id": "2",
-      "text": "input document", "language": "en"}, {"id": "3", "text": "input document",
-      "language": "en"}, {"id": "4", "text": "input document", "language": "en"},
-      {"id": "5", "text": "input document", "language": "en"}, {"id": "6", "text":
-      "input document", "language": "en"}, {"id": "7", "text": "input document", "language":
-      "en"}, {"id": "8", "text": "input document", "language": "en"}, {"id": "9",
-      "text": "input document", "language": "en"}, {"id": "10", "text": "input document",
+      [{"parameters": {"model-version": "latest", "loggingOptOut": false, "stringIndexType":
+      "UnicodeCodePoint"}}], "sentimentAnalysisTasks": [{"parameters": {"model-version":
+      "latest", "loggingOptOut": false, "opinionMining": false}}]}, "analysisInput":
+      {"documents": [{"id": "0", "text": "input document", "language": "en"}, {"id":
+      "1", "text": "input document", "language": "en"}, {"id": "2", "text": "input
+      document", "language": "en"}, {"id": "3", "text": "input document", "language":
+      "en"}, {"id": "4", "text": "input document", "language": "en"}, {"id": "5",
+      "text": "input document", "language": "en"}, {"id": "6", "text": "input document",
+      "language": "en"}, {"id": "7", "text": "input document", "language": "en"},
+      {"id": "8", "text": "input document", "language": "en"}, {"id": "9", "text":
+      "input document", "language": "en"}, {"id": "10", "text": "input document",
       "language": "en"}, {"id": "11", "text": "input document", "language": "en"},
       {"id": "12", "text": "input document", "language": "en"}, {"id": "13", "text":
       "input document", "language": "en"}, {"id": "14", "text": "input document",
@@ -29,7 +32,7 @@ interactions:
       Accept:
       - application/json, text/json
       Content-Length:
-      - '1942'
+      - '2169'
       Content-Type:
       - application/json
       User-Agent:
@@ -41,9 +44,9 @@ interactions:
       string: '{"error":{"code":"InvalidRequest","message":"Invalid document in request.","innererror":{"code":"InvalidDocument","message":"Batch
         request contains too many records. Max 25 records are permitted."}}}'
     headers:
-      apim-request-id: c7269150-9b52-4d39-90f8-256c29705029
+      apim-request-id: d380d1ce-d8db-4b57-be46-ffd53e225de6
       content-type: application/json; charset=utf-8
-      date: Tue, 27 Apr 2021 19:38:08 GMT
+      date: Thu, 29 Apr 2021 03:59:56 GMT
       strict-transport-security: max-age=31536000; includeSubDomains; preload
       transfer-encoding: chunked
       x-content-type-options: nosniff
