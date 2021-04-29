@@ -4,7 +4,7 @@
 # license information.
 # --------------------------------------------------------------------------
 from enum import Enum
-from typing import Any, Dict
+from typing import Any, Dict, Union, NamedTuple
 
 from ._error import _ERROR_ATTRIBUTE_MISSING
 
@@ -66,31 +66,6 @@ class TableEntity(dict):
         return dir({}) + list(self.keys())
 
 
-class EntityProperty(object):
-    """
-    An entity property. Used to explicitly set :class:`~EdmType` when necessary.
-
-    Values which require explicit typing are GUID, INT64, and BINARY. Other EdmTypes
-    may be explicitly create as EntityProperty objects but need not be. For example,
-    the below with both create STRING typed properties on the entity::
-        entity = TableEntity()
-        entity.a = 'b'
-        entity.x = EntityProperty('y', EdmType.STRING)
-    """
-
-    def __init__(self, value, edm_type):
-        # type: (Any, EdmType) -> None
-        """
-        Represents an Azure Table. Returned by list_tables and query_tables.
-
-        :param type: The type of the property.
-        :type type: EdmType
-        :param Any value: The value of the property.
-        """
-        self.value = value
-        self.edm_type = edm_type
-
-
 class EdmType(str, Enum):
     """
     Used by :class:`~.EntityProperty` to represent the type of the entity property
@@ -120,3 +95,21 @@ class EdmType(str, Enum):
 
     BOOLEAN = "Edm.Boolean"
     """ Represents a boolean. This type will be inferred for Python bools. """
+
+
+EntityProperty = NamedTuple("EntityProperty", [("value", Any), ("edm_type", Union[str, EdmType])])
+"""
+An entity property. Used to explicitly set :class:`~EdmType` when necessary.
+
+Values which require explicit typing are GUID, INT64, and BINARY. Other EdmTypes
+may be explicitly create as EntityProperty objects but need not be. For example,
+the below with both create STRING typed properties on the entity::
+    entity = TableEntity()
+    entity.a = 'b'
+    entity.x = EntityProperty('y', EdmType.STRING)
+
+:param value:
+:type value: Any
+:param edm_type: Type of the value
+:type edm_type: str or :class:`~azure.data.tables.EdmType`
+"""
