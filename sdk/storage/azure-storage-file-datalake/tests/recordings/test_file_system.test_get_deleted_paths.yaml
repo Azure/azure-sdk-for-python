@@ -383,7 +383,7 @@ interactions:
       x-ms-version:
       - '2020-06-12'
     method: DELETE
-    uri: https://storagename.dfs.core.windows.net/filesystem41b81006/file0?recursive=true
+    uri: https://storagename.dfs.core.windows.net/filesystem41b81006/file0
   response:
     body:
       string: ''
@@ -425,7 +425,7 @@ interactions:
       x-ms-version:
       - '2020-06-12'
     method: DELETE
-    uri: https://storagename.dfs.core.windows.net/filesystem41b81006/file1?recursive=true
+    uri: https://storagename.dfs.core.windows.net/filesystem41b81006/file1
   response:
     body:
       string: ''
@@ -551,7 +551,7 @@ interactions:
       x-ms-version:
       - '2020-06-12'
     method: DELETE
-    uri: https://storagename.dfs.core.windows.net/filesystem41b81006/dir3%2Ffile_in_dir3?recursive=true
+    uri: https://storagename.dfs.core.windows.net/filesystem41b81006/dir3%2Ffile_in_dir3
   response:
     body:
       string: ''
@@ -593,7 +593,7 @@ interactions:
       x-ms-version:
       - '2020-06-12'
     method: DELETE
-    uri: https://storagename.dfs.core.windows.net/filesystem41b81006/dir3%2Fsubdir%2Ffile_in_subdir?recursive=true
+    uri: https://storagename.dfs.core.windows.net/filesystem41b81006/dir3%2Fsubdir%2Ffile_in_subdir
   response:
     body:
       string: ''
