@@ -386,7 +386,7 @@ class ServiceBusAdministrationClient:  # pylint:disable=too-many-public-methods
             forward_dead_lettered_messages_to=forward_dead_lettered_messages_to,
             user_metadata=kwargs.pop("user_metadata", None),
         )
-        to_create = queue._to_internal_entity()
+        to_create = queue._to_internal_entity(self.fully_qualified_namespace)
         create_entity_body = CreateQueueBody(
             content=CreateQueueBodyContent(
                 queue_description=to_create,  # type: ignore
@@ -832,6 +832,7 @@ class ServiceBusAdministrationClient:  # pylint:disable=too-many-public-methods
         :type auto_delete_on_idle: Union[~datetime.timedelta, str]
         :rtype:  ~azure.servicebus.management.SubscriptionProperties
         """
+        # pylint:disable=protected-access
         _validate_entity_name_type(topic_name, display_name="topic_name")
         forward_to = _normalize_entity_path_to_full_path_if_needed(
             kwargs.pop("forward_to", None), self.fully_qualified_namespace
@@ -865,7 +866,7 @@ class ServiceBusAdministrationClient:  # pylint:disable=too-many-public-methods
             auto_delete_on_idle=kwargs.pop("auto_delete_on_idle", None),
             availability_status=None,
         )
-        to_create = subscription._to_internal_entity()  # type: ignore  # pylint:disable=protected-access
+        to_create = subscription._to_internal_entity(self.fully_qualified_namespace)  # type: ignore
 
         create_entity_body = CreateSubscriptionBody(
             content=CreateSubscriptionBodyContent(

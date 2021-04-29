@@ -335,13 +335,13 @@ class QueueProperties(DictMixin):  # pylint:disable=too-many-instance-attributes
             else authorization_rules
         )
 
-        self._internal_qd.auto_delete_on_idle = avoid_timedelta_overflow(
+        self._internal_qd.auto_delete_on_idle = avoid_timedelta_overflow(  # type: ignore
             kwargs.pop("auto_delete_on_idle", self.auto_delete_on_idle)
         )
         self._internal_qd.dead_lettering_on_message_expiration = (
             kwargs.pop("dead_lettering_on_message_expiration", self.dead_lettering_on_message_expiration)
         )
-        self._internal_qd.default_message_time_to_live = avoid_timedelta_overflow(
+        self._internal_qd.default_message_time_to_live = avoid_timedelta_overflow(  # type: ignore
             kwargs.pop("default_message_time_to_live", self.default_message_time_to_live)
         )
         self._internal_qd.duplicate_detection_history_time_window = (
@@ -607,7 +607,7 @@ class TopicProperties(DictMixin):  # pylint:disable=too-many-instance-attributes
 
         if not self._internal_td:
             self._internal_td = InternalTopicDescription()
-        self._internal_td.default_message_time_to_live = avoid_timedelta_overflow(
+        self._internal_td.default_message_time_to_live = avoid_timedelta_overflow(  # type: ignore
             kwargs.pop("default_message_time_to_live", self.default_message_time_to_live)
         )
         self._internal_td.max_size_in_megabytes = kwargs.pop("max_size_in_megabytes", self.max_size_in_megabytes)
@@ -630,7 +630,7 @@ class TopicProperties(DictMixin):  # pylint:disable=too-many-instance-attributes
         )
         self._internal_td.status = kwargs.pop("status", self.status)
         self._internal_td.support_ordering = kwargs.pop("support_ordering", self.support_ordering)
-        self._internal_td.auto_delete_on_idle = avoid_timedelta_overflow(
+        self._internal_td.auto_delete_on_idle = avoid_timedelta_overflow(  # type: ignore
             kwargs.pop("auto_delete_on_idle", self.auto_delete_on_idle)
         )
         self._internal_td.enable_partitioning = kwargs.pop("enable_partitioning", self.enable_partitioning)
@@ -830,7 +830,7 @@ class SubscriptionProperties(DictMixin):  # pylint:disable=too-many-instance-att
             self._internal_sd = InternalSubscriptionDescription()
         self._internal_sd.lock_duration = kwargs.pop("lock_duration", self.lock_duration)
         self._internal_sd.requires_session = kwargs.pop("requires_session", self.requires_session)
-        self._internal_sd.default_message_time_to_live = avoid_timedelta_overflow(
+        self._internal_sd.default_message_time_to_live = avoid_timedelta_overflow(  # type: ignore
             kwargs.pop("default_message_time_to_live", self.default_message_time_to_live)
         )
         self._internal_sd.dead_lettering_on_message_expiration = (
@@ -863,7 +863,7 @@ class SubscriptionProperties(DictMixin):  # pylint:disable=too-many-instance-att
         )
 
         self._internal_sd.user_metadata = kwargs.pop("user_metadata", self.user_metadata)
-        self._internal_sd.auto_delete_on_idle = avoid_timedelta_overflow(
+        self._internal_sd.auto_delete_on_idle = avoid_timedelta_overflow(  # type: ignore
             kwargs.pop("auto_delete_on_idle", self.auto_delete_on_idle)
         )
         self._internal_sd.entity_availability_status = kwargs.pop("availability_status", self.availability_status)
