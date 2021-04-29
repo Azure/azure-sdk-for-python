@@ -47,7 +47,7 @@ class CreateDeleteTable(object):
         with TableServiceClient.from_connection_string(self.connection_string) as table_service_client:
             try:
                 table_item = table_service_client.create_table(table_name="myTable")
-                print("Created table {}!".format(table_item.name))
+                print("Created table {}!".format(table_item.table_name))
             except ResourceExistsError:
                 print("Table already exists")
         # [END create_table_from_tc]
