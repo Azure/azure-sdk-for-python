@@ -26,12 +26,19 @@ class _CaseInsensitiveEnumMeta(EnumMeta):
             raise AttributeError(name)
 
 
+class BackupPolicyType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+    """Describes the mode of backups.
+    """
+
+    PERIODIC = "Periodic"
+    CONTINUOUS = "Continuous"
+
 class CompositePathSortOrder(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     """Sort order for composite paths.
     """
 
-    ASCENDING = "Ascending"
-    DESCENDING = "Descending"
+    ASCENDING = "ascending"
+    DESCENDING = "descending"
 
 class ConflictResolutionMode(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     """Indicates the conflict resolution mode.
@@ -79,9 +86,9 @@ class IndexingMode(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     """Indicates the indexing mode.
     """
 
-    CONSISTENT = "Consistent"
-    LAZY = "Lazy"
-    NONE = "None"
+    CONSISTENT = "consistent"
+    LAZY = "lazy"
+    NONE = "none"
 
 class IndexKind(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     """Indicates the type of index.
@@ -100,16 +107,25 @@ class KeyKind(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     PRIMARY_READONLY = "primaryReadonly"
     SECONDARY_READONLY = "secondaryReadonly"
 
+class NetworkAclBypass(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+    """Indicates what services are allowed to bypass firewall checks.
+    """
+
+    NONE = "None"
+    AZURE_SERVICES = "AzureServices"
+
 class NotebookWorkspaceName(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
 
     DEFAULT = "default"
 
 class PartitionKind(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
-    """Indicates the kind of algorithm used for partitioning
+    """Indicates the kind of algorithm used for partitioning. For MultiHash, multiple partition keys
+    (upto three maximum) are supported for container create
     """
 
     HASH = "Hash"
     RANGE = "Range"
+    MULTI_HASH = "MultiHash"
 
 class PrimaryAggregationType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     """The primary aggregation type of the metric.
@@ -129,12 +145,24 @@ class PublicNetworkAccess(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     ENABLED = "Enabled"
     DISABLED = "Disabled"
 
+class ResourceIdentityType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+    """The type of identity used for the resource. The type 'SystemAssigned,UserAssigned' includes
+    both an implicitly created identity and a set of user assigned identities. The type 'None' will
+    remove any identities from the service.
+    """
+
+    SYSTEM_ASSIGNED = "SystemAssigned"
+    USER_ASSIGNED = "UserAssigned"
+    SYSTEM_ASSIGNED_USER_ASSIGNED = "SystemAssigned,UserAssigned"
+    NONE = "None"
+
 class ServerVersion(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     """Describes the ServerVersion of an a MongoDB account.
     """
 
     THREE2 = "3.2"
     THREE6 = "3.6"
+    FOUR0 = "4.0"
 
 class SpatialType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     """Indicates the spatial type of index.

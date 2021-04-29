@@ -38,6 +38,12 @@ try:
     from ._models_py3 import AzureDataLakeStorageGen2DataFeed
     from ._models_py3 import AzureDataLakeStorageGen2DataFeedPatch
     from ._models_py3 import AzureDataLakeStorageGen2Parameter
+    from ._models_py3 import AzureEventHubsDataFeed
+    from ._models_py3 import AzureEventHubsDataFeedPatch
+    from ._models_py3 import AzureEventHubsParameter
+    from ._models_py3 import AzureSQLConnectionStringCredential
+    from ._models_py3 import AzureSQLConnectionStringCredentialPatch
+    from ._models_py3 import AzureSQLConnectionStringParam
     from ._models_py3 import AzureTableDataFeed
     from ._models_py3 import AzureTableDataFeedPatch
     from ._models_py3 import AzureTableParameter
@@ -50,6 +56,12 @@ try:
     from ._models_py3 import DataFeedDetailPatch
     from ._models_py3 import DataFeedIngestionProgress
     from ._models_py3 import DataFeedList
+    from ._models_py3 import DataLakeGen2SharedKeyCredential
+    from ._models_py3 import DataLakeGen2SharedKeyCredentialPatch
+    from ._models_py3 import DataLakeGen2SharedKeyParam
+    from ._models_py3 import DataSourceCredential
+    from ._models_py3 import DataSourceCredentialList
+    from ._models_py3 import DataSourceCredentialPatch
     from ._models_py3 import DetectionAnomalyFilterCondition
     from ._models_py3 import DetectionAnomalyResultQuery
     from ._models_py3 import DetectionIncidentFilterCondition
@@ -116,6 +128,12 @@ try:
     from ._models_py3 import SeriesIdentity
     from ._models_py3 import SeriesResult
     from ._models_py3 import SeriesResultList
+    from ._models_py3 import ServicePrincipalCredential
+    from ._models_py3 import ServicePrincipalCredentialPatch
+    from ._models_py3 import ServicePrincipalInKVCredential
+    from ._models_py3 import ServicePrincipalInKVCredentialPatch
+    from ._models_py3 import ServicePrincipalInKVParam
+    from ._models_py3 import ServicePrincipalParam
     from ._models_py3 import SeverityCondition
     from ._models_py3 import SeverityFilterCondition
     from ._models_py3 import SmartDetectionCondition
@@ -160,6 +178,12 @@ except (SyntaxError, ImportError):
     from ._models import AzureDataLakeStorageGen2DataFeed  # type: ignore
     from ._models import AzureDataLakeStorageGen2DataFeedPatch  # type: ignore
     from ._models import AzureDataLakeStorageGen2Parameter  # type: ignore
+    from ._models import AzureEventHubsDataFeed  # type: ignore
+    from ._models import AzureEventHubsDataFeedPatch  # type: ignore
+    from ._models import AzureEventHubsParameter  # type: ignore
+    from ._models import AzureSQLConnectionStringCredential  # type: ignore
+    from ._models import AzureSQLConnectionStringCredentialPatch  # type: ignore
+    from ._models import AzureSQLConnectionStringParam  # type: ignore
     from ._models import AzureTableDataFeed  # type: ignore
     from ._models import AzureTableDataFeedPatch  # type: ignore
     from ._models import AzureTableParameter  # type: ignore
@@ -172,6 +196,12 @@ except (SyntaxError, ImportError):
     from ._models import DataFeedDetailPatch  # type: ignore
     from ._models import DataFeedIngestionProgress  # type: ignore
     from ._models import DataFeedList  # type: ignore
+    from ._models import DataLakeGen2SharedKeyCredential  # type: ignore
+    from ._models import DataLakeGen2SharedKeyCredentialPatch  # type: ignore
+    from ._models import DataLakeGen2SharedKeyParam  # type: ignore
+    from ._models import DataSourceCredential  # type: ignore
+    from ._models import DataSourceCredentialList  # type: ignore
+    from ._models import DataSourceCredentialPatch  # type: ignore
     from ._models import DetectionAnomalyFilterCondition  # type: ignore
     from ._models import DetectionAnomalyResultQuery  # type: ignore
     from ._models import DetectionIncidentFilterCondition  # type: ignore
@@ -238,6 +268,12 @@ except (SyntaxError, ImportError):
     from ._models import SeriesIdentity  # type: ignore
     from ._models import SeriesResult  # type: ignore
     from ._models import SeriesResultList  # type: ignore
+    from ._models import ServicePrincipalCredential  # type: ignore
+    from ._models import ServicePrincipalCredentialPatch  # type: ignore
+    from ._models import ServicePrincipalInKVCredential  # type: ignore
+    from ._models import ServicePrincipalInKVCredentialPatch  # type: ignore
+    from ._models import ServicePrincipalInKVParam  # type: ignore
+    from ._models import ServicePrincipalParam  # type: ignore
     from ._models import SeverityCondition  # type: ignore
     from ._models import SeverityFilterCondition  # type: ignore
     from ._models import SmartDetectionCondition  # type: ignore
@@ -252,41 +288,33 @@ except (SyntaxError, ImportError):
     from ._models import WholeMetricConfiguration  # type: ignore
 
 from ._azure_cognitive_service_metrics_advisor_restapi_open_ap_iv2_enums import (
-    AnomalyAlertingConfigurationCrossMetricsOperator,
-    AnomalyAlertingConfigurationPatchCrossMetricsOperator,
+    AnomalyAlertingConfigurationLogicType,
+    AnomalyDetectionConfigurationLogicType,
     AnomalyDetectorDirection,
-    AnomalyPropertyAnomalyStatus,
     AnomalyScope,
+    AnomalyStatus,
     AnomalyValue,
+    AuthenticationTypeEnum,
     ChangePointValue,
-    DataFeedDetailPatchDataSourceType,
-    DataFeedDetailPatchFillMissingPointType,
-    DataFeedDetailPatchNeedRollup,
-    DataFeedDetailPatchRollUpMethod,
-    DataFeedDetailPatchStatus,
-    DataFeedDetailPatchViewMode,
-    DataFeedDetailRollUpMethod,
-    DataFeedDetailStatus,
+    DataSourceCredentialType,
     DataSourceType,
-    DimensionGroupConfigurationConditionOperator,
     Direction,
     EntityStatus,
     FeedbackQueryTimeMode,
     FeedbackType,
     FillMissingPointType,
     Granularity,
-    HookInfoPatchHookType,
     HookType,
-    IncidentPropertyIncidentStatus,
+    IncidentStatus,
     IngestionStatusType,
     NeedRollupEnum,
     PeriodType,
-    SeriesConfigurationConditionOperator,
+    RollUpMethod,
     Severity,
     SnoozeScope,
     TimeMode,
+    ValueType,
     ViewMode,
-    WholeMetricConfigurationConditionOperator,
 )
 
 __all__ = [
@@ -321,6 +349,12 @@ __all__ = [
     'AzureDataLakeStorageGen2DataFeed',
     'AzureDataLakeStorageGen2DataFeedPatch',
     'AzureDataLakeStorageGen2Parameter',
+    'AzureEventHubsDataFeed',
+    'AzureEventHubsDataFeedPatch',
+    'AzureEventHubsParameter',
+    'AzureSQLConnectionStringCredential',
+    'AzureSQLConnectionStringCredentialPatch',
+    'AzureSQLConnectionStringParam',
     'AzureTableDataFeed',
     'AzureTableDataFeedPatch',
     'AzureTableParameter',
@@ -333,6 +367,12 @@ __all__ = [
     'DataFeedDetailPatch',
     'DataFeedIngestionProgress',
     'DataFeedList',
+    'DataLakeGen2SharedKeyCredential',
+    'DataLakeGen2SharedKeyCredentialPatch',
+    'DataLakeGen2SharedKeyParam',
+    'DataSourceCredential',
+    'DataSourceCredentialList',
+    'DataSourceCredentialPatch',
     'DetectionAnomalyFilterCondition',
     'DetectionAnomalyResultQuery',
     'DetectionIncidentFilterCondition',
@@ -399,6 +439,12 @@ __all__ = [
     'SeriesIdentity',
     'SeriesResult',
     'SeriesResultList',
+    'ServicePrincipalCredential',
+    'ServicePrincipalCredentialPatch',
+    'ServicePrincipalInKVCredential',
+    'ServicePrincipalInKVCredentialPatch',
+    'ServicePrincipalInKVParam',
+    'ServicePrincipalParam',
     'SeverityCondition',
     'SeverityFilterCondition',
     'SmartDetectionCondition',
@@ -411,39 +457,31 @@ __all__ = [
     'WebhookHookInfoPatch',
     'WebhookHookParameter',
     'WholeMetricConfiguration',
-    'AnomalyAlertingConfigurationCrossMetricsOperator',
-    'AnomalyAlertingConfigurationPatchCrossMetricsOperator',
+    'AnomalyAlertingConfigurationLogicType',
+    'AnomalyDetectionConfigurationLogicType',
     'AnomalyDetectorDirection',
-    'AnomalyPropertyAnomalyStatus',
     'AnomalyScope',
+    'AnomalyStatus',
     'AnomalyValue',
+    'AuthenticationTypeEnum',
     'ChangePointValue',
-    'DataFeedDetailPatchDataSourceType',
-    'DataFeedDetailPatchFillMissingPointType',
-    'DataFeedDetailPatchNeedRollup',
-    'DataFeedDetailPatchRollUpMethod',
-    'DataFeedDetailPatchStatus',
-    'DataFeedDetailPatchViewMode',
-    'DataFeedDetailRollUpMethod',
-    'DataFeedDetailStatus',
+    'DataSourceCredentialType',
     'DataSourceType',
-    'DimensionGroupConfigurationConditionOperator',
     'Direction',
     'EntityStatus',
     'FeedbackQueryTimeMode',
     'FeedbackType',
     'FillMissingPointType',
     'Granularity',
-    'HookInfoPatchHookType',
     'HookType',
-    'IncidentPropertyIncidentStatus',
+    'IncidentStatus',
     'IngestionStatusType',
     'NeedRollupEnum',
     'PeriodType',
-    'SeriesConfigurationConditionOperator',
+    'RollUpMethod',
     'Severity',
     'SnoozeScope',
     'TimeMode',
+    'ValueType',
     'ViewMode',
-    'WholeMetricConfigurationConditionOperator',
 ]

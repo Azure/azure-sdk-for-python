@@ -50,6 +50,7 @@ with open("CHANGELOG.md", encoding="utf-8") as f:
 setup(
     name=PACKAGE_NAME,
     version=VERSION,
+    include_package_data=True,
     description="Microsoft Azure {} Client Library for Python".format(PACKAGE_PPRINT_NAME),
     long_description=README + "\n\n" + CHANGELOG,
     long_description_content_type="text/markdown",
@@ -67,6 +68,7 @@ setup(
         "Programming Language :: Python :: 3.6",
         "Programming Language :: Python :: 3.7",
         "Programming Language :: Python :: 3.8",
+        "Programming Language :: Python :: 3.9",
         "License :: OSI Approved :: MIT License",
     ],
     zip_safe=False,
@@ -79,7 +81,7 @@ setup(
             "azure.keyvault",
         ]
     ),
-    install_requires=["azure-common~=1.1", "azure-core<2.0.0,>=1.7.0", "msrest>=0.6.0"],
+    install_requires=["azure-common~=1.1", "azure-core<2.0.0,>=1.7.0", "msrest>=0.6.21"],
     extras_require={
         ":python_version<'3.0'": ["azure-keyvault-nspkg"],
         ":python_version<'3.4'": ["enum34>=1.0.4"],

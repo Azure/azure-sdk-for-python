@@ -10,6 +10,10 @@ try:
     from ._models_py3 import ApplyUpdate
     from ._models_py3 import ConfigurationAssignment
     from ._models_py3 import ErrorDetails
+    from ._models_py3 import InputLinuxParameters
+    from ._models_py3 import InputPatchConfiguration
+    from ._models_py3 import InputWindowsParameters
+    from ._models_py3 import ListApplyUpdate
     from ._models_py3 import ListConfigurationAssignmentsResult
     from ._models_py3 import ListMaintenanceConfigurationsResult
     from ._models_py3 import ListUpdatesResult
@@ -19,11 +23,17 @@ try:
     from ._models_py3 import OperationInfo
     from ._models_py3 import OperationsListResult
     from ._models_py3 import Resource
+    from ._models_py3 import SystemData
+    from ._models_py3 import TaskProperties
     from ._models_py3 import Update
 except (SyntaxError, ImportError):
     from ._models import ApplyUpdate  # type: ignore
     from ._models import ConfigurationAssignment  # type: ignore
     from ._models import ErrorDetails  # type: ignore
+    from ._models import InputLinuxParameters  # type: ignore
+    from ._models import InputPatchConfiguration  # type: ignore
+    from ._models import InputWindowsParameters  # type: ignore
+    from ._models import ListApplyUpdate  # type: ignore
     from ._models import ListConfigurationAssignmentsResult  # type: ignore
     from ._models import ListMaintenanceConfigurationsResult  # type: ignore
     from ._models import ListUpdatesResult  # type: ignore
@@ -33,11 +43,16 @@ except (SyntaxError, ImportError):
     from ._models import OperationInfo  # type: ignore
     from ._models import OperationsListResult  # type: ignore
     from ._models import Resource  # type: ignore
+    from ._models import SystemData  # type: ignore
+    from ._models import TaskProperties  # type: ignore
     from ._models import Update  # type: ignore
 
 from ._maintenance_client_enums import (
+    CreatedByType,
     ImpactType,
     MaintenanceScope,
+    RebootOptions,
+    TaskScope,
     UpdateStatus,
     Visibility,
 )
@@ -46,6 +61,10 @@ __all__ = [
     'ApplyUpdate',
     'ConfigurationAssignment',
     'ErrorDetails',
+    'InputLinuxParameters',
+    'InputPatchConfiguration',
+    'InputWindowsParameters',
+    'ListApplyUpdate',
     'ListConfigurationAssignmentsResult',
     'ListMaintenanceConfigurationsResult',
     'ListUpdatesResult',
@@ -55,9 +74,14 @@ __all__ = [
     'OperationInfo',
     'OperationsListResult',
     'Resource',
+    'SystemData',
+    'TaskProperties',
     'Update',
+    'CreatedByType',
     'ImpactType',
     'MaintenanceScope',
+    'RebootOptions',
+    'TaskScope',
     'UpdateStatus',
     'Visibility',
 ]

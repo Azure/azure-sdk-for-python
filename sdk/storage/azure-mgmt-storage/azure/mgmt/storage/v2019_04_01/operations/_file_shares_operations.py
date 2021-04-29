@@ -14,7 +14,7 @@ from azure.core.pipeline import PipelineResponse
 from azure.core.pipeline.transport import HttpRequest, HttpResponse
 from azure.mgmt.core.exceptions import ARMErrorFormat
 
-from .. import models
+from .. import models as _models
 
 if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
@@ -37,7 +37,7 @@ class FileSharesOperations(object):
     :param deserializer: An object model deserializer.
     """
 
-    models = models
+    models = _models
 
     def __init__(self, client, config, serializer, deserializer):
         self._client = client
@@ -54,7 +54,7 @@ class FileSharesOperations(object):
         filter=None,  # type: Optional[str]
         **kwargs  # type: Any
     ):
-        # type: (...) -> Iterable["models.FileShareItems"]
+        # type: (...) -> Iterable["_models.FileShareItems"]
         """Lists all shares.
 
         :param resource_group_name: The name of the resource group within the user's subscription. The
@@ -77,7 +77,7 @@ class FileSharesOperations(object):
         :rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.storage.v2019_04_01.models.FileShareItems]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.FileShareItems"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.FileShareItems"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -145,10 +145,10 @@ class FileSharesOperations(object):
         resource_group_name,  # type: str
         account_name,  # type: str
         share_name,  # type: str
-        file_share,  # type: "models.FileShare"
+        file_share,  # type: "_models.FileShare"
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.FileShare"
+        # type: (...) -> "_models.FileShare"
         """Creates a new share under the specified account as described by request body. The share
         resource includes metadata and properties for that share. It does not include a list of the
         files contained by the share.
@@ -172,7 +172,7 @@ class FileSharesOperations(object):
         :rtype: ~azure.mgmt.storage.v2019_04_01.models.FileShare
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.FileShare"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.FileShare"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -228,10 +228,10 @@ class FileSharesOperations(object):
         resource_group_name,  # type: str
         account_name,  # type: str
         share_name,  # type: str
-        file_share,  # type: "models.FileShare"
+        file_share,  # type: "_models.FileShare"
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.FileShare"
+        # type: (...) -> "_models.FileShare"
         """Updates share properties as specified in request body. Properties not mentioned in the request
         will not be changed. Update fails if the specified share does not already exist.
 
@@ -254,7 +254,7 @@ class FileSharesOperations(object):
         :rtype: ~azure.mgmt.storage.v2019_04_01.models.FileShare
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.FileShare"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.FileShare"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -308,7 +308,7 @@ class FileSharesOperations(object):
         share_name,  # type: str
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.FileShare"
+        # type: (...) -> "_models.FileShare"
         """Gets properties of a specified share.
 
         :param resource_group_name: The name of the resource group within the user's subscription. The
@@ -328,7 +328,7 @@ class FileSharesOperations(object):
         :rtype: ~azure.mgmt.storage.v2019_04_01.models.FileShare
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.FileShare"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.FileShare"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }

@@ -69,12 +69,16 @@ def _get_blob_name(blob):
         return blob
 
 
-class ContainerClient(StorageAccountHostsMixin):
+class ContainerClient(StorageAccountHostsMixin):    # pylint: disable=too-many-public-methods
     """A client to interact with a specific container, although that container
     may not yet exist.
 
     For operations relating to a specific blob within this container, a blob client can be
     retrieved using the :func:`~get_blob_client` function.
+
+    For more optional configuration, please click
+    `here <https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/storage/azure-storage-blob
+    #optional-configuration>`_.
 
     :param str account_url:
         The URI to the storage account. In order to create a client given the full URI to the container,
@@ -147,6 +151,8 @@ class ContainerClient(StorageAccountHostsMixin):
 
         _, sas_token = parse_query(parsed_url.query)
         self.container_name = container_name
+        # This parameter is used for the hierarchy traversal. Give precedence to credential.
+        self._raw_credential = credential if credential else sas_token
         self._query_str, credential = self._format_query_string(sas_token, credential)
         super(ContainerClient, self).__init__(parsed_url, service='blob', credential=credential, **kwargs)
         self._client = AzureBlobStorage(self.url, pipeline=self._pipeline)
@@ -290,6 +296,40 @@ class ContainerClient(StorageAccountHostsMixin):
                 cls=return_response_headers,
                 headers=headers,
                 **kwargs)
+        except HttpResponseError as error:
+            process_storage_error(error)
+
+    @distributed_trace
+    def _rename_container(self, new_name, **kwargs):
+        # type: (str, **Any) -> ContainerClient
+        """Renames a container.
+
+        Operation is successful only if the source container exists.
+
+        :param str new_name:
+            The new container name the user wants to rename to.
+        :keyword lease:
+            Specify this to perform only if the lease ID given
+            matches the active lease ID of the source container.
+        :paramtype lease: ~azure.storage.blob.BlobLeaseClient or str
+        :keyword int timeout:
+            The timeout parameter is expressed in seconds.
+        :rtype: ~azure.storage.blob.ContainerClient
+        """
+        lease = kwargs.pop('lease', None)
+        try:
+            kwargs['source_lease_id'] = lease.id  # type: str
+        except AttributeError:
+            kwargs['source_lease_id'] = lease
+        try:
+            renamed_container = ContainerClient(
+                "{}://{}".format(self.scheme, self.primary_hostname), container_name=new_name,
+                credential=self.credential, api_version=self.api_version, _configuration=self._config,
+                _pipeline=self._pipeline, _location_mode=self._location_mode, _hosts=self._hosts,
+                require_encryption=self.require_encryption, key_encryption_key=self.key_encryption_key,
+                key_resolver_function=self.key_resolver_function)
+            renamed_container._client.container.rename(self.container_name, **kwargs)   # pylint: disable = protected-access
+            return renamed_container
         except HttpResponseError as error:
             process_storage_error(error)
 
@@ -542,6 +582,40 @@ class ContainerClient(StorageAccountHostsMixin):
                 **kwargs)
         except HttpResponseError as error:
             process_storage_error(error)
+
+    @distributed_trace
+    def _get_blob_service_client(self):  # pylint: disable=client-method-missing-kwargs
+        # type: (...) -> BlobServiceClient
+        """Get a client to interact with the container's parent service account.
+
+        Defaults to current container's credentials.
+
+        :returns: A BlobServiceClient.
+        :rtype: ~azure.storage.blob.BlobServiceClient
+
+        .. admonition:: Example:
+
+            .. literalinclude:: ../samples/blob_samples_service.py
+                :start-after: [START get_blob_service_client_from_container_client]
+                :end-before: [END get_blob_service_client_from_container_client]
+                :language: python
+                :dedent: 8
+                :caption: Get blob service client from container object.
+        """
+        from ._blob_service_client import BlobServiceClient
+        if not isinstance(self._pipeline._transport, TransportWrapper): # pylint: disable = protected-access
+            _pipeline = Pipeline(
+                transport=TransportWrapper(self._pipeline._transport), # pylint: disable = protected-access
+                policies=self._pipeline._impl_policies # pylint: disable = protected-access
+            )
+        else:
+            _pipeline = self._pipeline   # pylint: disable = protected-access
+        return BlobServiceClient(
+            "{}://{}".format(self.scheme, self.primary_hostname),
+            credential=self._raw_credential, api_version=self.api_version, _configuration=self._config,
+            _location_mode=self._location_mode, _hosts=self._hosts, require_encryption=self.require_encryption,
+            key_encryption_key=self.key_encryption_key, key_resolver_function=self.key_resolver_function,
+            _pipeline=_pipeline)
 
     @distributed_trace
     def get_container_access_policy(self, **kwargs):
@@ -953,7 +1027,7 @@ class ContainerClient(StorageAccountHostsMixin):
         # type: (Union[str, BlobProperties], Optional[int], Optional[int], **Any) -> StorageStreamDownloader
         """Downloads a blob to the StorageStreamDownloader. The readall() method must
         be used to read all the content or readinto() must be used to download the blob into
-        a stream.
+        a stream. Using chunks() returns an iterator which allows the user to iterate over the content in chunks.
 
         :param blob: The blob with which to interact. If specified, this value will override
             a blob value specified in the blob URL.
@@ -1096,7 +1170,9 @@ class ContainerClient(StorageAccountHostsMixin):
         if_tags_match_condition = kwargs.pop('if_tags_match_condition', None)
         kwargs.update({'raise_on_any_failure': raise_on_any_failure,
                        'sas': self._query_str.replace('?', '&'),
-                       'timeout': '&timeout=' + str(timeout) if timeout else ""
+                       'timeout': '&timeout=' + str(timeout) if timeout else "",
+                       'path': self.container_name,
+                       'restype': 'restype=container&'
                        })
 
         reqs = []
@@ -1278,7 +1354,9 @@ class ContainerClient(StorageAccountHostsMixin):
         if_tags = kwargs.pop('if_tags_match_condition', None)
         kwargs.update({'raise_on_any_failure': raise_on_any_failure,
                        'sas': self._query_str.replace('?', '&'),
-                       'timeout': '&timeout=' + str(timeout) if timeout else ""
+                       'timeout': '&timeout=' + str(timeout) if timeout else "",
+                       'path': self.container_name,
+                       'restype': 'restype=container&'
                        })
 
         reqs = []

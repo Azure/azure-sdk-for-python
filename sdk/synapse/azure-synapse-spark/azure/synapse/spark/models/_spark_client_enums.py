@@ -75,6 +75,6 @@ class SparkSessionResultType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)
 class SparkStatementLanguageType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
 
     SPARK = "spark"
-    PYSPARK = "pyspark"
-    DOTNETSPARK = "dotnetspark"
+    PY_SPARK = "pyspark"
+    DOT_NET_SPARK = "dotnetspark"
     SQL = "sql"

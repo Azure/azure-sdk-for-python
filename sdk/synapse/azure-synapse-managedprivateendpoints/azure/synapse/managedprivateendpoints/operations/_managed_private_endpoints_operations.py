@@ -46,17 +46,17 @@ class ManagedPrivateEndpointsOperations(object):
 
     def get(
         self,
-        managed_virtual_network_name,  # type: str
         managed_private_endpoint_name,  # type: str
+        managed_virtual_network_name="default",  # type: str
         **kwargs  # type: Any
     ):
         # type: (...) -> "_models.ManagedPrivateEndpoint"
         """Get Managed Private Endpoints.
 
-        :param managed_virtual_network_name: Managed virtual network name.
-        :type managed_virtual_network_name: str
         :param managed_private_endpoint_name: Managed private endpoint name.
         :type managed_private_endpoint_name: str
+        :param managed_virtual_network_name: Managed virtual network name.
+        :type managed_virtual_network_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: ManagedPrivateEndpoint, or the result of cls(response)
         :rtype: ~azure.synapse.managedprivateendpoints.models.ManagedPrivateEndpoint
@@ -105,18 +105,18 @@ class ManagedPrivateEndpointsOperations(object):
 
     def create(
         self,
-        managed_virtual_network_name,  # type: str
         managed_private_endpoint_name,  # type: str
+        managed_virtual_network_name="default",  # type: str
         properties=None,  # type: Optional["_models.ManagedPrivateEndpointProperties"]
         **kwargs  # type: Any
     ):
         # type: (...) -> "_models.ManagedPrivateEndpoint"
         """Create Managed Private Endpoints.
 
-        :param managed_virtual_network_name: Managed virtual network name.
-        :type managed_virtual_network_name: str
         :param managed_private_endpoint_name: Managed private endpoint name.
         :type managed_private_endpoint_name: str
+        :param managed_virtual_network_name: Managed virtual network name.
+        :type managed_virtual_network_name: str
         :param properties: Managed private endpoint properties.
         :type properties: ~azure.synapse.managedprivateendpoints.models.ManagedPrivateEndpointProperties
         :keyword callable cls: A custom type or function that will be passed the direct response
@@ -174,17 +174,17 @@ class ManagedPrivateEndpointsOperations(object):
 
     def delete(
         self,
-        managed_virtual_network_name,  # type: str
         managed_private_endpoint_name,  # type: str
+        managed_virtual_network_name="default",  # type: str
         **kwargs  # type: Any
     ):
         # type: (...) -> None
         """Delete Managed Private Endpoints.
 
-        :param managed_virtual_network_name: Managed virtual network name.
-        :type managed_virtual_network_name: str
         :param managed_private_endpoint_name: Managed private endpoint name.
         :type managed_private_endpoint_name: str
+        :param managed_virtual_network_name: Managed virtual network name.
+        :type managed_virtual_network_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: None, or the result of cls(response)
         :rtype: None
@@ -228,7 +228,7 @@ class ManagedPrivateEndpointsOperations(object):
 
     def list(
         self,
-        managed_virtual_network_name,  # type: str
+        managed_virtual_network_name="default",  # type: str
         **kwargs  # type: Any
     ):
         # type: (...) -> Iterable["_models.ManagedPrivateEndpointListResponse"]

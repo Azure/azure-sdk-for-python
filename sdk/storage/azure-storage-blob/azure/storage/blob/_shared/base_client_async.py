@@ -111,7 +111,8 @@ class AsyncStorageAccountHostsMixin(object):
         return config, AsyncPipeline(config.transport, policies=policies)
 
     async def _batch_send(
-        self, *reqs: 'HttpRequest',
+        self,
+        *reqs,  # type: HttpRequest
         **kwargs
     ):
         """Given a series of request, do a Storage batch call.
@@ -119,11 +120,13 @@ class AsyncStorageAccountHostsMixin(object):
         # Pop it here, so requests doesn't feel bad about additional kwarg
         raise_on_any_failure = kwargs.pop("raise_on_any_failure", True)
         request = self._client._client.post(  # pylint: disable=protected-access
-            url='{}://{}/?comp=batch{}{}'.format(
+            url='{}://{}/{}?{}comp=batch{}{}'.format(
                 self.scheme,
                 self.primary_hostname,
-                kwargs.pop('sas', None),
-                kwargs.pop('timeout', None)
+                kwargs.pop('path', ""),
+                kwargs.pop('restype', ""),
+                kwargs.pop('sas', ""),
+                kwargs.pop('timeout', "")
             ),
             headers={
                 'x-ms-version': self.api_version

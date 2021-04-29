@@ -4,17 +4,20 @@ trigger:
   branches:
     include:
     - master
+    - main
     - hotfix/*
     - release/*
     - restapi*
   paths:
     include:
     - sdk/containerregistry/
+    - sdk/core/
 
 pr:
   branches:
     include:
     - master
+    - main
     - feature/*
     - hotfix/*
     - release/*
@@ -22,11 +25,14 @@ pr:
   paths:
     include:
     - sdk/containerregistry/
+    - sdk/core/
 
 extends:
   template: ../../eng/pipelines/templates/stages/archetype-sdk-client.yml
   parameters:
     ServiceDirectory: containerregistry
     Artifacts:
-    - name: azure_mgmt_containerregistry
+    - name: azure-mgmt-containerregistry
       safeName: azuremgmtcontainerregistry
+    - name: azure-containerregistry
+      safeName: azurecontainerregistry

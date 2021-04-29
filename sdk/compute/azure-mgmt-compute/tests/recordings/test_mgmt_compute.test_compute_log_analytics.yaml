@@ -1,7 +1,147 @@
 interactions:
 - request:
-    body: '{"blobContainerSasUri": "fakeuri", "fromTime": "2021-01-18T03:44:02.647271Z",
-      "toTime": "2021-01-20T03:44:02.647277Z", "groupByResourceName": true, "intervalLength":
+    body: '{"sku": {"name": "Standard_GRS"}, "kind": "StorageV2", "location": "eastus",
+      "tags": {"key1": "value1", "key2": "value2"}, "properties": {"encryption": {"services":
+      {"blob": {"enabled": true, "keyType": "Account"}, "file": {"enabled": true,
+      "keyType": "Account"}}, "keySource": "Microsoft.Storage"}}}'
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '300'
+      Content-Type:
+      - application/json
+      User-Agent:
+      - azsdk-python-azure-mgmt-storage/17.0.0 Python/3.8.8 (Linux-5.4.0-1043-azure-x86_64-with-glibc2.2.5)
+        VSTS_0fb41ef4-5012-48a9-bf39-4ee3de03ee35_build_2384_0
+    method: PUT
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Storage/storageAccounts/accountxyz9b271243?api-version=2021-01-01
+  response:
+    body:
+      string: ''
+    headers:
+      cache-control:
+      - no-cache
+      content-length:
+      - '0'
+      content-type:
+      - text/plain; charset=utf-8
+      date:
+      - Tue, 06 Apr 2021 03:10:43 GMT
+      expires:
+      - '-1'
+      location:
+      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Storage/locations/eastus/asyncoperations/b75e8233-c4f1-4051-9e67-6db7abae0ebf?monitor=true&api-version=2021-01-01
+      pragma:
+      - no-cache
+      server:
+      - Microsoft-Azure-Storage-Resource-Provider/1.0,Microsoft-HTTPAPI/2.0 Microsoft-HTTPAPI/2.0
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      x-content-type-options:
+      - nosniff
+      x-ms-ratelimit-remaining-subscription-writes:
+      - '1199'
+    status:
+      code: 202
+      message: Accepted
+- request:
+    body: null
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - azsdk-python-azure-mgmt-storage/17.0.0 Python/3.8.8 (Linux-5.4.0-1043-azure-x86_64-with-glibc2.2.5)
+        VSTS_0fb41ef4-5012-48a9-bf39-4ee3de03ee35_build_2384_0
+    method: GET
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Storage/locations/eastus/asyncoperations/b75e8233-c4f1-4051-9e67-6db7abae0ebf?monitor=true&api-version=2021-01-01
+  response:
+    body:
+      string: '{"sku":{"name":"Standard_GRS","tier":"Standard"},"kind":"StorageV2","id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Storage/storageAccounts/accountxyz9b271243","name":"accountxyz9b271243","type":"Microsoft.Storage/storageAccounts","location":"eastus","tags":{"key1":"value1","key2":"value2"},"properties":{"privateEndpointConnections":[],"networkAcls":{"bypass":"AzureServices","virtualNetworkRules":[],"ipRules":[],"defaultAction":"Allow"},"supportsHttpsTrafficOnly":true,"encryption":{"services":{"file":{"keyType":"Account","enabled":true,"lastEnabledTime":"2021-04-06T03:10:43.2325735Z"},"blob":{"keyType":"Account","enabled":true,"lastEnabledTime":"2021-04-06T03:10:43.2325735Z"}},"keySource":"Microsoft.Storage"},"accessTier":"Hot","provisioningState":"Succeeded","creationTime":"2021-04-06T03:10:43.1075889Z","primaryEndpoints":{"dfs":"https://accountxyz9b271243.dfs.core.windows.net/","web":"https://accountxyz9b271243.z13.web.core.windows.net/","blob":"https://accountxyz9b271243.blob.core.windows.net/","queue":"https://accountxyz9b271243.queue.core.windows.net/","table":"https://accountxyz9b271243.table.core.windows.net/","file":"https://accountxyz9b271243.file.core.windows.net/"},"primaryLocation":"eastus","statusOfPrimary":"available","secondaryLocation":"westus","statusOfSecondary":"available"}}'
+    headers:
+      cache-control:
+      - no-cache
+      content-length:
+      - '1440'
+      content-type:
+      - application/json
+      date:
+      - Tue, 06 Apr 2021 03:11:00 GMT
+      expires:
+      - '-1'
+      pragma:
+      - no-cache
+      server:
+      - Microsoft-Azure-Storage-Resource-Provider/1.0,Microsoft-HTTPAPI/2.0 Microsoft-HTTPAPI/2.0
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      transfer-encoding:
+      - chunked
+      vary:
+      - Accept-Encoding
+      x-content-type-options:
+      - nosniff
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '0'
+      User-Agent:
+      - azsdk-python-azure-mgmt-storage/17.0.0 Python/3.8.8 (Linux-5.4.0-1043-azure-x86_64-with-glibc2.2.5)
+        VSTS_0fb41ef4-5012-48a9-bf39-4ee3de03ee35_build_2384_0
+    method: POST
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Storage/storageAccounts/accountxyz9b271243/listKeys?api-version=2021-01-01&$expand=kerb
+  response:
+    body:
+      string: '{"keys":[{"keyName":"key1","value":"KM7H0H91acT1nXP95JquG7RLbV/0O8nZwICHkNA5PWOZ3fV1ERM6Zn60AvHgCMxJeCcj8uJze04Kr2u2qAc/8g==","permissions":"FULL"},{"keyName":"key2","value":"A6Q7Tu/b6099D7pbmsUdAj7BHBMfOnsUWz4RC9Io/vL2rI7sdNcrnW67pVpjkDnzmozuUvOeQr62FingNknE2g==","permissions":"FULL"}]}'
+    headers:
+      cache-control:
+      - no-cache
+      content-length:
+      - '288'
+      content-type:
+      - application/json
+      date:
+      - Tue, 06 Apr 2021 03:11:00 GMT
+      expires:
+      - '-1'
+      pragma:
+      - no-cache
+      server:
+      - Microsoft-Azure-Storage-Resource-Provider/1.0,Microsoft-HTTPAPI/2.0 Microsoft-HTTPAPI/2.0
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      transfer-encoding:
+      - chunked
+      vary:
+      - Accept-Encoding
+      x-content-type-options:
+      - nosniff
+      x-ms-ratelimit-remaining-subscription-resource-requests:
+      - '11999'
+    status:
+      code: 200
+      message: OK
+- request:
+    body: '{"blobContainerSasUri": "fakeuri", "fromTime": "2021-04-04T03:11:00.793184Z",
+      "toTime": "2021-04-06T03:11:00.79319Z", "groupByResourceName": true, "intervalLength":
       "SixtyMins"}'
     headers:
       Accept:
@@ -11,91 +151,99 @@ interactions:
       Connection:
       - keep-alive
       Content-Length:
-      - '178'
+      - '360'
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-azure-mgmt-compute/0.0.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+      - azsdk-python-azure-mgmt-compute/20.0.0 Python/3.8.8 (Linux-5.4.0-1043-azure-x86_64-with-glibc2.2.5)
+        VSTS_0fb41ef4-5012-48a9-bf39-4ee3de03ee35_build_2384_0
     method: POST
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Compute/locations/eastus/logAnalytics/apiAccess/getRequestRateByInterval?api-version=2020-06-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Compute/locations/eastus/logAnalytics/apiAccess/getRequestRateByInterval?api-version=2020-12-01
   response:
     body:
-      string: '{"error":{"code":"ServerTimeout","message":"The request timed out.
-        Diagnostic information: timestamp ''20210120T034516Z'', subscription id ''00000000-0000-0000-0000-000000000000'',
-        tracking id ''cd8e4d6c-0e9c-485a-897c-944a90162921'', request correlation
-        id ''cd8e4d6c-0e9c-485a-897c-944a90162921''."}}'
+      string: ''
     headers:
+      azure-asyncoperation:
+      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Compute/locations/eastus/operations/959e036e-3184-4321-a1d4-0d5d6046d24b?api-version=2020-12-01
       cache-control:
       - no-cache
-      connection:
-      - close
       content-length:
-      - '294'
-      content-type:
-      - application/json; charset=utf-8
+      - '0'
       date:
-      - Wed, 20 Jan 2021 03:45:22 GMT
+      - Tue, 06 Apr 2021 03:11:00 GMT
       expires:
       - '-1'
+      location:
+      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Compute/locations/eastus/operations/959e036e-3184-4321-a1d4-0d5d6046d24b?monitor=true&api-version=2020-12-01
       pragma:
       - no-cache
+      server:
+      - Microsoft-HTTPAPI/2.0
+      - Microsoft-HTTPAPI/2.0
       strict-transport-security:
       - max-age=31536000; includeSubDomains
       x-content-type-options:
       - nosniff
-      x-ms-failure-cause:
-      - gateway
+      x-ms-ratelimit-remaining-resource:
+      - Microsoft.Compute/GetLogAnalytics3Min;9,Microsoft.Compute/GetLogAnalytics30Min;49
+      x-ms-ratelimit-remaining-subscription-writes:
+      - '1199'
     status:
-      code: 503
-      message: Service Unavailable
+      code: 202
+      message: Accepted
 - request:
-    body: '{"blobContainerSasUri": "fakeuri", "fromTime": "2021-01-18T03:44:02.647271Z",
-      "toTime": "2021-01-20T03:44:02.647277Z", "groupByResourceName": true, "intervalLength":
-      "SixtyMins"}'
+    body: null
     headers:
       Accept:
-      - application/json
+      - '*/*'
       Accept-Encoding:
       - gzip, deflate
       Connection:
       - keep-alive
-      Content-Length:
-      - '178'
-      Content-Type:
-      - application/json
       User-Agent:
-      - azsdk-python-azure-mgmt-compute/0.0.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
-    method: POST
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Compute/locations/eastus/logAnalytics/apiAccess/getRequestRateByInterval?api-version=2020-06-01
+      - azsdk-python-azure-mgmt-compute/20.0.0 Python/3.8.8 (Linux-5.4.0-1043-azure-x86_64-with-glibc2.2.5)
+        VSTS_0fb41ef4-5012-48a9-bf39-4ee3de03ee35_build_2384_0
+    method: GET
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Compute/locations/eastus/operations/959e036e-3184-4321-a1d4-0d5d6046d24b?api-version=2020-12-01
   response:
     body:
-      string: '{"error":{"code":"SubscriptionNotFound","message":"The subscription
-        ''00000000-0000-0000-0000-000000000000'' could not be found."}}'
+      string: "{\r\n  \"startTime\": \"2021-04-06T03:11:01.0918068+00:00\",\r\n  \"endTime\":
+        \"2021-04-06T03:11:02.4668291+00:00\",\r\n  \"status\": \"Failed\",\r\n  \"error\":
+        {\r\n    \"code\": \"BadRequest\",\r\n    \"message\": \"Could not write log
+        analytics to the given SAS URI due to The remote server returned an error:
+        (403) Forbidden..\"\r\n  },\r\n  \"name\": \"959e036e-3184-4321-a1d4-0d5d6046d24b\"\r\n}"
     headers:
       cache-control:
       - no-cache
       content-length:
-      - '129'
+      - '359'
       content-type:
       - application/json; charset=utf-8
       date:
-      - Wed, 20 Jan 2021 03:46:09 GMT
+      - Tue, 06 Apr 2021 03:11:30 GMT
       expires:
       - '-1'
       pragma:
       - no-cache
+      server:
+      - Microsoft-HTTPAPI/2.0
+      - Microsoft-HTTPAPI/2.0
       strict-transport-security:
       - max-age=31536000; includeSubDomains
+      transfer-encoding:
+      - chunked
+      vary:
+      - Accept-Encoding
       x-content-type-options:
       - nosniff
-      x-ms-failure-cause:
-      - gateway
+      x-ms-ratelimit-remaining-resource:
+      - Microsoft.Compute/GetOperation3Min;14998,Microsoft.Compute/GetOperation30Min;29998
     status:
-      code: 404
-      message: Not Found
+      code: 200
+      message: OK
 - request:
-    body: '{"blobContainerSasUri": "fakeuri", "fromTime": "2021-01-18T03:46:10.242391Z",
-      "toTime": "2021-01-20T03:46:10.242396Z", "groupByOperationName": true, "groupByResourceName":
+    body: '{"blobContainerSasUri": "fakeuri", "fromTime": "2021-04-04T03:11:31.250437Z",
+      "toTime": "2021-04-06T03:11:31.250447Z", "groupByOperationName": true, "groupByResourceName":
       false}'
     headers:
       Accept:
@@ -105,37 +253,94 @@ interactions:
       Connection:
       - keep-alive
       Content-Length:
-      - '178'
+      - '361'
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-azure-mgmt-compute/0.0.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+      - azsdk-python-azure-mgmt-compute/20.0.0 Python/3.8.8 (Linux-5.4.0-1043-azure-x86_64-with-glibc2.2.5)
+        VSTS_0fb41ef4-5012-48a9-bf39-4ee3de03ee35_build_2384_0
     method: POST
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Compute/locations/eastus/logAnalytics/apiAccess/getThrottledRequests?api-version=2020-06-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Compute/locations/eastus/logAnalytics/apiAccess/getThrottledRequests?api-version=2020-12-01
   response:
     body:
-      string: '{"error":{"code":"SubscriptionNotFound","message":"The subscription
-        ''00000000-0000-0000-0000-000000000000'' could not be found."}}'
+      string: ''
     headers:
+      azure-asyncoperation:
+      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Compute/locations/eastus/operations/1b4dc7ac-f6d0-4f9d-b4c8-4cc2af5d5b65?api-version=2020-12-01
       cache-control:
       - no-cache
       content-length:
-      - '129'
-      content-type:
-      - application/json; charset=utf-8
+      - '0'
       date:
-      - Wed, 20 Jan 2021 03:46:40 GMT
+      - Tue, 06 Apr 2021 03:11:30 GMT
       expires:
       - '-1'
+      location:
+      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Compute/locations/eastus/operations/1b4dc7ac-f6d0-4f9d-b4c8-4cc2af5d5b65?monitor=true&api-version=2020-12-01
       pragma:
       - no-cache
+      server:
+      - Microsoft-HTTPAPI/2.0
+      - Microsoft-HTTPAPI/2.0
       strict-transport-security:
       - max-age=31536000; includeSubDomains
       x-content-type-options:
       - nosniff
-      x-ms-failure-cause:
-      - gateway
+      x-ms-ratelimit-remaining-resource:
+      - Microsoft.Compute/GetLogAnalytics3Min;8,Microsoft.Compute/GetLogAnalytics30Min;48
+      x-ms-ratelimit-remaining-subscription-writes:
+      - '1198'
     status:
-      code: 404
-      message: Not Found
+      code: 202
+      message: Accepted
+- request:
+    body: null
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - azsdk-python-azure-mgmt-compute/20.0.0 Python/3.8.8 (Linux-5.4.0-1043-azure-x86_64-with-glibc2.2.5)
+        VSTS_0fb41ef4-5012-48a9-bf39-4ee3de03ee35_build_2384_0
+    method: GET
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Compute/locations/eastus/operations/1b4dc7ac-f6d0-4f9d-b4c8-4cc2af5d5b65?api-version=2020-12-01
+  response:
+    body:
+      string: "{\r\n  \"startTime\": \"2021-04-06T03:11:31.2950969+00:00\",\r\n  \"endTime\":
+        \"2021-04-06T03:11:33.3106915+00:00\",\r\n  \"status\": \"Failed\",\r\n  \"error\":
+        {\r\n    \"code\": \"BadRequest\",\r\n    \"message\": \"Could not write log
+        analytics to the given SAS URI due to The remote server returned an error:
+        (403) Forbidden..\"\r\n  },\r\n  \"name\": \"1b4dc7ac-f6d0-4f9d-b4c8-4cc2af5d5b65\"\r\n}"
+    headers:
+      cache-control:
+      - no-cache
+      content-length:
+      - '359'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Tue, 06 Apr 2021 03:12:01 GMT
+      expires:
+      - '-1'
+      pragma:
+      - no-cache
+      server:
+      - Microsoft-HTTPAPI/2.0
+      - Microsoft-HTTPAPI/2.0
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      transfer-encoding:
+      - chunked
+      vary:
+      - Accept-Encoding
+      x-content-type-options:
+      - nosniff
+      x-ms-ratelimit-remaining-resource:
+      - Microsoft.Compute/GetOperation3Min;14996,Microsoft.Compute/GetOperation30Min;29996
+    status:
+      code: 200
+      message: OK
 version: 1

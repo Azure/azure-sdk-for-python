@@ -1,0 +1,38 @@
+interactions:
+- request:
+    body: '{"importManifest": {"url": "https://adutest.blob.core.windows.net/test/Ak1xigPLmur511bYfCvzeC?sv=2019-02-02&sr=b&sig=L9RZxCUwduStz0m1cj4YnXt6OJCvWSe9SPseum3cclE%3D&se=2020-05-08T20%3A52%3A51Z&sp=r",
+      "sizeInBytes": 453, "hashes": {"SHA256": "Ak1xigPLmur511bYfCvzeCwF6r/QxiBKeEDHOvHPzr4="}},
+      "files": [{"filename": "setup.exe", "url": "https://adutest.blob.core.windows.net/test/zVknnlx1tyYSMHY28LZVzk?sv=2019-02-02&sr=b&sig=QtS6bAOcHon18wLwIt9uvHIM%2B4M27EoVPNP4RWpMjyw%3D&se=2020-05-08T20%3A52%3A51Z&sp=r"}]}'
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '508'
+      Content-Type:
+      - application/json
+      User-Agent:
+      - azsdk-python-iot-deviceupdate/1.0.0b1 Python/3.9.1 (macOS-10.13.6-x86_64-i386-64bit)
+    method: POST
+    uri: https://fake_endpoint.com/deviceupdate/blue/v2/updates?action=import
+  response:
+    body:
+      string: ''
+    headers:
+      content-length:
+      - '0'
+      date:
+      - Wed, 03 Mar 2021 18:10:39 GMT
+      location:
+      - /deviceupdate/blue/updates/operations/53cbbb48-9a41-463b-969c-20b19f1e8b26?api-version=2
+      operation-location:
+      - /deviceupdate/blue/updates/operations/53cbbb48-9a41-463b-969c-20b19f1e8b26?api-version=2
+      traceparent:
+      - 00-bdf2ad7a5884f54fb1cfcf42479aadb2-5e9d9e99d7defe45-00
+    status:
+      code: 202
+      message: Accepted
+version: 1

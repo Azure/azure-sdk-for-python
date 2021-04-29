@@ -41,6 +41,10 @@ class AccountStatus(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     AVAILABLE = "available"
     UNAVAILABLE = "unavailable"
 
+class BlobInventoryPolicyName(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+
+    DEFAULT = "default"
+
 class BlobRestoreProgressStatus(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     """The status of blob restore progress. Possible values are: - InProgress: Indicates that blob
     restore is ongoing. - Complete: Indicates that blob restore has been completed successfully. -
@@ -71,6 +75,15 @@ class CorsRuleAllowedMethodsItem(with_metaclass(_CaseInsensitiveEnumMeta, str, E
     POST = "POST"
     OPTIONS = "OPTIONS"
     PUT = "PUT"
+
+class CreatedByType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+    """The type of identity that created the resource.
+    """
+
+    USER = "User"
+    APPLICATION = "Application"
+    MANAGED_IDENTITY = "ManagedIdentity"
+    KEY = "Key"
 
 class DefaultAction(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     """Specifies the default action of allow or deny when no other rules match.
@@ -144,6 +157,12 @@ class ImmutabilityPolicyUpdateType(with_metaclass(_CaseInsensitiveEnumMeta, str,
     PUT = "put"
     LOCK = "lock"
     EXTEND = "extend"
+
+class InventoryRuleType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+    """The valid value is Inventory
+    """
+
+    INVENTORY = "Inventory"
 
 class KeyPermission(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     """Permissions for the key -- read-only or full permissions.
@@ -237,6 +256,12 @@ class MinimumTlsVersion(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     TLS1_0 = "TLS1_0"
     TLS1_1 = "TLS1_1"
     TLS1_2 = "TLS1_2"
+
+class Name(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+    """Name of the policy. The valid value is AccessTimeTracking. This field is currently read only
+    """
+
+    ACCESS_TIME_TRACKING = "AccessTimeTracking"
 
 class Permissions(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     """The signed permissions for the account SAS. Possible values include: Read (r), Write (w),

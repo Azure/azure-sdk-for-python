@@ -4,6 +4,8 @@ parameters:
 
 steps:
   - template: /eng/common/pipelines/templates/steps/daily-dev-build-variable.yml
+    parameters:
+      ServiceDirectory: ${{ parameters.ServiceDirectory }}
 
   - task: PythonScript@0
     condition: and(succeededOrFailed(), eq(variables['SetDevVersion'],'true'))

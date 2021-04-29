@@ -66,6 +66,11 @@ class PropertyChangeType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     UPDATE = "Update"
     REMOVE = "Remove"
 
+class ResourcesHistoryRequestOptionsResultFormat(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+
+    TABLE = "table"
+    OBJECT_ARRAY = "objectArray"
+
 class ResultFormat(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     """Defines in which format query result returned.
     """

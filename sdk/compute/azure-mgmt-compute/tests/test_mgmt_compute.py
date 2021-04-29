@@ -66,7 +66,7 @@ class MgmtComputeTest(AzureMgmtTestCase):
                 "key2": "value2"
               }
             }
-            result = self.storage_client.storage_accounts.create(
+            result = self.storage_client.storage_accounts.begin_create(
                 group_name,
                 storage_account_name,
                 BODY
@@ -101,6 +101,7 @@ class MgmtComputeTest(AzureMgmtTestCase):
                 container_name="foo",
                 blob_name="default"
             )
+            self.scrubber.register_name_pair(container_client.url, "fakeuri")
             return container_client.url
             # container_client.create_container()
             # return container_client.url + "?" + sas_token

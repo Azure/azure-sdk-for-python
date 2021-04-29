@@ -46,6 +46,7 @@ class ServiceBusAdministrationClientTopicTests(AzureMgmtTestCase):
         mgmt_service = ServiceBusAdministrationClient.from_connection_string(servicebus_namespace_connection_string)
         clear_topics(mgmt_service)
         topic_name = "iweidk"
+        topic_name_2 = "djsadq"
         try:
             mgmt_service.create_topic(
                 topic_name=topic_name,
@@ -66,8 +67,30 @@ class ServiceBusAdministrationClientTopicTests(AzureMgmtTestCase):
             assert topic.enable_express
             assert topic.enable_partitioning
             assert topic.max_size_in_megabytes % 3072 == 0
+
+            mgmt_service.create_topic(
+                topic_name=topic_name_2,
+                auto_delete_on_idle="PT10M",
+                default_message_time_to_live="PT11M",
+                duplicate_detection_history_time_window="PT12M",
+                enable_batched_operations=True,
+                enable_express=True,
+                enable_partitioning=True,
+                max_size_in_megabytes=3072
+            )
+            topic_2 = mgmt_service.get_topic(topic_name_2)
+            assert topic_2.name == topic_name_2
+            assert topic_2.auto_delete_on_idle == datetime.timedelta(minutes=10)
+            assert topic_2.default_message_time_to_live == datetime.timedelta(minutes=11)
+            assert topic_2.duplicate_detection_history_time_window == datetime.timedelta(minutes=12)
+            assert topic_2.enable_batched_operations
+            assert topic_2.enable_express
+            assert topic_2.enable_partitioning
+            assert topic_2.max_size_in_megabytes % 3072 == 0
+
         finally:
             mgmt_service.delete_topic(topic_name)
+            mgmt_service.delete_topic(topic_name_2)
 
     @CachedResourceGroupPreparer(name_prefix='servicebustest')
     @CachedServiceBusNamespacePreparer(name_prefix='servicebustest')
@@ -123,6 +146,17 @@ class ServiceBusAdministrationClientTopicTests(AzureMgmtTestCase):
             # assert topic_description.requires_duplicate_detection == True
             # assert topic_description.requires_session == True
             assert topic_description.support_ordering == True
+
+            topic_description.auto_delete_on_idle = "PT10M1S"
+            topic_description.default_message_time_to_live = "PT11M2S"
+            topic_description.duplicate_detection_history_time_window = "PT12M3S"
+            mgmt_service.update_topic(topic_description)
+            topic_description = mgmt_service.get_topic(topic_name)
+
+            assert topic_description.auto_delete_on_idle == datetime.timedelta(minutes=10, seconds=1)
+            assert topic_description.default_message_time_to_live == datetime.timedelta(minutes=11, seconds=2)
+            assert topic_description.duplicate_detection_history_time_window == datetime.timedelta(minutes=12, seconds=3)
+
         finally:
             mgmt_service.delete_topic(topic_name)
 
@@ -136,11 +170,11 @@ class ServiceBusAdministrationClientTopicTests(AzureMgmtTestCase):
             topic_description = mgmt_service.create_topic(topic_name)
 
             # handle a null update properly.
-            with pytest.raises(AttributeError):
+            with pytest.raises(TypeError):
                 mgmt_service.update_topic(None)
 
             # handle an invalid type update properly.
-            with pytest.raises(AttributeError):
+            with pytest.raises(TypeError):
                 mgmt_service.update_topic(Exception("test"))
 
             # change the name to a topic that doesn't exist; should fail.
@@ -259,3 +293,64 @@ class ServiceBusAdministrationClientTopicTests(AzureMgmtTestCase):
     def test_topic_properties_constructor(self):
         with pytest.raises(TypeError):
             TopicProperties("randomname")
+
+    @CachedResourceGroupPreparer(name_prefix='servicebustest')
+    @CachedServiceBusNamespacePreparer(name_prefix='servicebustest')
+    def test_mgmt_topic_update_dict_success(self, servicebus_namespace_connection_string, **kwargs):
+        mgmt_service = ServiceBusAdministrationClient.from_connection_string(servicebus_namespace_connection_string)
+        clear_topics(mgmt_service)
+        topic_name = "fjruid"
+
+        try:
+            topic_description = mgmt_service.create_topic(topic_name)
+            topic_description_dict = dict(topic_description)
+
+            # Try updating one setting.
+            topic_description_dict["default_message_time_to_live"] = datetime.timedelta(minutes=2)
+            mgmt_service.update_topic(topic_description_dict)
+            topic_description = mgmt_service.get_topic(topic_name)
+            assert topic_description.default_message_time_to_live == datetime.timedelta(minutes=2)
+
+            # Now try updating all settings.
+            topic_description_dict = dict(topic_description)
+            topic_description_dict["auto_delete_on_idle"] = datetime.timedelta(minutes=10)
+            topic_description_dict["default_message_time_to_live"] = datetime.timedelta(minutes=11)
+            topic_description_dict["duplicate_detection_history_time_window"] = datetime.timedelta(minutes=12)
+            topic_description_dict["enable_batched_operations"] = True
+            topic_description_dict["enable_express"] = True
+            # topic_description_dict["enable_partitioning"] = True # Cannot be changed after creation
+            topic_description_dict["max_size_in_megabytes"] = 3072
+            # topic_description_dict["requires_duplicate_detection"] = True # Read only
+            # topic_description_dict["requires_session"] = True # Cannot be changed after creation
+            topic_description_dict["support_ordering"] = True
+
+            mgmt_service.update_topic(topic_description_dict)
+            topic_description = mgmt_service.get_topic(topic_name)
+
+            assert topic_description.auto_delete_on_idle == datetime.timedelta(minutes=10)
+            assert topic_description.default_message_time_to_live == datetime.timedelta(minutes=11)
+            assert topic_description.duplicate_detection_history_time_window == datetime.timedelta(minutes=12)
+            assert topic_description.enable_batched_operations == True
+            assert topic_description.enable_express == True
+            # assert topic_description.enable_partitioning == True
+            assert topic_description.max_size_in_megabytes == 3072
+            # assert topic_description.requires_duplicate_detection == True
+            # assert topic_description.requires_session == True
+            assert topic_description.support_ordering == True
+        finally:
+            mgmt_service.delete_topic(topic_name)
+
+    @CachedResourceGroupPreparer(name_prefix='servicebustest')
+    @CachedServiceBusNamespacePreparer(name_prefix='servicebustest')
+    def test_mgmt_topic_update_dict_error(self, servicebus_namespace_connection_string, **kwargs):
+        mgmt_service = ServiceBusAdministrationClient.from_connection_string(servicebus_namespace_connection_string)
+        clear_topics(mgmt_service)
+        topic_name = "dfjdfj"
+        try:
+            topic_description = mgmt_service.create_topic(topic_name)
+            # send in topic dict without non-name keyword args
+            topic_description_only_name = {"name": topic_name}
+            with pytest.raises(TypeError):
+                mgmt_service.update_topic(topic_description_only_name)
+        finally:
+            mgmt_service.delete_topic(topic_name)

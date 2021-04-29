@@ -26,7 +26,7 @@ class _CaseInsensitiveEnumMeta(EnumMeta):
             raise AttributeError(name)
 
 
-class ProvisioningState(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class CapacityProvisioningState(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     """The current deployment state of PowerBI Dedicated resource. The provisioningState is to
     indicate states for resource provisioning.
     """
@@ -44,11 +44,29 @@ class ProvisioningState(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     PREPARING = "Preparing"
     SCALING = "Scaling"
 
-class SkuTier(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class CapacitySkuTier(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     """The name of the Azure pricing tier to which the SKU applies.
     """
 
     PBIE_AZURE = "PBIE_Azure"
+    PREMIUM = "Premium"
+    AUTO_PREMIUM_HOST = "AutoPremiumHost"
+
+class IdentityType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+    """The type of identity that created/modified the resource.
+    """
+
+    USER = "User"
+    APPLICATION = "Application"
+    MANAGED_IDENTITY = "ManagedIdentity"
+    KEY = "Key"
+
+class Mode(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+    """The capacity mode.
+    """
+
+    GEN1 = "Gen1"
+    GEN2 = "Gen2"
 
 class State(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     """The current state of PowerBI Dedicated resource. The state is to indicate more states outside
@@ -67,3 +85,16 @@ class State(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     RESUMING = "Resuming"
     PREPARING = "Preparing"
     SCALING = "Scaling"
+
+class VCoreProvisioningState(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+    """The current deployment state of an auto scale v-core resource. The provisioningState is to
+    indicate states for resource provisioning.
+    """
+
+    SUCCEEDED = "Succeeded"
+
+class VCoreSkuTier(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+    """The name of the Azure pricing tier to which the SKU applies.
+    """
+
+    AUTO_SCALE = "AutoScale"

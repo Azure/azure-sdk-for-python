@@ -41,5 +41,7 @@ class BiggerBlockSizeHTTPAdapter(HTTPAdapter):
         conn = super(BiggerBlockSizeHTTPAdapter, self).get_connection(url, proxies)
         system_version = tuple(sys.version_info)[:3]
         if system_version[:2] >= (3, 7):
-            conn.conn_kw = {"blocksize": 32768}
+            if not conn.conn_kw:
+                conn.conn_kw = {}
+            conn.conn_kw['blocksize'] = 32768
         return conn

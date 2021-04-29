@@ -1,5 +1,83 @@
 # Release History
 
+## 20.0.0 (2021-04-06)
+
+**Features**
+
+  - Model PurchasePlan has a new parameter promotion_code
+  - Model DiskUpdate has a new parameter supports_hibernation
+  - Model DiskUpdate has a new parameter property_updates_in_progress
+  - Model SnapshotUpdate has a new parameter supports_hibernation
+  - Model DiskRestorePoint has a new parameter supports_hibernation
+  - Model DiskEncryptionSetUpdate has a new parameter identity
+  - Model DiskEncryptionSetUpdate has a new parameter rotation_to_latest_key_version_enabled
+  - Model CloudServiceProperties has a new parameter allow_model_override
+  - Model LoadBalancerConfiguration has a new parameter id
+  - Model CloudServiceInstanceView has a new parameter private_ids
+  - Model Snapshot has a new parameter supports_hibernation
+  - Model DiskEncryptionSet has a new parameter last_key_rotation_timestamp
+  - Model DiskEncryptionSet has a new parameter rotation_to_latest_key_version_enabled
+  - Model Disk has a new parameter security_profile
+  - Model Disk has a new parameter supports_hibernation
+  - Model Disk has a new parameter property_updates_in_progress
+  - Added operation group CloudServiceOperatingSystemsOperations
+
+**Breaking changes**
+
+  - Parameter name of model LoadBalancerConfiguration is now required
+  - Parameter properties of model LoadBalancerConfiguration is now required
+  - Parameter frontend_ip_configurations of model LoadBalancerConfigurationProperties is now required
+  - Parameter name of model LoadBalancerFrontendIPConfiguration is now required
+  - Parameter properties of model LoadBalancerFrontendIPConfiguration is now required
+
+
+## 19.0.0 (2021-02-20)
+
+**Features**
+
+  - Model VirtualMachineUpdate has a new parameter platform_fault_domain
+  - Model VirtualMachineImage has a new parameter extended_location
+  - Model VirtualMachineImage has a new parameter features
+  - Model VirtualMachineSoftwarePatchProperties has a new parameter kb_id
+  - Model LinuxConfiguration has a new parameter patch_settings
+  - Model PatchSettings has a new parameter enable_hotpatching
+  - Model VirtualMachineAssessPatchesResult has a new parameter available_patches
+  - Model VirtualMachineImageResource has a new parameter extended_location
+  - Model VirtualMachinePatchStatus has a new parameter configuration_statuses
+  - Model RollingUpgradePolicy has a new parameter enable_cross_zone_upgrade
+  - Model RollingUpgradePolicy has a new parameter prioritize_unhealthy_instances
+  - Model DataDisk has a new parameter detach_option
+  - Model Image has a new parameter extended_location
+  - Model VirtualMachine has a new parameter extended_location
+  - Model VirtualMachine has a new parameter platform_fault_domain
+  - Model SecurityProfile has a new parameter uefi_settings
+  - Model SecurityProfile has a new parameter security_type
+  - Model VirtualMachineScaleSet has a new parameter extended_location
+  - Model VirtualMachineScaleSet has a new parameter orchestration_mode
+  - Added operation VirtualMachinesOperations.begin_install_patches
+  - Added operation VirtualMachineScaleSetsOperations.list_by_location
+  - Added operation group VirtualMachineImagesEdgeZoneOperations
+
+**Breaking changes**
+
+  - Operation VirtualMachineScaleSetVMsOperations.begin_delete has a new signature
+  - Operation VirtualMachineScaleSetsOperations.begin_delete has a new signature
+  - Operation VirtualMachineScaleSetsOperations.begin_delete_instances has a new signature
+  - Model VirtualMachineSoftwarePatchProperties no longer has parameter kbid
+  - Model LastPatchInstallationSummary no longer has parameter started_by
+  - Model LastPatchInstallationSummary no longer has parameter reboot_status
+  - Model VirtualMachineAssessPatchesResult no longer has parameter patches
+  - Model PurchasePlan no longer has parameter promotion_code
+
+## 18.2.0 (2021-02-02)
+
+**Features**
+
+  - Added operation group CloudServicesUpdateDomainOperations
+  - Added operation group CloudServiceRolesOperations
+  - Added operation group CloudServiceRoleInstancesOperations
+  - Added operation group CloudServicesOperations
+
 ## 18.1.0 (2021-01-19)
 
 **Features**

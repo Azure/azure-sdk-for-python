@@ -6,4 +6,4 @@
 
 from ._publisher_client_async import EventGridPublisherClient
 
-__all__ = ['EventGridPublisherClient']
+__all__ = ["EventGridPublisherClient"]

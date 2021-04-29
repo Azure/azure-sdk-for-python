@@ -190,7 +190,7 @@ def sample_update_detection_config(detection_config):
         )
     )
 
-    updated = client.update_detection_configuration(
+    client.update_detection_configuration(
         detection_config,
         series_group_detection_conditions=[
             MetricSeriesGroupDetectionCondition(
@@ -205,6 +205,7 @@ def sample_update_detection_config(detection_config):
             )
         ]
     )
+    updated = client.get_detection_configuration(detection_config.id)
     print("Updated detection name: {}".format(updated.name))
     print("Updated detection description: {}".format(updated.description))
     print("Updated detection condition for series group: {}".format(

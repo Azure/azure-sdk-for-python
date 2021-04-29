@@ -1,17 +1,86 @@
 # Release History
 
-## 5.2.2 (Unreleased)
+## 5.4.1 (Unreleased)
+
+**Bug Fixes**
+
+- Fixed bug that custom user agent string should be put in front of the built-in user agent string instead of being appended.
+
+## 5.4.0 (2021-04-07)
+
+This version follows from version 5.3.1, rather than 5.4.0b1 so that the preview idempotent producer feature is not included.
 
 **New Features**
 
-* Added a `parse_connection_string` method which parses a connection string into a properties bag, `EventHubConnectionStringProperties`, containing its component parts.
+- Added support for using `azure.core.credentials.AzureSasCredential` as credential for authenticating producer and consumer clients.
+- Updated `list_ownership`, `claim_ownership`, `update_checkpoint`, `list_checkpoints` on sync and async `CheckpointStore` to support taking `**kwargs`.
+  - WARNING: Implementing a custom checkpointstore that does not support taking `**kwargs` in the methods listed previously will result in the following pylint error: `W0221: Parameters differ from overridden ________ method (arguments-differ)`.
+- Updated `update_checkpoint` on sync and async `PartitionContext` to support taking `**kwargs`.
+
+**Bug Fixes**
+
+* Updated uAMQP dependency to 1.3.0.
+  - Fixed bug that sending message of large size triggering segmentation fault when the underlying socket connection is lost (#13739, #14543).
+  - Fixed bug in link flow control where link credit and delivery count should be calculated based on per message instead of per transfer frame (#16934).
+
+**Notes**
+
+- Updated azure-core dependency to 1.13.0.
+
+## 5.4.0b1 (2021-03-09)
+
+This version and all future versions will require Python 2.7 or Python 3.6+, Python 3.5 is no longer supported.
+
+**New Features**
+
+- Added support for idempotent publishing which is supported by the service to endeavor to reduce the number of duplicate
+  events that are published.
+  - `EventHubProducerClient` constructor accepts two new parameters for idempotent publishing:
+    - `enable_idempotent_partitions`: A boolean value to tell the `EventHubProducerClient` whether to enable idempotency.
+    - `partition_config`: The set of configurations that can be specified to influence publishing behavior
+     specific to the configured Event Hub partition.
+  - Introduced a new method `get_partition_publishing_properties` on `EventHubProducerClient` to inspect the information
+    about the state of publishing for a partition.
+  - Introduced a new property `published_sequence_number` on `EventData` to get the publishing sequence number assigned
+    to the event at the time it was successfully published.
+  - Introduced a new property `starting_published_sequence_number` on `EventDataBatch` to get the publishing sequence 
+    number assigned to the first event in the batch at the time the batch was successfully published.
+  - Introduced a new class `azure.eventhub.PartitionPublishingConfiguration` which is a set of configurations that can be
+    specified to influence the behavior when publishing directly to an Event Hub partition.
+
+**Notes**
+
+- Updated uAMQP dependency to 1.2.15.
+
+## 5.3.1 (2021-03-09)
+
+This version will be the last version to officially support Python 3.5, future versions will require Python 2.7 or Python 3.6+.
+
+**Bug fixes**
+
+- Sending empty `event_data_batch` will be a no-op now instead of raising error.
+
+## 5.3.0 (2021-02-08)
+
+**New Features**
+
+- Added a `parse_connection_string` method which parses a connection string into a properties bag, `EventHubConnectionStringProperties`, containing its component parts.
+- The constructor and `from_connection_string` method of `EventHubConsumerClient` and `EventHubProducerClient` now accept two new optional arguments:
+  - `custom_endpoint_address` which allows for specifying a custom endpoint to use when communicating with the Event Hubs service,
+and is useful when your network does not allow communicating to the standard Event Hubs endpoint.
+  - `connection_verify` which allows for specifying the path to the custom CA_BUNDLE file of the SSL certificate which is used to authenticate
+the identity of the connection endpoint.
+
+**Notes**
+
+- Updated uAMQP dependency to 1.2.14.
 
 ## 5.2.1 (2021-01-11)
 
 **Bug fixes**
 
-* Updated `azure.eventhub.extension.__init__.py` to be compatible with pkgutil-style namespace (PR #13210, thanks @pjachowi).
-* Updated uAMQP dependency to 1.2.13
+- Updated `azure.eventhub.extension.__init__.py` to be compatible with pkgutil-style namespace (PR #13210, thanks @pjachowi).
+- Updated uAMQP dependency to 1.2.13
   - Added support for Python 3.9.
   - Fixed bug that macOS was unable to detect network error (#15473).
   - Fixed bug that `uamqp.ReceiveClient` and `uamqp.ReceiveClientAsync` receive messages during connection establishment (#15555).
@@ -45,6 +114,7 @@
 - Added enqueueTime to span links of distributed tracing. #9599
 
 **Bug fixes**
+
 - Fixed a bug that turned `azure.eventhub.EventhubConsumerClient` into an exclusive receiver when it has no checkpoint store. #11181
 - Updated uAMQP dependency to 1.2.7.
   - Fixed bug in setting certificate of tlsio on MacOS. #7201
@@ -53,6 +123,7 @@
 ## 5.1.0b1 (2020-04-06)
 
 **New Features**
+
 - Added `EventHubConsumerClient.receive_batch()` to receive and process events in batches instead of one by one. #9184
 - `EventHubConsumerCliuent.receive()` has a new param `max_wait_time`. 
 `on_event` is called every `max_wait_time` when no events are received and `max_wait_time` is not `None` or 0.
@@ -119,7 +190,6 @@ an error on Azure Stack #9920
     - The `starting_position_inclusive` parameter of the `receive` method accepts `bool` or `dict` indicating whether the given event position is inclusive or not.
 - `PartitionContext` no longer has attribute `owner_id`.
 - `PartitionContext` now has attribute `last_enqueued_event_properties` which is populated if `track_last_enqueued_event_properties` is set to `True` in the `receive` method.
-
 
 **New features**
 

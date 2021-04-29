@@ -1,7 +1,7 @@
 trigger: none
 
-jobs:
-  - template: ../../eng/pipelines/templates/jobs/archetype-sdk-tests.yml
+stages:
+  - template: ../../eng/pipelines/templates/stages/archetype-sdk-tests.yml
     parameters:
       ServiceDirectory: eventgrid
       BuildTargetingString: azure-eventgrid*
@@ -19,6 +19,7 @@ jobs:
         DOMAIN_TOPIC_HOSTNAME: $(python-sdk-test-eg-domain-topic-hostname)
         EG_DOMAIN_ACCESS_KEY: $(python-sdk-test-domain-access-key-eg)
         EG_DOMAIN_TOPIC_HOSTNAME: $(python-sdk-test-domain-topic-hostname-eg)
+        EVENTGRID_SAS: $(python-sdk-test-eg-sas)
         DOMAIN_NAME: $(python-sdk-test-eg-domain-name)
         CUSTOM_SCHEMA_ACCESS_KEY: $(python-sdk-test-eg-custom-schema-access-key)
         CUSTOM_SCHEMA_TOPIC_HOSTNAME: $(python-sdk-test-custom-schema-topic-hostname)

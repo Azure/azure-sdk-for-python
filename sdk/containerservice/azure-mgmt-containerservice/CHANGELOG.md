@@ -1,5 +1,62 @@
 # Release History
 
+## 15.1.0 (2021-04-07)
+
+**Features**
+
+  - Model Components1Q1Og48SchemasManagedclusterAllof1 has a new parameter private_link_resources
+  - Model Components1Q1Og48SchemasManagedclusterAllof1 has a new parameter disable_local_accounts
+  - Model Components1Q1Og48SchemasManagedclusterAllof1 has a new parameter http_proxy_config
+  - Model ManagedClusterPodIdentity has a new parameter binding_selector
+  - Model ManagedClusterAgentPoolProfileProperties has a new parameter gpu_instance_profile
+  - Model ManagedClusterAgentPoolProfileProperties has a new parameter enable_fips
+  - Model ManagedClusterAgentPoolProfileProperties has a new parameter os_sku
+  - Model AgentPool has a new parameter gpu_instance_profile
+  - Model AgentPool has a new parameter enable_fips
+  - Model AgentPool has a new parameter os_sku
+  - Model ManagedCluster has a new parameter extended_location
+  - Model ManagedCluster has a new parameter private_link_resources
+  - Model ManagedCluster has a new parameter disable_local_accounts
+  - Model ManagedCluster has a new parameter http_proxy_config
+  - Model ManagedClusterAgentPoolProfile has a new parameter gpu_instance_profile
+  - Model ManagedClusterAgentPoolProfile has a new parameter enable_fips
+  - Model ManagedClusterAgentPoolProfile has a new parameter os_sku
+  - Model ManagedClusterWindowsProfile has a new parameter enable_csi_proxy
+  - Added operation ManagedClustersOperations.get_command_result
+  - Added operation ManagedClustersOperations.begin_run_command
+  - Added operation ManagedClustersOperations.get_os_options
+
+## 15.0.0 (2021-03-03)
+
+**Features**
+
+  - Model ManagedClusterPropertiesAutoScalerProfile has a new parameter max_node_provision_time
+  - Model ManagedClusterPodIdentityProfile has a new parameter allow_network_plugin_kubenet
+  - Model KubeletConfig has a new parameter container_log_max_size_mb
+  - Model KubeletConfig has a new parameter pod_max_pids
+  - Model KubeletConfig has a new parameter container_log_max_files
+  - Model SysctlConfig has a new parameter net_core_rmem_default
+  - Model SysctlConfig has a new parameter net_core_wmem_default
+  - Model Components1Q1Og48SchemasManagedclusterAllof1 has a new parameter azure_portal_fqdn
+  - Model Components1Q1Og48SchemasManagedclusterAllof1 has a new parameter fqdn_subdomain
+  - Model ManagedCluster has a new parameter azure_portal_fqdn
+  - Model ManagedCluster has a new parameter fqdn_subdomain
+  - Model ManagedClusterAgentPoolProfile has a new parameter kubelet_disk_type
+  - Model ManagedClusterAgentPoolProfile has a new parameter enable_encryption_at_host
+  - Model ManagedClusterAgentPoolProfile has a new parameter node_public_ip_prefix_id
+  - Model ManagedClusterAgentPoolProfileProperties has a new parameter kubelet_disk_type
+  - Model ManagedClusterAgentPoolProfileProperties has a new parameter enable_encryption_at_host
+  - Model ManagedClusterAgentPoolProfileProperties has a new parameter node_public_ip_prefix_id
+  - Model AgentPool has a new parameter kubelet_disk_type
+  - Model AgentPool has a new parameter enable_encryption_at_host
+  - Model AgentPool has a new parameter node_public_ip_prefix_id
+  - Added operation group MaintenanceConfigurationsOperations
+
+**Breaking changes**
+
+  - Model SysctlConfig no longer has parameter net_ipv4_tcp_rmem
+  - Model SysctlConfig no longer has parameter net_ipv4_tcp_wmem
+
 ## 14.0.0 (2020-11-23)
 
 **Features**

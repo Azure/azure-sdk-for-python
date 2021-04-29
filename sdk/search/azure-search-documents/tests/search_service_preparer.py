@@ -19,7 +19,7 @@ from devtools_testutils import AzureMgmtPreparer, ResourceGroupPreparer
 from devtools_testutils.resource_testcase import RESOURCE_GROUP_PARAM
 from azure_devtools.scenario_tests.exceptions import AzureTestError
 
-SERVICE_URL_FMT = "https://{}.search.windows.net/indexes?api-version=2020-06-30"
+SERVICE_URL_FMT = "https://{}.search.windows.net/indexes?api-version=2020-06-30-Preview"
 TIME_TO_SLEEP = 3
 
 class SearchResourceGroupPreparer(ResourceGroupPreparer):
@@ -91,7 +91,7 @@ class SearchServicePreparer(AzureMgmtPreparer):
         from azure.mgmt.search.models import SearchService, Sku
 
         service_config = SearchService(location="West US", sku=Sku(name="free"))
-        resource = self.mgmt_client.services.create_or_update(
+        resource = self.mgmt_client.services.begin_create_or_update(
             group_name, self.service_name, service_config
         )
 
@@ -132,7 +132,7 @@ class SearchServicePreparer(AzureMgmtPreparer):
         if self.index_batch and self.schema:
             from azure.core.credentials import AzureKeyCredential
             from azure.search.documents import SearchClient
-            from azure.search.documents._internal._generated.models import IndexBatch
+            from azure.search.documents._generated.models import IndexBatch
 
             batch = IndexBatch.deserialize(self.index_batch)
             index_client = SearchClient(

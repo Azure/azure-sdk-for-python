@@ -21,6 +21,7 @@ from .operations import SkusOperations
 from .operations import StorageAccountsOperations
 from .operations import UsagesOperations
 from .operations import ManagementPoliciesOperations
+from .operations import BlobInventoryPoliciesOperations
 from .operations import PrivateEndpointConnectionsOperations
 from .operations import PrivateLinkResourcesOperations
 from .operations import ObjectReplicationPoliciesOperations
@@ -49,6 +50,8 @@ class StorageManagementClient(object):
     :vartype usages: azure.mgmt.storage.v2019_06_01.aio.operations.UsagesOperations
     :ivar management_policies: ManagementPoliciesOperations operations
     :vartype management_policies: azure.mgmt.storage.v2019_06_01.aio.operations.ManagementPoliciesOperations
+    :ivar blob_inventory_policies: BlobInventoryPoliciesOperations operations
+    :vartype blob_inventory_policies: azure.mgmt.storage.v2019_06_01.aio.operations.BlobInventoryPoliciesOperations
     :ivar private_endpoint_connections: PrivateEndpointConnectionsOperations operations
     :vartype private_endpoint_connections: azure.mgmt.storage.v2019_06_01.aio.operations.PrivateEndpointConnectionsOperations
     :ivar private_link_resources: PrivateLinkResourcesOperations operations
@@ -107,6 +110,8 @@ class StorageManagementClient(object):
         self.usages = UsagesOperations(
             self._client, self._config, self._serialize, self._deserialize)
         self.management_policies = ManagementPoliciesOperations(
+            self._client, self._config, self._serialize, self._deserialize)
+        self.blob_inventory_policies = BlobInventoryPoliciesOperations(
             self._client, self._config, self._serialize, self._deserialize)
         self.private_endpoint_connections = PrivateEndpointConnectionsOperations(
             self._client, self._config, self._serialize, self._deserialize)

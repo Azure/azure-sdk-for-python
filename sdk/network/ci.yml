@@ -4,6 +4,7 @@ trigger:
   branches:
     include:
     - master
+    - main
     - hotfix/*
     - release/*
     - restapi*
@@ -15,6 +16,7 @@ pr:
   branches:
     include:
     - master
+    - main
     - feature/*
     - hotfix/*
     - release/*
@@ -28,11 +30,11 @@ extends:
   parameters:
     ServiceDirectory: network
     Artifacts:
-    - name: azure_mgmt_dns
+    - name: azure-mgmt-dns
       safeName: azuremgmtdns
-    - name: azure_mgmt_frontdoor
+    - name: azure-mgmt-frontdoor
       safeName: azuremgmtfrontdoor
-    - name: azure_mgmt_network
+    - name: azure-mgmt-network
       safeName: azuremgmtnetwork
-    - name: azure_mgmt_privatedns
+    - name: azure-mgmt-privatedns
       safeName: azuremgmtprivatedns

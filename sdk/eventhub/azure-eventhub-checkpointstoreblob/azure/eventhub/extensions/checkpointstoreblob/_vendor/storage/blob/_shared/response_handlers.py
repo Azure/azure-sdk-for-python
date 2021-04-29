@@ -67,7 +67,7 @@ def normalize_headers(headers):
 
 
 def deserialize_metadata(response, obj, headers):  # pylint: disable=unused-argument
-    raw_metadata = {k: v for k, v in response.headers.items() if k.startswith("x-ms-meta-")}
+    raw_metadata = {k: v for k, v in response.http_response.headers.items() if k.startswith("x-ms-meta-")}
     return {k[10:]: v for k, v in raw_metadata.items()}
 
 
@@ -80,10 +80,13 @@ def return_headers_and_deserialized(response, deserialized, response_headers):  
 
 
 def return_context_and_deserialized(response, deserialized, response_headers):  # pylint: disable=unused-argument
-    return response.location_mode, deserialized
+    return response.http_response.location_mode, deserialized
 
 
 def process_storage_error(storage_error):
+    # If storage_error is one of the two then it has already been processed and serialized to the specific exception.
+    if isinstance(storage_error, (PartialBatchErrorException, ClientAuthenticationError)):
+        raise storage_error
     raise_error = HttpResponseError
     error_code = storage_error.response.headers.get('x-ms-error-code')
     error_message = storage_error.message
@@ -144,7 +147,7 @@ def process_storage_error(storage_error):
     error = raise_error(message=error_message, response=storage_error.response)
     error.error_code = error_code
     error.additional_info = additional_data
-    raise error
+    error.raise_with_traceback()
 
 
 def parse_to_internal_user_delegation_key(service_user_delegation_key):

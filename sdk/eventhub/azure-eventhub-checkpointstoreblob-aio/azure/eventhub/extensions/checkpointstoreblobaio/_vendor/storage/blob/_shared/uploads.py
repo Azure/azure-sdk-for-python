@@ -32,11 +32,11 @@ def _parallel_uploads(executor, uploader, pending, running):
         done, running = futures.wait(running, return_when=futures.FIRST_COMPLETED)
         range_ids.extend([chunk.result() for chunk in done])
         try:
-            next_chunk = next(pending)
+            for _ in range(0, len(done)):
+                next_chunk = next(pending)
+                running.add(executor.submit(with_current_context(uploader), next_chunk))
         except StopIteration:
             break
-        else:
-            running.add(executor.submit(with_current_context(uploader), next_chunk))
 
     # Wait for the remaining uploads to finish
     done, _running = futures.wait(running)
@@ -289,7 +289,7 @@ class PageBlobChunkUploader(_ChunkUploader):  # pylint: disable=abstract-method
             content_range = "bytes={0}-{1}".format(chunk_offset, chunk_end)
             computed_md5 = None
             self.response_headers = self.service.upload_pages(
-                chunk_data,
+                body=chunk_data,
                 content_length=len(chunk_data),
                 transactional_content_md5=computed_md5,
                 range=content_range,
@@ -312,7 +312,7 @@ class AppendBlobChunkUploader(_ChunkUploader):  # pylint: disable=abstract-metho
     def _upload_chunk(self, chunk_offset, chunk_data):
         if self.current_length is None:
             self.response_headers = self.service.append_block(
-                chunk_data,
+                body=chunk_data,
                 content_length=len(chunk_data),
                 cls=return_response_headers,
                 data_stream_total=self.total_size,
@@ -324,7 +324,7 @@ class AppendBlobChunkUploader(_ChunkUploader):  # pylint: disable=abstract-metho
             self.request_options['append_position_access_conditions'].append_position = \
                 self.current_length + chunk_offset
             self.response_headers = self.service.append_block(
-                chunk_data,
+                body=chunk_data,
                 content_length=len(chunk_data),
                 cls=return_response_headers,
                 data_stream_total=self.total_size,
@@ -520,8 +520,10 @@ class IterStreamer(object):
     def seekable(self):
         return False
 
-    def next(self):
+    def __next__(self):
         return next(self.iterator)
+
+    next = __next__  # Python 2 compatibility.
 
     def tell(self, *args, **kwargs):
         raise UnsupportedOperation("Data generator does not support tell.")
@@ -534,7 +536,7 @@ class IterStreamer(object):
         count = len(self.leftover)
         try:
             while count < size:
-                chunk = self.next()
+                chunk = self.__next__()
                 if isinstance(chunk, six.text_type):
                     chunk = chunk.encode(self.encoding)
                 data += chunk

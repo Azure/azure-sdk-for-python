@@ -17,6 +17,9 @@ try:
     from ._models_py3 import ErrorResponse
     from ._models_py3 import GenericResource
     from ._models_py3 import Identity
+    from ._models_py3 import Operation
+    from ._models_py3 import OperationDisplay
+    from ._models_py3 import OperationListResult
     from ._models_py3 import Plan
     from ._models_py3 import PlanPatchable
     from ._models_py3 import Resource
@@ -32,6 +35,9 @@ except (SyntaxError, ImportError):
     from ._models import ErrorResponse  # type: ignore
     from ._models import GenericResource  # type: ignore
     from ._models import Identity  # type: ignore
+    from ._models import Operation  # type: ignore
+    from ._models import OperationDisplay  # type: ignore
+    from ._models import OperationListResult  # type: ignore
     from ._models import Plan  # type: ignore
     from ._models import PlanPatchable  # type: ignore
     from ._models import Resource  # type: ignore
@@ -54,6 +60,9 @@ __all__ = [
     'ErrorResponse',
     'GenericResource',
     'Identity',
+    'Operation',
+    'OperationDisplay',
+    'OperationListResult',
     'Plan',
     'PlanPatchable',
     'Resource',

@@ -1,7 +1,7 @@
 interactions:
 - request:
     body: '{"tasks": {"entityRecognitionTasks": [{"parameters": {"model-version":
-      "bad", "stringIndexType": "TextElements_v8"}}], "entityRecognitionPiiTasks":
+      "bad", "stringIndexType": "UnicodeCodePoint"}}], "entityRecognitionPiiTasks":
       [], "keyPhraseExtractionTasks": []}, "analysisInput": {"documents": [{"id":
       "1", "text": "I did not like the hotel we stayed at.", "language": "english"}]}}'
     headers:
@@ -12,23 +12,23 @@ interactions:
       Connection:
       - keep-alive
       Content-Length:
-      - '304'
+      - '305'
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-ai-textanalytics/5.1.0b5 Python/3.8.5 (macOS-10.13.6-x86_64-i386-64bit)
+      - azsdk-python-ai-textanalytics/5.1.0b6 Python/3.9.1 (macOS-10.13.6-x86_64-i386-64bit)
     method: POST
-    uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.1-preview.3/analyze
+    uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.1-preview.4/analyze
   response:
     body:
       string: ''
     headers:
       apim-request-id:
-      - 7f4687ac-4e45-4e77-b2f2-858a12bd3d49
+      - 9f8d6b94-fc4f-47fe-bd8d-c4f41223f01b
       date:
-      - Wed, 27 Jan 2021 02:08:03 GMT
+      - Tue, 23 Feb 2021 17:06:40 GMT
       operation-location:
-      - https://westus2.api.cognitive.microsoft.com/text/analytics/v3.1-preview.3/analyze/jobs/6ac6b36e-0040-4e38-9a44-6dfe292daca0_637473024000000000
+      - https://westus2.api.cognitive.microsoft.com/text/analytics/v3.1-preview.4/analyze/jobs/dc6db5d8-0c26-4b34-92a0-2b923b654df5
       strict-transport-security:
       - max-age=31536000; includeSubDomains; preload
       transfer-encoding:
@@ -36,7 +36,7 @@ interactions:
       x-content-type-options:
       - nosniff
       x-envoy-upstream-service-time:
-      - '21'
+      - '194'
     status:
       code: 202
       message: Accepted
@@ -50,21 +50,21 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-ai-textanalytics/5.1.0b5 Python/3.8.5 (macOS-10.13.6-x86_64-i386-64bit)
+      - azsdk-python-ai-textanalytics/5.1.0b6 Python/3.9.1 (macOS-10.13.6-x86_64-i386-64bit)
     method: GET
-    uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.1-preview.3/analyze/jobs/6ac6b36e-0040-4e38-9a44-6dfe292daca0_637473024000000000
+    uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.1-preview.4/analyze/jobs/dc6db5d8-0c26-4b34-92a0-2b923b654df5
   response:
     body:
-      string: '{"jobId":"6ac6b36e-0040-4e38-9a44-6dfe292daca0_637473024000000000","lastUpdateDateTime":"2021-01-27T02:08:03Z","createdDateTime":"2021-01-27T02:08:03Z","expirationDateTime":"2021-01-28T02:08:03Z","status":"failed","errors":[],"tasks":{"details":{"lastUpdateDateTime":"2021-01-27T02:08:03Z"},"completed":0,"failed":1,"inProgress":0,"total":1,"entityRecognitionTasks":[{"lastUpdateDateTime":"2021-01-27T02:08:03.7543806Z","results":{"inTerminalState":true,"documents":[],"errors":[{"id":"1","error":{"code":"InvalidRequest","message":"Job
+      string: '{"jobId":"dc6db5d8-0c26-4b34-92a0-2b923b654df5","lastUpdateDateTime":"2021-02-23T17:06:41Z","createdDateTime":"2021-02-23T17:06:41Z","expirationDateTime":"2021-02-24T17:06:41Z","status":"failed","errors":[{"code":"InvalidRequest","message":"Job
         task parameter value bad is not supported for model-version parameter for
-        job task type NamedEntityRecognition. Supported values latest,2020-04-01."}}],"modelVersion":""}}]}}'
+        job task type NamedEntityRecognition. Supported values latest,2020-04-01,2021-01-15.","target":"#/tasks/entityRecognitionTasks/0"}],"tasks":{"details":{"lastUpdateDateTime":"2021-02-23T17:06:41Z"},"completed":0,"failed":1,"inProgress":0,"total":1,"entityRecognitionTasks":[{"lastUpdateDateTime":"2021-02-23T17:06:41.509565Z","state":"failed"}]}}'
     headers:
       apim-request-id:
-      - 26362a98-b710-4d8a-aaad-6140b3bb312b
+      - 57e7727f-facb-4d1d-a642-0e3d66e7a711
       content-type:
       - application/json; charset=utf-8
       date:
-      - Wed, 27 Jan 2021 02:08:08 GMT
+      - Tue, 23 Feb 2021 17:06:46 GMT
       strict-transport-security:
       - max-age=31536000; includeSubDomains; preload
       transfer-encoding:
@@ -72,7 +72,7 @@ interactions:
       x-content-type-options:
       - nosniff
       x-envoy-upstream-service-time:
-      - '9'
+      - '11'
     status:
       code: 200
       message: OK

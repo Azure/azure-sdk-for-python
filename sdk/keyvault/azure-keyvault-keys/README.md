@@ -139,7 +139,7 @@ Azure Key Vault can create and store RSA and elliptic curve keys. Both can
 optionally be protected by hardware security modules (HSMs). Azure Key Vault
 can also perform cryptographic operations with them. For more information about
 keys and supported operations and algorithms, see the
-[Key Vault documentation](https://docs.microsoft.com/azure/key-vault/about-keys-secrets-and-certificates#key-vault-keys).
+[Key Vault documentation](https://docs.microsoft.com/azure/key-vault/keys/about-keys).
 
 [KeyClient][key_client_docs] can create keys in the vault, get existing keys
 from the vault, update key metadata, and delete keys, as shown in the
@@ -281,8 +281,8 @@ See
 [azure-core documentation](https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/core/azure-core/CLIENT_LIBRARY_DEVELOPER.md#transport)
 for more information.
 
-Async clients should be closed when they're no longer needed. Each async
-client is an async context manager and defines an async `close` method. For
+Async clients and credentials should be closed when they're no longer needed. These
+objects are async context managers and define async `close` methods. For
 example:
 
 ```py
@@ -291,15 +291,17 @@ from azure.keyvault.keys.aio import KeyClient
 
 credential = DefaultAzureCredential()
 
-# call close when the client is no longer needed
+# call close when the client and credential are no longer needed
 client = KeyClient(vault_url="https://my-key-vault.vault.azure.net/", credential=credential)
 ...
 await client.close()
+await credential.close()
 
-# alternatively, use the client as an async context manager
+# alternatively, use them as async context managers (contextlib.AsyncExitStack can help)
 client = KeyClient(vault_url="https://my-key-vault.vault.azure.net/", credential=credential)
 async with client:
-  ...
+  async with credential:
+    ...
 ```
 
 ### Asynchronously create a Key

@@ -21,6 +21,9 @@ try:
     from ._models_py3 import AmazonRedshiftLinkedService
     from ._models_py3 import AmazonRedshiftSource
     from ._models_py3 import AmazonRedshiftTableDataset
+    from ._models_py3 import AmazonS3CompatibleLinkedService
+    from ._models_py3 import AmazonS3CompatibleLocation
+    from ._models_py3 import AmazonS3CompatibleReadSettings
     from ._models_py3 import AmazonS3Dataset
     from ._models_py3 import AmazonS3LinkedService
     from ._models_py3 import AmazonS3Location
@@ -157,6 +160,7 @@ try:
     from ._models_py3 import CustomActivityReferenceObject
     from ._models_py3 import CustomDataSourceLinkedService
     from ._models_py3 import CustomDataset
+    from ._models_py3 import CustomEventsTrigger
     from ._models_py3 import CustomSetupBase
     from ._models_py3 import DWCopyCommandDefaultValue
     from ._models_py3 import DWCopyCommandSettings
@@ -376,6 +380,7 @@ try:
     from ._models_py3 import ManagedPrivateEndpointResource
     from ._models_py3 import ManagedVirtualNetwork
     from ._models_py3 import ManagedVirtualNetworkListResponse
+    from ._models_py3 import ManagedVirtualNetworkReference
     from ._models_py3 import ManagedVirtualNetworkResource
     from ._models_py3 import MappingDataFlow
     from ._models_py3 import MariaDBLinkedService
@@ -424,6 +429,9 @@ try:
     from ._models_py3 import OperationMetricDimension
     from ._models_py3 import OperationMetricSpecification
     from ._models_py3 import OperationServiceSpecification
+    from ._models_py3 import OracleCloudStorageLinkedService
+    from ._models_py3 import OracleCloudStorageLocation
+    from ._models_py3 import OracleCloudStorageReadSettings
     from ._models_py3 import OracleLinkedService
     from ._models_py3 import OraclePartitionSettings
     from ._models_py3 import OracleServiceCloudLinkedService
@@ -450,8 +458,10 @@ try:
     from ._models_py3 import PhoenixLinkedService
     from ._models_py3 import PhoenixObjectDataset
     from ._models_py3 import PhoenixSource
+    from ._models_py3 import PipelineElapsedTimeMetricPolicy
     from ._models_py3 import PipelineFolder
     from ._models_py3 import PipelineListResponse
+    from ._models_py3 import PipelinePolicy
     from ._models_py3 import PipelineReference
     from ._models_py3 import PipelineResource
     from ._models_py3 import PipelineRun
@@ -665,6 +675,9 @@ except (SyntaxError, ImportError):
     from ._models import AmazonRedshiftLinkedService  # type: ignore
     from ._models import AmazonRedshiftSource  # type: ignore
     from ._models import AmazonRedshiftTableDataset  # type: ignore
+    from ._models import AmazonS3CompatibleLinkedService  # type: ignore
+    from ._models import AmazonS3CompatibleLocation  # type: ignore
+    from ._models import AmazonS3CompatibleReadSettings  # type: ignore
     from ._models import AmazonS3Dataset  # type: ignore
     from ._models import AmazonS3LinkedService  # type: ignore
     from ._models import AmazonS3Location  # type: ignore
@@ -801,6 +814,7 @@ except (SyntaxError, ImportError):
     from ._models import CustomActivityReferenceObject  # type: ignore
     from ._models import CustomDataSourceLinkedService  # type: ignore
     from ._models import CustomDataset  # type: ignore
+    from ._models import CustomEventsTrigger  # type: ignore
     from ._models import CustomSetupBase  # type: ignore
     from ._models import DWCopyCommandDefaultValue  # type: ignore
     from ._models import DWCopyCommandSettings  # type: ignore
@@ -1020,6 +1034,7 @@ except (SyntaxError, ImportError):
     from ._models import ManagedPrivateEndpointResource  # type: ignore
     from ._models import ManagedVirtualNetwork  # type: ignore
     from ._models import ManagedVirtualNetworkListResponse  # type: ignore
+    from ._models import ManagedVirtualNetworkReference  # type: ignore
     from ._models import ManagedVirtualNetworkResource  # type: ignore
     from ._models import MappingDataFlow  # type: ignore
     from ._models import MariaDBLinkedService  # type: ignore
@@ -1068,6 +1083,9 @@ except (SyntaxError, ImportError):
     from ._models import OperationMetricDimension  # type: ignore
     from ._models import OperationMetricSpecification  # type: ignore
     from ._models import OperationServiceSpecification  # type: ignore
+    from ._models import OracleCloudStorageLinkedService  # type: ignore
+    from ._models import OracleCloudStorageLocation  # type: ignore
+    from ._models import OracleCloudStorageReadSettings  # type: ignore
     from ._models import OracleLinkedService  # type: ignore
     from ._models import OraclePartitionSettings  # type: ignore
     from ._models import OracleServiceCloudLinkedService  # type: ignore
@@ -1094,8 +1112,10 @@ except (SyntaxError, ImportError):
     from ._models import PhoenixLinkedService  # type: ignore
     from ._models import PhoenixObjectDataset  # type: ignore
     from ._models import PhoenixSource  # type: ignore
+    from ._models import PipelineElapsedTimeMetricPolicy  # type: ignore
     from ._models import PipelineFolder  # type: ignore
     from ._models import PipelineListResponse  # type: ignore
+    from ._models import PipelinePolicy  # type: ignore
     from ._models import PipelineReference  # type: ignore
     from ._models import PipelineResource  # type: ignore
     from ._models import PipelineRun  # type: ignore
@@ -1303,6 +1323,8 @@ from ._data_factory_management_client_enums import (
     CassandraSourceReadConsistencyLevels,
     CompressionCodec,
     CopyBehaviorType,
+    CosmosDbConnectionMode,
+    CosmosDbServicePrincipalCredentialType,
     DataFlowComputeType,
     DataFlowDebugCommandType,
     DatasetCompressionLevel,
@@ -1315,6 +1337,7 @@ from ._data_factory_management_client_enums import (
     DynamicsServicePrincipalCredentialType,
     DynamicsSinkWriteBehavior,
     EventSubscriptionStatus,
+    FactoryIdentityType,
     FtpAuthenticationType,
     GlobalParameterType,
     GoogleAdWordsAuthenticationType,
@@ -1401,6 +1424,9 @@ __all__ = [
     'AmazonRedshiftLinkedService',
     'AmazonRedshiftSource',
     'AmazonRedshiftTableDataset',
+    'AmazonS3CompatibleLinkedService',
+    'AmazonS3CompatibleLocation',
+    'AmazonS3CompatibleReadSettings',
     'AmazonS3Dataset',
     'AmazonS3LinkedService',
     'AmazonS3Location',
@@ -1537,6 +1563,7 @@ __all__ = [
     'CustomActivityReferenceObject',
     'CustomDataSourceLinkedService',
     'CustomDataset',
+    'CustomEventsTrigger',
     'CustomSetupBase',
     'DWCopyCommandDefaultValue',
     'DWCopyCommandSettings',
@@ -1756,6 +1783,7 @@ __all__ = [
     'ManagedPrivateEndpointResource',
     'ManagedVirtualNetwork',
     'ManagedVirtualNetworkListResponse',
+    'ManagedVirtualNetworkReference',
     'ManagedVirtualNetworkResource',
     'MappingDataFlow',
     'MariaDBLinkedService',
@@ -1804,6 +1832,9 @@ __all__ = [
     'OperationMetricDimension',
     'OperationMetricSpecification',
     'OperationServiceSpecification',
+    'OracleCloudStorageLinkedService',
+    'OracleCloudStorageLocation',
+    'OracleCloudStorageReadSettings',
     'OracleLinkedService',
     'OraclePartitionSettings',
     'OracleServiceCloudLinkedService',
@@ -1830,8 +1861,10 @@ __all__ = [
     'PhoenixLinkedService',
     'PhoenixObjectDataset',
     'PhoenixSource',
+    'PipelineElapsedTimeMetricPolicy',
     'PipelineFolder',
     'PipelineListResponse',
+    'PipelinePolicy',
     'PipelineReference',
     'PipelineResource',
     'PipelineRun',
@@ -2037,6 +2070,8 @@ __all__ = [
     'CassandraSourceReadConsistencyLevels',
     'CompressionCodec',
     'CopyBehaviorType',
+    'CosmosDbConnectionMode',
+    'CosmosDbServicePrincipalCredentialType',
     'DataFlowComputeType',
     'DataFlowDebugCommandType',
     'DatasetCompressionLevel',
@@ -2049,6 +2084,7 @@ __all__ = [
     'DynamicsServicePrincipalCredentialType',
     'DynamicsSinkWriteBehavior',
     'EventSubscriptionStatus',
+    'FactoryIdentityType',
     'FtpAuthenticationType',
     'GlobalParameterType',
     'GoogleAdWordsAuthenticationType',

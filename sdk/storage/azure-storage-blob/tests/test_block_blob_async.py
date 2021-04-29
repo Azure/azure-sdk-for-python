@@ -80,8 +80,8 @@ class StorageBlockBlobTestAsync(AsyncStorageTestCase):
             except:
                 pass
 
-    def _get_blob_reference(self):
-        return self.get_resource_name(TEST_BLOB_PREFIX)
+    def _get_blob_reference(self, prefix=TEST_BLOB_PREFIX):
+        return self.get_resource_name(prefix)
 
     def _get_blob_with_special_chars_reference(self):
         return 'भारत¥test/testsubÐirÍ/'+self.get_resource_name('srcÆblob')
@@ -659,6 +659,31 @@ class StorageBlockBlobTestAsync(AsyncStorageTestCase):
         self.assertEqual(block_list[0][2].id, '3')
         self.assertEqual(block_list[0][2].size, 3)
 
+    @GlobalStorageAccountPreparer()
+    @AsyncStorageTestCase.await_prepared_test
+    async def test_upload_blob_content_md5(self, resource_group, location, storage_account, storage_account_key):
+        await self._setup(storage_account, storage_account_key)
+        blob1_name = self._get_blob_reference(prefix="blob1")
+        blob2_name = self._get_blob_reference(prefix="blob2")
+        blob1 = self.bsc.get_blob_client(self.container_name, blob1_name)
+        blob2 = self.bsc.get_blob_client(self.container_name, blob2_name)
+        data1 = b'hello world'
+        data2 = b'hello world this wont work'
+
+        # Act
+        await blob1.upload_blob(data1, overwrite=True)
+        blob1_props = await blob1.get_blob_properties()
+        blob1_md5 = blob1_props.content_settings.content_md5
+        blob2_content_settings = ContentSettings(content_md5=blob1_md5)
+
+        # Passing data that does not match the md5
+        with self.assertRaises(HttpResponseError):
+            await blob2.upload_blob(data2, content_settings=blob2_content_settings)
+        # Correct data and corresponding md5
+        await blob2.upload_blob(data1, content_settings=blob2_content_settings)
+        blob2_props = await blob2.get_blob_properties()
+        blob2_md5 = blob2_props.content_settings.content_md5
+        self.assertEqual(blob1_md5, blob2_md5)
 
     @GlobalStorageAccountPreparer()
     @AsyncStorageTestCase.await_prepared_test

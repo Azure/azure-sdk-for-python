@@ -172,7 +172,7 @@ class FileSystemOperations(object):
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        
+
         _if_modified_since = None
         _if_unmodified_since = None
         if modified_access_conditions is not None:
@@ -340,7 +340,7 @@ class FileSystemOperations(object):
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        
+
         _if_modified_since = None
         _if_unmodified_since = None
         if modified_access_conditions is not None:
@@ -447,7 +447,8 @@ class FileSystemOperations(object):
         error_map.update(kwargs.pop('error_map', {}))
         accept = "application/json"
 
-        def prepare_request(next_link=None):
+        # TODO: change this once continuation/next_link autorest PR is merged
+        def prepare_request(next_link=None, cont_token=None):
             # Construct headers
             header_parameters = {}  # type: Dict[str, Any]
             if request_id_parameter is not None:
@@ -467,8 +468,9 @@ class FileSystemOperations(object):
                 query_parameters['resource'] = self._serialize.query("self._config.resource", self._config.resource, 'str')
                 if timeout is not None:
                     query_parameters['timeout'] = self._serialize.query("timeout", timeout, 'int', minimum=0)
-                if continuation is not None:
-                    query_parameters['continuation'] = self._serialize.query("continuation", continuation, 'str')
+                # TODO: change this once continuation/next_link autorest PR is merged
+                if cont_token is not None:
+                    query_parameters['continuation'] = self._serialize.query("continuation", cont_token, 'str')
                 if path is not None:
                     query_parameters['directory'] = self._serialize.query("path", path, 'str')
                 query_parameters['recursive'] = self._serialize.query("recursive", recursive, 'bool')
@@ -489,14 +491,22 @@ class FileSystemOperations(object):
             return request
 
         def extract_data(pipeline_response):
+            # TODO: change this once continuation/next_link autorest PR is merged
+            try:
+                cont_token = pipeline_response.http_response.headers['x-ms-continuation']
+            except KeyError:
+                cont_token = None
             deserialized = self._deserialize('PathList', pipeline_response)
             list_of_elem = deserialized.paths
             if cls:
                 list_of_elem = cls(list_of_elem)
-            return None, iter(list_of_elem)
+            # TODO: change this once continuation/next_link autorest PR is merged
+            return cont_token, iter(list_of_elem)
 
-        def get_next(next_link=None):
-            request = prepare_request(next_link)
+        # TODO: change this once continuation/next_link autorest PR is merged
+        def get_next(cont_token=None):
+            cont_token = cont_token if not continuation else continuation
+            request = prepare_request(cont_token=cont_token)
 
             pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
             response = pipeline_response.http_response

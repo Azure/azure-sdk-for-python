@@ -6,6 +6,7 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
+from azure.core.exceptions import HttpResponseError
 import msrest.serialization
 
 
@@ -76,11 +77,15 @@ class ApplicationInsightsComponent(ComponentsResource):
      UI. This value is a freeform string, values should typically be one of the following: web, ios,
      other, store, java, phone.
     :type kind: str
+    :param etag: Resource etag.
+    :type etag: str
     :ivar application_id: The unique ID of your application. This field mirrors the 'Name' field
      and cannot be changed.
     :vartype application_id: str
     :ivar app_id: Application Insights Unique ID for your Application.
     :vartype app_id: str
+    :ivar name_properties_name: Application name.
+    :vartype name_properties_name: str
     :param application_type: Type of application being monitored. Possible values include: "web",
      "other". Default value: "web".
     :type application_type: str or
@@ -124,8 +129,9 @@ class ApplicationInsightsComponent(ComponentsResource):
     :type disable_ip_masking: bool
     :param immediate_purge_data_on30_days: Purge data immediately after 30 days.
     :type immediate_purge_data_on30_days: bool
-    :param workspace_resource_id: ResourceId of the log analytics workspace which the data will be
-     ingested to.
+    :param workspace_resource_id: Resource Id of the log analytics workspace which the data will be
+     ingested to. This property is required to create an application with this API version.
+     Applications from older versions will not have this property.
     :type workspace_resource_id: str
     :ivar la_migration_date: The date which the component got migrated to LA, in ISO 8601 format.
     :vartype la_migration_date: ~datetime.datetime
@@ -155,6 +161,7 @@ class ApplicationInsightsComponent(ComponentsResource):
         'kind': {'required': True},
         'application_id': {'readonly': True},
         'app_id': {'readonly': True},
+        'name_properties_name': {'readonly': True},
         'instrumentation_key': {'readonly': True},
         'creation_date': {'readonly': True},
         'tenant_id': {'readonly': True},
@@ -173,8 +180,10 @@ class ApplicationInsightsComponent(ComponentsResource):
         'location': {'key': 'location', 'type': 'str'},
         'tags': {'key': 'tags', 'type': '{str}'},
         'kind': {'key': 'kind', 'type': 'str'},
+        'etag': {'key': 'etag', 'type': 'str'},
         'application_id': {'key': 'properties.ApplicationId', 'type': 'str'},
         'app_id': {'key': 'properties.AppId', 'type': 'str'},
+        'name_properties_name': {'key': 'properties.Name', 'type': 'str'},
         'application_type': {'key': 'properties.Application_Type', 'type': 'str'},
         'flow_type': {'key': 'properties.Flow_Type', 'type': 'str'},
         'request_source': {'key': 'properties.Request_Source', 'type': 'str'},
@@ -203,8 +212,10 @@ class ApplicationInsightsComponent(ComponentsResource):
     ):
         super(ApplicationInsightsComponent, self).__init__(**kwargs)
         self.kind = kwargs['kind']
+        self.etag = kwargs.get('etag', None)
         self.application_id = None
         self.app_id = None
+        self.name_properties_name = None
         self.application_type = kwargs.get('application_type', "web")
         self.flow_type = kwargs.get('flow_type', "Bluefield")
         self.request_source = kwargs.get('request_source', "rest")
@@ -375,6 +386,101 @@ class ComponentPurgeStatusResponse(msrest.serialization.Model):
     ):
         super(ComponentPurgeStatusResponse, self).__init__(**kwargs)
         self.status = kwargs['status']
+
+
+class ErrorAdditionalInfo(msrest.serialization.Model):
+    """The resource management error additional info.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar type: The additional info type.
+    :vartype type: str
+    :ivar info: The additional info.
+    :vartype info: object
+    """
+
+    _validation = {
+        'type': {'readonly': True},
+        'info': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'type': {'key': 'type', 'type': 'str'},
+        'info': {'key': 'info', 'type': 'object'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(ErrorAdditionalInfo, self).__init__(**kwargs)
+        self.type = None
+        self.info = None
+
+
+class ErrorDetail(msrest.serialization.Model):
+    """The error detail.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar code: The error code.
+    :vartype code: str
+    :ivar message: The error message.
+    :vartype message: str
+    :ivar target: The error target.
+    :vartype target: str
+    :ivar details: The error details.
+    :vartype details: list[~azure.mgmt.applicationinsights.v2020_02_02_preview.models.ErrorDetail]
+    :ivar additional_info: The error additional info.
+    :vartype additional_info:
+     list[~azure.mgmt.applicationinsights.v2020_02_02_preview.models.ErrorAdditionalInfo]
+    """
+
+    _validation = {
+        'code': {'readonly': True},
+        'message': {'readonly': True},
+        'target': {'readonly': True},
+        'details': {'readonly': True},
+        'additional_info': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'code': {'key': 'code', 'type': 'str'},
+        'message': {'key': 'message', 'type': 'str'},
+        'target': {'key': 'target', 'type': 'str'},
+        'details': {'key': 'details', 'type': '[ErrorDetail]'},
+        'additional_info': {'key': 'additionalInfo', 'type': '[ErrorAdditionalInfo]'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(ErrorDetail, self).__init__(**kwargs)
+        self.code = None
+        self.message = None
+        self.target = None
+        self.details = None
+        self.additional_info = None
+
+
+class ErrorResponse(msrest.serialization.Model):
+    """Common error response for all Azure Resource Manager APIs to return error details for failed operations. (This also follows the OData error response format.).
+
+    :param error: The error object.
+    :type error: ~azure.mgmt.applicationinsights.v2020_02_02_preview.models.ErrorDetail
+    """
+
+    _attribute_map = {
+        'error': {'key': 'error', 'type': 'ErrorDetail'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(ErrorResponse, self).__init__(**kwargs)
+        self.error = kwargs.get('error', None)
 
 
 class PrivateLinkScopedResource(msrest.serialization.Model):

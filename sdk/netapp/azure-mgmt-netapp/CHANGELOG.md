@@ -1,5 +1,48 @@
 # Release History
 
+## 2.0.0 (2021-03-16)
+
+**Features**
+
+  - Model Volume has a new parameter ldap_enabled
+  - Model Backup has a new parameter volume_name
+  - Model ActiveDirectory has a new parameter allow_local_nfs_users_with_ldap
+  - Model BackupPatch has a new parameter volume_name
+  - Added operation BackupsOperations.begin_update
+  - Added operation group VolumeBackupStatusOperations
+
+**Breaking changes**
+
+  - Model SnapshotPolicyDetails no longer has parameter name_properties_name
+  - Model SnapshotPolicyPatch no longer has parameter name_properties_name
+  - Model Volume no longer has parameter name_properties_name
+  - Model SnapshotPolicy no longer has parameter name_properties_name
+  - Removed operation BackupsOperations.update
+
+## 1.0.0 (2021-02-04)
+
+**Features**
+
+  - Model VolumeList has a new parameter next_link
+  - Model BackupPatch has a new parameter failure_reason
+  - Model Backup has a new parameter failure_reason
+  - Model NetAppAccountList has a new parameter next_link
+  - Model ActiveDirectory has a new parameter security_operators
+  - Model ActiveDirectory has a new parameter ldap_over_tls
+  - Model NetAppAccountPatch has a new parameter encryption
+  - Model CapacityPoolList has a new parameter next_link
+  - Model Volume has a new parameter encryption_key_source
+  - Model Volume has a new parameter smb_encryption
+  - Model Volume has a new parameter smb_continuously_available
+  - Model Volume has a new parameter name_properties_name
+  - Model NetAppAccount has a new parameter system_data
+  - Model NetAppAccount has a new parameter encryption
+  - Added operation SnapshotPoliciesOperations.begin_update
+
+**Breaking changes**
+
+  - Removed operation SnapshotPoliciesOperations.update
+
 ## 1.0.0b1 (2020-12-01)
 
 This is beta preview version.

@@ -1,10 +1,11 @@
 interactions:
 - request:
     body: '{"tasks": {"entityRecognitionTasks": [{"parameters": {"model-version":
-      "latest", "stringIndexType": "TextElements_v8"}}], "entityRecognitionPiiTasks":
-      [{"parameters": {"model-version": "latest", "stringIndexType": "TextElements_v8"}}],
-      "keyPhraseExtractionTasks": [{"parameters": {"model-version": "latest"}}]},
-      "analysisInput": {"documents": [{"id": "0", "text": "input document", "language":
+      "latest", "loggingOptOut": false, "stringIndexType": "UnicodeCodePoint"}}],
+      "entityRecognitionPiiTasks": [{"parameters": {"model-version": "latest", "loggingOptOut":
+      true, "stringIndexType": "UnicodeCodePoint"}}], "keyPhraseExtractionTasks":
+      [{"parameters": {"model-version": "latest", "loggingOptOut": false}}], "entityLinkingTasks":
+      []}, "analysisInput": {"documents": [{"id": "0", "text": "input document", "language":
       "en"}, {"id": "1", "text": "input document", "language": "en"}, {"id": "2",
       "text": "input document", "language": "en"}, {"id": "3", "text": "input document",
       "language": "en"}, {"id": "4", "text": "input document", "language": "en"},
@@ -28,27 +29,27 @@ interactions:
       Accept:
       - application/json, text/json
       Content-Length:
-      - '1843'
+      - '1942'
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-ai-textanalytics/5.1.0b5 Python/3.8.5 (macOS-10.13.6-x86_64-i386-64bit)
+      - azsdk-python-ai-textanalytics/5.1.0b7 Python/3.9.0 (Windows-10-10.0.19041-SP0)
     method: POST
-    uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.1-preview.3/analyze
+    uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.1-preview.5/analyze
   response:
     body:
-      string: '{"error":{"code":"InvalidArgument","message":"Batch request contains
-        too many documents. Max 25 documents are permitted."}}'
+      string: '{"error":{"code":"InvalidRequest","message":"Invalid document in request.","innererror":{"code":"InvalidDocument","message":"Batch
+        request contains too many records. Max 25 records are permitted."}}}'
     headers:
-      apim-request-id: dca3c99d-544e-4a60-a000-89ec3bb5c190
+      apim-request-id: c7269150-9b52-4d39-90f8-256c29705029
       content-type: application/json; charset=utf-8
-      date: Wed, 27 Jan 2021 02:21:25 GMT
+      date: Tue, 27 Apr 2021 19:38:08 GMT
       strict-transport-security: max-age=31536000; includeSubDomains; preload
       transfer-encoding: chunked
       x-content-type-options: nosniff
-      x-envoy-upstream-service-time: '3'
+      x-envoy-upstream-service-time: '5'
     status:
       code: 400
       message: Bad Request
-    url: https://westus2.api.cognitive.microsoft.com//text/analytics/v3.1-preview.3/analyze
+    url: https://westus2.api.cognitive.microsoft.com//text/analytics/v3.1-preview.5/analyze
 version: 1

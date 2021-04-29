@@ -48,8 +48,9 @@ class ServiceBusAdministrationClientRuleTests(AzureMgmtTestCase):
             "@param": datetime(2020, 7, 5, 11, 12, 13),
         })
 
-        sql_filter = SqlRuleFilter("Priority = @param1", parameters={
+        sql_filter = SqlRuleFilter("Priority = @param1 AND Level = @param2", parameters={
             "@param1": "str1",
+            "@param2": 1
         })
 
         bool_filter = TrueRuleFilter()
@@ -75,8 +76,9 @@ class ServiceBusAdministrationClientRuleTests(AzureMgmtTestCase):
             mgmt_service.create_rule(topic_name, subscription_name, rule_name_2, filter=sql_filter)
             rule_desc = mgmt_service.get_rule(topic_name, subscription_name, rule_name_2)
             assert type(rule_desc.filter) == SqlRuleFilter
-            assert rule_desc.filter.sql_expression == "Priority = @param1"
+            assert rule_desc.filter.sql_expression == "Priority = @param1 AND Level = @param2"
             assert rule_desc.filter.parameters["@param1"] == "str1"
+            assert rule_desc.filter.parameters["@param2"] == 1
 
             mgmt_service.create_rule(topic_name, subscription_name, rule_name_3, filter=bool_filter)
             rule_desc = mgmt_service.get_rule(topic_name, subscription_name, rule_name_3)
@@ -188,11 +190,11 @@ class ServiceBusAdministrationClientRuleTests(AzureMgmtTestCase):
             rule_desc = mgmt_service.get_rule(topic_name, subscription_name, rule_name)
 
             # handle a null update properly.
-            with pytest.raises(AttributeError):
+            with pytest.raises(TypeError):
                 mgmt_service.update_rule(topic_name, subscription_name, None)
 
             # handle an invalid type update properly.
-            with pytest.raises(AttributeError):
+            with pytest.raises(TypeError):
                 mgmt_service.update_rule(topic_name, subscription_name, Exception("test"))
 
             # change the name to a topic that doesn't exist; should fail.
@@ -265,3 +267,66 @@ class ServiceBusAdministrationClientRuleTests(AzureMgmtTestCase):
     def test_rule_properties_constructor(self):
         with pytest.raises(TypeError):
             RuleProperties("randomname")
+
+    @CachedResourceGroupPreparer(name_prefix='servicebustest')
+    @CachedServiceBusNamespacePreparer(name_prefix='servicebustest')
+    def test_mgmt_rule_update_dict_success(self, servicebus_namespace_connection_string, **kwargs):
+        mgmt_service = ServiceBusAdministrationClient.from_connection_string(servicebus_namespace_connection_string)
+        clear_topics(mgmt_service)
+        topic_name = "fjruid"
+        subscription_name = "eqkovcd"
+        rule_name = 'rule'
+        sql_filter = SqlRuleFilter("Priority = 'low'")
+
+        try:
+            topic_description = mgmt_service.create_topic(topic_name)
+            subscription_description = mgmt_service.create_subscription(topic_description.name, subscription_name)
+            mgmt_service.create_rule(topic_name, subscription_name, rule_name, filter=sql_filter)
+
+            rule_desc = mgmt_service.get_rule(topic_name, subscription_name, rule_name)
+
+            assert type(rule_desc.filter) == SqlRuleFilter
+            assert rule_desc.filter.sql_expression == "Priority = 'low'"
+
+            correlation_fitler = CorrelationRuleFilter(correlation_id='testcid')
+            sql_rule_action = SqlRuleAction(sql_expression="SET Priority = 'low'")
+
+            rule_desc.filter = correlation_fitler
+            rule_desc.action = sql_rule_action
+            rule_desc_dict = dict(rule_desc)
+            mgmt_service.update_rule(topic_description.name, subscription_description.name, rule_desc_dict)
+
+            rule_desc = mgmt_service.get_rule(topic_name, subscription_name, rule_name)
+            assert type(rule_desc.filter) == CorrelationRuleFilter
+            assert rule_desc.filter.correlation_id == 'testcid'
+            assert rule_desc.action.sql_expression == "SET Priority = 'low'"
+
+        finally:
+            mgmt_service.delete_rule(topic_name, subscription_name, rule_name)
+            mgmt_service.delete_subscription(topic_name, subscription_name)
+            mgmt_service.delete_topic(topic_name)
+
+    @CachedResourceGroupPreparer(name_prefix='servicebustest')
+    @CachedServiceBusNamespacePreparer(name_prefix='servicebustest')
+    def test_mgmt_rule_update_dict_error(self, servicebus_namespace_connection_string, **kwargs):
+        mgmt_service = ServiceBusAdministrationClient.from_connection_string(servicebus_namespace_connection_string)
+        clear_topics(mgmt_service)
+        topic_name = "fjruid"
+        subscription_name = "eqkovcd"
+        rule_name = 'rule'
+        sql_filter = SqlRuleFilter("Priority = 'low'")
+
+        try:
+            topic_description = mgmt_service.create_topic(topic_name)
+            subscription_description = mgmt_service.create_subscription(topic_description.name, subscription_name)
+            mgmt_service.create_rule(topic_name, subscription_name, rule_name, filter=sql_filter)
+
+            # send in rule dict without non-name keyword args
+            rule_description_only_name = {"name": topic_name}
+            with pytest.raises(TypeError):
+                mgmt_service.update_rule(topic_description.name, subscription_description.name, rule_description_only_name)
+
+        finally:
+            mgmt_service.delete_rule(topic_name, subscription_name, rule_name)
+            mgmt_service.delete_subscription(topic_name, subscription_name)
+            mgmt_service.delete_topic(topic_name)

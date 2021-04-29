@@ -46,7 +46,7 @@ class CustomizedSASCredential(object):
         """
         return AccessToken(self.token, self.expiry)
 
-FULLY_QUALIFIED_NAMESPACE = os.environ['SERVICE_BUS_NAMESPACE']
+FULLY_QUALIFIED_NAMESPACE = os.environ['SERVICE_BUS_FULLY_QUALIFIED_NAMESPACE']
 SESSION_QUEUE_NAME = os.environ["SERVICE_BUS_SESSION_QUEUE_NAME"]
 SAS_POLICY = os.environ['SERVICE_BUS_SAS_POLICY']
 SAS_KEY = os.environ['SERVICE_BUS_SAS_KEY']

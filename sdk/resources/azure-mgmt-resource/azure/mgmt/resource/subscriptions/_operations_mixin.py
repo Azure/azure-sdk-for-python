@@ -26,7 +26,7 @@ class SubscriptionClientOperationsMixin(object):
 
     def check_resource_name(
         self,
-        resource_name_definition=None,  # type: Optional["models.ResourceName"]
+        resource_name_definition=None,  # type: Optional["_models.ResourceName"]
         **kwargs  # type: Any
     ):
         """Checks resource name validity.
@@ -57,5 +57,6 @@ class SubscriptionClientOperationsMixin(object):
         mixin_instance._client = self._client
         mixin_instance._config = self._config
         mixin_instance._serialize = Serializer(self._models_dict(api_version))
+        mixin_instance._serialize.client_side_validation = False
         mixin_instance._deserialize = Deserializer(self._models_dict(api_version))
         return mixin_instance.check_resource_name(resource_name_definition, **kwargs)

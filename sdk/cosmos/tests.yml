@@ -1,7 +1,7 @@
 trigger: none
 
-jobs:
-  - template: ../../eng/pipelines/templates/jobs/archetype-sdk-tests.yml
+stages:
+  - template: ../../eng/pipelines/templates/stages/archetype-sdk-tests.yml
     parameters:
       AllocateResourceGroup: 'false'
       MaxParallel: 1
@@ -13,13 +13,13 @@ jobs:
 
       # Workaround to ensure deletion of databases from a statically defined
       # CosmosDB account.
-      BeforeTestSteps:
+      PreSteps:
         - pwsh: |
             $testDatabaseId = "Python Test Database " + (New-Guid).ToString()
             Write-Host Test Database ID: $testDatabaseId
             Write-Host "##vso[task.setvariable variable=COSMOS_TEST_DATABASE_ID]$testDatabaseId"
           displayName: Set COSMOS_TEST_DATABASE_ID
-      AfterTestSteps:
+      PostSteps:
         - pwsh: >
             az cosmosdb sql database delete
             --db-name $env:COSMOS_TEST_DATABASE_ID

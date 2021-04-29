@@ -339,7 +339,7 @@ class DataFeed(object):  # pylint:disable=too-many-instance-attributes
     :ivar ingestion_settings: Data feed ingestion settings.
     :vartype ingestion_settings: ~azure.ai.metricsadvisor.models.DataFeedIngestionSettings
     :ivar bool is_admin: Whether the query user is one of data feed administrators or not.
-    :ivar list[str] metric_ids: List of metric ids
+    :ivar dict metric_ids: metric name and metric id dict
     :ivar str name: Data feed name.
     :ivar options: Data feed options
     :vartype options: ~azure.ai.metricsadvisor.models.DataFeedOptions
@@ -404,7 +404,7 @@ class DataFeed(object):  # pylint:disable=too-many-instance-attributes
                 stop_retry_after=data_feed.stop_retry_after_in_seconds
             ),
             is_admin=data_feed.is_admin,
-            metric_ids=[metric.metric_id for metric in data_feed.metrics],
+            metric_ids={metric.metric_name: metric.metric_id for metric in data_feed.metrics},
             name=data_feed.data_feed_name,
             options=DataFeedOptions(
                 admin_emails=data_feed.admins,
@@ -2652,7 +2652,7 @@ class AnomalyFeedback(msrest.serialization.Model):  # pylint:disable=too-many-in
         if not anomaly_feedback:
             return None
         dimension_key = anomaly_feedback.dimension_filter.dimension
-        value = anomaly_feedback.value.anomaly_value
+        value = anomaly_feedback.value.anomaly_value if anomaly_feedback.value else None
         return cls(
             id=anomaly_feedback.feedback_id,
             created_time=anomaly_feedback.created_time,
@@ -2761,7 +2761,7 @@ class ChangePointFeedback(msrest.serialization.Model):
         if not change_point_feedback:
             return None
         dimension_key = change_point_feedback.dimension_filter.dimension
-        value = change_point_feedback.value.change_point_value
+        value = change_point_feedback.value.change_point_value if change_point_feedback.value else None
         return cls(
             id=change_point_feedback.feedback_id,
             created_time=change_point_feedback.created_time,
@@ -2866,7 +2866,7 @@ class CommentFeedback(msrest.serialization.Model):
         if not comment_feedback:
             return None
         dimension_key = comment_feedback.dimension_filter.dimension
-        value = comment_feedback.value.comment_value
+        value = comment_feedback.value.comment_value if comment_feedback.value else None
         return cls(
             id=comment_feedback.feedback_id,
             created_time=comment_feedback.created_time,
@@ -2965,8 +2965,8 @@ class PeriodFeedback(msrest.serialization.Model):
         if not period_feedback:
             return None
         dimension_key = period_feedback.dimension_filter.dimension
-        value = period_feedback.value.period_value
-        period_type = period_feedback.value.period_type
+        value = period_feedback.value.period_value if period_feedback.value else None
+        period_type = period_feedback.value.period_type if period_feedback.value else None
         return cls(
             id=period_feedback.feedback_id,
             created_time=period_feedback.created_time,

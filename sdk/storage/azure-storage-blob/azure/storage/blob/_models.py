@@ -317,6 +317,10 @@ class ContainerProperties(DictMixin):
         container as metadata.
     :ivar ~azure.storage.blob.ContainerEncryptionScope encryption_scope:
         The default encryption scope configuration for the container.
+    :ivar bool deleted:
+        Whether this container was deleted.
+    :ivar str version:
+        The version of a deleted container.
     """
 
     def __init__(self, **kwargs):
@@ -618,7 +622,7 @@ class ContentSettings(DictMixin):
     :param str cache_control:
         If the cache_control has previously been set for
         the blob, that value is stored.
-    :param str content_md5:
+    :param bytearray content_md5:
         If the content_md5 has been set for the blob, this response
         header is stored so that the client can check for message content
         integrity.

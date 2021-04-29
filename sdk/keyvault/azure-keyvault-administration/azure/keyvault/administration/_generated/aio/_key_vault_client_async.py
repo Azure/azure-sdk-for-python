@@ -89,7 +89,7 @@ class KeyVaultClient(KeyVaultClientOperationsMixin, MultiApiClientMixin, _SDKCli
         """
         api_version = self._get_api_version('role_assignments')
         if api_version == '7.2-preview':
-            from ..v7_2_preview.aio.operations_async import RoleAssignmentsOperations as OperationClass
+            from ..v7_2_preview.aio.operations import RoleAssignmentsOperations as OperationClass
         else:
             raise NotImplementedError("APIVersion {} is not available".format(api_version))
         return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
@@ -102,7 +102,7 @@ class KeyVaultClient(KeyVaultClientOperationsMixin, MultiApiClientMixin, _SDKCli
         """
         api_version = self._get_api_version('role_definitions')
         if api_version == '7.2-preview':
-            from ..v7_2_preview.aio.operations_async import RoleDefinitionsOperations as OperationClass
+            from ..v7_2_preview.aio.operations import RoleDefinitionsOperations as OperationClass
         else:
             raise NotImplementedError("APIVersion {} is not available".format(api_version))
         return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))

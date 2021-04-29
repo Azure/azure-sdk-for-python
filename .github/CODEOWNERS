@@ -26,7 +26,7 @@
 /sdk/storage/                                                        @amishra-dev @zezha-msft @annatisch @xiafu-msft @tasherif-msft @kasobol-msft
 
 # PRLabel: %App Configuration
-/sdk/appconfiguration/                                               @xiangyan99
+/sdk/appconfiguration/                                               @xiangyan99 @seankane-msft
 
 /sdk/applicationinsights/azure-applicationinsights/                  @divya-jay @geneh @alongafni
 /sdk/loganalytics/azure-loganalytics/                                @divya-jay @geneh @alongafni
@@ -45,7 +45,7 @@
 /sdk/loganalytics/                                                   @alexeldeib
 
 # PRLabel: %Monitor - Exporter
-/sdk/monitor/azure-opentelemetry-exporter-azuremonitor               @rakshith91 @lmazuel @hectorhdzg @lzchen
+/sdk/monitor/azure-monitor-opentelemetry-exporter                    @rakshith91 @lmazuel @lzchen
 
 # PRLabel: %Consumption
 /sdk/consumption/                                                    @sandeepnl
@@ -70,6 +70,9 @@
 
 # PRLabel: %HDInsight
 /sdk/hdinsight/                                                      @idear1203
+
+# PRLabel: %Models repository
+/sdk/modelsrepository/                                               @cartertinney @digimaun
 
 # PRLabel: %Machine Learning Compute
 /sdk/machinelearningcompute/                                         @shutchings
@@ -102,16 +105,22 @@
 /sdk/textanalytics/                                                  @kristapratico @iscai-msft @abhahn
 
 # PRLabel: %Cognitive - Form Recognizer
-/sdk/formrecognizer/                                                 @kristapratico @iscai-msft
+/sdk/formrecognizer/                                                 @kristapratico @iscai-msft @catalinaperalta
 
 # PRLabel: %Cognitive - Metrics Advisor
 /sdk/metricsadvisor/                                                 @xiangyan99 @kristapratico
+
+# PRLabel: %Cognitive - Translator
+/sdk/translation/                                                    @kristapratico @mohamedshabanofficial
 
 # PRLabel: %Tables
 /sdk/tables/                                                         @seankane-msft
 
 # PRLabel: %Media
 /sdk/media/                                                          @naiteeks @bennage @giakas
+
+# PRLabel: %Container Registry
+/sdk/containerregistry/                                              @seankane-msft
 
 # Smoke Tests
 /common/smoketest/                                                   @lmazuel @chlowell @annatisch @rakshith91 @shurd @southpolesteve
@@ -124,5 +133,5 @@
 # Eng Sys
 ###########
 /eng/           @weshaggard @scbedd @mitchdenny @danieljurek
-/**/tests.yml   @danieljurek
+/**/tests.yml   @benbp
 /**/ci.yml      @mitchdenny

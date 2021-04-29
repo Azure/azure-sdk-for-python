@@ -22,9 +22,13 @@ from azure.storage.blob._shared.base_client import _format_shared_key_credential
 from _shared.testcase import StorageTestCase, GlobalStorageAccountPreparer
 
 # ------------------------------------------------------------------------------
+from azure.storage.blob._shared.uploads import SubStream
+
 TEST_BLOB_PREFIX = 'largestblob'
 LARGEST_BLOCK_SIZE = 4000 * 1024 * 1024
 LARGEST_SINGLE_UPLOAD_SIZE = 5000 * 1024 * 1024
+
+LARGE_BLOCK_SIZE = 100 * 1024 * 1024
 
 # ------------------------------------------------------------------------------
 if platform.python_implementation() == 'PyPy':
@@ -207,6 +211,31 @@ class StorageLargestBlockBlobTest(StorageTestCase):
         # Assert
         self._teardown(FILE_PATH)
 
+    def test_substream_for_single_thread_upload_large_block(self):
+        FILE_PATH = 'largest_blob_from_path.temp.{}.dat'.format(str(uuid.uuid4()))
+        with open(FILE_PATH, 'wb') as stream:
+            largeStream = LargeStream(LARGE_BLOCK_SIZE, 4 * 1024 * 1024)
+            chunk = largeStream.read()
+            while chunk:
+                stream.write(chunk)
+                chunk = largeStream.read()
+
+        with open(FILE_PATH, 'rb') as stream:
+            substream = SubStream(stream, 0, 2 * 1024 * 1024, None)
+            # this is to mimic stage large block: SubStream.read() is getting called by http client
+            data1 = substream.read(2 * 1024 * 1024)
+            substream.read(2 * 1024 * 1024)
+            substream.read(2 * 1024 * 1024)
+
+            # this is to mimic rewinding request body after connection error
+            substream.seek(0)
+
+            # this is to mimic retry: stage that large block from beginning
+            data2 = substream.read(2 * 1024 * 1024)
+
+            self.assertEqual(data1, data2)
+        self._teardown(FILE_PATH)
+
     @pytest.mark.live_test_only
     @GlobalStorageAccountPreparer()
     def test_create_largest_blob_from_path_without_network(self, resource_group, location, storage_account, storage_account_key):
@@ -259,7 +288,7 @@ class StorageLargestBlockBlobTest(StorageTestCase):
         payload_dropping_policy = PayloadDroppingPolicy()
         credential_policy = _format_shared_key_credential(storage_account.name, storage_account_key)
         self._setup(storage_account, storage_account_key, [payload_dropping_policy, credential_policy],
-                    max_single_put_size=LARGEST_SINGLE_UPLOAD_SIZE)
+                    max_single_put_size=LARGEST_SINGLE_UPLOAD_SIZE+1)
         blob_name = self._get_blob_reference()
         blob = self.bsc.get_blob_client(self.container_name, blob_name)
 

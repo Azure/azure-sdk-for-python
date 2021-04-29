@@ -1,4 +1,2 @@
 -e .[ci_tools]
-
 mock;python_version<="2.7"
-

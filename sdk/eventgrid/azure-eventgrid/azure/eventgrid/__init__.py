@@ -5,14 +5,15 @@
 # --------------------------------------------------------------------------
 
 from ._publisher_client import EventGridPublisherClient
-from ._consumer import EventGridDeserializer
-from ._event_mappings import SystemEventMappings
+from ._event_mappings import SystemEventNames
 from ._helpers import generate_sas
-from ._models import CloudEvent, CustomEvent, EventGridEvent
+from ._models import EventGridEvent
 from ._version import VERSION
 
-__all__ = ['EventGridPublisherClient', 'EventGridDeserializer',
-            'CloudEvent', 'CustomEvent', 'EventGridEvent', 'generate_sas',
-            'SystemEventMappings'
-            ]
+__all__ = [
+    "EventGridPublisherClient",
+    "EventGridEvent",
+    "generate_sas",
+    "SystemEventNames",
+]
 __version__ = VERSION

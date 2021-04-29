@@ -4,20 +4,19 @@ trigger:
   branches:
     include:
     - master
+    - main
     - hotfix/*
     - release/*
     - restapi*
   paths:
     include:
     - sdk/streamanalytics/
-    - sdk/core/
-    - tools/
-    - eng/
 
 pr:
   branches:
     include:
     - master
+    - main
     - feature/*
     - hotfix/*
     - release/*
@@ -25,14 +24,11 @@ pr:
   paths:
     include:
     - sdk/streamanalytics/
-    - sdk/core/
-    - tools/
-    - eng/
 
 extends:
   template: ../../eng/pipelines/templates/stages/archetype-sdk-client.yml
   parameters:
     ServiceDirectory: streamanalytics
     Artifacts:
-    - name: azure_mgmt_streamanalytics
+    - name: azure-mgmt-streamanalytics
       safeName: azuremgmtstreamanalytics

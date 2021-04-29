@@ -2,18 +2,15 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 # -------------------------------------
-from azure.keyvault.keys import KeyClient, parse_key_vault_key_id
-from devtools_testutils import ResourceGroupPreparer, KeyVaultPreparer
+from azure.keyvault.keys import parse_key_vault_key_id
 
-from _shared.preparer import KeyVaultClientPreparer
 from _shared.test_case import KeyVaultTestCase
+from _test_case import KeysTestCase
 
 
-class TestParseId(KeyVaultTestCase):
-    @ResourceGroupPreparer(random_name_enabled=True)
-    @KeyVaultPreparer()
-    @KeyVaultClientPreparer(KeyClient)
-    def test_parse_key_id_with_version(self, client):
+class TestParseId(KeysTestCase, KeyVaultTestCase):
+    def test_parse_key_id_with_version(self):
+        client = self.create_key_client(self.vault_url)
         key_name = self.get_resource_name("key")
         # create key
         created_key = client.create_rsa_key(key_name)

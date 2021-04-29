@@ -3,6 +3,7 @@
 # Licensed under the MIT License.
 # ------------------------------------
 import os
+import time
 from azure.keyvault.secrets import SecretClient
 from azure.identity import DefaultAzureCredential
 from azure.core.exceptions import HttpResponseError
@@ -25,7 +26,9 @@ from azure.core.exceptions import HttpResponseError
 #
 # 3. Delete a secret (begin_delete_secret)
 #
-# 4. Restore a secret (restore_secret_backup)
+# 4. Purge a secret (purge_deleted_secret)
+#
+# 5. Restore a secret (restore_secret_backup)
 # ----------------------------------------------------------------------------------------------------------
 
 # Instantiate a secret client that will be used to call the service.
@@ -50,13 +53,22 @@ try:
 
     # The storage account secret is no longer in use, so you delete it.
     print("\n.. Deleting secret...")
-    deleted_secret = client.begin_delete_secret(secret.name).result()
-    print("Deleted Secret with name '{0}'".format(deleted_secret.name))
+    delete_operation = client.begin_delete_secret(secret.name)
+    deleted_secret = delete_operation.result()
+    print("Deleted secret with name '{0}'".format(deleted_secret.name))
 
-    # In future, if the secret is required again, we can use the backup value to restore it in the Key Vault.
+    # Wait for the deletion to complete before purging the secret.
+    # The purge will take some time, so wait before restoring the backup to avoid a conflict.
+    delete_operation.wait()
+    print("\n.. Purge the secret")
+    client.purge_deleted_secret(deleted_secret.name)
+    time.sleep(60)
+    print("Purged secret with name '{0}'".format(deleted_secret.name))
+
+    # In the future, if the secret is required again, we can use the backup value to restore it in the Key Vault.
     print("\n.. Restore the secret using the backed up secret bytes")
     secret = client.restore_secret_backup(secret_backup)
-    print("Restored Secret with name '{0}'".format(secret.name))
+    print("Restored secret with name '{0}'".format(secret.name))
 
 except HttpResponseError as e:
     print("\nThis sample has caught an error. {0}".format(e.message))

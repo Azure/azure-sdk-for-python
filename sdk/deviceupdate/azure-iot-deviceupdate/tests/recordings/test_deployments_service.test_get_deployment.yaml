@@ -1,0 +1,36 @@
+interactions:
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - azsdk-python-iot-deviceupdate/1.0.0b1 Python/3.9.1 (macOS-10.13.6-x86_64-i386-64bit)
+    method: GET
+    uri: https://fake_endpoint.com/deviceupdate/blue/v2/management/deployments/fakeDeploymentId
+  response:
+    body:
+      string: "{\r\n  \"deploymentId\": \"fakeDeploymentId\",\r\n  \"deploymentType\":
+        \"Complete\",\r\n  \"startDateTime\": \"2021-03-02T20:04:52.8525661+00:00\",\r\n
+        \ \"deviceGroupType\": \"DeviceGroupDefinitions\",\r\n  \"deviceGroupDefinition\":
+        [\r\n    \"fakeDeviceId\"\r\n  ],\r\n  \"updateId\": {\r\n    \"provider\":
+        \"Contoso\",\r\n    \"name\": \"Virtual-Machine\",\r\n    \"version\": \"fakeVersion\"\r\n
+        \ },\r\n  \"isCanceled\": false,\r\n  \"isCompleted\": false,\r\n  \"isRetry\":
+        false\r\n}"
+    headers:
+      content-length:
+      - '439'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Wed, 03 Mar 2021 18:10:05 GMT
+      traceparent:
+      - 00-052c4983497e5e4daba8cb65f9ef67c1-47c9812ba0bfe749-00
+    status:
+      code: 200
+      message: OK
+version: 1

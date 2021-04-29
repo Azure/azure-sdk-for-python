@@ -44,7 +44,6 @@ class TestOpentelemetryWrapper:
 
     def test_span(self, tracer):
         with tracer.start_as_current_span("Root") as parent:
-            assert OpenTelemetrySpan.get_current_tracer().source is tracer.source
             with OpenTelemetrySpan() as wrapped_span:
                 assert wrapped_span.span_instance is trace.get_current_span()
 

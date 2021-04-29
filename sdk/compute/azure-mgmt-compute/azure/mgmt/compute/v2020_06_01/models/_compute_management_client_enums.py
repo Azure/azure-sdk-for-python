@@ -121,7 +121,7 @@ class InGuestPatchMode(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     mode, automatic updates are disabled; the property WindowsConfiguration.enableAutomaticUpdates
     must be false:code:`<br />`:code:`<br />` **AutomaticByOS** - The virtual machine will
     automatically be updated by the OS. The property WindowsConfiguration.enableAutomaticUpdates
-    must be true. :code:`<br />`:code:`<br />` ** AutomaticByPlatform** - the virtual machine will
+    must be true. :code:`<br />`:code:`<br />` **AutomaticByPlatform** - the virtual machine will
     automatically updated by the platform. The properties provisionVMAgent and
     WindowsConfiguration.enableAutomaticUpdates must be true
     """
@@ -161,8 +161,10 @@ class OperatingSystemStateTypes(with_metaclass(_CaseInsensitiveEnumMeta, str, En
     """The OS State.
     """
 
-    GENERALIZED = "Generalized"  #: Generalized image. Needs to be provisioned during deployment time.
-    SPECIALIZED = "Specialized"  #: Specialized image. Contains already provisioned OS Disk.
+    #: Generalized image. Needs to be provisioned during deployment time.
+    GENERALIZED = "Generalized"
+    #: Specialized image. Contains already provisioned OS Disk.
+    SPECIALIZED = "Specialized"
 
 class OperatingSystemTypes(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     """The operating system of the osDiskImage.

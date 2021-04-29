@@ -12,17 +12,17 @@ if TYPE_CHECKING:
     # pylint:disable=unused-import
     from .local_provider import Algorithm
     from .._internal import Key
-    from ... import KeyVaultKey
+    from ... import JsonWebKey
 
 _PRIVATE_KEY_OPERATIONS = frozenset((KeyOperation.decrypt, KeyOperation.sign, KeyOperation.unwrap_key))
 
 
 class RsaCryptographyProvider(LocalCryptographyProvider):
     def _get_internal_key(self, key):
-        # type: (KeyVaultKey) -> Key
-        if key.key_type not in (KeyType.rsa, KeyType.rsa_hsm):
+        # type: (JsonWebKey) -> Key
+        if key.kty not in (KeyType.rsa, KeyType.rsa_hsm):
             raise ValueError('"key" must be an RSA or RSA-HSM key')
-        return RsaKey.from_jwk(key.key)
+        return RsaKey.from_jwk(key)
 
     def supports(self, operation, algorithm):
         # type: (KeyOperation, Algorithm) -> bool

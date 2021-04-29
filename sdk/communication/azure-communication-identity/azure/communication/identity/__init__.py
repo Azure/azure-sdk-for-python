@@ -7,20 +7,25 @@
 from ._communication_identity_client import CommunicationIdentityClient
 
 from ._generated.models import (
-    CommunicationTokenRequest,
-    CommunicationIdentityToken
+    CommunicationTokenScope
 )
 
-from ._shared.models import CommunicationUserIdentifier
-
+from ._shared.models import (
+    CommunicationIdentifier,
+    CommunicationIdentifierKind,
+    CommunicationUserIdentifier,
+    CommunicationUserProperties
+)
 
 __all__ = [
     'CommunicationIdentityClient',
 
     # from _identity
-    'CommunicationTokenRequest',
-    'CommunicationIdentityToken',
+    'CommunicationTokenScope',
 
     # from _shared
-    'CommunicationUserIdentifier'
+    'CommunicationIdentifier',
+    'CommunicationIdentifierKind',
+    'CommunicationUserIdentifier',
+    'CommunicationUserProperties'
 ]

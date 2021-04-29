@@ -343,8 +343,8 @@ class CertificateImportParameters(msrest.serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param base64_encoded_certificate: Required. Base64 encoded representation of the certificate
-     object to import. This certificate needs to contain the private key.
+    :param base64_encoded_certificate: Required. A PEM file or a base64-encoded PFX file.  PEM
+     files need to contain the private key.
     :type base64_encoded_certificate: str
     :param password: If the private key in base64EncodedCertificate is encrypted, the password used
      for encryption.

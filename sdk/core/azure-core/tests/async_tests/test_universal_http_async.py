@@ -98,6 +98,8 @@ def _create_aiohttp_response(body_bytes, headers=None):
             self._body = body_bytes
             self._headers = headers
             self._cache = {}
+            self.status = 200
+            self.reason = "OK"
 
     req_response = MockAiohttpClientResponse(body_bytes, headers)
 
@@ -120,3 +122,12 @@ async def test_aiohttp_response_text():
             {'Content-Type': 'text/plain'}
         )
         assert res.text(encoding) == '56', "Encoding {} didn't work".format(encoding)
+
+def test_repr():
+    res = _create_aiohttp_response(
+        b'\xef\xbb\xbf56',
+        {}
+    )
+    res.content_type = "text/plain"
+
+    assert repr(res) == "<AioHttpTransportResponse: 200 OK, Content-Type: text/plain>"

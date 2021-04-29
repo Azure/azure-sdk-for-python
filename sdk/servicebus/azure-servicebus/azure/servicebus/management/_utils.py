@@ -3,10 +3,35 @@
 # Licensed under the MIT License. See License.txt in the project root for license information.
 # --------------------------------------------------------------------------------------------
 from datetime import datetime, timedelta
-from typing import cast
+from typing import TYPE_CHECKING, cast, Union, Mapping, Type, Any
 from xml.etree.ElementTree import ElementTree, SubElement, QName
 import isodate
 import six
+
+from . import _constants as constants
+from ._handle_response_error import _handle_response_error
+
+if TYPE_CHECKING:
+    # pylint: disable=unused-import, ungrouped-imports
+    from typing import TypeVar
+    from ._models import (
+        QueueProperties,
+        TopicProperties,
+        SubscriptionProperties,
+        RuleProperties,
+        InternalQueueDescription,
+        InternalTopicDescription,
+        InternalSubscriptionDescription,
+        InternalRuleDescription,
+    )
+
+    PropertiesType = TypeVar(
+        "PropertiesType",
+        QueueProperties,
+        TopicProperties,
+        SubscriptionProperties,
+        RuleProperties,
+    )
 
 # Refer to the async version of this module under ..\aio\management\_utils.py for detailed explanation.
 
@@ -14,9 +39,6 @@ try:
     import urllib.parse as urlparse
 except ImportError:
     import urlparse  # type: ignore  # for python 2.7
-
-from azure.servicebus.management import _constants as constants
-from ._handle_response_error import _handle_response_error
 
 
 def extract_rule_data_template(feed_class, convert, feed_element):
@@ -305,5 +327,44 @@ def _validate_topic_subscription_and_rule_types(
         raise TypeError(
             "topic name, subscription name and rule name must be strings, not {} {} and {}".format(
                 type(topic_name), type(subscription_name), type(rule_name)
+            )
+        )
+
+
+def _normalize_entity_path_to_full_path_if_needed(
+    entity_path, fully_qualified_namespace
+):
+    # type: (str, str) -> str
+    if not entity_path:
+        return entity_path
+    parsed = urlparse.urlparse(entity_path)
+    entity_path = (
+        ("sb://" + fully_qualified_namespace + "/" + entity_path)
+        if not parsed.netloc
+        else entity_path
+    )
+    return entity_path
+
+
+def create_properties_from_dict_if_needed(properties, sb_resource_type):
+    # type: (Union[PropertiesType, Mapping[str, Any]], Type[PropertiesType]) -> PropertiesType
+    """
+    This method is used to create a properties object given the
+    resource properties type and its corresponding dict representation.
+    :param properties: A properties object or its dict representation.
+    :type properties: Mapping or PropertiesType
+    :param type sb_resource_type: The type of properties object.
+    :rtype: PropertiesType
+    """
+    if isinstance(properties, sb_resource_type):
+        return properties
+    try:
+        return sb_resource_type(**cast(Mapping[str, Any], properties))
+    except TypeError as e:
+        if "required keyword arguments" in str(e):
+            raise e
+        raise TypeError(
+            "Update input must be an instance of {}, or a mapping representing one.".format(
+                sb_resource_type.__name__
             )
         )

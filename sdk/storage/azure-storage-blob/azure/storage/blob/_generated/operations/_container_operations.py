@@ -17,7 +17,7 @@ from .. import models as _models
 
 if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
-    from typing import Any, Callable, Dict, Generic, List, Optional, TypeVar, Union
+    from typing import Any, Callable, Dict, Generic, IO, List, Optional, TypeVar, Union
 
     T = TypeVar('T')
     ClsType = Optional[Callable[[PipelineResponse[HttpRequest, HttpResponse], T, Dict[str, Any]], Any]]
@@ -709,6 +709,176 @@ class ContainerOperations(object):
             return cls(pipeline_response, None, response_headers)
 
     restore.metadata = {'url': '/{containerName}'}  # type: ignore
+
+    def rename(
+        self,
+        source_container_name,  # type: str
+        timeout=None,  # type: Optional[int]
+        request_id_parameter=None,  # type: Optional[str]
+        source_lease_id=None,  # type: Optional[str]
+        **kwargs  # type: Any
+    ):
+        # type: (...) -> None
+        """Renames an existing container.
+
+        :param source_container_name: Required.  Specifies the name of the container to rename.
+        :type source_container_name: str
+        :param timeout: The timeout parameter is expressed in seconds. For more information, see
+         :code:`<a href="https://docs.microsoft.com/en-us/rest/api/storageservices/fileservices/setting-
+         timeouts-for-blob-service-operations">Setting Timeouts for Blob Service Operations.</a>`.
+        :type timeout: int
+        :param request_id_parameter: Provides a client-generated, opaque value with a 1 KB character
+         limit that is recorded in the analytics logs when storage analytics logging is enabled.
+        :type request_id_parameter: str
+        :param source_lease_id: A lease ID for the source path. If specified, the source path must have
+         an active lease and the lease ID must match.
+        :type source_lease_id: str
+        :keyword callable cls: A custom type or function that will be passed the direct response
+        :return: None, or the result of cls(response)
+        :rtype: None
+        :raises: ~azure.core.exceptions.HttpResponseError
+        """
+        cls = kwargs.pop('cls', None)  # type: ClsType[None]
+        error_map = {
+            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
+        }
+        error_map.update(kwargs.pop('error_map', {}))
+        restype = "container"
+        comp = "rename"
+        accept = "application/xml"
+
+        # Construct URL
+        url = self.rename.metadata['url']  # type: ignore
+        path_format_arguments = {
+            'url': self._serialize.url("self._config.url", self._config.url, 'str', skip_quote=True),
+        }
+        url = self._client.format_url(url, **path_format_arguments)
+
+        # Construct parameters
+        query_parameters = {}  # type: Dict[str, Any]
+        query_parameters['restype'] = self._serialize.query("restype", restype, 'str')
+        query_parameters['comp'] = self._serialize.query("comp", comp, 'str')
+        if timeout is not None:
+            query_parameters['timeout'] = self._serialize.query("timeout", timeout, 'int', minimum=0)
+
+        # Construct headers
+        header_parameters = {}  # type: Dict[str, Any]
+        header_parameters['x-ms-version'] = self._serialize.header("self._config.version", self._config.version, 'str')
+        if request_id_parameter is not None:
+            header_parameters['x-ms-client-request-id'] = self._serialize.header("request_id_parameter", request_id_parameter, 'str')
+        header_parameters['x-ms-source-container-name'] = self._serialize.header("source_container_name", source_container_name, 'str')
+        if source_lease_id is not None:
+            header_parameters['x-ms-source-lease-id'] = self._serialize.header("source_lease_id", source_lease_id, 'str')
+        header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
+
+        request = self._client.put(url, query_parameters, header_parameters)
+        pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = self._deserialize(_models.StorageError, response)
+            raise HttpResponseError(response=response, model=error)
+
+        response_headers = {}
+        response_headers['x-ms-client-request-id']=self._deserialize('str', response.headers.get('x-ms-client-request-id'))
+        response_headers['x-ms-request-id']=self._deserialize('str', response.headers.get('x-ms-request-id'))
+        response_headers['x-ms-version']=self._deserialize('str', response.headers.get('x-ms-version'))
+        response_headers['Date']=self._deserialize('rfc-1123', response.headers.get('Date'))
+
+        if cls:
+            return cls(pipeline_response, None, response_headers)
+
+    rename.metadata = {'url': '/{containerName}'}  # type: ignore
+
+    def submit_batch(
+        self,
+        content_length,  # type: int
+        multipart_content_type,  # type: str
+        body,  # type: IO
+        timeout=None,  # type: Optional[int]
+        request_id_parameter=None,  # type: Optional[str]
+        **kwargs  # type: Any
+    ):
+        # type: (...) -> IO
+        """The Batch operation allows multiple API calls to be embedded into a single HTTP request.
+
+        :param content_length: The length of the request.
+        :type content_length: long
+        :param multipart_content_type: Required. The value of this header must be multipart/mixed with
+         a batch boundary. Example header value: multipart/mixed; boundary=batch_:code:`<GUID>`.
+        :type multipart_content_type: str
+        :param body: Initial data.
+        :type body: IO
+        :param timeout: The timeout parameter is expressed in seconds. For more information, see
+         :code:`<a href="https://docs.microsoft.com/en-us/rest/api/storageservices/fileservices/setting-
+         timeouts-for-blob-service-operations">Setting Timeouts for Blob Service Operations.</a>`.
+        :type timeout: int
+        :param request_id_parameter: Provides a client-generated, opaque value with a 1 KB character
+         limit that is recorded in the analytics logs when storage analytics logging is enabled.
+        :type request_id_parameter: str
+        :keyword callable cls: A custom type or function that will be passed the direct response
+        :return: IO, or the result of cls(response)
+        :rtype: IO
+        :raises: ~azure.core.exceptions.HttpResponseError
+        """
+        cls = kwargs.pop('cls', None)  # type: ClsType[IO]
+        error_map = {
+            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
+        }
+        error_map.update(kwargs.pop('error_map', {}))
+        restype = "container"
+        comp = "batch"
+        content_type = kwargs.pop("content_type", "application/xml")
+        accept = "application/xml"
+
+        # Construct URL
+        url = self.submit_batch.metadata['url']  # type: ignore
+        path_format_arguments = {
+            'url': self._serialize.url("self._config.url", self._config.url, 'str', skip_quote=True),
+        }
+        url = self._client.format_url(url, **path_format_arguments)
+
+        # Construct parameters
+        query_parameters = {}  # type: Dict[str, Any]
+        query_parameters['restype'] = self._serialize.query("restype", restype, 'str')
+        query_parameters['comp'] = self._serialize.query("comp", comp, 'str')
+        if timeout is not None:
+            query_parameters['timeout'] = self._serialize.query("timeout", timeout, 'int', minimum=0)
+
+        # Construct headers
+        header_parameters = {}  # type: Dict[str, Any]
+        header_parameters['Content-Length'] = self._serialize.header("content_length", content_length, 'long')
+        header_parameters['Content-Type'] = self._serialize.header("multipart_content_type", multipart_content_type, 'str')
+        header_parameters['x-ms-version'] = self._serialize.header("self._config.version", self._config.version, 'str')
+        if request_id_parameter is not None:
+            header_parameters['x-ms-client-request-id'] = self._serialize.header("request_id_parameter", request_id_parameter, 'str')
+        header_parameters['Content-Type'] = self._serialize.header("content_type", content_type, 'str')
+        header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
+
+        body_content_kwargs = {}  # type: Dict[str, Any]
+        body_content = self._serialize.body(body, 'IO', is_xml=True)
+        body_content_kwargs['content'] = body_content
+        request = self._client.post(url, query_parameters, header_parameters, **body_content_kwargs)
+        pipeline_response = self._client._pipeline.run(request, stream=True, **kwargs)
+        response = pipeline_response.http_response
+
+        if response.status_code not in [202]:
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = self._deserialize(_models.StorageError, response)
+            raise HttpResponseError(response=response, model=error)
+
+        response_headers = {}
+        response_headers['Content-Type']=self._deserialize('str', response.headers.get('Content-Type'))
+        response_headers['x-ms-request-id']=self._deserialize('str', response.headers.get('x-ms-request-id'))
+        response_headers['x-ms-version']=self._deserialize('str', response.headers.get('x-ms-version'))
+        deserialized = response.stream_download(self._client._pipeline)
+
+        if cls:
+            return cls(pipeline_response, deserialized, response_headers)
+
+        return deserialized
+    submit_batch.metadata = {'url': '/{containerName}'}  # type: ignore
 
     def acquire_lease(
         self,

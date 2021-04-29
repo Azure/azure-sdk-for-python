@@ -1,7 +1,28 @@
 # Release History
 
-## 11.1.0b5 (Unreleased)
+## 11.2.0b3 (Unreleased)
 
+
+## 11.2.0b2 (2021-04-13)
+
+### New features
+
+- Added support for semantic search    #17638
+
+## 11.2.0b1 (2021-04-06)
+
+### New features
+
+- Added new data source type ADLS gen2  #16852
+- Added normalizer support  #17579
+
+## 11.1.0 (2021-02-10)
+
+**Breaking Changes**
+
+- `IndexDocumentsBatch` does not support `enqueue_action` any longer. `enqueue_actions` takes a single action too.
+- `max_retries` of `SearchIndexingBufferedSender` is renamed to `max_retries_per_action`
+- `SearchClient` does not support `get_search_indexing_buffered_sender`
 
 ## 11.1.0b4 (2020-11-10)
 

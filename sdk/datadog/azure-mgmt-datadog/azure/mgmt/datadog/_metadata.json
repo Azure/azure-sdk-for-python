@@ -1,6 +1,6 @@
 {
-    "chosen_version": "2020-02-01-preview",
-    "total_api_version_list": ["2020-02-01-preview"],
+    "chosen_version": "2021-03-01",
+    "total_api_version_list": ["2021-03-01"],
     "client": {
         "name": "MicrosoftDatadogClient",
         "filename": "_microsoft_datadog_client",
@@ -8,33 +8,34 @@
         "base_url": "\u0027https://management.azure.com\u0027",
         "custom_base_url": null,
         "azure_arm": true,
-        "has_lro_operations": true
+        "has_lro_operations": true,
+        "client_side_validation": true
     },
     "global_parameters": {
-        "sync_method": {
+        "sync": {
             "credential": {
-                "method_signature": "credential,  # type: \"TokenCredential\"",
+                "signature": "credential,  # type: \"TokenCredential\"",
                 "description": "Credential needed for the client to connect to Azure.",
                 "docstring_type": "~azure.core.credentials.TokenCredential",
                 "required": true
             },
             "subscription_id": {
-                "method_signature": "subscription_id,  # type: str",
-                "description": "The Microsoft Azure subscription ID.",
+                "signature": "subscription_id,  # type: str",
+                "description": "The ID of the target subscription.",
                 "docstring_type": "str",
                 "required": true
             }
         },
-        "async_method": {
+        "async": {
             "credential": {
-                "method_signature": "credential,  # type: \"AsyncTokenCredential\"",
+                "signature": "credential,  # type: \"AsyncTokenCredential\"",
                 "description": "Credential needed for the client to connect to Azure.",
                 "docstring_type": "~azure.core.credentials_async.AsyncTokenCredential",
                 "required": true
             },
             "subscription_id": {
-                "method_signature": "subscription_id,  # type: str",
-                "description": "The Microsoft Azure subscription ID.",
+                "signature": "subscription_id,  # type: str",
+                "description": "The ID of the target subscription.",
                 "docstring_type": "str",
                 "required": true
             }
@@ -51,13 +52,9 @@
         "credential_key_header_name": null
     },
     "operation_groups": {
-        "api_keys": "ApiKeysOperations",
-        "hosts": "HostsOperations",
-        "linked_resources": "LinkedResourcesOperations",
-        "monitored_resources": "MonitoredResourcesOperations",
-        "operations": "Operations",
+        "marketplace_agreements": "MarketplaceAgreementsOperations",
         "monitors": "MonitorsOperations",
-        "refresh_set_password": "RefreshSetPasswordOperations",
+        "operations": "Operations",
         "tag_rules": "TagRulesOperations",
         "single_sign_on_configurations": "SingleSignOnConfigurationsOperations"
     },

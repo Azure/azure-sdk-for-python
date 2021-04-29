@@ -5,22 +5,22 @@ interactions:
       Accept:
       - application/json
       User-Agent:
-      - azsdk-python-ai-formrecognizer/3.1.0b1 Python/3.9.0 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-ai-formrecognizer/3.1.0b4 Python/3.8.5 (Windows-10-10.0.19041-SP0)
     method: GET
-    uri: https://centraluseuap.api.cognitive.microsoft.com/formrecognizer/v2.1-preview.2/custom/models?op=summary
+    uri: https://region.api.cognitive.microsoft.com/formrecognizer/v2.1-preview.3/custom/models?op=summary
   response:
     body:
-      string: '{"summary": {"count": 0, "limit": 5000, "lastUpdatedDateTime": "2020-10-30T01:25:41Z"}}'
+      string: '{"summary": {"count": 412, "limit": 5000, "lastUpdatedDateTime": "2021-03-03T23:09:56Z"}}'
     headers:
-      apim-request-id: 6df7d902-f0ff-4f49-876d-bd6a01732886
+      apim-request-id: 40236437-c4a5-411f-9fd8-c61e7e5c323e
+      content-length: '83'
       content-type: application/json; charset=utf-8
-      date: Fri, 30 Oct 2020 01:25:40 GMT
+      date: Wed, 03 Mar 2021 23:09:56 GMT
       strict-transport-security: max-age=31536000; includeSubDomains; preload
-      transfer-encoding: chunked
       x-content-type-options: nosniff
-      x-envoy-upstream-service-time: '102'
+      x-envoy-upstream-service-time: '35'
     status:
       code: 200
       message: OK
-    url: https://centraluseuap.api.cognitive.microsoft.com//formrecognizer/v2.1-preview.2/custom/models?op=summary
+    url: https://region.api.cognitive.microsoft.com/formrecognizer/v2.1-preview.3/custom/models?op=summary
 version: 1

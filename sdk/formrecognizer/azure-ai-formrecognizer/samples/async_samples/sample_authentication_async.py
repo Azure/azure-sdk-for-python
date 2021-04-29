@@ -37,7 +37,7 @@ import asyncio
 
 class AuthenticationSampleAsync(object):
 
-    url = "https://raw.githubusercontent.com/Azure/azure-sdk-for-python/master/sdk/formrecognizer/azure-ai-formrecognizer/tests/sample_forms/receipt/contoso-receipt.png"
+    url = "https://raw.githubusercontent.com/Azure/azure-sdk-for-python/master/sdk/formrecognizer/azure-ai-formrecognizer/tests/sample_forms/forms/Form_1.jpg"
 
     async def authentication_with_api_key_credential_form_recognizer_client_async(self):
         # [START create_fr_client_with_key_async]
@@ -49,7 +49,7 @@ class AuthenticationSampleAsync(object):
         form_recognizer_client = FormRecognizerClient(endpoint, AzureKeyCredential(key))
         # [END create_fr_client_with_key_async]
         async with form_recognizer_client:
-            poller = await form_recognizer_client.begin_recognize_receipts_from_url(self.url)
+            poller = await form_recognizer_client.begin_recognize_content_from_url(self.url)
             result = await poller.result()
 
     async def authentication_with_azure_active_directory_form_recognizer_client_async(self):
@@ -66,7 +66,7 @@ class AuthenticationSampleAsync(object):
         form_recognizer_client = FormRecognizerClient(endpoint, credential)
         # [END create_fr_client_with_aad_async]
         async with form_recognizer_client:
-            poller = await form_recognizer_client.begin_recognize_receipts_from_url(self.url)
+            poller = await form_recognizer_client.begin_recognize_content_from_url(self.url)
             result = await poller.result()
 
     async def authentication_with_api_key_credential_form_training_client_async(self):

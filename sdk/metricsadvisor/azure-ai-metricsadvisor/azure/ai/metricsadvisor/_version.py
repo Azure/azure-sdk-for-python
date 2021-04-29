@@ -4,6 +4,6 @@
 # Licensed under the MIT License.
 # ------------------------------------
 
-VERSION = "1.0.0b3"
+VERSION = "1.0.0b4"
 
 SDK_MONIKER = "ai-metricsadvisor/{}".format(VERSION)  # type: str

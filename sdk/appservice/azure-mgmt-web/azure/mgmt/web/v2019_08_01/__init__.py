@@ -7,9 +7,6 @@
 # --------------------------------------------------------------------------
 
 from ._web_site_management_client import WebSiteManagementClient
-from ._version import VERSION
-
-__version__ = VERSION
 __all__ = ['WebSiteManagementClient']
 
 try:

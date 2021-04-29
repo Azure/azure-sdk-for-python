@@ -4,6 +4,7 @@ trigger:
   branches:
     include:
     - master
+    - main
     - hotfix/*
     - release/*
     - restapi*
@@ -11,13 +12,12 @@ trigger:
     include:
     - sdk/storage/
     - sdk/core/
-    - tools/
-    - eng/
 
 pr:
   branches:
     include:
     - master
+    - main
     - feature/*
     - hotfix/*
     - release/*
@@ -26,29 +26,50 @@ pr:
     include:
     - sdk/storage/
     - sdk/core/
-    - tools/
-    - eng/
 
 extends:
   template: ../../eng/pipelines/templates/stages/archetype-sdk-client.yml
   parameters:
     ServiceDirectory: storage
+    # Override the base matrix due to https://github.com/Azure/azure-sdk-for-python/issues/17837
+    MatrixConfigs:
+      - Name: storage_ci_matrix
+        Path: eng/pipelines/templates/stages/platform-matrix-cryptography-dependency.json
+        Selection: sparse
+        GenerateVMJobs: true
     Artifacts:
-    - name: azure_storage_blob
+    - name: azure-storage-blob
       safeName: azurestorageblob
-    - name: azure_storage_blob_changefeed
+    - name: azure-storage-blob-changefeed
       safeName: azurestorageblobchangefeed
-    - name: azure_storage_file_share
+    - name: azure-storage-file-share
       safeName: azurestoragefileshare
-    - name: azure_storage_file_datalake
+    - name: azure-storage-file-datalake
       safeName: azurestoragefiledatalake
-    - name: azure_storage_queue
+    - name: azure-storage-queue
       safeName: azurestoragequeue
-    - name: azure_mgmt_storage
+    - name: azure-mgmt-storage
       safeName: azuremgmtstorage
-    - name: azure_mgmt_storagecache
+    - name: azure-mgmt-storagecache
       safeName: azuremgmtstoragecache
-    - name: azure_mgmt_storagesync
+    - name: azure-mgmt-storagesync
       safeName: azuremgmtstoragesync
-    - name: azure_mgmt_storageimportexport
+    - name: azure-mgmt-storageimportexport
       safeName: azuremgmtstorageimportexport
+    CondaArtifacts:
+    - name: azure-storage
+      meta_source: meta.yaml
+      common_root: azure/storage
+      checkout:
+        - package: azure-storage-blob
+          checkout_path: sdk/storage
+          version: 12.8.0
+        - package: azure-storage-queue
+          checkout_path: sdk/storage
+          version: 12.1.5
+        - package: azure-storage-file-share
+          checkout_path: sdk/storage
+          version: 12.4.1
+        - package: azure-storage-file-datalake
+          checkout_path: sdk/storage
+          version: 12.3.0

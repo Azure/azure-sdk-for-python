@@ -1,16 +1,55 @@
 # Release History
 
-## 2.0.0b5 (Unreleased)
+## 4.1.2 (Unreleased)
+
+
+## 4.1.1 (2021-04-07)
+
+  **Bug Fixes**
+  - Improved the `repr` on `EventGridEvent` to show more meaningful text.
+
+## 4.1.0 (2021-03-23)
+
+  **New Features**
+  - Added new SystemEventNames `AcsChatThreadParticipantRemovedEventName`, `AcsChatThreadParticipantAddedEventName` and `AcsRecordingFileStatusUpdatedEventName`.
+
+## 4.0.0 (2021-03-09)
+
+  **Note:** This is the first stable release of our efforts to create a user-friendly and Pythonic client library for Azure EventGrid. Users migrating from `v1.x` are advised to view the [migration guide](https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/eventgrid/azure-eventgrid/migration_guide.md).
+
+  **New Features**
+  - `azure-eventgrid` package now supports `azure.core.messaging.CloudEvent` which honors the CNCF CloudEvent spec.
+  - `azure.eventgrid.SystemEventNames` can be used to get the event model type mapping for system events.
+  - Implements the `EventGridPublisherClient` for the publish flow for EventGrid Events, CloudEvents and Custom schema events.
+
+  **Breaking Changes**
+  - `azure.eventgrid.models` namespace along with all the models in it are now removed.:
+      - JSON documentation on the events is available here: https://docs.microsoft.com/azure/event-grid/system-topics
+      - `azure.eventgrid.SystemEventNames` provides the list of available events name for easy switching.
+  - `azure.eventgrid.event_grid_client.EventGridClient` is now removed in favor of `azure.eventgrid.EventGridPublisherClient`.
+  - `azure.eventgrid.event_grid_client.EventGridClientConfiguration` is now removed.
+
+
+## 2.0.0 (2021-03-09)
+
+  **Disclaimer:** v2.0.0 is functionally equivalent to v4.0.0. Users are advised to use v4.0.0 instead of this.
+
+  **Breaking Changes**
+  - `~azure.eventgrid.CloudEvent` is now removed in favor of `~azure.core.messaging.CloudEvent`.
+  - All the `SystemEventNames` related to Azure Communication Service starting with `ACS****` are renamed to `Acs***` to honor pascal case.
+
+  **Features**
+  - Added support for two new `SystemEvents` - `ServiceBusDeadletterMessagesAvailablePeriodicNotificationsEventData` and `ServiceBusActiveMessagesAvailablePeriodicNotificationsEventData`
+
+## 2.0.0b5 (2021-02-10)
 
   **Breaking Changes**
   - `EventGridSharedAccessSignatureCredential` is deprecated in favor of `AzureSasCredential`.
-  - `EventGridConsumer` is now renamed to `EventGridDeserializer`.
-  - `decode_cloud_event` is renamed to `deserialize_cloud_events`.
-  - `decode_eventgrid_event` is renamed to `deserialize_eventgrid_events`.
-  - `azure.eventgrid.models` namespace along with all the models in it are now removed. `azure.eventgrid.SystemEventMappings` can be used to get the event model type mapping.
+  - `azure.eventgrid.models` namespace along with all the models in it are now removed. `azure.eventgrid.SystemEventNames` can be used to get the event model type mapping.
   - `topic_hostname` is renamed to `endpoint` in the `EventGridPublisherClient`.
-  - `data` is now a required param for `CloudEvent`.
   - `azure.eventgrid.generate_shared_access_signature` method is now renamed to `generate_sas`.
+  - `EventGridConsumer`is now removed. Please see the samples to see how events can be deserialized.
+  - `CustomEvent` model is removed. Dictionaries must be used to send a custom schema.
   
   **Bug Fixes**
   - `EventGridEvent` has two additional required positional parameters namely, `data` and `data_version`.

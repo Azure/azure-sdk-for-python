@@ -45,20 +45,21 @@ eventhub_name = os.environ['EVENT_HUB_NAME']
 
 async def run():
     credential = EnvironmentCredential()
-    producer = EventHubProducerClient(fully_qualified_namespace=fully_qualified_namespace,
-                                      eventhub_name=eventhub_name,
-                                      credential=credential)
+    async with credential:
+        producer = EventHubProducerClient(fully_qualified_namespace=fully_qualified_namespace,
+                                          eventhub_name=eventhub_name,
+                                          credential=credential)
 
-    async with producer:
-        event_data_batch = await producer.create_batch()
-        while True:
-            try:
-                event_data_batch.add(EventData('Message inside EventBatchData'))
-            except ValueError:
-                # EventDataBatch object reaches max_size.
-                # New EventDataBatch object can be created here to send more data.
-                break
-        await producer.send_batch(event_data_batch)
+        async with producer:
+            event_data_batch = await producer.create_batch()
+            while True:
+                try:
+                    event_data_batch.add(EventData('Message inside EventBatchData'))
+                except ValueError:
+                    # EventDataBatch object reaches max_size.
+                    # New EventDataBatch object can be created here to send more data.
+                    break
+            await producer.send_batch(event_data_batch)
 
 loop = asyncio.get_event_loop()
 loop.run_until_complete(run())

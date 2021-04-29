@@ -12,7 +12,7 @@ from typing import (  # pylint: disable=unused-import
 from azure.core.pipeline.policies import ContentDecodePolicy
 from azure.core.exceptions import HttpResponseError, DecodeError, ResourceModifiedError, ClientAuthenticationError, \
     ResourceNotFoundError, ResourceExistsError
-from ._models import FileProperties, DirectoryProperties, LeaseProperties
+from ._models import FileProperties, DirectoryProperties, LeaseProperties, PathProperties
 from ._shared.models import StorageErrorCode
 
 if TYPE_CHECKING:
@@ -42,6 +42,10 @@ def deserialize_file_properties(response, obj, headers):
         else:
             file_properties.content_settings.content_md5 = None
     return file_properties
+
+
+def deserialize_path_properties(path_list):
+    return [PathProperties._from_generated(path) for path in path_list] # pylint: disable=protected-access
 
 
 def from_blob_properties(blob_properties):

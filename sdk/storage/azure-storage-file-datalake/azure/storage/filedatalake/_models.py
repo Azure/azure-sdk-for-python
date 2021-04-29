@@ -39,6 +39,10 @@ class FileSystemProperties(object):
         Represents whether the file system has a legal hold.
     :ivar dict metadata: A dict with name-value pairs to associate with the
         file system as metadata.
+    :ivar bool deleted:
+        Whether this file system was deleted.
+    :ivar str deleted_version:
+        The version of a deleted file system.
 
     Returned ``FileSystemProperties`` instances expose these values through a
     dictionary interface, for example: ``file_system_props["last_modified"]``.
@@ -54,12 +58,16 @@ class FileSystemProperties(object):
         self.has_immutability_policy = None
         self.has_legal_hold = None
         self.metadata = None
+        self.deleted = None
+        self.deleted_version = None
 
     @classmethod
     def _from_generated(cls, generated):
         props = cls()
         props.name = generated.name
         props.last_modified = generated.properties.last_modified
+        props.deleted = generated.deleted
+        props.deleted_version = generated.version
         props.etag = generated.properties.etag
         props.lease = LeaseProperties._from_generated(generated)  # pylint: disable=protected-access
         props.public_access = PublicAccess._from_generated(  # pylint: disable=protected-access
@@ -251,7 +259,7 @@ class ContentSettings(BlobContentSettings):
     :ivar str cache_control:
         If the cache_control has previously been set for
         the file, that value is stored.
-    :ivar str content_md5:
+    :ivar bytearray content_md5:
         If the content_md5 has been set for the file, this response
         header is stored so that the client can check for message content
         integrity.
@@ -272,7 +280,7 @@ class ContentSettings(BlobContentSettings):
     :keyword str cache_control:
         If the cache_control has previously been set for
         the file, that value is stored.
-    :keyword str content_md5:
+    :keyword bytearray content_md5:
         If the content_md5 has been set for the file, this response
         header is stored so that the client can check for message content
         integrity.

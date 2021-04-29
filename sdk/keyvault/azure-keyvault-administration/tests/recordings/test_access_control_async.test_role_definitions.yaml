@@ -23,8 +23,8 @@ interactions:
         resource="https://managedhsm.azure.net"
       x-content-type-options: nosniff
       x-frame-options: SAMEORIGIN
-      x-ms-build-version: 1.0.20210112-1-4fbf61ac-develop
-      x-ms-server-latency: '1'
+      x-ms-build-version: 1.0.20210128-1-4c3070d1-develop
+      x-ms-server-latency: '0'
     status:
       code: 401
       message: Unauthorized
@@ -56,22 +56,22 @@ interactions:
       strict-transport-security: max-age=31536000; includeSubDomains
       x-content-type-options: nosniff
       x-frame-options: SAMEORIGIN
-      x-ms-build-version: 1.0.20210112-1-4fbf61ac-develop
-      x-ms-keyvault-network-info: addr=162.211.216.102
-      x-ms-keyvault-region: eastus2
+      x-ms-build-version: 1.0.20210128-1-4c3070d1-develop
+      x-ms-keyvault-network-info: addr=174.127.232.53
+      x-ms-keyvault-region: northeurope
       x-ms-server-latency: '1'
     status:
       code: 200
       message: OK
     url: https://mcpatinotesthsm.managedhsm.azure.net/providers/Microsoft.Authorization/roleDefinitions?api-version=7.2-preview
 - request:
-    body: '{"properties": {"roleName": "definition-name", "permissions": [{"dataActions":
-      ["Microsoft.KeyVault/managedHsm/keys/read/action"]}]}}'
+    body: '{"properties": {"roleName": "role-named15f1369", "description": "test",
+      "permissions": [{"dataActions": ["Microsoft.KeyVault/managedHsm/keys/read/action"]}]}}'
     headers:
       Accept:
       - application/json
       Content-Length:
-      - '154'
+      - '158'
       Content-Type:
       - application/json
       User-Agent:
@@ -80,30 +80,29 @@ interactions:
     uri: https://managedhsm/providers/Microsoft.Authorization/roleDefinitions/definition-name?api-version=7.2-preview
   response:
     body:
-      string: '{"id":"Microsoft.KeyVault/providers/Microsoft.Authorization/roleDefinitions/definition-name","name":"definition-name","properties":{"assignableScopes":["/"],"description":"","permissions":[{"actions":[],"dataActions":["Microsoft.KeyVault/managedHsm/keys/read/action"],"notActions":[],"notDataActions":[]}],"roleName":"definition-name","type":"CustomRole"},"type":"Microsoft.Authorization/roleDefinitions"}'
+      string: '{"id":"Microsoft.KeyVault/providers/Microsoft.Authorization/roleDefinitions/definition-name","name":"definition-name","properties":{"assignableScopes":["/"],"description":"test","permissions":[{"actions":[],"dataActions":["Microsoft.KeyVault/managedHsm/keys/read/action"],"notActions":[],"notDataActions":[]}],"roleName":"role-named15f1369","type":"CustomRole"},"type":"Microsoft.Authorization/roleDefinitions"}'
     headers:
       cache-control: no-cache
-      content-length: '468'
+      content-length: '453'
       content-security-policy: default-src 'self'
       content-type: application/json; charset=utf-8
       strict-transport-security: max-age=31536000; includeSubDomains
       x-content-type-options: nosniff
       x-frame-options: SAMEORIGIN
-      x-ms-keyvault-network-info: addr=162.211.216.102
-      x-ms-keyvault-region: eastus2
-      x-ms-server-latency: '36'
+      x-ms-keyvault-network-info: addr=174.127.232.53
+      x-ms-keyvault-region: northeurope
+      x-ms-server-latency: '65'
     status:
       code: 201
       message: Created
-    url: https://mcpatinotesthsm.managedhsm.azure.net/providers/Microsoft.Authorization/roleDefinitions/bc61b7be-db21-4213-bc8f-1f0a3715b316?api-version=7.2-preview
+    url: https://mcpatinotesthsm.managedhsm.azure.net/providers/Microsoft.Authorization/roleDefinitions/09cac7da-ce29-4fb2-958e-7f60c658ed6d?api-version=7.2-preview
 - request:
-    body: '{"properties": {"roleName": "definition-name", "permissions": [{"notDataActions":
-      ["Microsoft.KeyVault/managedHsm/keys/read/action"], "dataActions": []}]}}'
+    body: '{"properties": {"permissions": [{"dataActions": [], "notDataActions": ["Microsoft.KeyVault/managedHsm/keys/read/action"]}]}}'
     headers:
       Accept:
       - application/json
       Content-Length:
-      - '176'
+      - '124'
       Content-Type:
       - application/json
       User-Agent:
@@ -112,22 +111,22 @@ interactions:
     uri: https://managedhsm/providers/Microsoft.Authorization/roleDefinitions/definition-name?api-version=7.2-preview
   response:
     body:
-      string: '{"id":"Microsoft.KeyVault/providers/Microsoft.Authorization/roleDefinitions/definition-name","name":"definition-name","properties":{"assignableScopes":["/"],"description":"","permissions":[{"actions":[],"dataActions":[],"notActions":[],"notDataActions":["Microsoft.KeyVault/managedHsm/keys/read/action"]}],"roleName":"definition-name","type":"CustomRole"},"type":"Microsoft.Authorization/roleDefinitions"}'
+      string: '{"id":"Microsoft.KeyVault/providers/Microsoft.Authorization/roleDefinitions/definition-name","name":"definition-name","properties":{"assignableScopes":["/"],"description":"","permissions":[{"actions":[],"dataActions":[],"notActions":[],"notDataActions":["Microsoft.KeyVault/managedHsm/keys/read/action"]}],"roleName":"","type":"CustomRole"},"type":"Microsoft.Authorization/roleDefinitions"}'
     headers:
       cache-control: no-cache
-      content-length: '468'
+      content-length: '432'
       content-security-policy: default-src 'self'
       content-type: application/json; charset=utf-8
       strict-transport-security: max-age=31536000; includeSubDomains
       x-content-type-options: nosniff
       x-frame-options: SAMEORIGIN
-      x-ms-keyvault-network-info: addr=162.211.216.102
-      x-ms-keyvault-region: eastus2
-      x-ms-server-latency: '39'
+      x-ms-keyvault-network-info: addr=174.127.232.53
+      x-ms-keyvault-region: northeurope
+      x-ms-server-latency: '48'
     status:
       code: 201
       message: Created
-    url: https://mcpatinotesthsm.managedhsm.azure.net/providers/Microsoft.Authorization/roleDefinitions/bc61b7be-db21-4213-bc8f-1f0a3715b316?api-version=7.2-preview
+    url: https://mcpatinotesthsm.managedhsm.azure.net/providers/Microsoft.Authorization/roleDefinitions/09cac7da-ce29-4fb2-958e-7f60c658ed6d?api-version=7.2-preview
 - request:
     body: null
     headers:
@@ -146,18 +145,18 @@ interactions:
         HSM Policy Administrator","type":"AKVBuiltInRole"},"type":"Microsoft.Authorization/roleDefinitions"},{"id":"Microsoft.KeyVault/providers/Microsoft.Authorization/roleDefinitions/21dbd100-6940-42c2-9190-5d6cb909625b","name":"21dbd100-6940-42c2-9190-5d6cb909625b","properties":{"assignableScopes":["/"],"description":"","permissions":[{"actions":[],"dataActions":["Microsoft.KeyVault/managedHsm/keys/read/action","Microsoft.KeyVault/managedHsm/keys/write/action","Microsoft.KeyVault/managedHsm/keys/backup/action","Microsoft.KeyVault/managedHsm/keys/create","Microsoft.KeyVault/managedHsm/keys/encrypt/action","Microsoft.KeyVault/managedHsm/keys/decrypt/action","Microsoft.KeyVault/managedHsm/keys/wrap/action","Microsoft.KeyVault/managedHsm/keys/unwrap/action","Microsoft.KeyVault/managedHsm/keys/sign/action","Microsoft.KeyVault/managedHsm/keys/verify/action"],"notActions":[],"notDataActions":[]}],"roleName":"Managed
         HSM Crypto User","type":"AKVBuiltInRole"},"type":"Microsoft.Authorization/roleDefinitions"},{"id":"Microsoft.KeyVault/providers/Microsoft.Authorization/roleDefinitions/515eb02d-2335-4d2d-92f2-b1cbdf9c3778","name":"515eb02d-2335-4d2d-92f2-b1cbdf9c3778","properties":{"assignableScopes":["/"],"description":"","permissions":[{"actions":[],"dataActions":["Microsoft.KeyVault/managedHsm/keys/read/action","Microsoft.KeyVault/managedHsm/keys/write/action","Microsoft.KeyVault/managedHsm/keys/deletedKeys/read/action","Microsoft.KeyVault/managedHsm/keys/deletedKeys/recover/action","Microsoft.KeyVault/managedHsm/keys/backup/action","Microsoft.KeyVault/managedHsm/keys/restore/action","Microsoft.KeyVault/managedHsm/keys/encrypt/action","Microsoft.KeyVault/managedHsm/keys/decrypt/action","Microsoft.KeyVault/managedHsm/keys/sign/action","Microsoft.KeyVault/managedHsm/keys/verify/action","Microsoft.KeyVault/managedHsm/keys/wrap/action","Microsoft.KeyVault/managedHsm/keys/unwrap/action","Microsoft.KeyVault/managedHsm/keys/create","Microsoft.KeyVault/managedHsm/keys/delete","Microsoft.KeyVault/managedHsm/keys/export/action","Microsoft.KeyVault/managedHsm/keys/import/action","Microsoft.KeyVault/managedHsm/keys/deletedKeys/delete"],"notActions":[],"notDataActions":[]}],"roleName":"Managed
         HSM Crypto Officer","type":"AKVBuiltInRole"},"type":"Microsoft.Authorization/roleDefinitions"},{"id":"Microsoft.KeyVault/providers/Microsoft.Authorization/roleDefinitions/a290e904-7015-4bba-90c8-60543313cdb4","name":"a290e904-7015-4bba-90c8-60543313cdb4","properties":{"assignableScopes":["/"],"description":"","permissions":[{"actions":[],"dataActions":["Microsoft.KeyVault/managedHsm/keys/read/action","Microsoft.KeyVault/managedHsm/keys/write/action","Microsoft.KeyVault/managedHsm/keys/deletedKeys/read/action","Microsoft.KeyVault/managedHsm/keys/deletedKeys/recover/action","Microsoft.KeyVault/managedHsm/keys/backup/action","Microsoft.KeyVault/managedHsm/keys/restore/action","Microsoft.KeyVault/managedHsm/roleAssignments/delete/action","Microsoft.KeyVault/managedHsm/roleAssignments/read/action","Microsoft.KeyVault/managedHsm/roleAssignments/write/action","Microsoft.KeyVault/managedHsm/roleDefinitions/read/action","Microsoft.KeyVault/managedHsm/roleDefinitions/write/action","Microsoft.KeyVault/managedHsm/roleDefinitions/delete/action","Microsoft.KeyVault/managedHsm/keys/encrypt/action","Microsoft.KeyVault/managedHsm/keys/decrypt/action","Microsoft.KeyVault/managedHsm/keys/wrap/action","Microsoft.KeyVault/managedHsm/keys/unwrap/action","Microsoft.KeyVault/managedHsm/keys/sign/action","Microsoft.KeyVault/managedHsm/keys/verify/action","Microsoft.KeyVault/managedHsm/keys/create","Microsoft.KeyVault/managedHsm/keys/delete","Microsoft.KeyVault/managedHsm/keys/export/action","Microsoft.KeyVault/managedHsm/keys/import/action","Microsoft.KeyVault/managedHsm/keys/deletedKeys/delete","Microsoft.KeyVault/managedHsm/securitydomain/download/action","Microsoft.KeyVault/managedHsm/securitydomain/upload/action","Microsoft.KeyVault/managedHsm/securitydomain/upload/read","Microsoft.KeyVault/managedHsm/securitydomain/transferkey/read","Microsoft.KeyVault/managedHsm/backup/start/action","Microsoft.KeyVault/managedHsm/restore/start/action","Microsoft.KeyVault/managedHsm/backup/status/action","Microsoft.KeyVault/managedHsm/restore/status/action"],"notActions":[],"notDataActions":[]}],"roleName":"Managed
-        HSM Administrator","type":"AKVBuiltInRole"},"type":"Microsoft.Authorization/roleDefinitions"},{"id":"Microsoft.KeyVault/providers/Microsoft.Authorization/roleDefinitions/definition-name","name":"definition-name","properties":{"assignableScopes":["/"],"description":"","permissions":[{"actions":[],"dataActions":[],"notActions":[],"notDataActions":["Microsoft.KeyVault/managedHsm/keys/read/action"]}],"roleName":"definition-name","type":"CustomRole"},"type":"Microsoft.Authorization/roleDefinitions"}]}'
+        HSM Administrator","type":"AKVBuiltInRole"},"type":"Microsoft.Authorization/roleDefinitions"},{"id":"Microsoft.KeyVault/providers/Microsoft.Authorization/roleDefinitions/definition-name","name":"definition-name","properties":{"assignableScopes":["/"],"description":"","permissions":[{"actions":[],"dataActions":[],"notActions":[],"notDataActions":["Microsoft.KeyVault/managedHsm/keys/read/action"]}],"roleName":"","type":"CustomRole"},"type":"Microsoft.Authorization/roleDefinitions"}]}'
     headers:
       cache-control: no-cache
-      content-length: '7241'
+      content-length: '7205'
       content-security-policy: default-src 'self'
       content-type: application/json; charset=utf-8
       strict-transport-security: max-age=31536000; includeSubDomains
       x-content-type-options: nosniff
       x-frame-options: SAMEORIGIN
-      x-ms-build-version: 1.0.20210112-1-4fbf61ac-develop
-      x-ms-keyvault-network-info: addr=162.211.216.102
-      x-ms-keyvault-region: eastus2
+      x-ms-build-version: 1.0.20210128-1-4c3070d1-develop
+      x-ms-keyvault-network-info: addr=174.127.232.53
+      x-ms-keyvault-region: northeurope
       x-ms-server-latency: '0'
     status:
       code: 200
@@ -174,23 +173,23 @@ interactions:
     uri: https://managedhsm/providers/Microsoft.Authorization/roleDefinitions/definition-name?api-version=7.2-preview
   response:
     body:
-      string: '{"id":"Microsoft.KeyVault/providers/Microsoft.Authorization/roleDefinitions/definition-name","name":"definition-name","properties":{"assignableScopes":["/"],"description":"","permissions":[{"actions":[],"dataActions":[],"notActions":[],"notDataActions":["Microsoft.KeyVault/managedHsm/keys/read/action"]}],"roleName":"definition-name","type":"CustomRole"},"type":"Microsoft.Authorization/roleDefinitions"}'
+      string: '{"id":"Microsoft.KeyVault/providers/Microsoft.Authorization/roleDefinitions/definition-name","name":"definition-name","properties":{"assignableScopes":["/"],"description":"","permissions":[{"actions":[],"dataActions":[],"notActions":[],"notDataActions":["Microsoft.KeyVault/managedHsm/keys/read/action"]}],"roleName":"","type":"CustomRole"},"type":"Microsoft.Authorization/roleDefinitions"}'
     headers:
       cache-control: no-cache
-      content-length: '468'
+      content-length: '432'
       content-security-policy: default-src 'self'
       content-type: application/json; charset=utf-8
       strict-transport-security: max-age=31536000; includeSubDomains
       x-content-type-options: nosniff
       x-frame-options: SAMEORIGIN
-      x-ms-build-version: 1.0.20210112-1-4fbf61ac-develop
-      x-ms-keyvault-network-info: addr=162.211.216.102
-      x-ms-keyvault-region: eastus2
+      x-ms-build-version: 1.0.20210128-1-4c3070d1-develop
+      x-ms-keyvault-network-info: addr=174.127.232.53
+      x-ms-keyvault-region: northeurope
       x-ms-server-latency: '0'
     status:
       code: 200
       message: OK
-    url: https://mcpatinotesthsm.managedhsm.azure.net/providers/Microsoft.Authorization/roleDefinitions/bc61b7be-db21-4213-bc8f-1f0a3715b316?api-version=7.2-preview
+    url: https://mcpatinotesthsm.managedhsm.azure.net/providers/Microsoft.Authorization/roleDefinitions/09cac7da-ce29-4fb2-958e-7f60c658ed6d?api-version=7.2-preview
 - request:
     body: null
     headers:
@@ -202,22 +201,22 @@ interactions:
     uri: https://managedhsm/providers/Microsoft.Authorization/roleDefinitions/definition-name?api-version=7.2-preview
   response:
     body:
-      string: '{"id":"Microsoft.KeyVault/providers/Microsoft.Authorization/roleDefinitions/definition-name","name":"definition-name","properties":{"assignableScopes":["/"],"description":"","permissions":[{"actions":[],"dataActions":[],"notActions":[],"notDataActions":["Microsoft.KeyVault/managedHsm/keys/read/action"]}],"roleName":"definition-name","type":"CustomRole"},"type":"Microsoft.Authorization/roleDefinitions"}'
+      string: '{"id":"Microsoft.KeyVault/providers/Microsoft.Authorization/roleDefinitions/definition-name","name":"definition-name","properties":{"assignableScopes":["/"],"description":"","permissions":[{"actions":[],"dataActions":[],"notActions":[],"notDataActions":["Microsoft.KeyVault/managedHsm/keys/read/action"]}],"roleName":"","type":"CustomRole"},"type":"Microsoft.Authorization/roleDefinitions"}'
     headers:
       cache-control: no-cache
-      content-length: '468'
+      content-length: '432'
       content-security-policy: default-src 'self'
       content-type: application/json; charset=utf-8
       strict-transport-security: max-age=31536000; includeSubDomains
       x-content-type-options: nosniff
       x-frame-options: SAMEORIGIN
-      x-ms-keyvault-network-info: addr=162.211.216.102
-      x-ms-keyvault-region: eastus2
-      x-ms-server-latency: '42'
+      x-ms-keyvault-network-info: addr=174.127.232.53
+      x-ms-keyvault-region: northeurope
+      x-ms-server-latency: '48'
     status:
       code: 200
       message: OK
-    url: https://mcpatinotesthsm.managedhsm.azure.net/providers/Microsoft.Authorization/roleDefinitions/bc61b7be-db21-4213-bc8f-1f0a3715b316?api-version=7.2-preview
+    url: https://mcpatinotesthsm.managedhsm.azure.net/providers/Microsoft.Authorization/roleDefinitions/09cac7da-ce29-4fb2-958e-7f60c658ed6d?api-version=7.2-preview
 - request:
     body: null
     headers:
@@ -245,9 +244,9 @@ interactions:
       strict-transport-security: max-age=31536000; includeSubDomains
       x-content-type-options: nosniff
       x-frame-options: SAMEORIGIN
-      x-ms-build-version: 1.0.20210112-1-4fbf61ac-develop
-      x-ms-keyvault-network-info: addr=162.211.216.102
-      x-ms-keyvault-region: eastus2
+      x-ms-build-version: 1.0.20210128-1-4c3070d1-develop
+      x-ms-keyvault-network-info: addr=174.127.232.53
+      x-ms-keyvault-region: northeurope
       x-ms-server-latency: '0'
     status:
       code: 200

@@ -18,10 +18,11 @@ Example to show managing queue entities under a ServiceBus Namespace asynchronou
 
 import os
 import asyncio
+import uuid
 from azure.servicebus.aio.management import ServiceBusAdministrationClient
 
 CONNECTION_STR = os.environ['SERVICE_BUS_CONNECTION_STR']
-QUEUE_NAME = "sb_mgmt_demo_queue"
+QUEUE_NAME = "sb_mgmt_queue" + str(uuid.uuid4())
 
 
 async def create_queue(servicebus_mgmt_client):

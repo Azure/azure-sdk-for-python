@@ -78,7 +78,7 @@ class RecognizePiiEntitiesSample(object):
         ssns = []
         for doc in docs:
             for entity in doc.entities:
-                if entity.category == 'U.S. Social Security Number (SSN)' and entity.confidence_score >= 0.6:
+                if entity.category == 'USSocialSecurityNumber' and entity.confidence_score >= 0.6:
                     ssns.append(entity.text)
 
         print("We have extracted the following SSNs as well: '{}'".format(

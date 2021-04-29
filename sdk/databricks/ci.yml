@@ -3,6 +3,7 @@ trigger:
   branches:
     include:
     - master
+    - main
     - hotfix/*
     - release/*
     - restapi*
@@ -14,6 +15,7 @@ pr:
   branches:
     include:
     - master
+    - main
     - feature/*
     - hotfix/*
     - release/*
@@ -27,5 +29,5 @@ extends:
   parameters:
     ServiceDirectory: databricks
     Artifacts:
-    - name: azure_mgmt_databricks
+    - name: azure-mgmt-databricks
       safeName: azuremgmtdatabricks

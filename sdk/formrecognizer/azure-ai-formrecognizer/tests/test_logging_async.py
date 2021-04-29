@@ -9,7 +9,7 @@ import logging
 import pytest
 from azure.ai.formrecognizer.aio import FormRecognizerClient, FormTrainingClient
 from azure.core.credentials import AzureKeyCredential
-from testcase import GlobalFormRecognizerAccountPreparer
+from preparers import FormRecognizerPreparer
 from asynctestcase import AsyncFormRecognizerTest
 
 
@@ -24,10 +24,10 @@ class MockHandler(logging.Handler):
 
 class TestLogging(AsyncFormRecognizerTest):
 
-    @GlobalFormRecognizerAccountPreparer()
+    @FormRecognizerPreparer()
     @pytest.mark.live_test_only
-    async def test_logging_info_fr_client(self, resource_group, location, form_recognizer_account, form_recognizer_account_key):
-        client = FormRecognizerClient(form_recognizer_account, AzureKeyCredential(form_recognizer_account_key))
+    async def test_logging_info_fr_client(self, formrecognizer_test_endpoint, formrecognizer_test_api_key):
+        client = FormRecognizerClient(formrecognizer_test_endpoint, AzureKeyCredential(formrecognizer_test_api_key))
         mock_handler = MockHandler()
 
         logger = logging.getLogger("azure")
@@ -45,10 +45,10 @@ class TestLogging(AsyncFormRecognizerTest):
                 else:
                     assert message.message.find("REDACTED") == -1
 
-    @GlobalFormRecognizerAccountPreparer()
+    @FormRecognizerPreparer()
     @pytest.mark.live_test_only
-    async def test_logging_info_ft_client(self, resource_group, location, form_recognizer_account, form_recognizer_account_key):
-        client = FormTrainingClient(form_recognizer_account, AzureKeyCredential(form_recognizer_account_key))
+    async def test_logging_info_ft_client(self, formrecognizer_test_endpoint, formrecognizer_test_api_key):
+        client = FormTrainingClient(formrecognizer_test_endpoint, AzureKeyCredential(formrecognizer_test_api_key))
         mock_handler = MockHandler()
 
         logger = logging.getLogger("azure")

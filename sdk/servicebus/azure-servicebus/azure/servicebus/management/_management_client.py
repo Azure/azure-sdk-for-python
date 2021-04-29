@@ -6,7 +6,7 @@
 # pylint:disable=specify-parameter-names-in-call
 # pylint:disable=too-many-lines
 import functools
-from typing import TYPE_CHECKING, Dict, Any, Union, cast
+from typing import TYPE_CHECKING, Dict, Any, Union, cast, Mapping
 from xml.etree.ElementTree import ElementTree
 
 from azure.core.paging import ItemPaged
@@ -46,6 +46,8 @@ from ._utils import (
     deserialize_rule_key_values,
     serialize_rule_key_values,
     extract_rule_data_template,
+    create_properties_from_dict_if_needed,
+    _normalize_entity_path_to_full_path_if_needed,
     _validate_entity_name_type,
     _validate_topic_and_subscription_types,
     _validate_topic_subscription_and_rule_types,
@@ -286,17 +288,20 @@ class ServiceBusAdministrationClient:  # pylint:disable=too-many-public-methods
         :type authorization_rules: list[~azure.servicebus.management.AuthorizationRule]
         :keyword auto_delete_on_idle: ISO 8601 timeSpan idle interval after which the queue is
          automatically deleted. The minimum duration is 5 minutes.
-        :type auto_delete_on_idle: ~datetime.timedelta
+         Input value of either type ~datetime.timedelta or string in ISO 8601 duration format like "PT300S" is accepted.
+        :type auto_delete_on_idle: Union[~datetime.timedelta, str]
         :keyword dead_lettering_on_message_expiration: A value that indicates whether this queue has dead
          letter support when a message expires.
         :type dead_lettering_on_message_expiration: bool
         :keyword default_message_time_to_live: ISO 8601 default message timespan to live value. This is
          the duration after which the message expires, starting from when the message is sent to Service
          Bus. This is the default value used when TimeToLive is not set on a message itself.
-        :type default_message_time_to_live: ~datetime.timedelta
+         Input value of either type ~datetime.timedelta or string in ISO 8601 duration format like "PT300S" is accepted.
+        :type default_message_time_to_live: Union[~datetime.timedelta, str]
         :keyword duplicate_detection_history_time_window: ISO 8601 timeSpan structure that defines the
          duration of the duplicate detection history. The default value is 10 minutes.
-        :type duplicate_detection_history_time_window: ~datetime.timedelta
+         Input value of either type ~datetime.timedelta or string in ISO 8601 duration format like "PT300S" is accepted.
+        :type duplicate_detection_history_time_window: Union[~datetime.timedelta, str]
         :keyword enable_batched_operations: Value that indicates whether server-side batched operations
          are enabled.
         :type enable_batched_operations: bool
@@ -309,7 +314,8 @@ class ServiceBusAdministrationClient:  # pylint:disable=too-many-public-methods
         :keyword lock_duration: ISO 8601 timespan duration of a peek-lock; that is, the amount of time
          that the message is locked for other receivers. The maximum value for LockDuration is 5
          minutes; the default value is 1 minute.
-        :type lock_duration: ~datetime.timedelta
+         Input value of either type ~datetime.timedelta or string in ISO 8601 duration format like "PT300S" is accepted.
+        :type lock_duration: Union[~datetime.timedelta, str]
         :keyword max_delivery_count: The maximum delivery count. A message is automatically deadlettered
          after this number of deliveries. Default value is 10.
         :type max_delivery_count: int
@@ -334,6 +340,15 @@ class ServiceBusAdministrationClient:  # pylint:disable=too-many-public-methods
 
         :rtype: ~azure.servicebus.management.QueueProperties
         """
+        forward_to = _normalize_entity_path_to_full_path_if_needed(
+            kwargs.pop("forward_to", None), self.fully_qualified_namespace
+        )
+        forward_dead_lettered_messages_to = (
+            _normalize_entity_path_to_full_path_if_needed(
+                kwargs.pop("forward_dead_lettered_messages_to", None),
+                self.fully_qualified_namespace,
+            )
+        )
         queue = QueueProperties(
             queue_name,
             authorization_rules=kwargs.pop("authorization_rules", None),
@@ -359,10 +374,8 @@ class ServiceBusAdministrationClient:  # pylint:disable=too-many-public-methods
             ),
             requires_session=kwargs.pop("requires_session", None),
             status=kwargs.pop("status", None),
-            forward_to=kwargs.pop("forward_to", None),
-            forward_dead_lettered_messages_to=kwargs.pop(
-                "forward_dead_lettered_messages_to", None
-            ),
+            forward_to=forward_to,
+            forward_dead_lettered_messages_to=forward_dead_lettered_messages_to,
             user_metadata=kwargs.pop("user_metadata", None),
         )
         to_create = queue._to_internal_entity()
@@ -391,7 +404,7 @@ class ServiceBusAdministrationClient:  # pylint:disable=too-many-public-methods
         return result
 
     def update_queue(self, queue, **kwargs):
-        # type: (QueueProperties, Any) -> None
+        # type: (Union[QueueProperties, Mapping], Any) -> None
         """Update a queue.
 
         Before calling this method, you should use `get_queue`, `create_queue` or `list_queues` to get a
@@ -403,7 +416,16 @@ class ServiceBusAdministrationClient:  # pylint:disable=too-many-public-methods
         :type queue: ~azure.servicebus.management.QueueProperties
         :rtype: None
         """
-
+        queue = create_properties_from_dict_if_needed(queue, QueueProperties)
+        queue.forward_to = _normalize_entity_path_to_full_path_if_needed(
+            queue.forward_to, self.fully_qualified_namespace
+        )
+        queue.forward_dead_lettered_messages_to = (
+            _normalize_entity_path_to_full_path_if_needed(
+                queue.forward_dead_lettered_messages_to,
+                self.fully_qualified_namespace,
+            )
+        )
         to_update = queue._to_internal_entity()
 
         to_update.default_message_time_to_live = avoid_timedelta_overflow(
@@ -535,7 +557,8 @@ class ServiceBusAdministrationClient:  # pylint:disable=too-many-public-methods
         :keyword default_message_time_to_live: ISO 8601 default message timespan to live value. This is
          the duration after which the message expires, starting from when the message is sent to Service
          Bus. This is the default value used when TimeToLive is not set on a message itself.
-        :type default_message_time_to_live: ~datetime.timedelta
+         Input value of either type ~datetime.timedelta or string in ISO 8601 duration format like "PT300S" is accepted.
+        :type default_message_time_to_live: Union[~datetime.timedelta, str]
         :keyword max_size_in_megabytes: The maximum size of the topic in megabytes, which is the size of
          memory allocated for the topic.
         :type max_size_in_megabytes: long
@@ -544,7 +567,8 @@ class ServiceBusAdministrationClient:  # pylint:disable=too-many-public-methods
         :type requires_duplicate_detection: bool
         :keyword duplicate_detection_history_time_window: ISO 8601 timeSpan structure that defines the
          duration of the duplicate detection history. The default value is 10 minutes.
-        :type duplicate_detection_history_time_window: ~datetime.timedelta
+         Input value of either type ~datetime.timedelta or string in ISO 8601 duration format like "PT300S" is accepted.
+        :type duplicate_detection_history_time_window: Union[~datetime.timedelta, str]
         :keyword enable_batched_operations: Value that indicates whether server-side batched operations
          are enabled.
         :type enable_batched_operations: bool
@@ -559,7 +583,8 @@ class ServiceBusAdministrationClient:  # pylint:disable=too-many-public-methods
         :type support_ordering: bool
         :keyword auto_delete_on_idle: ISO 8601 timeSpan idle interval after which the topic is
          automatically deleted. The minimum duration is 5 minutes.
-        :type auto_delete_on_idle: ~datetime.timedelta
+         Input value of either type ~datetime.timedelta or string in ISO 8601 duration format like "PT300S" is accepted.
+        :type auto_delete_on_idle: Union[~datetime.timedelta, str]
         :keyword enable_partitioning: A value that indicates whether the topic is to be partitioned
          across multiple message brokers.
         :type enable_partitioning: bool
@@ -619,7 +644,7 @@ class ServiceBusAdministrationClient:  # pylint:disable=too-many-public-methods
         return result
 
     def update_topic(self, topic, **kwargs):
-        # type: (TopicProperties, Any) -> None
+        # type: (Union[TopicProperties, Mapping[str, Any]], Any) -> None
         """Update a topic.
 
         Before calling this method, you should use `get_topic`, `create_topic` or `list_topics` to get a
@@ -632,6 +657,7 @@ class ServiceBusAdministrationClient:  # pylint:disable=too-many-public-methods
         :rtype: None
         """
 
+        topic = create_properties_from_dict_if_needed(topic, TopicProperties)
         to_update = topic._to_internal_entity()
 
         to_update.default_message_time_to_live = (
@@ -643,10 +669,10 @@ class ServiceBusAdministrationClient:  # pylint:disable=too-many-public-methods
             or topic.duplicate_detection_history_time_window
         )
 
-        to_update.default_message_time_to_live = avoid_timedelta_overflow(
+        to_update.default_message_time_to_live = avoid_timedelta_overflow(  # type: ignore
             to_update.default_message_time_to_live
         )
-        to_update.auto_delete_on_idle = avoid_timedelta_overflow(
+        to_update.auto_delete_on_idle = avoid_timedelta_overflow(  # type: ignore
             to_update.auto_delete_on_idle
         )
 
@@ -785,14 +811,16 @@ class ServiceBusAdministrationClient:  # pylint:disable=too-many-public-methods
         :keyword lock_duration: ISO 8601 timespan duration of a peek-lock; that is, the amount of time
          that the message is locked for other receivers. The maximum value for LockDuration is 5
          minutes; the default value is 1 minute.
-        :type lock_duration: ~datetime.timedelta
+         Input value of either type ~datetime.timedelta or string in ISO 8601 duration format like "PT300S" is accepted.
+        :type lock_duration: Union[~datetime.timedelta, str]
         :keyword requires_session: A value that indicates whether the queue supports the concept of
          sessions.
         :type requires_session: bool
         :keyword default_message_time_to_live: ISO 8601 default message timespan to live value. This is
          the duration after which the message expires, starting from when the message is sent to Service
          Bus. This is the default value used when TimeToLive is not set on a message itself.
-        :type default_message_time_to_live: ~datetime.timedelta
+         Input value of either type ~datetime.timedelta or string in ISO 8601 duration format like "PT300S" is accepted.
+        :type default_message_time_to_live: Union[~datetime.timedelta, str]
         :keyword dead_lettering_on_message_expiration: A value that indicates whether this subscription
          has dead letter support when a message expires.
         :type dead_lettering_on_message_expiration: bool
@@ -816,10 +844,20 @@ class ServiceBusAdministrationClient:  # pylint:disable=too-many-public-methods
         :type forward_dead_lettered_messages_to: str
         :keyword auto_delete_on_idle: ISO 8601 timeSpan idle interval after which the subscription is
          automatically deleted. The minimum duration is 5 minutes.
-        :type auto_delete_on_idle: ~datetime.timedelta
+         Input value of either type ~datetime.timedelta or string in ISO 8601 duration format like "PT300S" is accepted.
+        :type auto_delete_on_idle: Union[~datetime.timedelta, str]
         :rtype:  ~azure.servicebus.management.SubscriptionProperties
         """
         _validate_entity_name_type(topic_name, display_name="topic_name")
+        forward_to = _normalize_entity_path_to_full_path_if_needed(
+            kwargs.pop("forward_to", None), self.fully_qualified_namespace
+        )
+        forward_dead_lettered_messages_to = (
+            _normalize_entity_path_to_full_path_if_needed(
+                kwargs.pop("forward_dead_lettered_messages_to", None),
+                self.fully_qualified_namespace,
+            )
+        )
 
         subscription = SubscriptionProperties(
             subscription_name,
@@ -837,11 +875,9 @@ class ServiceBusAdministrationClient:  # pylint:disable=too-many-public-methods
             max_delivery_count=kwargs.pop("max_delivery_count", None),
             enable_batched_operations=kwargs.pop("enable_batched_operations", None),
             status=kwargs.pop("status", None),
-            forward_to=kwargs.pop("forward_to", None),
+            forward_to=forward_to,
             user_metadata=kwargs.pop("user_metadata", None),
-            forward_dead_lettered_messages_to=kwargs.pop(
-                "forward_dead_lettered_messages_to", None
-            ),
+            forward_dead_lettered_messages_to=forward_dead_lettered_messages_to,
             auto_delete_on_idle=kwargs.pop("auto_delete_on_idle", None),
             availability_status=None,
         )
@@ -873,7 +909,7 @@ class ServiceBusAdministrationClient:  # pylint:disable=too-many-public-methods
         return result
 
     def update_subscription(self, topic_name, subscription, **kwargs):
-        # type: (str, SubscriptionProperties, Any) -> None
+        # type: (str, Union[SubscriptionProperties, Mapping[str, Any]], Any) -> None
         """Update a subscription.
 
         Before calling this method, you should use `get_subscription`, `update_subscription` or `list_subscription`
@@ -884,17 +920,26 @@ class ServiceBusAdministrationClient:  # pylint:disable=too-many-public-methods
          from `get_subscription`, `update_subscription` or `list_subscription` and has the updated properties.
         :rtype: None
         """
-        _validate_entity_name_type(topic_name, display_name="topic_name")
 
+        _validate_entity_name_type(topic_name, display_name="topic_name")
+        subscription = create_properties_from_dict_if_needed(subscription, SubscriptionProperties)  # type: ignore
+        subscription.forward_to = _normalize_entity_path_to_full_path_if_needed(
+            subscription.forward_to, self.fully_qualified_namespace
+        )
+        subscription.forward_dead_lettered_messages_to = (
+            _normalize_entity_path_to_full_path_if_needed(
+                subscription.forward_dead_lettered_messages_to,
+                self.fully_qualified_namespace,
+            )
+        )
         to_update = subscription._to_internal_entity()
 
-        to_update.default_message_time_to_live = avoid_timedelta_overflow(
+        to_update.default_message_time_to_live = avoid_timedelta_overflow(  # type: ignore
             to_update.default_message_time_to_live
         )
-        to_update.auto_delete_on_idle = avoid_timedelta_overflow(
+        to_update.auto_delete_on_idle = avoid_timedelta_overflow(  # type: ignore
             to_update.auto_delete_on_idle
         )
-
         create_entity_body = CreateSubscriptionBody(
             content=CreateSubscriptionBodyContent(
                 subscription_description=to_update,
@@ -1060,7 +1105,7 @@ class ServiceBusAdministrationClient:  # pylint:disable=too-many-public-methods
         return result
 
     def update_rule(self, topic_name, subscription_name, rule, **kwargs):
-        # type: (str, str, RuleProperties, Any) -> None
+        # type: (str, str, Union[RuleProperties, Mapping[str, Any]], Any) -> None
         """Update a rule.
 
         Before calling this method, you should use `get_rule`, `create_rule` or `list_rules` to get a `RuleProperties`
@@ -1077,6 +1122,7 @@ class ServiceBusAdministrationClient:  # pylint:disable=too-many-public-methods
         """
         _validate_topic_and_subscription_types(topic_name, subscription_name)
 
+        rule = create_properties_from_dict_if_needed(rule, RuleProperties)
         to_update = rule._to_internal_entity()
 
         create_entity_body = CreateRuleBody(

@@ -10,9 +10,9 @@ steps:
     inputs:
      versionSpec: '3.7'
 
-  - task: DownloadPipelineArtifact@0
+  - task: DownloadPipelineArtifact@2
     inputs:
-      artifactName: 'artifacts' 
+      artifactName: 'packages'
       targetPath: $(Build.ArtifactStagingDirectory)
 
   - script: |

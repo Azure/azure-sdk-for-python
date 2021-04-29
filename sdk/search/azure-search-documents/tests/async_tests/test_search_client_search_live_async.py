@@ -84,7 +84,7 @@ class SearchClientTestAsync(AzureMgmtTestCase):
 
         async with client:
             results = []
-            select = ("hotelName", "category", "description")
+            select = ["hotelName", "category", "description"]
             async for x in await client.search(
                     search_text="WiFi",
                     filter="category eq 'Budget'",
@@ -114,7 +114,7 @@ class SearchClientTestAsync(AzureMgmtTestCase):
 
         async with client:
             results = []
-            select = ("hotelName", "category", "description")
+            select = ["hotelName", "category", "description"]
             async for x in await client.search(
                     search_text="WiFi",
                     filter="category eq 'Budget'",

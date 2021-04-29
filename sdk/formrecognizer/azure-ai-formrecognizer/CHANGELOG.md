@@ -1,6 +1,24 @@
 # Release History
 
-## 3.1.0b3 (Unreleased)
+## 3.1.0b5 (Unreleased)
+
+
+## 3.1.0b4 (2021-04-06)
+
+**New features**
+
+- New methods `begin_recognize_id_documents` and `begin_recognize_id_documents_from_url` introduced to the SDK. Use these methods to recognize data from identity documents.
+- New field value types "gender" and "country" described in the `FieldValueType` enum.
+- Content-type `image/bmp` now supported by custom forms and training methods.
+- Added keyword argument `pages` for business cards, receipts, custom forms, and invoices 
+to specify which page to process of the document.
+- Added keyword argument `reading_order` to `begin_recognize_content` and `begin_recognize_content_from_url`.
+
+**Dependency Updates**
+
+- Bumped `msrest` requirement from `0.6.12` to `0.6.21`.
+
+## 3.1.0b3 (2021-02-09)
 
 **Breaking Changes**
 
@@ -8,6 +26,10 @@
 - `Style` is renamed to `TextStyle`
 - Client property `api_version` is no longer exposed. Pass keyword argument `api_version` into the client to select the
 API version
+
+**Dependency Updates**
+
+- Bumped `six` requirement from `1.6` to `1.11.0`.
 
 ## 3.1.0b2 (2021-01-12)
 

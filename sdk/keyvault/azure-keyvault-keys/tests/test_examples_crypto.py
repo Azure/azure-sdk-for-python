@@ -3,23 +3,25 @@
 # Licensed under the MIT License.
 # ------------------------------------
 from azure.keyvault.keys.crypto import CryptographyClient
-from devtools_testutils import ResourceGroupPreparer, KeyVaultPreparer
 
 from _shared.test_case import KeyVaultTestCase
-from crypto_client_preparer import CryptoClientPreparer
+from _test_case import client_setup, get_decorator, KeysTestCase
 
 
-class TestCryptoExamples(KeyVaultTestCase):
+all_api_versions = get_decorator(vault_only=True)
+
+
+class TestCryptoExamples(KeysTestCase, KeyVaultTestCase):
     def __init__(self, *args, **kwargs):
         kwargs["match_body"] = False
         super(TestCryptoExamples, self).__init__(*args, **kwargs)
 
     # pylint:disable=unused-variable
 
-    @ResourceGroupPreparer(random_name_enabled=True)
-    @KeyVaultPreparer()
-    @CryptoClientPreparer()
-    def test_encrypt_decrypt(self, key_client, credential, **kwargs):
+    @all_api_versions()
+    @client_setup
+    def test_encrypt_decrypt(self, key_client, **kwargs):
+        credential = self.get_credential(CryptographyClient)
         key_name = self.get_resource_name("crypto-test-encrypt-key")
         key_client.create_rsa_key(key_name)
 
@@ -52,10 +54,10 @@ class TestCryptoExamples(KeyVaultTestCase):
         print(result.plaintext)
         # [END decrypt]
 
-    @ResourceGroupPreparer(random_name_enabled=True)
-    @KeyVaultPreparer()
-    @CryptoClientPreparer()
-    def test_wrap_unwrap(self, key_client, credential, **kwargs):
+    @all_api_versions()
+    @client_setup
+    def test_wrap_unwrap(self, key_client, **kwargs):
+        credential = self.get_credential(CryptographyClient)
         key_name = self.get_resource_name("crypto-test-wrapping-key")
         key = key_client.create_rsa_key(key_name)
         client = CryptographyClient(key, credential)
@@ -79,10 +81,10 @@ class TestCryptoExamples(KeyVaultTestCase):
         key = result.key
         # [END unwrap_key]
 
-    @ResourceGroupPreparer(random_name_enabled=True)
-    @KeyVaultPreparer()
-    @CryptoClientPreparer()
-    def test_sign_verify(self, key_client, credential, **kwargs):
+    @all_api_versions()
+    @client_setup
+    def test_sign_verify(self, key_client, **kwargs):
+        credential = self.get_credential(CryptographyClient)
         key_name = self.get_resource_name("crypto-test-wrapping-key")
         key = key_client.create_rsa_key(key_name)
         client = CryptographyClient(key, credential)

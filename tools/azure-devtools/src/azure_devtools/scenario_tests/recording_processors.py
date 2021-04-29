@@ -4,7 +4,7 @@
 # --------------------------------------------------------------------------------------------
 import six
 
-from .utilities import is_text_payload, is_json_payload
+from .utilities import is_text_payload, is_json_payload, is_batch_payload
 
 
 class RecordingProcessor(object):
@@ -148,7 +148,7 @@ class OAuthRequestResponsesFilter(RecordingProcessor):
         # GET https://login.microsoftonline.com/72f988bf-86f1-41af-91ab-2d7cd011db47/oauth2/token
         # POST https://login.microsoftonline.com/72f988bf-86f1-41af-91ab-2d7cd011db47/oauth2/v2.0/token
         import re
-        if not re.match('https://login.microsoftonline.com/([^/]+)/oauth2(?:/v2.0)?/token', request.uri):
+        if not re.search('/oauth2(?:/v2.0)?/token', request.uri):
             return request
         return None
 
@@ -191,10 +191,20 @@ class GeneralNameReplacer(RecordingProcessor):
             request.uri = request.uri.replace(old, new)
 
             if is_text_payload(request) and request.body:
-                body = six.ensure_str(request.body)
-                if old in body:
-                    request.body = body.replace(old, new)
+                if isinstance(request.body, dict):
+                    pass
+                else:
+                    body = six.ensure_str(request.body)
+                    if old in body:
+                        request.body = body.replace(old, new)
 
+            if request.body and request.uri and is_batch_payload(request):
+                import re
+                body = six.ensure_str(request.body)
+                matched_objects = set(re.findall(old, body))
+                for matched_object in matched_objects:
+                    request.body = body.replace(matched_object, new)
+                    body = body.replace(matched_object, new)
         return request
 
     def process_response(self, response):

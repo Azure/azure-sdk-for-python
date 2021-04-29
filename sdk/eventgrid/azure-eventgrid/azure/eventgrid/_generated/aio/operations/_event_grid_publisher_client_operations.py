@@ -8,11 +8,11 @@
 from typing import Any, Callable, Dict, Generic, List, Optional, TypeVar
 import warnings
 
-from azure.core.exceptions import HttpResponseError, ResourceExistsError, ResourceNotFoundError, map_error
+from azure.core.exceptions import ClientAuthenticationError, HttpResponseError, ResourceExistsError, ResourceNotFoundError, map_error
 from azure.core.pipeline import PipelineResponse
 from azure.core.pipeline.transport import AsyncHttpResponse, HttpRequest
 
-from ... import models
+from ... import models as _models
 
 T = TypeVar('T')
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]]
@@ -22,7 +22,7 @@ class EventGridPublisherClientOperationsMixin:
     async def publish_events(
         self,
         topic_hostname: str,
-        events: List["models.EventGridEvent"],
+        events: List["_models.EventGridEvent"],
         **kwargs
     ) -> None:
         """Publishes a batch of events to an Azure Event Grid topic.
@@ -37,7 +37,9 @@ class EventGridPublisherClientOperationsMixin:
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType[None]
-        error_map = {404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map = {
+            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
+        }
         error_map.update(kwargs.pop('error_map', {}))
         api_version = "2018-01-01"
         content_type = kwargs.pop("content_type", "application/json")
@@ -76,7 +78,7 @@ class EventGridPublisherClientOperationsMixin:
     async def publish_cloud_event_events(
         self,
         topic_hostname: str,
-        events: List["models.CloudEvent"],
+        events: List["_models.CloudEvent"],
         **kwargs
     ) -> None:
         """Publishes a batch of events to an Azure Event Grid topic.
@@ -91,7 +93,9 @@ class EventGridPublisherClientOperationsMixin:
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType[None]
-        error_map = {404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map = {
+            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
+        }
         error_map.update(kwargs.pop('error_map', {}))
         api_version = "2018-01-01"
         content_type = kwargs.pop("content_type", "application/cloudevents-batch+json; charset=utf-8")
@@ -145,7 +149,9 @@ class EventGridPublisherClientOperationsMixin:
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType[None]
-        error_map = {404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map = {
+            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
+        }
         error_map.update(kwargs.pop('error_map', {}))
         api_version = "2018-01-01"
         content_type = kwargs.pop("content_type", "application/json")
@@ -179,4 +185,4 @@ class EventGridPublisherClientOperationsMixin:
         if cls:
             return cls(pipeline_response, None, {})
 
-    publish_custom_event_events.metadata = {'url': '/api/events'}  # type: ignore
+    publish_custom_event_events.metadata = {'url': ''}  # type: ignore

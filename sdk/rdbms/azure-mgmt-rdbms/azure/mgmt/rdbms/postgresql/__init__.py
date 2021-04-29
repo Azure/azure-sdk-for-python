@@ -7,6 +7,9 @@
 # --------------------------------------------------------------------------
 
 from ._postgre_sql_management_client import PostgreSQLManagementClient
+from ._version import VERSION
+
+__version__ = VERSION
 __all__ = ['PostgreSQLManagementClient']
 
 try:

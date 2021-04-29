@@ -1,7 +1,32 @@
 # Release History
 
-## 12.7.2 (Unreleased)
+## 12.8.1 (2021-04-20)
+**Fixes**
+- Fixed retry on large block upload 
+- Make `AccountName`, `AccountKey` etc. in conn_str case insensitive
+- Fixed downloader.chunks() return chunks in different size (#9419, #15648)
+- Enabled `exists()` for CPK encrypted blobs (#18041)
+- Fixed the ability to upload from a generator (#17418)
+- Fixed unclosed `ThreadPoolExecutor` (#8955)
+- Fixed retries for blob download streams (#18164, #17974, #10572 (comment))
+- Added chunk streaming docstrings and samples (#17149, #11009)
+- Added retry for blob download (#17974, #10572)
+- Fixed encryption algorithm hardcoded setting (#17835)
 
+
+## 12.8.0 (2021-03-01)
+**Stable release of preview features**
+- Added `ContainerClient.exists()` method
+- Added container SAS support for blob batch operations
+
+**Fixes**
+- Fixed `delete_blob()` method signature (#15891)
+- Fixed Content-MD5 throwing when passed (#15919)
+
+## 12.8.0b1 (2021-02-10)
+**New Features**
+- Added `ContainerClient.exists()` method
+- Added container SAS support for blob batch operations
 
 ## 12.7.1 (2021-01-20)
 **Fixes**

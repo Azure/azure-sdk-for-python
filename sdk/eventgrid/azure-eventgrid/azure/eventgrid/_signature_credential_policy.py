@@ -20,6 +20,7 @@ class EventGridSasCredentialPolicy(SansIOHTTPPolicy):
     :param str name: The name of the token header used for the credential.
     :raises: ValueError or TypeError
     """
+
     def __init__(self, credential, name, **kwargs):  # pylint: disable=unused-argument
         # type: (AzureSasCredential, str, Any) -> None
         super(EventGridSasCredentialPolicy, self).__init__()

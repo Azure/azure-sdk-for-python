@@ -82,3 +82,10 @@ def test_requests_response_text():
             {'Content-Type': 'text/plain'}
         )
         assert res.text(encoding) == '56', "Encoding {} didn't work".format(encoding)
+
+def test_repr():
+    res = _create_requests_response(
+        b'\xef\xbb\xbf56',
+        {'Content-Type': 'text/plain'}
+    )
+    assert repr(res) == "<RequestsTransportResponse: 200 OK, Content-Type: text/plain>"
