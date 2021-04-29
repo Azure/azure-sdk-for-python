@@ -85,6 +85,39 @@ class ScenesOperations(object):
         :return: An iterator like instance of either Any or the result of cls(response)
         :rtype: ~azure.core.paging.ItemPaged[Any]
         :raises: ~azure.core.exceptions.HttpResponseError
+
+        Example:
+            .. code-block:: python
+
+                # response body for status code(s): 200
+                response_body == {
+                    "$skipToken": "str (optional)",
+                    "nextLink": "str (optional)",
+                    "value": [
+                        {
+                            "boundaryId": "str (optional)",
+                            "cloudCoverPercentage": "float (optional)",
+                            "darkPixelPercentage": "float (optional)",
+                            "eTag": "str (optional)",
+                            "farmerId": "str (optional)",
+                            "id": "str (optional)",
+                            "imageFiles": [
+                                {
+                                    "fileLink": "str (optional)",
+                                    "imageFormat": "str (optional)",
+                                    "name": "str",
+                                    "resolution": "float (optional)"
+                                }
+                            ],
+                            "imageFormat": "str (optional)",
+                            "ndviMedianValue": "float (optional)",
+                            "provider": "str (optional)",
+                            "sceneDateTime": "datetime (optional)",
+                            "source": "str (optional)"
+                        }
+                    ]
+                }
+
         """
 
         farmer_id = kwargs.pop('farmer_id')  # type: str
@@ -257,6 +290,44 @@ class ScenesOperations(object):
         :return: An instance of LROPoller that returns either Any or the result of cls(response)
         :rtype: ~azure.core.polling.LROPoller[Any]
         :raises ~azure.core.exceptions.HttpResponseError:
+
+        Example:
+            .. code-block:: python
+
+                # JSON input template you can fill out and use as your `json` input.
+                json = {
+                    "boundaryId": "str",
+                    "createdDateTime": "datetime (optional)",
+                    "data": {
+                        "imageFormats": [
+                            "str (optional)"
+                        ],
+                        "imageNames": [
+                            "str (optional)"
+                        ],
+                        "imageResolutions": [
+                            "float (optional)"
+                        ]
+                    },
+                    "description": "str (optional)",
+                    "durationInSeconds": "str (optional)",
+                    "endDateTime": "datetime",
+                    "endTime": "datetime (optional)",
+                    "farmerId": "str",
+                    "id": "str (optional)",
+                    "lastActionDateTime": "datetime (optional)",
+                    "message": "str (optional)",
+                    "name": "str (optional)",
+                    "properties": {
+                        "str": "object (optional)"
+                    },
+                    "provider": "str (optional)",
+                    "source": "str (optional)",
+                    "startDateTime": "datetime",
+                    "startTime": "datetime (optional)",
+                    "status": "str (optional)"
+                }
+
         """
 
         job = kwargs.pop('job', None)  # type: Any
@@ -321,6 +392,44 @@ class ScenesOperations(object):
         :return: Any, or the result of cls(response)
         :rtype: Any
         :raises: ~azure.core.exceptions.HttpResponseError
+
+        Example:
+            .. code-block:: python
+
+                # response body for status code(s): 200
+                response_body == {
+                    "boundaryId": "str",
+                    "createdDateTime": "datetime (optional)",
+                    "data": {
+                        "imageFormats": [
+                            "str (optional)"
+                        ],
+                        "imageNames": [
+                            "str (optional)"
+                        ],
+                        "imageResolutions": [
+                            "float (optional)"
+                        ]
+                    },
+                    "description": "str (optional)",
+                    "durationInSeconds": "str (optional)",
+                    "endDateTime": "datetime",
+                    "endTime": "datetime (optional)",
+                    "farmerId": "str",
+                    "id": "str (optional)",
+                    "lastActionDateTime": "datetime (optional)",
+                    "message": "str (optional)",
+                    "name": "str (optional)",
+                    "properties": {
+                        "str": "object (optional)"
+                    },
+                    "provider": "str (optional)",
+                    "source": "str (optional)",
+                    "startDateTime": "datetime",
+                    "startTime": "datetime (optional)",
+                    "status": "str (optional)"
+                }
+
         """
         cls = kwargs.pop('cls', None)  # type: ClsType[Any]
         error_map = {

@@ -54,7 +54,7 @@ def build_list_request(
         .. code-block:: python
 
             # response body for status code(s): 200
-            response.json() == {
+            response_body == {
                 "$skipToken": "str (optional)",
                 "nextLink": "str (optional)",
                 "value": [
@@ -68,6 +68,7 @@ def build_list_request(
                     }
                 ]
             }
+
     """
     auth_provider_ids = kwargs.pop('auth_provider_ids', None)  # type: Optional[List[str]]
     farmer_ids = kwargs.pop('farmer_ids', None)  # type: Optional[List[str]]
@@ -188,6 +189,7 @@ def build_get_o_auth_connection_link_request(
                 "userRedirectLink": "str",
                 "userRedirectState": "str (optional)"
             }
+
     """
     content_type = kwargs.pop("content_type", None)
     api_version = "2021-03-31-preview"

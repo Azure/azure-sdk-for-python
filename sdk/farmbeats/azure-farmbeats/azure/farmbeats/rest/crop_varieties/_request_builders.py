@@ -66,7 +66,7 @@ def build_list_by_crop_id_request(
         .. code-block:: python
 
             # response body for status code(s): 200
-            response.json() == {
+            response_body == {
                 "$skipToken": "str (optional)",
                 "nextLink": "str (optional)",
                 "value": [
@@ -87,6 +87,7 @@ def build_list_by_crop_id_request(
                     }
                 ]
             }
+
     """
     crop_ids = kwargs.pop('crop_ids', None)  # type: Optional[List[str]]
     brands = kwargs.pop('brands', None)  # type: Optional[List[str]]
@@ -198,7 +199,7 @@ def build_list_request(
         .. code-block:: python
 
             # response body for status code(s): 200
-            response.json() == {
+            response_body == {
                 "$skipToken": "str (optional)",
                 "nextLink": "str (optional)",
                 "value": [
@@ -219,6 +220,7 @@ def build_list_request(
                     }
                 ]
             }
+
     """
     crop_ids = kwargs.pop('crop_ids', None)  # type: Optional[List[str]]
     brands = kwargs.pop('brands', None)  # type: Optional[List[str]]
@@ -304,7 +306,7 @@ def build_get_request(
         .. code-block:: python
 
             # response body for status code(s): 200
-            response.json() == {
+            response_body == {
                 "brand": "str (optional)",
                 "createdDateTime": "datetime (optional)",
                 "cropId": "str (optional)",
@@ -319,6 +321,7 @@ def build_get_request(
                 },
                 "status": "str (optional)"
             }
+
     """
     api_version = "2021-03-31-preview"
     accept = "application/json"
@@ -390,38 +393,6 @@ def build_create_or_update_request(
                 "status": "str (optional)"
             }
 
-            # response body for status code(s): 200
-            response.json() == {
-                "brand": "str (optional)",
-                "createdDateTime": "datetime (optional)",
-                "cropId": "str (optional)",
-                "description": "str (optional)",
-                "eTag": "str (optional)",
-                "id": "str (optional)",
-                "modifiedDateTime": "datetime (optional)",
-                "name": "str (optional)",
-                "product": "str (optional)",
-                "properties": {
-                    "str": "object (optional)"
-                },
-                "status": "str (optional)"
-            }
-            # response body for status code(s): 201
-            response.json() == {
-                "brand": "str (optional)",
-                "createdDateTime": "datetime (optional)",
-                "cropId": "str (optional)",
-                "description": "str (optional)",
-                "eTag": "str (optional)",
-                "id": "str (optional)",
-                "modifiedDateTime": "datetime (optional)",
-                "name": "str (optional)",
-                "product": "str (optional)",
-                "properties": {
-                    "str": "object (optional)"
-                },
-                "status": "str (optional)"
-            }
     """
     content_type = kwargs.pop("content_type", None)
     api_version = "2021-03-31-preview"

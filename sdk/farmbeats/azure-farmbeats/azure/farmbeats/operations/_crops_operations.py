@@ -77,6 +77,31 @@ class CropsOperations(object):
         :return: An iterator like instance of either Any or the result of cls(response)
         :rtype: ~azure.core.paging.ItemPaged[Any]
         :raises: ~azure.core.exceptions.HttpResponseError
+
+        Example:
+            .. code-block:: python
+
+                # response body for status code(s): 200
+                response_body == {
+                    "$skipToken": "str (optional)",
+                    "nextLink": "str (optional)",
+                    "value": [
+                        {
+                            "createdDateTime": "datetime (optional)",
+                            "description": "str (optional)",
+                            "eTag": "str (optional)",
+                            "id": "str (optional)",
+                            "modifiedDateTime": "datetime (optional)",
+                            "name": "str (optional)",
+                            "phenotype": "str (optional)",
+                            "properties": {
+                                "str": "object (optional)"
+                            },
+                            "status": "str (optional)"
+                        }
+                    ]
+                }
+
         """
 
         phenotypes = kwargs.pop('phenotypes', None)  # type: Optional[List[str]]
@@ -186,6 +211,25 @@ class CropsOperations(object):
         :return: Any, or the result of cls(response)
         :rtype: Any or None
         :raises: ~azure.core.exceptions.HttpResponseError
+
+        Example:
+            .. code-block:: python
+
+                # response body for status code(s): 200
+                response_body == {
+                    "createdDateTime": "datetime (optional)",
+                    "description": "str (optional)",
+                    "eTag": "str (optional)",
+                    "id": "str (optional)",
+                    "modifiedDateTime": "datetime (optional)",
+                    "name": "str (optional)",
+                    "phenotype": "str (optional)",
+                    "properties": {
+                        "str": "object (optional)"
+                    },
+                    "status": "str (optional)"
+                }
+
         """
         cls = kwargs.pop('cls', None)  # type: ClsType[Optional[Any]]
         error_map = {
@@ -238,6 +282,25 @@ class CropsOperations(object):
         :return: Any, or the result of cls(response)
         :rtype: Any
         :raises: ~azure.core.exceptions.HttpResponseError
+
+        Example:
+            .. code-block:: python
+
+                # JSON input template you can fill out and use as your `json` input.
+                json = {
+                    "createdDateTime": "datetime (optional)",
+                    "description": "str (optional)",
+                    "eTag": "str (optional)",
+                    "id": "str (optional)",
+                    "modifiedDateTime": "datetime (optional)",
+                    "name": "str (optional)",
+                    "phenotype": "str (optional)",
+                    "properties": {
+                        "str": "object (optional)"
+                    },
+                    "status": "str (optional)"
+                }
+
         """
         cls = kwargs.pop('cls', None)  # type: ClsType[Any]
         error_map = {

@@ -72,6 +72,26 @@ class OAuthTokensOperations(object):
         :return: An iterator like instance of either Any or the result of cls(response)
         :rtype: ~azure.core.paging.ItemPaged[Any]
         :raises: ~azure.core.exceptions.HttpResponseError
+
+        Example:
+            .. code-block:: python
+
+                # response body for status code(s): 200
+                response_body == {
+                    "$skipToken": "str (optional)",
+                    "nextLink": "str (optional)",
+                    "value": [
+                        {
+                            "authProviderId": "str",
+                            "createdDateTime": "datetime (optional)",
+                            "eTag": "str (optional)",
+                            "farmerId": "str",
+                            "isValid": "bool (optional). Default value is True",
+                            "modifiedDateTime": "datetime (optional)"
+                        }
+                    ]
+                }
+
         """
 
         auth_provider_ids = kwargs.pop('auth_provider_ids', None)  # type: Optional[List[str]]
@@ -223,6 +243,18 @@ class OAuthTokensOperations(object):
         :return: str, or the result of cls(response)
         :rtype: str
         :raises: ~azure.core.exceptions.HttpResponseError
+
+        Example:
+            .. code-block:: python
+
+                # JSON input template you can fill out and use as your `json` input.
+                json = {
+                    "farmerId": "str",
+                    "oAuthProviderId": "str",
+                    "userRedirectLink": "str",
+                    "userRedirectState": "str (optional)"
+                }
+
         """
         cls = kwargs.pop('cls', None)  # type: ClsType[str]
         error_map = {

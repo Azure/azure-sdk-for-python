@@ -6,11 +6,15 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 import datetime
-from typing import Any, Dict, List, Optional
+from typing import Any, IO, List, Optional, TYPE_CHECKING
 
 from azure.core.pipeline.transport._base import _format_url_section
 from azure.farmbeats.core.rest import HttpRequest
 from msrest import Serializer
+
+if TYPE_CHECKING:
+    # pylint: disable=unused-import,ungrouped-imports
+    from typing import Any
 
 _SERIALIZER = Serializer()
 
@@ -81,7 +85,7 @@ def build_list_by_farmer_id_request(
         .. code-block:: python
 
             # response body for status code(s): 200
-            response.json() == {
+            response_body == {
                 "$skipToken": "str (optional)",
                 "nextLink": "str (optional)",
                 "value": [
@@ -107,6 +111,7 @@ def build_list_by_farmer_id_request(
                     }
                 ]
             }
+
     """
     api_version = "2021-03-31-preview"
     accept = "application/json"
@@ -221,33 +226,6 @@ def build_search_by_farmer_id_request(
                 ]
             }
 
-            # response body for status code(s): 200
-            response.json() == {
-                "$skipToken": "str (optional)",
-                "nextLink": "str (optional)",
-                "value": [
-                    {
-                        "acreage": "float (optional)",
-                        "createdDateTime": "datetime (optional)",
-                        "description": "str (optional)",
-                        "eTag": "str (optional)",
-                        "farmerId": "str (optional)",
-                        "geometry": {
-                            "type": "str"
-                        },
-                        "id": "str (optional)",
-                        "isPrimary": "bool (optional)",
-                        "modifiedDateTime": "datetime (optional)",
-                        "name": "str (optional)",
-                        "parentId": "str (optional)",
-                        "parentType": "str (optional)",
-                        "properties": {
-                            "str": "object (optional)"
-                        },
-                        "status": "str (optional)"
-                    }
-                ]
-            }
     """
     content_type = kwargs.pop("content_type", None)
     api_version = "2021-03-31-preview"
@@ -344,7 +322,7 @@ def build_list_request(
         .. code-block:: python
 
             # response body for status code(s): 200
-            response.json() == {
+            response_body == {
                 "$skipToken": "str (optional)",
                 "nextLink": "str (optional)",
                 "value": [
@@ -370,6 +348,7 @@ def build_list_request(
                     }
                 ]
             }
+
     """
     api_version = "2021-03-31-preview"
     accept = "application/json"
@@ -477,33 +456,6 @@ def build_search_request(
                 ]
             }
 
-            # response body for status code(s): 200
-            response.json() == {
-                "$skipToken": "str (optional)",
-                "nextLink": "str (optional)",
-                "value": [
-                    {
-                        "acreage": "float (optional)",
-                        "createdDateTime": "datetime (optional)",
-                        "description": "str (optional)",
-                        "eTag": "str (optional)",
-                        "farmerId": "str (optional)",
-                        "geometry": {
-                            "type": "str"
-                        },
-                        "id": "str (optional)",
-                        "isPrimary": "bool (optional)",
-                        "modifiedDateTime": "datetime (optional)",
-                        "name": "str (optional)",
-                        "parentId": "str (optional)",
-                        "parentType": "str (optional)",
-                        "properties": {
-                            "str": "object (optional)"
-                        },
-                        "status": "str (optional)"
-                    }
-                ]
-            }
     """
     content_type = kwargs.pop("content_type", None)
     api_version = "2021-03-31-preview"
@@ -551,7 +503,7 @@ def build_get_cascade_delete_job_details_request(
         .. code-block:: python
 
             # response body for status code(s): 200
-            response.json() == {
+            response_body == {
                 "createdDateTime": "datetime (optional)",
                 "description": "str (optional)",
                 "durationInSeconds": "str (optional)",
@@ -569,6 +521,7 @@ def build_get_cascade_delete_job_details_request(
                 "startTime": "datetime (optional)",
                 "status": "str (optional)"
             }
+
     """
     api_version = "2021-03-31-preview"
     accept = "application/json"
@@ -622,7 +575,7 @@ def build_create_cascade_delete_job_request_initial(
         .. code-block:: python
 
             # response body for status code(s): 202
-            response.json() == {
+            response_body == {
                 "createdDateTime": "datetime (optional)",
                 "description": "str (optional)",
                 "durationInSeconds": "str (optional)",
@@ -640,6 +593,7 @@ def build_create_cascade_delete_job_request_initial(
                 "startTime": "datetime (optional)",
                 "status": "str (optional)"
             }
+
     """
     api_version = "2021-03-31-preview"
     accept = "application/json"
@@ -691,7 +645,7 @@ def build_get_request(
         .. code-block:: python
 
             # response body for status code(s): 200
-            response.json() == {
+            response_body == {
                 "acreage": "float (optional)",
                 "createdDateTime": "datetime (optional)",
                 "description": "str (optional)",
@@ -711,6 +665,7 @@ def build_get_request(
                 },
                 "status": "str (optional)"
             }
+
     """
     api_version = "2021-03-31-preview"
     accept = "application/json"
@@ -789,48 +744,6 @@ def build_create_or_update_request(
                 "status": "str (optional)"
             }
 
-            # response body for status code(s): 200
-            response.json() == {
-                "acreage": "float (optional)",
-                "createdDateTime": "datetime (optional)",
-                "description": "str (optional)",
-                "eTag": "str (optional)",
-                "farmerId": "str (optional)",
-                "geometry": {
-                    "type": "str"
-                },
-                "id": "str (optional)",
-                "isPrimary": "bool (optional)",
-                "modifiedDateTime": "datetime (optional)",
-                "name": "str (optional)",
-                "parentId": "str (optional)",
-                "parentType": "str (optional)",
-                "properties": {
-                    "str": "object (optional)"
-                },
-                "status": "str (optional)"
-            }
-            # response body for status code(s): 201
-            response.json() == {
-                "acreage": "float (optional)",
-                "createdDateTime": "datetime (optional)",
-                "description": "str (optional)",
-                "eTag": "str (optional)",
-                "farmerId": "str (optional)",
-                "geometry": {
-                    "type": "str"
-                },
-                "id": "str (optional)",
-                "isPrimary": "bool (optional)",
-                "modifiedDateTime": "datetime (optional)",
-                "name": "str (optional)",
-                "parentId": "str (optional)",
-                "parentType": "str (optional)",
-                "properties": {
-                    "str": "object (optional)"
-                },
-                "status": "str (optional)"
-            }
     """
     content_type = kwargs.pop("content_type", None)
     api_version = "2021-03-31-preview"
@@ -938,11 +851,12 @@ def build_get_overlap_request(
         .. code-block:: python
 
             # response body for status code(s): 200
-            response.json() == {
+            response_body == {
                 "boundaryAcreage": "float (optional)",
                 "intersectingAcreage": "float (optional)",
                 "otherBoundaryAcreage": "float (optional)"
             }
+
     """
     api_version = "2021-03-31-preview"
     accept = "application/json"

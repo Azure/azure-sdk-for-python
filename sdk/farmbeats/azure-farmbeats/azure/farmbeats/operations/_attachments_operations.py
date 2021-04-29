@@ -82,6 +82,31 @@ class AttachmentsOperations(object):
         :return: An iterator like instance of either Any or the result of cls(response)
         :rtype: ~azure.core.paging.ItemPaged[Any]
         :raises: ~azure.core.exceptions.HttpResponseError
+
+        Example:
+            .. code-block:: python
+
+                # response body for status code(s): 200
+                response_body == {
+                    "$skipToken": "str (optional)",
+                    "nextLink": "str (optional)",
+                    "value": [
+                        {
+                            "createdDateTime": "datetime (optional)",
+                            "description": "str (optional)",
+                            "eTag": "str (optional)",
+                            "farmerId": "str (optional)",
+                            "id": "str (optional)",
+                            "modifiedDateTime": "datetime (optional)",
+                            "name": "str (optional)",
+                            "originalFileName": "str (optional)",
+                            "resourceId": "str (optional)",
+                            "resourceType": "str (optional)",
+                            "status": "str (optional)"
+                        }
+                    ]
+                }
+
         """
 
         resource_ids = kwargs.pop('resource_ids', None)  # type: Optional[List[str]]
@@ -199,6 +224,25 @@ class AttachmentsOperations(object):
         :return: Any, or the result of cls(response)
         :rtype: Any or None
         :raises: ~azure.core.exceptions.HttpResponseError
+
+        Example:
+            .. code-block:: python
+
+                # response body for status code(s): 200
+                response_body == {
+                    "createdDateTime": "datetime (optional)",
+                    "description": "str (optional)",
+                    "eTag": "str (optional)",
+                    "farmerId": "str (optional)",
+                    "id": "str (optional)",
+                    "modifiedDateTime": "datetime (optional)",
+                    "name": "str (optional)",
+                    "originalFileName": "str (optional)",
+                    "resourceId": "str (optional)",
+                    "resourceType": "str (optional)",
+                    "status": "str (optional)"
+                }
+
         """
         cls = kwargs.pop('cls', None)  # type: ClsType[Optional[Any]]
         error_map = {

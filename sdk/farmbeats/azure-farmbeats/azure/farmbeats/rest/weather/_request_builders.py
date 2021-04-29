@@ -56,7 +56,7 @@ def build_list_request(
         .. code-block:: python
 
             # response body for status code(s): 200
-            response.json() == {
+            response_body == {
                 "$skipToken": "str (optional)",
                 "nextLink": "str (optional)",
                 "value": [
@@ -143,6 +143,7 @@ def build_list_request(
                     }
                 ]
             }
+
     """
     farmer_id = kwargs.pop('farmer_id')  # type: str
     boundary_id = kwargs.pop('boundary_id')  # type: str
@@ -208,7 +209,7 @@ def build_get_data_ingestion_job_details_request(
         .. code-block:: python
 
             # response body for status code(s): 200
-            response.json() == {
+            response_body == {
                 "boundaryId": "str",
                 "createdDateTime": "datetime (optional)",
                 "description": "str (optional)",
@@ -232,6 +233,7 @@ def build_get_data_ingestion_job_details_request(
                 "startTime": "datetime (optional)",
                 "status": "str (optional)"
             }
+
     """
     api_version = "2021-03-31-preview"
     accept = "application/json"
@@ -308,31 +310,6 @@ def build_create_data_ingestion_job_request_initial(
                 "status": "str (optional)"
             }
 
-            # response body for status code(s): 202
-            response.json() == {
-                "boundaryId": "str",
-                "createdDateTime": "datetime (optional)",
-                "description": "str (optional)",
-                "durationInSeconds": "str (optional)",
-                "endTime": "datetime (optional)",
-                "extensionApiInput": {
-                    "str": "object"
-                },
-                "extensionApiName": "str",
-                "extensionDataProviderApiKey": "str (optional)",
-                "extensionDataProviderAppId": "str (optional)",
-                "extensionId": "str",
-                "farmerId": "str",
-                "id": "str (optional)",
-                "lastActionDateTime": "datetime (optional)",
-                "message": "str (optional)",
-                "name": "str (optional)",
-                "properties": {
-                    "str": "object (optional)"
-                },
-                "startTime": "datetime (optional)",
-                "status": "str (optional)"
-            }
     """
     content_type = kwargs.pop("content_type", None)
     api_version = "2021-03-31-preview"
@@ -383,7 +360,7 @@ def build_get_data_delete_job_details_request(
         .. code-block:: python
 
             # response body for status code(s): 200
-            response.json() == {
+            response_body == {
                 "boundaryId": "str",
                 "createdDateTime": "datetime (optional)",
                 "description": "str (optional)",
@@ -405,6 +382,7 @@ def build_get_data_delete_job_details_request(
                 "status": "str (optional)",
                 "weatherDataType": "str (optional)"
             }
+
     """
     api_version = "2021-03-31-preview"
     accept = "application/json"
@@ -479,29 +457,6 @@ def build_create_data_delete_job_request_initial(
                 "weatherDataType": "str (optional)"
             }
 
-            # response body for status code(s): 202
-            response.json() == {
-                "boundaryId": "str",
-                "createdDateTime": "datetime (optional)",
-                "description": "str (optional)",
-                "durationInSeconds": "str (optional)",
-                "endDateTime": "datetime (optional)",
-                "endTime": "datetime (optional)",
-                "extensionId": "str",
-                "farmerId": "str",
-                "granularity": "str (optional)",
-                "id": "str (optional)",
-                "lastActionDateTime": "datetime (optional)",
-                "message": "str (optional)",
-                "name": "str (optional)",
-                "properties": {
-                    "str": "object (optional)"
-                },
-                "startDateTime": "datetime (optional)",
-                "startTime": "datetime (optional)",
-                "status": "str (optional)",
-                "weatherDataType": "str (optional)"
-            }
     """
     content_type = kwargs.pop("content_type", None)
     api_version = "2021-03-31-preview"

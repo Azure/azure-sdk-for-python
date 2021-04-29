@@ -57,7 +57,7 @@ def build_list_request(
         .. code-block:: python
 
             # response body for status code(s): 200
-            response.json() == {
+            response_body == {
                 "$skipToken": "str (optional)",
                 "nextLink": "str (optional)",
                 "value": [
@@ -78,6 +78,7 @@ def build_list_request(
                     }
                 ]
             }
+
     """
     ids = kwargs.pop('ids', None)  # type: Optional[List[str]]
     names = kwargs.pop('names', None)  # type: Optional[List[str]]
@@ -151,7 +152,7 @@ def build_get_request(
         .. code-block:: python
 
             # response body for status code(s): 200
-            response.json() == {
+            response_body == {
                 "apiKey": "str (optional)",
                 "appId": "str (optional)",
                 "appSecret": "str (optional)",
@@ -166,6 +167,7 @@ def build_get_request(
                     "str": "object (optional)"
                 }
             }
+
     """
     api_version = "2021-03-31-preview"
     accept = "application/json"
@@ -233,38 +235,6 @@ def build_create_or_update_request(
                 }
             }
 
-            # response body for status code(s): 200
-            response.json() == {
-                "apiKey": "str (optional)",
-                "appId": "str (optional)",
-                "appSecret": "str (optional)",
-                "createdDateTime": "datetime (optional)",
-                "description": "str (optional)",
-                "eTag": "str (optional)",
-                "id": "str (optional)",
-                "isProductionApp": "bool (optional). Default value is False",
-                "modifiedDateTime": "datetime (optional)",
-                "name": "str (optional)",
-                "properties": {
-                    "str": "object (optional)"
-                }
-            }
-            # response body for status code(s): 201
-            response.json() == {
-                "apiKey": "str (optional)",
-                "appId": "str (optional)",
-                "appSecret": "str (optional)",
-                "createdDateTime": "datetime (optional)",
-                "description": "str (optional)",
-                "eTag": "str (optional)",
-                "id": "str (optional)",
-                "isProductionApp": "bool (optional). Default value is False",
-                "modifiedDateTime": "datetime (optional)",
-                "name": "str (optional)",
-                "properties": {
-                    "str": "object (optional)"
-                }
-            }
     """
     content_type = kwargs.pop("content_type", None)
     api_version = "2021-03-31-preview"

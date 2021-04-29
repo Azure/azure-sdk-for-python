@@ -84,7 +84,7 @@ def build_list_request(
         .. code-block:: python
 
             # response body for status code(s): 200
-            response.json() == {
+            response_body == {
                 "$skipToken": "str (optional)",
                 "nextLink": "str (optional)",
                 "value": [
@@ -105,6 +105,7 @@ def build_list_request(
                     }
                 ]
             }
+
     """
     api_version = "2021-03-31-preview"
     accept = "application/json"
@@ -177,7 +178,7 @@ def build_get_request(
         .. code-block:: python
 
             # response body for status code(s): 200
-            response.json() == {
+            response_body == {
                 "createdDateTime": "datetime (optional)",
                 "description": "str (optional)",
                 "eTag": "str (optional)",
@@ -192,6 +193,7 @@ def build_get_request(
                 "status": "str (optional)",
                 "year": "int (optional)"
             }
+
     """
     api_version = "2021-03-31-preview"
     accept = "application/json"
@@ -261,38 +263,6 @@ def build_create_or_update_request(
                 "year": "int (optional)"
             }
 
-            # response body for status code(s): 200
-            response.json() == {
-                "createdDateTime": "datetime (optional)",
-                "description": "str (optional)",
-                "eTag": "str (optional)",
-                "endDateTime": "datetime (optional)",
-                "id": "str (optional)",
-                "modifiedDateTime": "datetime (optional)",
-                "name": "str (optional)",
-                "properties": {
-                    "str": "object (optional)"
-                },
-                "startDateTime": "datetime (optional)",
-                "status": "str (optional)",
-                "year": "int (optional)"
-            }
-            # response body for status code(s): 201
-            response.json() == {
-                "createdDateTime": "datetime (optional)",
-                "description": "str (optional)",
-                "eTag": "str (optional)",
-                "endDateTime": "datetime (optional)",
-                "id": "str (optional)",
-                "modifiedDateTime": "datetime (optional)",
-                "name": "str (optional)",
-                "properties": {
-                    "str": "object (optional)"
-                },
-                "startDateTime": "datetime (optional)",
-                "status": "str (optional)",
-                "year": "int (optional)"
-            }
     """
     content_type = kwargs.pop("content_type", None)
     api_version = "2021-03-31-preview"

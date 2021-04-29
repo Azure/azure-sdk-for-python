@@ -98,6 +98,39 @@ class ScenesOperations:
         :return: An iterator like instance of either Any or the result of cls(response)
         :rtype: ~azure.core.async_paging.AsyncItemPaged[Any]
         :raises: ~azure.core.exceptions.HttpResponseError
+
+        Example:
+            .. code-block:: python
+
+                # response body for status code(s): 200
+                response_body == {
+                    "$skipToken": "str (optional)",
+                    "nextLink": "str (optional)",
+                    "value": [
+                        {
+                            "boundaryId": "str (optional)",
+                            "cloudCoverPercentage": "float (optional)",
+                            "darkPixelPercentage": "float (optional)",
+                            "eTag": "str (optional)",
+                            "farmerId": "str (optional)",
+                            "id": "str (optional)",
+                            "imageFiles": [
+                                {
+                                    "fileLink": "str (optional)",
+                                    "imageFormat": "str (optional)",
+                                    "name": "str",
+                                    "resolution": "float (optional)"
+                                }
+                            ],
+                            "imageFormat": "str (optional)",
+                            "ndviMedianValue": "float (optional)",
+                            "provider": "str (optional)",
+                            "sceneDateTime": "datetime (optional)",
+                            "source": "str (optional)"
+                        }
+                    ]
+                }
+
         """
         cls = kwargs.pop('cls', None)  # type: ClsType[Any]
         error_map = {
@@ -256,6 +289,44 @@ class ScenesOperations:
         :return: An instance of AsyncLROPoller that returns either Any or the result of cls(response)
         :rtype: ~azure.core.polling.AsyncLROPoller[Any]
         :raises ~azure.core.exceptions.HttpResponseError:
+
+        Example:
+            .. code-block:: python
+
+                # JSON input template you can fill out and use as your `json` input.
+                json = {
+                    "boundaryId": "str",
+                    "createdDateTime": "datetime (optional)",
+                    "data": {
+                        "imageFormats": [
+                            "str (optional)"
+                        ],
+                        "imageNames": [
+                            "str (optional)"
+                        ],
+                        "imageResolutions": [
+                            "float (optional)"
+                        ]
+                    },
+                    "description": "str (optional)",
+                    "durationInSeconds": "str (optional)",
+                    "endDateTime": "datetime",
+                    "endTime": "datetime (optional)",
+                    "farmerId": "str",
+                    "id": "str (optional)",
+                    "lastActionDateTime": "datetime (optional)",
+                    "message": "str (optional)",
+                    "name": "str (optional)",
+                    "properties": {
+                        "str": "object (optional)"
+                    },
+                    "provider": "str (optional)",
+                    "source": "str (optional)",
+                    "startDateTime": "datetime",
+                    "startTime": "datetime (optional)",
+                    "status": "str (optional)"
+                }
+
         """
         polling = kwargs.pop('polling', False)  # type: Union[bool, AsyncPollingMethod]
         cls = kwargs.pop('cls', None)  # type: ClsType[Any]
@@ -317,6 +388,44 @@ class ScenesOperations:
         :return: Any, or the result of cls(response)
         :rtype: Any
         :raises: ~azure.core.exceptions.HttpResponseError
+
+        Example:
+            .. code-block:: python
+
+                # response body for status code(s): 200
+                response_body == {
+                    "boundaryId": "str",
+                    "createdDateTime": "datetime (optional)",
+                    "data": {
+                        "imageFormats": [
+                            "str (optional)"
+                        ],
+                        "imageNames": [
+                            "str (optional)"
+                        ],
+                        "imageResolutions": [
+                            "float (optional)"
+                        ]
+                    },
+                    "description": "str (optional)",
+                    "durationInSeconds": "str (optional)",
+                    "endDateTime": "datetime",
+                    "endTime": "datetime (optional)",
+                    "farmerId": "str",
+                    "id": "str (optional)",
+                    "lastActionDateTime": "datetime (optional)",
+                    "message": "str (optional)",
+                    "name": "str (optional)",
+                    "properties": {
+                        "str": "object (optional)"
+                    },
+                    "provider": "str (optional)",
+                    "source": "str (optional)",
+                    "startDateTime": "datetime",
+                    "startTime": "datetime (optional)",
+                    "status": "str (optional)"
+                }
+
         """
         cls = kwargs.pop('cls', None)  # type: ClsType[Any]
         error_map = {

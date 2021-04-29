@@ -118,6 +118,64 @@ class ApplicationDataOperations(object):
         :return: An iterator like instance of either Any or the result of cls(response)
         :rtype: ~azure.core.paging.ItemPaged[Any]
         :raises: ~azure.core.exceptions.HttpResponseError
+
+        Example:
+            .. code-block:: python
+
+                # response body for status code(s): 200
+                response_body == {
+                    "$skipToken": "str (optional)",
+                    "nextLink": "str (optional)",
+                    "value": [
+                        {
+                            "applicationProductDetails": [
+                                {
+                                    "avgMaterial": {
+                                        "unit": "str (optional)",
+                                        "value": "float (optional)"
+                                    },
+                                    "isCarrier": "bool (optional). Default value is False",
+                                    "productName": "str (optional)",
+                                    "totalMaterial": {
+                                        "unit": "str (optional)",
+                                        "value": "float (optional)"
+                                    }
+                                }
+                            ],
+                            "area": {
+                                "unit": "str (optional)",
+                                "value": "float (optional)"
+                            },
+                            "associatedBoundaryId": "str (optional)",
+                            "attachmentsLink": "str (optional)",
+                            "avgMaterial": {
+                                "unit": "str (optional)",
+                                "value": "float (optional)"
+                            },
+                            "createdDateTime": "datetime (optional)",
+                            "description": "str (optional)",
+                            "eTag": "str (optional)",
+                            "farmerId": "str (optional)",
+                            "id": "str (optional)",
+                            "modifiedDateTime": "datetime (optional)",
+                            "name": "str (optional)",
+                            "operationBoundaryId": "str (optional)",
+                            "operationEndDateTime": "datetime (optional)",
+                            "operationModifiedDateTime": "datetime (optional)",
+                            "operationStartDateTime": "datetime (optional)",
+                            "properties": {
+                                "str": "object (optional)"
+                            },
+                            "source": "str (optional)",
+                            "status": "str (optional)",
+                            "totalMaterial": {
+                                "unit": "str (optional)",
+                                "value": "float (optional)"
+                            }
+                        }
+                    ]
+                }
+
         """
 
         min_avg_material = kwargs.pop('min_avg_material', None)  # type: Optional[float]
@@ -330,6 +388,64 @@ class ApplicationDataOperations(object):
         :return: An iterator like instance of either Any or the result of cls(response)
         :rtype: ~azure.core.paging.ItemPaged[Any]
         :raises: ~azure.core.exceptions.HttpResponseError
+
+        Example:
+            .. code-block:: python
+
+                # response body for status code(s): 200
+                response_body == {
+                    "$skipToken": "str (optional)",
+                    "nextLink": "str (optional)",
+                    "value": [
+                        {
+                            "applicationProductDetails": [
+                                {
+                                    "avgMaterial": {
+                                        "unit": "str (optional)",
+                                        "value": "float (optional)"
+                                    },
+                                    "isCarrier": "bool (optional). Default value is False",
+                                    "productName": "str (optional)",
+                                    "totalMaterial": {
+                                        "unit": "str (optional)",
+                                        "value": "float (optional)"
+                                    }
+                                }
+                            ],
+                            "area": {
+                                "unit": "str (optional)",
+                                "value": "float (optional)"
+                            },
+                            "associatedBoundaryId": "str (optional)",
+                            "attachmentsLink": "str (optional)",
+                            "avgMaterial": {
+                                "unit": "str (optional)",
+                                "value": "float (optional)"
+                            },
+                            "createdDateTime": "datetime (optional)",
+                            "description": "str (optional)",
+                            "eTag": "str (optional)",
+                            "farmerId": "str (optional)",
+                            "id": "str (optional)",
+                            "modifiedDateTime": "datetime (optional)",
+                            "name": "str (optional)",
+                            "operationBoundaryId": "str (optional)",
+                            "operationEndDateTime": "datetime (optional)",
+                            "operationModifiedDateTime": "datetime (optional)",
+                            "operationStartDateTime": "datetime (optional)",
+                            "properties": {
+                                "str": "object (optional)"
+                            },
+                            "source": "str (optional)",
+                            "status": "str (optional)",
+                            "totalMaterial": {
+                                "unit": "str (optional)",
+                                "value": "float (optional)"
+                            }
+                        }
+                    ]
+                }
+
         """
 
         min_avg_material = kwargs.pop('min_avg_material', None)  # type: Optional[float]
@@ -484,6 +600,58 @@ class ApplicationDataOperations(object):
         :return: Any, or the result of cls(response)
         :rtype: Any or None
         :raises: ~azure.core.exceptions.HttpResponseError
+
+        Example:
+            .. code-block:: python
+
+                # response body for status code(s): 200
+                response_body == {
+                    "applicationProductDetails": [
+                        {
+                            "avgMaterial": {
+                                "unit": "str (optional)",
+                                "value": "float (optional)"
+                            },
+                            "isCarrier": "bool (optional). Default value is False",
+                            "productName": "str (optional)",
+                            "totalMaterial": {
+                                "unit": "str (optional)",
+                                "value": "float (optional)"
+                            }
+                        }
+                    ],
+                    "area": {
+                        "unit": "str (optional)",
+                        "value": "float (optional)"
+                    },
+                    "associatedBoundaryId": "str (optional)",
+                    "attachmentsLink": "str (optional)",
+                    "avgMaterial": {
+                        "unit": "str (optional)",
+                        "value": "float (optional)"
+                    },
+                    "createdDateTime": "datetime (optional)",
+                    "description": "str (optional)",
+                    "eTag": "str (optional)",
+                    "farmerId": "str (optional)",
+                    "id": "str (optional)",
+                    "modifiedDateTime": "datetime (optional)",
+                    "name": "str (optional)",
+                    "operationBoundaryId": "str (optional)",
+                    "operationEndDateTime": "datetime (optional)",
+                    "operationModifiedDateTime": "datetime (optional)",
+                    "operationStartDateTime": "datetime (optional)",
+                    "properties": {
+                        "str": "object (optional)"
+                    },
+                    "source": "str (optional)",
+                    "status": "str (optional)",
+                    "totalMaterial": {
+                        "unit": "str (optional)",
+                        "value": "float (optional)"
+                    }
+                }
+
         """
         cls = kwargs.pop('cls', None)  # type: ClsType[Optional[Any]]
         error_map = {
@@ -540,6 +708,58 @@ class ApplicationDataOperations(object):
         :return: Any, or the result of cls(response)
         :rtype: Any
         :raises: ~azure.core.exceptions.HttpResponseError
+
+        Example:
+            .. code-block:: python
+
+                # JSON input template you can fill out and use as your `json` input.
+                json = {
+                    "applicationProductDetails": [
+                        {
+                            "avgMaterial": {
+                                "unit": "str (optional)",
+                                "value": "float (optional)"
+                            },
+                            "isCarrier": "bool (optional). Default value is False",
+                            "productName": "str (optional)",
+                            "totalMaterial": {
+                                "unit": "str (optional)",
+                                "value": "float (optional)"
+                            }
+                        }
+                    ],
+                    "area": {
+                        "unit": "str (optional)",
+                        "value": "float (optional)"
+                    },
+                    "associatedBoundaryId": "str (optional)",
+                    "attachmentsLink": "str (optional)",
+                    "avgMaterial": {
+                        "unit": "str (optional)",
+                        "value": "float (optional)"
+                    },
+                    "createdDateTime": "datetime (optional)",
+                    "description": "str (optional)",
+                    "eTag": "str (optional)",
+                    "farmerId": "str (optional)",
+                    "id": "str (optional)",
+                    "modifiedDateTime": "datetime (optional)",
+                    "name": "str (optional)",
+                    "operationBoundaryId": "str (optional)",
+                    "operationEndDateTime": "datetime (optional)",
+                    "operationModifiedDateTime": "datetime (optional)",
+                    "operationStartDateTime": "datetime (optional)",
+                    "properties": {
+                        "str": "object (optional)"
+                    },
+                    "source": "str (optional)",
+                    "status": "str (optional)",
+                    "totalMaterial": {
+                        "unit": "str (optional)",
+                        "value": "float (optional)"
+                    }
+                }
+
         """
         cls = kwargs.pop('cls', None)  # type: ClsType[Any]
         error_map = {

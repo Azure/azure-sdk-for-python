@@ -75,6 +75,33 @@ class OAuthProvidersOperations(object):
         :return: An iterator like instance of either Any or the result of cls(response)
         :rtype: ~azure.core.paging.ItemPaged[Any]
         :raises: ~azure.core.exceptions.HttpResponseError
+
+        Example:
+            .. code-block:: python
+
+                # response body for status code(s): 200
+                response_body == {
+                    "$skipToken": "str (optional)",
+                    "nextLink": "str (optional)",
+                    "value": [
+                        {
+                            "apiKey": "str (optional)",
+                            "appId": "str (optional)",
+                            "appSecret": "str (optional)",
+                            "createdDateTime": "datetime (optional)",
+                            "description": "str (optional)",
+                            "eTag": "str (optional)",
+                            "id": "str (optional)",
+                            "isProductionApp": "bool (optional). Default value is False",
+                            "modifiedDateTime": "datetime (optional)",
+                            "name": "str (optional)",
+                            "properties": {
+                                "str": "object (optional)"
+                            }
+                        }
+                    ]
+                }
+
         """
 
         ids = kwargs.pop('ids', None)  # type: Optional[List[str]]
@@ -181,6 +208,27 @@ class OAuthProvidersOperations(object):
         :return: Any, or the result of cls(response)
         :rtype: Any or None
         :raises: ~azure.core.exceptions.HttpResponseError
+
+        Example:
+            .. code-block:: python
+
+                # response body for status code(s): 200
+                response_body == {
+                    "apiKey": "str (optional)",
+                    "appId": "str (optional)",
+                    "appSecret": "str (optional)",
+                    "createdDateTime": "datetime (optional)",
+                    "description": "str (optional)",
+                    "eTag": "str (optional)",
+                    "id": "str (optional)",
+                    "isProductionApp": "bool (optional). Default value is False",
+                    "modifiedDateTime": "datetime (optional)",
+                    "name": "str (optional)",
+                    "properties": {
+                        "str": "object (optional)"
+                    }
+                }
+
         """
         cls = kwargs.pop('cls', None)  # type: ClsType[Optional[Any]]
         error_map = {
@@ -233,6 +281,27 @@ class OAuthProvidersOperations(object):
         :return: Any, or the result of cls(response)
         :rtype: Any
         :raises: ~azure.core.exceptions.HttpResponseError
+
+        Example:
+            .. code-block:: python
+
+                # JSON input template you can fill out and use as your `json` input.
+                json = {
+                    "apiKey": "str (optional)",
+                    "appId": "str (optional)",
+                    "appSecret": "str (optional)",
+                    "createdDateTime": "datetime (optional)",
+                    "description": "str (optional)",
+                    "eTag": "str (optional)",
+                    "id": "str (optional)",
+                    "isProductionApp": "bool (optional). Default value is False",
+                    "modifiedDateTime": "datetime (optional)",
+                    "name": "str (optional)",
+                    "properties": {
+                        "str": "object (optional)"
+                    }
+                }
+
         """
         cls = kwargs.pop('cls', None)  # type: ClsType[Any]
         error_map = {

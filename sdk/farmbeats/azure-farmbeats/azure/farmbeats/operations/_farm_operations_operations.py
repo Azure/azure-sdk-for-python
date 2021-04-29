@@ -113,6 +113,33 @@ class FarmOperationsOperations(object):
         :return: An instance of LROPoller that returns either Any or the result of cls(response)
         :rtype: ~azure.core.polling.LROPoller[Any]
         :raises ~azure.core.exceptions.HttpResponseError:
+
+        Example:
+            .. code-block:: python
+
+                # JSON input template you can fill out and use as your `json` input.
+                json = {
+                    "authProviderId": "str",
+                    "createdDateTime": "datetime (optional)",
+                    "description": "str (optional)",
+                    "durationInSeconds": "str (optional)",
+                    "endTime": "datetime (optional)",
+                    "farmerId": "str",
+                    "id": "str (optional)",
+                    "lastActionDateTime": "datetime (optional)",
+                    "message": "str (optional)",
+                    "name": "str (optional)",
+                    "operations": [
+                        "str (optional)"
+                    ],
+                    "properties": {
+                        "str": "object (optional)"
+                    },
+                    "startTime": "datetime (optional)",
+                    "startYear": "int",
+                    "status": "str (optional)"
+                }
+
         """
 
         job = kwargs.pop('job', None)  # type: Any
@@ -177,6 +204,33 @@ class FarmOperationsOperations(object):
         :return: Any, or the result of cls(response)
         :rtype: Any
         :raises: ~azure.core.exceptions.HttpResponseError
+
+        Example:
+            .. code-block:: python
+
+                # response body for status code(s): 200
+                response_body == {
+                    "authProviderId": "str",
+                    "createdDateTime": "datetime (optional)",
+                    "description": "str (optional)",
+                    "durationInSeconds": "str (optional)",
+                    "endTime": "datetime (optional)",
+                    "farmerId": "str",
+                    "id": "str (optional)",
+                    "lastActionDateTime": "datetime (optional)",
+                    "message": "str (optional)",
+                    "name": "str (optional)",
+                    "operations": [
+                        "str (optional)"
+                    ],
+                    "properties": {
+                        "str": "object (optional)"
+                    },
+                    "startTime": "datetime (optional)",
+                    "startYear": "int",
+                    "status": "str (optional)"
+                }
+
         """
         cls = kwargs.pop('cls', None)  # type: ClsType[Any]
         error_map = {

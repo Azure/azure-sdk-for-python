@@ -85,6 +85,99 @@ class WeatherOperations:
         :return: An iterator like instance of either Any or the result of cls(response)
         :rtype: ~azure.core.async_paging.AsyncItemPaged[Any]
         :raises: ~azure.core.exceptions.HttpResponseError
+
+        Example:
+            .. code-block:: python
+
+                # response body for status code(s): 200
+                response_body == {
+                    "$skipToken": "str (optional)",
+                    "nextLink": "str (optional)",
+                    "value": [
+                        {
+                            "boundaryId": "str",
+                            "cloudCover": {
+                                "unit": "str (optional)",
+                                "value": "float (optional)"
+                            },
+                            "createdDateTime": "datetime (optional)",
+                            "dateTime": "datetime",
+                            "dewPoint": {
+                                "unit": "str (optional)",
+                                "value": "float (optional)"
+                            },
+                            "eTag": "str (optional)",
+                            "extensionId": "str",
+                            "extensionVersion": "str",
+                            "farmerId": "str",
+                            "granularity": "str",
+                            "growingDegreeDay": {
+                                "unit": "str (optional)",
+                                "value": "float (optional)"
+                            },
+                            "id": "str (optional)",
+                            "location": {
+                                "latitude": "float",
+                                "longitude": "float"
+                            },
+                            "modifiedDateTime": "datetime (optional)",
+                            "precipitation": {
+                                "unit": "str (optional)",
+                                "value": "float (optional)"
+                            },
+                            "pressure": {
+                                "unit": "str (optional)",
+                                "value": "float (optional)"
+                            },
+                            "properties": {
+                                "str": "object (optional)"
+                            },
+                            "relativeHumidity": {
+                                "unit": "str (optional)",
+                                "value": "float (optional)"
+                            },
+                            "soilMoisture": {
+                                "unit": "str (optional)",
+                                "value": "float (optional)"
+                            },
+                            "soilTemperature": {
+                                "unit": "str (optional)",
+                                "value": "float (optional)"
+                            },
+                            "temperature": {
+                                "unit": "str (optional)",
+                                "value": "float (optional)"
+                            },
+                            "unitSystemCode": "str (optional)",
+                            "visibility": {
+                                "unit": "str (optional)",
+                                "value": "float (optional)"
+                            },
+                            "weatherDataType": "str",
+                            "wetBulbTemperature": {
+                                "unit": "str (optional)",
+                                "value": "float (optional)"
+                            },
+                            "windChill": {
+                                "unit": "str (optional)",
+                                "value": "float (optional)"
+                            },
+                            "windDirection": {
+                                "unit": "str (optional)",
+                                "value": "float (optional)"
+                            },
+                            "windGust": {
+                                "unit": "str (optional)",
+                                "value": "float (optional)"
+                            },
+                            "windSpeed": {
+                                "unit": "str (optional)",
+                                "value": "float (optional)"
+                            }
+                        }
+                    ]
+                }
+
         """
         cls = kwargs.pop('cls', None)  # type: ClsType[Any]
         error_map = {
@@ -177,6 +270,36 @@ class WeatherOperations:
         :return: Any, or the result of cls(response)
         :rtype: Any
         :raises: ~azure.core.exceptions.HttpResponseError
+
+        Example:
+            .. code-block:: python
+
+                # response body for status code(s): 200
+                response_body == {
+                    "boundaryId": "str",
+                    "createdDateTime": "datetime (optional)",
+                    "description": "str (optional)",
+                    "durationInSeconds": "str (optional)",
+                    "endTime": "datetime (optional)",
+                    "extensionApiInput": {
+                        "str": "object"
+                    },
+                    "extensionApiName": "str",
+                    "extensionDataProviderApiKey": "str (optional)",
+                    "extensionDataProviderAppId": "str (optional)",
+                    "extensionId": "str",
+                    "farmerId": "str",
+                    "id": "str (optional)",
+                    "lastActionDateTime": "datetime (optional)",
+                    "message": "str (optional)",
+                    "name": "str (optional)",
+                    "properties": {
+                        "str": "object (optional)"
+                    },
+                    "startTime": "datetime (optional)",
+                    "status": "str (optional)"
+                }
+
         """
         cls = kwargs.pop('cls', None)  # type: ClsType[Any]
         error_map = {
@@ -282,6 +405,36 @@ class WeatherOperations:
         :return: An instance of AsyncLROPoller that returns either Any or the result of cls(response)
         :rtype: ~azure.core.polling.AsyncLROPoller[Any]
         :raises ~azure.core.exceptions.HttpResponseError:
+
+        Example:
+            .. code-block:: python
+
+                # JSON input template you can fill out and use as your `json` input.
+                json = {
+                    "boundaryId": "str",
+                    "createdDateTime": "datetime (optional)",
+                    "description": "str (optional)",
+                    "durationInSeconds": "str (optional)",
+                    "endTime": "datetime (optional)",
+                    "extensionApiInput": {
+                        "str": "object"
+                    },
+                    "extensionApiName": "str",
+                    "extensionDataProviderApiKey": "str (optional)",
+                    "extensionDataProviderAppId": "str (optional)",
+                    "extensionId": "str",
+                    "farmerId": "str",
+                    "id": "str (optional)",
+                    "lastActionDateTime": "datetime (optional)",
+                    "message": "str (optional)",
+                    "name": "str (optional)",
+                    "properties": {
+                        "str": "object (optional)"
+                    },
+                    "startTime": "datetime (optional)",
+                    "status": "str (optional)"
+                }
+
         """
         polling = kwargs.pop('polling', False)  # type: Union[bool, AsyncPollingMethod]
         cls = kwargs.pop('cls', None)  # type: ClsType[Any]
@@ -343,6 +496,34 @@ class WeatherOperations:
         :return: Any, or the result of cls(response)
         :rtype: Any
         :raises: ~azure.core.exceptions.HttpResponseError
+
+        Example:
+            .. code-block:: python
+
+                # response body for status code(s): 200
+                response_body == {
+                    "boundaryId": "str",
+                    "createdDateTime": "datetime (optional)",
+                    "description": "str (optional)",
+                    "durationInSeconds": "str (optional)",
+                    "endDateTime": "datetime (optional)",
+                    "endTime": "datetime (optional)",
+                    "extensionId": "str",
+                    "farmerId": "str",
+                    "granularity": "str (optional)",
+                    "id": "str (optional)",
+                    "lastActionDateTime": "datetime (optional)",
+                    "message": "str (optional)",
+                    "name": "str (optional)",
+                    "properties": {
+                        "str": "object (optional)"
+                    },
+                    "startDateTime": "datetime (optional)",
+                    "startTime": "datetime (optional)",
+                    "status": "str (optional)",
+                    "weatherDataType": "str (optional)"
+                }
+
         """
         cls = kwargs.pop('cls', None)  # type: ClsType[Any]
         error_map = {
@@ -448,6 +629,34 @@ class WeatherOperations:
         :return: An instance of AsyncLROPoller that returns either Any or the result of cls(response)
         :rtype: ~azure.core.polling.AsyncLROPoller[Any]
         :raises ~azure.core.exceptions.HttpResponseError:
+
+        Example:
+            .. code-block:: python
+
+                # JSON input template you can fill out and use as your `json` input.
+                json = {
+                    "boundaryId": "str",
+                    "createdDateTime": "datetime (optional)",
+                    "description": "str (optional)",
+                    "durationInSeconds": "str (optional)",
+                    "endDateTime": "datetime (optional)",
+                    "endTime": "datetime (optional)",
+                    "extensionId": "str",
+                    "farmerId": "str",
+                    "granularity": "str (optional)",
+                    "id": "str (optional)",
+                    "lastActionDateTime": "datetime (optional)",
+                    "message": "str (optional)",
+                    "name": "str (optional)",
+                    "properties": {
+                        "str": "object (optional)"
+                    },
+                    "startDateTime": "datetime (optional)",
+                    "startTime": "datetime (optional)",
+                    "status": "str (optional)",
+                    "weatherDataType": "str (optional)"
+                }
+
         """
         polling = kwargs.pop('polling', False)  # type: Union[bool, AsyncPollingMethod]
         cls = kwargs.pop('cls', None)  # type: ClsType[Any]

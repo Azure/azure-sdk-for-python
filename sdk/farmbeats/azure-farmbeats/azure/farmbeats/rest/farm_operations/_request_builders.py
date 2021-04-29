@@ -64,28 +64,6 @@ def build_create_data_ingestion_job_request_initial(
                 "status": "str (optional)"
             }
 
-            # response body for status code(s): 202
-            response.json() == {
-                "authProviderId": "str",
-                "createdDateTime": "datetime (optional)",
-                "description": "str (optional)",
-                "durationInSeconds": "str (optional)",
-                "endTime": "datetime (optional)",
-                "farmerId": "str",
-                "id": "str (optional)",
-                "lastActionDateTime": "datetime (optional)",
-                "message": "str (optional)",
-                "name": "str (optional)",
-                "operations": [
-                    "str (optional)"
-                ],
-                "properties": {
-                    "str": "object (optional)"
-                },
-                "startTime": "datetime (optional)",
-                "startYear": "int",
-                "status": "str (optional)"
-            }
     """
     content_type = kwargs.pop("content_type", None)
     api_version = "2021-03-31-preview"
@@ -136,7 +114,7 @@ def build_get_data_ingestion_job_details_request(
         .. code-block:: python
 
             # response body for status code(s): 200
-            response.json() == {
+            response_body == {
                 "authProviderId": "str",
                 "createdDateTime": "datetime (optional)",
                 "description": "str (optional)",
@@ -157,6 +135,7 @@ def build_get_data_ingestion_job_details_request(
                 "startYear": "int",
                 "status": "str (optional)"
             }
+
     """
     api_version = "2021-03-31-preview"
     accept = "application/json"

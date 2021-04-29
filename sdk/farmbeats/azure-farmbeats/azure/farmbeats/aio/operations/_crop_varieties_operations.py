@@ -97,6 +97,33 @@ class CropVarietiesOperations:
         :return: An iterator like instance of either Any or the result of cls(response)
         :rtype: ~azure.core.async_paging.AsyncItemPaged[Any]
         :raises: ~azure.core.exceptions.HttpResponseError
+
+        Example:
+            .. code-block:: python
+
+                # response body for status code(s): 200
+                response_body == {
+                    "$skipToken": "str (optional)",
+                    "nextLink": "str (optional)",
+                    "value": [
+                        {
+                            "brand": "str (optional)",
+                            "createdDateTime": "datetime (optional)",
+                            "cropId": "str (optional)",
+                            "description": "str (optional)",
+                            "eTag": "str (optional)",
+                            "id": "str (optional)",
+                            "modifiedDateTime": "datetime (optional)",
+                            "name": "str (optional)",
+                            "product": "str (optional)",
+                            "properties": {
+                                "str": "object (optional)"
+                            },
+                            "status": "str (optional)"
+                        }
+                    ]
+                }
+
         """
         cls = kwargs.pop('cls', None)  # type: ClsType[Any]
         error_map = {
@@ -238,6 +265,33 @@ class CropVarietiesOperations:
         :return: An iterator like instance of either Any or the result of cls(response)
         :rtype: ~azure.core.async_paging.AsyncItemPaged[Any]
         :raises: ~azure.core.exceptions.HttpResponseError
+
+        Example:
+            .. code-block:: python
+
+                # response body for status code(s): 200
+                response_body == {
+                    "$skipToken": "str (optional)",
+                    "nextLink": "str (optional)",
+                    "value": [
+                        {
+                            "brand": "str (optional)",
+                            "createdDateTime": "datetime (optional)",
+                            "cropId": "str (optional)",
+                            "description": "str (optional)",
+                            "eTag": "str (optional)",
+                            "id": "str (optional)",
+                            "modifiedDateTime": "datetime (optional)",
+                            "name": "str (optional)",
+                            "product": "str (optional)",
+                            "properties": {
+                                "str": "object (optional)"
+                            },
+                            "status": "str (optional)"
+                        }
+                    ]
+                }
+
         """
         cls = kwargs.pop('cls', None)  # type: ClsType[Any]
         error_map = {
@@ -341,6 +395,27 @@ class CropVarietiesOperations:
         :return: Any, or the result of cls(response)
         :rtype: Any or None
         :raises: ~azure.core.exceptions.HttpResponseError
+
+        Example:
+            .. code-block:: python
+
+                # response body for status code(s): 200
+                response_body == {
+                    "brand": "str (optional)",
+                    "createdDateTime": "datetime (optional)",
+                    "cropId": "str (optional)",
+                    "description": "str (optional)",
+                    "eTag": "str (optional)",
+                    "id": "str (optional)",
+                    "modifiedDateTime": "datetime (optional)",
+                    "name": "str (optional)",
+                    "product": "str (optional)",
+                    "properties": {
+                        "str": "object (optional)"
+                    },
+                    "status": "str (optional)"
+                }
+
         """
         cls = kwargs.pop('cls', None)  # type: ClsType[Optional[Any]]
         error_map = {
@@ -398,6 +473,27 @@ class CropVarietiesOperations:
         :return: Any, or the result of cls(response)
         :rtype: Any
         :raises: ~azure.core.exceptions.HttpResponseError
+
+        Example:
+            .. code-block:: python
+
+                # JSON input template you can fill out and use as your `json` input.
+                json = {
+                    "brand": "str (optional)",
+                    "createdDateTime": "datetime (optional)",
+                    "cropId": "str (optional)",
+                    "description": "str (optional)",
+                    "eTag": "str (optional)",
+                    "id": "str (optional)",
+                    "modifiedDateTime": "datetime (optional)",
+                    "name": "str (optional)",
+                    "product": "str (optional)",
+                    "properties": {
+                        "str": "object (optional)"
+                    },
+                    "status": "str (optional)"
+                }
+
         """
         cls = kwargs.pop('cls', None)  # type: ClsType[Any]
         error_map = {

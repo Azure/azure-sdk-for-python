@@ -64,7 +64,7 @@ def build_list_by_farmer_id_request(
         .. code-block:: python
 
             # response body for status code(s): 200
-            response.json() == {
+            response_body == {
                 "$skipToken": "str (optional)",
                 "nextLink": "str (optional)",
                 "value": [
@@ -83,6 +83,7 @@ def build_list_by_farmer_id_request(
                     }
                 ]
             }
+
     """
     resource_ids = kwargs.pop('resource_ids', None)  # type: Optional[List[str]]
     resource_types = kwargs.pop('resource_types', None)  # type: Optional[List[str]]
@@ -169,7 +170,7 @@ def build_get_request(
         .. code-block:: python
 
             # response body for status code(s): 200
-            response.json() == {
+            response_body == {
                 "createdDateTime": "datetime (optional)",
                 "description": "str (optional)",
                 "eTag": "str (optional)",
@@ -182,6 +183,7 @@ def build_get_request(
                 "resourceType": "str (optional)",
                 "status": "str (optional)"
             }
+
     """
     api_version = "2021-03-31-preview"
     accept = "application/json"
@@ -254,34 +256,6 @@ def build_create_or_update_request(
                 "status": "str (optional). Status of the resource."
             }
 
-            # response body for status code(s): 200
-            response.json() == {
-                "createdDateTime": "datetime (optional)",
-                "description": "str (optional)",
-                "eTag": "str (optional)",
-                "farmerId": "str (optional)",
-                "id": "str (optional)",
-                "modifiedDateTime": "datetime (optional)",
-                "name": "str (optional)",
-                "originalFileName": "str (optional)",
-                "resourceId": "str (optional)",
-                "resourceType": "str (optional)",
-                "status": "str (optional)"
-            }
-            # response body for status code(s): 201
-            response.json() == {
-                "createdDateTime": "datetime (optional)",
-                "description": "str (optional)",
-                "eTag": "str (optional)",
-                "farmerId": "str (optional)",
-                "id": "str (optional)",
-                "modifiedDateTime": "datetime (optional)",
-                "name": "str (optional)",
-                "originalFileName": "str (optional)",
-                "resourceId": "str (optional)",
-                "resourceType": "str (optional)",
-                "status": "str (optional)"
-            }
     """
     content_type = kwargs.pop("content_type", None)
     api_version = "2021-03-31-preview"

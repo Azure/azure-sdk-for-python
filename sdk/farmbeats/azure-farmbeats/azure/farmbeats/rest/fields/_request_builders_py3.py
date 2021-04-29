@@ -73,7 +73,7 @@ def build_list_by_farmer_id_request(
         .. code-block:: python
 
             # response body for status code(s): 200
-            response.json() == {
+            response_body == {
                 "$skipToken": "str (optional)",
                 "nextLink": "str (optional)",
                 "value": [
@@ -97,6 +97,7 @@ def build_list_by_farmer_id_request(
                     }
                 ]
             }
+
     """
     api_version = "2021-03-31-preview"
     accept = "application/json"
@@ -198,7 +199,7 @@ def build_list_request(
         .. code-block:: python
 
             # response body for status code(s): 200
-            response.json() == {
+            response_body == {
                 "$skipToken": "str (optional)",
                 "nextLink": "str (optional)",
                 "value": [
@@ -222,6 +223,7 @@ def build_list_request(
                     }
                 ]
             }
+
     """
     api_version = "2021-03-31-preview"
     accept = "application/json"
@@ -289,7 +291,7 @@ def build_get_request(
         .. code-block:: python
 
             # response body for status code(s): 200
-            response.json() == {
+            response_body == {
                 "boundaryIds": [
                     "str (optional)"
                 ],
@@ -307,6 +309,7 @@ def build_get_request(
                 },
                 "status": "str (optional)"
             }
+
     """
     api_version = "2021-03-31-preview"
     accept = "application/json"
@@ -383,44 +386,6 @@ def build_create_or_update_request(
                 "status": "str (optional)"
             }
 
-            # response body for status code(s): 200
-            response.json() == {
-                "boundaryIds": [
-                    "str (optional)"
-                ],
-                "createdDateTime": "datetime (optional)",
-                "description": "str (optional)",
-                "eTag": "str (optional)",
-                "farmId": "str (optional)",
-                "farmerId": "str (optional)",
-                "id": "str (optional)",
-                "modifiedDateTime": "datetime (optional)",
-                "name": "str (optional)",
-                "primaryBoundaryId": "str (optional)",
-                "properties": {
-                    "str": "object (optional)"
-                },
-                "status": "str (optional)"
-            }
-            # response body for status code(s): 201
-            response.json() == {
-                "boundaryIds": [
-                    "str (optional)"
-                ],
-                "createdDateTime": "datetime (optional)",
-                "description": "str (optional)",
-                "eTag": "str (optional)",
-                "farmId": "str (optional)",
-                "farmerId": "str (optional)",
-                "id": "str (optional)",
-                "modifiedDateTime": "datetime (optional)",
-                "name": "str (optional)",
-                "primaryBoundaryId": "str (optional)",
-                "properties": {
-                    "str": "object (optional)"
-                },
-                "status": "str (optional)"
-            }
     """
     content_type = kwargs.pop("content_type", None)
     api_version = "2021-03-31-preview"
@@ -518,7 +483,7 @@ def build_get_cascade_delete_job_details_request(
         .. code-block:: python
 
             # response body for status code(s): 200
-            response.json() == {
+            response_body == {
                 "createdDateTime": "datetime (optional)",
                 "description": "str (optional)",
                 "durationInSeconds": "str (optional)",
@@ -536,6 +501,7 @@ def build_get_cascade_delete_job_details_request(
                 "startTime": "datetime (optional)",
                 "status": "str (optional)"
             }
+
     """
     api_version = "2021-03-31-preview"
     accept = "application/json"
@@ -589,7 +555,7 @@ def build_create_cascade_delete_job_request_initial(
         .. code-block:: python
 
             # response body for status code(s): 202
-            response.json() == {
+            response_body == {
                 "createdDateTime": "datetime (optional)",
                 "description": "str (optional)",
                 "durationInSeconds": "str (optional)",
@@ -607,6 +573,7 @@ def build_create_cascade_delete_job_request_initial(
                 "startTime": "datetime (optional)",
                 "status": "str (optional)"
             }
+
     """
     api_version = "2021-03-31-preview"
     accept = "application/json"

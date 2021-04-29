@@ -112,7 +112,7 @@ def build_list_by_farmer_id_request(
         .. code-block:: python
 
             # response body for status code(s): 200
-            response.json() == {
+            response_body == {
                 "$skipToken": "str (optional)",
                 "nextLink": "str (optional)",
                 "value": [
@@ -195,6 +195,7 @@ def build_list_by_farmer_id_request(
                     }
                 ]
             }
+
     """
     min_total_yield = kwargs.pop('min_total_yield', None)  # type: Optional[float]
     max_total_yield = kwargs.pop('max_total_yield', None)  # type: Optional[float]
@@ -412,7 +413,7 @@ def build_list_request(
         .. code-block:: python
 
             # response body for status code(s): 200
-            response.json() == {
+            response_body == {
                 "$skipToken": "str (optional)",
                 "nextLink": "str (optional)",
                 "value": [
@@ -495,6 +496,7 @@ def build_list_request(
                     }
                 ]
             }
+
     """
     min_total_yield = kwargs.pop('min_total_yield', None)  # type: Optional[float]
     max_total_yield = kwargs.pop('max_total_yield', None)  # type: Optional[float]
@@ -640,7 +642,7 @@ def build_get_request(
         .. code-block:: python
 
             # response body for status code(s): 200
-            response.json() == {
+            response_body == {
                 "area": {
                     "unit": "str (optional)",
                     "value": "float (optional)"
@@ -717,6 +719,7 @@ def build_get_request(
                     "value": "float (optional)"
                 }
             }
+
     """
     api_version = "2021-03-31-preview"
     accept = "application/json"
@@ -850,162 +853,6 @@ def build_create_or_update_request(
                 }
             }
 
-            # response body for status code(s): 200
-            response.json() == {
-                "area": {
-                    "unit": "str (optional)",
-                    "value": "float (optional)"
-                },
-                "associatedBoundaryId": "str (optional)",
-                "attachmentsLink": "str (optional)",
-                "avgMoisture": {
-                    "unit": "str (optional)",
-                    "value": "float (optional)"
-                },
-                "avgSpeed": {
-                    "unit": "str (optional)",
-                    "value": "float (optional)"
-                },
-                "avgWetMass": {
-                    "unit": "str (optional)",
-                    "value": "float (optional)"
-                },
-                "avgYield": {
-                    "unit": "str (optional)",
-                    "value": "float (optional)"
-                },
-                "createdDateTime": "datetime (optional)",
-                "description": "str (optional)",
-                "eTag": "str (optional)",
-                "farmerId": "str (optional)",
-                "harvestProductDetails": [
-                    {
-                        "area": {
-                            "unit": "str (optional)",
-                            "value": "float (optional)"
-                        },
-                        "avgMoisture": {
-                            "unit": "str (optional)",
-                            "value": "float (optional)"
-                        },
-                        "avgWetMass": {
-                            "unit": "str (optional)",
-                            "value": "float (optional)"
-                        },
-                        "avgYield": {
-                            "unit": "str (optional)",
-                            "value": "float (optional)"
-                        },
-                        "productName": "str (optional)",
-                        "totalWetMass": {
-                            "unit": "str (optional)",
-                            "value": "float (optional)"
-                        },
-                        "totalYield": {
-                            "unit": "str (optional)",
-                            "value": "float (optional)"
-                        }
-                    }
-                ],
-                "id": "str (optional)",
-                "modifiedDateTime": "datetime (optional)",
-                "name": "str (optional)",
-                "operationBoundaryId": "str (optional)",
-                "operationEndDateTime": "datetime (optional)",
-                "operationModifiedDateTime": "datetime (optional)",
-                "operationStartDateTime": "datetime (optional)",
-                "properties": {
-                    "str": "object (optional)"
-                },
-                "source": "str (optional)",
-                "status": "str (optional)",
-                "totalWetMass": {
-                    "unit": "str (optional)",
-                    "value": "float (optional)"
-                },
-                "totalYield": {
-                    "unit": "str (optional)",
-                    "value": "float (optional)"
-                }
-            }
-            # response body for status code(s): 201
-            response.json() == {
-                "area": {
-                    "unit": "str (optional)",
-                    "value": "float (optional)"
-                },
-                "associatedBoundaryId": "str (optional)",
-                "attachmentsLink": "str (optional)",
-                "avgMoisture": {
-                    "unit": "str (optional)",
-                    "value": "float (optional)"
-                },
-                "avgSpeed": {
-                    "unit": "str (optional)",
-                    "value": "float (optional)"
-                },
-                "avgWetMass": {
-                    "unit": "str (optional)",
-                    "value": "float (optional)"
-                },
-                "avgYield": {
-                    "unit": "str (optional)",
-                    "value": "float (optional)"
-                },
-                "createdDateTime": "datetime (optional)",
-                "description": "str (optional)",
-                "eTag": "str (optional)",
-                "farmerId": "str (optional)",
-                "harvestProductDetails": [
-                    {
-                        "area": {
-                            "unit": "str (optional)",
-                            "value": "float (optional)"
-                        },
-                        "avgMoisture": {
-                            "unit": "str (optional)",
-                            "value": "float (optional)"
-                        },
-                        "avgWetMass": {
-                            "unit": "str (optional)",
-                            "value": "float (optional)"
-                        },
-                        "avgYield": {
-                            "unit": "str (optional)",
-                            "value": "float (optional)"
-                        },
-                        "productName": "str (optional)",
-                        "totalWetMass": {
-                            "unit": "str (optional)",
-                            "value": "float (optional)"
-                        },
-                        "totalYield": {
-                            "unit": "str (optional)",
-                            "value": "float (optional)"
-                        }
-                    }
-                ],
-                "id": "str (optional)",
-                "modifiedDateTime": "datetime (optional)",
-                "name": "str (optional)",
-                "operationBoundaryId": "str (optional)",
-                "operationEndDateTime": "datetime (optional)",
-                "operationModifiedDateTime": "datetime (optional)",
-                "operationStartDateTime": "datetime (optional)",
-                "properties": {
-                    "str": "object (optional)"
-                },
-                "source": "str (optional)",
-                "status": "str (optional)",
-                "totalWetMass": {
-                    "unit": "str (optional)",
-                    "value": "float (optional)"
-                },
-                "totalYield": {
-                    "unit": "str (optional)",
-                    "value": "float (optional)"
-                }
-            }
     """
     content_type = kwargs.pop("content_type", None)
     api_version = "2021-03-31-preview"
