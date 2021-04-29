@@ -5,6 +5,7 @@
 # -------------------------------------------------------------------------
 # pylint: disable=too-many-lines
 
+import time
 import datetime
 import uuid
 import logging
@@ -279,13 +280,15 @@ class ServiceBusMessage(
             self._amqp_header = uamqp.message.MessageHeader()
         if value is None:
             self._amqp_header.time_to_live = value
+            if self._amqp_properties.absolute_expiry_time:
+                self._amqp_properties.absolute_expiry_time = value
         elif isinstance(value, datetime.timedelta):
             self._amqp_header.time_to_live = value.seconds * 1000
         else:
             self._amqp_header.time_to_live = int(value) * 1000
 
         if self._amqp_header.time_to_live and self._amqp_header.time_to_live != MAX_DURATION_VALUE:
-            self._amqp_properties.creation_time = int(utc_now().timestamp())
+            self._amqp_properties.creation_time = int(time.mktime(utc_now().timetuple()))
             self._amqp_properties.absolute_expiry_time = min(
                 MAX_ABSOLUTE_EXPIRY_TIME,
                 self._amqp_properties.creation_time + self._amqp_header.time_to_live
