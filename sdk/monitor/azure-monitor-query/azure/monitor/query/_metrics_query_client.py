@@ -32,7 +32,7 @@ class MetricsQueryClient(object):
 
     def query(self, resource_uri, **kwargs):
         # type: (str, Any) -> None
-        """**Lists the metric values for a resource**.
+        """Lists the metric values for a resource.
 
         :param resource_uri: The identifier of the resource.
         :type resource_uri: str

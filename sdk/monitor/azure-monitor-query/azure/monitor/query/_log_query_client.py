@@ -38,7 +38,7 @@ class LogQueryClient(object):
         """
         return self._query_op.get(workspace_id, query, **kwargs)
 
-    def batch_query(self, workspace_id, batch, **kwargs):
+    def batch_query(self, batch, **kwargs):
         # type: (str, Any) -> None
         """Execute an Analytics query.
 
