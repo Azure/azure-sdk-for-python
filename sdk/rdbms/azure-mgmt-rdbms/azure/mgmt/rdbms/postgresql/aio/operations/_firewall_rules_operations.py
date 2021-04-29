@@ -56,7 +56,7 @@ class FirewallRulesOperations:
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2020-02-14-preview"
+        api_version = "2017-12-01"
         content_type = kwargs.pop("content_type", "application/json")
         accept = "application/json"
 
@@ -101,7 +101,7 @@ class FirewallRulesOperations:
             return cls(pipeline_response, deserialized, {})
 
         return deserialized
-    _create_or_update_initial.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DBForPostgreSql/flexibleServers/{serverName}/firewallRules/{firewallRuleName}'}  # type: ignore
+    _create_or_update_initial.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DBForPostgreSQL/servers/{serverName}/firewallRules/{firewallRuleName}'}  # type: ignore
 
     async def begin_create_or_update(
         self,
@@ -177,7 +177,7 @@ class FirewallRulesOperations:
             )
         else:
             return AsyncLROPoller(self._client, raw_result, get_long_running_output, polling_method)
-    begin_create_or_update.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DBForPostgreSql/flexibleServers/{serverName}/firewallRules/{firewallRuleName}'}  # type: ignore
+    begin_create_or_update.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DBForPostgreSQL/servers/{serverName}/firewallRules/{firewallRuleName}'}  # type: ignore
 
     async def _delete_initial(
         self,
@@ -191,7 +191,7 @@ class FirewallRulesOperations:
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2020-02-14-preview"
+        api_version = "2017-12-01"
         accept = "application/json"
 
         # Construct URL
@@ -223,7 +223,7 @@ class FirewallRulesOperations:
         if cls:
             return cls(pipeline_response, None, {})
 
-    _delete_initial.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DBForPostgreSql/flexibleServers/{serverName}/firewallRules/{firewallRuleName}'}  # type: ignore
+    _delete_initial.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DBForPostgreSQL/servers/{serverName}/firewallRules/{firewallRuleName}'}  # type: ignore
 
     async def begin_delete(
         self,
@@ -232,7 +232,7 @@ class FirewallRulesOperations:
         firewall_rule_name: str,
         **kwargs
     ) -> AsyncLROPoller[None]:
-        """Deletes a PostgreSQL server firewall rule.
+        """Deletes a server firewall rule.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
         :type resource_group_name: str
@@ -292,7 +292,7 @@ class FirewallRulesOperations:
             )
         else:
             return AsyncLROPoller(self._client, raw_result, get_long_running_output, polling_method)
-    begin_delete.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DBForPostgreSql/flexibleServers/{serverName}/firewallRules/{firewallRuleName}'}  # type: ignore
+    begin_delete.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DBForPostgreSQL/servers/{serverName}/firewallRules/{firewallRuleName}'}  # type: ignore
 
     async def get(
         self,
@@ -301,7 +301,7 @@ class FirewallRulesOperations:
         firewall_rule_name: str,
         **kwargs
     ) -> "_models.FirewallRule":
-        """List all the firewall rules in a given server.
+        """Gets information about a server firewall rule.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
         :type resource_group_name: str
@@ -319,7 +319,7 @@ class FirewallRulesOperations:
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2020-02-14-preview"
+        api_version = "2017-12-01"
         accept = "application/json"
 
         # Construct URL
@@ -354,7 +354,7 @@ class FirewallRulesOperations:
             return cls(pipeline_response, deserialized, {})
 
         return deserialized
-    get.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DBForPostgreSql/flexibleServers/{serverName}/firewallRules/{firewallRuleName}'}  # type: ignore
+    get.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DBForPostgreSQL/servers/{serverName}/firewallRules/{firewallRuleName}'}  # type: ignore
 
     def list_by_server(
         self,
@@ -362,7 +362,7 @@ class FirewallRulesOperations:
         server_name: str,
         **kwargs
     ) -> AsyncIterable["_models.FirewallRuleListResult"]:
-        """List all the firewall rules in a given PostgreSQL server.
+        """List all the firewall rules in a given server.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
         :type resource_group_name: str
@@ -378,7 +378,7 @@ class FirewallRulesOperations:
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2020-02-14-preview"
+        api_version = "2017-12-01"
         accept = "application/json"
 
         def prepare_request(next_link=None):
@@ -411,7 +411,7 @@ class FirewallRulesOperations:
             list_of_elem = deserialized.value
             if cls:
                 list_of_elem = cls(list_of_elem)
-            return deserialized.next_link or None, AsyncList(list_of_elem)
+            return None, AsyncList(list_of_elem)
 
         async def get_next(next_link=None):
             request = prepare_request(next_link)
@@ -428,4 +428,4 @@ class FirewallRulesOperations:
         return AsyncItemPaged(
             get_next, extract_data
         )
-    list_by_server.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DBForPostgreSql/flexibleServers/{serverName}/firewallRules'}  # type: ignore
+    list_by_server.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DBForPostgreSQL/servers/{serverName}/firewallRules'}  # type: ignore
