@@ -49,7 +49,7 @@ from ._models import (
     HealthcareEntityAssertion,
 )
 from ._paging import AnalyzeHealthcareEntitiesResult
-from ._generated.v3_1_preview_4.models import (
+from ._generated.v3_1_preview_5.models import (
     PiiCategory as PiiEntityCategoryType,
     RelationType as HealthcareEntityRelationType
 )

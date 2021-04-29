@@ -254,6 +254,7 @@ opentelemetry-sdk<2.0.0,>=1.0.0
 #override azure-mgmt-keyvault msrest>=0.6.21
 #override azure-mgmt-resource msrest>=0.6.21
 #override azure-template azure-core<2.0.0,>=1.10.0
+#override azure-mgmt-servicefabricmanagedclusters msrest>=0.6.21
 #override azure-mgmt-managedservices msrest>=0.6.21
 #override azure-mgmt-databoxedge msrest>=0.6.21
 #override azure-mgmt-kusto msrest>=0.6.21

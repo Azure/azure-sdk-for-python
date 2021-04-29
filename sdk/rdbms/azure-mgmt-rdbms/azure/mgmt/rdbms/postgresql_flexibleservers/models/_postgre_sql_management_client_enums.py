@@ -42,6 +42,14 @@ class CreateMode(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     DEFAULT = "Default"
     POINT_IN_TIME_RESTORE = "PointInTimeRestore"
 
+class Enum8(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+
+    POSTGRE_SQL = "PostgreSQL"
+    POSTGRE_SQL_CITUS = "PostgreSQLCitus"
+    MY_SQL = "MySQL"
+    MARIA_DB = "MariaDb"
+    ORACLE = "Oracle"
+
 class HAEnabledEnum(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     """stand by count value can be either enabled or disabled
     """

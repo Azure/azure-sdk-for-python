@@ -93,18 +93,18 @@ class TextAnalyticsClientOperationsMixin:
         executed.
 
         :param body: Collection of documents to analyze and tasks to execute.
-        :type body: ~azure.ai.textanalytics.v3_1_preview_4.models.AnalyzeBatchInput
+        :type body: ~azure.ai.textanalytics.v3_1_preview_5.models.AnalyzeBatchInput
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: Pass in True if you'd like the AsyncAnalyzeBatchActionsLROPollingMethod polling method,
-         False for no polling, or your own initialized polling object for a personal polling strategy.
+        :keyword polling: By default, your polling method will be AsyncAnalyzeBatchActionsLROPollingMethod.
+         Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of AsyncAnalyzeBatchActionsLROPoller that returns either AnalyzeJobState or the result of cls(response)
-        :rtype: ~....._async_lro.AsyncAnalyzeBatchActionsLROPoller[~azure.ai.textanalytics.v3_1_preview_4.models.AnalyzeJobState]
+        :rtype: ~....._async_lro.AsyncAnalyzeBatchActionsLROPoller[~azure.ai.textanalytics.v3_1_preview_5.models.AnalyzeJobState]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        polling = kwargs.pop('polling', False)  # type: Union[bool, AsyncPollingMethod]
+        polling = kwargs.pop('polling', True)  # type: Union[bool, AsyncPollingMethod]
         cls = kwargs.pop('cls', None)  # type: ClsType["_models.AnalyzeJobState"]
         lro_delay = kwargs.pop(
             'polling_interval',
@@ -173,7 +173,7 @@ class TextAnalyticsClientOperationsMixin:
         :type skip: int
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: AnalyzeJobState, or the result of cls(response)
-        :rtype: ~azure.ai.textanalytics.v3_1_preview_4.models.AnalyzeJobState
+        :rtype: ~azure.ai.textanalytics.v3_1_preview_5.models.AnalyzeJobState
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType["_models.AnalyzeJobState"]
@@ -248,7 +248,7 @@ class TextAnalyticsClientOperationsMixin:
         :type show_stats: bool
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: HealthcareJobState, or the result of cls(response)
-        :rtype: ~azure.ai.textanalytics.v3_1_preview_4.models.HealthcareJobState
+        :rtype: ~azure.ai.textanalytics.v3_1_preview_5.models.HealthcareJobState
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType["_models.HealthcareJobState"]
@@ -357,15 +357,15 @@ class TextAnalyticsClientOperationsMixin:
         :type job_id: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: Pass in True if you'd like the AsyncLROBasePolling polling method,
-         False for no polling, or your own initialized polling object for a personal polling strategy.
+        :keyword polling: By default, your polling method will be AsyncLROBasePolling.
+         Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either None or the result of cls(response)
         :rtype: ~azure.core.polling.AsyncLROPoller[None]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        polling = kwargs.pop('polling', False)  # type: Union[bool, AsyncPollingMethod]
+        polling = kwargs.pop('polling', True)  # type: Union[bool, AsyncPollingMethod]
         cls = kwargs.pop('cls', None)  # type: ClsType[None]
         lro_delay = kwargs.pop(
             'polling_interval',
@@ -410,6 +410,7 @@ class TextAnalyticsClientOperationsMixin:
         documents: List["_models.MultiLanguageInput"],
         model_version: Optional[str] = None,
         string_index_type: Optional[Union[str, "_models.StringIndexType"]] = None,
+        logging_opt_out: Optional[bool] = None,
         **kwargs
     ) -> Optional["_models.HealthcareJobState"]:
         cls = kwargs.pop('cls', None)  # type: ClsType[Optional["_models.HealthcareJobState"]]
@@ -439,6 +440,8 @@ class TextAnalyticsClientOperationsMixin:
             query_parameters['model-version'] = self._serialize.query("model_version", model_version, 'str')
         if string_index_type is not None:
             query_parameters['stringIndexType'] = self._serialize.query("string_index_type", string_index_type, 'str')
+        if logging_opt_out is not None:
+            query_parameters['loggingOptOut'] = self._serialize.query("logging_opt_out", logging_opt_out, 'bool')
 
         # Construct headers
         header_parameters = {}  # type: Dict[str, Any]
@@ -475,6 +478,7 @@ class TextAnalyticsClientOperationsMixin:
         documents: List["_models.MultiLanguageInput"],
         model_version: Optional[str] = None,
         string_index_type: Optional[Union[str, "_models.StringIndexType"]] = None,
+        logging_opt_out: Optional[bool] = None,
         **kwargs
     ) -> AnalyzeHealthcareEntitiesAsyncLROPoller["_models.HealthcareJobState"]:
         """Submit healthcare analysis job.
@@ -483,25 +487,33 @@ class TextAnalyticsClientOperationsMixin:
         symptoms, etc) and their relations.
 
         :param documents: The set of documents to process as part of this batch.
-        :type documents: list[~azure.ai.textanalytics.v3_1_preview_4.models.MultiLanguageInput]
+        :type documents: list[~azure.ai.textanalytics.v3_1_preview_5.models.MultiLanguageInput]
         :param model_version: (Optional) This value indicates which model will be used for scoring. If
          a model-version is not specified, the API should default to the latest, non-preview version.
         :type model_version: str
         :param string_index_type: (Optional) Specifies the method used to interpret string offsets.
          Defaults to Text Elements (Graphemes) according to Unicode v8.0.0. For additional information
          see https://aka.ms/text-analytics-offsets.
-        :type string_index_type: str or ~azure.ai.textanalytics.v3_1_preview_4.models.StringIndexType
+        :type string_index_type: str or ~azure.ai.textanalytics.v3_1_preview_5.models.StringIndexType
+        :param logging_opt_out: (Optional) If set to true, you opt-out of having your text input logged
+         for troubleshooting. By default, Text Analytics logs your input text for 48 hours, solely to
+         allow for troubleshooting issues in providing you with the Text Analytics natural language
+         processing functions. Setting this parameter to true, disables input logging and may limit our
+         ability to remediate issues that occur.  Please see Cognitive Services Compliance and Privacy
+         notes at https://aka.ms/cs-compliance for additional details, and Microsoft Responsible AI
+         principles at https://www.microsoft.com/en-us/ai/responsible-ai.
+        :type logging_opt_out: bool
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: Pass in True if you'd like the AnalyzeHealthcareEntitiesAsyncLROPollingMethod polling method,
-         False for no polling, or your own initialized polling object for a personal polling strategy.
+        :keyword polling: By default, your polling method will be AnalyzeHealthcareEntitiesAsyncLROPollingMethod.
+         Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of AnalyzeHealthcareEntitiesAsyncLROPoller that returns either HealthcareJobState or the result of cls(response)
-        :rtype: ~....._async_lro.AnalyzeHealthcareEntitiesAsyncLROPoller[~azure.ai.textanalytics.v3_1_preview_4.models.HealthcareJobState]
+        :rtype: ~....._async_lro.AnalyzeHealthcareEntitiesAsyncLROPoller[~azure.ai.textanalytics.v3_1_preview_5.models.HealthcareJobState]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        polling = kwargs.pop('polling', False)  # type: Union[bool, AsyncPollingMethod]
+        polling = kwargs.pop('polling', True)  # type: Union[bool, AsyncPollingMethod]
         cls = kwargs.pop('cls', None)  # type: ClsType["_models.HealthcareJobState"]
         lro_delay = kwargs.pop(
             'polling_interval',
@@ -513,6 +525,7 @@ class TextAnalyticsClientOperationsMixin:
                 documents=documents,
                 model_version=model_version,
                 string_index_type=string_index_type,
+                logging_opt_out=logging_opt_out,
                 cls=lambda x,y,z: x,
                 **kwargs
             )
@@ -550,6 +563,7 @@ class TextAnalyticsClientOperationsMixin:
         documents: List["_models.MultiLanguageInput"],
         model_version: Optional[str] = None,
         show_stats: Optional[bool] = None,
+        logging_opt_out: Optional[bool] = None,
         string_index_type: Optional[Union[str, "_models.StringIndexType"]] = None,
         **kwargs
     ) -> "_models.EntitiesResult":
@@ -561,20 +575,28 @@ class TextAnalyticsClientOperationsMixin:
         Analytics API</a>` for the list of enabled languages.
 
         :param documents: The set of documents to process as part of this batch.
-        :type documents: list[~azure.ai.textanalytics.v3_1_preview_4.models.MultiLanguageInput]
+        :type documents: list[~azure.ai.textanalytics.v3_1_preview_5.models.MultiLanguageInput]
         :param model_version: (Optional) This value indicates which model will be used for scoring. If
          a model-version is not specified, the API should default to the latest, non-preview version.
         :type model_version: str
         :param show_stats: (Optional) if set to true, response will contain request and document level
          statistics.
         :type show_stats: bool
+        :param logging_opt_out: (Optional) If set to true, you opt-out of having your text input logged
+         for troubleshooting. By default, Text Analytics logs your input text for 48 hours, solely to
+         allow for troubleshooting issues in providing you with the Text Analytics natural language
+         processing functions. Setting this parameter to true, disables input logging and may limit our
+         ability to remediate issues that occur.  Please see Cognitive Services Compliance and Privacy
+         notes at https://aka.ms/cs-compliance for additional details, and Microsoft Responsible AI
+         principles at https://www.microsoft.com/en-us/ai/responsible-ai.
+        :type logging_opt_out: bool
         :param string_index_type: (Optional) Specifies the method used to interpret string offsets.
          Defaults to Text Elements (Graphemes) according to Unicode v8.0.0. For additional information
          see https://aka.ms/text-analytics-offsets.
-        :type string_index_type: str or ~azure.ai.textanalytics.v3_1_preview_4.models.StringIndexType
+        :type string_index_type: str or ~azure.ai.textanalytics.v3_1_preview_5.models.StringIndexType
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: EntitiesResult, or the result of cls(response)
-        :rtype: ~azure.ai.textanalytics.v3_1_preview_4.models.EntitiesResult
+        :rtype: ~azure.ai.textanalytics.v3_1_preview_5.models.EntitiesResult
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType["_models.EntitiesResult"]
@@ -604,6 +626,8 @@ class TextAnalyticsClientOperationsMixin:
             query_parameters['model-version'] = self._serialize.query("model_version", model_version, 'str')
         if show_stats is not None:
             query_parameters['showStats'] = self._serialize.query("show_stats", show_stats, 'bool')
+        if logging_opt_out is not None:
+            query_parameters['loggingOptOut'] = self._serialize.query("logging_opt_out", logging_opt_out, 'bool')
         if string_index_type is not None:
             query_parameters['stringIndexType'] = self._serialize.query("string_index_type", string_index_type, 'str')
 
@@ -636,6 +660,7 @@ class TextAnalyticsClientOperationsMixin:
         documents: List["_models.MultiLanguageInput"],
         model_version: Optional[str] = None,
         show_stats: Optional[bool] = None,
+        logging_opt_out: Optional[bool] = None,
         domain: Optional[str] = None,
         string_index_type: Optional[Union[str, "_models.StringIndexType"]] = None,
         pii_categories: Optional[List[Union[str, "_models.PiiCategory"]]] = None,
@@ -650,25 +675,33 @@ class TextAnalyticsClientOperationsMixin:
         list of enabled languages.
 
         :param documents: The set of documents to process as part of this batch.
-        :type documents: list[~azure.ai.textanalytics.v3_1_preview_4.models.MultiLanguageInput]
+        :type documents: list[~azure.ai.textanalytics.v3_1_preview_5.models.MultiLanguageInput]
         :param model_version: (Optional) This value indicates which model will be used for scoring. If
          a model-version is not specified, the API should default to the latest, non-preview version.
         :type model_version: str
         :param show_stats: (Optional) if set to true, response will contain request and document level
          statistics.
         :type show_stats: bool
+        :param logging_opt_out: (Optional) If set to true, you opt-out of having your text input logged
+         for troubleshooting. By default, Text Analytics logs your input text for 48 hours, solely to
+         allow for troubleshooting issues in providing you with the Text Analytics natural language
+         processing functions. Setting this parameter to true, disables input logging and may limit our
+         ability to remediate issues that occur.  Please see Cognitive Services Compliance and Privacy
+         notes at https://aka.ms/cs-compliance for additional details, and Microsoft Responsible AI
+         principles at https://www.microsoft.com/en-us/ai/responsible-ai.
+        :type logging_opt_out: bool
         :param domain: (Optional) if specified, will set the PII domain to include only a subset of the
          entity categories. Possible values include: 'PHI', 'none'.
         :type domain: str
         :param string_index_type: (Optional) Specifies the method used to interpret string offsets.
          Defaults to Text Elements (Graphemes) according to Unicode v8.0.0. For additional information
          see https://aka.ms/text-analytics-offsets.
-        :type string_index_type: str or ~azure.ai.textanalytics.v3_1_preview_4.models.StringIndexType
+        :type string_index_type: str or ~azure.ai.textanalytics.v3_1_preview_5.models.StringIndexType
         :param pii_categories: (Optional) describes the PII categories to return.
-        :type pii_categories: list[str or ~azure.ai.textanalytics.v3_1_preview_4.models.PiiCategory]
+        :type pii_categories: list[str or ~azure.ai.textanalytics.v3_1_preview_5.models.PiiCategory]
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: PiiResult, or the result of cls(response)
-        :rtype: ~azure.ai.textanalytics.v3_1_preview_4.models.PiiResult
+        :rtype: ~azure.ai.textanalytics.v3_1_preview_5.models.PiiResult
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType["_models.PiiResult"]
@@ -698,6 +731,8 @@ class TextAnalyticsClientOperationsMixin:
             query_parameters['model-version'] = self._serialize.query("model_version", model_version, 'str')
         if show_stats is not None:
             query_parameters['showStats'] = self._serialize.query("show_stats", show_stats, 'bool')
+        if logging_opt_out is not None:
+            query_parameters['loggingOptOut'] = self._serialize.query("logging_opt_out", logging_opt_out, 'bool')
         if domain is not None:
             query_parameters['domain'] = self._serialize.query("domain", domain, 'str')
         if string_index_type is not None:
@@ -734,6 +769,7 @@ class TextAnalyticsClientOperationsMixin:
         documents: List["_models.MultiLanguageInput"],
         model_version: Optional[str] = None,
         show_stats: Optional[bool] = None,
+        logging_opt_out: Optional[bool] = None,
         string_index_type: Optional[Union[str, "_models.StringIndexType"]] = None,
         **kwargs
     ) -> "_models.EntityLinkingResult":
@@ -744,20 +780,28 @@ class TextAnalyticsClientOperationsMixin:
         the list of enabled languages.
 
         :param documents: The set of documents to process as part of this batch.
-        :type documents: list[~azure.ai.textanalytics.v3_1_preview_4.models.MultiLanguageInput]
+        :type documents: list[~azure.ai.textanalytics.v3_1_preview_5.models.MultiLanguageInput]
         :param model_version: (Optional) This value indicates which model will be used for scoring. If
          a model-version is not specified, the API should default to the latest, non-preview version.
         :type model_version: str
         :param show_stats: (Optional) if set to true, response will contain request and document level
          statistics.
         :type show_stats: bool
+        :param logging_opt_out: (Optional) If set to true, you opt-out of having your text input logged
+         for troubleshooting. By default, Text Analytics logs your input text for 48 hours, solely to
+         allow for troubleshooting issues in providing you with the Text Analytics natural language
+         processing functions. Setting this parameter to true, disables input logging and may limit our
+         ability to remediate issues that occur.  Please see Cognitive Services Compliance and Privacy
+         notes at https://aka.ms/cs-compliance for additional details, and Microsoft Responsible AI
+         principles at https://www.microsoft.com/en-us/ai/responsible-ai.
+        :type logging_opt_out: bool
         :param string_index_type: (Optional) Specifies the method used to interpret string offsets.
          Defaults to Text Elements (Graphemes) according to Unicode v8.0.0. For additional information
          see https://aka.ms/text-analytics-offsets.
-        :type string_index_type: str or ~azure.ai.textanalytics.v3_1_preview_4.models.StringIndexType
+        :type string_index_type: str or ~azure.ai.textanalytics.v3_1_preview_5.models.StringIndexType
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: EntityLinkingResult, or the result of cls(response)
-        :rtype: ~azure.ai.textanalytics.v3_1_preview_4.models.EntityLinkingResult
+        :rtype: ~azure.ai.textanalytics.v3_1_preview_5.models.EntityLinkingResult
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType["_models.EntityLinkingResult"]
@@ -787,6 +831,8 @@ class TextAnalyticsClientOperationsMixin:
             query_parameters['model-version'] = self._serialize.query("model_version", model_version, 'str')
         if show_stats is not None:
             query_parameters['showStats'] = self._serialize.query("show_stats", show_stats, 'bool')
+        if logging_opt_out is not None:
+            query_parameters['loggingOptOut'] = self._serialize.query("logging_opt_out", logging_opt_out, 'bool')
         if string_index_type is not None:
             query_parameters['stringIndexType'] = self._serialize.query("string_index_type", string_index_type, 'str')
 
@@ -819,6 +865,7 @@ class TextAnalyticsClientOperationsMixin:
         documents: List["_models.MultiLanguageInput"],
         model_version: Optional[str] = None,
         show_stats: Optional[bool] = None,
+        logging_opt_out: Optional[bool] = None,
         **kwargs
     ) -> "_models.KeyPhraseResult":
         """Key Phrases.
@@ -828,16 +875,24 @@ class TextAnalyticsClientOperationsMixin:
         enabled languages.
 
         :param documents: The set of documents to process as part of this batch.
-        :type documents: list[~azure.ai.textanalytics.v3_1_preview_4.models.MultiLanguageInput]
+        :type documents: list[~azure.ai.textanalytics.v3_1_preview_5.models.MultiLanguageInput]
         :param model_version: (Optional) This value indicates which model will be used for scoring. If
          a model-version is not specified, the API should default to the latest, non-preview version.
         :type model_version: str
         :param show_stats: (Optional) if set to true, response will contain request and document level
          statistics.
         :type show_stats: bool
+        :param logging_opt_out: (Optional) If set to true, you opt-out of having your text input logged
+         for troubleshooting. By default, Text Analytics logs your input text for 48 hours, solely to
+         allow for troubleshooting issues in providing you with the Text Analytics natural language
+         processing functions. Setting this parameter to true, disables input logging and may limit our
+         ability to remediate issues that occur.  Please see Cognitive Services Compliance and Privacy
+         notes at https://aka.ms/cs-compliance for additional details, and Microsoft Responsible AI
+         principles at https://www.microsoft.com/en-us/ai/responsible-ai.
+        :type logging_opt_out: bool
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: KeyPhraseResult, or the result of cls(response)
-        :rtype: ~azure.ai.textanalytics.v3_1_preview_4.models.KeyPhraseResult
+        :rtype: ~azure.ai.textanalytics.v3_1_preview_5.models.KeyPhraseResult
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType["_models.KeyPhraseResult"]
@@ -867,6 +922,8 @@ class TextAnalyticsClientOperationsMixin:
             query_parameters['model-version'] = self._serialize.query("model_version", model_version, 'str')
         if show_stats is not None:
             query_parameters['showStats'] = self._serialize.query("show_stats", show_stats, 'bool')
+        if logging_opt_out is not None:
+            query_parameters['loggingOptOut'] = self._serialize.query("logging_opt_out", logging_opt_out, 'bool')
 
         # Construct headers
         header_parameters = {}  # type: Dict[str, Any]
@@ -897,6 +954,7 @@ class TextAnalyticsClientOperationsMixin:
         documents: List["_models.LanguageInput"],
         model_version: Optional[str] = None,
         show_stats: Optional[bool] = None,
+        logging_opt_out: Optional[bool] = None,
         **kwargs
     ) -> "_models.LanguageResult":
         """Detect Language.
@@ -907,16 +965,24 @@ class TextAnalyticsClientOperationsMixin:
         enabled languages.
 
         :param documents:
-        :type documents: list[~azure.ai.textanalytics.v3_1_preview_4.models.LanguageInput]
+        :type documents: list[~azure.ai.textanalytics.v3_1_preview_5.models.LanguageInput]
         :param model_version: (Optional) This value indicates which model will be used for scoring. If
          a model-version is not specified, the API should default to the latest, non-preview version.
         :type model_version: str
         :param show_stats: (Optional) if set to true, response will contain request and document level
          statistics.
         :type show_stats: bool
+        :param logging_opt_out: (Optional) If set to true, you opt-out of having your text input logged
+         for troubleshooting. By default, Text Analytics logs your input text for 48 hours, solely to
+         allow for troubleshooting issues in providing you with the Text Analytics natural language
+         processing functions. Setting this parameter to true, disables input logging and may limit our
+         ability to remediate issues that occur.  Please see Cognitive Services Compliance and Privacy
+         notes at https://aka.ms/cs-compliance for additional details, and Microsoft Responsible AI
+         principles at https://www.microsoft.com/en-us/ai/responsible-ai.
+        :type logging_opt_out: bool
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: LanguageResult, or the result of cls(response)
-        :rtype: ~azure.ai.textanalytics.v3_1_preview_4.models.LanguageResult
+        :rtype: ~azure.ai.textanalytics.v3_1_preview_5.models.LanguageResult
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType["_models.LanguageResult"]
@@ -946,6 +1012,8 @@ class TextAnalyticsClientOperationsMixin:
             query_parameters['model-version'] = self._serialize.query("model_version", model_version, 'str')
         if show_stats is not None:
             query_parameters['showStats'] = self._serialize.query("show_stats", show_stats, 'bool')
+        if logging_opt_out is not None:
+            query_parameters['loggingOptOut'] = self._serialize.query("logging_opt_out", logging_opt_out, 'bool')
 
         # Construct headers
         header_parameters = {}  # type: Dict[str, Any]
@@ -976,6 +1044,7 @@ class TextAnalyticsClientOperationsMixin:
         documents: List["_models.MultiLanguageInput"],
         model_version: Optional[str] = None,
         show_stats: Optional[bool] = None,
+        logging_opt_out: Optional[bool] = None,
         opinion_mining: Optional[bool] = None,
         string_index_type: Optional[Union[str, "_models.StringIndexType"]] = None,
         **kwargs
@@ -987,23 +1056,31 @@ class TextAnalyticsClientOperationsMixin:
         (targets and assessments).
 
         :param documents: The set of documents to process as part of this batch.
-        :type documents: list[~azure.ai.textanalytics.v3_1_preview_4.models.MultiLanguageInput]
+        :type documents: list[~azure.ai.textanalytics.v3_1_preview_5.models.MultiLanguageInput]
         :param model_version: (Optional) This value indicates which model will be used for scoring. If
          a model-version is not specified, the API should default to the latest, non-preview version.
         :type model_version: str
         :param show_stats: (Optional) if set to true, response will contain request and document level
          statistics.
         :type show_stats: bool
+        :param logging_opt_out: (Optional) If set to true, you opt-out of having your text input logged
+         for troubleshooting. By default, Text Analytics logs your input text for 48 hours, solely to
+         allow for troubleshooting issues in providing you with the Text Analytics natural language
+         processing functions. Setting this parameter to true, disables input logging and may limit our
+         ability to remediate issues that occur.  Please see Cognitive Services Compliance and Privacy
+         notes at https://aka.ms/cs-compliance for additional details, and Microsoft Responsible AI
+         principles at https://www.microsoft.com/en-us/ai/responsible-ai.
+        :type logging_opt_out: bool
         :param opinion_mining: (Optional) if set to true, response will contain not only sentiment
          prediction but also opinion mining (aspect-based sentiment analysis) results.
         :type opinion_mining: bool
         :param string_index_type: (Optional) Specifies the method used to interpret string offsets.
          Defaults to Text Elements (Graphemes) according to Unicode v8.0.0. For additional information
          see https://aka.ms/text-analytics-offsets.
-        :type string_index_type: str or ~azure.ai.textanalytics.v3_1_preview_4.models.StringIndexType
+        :type string_index_type: str or ~azure.ai.textanalytics.v3_1_preview_5.models.StringIndexType
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: SentimentResponse, or the result of cls(response)
-        :rtype: ~azure.ai.textanalytics.v3_1_preview_4.models.SentimentResponse
+        :rtype: ~azure.ai.textanalytics.v3_1_preview_5.models.SentimentResponse
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType["_models.SentimentResponse"]
@@ -1033,6 +1110,8 @@ class TextAnalyticsClientOperationsMixin:
             query_parameters['model-version'] = self._serialize.query("model_version", model_version, 'str')
         if show_stats is not None:
             query_parameters['showStats'] = self._serialize.query("show_stats", show_stats, 'bool')
+        if logging_opt_out is not None:
+            query_parameters['loggingOptOut'] = self._serialize.query("logging_opt_out", logging_opt_out, 'bool')
         if opinion_mining is not None:
             query_parameters['opinionMining'] = self._serialize.query("opinion_mining", opinion_mining, 'bool')
         if string_index_type is not None:
