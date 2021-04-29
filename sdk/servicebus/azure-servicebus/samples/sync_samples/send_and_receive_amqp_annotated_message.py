@@ -12,7 +12,8 @@ Example to show sending, receiving and parsing amqp annotated message(s) to a Se
 # pylint: disable=C0111
 
 import os
-from azure.servicebus import ServiceBusClient, AMQPAnnotatedMessage, AMQPMessageBodyType
+from azure.servicebus import ServiceBusClient
+from azure.servicebus.amqp import AMQPAnnotatedMessage, AMQPMessageBodyType
 
 
 CONNECTION_STR = os.environ['SERVICE_BUS_CONNECTION_STR']
@@ -64,17 +65,18 @@ def send_value_message(sender):
 
 def receive_and_parse_message(receiver):
     for message in receiver:
-        if message.body_type == AMQPMessageBodyType.DATA:
+        raw_amqp_message = message.raw_amqp_message
+        if raw_amqp_message.body_type == AMQPMessageBodyType.DATA:
             print("Message of data body received. Body is:")
-            for data_section in message.body:
+            for data_section in raw_amqp_message.body:
                 print(data_section)
-        elif message.body_type == AMQPMessageBodyType.SEQUENCE:
+        elif raw_amqp_message.body_type == AMQPMessageBodyType.SEQUENCE:
             print("Message of sequence body received. Body is:")
-            for sequence_section in message.body:
+            for sequence_section in raw_amqp_message.body:
                 print(sequence_section)
-        elif message.body_type == AMQPMessageBodyType.VALUE:
+        elif raw_amqp_message.body_type == AMQPMessageBodyType.VALUE:
             print("Message of value body received. Body is:")
-            print(message.body)
+            print(raw_amqp_message.body)
         receiver.complete_message(message)
 
 
