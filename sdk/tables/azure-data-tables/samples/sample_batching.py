@@ -75,7 +75,7 @@ class CreateClients(object):
         }
 
         # [START batching]
-        from azure.data.tables import TableClient, UpdateMode, TableTransactionError
+        from azure.data.tables import TableClient, TableTransactionError
         from azure.core.exceptions import ResourceExistsError
         self.table_client = TableClient.from_connection_string(
             conn_str=self.connection_string, table_name=self.table_name)
@@ -94,7 +94,7 @@ class CreateClients(object):
             ('upsert', entity1),
             ('delete', entity2),
             ('upsert', entity3),
-            ('update', entity4, {'mode': UpdateMode.REPLACE})
+            ('update', entity4, {'mode': 'replace'})
         ]
         try:
             self.table_client.submit_transaction(operations)
