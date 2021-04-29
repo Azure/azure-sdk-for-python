@@ -10,7 +10,7 @@ from ._container_registry_client import ContainerRegistryClient
 from ._container_repository_client import ContainerRepositoryClient
 from ._models import (
     ContentPermissions,
-    DeletedRepositoryResult,
+    DeleteRepositoryResult,
     RegistryArtifactOrderBy,
     RegistryArtifactProperties,
     RepositoryProperties,
@@ -25,7 +25,7 @@ __all__ = [
     "ContainerRegistryClient",
     "ContainerRepositoryClient",
     "ContentPermissions",
-    "DeletedRepositoryResult",
+    "DeleteRepositoryResult",
     "RegistryArtifactOrderBy",
     "RegistryArtifactProperties",
     "RepositoryProperties",

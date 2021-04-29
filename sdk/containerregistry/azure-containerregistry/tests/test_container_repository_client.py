@@ -12,7 +12,7 @@ from azure.containerregistry import (
     ContainerRepositoryClient,
     ContainerRegistryClient,
     ContentPermissions,
-    DeletedRepositoryResult,
+    DeleteRepositoryResult,
     RepositoryProperties,
     RegistryArtifactOrderBy,
     RegistryArtifactProperties,
@@ -293,8 +293,8 @@ class TestContainerRepositoryClient(ContainerRegistryTestClass):
 
         repo_client = self.create_repository_client(containerregistry_endpoint, TO_BE_DELETED)
         result = repo_client.delete()
-        assert isinstance(result, DeletedRepositoryResult)
-        assert result.deleted_registry_artifact_digests is not None
+        assert isinstance(result, DeleteRepositoryResult)
+        assert result.deleted_manifests is not None
         assert result.deleted_tags is not None
 
         existing_repos = list(reg_client.list_repositories())
