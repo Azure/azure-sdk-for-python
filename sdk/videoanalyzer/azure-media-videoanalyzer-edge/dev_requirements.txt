@@ -6,4 +6,3 @@ aiohttp>=3.0; python_version >= '3.5'
 aiodns>=2.0; python_version >= '3.5'
 tox>=3.20.0
 tox-monorepo>=0.1.2
-../azure-media-video-nspkg
