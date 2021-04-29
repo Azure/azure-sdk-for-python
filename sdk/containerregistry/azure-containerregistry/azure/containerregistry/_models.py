@@ -11,7 +11,7 @@ from ._generated.models import ContentProperties
 if TYPE_CHECKING:
     from ._generated.models import ManifestAttributesBase
     from ._generated.models import RepositoryProperties as GeneratedRepositoryProperties
-    from ._generated.models import TagProperties as GeneratedTagProperties
+    from ._generated.models import ArtifactTagProperties as GeneratedTagProperties
 
 
 class ContentPermissions(object):
@@ -64,7 +64,7 @@ class DeletedRepositoryResult(object):
     def _from_generated(cls, gen):
         return cls(
             deleted_tags=gen.deleted_tags,
-            deleted_registry_artifact_digests=gen.deleted_registry_artifact_digests,
+            deleted_registry_artifact_digests=gen.deleted_manifests,
         )
 
 
@@ -102,7 +102,7 @@ class RegistryArtifactProperties(object):
     def _from_generated(cls, generated):
         # type: (ManifestAttributesBase) -> RegistryArtifactProperties
         return cls(
-            cpu_architecture=generated.cpu_architecture,
+            cpu_architecture=generated.architecture,
             created_on=generated.created_on,
             digest=generated.digest,
             last_updated_on=generated.last_updated_on,
@@ -146,7 +146,7 @@ class RepositoryProperties(object):
             created_on=generated.created_on,
             last_updated_on=generated.last_updated_on,
             name=generated.name,
-            manifest_count=generated.registry_artifact_count,
+            manifest_count=generated.manifest_count,
             tag_count=generated.tag_count,
             content_permissions=generated.writeable_properties,
             registry=generated.additional_properties.get("registry", None),

@@ -1,9 +1,8 @@
 {% set name = "azure-core" %}
-{% set version = "2021.05.01" %}
 
 package:
   name: "{{ name|lower }}"
-  version: "{{ version }}"
+  version: {{ environ.get('AZURESDK_CONDA_VERSION', '0.0.0') }}
 
 source:
   url: {{ environ.get('CORE_SOURCE_DISTRIBUTION', '') }}
@@ -39,10 +38,10 @@ about:
   license: MIT
   license_family: MIT
   license_file: 
-  summary: "Microsoft Azure Core Library for Python"
+  summary: Microsoft Azure Core Library for Python{{ environ.get('CORE_SUMMARY', '') }}
   doc_url: 
   dev_url: 
 
 extra:
   recipe-maintainers:
-    - lmazuel,xiangyan99
+    - lmazuel,xiangyan99,scbedd

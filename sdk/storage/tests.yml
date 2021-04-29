@@ -23,6 +23,9 @@ stages:
         MaxParallel: 2
         ServiceDirectory: storage
         InjectedPackages: $(InjectedPackages)
+        MatrixReplace:
+          # Use dedicated storage pool in canadacentral with higher memory capacity
+          - Pool=(.*)-general/$1-storage
         EnvVars:
           STORAGE_ACCOUNT_NAME: $(python-storage-storage-account-name)
           STORAGE_ACCOUNT_KEY: $(python-storage-storage-account-key)

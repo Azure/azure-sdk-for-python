@@ -31,5 +31,5 @@ extends:
   parameters:
     ServiceDirectory: servicefabricmanagedclusters
     Artifacts:
-    - name: azure_mgmt_servicefabricmanagedclusters
+    - name: azure-mgmt-servicefabricmanagedclusters
       safeName: azuremgmtservicefabricmanagedclusters

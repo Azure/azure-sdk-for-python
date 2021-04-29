@@ -89,10 +89,6 @@ class StorageTableEntityTest(AzureTestCase, TableTestCase):
         for i in range(1, entity_count + 1):
             entity['RowKey'] = entity['RowKey'] + str(i)
             client.create_entity(entity)
-        # with self.ts.batch(table_name) as batch:
-        #    for i in range(1, entity_count + 1):
-        #        entity['RowKey'] = entity['RowKey'] + str(i)
-        #        batch.create_entity(entity)
         return client
 
     def _create_random_base_entity_dict(self):
@@ -487,6 +483,58 @@ class StorageTableEntityTest(AzureTestCase, TableTestCase):
         finally:
             self._tear_down()
             self.sleep(SLEEP_DELAY)
+
+    @CosmosPreparer()
+    def test_query_user_filter_binary(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
+        # Arrange
+        self._set_up(tables_cosmos_account_name, tables_primary_cosmos_account_key)
+        try:
+            entity, _ = self._insert_two_opposite_entities()
+
+            # Act
+            parameters = {
+                'my_param': entity['binary']
+            }
+            entities = self.table.query_entities("binary eq @my_param", parameters=parameters)
+
+            length = 0
+            assert entities is not None
+            for entity in entities:
+                self._assert_default_entity(entity)
+                length += 1
+
+            assert length == 1
+        finally:
+            self._tear_down()
+
+    @CosmosPreparer()
+    def test_query_user_filter_int64(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
+        # Arrange
+        self._set_up(tables_cosmos_account_name, tables_primary_cosmos_account_key)
+        try:
+            entity, _ = self._insert_two_opposite_entities()
+            large_entity = {
+                u"PartitionKey": u"pk001",
+                u"RowKey": u"rk001",
+                u"large_int": EntityProperty(2 ** 40, EdmType.INT64),
+            }
+            self.table.create_entity(large_entity)
+
+            # Act
+            parameters = {
+                'my_param': large_entity['large_int'].value
+            }
+            entities = self.table.query_entities("large_int eq @my_param", parameters=parameters)
+
+            length = 0
+            assert entities is not None
+            for entity in entities:
+                assert large_entity['large_int'] == entity['large_int']
+                length += 1
+
+            assert length == 1
+        finally:
+            self._tear_down()
 
     @CosmosPreparer()
     def test_query_invalid_filter(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
@@ -1554,21 +1602,22 @@ class StorageTableEntityTest(AzureTestCase, TableTestCase):
             table.create_entity(entity_a)
             table.create_entity(entity_b)
 
-            is_user_admin = "PartitionKey eq @first and IsAdmin eq 'admin'"
-            entities = list(table.query_entities(is_user_admin, parameters={'first': 'foo'}))
+            is_user_admin = u"PartitionKey eq @first and IsAdmin eq 'admin'"
+            entities = list(table.query_entities(is_user_admin, parameters={u'first': u'foo'}))
             assert len(entities) ==  1
 
-            injection = "foo' or RowKey eq 'bar2"
+            injection = u"foo' or RowKey eq 'bar2"
             injected_query = "PartitionKey eq '{}' and IsAdmin eq 'admin'".format(injection)
             entities = list(table.query_entities(injected_query))
             assert len(entities) ==  2
 
-            entities = list(table.query_entities(is_user_admin, parameters={'first': injection}))
+            entities = list(table.query_entities(is_user_admin, parameters={u'first': injection}))
             assert len(entities) ==  0
         finally:
             self.ts.delete_table(table_name)
             self._tear_down()
 
+    @pytest.mark.live_test_only
     @CosmosPreparer()
     def test_query_special_chars(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
         # Arrange

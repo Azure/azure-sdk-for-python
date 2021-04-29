@@ -4,7 +4,6 @@ stages:
   - template: ../../eng/pipelines/templates/stages/archetype-sdk-tests.yml
     parameters:
       AllocateResourceGroup: false
-      BuildTargetingString: 'azure-*'
       ServiceDirectory: template
       TestSamples: true
       EnvVars:
