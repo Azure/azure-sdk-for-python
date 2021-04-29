@@ -15,7 +15,7 @@ import time
 from azure.containerregistry import (
     ContainerRepositoryClient,
     ContainerRegistryClient,
-    TagProperties,
+    ArtifactTagProperties,
     ContentPermissions,
     RegistryArtifactProperties,
 )
@@ -210,7 +210,7 @@ class ContainerRegistryTestClass(AzureTestCase):
         registry=None,
         repository=None,
     ):
-        assert isinstance(tag, TagProperties)
+        assert isinstance(tag, ArtifactTagProperties)
         assert isinstance(tag.writeable_permissions, ContentPermissions)
         assert isinstance(tag.created_on, datetime)
         assert isinstance(tag.last_updated_on, datetime)

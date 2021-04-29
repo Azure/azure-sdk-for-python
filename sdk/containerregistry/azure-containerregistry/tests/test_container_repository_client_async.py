@@ -9,8 +9,8 @@ import pytest
 from devtools_testutils import AzureTestCase
 
 from azure.containerregistry import (
+    ArtifactTagProperties,
     DeletedRepositoryResult,
-    RepositoryProperties,
     ContentPermissions,
     RegistryArtifactOrderBy,
     RegistryArtifactProperties,
@@ -318,3 +318,13 @@ class TestContainerRepositoryClient(AsyncContainerRegistryTestClass):
             count += 1
 
         assert count > 0
+
+    @acr_preparer()
+    async def test_get_tag(self, containerregistry_endpoint):
+        client = self.create_repository_client(containerregistry_endpoint, "library/busybox")
+
+        tag = await client.get_tag_properties("latest")
+
+        assert tag is not None
+        assert isinstance(tag, ArtifactTagProperties)
+        assert tag.repository == client.repository

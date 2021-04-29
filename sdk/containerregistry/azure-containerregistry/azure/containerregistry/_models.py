@@ -167,7 +167,7 @@ class TagOrderBy(str, Enum):
     LAST_UPDATE_TIME_ASCENDING = "timeasc"
 
 
-class TagProperties(object):
+class ArtifactTagProperties(object):
     """Model for storing properties of a single tag
 
     :ivar content_permissions: Read/Write/List/Delete permissions for the tag
@@ -178,7 +178,7 @@ class TagProperties(object):
     :ivar last_updated_on: Time the tag was last updated
     :vartype last_updated_on: :class:`datetime.datetime`
     :ivar str name: Name of the image the tag corresponds to
-    :ivar str registry: Registry the tag belongs to
+    :ivar str repository: Repository the tag belongs to
     """
 
     def __init__(self, **kwargs):
@@ -187,16 +187,18 @@ class TagProperties(object):
         self.digest = kwargs.get("digest", None)
         self.last_updated_on = kwargs.get("last_updated_on", None)
         self.name = kwargs.get("name", None)
+        self.repository = kwargs.get("repository", None)
         if self.content_permissions:
             self.content_permissions = ContentPermissions._from_generated(self.content_permissions)
 
     @classmethod
-    def _from_generated(cls, generated):
-        # type: (GeneratedTagProperties) -> TagProperties
+    def _from_generated(cls, generated, **kwargs):
+        # type: (GeneratedTagProperties, Dict[str, Any]) -> ArtifactTagProperties
         return cls(
             created_on=generated.created_on,
             digest=generated.digest,
             last_updated_on=generated.last_updated_on,
             name=generated.name,
             writeable_properties=generated.writeable_properties,
+            repository=kwargs.get("repository", None),
         )
