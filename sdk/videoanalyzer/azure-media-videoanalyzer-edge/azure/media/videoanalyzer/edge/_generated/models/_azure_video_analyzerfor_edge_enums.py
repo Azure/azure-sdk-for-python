@@ -27,16 +27,20 @@ class _CaseInsensitiveEnumMeta(EnumMeta):
 
 
 class GrpcExtensionDataTransferMode(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
-    """How frame data should be transmitted to the inference engine.
+    """Data transfer mode: embedded or sharedMemory.
     """
 
-    #: Frames are transferred embedded into the gRPC messages.
+    #: Media samples are embedded into the gRPC messages. This mode is less efficient but it requires
+    #: a simpler implementations and can be used with plugins which are not on the same node as the
+    #: Video Analyzer module.
     EMBEDDED = "embedded"
-    #: Frames are transferred through shared memory.
+    #: Media samples are made available through shared memory. This mode enables efficient data
+    #: transfers but it requires that the extension plugin to be co-located on the same node and
+    #: sharing the same shared memory space.
     SHARED_MEMORY = "sharedMemory"
 
 class ImageFormatRawPixelFormat(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
-    """The pixel format that will be used to encode images.
+    """Pixel format to be applied to the raw image.
     """
 
     #: Planar YUV 4:2:0, 12bpp, (1 Cr and Cb sample per 2x2 Y samples).
@@ -63,90 +67,103 @@ class ImageFormatRawPixelFormat(with_metaclass(_CaseInsensitiveEnumMeta, str, En
     BGRA = "bgra"
 
 class ImageScaleMode(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
-    """Describes the modes for scaling an input video frame into an image, before it is sent to an
-    inference engine.
+    """Describes the image scaling mode to be applied. Default mode is 'pad'.
     """
 
-    #: Use the same aspect ratio as the input frame.
+    #: Preserves the same aspect ratio as the input image. If only one image dimension is provided,
+    #: the second dimension is calculated based on the input image aspect ratio. When 2 dimensions are
+    #: provided, the image is resized to fit the most constraining dimension, considering the input
+    #: image size and aspect ratio.
     PRESERVE_ASPECT_RATIO = "preserveAspectRatio"
-    #: Center pad the input frame to match the given dimensions.
+    #: Pads the image with black horizontal stripes (letterbox) or black vertical stripes (pillar-box)
+    #: so the image is resized to the specified dimensions while not altering the content aspect
+    #: ratio.
     PAD = "pad"
-    #: Stretch input frame to match given dimensions.
+    #: Stretches the original image so it resized to the specified dimensions.
     STRETCH = "stretch"
 
 class LivePipelineState(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
-    """Allowed states for a live pipeline.
+    """Current pipeline state (read-only).
     """
 
     #: The live pipeline is idle and not processing media.
     INACTIVE = "inactive"
     #: The live pipeline is transitioning into the active state.
     ACTIVATING = "activating"
-    #: The live pipeline is active and processing media.
+    #: The live pipeline is active and able to process media. If your data source is not available,
+    #: for instance, if your RTSP camera is powered off or unreachable, the pipeline will still be
+    #: active and periodically retrying the connection. Your Azure subscription will be billed for the
+    #: duration in which the live pipeline is in the active state.
     ACTIVE = "active"
     #: The live pipeline is transitioning into the inactive state.
     DEACTIVATING = "deactivating"
 
 class MotionDetectionSensitivity(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
-    """Enumeration that specifies the sensitivity of the motion detection processor.
+    """Motion detection sensitivity: low, medium, high.
     """
 
-    #: Low Sensitivity.
+    #: Low sensitivity.
     LOW = "low"
-    #: Medium Sensitivity.
+    #: Medium sensitivity.
     MEDIUM = "medium"
-    #: High Sensitivity.
+    #: High sensitivity.
     HIGH = "high"
 
 class ObjectTrackingAccuracy(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
-    """Enumeration that controls the accuracy of the tracker.
+    """Object tracker accuracy: low, medium, high. Higher accuracy leads to higher CPU consumption in
+    average.
     """
 
-    #: Low Accuracy.
+    #: Low accuracy.
     LOW = "low"
-    #: Medium Accuracy.
+    #: Medium accuracy.
     MEDIUM = "medium"
-    #: High Accuracy.
+    #: High accuracy.
     HIGH = "high"
 
 class OutputSelectorOperator(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
-    """The operator to compare streams by.
+    """The operator to compare properties by.
     """
 
-    #: A media type is the same type or a subtype.
+    #: The property is of the type defined by value.
     IS_ENUM = "is"
-    #: A media type is not the same type or a subtype.
+    #: The property is not of the type defined by value.
     IS_NOT = "isNot"
 
 class OutputSelectorProperty(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
-    """The stream property to compare with.
+    """The property of the data stream to be used as the selection criteria.
     """
 
-    #: The stream's MIME type or subtype.
+    #: The stream's MIME type or subtype: audio, video or application.
     MEDIA_TYPE = "mediaType"
 
 class ParameterType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
-    """The type of the parameter.
+    """Type of the parameter.
     """
 
-    #: A string parameter value.
+    #: The parameter's value is a string.
     STRING = "string"
-    #: A string to hold sensitive information as parameter value.
+    #: The parameter's value is a string that holds sensitive information.
     SECRET_STRING = "secretString"
-    #: A 32-bit signed integer as parameter value.
+    #: The parameter's value is a 32-bit signed integer.
     INT = "int"
-    #: A 64-bit double-precision floating point type as parameter value.
+    #: The parameter's value is a 64-bit double-precision floating point.
     DOUBLE = "double"
-    #: A boolean value that is either true or false.
+    #: The parameter's value is a boolean value that is either true or false.
     BOOL = "bool"
 
 class RtspTransport(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
-    """Underlying RTSP transport. This is used to enable or disable HTTP tunneling.
+    """Network transport utilized by the RTSP and RTP exchange: TCP or HTTP. When using TCP, the RTP
+    packets are interleaved on the TCP RTSP connection. When using HTTP, the RTSP messages are
+    exchanged through long lived HTTP connections, and the RTP packages are interleaved in the HTTP
+    connections alongside the RTSP messages.
     """
 
-    #: HTTP/HTTPS transport. This should be used when HTTP tunneling is desired.
+    #: HTTP transport. RTSP messages are exchanged over long running HTTP requests and RTP packets are
+    #: interleaved within the HTTP channel.
     HTTP = "http"
-    #: TCP transport. This should be used when HTTP tunneling is NOT desired.
+    #: TCP transport. RTSP is used directly over TCP and RTP packets are interleaved within the TCP
+    #: channel.
     TCP = "tcp"
 
 class SpatialAnalysisOperationFocus(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):

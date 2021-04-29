@@ -7,7 +7,6 @@
 # --------------------------------------------------------------------------
 
 try:
-    from ._models_py3 import AssetSink
     from ._models_py3 import CertificateSource
     from ._models_py3 import CognitiveServicesVisionProcessor
     from ._models_py3 import CredentialsBase
@@ -27,7 +26,6 @@ try:
     from ._models_py3 import ImageScale
     from ._models_py3 import IotHubMessageSink
     from ._models_py3 import IotHubMessageSource
-    from ._models_py3 import ItemNonSetRequestBase
     from ._models_py3 import LineCrossingProcessor
     from ._models_py3 import LivePipeline
     from ._models_py3 import LivePipelineActivateRequest
@@ -40,6 +38,7 @@ try:
     from ._models_py3 import LivePipelineSetRequest
     from ._models_py3 import LivePipelineSetRequestBody
     from ._models_py3 import MethodRequest
+    from ._models_py3 import MethodRequestEmptyBodyBase
     from ._models_py3 import MotionDetectionProcessor
     from ._models_py3 import NamedLineBase
     from ._models_py3 import NamedLineString
@@ -81,7 +80,6 @@ try:
     from ._models_py3 import SpatialAnalysisPersonZoneCrossingOperation
     from ._models_py3 import SpatialAnalysisPersonZoneCrossingZoneEvents
     from ._models_py3 import SpatialAnalysisTypedOperationBase
-    from ._models_py3 import SymmetricKeyCredentials
     from ._models_py3 import SystemData
     from ._models_py3 import TlsEndpoint
     from ._models_py3 import TlsValidationOptions
@@ -90,7 +88,6 @@ try:
     from ._models_py3 import VideoCreationProperties
     from ._models_py3 import VideoSink
 except (SyntaxError, ImportError):
-    from ._models import AssetSink  # type: ignore
     from ._models import CertificateSource  # type: ignore
     from ._models import CognitiveServicesVisionProcessor  # type: ignore
     from ._models import CredentialsBase  # type: ignore
@@ -110,7 +107,6 @@ except (SyntaxError, ImportError):
     from ._models import ImageScale  # type: ignore
     from ._models import IotHubMessageSink  # type: ignore
     from ._models import IotHubMessageSource  # type: ignore
-    from ._models import ItemNonSetRequestBase  # type: ignore
     from ._models import LineCrossingProcessor  # type: ignore
     from ._models import LivePipeline  # type: ignore
     from ._models import LivePipelineActivateRequest  # type: ignore
@@ -123,6 +119,7 @@ except (SyntaxError, ImportError):
     from ._models import LivePipelineSetRequest  # type: ignore
     from ._models import LivePipelineSetRequestBody  # type: ignore
     from ._models import MethodRequest  # type: ignore
+    from ._models import MethodRequestEmptyBodyBase  # type: ignore
     from ._models import MotionDetectionProcessor  # type: ignore
     from ._models import NamedLineBase  # type: ignore
     from ._models import NamedLineString  # type: ignore
@@ -164,7 +161,6 @@ except (SyntaxError, ImportError):
     from ._models import SpatialAnalysisPersonZoneCrossingOperation  # type: ignore
     from ._models import SpatialAnalysisPersonZoneCrossingZoneEvents  # type: ignore
     from ._models import SpatialAnalysisTypedOperationBase  # type: ignore
-    from ._models import SymmetricKeyCredentials  # type: ignore
     from ._models import SystemData  # type: ignore
     from ._models import TlsEndpoint  # type: ignore
     from ._models import TlsValidationOptions  # type: ignore
@@ -173,7 +169,7 @@ except (SyntaxError, ImportError):
     from ._models import VideoCreationProperties  # type: ignore
     from ._models import VideoSink  # type: ignore
 
-from ._direct_methodsfor_azure_video_analyzeron_io_tedge_enums import (
+from ._azure_video_analyzerfor_edge_enums import (
     GrpcExtensionDataTransferMode,
     ImageFormatRawPixelFormat,
     ImageScaleMode,
@@ -191,7 +187,6 @@ from ._direct_methodsfor_azure_video_analyzeron_io_tedge_enums import (
 )
 
 __all__ = [
-    'AssetSink',
     'CertificateSource',
     'CognitiveServicesVisionProcessor',
     'CredentialsBase',
@@ -211,7 +206,6 @@ __all__ = [
     'ImageScale',
     'IotHubMessageSink',
     'IotHubMessageSource',
-    'ItemNonSetRequestBase',
     'LineCrossingProcessor',
     'LivePipeline',
     'LivePipelineActivateRequest',
@@ -224,6 +218,7 @@ __all__ = [
     'LivePipelineSetRequest',
     'LivePipelineSetRequestBody',
     'MethodRequest',
+    'MethodRequestEmptyBodyBase',
     'MotionDetectionProcessor',
     'NamedLineBase',
     'NamedLineString',
@@ -265,7 +260,6 @@ __all__ = [
     'SpatialAnalysisPersonZoneCrossingOperation',
     'SpatialAnalysisPersonZoneCrossingZoneEvents',
     'SpatialAnalysisTypedOperationBase',
-    'SymmetricKeyCredentials',
     'SystemData',
     'TlsEndpoint',
     'TlsValidationOptions',

@@ -10,9 +10,7 @@ autorest --v3 --python
 ## Settings
 
 ```yaml
-input-file:
-- C:\Azure-Media-LiveVideoAnalytics\src\Edge\Client\AzureVideoAnalyzer.Edge\preview\1.0\AzureVideoAnalyzer.json
-- C:\Azure-Media-LiveVideoAnalytics\src\Edge\Client\AzureVideoAnalyzer.Edge\preview\1.0\AzureVideoAnalyzerSdkDefinitions.json
+require: https://github.com/Azure/azure-rest-api-specs/blob/55b3e2d075398ec62f9322829494ff6a4323e299/specification/videoanalyzer/data-plane/readme.md
 output-folder: ../azure/media/videoanalyzer/edge/_generated
 namespace: azure.media.videoanalyzer.edge
 no-namespace-folders: true

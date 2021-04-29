@@ -11,119 +11,7 @@ from typing import List, Optional, Union
 
 import msrest.serialization
 
-from ._direct_methodsfor_azure_video_analyzeron_io_tedge_enums import *
-
-
-class SinkNodeBase(msrest.serialization.Model):
-    """Enables a pipeline topology to write media data to a destination outside of the Azure Video Analyzer IoT Edge module.
-
-    You probably want to use the sub-classes and not this class directly. Known
-    sub-classes are: AssetSink, FileSink, IotHubMessageSink, VideoSink.
-
-    All required parameters must be populated in order to send to Azure.
-
-    :param type: Required. The discriminator for derived types.Constant filled by server.
-    :type type: str
-    :param name: Required. The name to be used for the topology sink.
-    :type name: str
-    :param inputs: Required. An array of the names of the other nodes in the pipeline topology, the
-     outputs of which are used as input for this sink node.
-    :type inputs: list[~azure.media.videoanalyzer.edge.models.NodeInput]
-    """
-
-    _validation = {
-        'type': {'required': True},
-        'name': {'required': True},
-        'inputs': {'required': True},
-    }
-
-    _attribute_map = {
-        'type': {'key': '@type', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'inputs': {'key': 'inputs', 'type': '[NodeInput]'},
-    }
-
-    _subtype_map = {
-        'type': {'#Microsoft.VideoAnalyzer.AssetSink': 'AssetSink', '#Microsoft.VideoAnalyzer.FileSink': 'FileSink', '#Microsoft.VideoAnalyzer.IotHubMessageSink': 'IotHubMessageSink', '#Microsoft.VideoAnalyzer.VideoSink': 'VideoSink'}
-    }
-
-    def __init__(
-        self,
-        *,
-        name: str,
-        inputs: List["NodeInput"],
-        **kwargs
-    ):
-        super(SinkNodeBase, self).__init__(**kwargs)
-        self.type = None  # type: Optional[str]
-        self.name = name
-        self.inputs = inputs
-
-
-class AssetSink(SinkNodeBase):
-    """Enables a pipeline topology to record media to an Azure Media Services asset for subsequent playback.
-
-    All required parameters must be populated in order to send to Azure.
-
-    :param type: Required. The discriminator for derived types.Constant filled by server.
-    :type type: str
-    :param name: Required. The name to be used for the topology sink.
-    :type name: str
-    :param inputs: Required. An array of the names of the other nodes in the pipeline topology, the
-     outputs of which are used as input for this sink node.
-    :type inputs: list[~azure.media.videoanalyzer.edge.models.NodeInput]
-    :param asset_container_sas_url: Required. An Azure Storage SAS Url which points to container,
-     such as the one created for an Azure Media Services asset.
-    :type asset_container_sas_url: str
-    :param segment_length: When writing media to an asset, wait until at least this duration of
-     media has been accumulated on the Edge. Expressed in increments of 30 seconds, with a minimum
-     of 30 seconds and a recommended maximum of 5 minutes.
-    :type segment_length: str
-    :param local_media_cache_path: Required. Path to a local file system directory for temporary
-     caching of media before writing to an Asset. Used when the Edge device is temporarily
-     disconnected from Azure.
-    :type local_media_cache_path: str
-    :param local_media_cache_maximum_size_mi_b: Required. Maximum amount of disk space that can be
-     used for temporary caching of media.
-    :type local_media_cache_maximum_size_mi_b: str
-    """
-
-    _validation = {
-        'type': {'required': True},
-        'name': {'required': True},
-        'inputs': {'required': True},
-        'asset_container_sas_url': {'required': True},
-        'local_media_cache_path': {'required': True},
-        'local_media_cache_maximum_size_mi_b': {'required': True},
-    }
-
-    _attribute_map = {
-        'type': {'key': '@type', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'inputs': {'key': 'inputs', 'type': '[NodeInput]'},
-        'asset_container_sas_url': {'key': 'assetContainerSasUrl', 'type': 'str'},
-        'segment_length': {'key': 'segmentLength', 'type': 'str'},
-        'local_media_cache_path': {'key': 'localMediaCachePath', 'type': 'str'},
-        'local_media_cache_maximum_size_mi_b': {'key': 'localMediaCacheMaximumSizeMiB', 'type': 'str'},
-    }
-
-    def __init__(
-        self,
-        *,
-        name: str,
-        inputs: List["NodeInput"],
-        asset_container_sas_url: str,
-        local_media_cache_path: str,
-        local_media_cache_maximum_size_mi_b: str,
-        segment_length: Optional[str] = None,
-        **kwargs
-    ):
-        super(AssetSink, self).__init__(name=name, inputs=inputs, **kwargs)
-        self.type = '#Microsoft.VideoAnalyzer.AssetSink'  # type: str
-        self.asset_container_sas_url = asset_container_sas_url
-        self.segment_length = segment_length
-        self.local_media_cache_path = local_media_cache_path
-        self.local_media_cache_maximum_size_mi_b = local_media_cache_maximum_size_mi_b
+from ._azure_video_analyzerfor_edge_enums import *
 
 
 class CertificateSource(msrest.serialization.Model):
@@ -134,7 +22,7 @@ class CertificateSource(msrest.serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param type: Required. The discriminator for derived types.Constant filled by server.
+    :param type: Required. Type discriminator for the derived types.Constant filled by server.
     :type type: str
     """
 
@@ -159,19 +47,19 @@ class CertificateSource(msrest.serialization.Model):
 
 
 class ProcessorNodeBase(msrest.serialization.Model):
-    """A node that represents the desired processing of media in a topology. Takes media and/or events as inputs, and emits media and/or event as output.
+    """Base class for topology processor nodes.
 
     You probably want to use the sub-classes and not this class directly. Known
     sub-classes are: CognitiveServicesVisionProcessor, ExtensionProcessorBase, LineCrossingProcessor, MotionDetectionProcessor, ObjectTrackingProcessor, SignalGateProcessor.
 
     All required parameters must be populated in order to send to Azure.
 
-    :param type: Required. The discriminator for derived types.Constant filled by server.
+    :param type: Required. Type discriminator for the derived types.Constant filled by server.
     :type type: str
-    :param name: Required. The name for this processor node.
+    :param name: Required. Node name. Must be unique within the topology.
     :type name: str
-    :param inputs: Required. An array of the names of the other nodes in the topology, the outputs
-     of which are used as input for this processor node.
+    :param inputs: Required. An array of upstream node references within the topology to be used as
+     inputs for this node.
     :type inputs: list[~azure.media.videoanalyzer.edge.models.NodeInput]
     """
 
@@ -209,12 +97,12 @@ class CognitiveServicesVisionProcessor(ProcessorNodeBase):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param type: Required. The discriminator for derived types.Constant filled by server.
+    :param type: Required. Type discriminator for the derived types.Constant filled by server.
     :type type: str
-    :param name: Required. The name for this processor node.
+    :param name: Required. Node name. Must be unique within the topology.
     :type name: str
-    :param inputs: Required. An array of the names of the other nodes in the topology, the outputs
-     of which are used as input for this processor node.
+    :param inputs: Required. An array of upstream node references within the topology to be used as
+     inputs for this node.
     :type inputs: list[~azure.media.videoanalyzer.edge.models.NodeInput]
     :param endpoint: Required. Endpoint to which this processor should connect.
     :type endpoint: ~azure.media.videoanalyzer.edge.models.EndpointBase
@@ -266,14 +154,14 @@ class CognitiveServicesVisionProcessor(ProcessorNodeBase):
 
 
 class CredentialsBase(msrest.serialization.Model):
-    """Credentials to present during authentication.
+    """Base class for credential objects.
 
     You probably want to use the sub-classes and not this class directly. Known
-    sub-classes are: HttpHeaderCredentials, SymmetricKeyCredentials, UsernamePasswordCredentials.
+    sub-classes are: HttpHeaderCredentials, UsernamePasswordCredentials.
 
     All required parameters must be populated in order to send to Azure.
 
-    :param type: Required. The discriminator for derived types.Constant filled by server.
+    :param type: Required. Type discriminator for the derived types.Constant filled by server.
     :type type: str
     """
 
@@ -286,7 +174,7 @@ class CredentialsBase(msrest.serialization.Model):
     }
 
     _subtype_map = {
-        'type': {'#Microsoft.VideoAnalyzer.HttpHeaderCredentials': 'HttpHeaderCredentials', '#Microsoft.VideoAnalyzer.SymmetricKeyCredentials': 'SymmetricKeyCredentials', '#Microsoft.VideoAnalyzer.UsernamePasswordCredentials': 'UsernamePasswordCredentials'}
+        'type': {'#Microsoft.VideoAnalyzer.HttpHeaderCredentials': 'HttpHeaderCredentials', '#Microsoft.VideoAnalyzer.UsernamePasswordCredentials': 'UsernamePasswordCredentials'}
     }
 
     def __init__(
@@ -305,11 +193,11 @@ class EndpointBase(msrest.serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param type: Required. The discriminator for derived types.Constant filled by server.
+    :param type: Required. Type discriminator for the derived types.Constant filled by server.
     :type type: str
-    :param credentials: Polymorphic credentials to be presented to the endpoint.
+    :param credentials: Credentials to be presented to the endpoint.
     :type credentials: ~azure.media.videoanalyzer.edge.models.CredentialsBase
-    :param url: Required. Url for the endpoint.
+    :param url: Required. The endpoint URL for Video Analyzer to connect to.
     :type url: str
     """
 
@@ -342,27 +230,27 @@ class EndpointBase(msrest.serialization.Model):
 
 
 class ExtensionProcessorBase(ProcessorNodeBase):
-    """Processor that allows for extensions outside of the Azure Video Analyzer Edge module to be integrated into the pipeline topology. It is the base class for various different kinds of extension processor types.
+    """Base class for pipeline extension processors. Pipeline extensions allow for custom media analysis and processing to be plugged into the Video Analyzer pipeline.
 
     You probably want to use the sub-classes and not this class directly. Known
     sub-classes are: GrpcExtension, HttpExtension.
 
     All required parameters must be populated in order to send to Azure.
 
-    :param type: Required. The discriminator for derived types.Constant filled by server.
+    :param type: Required. Type discriminator for the derived types.Constant filled by server.
     :type type: str
-    :param name: Required. The name for this processor node.
+    :param name: Required. Node name. Must be unique within the topology.
     :type name: str
-    :param inputs: Required. An array of the names of the other nodes in the topology, the outputs
-     of which are used as input for this processor node.
+    :param inputs: Required. An array of upstream node references within the topology to be used as
+     inputs for this node.
     :type inputs: list[~azure.media.videoanalyzer.edge.models.NodeInput]
-    :param endpoint: Required. Endpoint to which this processor should connect.
+    :param endpoint: Required. Endpoint details of the pipeline extension plugin.
     :type endpoint: ~azure.media.videoanalyzer.edge.models.EndpointBase
-    :param image: Required. Describes the parameters of the image that is sent as input to the
-     endpoint.
+    :param image: Required. Image transformations and formatting options to be applied to the video
+     frame(s) prior submission to the pipeline extension plugin.
     :type image: ~azure.media.videoanalyzer.edge.models.ImageProperties
-    :param sampling_options: Describes the sampling options to be applied when forwarding samples
-     to the extension.
+    :param sampling_options: Media sampling parameters that define how often media is submitted to
+     the extension plugin.
     :type sampling_options: ~azure.media.videoanalyzer.edge.models.SamplingOptions
     """
 
@@ -404,27 +292,72 @@ class ExtensionProcessorBase(ProcessorNodeBase):
         self.sampling_options = sampling_options
 
 
-class FileSink(SinkNodeBase):
-    """Enables a topology to write/store media (video and audio) to a file on the Edge device.
+class SinkNodeBase(msrest.serialization.Model):
+    """Base class for topology sink nodes.
+
+    You probably want to use the sub-classes and not this class directly. Known
+    sub-classes are: FileSink, IotHubMessageSink, VideoSink.
 
     All required parameters must be populated in order to send to Azure.
 
-    :param type: Required. The discriminator for derived types.Constant filled by server.
+    :param type: Required. Type discriminator for the derived types.Constant filled by server.
     :type type: str
-    :param name: Required. The name to be used for the topology sink.
+    :param name: Required. Node name. Must be unique within the topology.
     :type name: str
-    :param inputs: Required. An array of the names of the other nodes in the pipeline topology, the
-     outputs of which are used as input for this sink node.
+    :param inputs: Required. An array of upstream node references within the topology to be used as
+     inputs for this node.
     :type inputs: list[~azure.media.videoanalyzer.edge.models.NodeInput]
-    :param base_directory_path: Required. Absolute directory for all outputs to the Edge device
-     from this sink.
+    """
+
+    _validation = {
+        'type': {'required': True},
+        'name': {'required': True},
+        'inputs': {'required': True},
+    }
+
+    _attribute_map = {
+        'type': {'key': '@type', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
+        'inputs': {'key': 'inputs', 'type': '[NodeInput]'},
+    }
+
+    _subtype_map = {
+        'type': {'#Microsoft.VideoAnalyzer.FileSink': 'FileSink', '#Microsoft.VideoAnalyzer.IotHubMessageSink': 'IotHubMessageSink', '#Microsoft.VideoAnalyzer.VideoSink': 'VideoSink'}
+    }
+
+    def __init__(
+        self,
+        *,
+        name: str,
+        inputs: List["NodeInput"],
+        **kwargs
+    ):
+        super(SinkNodeBase, self).__init__(**kwargs)
+        self.type = None  # type: Optional[str]
+        self.name = name
+        self.inputs = inputs
+
+
+class FileSink(SinkNodeBase):
+    """File sink allows for video and audio content to be recorded on the file system on the edge device.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param type: Required. Type discriminator for the derived types.Constant filled by server.
+    :type type: str
+    :param name: Required. Node name. Must be unique within the topology.
+    :type name: str
+    :param inputs: Required. An array of upstream node references within the topology to be used as
+     inputs for this node.
+    :type inputs: list[~azure.media.videoanalyzer.edge.models.NodeInput]
+    :param base_directory_path: Required. Absolute directory path where media files will be stored.
     :type base_directory_path: str
-    :param file_name_pattern: Required. File name pattern for creating new files on the Edge
-     device. The pattern must include at least one system variable. See the documentation for
-     available variables and additional examples.
+    :param file_name_pattern: Required. File name pattern for creating new files when performing
+     event based recording. The pattern must include at least one system variable.
     :type file_name_pattern: str
     :param maximum_size_mi_b: Required. Maximum amount of disk space that can be used for storing
-     files from this sink.
+     files from this sink. Once this limit is reached, the oldest files from this sink will be
+     automatically deleted.
     :type maximum_size_mi_b: str
     """
 
@@ -464,28 +397,30 @@ class FileSink(SinkNodeBase):
 
 
 class GrpcExtension(ExtensionProcessorBase):
-    """A processor that allows the pipeline topology to send video frames to an external inference container over a gRPC connection. This can be done using shared memory (for high frame rates), or over the network. Inference results are relayed to downstream nodes.
+    """GRPC extension processor allows pipeline extension plugins to be connected to the pipeline through over a gRPC channel. Extension plugins must act as an gRPC server. Please see https://aka.ms/ava-extension-grpc for details.
 
     All required parameters must be populated in order to send to Azure.
 
-    :param type: Required. The discriminator for derived types.Constant filled by server.
+    :param type: Required. Type discriminator for the derived types.Constant filled by server.
     :type type: str
-    :param name: Required. The name for this processor node.
+    :param name: Required. Node name. Must be unique within the topology.
     :type name: str
-    :param inputs: Required. An array of the names of the other nodes in the topology, the outputs
-     of which are used as input for this processor node.
+    :param inputs: Required. An array of upstream node references within the topology to be used as
+     inputs for this node.
     :type inputs: list[~azure.media.videoanalyzer.edge.models.NodeInput]
-    :param endpoint: Required. Endpoint to which this processor should connect.
+    :param endpoint: Required. Endpoint details of the pipeline extension plugin.
     :type endpoint: ~azure.media.videoanalyzer.edge.models.EndpointBase
-    :param image: Required. Describes the parameters of the image that is sent as input to the
-     endpoint.
+    :param image: Required. Image transformations and formatting options to be applied to the video
+     frame(s) prior submission to the pipeline extension plugin.
     :type image: ~azure.media.videoanalyzer.edge.models.ImageProperties
-    :param sampling_options: Describes the sampling options to be applied when forwarding samples
-     to the extension.
+    :param sampling_options: Media sampling parameters that define how often media is submitted to
+     the extension plugin.
     :type sampling_options: ~azure.media.videoanalyzer.edge.models.SamplingOptions
-    :param data_transfer: Required. How media should be transferred to the inference engine.
+    :param data_transfer: Required. Specifies how media is transferred to the extension plugin.
     :type data_transfer: ~azure.media.videoanalyzer.edge.models.GrpcExtensionDataTransfer
-    :param extension_configuration: Optional configuration to pass to the gRPC extension.
+    :param extension_configuration: An optional configuration string that is sent to the extension
+     plugin. The configuration string is specific to each custom extension and it not understood
+     neither validated by Video Analyzer. Please see https://aka.ms/ava-extension-grpc for details.
     :type extension_configuration: str
     """
 
@@ -528,15 +463,15 @@ class GrpcExtension(ExtensionProcessorBase):
 
 
 class GrpcExtensionDataTransfer(msrest.serialization.Model):
-    """Describes how media should be transferred to the inference engine.
+    """Describes how media is transferred to the extension plugin.
 
     All required parameters must be populated in order to send to Azure.
 
-    :param shared_memory_size_mi_b: The size of the buffer for all in-flight frames in mebibytes if
-     mode is SharedMemory. Should not be specified otherwise.
+    :param shared_memory_size_mi_b: The share memory buffer for sample transfers, in mebibytes. It
+     can only be used with the 'SharedMemory' transfer mode.
     :type shared_memory_size_mi_b: str
-    :param mode: Required. How frame data should be transmitted to the inference engine. Possible
-     values include: "embedded", "sharedMemory".
+    :param mode: Required. Data transfer mode: embedded or sharedMemory. Possible values include:
+     "embedded", "sharedMemory".
     :type mode: str or ~azure.media.videoanalyzer.edge.models.GrpcExtensionDataTransferMode
     """
 
@@ -562,24 +497,24 @@ class GrpcExtensionDataTransfer(msrest.serialization.Model):
 
 
 class HttpExtension(ExtensionProcessorBase):
-    """A processor that allows the pipeline topology to send video frames (mostly at low frame rates e.g. <5 fps) to an external inference container over an HTTP-based RESTful API. Inference results are relayed to downstream nodes.
+    """HTTP extension processor allows pipeline extension plugins to be connected to the pipeline through over the HTTP protocol. Extension plugins must act as an HTTP server. Please see https://aka.ms/ava-extension-http for details.
 
     All required parameters must be populated in order to send to Azure.
 
-    :param type: Required. The discriminator for derived types.Constant filled by server.
+    :param type: Required. Type discriminator for the derived types.Constant filled by server.
     :type type: str
-    :param name: Required. The name for this processor node.
+    :param name: Required. Node name. Must be unique within the topology.
     :type name: str
-    :param inputs: Required. An array of the names of the other nodes in the topology, the outputs
-     of which are used as input for this processor node.
+    :param inputs: Required. An array of upstream node references within the topology to be used as
+     inputs for this node.
     :type inputs: list[~azure.media.videoanalyzer.edge.models.NodeInput]
-    :param endpoint: Required. Endpoint to which this processor should connect.
+    :param endpoint: Required. Endpoint details of the pipeline extension plugin.
     :type endpoint: ~azure.media.videoanalyzer.edge.models.EndpointBase
-    :param image: Required. Describes the parameters of the image that is sent as input to the
-     endpoint.
+    :param image: Required. Image transformations and formatting options to be applied to the video
+     frame(s) prior submission to the pipeline extension plugin.
     :type image: ~azure.media.videoanalyzer.edge.models.ImageProperties
-    :param sampling_options: Describes the sampling options to be applied when forwarding samples
-     to the extension.
+    :param sampling_options: Media sampling parameters that define how often media is submitted to
+     the extension plugin.
     :type sampling_options: ~azure.media.videoanalyzer.edge.models.SamplingOptions
     """
 
@@ -615,16 +550,17 @@ class HttpExtension(ExtensionProcessorBase):
 
 
 class HttpHeaderCredentials(CredentialsBase):
-    """Http header service credentials.
+    """HTTP header credentials.
 
     All required parameters must be populated in order to send to Azure.
 
-    :param type: Required. The discriminator for derived types.Constant filled by server.
+    :param type: Required. Type discriminator for the derived types.Constant filled by server.
     :type type: str
     :param header_name: Required. HTTP header name.
     :type header_name: str
-    :param header_value: Required. HTTP header value. Please use a parameter so that the actual
-     value is not returned on PUT or GET requests.
+    :param header_value: Required. HTTP header value. It is recommended that this value is
+     parameterized as a secret string in order to prevent this value to be returned as part of the
+     resource on API requests.
     :type header_value: str
     """
 
@@ -654,14 +590,14 @@ class HttpHeaderCredentials(CredentialsBase):
 
 
 class ImageFormatProperties(msrest.serialization.Model):
-    """Encoding settings for an image.
+    """Base class for image formatting properties.
 
     You probably want to use the sub-classes and not this class directly. Known
     sub-classes are: ImageFormatBmp, ImageFormatJpeg, ImageFormatPng, ImageFormatRaw.
 
     All required parameters must be populated in order to send to Azure.
 
-    :param type: Required. The discriminator for derived types.Constant filled by server.
+    :param type: Required. Type discriminator for the derived types.Constant filled by server.
     :type type: str
     """
 
@@ -686,11 +622,11 @@ class ImageFormatProperties(msrest.serialization.Model):
 
 
 class ImageFormatBmp(ImageFormatProperties):
-    """Encoding settings for Bmp images.
+    """BMP image encoding.
 
     All required parameters must be populated in order to send to Azure.
 
-    :param type: Required. The discriminator for derived types.Constant filled by server.
+    :param type: Required. Type discriminator for the derived types.Constant filled by server.
     :type type: str
     """
 
@@ -711,13 +647,13 @@ class ImageFormatBmp(ImageFormatProperties):
 
 
 class ImageFormatJpeg(ImageFormatProperties):
-    """Encoding settings for Jpeg images.
+    """JPEG image encoding.
 
     All required parameters must be populated in order to send to Azure.
 
-    :param type: Required. The discriminator for derived types.Constant filled by server.
+    :param type: Required. Type discriminator for the derived types.Constant filled by server.
     :type type: str
-    :param quality: The image quality. Value must be between 0 to 100 (best quality).
+    :param quality: Image quality value between 0 to 100 (best quality).
     :type quality: str
     """
 
@@ -742,11 +678,11 @@ class ImageFormatJpeg(ImageFormatProperties):
 
 
 class ImageFormatPng(ImageFormatProperties):
-    """Encoding settings for Png images.
+    """PNG image encoding.
 
     All required parameters must be populated in order to send to Azure.
 
-    :param type: Required. The discriminator for derived types.Constant filled by server.
+    :param type: Required. Type discriminator for the derived types.Constant filled by server.
     :type type: str
     """
 
@@ -767,15 +703,15 @@ class ImageFormatPng(ImageFormatProperties):
 
 
 class ImageFormatRaw(ImageFormatProperties):
-    """Encoding settings for raw images.
+    """Raw image formatting.
 
     All required parameters must be populated in order to send to Azure.
 
-    :param type: Required. The discriminator for derived types.Constant filled by server.
+    :param type: Required. Type discriminator for the derived types.Constant filled by server.
     :type type: str
-    :param pixel_format: Required. The pixel format that will be used to encode images. Possible
-     values include: "yuv420p", "rgb565be", "rgb565le", "rgb555be", "rgb555le", "rgb24", "bgr24",
-     "argb", "rgba", "abgr", "bgra".
+    :param pixel_format: Required. Pixel format to be applied to the raw image. Possible values
+     include: "yuv420p", "rgb565be", "rgb565le", "rgb555be", "rgb555le", "rgb24", "bgr24", "argb",
+     "rgba", "abgr", "bgra".
     :type pixel_format: str or ~azure.media.videoanalyzer.edge.models.ImageFormatRawPixelFormat
     """
 
@@ -801,11 +737,11 @@ class ImageFormatRaw(ImageFormatProperties):
 
 
 class ImageProperties(msrest.serialization.Model):
-    """Describes the properties of an image frame.
+    """Image transformations and formatting options to be applied to the video frame(s).
 
-    :param scale: The scaling mode for the image.
+    :param scale: Image scaling mode.
     :type scale: ~azure.media.videoanalyzer.edge.models.ImageScale
-    :param format: Encoding settings for an image.
+    :param format: Base class for image formatting properties.
     :type format: ~azure.media.videoanalyzer.edge.models.ImageFormatProperties
     """
 
@@ -827,14 +763,14 @@ class ImageProperties(msrest.serialization.Model):
 
 
 class ImageScale(msrest.serialization.Model):
-    """The scaling mode for the image.
+    """Image scaling mode.
 
-    :param mode: Describes the modes for scaling an input video frame into an image, before it is
-     sent to an inference engine. Possible values include: "preserveAspectRatio", "pad", "stretch".
+    :param mode: Describes the image scaling mode to be applied. Default mode is 'pad'. Possible
+     values include: "preserveAspectRatio", "pad", "stretch".
     :type mode: str or ~azure.media.videoanalyzer.edge.models.ImageScaleMode
-    :param width: The desired output width of the image.
+    :param width: The desired output image width.
     :type width: str
-    :param height: The desired output height of the image.
+    :param height: The desired output image height.
     :type height: str
     """
 
@@ -859,20 +795,19 @@ class ImageScale(msrest.serialization.Model):
 
 
 class IotHubMessageSink(SinkNodeBase):
-    """Enables a pipeline topology to publish messages that can be delivered via routes declared in the IoT Edge deployment manifest.
+    """IoT Hub Message sink allows for pipeline messages to published into the IoT Edge Hub. Published messages can then be delivered to the cloud and other modules via routes declared in the IoT Edge deployment manifest.
 
     All required parameters must be populated in order to send to Azure.
 
-    :param type: Required. The discriminator for derived types.Constant filled by server.
+    :param type: Required. Type discriminator for the derived types.Constant filled by server.
     :type type: str
-    :param name: Required. The name to be used for the topology sink.
+    :param name: Required. Node name. Must be unique within the topology.
     :type name: str
-    :param inputs: Required. An array of the names of the other nodes in the pipeline topology, the
-     outputs of which are used as input for this sink node.
+    :param inputs: Required. An array of upstream node references within the topology to be used as
+     inputs for this node.
     :type inputs: list[~azure.media.videoanalyzer.edge.models.NodeInput]
-    :param hub_output_name: Required. Name of the output path to which the pipeline topology will
-     publish message. These messages can then be delivered to desired destinations by declaring
-     routes referencing the output path in the IoT Edge deployment manifest.
+    :param hub_output_name: Required. Name of the Iot Edge Hub output to which the messages will be
+     published.
     :type hub_output_name: str
     """
 
@@ -904,17 +839,16 @@ class IotHubMessageSink(SinkNodeBase):
 
 
 class SourceNodeBase(msrest.serialization.Model):
-    """A source node in a pipeline topology.
+    """Base class for topology source nodes.
 
     You probably want to use the sub-classes and not this class directly. Known
     sub-classes are: IotHubMessageSource, RtspSource.
 
     All required parameters must be populated in order to send to Azure.
 
-    :param type: Required. The type of the source node. The discriminator for derived
-     types.Constant filled by server.
+    :param type: Required. Type discriminator for the derived types.Constant filled by server.
     :type type: str
-    :param name: Required. The name to be used for this source node.
+    :param name: Required. Node name. Must be unique within the topology.
     :type name: str
     """
 
@@ -944,17 +878,15 @@ class SourceNodeBase(msrest.serialization.Model):
 
 
 class IotHubMessageSource(SourceNodeBase):
-    """Enables a pipeline topology to receive messages via routes declared in the IoT Edge deployment manifest.
+    """IoT Hub Message source allows for the pipeline to consume messages from the IoT Edge Hub. Messages can be routed from other IoT modules via routes declared in the IoT Edge deployment manifest.
 
     All required parameters must be populated in order to send to Azure.
 
-    :param type: Required. The type of the source node. The discriminator for derived
-     types.Constant filled by server.
+    :param type: Required. Type discriminator for the derived types.Constant filled by server.
     :type type: str
-    :param name: Required. The name to be used for this source node.
+    :param name: Required. Node name. Must be unique within the topology.
     :type name: str
-    :param hub_input_name: Name of the input path where messages can be routed to (via routes
-     declared in the IoT Edge deployment manifest).
+    :param hub_input_name: Name of the IoT Edge Hub input from which messages will be consumed.
     :type hub_input_name: str
     """
 
@@ -981,104 +913,17 @@ class IotHubMessageSource(SourceNodeBase):
         self.hub_input_name = hub_input_name
 
 
-class MethodRequest(msrest.serialization.Model):
-    """Base Class for Method Requests.
-
-    You probably want to use the sub-classes and not this class directly. Known
-    sub-classes are: ItemNonSetRequestBase, LivePipelineSetRequestBody, PipelineTopologySetRequestBody, LivePipelineListRequest, LivePipelineSetRequest, PipelineTopologyListRequest, PipelineTopologySetRequest.
-
-    Variables are only populated by the server, and will be ignored when sending a request.
-
-    All required parameters must be populated in order to send to Azure.
-
-    :ivar method_name: Required. method name.Constant filled by server.
-    :vartype method_name: str
-    :ivar api_version: api version. Default value: "1.0".
-    :vartype api_version: str
-    """
-
-    _validation = {
-        'method_name': {'required': True, 'readonly': True},
-        'api_version': {'constant': True},
-    }
-
-    _attribute_map = {
-        'method_name': {'key': 'methodName', 'type': 'str'},
-        'api_version': {'key': '@apiVersion', 'type': 'str'},
-    }
-
-    _subtype_map = {
-        'method_name': {'ItemNonSetRequestBase': 'ItemNonSetRequestBase', 'LivePipelineSetRequestBody': 'LivePipelineSetRequestBody', 'PipelineTopologySetRequestBody': 'PipelineTopologySetRequestBody', 'livePipelineList': 'LivePipelineListRequest', 'livePipelineSet': 'LivePipelineSetRequest', 'pipelineTopologyList': 'PipelineTopologyListRequest', 'pipelineTopologySet': 'PipelineTopologySetRequest'}
-    }
-
-    api_version = "1.0"
-
-    def __init__(
-        self,
-        **kwargs
-    ):
-        super(MethodRequest, self).__init__(**kwargs)
-        self.method_name = None  # type: Optional[str]
-
-
-class ItemNonSetRequestBase(MethodRequest):
-    """ItemNonSetRequestBase.
-
-    You probably want to use the sub-classes and not this class directly. Known
-    sub-classes are: LivePipelineActivateRequest, LivePipelineDeactivateRequest, LivePipelineDeleteRequest, LivePipelineGetRequest, PipelineTopologyDeleteRequest, PipelineTopologyGetRequest.
-
-    Variables are only populated by the server, and will be ignored when sending a request.
-
-    All required parameters must be populated in order to send to Azure.
-
-    :ivar method_name: Required. method name.Constant filled by server.
-    :vartype method_name: str
-    :ivar api_version: api version. Default value: "1.0".
-    :vartype api_version: str
-    :param name: Required. method name.
-    :type name: str
-    """
-
-    _validation = {
-        'method_name': {'required': True, 'readonly': True},
-        'api_version': {'constant': True},
-        'name': {'required': True},
-    }
-
-    _attribute_map = {
-        'method_name': {'key': 'methodName', 'type': 'str'},
-        'api_version': {'key': '@apiVersion', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-    }
-
-    _subtype_map = {
-        'method_name': {'livePipelineActivate': 'LivePipelineActivateRequest', 'livePipelineDeactivate': 'LivePipelineDeactivateRequest', 'livePipelineDelete': 'LivePipelineDeleteRequest', 'livePipelineGet': 'LivePipelineGetRequest', 'pipelineTopologyDelete': 'PipelineTopologyDeleteRequest', 'pipelineTopologyGet': 'PipelineTopologyGetRequest'}
-    }
-
-    api_version = "1.0"
-
-    def __init__(
-        self,
-        *,
-        name: str,
-        **kwargs
-    ):
-        super(ItemNonSetRequestBase, self).__init__(**kwargs)
-        self.method_name = 'ItemNonSetRequestBase'  # type: str
-        self.name = name
-
-
 class LineCrossingProcessor(ProcessorNodeBase):
-    """A node that accepts raw video as input, and detects when an object crosses a line.
+    """Line crossing processor allows for the detection of tracked objects moving across one or more predefined lines. It must be downstream of an object tracker of downstream on an AI extension node that generates sequenceId for objects which are tracked across different frames of the video. Inference events are generated every time objects crosses from one side of the line to another.
 
     All required parameters must be populated in order to send to Azure.
 
-    :param type: Required. The discriminator for derived types.Constant filled by server.
+    :param type: Required. Type discriminator for the derived types.Constant filled by server.
     :type type: str
-    :param name: Required. The name for this processor node.
+    :param name: Required. Node name. Must be unique within the topology.
     :type name: str
-    :param inputs: Required. An array of the names of the other nodes in the topology, the outputs
-     of which are used as input for this processor node.
+    :param inputs: Required. An array of upstream node references within the topology to be used as
+     inputs for this node.
     :type inputs: list[~azure.media.videoanalyzer.edge.models.NodeInput]
     :param lines: Required. An array of lines used to compute line crossing events.
     :type lines: list[~azure.media.videoanalyzer.edge.models.NamedLineBase]
@@ -1112,15 +957,15 @@ class LineCrossingProcessor(ProcessorNodeBase):
 
 
 class LivePipeline(msrest.serialization.Model):
-    """Represents a unique live pipeline.
+    """Live Pipeline represents an unique instance of a pipeline topology which is used for real-time content ingestion and analysis.
 
     All required parameters must be populated in order to send to Azure.
 
-    :param name: Required. The identifier for the live pipeline.
+    :param name: Required. Live pipeline unique identifier.
     :type name: str
-    :param system_data: The system data for a resource.
+    :param system_data: Read-only system metadata associated with this object.
     :type system_data: ~azure.media.videoanalyzer.edge.models.SystemData
-    :param properties: The properties of the live pipeline.
+    :param properties: Live pipeline properties.
     :type properties: ~azure.media.videoanalyzer.edge.models.LivePipelineProperties
     """
 
@@ -1148,18 +993,105 @@ class LivePipeline(msrest.serialization.Model):
         self.properties = properties
 
 
-class LivePipelineActivateRequest(ItemNonSetRequestBase):
-    """Represents the livePipelineActivate request.
+class MethodRequest(msrest.serialization.Model):
+    """Base class for direct method calls.
+
+    You probably want to use the sub-classes and not this class directly. Known
+    sub-classes are: LivePipelineSetRequestBody, MethodRequestEmptyBodyBase, PipelineTopologySetRequestBody, LivePipelineListRequest, LivePipelineSetRequest, PipelineTopologyListRequest, PipelineTopologySetRequest.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar method_name: Required. method name.Constant filled by server.
+    :ivar method_name: Required. Direct method method name.Constant filled by server.
     :vartype method_name: str
-    :ivar api_version: api version. Default value: "1.0".
+    :ivar api_version: Video Analyzer API version. Default value: "1.0".
     :vartype api_version: str
-    :param name: Required. method name.
+    """
+
+    _validation = {
+        'method_name': {'required': True, 'readonly': True},
+        'api_version': {'constant': True},
+    }
+
+    _attribute_map = {
+        'method_name': {'key': 'methodName', 'type': 'str'},
+        'api_version': {'key': '@apiVersion', 'type': 'str'},
+    }
+
+    _subtype_map = {
+        'method_name': {'LivePipelineSetRequestBody': 'LivePipelineSetRequestBody', 'MethodRequestEmptyBodyBase': 'MethodRequestEmptyBodyBase', 'PipelineTopologySetRequestBody': 'PipelineTopologySetRequestBody', 'livePipelineList': 'LivePipelineListRequest', 'livePipelineSet': 'LivePipelineSetRequest', 'pipelineTopologyList': 'PipelineTopologyListRequest', 'pipelineTopologySet': 'PipelineTopologySetRequest'}
+    }
+
+    api_version = "1.0"
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(MethodRequest, self).__init__(**kwargs)
+        self.method_name = None  # type: Optional[str]
+
+
+class MethodRequestEmptyBodyBase(MethodRequest):
+    """MethodRequestEmptyBodyBase.
+
+    You probably want to use the sub-classes and not this class directly. Known
+    sub-classes are: LivePipelineActivateRequest, LivePipelineDeactivateRequest, LivePipelineDeleteRequest, LivePipelineGetRequest, PipelineTopologyDeleteRequest, PipelineTopologyGetRequest.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar method_name: Required. Direct method method name.Constant filled by server.
+    :vartype method_name: str
+    :ivar api_version: Video Analyzer API version. Default value: "1.0".
+    :vartype api_version: str
+    :param name: Required. Resource name.
+    :type name: str
+    """
+
+    _validation = {
+        'method_name': {'required': True, 'readonly': True},
+        'api_version': {'constant': True},
+        'name': {'required': True},
+    }
+
+    _attribute_map = {
+        'method_name': {'key': 'methodName', 'type': 'str'},
+        'api_version': {'key': '@apiVersion', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
+    }
+
+    _subtype_map = {
+        'method_name': {'livePipelineActivate': 'LivePipelineActivateRequest', 'livePipelineDeactivate': 'LivePipelineDeactivateRequest', 'livePipelineDelete': 'LivePipelineDeleteRequest', 'livePipelineGet': 'LivePipelineGetRequest', 'pipelineTopologyDelete': 'PipelineTopologyDeleteRequest', 'pipelineTopologyGet': 'PipelineTopologyGetRequest'}
+    }
+
+    api_version = "1.0"
+
+    def __init__(
+        self,
+        *,
+        name: str,
+        **kwargs
+    ):
+        super(MethodRequestEmptyBodyBase, self).__init__(**kwargs)
+        self.method_name = 'MethodRequestEmptyBodyBase'  # type: str
+        self.name = name
+
+
+class LivePipelineActivateRequest(MethodRequestEmptyBodyBase):
+    """Activates an existing live pipeline.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar method_name: Required. Direct method method name.Constant filled by server.
+    :vartype method_name: str
+    :ivar api_version: Video Analyzer API version. Default value: "1.0".
+    :vartype api_version: str
+    :param name: Required. Resource name.
     :type name: str
     """
 
@@ -1188,13 +1120,13 @@ class LivePipelineActivateRequest(ItemNonSetRequestBase):
 
 
 class LivePipelineCollection(msrest.serialization.Model):
-    """A collection of streams.
+    """A collection of live pipelines.
 
-    :param value: A collection of live pipelines.
+    :param value: List of live pipelines.
     :type value: list[~azure.media.videoanalyzer.edge.models.LivePipeline]
-    :param continuation_token: A continuation token to use in subsequent calls to enumerate through
-     the live pipeline collection. This is used when the collection contains too many results to
-     return in one response.
+    :param continuation_token: A continuation token to be used in subsequent calls when enumerating
+     through the collection. This is returned when the collection results won't fit in a single
+     response.
     :type continuation_token: str
     """
 
@@ -1215,18 +1147,18 @@ class LivePipelineCollection(msrest.serialization.Model):
         self.continuation_token = continuation_token
 
 
-class LivePipelineDeactivateRequest(ItemNonSetRequestBase):
-    """Represents the livePipelineDeactivate request.
+class LivePipelineDeactivateRequest(MethodRequestEmptyBodyBase):
+    """Deactivates an existing live pipeline.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar method_name: Required. method name.Constant filled by server.
+    :ivar method_name: Required. Direct method method name.Constant filled by server.
     :vartype method_name: str
-    :ivar api_version: api version. Default value: "1.0".
+    :ivar api_version: Video Analyzer API version. Default value: "1.0".
     :vartype api_version: str
-    :param name: Required. method name.
+    :param name: Required. Resource name.
     :type name: str
     """
 
@@ -1254,18 +1186,18 @@ class LivePipelineDeactivateRequest(ItemNonSetRequestBase):
         self.method_name = 'livePipelineDeactivate'  # type: str
 
 
-class LivePipelineDeleteRequest(ItemNonSetRequestBase):
-    """Represents the livePipelineDelete request.
+class LivePipelineDeleteRequest(MethodRequestEmptyBodyBase):
+    """Deletes an existing live pipeline.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar method_name: Required. method name.Constant filled by server.
+    :ivar method_name: Required. Direct method method name.Constant filled by server.
     :vartype method_name: str
-    :ivar api_version: api version. Default value: "1.0".
+    :ivar api_version: Video Analyzer API version. Default value: "1.0".
     :vartype api_version: str
-    :param name: Required. method name.
+    :param name: Required. Resource name.
     :type name: str
     """
 
@@ -1293,18 +1225,18 @@ class LivePipelineDeleteRequest(ItemNonSetRequestBase):
         self.method_name = 'livePipelineDelete'  # type: str
 
 
-class LivePipelineGetRequest(ItemNonSetRequestBase):
-    """Represents the livePipelineGet request.
+class LivePipelineGetRequest(MethodRequestEmptyBodyBase):
+    """Retrieves an existing live pipeline.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar method_name: Required. method name.Constant filled by server.
+    :ivar method_name: Required. Direct method method name.Constant filled by server.
     :vartype method_name: str
-    :ivar api_version: api version. Default value: "1.0".
+    :ivar api_version: Video Analyzer API version. Default value: "1.0".
     :vartype api_version: str
-    :param name: Required. method name.
+    :param name: Required. Resource name.
     :type name: str
     """
 
@@ -1333,15 +1265,15 @@ class LivePipelineGetRequest(ItemNonSetRequestBase):
 
 
 class LivePipelineListRequest(MethodRequest):
-    """Represents the livePipelineList request.
+    """List all existing live pipelines.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar method_name: Required. method name.Constant filled by server.
+    :ivar method_name: Required. Direct method method name.Constant filled by server.
     :vartype method_name: str
-    :ivar api_version: api version. Default value: "1.0".
+    :ivar api_version: Video Analyzer API version. Default value: "1.0".
     :vartype api_version: str
     """
 
@@ -1366,16 +1298,20 @@ class LivePipelineListRequest(MethodRequest):
 
 
 class LivePipelineProperties(msrest.serialization.Model):
-    """Properties of a live pipeline.
+    """Live pipeline properties.
 
-    :param description: An optional description for the live pipeline.
+    :param description: An optional description of the live pipeline.
     :type description: str
-    :param topology_name: The name of the pipeline topology that this live pipeline will run. A
-     pipeline topology with this name should already have been set in the Edge module.
+    :param topology_name: The reference to an existing pipeline topology defined for real-time
+     content processing. When activated, this live pipeline will process content according to the
+     pipeline topology definition.
     :type topology_name: str
-    :param parameters: List of one or more live pipeline parameters.
+    :param parameters: List of the instance level parameter values for the user-defined topology
+     parameters. A pipeline can only define or override parameters values for parameters which have
+     been declared in the referenced topology. Topology parameters without a default value must be
+     defined. Topology parameters with a default value can be optionally be overridden.
     :type parameters: list[~azure.media.videoanalyzer.edge.models.ParameterDefinition]
-    :param state: Allowed states for a live pipeline. Possible values include: "inactive",
+    :param state: Current pipeline state (read-only). Possible values include: "inactive",
      "activating", "active", "deactivating".
     :type state: str or ~azure.media.videoanalyzer.edge.models.LivePipelineState
     """
@@ -1404,17 +1340,18 @@ class LivePipelineProperties(msrest.serialization.Model):
 
 
 class LivePipelineSetRequest(MethodRequest):
-    """Represents the livePipelineSet request.
+    """Creates a new live pipeline or updates an existing one.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar method_name: Required. method name.Constant filled by server.
+    :ivar method_name: Required. Direct method method name.Constant filled by server.
     :vartype method_name: str
-    :ivar api_version: api version. Default value: "1.0".
+    :ivar api_version: Video Analyzer API version. Default value: "1.0".
     :vartype api_version: str
-    :param live_pipeline: Required. Represents a unique live pipeline.
+    :param live_pipeline: Required. Live Pipeline represents an unique instance of a pipeline
+     topology which is used for real-time content ingestion and analysis.
     :type live_pipeline: ~azure.media.videoanalyzer.edge.models.LivePipeline
     """
 
@@ -1444,21 +1381,21 @@ class LivePipelineSetRequest(MethodRequest):
 
 
 class LivePipelineSetRequestBody(LivePipeline, MethodRequest):
-    """Represents the livePipelineSet request body.
+    """Live pipeline resource representation.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar method_name: Required. method name.Constant filled by server.
+    :ivar method_name: Required. Direct method method name.Constant filled by server.
     :vartype method_name: str
-    :ivar api_version: api version. Default value: "1.0".
+    :ivar api_version: Video Analyzer API version. Default value: "1.0".
     :vartype api_version: str
-    :param name: Required. The identifier for the live pipeline.
+    :param name: Required. Live pipeline unique identifier.
     :type name: str
-    :param system_data: The system data for a resource.
+    :param system_data: Read-only system metadata associated with this object.
     :type system_data: ~azure.media.videoanalyzer.edge.models.SystemData
-    :param properties: The properties of the live pipeline.
+    :param properties: Live pipeline properties.
     :type properties: ~azure.media.videoanalyzer.edge.models.LivePipelineProperties
     """
 
@@ -1495,24 +1432,26 @@ class LivePipelineSetRequestBody(LivePipeline, MethodRequest):
 
 
 class MotionDetectionProcessor(ProcessorNodeBase):
-    """A node that accepts raw video as input, and detects if there are moving objects present. If so, then it emits an event, and allows frames where motion was detected to pass through. Other frames are blocked/dropped.
+    """Motion detection processor allows for motion detection on the video stream. It generates motion events whenever motion is present on the video.
 
     All required parameters must be populated in order to send to Azure.
 
-    :param type: Required. The discriminator for derived types.Constant filled by server.
+    :param type: Required. Type discriminator for the derived types.Constant filled by server.
     :type type: str
-    :param name: Required. The name for this processor node.
+    :param name: Required. Node name. Must be unique within the topology.
     :type name: str
-    :param inputs: Required. An array of the names of the other nodes in the topology, the outputs
-     of which are used as input for this processor node.
+    :param inputs: Required. An array of upstream node references within the topology to be used as
+     inputs for this node.
     :type inputs: list[~azure.media.videoanalyzer.edge.models.NodeInput]
-    :param sensitivity: Enumeration that specifies the sensitivity of the motion detection
-     processor. Possible values include: "low", "medium", "high".
+    :param sensitivity: Motion detection sensitivity: low, medium, high. Possible values include:
+     "low", "medium", "high".
     :type sensitivity: str or ~azure.media.videoanalyzer.edge.models.MotionDetectionSensitivity
     :param output_motion_region: Indicates whether the processor should detect and output the
-     regions, within the video frame, where motion was detected. Default is true.
+     regions within the video frame where motion was detected. Default is true.
     :type output_motion_region: bool
-    :param event_aggregation_window: Event aggregation window duration, or 0 for no aggregation.
+    :param event_aggregation_window: Time window duration on which events are aggregated before
+     being emitted. Value must be specified in ISO8601 duration format (i.e. "PT2S" equals 2
+     seconds). Use 0 seconds for no aggregation. Default is 1 second.
     :type event_aggregation_window: str
     """
 
@@ -1549,16 +1488,16 @@ class MotionDetectionProcessor(ProcessorNodeBase):
 
 
 class NamedLineBase(msrest.serialization.Model):
-    """Describes the named line.
+    """Base class for named lines.
 
     You probably want to use the sub-classes and not this class directly. Known
     sub-classes are: NamedLineString.
 
     All required parameters must be populated in order to send to Azure.
 
-    :param type: Required. The discriminator for derived types.Constant filled by server.
+    :param type: Required. The Type discriminator for the derived types.Constant filled by server.
     :type type: str
-    :param name: Required. The name of the line.
+    :param name: Required. Line name. Must be unique within the node.
     :type name: str
     """
 
@@ -1588,15 +1527,18 @@ class NamedLineBase(msrest.serialization.Model):
 
 
 class NamedLineString(NamedLineBase):
-    """Describes the start point and end point of a line in the frame.
+    """Describes a line configuration.
 
     All required parameters must be populated in order to send to Azure.
 
-    :param type: Required. The discriminator for derived types.Constant filled by server.
+    :param type: Required. The Type discriminator for the derived types.Constant filled by server.
     :type type: str
-    :param name: Required. The name of the line.
+    :param name: Required. Line name. Must be unique within the node.
     :type name: str
-    :param line: Required. Sets the properties of the line.
+    :param line: Required. Point coordinates for the line start and end, respectively. Example:
+     '[[0.3, 0.2],[0.9, 0.8]]'. Each point is expressed as [LEFT, TOP] coordinate ratios ranging
+     from 0.0 to 1.0, where [0,0] is the upper-left frame corner and [1, 1] is the bottom-right
+     frame corner.
     :type line: str
     """
 
@@ -1632,9 +1574,9 @@ class NamedPolygonBase(msrest.serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param type: Required. The discriminator for derived types.Constant filled by server.
+    :param type: Required. The Type discriminator for the derived types.Constant filled by server.
     :type type: str
-    :param name: Required. The name of the polygon.
+    :param name: Required. Polygon name. Must be unique within the node.
     :type name: str
     """
 
@@ -1664,15 +1606,17 @@ class NamedPolygonBase(msrest.serialization.Model):
 
 
 class NamedPolygonString(NamedPolygonBase):
-    """Describes a closed polygon in the frame.
+    """Describes a closed polygon configuration.
 
     All required parameters must be populated in order to send to Azure.
 
-    :param type: Required. The discriminator for derived types.Constant filled by server.
+    :param type: Required. The Type discriminator for the derived types.Constant filled by server.
     :type type: str
-    :param name: Required. The name of the polygon.
+    :param name: Required. Polygon name. Must be unique within the node.
     :type name: str
-    :param polygon: Required. Sets the properties of the polygon.
+    :param polygon: Required. Point coordinates for the polygon. Example: '[[0.3, 0.2],[0.9,
+     0.8],[0.7, 0.6]]'. Each point is expressed as [LEFT, TOP] coordinate ratios ranging from 0.0 to
+     1.0, where [0,0] is the upper-left frame corner and [1, 1] is the bottom-right frame corner.
     :type polygon: str
     """
 
@@ -1701,14 +1645,15 @@ class NamedPolygonString(NamedPolygonBase):
 
 
 class NodeInput(msrest.serialization.Model):
-    """Represents the input to any node in a topology.
+    """Describes an input signal to be used on a pipeline node.
 
     All required parameters must be populated in order to send to Azure.
 
-    :param node_name: Required. The name of another node in the pipeline topology, the output of
-     which is used as input to this node.
+    :param node_name: Required. The name of the upstream node in the pipeline which output is used
+     as input of the current node.
     :type node_name: str
-    :param output_selectors: Allows for the selection of particular streams from another node.
+    :param output_selectors: Allows for the selection of specific data streams (eg. video only)
+     from another node.
     :type output_selectors: list[~azure.media.videoanalyzer.edge.models.OutputSelector]
     """
 
@@ -1734,19 +1679,19 @@ class NodeInput(msrest.serialization.Model):
 
 
 class ObjectTrackingProcessor(ProcessorNodeBase):
-    """A node that accepts raw video as input, and detects objects.
+    """Object tracker processor allows for continuous tracking of one of more objects over a finite sequence of video frames. It must be used downstream of an object detector extension node, thus allowing for the extension to be configured to to perform inferences on sparse frames through the use of the 'maximumSamplesPerSecond' sampling property. The object tracker node will then track the detected objects over the frames in which the detector is not invoked resulting on a smother tracking of detected objects across the continuum of video frames. The tracker will stop tracking objects which are not subsequently detected by the upstream detector on the subsequent detections.
 
     All required parameters must be populated in order to send to Azure.
 
-    :param type: Required. The discriminator for derived types.Constant filled by server.
+    :param type: Required. Type discriminator for the derived types.Constant filled by server.
     :type type: str
-    :param name: Required. The name for this processor node.
+    :param name: Required. Node name. Must be unique within the topology.
     :type name: str
-    :param inputs: Required. An array of the names of the other nodes in the topology, the outputs
-     of which are used as input for this processor node.
+    :param inputs: Required. An array of upstream node references within the topology to be used as
+     inputs for this node.
     :type inputs: list[~azure.media.videoanalyzer.edge.models.NodeInput]
-    :param accuracy: Enumeration that controls the accuracy of the tracker. Possible values
-     include: "low", "medium", "high".
+    :param accuracy: Object tracker accuracy: low, medium, high. Higher accuracy leads to higher
+     CPU consumption in average. Possible values include: "low", "medium", "high".
     :type accuracy: str or ~azure.media.videoanalyzer.edge.models.ObjectTrackingAccuracy
     """
 
@@ -1779,9 +1724,10 @@ class ObjectTrackingProcessor(ProcessorNodeBase):
 class OutputSelector(msrest.serialization.Model):
     """Allows for the selection of particular streams from another node.
 
-    :param property: The stream property to compare with. Possible values include: "mediaType".
+    :param property: The property of the data stream to be used as the selection criteria. Possible
+     values include: "mediaType".
     :type property: str or ~azure.media.videoanalyzer.edge.models.OutputSelectorProperty
-    :param operator: The operator to compare streams by. Possible values include: "is", "isNot".
+    :param operator: The operator to compare properties by. Possible values include: "is", "isNot".
     :type operator: str or ~azure.media.videoanalyzer.edge.models.OutputSelectorOperator
     :param value: Value to compare against.
     :type value: str
@@ -1808,13 +1754,13 @@ class OutputSelector(msrest.serialization.Model):
 
 
 class ParameterDeclaration(msrest.serialization.Model):
-    """The declaration of a parameter in the pipeline topology. A topology can be authored with parameters. Then, during live pipeline creation, the value for those parameters can be specified. This allows the same pipeline topology to be used as a blueprint for multiple live pipelines with different values for the parameters.
+    """Single topology parameter declaration. Declared parameters can and must be referenced throughout the topology and can optionally have default values to be used when they are not defined in the pipeline instances.
 
     All required parameters must be populated in order to send to Azure.
 
-    :param name: Required. The name of the parameter.
+    :param name: Required. Name of the parameter.
     :type name: str
-    :param type: Required. The type of the parameter. Possible values include: "string",
+    :param type: Required. Type of the parameter. Possible values include: "string",
      "secretString", "int", "double", "bool".
     :type type: str or ~azure.media.videoanalyzer.edge.models.ParameterType
     :param description: Description of the parameter.
@@ -1853,13 +1799,13 @@ class ParameterDeclaration(msrest.serialization.Model):
 
 
 class ParameterDefinition(msrest.serialization.Model):
-    """A key-value pair. A pipeline topology allows certain values to be parameterized. When a live pipeline is created, the parameters are supplied with arguments specific to that instance. This allows the same pipeline topology to be used as a blueprint for multiple streams with different values for the parameters.
+    """Defines the parameter value of an specific pipeline topology parameter. See pipeline topology parameters for more information.
 
     All required parameters must be populated in order to send to Azure.
 
-    :param name: Required. The name of the parameter defined in the pipeline topology.
+    :param name: Required. Name of the parameter declared in the pipeline topology.
     :type name: str
-    :param value: The value to supply for the named parameter defined in the pipeline topology.
+    :param value: Parameter value to be applied on this specific live pipeline.
     :type value: str
     """
 
@@ -1889,9 +1835,9 @@ class PemCertificateList(CertificateSource):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param type: Required. The discriminator for derived types.Constant filled by server.
+    :param type: Required. Type discriminator for the derived types.Constant filled by server.
     :type type: str
-    :param certificates: Required. PEM formatted public certificates one per entry.
+    :param certificates: Required. PEM formatted public certificates. One certificate per entry.
     :type certificates: list[str]
     """
 
@@ -1917,15 +1863,21 @@ class PemCertificateList(CertificateSource):
 
 
 class PipelineTopology(msrest.serialization.Model):
-    """The definition of a pipeline topology.
+    """Pipeline topology describes the processing steps to be applied when processing media for a particular outcome. The topology should be defined according to the scenario to be achieved and can be reused across many pipeline instances which share the same processing characteristics. For instance, a pipeline topology which acquires data from a RTSP camera, process it with an specific AI model and stored the data on the cloud can be reused across many different cameras, as long as the same processing should be applied across all the cameras. Individual instance properties can be defined through the use of user-defined parameters, which allow for a topology to be parameterized, thus allowing individual pipelines to refer to different values, such as individual cameras RTSP endpoints and credentials. Overall a topology is composed of the following:
+
+
+* Parameters: list of user defined parameters that can be references across the topology nodes.
+* Sources: list of one or more data sources nodes such as an RTSP source which allows for media to be ingested from cameras.
+* Processors: list of nodes which perform data analysis or transformations.
+  -Sinks: list of one or more data sinks which allow for data to be stored or exported to other destinations.
 
     All required parameters must be populated in order to send to Azure.
 
-    :param name: Required. The identifier for the pipeline topology.
+    :param name: Required. Pipeline topology unique identifier.
     :type name: str
-    :param system_data: The system data for a resource.
+    :param system_data: Read-only system metadata associated with this object.
     :type system_data: ~azure.media.videoanalyzer.edge.models.SystemData
-    :param properties: The properties of the pipeline topology.
+    :param properties: Pipeline topology properties.
     :type properties: ~azure.media.videoanalyzer.edge.models.PipelineTopologyProperties
     """
 
@@ -1956,11 +1908,11 @@ class PipelineTopology(msrest.serialization.Model):
 class PipelineTopologyCollection(msrest.serialization.Model):
     """A collection of pipeline topologies.
 
-    :param value: A collection of pipeline topologies.
+    :param value: List of pipeline topologies.
     :type value: list[~azure.media.videoanalyzer.edge.models.PipelineTopology]
-    :param continuation_token: A continuation token to use in subsequent calls to enumerate through
-     the pipeline topology collection. This is used when the collection contains too many results to
-     return in one response.
+    :param continuation_token: A continuation token to be used in subsequent calls when enumerating
+     through the collection. This is returned when the collection results won't fit in a single
+     response.
     :type continuation_token: str
     """
 
@@ -1981,18 +1933,18 @@ class PipelineTopologyCollection(msrest.serialization.Model):
         self.continuation_token = continuation_token
 
 
-class PipelineTopologyDeleteRequest(ItemNonSetRequestBase):
-    """Represents the pipelineTopologyDelete request.
+class PipelineTopologyDeleteRequest(MethodRequestEmptyBodyBase):
+    """Deletes an existing pipeline topology.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar method_name: Required. method name.Constant filled by server.
+    :ivar method_name: Required. Direct method method name.Constant filled by server.
     :vartype method_name: str
-    :ivar api_version: api version. Default value: "1.0".
+    :ivar api_version: Video Analyzer API version. Default value: "1.0".
     :vartype api_version: str
-    :param name: Required. method name.
+    :param name: Required. Resource name.
     :type name: str
     """
 
@@ -2020,18 +1972,18 @@ class PipelineTopologyDeleteRequest(ItemNonSetRequestBase):
         self.method_name = 'pipelineTopologyDelete'  # type: str
 
 
-class PipelineTopologyGetRequest(ItemNonSetRequestBase):
-    """Represents the pipelineTopologyGet request.
+class PipelineTopologyGetRequest(MethodRequestEmptyBodyBase):
+    """Retrieves an existing pipeline topology.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar method_name: Required. method name.Constant filled by server.
+    :ivar method_name: Required. Direct method method name.Constant filled by server.
     :vartype method_name: str
-    :ivar api_version: api version. Default value: "1.0".
+    :ivar api_version: Video Analyzer API version. Default value: "1.0".
     :vartype api_version: str
-    :param name: Required. method name.
+    :param name: Required. Resource name.
     :type name: str
     """
 
@@ -2060,15 +2012,15 @@ class PipelineTopologyGetRequest(ItemNonSetRequestBase):
 
 
 class PipelineTopologyListRequest(MethodRequest):
-    """Represents the pipelineTopologyList request.
+    """List all existing pipeline topologies.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar method_name: Required. method name.Constant filled by server.
+    :ivar method_name: Required. Direct method method name.Constant filled by server.
     :vartype method_name: str
-    :ivar api_version: api version. Default value: "1.0".
+    :ivar api_version: Video Analyzer API version. Default value: "1.0".
     :vartype api_version: str
     """
 
@@ -2093,19 +2045,24 @@ class PipelineTopologyListRequest(MethodRequest):
 
 
 class PipelineTopologyProperties(msrest.serialization.Model):
-    """A description of the properties of a pipeline topology.
+    """Pipeline topology properties.
 
-    :param description: A description of a pipeline topology. It is recommended to use this to
-     describe the expected use of the pipeline topology.
+    :param description: An optional description of the pipeline topology. It is recommended that
+     the expected use of the topology to be described here.
     :type description: str
-    :param parameters: The list of parameters defined in the pipeline topology. The value for these
-     parameters are supplied by streams of this pipeline topology.
+    :param parameters: List of the topology parameter declarations. Parameters declared here can be
+     referenced throughout the topology nodes through the use of "${PARAMETER_NAME}" string pattern.
+     Parameters can have optional default values and can later be defined in individual instances of
+     the pipeline.
     :type parameters: list[~azure.media.videoanalyzer.edge.models.ParameterDeclaration]
-    :param sources: The list of source nodes in this pipeline topology.
+    :param sources: List of the topology source nodes. Source nodes enable external data to be
+     ingested by the pipeline.
     :type sources: list[~azure.media.videoanalyzer.edge.models.SourceNodeBase]
-    :param processors: The list of processor nodes in this pipeline topology.
+    :param processors: List of the topology processor nodes. Processor nodes enable pipeline data
+     to be analyzed, processed or transformed.
     :type processors: list[~azure.media.videoanalyzer.edge.models.ProcessorNodeBase]
-    :param sinks: The list of sink nodes in this pipeline topology.
+    :param sinks: List of the topology sink nodes. Sink nodes allow pipeline data to be stored or
+     exported.
     :type sinks: list[~azure.media.videoanalyzer.edge.models.SinkNodeBase]
     """
 
@@ -2136,17 +2093,35 @@ class PipelineTopologyProperties(msrest.serialization.Model):
 
 
 class PipelineTopologySetRequest(MethodRequest):
-    """Represents the pipelineTopologySet request.
+    """Creates a new pipeline topology or updates an existing one.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar method_name: Required. method name.Constant filled by server.
+    :ivar method_name: Required. Direct method method name.Constant filled by server.
     :vartype method_name: str
-    :ivar api_version: api version. Default value: "1.0".
+    :ivar api_version: Video Analyzer API version. Default value: "1.0".
     :vartype api_version: str
-    :param pipeline_topology: Required. The definition of a pipeline topology.
+    :param pipeline_topology: Required. Pipeline topology describes the processing steps to be
+     applied when processing media for a particular outcome. The topology should be defined
+     according to the scenario to be achieved and can be reused across many pipeline instances which
+     share the same processing characteristics. For instance, a pipeline topology which acquires
+     data from a RTSP camera, process it with an specific AI model and stored the data on the cloud
+     can be reused across many different cameras, as long as the same processing should be applied
+     across all the cameras. Individual instance properties can be defined through the use of
+     user-defined parameters, which allow for a topology to be parameterized, thus allowing
+     individual pipelines to refer to different values, such as individual cameras RTSP endpoints
+     and credentials. Overall a topology is composed of the following:
+    
+    
+     * Parameters: list of user defined parameters that can be references across the topology
+     nodes.
+     * Sources: list of one or more data sources nodes such as an RTSP source which allows for
+     media to be ingested from cameras.
+     * Processors: list of nodes which perform data analysis or transformations.
+       -Sinks: list of one or more data sinks which allow for data to be stored or exported to
+     other destinations.
     :type pipeline_topology: ~azure.media.videoanalyzer.edge.models.PipelineTopology
     """
 
@@ -2176,21 +2151,21 @@ class PipelineTopologySetRequest(MethodRequest):
 
 
 class PipelineTopologySetRequestBody(PipelineTopology, MethodRequest):
-    """Represents the pipelineTopologySet request body.
+    """Pipeline topology resource representation.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar method_name: Required. method name.Constant filled by server.
+    :ivar method_name: Required. Direct method method name.Constant filled by server.
     :vartype method_name: str
-    :ivar api_version: api version. Default value: "1.0".
+    :ivar api_version: Video Analyzer API version. Default value: "1.0".
     :vartype api_version: str
-    :param name: Required. The identifier for the pipeline topology.
+    :param name: Required. Pipeline topology unique identifier.
     :type name: str
-    :param system_data: The system data for a resource.
+    :param system_data: Read-only system metadata associated with this object.
     :type system_data: ~azure.media.videoanalyzer.edge.models.SystemData
-    :param properties: The properties of the pipeline topology.
+    :param properties: Pipeline topology properties.
     :type properties: ~azure.media.videoanalyzer.edge.models.PipelineTopologyProperties
     """
 
@@ -2227,19 +2202,23 @@ class PipelineTopologySetRequestBody(PipelineTopology, MethodRequest):
 
 
 class RtspSource(SourceNodeBase):
-    """Enables a pipeline topology to capture media from a RTSP server.
+    """RTSP source allows for media from an RTSP camera or generic RTSP server to be ingested into a live pipeline.
 
     All required parameters must be populated in order to send to Azure.
 
-    :param type: Required. The type of the source node. The discriminator for derived
-     types.Constant filled by server.
+    :param type: Required. Type discriminator for the derived types.Constant filled by server.
     :type type: str
-    :param name: Required. The name to be used for this source node.
+    :param name: Required. Node name. Must be unique within the topology.
     :type name: str
-    :param transport: Underlying RTSP transport. This is used to enable or disable HTTP tunneling.
-     Possible values include: "http", "tcp".
+    :param transport: Network transport utilized by the RTSP and RTP exchange: TCP or HTTP. When
+     using TCP, the RTP packets are interleaved on the TCP RTSP connection. When using HTTP, the
+     RTSP messages are exchanged through long lived HTTP connections, and the RTP packages are
+     interleaved in the HTTP connections alongside the RTSP messages. Possible values include:
+     "http", "tcp".
     :type transport: str or ~azure.media.videoanalyzer.edge.models.RtspTransport
-    :param endpoint: Required. RTSP endpoint of the stream that is being connected to.
+    :param endpoint: Required. RTSP endpoint information for Video Analyzer to connect to. This
+     contains the required information for Video Analyzer to connect to RTSP cameras and/or generic
+     RTSP servers.
     :type endpoint: ~azure.media.videoanalyzer.edge.models.EndpointBase
     """
 
@@ -2271,12 +2250,16 @@ class RtspSource(SourceNodeBase):
 
 
 class SamplingOptions(msrest.serialization.Model):
-    """Describes the properties of a sample.
+    """Defines how often media is submitted to the extension plugin.
 
-    :param skip_samples_without_annotation: If true, limits the samples submitted to the extension
-     to only samples which have associated inference(s).
+    :param skip_samples_without_annotation: When set to 'true', prevents frames without upstream
+     inference data to be sent to the extension plugin. This is useful to limit the frames sent to
+     the extension to pre-analyzed frames only. For example, when used downstream from a motion
+     detector, this can enable for only frames in which motion has been detected to be further
+     analyzed.
     :type skip_samples_without_annotation: str
-    :param maximum_samples_per_second: Maximum rate of samples submitted to the extension.
+    :param maximum_samples_per_second: Maximum rate of samples submitted to the extension. This
+     prevents an extension plugin to be overloaded with data.
     :type maximum_samples_per_second: str
     """
 
@@ -2298,29 +2281,34 @@ class SamplingOptions(msrest.serialization.Model):
 
 
 class SignalGateProcessor(ProcessorNodeBase):
-    """A signal gate determines when to block (gate) incoming media, and when to allow it through. It gathers input events over the activationEvaluationWindow, and determines whether to open or close the gate.
+    """A signal gate determines when to block (gate) incoming media, and when to allow it through. It gathers input events over the activationEvaluationWindow, and determines whether to open or close the gate. See https://aka.ms/ava-signalgate for more information.
 
     All required parameters must be populated in order to send to Azure.
 
-    :param type: Required. The discriminator for derived types.Constant filled by server.
+    :param type: Required. Type discriminator for the derived types.Constant filled by server.
     :type type: str
-    :param name: Required. The name for this processor node.
+    :param name: Required. Node name. Must be unique within the topology.
     :type name: str
-    :param inputs: Required. An array of the names of the other nodes in the topology, the outputs
-     of which are used as input for this processor node.
+    :param inputs: Required. An array of upstream node references within the topology to be used as
+     inputs for this node.
     :type inputs: list[~azure.media.videoanalyzer.edge.models.NodeInput]
     :param activation_evaluation_window: The period of time over which the gate gathers input
      events before evaluating them.
     :type activation_evaluation_window: str
     :param activation_signal_offset: Signal offset once the gate is activated (can be negative). It
-     is an offset between the time the event is received, and the timestamp of the first media
-     sample (eg. video frame) that is allowed through by the gate.
+     determines the how much farther behind of after the signal will be let through based on the
+     activation time. A negative offset indicates that data prior the activation time must be
+     included on the signal that is let through, once the gate is activated. When used upstream of a
+     file or video sink, this allows for scenarios such as recording buffered media prior an event,
+     such as: record video 5 seconds prior motions is detected.
     :type activation_signal_offset: str
     :param minimum_activation_time: The minimum period for which the gate remains open in the
-     absence of subsequent triggers (events).
+     absence of subsequent triggers (events). When used upstream of a file or video sink, it
+     determines the minimum length of the recorded video clip.
     :type minimum_activation_time: str
     :param maximum_activation_time: The maximum period for which the gate remains open in the
-     presence of subsequent events.
+     presence of subsequent triggers (events). When used upstream of a file or video sink, it
+     determines the maximum length of the recorded video clip.
     :type maximum_activation_time: str
     """
 
@@ -2360,14 +2348,14 @@ class SignalGateProcessor(ProcessorNodeBase):
 
 
 class SpatialAnalysisOperationBase(msrest.serialization.Model):
-    """Defines the Spatial Analysis operation to be used in the Cognitive Services Vision processor.
+    """Base class for Azure Cognitive Services Spatial Analysis operations.
 
     You probably want to use the sub-classes and not this class directly. Known
     sub-classes are: SpatialAnalysisCustomOperation, SpatialAnalysisTypedOperationBase.
 
     All required parameters must be populated in order to send to Azure.
 
-    :param type: Required. The discriminator for derived types.Constant filled by server.
+    :param type: Required. The Type discriminator for the derived types.Constant filled by server.
     :type type: str
     """
 
@@ -2392,14 +2380,14 @@ class SpatialAnalysisOperationBase(msrest.serialization.Model):
 
 
 class SpatialAnalysisCustomOperation(SpatialAnalysisOperationBase):
-    """Defines a custom Spatial Analysis operation to be used in the Cognitive Services Vision processor.
+    """Defines a Spatial Analysis custom operation. This requires the Azure Cognitive Services Spatial analysis module to be deployed alongside the Video Analyzer module, please see https://aka.ms/ava-spatial-analysis for more information.
 
     All required parameters must be populated in order to send to Azure.
 
-    :param type: Required. The discriminator for derived types.Constant filled by server.
+    :param type: Required. The Type discriminator for the derived types.Constant filled by server.
     :type type: str
-    :param extension_configuration: Required. Custom configuration to pass to the Cognitive
-     Services Vision processor.
+    :param extension_configuration: Required. Custom configuration to pass to the Azure Cognitive
+     Services Spatial Analysis module.
     :type extension_configuration: str
     """
 
@@ -2425,7 +2413,7 @@ class SpatialAnalysisCustomOperation(SpatialAnalysisOperationBase):
 
 
 class SpatialAnalysisOperationEventBase(msrest.serialization.Model):
-    """Defines a Spatial Analysis operation eventing configuration.
+    """Defines the Azure Cognitive Services Spatial Analysis operation eventing configuration.
 
     :param threshold: The event threshold.
     :type threshold: str
@@ -2452,7 +2440,7 @@ class SpatialAnalysisOperationEventBase(msrest.serialization.Model):
 
 
 class SpatialAnalysisPersonCountEvent(SpatialAnalysisOperationEventBase):
-    """Defines a Spatial Analysis Person Count operation eventing configuration.
+    """Defines a Spatial Analysis person count operation eventing configuration.
 
     :param threshold: The event threshold.
     :type threshold: str
@@ -2488,22 +2476,23 @@ class SpatialAnalysisPersonCountEvent(SpatialAnalysisOperationEventBase):
 
 
 class SpatialAnalysisTypedOperationBase(SpatialAnalysisOperationBase):
-    """Defines a typed Spatial Analysis operation to be used in the Cognitive Services Vision processor.
+    """Base class for Azure Cognitive Services Spatial Analysis typed operations.
 
     You probably want to use the sub-classes and not this class directly. Known
     sub-classes are: SpatialAnalysisPersonCountOperation, SpatialAnalysisPersonDistanceOperation, SpatialAnalysisPersonLineCrossingOperation, SpatialAnalysisPersonZoneCrossingOperation.
 
     All required parameters must be populated in order to send to Azure.
 
-    :param type: Required. The discriminator for derived types.Constant filled by server.
+    :param type: Required. The Type discriminator for the derived types.Constant filled by server.
     :type type: str
-    :param debug: Enables debugging for the Spatial Analysis operation.
+    :param debug: If set to 'true', enables debugging mode for this operation.
     :type debug: str
     :param camera_configuration: Advanced camera configuration.
     :type camera_configuration: str
     :param detector_node_configuration: Advanced detector node configuration.
     :type detector_node_configuration: str
-    :param enable_face_mask_classifier: Enables face mask detection.
+    :param enable_face_mask_classifier: If set to 'true', enables face mask detection for this
+     operation.
     :type enable_face_mask_classifier: str
     """
 
@@ -2541,19 +2530,20 @@ class SpatialAnalysisTypedOperationBase(SpatialAnalysisOperationBase):
 
 
 class SpatialAnalysisPersonCountOperation(SpatialAnalysisTypedOperationBase):
-    """Defines a Spatial Analysis Person Count operation to be used in the Cognitive Services Vision processor.
+    """Defines a Spatial Analysis person count operation. This requires the Azure Cognitive Services Spatial analysis module to be deployed alongside the Video Analyzer module, please see https://aka.ms/ava-spatial-analysis for more information.
 
     All required parameters must be populated in order to send to Azure.
 
-    :param type: Required. The discriminator for derived types.Constant filled by server.
+    :param type: Required. The Type discriminator for the derived types.Constant filled by server.
     :type type: str
-    :param debug: Enables debugging for the Spatial Analysis operation.
+    :param debug: If set to 'true', enables debugging mode for this operation.
     :type debug: str
     :param camera_configuration: Advanced camera configuration.
     :type camera_configuration: str
     :param detector_node_configuration: Advanced detector node configuration.
     :type detector_node_configuration: str
-    :param enable_face_mask_classifier: Enables face mask detection.
+    :param enable_face_mask_classifier: If set to 'true', enables face mask detection for this
+     operation.
     :type enable_face_mask_classifier: str
     :param zones: Required. The list of zones and optional events.
     :type zones: list[~azure.media.videoanalyzer.edge.models.SpatialAnalysisPersonCountZoneEvents]
@@ -2621,7 +2611,7 @@ class SpatialAnalysisPersonCountZoneEvents(msrest.serialization.Model):
 
 
 class SpatialAnalysisPersonDistanceEvent(SpatialAnalysisOperationEventBase):
-    """Defines a Spatial Analysis Person Distance operation eventing configuration.
+    """Defines a Spatial Analysis person distance operation eventing configuration.
 
     :param threshold: The event threshold.
     :type threshold: str
@@ -2667,19 +2657,20 @@ class SpatialAnalysisPersonDistanceEvent(SpatialAnalysisOperationEventBase):
 
 
 class SpatialAnalysisPersonDistanceOperation(SpatialAnalysisTypedOperationBase):
-    """Defines a Spatial Analysis Person Distance operation to be used in the Cognitive Services Vision processor.
+    """Defines a Spatial Analysis person distance operation. This requires the Azure Cognitive Services Spatial analysis module to be deployed alongside the Video Analyzer module, please see https://aka.ms/ava-spatial-analysis for more information.
 
     All required parameters must be populated in order to send to Azure.
 
-    :param type: Required. The discriminator for derived types.Constant filled by server.
+    :param type: Required. The Type discriminator for the derived types.Constant filled by server.
     :type type: str
-    :param debug: Enables debugging for the Spatial Analysis operation.
+    :param debug: If set to 'true', enables debugging mode for this operation.
     :type debug: str
     :param camera_configuration: Advanced camera configuration.
     :type camera_configuration: str
     :param detector_node_configuration: Advanced detector node configuration.
     :type detector_node_configuration: str
-    :param enable_face_mask_classifier: Enables face mask detection.
+    :param enable_face_mask_classifier: If set to 'true', enables face mask detection for this
+     operation.
     :type enable_face_mask_classifier: str
     :param zones: Required. The list of zones with optional events.
     :type zones:
@@ -2748,7 +2739,7 @@ class SpatialAnalysisPersonDistanceZoneEvents(msrest.serialization.Model):
 
 
 class SpatialAnalysisPersonLineCrossingEvent(SpatialAnalysisOperationEventBase):
-    """Defines a Spatial Analysis Person Line Crossing operation eventing configuration.
+    """Defines a Spatial Analysis person line crossing operation eventing configuration.
 
     :param threshold: The event threshold.
     :type threshold: str
@@ -2806,19 +2797,20 @@ class SpatialAnalysisPersonLineCrossingLineEvents(msrest.serialization.Model):
 
 
 class SpatialAnalysisPersonLineCrossingOperation(SpatialAnalysisTypedOperationBase):
-    """Defines a Spatial Analysis Person Line Crossing operation to be used in the Cognitive Services Vision processor.
+    """Defines a Spatial Analysis person line crossing operation. This requires the Azure Cognitive Services Spatial analysis module to be deployed alongside the Video Analyzer module, please see https://aka.ms/ava-spatial-analysis for more information.
 
     All required parameters must be populated in order to send to Azure.
 
-    :param type: Required. The discriminator for derived types.Constant filled by server.
+    :param type: Required. The Type discriminator for the derived types.Constant filled by server.
     :type type: str
-    :param debug: Enables debugging for the Spatial Analysis operation.
+    :param debug: If set to 'true', enables debugging mode for this operation.
     :type debug: str
     :param camera_configuration: Advanced camera configuration.
     :type camera_configuration: str
     :param detector_node_configuration: Advanced detector node configuration.
     :type detector_node_configuration: str
-    :param enable_face_mask_classifier: Enables face mask detection.
+    :param enable_face_mask_classifier: If set to 'true', enables face mask detection for this
+     operation.
     :type enable_face_mask_classifier: str
     :param lines: Required. The list of lines with optional events.
     :type lines:
@@ -2855,7 +2847,7 @@ class SpatialAnalysisPersonLineCrossingOperation(SpatialAnalysisTypedOperationBa
 
 
 class SpatialAnalysisPersonZoneCrossingEvent(SpatialAnalysisOperationEventBase):
-    """Defines a Spatial Analysis Person Crossing Zone operation eventing configuration.
+    """Defines a Spatial Analysis person crossing zone operation eventing configuration.
 
     :param threshold: The event threshold.
     :type threshold: str
@@ -2886,19 +2878,20 @@ class SpatialAnalysisPersonZoneCrossingEvent(SpatialAnalysisOperationEventBase):
 
 
 class SpatialAnalysisPersonZoneCrossingOperation(SpatialAnalysisTypedOperationBase):
-    """Defines a Spatial Analysis Person Zone Crossing operation to be used in the Cognitive Services Vision processor.
+    """Defines a Spatial Analysis person zone crossing operation. This requires the Azure Cognitive Services Spatial analysis module to be deployed alongside the Video Analyzer module, please see https://aka.ms/ava-spatial-analysis for more information.
 
     All required parameters must be populated in order to send to Azure.
 
-    :param type: Required. The discriminator for derived types.Constant filled by server.
+    :param type: Required. The Type discriminator for the derived types.Constant filled by server.
     :type type: str
-    :param debug: Enables debugging for the Spatial Analysis operation.
+    :param debug: If set to 'true', enables debugging mode for this operation.
     :type debug: str
     :param camera_configuration: Advanced camera configuration.
     :type camera_configuration: str
     :param detector_node_configuration: Advanced detector node configuration.
     :type detector_node_configuration: str
-    :param enable_face_mask_classifier: Enables face mask detection.
+    :param enable_face_mask_classifier: If set to 'true', enables face mask detection for this
+     operation.
     :type enable_face_mask_classifier: str
     :param zones: Required. The list of zones with optional events.
     :type zones:
@@ -2967,44 +2960,14 @@ class SpatialAnalysisPersonZoneCrossingZoneEvents(msrest.serialization.Model):
         self.events = events
 
 
-class SymmetricKeyCredentials(CredentialsBase):
-    """Symmetric key credential.
-
-    All required parameters must be populated in order to send to Azure.
-
-    :param type: Required. The discriminator for derived types.Constant filled by server.
-    :type type: str
-    :param key: Required. Symmetric key credential.
-    :type key: str
-    """
-
-    _validation = {
-        'type': {'required': True},
-        'key': {'required': True},
-    }
-
-    _attribute_map = {
-        'type': {'key': '@type', 'type': 'str'},
-        'key': {'key': 'key', 'type': 'str'},
-    }
-
-    def __init__(
-        self,
-        *,
-        key: str,
-        **kwargs
-    ):
-        super(SymmetricKeyCredentials, self).__init__(**kwargs)
-        self.type = '#Microsoft.VideoAnalyzer.SymmetricKeyCredentials'  # type: str
-        self.key = key
-
-
 class SystemData(msrest.serialization.Model):
-    """The system data for a resource. This is used by both pipeline topologies and live pipelines.
+    """Read-only system metadata associated with a resource.
 
-    :param created_at: The timestamp of resource creation (UTC).
+    :param created_at: Date and time when this resource was first created. Value is represented in
+     UTC according to the ISO8601 date format.
     :type created_at: ~datetime.datetime
-    :param last_modified_at: The timestamp of resource last modification (UTC).
+    :param last_modified_at: Date and time when this resource was last modified. Value is
+     represented in UTC according to the ISO8601 date format.
     :type last_modified_at: ~datetime.datetime
     """
 
@@ -3026,18 +2989,19 @@ class SystemData(msrest.serialization.Model):
 
 
 class TlsEndpoint(EndpointBase):
-    """A TLS endpoint for pipeline topology external connections.
+    """TLS endpoint describes an endpoint that the pipeline can connect to over TLS transport (data is encrypted in transit).
 
     All required parameters must be populated in order to send to Azure.
 
-    :param type: Required. The discriminator for derived types.Constant filled by server.
+    :param type: Required. Type discriminator for the derived types.Constant filled by server.
     :type type: str
-    :param credentials: Polymorphic credentials to be presented to the endpoint.
+    :param credentials: Credentials to be presented to the endpoint.
     :type credentials: ~azure.media.videoanalyzer.edge.models.CredentialsBase
-    :param url: Required. Url for the endpoint.
+    :param url: Required. The endpoint URL for Video Analyzer to connect to.
     :type url: str
-    :param trusted_certificates: Trusted certificates when authenticating a TLS connection. Null
-     designates that Azure Media Service's source of trust should be used.
+    :param trusted_certificates: List of trusted certificate authorities when authenticating a TLS
+     connection. A null list designates that Azure Video Analyzer's list of trusted authorities
+     should be used.
     :type trusted_certificates: ~azure.media.videoanalyzer.edge.models.CertificateSource
     :param validation_options: Validation options to use when authenticating a TLS connection. By
      default, strict validation is used.
@@ -3073,12 +3037,13 @@ class TlsEndpoint(EndpointBase):
 
 
 class TlsValidationOptions(msrest.serialization.Model):
-    """Options for controlling the authentication of TLS endpoints.
+    """Options for controlling the validation of TLS endpoints.
 
-    :param ignore_hostname: Boolean value ignoring the host name (common name) during validation.
+    :param ignore_hostname: When set to 'true' causes the certificate subject name validation to be
+     skipped. Default is 'false'.
     :type ignore_hostname: str
-    :param ignore_signature: Boolean value ignoring the integrity of the certificate chain at the
-     current time.
+    :param ignore_signature: When set to 'true' causes the certificate chain trust validation to be
+     skipped. Default is 'false'.
     :type ignore_signature: str
     """
 
@@ -3100,15 +3065,15 @@ class TlsValidationOptions(msrest.serialization.Model):
 
 
 class UnsecuredEndpoint(EndpointBase):
-    """An endpoint that the pipeline topology can connect to, with no encryption in transit.
+    """Unsecured endpoint describes an endpoint that the pipeline can connect to over clear transport (no encryption in transit).
 
     All required parameters must be populated in order to send to Azure.
 
-    :param type: Required. The discriminator for derived types.Constant filled by server.
+    :param type: Required. Type discriminator for the derived types.Constant filled by server.
     :type type: str
-    :param credentials: Polymorphic credentials to be presented to the endpoint.
+    :param credentials: Credentials to be presented to the endpoint.
     :type credentials: ~azure.media.videoanalyzer.edge.models.CredentialsBase
-    :param url: Required. Url for the endpoint.
+    :param url: Required. The endpoint URL for Video Analyzer to connect to.
     :type url: str
     """
 
@@ -3135,16 +3100,17 @@ class UnsecuredEndpoint(EndpointBase):
 
 
 class UsernamePasswordCredentials(CredentialsBase):
-    """Username/password credential pair.
+    """Username and password credentials.
 
     All required parameters must be populated in order to send to Azure.
 
-    :param type: Required. The discriminator for derived types.Constant filled by server.
+    :param type: Required. Type discriminator for the derived types.Constant filled by server.
     :type type: str
-    :param username: Required. Username for a username/password pair.
+    :param username: Required. Username to be presented as part of the credentials.
     :type username: str
-    :param password: Required. Password for a username/password pair. Please use a parameter so
-     that the actual value is not returned on PUT or GET requests.
+    :param password: Required. Password to be presented as part of the credentials. It is
+     recommended that this value is parameterized as a secret string in order to prevent this value
+     to be returned as part of the resource on API requests.
     :type password: str
     """
 
@@ -3174,15 +3140,21 @@ class UsernamePasswordCredentials(CredentialsBase):
 
 
 class VideoCreationProperties(msrest.serialization.Model):
-    """Properties which will be used only if a video is being created.
+    """Optional video properties to be used in case a new video resource needs to be created on the service. These will not take effect if the video already exists.
 
-    :param title: An optional title for the video.
+    :param title: Optional video title provided by the user. Value can be up to 256 characters
+     long.
     :type title: str
-    :param description: An optional description for the video.
+    :param description: Optional video description provided by the user. Value can be up to 2048
+     characters long.
     :type description: str
-    :param segment_length: When writing media to video, wait until at least this duration of media
-     has been accumulated on the Edge. Expressed in increments of 30 seconds, with a minimum of 30
-     seconds and a recommended maximum of 5 minutes.
+    :param segment_length: Video segment length indicates the length of individual video files
+     (segments) which are persisted to storage. Smaller segments provide lower archive playback
+     latency but generate larger volume of storage transactions. Larger segments reduce the amount
+     of storage transactions while increasing the archive playback latency. Value must be specified
+     in ISO8601 duration format (i.e. "PT30S" equals 30 seconds) and can vary between 30 seconds to
+     5 minutes, in 30 seconds increments. Changing this value after the video is initially created
+     can lead to errors when uploading media to the archive. Default value is 30 seconds.
     :type segment_length: str
     """
 
@@ -3207,29 +3179,31 @@ class VideoCreationProperties(msrest.serialization.Model):
 
 
 class VideoSink(SinkNodeBase):
-    """Enables a pipeline topology to record media to an Azure Video Analyzer video for subsequent playback.
+    """Video sink allows for video and audio to be recorded to the Video Analyzer service. The recorded video can be played from anywhere and further managed from the cloud. Due to security reasons, a given Video Analyzer edge module instance can only record content to new video entries, or existing video entries previously recorded by the same module. Any attempt to record content to an existing video which has not been created by the same module instance will result in failure to record.
 
     All required parameters must be populated in order to send to Azure.
 
-    :param type: Required. The discriminator for derived types.Constant filled by server.
+    :param type: Required. Type discriminator for the derived types.Constant filled by server.
     :type type: str
-    :param name: Required. The name to be used for the topology sink.
+    :param name: Required. Node name. Must be unique within the topology.
     :type name: str
-    :param inputs: Required. An array of the names of the other nodes in the pipeline topology, the
-     outputs of which are used as input for this sink node.
+    :param inputs: Required. An array of upstream node references within the topology to be used as
+     inputs for this node.
     :type inputs: list[~azure.media.videoanalyzer.edge.models.NodeInput]
-    :param video_name: Required. Name of a new or existing Video Analyzer video entity to use as
-     media output.
+    :param video_name: Required. Name of a new or existing Video Analyzer video resource used for
+     the media recording.
     :type video_name: str
-    :param video_creation_properties: Optional properties which will be used only if a video is
-     being created.
+    :param video_creation_properties: Optional video properties to be used in case a new video
+     resource needs to be created on the service.
     :type video_creation_properties: ~azure.media.videoanalyzer.edge.models.VideoCreationProperties
-    :param local_media_cache_path: Required. Path to a local file system directory for temporary
-     caching of media before writing to a video. This local cache will grow if the connection to
-     Azure is not stable.
+    :param local_media_cache_path: Required. Path to a local file system directory for caching of
+     temporary media files. This will also be used to store content which cannot be immediately
+     uploaded to Azure due to Internet connectivity issues.
     :type local_media_cache_path: str
     :param local_media_cache_maximum_size_mi_b: Required. Maximum amount of disk space that can be
-     used for temporary caching of media.
+     used for caching of temporary media files. Once this limit is reached, the oldest segments of
+     the media archive will be continuously deleted in order to make space for new media, thus
+     leading to gaps in the cloud recorded content.
     :type local_media_cache_maximum_size_mi_b: str
     """
 
