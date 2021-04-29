@@ -95,7 +95,44 @@ class FarmBeatsClient(object):
         self._client = AsyncPipelineClient(base_url=base_url, config=self._config, **kwargs)
 
         self._serialize = Serializer()
+        self._deserialize = Deserializer()
         self._serialize.client_side_validation = False
+        self.application_data = ApplicationDataOperations(
+            self._client, self._config, self._serialize, self._deserialize)
+        self.attachments = AttachmentsOperations(
+            self._client, self._config, self._serialize, self._deserialize)
+        self.boundaries = BoundariesOperations(
+            self._client, self._config, self._serialize, self._deserialize)
+        self.crops = CropsOperations(
+            self._client, self._config, self._serialize, self._deserialize)
+        self.crop_varieties = CropVarietiesOperations(
+            self._client, self._config, self._serialize, self._deserialize)
+        self.farmers = FarmersOperations(
+            self._client, self._config, self._serialize, self._deserialize)
+        self.farm_operations = FarmOperationsOperations(
+            self._client, self._config, self._serialize, self._deserialize)
+        self.farms = FarmsOperations(
+            self._client, self._config, self._serialize, self._deserialize)
+        self.fields = FieldsOperations(
+            self._client, self._config, self._serialize, self._deserialize)
+        self.harvest_data = HarvestDataOperations(
+            self._client, self._config, self._serialize, self._deserialize)
+        self.oauth_providers = OAuthProvidersOperations(
+            self._client, self._config, self._serialize, self._deserialize)
+        self.oauth_tokens = OAuthTokensOperations(
+            self._client, self._config, self._serialize, self._deserialize)
+        self.planting_data = PlantingDataOperations(
+            self._client, self._config, self._serialize, self._deserialize)
+        self.scenes = ScenesOperations(
+            self._client, self._config, self._serialize, self._deserialize)
+        self.seasonal_fields = SeasonalFieldsOperations(
+            self._client, self._config, self._serialize, self._deserialize)
+        self.seasons = SeasonsOperations(
+            self._client, self._config, self._serialize, self._deserialize)
+        self.tillage_data = TillageDataOperations(
+            self._client, self._config, self._serialize, self._deserialize)
+        self.weather = WeatherOperations(
+            self._client, self._config, self._serialize, self._deserialize)
 
     async def send_request(self, http_request: HttpRequest, **kwargs: Any) -> AsyncHttpResponse:
         """Runs the network request through the client's chained policies.
