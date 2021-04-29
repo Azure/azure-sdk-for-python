@@ -41,8 +41,8 @@ steps:
       if ($IsWindows) { 
         $activateMethod = "call" 
         $requirementSuffix = " --user"
-        Write-Host "Prepending with $($env:CONDA\Scripts)"
-        Write-Host "##vso[task.prependpath]$env:CONDA\Scripts"
+        Write-Host "Prepending with $($env:CONDA/Scripts)"
+        Write-Host "##vso[task.prependpath]$($env:CONDA/Scripts)"
       }
       else {
         Write-Host "Prepending with $($CONDA/bin)"
