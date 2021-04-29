@@ -5,6 +5,8 @@
 # license information.
 # --------------------------------------------------------------------------
 
+# pylint: disable=anomalous-backslash-in-string
+
 from typing import TYPE_CHECKING, Any, Union
 
 from ._generated._monitor_query_client import (
