@@ -216,6 +216,7 @@ class SearchClient(HeadersMixin):
         scoring_parameters = kwargs.pop("scoring_parameters", None)
         scoring_profile = kwargs.pop("scoring_profile", None)
         search_fields = kwargs.pop("search_fields", None)
+        search_fields_str = ",".join(search_fields) if search_fields else None
         search_mode = kwargs.pop("search_mode", None)
         query_language = kwargs.pop("query_language", None)
         speller = kwargs.pop("speller", None)
@@ -236,7 +237,7 @@ class SearchClient(HeadersMixin):
             query_type=query_type,
             scoring_parameters=scoring_parameters,
             scoring_profile=scoring_profile,
-            search_fields=search_fields,
+            search_fields=search_fields_str,
             search_mode=search_mode,
             query_language=query_language,
             speller=speller,
@@ -306,6 +307,7 @@ class SearchClient(HeadersMixin):
         minimum_coverage = kwargs.pop("minimum_coverage", None)
         order_by = kwargs.pop("order_by", None)
         search_fields = kwargs.pop("search_fields", None)
+        search_fields_str = ",".join(search_fields) if search_fields else None
         select = kwargs.pop("select", None)
         top = kwargs.pop("top", None)
         query = SuggestQuery(
@@ -317,7 +319,7 @@ class SearchClient(HeadersMixin):
             highlight_pre_tag=highlight_pre_tag,
             minimum_coverage=minimum_coverage,
             order_by=order_by,
-            search_fields=search_fields,
+            search_fields=search_fields_str,
             select=select if isinstance(select, six.string_types) else None,
             top=top
         )
@@ -379,6 +381,7 @@ class SearchClient(HeadersMixin):
         highlight_pre_tag = kwargs.pop("highlight_pre_tag", None)
         minimum_coverage = kwargs.pop("minimum_coverage", None)
         search_fields = kwargs.pop("search_fields", None)
+        search_fields_str = ",".join(search_fields) if search_fields else None
         top = kwargs.pop("top", None)
         query = AutocompleteQuery(
             search_text=search_text,
@@ -389,7 +392,7 @@ class SearchClient(HeadersMixin):
             highlight_post_tag=highlight_post_tag,
             highlight_pre_tag=highlight_pre_tag,
             minimum_coverage=minimum_coverage,
-            search_fields=search_fields,
+            search_fields=search_fields_str,
             top=top
         )
 

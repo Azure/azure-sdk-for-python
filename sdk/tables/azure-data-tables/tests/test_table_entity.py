@@ -306,7 +306,7 @@ class StorageTableEntityTest(AzureTestCase, TableTestCase):
                 self.table.create_entity(entity)
 
             f = u"RowKey eq '{}'".format(entity["RowKey"])
-            entities = self.table.query_entities(filter=f)
+            entities = self.table.query_entities(f)
             count = 0
             for e in entities:
                 assert e.PartitionKey == entity[u"PartitionKey"]
@@ -318,7 +318,7 @@ class StorageTableEntityTest(AzureTestCase, TableTestCase):
             assert count == 1
 
             count = 0
-            for e in self.table.query_entities(filter=f):
+            for e in self.table.query_entities(f):
                 count += 1
             assert count == 0
         finally:
@@ -350,7 +350,7 @@ class StorageTableEntityTest(AzureTestCase, TableTestCase):
 
             # Act
             entities = self.table.query_entities(
-                filter="married eq @my_param",
+                "married eq @my_param",
                 parameters={'my_param': entity['married']}
             )
 
@@ -376,7 +376,7 @@ class StorageTableEntityTest(AzureTestCase, TableTestCase):
                 'my_param': True,
                 'rk': entity['RowKey']
             }
-            entities = self.table.query_entities(filter="married eq @my_param and RowKey eq @rk", parameters=parameters)
+            entities = self.table.query_entities("married eq @my_param and RowKey eq @rk", parameters=parameters)
 
             length = 0
             assert entities is not None
@@ -399,7 +399,7 @@ class StorageTableEntityTest(AzureTestCase, TableTestCase):
             parameters = {
                 'my_param': 40,
             }
-            entities = self.table.query_entities(filter="age lt @my_param", parameters=parameters)
+            entities = self.table.query_entities("age lt @my_param", parameters=parameters)
 
             length = 0
             assert entities is not None
@@ -422,7 +422,7 @@ class StorageTableEntityTest(AzureTestCase, TableTestCase):
             parameters = {
                 'my_param': entity['ratio'] + 1,
             }
-            entities = self.table.query_entities(filter="ratio lt @my_param", parameters=parameters)
+            entities = self.table.query_entities("ratio lt @my_param", parameters=parameters)
 
             length = 0
             assert entities is not None
@@ -445,7 +445,7 @@ class StorageTableEntityTest(AzureTestCase, TableTestCase):
             parameters = {
                 'my_param': entity['birthday'],
             }
-            entities = self.table.query_entities(filter="birthday eq @my_param", parameters=parameters)
+            entities = self.table.query_entities("birthday eq @my_param", parameters=parameters)
 
             length = 0
             assert entities is not None
@@ -468,12 +468,65 @@ class StorageTableEntityTest(AzureTestCase, TableTestCase):
             parameters = {
                 'my_param': entity['clsid']
             }
-            entities = self.table.query_entities(filter="clsid eq @my_param", parameters=parameters)
+            entities = self.table.query_entities("clsid eq @my_param", parameters=parameters)
 
             length = 0
             assert entities is not None
             for entity in entities:
                 self._assert_default_entity(entity)
+                length += 1
+
+            assert length == 1
+        finally:
+            self._tear_down()
+
+    @TablesPreparer()
+    def test_query_user_filter_binary(self, tables_storage_account_name, tables_primary_storage_account_key):
+        # Arrange
+        self._set_up(tables_storage_account_name, tables_primary_storage_account_key)
+        try:
+            entity, _ = self._insert_two_opposite_entities()
+
+            # Act
+            parameters = {
+                'my_param': entity['binary']
+            }
+            entities = self.table.query_entities("binary eq @my_param", parameters=parameters)
+
+            length = 0
+            assert entities is not None
+            for entity in entities:
+                self._assert_default_entity(entity)
+                length += 1
+
+            assert length == 1
+        finally:
+            self._tear_down()
+
+    @TablesPreparer()
+    def test_query_user_filter_int64(self, tables_storage_account_name, tables_primary_storage_account_key):
+        # Arrange
+        self._set_up(tables_storage_account_name, tables_primary_storage_account_key)
+        try:
+            entity, _ = self._insert_two_opposite_entities()
+            large_entity = {
+                u"PartitionKey": u"pk001",
+                u"RowKey": u"rk001",
+                u"large_int": EntityProperty(2 ** 40, EdmType.INT64),
+            }
+            self.table.create_entity(large_entity)
+
+            # Act
+            parameters = {
+                'my_param': large_entity['large_int'].value
+            }
+            entities = self.table.query_entities("large_int eq @my_param", parameters=parameters)
+
+            length = 0
+            assert entities is not None
+            for entity in entities:
+                # self._assert_default_entity(entity)
+                assert large_entity['large_int'] == entity['large_int']
                 length += 1
 
             assert length == 1
@@ -497,7 +550,7 @@ class StorageTableEntityTest(AzureTestCase, TableTestCase):
                 self.table.create_entity(base_entity)
             # Act
             with pytest.raises(HttpResponseError):
-                resp = self.table.query_entities(filter="aaa bbb ccc")
+                resp = self.table.query_entities("aaa bbb ccc")
                 for row in resp:
                     _ = row
 
@@ -1252,7 +1305,7 @@ class StorageTableEntityTest(AzureTestCase, TableTestCase):
             self.table.create_entity(entity=entity1)
             self.table.create_entity(entity=entity2)
             entities = list(self.table.query_entities(
-                filter="PartitionKey eq '{}'".format(entity['PartitionKey'])))
+                "PartitionKey eq '{}'".format(entity['PartitionKey'])))
 
             # Assert
             assert len(entities) ==  2
@@ -1276,7 +1329,7 @@ class StorageTableEntityTest(AzureTestCase, TableTestCase):
             self.table.create_entity(entity=entity1)
             self.table.create_entity(entity=entity2)
             entities = list(self.table.query_entities(
-                filter="PartitionKey eq '{}'".format(entity['PartitionKey'])))
+                "PartitionKey eq '{}'".format(entity['PartitionKey'])))
 
             # Assert
             assert len(entities) ==  2
@@ -1397,7 +1450,6 @@ class StorageTableEntityTest(AzureTestCase, TableTestCase):
         finally:
             self._tear_down()
 
-    @pytest.mark.skip("response time is three hours before the given one")
     @TablesPreparer()
     def test_timezone(self, tables_storage_account_name, tables_primary_storage_account_key):
         # Arrange
@@ -1461,7 +1513,7 @@ class StorageTableEntityTest(AzureTestCase, TableTestCase):
 
             entity_count = 0
             page_count = 0
-            for entity_page in self.table.query_entities(filter=query_filter, results_per_page=2).by_page():
+            for entity_page in self.table.query_entities(query_filter, results_per_page=2).by_page():
 
                 temp_count = 0
                 for ent in entity_page:
@@ -1537,7 +1589,7 @@ class StorageTableEntityTest(AzureTestCase, TableTestCase):
 
             # Act
             entities = list(self.table.query_entities(
-                filter="PartitionKey eq '{}'".format(entity.PartitionKey),
+                "PartitionKey eq '{}'".format(entity.PartitionKey),
                 results_per_page=1))
 
             # Assert
@@ -1560,10 +1612,10 @@ class StorageTableEntityTest(AzureTestCase, TableTestCase):
             table.create_entity(entity_b)
 
             is_user_admin = "PartitionKey eq @first and IsAdmin eq 'admin'"
-            entities = list(table.query_entities(is_user_admin, parameters={'first': 'foo'}))
+            entities = list(table.query_entities(is_user_admin, parameters={'first': u'foo'}))
             assert len(entities) ==  1
 
-            injection = "foo' or RowKey eq 'bar2"
+            injection = u"foo' or RowKey eq 'bar2"
             injected_query = "PartitionKey eq '{}' and IsAdmin eq 'admin'".format(injection)
             entities = list(table.query_entities(injected_query))
             assert len(entities) ==  2
@@ -1589,7 +1641,7 @@ class StorageTableEntityTest(AzureTestCase, TableTestCase):
             all_entities = list(table.query_entities("PartitionKey eq ':@'"))
             assert len(all_entities) == 2
 
-            parameters = {'key': ':@'}
+            parameters = {'key': u':@'}
             all_entities = list(table.query_entities("PartitionKey eq @key", parameters=parameters))
             assert len(all_entities) == 2
 
@@ -1598,7 +1650,7 @@ class StorageTableEntityTest(AzureTestCase, TableTestCase):
             assert len(entities) == 1
 
             query = "PartitionKey eq @key and RowKey eq @row and Chars eq @quote"
-            parameters = {'key': ':@', 'row': '+,$', 'quote': "?'/!_^#"}
+            parameters = {'key': u':@', 'row': u'+,$', 'quote': u"?'/!_^#"}
             entities = list(table.query_entities(query, parameters=parameters))
             assert len(entities) ==  1
 
@@ -1607,7 +1659,7 @@ class StorageTableEntityTest(AzureTestCase, TableTestCase):
             assert len(entities) == 1
 
             query = "PartitionKey eq @key and RowKey eq @row and Chars eq @quote"
-            parameters = {'key': ':@', 'row': '=& ', 'quote': r'?"\{}<>%'}
+            parameters = {'key': u':@', 'row': u'=& ', 'quote': u'?"\\{}<>%'}
             entities = list(table.query_entities(query, parameters=parameters))
             assert len(entities) ==  1
 
@@ -1709,7 +1761,7 @@ class StorageTableEntityTest(AzureTestCase, TableTestCase):
             )
             table = service.get_table_client(self.table_name)
             entities = list(table.query_entities(
-                filter="PartitionKey eq '{}'".format(entity['PartitionKey'])))
+                "PartitionKey eq '{}'".format(entity['PartitionKey'])))
 
             # Assert
             assert len(entities) ==  1
@@ -1921,7 +1973,7 @@ class StorageTableEntityTest(AzureTestCase, TableTestCase):
             )
             table = service.get_table_client(self.table_name)
             entities = list(table.query_entities(
-                filter="PartitionKey eq '{}'".format(entity.PartitionKey)))
+                "PartitionKey eq '{}'".format(entity.PartitionKey)))
 
             # Assert
             assert len(entities) ==  1
@@ -1961,7 +2013,7 @@ class StorageTableEntityTest(AzureTestCase, TableTestCase):
             )
             table = service.get_table_client(self.table_name)
             entities = list(table.query_entities(
-                filter="PartitionKey eq '{}'".format(entity.PartitionKey)))
+                "PartitionKey eq '{}'".format(entity.PartitionKey)))
 
             # Assert
             assert len(entities) ==  1

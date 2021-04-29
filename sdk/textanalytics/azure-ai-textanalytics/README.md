@@ -81,7 +81,7 @@ This table shows the relationship between SDK versions and supported API version
 | SDK version                                                               | Supported API version of service  |
 | ------------------------------------------------------------------------- | --------------------------------- |
 | 5.0.0 - Latest GA release (can be installed by removing the `--pre` flag) | 3.0                               |
-| 5.1.0b6 - Latest release (beta)                                           | 3.0, 3.1-preview.4 |
+| 5.1.0b7 - Latest release (beta)                                           | 3.0, 3.1-preview.5 |
 
 ### Authenticate the client
 
@@ -499,6 +499,7 @@ Note: The Healthcare Entities Analysis service is currently available only in th
 - PII Entities Recognition
 - Linked Entity Recognition
 - Key Phrase Extraction
+- Sentiment Analysis
 
 ```python
 from azure.core.credentials import AzureKeyCredential
@@ -507,7 +508,8 @@ from azure.ai.textanalytics import (
     RecognizeEntitiesAction,
     RecognizePiiEntitiesAction,
     ExtractKeyPhrasesAction,
-    RecognizeLinkedEntitiesAction
+    RecognizeLinkedEntitiesAction,
+    AnalyzeSentimentAction
 )
 
 credential = AzureKeyCredential("<api_key>")
@@ -524,7 +526,8 @@ poller = text_analytics_client.begin_analyze_batch_actions(
         RecognizeEntitiesAction(),
         RecognizePiiEntitiesAction(),
         ExtractKeyPhrasesAction(),
-        RecognizeLinkedEntitiesAction()
+        RecognizeLinkedEntitiesAction(),
+        AnalyzeSentimentAction()
     ]
 )
 
@@ -583,6 +586,19 @@ for idx, doc in enumerate(docs):
             print(".........Confidence Score: {}".format(match.confidence_score))
             print(".........Offset: {}".format(match.offset))
             print(".........Length: {}".format(match.length))
+    print("------------------------------------------")
+
+fifth_action_result = next(result)
+print("Results of Sentiment Analysis action:")
+docs = [doc for doc in fifth_action_result.document_results if not doc.is_error]
+
+for doc in docs:
+    print("Overall sentiment: {}".format(doc.sentiment))
+    print("Scores: positive={}; neutral={}; negative={} \n".format(
+        doc.confidence_scores.positive,
+        doc.confidence_scores.neutral,
+        doc.confidence_scores.negative,
+    ))
     print("------------------------------------------")
 ```
 

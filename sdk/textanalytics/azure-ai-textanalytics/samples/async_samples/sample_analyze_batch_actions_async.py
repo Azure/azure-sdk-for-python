@@ -11,8 +11,9 @@ FILE: sample_analyze_batch_actions_async.py
 
 DESCRIPTION:
     This sample demonstrates how to submit a collection of text documents for analysis, which consists of a variety
-    of text analysis actions, such as Entity Recognition, PII Entity Recognition,
-    or Key Phrase Extraction.  The response will contain results from each of the individual actions specified in the request.
+    of text analysis actions, such as Entity Recognition, PII Entity Recognition, Linked Entity Recognition,
+    Sentiment Analysis, or Key Phrase Extraction.  The response will contain results from each of the individual
+    actions specified in the request.
 
 USAGE:
     python sample_analyze_batch_actions_async.py
@@ -37,6 +38,7 @@ class AnalyzeSampleAsync(object):
             RecognizeLinkedEntitiesAction,
             RecognizePiiEntitiesAction,
             ExtractKeyPhrasesAction,
+            AnalyzeSentimentAction,
             AnalyzeBatchActionsType
         )
 
@@ -65,7 +67,8 @@ class AnalyzeSampleAsync(object):
                     RecognizeEntitiesAction(),
                     RecognizePiiEntitiesAction(),
                     ExtractKeyPhrasesAction(),
-                    RecognizeLinkedEntitiesAction()
+                    RecognizeLinkedEntitiesAction(),
+                    AnalyzeSentimentAction()
                 ]
             )
 
@@ -122,6 +125,17 @@ class AnalyzeSampleAsync(object):
                                 print(".........Confidence Score: {}".format(match.confidence_score))
                                 print(".........Offset: {}".format(match.offset))
                                 print(".........Length: {}".format(match.length))
+                        print("------------------------------------------")
+
+                if action_result.action_type == AnalyzeBatchActionsType.ANALYZE_SENTIMENT:
+                    print("Results of Sentiment Analysis action:")
+                    for doc in action_result.document_results:
+                        print("Overall sentiment: {}".format(doc.sentiment))
+                        print("Scores: positive={}; neutral={}; negative={} \n".format(
+                            doc.confidence_scores.positive,
+                            doc.confidence_scores.neutral,
+                            doc.confidence_scores.negative,
+                        ))
                         print("------------------------------------------")
 
         # [END analyze_async]

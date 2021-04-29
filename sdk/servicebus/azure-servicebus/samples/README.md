@@ -85,6 +85,8 @@ Both [sync version](https://github.com/Azure/azure-sdk-for-python/tree/master/sd
     - List rule
     - Get rule properties
 - [failure_and_recovery.py](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/servicebus/azure-servicebus/samples/sync_samples/failure_and_recovery.py) - A demonstration of potential failure modes from an end-to-end send receive flow, as well as possible recovery patterns.
+- [deadletter_messages_and_correct.py](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/servicebus/azure-servicebus/samples/sync_samples/deadletter_messages_and_correct.py) ([async_version](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/servicebus/azure-servicebus/samples/async_samples/deadletter_messages_and_correct_async.py)) - Comprehensive example of moving messages to the dead-letter queue, retrieving messages from it, and resubmitting corrected messages back into main queue.
+- [topic_subscription_with_rule_operations.py](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/servicebus/azure-servicebus/samples/sync_samples/topic_subscription_with_rule_operations.py) ([async_version](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/servicebus/azure-servicebus/samples/async_samples/topic_subscription_with_rule_operations_async.py)) - Example to manage rules on topic subscriptions and to explore different forms of subscription filters.
 
 ## Prerequisites
 - Python 2.7, 3.6 or later.

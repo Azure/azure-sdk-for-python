@@ -86,6 +86,9 @@ parameters:
   - name: MatrixFilters
     type: object
     default: []
+  - name: MatrixReplace
+    type: object
+    default: []
   - name: PlatformPreSteps
     type: object
     default: []
@@ -137,8 +140,13 @@ stages:
               - ${{ each cloudFilter in cloud.value.MatrixFilters }}:
                 - ${{ cloudFilter }}
               - ${{ parameters.MatrixFilters }}
+            MatrixReplace:
+              - ${{ each cloudReplace in cloud.value.MatrixReplace }}:
+                - ${{ cloudReplace }}
+              - ${{ parameters.MatrixReplace }}
             CloudConfig:
               SubscriptionConfiguration: ${{ cloud.value.SubscriptionConfiguration }}
+              SubscriptionConfigurations: ${{ cloud.value.SubscriptionConfigurations }}
               Location: ${{ coalesce(parameters.Location, cloud.value.Location) }}
               Cloud: ${{ cloud.key }}
 

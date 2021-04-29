@@ -47,11 +47,15 @@ from ._models import (
     HealthcareRelation,
     HealthcareRelationRole,
     HealthcareEntityAssertion,
+    AnalyzeSentimentAction
 )
 from ._paging import AnalyzeHealthcareEntitiesResult
-from ._generated.v3_1_preview_4.models import (
+from ._generated.v3_1_preview_5.models import (
     PiiCategory as PiiEntityCategoryType,
-    RelationType as HealthcareEntityRelationType
+    RelationType as HealthcareEntityRelationType,
+    Conditionality as EntityConditionality,
+    Certainty as EntityCertainty,
+    Association as EntityAssociation
 )
 
 __all__ = [
@@ -99,6 +103,10 @@ __all__ = [
     "HealthcareRelation",
     "HealthcareRelationRole",
     "HealthcareEntityAssertion",
+    "EntityConditionality",
+    "EntityCertainty",
+    "EntityAssociation",
+    "AnalyzeSentimentAction"
 ]
 
 __version__ = VERSION
