@@ -485,6 +485,24 @@ class FormPage(object):
             )[:1024]
         )
 
+    def to_dict(self):
+        return {
+            "page_number": self.page_number,
+            "text_angle": self.text_angle,
+            "width": self.width,
+            "height": self.height,
+            "unit": self.unit,
+            "tables": [
+                table.to_dict() for table in self.tables
+            ] if self.tables else None,
+            "lines": [
+                line.to_dict() for line in self.lines
+            ] if self.lines else None,
+            "selection_marks": [
+                mark.to_dict() for mark in self.selection_marks
+            ] if self.selection_marks else None
+        }
+
 
 class FormLine(FormElement):
     """An object representing an extracted line of text.
@@ -633,8 +651,8 @@ class FormSelectionMark(FormElement):
         )
 
     def __repr__(self):
-        return "FormSelectionMark(text={}, bounding_box={}, confidence={}, page_number={}, state={})".format(
-            self.text, self.bounding_box, self.confidence, self.page_number, self.state
+        return "FormSelectionMark(text={}, bounding_box={}, confidence={}, page_number={}, state={}, kind={})".format(
+            self.text, self.bounding_box, self.confidence, self.page_number, self.state, self.kind
         )[
             :1024
         ]
@@ -688,6 +706,15 @@ class FormTable(object):
         )[
             :1024
         ]
+
+    def to_dict(self):
+        return {
+            "page_number": self.page_number,
+            "row_count": self.row_count,
+            "column_count": self.column_count,
+            "cells": [cell.to_dict() for cell in self.cells],
+            "bounding_box": [box.to_dict() for box in self.bounding_box]
+        }
 
 
 class FormTableCell(object):  # pylint:disable=too-many-instance-attributes
@@ -773,6 +800,22 @@ class FormTableCell(object):  # pylint:disable=too-many-instance-attributes
                 :1024
             ]
         )
+
+    def to_dict(self):
+        return {
+            "text": self.text,
+            "row_index": self.row_index,
+            "column_index": self.column_index,
+            "row_span": self.row_span,
+            "column_span": self.column_span,
+            "confidence": self.confidence,
+            "is_header": self.is_header,
+            "is_footer": self.is_footer,
+            "page_number": self.page_number,
+            "bounding_box": [box.to_dict() for box in self.bounding_box],
+            "field_elements": [element.to_dict() for element in self.field_elements]
+            if self.field_elements else None
+        }
 
 
 class CustomFormModel(object):
@@ -876,6 +919,19 @@ class CustomFormModel(object):
             ]
         )
 
+    def to_dict(self):
+        return {
+            "model_id": self.model_id,
+            "status": self.status,
+            "training_started_on": self.training_started_on,
+            "training_completed_on": self.training_completed_on,
+            "submodels": [submodel.to_dict() for submodel in self.submodels],
+            "errors": [err.to_dict() for err in self.errors],
+            "training_documents": [doc.to_dict() for doc in self.training_documents],
+            "model_name": self.model_name,
+            "properties": self.properties.to_dict()
+        }
+
 
 class CustomFormSubmodel(object):
     """Represents a submodel that extracts fields from a specific type of form.
@@ -970,6 +1026,14 @@ class CustomFormSubmodel(object):
             :1024
         ]
 
+    def to_dict(self):
+        return {
+            "model_id": self.model_id,
+            "accuracy": self.accuracy,
+            "fields": {k: v.to_dict() for k, v in self.fields.items()},
+            "form_type": self.form_type
+        }
+
 
 class CustomFormModelField(object):
     """A field that the model will extract from forms it analyzes.
@@ -1002,6 +1066,13 @@ class CustomFormModelField(object):
         return "CustomFormModelField(label={}, name={}, accuracy={})".format(
             self.label, self.name, self.accuracy
         )[:1024]
+
+    def to_dict(self):
+        return {
+            "label": self.label,
+            "accuracy": self.accuracy,
+            "name": self.name
+        }
 
 
 class TrainingDocumentInfo(object):
@@ -1074,6 +1145,15 @@ class TrainingDocumentInfo(object):
             :1024
         ]
 
+    def to_dict(self):
+        return {
+            "name": self.name,
+            "status": self.status,
+            "page_count": self.page_count,
+            "errors": [err.to_dict() for err in self.errors],
+            "model_id": self.model_id
+        }
+
 
 class FormRecognizerError(object):
     """Represents an error that occurred while training.
@@ -1098,6 +1178,12 @@ class FormRecognizerError(object):
         return "FormRecognizerError(code={}, message={})".format(
             self.code, self.message
         )[:1024]
+
+    def to_dict(self):
+        return {
+            "code": self.code,
+            "message": self.message
+        }
 
 
 class CustomFormModelInfo(object):
@@ -1164,6 +1250,16 @@ class CustomFormModelInfo(object):
             )[:1024]
         )
 
+    def to_dict(self):
+        return {
+            "model_id": self.model_id,
+            "status": self.status,
+            "training_started_on": self.training_started_on,
+            "training_completed_on": self.training_completed_on,
+            "model_name": self.model_name,
+            "properties": self.properties.to_dict()
+        }
+
 
 class AccountProperties(object):
     """Summary of all the custom models on the account.
@@ -1188,6 +1284,12 @@ class AccountProperties(object):
             self.custom_model_count, self.custom_model_limit
         )[:1024]
 
+    def to_dict(self):
+        return {
+            "custom_model_count": self.custom_model_count,
+            "custom_model_limit": self.custom_model_limit
+        }
+
 
 class CustomFormModelProperties(object):
     """Optional model properties.
@@ -1208,6 +1310,11 @@ class CustomFormModelProperties(object):
         return "CustomFormModelProperties(is_composed_model={})".format(
             self.is_composed_model
         )
+
+    def to_dict(self):
+        return {
+            "is_composed_model": self.is_composed_model
+        }
 
 
 class TextAppearance(object):
