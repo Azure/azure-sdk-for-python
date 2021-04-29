@@ -9,12 +9,19 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from azure.mgmt.core import AsyncARMPipelineClient
-from msrest import Serializer, Deserializer
+from typing import Any, Optional, TYPE_CHECKING
 
+from azure.core.pipeline.transport import AsyncHttpResponse, HttpRequest
+from azure.mgmt.core import AsyncARMPipelineClient
 from azure.profiles import KnownProfiles, ProfileDefinition
 from azure.profiles.multiapiclient import MultiApiClientMixin
+from msrest import Deserializer, Serializer
+
 from ._configuration import DeploymentScriptsClientConfiguration
+
+if TYPE_CHECKING:
+    # pylint: disable=unused-import,ungrouped-imports
+    from azure.core.credentials_async import AsyncTokenCredential
 
 class _SDKClient(object):
     def __init__(self, *args, **kwargs):
@@ -38,16 +45,17 @@ class DeploymentScriptsClient(MultiApiClientMixin, _SDKClient):
     :type credential: ~azure.core.credentials_async.AsyncTokenCredential
     :param subscription_id: Subscription Id which forms part of the URI for every service call.
     :type subscription_id: str
-    :param str api_version: API version to use if no profile is provided, or if
-     missing in profile.
-    :param str base_url: Service URL
+    :param api_version: API version to use if no profile is provided, or if missing in profile.
+    :type api_version: str
+    :param base_url: Service URL
+    :type base_url: str
     :param profile: A profile definition, from KnownProfiles to dict.
     :type profile: azure.profiles.KnownProfiles
     :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
     """
 
     DEFAULT_API_VERSION = '2020-10-01'
-    _PROFILE_TAG = "azure.mgmt.resource.DeploymentScriptsClient"
+    _PROFILE_TAG = "azure.mgmt.resource.deploymentscripts.DeploymentScriptsClient"
     LATEST_PROFILE = ProfileDefinition({
         _PROFILE_TAG: {
             None: DEFAULT_API_VERSION,
@@ -57,11 +65,11 @@ class DeploymentScriptsClient(MultiApiClientMixin, _SDKClient):
 
     def __init__(
         self,
-        credential,  # type: "AsyncTokenCredential"
-        subscription_id,  # type: str
-        api_version=None,
-        base_url=None,
-        profile=KnownProfiles.default,
+        credential: "AsyncTokenCredential",
+        subscription_id: str,
+        api_version: Optional[str] = None,
+        base_url: Optional[str] = None,
+        profile: KnownProfiles = KnownProfiles.default,
         **kwargs  # type: Any
     ) -> None:
         if not base_url:
@@ -81,8 +89,8 @@ class DeploymentScriptsClient(MultiApiClientMixin, _SDKClient):
     def models(cls, api_version=DEFAULT_API_VERSION):
         """Module depends on the API version:
 
-           * 2019-10-01-preview: :mod:`v2019_10_01_preview.models<azure.mgmt.resource.v2019_10_01_preview.models>`
-           * 2020-10-01: :mod:`v2020_10_01.models<azure.mgmt.resource.v2020_10_01.models>`
+           * 2019-10-01-preview: :mod:`v2019_10_01_preview.models<azure.mgmt.resource.deploymentscripts.v2019_10_01_preview.models>`
+           * 2020-10-01: :mod:`v2020_10_01.models<azure.mgmt.resource.deploymentscripts.v2020_10_01.models>`
         """
         if api_version == '2019-10-01-preview':
             from ..v2019_10_01_preview import models
@@ -96,8 +104,8 @@ class DeploymentScriptsClient(MultiApiClientMixin, _SDKClient):
     def deployment_scripts(self):
         """Instance depends on the API version:
 
-           * 2019-10-01-preview: :class:`DeploymentScriptsOperations<azure.mgmt.resource.v2019_10_01_preview.aio.operations.DeploymentScriptsOperations>`
-           * 2020-10-01: :class:`DeploymentScriptsOperations<azure.mgmt.resource.v2020_10_01.aio.operations.DeploymentScriptsOperations>`
+           * 2019-10-01-preview: :class:`DeploymentScriptsOperations<azure.mgmt.resource.deploymentscripts.v2019_10_01_preview.aio.operations.DeploymentScriptsOperations>`
+           * 2020-10-01: :class:`DeploymentScriptsOperations<azure.mgmt.resource.deploymentscripts.v2020_10_01.aio.operations.DeploymentScriptsOperations>`
         """
         api_version = self._get_api_version('deployment_scripts')
         if api_version == '2019-10-01-preview':

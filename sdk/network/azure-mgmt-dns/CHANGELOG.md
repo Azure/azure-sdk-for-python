@@ -1,5 +1,9 @@
 # Release History
 
+## 8.0.0 (2021-04-14)
+
+ - GA release
+
 ## 8.0.0b1 (2021-03-10)
 
 This is beta preview version.

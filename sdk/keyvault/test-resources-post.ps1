@@ -106,3 +106,12 @@ if (Test-Path $sdpath) {
 az keyvault security-domain download --hsm-name $hsmName --security-domain-file $sdPath --sd-quorum 2 --sd-wrapping-keys $wrappingFiles
 
 Log "Security domain downloaded to '$sdPath'; Managed HSM is now active at '$hsmUrl'"
+
+# Force a sleep to wait for Managed HSM activation to propagate through Cosmos replication. Issue tracked in AzDo.
+Log "Sleeping for 120 seconds to allow activation to propagate..."
+Start-Sleep -Seconds 120
+
+Log "Creating additional required role assignments for resource access."
+New-AzKeyVaultRoleAssignment -HsmName $hsmName -RoleDefinitionName "Managed HSM Crypto Officer" -ObjectID $DeploymentOutputs["CLIENT_OBJECTID"]
+New-AzKeyVaultRoleAssignment -HsmName $hsmName -RoleDefinitionName "Managed HSM Crypto User" -ObjectID $DeploymentOutputs["CLIENT_OBJECTID"]
+Log "Done."

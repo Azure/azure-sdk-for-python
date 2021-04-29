@@ -20,6 +20,7 @@ from typing import (
 )
 from functools import partial
 
+from .._utils import get_event_links
 from .partition_context import PartitionContext
 from .in_memory_checkpoint_store import InMemoryCheckpointStore
 from .ownership_manager import OwnershipManager
@@ -221,7 +222,8 @@ class EventProcessor(
                 partition_context._last_received_event = event[-1]  # type: ignore  #pylint:disable=protected-access
             except TypeError:
                 partition_context._last_received_event = event  # type: ignore  #pylint:disable=protected-access
-            with self._context(event):
+            links = get_event_links(event)
+            with self._context(links=links):
                 self._event_handler(partition_context, event)
         else:
             self._event_handler(partition_context, event)

@@ -8,13 +8,10 @@
 
 try:
     from ._models_py3 import BgpSession
-    from ._models_py3 import CdnPeeringPrefix
-    from ._models_py3 import CdnPeeringPrefixListResult
     from ._models_py3 import CheckServiceProviderAvailabilityInput
-    from ._models_py3 import ContactDetail
+    from ._models_py3 import ContactInfo
     from ._models_py3 import DirectConnection
     from ._models_py3 import DirectPeeringFacility
-    from ._models_py3 import ErrorDetail
     from ._models_py3 import ErrorResponse
     from ._models_py3 import ExchangeConnection
     from ._models_py3 import ExchangePeeringFacility
@@ -32,37 +29,24 @@ try:
     from ._models_py3 import PeeringLocationPropertiesExchange
     from ._models_py3 import PeeringPropertiesDirect
     from ._models_py3 import PeeringPropertiesExchange
-    from ._models_py3 import PeeringReceivedRoute
-    from ._models_py3 import PeeringReceivedRouteListResult
-    from ._models_py3 import PeeringRegisteredAsn
-    from ._models_py3 import PeeringRegisteredAsnListResult
-    from ._models_py3 import PeeringRegisteredPrefix
-    from ._models_py3 import PeeringRegisteredPrefixListResult
     from ._models_py3 import PeeringService
-    from ._models_py3 import PeeringServiceCountry
-    from ._models_py3 import PeeringServiceCountryListResult
     from ._models_py3 import PeeringServiceListResult
     from ._models_py3 import PeeringServiceLocation
     from ._models_py3 import PeeringServiceLocationListResult
     from ._models_py3 import PeeringServicePrefix
-    from ._models_py3 import PeeringServicePrefixEvent
     from ._models_py3 import PeeringServicePrefixListResult
     from ._models_py3 import PeeringServiceProvider
     from ._models_py3 import PeeringServiceProviderListResult
-    from ._models_py3 import PeeringServiceSku
     from ._models_py3 import PeeringSku
     from ._models_py3 import Resource
     from ._models_py3 import ResourceTags
     from ._models_py3 import SubResource
 except (SyntaxError, ImportError):
     from ._models import BgpSession  # type: ignore
-    from ._models import CdnPeeringPrefix  # type: ignore
-    from ._models import CdnPeeringPrefixListResult  # type: ignore
     from ._models import CheckServiceProviderAvailabilityInput  # type: ignore
-    from ._models import ContactDetail  # type: ignore
+    from ._models import ContactInfo  # type: ignore
     from ._models import DirectConnection  # type: ignore
     from ._models import DirectPeeringFacility  # type: ignore
-    from ._models import ErrorDetail  # type: ignore
     from ._models import ErrorResponse  # type: ignore
     from ._models import ExchangeConnection  # type: ignore
     from ._models import ExchangePeeringFacility  # type: ignore
@@ -80,24 +64,14 @@ except (SyntaxError, ImportError):
     from ._models import PeeringLocationPropertiesExchange  # type: ignore
     from ._models import PeeringPropertiesDirect  # type: ignore
     from ._models import PeeringPropertiesExchange  # type: ignore
-    from ._models import PeeringReceivedRoute  # type: ignore
-    from ._models import PeeringReceivedRouteListResult  # type: ignore
-    from ._models import PeeringRegisteredAsn  # type: ignore
-    from ._models import PeeringRegisteredAsnListResult  # type: ignore
-    from ._models import PeeringRegisteredPrefix  # type: ignore
-    from ._models import PeeringRegisteredPrefixListResult  # type: ignore
     from ._models import PeeringService  # type: ignore
-    from ._models import PeeringServiceCountry  # type: ignore
-    from ._models import PeeringServiceCountryListResult  # type: ignore
     from ._models import PeeringServiceListResult  # type: ignore
     from ._models import PeeringServiceLocation  # type: ignore
     from ._models import PeeringServiceLocationListResult  # type: ignore
     from ._models import PeeringServicePrefix  # type: ignore
-    from ._models import PeeringServicePrefixEvent  # type: ignore
     from ._models import PeeringServicePrefixListResult  # type: ignore
     from ._models import PeeringServiceProvider  # type: ignore
     from ._models import PeeringServiceProviderListResult  # type: ignore
-    from ._models import PeeringServiceSku  # type: ignore
     from ._models import PeeringSku  # type: ignore
     from ._models import Resource  # type: ignore
     from ._models import ResourceTags  # type: ignore
@@ -113,9 +87,9 @@ from ._peering_management_client_enums import (
     Family,
     Kind,
     LearnedType,
+    Name,
     PrefixValidationState,
     ProvisioningState,
-    Role,
     SessionAddressProvider,
     SessionStateV4,
     SessionStateV6,
@@ -126,13 +100,10 @@ from ._peering_management_client_enums import (
 
 __all__ = [
     'BgpSession',
-    'CdnPeeringPrefix',
-    'CdnPeeringPrefixListResult',
     'CheckServiceProviderAvailabilityInput',
-    'ContactDetail',
+    'ContactInfo',
     'DirectConnection',
     'DirectPeeringFacility',
-    'ErrorDetail',
     'ErrorResponse',
     'ExchangeConnection',
     'ExchangePeeringFacility',
@@ -150,24 +121,14 @@ __all__ = [
     'PeeringLocationPropertiesExchange',
     'PeeringPropertiesDirect',
     'PeeringPropertiesExchange',
-    'PeeringReceivedRoute',
-    'PeeringReceivedRouteListResult',
-    'PeeringRegisteredAsn',
-    'PeeringRegisteredAsnListResult',
-    'PeeringRegisteredPrefix',
-    'PeeringRegisteredPrefixListResult',
     'PeeringService',
-    'PeeringServiceCountry',
-    'PeeringServiceCountryListResult',
     'PeeringServiceListResult',
     'PeeringServiceLocation',
     'PeeringServiceLocationListResult',
     'PeeringServicePrefix',
-    'PeeringServicePrefixEvent',
     'PeeringServicePrefixListResult',
     'PeeringServiceProvider',
     'PeeringServiceProviderListResult',
-    'PeeringServiceSku',
     'PeeringSku',
     'Resource',
     'ResourceTags',
@@ -181,9 +142,9 @@ __all__ = [
     'Family',
     'Kind',
     'LearnedType',
+    'Name',
     'PrefixValidationState',
     'ProvisioningState',
-    'Role',
     'SessionAddressProvider',
     'SessionStateV4',
     'SessionStateV6',

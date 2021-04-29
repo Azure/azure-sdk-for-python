@@ -9,13 +9,21 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from azure.mgmt.core import AsyncARMPipelineClient
-from msrest import Serializer, Deserializer
+from typing import Any, Optional, TYPE_CHECKING
 
+from azure.core.pipeline.transport import AsyncHttpResponse, HttpRequest
+from azure.mgmt.core import AsyncARMPipelineClient
 from azure.profiles import KnownProfiles, ProfileDefinition
 from azure.profiles.multiapiclient import MultiApiClientMixin
+from msrest import Deserializer, Serializer
+
 from ._configuration import SubscriptionClientConfiguration
 from ._operations_mixin import SubscriptionClientOperationsMixin
+
+if TYPE_CHECKING:
+    # pylint: disable=unused-import,ungrouped-imports
+    from azure.core.credentials_async import AsyncTokenCredential
+
 class _SDKClient(object):
     def __init__(self, *args, **kwargs):
         """This is a fake class to support current implemetation of MultiApiClientMixin."
@@ -36,15 +44,16 @@ class SubscriptionClient(SubscriptionClientOperationsMixin, MultiApiClientMixin,
 
     :param credential: Credential needed for the client to connect to Azure.
     :type credential: ~azure.core.credentials_async.AsyncTokenCredential
-    :param str api_version: API version to use if no profile is provided, or if
-     missing in profile.
-    :param str base_url: Service URL
+    :param api_version: API version to use if no profile is provided, or if missing in profile.
+    :type api_version: str
+    :param base_url: Service URL
+    :type base_url: str
     :param profile: A profile definition, from KnownProfiles to dict.
     :type profile: azure.profiles.KnownProfiles
     """
 
     DEFAULT_API_VERSION = '2019-11-01'
-    _PROFILE_TAG = "azure.mgmt.resource.SubscriptionClient"
+    _PROFILE_TAG = "azure.mgmt.resource.subscriptions.SubscriptionClient"
     LATEST_PROFILE = ProfileDefinition({
         _PROFILE_TAG: {
             None: DEFAULT_API_VERSION,
@@ -54,10 +63,10 @@ class SubscriptionClient(SubscriptionClientOperationsMixin, MultiApiClientMixin,
 
     def __init__(
         self,
-        credential,  # type: "AsyncTokenCredential"
-        api_version=None,
-        base_url=None,
-        profile=KnownProfiles.default,
+        credential: "AsyncTokenCredential",
+        api_version: Optional[str] = None,
+        base_url: Optional[str] = None,
+        profile: KnownProfiles = KnownProfiles.default,
         **kwargs  # type: Any
     ) -> None:
         if not base_url:
@@ -77,10 +86,10 @@ class SubscriptionClient(SubscriptionClientOperationsMixin, MultiApiClientMixin,
     def models(cls, api_version=DEFAULT_API_VERSION):
         """Module depends on the API version:
 
-           * 2016-06-01: :mod:`v2016_06_01.models<azure.mgmt.resource.v2016_06_01.models>`
-           * 2018-06-01: :mod:`v2018_06_01.models<azure.mgmt.resource.v2018_06_01.models>`
-           * 2019-06-01: :mod:`v2019_06_01.models<azure.mgmt.resource.v2019_06_01.models>`
-           * 2019-11-01: :mod:`v2019_11_01.models<azure.mgmt.resource.v2019_11_01.models>`
+           * 2016-06-01: :mod:`v2016_06_01.models<azure.mgmt.resource.subscriptions.v2016_06_01.models>`
+           * 2018-06-01: :mod:`v2018_06_01.models<azure.mgmt.resource.subscriptions.v2018_06_01.models>`
+           * 2019-06-01: :mod:`v2019_06_01.models<azure.mgmt.resource.subscriptions.v2019_06_01.models>`
+           * 2019-11-01: :mod:`v2019_11_01.models<azure.mgmt.resource.subscriptions.v2019_11_01.models>`
         """
         if api_version == '2016-06-01':
             from ..v2016_06_01 import models
@@ -100,10 +109,10 @@ class SubscriptionClient(SubscriptionClientOperationsMixin, MultiApiClientMixin,
     def operations(self):
         """Instance depends on the API version:
 
-           * 2016-06-01: :class:`Operations<azure.mgmt.resource.v2016_06_01.aio.operations.Operations>`
-           * 2018-06-01: :class:`Operations<azure.mgmt.resource.v2018_06_01.aio.operations.Operations>`
-           * 2019-06-01: :class:`Operations<azure.mgmt.resource.v2019_06_01.aio.operations.Operations>`
-           * 2019-11-01: :class:`Operations<azure.mgmt.resource.v2019_11_01.aio.operations.Operations>`
+           * 2016-06-01: :class:`Operations<azure.mgmt.resource.subscriptions.v2016_06_01.aio.operations.Operations>`
+           * 2018-06-01: :class:`Operations<azure.mgmt.resource.subscriptions.v2018_06_01.aio.operations.Operations>`
+           * 2019-06-01: :class:`Operations<azure.mgmt.resource.subscriptions.v2019_06_01.aio.operations.Operations>`
+           * 2019-11-01: :class:`Operations<azure.mgmt.resource.subscriptions.v2019_11_01.aio.operations.Operations>`
         """
         api_version = self._get_api_version('operations')
         if api_version == '2016-06-01':
@@ -122,10 +131,10 @@ class SubscriptionClient(SubscriptionClientOperationsMixin, MultiApiClientMixin,
     def subscriptions(self):
         """Instance depends on the API version:
 
-           * 2016-06-01: :class:`SubscriptionsOperations<azure.mgmt.resource.v2016_06_01.aio.operations.SubscriptionsOperations>`
-           * 2018-06-01: :class:`SubscriptionsOperations<azure.mgmt.resource.v2018_06_01.aio.operations.SubscriptionsOperations>`
-           * 2019-06-01: :class:`SubscriptionsOperations<azure.mgmt.resource.v2019_06_01.aio.operations.SubscriptionsOperations>`
-           * 2019-11-01: :class:`SubscriptionsOperations<azure.mgmt.resource.v2019_11_01.aio.operations.SubscriptionsOperations>`
+           * 2016-06-01: :class:`SubscriptionsOperations<azure.mgmt.resource.subscriptions.v2016_06_01.aio.operations.SubscriptionsOperations>`
+           * 2018-06-01: :class:`SubscriptionsOperations<azure.mgmt.resource.subscriptions.v2018_06_01.aio.operations.SubscriptionsOperations>`
+           * 2019-06-01: :class:`SubscriptionsOperations<azure.mgmt.resource.subscriptions.v2019_06_01.aio.operations.SubscriptionsOperations>`
+           * 2019-11-01: :class:`SubscriptionsOperations<azure.mgmt.resource.subscriptions.v2019_11_01.aio.operations.SubscriptionsOperations>`
         """
         api_version = self._get_api_version('subscriptions')
         if api_version == '2016-06-01':
@@ -144,10 +153,10 @@ class SubscriptionClient(SubscriptionClientOperationsMixin, MultiApiClientMixin,
     def tenants(self):
         """Instance depends on the API version:
 
-           * 2016-06-01: :class:`TenantsOperations<azure.mgmt.resource.v2016_06_01.aio.operations.TenantsOperations>`
-           * 2018-06-01: :class:`TenantsOperations<azure.mgmt.resource.v2018_06_01.aio.operations.TenantsOperations>`
-           * 2019-06-01: :class:`TenantsOperations<azure.mgmt.resource.v2019_06_01.aio.operations.TenantsOperations>`
-           * 2019-11-01: :class:`TenantsOperations<azure.mgmt.resource.v2019_11_01.aio.operations.TenantsOperations>`
+           * 2016-06-01: :class:`TenantsOperations<azure.mgmt.resource.subscriptions.v2016_06_01.aio.operations.TenantsOperations>`
+           * 2018-06-01: :class:`TenantsOperations<azure.mgmt.resource.subscriptions.v2018_06_01.aio.operations.TenantsOperations>`
+           * 2019-06-01: :class:`TenantsOperations<azure.mgmt.resource.subscriptions.v2019_06_01.aio.operations.TenantsOperations>`
+           * 2019-11-01: :class:`TenantsOperations<azure.mgmt.resource.subscriptions.v2019_11_01.aio.operations.TenantsOperations>`
         """
         api_version = self._get_api_version('tenants')
         if api_version == '2016-06-01':

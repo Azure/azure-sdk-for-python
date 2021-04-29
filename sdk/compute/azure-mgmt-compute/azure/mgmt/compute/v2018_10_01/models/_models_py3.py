@@ -4962,9 +4962,10 @@ class VirtualMachineScaleSetListWithLinkResult(msrest.serialization.Model):
 class VirtualMachineScaleSetManagedDiskParameters(msrest.serialization.Model):
     """Describes the parameters of a ScaleSet managed disk.
 
-    :param storage_account_type: Specifies the storage account type for the managed disk. NOTE:
-     UltraSSD_LRS can only be used with data disks, it cannot be used with OS Disk. Possible values
-     include: "Standard_LRS", "Premium_LRS", "StandardSSD_LRS", "UltraSSD_LRS".
+    :param storage_account_type: Specifies the storage account type for the managed disk. Managed
+     OS disk storage account type can only be set when you create the scale set. NOTE: UltraSSD_LRS
+     can only be used with data disks, it cannot be used with OS Disk. Possible values include:
+     "Standard_LRS", "Premium_LRS", "StandardSSD_LRS", "UltraSSD_LRS".
     :type storage_account_type: str or ~azure.mgmt.compute.v2018_10_01.models.StorageAccountTypes
     """
 
@@ -5358,7 +5359,28 @@ class VirtualMachineScaleSetPublicIPAddressConfigurationDnsSettings(msrest.seria
         self.domain_name_label = domain_name_label
 
 
-class VirtualMachineScaleSetReimageParameters(VirtualMachineReimageParameters):
+class VirtualMachineScaleSetVMReimageParameters(VirtualMachineReimageParameters):
+    """Describes a Virtual Machine Scale Set VM Reimage Parameters.
+
+    :param temp_disk: Specifies whether to reimage temp disk. Default value: false. Note: This temp
+     disk reimage parameter is only supported for VM/VMSS with Ephemeral OS disk.
+    :type temp_disk: bool
+    """
+
+    _attribute_map = {
+        'temp_disk': {'key': 'tempDisk', 'type': 'bool'},
+    }
+
+    def __init__(
+        self,
+        *,
+        temp_disk: Optional[bool] = None,
+        **kwargs
+    ):
+        super(VirtualMachineScaleSetVMReimageParameters, self).__init__(temp_disk=temp_disk, **kwargs)
+
+
+class VirtualMachineScaleSetReimageParameters(VirtualMachineScaleSetVMReimageParameters):
     """Describes a Virtual Machine Scale Set VM Reimage Parameters.
 
     :param temp_disk: Specifies whether to reimage temp disk. Default value: false. Note: This temp
@@ -6370,27 +6392,6 @@ class VirtualMachineScaleSetVMProfile(msrest.serialization.Model):
         self.license_type = license_type
         self.priority = priority
         self.eviction_policy = eviction_policy
-
-
-class VirtualMachineScaleSetVMReimageParameters(VirtualMachineReimageParameters):
-    """Describes a Virtual Machine Scale Set VM Reimage Parameters.
-
-    :param temp_disk: Specifies whether to reimage temp disk. Default value: false. Note: This temp
-     disk reimage parameter is only supported for VM/VMSS with Ephemeral OS disk.
-    :type temp_disk: bool
-    """
-
-    _attribute_map = {
-        'temp_disk': {'key': 'tempDisk', 'type': 'bool'},
-    }
-
-    def __init__(
-        self,
-        *,
-        temp_disk: Optional[bool] = None,
-        **kwargs
-    ):
-        super(VirtualMachineScaleSetVMReimageParameters, self).__init__(temp_disk=temp_disk, **kwargs)
 
 
 class VirtualMachineSize(msrest.serialization.Model):

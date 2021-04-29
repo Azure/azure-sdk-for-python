@@ -27,7 +27,9 @@ from azure.core.exceptions import HttpResponseError
 #
 # 3. Delete a secret (delete_secret)
 #
-# 4. Restore a secret (restore_secret_backup)
+# 4. Purge a secret (purge_deleted_secret)
+#
+# 5. Restore a secret (restore_secret_backup)
 # ----------------------------------------------------------------------------------------------------------
 async def run_sample():
     # Instantiate a secret client that will be used to call the service.
@@ -53,12 +55,19 @@ async def run_sample():
         # The storage account secret is no longer in use, so you delete it.
         print("\n.. Deleting secret...")
         await client.delete_secret(secret.name)
-        print("Deleted Secret with name '{0}'".format(secret.name))
+        print("Deleted secret with name '{0}'".format(secret.name))
 
-        # In future, if the secret is required again, we can use the backup value to restore it in the Key Vault.
+        # Purge the deleted secret.
+        # The purge will take some time, so wait before restoring the backup to avoid a conflict.
+        print("\n.. Purge the secret")
+        await client.purge_deleted_secret(secret.name)
+        await asyncio.sleep(60)
+        print("Purged secret with name '{0}'".format(secret.name))
+
+        # In the future, if the secret is required again, we can use the backup value to restore it in the Key Vault.
         print("\n.. Restore the secret using the backed up secret bytes")
         secret = await client.restore_secret_backup(secret_backup)
-        print("Restored Secret with name '{0}'".format(secret.name))
+        print("Restored secret with name '{0}'".format(secret.name))
 
     except HttpResponseError as e:
         print("\nrun_sample has caught an error. {0}".format(e.message))

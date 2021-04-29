@@ -26,9 +26,30 @@ class _CaseInsensitiveEnumMeta(EnumMeta):
             raise AttributeError(name)
 
 
+class CreatedByType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+    """The type of identity that created the resource.
+    """
+
+    USER = "User"
+    APPLICATION = "Application"
+    MANAGED_IDENTITY = "ManagedIdentity"
+    KEY = "Key"
+
 class InstanceViewTypes(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
 
     INSTANCE_VIEW = "instanceView"
+
+class PublicNetworkAccessType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+    """The network access policy to determine if Azure Arc agents can use public Azure Arc service
+    endpoints. Defaults to disabled (access to Azure Arc services only via private link).
+    """
+
+    #: Allows Azure Arc agents to communicate with Azure Arc services over both public (internet) and
+    #: private endpoints.
+    ENABLED = "Enabled"
+    #: Does not allow Azure Arc agents to communicate with Azure Arc services over public (internet)
+    #: endpoints. The agents must use the private link.
+    DISABLED = "Disabled"
 
 class StatusLevelTypes(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     """The level code.

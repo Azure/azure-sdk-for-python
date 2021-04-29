@@ -137,7 +137,6 @@ def test_disable_automatic_authentication():
 
     # the exception should carry the requested scopes and claims, and any error message from AAD
     assert ex.value.scopes == (scope,)
-    assert ex.value.error_details == expected_details
     assert ex.value.claims == expected_claims
 
 

@@ -48,7 +48,7 @@ class PrivateEndpointConnectionsOperations:
         resource_group_name: str,
         resource_name: str,
         **kwargs
-    ) -> AsyncIterable["_models.PrivateEndpointConnectionListResult"]:
+    ) -> AsyncIterable["_models.PrivateEndpointConnectionListResultDescription"]:
         """Lists all private endpoint connections for a service.
 
         :param resource_group_name: The name of the resource group that contains the service instance.
@@ -56,16 +56,16 @@ class PrivateEndpointConnectionsOperations:
         :param resource_name: The name of the service instance.
         :type resource_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: An iterator like instance of either PrivateEndpointConnectionListResult or the result of cls(response)
-        :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.healthcareapis.models.PrivateEndpointConnectionListResult]
+        :return: An iterator like instance of either PrivateEndpointConnectionListResultDescription or the result of cls(response)
+        :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.healthcareapis.models.PrivateEndpointConnectionListResultDescription]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["_models.PrivateEndpointConnectionListResult"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.PrivateEndpointConnectionListResultDescription"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2020-03-30"
+        api_version = "2021-01-11"
         accept = "application/json"
 
         def prepare_request(next_link=None):
@@ -94,7 +94,7 @@ class PrivateEndpointConnectionsOperations:
             return request
 
         async def extract_data(pipeline_response):
-            deserialized = self._deserialize('PrivateEndpointConnectionListResult', pipeline_response)
+            deserialized = self._deserialize('PrivateEndpointConnectionListResultDescription', pipeline_response)
             list_of_elem = deserialized.value
             if cls:
                 list_of_elem = cls(list_of_elem)
@@ -107,7 +107,7 @@ class PrivateEndpointConnectionsOperations:
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
-                error = self._deserialize(_models.ErrorDetails, response)
+                error = self._deserialize.failsafe_deserialize(_models.ErrorDetails, response)
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
@@ -124,7 +124,7 @@ class PrivateEndpointConnectionsOperations:
         resource_name: str,
         private_endpoint_connection_name: str,
         **kwargs
-    ) -> "_models.PrivateEndpointConnection":
+    ) -> "_models.PrivateEndpointConnectionDescription":
         """Gets the specified private endpoint connection associated with the service.
 
         :param resource_group_name: The name of the resource group that contains the service instance.
@@ -135,16 +135,16 @@ class PrivateEndpointConnectionsOperations:
          with the Azure resource.
         :type private_endpoint_connection_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: PrivateEndpointConnection, or the result of cls(response)
-        :rtype: ~azure.mgmt.healthcareapis.models.PrivateEndpointConnection
+        :return: PrivateEndpointConnectionDescription, or the result of cls(response)
+        :rtype: ~azure.mgmt.healthcareapis.models.PrivateEndpointConnectionDescription
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["_models.PrivateEndpointConnection"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.PrivateEndpointConnectionDescription"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2020-03-30"
+        api_version = "2021-01-11"
         accept = "application/json"
 
         # Construct URL
@@ -171,10 +171,10 @@ class PrivateEndpointConnectionsOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.ErrorDetails, response)
+            error = self._deserialize.failsafe_deserialize(_models.ErrorDetails, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
-        deserialized = self._deserialize('PrivateEndpointConnection', pipeline_response)
+        deserialized = self._deserialize('PrivateEndpointConnectionDescription', pipeline_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})
@@ -189,13 +189,13 @@ class PrivateEndpointConnectionsOperations:
         private_endpoint_connection_name: str,
         properties: "_models.PrivateEndpointConnection",
         **kwargs
-    ) -> "_models.PrivateEndpointConnection":
-        cls = kwargs.pop('cls', None)  # type: ClsType["_models.PrivateEndpointConnection"]
+    ) -> "_models.PrivateEndpointConnectionDescription":
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.PrivateEndpointConnectionDescription"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2020-03-30"
+        api_version = "2021-01-11"
         content_type = kwargs.pop("content_type", "application/json")
         accept = "application/json"
 
@@ -227,10 +227,10 @@ class PrivateEndpointConnectionsOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.ErrorDetails, response)
+            error = self._deserialize.failsafe_deserialize(_models.ErrorDetails, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
-        deserialized = self._deserialize('PrivateEndpointConnection', pipeline_response)
+        deserialized = self._deserialize('PrivateEndpointConnectionDescription', pipeline_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})
@@ -245,7 +245,7 @@ class PrivateEndpointConnectionsOperations:
         private_endpoint_connection_name: str,
         properties: "_models.PrivateEndpointConnection",
         **kwargs
-    ) -> AsyncLROPoller["_models.PrivateEndpointConnection"]:
+    ) -> AsyncLROPoller["_models.PrivateEndpointConnectionDescription"]:
         """Update the state of the specified private endpoint connection associated with the service.
 
         :param resource_group_name: The name of the resource group that contains the service instance.
@@ -259,16 +259,16 @@ class PrivateEndpointConnectionsOperations:
         :type properties: ~azure.mgmt.healthcareapis.models.PrivateEndpointConnection
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: True for ARMPolling, False for no polling, or a
-         polling object for personal polling strategy
+        :keyword polling: Pass in True if you'd like the AsyncARMPolling polling method,
+         False for no polling, or your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
-        :return: An instance of AsyncLROPoller that returns either PrivateEndpointConnection or the result of cls(response)
-        :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.healthcareapis.models.PrivateEndpointConnection]
+        :return: An instance of AsyncLROPoller that returns either PrivateEndpointConnectionDescription or the result of cls(response)
+        :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.healthcareapis.models.PrivateEndpointConnectionDescription]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         polling = kwargs.pop('polling', True)  # type: Union[bool, AsyncPollingMethod]
-        cls = kwargs.pop('cls', None)  # type: ClsType["_models.PrivateEndpointConnection"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.PrivateEndpointConnectionDescription"]
         lro_delay = kwargs.pop(
             'polling_interval',
             self._config.polling_interval
@@ -288,7 +288,7 @@ class PrivateEndpointConnectionsOperations:
         kwargs.pop('content_type', None)
 
         def get_long_running_output(pipeline_response):
-            deserialized = self._deserialize('PrivateEndpointConnection', pipeline_response)
+            deserialized = self._deserialize('PrivateEndpointConnectionDescription', pipeline_response)
 
             if cls:
                 return cls(pipeline_response, deserialized, {})
@@ -327,7 +327,7 @@ class PrivateEndpointConnectionsOperations:
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2020-03-30"
+        api_version = "2021-01-11"
         accept = "application/json"
 
         # Construct URL
@@ -354,7 +354,7 @@ class PrivateEndpointConnectionsOperations:
 
         if response.status_code not in [200, 202, 204]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.ErrorDetails, response)
+            error = self._deserialize.failsafe_deserialize(_models.ErrorDetails, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if cls:
@@ -380,8 +380,8 @@ class PrivateEndpointConnectionsOperations:
         :type private_endpoint_connection_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: True for ARMPolling, False for no polling, or a
-         polling object for personal polling strategy
+        :keyword polling: Pass in True if you'd like the AsyncARMPolling polling method,
+         False for no polling, or your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either None or the result of cls(response)
