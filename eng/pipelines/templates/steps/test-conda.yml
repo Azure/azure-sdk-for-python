@@ -65,6 +65,7 @@ steps:
 
     - powershell: |
         Write-Host "$(PythonVersion)"
+        Write-Host $(OSVmImage)
       displayName: 'Dump Python Version Info'
 
     - script: |
@@ -78,12 +79,6 @@ steps:
         $(activate.method) activate ${{ artifact.name }}
         python -m pip install -r eng/ci_tools.txt $(requirement.suffix)
       displayName: 'Activate Conda Environment and Install General Dependencies ${{ artifact.name }}'
-
-    - pwsh: |
-        mkdir $(Agent.BuildDirectory)/conda/
-        Write-Host "##vso[task.setvariable variable=conda.build]$(Agent.BuildDirectory)/conda_checkout"
-      displayName: 'Create Conda Working Directory for Testing'
-
 
     - pwsh: |
         mkdir $(Agent.BuildDirectory)/conda/
