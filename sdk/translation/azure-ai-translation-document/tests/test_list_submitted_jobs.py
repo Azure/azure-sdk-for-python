@@ -13,17 +13,16 @@ import pytest
 
 DocumentTranslationClientPreparer = functools.partial(_DocumentTranslationClientPreparer, DocumentTranslationClient)
 
-TOTAL_DOC_COUNT_IN_JOB = 1
-
 class TestSubmittedJobs(DocumentTranslationTest):
 
+    @pytest.mark.skip(reason="passing")
     @DocumentTranslationPreparer()
     @DocumentTranslationClientPreparer()
     def test_list_submitted_jobs(self, client):
         # create some jobs
-        jobs_count = 3
-        docs_per_job = 2
-        job_ids = self._create_and_submit_sample_translation_jobs(client, jobs_count, docs_per_job=docs_per_job)
+        jobs_count = 5
+        docs_per_job = 5
+        self._create_and_submit_sample_translation_jobs(client, jobs_count, docs_per_job=docs_per_job, wait=False)
 
         # list jobs
         submitted_jobs = list(client.list_submitted_jobs())
@@ -31,21 +30,20 @@ class TestSubmittedJobs(DocumentTranslationTest):
 
         # check statuses
         for job in submitted_jobs:
-            if job.id in job_ids:
-                self._validate_translation_job(job, status="Succeeded", total=docs_per_job, succeeded=docs_per_job)
-            else:
-                self._validate_translation_job(job)
+            self._validate_translation_job(job)
 
 
-    @pytest.mark.skip(reason="no way of currently testing this")
+    @pytest.mark.skip(reason="passing")
     @DocumentTranslationPreparer()
     @DocumentTranslationClientPreparer()
     def test_list_submitted_jobs_with_pagination(self, client):
         # prepare data
+        jobs_count = 5
+        docs_per_job = 2
         results_per_page = 2
 
         # create some jobs
-        job_ids = self._create_and_submit_sample_translation_jobs(client, 6, wait=True)
+        self._create_and_submit_sample_translation_jobs(client, jobs_count, docs_per_job=docs_per_job, wait=False)
 
         # list jobs
         submitted_jobs_pages = client.list_submitted_jobs(results_per_page=results_per_page).by_page()
@@ -54,15 +52,12 @@ class TestSubmittedJobs(DocumentTranslationTest):
         # iterate by page
         for page in submitted_jobs_pages:
             page_jobs = list(page)
-            self.assertEqual(len(page_jobs), results_per_page)
+            self.assertLessEqual(len(page_jobs), results_per_page)
             for job in page:
-                if job.id in job_ids:
-                    self._validate_translation_job(job, status="Succeeded", total=TOTAL_DOC_COUNT_IN_JOB, succeeded=TOTAL_DOC_COUNT_IN_JOB)
-                else:
-                    self._validate_translation_job(job)
+                self._validate_translation_job(job)
 
 
-    @pytest.mark.skip(reason="no way of currently testing this")
+    @pytest.mark.skip(reason="needs update - flaky behaviour!")
     @DocumentTranslationPreparer()
     @DocumentTranslationClientPreparer()
     def test_list_submitted_jobs_with_skip(self, client):
@@ -75,29 +70,30 @@ class TestSubmittedJobs(DocumentTranslationTest):
             the only thing we can do, is to call the service with the parameter 
         '''
         # prepare data
-        jobs_count = 6
+        jobs_count = 5
+        docs_per_job = 2
         skip = 2
 
         # create some jobs
-        job_ids = self._create_and_submit_sample_translation_jobs(client, jobs_count)
+        self._create_and_submit_sample_translation_jobs(client, jobs_count, wait=False, docs_per_job=docs_per_job)
 
         # list jobs - unable to assert skip!!
         submitted_jobs = list(client.list_submitted_jobs(skip=skip))
         self.assertIsNotNone(submitted_jobs)
 
         for job in submitted_jobs:
-            if job.id in job_ids:
-                self._validate_translation_job(job, status="Succeeded", total=TOTAL_DOC_COUNT_IN_JOB, succeeded=TOTAL_DOC_COUNT_IN_JOB)
-            else:
-                self._validate_translation_job(job)
+            self._validate_translation_job(job)
 
 
-    @pytest.mark.skip(reason="no way of currently testing this")
+    @pytest.mark.skip(reason="needs update - flaky behaviour!")
     @DocumentTranslationPreparer()
     @DocumentTranslationClientPreparer()
     def test_list_submitted_jobs_filter_by_status(self, client):
+        jobs_count = 10
+        docs_per_job = 2
+
         # create some jobs
-        self._create_and_submit_sample_translation_jobs(client, 10, wait=False)
+        self._create_and_submit_sample_translation_jobs(client, jobs_count, wait=False, docs_per_job=docs_per_job)
 
         # list jobs
         statuses = ["Running"]
@@ -109,12 +105,15 @@ class TestSubmittedJobs(DocumentTranslationTest):
             self.assertIn(job.status, statuses)
 
 
-    @pytest.mark.skip(reason="no way of currently testing this")
+    @pytest.mark.skip(reason="passing")
     @DocumentTranslationPreparer()
     @DocumentTranslationClientPreparer()
     def test_list_submitted_jobs_filter_by_ids(self, client):
+        jobs_count = 3
+        docs_per_job = 2
+
         # create some jobs
-        job_ids = self._create_and_submit_sample_translation_jobs(client, 3)
+        job_ids = self._create_and_submit_sample_translation_jobs(client, jobs_count, wait=False, docs_per_job=docs_per_job)
 
         # list jobs
         submitted_jobs = list(client.list_submitted_jobs(ids=job_ids))
@@ -125,13 +124,17 @@ class TestSubmittedJobs(DocumentTranslationTest):
             self.assertIn(job.id, job_ids)
 
 
-    @pytest.mark.skip(reason="no way of currently testing this")
+    @pytest.mark.skip(reason="passing")
     @DocumentTranslationPreparer()
     @DocumentTranslationClientPreparer()
     def test_list_submitted_jobs_filter_by_created_after(self, client):
         # create some jobs
+        jobs_count = 3
+        docs_per_job = 2
+
+        # create some jobs
         start = datetime.now()
-        self._create_and_submit_sample_translation_jobs(client, 3)
+        job_ids = self._create_and_submit_sample_translation_jobs(client, jobs_count, wait=False, docs_per_job=docs_per_job)
 
         # list jobs
         submitted_jobs = list(client.list_submitted_jobs(created_after=start))
@@ -139,17 +142,26 @@ class TestSubmittedJobs(DocumentTranslationTest):
 
         # check statuses
         for job in submitted_jobs:
-            assert(job.created_on > start)
+            self.assertIn(job.id, job_ids)
+            assert(job.created_on >= start)
 
 
-    @pytest.mark.skip(reason="no way of currently testing this")
+    @pytest.mark.skip(reason="for some reason, jobs created after 'end' timestamp showup in result!")
     @DocumentTranslationPreparer()
     @DocumentTranslationClientPreparer()
     def test_list_submitted_jobs_filter_by_created_before(self, client):
+        '''
+            NOTE: we need to wait for few seconds after calling 'end = datetime.now()'
+            for the local and service clocks to differ by some significant amount 
+        '''
+        jobs_count = 3
+        docs_per_job = 2
+
         # create some jobs
-        self._create_and_submit_sample_translation_jobs(client, 3)
+        self._create_and_submit_sample_translation_jobs(client, jobs_count, wait=False, docs_per_job=docs_per_job)
         end = datetime.now()
-        self._create_and_submit_sample_translation_jobs(client, 3)
+        self.wait(5) # 
+        job_ids = self._create_and_submit_sample_translation_jobs(client, jobs_count, wait=False, docs_per_job=docs_per_job)
 
         # list jobs
         submitted_jobs = list(client.list_submitted_jobs(created_before=end))
@@ -157,55 +169,65 @@ class TestSubmittedJobs(DocumentTranslationTest):
 
         # check statuses
         for job in submitted_jobs:
-            assert(job.created_on < end)
+            self.assertLessEqual(job.created_on.replace(tzinfo=None), end.replace(tzinfo=None))
+            self.assertNotIn(job.id, job_ids)
 
-
-    @pytest.mark.skip(reason="no way of currently testing this")
+    @pytest.mark.skip(reason="passing")
     @DocumentTranslationPreparer()
     @DocumentTranslationClientPreparer()
     def test_list_submitted_jobs_order_by_creation_time_asc(self, client):
+        jobs_count = 3
+        docs_per_job = 2
+
         # create some jobs
-        self._create_and_submit_sample_translation_jobs(client, 3)
+        self._create_and_submit_sample_translation_jobs(client, jobs_count, wait=False, docs_per_job=docs_per_job)
 
         # list jobs
-        submitted_jobs = list(client.list_submitted_jobs(order_by=["CreatedDateTimeUtc asc"]))
+        submitted_jobs = list(client.list_submitted_jobs(order_by=["createdDateTimeUtc asc"]))
         self.assertIsNotNone(submitted_jobs)
 
         # check statuses
-        curr = date.min
+        curr = datetime.min
         for job in submitted_jobs:
-            assert(job.created_on > curr)
+            assert(job.created_on.replace(tzinfo=None) >= curr.replace(tzinfo=None))
             curr = job.created_on
 
 
-    @pytest.mark.skip(reason="no way of currently testing this")
+    @pytest.mark.skip(reason="passing")
     @DocumentTranslationPreparer()
     @DocumentTranslationClientPreparer()
     def test_list_submitted_jobs_order_by_creation_time_desc(self, client):
+        jobs_count = 3
+        docs_per_job = 2
+
         # create some jobs
-        self._create_and_submit_sample_translation_jobs(client, 3)
+        self._create_and_submit_sample_translation_jobs(client, jobs_count, wait=False, docs_per_job=docs_per_job)
 
         # list jobs
-        submitted_jobs = list(client.list_submitted_jobs(order_by=["CreatedDateTimeUtc desc"]))
+        submitted_jobs = list(client.list_submitted_jobs(order_by=["createdDateTimeUtc desc"]))
         self.assertIsNotNone(submitted_jobs)
 
         # check statuses
-        curr = date.max
+        curr = datetime.max
         for job in submitted_jobs:
-            assert(job.created_on < curr)
+            assert(job.created_on.replace(tzinfo=None) <= curr.replace(tzinfo=None))
             curr = job.created_on
 
 
-    @pytest.mark.skip(reason="no way of currently testing this")
+    @pytest.mark.skip(reason="passing")
     @DocumentTranslationPreparer()
     @DocumentTranslationClientPreparer()
     def test_list_submitted_jobs_mixed_filters(self, client):
         # create some jobs
-        start = datetime.now()
-        self._create_and_submit_sample_translation_jobs(client, 20, wait=False)
-        end = datetime.now()
+        jobs_count = 5
+        docs_per_job = 2
         results_per_page = 2
         statuses = ["Running"]
+
+        # create some jobs
+        start = datetime.now()
+        self._create_and_submit_sample_translation_jobs(client, jobs_count, wait=False, docs_per_job=docs_per_job)
+        end = datetime.now()
 
         # list jobs
         submitted_jobs = client.list_submitted_jobs(
@@ -214,7 +236,7 @@ class TestSubmittedJobs(DocumentTranslationTest):
             created_after=start,
             created_before=end,
             # ordering
-            order_by=["CreatedDateTimeUtc", "desc"],
+            order_by=["CreatedDateTimeUtc desc"],
             # paging
             skip=1,
             results_per_page=results_per_page
@@ -225,25 +247,28 @@ class TestSubmittedJobs(DocumentTranslationTest):
         curr_time = date.max
         for page in submitted_jobs:
             page_jobs = list(page)
-            self.assertEqual(len(page_jobs), results_per_page) # assert paging
+            self.assertLessEqual(len(page_jobs), results_per_page) # assert paging
             for job in page:
                 # assert ordering
-                assert(job.created_on < curr_time)
+                assert(job.created_on <= curr_time)
                 curr_time = job.created_on
                 # assert filters
-                assert(job.created_on < end)
-                assert(job.created_on > start)
+                assert(job.created_on <= end)
+                assert(job.created_on >= start)
                 self.assertIn(job.status, statuses)
 
 
-    @pytest.mark.skip(reason="no way of currently testing this")
+    @pytest.mark.skip(reason="passing")
     @DocumentTranslationPreparer()
     @DocumentTranslationClientPreparer()
     def test_list_submitted_jobs_mixed_filters_more(self, client):
-        # create some jobs
-        job_ids = self._create_and_submit_sample_translation_jobs(client, 20, wait=False)
+        jobs_count = 5
+        docs_per_job = 2
         results_per_page = 2
         statuses = ["Running"]
+
+        # create some jobs
+        job_ids = self._create_and_submit_sample_translation_jobs(client, jobs_count, wait=False, docs_per_job=docs_per_job)
 
         # list jobs
         submitted_jobs = client.list_submitted_jobs(
@@ -251,7 +276,7 @@ class TestSubmittedJobs(DocumentTranslationTest):
             ids=job_ids,
             statuses=statuses,
             # ordering
-            order_by=["CreatedDateTimeUtc", "asc"],
+            order_by=["CreatedDateTimeUtc asc"],
             # paging
             skip=1,
             results_per_page=results_per_page
@@ -262,10 +287,10 @@ class TestSubmittedJobs(DocumentTranslationTest):
         curr_time = date.max
         for page in submitted_jobs:
             page_jobs = list(page)
-            self.assertEqual(len(page_jobs), results_per_page) # assert paging
+            self.assertLessEqual(len(page_jobs), results_per_page) # assert paging
             for job in page:
                 # assert ordering
-                assert(job.created_on < curr_time)
+                assert(job.created_on <= curr_time)
                 curr_time = job.created_on
                 # assert filters
                 self.assertIn(job.status, statuses)
