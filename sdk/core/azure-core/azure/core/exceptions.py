@@ -307,12 +307,12 @@ class HttpResponseError(AzureError):
     def __str__(self):
         try:
             json_body = ", body: {}".format(self.response.json())
-        except ValueError:
-            # failed to deserialize json
-            json_body = ""
-        return "HttpResponseError: {} {}{}".format(
-            self.status_code, self.reason, json_body
-        )
+            return "HttpResponseError: {} {}{}".format(
+                self.status_code, self.reason, json_body
+            )
+        except Exception:  # pylint: disable=broad-except
+            return super(HttpResponseError, self).__str__()
+
 
 
 class DecodeError(HttpResponseError):
