@@ -6,6 +6,7 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 import datetime
+import json
 from typing import TYPE_CHECKING
 import warnings
 
@@ -271,7 +272,7 @@ class AttachmentsOperations(object):
 
         deserialized = None
         if response.status_code == 200:
-            deserialized = self._deserialize('Attachment', pipeline_response)
+            deserialized = json.loads(response.text)
 
         if cls:
             return cls(pipeline_response, deserialized, {})
@@ -383,10 +384,10 @@ class AttachmentsOperations(object):
             raise HttpResponseError(response=response)
 
         if response.status_code == 200:
-            deserialized = self._deserialize('Attachment', pipeline_response)
+            deserialized = json.loads(response.text)
 
         if response.status_code == 201:
-            deserialized = self._deserialize('Attachment', pipeline_response)
+            deserialized = json.loads(response.text)
 
         if cls:
             return cls(pipeline_response, deserialized, {})

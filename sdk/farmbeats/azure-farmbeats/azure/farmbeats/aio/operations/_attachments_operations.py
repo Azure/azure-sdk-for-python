@@ -6,7 +6,8 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 import datetime
-from typing import Any, AsyncIterable, Callable, Dict, Generic, IO, List, Optional, TYPE_CHECKING, TypeVar, Union
+import json
+from typing import Any, AsyncIterable, Callable, Dict, Generic, IO, List, Optional, TypeVar, Union
 import warnings
 
 from azure.core.async_paging import AsyncItemPaged, AsyncList
@@ -16,10 +17,6 @@ from azure.core.pipeline.transport import AsyncHttpResponse
 from azure.farmbeats.core.rest import HttpRequest
 
 from ...rest import attachments as rest_attachments
-
-if TYPE_CHECKING:
-    # pylint: disable=unused-import,ungrouped-imports
-    from typing import Any
 
 T = TypeVar('T')
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]]
@@ -269,7 +266,7 @@ class AttachmentsOperations:
 
         deserialized = None
         if response.status_code == 200:
-            deserialized = self._deserialize('Attachment', pipeline_response)
+            deserialized = json.loads(response.text)
 
         if cls:
             return cls(pipeline_response, deserialized, {})
@@ -380,10 +377,10 @@ class AttachmentsOperations:
             raise HttpResponseError(response=response)
 
         if response.status_code == 200:
-            deserialized = self._deserialize('Attachment', pipeline_response)
+            deserialized = json.loads(response.text)
 
         if response.status_code == 201:
-            deserialized = self._deserialize('Attachment', pipeline_response)
+            deserialized = json.loads(response.text)
 
         if cls:
             return cls(pipeline_response, deserialized, {})

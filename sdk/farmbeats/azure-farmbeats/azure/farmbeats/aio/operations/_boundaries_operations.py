@@ -6,6 +6,7 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 import datetime
+import json
 from typing import Any, AsyncIterable, Callable, Dict, Generic, List, Optional, TYPE_CHECKING, TypeVar, Union
 import warnings
 
@@ -294,14 +295,14 @@ class BoundariesOperations:
             if not next_link:
                 content_type = kwargs.pop("content_type", "application/json")
                 if query is not None:
-                    json = query
+                    json_body = query
                 else:
-                    json = None
+                    json_body = None
 
 
                 request = rest_boundaries.build_search_by_farmer_id_request(
                     farmer_id=farmer_id,
-                    json=json,
+                    json_body=json_body,
                     content_type=content_type,
                     template_url=self.search_by_farmer_id.metadata['url'],
                     **kwargs
@@ -314,14 +315,14 @@ class BoundariesOperations:
             else:
                 content_type = kwargs.pop("content_type", "application/json")
                 if query is not None:
-                    json = query
+                    json_body = query
                 else:
-                    json = None
+                    json_body = None
 
 
                 request = rest_boundaries.build_search_by_farmer_id_request(
                     farmer_id=farmer_id,
-                    json=json,
+                    json_body=json_body,
                     content_type=content_type,
                     template_url=self.search_by_farmer_id.metadata['url'],
                     **kwargs
@@ -606,13 +607,13 @@ class BoundariesOperations:
             if not next_link:
                 content_type = kwargs.pop("content_type", "application/json")
                 if query is not None:
-                    json = query
+                    json_body = query
                 else:
-                    json = None
+                    json_body = None
 
 
                 request = rest_boundaries.build_search_request(
-                    json=json,
+                    json_body=json_body,
                     content_type=content_type,
                     template_url=self.search.metadata['url'],
                     **kwargs
@@ -625,13 +626,13 @@ class BoundariesOperations:
             else:
                 content_type = kwargs.pop("content_type", "application/json")
                 if query is not None:
-                    json = query
+                    json_body = query
                 else:
-                    json = None
+                    json_body = None
 
 
                 request = rest_boundaries.build_search_request(
-                    json=json,
+                    json_body=json_body,
                     content_type=content_type,
                     template_url=self.search.metadata['url'],
                     **kwargs
@@ -738,7 +739,7 @@ class BoundariesOperations:
 
         deserialized = None
         if response.status_code == 200:
-            deserialized = self._deserialize('CascadeDeleteJob', pipeline_response)
+            deserialized = json.loads(response.text)
 
         if cls:
             return cls(pipeline_response, deserialized, {})
@@ -781,7 +782,7 @@ class BoundariesOperations:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             raise HttpResponseError(response=response)
 
-        deserialized = self._deserialize('CascadeDeleteJob', pipeline_response)
+        deserialized = json.loads(response.text)
 
         if cls:
             return cls(pipeline_response, deserialized, {})
@@ -864,7 +865,7 @@ class BoundariesOperations:
         kwargs.pop('content_type', None)
 
         def get_long_running_output(pipeline_response):
-            deserialized = self._deserialize('CascadeDeleteJob', pipeline_response)
+            deserialized = json.loads(response.text)
 
             if cls:
                 return cls(pipeline_response, deserialized, {})
@@ -959,7 +960,7 @@ class BoundariesOperations:
 
         deserialized = None
         if response.status_code == 200:
-            deserialized = self._deserialize('Boundary', pipeline_response)
+            deserialized = json.loads(response.text)
 
         if cls:
             return cls(pipeline_response, deserialized, {})
@@ -1023,15 +1024,15 @@ class BoundariesOperations:
 
         content_type = kwargs.pop("content_type", "application/merge-patch+json")
         if boundary is not None:
-            json = boundary
+            json_body = boundary
         else:
-            json = None
+            json_body = None
 
 
         request = rest_boundaries.build_create_or_update_request(
             farmer_id=farmer_id,
             boundary_id=boundary_id,
-            json=json,
+            json_body=json_body,
             content_type=content_type,
             template_url=self.create_or_update.metadata['url'],
             **kwargs
@@ -1050,10 +1051,10 @@ class BoundariesOperations:
             raise HttpResponseError(response=response)
 
         if response.status_code == 200:
-            deserialized = self._deserialize('Boundary', pipeline_response)
+            deserialized = json.loads(response.text)
 
         if response.status_code == 201:
-            deserialized = self._deserialize('Boundary', pipeline_response)
+            deserialized = json.loads(response.text)
 
         if cls:
             return cls(pipeline_response, deserialized, {})
@@ -1173,7 +1174,7 @@ class BoundariesOperations:
 
         deserialized = None
         if response.status_code == 200:
-            deserialized = self._deserialize('BoundaryOverlapResponse', pipeline_response)
+            deserialized = json.loads(response.text)
 
         if cls:
             return cls(pipeline_response, deserialized, {})

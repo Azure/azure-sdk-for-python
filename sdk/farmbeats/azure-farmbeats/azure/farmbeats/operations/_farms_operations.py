@@ -6,6 +6,7 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 import datetime
+import json
 from typing import TYPE_CHECKING
 import warnings
 
@@ -413,7 +414,7 @@ class FarmsOperations(object):
 
         deserialized = None
         if response.status_code == 200:
-            deserialized = self._deserialize('Farm', pipeline_response)
+            deserialized = json.loads(response.text)
 
         if cls:
             return cls(pipeline_response, deserialized, {})
@@ -471,15 +472,15 @@ class FarmsOperations(object):
 
         content_type = kwargs.pop("content_type", "application/merge-patch+json")
         if farm is not None:
-            json = farm
+            json_body = farm
         else:
-            json = None
+            json_body = None
 
 
         request = rest_farms.build_create_or_update_request(
             farmer_id=farmer_id,
             farm_id=farm_id,
-            json=json,
+            json_body=json_body,
             content_type=content_type,
             template_url=self.create_or_update.metadata['url'],
             **kwargs
@@ -498,10 +499,10 @@ class FarmsOperations(object):
             raise HttpResponseError(response=response)
 
         if response.status_code == 200:
-            deserialized = self._deserialize('Farm', pipeline_response)
+            deserialized = json.loads(response.text)
 
         if response.status_code == 201:
-            deserialized = self._deserialize('Farm', pipeline_response)
+            deserialized = json.loads(response.text)
 
         if cls:
             return cls(pipeline_response, deserialized, {})
@@ -623,7 +624,7 @@ class FarmsOperations(object):
 
         deserialized = None
         if response.status_code == 200:
-            deserialized = self._deserialize('CascadeDeleteJob', pipeline_response)
+            deserialized = json.loads(response.text)
 
         if cls:
             return cls(pipeline_response, deserialized, {})
@@ -667,7 +668,7 @@ class FarmsOperations(object):
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             raise HttpResponseError(response=response)
 
-        deserialized = self._deserialize('CascadeDeleteJob', pipeline_response)
+        deserialized = json.loads(response.text)
 
         if cls:
             return cls(pipeline_response, deserialized, {})
@@ -751,7 +752,7 @@ class FarmsOperations(object):
         kwargs.pop('content_type', None)
 
         def get_long_running_output(pipeline_response):
-            deserialized = self._deserialize('CascadeDeleteJob', pipeline_response)
+            deserialized = json.loads(response.text)
 
             if cls:
                 return cls(pipeline_response, deserialized, {})

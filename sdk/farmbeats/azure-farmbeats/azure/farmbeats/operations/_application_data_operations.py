@@ -6,6 +6,7 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 import datetime
+import json
 from typing import TYPE_CHECKING
 import warnings
 
@@ -680,7 +681,7 @@ class ApplicationDataOperations(object):
 
         deserialized = None
         if response.status_code == 200:
-            deserialized = self._deserialize('ApplicationData', pipeline_response)
+            deserialized = json.loads(response.text)
 
         if cls:
             return cls(pipeline_response, deserialized, {})
@@ -771,15 +772,15 @@ class ApplicationDataOperations(object):
 
         content_type = kwargs.pop("content_type", "application/merge-patch+json")
         if application_data is not None:
-            json = application_data
+            json_body = application_data
         else:
-            json = None
+            json_body = None
 
 
         request = rest_application_data.build_create_or_update_request(
             farmer_id=farmer_id,
             application_data_id=application_data_id,
-            json=json,
+            json_body=json_body,
             content_type=content_type,
             template_url=self.create_or_update.metadata['url'],
             **kwargs
@@ -798,10 +799,10 @@ class ApplicationDataOperations(object):
             raise HttpResponseError(response=response)
 
         if response.status_code == 200:
-            deserialized = self._deserialize('ApplicationData', pipeline_response)
+            deserialized = json.loads(response.text)
 
         if response.status_code == 201:
-            deserialized = self._deserialize('ApplicationData', pipeline_response)
+            deserialized = json.loads(response.text)
 
         if cls:
             return cls(pipeline_response, deserialized, {})

@@ -6,7 +6,8 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 import datetime
-from typing import Any, AsyncIterable, Callable, Dict, Generic, IO, List, Optional, TYPE_CHECKING, TypeVar, Union
+import json
+from typing import Any, AsyncIterable, Callable, Dict, Generic, List, Optional, TYPE_CHECKING, TypeVar, Union
 import warnings
 
 from azure.core.async_paging import AsyncItemPaged, AsyncList
@@ -233,14 +234,14 @@ class ScenesOperations:
 
         content_type = kwargs.pop("content_type", "application/json")
         if job is not None:
-            json = self._serialize.body(job, 'SatelliteDataIngestionJob')
+            json_body = self._serialize.body(job, 'SatelliteDataIngestionJob')
         else:
-            json = None
+            json_body = None
 
 
         request = rest_scenes.build_create_satellite_data_ingestion_job_request_initial(
             job_id=job_id,
-            json=json,
+            json_body=json_body,
             content_type=content_type,
             template_url=self._create_satellite_data_ingestion_jo_initial.metadata['url'],
             **kwargs
@@ -258,7 +259,7 @@ class ScenesOperations:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             raise HttpResponseError(response=response)
 
-        deserialized = self._deserialize('SatelliteDataIngestionJob', pipeline_response)
+        deserialized = json.loads(response.text)
 
         if cls:
             return cls(pipeline_response, deserialized, {})
@@ -350,7 +351,7 @@ class ScenesOperations:
         kwargs.pop('content_type', None)
 
         def get_long_running_output(pipeline_response):
-            deserialized = self._deserialize('SatelliteDataIngestionJob', pipeline_response)
+            deserialized = json.loads(response.text)
 
             if cls:
                 return cls(pipeline_response, deserialized, {})
@@ -451,7 +452,7 @@ class ScenesOperations:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             raise HttpResponseError(response=response)
 
-        deserialized = self._deserialize('SatelliteDataIngestionJob', pipeline_response)
+        deserialized = json.loads(response.text)
 
         if cls:
             return cls(pipeline_response, deserialized, {})

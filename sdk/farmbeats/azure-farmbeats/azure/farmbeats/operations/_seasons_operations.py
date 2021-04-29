@@ -6,6 +6,7 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 import datetime
+import json
 from typing import TYPE_CHECKING
 import warnings
 
@@ -283,7 +284,7 @@ class SeasonsOperations(object):
 
         deserialized = None
         if response.status_code == 200:
-            deserialized = self._deserialize('Season', pipeline_response)
+            deserialized = json.loads(response.text)
 
         if cls:
             return cls(pipeline_response, deserialized, {})
@@ -340,14 +341,14 @@ class SeasonsOperations(object):
 
         content_type = kwargs.pop("content_type", "application/merge-patch+json")
         if season is not None:
-            json = season
+            json_body = season
         else:
-            json = None
+            json_body = None
 
 
         request = rest_seasons.build_create_or_update_request(
             season_id=season_id,
-            json=json,
+            json_body=json_body,
             content_type=content_type,
             template_url=self.create_or_update.metadata['url'],
             **kwargs
@@ -366,10 +367,10 @@ class SeasonsOperations(object):
             raise HttpResponseError(response=response)
 
         if response.status_code == 200:
-            deserialized = self._deserialize('Season', pipeline_response)
+            deserialized = json.loads(response.text)
 
         if response.status_code == 201:
-            deserialized = self._deserialize('Season', pipeline_response)
+            deserialized = json.loads(response.text)
 
         if cls:
             return cls(pipeline_response, deserialized, {})

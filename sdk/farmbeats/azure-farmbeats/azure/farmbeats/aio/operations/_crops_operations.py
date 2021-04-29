@@ -6,6 +6,7 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 import datetime
+import json
 from typing import Any, AsyncIterable, Callable, Dict, Generic, List, Optional, TYPE_CHECKING, TypeVar, Union
 import warnings
 
@@ -255,7 +256,7 @@ class CropsOperations:
 
         deserialized = None
         if response.status_code == 200:
-            deserialized = self._deserialize('Crop', pipeline_response)
+            deserialized = json.loads(response.text)
 
         if cls:
             return cls(pipeline_response, deserialized, {})
@@ -309,14 +310,14 @@ class CropsOperations:
 
         content_type = kwargs.pop("content_type", "application/merge-patch+json")
         if crop is not None:
-            json = crop
+            json_body = crop
         else:
-            json = None
+            json_body = None
 
 
         request = rest_crops.build_create_or_update_request(
             crop_id=crop_id,
-            json=json,
+            json_body=json_body,
             content_type=content_type,
             template_url=self.create_or_update.metadata['url'],
             **kwargs
@@ -335,10 +336,10 @@ class CropsOperations:
             raise HttpResponseError(response=response)
 
         if response.status_code == 200:
-            deserialized = self._deserialize('Crop', pipeline_response)
+            deserialized = json.loads(response.text)
 
         if response.status_code == 201:
-            deserialized = self._deserialize('Crop', pipeline_response)
+            deserialized = json.loads(response.text)
 
         if cls:
             return cls(pipeline_response, deserialized, {})

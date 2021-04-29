@@ -6,6 +6,7 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 import datetime
+import json
 from typing import TYPE_CHECKING
 import warnings
 
@@ -266,13 +267,13 @@ class OAuthTokensOperations(object):
 
         content_type = kwargs.pop("content_type", "application/json")
         if oauth_connect_request is not None:
-            json = oauth_connect_request
+            json_body = oauth_connect_request
         else:
-            json = None
+            json_body = None
 
 
         request = rest_oauth_tokens.build_get_o_auth_connection_link_request(
-            json=json,
+            json_body=json_body,
             content_type=content_type,
             template_url=self.get_o_auth_connection_link.metadata['url'],
             **kwargs
@@ -290,7 +291,7 @@ class OAuthTokensOperations(object):
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             raise HttpResponseError(response=response)
 
-        deserialized = self._deserialize('str', pipeline_response)
+        deserialized = json.loads(response.text)
 
         if cls:
             return cls(pipeline_response, deserialized, {})

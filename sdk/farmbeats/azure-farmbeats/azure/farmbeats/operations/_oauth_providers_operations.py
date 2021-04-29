@@ -6,6 +6,7 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 import datetime
+import json
 from typing import TYPE_CHECKING
 import warnings
 
@@ -256,7 +257,7 @@ class OAuthProvidersOperations(object):
 
         deserialized = None
         if response.status_code == 200:
-            deserialized = self._deserialize('OAuthProvider', pipeline_response)
+            deserialized = json.loads(response.text)
 
         if cls:
             return cls(pipeline_response, deserialized, {})
@@ -313,14 +314,14 @@ class OAuthProvidersOperations(object):
 
         content_type = kwargs.pop("content_type", "application/merge-patch+json")
         if oauth_provider is not None:
-            json = oauth_provider
+            json_body = oauth_provider
         else:
-            json = None
+            json_body = None
 
 
         request = rest_oauth_providers.build_create_or_update_request(
             oauth_provider_id=oauth_provider_id,
-            json=json,
+            json_body=json_body,
             content_type=content_type,
             template_url=self.create_or_update.metadata['url'],
             **kwargs
@@ -339,10 +340,10 @@ class OAuthProvidersOperations(object):
             raise HttpResponseError(response=response)
 
         if response.status_code == 200:
-            deserialized = self._deserialize('OAuthProvider', pipeline_response)
+            deserialized = json.loads(response.text)
 
         if response.status_code == 201:
-            deserialized = self._deserialize('OAuthProvider', pipeline_response)
+            deserialized = json.loads(response.text)
 
         if cls:
             return cls(pipeline_response, deserialized, {})

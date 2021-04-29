@@ -6,6 +6,7 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 import datetime
+import json
 from typing import TYPE_CHECKING
 import warnings
 
@@ -327,7 +328,7 @@ class WeatherOperations(object):
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             raise HttpResponseError(response=response)
 
-        deserialized = self._deserialize('WeatherDataIngestionJob', pipeline_response)
+        deserialized = json.loads(response.text)
 
         if cls:
             return cls(pipeline_response, deserialized, {})
@@ -352,14 +353,14 @@ class WeatherOperations(object):
 
         content_type = kwargs.pop("content_type", "application/json")
         if job is not None:
-            json = self._serialize.body(job, 'WeatherDataIngestionJob')
+            json_body = self._serialize.body(job, 'WeatherDataIngestionJob')
         else:
-            json = None
+            json_body = None
 
 
         request = rest_weather.build_create_data_ingestion_job_request_initial(
             job_id=job_id,
-            json=json,
+            json_body=json_body,
             content_type=content_type,
             template_url=self._create_data_ingestion_jo_initial.metadata['url'],
             **kwargs
@@ -377,7 +378,7 @@ class WeatherOperations(object):
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             raise HttpResponseError(response=response)
 
-        deserialized = self._deserialize('WeatherDataIngestionJob', pipeline_response)
+        deserialized = json.loads(response.text)
 
         if cls:
             return cls(pipeline_response, deserialized, {})
@@ -462,7 +463,7 @@ class WeatherOperations(object):
         kwargs.pop('content_type', None)
 
         def get_long_running_output(pipeline_response):
-            deserialized = self._deserialize('WeatherDataIngestionJob', pipeline_response)
+            deserialized = json.loads(response.text)
 
             if cls:
                 return cls(pipeline_response, deserialized, {})
@@ -554,7 +555,7 @@ class WeatherOperations(object):
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             raise HttpResponseError(response=response)
 
-        deserialized = self._deserialize('WeatherDataDeleteJob', pipeline_response)
+        deserialized = json.loads(response.text)
 
         if cls:
             return cls(pipeline_response, deserialized, {})
@@ -579,14 +580,14 @@ class WeatherOperations(object):
 
         content_type = kwargs.pop("content_type", "application/json")
         if job is not None:
-            json = self._serialize.body(job, 'WeatherDataDeleteJob')
+            json_body = self._serialize.body(job, 'WeatherDataDeleteJob')
         else:
-            json = None
+            json_body = None
 
 
         request = rest_weather.build_create_data_delete_job_request_initial(
             job_id=job_id,
-            json=json,
+            json_body=json_body,
             content_type=content_type,
             template_url=self._create_data_delete_jo_initial.metadata['url'],
             **kwargs
@@ -604,7 +605,7 @@ class WeatherOperations(object):
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             raise HttpResponseError(response=response)
 
-        deserialized = self._deserialize('WeatherDataDeleteJob', pipeline_response)
+        deserialized = json.loads(response.text)
 
         if cls:
             return cls(pipeline_response, deserialized, {})
@@ -687,7 +688,7 @@ class WeatherOperations(object):
         kwargs.pop('content_type', None)
 
         def get_long_running_output(pipeline_response):
-            deserialized = self._deserialize('WeatherDataDeleteJob', pipeline_response)
+            deserialized = json.loads(response.text)
 
             if cls:
                 return cls(pipeline_response, deserialized, {})
