@@ -33,8 +33,8 @@ async def update_phone_number_capabilities():
     async with phone_numbers_client:
         poller = await phone_numbers_client.begin_update_phone_number_capabilities(
             phone_number_to_update,
-            PhoneNumberCapabilityType.OUTBOUND,
-            PhoneNumberCapabilityType.OUTBOUND,
+            PhoneNumberCapabilityType.INBOUND_OUTBOUND,
+            PhoneNumberCapabilityType.INBOUND,
             polling = True
         )
         await poller.result()

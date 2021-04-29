@@ -33,8 +33,8 @@ phone_numbers_client = PhoneNumbersClient.from_connection_string(connection_str)
 def update_phone_number_capabilities():
     poller = phone_numbers_client.begin_update_phone_number_capabilities(
         phone_number_to_update,
-        PhoneNumberCapabilityType.OUTBOUND,
-        PhoneNumberCapabilityType.OUTBOUND,
+        PhoneNumberCapabilityType.INBOUND_OUTBOUND,
+        PhoneNumberCapabilityType.INBOUND,
         polling = True
     )
     poller.result()
