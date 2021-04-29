@@ -44,43 +44,33 @@ class OAuthProvidersOperations(object):
 
     def list(
         self,
-        ids=None,  # type: Optional[List[str]]
-        names=None,  # type: Optional[List[str]]
-        property_filters=None,  # type: Optional[List[str]]
-        statuses=None,  # type: Optional[List[str]]
-        min_created_date_time=None,  # type: Optional[datetime.datetime]
-        max_created_date_time=None,  # type: Optional[datetime.datetime]
-        min_last_modified_date_time=None,  # type: Optional[datetime.datetime]
-        max_last_modified_date_time=None,  # type: Optional[datetime.datetime]
-        max_page_size=50,  # type: Optional[int]
-        skip_token=None,  # type: Optional[str]
         **kwargs  # type: Any
     ):
         # type: (...) -> Iterable[Any]
         """Returns a paginated list of oauthProvider resources.
 
-        :param ids: Ids of the resource.
-        :type ids: list[str]
-        :param names: Names of the resource.
-        :type names: list[str]
-        :param property_filters: Filters on key-value pairs within the Properties object.
+        :keyword ids: Ids of the resource.
+        :paramtype ids: list[str]
+        :keyword names: Names of the resource.
+        :paramtype names: list[str]
+        :keyword property_filters: Filters on key-value pairs within the Properties object.
          eg. "{testkey} eq {testvalue}".
-        :type property_filters: list[str]
-        :param statuses: Statuses of the resource.
-        :type statuses: list[str]
-        :param min_created_date_time: Minimum creation date of resource (inclusive).
-        :type min_created_date_time: ~datetime.datetime
-        :param max_created_date_time: Maximum creation date of resource (inclusive).
-        :type max_created_date_time: ~datetime.datetime
-        :param min_last_modified_date_time: Minimum last modified date of resource (inclusive).
-        :type min_last_modified_date_time: ~datetime.datetime
-        :param max_last_modified_date_time: Maximum last modified date of resource (inclusive).
-        :type max_last_modified_date_time: ~datetime.datetime
-        :param max_page_size: Maximum number of items needed (inclusive).
+        :paramtype property_filters: list[str]
+        :keyword statuses: Statuses of the resource.
+        :paramtype statuses: list[str]
+        :keyword min_created_date_time: Minimum creation date of resource (inclusive).
+        :paramtype min_created_date_time: ~datetime.datetime
+        :keyword max_created_date_time: Maximum creation date of resource (inclusive).
+        :paramtype max_created_date_time: ~datetime.datetime
+        :keyword min_last_modified_date_time: Minimum last modified date of resource (inclusive).
+        :paramtype min_last_modified_date_time: ~datetime.datetime
+        :keyword max_last_modified_date_time: Maximum last modified date of resource (inclusive).
+        :paramtype max_last_modified_date_time: ~datetime.datetime
+        :keyword max_page_size: Maximum number of items needed (inclusive).
          Minimum = 10, Maximum = 1000, Default value = 50.
-        :type max_page_size: int
-        :param skip_token: Skip token for getting next set of results.
-        :type skip_token: str
+        :paramtype max_page_size: int
+        :keyword skip_token: Skip token for getting next set of results.
+        :paramtype skip_token: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: An iterator like instance of either Any or the result of cls(response)
         :rtype: ~azure.core.paging.ItemPaged[Any]
@@ -94,6 +84,16 @@ class OAuthProvidersOperations(object):
 
         def prepare_request(next_link=None):
             if not next_link:
+                ids = kwargs.pop('ids', None)  # type: Optional[List[str]]
+                names = kwargs.pop('names', None)  # type: Optional[List[str]]
+                property_filters = kwargs.pop('property_filters', None)  # type: Optional[List[str]]
+                statuses = kwargs.pop('statuses', None)  # type: Optional[List[str]]
+                min_created_date_time = kwargs.pop('min_created_date_time', None)  # type: Optional[datetime.datetime]
+                max_created_date_time = kwargs.pop('max_created_date_time', None)  # type: Optional[datetime.datetime]
+                min_last_modified_date_time = kwargs.pop('min_last_modified_date_time', None)  # type: Optional[datetime.datetime]
+                max_last_modified_date_time = kwargs.pop('max_last_modified_date_time', None)  # type: Optional[datetime.datetime]
+                max_page_size = kwargs.pop('max_page_size', 50)  # type: Optional[int]
+                skip_token = kwargs.pop('skip_token', None)  # type: Optional[str]
                 request = rest_oauth_providers.build_list_request(
                     ids=ids,
                     names=names,
@@ -111,6 +111,16 @@ class OAuthProvidersOperations(object):
                 request.url = self._client.format_url(request.url)
                 kwargs.pop("content_type", None)
             else:
+                ids = kwargs.pop('ids', None)  # type: Optional[List[str]]
+                names = kwargs.pop('names', None)  # type: Optional[List[str]]
+                property_filters = kwargs.pop('property_filters', None)  # type: Optional[List[str]]
+                statuses = kwargs.pop('statuses', None)  # type: Optional[List[str]]
+                min_created_date_time = kwargs.pop('min_created_date_time', None)  # type: Optional[datetime.datetime]
+                max_created_date_time = kwargs.pop('max_created_date_time', None)  # type: Optional[datetime.datetime]
+                min_last_modified_date_time = kwargs.pop('min_last_modified_date_time', None)  # type: Optional[datetime.datetime]
+                max_last_modified_date_time = kwargs.pop('max_last_modified_date_time', None)  # type: Optional[datetime.datetime]
+                max_page_size = kwargs.pop('max_page_size', 50)  # type: Optional[int]
+                skip_token = kwargs.pop('skip_token', None)  # type: Optional[str]
                 request = rest_oauth_providers.build_list_request(
                     ids=ids,
                     names=names,
@@ -207,7 +217,6 @@ class OAuthProvidersOperations(object):
     def create_or_update(
         self,
         oauth_provider_id,  # type: str
-        oauth_provider=None,  # type: Any
         **kwargs  # type: Any
     ):
         # type: (...) -> Any
@@ -215,8 +224,8 @@ class OAuthProvidersOperations(object):
 
         :param oauth_provider_id: ID of oauthProvider resource.
         :type oauth_provider_id: str
-        :param oauth_provider: OauthProvider resource payload to create or update.
-        :type oauth_provider: Any
+        :keyword oauth_provider: OauthProvider resource payload to create or update.
+        :paramtype oauth_provider: Any
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: Any, or the result of cls(response)
         :rtype: Any
@@ -229,6 +238,7 @@ class OAuthProvidersOperations(object):
         error_map.update(kwargs.pop('error_map', {}))
 
         content_type = kwargs.pop("content_type", "application/merge-patch+json")
+        oauth_provider = kwargs.pop('oauth_provider', None)  # type: Any
         if oauth_provider is not None:
             json = oauth_provider
         else:

@@ -47,17 +47,6 @@ class FieldsOperations(object):
     def list_by_farmer_id(
         self,
         farmer_id,  # type: str
-        farm_ids=None,  # type: Optional[List[str]]
-        ids=None,  # type: Optional[List[str]]
-        names=None,  # type: Optional[List[str]]
-        property_filters=None,  # type: Optional[List[str]]
-        statuses=None,  # type: Optional[List[str]]
-        min_created_date_time=None,  # type: Optional[datetime.datetime]
-        max_created_date_time=None,  # type: Optional[datetime.datetime]
-        min_last_modified_date_time=None,  # type: Optional[datetime.datetime]
-        max_last_modified_date_time=None,  # type: Optional[datetime.datetime]
-        max_page_size=50,  # type: Optional[int]
-        skip_token=None,  # type: Optional[str]
         **kwargs  # type: Any
     ):
         # type: (...) -> Iterable[Any]
@@ -65,30 +54,30 @@ class FieldsOperations(object):
 
         :param farmer_id: Id of the associated farmer.
         :type farmer_id: str
-        :param farm_ids: Farm Ids of the resource.
-        :type farm_ids: list[str]
-        :param ids: Ids of the resource.
-        :type ids: list[str]
-        :param names: Names of the resource.
-        :type names: list[str]
-        :param property_filters: Filters on key-value pairs within the Properties object.
+        :keyword farm_ids: Farm Ids of the resource.
+        :paramtype farm_ids: list[str]
+        :keyword ids: Ids of the resource.
+        :paramtype ids: list[str]
+        :keyword names: Names of the resource.
+        :paramtype names: list[str]
+        :keyword property_filters: Filters on key-value pairs within the Properties object.
          eg. "{testkey} eq {testvalue}".
-        :type property_filters: list[str]
-        :param statuses: Statuses of the resource.
-        :type statuses: list[str]
-        :param min_created_date_time: Minimum creation date of resource (inclusive).
-        :type min_created_date_time: ~datetime.datetime
-        :param max_created_date_time: Maximum creation date of resource (inclusive).
-        :type max_created_date_time: ~datetime.datetime
-        :param min_last_modified_date_time: Minimum last modified date of resource (inclusive).
-        :type min_last_modified_date_time: ~datetime.datetime
-        :param max_last_modified_date_time: Maximum last modified date of resource (inclusive).
-        :type max_last_modified_date_time: ~datetime.datetime
-        :param max_page_size: Maximum number of items needed (inclusive).
+        :paramtype property_filters: list[str]
+        :keyword statuses: Statuses of the resource.
+        :paramtype statuses: list[str]
+        :keyword min_created_date_time: Minimum creation date of resource (inclusive).
+        :paramtype min_created_date_time: ~datetime.datetime
+        :keyword max_created_date_time: Maximum creation date of resource (inclusive).
+        :paramtype max_created_date_time: ~datetime.datetime
+        :keyword min_last_modified_date_time: Minimum last modified date of resource (inclusive).
+        :paramtype min_last_modified_date_time: ~datetime.datetime
+        :keyword max_last_modified_date_time: Maximum last modified date of resource (inclusive).
+        :paramtype max_last_modified_date_time: ~datetime.datetime
+        :keyword max_page_size: Maximum number of items needed (inclusive).
          Minimum = 10, Maximum = 1000, Default value = 50.
-        :type max_page_size: int
-        :param skip_token: Skip token for getting next set of results.
-        :type skip_token: str
+        :paramtype max_page_size: int
+        :keyword skip_token: Skip token for getting next set of results.
+        :paramtype skip_token: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: An iterator like instance of either Any or the result of cls(response)
         :rtype: ~azure.core.paging.ItemPaged[Any]
@@ -102,6 +91,17 @@ class FieldsOperations(object):
 
         def prepare_request(next_link=None):
             if not next_link:
+                farm_ids = kwargs.pop('farm_ids', None)  # type: Optional[List[str]]
+                ids = kwargs.pop('ids', None)  # type: Optional[List[str]]
+                names = kwargs.pop('names', None)  # type: Optional[List[str]]
+                property_filters = kwargs.pop('property_filters', None)  # type: Optional[List[str]]
+                statuses = kwargs.pop('statuses', None)  # type: Optional[List[str]]
+                min_created_date_time = kwargs.pop('min_created_date_time', None)  # type: Optional[datetime.datetime]
+                max_created_date_time = kwargs.pop('max_created_date_time', None)  # type: Optional[datetime.datetime]
+                min_last_modified_date_time = kwargs.pop('min_last_modified_date_time', None)  # type: Optional[datetime.datetime]
+                max_last_modified_date_time = kwargs.pop('max_last_modified_date_time', None)  # type: Optional[datetime.datetime]
+                max_page_size = kwargs.pop('max_page_size', 50)  # type: Optional[int]
+                skip_token = kwargs.pop('skip_token', None)  # type: Optional[str]
                 request = rest_fields.build_list_by_farmer_id_request(
                     farmer_id=farmer_id,
                     farm_ids=farm_ids,
@@ -121,6 +121,17 @@ class FieldsOperations(object):
                 request.url = self._client.format_url(request.url)
                 kwargs.pop("content_type", None)
             else:
+                farm_ids = kwargs.pop('farm_ids', None)  # type: Optional[List[str]]
+                ids = kwargs.pop('ids', None)  # type: Optional[List[str]]
+                names = kwargs.pop('names', None)  # type: Optional[List[str]]
+                property_filters = kwargs.pop('property_filters', None)  # type: Optional[List[str]]
+                statuses = kwargs.pop('statuses', None)  # type: Optional[List[str]]
+                min_created_date_time = kwargs.pop('min_created_date_time', None)  # type: Optional[datetime.datetime]
+                max_created_date_time = kwargs.pop('max_created_date_time', None)  # type: Optional[datetime.datetime]
+                min_last_modified_date_time = kwargs.pop('min_last_modified_date_time', None)  # type: Optional[datetime.datetime]
+                max_last_modified_date_time = kwargs.pop('max_last_modified_date_time', None)  # type: Optional[datetime.datetime]
+                max_page_size = kwargs.pop('max_page_size', 50)  # type: Optional[int]
+                skip_token = kwargs.pop('skip_token', None)  # type: Optional[str]
                 request = rest_fields.build_list_by_farmer_id_request(
                     farmer_id=farmer_id,
                     farm_ids=farm_ids,
@@ -171,46 +182,35 @@ class FieldsOperations(object):
 
     def list(
         self,
-        farm_ids=None,  # type: Optional[List[str]]
-        ids=None,  # type: Optional[List[str]]
-        names=None,  # type: Optional[List[str]]
-        property_filters=None,  # type: Optional[List[str]]
-        statuses=None,  # type: Optional[List[str]]
-        min_created_date_time=None,  # type: Optional[datetime.datetime]
-        max_created_date_time=None,  # type: Optional[datetime.datetime]
-        min_last_modified_date_time=None,  # type: Optional[datetime.datetime]
-        max_last_modified_date_time=None,  # type: Optional[datetime.datetime]
-        max_page_size=50,  # type: Optional[int]
-        skip_token=None,  # type: Optional[str]
         **kwargs  # type: Any
     ):
         # type: (...) -> Iterable[Any]
         """Returns a paginated list of field resources across all farmers.
 
-        :param farm_ids: Farm Ids of the resource.
-        :type farm_ids: list[str]
-        :param ids: Ids of the resource.
-        :type ids: list[str]
-        :param names: Names of the resource.
-        :type names: list[str]
-        :param property_filters: Filters on key-value pairs within the Properties object.
+        :keyword farm_ids: Farm Ids of the resource.
+        :paramtype farm_ids: list[str]
+        :keyword ids: Ids of the resource.
+        :paramtype ids: list[str]
+        :keyword names: Names of the resource.
+        :paramtype names: list[str]
+        :keyword property_filters: Filters on key-value pairs within the Properties object.
          eg. "{testkey} eq {testvalue}".
-        :type property_filters: list[str]
-        :param statuses: Statuses of the resource.
-        :type statuses: list[str]
-        :param min_created_date_time: Minimum creation date of resource (inclusive).
-        :type min_created_date_time: ~datetime.datetime
-        :param max_created_date_time: Maximum creation date of resource (inclusive).
-        :type max_created_date_time: ~datetime.datetime
-        :param min_last_modified_date_time: Minimum last modified date of resource (inclusive).
-        :type min_last_modified_date_time: ~datetime.datetime
-        :param max_last_modified_date_time: Maximum last modified date of resource (inclusive).
-        :type max_last_modified_date_time: ~datetime.datetime
-        :param max_page_size: Maximum number of items needed (inclusive).
+        :paramtype property_filters: list[str]
+        :keyword statuses: Statuses of the resource.
+        :paramtype statuses: list[str]
+        :keyword min_created_date_time: Minimum creation date of resource (inclusive).
+        :paramtype min_created_date_time: ~datetime.datetime
+        :keyword max_created_date_time: Maximum creation date of resource (inclusive).
+        :paramtype max_created_date_time: ~datetime.datetime
+        :keyword min_last_modified_date_time: Minimum last modified date of resource (inclusive).
+        :paramtype min_last_modified_date_time: ~datetime.datetime
+        :keyword max_last_modified_date_time: Maximum last modified date of resource (inclusive).
+        :paramtype max_last_modified_date_time: ~datetime.datetime
+        :keyword max_page_size: Maximum number of items needed (inclusive).
          Minimum = 10, Maximum = 1000, Default value = 50.
-        :type max_page_size: int
-        :param skip_token: Skip token for getting next set of results.
-        :type skip_token: str
+        :paramtype max_page_size: int
+        :keyword skip_token: Skip token for getting next set of results.
+        :paramtype skip_token: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: An iterator like instance of either Any or the result of cls(response)
         :rtype: ~azure.core.paging.ItemPaged[Any]
@@ -224,6 +224,17 @@ class FieldsOperations(object):
 
         def prepare_request(next_link=None):
             if not next_link:
+                farm_ids = kwargs.pop('farm_ids', None)  # type: Optional[List[str]]
+                ids = kwargs.pop('ids', None)  # type: Optional[List[str]]
+                names = kwargs.pop('names', None)  # type: Optional[List[str]]
+                property_filters = kwargs.pop('property_filters', None)  # type: Optional[List[str]]
+                statuses = kwargs.pop('statuses', None)  # type: Optional[List[str]]
+                min_created_date_time = kwargs.pop('min_created_date_time', None)  # type: Optional[datetime.datetime]
+                max_created_date_time = kwargs.pop('max_created_date_time', None)  # type: Optional[datetime.datetime]
+                min_last_modified_date_time = kwargs.pop('min_last_modified_date_time', None)  # type: Optional[datetime.datetime]
+                max_last_modified_date_time = kwargs.pop('max_last_modified_date_time', None)  # type: Optional[datetime.datetime]
+                max_page_size = kwargs.pop('max_page_size', 50)  # type: Optional[int]
+                skip_token = kwargs.pop('skip_token', None)  # type: Optional[str]
                 request = rest_fields.build_list_request(
                     farm_ids=farm_ids,
                     ids=ids,
@@ -242,6 +253,17 @@ class FieldsOperations(object):
                 request.url = self._client.format_url(request.url)
                 kwargs.pop("content_type", None)
             else:
+                farm_ids = kwargs.pop('farm_ids', None)  # type: Optional[List[str]]
+                ids = kwargs.pop('ids', None)  # type: Optional[List[str]]
+                names = kwargs.pop('names', None)  # type: Optional[List[str]]
+                property_filters = kwargs.pop('property_filters', None)  # type: Optional[List[str]]
+                statuses = kwargs.pop('statuses', None)  # type: Optional[List[str]]
+                min_created_date_time = kwargs.pop('min_created_date_time', None)  # type: Optional[datetime.datetime]
+                max_created_date_time = kwargs.pop('max_created_date_time', None)  # type: Optional[datetime.datetime]
+                min_last_modified_date_time = kwargs.pop('min_last_modified_date_time', None)  # type: Optional[datetime.datetime]
+                max_last_modified_date_time = kwargs.pop('max_last_modified_date_time', None)  # type: Optional[datetime.datetime]
+                max_page_size = kwargs.pop('max_page_size', 50)  # type: Optional[int]
+                skip_token = kwargs.pop('skip_token', None)  # type: Optional[str]
                 request = rest_fields.build_list_request(
                     farm_ids=farm_ids,
                     ids=ids,
@@ -344,7 +366,6 @@ class FieldsOperations(object):
         self,
         farmer_id,  # type: str
         field_id,  # type: str
-        field=None,  # type: Any
         **kwargs  # type: Any
     ):
         # type: (...) -> Any
@@ -354,8 +375,8 @@ class FieldsOperations(object):
         :type farmer_id: str
         :param field_id: Id of the field resource.
         :type field_id: str
-        :param field: Field resource payload to create or update.
-        :type field: Any
+        :keyword field: Field resource payload to create or update.
+        :paramtype field: Any
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: Any, or the result of cls(response)
         :rtype: Any
@@ -368,6 +389,7 @@ class FieldsOperations(object):
         error_map.update(kwargs.pop('error_map', {}))
 
         content_type = kwargs.pop("content_type", "application/merge-patch+json")
+        field = kwargs.pop('field', None)  # type: Any
         if field is not None:
             json = field
         else:
@@ -500,8 +522,6 @@ class FieldsOperations(object):
     def _create_cascade_delete_jo_initial(
         self,
         job_id,  # type: str
-        farmer_id,  # type: str
-        field_id,  # type: str
         **kwargs  # type: Any
     ):
         # type: (...) -> Any
@@ -511,6 +531,8 @@ class FieldsOperations(object):
         }
         error_map.update(kwargs.pop('error_map', {}))
 
+        farmer_id = kwargs.pop('farmer_id')  # type: str
+        field_id = kwargs.pop('field_id')  # type: str
         request = rest_fields.build_create_cascade_delete_job_request_initial(
             job_id=job_id,
             farmer_id=farmer_id,
@@ -540,8 +562,6 @@ class FieldsOperations(object):
     def begin_create_cascade_delete_job(
         self,
         job_id,  # type: str
-        farmer_id,  # type: str
-        field_id,  # type: str
         **kwargs  # type: Any
     ):
         # type: (...) -> LROPoller[Any]
@@ -549,10 +569,10 @@ class FieldsOperations(object):
 
         :param job_id: Job ID supplied by end user.
         :type job_id: str
-        :param farmer_id: ID of the associated farmer.
-        :type farmer_id: str
-        :param field_id: ID of the field to be deleted.
-        :type field_id: str
+        :keyword farmer_id: ID of the associated farmer.
+        :paramtype farmer_id: str
+        :keyword field_id: ID of the field to be deleted.
+        :paramtype field_id: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
         :keyword polling: Pass in True if you'd like the LROBasePolling polling method,

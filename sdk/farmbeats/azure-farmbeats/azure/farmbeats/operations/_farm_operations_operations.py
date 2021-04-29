@@ -45,7 +45,6 @@ class FarmOperationsOperations(object):
     def _create_data_ingestion_jo_initial(
         self,
         job_id,  # type: str
-        job=None,  # type: Any
         **kwargs  # type: Any
     ):
         # type: (...) -> Any
@@ -56,6 +55,7 @@ class FarmOperationsOperations(object):
         error_map.update(kwargs.pop('error_map', {}))
 
         content_type = kwargs.pop("content_type", "application/json")
+        job = kwargs.pop('job', None)  # type: Any
         if job is not None:
             json = self._serialize.body(job, 'FarmOperationDataIngestionJob')
         else:
@@ -91,7 +91,6 @@ class FarmOperationsOperations(object):
     def begin_create_data_ingestion_job(
         self,
         job_id,  # type: str
-        job=None,  # type: Any
         **kwargs  # type: Any
     ):
         # type: (...) -> LROPoller[Any]
@@ -99,8 +98,8 @@ class FarmOperationsOperations(object):
 
         :param job_id: Job Id supplied by user.
         :type job_id: str
-        :param job: Job parameters supplied by user.
-        :type job: Any
+        :keyword job: Job parameters supplied by user.
+        :paramtype job: Any
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
         :keyword polling: Pass in True if you'd like the LROBasePolling polling method,

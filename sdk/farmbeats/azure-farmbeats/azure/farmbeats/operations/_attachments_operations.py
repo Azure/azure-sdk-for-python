@@ -45,18 +45,6 @@ class AttachmentsOperations(object):
     def list_by_farmer_id(
         self,
         farmer_id,  # type: str
-        resource_ids=None,  # type: Optional[List[str]]
-        resource_types=None,  # type: Optional[List[str]]
-        ids=None,  # type: Optional[List[str]]
-        names=None,  # type: Optional[List[str]]
-        property_filters=None,  # type: Optional[List[str]]
-        statuses=None,  # type: Optional[List[str]]
-        min_created_date_time=None,  # type: Optional[datetime.datetime]
-        max_created_date_time=None,  # type: Optional[datetime.datetime]
-        min_last_modified_date_time=None,  # type: Optional[datetime.datetime]
-        max_last_modified_date_time=None,  # type: Optional[datetime.datetime]
-        max_page_size=50,  # type: Optional[int]
-        skip_token=None,  # type: Optional[str]
         **kwargs  # type: Any
     ):
         # type: (...) -> Iterable[Any]
@@ -64,32 +52,32 @@ class AttachmentsOperations(object):
 
         :param farmer_id: Id of the associated farmer.
         :type farmer_id: str
-        :param resource_ids: Resource Ids of the resource.
-        :type resource_ids: list[str]
-        :param resource_types: Resource Types of the resource.
-        :type resource_types: list[str]
-        :param ids: Ids of the resource.
-        :type ids: list[str]
-        :param names: Names of the resource.
-        :type names: list[str]
-        :param property_filters: Filters on key-value pairs within the Properties object.
+        :keyword resource_ids: Resource Ids of the resource.
+        :paramtype resource_ids: list[str]
+        :keyword resource_types: Resource Types of the resource.
+        :paramtype resource_types: list[str]
+        :keyword ids: Ids of the resource.
+        :paramtype ids: list[str]
+        :keyword names: Names of the resource.
+        :paramtype names: list[str]
+        :keyword property_filters: Filters on key-value pairs within the Properties object.
          eg. "{testkey} eq {testvalue}".
-        :type property_filters: list[str]
-        :param statuses: Statuses of the resource.
-        :type statuses: list[str]
-        :param min_created_date_time: Minimum creation date of resource (inclusive).
-        :type min_created_date_time: ~datetime.datetime
-        :param max_created_date_time: Maximum creation date of resource (inclusive).
-        :type max_created_date_time: ~datetime.datetime
-        :param min_last_modified_date_time: Minimum last modified date of resource (inclusive).
-        :type min_last_modified_date_time: ~datetime.datetime
-        :param max_last_modified_date_time: Maximum last modified date of resource (inclusive).
-        :type max_last_modified_date_time: ~datetime.datetime
-        :param max_page_size: Maximum number of items needed (inclusive).
+        :paramtype property_filters: list[str]
+        :keyword statuses: Statuses of the resource.
+        :paramtype statuses: list[str]
+        :keyword min_created_date_time: Minimum creation date of resource (inclusive).
+        :paramtype min_created_date_time: ~datetime.datetime
+        :keyword max_created_date_time: Maximum creation date of resource (inclusive).
+        :paramtype max_created_date_time: ~datetime.datetime
+        :keyword min_last_modified_date_time: Minimum last modified date of resource (inclusive).
+        :paramtype min_last_modified_date_time: ~datetime.datetime
+        :keyword max_last_modified_date_time: Maximum last modified date of resource (inclusive).
+        :paramtype max_last_modified_date_time: ~datetime.datetime
+        :keyword max_page_size: Maximum number of items needed (inclusive).
          Minimum = 10, Maximum = 1000, Default value = 50.
-        :type max_page_size: int
-        :param skip_token: Skip token for getting next set of results.
-        :type skip_token: str
+        :paramtype max_page_size: int
+        :keyword skip_token: Skip token for getting next set of results.
+        :paramtype skip_token: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: An iterator like instance of either Any or the result of cls(response)
         :rtype: ~azure.core.paging.ItemPaged[Any]
@@ -103,6 +91,18 @@ class AttachmentsOperations(object):
 
         def prepare_request(next_link=None):
             if not next_link:
+                resource_ids = kwargs.pop('resource_ids', None)  # type: Optional[List[str]]
+                resource_types = kwargs.pop('resource_types', None)  # type: Optional[List[str]]
+                ids = kwargs.pop('ids', None)  # type: Optional[List[str]]
+                names = kwargs.pop('names', None)  # type: Optional[List[str]]
+                property_filters = kwargs.pop('property_filters', None)  # type: Optional[List[str]]
+                statuses = kwargs.pop('statuses', None)  # type: Optional[List[str]]
+                min_created_date_time = kwargs.pop('min_created_date_time', None)  # type: Optional[datetime.datetime]
+                max_created_date_time = kwargs.pop('max_created_date_time', None)  # type: Optional[datetime.datetime]
+                min_last_modified_date_time = kwargs.pop('min_last_modified_date_time', None)  # type: Optional[datetime.datetime]
+                max_last_modified_date_time = kwargs.pop('max_last_modified_date_time', None)  # type: Optional[datetime.datetime]
+                max_page_size = kwargs.pop('max_page_size', 50)  # type: Optional[int]
+                skip_token = kwargs.pop('skip_token', None)  # type: Optional[str]
                 request = rest_attachments.build_list_by_farmer_id_request(
                     farmer_id=farmer_id,
                     resource_ids=resource_ids,
@@ -123,6 +123,18 @@ class AttachmentsOperations(object):
                 request.url = self._client.format_url(request.url)
                 kwargs.pop("content_type", None)
             else:
+                resource_ids = kwargs.pop('resource_ids', None)  # type: Optional[List[str]]
+                resource_types = kwargs.pop('resource_types', None)  # type: Optional[List[str]]
+                ids = kwargs.pop('ids', None)  # type: Optional[List[str]]
+                names = kwargs.pop('names', None)  # type: Optional[List[str]]
+                property_filters = kwargs.pop('property_filters', None)  # type: Optional[List[str]]
+                statuses = kwargs.pop('statuses', None)  # type: Optional[List[str]]
+                min_created_date_time = kwargs.pop('min_created_date_time', None)  # type: Optional[datetime.datetime]
+                max_created_date_time = kwargs.pop('max_created_date_time', None)  # type: Optional[datetime.datetime]
+                min_last_modified_date_time = kwargs.pop('min_last_modified_date_time', None)  # type: Optional[datetime.datetime]
+                max_last_modified_date_time = kwargs.pop('max_last_modified_date_time', None)  # type: Optional[datetime.datetime]
+                max_page_size = kwargs.pop('max_page_size', 50)  # type: Optional[int]
+                skip_token = kwargs.pop('skip_token', None)  # type: Optional[str]
                 request = rest_attachments.build_list_by_farmer_id_request(
                     farmer_id=farmer_id,
                     resource_ids=resource_ids,
@@ -227,18 +239,6 @@ class AttachmentsOperations(object):
         self,
         farmer_id,  # type: str
         attachment_id,  # type: str
-        file=None,  # type: Optional[IO]
-        farmer_id1=None,  # type: Optional[str]
-        resource_id=None,  # type: Optional[str]
-        resource_type=None,  # type: Optional[str]
-        original_file_name=None,  # type: Optional[str]
-        id=None,  # type: Optional[str]
-        status=None,  # type: Optional[str]
-        created_date_time=None,  # type: Optional[str]
-        modified_date_time=None,  # type: Optional[str]
-        name=None,  # type: Optional[str]
-        description=None,  # type: Optional[str]
-        e_tag=None,  # type: Optional[str]
         **kwargs  # type: Any
     ):
         # type: (...) -> Any
@@ -248,32 +248,32 @@ class AttachmentsOperations(object):
         :type farmer_id: str
         :param attachment_id: Id of the attachment resource.
         :type attachment_id: str
-        :param file: File to be uploaded.
-        :type file: IO
-        :param farmer_id1: Farmer id for this attachment.
-        :type farmer_id1: str
-        :param resource_id: Associated Resource id for this attachment.
-        :type resource_id: str
-        :param resource_type: Associated Resource type for this attachment
+        :keyword file: File to be uploaded.
+        :paramtype file: IO
+        :keyword farmer_id1: Farmer id for this attachment.
+        :paramtype farmer_id1: str
+        :keyword resource_id: Associated Resource id for this attachment.
+        :paramtype resource_id: str
+        :keyword resource_type: Associated Resource type for this attachment
          i.e. Farmer, Farm, Field, SeasonalField, Boundary, FarmOperationApplicationData, HarvestData,
          TillageData, PlantingData.
-        :type resource_type: str
-        :param original_file_name: Original File Name for this attachment.
-        :type original_file_name: str
-        :param id: Unique id.
-        :type id: str
-        :param status: Status of the resource.
-        :type status: str
-        :param created_date_time: Date when resource was created.
-        :type created_date_time: str
-        :param modified_date_time: Date when resource was last modified.
-        :type modified_date_time: str
-        :param name: Name to identify resource.
-        :type name: str
-        :param description: Textual description of resource.
-        :type description: str
-        :param e_tag: The ETag value to implement optimistic concurrency.
-        :type e_tag: str
+        :paramtype resource_type: str
+        :keyword original_file_name: Original File Name for this attachment.
+        :paramtype original_file_name: str
+        :keyword id: Unique id.
+        :paramtype id: str
+        :keyword status: Status of the resource.
+        :paramtype status: str
+        :keyword created_date_time: Date when resource was created.
+        :paramtype created_date_time: str
+        :keyword modified_date_time: Date when resource was last modified.
+        :paramtype modified_date_time: str
+        :keyword name: Name to identify resource.
+        :paramtype name: str
+        :keyword description: Textual description of resource.
+        :paramtype description: str
+        :keyword e_tag: The ETag value to implement optimistic concurrency.
+        :paramtype e_tag: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: Any, or the result of cls(response)
         :rtype: Any
@@ -286,6 +286,18 @@ class AttachmentsOperations(object):
         error_map.update(kwargs.pop('error_map', {}))
 
         content_type = kwargs.pop("content_type", "multipart/form-data")
+        file = kwargs.pop('file', None)  # type: Optional[IO]
+        farmer_id1 = kwargs.pop('farmer_id1', None)  # type: Optional[str]
+        resource_id = kwargs.pop('resource_id', None)  # type: Optional[str]
+        resource_type = kwargs.pop('resource_type', None)  # type: Optional[str]
+        original_file_name = kwargs.pop('original_file_name', None)  # type: Optional[str]
+        id = kwargs.pop('id', None)  # type: Optional[str]
+        status = kwargs.pop('status', None)  # type: Optional[str]
+        created_date_time = kwargs.pop('created_date_time', None)  # type: Optional[str]
+        modified_date_time = kwargs.pop('modified_date_time', None)  # type: Optional[str]
+        name = kwargs.pop('name', None)  # type: Optional[str]
+        description = kwargs.pop('description', None)  # type: Optional[str]
+        e_tag = kwargs.pop('e_tag', None)  # type: Optional[str]
         # Construct form data
         files = {
             'file': file,

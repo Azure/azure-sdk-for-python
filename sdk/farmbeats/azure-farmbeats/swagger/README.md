@@ -36,4 +36,5 @@ vendor: true
 package-version: 1.0.0b1
 add-credential: true
 credential-scopes: https://farmbeats-dogfood.azure.net/.default
+only-path-params-positional: true
 ```

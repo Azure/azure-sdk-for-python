@@ -15,7 +15,7 @@ from azure.core.pipeline import PipelineResponse
 from azure.core.pipeline.transport import AsyncHttpResponse
 from azure.farmbeats.core.rest import HttpRequest
 
-from ..rest import attachments as rest_attachments
+from ...rest import attachments as rest_attachments
 
 if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
@@ -45,6 +45,7 @@ class AttachmentsOperations:
     def list_by_farmer_id(
         self,
         farmer_id: str,
+        *,
         resource_ids: Optional[List[str]] = None,
         resource_types: Optional[List[str]] = None,
         ids: Optional[List[str]] = None,
@@ -63,32 +64,32 @@ class AttachmentsOperations:
 
         :param farmer_id: Id of the associated farmer.
         :type farmer_id: str
-        :param resource_ids: Resource Ids of the resource.
-        :type resource_ids: list[str]
-        :param resource_types: Resource Types of the resource.
-        :type resource_types: list[str]
-        :param ids: Ids of the resource.
-        :type ids: list[str]
-        :param names: Names of the resource.
-        :type names: list[str]
-        :param property_filters: Filters on key-value pairs within the Properties object.
+        :keyword resource_ids: Resource Ids of the resource.
+        :paramtype resource_ids: list[str]
+        :keyword resource_types: Resource Types of the resource.
+        :paramtype resource_types: list[str]
+        :keyword ids: Ids of the resource.
+        :paramtype ids: list[str]
+        :keyword names: Names of the resource.
+        :paramtype names: list[str]
+        :keyword property_filters: Filters on key-value pairs within the Properties object.
          eg. "{testkey} eq {testvalue}".
-        :type property_filters: list[str]
-        :param statuses: Statuses of the resource.
-        :type statuses: list[str]
-        :param min_created_date_time: Minimum creation date of resource (inclusive).
-        :type min_created_date_time: ~datetime.datetime
-        :param max_created_date_time: Maximum creation date of resource (inclusive).
-        :type max_created_date_time: ~datetime.datetime
-        :param min_last_modified_date_time: Minimum last modified date of resource (inclusive).
-        :type min_last_modified_date_time: ~datetime.datetime
-        :param max_last_modified_date_time: Maximum last modified date of resource (inclusive).
-        :type max_last_modified_date_time: ~datetime.datetime
-        :param max_page_size: Maximum number of items needed (inclusive).
+        :paramtype property_filters: list[str]
+        :keyword statuses: Statuses of the resource.
+        :paramtype statuses: list[str]
+        :keyword min_created_date_time: Minimum creation date of resource (inclusive).
+        :paramtype min_created_date_time: ~datetime.datetime
+        :keyword max_created_date_time: Maximum creation date of resource (inclusive).
+        :paramtype max_created_date_time: ~datetime.datetime
+        :keyword min_last_modified_date_time: Minimum last modified date of resource (inclusive).
+        :paramtype min_last_modified_date_time: ~datetime.datetime
+        :keyword max_last_modified_date_time: Maximum last modified date of resource (inclusive).
+        :paramtype max_last_modified_date_time: ~datetime.datetime
+        :keyword max_page_size: Maximum number of items needed (inclusive).
          Minimum = 10, Maximum = 1000, Default value = 50.
-        :type max_page_size: int
-        :param skip_token: Skip token for getting next set of results.
-        :type skip_token: str
+        :paramtype max_page_size: int
+        :keyword skip_token: Skip token for getting next set of results.
+        :paramtype skip_token: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: An iterator like instance of either Any or the result of cls(response)
         :rtype: ~azure.core.async_paging.AsyncItemPaged[Any]
@@ -225,6 +226,7 @@ class AttachmentsOperations:
         self,
         farmer_id: str,
         attachment_id: str,
+        *,
         file: Optional[IO] = None,
         farmer_id1: Optional[str] = None,
         resource_id: Optional[str] = None,
@@ -245,32 +247,32 @@ class AttachmentsOperations:
         :type farmer_id: str
         :param attachment_id: Id of the attachment resource.
         :type attachment_id: str
-        :param file: File to be uploaded.
-        :type file: IO
-        :param farmer_id1: Farmer id for this attachment.
-        :type farmer_id1: str
-        :param resource_id: Associated Resource id for this attachment.
-        :type resource_id: str
-        :param resource_type: Associated Resource type for this attachment
+        :keyword file: File to be uploaded.
+        :paramtype file: IO
+        :keyword farmer_id1: Farmer id for this attachment.
+        :paramtype farmer_id1: str
+        :keyword resource_id: Associated Resource id for this attachment.
+        :paramtype resource_id: str
+        :keyword resource_type: Associated Resource type for this attachment
          i.e. Farmer, Farm, Field, SeasonalField, Boundary, FarmOperationApplicationData, HarvestData,
          TillageData, PlantingData.
-        :type resource_type: str
-        :param original_file_name: Original File Name for this attachment.
-        :type original_file_name: str
-        :param id: Unique id.
-        :type id: str
-        :param status: Status of the resource.
-        :type status: str
-        :param created_date_time: Date when resource was created.
-        :type created_date_time: str
-        :param modified_date_time: Date when resource was last modified.
-        :type modified_date_time: str
-        :param name: Name to identify resource.
-        :type name: str
-        :param description: Textual description of resource.
-        :type description: str
-        :param e_tag: The ETag value to implement optimistic concurrency.
-        :type e_tag: str
+        :paramtype resource_type: str
+        :keyword original_file_name: Original File Name for this attachment.
+        :paramtype original_file_name: str
+        :keyword id: Unique id.
+        :paramtype id: str
+        :keyword status: Status of the resource.
+        :paramtype status: str
+        :keyword created_date_time: Date when resource was created.
+        :paramtype created_date_time: str
+        :keyword modified_date_time: Date when resource was last modified.
+        :paramtype modified_date_time: str
+        :keyword name: Name to identify resource.
+        :paramtype name: str
+        :keyword description: Textual description of resource.
+        :paramtype description: str
+        :keyword e_tag: The ETag value to implement optimistic concurrency.
+        :paramtype e_tag: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: Any, or the result of cls(response)
         :rtype: Any

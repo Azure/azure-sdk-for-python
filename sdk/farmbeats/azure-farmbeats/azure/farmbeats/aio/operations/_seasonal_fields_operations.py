@@ -17,7 +17,7 @@ from azure.core.polling import AsyncLROPoller, AsyncNoPolling, AsyncPollingMetho
 from azure.core.polling.async_base_polling import AsyncLROBasePolling
 from azure.farmbeats.core.rest import HttpRequest
 
-from ..rest import seasonal_fields as rest_seasonal_fields
+from ...rest import seasonal_fields as rest_seasonal_fields
 
 if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
@@ -47,6 +47,7 @@ class SeasonalFieldsOperations:
     def list_by_farmer_id(
         self,
         farmer_id: str,
+        *,
         farm_ids: Optional[List[str]] = None,
         field_ids: Optional[List[str]] = None,
         season_ids: Optional[List[str]] = None,
@@ -76,56 +77,58 @@ class SeasonalFieldsOperations:
 
         :param farmer_id: Id of the associated farmer.
         :type farmer_id: str
-        :param farm_ids: Farm Ids of the resource.
-        :type farm_ids: list[str]
-        :param field_ids: Field Ids of the resource.
-        :type field_ids: list[str]
-        :param season_ids: Season Ids of the resource.
-        :type season_ids: list[str]
-        :param crop_variety_ids: CropVarietyIds of the resource.
-        :type crop_variety_ids: list[str]
-        :param crop_ids: Ids of the crop it belongs to.
-        :type crop_ids: list[str]
-        :param min_avg_yield_value: Minimum average yield value of the seasonal field(inclusive).
-        :type min_avg_yield_value: float
-        :param max_avg_yield_value: Maximum average yield value of the seasonal field(inclusive).
-        :type max_avg_yield_value: float
-        :param avg_yield_unit: Unit of the average yield value attribute.
-        :type avg_yield_unit: str
-        :param min_avg_seed_population_value: Minimum average seed population value of the seasonal
+        :keyword farm_ids: Farm Ids of the resource.
+        :paramtype farm_ids: list[str]
+        :keyword field_ids: Field Ids of the resource.
+        :paramtype field_ids: list[str]
+        :keyword season_ids: Season Ids of the resource.
+        :paramtype season_ids: list[str]
+        :keyword crop_variety_ids: CropVarietyIds of the resource.
+        :paramtype crop_variety_ids: list[str]
+        :keyword crop_ids: Ids of the crop it belongs to.
+        :paramtype crop_ids: list[str]
+        :keyword min_avg_yield_value: Minimum average yield value of the seasonal field(inclusive).
+        :paramtype min_avg_yield_value: float
+        :keyword max_avg_yield_value: Maximum average yield value of the seasonal field(inclusive).
+        :paramtype max_avg_yield_value: float
+        :keyword avg_yield_unit: Unit of the average yield value attribute.
+        :paramtype avg_yield_unit: str
+        :keyword min_avg_seed_population_value: Minimum average seed population value of the seasonal
          field(inclusive).
-        :type min_avg_seed_population_value: float
-        :param max_avg_seed_population_value: Maximum average seed population value of the seasonal
+        :paramtype min_avg_seed_population_value: float
+        :keyword max_avg_seed_population_value: Maximum average seed population value of the seasonal
          field(inclusive).
-        :type max_avg_seed_population_value: float
-        :param avg_seed_population_unit: Unit of average seed population value attribute.
-        :type avg_seed_population_unit: str
-        :param min_planting_date_time: Minimum planting datetime, sample format: yyyy-MM-ddTHH:mm:ssZ.
-        :type min_planting_date_time: ~datetime.datetime
-        :param max_planting_date_time: Maximum planting datetime, sample format: yyyy-MM-ddTHH:mm:ssZ.
-        :type max_planting_date_time: ~datetime.datetime
-        :param ids: Ids of the resource.
-        :type ids: list[str]
-        :param names: Names of the resource.
-        :type names: list[str]
-        :param property_filters: Filters on key-value pairs within the Properties object.
+        :paramtype max_avg_seed_population_value: float
+        :keyword avg_seed_population_unit: Unit of average seed population value attribute.
+        :paramtype avg_seed_population_unit: str
+        :keyword min_planting_date_time: Minimum planting datetime, sample format: yyyy-MM-
+         ddTHH:mm:ssZ.
+        :paramtype min_planting_date_time: ~datetime.datetime
+        :keyword max_planting_date_time: Maximum planting datetime, sample format: yyyy-MM-
+         ddTHH:mm:ssZ.
+        :paramtype max_planting_date_time: ~datetime.datetime
+        :keyword ids: Ids of the resource.
+        :paramtype ids: list[str]
+        :keyword names: Names of the resource.
+        :paramtype names: list[str]
+        :keyword property_filters: Filters on key-value pairs within the Properties object.
          eg. "{testkey} eq {testvalue}".
-        :type property_filters: list[str]
-        :param statuses: Statuses of the resource.
-        :type statuses: list[str]
-        :param min_created_date_time: Minimum creation date of resource (inclusive).
-        :type min_created_date_time: ~datetime.datetime
-        :param max_created_date_time: Maximum creation date of resource (inclusive).
-        :type max_created_date_time: ~datetime.datetime
-        :param min_last_modified_date_time: Minimum last modified date of resource (inclusive).
-        :type min_last_modified_date_time: ~datetime.datetime
-        :param max_last_modified_date_time: Maximum last modified date of resource (inclusive).
-        :type max_last_modified_date_time: ~datetime.datetime
-        :param max_page_size: Maximum number of items needed (inclusive).
+        :paramtype property_filters: list[str]
+        :keyword statuses: Statuses of the resource.
+        :paramtype statuses: list[str]
+        :keyword min_created_date_time: Minimum creation date of resource (inclusive).
+        :paramtype min_created_date_time: ~datetime.datetime
+        :keyword max_created_date_time: Maximum creation date of resource (inclusive).
+        :paramtype max_created_date_time: ~datetime.datetime
+        :keyword min_last_modified_date_time: Minimum last modified date of resource (inclusive).
+        :paramtype min_last_modified_date_time: ~datetime.datetime
+        :keyword max_last_modified_date_time: Maximum last modified date of resource (inclusive).
+        :paramtype max_last_modified_date_time: ~datetime.datetime
+        :keyword max_page_size: Maximum number of items needed (inclusive).
          Minimum = 10, Maximum = 1000, Default value = 50.
-        :type max_page_size: int
-        :param skip_token: Skip token for getting next set of results.
-        :type skip_token: str
+        :paramtype max_page_size: int
+        :keyword skip_token: Skip token for getting next set of results.
+        :paramtype skip_token: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: An iterator like instance of either Any or the result of cls(response)
         :rtype: ~azure.core.async_paging.AsyncItemPaged[Any]
@@ -232,6 +235,7 @@ class SeasonalFieldsOperations:
 
     def list(
         self,
+        *,
         farm_ids: Optional[List[str]] = None,
         field_ids: Optional[List[str]] = None,
         season_ids: Optional[List[str]] = None,
@@ -259,56 +263,58 @@ class SeasonalFieldsOperations:
     ) -> AsyncIterable[Any]:
         """Returns a paginated list of seasonal field resources across all farmers.
 
-        :param farm_ids: Farm Ids of the resource.
-        :type farm_ids: list[str]
-        :param field_ids: Field Ids of the resource.
-        :type field_ids: list[str]
-        :param season_ids: Season Ids of the resource.
-        :type season_ids: list[str]
-        :param crop_variety_ids: CropVarietyIds of the resource.
-        :type crop_variety_ids: list[str]
-        :param crop_ids: Ids of the crop it belongs to.
-        :type crop_ids: list[str]
-        :param min_avg_yield_value: Minimum average yield value of the seasonal field(inclusive).
-        :type min_avg_yield_value: float
-        :param max_avg_yield_value: Maximum average yield value of the seasonal field(inclusive).
-        :type max_avg_yield_value: float
-        :param avg_yield_unit: Unit of the average yield value attribute.
-        :type avg_yield_unit: str
-        :param min_avg_seed_population_value: Minimum average seed population value of the seasonal
+        :keyword farm_ids: Farm Ids of the resource.
+        :paramtype farm_ids: list[str]
+        :keyword field_ids: Field Ids of the resource.
+        :paramtype field_ids: list[str]
+        :keyword season_ids: Season Ids of the resource.
+        :paramtype season_ids: list[str]
+        :keyword crop_variety_ids: CropVarietyIds of the resource.
+        :paramtype crop_variety_ids: list[str]
+        :keyword crop_ids: Ids of the crop it belongs to.
+        :paramtype crop_ids: list[str]
+        :keyword min_avg_yield_value: Minimum average yield value of the seasonal field(inclusive).
+        :paramtype min_avg_yield_value: float
+        :keyword max_avg_yield_value: Maximum average yield value of the seasonal field(inclusive).
+        :paramtype max_avg_yield_value: float
+        :keyword avg_yield_unit: Unit of the average yield value attribute.
+        :paramtype avg_yield_unit: str
+        :keyword min_avg_seed_population_value: Minimum average seed population value of the seasonal
          field(inclusive).
-        :type min_avg_seed_population_value: float
-        :param max_avg_seed_population_value: Maximum average seed population value of the seasonal
+        :paramtype min_avg_seed_population_value: float
+        :keyword max_avg_seed_population_value: Maximum average seed population value of the seasonal
          field(inclusive).
-        :type max_avg_seed_population_value: float
-        :param avg_seed_population_unit: Unit of average seed population value attribute.
-        :type avg_seed_population_unit: str
-        :param min_planting_date_time: Minimum planting datetime, sample format: yyyy-MM-ddTHH:mm:ssZ.
-        :type min_planting_date_time: ~datetime.datetime
-        :param max_planting_date_time: Maximum planting datetime, sample format: yyyy-MM-ddTHH:mm:ssZ.
-        :type max_planting_date_time: ~datetime.datetime
-        :param ids: Ids of the resource.
-        :type ids: list[str]
-        :param names: Names of the resource.
-        :type names: list[str]
-        :param property_filters: Filters on key-value pairs within the Properties object.
+        :paramtype max_avg_seed_population_value: float
+        :keyword avg_seed_population_unit: Unit of average seed population value attribute.
+        :paramtype avg_seed_population_unit: str
+        :keyword min_planting_date_time: Minimum planting datetime, sample format: yyyy-MM-
+         ddTHH:mm:ssZ.
+        :paramtype min_planting_date_time: ~datetime.datetime
+        :keyword max_planting_date_time: Maximum planting datetime, sample format: yyyy-MM-
+         ddTHH:mm:ssZ.
+        :paramtype max_planting_date_time: ~datetime.datetime
+        :keyword ids: Ids of the resource.
+        :paramtype ids: list[str]
+        :keyword names: Names of the resource.
+        :paramtype names: list[str]
+        :keyword property_filters: Filters on key-value pairs within the Properties object.
          eg. "{testkey} eq {testvalue}".
-        :type property_filters: list[str]
-        :param statuses: Statuses of the resource.
-        :type statuses: list[str]
-        :param min_created_date_time: Minimum creation date of resource (inclusive).
-        :type min_created_date_time: ~datetime.datetime
-        :param max_created_date_time: Maximum creation date of resource (inclusive).
-        :type max_created_date_time: ~datetime.datetime
-        :param min_last_modified_date_time: Minimum last modified date of resource (inclusive).
-        :type min_last_modified_date_time: ~datetime.datetime
-        :param max_last_modified_date_time: Maximum last modified date of resource (inclusive).
-        :type max_last_modified_date_time: ~datetime.datetime
-        :param max_page_size: Maximum number of items needed (inclusive).
+        :paramtype property_filters: list[str]
+        :keyword statuses: Statuses of the resource.
+        :paramtype statuses: list[str]
+        :keyword min_created_date_time: Minimum creation date of resource (inclusive).
+        :paramtype min_created_date_time: ~datetime.datetime
+        :keyword max_created_date_time: Maximum creation date of resource (inclusive).
+        :paramtype max_created_date_time: ~datetime.datetime
+        :keyword min_last_modified_date_time: Minimum last modified date of resource (inclusive).
+        :paramtype min_last_modified_date_time: ~datetime.datetime
+        :keyword max_last_modified_date_time: Maximum last modified date of resource (inclusive).
+        :paramtype max_last_modified_date_time: ~datetime.datetime
+        :keyword max_page_size: Maximum number of items needed (inclusive).
          Minimum = 10, Maximum = 1000, Default value = 50.
-        :type max_page_size: int
-        :param skip_token: Skip token for getting next set of results.
-        :type skip_token: str
+        :paramtype max_page_size: int
+        :keyword skip_token: Skip token for getting next set of results.
+        :paramtype skip_token: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: An iterator like instance of either Any or the result of cls(response)
         :rtype: ~azure.core.async_paging.AsyncItemPaged[Any]
@@ -465,6 +471,7 @@ class SeasonalFieldsOperations:
         self,
         farmer_id: str,
         seasonal_field_id: str,
+        *,
         seasonal_field: Any = None,
         **kwargs: Any
     ) -> Any:
@@ -474,8 +481,8 @@ class SeasonalFieldsOperations:
         :type farmer_id: str
         :param seasonal_field_id: Id of the seasonal field resource.
         :type seasonal_field_id: str
-        :param seasonal_field: Seasonal field resource payload to create or update.
-        :type seasonal_field: Any
+        :keyword seasonal_field: Seasonal field resource payload to create or update.
+        :paramtype seasonal_field: Any
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: Any, or the result of cls(response)
         :rtype: Any
@@ -618,6 +625,7 @@ class SeasonalFieldsOperations:
     async def _create_cascade_delete_jo_initial(
         self,
         job_id: str,
+        *,
         farmer_id: str,
         seasonal_field_id: str,
         **kwargs: Any
@@ -657,6 +665,7 @@ class SeasonalFieldsOperations:
     async def begin_create_cascade_delete_job(
         self,
         job_id: str,
+        *,
         farmer_id: str,
         seasonal_field_id: str,
         **kwargs: Any
@@ -665,10 +674,10 @@ class SeasonalFieldsOperations:
 
         :param job_id: Job ID supplied by end user.
         :type job_id: str
-        :param farmer_id: ID of the associated farmer.
-        :type farmer_id: str
-        :param seasonal_field_id: ID of the seasonalField to be deleted.
-        :type seasonal_field_id: str
+        :keyword farmer_id: ID of the associated farmer.
+        :paramtype farmer_id: str
+        :keyword seasonal_field_id: ID of the seasonalField to be deleted.
+        :paramtype seasonal_field_id: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
         :keyword polling: Pass in True if you'd like the AsyncLROBasePolling polling method,

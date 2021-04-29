@@ -17,7 +17,7 @@ from azure.core.polling import AsyncLROPoller, AsyncNoPolling, AsyncPollingMetho
 from azure.core.polling.async_base_polling import AsyncLROBasePolling
 from azure.farmbeats.core.rest import HttpRequest
 
-from ..rest import fields as rest_fields
+from ...rest import fields as rest_fields
 
 if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
@@ -47,6 +47,7 @@ class FieldsOperations:
     def list_by_farmer_id(
         self,
         farmer_id: str,
+        *,
         farm_ids: Optional[List[str]] = None,
         ids: Optional[List[str]] = None,
         names: Optional[List[str]] = None,
@@ -64,30 +65,30 @@ class FieldsOperations:
 
         :param farmer_id: Id of the associated farmer.
         :type farmer_id: str
-        :param farm_ids: Farm Ids of the resource.
-        :type farm_ids: list[str]
-        :param ids: Ids of the resource.
-        :type ids: list[str]
-        :param names: Names of the resource.
-        :type names: list[str]
-        :param property_filters: Filters on key-value pairs within the Properties object.
+        :keyword farm_ids: Farm Ids of the resource.
+        :paramtype farm_ids: list[str]
+        :keyword ids: Ids of the resource.
+        :paramtype ids: list[str]
+        :keyword names: Names of the resource.
+        :paramtype names: list[str]
+        :keyword property_filters: Filters on key-value pairs within the Properties object.
          eg. "{testkey} eq {testvalue}".
-        :type property_filters: list[str]
-        :param statuses: Statuses of the resource.
-        :type statuses: list[str]
-        :param min_created_date_time: Minimum creation date of resource (inclusive).
-        :type min_created_date_time: ~datetime.datetime
-        :param max_created_date_time: Maximum creation date of resource (inclusive).
-        :type max_created_date_time: ~datetime.datetime
-        :param min_last_modified_date_time: Minimum last modified date of resource (inclusive).
-        :type min_last_modified_date_time: ~datetime.datetime
-        :param max_last_modified_date_time: Maximum last modified date of resource (inclusive).
-        :type max_last_modified_date_time: ~datetime.datetime
-        :param max_page_size: Maximum number of items needed (inclusive).
+        :paramtype property_filters: list[str]
+        :keyword statuses: Statuses of the resource.
+        :paramtype statuses: list[str]
+        :keyword min_created_date_time: Minimum creation date of resource (inclusive).
+        :paramtype min_created_date_time: ~datetime.datetime
+        :keyword max_created_date_time: Maximum creation date of resource (inclusive).
+        :paramtype max_created_date_time: ~datetime.datetime
+        :keyword min_last_modified_date_time: Minimum last modified date of resource (inclusive).
+        :paramtype min_last_modified_date_time: ~datetime.datetime
+        :keyword max_last_modified_date_time: Maximum last modified date of resource (inclusive).
+        :paramtype max_last_modified_date_time: ~datetime.datetime
+        :keyword max_page_size: Maximum number of items needed (inclusive).
          Minimum = 10, Maximum = 1000, Default value = 50.
-        :type max_page_size: int
-        :param skip_token: Skip token for getting next set of results.
-        :type skip_token: str
+        :paramtype max_page_size: int
+        :keyword skip_token: Skip token for getting next set of results.
+        :paramtype skip_token: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: An iterator like instance of either Any or the result of cls(response)
         :rtype: ~azure.core.async_paging.AsyncItemPaged[Any]
@@ -170,6 +171,7 @@ class FieldsOperations:
 
     def list(
         self,
+        *,
         farm_ids: Optional[List[str]] = None,
         ids: Optional[List[str]] = None,
         names: Optional[List[str]] = None,
@@ -185,30 +187,30 @@ class FieldsOperations:
     ) -> AsyncIterable[Any]:
         """Returns a paginated list of field resources across all farmers.
 
-        :param farm_ids: Farm Ids of the resource.
-        :type farm_ids: list[str]
-        :param ids: Ids of the resource.
-        :type ids: list[str]
-        :param names: Names of the resource.
-        :type names: list[str]
-        :param property_filters: Filters on key-value pairs within the Properties object.
+        :keyword farm_ids: Farm Ids of the resource.
+        :paramtype farm_ids: list[str]
+        :keyword ids: Ids of the resource.
+        :paramtype ids: list[str]
+        :keyword names: Names of the resource.
+        :paramtype names: list[str]
+        :keyword property_filters: Filters on key-value pairs within the Properties object.
          eg. "{testkey} eq {testvalue}".
-        :type property_filters: list[str]
-        :param statuses: Statuses of the resource.
-        :type statuses: list[str]
-        :param min_created_date_time: Minimum creation date of resource (inclusive).
-        :type min_created_date_time: ~datetime.datetime
-        :param max_created_date_time: Maximum creation date of resource (inclusive).
-        :type max_created_date_time: ~datetime.datetime
-        :param min_last_modified_date_time: Minimum last modified date of resource (inclusive).
-        :type min_last_modified_date_time: ~datetime.datetime
-        :param max_last_modified_date_time: Maximum last modified date of resource (inclusive).
-        :type max_last_modified_date_time: ~datetime.datetime
-        :param max_page_size: Maximum number of items needed (inclusive).
+        :paramtype property_filters: list[str]
+        :keyword statuses: Statuses of the resource.
+        :paramtype statuses: list[str]
+        :keyword min_created_date_time: Minimum creation date of resource (inclusive).
+        :paramtype min_created_date_time: ~datetime.datetime
+        :keyword max_created_date_time: Maximum creation date of resource (inclusive).
+        :paramtype max_created_date_time: ~datetime.datetime
+        :keyword min_last_modified_date_time: Minimum last modified date of resource (inclusive).
+        :paramtype min_last_modified_date_time: ~datetime.datetime
+        :keyword max_last_modified_date_time: Maximum last modified date of resource (inclusive).
+        :paramtype max_last_modified_date_time: ~datetime.datetime
+        :keyword max_page_size: Maximum number of items needed (inclusive).
          Minimum = 10, Maximum = 1000, Default value = 50.
-        :type max_page_size: int
-        :param skip_token: Skip token for getting next set of results.
-        :type skip_token: str
+        :paramtype max_page_size: int
+        :keyword skip_token: Skip token for getting next set of results.
+        :paramtype skip_token: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: An iterator like instance of either Any or the result of cls(response)
         :rtype: ~azure.core.async_paging.AsyncItemPaged[Any]
@@ -341,6 +343,7 @@ class FieldsOperations:
         self,
         farmer_id: str,
         field_id: str,
+        *,
         field: Any = None,
         **kwargs: Any
     ) -> Any:
@@ -350,8 +353,8 @@ class FieldsOperations:
         :type farmer_id: str
         :param field_id: Id of the field resource.
         :type field_id: str
-        :param field: Field resource payload to create or update.
-        :type field: Any
+        :keyword field: Field resource payload to create or update.
+        :paramtype field: Any
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: Any, or the result of cls(response)
         :rtype: Any
@@ -494,6 +497,7 @@ class FieldsOperations:
     async def _create_cascade_delete_jo_initial(
         self,
         job_id: str,
+        *,
         farmer_id: str,
         field_id: str,
         **kwargs: Any
@@ -533,6 +537,7 @@ class FieldsOperations:
     async def begin_create_cascade_delete_job(
         self,
         job_id: str,
+        *,
         farmer_id: str,
         field_id: str,
         **kwargs: Any
@@ -541,10 +546,10 @@ class FieldsOperations:
 
         :param job_id: Job ID supplied by end user.
         :type job_id: str
-        :param farmer_id: ID of the associated farmer.
-        :type farmer_id: str
-        :param field_id: ID of the field to be deleted.
-        :type field_id: str
+        :keyword farmer_id: ID of the associated farmer.
+        :paramtype farmer_id: str
+        :keyword field_id: ID of the field to be deleted.
+        :paramtype field_id: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
         :keyword polling: Pass in True if you'd like the AsyncLROBasePolling polling method,

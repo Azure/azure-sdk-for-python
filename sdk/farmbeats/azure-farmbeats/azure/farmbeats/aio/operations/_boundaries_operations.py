@@ -17,7 +17,7 @@ from azure.core.polling import AsyncLROPoller, AsyncNoPolling, AsyncPollingMetho
 from azure.core.polling.async_base_polling import AsyncLROBasePolling
 from azure.farmbeats.core.rest import HttpRequest
 
-from ..rest import boundaries as rest_boundaries
+from ...rest import boundaries as rest_boundaries
 
 if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
@@ -47,6 +47,7 @@ class BoundariesOperations:
     def list_by_farmer_id(
         self,
         farmer_id: str,
+        *,
         is_primary: Optional[bool] = None,
         parent_type: Optional[str] = None,
         parent_ids: Optional[List[str]] = None,
@@ -68,38 +69,38 @@ class BoundariesOperations:
 
         :param farmer_id: Id of the associated farmer.
         :type farmer_id: str
-        :param is_primary: Is the boundary primary.
-        :type is_primary: bool
-        :param parent_type: Type of the parent it belongs to.
-        :type parent_type: str
-        :param parent_ids: Parent Ids of the resource.
-        :type parent_ids: list[str]
-        :param min_acreage: Minimum acreage of the boundary (inclusive).
-        :type min_acreage: float
-        :param max_acreage: Maximum acreage of the boundary (inclusive).
-        :type max_acreage: float
-        :param ids: Ids of the resource.
-        :type ids: list[str]
-        :param names: Names of the resource.
-        :type names: list[str]
-        :param property_filters: Filters on key-value pairs within the Properties object.
+        :keyword is_primary: Is the boundary primary.
+        :paramtype is_primary: bool
+        :keyword parent_type: Type of the parent it belongs to.
+        :paramtype parent_type: str
+        :keyword parent_ids: Parent Ids of the resource.
+        :paramtype parent_ids: list[str]
+        :keyword min_acreage: Minimum acreage of the boundary (inclusive).
+        :paramtype min_acreage: float
+        :keyword max_acreage: Maximum acreage of the boundary (inclusive).
+        :paramtype max_acreage: float
+        :keyword ids: Ids of the resource.
+        :paramtype ids: list[str]
+        :keyword names: Names of the resource.
+        :paramtype names: list[str]
+        :keyword property_filters: Filters on key-value pairs within the Properties object.
          eg. "{testkey} eq {testvalue}".
-        :type property_filters: list[str]
-        :param statuses: Statuses of the resource.
-        :type statuses: list[str]
-        :param min_created_date_time: Minimum creation date of resource (inclusive).
-        :type min_created_date_time: ~datetime.datetime
-        :param max_created_date_time: Maximum creation date of resource (inclusive).
-        :type max_created_date_time: ~datetime.datetime
-        :param min_last_modified_date_time: Minimum last modified date of resource (inclusive).
-        :type min_last_modified_date_time: ~datetime.datetime
-        :param max_last_modified_date_time: Maximum last modified date of resource (inclusive).
-        :type max_last_modified_date_time: ~datetime.datetime
-        :param max_page_size: Maximum number of items needed (inclusive).
+        :paramtype property_filters: list[str]
+        :keyword statuses: Statuses of the resource.
+        :paramtype statuses: list[str]
+        :keyword min_created_date_time: Minimum creation date of resource (inclusive).
+        :paramtype min_created_date_time: ~datetime.datetime
+        :keyword max_created_date_time: Maximum creation date of resource (inclusive).
+        :paramtype max_created_date_time: ~datetime.datetime
+        :keyword min_last_modified_date_time: Minimum last modified date of resource (inclusive).
+        :paramtype min_last_modified_date_time: ~datetime.datetime
+        :keyword max_last_modified_date_time: Maximum last modified date of resource (inclusive).
+        :paramtype max_last_modified_date_time: ~datetime.datetime
+        :keyword max_page_size: Maximum number of items needed (inclusive).
          Minimum = 10, Maximum = 1000, Default value = 50.
-        :type max_page_size: int
-        :param skip_token: Skip token for getting next set of results.
-        :type skip_token: str
+        :paramtype max_page_size: int
+        :keyword skip_token: Skip token for getting next set of results.
+        :paramtype skip_token: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: An iterator like instance of either Any or the result of cls(response)
         :rtype: ~azure.core.async_paging.AsyncItemPaged[Any]
@@ -191,6 +192,7 @@ class BoundariesOperations:
     def search_by_farmer_id(
         self,
         farmer_id: str,
+        *,
         query: Any = None,
         **kwargs: Any
     ) -> AsyncIterable[Any]:
@@ -198,8 +200,8 @@ class BoundariesOperations:
 
         :param farmer_id: Id of the farmer.
         :type farmer_id: str
-        :param query: Query filters.
-        :type query: Any
+        :keyword query: Query filters.
+        :paramtype query: Any
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: An iterator like instance of either Any or the result of cls(response)
         :rtype: ~azure.core.async_paging.AsyncItemPaged[Any]
@@ -215,7 +217,7 @@ class BoundariesOperations:
             if not next_link:
                 content_type = kwargs.pop("content_type", "application/json")
                 if query is not None:
-                    json = self._serialize.body(query, 'SearchBoundaryQuery')
+                    json = query
                 else:
                     json = None
 
@@ -232,7 +234,7 @@ class BoundariesOperations:
             else:
                 content_type = kwargs.pop("content_type", "application/json")
                 if query is not None:
-                    json = self._serialize.body(query, 'SearchBoundaryQuery')
+                    json = query
                 else:
                     json = None
 
@@ -278,6 +280,7 @@ class BoundariesOperations:
 
     def list(
         self,
+        *,
         is_primary: Optional[bool] = None,
         parent_type: Optional[str] = None,
         parent_ids: Optional[List[str]] = None,
@@ -297,38 +300,38 @@ class BoundariesOperations:
     ) -> AsyncIterable[Any]:
         """Returns a paginated list of boundary resources across all farmers.
 
-        :param is_primary: Is the boundary primary.
-        :type is_primary: bool
-        :param parent_type: Type of the parent it belongs to.
-        :type parent_type: str
-        :param parent_ids: Parent Ids of the resource.
-        :type parent_ids: list[str]
-        :param min_acreage: Minimum acreage of the boundary (inclusive).
-        :type min_acreage: float
-        :param max_acreage: Maximum acreage of the boundary (inclusive).
-        :type max_acreage: float
-        :param ids: Ids of the resource.
-        :type ids: list[str]
-        :param names: Names of the resource.
-        :type names: list[str]
-        :param property_filters: Filters on key-value pairs within the Properties object.
+        :keyword is_primary: Is the boundary primary.
+        :paramtype is_primary: bool
+        :keyword parent_type: Type of the parent it belongs to.
+        :paramtype parent_type: str
+        :keyword parent_ids: Parent Ids of the resource.
+        :paramtype parent_ids: list[str]
+        :keyword min_acreage: Minimum acreage of the boundary (inclusive).
+        :paramtype min_acreage: float
+        :keyword max_acreage: Maximum acreage of the boundary (inclusive).
+        :paramtype max_acreage: float
+        :keyword ids: Ids of the resource.
+        :paramtype ids: list[str]
+        :keyword names: Names of the resource.
+        :paramtype names: list[str]
+        :keyword property_filters: Filters on key-value pairs within the Properties object.
          eg. "{testkey} eq {testvalue}".
-        :type property_filters: list[str]
-        :param statuses: Statuses of the resource.
-        :type statuses: list[str]
-        :param min_created_date_time: Minimum creation date of resource (inclusive).
-        :type min_created_date_time: ~datetime.datetime
-        :param max_created_date_time: Maximum creation date of resource (inclusive).
-        :type max_created_date_time: ~datetime.datetime
-        :param min_last_modified_date_time: Minimum last modified date of resource (inclusive).
-        :type min_last_modified_date_time: ~datetime.datetime
-        :param max_last_modified_date_time: Maximum last modified date of resource (inclusive).
-        :type max_last_modified_date_time: ~datetime.datetime
-        :param max_page_size: Maximum number of items needed (inclusive).
+        :paramtype property_filters: list[str]
+        :keyword statuses: Statuses of the resource.
+        :paramtype statuses: list[str]
+        :keyword min_created_date_time: Minimum creation date of resource (inclusive).
+        :paramtype min_created_date_time: ~datetime.datetime
+        :keyword max_created_date_time: Maximum creation date of resource (inclusive).
+        :paramtype max_created_date_time: ~datetime.datetime
+        :keyword min_last_modified_date_time: Minimum last modified date of resource (inclusive).
+        :paramtype min_last_modified_date_time: ~datetime.datetime
+        :keyword max_last_modified_date_time: Maximum last modified date of resource (inclusive).
+        :paramtype max_last_modified_date_time: ~datetime.datetime
+        :keyword max_page_size: Maximum number of items needed (inclusive).
          Minimum = 10, Maximum = 1000, Default value = 50.
-        :type max_page_size: int
-        :param skip_token: Skip token for getting next set of results.
-        :type skip_token: str
+        :paramtype max_page_size: int
+        :keyword skip_token: Skip token for getting next set of results.
+        :paramtype skip_token: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: An iterator like instance of either Any or the result of cls(response)
         :rtype: ~azure.core.async_paging.AsyncItemPaged[Any]
@@ -417,13 +420,14 @@ class BoundariesOperations:
 
     def search(
         self,
+        *,
         query: Any = None,
         **kwargs: Any
     ) -> AsyncIterable[Any]:
         """Search for boundaries across all farmers by fields and intersecting geometry.
 
-        :param query: Query filters.
-        :type query: Any
+        :keyword query: Query filters.
+        :paramtype query: Any
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: An iterator like instance of either Any or the result of cls(response)
         :rtype: ~azure.core.async_paging.AsyncItemPaged[Any]
@@ -439,7 +443,7 @@ class BoundariesOperations:
             if not next_link:
                 content_type = kwargs.pop("content_type", "application/json")
                 if query is not None:
-                    json = self._serialize.body(query, 'SearchBoundaryQuery')
+                    json = query
                 else:
                     json = None
 
@@ -455,7 +459,7 @@ class BoundariesOperations:
             else:
                 content_type = kwargs.pop("content_type", "application/json")
                 if query is not None:
-                    json = self._serialize.body(query, 'SearchBoundaryQuery')
+                    json = query
                 else:
                     json = None
 
@@ -547,6 +551,7 @@ class BoundariesOperations:
     async def _create_cascade_delete_jo_initial(
         self,
         job_id: str,
+        *,
         farmer_id: str,
         boundary_id: str,
         **kwargs: Any
@@ -586,6 +591,7 @@ class BoundariesOperations:
     async def begin_create_cascade_delete_job(
         self,
         job_id: str,
+        *,
         farmer_id: str,
         boundary_id: str,
         **kwargs: Any
@@ -594,10 +600,10 @@ class BoundariesOperations:
 
         :param job_id: Job ID supplied by end user.
         :type job_id: str
-        :param farmer_id: ID of the associated farmer.
-        :type farmer_id: str
-        :param boundary_id: ID of the boundary to be deleted.
-        :type boundary_id: str
+        :keyword farmer_id: ID of the associated farmer.
+        :paramtype farmer_id: str
+        :keyword boundary_id: ID of the boundary to be deleted.
+        :paramtype boundary_id: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
         :keyword polling: Pass in True if you'd like the AsyncLROBasePolling polling method,
@@ -707,6 +713,7 @@ class BoundariesOperations:
         self,
         farmer_id: str,
         boundary_id: str,
+        *,
         boundary: Any = None,
         **kwargs: Any
     ) -> Any:
@@ -716,8 +723,8 @@ class BoundariesOperations:
         :type farmer_id: str
         :param boundary_id: Id of the boundary resource.
         :type boundary_id: str
-        :param boundary: Boundary resource payload to create or update.
-        :type boundary: Any
+        :keyword boundary: Boundary resource payload to create or update.
+        :paramtype boundary: Any
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: Any, or the result of cls(response)
         :rtype: Any
@@ -815,6 +822,7 @@ class BoundariesOperations:
         self,
         farmer_id: str,
         boundary_id: str,
+        *,
         other_farmer_id: str,
         other_boundary_id: str,
         **kwargs: Any
@@ -825,10 +833,10 @@ class BoundariesOperations:
         :type farmer_id: str
         :param boundary_id: Id of the boundary.
         :type boundary_id: str
-        :param other_farmer_id: FarmerId of the other field.
-        :type other_farmer_id: str
-        :param other_boundary_id: Id of the other boundary.
-        :type other_boundary_id: str
+        :keyword other_farmer_id: FarmerId of the other field.
+        :paramtype other_farmer_id: str
+        :keyword other_boundary_id: Id of the other boundary.
+        :paramtype other_boundary_id: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: Any, or the result of cls(response)
         :rtype: Any or None

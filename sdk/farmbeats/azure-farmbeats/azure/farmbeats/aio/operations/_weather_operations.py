@@ -17,7 +17,7 @@ from azure.core.polling import AsyncLROPoller, AsyncNoPolling, AsyncPollingMetho
 from azure.core.polling.async_base_polling import AsyncLROBasePolling
 from azure.farmbeats.core.rest import HttpRequest
 
-from ..rest import weather as rest_weather
+from ...rest import weather as rest_weather
 
 if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
@@ -46,6 +46,7 @@ class WeatherOperations:
 
     def list(
         self,
+        *,
         farmer_id: str,
         boundary_id: str,
         extension_id: str,
@@ -59,27 +60,27 @@ class WeatherOperations:
     ) -> AsyncIterable[Any]:
         """Returns a paginated list of weather data.
 
-        :param farmer_id: Farmer ID.
-        :type farmer_id: str
-        :param boundary_id: Boundary ID.
-        :type boundary_id: str
-        :param extension_id: ID of the weather extension.
-        :type extension_id: str
-        :param weather_data_type: Type of weather data (forecast/historical).
-        :type weather_data_type: str
-        :param granularity: Granularity of weather data (daily/hourly).
-        :type granularity: str
-        :param start_date_time: Weather data start UTC date-time (inclusive), sample format: yyyy-MM-
+        :keyword farmer_id: Farmer ID.
+        :paramtype farmer_id: str
+        :keyword boundary_id: Boundary ID.
+        :paramtype boundary_id: str
+        :keyword extension_id: ID of the weather extension.
+        :paramtype extension_id: str
+        :keyword weather_data_type: Type of weather data (forecast/historical).
+        :paramtype weather_data_type: str
+        :keyword granularity: Granularity of weather data (daily/hourly).
+        :paramtype granularity: str
+        :keyword start_date_time: Weather data start UTC date-time (inclusive), sample format: yyyy-MM-
          ddTHH:mm:ssZ.
-        :type start_date_time: ~datetime.datetime
-        :param end_date_time: Weather data end UTC date-time (inclusive), sample format: yyyy-MM-
+        :paramtype start_date_time: ~datetime.datetime
+        :keyword end_date_time: Weather data end UTC date-time (inclusive), sample format: yyyy-MM-
          ddTHH:mm:ssZ.
-        :type end_date_time: ~datetime.datetime
-        :param max_page_size: Maximum number of items needed (inclusive).
+        :paramtype end_date_time: ~datetime.datetime
+        :keyword max_page_size: Maximum number of items needed (inclusive).
          Minimum = 10, Maximum = 1000, Default value = 50.
-        :type max_page_size: int
-        :param skip_token: Skip token for getting next set of results.
-        :type skip_token: str
+        :paramtype max_page_size: int
+        :keyword skip_token: Skip token for getting next set of results.
+        :paramtype skip_token: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: An iterator like instance of either Any or the result of cls(response)
         :rtype: ~azure.core.async_paging.AsyncItemPaged[Any]
@@ -201,6 +202,7 @@ class WeatherOperations:
     async def _create_data_ingestion_jo_initial(
         self,
         job_id: str,
+        *,
         job: Any = None,
         **kwargs: Any
     ) -> Any:
@@ -246,6 +248,7 @@ class WeatherOperations:
     async def begin_create_data_ingestion_job(
         self,
         job_id: str,
+        *,
         job: Any = None,
         **kwargs: Any
     ) -> AsyncLROPoller[Any]:
@@ -253,8 +256,8 @@ class WeatherOperations:
 
         :param job_id: Job id supplied by user.
         :type job_id: str
-        :param job: Job parameters supplied by user.
-        :type job: Any
+        :keyword job: Job parameters supplied by user.
+        :paramtype job: Any
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
         :keyword polling: Pass in True if you'd like the AsyncLROBasePolling polling method,
@@ -355,6 +358,7 @@ class WeatherOperations:
     async def _create_data_delete_jo_initial(
         self,
         job_id: str,
+        *,
         job: Any = None,
         **kwargs: Any
     ) -> Any:
@@ -400,6 +404,7 @@ class WeatherOperations:
     async def begin_create_data_delete_job(
         self,
         job_id: str,
+        *,
         job: Any = None,
         **kwargs: Any
     ) -> AsyncLROPoller[Any]:
@@ -407,8 +412,8 @@ class WeatherOperations:
 
         :param job_id: Job Id supplied by end user.
         :type job_id: str
-        :param job: Job parameters supplied by user.
-        :type job: Any
+        :keyword job: Job parameters supplied by user.
+        :paramtype job: Any
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
         :keyword polling: Pass in True if you'd like the AsyncLROBasePolling polling method,

@@ -15,7 +15,7 @@ from azure.core.pipeline import PipelineResponse
 from azure.core.pipeline.transport import AsyncHttpResponse
 from azure.farmbeats.core.rest import HttpRequest
 
-from ..rest import oauth_tokens as rest_oauth_tokens
+from ...rest import oauth_tokens as rest_oauth_tokens
 
 if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
@@ -44,6 +44,7 @@ class OAuthTokensOperations:
 
     def list(
         self,
+        *,
         auth_provider_ids: Optional[List[str]] = None,
         farmer_ids: Optional[List[str]] = None,
         is_valid: Optional[bool] = None,
@@ -57,25 +58,25 @@ class OAuthTokensOperations:
     ) -> AsyncIterable[Any]:
         """Returns a list of OAuthToken documents.
 
-        :param auth_provider_ids: Name of AuthProvider.
-        :type auth_provider_ids: list[str]
-        :param farmer_ids: List of farmers.
-        :type farmer_ids: list[str]
-        :param is_valid: If the token object is valid.
-        :type is_valid: bool
-        :param min_created_date_time: Minimum creation date of resource (inclusive).
-        :type min_created_date_time: ~datetime.datetime
-        :param max_created_date_time: Maximum creation date of resource (inclusive).
-        :type max_created_date_time: ~datetime.datetime
-        :param min_last_modified_date_time: Minimum last modified date of resource (inclusive).
-        :type min_last_modified_date_time: ~datetime.datetime
-        :param max_last_modified_date_time: Maximum last modified date of resource (inclusive).
-        :type max_last_modified_date_time: ~datetime.datetime
-        :param max_page_size: Maximum number of items needed (inclusive).
+        :keyword auth_provider_ids: Name of AuthProvider.
+        :paramtype auth_provider_ids: list[str]
+        :keyword farmer_ids: List of farmers.
+        :paramtype farmer_ids: list[str]
+        :keyword is_valid: If the token object is valid.
+        :paramtype is_valid: bool
+        :keyword min_created_date_time: Minimum creation date of resource (inclusive).
+        :paramtype min_created_date_time: ~datetime.datetime
+        :keyword max_created_date_time: Maximum creation date of resource (inclusive).
+        :paramtype max_created_date_time: ~datetime.datetime
+        :keyword min_last_modified_date_time: Minimum last modified date of resource (inclusive).
+        :paramtype min_last_modified_date_time: ~datetime.datetime
+        :keyword max_last_modified_date_time: Maximum last modified date of resource (inclusive).
+        :paramtype max_last_modified_date_time: ~datetime.datetime
+        :keyword max_page_size: Maximum number of items needed (inclusive).
          Minimum = 10, Maximum = 1000, Default value = 50.
-        :type max_page_size: int
-        :param skip_token: Skip token for getting next set of results.
-        :type skip_token: str
+        :paramtype max_page_size: int
+        :keyword skip_token: Skip token for getting next set of results.
+        :paramtype skip_token: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: An iterator like instance of either Any or the result of cls(response)
         :rtype: ~azure.core.async_paging.AsyncItemPaged[Any]
@@ -152,16 +153,17 @@ class OAuthTokensOperations:
 
     async def delete(
         self,
+        *,
         farmer_id: str,
         oauth_provider_id: str,
         **kwargs: Any
     ) -> None:
         """Deletes OAuth Token for given oauth provider Id and farmer Id.
 
-        :param farmer_id: Id of the associated farmer.
-        :type farmer_id: str
-        :param oauth_provider_id: Id of the associated oauth provider.
-        :type oauth_provider_id: str
+        :keyword farmer_id: Id of the associated farmer.
+        :paramtype farmer_id: str
+        :keyword oauth_provider_id: Id of the associated oauth provider.
+        :paramtype oauth_provider_id: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: None, or the result of cls(response)
         :rtype: None
@@ -196,13 +198,14 @@ class OAuthTokensOperations:
 
     async def get_o_auth_connection_link(
         self,
+        *,
         oauth_connect_request: Any = None,
         **kwargs: Any
     ) -> str:
         """Returns Connection link needed in the OAuth flow.
 
-        :param oauth_connect_request: OAuth Connect Request.
-        :type oauth_connect_request: Any
+        :keyword oauth_connect_request: OAuth Connect Request.
+        :paramtype oauth_connect_request: Any
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: str, or the result of cls(response)
         :rtype: str

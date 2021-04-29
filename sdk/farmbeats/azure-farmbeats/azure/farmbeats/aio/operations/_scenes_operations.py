@@ -17,7 +17,7 @@ from azure.core.polling import AsyncLROPoller, AsyncNoPolling, AsyncPollingMetho
 from azure.core.polling.async_base_polling import AsyncLROBasePolling
 from azure.farmbeats.core.rest import HttpRequest
 
-from ..rest import scenes as rest_scenes
+from ...rest import scenes as rest_scenes
 
 if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
@@ -46,6 +46,7 @@ class ScenesOperations:
 
     def list(
         self,
+        *,
         farmer_id: str,
         boundary_id: str,
         provider: str = "Microsoft",
@@ -63,36 +64,36 @@ class ScenesOperations:
     ) -> AsyncIterable[Any]:
         """Returns a paginated list of scene resources.
 
-        :param farmer_id: FarmerId.
-        :type farmer_id: str
-        :param boundary_id: BoundaryId.
-        :type boundary_id: str
-        :param provider: Provider name of scene data.
-        :type provider: str
-        :param source: Source name of scene data, default value Sentinel_2_L2A (Sentinel 2 L2A).
-        :type source: str
-        :param start_date_time: Scene start UTC datetime (inclusive), sample format: yyyy-MM-
+        :keyword farmer_id: FarmerId.
+        :paramtype farmer_id: str
+        :keyword boundary_id: BoundaryId.
+        :paramtype boundary_id: str
+        :keyword provider: Provider name of scene data.
+        :paramtype provider: str
+        :keyword source: Source name of scene data, default value Sentinel_2_L2A (Sentinel 2 L2A).
+        :paramtype source: str
+        :keyword start_date_time: Scene start UTC datetime (inclusive), sample format: yyyy-MM-
          ddThh:mm:ssZ.
-        :type start_date_time: ~datetime.datetime
-        :param end_date_time: Scene end UTC datetime (inclusive), sample format: yyyy-MM-dThh:mm:ssZ.
-        :type end_date_time: ~datetime.datetime
-        :param max_cloud_coverage_percentage: Filter scenes with cloud coverage percentage less than
+        :paramtype start_date_time: ~datetime.datetime
+        :keyword end_date_time: Scene end UTC datetime (inclusive), sample format: yyyy-MM-dThh:mm:ssZ.
+        :paramtype end_date_time: ~datetime.datetime
+        :keyword max_cloud_coverage_percentage: Filter scenes with cloud coverage percentage less than
          max value. Range [0 to 100.0].
-        :type max_cloud_coverage_percentage: float
-        :param max_dark_pixel_coverage_percentage: Filter scenes with dark pixel coverage percentage
+        :paramtype max_cloud_coverage_percentage: float
+        :keyword max_dark_pixel_coverage_percentage: Filter scenes with dark pixel coverage percentage
          less than max value. Range [0 to 100.0].
-        :type max_dark_pixel_coverage_percentage: float
-        :param image_names: List of image names to be filtered.
-        :type image_names: list[str]
-        :param image_resolutions: List of image resolutions in meters to be filtered.
-        :type image_resolutions: list[float]
-        :param image_formats: List of image formats to be filtered.
-        :type image_formats: list[str]
-        :param max_page_size: Maximum number of items needed (inclusive).
+        :paramtype max_dark_pixel_coverage_percentage: float
+        :keyword image_names: List of image names to be filtered.
+        :paramtype image_names: list[str]
+        :keyword image_resolutions: List of image resolutions in meters to be filtered.
+        :paramtype image_resolutions: list[float]
+        :keyword image_formats: List of image formats to be filtered.
+        :paramtype image_formats: list[str]
+        :keyword max_page_size: Maximum number of items needed (inclusive).
          Minimum = 10, Maximum = 1000, Default value = 50.
-        :type max_page_size: int
-        :param skip_token: Skip token for getting next set of results.
-        :type skip_token: str
+        :paramtype max_page_size: int
+        :keyword skip_token: Skip token for getting next set of results.
+        :paramtype skip_token: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: An iterator like instance of either Any or the result of cls(response)
         :rtype: ~azure.core.async_paging.AsyncItemPaged[Any]
@@ -178,6 +179,7 @@ class ScenesOperations:
     async def _create_satellite_data_ingestion_jo_initial(
         self,
         job_id: str,
+        *,
         job: Any = None,
         **kwargs: Any
     ) -> Any:
@@ -223,6 +225,7 @@ class ScenesOperations:
     async def begin_create_satellite_data_ingestion_job(
         self,
         job_id: str,
+        *,
         job: Any = None,
         **kwargs: Any
     ) -> AsyncLROPoller[Any]:
@@ -230,8 +233,8 @@ class ScenesOperations:
 
         :param job_id: JobId provided by user.
         :type job_id: str
-        :param job: Job parameters supplied by user.
-        :type job: Any
+        :keyword job: Job parameters supplied by user.
+        :paramtype job: Any
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
         :keyword polling: Pass in True if you'd like the AsyncLROBasePolling polling method,
@@ -331,13 +334,14 @@ class ScenesOperations:
 
     async def download(
         self,
+        *,
         file_path: str,
         **kwargs: Any
     ) -> IO:
         """Downloads and returns file Stream as response for the given input filePath.
 
-        :param file_path: cloud storage path of scene file.
-        :type file_path: str
+        :keyword file_path: cloud storage path of scene file.
+        :paramtype file_path: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: IO, or the result of cls(response)
         :rtype: IO

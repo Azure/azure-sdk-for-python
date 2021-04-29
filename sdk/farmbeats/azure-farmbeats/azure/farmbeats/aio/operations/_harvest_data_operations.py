@@ -15,7 +15,7 @@ from azure.core.pipeline import PipelineResponse
 from azure.core.pipeline.transport import AsyncHttpResponse
 from azure.farmbeats.core.rest import HttpRequest
 
-from ..rest import harvest_data as rest_harvest_data
+from ...rest import harvest_data as rest_harvest_data
 
 if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
@@ -45,6 +45,7 @@ class HarvestDataOperations:
     def list_by_farmer_id(
         self,
         farmer_id: str,
+        *,
         min_total_yield: Optional[float] = None,
         max_total_yield: Optional[float] = None,
         min_avg_yield: Optional[float] = None,
@@ -84,80 +85,80 @@ class HarvestDataOperations:
 
         :param farmer_id: ID of the associated farmer.
         :type farmer_id: str
-        :param min_total_yield: Minimum Yield value(inclusive).
-        :type min_total_yield: float
-        :param max_total_yield: Maximum Yield value (inclusive).
-        :type max_total_yield: float
-        :param min_avg_yield: Minimum AvgYield value(inclusive).
-        :type min_avg_yield: float
-        :param max_avg_yield: Maximum AvgYield value (inclusive).
-        :type max_avg_yield: float
-        :param min_total_wet_mass: Minimum Total WetMass value(inclusive).
-        :type min_total_wet_mass: float
-        :param max_total_wet_mass: Maximum Total WetMass value (inclusive).
-        :type max_total_wet_mass: float
-        :param min_avg_wet_mass: Minimum AvgWetMass value(inclusive).
-        :type min_avg_wet_mass: float
-        :param max_avg_wet_mass: Maximum AvgWetMass value (inclusive).
-        :type max_avg_wet_mass: float
-        :param min_avg_moisture: Minimum AvgMoisture value(inclusive).
-        :type min_avg_moisture: float
-        :param max_avg_moisture: Maximum AvgMoisture value (inclusive).
-        :type max_avg_moisture: float
-        :param min_avg_speed: Minimum AvgSpeed value(inclusive).
-        :type min_avg_speed: float
-        :param max_avg_speed: Maximum AvgSpeed value (inclusive).
-        :type max_avg_speed: float
-        :param sources: Sources of the operation data.
-        :type sources: list[str]
-        :param associated_boundary_ids: Boundary IDs associated with operation data.
-        :type associated_boundary_ids: list[str]
-        :param operation_boundary_ids: Operation boundary IDs associated with operation data.
-        :type operation_boundary_ids: list[str]
-        :param min_operation_start_date_time: Minimum start date-time of the operation data, sample
+        :keyword min_total_yield: Minimum Yield value(inclusive).
+        :paramtype min_total_yield: float
+        :keyword max_total_yield: Maximum Yield value (inclusive).
+        :paramtype max_total_yield: float
+        :keyword min_avg_yield: Minimum AvgYield value(inclusive).
+        :paramtype min_avg_yield: float
+        :keyword max_avg_yield: Maximum AvgYield value (inclusive).
+        :paramtype max_avg_yield: float
+        :keyword min_total_wet_mass: Minimum Total WetMass value(inclusive).
+        :paramtype min_total_wet_mass: float
+        :keyword max_total_wet_mass: Maximum Total WetMass value (inclusive).
+        :paramtype max_total_wet_mass: float
+        :keyword min_avg_wet_mass: Minimum AvgWetMass value(inclusive).
+        :paramtype min_avg_wet_mass: float
+        :keyword max_avg_wet_mass: Maximum AvgWetMass value (inclusive).
+        :paramtype max_avg_wet_mass: float
+        :keyword min_avg_moisture: Minimum AvgMoisture value(inclusive).
+        :paramtype min_avg_moisture: float
+        :keyword max_avg_moisture: Maximum AvgMoisture value (inclusive).
+        :paramtype max_avg_moisture: float
+        :keyword min_avg_speed: Minimum AvgSpeed value(inclusive).
+        :paramtype min_avg_speed: float
+        :keyword max_avg_speed: Maximum AvgSpeed value (inclusive).
+        :paramtype max_avg_speed: float
+        :keyword sources: Sources of the operation data.
+        :paramtype sources: list[str]
+        :keyword associated_boundary_ids: Boundary IDs associated with operation data.
+        :paramtype associated_boundary_ids: list[str]
+        :keyword operation_boundary_ids: Operation boundary IDs associated with operation data.
+        :paramtype operation_boundary_ids: list[str]
+        :keyword min_operation_start_date_time: Minimum start date-time of the operation data, sample
          format: yyyy-MM-ddTHH:mm:ssZ (inclusive).
-        :type min_operation_start_date_time: ~datetime.datetime
-        :param max_operation_start_date_time: Maximum start date-time of the operation data, sample
+        :paramtype min_operation_start_date_time: ~datetime.datetime
+        :keyword max_operation_start_date_time: Maximum start date-time of the operation data, sample
          format: yyyy-MM-ddTHH:mm:ssZ (inclusive).
-        :type max_operation_start_date_time: ~datetime.datetime
-        :param min_operation_end_date_time: Minimum end date-time of the operation data, sample format:
-         yyyy-MM-ddTHH:mm:ssZ (inclusive).
-        :type min_operation_end_date_time: ~datetime.datetime
-        :param max_operation_end_date_time: Maximum end date-time of the operation data, sample format:
-         yyyy-MM-ddTHH:mm:ssZ (inclusive).
-        :type max_operation_end_date_time: ~datetime.datetime
-        :param min_operation_modified_date_time: Minimum modified date-time of the operation data,
+        :paramtype max_operation_start_date_time: ~datetime.datetime
+        :keyword min_operation_end_date_time: Minimum end date-time of the operation data, sample
+         format: yyyy-MM-ddTHH:mm:ssZ (inclusive).
+        :paramtype min_operation_end_date_time: ~datetime.datetime
+        :keyword max_operation_end_date_time: Maximum end date-time of the operation data, sample
+         format: yyyy-MM-ddTHH:mm:ssZ (inclusive).
+        :paramtype max_operation_end_date_time: ~datetime.datetime
+        :keyword min_operation_modified_date_time: Minimum modified date-time of the operation data,
          sample format: yyyy-MM-ddTHH:mm:ssZ (inclusive).
-        :type min_operation_modified_date_time: ~datetime.datetime
-        :param max_operation_modified_date_time: Maximum modified date-time of the operation data,
+        :paramtype min_operation_modified_date_time: ~datetime.datetime
+        :keyword max_operation_modified_date_time: Maximum modified date-time of the operation data,
          sample format: yyyy-MM-ddTHH:mm:ssZ (inclusive).
-        :type max_operation_modified_date_time: ~datetime.datetime
-        :param min_area: Minimum area for which operation was applied (inclusive).
-        :type min_area: float
-        :param max_area: Maximum area for which operation was applied (inclusive).
-        :type max_area: float
-        :param ids: Ids of the resource.
-        :type ids: list[str]
-        :param names: Names of the resource.
-        :type names: list[str]
-        :param property_filters: Filters on key-value pairs within the Properties object.
+        :paramtype max_operation_modified_date_time: ~datetime.datetime
+        :keyword min_area: Minimum area for which operation was applied (inclusive).
+        :paramtype min_area: float
+        :keyword max_area: Maximum area for which operation was applied (inclusive).
+        :paramtype max_area: float
+        :keyword ids: Ids of the resource.
+        :paramtype ids: list[str]
+        :keyword names: Names of the resource.
+        :paramtype names: list[str]
+        :keyword property_filters: Filters on key-value pairs within the Properties object.
          eg. "{testkey} eq {testvalue}".
-        :type property_filters: list[str]
-        :param statuses: Statuses of the resource.
-        :type statuses: list[str]
-        :param min_created_date_time: Minimum creation date of resource (inclusive).
-        :type min_created_date_time: ~datetime.datetime
-        :param max_created_date_time: Maximum creation date of resource (inclusive).
-        :type max_created_date_time: ~datetime.datetime
-        :param min_last_modified_date_time: Minimum last modified date of resource (inclusive).
-        :type min_last_modified_date_time: ~datetime.datetime
-        :param max_last_modified_date_time: Maximum last modified date of resource (inclusive).
-        :type max_last_modified_date_time: ~datetime.datetime
-        :param max_page_size: Maximum number of items needed (inclusive).
+        :paramtype property_filters: list[str]
+        :keyword statuses: Statuses of the resource.
+        :paramtype statuses: list[str]
+        :keyword min_created_date_time: Minimum creation date of resource (inclusive).
+        :paramtype min_created_date_time: ~datetime.datetime
+        :keyword max_created_date_time: Maximum creation date of resource (inclusive).
+        :paramtype max_created_date_time: ~datetime.datetime
+        :keyword min_last_modified_date_time: Minimum last modified date of resource (inclusive).
+        :paramtype min_last_modified_date_time: ~datetime.datetime
+        :keyword max_last_modified_date_time: Maximum last modified date of resource (inclusive).
+        :paramtype max_last_modified_date_time: ~datetime.datetime
+        :keyword max_page_size: Maximum number of items needed (inclusive).
          Minimum = 10, Maximum = 1000, Default value = 50.
-        :type max_page_size: int
-        :param skip_token: Skip token for getting next set of results.
-        :type skip_token: str
+        :paramtype max_page_size: int
+        :keyword skip_token: Skip token for getting next set of results.
+        :paramtype skip_token: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: An iterator like instance of either Any or the result of cls(response)
         :rtype: ~azure.core.async_paging.AsyncItemPaged[Any]
@@ -284,6 +285,7 @@ class HarvestDataOperations:
 
     def list(
         self,
+        *,
         min_total_yield: Optional[float] = None,
         max_total_yield: Optional[float] = None,
         min_avg_yield: Optional[float] = None,
@@ -321,80 +323,80 @@ class HarvestDataOperations:
     ) -> AsyncIterable[Any]:
         """Returns a paginated list of harvest data resources across all farmers.
 
-        :param min_total_yield: Minimum Yield value(inclusive).
-        :type min_total_yield: float
-        :param max_total_yield: Maximum Yield value (inclusive).
-        :type max_total_yield: float
-        :param min_avg_yield: Minimum AvgYield value(inclusive).
-        :type min_avg_yield: float
-        :param max_avg_yield: Maximum AvgYield value (inclusive).
-        :type max_avg_yield: float
-        :param min_total_wet_mass: Minimum Total WetMass value(inclusive).
-        :type min_total_wet_mass: float
-        :param max_total_wet_mass: Maximum Total WetMass value (inclusive).
-        :type max_total_wet_mass: float
-        :param min_avg_wet_mass: Minimum AvgWetMass value(inclusive).
-        :type min_avg_wet_mass: float
-        :param max_avg_wet_mass: Maximum AvgWetMass value (inclusive).
-        :type max_avg_wet_mass: float
-        :param min_avg_moisture: Minimum AvgMoisture value(inclusive).
-        :type min_avg_moisture: float
-        :param max_avg_moisture: Maximum AvgMoisture value (inclusive).
-        :type max_avg_moisture: float
-        :param min_avg_speed: Minimum AvgSpeed value(inclusive).
-        :type min_avg_speed: float
-        :param max_avg_speed: Maximum AvgSpeed value (inclusive).
-        :type max_avg_speed: float
-        :param sources: Sources of the operation data.
-        :type sources: list[str]
-        :param associated_boundary_ids: Boundary IDs associated with operation data.
-        :type associated_boundary_ids: list[str]
-        :param operation_boundary_ids: Operation boundary IDs associated with operation data.
-        :type operation_boundary_ids: list[str]
-        :param min_operation_start_date_time: Minimum start date-time of the operation data, sample
+        :keyword min_total_yield: Minimum Yield value(inclusive).
+        :paramtype min_total_yield: float
+        :keyword max_total_yield: Maximum Yield value (inclusive).
+        :paramtype max_total_yield: float
+        :keyword min_avg_yield: Minimum AvgYield value(inclusive).
+        :paramtype min_avg_yield: float
+        :keyword max_avg_yield: Maximum AvgYield value (inclusive).
+        :paramtype max_avg_yield: float
+        :keyword min_total_wet_mass: Minimum Total WetMass value(inclusive).
+        :paramtype min_total_wet_mass: float
+        :keyword max_total_wet_mass: Maximum Total WetMass value (inclusive).
+        :paramtype max_total_wet_mass: float
+        :keyword min_avg_wet_mass: Minimum AvgWetMass value(inclusive).
+        :paramtype min_avg_wet_mass: float
+        :keyword max_avg_wet_mass: Maximum AvgWetMass value (inclusive).
+        :paramtype max_avg_wet_mass: float
+        :keyword min_avg_moisture: Minimum AvgMoisture value(inclusive).
+        :paramtype min_avg_moisture: float
+        :keyword max_avg_moisture: Maximum AvgMoisture value (inclusive).
+        :paramtype max_avg_moisture: float
+        :keyword min_avg_speed: Minimum AvgSpeed value(inclusive).
+        :paramtype min_avg_speed: float
+        :keyword max_avg_speed: Maximum AvgSpeed value (inclusive).
+        :paramtype max_avg_speed: float
+        :keyword sources: Sources of the operation data.
+        :paramtype sources: list[str]
+        :keyword associated_boundary_ids: Boundary IDs associated with operation data.
+        :paramtype associated_boundary_ids: list[str]
+        :keyword operation_boundary_ids: Operation boundary IDs associated with operation data.
+        :paramtype operation_boundary_ids: list[str]
+        :keyword min_operation_start_date_time: Minimum start date-time of the operation data, sample
          format: yyyy-MM-ddTHH:mm:ssZ (inclusive).
-        :type min_operation_start_date_time: ~datetime.datetime
-        :param max_operation_start_date_time: Maximum start date-time of the operation data, sample
+        :paramtype min_operation_start_date_time: ~datetime.datetime
+        :keyword max_operation_start_date_time: Maximum start date-time of the operation data, sample
          format: yyyy-MM-ddTHH:mm:ssZ (inclusive).
-        :type max_operation_start_date_time: ~datetime.datetime
-        :param min_operation_end_date_time: Minimum end date-time of the operation data, sample format:
-         yyyy-MM-ddTHH:mm:ssZ (inclusive).
-        :type min_operation_end_date_time: ~datetime.datetime
-        :param max_operation_end_date_time: Maximum end date-time of the operation data, sample format:
-         yyyy-MM-ddTHH:mm:ssZ (inclusive).
-        :type max_operation_end_date_time: ~datetime.datetime
-        :param min_operation_modified_date_time: Minimum modified date-time of the operation data,
+        :paramtype max_operation_start_date_time: ~datetime.datetime
+        :keyword min_operation_end_date_time: Minimum end date-time of the operation data, sample
+         format: yyyy-MM-ddTHH:mm:ssZ (inclusive).
+        :paramtype min_operation_end_date_time: ~datetime.datetime
+        :keyword max_operation_end_date_time: Maximum end date-time of the operation data, sample
+         format: yyyy-MM-ddTHH:mm:ssZ (inclusive).
+        :paramtype max_operation_end_date_time: ~datetime.datetime
+        :keyword min_operation_modified_date_time: Minimum modified date-time of the operation data,
          sample format: yyyy-MM-ddTHH:mm:ssZ (inclusive).
-        :type min_operation_modified_date_time: ~datetime.datetime
-        :param max_operation_modified_date_time: Maximum modified date-time of the operation data,
+        :paramtype min_operation_modified_date_time: ~datetime.datetime
+        :keyword max_operation_modified_date_time: Maximum modified date-time of the operation data,
          sample format: yyyy-MM-ddTHH:mm:ssZ (inclusive).
-        :type max_operation_modified_date_time: ~datetime.datetime
-        :param min_area: Minimum area for which operation was applied (inclusive).
-        :type min_area: float
-        :param max_area: Maximum area for which operation was applied (inclusive).
-        :type max_area: float
-        :param ids: Ids of the resource.
-        :type ids: list[str]
-        :param names: Names of the resource.
-        :type names: list[str]
-        :param property_filters: Filters on key-value pairs within the Properties object.
+        :paramtype max_operation_modified_date_time: ~datetime.datetime
+        :keyword min_area: Minimum area for which operation was applied (inclusive).
+        :paramtype min_area: float
+        :keyword max_area: Maximum area for which operation was applied (inclusive).
+        :paramtype max_area: float
+        :keyword ids: Ids of the resource.
+        :paramtype ids: list[str]
+        :keyword names: Names of the resource.
+        :paramtype names: list[str]
+        :keyword property_filters: Filters on key-value pairs within the Properties object.
          eg. "{testkey} eq {testvalue}".
-        :type property_filters: list[str]
-        :param statuses: Statuses of the resource.
-        :type statuses: list[str]
-        :param min_created_date_time: Minimum creation date of resource (inclusive).
-        :type min_created_date_time: ~datetime.datetime
-        :param max_created_date_time: Maximum creation date of resource (inclusive).
-        :type max_created_date_time: ~datetime.datetime
-        :param min_last_modified_date_time: Minimum last modified date of resource (inclusive).
-        :type min_last_modified_date_time: ~datetime.datetime
-        :param max_last_modified_date_time: Maximum last modified date of resource (inclusive).
-        :type max_last_modified_date_time: ~datetime.datetime
-        :param max_page_size: Maximum number of items needed (inclusive).
+        :paramtype property_filters: list[str]
+        :keyword statuses: Statuses of the resource.
+        :paramtype statuses: list[str]
+        :keyword min_created_date_time: Minimum creation date of resource (inclusive).
+        :paramtype min_created_date_time: ~datetime.datetime
+        :keyword max_created_date_time: Maximum creation date of resource (inclusive).
+        :paramtype max_created_date_time: ~datetime.datetime
+        :keyword min_last_modified_date_time: Minimum last modified date of resource (inclusive).
+        :paramtype min_last_modified_date_time: ~datetime.datetime
+        :keyword max_last_modified_date_time: Maximum last modified date of resource (inclusive).
+        :paramtype max_last_modified_date_time: ~datetime.datetime
+        :keyword max_page_size: Maximum number of items needed (inclusive).
          Minimum = 10, Maximum = 1000, Default value = 50.
-        :type max_page_size: int
-        :param skip_token: Skip token for getting next set of results.
-        :type skip_token: str
+        :paramtype max_page_size: int
+        :keyword skip_token: Skip token for getting next set of results.
+        :paramtype skip_token: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: An iterator like instance of either Any or the result of cls(response)
         :rtype: ~azure.core.async_paging.AsyncItemPaged[Any]
@@ -571,6 +573,7 @@ class HarvestDataOperations:
         self,
         farmer_id: str,
         harvest_data_id: str,
+        *,
         harvest_data: Any = None,
         **kwargs: Any
     ) -> Any:
@@ -580,8 +583,8 @@ class HarvestDataOperations:
         :type farmer_id: str
         :param harvest_data_id: ID of the harvest data resource.
         :type harvest_data_id: str
-        :param harvest_data: Harvest data resource payload to create or update.
-        :type harvest_data: Any
+        :keyword harvest_data: Harvest data resource payload to create or update.
+        :paramtype harvest_data: Any
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: Any, or the result of cls(response)
         :rtype: Any

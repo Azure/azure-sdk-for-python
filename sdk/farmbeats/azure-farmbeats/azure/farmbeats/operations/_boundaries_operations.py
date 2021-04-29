@@ -47,21 +47,6 @@ class BoundariesOperations(object):
     def list_by_farmer_id(
         self,
         farmer_id,  # type: str
-        is_primary=None,  # type: Optional[bool]
-        parent_type=None,  # type: Optional[str]
-        parent_ids=None,  # type: Optional[List[str]]
-        min_acreage=None,  # type: Optional[float]
-        max_acreage=None,  # type: Optional[float]
-        ids=None,  # type: Optional[List[str]]
-        names=None,  # type: Optional[List[str]]
-        property_filters=None,  # type: Optional[List[str]]
-        statuses=None,  # type: Optional[List[str]]
-        min_created_date_time=None,  # type: Optional[datetime.datetime]
-        max_created_date_time=None,  # type: Optional[datetime.datetime]
-        min_last_modified_date_time=None,  # type: Optional[datetime.datetime]
-        max_last_modified_date_time=None,  # type: Optional[datetime.datetime]
-        max_page_size=50,  # type: Optional[int]
-        skip_token=None,  # type: Optional[str]
         **kwargs  # type: Any
     ):
         # type: (...) -> Iterable[Any]
@@ -69,38 +54,38 @@ class BoundariesOperations(object):
 
         :param farmer_id: Id of the associated farmer.
         :type farmer_id: str
-        :param is_primary: Is the boundary primary.
-        :type is_primary: bool
-        :param parent_type: Type of the parent it belongs to.
-        :type parent_type: str
-        :param parent_ids: Parent Ids of the resource.
-        :type parent_ids: list[str]
-        :param min_acreage: Minimum acreage of the boundary (inclusive).
-        :type min_acreage: float
-        :param max_acreage: Maximum acreage of the boundary (inclusive).
-        :type max_acreage: float
-        :param ids: Ids of the resource.
-        :type ids: list[str]
-        :param names: Names of the resource.
-        :type names: list[str]
-        :param property_filters: Filters on key-value pairs within the Properties object.
+        :keyword is_primary: Is the boundary primary.
+        :paramtype is_primary: bool
+        :keyword parent_type: Type of the parent it belongs to.
+        :paramtype parent_type: str
+        :keyword parent_ids: Parent Ids of the resource.
+        :paramtype parent_ids: list[str]
+        :keyword min_acreage: Minimum acreage of the boundary (inclusive).
+        :paramtype min_acreage: float
+        :keyword max_acreage: Maximum acreage of the boundary (inclusive).
+        :paramtype max_acreage: float
+        :keyword ids: Ids of the resource.
+        :paramtype ids: list[str]
+        :keyword names: Names of the resource.
+        :paramtype names: list[str]
+        :keyword property_filters: Filters on key-value pairs within the Properties object.
          eg. "{testkey} eq {testvalue}".
-        :type property_filters: list[str]
-        :param statuses: Statuses of the resource.
-        :type statuses: list[str]
-        :param min_created_date_time: Minimum creation date of resource (inclusive).
-        :type min_created_date_time: ~datetime.datetime
-        :param max_created_date_time: Maximum creation date of resource (inclusive).
-        :type max_created_date_time: ~datetime.datetime
-        :param min_last_modified_date_time: Minimum last modified date of resource (inclusive).
-        :type min_last_modified_date_time: ~datetime.datetime
-        :param max_last_modified_date_time: Maximum last modified date of resource (inclusive).
-        :type max_last_modified_date_time: ~datetime.datetime
-        :param max_page_size: Maximum number of items needed (inclusive).
+        :paramtype property_filters: list[str]
+        :keyword statuses: Statuses of the resource.
+        :paramtype statuses: list[str]
+        :keyword min_created_date_time: Minimum creation date of resource (inclusive).
+        :paramtype min_created_date_time: ~datetime.datetime
+        :keyword max_created_date_time: Maximum creation date of resource (inclusive).
+        :paramtype max_created_date_time: ~datetime.datetime
+        :keyword min_last_modified_date_time: Minimum last modified date of resource (inclusive).
+        :paramtype min_last_modified_date_time: ~datetime.datetime
+        :keyword max_last_modified_date_time: Maximum last modified date of resource (inclusive).
+        :paramtype max_last_modified_date_time: ~datetime.datetime
+        :keyword max_page_size: Maximum number of items needed (inclusive).
          Minimum = 10, Maximum = 1000, Default value = 50.
-        :type max_page_size: int
-        :param skip_token: Skip token for getting next set of results.
-        :type skip_token: str
+        :paramtype max_page_size: int
+        :keyword skip_token: Skip token for getting next set of results.
+        :paramtype skip_token: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: An iterator like instance of either Any or the result of cls(response)
         :rtype: ~azure.core.paging.ItemPaged[Any]
@@ -114,6 +99,21 @@ class BoundariesOperations(object):
 
         def prepare_request(next_link=None):
             if not next_link:
+                is_primary = kwargs.pop('is_primary', None)  # type: Optional[bool]
+                parent_type = kwargs.pop('parent_type', None)  # type: Optional[str]
+                parent_ids = kwargs.pop('parent_ids', None)  # type: Optional[List[str]]
+                min_acreage = kwargs.pop('min_acreage', None)  # type: Optional[float]
+                max_acreage = kwargs.pop('max_acreage', None)  # type: Optional[float]
+                ids = kwargs.pop('ids', None)  # type: Optional[List[str]]
+                names = kwargs.pop('names', None)  # type: Optional[List[str]]
+                property_filters = kwargs.pop('property_filters', None)  # type: Optional[List[str]]
+                statuses = kwargs.pop('statuses', None)  # type: Optional[List[str]]
+                min_created_date_time = kwargs.pop('min_created_date_time', None)  # type: Optional[datetime.datetime]
+                max_created_date_time = kwargs.pop('max_created_date_time', None)  # type: Optional[datetime.datetime]
+                min_last_modified_date_time = kwargs.pop('min_last_modified_date_time', None)  # type: Optional[datetime.datetime]
+                max_last_modified_date_time = kwargs.pop('max_last_modified_date_time', None)  # type: Optional[datetime.datetime]
+                max_page_size = kwargs.pop('max_page_size', 50)  # type: Optional[int]
+                skip_token = kwargs.pop('skip_token', None)  # type: Optional[str]
                 request = rest_boundaries.build_list_by_farmer_id_request(
                     farmer_id=farmer_id,
                     is_primary=is_primary,
@@ -137,6 +137,21 @@ class BoundariesOperations(object):
                 request.url = self._client.format_url(request.url)
                 kwargs.pop("content_type", None)
             else:
+                is_primary = kwargs.pop('is_primary', None)  # type: Optional[bool]
+                parent_type = kwargs.pop('parent_type', None)  # type: Optional[str]
+                parent_ids = kwargs.pop('parent_ids', None)  # type: Optional[List[str]]
+                min_acreage = kwargs.pop('min_acreage', None)  # type: Optional[float]
+                max_acreage = kwargs.pop('max_acreage', None)  # type: Optional[float]
+                ids = kwargs.pop('ids', None)  # type: Optional[List[str]]
+                names = kwargs.pop('names', None)  # type: Optional[List[str]]
+                property_filters = kwargs.pop('property_filters', None)  # type: Optional[List[str]]
+                statuses = kwargs.pop('statuses', None)  # type: Optional[List[str]]
+                min_created_date_time = kwargs.pop('min_created_date_time', None)  # type: Optional[datetime.datetime]
+                max_created_date_time = kwargs.pop('max_created_date_time', None)  # type: Optional[datetime.datetime]
+                min_last_modified_date_time = kwargs.pop('min_last_modified_date_time', None)  # type: Optional[datetime.datetime]
+                max_last_modified_date_time = kwargs.pop('max_last_modified_date_time', None)  # type: Optional[datetime.datetime]
+                max_page_size = kwargs.pop('max_page_size', 50)  # type: Optional[int]
+                skip_token = kwargs.pop('skip_token', None)  # type: Optional[str]
                 request = rest_boundaries.build_list_by_farmer_id_request(
                     farmer_id=farmer_id,
                     is_primary=is_primary,
@@ -192,7 +207,6 @@ class BoundariesOperations(object):
     def search_by_farmer_id(
         self,
         farmer_id,  # type: str
-        query=None,  # type: Any
         **kwargs  # type: Any
     ):
         # type: (...) -> Iterable[Any]
@@ -200,8 +214,8 @@ class BoundariesOperations(object):
 
         :param farmer_id: Id of the farmer.
         :type farmer_id: str
-        :param query: Query filters.
-        :type query: Any
+        :keyword query: Query filters.
+        :paramtype query: Any
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: An iterator like instance of either Any or the result of cls(response)
         :rtype: ~azure.core.paging.ItemPaged[Any]
@@ -216,8 +230,9 @@ class BoundariesOperations(object):
         def prepare_request(next_link=None):
             if not next_link:
                 content_type = kwargs.pop("content_type", "application/json")
+                query = kwargs.pop('query', None)  # type: Any
                 if query is not None:
-                    json = self._serialize.body(query, 'SearchBoundaryQuery')
+                    json = query
                 else:
                     json = None
 
@@ -233,8 +248,9 @@ class BoundariesOperations(object):
                 kwargs.pop("content_type", None)
             else:
                 content_type = kwargs.pop("content_type", "application/json")
+                query = kwargs.pop('query', None)  # type: Any
                 if query is not None:
-                    json = self._serialize.body(query, 'SearchBoundaryQuery')
+                    json = query
                 else:
                     json = None
 
@@ -280,58 +296,43 @@ class BoundariesOperations(object):
 
     def list(
         self,
-        is_primary=None,  # type: Optional[bool]
-        parent_type=None,  # type: Optional[str]
-        parent_ids=None,  # type: Optional[List[str]]
-        min_acreage=None,  # type: Optional[float]
-        max_acreage=None,  # type: Optional[float]
-        ids=None,  # type: Optional[List[str]]
-        names=None,  # type: Optional[List[str]]
-        property_filters=None,  # type: Optional[List[str]]
-        statuses=None,  # type: Optional[List[str]]
-        min_created_date_time=None,  # type: Optional[datetime.datetime]
-        max_created_date_time=None,  # type: Optional[datetime.datetime]
-        min_last_modified_date_time=None,  # type: Optional[datetime.datetime]
-        max_last_modified_date_time=None,  # type: Optional[datetime.datetime]
-        max_page_size=50,  # type: Optional[int]
-        skip_token=None,  # type: Optional[str]
         **kwargs  # type: Any
     ):
         # type: (...) -> Iterable[Any]
         """Returns a paginated list of boundary resources across all farmers.
 
-        :param is_primary: Is the boundary primary.
-        :type is_primary: bool
-        :param parent_type: Type of the parent it belongs to.
-        :type parent_type: str
-        :param parent_ids: Parent Ids of the resource.
-        :type parent_ids: list[str]
-        :param min_acreage: Minimum acreage of the boundary (inclusive).
-        :type min_acreage: float
-        :param max_acreage: Maximum acreage of the boundary (inclusive).
-        :type max_acreage: float
-        :param ids: Ids of the resource.
-        :type ids: list[str]
-        :param names: Names of the resource.
-        :type names: list[str]
-        :param property_filters: Filters on key-value pairs within the Properties object.
+        :keyword is_primary: Is the boundary primary.
+        :paramtype is_primary: bool
+        :keyword parent_type: Type of the parent it belongs to.
+        :paramtype parent_type: str
+        :keyword parent_ids: Parent Ids of the resource.
+        :paramtype parent_ids: list[str]
+        :keyword min_acreage: Minimum acreage of the boundary (inclusive).
+        :paramtype min_acreage: float
+        :keyword max_acreage: Maximum acreage of the boundary (inclusive).
+        :paramtype max_acreage: float
+        :keyword ids: Ids of the resource.
+        :paramtype ids: list[str]
+        :keyword names: Names of the resource.
+        :paramtype names: list[str]
+        :keyword property_filters: Filters on key-value pairs within the Properties object.
          eg. "{testkey} eq {testvalue}".
-        :type property_filters: list[str]
-        :param statuses: Statuses of the resource.
-        :type statuses: list[str]
-        :param min_created_date_time: Minimum creation date of resource (inclusive).
-        :type min_created_date_time: ~datetime.datetime
-        :param max_created_date_time: Maximum creation date of resource (inclusive).
-        :type max_created_date_time: ~datetime.datetime
-        :param min_last_modified_date_time: Minimum last modified date of resource (inclusive).
-        :type min_last_modified_date_time: ~datetime.datetime
-        :param max_last_modified_date_time: Maximum last modified date of resource (inclusive).
-        :type max_last_modified_date_time: ~datetime.datetime
-        :param max_page_size: Maximum number of items needed (inclusive).
+        :paramtype property_filters: list[str]
+        :keyword statuses: Statuses of the resource.
+        :paramtype statuses: list[str]
+        :keyword min_created_date_time: Minimum creation date of resource (inclusive).
+        :paramtype min_created_date_time: ~datetime.datetime
+        :keyword max_created_date_time: Maximum creation date of resource (inclusive).
+        :paramtype max_created_date_time: ~datetime.datetime
+        :keyword min_last_modified_date_time: Minimum last modified date of resource (inclusive).
+        :paramtype min_last_modified_date_time: ~datetime.datetime
+        :keyword max_last_modified_date_time: Maximum last modified date of resource (inclusive).
+        :paramtype max_last_modified_date_time: ~datetime.datetime
+        :keyword max_page_size: Maximum number of items needed (inclusive).
          Minimum = 10, Maximum = 1000, Default value = 50.
-        :type max_page_size: int
-        :param skip_token: Skip token for getting next set of results.
-        :type skip_token: str
+        :paramtype max_page_size: int
+        :keyword skip_token: Skip token for getting next set of results.
+        :paramtype skip_token: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: An iterator like instance of either Any or the result of cls(response)
         :rtype: ~azure.core.paging.ItemPaged[Any]
@@ -345,6 +346,21 @@ class BoundariesOperations(object):
 
         def prepare_request(next_link=None):
             if not next_link:
+                is_primary = kwargs.pop('is_primary', None)  # type: Optional[bool]
+                parent_type = kwargs.pop('parent_type', None)  # type: Optional[str]
+                parent_ids = kwargs.pop('parent_ids', None)  # type: Optional[List[str]]
+                min_acreage = kwargs.pop('min_acreage', None)  # type: Optional[float]
+                max_acreage = kwargs.pop('max_acreage', None)  # type: Optional[float]
+                ids = kwargs.pop('ids', None)  # type: Optional[List[str]]
+                names = kwargs.pop('names', None)  # type: Optional[List[str]]
+                property_filters = kwargs.pop('property_filters', None)  # type: Optional[List[str]]
+                statuses = kwargs.pop('statuses', None)  # type: Optional[List[str]]
+                min_created_date_time = kwargs.pop('min_created_date_time', None)  # type: Optional[datetime.datetime]
+                max_created_date_time = kwargs.pop('max_created_date_time', None)  # type: Optional[datetime.datetime]
+                min_last_modified_date_time = kwargs.pop('min_last_modified_date_time', None)  # type: Optional[datetime.datetime]
+                max_last_modified_date_time = kwargs.pop('max_last_modified_date_time', None)  # type: Optional[datetime.datetime]
+                max_page_size = kwargs.pop('max_page_size', 50)  # type: Optional[int]
+                skip_token = kwargs.pop('skip_token', None)  # type: Optional[str]
                 request = rest_boundaries.build_list_request(
                     is_primary=is_primary,
                     parent_type=parent_type,
@@ -367,6 +383,21 @@ class BoundariesOperations(object):
                 request.url = self._client.format_url(request.url)
                 kwargs.pop("content_type", None)
             else:
+                is_primary = kwargs.pop('is_primary', None)  # type: Optional[bool]
+                parent_type = kwargs.pop('parent_type', None)  # type: Optional[str]
+                parent_ids = kwargs.pop('parent_ids', None)  # type: Optional[List[str]]
+                min_acreage = kwargs.pop('min_acreage', None)  # type: Optional[float]
+                max_acreage = kwargs.pop('max_acreage', None)  # type: Optional[float]
+                ids = kwargs.pop('ids', None)  # type: Optional[List[str]]
+                names = kwargs.pop('names', None)  # type: Optional[List[str]]
+                property_filters = kwargs.pop('property_filters', None)  # type: Optional[List[str]]
+                statuses = kwargs.pop('statuses', None)  # type: Optional[List[str]]
+                min_created_date_time = kwargs.pop('min_created_date_time', None)  # type: Optional[datetime.datetime]
+                max_created_date_time = kwargs.pop('max_created_date_time', None)  # type: Optional[datetime.datetime]
+                min_last_modified_date_time = kwargs.pop('min_last_modified_date_time', None)  # type: Optional[datetime.datetime]
+                max_last_modified_date_time = kwargs.pop('max_last_modified_date_time', None)  # type: Optional[datetime.datetime]
+                max_page_size = kwargs.pop('max_page_size', 50)  # type: Optional[int]
+                skip_token = kwargs.pop('skip_token', None)  # type: Optional[str]
                 request = rest_boundaries.build_list_request(
                     is_primary=is_primary,
                     parent_type=parent_type,
@@ -420,14 +451,13 @@ class BoundariesOperations(object):
 
     def search(
         self,
-        query=None,  # type: Any
         **kwargs  # type: Any
     ):
         # type: (...) -> Iterable[Any]
         """Search for boundaries across all farmers by fields and intersecting geometry.
 
-        :param query: Query filters.
-        :type query: Any
+        :keyword query: Query filters.
+        :paramtype query: Any
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: An iterator like instance of either Any or the result of cls(response)
         :rtype: ~azure.core.paging.ItemPaged[Any]
@@ -442,8 +472,9 @@ class BoundariesOperations(object):
         def prepare_request(next_link=None):
             if not next_link:
                 content_type = kwargs.pop("content_type", "application/json")
+                query = kwargs.pop('query', None)  # type: Any
                 if query is not None:
-                    json = self._serialize.body(query, 'SearchBoundaryQuery')
+                    json = query
                 else:
                     json = None
 
@@ -458,8 +489,9 @@ class BoundariesOperations(object):
                 kwargs.pop("content_type", None)
             else:
                 content_type = kwargs.pop("content_type", "application/json")
+                query = kwargs.pop('query', None)  # type: Any
                 if query is not None:
-                    json = self._serialize.body(query, 'SearchBoundaryQuery')
+                    json = query
                 else:
                     json = None
 
@@ -552,8 +584,6 @@ class BoundariesOperations(object):
     def _create_cascade_delete_jo_initial(
         self,
         job_id,  # type: str
-        farmer_id,  # type: str
-        boundary_id,  # type: str
         **kwargs  # type: Any
     ):
         # type: (...) -> Any
@@ -563,6 +593,8 @@ class BoundariesOperations(object):
         }
         error_map.update(kwargs.pop('error_map', {}))
 
+        farmer_id = kwargs.pop('farmer_id')  # type: str
+        boundary_id = kwargs.pop('boundary_id')  # type: str
         request = rest_boundaries.build_create_cascade_delete_job_request_initial(
             job_id=job_id,
             farmer_id=farmer_id,
@@ -592,8 +624,6 @@ class BoundariesOperations(object):
     def begin_create_cascade_delete_job(
         self,
         job_id,  # type: str
-        farmer_id,  # type: str
-        boundary_id,  # type: str
         **kwargs  # type: Any
     ):
         # type: (...) -> LROPoller[Any]
@@ -601,10 +631,10 @@ class BoundariesOperations(object):
 
         :param job_id: Job ID supplied by end user.
         :type job_id: str
-        :param farmer_id: ID of the associated farmer.
-        :type farmer_id: str
-        :param boundary_id: ID of the boundary to be deleted.
-        :type boundary_id: str
+        :keyword farmer_id: ID of the associated farmer.
+        :paramtype farmer_id: str
+        :keyword boundary_id: ID of the boundary to be deleted.
+        :paramtype boundary_id: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
         :keyword polling: Pass in True if you'd like the LROBasePolling polling method,
@@ -715,7 +745,6 @@ class BoundariesOperations(object):
         self,
         farmer_id,  # type: str
         boundary_id,  # type: str
-        boundary=None,  # type: Any
         **kwargs  # type: Any
     ):
         # type: (...) -> Any
@@ -725,8 +754,8 @@ class BoundariesOperations(object):
         :type farmer_id: str
         :param boundary_id: Id of the boundary resource.
         :type boundary_id: str
-        :param boundary: Boundary resource payload to create or update.
-        :type boundary: Any
+        :keyword boundary: Boundary resource payload to create or update.
+        :paramtype boundary: Any
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: Any, or the result of cls(response)
         :rtype: Any
@@ -739,6 +768,7 @@ class BoundariesOperations(object):
         error_map.update(kwargs.pop('error_map', {}))
 
         content_type = kwargs.pop("content_type", "application/merge-patch+json")
+        boundary = kwargs.pop('boundary', None)  # type: Any
         if boundary is not None:
             json = boundary
         else:
@@ -825,8 +855,6 @@ class BoundariesOperations(object):
         self,
         farmer_id,  # type: str
         boundary_id,  # type: str
-        other_farmer_id,  # type: str
-        other_boundary_id,  # type: str
         **kwargs  # type: Any
     ):
         # type: (...) -> Optional[Any]
@@ -836,10 +864,10 @@ class BoundariesOperations(object):
         :type farmer_id: str
         :param boundary_id: Id of the boundary.
         :type boundary_id: str
-        :param other_farmer_id: FarmerId of the other field.
-        :type other_farmer_id: str
-        :param other_boundary_id: Id of the other boundary.
-        :type other_boundary_id: str
+        :keyword other_farmer_id: FarmerId of the other field.
+        :paramtype other_farmer_id: str
+        :keyword other_boundary_id: Id of the other boundary.
+        :paramtype other_boundary_id: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: Any, or the result of cls(response)
         :rtype: Any or None
@@ -851,6 +879,8 @@ class BoundariesOperations(object):
         }
         error_map.update(kwargs.pop('error_map', {}))
 
+        other_farmer_id = kwargs.pop('other_farmer_id')  # type: str
+        other_boundary_id = kwargs.pop('other_boundary_id')  # type: str
         request = rest_boundaries.build_get_overlap_request(
             farmer_id=farmer_id,
             boundary_id=boundary_id,

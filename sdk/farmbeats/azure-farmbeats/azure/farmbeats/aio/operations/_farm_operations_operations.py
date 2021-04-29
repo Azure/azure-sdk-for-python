@@ -15,7 +15,7 @@ from azure.core.polling import AsyncLROPoller, AsyncNoPolling, AsyncPollingMetho
 from azure.core.polling.async_base_polling import AsyncLROBasePolling
 from azure.farmbeats.core.rest import HttpRequest
 
-from ..rest import farm_operations as rest_farm_operations
+from ...rest import farm_operations as rest_farm_operations
 
 if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
@@ -45,6 +45,7 @@ class FarmOperationsOperations:
     async def _create_data_ingestion_jo_initial(
         self,
         job_id: str,
+        *,
         job: Any = None,
         **kwargs: Any
     ) -> Any:
@@ -90,6 +91,7 @@ class FarmOperationsOperations:
     async def begin_create_data_ingestion_job(
         self,
         job_id: str,
+        *,
         job: Any = None,
         **kwargs: Any
     ) -> AsyncLROPoller[Any]:
@@ -97,8 +99,8 @@ class FarmOperationsOperations:
 
         :param job_id: Job Id supplied by user.
         :type job_id: str
-        :param job: Job parameters supplied by user.
-        :type job: Any
+        :keyword job: Job parameters supplied by user.
+        :paramtype job: Any
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
         :keyword polling: Pass in True if you'd like the AsyncLROBasePolling polling method,

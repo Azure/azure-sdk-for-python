@@ -44,46 +44,35 @@ class CropsOperations(object):
 
     def list(
         self,
-        phenotypes=None,  # type: Optional[List[str]]
-        ids=None,  # type: Optional[List[str]]
-        names=None,  # type: Optional[List[str]]
-        property_filters=None,  # type: Optional[List[str]]
-        statuses=None,  # type: Optional[List[str]]
-        min_created_date_time=None,  # type: Optional[datetime.datetime]
-        max_created_date_time=None,  # type: Optional[datetime.datetime]
-        min_last_modified_date_time=None,  # type: Optional[datetime.datetime]
-        max_last_modified_date_time=None,  # type: Optional[datetime.datetime]
-        max_page_size=50,  # type: Optional[int]
-        skip_token=None,  # type: Optional[str]
         **kwargs  # type: Any
     ):
         # type: (...) -> Iterable[Any]
         """Returns a paginated list of crop resources.
 
-        :param phenotypes: Crop phenotypes of the resource.
-        :type phenotypes: list[str]
-        :param ids: Ids of the resource.
-        :type ids: list[str]
-        :param names: Names of the resource.
-        :type names: list[str]
-        :param property_filters: Filters on key-value pairs within the Properties object.
+        :keyword phenotypes: Crop phenotypes of the resource.
+        :paramtype phenotypes: list[str]
+        :keyword ids: Ids of the resource.
+        :paramtype ids: list[str]
+        :keyword names: Names of the resource.
+        :paramtype names: list[str]
+        :keyword property_filters: Filters on key-value pairs within the Properties object.
          eg. "{testkey} eq {testvalue}".
-        :type property_filters: list[str]
-        :param statuses: Statuses of the resource.
-        :type statuses: list[str]
-        :param min_created_date_time: Minimum creation date of resource (inclusive).
-        :type min_created_date_time: ~datetime.datetime
-        :param max_created_date_time: Maximum creation date of resource (inclusive).
-        :type max_created_date_time: ~datetime.datetime
-        :param min_last_modified_date_time: Minimum last modified date of resource (inclusive).
-        :type min_last_modified_date_time: ~datetime.datetime
-        :param max_last_modified_date_time: Maximum last modified date of resource (inclusive).
-        :type max_last_modified_date_time: ~datetime.datetime
-        :param max_page_size: Maximum number of items needed (inclusive).
+        :paramtype property_filters: list[str]
+        :keyword statuses: Statuses of the resource.
+        :paramtype statuses: list[str]
+        :keyword min_created_date_time: Minimum creation date of resource (inclusive).
+        :paramtype min_created_date_time: ~datetime.datetime
+        :keyword max_created_date_time: Maximum creation date of resource (inclusive).
+        :paramtype max_created_date_time: ~datetime.datetime
+        :keyword min_last_modified_date_time: Minimum last modified date of resource (inclusive).
+        :paramtype min_last_modified_date_time: ~datetime.datetime
+        :keyword max_last_modified_date_time: Maximum last modified date of resource (inclusive).
+        :paramtype max_last_modified_date_time: ~datetime.datetime
+        :keyword max_page_size: Maximum number of items needed (inclusive).
          Minimum = 10, Maximum = 1000, Default value = 50.
-        :type max_page_size: int
-        :param skip_token: Skip token for getting next set of results.
-        :type skip_token: str
+        :paramtype max_page_size: int
+        :keyword skip_token: Skip token for getting next set of results.
+        :paramtype skip_token: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: An iterator like instance of either Any or the result of cls(response)
         :rtype: ~azure.core.paging.ItemPaged[Any]
@@ -97,6 +86,17 @@ class CropsOperations(object):
 
         def prepare_request(next_link=None):
             if not next_link:
+                phenotypes = kwargs.pop('phenotypes', None)  # type: Optional[List[str]]
+                ids = kwargs.pop('ids', None)  # type: Optional[List[str]]
+                names = kwargs.pop('names', None)  # type: Optional[List[str]]
+                property_filters = kwargs.pop('property_filters', None)  # type: Optional[List[str]]
+                statuses = kwargs.pop('statuses', None)  # type: Optional[List[str]]
+                min_created_date_time = kwargs.pop('min_created_date_time', None)  # type: Optional[datetime.datetime]
+                max_created_date_time = kwargs.pop('max_created_date_time', None)  # type: Optional[datetime.datetime]
+                min_last_modified_date_time = kwargs.pop('min_last_modified_date_time', None)  # type: Optional[datetime.datetime]
+                max_last_modified_date_time = kwargs.pop('max_last_modified_date_time', None)  # type: Optional[datetime.datetime]
+                max_page_size = kwargs.pop('max_page_size', 50)  # type: Optional[int]
+                skip_token = kwargs.pop('skip_token', None)  # type: Optional[str]
                 request = rest_crops.build_list_request(
                     phenotypes=phenotypes,
                     ids=ids,
@@ -115,6 +115,17 @@ class CropsOperations(object):
                 request.url = self._client.format_url(request.url)
                 kwargs.pop("content_type", None)
             else:
+                phenotypes = kwargs.pop('phenotypes', None)  # type: Optional[List[str]]
+                ids = kwargs.pop('ids', None)  # type: Optional[List[str]]
+                names = kwargs.pop('names', None)  # type: Optional[List[str]]
+                property_filters = kwargs.pop('property_filters', None)  # type: Optional[List[str]]
+                statuses = kwargs.pop('statuses', None)  # type: Optional[List[str]]
+                min_created_date_time = kwargs.pop('min_created_date_time', None)  # type: Optional[datetime.datetime]
+                max_created_date_time = kwargs.pop('max_created_date_time', None)  # type: Optional[datetime.datetime]
+                min_last_modified_date_time = kwargs.pop('min_last_modified_date_time', None)  # type: Optional[datetime.datetime]
+                max_last_modified_date_time = kwargs.pop('max_last_modified_date_time', None)  # type: Optional[datetime.datetime]
+                max_page_size = kwargs.pop('max_page_size', 50)  # type: Optional[int]
+                skip_token = kwargs.pop('skip_token', None)  # type: Optional[str]
                 request = rest_crops.build_list_request(
                     phenotypes=phenotypes,
                     ids=ids,
@@ -212,7 +223,6 @@ class CropsOperations(object):
     def create_or_update(
         self,
         crop_id,  # type: str
-        crop=None,  # type: Any
         **kwargs  # type: Any
     ):
         # type: (...) -> Any
@@ -220,8 +230,8 @@ class CropsOperations(object):
 
         :param crop_id: Id of the crop resource.
         :type crop_id: str
-        :param crop: Crop resource payload to create or update.
-        :type crop: Any
+        :keyword crop: Crop resource payload to create or update.
+        :paramtype crop: Any
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: Any, or the result of cls(response)
         :rtype: Any
@@ -234,6 +244,7 @@ class CropsOperations(object):
         error_map.update(kwargs.pop('error_map', {}))
 
         content_type = kwargs.pop("content_type", "application/merge-patch+json")
+        crop = kwargs.pop('crop', None)  # type: Any
         if crop is not None:
             json = crop
         else:

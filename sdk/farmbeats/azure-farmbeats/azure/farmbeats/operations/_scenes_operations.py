@@ -46,54 +46,41 @@ class ScenesOperations(object):
 
     def list(
         self,
-        farmer_id,  # type: str
-        boundary_id,  # type: str
-        provider="Microsoft",  # type: str
-        source="Sentinel_2_L2A",  # type: Optional[str]
-        start_date_time=None,  # type: Optional[datetime.datetime]
-        end_date_time=None,  # type: Optional[datetime.datetime]
-        max_cloud_coverage_percentage=100,  # type: Optional[float]
-        max_dark_pixel_coverage_percentage=100,  # type: Optional[float]
-        image_names=None,  # type: Optional[List[str]]
-        image_resolutions=None,  # type: Optional[List[float]]
-        image_formats=None,  # type: Optional[List[str]]
-        max_page_size=50,  # type: Optional[int]
-        skip_token=None,  # type: Optional[str]
         **kwargs  # type: Any
     ):
         # type: (...) -> Iterable[Any]
         """Returns a paginated list of scene resources.
 
-        :param farmer_id: FarmerId.
-        :type farmer_id: str
-        :param boundary_id: BoundaryId.
-        :type boundary_id: str
-        :param provider: Provider name of scene data.
-        :type provider: str
-        :param source: Source name of scene data, default value Sentinel_2_L2A (Sentinel 2 L2A).
-        :type source: str
-        :param start_date_time: Scene start UTC datetime (inclusive), sample format: yyyy-MM-
+        :keyword farmer_id: FarmerId.
+        :paramtype farmer_id: str
+        :keyword boundary_id: BoundaryId.
+        :paramtype boundary_id: str
+        :keyword provider: Provider name of scene data.
+        :paramtype provider: str
+        :keyword source: Source name of scene data, default value Sentinel_2_L2A (Sentinel 2 L2A).
+        :paramtype source: str
+        :keyword start_date_time: Scene start UTC datetime (inclusive), sample format: yyyy-MM-
          ddThh:mm:ssZ.
-        :type start_date_time: ~datetime.datetime
-        :param end_date_time: Scene end UTC datetime (inclusive), sample format: yyyy-MM-dThh:mm:ssZ.
-        :type end_date_time: ~datetime.datetime
-        :param max_cloud_coverage_percentage: Filter scenes with cloud coverage percentage less than
+        :paramtype start_date_time: ~datetime.datetime
+        :keyword end_date_time: Scene end UTC datetime (inclusive), sample format: yyyy-MM-dThh:mm:ssZ.
+        :paramtype end_date_time: ~datetime.datetime
+        :keyword max_cloud_coverage_percentage: Filter scenes with cloud coverage percentage less than
          max value. Range [0 to 100.0].
-        :type max_cloud_coverage_percentage: float
-        :param max_dark_pixel_coverage_percentage: Filter scenes with dark pixel coverage percentage
+        :paramtype max_cloud_coverage_percentage: float
+        :keyword max_dark_pixel_coverage_percentage: Filter scenes with dark pixel coverage percentage
          less than max value. Range [0 to 100.0].
-        :type max_dark_pixel_coverage_percentage: float
-        :param image_names: List of image names to be filtered.
-        :type image_names: list[str]
-        :param image_resolutions: List of image resolutions in meters to be filtered.
-        :type image_resolutions: list[float]
-        :param image_formats: List of image formats to be filtered.
-        :type image_formats: list[str]
-        :param max_page_size: Maximum number of items needed (inclusive).
+        :paramtype max_dark_pixel_coverage_percentage: float
+        :keyword image_names: List of image names to be filtered.
+        :paramtype image_names: list[str]
+        :keyword image_resolutions: List of image resolutions in meters to be filtered.
+        :paramtype image_resolutions: list[float]
+        :keyword image_formats: List of image formats to be filtered.
+        :paramtype image_formats: list[str]
+        :keyword max_page_size: Maximum number of items needed (inclusive).
          Minimum = 10, Maximum = 1000, Default value = 50.
-        :type max_page_size: int
-        :param skip_token: Skip token for getting next set of results.
-        :type skip_token: str
+        :paramtype max_page_size: int
+        :keyword skip_token: Skip token for getting next set of results.
+        :paramtype skip_token: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: An iterator like instance of either Any or the result of cls(response)
         :rtype: ~azure.core.paging.ItemPaged[Any]
@@ -107,6 +94,19 @@ class ScenesOperations(object):
 
         def prepare_request(next_link=None):
             if not next_link:
+                farmer_id = kwargs.pop('farmer_id')  # type: str
+                boundary_id = kwargs.pop('boundary_id')  # type: str
+                provider = kwargs.pop('provider', "Microsoft")  # type: str
+                source = kwargs.pop('source', "Sentinel_2_L2A")  # type: Optional[str]
+                start_date_time = kwargs.pop('start_date_time', None)  # type: Optional[datetime.datetime]
+                end_date_time = kwargs.pop('end_date_time', None)  # type: Optional[datetime.datetime]
+                max_cloud_coverage_percentage = kwargs.pop('max_cloud_coverage_percentage', 100)  # type: Optional[float]
+                max_dark_pixel_coverage_percentage = kwargs.pop('max_dark_pixel_coverage_percentage', 100)  # type: Optional[float]
+                image_names = kwargs.pop('image_names', None)  # type: Optional[List[str]]
+                image_resolutions = kwargs.pop('image_resolutions', None)  # type: Optional[List[float]]
+                image_formats = kwargs.pop('image_formats', None)  # type: Optional[List[str]]
+                max_page_size = kwargs.pop('max_page_size', 50)  # type: Optional[int]
+                skip_token = kwargs.pop('skip_token', None)  # type: Optional[str]
                 request = rest_scenes.build_list_request(
                     farmer_id=farmer_id,
                     boundary_id=boundary_id,
@@ -127,6 +127,19 @@ class ScenesOperations(object):
                 request.url = self._client.format_url(request.url)
                 kwargs.pop("content_type", None)
             else:
+                farmer_id = kwargs.pop('farmer_id')  # type: str
+                boundary_id = kwargs.pop('boundary_id')  # type: str
+                provider = kwargs.pop('provider', "Microsoft")  # type: str
+                source = kwargs.pop('source', "Sentinel_2_L2A")  # type: Optional[str]
+                start_date_time = kwargs.pop('start_date_time', None)  # type: Optional[datetime.datetime]
+                end_date_time = kwargs.pop('end_date_time', None)  # type: Optional[datetime.datetime]
+                max_cloud_coverage_percentage = kwargs.pop('max_cloud_coverage_percentage', 100)  # type: Optional[float]
+                max_dark_pixel_coverage_percentage = kwargs.pop('max_dark_pixel_coverage_percentage', 100)  # type: Optional[float]
+                image_names = kwargs.pop('image_names', None)  # type: Optional[List[str]]
+                image_resolutions = kwargs.pop('image_resolutions', None)  # type: Optional[List[float]]
+                image_formats = kwargs.pop('image_formats', None)  # type: Optional[List[str]]
+                max_page_size = kwargs.pop('max_page_size', 50)  # type: Optional[int]
+                skip_token = kwargs.pop('skip_token', None)  # type: Optional[str]
                 request = rest_scenes.build_list_request(
                     farmer_id=farmer_id,
                     boundary_id=boundary_id,
@@ -179,7 +192,6 @@ class ScenesOperations(object):
     def _create_satellite_data_ingestion_jo_initial(
         self,
         job_id,  # type: str
-        job=None,  # type: Any
         **kwargs  # type: Any
     ):
         # type: (...) -> Any
@@ -190,6 +202,7 @@ class ScenesOperations(object):
         error_map.update(kwargs.pop('error_map', {}))
 
         content_type = kwargs.pop("content_type", "application/json")
+        job = kwargs.pop('job', None)  # type: Any
         if job is not None:
             json = self._serialize.body(job, 'SatelliteDataIngestionJob')
         else:
@@ -225,7 +238,6 @@ class ScenesOperations(object):
     def begin_create_satellite_data_ingestion_job(
         self,
         job_id,  # type: str
-        job=None,  # type: Any
         **kwargs  # type: Any
     ):
         # type: (...) -> LROPoller[Any]
@@ -233,8 +245,8 @@ class ScenesOperations(object):
 
         :param job_id: JobId provided by user.
         :type job_id: str
-        :param job: Job parameters supplied by user.
-        :type job: Any
+        :keyword job: Job parameters supplied by user.
+        :paramtype job: Any
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
         :keyword polling: Pass in True if you'd like the LROBasePolling polling method,
@@ -335,14 +347,13 @@ class ScenesOperations(object):
 
     def download(
         self,
-        file_path,  # type: str
         **kwargs  # type: Any
     ):
         # type: (...) -> IO
         """Downloads and returns file Stream as response for the given input filePath.
 
-        :param file_path: cloud storage path of scene file.
-        :type file_path: str
+        :keyword file_path: cloud storage path of scene file.
+        :paramtype file_path: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: IO, or the result of cls(response)
         :rtype: IO
@@ -354,6 +365,7 @@ class ScenesOperations(object):
         }
         error_map.update(kwargs.pop('error_map', {}))
 
+        file_path = kwargs.pop('file_path')  # type: str
         request = rest_scenes.build_download_request(
             file_path=file_path,
             template_url=self.download.metadata['url'],

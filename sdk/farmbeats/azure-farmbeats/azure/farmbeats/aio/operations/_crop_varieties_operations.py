@@ -15,7 +15,7 @@ from azure.core.pipeline import PipelineResponse
 from azure.core.pipeline.transport import AsyncHttpResponse
 from azure.farmbeats.core.rest import HttpRequest
 
-from ..rest import crop_varieties as rest_crop_varieties
+from ...rest import crop_varieties as rest_crop_varieties
 
 if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
@@ -45,6 +45,7 @@ class CropVarietiesOperations:
     def list_by_crop_id(
         self,
         crop_id: str,
+        *,
         crop_ids: Optional[List[str]] = None,
         brands: Optional[List[str]] = None,
         products: Optional[List[str]] = None,
@@ -64,34 +65,34 @@ class CropVarietiesOperations:
 
         :param crop_id: Id of the associated crop.
         :type crop_id: str
-        :param crop_ids: CropIds of the resource.
-        :type crop_ids: list[str]
-        :param brands: Brands of the resource.
-        :type brands: list[str]
-        :param products: Products of the resource.
-        :type products: list[str]
-        :param ids: Ids of the resource.
-        :type ids: list[str]
-        :param names: Names of the resource.
-        :type names: list[str]
-        :param property_filters: Filters on key-value pairs within the Properties object.
+        :keyword crop_ids: CropIds of the resource.
+        :paramtype crop_ids: list[str]
+        :keyword brands: Brands of the resource.
+        :paramtype brands: list[str]
+        :keyword products: Products of the resource.
+        :paramtype products: list[str]
+        :keyword ids: Ids of the resource.
+        :paramtype ids: list[str]
+        :keyword names: Names of the resource.
+        :paramtype names: list[str]
+        :keyword property_filters: Filters on key-value pairs within the Properties object.
          eg. "{testkey} eq {testvalue}".
-        :type property_filters: list[str]
-        :param statuses: Statuses of the resource.
-        :type statuses: list[str]
-        :param min_created_date_time: Minimum creation date of resource (inclusive).
-        :type min_created_date_time: ~datetime.datetime
-        :param max_created_date_time: Maximum creation date of resource (inclusive).
-        :type max_created_date_time: ~datetime.datetime
-        :param min_last_modified_date_time: Minimum last modified date of resource (inclusive).
-        :type min_last_modified_date_time: ~datetime.datetime
-        :param max_last_modified_date_time: Maximum last modified date of resource (inclusive).
-        :type max_last_modified_date_time: ~datetime.datetime
-        :param max_page_size: Maximum number of items needed (inclusive).
+        :paramtype property_filters: list[str]
+        :keyword statuses: Statuses of the resource.
+        :paramtype statuses: list[str]
+        :keyword min_created_date_time: Minimum creation date of resource (inclusive).
+        :paramtype min_created_date_time: ~datetime.datetime
+        :keyword max_created_date_time: Maximum creation date of resource (inclusive).
+        :paramtype max_created_date_time: ~datetime.datetime
+        :keyword min_last_modified_date_time: Minimum last modified date of resource (inclusive).
+        :paramtype min_last_modified_date_time: ~datetime.datetime
+        :keyword max_last_modified_date_time: Maximum last modified date of resource (inclusive).
+        :paramtype max_last_modified_date_time: ~datetime.datetime
+        :keyword max_page_size: Maximum number of items needed (inclusive).
          Minimum = 10, Maximum = 1000, Default value = 50.
-        :type max_page_size: int
-        :param skip_token: Skip token for getting next set of results.
-        :type skip_token: str
+        :paramtype max_page_size: int
+        :keyword skip_token: Skip token for getting next set of results.
+        :paramtype skip_token: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: An iterator like instance of either Any or the result of cls(response)
         :rtype: ~azure.core.async_paging.AsyncItemPaged[Any]
@@ -178,6 +179,7 @@ class CropVarietiesOperations:
 
     def list(
         self,
+        *,
         crop_ids: Optional[List[str]] = None,
         brands: Optional[List[str]] = None,
         products: Optional[List[str]] = None,
@@ -195,34 +197,34 @@ class CropVarietiesOperations:
     ) -> AsyncIterable[Any]:
         """Returns a paginated list of crop variety resources across all crops.
 
-        :param crop_ids: CropIds of the resource.
-        :type crop_ids: list[str]
-        :param brands: Brands of the resource.
-        :type brands: list[str]
-        :param products: Products of the resource.
-        :type products: list[str]
-        :param ids: Ids of the resource.
-        :type ids: list[str]
-        :param names: Names of the resource.
-        :type names: list[str]
-        :param property_filters: Filters on key-value pairs within the Properties object.
+        :keyword crop_ids: CropIds of the resource.
+        :paramtype crop_ids: list[str]
+        :keyword brands: Brands of the resource.
+        :paramtype brands: list[str]
+        :keyword products: Products of the resource.
+        :paramtype products: list[str]
+        :keyword ids: Ids of the resource.
+        :paramtype ids: list[str]
+        :keyword names: Names of the resource.
+        :paramtype names: list[str]
+        :keyword property_filters: Filters on key-value pairs within the Properties object.
          eg. "{testkey} eq {testvalue}".
-        :type property_filters: list[str]
-        :param statuses: Statuses of the resource.
-        :type statuses: list[str]
-        :param min_created_date_time: Minimum creation date of resource (inclusive).
-        :type min_created_date_time: ~datetime.datetime
-        :param max_created_date_time: Maximum creation date of resource (inclusive).
-        :type max_created_date_time: ~datetime.datetime
-        :param min_last_modified_date_time: Minimum last modified date of resource (inclusive).
-        :type min_last_modified_date_time: ~datetime.datetime
-        :param max_last_modified_date_time: Maximum last modified date of resource (inclusive).
-        :type max_last_modified_date_time: ~datetime.datetime
-        :param max_page_size: Maximum number of items needed (inclusive).
+        :paramtype property_filters: list[str]
+        :keyword statuses: Statuses of the resource.
+        :paramtype statuses: list[str]
+        :keyword min_created_date_time: Minimum creation date of resource (inclusive).
+        :paramtype min_created_date_time: ~datetime.datetime
+        :keyword max_created_date_time: Maximum creation date of resource (inclusive).
+        :paramtype max_created_date_time: ~datetime.datetime
+        :keyword min_last_modified_date_time: Minimum last modified date of resource (inclusive).
+        :paramtype min_last_modified_date_time: ~datetime.datetime
+        :keyword max_last_modified_date_time: Maximum last modified date of resource (inclusive).
+        :paramtype max_last_modified_date_time: ~datetime.datetime
+        :keyword max_page_size: Maximum number of items needed (inclusive).
          Minimum = 10, Maximum = 1000, Default value = 50.
-        :type max_page_size: int
-        :param skip_token: Skip token for getting next set of results.
-        :type skip_token: str
+        :paramtype max_page_size: int
+        :keyword skip_token: Skip token for getting next set of results.
+        :paramtype skip_token: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: An iterator like instance of either Any or the result of cls(response)
         :rtype: ~azure.core.async_paging.AsyncItemPaged[Any]
@@ -359,6 +361,7 @@ class CropVarietiesOperations:
         self,
         crop_id: str,
         crop_variety_id: str,
+        *,
         crop_variety: Any = None,
         **kwargs: Any
     ) -> Any:
@@ -368,8 +371,8 @@ class CropVarietiesOperations:
         :type crop_id: str
         :param crop_variety_id: Id of the crop variety resource.
         :type crop_variety_id: str
-        :param crop_variety: Crop variety resource payload to create or update.
-        :type crop_variety: Any
+        :keyword crop_variety: Crop variety resource payload to create or update.
+        :paramtype crop_variety: Any
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: Any, or the result of cls(response)
         :rtype: Any

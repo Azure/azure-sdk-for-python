@@ -15,7 +15,7 @@ from azure.core.pipeline import PipelineResponse
 from azure.core.pipeline.transport import AsyncHttpResponse
 from azure.farmbeats.core.rest import HttpRequest
 
-from ..rest import seasons as rest_seasons
+from ...rest import seasons as rest_seasons
 
 if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
@@ -44,6 +44,7 @@ class SeasonsOperations:
 
     def list(
         self,
+        *,
         min_start_date_time: Optional[datetime.datetime] = None,
         max_start_date_time: Optional[datetime.datetime] = None,
         min_end_date_time: Optional[datetime.datetime] = None,
@@ -63,38 +64,40 @@ class SeasonsOperations:
     ) -> AsyncIterable[Any]:
         """Returns a paginated list of season resources.
 
-        :param min_start_date_time: Minimum season start datetime, sample format: yyyy-MM-ddTHH:mm:ssZ.
-        :type min_start_date_time: ~datetime.datetime
-        :param max_start_date_time: Maximum season start datetime, sample format: yyyy-MM-ddTHH:mm:ssZ.
-        :type max_start_date_time: ~datetime.datetime
-        :param min_end_date_time: Minimum season end datetime, sample format: yyyy-MM-ddTHH:mm:ssZ.
-        :type min_end_date_time: ~datetime.datetime
-        :param max_end_date_time: Maximum season end datetime, sample format: yyyy-MM-ddTHH:mm:ssZ.
-        :type max_end_date_time: ~datetime.datetime
-        :param years: Years of the resource.
-        :type years: list[int]
-        :param ids: Ids of the resource.
-        :type ids: list[str]
-        :param names: Names of the resource.
-        :type names: list[str]
-        :param property_filters: Filters on key-value pairs within the Properties object.
+        :keyword min_start_date_time: Minimum season start datetime, sample format: yyyy-MM-
+         ddTHH:mm:ssZ.
+        :paramtype min_start_date_time: ~datetime.datetime
+        :keyword max_start_date_time: Maximum season start datetime, sample format: yyyy-MM-
+         ddTHH:mm:ssZ.
+        :paramtype max_start_date_time: ~datetime.datetime
+        :keyword min_end_date_time: Minimum season end datetime, sample format: yyyy-MM-ddTHH:mm:ssZ.
+        :paramtype min_end_date_time: ~datetime.datetime
+        :keyword max_end_date_time: Maximum season end datetime, sample format: yyyy-MM-ddTHH:mm:ssZ.
+        :paramtype max_end_date_time: ~datetime.datetime
+        :keyword years: Years of the resource.
+        :paramtype years: list[int]
+        :keyword ids: Ids of the resource.
+        :paramtype ids: list[str]
+        :keyword names: Names of the resource.
+        :paramtype names: list[str]
+        :keyword property_filters: Filters on key-value pairs within the Properties object.
          eg. "{testkey} eq {testvalue}".
-        :type property_filters: list[str]
-        :param statuses: Statuses of the resource.
-        :type statuses: list[str]
-        :param min_created_date_time: Minimum creation date of resource (inclusive).
-        :type min_created_date_time: ~datetime.datetime
-        :param max_created_date_time: Maximum creation date of resource (inclusive).
-        :type max_created_date_time: ~datetime.datetime
-        :param min_last_modified_date_time: Minimum last modified date of resource (inclusive).
-        :type min_last_modified_date_time: ~datetime.datetime
-        :param max_last_modified_date_time: Maximum last modified date of resource (inclusive).
-        :type max_last_modified_date_time: ~datetime.datetime
-        :param max_page_size: Maximum number of items needed (inclusive).
+        :paramtype property_filters: list[str]
+        :keyword statuses: Statuses of the resource.
+        :paramtype statuses: list[str]
+        :keyword min_created_date_time: Minimum creation date of resource (inclusive).
+        :paramtype min_created_date_time: ~datetime.datetime
+        :keyword max_created_date_time: Maximum creation date of resource (inclusive).
+        :paramtype max_created_date_time: ~datetime.datetime
+        :keyword min_last_modified_date_time: Minimum last modified date of resource (inclusive).
+        :paramtype min_last_modified_date_time: ~datetime.datetime
+        :keyword max_last_modified_date_time: Maximum last modified date of resource (inclusive).
+        :paramtype max_last_modified_date_time: ~datetime.datetime
+        :keyword max_page_size: Maximum number of items needed (inclusive).
          Minimum = 10, Maximum = 1000, Default value = 50.
-        :type max_page_size: int
-        :param skip_token: Skip token for getting next set of results.
-        :type skip_token: str
+        :paramtype max_page_size: int
+        :keyword skip_token: Skip token for getting next set of results.
+        :paramtype skip_token: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: An iterator like instance of either Any or the result of cls(response)
         :rtype: ~azure.core.async_paging.AsyncItemPaged[Any]
@@ -230,6 +233,7 @@ class SeasonsOperations:
     async def create_or_update(
         self,
         season_id: str,
+        *,
         season: Any = None,
         **kwargs: Any
     ) -> Any:
@@ -237,8 +241,8 @@ class SeasonsOperations:
 
         :param season_id: Id of the season resource.
         :type season_id: str
-        :param season: Season resource payload to create or update.
-        :type season: Any
+        :keyword season: Season resource payload to create or update.
+        :paramtype season: Any
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: Any, or the result of cls(response)
         :rtype: Any

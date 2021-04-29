@@ -46,41 +46,32 @@ class WeatherOperations(object):
 
     def list(
         self,
-        farmer_id,  # type: str
-        boundary_id,  # type: str
-        extension_id,  # type: str
-        weather_data_type,  # type: str
-        granularity,  # type: str
-        start_date_time=None,  # type: Optional[datetime.datetime]
-        end_date_time=None,  # type: Optional[datetime.datetime]
-        max_page_size=50,  # type: Optional[int]
-        skip_token=None,  # type: Optional[str]
         **kwargs  # type: Any
     ):
         # type: (...) -> Iterable[Any]
         """Returns a paginated list of weather data.
 
-        :param farmer_id: Farmer ID.
-        :type farmer_id: str
-        :param boundary_id: Boundary ID.
-        :type boundary_id: str
-        :param extension_id: ID of the weather extension.
-        :type extension_id: str
-        :param weather_data_type: Type of weather data (forecast/historical).
-        :type weather_data_type: str
-        :param granularity: Granularity of weather data (daily/hourly).
-        :type granularity: str
-        :param start_date_time: Weather data start UTC date-time (inclusive), sample format: yyyy-MM-
+        :keyword farmer_id: Farmer ID.
+        :paramtype farmer_id: str
+        :keyword boundary_id: Boundary ID.
+        :paramtype boundary_id: str
+        :keyword extension_id: ID of the weather extension.
+        :paramtype extension_id: str
+        :keyword weather_data_type: Type of weather data (forecast/historical).
+        :paramtype weather_data_type: str
+        :keyword granularity: Granularity of weather data (daily/hourly).
+        :paramtype granularity: str
+        :keyword start_date_time: Weather data start UTC date-time (inclusive), sample format: yyyy-MM-
          ddTHH:mm:ssZ.
-        :type start_date_time: ~datetime.datetime
-        :param end_date_time: Weather data end UTC date-time (inclusive), sample format: yyyy-MM-
+        :paramtype start_date_time: ~datetime.datetime
+        :keyword end_date_time: Weather data end UTC date-time (inclusive), sample format: yyyy-MM-
          ddTHH:mm:ssZ.
-        :type end_date_time: ~datetime.datetime
-        :param max_page_size: Maximum number of items needed (inclusive).
+        :paramtype end_date_time: ~datetime.datetime
+        :keyword max_page_size: Maximum number of items needed (inclusive).
          Minimum = 10, Maximum = 1000, Default value = 50.
-        :type max_page_size: int
-        :param skip_token: Skip token for getting next set of results.
-        :type skip_token: str
+        :paramtype max_page_size: int
+        :keyword skip_token: Skip token for getting next set of results.
+        :paramtype skip_token: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: An iterator like instance of either Any or the result of cls(response)
         :rtype: ~azure.core.paging.ItemPaged[Any]
@@ -94,6 +85,15 @@ class WeatherOperations(object):
 
         def prepare_request(next_link=None):
             if not next_link:
+                farmer_id = kwargs.pop('farmer_id')  # type: str
+                boundary_id = kwargs.pop('boundary_id')  # type: str
+                extension_id = kwargs.pop('extension_id')  # type: str
+                weather_data_type = kwargs.pop('weather_data_type')  # type: str
+                granularity = kwargs.pop('granularity')  # type: str
+                start_date_time = kwargs.pop('start_date_time', None)  # type: Optional[datetime.datetime]
+                end_date_time = kwargs.pop('end_date_time', None)  # type: Optional[datetime.datetime]
+                max_page_size = kwargs.pop('max_page_size', 50)  # type: Optional[int]
+                skip_token = kwargs.pop('skip_token', None)  # type: Optional[str]
                 request = rest_weather.build_list_request(
                     farmer_id=farmer_id,
                     boundary_id=boundary_id,
@@ -110,6 +110,15 @@ class WeatherOperations(object):
                 request.url = self._client.format_url(request.url)
                 kwargs.pop("content_type", None)
             else:
+                farmer_id = kwargs.pop('farmer_id')  # type: str
+                boundary_id = kwargs.pop('boundary_id')  # type: str
+                extension_id = kwargs.pop('extension_id')  # type: str
+                weather_data_type = kwargs.pop('weather_data_type')  # type: str
+                granularity = kwargs.pop('granularity')  # type: str
+                start_date_time = kwargs.pop('start_date_time', None)  # type: Optional[datetime.datetime]
+                end_date_time = kwargs.pop('end_date_time', None)  # type: Optional[datetime.datetime]
+                max_page_size = kwargs.pop('max_page_size', 50)  # type: Optional[int]
+                skip_token = kwargs.pop('skip_token', None)  # type: Optional[str]
                 request = rest_weather.build_list_request(
                     farmer_id=farmer_id,
                     boundary_id=boundary_id,
@@ -203,7 +212,6 @@ class WeatherOperations(object):
     def _create_data_ingestion_jo_initial(
         self,
         job_id,  # type: str
-        job=None,  # type: Any
         **kwargs  # type: Any
     ):
         # type: (...) -> Any
@@ -214,6 +222,7 @@ class WeatherOperations(object):
         error_map.update(kwargs.pop('error_map', {}))
 
         content_type = kwargs.pop("content_type", "application/json")
+        job = kwargs.pop('job', None)  # type: Any
         if job is not None:
             json = self._serialize.body(job, 'WeatherDataIngestionJob')
         else:
@@ -249,7 +258,6 @@ class WeatherOperations(object):
     def begin_create_data_ingestion_job(
         self,
         job_id,  # type: str
-        job=None,  # type: Any
         **kwargs  # type: Any
     ):
         # type: (...) -> LROPoller[Any]
@@ -257,8 +265,8 @@ class WeatherOperations(object):
 
         :param job_id: Job id supplied by user.
         :type job_id: str
-        :param job: Job parameters supplied by user.
-        :type job: Any
+        :keyword job: Job parameters supplied by user.
+        :paramtype job: Any
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
         :keyword polling: Pass in True if you'd like the LROBasePolling polling method,
@@ -360,7 +368,6 @@ class WeatherOperations(object):
     def _create_data_delete_jo_initial(
         self,
         job_id,  # type: str
-        job=None,  # type: Any
         **kwargs  # type: Any
     ):
         # type: (...) -> Any
@@ -371,6 +378,7 @@ class WeatherOperations(object):
         error_map.update(kwargs.pop('error_map', {}))
 
         content_type = kwargs.pop("content_type", "application/json")
+        job = kwargs.pop('job', None)  # type: Any
         if job is not None:
             json = self._serialize.body(job, 'WeatherDataDeleteJob')
         else:
@@ -406,7 +414,6 @@ class WeatherOperations(object):
     def begin_create_data_delete_job(
         self,
         job_id,  # type: str
-        job=None,  # type: Any
         **kwargs  # type: Any
     ):
         # type: (...) -> LROPoller[Any]
@@ -414,8 +421,8 @@ class WeatherOperations(object):
 
         :param job_id: Job Id supplied by end user.
         :type job_id: str
-        :param job: Job parameters supplied by user.
-        :type job: Any
+        :keyword job: Job parameters supplied by user.
+        :paramtype job: Any
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
         :keyword polling: Pass in True if you'd like the LROBasePolling polling method,
