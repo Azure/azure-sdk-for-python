@@ -511,7 +511,7 @@ class ApplicationTypeVersionResourceList(msrest.serialization.Model):
 
 
 class ApplicationTypeVersionsCleanupPolicy(msrest.serialization.Model):
-    """The policy used to clean up unused versions.
+    """The policy used to clean up unused versions. When the policy is not specified explicitly, the default unused application versions to keep will be 3.
 
     All required parameters must be populated in order to send to Azure.
 
@@ -597,10 +597,7 @@ class ApplicationUpgradePolicy(msrest.serialization.Model):
     :param instance_close_delay_duration: Duration in seconds, to wait before a stateless instance
      is closed, to allow the active requests to drain gracefully. This would be effective when the
      instance is closing during the application/cluster upgrade, only for those instances which have
-     a non-zero delay duration configured in the service description. See
-     InstanceCloseDelayDurationSeconds property in StatelessServiceDescription for details. Note,
-     the default value of InstanceCloseDelayDurationInSeconds is 4294967295, which indicates that
-     the behavior will entirely depend on the delay configured in the stateless service description.
+     a non-zero delay duration configured in the service description.
     :type instance_close_delay_duration: long
     :param upgrade_mode: The mode used to monitor health during a rolling upgrade. The values are
      Monitored, and UnmonitoredAuto. Possible values include: "Monitored", "UnmonitoredAuto".
@@ -827,6 +824,11 @@ class AverageServiceLoadScalingTrigger(ScalingTrigger):
     :param scale_interval: Required. The period in seconds on which a decision is made whether to
      scale or not. This property should come in ISO 8601 format "hh:mm:ss".
     :type scale_interval: str
+    :param use_only_primary_load: Required. Flag determines whether only the load of primary
+     replica should be considered for scaling. If set to true, then trigger will only consider the
+     load of primary replicas of stateful service. If set to false, trigger will consider load of
+     all replicas. This parameter cannot be set to true for stateless service.
+    :type use_only_primary_load: bool
     """
 
     _validation = {
@@ -835,6 +837,7 @@ class AverageServiceLoadScalingTrigger(ScalingTrigger):
         'lower_load_threshold': {'required': True},
         'upper_load_threshold': {'required': True},
         'scale_interval': {'required': True},
+        'use_only_primary_load': {'required': True},
     }
 
     _attribute_map = {
@@ -843,6 +846,7 @@ class AverageServiceLoadScalingTrigger(ScalingTrigger):
         'lower_load_threshold': {'key': 'lowerLoadThreshold', 'type': 'float'},
         'upper_load_threshold': {'key': 'upperLoadThreshold', 'type': 'float'},
         'scale_interval': {'key': 'scaleInterval', 'type': 'str'},
+        'use_only_primary_load': {'key': 'useOnlyPrimaryLoad', 'type': 'bool'},
     }
 
     def __init__(
@@ -852,6 +856,7 @@ class AverageServiceLoadScalingTrigger(ScalingTrigger):
         lower_load_threshold: float,
         upper_load_threshold: float,
         scale_interval: str,
+        use_only_primary_load: bool,
         **kwargs
     ):
         super(AverageServiceLoadScalingTrigger, self).__init__(**kwargs)
@@ -860,6 +865,7 @@ class AverageServiceLoadScalingTrigger(ScalingTrigger):
         self.lower_load_threshold = lower_load_threshold
         self.upper_load_threshold = upper_load_threshold
         self.scale_interval = scale_interval
+        self.use_only_primary_load = use_only_primary_load
 
 
 class AzureActiveDirectory(msrest.serialization.Model):
@@ -1031,6 +1037,9 @@ class LoadBalancingRule(msrest.serialization.Model):
     :param protocol: Required. The reference to the transport protocol used by the load balancing
      rule. Possible values include: "tcp", "udp".
     :type protocol: str or ~service_fabric_managed_clusters_management_client.models.Protocol
+    :param probe_port: The prob port used by the load balancing rule. Acceptable values are between
+     1 and 65535.
+    :type probe_port: int
     :param probe_protocol: Required. the reference to the load balancer probe used by the load
      balancing rule. Possible values include: "tcp", "http", "https".
     :type probe_protocol: str or
@@ -1043,6 +1052,7 @@ class LoadBalancingRule(msrest.serialization.Model):
         'frontend_port': {'required': True, 'maximum': 65534, 'minimum': 1},
         'backend_port': {'required': True, 'maximum': 65534, 'minimum': 1},
         'protocol': {'required': True},
+        'probe_port': {'maximum': 65534, 'minimum': 1},
         'probe_protocol': {'required': True},
     }
 
@@ -1050,6 +1060,7 @@ class LoadBalancingRule(msrest.serialization.Model):
         'frontend_port': {'key': 'frontendPort', 'type': 'int'},
         'backend_port': {'key': 'backendPort', 'type': 'int'},
         'protocol': {'key': 'protocol', 'type': 'str'},
+        'probe_port': {'key': 'probePort', 'type': 'int'},
         'probe_protocol': {'key': 'probeProtocol', 'type': 'str'},
         'probe_request_path': {'key': 'probeRequestPath', 'type': 'str'},
     }
@@ -1061,6 +1072,7 @@ class LoadBalancingRule(msrest.serialization.Model):
         backend_port: int,
         protocol: Union[str, "Protocol"],
         probe_protocol: Union[str, "ProbeProtocol"],
+        probe_port: Optional[int] = None,
         probe_request_path: Optional[str] = None,
         **kwargs
     ):
@@ -1068,6 +1080,7 @@ class LoadBalancingRule(msrest.serialization.Model):
         self.frontend_port = frontend_port
         self.backend_port = backend_port
         self.protocol = protocol
+        self.probe_port = probe_port
         self.probe_protocol = probe_protocol
         self.probe_request_path = probe_request_path
 
@@ -1204,13 +1217,18 @@ class ManagedCluster(Resource):
     :vartype provisioning_state: str or
      ~service_fabric_managed_clusters_management_client.models.ManagedResourceProvisioningState
     :param cluster_code_version: The Service Fabric runtime version of the cluster. This property
-     can only by set the user when **upgradeMode** is set to 'Manual'. To get list of available
-     Service Fabric versions for new clusters use `ClusterVersion API <./ClusterVersion.md>`_. To
-     get the list of available version for existing clusters use **availableClusterVersions**.
+     is required when **clusterUpgradeMode** is set to 'Manual'. To get list of available Service
+     Fabric versions for new clusters use `ClusterVersion API <./ClusterVersion.md>`_. To get the
+     list of available version for existing clusters use **availableClusterVersions**.
     :type cluster_code_version: str
+    :param cluster_upgrade_mode: The upgrade mode of the cluster when new Service Fabric runtime
+     version is available. Possible values include: "Automatic", "Manual". Default value:
+     "Automatic".
+    :type cluster_upgrade_mode: str or
+     ~service_fabric_managed_clusters_management_client.models.ClusterUpgradeMode
     :param cluster_upgrade_cadence: Indicates when new cluster runtime version upgrades will be
-     applied after they are released. By default is Wave0. Possible values include: "Wave0",
-     "Wave1", "Wave2".
+     applied after they are released. By default is Wave0. Only applies when **clusterUpgradeMode**
+     is set to 'Automatic'. Possible values include: "Wave0", "Wave1", "Wave2".
     :type cluster_upgrade_cadence: str or
      ~service_fabric_managed_clusters_management_client.models.ClusterUpgradeCadence
     :param addon_features: List of add-on features to enable on the cluster.
@@ -1220,6 +1238,8 @@ class ManagedCluster(Resource):
      types that are created using any platform OS image with version 'latest'. The default value for
      this setting is false.
     :type enable_auto_os_upgrade: bool
+    :param zonal_resiliency: Indicates if the cluster has zone resiliency.
+    :type zonal_resiliency: bool
     :param application_type_versions_cleanup_policy: The policy used to clean up unused versions.
     :type application_type_versions_cleanup_policy:
      ~service_fabric_managed_clusters_management_client.models.ApplicationTypeVersionsCleanupPolicy
@@ -1267,9 +1287,11 @@ class ManagedCluster(Resource):
         'fabric_settings': {'key': 'properties.fabricSettings', 'type': '[SettingsSectionDescription]'},
         'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
         'cluster_code_version': {'key': 'properties.clusterCodeVersion', 'type': 'str'},
+        'cluster_upgrade_mode': {'key': 'properties.clusterUpgradeMode', 'type': 'str'},
         'cluster_upgrade_cadence': {'key': 'properties.clusterUpgradeCadence', 'type': 'str'},
         'addon_features': {'key': 'properties.addonFeatures', 'type': '[str]'},
         'enable_auto_os_upgrade': {'key': 'properties.enableAutoOSUpgrade', 'type': 'bool'},
+        'zonal_resiliency': {'key': 'properties.zonalResiliency', 'type': 'bool'},
         'application_type_versions_cleanup_policy': {'key': 'properties.applicationTypeVersionsCleanupPolicy', 'type': 'ApplicationTypeVersionsCleanupPolicy'},
     }
 
@@ -1291,9 +1313,11 @@ class ManagedCluster(Resource):
         azure_active_directory: Optional["AzureActiveDirectory"] = None,
         fabric_settings: Optional[List["SettingsSectionDescription"]] = None,
         cluster_code_version: Optional[str] = None,
+        cluster_upgrade_mode: Optional[Union[str, "ClusterUpgradeMode"]] = "Automatic",
         cluster_upgrade_cadence: Optional[Union[str, "ClusterUpgradeCadence"]] = None,
         addon_features: Optional[List[Union[str, "ManagedClusterAddOnFeature"]]] = None,
         enable_auto_os_upgrade: Optional[bool] = None,
+        zonal_resiliency: Optional[bool] = False,
         application_type_versions_cleanup_policy: Optional["ApplicationTypeVersionsCleanupPolicy"] = None,
         **kwargs
     ):
@@ -1317,10 +1341,64 @@ class ManagedCluster(Resource):
         self.fabric_settings = fabric_settings
         self.provisioning_state = None
         self.cluster_code_version = cluster_code_version
+        self.cluster_upgrade_mode = cluster_upgrade_mode
         self.cluster_upgrade_cadence = cluster_upgrade_cadence
         self.addon_features = addon_features
         self.enable_auto_os_upgrade = enable_auto_os_upgrade
+        self.zonal_resiliency = zonal_resiliency
         self.application_type_versions_cleanup_policy = application_type_versions_cleanup_policy
+
+
+class ManagedClusterCodeVersionResult(msrest.serialization.Model):
+    """The result of the Service Fabric runtime versions.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :param id: The identification of the result.
+    :type id: str
+    :param name: The name of the result.
+    :type name: str
+    :param type: The result resource type.
+    :type type: str
+    :param cluster_code_version: The Service Fabric runtime version of the cluster.
+    :type cluster_code_version: str
+    :param support_expiry_utc: The date of expiry of support of the version.
+    :type support_expiry_utc: str
+    :ivar os_type: Cluster operating system, the default will be Windows. Default value: "Windows".
+    :vartype os_type: str
+    """
+
+    _validation = {
+        'os_type': {'constant': True},
+    }
+
+    _attribute_map = {
+        'id': {'key': 'id', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
+        'cluster_code_version': {'key': 'properties.clusterCodeVersion', 'type': 'str'},
+        'support_expiry_utc': {'key': 'properties.supportExpiryUtc', 'type': 'str'},
+        'os_type': {'key': 'properties.osType', 'type': 'str'},
+    }
+
+    os_type = "Windows"
+
+    def __init__(
+        self,
+        *,
+        id: Optional[str] = None,
+        name: Optional[str] = None,
+        type: Optional[str] = None,
+        cluster_code_version: Optional[str] = None,
+        support_expiry_utc: Optional[str] = None,
+        **kwargs
+    ):
+        super(ManagedClusterCodeVersionResult, self).__init__(**kwargs)
+        self.id = id
+        self.name = name
+        self.type = type
+        self.cluster_code_version = cluster_code_version
+        self.support_expiry_utc = support_expiry_utc
 
 
 class ManagedClusterListResult(msrest.serialization.Model):
@@ -1637,6 +1715,11 @@ class NodeType(ManagedProxyResource):
     :type vm_instance_count: int
     :param data_disk_size_gb: Disk size for each vm in the node type in GBs.
     :type data_disk_size_gb: int
+    :param data_disk_type: Managed data disk type. IOPS and throughput are given by the disk size,
+     to see more information go to
+     https://docs.microsoft.com/en-us/azure/virtual-machines/disks-types. Possible values include:
+     "Standard_LRS", "StandardSSD_LRS", "Premium_LRS". Default value: "StandardSSD_LRS".
+    :type data_disk_type: str or ~service_fabric_managed_clusters_management_client.models.DiskType
     :param placement_properties: The placement tags applied to nodes in the node type, which can be
      used to indicate where certain services (workload) should run.
     :type placement_properties: dict[str, str]
@@ -1676,6 +1759,11 @@ class NodeType(ManagedProxyResource):
     :param vm_managed_identity: Identities for the virtual machine scale set under the node type.
     :type vm_managed_identity:
      ~service_fabric_managed_clusters_management_client.models.VmManagedIdentity
+    :param is_stateless: Indicates if the node type can only host Stateless workloads.
+    :type is_stateless: bool
+    :param multiple_placement_groups: Indicates if scale set associated with the node type can be
+     composed of multiple placement groups.
+    :type multiple_placement_groups: bool
     :ivar provisioning_state: The provisioning state of the managed cluster resource. Possible
      values include: "None", "Creating", "Created", "Updating", "Succeeded", "Failed", "Canceled",
      "Deleting", "Deleted", "Other".
@@ -1701,6 +1789,7 @@ class NodeType(ManagedProxyResource):
         'is_primary': {'key': 'properties.isPrimary', 'type': 'bool'},
         'vm_instance_count': {'key': 'properties.vmInstanceCount', 'type': 'int'},
         'data_disk_size_gb': {'key': 'properties.dataDiskSizeGB', 'type': 'int'},
+        'data_disk_type': {'key': 'properties.dataDiskType', 'type': 'str'},
         'placement_properties': {'key': 'properties.placementProperties', 'type': '{str}'},
         'capacities': {'key': 'properties.capacities', 'type': '{str}'},
         'application_ports': {'key': 'properties.applicationPorts', 'type': 'EndpointRangeDescription'},
@@ -1713,6 +1802,8 @@ class NodeType(ManagedProxyResource):
         'vm_secrets': {'key': 'properties.vmSecrets', 'type': '[VaultSecretGroup]'},
         'vm_extensions': {'key': 'properties.vmExtensions', 'type': '[VMSSExtension]'},
         'vm_managed_identity': {'key': 'properties.vmManagedIdentity', 'type': 'VmManagedIdentity'},
+        'is_stateless': {'key': 'properties.isStateless', 'type': 'bool'},
+        'multiple_placement_groups': {'key': 'properties.multiplePlacementGroups', 'type': 'bool'},
         'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
     }
 
@@ -1723,6 +1814,7 @@ class NodeType(ManagedProxyResource):
         is_primary: Optional[bool] = None,
         vm_instance_count: Optional[int] = None,
         data_disk_size_gb: Optional[int] = None,
+        data_disk_type: Optional[Union[str, "DiskType"]] = "StandardSSD_LRS",
         placement_properties: Optional[Dict[str, str]] = None,
         capacities: Optional[Dict[str, str]] = None,
         application_ports: Optional["EndpointRangeDescription"] = None,
@@ -1735,12 +1827,15 @@ class NodeType(ManagedProxyResource):
         vm_secrets: Optional[List["VaultSecretGroup"]] = None,
         vm_extensions: Optional[List["VMSSExtension"]] = None,
         vm_managed_identity: Optional["VmManagedIdentity"] = None,
+        is_stateless: Optional[bool] = False,
+        multiple_placement_groups: Optional[bool] = False,
         **kwargs
     ):
         super(NodeType, self).__init__(tags=tags, **kwargs)
         self.is_primary = is_primary
         self.vm_instance_count = vm_instance_count
         self.data_disk_size_gb = data_disk_size_gb
+        self.data_disk_type = data_disk_type
         self.placement_properties = placement_properties
         self.capacities = capacities
         self.application_ports = application_ports
@@ -1753,6 +1848,8 @@ class NodeType(ManagedProxyResource):
         self.vm_secrets = vm_secrets
         self.vm_extensions = vm_extensions
         self.vm_managed_identity = vm_managed_identity
+        self.is_stateless = is_stateless
+        self.multiple_placement_groups = multiple_placement_groups
         self.provisioning_state = None
 
 
@@ -2571,9 +2668,6 @@ class ServiceResourceProperties(ServiceResourcePropertiesBase):
      values include: "SharedProcess", "ExclusiveProcess".
     :type service_package_activation_mode: str or
      ~service_fabric_managed_clusters_management_client.models.ServicePackageActivationMode
-    :param service_dns_name: The DNS name of the service. It requires the DNS system service to be
-     enabled in Service Fabric cluster.
-    :type service_dns_name: str
     """
 
     _validation = {
@@ -2595,7 +2689,6 @@ class ServiceResourceProperties(ServiceResourcePropertiesBase):
         'service_type_name': {'key': 'serviceTypeName', 'type': 'str'},
         'partition_description': {'key': 'partitionDescription', 'type': 'Partition'},
         'service_package_activation_mode': {'key': 'servicePackageActivationMode', 'type': 'str'},
-        'service_dns_name': {'key': 'serviceDnsName', 'type': 'str'},
     }
 
     _subtype_map = {
@@ -2614,7 +2707,6 @@ class ServiceResourceProperties(ServiceResourcePropertiesBase):
         default_move_cost: Optional[Union[str, "MoveCost"]] = None,
         scaling_policies: Optional[List["ScalingPolicy"]] = None,
         service_package_activation_mode: Optional[Union[str, "ServicePackageActivationMode"]] = None,
-        service_dns_name: Optional[str] = None,
         **kwargs
     ):
         super(ServiceResourceProperties, self).__init__(placement_constraints=placement_constraints, correlation_scheme=correlation_scheme, service_load_metrics=service_load_metrics, service_placement_policies=service_placement_policies, default_move_cost=default_move_cost, scaling_policies=scaling_policies, **kwargs)
@@ -2623,7 +2715,6 @@ class ServiceResourceProperties(ServiceResourcePropertiesBase):
         self.service_type_name = service_type_name
         self.partition_description = partition_description
         self.service_package_activation_mode = service_package_activation_mode
-        self.service_dns_name = service_dns_name
 
 
 class ServiceTypeHealthPolicy(msrest.serialization.Model):
@@ -2881,9 +2972,6 @@ class StatefulServiceProperties(ServiceResourceProperties):
      values include: "SharedProcess", "ExclusiveProcess".
     :type service_package_activation_mode: str or
      ~service_fabric_managed_clusters_management_client.models.ServicePackageActivationMode
-    :param service_dns_name: The DNS name of the service. It requires the DNS system service to be
-     enabled in Service Fabric cluster.
-    :type service_dns_name: str
     :param has_persisted_state: A flag indicating whether this is a persistent service which stores
      states on the local disk. If it is then the value of this property is true, if not it is false.
     :type has_persisted_state: bool
@@ -2903,10 +2991,6 @@ class StatefulServiceProperties(ServiceResourceProperties):
     :param service_placement_time_limit: The duration for which replicas can stay InBuild before
      reporting that build is stuck, represented in ISO 8601 format "hh:mm:ss".
     :type service_placement_time_limit: str
-    :param drop_source_replica_on_move: Indicates whether to drop source Secondary replica even if
-     the target replica has not finished build. If desired behavior is to drop it as soon as
-     possible the value of this property is true, if not it is false.
-    :type drop_source_replica_on_move: bool
     """
 
     _validation = {
@@ -2930,7 +3014,6 @@ class StatefulServiceProperties(ServiceResourceProperties):
         'service_type_name': {'key': 'serviceTypeName', 'type': 'str'},
         'partition_description': {'key': 'partitionDescription', 'type': 'Partition'},
         'service_package_activation_mode': {'key': 'servicePackageActivationMode', 'type': 'str'},
-        'service_dns_name': {'key': 'serviceDnsName', 'type': 'str'},
         'has_persisted_state': {'key': 'hasPersistedState', 'type': 'bool'},
         'target_replica_set_size': {'key': 'targetReplicaSetSize', 'type': 'int'},
         'min_replica_set_size': {'key': 'minReplicaSetSize', 'type': 'int'},
@@ -2938,7 +3021,6 @@ class StatefulServiceProperties(ServiceResourceProperties):
         'quorum_loss_wait_duration': {'key': 'quorumLossWaitDuration', 'type': 'str'},
         'stand_by_replica_keep_duration': {'key': 'standByReplicaKeepDuration', 'type': 'str'},
         'service_placement_time_limit': {'key': 'servicePlacementTimeLimit', 'type': 'str'},
-        'drop_source_replica_on_move': {'key': 'dropSourceReplicaOnMove', 'type': 'bool'},
     }
 
     def __init__(
@@ -2953,7 +3035,6 @@ class StatefulServiceProperties(ServiceResourceProperties):
         default_move_cost: Optional[Union[str, "MoveCost"]] = None,
         scaling_policies: Optional[List["ScalingPolicy"]] = None,
         service_package_activation_mode: Optional[Union[str, "ServicePackageActivationMode"]] = None,
-        service_dns_name: Optional[str] = None,
         has_persisted_state: Optional[bool] = None,
         target_replica_set_size: Optional[int] = None,
         min_replica_set_size: Optional[int] = None,
@@ -2961,10 +3042,9 @@ class StatefulServiceProperties(ServiceResourceProperties):
         quorum_loss_wait_duration: Optional[str] = None,
         stand_by_replica_keep_duration: Optional[str] = None,
         service_placement_time_limit: Optional[str] = None,
-        drop_source_replica_on_move: Optional[bool] = None,
         **kwargs
     ):
-        super(StatefulServiceProperties, self).__init__(placement_constraints=placement_constraints, correlation_scheme=correlation_scheme, service_load_metrics=service_load_metrics, service_placement_policies=service_placement_policies, default_move_cost=default_move_cost, scaling_policies=scaling_policies, service_type_name=service_type_name, partition_description=partition_description, service_package_activation_mode=service_package_activation_mode, service_dns_name=service_dns_name, **kwargs)
+        super(StatefulServiceProperties, self).__init__(placement_constraints=placement_constraints, correlation_scheme=correlation_scheme, service_load_metrics=service_load_metrics, service_placement_policies=service_placement_policies, default_move_cost=default_move_cost, scaling_policies=scaling_policies, service_type_name=service_type_name, partition_description=partition_description, service_package_activation_mode=service_package_activation_mode, **kwargs)
         self.service_kind = 'Stateful'  # type: str
         self.has_persisted_state = has_persisted_state
         self.target_replica_set_size = target_replica_set_size
@@ -2973,7 +3053,6 @@ class StatefulServiceProperties(ServiceResourceProperties):
         self.quorum_loss_wait_duration = quorum_loss_wait_duration
         self.stand_by_replica_keep_duration = stand_by_replica_keep_duration
         self.service_placement_time_limit = service_placement_time_limit
-        self.drop_source_replica_on_move = drop_source_replica_on_move
 
 
 class StatelessServiceProperties(ServiceResourceProperties):
@@ -3023,9 +3102,6 @@ class StatelessServiceProperties(ServiceResourceProperties):
      values include: "SharedProcess", "ExclusiveProcess".
     :type service_package_activation_mode: str or
      ~service_fabric_managed_clusters_management_client.models.ServicePackageActivationMode
-    :param service_dns_name: The DNS name of the service. It requires the DNS system service to be
-     enabled in Service Fabric cluster.
-    :type service_dns_name: str
     :param instance_count: Required. The instance count.
     :type instance_count: int
     :param min_instance_count: MinInstanceCount is the minimum number of instances that must be up
@@ -3042,19 +3118,6 @@ class StatelessServiceProperties(ServiceResourceProperties):
      MinInstancePercentage computation, -1 is first converted into the number of nodes on which the
      instances are allowed to be placed according to the placement constraints on the service.
     :type min_instance_percentage: int
-    :param instance_close_delay_duration: Duration represented in ISO 8601 format "hh:mm:ss", to
-     wait before a stateless instance is closed, to allow the active requests to drain gracefully.
-     This would be effective when the instance is closing during the application/cluster upgrade and
-     disabling node. The endpoint exposed on this instance is removed prior to starting the delay,
-     which prevents new connections to this instance. In addition, clients that have subscribed to
-     service endpoint change
-     events(https://docs.microsoft.com/dotnet/api/system.fabric.fabricclient.servicemanagementclient.registerservicenotificationfilterasync),
-     can do the following upon receiving the endpoint removal notification: - Stop sending new
-     requests to this instance. - Close existing connections after in-flight requests have
-     completed. - Connect to a different instance of the service partition for future requests.
-     Note, the default value of InstanceCloseDelayDuration is 0, which indicates that there won't be
-     any delay or removal of the endpoint prior to closing the instance.
-    :type instance_close_delay_duration: str
     """
 
     _validation = {
@@ -3077,11 +3140,9 @@ class StatelessServiceProperties(ServiceResourceProperties):
         'service_type_name': {'key': 'serviceTypeName', 'type': 'str'},
         'partition_description': {'key': 'partitionDescription', 'type': 'Partition'},
         'service_package_activation_mode': {'key': 'servicePackageActivationMode', 'type': 'str'},
-        'service_dns_name': {'key': 'serviceDnsName', 'type': 'str'},
         'instance_count': {'key': 'instanceCount', 'type': 'int'},
         'min_instance_count': {'key': 'minInstanceCount', 'type': 'int'},
         'min_instance_percentage': {'key': 'minInstancePercentage', 'type': 'int'},
-        'instance_close_delay_duration': {'key': 'instanceCloseDelayDuration', 'type': 'str'},
     }
 
     def __init__(
@@ -3097,18 +3158,15 @@ class StatelessServiceProperties(ServiceResourceProperties):
         default_move_cost: Optional[Union[str, "MoveCost"]] = None,
         scaling_policies: Optional[List["ScalingPolicy"]] = None,
         service_package_activation_mode: Optional[Union[str, "ServicePackageActivationMode"]] = None,
-        service_dns_name: Optional[str] = None,
         min_instance_count: Optional[int] = None,
         min_instance_percentage: Optional[int] = None,
-        instance_close_delay_duration: Optional[str] = "0",
         **kwargs
     ):
-        super(StatelessServiceProperties, self).__init__(placement_constraints=placement_constraints, correlation_scheme=correlation_scheme, service_load_metrics=service_load_metrics, service_placement_policies=service_placement_policies, default_move_cost=default_move_cost, scaling_policies=scaling_policies, service_type_name=service_type_name, partition_description=partition_description, service_package_activation_mode=service_package_activation_mode, service_dns_name=service_dns_name, **kwargs)
+        super(StatelessServiceProperties, self).__init__(placement_constraints=placement_constraints, correlation_scheme=correlation_scheme, service_load_metrics=service_load_metrics, service_placement_policies=service_placement_policies, default_move_cost=default_move_cost, scaling_policies=scaling_policies, service_type_name=service_type_name, partition_description=partition_description, service_package_activation_mode=service_package_activation_mode, **kwargs)
         self.service_kind = 'Stateless'  # type: str
         self.instance_count = instance_count
         self.min_instance_count = min_instance_count
         self.min_instance_percentage = min_instance_percentage
-        self.instance_close_delay_duration = instance_close_delay_duration
 
 
 class SubResource(msrest.serialization.Model):
@@ -3265,9 +3323,9 @@ class VaultCertificate(msrest.serialization.Model):
      Key Vault as a secret. For adding a secret to the Key Vault, see `Add a key or secret to the
      key vault <https://docs.microsoft.com/azure/key-vault/key-vault-get-started/#add>`_. In this
      case, your certificate needs to be It is the Base64 encoding of the following JSON Object which
-     is encoded in UTF-8: :code:`<br>`:code:`<br>` {:code:`<br>`  "data":":code:`<Base64-encoded-
-     certificate>`",:code:`<br>`  "dataType":"pfx",:code:`<br>`  "password":":code:`<pfx-file-
-     password>`":code:`<br>`}.
+     is encoded in UTF-8: :code:`<br>`:code:`<br>` {:code:`<br>`
+     "data":":code:`<Base64-encoded-certificate>`",:code:`<br>`  "dataType":"pfx",:code:`<br>`
+     "password":":code:`<pfx-file-password>`":code:`<br>`}.
     :type certificate_url: str
     :param certificate_store: Required. For Windows VMs, specifies the certificate store on the
      Virtual Machine to which the certificate should be added. The specified certificate store is
