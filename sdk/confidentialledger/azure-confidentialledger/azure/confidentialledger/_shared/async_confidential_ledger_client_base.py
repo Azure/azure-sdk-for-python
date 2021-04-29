@@ -90,7 +90,7 @@ class AsyncConfidentialLedgerClientBase(object):
                 "authentication_policy",
                 AsyncBearerTokenCredentialPolicy(
                     credential,
-                    "https://confidential-ledger-ppe.azure.com/.default",
+                    "https://confidential-ledger.azure.com/.default",
                     **kwargs
                 ),
             )

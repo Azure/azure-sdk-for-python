@@ -18,11 +18,11 @@ interactions:
     headers:
       content-length: '29'
       content-type: application/json
-      x-ms-ccf-transaction-id: '13.9075'
+      x-ms-ccf-transaction-id: '2.3237'
     status:
       code: 200
       message: OK
-    url: https://lyshi-sdk-ledger-1.eastus.cloudapp.azure.com/app/transactions?api-version=0.1-preview
+    url: https://lyshi-sdk-ledger-2.eastus.cloudapp.azure.com/app/transactions?api-version=0.1-preview
 - request:
     body: null
     headers:
@@ -31,18 +31,18 @@ interactions:
       User-Agent:
       - azsdk-python-confidentialledger/0.1 Python/3.8.5 (Linux-5.4.72-microsoft-standard-WSL2-x86_64-with-glibc2.29)
     method: GET
-    uri: https://fake-confidential-ledger.azure.com/app/transactions/13.9075/status?api-version=0.1-preview
+    uri: https://fake-confidential-ledger.azure.com/app/transactions/2.3237/status?api-version=0.1-preview
   response:
     body:
-      string: '{"state":"Pending","transactionId":"13.9075"}'
+      string: '{"state":"Committed","transactionId":"2.3237"}'
     headers:
-      content-length: '45'
+      content-length: '46'
       content-type: application/json
-      x-ms-ccf-transaction-id: '13.9075'
+      x-ms-ccf-transaction-id: '2.3238'
     status:
       code: 200
       message: OK
-    url: https://lyshi-sdk-ledger-1.eastus.cloudapp.azure.com/app/transactions/13.9075/status?api-version=0.1-preview
+    url: https://lyshi-sdk-ledger-2.eastus.cloudapp.azure.com/app/transactions/2.3237/status?api-version=0.1-preview
 - request:
     body: null
     headers:
@@ -51,18 +51,18 @@ interactions:
       User-Agent:
       - azsdk-python-confidentialledger/0.1 Python/3.8.5 (Linux-5.4.72-microsoft-standard-WSL2-x86_64-with-glibc2.29)
     method: GET
-    uri: https://fake-confidential-ledger.azure.com/app/transactions/13.9075/status?api-version=0.1-preview
+    uri: https://fake-confidential-ledger.azure.com/app/transactions/2.3237/status?api-version=0.1-preview
   response:
     body:
-      string: '{"state":"Committed","transactionId":"13.9075"}'
+      string: '{"state":"Committed","transactionId":"2.3237"}'
     headers:
-      content-length: '47'
+      content-length: '46'
       content-type: application/json
-      x-ms-ccf-transaction-id: '13.9076'
+      x-ms-ccf-transaction-id: '2.3238'
     status:
       code: 200
       message: OK
-    url: https://lyshi-sdk-ledger-1.eastus.cloudapp.azure.com/app/transactions/13.9075/status?api-version=0.1-preview
+    url: https://lyshi-sdk-ledger-2.eastus.cloudapp.azure.com/app/transactions/2.3237/status?api-version=0.1-preview
 - request:
     body: null
     headers:
@@ -71,27 +71,7 @@ interactions:
       User-Agent:
       - azsdk-python-confidentialledger/0.1 Python/3.8.5 (Linux-5.4.72-microsoft-standard-WSL2-x86_64-with-glibc2.29)
     method: GET
-    uri: https://fake-confidential-ledger.azure.com/app/transactions/13.9075/status?api-version=0.1-preview
-  response:
-    body:
-      string: '{"state":"Committed","transactionId":"13.9075"}'
-    headers:
-      content-length: '47'
-      content-type: application/json
-      x-ms-ccf-transaction-id: '13.9076'
-    status:
-      code: 200
-      message: OK
-    url: https://lyshi-sdk-ledger-1.eastus.cloudapp.azure.com/app/transactions/13.9075/status?api-version=0.1-preview
-- request:
-    body: null
-    headers:
-      Accept:
-      - application/json
-      User-Agent:
-      - azsdk-python-confidentialledger/0.1 Python/3.8.5 (Linux-5.4.72-microsoft-standard-WSL2-x86_64-with-glibc2.29)
-    method: GET
-    uri: https://fake-confidential-ledger.azure.com/app/transactions/13.9075/receipt?api-version=0.1-preview
+    uri: https://fake-confidential-ledger.azure.com/app/transactions/2.3237/receipt?api-version=0.1-preview
   response:
     body:
       string: "{\n  \"receipt\": {\n    \"leaf\": \"\",\n    \"node_id\": \"\",\n
@@ -100,11 +80,11 @@ interactions:
     headers:
       content-length: '155'
       content-type: application/json
-      x-ms-ccf-transaction-id: '13.9076'
+      x-ms-ccf-transaction-id: '2.3238'
     status:
       code: 200
       message: OK
-    url: https://lyshi-sdk-ledger-1.eastus.cloudapp.azure.com/app/transactions/13.9075/receipt?api-version=0.1-preview
+    url: https://lyshi-sdk-ledger-2.eastus.cloudapp.azure.com/app/transactions/2.3237/receipt?api-version=0.1-preview
 - request:
     body: null
     headers:
@@ -113,30 +93,50 @@ interactions:
       User-Agent:
       - azsdk-python-confidentialledger/0.1 Python/3.8.5 (Linux-5.4.72-microsoft-standard-WSL2-x86_64-with-glibc2.29)
     method: GET
-    uri: https://fake-confidential-ledger.azure.com/app/transactions/13.9075/receipt?api-version=0.1-preview
+    uri: https://fake-confidential-ledger.azure.com/app/transactions/2.3237/receipt?api-version=0.1-preview
   response:
     body:
-      string: "{\n  \"receipt\": {\n    \"leaf\": \"b81556ab5041261dce07ad3a7bb1610e92c79ee849a3b867f3f9f89fb0b0d829\",\n
-        \   \"node_id\": \"b3b66865cec514b29e8c15315170db13f959a0796c5227b3f0778922bec3b213\",\n
-        \   \"proof\": [\n      {\n        \"left\": \"4e6e4ea4a7ac11a98407f89d6d37606f8e2f4a4347d823c98c24d4f174952488\"\n
-        \     },\n      {\n        \"left\": \"8b16896937e11f177e1c5d365395df75969c8d08b9dd634a05d601547678b2c2\"\n
-        \     },\n      {\n        \"left\": \"db3aa001e9c595aa865f95003c1407237ae1eaff5747e70589c26a80a6f578dd\"\n
-        \     },\n      {\n        \"left\": \"acf250487d4868ebb3ff90e72ff35ca571d876ea699d16ada0b7e11539f3699e\"\n
-        \     },\n      {\n        \"left\": \"51283f059e51c2a9381f3a5f4875d73efa3d0167127e4829d963f5318088afec\"\n
-        \     },\n      {\n        \"left\": \"af94eec53b5c74d00f303a9139ea0555bad192e5a8755298f402457484e77d56\"\n
-        \     },\n      {\n        \"left\": \"5ad8aece85bd2507321a9d804f78f29c889f3839484ffe03ea179f52be512cb7\"\n
-        \     },\n      {\n        \"left\": \"aea2c32ba14224beb3025b2479534c13a402f4cb158e73466b81135c20d32d4a\"\n
-        \     }\n    ],\n    \"root\": \"ed80991006a7c19d9c1ba3e141d6e6e86c80611776ec91de5ea005a46338fc7b\",\n
-        \   \"signature\": \"MGUCMEV5yJPtb2F4PDyEHUyDHjHBFd+TUCWInR0ZuTptayN+DkUkzFW6wXkaQPuU3F1jDQIxAOOKtkX6oWrxqpSZo3I6KtzNsDm0INIeIzdCjb/GrLbjKnw+xbVXnCrpMROdpcTVmQ==\"\n
-        \ },\n  \"state\": \"Ready\",\n  \"transactionId\": \"13.9075\"\n}"
+      string: "{\n  \"receipt\": {\n    \"leaf\": \"\",\n    \"node_id\": \"\",\n
+        \   \"proof\": [],\n    \"root\": \"\",\n    \"signature\": \"\"\n  },\n  \"state\":
+        \"Loading\",\n  \"transactionId\": \"\"\n}"
     headers:
-      content-length: '1296'
+      content-length: '155'
       content-type: application/json
-      x-ms-ccf-transaction-id: '13.9076'
+      x-ms-ccf-transaction-id: '2.3238'
     status:
       code: 200
       message: OK
-    url: https://lyshi-sdk-ledger-1.eastus.cloudapp.azure.com/app/transactions/13.9075/receipt?api-version=0.1-preview
+    url: https://lyshi-sdk-ledger-2.eastus.cloudapp.azure.com/app/transactions/2.3237/receipt?api-version=0.1-preview
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      User-Agent:
+      - azsdk-python-confidentialledger/0.1 Python/3.8.5 (Linux-5.4.72-microsoft-standard-WSL2-x86_64-with-glibc2.29)
+    method: GET
+    uri: https://fake-confidential-ledger.azure.com/app/transactions/2.3237/receipt?api-version=0.1-preview
+  response:
+    body:
+      string: "{\n  \"receipt\": {\n    \"leaf\": \"e1cb2d3d718021b2ed725168cb7c1d4bd1375241c9c021643ab8a4b6be2aea2a\",\n
+        \   \"node_id\": \"d115c6b83f3728dea4daec1f51a7d0bfc23d9d240d013d6b09ff5c63256599ba\",\n
+        \   \"proof\": [\n      {\n        \"left\": \"c3b9b44e89efdc71f3bc9bf9eea9ac01539e11ef79c603f5afd2eb36b5da523a\"\n
+        \     },\n      {\n        \"left\": \"bf0a1d529b6a4f61f2bb2ea6c440ba965d989da80ebc828bc6dcaaea356d04a5\"\n
+        \     },\n      {\n        \"left\": \"7c77a2fa8b58921a80ac11cc33c2504af20ac4762621f35847b1593df6e28cd6\"\n
+        \     },\n      {\n        \"left\": \"44c5054bef93b72c12828b12f7edc6a0a7f37b93874a8fa681c4a279a664aca3\"\n
+        \     },\n      {\n        \"left\": \"125586c97647af6480e2b37aa9182d04023e11cae3e920d2322f2c0baae6d5eb\"\n
+        \     },\n      {\n        \"left\": \"01e69f16f3a40f63965958e28c47796990ccb0ceb8b44d10de291987ffe2bc4d\"\n
+        \     }\n    ],\n    \"root\": \"33bc7d903d8a2d7855b5982c8732acdc6ec90f85e6832cc01094225cd1638404\",\n
+        \   \"signature\": \"MGQCMBMrA28g9cMAgawKKXF2VepJmRaA5IXlS1l2cciNHEE63tmOJxa6m4aY+qmE+EDvwQIwY2d3mJRvlnbgu9rvBT/RXStnKaAhuLvHE3pQ2qIbAoxicVWNyYFQRGqS6N9/eiek\"\n
+        \ },\n  \"state\": \"Ready\",\n  \"transactionId\": \"2.3237\"\n}"
+    headers:
+      content-length: '1091'
+      content-type: application/json
+      x-ms-ccf-transaction-id: '2.3238'
+    status:
+      code: 200
+      message: OK
+    url: https://lyshi-sdk-ledger-2.eastus.cloudapp.azure.com/app/transactions/2.3237/receipt?api-version=0.1-preview
 - request:
     body: null
     headers:
@@ -148,15 +148,15 @@ interactions:
     uri: https://fake-confidential-ledger.azure.com/app/transactions/current?api-version=0.1-preview
   response:
     body:
-      string: '{"contents":"Test entry from Python SDK","subLedgerId":"subledger:0","transactionId":"13.9076"}'
+      string: '{"contents":"Test entry from Python SDK","subLedgerId":"subledger:0","transactionId":"2.3238"}'
     headers:
-      content-length: '95'
+      content-length: '94'
       content-type: application/json
-      x-ms-ccf-transaction-id: '13.9076'
+      x-ms-ccf-transaction-id: '2.3238'
     status:
       code: 200
       message: OK
-    url: https://lyshi-sdk-ledger-1.eastus.cloudapp.azure.com/app/transactions/current?api-version=0.1-preview
+    url: https://lyshi-sdk-ledger-2.eastus.cloudapp.azure.com/app/transactions/current?api-version=0.1-preview
 - request:
     body: '{"contents": "Test entry 2 from Python SDK"}'
     headers:
@@ -176,11 +176,11 @@ interactions:
     headers:
       content-length: '29'
       content-type: application/json
-      x-ms-ccf-transaction-id: '13.9077'
+      x-ms-ccf-transaction-id: '2.3239'
     status:
       code: 200
       message: OK
-    url: https://lyshi-sdk-ledger-1.eastus.cloudapp.azure.com/app/transactions?api-version=0.1-preview
+    url: https://lyshi-sdk-ledger-2.eastus.cloudapp.azure.com/app/transactions?api-version=0.1-preview
 - request:
     body: null
     headers:
@@ -189,18 +189,38 @@ interactions:
       User-Agent:
       - azsdk-python-confidentialledger/0.1 Python/3.8.5 (Linux-5.4.72-microsoft-standard-WSL2-x86_64-with-glibc2.29)
     method: GET
-    uri: https://fake-confidential-ledger.azure.com/app/transactions/13.9077/status?api-version=0.1-preview
+    uri: https://fake-confidential-ledger.azure.com/app/transactions/2.3239/status?api-version=0.1-preview
   response:
     body:
-      string: '{"state":"Committed","transactionId":"13.9077"}'
+      string: '{"state":"Pending","transactionId":"2.3239"}'
     headers:
-      content-length: '47'
+      content-length: '44'
       content-type: application/json
-      x-ms-ccf-transaction-id: '13.9078'
+      x-ms-ccf-transaction-id: '2.3240'
     status:
       code: 200
       message: OK
-    url: https://lyshi-sdk-ledger-1.eastus.cloudapp.azure.com/app/transactions/13.9077/status?api-version=0.1-preview
+    url: https://lyshi-sdk-ledger-2.eastus.cloudapp.azure.com/app/transactions/2.3239/status?api-version=0.1-preview
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      User-Agent:
+      - azsdk-python-confidentialledger/0.1 Python/3.8.5 (Linux-5.4.72-microsoft-standard-WSL2-x86_64-with-glibc2.29)
+    method: GET
+    uri: https://fake-confidential-ledger.azure.com/app/transactions/2.3239/status?api-version=0.1-preview
+  response:
+    body:
+      string: '{"state":"Committed","transactionId":"2.3239"}'
+    headers:
+      content-length: '46'
+      content-type: application/json
+      x-ms-ccf-transaction-id: '2.3240'
+    status:
+      code: 200
+      message: OK
+    url: https://lyshi-sdk-ledger-2.eastus.cloudapp.azure.com/app/transactions/2.3239/status?api-version=0.1-preview
 - request:
     body: null
     headers:
@@ -212,15 +232,15 @@ interactions:
     uri: https://fake-confidential-ledger.azure.com/app/transactions/current?api-version=0.1-preview
   response:
     body:
-      string: '{"contents":"Test entry 2 from Python SDK","subLedgerId":"subledger:0","transactionId":"13.9078"}'
+      string: '{"contents":"Test entry 2 from Python SDK","subLedgerId":"subledger:0","transactionId":"2.3240"}'
     headers:
-      content-length: '97'
+      content-length: '96'
       content-type: application/json
-      x-ms-ccf-transaction-id: '13.9078'
+      x-ms-ccf-transaction-id: '2.3240'
     status:
       code: 200
       message: OK
-    url: https://lyshi-sdk-ledger-1.eastus.cloudapp.azure.com/app/transactions/current?api-version=0.1-preview
+    url: https://lyshi-sdk-ledger-2.eastus.cloudapp.azure.com/app/transactions/current?api-version=0.1-preview
 - request:
     body: null
     headers:
@@ -229,18 +249,18 @@ interactions:
       User-Agent:
       - azsdk-python-confidentialledger/0.1 Python/3.8.5 (Linux-5.4.72-microsoft-standard-WSL2-x86_64-with-glibc2.29)
     method: GET
-    uri: https://fake-confidential-ledger.azure.com/app/transactions/13.9075?api-version=0.1-preview
+    uri: https://fake-confidential-ledger.azure.com/app/transactions/2.3237?api-version=0.1-preview
   response:
     body:
       string: "{\n  \"entry\": {\n    \"contents\": \"Test entry from Python SDK\",\n
-        \   \"subLedgerId\": \"subledger:0\",\n    \"transactionId\": \"13.9075\"\n
+        \   \"subLedgerId\": \"subledger:0\",\n    \"transactionId\": \"2.3237\"\n
         \ },\n  \"state\": \"Ready\"\n}"
     headers:
-      content-length: '151'
+      content-length: '150'
       content-type: application/json
-      x-ms-ccf-transaction-id: '13.9078'
+      x-ms-ccf-transaction-id: '2.3240'
     status:
       code: 200
       message: OK
-    url: https://lyshi-sdk-ledger-1.eastus.cloudapp.azure.com/app/transactions/13.9075?api-version=0.1-preview
+    url: https://lyshi-sdk-ledger-2.eastus.cloudapp.azure.com/app/transactions/2.3237?api-version=0.1-preview
 version: 1
