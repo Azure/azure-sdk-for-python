@@ -205,6 +205,8 @@ def _get_deserialization_callback_from_task_type(task_type):
         return pii_entities_result
     if task_type == AnalyzeBatchActionsType.RECOGNIZE_LINKED_ENTITIES:
         return linked_entities_result
+    if task_type == AnalyzeBatchActionsType.ANALYZE_SENTIMENT:
+        return sentiment_result
     return key_phrases_result
 
 def _get_property_name_from_task_type(task_type):
@@ -214,6 +216,8 @@ def _get_property_name_from_task_type(task_type):
         return "entity_recognition_pii_tasks"
     if task_type == AnalyzeBatchActionsType.RECOGNIZE_LINKED_ENTITIES:
         return "entity_linking_tasks"
+    if task_type == AnalyzeBatchActionsType.ANALYZE_SENTIMENT:
+        return "sentiment_analysis_tasks"
     return "key_phrase_extraction_tasks"
 
 def _num_tasks_in_current_page(returned_tasks_object):
@@ -221,7 +225,8 @@ def _num_tasks_in_current_page(returned_tasks_object):
         len(returned_tasks_object.entity_recognition_tasks or []) +
         len(returned_tasks_object.entity_recognition_pii_tasks or []) +
         len(returned_tasks_object.key_phrase_extraction_tasks or []) +
-        len(returned_tasks_object.entity_linking_tasks or [])
+        len(returned_tasks_object.entity_linking_tasks or []) +
+        len(returned_tasks_object.sentiment_analysis_tasks or [])
     )
 
 def _get_task_type_from_error(error):
@@ -231,6 +236,8 @@ def _get_task_type_from_error(error):
         return AnalyzeBatchActionsType.RECOGNIZE_ENTITIES
     if "entitylinking" in error.target.lower():
         return AnalyzeBatchActionsType.RECOGNIZE_LINKED_ENTITIES
+    if "sentiment" in error.target.lower():
+        return AnalyzeBatchActionsType.ANALYZE_SENTIMENT
     return AnalyzeBatchActionsType.EXTRACT_KEY_PHRASES
 
 def _get_mapped_errors(analyze_job_state):

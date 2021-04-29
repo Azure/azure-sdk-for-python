@@ -4,6 +4,7 @@
 
 **New Features**
 - Added enums `EntityConditionality`, `EntityCertainty`, and `EntityAssociation`.
+- Added `AnalyzeSentimentAction` as a supported action type for `begin_analyze_batch_actions`.
 
 ## 5.1.0b6 (2021-03-09)
 
