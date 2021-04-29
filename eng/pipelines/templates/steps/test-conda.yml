@@ -49,8 +49,8 @@ steps:
         # Write-Host "##vso[task.prependpath]]$($env:CONDA)/bin"
       }
       
-      Write-Host "##vso[task.prependpath]$($env:CONDA)/Scripts"
       Write-Host "##vso[task.prependpath]]$($env:CONDA)/bin"
+      Write-Host "##vso[task.prependpath]$($env:CONDA)/Scripts"
       
       Write-Host "##vso[task.setvariable variable=activate.method]$activateMethod"
       Write-Host "##vso[task.setvariable variable=requirement.suffix]$requirementSuffix"
@@ -67,7 +67,7 @@ steps:
 
     - script: |
         echo "conda env create --name ${{ artifact.name }} python=$(PythonVersion) --file $(Build.SourcesDirectory)/eng/conda_env.yml"
-        conda env create --name ${{ artifact.name }} python=$(PythonVersion) --file $(Build.SourcesDirectory)/eng/conda_env.yml
+        conda create --name ${{ artifact.name }} python=$(PythonVersion) --file $(Build.SourcesDirectory)/eng/conda_env.yml
         conda install --name ${{ artifact.name }} --yes --quiet conda-build
         $(activate.method) activate ${{ artifact.name }}
         conda index $(Build.ArtifactStagingDirectory)/${{ artifact.name }}
