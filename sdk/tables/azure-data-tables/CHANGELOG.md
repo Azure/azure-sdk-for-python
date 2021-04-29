@@ -15,6 +15,7 @@
 * Removed unused legacy client-side encryption attributes from client classes.
 * Fixed sharing of pipeline between service/table clients.
 * Added support for Azurite storage emulator
+* Added support for Int64 and Binary types in query filters
 * Throws a `RequestTooLargeError` on batch requests that return a 413 error code
 
 ## 12.0.0b6 (2021-04-06)

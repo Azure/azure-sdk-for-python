@@ -481,6 +481,59 @@ class StorageTableEntityTest(AzureTestCase, TableTestCase):
             self._tear_down()
 
     @TablesPreparer()
+    def test_query_user_filter_binary(self, tables_storage_account_name, tables_primary_storage_account_key):
+        # Arrange
+        self._set_up(tables_storage_account_name, tables_primary_storage_account_key)
+        try:
+            entity, _ = self._insert_two_opposite_entities()
+
+            # Act
+            parameters = {
+                'my_param': entity['binary']
+            }
+            entities = self.table.query_entities("binary eq @my_param", parameters=parameters)
+
+            length = 0
+            assert entities is not None
+            for entity in entities:
+                self._assert_default_entity(entity)
+                length += 1
+
+            assert length == 1
+        finally:
+            self._tear_down()
+
+    @TablesPreparer()
+    def test_query_user_filter_int64(self, tables_storage_account_name, tables_primary_storage_account_key):
+        # Arrange
+        self._set_up(tables_storage_account_name, tables_primary_storage_account_key)
+        try:
+            entity, _ = self._insert_two_opposite_entities()
+            large_entity = {
+                u"PartitionKey": u"pk001",
+                u"RowKey": u"rk001",
+                u"large_int": EntityProperty(2 ** 40, EdmType.INT64),
+            }
+            self.table.create_entity(large_entity)
+
+            # Act
+            parameters = {
+                'my_param': large_entity['large_int'].value
+            }
+            entities = self.table.query_entities("large_int eq @my_param", parameters=parameters)
+
+            length = 0
+            assert entities is not None
+            for entity in entities:
+                # self._assert_default_entity(entity)
+                assert large_entity['large_int'] == entity['large_int']
+                length += 1
+
+            assert length == 1
+        finally:
+            self._tear_down()
+
+    @TablesPreparer()
     def test_query_invalid_filter(self, tables_storage_account_name, tables_primary_storage_account_key):
         # Arrange
         self._set_up(tables_storage_account_name, tables_primary_storage_account_key)
@@ -1559,10 +1612,10 @@ class StorageTableEntityTest(AzureTestCase, TableTestCase):
             table.create_entity(entity_b)
 
             is_user_admin = "PartitionKey eq @first and IsAdmin eq 'admin'"
-            entities = list(table.query_entities(is_user_admin, parameters={'first': 'foo'}))
+            entities = list(table.query_entities(is_user_admin, parameters={'first': u'foo'}))
             assert len(entities) ==  1
 
-            injection = "foo' or RowKey eq 'bar2"
+            injection = u"foo' or RowKey eq 'bar2"
             injected_query = "PartitionKey eq '{}' and IsAdmin eq 'admin'".format(injection)
             entities = list(table.query_entities(injected_query))
             assert len(entities) ==  2
@@ -1588,7 +1641,7 @@ class StorageTableEntityTest(AzureTestCase, TableTestCase):
             all_entities = list(table.query_entities("PartitionKey eq ':@'"))
             assert len(all_entities) == 2
 
-            parameters = {'key': ':@'}
+            parameters = {'key': u':@'}
             all_entities = list(table.query_entities("PartitionKey eq @key", parameters=parameters))
             assert len(all_entities) == 2
 
@@ -1597,7 +1650,7 @@ class StorageTableEntityTest(AzureTestCase, TableTestCase):
             assert len(entities) == 1
 
             query = "PartitionKey eq @key and RowKey eq @row and Chars eq @quote"
-            parameters = {'key': ':@', 'row': '+,$', 'quote': "?'/!_^#"}
+            parameters = {'key': u':@', 'row': u'+,$', 'quote': u"?'/!_^#"}
             entities = list(table.query_entities(query, parameters=parameters))
             assert len(entities) ==  1
 
@@ -1606,7 +1659,7 @@ class StorageTableEntityTest(AzureTestCase, TableTestCase):
             assert len(entities) == 1
 
             query = "PartitionKey eq @key and RowKey eq @row and Chars eq @quote"
-            parameters = {'key': ':@', 'row': '=& ', 'quote': r'?"\{}<>%'}
+            parameters = {'key': u':@', 'row': u'=& ', 'quote': u'?"\\{}<>%'}
             entities = list(table.query_entities(query, parameters=parameters))
             assert len(entities) ==  1
 

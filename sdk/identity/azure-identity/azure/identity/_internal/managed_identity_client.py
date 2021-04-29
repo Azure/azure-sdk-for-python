@@ -7,10 +7,11 @@ import time
 from typing import TYPE_CHECKING
 
 from msal import TokenCache
+import six
 
 from azure.core.configuration import Configuration
 from azure.core.credentials import AccessToken
-from azure.core.exceptions import ClientAuthenticationError
+from azure.core.exceptions import ClientAuthenticationError, DecodeError
 from azure.core.pipeline import Pipeline
 from azure.core.pipeline.policies import (
     ContentDecodePolicy,
@@ -58,10 +59,19 @@ class ManagedIdentityClientBase(ABC):
     def _process_response(self, response, request_time):
         # type: (PipelineResponse, int) -> AccessToken
 
-        # ContentDecodePolicy sets this, and should have raised if it couldn't deserialize the response
-        content = ContentDecodePolicy.deserialize_from_http_generics(response.http_response)  # type: dict
-        if not content:
-            raise ClientAuthenticationError(message="No token received.", response=response.http_response)
+        try:
+            content = ContentDecodePolicy.deserialize_from_text(
+                response.http_response.text(), mime_type="application/json"
+            )
+            if not content:
+                raise ClientAuthenticationError(message="No token received.", response=response.http_response)
+        except DecodeError as ex:
+            if response.http_response.content_type.startswith("application/json"):
+                message = "Failed to deserialize JSON from response"
+            else:
+                message = 'Unexpected content type "{}"'.format(response.http_response.content_type)
+            six.raise_from(ClientAuthenticationError(message=message, response=response.http_response), ex)
+
         if "access_token" not in content or not ("expires_in" in content or "expires_on" in content):
             if content and "access_token" in content:
                 content["access_token"] = "****"
@@ -79,7 +89,8 @@ class ManagedIdentityClientBase(ABC):
 
         # caching is the final step because TokenCache.add mutates its "event"
         self._cache.add(
-            event={"response": content, "scope": [content["resource"]]}, now=request_time,
+            event={"response": content, "scope": [content["resource"]]},
+            now=request_time,
         )
 
         return token
@@ -104,12 +115,12 @@ class ManagedIdentityClientBase(ABC):
 
 
 class ManagedIdentityClient(ManagedIdentityClientBase):
-    def request_token(self, *scopes, **kwargs):  # pylint:disable=unused-argument
+    def request_token(self, *scopes, **kwargs):
         # type: (*str, **Any) -> AccessToken
         resource = _scopes_to_resource(*scopes)
         request = self._request_factory(resource, self._identity_config)
         request_time = int(time.time())
-        response = self._pipeline.run(request, retry_on_methods=[request.method])
+        response = self._pipeline.run(request, retry_on_methods=[request.method], **kwargs)
         token = self._process_response(response, request_time)
         return token
 

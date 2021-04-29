@@ -39,6 +39,7 @@ class AiohttpTestTransport(AioHttpTransport):
             response.content_type = response.headers.get("content-type")
         return response
 
+@pytest.mark.skip("404 Not Found")
 class TestHealth(AsyncTextAnalyticsTest):
     def _interval(self):
         return 5 if self.is_live else 0

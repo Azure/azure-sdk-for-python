@@ -46,11 +46,14 @@ class AzureSkuName(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     STANDARD_D14_V2 = "Standard_D14_v2"
     STANDARD_L8_S = "Standard_L8s"
     STANDARD_L16_S = "Standard_L16s"
+    STANDARD_L8_S_V2 = "Standard_L8s_v2"
+    STANDARD_L16_S_V2 = "Standard_L16s_v2"
     STANDARD_D11_V2 = "Standard_D11_v2"
     STANDARD_D12_V2 = "Standard_D12_v2"
     STANDARD_L4_S = "Standard_L4s"
     DEV_NO_SLA_STANDARD_D11_V2 = "Dev(No SLA)_Standard_D11_v2"
     STANDARD_E64_I_V3 = "Standard_E64i_v3"
+    STANDARD_E80_IDS_V4 = "Standard_E80ids_v4"
     STANDARD_E2_A_V4 = "Standard_E2a_v4"
     STANDARD_E4_A_V4 = "Standard_E4a_v4"
     STANDARD_E8_A_V4 = "Standard_E8a_v4"
@@ -89,6 +92,15 @@ class Compression(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     NONE = "None"
     G_ZIP = "GZip"
 
+class CreatedByType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+    """The type of identity that created the resource.
+    """
+
+    USER = "User"
+    APPLICATION = "Application"
+    MANAGED_IDENTITY = "ManagedIdentity"
+    KEY = "Key"
+
 class DatabasePrincipalRole(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     """Database principal role.
     """
@@ -97,7 +109,7 @@ class DatabasePrincipalRole(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum))
     INGESTOR = "Ingestor"
     MONITOR = "Monitor"
     USER = "User"
-    UNRESTRICTED_VIEWERS = "UnrestrictedViewers"
+    UNRESTRICTED_VIEWER = "UnrestrictedViewer"
     VIEWER = "Viewer"
 
 class DatabasePrincipalType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
@@ -266,6 +278,15 @@ class State(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     STOPPED = "Stopped"
     STARTING = "Starting"
     UPDATING = "Updating"
+
+class Status(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+    """The status of operation.
+    """
+
+    SUCCEEDED = "Succeeded"
+    CANCELED = "Canceled"
+    FAILED = "Failed"
+    RUNNING = "Running"
 
 class Type(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     """The type of resource, for instance Microsoft.Kusto/clusters/databases.

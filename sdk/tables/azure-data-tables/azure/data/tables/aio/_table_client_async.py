@@ -40,7 +40,10 @@ from ._table_batch_async import TableBatchOperations
 
 
 class TableClient(AsyncTablesBaseClient):
-    """ :ivar str account_name: Name of the storage account (Cosmos or Azure)"""
+    """
+    :ivar str account_name: Name of the storage account (Cosmos or Azure)
+    :ivar str table_name: The name of the table
+    """
 
     def __init__(
         self,
@@ -94,7 +97,7 @@ class TableClient(AsyncTablesBaseClient):
         :param table_name: The table name.
         :type table_name: str
         :returns: A table client.
-        :rtype: ~azure.data.tables.TableClient
+        :rtype: :class:`~azure.data.tables.TableClient`
 
         .. admonition:: Example:
 
@@ -123,7 +126,7 @@ class TableClient(AsyncTablesBaseClient):
             shared access key.
         :type credential: str
         :returns: A table client.
-        :rtype: ~azure.data.tables.TableClient
+        :rtype: :class:`~azure.data.tables.TableClient`
         """
         try:
             if not table_url.lower().startswith("http"):
@@ -153,17 +156,14 @@ class TableClient(AsyncTablesBaseClient):
         return cls(account_url, table_name=table_name, credential=credential, **kwargs)
 
     @distributed_trace_async
-    async def get_table_access_policy(
-        self, **kwargs  # type: Any
-    ):
-        # type: (...) -> dict[str,AccessPolicy]
+    async def get_table_access_policy(self, **kwargs: Any) -> Dict[str, AccessPolicy]:
         """
         Retrieves details about any stored access policies specified on the table that may be
         used with Shared Access Signatures.
 
         :return: Dictionary of SignedIdentifiers
-        :rtype: dict[str,~azure.data.tables.AccessPolicy]
-        :raises ~azure.core.exceptions.HttpResponseError:
+        :rtype: Dict[str, :class:`~azure.data.tables.AccessPolicy`]
+        :raises: :class:`~azure.core.exceptions.HttpResponseError`
         """
         timeout = kwargs.pop("timeout", None)
         try:
@@ -190,11 +190,11 @@ class TableClient(AsyncTablesBaseClient):
         # type: (...) -> None
         """Sets stored access policies for the table that may be used with Shared Access Signatures.
 
-        :param signed_identifiers:
-        :type signed_identifiers: dict[str,AccessPolicy]
+        :param signed_identifiers: Access policies to set for the table
+        :type signed_identifiers: Dict[str, :class:`~azure.data.tables.AccessPolicy`]
         :return: None
         :rtype: None
-        :raises ~azure.core.exceptions.HttpResponseError:
+        :raises: :class:`~azure.core.exceptions.HttpResponseError`
         """
         identifiers = []
         for key, value in signed_identifiers.items():
@@ -227,8 +227,8 @@ class TableClient(AsyncTablesBaseClient):
         """Creates a new table under the given account.
 
         :return: Dictionary of operation metadata returned from service
-        :rtype: dict[str,str]
-        :raises ~azure.core.exceptions.ResourceExistsError: If the table already exists
+        :rtype: Dict[str,str]
+        :raises: :class:`~azure.core.exceptions.ResourceExistsError` If the entity already exists
 
         .. admonition:: Example:
 
@@ -259,7 +259,7 @@ class TableClient(AsyncTablesBaseClient):
 
         :return: None
         :rtype: None
-        :raises ~azure.core.exceptions.ResourceNotFoundError:
+        :raises: :class:`~azure.core.exceptions.ResourceNotFoundError` If the table does not exist
 
         .. admonition:: Example:
 
@@ -290,10 +290,11 @@ class TableClient(AsyncTablesBaseClient):
         :param row_key: The row key of the entity.
         :type row_key: str
         :keyword str etag: Etag of the entity
-        :keyword ~azure.core.MatchConditions match_condition: MatchCondition
+        :keyword match_condition: MatchCondition
+        :paramtype match_condition: ~azure.core.MatchConditions
         :return: None
         :rtype: None
-        :raises ~azure.core.exceptions.ResourceNotFoundError: If the table does not exist
+        :raises: :class:`~azure.core.exceptions.ResourceNotFoundError` If the entity already does not exist
 
         .. admonition:: Example:
 
@@ -334,10 +335,11 @@ class TableClient(AsyncTablesBaseClient):
         """Insert entity in a table.
 
         :param entity: The properties for the table entity.
-        :type entity: TableEntity or dict[str,str]
+        :type entity: ~azure.data.tables.TableEntity or Dict[str,str]
         :return: Dictionary mapping operation metadata returned from the service
-        :rtype: dict[str,str]
-        :raises ~azure.core.exceptions.ResourceExistsError: If the entity already exists
+        :rtype: Dict[str,str]
+        :raises: :class:`~azure.core.exceptions.ResourceExistsError` If the entity already exists
+
 
         .. admonition:: Example:
 
@@ -377,13 +379,12 @@ class TableClient(AsyncTablesBaseClient):
         :type entity: dict[str, str]
         :param mode: Merge or Replace entity
         :type mode: ~azure.data.tables.UpdateMode
-        :keyword str partition_key: The partition key of the entity.
-        :keyword str row_key: The row key of the entity.
         :keyword str etag: Etag of the entity
-        :keyword ~azure.core.MatchConditions match_condition: MatchCondition
+        :keyword match_condition: MatchCondition
+        :paramtype match_condition: ~azure.core.MatchCondition
         :return: Dictionary of operation metadata returned from service
-        :rtype: dict[str,str]
-        :raises ~azure.core.exceptions.HttpResponseError:
+        :rtype: Dict[str,str]
+        :raises: :class:`~azure.core.exceptions.HttpResponseError`
 
         .. admonition:: Example:
 
@@ -444,10 +445,10 @@ class TableClient(AsyncTablesBaseClient):
 
         :keyword int results_per_page: Number of entities per page in return AsyncItemPaged
         :keyword select: Specify desired properties of an entity to return certain entities
-        :paramtype select: str or list[str]
-        :return: Query of table entities
-        :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.data.tables.TableEntity]
-        :raises ~azure.core.exceptions.HttpResponseError:
+        :paramtype select: str or List[str]
+        :return: AsyncItemPaged[:class:`~azure.data.tables.TableEntity`]
+        :rtype: ~azure.core.async_paging.AsyncItemPaged
+        :raises: :class:`~azure.core.exceptions.HttpResponseError`
 
         .. admonition:: Example:
 
@@ -478,17 +479,17 @@ class TableClient(AsyncTablesBaseClient):
         query_filter,
         **kwargs
     ):
-        # type: (...) -> AsyncItemPaged[TableEntity]
+        # type: (str, Dict[str, Any]) -> AsyncItemPaged[TableEntity]
         """Lists entities in a table.
 
-        :param str filter: Specify a filter to return certain entities
+        :param str query_filter: Specify a filter to return certain entities
         :keyword int results_per_page: Number of entities per page in return AsyncItemPaged
         :keyword select: Specify desired properties of an entity to return certain entities
-        :paramtype select: str or list[str]
-        :keyword dict parameters: Dictionary for formatting query with additional, user defined parameters
-        :return: Query of table entities
-        :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.data.tables.TableEntity]
-        :raises ~azure.core.exceptions.HttpResponseError:
+        :paramtype select: str or List[str]
+        :keyword Dict[str, Any] parameters: Dictionary for formatting query with additional, user defined parameters
+        :return: AsyncItemPaged[:class:`~azure.data.tables.TableEntity`]
+        :rtype: ~azure.core.async_paging.AsyncItemPaged
+        :raises: :class:`~azure.core.exceptions.HttpResponseError`
 
         .. admonition:: Example:
 
@@ -533,8 +534,8 @@ class TableClient(AsyncTablesBaseClient):
         :param row_key: The row key of the entity.
         :type row_key: str
         :return: Dictionary mapping operation metadata returned from the service
-        :rtype: ~azure.data.tables.TableEntity
-        :raises ~azure.core.exceptions.HttpResponseError:
+        :rtype: :class:`~azure.data.tables.TableEntity`
+        :raises: :class:`~azure.core.exceptions.HttpResponseError`
 
         .. admonition:: Example:
 
@@ -570,11 +571,11 @@ class TableClient(AsyncTablesBaseClient):
 
         :param entity: The properties for the table entity.
         :type entity: TableEntity or dict[str,str]
-        :param mode: Merge or Replace and Insert on fail
+        :param mode: Merge or Replace entity
         :type mode: ~azure.data.tables.UpdateMode
         :return: Dictionary mapping operation metadata returned from the service
-        :rtype: dict[str,str]
-        :raises ~azure.core.exceptions.HttpResponseError:
+        :rtype: Dict[str,str]
+        :raises: :class:`~azure.core.exceptions.HttpResponseError`
 
         .. admonition:: Example:
 
@@ -626,7 +627,7 @@ class TableClient(AsyncTablesBaseClient):
         """Create a Batching object from a Table Client
 
         :return: Object containing requests and responses
-        :rtype: ~azure.data.tables.TableBatchOperations
+        :rtype: :class:`~azure.data.tables.TableBatchOperations`
 
         .. admonition:: Example:
 
@@ -652,10 +653,12 @@ class TableClient(AsyncTablesBaseClient):
     ) -> List[Tuple[Mapping[str, Any], Mapping[str, Any]]]:
         """Commit a TableBatchOperations to send requests to the server
 
+        :param batch: Batch of operations
+        :type batch: ~azure.data.tables.TableBatchOperations
         :return: A list of tuples, each containing the entity operated on, and a dictionary
          of metadata returned from the service.
         :rtype: List[Tuple[Mapping[str, Any], Mapping[str, Any]]]
-        :raises ~azure.data.tables.BatchErrorException:
+        :raises: :class:`~azure.data.tables.BatchErrorException`
 
         .. admonition:: Example:
 
