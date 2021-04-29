@@ -592,7 +592,7 @@ fifth_action_result = next(result)
 print("Results of Sentiment Analysis action:")
 docs = [doc for doc in fifth_action_result.document_results if not doc.is_error]
 
-for doc in result:
+for doc in docs:
     print("Overall sentiment: {}".format(doc.sentiment))
     print("Scores: positive={}; neutral={}; negative={} \n".format(
         doc.confidence_scores.positive,
