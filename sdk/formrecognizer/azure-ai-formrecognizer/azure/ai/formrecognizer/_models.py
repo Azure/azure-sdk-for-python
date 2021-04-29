@@ -63,7 +63,7 @@ def get_field_value(
             for key, value in value.value_object.items()
         }
     if value.type == "selectionMark":
-        return value.value_selection_mark
+        return value.value_selection_mark or value.text  # TODO: preview.3 still returns in text
     if value.type == "gender":
         return value.value_gender
     if value.type == "country":
