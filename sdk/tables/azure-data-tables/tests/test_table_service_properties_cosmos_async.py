@@ -16,7 +16,7 @@ from azure.core.exceptions import HttpResponseError
 
 from _shared.testcase import SLEEP_DELAY
 from _shared.asynctestcase import AsyncTableTestCase
-from preparers import cosmos_decorator
+from preparers import cosmos_decorator_async
 # ------------------------------------------------------------------------------
 
 class TableServicePropertiesTest(AzureTestCase, AsyncTableTestCase):
@@ -95,7 +95,7 @@ class TableServicePropertiesTest(AzureTestCase, AsyncTableTestCase):
         assert ret1.days ==  ret2.days
 
     # --Test cases for errors ---------------------------------------
-    @cosmos_decorator
+    @cosmos_decorator_async
     async def test_too_many_cors_rules_async(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
         # Arrange
         tsc = TableServiceClient(self.account_url(tables_cosmos_account_name, "cosmos"), tables_primary_cosmos_account_key)
@@ -108,7 +108,7 @@ class TableServicePropertiesTest(AzureTestCase, AsyncTableTestCase):
             await tsc.set_service_properties(None, None, None, cors)
         self.sleep(SLEEP_DELAY)
 
-    @cosmos_decorator
+    @cosmos_decorator_async
     async def test_retention_too_long_async(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
         # Arrange
         tsc = TableServiceClient(self.account_url(tables_cosmos_account_name, "cosmos"), tables_primary_cosmos_account_key)

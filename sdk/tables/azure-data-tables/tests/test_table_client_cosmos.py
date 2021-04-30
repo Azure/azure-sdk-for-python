@@ -12,6 +12,7 @@ from devtools_testutils import AzureTestCase
 
 from azure.data.tables import TableServiceClient, TableClient
 from azure.data.tables import __version__ as  VERSION
+from azure.core.credentials import AzureNamedKeyCredential
 
 from _shared.testcase import (
     TableTestCase,
@@ -120,6 +121,7 @@ class TestTableClient(AzureTestCase, TableTestCase):
 class TestTableClientUnit(TableTestCase):
     tables_cosmos_account_name = "fake_storage_account"
     tables_primary_cosmos_account_key = "fakeXMZjnGsZGvd4bVr3Il5SeHA"
+    credential = AzureNamedKeyCredential(name=tables_cosmos_account_name, key=tables_primary_cosmos_account_key)
 
     # --Helpers-----------------------------------------------------------------
     def validate_standard_account_endpoints(self, service, account_name, account_key):

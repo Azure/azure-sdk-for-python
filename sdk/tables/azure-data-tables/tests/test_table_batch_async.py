@@ -38,7 +38,7 @@ from azure.data.tables import (
 )
 
 from _shared.asynctestcase import AsyncTableTestCase
-from preparers import tables_decorator
+from preparers import tables_decorator_async
 
 #------------------------------------------------------------------------------
 TEST_TABLE_PREFIX = 'table'
@@ -173,7 +173,7 @@ class StorageTableBatchTest(AzureTestCase, AsyncTableTestCase):
         assert length ==  len(transaction)
 
     #--Test cases for batch ---------------------------------------------
-    @tables_decorator
+    @tables_decorator_async
     async def test_batch_single_insert(self, tables_storage_account_name, tables_primary_storage_account_key):
         # Arrange
         await self._set_up(tables_storage_account_name, tables_primary_storage_account_key)
@@ -203,7 +203,7 @@ class StorageTableBatchTest(AzureTestCase, AsyncTableTestCase):
         finally:
             await self._tear_down()
 
-    @tables_decorator
+    @tables_decorator_async
     async def test_batch_single_update(self, tables_storage_account_name, tables_primary_storage_account_key):
         # Arrange
         await self._set_up(tables_storage_account_name, tables_primary_storage_account_key)
@@ -238,7 +238,7 @@ class StorageTableBatchTest(AzureTestCase, AsyncTableTestCase):
         finally:
             await self._tear_down()
 
-    @tables_decorator
+    @tables_decorator_async
     async def test_batch_update(self, tables_storage_account_name, tables_primary_storage_account_key):
         # Arrange
         await self._set_up(tables_storage_account_name, tables_primary_storage_account_key)
@@ -272,7 +272,7 @@ class StorageTableBatchTest(AzureTestCase, AsyncTableTestCase):
         finally:
             await self._tear_down()
 
-    @tables_decorator
+    @tables_decorator_async
     async def test_batch_merge(self, tables_storage_account_name, tables_primary_storage_account_key):
         # Arrange
         await self._set_up(tables_storage_account_name, tables_primary_storage_account_key)
@@ -310,7 +310,7 @@ class StorageTableBatchTest(AzureTestCase, AsyncTableTestCase):
         finally:
             await self._tear_down()
 
-    @tables_decorator
+    @tables_decorator_async
     async def test_batch_update_if_match(self, tables_storage_account_name, tables_primary_storage_account_key):
         # Arrange
         await self._set_up(tables_storage_account_name, tables_primary_storage_account_key)
@@ -337,7 +337,7 @@ class StorageTableBatchTest(AzureTestCase, AsyncTableTestCase):
         finally:
             await self._tear_down()
 
-    @tables_decorator
+    @tables_decorator_async
     async def test_batch_update_if_doesnt_match(self, tables_storage_account_name, tables_primary_storage_account_key):
         # Arrange
         await self._set_up(tables_storage_account_name, tables_primary_storage_account_key)
@@ -363,7 +363,7 @@ class StorageTableBatchTest(AzureTestCase, AsyncTableTestCase):
         finally:
             await self._tear_down()
 
-    @tables_decorator
+    @tables_decorator_async
     async def test_batch_insert_replace(self, tables_storage_account_name, tables_primary_storage_account_key):
         # Arrange
         await self._set_up(tables_storage_account_name, tables_primary_storage_account_key)
@@ -392,7 +392,7 @@ class StorageTableBatchTest(AzureTestCase, AsyncTableTestCase):
         finally:
             await self._tear_down()
 
-    @tables_decorator
+    @tables_decorator_async
     async def test_batch_insert_merge(self, tables_storage_account_name, tables_primary_storage_account_key):
         # Arrange
         await self._set_up(tables_storage_account_name, tables_primary_storage_account_key)
@@ -421,7 +421,7 @@ class StorageTableBatchTest(AzureTestCase, AsyncTableTestCase):
         finally:
             await self._tear_down()
 
-    @tables_decorator
+    @tables_decorator_async
     async def test_batch_delete(self, tables_storage_account_name, tables_primary_storage_account_key):
         # Arrange
         await self._set_up(tables_storage_account_name, tables_primary_storage_account_key)
@@ -452,7 +452,7 @@ class StorageTableBatchTest(AzureTestCase, AsyncTableTestCase):
         finally:
             await self._tear_down()
 
-    @tables_decorator
+    @tables_decorator_async
     async def test_batch_inserts(self, tables_storage_account_name, tables_primary_storage_account_key):
         # Arrange
         await self._set_up(tables_storage_account_name, tables_primary_storage_account_key)
@@ -489,7 +489,7 @@ class StorageTableBatchTest(AzureTestCase, AsyncTableTestCase):
         finally:
             await self._tear_down()
 
-    @tables_decorator
+    @tables_decorator_async
     async def test_batch_all_operations_together(self, tables_storage_account_name, tables_primary_storage_account_key):
         # Arrange
         await self._set_up(tables_storage_account_name, tables_primary_storage_account_key)
@@ -560,7 +560,7 @@ class StorageTableBatchTest(AzureTestCase, AsyncTableTestCase):
         finally:
             await self._tear_down()
 
-    @tables_decorator
+    @tables_decorator_async
     async def test_batch_same_row_operations_fail(self, tables_storage_account_name, tables_primary_storage_account_key):
         # Arrange
         await self._set_up(tables_storage_account_name, tables_primary_storage_account_key)
@@ -585,7 +585,7 @@ class StorageTableBatchTest(AzureTestCase, AsyncTableTestCase):
         finally:
             await self._tear_down()
 
-    @tables_decorator
+    @tables_decorator_async
     async def test_batch_different_partition_operations_fail(self, tables_storage_account_name, tables_primary_storage_account_key):
         # Arrange
         await self._set_up(tables_storage_account_name, tables_primary_storage_account_key)
@@ -610,7 +610,7 @@ class StorageTableBatchTest(AzureTestCase, AsyncTableTestCase):
         finally:
             await self._tear_down()
 
-    @tables_decorator
+    @tables_decorator_async
     async def test_batch_too_many_ops(self, tables_storage_account_name, tables_primary_storage_account_key):
         # Arrange
         await self._set_up(tables_storage_account_name, tables_primary_storage_account_key)
@@ -632,7 +632,7 @@ class StorageTableBatchTest(AzureTestCase, AsyncTableTestCase):
         finally:
             await self._tear_down()
 
-    @tables_decorator
+    @tables_decorator_async
     async def test_new_non_existent_table(self, tables_storage_account_name, tables_primary_storage_account_key):
         # Arrange
         await self._set_up(tables_storage_account_name, tables_primary_storage_account_key)
@@ -649,7 +649,7 @@ class StorageTableBatchTest(AzureTestCase, AsyncTableTestCase):
         finally:
             await self._tear_down()
 
-    @tables_decorator
+    @tables_decorator_async
     async def test_new_invalid_key(self, tables_storage_account_name, tables_primary_storage_account_key):
         # Arrange
         invalid_key = tables_primary_storage_account_key[0:-6] + "==" # cut off a bit from the end to invalidate
@@ -668,7 +668,7 @@ class StorageTableBatchTest(AzureTestCase, AsyncTableTestCase):
         with pytest.raises(ClientAuthenticationError):
             resp = await self.table.submit_transaction(batch)
 
-    @tables_decorator
+    @tables_decorator_async
     async def test_new_delete_nonexistent_entity(self, tables_storage_account_name, tables_primary_storage_account_key):
         # Arrange
         await self._set_up(tables_storage_account_name, tables_primary_storage_account_key)
@@ -683,7 +683,7 @@ class StorageTableBatchTest(AzureTestCase, AsyncTableTestCase):
             await self._tear_down()
 
     @pytest.mark.live_test_only
-    @tables_decorator
+    @tables_decorator_async
     async def test_batch_sas_auth(self, tables_storage_account_name, tables_primary_storage_account_key):
         # Arrange
         await self._set_up(tables_storage_account_name, tables_primary_storage_account_key)
@@ -732,7 +732,7 @@ class StorageTableBatchTest(AzureTestCase, AsyncTableTestCase):
             await self._tear_down()
 
     @pytest.mark.live_test_only  # Request bodies are very large
-    @tables_decorator
+    @tables_decorator_async
     async def test_batch_request_too_large(self, tables_storage_account_name, tables_primary_storage_account_key):
         # Arrange
         await self._set_up(tables_storage_account_name, tables_primary_storage_account_key)

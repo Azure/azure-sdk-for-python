@@ -10,7 +10,7 @@ from devtools_testutils import AzureTestCase
 
 from azure.data.tables import TableServiceClient, TableClient
 from azure.data.tables import __version__ as VERSION
-from azure.core.exceptions import HttpResponseError
+from azure.core.credentials import AzureNamedKeyCredential
 
 from _shared.testcase import (
     TableTestCase
@@ -106,6 +106,7 @@ class TestTableClient(AzureTestCase, TableTestCase):
 class TestTableUnitTests(TableTestCase):
     tables_storage_account_name = "fake_storage_account"
     tables_primary_storage_account_key = "fakeXMZjnGsZGvd4bVr3Il5SeHA"
+    credential = AzureNamedKeyCredential(name=tables_storage_account_name, key=tables_primary_storage_account_key)
 
     # --Helpers-----------------------------------------------------------------
     def validate_standard_account_endpoints(self, service, account_name, account_key):
@@ -122,10 +123,10 @@ class TestTableUnitTests(TableTestCase):
         for client, url in SERVICES.items():
             # Act
             service = client(
-                self.account_url(self.tables_storage_account_name, url), credential=self.tables_primary_storage_account_key, table_name='foo')
+                self.account_url(self.tables_storage_account_name, url), credential=self.credential, table_name='foo')
 
             # Assert
-            self.validate_standard_account_endpoints(service, self.tables_storage_account_name, self.tables_primary_storage_account_key)
+            self.validate_standard_account_endpoints(service, self.tables_storage_account_name, self.credential)
             assert service.scheme ==  'https'
 
     def test_create_service_with_connection_string(self):
@@ -133,10 +134,10 @@ class TestTableUnitTests(TableTestCase):
         for service_type in SERVICES.items():
             # Act
             service = service_type[0].from_connection_string(
-                self.connection_string(self.tables_storage_account_name, self.tables_primary_storage_account_key), table_name="test")
+                self.connection_string(self.tables_storage_account_name, self.credential), table_name="test")
 
             # Assert
-            self.validate_standard_account_endpoints(service, self.tables_storage_account_name, self.tables_primary_storage_account_key)
+            self.validate_standard_account_endpoints(service, self.tables_storage_account_name, self.credential)
             assert service.scheme ==  'https'
 
     def test_create_service_with_sas(self):
@@ -162,13 +163,13 @@ class TestTableUnitTests(TableTestCase):
             # Act
             url = self.account_url(self.tables_storage_account_name, "table").replace('core.windows.net', 'core.chinacloudapi.cn')
             service = service_type[0](
-                url, credential=self.tables_primary_storage_account_key, table_name='foo')
+                url, credential=self.credential, table_name='foo')
 
             # Assert
             assert service is not None
             assert service.account_name ==  self.tables_storage_account_name
             assert service.credential.account_name ==  self.tables_storage_account_name
-            assert service.credential.account_key ==  self.tables_primary_storage_account_key
+            assert service.credential.account_key ==  self.credential
             assert service._primary_endpoint.startswith('https://{}.{}.core.chinacloudapi.cn'.format(self.tables_storage_account_name, "table"))
 
     def test_create_service_protocol(self):
@@ -178,10 +179,10 @@ class TestTableUnitTests(TableTestCase):
             # Act
             url = self.account_url(self.tables_storage_account_name, "table").replace('https', 'http')
             service = service_type[0](
-                url, credential=self.tables_primary_storage_account_key, table_name='foo')
+                url, credential=self.credential, table_name='foo')
 
             # Assert
-            self.validate_standard_account_endpoints(service, self.tables_storage_account_name, self.tables_primary_storage_account_key)
+            self.validate_standard_account_endpoints(service, self.tables_storage_account_name, self.credential)
             assert service.scheme ==  'http'
 
     def test_create_service_empty_key(self):
@@ -195,7 +196,7 @@ class TestTableUnitTests(TableTestCase):
 
             # test non-string account URL
             with pytest.raises(ValueError):
-                test_service = service_type(account_url=123456, credential=self.tables_primary_storage_account_key, table_name='foo')
+                test_service = service_type(account_url=123456, credential=self.credential, table_name='foo')
 
             assert str(e.value) == "You need to provide either a SAS token or an account shared key to authenticate."
 
@@ -205,20 +206,20 @@ class TestTableUnitTests(TableTestCase):
         for service_type in SERVICES.items():
             # Act
             default_service = service_type[0](
-                self.account_url(self.tables_storage_account_name, "table"), credential=self.tables_primary_storage_account_key, table_name='foo')
+                self.account_url(self.tables_storage_account_name, "table"), credential=self.credential, table_name='foo')
             service = service_type[0](
-                self.account_url(self.tables_storage_account_name, "table"), credential=self.tables_primary_storage_account_key,
+                self.account_url(self.tables_storage_account_name, "table"), credential=self.credential,
                 table_name='foo', connection_timeout=22)
 
             # Assert
-            self.validate_standard_account_endpoints(service, self.tables_storage_account_name, self.tables_primary_storage_account_key)
+            self.validate_standard_account_endpoints(service, self.tables_storage_account_name, self.credential)
             assert service._client._client._pipeline._transport.connection_config.timeout == 22
             assert default_service._client._client._pipeline._transport.connection_config.timeout == 300
 
         # Assert Parent transport is shared with child client
         service = TableServiceClient(
             self.account_url(self.tables_storage_account_name, "table"),
-            credential=self.tables_primary_storage_account_key,
+            credential=self.credential,
             connection_timeout=22)
         assert service._client._client._pipeline._transport.connection_config.timeout == 22
         table = service.get_table_client('tablename')
@@ -229,14 +230,14 @@ class TestTableUnitTests(TableTestCase):
     # --Connection String Test Cases --------------------------------------------
     def test_create_service_with_connection_string_key(self):
         # Arrange
-        conn_string = 'AccountName={};AccountKey={};'.format(self.tables_storage_account_name, self.tables_primary_storage_account_key)
+        conn_string = 'AccountName={};AccountKey={};'.format(self.tables_storage_account_name, self.credential)
 
         for service_type in SERVICES.items():
             # Act
             service = service_type[0].from_connection_string(conn_string, table_name='foo')
 
             # Assert
-            self.validate_standard_account_endpoints(service, self.tables_storage_account_name, self.tables_primary_storage_account_key)
+            self.validate_standard_account_endpoints(service, self.tables_storage_account_name, self.credential)
             assert service.scheme ==  'https'
 
     def test_create_service_with_connection_string_sas(self):
@@ -260,7 +261,7 @@ class TestTableUnitTests(TableTestCase):
     def test_create_service_with_connection_string_cosmos(self):
         # Arrange
         conn_string = 'DefaultEndpointsProtocol=https;AccountName={0};AccountKey={1};TableEndpoint=https://{0}.table.cosmos.azure.com:443/;'.format(
-            self.tables_storage_account_name, self.tables_primary_storage_account_key)
+            self.tables_storage_account_name, self.credential)
 
         for service_type in SERVICES:
             # Act
@@ -271,14 +272,14 @@ class TestTableUnitTests(TableTestCase):
             assert service.account_name ==  self.tables_storage_account_name
             assert service.url.startswith('https://' + self.tables_storage_account_name + '.table.cosmos.azure.com')
             assert service.credential.account_name ==  self.tables_storage_account_name
-            assert service.credential.account_key ==  self.tables_primary_storage_account_key
+            assert service.credential.account_key ==  self.credential
             assert service._primary_endpoint.startswith('https://' + self.tables_storage_account_name + '.table.cosmos.azure.com')
             assert service.scheme ==  'https'
 
     def test_create_service_with_connection_string_endpoint_protocol(self):
         # Arrange
         conn_string = 'AccountName={};AccountKey={};DefaultEndpointsProtocol=http;EndpointSuffix=core.chinacloudapi.cn;'.format(
-            self.tables_storage_account_name, self.tables_primary_storage_account_key)
+            self.tables_storage_account_name, self.credential)
 
         for service_type in SERVICES.items():
             # Act
@@ -288,14 +289,14 @@ class TestTableUnitTests(TableTestCase):
             assert service is not None
             assert service.account_name ==  self.tables_storage_account_name
             assert service.credential.account_name ==  self.tables_storage_account_name
-            assert service.credential.account_key ==  self.tables_primary_storage_account_key
+            assert service.credential.account_key ==  self.credential
             assert service._primary_endpoint.startswith('http://{}.{}.core.chinacloudapi.cn'.format(self.tables_storage_account_name, "table"))
             assert service.scheme ==  'http'
 
     def test_create_service_with_connection_string_emulated(self):
         # Arrange
         for service_type in SERVICES.items():
-            conn_string = 'UseDevelopmentStorage=true;'.format(self.tables_storage_account_name, self.tables_primary_storage_account_key)
+            conn_string = 'UseDevelopmentStorage=true;'.format(self.tables_storage_account_name, self.credential)
 
             # Act
             with pytest.raises(ValueError):
@@ -305,7 +306,7 @@ class TestTableUnitTests(TableTestCase):
         # Arrange
         for service_type in SERVICES.items():
             conn_string = 'AccountName={};AccountKey={};TableEndpoint=www.mydomain.com;'.format(
-                self.tables_storage_account_name, self.tables_primary_storage_account_key)
+                self.tables_storage_account_name, self.credential)
 
             # Act
             service = service_type[0].from_connection_string(conn_string, table_name="foo")
@@ -314,14 +315,14 @@ class TestTableUnitTests(TableTestCase):
             assert service is not None
             assert service.account_name ==  self.tables_storage_account_name
             assert service.credential.account_name ==  self.tables_storage_account_name
-            assert service.credential.account_key ==  self.tables_primary_storage_account_key
+            assert service.credential.account_key ==  self.credential
             assert service._primary_endpoint.startswith('https://www.mydomain.com')
 
     def test_create_service_with_conn_str_custom_domain_trailing_slash(self):
         # Arrange
         for service_type in SERVICES.items():
             conn_string = 'AccountName={};AccountKey={};TableEndpoint=www.mydomain.com/;'.format(
-                self.tables_storage_account_name, self.tables_primary_storage_account_key)
+                self.tables_storage_account_name, self.credential)
 
             # Act
             service = service_type[0].from_connection_string(conn_string, table_name="foo")
@@ -330,14 +331,14 @@ class TestTableUnitTests(TableTestCase):
             assert service is not None
             assert service.account_name ==  self.tables_storage_account_name
             assert service.credential.account_name ==  self.tables_storage_account_name
-            assert service.credential.account_key ==  self.tables_primary_storage_account_key
+            assert service.credential.account_key ==  self.credential
             assert service._primary_endpoint.startswith('https://www.mydomain.com')
 
     def test_create_service_with_conn_str_custom_domain_sec_override(self):
         # Arrange
         for service_type in SERVICES.items():
             conn_string = 'AccountName={};AccountKey={};TableEndpoint=www.mydomain.com/;'.format(
-                self.tables_storage_account_name, self.tables_primary_storage_account_key)
+                self.tables_storage_account_name, self.credential)
 
             # Act
             service = service_type[0].from_connection_string(
@@ -347,14 +348,14 @@ class TestTableUnitTests(TableTestCase):
             assert service is not None
             assert service.account_name ==  self.tables_storage_account_name
             assert service.credential.account_name ==  self.tables_storage_account_name
-            assert service.credential.account_key ==  self.tables_primary_storage_account_key
+            assert service.credential.account_key ==  self.credential
             assert service._primary_endpoint.startswith('https://www.mydomain.com')
 
     def test_create_service_with_conn_str_fails_if_sec_without_primary(self):
         for service_type in SERVICES.items():
             # Arrange
             conn_string = 'AccountName={};AccountKey={};{}=www.mydomain.com;'.format(
-                self.tables_storage_account_name, self.tables_primary_storage_account_key,
+                self.tables_storage_account_name, self.credential,
                 _CONNECTION_ENDPOINTS_SECONDARY.get(service_type[1]))
 
             # Act
@@ -368,7 +369,7 @@ class TestTableUnitTests(TableTestCase):
             # Arrange
             conn_string = 'AccountName={};AccountKey={};{}=www.mydomain.com;{}=www-sec.mydomain.com;'.format(
                 self.tables_storage_account_name,
-                self.tables_primary_storage_account_key,
+                self.credential,
                 _CONNECTION_ENDPOINTS.get(service_type[1]),
                 _CONNECTION_ENDPOINTS_SECONDARY.get(service_type[1]))
 
@@ -379,7 +380,7 @@ class TestTableUnitTests(TableTestCase):
             assert service is not None
             assert service.account_name ==  self.tables_storage_account_name
             assert service.credential.account_name ==  self.tables_storage_account_name
-            assert service.credential.account_key ==  self.tables_primary_storage_account_key
+            assert service.credential.account_key ==  self.credential
             assert service._primary_endpoint.startswith('https://www.mydomain.com')
 
     def test_create_service_with_custom_account_endpoint_path(self):
@@ -387,7 +388,7 @@ class TestTableUnitTests(TableTestCase):
         custom_account_url = "http://local-machine:11002/custom/account/path/" + token
         for service_type in SERVICES.items():
             conn_string = 'DefaultEndpointsProtocol=http;AccountName={};AccountKey={};TableEndpoint={};'.format(
-                self.tables_storage_account_name, self.tables_primary_storage_account_key, custom_account_url)
+                self.tables_storage_account_name, self.credential, custom_account_url)
 
             # Act
             service = service_type[0].from_connection_string(conn_string, table_name="foo")
@@ -395,7 +396,7 @@ class TestTableUnitTests(TableTestCase):
             # Assert
             assert service.account_name ==  self.tables_storage_account_name
             assert service.credential.account_name ==  self.tables_storage_account_name
-            assert service.credential.account_key ==  self.tables_primary_storage_account_key
+            assert service.credential.account_key ==  self.credential
             assert service._primary_hostname ==  'local-machine:11002/custom/account/path'
 
         service = TableServiceClient(account_url=custom_account_url)
@@ -421,7 +422,7 @@ class TestTableUnitTests(TableTestCase):
     def test_create_table_client_with_complete_table_url(self):
         # Arrange
         table_url = self.account_url(self.tables_storage_account_name, "table") + "/foo"
-        service = TableClient(table_url, table_name='bar', credential=self.tables_primary_storage_account_key)
+        service = TableClient(table_url, table_name='bar', credential=self.credential)
 
         # Assert
         assert service.scheme ==  'https'
@@ -431,7 +432,7 @@ class TestTableUnitTests(TableTestCase):
     def test_create_table_client_with_complete_url(self):
         # Arrange
         table_url = "https://{}.table.core.windows.net:443/foo".format(self.tables_storage_account_name)
-        service = TableClient(account_url=table_url, table_name='bar', credential=self.tables_primary_storage_account_key)
+        service = TableClient(account_url=table_url, table_name='bar', credential=self.credential)
 
         # Assert
         assert service.scheme ==  'https'
@@ -445,7 +446,7 @@ class TestTableUnitTests(TableTestCase):
 
         # Assert
         with pytest.raises(ValueError) as excinfo:
-            service = TableClient(account_url=table_url, table_name=invalid_table_name, credential="self.tables_primary_storage_account_key")
+            service = TableClient(account_url=table_url, table_name=invalid_table_name, credential="self.credential")
 
         assert "Table names must be alphanumeric, cannot begin with a number, and must be between 3-63 characters long." in str(excinfo)
 
@@ -468,7 +469,7 @@ class TestTableUnitTests(TableTestCase):
         for client, url in SERVICES.items():
             # Act
             service = client(
-                self.account_url(self.tables_storage_account_name, "table"), credential=self.tables_primary_storage_account_key, table_name='table')
+                self.account_url(self.tables_storage_account_name, "table"), credential=self.credential, table_name='table')
 
             # Assert
             with service:
@@ -480,7 +481,7 @@ class TestTableUnitTests(TableTestCase):
         for client, url in SERVICES.items():
             # Act
             service = client(
-                self.account_url(self.tables_storage_account_name, "table"), credential=self.tables_primary_storage_account_key, table_name='table')
+                self.account_url(self.tables_storage_account_name, "table"), credential=self.credential, table_name='table')
             service.close()
 
     def test_create_service_with_token_and_http(self):
@@ -517,15 +518,15 @@ class TestTableUnitTests(TableTestCase):
 
     def test_create_client_with_api_version(self):
         url = self.account_url(self.tables_storage_account_name, "table")
-        client = TableServiceClient(url, credential=self.tables_primary_storage_account_key)
+        client = TableServiceClient(url, credential=self.credential)
         assert client._client._config.version == "2019-02-02"
         table = client.get_table_client('tablename')
         assert table._client._config.version == "2019-02-02"
 
-        client = TableServiceClient(url, credential=self.tables_primary_storage_account_key, api_version="2019-07-07")
+        client = TableServiceClient(url, credential=self.credential, api_version="2019-07-07")
         assert client._client._config.version == "2019-07-07"
         table = client.get_table_client('tablename')
         assert table._client._config.version == "2019-07-07"
 
         with pytest.raises(ValueError):
-            TableServiceClient(url, credential=self.tables_primary_storage_account_key, api_version="foo")
+            TableServiceClient(url, credential=self.credential, api_version="foo")

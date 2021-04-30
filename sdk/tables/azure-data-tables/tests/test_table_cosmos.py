@@ -17,7 +17,7 @@ from datetime import (
 
 from devtools_testutils import AzureTestCase
 
-from azure.core.credentials import AzureSasCredential
+from azure.core.credentials import AzureNamedKeyCredential
 from azure.core.exceptions import (
     HttpResponseError,
     ResourceNotFoundError,
@@ -281,10 +281,11 @@ class StorageTableTest(AzureTestCase, TableTestCase):
 class TestTableUnitTest(TableTestCase):
     tables_cosmos_account_name = "fake_storage_account"
     tables_primary_cosmos_account_key = "fakeXMZjnGsZGvd4bVr3Il5SeHA"
+    credential = AzureNamedKeyCredential(name=tables_cosmos_account_name, key=tables_primary_cosmos_account_key)
 
     def test_create_table_invalid_name(self):
         # Arrange
-        ts = TableServiceClient(self.account_url(self.tables_cosmos_account_name, "cosmos"), self.tables_primary_cosmos_account_key)
+        ts = TableServiceClient(self.account_url(self.tables_cosmos_account_name, "cosmos"), self.credential)
         invalid_table_name = "my_table"
 
         with pytest.raises(ValueError) as excinfo:
@@ -295,7 +296,7 @@ class TestTableUnitTest(TableTestCase):
 
     def test_delete_table_invalid_name(self):
         # Arrange
-        ts = TableServiceClient(self.account_url(self.tables_cosmos_account_name, "cosmos"), self.tables_primary_cosmos_account_key)
+        ts = TableServiceClient(self.account_url(self.tables_cosmos_account_name, "cosmos"), self.credential)
         invalid_table_name = "my_table"
 
         with pytest.raises(ValueError) as excinfo:
@@ -307,7 +308,7 @@ class TestTableUnitTest(TableTestCase):
     def test_unicode_create_table_unicode_name(self):
         # Arrange
         url = self.account_url(self.tables_cosmos_account_name, "cosmos")
-        ts = TableServiceClient(url, self.tables_primary_cosmos_account_key)
+        ts = TableServiceClient(url, self.credential)
         table_name = u'啊齄丂狛狜'
 
         # Act

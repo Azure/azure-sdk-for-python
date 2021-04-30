@@ -17,7 +17,7 @@ import uuid
 from devtools_testutils import AzureTestCase
 
 from azure.core import MatchConditions
-from azure.core.credentials import AzureSasCredential
+from azure.core.credentials import AzureNamedKeyCredential, AzureSasCredential
 from azure.core.exceptions import (
     ResourceExistsError,
     ResourceNotFoundError,
@@ -759,8 +759,9 @@ class StorageTableBatchTest(AzureTestCase, TableTestCase):
     @tables_decorator
     def test_new_invalid_key(self, tables_storage_account_name, tables_primary_storage_account_key):
         # Arrange
-        invalid_key = tables_primary_storage_account_key[0:-6] + "==" # cut off a bit from the end to invalidate
-        self.ts = TableServiceClient(self.account_url(tables_storage_account_name, "table"), invalid_key)
+        invalid_key = tables_primary_storage_account_key.named_key.key[0:-6] + "==" # cut off a bit from the end to invalidate
+        credential = AzureNamedKeyCredential(name=tables_storage_account_name, key=tables_primary_storage_account_key.named_key.key)
+        self.ts = TableServiceClient(self.account_url(tables_storage_account_name, "table"), credential)
         self.table_name = self.get_resource_name('uttable')
         self.table = self.ts.get_table_client(self.table_name)
 
