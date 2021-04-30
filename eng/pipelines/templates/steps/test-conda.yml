@@ -56,7 +56,10 @@ steps:
       # pypy3.7 is not in the hosted tool cache. to use the correct pypy3 version in conda 
       # we have to patch it to a version that actually does work
       if("$(PythonVersion)" -eq "pypy3"){
-        Write-Host "##vso[task.setvariable variable=PythonVersion]pypy3.7"
+        Write-Host "##vso[task.setvariable variable=PyVersion]pypy3.7"
+      }
+      else {
+        Write-Host "##vso[task.setvariable variable=PyVersion]$(PythonVersion)"
       }
       
       Write-Host "##vso[task.setvariable variable=activate.method]$activateMethod"
@@ -65,8 +68,8 @@ steps:
 
   - ${{ each artifact in parameters.CondaArtifacts }}:
     - script: |
-        echo "conda create --name ${{ artifact.name }} python=$(PythonVersion) --yes"
-        conda create --name ${{ artifact.name }} python=$(PythonVersion) --yes
+        echo "conda create --name ${{ artifact.name }} python=$(PyVersion) --yes"
+        conda create --name ${{ artifact.name }} python=$(PyVersion) --yes
         conda install --name ${{ artifact.name }} --yes --quiet conda-build
         $(activate.method) activate ${{ artifact.name }}
         conda index $(Build.ArtifactStagingDirectory)/${{ artifact.name }}
