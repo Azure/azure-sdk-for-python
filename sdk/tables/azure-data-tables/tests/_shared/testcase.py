@@ -14,7 +14,7 @@ import logging
 import pytest
 
 from devtools_testutils import AzureTestCase
-from azure.core.credentials import AccessToken
+from azure.core.credentials import AccessToken, AzureNamedKeyCredential
 from azure.data.tables import generate_account_sas, AccountSasPermissions, ResourceTypes
 
 LOGGING_FORMAT = '%(asctime)s %(name)-20s %(levelname)-5s %(message)s'
@@ -62,7 +62,7 @@ class TableTestCase(object):
 
         return '?' + generate_account_sas(
             account_name = 'test', # name of the storage account
-            account_key = fake_key, # key for the storage account
+            account_key = AzureNamedKeyCredential(name="fakename", key=fake_key), # key for the storage account
             resource_types = ResourceTypes(object=True),
             permission = AccountSasPermissions(read=True,list=True),
             start = datetime.now() - timedelta(hours = 24),

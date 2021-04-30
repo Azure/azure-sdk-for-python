@@ -352,10 +352,7 @@ def parse_connection_str(conn_str, credential, keyword_args):
     secondary = None
     if not credential:
         try:
-            credential = {
-                "account_name": conn_settings["accountname"],
-                "account_key": conn_settings["accountkey"],
-            }
+            credential = AzureNamedKeyCredential(name=conn_settings["accountname"], key=conn_settings["accountkey"])
         except KeyError:
             credential = conn_settings.get("sharedaccesssignature")
 

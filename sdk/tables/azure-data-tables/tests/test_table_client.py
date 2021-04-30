@@ -112,8 +112,8 @@ class TestTableUnitTests(TableTestCase):
     def validate_standard_account_endpoints(self, service, account_name, account_key):
         assert service is not None
         assert service.account_name ==  account_name
-        assert service.credential.account_name ==  account_name
-        assert service.credential.account_key ==  account_key
+        assert service.credential.named_key.name ==  account_name
+        assert service.credential.named_key.key ==  account_key
         assert ('{}.{}'.format(account_name, 'table.core.windows.net') in service.url) or ('{}.{}'.format(account_name, 'table.cosmos.azure.com') in service.url)
 
     # --Direct Parameters Test Cases --------------------------------------------
@@ -168,8 +168,8 @@ class TestTableUnitTests(TableTestCase):
             # Assert
             assert service is not None
             assert service.account_name ==  self.tables_storage_account_name
-            assert service.credential.account_name ==  self.tables_storage_account_name
-            assert service.credential.account_key ==  self.credential
+            assert service.credential.named_key.name ==  self.tables_storage_account_name
+            assert service.credential.named_key.key == self.tables_primary_storage_account_key
             assert service._primary_endpoint.startswith('https://{}.{}.core.chinacloudapi.cn'.format(self.tables_storage_account_name, "table"))
 
     def test_create_service_protocol(self):
@@ -271,8 +271,8 @@ class TestTableUnitTests(TableTestCase):
             assert service is not None
             assert service.account_name ==  self.tables_storage_account_name
             assert service.url.startswith('https://' + self.tables_storage_account_name + '.table.cosmos.azure.com')
-            assert service.credential.account_name ==  self.tables_storage_account_name
-            assert service.credential.account_key ==  self.credential
+            assert service.credential.named_key.name ==  self.tables_storage_account_name
+            assert service.credential.named_key.key == self.tables_primary_storage_account_key
             assert service._primary_endpoint.startswith('https://' + self.tables_storage_account_name + '.table.cosmos.azure.com')
             assert service.scheme ==  'https'
 
@@ -288,8 +288,8 @@ class TestTableUnitTests(TableTestCase):
             # Assert
             assert service is not None
             assert service.account_name ==  self.tables_storage_account_name
-            assert service.credential.account_name ==  self.tables_storage_account_name
-            assert service.credential.account_key ==  self.credential
+            assert service.credential.named_key.name ==  self.tables_storage_account_name
+            assert service.credential.named_key.key == self.tables_primary_storage_account_key
             assert service._primary_endpoint.startswith('http://{}.{}.core.chinacloudapi.cn'.format(self.tables_storage_account_name, "table"))
             assert service.scheme ==  'http'
 
@@ -313,9 +313,8 @@ class TestTableUnitTests(TableTestCase):
 
             # Assert
             assert service is not None
-            assert service.account_name ==  self.tables_storage_account_name
-            assert service.credential.account_name ==  self.tables_storage_account_name
-            assert service.credential.account_key ==  self.credential
+            assert service.credential.named_key.name == self.tables_storage_account_name
+            assert service.credential.named_key.key == self.tables_primary_storage_account_key
             assert service._primary_endpoint.startswith('https://www.mydomain.com')
 
     def test_create_service_with_conn_str_custom_domain_trailing_slash(self):
@@ -329,9 +328,8 @@ class TestTableUnitTests(TableTestCase):
 
             # Assert
             assert service is not None
-            assert service.account_name ==  self.tables_storage_account_name
-            assert service.credential.account_name ==  self.tables_storage_account_name
-            assert service.credential.account_key ==  self.credential
+            assert service.credential.named_key.name == self.tables_storage_account_name
+            assert service.credential.named_key.key == self.tables_primary_storage_account_key
             assert service._primary_endpoint.startswith('https://www.mydomain.com')
 
     def test_create_service_with_conn_str_custom_domain_sec_override(self):
@@ -346,9 +344,8 @@ class TestTableUnitTests(TableTestCase):
 
             # Assert
             assert service is not None
-            assert service.account_name ==  self.tables_storage_account_name
-            assert service.credential.account_name ==  self.tables_storage_account_name
-            assert service.credential.account_key ==  self.credential
+            assert service.credential.named_key.name == self.tables_storage_account_name
+            assert service.credential.named_key.key == self.tables_primary_storage_account_key
             assert service._primary_endpoint.startswith('https://www.mydomain.com')
 
     def test_create_service_with_conn_str_fails_if_sec_without_primary(self):
@@ -378,9 +375,8 @@ class TestTableUnitTests(TableTestCase):
 
             # Assert
             assert service is not None
-            assert service.account_name ==  self.tables_storage_account_name
-            assert service.credential.account_name ==  self.tables_storage_account_name
-            assert service.credential.account_key ==  self.credential
+            assert service.credential.named_key.name ==  self.tables_storage_account_name
+            assert service.credential.named_key.key == self.tables_primary_storage_account_key
             assert service._primary_endpoint.startswith('https://www.mydomain.com')
 
     def test_create_service_with_custom_account_endpoint_path(self):
@@ -395,8 +391,8 @@ class TestTableUnitTests(TableTestCase):
 
             # Assert
             assert service.account_name ==  self.tables_storage_account_name
-            assert service.credential.account_name ==  self.tables_storage_account_name
-            assert service.credential.account_key ==  self.credential
+            assert service.credential.named_key.name ==  self.tables_storage_account_name
+            assert service.credential.named_key.key == self.tables_primary_storage_account_key
             assert service._primary_hostname ==  'local-machine:11002/custom/account/path'
 
         service = TableServiceClient(account_url=custom_account_url)
