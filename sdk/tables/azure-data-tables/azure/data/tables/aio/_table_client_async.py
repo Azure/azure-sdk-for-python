@@ -19,7 +19,7 @@ from azure.core.tracing.decorator_async import distributed_trace_async
 
 from .._base_client import parse_connection_str
 from .._entity import TableEntity
-from .._generated.models import SignedIdentifier, TableProperties
+from .._generated.models import SignedIdentifier, TableProperties, QueryOptions
 from .._models import AccessPolicy
 from .._serialize import serialize_iso, _parameter_filter_substitution
 from .._deserialize import _return_headers_and_deserialized
@@ -421,8 +421,8 @@ class TableClient(AsyncTablesBaseClient):
     def list_entities(self, **kwargs) -> AsyncItemPaged[TableEntity]:
         """Lists entities in a table.
 
-        :keyword int results_per_page: Number of entities per page in return AsyncItemPaged
-        :keyword select: Specify desired properties of an entity to return certain entities
+        :keyword int results_per_page: Number of entities returned per service request.
+        :keyword select: Specify desired properties of an entity to return.
         :paramtype select: str or List[str]
         :return: AsyncItemPaged[:class:`~azure.data.tables.TableEntity`]
         :rtype: ~azure.core.async_paging.AsyncItemPaged
@@ -460,8 +460,8 @@ class TableClient(AsyncTablesBaseClient):
         """Lists entities in a table.
 
         :param str query_filter: Specify a filter to return certain entities
-        :keyword int results_per_page: Number of entities per page in return AsyncItemPaged
-        :keyword select: Specify desired properties of an entity to return certain entities
+        :keyword int results_per_page: Number of entities returned per service request.
+        :keyword select: Specify desired properties of an entity to return.
         :paramtype select: str or List[str]
         :keyword Dict[str, Any] parameters: Dictionary for formatting query with additional, user defined parameters
         :return: AsyncItemPaged[:class:`~azure.data.tables.TableEntity`]
@@ -484,7 +484,7 @@ class TableClient(AsyncTablesBaseClient):
         top = kwargs.pop("results_per_page", None)
         user_select = kwargs.pop("select", None)
         if user_select and not isinstance(user_select, str):
-            user_select = ", ".join(user_select)
+            user_select = ",".join(user_select)
 
         command = functools.partial(self._client.table.query_entities, **kwargs)
         return AsyncItemPaged(
@@ -509,6 +509,8 @@ class TableClient(AsyncTablesBaseClient):
         :type partition_key: str
         :param row_key: The row key of the entity.
         :type row_key: str
+        :keyword select: Specify desired properties of an entity to return.
+        :paramtype select: str or List[str]
         :return: Dictionary mapping operation metadata returned from the service
         :rtype: :class:`~azure.data.tables.TableEntity`
         :raises: :class:`~azure.core.exceptions.HttpResponseError`
@@ -522,14 +524,17 @@ class TableClient(AsyncTablesBaseClient):
                 :dedent: 8
                 :caption: Getting an entity from PartitionKey and RowKey
         """
+        user_select = kwargs.pop("select", None)
+        if user_select and not isinstance(user_select, str):
+            user_select = ",".join(user_select)
         try:
             entity = await self._client.table.query_entity_with_partition_and_row_key(
                 table=self.table_name,
                 partition_key=partition_key,
                 row_key=row_key,
+                query_options=QueryOptions(select=user_select),
                 **kwargs
             )
-
             properties = _convert_to_entity(entity)
             return properties
         except HttpResponseError as error:
