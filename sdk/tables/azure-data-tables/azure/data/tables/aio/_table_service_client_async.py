@@ -264,8 +264,6 @@ class TableServiceClient(AsyncTablesBaseClient):
         """Queries tables under the given account.
 
         :keyword int results_per_page: Number of tables per page in return ItemPaged
-        :keyword select: Specify desired properties of a table to return certain tables
-        :paramtype select: str or List[str]
         :return: AsyncItemPaged[:class:`~azure.data.tables.TableItem`]
         :rtype: ~azure.core.async_paging.AsyncItemPaged
         :raises: :class:`~azure.core.exceptions.HttpResponseError`
@@ -279,16 +277,12 @@ class TableServiceClient(AsyncTablesBaseClient):
                 :dedent: 8
                 :caption: Listing all tables in an account
         """
-        user_select = kwargs.pop("select", None)
-        if user_select and not isinstance(user_select, str):
-            user_select = ", ".join(user_select)
         top = kwargs.pop("results_per_page", None)
 
         command = functools.partial(self._client.table.query, **kwargs)
         return AsyncItemPaged(
             command,
             results_per_page=top,
-            select=user_select,
             page_iterator_class=TablePropertiesPaged,
         )
 
@@ -303,8 +297,6 @@ class TableServiceClient(AsyncTablesBaseClient):
 
         :param str query_filter: Specify a filter to return certain tables.
         :keyword int results_per_page: Number of tables per page in return ItemPaged
-        :keyword select: Specify desired properties of a table to return certain tables
-        :paramtype select: str or List[str]
         :keyword Dict[str, Any] parameters: Dictionary for formatting query with additional, user defined parameters
         :return: AsyncItemPaged[:class:`~azure.data.tables.TableItem`]
         :rtype: ~azure.core.async_paging.AsyncItemPaged
@@ -323,15 +315,11 @@ class TableServiceClient(AsyncTablesBaseClient):
         query_filter = _parameter_filter_substitution(
             parameters, query_filter
         )
-        user_select = kwargs.pop("select", None)
-        if user_select and not isinstance(user_select, str):
-            user_select = ", ".join(user_select)
         top = kwargs.pop("results_per_page", None)
         command = functools.partial(self._client.table.query, **kwargs)
         return AsyncItemPaged(
             command,
             results_per_page=top,
-            select=user_select,
             filter=query_filter,
             page_iterator_class=TablePropertiesPaged,
         )

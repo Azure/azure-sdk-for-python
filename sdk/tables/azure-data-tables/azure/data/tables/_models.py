@@ -279,7 +279,6 @@ class TablePropertiesPaged(PageIterator):
     :param callable command: Function to retrieve the next page of items.
     :keyword int results_per_page: The maximum number of results retrieved per API call.
     :keyword str filter: The filter to apply to results.
-    :keyword str select: The select filter to apply to results.
     :keyword str continuation_token: An opaque continuation token.
     """
 
@@ -294,13 +293,10 @@ class TablePropertiesPaged(PageIterator):
         self._response = None
         self.results_per_page = kwargs.get("results_per_page")
         self.filter = kwargs.get("filter")
-        self.select = kwargs.get("select")
         self._location_mode = None
 
     def _get_next_cb(self, continuation_token, **kwargs):
-        query_options = QueryOptions(
-            top=self.results_per_page, select=self.select, filter=self.filter
-        )
+        query_options = QueryOptions(top=self.results_per_page, filter=self.filter)
         try:
             return self._command(
                 query_options=query_options,

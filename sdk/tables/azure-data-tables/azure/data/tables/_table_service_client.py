@@ -267,8 +267,6 @@ class TableServiceClient(TablesBaseClient):
 
         :param str query_filter: Specify a filter to return certain tables.
         :keyword int results_per_page: Number of tables per page in return ItemPaged
-        :keyword select: Specify desired properties of a table to return certain tables
-        :paramtype select: str or List[str]
         :keyword Dict[str, str] parameters: Dictionary for formatting query with additional, user defined parameters
         :return: ItemPaged[:class:`~azure.data.tables.TableItem`]
         :rtype: ~azure.core.paging.ItemPaged
@@ -288,16 +286,12 @@ class TableServiceClient(TablesBaseClient):
             parameters, query_filter
         )
         top = kwargs.pop("results_per_page", None)
-        user_select = kwargs.pop("select", None)
-        if user_select and not isinstance(user_select, str):
-            user_select = ", ".join(user_select)
 
         command = functools.partial(self._client.table.query, **kwargs)
         return ItemPaged(
             command,
             results_per_page=top,
             filter=query_filter,
-            select=user_select,
             page_iterator_class=TablePropertiesPaged,
         )
 
@@ -307,8 +301,6 @@ class TableServiceClient(TablesBaseClient):
         """Queries tables under the given account.
 
         :keyword int results_per_page: Number of tables per page in return ItemPaged
-        :keyword select: Specify desired properties of a table to return certain tables
-        :paramtype select: str or List[str]
         :return: ItemPaged[:class:`~azure.data.tables.TableItem`]
         :rtype: ~azure.core.paging.ItemPaged
         :raises: :class:`~azure.core.exceptions.HttpResponseError`
@@ -322,16 +314,12 @@ class TableServiceClient(TablesBaseClient):
                 :dedent: 8
                 :caption: Listing all tables in a storage account
         """
-        user_select = kwargs.pop("select", None)
-        if user_select and not isinstance(user_select, str):
-            user_select = ", ".join(user_select)
         top = kwargs.pop("results_per_page", None)
 
         command = functools.partial(self._client.table.query, **kwargs)
         return ItemPaged(
             command,
             results_per_page=top,
-            select=user_select,
             page_iterator_class=TablePropertiesPaged,
         )
 
