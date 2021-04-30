@@ -4,7 +4,7 @@
 # license information.
 # --------------------------------------------------------------------------
 
-from typing import Any, List, Mapping
+from typing import Any, List, Mapping, Optional, Union
 from uuid import uuid4
 
 from azure.core.credentials import AzureSasCredential, AzureNamedKeyCredential
@@ -40,9 +40,9 @@ class AsyncTablesBaseClient(AccountHostsMixin):
 
     def __init__(
         self,
-        account_url,  # type: str
-        credential=None,  # type: str
-        **kwargs  # type: Any
+        account_url: str,
+        credential: Optional[Union[AzureSasCredential, AzureNamedKeyCredential]] = None,
+        **kwargs: Any
     ):
         # type: (...) -> None
         super(AsyncTablesBaseClient, self).__init__(account_url, credential=credential, **kwargs)

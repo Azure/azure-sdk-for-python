@@ -29,7 +29,7 @@ from _shared.testcase import (
     RetryCounter
 )
 
-from preparers import tables_decorator
+from preparers import tables_decorator_async
 
 
 class RetryAioHttpTransport(AioHttpTransport):
@@ -80,7 +80,7 @@ class StorageRetryTest(AzureTestCase, AsyncTableTestCase):
                 pass
 
     # --Test Cases --------------------------------------------
-    @tables_decorator
+    @tables_decorator_async
     async def test_retry_on_server_error_async(self, tables_storage_account_name, tables_primary_storage_account_key):
         await self._set_up(tables_storage_account_name, tables_primary_storage_account_key, default_table=False)
         try:
@@ -95,7 +95,7 @@ class StorageRetryTest(AzureTestCase, AsyncTableTestCase):
             await self.ts.delete_table(new_table_name)
             await self._tear_down()
 
-    @tables_decorator
+    @tables_decorator_async
     async def test_retry_on_timeout_async(self, tables_storage_account_name, tables_primary_storage_account_key):
         await self._set_up(
             tables_storage_account_name,
@@ -114,7 +114,7 @@ class StorageRetryTest(AzureTestCase, AsyncTableTestCase):
             await self._tear_down()
 
     @pytest.mark.live_test_only
-    @tables_decorator
+    @tables_decorator_async
     async def test_retry_on_socket_timeout_async(self, tables_storage_account_name, tables_primary_storage_account_key):
         retry_transport = RetryAioHttpTransport(connection_timeout=11, read_timeout=0.000000000001)
         await self._set_up(
@@ -138,7 +138,7 @@ class StorageRetryTest(AzureTestCase, AsyncTableTestCase):
         finally:
             await self._tear_down()
 
-    @tables_decorator
+    @tables_decorator_async
     async def test_no_retry_async(self, tables_storage_account_name, tables_primary_storage_account_key):
         await self._set_up(tables_storage_account_name, tables_primary_storage_account_key, retry_total=0, default_table=False)
 
