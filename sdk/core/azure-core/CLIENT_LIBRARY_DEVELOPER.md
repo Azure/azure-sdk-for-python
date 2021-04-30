@@ -94,10 +94,10 @@ response = client.get_foo_properties()
 | Parameters | Description |
 | --- | --- |
 | `pipeline` | While `PipelineClient` will create a default pipeline, users can opt to use their own pipeline by passing in a `Pipeline` object. If passed in, the other configurations will be ignored.  |
-| `policies` | While `PipelineClient` will create a default list of `policies`, users can opt to use their own policies by passing in a `policies` object. If passed in, `config`, `per_call_policies` and `per_retry_policies` will be ignored |
+| `policies` | While `PipelineClient` will create a default list of `policies`, users can opt to use their own policies by passing in a `policies` object. If passed in, `config` will be ignored |
 | `config` | While `PipelineClient` will create a default `Configuration`, users can opt to use their own configuration by passing in a `Configuration` object. If passed in, it will be used to create a `Pipeline` object. |
-| `per_call_policies` | If a default `pipeline` is needed and no `policies` is passed in, `PipelineClient` will create a default list of policies and `per_call_policies` will be added before the `Retry` policy |
-| `per_retry_policies` | If a default `pipeline` is needed and no `policies` is passed in, `PipelineClient` will create a default list of policies and `per_retry_policies` will be added after the `Retry` policy |
+| `per_call_policies` | If a default `pipeline` is needed and no `policies` is passed in, `per_call_policies` will be added before the `Retry` policy |
+| `per_retry_policies` | If a default `pipeline` is needed and no `policies` is passed in, `per_retry_policies` will be added after the `Retry` policy. If there is no `RetryPolicy` in the pipeline, a `ValueError` will be raised |
 | `transport` | While `PipelineClient` will create a default `RequestsTransport`, users can opt to use their own transport by passing in a `RequestsTransport` object. If it is omitted, `PipelineClient` will honor the other described [transport customizations](#transport). |
 
 ### Transport
