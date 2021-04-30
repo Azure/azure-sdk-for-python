@@ -2,15 +2,15 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 # ------------------------------------
+import json
 import sys
 import time
 
 from azure.core.credentials import AccessToken
-from azure.identity import CredentialUnavailableError, VisualStudioCodeCredential
+from azure.identity import AzureAuthorityHosts, CredentialUnavailableError, VisualStudioCodeCredential
 from azure.core.pipeline.policies import SansIOHTTPPolicy
 from azure.identity._constants import EnvironmentVariables
 from azure.identity._internal.user_agent import USER_AGENT
-from azure.identity._credentials.vscode import get_credentials
 import pytest
 from six.moves.urllib_parse import urlparse
 
@@ -20,6 +20,41 @@ try:
     from unittest import mock
 except ImportError:  # python < 3.3
     import mock
+
+GET_REFRESH_TOKEN = VisualStudioCodeCredential.__module__ + ".get_refresh_token"
+GET_USER_SETTINGS = VisualStudioCodeCredential.__module__ + ".get_user_settings"
+
+
+def test_tenant_id():
+    def get_transport(expected_tenant):
+        return validating_transport(
+            requests=[
+                Request(base_url="https://{}/{}".format(AzureAuthorityHosts.AZURE_PUBLIC_CLOUD, expected_tenant))
+            ],
+            responses=[mock_response(json_payload=build_aad_response(access_token="**"))],
+        )
+
+    # credential should default to "organizations" tenant
+    transport = get_transport("organizations")
+    with mock.patch(GET_USER_SETTINGS, lambda: {}):
+        credential = VisualStudioCodeCredential(transport=transport)
+    credential.get_token("scope")
+    assert transport.send.call_count == 1
+
+    # ... unless VS Code has a tenant configured
+    user_settings = {"azure.tenant": "vs-code-setting"}
+    transport = get_transport(user_settings["azure.tenant"])
+    with mock.patch(GET_USER_SETTINGS, lambda: user_settings):
+        credential = VisualStudioCodeCredential(transport=transport)
+    credential.get_token("scope")
+    assert transport.send.call_count == 1
+
+    # ... and a tenant specified by the application prevails over VS Code configuration
+    transport = get_transport("from-application")
+    with mock.patch(GET_USER_SETTINGS, lambda: user_settings):
+        credential = VisualStudioCodeCredential(tenant_id="from-application", transport=transport)
+    credential.get_token("scope")
+    assert transport.send.call_count == 1
 
 
 def test_tenant_id_validation():
@@ -49,7 +84,7 @@ def test_policies_configurable():
     def send(*_, **__):
         return mock_response(json_payload=build_aad_response(access_token="**"))
 
-    with mock.patch(VisualStudioCodeCredential.__module__ + ".get_credentials", return_value="VALUE"):
+    with mock.patch(GET_REFRESH_TOKEN):
         credential = VisualStudioCodeCredential(policies=[policy], transport=mock.Mock(send=send))
         credential.get_token("scope")
         assert policy.on_request.called
@@ -61,7 +96,7 @@ def test_user_agent():
         responses=[mock_response(json_payload=build_aad_response(access_token="**"))],
     )
 
-    with mock.patch(VisualStudioCodeCredential.__module__ + ".get_credentials", return_value="VALUE"):
+    with mock.patch(GET_REFRESH_TOKEN):
         credential = VisualStudioCodeCredential(transport=transport)
         credential.get_token("scope")
 
@@ -87,22 +122,20 @@ def test_request_url(authority):
     credential = VisualStudioCodeCredential(
         tenant_id=tenant_id, transport=mock.Mock(send=mock_send), authority=authority
     )
-    with mock.patch(VisualStudioCodeCredential.__module__ + ".get_credentials", return_value=expected_refresh_token):
+    with mock.patch(GET_REFRESH_TOKEN, return_value=expected_refresh_token):
         token = credential.get_token("scope")
     assert token.token == access_token
 
     # authority can be configured via environment variable
-    with mock.patch.dict("os.environ", {EnvironmentVariables.AZURE_AUTHORITY_HOST: authority}, clear=True):
+    with mock.patch.dict("os.environ", {EnvironmentVariables.AZURE_AUTHORITY_HOST: authority}):
         credential = VisualStudioCodeCredential(tenant_id=tenant_id, transport=mock.Mock(send=mock_send))
-        with mock.patch(
-            VisualStudioCodeCredential.__module__ + ".get_credentials", return_value=expected_refresh_token
-        ):
+        with mock.patch(GET_REFRESH_TOKEN, return_value=expected_refresh_token):
             credential.get_token("scope")
     assert token.token == access_token
 
 
 def test_credential_unavailable_error():
-    with mock.patch(VisualStudioCodeCredential.__module__ + ".get_credentials", return_value=None):
+    with mock.patch(GET_REFRESH_TOKEN, return_value=None):
         credential = VisualStudioCodeCredential()
         with pytest.raises(CredentialUnavailableError):
             token = credential.get_token("scope")
@@ -116,7 +149,7 @@ def test_redeem_token():
     mock_client.obtain_token_by_refresh_token = mock.Mock(return_value=expected_token)
     mock_client.get_cached_access_token = mock.Mock(return_value=None)
 
-    with mock.patch(VisualStudioCodeCredential.__module__ + ".get_credentials", return_value=expected_value):
+    with mock.patch(GET_REFRESH_TOKEN, return_value=expected_value):
         credential = VisualStudioCodeCredential(_client=mock_client)
         token = credential.get_token("scope")
         assert token is expected_token
@@ -132,7 +165,7 @@ def test_cache_refresh_token():
     mock_client.get_cached_access_token = mock.Mock(return_value=None)
     mock_get_credentials = mock.Mock(return_value="VALUE")
 
-    with mock.patch(VisualStudioCodeCredential.__module__ + ".get_credentials", mock_get_credentials):
+    with mock.patch(GET_REFRESH_TOKEN, mock_get_credentials):
         credential = VisualStudioCodeCredential(_client=mock_client)
         token = credential.get_token("scope")
         assert token is expected_token
@@ -147,13 +180,12 @@ def test_no_obtain_token_if_cached():
 
     mock_client = mock.Mock(
         obtain_token_by_refresh_token=mock.Mock(return_value=expected_token),
-        get_cached_access_token=mock.Mock(return_value=expected_token)
+        get_cached_access_token=mock.Mock(return_value=expected_token),
     )
 
     credential = VisualStudioCodeCredential(_client=mock_client)
     with mock.patch(
-        VisualStudioCodeCredential.__module__ + ".get_credentials",
-        mock.Mock(side_effect=Exception("credential should not acquire a new token")),
+        GET_REFRESH_TOKEN, mock.Mock(side_effect=Exception("credential should not acquire a new token")),
     ):
         token = credential.get_token("scope")
 
@@ -192,3 +224,48 @@ def test_adfs():
     with pytest.raises(CredentialUnavailableError) as ex:
         credential.get_token("scope")
     assert "adfs" in ex.value.message.lower()
+
+
+@pytest.mark.parametrize(
+    "cloud,authority",
+    (
+        ("AzureCloud", AzureAuthorityHosts.AZURE_PUBLIC_CLOUD),
+        ("AzureChinaCloud", AzureAuthorityHosts.AZURE_CHINA),
+        ("AzureGermanCloud", AzureAuthorityHosts.AZURE_GERMANY),
+        ("AzureUSGovernment", AzureAuthorityHosts.AZURE_GOVERNMENT),
+    ),
+)
+def test_reads_cloud_settings(cloud, authority):
+    """the credential should read authority and tenant from VS Code settings when an application doesn't specify them"""
+
+    expected_tenant = "tenant-id"
+    user_settings = {"azure.cloud": cloud, "azure.tenant": expected_tenant}
+
+    transport = validating_transport(
+        requests=[Request(base_url="https://{}/{}".format(authority, expected_tenant))],
+        responses=[mock_response(json_payload=build_aad_response(access_token="**"))],
+    )
+
+    with mock.patch(GET_USER_SETTINGS, lambda: user_settings):
+        credential = VisualStudioCodeCredential(transport=transport)
+
+    with mock.patch(GET_REFRESH_TOKEN, lambda _: "**"):
+        credential.get_token("scope")
+
+    assert transport.send.call_count == 1
+
+
+def test_no_user_settings():
+    """the credential should default to Public Cloud and "organizations" tenant when it can't read VS Code settings"""
+
+    transport = validating_transport(
+        requests=[Request(base_url="https://{}/{}".format(AzureAuthorityHosts.AZURE_PUBLIC_CLOUD, "organizations"))],
+        responses=[mock_response(json_payload=build_aad_response(access_token="**"))],
+    )
+
+    with mock.patch(GET_USER_SETTINGS, lambda: {}):
+        credential = VisualStudioCodeCredential(transport=transport)
+
+    credential.get_token("scope")
+
+    assert transport.send.call_count == 1
