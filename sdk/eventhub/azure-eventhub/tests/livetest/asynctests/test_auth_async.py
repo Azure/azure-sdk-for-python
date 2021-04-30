@@ -135,27 +135,22 @@ class AsyncEventHubAuthTests(AzureMgmtTestCase):
             await producer_client.send_batch(batch)
 
     @pytest.mark.liveTest
-    @pytest.mark.live_test_only
-    @CachedResourceGroupPreparer(name_prefix='eventhubtest')
-    @CachedEventHubNamespacePreparer(name_prefix='eventhubtest')
-    @CachedEventHubPreparer(name_prefix='eventhubtest')
-    async def test_client_azure_sas_credential_async(self,
-                                   eventhub,
-                                   eventhub_namespace,
-                                   eventhub_namespace_key_name,
-                                   eventhub_namespace_primary_key,
-                                   eventhub_namespace_connection_string,
-                                   **kwargs):
+    @pytest.mark.asyncio
+    async def test_client_azure_named_key_credential_async(live_eventhub):
 
         hostname = "{}.servicebus.windows.net".format(eventhub_namespace.name)
-        producer_client = EventHubProducerClient(fully_qualified_namespace=hostname,
-                                                 eventhub_name=eventhub.name,
-                                                 credential=AzureNamedKeyCredential(
-                                                     eventhub_namespace_key_name,
-                                                     eventhub_namespace_primary_key
-                                                     ))
+        consumer_client = EventHubConsumerClient(fully_qualified_namespace=live_eventhub['hostname'],
+                                                eventhub_name=live_eventhub['event_hub'],
+                                                consumer_group='$default',
+                                                credential=credential,
+                                                user_agent='customized information')
 
-        async with producer_client:
-            batch = await producer_client.create_batch(partition_id='0')
-            batch.add(EventData(body='A single message'))
-            await producer_client.send_batch(batch)
+        assert (await consumer_client.get_eventhub_properties()) is not None
+    
+        credential.update("foo", "bar")
+
+        with pytest.raises(Exception):
+            await consumer_client.get_eventhub_properties()
+        
+        credential.update(live_eventhub['key_name'], live_eventhub['access_key'])
+        assert (await consumer_client.get_eventhub_properties()) is not None

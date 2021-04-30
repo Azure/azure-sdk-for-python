@@ -110,14 +110,19 @@ def test_client_azure_sas_credential(live_eventhub):
 
 @pytest.mark.liveTest
 def test_client_azure_named_key_credential(live_eventhub):
-    hostname = live_eventhub['hostname']
-
     credential = AzureNamedKeyCredential(live_eventhub['key_name'], live_eventhub['access_key'])
-    producer_client = EventHubProducerClient(fully_qualified_namespace=hostname,
+    consumer_client = EventHubConsumerClient(fully_qualified_namespace=live_eventhub['hostname'],
                                              eventhub_name=live_eventhub['event_hub'],
-                                             credential=credential)
+                                             consumer_group='$default',
+                                             credential=credential,
+                                             user_agent='customized information')
 
-    with producer_client:
-        batch = producer_client.create_batch(partition_id='0')
-        batch.add(EventData(body='A single message'))
-        producer_client.send_batch(batch)
+    assert consumer_client.get_eventhub_properties() is not None
+    
+    credential.update("foo", "bar")
+
+    with pytest.raises(Exception):
+        consumer_client.get_eventhub_properties()
+    
+    credential.update(live_eventhub['key_name'], live_eventhub['access_key'])
+    assert consumer_client.get_eventhub_properties() is not None
