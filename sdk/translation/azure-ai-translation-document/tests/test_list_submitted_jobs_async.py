@@ -17,14 +17,13 @@ TOTAL_DOC_COUNT_IN_JOB = 1
 class TestSubmittedJobs(AsyncDocumentTranslationTest):
 
 
-    @pytest.mark.skip(reason="no way of currently testing this")
     @DocumentTranslationPreparer()
     @DocumentTranslationClientPreparer()
     async def test_list_submitted_jobs(self, client):
         # create some jobs
         jobs_count = 5
         docs_per_job = 5
-        self._create_and_submit_sample_translation_jobs_async(client, jobs_count, docs_per_job=docs_per_job, wait=False)
+        await self._create_and_submit_sample_translation_jobs_async(client, jobs_count, docs_per_job=docs_per_job, wait=False)
 
         # list jobs
         submitted_jobs = client.list_submitted_jobs()
@@ -44,7 +43,7 @@ class TestSubmittedJobs(AsyncDocumentTranslationTest):
         results_per_page = 2
 
         # create some jobs
-        self._create_and_submit_sample_translation_jobs_async(client, jobs_count, docs_per_job=docs_per_job, wait=False)
+        await self._create_and_submit_sample_translation_jobs_async(client, jobs_count, docs_per_job=docs_per_job, wait=False)
 
         # list jobs
         submitted_jobs_pages = client.list_submitted_jobs(results_per_page=results_per_page).by_page()
@@ -60,137 +59,174 @@ class TestSubmittedJobs(AsyncDocumentTranslationTest):
             self.assertEqual(len(page_jobs), results_per_page)
 
 
-    @pytest.mark.skip(reason="no way of currently testing this")
+    @pytest.mark.skip(reason="passing, pointless test!")
     @DocumentTranslationPreparer()
-
     @DocumentTranslationClientPreparer()
     async def test_list_submitted_jobs_with_skip(self, client):
         '''
+            note:
             some notes regarding this test
-            there's no possible way of asserting for 'skip'
+            there's no possible way of asserting for 'skip', unless we can know the 
+            count of the jobs returned!
+
             as we can't possibly know the how many previous items were created
             even if we filter only on newly created items,
             tests can run in parallel which will ruin our pre-conceptions!
             the only thing we can do, is to call the service with the parameter 
+
+            update:
+                we can test 'skip' by using some other filters to get how many docs
+                will be in result and only then skip will be meaningfull
         '''
         # prepare data
-        jobs_count = 6
+        jobs_count = 5
+        docs_per_job = 2
         skip = 2
 
         # create some jobs
-        job_ids = await self._create_and_submit_sample_translation_jobs_async(client, jobs_count)
+        await self._create_and_submit_sample_translation_jobs_async(client, jobs_count, wait=False, docs_per_job=docs_per_job)
 
-        # list jobs
+        # list jobs - unable to assert skip!!
         submitted_jobs = client.list_submitted_jobs(skip=skip)
-        jobs_list = []
+        self.assertIsNotNone(submitted_jobs)
 
         async for job in submitted_jobs:
-            jobs_list.append(job)
-            if job.id in job_ids:
-                self._validate_translation_job(job, status="Succeeded", total=TOTAL_DOC_COUNT_IN_JOB, succeeded=TOTAL_DOC_COUNT_IN_JOB)
-            else:
-                self._validate_translation_job(job)
+            self._validate_translation_job(job)
 
 
-    @pytest.mark.skip(reason="no way of currently testing this")
+    @pytest.mark.skip(reason="filter not working!")
     @DocumentTranslationPreparer()
     @DocumentTranslationClientPreparer()
     async def test_list_submitted_jobs_filter_by_status(self, client):
+        jobs_count = 10
+        docs_per_job = 3
+
         # create some jobs
-        self._create_and_submit_sample_translation_jobs_async(client, 10, wait=False)
+        job_ids = await self._create_and_submit_sample_translation_jobs_async(client, jobs_count, wait=False, docs_per_job=docs_per_job)
+
+        # update status
+        cancelled_count = jobs_count//2
+        for id in job_ids[:cancelled_count]:
+            await client.cancel_job(id)
+        statuses = ["Cancelled", "Cancelling"]
+        self.wait(10) # wait for cancelled to propagate
 
         # list jobs
-        statuses = ["Running"]
         submitted_jobs = client.list_submitted_jobs(statuses=statuses)
+        self.assertIsNotNone(submitted_jobs)
 
         # check statuses
         async for job in submitted_jobs:
             self.assertIn(job.status, statuses)
 
 
-    @pytest.mark.skip(reason="no way of currently testing this")
     @DocumentTranslationPreparer()
     @DocumentTranslationClientPreparer()
     async def test_list_submitted_jobs_filter_by_ids(self, client):
+        jobs_count = 3
+        docs_per_job = 2
+
         # create some jobs
-        job_ids = self._create_and_submit_sample_translation_jobs_async(client, 3)
+        job_ids = await self._create_and_submit_sample_translation_jobs_async(client, jobs_count, wait=False, docs_per_job=docs_per_job)
 
         # list jobs
         submitted_jobs = client.list_submitted_jobs(ids=job_ids)
+        self.assertIsNotNone(submitted_jobs)
 
         # check statuses
         async for job in submitted_jobs:
             self.assertIn(job.id, job_ids)
 
 
-    @pytest.mark.skip(reason="no way of currently testing this")
     @DocumentTranslationPreparer()
     @DocumentTranslationClientPreparer()
     async def test_list_submitted_jobs_filter_by_created_after(self, client):
         # create some jobs
+        jobs_count = 3
+        docs_per_job = 2
+
+        # create some jobs
         start = datetime.now()
-        self._create_and_submit_sample_translation_jobs_async(client, 3)
+        job_ids = await self._create_and_submit_sample_translation_jobs_async(client, jobs_count, wait=False, docs_per_job=docs_per_job)
 
         # list jobs
         submitted_jobs = client.list_submitted_jobs(created_after=start)
+        self.assertIsNotNone(submitted_jobs)
 
         # check statuses
         async for job in submitted_jobs:
-            assert(job.created_on > start)
+            self.assertIn(job.id, job_ids)
+            assert(job.created_on.replace(tzinfo=None) >= start.replace(tzinfo=None))
 
 
-    @pytest.mark.skip(reason="no way of currently testing this")
+    @pytest.mark.skip(reason="for some reason, jobs created after 'end' timestamp showup in result! might be different timestamps locally and service")
     @DocumentTranslationPreparer()
     @DocumentTranslationClientPreparer()
     async def test_list_submitted_jobs_filter_by_created_before(self, client):
+        '''
+            NOTE: maybe we need to wait for few seconds after calling 'end = datetime.now()'
+            for the local and service clocks to differ by some significant amount 
+        '''
+        jobs_count = 3
+        docs_per_job = 2
+
         # create some jobs
-        self._create_and_submit_sample_translation_jobs_async(client, 3)
+        await self._create_and_submit_sample_translation_jobs_async(client, jobs_count, wait=False, docs_per_job=docs_per_job)
         end = datetime.now()
-        self._create_and_submit_sample_translation_jobs_async(client, 3)
+        self.wait(5) # 
+        job_ids = await self._create_and_submit_sample_translation_jobs_async(client, jobs_count, wait=False, docs_per_job=docs_per_job)
 
         # list jobs
         submitted_jobs = client.list_submitted_jobs(created_before=end)
+        self.assertIsNotNone(submitted_jobs)
 
         # check statuses
         async for job in submitted_jobs:
-            assert(job.created_on < end)
+            self.assertLessEqual(job.created_on.replace(tzinfo=None), end.replace(tzinfo=None))
+            self.assertNotIn(job.id, job_ids)
 
 
-    @pytest.mark.skip(reason="no way of currently testing this")
     @DocumentTranslationPreparer()
     @DocumentTranslationClientPreparer()
     async def test_list_submitted_jobs_order_by_creation_time_asc(self, client):
+        jobs_count = 3
+        docs_per_job = 2
+
         # create some jobs
-        self._create_and_submit_sample_translation_jobs_async(client, 3)
+        await self._create_and_submit_sample_translation_jobs_async(client, jobs_count, wait=False, docs_per_job=docs_per_job)
 
         # list jobs
-        submitted_jobs = client.list_submitted_jobs(order_by=["CreatedDateTimeUtc asc"])
+        submitted_jobs = client.list_submitted_jobs(order_by=["createdDateTimeUtc asc"])
+        self.assertIsNotNone(submitted_jobs)
 
         # check statuses
-        curr = date.min
+        curr = datetime.min
         async for job in submitted_jobs:
-            assert(job.created_on > curr)
+            assert(job.created_on.replace(tzinfo=None) >= curr.replace(tzinfo=None))
             curr = job.created_on
 
 
-    @pytest.mark.skip(reason="no way of currently testing this")
     @DocumentTranslationPreparer()
     @DocumentTranslationClientPreparer()
     async def test_list_submitted_jobs_order_by_creation_time_desc(self, client):
+        jobs_count = 3
+        docs_per_job = 2
+
         # create some jobs
-        self._create_and_submit_sample_translation_jobs_async(client, 3)
+        await self._create_and_submit_sample_translation_jobs_async(client, jobs_count, wait=False, docs_per_job=docs_per_job)
 
         # list jobs
-        submitted_jobs = client.list_submitted_jobs(order_by=["CreatedDateTimeUtc desc"])
+        submitted_jobs = client.list_submitted_jobs(order_by=["createdDateTimeUtc desc"])
+        self.assertIsNotNone(submitted_jobs)
 
         # check statuses
-        curr = date.max
+        curr = datetime.max
         async for job in submitted_jobs:
-            assert(job.created_on < curr)
+            assert(job.created_on.replace(tzinfo=None) <= curr.replace(tzinfo=None))
             curr = job.created_on
 
 
-    @pytest.mark.skip(reason="no way of currently testing this")
+    @pytest.mark.skip(reason="pending for filters which aren't working - mainly 'statuses' filter")
     @DocumentTranslationPreparer()
     @DocumentTranslationClientPreparer()
     async def test_list_submitted_jobs_mixed_filters(self, client):
@@ -226,12 +262,12 @@ class TestSubmittedJobs(AsyncDocumentTranslationTest):
                 # assert filters
                 assert(job.created_on < end)
                 assert(job.created_on > start)
-                assertIn(job.status, statuses)
+                self.assertIn(job.status, statuses)
 
             self.assertEqual(len(page_jobs), results_per_page)
 
 
-    @pytest.mark.skip(reason="no way of currently testing this")
+    @pytest.mark.skip(reason="pending for filters which aren't working - mainly 'statuses' filter")
     @DocumentTranslationPreparer()
     @DocumentTranslationClientPreparer()
     async def test_list_submitted_jobs_mixed_filters_more(self, client):

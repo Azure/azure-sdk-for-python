@@ -160,7 +160,7 @@ class TestSubmittedJobs(DocumentTranslationTest):
     @DocumentTranslationClientPreparer()
     def test_list_submitted_jobs_filter_by_created_before(self, client):
         '''
-            NOTE: we need to wait for few seconds after calling 'end = datetime.now()'
+            NOTE: maybe we need to wait for few seconds after calling 'end = datetime.now()'
             for the local and service clocks to differ by some significant amount 
         '''
         jobs_count = 3
@@ -230,7 +230,7 @@ class TestSubmittedJobs(DocumentTranslationTest):
         jobs_count = 5
         docs_per_job = 2
         results_per_page = 2
-        # statuses = ["Running"]
+        statuses = ["Running"]
 
         # create some jobs
         start = datetime.now()
@@ -240,7 +240,7 @@ class TestSubmittedJobs(DocumentTranslationTest):
         # list jobs
         submitted_jobs = client.list_submitted_jobs(
             # filters
-            # statuses=statuses,
+            statuses=statuses,
             created_after=start,
             created_before=end,
             # ordering
