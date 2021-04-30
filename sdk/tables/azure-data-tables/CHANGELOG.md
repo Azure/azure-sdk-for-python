@@ -10,6 +10,7 @@
 * `TableClient.send_batch` has been renamed to `TableClient.submit_transaction`.
 * Removed `BatchTransactionResult` object in favor of returning an iterable of batched entities with returned metadata.
 * `BatchErrorException` has been renamed to `TableTransactionError`.
+* Removed `date` and `api_version` from the `TableItem` class.
 
 **Fixes**
 * Fixed issue with Cosmos merge operations.
