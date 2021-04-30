@@ -254,6 +254,7 @@ class StorageTableBatchTest(AzureTestCase, TableTestCase):
             entity.test3 = 3
             entity.test4 = EntityProperty(1234567890, EdmType.INT32)
             entity.test5 = datetime.utcnow()
+            entity.test6 = (2 ** 40, "EdmType.INT64")
             self.table.create_entity(entity)
 
             entity = self.table.get_entity(u'001', u'batch_update')

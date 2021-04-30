@@ -185,6 +185,14 @@ _EDM_TO_ENTITY_CONVERSIONS = {
     EdmType.INT32: _to_entity_int32,
     EdmType.INT64: _to_entity_int64,
     EdmType.STRING: _to_entity_str,
+    "EdmType.BINARY": _to_entity_binary,
+    "EdmType.BOOLEAN": _to_entity_bool,
+    "EdmType.DATETIME": _to_entity_datetime,
+    "EdmType.DOUBLE": _to_entity_float,
+    "EdmType.GUID": _to_entity_guid,
+    "EdmType.INT32": _to_entity_int32,
+    "EdmType.INT64": _to_entity_int64,
+    "EdmType.STRING": _to_entity_str,
 }
 
 
@@ -225,11 +233,9 @@ def _add_entity_properties(source):
             mtype, value = conv(value)
         elif isinstance(value, datetime):
             mtype, value = _to_entity_datetime(value)
-        elif isinstance(value, EntityProperty):
-            conv = _EDM_TO_ENTITY_CONVERSIONS.get(value.edm_type)
-            if conv is None:
-                raise TypeError(_ERROR_TYPE_NOT_SUPPORTED.format(value.type))
-            mtype, value = conv(value.value)
+        elif isinstance(value, tuple):
+            conv = _EDM_TO_ENTITY_CONVERSIONS.get(value[1])
+            mtype, value = conv(value[0])
         else:
             conv = _PYTHON_TO_ENTITY_CONVERSIONS.get(type(value))
             if conv is None and value is not None:

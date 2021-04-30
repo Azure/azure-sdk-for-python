@@ -13,6 +13,7 @@
 * Changed optional `value` and `type` arguments of `EntityProperty` to required.
 * Renamed `EntityProperty.type` to `EntityProperty.edm_type`.
 * `BatchErrorException` has been renamed to `TableTransactionError`.
+* `EntityProperty` is now a tuple.
 
 **Fixes**
 * Fixed issue with Cosmos merge operations.
