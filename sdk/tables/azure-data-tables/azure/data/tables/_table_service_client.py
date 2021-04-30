@@ -26,18 +26,26 @@ from ._serialize import _parameter_filter_substitution
 
 
 class TableServiceClient(TablesBaseClient):
-    """Create TableServiceClient from a Credential.
+    """A client to interact with the Table Service at the account level.
 
-        :param account_url:
-            A url to an Azure Storage account.
-        :type account_url: str
-        :param credential:
-            The credentials with which to authenticate. This is optional if the
-            account URL already has a SAS token, or the connection string already has shared
-            access key values. The value can be a SAS token string or an account shared access
-            key.
-        :type credential: str
-        :returns: None
+    This client provides operations to retrieve and configure the account properties
+    as well as list, create and delete tables within the account.
+    For operations relating to a specific table, a client for this entity
+    can be retrieved using the :func:`~get_table_client` function.
+
+    :ivar str account_name: The name of the Tables account.
+    :ivar str url: The full URL to the Tables account.
+    :param str endpoint:
+        The URL to the table service endpoint. Any other entities included
+        in the URL path (e.g. table) will be discarded. This URL can be optionally
+        authenticated with a SAS token.
+    :param str credential:
+        The credentials with which to authenticate. This is optional if the
+        account URL already has a SAS token. The value can be a SAS token string, an account
+        shared access key.
+    :keyword str api_version:
+        The Storage API version to use for requests. Default value is '2019-02-02'.
+        Setting to an older version may result in reduced feature compatibility.
 
         .. admonition:: Example:
 
@@ -83,10 +91,10 @@ class TableServiceClient(TablesBaseClient):
                 :dedent: 8
                 :caption: Authenticating a TableServiceClient from a connection_string
         """
-        account_url, credential = parse_connection_str(
+        endpoint, credential = parse_connection_str(
             conn_str=conn_str, credential=None, keyword_args=kwargs
         )
-        return cls(account_url, credential=credential, **kwargs)
+        return cls(endpoint, credential=credential, **kwargs)
 
     @distributed_trace
     def get_service_stats(self, **kwargs):

@@ -2,6 +2,7 @@
 
 ## 12.0.0b7 (Unreleased)
 **Breaking**
+* The `account_url` parameter in the client constructors has been renamed to `endpoint`.
 * Removed explicit `LinearRetry` and `ExponentialRetry` in favor of keyword parameter.
 * Renamed `filter` parameter in query APIs to `query_filter`.
 * The `location_mode` attribute on clients is now read-only. This has been added as a keyword parameter to the constructor.
@@ -10,6 +11,7 @@
 * `TableClient.send_batch` has been renamed to `TableClient.submit_transaction`.
 * Removed `BatchTransactionResult` object in favor of returning an iterable of batched entities with returned metadata.
 * `BatchErrorException` has been renamed to `TableTransactionError`.
+* The `location_mode` is no longer a public attribute on the Clients.
 
 **Fixes**
 * Fixed issue with Cosmos merge operations.

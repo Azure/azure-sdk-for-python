@@ -40,12 +40,12 @@ class AsyncTablesBaseClient(AccountHostsMixin):
 
     def __init__(
         self,
-        account_url,  # type: str
+        endpoint,  # type: str
         credential=None,  # type: str
         **kwargs  # type: Any
     ):
         # type: (...) -> None
-        super(AsyncTablesBaseClient, self).__init__(account_url, credential=credential, **kwargs)
+        super(AsyncTablesBaseClient, self).__init__(endpoint, credential=credential, **kwargs)
         self._client = AzureTable(
             self.url,
             policies=kwargs.pop('policies', self._policies),

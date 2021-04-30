@@ -17,7 +17,7 @@ USAGE:
 
     Set the environment variables with your own values before running the sample:
     1) AZURE_STORAGE_CONNECTION_STRING - the connection string to your storage account
-    2) AZURE_STORAGE_ACCOUNT_URL - the Table service account URL
+    2) AZURE_STORAGE_ENDPOINT_SUFFIX - the Table service account URL suffix
     3) AZURE_STORAGE_ACCOUNT_NAME - the name of the storage account
     4) AZURE_STORAGE_ACCESS_KEY - the storage account access key
 """
@@ -32,9 +32,9 @@ class CreateClients(object):
         load_dotenv(find_dotenv())
         # self.connection_string = os.getenv("AZURE_TABLES_CONNECTION_STRING")
         self.access_key = os.getenv("TABLES_PRIMARY_STORAGE_ACCOUNT_KEY")
-        self.endpoint = os.getenv("TABLES_STORAGE_ENDPOINT_SUFFIX")
+        self.endpoint_suffix = os.getenv("TABLES_STORAGE_ENDPOINT_SUFFIX")
         self.account_name = os.getenv("TABLES_STORAGE_ACCOUNT_NAME")
-        self.account_url = "{}.table.{}".format(self.account_name, self.endpoint)
+        self.endpoint = "{}.table.{}".format(self.account_name, self.endpoint_suffix)
         self.connection_string = "DefaultEndpointsProtocol=https;AccountName={};AccountKey={};EndpointSuffix={}".format(
             self.account_name,
             self.access_key,
@@ -54,7 +54,7 @@ class CreateClients(object):
         # Instantiate a TableServiceClient using a shared access key
         # [START create_table_service_client]
         from azure.data.tables import TableServiceClient
-        with TableServiceClient(account_url=self.account_url, credential=self.access_key) as table_service:
+        with TableServiceClient(endpoint=self.endpoint, credential=self.access_key) as table_service:
             properties = table_service.get_service_properties()
             print("Properties: {}".format(properties))
         # [END create_table_service_client]

@@ -98,7 +98,7 @@ class TestTableClient(AzureTestCase, TableTestCase):
     def test_user_agent_append(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
         service = self.create_client_from_credential(
             TableServiceClient,
-            account_url=self.account_url(tables_cosmos_account_name, "cosmos"),
+            endpoint=self.account_url(tables_cosmos_account_name, "cosmos"),
             credential=tables_primary_cosmos_account_key)
 
         def callback(response):
@@ -139,7 +139,7 @@ class TestTableClientUnit(TableTestCase):
         for client, url in SERVICES.items():
             # Act
             service = client(
-                account_url=self._account_url(self.tables_cosmos_account_name),
+                endpoint=self._account_url(self.tables_cosmos_account_name),
                 credential=self.tables_primary_cosmos_account_key,
                 table_name='foo')
 
@@ -153,7 +153,7 @@ class TestTableClientUnit(TableTestCase):
         for client, url in SERVICES.items():
             # Act
             service = client(
-                account_url=self._account_url(self.tables_cosmos_account_name),
+                endpoint=self._account_url(self.tables_cosmos_account_name),
                 credential=self.tables_primary_cosmos_account_key,
                 table_name="test")
 
@@ -169,7 +169,7 @@ class TestTableClientUnit(TableTestCase):
         for service_type in SERVICES:
             # Act
             service = service_type(
-                account_url=self._account_url(self.tables_cosmos_account_name),
+                endpoint=self._account_url(self.tables_cosmos_account_name),
                 credential=self.sas_token,
                 table_name="foo")
 
@@ -186,7 +186,7 @@ class TestTableClientUnit(TableTestCase):
         for service_type in SERVICES:
             # Act
             service = service_type(
-                account_url=self._account_url(self.tables_cosmos_account_name),
+                endpoint=self._account_url(self.tables_cosmos_account_name),
                 credential=self.tables_primary_cosmos_account_key,
                 table_name="foo")
 
@@ -204,7 +204,7 @@ class TestTableClientUnit(TableTestCase):
             with pytest.raises(ValueError):
                 url = self.account_url(self.tables_cosmos_account_name, "cosmos").replace('https', 'http')
                 service = service_type(
-                    account_url=url,
+                    endpoint=url,
                     credential=self.token_credential,
                     table_name="foo")
 
@@ -227,7 +227,7 @@ class TestTableClientUnit(TableTestCase):
         for service_type in SERVICES:
             # Act
             service = service_type(
-                account_url=url,
+                endpoint=url,
                 credential=self.tables_primary_cosmos_account_key,
                 table_name="foo")
 
@@ -252,11 +252,11 @@ class TestTableClientUnit(TableTestCase):
         for service_type in SERVICES.items():
             # Act
             default_service = service_type[0](
-                account_url=self._account_url(self.tables_cosmos_account_name),
+                endpoint=self._account_url(self.tables_cosmos_account_name),
                 credential=self.tables_primary_cosmos_account_key,
                 table_name="foo")
             service = service_type[0](
-                account_url=self._account_url(self.tables_cosmos_account_name),
+                endpoint=self._account_url(self.tables_cosmos_account_name),
                 credential=self.tables_primary_cosmos_account_key,
                 table_name="foo", connection_timeout=22)
 
@@ -438,14 +438,14 @@ class TestTableClientUnit(TableTestCase):
             assert service.credential.account_key == self.tables_primary_cosmos_account_key
             assert service._primary_hostname ==  'local-machine:11002/custom/account/path'
 
-        service = TableServiceClient(account_url=custom_account_url)
+        service = TableServiceClient(endpoint=custom_account_url)
         assert service.account_name == "custom"
         assert service.credential ==  None
         assert service._primary_hostname ==  'local-machine:11002/custom/account/path'
         # mine doesnt have a question mark at the end
         assert service.url.startswith('http://local-machine:11002/custom/account/path')
 
-        service = TableClient(account_url=custom_account_url, table_name="foo")
+        service = TableClient(endpoint=custom_account_url, table_name="foo")
         assert service.account_name == "custom"
         assert service.table_name ==  "foo"
         assert service.credential ==  None
@@ -463,7 +463,7 @@ class TestTableClientUnit(TableTestCase):
         # Arrange
         table_url = self._account_url(self.tables_cosmos_account_name) + "/foo"
         service = TableClient(
-            account_url=table_url,
+            endpoint=table_url,
             credential=self.tables_primary_cosmos_account_key,
             table_name="bar")
 
@@ -477,7 +477,7 @@ class TestTableClientUnit(TableTestCase):
         # Arrange
         table_url = "https://{}.table.cosmos.azure.com:443/foo".format(self.tables_cosmos_account_name)
         service = TableClient(
-            account_url=table_url,
+            endpoint=table_url,
             credential=self.tables_primary_cosmos_account_key,
             table_name="bar")
 
@@ -493,7 +493,7 @@ class TestTableClientUnit(TableTestCase):
 
         # Assert
         with pytest.raises(ValueError) as excinfo:
-            service = TableClient(account_url=table_url, table_name=invalid_table_name, credential="self.tables_primary_cosmos_account_key")
+            service = TableClient(endpoint=table_url, table_name=invalid_table_name, credential="self.tables_primary_cosmos_account_key")
 
         assert "Table names must be alphanumeric, cannot begin with a number, and must be between 3-63 characters long." in str(excinfo)
 
@@ -516,7 +516,7 @@ class TestTableClientUnit(TableTestCase):
         for client, url in SERVICES.items():
             # Act
             service = client(
-                account_url=self._account_url(self.tables_cosmos_account_name),
+                endpoint=self._account_url(self.tables_cosmos_account_name),
                 credential=self.tables_primary_cosmos_account_key,
                 table_name='table')
 
@@ -531,7 +531,7 @@ class TestTableClientUnit(TableTestCase):
         for client, url in SERVICES.items():
             # Act
             service = client(
-                account_url=self._account_url(self.tables_cosmos_account_name),
+                endpoint=self._account_url(self.tables_cosmos_account_name),
                 credential=self.tables_primary_cosmos_account_key,
                 table_name='table')
 

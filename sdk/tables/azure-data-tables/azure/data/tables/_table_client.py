@@ -41,14 +41,16 @@ TransactionOperationType = Union[Tuple[OperationType, EntityType], Tuple[Operati
 
 
 class TableClient(TablesBaseClient):
-    """
-    :ivar str account_name: Name of the storage account (Cosmos or Azure)
-    :ivar str table_name: The name of the table
+    """A client to interact with a specific Table in an Azure Tables account.
+
+    :ivar str account_name: The name of the Tables account.
+    :ivar str table_name: The name of the table.
+    :ivar str url: The full URL to the Tables account.
     """
 
     def __init__(
         self,
-        account_url,  # type: str
+        endpoint,  # type: str
         table_name,  # type: str
         credential=None,  # type: str
         **kwargs  # type: Any
@@ -56,11 +58,8 @@ class TableClient(TablesBaseClient):
         # type: (...) -> None
         """Create TableClient from a Credential.
 
-        :param account_url:
-            A url to an Azure Storage account.
-        :type account_url: str
-        :param table_name: The table name.
-        :type table_name: str
+        :param str endpoint: A URL to an Azure Tables account.
+        :param str table_name: The table name.
         :param credential:
             The credentials with which to authenticate. This is optional if the
             account URL already has a SAS token, or the connection string already has shared
@@ -74,7 +73,7 @@ class TableClient(TablesBaseClient):
             raise ValueError("Please specify a table name.")
         _validate_table_name(table_name)
         self.table_name = table_name
-        super(TableClient, self).__init__(account_url, credential=credential, **kwargs)
+        super(TableClient, self).__init__(endpoint, credential=credential, **kwargs)
 
     def _format_url(self, hostname):
         """Format the endpoint URL according to the current location
@@ -92,11 +91,8 @@ class TableClient(TablesBaseClient):
         # type: (...) -> TableClient
         """Create TableClient from a Connection String.
 
-        :param conn_str:
-            A connection string to an Azure Storage or Cosmos account.
-        :type conn_str: str
-        :param table_name: The table name.
-        :type table_name: str
+        :param str conn_str: A connection string to an Azure Tables account.
+        :param str table_name: The table name.
         :returns: A table client.
         :rtype: :class:`~azure.data.tables.TableClient`
 
@@ -109,10 +105,10 @@ class TableClient(TablesBaseClient):
                 :dedent: 8
                 :caption: Authenticating a TableServiceClient from a connection_string
         """
-        account_url, credential = parse_connection_str(
+        endpoint, credential = parse_connection_str(
             conn_str=conn_str, credential=None, keyword_args=kwargs
         )
-        return cls(account_url, table_name=table_name, credential=credential, **kwargs)
+        return cls(endpoint, table_name=table_name, credential=credential, **kwargs)
 
     @classmethod
     def from_table_url(cls, table_url, credential=None, **kwargs):
@@ -142,7 +138,7 @@ class TableClient(TablesBaseClient):
         account_path = ""
         if len(table_path) > 1:
             account_path = "/" + "/".join(table_path[:-1])
-        account_url = "{}://{}{}?{}".format(
+        endpoint = "{}://{}{}?{}".format(
             parsed_url.scheme,
             parsed_url.netloc.rstrip("/"),
             account_path,
@@ -153,7 +149,7 @@ class TableClient(TablesBaseClient):
             raise ValueError(
                 "Invalid URL. Please provide a URL with a valid table name"
             )
-        return cls(account_url, table_name=table_name, credential=credential, **kwargs)
+        return cls(endpoint, table_name=table_name, credential=credential, **kwargs)
 
     @distributed_trace
     def get_table_access_policy(

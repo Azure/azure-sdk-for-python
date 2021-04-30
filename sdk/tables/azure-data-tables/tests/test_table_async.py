@@ -56,7 +56,7 @@ class TableTestAsync(AzureTestCase, AsyncTableTestCase):
     async def test_create_table(self, tables_storage_account_name, tables_primary_storage_account_key):
         # Arrange
         account_url = self.account_url(tables_storage_account_name, "table")
-        ts = self.create_client_from_credential(TableServiceClient, tables_primary_storage_account_key, account_url=account_url)
+        ts = self.create_client_from_credential(TableServiceClient, tables_primary_storage_account_key, endpoint=account_url)
 
         table_name = self._get_table_reference()
 
@@ -71,7 +71,7 @@ class TableTestAsync(AzureTestCase, AsyncTableTestCase):
     async def test_create_table_fail_on_exist(self, tables_storage_account_name, tables_primary_storage_account_key):
         # Arrange
         account_url = self.account_url(tables_storage_account_name, "table")
-        ts = self.create_client_from_credential(TableServiceClient, tables_primary_storage_account_key, account_url=account_url)
+        ts = self.create_client_from_credential(TableServiceClient, tables_primary_storage_account_key, endpoint=account_url)
         table_name = self._get_table_reference()
 
         # Act
@@ -90,7 +90,7 @@ class TableTestAsync(AzureTestCase, AsyncTableTestCase):
     async def test_query_tables_per_page(self, tables_storage_account_name, tables_primary_storage_account_key):
         # Arrange
         account_url = self.account_url(tables_storage_account_name, "table")
-        ts = self.create_client_from_credential(TableServiceClient, tables_primary_storage_account_key, account_url=account_url)
+        ts = self.create_client_from_credential(TableServiceClient, tables_primary_storage_account_key, endpoint=account_url)
 
         table_name = "myasynctable"
 
@@ -119,7 +119,7 @@ class TableTestAsync(AzureTestCase, AsyncTableTestCase):
     async def test_list_tables(self, tables_storage_account_name, tables_primary_storage_account_key):
         # Arrange
         account_url = self.account_url(tables_storage_account_name, "table")
-        ts = self.create_client_from_credential(TableServiceClient, tables_primary_storage_account_key, account_url=account_url)
+        ts = self.create_client_from_credential(TableServiceClient, tables_primary_storage_account_key, endpoint=account_url)
         table = await self._create_table(ts)
 
         # Act
@@ -140,7 +140,7 @@ class TableTestAsync(AzureTestCase, AsyncTableTestCase):
     async def test_query_tables_with_filter(self, tables_storage_account_name, tables_primary_storage_account_key):
         # Arrange
         account_url = self.account_url(tables_storage_account_name, "table")
-        ts = self.create_client_from_credential(TableServiceClient, tables_primary_storage_account_key, account_url=account_url)
+        ts = self.create_client_from_credential(TableServiceClient, tables_primary_storage_account_key, endpoint=account_url)
         table = await self._create_table(ts)
 
         # Act
@@ -163,7 +163,7 @@ class TableTestAsync(AzureTestCase, AsyncTableTestCase):
         # Arrange
         prefix = 'listtable'
         account_url = self.account_url(tables_storage_account_name, "table")
-        ts = self.create_client_from_credential(TableServiceClient, tables_primary_storage_account_key, account_url=account_url)
+        ts = self.create_client_from_credential(TableServiceClient, tables_primary_storage_account_key, endpoint=account_url)
 
         # Delete any existing tables
         async for table in ts.list_tables():
@@ -189,7 +189,7 @@ class TableTestAsync(AzureTestCase, AsyncTableTestCase):
     async def test_list_tables_with_marker(self, tables_storage_account_name, tables_primary_storage_account_key):
         # Arrange
         account_url = self.account_url(tables_storage_account_name, "table")
-        ts = self.create_client_from_credential(TableServiceClient, tables_primary_storage_account_key, account_url=account_url)
+        ts = self.create_client_from_credential(TableServiceClient, tables_primary_storage_account_key, endpoint=account_url)
         prefix = 'listtable'
         table_names = []
         for i in range(0, 4):
@@ -222,7 +222,7 @@ class TableTestAsync(AzureTestCase, AsyncTableTestCase):
     async def test_delete_table_with_existing_table(self, tables_storage_account_name, tables_primary_storage_account_key):
         # Arrange
         account_url = self.account_url(tables_storage_account_name, "table")
-        ts = self.create_client_from_credential(TableServiceClient, tables_primary_storage_account_key, account_url=account_url)
+        ts = self.create_client_from_credential(TableServiceClient, tables_primary_storage_account_key, endpoint=account_url)
         table = await self._create_table(ts)
 
         # Act
@@ -239,7 +239,7 @@ class TableTestAsync(AzureTestCase, AsyncTableTestCase):
                                                                        tables_primary_storage_account_key):
         # Arrange
         account_url = self.account_url(tables_storage_account_name, "table")
-        ts = self.create_client_from_credential(TableServiceClient, tables_primary_storage_account_key, account_url=account_url)
+        ts = self.create_client_from_credential(TableServiceClient, tables_primary_storage_account_key, endpoint=account_url)
         table_name = self._get_table_reference()
 
         # Act
@@ -252,7 +252,7 @@ class TableTestAsync(AzureTestCase, AsyncTableTestCase):
     async def test_get_table_acl(self, tables_storage_account_name, tables_primary_storage_account_key):
         # Arrange
         account_url = self.account_url(tables_storage_account_name, "table")
-        ts = self.create_client_from_credential(TableServiceClient, tables_primary_storage_account_key, account_url=account_url)
+        ts = self.create_client_from_credential(TableServiceClient, tables_primary_storage_account_key, endpoint=account_url)
 
         table = await self._create_table(ts)
         try:
@@ -269,7 +269,7 @@ class TableTestAsync(AzureTestCase, AsyncTableTestCase):
     async def test_set_table_acl_with_empty_signed_identifiers(self, tables_storage_account_name, tables_primary_storage_account_key):
         # Arrange
         account_url = self.account_url(tables_storage_account_name, "table")
-        ts = self.create_client_from_credential(TableServiceClient, tables_primary_storage_account_key, account_url=account_url)
+        ts = self.create_client_from_credential(TableServiceClient, tables_primary_storage_account_key, endpoint=account_url)
 
         table = await self._create_table(ts)
         try:
@@ -353,7 +353,7 @@ class TableTestAsync(AzureTestCase, AsyncTableTestCase):
 
         # Arrange
         account_url = self.account_url(tables_storage_account_name, "table")
-        tsc = self.create_client_from_credential(TableServiceClient, tables_primary_storage_account_key, account_url=account_url)
+        tsc = self.create_client_from_credential(TableServiceClient, tables_primary_storage_account_key, endpoint=account_url)
 
         table = await self._create_table(tsc)
         try:
@@ -378,7 +378,7 @@ class TableTestAsync(AzureTestCase, AsyncTableTestCase):
 
             account_url = self.account_url(tables_storage_account_name, "table")
 
-            service = self.create_client_from_credential(TableServiceClient, token, account_url=account_url)
+            service = self.create_client_from_credential(TableServiceClient, token, endpoint=account_url)
 
             # Act
             sas_table = service.get_table_client(table.table_name)
@@ -445,6 +445,6 @@ class TestTablesUnitTest(AsyncTableTestCase):
 
         assert tsc.account_name == "my_account"
         assert tsc.url == "https://127.0.0.1:10002/my_account"
-        assert tsc.location_mode == "primary"
+        assert tsc._location_mode == "primary"
         assert tsc.credential.account_key == self.tables_primary_storage_account_key
         assert tsc.credential.account_name == "my_account"

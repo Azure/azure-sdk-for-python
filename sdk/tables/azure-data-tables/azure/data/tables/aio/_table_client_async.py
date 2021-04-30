@@ -34,25 +34,24 @@ from .._table_client import EntityType, TransactionOperationType
 
 
 class TableClient(AsyncTablesBaseClient):
-    """
-    :ivar str account_name: Name of the storage account (Cosmos or Azure)
-    :ivar str table_name: The name of the table
+    """A client to interact with a specific Table in an Azure Tables account.
+
+    :ivar str account_name: The name of the Tables account.
+    :ivar str table_name: The name of the table.
+    :ivar str url: The full URL to the Tables account.
     """
 
     def __init__(
         self,
-        account_url: str,
+        endpoint: str,
         table_name: str,
         credential: Optional[Union[AzureSasCredential]] = None,
         **kwargs
     ) -> None:
         """Create TableClient from a Credential.
 
-        :param account_url:
-            A url to an Azure Storage account.
-        :type account_url: str
-        :param table_name: The table name.
-        :type table_name: str
+        :param str endpoint: A URL to an Azure Tables account.
+        :param str table_name: The table name.
         :param credential:
             The credentials with which to authenticate. This is optional if the
             account URL already has a SAS token, or the connection string already has shared
@@ -66,7 +65,7 @@ class TableClient(AsyncTablesBaseClient):
             raise ValueError("Please specify a table name.")
         _validate_table_name(table_name)
         self.table_name = table_name
-        super(TableClient, self).__init__(account_url, credential=credential, **kwargs)
+        super(TableClient, self).__init__(endpoint, credential=credential, **kwargs)
 
     def _format_url(self, hostname):
         """Format the endpoint URL according to the current location
@@ -83,11 +82,8 @@ class TableClient(AsyncTablesBaseClient):
     ) -> 'TableClient':
         """Create TableClient from a Connection string.
 
-        :param conn_str:
-            A connection string to an Azure Storage or Cosmos account.
-        :type conn_str: str
-        :param table_name: The table name.
-        :type table_name: str
+        :param str conn_str: A connection string to an Azure Tables account.
+        :param str table_name: The table name.
         :returns: A table client.
         :rtype: :class:`~azure.data.tables.TableClient`
 
@@ -100,10 +96,10 @@ class TableClient(AsyncTablesBaseClient):
                 :dedent: 8
                 :caption: Creating the TableClient from a connection string.
         """
-        account_url, credential = parse_connection_str(
+        endpoint, credential = parse_connection_str(
             conn_str=conn_str, credential=None, keyword_args=kwargs
         )
-        return cls(account_url, table_name=table_name, credential=credential, **kwargs)
+        return cls(endpoint, table_name=table_name, credential=credential, **kwargs)
 
     @classmethod
     def from_table_url(
@@ -114,8 +110,7 @@ class TableClient(AsyncTablesBaseClient):
     ) -> 'TableClient':
         """A client to interact with a specific Table.
 
-        :param table_url: The full URI to the table, including SAS token if used.
-        :type table_url: str
+        :param str table_url: The full URI to the table, including SAS token if used.
         :param credential:
             The credentials with which to authenticate. This is optional if the
             account URL already has a SAS token. The value can be a SAS token string, an account
@@ -138,7 +133,7 @@ class TableClient(AsyncTablesBaseClient):
         account_path = ""
         if len(table_path) > 1:
             account_path = "/" + "/".join(table_path[:-1])
-        account_url = "{}://{}{}?{}".format(
+        endpoint = "{}://{}{}?{}".format(
             parsed_url.scheme,
             parsed_url.netloc.rstrip("/"),
             account_path,
@@ -149,7 +144,7 @@ class TableClient(AsyncTablesBaseClient):
             raise ValueError(
                 "Invalid URL. Please provide a URL with a valid table name"
             )
-        return cls(account_url, table_name=table_name, credential=credential, **kwargs)
+        return cls(endpoint, table_name=table_name, credential=credential, **kwargs)
 
     @distributed_trace_async
     async def get_table_access_policy(self, **kwargs) -> Mapping[str, AccessPolicy]:

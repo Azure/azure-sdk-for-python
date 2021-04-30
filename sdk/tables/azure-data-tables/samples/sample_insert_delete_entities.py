@@ -29,9 +29,9 @@ class InsertDeleteEntity(object):
         load_dotenv(find_dotenv())
         # self.connection_string = os.getenv("AZURE_TABLES_CONNECTION_STRING")
         self.access_key = os.getenv("TABLES_PRIMARY_STORAGE_ACCOUNT_KEY")
-        self.endpoint = os.getenv("TABLES_STORAGE_ENDPOINT_SUFFIX")
+        self.endpoint_suffix = os.getenv("TABLES_STORAGE_ENDPOINT_SUFFIX")
         self.account_name = os.getenv("TABLES_STORAGE_ACCOUNT_NAME")
-        self.account_url = "{}.table.{}".format(self.account_name, self.endpoint)
+        self.endpoint = "{}.table.{}".format(self.account_name, self.endpoint_suffix)
         self.connection_string = u"DefaultEndpointsProtocol=https;AccountName={};AccountKey={};EndpointSuffix={}".format(
             self.account_name,
             self.access_key,
@@ -72,7 +72,7 @@ class InsertDeleteEntity(object):
         from azure.core.exceptions import ResourceNotFoundError, ResourceExistsError
         from azure.core import MatchConditions
 
-        with TableClient(account_url=self.account_url, credential=self.access_key, table_name=self.table_name) as table_client:
+        with TableClient(endpoint=self.endpoint, credential=self.access_key, table_name=self.table_name) as table_client:
 
             # Create entity to delete (to showcase etag)
             try:

@@ -21,7 +21,7 @@ USAGE:
 
     Set the environment variables with your own values before running the sample:
     1) AZURE_STORAGE_CONNECTION_STRING - the connection string to your storage account
-    2) AZURE_STORAGE_ACCOUNT_URL - the Table service account URL
+    2) AZURE_STORAGE_ENDPOINT_SUFFIX - the Table service account URL
     3) AZURE_STORAGE_ACCOUNT_NAME - the name of the storage account
     4) AZURE_STORAGE_ACCESS_KEY - the storage account access key
 """
@@ -39,9 +39,9 @@ class TableAuthSamples(object):
         load_dotenv(find_dotenv())
         # self.connection_string = os.getenv("AZURE_TABLES_CONNECTION_STRING")
         self.access_key = os.getenv("TABLES_PRIMARY_STORAGE_ACCOUNT_KEY")
-        self.endpoint = os.getenv("TABLES_STORAGE_ENDPOINT_SUFFIX")
+        self.endpoint_suffix = os.getenv("TABLES_STORAGE_ENDPOINT_SUFFIX")
         self.account_name = os.getenv("TABLES_STORAGE_ACCOUNT_NAME")
-        self.account_url = "{}.table.{}".format(self.account_name, self.endpoint)
+        self.endpoint = "{}.table.{}".format(self.account_name, self.endpoint_suffix)
         self.connection_string = "DefaultEndpointsProtocol=https;AccountName={};AccountKey={};EndpointSuffix={}".format(
             self.account_name,
             self.access_key,
@@ -82,7 +82,7 @@ class TableAuthSamples(object):
             expiry=datetime.utcnow() + timedelta(hours=1)
         )
 
-        async with TableServiceClient(account_url=self.account_url, credential=sas_token) as token_auth_table_service:
+        async with TableServiceClient(endpoint=self.endpoint, credential=sas_token) as token_auth_table_service:
             properties = await token_auth_table_service.get_service_properties()
             print("Shared Access Signature: {}".format(properties))
         # [END auth_by_sas]

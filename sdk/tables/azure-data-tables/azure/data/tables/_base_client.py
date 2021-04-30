@@ -189,17 +189,6 @@ class AccountHostsMixin(object):  # pylint: disable=too-many-instance-attributes
         return self._hosts[LocationMode.SECONDARY]
 
     @property
-    def location_mode(self):
-        """The location mode that the client is currently using.
-
-        By default this will be "primary". Options include "primary" and "secondary".
-
-        :type: str
-        """
-
-        return self._location_mode
-
-    @property
     def api_version(self):
         """The version of the Storage API used for requests.
 
@@ -212,12 +201,12 @@ class TablesBaseClient(AccountHostsMixin):
 
     def __init__(
         self,
-        account_url,  # type: str
+        endpoint,  # type: str
         credential=None,  # type: str
         **kwargs  # type: Any
     ):
         # type: (...) -> None
-        super(TablesBaseClient, self).__init__(account_url, credential=credential, **kwargs)
+        super(TablesBaseClient, self).__init__(endpoint, credential=credential, **kwargs)
         self._client = AzureTable(
             self.url,
             policies=kwargs.pop('policies', self._policies),

@@ -36,7 +36,9 @@ class TableServiceClient(AsyncTablesBaseClient):
     For operations relating to a specific table, a client for this entity
     can be retrieved using the :func:`~get_table_client` function.
 
-    :param str account_url:
+    :ivar str account_name: The name of the Tables account.
+    :ivar str url: The full URL to the Tables account.
+    :param str endpoint:
         The URL to the table service endpoint. Any other entities included
         in the URL path (e.g. table) will be discarded. This URL can be optionally
         authenticated with a SAS token.
@@ -45,16 +47,8 @@ class TableServiceClient(AsyncTablesBaseClient):
         account URL already has a SAS token. The value can be a SAS token string, an account
         shared access key.
     :keyword str api_version:
-        The Storage API version to use for requests. Default value is '2019-07-07'.
+        The Storage API version to use for requests. Default value is '2019-02-02'.
         Setting to an older version may result in reduced feature compatibility.
-    :keyword str secondary_hostname:
-        The hostname of the secondary endpoint.
-    :param credential:
-        The credentials with which to authenticate. This is optional if the
-        account URL already has a SAS token, or the connection string already has shared
-        access key values. The value can be a SAS token string or an account shared access
-        key.
-    :type credential: str
 
     .. admonition:: Example:
 
@@ -80,16 +74,11 @@ class TableServiceClient(AsyncTablesBaseClient):
         return "{}://{}{}".format(self.scheme, hostname, self._query_str)
 
     @classmethod
-    def from_connection_string(
-        cls,
-        conn_str,  # type: any
-        **kwargs  # type: Any
-    ):  # type: (...) -> TableServiceClient
+    def from_connection_string(cls, conn_str, **kwargs):
+        # type: (str, Any) -> TableServiceClient
         """Create TableServiceClient from a Connection String.
 
-        :param conn_str:
-            A connection string to an Azure Storage or Cosmos account.
-        :type conn_str: str
+        :param str conn_str: A connection string to an Azure Tables account.
         :returns: A Table service client.
         :rtype: :class:`~azure.data.tables.aio.TableServiceClient`
 
@@ -103,14 +92,14 @@ class TableServiceClient(AsyncTablesBaseClient):
                 :caption: Creating the tableServiceClient from a connection string
 
         """
-        account_url, credential = parse_connection_str(
+        endpoint, credential = parse_connection_str(
             conn_str=conn_str, credential=None, keyword_args=kwargs
         )
-        return cls(account_url, credential=credential, **kwargs)
+        return cls(endpoint, credential=credential, **kwargs)
 
     @distributed_trace_async
     async def get_service_stats(self, **kwargs):
-        # type: (...) -> dict[str,object]
+        # type: (Any) -> dict[str,object]
         """Retrieves statistics related to replication for the Table service. It is only available on the secondary
         location endpoint when read-access geo-redundant replication is enabled for the account.
 
