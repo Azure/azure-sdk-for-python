@@ -38,19 +38,20 @@ steps:
   - pwsh: |
       $activateMethod = "source"
       $requirementSuffix = ""
+      
+      Write-Host "##vso[task.prependpath]]$($env:CONDA)/bin"
       if ($IsWindows) { 
         $activateMethod = "call" 
         $requirementSuffix = " --user"
         # Write-Host "Prepending with $($env:CONDA)/Scripts"
         # Write-Host "##vso[task.prependpath]$($env:CONDA)/Scripts"
+        Write-Host "##vso[task.prependpath]$($env:CONDA)/Scripts"
       }
       else {
         # Write-Host "Prepending with $($env:CONDA)/bin"
         # Write-Host "##vso[task.prependpath]]$($env:CONDA)/bin"
       }
       
-      Write-Host "##vso[task.prependpath]]$($env:CONDA)/bin"
-      Write-Host "##vso[task.prependpath]$($env:CONDA)/Scripts"
       
       Write-Host "##vso[task.setvariable variable=activate.method]$activateMethod"
       Write-Host "##vso[task.setvariable variable=requirement.suffix]$requirementSuffix"
