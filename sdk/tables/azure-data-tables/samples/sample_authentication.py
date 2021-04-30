@@ -29,6 +29,7 @@ USAGE:
 
 from datetime import datetime, timedelta
 import os
+from azure.core.credentials import AzureNamedKeyCredential
 from dotenv import find_dotenv, load_dotenv
 
 
@@ -60,7 +61,7 @@ class TableAuthSamples(object):
         # Instantiate a TableServiceClient using a shared access key
         # [START auth_from_shared_key]
         from azure.data.tables import TableServiceClient
-        with TableServiceClient(account_url=self.account_url, credential=self.access_key) as table_service:
+        with TableServiceClient(account_url=self.account_url, credential=AzureNamedKeyCredential(self.account_name, self.access_key)) as table_service:
             properties = table_service.get_service_properties()
             print("Shared Key: {}".format(properties))
         # [END auth_from_shared_key]

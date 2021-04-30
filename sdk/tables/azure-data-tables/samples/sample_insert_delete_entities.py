@@ -23,6 +23,8 @@ USAGE:
 import os
 from dotenv import find_dotenv, load_dotenv
 
+from azure.core.credentials import AzureNamedKeyCredential
+
 class InsertDeleteEntity(object):
 
     def __init__(self):
@@ -72,7 +74,7 @@ class InsertDeleteEntity(object):
         from azure.core.exceptions import ResourceNotFoundError, ResourceExistsError
         from azure.core import MatchConditions
 
-        with TableClient(account_url=self.account_url, credential=self.access_key, table_name=self.table_name) as table_client:
+        with TableClient(account_url=self.account_url, credential=AzureNamedKeyCredential(self.account_name, self.access_key), table_name=self.table_name) as table_client:
 
             # Create entity to delete (to showcase etag)
             try:

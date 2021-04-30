@@ -26,6 +26,8 @@ from datetime import datetime, timedelta
 from dotenv import find_dotenv, load_dotenv
 import os
 
+from azure.core.credentials import AzureNamedKeyCredential
+
 class CreateClients(object):
 
     def __init__(self):
@@ -54,7 +56,7 @@ class CreateClients(object):
         # Instantiate a TableServiceClient using a shared access key
         # [START create_table_service_client]
         from azure.data.tables import TableServiceClient
-        with TableServiceClient(account_url=self.account_url, credential=self.access_key) as table_service:
+        with TableServiceClient(account_url=self.account_url, credential=AzureNamedKeyCredential(self.account_name, self.access_key)) as table_service:
             properties = table_service.get_service_properties()
             print("Properties: {}".format(properties))
         # [END create_table_service_client]

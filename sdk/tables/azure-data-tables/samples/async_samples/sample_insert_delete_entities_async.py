@@ -25,6 +25,8 @@ from time import sleep
 import asyncio
 from dotenv import find_dotenv, load_dotenv
 
+from azure.core.credentials import AzureNamedKeyCredential
+
 class InsertDeleteEntity(object):
 
     def __init__(self):
@@ -75,7 +77,7 @@ class InsertDeleteEntity(object):
         from azure.core.exceptions import ResourceNotFoundError, ResourceExistsError
         from azure.core import MatchConditions
 
-        table_client = TableClient(account_url=self.account_url, credential=self.access_key, table_name=self.table_name)
+        table_client = TableClient(account_url=self.account_url, credential=AzureNamedKeyCredential(self.account_name, self.access_key), table_name=self.table_name)
 
         # [START delete_entity]
         async with table_client:
