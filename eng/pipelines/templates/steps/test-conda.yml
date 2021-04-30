@@ -36,39 +36,31 @@ steps:
       versionSpec: $(PythonVersion)
 
   - pwsh: |
+      python -c "import sys; print(sys.executable)"
+    displayName: Find installed version of pypy3
+
+  - pwsh: |
       $activateMethod = "source"
       $requirementSuffix = ""
-      
+
+      # always need to add conda bin      
       Write-Host "##vso[task.prependpath]]$($env:CONDA)/bin"
       if ($IsWindows) { 
         $activateMethod = "call" 
         $requirementSuffix = " --user"
-        # Write-Host "Prepending with $($env:CONDA)/Scripts"
-        # Write-Host "##vso[task.prependpath]$($env:CONDA)/Scripts"
+
+        # on windows only, need to prepend with the scripts directory as well
         Write-Host "##vso[task.prependpath]$($env:CONDA)/Scripts"
       }
-      else {
-        # Write-Host "Prepending with $($env:CONDA)/bin"
-        # Write-Host "##vso[task.prependpath]]$($env:CONDA)/bin"
-      }
-      
       
       Write-Host "##vso[task.setvariable variable=activate.method]$activateMethod"
       Write-Host "##vso[task.setvariable variable=requirement.suffix]$requirementSuffix"
     displayName: 'Evaluate OS Specific PATH and Parameters'
 
   - ${{ each artifact in parameters.CondaArtifacts }}:
-    - powershell: |
-        Write-Host "$(PythonVersion)"
-        Write-Host "${{ parameters.OSVmImage }}"
-        Write-Host "$(OSVmImage)"
-        Write-Host "$(activate.method)"
-        Write-Host "$(requirement.suffix)"
-      displayName: 'Dump Python Version Info'
-
     - script: |
         echo "conda env create --name ${{ artifact.name }} python=$(PythonVersion) --file $(Build.SourcesDirectory)/eng/conda_env.yml"
-        conda create --name ${{ artifact.name }} python=$(PythonVersion)
+        conda create --name ${{ artifact.name }} python=$(PythonVersion) --yes
         conda install --name ${{ artifact.name }} --yes --quiet conda-build
         $(activate.method) activate ${{ artifact.name }}
         conda index $(Build.ArtifactStagingDirectory)/${{ artifact.name }}
@@ -76,7 +68,6 @@ steps:
 
     - script: |
         $(activate.method) activate ${{ artifact.name }}
-        python -c "import sys; print(sys.executable)"
         python -m pip install -r eng/ci_tools.txt $(requirement.suffix)
       displayName: 'Activate Conda Environment and Install General Dependencies ${{ artifact.name }}'
 
