@@ -27,7 +27,7 @@ from azure.ai.textanalytics import (
     RecognizePiiEntitiesAction,
     ExtractKeyPhrasesAction,
     AnalyzeSentimentAction,
-    AnalyzeBatchActionsType
+    AnalyzeActionsType
 )
 
 # pre-apply the client_cls positional argument so it needn't be explicitly passed below
@@ -55,7 +55,7 @@ class TestAnalyzeAsync(AsyncTextAnalyticsTest):
     @TextAnalyticsClientPreparer()
     async def test_no_single_input(self, client):
         with self.assertRaises(TypeError):
-            response = await client.begin_analyze_batch_actions("hello world", actions=[], polling_interval=self._interval())
+            response = await client.begin_analyze_actions("hello world", actions=[], polling_interval=self._interval())
 
     @GlobalTextAnalyticsAccountPreparer()
     @TextAnalyticsClientPreparer()
@@ -64,7 +64,7 @@ class TestAnalyzeAsync(AsyncTextAnalyticsTest):
                 {"id": "2", "language": "es", "text": "Microsoft fue fundado por Bill Gates y Paul Allen"}]
 
         async with client:
-            response = await (await client.begin_analyze_batch_actions(
+            response = await (await client.begin_analyze_actions(
                 docs,
                 actions=[ExtractKeyPhrasesAction()],
                 show_stats=True,
@@ -77,7 +77,7 @@ class TestAnalyzeAsync(AsyncTextAnalyticsTest):
             assert len(action_results) == 1
             action_result = action_results[0]
 
-            assert action_result.action_type == AnalyzeBatchActionsType.EXTRACT_KEY_PHRASES
+            assert action_result.action_type == AnalyzeActionsType.EXTRACT_KEY_PHRASES
             assert len(action_result.document_results) == len(docs)
 
             for doc in action_result.document_results:
@@ -94,7 +94,7 @@ class TestAnalyzeAsync(AsyncTextAnalyticsTest):
                 {"id": "3", "language": "en", "text": "The restaurant had really good food. I recommend you try it."}]
 
         async with client:
-            response = await (await client.begin_analyze_batch_actions(
+            response = await (await client.begin_analyze_actions(
                 docs,
                 actions=[AnalyzeSentimentAction()],
                 show_stats=True,
@@ -108,7 +108,7 @@ class TestAnalyzeAsync(AsyncTextAnalyticsTest):
         assert len(action_results) == 1
         action_result = action_results[0]
 
-        assert action_result.action_type == AnalyzeBatchActionsType.ANALYZE_SENTIMENT
+        assert action_result.action_type == AnalyzeActionsType.ANALYZE_SENTIMENT
         assert len(action_result.document_results) == len(docs)
 
         self.assertEqual(action_result.document_results[0].sentiment, "neutral")
@@ -139,7 +139,7 @@ class TestAnalyzeAsync(AsyncTextAnalyticsTest):
         ]
 
         async with client:
-            response = await (await client.begin_analyze_batch_actions(
+            response = await (await client.begin_analyze_actions(
                 documents,
                 actions=[AnalyzeSentimentAction(show_opinion_mining=True)],
                 show_stats=True,
@@ -153,7 +153,7 @@ class TestAnalyzeAsync(AsyncTextAnalyticsTest):
         assert len(action_results) == 1
         action_result = action_results[0]
 
-        assert action_result.action_type == AnalyzeBatchActionsType.ANALYZE_SENTIMENT
+        assert action_result.action_type == AnalyzeActionsType.ANALYZE_SENTIMENT
         assert len(action_result.document_results) == len(documents)
 
         for idx, doc in enumerate(action_result.document_results):
@@ -220,7 +220,7 @@ class TestAnalyzeAsync(AsyncTextAnalyticsTest):
         ]
 
         async with client:
-            poller = await client.begin_analyze_batch_actions(
+            poller = await client.begin_analyze_actions(
                 docs,
                 actions=[RecognizeEntitiesAction()],
                 show_stats=True,
@@ -234,7 +234,7 @@ class TestAnalyzeAsync(AsyncTextAnalyticsTest):
             assert len(action_results) == 1
             action_result = action_results[0]
 
-            assert action_result.action_type == AnalyzeBatchActionsType.RECOGNIZE_ENTITIES
+            assert action_result.action_type == AnalyzeActionsType.RECOGNIZE_ENTITIES
             assert len(action_result.document_results) == len(docs)
 
             for doc in action_result.document_results:
@@ -256,7 +256,7 @@ class TestAnalyzeAsync(AsyncTextAnalyticsTest):
         ]
 
         async with client:
-            response = await (await client.begin_analyze_batch_actions(
+            response = await (await client.begin_analyze_actions(
                 docs,
                 actions=[RecognizePiiEntitiesAction()],
                 show_stats=True,
@@ -269,7 +269,7 @@ class TestAnalyzeAsync(AsyncTextAnalyticsTest):
             assert len(action_results) == 1
             action_result = action_results[0]
 
-            assert action_result.action_type == AnalyzeBatchActionsType.RECOGNIZE_PII_ENTITIES
+            assert action_result.action_type == AnalyzeActionsType.RECOGNIZE_PII_ENTITIES
             assert len(action_result.document_results) == len(docs)
 
             self.assertEqual(action_result.document_results[0].entities[0].text, "859-98-0987")
@@ -295,7 +295,7 @@ class TestAnalyzeAsync(AsyncTextAnalyticsTest):
 
         with self.assertRaises(HttpResponseError):
             async with client:
-                response = await (await client.begin_analyze_batch_actions(
+                response = await (await client.begin_analyze_actions(
                     docs,
                     actions=[ExtractKeyPhrasesAction()],
                     polling_interval=self._interval()
@@ -308,7 +308,7 @@ class TestAnalyzeAsync(AsyncTextAnalyticsTest):
     async def test_empty_credential_class(self, client):
         with self.assertRaises(ClientAuthenticationError):
             async with client:
-                response = await (await client.begin_analyze_batch_actions(
+                response = await (await client.begin_analyze_actions(
                     ["This is written in English."],
                     actions=[
                         RecognizeEntitiesAction(),
@@ -327,7 +327,7 @@ class TestAnalyzeAsync(AsyncTextAnalyticsTest):
     async def test_bad_credentials(self, client):
         with self.assertRaises(ClientAuthenticationError):
             async with client:
-                response = await (await client.begin_analyze_batch_actions(
+                response = await (await client.begin_analyze_actions(
                     ["This is written in English."],
                     actions=[
                         RecognizeEntitiesAction(),
@@ -350,7 +350,7 @@ class TestAnalyzeAsync(AsyncTextAnalyticsTest):
                 {"id": "1", "text": ":D"}]
 
         async with client:
-            response = await (await client.begin_analyze_batch_actions(
+            response = await (await client.begin_analyze_actions(
                 docs,
                 actions=[
                     RecognizeEntitiesAction(model_version="bad"),
@@ -368,8 +368,8 @@ class TestAnalyzeAsync(AsyncTextAnalyticsTest):
             assert len(action_results) == 3
 
             assert action_results[0].is_error
-            assert action_results[1].action_type == AnalyzeBatchActionsType.EXTRACT_KEY_PHRASES
-            assert action_results[2].action_type == AnalyzeBatchActionsType.RECOGNIZE_PII_ENTITIES
+            assert action_results[1].action_type == AnalyzeActionsType.EXTRACT_KEY_PHRASES
+            assert action_results[2].action_type == AnalyzeActionsType.RECOGNIZE_PII_ENTITIES
 
             action_results = [r for r in action_results if not r.is_error]
 
@@ -390,7 +390,7 @@ class TestAnalyzeAsync(AsyncTextAnalyticsTest):
                 {"id": "1", "text": ":D"}]
 
         async with client:
-            response = await (await client.begin_analyze_batch_actions(
+            response = await (await client.begin_analyze_actions(
                 docs,
                 actions=[
                     RecognizeEntitiesAction(model_version="latest"),
@@ -407,11 +407,11 @@ class TestAnalyzeAsync(AsyncTextAnalyticsTest):
             async for p in response:
                 action_results.append(p)
             assert len(action_results) == 5
-            assert action_results[0].action_type == AnalyzeBatchActionsType.RECOGNIZE_ENTITIES
-            assert action_results[1].action_type == AnalyzeBatchActionsType.EXTRACT_KEY_PHRASES
-            assert action_results[2].action_type == AnalyzeBatchActionsType.RECOGNIZE_PII_ENTITIES
-            assert action_results[3].action_type == AnalyzeBatchActionsType.RECOGNIZE_LINKED_ENTITIES
-            assert action_results[4].action_type == AnalyzeBatchActionsType.ANALYZE_SENTIMENT
+            assert action_results[0].action_type == AnalyzeActionsType.RECOGNIZE_ENTITIES
+            assert action_results[1].action_type == AnalyzeActionsType.EXTRACT_KEY_PHRASES
+            assert action_results[2].action_type == AnalyzeActionsType.RECOGNIZE_PII_ENTITIES
+            assert action_results[3].action_type == AnalyzeActionsType.RECOGNIZE_LINKED_ENTITIES
+            assert action_results[4].action_type == AnalyzeActionsType.ANALYZE_SENTIMENT
 
             assert all([action_result for action_result in action_results if len(action_result.document_results) == len(docs)])
 
@@ -426,7 +426,7 @@ class TestAnalyzeAsync(AsyncTextAnalyticsTest):
         docs = [{"id": "56", "text": ":)"}]
 
         async with client:
-            poller = await client.begin_analyze_batch_actions(
+            poller = await client.begin_analyze_actions(
                 docs,
                 actions=[
                     RecognizeEntitiesAction(model_version="latest")
@@ -465,7 +465,7 @@ class TestAnalyzeAsync(AsyncTextAnalyticsTest):
     #     ]
 
     #     async with client:
-    #         response = await (await client.begin_analyze_batch_actions(
+    #         response = await (await client.begin_analyze_actions(
     #             docs,
     #             actions=[
     #                 RecognizeEntitiesAction(),
@@ -503,7 +503,7 @@ class TestAnalyzeAsync(AsyncTextAnalyticsTest):
     #     ]
 
     #     async with client:
-    #         response = await (await client.begin_analyze_batch_actions(
+    #         response = await (await client.begin_analyze_actions(
     #             docs,
     #             actions=[
     #                 RecognizeEntitiesAction(),
@@ -522,7 +522,7 @@ class TestAnalyzeAsync(AsyncTextAnalyticsTest):
     # @TextAnalyticsClientPreparer()
     # async def test_invalid_language_hint_method(self, client):
     #     async with client:
-    #         response = await (await client.begin_analyze_batch_actions(
+    #         response = await (await client.begin_analyze_actions(
     #             ["This should fail because we're passing in an invalid language hint"],
     #             language="notalanguage",
     #             actions=[
@@ -546,7 +546,7 @@ class TestAnalyzeAsync(AsyncTextAnalyticsTest):
 
         async with client:
             response = await (await
-            client.begin_analyze_batch_actions(
+            client.begin_analyze_actions(
                 docs,
                 actions=[
                     RecognizeEntitiesAction(model_version="latest"),
@@ -563,7 +563,7 @@ class TestAnalyzeAsync(AsyncTextAnalyticsTest):
                 action_results.append(p)
 
             assert action_results[0].is_error == False
-            assert action_results[0].action_type == AnalyzeBatchActionsType.RECOGNIZE_ENTITIES
+            assert action_results[0].action_type == AnalyzeActionsType.RECOGNIZE_ENTITIES
             assert action_results[1].is_error == True
             assert action_results[1].error.code == "InvalidRequest"
             assert action_results[2].is_error == True
@@ -580,7 +580,7 @@ class TestAnalyzeAsync(AsyncTextAnalyticsTest):
 
         with self.assertRaises(HttpResponseError):
             async with client:
-                result = await (await client.begin_analyze_batch_actions(
+                result = await (await client.begin_analyze_actions(
                     docs,
                     actions=[
                         RecognizeEntitiesAction(model_version="bad"),
@@ -598,7 +598,7 @@ class TestAnalyzeAsync(AsyncTextAnalyticsTest):
         docs = []
         with pytest.raises(ValueError) as excinfo:
             async with client:
-                await (await client.begin_analyze_batch_actions(
+                await (await client.begin_analyze_actions(
                     docs,
                     actions=[
                         RecognizeEntitiesAction(),
@@ -616,7 +616,7 @@ class TestAnalyzeAsync(AsyncTextAnalyticsTest):
     async def test_passing_none_docs(self, client):
         with pytest.raises(ValueError) as excinfo:
             async with client:
-                await client.begin_analyze_batch_actions(None, None, polling_interval=self._interval())
+                await client.begin_analyze_actions(None, None, polling_interval=self._interval())
         assert "Input documents can not be empty or None" in str(excinfo.value)
 
     @GlobalTextAnalyticsAccountPreparer()
@@ -626,7 +626,7 @@ class TestAnalyzeAsync(AsyncTextAnalyticsTest):
             return "cls result"
 
         async with client:
-            res = await (await client.begin_analyze_batch_actions(
+            res = await (await client.begin_analyze_actions(
                 documents=["Test passing cls to endpoint"],
                 actions=[
                     RecognizeEntitiesAction(),
@@ -644,7 +644,7 @@ class TestAnalyzeAsync(AsyncTextAnalyticsTest):
                 enumerate(list(itertools.repeat(single_doc, 25)))]  # max number of documents is 25
 
         async with client:
-            result = await (await client.begin_analyze_batch_actions(
+            result = await (await client.begin_analyze_actions(
                 docs,
                 actions=[
                     RecognizeEntitiesAction(),
@@ -669,19 +669,19 @@ class TestAnalyzeAsync(AsyncTextAnalyticsTest):
 
             for idx, action_result in enumerate(pages):
                 if idx % 5 == 0:
-                    assert action_result.action_type == AnalyzeBatchActionsType.RECOGNIZE_ENTITIES
+                    assert action_result.action_type == AnalyzeActionsType.RECOGNIZE_ENTITIES
                     recognize_entities_results.append(action_result)
                 elif idx % 5 == 1:
-                    assert action_result.action_type == AnalyzeBatchActionsType.EXTRACT_KEY_PHRASES
+                    assert action_result.action_type == AnalyzeActionsType.EXTRACT_KEY_PHRASES
                     extract_key_phrases_results.append(action_result)
                 elif idx % 5 == 2:
-                    assert action_result.action_type == AnalyzeBatchActionsType.RECOGNIZE_PII_ENTITIES
+                    assert action_result.action_type == AnalyzeActionsType.RECOGNIZE_PII_ENTITIES
                     recognize_pii_entities_results.append(action_result)
                 elif idx % 5 == 3:
-                    assert action_result.action_type == AnalyzeBatchActionsType.RECOGNIZE_LINKED_ENTITIES
+                    assert action_result.action_type == AnalyzeActionsType.RECOGNIZE_LINKED_ENTITIES
                     recognize_linked_entities_results.append(action_result)
                 else:
-                    assert action_result.action_type == AnalyzeBatchActionsType.ANALYZE_SENTIMENT
+                    assert action_result.action_type == AnalyzeActionsType.ANALYZE_SENTIMENT
                     analyze_sentiment_results.append(action_result)
                 if idx < 5:  # first page of task results
                     assert len(action_result.document_results) == 20
@@ -704,7 +704,7 @@ class TestAnalyzeAsync(AsyncTextAnalyticsTest):
                 enumerate(list(itertools.repeat(single_doc, 25)))]  # max number of documents is 25
 
         async with client:
-            result = await (await client.begin_analyze_batch_actions(
+            result = await (await client.begin_analyze_actions(
                 docs,
                 actions=[
                     RecognizeEntitiesAction(model_version="bad"),
@@ -733,7 +733,7 @@ class TestAnalyzeAsync(AsyncTextAnalyticsTest):
 
         with pytest.raises(HttpResponseError) as excinfo:
             async with client:
-                await (await client.begin_analyze_batch_actions(
+                await (await client.begin_analyze_actions(
                     docs,
                     actions=[
                         RecognizeEntitiesAction(),
