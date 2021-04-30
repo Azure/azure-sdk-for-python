@@ -66,7 +66,7 @@ ledger_client = ConfidentialLedgerClient(
 Every write to Confidential Ledger generates an immutable ledger entry in the service. Writes are uniquely identified by transaction ids that increment with each write.
 ```python
 append_result = ledger_client.append_to_ledger(entry_contents="Hello world!")
-print(write_result.transaction_id)
+print(append_result.transaction_id)
 ```
 
 Since Confidential Ledger is a distributed system, rare transient failures may cause writes to be lost. For entries that must be preserved, it is advisable to verify that the write became durable. Waits are blocking calls.
