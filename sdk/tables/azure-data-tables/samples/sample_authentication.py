@@ -44,7 +44,7 @@ class TableAuthSamples(object):
         self.connection_string = "DefaultEndpointsProtocol=https;AccountName={};AccountKey={};EndpointSuffix={}".format(
             self.account_name,
             self.access_key,
-            self.endpoint
+            self.endpoint_suffix
         )
 
     def authentication_by_connection_string(self):

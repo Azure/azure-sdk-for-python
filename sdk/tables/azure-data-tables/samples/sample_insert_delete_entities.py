@@ -35,7 +35,7 @@ class InsertDeleteEntity(object):
         self.connection_string = u"DefaultEndpointsProtocol=https;AccountName={};AccountKey={};EndpointSuffix={}".format(
             self.account_name,
             self.access_key,
-            self.endpoint
+            self.endpoint_suffix
         )
         self.table_name = "SampleInsertDelete"
 

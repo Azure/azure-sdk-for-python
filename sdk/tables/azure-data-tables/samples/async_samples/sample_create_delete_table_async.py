@@ -41,7 +41,7 @@ class CreateDeleteTable(object):
         self.connection_string = "DefaultEndpointsProtocol=https;AccountName={};AccountKey={};EndpointSuffix={}".format(
             self.account_name,
             self.access_key,
-            self.endpoint
+            self.endpoint_suffix
         )
         self.table_name = "CreateDeleteTable"
 
