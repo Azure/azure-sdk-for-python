@@ -6,6 +6,8 @@
 # pylint: disable=no-self-use
 
 import asyncio
+import os
+import errno
 from asyncio import Lock
 from itertools import islice
 import threading
@@ -280,6 +282,47 @@ class BlockBlobChunkUploader(_ChunkUploader):
 
 
 class PageBlobChunkUploader(_ChunkUploader):  # pylint: disable=abstract-method
+
+    def get_chunk_streams(self):
+        index = 0
+        while True:
+            data = b""
+            read_size = self.chunk_size
+
+            try:
+                non_empty_index = self.stream.seek(index, os.SEEK_DATA)
+                number_of_empty_bytes = non_empty_index % 512
+                data = b'\0' * number_of_empty_bytes
+                index = (non_empty_index / 512) * 512
+                read_size -= number_of_empty_bytes
+            except OSError as e:
+                if e.errno == errno.ENXIO:
+                    # no more data available
+                    break
+            except AttributeError:
+                pass
+
+            # Buffer until we either reach the end of the stream or get a whole chunk.
+            while True:
+                if self.total_size:
+                    read_size = min(self.chunk_size - len(data), self.total_size - (index + len(data)))
+                temp = self.stream.read(read_size)
+                if not isinstance(temp, six.binary_type):
+                    raise TypeError("Blob data should be of type bytes.")
+                data += temp or b""
+
+                # We have read an empty string and so are at the end
+                # of the buffer or we have read a full chunk.
+                if temp == b"" or len(data) == self.chunk_size:
+                    break
+
+            if data:
+                if len(data) % 512 != 0:
+                    data += b"\0" * (512 - len(data) % 512)
+                yield index, data
+            else:
+                break
+            index += len(data)
 
     def _is_chunk_empty(self, chunk_data):
         # read until non-zero byte is encountered

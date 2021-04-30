@@ -1855,7 +1855,7 @@ class StoragePageBlobAsyncTest(AsyncStorageTestCase):
 
     @GlobalStorageAccountPreparer()
     @AsyncStorageTestCase.await_prepared_test
-    async def _test_download_sparse_page_blob(self, resource_group, location, storage_account, storage_account_key):
+    async def test_download_sparse_page_blob(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
         bsc = BlobServiceClient(self.account_url(storage_account, "blob"), credential=storage_account_key, connection_data_block_size=4 * 1024, max_page_size=4 * 1024, transport=AiohttpTestTransport())
         await self._setup(bsc)
@@ -1864,7 +1864,7 @@ class StoragePageBlobAsyncTest(AsyncStorageTestCase):
 
         sparse_page_blob_size = 1024 * 1024
         data = self.get_random_bytes(2048)
-        blob_client = await self._create_sparse_page_blob(size=sparse_page_blob_size, data=data)
+        blob_client = await self._create_sparse_page_blob(bsc, size=sparse_page_blob_size, data=data)
 
         # Act
         page_ranges, cleared = await blob_client.get_page_ranges()
@@ -1890,4 +1890,48 @@ class StoragePageBlobAsyncTest(AsyncStorageTestCase):
             except:
                 self.assertEqual(byte, 0)
 
+    @GlobalStorageAccountPreparer()
+    async def test_upload_sparse_page_blob(self, resource_group, location, storage_account, storage_account_key):
+        bsc = BlobServiceClient(self.account_url(storage_account, "blob"), credential=storage_account_key, connection_data_block_size=4 * 1024, max_page_size=512)
+        await self._setup(bsc)
+        FILE_PATH = 'page_blob.temp.{}.dat'.format(str(uuid.uuid4()))
+        with open(FILE_PATH, 'wb') as stream:
+            stream.seek(566, 0)
+            # Add data to the middle of a page
+            stream.write(b'hello' * 5)
+            stream.seek(4096, 0)
+            # Add data to the start of a page, and the data will end at the middle of a page
+            stream.write(b'world' * 515)
+            stream.write(b'\0' * 10)
+
+        blob_client = self._get_blob_reference(bsc)
+
+        with open(FILE_PATH, 'rb') as stream:
+            wrapped_stream = StreamWrapper(stream)
+            await blob_client.upload_blob(wrapped_stream, blob_type=BlobType.PageBlob, length=7168, overwrite=True)
+            if os.name == 'posix':
+                self.assertTrue(wrapped_stream._seek_data_enabled)
+
+        with open(FILE_PATH, 'rb') as stream:
+            original_data = stream.read()
+
+        downloaded_data = await (await blob_client.download_blob()).readall()
+        # since the specified page blob size is larger than the original file size,
+        # we only need to compare the non-empty part
+        self.assertEqual(original_data, downloaded_data[:len(original_data)])
+
+
+class StreamWrapper:
+    def __init__(self, stream):
+        self._stream = stream
+        self._seek_data_enabled = False
+
+    def read(self, size=None):
+        return self._stream.read(size)
+
+    def seek(self, offset, whence):
+        index = self._stream.seek(offset, whence)
+        if whence == os.SEEK_DATA:
+            self._seek_data_enabled = True
+        return index
 #------------------------------------------------------------------------------

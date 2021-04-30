@@ -186,8 +186,7 @@ def upload_page_blob(
                 headers['x-ms-access-tier'] = premium_page_blob_tier.value
             except AttributeError:
                 headers['x-ms-access-tier'] = premium_page_blob_tier
-        if encryption_options and encryption_options.get('data'):
-            headers['x-ms-meta-encryptiondata'] = encryption_options['data']
+
         blob_tags_string = kwargs.pop('blob_tags_string', None)
 
         response = client.create(
