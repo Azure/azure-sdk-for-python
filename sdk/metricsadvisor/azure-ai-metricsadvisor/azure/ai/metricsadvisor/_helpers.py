@@ -112,7 +112,7 @@ def convert_to_generated_data_feed_type(
         InfluxDBDataFeed, MySqlDataFeed, PostgreSqlDataFeed, SQLServerDataFeed, MongoDBDataFeed,
         ElasticsearchDataFeed]
     :param str name: Name for the data feed.
-    :param source: The exposed model source of the data feed source
+    :param source: The exposed model source of the data feed
     :type source: Union[AzureApplicationInsightsDataFeedSource, AzureBlobDataFeedSource, AzureCosmosDBDataFeedSource,
         AzureDataExplorerDataFeedSource, AzureDataLakeStorageGen2DataFeedSource, AzureTableDataFeedSource,
         HttpRequestDataFeedSource, InfluxDBDataFeedSource, MySqlDataFeedSource, PostgreSqlDataFeedSource,
