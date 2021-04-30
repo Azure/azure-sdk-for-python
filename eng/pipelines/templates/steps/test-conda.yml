@@ -52,6 +52,12 @@ steps:
         # on windows only, need to prepend with the scripts directory as well
         Write-Host "##vso[task.prependpath]$($env:CONDA)/Scripts"
       }
+
+      # pypy3.7 is not in the hosted tool cache. to use the correct pypy3 version in conda 
+      # we have to patch it to a version that actually does work
+      if("$(PythonVersion)" -eq "pypy3"){
+        Write-Host "##vso[task.setvariable variable=PythonVersion]pypy3.7"
+      }
       
       Write-Host "##vso[task.setvariable variable=activate.method]$activateMethod"
       Write-Host "##vso[task.setvariable variable=requirement.suffix]$requirementSuffix"
