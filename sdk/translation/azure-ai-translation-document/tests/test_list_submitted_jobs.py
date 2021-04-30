@@ -15,7 +15,6 @@ DocumentTranslationClientPreparer = functools.partial(_DocumentTranslationClient
 
 class TestSubmittedJobs(DocumentTranslationTest):
 
-    @pytest.mark.skip(reason="passing")
     @DocumentTranslationPreparer()
     @DocumentTranslationClientPreparer()
     def test_list_submitted_jobs(self, client):
@@ -33,7 +32,6 @@ class TestSubmittedJobs(DocumentTranslationTest):
             self._validate_translation_job(job)
 
 
-    @pytest.mark.skip(reason="passing")
     @DocumentTranslationPreparer()
     @DocumentTranslationClientPreparer()
     def test_list_submitted_jobs_with_pagination(self, client):
@@ -57,17 +55,24 @@ class TestSubmittedJobs(DocumentTranslationTest):
                 self._validate_translation_job(job)
 
 
-    @pytest.mark.skip(reason="needs update - flaky behaviour!")
+    @pytest.mark.skip(reason="passing, pointless test!")
     @DocumentTranslationPreparer()
     @DocumentTranslationClientPreparer()
     def test_list_submitted_jobs_with_skip(self, client):
         '''
+            note:
             some notes regarding this test
-            there's no possible way of asserting for 'skip'
+            there's no possible way of asserting for 'skip', unless we can know the 
+            count of the jobs returned!
+
             as we can't possibly know the how many previous items were created
             even if we filter only on newly created items,
             tests can run in parallel which will ruin our pre-conceptions!
             the only thing we can do, is to call the service with the parameter 
+
+            update:
+                we can test 'skip' by using some other filters to get how many docs
+                will be in result and only then skip will be meaningfull
         '''
         # prepare data
         jobs_count = 5
@@ -85,18 +90,24 @@ class TestSubmittedJobs(DocumentTranslationTest):
             self._validate_translation_job(job)
 
 
-    @pytest.mark.skip(reason="needs update - flaky behaviour!")
+    @pytest.mark.skip(reason="filter not working!")
     @DocumentTranslationPreparer()
     @DocumentTranslationClientPreparer()
     def test_list_submitted_jobs_filter_by_status(self, client):
         jobs_count = 10
-        docs_per_job = 2
+        docs_per_job = 3
 
         # create some jobs
-        self._create_and_submit_sample_translation_jobs(client, jobs_count, wait=False, docs_per_job=docs_per_job)
+        job_ids = self._create_and_submit_sample_translation_jobs(client, jobs_count, wait=False, docs_per_job=docs_per_job)
+
+        # update status
+        cancelled_count = jobs_count//2
+        for id in job_ids[:cancelled_count]:
+            client.cancel_job(id)
+        statuses = ["Cancelled", "Cancelling"]
+        self.wait(10) # wait for cancelled to propagate
 
         # list jobs
-        statuses = ["Running"]
         submitted_jobs = list(client.list_submitted_jobs(statuses=statuses))
         self.assertIsNotNone(submitted_jobs)
 
@@ -105,7 +116,6 @@ class TestSubmittedJobs(DocumentTranslationTest):
             self.assertIn(job.status, statuses)
 
 
-    @pytest.mark.skip(reason="passing")
     @DocumentTranslationPreparer()
     @DocumentTranslationClientPreparer()
     def test_list_submitted_jobs_filter_by_ids(self, client):
@@ -124,7 +134,6 @@ class TestSubmittedJobs(DocumentTranslationTest):
             self.assertIn(job.id, job_ids)
 
 
-    @pytest.mark.skip(reason="passing")
     @DocumentTranslationPreparer()
     @DocumentTranslationClientPreparer()
     def test_list_submitted_jobs_filter_by_created_after(self, client):
@@ -143,10 +152,10 @@ class TestSubmittedJobs(DocumentTranslationTest):
         # check statuses
         for job in submitted_jobs:
             self.assertIn(job.id, job_ids)
-            assert(job.created_on >= start)
+            assert(job.created_on.replace(tzinfo=None) >= start.replace(tzinfo=None))
 
 
-    @pytest.mark.skip(reason="for some reason, jobs created after 'end' timestamp showup in result!")
+    @pytest.mark.skip(reason="for some reason, jobs created after 'end' timestamp showup in result! might be different timestamps locally and service")
     @DocumentTranslationPreparer()
     @DocumentTranslationClientPreparer()
     def test_list_submitted_jobs_filter_by_created_before(self, client):
@@ -172,7 +181,7 @@ class TestSubmittedJobs(DocumentTranslationTest):
             self.assertLessEqual(job.created_on.replace(tzinfo=None), end.replace(tzinfo=None))
             self.assertNotIn(job.id, job_ids)
 
-    @pytest.mark.skip(reason="passing")
+
     @DocumentTranslationPreparer()
     @DocumentTranslationClientPreparer()
     def test_list_submitted_jobs_order_by_creation_time_asc(self, client):
@@ -193,7 +202,6 @@ class TestSubmittedJobs(DocumentTranslationTest):
             curr = job.created_on
 
 
-    @pytest.mark.skip(reason="passing")
     @DocumentTranslationPreparer()
     @DocumentTranslationClientPreparer()
     def test_list_submitted_jobs_order_by_creation_time_desc(self, client):
@@ -214,7 +222,7 @@ class TestSubmittedJobs(DocumentTranslationTest):
             curr = job.created_on
 
 
-    @pytest.mark.skip(reason="passing")
+    @pytest.mark.skip(reason="pending for filters which aren't working - mainly 'statuses' filter")
     @DocumentTranslationPreparer()
     @DocumentTranslationClientPreparer()
     def test_list_submitted_jobs_mixed_filters(self, client):
@@ -222,7 +230,7 @@ class TestSubmittedJobs(DocumentTranslationTest):
         jobs_count = 5
         docs_per_job = 2
         results_per_page = 2
-        statuses = ["Running"]
+        # statuses = ["Running"]
 
         # create some jobs
         start = datetime.now()
@@ -232,11 +240,11 @@ class TestSubmittedJobs(DocumentTranslationTest):
         # list jobs
         submitted_jobs = client.list_submitted_jobs(
             # filters
-            statuses=statuses,
+            # statuses=statuses,
             created_after=start,
             created_before=end,
             # ordering
-            order_by=["CreatedDateTimeUtc desc"],
+            order_by=["createdDateTimeUtc desc"],
             # paging
             skip=1,
             results_per_page=results_per_page
@@ -244,7 +252,7 @@ class TestSubmittedJobs(DocumentTranslationTest):
         self.assertIsNotNone(submitted_jobs)
 
         # check statuses
-        curr_time = date.max
+        curr_time = datetime.max
         for page in submitted_jobs:
             page_jobs = list(page)
             self.assertLessEqual(len(page_jobs), results_per_page) # assert paging
@@ -258,7 +266,7 @@ class TestSubmittedJobs(DocumentTranslationTest):
                 self.assertIn(job.status, statuses)
 
 
-    @pytest.mark.skip(reason="passing")
+    @pytest.mark.skip(reason="pending for filters which aren't working - mainly 'statuses' filter")
     @DocumentTranslationPreparer()
     @DocumentTranslationClientPreparer()
     def test_list_submitted_jobs_mixed_filters_more(self, client):
@@ -276,7 +284,7 @@ class TestSubmittedJobs(DocumentTranslationTest):
             ids=job_ids,
             statuses=statuses,
             # ordering
-            order_by=["CreatedDateTimeUtc asc"],
+            order_by=["createdDateTimeUtc asc"],
             # paging
             skip=1,
             results_per_page=results_per_page
