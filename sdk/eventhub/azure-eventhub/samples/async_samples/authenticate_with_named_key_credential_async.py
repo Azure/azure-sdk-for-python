@@ -6,7 +6,7 @@
 # --------------------------------------------------------------------------------------------
 
 """
-Example to demonstrate utilizing AzureNamedKeyCredential to authenticate with Event Hubs.
+Example to demonstrate utilizing AzureNamedKeyCredential to authenticate with Event Hubs asynchronously.
 """
 
 # pylint: disable=C0111
