@@ -16,7 +16,7 @@ from azure.data.tables import TableAnalyticsLogging, Metrics, RetentionPolicy, C
 from azure.data.tables.aio import TableServiceClient
 
 from _shared.testcase import TableTestCase
-from preparers import TablesPreparer
+from preparers import tables_decorator
 
 # ------------------------------------------------------------------------------
 
@@ -97,7 +97,7 @@ class TableServicePropertiesTest(AzureTestCase, TableTestCase):
         assert ret1.days ==  ret2.days
 
     # --Test cases per service ---------------------------------------
-    @TablesPreparer()
+    @tables_decorator
     async def test_table_service_properties_async(self, tables_storage_account_name, tables_primary_storage_account_key):
         # Arrange
         url = self.account_url(tables_storage_account_name, "table")
@@ -116,7 +116,7 @@ class TableServicePropertiesTest(AzureTestCase, TableTestCase):
         self._assert_properties_default(await tsc.get_service_properties())
 
     # --Test cases per feature ---------------------------------------
-    @TablesPreparer()
+    @tables_decorator
     async def test_set_logging_async(self, tables_storage_account_name, tables_primary_storage_account_key):
         # Arrange
         url = self.account_url(tables_storage_account_name, "table")
@@ -132,7 +132,7 @@ class TableServicePropertiesTest(AzureTestCase, TableTestCase):
         received_props = await tsc.get_service_properties()
         self._assert_logging_equal(received_props['analytics_logging'], logging)
 
-    @TablesPreparer()
+    @tables_decorator
     async def test_set_hour_metrics_async(self, tables_storage_account_name, tables_primary_storage_account_key):
         # Arrange
         url = self.account_url(tables_storage_account_name, "table")
@@ -148,7 +148,7 @@ class TableServicePropertiesTest(AzureTestCase, TableTestCase):
         received_props = await tsc.get_service_properties()
         self._assert_metrics_equal(received_props['hour_metrics'], hour_metrics)
 
-    @TablesPreparer()
+    @tables_decorator
     async def test_set_minute_metrics_async(self, tables_storage_account_name, tables_primary_storage_account_key):
         # Arrange
         url = self.account_url(tables_storage_account_name, "table")
@@ -165,7 +165,7 @@ class TableServicePropertiesTest(AzureTestCase, TableTestCase):
         received_props = await tsc.get_service_properties()
         self._assert_metrics_equal(received_props['minute_metrics'], minute_metrics)
 
-    @TablesPreparer()
+    @tables_decorator
     async def test_set_cors_async(self, tables_storage_account_name, tables_primary_storage_account_key):
         # Arrange
         url = self.account_url(tables_storage_account_name, "table")
@@ -196,7 +196,7 @@ class TableServicePropertiesTest(AzureTestCase, TableTestCase):
         self._assert_cors_equal(received_props['cors'], cors)
 
     # --Test cases for errors ---------------------------------------
-    @TablesPreparer()
+    @tables_decorator
     async def test_too_many_cors_rules_async(self, tables_storage_account_name, tables_primary_storage_account_key):
         # Arrange
         tsc = TableServiceClient(self.account_url(tables_storage_account_name, "table"), tables_primary_storage_account_key)
@@ -208,7 +208,7 @@ class TableServicePropertiesTest(AzureTestCase, TableTestCase):
         with pytest.raises(HttpResponseError):
             await tsc.set_service_properties(None, None, None, cors)
 
-    @TablesPreparer()
+    @tables_decorator
     async def test_retention_too_long_async(self, tables_storage_account_name, tables_primary_storage_account_key):
         # Arrange
         tsc = TableServiceClient(self.account_url(tables_storage_account_name, "table"), tables_primary_storage_account_key)

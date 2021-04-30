@@ -44,7 +44,7 @@ from azure.data.tables import (
 )
 
 from _shared.testcase import TableTestCase, SLEEP_DELAY
-from preparers import CosmosPreparer
+from preparers import cosmos_decorator
 
 # ------------------------------------------------------------------------------
 TEST_TABLE_PREFIX = 'pytablesync'
@@ -84,7 +84,7 @@ class StorageTableTest(AzureTestCase, TableTestCase):
                 pass
 
     # --Test cases for tables --------------------------------------------------
-    @CosmosPreparer()
+    @cosmos_decorator
     def test_create_table(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
         # # Arrange
         ts = TableServiceClient(self.account_url(tables_cosmos_account_name, "cosmos"), tables_primary_cosmos_account_key)
@@ -101,7 +101,7 @@ class StorageTableTest(AzureTestCase, TableTestCase):
         if self.is_live:
             sleep(SLEEP_DELAY)
 
-    @CosmosPreparer()
+    @cosmos_decorator
     def test_create_table_fail_on_exist(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
         # Arrange
         ts = TableServiceClient(self.account_url(tables_cosmos_account_name, "cosmos"), tables_primary_cosmos_account_key)
@@ -119,7 +119,7 @@ class StorageTableTest(AzureTestCase, TableTestCase):
         if self.is_live:
             sleep(SLEEP_DELAY)
 
-    @CosmosPreparer()
+    @cosmos_decorator
     def test_query_tables_per_page(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
         # Arrange
         ts = TableServiceClient(self.account_url(tables_cosmos_account_name, "cosmos"), tables_primary_cosmos_account_key)
@@ -150,7 +150,7 @@ class StorageTableTest(AzureTestCase, TableTestCase):
             sleep(SLEEP_DELAY)
 
 
-    @CosmosPreparer()
+    @cosmos_decorator
     def test_query_tables(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
         # Arrange
         ts = TableServiceClient(self.account_url(tables_cosmos_account_name, "cosmos"), tables_primary_cosmos_account_key)
@@ -168,7 +168,7 @@ class StorageTableTest(AzureTestCase, TableTestCase):
         if self.is_live:
             sleep(SLEEP_DELAY)
 
-    @CosmosPreparer()
+    @cosmos_decorator
     def test_query_tables_with_filter(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
         # Arrange
         ts = TableServiceClient(self.account_url(tables_cosmos_account_name, "cosmos"), tables_primary_cosmos_account_key)
@@ -188,7 +188,7 @@ class StorageTableTest(AzureTestCase, TableTestCase):
         if self.is_live:
             sleep(SLEEP_DELAY)
 
-    @CosmosPreparer()
+    @cosmos_decorator
     def test_query_tables_with_num_results(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
         # Arrange
         prefix = 'listtable'
@@ -216,7 +216,7 @@ class StorageTableTest(AzureTestCase, TableTestCase):
         if self.is_live:
             sleep(SLEEP_DELAY)
 
-    @CosmosPreparer()
+    @cosmos_decorator
     def test_query_tables_with_marker(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
         # Arrange
         ts = TableServiceClient(self.account_url(tables_cosmos_account_name, "cosmos"), tables_primary_cosmos_account_key)
@@ -247,7 +247,7 @@ class StorageTableTest(AzureTestCase, TableTestCase):
         if self.is_live:
             sleep(SLEEP_DELAY)
 
-    @CosmosPreparer()
+    @cosmos_decorator
     def test_delete_table_with_existing_table(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
         # Arrange
         ts = TableServiceClient(self.account_url(tables_cosmos_account_name, "cosmos"), tables_primary_cosmos_account_key)
@@ -263,7 +263,7 @@ class StorageTableTest(AzureTestCase, TableTestCase):
         if self.is_live:
             sleep(SLEEP_DELAY)
 
-    @CosmosPreparer()
+    @cosmos_decorator
     def test_delete_table_with_non_existing_table_fail_not_exist(self, tables_cosmos_account_name,
                                                                  tables_primary_cosmos_account_key):
         # Arrange

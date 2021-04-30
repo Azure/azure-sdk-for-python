@@ -17,7 +17,7 @@ from _shared.testcase import (
     TableTestCase,
     SLEEP_DELAY
 )
-from preparers import CosmosPreparer
+from preparers import cosmos_decorator
 
 # ------------------------------------------------------------------------------
 SERVICES = {
@@ -32,7 +32,7 @@ _CONNECTION_ENDPOINTS_SECONDARY = {'table': 'TableSecondaryEndpoint', 'cosmos': 
 class TestTableClient(AzureTestCase, TableTestCase):
 
     @pytest.mark.skipif(sys.version_info < (3, 0), reason="Malformed string")
-    @CosmosPreparer()
+    @cosmos_decorator
     def test_user_agent_default(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
         service = TableServiceClient(self.account_url(tables_cosmos_account_name, "cosmos"), credential=tables_primary_cosmos_account_key)
 
@@ -54,7 +54,7 @@ class TestTableClient(AzureTestCase, TableTestCase):
             sleep(SLEEP_DELAY)
 
     @pytest.mark.skipif(sys.version_info < (3, 0), reason="requires Python3")
-    @CosmosPreparer()
+    @cosmos_decorator
     def test_user_agent_custom(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
         custom_app = "TestApp/v1.0"
         service = TableServiceClient(
@@ -94,7 +94,7 @@ class TestTableClient(AzureTestCase, TableTestCase):
             sleep(SLEEP_DELAY)
 
     @pytest.mark.skipif(sys.version_info < (3, 0), reason="requires Python3")
-    @CosmosPreparer()
+    @cosmos_decorator
     def test_user_agent_append(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
         service = self.create_client_from_credential(
             TableServiceClient,

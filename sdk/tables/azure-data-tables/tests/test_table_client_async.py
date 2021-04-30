@@ -12,7 +12,7 @@ from azure.data.tables.aio import TableServiceClient, TableClient
 from azure.data.tables._version import VERSION
 
 from _shared.asynctestcase import AsyncTableTestCase
-from preparers import TablesPreparer
+from preparers import tables_decorator
 from devtools_testutils import AzureTestCase
 # ------------------------------------------------------------------------------
 SERVICES = {
@@ -27,7 +27,7 @@ _CONNECTION_ENDPOINTS_SECONDARY = {'table': 'TableSecondaryEndpoint'}
 
 class TestTableClient(AzureTestCase, AsyncTableTestCase):
 
-    @TablesPreparer()
+    @tables_decorator
     async def test_user_agent_default_async(self, tables_storage_account_name, tables_primary_storage_account_key):
         service = TableServiceClient(self.account_url(tables_storage_account_name, "table"), credential=tables_primary_storage_account_key)
 
@@ -46,7 +46,7 @@ class TestTableClient(AzureTestCase, AsyncTableTestCase):
         async for table in tables:
             count += 1
 
-    @TablesPreparer()
+    @tables_decorator
     async def test_user_agent_custom_async(self, tables_storage_account_name, tables_primary_storage_account_key):
         custom_app = "TestApp/v1.0"
         service = TableServiceClient(
@@ -82,7 +82,7 @@ class TestTableClient(AzureTestCase, AsyncTableTestCase):
         async for table in tables:
             count += 1
 
-    @TablesPreparer()
+    @tables_decorator
     async def test_user_agent_append(self, tables_storage_account_name, tables_primary_storage_account_key):
         service = TableServiceClient(self.account_url(tables_storage_account_name, "table"), credential=tables_primary_storage_account_key)
 

@@ -39,7 +39,7 @@ from azure.data.tables import (
 )
 
 from _shared.testcase import TableTestCase
-from preparers import TablesPreparer
+from preparers import tables_decorator
 
 #------------------------------------------------------------------------------
 TEST_TABLE_PREFIX = 'table'
@@ -174,7 +174,7 @@ class StorageTableBatchTest(AzureTestCase, TableTestCase):
 
 
     @pytest.mark.skipif(sys.version_info < (3, 0), reason="requires Python3")
-    @TablesPreparer()
+    @tables_decorator
     def test_batch_single_insert(self, tables_storage_account_name, tables_primary_storage_account_key):
         # Arrange
         self._set_up(tables_storage_account_name, tables_primary_storage_account_key)
@@ -205,7 +205,7 @@ class StorageTableBatchTest(AzureTestCase, TableTestCase):
             self._tear_down()
 
     @pytest.mark.skipif(sys.version_info < (3, 0), reason="requires Python3")
-    @TablesPreparer()
+    @tables_decorator
     def test_batch_single_update(self, tables_storage_account_name, tables_primary_storage_account_key):
         # Arrange
         self._set_up(tables_storage_account_name, tables_primary_storage_account_key)
@@ -240,7 +240,7 @@ class StorageTableBatchTest(AzureTestCase, TableTestCase):
             self._tear_down()
 
     @pytest.mark.skipif(sys.version_info < (3, 0), reason="requires Python3")
-    @TablesPreparer()
+    @tables_decorator
     def test_batch_update(self, tables_storage_account_name, tables_primary_storage_account_key):
         # Arrange
         self._set_up(tables_storage_account_name, tables_primary_storage_account_key)
@@ -276,7 +276,7 @@ class StorageTableBatchTest(AzureTestCase, TableTestCase):
             self._tear_down()
 
     @pytest.mark.skipif(sys.version_info < (3, 0), reason="requires Python3")
-    @TablesPreparer()
+    @tables_decorator
     def test_batch_merge(self, tables_storage_account_name, tables_primary_storage_account_key):
         # Arrange
         self._set_up(tables_storage_account_name, tables_primary_storage_account_key)
@@ -315,7 +315,7 @@ class StorageTableBatchTest(AzureTestCase, TableTestCase):
             self._tear_down()
 
     @pytest.mark.skipif(sys.version_info < (3, 0), reason="requires Python3")
-    @TablesPreparer()
+    @tables_decorator
     def test_batch_update_if_match(self, tables_storage_account_name, tables_primary_storage_account_key):
         # Arrange
         self._set_up(tables_storage_account_name, tables_primary_storage_account_key)
@@ -343,7 +343,7 @@ class StorageTableBatchTest(AzureTestCase, TableTestCase):
             self._tear_down()
 
     @pytest.mark.skipif(sys.version_info < (3, 0), reason="requires Python3")
-    @TablesPreparer()
+    @tables_decorator
     def test_batch_update_if_doesnt_match(self, tables_storage_account_name, tables_primary_storage_account_key):
         # Arrange
         self._set_up(tables_storage_account_name, tables_primary_storage_account_key)
@@ -369,7 +369,7 @@ class StorageTableBatchTest(AzureTestCase, TableTestCase):
             self._tear_down()
 
     @pytest.mark.skipif(sys.version_info < (3, 0), reason="requires Python3")
-    @TablesPreparer()
+    @tables_decorator
     def test_batch_single_op_if_doesnt_match(self, tables_storage_account_name, tables_primary_storage_account_key):
         # Arrange
         self._set_up(tables_storage_account_name, tables_primary_storage_account_key)
@@ -411,7 +411,7 @@ class StorageTableBatchTest(AzureTestCase, TableTestCase):
             self._tear_down()
 
     @pytest.mark.skipif(sys.version_info < (3, 0), reason="requires Python3")
-    @TablesPreparer()
+    @tables_decorator
     def test_batch_insert_replace(self, tables_storage_account_name, tables_primary_storage_account_key):
         # Arrange
         self._set_up(tables_storage_account_name, tables_primary_storage_account_key)
@@ -441,7 +441,7 @@ class StorageTableBatchTest(AzureTestCase, TableTestCase):
             self._tear_down()
 
     @pytest.mark.skipif(sys.version_info < (3, 0), reason="requires Python3")
-    @TablesPreparer()
+    @tables_decorator
     def test_batch_insert_merge(self, tables_storage_account_name, tables_primary_storage_account_key):
         # Arrange
         self._set_up(tables_storage_account_name, tables_primary_storage_account_key)
@@ -471,7 +471,7 @@ class StorageTableBatchTest(AzureTestCase, TableTestCase):
             self._tear_down()
 
     @pytest.mark.skipif(sys.version_info < (3, 0), reason="requires Python3")
-    @TablesPreparer()
+    @tables_decorator
     def test_batch_delete(self, tables_storage_account_name, tables_primary_storage_account_key):
         # Arrange
         self._set_up(tables_storage_account_name, tables_primary_storage_account_key)
@@ -503,7 +503,7 @@ class StorageTableBatchTest(AzureTestCase, TableTestCase):
             self._tear_down()
 
     @pytest.mark.skipif(sys.version_info < (3, 0), reason="requires Python3")
-    @TablesPreparer()
+    @tables_decorator
     def test_batch_inserts(self, tables_storage_account_name, tables_primary_storage_account_key):
         # Arrange
         self._set_up(tables_storage_account_name, tables_primary_storage_account_key)
@@ -538,7 +538,7 @@ class StorageTableBatchTest(AzureTestCase, TableTestCase):
             self._tear_down()
 
     @pytest.mark.skipif(sys.version_info < (3, 0), reason="requires Python3")
-    @TablesPreparer()
+    @tables_decorator
     def test_batch_all_operations_together(self, tables_storage_account_name, tables_primary_storage_account_key):
         # Arrange
         self._set_up(tables_storage_account_name, tables_primary_storage_account_key)
@@ -607,7 +607,7 @@ class StorageTableBatchTest(AzureTestCase, TableTestCase):
             self._tear_down()
 
     @pytest.mark.skipif(sys.version_info < (3, 0), reason="requires Python3")
-    @TablesPreparer()
+    @tables_decorator
     def test_batch_reuse(self, tables_storage_account_name, tables_primary_storage_account_key):
         # Arrange
         self._set_up(tables_storage_account_name, tables_primary_storage_account_key)
@@ -645,7 +645,7 @@ class StorageTableBatchTest(AzureTestCase, TableTestCase):
             self._tear_down()
 
     @pytest.mark.skipif(sys.version_info < (3, 0), reason="requires Python3")
-    @TablesPreparer()
+    @tables_decorator
     def test_batch_same_row_operations_fail(self, tables_storage_account_name, tables_primary_storage_account_key):
         # Arrange
         self._set_up(tables_storage_account_name, tables_primary_storage_account_key)
@@ -673,7 +673,7 @@ class StorageTableBatchTest(AzureTestCase, TableTestCase):
             self._tear_down()
 
     @pytest.mark.skipif(sys.version_info < (3, 0), reason="requires Python3")
-    @TablesPreparer()
+    @tables_decorator
     def test_batch_different_partition_operations_fail(self, tables_storage_account_name, tables_primary_storage_account_key):
         # Arrange
         self._set_up(tables_storage_account_name, tables_primary_storage_account_key)
@@ -698,7 +698,7 @@ class StorageTableBatchTest(AzureTestCase, TableTestCase):
             self._tear_down()
 
     @pytest.mark.skipif(sys.version_info < (3, 0), reason="requires Python3")
-    @TablesPreparer()
+    @tables_decorator
     def test_batch_too_many_ops(self, tables_storage_account_name, tables_primary_storage_account_key):
         # Arrange
         self._set_up(tables_storage_account_name, tables_primary_storage_account_key)
@@ -721,7 +721,7 @@ class StorageTableBatchTest(AzureTestCase, TableTestCase):
             self._tear_down()
 
     @pytest.mark.skipif(sys.version_info < (3, 0), reason="requires Python3")
-    @TablesPreparer()
+    @tables_decorator
     def test_batch_different_partition_keys(self, tables_storage_account_name, tables_primary_storage_account_key):
         # Arrange
         self._set_up(tables_storage_account_name, tables_primary_storage_account_key)
@@ -738,7 +738,7 @@ class StorageTableBatchTest(AzureTestCase, TableTestCase):
             self._tear_down()
 
     @pytest.mark.skipif(sys.version_info < (3, 0), reason="requires Python3")
-    @TablesPreparer()
+    @tables_decorator
     def test_new_non_existent_table(self, tables_storage_account_name, tables_primary_storage_account_key):
         # Arrange
         self._set_up(tables_storage_account_name, tables_primary_storage_account_key)
@@ -756,7 +756,7 @@ class StorageTableBatchTest(AzureTestCase, TableTestCase):
             self._tear_down()
 
     @pytest.mark.skipif(sys.version_info < (3, 0), reason="requires Python3")
-    @TablesPreparer()
+    @tables_decorator
     def test_new_invalid_key(self, tables_storage_account_name, tables_primary_storage_account_key):
         # Arrange
         invalid_key = tables_primary_storage_account_key[0:-6] + "==" # cut off a bit from the end to invalidate
@@ -772,7 +772,7 @@ class StorageTableBatchTest(AzureTestCase, TableTestCase):
             resp = self.table.submit_transaction(batch)
 
     @pytest.mark.skipif(sys.version_info < (3, 0), reason="requires Python3")
-    @TablesPreparer()
+    @tables_decorator
     def test_new_delete_nonexistent_entity(self, tables_storage_account_name, tables_primary_storage_account_key):
         # Arrange
         self._set_up(tables_storage_account_name, tables_primary_storage_account_key)
@@ -789,7 +789,7 @@ class StorageTableBatchTest(AzureTestCase, TableTestCase):
 
     @pytest.mark.skipif(sys.version_info < (3, 0), reason="requires Python3")
     @pytest.mark.live_test_only
-    @TablesPreparer()
+    @tables_decorator
     def test_batch_sas_auth(self, tables_storage_account_name, tables_primary_storage_account_key):
         # Arrange
         self._set_up(tables_storage_account_name, tables_primary_storage_account_key)
@@ -839,7 +839,7 @@ class StorageTableBatchTest(AzureTestCase, TableTestCase):
 
     @pytest.mark.skipif(sys.version_info < (3, 0), reason="requires Python3")
     @pytest.mark.live_test_only  # Request bodies are very large
-    @TablesPreparer()
+    @tables_decorator
     def test_batch_request_too_large(self, tables_storage_account_name, tables_primary_storage_account_key):
         # Arrange
         self._set_up(tables_storage_account_name, tables_primary_storage_account_key)

@@ -13,7 +13,7 @@ except ImportError:
     from urllib2 import quote  # type: ignore
 
 import six
-from azure.core.credentials import AzureSasCredential
+from azure.core.credentials import AzureSasCredential, AzureNamedKeyCredential
 from azure.core.utils import parse_connection_string
 from azure.core.pipeline.transport import (
     HttpTransport,
@@ -30,7 +30,7 @@ from azure.core.pipeline.policies import (
     AzureSasCredentialPolicy,
     NetworkTraceLoggingPolicy,
     CustomHookPolicy,
-    RequestIdPolicy
+    RequestIdPolicy,
 )
 
 from ._generated import AzureTable
@@ -111,7 +111,7 @@ class AccountHostsMixin(object):  # pylint: disable=too-many-instance-attributes
                 self.account_name = account[0] if len(account) > 1 else None
 
         secondary_hostname = None
-        self.credential = format_shared_key_credential(account, credential)
+        self.credential = credential
         if self.scheme.lower() != "https" and hasattr(self.credential, "get_token"):
             raise ValueError("Token credential is only supported with HTTPS.")
         if hasattr(self.credential, "account_name"):
@@ -259,6 +259,8 @@ class TablesBaseClient(AccountHostsMixin):
             self._credential_policy = credential
         elif isinstance(credential, AzureSasCredential):
             self._credential_policy = AzureSasCredentialPolicy(credential)
+        elif isinstance(credential, AzureNamedKeyCredential):
+            self._credential_policy = SharedKeyCredentialPolicy(credential)
         elif credential is not None:
             raise TypeError("Unsupported credential: {}".format(credential))
 
@@ -342,22 +344,6 @@ class TransportWrapper(HttpTransport):
 
     def __exit__(self, *args):  # pylint: disable=arguments-differ
         pass
-
-
-def format_shared_key_credential(account, credential):
-    if isinstance(credential, six.string_types):
-        if len(account) < 2:
-            raise ValueError(
-                "Unable to determine account name for shared key credential."
-            )
-        credential = {"account_name": account[0], "account_key": credential}
-    if isinstance(credential, dict):
-        if "account_name" not in credential:
-            raise ValueError("Shared key credential missing 'account_name")
-        if "account_key" not in credential:
-            raise ValueError("Shared key credential missing 'account_key")
-        return SharedKeyCredentialPolicy(**credential)
-    return credential
 
 
 def parse_connection_str(conn_str, credential, keyword_args):

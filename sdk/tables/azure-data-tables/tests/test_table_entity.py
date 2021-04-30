@@ -38,7 +38,7 @@ from azure.core.exceptions import (
 )
 
 from _shared.testcase import TableTestCase
-from preparers import TablesPreparer
+from preparers import tables_decorator
 
 # ------------------------------------------------------------------------------
 
@@ -289,7 +289,7 @@ class StorageTableEntityTest(AzureTestCase, TableTestCase):
         assert len(keys) ==  3
 
     # --Test cases for entities ------------------------------------------
-    @TablesPreparer()
+    @tables_decorator
     def test_url_encoding_at_symbol(self, tables_storage_account_name, tables_primary_storage_account_key):
 
         self._set_up(tables_storage_account_name, tables_primary_storage_account_key)
@@ -324,7 +324,7 @@ class StorageTableEntityTest(AzureTestCase, TableTestCase):
         finally:
             self._tear_down()
 
-    @TablesPreparer()
+    @tables_decorator
     def test_insert_etag(self, tables_storage_account_name, tables_primary_storage_account_key):
 
         self._set_up(tables_storage_account_name, tables_primary_storage_account_key)
@@ -341,7 +341,7 @@ class StorageTableEntityTest(AzureTestCase, TableTestCase):
         finally:
             self._tear_down()
 
-    @TablesPreparer()
+    @tables_decorator
     def test_query_user_filter(self, tables_storage_account_name, tables_primary_storage_account_key):
         # Arrange
         self._set_up(tables_storage_account_name, tables_primary_storage_account_key)
@@ -364,7 +364,7 @@ class StorageTableEntityTest(AzureTestCase, TableTestCase):
         finally:
             self._tear_down()
 
-    @TablesPreparer()
+    @tables_decorator
     def test_query_user_filter_multiple_params(self, tables_storage_account_name, tables_primary_storage_account_key):
         # Arrange
         self._set_up(tables_storage_account_name, tables_primary_storage_account_key)
@@ -388,7 +388,7 @@ class StorageTableEntityTest(AzureTestCase, TableTestCase):
         finally:
             self._tear_down()
 
-    @TablesPreparer()
+    @tables_decorator
     def test_query_user_filter_integers(self, tables_storage_account_name, tables_primary_storage_account_key):
         # Arrange
         self._set_up(tables_storage_account_name, tables_primary_storage_account_key)
@@ -411,7 +411,7 @@ class StorageTableEntityTest(AzureTestCase, TableTestCase):
         finally:
             self._tear_down()
 
-    @TablesPreparer()
+    @tables_decorator
     def test_query_user_filter_floats(self, tables_storage_account_name, tables_primary_storage_account_key):
         # Arrange
         self._set_up(tables_storage_account_name, tables_primary_storage_account_key)
@@ -434,7 +434,7 @@ class StorageTableEntityTest(AzureTestCase, TableTestCase):
         finally:
             self._tear_down()
 
-    @TablesPreparer()
+    @tables_decorator
     def test_query_user_filter_datetimes(self, tables_storage_account_name, tables_primary_storage_account_key):
         # Arrange
         self._set_up(tables_storage_account_name, tables_primary_storage_account_key)
@@ -457,7 +457,7 @@ class StorageTableEntityTest(AzureTestCase, TableTestCase):
         finally:
             self._tear_down()
 
-    @TablesPreparer()
+    @tables_decorator
     def test_query_user_filter_guids(self, tables_storage_account_name, tables_primary_storage_account_key):
         # Arrange
         self._set_up(tables_storage_account_name, tables_primary_storage_account_key)
@@ -480,7 +480,7 @@ class StorageTableEntityTest(AzureTestCase, TableTestCase):
         finally:
             self._tear_down()
 
-    @TablesPreparer()
+    @tables_decorator
     def test_query_user_filter_binary(self, tables_storage_account_name, tables_primary_storage_account_key):
         # Arrange
         self._set_up(tables_storage_account_name, tables_primary_storage_account_key)
@@ -503,7 +503,7 @@ class StorageTableEntityTest(AzureTestCase, TableTestCase):
         finally:
             self._tear_down()
 
-    @TablesPreparer()
+    @tables_decorator
     def test_query_user_filter_int64(self, tables_storage_account_name, tables_primary_storage_account_key):
         # Arrange
         self._set_up(tables_storage_account_name, tables_primary_storage_account_key)
@@ -533,7 +533,7 @@ class StorageTableEntityTest(AzureTestCase, TableTestCase):
         finally:
             self._tear_down()
 
-    @TablesPreparer()
+    @tables_decorator
     def test_query_invalid_filter(self, tables_storage_account_name, tables_primary_storage_account_key):
         # Arrange
         self._set_up(tables_storage_account_name, tables_primary_storage_account_key)
@@ -557,7 +557,7 @@ class StorageTableEntityTest(AzureTestCase, TableTestCase):
         finally:
             self._tear_down()
 
-    @TablesPreparer()
+    @tables_decorator
     def test_insert_entity_dictionary(self, tables_storage_account_name, tables_primary_storage_account_key):
         # Arrange
         self._set_up(tables_storage_account_name, tables_primary_storage_account_key)
@@ -572,7 +572,7 @@ class StorageTableEntityTest(AzureTestCase, TableTestCase):
         finally:
             self._tear_down()
 
-    @TablesPreparer()
+    @tables_decorator
     def test_insert_entity_with_hook(self, tables_storage_account_name, tables_primary_storage_account_key):
         # Arrange
         self._set_up(tables_storage_account_name, tables_primary_storage_account_key)
@@ -592,7 +592,7 @@ class StorageTableEntityTest(AzureTestCase, TableTestCase):
         finally:
             self._tear_down()
 
-    @TablesPreparer()
+    @tables_decorator
     def test_insert_entity_with_no_metadata(self, tables_storage_account_name, tables_primary_storage_account_key):
         # Arrange
         self._set_up(tables_storage_account_name, tables_primary_storage_account_key)
@@ -617,7 +617,7 @@ class StorageTableEntityTest(AzureTestCase, TableTestCase):
         finally:
             self._tear_down()
 
-    @TablesPreparer()
+    @tables_decorator
     def test_insert_entity_with_full_metadata(self, tables_storage_account_name, tables_primary_storage_account_key):
         # Arrange
         self._set_up(tables_storage_account_name, tables_primary_storage_account_key)
@@ -642,7 +642,7 @@ class StorageTableEntityTest(AzureTestCase, TableTestCase):
         finally:
             self._tear_down()
 
-    @TablesPreparer()
+    @tables_decorator
     def test_insert_entity_conflict(self, tables_storage_account_name, tables_primary_storage_account_key):
         # Arrange
         self._set_up(tables_storage_account_name, tables_primary_storage_account_key)
@@ -657,7 +657,7 @@ class StorageTableEntityTest(AzureTestCase, TableTestCase):
         finally:
             self._tear_down()
 
-    @TablesPreparer()
+    @tables_decorator
     def test_insert_entity_with_large_int32_value_throws(self, tables_storage_account_name,
                                                          tables_primary_storage_account_key):
         # Arrange
@@ -677,7 +677,7 @@ class StorageTableEntityTest(AzureTestCase, TableTestCase):
         finally:
             self._tear_down()
 
-    @TablesPreparer()
+    @tables_decorator
     def test_insert_entity_with_large_int64_value_throws(self, tables_storage_account_name,
                                                          tables_primary_storage_account_key):
         # Arrange
@@ -697,7 +697,7 @@ class StorageTableEntityTest(AzureTestCase, TableTestCase):
         finally:
             self._tear_down()
 
-    @TablesPreparer()
+    @tables_decorator
     def test_insert_entity_with_large_int_success(self, tables_storage_account_name,
                                                          tables_primary_storage_account_key):
         # Arrange
@@ -723,7 +723,7 @@ class StorageTableEntityTest(AzureTestCase, TableTestCase):
         finally:
             self._tear_down()
 
-    @TablesPreparer()
+    @tables_decorator
     def test_insert_entity_missing_pk(self, tables_storage_account_name, tables_primary_storage_account_key):
         # Arrange
         self._set_up(tables_storage_account_name, tables_primary_storage_account_key)
@@ -737,7 +737,7 @@ class StorageTableEntityTest(AzureTestCase, TableTestCase):
         finally:
             self._tear_down()
 
-    @TablesPreparer()
+    @tables_decorator
     def test_insert_entity_empty_string_pk(self, tables_storage_account_name, tables_primary_storage_account_key):
         # Arrange
         self._set_up(tables_storage_account_name, tables_primary_storage_account_key)
@@ -751,7 +751,7 @@ class StorageTableEntityTest(AzureTestCase, TableTestCase):
         finally:
             self._tear_down()
 
-    @TablesPreparer()
+    @tables_decorator
     def test_insert_entity_missing_rk(self, tables_storage_account_name, tables_primary_storage_account_key):
         # Arrange
         self._set_up(tables_storage_account_name, tables_primary_storage_account_key)
@@ -765,7 +765,7 @@ class StorageTableEntityTest(AzureTestCase, TableTestCase):
         finally:
             self._tear_down()
 
-    @TablesPreparer()
+    @tables_decorator
     def test_insert_entity_empty_string_rk(self, tables_storage_account_name, tables_primary_storage_account_key):
         # Arrange
         self._set_up(tables_storage_account_name, tables_primary_storage_account_key)
@@ -779,7 +779,7 @@ class StorageTableEntityTest(AzureTestCase, TableTestCase):
         finally:
             self._tear_down()
 
-    @TablesPreparer()
+    @tables_decorator
     def test_insert_entity_too_many_properties(self, tables_storage_account_name, tables_primary_storage_account_key):
         # Arrange
         self._set_up(tables_storage_account_name, tables_primary_storage_account_key)
@@ -796,7 +796,7 @@ class StorageTableEntityTest(AzureTestCase, TableTestCase):
         finally:
             self._tear_down()
 
-    @TablesPreparer()
+    @tables_decorator
     def test_insert_entity_property_name_too_long(self, tables_storage_account_name, tables_primary_storage_account_key):
         # Arrange
         self._set_up(tables_storage_account_name, tables_primary_storage_account_key)
@@ -812,7 +812,7 @@ class StorageTableEntityTest(AzureTestCase, TableTestCase):
         finally:
             self._tear_down()
 
-    @TablesPreparer()
+    @tables_decorator
     def test_insert_entity_with_enums(self, tables_storage_account_name,
                                                          tables_primary_storage_account_key):
         # Arrange
@@ -842,7 +842,7 @@ class StorageTableEntityTest(AzureTestCase, TableTestCase):
         finally:
             self._tear_down()
 
-    @TablesPreparer()
+    @tables_decorator
     def test_get_entity(self, tables_storage_account_name, tables_primary_storage_account_key):
         # Arrange
         self._set_up(tables_storage_account_name, tables_primary_storage_account_key)
@@ -860,7 +860,7 @@ class StorageTableEntityTest(AzureTestCase, TableTestCase):
         finally:
             self._tear_down()
 
-    @TablesPreparer()
+    @tables_decorator
     def test_get_entity_with_hook(self, tables_storage_account_name, tables_primary_storage_account_key):
         # Arrange
         self._set_up(tables_storage_account_name, tables_primary_storage_account_key)
@@ -882,7 +882,7 @@ class StorageTableEntityTest(AzureTestCase, TableTestCase):
         finally:
             self._tear_down()
 
-    @TablesPreparer()
+    @tables_decorator
     def test_get_entity_if_match(self, tables_storage_account_name, tables_primary_storage_account_key):
         # Arrange
         self._set_up(tables_storage_account_name, tables_primary_storage_account_key)
@@ -910,7 +910,7 @@ class StorageTableEntityTest(AzureTestCase, TableTestCase):
         finally:
             self._tear_down()
 
-    @TablesPreparer()
+    @tables_decorator
     def test_get_entity_full_metadata(self, tables_storage_account_name, tables_primary_storage_account_key):
         # Arrange
         self._set_up(tables_storage_account_name, tables_primary_storage_account_key)
@@ -930,7 +930,7 @@ class StorageTableEntityTest(AzureTestCase, TableTestCase):
         finally:
             self._tear_down()
 
-    @TablesPreparer()
+    @tables_decorator
     def test_get_entity_no_metadata(self, tables_storage_account_name, tables_primary_storage_account_key):
         # Arrange
         self._set_up(tables_storage_account_name, tables_primary_storage_account_key)
@@ -950,7 +950,7 @@ class StorageTableEntityTest(AzureTestCase, TableTestCase):
         finally:
             self._tear_down()
 
-    @TablesPreparer()
+    @tables_decorator
     def test_get_entity_not_existing(self, tables_storage_account_name, tables_primary_storage_account_key):
         # Arrange
         self._set_up(tables_storage_account_name, tables_primary_storage_account_key)
@@ -966,7 +966,7 @@ class StorageTableEntityTest(AzureTestCase, TableTestCase):
         finally:
             self._tear_down()
 
-    @TablesPreparer()
+    @tables_decorator
     def test_get_entity_with_special_doubles(self, tables_storage_account_name, tables_primary_storage_account_key):
         # Arrange
         self._set_up(tables_storage_account_name, tables_primary_storage_account_key)
@@ -990,7 +990,7 @@ class StorageTableEntityTest(AzureTestCase, TableTestCase):
         finally:
             self._tear_down()
 
-    @TablesPreparer()
+    @tables_decorator
     def test_update_entity(self, tables_storage_account_name, tables_primary_storage_account_key):
         # Arrange
         self._set_up(tables_storage_account_name, tables_primary_storage_account_key)
@@ -1014,7 +1014,7 @@ class StorageTableEntityTest(AzureTestCase, TableTestCase):
         finally:
             self._tear_down()
 
-    @TablesPreparer()
+    @tables_decorator
     def test_update_entity_not_existing(self, tables_storage_account_name, tables_primary_storage_account_key):
         # Arrange
         self._set_up(tables_storage_account_name, tables_primary_storage_account_key)
@@ -1030,7 +1030,7 @@ class StorageTableEntityTest(AzureTestCase, TableTestCase):
         finally:
             self._tear_down()
 
-    @TablesPreparer()
+    @tables_decorator
     def test_update_entity_with_if_matches(self, tables_storage_account_name, tables_primary_storage_account_key):
         # Arrange
         self._set_up(tables_storage_account_name, tables_primary_storage_account_key)
@@ -1051,7 +1051,7 @@ class StorageTableEntityTest(AzureTestCase, TableTestCase):
         finally:
             self._tear_down()
 
-    @TablesPreparer()
+    @tables_decorator
     def test_update_entity_with_if_doesnt_match(self, tables_storage_account_name, tables_primary_storage_account_key):
         # Arrange
         self._set_up(tables_storage_account_name, tables_primary_storage_account_key)
@@ -1069,7 +1069,7 @@ class StorageTableEntityTest(AzureTestCase, TableTestCase):
         finally:
             self._tear_down()
 
-    @TablesPreparer()
+    @tables_decorator
     def test_insert_or_merge_entity_with_existing_entity(self, tables_storage_account_name,
                                                          tables_primary_storage_account_key):
         # Arrange
@@ -1088,7 +1088,7 @@ class StorageTableEntityTest(AzureTestCase, TableTestCase):
         finally:
             self._tear_down()
 
-    @TablesPreparer()
+    @tables_decorator
     def test_insert_or_merge_entity_with_non_existing_entity(self, tables_storage_account_name,
                                                              tables_primary_storage_account_key):
         # Arrange
@@ -1108,7 +1108,7 @@ class StorageTableEntityTest(AzureTestCase, TableTestCase):
         finally:
             self._tear_down()
 
-    @TablesPreparer()
+    @tables_decorator
     def test_insert_or_replace_entity_with_existing_entity(self, tables_storage_account_name,
                                                            tables_primary_storage_account_key):
         # Arrange
@@ -1127,7 +1127,7 @@ class StorageTableEntityTest(AzureTestCase, TableTestCase):
         finally:
             self._tear_down()
 
-    @TablesPreparer()
+    @tables_decorator
     def test_insert_or_replace_entity_with_non_existing_entity(self, tables_storage_account_name,
                                                                tables_primary_storage_account_key):
         # Arrange
@@ -1147,7 +1147,7 @@ class StorageTableEntityTest(AzureTestCase, TableTestCase):
         finally:
             self._tear_down()
 
-    @TablesPreparer()
+    @tables_decorator
     def test_merge_entity(self, tables_storage_account_name, tables_primary_storage_account_key):
         # Arrange
         self._set_up(tables_storage_account_name, tables_primary_storage_account_key)
@@ -1165,7 +1165,7 @@ class StorageTableEntityTest(AzureTestCase, TableTestCase):
         finally:
             self._tear_down()
 
-    @TablesPreparer()
+    @tables_decorator
     def test_merge_entity_not_existing(self, tables_storage_account_name, tables_primary_storage_account_key):
         # Arrange
         self._set_up(tables_storage_account_name, tables_primary_storage_account_key)
@@ -1181,7 +1181,7 @@ class StorageTableEntityTest(AzureTestCase, TableTestCase):
         finally:
             self._tear_down()
 
-    @TablesPreparer()
+    @tables_decorator
     def test_merge_entity_with_if_matches(self, tables_storage_account_name, tables_primary_storage_account_key):
         # Arrange
         self._set_up(tables_storage_account_name, tables_primary_storage_account_key)
@@ -1203,7 +1203,7 @@ class StorageTableEntityTest(AzureTestCase, TableTestCase):
         finally:
             self._tear_down()
 
-    @TablesPreparer()
+    @tables_decorator
     def test_merge_entity_with_if_doesnt_match(self, tables_storage_account_name, tables_primary_storage_account_key):
         # Arrange
         self._set_up(tables_storage_account_name, tables_primary_storage_account_key)
@@ -1222,7 +1222,7 @@ class StorageTableEntityTest(AzureTestCase, TableTestCase):
         finally:
             self._tear_down()
 
-    @TablesPreparer()
+    @tables_decorator
     def test_delete_entity(self, tables_storage_account_name, tables_primary_storage_account_key):
         # Arrange
         self._set_up(tables_storage_account_name, tables_primary_storage_account_key)
@@ -1239,7 +1239,7 @@ class StorageTableEntityTest(AzureTestCase, TableTestCase):
         finally:
             self._tear_down()
 
-    @TablesPreparer()
+    @tables_decorator
     def test_delete_entity_not_existing(self, tables_storage_account_name, tables_primary_storage_account_key):
         # Arrange
         self._set_up(tables_storage_account_name, tables_primary_storage_account_key)
@@ -1254,7 +1254,7 @@ class StorageTableEntityTest(AzureTestCase, TableTestCase):
         finally:
             self._tear_down()
 
-    @TablesPreparer()
+    @tables_decorator
     def test_delete_entity_with_if_matches(self, tables_storage_account_name, tables_primary_storage_account_key):
         # Arrange
         self._set_up(tables_storage_account_name, tables_primary_storage_account_key)
@@ -1272,7 +1272,7 @@ class StorageTableEntityTest(AzureTestCase, TableTestCase):
         finally:
             self._tear_down()
 
-    @TablesPreparer()
+    @tables_decorator
     def test_delete_entity_with_if_doesnt_match(self, tables_storage_account_name, tables_primary_storage_account_key):
         # Arrange
         self._set_up(tables_storage_account_name, tables_primary_storage_account_key)
@@ -1290,7 +1290,7 @@ class StorageTableEntityTest(AzureTestCase, TableTestCase):
         finally:
             self._tear_down()
 
-    @TablesPreparer()
+    @tables_decorator
     def test_unicode_property_value(self, tables_storage_account_name, tables_primary_storage_account_key):
         # Arrange
         self._set_up(tables_storage_account_name, tables_primary_storage_account_key)
@@ -1314,7 +1314,7 @@ class StorageTableEntityTest(AzureTestCase, TableTestCase):
         finally:
             self._tear_down()
 
-    @TablesPreparer()
+    @tables_decorator
     def test_unicode_property_name(self, tables_storage_account_name, tables_primary_storage_account_key):
         # Arrange
         self._set_up(tables_storage_account_name, tables_primary_storage_account_key)
@@ -1338,7 +1338,7 @@ class StorageTableEntityTest(AzureTestCase, TableTestCase):
         finally:
             self._tear_down()
 
-    @TablesPreparer()
+    @tables_decorator
     def test_operations_on_entity_with_partition_key_having_single_quote(self, tables_storage_account_name, tables_primary_storage_account_key):
         # Arrange
         partition_key_with_single_quote = u"a''''b"
@@ -1375,7 +1375,7 @@ class StorageTableEntityTest(AzureTestCase, TableTestCase):
         finally:
             self._tear_down()
 
-    @TablesPreparer()
+    @tables_decorator
     def test_empty_and_spaces_property_value(self, tables_storage_account_name, tables_primary_storage_account_key):
         # Arrange
         self._set_up(tables_storage_account_name, tables_primary_storage_account_key)
@@ -1413,7 +1413,7 @@ class StorageTableEntityTest(AzureTestCase, TableTestCase):
         finally:
             self._tear_down()
 
-    @TablesPreparer()
+    @tables_decorator
     def test_none_property_value(self, tables_storage_account_name, tables_primary_storage_account_key):
         # Arrange
         self._set_up(tables_storage_account_name, tables_primary_storage_account_key)
@@ -1431,7 +1431,7 @@ class StorageTableEntityTest(AzureTestCase, TableTestCase):
         finally:
             self._tear_down()
 
-    @TablesPreparer()
+    @tables_decorator
     def test_binary_property_value(self, tables_storage_account_name, tables_primary_storage_account_key):
         # Arrange
         self._set_up(tables_storage_account_name, tables_primary_storage_account_key)
@@ -1450,7 +1450,7 @@ class StorageTableEntityTest(AzureTestCase, TableTestCase):
         finally:
             self._tear_down()
 
-    @TablesPreparer()
+    @tables_decorator
     def test_timezone(self, tables_storage_account_name, tables_primary_storage_account_key):
         # Arrange
         self._set_up(tables_storage_account_name, tables_primary_storage_account_key)
@@ -1472,7 +1472,7 @@ class StorageTableEntityTest(AzureTestCase, TableTestCase):
         finally:
             self._tear_down()
 
-    @TablesPreparer()
+    @tables_decorator
     def test_query_entities(self, tables_storage_account_name, tables_primary_storage_account_key):
         # Arrange
         self._set_up(tables_storage_account_name, tables_primary_storage_account_key)
@@ -1489,7 +1489,7 @@ class StorageTableEntityTest(AzureTestCase, TableTestCase):
         finally:
             self._tear_down()
 
-    @TablesPreparer()
+    @tables_decorator
     def test_query_entities_each_page(self, tables_storage_account_name, tables_primary_storage_account_key):
         # Arrange
         self._set_up(tables_storage_account_name, tables_primary_storage_account_key)
@@ -1529,7 +1529,7 @@ class StorageTableEntityTest(AzureTestCase, TableTestCase):
         finally:
             self._tear_down()
 
-    @TablesPreparer()
+    @tables_decorator
     def test_query_zero_entities(self, tables_storage_account_name, tables_primary_storage_account_key):
         # Arrange
         self._set_up(tables_storage_account_name, tables_primary_storage_account_key)
@@ -1544,7 +1544,7 @@ class StorageTableEntityTest(AzureTestCase, TableTestCase):
         finally:
             self._tear_down()
 
-    @TablesPreparer()
+    @tables_decorator
     def test_query_entities_full_metadata(self, tables_storage_account_name, tables_primary_storage_account_key):
         # Arrange
         self._set_up(tables_storage_account_name, tables_primary_storage_account_key)
@@ -1561,7 +1561,7 @@ class StorageTableEntityTest(AzureTestCase, TableTestCase):
         finally:
             self._tear_down()
 
-    @TablesPreparer()
+    @tables_decorator
     def test_query_entities_no_metadata(self, tables_storage_account_name, tables_primary_storage_account_key):
         # Arrange
         self._set_up(tables_storage_account_name, tables_primary_storage_account_key)
@@ -1578,7 +1578,7 @@ class StorageTableEntityTest(AzureTestCase, TableTestCase):
         finally:
             self._tear_down()
 
-    @TablesPreparer()
+    @tables_decorator
     def test_query_entities_with_filter(self, tables_storage_account_name, tables_primary_storage_account_key):
         # Arrange
         self._set_up(tables_storage_account_name, tables_primary_storage_account_key)
@@ -1599,7 +1599,7 @@ class StorageTableEntityTest(AzureTestCase, TableTestCase):
         finally:
             self._tear_down()
 
-    @TablesPreparer()
+    @tables_decorator
     def test_query_injection(self, tables_storage_account_name, tables_primary_storage_account_key):
         # Arrange
         self._set_up(tables_storage_account_name, tables_primary_storage_account_key)
@@ -1626,7 +1626,7 @@ class StorageTableEntityTest(AzureTestCase, TableTestCase):
             self.ts.delete_table(table_name)
             self._tear_down()
 
-    @TablesPreparer()
+    @tables_decorator
     def test_query_special_chars(self, tables_storage_account_name, tables_primary_storage_account_key):
         # Arrange
         self._set_up(tables_storage_account_name, tables_primary_storage_account_key)
@@ -1667,7 +1667,7 @@ class StorageTableEntityTest(AzureTestCase, TableTestCase):
             self.ts.delete_table(table_name)
             self._tear_down()
 
-    @TablesPreparer()
+    @tables_decorator
     def test_query_entities_with_select(self, tables_storage_account_name, tables_primary_storage_account_key):
         # Arrange
         self._set_up(tables_storage_account_name, tables_primary_storage_account_key)
@@ -1687,7 +1687,7 @@ class StorageTableEntityTest(AzureTestCase, TableTestCase):
         finally:
             self._tear_down()
 
-    @TablesPreparer()
+    @tables_decorator
     def test_query_entities_with_top(self, tables_storage_account_name, tables_primary_storage_account_key):
         # Arrange
         self._set_up(tables_storage_account_name, tables_primary_storage_account_key)
@@ -1702,7 +1702,7 @@ class StorageTableEntityTest(AzureTestCase, TableTestCase):
         finally:
             self._tear_down()
 
-    @TablesPreparer()
+    @tables_decorator
     def test_query_entities_with_top_and_next(self, tables_storage_account_name, tables_primary_storage_account_key):
         # Arrange
         self._set_up(tables_storage_account_name, tables_primary_storage_account_key)
@@ -1735,7 +1735,7 @@ class StorageTableEntityTest(AzureTestCase, TableTestCase):
         finally:
             self._tear_down()
 
-    @TablesPreparer()
+    @tables_decorator
     def test_sas_query(self, tables_storage_account_name, tables_primary_storage_account_key):
         # SAS URL is calculated from storage key, so this test runs live only
         url = self.account_url(tables_storage_account_name, "table")
@@ -1769,7 +1769,7 @@ class StorageTableEntityTest(AzureTestCase, TableTestCase):
         finally:
             self._tear_down()
 
-    @TablesPreparer()
+    @tables_decorator
     def test_sas_add(self, tables_storage_account_name, tables_primary_storage_account_key):
         # SAS URL is calculated from storage key, so this test runs live only
         url = self.account_url(tables_storage_account_name, "table")
@@ -1803,7 +1803,7 @@ class StorageTableEntityTest(AzureTestCase, TableTestCase):
         finally:
             self._tear_down()
 
-    @TablesPreparer()
+    @tables_decorator
     def test_sas_add_inside_range(self, tables_storage_account_name, tables_primary_storage_account_key):
         # SAS URL is calculated from storage key, so this test runs live only
         url = self.account_url(tables_storage_account_name, "table")
@@ -1836,7 +1836,7 @@ class StorageTableEntityTest(AzureTestCase, TableTestCase):
         finally:
             self._tear_down()
 
-    @TablesPreparer()
+    @tables_decorator
     def test_sas_add_outside_range(self, tables_storage_account_name, tables_primary_storage_account_key):
         # SAS URL is calculated from storage key, so this test runs live only
         url = self.account_url(tables_storage_account_name, "table")
@@ -1868,7 +1868,7 @@ class StorageTableEntityTest(AzureTestCase, TableTestCase):
         finally:
             self._tear_down()
 
-    @TablesPreparer()
+    @tables_decorator
     def test_sas_update(self, tables_storage_account_name, tables_primary_storage_account_key):
         # SAS URL is calculated from storage key, so this test runs live only
         url = self.account_url(tables_storage_account_name, "table")
@@ -1908,7 +1908,7 @@ class StorageTableEntityTest(AzureTestCase, TableTestCase):
         finally:
             self._tear_down()
 
-    @TablesPreparer()
+    @tables_decorator
     def test_sas_delete(self, tables_storage_account_name, tables_primary_storage_account_key):
         # SAS URL is calculated from storage key, so this test runs live only
         url = self.account_url(tables_storage_account_name, "table")
@@ -1939,7 +1939,7 @@ class StorageTableEntityTest(AzureTestCase, TableTestCase):
         finally:
             self._tear_down()
 
-    @TablesPreparer()
+    @tables_decorator
     def test_sas_upper_case_table_name(self, tables_storage_account_name, tables_primary_storage_account_key):
         # SAS URL is calculated from storage key, so this test runs live only
         url = self.account_url(tables_storage_account_name, "table")
@@ -1981,7 +1981,7 @@ class StorageTableEntityTest(AzureTestCase, TableTestCase):
         finally:
             self._tear_down()
 
-    @TablesPreparer()
+    @tables_decorator
     def test_sas_signed_identifier(self, tables_storage_account_name, tables_primary_storage_account_key):
         # SAS URL is calculated from storage key, so this test runs live only
         url = self.account_url(tables_storage_account_name, "table")
@@ -2021,7 +2021,7 @@ class StorageTableEntityTest(AzureTestCase, TableTestCase):
         finally:
             self._tear_down()
 
-    @TablesPreparer()
+    @tables_decorator
     def test_datetime_milliseconds(self, tables_storage_account_name, tables_primary_storage_account_key):
         self._set_up(tables_storage_account_name, tables_primary_storage_account_key)
         try:
@@ -2042,7 +2042,7 @@ class StorageTableEntityTest(AzureTestCase, TableTestCase):
             self._tear_down()
 
 
-    @TablesPreparer()
+    @tables_decorator
     def test_datetime_str_passthrough(self, tables_storage_account_name, tables_primary_storage_account_key):
         self._set_up(tables_storage_account_name, tables_primary_storage_account_key)
         partition, row = self._create_pk_rk(None, None)

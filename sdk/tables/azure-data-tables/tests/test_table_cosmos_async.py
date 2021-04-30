@@ -21,7 +21,7 @@ from azure.data.tables.aio import TableServiceClient
 
 from _shared.asynctestcase import AsyncTableTestCase
 from _shared.testcase import SLEEP_DELAY
-from preparers import CosmosPreparer
+from preparers import cosmos_decorator
 
 TEST_TABLE_PREFIX = 'pytableasync'
 
@@ -60,7 +60,7 @@ class TableTestAsync(AzureTestCase, AsyncTableTestCase):
             pass
 
     # --Test cases for tables --------------------------------------------------
-    @CosmosPreparer()
+    @cosmos_decorator
     async def test_create_table(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
         # Arrange
         ts = TableServiceClient(self.account_url(tables_cosmos_account_name, "cosmos"), tables_primary_cosmos_account_key)
@@ -77,7 +77,7 @@ class TableTestAsync(AzureTestCase, AsyncTableTestCase):
         if self.is_live:
             sleep(SLEEP_DELAY)
 
-    @CosmosPreparer()
+    @cosmos_decorator
     async def test_create_table_fail_on_exist(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
         # Arrange
         ts = TableServiceClient(self.account_url(tables_cosmos_account_name, "cosmos"), tables_primary_cosmos_account_key)
@@ -95,7 +95,7 @@ class TableTestAsync(AzureTestCase, AsyncTableTestCase):
         if self.is_live:
             sleep(SLEEP_DELAY)
 
-    @CosmosPreparer()
+    @cosmos_decorator
     async def test_query_tables_per_page(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
         # Arrange
         # account_url = self.account_url(tables_cosmos_account_name, "table")
@@ -128,7 +128,7 @@ class TableTestAsync(AzureTestCase, AsyncTableTestCase):
         if self.is_live:
             sleep(SLEEP_DELAY)
 
-    @CosmosPreparer()
+    @cosmos_decorator
     async def test_list_tables(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
         # Arrange
         ts = TableServiceClient(self.account_url(tables_cosmos_account_name, "cosmos"), tables_primary_cosmos_account_key)
@@ -147,7 +147,7 @@ class TableTestAsync(AzureTestCase, AsyncTableTestCase):
         if self.is_live:
             sleep(SLEEP_DELAY)
 
-    @CosmosPreparer()
+    @cosmos_decorator
     async def test_query_tables_with_filter(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
         # Arrange
         ts = TableServiceClient(self.account_url(tables_cosmos_account_name, "cosmos"), tables_primary_cosmos_account_key)
@@ -167,7 +167,7 @@ class TableTestAsync(AzureTestCase, AsyncTableTestCase):
         if self.is_live:
             sleep(SLEEP_DELAY)
 
-    @CosmosPreparer()
+    @cosmos_decorator
     async def test_list_tables_with_num_results(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
         # Arrange
         await self._delete_all_tables(tables_cosmos_account_name, tables_primary_cosmos_account_key)
@@ -196,7 +196,7 @@ class TableTestAsync(AzureTestCase, AsyncTableTestCase):
         # if self.is_live:
         #     sleep(SLEEP_DELAY)
 
-    @CosmosPreparer()
+    @cosmos_decorator
     async def test_list_tables_with_marker(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
         # Arrange
         ts = TableServiceClient(self.account_url(tables_cosmos_account_name, "cosmos"), tables_primary_cosmos_account_key)
@@ -231,7 +231,7 @@ class TableTestAsync(AzureTestCase, AsyncTableTestCase):
         if self.is_live:
             sleep(SLEEP_DELAY)
 
-    @CosmosPreparer()
+    @cosmos_decorator
     async def test_delete_table_with_existing_table(self, tables_cosmos_account_name,
                                                     tables_primary_cosmos_account_key):
         # Arrange
@@ -248,7 +248,7 @@ class TableTestAsync(AzureTestCase, AsyncTableTestCase):
         if self.is_live:
             sleep(SLEEP_DELAY)
 
-    @CosmosPreparer()
+    @cosmos_decorator
     async def test_delete_table_with_non_existing_table_fail_not_exist(self, tables_cosmos_account_name,
                                                                        tables_primary_cosmos_account_key):
         # Arrange

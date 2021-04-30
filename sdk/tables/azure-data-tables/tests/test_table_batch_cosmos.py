@@ -34,7 +34,7 @@ from azure.data.tables import (
 )
 
 from _shared.testcase import TableTestCase, SLEEP_DELAY
-from preparers import CosmosPreparer
+from preparers import cosmos_decorator
 
 #------------------------------------------------------------------------------
 TEST_TABLE_PREFIX = 'table'
@@ -169,7 +169,7 @@ class StorageTableClientTest(AzureTestCase, TableTestCase):
         assert length ==  len(transaction)
 
     @pytest.mark.skipif(sys.version_info < (3, 0), reason="requires Python3")
-    @CosmosPreparer()
+    @cosmos_decorator
     def test_batch_insert(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
         # Arrange
         self._set_up(tables_cosmos_account_name, tables_primary_cosmos_account_key)
@@ -199,7 +199,7 @@ class StorageTableClientTest(AzureTestCase, TableTestCase):
             self._tear_down()
 
     @pytest.mark.skipif(sys.version_info < (3, 0), reason="requires Python3")
-    @CosmosPreparer()
+    @cosmos_decorator
     def test_batch_update(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
         # Arrange
         self._set_up(tables_cosmos_account_name, tables_primary_cosmos_account_key)
@@ -234,7 +234,7 @@ class StorageTableClientTest(AzureTestCase, TableTestCase):
             self._tear_down()
 
     @pytest.mark.skipif(sys.version_info < (3, 0), reason="requires Python3")
-    @CosmosPreparer()
+    @cosmos_decorator
     def test_batch_merge(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
         # Arrange
         self._set_up(tables_cosmos_account_name, tables_primary_cosmos_account_key)
@@ -273,7 +273,7 @@ class StorageTableClientTest(AzureTestCase, TableTestCase):
             self._tear_down()
 
     @pytest.mark.skipif(sys.version_info < (3, 0), reason="requires Python3")
-    @CosmosPreparer()
+    @cosmos_decorator
     def test_batch_update_if_match(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
         # Arrange
         self._set_up(tables_cosmos_account_name, tables_primary_cosmos_account_key)
@@ -301,7 +301,7 @@ class StorageTableClientTest(AzureTestCase, TableTestCase):
             self._tear_down()
 
     @pytest.mark.skipif(sys.version_info < (3, 0), reason="requires Python3")
-    @CosmosPreparer()
+    @cosmos_decorator
     def test_batch_update_if_doesnt_match(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
         # Arrange
         self._set_up(tables_cosmos_account_name, tables_primary_cosmos_account_key)
@@ -327,7 +327,7 @@ class StorageTableClientTest(AzureTestCase, TableTestCase):
             self._tear_down()
 
     @pytest.mark.skipif(sys.version_info < (3, 0), reason="requires Python3")
-    @CosmosPreparer()
+    @cosmos_decorator
     def test_batch_insert_replace(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
         # Arrange
         self._set_up(tables_cosmos_account_name, tables_primary_cosmos_account_key)
@@ -357,7 +357,7 @@ class StorageTableClientTest(AzureTestCase, TableTestCase):
             self._tear_down()
 
     @pytest.mark.skipif(sys.version_info < (3, 0), reason="requires Python3")
-    @CosmosPreparer()
+    @cosmos_decorator
     def test_batch_insert_merge(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
         # Arrange
         self._set_up(tables_cosmos_account_name, tables_primary_cosmos_account_key)
@@ -387,7 +387,7 @@ class StorageTableClientTest(AzureTestCase, TableTestCase):
             self._tear_down()
 
     @pytest.mark.skipif(sys.version_info < (3, 0), reason="requires Python3")
-    @CosmosPreparer()
+    @cosmos_decorator
     def test_batch_delete(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
         # Arrange
         self._set_up(tables_cosmos_account_name, tables_primary_cosmos_account_key)
@@ -419,7 +419,7 @@ class StorageTableClientTest(AzureTestCase, TableTestCase):
             self._tear_down()
 
     @pytest.mark.skipif(sys.version_info < (3, 0), reason="requires Python3")
-    @CosmosPreparer()
+    @cosmos_decorator
     def test_batch_inserts(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
         # Arrange
         self._set_up(tables_cosmos_account_name, tables_primary_cosmos_account_key)
@@ -454,7 +454,7 @@ class StorageTableClientTest(AzureTestCase, TableTestCase):
             self._tear_down()
 
     @pytest.mark.skipif(sys.version_info < (3, 0), reason="requires Python3")
-    @CosmosPreparer()
+    @cosmos_decorator
     def test_batch_all_operations_together(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
         # Arrange
         self._set_up(tables_cosmos_account_name, tables_primary_cosmos_account_key)
@@ -523,7 +523,7 @@ class StorageTableClientTest(AzureTestCase, TableTestCase):
             self._tear_down()
 
     @pytest.mark.skipif(sys.version_info < (3, 0), reason="requires Python3")
-    @CosmosPreparer()
+    @cosmos_decorator
     def test_batch_different_partition_operations_fail(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
         # Arrange
         self._set_up(tables_cosmos_account_name, tables_primary_cosmos_account_key)
@@ -548,7 +548,7 @@ class StorageTableClientTest(AzureTestCase, TableTestCase):
             self._tear_down()
 
     @pytest.mark.skipif(sys.version_info < (3, 0), reason="requires Python3")
-    @CosmosPreparer()
+    @cosmos_decorator
     def test_new_non_existent_table(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
         # Arrange
         self._set_up(tables_cosmos_account_name, tables_primary_cosmos_account_key)
@@ -566,7 +566,7 @@ class StorageTableClientTest(AzureTestCase, TableTestCase):
             self._tear_down()
 
     @pytest.mark.skipif(sys.version_info < (3, 0), reason="requires Python3")
-    @CosmosPreparer()
+    @cosmos_decorator
     def test_new_delete_nonexistent_entity(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
         # Arrange
         self._set_up(tables_cosmos_account_name, tables_primary_cosmos_account_key)
@@ -582,7 +582,7 @@ class StorageTableClientTest(AzureTestCase, TableTestCase):
 
     @pytest.mark.skipif(sys.version_info < (3, 0), reason="requires Python3")
     @pytest.mark.live_test_only  # Request bodies are very large
-    @CosmosPreparer()
+    @cosmos_decorator
     def test_batch_request_too_large(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
         # Arrange
         self._set_up(tables_cosmos_account_name, tables_primary_cosmos_account_key)

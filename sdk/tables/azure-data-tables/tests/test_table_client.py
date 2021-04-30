@@ -16,7 +16,7 @@ from _shared.testcase import (
     TableTestCase
 )
 
-from preparers import TablesPreparer
+from preparers import tables_decorator
 
 # ------------------------------------------------------------------------------
 
@@ -31,7 +31,7 @@ _CONNECTION_ENDPOINTS_SECONDARY = {'table': 'TableSecondaryEndpoint', 'cosmos': 
 
 class TestTableClient(AzureTestCase, TableTestCase):
 
-    @TablesPreparer()
+    @tables_decorator
     def test_user_agent_custom(self, tables_storage_account_name, tables_primary_storage_account_key):
         custom_app = "TestApp/v1.0"
         service = TableServiceClient(
@@ -67,7 +67,7 @@ class TestTableClient(AzureTestCase, TableTestCase):
         for table in tables:
             count += 1
 
-    @TablesPreparer()
+    @tables_decorator
     def test_user_agent_append(self, tables_storage_account_name, tables_primary_storage_account_key):
         service = TableServiceClient(self.account_url(tables_storage_account_name, "table"), credential=tables_primary_storage_account_key)
 
@@ -83,7 +83,7 @@ class TestTableClient(AzureTestCase, TableTestCase):
         for table in tables:
             count += 1
 
-    @TablesPreparer()
+    @tables_decorator
     def test_user_agent_default(self, tables_storage_account_name, tables_primary_storage_account_key):
         service = TableServiceClient(self.account_url(tables_storage_account_name, "table"), credential=tables_primary_storage_account_key)
 
@@ -214,7 +214,7 @@ class TestTableUnitTests(TableTestCase):
             self.validate_standard_account_endpoints(service, self.tables_storage_account_name, self.tables_primary_storage_account_key)
             assert service._client._client._pipeline._transport.connection_config.timeout == 22
             assert default_service._client._client._pipeline._transport.connection_config.timeout == 300
-        
+
         # Assert Parent transport is shared with child client
         service = TableServiceClient(
             self.account_url(self.tables_storage_account_name, "table"),
@@ -223,7 +223,7 @@ class TestTableUnitTests(TableTestCase):
         assert service._client._client._pipeline._transport.connection_config.timeout == 22
         table = service.get_table_client('tablename')
         assert table._client._client._pipeline._transport._transport.connection_config.timeout == 22
-        
+
 
 
     # --Connection String Test Cases --------------------------------------------

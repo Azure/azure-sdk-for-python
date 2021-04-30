@@ -7,7 +7,7 @@
 from typing import Any, List, Mapping
 from uuid import uuid4
 
-from azure.core.credentials import AzureSasCredential
+from azure.core.credentials import AzureSasCredential, AzureNamedKeyCredential
 from azure.core.pipeline.policies import (
     ContentDecodePolicy,
     AsyncBearerTokenCredentialPolicy,
@@ -19,7 +19,7 @@ from azure.core.pipeline.policies import (
     AzureSasCredentialPolicy,
     RequestIdPolicy,
     CustomHookPolicy,
-    NetworkTraceLoggingPolicy
+    NetworkTraceLoggingPolicy,
 )
 from azure.core.pipeline.transport import (
     AsyncHttpTransport,
@@ -77,6 +77,8 @@ class AsyncTablesBaseClient(AccountHostsMixin):
             self._credential_policy = credential
         elif isinstance(credential, AzureSasCredential):
             self._credential_policy = AzureSasCredentialPolicy(credential)
+        elif isinstance(credential, AzureNamedKeyCredential):
+            self._credential_policy = SharedKeyCredentialPolicy(credential)
         elif credential is not None:
             raise TypeError("Unsupported credential: {}".format(credential))
 

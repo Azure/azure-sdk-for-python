@@ -32,13 +32,13 @@ class SharedAccessSignature(object):
         """
         :param str account_name:
             The storage account name used to generate the shared access signatures.
-        :param str account_key:
+        :param AzureNamedKeyCredential account_key:
             The access key to generate the shares access signatures.
         :param str x_ms_version:
             The service version used to generate the shared access signatures.
         """
         self.account_name = account_name
-        self.account_key = account_key
+        self.account_key = account_key.named_key.key
         self.x_ms_version = x_ms_version
 
     def generate_account(

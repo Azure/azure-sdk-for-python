@@ -14,7 +14,7 @@ from azure.data.tables import __version__ as VERSION
 
 from _shared.asynctestcase import AsyncTableTestCase
 from _shared.testcase import SLEEP_DELAY
-from preparers import CosmosPreparer
+from preparers import cosmos_decorator
 from devtools_testutils import AzureTestCase
 
 # ------------------------------------------------------------------------------
@@ -30,7 +30,7 @@ _CONNECTION_ENDPOINTS_SECONDARY = {'table': 'TableSecondaryEndpoint', 'cosmos': 
 
 class TestTableClient(AzureTestCase, AsyncTableTestCase):
 
-    @CosmosPreparer()
+    @cosmos_decorator
     async def test_user_agent_default_async(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
         service = TableServiceClient(self.account_url(tables_cosmos_account_name, "cosmos"), credential=tables_primary_cosmos_account_key)
 
@@ -52,7 +52,7 @@ class TestTableClient(AzureTestCase, AsyncTableTestCase):
         if self.is_live:
             sleep(SLEEP_DELAY)
 
-    @CosmosPreparer()
+    @cosmos_decorator
     async def test_user_agent_custom_async(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
         custom_app = "TestApp/v1.0"
         service = TableServiceClient(
@@ -88,7 +88,7 @@ class TestTableClient(AzureTestCase, AsyncTableTestCase):
         if self.is_live:
             sleep(SLEEP_DELAY)
 
-    @CosmosPreparer()
+    @cosmos_decorator
     async def test_user_agent_append(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
         service = TableServiceClient(self.account_url(tables_cosmos_account_name, "cosmos"), credential=tables_primary_cosmos_account_key)
 
