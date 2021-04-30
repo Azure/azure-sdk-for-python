@@ -29,7 +29,7 @@ from _shared.testcase import (
     RetryCounter
 )
 
-from preparers import tables_decorator_async
+from async_preparers import tables_decorator_async
 
 
 class RetryAioHttpTransport(AioHttpTransport):

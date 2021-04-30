@@ -15,7 +15,7 @@ from azure.data.tables import __version__ as VERSION
 
 from _shared.asynctestcase import AsyncTableTestCase
 from _shared.testcase import SLEEP_DELAY
-from preparers import cosmos_decorator_async
+from async_preparers import cosmos_decorator_async
 from devtools_testutils import AzureTestCase
 
 # ------------------------------------------------------------------------------

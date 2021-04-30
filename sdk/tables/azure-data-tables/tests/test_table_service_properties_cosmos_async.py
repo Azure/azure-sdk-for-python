@@ -16,7 +16,7 @@ from azure.core.exceptions import HttpResponseError
 
 from _shared.testcase import SLEEP_DELAY
 from _shared.asynctestcase import AsyncTableTestCase
-from preparers import cosmos_decorator_async
+from async_preparers import cosmos_decorator_async
 # ------------------------------------------------------------------------------
 
 class TableServicePropertiesTest(AzureTestCase, AsyncTableTestCase):

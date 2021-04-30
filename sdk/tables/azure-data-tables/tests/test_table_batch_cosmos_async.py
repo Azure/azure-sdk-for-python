@@ -36,7 +36,7 @@ from azure.data.tables.aio import TableServiceClient
 
 from _shared.testcase import SLEEP_DELAY
 from _shared.asynctestcase import AsyncTableTestCase
-from preparers import cosmos_decorator_async
+from async_preparers import cosmos_decorator_async
 
 #------------------------------------------------------------------------------
 TEST_TABLE_PREFIX = 'table'

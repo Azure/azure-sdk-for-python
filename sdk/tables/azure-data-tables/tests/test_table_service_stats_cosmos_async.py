@@ -11,7 +11,7 @@ from azure.data.tables.aio import TableServiceClient
 
 from _shared.asynctestcase import AsyncTableTestCase
 from _shared.testcase import SLEEP_DELAY
-from preparers import cosmos_decorator_async
+from async_preparers import cosmos_decorator_async
 
 SERVICE_UNAVAILABLE_RESP_BODY = '<?xml version="1.0" encoding="utf-8"?><StorageServiceStats><GeoReplication><Status' \
                                 '>unavailable</Status><LastSyncTime></LastSyncTime></GeoReplication' \

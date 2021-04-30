@@ -37,7 +37,7 @@ from azure.core.exceptions import (
 
 from _shared.asynctestcase import AsyncTableTestCase
 from _shared.testcase import SLEEP_DELAY
-from preparers import cosmos_decorator_async
+from async_preparers import cosmos_decorator_async
 # ------------------------------------------------------------------------------
 # TODO: change to `with table_client as client:` to close sessions
 # ------------------------------------------------------------------------------

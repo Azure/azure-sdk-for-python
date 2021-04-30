@@ -16,7 +16,7 @@ from azure.data.tables import TableAnalyticsLogging, Metrics, RetentionPolicy, C
 from azure.data.tables.aio import TableServiceClient
 
 from _shared.testcase import TableTestCase
-from preparers import tables_decorator_async
+from async_preparers import tables_decorator_async
 
 # ------------------------------------------------------------------------------
 

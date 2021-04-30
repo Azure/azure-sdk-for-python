@@ -5,7 +5,7 @@
 # --------------------------------------------------------------------------
 
 import logging
-from typing import Union, Awaitable
+from typing import TYPE_CHECKING
 
 try:
     from urllib.parse import urlparse
@@ -32,6 +32,9 @@ from ._common_conversion import (
 from ._error import (
     _wrap_exception,
 )
+
+if TYPE_CHECKING:
+    from typing import Union, Awaitable
 
 logger = logging.getLogger(__name__)
 

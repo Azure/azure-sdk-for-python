@@ -20,7 +20,7 @@ from azure.data.tables import (
 from azure.data.tables.aio import TableServiceClient, TableClient
 
 from _shared.asynctestcase import AsyncTableTestCase
-from preparers import tables_decorator_async
+from async_preparers import tables_decorator_async
 
 TEST_TABLE_PREFIX = 'pytableasync'
 
