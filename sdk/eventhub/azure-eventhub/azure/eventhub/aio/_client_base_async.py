@@ -94,7 +94,7 @@ class AzureNamedKeyTokenCredentialAsync(object):
         self.credential = credential
         self.token_type = b"servicebus.windows.net:sastoken"
 
-    async def get_token(self, *scopes: str, **kwargs: Any) -> AccessToken:  # pylint:disable=unused-argument
+    async def get_token(self, *scopes, **kwargs):  # pylint:disable=unused-argument
         if not scopes:
             raise ValueError("No token scope provided.")
         name, key = self.credential.named_key
