@@ -26,6 +26,7 @@ class AsyncDocumentTranslationTest(DocumentTranslationTest):
     async def _create_and_submit_sample_translation_jobs_async(self, async_client, jobs_count, **kwargs):
         wait_for_job = kwargs.pop('wait', True)
         language_code = kwargs.pop('language_code', "es")
+        docs_per_job = kwargs.pop('docs_per_job', 2)
         result_job_ids = []
         for i in range(jobs_count):
             # prepare containers and test data
@@ -35,8 +36,8 @@ class AsyncDocumentTranslationTest(DocumentTranslationTest):
                 we can use sync container calls in here
                 no need for async container clients!
             '''
-            blob_data = b'This is some text'  
-            source_container_sas_url = self.create_source_container(data=Document(data=blob_data))
+            blob_data = Document.create_dummy_docs(docs_per_job)
+            source_container_sas_url = self.create_source_container(data=blob_data)
             target_container_sas_url = self.create_target_container()
 
             # prepare translation inputs

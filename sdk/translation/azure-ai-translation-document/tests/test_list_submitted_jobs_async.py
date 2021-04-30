@@ -21,11 +21,10 @@ class TestSubmittedJobs(AsyncDocumentTranslationTest):
     @DocumentTranslationPreparer()
     @DocumentTranslationClientPreparer()
     async def test_list_submitted_jobs(self, client):
-        # prepare data
-        jobs_count = 3
-
         # create some jobs
-        job_ids = await self._create_and_submit_sample_translation_jobs_async(client, jobs_count)
+        jobs_count = 5
+        docs_per_job = 5
+        self._create_and_submit_sample_translation_jobs_async(client, jobs_count, docs_per_job=docs_per_job, wait=False)
 
         # list jobs
         submitted_jobs = client.list_submitted_jobs()
@@ -33,37 +32,30 @@ class TestSubmittedJobs(AsyncDocumentTranslationTest):
 
         # check statuses
         async for job in submitted_jobs:
-            if job.id in job_ids:
-                self._validate_translation_job(job, status="Succeeded", total=TOTAL_DOC_COUNT_IN_JOB, succeeded=TOTAL_DOC_COUNT_IN_JOB)
-            else:
-                self._validate_translation_job(job)
+            self._validate_translation_job(job)
 
 
-    @pytest.mark.skip(reason="no way of currently testing this")
     @DocumentTranslationPreparer()
     @DocumentTranslationClientPreparer()
     async def test_list_submitted_jobs_with_pagination(self, client):
         # prepare data
-        jobs_count = 6
+        jobs_count = 5
+        docs_per_job = 2
         results_per_page = 2
-        no_of_pages = jobs_count // results_per_page
 
         # create some jobs
-        job_ids = await self._create_and_submit_sample_translation_jobs_async(client, jobs_count)
+        self._create_and_submit_sample_translation_jobs_async(client, jobs_count, docs_per_job=docs_per_job, wait=False)
 
         # list jobs
         submitted_jobs_pages = client.list_submitted_jobs(results_per_page=results_per_page).by_page()
+        self.assertIsNotNone(submitted_jobs_pages)
 
         # iterate by page
         async for page in submitted_jobs_pages:
             page_jobs = []
-
             async for job in page:
                 page_jobs.append(job)
-                if job.id in job_ids:
-                    self._validate_translation_job(job, status="Succeeded", total=TOTAL_DOC_COUNT_IN_JOB, succeeded=TOTAL_DOC_COUNT_IN_JOB)
-                else:
-                    self._validate_translation_job(job)
+                self._validate_translation_job(job)
 
             self.assertEqual(len(page_jobs), results_per_page)
 
