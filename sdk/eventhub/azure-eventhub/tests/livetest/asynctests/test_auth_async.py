@@ -138,7 +138,7 @@ class AsyncEventHubAuthTests(AzureMgmtTestCase):
     @pytest.mark.asyncio
     async def test_client_azure_named_key_credential_async(live_eventhub):
 
-        hostname = "{}.servicebus.windows.net".format(eventhub_namespace.name)
+        credential = AzureNamedKeyCredential(live_eventhub['key_name'], live_eventhub['access_key'])
         consumer_client = EventHubConsumerClient(fully_qualified_namespace=live_eventhub['hostname'],
                                                 eventhub_name=live_eventhub['event_hub'],
                                                 consumer_group='$default',
