@@ -17,9 +17,8 @@ DESCRIPTION:
     https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/formrecognizer/azure-ai-formrecognizer/samples/sample_forms/labeled_tables
 
     Note that Form Recognizer automatically finds and extracts all tables in your documents whether the tables
-    are tagged/labeled or not. Therefore, you don't have to label every table from your form with a table tag and your
-    table tags don't have to replicate the structure of every table found in your form. Tables extracted
-    automatically by Form Recognizer will be included in the `tables` property under `RecognizedForm.pages`.
+    are tagged/labeled or not. Tables extracted automatically by Form Recognizer will be included in the
+    `tables` property under `RecognizedForm.pages`.
 
     A conceptual explanation of using table tags to train your custom form model can be found in the
     service documentation: https://docs.microsoft.com/azure/cognitive-services/form-recognizer/supervised-table-tags
