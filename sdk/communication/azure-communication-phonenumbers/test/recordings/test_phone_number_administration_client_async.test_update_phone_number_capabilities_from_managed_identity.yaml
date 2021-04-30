@@ -11,28 +11,28 @@ interactions:
   response:
     body:
       string: '{"id": "sanitized", "phoneNumber": "sanitized", "countryCode": "US",
-        "phoneNumberType": "tollFree", "capabilities": {"calling": "inbound", "sms":
-        "inbound+outbound"}, "assignmentType": "application", "purchaseDate": "2000-01-01T00:00:00+00:00",
+        "phoneNumberType": "tollFree", "capabilities": {"calling": "outbound", "sms":
+        "outbound"}, "assignmentType": "application", "purchaseDate": "2000-01-01T00:00:00+00:00",
         "cost": {"amount": 2.0, "currencyCode": "USD", "billingFrequency": "monthly"}}'
     headers:
       api-supported-versions: '2021-03-07'
       content-type: application/json; charset=utf-8
-      date: Wed, 28 Apr 2021 16:46:14 GMT
-      ms-cv: /MHcYD3c50eydF0onlLNaw.0
+      date: Fri, 30 Apr 2021 16:18:15 GMT
+      ms-cv: b8QShH17K0OPkuuUcD83tg.0
       request-context: appId=
       transfer-encoding: chunked
-      x-processing-time: 1162ms
+      x-processing-time: 2201ms
     status:
       code: 200
       message: OK
     url: sanitized
 - request:
-    body: '{"calling": "outbound", "sms": "outbound"}'
+    body: '{"calling": "inbound", "sms": "inbound+outbound"}'
     headers:
       Accept:
       - application/json
       Content-Length:
-      - '42'
+      - '49'
       Content-Type:
       - application/merge-patch+json
       User-Agent:
@@ -41,19 +41,19 @@ interactions:
     uri: https://sanitized.communication.azure.com/phoneNumbers/sanitized/capabilities?api-version=2021-03-07
   response:
     body:
-      string: '{"capabilitiesUpdateId": "968ff85e-a8a6-475d-853a-f311db7ef9ce"}'
+      string: '{"capabilitiesUpdateId": "d673295d-7927-4c56-8912-3b8a7517c3dd"}'
     headers:
       access-control-expose-headers: Operation-Location,Location,operation-id,capabilities-id
       api-supported-versions: '2021-03-07'
-      capabilities-id: 968ff85e-a8a6-475d-853a-f311db7ef9ce
+      capabilities-id: d673295d-7927-4c56-8912-3b8a7517c3dd
       content-type: application/json; charset=utf-8
-      date: Wed, 28 Apr 2021 16:46:16 GMT
-      ms-cv: PJ7DpPO+hEavcOmRpbC6/g.0
-      operation-id: capabilities_968ff85e-a8a6-475d-853a-f311db7ef9ce
-      operation-location: /phoneNumbers/operations/capabilities_968ff85e-a8a6-475d-853a-f311db7ef9ce?api-version=2021-03-07
+      date: Fri, 30 Apr 2021 16:18:17 GMT
+      ms-cv: EglfUu8sgke3lTBhJ92ynw.0
+      operation-id: capabilities_d673295d-7927-4c56-8912-3b8a7517c3dd
+      operation-location: /phoneNumbers/operations/capabilities_d673295d-7927-4c56-8912-3b8a7517c3dd?api-version=2021-03-07
       request-context: appId=
       transfer-encoding: chunked
-      x-processing-time: 1607ms
+      x-processing-time: 1806ms
     status:
       code: 202
       message: Accepted
@@ -64,21 +64,21 @@ interactions:
       User-Agent:
       - azsdk-python-communication-phonenumbers/1.0.1 Python/3.8.5 (Windows-10-10.0.19041-SP0)
     method: GET
-    uri: https://sanitized.communication.azure.com/phoneNumbers/operations/capabilities_968ff85e-a8a6-475d-853a-f311db7ef9ce?api-version=2021-03-07
+    uri: https://sanitized.communication.azure.com/phoneNumbers/operations/capabilities_d673295d-7927-4c56-8912-3b8a7517c3dd?api-version=2021-03-07
   response:
     body:
       string: '{"status": "succeeded", "resourceLocation": "/phoneNumbers/+18335260208?api-version=2021-03-07",
-        "createdDateTime": "2021-04-28T16:46:16.8085663+00:00", "id": "sanitized",
+        "createdDateTime": "2021-04-30T16:18:17.4753288+00:00", "id": "sanitized",
         "operationType": "updatePhoneNumberCapabilities", "lastActionDateTime": "0001-01-01T00:00:00+00:00"}'
     headers:
       access-control-expose-headers: Location
       api-supported-versions: '2021-03-07'
       content-type: application/json; charset=utf-8
-      date: Wed, 28 Apr 2021 16:46:47 GMT
-      ms-cv: ZgD3NPNh10KkcpsRcGKrzA.0
+      date: Fri, 30 Apr 2021 16:18:48 GMT
+      ms-cv: VnwNJZRFBUimJlcQEKl/2Q.0
       request-context: appId=
       transfer-encoding: chunked
-      x-processing-time: 559ms
+      x-processing-time: 664ms
     status:
       code: 200
       message: OK
@@ -93,17 +93,17 @@ interactions:
   response:
     body:
       string: '{"id": "sanitized", "phoneNumber": "sanitized", "countryCode": "US",
-        "phoneNumberType": "tollFree", "capabilities": {"calling": "outbound", "sms":
-        "outbound"}, "assignmentType": "application", "purchaseDate": "2000-01-01T00:00:00+00:00",
+        "phoneNumberType": "tollFree", "capabilities": {"calling": "inbound", "sms":
+        "inbound+outbound"}, "assignmentType": "application", "purchaseDate": "2000-01-01T00:00:00+00:00",
         "cost": {"amount": 2.0, "currencyCode": "USD", "billingFrequency": "monthly"}}'
     headers:
       api-supported-versions: '2021-03-07'
       content-type: application/json; charset=utf-8
-      date: Wed, 28 Apr 2021 16:46:49 GMT
-      ms-cv: KTxsc3fmJ0Go8QDrR0nJjg.0
+      date: Fri, 30 Apr 2021 16:18:53 GMT
+      ms-cv: INpASdJbFkiAzoUK/fLPgA.0
       request-context: appId=
       transfer-encoding: chunked
-      x-processing-time: 1808ms
+      x-processing-time: 4863ms
     status:
       code: 200
       message: OK

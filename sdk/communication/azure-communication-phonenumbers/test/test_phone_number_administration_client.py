@@ -122,9 +122,7 @@ class PhoneNumbersClientTest(CommunicationTestCase):
             calling_capabilities,
             polling = True
         )
-        updated_phone_number = poller.result()
-        assert updated_phone_number.capabilities.calling == calling_capabilities
-        assert updated_phone_number.capabilities.sms == sms_capabilities
+        assert poller.result()
         assert poller.status() == PhoneNumberOperationStatus.SUCCEEDED.value
 
     def test_update_phone_number_capabilities(self):
@@ -137,9 +135,7 @@ class PhoneNumbersClientTest(CommunicationTestCase):
             calling_capabilities,
             polling = True
         )
-        updated_phone_number = poller.result()
-        assert updated_phone_number.capabilities.calling == calling_capabilities
-        assert updated_phone_number.capabilities.sms == sms_capabilities
+        assert poller.result()
         assert poller.status() == PhoneNumberOperationStatus.SUCCEEDED.value
 
     @pytest.mark.skipif(SKIP_PURCHASE_PHONE_NUMBER_TESTS, reason=PURCHASE_PHONE_NUMBER_TEST_SKIP_REASON)

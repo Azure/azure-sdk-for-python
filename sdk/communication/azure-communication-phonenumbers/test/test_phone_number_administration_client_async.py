@@ -136,9 +136,8 @@ class PhoneNumbersClientTestAsync(AsyncCommunicationTestCase):
                 calling_capabilities,
                 polling = True
             )
-            updated_phone_number = await poller.result()
-            assert updated_phone_number.capabilities.calling == calling_capabilities
-            assert updated_phone_number.capabilities.sms == sms_capabilities
+            assert await poller.result()
+            assert poller.status() == PhoneNumberOperationStatus.SUCCEEDED.value
 
     @AsyncCommunicationTestCase.await_prepared_test
     async def test_update_phone_number_capabilities_from_managed_identity(self):
@@ -159,9 +158,8 @@ class PhoneNumbersClientTestAsync(AsyncCommunicationTestCase):
                 calling_capabilities,
                 polling = True
             )
-            updated_phone_number = await poller.result()
-            assert updated_phone_number.capabilities.calling == calling_capabilities
-            assert updated_phone_number.capabilities.sms == sms_capabilities
+            assert await poller.result()
+            assert poller.status() == PhoneNumberOperationStatus.SUCCEEDED.value
 
     @pytest.mark.skipif(SKIP_PURCHASE_PHONE_NUMBER_TESTS, reason=PURCHASE_PHONE_NUMBER_TEST_SKIP_REASON)
     @AsyncCommunicationTestCase.await_prepared_test
