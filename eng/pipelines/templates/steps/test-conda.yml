@@ -59,7 +59,7 @@ steps:
 
   - ${{ each artifact in parameters.CondaArtifacts }}:
     - script: |
-        echo "conda env create --name ${{ artifact.name }} python=$(PythonVersion) --file $(Build.SourcesDirectory)/eng/conda_env.yml"
+        echo "conda create --name ${{ artifact.name }} python=$(PythonVersion) --yes"
         conda create --name ${{ artifact.name }} python=$(PythonVersion) --yes
         conda install --name ${{ artifact.name }} --yes --quiet conda-build
         $(activate.method) activate ${{ artifact.name }}
