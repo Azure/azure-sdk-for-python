@@ -9,12 +9,14 @@ import functools
 from testcase import DocumentTranslationTest
 from preparer import DocumentTranslationPreparer, DocumentTranslationClientPreparer as _DocumentTranslationClientPreparer
 from azure.ai.translation.document import DocumentTranslationClient
+import pytest
 
 DocumentTranslationClientPreparer = functools.partial(_DocumentTranslationClientPreparer, DocumentTranslationClient)
 
 
 class TestAllDocumentStatuses(DocumentTranslationTest):
 
+    @pytest.mark.skip(reason="pending")
     @DocumentTranslationPreparer()
     @DocumentTranslationClientPreparer()
     def test_list_document_statuses(self, client):
@@ -32,6 +34,7 @@ class TestAllDocumentStatuses(DocumentTranslationTest):
             self._validate_doc_status(document, target_language)
 
 
+    @pytest.mark.skip(reason="pending")
     @DocumentTranslationPreparer()
     @DocumentTranslationClientPreparer()
     def test_list_document_statuses_with_pagination(self, client):
@@ -55,6 +58,7 @@ class TestAllDocumentStatuses(DocumentTranslationTest):
                 self._validate_doc_status(document, target_language)
 
 
+    @pytest.mark.skip(reason="pending")
     @DocumentTranslationPreparer()
     @DocumentTranslationClientPreparer()
     def test_list_document_statuses_with_skip(self, client):
@@ -74,6 +78,7 @@ class TestAllDocumentStatuses(DocumentTranslationTest):
             self._validate_doc_status(document, target_language)
 
 
+    @pytest.mark.skip(reason="pending")
     @DocumentTranslationPreparer()
     @DocumentTranslationClientPreparer()
     def test_list_document_statuses_filter_by_status(self, client):
@@ -93,6 +98,7 @@ class TestAllDocumentStatuses(DocumentTranslationTest):
             self._validate_doc_status(document, target_language, status=statuses)
 
 
+    @pytest.mark.skip(reason="pending")
     @DocumentTranslationPreparer()
     @DocumentTranslationClientPreparer()
     def test_list_document_statuses_filter_by_ids(self, client):
@@ -115,6 +121,7 @@ class TestAllDocumentStatuses(DocumentTranslationTest):
             self._validate_doc_status(document, target_language, ids=ids)
 
 
+    @pytest.mark.skip(reason="pending")
     @DocumentTranslationPreparer()
     @DocumentTranslationClientPreparer()
     def test_list_document_statuses_order_by_creation_time_asc(self, client):
@@ -134,6 +141,7 @@ class TestAllDocumentStatuses(DocumentTranslationTest):
             curr = document.created_on
 
 
+    @pytest.mark.skip(reason="pending")
     @DocumentTranslationPreparer()
     @DocumentTranslationClientPreparer()
     def test_list_document_statuses_order_by_creation_time_desc(self, client):
@@ -153,6 +161,7 @@ class TestAllDocumentStatuses(DocumentTranslationTest):
             curr = document.created_on
 
 
+    @pytest.mark.skip(reason="pending")
     @DocumentTranslationPreparer()
     @DocumentTranslationClientPreparer()
     def test_list_document_statuses_mixed_filters(self, client):
