@@ -4,7 +4,7 @@
 
 **Breaking Changes**
 
-- Renaming
+- Renamed
     - AzureApplicationInsightsDataFeed -> AzureApplicationInsightsDataFeedSource
     - AzureBlobDataFeed -> AzureBlobDataFeedSource
     - AzureCosmosDBDataFeed -> AzureCosmosDBDataFeedSource
