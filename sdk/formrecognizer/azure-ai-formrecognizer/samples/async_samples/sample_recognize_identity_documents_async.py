@@ -7,16 +7,16 @@
 # --------------------------------------------------------------------------
 
 """
-FILE: sample_recognize_id_documents_async.py
+FILE: sample_recognize_identity_documents_async.py
 
 DESCRIPTION:
     This sample demonstrates how to recognize fields from an identity document.
 
-    See fields found on an ID document here:
+    See fields found on an identity document here:
     https://aka.ms/formrecognizer/iddocumentfields
 
 USAGE:
-    python sample_recognize_id_documents_async.py
+    python sample_recognize_identity_documents_async.py
 
     Set the environment variables with your own values before running the sample:
     1) AZURE_FORM_RECOGNIZER_ENDPOINT - the endpoint to your Cognitive Services resource.
@@ -29,11 +29,11 @@ import asyncio
 
 class RecognizeIdDocumentsSampleAsync(object):
 
-    async def recognize_id_documents(self):
+    async def recognize_identity_documents(self):
         path_to_sample_forms = os.path.abspath(os.path.join(os.path.abspath(__file__),
                                                             "..", "./../sample_forms/id_documents/license.jpg"))
 
-        # [START recognize_id_documents]
+        # [START recognize_identity_documents]
         from azure.core.credentials import AzureKeyCredential
         from azure.ai.formrecognizer.aio import FormRecognizerClient
 
@@ -45,7 +45,7 @@ class RecognizeIdDocumentsSampleAsync(object):
         ) as form_recognizer_client:
             
             with open(path_to_sample_forms, "rb") as f:
-                poller = await form_recognizer_client.begin_recognize_id_documents(id_document=f)
+                poller = await form_recognizer_client.begin_recognize_identity_documents(id_document=f)
             
             id_documents = await poller.result()
 
@@ -78,11 +78,11 @@ class RecognizeIdDocumentsSampleAsync(object):
                 region = id_document.fields.get("Region")
                 if region:
                     print("Region: {} has confidence: {}".format(region.value, region.confidence))
-        # [END recognize_id_documents]
+        # [END recognize_identity_documents]
 
 async def main():
     sample = RecognizeIdDocumentsSampleAsync()
-    await sample.recognize_id_documents()
+    await sample.recognize_identity_documents()
 
 if __name__ == '__main__':
     loop = asyncio.get_event_loop()

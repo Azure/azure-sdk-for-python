@@ -9,7 +9,7 @@ from form documents. It includes the following main functionalities:
     * Receipt model - Recognize data from sales receipts using a prebuilt model.
     * Business card model - Recognize data from business cards using a prebuilt model.
     * Invoice model - Recognize data from invoices using a prebuilt model.
-    * ID document model - Recognize data from ID documents using a prebuilt model.
+    * Identity document model - Recognize data from identity documents using a prebuilt model.
 
 [Source code][python-fr-src] | [Package (PyPI)][python-fr-pypi] | [API reference documentation][python-fr-ref-docs]| [Product documentation][python-fr-product-docs] | [Samples][python-fr-samples]
 
@@ -139,7 +139,7 @@ form_recognizer_client = FormRecognizerClient(
     - Sales receipts. See fields found on a receipt [here][service_recognize_receipt].
     - Business cards. See fields found on a business card [here][service_recognize_business_cards].
     - Invoices. See fields found on an invoice [here][service_recognize_invoice].
-    - ID documents. See fields found on an ID document [here][service_recognize_id_documents].
+    - Identity documents. See fields found on identity documents [here][service_recognize_identity_documents].
  - Recognizing form content, including tables, lines, words, and selection marks, without the need to train a model. Form content is returned in a collection of `FormPage` objects.
 
 Sample code snippets are provided to illustrate using a FormRecognizerClient [here](#recognize-forms-using-a-custom-model "Recognize Forms Using a Custom Model").
@@ -293,7 +293,7 @@ You are not limited to receipts! There are a few prebuilt models to choose from,
 - Analyze receipts through the `begin_recognize_receipts` method (fields recognized by the service can be found [here][service_recognize_receipt])
 - Analyze business cards through the `begin_recognize_business_cards` method (fields recognized by the service can be found [here][service_recognize_business_cards]).
 - Analyze invoices through the `begin_recognize_invoices` method (fields recognized by the service can be found [here][service_recognize_invoice]).
-- Analyze identity documents through the `begin_recognize_id_documents` method (fields recognized by the service can be found [here][service_recognize_id_documents]).
+- Analyze identity documents through the `begin_recognize_identity_documents` method (fields recognized by the service can be found [here][service_recognize_identity_documents]).
 
 
 ### Train a model
@@ -427,7 +427,7 @@ These code samples show common scenario operations with the Azure Form Recognize
 * Recognize receipts from a URL: [sample_recognize_receipts_from_url.py][sample_recognize_receipts_from_url]
 * Recognize business cards: [sample_recognize_business_cards.py][sample_recognize_business_cards]
 * Recognize invoices: [sample_recognize_invoices.py][sample_recognize_invoices]
-* Recognize ID documents: [sample_recognize_id_documents.py][sample_recognize_id_documents]
+* Recognize identity documents: [sample_recognize_identity_documents.py][sample_recognize_identity_documents]
 * Recognize content: [sample_recognize_content.py][sample_recognize_content]
 * Recognize custom forms: [sample_recognize_custom_forms.py][sample_recognize_custom_forms]
 * Train a model without labels: [sample_train_model_without_labels.py][sample_train_model_without_labels]
@@ -446,7 +446,7 @@ are found under the `azure.ai.formrecognizer.aio` namespace.
 * Recognize receipts from a URL: [sample_recognize_receipts_from_url_async.py][sample_recognize_receipts_from_url_async]
 * Recognize business cards: [sample_recognize_business_cards_async.py][sample_recognize_business_cards_async]
 * Recognize invoices: [sample_recognize_invoices_async.py][sample_recognize_invoices_async]
-* Recognize ID documents: [sample_recognize_id_documents_async.py][sample_recognize_id_documents_async]
+* Recognize identity documents: [sample_recognize_identity_documents_async.py][sample_recognize_identity_documents_async]
 * Recognize content: [sample_recognize_content_async.py][sample_recognize_content_async]
 * Recognize custom forms: [sample_recognize_custom_forms_async.py][sample_recognize_custom_forms_async]
 * Train a model without labels: [sample_train_model_without_labels_async.py][sample_train_model_without_labels_async]
@@ -502,7 +502,7 @@ This project has adopted the [Microsoft Open Source Code of Conduct][code_of_con
 [service_recognize_receipt]: https://aka.ms/formrecognizer/receiptfields
 [service_recognize_business_cards]: https://aka.ms/formrecognizer/businesscardfields
 [service_recognize_invoice]: https://aka.ms/formrecognizer/invoicefields
-[service_recognize_id_documents]: https://aka.ms/formrecognizer/iddocumentfields
+[service_recognize_identity_documents]: https://aka.ms/formrecognizer/iddocumentfields
 [sdk_logging_docs]: https://docs.microsoft.com/azure/developer/python/azure-sdk-logging
 
 [cla]: https://cla.microsoft.com
@@ -526,8 +526,8 @@ This project has adopted the [Microsoft Open Source Code of Conduct][code_of_con
 [sample_recognize_business_cards_async]: https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/formrecognizer/azure-ai-formrecognizer/samples/async_samples/sample_recognize_business_cards_async.py
 [sample_recognize_invoices]: https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/formrecognizer/azure-ai-formrecognizer/samples/sample_recognize_invoices.py
 [sample_recognize_invoices_async]: https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/formrecognizer/azure-ai-formrecognizer/samples/async_samples/sample_recognize_invoices_async.py
-[sample_recognize_id_documents]: https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/formrecognizer/azure-ai-formrecognizer/samples/sample_recognize_id_documents.py
-[sample_recognize_id_documents_async]: https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/formrecognizer/azure-ai-formrecognizer/samples/async_samples/sample_recognize_id_documents_async.py
+[sample_recognize_identity_documents]: https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/formrecognizer/azure-ai-formrecognizer/samples/sample_recognize_identity_documents.py
+[sample_recognize_identity_documents_async]: https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/formrecognizer/azure-ai-formrecognizer/samples/async_samples/sample_recognize_identity_documents_async.py
 [sample_train_model_with_labels]: https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/formrecognizer/azure-ai-formrecognizer/samples/sample_train_model_with_labels.py
 [sample_train_model_with_labels_async]: https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/formrecognizer/azure-ai-formrecognizer/samples/async_samples/sample_train_model_with_labels_async.py
 [sample_train_model_without_labels]: https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/formrecognizer/azure-ai-formrecognizer/samples/sample_train_model_without_labels.py

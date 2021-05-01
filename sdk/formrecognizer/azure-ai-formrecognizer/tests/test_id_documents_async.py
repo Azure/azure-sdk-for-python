@@ -31,14 +31,14 @@ class TestIdDocumentsAsync(AsyncFormRecognizerTest):
         with self.assertRaises(ServiceRequestError):
             client = FormRecognizerClient("http://notreal.azure.com", AzureKeyCredential(formrecognizer_test_api_key))
             async with client:
-                poller = await client.begin_recognize_id_documents(myfile)
+                poller = await client.begin_recognize_identity_documents(myfile)
 
     @FormRecognizerPreparer()
     async def test_authentication_bad_key(self, formrecognizer_test_endpoint, formrecognizer_test_api_key):
         client = FormRecognizerClient(formrecognizer_test_endpoint, AzureKeyCredential("xxxx"))
         with self.assertRaises(ClientAuthenticationError):
             async with client:
-                poller = await client.begin_recognize_id_documents(b"xx", content_type="image/jpeg")
+                poller = await client.begin_recognize_identity_documents(b"xx", content_type="image/jpeg")
 
     @FormRecognizerPreparer()
     @GlobalClientPreparer()
@@ -46,7 +46,7 @@ class TestIdDocumentsAsync(AsyncFormRecognizerTest):
         with open(self.id_document_license_jpg, "rb") as fd:
             myfile = fd.read()
         async with client: 
-            poller = await client.begin_recognize_id_documents(
+            poller = await client.begin_recognize_identity_documents(
                 myfile,
                 content_type=FormContentType.IMAGE_JPEG
             )
@@ -59,7 +59,7 @@ class TestIdDocumentsAsync(AsyncFormRecognizerTest):
         damaged_pdf = b"\x25\x50\x44\x46\x55\x55\x55"  # still has correct bytes to be recognized as PDF
         with self.assertRaises(HttpResponseError):
             async with client:
-                poller = await client.begin_recognize_id_documents(
+                poller = await client.begin_recognize_identity_documents(
                     damaged_pdf
                 )
 
@@ -69,7 +69,7 @@ class TestIdDocumentsAsync(AsyncFormRecognizerTest):
         damaged_pdf = b"\x50\x44\x46\x55\x55\x55"  # doesn't match any magic file numbers
         with self.assertRaises(ValueError):
             async with client:
-                poller = await client.begin_recognize_id_documents(
+                poller = await client.begin_recognize_identity_documents(
                     damaged_pdf
                 )
 
@@ -79,7 +79,7 @@ class TestIdDocumentsAsync(AsyncFormRecognizerTest):
         damaged_pdf = BytesIO(b"\x25\x50\x44\x46\x55\x55\x55")  # still has correct bytes to be recognized as PDF
         with self.assertRaises(HttpResponseError):
             async with client:
-                poller = await client.begin_recognize_id_documents(
+                poller = await client.begin_recognize_identity_documents(
                     damaged_pdf
                 )
 
@@ -89,7 +89,7 @@ class TestIdDocumentsAsync(AsyncFormRecognizerTest):
         damaged_pdf = BytesIO(b"\x50\x44\x46\x55\x55\x55")  # doesn't match any magic file numbers
         with self.assertRaises(ValueError):
             async with client:
-                poller = await client.begin_recognize_id_documents(
+                poller = await client.begin_recognize_identity_documents(
                     damaged_pdf
                 )
 
@@ -99,7 +99,7 @@ class TestIdDocumentsAsync(AsyncFormRecognizerTest):
         with open(self.blank_pdf, "rb") as fd:
             blank = fd.read()
         async with client:
-            poller = await client.begin_recognize_id_documents(
+            poller = await client.begin_recognize_identity_documents(
                 blank
             )
             result = await poller.result()
@@ -112,7 +112,7 @@ class TestIdDocumentsAsync(AsyncFormRecognizerTest):
             myfile = fd.read()
         with self.assertRaises(ValueError):
             async with client:
-                poller = await client.begin_recognize_id_documents(
+                poller = await client.begin_recognize_identity_documents(
                     myfile,
                     content_type="application/jpeg"
                 )
@@ -122,7 +122,7 @@ class TestIdDocumentsAsync(AsyncFormRecognizerTest):
     async def test_passing_unsupported_url_content_type(self, client):
         with self.assertRaises(TypeError):
             async with client:
-                poller = await client.begin_recognize_id_documents("https://badurl.jpg", content_type="application/json")
+                poller = await client.begin_recognize_identity_documents("https://badurl.jpg", content_type="application/json")
 
     @FormRecognizerPreparer()
     @GlobalClientPreparer()
@@ -132,7 +132,7 @@ class TestIdDocumentsAsync(AsyncFormRecognizerTest):
 
         with self.assertRaises(ValueError):
             async with client:
-                poller = await client.begin_recognize_id_documents(
+                poller = await client.begin_recognize_identity_documents(
                     myfile
                 )
 
@@ -151,7 +151,7 @@ class TestIdDocumentsAsync(AsyncFormRecognizerTest):
             myfile = fd.read()
 
         async with client:
-            poller = await client.begin_recognize_id_documents(
+            poller = await client.begin_recognize_identity_documents(
                 id_document=myfile,
                 include_field_elements=True,
                 cls=callback
@@ -182,7 +182,7 @@ class TestIdDocumentsAsync(AsyncFormRecognizerTest):
             id_document = fd.read()
 
         async with client:
-            poller = await client.begin_recognize_id_documents(id_document)
+            poller = await client.begin_recognize_identity_documents(id_document)
 
             result = await poller.result()
             self.assertEqual(len(result), 1)
@@ -206,7 +206,7 @@ class TestIdDocumentsAsync(AsyncFormRecognizerTest):
             id_document = fd.read()
 
         async with client:
-            poller = await client.begin_recognize_id_documents(id_document)
+            poller = await client.begin_recognize_identity_documents(id_document)
 
             result = await poller.result()
         self.assertEqual(len(result), 1)
@@ -230,7 +230,7 @@ class TestIdDocumentsAsync(AsyncFormRecognizerTest):
         with open(self.id_document_license_jpg, "rb") as fd:
             id_document = fd.read()
         async with client:
-            poller = await client.begin_recognize_id_documents(id_document, include_field_elements=True)
+            poller = await client.begin_recognize_identity_documents(id_document, include_field_elements=True)
 
             result = await poller.result()
         self.assertEqual(len(result), 1)
@@ -254,9 +254,9 @@ class TestIdDocumentsAsync(AsyncFormRecognizerTest):
         with open(self.id_document_license_jpg, "rb") as fd:
             id_document = fd.read()
         async with client:
-            initial_poller = await client.begin_recognize_id_documents(id_document)
+            initial_poller = await client.begin_recognize_identity_documents(id_document)
             cont_token = initial_poller.continuation_token()
-            poller = await client.begin_recognize_id_documents(None, continuation_token=cont_token)
+            poller = await client.begin_recognize_identity_documents(None, continuation_token=cont_token)
             result = await poller.result()
             self.assertIsNotNone(result)
             await initial_poller.wait()  # necessary so azure-devtools doesn't throw assertion error
@@ -268,8 +268,8 @@ class TestIdDocumentsAsync(AsyncFormRecognizerTest):
             id_document = fd.read()
         with pytest.raises(ValueError) as e:
             async with client:
-                await client.begin_recognize_id_documents(id_document)
-        assert "Method 'begin_recognize_id_documents' is only available for API version V2_1_PREVIEW and up" in str(e.value)
+                await client.begin_recognize_identity_documents(id_document)
+        assert "Method 'begin_recognize_identity_documents' is only available for API version V2_1_PREVIEW and up" in str(e.value)
 
     @FormRecognizerPreparer()
     @GlobalClientPreparer()
@@ -277,7 +277,7 @@ class TestIdDocumentsAsync(AsyncFormRecognizerTest):
         with open(self.id_document_license_jpg, "rb") as fd:
             id_document = fd.read()
         async with client:
-            poller = await client.begin_recognize_id_documents(id_document, pages=["1"])
+            poller = await client.begin_recognize_identity_documents(id_document, pages=["1"])
             assert '1' == poller._polling_method._initial_response.http_response.request.query['pages']
             result = await poller.result()
             assert result
