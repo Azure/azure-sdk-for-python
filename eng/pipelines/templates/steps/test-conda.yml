@@ -43,7 +43,10 @@ steps:
       $activateMethod = "source"
       $requirementSuffix = ""
 
-      # always need to add conda bin      
+      # always need to add conda bin  
+      Write-Host "$($env:CONDA)/bin"
+      Write-Host "$env:CONDA"
+      Write-Host "$CONDA"
       Write-Host "##vso[task.prependpath]]$($env:CONDA)/bin"
       if ($IsWindows) { 
         $activateMethod = "call" 
@@ -56,7 +59,7 @@ steps:
       # pypy3.7 is not in the hosted tool cache. to use the correct pypy3 version in conda 
       # we have to patch it to a version that actually does work
       if("$(PythonVersion)" -eq "pypy3"){
-        Write-Host "##vso[task.setvariable variable=PyVersion]pypy3.7 -c conda-forge"
+        Write-Host "##vso[task.setvariable variable=PyVersion]pypy -c conda-forge"
       }
       else {
         Write-Host "##vso[task.setvariable variable=PyVersion]$(PythonVersion)"
