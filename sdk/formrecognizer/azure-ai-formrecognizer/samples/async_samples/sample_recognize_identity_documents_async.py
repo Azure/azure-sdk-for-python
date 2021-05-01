@@ -45,7 +45,7 @@ class RecognizeIdDocumentsSampleAsync(object):
         ) as form_recognizer_client:
             
             with open(path_to_sample_forms, "rb") as f:
-                poller = await form_recognizer_client.begin_recognize_identity_documents(id_document=f)
+                poller = await form_recognizer_client.begin_recognize_identity_documents(identity_document=f)
             
             id_documents = await poller.result()
 

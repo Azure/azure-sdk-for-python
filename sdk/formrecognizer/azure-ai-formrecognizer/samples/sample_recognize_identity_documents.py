@@ -43,7 +43,7 @@ class RecognizeIdDocumentsSample(object):
             endpoint=endpoint, credential=AzureKeyCredential(key)
         )
         with open(path_to_sample_forms, "rb") as f:
-            poller = form_recognizer_client.begin_recognize_identity_documents(id_document=f)
+            poller = form_recognizer_client.begin_recognize_identity_documents(identity_document=f)
         id_documents = poller.result()
 
         for idx, id_document in enumerate(id_documents):
