@@ -21,7 +21,6 @@ GlobalClientPreparer = functools.partial(_GlobalClientPreparer, FormTrainingClie
 class TestCustomFormsFromUrl(FormRecognizerTest):
 
     @FormRecognizerPreparer()
-    @pytest.mark.skip("504 Gateway error with canary - fix in progress")
     def test_custom_forms_encoded_url(self, formrecognizer_test_endpoint, formrecognizer_test_api_key):
         client = FormRecognizerClient(formrecognizer_test_endpoint, AzureKeyCredential(formrecognizer_test_api_key))
         try:
@@ -69,7 +68,7 @@ class TestCustomFormsFromUrl(FormRecognizerTest):
 
     @FormRecognizerPreparer()
     @GlobalClientPreparer()
-    @pytest.mark.skip("504 Gateway error with canary - fix in progress")
+    @pytest.mark.skip("Error code mismatch: canary returns 2001, canadacentral returns 2003")
     def test_custom_form_bad_url(self, client, formrecognizer_storage_container_sas_url):
         fr_client = client.get_form_recognizer_client()
 
