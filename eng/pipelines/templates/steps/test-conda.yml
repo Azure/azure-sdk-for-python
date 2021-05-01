@@ -73,11 +73,11 @@ steps:
 
   - ${{ each artifact in parameters.CondaArtifacts }}:
     - script: |
-        echo "conda create --name ${{ artifact.name }} python=$(PyVersion) --yes"
-        conda create --name ${{ artifact.name }} python=$(PyVersion) --yes
+        echo "conda create --name ${{ artifact.name }} python=$(PyVersion) --yes -p $(CONDABASE)/envs/${{ artifact.name}}"
+        conda create --name ${{ artifact.name }} python=$(PyVersion) --yes -p $(CONDABASE)/envs/${{ artifact.name}}
         conda install --name ${{ artifact.name }} --yes --quiet conda-build
         echo "$(activate.method) activate ${{ artifact.name }}"
-        $(activate.method) activate ${{ artifact.name }}
+        $(activate.method) $(CONDABASE)/bin/activate ${{ artifact.name }}
         conda index $(Build.ArtifactStagingDirectory)/${{ artifact.name }}
       displayName: 'Prepare Conda Environment for Testing ${{ artifact.name }}, Index the Target Local Artifact'
 
