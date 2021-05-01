@@ -73,7 +73,7 @@ class TestIdDocumentsFromUrl(FormRecognizerTest):
             responses.append(extracted_id_document)
 
         poller = client.begin_recognize_identity_documents_from_url(
-            id_document_url=self.id_document_url_jpg,
+            identity_document_url=self.id_document_url_jpg,
             include_field_elements=True,
             cls=callback
         )

@@ -138,7 +138,7 @@ class TestIdDocument(FormRecognizerTest):
             myfile = fd.read()
 
         poller = client.begin_recognize_identity_documents(
-            id_document=myfile,
+            identity_document=myfile,
             include_field_elements=True,
             cls=callback
         )

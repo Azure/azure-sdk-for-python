@@ -152,7 +152,7 @@ class TestIdDocumentsAsync(AsyncFormRecognizerTest):
 
         async with client:
             poller = await client.begin_recognize_identity_documents(
-                id_document=myfile,
+                identity_document=myfile,
                 include_field_elements=True,
                 cls=callback
             )
