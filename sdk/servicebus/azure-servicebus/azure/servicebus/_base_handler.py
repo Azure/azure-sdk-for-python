@@ -19,7 +19,7 @@ import uamqp
 from uamqp import utils, compat
 from uamqp.message import MessageProperties
 
-from azure.core.credentials import AccessToken, AzureSasCredential
+from azure.core.credentials import AccessToken, AzureSasCredential, AzureNamedKeyCredential
 
 from ._common._configuration import Configuration
 from .exceptions import (
@@ -196,6 +196,22 @@ class ServiceBusSharedKeyCredential(object):
             raise ValueError("No token scope provided.")
         return _generate_sas_token(scopes[0], self.policy, self.key)
 
+class AzureNamedKeyTokenCredential(object):
+    """The named key credential used for authentication.
+    :param str credential: The AzureNamedKeyCredential that should be used
+    """
+
+    def __init__(self, credential):
+        # type: (AzureNamedKeyCredential) -> None
+        self.credential = credential
+        self.token_type = b"servicebus.windows.net:sastoken"
+
+    def get_token(self, *scopes, **kwargs):  # pylint:disable=unused-argument
+        # type: (str, Any) -> _AccessToken
+        if not scopes:
+            raise ValueError("No token scope provided.")
+        name, key = self.credential.named_key
+        return _generate_sas_token(scopes[0], name, key)
 
 class ServiceBusAzureSasCredential(object):
     """The shared access token credential used for authentication
@@ -219,7 +235,7 @@ class ServiceBusAzureSasCredential(object):
 
 class BaseHandler:  # pylint:disable=too-many-instance-attributes
     def __init__(self, fully_qualified_namespace, entity_name, credential, **kwargs):
-        # type: (str, str, Union[TokenCredential, AzureSasCredential], Any) -> None
+        # type: (str, str, Union[TokenCredential, AzureSasCredential, AzureNamedKeyCredential], Any) -> None
         # If the user provided http:// or sb://, let's be polite and strip that.
         self.fully_qualified_namespace = strip_protocol_from_uri(
             fully_qualified_namespace.strip()
@@ -233,6 +249,8 @@ class BaseHandler:  # pylint:disable=too-many-instance-attributes
         self._mgmt_target = "{}{}".format(self._entity_path, MANAGEMENT_PATH_SUFFIX)
         if isinstance(credential, AzureSasCredential):
             self._credential = ServiceBusAzureSasCredential(credential)
+        elif isinstance(credential, AzureNamedKeyCredential):
+            self._credential = AzureNamedKeyTokenCredential(credential) # type: ignore
         else:
             self._credential = credential # type: ignore
         self._container_id = CONTAINER_PREFIX + str(uuid.uuid4())[:8]
