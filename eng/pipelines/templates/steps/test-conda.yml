@@ -47,6 +47,7 @@ steps:
       Write-Host "$($env:CONDA)/bin"
       Write-Host "$env:CONDA"
       Write-Host "$CONDA"
+      Write-Host "##vso[task.setvariable variable=CONDABASE]$($env:CONDA)"
       Write-Host "##vso[task.prependpath]]$($env:CONDA)/bin"
       if ($IsWindows) { 
         $activateMethod = "call" 
@@ -65,6 +66,7 @@ steps:
         Write-Host "##vso[task.setvariable variable=PyVersion]$(PythonVersion)"
       }
       
+      Write-Host "$env:PATH"
       Write-Host "##vso[task.setvariable variable=activate.method]$activateMethod"
       Write-Host "##vso[task.setvariable variable=requirement.suffix]$requirementSuffix"
     displayName: 'Evaluate OS Specific PATH and Parameters'
@@ -74,6 +76,7 @@ steps:
         echo "conda create --name ${{ artifact.name }} python=$(PyVersion) --yes"
         conda create --name ${{ artifact.name }} python=$(PyVersion) --yes
         conda install --name ${{ artifact.name }} --yes --quiet conda-build
+        echo "$(activate.method) activate ${{ artifact.name }}"
         $(activate.method) activate ${{ artifact.name }}
         conda index $(Build.ArtifactStagingDirectory)/${{ artifact.name }}
       displayName: 'Prepare Conda Environment for Testing ${{ artifact.name }}, Index the Target Local Artifact'
