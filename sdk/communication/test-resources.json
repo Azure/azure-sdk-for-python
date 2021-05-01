@@ -17,10 +17,10 @@
             "defaultValue": ".communication.azure.com",
             "type": "string"
         },
-          "subscriptionId": {
+        "subscriptionId": {
             "defaultValue": "[subscription().subscriptionId]",
             "type": "string"
-          },
+        },
         "testApplicationOid": {
             "type": "string",
             "metadata": {
@@ -72,6 +72,10 @@
         }
     ],
     "outputs": {
+        "AZURE_SUBSCRIPTION_ID": {
+            "type": "string",
+            "value": "[parameters('subscriptionId')]"
+        },
         "AZURE_TENANT_ID": {
             "type": "string",
             "value": "[parameters('tenantId')]"
