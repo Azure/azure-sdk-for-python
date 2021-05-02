@@ -295,8 +295,8 @@ class DocumentTranslationClient(object):
                 :dedent: 8
                 :caption: List all the document statuses under the translation job.
         """
-        translated_after=kwargs.pop("translated_after", None),
-        translated_before=kwargs.pop("translated_before", None),
+        translated_after=kwargs.pop("translated_after", None)
+        translated_before=kwargs.pop("translated_before", None)
         translated_after = convert_datetime(translated_after) if translated_after else None
         translated_before = convert_datetime(translated_before) if translated_before else None
         results_per_page = kwargs.pop("results_per_page", None)

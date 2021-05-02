@@ -165,6 +165,8 @@ class TestAllDocumentStatuses(DocumentTranslationTest):
         docs_count = 25
         target_language = "es"
         skip = 3
+        results_per_page = 2
+        statuses = ["Succeeded"]
 
         # submit and validate job
         job_id = self._create_translation_job_with_dummy_docs(client, docs_count, language_code=target_language, wait=True)
@@ -174,12 +176,6 @@ class TestAllDocumentStatuses(DocumentTranslationTest):
         self.assertEqual(len(doc_statuses), docs_count)
         ids = [doc.id for doc in doc_statuses]
         ids = ids[:docs_count//2]
-
-        print(len(ids))
-
-        # create some jobs
-        results_per_page = 2
-        statuses = ["Succeeded"]
 
         # list jobs
         filtered_docs = client.list_all_document_statuses(
