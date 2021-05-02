@@ -65,23 +65,16 @@ steps:
       else {
         Write-Host "##vso[task.setvariable variable=PyVersion]$(PythonVersion)"
       }
-
+      
       Write-Host "##vso[task.setvariable variable=activate.method]$activateMethod"
       Write-Host "##vso[task.setvariable variable=requirement.suffix]$requirementSuffix"
     displayName: 'Evaluate OS Specific PATH and Parameters'
 
-  - pwsh: |
-      Write-Host "$env:PATH"
-    displayName: 'Dump PAth'
-
   - ${{ each artifact in parameters.CondaArtifacts }}:
     - script: |
-        echo "conda create python=$(PyVersion) --yes -p $(CONDABASE)/envs/${{ artifact.name}}"
-        conda create python=$(PyVersion) --yes -p $(CONDABASE)/envs/${{ artifact.name}}
-
-        echo "conda install -p $(CONDABASE)/envs/${{ artifact.name}}" --yes --quiet conda-build"
-        conda install -p $(CONDABASE)/envs/${{ artifact.name}}" --yes --quiet conda-build
-
+        echo "conda create --name ${{ artifact.name }} python=$(PyVersion) --yes"
+        conda create --name ${{ artifact.name }} python=$(PyVersion) --yes
+        conda install --name ${{ artifact.name }} --yes --quiet conda-build
         echo "$(activate.method) $(CONDABASE)/bin/activate ${{ artifact.name }}"
         $(activate.method) $(CONDABASE)/bin/activate ${{ artifact.name }}
         conda index $(Build.ArtifactStagingDirectory)/${{ artifact.name }}
