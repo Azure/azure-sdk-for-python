@@ -134,7 +134,7 @@ class TestAllDocumentStatuses(AsyncDocumentTranslationTest):
         ids = ids[:docs_count//2]
 
         # do the testing
-        doc_statuses = client.list_all_document_statuses(job_id, ids=ids)
+        doc_statuses = client.list_all_document_statuses(job_id, document_ids=ids)
         counter = 0
         async for document in doc_statuses:
             counter += 1
@@ -210,7 +210,7 @@ class TestAllDocumentStatuses(AsyncDocumentTranslationTest):
         filtered_docs = client.list_all_document_statuses(
             job_id,
             # filters
-            ids=ids,
+            document_ids=ids,
             statuses=statuses,
             # ordering
             order_by=["createdDateTimeUtc asc"],

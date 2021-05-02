@@ -114,7 +114,7 @@ class TestAllDocumentStatuses(DocumentTranslationTest):
         ids = ids[:docs_count//2]
 
         # do the testing
-        doc_statuses = list(client.list_all_document_statuses(job_id, ids=ids))
+        doc_statuses = list(client.list_all_document_statuses(job_id, document_ids=ids))
         self.assertEqual(len(doc_statuses), len(ids))
         for document in doc_statuses:
             self._validate_doc_status(document, target_language, ids=ids)
@@ -181,7 +181,7 @@ class TestAllDocumentStatuses(DocumentTranslationTest):
         filtered_docs = client.list_all_document_statuses(
             job_id,
             # filters
-            ids=ids,
+            document_ids=ids,
             statuses=statuses,
             # ordering
             order_by=["createdDateTimeUtc asc"],

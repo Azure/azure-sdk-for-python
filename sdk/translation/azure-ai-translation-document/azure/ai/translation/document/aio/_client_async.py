@@ -221,7 +221,7 @@ class DocumentTranslationClient(object):
         :keyword int skip: the number of jobs to skip (from beginning of the all submitted jobs).
             By default, we sort by all submitted jobs descendingly by start time.
         :keyword int results_per_page: is the number of jobs returned per page.
-        :keyword list[str] ids: job ids to filter by.
+        :keyword list[str] job_ids: job ids to filter by.
         :keyword list[str] statuses: job statuses to filter by.
         :keyword Union[str, datetime.datetime] created_after: get jobs created after certian datetime.
         :keyword Union[str, datetime.datetime] created_before: get jobs created before certian datetime.
@@ -247,6 +247,7 @@ class DocumentTranslationClient(object):
         created_after = convert_datetime(created_after) if created_after else None
         created_before = convert_datetime(created_before) if created_before else None
         results_per_page = kwargs.pop("results_per_page", None)
+        job_ids = kwargs.pop("job_ids", None)
 
         def _convert_from_generated_model(generated_model):
             # pylint: disable=protected-access
@@ -262,6 +263,7 @@ class DocumentTranslationClient(object):
             maxpagesize=results_per_page,
             created_date_time_utc_start=created_after,
             created_date_time_utc_end=created_before,
+            ids=job_ids,
             **kwargs
         )
 
@@ -275,7 +277,7 @@ class DocumentTranslationClient(object):
         :keyword int skip: the number of documents to skip (from beginning).
             By default, we sort by all documents descendingly by start time.
         :keyword int results_per_page: is the number of documents returned per page.
-        :keyword list[str] ids: document IDs to filter by.
+        :keyword list[str] document_ids: document IDs to filter by.
         :keyword list[str] statuses: document statuses to filter by.
         :keyword Union[str, datetime.datetime] translated_after: get document translated after certian datetime.
         :keyword Union[str, datetime.datetime] translated_before: get document translated before certian datetime.
@@ -300,6 +302,7 @@ class DocumentTranslationClient(object):
         translated_after = convert_datetime(translated_after) if translated_after else None
         translated_before = convert_datetime(translated_before) if translated_before else None
         results_per_page = kwargs.pop("results_per_page", None)
+        document_ids = kwargs.pop("document_ids", None)
 
         def _convert_from_generated_model(generated_model):
             # pylint: disable=protected-access
@@ -316,6 +319,7 @@ class DocumentTranslationClient(object):
             maxpagesize=results_per_page,
             created_date_time_utc_start=translated_after,
             created_date_time_utc_end=translated_before,
+            ids=document_ids,
             **kwargs
         )
 

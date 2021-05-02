@@ -126,7 +126,7 @@ class TestSubmittedJobs(DocumentTranslationTest):
         job_ids = self._create_and_submit_sample_translation_jobs(client, jobs_count, wait=False, docs_per_job=docs_per_job)
 
         # list jobs
-        submitted_jobs = list(client.list_submitted_jobs(ids=job_ids))
+        submitted_jobs = list(client.list_submitted_jobs(job_ids=job_ids))
         self.assertIsNotNone(submitted_jobs)
 
         # check statuses
@@ -281,7 +281,7 @@ class TestSubmittedJobs(DocumentTranslationTest):
         # list jobs
         submitted_jobs = client.list_submitted_jobs(
             # filters
-            ids=job_ids,
+            job_ids=job_ids,
             statuses=statuses,
             # ordering
             order_by=["createdDateTimeUtc asc"],
