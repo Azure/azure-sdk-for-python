@@ -91,28 +91,28 @@ jobs:
         echo "##vso[task.setvariable variable=toxenv]$toxenvvar"
       displayName: "Set Tox Environment"
 
-    # - template: ../steps/build-test.yml
-    #   parameters:
-    #     ServiceDirectory: ${{ parameters.ServiceDirectory }}
-    #     TestMarkArgument: ${{ parameters.TestMarkArgument }}
-    #     AdditionalTestArgs: '--wheel_dir="$(Build.ArtifactStagingDirectory)"'
-    #     OSVmImage: $(OSVmImage)
-    #     CoverageArg: $(CoverageArg)
-    #     PythonVersion: $(PythonVersion)
-    #     BuildTargetingString: ${{ parameters.BuildTargetingString }}
-    #     ToxTestEnv: $(toxenv)
-    #     ToxEnvParallel: ${{ parameters.ToxEnvParallel }}
-    #     InjectedPackages: $(InjectedPackages)
-    #     BeforeTestSteps:
-    #       - task: DownloadPipelineArtifact@2
-    #         inputs:
-    #           artifactName: 'packages'
-    #           targetPath: $(Build.ArtifactStagingDirectory)
+    - template: ../steps/build-test.yml
+      parameters:
+        ServiceDirectory: ${{ parameters.ServiceDirectory }}
+        TestMarkArgument: ${{ parameters.TestMarkArgument }}
+        AdditionalTestArgs: '--wheel_dir="$(Build.ArtifactStagingDirectory)"'
+        OSVmImage: $(OSVmImage)
+        CoverageArg: $(CoverageArg)
+        PythonVersion: $(PythonVersion)
+        BuildTargetingString: ${{ parameters.BuildTargetingString }}
+        ToxTestEnv: $(toxenv)
+        ToxEnvParallel: ${{ parameters.ToxEnvParallel }}
+        InjectedPackages: $(InjectedPackages)
+        BeforeTestSteps:
+          - task: DownloadPipelineArtifact@2
+            inputs:
+              artifactName: 'packages'
+              targetPath: $(Build.ArtifactStagingDirectory)
 
-    #       - template: ../steps/set-dev-build.yml
-    #         parameters:
-    #           ServiceDirectory: ${{ parameters.ServiceDirectory }}
-    #           BuildTargetingString: ${{ parameters.BuildTargetingString }}
+          - template: ../steps/set-dev-build.yml
+            parameters:
+              ServiceDirectory: ${{ parameters.ServiceDirectory }}
+              BuildTargetingString: ${{ parameters.BuildTargetingString }}
 
     - template: ../steps/test-conda.yml
       parameters:

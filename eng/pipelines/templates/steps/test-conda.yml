@@ -42,7 +42,6 @@ steps:
       $activateMethod = "source $($env:CONDA)/bin/activate"
 
       # pypy3 is not a true python executable. in conda-land, we need to call it using pypy3, NOT python
-      # $pythonInvocation = "python"
 
       # on windows, we need to add "--user" as otherwise pip won't successfully install/uninstall due to 
       # how windows holds reservation on pip.exe. this is unnecessary on ubuntu/mac.
@@ -62,12 +61,8 @@ steps:
         Write-Host "##vso[task.prependpath]$($env:CONDA)/Scripts"
       }
 
-      # pypy3.7, for devops we are forced to use the term 'pypy3'
-      # however, conda has no comprehension of such a thing.
-
       if("$(PythonVersion)" -eq "pypy3"){
         Write-Host "##vso[task.setvariable variable=PyVersion]-c conda-forge pypy3.7 pip"
-        # $pythonInvocation = "pypy3"
       }
       else {
         Write-Host "##vso[task.setvariable variable=PyVersion]python=$(PythonVersion)"
@@ -76,10 +71,11 @@ steps:
       # we will use these variables extensively later
       Write-Host "##vso[task.setvariable variable=activate.method]$activateMethod"
       Write-Host "##vso[task.setvariable variable=requirement.suffix]$requirementSuffix"
-      # Write-Host "##vso[task.setvariable variable=python.invocation]$pythonInvocation"
     displayName: 'Evaluate OS Specific PATH and Parameters'
 
   - ${{ each artifact in parameters.CondaArtifacts }}:
+    # due to the fact that `pypy3` and `conda-build` conda packages are INCOMPATIBLE, we have to create
+    # a separate env to install `conda-build` and use that to `conda index` the local file channel
     - script: |
         echo "conda create --name ${{ artifact.name }} $(PyVersion) --yes"
         conda create --name ${{ artifact.name }} $(PyVersion) --yes
