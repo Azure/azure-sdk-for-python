@@ -79,11 +79,8 @@ steps:
         echo "conda create --name ${{ artifact.name }} $(PyVersion) --yes"
         conda create --name ${{ artifact.name }} $(PyVersion) --yes
 
-        echo "conda install --name ${{ artifact.name }} --yes --quiet conda-build"
-        conda install --name ${{ artifact.name }} --yes --quiet conda-build
-
-        echo "$(activate.method) ${{ artifact.name }}"
-        $(activate.method) ${{ artifact.name }}
+        echo "conda install --yes --quiet conda-build"
+        conda install --yes --quiet conda-build
 
         echo "conda index $(Build.ArtifactStagingDirectory)/${{ artifact.name }}"
         conda index $(Build.ArtifactStagingDirectory)/${{ artifact.name }}
