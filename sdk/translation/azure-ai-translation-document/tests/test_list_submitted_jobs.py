@@ -55,39 +55,21 @@ class TestSubmittedJobs(DocumentTranslationTest):
                 self._validate_translation_job(job)
 
 
-    @pytest.mark.skip(reason="passing, pointless test!")
     @DocumentTranslationPreparer()
     @DocumentTranslationClientPreparer()
     def test_list_submitted_jobs_with_skip(self, client):
-        '''
-            note:
-            some notes regarding this test
-            there's no possible way of asserting for 'skip', unless we can know the 
-            count of the jobs returned!
-
-            as we can't possibly know the how many previous items were created
-            even if we filter only on newly created items,
-            tests can run in parallel which will ruin our pre-conceptions!
-            the only thing we can do, is to call the service with the parameter 
-
-            update:
-                we can test 'skip' by using some other filters to get how many docs
-                will be in result and only then skip will be meaningfull
-        '''
         # prepare data
-        jobs_count = 5
+        jobs_count = 10
         docs_per_job = 2
-        skip = 2
+        skip = 5
 
         # create some jobs
         self._create_and_submit_sample_translation_jobs(client, jobs_count, wait=False, docs_per_job=docs_per_job)
 
-        # list jobs - unable to assert skip!!
-        submitted_jobs = list(client.list_submitted_jobs(skip=skip))
-        self.assertIsNotNone(submitted_jobs)
-
-        for job in submitted_jobs:
-            self._validate_translation_job(job)
+        # assert
+        all_jobs = list(client.list_submitted_jobs())
+        jobs_with_skip = list(client.list_submitted_jobs(skip=skip))
+        assert len(all_jobs) - len(jobs_with_skip) == skip
 
 
     @pytest.mark.skip(reason="filter not working!")
