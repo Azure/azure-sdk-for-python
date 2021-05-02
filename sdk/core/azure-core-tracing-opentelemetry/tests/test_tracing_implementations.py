@@ -148,7 +148,6 @@ class TestOpentelemetryWrapper:
             setattr(request, "headers", {})
             setattr(response, "status_code", 200)
             wrapped_class.set_http_attributes(request)
-            assert wrapped_class.span_instance.kind == OpenTelemetrySpanKind.CLIENT
             assert wrapped_class.span_instance.attributes.get("http.method") == request.method
             assert wrapped_class.span_instance.attributes.get("component") == "http"
             assert wrapped_class.span_instance.attributes.get("http.url") == request.url

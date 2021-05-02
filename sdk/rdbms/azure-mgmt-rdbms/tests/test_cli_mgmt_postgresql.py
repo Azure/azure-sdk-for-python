@@ -47,6 +47,7 @@ class MgmtPostgreSQLTest(AzureMgmtTestCase):
             azure.mgmt.rdbms.postgresql.PostgreSQLManagementClient
         )
 
+    @unittest.skip("hard to test")
     @ResourceGroupPreparer(location=AZURE_LOCATION)
     def test_postgresql(self, resource_group):
         SERVER_NAME = "testserver21345"

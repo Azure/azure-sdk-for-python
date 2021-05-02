@@ -20,7 +20,7 @@ from ._async_base_client import ContainerRegistryBaseClient
 from .._generated.models import AcrErrors
 from .._helpers import _is_tag, _parse_next_link
 from .._models import (
-    ContentPermissions,
+    ContentProperties,
     DeletedRepositoryResult,
     RegistryArtifactProperties,
     RepositoryProperties,
@@ -78,7 +78,7 @@ class ContainerRepositoryClient(ContainerRegistryBaseClient):
         :returns: None
         :raises: :class:`~azure.core.exceptions.ResourceNotFoundError`
         """
-        await self._client.container_registry_repository.delete_manifest(self.repository, digest, **kwargs)
+        await self._client.container_registry.delete_manifest(self.repository, digest, **kwargs)
 
     @distributed_trace_async
     async def delete_tag(self, tag: str, **kwargs: Dict[str, Any]) -> None:
@@ -88,7 +88,7 @@ class ContainerRepositoryClient(ContainerRegistryBaseClient):
         :returns: None
         :raises: :class:`~azure.core.exceptions.ResourceNotFoundError`
         """
-        await self._client.container_registry_repository.delete_tag(self.repository, tag, **kwargs)
+        await self._client.container_registry.delete_tag(self.repository, tag, **kwargs)
 
     @distributed_trace_async
     async def get_properties(self, **kwargs: Dict[str, Any]) -> RepositoryProperties:
@@ -98,7 +98,7 @@ class ContainerRepositoryClient(ContainerRegistryBaseClient):
         :raises: :class:`~azure.core.exceptions.ResourceNotFoundError`
         """
         return RepositoryProperties._from_generated(  # pylint: disable=protected-access
-            await self._client.container_registry_repository.get_properties(self.repository, **kwargs)
+            await self._client.container_registry.get_properties(self.repository, **kwargs)
         )
 
     @distributed_trace_async
@@ -116,9 +116,7 @@ class ContainerRepositoryClient(ContainerRegistryBaseClient):
             tag_or_digest = self._get_digest_from_tag(tag_or_digest)
 
         return RegistryArtifactProperties._from_generated(  # pylint: disable=protected-access
-            await self._client.container_registry_repository.get_registry_artifact_properties(
-                self.repository, tag_or_digest, **kwargs
-            )
+            await self._client.container_registry.get_manifest_properties(self.repository, tag_or_digest, **kwargs)
         )
 
     @distributed_trace_async
@@ -131,7 +129,7 @@ class ContainerRepositoryClient(ContainerRegistryBaseClient):
         :raises: :class:`~azure.core.exceptions.ResourceNotFoundError`
         """
         return TagProperties._from_generated(  # pylint: disable=protected-access
-            await self._client.container_registry_repository.get_tag_properties(self.repository, tag, **kwargs)
+            await self._client.container_registry.get_tag_properties(self.repository, tag, **kwargs)
         )
 
     @distributed_trace
@@ -370,38 +368,38 @@ class ContainerRepositoryClient(ContainerRegistryBaseClient):
 
     @distributed_trace_async
     async def set_manifest_properties(
-        self, digest: str, permissions: ContentPermissions, **kwargs: Dict[str, Any]
+        self, digest: str, permissions: ContentProperties, **kwargs: Dict[str, Any]
     ) -> None:
         """Set the properties for a manifest
 
         :param digest: Digest of a manifest
         :type digest: str
         :param permissions: The property's values to be set
-        :type permissions: ContentPermissions
+        :type permissions: ContentProperties
         :returns: :class:`~azure.containerregistry.RegistryArtifactProperties`
         :raises: :class:`~azure.core.exceptions.ResourceNotFoundError`
         """
         return RegistryArtifactProperties._from_generated(  # pylint: disable=protected-access
-            await self._client.container_registry_repository.update_manifest_attributes(
+            await self._client.container_registry.update_manifest_properties(
                 self.repository, digest, value=permissions._to_generated(), **kwargs  # pylint: disable=protected-access
             )
         )
 
     @distributed_trace_async
     async def set_tag_properties(
-        self, tag: str, permissions: ContentPermissions, **kwargs: Dict[str, Any]
+        self, tag: str, permissions: ContentProperties, **kwargs: Dict[str, Any]
     ) -> TagProperties:
         """Set the properties for a tag
 
         :param tag: Tag to set properties for
         :type tag: str
         :param permissions: The property's values to be set
-        :type permissions: ContentPermissions
+        :type permissions: ContentProperties
         :returns: :class:`~azure.containerregistry.TagProperties`
         :raises: :class:`~azure.core.exceptions.ResourceNotFoundError`
         """
         return TagProperties._from_generated(  # pylint: disable=protected-access
-            await self._client.container_registry_repository.update_tag_attributes(
+            await self._client.container_registry.update_tag_attributes(
                 self.repository, tag, value=permissions._to_generated(), **kwargs  # pylint: disable=protected-access
             )
         )

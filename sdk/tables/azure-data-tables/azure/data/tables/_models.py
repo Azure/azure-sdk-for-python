@@ -4,8 +4,12 @@
 # license information.
 # --------------------------------------------------------------------------
 from enum import Enum
+from typing import TYPE_CHECKING, Any, Dict
+
 from azure.core.exceptions import HttpResponseError
 from azure.core.paging import PageIterator
+# from azure.core import CaseInsensitiveEnumMeta
+# from six import with_metaclass
 
 from ._generated.models import TableServiceStats as GenTableServiceStats
 from ._generated.models import AccessPolicy as GenAccessPolicy
@@ -21,6 +25,9 @@ from ._deserialize import (
 )
 from ._error import _process_table_error
 from ._constants import NEXT_PARTITION_KEY, NEXT_ROW_KEY, NEXT_TABLE_NAME
+
+if TYPE_CHECKING:
+    from ._generated.models import TableQueryResponse
 
 
 class TableServiceStats(GenTableServiceStats):
@@ -133,7 +140,7 @@ class Metrics(GeneratedMetrics):
 
     :keyword str version: The version of Storage Analytics to configure.
     :keyword bool enabled: Required. Indicates whether metrics are enabled for the service.
-    :keyword bool include_ap_is: Indicates whether metrics should generate summary
+    :keyword bool include_apis: Indicates whether metrics should generate summary
         statistics for called API operations.
     :keyword ~azure.data.tables.RetentionPolicy retention_policy: Required.
         The retention policy for the metrics.
@@ -150,7 +157,7 @@ class Metrics(GeneratedMetrics):
 
     @classmethod
     def _from_generated(cls, generated):
-        # type: (...) -> cls
+        # type: (...) -> Metrics
         """A summary of request statistics grouped by API in hour or minute aggregates.
 
         :param Metrics generated: generated Metrics
@@ -194,7 +201,7 @@ class RetentionPolicy(GeneratedRetentionPolicy):
 
     @classmethod
     def _from_generated(cls, generated, **kwargs):  # pylint: disable=unused-argument
-        # type: (...) -> cls
+        # type: (GeneratedRetentionPolicy, Dict[str, Any]) -> RetentionPolicy
         """The retention policy which determines how long the associated data should
         persist.
 
@@ -400,12 +407,15 @@ class TableSasPermissions(object):
         self.delete = kwargs.pop("delete", None) or ("d" in _str)
 
     def __or__(self, other):
+        # type: (TableSasPermissions) -> TableSasPermissions
         return TableSasPermissions(_str=str(self) + str(other))
 
     def __add__(self, other):
+        # type: (TableSasPermissions) -> TableSasPermissions
         return TableSasPermissions(_str=str(self) + str(other))
 
     def __str__(self):
+        # type: () -> TableSasPermissions
         return (
             ("r" if self.read else "")
             + ("a" if self.add else "")
@@ -416,9 +426,10 @@ class TableSasPermissions(object):
     @classmethod
     def from_string(
         cls,
-        permission,  # type: str
+        permission,
         **kwargs
     ):
+        # Type: (str, Dict[str, Any]) -> AccountSasPermissions
         """Create AccountSasPermissions from a string.
 
         To specify read, write, delete, etc. permissions you need only to
@@ -428,8 +439,8 @@ class TableSasPermissions(object):
         :param str permission: Specify permissions in
             the string with the first letter of the word.
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: A AccountSasPermissions object
-        :rtype: ~azure.data.tables.AccountSasPermissions
+        :return: An AccountSasPermissions object
+        :rtype: :class:`~azure.data.tables.AccountSasPermissions`
         """
         p_read = "r" in permission
         p_add = "a" in permission
@@ -477,23 +488,28 @@ def service_properties_deserialize(generated):
 
 class TableItem(object):
     """
-    Represents an Azure TableItem. Returned by TableServiceClient.list_tables
-    and TableServiceClient.query_tables.
+    Represents an Azure TableItem.
+    Returned by TableServiceClient.list_tables and TableServiceClient.query_tables.
 
-    :param str name: The name of the table.
+    :ivar str name: The name of the table.
     :ivar str api_version: The API version included in the service call
     :ivar str date: The date the service call was made
     """
 
     def __init__(self, name, **kwargs):
-        # type: (str, **Any) -> None
+        # type: (str, Dict[str, Any]) -> None
+        """
+        :param str name: Name of the Table
+        :keyword str api_version: The API version included in the service call
+        :keyword str date: The date the service call was made
+        """
         self.name = name
         self.api_version = kwargs.get("version")
         self.date = kwargs.get("date") or kwargs.get("Date")
 
     @classmethod
     def _from_generated(cls, generated, **kwargs):
-        # type: (obj, **Any) -> cls
+        # type: (TableQueryResponse, Dict[str, Any]) -> TableItem
         return cls(generated.table_name, **kwargs)
 
 
@@ -518,42 +534,19 @@ class UpdateMode(str, Enum):
     MERGE = "merge"
 
 
+class TransactionOperation(str, Enum):
+    CREATE = "create"
+    UPSERT = "upsert"
+    UPDATE = "update"
+    DELETE = "delete"
+
+
 class SASProtocol(str, Enum):
     HTTPS = "https"
     HTTP = "http"
 
 
-# class PartialBatchErrorException(HttpResponseError):
-#     """There is a partial failure in batch operations.
-
-#     :param str message: The message of the exception.
-#     :param response: Server response to be deserialized.
-#     :param list parts: A list of the parts in multipart response.
-#     """
-
-#     def __init__(self, message, response, parts):
-#         self.parts = parts
-#         super(PartialBatchErrorException, self).__init__(
-#             message=message, response=response
-#         )
-
-
-class BatchErrorException(HttpResponseError):
-    """There is a failure in batch operations.
-
-    :param str message: The message of the exception.
-    :param response: Server response to be deserialized.
-    :param list parts: A list of the parts in multipart response.
-    """
-
-    def __init__(self, message, response, parts, *args, **kwargs):
-        self.parts = parts
-        super(BatchErrorException, self).__init__(
-            message=message, response=response, *args, **kwargs
-        )
-
-
-class LocationMode(object):
+class LocationMode(str, Enum):
     """
     Specifies the location the request should be sent to. This mode only applies
     for RA-GRS accounts which allow secondary read access. All other account types
@@ -577,9 +570,8 @@ class ResourceTypes(object):
         Access to object-level APIs for tables (e.g. Get/Create/Query Entity etc.)
     """
 
-    def __init__(
-        self, service=False, object=False
-    ):  # pylint: disable=redefined-builtin
+    def __init__(self, service=False, object=False):  # pylint: disable=redefined-builtin
+        # type: (bool, bool) -> None
         self.service = service
         self.object = object
         self._str = ("s" if self.service else "") + ("o" if self.object else "")
@@ -589,6 +581,7 @@ class ResourceTypes(object):
 
     @classmethod
     def from_string(cls, string):
+        # type: (str) -> ResourceTypes
         """Create a ResourceTypes from a string.
 
         To specify service, container, or object you need only to
@@ -598,7 +591,7 @@ class ResourceTypes(object):
         :param str string: Specify service, container, or object in
             in the string with the first letter of the word.
         :return: A ResourceTypes object
-        :rtype: ~azure.data.tables.ResourceTypes
+        :rtype: :class:`~azure.data.tables.ResourceTypes`
         """
         res_service = "s" in string
         res_object = "o" in string
@@ -664,17 +657,18 @@ class AccountSasPermissions(object):
 
     @classmethod
     def from_string(cls, permission, **kwargs):
+        # type: (str, Dict[str]) -> AccountSasPermissions
         """Create AccountSasPermissions from a string.
 
         To specify read, write, delete, etc. permissions you need only to
         include the first letter of the word in the string. E.g. for read and write
         permissions you would provide a string "rw".
 
-        :param str permission: Specify permissions in
-            the string with the first letter of the word.
+        :param permission: Specify permissions in the string with the first letter of the word.
+        :type permission: str
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: A AccountSasPermissions object
-        :rtype: ~azure.data.tables.AccountSasPermissions
+        :return: An AccountSasPermissions object
+        :rtype: :class:`~azure.data.tables.AccountSasPermissions`
         """
         p_read = "r" in permission
         p_write = "w" in permission
