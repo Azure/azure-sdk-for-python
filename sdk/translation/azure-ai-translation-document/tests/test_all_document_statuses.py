@@ -4,7 +4,7 @@
 # Licensed under the MIT License.
 # ------------------------------------
 
-from datetime import date
+from datetime import datetime
 import functools
 from testcase import DocumentTranslationTest
 from preparer import DocumentTranslationPreparer, DocumentTranslationClientPreparer as _DocumentTranslationClientPreparer
@@ -16,6 +16,7 @@ DocumentTranslationClientPreparer = functools.partial(_DocumentTranslationClient
 
 class TestAllDocumentStatuses(DocumentTranslationTest):
 
+
     @DocumentTranslationPreparer()
     @DocumentTranslationClientPreparer()
     def test_list_document_statuses(self, client):
@@ -23,22 +24,15 @@ class TestAllDocumentStatuses(DocumentTranslationTest):
         target_language = "es"
 
         # submit and validate job
-        job_id = self._create_translation_job_with_dummy_docs(client, docs_count, language_code=target_language, wait=False)
-        print(job_id)
+        job_id = self._create_translation_job_with_dummy_docs(client, docs_count, language_code=target_language, wait=True)
 
-        docs = client.list_all_document_statuses(job_id)
-        for doc in docs:
-            print(doc.id)
+        # list docs statuses
+        doc_statuses = list(client.list_all_document_statuses(job_id)) # convert from generic iterator to list
+        self.assertEqual(len(doc_statuses), docs_count)
 
-        # # check doc statuses
-        # doc_statuses = list(client.list_all_document_statuses(job_id)) # convert from generic iterator to list
-        # self.assertEqual(len(doc_statuses), docs_count)
+        for document in doc_statuses:
+            self._validate_doc_status(document, target_language)
 
-        # for document in doc_statuses:
-        #     self._validate_doc_status(document, target_language)
-
-
-    @pytest.mark.skip(reason="pending")
     @DocumentTranslationPreparer()
     @DocumentTranslationClientPreparer()
     def test_list_document_statuses_with_pagination(self, client):
@@ -48,21 +42,20 @@ class TestAllDocumentStatuses(DocumentTranslationTest):
         target_language = "es"
 
         # submit and validate job
-        job_id = self._create_translation_job_with_dummy_docs(client, docs_count, language_code=target_language, wait=False)
+        job_id = self._create_translation_job_with_dummy_docs(client, docs_count, language_code=target_language, wait=True)
 
         # check doc statuses
-        doc_statuses_pages = client.list_all_document_statuses(job_id=job_id, results_per_page=results_per_page).by_page()
+        doc_statuses_pages = list(client.list_all_document_statuses(job_id=job_id, results_per_page=results_per_page).by_page())
         self.assertEqual(len(doc_statuses_pages), no_of_pages)
 
         # iterate by page
         for page in doc_statuses_pages:
             page_items = list(page)
-            self.assertEqual(len(page_items), results_per_page)
+            self.assertLessEqual(len(page_items), results_per_page)
             for document in page:
                 self._validate_doc_status(document, target_language)
 
 
-    @pytest.mark.skip(reason="pending")
     @DocumentTranslationPreparer()
     @DocumentTranslationClientPreparer()
     def test_list_document_statuses_with_skip(self, client):
@@ -71,7 +64,7 @@ class TestAllDocumentStatuses(DocumentTranslationTest):
         target_language = "es"
 
         # submit and validate job
-        job_id = self._create_translation_job_with_dummy_docs(client, docs_count, language_code=target_language, wait=False)
+        job_id = self._create_translation_job_with_dummy_docs(client, docs_count, language_code=target_language, wait=True)
 
         # check doc statuses
         doc_statuses = list(client.list_all_document_statuses(job_id=job_id, skip=skip))
@@ -82,7 +75,6 @@ class TestAllDocumentStatuses(DocumentTranslationTest):
             self._validate_doc_status(document, target_language)
 
 
-    @pytest.mark.skip(reason="pending")
     @DocumentTranslationPreparer()
     @DocumentTranslationClientPreparer()
     def test_list_document_statuses_filter_by_status(self, client):
@@ -90,19 +82,22 @@ class TestAllDocumentStatuses(DocumentTranslationTest):
         target_language = "es"
 
         # submit and validate job
-        job_id = self._create_translation_job_with_dummy_docs(client, docs_count, language_code=target_language, wait=False)
+        job_id = self._create_translation_job_with_dummy_docs(client, docs_count, language_code=target_language, wait=True)
 
         # list jobs
-        statuses = ["Running"]
+        statuses = ["NotStarted"]
         doc_statuses = list(client.list_all_document_statuses(job_id, statuses=statuses))
-        self.assertIsNotNone(doc_statuses)
+        assert(len(doc_statuses) == 0)
 
-        # check statuses
-        for document in doc_statuses:
-            self._validate_doc_status(document, target_language, status=statuses)
+        statuses = ["Succeeded"]
+        doc_statuses = list(client.list_all_document_statuses(job_id, statuses=statuses))
+        assert(len(doc_statuses) == docs_count)
+
+        statuses = ["Failed"]
+        doc_statuses = list(client.list_all_document_statuses(job_id, statuses=statuses))
+        assert(len(doc_statuses) == 0)
 
 
-    @pytest.mark.skip(reason="pending")
     @DocumentTranslationPreparer()
     @DocumentTranslationClientPreparer()
     def test_list_document_statuses_filter_by_ids(self, client):
@@ -110,7 +105,7 @@ class TestAllDocumentStatuses(DocumentTranslationTest):
         target_language = "es"
 
         # submit and validate job
-        job_id = self._create_translation_job_with_dummy_docs(client, docs_count, language_code=target_language, wait=False)
+        job_id = self._create_translation_job_with_dummy_docs(client, docs_count, language_code=target_language, wait=True)
 
         # filter ids
         doc_statuses = list(client.list_all_document_statuses(job_id)) # convert from generic iterator to list
@@ -125,7 +120,6 @@ class TestAllDocumentStatuses(DocumentTranslationTest):
             self._validate_doc_status(document, target_language, ids=ids)
 
 
-    @pytest.mark.skip(reason="pending")
     @DocumentTranslationPreparer()
     @DocumentTranslationClientPreparer()
     def test_list_document_statuses_order_by_creation_time_asc(self, client):
@@ -133,19 +127,18 @@ class TestAllDocumentStatuses(DocumentTranslationTest):
         target_language = "es"
 
         # submit and validate job
-        job_id = self._create_translation_job_with_dummy_docs(client, docs_count, language_code=target_language, wait=False)
+        job_id = self._create_translation_job_with_dummy_docs(client, docs_count, language_code=target_language, wait=True)
 
         # check doc statuses
-        doc_statuses = list(client.list_all_document_statuses(job_id, order_by=["CreatedDateTimeUtc asc"])) # convert from generic iterator to list
+        doc_statuses = list(client.list_all_document_statuses(job_id, order_by=["createdDateTimeUtc asc"])) # convert from generic iterator to list
         self.assertEqual(len(doc_statuses), docs_count)
 
-        curr = date.min
+        curr = datetime.min
         for document in doc_statuses:
-            assert(document.created_on > curr)
+            assert(document.created_on.replace(tzinfo=None) >= curr.replace(tzinfo=None))
             curr = document.created_on
 
 
-    @pytest.mark.skip(reason="pending")
     @DocumentTranslationPreparer()
     @DocumentTranslationClientPreparer()
     def test_list_document_statuses_order_by_creation_time_desc(self, client):
@@ -153,27 +146,28 @@ class TestAllDocumentStatuses(DocumentTranslationTest):
         target_language = "es"
 
         # submit and validate job
-        job_id = self._create_translation_job_with_dummy_docs(client, docs_count, language_code=target_language, wait=False)
+        job_id = self._create_translation_job_with_dummy_docs(client, docs_count, language_code=target_language, wait=True)
 
         # check doc statuses
-        doc_statuses = list(client.list_all_document_statuses(job_id, order_by=["CreatedDateTimeUtc desc"])) # convert from generic iterator to list
+        doc_statuses = list(client.list_all_document_statuses(job_id, order_by=["createdDateTimeUtc desc"])) # convert from generic iterator to list
         self.assertEqual(len(doc_statuses), docs_count)
 
-        curr = date.max
+        curr = datetime.max
         for document in doc_statuses:
-            assert(document.created_on < curr)
+            assert(document.created_on.replace(tzinfo=None) <= curr.replace(tzinfo=None))
             curr = document.created_on
 
 
-    @pytest.mark.skip(reason="pending")
+    @pytest.mark.skip(reason="not working! - list returned is empty")
     @DocumentTranslationPreparer()
     @DocumentTranslationClientPreparer()
     def test_list_document_statuses_mixed_filters(self, client):
-        docs_count = 15
+        docs_count = 25
         target_language = "es"
+        skip = 3
 
         # submit and validate job
-        job_id = self._create_translation_job_with_dummy_docs(client, docs_count, language_code=target_language, wait=False)
+        job_id = self._create_translation_job_with_dummy_docs(client, docs_count, language_code=target_language, wait=True)
 
         # get ids
         doc_statuses = list(client.list_all_document_statuses(job_id)) # convert from generic iterator to list
@@ -181,9 +175,11 @@ class TestAllDocumentStatuses(DocumentTranslationTest):
         ids = [doc.id for doc in doc_statuses]
         ids = ids[:docs_count//2]
 
+        print(len(ids))
+
         # create some jobs
         results_per_page = 2
-        statuses = ["Running"]
+        statuses = ["Succeeded"]
 
         # list jobs
         filtered_docs = client.list_all_document_statuses(
@@ -192,24 +188,26 @@ class TestAllDocumentStatuses(DocumentTranslationTest):
             ids=ids,
             statuses=statuses,
             # ordering
-            order_by=["CreatedDateTimeUtc", "asc"],
+            order_by=["createdDateTimeUtc asc"],
             # paging
-            skip=1,
+            skip=skip,
             results_per_page=results_per_page
         ).by_page()
         self.assertIsNotNone(filtered_docs)
 
         # check statuses
-        curr_time = date.max
+        counter = 0
+        curr_time = datetime.max
         for page in filtered_docs:
             page_docs = list(page)
-            self.assertEqual(len(page_docs), results_per_page) # assert paging
+            self.assertLessEqual(len(page_docs), results_per_page) # assert paging
             for doc in page:
+                counter += 1
                 # assert ordering
-                assert(doc.created_on < curr_time)
+                assert(doc.created_on.replace(tzinfo=None) <= curr_time.replace(tzinfo=None))
                 curr_time = doc.created_on
                 # assert filters
                 self.assertIn(doc.status, statuses)
                 self.assertIn(doc.id, ids)
 
-
+        assert(counter == len(ids) - skip)
