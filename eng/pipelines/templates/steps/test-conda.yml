@@ -45,11 +45,11 @@ steps:
       # how windows holds reservation on pip.exe. this is unnecessary on ubuntu/mac.
       $requirementSuffix = ""
 
-      # we always want to prepend the path with conda bin, but windows requires an additional path      
+      # we always want to prepend the path with conda bin   
       Write-Host "##vso[task.prependpath]]$($env:CONDA)/bin"
 
       if ($IsWindows) {
-        # powershell is does not have an equivalent of call/source, which is necessary when
+        # powershell does not have an equivalent of call/source, which is necessary when
         # using conda in azure devops. Note that we use `activate` natively here, as
         # a later path prepend of the /scripts directory actually works.
         $activateMethod = "call activate" 
@@ -59,8 +59,9 @@ steps:
         Write-Host "##vso[task.prependpath]$($env:CONDA)/Scripts"
       }
 
-      # pypy3.7 is not in the hosted tool cache. to use the correct pypy3 version in conda 
-      # we have to patch it to a version that actually does work
+      # pypy3.7, for devops we are forced to use the term 'pypy3'
+      # however, conda has no comprehension of such a thing.
+
       if("$(PythonVersion)" -eq "pypy3"){
         Write-Host "##vso[task.setvariable variable=PyVersion]pypy -c conda-forge"
       }
