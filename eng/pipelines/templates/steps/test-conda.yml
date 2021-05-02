@@ -63,10 +63,10 @@ steps:
       # however, conda has no comprehension of such a thing.
 
       if("$(PythonVersion)" -eq "pypy3"){
-        Write-Host "##vso[task.setvariable variable=PyVersion]pypy -c conda-forge"
+        Write-Host "##vso[task.setvariable variable=PyVersion]-c conda-forge pypy3"
       }
       else {
-        Write-Host "##vso[task.setvariable variable=PyVersion]$(PythonVersion)"
+        Write-Host "##vso[task.setvariable variable=PyVersion]python=$(PythonVersion)"
       }
       
       # we will use these two variables extensively later
@@ -76,8 +76,8 @@ steps:
 
   - ${{ each artifact in parameters.CondaArtifacts }}:
     - script: |
-        echo "conda create --name ${{ artifact.name }} python=$(PyVersion) --yes"
-        conda create --name ${{ artifact.name }} python=$(PyVersion) --yes
+        echo "conda create --name ${{ artifact.name }} $(PyVersion) --yes"
+        conda create --name ${{ artifact.name }} $(PyVersion) --yes
 
         echo "conda install --name ${{ artifact.name }} --yes --quiet conda-build"
         conda install --name ${{ artifact.name }} --yes --quiet conda-build
