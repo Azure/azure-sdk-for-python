@@ -66,7 +66,7 @@ steps:
       # however, conda has no comprehension of such a thing.
 
       if("$(PythonVersion)" -eq "pypy3"){
-        Write-Host "##vso[task.setvariable variable=PyVersion]-c conda-forge pypy3.7"
+        Write-Host "##vso[task.setvariable variable=PyVersion]-c conda-forge pypy3.7 pip"
         $pythonInvocation = "pypy3"
       }
       else {
