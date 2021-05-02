@@ -70,6 +70,10 @@ steps:
       Write-Host "##vso[task.setvariable variable=requirement.suffix]$requirementSuffix"
     displayName: 'Evaluate OS Specific PATH and Parameters'
 
+  - pwsh: |
+      Write-Host $env:PATH
+    displayName: 'Evaluate OS Specific PATH and Parameters'
+
   - ${{ each artifact in parameters.CondaArtifacts }}:
     - script: |
         echo "conda create --name ${{ artifact.name }} python=$(PyVersion) --yes"
