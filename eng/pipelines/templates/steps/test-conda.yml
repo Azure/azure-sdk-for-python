@@ -36,25 +36,24 @@ steps:
       versionSpec: $(PythonVersion)
 
   - pwsh: |
-      python -c "import sys; print(sys.executable)"
-    displayName: Find installed version of pypy3
-
-  - pwsh: |
+      # due to faulty deployed scripts/how the path gets manipulated by conda actions on 
+      # ubuntu and mac, we can't rely on bin/scripts being referenced correctly. see
+      # https://github.com/MicrosoftDocs/azure-devops-docs/issues/3812
       $activateMethod = "source $($env:CONDA)/bin/activate"
+
+      # on windows, we need to add "--user" as otherwise pip won't successfully install/uninstall due to 
+      # how windows holds reservation on pip.exe. this is unnecessary on ubuntu/mac.
       $requirementSuffix = ""
 
-      # always need to add conda bin  
-      Write-Host "$($env:CONDA)/bin"
-      Write-Host "$env:CONDA"
-      Write-Host "$CONDA"
-      Write-Host "##vso[task.setvariable variable=CONDABASE]$($env:CONDA)"
+      # we always want to prepend the path with conda bin, but windows requires an additional path      
       Write-Host "##vso[task.prependpath]]$($env:CONDA)/bin"
-      if ($IsWindows) { 
+
+      if ($IsWindows) {
+        # powershell is does not have an equivalent of call/source, which is necessary when
+        # using conda in azure devops. Note that we use `activate` natively here, as
+        # a later path prepend of the /scripts directory actually works.
         $activateMethod = "call activate" 
         $requirementSuffix = " --user"
-
-        Write-Host $activateMethod
-        Write-Host "In windows"
 
         # on windows only, need to prepend with the scripts directory as well
         Write-Host "##vso[task.prependpath]$($env:CONDA)/Scripts"
@@ -69,26 +68,31 @@ steps:
         Write-Host "##vso[task.setvariable variable=PyVersion]$(PythonVersion)"
       }
       
+      # we will use these two variables extensively later
       Write-Host "##vso[task.setvariable variable=activate.method]$activateMethod"
       Write-Host "##vso[task.setvariable variable=requirement.suffix]$requirementSuffix"
-    displayName: 'Evaluate OS Specific PATH and Parameters'
-
-  - pwsh: |
-      Write-Host $env:PATH
     displayName: 'Evaluate OS Specific PATH and Parameters'
 
   - ${{ each artifact in parameters.CondaArtifacts }}:
     - script: |
         echo "conda create --name ${{ artifact.name }} python=$(PyVersion) --yes"
         conda create --name ${{ artifact.name }} python=$(PyVersion) --yes
+
+        echo "conda install --name ${{ artifact.name }} --yes --quiet conda-build"
         conda install --name ${{ artifact.name }} --yes --quiet conda-build
+
         echo "$(activate.method) ${{ artifact.name }}"
         $(activate.method) ${{ artifact.name }}
+
+        echo "conda index $(Build.ArtifactStagingDirectory)/${{ artifact.name }}"
         conda index $(Build.ArtifactStagingDirectory)/${{ artifact.name }}
       displayName: 'Prepare Conda Environment for Testing ${{ artifact.name }}, Index the Target Local Artifact'
 
     - script: |
+        echo "$(activate.method) ${{ artifact.name }}"
         $(activate.method) ${{ artifact.name }}
+
+        echo "python -m pip install -r eng/ci_tools.txt $(requirement.suffix)"
         python -m pip install -r eng/ci_tools.txt $(requirement.suffix)
       displayName: 'Activate Conda Environment and Install General Dependencies ${{ artifact.name }}'
 
@@ -115,13 +119,18 @@ steps:
           SkipDefaultCheckout: true
 
       - script: |
+          echo "conda install --name ${{ artifact.name }} ${{ artifact.name }} -c $(Build.ArtifactStagingDirectory)/${{ artifact.name }} --yes"
           conda install --name ${{ artifact.name }} ${{ artifact.name }} -c $(Build.ArtifactStagingDirectory)/${{ artifact.name }} --yes
+
+          echo "$(activate.method) ${{ artifact.name }}"
           $(activate.method) ${{ artifact.name }}
+
           python -m pip install -r dev_requirements.txt
         displayName: 'Install ${{ checkout.package }} Conda Package and Dev Requirements'
         workingDirectory: $(conda.build)/${{ checkout.checkout_path }}/${{ checkout.package }}
 
       - script: |
+          echo "$(activate.method) ${{ artifact.name }}"
           $(activate.method) ${{ artifact.name }}
           python -m pytest .
         displayName: 'Run Tests for ${{ checkout.package }}'
