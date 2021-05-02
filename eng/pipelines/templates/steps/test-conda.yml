@@ -40,7 +40,7 @@ steps:
     displayName: Find installed version of pypy3
 
   - pwsh: |
-      $activateMethod = "source"
+      $activateMethod = "source $($env:CONDA)/bin/activate"
       $requirementSuffix = ""
 
       # always need to add conda bin  
@@ -50,8 +50,11 @@ steps:
       Write-Host "##vso[task.setvariable variable=CONDABASE]$($env:CONDA)"
       Write-Host "##vso[task.prependpath]]$($env:CONDA)/bin"
       if ($IsWindows) { 
-        $activateMethod = "call" 
+        $activateMethod = "call activate" 
         $requirementSuffix = " --user"
+
+        Write-Host $activateMethod
+        Write-Host "In windows"
 
         # on windows only, need to prepend with the scripts directory as well
         Write-Host "##vso[task.prependpath]$($env:CONDA)/Scripts"
@@ -79,13 +82,13 @@ steps:
         echo "conda create --name ${{ artifact.name }} python=$(PyVersion) --yes"
         conda create --name ${{ artifact.name }} python=$(PyVersion) --yes
         conda install --name ${{ artifact.name }} --yes --quiet conda-build
-        echo "$(activate.method) $(CONDABASE)/bin/activate ${{ artifact.name }}"
-        $(activate.method) $(CONDABASE)/bin/activate ${{ artifact.name }}
+        echo "$(activate.method) ${{ artifact.name }}"
+        $(activate.method) ${{ artifact.name }}
         conda index $(Build.ArtifactStagingDirectory)/${{ artifact.name }}
       displayName: 'Prepare Conda Environment for Testing ${{ artifact.name }}, Index the Target Local Artifact'
 
     - script: |
-        $(activate.method) $(CONDABASE)/bin/activate ${{ artifact.name }}
+        $(activate.method) ${{ artifact.name }}
         python -m pip install -r eng/ci_tools.txt $(requirement.suffix)
       displayName: 'Activate Conda Environment and Install General Dependencies ${{ artifact.name }}'
 
@@ -113,13 +116,13 @@ steps:
 
       - script: |
           conda install --name ${{ artifact.name }} ${{ artifact.name }} -c $(Build.ArtifactStagingDirectory)/${{ artifact.name }} --yes
-          $(activate.method) $(CONDABASE)/bin/activate ${{ artifact.name }}
+          $(activate.method) ${{ artifact.name }}
           python -m pip install -r dev_requirements.txt
         displayName: 'Install ${{ checkout.package }} Conda Package and Dev Requirements'
         workingDirectory: $(conda.build)/${{ checkout.checkout_path }}/${{ checkout.package }}
 
       - script: |
-          $(activate.method) $(CONDABASE)/bin/activate ${{ artifact.name }}
+          $(activate.method) ${{ artifact.name }}
           python -m pytest .
         displayName: 'Run Tests for ${{ checkout.package }}'
         workingDirectory: $(conda.build)/${{ checkout.checkout_path }}/${{ checkout.package }}
