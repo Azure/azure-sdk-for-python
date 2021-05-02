@@ -1,6 +1,7 @@
 import functools
 import hashlib
 import os
+import time
 from collections import namedtuple
 
 from azure.mgmt.servicebus import ServiceBusManagementClient
@@ -212,15 +213,25 @@ class ServiceBusSubscriptionPreparer(_ServiceBusChildResourcePreparer):
             group = self._get_resource_group(**kwargs)
             namespace = self._get_namespace(**kwargs)
             topic = self._get_topic(**kwargs)
-            self.resource = self.client.subscriptions.create_or_update(
-                group.name,
-                namespace.name,
-                topic.name,
-                name,
-                SBSubscription(
-                    requires_session=self.requires_session
-                )
-            )
+            retries = 4
+            for i in range(retries):
+                try:
+                    self.resource = self.client.subscriptions.create_or_update(
+                        group.name,
+                        namespace.name,
+                        topic.name,
+                        name,
+                        SBSubscription(
+                            requires_session=self.requires_session
+                        )
+                    )
+                    break
+                except Exception as ex:
+                    error = "The requested resource {} does not exist".format(namespace)
+                    not_found_error = "Operation returned an invalid status code 'Not Found'"
+                    if (error not in str(ex) and not_found_error not in str(ex)) or i == retries - 1:
+                        raise
+                    time.sleep(3)
 
             self.test_class_instance.scrubber.register_name_pair(
                 name,
@@ -340,12 +351,22 @@ class ServiceBusNamespaceAuthorizationRulePreparer(_ServiceBusChildResourcePrepa
             self.client = self.create_mgmt_client(ServiceBusManagementClient)
             group = self._get_resource_group(**kwargs)
             namespace = self._get_namespace(**kwargs)
-            self.resource = self.client.namespaces.create_or_update_authorization_rule(
-                group.name,
-                namespace.name,
-                name,
-                self.access_rights
-            )
+            retries = 4
+            for i in range(retries):
+                try:
+                    self.resource = self.client.namespaces.create_or_update_authorization_rule(
+                        group.name,
+                        namespace.name,
+                        name,
+                        self.access_rights
+                    )
+                    break
+                except Exception as ex:
+                    error = "The requested resource {} does not exist".format(namespace)
+                    not_found_error = "Operation returned an invalid status code 'Not Found'"
+                    if (error not in str(ex) and not_found_error not in str(ex)) or i == retries - 1:
+                        raise
+                    time.sleep(3)
 
             key = self.client.namespaces.list_keys(group.name, namespace.name, name)
             connection_string = key.primary_connection_string
@@ -400,13 +421,23 @@ class ServiceBusQueueAuthorizationRulePreparer(_ServiceBusChildResourcePreparer)
             group = self._get_resource_group(**kwargs)
             namespace = self._get_namespace(**kwargs)
             queue = self._get_queue(**kwargs)
-            self.resource = self.client.queues.create_or_update_authorization_rule(
-                group.name,
-                namespace.name,
-                queue.name,
-                name,
-                self.access_rights
-            )
+            retries = 4
+            for i in range(retries):
+                try:
+                    self.resource = self.client.queues.create_or_update_authorization_rule(
+                        group.name,
+                        namespace.name,
+                        queue.name,
+                        name,
+                        self.access_rights
+                    )
+                    break
+                except Exception as ex:
+                    error = "The requested resource {} does not exist".format(namespace)
+                    not_found_error = "Operation returned an invalid status code 'Not Found'"
+                    if (error not in str(ex) and not_found_error not in str(ex)) or i == retries - 1:
+                        raise
+                    time.sleep(3)
 
             key = self.client.queues.list_keys(group.name, namespace.name, queue.name, name)
             connection_string = key.primary_connection_string
