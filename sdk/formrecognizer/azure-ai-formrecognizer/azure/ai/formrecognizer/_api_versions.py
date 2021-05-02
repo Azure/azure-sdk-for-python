@@ -10,8 +10,8 @@ class FormRecognizerApiVersion(str, Enum):
     """Form Recognizer API versions supported by this package"""
 
     #: This is the default version
+    V2_1_PREVIEW = "2.1-preview.3"
     V2_1 = "2.1"
-    V2_1_PREVIEW = "2.1-preview.3"  # TODO what to do about this enum value?
     V2_0 = "2.0"
 
 

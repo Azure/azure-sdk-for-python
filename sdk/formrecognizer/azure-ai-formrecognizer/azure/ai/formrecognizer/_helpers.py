@@ -17,8 +17,10 @@ COGNITIVE_KEY_HEADER = "Ocp-Apim-Subscription-Key"
 def _get_deserialize(api_version):
     if api_version == "2.0":
         from ._generated.v2_0 import FormRecognizerClient
-    else:
+    elif api_version == "2.1":
         from ._generated.v2_1 import FormRecognizerClient
+    elif api_version == "2.1-preview.3":
+        from ._generated.v2_1_preview_3 import FormRecognizerClient
     return FormRecognizerClient(  # pylint: disable=protected-access
         "dummy", "dummy"
     )._deserialize

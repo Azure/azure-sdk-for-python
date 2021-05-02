@@ -32,7 +32,7 @@ class FormRecognizerClientBaseAsync(object):
         self._endpoint = endpoint
         self._credential = credential
         self._api_version = kwargs.pop(
-            "api_version", FormRecognizerApiVersion.V2_1
+            "api_version", FormRecognizerApiVersion.V2_1_PREVIEW
         )
         validate_api_version(self._api_version)
 

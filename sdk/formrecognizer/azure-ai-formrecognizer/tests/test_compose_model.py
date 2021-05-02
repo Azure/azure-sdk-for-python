@@ -91,4 +91,4 @@ class TestTraining(FormRecognizerTest):
         with pytest.raises(ValueError) as excinfo:
             poller = client.begin_create_composed_model(["00000000-0000-0000-0000-000000000000", "00000000-0000-0000-0000-000000000000"])
             result = poller.result()
-        assert "Method 'begin_create_composed_model' is only available for API version V2_1 and up" in str(excinfo.value)
+        assert "Method 'begin_create_composed_model' is only available for API version V2_1_PREVIEW and up" in str(excinfo.value)

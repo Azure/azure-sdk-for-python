@@ -267,7 +267,7 @@ class TestInvoiceFromUrl(FormRecognizerTest):
     def test_invoice_v2(self, client):
         with pytest.raises(ValueError) as e:
             client.begin_recognize_invoices_from_url(self.invoice_url_tiff)
-        assert "Method 'begin_recognize_invoices_from_url' is only available for API version V2_1 and up" in str(e.value)
+        assert "Method 'begin_recognize_invoices_from_url' is only available for API version V2_1_PREVIEW and up" in str(e.value)
 
     @FormRecognizerPreparer()
     @GlobalClientPreparer()

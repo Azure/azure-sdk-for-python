@@ -187,7 +187,7 @@ class TestIdDocumentsFromUrlAsync(AsyncFormRecognizerTest):
         with pytest.raises(ValueError) as e:
             async with client:
                 await client.begin_recognize_id_documents_from_url(self.id_document_url_jpg)
-        assert "Method 'begin_recognize_id_documents_from_url' is only available for API version V2_1 and up" in str(e.value)
+        assert "Method 'begin_recognize_id_documents_from_url' is only available for API version V2_1_PREVIEW and up" in str(e.value)
 
     @FormRecognizerPreparer()
     @GlobalClientPreparer()

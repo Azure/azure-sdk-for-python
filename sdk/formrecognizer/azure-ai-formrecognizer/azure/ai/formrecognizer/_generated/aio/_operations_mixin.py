@@ -41,13 +41,13 @@ class FormRecognizerClientOperationsMixin(object):
         :type include_text_details: bool
         :param locale: Locale of the input document. Supported locales include: en-AU, en-CA, en-GB,
          en-IN, en-US(default).
-        :type locale: str or ~azure.ai.formrecognizer.v2_1.models.Locale
+        :type locale: str or ~azure.ai.formrecognizer.v2_1_preview_3.models.Locale
         :param pages: Custom page numbers for multi-page documents(PDF/TIFF), input the number of the
          pages you want to get OCR result. For a range of pages, use a hyphen. Separate each page or
          range with a comma.
         :type pages: list[str]
         :param file_stream: .json, .pdf, .jpg, .png, .tiff or .bmp type file stream.
-        :type file_stream: IO or ~azure.ai.formrecognizer.v2_1.models.SourcePath
+        :type file_stream: IO or ~azure.ai.formrecognizer.v2_1_preview_3.models.SourcePath
         :keyword str content_type: Media type of the body sent to the API. Default value is "application/json".
          Allowed values are: "application/pdf", "image/bmp", "image/jpeg", "image/png", "image/tiff", "application/json".
         :keyword callable cls: A custom type or function that will be passed the direct response
@@ -63,6 +63,8 @@ class FormRecognizerClientOperationsMixin(object):
         api_version = self._get_api_version('begin_analyze_business_card_async')
         if api_version == '2.1':
             from ..v2_1.aio.operations import FormRecognizerClientOperationsMixin as OperationClass
+        elif api_version == '2.1-preview.3':
+            from ..v2_1_preview_3.aio.operations import FormRecognizerClientOperationsMixin as OperationClass
         else:
             raise ValueError("API version {} does not have operation 'begin_analyze_business_card_async'".format(api_version))
         mixin_instance = OperationClass()
@@ -94,7 +96,7 @@ class FormRecognizerClientOperationsMixin(object):
          range with a comma.
         :type pages: list[str]
         :param file_stream: .json, .pdf, .jpg, .png, .tiff or .bmp type file stream.
-        :type file_stream: IO or ~azure.ai.formrecognizer.v2_1.models.SourcePath
+        :type file_stream: IO or ~azure.ai.formrecognizer.v2_1_preview_3.models.SourcePath
         :keyword str content_type: Media type of the body sent to the API. Default value is "application/json".
          Allowed values are: "application/pdf", "image/bmp", "image/jpeg", "image/png", "image/tiff", "application/json".
         :keyword callable cls: A custom type or function that will be passed the direct response
@@ -110,6 +112,8 @@ class FormRecognizerClientOperationsMixin(object):
         api_version = self._get_api_version('begin_analyze_id_document_async')
         if api_version == '2.1':
             from ..v2_1.aio.operations import FormRecognizerClientOperationsMixin as OperationClass
+        elif api_version == '2.1-preview.3':
+            from ..v2_1_preview_3.aio.operations import FormRecognizerClientOperationsMixin as OperationClass
         else:
             raise ValueError("API version {} does not have operation 'begin_analyze_id_document_async'".format(api_version))
         mixin_instance = OperationClass()
@@ -139,13 +143,13 @@ class FormRecognizerClientOperationsMixin(object):
         :type include_text_details: bool
         :param locale: Locale of the input document. Supported locales include: en-AU, en-CA, en-GB,
          en-IN, en-US(default).
-        :type locale: str or ~azure.ai.formrecognizer.v2_1.models.Locale
+        :type locale: str or ~azure.ai.formrecognizer.v2_1_preview_3.models.Locale
         :param pages: Custom page numbers for multi-page documents(PDF/TIFF), input the number of the
          pages you want to get OCR result. For a range of pages, use a hyphen. Separate each page or
          range with a comma.
         :type pages: list[str]
         :param file_stream: .json, .pdf, .jpg, .png, .tiff or .bmp type file stream.
-        :type file_stream: IO or ~azure.ai.formrecognizer.v2_1.models.SourcePath
+        :type file_stream: IO or ~azure.ai.formrecognizer.v2_1_preview_3.models.SourcePath
         :keyword str content_type: Media type of the body sent to the API. Default value is "application/json".
          Allowed values are: "application/pdf", "image/bmp", "image/jpeg", "image/png", "image/tiff", "application/json".
         :keyword callable cls: A custom type or function that will be passed the direct response
@@ -161,6 +165,8 @@ class FormRecognizerClientOperationsMixin(object):
         api_version = self._get_api_version('begin_analyze_invoice_async')
         if api_version == '2.1':
             from ..v2_1.aio.operations import FormRecognizerClientOperationsMixin as OperationClass
+        elif api_version == '2.1-preview.3':
+            from ..v2_1_preview_3.aio.operations import FormRecognizerClientOperationsMixin as OperationClass
         else:
             raise ValueError("API version {} does not have operation 'begin_analyze_invoice_async'".format(api_version))
         mixin_instance = OperationClass()
@@ -208,12 +214,12 @@ class FormRecognizerClientOperationsMixin(object):
          seventy-three languages and handwritten – English only). Layout supports auto language
          identification and multi language documents, so only provide a language code if you would like
          to force the documented to be processed as that specific language.
-        :type language: str or ~azure.ai.formrecognizer.v2_1.models.Language
+        :type language: str or ~azure.ai.formrecognizer.v2_1_preview_3.models.Language
         :param reading_order: Reading order algorithm to sort the text lines returned. Supported
          reading orders include: basic(default), natural.
-        :type reading_order: str or ~azure.ai.formrecognizer.v2_1.models.ReadingOrder
+        :type reading_order: str or ~azure.ai.formrecognizer.v2_1_preview_3.models.ReadingOrder
         :param file_stream: .json, .pdf, .jpg, .png, .tiff or .bmp type file stream.
-        :type file_stream: IO or ~azure.ai.formrecognizer.v2_1.models.SourcePath
+        :type file_stream: IO or ~azure.ai.formrecognizer.v2_1_preview_3.models.SourcePath
         :keyword str content_type: Media type of the body sent to the API. Default value is "application/json".
          Allowed values are: "application/pdf", "image/bmp", "image/jpeg", "image/png", "image/tiff", "application/json".
         :keyword callable cls: A custom type or function that will be passed the direct response
@@ -231,6 +237,8 @@ class FormRecognizerClientOperationsMixin(object):
             from ..v2_0.aio.operations import FormRecognizerClientOperationsMixin as OperationClass
         elif api_version == '2.1':
             from ..v2_1.aio.operations import FormRecognizerClientOperationsMixin as OperationClass
+        elif api_version == '2.1-preview.3':
+            from ..v2_1_preview_3.aio.operations import FormRecognizerClientOperationsMixin as OperationClass
         else:
             raise ValueError("API version {} does not have operation 'begin_analyze_layout_async'".format(api_version))
         mixin_instance = OperationClass()
@@ -243,6 +251,8 @@ class FormRecognizerClientOperationsMixin(object):
         if api_version == '2.0':
             return await mixin_instance.begin_analyze_layout_async(file_stream, **kwargs)
         elif api_version == '2.1':
+            return await mixin_instance.begin_analyze_layout_async(pages, language, reading_order, file_stream, **kwargs)
+        elif api_version == '2.1-preview.3':
             return await mixin_instance.begin_analyze_layout_async(pages, language, reading_order, file_stream, **kwargs)
 
     async def begin_analyze_receipt_async(
@@ -264,13 +274,13 @@ class FormRecognizerClientOperationsMixin(object):
         :type include_text_details: bool
         :param locale: Locale of the input document. Supported locales include: en-AU, en-CA, en-GB,
          en-IN, en-US(default).
-        :type locale: str or ~azure.ai.formrecognizer.v2_1.models.Locale
+        :type locale: str or ~azure.ai.formrecognizer.v2_1_preview_3.models.Locale
         :param pages: Custom page numbers for multi-page documents(PDF/TIFF), input the number of the
          pages you want to get OCR result. For a range of pages, use a hyphen. Separate each page or
          range with a comma.
         :type pages: list[str]
         :param file_stream: .json, .pdf, .jpg, .png, .tiff or .bmp type file stream.
-        :type file_stream: IO or ~azure.ai.formrecognizer.v2_1.models.SourcePath
+        :type file_stream: IO or ~azure.ai.formrecognizer.v2_1_preview_3.models.SourcePath
         :keyword str content_type: Media type of the body sent to the API. Default value is "application/json".
          Allowed values are: "application/pdf", "image/bmp", "image/jpeg", "image/png", "image/tiff", "application/json".
         :keyword callable cls: A custom type or function that will be passed the direct response
@@ -288,6 +298,8 @@ class FormRecognizerClientOperationsMixin(object):
             from ..v2_0.aio.operations import FormRecognizerClientOperationsMixin as OperationClass
         elif api_version == '2.1':
             from ..v2_1.aio.operations import FormRecognizerClientOperationsMixin as OperationClass
+        elif api_version == '2.1-preview.3':
+            from ..v2_1_preview_3.aio.operations import FormRecognizerClientOperationsMixin as OperationClass
         else:
             raise ValueError("API version {} does not have operation 'begin_analyze_receipt_async'".format(api_version))
         mixin_instance = OperationClass()
@@ -300,6 +312,8 @@ class FormRecognizerClientOperationsMixin(object):
         if api_version == '2.0':
             return await mixin_instance.begin_analyze_receipt_async(include_text_details, file_stream, **kwargs)
         elif api_version == '2.1':
+            return await mixin_instance.begin_analyze_receipt_async(include_text_details, locale, pages, file_stream, **kwargs)
+        elif api_version == "2.1-preview.3":
             return await mixin_instance.begin_analyze_receipt_async(include_text_details, locale, pages, file_stream, **kwargs)
 
     async def begin_analyze_with_custom_model(
@@ -326,7 +340,7 @@ class FormRecognizerClientOperationsMixin(object):
          range with a comma.
         :type pages: list[str]
         :param file_stream: .json, .pdf, .jpg, .png, .tiff or .bmp type file stream.
-        :type file_stream: IO or ~azure.ai.formrecognizer.v2_1.models.SourcePath
+        :type file_stream: IO or ~azure.ai.formrecognizer.v2_1_preview_3.models.SourcePath
         :keyword str content_type: Media type of the body sent to the API. Default value is "application/json".
          Allowed values are: "application/pdf", "image/bmp", "image/jpeg", "image/png", "image/tiff", "application/json".
         :keyword callable cls: A custom type or function that will be passed the direct response
@@ -344,6 +358,8 @@ class FormRecognizerClientOperationsMixin(object):
             from ..v2_0.aio.operations import FormRecognizerClientOperationsMixin as OperationClass
         elif api_version == '2.1':
             from ..v2_1.aio.operations import FormRecognizerClientOperationsMixin as OperationClass
+        elif api_version == '2.1-preview.3':
+            from ..v2_1_preview_3.aio.operations import FormRecognizerClientOperationsMixin as OperationClass
         else:
             raise ValueError("API version {} does not have operation 'begin_analyze_with_custom_model'".format(api_version))
         mixin_instance = OperationClass()
@@ -356,6 +372,8 @@ class FormRecognizerClientOperationsMixin(object):
         if api_version == '2.0':
             return await mixin_instance.begin_analyze_with_custom_model(model_id, include_text_details, file_stream, **kwargs)
         elif api_version == '2.1':
+            return await mixin_instance.begin_analyze_with_custom_model(model_id, include_text_details, pages, file_stream, **kwargs)
+        elif api_version == '2.1-preview.3':
             return await mixin_instance.begin_analyze_with_custom_model(model_id, include_text_details, pages, file_stream, **kwargs)
 
     async def begin_compose_custom_models_async(
@@ -370,7 +388,7 @@ class FormRecognizerClientOperationsMixin(object):
         It would validate limit of models put together.
 
         :param compose_request: Compose models.
-        :type compose_request: ~azure.ai.formrecognizer.v2_1.models.ComposeRequest
+        :type compose_request: ~azure.ai.formrecognizer.v2_1_preview_3.models.ComposeRequest
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
         :keyword polling: By default, your polling method will be AsyncLROBasePolling.
@@ -384,6 +402,8 @@ class FormRecognizerClientOperationsMixin(object):
         api_version = self._get_api_version('begin_compose_custom_models_async')
         if api_version == '2.1':
             from ..v2_1.aio.operations import FormRecognizerClientOperationsMixin as OperationClass
+        elif api_version == '2.1-preview.3':
+            from ..v2_1_preview_3.aio.operations import FormRecognizerClientOperationsMixin as OperationClass
         else:
             raise ValueError("API version {} does not have operation 'begin_compose_custom_models_async'".format(api_version))
         mixin_instance = OperationClass()
@@ -408,7 +428,7 @@ class FormRecognizerClientOperationsMixin(object):
         :param model_id: Model identifier.
         :type model_id: str
         :param copy_request: Copy request parameters.
-        :type copy_request: ~azure.ai.formrecognizer.v2_1.models.CopyRequest
+        :type copy_request: ~azure.ai.formrecognizer.v2_1_preview_3.models.CopyRequest
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
         :keyword polling: By default, your polling method will be AsyncLROBasePolling.
@@ -424,6 +444,8 @@ class FormRecognizerClientOperationsMixin(object):
             from ..v2_0.aio.operations import FormRecognizerClientOperationsMixin as OperationClass
         elif api_version == '2.1':
             from ..v2_1.aio.operations import FormRecognizerClientOperationsMixin as OperationClass
+        elif api_version == '2.1-preview.3':
+            from ..v2_1_preview_3.aio.operations import FormRecognizerClientOperationsMixin as OperationClass
         else:
             raise ValueError("API version {} does not have operation 'begin_copy_custom_model'".format(api_version))
         mixin_instance = OperationClass()
@@ -452,7 +474,7 @@ class FormRecognizerClientOperationsMixin(object):
         or 'image/bmp'. Other type of content is ignored.
 
         :param train_request: Training request parameters.
-        :type train_request: ~azure.ai.formrecognizer.v2_1.models.TrainRequest
+        :type train_request: ~azure.ai.formrecognizer.v2_1_preview_3.models.TrainRequest
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
         :keyword polling: By default, your polling method will be AsyncLROBasePolling.
@@ -466,6 +488,8 @@ class FormRecognizerClientOperationsMixin(object):
         api_version = self._get_api_version('begin_train_custom_model_async')
         if api_version == '2.1':
             from ..v2_1.aio.operations import FormRecognizerClientOperationsMixin as OperationClass
+        elif api_version == '2.1-preview.3':
+            from ..v2_1_preview_3.aio.operations import FormRecognizerClientOperationsMixin as OperationClass
         else:
             raise ValueError("API version {} does not have operation 'begin_train_custom_model_async'".format(api_version))
         mixin_instance = OperationClass()
@@ -498,6 +522,8 @@ class FormRecognizerClientOperationsMixin(object):
             from ..v2_0.aio.operations import FormRecognizerClientOperationsMixin as OperationClass
         elif api_version == '2.1':
             from ..v2_1.aio.operations import FormRecognizerClientOperationsMixin as OperationClass
+        elif api_version == '2.1-preview.3':
+            from ..v2_1_preview_3.aio.operations import FormRecognizerClientOperationsMixin as OperationClass
         else:
             raise ValueError("API version {} does not have operation 'delete_custom_model'".format(api_version))
         mixin_instance = OperationClass()
@@ -518,7 +544,7 @@ class FormRecognizerClientOperationsMixin(object):
 
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: CopyAuthorizationResult, or the result of cls(response)
-        :rtype: ~azure.ai.formrecognizer.v2_1.models.CopyAuthorizationResult
+        :rtype: ~azure.ai.formrecognizer.v2_1_preview_3.models.CopyAuthorizationResult
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         api_version = self._get_api_version('generate_model_copy_authorization')
@@ -526,6 +552,8 @@ class FormRecognizerClientOperationsMixin(object):
             from ..v2_0.aio.operations import FormRecognizerClientOperationsMixin as OperationClass
         elif api_version == '2.1':
             from ..v2_1.aio.operations import FormRecognizerClientOperationsMixin as OperationClass
+        elif api_version == '2.1-preview.3':
+            from ..v2_1_preview_3.aio.operations import FormRecognizerClientOperationsMixin as OperationClass
         else:
             raise ValueError("API version {} does not have operation 'generate_model_copy_authorization'".format(api_version))
         mixin_instance = OperationClass()
@@ -549,12 +577,14 @@ class FormRecognizerClientOperationsMixin(object):
         :type result_id: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: AnalyzeOperationResult, or the result of cls(response)
-        :rtype: ~azure.ai.formrecognizer.v2_1.models.AnalyzeOperationResult
+        :rtype: ~azure.ai.formrecognizer.v2_1_preview_3.models.AnalyzeOperationResult
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         api_version = self._get_api_version('get_analyze_business_card_result')
         if api_version == '2.1':
             from ..v2_1.aio.operations import FormRecognizerClientOperationsMixin as OperationClass
+        elif api_version == '2.1-preview.3':
+            from ..v2_1_preview_3.aio.operations import FormRecognizerClientOperationsMixin as OperationClass
         else:
             raise ValueError("API version {} does not have operation 'get_analyze_business_card_result'".format(api_version))
         mixin_instance = OperationClass()
@@ -581,7 +611,7 @@ class FormRecognizerClientOperationsMixin(object):
         :type result_id: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: AnalyzeOperationResult, or the result of cls(response)
-        :rtype: ~azure.ai.formrecognizer.v2_1.models.AnalyzeOperationResult
+        :rtype: ~azure.ai.formrecognizer.v2_1_preview_3.models.AnalyzeOperationResult
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         api_version = self._get_api_version('get_analyze_form_result')
@@ -589,6 +619,8 @@ class FormRecognizerClientOperationsMixin(object):
             from ..v2_0.aio.operations import FormRecognizerClientOperationsMixin as OperationClass
         elif api_version == '2.1':
             from ..v2_1.aio.operations import FormRecognizerClientOperationsMixin as OperationClass
+        elif api_version == '2.1-preview.3':
+            from ..v2_1_preview_3.aio.operations import FormRecognizerClientOperationsMixin as OperationClass
         else:
             raise ValueError("API version {} does not have operation 'get_analyze_form_result'".format(api_version))
         mixin_instance = OperationClass()
@@ -612,12 +644,14 @@ class FormRecognizerClientOperationsMixin(object):
         :type result_id: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: AnalyzeOperationResult, or the result of cls(response)
-        :rtype: ~azure.ai.formrecognizer.v2_1.models.AnalyzeOperationResult
+        :rtype: ~azure.ai.formrecognizer.v2_1_preview_3.models.AnalyzeOperationResult
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         api_version = self._get_api_version('get_analyze_id_document_result')
         if api_version == '2.1':
             from ..v2_1.aio.operations import FormRecognizerClientOperationsMixin as OperationClass
+        elif api_version == '2.1-preview.3':
+            from ..v2_1_preview_3.aio.operations import FormRecognizerClientOperationsMixin as OperationClass
         else:
             raise ValueError("API version {} does not have operation 'get_analyze_id_document_result'".format(api_version))
         mixin_instance = OperationClass()
@@ -641,12 +675,14 @@ class FormRecognizerClientOperationsMixin(object):
         :type result_id: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: AnalyzeOperationResult, or the result of cls(response)
-        :rtype: ~azure.ai.formrecognizer.v2_1.models.AnalyzeOperationResult
+        :rtype: ~azure.ai.formrecognizer.v2_1_preview_3.models.AnalyzeOperationResult
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         api_version = self._get_api_version('get_analyze_invoice_result')
         if api_version == '2.1':
             from ..v2_1.aio.operations import FormRecognizerClientOperationsMixin as OperationClass
+        elif api_version == '2.1-preview.3':
+            from ..v2_1_preview_3.aio.operations import FormRecognizerClientOperationsMixin as OperationClass
         else:
             raise ValueError("API version {} does not have operation 'get_analyze_invoice_result'".format(api_version))
         mixin_instance = OperationClass()
@@ -670,7 +706,7 @@ class FormRecognizerClientOperationsMixin(object):
         :type result_id: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: AnalyzeOperationResult, or the result of cls(response)
-        :rtype: ~azure.ai.formrecognizer.v2_1.models.AnalyzeOperationResult
+        :rtype: ~azure.ai.formrecognizer.v2_1_preview_3.models.AnalyzeOperationResult
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         api_version = self._get_api_version('get_analyze_layout_result')
@@ -678,6 +714,8 @@ class FormRecognizerClientOperationsMixin(object):
             from ..v2_0.aio.operations import FormRecognizerClientOperationsMixin as OperationClass
         elif api_version == '2.1':
             from ..v2_1.aio.operations import FormRecognizerClientOperationsMixin as OperationClass
+        elif api_version == '2.1-preview.3':
+            from ..v2_1_preview_3.aio.operations import FormRecognizerClientOperationsMixin as OperationClass
         else:
             raise ValueError("API version {} does not have operation 'get_analyze_layout_result'".format(api_version))
         mixin_instance = OperationClass()
@@ -701,7 +739,7 @@ class FormRecognizerClientOperationsMixin(object):
         :type result_id: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: AnalyzeOperationResult, or the result of cls(response)
-        :rtype: ~azure.ai.formrecognizer.v2_1.models.AnalyzeOperationResult
+        :rtype: ~azure.ai.formrecognizer.v2_1_preview_3.models.AnalyzeOperationResult
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         api_version = self._get_api_version('get_analyze_receipt_result')
@@ -709,6 +747,8 @@ class FormRecognizerClientOperationsMixin(object):
             from ..v2_0.aio.operations import FormRecognizerClientOperationsMixin as OperationClass
         elif api_version == '2.1':
             from ..v2_1.aio.operations import FormRecognizerClientOperationsMixin as OperationClass
+        elif api_version == '2.1-preview.3':
+            from ..v2_1_preview_3.aio.operations import FormRecognizerClientOperationsMixin as OperationClass
         else:
             raise ValueError("API version {} does not have operation 'get_analyze_receipt_result'".format(api_version))
         mixin_instance = OperationClass()
@@ -735,7 +775,7 @@ class FormRecognizerClientOperationsMixin(object):
         :type include_keys: bool
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: Model, or the result of cls(response)
-        :rtype: ~azure.ai.formrecognizer.v2_1.models.Model
+        :rtype: ~azure.ai.formrecognizer.v2_1_preview_3.models.Model
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         api_version = self._get_api_version('get_custom_model')
@@ -743,6 +783,8 @@ class FormRecognizerClientOperationsMixin(object):
             from ..v2_0.aio.operations import FormRecognizerClientOperationsMixin as OperationClass
         elif api_version == '2.1':
             from ..v2_1.aio.operations import FormRecognizerClientOperationsMixin as OperationClass
+        elif api_version == '2.1-preview.3':
+            from ..v2_1_preview_3.aio.operations import FormRecognizerClientOperationsMixin as OperationClass
         else:
             raise ValueError("API version {} does not have operation 'get_custom_model'".format(api_version))
         mixin_instance = OperationClass()
@@ -769,7 +811,7 @@ class FormRecognizerClientOperationsMixin(object):
         :type result_id: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: CopyOperationResult, or the result of cls(response)
-        :rtype: ~azure.ai.formrecognizer.v2_1.models.CopyOperationResult
+        :rtype: ~azure.ai.formrecognizer.v2_1_preview_3.models.CopyOperationResult
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         api_version = self._get_api_version('get_custom_model_copy_result')
@@ -777,6 +819,8 @@ class FormRecognizerClientOperationsMixin(object):
             from ..v2_0.aio.operations import FormRecognizerClientOperationsMixin as OperationClass
         elif api_version == '2.1':
             from ..v2_1.aio.operations import FormRecognizerClientOperationsMixin as OperationClass
+        elif api_version == '2.1-preview.3':
+            from ..v2_1_preview_3.aio.operations import FormRecognizerClientOperationsMixin as OperationClass
         else:
             raise ValueError("API version {} does not have operation 'get_custom_model_copy_result'".format(api_version))
         mixin_instance = OperationClass()
@@ -797,7 +841,7 @@ class FormRecognizerClientOperationsMixin(object):
 
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: Models, or the result of cls(response)
-        :rtype: ~azure.ai.formrecognizer.v2_1.models.Models
+        :rtype: ~azure.ai.formrecognizer.v2_1_preview_3.models.Models
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         api_version = self._get_api_version('get_custom_models')
@@ -805,6 +849,8 @@ class FormRecognizerClientOperationsMixin(object):
             from ..v2_0.aio.operations import FormRecognizerClientOperationsMixin as OperationClass
         elif api_version == '2.1':
             from ..v2_1.aio.operations import FormRecognizerClientOperationsMixin as OperationClass
+        elif api_version == '2.1-preview.3':
+            from ..v2_1_preview_3.aio.operations import FormRecognizerClientOperationsMixin as OperationClass
         else:
             raise ValueError("API version {} does not have operation 'get_custom_models'".format(api_version))
         mixin_instance = OperationClass()
@@ -825,7 +871,7 @@ class FormRecognizerClientOperationsMixin(object):
 
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: An iterator like instance of either Models or the result of cls(response)
-        :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.ai.formrecognizer.v2_1.models.Models]
+        :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.ai.formrecognizer.v2_1_preview_3.models.Models]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         api_version = self._get_api_version('list_custom_models')
@@ -833,6 +879,8 @@ class FormRecognizerClientOperationsMixin(object):
             from ..v2_0.aio.operations import FormRecognizerClientOperationsMixin as OperationClass
         elif api_version == '2.1':
             from ..v2_1.aio.operations import FormRecognizerClientOperationsMixin as OperationClass
+        elif api_version == '2.1-preview.3':
+            from ..v2_1_preview_3.aio.operations import FormRecognizerClientOperationsMixin as OperationClass
         else:
             raise ValueError("API version {} does not have operation 'list_custom_models'".format(api_version))
         mixin_instance = OperationClass()

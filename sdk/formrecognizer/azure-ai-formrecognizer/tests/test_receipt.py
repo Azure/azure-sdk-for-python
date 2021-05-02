@@ -379,7 +379,7 @@ class TestReceiptFromStream(FormRecognizerTest):
             receipt = fd.read()
         with pytest.raises(ValueError) as e:
             client.begin_recognize_receipts(receipt, locale="en-US")
-        assert "'locale' is only available for API version V2_1 and up" in str(e.value)
+        assert "'locale' is only available for API version V2_1_PREVIEW and up" in str(e.value)
 
     @FormRecognizerPreparer()
     @GlobalClientPreparer()
