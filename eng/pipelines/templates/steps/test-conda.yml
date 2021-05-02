@@ -42,7 +42,7 @@ steps:
       $activateMethod = "source $($env:CONDA)/bin/activate"
 
       # pypy3 is not a true python executable. in conda-land, we need to call it using pypy3, NOT python
-      # $pythonInvocation = "python"
+      $pythonInvocation = "python"
 
       # on windows, we need to add "--user" as otherwise pip won't successfully install/uninstall due to 
       # how windows holds reservation on pip.exe. this is unnecessary on ubuntu/mac.
@@ -67,15 +67,16 @@ steps:
 
       if("$(PythonVersion)" -eq "pypy3"){
         Write-Host "##vso[task.setvariable variable=PyVersion]-c conda-forge pypy3.7"
-        # $pythonInvocation = "pypy3"
+        $pythonInvocation = "pypy3"
       }
       else {
         Write-Host "##vso[task.setvariable variable=PyVersion]python=$(PythonVersion)"
       }
       
-      # we will use these two variables extensively later
+      # we will use these variables extensively later
       Write-Host "##vso[task.setvariable variable=activate.method]$activateMethod"
       Write-Host "##vso[task.setvariable variable=requirement.suffix]$requirementSuffix"
+      Write-Host "##vso[task.setvariable variable=python.invocation]$pythonInvocation"
     displayName: 'Evaluate OS Specific PATH and Parameters'
 
   - ${{ each artifact in parameters.CondaArtifacts }}:
@@ -100,8 +101,8 @@ steps:
         echo "$(activate.method) ${{ artifact.name }}"
         $(activate.method) ${{ artifact.name }}
 
-        echo "python -m pip install -r eng/ci_tools.txt $(requirement.suffix)"
-        python -m pip install -r eng/ci_tools.txt $(requirement.suffix)
+        echo "$(python.invocation) -m pip install -r eng/ci_tools.txt $(requirement.suffix)"
+        $(python.invocation) -m pip install -r eng/ci_tools.txt $(requirement.suffix)
       displayName: 'Activate Conda Environment and Install General Dependencies ${{ artifact.name }}'
 
     - pwsh: |
@@ -133,13 +134,13 @@ steps:
           echo "$(activate.method) ${{ artifact.name }}"
           $(activate.method) ${{ artifact.name }}
 
-          python -m pip install -r dev_requirements.txt
+          $(python.invocation) -m pip install -r dev_requirements.txt
         displayName: 'Install ${{ checkout.package }} Conda Package and Dev Requirements'
         workingDirectory: $(conda.build)/${{ checkout.checkout_path }}/${{ checkout.package }}
 
       - script: |
           echo "$(activate.method) ${{ artifact.name }}"
           $(activate.method) ${{ artifact.name }}
-          python -m pytest .
+          $(python.invocation) -m pytest .
         displayName: 'Run Tests for ${{ checkout.package }}'
         workingDirectory: $(conda.build)/${{ checkout.checkout_path }}/${{ checkout.package }}
