@@ -81,6 +81,7 @@ async def run_command(args: "Tuple") -> str:
         error = CredentialUnavailableError(message='Failed to execute "{}"'.format(args[0]))
         raise error from ex
     except asyncio.TimeoutError as ex:
+        proc.kill()
         raise CredentialUnavailableError(message="Timed out waiting for Azure PowerShell") from ex
 
     decoded_stdout = stdout.decode()
