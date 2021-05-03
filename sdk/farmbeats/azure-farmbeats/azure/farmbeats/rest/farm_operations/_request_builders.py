@@ -14,7 +14,7 @@ from msrest import Serializer
 
 if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
-    from typing import Any, IO, List, Optional
+    from typing import Any, Dict, List, Optional
 
 _SERIALIZER = Serializer()
 
@@ -41,8 +41,33 @@ def build_create_data_ingestion_job_request_initial(
     Example:
         .. code-block:: python
 
+    
             # JSON input template you can fill out and use as your `json` input.
             json = {
+                "authProviderId": "str",
+                "createdDateTime": "datetime (optional)",
+                "description": "str (optional)",
+                "durationInSeconds": "str (optional)",
+                "endTime": "datetime (optional)",
+                "farmerId": "str",
+                "id": "str (optional)",
+                "lastActionDateTime": "datetime (optional)",
+                "message": "str (optional)",
+                "name": "str (optional)",
+                "operations": [
+                    "str (optional)"
+                ],
+                "properties": {
+                    "str": "object (optional)"
+                },
+                "startTime": "datetime (optional)",
+                "startYear": "int",
+                "status": "str (optional)"
+            }
+
+    
+            # response body for status code(s): 202
+            response_body == {
                 "authProviderId": "str",
                 "createdDateTime": "datetime (optional)",
                 "description": "str (optional)",
@@ -113,6 +138,7 @@ def build_get_data_ingestion_job_details_request(
     Example:
         .. code-block:: python
 
+    
             # response body for status code(s): 200
             response_body == {
                 "authProviderId": "str",

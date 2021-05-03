@@ -90,6 +90,8 @@ class OAuthProvidersOperations:
         Example:
             .. code-block:: python
 
+
+
                 # response body for status code(s): 200
                 response_body == {
                     "$skipToken": "str (optional)",
@@ -211,6 +213,7 @@ class OAuthProvidersOperations:
         Example:
             .. code-block:: python
 
+
                 # response body for status code(s): 200
                 response_body == {
                     "apiKey": "str (optional)",
@@ -285,8 +288,27 @@ class OAuthProvidersOperations:
         Example:
             .. code-block:: python
 
+
                 # JSON input template you can fill out and use as your `json` input.
-                json = {
+                oauth_provider = {
+                    "apiKey": "str (optional)",
+                    "appId": "str (optional)",
+                    "appSecret": "str (optional)",
+                    "createdDateTime": "datetime (optional)",
+                    "description": "str (optional)",
+                    "eTag": "str (optional)",
+                    "id": "str (optional)",
+                    "isProductionApp": "bool (optional). Default value is False",
+                    "modifiedDateTime": "datetime (optional)",
+                    "name": "str (optional)",
+                    "properties": {
+                        "str": "object (optional)"
+                    }
+                }
+
+
+                # response body for status code(s): 200, 201
+                response_body == {
                     "apiKey": "str (optional)",
                     "appId": "str (optional)",
                     "appSecret": "str (optional)",
@@ -311,7 +333,7 @@ class OAuthProvidersOperations:
 
         content_type = kwargs.pop("content_type", "application/merge-patch+json")
         if oauth_provider is not None:
-            json = oauth_provider
+            json = self._serialize.body(oauth_provider, 'object')
         else:
             json = None
 

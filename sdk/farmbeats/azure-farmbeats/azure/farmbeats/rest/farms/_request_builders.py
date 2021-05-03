@@ -14,7 +14,7 @@ from msrest import Serializer
 
 if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
-    from typing import Any, Dict, List, Optional
+    from typing import Any, IO, List, Optional
 
 _SERIALIZER = Serializer()
 
@@ -59,6 +59,7 @@ def build_list_by_farmer_id_request(
     Example:
         .. code-block:: python
 
+    
             # response body for status code(s): 200
             response_body == {
                 "$skipToken": "str (optional)",
@@ -175,6 +176,7 @@ def build_list_request(
     Example:
         .. code-block:: python
 
+    
             # response body for status code(s): 200
             response_body == {
                 "$skipToken": "str (optional)",
@@ -271,6 +273,7 @@ def build_get_request(
     Example:
         .. code-block:: python
 
+    
             # response body for status code(s): 200
             response_body == {
                 "createdDateTime": "datetime (optional)",
@@ -340,8 +343,25 @@ def build_create_or_update_request(
     Example:
         .. code-block:: python
 
+    
             # JSON input template you can fill out and use as your `json` input.
             json = {
+                "createdDateTime": "datetime (optional)",
+                "description": "str (optional)",
+                "eTag": "str (optional)",
+                "farmerId": "str (optional)",
+                "id": "str (optional)",
+                "modifiedDateTime": "datetime (optional)",
+                "name": "str (optional)",
+                "properties": {
+                    "str": "object (optional)"
+                },
+                "status": "str (optional)"
+            }
+
+    
+            # response body for status code(s): 200, 201
+            response_body == {
                 "createdDateTime": "datetime (optional)",
                 "description": "str (optional)",
                 "eTag": "str (optional)",
@@ -451,6 +471,7 @@ def build_get_cascade_delete_job_details_request(
     Example:
         .. code-block:: python
 
+    
             # response body for status code(s): 200
             response_body == {
                 "createdDateTime": "datetime (optional)",
@@ -521,6 +542,7 @@ def build_create_cascade_delete_job_request_initial(
     Example:
         .. code-block:: python
 
+    
             # response body for status code(s): 202
             response_body == {
                 "createdDateTime": "datetime (optional)",

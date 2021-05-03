@@ -110,6 +110,8 @@ class BoundariesOperations:
         Example:
             .. code-block:: python
 
+
+
                 # response body for status code(s): 200
                 response_body == {
                     "$skipToken": "str (optional)",
@@ -121,9 +123,7 @@ class BoundariesOperations:
                             "description": "str (optional)",
                             "eTag": "str (optional)",
                             "farmerId": "str (optional)",
-                            "geometry": {
-                                "type": "type"
-                            },
+                            "geometry": "geometry",
                             "id": "str (optional)",
                             "isPrimary": "bool (optional)",
                             "modifiedDateTime": "datetime (optional)",
@@ -252,16 +252,51 @@ class BoundariesOperations:
         Example:
             .. code-block:: python
 
+
+
+                # 'intersects_with_geometry' can be defined the following ways:
+                # MultiPolygon geometry.
+                intersects_with_geometry = {
+                    "coordinates": [
+                        [
+                            [
+                                [
+                                    "float"
+                                ]
+                            ]
+                        ]
+                    ],
+                    "type": "MultiPolygon"
+                }
+                # OR
+                # Point geometry.
+                intersects_with_geometry = {
+                    "coordinates": [
+                        "float"
+                    ],
+                    "type": "Point"
+                }
+                # OR
+                # Polygon geometry.
+                intersects_with_geometry = {
+                    "coordinates": [
+                        [
+                            [
+                                "float"
+                            ]
+                        ]
+                    ],
+                    "type": "Polygon"
+                }
+
                 # JSON input template you can fill out and use as your `json` input.
-                json = {
+                query = {
                     "$maxPageSize": "int (optional). Default value is 50",
                     "$skipToken": "str (optional)",
                     "ids": [
                         "str (optional)"
                     ],
-                    "intersectsWithGeometry": {
-                        "type": "type"
-                    },
+                    "intersectsWithGeometry": "intersects_with_geometry",
                     "isPrimary": "bool (optional)",
                     "maxAcreage": "float (optional)",
                     "maxCreatedDateTime": "datetime (optional)",
@@ -284,6 +319,34 @@ class BoundariesOperations:
                     ]
                 }
 
+
+
+                # response body for status code(s): 200
+                response_body == {
+                    "$skipToken": "str (optional)",
+                    "nextLink": "str (optional)",
+                    "value": [
+                        {
+                            "acreage": "float (optional)",
+                            "createdDateTime": "datetime (optional)",
+                            "description": "str (optional)",
+                            "eTag": "str (optional)",
+                            "farmerId": "str (optional)",
+                            "geometry": "geometry",
+                            "id": "str (optional)",
+                            "isPrimary": "bool (optional)",
+                            "modifiedDateTime": "datetime (optional)",
+                            "name": "str (optional)",
+                            "parentId": "str (optional)",
+                            "parentType": "str (optional)",
+                            "properties": {
+                                "str": "object (optional)"
+                            },
+                            "status": "str (optional)"
+                        }
+                    ]
+                }
+
         """
         cls = kwargs.pop('cls', None)  # type: ClsType[Any]
         error_map = {
@@ -295,7 +358,7 @@ class BoundariesOperations:
             if not next_link:
                 content_type = kwargs.pop("content_type", "application/json")
                 if query is not None:
-                    json = query
+                    json = self._serialize.body(query, 'object')
                 else:
                     json = None
 
@@ -315,7 +378,7 @@ class BoundariesOperations:
             else:
                 content_type = kwargs.pop("content_type", "application/json")
                 if query is not None:
-                    json = query
+                    json = self._serialize.body(query, 'object')
                 else:
                     json = None
 
@@ -427,6 +490,8 @@ class BoundariesOperations:
         Example:
             .. code-block:: python
 
+
+
                 # response body for status code(s): 200
                 response_body == {
                     "$skipToken": "str (optional)",
@@ -438,9 +503,7 @@ class BoundariesOperations:
                             "description": "str (optional)",
                             "eTag": "str (optional)",
                             "farmerId": "str (optional)",
-                            "geometry": {
-                                "type": "type"
-                            },
+                            "geometry": "geometry",
                             "id": "str (optional)",
                             "isPrimary": "bool (optional)",
                             "modifiedDateTime": "datetime (optional)",
@@ -564,16 +627,51 @@ class BoundariesOperations:
         Example:
             .. code-block:: python
 
+
+
+                # 'intersects_with_geometry' can be defined the following ways:
+                # MultiPolygon geometry.
+                intersects_with_geometry = {
+                    "coordinates": [
+                        [
+                            [
+                                [
+                                    "float"
+                                ]
+                            ]
+                        ]
+                    ],
+                    "type": "MultiPolygon"
+                }
+                # OR
+                # Point geometry.
+                intersects_with_geometry = {
+                    "coordinates": [
+                        "float"
+                    ],
+                    "type": "Point"
+                }
+                # OR
+                # Polygon geometry.
+                intersects_with_geometry = {
+                    "coordinates": [
+                        [
+                            [
+                                "float"
+                            ]
+                        ]
+                    ],
+                    "type": "Polygon"
+                }
+
                 # JSON input template you can fill out and use as your `json` input.
-                json = {
+                query = {
                     "$maxPageSize": "int (optional). Default value is 50",
                     "$skipToken": "str (optional)",
                     "ids": [
                         "str (optional)"
                     ],
-                    "intersectsWithGeometry": {
-                        "type": "type"
-                    },
+                    "intersectsWithGeometry": "intersects_with_geometry",
                     "isPrimary": "bool (optional)",
                     "maxAcreage": "float (optional)",
                     "maxCreatedDateTime": "datetime (optional)",
@@ -596,6 +694,34 @@ class BoundariesOperations:
                     ]
                 }
 
+
+
+                # response body for status code(s): 200
+                response_body == {
+                    "$skipToken": "str (optional)",
+                    "nextLink": "str (optional)",
+                    "value": [
+                        {
+                            "acreage": "float (optional)",
+                            "createdDateTime": "datetime (optional)",
+                            "description": "str (optional)",
+                            "eTag": "str (optional)",
+                            "farmerId": "str (optional)",
+                            "geometry": "geometry",
+                            "id": "str (optional)",
+                            "isPrimary": "bool (optional)",
+                            "modifiedDateTime": "datetime (optional)",
+                            "name": "str (optional)",
+                            "parentId": "str (optional)",
+                            "parentType": "str (optional)",
+                            "properties": {
+                                "str": "object (optional)"
+                            },
+                            "status": "str (optional)"
+                        }
+                    ]
+                }
+
         """
         cls = kwargs.pop('cls', None)  # type: ClsType[Any]
         error_map = {
@@ -607,7 +733,7 @@ class BoundariesOperations:
             if not next_link:
                 content_type = kwargs.pop("content_type", "application/json")
                 if query is not None:
-                    json = query
+                    json = self._serialize.body(query, 'object')
                 else:
                     json = None
 
@@ -626,7 +752,7 @@ class BoundariesOperations:
             else:
                 content_type = kwargs.pop("content_type", "application/json")
                 if query is not None:
-                    json = query
+                    json = self._serialize.body(query, 'object')
                 else:
                     json = None
 
@@ -691,6 +817,7 @@ class BoundariesOperations:
 
         Example:
             .. code-block:: python
+
 
                 # response body for status code(s): 200
                 response_body == {
@@ -820,6 +947,7 @@ class BoundariesOperations:
         Example:
             .. code-block:: python
 
+
                 # response body for status code(s): 202
                 response_body == {
                     "createdDateTime": "datetime (optional)",
@@ -911,6 +1039,7 @@ class BoundariesOperations:
         Example:
             .. code-block:: python
 
+
                 # response body for status code(s): 200
                 response_body == {
                     "acreage": "float (optional)",
@@ -918,9 +1047,7 @@ class BoundariesOperations:
                     "description": "str (optional)",
                     "eTag": "str (optional)",
                     "farmerId": "str (optional)",
-                    "geometry": {
-                        "type": "type"
-                    },
+                    "geometry": "geometry",
                     "id": "str (optional)",
                     "isPrimary": "bool (optional)",
                     "modifiedDateTime": "datetime (optional)",
@@ -994,16 +1121,71 @@ class BoundariesOperations:
         Example:
             .. code-block:: python
 
+
+                # 'geometry' can be defined the following ways:
+                # MultiPolygon geometry.
+                geometry = {
+                    "coordinates": [
+                        [
+                            [
+                                [
+                                    "float"
+                                ]
+                            ]
+                        ]
+                    ],
+                    "type": "MultiPolygon"
+                }
+                # OR
+                # Point geometry.
+                geometry = {
+                    "coordinates": [
+                        "float"
+                    ],
+                    "type": "Point"
+                }
+                # OR
+                # Polygon geometry.
+                geometry = {
+                    "coordinates": [
+                        [
+                            [
+                                "float"
+                            ]
+                        ]
+                    ],
+                    "type": "Polygon"
+                }
+
                 # JSON input template you can fill out and use as your `json` input.
-                json = {
+                boundary = {
                     "acreage": "float (optional)",
                     "createdDateTime": "datetime (optional)",
                     "description": "str (optional)",
                     "eTag": "str (optional)",
                     "farmerId": "str (optional)",
-                    "geometry": {
-                        "type": "type"
+                    "geometry": "geometry",
+                    "id": "str (optional)",
+                    "isPrimary": "bool (optional)",
+                    "modifiedDateTime": "datetime (optional)",
+                    "name": "str (optional)",
+                    "parentId": "str (optional)",
+                    "parentType": "str (optional)",
+                    "properties": {
+                        "str": "object (optional)"
                     },
+                    "status": "str (optional)"
+                }
+
+
+                # response body for status code(s): 200, 201
+                response_body == {
+                    "acreage": "float (optional)",
+                    "createdDateTime": "datetime (optional)",
+                    "description": "str (optional)",
+                    "eTag": "str (optional)",
+                    "farmerId": "str (optional)",
+                    "geometry": "geometry",
                     "id": "str (optional)",
                     "isPrimary": "bool (optional)",
                     "modifiedDateTime": "datetime (optional)",
@@ -1025,7 +1207,7 @@ class BoundariesOperations:
 
         content_type = kwargs.pop("content_type", "application/merge-patch+json")
         if boundary is not None:
-            json = boundary
+            json = self._serialize.body(boundary, 'object')
         else:
             json = None
 
@@ -1137,6 +1319,7 @@ class BoundariesOperations:
 
         Example:
             .. code-block:: python
+
 
                 # response body for status code(s): 200
                 response_body == {

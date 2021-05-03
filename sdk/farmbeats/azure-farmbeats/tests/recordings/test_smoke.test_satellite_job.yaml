@@ -1,0 +1,134 @@
+interactions:
+- request:
+    body: '{"boundaryId": "fake-boundary-scenes", "data": {"imageNames": ["LAI"]},
+      "farmerId": "fake-farmer", "startDateTime": "2020-01-01T00:00:00.000Z", "endDateTime":
+      "2020-12-31T00:00:00.000Z"}'
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '188'
+      Content-Type:
+      - application/json
+      User-Agent:
+      - azsdk-python-farmbeats/1.0.0b1 Python/3.9.1 (macOS-10.16-x86_64-i386-64bit)
+    method: PUT
+    uri: https://fakeAccount.farmbeats.azure.net/scenes/satellite/ingest-data/fake-job-960?api-version=2021-03-31-preview
+  response:
+    body:
+      string: '{"farmerId":"fake-farmer","boundaryId":"fake-boundary-scenes","startDateTime":"2020-01-01T00:00:00Z","endDateTime":"2020-12-31T00:00:00Z","provider":"Microsoft","source":"Sentinel_2_L2A","data":{"imageNames":["LAI"],"imageFormats":["TIF"],"imageResolutions":[10.0]},"id":"fake-job-960","status":"Waiting","message":"Created
+        job ''fake-job-960'' to fetch satellite data for boundary ''fake-boundary-scenes''
+        from startDate ''01/01/2020'' to endDate ''12/31/2020'' (both inclusive).","createdDateTime":"2021-05-04T18:26:02Z","lastActionDateTime":"2021-05-04T18:26:02Z","startTime":"2021-05-04T18:26:02Z"}'
+    headers:
+      api-deprecated-versions:
+      - 2020-12-31-preview
+      api-supported-versions:
+      - 2021-03-31-preview
+      connection:
+      - keep-alive
+      content-length:
+      - '597'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Tue, 04 May 2021 18:26:02 GMT
+      location:
+      - https://fakeAccount.farmbeats.azure.net/scenes/satellite/ingest-data/fake-job-960?api-version=2021-03-31-preview
+      operation-location:
+      - https://iscai-sdk.farmbeats-dogfood.azure.net/scenes/satellite/ingest-data/fake-job-960?api-version=2021-03-31-preview
+      server:
+      - nginx/1.19.1
+      strict-transport-security:
+      - max-age=15724800; includeSubDomains
+    status:
+      code: 202
+      message: Accepted
+- request:
+    body: null
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - azsdk-python-farmbeats/1.0.0b1 Python/3.9.1 (macOS-10.16-x86_64-i386-64bit)
+    method: GET
+    uri: https://fakeAccount.farmbeats.azure.net/scenes/satellite/ingest-data/fake-job-960?api-version=2021-03-31-preview
+  response:
+    body:
+      string: '{"farmerId":"fake-farmer","boundaryId":"fake-boundary-scenes","startDateTime":"2020-01-01T00:00:00Z","endDateTime":"2020-12-31T00:00:00Z","provider":"Microsoft","source":"Sentinel_2_L2A","data":{"imageNames":["LAI"],"imageFormats":["TIF"],"imageResolutions":[10.0]},"id":"fake-job-960","status":"Succeeded","durationInSeconds":"6.2880841","message":"Satellite
+        data is available for 143 days from provider in the requested date range.
+        Successfully fetched data for 143 days.","createdDateTime":"2021-05-04T18:26:02Z","lastActionDateTime":"2021-05-04T18:26:08Z","startTime":"2021-05-04T18:26:02Z"}'
+    headers:
+      api-deprecated-versions:
+      - 2020-12-31-preview
+      api-supported-versions:
+      - 2021-03-31-preview
+      connection:
+      - keep-alive
+      content-length:
+      - '597'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Tue, 04 May 2021 18:26:34 GMT
+      server:
+      - nginx/1.19.1
+      strict-transport-security:
+      - max-age=15724800; includeSubDomains
+      transfer-encoding:
+      - chunked
+      vary:
+      - Accept-Encoding
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - azsdk-python-farmbeats/1.0.0b1 Python/3.9.1 (macOS-10.16-x86_64-i386-64bit)
+    method: GET
+    uri: https://fakeAccount.farmbeats.azure.net/scenes/satellite/ingest-data/fake-job-960?api-version=2021-03-31-preview
+  response:
+    body:
+      string: '{"farmerId":"fake-farmer","boundaryId":"fake-boundary-scenes","startDateTime":"2020-01-01T00:00:00Z","endDateTime":"2020-12-31T00:00:00Z","provider":"Microsoft","source":"Sentinel_2_L2A","data":{"imageNames":["LAI"],"imageFormats":["TIF"],"imageResolutions":[10.0]},"id":"fake-job-960","status":"Succeeded","durationInSeconds":"6.2880841","message":"Satellite
+        data is available for 143 days from provider in the requested date range.
+        Successfully fetched data for 143 days.","createdDateTime":"2021-05-04T18:26:02Z","lastActionDateTime":"2021-05-04T18:26:08Z","startTime":"2021-05-04T18:26:02Z"}'
+    headers:
+      api-deprecated-versions:
+      - 2020-12-31-preview
+      api-supported-versions:
+      - 2021-03-31-preview
+      connection:
+      - keep-alive
+      content-length:
+      - '597'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Tue, 04 May 2021 18:26:34 GMT
+      server:
+      - nginx/1.19.1
+      strict-transport-security:
+      - max-age=15724800; includeSubDomains
+      transfer-encoding:
+      - chunked
+      vary:
+      - Accept-Encoding
+    status:
+      code: 200
+      message: OK
+version: 1

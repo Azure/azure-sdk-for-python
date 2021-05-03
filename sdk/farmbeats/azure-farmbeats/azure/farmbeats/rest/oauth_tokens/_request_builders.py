@@ -14,7 +14,7 @@ from msrest import Serializer
 
 if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
-    from typing import Any, IO, List, Optional
+    from typing import Any, Dict, List, Optional
 
 _SERIALIZER = Serializer()
 
@@ -53,6 +53,7 @@ def build_list_request(
     Example:
         .. code-block:: python
 
+    
             # response body for status code(s): 200
             response_body == {
                 "$skipToken": "str (optional)",
@@ -182,6 +183,7 @@ def build_get_o_auth_connection_link_request(
     Example:
         .. code-block:: python
 
+    
             # JSON input template you can fill out and use as your `json` input.
             json = {
                 "farmerId": "str",

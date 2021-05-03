@@ -6,7 +6,7 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 import datetime
-from typing import Any, IO, List, Optional, TYPE_CHECKING
+from typing import Any, Dict, List, Optional, TYPE_CHECKING
 
 from azure.core.pipeline.transport._base import _format_url_section
 from azure.farmbeats.core.rest import HttpRequest
@@ -62,6 +62,7 @@ def build_list_request(
     Example:
         .. code-block:: python
 
+    
             # response body for status code(s): 200
             response_body == {
                 "$skipToken": "str (optional)",
@@ -184,6 +185,7 @@ def build_get_o_auth_connection_link_request(
     Example:
         .. code-block:: python
 
+    
             # JSON input template you can fill out and use as your `json` input.
             json = {
                 "farmerId": "str",

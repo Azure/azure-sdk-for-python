@@ -123,6 +123,8 @@ class PlantingDataOperations(object):
         Example:
             .. code-block:: python
 
+
+
                 # response body for status code(s): 200
                 response_body == {
                     "$skipToken": "str (optional)",
@@ -406,6 +408,8 @@ class PlantingDataOperations(object):
         Example:
             .. code-block:: python
 
+
+
                 # response body for status code(s): 200
                 response_body == {
                     "$skipToken": "str (optional)",
@@ -631,6 +635,7 @@ class PlantingDataOperations(object):
         Example:
             .. code-block:: python
 
+
                 # response body for status code(s): 200
                 response_body == {
                     "area": {
@@ -746,8 +751,65 @@ class PlantingDataOperations(object):
         Example:
             .. code-block:: python
 
+
                 # JSON input template you can fill out and use as your `json` input.
-                json = {
+                planting_data = {
+                    "area": {
+                        "unit": "str (optional)",
+                        "value": "float (optional)"
+                    },
+                    "associatedBoundaryId": "str (optional)",
+                    "attachmentsLink": "str (optional)",
+                    "avgMaterial": {
+                        "unit": "str (optional)",
+                        "value": "float (optional)"
+                    },
+                    "avgPlantingRate": {
+                        "unit": "str (optional)",
+                        "value": "float (optional)"
+                    },
+                    "createdDateTime": "datetime (optional)",
+                    "description": "str (optional)",
+                    "eTag": "str (optional)",
+                    "farmerId": "str (optional)",
+                    "id": "str (optional)",
+                    "modifiedDateTime": "datetime (optional)",
+                    "name": "str (optional)",
+                    "operationBoundaryId": "str (optional)",
+                    "operationEndDateTime": "datetime (optional)",
+                    "operationModifiedDateTime": "datetime (optional)",
+                    "operationStartDateTime": "datetime (optional)",
+                    "plantingProductDetails": [
+                        {
+                            "area": {
+                                "unit": "str (optional)",
+                                "value": "float (optional)"
+                            },
+                            "avgMaterial": {
+                                "unit": "str (optional)",
+                                "value": "float (optional)"
+                            },
+                            "productName": "str (optional)",
+                            "totalMaterial": {
+                                "unit": "str (optional)",
+                                "value": "float (optional)"
+                            }
+                        }
+                    ],
+                    "properties": {
+                        "str": "object (optional)"
+                    },
+                    "source": "str (optional)",
+                    "status": "str (optional)",
+                    "totalMaterial": {
+                        "unit": "str (optional)",
+                        "value": "float (optional)"
+                    }
+                }
+
+
+                # response body for status code(s): 200, 201
+                response_body == {
                     "area": {
                         "unit": "str (optional)",
                         "value": "float (optional)"
@@ -812,7 +874,7 @@ class PlantingDataOperations(object):
 
         content_type = kwargs.pop("content_type", "application/merge-patch+json")
         if planting_data is not None:
-            json = planting_data
+            json = self._serialize.body(planting_data, 'object')
         else:
             json = None
 

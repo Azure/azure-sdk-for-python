@@ -87,6 +87,8 @@ class AttachmentsOperations(object):
         Example:
             .. code-block:: python
 
+
+
                 # response body for status code(s): 200
                 response_body == {
                     "$skipToken": "str (optional)",
@@ -228,6 +230,7 @@ class AttachmentsOperations(object):
 
         Example:
             .. code-block:: python
+
 
                 # response body for status code(s): 200
                 response_body == {

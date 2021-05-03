@@ -85,6 +85,8 @@ class FarmsOperations(object):
         Example:
             .. code-block:: python
 
+
+
                 # response body for status code(s): 200
                 response_body == {
                     "$skipToken": "str (optional)",
@@ -237,6 +239,8 @@ class FarmsOperations(object):
         Example:
             .. code-block:: python
 
+
+
                 # response body for status code(s): 200
                 response_body == {
                     "$skipToken": "str (optional)",
@@ -371,6 +375,7 @@ class FarmsOperations(object):
         Example:
             .. code-block:: python
 
+
                 # response body for status code(s): 200
                 response_body == {
                     "createdDateTime": "datetime (optional)",
@@ -446,8 +451,25 @@ class FarmsOperations(object):
         Example:
             .. code-block:: python
 
+
                 # JSON input template you can fill out and use as your `json` input.
-                json = {
+                farm = {
+                    "createdDateTime": "datetime (optional)",
+                    "description": "str (optional)",
+                    "eTag": "str (optional)",
+                    "farmerId": "str (optional)",
+                    "id": "str (optional)",
+                    "modifiedDateTime": "datetime (optional)",
+                    "name": "str (optional)",
+                    "properties": {
+                        "str": "object (optional)"
+                    },
+                    "status": "str (optional)"
+                }
+
+
+                # response body for status code(s): 200, 201
+                response_body == {
                     "createdDateTime": "datetime (optional)",
                     "description": "str (optional)",
                     "eTag": "str (optional)",
@@ -472,7 +494,7 @@ class FarmsOperations(object):
 
         content_type = kwargs.pop("content_type", "application/merge-patch+json")
         if farm is not None:
-            json = farm
+            json = self._serialize.body(farm, 'object')
         else:
             json = None
 
@@ -576,6 +598,7 @@ class FarmsOperations(object):
 
         Example:
             .. code-block:: python
+
 
                 # response body for status code(s): 200
                 response_body == {
@@ -703,6 +726,7 @@ class FarmsOperations(object):
 
         Example:
             .. code-block:: python
+
 
                 # response body for status code(s): 202
                 response_body == {

@@ -89,6 +89,8 @@ class CropVarietiesOperations(object):
         Example:
             .. code-block:: python
 
+
+
                 # response body for status code(s): 200
                 response_body == {
                     "$skipToken": "str (optional)",
@@ -258,6 +260,8 @@ class CropVarietiesOperations(object):
         Example:
             .. code-block:: python
 
+
+
                 # response body for status code(s): 200
                 response_body == {
                     "$skipToken": "str (optional)",
@@ -403,6 +407,7 @@ class CropVarietiesOperations(object):
         Example:
             .. code-block:: python
 
+
                 # response body for status code(s): 200
                 response_body == {
                     "brand": "str (optional)",
@@ -480,8 +485,27 @@ class CropVarietiesOperations(object):
         Example:
             .. code-block:: python
 
+
                 # JSON input template you can fill out and use as your `json` input.
-                json = {
+                crop_variety = {
+                    "brand": "str (optional)",
+                    "createdDateTime": "datetime (optional)",
+                    "cropId": "str (optional)",
+                    "description": "str (optional)",
+                    "eTag": "str (optional)",
+                    "id": "str (optional)",
+                    "modifiedDateTime": "datetime (optional)",
+                    "name": "str (optional)",
+                    "product": "str (optional)",
+                    "properties": {
+                        "str": "object (optional)"
+                    },
+                    "status": "str (optional)"
+                }
+
+
+                # response body for status code(s): 200, 201
+                response_body == {
                     "brand": "str (optional)",
                     "createdDateTime": "datetime (optional)",
                     "cropId": "str (optional)",
@@ -508,7 +532,7 @@ class CropVarietiesOperations(object):
 
         content_type = kwargs.pop("content_type", "application/merge-patch+json")
         if crop_variety is not None:
-            json = crop_variety
+            json = self._serialize.body(crop_variety, 'object')
         else:
             json = None
 

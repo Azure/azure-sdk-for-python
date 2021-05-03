@@ -86,6 +86,8 @@ class OAuthTokensOperations:
         Example:
             .. code-block:: python
 
+
+
                 # response body for status code(s): 200
                 response_body == {
                     "$skipToken": "str (optional)",
@@ -247,8 +249,9 @@ class OAuthTokensOperations:
         Example:
             .. code-block:: python
 
+
                 # JSON input template you can fill out and use as your `json` input.
-                json = {
+                oauth_connect_request = {
                     "farmerId": "str",
                     "oAuthProviderId": "str",
                     "userRedirectLink": "str",
@@ -264,7 +267,7 @@ class OAuthTokensOperations:
 
         content_type = kwargs.pop("content_type", "application/json")
         if oauth_connect_request is not None:
-            json = oauth_connect_request
+            json = self._serialize.body(oauth_connect_request, 'object')
         else:
             json = None
 

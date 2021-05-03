@@ -1,0 +1,128 @@
+interactions:
+- request:
+    body: '{"description": "Created by SDK", "geometry": {"type": "Polygon", "coordinates":
+      [[[73.70457172393799, 20.545385304358106], [73.70457172393799, 20.545385304358106],
+      [73.70448589324951, 20.542411534243367], [73.70877742767334, 20.541688176010233],
+      [73.71023654937744, 20.545083911372505], [73.70663166046143, 20.546992723579137],
+      [73.70457172393799, 20.545385304358106]]]}}'
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '372'
+      Content-Type:
+      - application/merge-patch+json
+      User-Agent:
+      - azsdk-python-farmbeats/1.0.0b1 Python/3.9.1 (macOS-10.16-x86_64-i386-64bit)
+    method: PATCH
+    uri: https://fakeAccount.farmbeats.azure.net/farmers/fake-farmer/boundaries/fake-boundaryboundary?api-version=2021-03-31-preview
+  response:
+    body:
+      string: '{"farmerId":"fake-farmer","geometry":{"type":"Polygon","coordinates":[[[73.70457172393799,20.545385304358106],[73.70457172393799,20.545385304358106],[73.70448589324951,20.542411534243367],[73.70877742767334,20.541688176010233],[73.71023654937744,20.545083911372505],[73.70663166046143,20.546992723579137],[73.70457172393799,20.545385304358106]]]},"isPrimary":false,"acreage":60.40491151079627,"id":"fake-boundaryboundary","eTag":"19025df6-0000-0700-0000-609191ab0000","createdDateTime":"2021-05-04T18:25:47Z","modifiedDateTime":"2021-05-04T18:25:47Z","description":"Created
+        by SDK"}'
+    headers:
+      api-deprecated-versions:
+      - 2020-12-31-preview
+      api-supported-versions:
+      - 2021-03-31-preview
+      connection:
+      - keep-alive
+      content-length:
+      - '584'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Tue, 04 May 2021 18:25:47 GMT
+      etag:
+      - 19025df6-0000-0700-0000-609191ab0000
+      location:
+      - http://iscai-sdk.farmbeats-dogfood.azure.net/farmers/fake-farmer/boundaries/fake-boundaryboundary
+      server:
+      - nginx/1.19.1
+      strict-transport-security:
+      - max-age=15724800; includeSubDomains
+    status:
+      code: 201
+      message: Created
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - azsdk-python-farmbeats/1.0.0b1 Python/3.9.1 (macOS-10.16-x86_64-i386-64bit)
+    method: GET
+    uri: https://fakeAccount.farmbeats.azure.net/farmers/fake-farmer/boundaries/fake-boundaryboundary?api-version=2021-03-31-preview
+  response:
+    body:
+      string: '{"farmerId":"fake-farmer","geometry":{"type":"Polygon","coordinates":[[[73.70457172393799,20.545385304358106],[73.70457172393799,20.545385304358106],[73.70448589324951,20.542411534243367],[73.70877742767334,20.541688176010233],[73.71023654937744,20.545083911372505],[73.70663166046143,20.546992723579137],[73.70457172393799,20.545385304358106]]]},"isPrimary":false,"acreage":60.40491151079627,"id":"fake-boundaryboundary","eTag":"19025df6-0000-0700-0000-609191ab0000","createdDateTime":"2021-05-04T18:25:47Z","modifiedDateTime":"2021-05-04T18:25:47Z","description":"Created
+        by SDK"}'
+    headers:
+      api-deprecated-versions:
+      - 2020-12-31-preview
+      api-supported-versions:
+      - 2021-03-31-preview
+      connection:
+      - keep-alive
+      content-length:
+      - '584'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Tue, 04 May 2021 18:25:49 GMT
+      server:
+      - nginx/1.19.1
+      strict-transport-security:
+      - max-age=15724800; includeSubDomains
+      transfer-encoding:
+      - chunked
+      vary:
+      - Accept-Encoding
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '0'
+      User-Agent:
+      - azsdk-python-farmbeats/1.0.0b1 Python/3.9.1 (macOS-10.16-x86_64-i386-64bit)
+    method: DELETE
+    uri: https://fakeAccount.farmbeats.azure.net/farmers/fake-farmer/boundaries/fake-boundaryboundary?api-version=2021-03-31-preview
+  response:
+    body:
+      string: ''
+    headers:
+      api-deprecated-versions:
+      - 2020-12-31-preview
+      api-supported-versions:
+      - 2021-03-31-preview
+      connection:
+      - keep-alive
+      content-length:
+      - '0'
+      date:
+      - Tue, 04 May 2021 18:25:51 GMT
+      server:
+      - nginx/1.19.1
+      strict-transport-security:
+      - max-age=15724800; includeSubDomains
+    status:
+      code: 204
+      message: No Content
+version: 1

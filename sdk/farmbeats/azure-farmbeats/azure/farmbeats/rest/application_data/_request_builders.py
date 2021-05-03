@@ -99,6 +99,7 @@ def build_list_by_farmer_id_request(
     Example:
         .. code-block:: python
 
+    
             # response body for status code(s): 200
             response_body == {
                 "$skipToken": "str (optional)",
@@ -333,6 +334,7 @@ def build_list_request(
     Example:
         .. code-block:: python
 
+    
             # response body for status code(s): 200
             response_body == {
                 "$skipToken": "str (optional)",
@@ -507,6 +509,7 @@ def build_get_request(
     Example:
         .. code-block:: python
 
+    
             # response body for status code(s): 200
             response_body == {
                 "applicationProductDetails": [
@@ -609,8 +612,58 @@ def build_create_or_update_request(
     Example:
         .. code-block:: python
 
+    
             # JSON input template you can fill out and use as your `json` input.
             json = {
+                "applicationProductDetails": [
+                    {
+                        "avgMaterial": {
+                            "unit": "str (optional)",
+                            "value": "float (optional)"
+                        },
+                        "isCarrier": "bool (optional). Default value is False",
+                        "productName": "str (optional)",
+                        "totalMaterial": {
+                            "unit": "str (optional)",
+                            "value": "float (optional)"
+                        }
+                    }
+                ],
+                "area": {
+                    "unit": "str (optional)",
+                    "value": "float (optional)"
+                },
+                "associatedBoundaryId": "str (optional)",
+                "attachmentsLink": "str (optional)",
+                "avgMaterial": {
+                    "unit": "str (optional)",
+                    "value": "float (optional)"
+                },
+                "createdDateTime": "datetime (optional)",
+                "description": "str (optional)",
+                "eTag": "str (optional)",
+                "farmerId": "str (optional)",
+                "id": "str (optional)",
+                "modifiedDateTime": "datetime (optional)",
+                "name": "str (optional)",
+                "operationBoundaryId": "str (optional)",
+                "operationEndDateTime": "datetime (optional)",
+                "operationModifiedDateTime": "datetime (optional)",
+                "operationStartDateTime": "datetime (optional)",
+                "properties": {
+                    "str": "object (optional)"
+                },
+                "source": "str (optional)",
+                "status": "str (optional)",
+                "totalMaterial": {
+                    "unit": "str (optional)",
+                    "value": "float (optional)"
+                }
+            }
+
+    
+            # response body for status code(s): 200, 201
+            response_body == {
                 "applicationProductDetails": [
                     {
                         "avgMaterial": {

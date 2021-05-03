@@ -93,6 +93,8 @@ class CropsOperations:
         Example:
             .. code-block:: python
 
+
+
                 # response body for status code(s): 200
                 response_body == {
                     "$skipToken": "str (optional)",
@@ -214,6 +216,7 @@ class CropsOperations:
         Example:
             .. code-block:: python
 
+
                 # response body for status code(s): 200
                 response_body == {
                     "createdDateTime": "datetime (optional)",
@@ -286,8 +289,25 @@ class CropsOperations:
         Example:
             .. code-block:: python
 
+
                 # JSON input template you can fill out and use as your `json` input.
-                json = {
+                crop = {
+                    "createdDateTime": "datetime (optional)",
+                    "description": "str (optional)",
+                    "eTag": "str (optional)",
+                    "id": "str (optional)",
+                    "modifiedDateTime": "datetime (optional)",
+                    "name": "str (optional)",
+                    "phenotype": "str (optional)",
+                    "properties": {
+                        "str": "object (optional)"
+                    },
+                    "status": "str (optional)"
+                }
+
+
+                # response body for status code(s): 200, 201
+                response_body == {
                     "createdDateTime": "datetime (optional)",
                     "description": "str (optional)",
                     "eTag": "str (optional)",
@@ -310,7 +330,7 @@ class CropsOperations:
 
         content_type = kwargs.pop("content_type", "application/merge-patch+json")
         if crop is not None:
-            json = crop
+            json = self._serialize.body(crop, 'object')
         else:
             json = None
 

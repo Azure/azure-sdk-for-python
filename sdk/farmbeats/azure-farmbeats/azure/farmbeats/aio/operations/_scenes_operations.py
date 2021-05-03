@@ -7,7 +7,7 @@
 # --------------------------------------------------------------------------
 import datetime
 from json import loads as _loads
-from typing import Any, AsyncIterable, Callable, Dict, Generic, List, Optional, TYPE_CHECKING, TypeVar, Union
+from typing import Any, AsyncIterable, Callable, Dict, Generic, IO, List, Optional, TYPE_CHECKING, TypeVar, Union
 import warnings
 
 from azure.core.async_paging import AsyncItemPaged, AsyncList
@@ -102,6 +102,8 @@ class ScenesOperations:
 
         Example:
             .. code-block:: python
+
+
 
                 # response body for status code(s): 200
                 response_body == {
@@ -234,7 +236,7 @@ class ScenesOperations:
 
         content_type = kwargs.pop("content_type", "application/json")
         if job is not None:
-            json = job
+            json = self._serialize.body(job, 'object')
         else:
             json = None
 
@@ -294,8 +296,44 @@ class ScenesOperations:
         Example:
             .. code-block:: python
 
+
                 # JSON input template you can fill out and use as your `json` input.
-                json = {
+                job = {
+                    "boundaryId": "str",
+                    "createdDateTime": "datetime (optional)",
+                    "data": {
+                        "imageFormats": [
+                            "str (optional)"
+                        ],
+                        "imageNames": [
+                            "str (optional)"
+                        ],
+                        "imageResolutions": [
+                            "float (optional)"
+                        ]
+                    },
+                    "description": "str (optional)",
+                    "durationInSeconds": "str (optional)",
+                    "endDateTime": "datetime",
+                    "endTime": "datetime (optional)",
+                    "farmerId": "str",
+                    "id": "str (optional)",
+                    "lastActionDateTime": "datetime (optional)",
+                    "message": "str (optional)",
+                    "name": "str (optional)",
+                    "properties": {
+                        "str": "object (optional)"
+                    },
+                    "provider": "str (optional)",
+                    "source": "str (optional)",
+                    "startDateTime": "datetime",
+                    "startTime": "datetime (optional)",
+                    "status": "str (optional)"
+                }
+
+
+                # response body for status code(s): 202
+                response_body == {
                     "boundaryId": "str",
                     "createdDateTime": "datetime (optional)",
                     "data": {
@@ -393,6 +431,7 @@ class ScenesOperations:
 
         Example:
             .. code-block:: python
+
 
                 # response body for status code(s): 200
                 response_body == {

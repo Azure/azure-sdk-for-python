@@ -1,0 +1,82 @@
+interactions:
+- request:
+    body: '{}'
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '2'
+      Content-Type:
+      - application/merge-patch+json
+      User-Agent:
+      - azsdk-python-farmbeats/1.0.0b1 Python/3.9.1 (macOS-10.16-x86_64-i386-64bit)
+    method: PATCH
+    uri: https://fakeAccount.farmbeats.azure.net/farmers/fake-farmer?api-version=2021-03-31-preview
+  response:
+    body:
+      string: '{"id":"fake-farmer","eTag":"190263f6-0000-0700-0000-609191b60000","createdDateTime":"2021-04-29T23:34:05Z","modifiedDateTime":"2021-05-04T18:25:58Z"}'
+    headers:
+      api-deprecated-versions:
+      - 2020-12-31-preview
+      api-supported-versions:
+      - 2021-03-31-preview
+      connection:
+      - keep-alive
+      content-length:
+      - '150'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Tue, 04 May 2021 18:25:59 GMT
+      etag:
+      - 190263f6-0000-0700-0000-609191b60000
+      server:
+      - nginx/1.19.1
+      strict-transport-security:
+      - max-age=15724800; includeSubDomains
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - azsdk-python-farmbeats/1.0.0b1 Python/3.9.1 (macOS-10.16-x86_64-i386-64bit)
+    method: GET
+    uri: https://fakeAccount.farmbeats.azure.net/farmers/fake-farmer?api-version=2021-03-31-preview
+  response:
+    body:
+      string: '{"id":"fake-farmer","eTag":"190263f6-0000-0700-0000-609191b60000","createdDateTime":"2021-04-29T23:34:05Z","modifiedDateTime":"2021-05-04T18:25:58Z"}'
+    headers:
+      api-deprecated-versions:
+      - 2020-12-31-preview
+      api-supported-versions:
+      - 2021-03-31-preview
+      connection:
+      - keep-alive
+      content-length:
+      - '150'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Tue, 04 May 2021 18:26:00 GMT
+      etag:
+      - 190263f6-0000-0700-0000-609191b60000
+      server:
+      - nginx/1.19.1
+      strict-transport-security:
+      - max-age=15724800; includeSubDomains
+    status:
+      code: 200
+      message: OK
+version: 1

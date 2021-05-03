@@ -58,7 +58,7 @@ class FarmOperationsOperations:
 
         content_type = kwargs.pop("content_type", "application/json")
         if job is not None:
-            json = job
+            json = self._serialize.body(job, 'object')
         else:
             json = None
 
@@ -118,8 +118,33 @@ class FarmOperationsOperations:
         Example:
             .. code-block:: python
 
+
                 # JSON input template you can fill out and use as your `json` input.
-                json = {
+                job = {
+                    "authProviderId": "str",
+                    "createdDateTime": "datetime (optional)",
+                    "description": "str (optional)",
+                    "durationInSeconds": "str (optional)",
+                    "endTime": "datetime (optional)",
+                    "farmerId": "str",
+                    "id": "str (optional)",
+                    "lastActionDateTime": "datetime (optional)",
+                    "message": "str (optional)",
+                    "name": "str (optional)",
+                    "operations": [
+                        "str (optional)"
+                    ],
+                    "properties": {
+                        "str": "object (optional)"
+                    },
+                    "startTime": "datetime (optional)",
+                    "startYear": "int",
+                    "status": "str (optional)"
+                }
+
+
+                # response body for status code(s): 202
+                response_body == {
                     "authProviderId": "str",
                     "createdDateTime": "datetime (optional)",
                     "description": "str (optional)",
@@ -206,6 +231,7 @@ class FarmOperationsOperations:
 
         Example:
             .. code-block:: python
+
 
                 # response body for status code(s): 200
                 response_body == {

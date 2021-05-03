@@ -82,6 +82,8 @@ class FarmersOperations(object):
         Example:
             .. code-block:: python
 
+
+
                 # response body for status code(s): 200
                 response_body == {
                     "$skipToken": "str (optional)",
@@ -212,6 +214,7 @@ class FarmersOperations(object):
         Example:
             .. code-block:: python
 
+
                 # response body for status code(s): 200
                 response_body == {
                     "createdDateTime": "datetime (optional)",
@@ -282,8 +285,24 @@ class FarmersOperations(object):
         Example:
             .. code-block:: python
 
+
                 # JSON input template you can fill out and use as your `json` input.
-                json = {
+                farmer = {
+                    "createdDateTime": "datetime (optional)",
+                    "description": "str (optional)",
+                    "eTag": "str (optional)",
+                    "id": "str (optional)",
+                    "modifiedDateTime": "datetime (optional)",
+                    "name": "str (optional)",
+                    "properties": {
+                        "str": "object (optional)"
+                    },
+                    "status": "str (optional)"
+                }
+
+
+                # response body for status code(s): 200, 201
+                response_body == {
                     "createdDateTime": "datetime (optional)",
                     "description": "str (optional)",
                     "eTag": "str (optional)",
@@ -307,7 +326,7 @@ class FarmersOperations(object):
 
         content_type = kwargs.pop("content_type", "application/merge-patch+json")
         if farmer is not None:
-            json = farmer
+            json = self._serialize.body(farmer, 'object')
         else:
             json = None
 
@@ -406,6 +425,7 @@ class FarmersOperations(object):
 
         Example:
             .. code-block:: python
+
 
                 # response body for status code(s): 200
                 response_body == {
@@ -529,6 +549,7 @@ class FarmersOperations(object):
 
         Example:
             .. code-block:: python
+
 
                 # response body for status code(s): 202
                 response_body == {

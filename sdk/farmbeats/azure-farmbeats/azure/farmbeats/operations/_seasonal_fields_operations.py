@@ -115,6 +115,8 @@ class SeasonalFieldsOperations(object):
         Example:
             .. code-block:: python
 
+
+
                 # response body for status code(s): 200
                 response_body == {
                     "$skipToken": "str (optional)",
@@ -352,6 +354,8 @@ class SeasonalFieldsOperations(object):
         Example:
             .. code-block:: python
 
+
+
                 # response body for status code(s): 200
                 response_body == {
                     "$skipToken": "str (optional)",
@@ -541,6 +545,7 @@ class SeasonalFieldsOperations(object):
         Example:
             .. code-block:: python
 
+
                 # response body for status code(s): 200
                 response_body == {
                     "avgSeedPopulationUnit": "str (optional)",
@@ -632,8 +637,41 @@ class SeasonalFieldsOperations(object):
         Example:
             .. code-block:: python
 
+
                 # JSON input template you can fill out and use as your `json` input.
-                json = {
+                seasonal_field = {
+                    "avgSeedPopulationUnit": "str (optional)",
+                    "avgSeedPopulationValue": "float (optional)",
+                    "avgYieldUnit": "str (optional)",
+                    "avgYieldValue": "float (optional)",
+                    "boundaryIds": [
+                        "str (optional)"
+                    ],
+                    "createdDateTime": "datetime (optional)",
+                    "cropId": "str (optional)",
+                    "cropVarietyIds": [
+                        "str (optional)"
+                    ],
+                    "description": "str (optional)",
+                    "eTag": "str (optional)",
+                    "farmId": "str (optional)",
+                    "farmerId": "str (optional)",
+                    "fieldId": "str (optional)",
+                    "id": "str (optional)",
+                    "modifiedDateTime": "datetime (optional)",
+                    "name": "str (optional)",
+                    "plantingDateTime": "datetime (optional)",
+                    "primaryBoundaryId": "str (optional)",
+                    "properties": {
+                        "str": "object (optional)"
+                    },
+                    "seasonId": "str (optional)",
+                    "status": "str (optional)"
+                }
+
+
+                # response body for status code(s): 200, 201
+                response_body == {
                     "avgSeedPopulationUnit": "str (optional)",
                     "avgSeedPopulationValue": "float (optional)",
                     "avgYieldUnit": "str (optional)",
@@ -674,7 +712,7 @@ class SeasonalFieldsOperations(object):
 
         content_type = kwargs.pop("content_type", "application/merge-patch+json")
         if seasonal_field is not None:
-            json = seasonal_field
+            json = self._serialize.body(seasonal_field, 'object')
         else:
             json = None
 
@@ -778,6 +816,7 @@ class SeasonalFieldsOperations(object):
 
         Example:
             .. code-block:: python
+
 
                 # response body for status code(s): 200
                 response_body == {
@@ -905,6 +944,7 @@ class SeasonalFieldsOperations(object):
 
         Example:
             .. code-block:: python
+
 
                 # response body for status code(s): 202
                 response_body == {

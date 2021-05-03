@@ -6,7 +6,7 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 import datetime
-from typing import Any, IO, List, Optional, TYPE_CHECKING
+from typing import Any, Dict, List, Optional, TYPE_CHECKING
 
 from azure.core.pipeline.transport._base import _format_url_section
 from azure.farmbeats.core.rest import HttpRequest
@@ -77,6 +77,7 @@ def build_list_request(
     Example:
         .. code-block:: python
 
+    
             # response body for status code(s): 200
             response_body == {
                 "$skipToken": "str (optional)",
@@ -177,8 +178,44 @@ def build_create_satellite_data_ingestion_job_request_initial(
     Example:
         .. code-block:: python
 
+    
             # JSON input template you can fill out and use as your `json` input.
             json = {
+                "boundaryId": "str",
+                "createdDateTime": "datetime (optional)",
+                "data": {
+                    "imageFormats": [
+                        "str (optional)"
+                    ],
+                    "imageNames": [
+                        "str (optional)"
+                    ],
+                    "imageResolutions": [
+                        "float (optional)"
+                    ]
+                },
+                "description": "str (optional)",
+                "durationInSeconds": "str (optional)",
+                "endDateTime": "datetime",
+                "endTime": "datetime (optional)",
+                "farmerId": "str",
+                "id": "str (optional)",
+                "lastActionDateTime": "datetime (optional)",
+                "message": "str (optional)",
+                "name": "str (optional)",
+                "properties": {
+                    "str": "object (optional)"
+                },
+                "provider": "str (optional)",
+                "source": "str (optional)",
+                "startDateTime": "datetime",
+                "startTime": "datetime (optional)",
+                "status": "str (optional)"
+            }
+
+    
+            # response body for status code(s): 202
+            response_body == {
                 "boundaryId": "str",
                 "createdDateTime": "datetime (optional)",
                 "data": {
@@ -261,6 +298,7 @@ def build_get_satellite_data_ingestion_job_details_request(
     Example:
         .. code-block:: python
 
+    
             # response body for status code(s): 200
             response_body == {
                 "boundaryId": "str",

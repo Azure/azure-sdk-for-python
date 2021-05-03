@@ -75,6 +75,7 @@ def build_list_by_farmer_id_request(
     Example:
         .. code-block:: python
 
+    
             # response body for status code(s): 200
             response_body == {
                 "$skipToken": "str (optional)",
@@ -168,6 +169,7 @@ def build_get_request(
     Example:
         .. code-block:: python
 
+    
             # response body for status code(s): 200
             response_body == {
                 "createdDateTime": "datetime (optional)",
@@ -241,7 +243,7 @@ def build_create_or_update_request(
     Example:
         .. code-block:: python
 
-            # multipart input template you can fill out and use as your `files` input.
+    # multipart input template you can fill out and use as your `files` input.
             files = {
                 "created_date_time": "str (optional). Date when resource was created.",
                 "description": "str (optional). Textual description of resource.",
@@ -255,6 +257,22 @@ def build_create_or_update_request(
                 "resource_id": "str (optional). Associated Resource id for this attachment.",
                 "resource_type": "str (optional). Associated Resource type for this attachment\ni.e. Farmer, Farm, Field, SeasonalField, Boundary, FarmOperationApplicationData, HarvestData, TillageData, PlantingData.",
                 "status": "str (optional). Status of the resource."
+            }
+
+    
+            # response body for status code(s): 200, 201
+            response_body == {
+                "createdDateTime": "datetime (optional)",
+                "description": "str (optional)",
+                "eTag": "str (optional)",
+                "farmerId": "str (optional)",
+                "id": "str (optional)",
+                "modifiedDateTime": "datetime (optional)",
+                "name": "str (optional)",
+                "originalFileName": "str (optional)",
+                "resourceId": "str (optional)",
+                "resourceType": "str (optional)",
+                "status": "str (optional)"
             }
 
     """

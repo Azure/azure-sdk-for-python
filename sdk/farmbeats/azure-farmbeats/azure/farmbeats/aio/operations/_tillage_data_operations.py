@@ -144,6 +144,8 @@ class TillageDataOperations:
         Example:
             .. code-block:: python
 
+
+
                 # response body for status code(s): 200
                 response_body == {
                     "$skipToken": "str (optional)",
@@ -395,6 +397,8 @@ class TillageDataOperations:
         Example:
             .. code-block:: python
 
+
+
                 # response body for status code(s): 200
                 response_body == {
                     "$skipToken": "str (optional)",
@@ -566,6 +570,7 @@ class TillageDataOperations:
         Example:
             .. code-block:: python
 
+
                 # response body for status code(s): 200
                 response_body == {
                     "area": {
@@ -661,8 +666,44 @@ class TillageDataOperations:
         Example:
             .. code-block:: python
 
+
                 # JSON input template you can fill out and use as your `json` input.
-                json = {
+                tillage_data = {
+                    "area": {
+                        "unit": "str (optional)",
+                        "value": "float (optional)"
+                    },
+                    "associatedBoundaryId": "str (optional)",
+                    "attachmentsLink": "str (optional)",
+                    "createdDateTime": "datetime (optional)",
+                    "description": "str (optional)",
+                    "eTag": "str (optional)",
+                    "farmerId": "str (optional)",
+                    "id": "str (optional)",
+                    "modifiedDateTime": "datetime (optional)",
+                    "name": "str (optional)",
+                    "operationBoundaryId": "str (optional)",
+                    "operationEndDateTime": "datetime (optional)",
+                    "operationModifiedDateTime": "datetime (optional)",
+                    "operationStartDateTime": "datetime (optional)",
+                    "properties": {
+                        "str": "object (optional)"
+                    },
+                    "source": "str (optional)",
+                    "status": "str (optional)",
+                    "tillageDepth": {
+                        "unit": "str (optional)",
+                        "value": "float (optional)"
+                    },
+                    "tillagePressure": {
+                        "unit": "str (optional)",
+                        "value": "float (optional)"
+                    }
+                }
+
+
+                # response body for status code(s): 200, 201
+                response_body == {
                     "area": {
                         "unit": "str (optional)",
                         "value": "float (optional)"
@@ -704,7 +745,7 @@ class TillageDataOperations:
 
         content_type = kwargs.pop("content_type", "application/merge-patch+json")
         if tillage_data is not None:
-            json = tillage_data
+            json = self._serialize.body(tillage_data, 'object')
         else:
             json = None
 

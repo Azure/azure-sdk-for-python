@@ -87,6 +87,8 @@ class FieldsOperations(object):
         Example:
             .. code-block:: python
 
+
+
                 # response body for status code(s): 200
                 response_body == {
                     "$skipToken": "str (optional)",
@@ -249,6 +251,8 @@ class FieldsOperations(object):
         Example:
             .. code-block:: python
 
+
+
                 # response body for status code(s): 200
                 response_body == {
                     "$skipToken": "str (optional)",
@@ -391,6 +395,7 @@ class FieldsOperations(object):
         Example:
             .. code-block:: python
 
+
                 # response body for status code(s): 200
                 response_body == {
                     "boundaryIds": [
@@ -471,8 +476,30 @@ class FieldsOperations(object):
         Example:
             .. code-block:: python
 
+
                 # JSON input template you can fill out and use as your `json` input.
-                json = {
+                field = {
+                    "boundaryIds": [
+                        "str (optional)"
+                    ],
+                    "createdDateTime": "datetime (optional)",
+                    "description": "str (optional)",
+                    "eTag": "str (optional)",
+                    "farmId": "str (optional)",
+                    "farmerId": "str (optional)",
+                    "id": "str (optional)",
+                    "modifiedDateTime": "datetime (optional)",
+                    "name": "str (optional)",
+                    "primaryBoundaryId": "str (optional)",
+                    "properties": {
+                        "str": "object (optional)"
+                    },
+                    "status": "str (optional)"
+                }
+
+
+                # response body for status code(s): 200, 201
+                response_body == {
                     "boundaryIds": [
                         "str (optional)"
                     ],
@@ -502,7 +529,7 @@ class FieldsOperations(object):
 
         content_type = kwargs.pop("content_type", "application/merge-patch+json")
         if field is not None:
-            json = field
+            json = self._serialize.body(field, 'object')
         else:
             json = None
 
@@ -606,6 +633,7 @@ class FieldsOperations(object):
 
         Example:
             .. code-block:: python
+
 
                 # response body for status code(s): 200
                 response_body == {
@@ -733,6 +761,7 @@ class FieldsOperations(object):
 
         Example:
             .. code-block:: python
+
 
                 # response body for status code(s): 202
                 response_body == {

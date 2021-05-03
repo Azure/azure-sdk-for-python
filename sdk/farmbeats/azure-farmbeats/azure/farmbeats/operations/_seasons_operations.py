@@ -92,6 +92,8 @@ class SeasonsOperations(object):
         Example:
             .. code-block:: python
 
+
+
                 # response body for status code(s): 200
                 response_body == {
                     "$skipToken": "str (optional)",
@@ -240,6 +242,7 @@ class SeasonsOperations(object):
         Example:
             .. code-block:: python
 
+
                 # response body for status code(s): 200
                 response_body == {
                     "createdDateTime": "datetime (optional)",
@@ -313,8 +316,27 @@ class SeasonsOperations(object):
         Example:
             .. code-block:: python
 
+
                 # JSON input template you can fill out and use as your `json` input.
-                json = {
+                season = {
+                    "createdDateTime": "datetime (optional)",
+                    "description": "str (optional)",
+                    "eTag": "str (optional)",
+                    "endDateTime": "datetime (optional)",
+                    "id": "str (optional)",
+                    "modifiedDateTime": "datetime (optional)",
+                    "name": "str (optional)",
+                    "properties": {
+                        "str": "object (optional)"
+                    },
+                    "startDateTime": "datetime (optional)",
+                    "status": "str (optional)",
+                    "year": "int (optional)"
+                }
+
+
+                # response body for status code(s): 200, 201
+                response_body == {
                     "createdDateTime": "datetime (optional)",
                     "description": "str (optional)",
                     "eTag": "str (optional)",
@@ -341,7 +363,7 @@ class SeasonsOperations(object):
 
         content_type = kwargs.pop("content_type", "application/merge-patch+json")
         if season is not None:
-            json = season
+            json = self._serialize.body(season, 'object')
         else:
             json = None
 

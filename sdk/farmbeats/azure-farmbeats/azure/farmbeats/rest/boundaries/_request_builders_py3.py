@@ -84,6 +84,7 @@ def build_list_by_farmer_id_request(
     Example:
         .. code-block:: python
 
+    
             # response body for status code(s): 200
             response_body == {
                 "$skipToken": "str (optional)",
@@ -95,9 +96,7 @@ def build_list_by_farmer_id_request(
                         "description": "str (optional)",
                         "eTag": "str (optional)",
                         "farmerId": "str (optional)",
-                        "geometry": {
-                            "type": "type"
-                        },
+                        "geometry": "geometry",
                         "id": "str (optional)",
                         "isPrimary": "bool (optional)",
                         "modifiedDateTime": "datetime (optional)",
@@ -194,6 +193,42 @@ def build_search_by_farmer_id_request(
     Example:
         .. code-block:: python
 
+    
+            # 'intersects_with_geometry' can be defined the following ways:
+            # MultiPolygon geometry.
+            intersects_with_geometry = {
+                "coordinates": [
+                    [
+                        [
+                            [
+                                "float"
+                            ]
+                        ]
+                    ]
+                ],
+                "type": "MultiPolygon"
+            }
+            # OR
+            # Point geometry.
+            intersects_with_geometry = {
+                "coordinates": [
+                    "float"
+                ],
+                "type": "Point"
+            }
+            # OR
+            # Polygon geometry.
+            intersects_with_geometry = {
+                "coordinates": [
+                    [
+                        [
+                            "float"
+                        ]
+                    ]
+                ],
+                "type": "Polygon"
+            }
+
             # JSON input template you can fill out and use as your `json` input.
             json = {
                 "$maxPageSize": "int (optional). Default value is 50",
@@ -201,9 +236,7 @@ def build_search_by_farmer_id_request(
                 "ids": [
                     "str (optional)"
                 ],
-                "intersectsWithGeometry": {
-                    "type": "type"
-                },
+                "intersectsWithGeometry": "intersects_with_geometry",
                 "isPrimary": "bool (optional)",
                 "maxAcreage": "float (optional)",
                 "maxCreatedDateTime": "datetime (optional)",
@@ -223,6 +256,33 @@ def build_search_by_farmer_id_request(
                 ],
                 "statuses": [
                     "str (optional)"
+                ]
+            }
+
+    
+            # response body for status code(s): 200
+            response_body == {
+                "$skipToken": "str (optional)",
+                "nextLink": "str (optional)",
+                "value": [
+                    {
+                        "acreage": "float (optional)",
+                        "createdDateTime": "datetime (optional)",
+                        "description": "str (optional)",
+                        "eTag": "str (optional)",
+                        "farmerId": "str (optional)",
+                        "geometry": "geometry",
+                        "id": "str (optional)",
+                        "isPrimary": "bool (optional)",
+                        "modifiedDateTime": "datetime (optional)",
+                        "name": "str (optional)",
+                        "parentId": "str (optional)",
+                        "parentType": "str (optional)",
+                        "properties": {
+                            "str": "object (optional)"
+                        },
+                        "status": "str (optional)"
+                    }
                 ]
             }
 
@@ -321,6 +381,7 @@ def build_list_request(
     Example:
         .. code-block:: python
 
+    
             # response body for status code(s): 200
             response_body == {
                 "$skipToken": "str (optional)",
@@ -332,9 +393,7 @@ def build_list_request(
                         "description": "str (optional)",
                         "eTag": "str (optional)",
                         "farmerId": "str (optional)",
-                        "geometry": {
-                            "type": "type"
-                        },
+                        "geometry": "geometry",
                         "id": "str (optional)",
                         "isPrimary": "bool (optional)",
                         "modifiedDateTime": "datetime (optional)",
@@ -424,6 +483,42 @@ def build_search_request(
     Example:
         .. code-block:: python
 
+    
+            # 'intersects_with_geometry' can be defined the following ways:
+            # MultiPolygon geometry.
+            intersects_with_geometry = {
+                "coordinates": [
+                    [
+                        [
+                            [
+                                "float"
+                            ]
+                        ]
+                    ]
+                ],
+                "type": "MultiPolygon"
+            }
+            # OR
+            # Point geometry.
+            intersects_with_geometry = {
+                "coordinates": [
+                    "float"
+                ],
+                "type": "Point"
+            }
+            # OR
+            # Polygon geometry.
+            intersects_with_geometry = {
+                "coordinates": [
+                    [
+                        [
+                            "float"
+                        ]
+                    ]
+                ],
+                "type": "Polygon"
+            }
+
             # JSON input template you can fill out and use as your `json` input.
             json = {
                 "$maxPageSize": "int (optional). Default value is 50",
@@ -431,9 +526,7 @@ def build_search_request(
                 "ids": [
                     "str (optional)"
                 ],
-                "intersectsWithGeometry": {
-                    "type": "type"
-                },
+                "intersectsWithGeometry": "intersects_with_geometry",
                 "isPrimary": "bool (optional)",
                 "maxAcreage": "float (optional)",
                 "maxCreatedDateTime": "datetime (optional)",
@@ -453,6 +546,33 @@ def build_search_request(
                 ],
                 "statuses": [
                     "str (optional)"
+                ]
+            }
+
+    
+            # response body for status code(s): 200
+            response_body == {
+                "$skipToken": "str (optional)",
+                "nextLink": "str (optional)",
+                "value": [
+                    {
+                        "acreage": "float (optional)",
+                        "createdDateTime": "datetime (optional)",
+                        "description": "str (optional)",
+                        "eTag": "str (optional)",
+                        "farmerId": "str (optional)",
+                        "geometry": "geometry",
+                        "id": "str (optional)",
+                        "isPrimary": "bool (optional)",
+                        "modifiedDateTime": "datetime (optional)",
+                        "name": "str (optional)",
+                        "parentId": "str (optional)",
+                        "parentType": "str (optional)",
+                        "properties": {
+                            "str": "object (optional)"
+                        },
+                        "status": "str (optional)"
+                    }
                 ]
             }
 
@@ -502,6 +622,7 @@ def build_get_cascade_delete_job_details_request(
     Example:
         .. code-block:: python
 
+    
             # response body for status code(s): 200
             response_body == {
                 "createdDateTime": "datetime (optional)",
@@ -574,6 +695,7 @@ def build_create_cascade_delete_job_request_initial(
     Example:
         .. code-block:: python
 
+    
             # response body for status code(s): 202
             response_body == {
                 "createdDateTime": "datetime (optional)",
@@ -644,6 +766,7 @@ def build_get_request(
     Example:
         .. code-block:: python
 
+    
             # response body for status code(s): 200
             response_body == {
                 "acreage": "float (optional)",
@@ -651,9 +774,7 @@ def build_get_request(
                 "description": "str (optional)",
                 "eTag": "str (optional)",
                 "farmerId": "str (optional)",
-                "geometry": {
-                    "type": "type"
-                },
+                "geometry": "geometry",
                 "id": "str (optional)",
                 "isPrimary": "bool (optional)",
                 "modifiedDateTime": "datetime (optional)",
@@ -722,6 +843,42 @@ def build_create_or_update_request(
     Example:
         .. code-block:: python
 
+    
+            # 'geometry' can be defined the following ways:
+            # MultiPolygon geometry.
+            geometry = {
+                "coordinates": [
+                    [
+                        [
+                            [
+                                "float"
+                            ]
+                        ]
+                    ]
+                ],
+                "type": "MultiPolygon"
+            }
+            # OR
+            # Point geometry.
+            geometry = {
+                "coordinates": [
+                    "float"
+                ],
+                "type": "Point"
+            }
+            # OR
+            # Polygon geometry.
+            geometry = {
+                "coordinates": [
+                    [
+                        [
+                            "float"
+                        ]
+                    ]
+                ],
+                "type": "Polygon"
+            }
+
             # JSON input template you can fill out and use as your `json` input.
             json = {
                 "acreage": "float (optional)",
@@ -729,9 +886,28 @@ def build_create_or_update_request(
                 "description": "str (optional)",
                 "eTag": "str (optional)",
                 "farmerId": "str (optional)",
-                "geometry": {
-                    "type": "type"
+                "geometry": "geometry",
+                "id": "str (optional)",
+                "isPrimary": "bool (optional)",
+                "modifiedDateTime": "datetime (optional)",
+                "name": "str (optional)",
+                "parentId": "str (optional)",
+                "parentType": "str (optional)",
+                "properties": {
+                    "str": "object (optional)"
                 },
+                "status": "str (optional)"
+            }
+
+    
+            # response body for status code(s): 200, 201
+            response_body == {
+                "acreage": "float (optional)",
+                "createdDateTime": "datetime (optional)",
+                "description": "str (optional)",
+                "eTag": "str (optional)",
+                "farmerId": "str (optional)",
+                "geometry": "geometry",
                 "id": "str (optional)",
                 "isPrimary": "bool (optional)",
                 "modifiedDateTime": "datetime (optional)",
@@ -850,6 +1026,7 @@ def build_get_overlap_request(
     Example:
         .. code-block:: python
 
+    
             # response body for status code(s): 200
             response_body == {
                 "boundaryAcreage": "float (optional)",

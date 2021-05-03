@@ -64,6 +64,7 @@ def build_list_request(
     Example:
         .. code-block:: python
 
+    
             # response body for status code(s): 200
             response_body == {
                 "$skipToken": "str (optional)",
@@ -207,6 +208,7 @@ def build_get_data_ingestion_job_details_request(
     Example:
         .. code-block:: python
 
+    
             # response body for status code(s): 200
             response_body == {
                 "boundaryId": "str",
@@ -285,8 +287,36 @@ def build_create_data_ingestion_job_request_initial(
     Example:
         .. code-block:: python
 
+    
             # JSON input template you can fill out and use as your `json` input.
             json = {
+                "boundaryId": "str",
+                "createdDateTime": "datetime (optional)",
+                "description": "str (optional)",
+                "durationInSeconds": "str (optional)",
+                "endTime": "datetime (optional)",
+                "extensionApiInput": {
+                    "str": "object"
+                },
+                "extensionApiName": "str",
+                "extensionDataProviderApiKey": "str (optional)",
+                "extensionDataProviderAppId": "str (optional)",
+                "extensionId": "str",
+                "farmerId": "str",
+                "id": "str (optional)",
+                "lastActionDateTime": "datetime (optional)",
+                "message": "str (optional)",
+                "name": "str (optional)",
+                "properties": {
+                    "str": "object (optional)"
+                },
+                "startTime": "datetime (optional)",
+                "status": "str (optional)"
+            }
+
+    
+            # response body for status code(s): 202
+            response_body == {
                 "boundaryId": "str",
                 "createdDateTime": "datetime (optional)",
                 "description": "str (optional)",
@@ -361,6 +391,7 @@ def build_get_data_delete_job_details_request(
     Example:
         .. code-block:: python
 
+    
             # response body for status code(s): 200
             response_body == {
                 "boundaryId": "str",
@@ -437,8 +468,34 @@ def build_create_data_delete_job_request_initial(
     Example:
         .. code-block:: python
 
+    
             # JSON input template you can fill out and use as your `json` input.
             json = {
+                "boundaryId": "str",
+                "createdDateTime": "datetime (optional)",
+                "description": "str (optional)",
+                "durationInSeconds": "str (optional)",
+                "endDateTime": "datetime (optional)",
+                "endTime": "datetime (optional)",
+                "extensionId": "str",
+                "farmerId": "str",
+                "granularity": "str (optional)",
+                "id": "str (optional)",
+                "lastActionDateTime": "datetime (optional)",
+                "message": "str (optional)",
+                "name": "str (optional)",
+                "properties": {
+                    "str": "object (optional)"
+                },
+                "startDateTime": "datetime (optional)",
+                "startTime": "datetime (optional)",
+                "status": "str (optional)",
+                "weatherDataType": "str (optional)"
+            }
+
+    
+            # response body for status code(s): 202
+            response_body == {
                 "boundaryId": "str",
                 "createdDateTime": "datetime (optional)",
                 "description": "str (optional)",
