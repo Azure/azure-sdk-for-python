@@ -25,7 +25,7 @@ USAGE:
 import os
 import asyncio
 
-async def sample_list_submitted_jobs_with_filters_async(self, client):
+async def sample_list_submitted_jobs_with_filters_async():
     # import libraries
     from azure.core.credentials import AzureKeyCredential
     from azure.ai.translation.document.aio import DocumentTranslationClient
