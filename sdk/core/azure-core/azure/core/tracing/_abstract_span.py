@@ -221,7 +221,6 @@ class HttpSpanMixin(_MIXIN_BASE):
         :param response: The response received by the server. Is None if no response received.
         :type response: ~azure.core.pipeline.transport.HttpResponse or ~azure.core.pipeline.transport.AsyncHttpResponse
         """
-        self.kind = SpanKind.CLIENT
         self.add_attribute(self._SPAN_COMPONENT, "http")
         self.add_attribute(self._HTTP_METHOD, request.method)
         self.add_attribute(self._HTTP_URL, request.url)

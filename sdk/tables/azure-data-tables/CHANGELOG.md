@@ -11,6 +11,8 @@
 * Removed `BatchTransactionResult` object in favor of returning an iterable of batched entities with returned metadata.
 * `BatchErrorException` has been renamed to `TableTransactionError`.
 * The only supported credentials are `AzureNamedKeyCredential`, `AzureSasCredential`, or authentication by connection string
+* Removed `date` and `api_version` from the `TableItem` class.
+
 
 **Fixes**
 * Fixed issue with Cosmos merge operations.
