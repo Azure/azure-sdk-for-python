@@ -143,26 +143,29 @@ class StorageTableClientTest(AzureTestCase, TableTestCase):
         assert entity['binary'].value ==  b'binary'
         assert entity['other'] ==  20
         assert entity['clsid'] ==  uuid.UUID('c9da6455-213d-42c9-9a79-3e9149a57833')
-        assert '_metadata' in entity
+        assert entity.metadata['etag']
+        assert entity.metadata['timestamp']
 
     def _assert_updated_entity(self, entity):
         '''
         Asserts that the entity passed in matches the updated entity.
         '''
-        assert entity.age ==  'abc'
-        assert entity.sex ==  'female'
-        assert not hasattr(entity, "married")
-        assert not hasattr(entity, "deceased")
-        assert entity.sign ==  'aquarius'
-        assert not hasattr(entity, "optional")
-        assert not hasattr(entity, "ratio")
-        assert not hasattr(entity, "evenratio")
-        assert not hasattr(entity, "large")
-        assert not hasattr(entity, "Birthday")
-        assert entity.birthday, datetime(1991, 10, 4, tzinfo=tzutc())
-        assert not hasattr(entity, "other")
-        assert not hasattr(entity, "clsid")
-        assert entity['_metadata']['etag'] is not None
+        assert entity['age'] ==  'abc'
+        assert entity['sex'] ==  'female'
+        assert not "married" in entity
+        assert not "deceased" in entity
+        assert entity['sign'] ==  'aquarius'
+        assert not "optional" in entity
+        assert not "ratio" in entity
+        assert not "evenratio" in entity
+        assert not "large" in entity
+        assert not "Birthday" in entity
+        assert entity['birthday'] == datetime(1991, 10, 4, tzinfo=tzutc())
+        assert not "other" in entity
+        assert not "clsid" in entity
+        assert entity.metadata['etag']
+        assert entity.metadata['timestamp']
+
 
     #--Test cases for batch ---------------------------------------------
     def _assert_valid_batch_transaction(self, transaction, length):
@@ -176,13 +179,13 @@ class StorageTableClientTest(AzureTestCase, TableTestCase):
         try:
             # Act
             entity = TableEntity()
-            entity.PartitionKey = '001'
-            entity.RowKey = 'batch_insert_replace'
-            entity.test = True
-            entity.test2 = 'value'
-            entity.test3 = 3
-            entity.test4 = EntityProperty(1234567890)
-            entity.test5 = datetime.utcnow()
+            entity['PartitionKey'] = '001'
+            entity['RowKey'] = 'batch_insert_replace'
+            entity['test'] = True
+            entity['test2'] = 'value'
+            entity['test3'] = 3
+            entity['test4'] = EntityProperty(1234567890)
+            entity['test5'] = datetime.utcnow()
 
             batch = [('upsert', entity)]
             transaction_result = self.table.submit_transaction(batch)
@@ -193,8 +196,8 @@ class StorageTableClientTest(AzureTestCase, TableTestCase):
 
             entity = self.table.get_entity('001', 'batch_insert_replace')
             assert entity is not None
-            assert 'value' ==  entity.test2
-            assert 1234567890 ==  entity.test4
+            assert 'value' ==  entity['test2']
+            assert 1234567890 ==  entity['test4']
         finally:
             self._tear_down()
 
@@ -206,18 +209,18 @@ class StorageTableClientTest(AzureTestCase, TableTestCase):
         try:
             # Act
             entity = TableEntity()
-            entity.PartitionKey = u'001'
-            entity.RowKey = u'batch_update'
-            entity.test = EntityProperty(True)
-            entity.test2 = u'value'
-            entity.test3 = 3
-            entity.test4 = EntityProperty(1234567890)
-            entity.test5 = datetime.utcnow()
+            entity['PartitionKey'] = u'001'
+            entity['RowKey'] = u'batch_update'
+            entity['test'] = EntityProperty(True)
+            entity['test2'] = u'value'
+            entity['test3'] = 3
+            entity['test4'] = EntityProperty(1234567890)
+            entity['test5'] = datetime.utcnow()
             self.table.create_entity(entity)
 
             entity = self.table.get_entity(u'001', u'batch_update')
-            assert 3 ==  entity.test3
-            entity.test2 = u'value1'
+            assert 3 ==  entity['test3']
+            entity['test2'] = u'value1'
 
             batch = [('update', entity)]
             transaction_result = self.table.submit_transaction(batch)
@@ -227,9 +230,9 @@ class StorageTableClientTest(AzureTestCase, TableTestCase):
             assert 'etag' in transaction_result[0]
 
             result = self.table.get_entity('001', 'batch_update')
-            assert 'value1' ==  result.test2
-            assert entity.PartitionKey ==  u'001'
-            assert entity.RowKey ==  u'batch_update'
+            assert 'value1' ==  result['test2']
+            assert entity['PartitionKey'] ==  u'001'
+            assert entity['RowKey'] ==  u'batch_update'
         finally:
             self._tear_down()
 
@@ -241,21 +244,21 @@ class StorageTableClientTest(AzureTestCase, TableTestCase):
         try:
             # Act
             entity = TableEntity()
-            entity.PartitionKey = u'001'
-            entity.RowKey = u'batch_merge'
-            entity.test = EntityProperty(True)
-            entity.test2 = u'value'
-            entity.test3 = 3
-            entity.test4 = EntityProperty(1234567890)
-            entity.test5 = datetime.utcnow()
+            entity['PartitionKey'] = u'001'
+            entity['RowKey'] = u'batch_merge'
+            entity['test'] = EntityProperty(True)
+            entity['test2'] = u'value'
+            entity['test3'] = 3
+            entity['test4'] = EntityProperty(1234567890)
+            entity['test5'] = datetime.utcnow()
             self.table.create_entity(entity)
 
             resp_entity = self.table.get_entity(partition_key=u'001', row_key=u'batch_merge')
-            assert 3 ==  entity.test3
+            assert 3 ==  entity['test3']
             entity = TableEntity()
-            entity.PartitionKey = u'001'
-            entity.RowKey = u'batch_merge'
-            entity.test2 = u'value1'
+            entity['PartitionKey'] = u'001'
+            entity['RowKey'] = u'batch_merge'
+            entity['test2'] = u'value1'
 
             batch = [('update', entity, {'mode': UpdateMode.MERGE})]
             transaction_result = self.table.submit_transaction(batch)
@@ -265,10 +268,10 @@ class StorageTableClientTest(AzureTestCase, TableTestCase):
             assert 'etag' in transaction_result[0]
 
             resp_entity = self.table.get_entity(partition_key=u'001', row_key=u'batch_merge')
-            assert entity.test2 ==  resp_entity.test2
-            assert 1234567890 ==  resp_entity.test4
-            assert entity.PartitionKey ==  resp_entity.PartitionKey
-            assert entity.RowKey ==  resp_entity.RowKey
+            assert entity['test2'] ==  resp_entity['test2']
+            assert 1234567890 ==  resp_entity['test4']
+            assert entity['PartitionKey'] ==  resp_entity['PartitionKey']
+            assert entity['RowKey'] ==  resp_entity['RowKey']
         finally:
             self._tear_down()
 
@@ -334,13 +337,13 @@ class StorageTableClientTest(AzureTestCase, TableTestCase):
         try:
             # Act
             entity = TableEntity()
-            entity.PartitionKey = '001'
-            entity.RowKey = 'batch_insert_replace'
-            entity.test = True
-            entity.test2 = 'value'
-            entity.test3 = 3
-            entity.test4 = EntityProperty(1234567890)
-            entity.test5 = datetime.utcnow()
+            entity['PartitionKey'] = '001'
+            entity['RowKey'] = 'batch_insert_replace'
+            entity['test'] = True
+            entity['test2'] = 'value'
+            entity['test3'] = 3
+            entity['test4'] = EntityProperty(1234567890)
+            entity['test5'] = datetime.utcnow()
 
             batch = [('upsert', entity, {'mode': UpdateMode.REPLACE})]
             transaction_result = self.table.submit_transaction(batch)
@@ -351,8 +354,8 @@ class StorageTableClientTest(AzureTestCase, TableTestCase):
 
             entity = self.table.get_entity('001', 'batch_insert_replace')
             assert entity is not None
-            assert 'value' ==  entity.test2
-            assert 1234567890 ==  entity.test4
+            assert 'value' ==  entity['test2']
+            assert 1234567890 ==  entity['test4']
         finally:
             self._tear_down()
 
@@ -364,13 +367,13 @@ class StorageTableClientTest(AzureTestCase, TableTestCase):
         try:
             # Act
             entity = TableEntity()
-            entity.PartitionKey = '001'
-            entity.RowKey = 'batch_insert_merge'
-            entity.test = True
-            entity.test2 = 'value'
-            entity.test3 = 3
-            entity.test4 = EntityProperty(1234567890)
-            entity.test5 = datetime.utcnow()
+            entity['PartitionKey'] = '001'
+            entity['RowKey'] = 'batch_insert_merge'
+            entity['test'] = True
+            entity['test2'] = 'value'
+            entity['test3'] = 3
+            entity['test4'] = EntityProperty(1234567890)
+            entity['test5'] = datetime.utcnow()
 
             batch = [('upsert', entity, {'mode': UpdateMode.MERGE})]
             transaction_result = self.table.submit_transaction(batch)
@@ -381,8 +384,8 @@ class StorageTableClientTest(AzureTestCase, TableTestCase):
 
             entity = self.table.get_entity('001', 'batch_insert_merge')
             assert entity is not None
-            assert 'value' ==  entity.test2
-            assert 1234567890 ==  entity.test4
+            assert 'value' ==  entity['test2']
+            assert 1234567890 ==  entity['test4']
         finally:
             self._tear_down()
 
@@ -394,17 +397,17 @@ class StorageTableClientTest(AzureTestCase, TableTestCase):
         try:
             # Act
             entity = TableEntity()
-            entity.PartitionKey = u'001'
-            entity.RowKey = u'batch_delete'
-            entity.test = EntityProperty(True)
-            entity.test2 = u'value'
-            entity.test3 = 3
-            entity.test4 = EntityProperty(1234567890)
-            entity.test5 = datetime.utcnow()
+            entity['PartitionKey'] = u'001'
+            entity['RowKey'] = u'batch_delete'
+            entity['test'] = EntityProperty(True)
+            entity['test2'] = u'value'
+            entity['test3'] = 3
+            entity['test4'] = EntityProperty(1234567890)
+            entity['test5'] = datetime.utcnow()
             self.table.create_entity(entity)
 
             entity = self.table.get_entity(partition_key=u'001', row_key=u'batch_delete')
-            assert 3 ==  entity.test3
+            assert 3 ==  entity['test3']
 
             batch = [('delete', entity)]
             transaction_result = self.table.submit_transaction(batch)
@@ -414,7 +417,7 @@ class StorageTableClientTest(AzureTestCase, TableTestCase):
             assert 'etag' not in transaction_result[0]
 
             with pytest.raises(ResourceNotFoundError):
-                entity = self.table.get_entity(partition_key=entity.PartitionKey, row_key=entity.RowKey)
+                entity = self.table.get_entity(partition_key=entity['PartitionKey'], row_key=entity['RowKey'])
         finally:
             self._tear_down()
 
@@ -426,16 +429,16 @@ class StorageTableClientTest(AzureTestCase, TableTestCase):
         try:
             # Act
             entity = TableEntity()
-            entity.PartitionKey = 'batch_inserts'
-            entity.test = EntityProperty(True)
-            entity.test2 = 'value'
-            entity.test3 = 3
-            entity.test4 = EntityProperty(1234567890)
+            entity['PartitionKey'] = 'batch_inserts'
+            entity['test'] = EntityProperty(True)
+            entity['test2'] = 'value'
+            entity['test3'] = 3
+            entity['test4'] = EntityProperty(1234567890)
 
             transaction_count = 0
             batch = []
             for i in range(100):
-                entity.RowKey = str(i)
+                entity['RowKey'] = str(i)
                 batch.append(('create', entity.copy()))
                 transaction_count += 1
             transaction_result = self.table.submit_transaction(batch)
@@ -461,47 +464,47 @@ class StorageTableClientTest(AzureTestCase, TableTestCase):
         try:
             # Act
             entity = TableEntity()
-            entity.PartitionKey = '003'
-            entity.RowKey = 'batch_all_operations_together-1'
-            entity.test = EntityProperty(True)
-            entity.test2 = 'value'
-            entity.test3 = 3
-            entity.test4 = EntityProperty(1234567890)
-            entity.test5 = datetime.utcnow()
+            entity['PartitionKey'] = '003'
+            entity['RowKey'] = 'batch_all_operations_together-1'
+            entity['test'] = EntityProperty(True)
+            entity['test2'] = 'value'
+            entity['test3'] = 3
+            entity['test4'] = EntityProperty(1234567890)
+            entity['test5'] = datetime.utcnow()
             self.table.create_entity(entity)
-            entity.RowKey = 'batch_all_operations_together-2'
+            entity['RowKey'] = 'batch_all_operations_together-2'
             self.table.create_entity(entity)
-            entity.RowKey = 'batch_all_operations_together-3'
+            entity['RowKey'] = 'batch_all_operations_together-3'
             self.table.create_entity(entity)
-            entity.RowKey = 'batch_all_operations_together-4'
+            entity['RowKey'] = 'batch_all_operations_together-4'
             self.table.create_entity(entity)
             transaction_count = 0
 
             batch = []
-            entity.RowKey = 'batch_all_operations_together'
+            entity['RowKey'] = 'batch_all_operations_together'
             batch.append((TransactionOperation.CREATE, entity.copy()))
             transaction_count += 1
 
-            entity.RowKey = 'batch_all_operations_together-1'
+            entity['RowKey'] = 'batch_all_operations_together-1'
             batch.append((TransactionOperation.DELETE, entity.copy()))
             transaction_count += 1
 
-            entity.RowKey = 'batch_all_operations_together-2'
-            entity.test3 = 10
+            entity['RowKey'] = 'batch_all_operations_together-2'
+            entity['test3'] = 10
             batch.append((TransactionOperation.UPDATE, entity.copy()))
             transaction_count += 1
 
-            entity.RowKey = 'batch_all_operations_together-3'
-            entity.test3 = 100
+            entity['RowKey'] = 'batch_all_operations_together-3'
+            entity['test3'] = 100
             batch.append((TransactionOperation.UPDATE, entity.copy(), {'mode': UpdateMode.REPLACE}))
             transaction_count += 1
 
-            entity.RowKey = 'batch_all_operations_together-4'
-            entity.test3 = 10
+            entity['RowKey'] = 'batch_all_operations_together-4'
+            entity['test3'] = 10
             batch.append((TransactionOperation.UPSERT, entity.copy()))
             transaction_count += 1
 
-            entity.RowKey = 'batch_all_operations_together-5'
+            entity['RowKey'] = 'batch_all_operations_together-5'
             batch.append((TransactionOperation.UPSERT, entity.copy(), {'mode': UpdateMode.REPLACE}))
             transaction_count += 1
 
