@@ -262,6 +262,8 @@ class TableClient(AsyncTablesBaseClient):
         try:
             await self._client.table.delete(table=self.table_name, **kwargs)
         except HttpResponseError as error:
+            if error.status_code == 404 and error.reason == u"Not Found":
+                return
             _process_table_error(error)
 
     @distributed_trace_async
@@ -311,6 +313,8 @@ class TableClient(AsyncTablesBaseClient):
                 **kwargs
             )
         except HttpResponseError as error:
+            if error.status_code == 404 and error.reason == u"Not Found":
+                return
             _process_table_error(error)
 
     @distributed_trace_async

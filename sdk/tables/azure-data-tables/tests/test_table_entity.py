@@ -1245,12 +1245,7 @@ class StorageTableEntityTest(AzureTestCase, TableTestCase):
         self._set_up(tables_storage_account_name, tables_primary_storage_account_key)
         try:
             entity = self._create_random_base_entity_dict()
-
-            # Act
-            with pytest.raises(ResourceNotFoundError):
-                self.table.delete_entity(entity['PartitionKey'], entity['RowKey'])
-
-            # Assert
+            self.table.delete_entity(entity['PartitionKey'], entity['RowKey'])
         finally:
             self._tear_down()
 

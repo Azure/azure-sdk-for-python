@@ -70,15 +70,15 @@ class CreateDeleteTable(object):
 
     async def delete_table(self):
         from azure.data.tables.aio import TableServiceClient
-        from azure.core.exceptions import ResourceNotFoundError
+        from azure.core.exceptions import HttpResponseError
 
         # [START delete_table]
         async with TableServiceClient.from_connection_string(self.connection_string) as table_service_client:
             try:
                 await table_service_client.delete_table(table_name=self.table_name)
                 print("Deleted table {}!".format(self.table_name))
-            except ResourceNotFoundError:
-                print("Table could not be found")
+            except HttpResponseError:
+                print("There was an issue deleting the table")
         # [END delete_table]
 
     async def create_from_table_client(self):
@@ -95,15 +95,15 @@ class CreateDeleteTable(object):
 
     async def delete_from_table_client(self):
         from azure.data.tables.aio import TableClient
-        from azure.core.exceptions import ResourceNotFoundError
+        from azure.core.exceptions import HttpResponseError
 
         # [START delete_from_table_client]
         async with TableClient.from_connection_string(conn_str=self.connection_string, table_name=self.table_name) as table_client:
             try:
                 await table_client.delete_table()
                 print("Deleted table {}!".format(self.table_name))
-            except ResourceNotFoundError:
-                print("Table could not be found")
+            except HttpResponseError:
+                print("There was an issue deleting the table")
         # [END delete_from_table_client]
 
 

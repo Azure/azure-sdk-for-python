@@ -72,8 +72,7 @@ class InsertDeleteEntity(object):
 
     async def delete_entity(self):
         from azure.data.tables.aio import TableClient
-        from azure.core.exceptions import ResourceNotFoundError, ResourceExistsError
-        from azure.core import MatchConditions
+        from azure.core.exceptions import HttpResponseError, ResourceExistsError
 
         table_client = TableClient(account_url=self.account_url, credential=self.access_key, table_name=self.table_name)
 
@@ -90,8 +89,8 @@ class InsertDeleteEntity(object):
                     partition_key=self.entity["PartitionKey"]
                 )
                 print("Successfully deleted!")
-            except ResourceNotFoundError:
-                print("Entity does not exists")
+            except HttpResponseError:
+                print("There was an issue deleting the entity")
         # [END delete_entity]
 
     async def clean_up(self):

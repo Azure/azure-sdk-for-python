@@ -931,12 +931,7 @@ class StorageTableEntityTest(AzureTestCase, AsyncTableTestCase):
         await self._set_up(tables_cosmos_account_name, tables_primary_cosmos_account_key)
         try:
             entity = self._create_random_base_entity_dict()
-
-            # Act
-            with pytest.raises(ResourceNotFoundError):
-                await self.table.delete_entity(entity['PartitionKey'], entity['RowKey'])
-
-            # Assert
+            await self.table.delete_entity(entity['PartitionKey'], entity['RowKey'])
         finally:
             await self._tear_down()
 
