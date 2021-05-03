@@ -33,7 +33,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Fri, 09 Apr 2021 14:58:00 GMT
+      - Tue, 13 Apr 2021 15:58:49 GMT
       docker-distribution-api-version:
       - registry/2.0
       server:
@@ -74,7 +74,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Fri, 09 Apr 2021 14:58:02 GMT
+      - Tue, 13 Apr 2021 15:58:50 GMT
       server:
       - openresty
       strict-transport-security:
@@ -82,7 +82,7 @@ interactions:
       transfer-encoding:
       - chunked
       x-ms-ratelimit-remaining-calls-per-second:
-      - '332.816667'
+      - '165.833333'
     status:
       code: 200
       message: OK
@@ -112,7 +112,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Fri, 09 Apr 2021 14:58:02 GMT
+      - Tue, 13 Apr 2021 15:58:50 GMT
       server:
       - openresty
       strict-transport-security:
@@ -120,7 +120,7 @@ interactions:
       transfer-encoding:
       - chunked
       x-ms-ratelimit-remaining-calls-per-second:
-      - '332.8'
+      - '165.816667'
     status:
       code: 200
       message: OK
@@ -156,7 +156,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Fri, 09 Apr 2021 14:58:02 GMT
+      - Tue, 13 Apr 2021 15:58:50 GMT
       docker-distribution-api-version:
       - registry/2.0
       server:
@@ -167,7 +167,7 @@ interactions:
       x-content-type-options:
       - nosniff
       x-ms-ratelimit-remaining-calls-per-second:
-      - '32.000000'
+      - '8.000000'
     status:
       code: 404
       message: Not Found

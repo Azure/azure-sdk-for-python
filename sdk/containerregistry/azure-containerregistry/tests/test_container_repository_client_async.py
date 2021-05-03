@@ -22,7 +22,7 @@ from azure.core.async_paging import AsyncItemPaged
 
 from asynctestcase import AsyncContainerRegistryTestClass
 from preparer import acr_preparer
-from constants import TO_BE_DELETED
+from constants import TO_BE_DELETED, DOES_NOT_EXIST, HELLO_WORLD
 
 
 class TestContainerRepositoryClient(AsyncContainerRegistryTestClass):
@@ -85,15 +85,9 @@ class TestContainerRepositoryClient(AsyncContainerRegistryTestClass):
 
     @acr_preparer()
     async def test_delete_tag(self, containerregistry_endpoint, containerregistry_resource_group):
-        repo = self.get_resource_name("repo")
-        self.import_repo(
-            containerregistry_endpoint,
-            resource_group=containerregistry_resource_group,
-            repository=repo,
-            tag=TO_BE_DELETED,
-        )
+        self.import_image(HELLO_WORLD, ["{}:{}".format(HELLO_WORLD, TO_BE_DELETED)])
 
-        client = self.create_repository_client(containerregistry_endpoint, repo)
+        client = self.create_repository_client(containerregistry_endpoint, HELLO_WORLD)
 
         tag = await client.get_tag_properties(TO_BE_DELETED)
         assert tag is not None
@@ -106,16 +100,14 @@ class TestContainerRepositoryClient(AsyncContainerRegistryTestClass):
 
     @acr_preparer()
     async def test_delete_tag_does_not_exist(self, containerregistry_endpoint):
-        client = self.create_repository_client(containerregistry_endpoint, "hello-world")
+        client = self.create_repository_client(containerregistry_endpoint, HELLO_WORLD)
 
         with pytest.raises(ResourceNotFoundError):
             await client.delete_tag(TO_BE_DELETED)
 
     @acr_preparer()
     async def test_delete_repository(self, containerregistry_endpoint, containerregistry_resource_group):
-        self.import_repo(
-            containerregistry_endpoint, resource_group=containerregistry_resource_group, repository=TO_BE_DELETED
-        )
+        self.import_image(HELLO_WORLD, [TO_BE_DELETED])
 
         reg_client = self.create_registry_client(containerregistry_endpoint)
         existing_repos = []
@@ -136,8 +128,6 @@ class TestContainerRepositoryClient(AsyncContainerRegistryTestClass):
 
     @acr_preparer()
     async def test_delete_repository_doesnt_exist(self, containerregistry_endpoint):
-        DOES_NOT_EXIST = "does_not_exist"
-
         repo_client = self.create_repository_client(containerregistry_endpoint, DOES_NOT_EXIST)
         with pytest.raises(ResourceNotFoundError):
             await repo_client.delete()
@@ -145,9 +135,7 @@ class TestContainerRepositoryClient(AsyncContainerRegistryTestClass):
     @acr_preparer()
     async def test_delete_registry_artifact(self, containerregistry_endpoint, containerregistry_resource_group):
         repository = self.get_resource_name("repo")
-        self.import_repo(
-            containerregistry_endpoint, resource_group=containerregistry_resource_group, repository=repository
-        )
+        self.import_image(HELLO_WORLD, [repository])
 
         repo_client = self.create_repository_client(containerregistry_endpoint, repository)
 
@@ -169,12 +157,7 @@ class TestContainerRepositoryClient(AsyncContainerRegistryTestClass):
     async def test_set_tag_properties(self, containerregistry_endpoint, containerregistry_resource_group):
         repository = self.get_resource_name("repo")
         tag_identifier = self.get_resource_name("tag")
-        self.import_repo(
-            containerregistry_endpoint,
-            resource_group=containerregistry_resource_group,
-            tag=tag_identifier,
-            repository=repository,
-        )
+        self.import_image(HELLO_WORLD, ["{}:{}".format(repository, tag_identifier)])
 
         client = self.create_repository_client(containerregistry_endpoint, repository)
 
@@ -196,23 +179,29 @@ class TestContainerRepositoryClient(AsyncContainerRegistryTestClass):
         assert not received.content_permissions.can_list
         assert not received.content_permissions.can_delete
 
+        # Reset them
+        await client.set_tag_properties(
+            tag_identifier,
+            ContentPermissions(
+                can_delete=True,
+                can_list=True,
+                can_read=True,
+                can_write=True,
+            ),
+        )
+
     @acr_preparer()
     async def test_set_tag_properties_does_not_exist(self, containerregistry_endpoint):
         client = self.create_repository_client(containerregistry_endpoint, self.get_resource_name("repo"))
 
         with pytest.raises(ResourceNotFoundError):
-            await client.set_tag_properties("does_not_exist", ContentPermissions(can_delete=False))
+            await client.set_tag_properties(DOES_NOT_EXIST, ContentPermissions(can_delete=False))
 
     @acr_preparer()
     async def test_set_manifest_properties(self, containerregistry_endpoint, containerregistry_resource_group):
         repository = self.get_resource_name("reposet")
         tag_identifier = self.get_resource_name("tag")
-        self.import_repo(
-            containerregistry_endpoint,
-            resource_group=containerregistry_resource_group,
-            tag=tag_identifier,
-            repository=repository,
-        )
+        self.import_image(HELLO_WORLD, ["{}:{}".format(repository, tag_identifier)])
 
         client = self.create_repository_client(containerregistry_endpoint, repository)
 

@@ -1,6 +1,9 @@
 # Release History
 
-## 11.2.0b2 (Unreleased)
+## 11.2.0b3 (Unreleased)
+
+
+## 11.2.0b2 (2021-04-13)
 
 ### New features
 

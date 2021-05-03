@@ -11,30 +11,120 @@ interactions:
       DataServiceVersion:
       - '3.0'
       Date:
-      - Thu, 17 Sep 2020 20:06:14 GMT
+      - Thu, 15 Apr 2021 16:27:46 GMT
       User-Agent:
-      - azsdk-python-data-tables/2019-07-07 Python/3.8.4 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-data-tables/12.0.0b7 Python/3.9.0rc1 (Windows-10-10.0.19041-SP0)
       x-ms-date:
-      - Thu, 17 Sep 2020 20:06:14 GMT
+      - Thu, 15 Apr 2021 16:27:46 GMT
       x-ms-version:
-      - '2019-07-07'
+      - '2019-02-02'
     method: POST
-    uri: https://cosmostestcosmosname.table.cosmos.azure.com/Tables
+    uri: https://fake_cosmos_account.table.cosmos.azure.com/Tables
   response:
     body:
-      string: "{\"odata.error\":{\"code\":\"429\",\"message\":{\"lang\":\"en-us\",\"value\":\"Message:
-        {\\\"Errors\\\":[\\\"Request rate is large. More Request Units may be needed,
-        so no changes were made. Please retry this request later. Learn more: http://aka.ms/cosmosdb-error-429\\\"]}\\r\\nActivityId:
-        42b436f5-972b-4f63-86aa-e46935c97e1d, Request URI: /apps/601902c2-6efc-451c-b73c-a3093c994abb/services/edddf78d-cb65-4d5d-95a8-45ba80155148/partitions/8e6b4f42-63aa-45e9-b4f0-cb9270cdab0e/replicas/132447198008083897p,
-        RequestStats: , SDK: Microsoft.Azure.Documents.Common/2.11.0, documentdb-dotnet-sdk/2.11.0
-        Host/64-bit MicrosoftWindowsNT/6.2.9200.0\\nRequestID:3d446231-f921-11ea-b176-58961df361d1\\n\"}}}\r\n"
+      string: '{"TableName":"uttable9c15124c","odata.metadata":"https://fake_cosmos_account.table.cosmos.azure.com/$metadata#Tables/@Element"}'
     headers:
       content-type: application/json;odata=minimalmetadata
-      date: Thu, 17 Sep 2020 20:06:14 GMT
+      date: Thu, 15 Apr 2021 16:27:47 GMT
+      etag: W/"datetime'2021-04-15T16%3A27%3A47.4226184Z'"
+      location: https://fake_cosmos_account.table.cosmos.azure.com/Tables('uttable9c15124c')
       server: Microsoft-HTTPAPI/2.0
       transfer-encoding: chunked
     status:
-      code: 429
-      message: Too Many Requests
-    url: https://cosmostables4lo5zhb5qk2h.table.cosmos.azure.com/Tables
+      code: 201
+      message: Ok
+    url: https://seankaneprim.table.cosmos.azure.com/Tables
+- request:
+    body: '{"PartitionKey": "pk9c15124c", "PartitionKey@odata.type": "Edm.String",
+      "RowKey": "rk9c15124c", "RowKey@odata.type": "Edm.String", "date": "2003-09-27T12:52:43.000000Z",
+      "date@odata.type": "Edm.DateTime"}'
+    headers:
+      Accept:
+      - application/json;odata=minimalmetadata
+      Content-Length:
+      - '204'
+      Content-Type:
+      - application/json;odata=nometadata
+      DataServiceVersion:
+      - '3.0'
+      Date:
+      - Thu, 15 Apr 2021 16:27:47 GMT
+      User-Agent:
+      - azsdk-python-data-tables/12.0.0b7 Python/3.9.0rc1 (Windows-10-10.0.19041-SP0)
+      x-ms-date:
+      - Thu, 15 Apr 2021 16:27:47 GMT
+      x-ms-version:
+      - '2019-02-02'
+    method: POST
+    uri: https://fake_cosmos_account.table.cosmos.azure.com/uttable9c15124c
+  response:
+    body:
+      string: '{"odata.metadata":"https://fake_cosmos_account.table.cosmos.azure.com/uttable9c15124c/$metadata#uttable9c15124c/@Element","odata.etag":"W/\"datetime''2021-04-15T16%3A27%3A47.9485448Z''\"","PartitionKey":"pk9c15124c","RowKey":"rk9c15124c","date@odata.type":"Edm.DateTime","date":"2003-09-27T12:52:43.0000000Z","Timestamp":"2021-04-15T16:27:47.9485448Z"}'
+    headers:
+      content-type: application/json;odata=minimalmetadata
+      date: Thu, 15 Apr 2021 16:27:47 GMT
+      etag: W/"datetime'2021-04-15T16%3A27%3A47.9485448Z'"
+      location: https://fake_cosmos_account.table.cosmos.azure.com/uttable9c15124c(PartitionKey='pk9c15124c',RowKey='rk9c15124c')
+      server: Microsoft-HTTPAPI/2.0
+      transfer-encoding: chunked
+    status:
+      code: 201
+      message: Created
+    url: https://seankaneprim.table.cosmos.azure.com/uttable9c15124c
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json;odata=minimalmetadata
+      DataServiceVersion:
+      - '3.0'
+      Date:
+      - Thu, 15 Apr 2021 16:27:47 GMT
+      User-Agent:
+      - azsdk-python-data-tables/12.0.0b7 Python/3.9.0rc1 (Windows-10-10.0.19041-SP0)
+      x-ms-date:
+      - Thu, 15 Apr 2021 16:27:47 GMT
+      x-ms-version:
+      - '2019-02-02'
+    method: GET
+    uri: https://fake_cosmos_account.table.cosmos.azure.com/uttable9c15124c(PartitionKey='pk9c15124c',RowKey='rk9c15124c')
+  response:
+    body:
+      string: '{"odata.metadata":"https://fake_cosmos_account.table.cosmos.azure.com/uttable9c15124c/$metadata#uttable9c15124c/@Element","odata.etag":"W/\"datetime''2021-04-15T16%3A27%3A47.9485448Z''\"","PartitionKey":"pk9c15124c","RowKey":"rk9c15124c","date@odata.type":"Edm.DateTime","date":"2003-09-27T12:52:43.0000000Z","Timestamp":"2021-04-15T16:27:47.9485448Z"}'
+    headers:
+      content-type: application/json;odata=minimalmetadata
+      date: Thu, 15 Apr 2021 16:27:47 GMT
+      etag: W/"datetime'2021-04-15T16%3A27%3A47.9485448Z'"
+      server: Microsoft-HTTPAPI/2.0
+      transfer-encoding: chunked
+    status:
+      code: 200
+      message: Ok
+    url: https://seankaneprim.table.cosmos.azure.com/uttable9c15124c(PartitionKey='pk9c15124c',RowKey='rk9c15124c')
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      Date:
+      - Thu, 15 Apr 2021 16:27:48 GMT
+      User-Agent:
+      - azsdk-python-data-tables/12.0.0b7 Python/3.9.0rc1 (Windows-10-10.0.19041-SP0)
+      x-ms-date:
+      - Thu, 15 Apr 2021 16:27:48 GMT
+      x-ms-version:
+      - '2019-02-02'
+    method: DELETE
+    uri: https://fake_cosmos_account.table.cosmos.azure.com/Tables('uttable9c15124c')
+  response:
+    body:
+      string: ''
+    headers:
+      content-length: '0'
+      date: Thu, 15 Apr 2021 16:27:47 GMT
+      server: Microsoft-HTTPAPI/2.0
+    status:
+      code: 204
+      message: No Content
+    url: https://seankaneprim.table.cosmos.azure.com/Tables('uttable9c15124c')
 version: 1

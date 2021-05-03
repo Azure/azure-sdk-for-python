@@ -76,7 +76,7 @@ interactions:
       x-ms-version:
       - '2020-06-12'
     method: DELETE
-    uri: https://storagename.dfs.core.windows.net/fsace1178f/dir10%2Ffile%C5%87?recursive=true
+    uri: https://storagename.dfs.core.windows.net/fsace1178f/dir10%2Ffile%C5%87
   response:
     body:
       string: ''
@@ -91,7 +91,7 @@ interactions:
     status:
       code: 200
       message: OK
-    url: https://storagename.dfs.core.windows.net/fsace1178f/dir10%2Ffile%C5%87?recursive=true
+    url: https://storagename.dfs.core.windows.net/fsace1178f/dir10%2Ffile%C5%87
 - request:
     body: null
     headers:

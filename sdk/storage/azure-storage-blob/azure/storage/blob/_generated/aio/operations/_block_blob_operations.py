@@ -47,7 +47,6 @@ class BlockBlobOperations:
         timeout: Optional[int] = None,
         transactional_content_md5: Optional[bytearray] = None,
         metadata: Optional[str] = None,
-        encryption_algorithm: Optional[str] = "AES256",
         tier: Optional[Union[str, "_models.AccessTierOptional"]] = None,
         request_id_parameter: Optional[str] = None,
         blob_tags_string: Optional[str] = None,
@@ -86,10 +85,6 @@ class BlockBlobOperations:
          rules for C# identifiers. See Naming and Referencing Containers, Blobs, and Metadata for more
          information.
         :type metadata: str
-        :param encryption_algorithm: The algorithm used to produce the encryption key hash. Currently,
-         the only accepted value is "AES256". Must be provided if the x-ms-encryption-key header is
-         provided.
-        :type encryption_algorithm: str
         :param tier: Optional. Indicates the tier to be set on the blob.
         :type tier: str or ~azure.storage.blob.models.AccessTierOptional
         :param request_id_parameter: Provides a client-generated, opaque value with a 1 KB character
@@ -134,6 +129,7 @@ class BlockBlobOperations:
         _blob_content_disposition = None
         _encryption_key = None
         _encryption_key_sha256 = None
+        _encryption_algorithm = None
         _encryption_scope = None
         _if_modified_since = None
         _if_unmodified_since = None
@@ -150,6 +146,7 @@ class BlockBlobOperations:
         if cpk_info is not None:
             _encryption_key = cpk_info.encryption_key
             _encryption_key_sha256 = cpk_info.encryption_key_sha256
+            _encryption_algorithm = cpk_info.encryption_algorithm
         if cpk_scope_info is not None:
             _encryption_scope = cpk_scope_info.encryption_scope
         if lease_access_conditions is not None:
@@ -202,8 +199,8 @@ class BlockBlobOperations:
             header_parameters['x-ms-encryption-key'] = self._serialize.header("encryption_key", _encryption_key, 'str')
         if _encryption_key_sha256 is not None:
             header_parameters['x-ms-encryption-key-sha256'] = self._serialize.header("encryption_key_sha256", _encryption_key_sha256, 'str')
-        if encryption_algorithm is not None:
-            header_parameters['x-ms-encryption-algorithm'] = self._serialize.header("encryption_algorithm", encryption_algorithm, 'str')
+        if _encryption_algorithm is not None:
+            header_parameters['x-ms-encryption-algorithm'] = self._serialize.header("encryption_algorithm", _encryption_algorithm, 'str')
         if _encryption_scope is not None:
             header_parameters['x-ms-encryption-scope'] = self._serialize.header("encryption_scope", _encryption_scope, 'str')
         if tier is not None:
@@ -268,7 +265,6 @@ class BlockBlobOperations:
         timeout: Optional[int] = None,
         transactional_content_md5: Optional[bytearray] = None,
         metadata: Optional[str] = None,
-        encryption_algorithm: Optional[str] = "AES256",
         tier: Optional[Union[str, "_models.AccessTierOptional"]] = None,
         request_id_parameter: Optional[str] = None,
         source_content_md5: Optional[bytearray] = None,
@@ -310,10 +306,6 @@ class BlockBlobOperations:
          rules for C# identifiers. See Naming and Referencing Containers, Blobs, and Metadata for more
          information.
         :type metadata: str
-        :param encryption_algorithm: The algorithm used to produce the encryption key hash. Currently,
-         the only accepted value is "AES256". Must be provided if the x-ms-encryption-key header is
-         provided.
-        :type encryption_algorithm: str
         :param tier: Optional. Indicates the tier to be set on the blob.
         :type tier: str or ~azure.storage.blob.models.AccessTierOptional
         :param request_id_parameter: Provides a client-generated, opaque value with a 1 KB character
@@ -359,6 +351,7 @@ class BlockBlobOperations:
         _blob_content_disposition = None
         _encryption_key = None
         _encryption_key_sha256 = None
+        _encryption_algorithm = None
         _encryption_scope = None
         _if_modified_since = None
         _if_unmodified_since = None
@@ -380,6 +373,7 @@ class BlockBlobOperations:
         if cpk_info is not None:
             _encryption_key = cpk_info.encryption_key
             _encryption_key_sha256 = cpk_info.encryption_key_sha256
+            _encryption_algorithm = cpk_info.encryption_algorithm
         if cpk_scope_info is not None:
             _encryption_scope = cpk_scope_info.encryption_scope
         if lease_access_conditions is not None:
@@ -437,8 +431,8 @@ class BlockBlobOperations:
             header_parameters['x-ms-encryption-key'] = self._serialize.header("encryption_key", _encryption_key, 'str')
         if _encryption_key_sha256 is not None:
             header_parameters['x-ms-encryption-key-sha256'] = self._serialize.header("encryption_key_sha256", _encryption_key_sha256, 'str')
-        if encryption_algorithm is not None:
-            header_parameters['x-ms-encryption-algorithm'] = self._serialize.header("encryption_algorithm", encryption_algorithm, 'str')
+        if _encryption_algorithm is not None:
+            header_parameters['x-ms-encryption-algorithm'] = self._serialize.header("encryption_algorithm", _encryption_algorithm, 'str')
         if _encryption_scope is not None:
             header_parameters['x-ms-encryption-scope'] = self._serialize.header("encryption_scope", _encryption_scope, 'str')
         if tier is not None:
@@ -510,7 +504,6 @@ class BlockBlobOperations:
         transactional_content_md5: Optional[bytearray] = None,
         transactional_content_crc64: Optional[bytearray] = None,
         timeout: Optional[int] = None,
-        encryption_algorithm: Optional[str] = "AES256",
         request_id_parameter: Optional[str] = None,
         lease_access_conditions: Optional["_models.LeaseAccessConditions"] = None,
         cpk_info: Optional["_models.CpkInfo"] = None,
@@ -537,10 +530,6 @@ class BlockBlobOperations:
          :code:`<a href="https://docs.microsoft.com/en-us/rest/api/storageservices/fileservices/setting-
          timeouts-for-blob-service-operations">Setting Timeouts for Blob Service Operations.</a>`.
         :type timeout: int
-        :param encryption_algorithm: The algorithm used to produce the encryption key hash. Currently,
-         the only accepted value is "AES256". Must be provided if the x-ms-encryption-key header is
-         provided.
-        :type encryption_algorithm: str
         :param request_id_parameter: Provides a client-generated, opaque value with a 1 KB character
          limit that is recorded in the analytics logs when storage analytics logging is enabled.
         :type request_id_parameter: str
@@ -564,10 +553,12 @@ class BlockBlobOperations:
         _lease_id = None
         _encryption_key = None
         _encryption_key_sha256 = None
+        _encryption_algorithm = None
         _encryption_scope = None
         if cpk_info is not None:
             _encryption_key = cpk_info.encryption_key
             _encryption_key_sha256 = cpk_info.encryption_key_sha256
+            _encryption_algorithm = cpk_info.encryption_algorithm
         if cpk_scope_info is not None:
             _encryption_scope = cpk_scope_info.encryption_scope
         if lease_access_conditions is not None:
@@ -603,8 +594,8 @@ class BlockBlobOperations:
             header_parameters['x-ms-encryption-key'] = self._serialize.header("encryption_key", _encryption_key, 'str')
         if _encryption_key_sha256 is not None:
             header_parameters['x-ms-encryption-key-sha256'] = self._serialize.header("encryption_key_sha256", _encryption_key_sha256, 'str')
-        if encryption_algorithm is not None:
-            header_parameters['x-ms-encryption-algorithm'] = self._serialize.header("encryption_algorithm", encryption_algorithm, 'str')
+        if _encryption_algorithm is not None:
+            header_parameters['x-ms-encryption-algorithm'] = self._serialize.header("encryption_algorithm", _encryption_algorithm, 'str')
         if _encryption_scope is not None:
             header_parameters['x-ms-encryption-scope'] = self._serialize.header("encryption_scope", _encryption_scope, 'str')
         header_parameters['x-ms-version'] = self._serialize.header("self._config.version", self._config.version, 'str')
@@ -649,7 +640,6 @@ class BlockBlobOperations:
         source_content_md5: Optional[bytearray] = None,
         source_contentcrc64: Optional[bytearray] = None,
         timeout: Optional[int] = None,
-        encryption_algorithm: Optional[str] = "AES256",
         request_id_parameter: Optional[str] = None,
         cpk_info: Optional["_models.CpkInfo"] = None,
         cpk_scope_info: Optional["_models.CpkScopeInfo"] = None,
@@ -680,10 +670,6 @@ class BlockBlobOperations:
          :code:`<a href="https://docs.microsoft.com/en-us/rest/api/storageservices/fileservices/setting-
          timeouts-for-blob-service-operations">Setting Timeouts for Blob Service Operations.</a>`.
         :type timeout: int
-        :param encryption_algorithm: The algorithm used to produce the encryption key hash. Currently,
-         the only accepted value is "AES256". Must be provided if the x-ms-encryption-key header is
-         provided.
-        :type encryption_algorithm: str
         :param request_id_parameter: Provides a client-generated, opaque value with a 1 KB character
          limit that is recorded in the analytics logs when storage analytics logging is enabled.
         :type request_id_parameter: str
@@ -708,6 +694,7 @@ class BlockBlobOperations:
         
         _encryption_key = None
         _encryption_key_sha256 = None
+        _encryption_algorithm = None
         _encryption_scope = None
         _lease_id = None
         _source_if_modified_since = None
@@ -717,6 +704,7 @@ class BlockBlobOperations:
         if cpk_info is not None:
             _encryption_key = cpk_info.encryption_key
             _encryption_key_sha256 = cpk_info.encryption_key_sha256
+            _encryption_algorithm = cpk_info.encryption_algorithm
         if cpk_scope_info is not None:
             _encryption_scope = cpk_scope_info.encryption_scope
         if lease_access_conditions is not None:
@@ -757,8 +745,8 @@ class BlockBlobOperations:
             header_parameters['x-ms-encryption-key'] = self._serialize.header("encryption_key", _encryption_key, 'str')
         if _encryption_key_sha256 is not None:
             header_parameters['x-ms-encryption-key-sha256'] = self._serialize.header("encryption_key_sha256", _encryption_key_sha256, 'str')
-        if encryption_algorithm is not None:
-            header_parameters['x-ms-encryption-algorithm'] = self._serialize.header("encryption_algorithm", encryption_algorithm, 'str')
+        if _encryption_algorithm is not None:
+            header_parameters['x-ms-encryption-algorithm'] = self._serialize.header("encryption_algorithm", _encryption_algorithm, 'str')
         if _encryption_scope is not None:
             header_parameters['x-ms-encryption-scope'] = self._serialize.header("encryption_scope", _encryption_scope, 'str')
         if _lease_id is not None:
@@ -808,7 +796,6 @@ class BlockBlobOperations:
         transactional_content_md5: Optional[bytearray] = None,
         transactional_content_crc64: Optional[bytearray] = None,
         metadata: Optional[str] = None,
-        encryption_algorithm: Optional[str] = "AES256",
         tier: Optional[Union[str, "_models.AccessTierOptional"]] = None,
         request_id_parameter: Optional[str] = None,
         blob_tags_string: Optional[str] = None,
@@ -850,10 +837,6 @@ class BlockBlobOperations:
          rules for C# identifiers. See Naming and Referencing Containers, Blobs, and Metadata for more
          information.
         :type metadata: str
-        :param encryption_algorithm: The algorithm used to produce the encryption key hash. Currently,
-         the only accepted value is "AES256". Must be provided if the x-ms-encryption-key header is
-         provided.
-        :type encryption_algorithm: str
         :param tier: Optional. Indicates the tier to be set on the blob.
         :type tier: str or ~azure.storage.blob.models.AccessTierOptional
         :param request_id_parameter: Provides a client-generated, opaque value with a 1 KB character
@@ -898,6 +881,7 @@ class BlockBlobOperations:
         _blob_content_disposition = None
         _encryption_key = None
         _encryption_key_sha256 = None
+        _encryption_algorithm = None
         _encryption_scope = None
         _if_modified_since = None
         _if_unmodified_since = None
@@ -914,6 +898,7 @@ class BlockBlobOperations:
         if cpk_info is not None:
             _encryption_key = cpk_info.encryption_key
             _encryption_key_sha256 = cpk_info.encryption_key_sha256
+            _encryption_algorithm = cpk_info.encryption_algorithm
         if cpk_scope_info is not None:
             _encryption_scope = cpk_scope_info.encryption_scope
         if lease_access_conditions is not None:
@@ -967,8 +952,8 @@ class BlockBlobOperations:
             header_parameters['x-ms-encryption-key'] = self._serialize.header("encryption_key", _encryption_key, 'str')
         if _encryption_key_sha256 is not None:
             header_parameters['x-ms-encryption-key-sha256'] = self._serialize.header("encryption_key_sha256", _encryption_key_sha256, 'str')
-        if encryption_algorithm is not None:
-            header_parameters['x-ms-encryption-algorithm'] = self._serialize.header("encryption_algorithm", encryption_algorithm, 'str')
+        if _encryption_algorithm is not None:
+            header_parameters['x-ms-encryption-algorithm'] = self._serialize.header("encryption_algorithm", _encryption_algorithm, 'str')
         if _encryption_scope is not None:
             header_parameters['x-ms-encryption-scope'] = self._serialize.header("encryption_scope", _encryption_scope, 'str')
         if tier is not None:

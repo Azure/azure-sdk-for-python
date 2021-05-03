@@ -49,7 +49,6 @@ class AppendBlobOperations(object):
         content_length,  # type: int
         timeout=None,  # type: Optional[int]
         metadata=None,  # type: Optional[str]
-        encryption_algorithm="AES256",  # type: Optional[str]
         request_id_parameter=None,  # type: Optional[str]
         blob_tags_string=None,  # type: Optional[str]
         immutability_policy_expiry=None,  # type: Optional[datetime.datetime]
@@ -79,10 +78,6 @@ class AppendBlobOperations(object):
          rules for C# identifiers. See Naming and Referencing Containers, Blobs, and Metadata for more
          information.
         :type metadata: str
-        :param encryption_algorithm: The algorithm used to produce the encryption key hash. Currently,
-         the only accepted value is "AES256". Must be provided if the x-ms-encryption-key header is
-         provided.
-        :type encryption_algorithm: str
         :param request_id_parameter: Provides a client-generated, opaque value with a 1 KB character
          limit that is recorded in the analytics logs when storage analytics logging is enabled.
         :type request_id_parameter: str
@@ -125,6 +120,7 @@ class AppendBlobOperations(object):
         _blob_content_disposition = None
         _encryption_key = None
         _encryption_key_sha256 = None
+        _encryption_algorithm = None
         _encryption_scope = None
         _if_modified_since = None
         _if_unmodified_since = None
@@ -141,6 +137,7 @@ class AppendBlobOperations(object):
         if cpk_info is not None:
             _encryption_key = cpk_info.encryption_key
             _encryption_key_sha256 = cpk_info.encryption_key_sha256
+            _encryption_algorithm = cpk_info.encryption_algorithm
         if cpk_scope_info is not None:
             _encryption_scope = cpk_scope_info.encryption_scope
         if lease_access_conditions is not None:
@@ -190,8 +187,8 @@ class AppendBlobOperations(object):
             header_parameters['x-ms-encryption-key'] = self._serialize.header("encryption_key", _encryption_key, 'str')
         if _encryption_key_sha256 is not None:
             header_parameters['x-ms-encryption-key-sha256'] = self._serialize.header("encryption_key_sha256", _encryption_key_sha256, 'str')
-        if encryption_algorithm is not None:
-            header_parameters['x-ms-encryption-algorithm'] = self._serialize.header("encryption_algorithm", encryption_algorithm, 'str')
+        if _encryption_algorithm is not None:
+            header_parameters['x-ms-encryption-algorithm'] = self._serialize.header("encryption_algorithm", _encryption_algorithm, 'str')
         if _encryption_scope is not None:
             header_parameters['x-ms-encryption-scope'] = self._serialize.header("encryption_scope", _encryption_scope, 'str')
         if _if_modified_since is not None:
@@ -251,7 +248,6 @@ class AppendBlobOperations(object):
         timeout=None,  # type: Optional[int]
         transactional_content_md5=None,  # type: Optional[bytearray]
         transactional_content_crc64=None,  # type: Optional[bytearray]
-        encryption_algorithm="AES256",  # type: Optional[str]
         request_id_parameter=None,  # type: Optional[str]
         lease_access_conditions=None,  # type: Optional["_models.LeaseAccessConditions"]
         append_position_access_conditions=None,  # type: Optional["_models.AppendPositionAccessConditions"]
@@ -279,10 +275,6 @@ class AppendBlobOperations(object):
         :param transactional_content_crc64: Specify the transactional crc64 for the body, to be
          validated by the service.
         :type transactional_content_crc64: bytearray
-        :param encryption_algorithm: The algorithm used to produce the encryption key hash. Currently,
-         the only accepted value is "AES256". Must be provided if the x-ms-encryption-key header is
-         provided.
-        :type encryption_algorithm: str
         :param request_id_parameter: Provides a client-generated, opaque value with a 1 KB character
          limit that is recorded in the analytics logs when storage analytics logging is enabled.
         :type request_id_parameter: str
@@ -312,6 +304,7 @@ class AppendBlobOperations(object):
         _append_position = None
         _encryption_key = None
         _encryption_key_sha256 = None
+        _encryption_algorithm = None
         _encryption_scope = None
         _if_modified_since = None
         _if_unmodified_since = None
@@ -324,6 +317,7 @@ class AppendBlobOperations(object):
         if cpk_info is not None:
             _encryption_key = cpk_info.encryption_key
             _encryption_key_sha256 = cpk_info.encryption_key_sha256
+            _encryption_algorithm = cpk_info.encryption_algorithm
         if cpk_scope_info is not None:
             _encryption_scope = cpk_scope_info.encryption_scope
         if lease_access_conditions is not None:
@@ -368,8 +362,8 @@ class AppendBlobOperations(object):
             header_parameters['x-ms-encryption-key'] = self._serialize.header("encryption_key", _encryption_key, 'str')
         if _encryption_key_sha256 is not None:
             header_parameters['x-ms-encryption-key-sha256'] = self._serialize.header("encryption_key_sha256", _encryption_key_sha256, 'str')
-        if encryption_algorithm is not None:
-            header_parameters['x-ms-encryption-algorithm'] = self._serialize.header("encryption_algorithm", encryption_algorithm, 'str')
+        if _encryption_algorithm is not None:
+            header_parameters['x-ms-encryption-algorithm'] = self._serialize.header("encryption_algorithm", _encryption_algorithm, 'str')
         if _encryption_scope is not None:
             header_parameters['x-ms-encryption-scope'] = self._serialize.header("encryption_scope", _encryption_scope, 'str')
         if _if_modified_since is not None:
@@ -428,7 +422,6 @@ class AppendBlobOperations(object):
         source_contentcrc64=None,  # type: Optional[bytearray]
         timeout=None,  # type: Optional[int]
         transactional_content_md5=None,  # type: Optional[bytearray]
-        encryption_algorithm="AES256",  # type: Optional[str]
         request_id_parameter=None,  # type: Optional[str]
         cpk_info=None,  # type: Optional["_models.CpkInfo"]
         cpk_scope_info=None,  # type: Optional["_models.CpkScopeInfo"]
@@ -463,10 +456,6 @@ class AppendBlobOperations(object):
         :param transactional_content_md5: Specify the transactional md5 for the body, to be validated
          by the service.
         :type transactional_content_md5: bytearray
-        :param encryption_algorithm: The algorithm used to produce the encryption key hash. Currently,
-         the only accepted value is "AES256". Must be provided if the x-ms-encryption-key header is
-         provided.
-        :type encryption_algorithm: str
         :param request_id_parameter: Provides a client-generated, opaque value with a 1 KB character
          limit that is recorded in the analytics logs when storage analytics logging is enabled.
         :type request_id_parameter: str
@@ -495,6 +484,7 @@ class AppendBlobOperations(object):
         
         _encryption_key = None
         _encryption_key_sha256 = None
+        _encryption_algorithm = None
         _encryption_scope = None
         _lease_id = None
         _max_size = None
@@ -514,6 +504,7 @@ class AppendBlobOperations(object):
         if cpk_info is not None:
             _encryption_key = cpk_info.encryption_key
             _encryption_key_sha256 = cpk_info.encryption_key_sha256
+            _encryption_algorithm = cpk_info.encryption_algorithm
         if cpk_scope_info is not None:
             _encryption_scope = cpk_scope_info.encryption_scope
         if lease_access_conditions is not None:
@@ -561,8 +552,8 @@ class AppendBlobOperations(object):
             header_parameters['x-ms-encryption-key'] = self._serialize.header("encryption_key", _encryption_key, 'str')
         if _encryption_key_sha256 is not None:
             header_parameters['x-ms-encryption-key-sha256'] = self._serialize.header("encryption_key_sha256", _encryption_key_sha256, 'str')
-        if encryption_algorithm is not None:
-            header_parameters['x-ms-encryption-algorithm'] = self._serialize.header("encryption_algorithm", encryption_algorithm, 'str')
+        if _encryption_algorithm is not None:
+            header_parameters['x-ms-encryption-algorithm'] = self._serialize.header("encryption_algorithm", _encryption_algorithm, 'str')
         if _encryption_scope is not None:
             header_parameters['x-ms-encryption-scope'] = self._serialize.header("encryption_scope", _encryption_scope, 'str')
         if _lease_id is not None:

@@ -60,8 +60,8 @@ Lists all of your purchased phone numbers
 
 ```python
 purchased_phone_numbers = phone_numbers_client.list_purchased_phone_numbers()
-purchased_phone_number = purchased_phone_numbers.next()
-print(acquired_phone_number.phone_number)
+for acquired_phone_number in purchased_phone_numbers:
+    print(acquired_phone_number.phone_number)
 ```
 
 ### Get Purchased Phone Number

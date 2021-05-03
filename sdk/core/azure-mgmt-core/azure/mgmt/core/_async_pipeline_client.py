@@ -23,12 +23,8 @@
 # IN THE SOFTWARE.
 #
 # --------------------------------------------------------------------------
+from collections.abc import Iterable
 from azure.core import AsyncPipelineClient
-from azure.core.pipeline.policies import (
-    ContentDecodePolicy,
-    DistributedTracingPolicy,
-    RequestIdPolicy,
-)
 from .policies import AsyncARMAutoResourceProviderRegistrationPolicy, ARMHttpLoggingPolicy
 
 
@@ -37,8 +33,14 @@ class AsyncARMPipelineClient(AsyncPipelineClient):
 
     :param str base_url: URL for the request.
     :keyword AsyncPipeline pipeline: If omitted, a Pipeline object is created and returned.
-    :keyword list[HTTPPolicy] policies: If omitted, the standard policies of the configuration object is used.
-    :keyword HttpTransport transport: If omitted, RequestsTransport is used for synchronous transport.
+    :keyword list[AsyncHTTPPolicy] policies: If omitted, the standard policies of the configuration object is used.
+    :keyword per_call_policies: If specified, the policies will be added into the policy list before RetryPolicy
+    :paramtype per_call_policies: Union[AsyncHTTPPolicy, SansIOHTTPPolicy,
+        list[AsyncHTTPPolicy], list[SansIOHTTPPolicy]]
+    :keyword per_retry_policies: If specified, the policies will be added into the policy list after RetryPolicy
+    :paramtype per_retry_policies: Union[AsyncHTTPPolicy, SansIOHTTPPolicy,
+        list[AsyncHTTPPolicy], list[SansIOHTTPPolicy]]
+    :keyword AsyncHttpTransport transport: If omitted, AioHttpTransport is used for asynchronous transport.
     """
 
     def __init__(self, base_url, **kwargs):
@@ -47,23 +49,15 @@ class AsyncARMPipelineClient(AsyncPipelineClient):
                 raise ValueError(
                     "Current implementation requires to pass 'config' if you don't pass 'policies'"
                 )
-            kwargs["policies"] = self._default_policies(**kwargs)
+            per_call_policies = kwargs.get('per_call_policies', [])
+            if isinstance(per_call_policies, Iterable):
+                per_call_policies.append(AsyncARMAutoResourceProviderRegistrationPolicy())
+            else:
+                per_call_policies = [per_call_policies,
+                                     AsyncARMAutoResourceProviderRegistrationPolicy()]
+            kwargs["per_call_policies"] = per_call_policies
+            config = kwargs.get('config')
+            if not config.http_logging_policy:
+                config.http_logging_policy = kwargs.get('http_logging_policy', ARMHttpLoggingPolicy(**kwargs))
+            kwargs["config"] = config
         super(AsyncARMPipelineClient, self).__init__(base_url, **kwargs)
-
-    @staticmethod
-    def _default_policies(config, **kwargs):
-        return [
-            RequestIdPolicy(**kwargs),
-            AsyncARMAutoResourceProviderRegistrationPolicy(),
-            config.headers_policy,
-            config.user_agent_policy,
-            config.proxy_policy,
-            ContentDecodePolicy(**kwargs),
-            config.redirect_policy,
-            config.retry_policy,
-            config.authentication_policy,
-            config.custom_hook_policy,
-            config.logging_policy,
-            DistributedTracingPolicy(**kwargs),
-            config.http_logging_policy or ARMHttpLoggingPolicy(**kwargs),
-        ]

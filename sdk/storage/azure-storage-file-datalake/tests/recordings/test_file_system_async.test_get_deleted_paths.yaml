@@ -274,7 +274,7 @@ interactions:
       x-ms-version:
       - '2020-06-12'
     method: DELETE
-    uri: https://storagename.dfs.core.windows.net/filesystemac201283/file0?recursive=true
+    uri: https://storagename.dfs.core.windows.net/filesystemac201283/file0
   response:
     body:
       string: ''
@@ -289,7 +289,7 @@ interactions:
     status:
       code: 200
       message: OK
-    url: https://storagename.dfs.core.windows.net/filesystemac201283/file0?recursive=true
+    url: https://storagename.dfs.core.windows.net/filesystemac201283/file0
 - request:
     body: null
     headers:
@@ -304,7 +304,7 @@ interactions:
       x-ms-version:
       - '2020-06-12'
     method: DELETE
-    uri: https://storagename.dfs.core.windows.net/filesystemac201283/file1?recursive=true
+    uri: https://storagename.dfs.core.windows.net/filesystemac201283/file1
   response:
     body:
       string: ''
@@ -319,7 +319,7 @@ interactions:
     status:
       code: 200
       message: OK
-    url: https://storagename.dfs.core.windows.net/filesystemac201283/file1?recursive=true
+    url: https://storagename.dfs.core.windows.net/filesystemac201283/file1
 - request:
     body: null
     headers:
@@ -394,7 +394,7 @@ interactions:
       x-ms-version:
       - '2020-06-12'
     method: DELETE
-    uri: https://storagename.dfs.core.windows.net/filesystemac201283/dir3%2Ffile_in_dir3?recursive=true
+    uri: https://storagename.dfs.core.windows.net/filesystemac201283/dir3%2Ffile_in_dir3
   response:
     body:
       string: ''
@@ -409,7 +409,7 @@ interactions:
     status:
       code: 200
       message: OK
-    url: https://storagename.dfs.core.windows.net/filesystemac201283/dir3%2Ffile_in_dir3?recursive=true
+    url: https://storagename.dfs.core.windows.net/filesystemac201283/dir3%2Ffile_in_dir3
 - request:
     body: null
     headers:
@@ -424,7 +424,7 @@ interactions:
       x-ms-version:
       - '2020-06-12'
     method: DELETE
-    uri: https://storagename.dfs.core.windows.net/filesystemac201283/dir3%2Fsubdir%2Ffile_in_subdir?recursive=true
+    uri: https://storagename.dfs.core.windows.net/filesystemac201283/dir3%2Fsubdir%2Ffile_in_subdir
   response:
     body:
       string: ''
@@ -439,7 +439,7 @@ interactions:
     status:
       code: 200
       message: OK
-    url: https://storagename.dfs.core.windows.net/filesystemac201283/dir3%2Fsubdir%2Ffile_in_subdir?recursive=true
+    url: https://storagename.dfs.core.windows.net/filesystemac201283/dir3%2Fsubdir%2Ffile_in_subdir
 - request:
     body: null
     headers:

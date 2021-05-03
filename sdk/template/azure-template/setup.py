@@ -58,12 +58,13 @@ setup(
     packages=find_packages(exclude=[
         'tests',
         # Exclude packages that will be covered by PEP420 or nspkg
+        # This means any folder structure that only consists of a __init__.py. 
+        # For example, for storage, this would mean adding 'azure.storage' 
+        # in addition to the default 'azure' that is seen here.
         'azure'
     ]),
     install_requires=[
-        #'msrest>=0.5.0',
-        #'msrestazure>=0.4.32,<2.0.0',
-        #'azure-common~=1.1',
+        'azure-core<2.0.0,>=1.10.0',
     ],
     extras_require={
         ":python_version<'3.0'": ['azure-nspkg'],
