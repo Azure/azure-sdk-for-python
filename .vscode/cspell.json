@@ -1,0 +1,13 @@
+{
+  "version": "0.1",
+  "language": "en",
+  "languageId": "python",
+  "dictionaries": [
+    "powershell"
+  ],
+  "ignorePaths": [
+ 
+  ],
+  "words": [],
+  "allowCompoundWords": false
+}
