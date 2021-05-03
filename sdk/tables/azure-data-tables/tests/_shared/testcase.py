@@ -61,8 +61,7 @@ class TableTestCase(object):
         fake_key = 'a'*30 + 'b'*30
 
         return '?' + generate_account_sas(
-            account_name = 'test', # name of the storage account
-            account_key = AzureNamedKeyCredential(name="fakename", key=fake_key), # key for the storage account
+            credential = AzureNamedKeyCredential(name="fakename", key=fake_key),
             resource_types = ResourceTypes(object=True),
             permission = AccountSasPermissions(read=True,list=True),
             start = datetime.now() - timedelta(hours = 24),

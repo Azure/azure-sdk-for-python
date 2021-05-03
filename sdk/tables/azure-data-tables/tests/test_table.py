@@ -454,7 +454,6 @@ class StorageTableTest(AzureTestCase, TableTestCase):
             table.upsert_entity(mode=UpdateMode.MERGE, entity=entity)
 
             token = generate_account_sas(
-                tables_storage_account_name,
                 tables_primary_storage_account_key,
                 resource_types=ResourceTypes(object=True),
                 permission=AccountSasPermissions(read=True),

@@ -1729,7 +1729,6 @@ class StorageTableEntityTest(AzureTestCase, AsyncTableTestCase):
             entity, _ = await self._insert_random_entity()
             token = self.generate_sas(
                 generate_table_sas,
-                tables_storage_account_name,
                 tables_primary_storage_account_key,
                 self.table_name,
                 permission=TableSasPermissions(read=True),
@@ -1763,7 +1762,6 @@ class StorageTableEntityTest(AzureTestCase, AsyncTableTestCase):
             # Arrange
             token = self.generate_sas(
                 generate_table_sas,
-                tables_storage_account_name,
                 tables_primary_storage_account_key,
                 self.table_name,
                 permission=TableSasPermissions(add=True),
@@ -1797,7 +1795,6 @@ class StorageTableEntityTest(AzureTestCase, AsyncTableTestCase):
             # Arrange
             token = self.generate_sas(
                 generate_table_sas,
-                tables_storage_account_name,
                 tables_primary_storage_account_key,
                 self.table_name,
                 permission=TableSasPermissions(add=True),
@@ -1830,7 +1827,6 @@ class StorageTableEntityTest(AzureTestCase, AsyncTableTestCase):
             # Arrange
             token = self.generate_sas(
                 generate_table_sas,
-                tables_storage_account_name,
                 tables_primary_storage_account_key,
                 self.table_name,
                 permission=TableSasPermissions(add=True),
@@ -1863,7 +1859,6 @@ class StorageTableEntityTest(AzureTestCase, AsyncTableTestCase):
             entity, _ = await self._insert_random_entity()
             token = self.generate_sas(
                 generate_table_sas,
-                tables_storage_account_name,
                 tables_primary_storage_account_key,
                 self.table_name,
                 permission=TableSasPermissions(update=True),
@@ -1898,7 +1893,6 @@ class StorageTableEntityTest(AzureTestCase, AsyncTableTestCase):
             entity, _ = await self._insert_random_entity()
             token = self.generate_sas(
                 generate_table_sas,
-                tables_storage_account_name,
                 tables_primary_storage_account_key,
                 self.table_name,
                 permission=TableSasPermissions(delete=True),
@@ -1931,7 +1925,6 @@ class StorageTableEntityTest(AzureTestCase, AsyncTableTestCase):
             # Table names are case insensitive, so simply upper case our existing table name to test
             token = self.generate_sas(
                 generate_table_sas,
-                tables_storage_account_name,
                 tables_primary_storage_account_key,
                 self.table_name.upper(),
                 permission=TableSasPermissions(read=True),
@@ -1975,7 +1968,6 @@ class StorageTableEntityTest(AzureTestCase, AsyncTableTestCase):
 
             token = self.generate_sas(
                 generate_table_sas,
-                tables_storage_account_name,
                 tables_primary_storage_account_key,
                 self.table_name,
                 policy_id='testid',

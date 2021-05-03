@@ -1746,7 +1746,6 @@ class StorageTableEntityTest(AzureTestCase, TableTestCase):
             entity, _ = self._insert_random_entity()
             token = self.generate_sas(
                 generate_table_sas,
-                tables_storage_account_name,
                 tables_primary_storage_account_key,
                 self.table_name,
                 permission=TableSasPermissions(read=True),
@@ -1778,7 +1777,6 @@ class StorageTableEntityTest(AzureTestCase, TableTestCase):
             # Arrange
             token = self.generate_sas(
                 generate_table_sas,
-                tables_storage_account_name,
                 tables_primary_storage_account_key,
                 self.table_name,
                 permission=TableSasPermissions(add=True),
@@ -1812,7 +1810,6 @@ class StorageTableEntityTest(AzureTestCase, TableTestCase):
             # Arrange
             token = self.generate_sas(
                 generate_table_sas,
-                tables_storage_account_name,
                 tables_primary_storage_account_key,
                 self.table_name,
                 permission=TableSasPermissions(add=True),
@@ -1845,7 +1842,6 @@ class StorageTableEntityTest(AzureTestCase, TableTestCase):
             # Arrange
             token = self.generate_sas(
                 generate_table_sas,
-                tables_storage_account_name,
                 tables_primary_storage_account_key,
                 self.table_name,
                 permission=TableSasPermissions(add=True),
@@ -1878,21 +1874,12 @@ class StorageTableEntityTest(AzureTestCase, TableTestCase):
             entity, _ = self._insert_random_entity()
             token = self.generate_sas(
                 generate_table_sas,
-                tables_storage_account_name,
                 tables_primary_storage_account_key,
                 self.table_name,
                 permission=TableSasPermissions(update=True),
                 expiry=datetime.utcnow() + timedelta(hours=1),
             )
-            # token = generate_table_sas(
-            #     tables_storage_account_name,
-            #     tables_primary_storage_account_key,
-            #     self.table_name,
-            #     permission=TableSasPermissions(update=True),
-            #     expiry=datetime.utcnow() + timedelta(hours=1),
-            # )
 
-            # Act
             service = TableServiceClient(
                 self.account_url(tables_storage_account_name, "table"),
                 credential=AzureSasCredential(token),
@@ -1918,7 +1905,6 @@ class StorageTableEntityTest(AzureTestCase, TableTestCase):
             entity, _ = self._insert_random_entity()
             token = self.generate_sas(
                 generate_table_sas,
-                tables_storage_account_name,
                 tables_primary_storage_account_key,
                 self.table_name,
                 permission=TableSasPermissions(delete=True),
@@ -1958,7 +1944,6 @@ class StorageTableEntityTest(AzureTestCase, TableTestCase):
 
             token = self.generate_sas(
                 generate_table_sas,
-                tables_storage_account_name,
                 tables_primary_storage_account_key,
                 self.table_name.upper(),
                 permission=TableSasPermissions(read=True),
@@ -2000,7 +1985,6 @@ class StorageTableEntityTest(AzureTestCase, TableTestCase):
 
             token = self.generate_sas(
                 generate_table_sas,
-                tables_storage_account_name,
                 tables_primary_storage_account_key,
                 self.table_name,
                 policy_id='testid'
