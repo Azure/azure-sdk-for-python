@@ -8,7 +8,7 @@ import pytest
 
 from azure.containerregistry import (
     ContentProperties,
-    DeletedRepositoryResult,
+    DeleteRepositoryResult,
     RepositoryProperties,
     ManifestOrderBy,
     ArtifactManifestProperties,
@@ -129,7 +129,7 @@ class TestContainerRepository(ContainerRegistryTestClass):
 
         repo_client = self.create_container_repository(containerregistry_endpoint, TO_BE_DELETED)
         result = repo_client.delete()
-        assert isinstance(result, DeletedRepositoryResult)
+        assert isinstance(result, DeleteRepositoryResult)
         assert result.deleted_manifests is not None
         assert result.deleted_tags is not None
 

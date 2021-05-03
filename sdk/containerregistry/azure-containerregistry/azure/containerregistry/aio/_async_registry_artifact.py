@@ -20,6 +20,7 @@ from ._async_base_client import ContainerRegistryBaseClient
 from .._generated.models import AcrErrors
 from .._helpers import _is_tag, _parse_next_link
 from .._models import (
+    DeleteRepositoryResult,
     ContentProperties,
     ArtifactTagProperties,
     ArtifactManifestProperties
@@ -67,7 +68,19 @@ class RegistryArtifact(ContainerRegistryBaseClient):
         return tag_props.digest
 
     @distributed_trace_async
-    async def delete(self, **kwargs: Dict[str, Any]) -> None:
+    async def delete(self, **kwargs: Dict[str, Any]) -> DeleteRepositoryResult:
+        """Delete a repository
+
+        :returns: Object containing information about the deleted repository
+        :rtype: :class:`~azure.containerregistry.DeleteRepositoryResult`
+        :raises: :class:`~azure.core.exceptions.ResourceNotFoundError`
+        """
+        return DeleteRepositoryResult._from_generated(  # pylint: disable=protected-access
+            await self._client.container_registry.delete_repository(self.repository, **kwargs)
+        )
+
+    @distributed_trace_async
+    async def delete_registry_artifact(self, digest: str, **kwargs: Dict[str, Any]) -> None:
         """Delete a registry artifact
 
         :returns: None

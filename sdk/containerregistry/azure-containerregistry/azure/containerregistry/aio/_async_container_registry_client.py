@@ -21,8 +21,8 @@ from ._async_base_client import ContainerRegistryBaseClient, AsyncTransportWrapp
 from ._async_container_repository import ContainerRepository
 from .._generated.models import AcrErrors
 from .._helpers import _parse_next_link
-from .._models import RepositoryProperties, DeletedRepositoryResult
 from ._async_registry_artifact import RegistryArtifact
+from .._models import RepositoryProperties, DeleteRepositoryResult
 
 if TYPE_CHECKING:
     from azure.core.credentials_async import AsyncTokenCredential
@@ -46,17 +46,17 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
         super(ContainerRegistryClient, self).__init__(endpoint=endpoint, credential=credential, **kwargs)
 
     @distributed_trace_async
-    async def delete_repository(self, repository: str, **kwargs: Dict[str, Any]) -> DeletedRepositoryResult:
+    async def delete_repository(self, repository: str, **kwargs: Dict[str, Any]) -> DeleteRepositoryResult:
         """Delete a repository
 
         :param repository: The repository to delete
         :type repository: str
         :returns: Object containing information about the deleted repository
-        :rtype: :class:`~azure.containerregistry.DeletedRepositoryResult`
+        :rtype: :class:`~azure.containerregistry.DeleteRepositoryResult`
         :raises: :class:`~azure.core.exceptions.ResourceNotFoundError`
         """
         result = await self._client.container_registry.delete_repository(repository, **kwargs)
-        return DeletedRepositoryResult._from_generated(result)  # pylint: disable=protected-access
+        return DeleteRepositoryResult._from_generated(result)  # pylint: disable=protected-access
 
     @distributed_trace
     def list_repository_names(self, **kwargs: Dict[str, Any]) -> AsyncItemPaged[str]:

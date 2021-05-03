@@ -19,8 +19,8 @@ from ._base_client import ContainerRegistryBaseClient, TransportWrapper
 from ._container_repository import ContainerRepository
 from ._generated.models import AcrErrors
 from ._helpers import _parse_next_link
-from ._models import DeletedRepositoryResult
 from ._registry_artifact import RegistryArtifact
+from ._models import DeleteRepositoryResult
 
 if TYPE_CHECKING:
     from typing import Any, Dict
@@ -46,15 +46,15 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
 
     @distributed_trace
     def delete_repository(self, repository, **kwargs):
-        # type: (str, Dict[str, Any]) -> DeletedRepositoryResult
+        # type: (str, Dict[str, Any]) -> DeleteRepositoryResult
         """Delete a repository
 
         :param str repository: The repository to delete
         :returns: Object containing information about the deleted repository
-        :rtype: :class:`~azure.containerregistry.DeletedRepositoryResult`
+        :rtype: :class:`~azure.containerregistry.DeleteRepositoryResult`
         :raises: :class:`~azure.core.exceptions.ResourceNotFoundError`
         """
-        return DeletedRepositoryResult._from_generated(  # pylint: disable=protected-access
+        return DeleteRepositoryResult._from_generated(  # pylint: disable=protected-access
             self._client.container_registry.delete_repository(repository, **kwargs)
         )
 

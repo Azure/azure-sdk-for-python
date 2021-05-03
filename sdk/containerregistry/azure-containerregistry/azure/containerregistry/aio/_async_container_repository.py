@@ -21,7 +21,7 @@ from .._generated.models import AcrErrors
 from .._helpers import _parse_next_link
 from .._models import (
     ContentProperties,
-    DeletedRepositoryResult,
+    DeleteRepositoryResult,
     ArtifactManifestProperties,
     RepositoryProperties,
     ArtifactTagProperties,
@@ -55,14 +55,14 @@ class ContainerRepository(ContainerRegistryBaseClient):
         super(ContainerRepository, self).__init__(endpoint=self._endpoint, credential=credential, **kwargs)
 
     @distributed_trace_async
-    async def delete(self, **kwargs: Dict[str, Any]) -> DeletedRepositoryResult:
+    async def delete(self, **kwargs: Dict[str, Any]) -> DeleteRepositoryResult:
         """Delete a repository
 
         :returns: Object containing information about the deleted repository
-        :rtype: :class:`~azure.containerregistry.DeletedRepositoryResult`
+        :rtype: :class:`~azure.containerregistry.DeleteRepositoryResult`
         :raises: :class:`~azure.core.exceptions.ResourceNotFoundError`
         """
-        return DeletedRepositoryResult._from_generated(  # pylint: disable=protected-access
+        return DeleteRepositoryResult._from_generated(  # pylint: disable=protected-access
             await self._client.container_registry.delete_repository(self.repository, **kwargs)
         )
 

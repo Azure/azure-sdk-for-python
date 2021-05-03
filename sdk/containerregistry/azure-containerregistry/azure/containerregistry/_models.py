@@ -56,7 +56,7 @@ class ContentProperties(object):
         )
 
 
-class DeletedRepositoryResult(object):
+class DeleteRepositoryResult(object):
     """Represents the digests and tags deleted when a repository is deleted
 
     :ivar List[str] deleted_manifests: Registry artifact digests that were deleted
