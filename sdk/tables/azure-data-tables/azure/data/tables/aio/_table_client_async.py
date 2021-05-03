@@ -24,7 +24,7 @@ from .._models import AccessPolicy
 from .._serialize import serialize_iso, _parameter_filter_substitution
 from .._deserialize import _return_headers_and_deserialized
 from .._error import _process_table_error, _validate_table_name
-from .._models import UpdateMode, TransactionOperation
+from .._models import UpdateMode
 from .._deserialize import _convert_to_entity, _trim_service_metadata
 from .._serialize import _add_entity_properties, _get_match_headers
 from ._base_client_async import AsyncTablesBaseClient
