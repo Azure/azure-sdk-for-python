@@ -134,7 +134,7 @@ class TableEntitySamples(object):
 
                 # Get the replaced entity
                 replaced = table.get_entity(
-                    partition_key=created.PartitionKey, row_key=created.RowKey)
+                    partition_key=created['PartitionKey'], row_key=created['RowKey'])
                 print("Replaced entity: {}".format(replaced))
 
                 # Merge the entity
@@ -143,7 +143,7 @@ class TableEntitySamples(object):
 
                 # Get the merged entity
                 merged = table.get_entity(
-                    partition_key=replaced.PartitionKey, row_key=replaced.RowKey)
+                    partition_key=replaced['PartitionKey'], row_key=replaced['RowKey'])
                 print("Merged entity: {}".format(merged))
                 # [END update_entity]
 

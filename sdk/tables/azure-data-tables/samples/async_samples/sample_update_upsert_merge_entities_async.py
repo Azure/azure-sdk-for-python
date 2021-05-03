@@ -64,8 +64,10 @@ class TableEntitySamples(object):
 
                 # [START get_entity]
                 # Get Entity by partition and row key
-                got_entity = await table.get_entity(partition_key=my_entity['PartitionKey'],
-                                                                            row_key=my_entity['RowKey'])
+                got_entity = await table.get_entity(
+                    partition_key=my_entity['PartitionKey'],
+                    row_key=my_entity['RowKey']
+                )
                 print("Received entity: {}".format(got_entity))
                 # [END get_entity]
 
@@ -139,7 +141,7 @@ class TableEntitySamples(object):
 
                 # Get the replaced entity
                 replaced = await table.get_entity(
-                    partition_key=created.PartitionKey, row_key=created.RowKey)
+                    partition_key=created['PartitionKey'], row_key=created['RowKey'])
                 print("Replaced entity: {}".format(replaced))
 
                 # Merge the entity
@@ -148,7 +150,7 @@ class TableEntitySamples(object):
 
                 # Get the merged entity
                 merged = await table.get_entity(
-                    partition_key=replaced.PartitionKey, row_key=replaced.RowKey)
+                    partition_key=replaced['PartitionKey'], row_key=replaced['RowKey'])
                 print("Merged entity: {}".format(merged))
                 # [END update_entity]
 

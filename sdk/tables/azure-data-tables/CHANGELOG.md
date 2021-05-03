@@ -2,6 +2,8 @@
 
 ## 12.0.0b7 (Unreleased)
 **Breaking**
+* The `TableEntity` object now acts exclusively like a dictionary, and no longer supports key access via attributes.
+* Metadata of an entity is now accessed via `TableEntity.metadata` attribute rather than a method.
 * Removed explicit `LinearRetry` and `ExponentialRetry` in favor of keyword parameter.
 * Renamed `filter` parameter in query APIs to `query_filter`.
 * The `location_mode` attribute on clients is now read-only. This has been added as a keyword parameter to the constructor.
