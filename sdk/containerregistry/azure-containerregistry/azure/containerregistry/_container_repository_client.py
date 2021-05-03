@@ -3,7 +3,7 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 # ------------------------------------
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, Any, Dict
 
 from azure.core.exceptions import (
     ClientAuthenticationError,
@@ -26,9 +26,8 @@ from ._models import (
 )
 
 if TYPE_CHECKING:
-    from typing import Any, Dict
     from azure.core.credentials import TokenCredential
-    from ._models import ContentPermissions
+    from ._models import ContentProperties
 
 
 class ContainerRepositoryClient(ContainerRegistryBaseClient):
@@ -378,13 +377,13 @@ class ContainerRepositoryClient(ContainerRegistryBaseClient):
 
     @distributed_trace
     def set_manifest_properties(self, digest, permissions, **kwargs):
-        # type: (str, ContentPermissions, Dict[str, Any]) -> RegistryArtifactProperties
+        # type: (str, ContentProperties, Dict[str, Any]) -> RegistryArtifactProperties
         """Set the properties for a manifest
 
         :param digest: Digest of a manifest
         :type digest: str
         :param permissions: The property's values to be set
-        :type permissions: ContentPermissions
+        :type permissions: ContentProperties
         :returns: :class:`~azure.containerregistry.RegistryArtifactProperties`
         :raises: :class:`~azure.core.exceptions.ResourceNotFoundError`
         """
@@ -396,13 +395,13 @@ class ContainerRepositoryClient(ContainerRegistryBaseClient):
 
     @distributed_trace
     def set_tag_properties(self, tag, permissions, **kwargs):
-        # type: (str, ContentPermissions, Dict[str, Any]) -> ArtifactTagProperties
+        # type: (str, ContentProperties, Dict[str, Any]) -> ArtifactTagProperties
         """Set the properties for a tag
 
         :param tag: Tag to set properties for
         :type tag: str
         :param permissions: The property's values to be set
-        :type permissions: ContentPermissions
+        :type permissions: ContentProperties
         :returns: :class:`~azure.containerregistry.ArtifactTagProperties`
         :raises: :class:`~azure.core.exceptions.ResourceNotFoundError`
         """
