@@ -7,16 +7,16 @@
 # --------------------------------------------------------------------------
 
 """
-FILE: sample_recognize_id_documents.py
+FILE: sample_recognize_identity_documents.py
 
 DESCRIPTION:
     This sample demonstrates how to recognize fields from an identity document.
 
-    See fields found on an ID document here:
+    See fields found on identity documents here:
     https://aka.ms/formrecognizer/iddocumentfields
 
 USAGE:
-    python sample_recognize_id_documents.py
+    python sample_recognize_identity_documents.py
 
     Set the environment variables with your own values before running the sample:
     1) AZURE_FORM_RECOGNIZER_ENDPOINT - the endpoint to your Cognitive Services resource.
@@ -28,11 +28,11 @@ import os
 
 class RecognizeIdDocumentsSample(object):
 
-    def recognize_id_documents(self):
+    def recognize_identity_documents(self):
         path_to_sample_forms = os.path.abspath(os.path.join(os.path.abspath(__file__),
                                                             "..", "./sample_forms/id_documents/license.jpg"))
 
-        # [START recognize_id_documents]
+        # [START recognize_identity_documents]
         from azure.core.credentials import AzureKeyCredential
         from azure.ai.formrecognizer import FormRecognizerClient
 
@@ -43,7 +43,7 @@ class RecognizeIdDocumentsSample(object):
             endpoint=endpoint, credential=AzureKeyCredential(key)
         )
         with open(path_to_sample_forms, "rb") as f:
-            poller = form_recognizer_client.begin_recognize_id_documents(id_document=f)
+            poller = form_recognizer_client.begin_recognize_identity_documents(identity_document=f)
         id_documents = poller.result()
 
         for idx, id_document in enumerate(id_documents):
@@ -75,8 +75,8 @@ class RecognizeIdDocumentsSample(object):
             region = id_document.fields.get("Region")
             if region:
                 print("Region: {} has confidence: {}".format(region.value, region.confidence))
-        # [END recognize_id_documents]
+        # [END recognize_identity_documents]
 
 if __name__ == '__main__':
     sample = RecognizeIdDocumentsSample()
-    sample.recognize_id_documents()
+    sample.recognize_identity_documents()

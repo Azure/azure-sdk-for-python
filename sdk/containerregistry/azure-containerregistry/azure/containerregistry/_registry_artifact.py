@@ -3,7 +3,7 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 # ------------------------------------
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, Any, Dict
 
 from azure.core.exceptions import (
     ClientAuthenticationError,
@@ -24,7 +24,6 @@ from ._models import (
 )
 
 if TYPE_CHECKING:
-    from typing import Any, Dict
     from azure.core.credentials import TokenCredential
     from ._models import ContentProperties
 
@@ -111,7 +110,8 @@ class RegistryArtifact(ContainerRegistryBaseClient):
         :raises: :class:`~azure.core.exceptions.ResourceNotFoundError`
         """
         return ArtifactTagProperties._from_generated(  # pylint: disable=protected-access
-            self._client.container_registry.get_tag_properties(self.repository, tag, **kwargs)
+            self._client.container_registry.get_tag_properties(self.repository, tag, **kwargs),
+            repository=self.repository,
         )
 
     @distributed_trace
@@ -137,7 +137,10 @@ class RegistryArtifact(ContainerRegistryBaseClient):
         digest = kwargs.pop("digest", None)
         cls = kwargs.pop(
             "cls",
-            lambda objs: [ArtifactTagProperties._from_generated(o) for o in objs],  # pylint: disable=protected-access
+            lambda objs: [
+                ArtifactTagProperties._from_generated(o, repository=self.repository)  # pylint: disable=protected-access
+                for o in objs
+            ],
         )
 
         error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
@@ -271,5 +274,6 @@ class RegistryArtifact(ContainerRegistryBaseClient):
         return ArtifactTagProperties._from_generated(  # pylint: disable=protected-access
             self._client.container_registry.update_tag_attributes(
                 self.repository, tag, value=permissions._to_generated(), **kwargs  # pylint: disable=protected-access
-            )
+            ),
+            repository=self.repository,
         )

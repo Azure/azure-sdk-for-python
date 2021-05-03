@@ -208,12 +208,13 @@ class ArtifactTagProperties(object):
             self.writeable_properties = ContentProperties._from_generated(self.writeable_properties)
 
     @classmethod
-    def _from_generated(cls, generated):
-        # type: (GeneratedArtifactTagProperties) -> ArtifactTagProperties
+    def _from_generated(cls, generated, **kwargs):
+        # type: (GeneratedArtifactTagProperties, Dict[str, Any]) -> ArtifactTagProperties
         return cls(
             created_on=generated.created_on,
             digest=generated.digest,
             last_updated_on=generated.last_updated_on,
             name=generated.name,
             writeable_properties=generated.writeable_properties,
+            repository=kwargs.get("repository", None),
         )
