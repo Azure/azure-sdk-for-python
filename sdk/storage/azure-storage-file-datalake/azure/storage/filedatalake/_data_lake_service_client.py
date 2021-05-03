@@ -495,7 +495,7 @@ class DataLakeServiceClient(StorageAccountHostsMixin):
             key_resolver_function=self.key_resolver_function)
 
     def set_service_properties(self, **kwargs):
-        # type: (Any) -> None
+        # type: (**Any) -> None
         """Sets the properties of a storage account's Datalake service, including
         Azure Storage Analytics.
 
@@ -539,7 +539,7 @@ class DataLakeServiceClient(StorageAccountHostsMixin):
         return self._blob_service_client.set_service_properties(**kwargs)  # pylint: disable=protected-access
 
     def get_service_properties(self, **kwargs):
-        # type: (Any) -> Dict[str, Any]
+        # type: (**Any) -> Dict[str, Any]
         """Gets the properties of a storage account's datalake service, including
         Azure Storage Analytics.
 

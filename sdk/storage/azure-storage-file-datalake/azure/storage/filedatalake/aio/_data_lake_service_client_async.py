@@ -4,7 +4,7 @@
 # license information.
 # --------------------------------------------------------------------------
 # pylint: disable=invalid-overridden-method
-from typing import Optional, List, Any
+from typing import Optional, Any, Dict
 
 from azure.core.paging import ItemPaged
 from azure.core.pipeline import AsyncPipeline
@@ -444,7 +444,7 @@ class DataLakeServiceClient(AsyncStorageAccountHostsMixin, DataLakeServiceClient
             key_resolver_function=self.key_resolver_function)
 
     async def set_service_properties(self, **kwargs):
-        # type: (Any) -> None
+        # type: (**Any) -> None
         """Sets the properties of a storage account's Datalake service, including
         Azure Storage Analytics.
 
@@ -488,7 +488,7 @@ class DataLakeServiceClient(AsyncStorageAccountHostsMixin, DataLakeServiceClient
         return await self._blob_service_client.set_service_properties(**kwargs)  # pylint: disable=protected-access
 
     async def get_service_properties(self, **kwargs):
-        # type: (Any) -> Dict[str, Any]
+        # type: (**Any) -> Dict[str, Any]
         """Gets the properties of a storage account's datalake service, including
         Azure Storage Analytics.
 

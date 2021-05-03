@@ -750,7 +750,7 @@ class FileSystemClient(StorageAccountHostsMixin):
         file_client.delete_file(**kwargs)
         return file_client
 
-    def _undelete_path(self, deleted_path_name, deletion_id):
+    def __undelete_path(self, deleted_path_name, deletion_id):
         quoted_path = quote(unquote(deleted_path_name.strip('/')))
 
         url_and_token = self.url.replace('.dfs.', '.blob.').split('?')
@@ -763,7 +763,7 @@ class FileSystemClient(StorageAccountHostsMixin):
 
         return quoted_path, url, undelete_source
 
-    def undelete_path(self, deleted_path_name, deletion_id, **kwargs):
+    def _undelete_path(self, deleted_path_name, deletion_id, **kwargs):
         # type: (str, str, **Any) -> Union[DataLakeDirectoryClient, DataLakeFileClient]
         """Restores soft-deleted path.
 
@@ -781,7 +781,7 @@ class FileSystemClient(StorageAccountHostsMixin):
             The timeout parameter is expressed in seconds.
         :rtype: ~azure.storage.file.datalake.DataLakeDirectoryClient or azure.storage.file.datalake.DataLakeFileClient
         """
-        _, url, undelete_source = self._undelete_path(deleted_path_name, deletion_id)
+        _, url, undelete_source = self.__undelete_path(deleted_path_name, deletion_id)
 
         pipeline = Pipeline(
             transport=TransportWrapper(self._pipeline._transport), # pylint: disable = protected-access
@@ -900,7 +900,7 @@ class FileSystemClient(StorageAccountHostsMixin):
             If omitted or greater than 5,000, the response will include up to 5,000 items per page.
         :keyword int timeout:
             The timeout parameter is expressed in seconds.
-        :returns: An iterable (auto-paging) response of PathProperties.
+        :returns: An iterable (auto-paging) response of DeletedPathProperties.
         :rtype:
             ~azure.core.paging.ItemPaged[~azure.storage.filedatalake.DeletedPathProperties]
         """

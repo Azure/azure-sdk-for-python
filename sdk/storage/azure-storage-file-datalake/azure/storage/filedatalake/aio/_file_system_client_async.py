@@ -710,7 +710,7 @@ class FileSystemClient(AsyncStorageAccountHostsMixin, FileSystemClientBase):
         return file_client
 
     @distributed_trace_async
-    async def undelete_path(self, deleted_path_name, deletion_id, **kwargs):
+    async def _undelete_path(self, deleted_path_name, deletion_id, **kwargs):
         # type: (str, str, **Any) -> Union[DataLakeDirectoryClient, DataLakeFileClient]
         """Restores soft-deleted path.
 
@@ -729,7 +729,7 @@ class FileSystemClient(AsyncStorageAccountHostsMixin, FileSystemClientBase):
         :rtype: ~azure.storage.file.datalake.aio.DataLakeDirectoryClient
                 or azure.storage.file.datalake.aio.DataLakeFileClient
         """
-        _, url, undelete_source = self._undelete_path(deleted_path_name, deletion_id)
+        _, url, undelete_source = self.__undelete_path(deleted_path_name, deletion_id)
 
         pipeline = AsyncPipeline(
             transport=AsyncTransportWrapper(self._pipeline._transport), # pylint: disable = protected-access
@@ -850,7 +850,7 @@ class FileSystemClient(AsyncStorageAccountHostsMixin, FileSystemClientBase):
             If omitted or greater than 5,000, the response will include up to 5,000 items per page.
         :keyword int timeout:
             The timeout parameter is expressed in seconds.
-        :returns: An iterable (auto-paging) response of PathProperties.
+        :returns: An iterable (auto-paging) response of DeletedPathProperties.
         :rtype:
             ~azure.core.paging.ItemPaged[~azure.storage.filedatalake.DeletedPathProperties]
         """

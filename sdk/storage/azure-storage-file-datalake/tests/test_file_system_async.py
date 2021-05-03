@@ -764,7 +764,7 @@ class FileSystemTest(StorageTestCase):
         resp = await dir_client.delete_directory()
         with self.assertRaises(HttpResponseError):
             await file_system_client.get_file_client(dir_path).get_file_properties()
-        restored_dir_client = await file_system_client.undelete_path(dir_path, resp['deletion_id'])
+        restored_dir_client = await file_system_client._undelete_path(dir_path, resp['deletion_id'])
         resp = await restored_dir_client.get_directory_properties()
         self.assertIsNotNone(resp)
 
@@ -779,7 +779,7 @@ class FileSystemTest(StorageTestCase):
         resp = await dir_client.delete_file()
         with self.assertRaises(HttpResponseError):
             await file_system_client.get_file_client(file_path).get_file_properties()
-        restored_file_client = await file_system_client.undelete_path(file_path, resp['deletion_id'])
+        restored_file_client = await file_system_client._undelete_path(file_path, resp['deletion_id'])
         resp = await restored_file_client.get_file_properties()
         self.assertIsNotNone(resp)
 
