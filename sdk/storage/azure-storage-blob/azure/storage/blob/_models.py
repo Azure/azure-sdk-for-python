@@ -67,14 +67,6 @@ class PremiumPageBlobTier(str, Enum):
     P60 = 'P60'  #: P60 Tier
 
 
-class QuickQueryDialect(str, Enum):
-    """Specifies the quick query input/output dialect."""
-
-    DelimitedTextDialect = 'DelimitedTextDialect'
-    DelimitedJsonDialect = 'DelimitedJsonDialect'
-    ParquetDialect = 'ParquetDialect'
-
-
 class SequenceNumberAction(str, Enum):
     """Sequence number actions."""
 
@@ -1043,11 +1035,6 @@ class DelimitedTextDialect(DictMixin):
         self.lineterminator = kwargs.pop('lineterminator', '\n')
         self.escapechar = kwargs.pop('escapechar', "")
         self.has_header = kwargs.pop('has_header', False)
-
-
-class ParquetDialect(DictMixin):
-    """Defines parquet input serialization for a blob query request."""
-    pass
 
 
 class ArrowDialect(ArrowField):
