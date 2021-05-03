@@ -57,7 +57,7 @@ class TestSubmittedJobs(AsyncDocumentTranslationTest):
                 page_jobs.append(job)
                 self._validate_translation_job(job)
 
-            self.assertEqual(len(page_jobs), results_per_page)
+            self.assertLessEqual(len(page_jobs), results_per_page)
 
 
     @DocumentTranslationPreparer()
@@ -105,7 +105,7 @@ class TestSubmittedJobs(AsyncDocumentTranslationTest):
         submitted_jobs = client.list_submitted_jobs(statuses=statuses)
 
         # check statuses
-        for job in submitted_jobs:
+        async for job in submitted_jobs:
             self.assertIn(job.status, statuses)
             self.assertNotIn(job.id, completed_job_ids)
 
@@ -252,7 +252,7 @@ class TestSubmittedJobs(AsyncDocumentTranslationTest):
                 assert(job.created_on > start)
                 self.assertIn(job.status, statuses)
 
-            self.assertEqual(len(page_jobs), results_per_page)
+            self.assertLessEqual(len(page_jobs), results_per_page)
 
 
     @pytest.mark.skip(reason="pending for filters which aren't working - mainly 'statuses' filter")
@@ -289,5 +289,5 @@ class TestSubmittedJobs(AsyncDocumentTranslationTest):
                 self.assertIn(job.status, statuses)
                 self.assertIn(job.id, job_ids)
 
-            self.assertEqual(len(page_jobs), results_per_page)
+            self.assertLessEqual(len(page_jobs), results_per_page)
 
