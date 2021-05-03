@@ -186,6 +186,9 @@ class FormElement(object):
 
 class RecognizedForm(object):
     """Represents a form that has been recognized by a trained or prebuilt model.
+    The `fields` property contains the form fields that were extracted from the
+    form. Tables, text lines/words, and selection marks are extracted per page
+    and found in the `pages` property.
 
     :ivar str form_type:
         The type of form the model identified the submitted form to be.

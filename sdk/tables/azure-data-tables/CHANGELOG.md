@@ -14,6 +14,7 @@
 * Renamed `EntityProperty.type` to `EntityProperty.edm_type`.
 * `BatchErrorException` has been renamed to `TableTransactionError`.
 * `EntityProperty` is now a tuple.
+* Removed `date` and `api_version` from the `TableItem` class.
 
 **Fixes**
 * Fixed issue with Cosmos merge operations.

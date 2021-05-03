@@ -1362,7 +1362,8 @@ class AnalyzeBatchActionsType(str, Enum):
     RECOGNIZE_ENTITIES = "recognize_entities"  #: Entities Recognition action.
     RECOGNIZE_PII_ENTITIES = "recognize_pii_entities"  #: PII Entities Recognition action.
     EXTRACT_KEY_PHRASES = "extract_key_phrases"  #: Key Phrase Extraction action.
-    RECOGNIZE_LINKED_ENTITIES = "recognize_linked_entities" #: Linked Entities Recognition action.
+    RECOGNIZE_LINKED_ENTITIES = "recognize_linked_entities"  #: Linked Entities Recognition action.
+    ANALYZE_SENTIMENT = "analyze_sentiment"  #: Sentiment Analysis action.
 
 
 class AnalyzeBatchActionsResult(DictMixin):
@@ -1455,6 +1456,58 @@ class RecognizeEntitiesAction(DictMixin):
         return _latest_preview_models.EntitiesTask(
             parameters=_latest_preview_models.EntitiesTaskParameters(
                 model_version=self.model_version,
+                string_index_type=self.string_index_type
+            )
+        )
+
+
+class AnalyzeSentimentAction(DictMixin):
+    """AnalyzeSentimentAction encapsulates the parameters for starting a long-running
+    Sentiment Analysis operation.
+
+    If you just want to analyze sentiment in a list of documents, and not perform a batch
+    of long running actions on the input of documents, call method `analyze_sentiment` instead
+    of interfacing with this model.
+
+    :keyword str model_version: The model version to use for the analysis.
+    :keyword bool show_opinion_mining: Whether to mine the opinions of a sentence and conduct more
+        granular analysis around the aspects of a product or service (also known as
+        aspect-based sentiment analysis). If set to true, the returned
+        :class:`~azure.ai.textanalytics.SentenceSentiment` objects
+        will have property `mined_opinions` containing the result of this analysis.
+    :keyword str string_index_type: Specifies the method used to interpret string offsets.
+        `UnicodeCodePoint`, the Python encoding, is the default. To override the Python default,
+        you can also pass in `Utf16CodePoint` or TextElement_v8`. For additional information
+        see https://aka.ms/text-analytics-offsets
+    :ivar str model_version: The model version to use for the analysis.
+    :ivar bool show_opinion_mining: Whether to mine the opinions of a sentence and conduct more
+        granular analysis around the aspects of a product or service (also known as
+        aspect-based sentiment analysis). If set to true, the returned
+        :class:`~azure.ai.textanalytics.SentenceSentiment` objects
+        will have property `mined_opinions` containing the result of this analysis.
+    :ivar str string_index_type: Specifies the method used to interpret string offsets.
+        `UnicodeCodePoint`, the Python encoding, is the default. To override the Python default,
+        you can also pass in `Utf16CodePoint` or TextElement_v8`. For additional information
+        see https://aka.ms/text-analytics-offsets
+    """
+
+    def __init__(self, **kwargs):
+        self.model_version = kwargs.get('model_version', "latest")
+        self.show_opinion_mining = kwargs.get('show_opinion_mining', False)
+        self.string_index_type = kwargs.get('string_index_type', None)
+
+    def __repr__(self, **kwargs):
+        return "AnalyzeSentimentAction(model_version={}, show_opinion_mining={}, string_index_type={}".format(
+            self.model_version,
+            self.show_opinion_mining,
+            self.string_index_type
+        )[:1024]
+
+    def to_generated(self):
+        return _latest_preview_models.SentimentAnalysisTask(
+            parameters=_latest_preview_models.SentimentAnalysisTaskParameters(
+                model_version=self.model_version,
+                opinion_mining=self.show_opinion_mining,
                 string_index_type=self.string_index_type
             )
         )

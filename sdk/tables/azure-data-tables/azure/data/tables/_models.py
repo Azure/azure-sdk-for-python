@@ -492,20 +492,14 @@ class TableItem(object):
     Returned by TableServiceClient.list_tables and TableServiceClient.query_tables.
 
     :ivar str name: The name of the table.
-    :ivar str api_version: The API version included in the service call
-    :ivar str date: The date the service call was made
     """
 
-    def __init__(self, name, **kwargs):
+    def __init__(self, name, **kwargs):  # pylint: disable=unused-argument
         # type: (str, Dict[str, Any]) -> None
         """
         :param str name: Name of the Table
-        :keyword str api_version: The API version included in the service call
-        :keyword str date: The date the service call was made
         """
         self.name = name
-        self.api_version = kwargs.get("version")
-        self.date = kwargs.get("date") or kwargs.get("Date")
 
     @classmethod
     def _from_generated(cls, generated, **kwargs):
