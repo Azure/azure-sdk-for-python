@@ -168,17 +168,13 @@ class TableSharedAccessSignature(SharedAccessSignature):
     generate_*_shared_access_signature method directly.
     """
 
-    def __init__(self, account_name, account_key):
+    def __init__(self, credential):
         """
-        :param account_name:
-            The storage account name used to generate the shared access signatures.
-        :type account_name: str
-        :param account_key:
-            The access key to generate the shares access signatures.
-        :type account_key: str
+        :param credential: The credential used for authenticating requests
+        :type credential: :class:`~azure.core.credentials.NamedKeyCredential`
         """
         super(TableSharedAccessSignature, self).__init__(
-            account_name, account_key, x_ms_version=X_MS_VERSION
+            credential, x_ms_version=X_MS_VERSION
         )
 
     def generate_table(

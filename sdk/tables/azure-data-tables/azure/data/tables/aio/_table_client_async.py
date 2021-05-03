@@ -58,7 +58,9 @@ class TableClient(AsyncTablesBaseClient):
             account URL already has a SAS token, or the connection string already has shared
             access key values. The value can be a SAS token string or an account shared access
             key.
-        :type credential: :class:`~azure.core.credentials.AzureNamedKeyCredential` or :class:`~azure.core.credentials.AzureSasCredential`
+        :type credential:
+            :class:`~azure.core.credentials.AzureNamedKeyCredential` or
+            :class:`~azure.core.credentials.AzureSasCredential`
 
         :returns: None
         """
@@ -120,7 +122,9 @@ class TableClient(AsyncTablesBaseClient):
             The credentials with which to authenticate. This is optional if the
             account URL already has a SAS token. The value can be a SAS token string, an account
             shared access key.
-        :type credential: :class:`~azure.core.credentials.AzureNamedKeyCredential` or :class:`~azure.core.credentials.AzureSasCredential`
+        :type credential:
+            :class:`~azure.core.credentials.AzureNamedKeyCredential` or
+            :class:`~azure.core.credentials.AzureSasCredential`
         :returns: A table client.
         :rtype: :class:`~azure.data.tables.TableClient`
         """

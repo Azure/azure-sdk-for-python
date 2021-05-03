@@ -66,7 +66,9 @@ class TableClient(TablesBaseClient):
             account URL already has a SAS token, or the connection string already has shared
             access key values. The value can be a SAS token string or an account shared access
             key.
-        :type credential: :class:`~azure.core.credentials.AzureNamedKeyCredential` or :class:`~azure.core.credentials.AzureSasCredential`
+        :type credential:
+            :class:`~azure.core.credentials.AzureNamedKeyCredential` or
+            :class:`~azure.core.credentials.AzureSasCredential`
         :returns: None
         """
         if not table_name:

@@ -5,7 +5,8 @@
 # --------------------------------------------------------------------------
 
 import logging
-from typing import TYPE_CHECKING
+import sys
+from typing import Union
 
 try:
     from urllib.parse import urlparse
@@ -33,8 +34,8 @@ from ._error import (
     _wrap_exception,
 )
 
-if TYPE_CHECKING:
-    from typing import Union, Awaitable
+if sys.version_info > (3, 5):
+    from typing import Awaitable
 
 logger = logging.getLogger(__name__)
 
