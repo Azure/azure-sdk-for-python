@@ -5,7 +5,7 @@
 # --------------------------------------------------------------------------
 
 import functools
-from typing import Optional, Any, Union, List, Tuple, Dict, Mapping, Iterable
+from typing import Optional, Any, Union, List, Tuple, Dict, Mapping, Iterable, overload
 try:
     from urllib.parse import urlparse, unquote
 except ImportError:
@@ -273,13 +273,19 @@ class TableClient(TablesBaseClient):
         except HttpResponseError as error:
             _process_table_error(error)
 
+    @overload
+    def delete_entity(self, partition_key, row_key, **kwargs):
+        # type: (str, str, Any) -> None
+        ...
+
+    @overload
+    def delete_entity(self, entity: Union[TableEntity, Mapping[str, Any]], **kwargs):
+        # type: (Union[TableEntity, Mapping[str, Any]], Any) -> None
+        ...
+
     @distributed_trace
-    def delete_entity(
-        self,
-        entity,  # type: EntityType
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> None
+    def delete_entity(self, *args, **kwargs):
+        # type: (Union[TableEntity, str], Any) -> None
         """Deletes the specified entity in a table.
 
         :param partition_key: The partition key of the entity.
@@ -302,6 +308,14 @@ class TableClient(TablesBaseClient):
                 :dedent: 8
                 :caption: Deleting an entity to a Table
         """
+        try:
+            entity = kwargs.get('entity') or args[0]
+            partition_key = entity['PartitionKey']
+            row_key = entity['RowKey']
+        except TypeError:
+            partition_key = kwargs.get('partition_key') or args[0]
+            row_key = kwargs.get('row_key') or args[1]
+
 
         if_match, _ = _get_match_headers(
             kwargs=dict(
@@ -316,8 +330,8 @@ class TableClient(TablesBaseClient):
         try:
             self._client.table.delete_entity(
                 table=self.table_name,
-                partition_key=entity["PartitionKey"],
-                row_key=entity["RowKey"],
+                partition_key=partition_key,
+                row_key=row_key,
                 if_match=if_match or "*",
                 **kwargs
             )

@@ -973,8 +973,35 @@ class StorageTableEntityTest(AzureTestCase, AsyncTableTestCase):
                     etag=u'W/"datetime\'2012-06-15T22%3A51%3A44.9662825Z\'"',
                     match_condition=MatchConditions.IfNotModified
                 )
+        finally:
+            await self._tear_down()
 
-            # Assert
+    @CosmosPreparer()
+    async def test_delete_entity_overloads(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
+        # Arrange
+        await self._set_up(tables_cosmos_account_name, tables_primary_cosmos_account_key)
+        try:
+            entity, _ = await self._insert_random_entity()
+
+            # Test passing in an entity
+            await self.table.delete_entity(entity)
+
+            pk, rk = self._create_pk_rk("pk", "rk")
+            pk, rk = pk + u"2", rk + u"2"
+            entity2 = {
+                u"PartitionKey": pk,
+                u"RowKey": rk,
+                u"Value": 100
+            }
+            await self.table.create_entity(entity2)
+
+            # Test passing in a partition key and row key
+            await self.table.delete_entity(pk, rk)
+
+            count = 0
+            async for entity in self.table.list_entities():
+                count += 1
+            assert count == 0
         finally:
             await self._tear_down()
 

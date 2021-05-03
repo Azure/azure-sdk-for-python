@@ -1294,6 +1294,34 @@ class StorageTableEntityTest(AzureTestCase, TableTestCase):
             self._tear_down()
 
     @TablesPreparer()
+    def test_delete_entity_overloads(self, tables_storage_account_name, tables_primary_storage_account_key):
+        # Arrange
+        self._set_up(tables_storage_account_name, tables_primary_storage_account_key)
+        try:
+            entity, _ = self._insert_random_entity()
+
+            # Act
+            self.table.delete_entity(entity)
+
+            pk, rk = self._create_pk_rk("pk", "rk")
+            pk, rk = pk + u"2", rk + u"2"
+            entity2 = {
+                u"PartitionKey": pk,
+                u"RowKey": rk,
+                u"Value": 100
+            }
+            self.table.create_entity(entity2)
+
+            self.table.delete_entity(pk, rk)
+
+            count = 0
+            for entity in self.table.list_entities():
+                count += 1
+            assert count == 0
+        finally:
+            self._tear_down()
+
+    @TablesPreparer()
     def test_unicode_property_value(self, tables_storage_account_name, tables_primary_storage_account_key):
         # Arrange
         self._set_up(tables_storage_account_name, tables_primary_storage_account_key)

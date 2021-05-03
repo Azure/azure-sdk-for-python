@@ -4,7 +4,7 @@
 # license information.
 # --------------------------------------------------------------------------
 import functools
-from typing import List, Union, Any, Optional, Mapping, Iterable, Tuple
+from typing import List, Union, Any, Optional, Mapping, Iterable, Dict, overload
 try:
     from urllib.parse import urlparse, unquote
 except ImportError:
@@ -31,11 +31,6 @@ from ._base_client_async import AsyncTablesBaseClient
 from ._models import TableEntityPropertiesPaged
 from ._table_batch_async import TableBatchOperations
 from .._table_client import EntityType, TransactionOperationType
-
-
-EntityType = Union[TableEntity, Mapping[str, Any]]
-OperationType = Union[TransactionOperation, str]
-TransactionOperationType = Union[Tuple[OperationType, EntityType], Tuple[OperationType, EntityType, Mapping[str, Any]]]
 
 
 class TableClient(AsyncTablesBaseClient):
@@ -269,12 +264,16 @@ class TableClient(AsyncTablesBaseClient):
         except HttpResponseError as error:
             _process_table_error(error)
 
+    @overload
+    async def delete_entity(self, partition_key: str, row_key: str, **kwargs: Any) -> None:
+        ...
+
+    @overload
+    async def delete_entity(self, entity: Union[TableEntity, Mapping[str, Any]], **kwargs: Any) -> None:
+        ...
+
     @distributed_trace_async
-    async def delete_entity(
-        self,
-        entity: EntityType,
-        **kwargs
-    ) -> None:
+    async def delete_entity(self, *args: Union[TableEntity, str], **kwargs: Any) -> None:
         """Deletes the specified entity in a table.
 
         :param partition_key: The partition key of the entity.
@@ -297,6 +296,14 @@ class TableClient(AsyncTablesBaseClient):
                 :dedent: 8
                 :caption: Adding an entity to a Table
         """
+        try:
+            entity = kwargs.get('entity') or args[0]
+            partition_key = entity['PartitionKey']
+            row_key = entity['RowKey']
+        except TypeError:
+            partition_key = kwargs.get('partition_key') or args[0]
+            row_key = kwargs.get('row_key') or args[1]
+
         if_match, _ = _get_match_headers(
             kwargs=dict(
                 kwargs,
@@ -309,8 +316,8 @@ class TableClient(AsyncTablesBaseClient):
         try:
             await self._client.table.delete_entity(
                 table=self.table_name,
-                partition_key=entity["PartitionKey"],
-                row_key=entity["RowKey"],
+                partition_key=partition_key,
+                row_key=row_key,
                 if_match=if_match or "*",
                 **kwargs
             )
