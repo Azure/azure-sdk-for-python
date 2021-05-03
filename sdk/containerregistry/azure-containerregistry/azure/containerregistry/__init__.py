@@ -9,8 +9,8 @@
 from ._container_registry_client import ContainerRegistryClient
 from ._container_repository_client import ContainerRepositoryClient
 from ._models import (
+    DeleteRepositoryResult,
     ContentProperties,
-    DeletedRepositoryResult,
     RegistryArtifactOrderBy,
     RegistryArtifactProperties,
     RepositoryProperties,
@@ -24,8 +24,8 @@ __version__ = VERSION
 __all__ = [
     "ContainerRegistryClient",
     "ContainerRepositoryClient",
+    "DeleteRepositoryResult",
     "ContentProperties",
-    "DeletedRepositoryResult",
     "RegistryArtifactOrderBy",
     "RegistryArtifactProperties",
     "RepositoryProperties",

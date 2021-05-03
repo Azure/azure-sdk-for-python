@@ -56,22 +56,22 @@ class ContentProperties(object):
         )
 
 
-class DeletedRepositoryResult(object):
+class DeleteRepositoryResult(object):
     """Represents the digests and tags deleted when a repository is deleted
 
-    :ivar List[str] deleted_registry_artifact_digests: Registry artifact digests that were deleted
+    :ivar List[str] deleted_manifests: Registry artifact digests that were deleted
     :ivar List[str] deleted_tags: Tags that were deleted
     """
 
     def __init__(self, **kwargs):
-        self.deleted_registry_artifact_digests = kwargs.get("deleted_registry_artifact_digests", None)
+        self.deleted_manifests = kwargs.get("deleted_manifests", None)
         self.deleted_tags = kwargs.get("deleted_tags", None)
 
     @classmethod
     def _from_generated(cls, gen):
         return cls(
             deleted_tags=gen.deleted_tags,
-            deleted_registry_artifact_digests=gen.deleted_manifests,
+            deleted_manifests=gen.deleted_manifests,
         )
 
 
