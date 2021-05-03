@@ -83,7 +83,7 @@ class SharedKeyCredentialPolicy(SansIOHTTPPolicy):
                 )
             ):
                 uri_path = URL(uri_path)
-                return "/" + self._credential.name + str(uri_path)
+                return "/" + self._credential.named_key.name + str(uri_path)
         except TypeError:
             pass
         return "/" + self._credential.named_key.name + uri_path

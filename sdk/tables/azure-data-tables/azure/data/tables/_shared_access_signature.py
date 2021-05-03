@@ -28,17 +28,15 @@ class SharedAccessSignature(object):
     generate_*_shared_access_signature method directly.
     """
 
-    def __init__(self, account_name, account_key, x_ms_version=DEFAULT_X_MS_VERSION):
+    def __init__(self, credential, x_ms_version=DEFAULT_X_MS_VERSION):
         """
-        :param str account_name:
-            The storage account name used to generate the shared access signatures.
-        :param AzureNamedKeyCredential account_key:
-            The access key to generate the shares access signatures.
+        :param credential: The credential used for authenticating requests
+        :type credential: :class:`~azure.core.credentials.NamedKeyCredential`
         :param str x_ms_version:
             The service version used to generate the shared access signatures.
         """
-        self.account_name = account_name
-        self.account_key = account_key.named_key.key
+        self.account_name = credential.named_key.name
+        self.account_key = credential.named_key.key
         self.x_ms_version = x_ms_version
 
     def generate_account(
