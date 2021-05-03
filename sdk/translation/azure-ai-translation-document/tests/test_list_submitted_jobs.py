@@ -10,6 +10,7 @@ from testcase import DocumentTranslationTest
 from preparer import DocumentTranslationPreparer, DocumentTranslationClientPreparer as _DocumentTranslationClientPreparer
 from azure.ai.translation.document import DocumentTranslationClient
 import pytest
+import pytz
 
 DocumentTranslationClientPreparer = functools.partial(_DocumentTranslationClientPreparer, DocumentTranslationClient)
 
@@ -136,22 +137,20 @@ class TestSubmittedJobs(DocumentTranslationTest):
             assert(job.created_on.replace(tzinfo=None) >= start.replace(tzinfo=None))
 
 
-    @pytest.mark.skip(reason="for some reason, jobs created after 'end' timestamp showup in result! might be different timestamps locally and service")
     @DocumentTranslationPreparer()
     @DocumentTranslationClientPreparer()
     def test_list_submitted_jobs_filter_by_created_before(self, client):
         '''
-            NOTE: maybe we need to wait for few seconds after calling 'end = datetime.now()'
-            for the local and service clocks to differ by some significant amount 
+            NOTE: test is dependent on 'end' to be specific/same as time zone of the service! 
+                'end' must be timezone-aware!
         '''
-        jobs_count = 3
-        docs_per_job = 2
+        jobs_count = 5
+        docs_per_job = 1
 
         # create some jobs
-        self._create_and_submit_sample_translation_jobs(client, jobs_count, wait=False, docs_per_job=docs_per_job)
-        end = datetime.now()
-        self.wait(5) # 
-        job_ids = self._create_and_submit_sample_translation_jobs(client, jobs_count, wait=False, docs_per_job=docs_per_job)
+        self._create_and_submit_sample_translation_jobs(client, jobs_count, wait=True, docs_per_job=docs_per_job)
+        end = datetime.utcnow().replace(tzinfo=pytz.utc)
+        job_ids = self._create_and_submit_sample_translation_jobs(client, jobs_count, wait=True, docs_per_job=docs_per_job)
 
         # list jobs
         submitted_jobs = list(client.list_submitted_jobs(created_before=end))
