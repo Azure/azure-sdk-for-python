@@ -5,7 +5,7 @@
 # ------------------------------------
 
 """
-FILE: sample_list_document_statuses_in_a_translation_job_with_filters.py
+FILE: sample_list_document_statuses_in_a_translation_job_with_filters_async.py
 
 DESCRIPTION:
     This sample demonstrates how to list all the docs in some translation job for the resource 
@@ -15,20 +15,22 @@ DESCRIPTION:
     with the appropriate permissions, see the README.
 
 USAGE:
-    python sample_list_document_statuses_in_a_translation_job_with_filters.py
+    python sample_list_document_statuses_in_a_translation_job_with_filters_async.py
 
     Set the environment variables with your own values before running the sample:
     1) AZURE_DOCUMENT_TRANSLATION_ENDPOINT - the endpoint to your Document Translation resource.
     2) AZURE_DOCUMENT_TRANSLATION_KEY - your Document Translation API key.
 """
 
-def sample_list_document_statuses_in_a_translation_job_with_filters(self, client):
+import os
+import asyncio
+
+async def sample_list_document_statuses_in_a_translation_job_with_filters_async(self, client):
     # import libraries
     from azure.core.credentials import AzureKeyCredential
     from azure.ai.translation.document import (
         DocumentTranslationClient,
     )
-    import os
     from datetime import datetime
     import uuid
 
@@ -49,23 +51,24 @@ def sample_list_document_statuses_in_a_translation_job_with_filters(self, client
     skip = 3
     
     # list jobs
-    filtered_docs = client.list_all_document_statuses(
-        job_id,
-        # filters
-        statuses=statuses,
-        translated_after=start,
-        translated_before=end,
-        # ordering
-        order_by=order_by,
-        # paging
-        skip=skip,
-        results_per_page=results_per_page
-    ).by_page()
+    async with client:
+        filtered_docs = client.list_all_document_statuses(
+            job_id,
+            # filters
+            statuses=statuses,
+            translated_after=start,
+            translated_before=end,
+            # ordering
+            order_by=order_by,
+            # paging
+            skip=skip,
+            results_per_page=results_per_page
+        ).by_page()
 
-    # check statuses
-    for page in filtered_docs:
-        for job in page:
-            display_doc_info(job)
+        # check statuses
+        async for page in filtered_docs:
+            async for job in page:
+                display_doc_info(job)
 
 def display_doc_info(document):
     print("Document ID: {}".format(document.id))
@@ -75,5 +78,10 @@ def display_doc_info(document):
         print("Translated document location: {}".format(document.translated_document_url))
         print("Translated to language: {}\n".format(document.translate_to))
 
+
+async def main():
+    await sample_list_document_statuses_in_a_translation_job_with_filters_async()
+
 if __name__ == '__main__':
-    sample_list_document_statuses_in_a_translation_job_with_filters()
+    loop = asyncio.get_event_loop()
+    loop.run_until_complete(main())
