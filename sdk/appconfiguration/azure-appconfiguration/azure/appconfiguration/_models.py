@@ -3,6 +3,7 @@
 # Licensed under the MIT License.
 # ------------------------------------
 import json
+from typing import Dict, Union, List, Any, Optional
 from msrest.serialization import Model
 from ._generated.models import KeyValue
 
@@ -143,7 +144,7 @@ class FeatureFlagConfigurationSetting(
     kind = "FeatureFlag"
 
     def __init__(self, feature_id, enabled, filters=[], **kwargs):  # pylint: disable=dangerous-default-value
-        # type: (str, bool, Optional[List[Dict[str, Any]]]) -> None
+        # type: (str, bool, Optional[List[Dict[str, Any]]], Any) -> None
         super(FeatureFlagConfigurationSetting, self).__init__(**kwargs)
         if not feature_id.startswith(self.key_prefix):
             feature_id = self.key_prefix + feature_id
@@ -248,7 +249,7 @@ class FeatureFlagConfigurationSetting(
         return KeyValue(
             key=self.key,
             label=self.label,
-            value=self.value,
+            value=json.dumps(self.value),
             content_type=self.content_type,
             last_modified=self.last_modified,
             tags=self.tags,
