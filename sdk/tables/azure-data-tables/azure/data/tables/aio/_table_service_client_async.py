@@ -253,7 +253,7 @@ class TableServiceClient(AsyncTablesBaseClient):
         :param str table_name: The Table name.
         :return: None
         :rtype: None
-        :raises: :class:`~azure.core.exceptions.ResourceNotFoundError`
+        :raises: :class:`~azure.core.exceptions.HttpResponseError`
 
         .. admonition:: Example:
 

@@ -294,7 +294,7 @@ class TableClient(TablesBaseClient):
         :paramtype match_condition: ~azure.core.MatchConditions
         :return: None
         :rtype: None
-        :raises: :class:`~azure.core.exceptions.ResourceNotFoundError` If the entity already does not exist
+        :raises: :class:`~azure.core.exceptions.HttpResponseError`
 
         .. admonition:: Example:
 
@@ -342,7 +342,7 @@ class TableClient(TablesBaseClient):
         :type entity: ~azure.data.tables.TableEntity or Dict[str,str]
         :return: Dictionary mapping operation metadata returned from the service
         :rtype: Dict[str,str]
-        :raises: :class:`~azure.core.exceptions.ResourceExistsError` If the entity already exists
+        :raises: :class:`~azure.core.exceptions.HttpResponseError`
 
         .. admonition:: Example:
 

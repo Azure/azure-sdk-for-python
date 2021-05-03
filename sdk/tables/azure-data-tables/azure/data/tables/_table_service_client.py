@@ -234,7 +234,7 @@ class TableServiceClient(TablesBaseClient):
         :type table_name: str
         :return: None
         :rtype: None
-        :raises: :class:`~azure.core.exceptions.ResourceNotFoundError`
+        :raises: :class:`~azure.core.exceptions.HttpResponseError`
 
         .. admonition:: Example:
 

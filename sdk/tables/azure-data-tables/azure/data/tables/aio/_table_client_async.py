@@ -248,7 +248,7 @@ class TableClient(AsyncTablesBaseClient):
 
         :return: None
         :rtype: None
-        :raises: :class:`~azure.core.exceptions.ResourceNotFoundError` If the table does not exist
+        :raises: :class:`~azure.core.exceptions.HttpResponseError`
 
         .. admonition:: Example:
 
@@ -284,7 +284,7 @@ class TableClient(AsyncTablesBaseClient):
         :paramtype match_condition: ~azure.core.MatchConditions
         :return: None
         :rtype: None
-        :raises: :class:`~azure.core.exceptions.ResourceNotFoundError` If the entity already does not exist
+        :raises: :class:`~azure.core.exceptions.HttpResponseError`
 
         .. admonition:: Example:
 
