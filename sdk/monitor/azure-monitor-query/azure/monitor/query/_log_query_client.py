@@ -63,12 +63,13 @@ class LogQueryClient(object):
         include_statistics = kwargs.pop("include_statistics", False)
         include_render = kwargs.pop("include_render", False)
         
+        prefer = ""
         if timeout:
-            prefer = "wait=" + str(timeout)
+            prefer += "wait=" + str(timeout)
         if include_statistics:
             prefer += " include-statistics=true"
         if include_render:
-            prefer += " include-statistics=true"
+            prefer += " include-render=true"
 
         return self._query_op.get(workspace_id, query, **kwargs)
 
