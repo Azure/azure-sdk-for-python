@@ -36,7 +36,7 @@ from ._response_handlers import (
     _get_deserialize
 )
 
-from ._models import AnalyzeBatchActionsType
+from ._models import AnalyzeActionsType
 
 from ._lro import (
     TextAnalyticsOperationResourcePolling,
@@ -62,7 +62,7 @@ if TYPE_CHECKING:
         ExtractKeyPhrasesAction,
         AnalyzeSentimentAction,
         AnalyzeHealthcareEntitiesResultItem,
-        AnalyzeBatchActionsResult,
+        AnalyzeActionsResult,
     )
 
 
@@ -742,12 +742,12 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
         )
 
     @distributed_trace
-    def begin_analyze_batch_actions(  # type: ignore
+    def begin_analyze_actions(  # type: ignore
         self,
         documents,  # type: Union[List[str], List[TextDocumentInput], List[Dict[str, str]]]
         actions,  # type: List[Union[RecognizeEntitiesAction, RecognizeLinkedEntitiesAction, RecognizePiiEntitiesAction, ExtractKeyPhrasesAction, AnalyzeSentimentAction]] # pylint: disable=line-too-long
         **kwargs  # type: Any
-    ):  # type: (...) -> LROPoller[ItemPaged[AnalyzeBatchActionsResult]]
+    ):  # type: (...) -> LROPoller[ItemPaged[AnalyzeActionsResult]]
         """Start a long-running operation to perform a variety of text analysis actions over a batch of documents.
 
         :param documents: The set of documents to process as part of this batch.
@@ -779,12 +779,12 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
             the actions were sent in this method.
         :rtype:
             ~azure.core.polling.LROPoller[~azure.core.paging.ItemPaged[
-            ~azure.ai.textanalytics.AnalyzeBatchActionsResult]]
+            ~azure.ai.textanalytics.AnalyzeActionsResult]]
         :raises ~azure.core.exceptions.HttpResponseError or TypeError or ValueError or NotImplementedError:
 
         .. admonition:: Example:
 
-            .. literalinclude:: ../samples/sample_analyze_batch_actions.py
+            .. literalinclude:: ../samples/sample_analyze_actions.py
                 :start-after: [START analyze]
                 :end-before: [END analyze]
                 :language: python
@@ -810,26 +810,26 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
             analyze_tasks = self._client.models(api_version='v3.1-preview.5').JobManifestTasks(
                 entity_recognition_tasks=[
                     t.to_generated() for t in
-                    [a for a in actions if _determine_action_type(a) == AnalyzeBatchActionsType.RECOGNIZE_ENTITIES]
+                    [a for a in actions if _determine_action_type(a) == AnalyzeActionsType.RECOGNIZE_ENTITIES]
                 ],
                 entity_recognition_pii_tasks=[
                     t.to_generated() for t in
-                    [a for a in actions if _determine_action_type(a) == AnalyzeBatchActionsType.RECOGNIZE_PII_ENTITIES]
+                    [a for a in actions if _determine_action_type(a) == AnalyzeActionsType.RECOGNIZE_PII_ENTITIES]
                 ],
                 key_phrase_extraction_tasks=[
                     t.to_generated() for t in
-                    [a for a in actions if _determine_action_type(a) == AnalyzeBatchActionsType.EXTRACT_KEY_PHRASES]
+                    [a for a in actions if _determine_action_type(a) == AnalyzeActionsType.EXTRACT_KEY_PHRASES]
                 ],
                 entity_linking_tasks=[
                     t.to_generated() for t in
                     [
                         a for a in actions
-                        if _determine_action_type(a) == AnalyzeBatchActionsType.RECOGNIZE_LINKED_ENTITIES
+                        if _determine_action_type(a) == AnalyzeActionsType.RECOGNIZE_LINKED_ENTITIES
                     ]
                 ],
                 sentiment_analysis_tasks=[
                     t.to_generated() for t in
-                    [a for a in actions if _determine_action_type(a) == AnalyzeBatchActionsType.ANALYZE_SENTIMENT]
+                    [a for a in actions if _determine_action_type(a) == AnalyzeActionsType.ANALYZE_SENTIMENT]
                 ]
             )
             analyze_body = self._client.models(api_version='v3.1-preview.5').AnalyzeBatchInput(
@@ -855,7 +855,7 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
         except ValueError as error:
             if "API version v3.0 does not have operation 'begin_analyze'" in str(error):
                 raise ValueError(
-                    "'begin_analyze_batch_actions' endpoint is only available for API version V3_1_PREVIEW and up"
+                    "'begin_analyze_actions' endpoint is only available for API version V3_1_PREVIEW and up"
                 )
             raise error
 
