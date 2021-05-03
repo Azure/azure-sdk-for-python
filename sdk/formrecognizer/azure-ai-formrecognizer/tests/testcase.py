@@ -154,6 +154,7 @@ class FormRecognizerTest(AzureTestCase):
         self.selection_mark_url_pdf = self.get_blob_url(testing_container_sas_url, "testingdata", "selection_mark_form.pdf")
         self.label_table_variable_row_url_pdf = self.get_blob_url(testing_container_sas_url, "testingdata", "label_table_variable_rows1.pdf")
         self.label_table_fixed_row_url_pdf = self.get_blob_url(testing_container_sas_url, "testingdata", "label_table_fixed_rows1.pdf")
+        self.multipage_receipt_url_pdf = self.get_blob_url(testing_container_sas_url, "testingdata", "multipage_receipt.pdf")
 
         # file stream samples
         self.receipt_jpg = os.path.abspath(os.path.join(os.path.abspath(__file__), "..", "./sample_forms/receipt/contoso-allinone.jpg"))
@@ -172,6 +173,7 @@ class FormRecognizerTest(AzureTestCase):
         self.multipage_table_pdf = os.path.abspath(os.path.join(os.path.abspath(__file__), "..", "./sample_forms/forms/multipagelayout.pdf"))
         self.multipage_vendor_pdf = os.path.abspath(os.path.join(os.path.abspath(__file__), "..", "./sample_forms/forms/multi1.pdf"))
         self.selection_form_pdf = os.path.abspath(os.path.join(os.path.abspath(__file__), "..", "./sample_forms/forms/selection_mark_form.pdf"))
+        self.multipage_receipt_pdf = os.path.abspath(os.path.join(os.path.abspath(__file__), "..", "./sample_forms/receipt/multipage_receipt.pdf"))
 
     def get_blob_url(self, container_sas_url, container, file_name):
         if self.is_live:
