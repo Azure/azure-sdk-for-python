@@ -60,60 +60,130 @@ class AppConfigurationClientTest(AzureTestCase):
     @app_config_decorator
     def test_update_json_by_value(self, client):
         key = self.get_resource_name("key")
-        try:
-            feature_flag = FeatureFlagConfigurationSetting(key, True)
-            set_flag = client.set_configuration_setting(feature_flag)
-            set_flag.filters.append(
+        feature_flag = FeatureFlagConfigurationSetting(
+            key,
+            True,
+            filters=[
                 {
-                    "name": TARGETING,
+                    "name": PERCENTAGE,
                     "parameters": {
-                        u"Audience": {
-                            u"Users": [u"abcd", u"defg"],
-                            u"Groups": [u"ghij", u"jklm"],
-                            u"DefaultRolloutPercentage": 50
-                        }
+                        "Value": 10,
+                        "User": "user1"
                     }
                 }
-            )
+            ]
+        )
+        set_flag = client.set_configuration_setting(feature_flag)
 
-            updated_flag = client.set_configuration_setting(set_flag)
-
-            assert isinstance(updated_flag, FeatureFlagConfigurationSetting)
-            assert isinstance(set_flag.filters, list)
-        finally:
-            client.delete_configuration_setting(key)
-
-    @pytest.mark.skip("abc")
-    @app_config_decorator
-    def test_update_json_invalid_value(self, client):
-        key = self.get_resource_name("key")
-        try:
-            new = FeatureFlagConfigurationSetting(
-                key,
-                True,
-                filters=[
+        set_flag.value = {
+            'conditions': {
+                'client_filters': [
                     {
-                        "name": TARGETING,
-                        "parameters": {
-                            u"Audience": {
-                                u"Users": [u"abc", u"def"],
-                                u"Groups": [u"ghi", u"jkl"],
-                                u"DefaultRolloutPercentage": 75
+                        'name': 'Microsoft.Targeting',
+                        'parameters': {
+                            'name': 'Microsoft.Targeting',
+                            'parameters': {
+                                'Audience': {
+                                    'DefaultRolloutPercentage': 50,
+                                    'Groups': [],
+                                    'Users': []
+                                }
                             }
                         }
                     }
                 ]
-            )
+            },
+            'description': '',
+            'enabled': False,
+            'id': key,
+        }
 
-            sent_config = client.set_configuration_setting(new)
+        set_flag = client.set_configuration_setting(set_flag)
+        assert isinstance(set_flag, FeatureFlagConfigurationSetting)
+        assert set_flag.enabled == False
+        assert set_flag.key.endswith(key)
 
-            self._assert_same_keys(new, sent_config)
+    @app_config_decorator
+    def test_feature_flag_invalid_json(self, client):
+        key = self.get_resource_name("key")
+        feature_flag = FeatureFlagConfigurationSetting(key, True)
+        set_flag = client.set_configuration_setting(feature_flag)
 
-            received = client.get_configuration_setting(key)
-            received.filters = []
-            invalid_flag = client.set_configuraiton_setting(received)
+        set_flag.value = []
+        received = client.set_configuration_setting(set_flag)
 
-            assert isinstance(invalid_flag, ConfigurationSetting)
-            assert not isinstance(invalid_flag, FeatureFlagConfigurationSetting)
-        finally:
-            client.delete_configuration_setting(key)
+        assert not isinstance(received, FeatureFlagConfigurationSetting)
+
+    @app_config_decorator
+    def test_feature_flag_invalid_json_string(self, client):
+        key = self.get_resource_name("key")
+        feature_flag = FeatureFlagConfigurationSetting(key, True)
+        set_flag = client.set_configuration_setting(feature_flag)
+
+        set_flag.value = "hello world"
+        received = client.set_configuration_setting(set_flag)
+
+        assert not isinstance(received, FeatureFlagConfigurationSetting)
+
+    @app_config_decorator
+    def test_feature_flag_invalid_json_access_properties(self, client):
+        key = self.get_resource_name("key")
+        feature_flag = FeatureFlagConfigurationSetting(key, True)
+        set_flag = client.set_configuration_setting(feature_flag)
+
+        set_flag.value = "hello world"
+        with pytest.raises(ValueError):
+            a = set_flag.enabled
+        with pytest.raises(ValueError):
+            b = set_flag.filters
+
+    @app_config_decorator
+    def test_feature_flag_set_value(self, client):
+        key = self.get_resource_name("key")
+        feature_flag = FeatureFlagConfigurationSetting(
+            key,
+            True,
+            filters=[
+                {
+                    "name": PERCENTAGE,
+                    "parameters": {
+                        "Value": 10,
+                        "User": "user1"
+                    }
+                }
+            ]
+        )
+        feature_flag.value = {
+            "conditions": {
+                "client_filters": []
+            },
+            "enabled": False
+        }
+
+        assert feature_flag.value["enabled"] == False
+
+    @app_config_decorator
+    def test_feature_flag_set_enabled(self, client):
+        key = self.get_resource_name("key")
+        feature_flag = FeatureFlagConfigurationSetting(
+            key,
+            True,
+            filters=[
+                {
+                    "name": PERCENTAGE,
+                    "parameters": {
+                        "Value": 10,
+                        "User": "user1"
+                    }
+                }
+            ]
+        )
+        feature_flag.enabled = False
+
+        assert feature_flag.value["enabled"] == False
+
+    @app_config_decorator
+    def test_feature_flag_prefix(self, client):
+        key = self.get_resource_name("key")
+        feature_flag = FeatureFlagConfigurationSetting(key, True)
+        assert feature_flag.key.startswith(".appconfig.featureflag/")
