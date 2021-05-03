@@ -393,7 +393,7 @@ class ServiceBusAdministrationClient:  # pylint:disable=too-many-public-methods
             )
         )
         request_body = create_entity_body.serialize(is_xml=True)
-        await self._create_forward_to_header_tokens(queue, kwargs)
+        await self._create_forward_to_header_tokens(to_create, kwargs)
         with _handle_response_error():
             entry_ele = cast(
                 ElementTree,
@@ -438,7 +438,7 @@ class ServiceBusAdministrationClient:  # pylint:disable=too-many-public-methods
             )
         )
         request_body = create_entity_body.serialize(is_xml=True)
-        await self._create_forward_to_header_tokens(queue, kwargs)
+        await self._create_forward_to_header_tokens(to_update, kwargs)
         with _handle_response_error():
             await self._impl.entity.put(
                 queue.name,  # type: ignore
@@ -874,7 +874,7 @@ class ServiceBusAdministrationClient:  # pylint:disable=too-many-public-methods
             )
         )
         request_body = create_entity_body.serialize(is_xml=True)
-        await self._create_forward_to_header_tokens(subscription, kwargs)
+        await self._create_forward_to_header_tokens(to_create, kwargs)
         with _handle_response_error():
             entry_ele = cast(
                 ElementTree,
@@ -925,7 +925,7 @@ class ServiceBusAdministrationClient:  # pylint:disable=too-many-public-methods
             )
         )
         request_body = create_entity_body.serialize(is_xml=True)
-        await self._create_forward_to_header_tokens(subscription, kwargs)
+        await self._create_forward_to_header_tokens(to_update, kwargs)
         with _handle_response_error():
             await self._impl.subscription.put(
                 topic_name,
