@@ -9,8 +9,8 @@ import pytest
 from azure.containerregistry import (
     DeleteRepositoryResult,
     ContentProperties,
-    RegistryArtifactOrderBy,
-    RegistryArtifactProperties,
+    ManifestOrderBy,
+    ArtifactManifestProperties,
     ArtifactTagProperties,
     TagOrderBy,
 )
@@ -70,7 +70,7 @@ class TestContainerRepositoryClient(ContainerRegistryTestClass):
         count = 0
         for artifact in client.list_registry_artifacts():
             assert artifact is not None
-            assert isinstance(artifact, RegistryArtifactProperties)
+            assert isinstance(artifact, ArtifactManifestProperties)
             assert artifact.created_on is not None
             assert isinstance(artifact.created_on, datetime)
             assert artifact.last_updated_on is not None
@@ -101,7 +101,7 @@ class TestContainerRepositoryClient(ContainerRegistryTestClass):
 
         prev_last_updated_on = None
         count = 0
-        for artifact in client.list_registry_artifacts(order_by=RegistryArtifactOrderBy.LAST_UPDATE_TIME_DESCENDING):
+        for artifact in client.list_registry_artifacts(order_by=ManifestOrderBy.LAST_UPDATE_TIME_DESCENDING):
             if prev_last_updated_on:
                 assert artifact.last_updated_on < prev_last_updated_on
             prev_last_updated_on = artifact.last_updated_on
@@ -115,7 +115,7 @@ class TestContainerRepositoryClient(ContainerRegistryTestClass):
 
         prev_last_updated_on = None
         count = 0
-        for artifact in client.list_registry_artifacts(order_by=RegistryArtifactOrderBy.LAST_UPDATE_TIME_ASCENDING):
+        for artifact in client.list_registry_artifacts(order_by=ManifestOrderBy.LAST_UPDATE_TIME_ASCENDING):
             if prev_last_updated_on:
                 assert artifact.last_updated_on > prev_last_updated_on
             prev_last_updated_on = artifact.last_updated_on
@@ -129,7 +129,7 @@ class TestContainerRepositoryClient(ContainerRegistryTestClass):
 
         properties = client.get_registry_artifact_properties("latest")
 
-        assert isinstance(properties, RegistryArtifactProperties)
+        assert isinstance(properties, ArtifactManifestProperties)
         assert isinstance(properties.created_on, datetime)
         assert isinstance(properties.last_updated_on, datetime)
 

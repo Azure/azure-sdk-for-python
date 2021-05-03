@@ -75,7 +75,7 @@ class DeleteRepositoryResult(object):
         )
 
 
-class RegistryArtifactProperties(object):
+class ArtifactManifestProperties(object):
     """Represents properties of a registry artifact
 
     :ivar str cpu_architecture: CPU Architecture of an artifact
@@ -85,7 +85,7 @@ class RegistryArtifactProperties(object):
     :ivar last_updated_on: Time and date an artifact was last updated
     :vartype last_updated_on: :class:`~datetime.datetime`
     :ivar str operating_system: Operating system for the artifact
-    :ivar List[str] references: References for the artifact
+    :ivar str repository_name: Repository name the artifact belongs to
     :ivar str size: Size of the artifact
     :ivar List[str] tags: Tags associated with a registry artifact
     :ivar writeable_properties: Permissions for an artifact
@@ -98,7 +98,7 @@ class RegistryArtifactProperties(object):
         self.digest = kwargs.get("digest", None)
         self.last_updated_on = kwargs.get("last_updated_on", None)
         self.operating_system = kwargs.get("operating_system", None)
-        self.references = kwargs.get("references", None)
+        self.repository_name = kwargs.get("repository_name", None)
         self.size = kwargs.get("size", None)
         self.tags = kwargs.get("tags", None)
         self.writeable_properties = kwargs.get("content_permissions", None)
@@ -106,8 +106,8 @@ class RegistryArtifactProperties(object):
             self.writeable_properties = ContentProperties._from_generated(self.writeable_properties)
 
     @classmethod
-    def _from_generated(cls, generated):
-        # type: (ManifestAttributesBase) -> RegistryArtifactProperties
+    def _from_generated(cls, generated, **kwargs):
+        # type: (ManifestAttributesBase, Any) -> ArtifactManifestProperties
         return cls(
             cpu_architecture=generated.architecture,
             created_on=generated.created_on,
@@ -117,6 +117,7 @@ class RegistryArtifactProperties(object):
             size=generated.size,
             tags=generated.tags,
             content_permissions=generated.writeable_properties,
+            repository_name=kwargs.get("repository_name"),
         )
 
 
@@ -160,7 +161,7 @@ class RepositoryProperties(object):
         )
 
 
-class RegistryArtifactOrderBy(str, Enum):
+class ManifestOrderBy(str, Enum):
     """Enum for ordering registry artifacts"""
 
     LAST_UPDATE_TIME_DESCENDING = "timedesc"
