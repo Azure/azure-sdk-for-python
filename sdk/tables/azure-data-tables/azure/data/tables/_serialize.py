@@ -15,7 +15,7 @@ import six
 from azure.core import MatchConditions
 from azure.core.exceptions import raise_with_traceback
 
-from ._entity import EdmType, EntityProperty
+from ._entity import EdmType
 from ._common_conversion import _encode_base64, _to_utc_datetime
 from ._error import _ERROR_VALUE_TOO_LARGE, _ERROR_TYPE_NOT_SUPPORTED
 
