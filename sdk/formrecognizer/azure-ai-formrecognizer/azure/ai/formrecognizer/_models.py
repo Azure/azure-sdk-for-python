@@ -1341,8 +1341,7 @@ class TextAppearance(object):
         return "TextAppearance(style={})".format(repr(self.style))
 
     def to_dict(self):
-        if self.style is not None:
-            return {"style": self.style.to_dict()}
+        return {"style": self.style.to_dict()} if self.style else None
 
 
 class TextStyle(object):
