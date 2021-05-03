@@ -6,7 +6,7 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 import datetime
-import json
+from json import loads as _loads
 from typing import Any, AsyncIterable, Callable, Dict, Generic, List, Optional, TYPE_CHECKING, TypeVar, Union
 import warnings
 
@@ -268,16 +268,16 @@ class TillageDataOperations:
                 path_format_arguments = {
                     'Endpoint': self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
                 }
-                request._internal_request.method = "GET"
+                request.method = "GET"
                 request.url = self._client.format_url(next_link, **path_format_arguments)
             return request
 
         async def extract_data(pipeline_response):
-            deserialized = self._deserialize('TillageDataListResponse', pipeline_response)
-            list_of_elem = deserialized.value
+            deserialized = _loads(pipeline_response.http_response.text())
+            list_of_elem = deserialized.get('value', [])
             if cls:
                 list_of_elem = cls(list_of_elem)
-            return deserialized.next_link or None, AsyncList(list_of_elem)
+            return deserialized.get('nextLink', None), AsyncList(list_of_elem)
 
         async def get_next(next_link=None):
             request = prepare_request(next_link)
@@ -517,16 +517,16 @@ class TillageDataOperations:
                 path_format_arguments = {
                     'Endpoint': self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
                 }
-                request._internal_request.method = "GET"
+                request.method = "GET"
                 request.url = self._client.format_url(next_link, **path_format_arguments)
             return request
 
         async def extract_data(pipeline_response):
-            deserialized = self._deserialize('TillageDataListResponse', pipeline_response)
-            list_of_elem = deserialized.value
+            deserialized = _loads(pipeline_response.http_response.text())
+            list_of_elem = deserialized.get('value', [])
             if cls:
                 list_of_elem = cls(list_of_elem)
-            return deserialized.next_link or None, AsyncList(list_of_elem)
+            return deserialized.get('nextLink', None), AsyncList(list_of_elem)
 
         async def get_next(next_link=None):
             request = prepare_request(next_link)
@@ -628,7 +628,7 @@ class TillageDataOperations:
 
         deserialized = None
         if response.status_code == 200:
-            deserialized = json.loads(response.text)
+            deserialized = _loads(response.text())
 
         if cls:
             return cls(pipeline_response, deserialized, {})
@@ -704,15 +704,15 @@ class TillageDataOperations:
 
         content_type = kwargs.pop("content_type", "application/merge-patch+json")
         if tillage_data is not None:
-            json_body = tillage_data
+            json = tillage_data
         else:
-            json_body = None
+            json = None
 
 
         request = rest_tillage_data.build_create_or_update_request(
             farmer_id=farmer_id,
             tillage_data_id=tillage_data_id,
-            json_body=json_body,
+            json=json,
             content_type=content_type,
             template_url=self.create_or_update.metadata['url'],
             **kwargs
@@ -731,10 +731,10 @@ class TillageDataOperations:
             raise HttpResponseError(response=response)
 
         if response.status_code == 200:
-            deserialized = json.loads(response.text)
+            deserialized = _loads(response.text())
 
         if response.status_code == 201:
-            deserialized = json.loads(response.text)
+            deserialized = _loads(response.text())
 
         if cls:
             return cls(pipeline_response, deserialized, {})

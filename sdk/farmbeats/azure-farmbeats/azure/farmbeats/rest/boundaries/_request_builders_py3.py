@@ -6,7 +6,7 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 import datetime
-from typing import Any, Dict, List, Optional, TYPE_CHECKING
+from typing import Any, IO, List, Optional, TYPE_CHECKING
 
 from azure.core.pipeline.transport._base import _format_url_section
 from azure.farmbeats.core.rest import HttpRequest
@@ -96,7 +96,7 @@ def build_list_by_farmer_id_request(
                         "eTag": "str (optional)",
                         "farmerId": "str (optional)",
                         "geometry": {
-                            "type": "str"
+                            "type": "type"
                         },
                         "id": "str (optional)",
                         "isPrimary": "bool (optional)",
@@ -202,7 +202,7 @@ def build_search_by_farmer_id_request(
                     "str (optional)"
                 ],
                 "intersectsWithGeometry": {
-                    "type": "str"
+                    "type": "type"
                 },
                 "isPrimary": "bool (optional)",
                 "maxAcreage": "float (optional)",
@@ -333,7 +333,7 @@ def build_list_request(
                         "eTag": "str (optional)",
                         "farmerId": "str (optional)",
                         "geometry": {
-                            "type": "str"
+                            "type": "type"
                         },
                         "id": "str (optional)",
                         "isPrimary": "bool (optional)",
@@ -432,7 +432,7 @@ def build_search_request(
                     "str (optional)"
                 ],
                 "intersectsWithGeometry": {
-                    "type": "str"
+                    "type": "type"
                 },
                 "isPrimary": "bool (optional)",
                 "maxAcreage": "float (optional)",
@@ -652,7 +652,7 @@ def build_get_request(
                 "eTag": "str (optional)",
                 "farmerId": "str (optional)",
                 "geometry": {
-                    "type": "str"
+                    "type": "type"
                 },
                 "id": "str (optional)",
                 "isPrimary": "bool (optional)",
@@ -730,7 +730,7 @@ def build_create_or_update_request(
                 "eTag": "str (optional)",
                 "farmerId": "str (optional)",
                 "geometry": {
-                    "type": "str"
+                    "type": "type"
                 },
                 "id": "str (optional)",
                 "isPrimary": "bool (optional)",

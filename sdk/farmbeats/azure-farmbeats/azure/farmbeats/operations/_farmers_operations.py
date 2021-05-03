@@ -6,7 +6,7 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 import datetime
-import json
+from json import loads as _loads
 from typing import TYPE_CHECKING
 import warnings
 
@@ -165,16 +165,16 @@ class FarmersOperations(object):
                 path_format_arguments = {
                     'Endpoint': self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
                 }
-                request._internal_request.method = "GET"
+                request.method = "GET"
                 request.url = self._client.format_url(next_link, **path_format_arguments)
             return request
 
         def extract_data(pipeline_response):
-            deserialized = self._deserialize('FarmerListResponse', pipeline_response)
-            list_of_elem = deserialized.value
+            deserialized = _loads(pipeline_response.http_response.text())
+            list_of_elem = deserialized.get('value', [])
             if cls:
                 list_of_elem = cls(list_of_elem)
-            return deserialized.next_link or None, iter(list_of_elem)
+            return deserialized.get('nextLink', None), iter(list_of_elem)
 
         def get_next(next_link=None):
             request = prepare_request(next_link)
@@ -253,7 +253,7 @@ class FarmersOperations(object):
 
         deserialized = None
         if response.status_code == 200:
-            deserialized = json.loads(response.text)
+            deserialized = _loads(response.text())
 
         if cls:
             return cls(pipeline_response, deserialized, {})
@@ -307,14 +307,14 @@ class FarmersOperations(object):
 
         content_type = kwargs.pop("content_type", "application/merge-patch+json")
         if farmer is not None:
-            json_body = farmer
+            json = farmer
         else:
-            json_body = None
+            json = None
 
 
         request = rest_farmers.build_create_or_update_request(
             farmer_id=farmer_id,
-            json_body=json_body,
+            json=json,
             content_type=content_type,
             template_url=self.create_or_update.metadata['url'],
             **kwargs
@@ -333,10 +333,10 @@ class FarmersOperations(object):
             raise HttpResponseError(response=response)
 
         if response.status_code == 200:
-            deserialized = json.loads(response.text)
+            deserialized = _loads(response.text())
 
         if response.status_code == 201:
-            deserialized = json.loads(response.text)
+            deserialized = _loads(response.text())
 
         if cls:
             return cls(pipeline_response, deserialized, {})
@@ -454,7 +454,7 @@ class FarmersOperations(object):
 
         deserialized = None
         if response.status_code == 200:
-            deserialized = json.loads(response.text)
+            deserialized = _loads(response.text())
 
         if cls:
             return cls(pipeline_response, deserialized, {})
@@ -463,7 +463,7 @@ class FarmersOperations(object):
 
     get_cascade_delete_job_details.metadata = {'url': '/farmers/cascade-delete/{jobId}'}  # type: ignore
 
-    def _create_cascade_delete_jo_initial(
+    def _create_cascade_delete_job_initial(
         self,
         job_id,  # type: str
         **kwargs  # type: Any
@@ -480,7 +480,7 @@ class FarmersOperations(object):
         request = rest_farmers.build_create_cascade_delete_job_request_initial(
             job_id=job_id,
             farmer_id=farmer_id,
-            template_url=self._create_cascade_delete_jo_initial.metadata['url'],
+            template_url=self._create_cascade_delete_job_initial.metadata['url'],
             **kwargs
         )._internal_request
         path_format_arguments = {
@@ -496,14 +496,14 @@ class FarmersOperations(object):
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             raise HttpResponseError(response=response)
 
-        deserialized = json.loads(response.text)
+        deserialized = _loads(response.text())
 
         if cls:
             return cls(pipeline_response, deserialized, {})
 
         return deserialized
 
-    _create_cascade_delete_jo_initial.metadata = {'url': '/farmers/cascade-delete/{jobId}'}  # type: ignore
+    _create_cascade_delete_job_initial.metadata = {'url': '/farmers/cascade-delete/{jobId}'}  # type: ignore
 
     def begin_create_cascade_delete_job(
         self,
@@ -561,7 +561,7 @@ class FarmersOperations(object):
         )
         cont_token = kwargs.pop('continuation_token', None)  # type: Optional[str]
         if cont_token is None:
-            raw_result = self._create_cascade_delete_jo_initial(
+            raw_result = self._create_cascade_delete_job_initial(
                 job_id=job_id,
 
                 farmer_id=farmer_id,
@@ -575,7 +575,8 @@ class FarmersOperations(object):
         kwargs.pop('content_type', None)
 
         def get_long_running_output(pipeline_response):
-            deserialized = json.loads(response.text)
+            response = pipeline_response.http_response
+            deserialized = _loads(response.text())
 
             if cls:
                 return cls(pipeline_response, deserialized, {})

@@ -6,7 +6,7 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 import datetime
-import json
+from json import loads as _loads
 from typing import Any, AsyncIterable, Callable, Dict, Generic, List, Optional, TYPE_CHECKING, TypeVar
 import warnings
 
@@ -152,16 +152,16 @@ class OAuthTokensOperations:
                 path_format_arguments = {
                     'Endpoint': self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
                 }
-                request._internal_request.method = "GET"
+                request.method = "GET"
                 request.url = self._client.format_url(next_link, **path_format_arguments)
             return request
 
         async def extract_data(pipeline_response):
-            deserialized = self._deserialize('OAuthTokenListResponse', pipeline_response)
-            list_of_elem = deserialized.value
+            deserialized = _loads(pipeline_response.http_response.text())
+            list_of_elem = deserialized.get('value', [])
             if cls:
                 list_of_elem = cls(list_of_elem)
-            return deserialized.next_link or None, AsyncList(list_of_elem)
+            return deserialized.get('nextLink', None), AsyncList(list_of_elem)
 
         async def get_next(next_link=None):
             request = prepare_request(next_link)
@@ -264,13 +264,13 @@ class OAuthTokensOperations:
 
         content_type = kwargs.pop("content_type", "application/json")
         if oauth_connect_request is not None:
-            json_body = oauth_connect_request
+            json = oauth_connect_request
         else:
-            json_body = None
+            json = None
 
 
         request = rest_oauth_tokens.build_get_o_auth_connection_link_request(
-            json_body=json_body,
+            json=json,
             content_type=content_type,
             template_url=self.get_o_auth_connection_link.metadata['url'],
             **kwargs
@@ -288,7 +288,7 @@ class OAuthTokensOperations:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             raise HttpResponseError(response=response)
 
-        deserialized = json.loads(response.text)
+        deserialized = _loads(response.text())
 
         if cls:
             return cls(pipeline_response, deserialized, {})

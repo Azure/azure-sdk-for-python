@@ -6,7 +6,7 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 import datetime
-import json
+from json import loads as _loads
 from typing import TYPE_CHECKING
 import warnings
 
@@ -300,16 +300,16 @@ class PlantingDataOperations(object):
                 path_format_arguments = {
                     'Endpoint': self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
                 }
-                request._internal_request.method = "GET"
+                request.method = "GET"
                 request.url = self._client.format_url(next_link, **path_format_arguments)
             return request
 
         def extract_data(pipeline_response):
-            deserialized = self._deserialize('PlantingDataListResponse', pipeline_response)
-            list_of_elem = deserialized.value
+            deserialized = _loads(pipeline_response.http_response.text())
+            list_of_elem = deserialized.get('value', [])
             if cls:
                 list_of_elem = cls(list_of_elem)
-            return deserialized.next_link or None, iter(list_of_elem)
+            return deserialized.get('nextLink', None), iter(list_of_elem)
 
         def get_next(next_link=None):
             request = prepare_request(next_link)
@@ -581,16 +581,16 @@ class PlantingDataOperations(object):
                 path_format_arguments = {
                     'Endpoint': self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
                 }
-                request._internal_request.method = "GET"
+                request.method = "GET"
                 request.url = self._client.format_url(next_link, **path_format_arguments)
             return request
 
         def extract_data(pipeline_response):
-            deserialized = self._deserialize('PlantingDataListResponse', pipeline_response)
-            list_of_elem = deserialized.value
+            deserialized = _loads(pipeline_response.http_response.text())
+            list_of_elem = deserialized.get('value', [])
             if cls:
                 list_of_elem = cls(list_of_elem)
-            return deserialized.next_link or None, iter(list_of_elem)
+            return deserialized.get('nextLink', None), iter(list_of_elem)
 
         def get_next(next_link=None):
             request = prepare_request(next_link)
@@ -714,7 +714,7 @@ class PlantingDataOperations(object):
 
         deserialized = None
         if response.status_code == 200:
-            deserialized = json.loads(response.text)
+            deserialized = _loads(response.text())
 
         if cls:
             return cls(pipeline_response, deserialized, {})
@@ -812,15 +812,15 @@ class PlantingDataOperations(object):
 
         content_type = kwargs.pop("content_type", "application/merge-patch+json")
         if planting_data is not None:
-            json_body = planting_data
+            json = planting_data
         else:
-            json_body = None
+            json = None
 
 
         request = rest_planting_data.build_create_or_update_request(
             farmer_id=farmer_id,
             planting_data_id=planting_data_id,
-            json_body=json_body,
+            json=json,
             content_type=content_type,
             template_url=self.create_or_update.metadata['url'],
             **kwargs
@@ -839,10 +839,10 @@ class PlantingDataOperations(object):
             raise HttpResponseError(response=response)
 
         if response.status_code == 200:
-            deserialized = json.loads(response.text)
+            deserialized = _loads(response.text())
 
         if response.status_code == 201:
-            deserialized = json.loads(response.text)
+            deserialized = _loads(response.text())
 
         if cls:
             return cls(pipeline_response, deserialized, {})

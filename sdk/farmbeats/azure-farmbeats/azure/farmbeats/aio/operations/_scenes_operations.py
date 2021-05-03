@@ -6,7 +6,7 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 import datetime
-import json
+from json import loads as _loads
 from typing import Any, AsyncIterable, Callable, Dict, Generic, List, Optional, TYPE_CHECKING, TypeVar, Union
 import warnings
 
@@ -190,16 +190,16 @@ class ScenesOperations:
                 path_format_arguments = {
                     'Endpoint': self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
                 }
-                request._internal_request.method = "GET"
+                request.method = "GET"
                 request.url = self._client.format_url(next_link, **path_format_arguments)
             return request
 
         async def extract_data(pipeline_response):
-            deserialized = self._deserialize('SceneListResponse', pipeline_response)
-            list_of_elem = deserialized.value
+            deserialized = _loads(pipeline_response.http_response.text())
+            list_of_elem = deserialized.get('value', [])
             if cls:
                 list_of_elem = cls(list_of_elem)
-            return deserialized.next_link or None, AsyncList(list_of_elem)
+            return deserialized.get('nextLink', None), AsyncList(list_of_elem)
 
         async def get_next(next_link=None):
             request = prepare_request(next_link)
@@ -219,7 +219,7 @@ class ScenesOperations:
         )
     list.metadata = {'url': '/scenes'}  # type: ignore
 
-    async def _create_satellite_data_ingestion_jo_initial(
+    async def _create_satellite_data_ingestion_job_initial(
         self,
         job_id: str,
         *,
@@ -234,16 +234,16 @@ class ScenesOperations:
 
         content_type = kwargs.pop("content_type", "application/json")
         if job is not None:
-            json_body = self._serialize.body(job, 'SatelliteDataIngestionJob')
+            json = job
         else:
-            json_body = None
+            json = None
 
 
         request = rest_scenes.build_create_satellite_data_ingestion_job_request_initial(
             job_id=job_id,
-            json_body=json_body,
+            json=json,
             content_type=content_type,
-            template_url=self._create_satellite_data_ingestion_jo_initial.metadata['url'],
+            template_url=self._create_satellite_data_ingestion_job_initial.metadata['url'],
             **kwargs
         )._internal_request
         path_format_arguments = {
@@ -259,14 +259,14 @@ class ScenesOperations:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             raise HttpResponseError(response=response)
 
-        deserialized = json.loads(response.text)
+        deserialized = _loads(response.text())
 
         if cls:
             return cls(pipeline_response, deserialized, {})
 
         return deserialized
 
-    _create_satellite_data_ingestion_jo_initial.metadata = {'url': '/scenes/satellite/ingest-data/{jobId}'}  # type: ignore
+    _create_satellite_data_ingestion_job_initial.metadata = {'url': '/scenes/satellite/ingest-data/{jobId}'}  # type: ignore
 
     async def begin_create_satellite_data_ingestion_job(
         self,
@@ -337,7 +337,7 @@ class ScenesOperations:
         )
         cont_token = kwargs.pop('continuation_token', None)  # type: Optional[str]
         if cont_token is None:
-            raw_result = await self._create_satellite_data_ingestion_jo_initial(
+            raw_result = await self._create_satellite_data_ingestion_job_initial(
                 job_id=job_id,
 
                 job=job,
@@ -351,7 +351,8 @@ class ScenesOperations:
         kwargs.pop('content_type', None)
 
         def get_long_running_output(pipeline_response):
-            deserialized = json.loads(response.text)
+            response = pipeline_response.http_response
+            deserialized = _loads(response.text())
 
             if cls:
                 return cls(pipeline_response, deserialized, {})
@@ -452,7 +453,7 @@ class ScenesOperations:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             raise HttpResponseError(response=response)
 
-        deserialized = json.loads(response.text)
+        deserialized = _loads(response.text())
 
         if cls:
             return cls(pipeline_response, deserialized, {})

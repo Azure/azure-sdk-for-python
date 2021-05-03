@@ -6,7 +6,7 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 import datetime
-import json
+from json import loads as _loads
 from typing import Any, AsyncIterable, Callable, Dict, Generic, IO, List, Optional, TypeVar, Union
 import warnings
 
@@ -174,16 +174,16 @@ class AttachmentsOperations:
                 path_format_arguments = {
                     'Endpoint': self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
                 }
-                request._internal_request.method = "GET"
+                request.method = "GET"
                 request.url = self._client.format_url(next_link, **path_format_arguments)
             return request
 
         async def extract_data(pipeline_response):
-            deserialized = self._deserialize('AttachmentListResponse', pipeline_response)
-            list_of_elem = deserialized.value
+            deserialized = _loads(pipeline_response.http_response.text())
+            list_of_elem = deserialized.get('value', [])
             if cls:
                 list_of_elem = cls(list_of_elem)
-            return deserialized.next_link or None, AsyncList(list_of_elem)
+            return deserialized.get('nextLink', None), AsyncList(list_of_elem)
 
         async def get_next(next_link=None):
             request = prepare_request(next_link)
@@ -266,7 +266,7 @@ class AttachmentsOperations:
 
         deserialized = None
         if response.status_code == 200:
-            deserialized = json.loads(response.text)
+            deserialized = _loads(response.text())
 
         if cls:
             return cls(pipeline_response, deserialized, {})
@@ -377,10 +377,10 @@ class AttachmentsOperations:
             raise HttpResponseError(response=response)
 
         if response.status_code == 200:
-            deserialized = json.loads(response.text)
+            deserialized = _loads(response.text())
 
         if response.status_code == 201:
-            deserialized = json.loads(response.text)
+            deserialized = _loads(response.text())
 
         if cls:
             return cls(pipeline_response, deserialized, {})

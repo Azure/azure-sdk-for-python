@@ -14,7 +14,7 @@ from msrest import Serializer
 
 if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
-    from typing import Any, Dict, List, Optional
+    from typing import Any, IO, List, Optional
 
 _SERIALIZER = Serializer()
 
@@ -81,7 +81,7 @@ def build_list_by_farmer_id_request(
                         "eTag": "str (optional)",
                         "farmerId": "str (optional)",
                         "geometry": {
-                            "type": "str"
+                            "type": "type"
                         },
                         "id": "str (optional)",
                         "isPrimary": "bool (optional)",
@@ -200,7 +200,7 @@ def build_search_by_farmer_id_request(
                     "str (optional)"
                 ],
                 "intersectsWithGeometry": {
-                    "type": "str"
+                    "type": "type"
                 },
                 "isPrimary": "bool (optional)",
                 "maxAcreage": "float (optional)",
@@ -314,7 +314,7 @@ def build_list_request(
                         "eTag": "str (optional)",
                         "farmerId": "str (optional)",
                         "geometry": {
-                            "type": "str"
+                            "type": "type"
                         },
                         "id": "str (optional)",
                         "isPrimary": "bool (optional)",
@@ -426,7 +426,7 @@ def build_search_request(
                     "str (optional)"
                 ],
                 "intersectsWithGeometry": {
-                    "type": "str"
+                    "type": "type"
                 },
                 "isPrimary": "bool (optional)",
                 "maxAcreage": "float (optional)",
@@ -646,7 +646,7 @@ def build_get_request(
                 "eTag": "str (optional)",
                 "farmerId": "str (optional)",
                 "geometry": {
-                    "type": "str"
+                    "type": "type"
                 },
                 "id": "str (optional)",
                 "isPrimary": "bool (optional)",
@@ -722,7 +722,7 @@ def build_create_or_update_request(
                 "eTag": "str (optional)",
                 "farmerId": "str (optional)",
                 "geometry": {
-                    "type": "str"
+                    "type": "type"
                 },
                 "id": "str (optional)",
                 "isPrimary": "bool (optional)",
