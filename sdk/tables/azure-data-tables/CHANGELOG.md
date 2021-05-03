@@ -12,6 +12,7 @@
 * Removed `BatchTransactionResult` object in favor of returning an iterable of batched entities with returned metadata.
 * `BatchErrorException` has been renamed to `TableTransactionError`.
 * The `location_mode` is no longer a public attribute on the Clients.
+* Removed `date` and `api_version` from the `TableItem` class.
 
 **Fixes**
 * Fixed issue with Cosmos merge operations.
