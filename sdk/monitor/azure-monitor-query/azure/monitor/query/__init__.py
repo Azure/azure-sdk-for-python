@@ -6,24 +6,26 @@
 
 from ._log_query_client import LogQueryClient
 from ._metrics_query_client import MetricsQueryClient
-from ._generated.models import (
-    BatchResponse,
-    QueryResults as LogQueryResults,
-    Table as QueryTable,
-    Column as QueryResultColum,
-    Response as MetricsResponse,
+
+from ._models import (
+    LogQueryResults,
+    LogQueryResultTable,
+    LogQueryResultColumn,
+    MetricsResponse
 )
+
+from ._generated.models import MetricNamespaceCollection
     
 from ._version import VERSION
 
 __all__ = [
-    "BatchResponse",
     "LogQueryClient",
-    "MetricsQueryClient",
     "LogQueryResults",
-    "QueryTable",
-    "QueryResultColum",
-    "MetricsResponse"
+    "LogQueryResultColumn",
+    "LogQueryResultTable",
+    "MetricsQueryClient",
+    "MetricsResponse",
+    "MetricNamespaceCollection"
 ]
 
 __version__ = VERSION

@@ -11,9 +11,9 @@ from ._generated._monitor_query_client import (
     MonitorQueryClient
 )
 
-from ._generated.models import BatchRequest, QueryBody, LogQueryRequest, QueryResults as LogQueryResults
-
+from ._generated.models import BatchRequest, QueryBody, LogQueryRequest
 from ._helpers import get_authentication_policy
+from ._models import LogQueryResults
 
 if TYPE_CHECKING:
     from azure.identity import DefaultAzureCredential

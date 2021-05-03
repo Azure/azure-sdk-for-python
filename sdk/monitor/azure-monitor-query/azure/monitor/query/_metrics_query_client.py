@@ -19,7 +19,8 @@ if TYPE_CHECKING:
     from azure.identity import DefaultAzureCredential
     from azure.core.credentials import TokenCredential
     from azure.core.paging import ItemPaged
-    from ._generated.models import Response as MetricsResponse, MetricNamespaceCollection
+    from ._models import MetricsResponse
+    from ._generated.models import MetricNamespaceCollection
 
 class MetricsQueryClient(object):
     """MetricsQueryClient
