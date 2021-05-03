@@ -214,80 +214,54 @@ class TestSubmittedJobs(AsyncDocumentTranslationTest):
             curr = job.created_on
 
 
-    @pytest.mark.skip(reason="pending for filters which aren't working - mainly 'statuses' filter")
+    @pytest.mark.skip(reason="not working! - list returned is empty")
     @DocumentTranslationPreparer()
     @DocumentTranslationClientPreparer()
     async def test_list_submitted_jobs_mixed_filters(self, client):
         # create some jobs
-        start = datetime.now()
-        self._create_and_submit_sample_translation_jobs_async(client, 20, wait=False)
-        end = datetime.now()
+        jobs_count = 15
+        docs_per_job = 1
         results_per_page = 2
-        statuses = ["Running"]
+        statuses = ["Cancelled"]
+        skip = 2
 
-        # list jobs
-        submitted_jobs = client.list_submitted_jobs(
-            # filters
-            statuses=statuses,
-            created_date_time_utc_start=start,
-            created_date_time_utc_end=end,
-            # ordering
-            order_by=["CreatedDateTimeUtc", "desc"],
-            # paging
-            skip=1,
-            results_per_page=results_per_page
-        )
-
-        # check statuses
-        curr_time = date.max
-        async for page in submitted_jobs:
-            page_jobs = []
-            async for job in page:
-                page_jobs.append(job)
-                # assert ordering
-                assert(job.created_on < curr_time)
-                curr_time = job.created_on
-                # assert filters
-                assert(job.created_on < end)
-                assert(job.created_on > start)
-                self.assertIn(job.status, statuses)
-
-            self.assertLessEqual(len(page_jobs), results_per_page)
-
-
-    @pytest.mark.skip(reason="pending for filters which aren't working - mainly 'statuses' filter")
-    @DocumentTranslationPreparer()
-    @DocumentTranslationClientPreparer()
-    async def test_list_submitted_jobs_mixed_filters_more(self, client):
         # create some jobs
-        job_ids = self._create_and_submit_sample_translation_jobs_async(client, 20, wait=False)
-        results_per_page = 2
-        statuses = ["Running"]
+        start = datetime.utcnow().replace(tzinfo=pytz.utc)
+        successful_job_ids = await self._create_and_submit_sample_translation_jobs_async(client, jobs_count, wait=True, docs_per_job=docs_per_job)
+        cancelled_job_ids = await self._create_and_submit_sample_translation_jobs_async(client, jobs_count, wait=False, docs_per_job=docs_per_job)
+        for job in cancelled_job_ids:
+            await client.cancel_job(job.id)
+        self.wait(15) # wait for status to propagate
+        end = datetime.utcnow().replace(tzinfo=pytz.utc)
 
         # list jobs
         submitted_jobs = client.list_submitted_jobs(
             # filters
-            job_ids=job_ids,
             statuses=statuses,
+            created_after=start,
+            created_before=end,
             # ordering
-            order_by=["CreatedDateTimeUtc", "asc"],
+            order_by=["createdDateTimeUtc desc"],
             # paging
-            skip=1,
+            skip=skip,
             results_per_page=results_per_page
         ).by_page()
 
         # check statuses
-        curr_time = date.max
+        curr_time = datetime.max
         async for page in submitted_jobs:
-            page_jobs = []
+            counter = 0
             async for job in page:
-                page_jobs.append(job)
+                counter += 1
+                # assert id
+                self.assertIn(job.id, cancelled_job_ids)
+                self.assertNotIn(job.id, successful_job_ids)
                 # assert ordering
-                assert(job.created_on < curr_time)
+                assert(job.created_on.replace(tzinfo=None) <= curr_time.replace(tzinfo=None))
                 curr_time = job.created_on
                 # assert filters
+                assert(job.created_on.replace(tzinfo=None) <= end.replace(tzinfo=None))
+                assert(job.created_on >= start.replace(tzinfo=None))
                 self.assertIn(job.status, statuses)
-                self.assertIn(job.id, job_ids)
 
-            self.assertLessEqual(len(page_jobs), results_per_page)
-
+            self.assertLessEqual(counter, results_per_page) # assert paging

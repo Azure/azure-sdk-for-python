@@ -202,20 +202,25 @@ class TestSubmittedJobs(DocumentTranslationTest):
             curr = job.created_on
 
 
-    @pytest.mark.skip(reason="pending for filters which aren't working - mainly 'statuses' filter")
+    @pytest.mark.skip(reason="not working! - list returned is empty")
     @DocumentTranslationPreparer()
     @DocumentTranslationClientPreparer()
     def test_list_submitted_jobs_mixed_filters(self, client):
         # create some jobs
-        jobs_count = 5
-        docs_per_job = 2
+        jobs_count = 15
+        docs_per_job = 1
         results_per_page = 2
-        statuses = ["Running"]
+        statuses = ["Cancelled"]
+        skip = 2
 
         # create some jobs
-        start = datetime.now()
-        self._create_and_submit_sample_translation_jobs(client, jobs_count, wait=False, docs_per_job=docs_per_job)
-        end = datetime.now()
+        start = datetime.utcnow().replace(tzinfo=pytz.utc)
+        successful_job_ids = self._create_and_submit_sample_translation_jobs(client, jobs_count, wait=True, docs_per_job=docs_per_job)
+        cancelled_job_ids = self._create_and_submit_sample_translation_jobs(client, jobs_count, wait=False, docs_per_job=docs_per_job)
+        for job in cancelled_job_ids:
+            client.cancel_job(job.id)
+        self.wait(15) # wait for status to propagate
+        end = datetime.utcnow().replace(tzinfo=pytz.utc)
 
         # list jobs
         submitted_jobs = client.list_submitted_jobs(
@@ -226,10 +231,9 @@ class TestSubmittedJobs(DocumentTranslationTest):
             # ordering
             order_by=["createdDateTimeUtc desc"],
             # paging
-            skip=1,
+            skip=skip,
             results_per_page=results_per_page
         ).by_page()
-        self.assertIsNotNone(submitted_jobs)
 
         # check statuses
         curr_time = datetime.max
@@ -237,51 +241,13 @@ class TestSubmittedJobs(DocumentTranslationTest):
             page_jobs = list(page)
             self.assertLessEqual(len(page_jobs), results_per_page) # assert paging
             for job in page:
+                # assert id
+                self.assertIn(job.id, cancelled_job_ids)
+                self.assertNotIn(job.id, successful_job_ids)
                 # assert ordering
-                assert(job.created_on <= curr_time)
+                assert(job.created_on.replace(tzinfo=None) <= curr_time.replace(tzinfo=None))
                 curr_time = job.created_on
                 # assert filters
-                assert(job.created_on <= end)
-                assert(job.created_on >= start)
+                assert(job.created_on.replace(tzinfo=None) <= end.replace(tzinfo=None))
+                assert(job.created_on >= start.replace(tzinfo=None))
                 self.assertIn(job.status, statuses)
-
-
-    @pytest.mark.skip(reason="pending for filters which aren't working - mainly 'statuses' filter")
-    @DocumentTranslationPreparer()
-    @DocumentTranslationClientPreparer()
-    def test_list_submitted_jobs_mixed_filters_more(self, client):
-        jobs_count = 5
-        docs_per_job = 2
-        results_per_page = 2
-        statuses = ["Running"]
-
-        # create some jobs
-        job_ids = self._create_and_submit_sample_translation_jobs(client, jobs_count, wait=False, docs_per_job=docs_per_job)
-
-        # list jobs
-        submitted_jobs = client.list_submitted_jobs(
-            # filters
-            job_ids=job_ids,
-            statuses=statuses,
-            # ordering
-            order_by=["createdDateTimeUtc asc"],
-            # paging
-            skip=1,
-            results_per_page=results_per_page
-        ).by_page()
-        self.assertIsNotNone(submitted_jobs)
-
-        # check statuses
-        curr_time = date.max
-        for page in submitted_jobs:
-            page_jobs = list(page)
-            self.assertLessEqual(len(page_jobs), results_per_page) # assert paging
-            for job in page:
-                # assert ordering
-                assert(job.created_on <= curr_time)
-                curr_time = job.created_on
-                # assert filters
-                self.assertIn(job.status, statuses)
-                self.assertIn(job.id, job_ids)
-
-
