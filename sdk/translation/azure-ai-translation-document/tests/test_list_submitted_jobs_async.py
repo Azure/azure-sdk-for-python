@@ -84,30 +84,29 @@ class TestSubmittedJobs(AsyncDocumentTranslationTest):
         assert all_jobs_count - jobs_with_skip_count == skip
 
 
-    @pytest.mark.skip(reason="filter not working!")
     @DocumentTranslationPreparer()
     @DocumentTranslationClientPreparer()
     async def test_list_submitted_jobs_filter_by_status(self, client):
-        jobs_count = 10
-        docs_per_job = 3
+        jobs_count = 5
+        docs_per_job = 1
 
-        # create some jobs
+        # create some jobs with the status 'Succeeded'
+        completed_job_ids = await self._create_and_submit_sample_translation_jobs_async(client, jobs_count, wait=True, docs_per_job=docs_per_job)
+
+        # create some jobs with the status 'Cancelled'
         job_ids = await self._create_and_submit_sample_translation_jobs_async(client, jobs_count, wait=False, docs_per_job=docs_per_job)
+        for id in job_ids:
+            client.cancel_job(id)
+        self.wait(10) # wait for 'cancelled' to propagate
 
-        # update status
-        cancelled_count = jobs_count//2
-        for id in job_ids[:cancelled_count]:
-            await client.cancel_job(id)
-        statuses = ["Cancelled", "Cancelling"]
-        self.wait(10) # wait for cancelled to propagate
-
-        # list jobs
+        # list jobs with status filter
+        statuses = ["Cancelled"]
         submitted_jobs = client.list_submitted_jobs(statuses=statuses)
-        self.assertIsNotNone(submitted_jobs)
 
         # check statuses
-        async for job in submitted_jobs:
+        for job in submitted_jobs:
             self.assertIn(job.status, statuses)
+            self.assertNotIn(job.id, completed_job_ids)
 
 
     @DocumentTranslationPreparer()
