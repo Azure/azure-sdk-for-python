@@ -15,7 +15,7 @@ credential  = ClientSecretCredential(
 client = LogQueryClient(credential)
 
 response = client.query(
-    "640bfb1c-9109-4569-8a1b-4d9c92cc0eb2",
+    os.environ['LOG_WORKSPACE_ID'],
     "AppRequests | take 5",
     timeout=30,
     include_statistics=True,

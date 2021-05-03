@@ -20,7 +20,7 @@ query = """AppRequests |
 where TimeGenerated > ago(12h) | 
 summarize avgRequestDuration=avg(DurationMs) by bin(TimeGenerated, 10m), _ResourceId"""
 
-response = client.query("640bfb1c-9109-4569-8a1b-4d9c92cc0eb2", query)
+response = client.query(os.environ['LOG_WORKSPACE_ID'], query)
 
 for item in response.tables:
     print(item.rows,len(item.rows))

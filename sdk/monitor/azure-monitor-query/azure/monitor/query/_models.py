@@ -10,6 +10,7 @@ from ._generated.models import (
     Table,
     Column,
     Response,
+    LogQueryRequest as InternalLogQueryRequest
 )
 
 class LogQueryResultTable(Table):
@@ -141,3 +142,50 @@ class MetricsResponse(Response):
         self.namespace = kwargs.get('namespace', None)
         self.resourceregion = kwargs.get('resourceregion', None)
         self.value = kwargs['value']
+
+class LogQueryRequest(InternalLogQueryRequest):
+    """An single request in a batch.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :param id: The error details.
+    :type id: str
+    :param headers: Dictionary of :code:`<string>`.
+    :type headers: dict[str, str]
+    :param body: The Analytics query. Learn more about the `Analytics query syntax
+     <https://azure.microsoft.com/documentation/articles/app-insights-analytics-reference/>`_.
+    :type body: ~monitor_query_client.models.QueryBody
+    :ivar path:  Default value: "/query".
+    :vartype path: str
+    :ivar method:  Default value: "POST".
+    :vartype method: str
+    :param workspace: Workspace Id to be included in the query.
+    :type workspace: str
+    """
+
+    _validation = {
+        'path': {'constant': True},
+        'method': {'constant': True},
+    }
+
+    _attribute_map = {
+        'id': {'key': 'id', 'type': 'str'},
+        'headers': {'key': 'headers', 'type': '{str}'},
+        'body': {'key': 'body', 'type': 'QueryBody'},
+        'path': {'key': 'path', 'type': 'str'},
+        'method': {'key': 'method', 'type': 'str'},
+        'workspace': {'key': 'workspace', 'type': 'str'},
+    }
+
+    path = "/query"
+    method = "POST"
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(LogQueryRequest, self).__init__(**kwargs)
+        self.id = kwargs.get('id', None)
+        self.headers = kwargs.get('headers', None)
+        self.body = kwargs.get('body', None)
+        self.workspace = kwargs.get('workspace', None)

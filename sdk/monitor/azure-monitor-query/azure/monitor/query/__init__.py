@@ -11,7 +11,8 @@ from ._models import (
     LogQueryResults,
     LogQueryResultTable,
     LogQueryResultColumn,
-    MetricsResponse
+    MetricsResponse,
+    LogQueryRequest
 )
 
 from ._generated.models import MetricNamespaceCollection
@@ -23,6 +24,7 @@ __all__ = [
     "LogQueryResults",
     "LogQueryResultColumn",
     "LogQueryResultTable",
+    "LogQueryRequest",
     "MetricsQueryClient",
     "MetricsResponse",
     "MetricNamespaceCollection"

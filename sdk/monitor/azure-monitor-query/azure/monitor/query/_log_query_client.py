@@ -11,9 +11,9 @@ from ._generated._monitor_query_client import (
     MonitorQueryClient
 )
 
-from ._generated.models import BatchRequest, QueryBody, LogQueryRequest
+from ._generated.models import BatchRequest, QueryBody
 from ._helpers import get_authentication_policy
-from ._models import LogQueryResults
+from ._models import LogQueryResults, LogQueryRequest
 
 if TYPE_CHECKING:
     from azure.identity import DefaultAzureCredential
@@ -69,23 +69,24 @@ class LogQueryClient(object):
 
         return self._query_op.get(workspace_id, query, **kwargs)
 
-    def batch_query(self, workspace_id, queries, **kwargs):
-        # type: (str, Sequence[str], Any) -> BatchResponse
+    def batch_query(self, queries, **kwargs):
+        # type: (Union[Sequence[Dict], Sequence[LogQueryRequest], Any) -> BatchResponse
         """Execute an Analytics query.
 
         Executes an Analytics query for data.
 
-        :param workspace_id: ID of the workspace. This is Workspace ID from the Properties blade in the
-         Azure portal.
-        :type workspace_id: str
         :param queries: The list of queries that should be processed
-        :type queries: list[str]
+        :type queries: list[dict] or list[~azure.monitor.query.LogQueryRequest]
         :return: BatchResponse, or the result of cls(response)
         :rtype: ~monitor_query_client.models.BatchResponse
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        queries = [QueryBody(query=query) for query in queries]
-        queries = [LogQueryRequest(body=query, workspace=workspace_id) for query in queries]
+        try:
+            try:
+                for q in queries:
+            queries = [LogQueryRequest(**q) for q in queries]
+        except KeyError:
+            pass
         batch = BatchRequest(requests=queries)
         return self._query_op.batch(batch, **kwargs)
 
