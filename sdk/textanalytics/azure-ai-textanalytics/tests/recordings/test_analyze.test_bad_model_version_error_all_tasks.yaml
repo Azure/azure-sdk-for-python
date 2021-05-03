@@ -4,9 +4,11 @@ interactions:
       "bad", "loggingOptOut": false, "stringIndexType": "UnicodeCodePoint"}}], "entityRecognitionPiiTasks":
       [{"parameters": {"model-version": "bad", "loggingOptOut": true, "stringIndexType":
       "UnicodeCodePoint"}}], "keyPhraseExtractionTasks": [{"parameters": {"model-version":
-      "bad", "loggingOptOut": false}}], "entityLinkingTasks": []}, "analysisInput":
-      {"documents": [{"id": "1", "text": "I did not like the hotel we stayed at.",
-      "language": "english"}]}}'
+      "bad", "loggingOptOut": false}}], "entityLinkingTasks": [{"parameters": {"model-version":
+      "bad", "loggingOptOut": false, "stringIndexType": "UnicodeCodePoint"}}], "sentimentAnalysisTasks":
+      [{"parameters": {"model-version": "bad", "loggingOptOut": false, "opinionMining":
+      false}}]}, "analysisInput": {"documents": [{"id": "1", "text": "I did not like
+      the hotel we stayed at.", "language": "english"}]}}'
     headers:
       Accept:
       - application/json, text/json
@@ -15,7 +17,7 @@ interactions:
       Connection:
       - keep-alive
       Content-Length:
-      - '521'
+      - '742'
       Content-Type:
       - application/json
       User-Agent:
@@ -29,11 +31,11 @@ interactions:
         Supported values latest,2019-10-01,2020-07-01."}}'
     headers:
       apim-request-id:
-      - b68520ae-7af6-48de-8d11-b843a0fab2ff
+      - 6a187ef3-c4e7-4f07-a80c-bfbef6f57ace
       content-type:
       - application/json; charset=utf-8
       date:
-      - Tue, 27 Apr 2021 19:33:15 GMT
+      - Thu, 29 Apr 2021 03:35:34 GMT
       strict-transport-security:
       - max-age=31536000; includeSubDomains; preload
       transfer-encoding:
@@ -41,7 +43,7 @@ interactions:
       x-content-type-options:
       - nosniff
       x-envoy-upstream-service-time:
-      - '28'
+      - '7'
     status:
       code: 400
       message: Bad Request

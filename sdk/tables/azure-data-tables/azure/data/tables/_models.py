@@ -4,10 +4,12 @@
 # license information.
 # --------------------------------------------------------------------------
 from enum import Enum
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, Any, Dict
 
 from azure.core.exceptions import HttpResponseError
 from azure.core.paging import PageIterator
+# from azure.core import CaseInsensitiveEnumMeta
+# from six import with_metaclass
 
 from ._generated.models import TableServiceStats as GenTableServiceStats
 from ._generated.models import AccessPolicy as GenAccessPolicy
@@ -26,8 +28,6 @@ from ._constants import NEXT_PARTITION_KEY, NEXT_ROW_KEY, NEXT_TABLE_NAME
 
 if TYPE_CHECKING:
     from ._generated.models import TableQueryResponse
-    from azure.core.pipeline.transport import HttpResponse
-    from typing import Any, Dict, List
 
 
 class TableServiceStats(GenTableServiceStats):
@@ -534,48 +534,19 @@ class UpdateMode(str, Enum):
     MERGE = "merge"
 
 
+class TransactionOperation(str, Enum):
+    CREATE = "create"
+    UPSERT = "upsert"
+    UPDATE = "update"
+    DELETE = "delete"
+
+
 class SASProtocol(str, Enum):
     HTTPS = "https"
     HTTP = "http"
 
 
-# class PartialBatchErrorException(HttpResponseError):
-#     """There is a partial failure in batch operations.
-
-#     :param str message: The message of the exception.
-#     :param response: Server response to be deserialized.
-#     :param list parts: A list of the parts in multipart response.
-#     """
-
-#     def __init__(self, message, response, parts):
-#         self.parts = parts
-#         super(PartialBatchErrorException, self).__init__(
-#             message=message, response=response
-#         )
-
-
-class BatchErrorException(HttpResponseError):
-    """There is a failure in batch operations.
-
-    :param message: The message of the exception.
-    :type message: str
-    :param response: Server response to be deserialized.
-    :type response: str
-    :param parts: A list of the parts in multipart response.
-    :type parts: ~azure.core.pipeline.transport.HttpResponse
-    :param args: Args to be passed through
-    :type args: List[:class:`~azure.core.pipeline.transport.HttpResponse`]
-    """
-
-    def __init__(self, message, response, parts, *args, **kwargs):
-        # type: (str, str, HttpResponse, List[HttpResponse], Dict[str, Any]) -> None
-        self.parts = parts
-        super(BatchErrorException, self).__init__(
-            message=message, response=response, *args, **kwargs
-        )
-
-
-class LocationMode(object):
+class LocationMode(str, Enum):
     """
     Specifies the location the request should be sent to. This mode only applies
     for RA-GRS accounts which allow secondary read access. All other account types
