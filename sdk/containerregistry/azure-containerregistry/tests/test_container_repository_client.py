@@ -16,7 +16,7 @@ from azure.containerregistry import (
     RepositoryProperties,
     RegistryArtifactOrderBy,
     RegistryArtifactProperties,
-    TagProperties,
+    ArtifactTagProperties,
     TagOrderBy,
 )
 from azure.core.exceptions import ResourceNotFoundError
@@ -65,7 +65,8 @@ class TestContainerRepositoryClient(ContainerRegistryTestClass):
         tag = client.get_tag_properties("latest")
 
         assert tag is not None
-        assert isinstance(tag, TagProperties)
+        assert isinstance(tag, ArtifactTagProperties)
+        assert tag.repository == client.repository
 
     @acr_preparer()
     def test_list_registry_artifacts(self, containerregistry_endpoint):
