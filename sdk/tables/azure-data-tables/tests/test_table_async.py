@@ -154,7 +154,6 @@ class TableTestAsync(AzureTestCase, AsyncTableTestCase):
         assert len(tables) ==  1
         for table_item in tables:
             assert isinstance(table_item,  TableItem)
-            assert table_item.date is not None
             assert table_item.name is not None
         await ts.delete_table(table.table_name)
 
