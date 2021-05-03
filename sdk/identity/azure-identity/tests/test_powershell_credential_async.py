@@ -2,6 +2,7 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 # ------------------------------------
+import asyncio
 import base64
 import logging
 import sys
@@ -176,6 +177,18 @@ async def test_blocked_by_execution_policy():
     with patch(CREATE_SUBPROCESS_EXEC, mock_exec):
         with pytest.raises(CredentialUnavailableError, match=BLOCKED_BY_EXECUTION_POLICY):
             await AzurePowerShellCredential().get_token("scope")
+
+
+async def test_timeout():
+    """The credential should kill the subprocess after a timeout"""
+
+    proc = Mock(communicate=Mock(side_effect=asyncio.TimeoutError), returncode=None)
+    with patch(CREATE_SUBPROCESS_EXEC, Mock(return_value=get_completed_future(proc))):
+        with pytest.raises(CredentialUnavailableError):
+            await AzurePowerShellCredential().get_token("scope")
+
+    assert proc.communicate.call_count == 1
+    assert proc.kill.call_count == 1
 
 
 async def test_unexpected_error():

@@ -188,6 +188,21 @@ def test_blocked_by_execution_policy():
             AzurePowerShellCredential().get_token("scope")
 
 
+@pytest.mark.skipif(sys.version_info < (3, 3), reason="Python 3.3 added timeout support to Popen")
+def test_timeout():
+    """The credential should kill the subprocess after a timeout"""
+
+    from subprocess import TimeoutExpired
+
+    proc = mock.Mock(communicate=mock.Mock(side_effect=TimeoutExpired), returncode=None)
+    with mock.patch(POPEN, mock.Mock(return_value=proc)):
+        with pytest.raises(CredentialUnavailableError):
+            AzurePowerShellCredential().get_token("scope")
+
+    assert proc.communicate.call_count == 1
+    assert proc.kill.call_count == 1
+
+
 def test_unexpected_error():
     """The credential should log stderr when Get-AzAccessToken returns an unexpected error"""
 
