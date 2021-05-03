@@ -89,15 +89,15 @@ class AzureNamedKeyTokenCredentialAsync(object):
     :param str credential: The AzureNamedKeyCredential that should be used
     """
 
-    def __init__(self, credential):
+    def __init__(self, azure_named_key_credential):
         # type: (AzureNamedKeyCredential) -> None
-        self.credential = credential
+        self._credential = azure_named_key_credential
         self.token_type = b"servicebus.windows.net:sastoken"
 
     async def get_token(self, *scopes, **kwargs):  # pylint:disable=unused-argument
         if not scopes:
             raise ValueError("No token scope provided.")
-        name, key = self.credential.named_key
+        name, key = self._credential.named_key
         return _generate_sas_token(scopes[0], name, key)
 
 

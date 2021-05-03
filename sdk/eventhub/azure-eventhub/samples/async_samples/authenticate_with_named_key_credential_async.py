@@ -21,8 +21,8 @@ from azure.eventhub import EventData
 FULLY_QUALIFIED_NAMESPACE = os.environ['EVENT_HUB_HOSTNAME']
 EVENTHUB_NAME = os.environ['EVENT_HUB_NAME']
 
-EVENTHUB_POLICY_NAME = os.environ['EVENT_HUB_POLICY_NAME']
-EVENTHUB_KEY = os.environ['EVENT_HUB_KEY']
+EVENTHUB_POLICY_NAME = os.environ['EVENT_HUB_SAS_POLICY']
+EVENTHUB_KEY = os.environ['EVENT_HUB_SAS_KEY']
 
 credential = AzureNamedKeyCredential(EVENTHUB_POLICY_NAME, EVENTHUB_KEY)
 
