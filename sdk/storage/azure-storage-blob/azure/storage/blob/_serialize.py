@@ -13,7 +13,7 @@ from azure.core import MatchConditions
 
 from ._models import (
     ContainerEncryptionScope,
-    DelimitedJsonDialect, ParquetDialect)
+    DelimitedJsonDialect)
 from ._generated.models import (
     ModifiedAccessConditions,
     SourceModifiedAccessConditions,
@@ -162,12 +162,7 @@ def serialize_blob_tags(tags=None):
 
 
 def serialize_query_format(formater):
-    if isinstance(formater, ParquetDialect):
-        qq_format = QueryFormat(
-            type=QueryFormatType.PARQUET,
-            parquet_text_configuration=' '
-        )
-    elif isinstance(formater, DelimitedJsonDialect):
+    if isinstance(formater, DelimitedJsonDialect):
         serialization_settings = JsonTextConfiguration(
             record_separator=formater.delimiter
         )
@@ -200,5 +195,5 @@ def serialize_query_format(formater):
     elif not formater:
         return None
     else:
-        raise TypeError("Format must be DelimitedTextDialect or DelimitedJsonDialect or ParquetDialect.")
+        raise TypeError("Format must be DelimitedTextDialect or DelimitedJsonDialect.")
     return QuerySerialization(format=qq_format)
