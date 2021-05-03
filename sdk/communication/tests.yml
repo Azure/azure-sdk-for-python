@@ -18,7 +18,8 @@ stages:
           Public:
             SubscriptionConfigurations:
               - $(sub-config-azure-cloud-test-resources)
-              - $(sub-config-communication-services-cloud-test-resources-test)
+              - $(sub-config-communication-services-cloud-test-resources-common)
+              - $(sub-config-communication-services-cloud-test-resources-python)
           Int:
             SubscriptionConfiguration: $(sub-config-communication-int-test-resources)
         Clouds: Public,Int
