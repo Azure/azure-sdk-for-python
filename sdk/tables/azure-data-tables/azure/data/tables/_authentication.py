@@ -35,7 +35,7 @@ from ._error import (
 )
 
 if sys.version_info > (3, 5):
-    from typing import Awaitable
+    from typing import Awaitable  # pylint: disable=ungrouped-imports
 
 logger = logging.getLogger(__name__)
 
