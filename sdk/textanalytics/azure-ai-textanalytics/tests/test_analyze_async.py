@@ -26,7 +26,8 @@ from azure.ai.textanalytics import (
     RecognizeLinkedEntitiesAction,
     RecognizePiiEntitiesAction,
     ExtractKeyPhrasesAction,
-    AnalyzeBatchActionsType
+    AnalyzeSentimentAction,
+    AnalyzeActionsType
 )
 
 # pre-apply the client_cls positional argument so it needn't be explicitly passed below
@@ -54,7 +55,7 @@ class TestAnalyzeAsync(AsyncTextAnalyticsTest):
     @TextAnalyticsClientPreparer()
     async def test_no_single_input(self, client):
         with self.assertRaises(TypeError):
-            response = await client.begin_analyze_batch_actions("hello world", actions=[], polling_interval=self._interval())
+            response = await client.begin_analyze_actions("hello world", actions=[], polling_interval=self._interval())
 
     @GlobalTextAnalyticsAccountPreparer()
     @TextAnalyticsClientPreparer()
@@ -63,7 +64,7 @@ class TestAnalyzeAsync(AsyncTextAnalyticsTest):
                 {"id": "2", "language": "es", "text": "Microsoft fue fundado por Bill Gates y Paul Allen"}]
 
         async with client:
-            response = await (await client.begin_analyze_batch_actions(
+            response = await (await client.begin_analyze_actions(
                 docs,
                 actions=[ExtractKeyPhrasesAction()],
                 show_stats=True,
@@ -76,7 +77,7 @@ class TestAnalyzeAsync(AsyncTextAnalyticsTest):
             assert len(action_results) == 1
             action_result = action_results[0]
 
-            assert action_result.action_type == AnalyzeBatchActionsType.EXTRACT_KEY_PHRASES
+            assert action_result.action_type == AnalyzeActionsType.EXTRACT_KEY_PHRASES
             assert len(action_result.document_results) == len(docs)
 
             for doc in action_result.document_results:
@@ -84,6 +85,130 @@ class TestAnalyzeAsync(AsyncTextAnalyticsTest):
                 self.assertIn("Bill Gates", doc.key_phrases)
                 self.assertIn("Microsoft", doc.key_phrases)
                 self.assertIsNotNone(doc.id)
+
+    @GlobalTextAnalyticsAccountPreparer()
+    @TextAnalyticsClientPreparer()
+    async def test_all_successful_passing_dict_sentiment_task(self, client):
+        docs = [{"id": "1", "language": "en", "text": "Microsoft was founded by Bill Gates and Paul Allen."},
+                {"id": "2", "language": "en", "text": "I did not like the hotel we stayed at. It was too expensive."},
+                {"id": "3", "language": "en", "text": "The restaurant had really good food. I recommend you try it."}]
+
+        async with client:
+            response = await (await client.begin_analyze_actions(
+                docs,
+                actions=[AnalyzeSentimentAction()],
+                show_stats=True,
+                polling_interval=self._interval(),
+            )).result()
+
+        action_results = []
+        async for p in response:
+            action_results.append(p)
+
+        assert len(action_results) == 1
+        action_result = action_results[0]
+
+        assert action_result.action_type == AnalyzeActionsType.ANALYZE_SENTIMENT
+        assert len(action_result.document_results) == len(docs)
+
+        self.assertEqual(action_result.document_results[0].sentiment, "neutral")
+        self.assertEqual(action_result.document_results[1].sentiment, "negative")
+        self.assertEqual(action_result.document_results[2].sentiment, "positive")
+
+        for doc in action_result.document_results:
+            self.assertIsNotNone(doc.id)
+            self.assertIsNotNone(doc.statistics)
+            self.validateConfidenceScores(doc.confidence_scores)
+            self.assertIsNotNone(doc.sentences)
+
+        self.assertEqual(len(action_result.document_results[0].sentences), 1)
+        self.assertEqual(action_result.document_results[0].sentences[0].text, "Microsoft was founded by Bill Gates and Paul Allen.")
+        self.assertEqual(len(action_result.document_results[1].sentences), 2)
+        self.assertEqual(action_result.document_results[1].sentences[0].text, "I did not like the hotel we stayed at.")
+        self.assertEqual(action_result.document_results[1].sentences[1].text, "It was too expensive.")
+        self.assertEqual(len(action_result.document_results[2].sentences), 2)
+        self.assertEqual(action_result.document_results[2].sentences[0].text, "The restaurant had really good food.")
+        self.assertEqual(action_result.document_results[2].sentences[1].text, "I recommend you try it.")
+
+    @GlobalTextAnalyticsAccountPreparer()
+    @TextAnalyticsClientPreparer()
+    async def test_sentiment_analysis_task_with_opinion_mining(self, client):
+        documents = [
+            "It has a sleek premium aluminum design that makes it beautiful to look at.",
+            "The food and service is not good"
+        ]
+
+        async with client:
+            response = await (await client.begin_analyze_actions(
+                documents,
+                actions=[AnalyzeSentimentAction(show_opinion_mining=True)],
+                show_stats=True,
+                polling_interval=self._interval(),
+            )).result()
+
+        action_results = []
+        async for p in response:
+            action_results.append(p)
+
+        assert len(action_results) == 1
+        action_result = action_results[0]
+
+        assert action_result.action_type == AnalyzeActionsType.ANALYZE_SENTIMENT
+        assert len(action_result.document_results) == len(documents)
+
+        for idx, doc in enumerate(action_result.document_results):
+            for sentence in doc.sentences:
+                if idx == 0:
+                    for mined_opinion in sentence.mined_opinions:
+                        target = mined_opinion.target
+                        self.assertEqual('design', target.text)
+                        self.assertEqual('positive', target.sentiment)
+                        self.assertEqual(0.0, target.confidence_scores.neutral)
+                        self.validateConfidenceScores(target.confidence_scores)
+                        self.assertEqual(32, target.offset)
+
+                        sleek_opinion = mined_opinion.assessments[0]
+                        self.assertEqual('sleek', sleek_opinion.text)
+                        self.assertEqual('positive', sleek_opinion.sentiment)
+                        self.assertEqual(0.0, sleek_opinion.confidence_scores.neutral)
+                        self.validateConfidenceScores(sleek_opinion.confidence_scores)
+                        self.assertEqual(9, sleek_opinion.offset)
+                        self.assertFalse(sleek_opinion.is_negated)
+
+                        premium_opinion = mined_opinion.assessments[1]
+                        self.assertEqual('premium', premium_opinion.text)
+                        self.assertEqual('positive', premium_opinion.sentiment)
+                        self.assertEqual(0.0, premium_opinion.confidence_scores.neutral)
+                        self.validateConfidenceScores(premium_opinion.confidence_scores)
+                        self.assertEqual(15, premium_opinion.offset)
+                        self.assertFalse(premium_opinion.is_negated)
+                else:
+                    food_target = sentence.mined_opinions[0].target
+                    service_target = sentence.mined_opinions[1].target
+                    self.validateConfidenceScores(food_target.confidence_scores)
+                    self.assertEqual(4, food_target.offset)
+
+                    self.assertEqual('service', service_target.text)
+                    self.assertEqual('negative', service_target.sentiment)
+                    self.assertEqual(0.0, service_target.confidence_scores.neutral)
+                    self.validateConfidenceScores(service_target.confidence_scores)
+                    self.assertEqual(13, service_target.offset)
+
+                    food_opinion = sentence.mined_opinions[0].assessments[0]
+                    service_opinion = sentence.mined_opinions[1].assessments[0]
+                    self.assertOpinionsEqual(food_opinion, service_opinion)
+
+                    self.assertEqual('good', food_opinion.text)
+                    self.assertEqual('negative', food_opinion.sentiment)
+                    self.assertEqual(0.0, food_opinion.confidence_scores.neutral)
+                    self.validateConfidenceScores(food_opinion.confidence_scores)
+                    self.assertEqual(28, food_opinion.offset)
+                    self.assertTrue(food_opinion.is_negated)
+                    service_target = sentence.mined_opinions[1].target
+
+                    self.assertEqual('food', food_target.text)
+                    self.assertEqual('negative', food_target.sentiment)
+                    self.assertEqual(0.0, food_target.confidence_scores.neutral)
 
     @GlobalTextAnalyticsAccountPreparer()
     @TextAnalyticsClientPreparer()
@@ -95,7 +220,7 @@ class TestAnalyzeAsync(AsyncTextAnalyticsTest):
         ]
 
         async with client:
-            poller = await client.begin_analyze_batch_actions(
+            poller = await client.begin_analyze_actions(
                 docs,
                 actions=[RecognizeEntitiesAction()],
                 show_stats=True,
@@ -109,7 +234,7 @@ class TestAnalyzeAsync(AsyncTextAnalyticsTest):
             assert len(action_results) == 1
             action_result = action_results[0]
 
-            assert action_result.action_type == AnalyzeBatchActionsType.RECOGNIZE_ENTITIES
+            assert action_result.action_type == AnalyzeActionsType.RECOGNIZE_ENTITIES
             assert len(action_result.document_results) == len(docs)
 
             for doc in action_result.document_results:
@@ -131,7 +256,7 @@ class TestAnalyzeAsync(AsyncTextAnalyticsTest):
         ]
 
         async with client:
-            response = await (await client.begin_analyze_batch_actions(
+            response = await (await client.begin_analyze_actions(
                 docs,
                 actions=[RecognizePiiEntitiesAction()],
                 show_stats=True,
@@ -144,7 +269,7 @@ class TestAnalyzeAsync(AsyncTextAnalyticsTest):
             assert len(action_results) == 1
             action_result = action_results[0]
 
-            assert action_result.action_type == AnalyzeBatchActionsType.RECOGNIZE_PII_ENTITIES
+            assert action_result.action_type == AnalyzeActionsType.RECOGNIZE_PII_ENTITIES
             assert len(action_result.document_results) == len(docs)
 
             self.assertEqual(action_result.document_results[0].entities[0].text, "859-98-0987")
@@ -170,7 +295,7 @@ class TestAnalyzeAsync(AsyncTextAnalyticsTest):
 
         with self.assertRaises(HttpResponseError):
             async with client:
-                response = await (await client.begin_analyze_batch_actions(
+                response = await (await client.begin_analyze_actions(
                     docs,
                     actions=[ExtractKeyPhrasesAction()],
                     polling_interval=self._interval()
@@ -183,12 +308,14 @@ class TestAnalyzeAsync(AsyncTextAnalyticsTest):
     async def test_empty_credential_class(self, client):
         with self.assertRaises(ClientAuthenticationError):
             async with client:
-                response = await (await client.begin_analyze_batch_actions(
+                response = await (await client.begin_analyze_actions(
                     ["This is written in English."],
                     actions=[
                         RecognizeEntitiesAction(),
                         ExtractKeyPhrasesAction(),
                         RecognizePiiEntitiesAction(),
+                        RecognizeLinkedEntitiesAction(),
+                        AnalyzeSentimentAction()
                     ],
                     polling_interval=self._interval()
                 )).result()
@@ -200,12 +327,14 @@ class TestAnalyzeAsync(AsyncTextAnalyticsTest):
     async def test_bad_credentials(self, client):
         with self.assertRaises(ClientAuthenticationError):
             async with client:
-                response = await (await client.begin_analyze_batch_actions(
+                response = await (await client.begin_analyze_actions(
                     ["This is written in English."],
                     actions=[
                         RecognizeEntitiesAction(),
                         ExtractKeyPhrasesAction(),
                         RecognizePiiEntitiesAction(),
+                        RecognizeLinkedEntitiesAction(),
+                        AnalyzeSentimentAction()
                     ],
                     polling_interval=self._interval()
                 )).result()
@@ -221,12 +350,14 @@ class TestAnalyzeAsync(AsyncTextAnalyticsTest):
                 {"id": "1", "text": ":D"}]
 
         async with client:
-            response = await (await client.begin_analyze_batch_actions(
+            response = await (await client.begin_analyze_actions(
                 docs,
                 actions=[
                     RecognizeEntitiesAction(model_version="bad"),
                     ExtractKeyPhrasesAction(),
                     RecognizePiiEntitiesAction(),
+                    RecognizeLinkedEntitiesAction(),
+                    AnalyzeSentimentAction()
                 ],
                 polling_interval=self._interval()
             )).result()
@@ -237,8 +368,8 @@ class TestAnalyzeAsync(AsyncTextAnalyticsTest):
             assert len(action_results) == 3
 
             assert action_results[0].is_error
-            assert action_results[1].action_type == AnalyzeBatchActionsType.EXTRACT_KEY_PHRASES
-            assert action_results[2].action_type == AnalyzeBatchActionsType.RECOGNIZE_PII_ENTITIES
+            assert action_results[1].action_type == AnalyzeActionsType.EXTRACT_KEY_PHRASES
+            assert action_results[2].action_type == AnalyzeActionsType.RECOGNIZE_PII_ENTITIES
 
             action_results = [r for r in action_results if not r.is_error]
 
@@ -259,13 +390,14 @@ class TestAnalyzeAsync(AsyncTextAnalyticsTest):
                 {"id": "1", "text": ":D"}]
 
         async with client:
-            response = await (await client.begin_analyze_batch_actions(
+            response = await (await client.begin_analyze_actions(
                 docs,
                 actions=[
                     RecognizeEntitiesAction(model_version="latest"),
                     ExtractKeyPhrasesAction(model_version="latest"),
                     RecognizePiiEntitiesAction(model_version="latest"),
-                    RecognizeLinkedEntitiesAction(model_version="latest")
+                    RecognizeLinkedEntitiesAction(model_version="latest"),
+                    AnalyzeSentimentAction(model_version="latest")
                 ],
                 show_stats=True,
                 polling_interval=self._interval()
@@ -274,11 +406,12 @@ class TestAnalyzeAsync(AsyncTextAnalyticsTest):
             action_results = []
             async for p in response:
                 action_results.append(p)
-            assert len(action_results) == 4
-            assert action_results[0].action_type == AnalyzeBatchActionsType.RECOGNIZE_ENTITIES
-            assert action_results[1].action_type == AnalyzeBatchActionsType.EXTRACT_KEY_PHRASES
-            assert action_results[2].action_type == AnalyzeBatchActionsType.RECOGNIZE_PII_ENTITIES
-            assert action_results[3].action_type == AnalyzeBatchActionsType.RECOGNIZE_LINKED_ENTITIES
+            assert len(action_results) == 5
+            assert action_results[0].action_type == AnalyzeActionsType.RECOGNIZE_ENTITIES
+            assert action_results[1].action_type == AnalyzeActionsType.EXTRACT_KEY_PHRASES
+            assert action_results[2].action_type == AnalyzeActionsType.RECOGNIZE_PII_ENTITIES
+            assert action_results[3].action_type == AnalyzeActionsType.RECOGNIZE_LINKED_ENTITIES
+            assert action_results[4].action_type == AnalyzeActionsType.ANALYZE_SENTIMENT
 
             assert all([action_result for action_result in action_results if len(action_result.document_results) == len(docs)])
 
@@ -293,7 +426,7 @@ class TestAnalyzeAsync(AsyncTextAnalyticsTest):
         docs = [{"id": "56", "text": ":)"}]
 
         async with client:
-            poller = await client.begin_analyze_batch_actions(
+            poller = await client.begin_analyze_actions(
                 docs,
                 actions=[
                     RecognizeEntitiesAction(model_version="latest")
@@ -332,7 +465,7 @@ class TestAnalyzeAsync(AsyncTextAnalyticsTest):
     #     ]
 
     #     async with client:
-    #         response = await (await client.begin_analyze_batch_actions(
+    #         response = await (await client.begin_analyze_actions(
     #             docs,
     #             actions=[
     #                 RecognizeEntitiesAction(),
@@ -370,7 +503,7 @@ class TestAnalyzeAsync(AsyncTextAnalyticsTest):
     #     ]
 
     #     async with client:
-    #         response = await (await client.begin_analyze_batch_actions(
+    #         response = await (await client.begin_analyze_actions(
     #             docs,
     #             actions=[
     #                 RecognizeEntitiesAction(),
@@ -389,7 +522,7 @@ class TestAnalyzeAsync(AsyncTextAnalyticsTest):
     # @TextAnalyticsClientPreparer()
     # async def test_invalid_language_hint_method(self, client):
     #     async with client:
-    #         response = await (await client.begin_analyze_batch_actions(
+    #         response = await (await client.begin_analyze_actions(
     #             ["This should fail because we're passing in an invalid language hint"],
     #             language="notalanguage",
     #             actions=[
@@ -413,13 +546,14 @@ class TestAnalyzeAsync(AsyncTextAnalyticsTest):
 
         async with client:
             response = await (await
-            client.begin_analyze_batch_actions(
+            client.begin_analyze_actions(
                 docs,
                 actions=[
                     RecognizeEntitiesAction(model_version="latest"),
                     ExtractKeyPhrasesAction(model_version="bad"),
                     RecognizePiiEntitiesAction(model_version="bad"),
-                    RecognizeLinkedEntitiesAction(model_version="bad")
+                    RecognizeLinkedEntitiesAction(model_version="bad"),
+                    AnalyzeSentimentAction(model_version="bad")
                 ],
                 polling_interval=self._interval()
             )).result()
@@ -429,13 +563,15 @@ class TestAnalyzeAsync(AsyncTextAnalyticsTest):
                 action_results.append(p)
 
             assert action_results[0].is_error == False
-            assert action_results[0].action_type == AnalyzeBatchActionsType.RECOGNIZE_ENTITIES
+            assert action_results[0].action_type == AnalyzeActionsType.RECOGNIZE_ENTITIES
             assert action_results[1].is_error == True
             assert action_results[1].error.code == "InvalidRequest"
             assert action_results[2].is_error == True
             assert action_results[2].error.code == "InvalidRequest"
             assert action_results[3].is_error == True
             assert action_results[3].error.code == "InvalidRequest"
+            assert action_results[4].is_error == True
+            assert action_results[4].error.code == "InvalidRequest"
 
     @GlobalTextAnalyticsAccountPreparer()
     @TextAnalyticsClientPreparer()
@@ -444,12 +580,14 @@ class TestAnalyzeAsync(AsyncTextAnalyticsTest):
 
         with self.assertRaises(HttpResponseError):
             async with client:
-                result = await (await client.begin_analyze_batch_actions(
+                result = await (await client.begin_analyze_actions(
                     docs,
                     actions=[
                         RecognizeEntitiesAction(model_version="bad"),
                         ExtractKeyPhrasesAction(model_version="bad"),
-                        RecognizePiiEntitiesAction(model_version="bad")
+                        RecognizePiiEntitiesAction(model_version="bad"),
+                        RecognizeLinkedEntitiesAction(model_version="bad"),
+                        AnalyzeSentimentAction(model_version="bad")
                     ],
                     polling_interval=self._interval()
                 )).result()
@@ -460,12 +598,14 @@ class TestAnalyzeAsync(AsyncTextAnalyticsTest):
         docs = []
         with pytest.raises(ValueError) as excinfo:
             async with client:
-                await (await client.begin_analyze_batch_actions(
+                await (await client.begin_analyze_actions(
                     docs,
                     actions=[
                         RecognizeEntitiesAction(),
                         ExtractKeyPhrasesAction(),
-                        RecognizePiiEntitiesAction()
+                        RecognizePiiEntitiesAction(),
+                        RecognizeLinkedEntitiesAction(),
+                        AnalyzeSentimentAction()
                     ],
                     polling_interval=self._interval()
                 )).result()
@@ -476,7 +616,7 @@ class TestAnalyzeAsync(AsyncTextAnalyticsTest):
     async def test_passing_none_docs(self, client):
         with pytest.raises(ValueError) as excinfo:
             async with client:
-                await client.begin_analyze_batch_actions(None, None, polling_interval=self._interval())
+                await client.begin_analyze_actions(None, None, polling_interval=self._interval())
         assert "Input documents can not be empty or None" in str(excinfo.value)
 
     @GlobalTextAnalyticsAccountPreparer()
@@ -486,7 +626,7 @@ class TestAnalyzeAsync(AsyncTextAnalyticsTest):
             return "cls result"
 
         async with client:
-            res = await (await client.begin_analyze_batch_actions(
+            res = await (await client.begin_analyze_actions(
                 documents=["Test passing cls to endpoint"],
                 actions=[
                     RecognizeEntitiesAction(),
@@ -504,12 +644,14 @@ class TestAnalyzeAsync(AsyncTextAnalyticsTest):
                 enumerate(list(itertools.repeat(single_doc, 25)))]  # max number of documents is 25
 
         async with client:
-            result = await (await client.begin_analyze_batch_actions(
+            result = await (await client.begin_analyze_actions(
                 docs,
                 actions=[
                     RecognizeEntitiesAction(),
                     ExtractKeyPhrasesAction(),
                     RecognizePiiEntitiesAction(),
+                    RecognizeLinkedEntitiesAction(),
+                    AnalyzeSentimentAction()
                 ],
                 show_stats=True,
                 polling_interval=self._interval()
@@ -522,18 +664,26 @@ class TestAnalyzeAsync(AsyncTextAnalyticsTest):
             recognize_entities_results = []
             extract_key_phrases_results = []
             recognize_pii_entities_results = []
+            recognize_linked_entities_results = []
+            analyze_sentiment_results = []
 
             for idx, action_result in enumerate(pages):
-                if idx % 3 == 0:
-                    assert action_result.action_type == AnalyzeBatchActionsType.RECOGNIZE_ENTITIES
+                if idx % 5 == 0:
+                    assert action_result.action_type == AnalyzeActionsType.RECOGNIZE_ENTITIES
                     recognize_entities_results.append(action_result)
-                elif idx % 3 == 1:
-                    assert action_result.action_type == AnalyzeBatchActionsType.EXTRACT_KEY_PHRASES
+                elif idx % 5 == 1:
+                    assert action_result.action_type == AnalyzeActionsType.EXTRACT_KEY_PHRASES
                     extract_key_phrases_results.append(action_result)
-                else:
-                    assert action_result.action_type == AnalyzeBatchActionsType.RECOGNIZE_PII_ENTITIES
+                elif idx % 5 == 2:
+                    assert action_result.action_type == AnalyzeActionsType.RECOGNIZE_PII_ENTITIES
                     recognize_pii_entities_results.append(action_result)
-                if idx < 3:  # first page of task results
+                elif idx % 5 == 3:
+                    assert action_result.action_type == AnalyzeActionsType.RECOGNIZE_LINKED_ENTITIES
+                    recognize_linked_entities_results.append(action_result)
+                else:
+                    assert action_result.action_type == AnalyzeActionsType.ANALYZE_SENTIMENT
+                    analyze_sentiment_results.append(action_result)
+                if idx < 5:  # first page of task results
                     assert len(action_result.document_results) == 20
                 else:
                     assert len(action_result.document_results) == 5
@@ -541,6 +691,8 @@ class TestAnalyzeAsync(AsyncTextAnalyticsTest):
             assert all([action_result for action_result in recognize_entities_results if len(action_result.document_results) == len(docs)])
             assert all([action_result for action_result in extract_key_phrases_results if len(action_result.document_results) == len(docs)])
             assert all([action_result for action_result in recognize_pii_entities_results if len(action_result.document_results) == len(docs)])
+        assert all([action_result for action_result in recognize_linked_entities_results if len(action_result.document_results) == len(docs)])
+        assert all([action_result for action_result in analyze_sentiment_results if len(action_result.document_results) == len(docs)])
 
     @pytest.mark.skip("Throws 400 on POST: (InvalidRequest) Job task parameter value bad is not supported for model-version "
                  "parameter for job task type NamedEntityRecognition. Supported values latest,2019-10-01,2020-07-01")
@@ -552,12 +704,14 @@ class TestAnalyzeAsync(AsyncTextAnalyticsTest):
                 enumerate(list(itertools.repeat(single_doc, 25)))]  # max number of documents is 25
 
         async with client:
-            result = await (await client.begin_analyze_batch_actions(
+            result = await (await client.begin_analyze_actions(
                 docs,
                 actions=[
                     RecognizeEntitiesAction(model_version="bad"),
                     ExtractKeyPhrasesAction(),
                     RecognizePiiEntitiesAction(),
+                    RecognizeLinkedEntitiesAction(),
+                    AnalyzeSentimentAction()
                 ],
                 polling_interval=self._interval()
             )).result()
@@ -567,7 +721,7 @@ class TestAnalyzeAsync(AsyncTextAnalyticsTest):
                 pages.append(p)
 
             for idx, action_result in enumerate(pages):
-                if idx % 3 == 0:
+                if idx % 5 == 0:
                     assert action_result.is_error
                 else:
                     assert all([doc for doc in action_result.document_results if not doc.is_error])
@@ -579,12 +733,14 @@ class TestAnalyzeAsync(AsyncTextAnalyticsTest):
 
         with pytest.raises(HttpResponseError) as excinfo:
             async with client:
-                await (await client.begin_analyze_batch_actions(
+                await (await client.begin_analyze_actions(
                     docs,
                     actions=[
                         RecognizeEntitiesAction(),
                         ExtractKeyPhrasesAction(),
                         RecognizePiiEntitiesAction(),
+                        RecognizeLinkedEntitiesAction(),
+                        AnalyzeSentimentAction()
                     ],
                     polling_interval=self._interval()
                 )).result()

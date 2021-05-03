@@ -43,8 +43,10 @@ from .._models import (
     RecognizeEntitiesAction,
     RecognizePiiEntitiesAction,
     ExtractKeyPhrasesAction,
-    AnalyzeBatchActionsResult,
-    AnalyzeBatchActionsType,
+    AnalyzeActionsResult,
+    AnalyzeActionsType,
+    RecognizeLinkedEntitiesAction,
+    AnalyzeSentimentAction
 )
 from .._lro import TextAnalyticsOperationResourcePolling
 from .._async_lro import (
@@ -724,12 +726,12 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
         )
 
     @distributed_trace_async
-    async def begin_analyze_batch_actions(  # type: ignore
+    async def begin_analyze_actions(  # type: ignore
         self,
         documents,  # type: Union[List[str], List[TextDocumentInput], List[Dict[str, str]]]
-        actions,  # type: List[Union[RecognizeEntitiesAction, RecognizePiiEntitiesAction, ExtractKeyPhrasesAction]]
+        actions,  # type: List[Union[RecognizeEntitiesAction, RecognizeLinkedEntitiesAction, RecognizePiiEntitiesAction, ExtractKeyPhrasesAction, AnalyzeSentimentAction]] # pylint: disable=line-too-long
         **kwargs  # type: Any
-    ):  # type: (...) -> AsyncLROPoller[AsyncItemPaged[AnalyzeBatchActionsResult]]
+    ):  # type: (...) -> AsyncLROPoller[AsyncItemPaged[AnalyzeActionsResult]]
         """Start a long-running operation to perform a variety of text analysis actions over a batch of documents.
 
         :param documents: The set of documents to process as part of this batch.
@@ -746,7 +748,7 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
             Duplicate actions in list not supported.
         :type actions:
             list[RecognizeEntitiesAction or RecognizePiiEntitiesAction or ExtractKeyPhrasesAction or
-            RecognizeLinkedEntitiesAction]
+            RecognizeLinkedEntitiesAction or AnalyzeSentimentAction]
         :keyword str display_name: An optional display name to set for the requested analysis.
         :keyword str language: The 2 letter ISO 639-1 representation of language for the
             entire batch. For example, use "en" for English; "es" for Spanish etc.
@@ -761,17 +763,17 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
             the actions were sent in this method.
         :rtype:
             ~azure.core.polling.AsyncLROPoller[~azure.core.async_paging.AsyncItemPaged[
-            ~azure.ai.textanalytics.AnalyzeBatchActionsResult]]
+            ~azure.ai.textanalytics.AnalyzeActionsResult]]
         :raises ~azure.core.exceptions.HttpResponseError or TypeError or ValueError or NotImplementedError:
 
         .. admonition:: Example:
 
-            .. literalinclude:: ../samples/async_samples/sample_analyze_batch_actions_async.py
+            .. literalinclude:: ../samples/async_samples/sample_analyze_actions_async.py
                 :start-after: [START analyze_async]
                 :end-before: [END analyze_async]
                 :language: python
                 :dedent: 8
-                :caption: Start a long-running operation to perform a variety of text analysis tasks over
+                :caption: Start a long-running operation to perform a variety of text analysis actions over
                     a batch of documents.
         """
 
@@ -792,22 +794,26 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
             analyze_tasks = self._client.models(api_version='v3.1-preview.5').JobManifestTasks(
                 entity_recognition_tasks=[
                     t.to_generated() for t in
-                    [a for a in actions if _determine_action_type(a) == AnalyzeBatchActionsType.RECOGNIZE_ENTITIES]
+                    [a for a in actions if _determine_action_type(a) == AnalyzeActionsType.RECOGNIZE_ENTITIES]
                 ],
                 entity_recognition_pii_tasks=[
                     t.to_generated() for t in
-                    [a for a in actions if _determine_action_type(a) == AnalyzeBatchActionsType.RECOGNIZE_PII_ENTITIES]
+                    [a for a in actions if _determine_action_type(a) == AnalyzeActionsType.RECOGNIZE_PII_ENTITIES]
                 ],
                 key_phrase_extraction_tasks=[
                     t.to_generated() for t in
-                    [a for a in actions if _determine_action_type(a) == AnalyzeBatchActionsType.EXTRACT_KEY_PHRASES]
+                    [a for a in actions if _determine_action_type(a) == AnalyzeActionsType.EXTRACT_KEY_PHRASES]
                 ],
                 entity_linking_tasks=[
                     t.to_generated() for t in
                     [
                         a for a in actions if \
-                        _determine_action_type(a) == AnalyzeBatchActionsType.RECOGNIZE_LINKED_ENTITIES
+                        _determine_action_type(a) == AnalyzeActionsType.RECOGNIZE_LINKED_ENTITIES
                     ]
+                ],
+                sentiment_analysis_tasks=[
+                    t.to_generated() for t in
+                    [a for a in actions if _determine_action_type(a) == AnalyzeActionsType.ANALYZE_SENTIMENT]
                 ]
             )
             analyze_body = self._client.models(api_version='v3.1-preview.5').AnalyzeBatchInput(
@@ -833,7 +839,7 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
         except ValueError as error:
             if "API version v3.0 does not have operation 'begin_analyze'" in str(error):
                 raise ValueError(
-                    "'begin_analyze_batch_actions' endpoint is only available for API version V3_1_PREVIEW and up"
+                    "'begin_analyze_actions' endpoint is only available for API version V3_1_PREVIEW and up"
                 )
             raise error
 

@@ -81,10 +81,6 @@ class StorageTableEntityTest(AzureTestCase, AsyncTableTestCase):
         for i in range(1, entity_count + 1):
             entity['RowKey'] = entity['RowKey'] + str(i)
             await client.create_entity(entity=entity)
-        # with self.ts.batch(table_name) as batch:
-        #    for i in range(1, entity_count + 1):
-        #        entity['RowKey'] = entity['RowKey'] + str(i)
-        #        batch.create_entity(entity)
         return client
 
     def _create_random_base_entity_dict(self):
@@ -1516,7 +1512,7 @@ class StorageTableEntityTest(AzureTestCase, AsyncTableTestCase):
 
             assert length == 1
         finally:
-            self._tear_down()
+            await self._tear_down()
 
     @TablesPreparer()
     async def test_query_user_filter_int64(self, tables_storage_account_name, tables_primary_storage_account_key):

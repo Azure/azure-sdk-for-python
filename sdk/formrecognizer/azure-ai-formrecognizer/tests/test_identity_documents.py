@@ -23,25 +23,25 @@ GlobalClientPreparer = functools.partial(_GlobalClientPreparer, FormRecognizerCl
 class TestIdDocument(FormRecognizerTest):
 
     @FormRecognizerPreparer()
-    def test_id_document_bad_endpoint(self, formrecognizer_test_endpoint, formrecognizer_test_api_key):
-        with open(self.id_document_license_jpg, "rb") as fd:
+    def test_identity_document_bad_endpoint(self, formrecognizer_test_endpoint, formrecognizer_test_api_key):
+        with open(self.identity_document_license_jpg, "rb") as fd:
             myfile = fd.read()
         with self.assertRaises(ServiceRequestError):
             client = FormRecognizerClient("http://notreal.azure.com", AzureKeyCredential(formrecognizer_test_api_key))
-            poller = client.begin_recognize_id_documents(myfile)
+            poller = client.begin_recognize_identity_documents(myfile)
 
     @FormRecognizerPreparer()
     def test_authentication_bad_key(self, formrecognizer_test_endpoint, formrecognizer_test_api_key):
         client = FormRecognizerClient(formrecognizer_test_endpoint, AzureKeyCredential("xxxx"))
         with self.assertRaises(ClientAuthenticationError):
-            poller = client.begin_recognize_id_documents(b"xx", content_type="image/jpeg")
+            poller = client.begin_recognize_identity_documents(b"xx", content_type="image/jpeg")
 
     @FormRecognizerPreparer()
     @GlobalClientPreparer()
     def test_passing_enum_content_type(self, client):
-        with open(self.id_document_license_jpg, "rb") as fd:
+        with open(self.identity_document_license_jpg, "rb") as fd:
             myfile = fd.read()
-        poller = client.begin_recognize_id_documents(
+        poller = client.begin_recognize_identity_documents(
             myfile,
             content_type=FormContentType.IMAGE_JPEG
         )
@@ -53,7 +53,7 @@ class TestIdDocument(FormRecognizerTest):
     def test_damaged_file_passed_as_bytes(self, client):
         damaged_pdf = b"\x25\x50\x44\x46\x55\x55\x55"  # still has correct bytes to be recognized as PDF
         with self.assertRaises(HttpResponseError):
-            poller = client.begin_recognize_id_documents(
+            poller = client.begin_recognize_identity_documents(
                 damaged_pdf
             )
 
@@ -62,7 +62,7 @@ class TestIdDocument(FormRecognizerTest):
     def test_damaged_file_bytes_fails_autodetect_content_type(self, client):
         damaged_pdf = b"\x50\x44\x46\x55\x55\x55"  # doesn't match any magic file numbers
         with self.assertRaises(ValueError):
-            poller = client.begin_recognize_id_documents(
+            poller = client.begin_recognize_identity_documents(
                 damaged_pdf
             )
 
@@ -71,7 +71,7 @@ class TestIdDocument(FormRecognizerTest):
     def test_damaged_file_passed_as_bytes_io(self, client):
         damaged_pdf = BytesIO(b"\x25\x50\x44\x46\x55\x55\x55")  # still has correct bytes to be recognized as PDF
         with self.assertRaises(HttpResponseError):
-            poller = client.begin_recognize_id_documents(
+            poller = client.begin_recognize_identity_documents(
                 damaged_pdf
             )
 
@@ -80,7 +80,7 @@ class TestIdDocument(FormRecognizerTest):
     def test_damaged_file_bytes_io_fails_autodetect(self, client):
         damaged_pdf = BytesIO(b"\x50\x44\x46\x55\x55\x55")  # doesn't match any magic file numbers
         with self.assertRaises(ValueError):
-            poller = client.begin_recognize_id_documents(
+            poller = client.begin_recognize_identity_documents(
                 damaged_pdf
             )
 
@@ -89,7 +89,7 @@ class TestIdDocument(FormRecognizerTest):
     def test_blank_page(self, client):
         with open(self.blank_pdf, "rb") as fd:
             blank = fd.read()
-        poller = client.begin_recognize_id_documents(
+        poller = client.begin_recognize_identity_documents(
             blank
         )
         result = poller.result()
@@ -98,10 +98,10 @@ class TestIdDocument(FormRecognizerTest):
     @FormRecognizerPreparer()
     @GlobalClientPreparer()
     def test_passing_bad_content_type_param_passed(self, client):
-        with open(self.id_document_license_jpg, "rb") as fd:
+        with open(self.identity_document_license_jpg, "rb") as fd:
             myfile = fd.read()
         with self.assertRaises(ValueError):
-            poller = client.begin_recognize_id_documents(
+            poller = client.begin_recognize_identity_documents(
                 myfile,
                 content_type="application/jpeg"
             )
@@ -110,7 +110,7 @@ class TestIdDocument(FormRecognizerTest):
     @GlobalClientPreparer()
     def test_passing_unsupported_url_content_type(self, client):
         with self.assertRaises(TypeError):
-            poller = client.begin_recognize_id_documents("https://badurl.jpg", content_type="application/json")
+            poller = client.begin_recognize_identity_documents("https://badurl.jpg", content_type="application/json")
 
     @FormRecognizerPreparer()
     @GlobalClientPreparer()
@@ -119,13 +119,13 @@ class TestIdDocument(FormRecognizerTest):
             myfile = fd.read()
 
         with self.assertRaises(ValueError):
-            poller = client.begin_recognize_id_documents(
+            poller = client.begin_recognize_identity_documents(
                 myfile
             )
 
     @FormRecognizerPreparer()
     @GlobalClientPreparer()
-    def test_id_document_stream_transform_jpg(self, client):
+    def test_identity_document_stream_transform_jpg(self, client):
         responses = []
 
         def callback(raw_response, _, headers):
@@ -134,11 +134,11 @@ class TestIdDocument(FormRecognizerTest):
             responses.append(analyze_result)
             responses.append(extracted_id_document)
 
-        with open(self.id_document_license_jpg, "rb") as fd:
+        with open(self.identity_document_license_jpg, "rb") as fd:
             myfile = fd.read()
 
-        poller = client.begin_recognize_id_documents(
-            id_document=myfile,
+        poller = client.begin_recognize_identity_documents(
+            identity_document=myfile,
             include_field_elements=True,
             cls=callback
         )
@@ -163,11 +163,11 @@ class TestIdDocument(FormRecognizerTest):
 
     @FormRecognizerPreparer()
     @GlobalClientPreparer()
-    def test_id_document_jpg_passport(self, client):
-        with open(self.id_document_passport_jpg, "rb") as fd:
+    def test_identity_document_jpg_passport(self, client):
+        with open(self.identity_document_passport_jpg, "rb") as fd:
             id_document = fd.read()
 
-        poller = client.begin_recognize_id_documents(id_document)
+        poller = client.begin_recognize_identity_documents(id_document)
 
         result = poller.result()
         self.assertEqual(len(result), 1)
@@ -186,11 +186,11 @@ class TestIdDocument(FormRecognizerTest):
 
     @FormRecognizerPreparer()
     @GlobalClientPreparer()
-    def test_id_document_jpg(self, client):
-        with open(self.id_document_license_jpg, "rb") as fd:
+    def test_identity_document_jpg(self, client):
+        with open(self.identity_document_license_jpg, "rb") as fd:
             id_document = fd.read()
 
-        poller = client.begin_recognize_id_documents(id_document)
+        poller = client.begin_recognize_identity_documents(id_document)
 
         result = poller.result()
         self.assertEqual(len(result), 1)
@@ -209,10 +209,10 @@ class TestIdDocument(FormRecognizerTest):
 
     @FormRecognizerPreparer()
     @GlobalClientPreparer()
-    def test_id_document_jpg_include_field_elements(self, client):
-        with open(self.id_document_license_jpg, "rb") as fd:
+    def test_identity_document_jpg_include_field_elements(self, client):
+        with open(self.identity_document_license_jpg, "rb") as fd:
             id_document = fd.read()
-        poller = client.begin_recognize_id_documents(id_document, include_field_elements=True)
+        poller = client.begin_recognize_identity_documents(id_document, include_field_elements=True)
 
         result = poller.result()
         self.assertEqual(len(result), 1)
@@ -232,32 +232,32 @@ class TestIdDocument(FormRecognizerTest):
     @FormRecognizerPreparer()
     @GlobalClientPreparer()
     @pytest.mark.live_test_only
-    def test_id_document_continuation_token(self, client):
-        with open(self.id_document_license_jpg, "rb") as fd:
+    def test_identity_document_continuation_token(self, client):
+        with open(self.identity_document_license_jpg, "rb") as fd:
             id_document = fd.read()
 
-        initial_poller = client.begin_recognize_id_documents(id_document)
+        initial_poller = client.begin_recognize_identity_documents(id_document)
         cont_token = initial_poller.continuation_token()
-        poller = client.begin_recognize_id_documents(None, continuation_token=cont_token)
+        poller = client.begin_recognize_identity_documents(None, continuation_token=cont_token)
         result = poller.result()
         self.assertIsNotNone(result)
         initial_poller.wait()  # necessary so azure-devtools doesn't throw assertion error
 
     @FormRecognizerPreparer()
     @GlobalClientPreparer(client_kwargs={"api_version": FormRecognizerApiVersion.V2_0})
-    def test_id_document_v2(self, client):
-        with open(self.id_document_license_jpg, "rb") as fd:
+    def test_identity_document_v2(self, client):
+        with open(self.identity_document_license_jpg, "rb") as fd:
             id_document = fd.read()
         with pytest.raises(ValueError) as e:
-            client.begin_recognize_id_documents(id_document)
-        assert "Method 'begin_recognize_id_documents' is only available for API version V2_1_PREVIEW and up" in str(e.value)
+            client.begin_recognize_identity_documents(id_document)
+        assert "Method 'begin_recognize_identity_documents' is only available for API version V2_1_PREVIEW and up" in str(e.value)
 
     @FormRecognizerPreparer()
     @GlobalClientPreparer()
     def test_pages_kwarg_specified(self, client):
-        with open(self.id_document_license_jpg, "rb") as fd:
+        with open(self.identity_document_license_jpg, "rb") as fd:
             id_document = fd.read()
-        poller = client.begin_recognize_id_documents(id_document, pages=["1"])
+        poller = client.begin_recognize_identity_documents(id_document, pages=["1"])
         assert '1' == poller._polling_method._initial_response.http_response.request.query['pages']
         result = poller.result()
         assert result

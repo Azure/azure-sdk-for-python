@@ -102,7 +102,7 @@ search_result = poller.result()
 
 ### Purchase Phone Numbers
 
-The result of your search can be used to purchase the specificied phone numbers. This can be done by passing the `search_id` from the search response to the purchase phone number API.
+The result of your search can be used to purchase the specified phone numbers. This can be done by passing the `search_id` from the search response to the purchase phone number API.
 
 ```python
 purchase_poller = phone_numbers_client.begin_purchase_phone_numbers(

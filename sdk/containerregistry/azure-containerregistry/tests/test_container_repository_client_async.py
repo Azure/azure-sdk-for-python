@@ -11,7 +11,7 @@ from devtools_testutils import AzureTestCase
 from azure.containerregistry import (
     DeleteRepositoryResult,
     RepositoryProperties,
-    ContentPermissions,
+    ContentProperties,
     RegistryArtifactOrderBy,
     RegistryArtifactProperties,
     TagOrderBy,
@@ -84,26 +84,28 @@ class TestContainerRepositoryClient(AsyncContainerRegistryTestClass):
         assert page_count >= 1
 
     @acr_preparer()
-    async def test_delete_tag(self, containerregistry_endpoint, containerregistry_resource_group):
-        self.import_image(HELLO_WORLD, ["{}:{}".format(HELLO_WORLD, TO_BE_DELETED)])
+    async def test_delete_tag(self, containerregistry_endpoint):
+        repo = self.get_resource_name("repos")
+        tag = self.get_resource_name("tag")
+        self.import_image(HELLO_WORLD, ["{}:{}".format(repo, tag)])
 
-        client = self.create_repository_client(containerregistry_endpoint, HELLO_WORLD)
+        client = self.create_repository_client(containerregistry_endpoint, repo)
 
-        tag = await client.get_tag_properties(TO_BE_DELETED)
-        assert tag is not None
+        tag_props = await client.get_tag_properties(tag)
+        assert tag_props is not None
 
-        await client.delete_tag(TO_BE_DELETED)
+        await client.delete_tag(tag)
         self.sleep(5)
 
         with pytest.raises(ResourceNotFoundError):
-            await client.get_tag_properties(TO_BE_DELETED)
+            await client.get_tag_properties(tag)
 
     @acr_preparer()
     async def test_delete_tag_does_not_exist(self, containerregistry_endpoint):
-        client = self.create_repository_client(containerregistry_endpoint, HELLO_WORLD)
+        client = self.create_repository_client(containerregistry_endpoint, "DOES_NOT_EXIST123")
 
         with pytest.raises(ResourceNotFoundError):
-            await client.delete_tag(TO_BE_DELETED)
+            await client.delete_tag("DOESNOTEXIST123")
 
     @acr_preparer()
     async def test_delete_repository(self, containerregistry_endpoint, containerregistry_resource_group):
@@ -162,11 +164,11 @@ class TestContainerRepositoryClient(AsyncContainerRegistryTestClass):
         client = self.create_repository_client(containerregistry_endpoint, repository)
 
         tag_props = await client.get_tag_properties(tag_identifier)
-        permissions = tag_props.content_permissions
+        permissions = tag_props.writeable_properties
 
         received = await client.set_tag_properties(
             tag_identifier,
-            ContentPermissions(
+            ContentProperties(
                 can_delete=False,
                 can_list=False,
                 can_read=False,
@@ -174,15 +176,15 @@ class TestContainerRepositoryClient(AsyncContainerRegistryTestClass):
             ),
         )
 
-        assert not received.content_permissions.can_write
-        assert not received.content_permissions.can_read
-        assert not received.content_permissions.can_list
-        assert not received.content_permissions.can_delete
+        assert not received.writeable_properties.can_write
+        assert not received.writeable_properties.can_read
+        assert not received.writeable_properties.can_list
+        assert not received.writeable_properties.can_delete
 
         # Reset them
         await client.set_tag_properties(
             tag_identifier,
-            ContentPermissions(
+            ContentProperties(
                 can_delete=True,
                 can_list=True,
                 can_read=True,
@@ -195,7 +197,7 @@ class TestContainerRepositoryClient(AsyncContainerRegistryTestClass):
         client = self.create_repository_client(containerregistry_endpoint, self.get_resource_name("repo"))
 
         with pytest.raises(ResourceNotFoundError):
-            await client.set_tag_properties(DOES_NOT_EXIST, ContentPermissions(can_delete=False))
+            await client.set_tag_properties(DOES_NOT_EXIST, ContentProperties(can_delete=False))
 
     @acr_preparer()
     async def test_set_manifest_properties(self, containerregistry_endpoint, containerregistry_resource_group):
@@ -206,26 +208,26 @@ class TestContainerRepositoryClient(AsyncContainerRegistryTestClass):
         client = self.create_repository_client(containerregistry_endpoint, repository)
 
         async for artifact in client.list_registry_artifacts():
-            permissions = artifact.content_permissions
+            permissions = artifact.writeable_properties
 
             received_permissions = await client.set_manifest_properties(
                 artifact.digest,
-                ContentPermissions(
+                ContentProperties(
                     can_delete=False,
                     can_list=False,
                     can_read=False,
                     can_write=False,
                 ),
             )
-            assert not received_permissions.content_permissions.can_delete
-            assert not received_permissions.content_permissions.can_read
-            assert not received_permissions.content_permissions.can_list
-            assert not received_permissions.content_permissions.can_write
+            assert not received_permissions.writeable_properties.can_delete
+            assert not received_permissions.writeable_properties.can_read
+            assert not received_permissions.writeable_properties.can_list
+            assert not received_permissions.writeable_properties.can_write
 
             # Reset and delete
             await client.set_manifest_properties(
                 artifact.digest,
-                ContentPermissions(
+                ContentProperties(
                     can_delete=True,
                     can_list=True,
                     can_read=True,
@@ -241,7 +243,7 @@ class TestContainerRepositoryClient(AsyncContainerRegistryTestClass):
         client = self.create_repository_client(containerregistry_endpoint, self.get_resource_name("repo"))
 
         with pytest.raises(ResourceNotFoundError):
-            await client.set_manifest_properties("sha256:abcdef", ContentPermissions(can_delete=False))
+            await client.set_manifest_properties("sha256:abcdef", ContentProperties(can_delete=False))
 
     @acr_preparer()
     async def test_list_tags_descending(self, containerregistry_endpoint):

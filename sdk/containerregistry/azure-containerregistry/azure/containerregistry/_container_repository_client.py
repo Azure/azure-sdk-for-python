@@ -28,7 +28,7 @@ from ._models import (
 if TYPE_CHECKING:
     from typing import Any, Dict
     from azure.core.credentials import TokenCredential
-    from ._models import ContentPermissions
+    from ._models import ContentProperties
 
 
 class ContainerRepositoryClient(ContainerRegistryBaseClient):
@@ -118,9 +118,7 @@ class ContainerRepositoryClient(ContainerRegistryBaseClient):
             tag_or_digest = self._get_digest_from_tag(tag_or_digest)
 
         return RegistryArtifactProperties._from_generated(  # pylint: disable=protected-access
-            self._client.container_registry.get_manifest_properties(
-                self.repository, tag_or_digest, **kwargs
-            )
+            self._client.container_registry.get_manifest_properties(self.repository, tag_or_digest, **kwargs)
         )
 
     @distributed_trace
@@ -375,13 +373,13 @@ class ContainerRepositoryClient(ContainerRegistryBaseClient):
 
     @distributed_trace
     def set_manifest_properties(self, digest, permissions, **kwargs):
-        # type: (str, ContentPermissions, Dict[str, Any]) -> RegistryArtifactProperties
+        # type: (str, ContentProperties, Dict[str, Any]) -> RegistryArtifactProperties
         """Set the properties for a manifest
 
         :param digest: Digest of a manifest
         :type digest: str
         :param permissions: The property's values to be set
-        :type permissions: ContentPermissions
+        :type permissions: ContentProperties
         :returns: :class:`~azure.containerregistry.RegistryArtifactProperties`
         :raises: :class:`~azure.core.exceptions.ResourceNotFoundError`
         """
@@ -393,13 +391,13 @@ class ContainerRepositoryClient(ContainerRegistryBaseClient):
 
     @distributed_trace
     def set_tag_properties(self, tag, permissions, **kwargs):
-        # type: (str, ContentPermissions, Dict[str, Any]) -> TagProperties
+        # type: (str, ContentProperties, Dict[str, Any]) -> TagProperties
         """Set the properties for a tag
 
         :param tag: Tag to set properties for
         :type tag: str
         :param permissions: The property's values to be set
-        :type permissions: ContentPermissions
+        :type permissions: ContentProperties
         :returns: :class:`~azure.containerregistry.TagProperties`
         :raises: :class:`~azure.core.exceptions.ResourceNotFoundError`
         """

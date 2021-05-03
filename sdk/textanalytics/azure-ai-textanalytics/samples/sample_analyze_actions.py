@@ -7,15 +7,16 @@
 # --------------------------------------------------------------------------
 
 """
-FILE: sample_analyze_batch_actions.py
+FILE: sample_analyze_actions.py
 
 DESCRIPTION:
     This sample demonstrates how to submit a collection of text documents for analysis, which consists of a variety
-    of text analysis actions, such as Entity Recognition, PII Entity Recognition,
-    or Key Phrase Extraction.  The response will contain results from each of the individual actions specified in the request.
+    of text analysis actions, such as Entity Recognition, PII Entity Recognition, Linked Entity Recognition,
+    Sentiment Analysis, or Key Phrase Extraction.  The response will contain results from each of the individual
+    actions specified in the request.
 
 USAGE:
-    python sample_analyze_batch_actions.py
+    python sample_analyze_actions.py
 
     Set the environment variables with your own values before running the sample:
     1) AZURE_TEXT_ANALYTICS_ENDPOINT - the endpoint to your Cognitive Services resource.
@@ -37,6 +38,7 @@ class AnalyzeSample(object):
             RecognizeLinkedEntitiesAction,
             RecognizePiiEntitiesAction,
             ExtractKeyPhrasesAction,
+            AnalyzeSentimentAction,
             PiiEntityDomainType,
         )
 
@@ -57,14 +59,15 @@ class AnalyzeSample(object):
             The only complaint I have is the food didn't come fast enough. Overall I highly recommend it!"
         ]
 
-        poller = text_analytics_client.begin_analyze_batch_actions(
+        poller = text_analytics_client.begin_analyze_actions(
             documents,
             display_name="Sample Text Analysis",
             actions=[
                 RecognizeEntitiesAction(),
                 RecognizePiiEntitiesAction(domain_filter=PiiEntityDomainType.PROTECTED_HEALTH_INFORMATION),
                 ExtractKeyPhrasesAction(),
-                RecognizeLinkedEntitiesAction()
+                RecognizeLinkedEntitiesAction(),
+                AnalyzeSentimentAction()
             ],
         )
 
@@ -127,6 +130,19 @@ class AnalyzeSample(object):
                     print(".........Confidence Score: {}".format(match.confidence_score))
                     print(".........Offset: {}".format(match.offset))
                     print(".........Length: {}".format(match.length))
+            print("------------------------------------------")
+
+        fifth_action_result = action_results[4]
+        print("Results of Sentiment Analysis action:")
+        docs = [doc for doc in fifth_action_result.document_results if not doc.is_error]
+
+        for doc in docs:
+            print("Overall sentiment: {}".format(doc.sentiment))
+            print("Scores: positive={}; neutral={}; negative={} \n".format(
+                doc.confidence_scores.positive,
+                doc.confidence_scores.neutral,
+                doc.confidence_scores.negative,
+            ))
             print("------------------------------------------")
 
         # [END analyze]
