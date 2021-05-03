@@ -15,7 +15,7 @@ from ._models import (
     RegistryArtifactProperties,
     RepositoryProperties,
     TagOrderBy,
-    TagProperties,
+    ArtifactTagProperties,
 )
 from ._version import VERSION
 
@@ -30,5 +30,5 @@ __all__ = [
     "RegistryArtifactProperties",
     "RepositoryProperties",
     "TagOrderBy",
-    "TagProperties",
+    "ArtifactTagProperties",
 ]

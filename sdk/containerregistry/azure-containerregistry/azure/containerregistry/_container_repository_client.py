@@ -3,7 +3,7 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 # ------------------------------------
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, Any, Dict
 
 from azure.core.exceptions import (
     ClientAuthenticationError,
@@ -22,11 +22,10 @@ from ._models import (
     DeleteRepositoryResult,
     RegistryArtifactProperties,
     RepositoryProperties,
-    TagProperties,
+    ArtifactTagProperties,
 )
 
 if TYPE_CHECKING:
-    from typing import Any, Dict
     from azure.core.credentials import TokenCredential
     from ._models import ContentProperties
 
@@ -123,16 +122,17 @@ class ContainerRepositoryClient(ContainerRegistryBaseClient):
 
     @distributed_trace
     def get_tag_properties(self, tag, **kwargs):
-        # type: (str, Dict[str, Any]) -> TagProperties
+        # type: (str, Dict[str, Any]) -> ArtifactTagProperties
         """Get the properties for a tag
 
         :param tag: The tag to get properties for
         :type tag: str
-        :returns: :class:`~azure.containerregistry.TagProperties`
+        :returns: :class:`~azure.containerregistry.ArtifactTagProperties`
         :raises: :class:`~azure.core.exceptions.ResourceNotFoundError`
         """
-        return TagProperties._from_generated(  # pylint: disable=protected-access
-            self._client.container_registry.get_tag_properties(self.repository, tag, **kwargs)
+        return ArtifactTagProperties._from_generated(  # pylint: disable=protected-access
+            self._client.container_registry.get_tag_properties(self.repository, tag, **kwargs),
+            repository=self.repository,
         )
 
     @distributed_trace
@@ -255,7 +255,7 @@ class ContainerRepositoryClient(ContainerRegistryBaseClient):
 
     @distributed_trace
     def list_tags(self, **kwargs):
-        # type: (Dict[str, Any]) -> ItemPaged[TagProperties]
+        # type: (Dict[str, Any]) -> ItemPaged[ArtifactTagProperties]
         """List the tags for a repository
 
         :keyword last: Query parameter for the last item in the previous call. Ensuing
@@ -265,7 +265,7 @@ class ContainerRepositoryClient(ContainerRegistryBaseClient):
         :paramtype order_by: :class:`~azure.containerregistry.TagOrderBy`
         :keyword results_per_page: Number of repositories to return per page
         :paramtype results_per_page: int
-        :return: ItemPaged[:class:`~azure.containerregistry.TagProperties`]
+        :return: ItemPaged[:class:`~azure.containerregistry.ArtifactTagProperties`]
         :rtype: :class:`~azure.core.paging.ItemPaged`
         :raises: :class:`~azure.core.exceptions.ResourceNotFoundError`
         """
@@ -275,7 +275,11 @@ class ContainerRepositoryClient(ContainerRegistryBaseClient):
         orderby = kwargs.pop("order_by", None)
         digest = kwargs.pop("digest", None)
         cls = kwargs.pop(
-            "cls", lambda objs: [TagProperties._from_generated(o) for o in objs]  # pylint: disable=protected-access
+            "cls",
+            lambda objs: [
+                ArtifactTagProperties._from_generated(o, repository=self.repository)  # pylint: disable=protected-access
+                for o in objs
+            ],
         )
 
         error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
@@ -391,18 +395,19 @@ class ContainerRepositoryClient(ContainerRegistryBaseClient):
 
     @distributed_trace
     def set_tag_properties(self, tag, permissions, **kwargs):
-        # type: (str, ContentProperties, Dict[str, Any]) -> TagProperties
+        # type: (str, ContentProperties, Dict[str, Any]) -> ArtifactTagProperties
         """Set the properties for a tag
 
         :param tag: Tag to set properties for
         :type tag: str
         :param permissions: The property's values to be set
         :type permissions: ContentProperties
-        :returns: :class:`~azure.containerregistry.TagProperties`
+        :returns: :class:`~azure.containerregistry.ArtifactTagProperties`
         :raises: :class:`~azure.core.exceptions.ResourceNotFoundError`
         """
-        return TagProperties._from_generated(  # pylint: disable=protected-access
+        return ArtifactTagProperties._from_generated(  # pylint: disable=protected-access
             self._client.container_registry.update_tag_attributes(
                 self.repository, tag, value=permissions._to_generated(), **kwargs  # pylint: disable=protected-access
-            )
+            ),
+            repository=self.repository,
         )
