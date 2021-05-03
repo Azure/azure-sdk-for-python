@@ -2,6 +2,7 @@
 # Licensed under the MIT License.
 
 import os
+from datetime import timedelta
 from azure.monitor.query import LogQueryClient
 from azure.identity import ClientSecretCredential
 
@@ -16,12 +17,11 @@ client = LogQueryClient(credential)
 
 response = client.query(
     os.environ['LOG_WORKSPACE_ID'],
-    "AppRequests | take 5",
-    timeout=30,
+    "AppRequests | take 1",
+    timeout=timedelta(seconds=30) ,
     include_statistics=True,
     include_render=True
     )
 
 for item in response.tables:
-    print(item.rows,len(item.rows))
-    print("\n\n\n\n\n\n")
+    print(item)

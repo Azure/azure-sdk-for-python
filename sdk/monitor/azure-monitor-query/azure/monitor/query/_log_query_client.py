@@ -48,10 +48,13 @@ class LogQueryClient(object):
         :param query: The Analytics query. Learn more about the `Analytics query syntax
          <https://azure.microsoft.com/documentation/articles/app-insights-analytics-reference/>`_.
         :type query: str
-        :keyword timespan: Optional. The timespan over which to query data. This is an ISO8601 time
+        :keyword ~datetime.timedelta timespan: Optional. The timespan over which to query data. This is an ISO8601 time
          period value.  This timespan is applied in addition to any that are specified in the query
          expression.
-        :paramtype timespan: ~datetime.timedelta
+        :keyword bool include_statistics: To get information about query statistics.
+        :keyword bool include_render: In the query language, it is possible to specify different render options.
+         By default, the API does not return information regarding the type of visualization to show.
+         If your client requires this information, specify the preference
         :return: QueryResults, or the result of cls(response)
         :rtype: ~azure.monitor.query.LogQueryResults
         :raises: ~azure.core.exceptions.HttpResponseError
@@ -82,8 +85,6 @@ class LogQueryClient(object):
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         try:
-            try:
-                for q in queries:
             queries = [LogQueryRequest(**q) for q in queries]
         except KeyError:
             pass
