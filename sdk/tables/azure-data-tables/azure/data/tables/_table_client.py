@@ -276,12 +276,12 @@ class TableClient(TablesBaseClient):
     @overload
     def delete_entity(self, partition_key, row_key, **kwargs):
         # type: (str, str, Any) -> None
-        ...
+        pass
 
     @overload
-    def delete_entity(self, entity: Union[TableEntity, Mapping[str, Any]], **kwargs):
+    def delete_entity(self, entity, **kwargs):
         # type: (Union[TableEntity, Mapping[str, Any]], Any) -> None
-        ...
+        pass
 
     @distributed_trace
     def delete_entity(self, *args, **kwargs):
