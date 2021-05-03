@@ -14,8 +14,7 @@ credential  = ClientSecretCredential(
 
 client = LogQueryClient(credential)
 
-response = client.batch_query("d2d0e126-fa1e-4b0a-b647-250cdd471e68",
-["AppRequests | take 2", "AppRequests | take 3"])
+response = client.batch_query("640bfb1c-9109-4569-8a1b-4d9c92cc0eb2", ["AppRequests | take 2", "AppRequests | take 3"])
 
 for r in response:
     print(response)

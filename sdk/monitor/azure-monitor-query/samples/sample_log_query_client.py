@@ -14,7 +14,13 @@ credential  = ClientSecretCredential(
 
 client = LogQueryClient(credential)
 
-response = client.query("d2d0e126-fa1e-4b0a-b647-250cdd471e68", "AppRequests")
+# Response time trend 
+# request duration over the last 12 hours. 
+query = """AppRequests | 
+where TimeGenerated > ago(12h) | 
+summarize avgRequestDuration=avg(DurationMs) by bin(TimeGenerated, 10m), _ResourceId"""
+
+response = client.query("640bfb1c-9109-4569-8a1b-4d9c92cc0eb2", query)
 
 for item in response.tables:
     print(item.rows,len(item.rows))

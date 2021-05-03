@@ -5,20 +5,26 @@
 # license information.
 # --------------------------------------------------------------------------
 
-from typing import TYPE_CHECKING, Any, Union
+from typing import TYPE_CHECKING, Any, Union, Sequence
 
 from ._generated._monitor_query_client import (
-    MonitorQueryClient,
+    MonitorQueryClient
 )
+
+from ._generated.models import BatchRequest, QueryBody, LogQueryRequest, QueryResults as LogQueryResults
 
 from ._helpers import get_authentication_policy
 
 if TYPE_CHECKING:
     from azure.identity import DefaultAzureCredential
     from azure.core.credentials import TokenCredential
+    from ._generated.models import BatchResponse
 
 class LogQueryClient(object):
     """LogQueryClient
+
+    :param credential: The credential to authenticate the client
+    :type credential: ~azure.core.credentials.TokenCredential or ~azure.identity.DefaultAzureCredential
     """
 
     def __init__(self, credential, **kwargs):
@@ -31,19 +37,56 @@ class LogQueryClient(object):
         self._query_op = self._client.query
 
     def query(self, workspace_id, query, **kwargs):
-        # type: (str, str, Any) -> None
+        # type: (str, str, Any) -> LogQueryResults
         """Execute an Analytics query.
 
         Executes an Analytics query for data.
+
+        :param workspace_id: ID of the workspace. This is Workspace ID from the Properties blade in the
+         Azure portal.
+        :type workspace_id: str
+        :param query: The Analytics query. Learn more about the `Analytics query syntax
+         <https://azure.microsoft.com/documentation/articles/app-insights-analytics-reference/>`_.
+        :type query: str
+        :keyword timespan: Optional. The timespan over which to query data. This is an ISO8601 time
+         period value.  This timespan is applied in addition to any that are specified in the query
+         expression.
+        :paramtype timespan: ~datetime.timedelta
+        :return: QueryResults, or the result of cls(response)
+        :rtype: ~azure.monitor.query.LogQueryResults
+        :raises: ~azure.core.exceptions.HttpResponseError
         """
+        timeout = kwargs.pop("timeout", None)
+        include_statistics = kwargs.pop("include_statistics", False)
+        include_render = kwargs.pop("include_render", False)
+        
+        if timeout:
+            prefer = "wait=" + str(timeout)
+        if include_statistics:
+            prefer += " include-statistics=true"
+        if include_render:
+            prefer += " include-statistics=true"
+
         return self._query_op.get(workspace_id, query, **kwargs)
 
-    def batch_query(self, batch, **kwargs):
-        # type: (str, Any) -> None
+    def batch_query(self, workspace_id, queries, **kwargs):
+        # type: (str, Sequence[str], Any) -> BatchResponse
         """Execute an Analytics query.
 
         Executes an Analytics query for data.
+
+        :param workspace_id: ID of the workspace. This is Workspace ID from the Properties blade in the
+         Azure portal.
+        :type workspace_id: str
+        :param queries: The list of queries that should be processed
+        :type queries: list[str]
+        :return: BatchResponse, or the result of cls(response)
+        :rtype: ~monitor_query_client.models.BatchResponse
+        :raises: ~azure.core.exceptions.HttpResponseError
         """
+        queries = [QueryBody(query=query) for query in queries]
+        queries = [LogQueryRequest(body=query, workspace=workspace_id) for query in queries]
+        batch = BatchRequest(requests=queries)
         return self._query_op.batch(batch, **kwargs)
 
     def close(self):

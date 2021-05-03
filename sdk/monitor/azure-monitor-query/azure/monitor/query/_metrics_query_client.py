@@ -18,9 +18,14 @@ from ._helpers import get_authentication_policy
 if TYPE_CHECKING:
     from azure.identity import DefaultAzureCredential
     from azure.core.credentials import TokenCredential
+    from azure.core.paging import ItemPaged
+    from ._generated.models import Response as MetricsResponse, MetricNamespaceCollection
 
 class MetricsQueryClient(object):
     """MetricsQueryClient
+
+    :param credential: The credential to authenticate the client
+    :type credential: ~azure.core.credentials.TokenCredential or ~azure.identity.DefaultAzureCredential
     """
 
     def __init__(self, credential, **kwargs):
@@ -30,10 +35,11 @@ class MetricsQueryClient(object):
             authentication_policy=get_authentication_policy(credential),
             **kwargs
         )
-        self._query_op = self._client.metrics
+        self._metrics_op = self._client.metrics
+        self._namespace_op = self._client.metric_namespaces
 
     def query(self, resource_uri, **kwargs):
-        # type: (str, Any) -> None
+        # type: (str, Any) -> MetricsResponse
         """Lists the metric values for a resource.
 
         :param resource_uri: The identifier of the resource.
@@ -70,12 +76,26 @@ class MetricsQueryClient(object):
         :paramtype result_type: str or ~monitor_query_client.models.ResultType
         :keyword metricnamespace: Metric namespace to query metric definitions for.
         :paramtype metricnamespace: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: Response, or the result of cls(response)
-        :rtype: ~monitor_query_client.models.Response
+        :rtype: ~azure.monitor.query.MetricsResponse
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        return self._query_op.list(resource_uri, **kwargs)
+        return self._metrics_op.list(resource_uri, connection_verify=False, **kwargs)
+
+    def get_metric_namespaces(self, resource_uri, **kwargs):
+        # type: (str, Any) -> ItemPaged[MetricNamespaceCollection]
+        """Lists the metric namespaces for the resource.
+
+        :param resource_uri: The identifier of the resource.
+        :type resource_uri: str
+        :keyword start_time: The ISO 8601 conform Date start time from which to query for metric
+         namespaces.
+        :paramtype start_time: str
+        :return: An iterator like instance of either MetricNamespaceCollection or the result of cls(response)
+        :rtype: ~azure.core.paging.ItemPaged[~azure.monitor.query.MetricNamespaceCollection]
+        :raises: ~azure.core.exceptions.HttpResponseError
+        """
+        return self._namespace_op.list(resource_uri)
 
     def close(self):
         # type: () -> None

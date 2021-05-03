@@ -14,4 +14,4 @@ credential  = ClientSecretCredential(
 
 client = MetricsQueryClient(credential)
 
-response = client.query("d2d0e126-fa1e-4b0a-b647-250cdd471e68", "AppRequests")
+response = client.query("/subscriptions/faa080af-c1d8-40ad-9cce-e1a450ca5b57/resourceGroups/srnagar-azuresdkgroup/providers/Microsoft.CognitiveServices/accounts/srnagara-textanalytics")
