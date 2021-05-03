@@ -729,7 +729,7 @@ class FileSystemClient(AsyncStorageAccountHostsMixin, FileSystemClientBase):
         :rtype: ~azure.storage.file.datalake.aio.DataLakeDirectoryClient
                 or azure.storage.file.datalake.aio.DataLakeFileClient
         """
-        _, url, undelete_source = self.__undelete_path(deleted_path_name, deletion_id)
+        _, url, undelete_source = self._undelete_path_options(deleted_path_name, deletion_id)
 
         pipeline = AsyncPipeline(
             transport=AsyncTransportWrapper(self._pipeline._transport), # pylint: disable = protected-access

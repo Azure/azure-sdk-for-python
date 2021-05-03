@@ -3,7 +3,7 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
-from typing import Optional, List, Dict, Any
+from typing import Optional, Dict, Any
 
 try:
     from urllib.parse import urlparse

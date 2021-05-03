@@ -750,7 +750,7 @@ class FileSystemClient(StorageAccountHostsMixin):
         file_client.delete_file(**kwargs)
         return file_client
 
-    def __undelete_path(self, deleted_path_name, deletion_id):
+    def _undelete_path_options(self, deleted_path_name, deletion_id):
         quoted_path = quote(unquote(deleted_path_name.strip('/')))
 
         url_and_token = self.url.replace('.dfs.', '.blob.').split('?')
@@ -781,7 +781,7 @@ class FileSystemClient(StorageAccountHostsMixin):
             The timeout parameter is expressed in seconds.
         :rtype: ~azure.storage.file.datalake.DataLakeDirectoryClient or azure.storage.file.datalake.DataLakeFileClient
         """
-        _, url, undelete_source = self.__undelete_path(deleted_path_name, deletion_id)
+        _, url, undelete_source = self._undelete_path_options(deleted_path_name, deletion_id)
 
         pipeline = Pipeline(
             transport=TransportWrapper(self._pipeline._transport), # pylint: disable = protected-access
