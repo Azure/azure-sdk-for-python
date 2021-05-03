@@ -5,6 +5,7 @@
 # license information.
 # --------------------------------------------------------------------------
 
+import uuid
 from ._generated.models import (
     QueryResults,
     Table,
@@ -185,7 +186,9 @@ class LogQueryRequest(InternalLogQueryRequest):
         **kwargs
     ):
         super(LogQueryRequest, self).__init__(**kwargs)
-        self.id = kwargs.get('id', None)
-        self.headers = kwargs.get('headers', None)
+        self.id = kwargs.get('id', uuid.uuid4())
+        self.headers = kwargs.get('headers', {
+            "Content-Type": "application/json"
+        })
         self.body = kwargs.get('body', None)
         self.workspace = kwargs.get('workspace', None)

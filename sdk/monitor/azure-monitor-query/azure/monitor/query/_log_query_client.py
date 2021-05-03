@@ -87,7 +87,7 @@ class LogQueryClient(object):
         """
         try:
             queries = [LogQueryRequest(**q) for q in queries]
-        except KeyError:
+        except (KeyError, TypeError):
             pass
         batch = BatchRequest(requests=queries)
         return self._query_op.batch(batch, **kwargs)
