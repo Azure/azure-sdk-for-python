@@ -293,7 +293,7 @@ Use `update_topic` method to update a thread's properties. `topic` is used to de
 topic = "new topic"
 chat_thread_client.update_topic(topic=topic)
 
-chat_thread = chat_client.get_properties(thread_id)
+chat_thread = chat_thread_client.get_properties(thread_id)
 
 assert chat_thread.topic == topic
 ```
@@ -388,7 +388,7 @@ chat_thread_client.update_message(send_message_result_id, content=content)
 
 chat_message = chat_thread_client.get_message(message_id=send_message_result_id)
 
-assert chat_message.content == content
+assert chat_message.content.message == content
 ```
 
 ### Delete a message

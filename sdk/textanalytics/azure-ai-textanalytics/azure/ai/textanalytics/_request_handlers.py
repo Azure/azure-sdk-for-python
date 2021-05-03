@@ -13,6 +13,7 @@ from ._models import (
     RecognizeEntitiesAction,
     RecognizePiiEntitiesAction,
     RecognizeLinkedEntitiesAction,
+    AnalyzeSentimentAction,
     AnalyzeBatchActionsType,
 )
 
@@ -75,6 +76,8 @@ def _determine_action_type(action):
         return AnalyzeBatchActionsType.RECOGNIZE_PII_ENTITIES
     if isinstance(action, RecognizeLinkedEntitiesAction):
         return AnalyzeBatchActionsType.RECOGNIZE_LINKED_ENTITIES
+    if isinstance(action, AnalyzeSentimentAction):
+        return AnalyzeBatchActionsType.ANALYZE_SENTIMENT
     return AnalyzeBatchActionsType.EXTRACT_KEY_PHRASES
 
 def _check_string_index_type_arg(string_index_type_arg, api_version, string_index_type_default="UnicodeCodePoint"):
