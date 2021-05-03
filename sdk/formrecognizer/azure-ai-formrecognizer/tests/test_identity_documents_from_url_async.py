@@ -30,16 +30,16 @@ class TestIdDocumentsFromUrlAsync(AsyncFormRecognizerTest):
         self.assertEqual(client._client._config.polling_interval, 7)
 
         async with client:
-            poller = await client.begin_recognize_identity_documents_from_url(self.id_document_url_jpg, polling_interval=6)
+            poller = await client.begin_recognize_identity_documents_from_url(self.identity_document_url_jpg, polling_interval=6)
             await poller.wait()
             self.assertEqual(poller._polling_method._timeout, 6)
-            poller2 = await client.begin_recognize_identity_documents_from_url(self.id_document_url_jpg)
+            poller2 = await client.begin_recognize_identity_documents_from_url(self.identity_document_url_jpg)
             await poller2.wait()
             self.assertEqual(poller2._polling_method._timeout, 7)  # goes back to client default
 
     @FormRecognizerPreparer()
     @GlobalClientPreparer()
-    async def test_id_document_encoded_url(self, client):
+    async def test_identity_document_encoded_url(self, client):
         async with client:
             try:
                 poller = await client.begin_recognize_identity_documents_from_url("https://fakeuri.com/blank%20space")
@@ -51,26 +51,26 @@ class TestIdDocumentsFromUrlAsync(AsyncFormRecognizerTest):
         client = FormRecognizerClient(formrecognizer_test_endpoint, AzureKeyCredential("xxxx"))
         with self.assertRaises(ClientAuthenticationError):
             async with client:
-                poller = await client.begin_recognize_identity_documents_from_url(self.id_document_url_jpg)
+                poller = await client.begin_recognize_identity_documents_from_url(self.identity_document_url_jpg)
 
     @FormRecognizerPreparer()
     @GlobalClientPreparer()
-    async def test_id_document_bad_url(self, client):
+    async def test_identity_document_bad_url(self, client):
         with self.assertRaises(HttpResponseError):
             async with client:
                 poller = await client.begin_recognize_identity_documents_from_url("https://badurl.jpg")
 
     @FormRecognizerPreparer()
     @GlobalClientPreparer()
-    async def test_id_document_url_pass_stream(self, client):
-        with open(self.id_document_license_jpg, "rb") as id_document:
+    async def test_identity_document_url_pass_stream(self, client):
+        with open(self.identity_document_license_jpg, "rb") as id_document:
             with self.assertRaises(HttpResponseError):
                 async with client:
                     poller = await client.begin_recognize_identity_documents_from_url(id_document)
 
     @FormRecognizerPreparer()
     @GlobalClientPreparer()
-    async def test_id_document_url_transform_jpg(self, client):
+    async def test_identity_document_url_transform_jpg(self, client):
         responses = []
 
         def callback(raw_response, _, headers):
@@ -81,7 +81,7 @@ class TestIdDocumentsFromUrlAsync(AsyncFormRecognizerTest):
 
         async with client:
             poller = await client.begin_recognize_identity_documents_from_url(
-                identity_document_url=self.id_document_url_jpg,
+                identity_document_url=self.identity_document_url_jpg,
                 include_field_elements=True,
                 cls=callback
             )
@@ -106,9 +106,9 @@ class TestIdDocumentsFromUrlAsync(AsyncFormRecognizerTest):
 
     @FormRecognizerPreparer()
     @GlobalClientPreparer()
-    async def test_id_document_jpg_passport(self, client):
+    async def test_identity_document_jpg_passport(self, client):
         async with client:
-            poller = await client.begin_recognize_identity_documents_from_url(self.id_document_url_jpg_passport)
+            poller = await client.begin_recognize_identity_documents_from_url(self.identity_document_url_jpg_passport)
 
             result = await poller.result()
             self.assertEqual(len(result), 1)
@@ -127,9 +127,9 @@ class TestIdDocumentsFromUrlAsync(AsyncFormRecognizerTest):
 
     @FormRecognizerPreparer()
     @GlobalClientPreparer()
-    async def test_id_document_jpg(self, client):
+    async def test_identity_document_jpg(self, client):
         async with client:
-            poller = await client.begin_recognize_identity_documents_from_url(self.id_document_url_jpg)
+            poller = await client.begin_recognize_identity_documents_from_url(self.identity_document_url_jpg)
 
             result = await poller.result()
         self.assertEqual(len(result), 1)
@@ -150,9 +150,9 @@ class TestIdDocumentsFromUrlAsync(AsyncFormRecognizerTest):
 
     @FormRecognizerPreparer()
     @GlobalClientPreparer()
-    async def test_id_document_jpg_include_field_elements(self, client):
+    async def test_identity_document_jpg_include_field_elements(self, client):
         async with client:
-            poller = await client.begin_recognize_identity_documents_from_url(self.id_document_url_jpg, include_field_elements=True)
+            poller = await client.begin_recognize_identity_documents_from_url(self.identity_document_url_jpg, include_field_elements=True)
 
             result = await poller.result()
         self.assertEqual(len(result), 1)
@@ -172,9 +172,9 @@ class TestIdDocumentsFromUrlAsync(AsyncFormRecognizerTest):
     @FormRecognizerPreparer()
     @GlobalClientPreparer()
     @pytest.mark.live_test_only
-    async def test_id_document_continuation_token(self, client):
+    async def test_identity_document_continuation_token(self, client):
         async with client:
-            initial_poller = await client.begin_recognize_identity_documents_from_url(self.id_document_url_jpg)
+            initial_poller = await client.begin_recognize_identity_documents_from_url(self.identity_document_url_jpg)
             cont_token = initial_poller.continuation_token()
             poller = await client.begin_recognize_identity_documents_from_url(None, continuation_token=cont_token)
             result = await poller.result()
@@ -183,17 +183,17 @@ class TestIdDocumentsFromUrlAsync(AsyncFormRecognizerTest):
 
     @FormRecognizerPreparer()
     @GlobalClientPreparer(client_kwargs={"api_version": FormRecognizerApiVersion.V2_0})
-    async def test_id_document_v2(self, client):
+    async def test_identity_document_v2(self, client):
         with pytest.raises(ValueError) as e:
             async with client:
-                await client.begin_recognize_identity_documents_from_url(self.id_document_url_jpg)
+                await client.begin_recognize_identity_documents_from_url(self.identity_document_url_jpg)
         assert "Method 'begin_recognize_identity_documents_from_url' is only available for API version V2_1_PREVIEW and up" in str(e.value)
 
     @FormRecognizerPreparer()
     @GlobalClientPreparer()
     async def test_pages_kwarg_specified(self, client):
         async with client:
-            poller = await client.begin_recognize_identity_documents_from_url(self.id_document_url_jpg, pages=["1"])
+            poller = await client.begin_recognize_identity_documents_from_url(self.identity_document_url_jpg, pages=["1"])
             assert '1' == poller._polling_method._initial_response.http_response.request.query['pages']
             result = await poller.result()
             assert result
