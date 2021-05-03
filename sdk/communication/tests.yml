@@ -21,7 +21,9 @@ stages:
               - $(sub-config-communication-services-cloud-test-resources-common)
               - $(sub-config-communication-services-cloud-test-resources-python)
           Int:
-            SubscriptionConfiguration: $(sub-config-communication-int-test-resources)
+            SubscriptionConfiguration:
+              - $(sub-config-communication-int-test-resources)
+              - $(sub-config-communication-int-test-resources-python)
         Clouds: Public,Int
         AllocateResourceGroup: 'false'
         ${{ if ne(package, 'mgmt') }}:
