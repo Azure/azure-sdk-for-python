@@ -105,6 +105,8 @@ def run_command(args):
     except Exception as ex:  # pylint:disable=broad-except
         # failed to execute 'cmd' or '/bin/sh', or timed out; PowerShell and Az.Account may or may not be installed
         # (handling Exception here because subprocess.SubprocessError and .TimeoutExpired were added in 3.3)
+        if proc and not proc.returncode:
+            proc.kill()
         error = CredentialUnavailableError(message="Failed to invoke PowerShell")
         six.raise_from(error, ex)
 
