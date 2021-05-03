@@ -637,7 +637,7 @@ class ContainerRegistryOperations(object):
         reference,  # type: str
         **kwargs  # type: Any
     ):
-        # type: (...) -> "_models.ArtifactArtifactTagProperties"
+        # type: (...) -> "_models.ArtifactTagProperties"
         """Get tag attributes by tag.
 
         :param name: Name of the image (including the namespace).
@@ -645,11 +645,11 @@ class ContainerRegistryOperations(object):
         :param reference: Tag name.
         :type reference: str
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: ArtifactArtifactTagProperties, or the result of cls(response)
-        :rtype: ~container_registry.models.ArtifactArtifactTagProperties
+        :return: ArtifactTagProperties, or the result of cls(response)
+        :rtype: ~container_registry.models.ArtifactTagProperties
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["_models.ArtifactArtifactTagProperties"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.ArtifactTagProperties"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -681,7 +681,7 @@ class ContainerRegistryOperations(object):
             error = self._deserialize.failsafe_deserialize(_models.AcrErrors, response)
             raise HttpResponseError(response=response, model=error)
 
-        deserialized = self._deserialize('ArtifactArtifactTagProperties', pipeline_response)
+        deserialized = self._deserialize('ArtifactTagProperties', pipeline_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})
@@ -696,7 +696,7 @@ class ContainerRegistryOperations(object):
         value=None,  # type: Optional["_models.ContentProperties"]
         **kwargs  # type: Any
     ):
-        # type: (...) -> "_models.ArtifactArtifactTagProperties"
+        # type: (...) -> "_models.ArtifactTagProperties"
         """Update tag attributes.
 
         :param name: Name of the image (including the namespace).
@@ -706,11 +706,11 @@ class ContainerRegistryOperations(object):
         :param value: Repository attribute value.
         :type value: ~container_registry.models.ContentProperties
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: ArtifactArtifactTagProperties, or the result of cls(response)
-        :rtype: ~container_registry.models.ArtifactArtifactTagProperties
+        :return: ArtifactTagProperties, or the result of cls(response)
+        :rtype: ~container_registry.models.ArtifactTagProperties
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["_models.ArtifactArtifactTagProperties"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.ArtifactTagProperties"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -750,7 +750,7 @@ class ContainerRegistryOperations(object):
             error = self._deserialize.failsafe_deserialize(_models.AcrErrors, response)
             raise HttpResponseError(response=response, model=error)
 
-        deserialized = self._deserialize('ArtifactArtifactTagProperties', pipeline_response)
+        deserialized = self._deserialize('ArtifactTagProperties', pipeline_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})

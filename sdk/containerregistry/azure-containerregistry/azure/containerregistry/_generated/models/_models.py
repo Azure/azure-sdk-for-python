@@ -249,7 +249,7 @@ class ArtifactManifestProperties(msrest.serialization.Model):
         self.writeable_properties = kwargs.get('writeable_properties', None)
 
 
-class ArtifactArtifactTagProperties(msrest.serialization.Model):
+class ArtifactTagProperties(msrest.serialization.Model):
     """Tag attributes.
 
     All required parameters must be populated in order to send to Azure.
@@ -290,7 +290,7 @@ class ArtifactArtifactTagProperties(msrest.serialization.Model):
         self,
         **kwargs
     ):
-        super(ArtifactArtifactTagProperties, self).__init__(**kwargs)
+        super(ArtifactTagProperties, self).__init__(**kwargs)
         self.repository = kwargs['repository']
         self.name = kwargs['name']
         self.digest = kwargs['digest']
