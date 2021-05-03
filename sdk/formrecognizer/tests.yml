@@ -44,3 +44,5 @@ stages:
         AZURE_FORM_RECOGNIZER_TARGET_KEY: $(python-formrecognizer-test-endpoint-key)
         AZURE_FORM_RECOGNIZER_TARGET_REGION: $(python-formrecognizer-test-target-region)
         AZURE_FORM_RECOGNIZER_TARGET_RESOURCE_ID: $(python-formrecognizer-test-target-resource-id)
+        MODEL_ID_FIXED_ROW_TABLES: $(python-formrecognizer-test-model-id-fixed-row-tables)
+        MODEL_ID_DYNAMIC_ROW_TABLES: $(python-formrecognizer-test-model-id-dynamic-row-tables)

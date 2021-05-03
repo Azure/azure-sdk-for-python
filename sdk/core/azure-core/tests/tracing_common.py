@@ -22,7 +22,7 @@ class FakeSpan(HttpSpanMixin, object):
     # Keep a fake context of the current one
     CONTEXT = []
 
-    def __init__(self, span=None, name="span"):
+    def __init__(self, span=None, name="span", kind=None):
         # type: (Optional[Span], Optional[str]) -> None
         """
         If a span is not passed in, creates a new tracer. If the instrumentation key for Azure Exporter is given, will
@@ -35,7 +35,7 @@ class FakeSpan(HttpSpanMixin, object):
         """
         self._span = span
         self.name = name
-        self._kind = SpanKind.UNSPECIFIED
+        self._kind = kind or SpanKind.UNSPECIFIED
         self.attributes = {}
         self.children = []
         if self.CONTEXT:
