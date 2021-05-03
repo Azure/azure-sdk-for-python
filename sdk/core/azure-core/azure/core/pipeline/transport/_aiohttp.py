@@ -90,7 +90,6 @@ class AioHttpTransport(AsyncHttpTransport):
                 loop=self._loop,
                 trust_env=self._use_env_settings,
                 cookie_jar=jar,
-                auto_decompress=False,
             )
         if self.session is not None:
             await self.session.__aenter__()
@@ -198,29 +197,38 @@ class AioHttpStreamDownloadGenerator(AsyncIterator):
 
     :param pipeline: The pipeline object
     :param response: The client response object.
+    :param int raw: If returns the raw stream.
     """
-    def __init__(self, pipeline: Pipeline, response: AsyncHttpResponse) -> None:
+    def __init__(self, pipeline: Pipeline, response: AsyncHttpResponse, raw: bool = False) -> None:
         self.pipeline = pipeline
         self.request = response.request
         self.response = response
         self.block_size = response.block_size
+        self._raw = raw
         self.content_length = int(response.internal_response.headers.get('Content-Length', 0))
 
     def __len__(self):
         return self.content_length
 
     async def __anext__(self):
+        raw = self.pipeline.transport.session.auto_decompress
+        if self._raw:
+            self.pipeline.transport.session.auto_decompress = False
         try:
             chunk = await self.response.internal_response.content.read(self.block_size)
+            self.pipeline.transport.session.auto_decompress = raw
             if not chunk:
                 raise _ResponseStopIteration()
             return chunk
         except _ResponseStopIteration:
+            self.pipeline.transport.session.auto_decompress = raw
             self.response.internal_response.close()
             raise StopAsyncIteration()
         except StreamConsumedError:
+            self.pipeline.transport.session.auto_decompress = raw
             raise
         except Exception as err:
+            self.pipeline.transport.session.auto_decompress = raw
             _LOGGER.warning("Unable to stream download: %s", err)
             self.response.internal_response.close()
             raise
@@ -267,13 +275,14 @@ class AioHttpTransportResponse(AsyncHttpResponse):
         """Load in memory the body, so it could be accessible from sync methods."""
         self._body = await self.internal_response.read()
 
-    def stream_download(self, pipeline) -> AsyncIteratorType[bytes]:
+    def stream_download(self, pipeline, raw=False) -> AsyncIteratorType[bytes]:
         """Generator for streaming response body data.
 
         :param pipeline: The pipeline object
-        :type pipeline: azure.core.pipeline
+        :type pipeline: azure.core.pipeline.Pipeline
+        :param int raw: If returns the raw stream.
         """
-        return AioHttpStreamDownloadGenerator(pipeline, self)
+        return AioHttpStreamDownloadGenerator(pipeline, self, raw=raw)
 
     def __getstate__(self):
         # Be sure body is loaded in memory, otherwise not pickable and let it throw

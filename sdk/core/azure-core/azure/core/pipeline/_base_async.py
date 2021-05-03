@@ -160,6 +160,11 @@ class AsyncPipeline(
     async def __aexit__(self, *exc_details):  # pylint: disable=arguments-differ
         await self._transport.__aexit__(*exc_details)
 
+    @property
+    def transport(self):
+        """Runs transport used in the pipeline."""
+        return self._transport
+
     async def _prepare_multipart_mixed_request(self, request: HTTPRequestType) -> None:
         """Will execute the multipart policies.
 
