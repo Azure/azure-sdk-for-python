@@ -185,14 +185,6 @@ _EDM_TO_ENTITY_CONVERSIONS = {
     EdmType.INT32: _to_entity_int32,
     EdmType.INT64: _to_entity_int64,
     EdmType.STRING: _to_entity_str,
-    "EdmType.BINARY": _to_entity_binary,
-    "EdmType.BOOLEAN": _to_entity_bool,
-    "EdmType.DATETIME": _to_entity_datetime,
-    "EdmType.DOUBLE": _to_entity_float,
-    "EdmType.GUID": _to_entity_guid,
-    "EdmType.INT32": _to_entity_int32,
-    "EdmType.INT64": _to_entity_int64,
-    "EdmType.STRING": _to_entity_str,
 }
 
 
