@@ -19,7 +19,7 @@ from ._base_client import ContainerRegistryBaseClient
 from ._generated.models import AcrErrors
 from ._helpers import _is_tag, _parse_next_link
 from ._models import (
-    DeletedRepositoryResult,
+    DeleteRepositoryResult,
     RegistryArtifactProperties,
     RepositoryProperties,
     ArtifactTagProperties,
@@ -61,10 +61,10 @@ class ContainerRepositoryClient(ContainerRegistryBaseClient):
         """Delete a repository
 
         :returns: Object containing information about the deleted repository
-        :rtype: :class:`~azure.containerregistry.DeletedRepositoryResult`
+        :rtype: :class:`~azure.containerregistry.DeleteRepositoryResult`
         :raises: :class:`~azure.core.exceptions.ResourceNotFoundError`
         """
-        return DeletedRepositoryResult._from_generated(  # pylint: disable=protected-access
+        return DeleteRepositoryResult._from_generated(  # pylint: disable=protected-access
             self._client.container_registry.delete_repository(self.repository, **kwargs)
         )
 
