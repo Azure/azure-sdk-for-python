@@ -3,69 +3,30 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
+from typing import Dict, Any
 from enum import Enum
 from datetime import datetime
 from uuid import UUID
 import six
 
-from ._error import _ERROR_ATTRIBUTE_MISSING, _ERROR_VALUE_TOO_LARGE
+from ._error import _ERROR_VALUE_TOO_LARGE
 
 
 class TableEntity(dict):
     """
-    An entity object. Can be accessed as a dict or as an obj. The attributes of
-    the entity will be created dynamically. For example, the following are both
-    valid::
-        TableEntity = TableEntity()
-        TableEntity.a = 'b'
-        TableEntity['x'] = 'y'
+    An Entity dictionary with additional metadata
 
     """
+    _metadata = None
 
-    def _set_metadata(self):
-        if "Timestamp" in self.keys():
-            self._metadata = {  # pylint: disable=attribute-defined-outside-init
-                "etag": self.pop("etag"),
-                "timestamp": self.pop("Timestamp"),
-            }
-        else:
-            self._metadata = {"etag": self.pop("etag")}  # pylint: disable=attribute-defined-outside-init
-
+    @property
     def metadata(self):
-        # type: (...) -> Dict[str,Any]
+        # type: () -> Dict[str, Any]
         """Resets metadata to be a part of the entity
         :return Dict of entity metadata
         :rtype Dict[str, Any]
         """
         return self._metadata
-
-    def __getattr__(self, name):
-        """
-        :param name:name of entity entry
-        :type name: str
-        :return: TableEntity dictionary
-        :rtype: Dict[str,str]
-        """
-        try:
-            return self[name]
-        except KeyError:
-            raise AttributeError(_ERROR_ATTRIBUTE_MISSING.format("TableEntity", name))
-
-    __setattr__ = dict.__setitem__
-
-    def __delattr__(self, name):
-        """
-        :param name:name of entity entry
-        :type name: str
-        """
-        try:
-            if name is not None:
-                del self[name]
-        except KeyError:
-            raise AttributeError(_ERROR_ATTRIBUTE_MISSING.format("TableEntity", name))
-
-    def __dir__(self):
-        return dir({}) + list(self.keys())
 
 
 class EntityProperty(object):
