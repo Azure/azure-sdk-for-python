@@ -20,25 +20,28 @@ T = TypeVar('T', PolicyResult, AttestationResult, StoredAttestationPolicy, Polic
 class AttestationSigner(object):
     """ Represents a signing certificate returned by the Attestation Service.
 
-    :keyword List[str] certificates: A list of Base64 encoded X.509 Certificates which may be used
+    :param list[str] certificates: A list of Base64 encoded X.509 Certificates which may be used
         to sign an :class:`AttestationToken`. 
-    :keyword str key_id: A string which identifies a signing key, :seealso `https://tools.ietf.org/html/rfc7517#section-4.5`:
+    :param str key_id: A string which identifies a signing key, See `RFC 7517 Section 4.5<https://tools.ietf.org/html/rfc7517#section-4.5>`:
 
     """
     def __init__(self, certificates, key_id, **kwargs):
-        # type: (List[bytes], str, Any) -> None
+        # type: (list[bytes], str, Any) -> None
         self.certificates = certificates
         self.key_id = key_id
 
 class AttestationData(object):
     """ AttestationData represents an object passed as an input to the Attestation Service.
     
-    AttestationData comes in two forms: Binary and JSON. To distinguish between the two, when an <see cref="AttestationData"/>
+    AttestationData comes in two forms: Binary and JSON. To distinguish between the two, when an :class:`AttestationData`
     object is created, the caller provides an indication that the input binary data will be treated as either JSON or Binary.
 
-    The AttestationData is reflected in the generated AttestationResult in two possible ways.
+    The AttestationData is reflected in the generated :class:`AttestationResult` in two possible ways.
     If the AttestationData is Binary, then the AttestationData is reflected in the AttestationResult.enclave_held_data claim.
-    If the AttestationData is JSON, then the AttestationData is expressed as JSON in the AttestationResult.runtime_claims or <see cref="AttestationResult.InittimeClaims"/> claim.
+    If the AttestationData is JSON, then the AttestationData is expressed as JSON in the AttestationResult.runtime_claims or AttestationResult.inittime_claims claim.
+
+    :param bytes data: Input data to be sent to the attestation service.
+    :param bool is_json: True if the attestation service should treat the input data as JSON.
     """
     def __init__(self, data, is_json=None):
         # type:(bytes, bool) -> None
@@ -123,53 +126,13 @@ class AttestationSigningKey(object):
 class AttestationToken(Generic[T]):
     """ Represents a token returned from the attestation service.
 
-    :var algorithm: Json Web Token Header "algorithm". See https://www.rfc-editor.org/rfc/rfc7515.html#section-4.1.1 for details. If the value of algorithm attribute is "none" it indicates that the token is unsecured.
-    :vartype algorithm: str
-
-    :var str content_type: Json Web Token Header "content type". See https://www.rfc-editor.org/rfc/rfc7515.html#section-4.1.10 for details.
-    :var str type: Json Web Token Header "type". See https://www.rfc-editor.org/rfc/rfc7515.html#section-4.1.9 for details. If present, the value for this field is normally "JWT".
-
-    :var critical: Optional critical indicator - indicates that the token must be valid.
-    :vartype critical: Optional[bool]
-    :var expiration_time: Time at which the token expires.
-    :vartype expiration_time: datetime
-    :var issuance_time: Time at which the token was issued.
-    :vartype issuance_time: datetime
-    :var not_before_time: Before this time, the token is invalid.
-    :vartype issuance_time: datetime
-    :var issuer: The entity which issued this token.
-    :vartype issuer: str
-    :var key_id: Json Web Token Header "kid". See https://www.rfc-editor.org/rfc/rfc7515.html#section-4.1.4 for details.
-    :vartype key_id: str
-    :var key_url: Json Web Token Header "jku". See https://www.rfc-editor.org/rfc/rfc7515.html#section-4.1.2 for details.
-    :vartype key_url: str
-    :var x509_url: Json Web Token Header "x5u". See https://www.rfc-editor.org/rfc/rfc7515.html#section-4.1.5 for details.
-    :vartype key_url: str
-    :var certificate_thumbprint: The Base64 encoded SHA1 hash of the certificate which signed this token.
-    :vartype certificate_thumbprint: str
-    :var certificate_sha256_thumbprint: The Base64 encoded SHA256 hash of the certificate which signed this token.
-    :vartype certificate_sha256_thumbprint: str
-    :var bytes header_bytes: Decoded header of the attestation token. See https://tools.ietf.org/html/rfc7515 for more details.
-    :vartype header_bytes: bytes
-    :var body_bytes: Decoded body of the attestation token. See https://tools.ietf.org/html/rfc7515 for more details.
-    :vartype body_bytes: bytes
-    :var signature_bytes: Decoded signature of the attestation token. See https://tools.ietf.org/html/rfc7515 for more details.
-    :vartype signature_bytes: bytes
-
-        public virtual AttestationSigner SigningCertificate { get; }
-        public virtual string TokenBody { get; }
-        public virtual string TokenHeader { get; }
-        public virtual X509Certificate2[] X509CertificateChain { get; }
-
-    """
-
-    def __init__(self, **kwargs):
-        """ Create a new instance of an AttestationToken class.
         :keyword Any body: The body of hte newly created token, if provided.
         :keyword SigningKey signer: If specified, the key used to sign the token.
         :keyword str token: If no body or signer is provided, the string representation of the token.
         :keyword Type body_type: The underlying type of the body of the 'token' parameter, used to deserialize the underlying body when parsing the token.
-        """
+    """
+
+    def __init__(self, **kwargs):
         body = kwargs.get('body')  # type: Any
         signer = kwargs.get('signer')  # type: AttestationSigningKey
         if body:
@@ -197,15 +160,20 @@ class AttestationToken(Generic[T]):
     @property
     def algorithm(self):
         #type:() -> str | None
-        """ Json Web Token Header "algorithm". See https://www.rfc-editor.org/rfc/rfc7515.html#section-4.1.1 for details.
-        If the value of Algorithm is "none" it indicates that the token is unsecured.
+        """ Json Web Token Header "alg". 
+        
+        ..seealso::See `RFC 7515 Section 4.1.1<https://www.rfc-editor.org/rfc/rfc7515.html#section-4.1.1>` for details.
+
+        If the value of algorithm is "none" it indicates that the token is unsecured.
         """
         return self._header.get('alg')
 
     @property
     def key_id(self):
         #type:() -> str | None
-        """ Json Web Token Header "Key ID". See https://www.rfc-editor.org/rfc/rfc7515.html#section-4.1.4 for details.
+        """ Json Web Token Header "kid". 
+        
+        ..seealso:: See `RFC7515 Section 4.1.4<https://www.rfc-editor.org/rfc/rfc7515.html#section-4.1.4>` for details.
         """
         return self._header.get('kid')
 
@@ -242,79 +210,109 @@ class AttestationToken(Generic[T]):
     @property
     def content_type(self): 
         #type:() -> str | None
-        """ Json Web Token Header "content type". See https://www.rfc-editor.org/rfc/rfc7515.html#section-4.1.10 for details.
+        """ Json Web Token Header "content type".
+        
+        ..seealso:: See `RFC 7515 Section 4.1.10 <https://www.rfc-editor.org/rfc/rfc7515.html#section-4.1.10>` for details.
         """
         return self._header.get('cty')
 
     @property
     def critical(self):
         #type() -> # type: Optional[bool]
-        """ Json Web Token Header "Critical". See https://www.rfc-editor.org/rfc/rfc7515.html#section-4.1.11 for details."""
+        """ Json Web Token Header "Critical". 
+        
+        See `RFC 7515 Section 4.1.11 <https://www.rfc-editor.org/rfc/rfc7515.html#section-4.1.11>` for details.
+        """
         return self._header.get('crit')
 
     @property
     def key_url(self): 
         #type:() -> str | None
-        """ Json Web Token Header "Key URL". See :seealso:`https://www.rfc-editor.org/rfc/rfc7515.html#section-4.1.2` for details.
+        """ Json Web Token Header "Key URL". 
+        
+        See ..seealso:`RFC 7515 Section 4.1.2 <https://www.rfc-editor.org/rfc/rfc7515.html#section-4.1.2>` for details.
         """
         return self._header.get('jku')
 
     @property
     def x509_url(self): 
         #type:() -> str | None
-        """  Json Web Token Header "X509 URL". See :seealso:`https://www.rfc-editor.org/rfc/rfc7515.html#section-4.1.5` for details.
+        """  Json Web Token Header "X509 URL".
+
+        See ..seealso:`RFC 7515 Section 4.1.5 <https://www.rfc-editor.org/rfc/rfc7515.html#section-4.1.5>` for details.
         """
         return self._header.get('x5u')
 
     @property
     def type(self):
         #type:() -> str | None
-        """ Json Web Token Header "type". :seealso:`https://www.rfc-editor.org/rfc/rfc7515.html#section-4.1.9` for details."""
+        """ Json Web Token Header "typ".
+        
+        ..seealso:`RFC 7515 Section 4.1.9<https://www.rfc-editor.org/rfc/rfc7515.html#section-4.1.9>` for details.
+        """
         return self._header.get('typ')
 
     @property
     def certificate_thumbprint(self):
         #type:() -> str | None
-        """ The "thumbprint" of the certificate used to sign the request. See https://www.rfc-editor.org/rfc/rfc7515.html#section-4.1.7 for details. """
+        """ The "thumbprint" of the certificate used to sign the request. 
+        
+        ..seealso:`RFC 7515 Section 4.1.7<https://www.rfc-editor.org/rfc/rfc7515.html#section-4.1.7>` for details.
+        """
         return self._header.get('x5t')
 
     @property
     def certificate_sha256_thumbprint(self):
         #type:() -> str | None
-        """ The "thumbprint" of the certificate used to sign the request generated using the SHA256 algorithm. See https://www.rfc-editor.org/rfc/rfc7515.html#section-4.1.8 for details."""
+        """ The "thumbprint" of the certificate used to sign the request generated using the SHA256 algorithm. 
+        
+        ..seealso:`RFC 7515 Section 4.1.8<https://www.rfc-editor.org/rfc/rfc7515.html#section-4.1.8>` for details.
+        """
         return self._header.get('x5t#256')
 
     @property
     def issuer(self):
         #type:() -> str
-        """ Json Web Token Body Issuer. See https://www.rfc-editor.org/rfc/rfc7519.html#section-4.1.1 for details.
+        """ Json Web Token "iss" claim.
+        
+        ..seealso:`RFC 7515 Section 4.1.1<https://www.rfc-editor.org/rfc/rfc7519.html#section-4.1.1>` for details.
         """
         return self._body.get('iss')
 
     @property
     def x509_certificate_chain(self):
-        #type:() -> List[Certificate] | None
-        """ An array of X.509Certificates which represent a certificate chain used to sign the token. See https://www.rfc-editor.org/rfc/rfc7515.html#section-4.1.6 for details."""
+        #type:() -> List[str] | None
+        """ An array of Base64 encoded X.509 certificates which represent a certificate chain used to sign the token. 
+        
+        :seealso:See `RFC 7515 Section 4.1.6<https://www.rfc-editor.org/rfc/rfc7515.html#section-4.1.6>` for details.
+        """
         x5c = self._header.get('x5c')
         if x5c is not None:
-            return self._get_certificates_from_x5c(x5c)
+            return x5c
         return None
 
-    @property
-    def json_web_key(self):
+    def _json_web_key(self):
         #type:() -> JSONWebKey
         jwk = self._header.get('jwk')
         return JSONWebKey.deserialize(jwk)
 
     def serialize(self):
+        """ Serialize the JSON Web Token to a string"""
         return self._token
 
-    """ Validate the attestation token based on the options specified in the TokenValidationOptions
-    """
-
-    def validate_token(self, options=None, signing_certificates=None):
+    def validate_token(self, options=None, signers=None):
         # type: (TokenValidationOptions, List[AttestationSigner]) -> bool
-        """ Validates the attestation token.
+        """ Validate the attestation token based on the options specified in the
+         :class:`TokenValidationOptions`.
+        
+        :param TokenValidationOptions options: Options to be used when validating 
+            the token.
+        :param list[AttestationSigner] signers: Potential signers for the token.
+            If the signers parameter is specified, validate_token will only 
+            consider the signers as potential signatories for the token, otherwise
+            it will consider attributes in the header of the token.
+        :return bool: Returns True if the token successfully validated, False 
+            otherwise. 
         """
         if (options is None):
             options = TokenValidationOptions(
@@ -328,7 +326,7 @@ class AttestationToken(Generic[T]):
         if self.algorithm != 'none' and options.validate_signature:
             # validate the signature for the token.
             candidate_certificates = self._get_candidate_signing_certificates(
-                signing_certificates)
+                signers)
             if (not self._validate_signature(candidate_certificates)):
                 raise Exception(
                     "Could not find the certificate used to sign the token.")
@@ -340,33 +338,12 @@ class AttestationToken(Generic[T]):
 
     def get_body(self):
         # type: () -> T
-        """ Returns the body of the attestation token.
+        """ Returns the body of the attestation token as an object.
         """
         try:
             return self._body_type.deserialize(self._body)
         except AttributeError:
             return self._body
-
-        # # Start with StoredAttestationPolicy, returning it if we can decode it.
-        # stored_policy = StoredAttestationPolicy.deserialize(self._body)
-        # # Do a quick sanity check. A StoredAttestationPolicy must have an attestation_policy attribute.
-        # if stored_policy.attestation_policy is not None:
-        #     return stored_policy
-
-        # # Maybe this is a PolicyResult, try that.
-        # policy_result = PolicyResult.deserialize(self._body)
-        # # Do a quick sanity check. A PolicyResult must have either a policy or policy_token_hash attribute.
-        # if policy_result is not None and (policy_result.policy is not None or policy_result.policy_token_hash is not None):
-        #     return policy_result
-
-        # # Next try the result of an Attest call.
-        # attest_result  = AttestationResult.deserialize(self._body)
-        # # Do a quick sanity check. An AttestationResult will always have an sgx_collateral attribute.
-        # if attest_result is not None and (attest_result.sgx_collateral is not None):
-        #     return attest_result
-
-        # # Finally, we give up and just return a dictionary.
-        # return self._body
 
     def _get_candidate_signing_certificates(self, signing_certificates):
         # type: (List[AttestationSigner]) -> List[AttestationSigner]
@@ -381,7 +358,7 @@ class AttestationToken(Generic[T]):
             # If we didn't find a matching key ID in the supplied certificates,
             # try the JWS header to see if there might be a corresponding key.
             if (len(candidates) == 0):
-                jwk = self.json_web_key
+                jwk = self._json_web_key()
                 if jwk is not None:
                     if jwk.kid  == desired_key_id:
                         if (jwk.x5_c):
@@ -396,10 +373,10 @@ class AttestationToken(Generic[T]):
                 for signer in signing_certificates:
                     candidates.append(signer)
             else:
-                jwk = self.json_web_key
+                jwk = self._json_web_key()
                 if jwk.x5_c is not None:
                     signers = self._get_certificates_from_x5c(
-                        self.json_web_key.x5_c)
+                        self._json_web_key().x5_c)
                     candidates.append(AttestationSigner(signers, None))
                 candidates.append(self.x509_certificate_chain)
 
@@ -414,7 +391,7 @@ class AttestationToken(Generic[T]):
         return certs
 
     def _validate_signature(self, candidate_certificates):
-        # type:(List[AttestationSigner]) -> bool
+        # type:(List[AttestationSigner]) -> AttestationSigner
         signed_data = Base64Url.encode(
             self.header_bytes)+'.'+Base64Url.encode(self.body_bytes)
         for signer in candidate_certificates:
@@ -433,10 +410,11 @@ class AttestationToken(Generic[T]):
                         self.signature_bytes,
                         signed_data.encode('utf-8'),
                         SHA256())
+                return signer
                 return True
             except:
                 pass
-        return False
+        return None
 
     def _validate_static_properties(self, options):
         # type:(TokenValidationOptions) -> bool
@@ -523,6 +501,11 @@ class AttestationToken(Generic[T]):
 
 
 class AttestationResponse(Generic[T]):
+    """ Represents a response from the attestation service.
+
+    :param AttestationToken token: Attestation Token returned from the service.
+    :param T value: Value of the body of the attestation token.
+    """
     def __init__(self, token, value):
         # type (AttestationToken, T) -> None
         self.token = token #type: AttestationToken

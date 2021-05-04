@@ -31,7 +31,8 @@ from threading import Lock
 
 
 class AttestationClient(object):
-    """Describes the interface for the per-tenant enclave service.
+    """An AttestationClient object enables access to the Attestation family of APIs provided
+      by the attestation service.
 
     :param str base_url: base url of the service
     :param credential: An object which can provide secrets for the attestation service
@@ -95,6 +96,8 @@ class AttestationClient(object):
             policy document will be used for the attestation request.
             This allows a caller to test various policy documents against actual data
             before applying the policy document via the set_policy API.
+        :return AttestationResponse[AttestationResult]: Attestation service response encapsulating an :class:`AttestationResult`.
+
         """
         runtime = None
         if runtime_data:
@@ -120,18 +123,15 @@ class AttestationClient(object):
         # type:(bytes, AttestationData, AttestationData, str, Any) -> AttestationResponse[AttestationResult]
         """ Attests the validity of an Open Enclave report.
 
-        :param report: An open_enclave report generated from an Intel(tm) SGX enclave
-        :type report: bytes
-        :param inittime_data: Data presented at the time that the SGX enclave was initialized.
-        :type inittime_data: AttestationData
-        :param runtime_data: Data presented at the time that the SGX quote was created.
-        :type runtime_data: AttestationData
-        :param draft_policy: "draft", or "experimental" policy to be used with
+        :param bytes report: An open_enclave report generated from an Intel(tm) SGX enclave
+        :param AttestationData inittime_data: Data presented at the time that the SGX enclave was initialized.
+        :param AttestationData runtime_data: Data presented at the time that the SGX quote was created.
+        :param str draft_policy: "draft", or "experimental" policy to be used with
             this attestation request. If this parameter is provided, then this 
             policy document will be used for the attestation request.
             This allows a caller to test various policy documents against actual data
             before applying the policy document via the set_policy API.
-        :type draft_policy: str
+        :return AttestationResponse[AttestationResult]: Attestation service response encapsulating an :class:`AttestationResult`.
         """
 
         runtime = None
@@ -152,6 +152,19 @@ class AttestationClient(object):
         token.validate_token(self._config.token_validation_options, self._get_signers(**kwargs))
         return AttestationResponse[AttestationResult](token, token.get_body())
 
+    @distributed_trace
+    def attest_tpm(self, request):
+        #type:(bytes) -> bytes
+        """ Attest a TPM based enclave.
+
+        See ..seealso:`https://docs.microsoft.com/en-us/azure/attestation/virtualization-based-security-protocol` for more information.
+
+        :param bytes request: Incoming request to send to the TPM attestation service.
+        :returns bytes: A structure containing the response from the TPM attestation.</returns>
+
+        """
+        return self._client.attestation.attest_tpm(request)
+
     def _get_signers(self, **kwargs):
         # type:(Any) -> List[AttestationSigner]
         """ Returns the set of signing certificates used to sign attestation tokens.
@@ -171,7 +184,6 @@ class AttestationClient(object):
                     self._signing_certificates.append(AttestationSigner(certificates, key.kid))
             signers = self._signing_certificates
         return signers
-
 
     def close(self):
         # type: () -> None

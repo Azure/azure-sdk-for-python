@@ -1,6 +1,6 @@
 # Azure Attestation client library for Python
 
-The Microsoft Azure Attestation (MAA) service is a unified solution for remotely verifying the trustworthiness of a platform and integrity of the binaries running inside it. The service supports attestation of the platforms backed by Trusted Platform Modules (TPMs) alongside the ability to attest to the state of Trusted Execution Environments (TEEs) such as Intel® Software Guard Extensions (SGX) enclaves and Virtualization-based Security (VBS) enclaves.
+The Microsoft Azure Attestation (MAA) service is a unified solution for remotely verifying the trustworthiness of a platform and integrity of the binaries running inside it. The service supports attestation of the platforms backed by Trusted Platform Modules (TPMs) alongside the ability to attest to the state of Trusted Execution Environments (TEEs) such as Intel(tm) Software Guard Extensions (SGX) enclaves and Virtualization-based Security (VBS) enclaves.
 
 Attestation is a process for demonstrating that software binaries were properly instantiated on a trusted platform. Remote relying parties can then gain confidence that only such intended software is running on trusted hardware. Azure Attestation is a unified customer-facing service and framework for attestation.
 
@@ -27,7 +27,7 @@ For a more complete view of Azure libraries, see the [azure sdk python release](
 
 Install the Microsoft Azure Attestation client library for .NET with [NuGet][nuget]:
 
-```PowerShell
+```Powershell
 pip install --pre azure-security-attestation
 ```
 
@@ -39,7 +39,7 @@ In order to interact with the Microsoft Azure Attestation service, you'll need t
 Client secret credential authentication is being used in this getting started section but you can find more ways to authenticate with [Azure identity][azure_identity]. To use the [DefaultAzureCredential][DefaultAzureCredential] provider shown below,
 or other credential providers provided with the Azure SDK, you should install the Azure.Identity package:
 
-```PowerShell
+```Powershell
 pip install azure-identity
 ```
 
@@ -67,7 +67,7 @@ Use the [Azure CLI][azure_cli] snippet below to create/get client secret credent
 
 * Take note of the service principal objectId
 
-    ```PowerShell
+    ```Powershell
     az ad sp show --id <appId> --query objectId
     ```
 
@@ -79,7 +79,7 @@ Use the [Azure CLI][azure_cli] snippet below to create/get client secret credent
 
 * Use the returned credentials above to set  **AZURE_CLIENT_ID** (appId), **AZURE_CLIENT_SECRET** (password), and **AZURE_TENANT_ID** (tenant) environment variables. The following example shows a way to do this in Powershell:
 
-    ```PowerShell
+    ```Powershell
     $Env:AZURE_CLIENT_ID="generated-app-ID"
     $Env:AZURE_CLIENT_SECRET="random-password"
     $Env:AZURE_TENANT_ID="tenant-ID"
@@ -119,7 +119,7 @@ This token will be signed by a signing certificate issued by the MAA service for
 If the MAA service instance is running in a region where the service runs in an SGX enclave, then
 the certificate issued by the server can be verified using the [oe_verify_attestation_certificate API](https://openenclave.github.io/openenclave/api/enclave_8h_a3b75c5638360adca181a0d945b45ad86.html).
 
-The [`AttestationResponse`][attestation_response] object contains two main properties: [`Token`][attestation_response_token] and [`Value`][attestation_response_value]. The `Token` property contains the complete token returned by the attestation service, the `Value` property contains the body of the JSON Web Token response.
+The [`AttestationResponse`][attestation_response] object contains two main attributes: `token` and `value`. The `token` attribute contains the complete token returned by the attestation service, the `value` attribute contains the body of the JSON Web Token response.
 
 ### Policy Management
 
@@ -348,5 +348,7 @@ section of the project.
 [base64url_encoding]: https://tools.ietf.org/html/rfc4648#section-5
 [contributing]: https://github.com/Azure/azure-sdk-for-python/blob/master/CONTRIBUTING.md
 [coc_faq]: https://opensource.microsoft.com/codeofconduct/faq/
+[attestation_response]: ./azure.security.attestation.html#azure.security.attestation.AttestationResponse
+[attestation_policy_result_signer]: azure.security.attestation.html#azure.security.attestation.PolicyResult
 
 ![Impressions](https://azure-sdk-impressions.azurewebsites.net/api/impressions/azure-sdk-for-python%2Fsdk%2Fattestation%2Fazure-security-attestation%2FREADME.png)

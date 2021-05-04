@@ -33,8 +33,9 @@ from threading import Lock, Thread
 
 
 class AttestationAdministrationClient(object):
-    """Describes the interface for the per-tenant enclave service.
-    :param str base_url: base url of the service
+    """Provides administrative APIs for managing an instance of the Attestation Service.
+
+    :param str instance_url: base url of the service
     :param credential: An object which can provide secrets for the attestation service
     :type credential: azure.core.credentials.TokenCredential
     :keyword Pipeline pipeline: If omitted, the standard pipeline is used.
@@ -61,8 +62,10 @@ class AttestationAdministrationClient(object):
     def get_policy(self, attestation_type, **kwargs): 
         #type(AttestationType) -> AttestationResult[str]:
         """ Retrieves the attestation policy for a specified attestation type.
-        :param attestation_type - The attestation parameter type.
-        :type attestation_type: AttestationType
+
+        :param azure.security.attestation.AttestationType attestation_type: :class:`azure.security.attestation.AttestationType` for 
+            which to retrieve the policy.
+        :return AttestationResponse[str]: Attestation service response encapsulating a string attestation policy.
         """
         
         policyResult = self._client.policy.get(attestation_type, **kwargs)
@@ -80,6 +83,15 @@ class AttestationAdministrationClient(object):
     @distributed_trace
     def set_policy(self, attestation_type, attestation_policy, signing_key=None, **kwargs): 
         #type:(AttestationType, str, AttestationSigningKey, Any) -> AttestationResponse[PolicyResult]
+        """ Sets the attestation policy for the specified attestation type.
+
+        :param azure.security.attestation.AttestationType attestation_type: :class:`azure.security.attestation.AttestationType` for 
+            which to set the policy.
+        :param str attestation_policy: Attestation policy to be set.
+        :param AttestationSigningKey signing_key: Optional signing key to be
+            used to sign the policy before sending it to the service.
+        :return AttestationResponse[PolicyResult]: Attestation service response encapsulating a :class:`PolicyResult`.
+        """
         policy_token = AttestationToken[StoredAttestationPolicy](
             body=StoredAttestationPolicy(attestation_policy = attestation_policy.encode('ascii')),
             signer=signing_key,
