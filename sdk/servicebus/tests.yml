@@ -19,8 +19,8 @@ stages:
       CloudConfig:
         Public:
           MatrixFilters:
-            - '"PythonVersion=^(?!pypy3).*"'
+            - PythonVersion=^(?!pypy3).*
         Canary:
           Location: 'centraluseuap'
           MatrixFilters:
-            - '"PythonVersion=^(?!pypy3).*"'
+            - PythonVersion=^(?!pypy3).*
