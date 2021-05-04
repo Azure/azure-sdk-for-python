@@ -211,24 +211,29 @@ class AioHttpStreamDownloadGenerator(AsyncIterator):
         return self.content_length
 
     async def __anext__(self):
-        raw = self.pipeline.transport.session.auto_decompress
+        if self.pipeline:
+            raw = self.pipeline.transport.session.auto_decompress
         if self._raw:
             self.pipeline.transport.session.auto_decompress = False
         try:
             chunk = await self.response.internal_response.content.read(self.block_size)
-            self.pipeline.transport.session.auto_decompress = raw
+            if self.pipeline:
+                self.pipeline.transport.session.auto_decompress = raw
             if not chunk:
                 raise _ResponseStopIteration()
             return chunk
         except _ResponseStopIteration:
-            self.pipeline.transport.session.auto_decompress = raw
+            if self.pipeline:
+                self.pipeline.transport.session.auto_decompress = raw
             self.response.internal_response.close()
             raise StopAsyncIteration()
         except StreamConsumedError:
-            self.pipeline.transport.session.auto_decompress = raw
+            if self.pipeline:
+                self.pipeline.transport.session.auto_decompress = raw
             raise
         except Exception as err:
-            self.pipeline.transport.session.auto_decompress = raw
+            if self.pipeline:
+                self.pipeline.transport.session.auto_decompress = raw
             _LOGGER.warning("Unable to stream download: %s", err)
             self.response.internal_response.close()
             raise
