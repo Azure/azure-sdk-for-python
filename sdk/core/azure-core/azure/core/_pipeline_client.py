@@ -141,18 +141,25 @@ class PipelineClient(PipelineClientBase):
                              DistributedTracingPolicy(**kwargs),
                              config.http_logging_policy or HttpLoggingPolicy(**kwargs)])
         else:
-            per_call_policies_list = list(per_call_policies)
+            if isinstance(per_call_policies, Iterable):
+                per_call_policies_list = list(per_call_policies)
+            else:
+                per_call_policies_list = [per_call_policies]
             per_call_policies_list.extend(policies)
             policies = per_call_policies_list
 
-            per_retry_policies_list = list(per_retry_policies)
+            if isinstance(per_retry_policies, Iterable):
+                per_retry_policies_list = list(per_retry_policies)
+            else:
+                per_retry_policies_list = [per_retry_policies]
             if len(per_retry_policies_list) > 0:
                 index_of_retry = -1
                 for index, policy in enumerate(policies):
                     if isinstance(policy, RetryPolicy):
                         index_of_retry = index
                 if index_of_retry == -1:
-                    raise ValueError("There is no RetryPolicy found, fail to add per_retry_policies!")
+                    raise ValueError("Failed to add per_retry_policies; "
+                                     "no RetryPolicy found in the supplied list of policies. ")
                 policies_1 = policies[:index_of_retry+1]
                 policies_2 = policies[index_of_retry+1:]
                 policies_1.extend(per_retry_policies_list)

@@ -402,14 +402,25 @@ class TestClientRequest(unittest.TestCase):
         policies = [UserAgentPolicy(),
                     RetryPolicy(),
                     DistributedTracingPolicy()]
+        client = PipelineClient(base_url="test", policies=policies, per_call_policies=boo_policy)
+        actual_policies = client._pipeline._impl_policies
+        assert boo_policy == actual_policies[0]
         client = PipelineClient(base_url="test", policies=policies, per_call_policies=[boo_policy])
         actual_policies = client._pipeline._impl_policies
         assert boo_policy == actual_policies[0]
 
+        client = PipelineClient(base_url="test", policies=policies, per_retry_policies=foo_policy)
+        actual_policies = client._pipeline._impl_policies
+        assert foo_policy == actual_policies[2]
         client = PipelineClient(base_url="test", policies=policies, per_retry_policies=[foo_policy])
         actual_policies = client._pipeline._impl_policies
         assert foo_policy == actual_policies[2]
 
+        client = PipelineClient(base_url="test", policies=policies, per_call_policies=boo_policy,
+                                per_retry_policies=foo_policy)
+        actual_policies = client._pipeline._impl_policies
+        assert boo_policy == actual_policies[0]
+        assert foo_policy == actual_policies[3]
         client = PipelineClient(base_url="test", policies=policies, per_call_policies=[boo_policy],
                                 per_retry_policies=[foo_policy])
         actual_policies = client._pipeline._impl_policies
@@ -418,6 +429,8 @@ class TestClientRequest(unittest.TestCase):
 
         policies = [UserAgentPolicy(),
                     DistributedTracingPolicy()]
+        with pytest.raises(ValueError):
+            client = PipelineClient(base_url="test", policies=policies, per_retry_policies=foo_policy)
         with pytest.raises(ValueError):
             client = PipelineClient(base_url="test", policies=policies, per_retry_policies=[foo_policy])
 
