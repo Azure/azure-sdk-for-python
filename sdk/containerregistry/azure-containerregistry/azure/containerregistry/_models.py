@@ -11,7 +11,7 @@ from ._generated.models import RepositoryProperties as GeneratedRepositoryProper
 
 if TYPE_CHECKING:
     from ._generated.models import ManifestAttributesBase
-    from ._generated.models import ArtifactArtifactTagProperties as GeneratedArtifactTagProperties
+    from ._generated.models import ArtifactTagProperties as GeneratedArtifactTagProperties
 
 
 class ContentProperties(object):

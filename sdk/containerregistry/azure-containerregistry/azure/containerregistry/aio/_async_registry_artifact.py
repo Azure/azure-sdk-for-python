@@ -80,17 +80,6 @@ class RegistryArtifact(ContainerRegistryBaseClient):
         )
 
     @distributed_trace_async
-    async def delete_registry_artifact(self, digest: str, **kwargs: Dict[str, Any]) -> None:
-        """Delete a registry artifact
-
-        :returns: None
-        :raises: :class:`~azure.core.exceptions.ResourceNotFoundError`
-        """
-        if not self._digest:
-            self._digest = self.tag_or_digest if not _is_tag(self.tag_or_digest) else await self._get_digest_from_tag()
-        await self._client.container_registry.delete_manifest(self.repository, self._digest, **kwargs)
-
-    @distributed_trace_async
     async def delete_tag(self, tag: str, **kwargs: Dict[str, Any]) -> None:
         """Delete a tag from a repository
 
