@@ -7,13 +7,13 @@
 # --------------------------------------------------------------------------
 
 """
-FILE: sample_delete_old_tags.py
+FILE: sample_delete_old_tags_async.py
 
 DESCRIPTION:
-    These samples demonstrates deleting the three oldest tags for each repository
+    These samples demonstrates deleting the three oldest tags for each repository asynchronously.
 
 USAGE:
-    python sample_delete_old_tags.py
+    python sample_delete_old_tags_async.py
 
     Set the environment variables with your own values before running the sample:
     1) CONTAINERREGISTRY_ENDPOINT - The URL of you Container Registry account
@@ -65,4 +65,3 @@ async def main():
 if __name__ == '__main__':
     loop = asyncio.get_event_loop()
     loop.run_until_complete(main())
-
