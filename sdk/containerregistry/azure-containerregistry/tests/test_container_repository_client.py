@@ -6,23 +6,18 @@
 from datetime import datetime
 import pytest
 
-from devtools_testutils import AzureTestCase
-
 from azure.containerregistry import (
-    ContainerRepositoryClient,
-    ContainerRegistryClient,
+    DeleteRepositoryResult,
     ContentProperties,
-    DeletedRepositoryResult,
-    RepositoryProperties,
     RegistryArtifactOrderBy,
     RegistryArtifactProperties,
-    TagProperties,
+    ArtifactTagProperties,
     TagOrderBy,
 )
 from azure.core.exceptions import ResourceNotFoundError
 from azure.core.paging import ItemPaged
 
-from testcase import ContainerRegistryTestClass, AcrBodyReplacer, FakeTokenCredential
+from testcase import ContainerRegistryTestClass
 from constants import TO_BE_DELETED, DOES_NOT_EXIST, HELLO_WORLD
 from preparer import acr_preparer
 
@@ -65,7 +60,8 @@ class TestContainerRepositoryClient(ContainerRegistryTestClass):
         tag = client.get_tag_properties("latest")
 
         assert tag is not None
-        assert isinstance(tag, TagProperties)
+        assert isinstance(tag, ArtifactTagProperties)
+        assert tag.repository == client.repository
 
     @acr_preparer()
     def test_list_registry_artifacts(self, containerregistry_endpoint):
@@ -293,8 +289,8 @@ class TestContainerRepositoryClient(ContainerRegistryTestClass):
 
         repo_client = self.create_repository_client(containerregistry_endpoint, TO_BE_DELETED)
         result = repo_client.delete()
-        assert isinstance(result, DeletedRepositoryResult)
-        assert result.deleted_registry_artifact_digests is not None
+        assert isinstance(result, DeleteRepositoryResult)
+        assert result.deleted_manifests is not None
         assert result.deleted_tags is not None
 
         existing_repos = list(reg_client.list_repositories())

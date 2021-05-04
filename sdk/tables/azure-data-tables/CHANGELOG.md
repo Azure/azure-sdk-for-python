@@ -10,8 +10,12 @@
 * Removed the `TableClient.create_batch` method along with the `TableBatchOperations` object. The transactional batching is now supported via a simple Python list of tuples.
 * `TableClient.send_batch` has been renamed to `TableClient.submit_transaction`.
 * Removed `BatchTransactionResult` object in favor of returning an iterable of batched entities with returned metadata.
+* Removed Batching context-manager behavior
+* Changed optional `value` and `type` arguments of `EntityProperty` to required.
+* Renamed `EntityProperty.type` to `EntityProperty.edm_type`.
 * `BatchErrorException` has been renamed to `TableTransactionError`.
 * The `location_mode` is no longer a public attribute on the Clients.
+* `EntityProperty` is now a NampedTuple, and can be represented by a tuple of `(entity, EdmType)`.
 * Removed `date` and `api_version` from the `TableItem` class.
 
 **Fixes**

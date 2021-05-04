@@ -5,7 +5,7 @@
 # ------------------------------------
 
 from enum import Enum
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, Dict, Any
 from ._generated.models import ContentProperties as GeneratedContentProperties
 
 if TYPE_CHECKING:
@@ -56,22 +56,22 @@ class ContentProperties(object):
         )
 
 
-class DeletedRepositoryResult(object):
+class DeleteRepositoryResult(object):
     """Represents the digests and tags deleted when a repository is deleted
 
-    :ivar List[str] deleted_registry_artifact_digests: Registry artifact digests that were deleted
+    :ivar List[str] deleted_manifests: Registry artifact digests that were deleted
     :ivar List[str] deleted_tags: Tags that were deleted
     """
 
     def __init__(self, **kwargs):
-        self.deleted_registry_artifact_digests = kwargs.get("deleted_registry_artifact_digests", None)
+        self.deleted_manifests = kwargs.get("deleted_manifests", None)
         self.deleted_tags = kwargs.get("deleted_tags", None)
 
     @classmethod
     def _from_generated(cls, gen):
         return cls(
             deleted_tags=gen.deleted_tags,
-            deleted_registry_artifact_digests=gen.deleted_manifests,
+            deleted_manifests=gen.deleted_manifests,
         )
 
 
@@ -174,7 +174,7 @@ class TagOrderBy(str, Enum):
     LAST_UPDATE_TIME_ASCENDING = "timeasc"
 
 
-class TagProperties(object):
+class ArtifactTagProperties(object):
     """Model for storing properties of a single tag
 
     :ivar writeable_properties: Read/Write/List/Delete permissions for the tag
@@ -185,7 +185,7 @@ class TagProperties(object):
     :ivar last_updated_on: Time the tag was last updated
     :vartype last_updated_on: :class:`datetime.datetime`
     :ivar str name: Name of the image the tag corresponds to
-    :ivar str registry: Registry the tag belongs to
+    :ivar str repository: Repository the tag belongs to
     """
 
     def __init__(self, **kwargs):
@@ -194,16 +194,18 @@ class TagProperties(object):
         self.digest = kwargs.get("digest", None)
         self.last_updated_on = kwargs.get("last_updated_on", None)
         self.name = kwargs.get("name", None)
+        self.repository = kwargs.get("repository", None)
         if self.writeable_properties:
             self.writeable_properties = ContentProperties._from_generated(self.writeable_properties)
 
     @classmethod
-    def _from_generated(cls, generated):
-        # type: (GeneratedTagProperties) -> TagProperties
+    def _from_generated(cls, generated, **kwargs):
+        # type: (GeneratedTagProperties, Dict[str, Any]) -> ArtifactTagProperties
         return cls(
             created_on=generated.created_on,
             digest=generated.digest,
             last_updated_on=generated.last_updated_on,
             name=generated.name,
             writeable_properties=generated.writeable_properties,
+            repository=kwargs.get("repository", None),
         )
