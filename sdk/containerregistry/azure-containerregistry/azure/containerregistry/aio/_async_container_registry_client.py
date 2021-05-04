@@ -46,16 +46,15 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
         super(ContainerRegistryClient, self).__init__(endpoint=endpoint, credential=credential, **kwargs)
 
     @distributed_trace_async
-    async def delete_repository(self, repository: str, **kwargs: Dict[str, Any]) -> DeleteRepositoryResult:
+    async def delete_repository(self, repository_name: str, **kwargs: Dict[str, Any]) -> DeleteRepositoryResult:
         """Delete a repository
 
-        :param repository: The repository to delete
-        :type repository: str
+        :param str repository_name: The repository to delete
         :returns: Object containing information about the deleted repository
         :rtype: :class:`~azure.containerregistry.DeleteRepositoryResult`
         :raises: :class:`~azure.core.exceptions.ResourceNotFoundError`
         """
-        result = await self._client.container_registry.delete_repository(repository, **kwargs)
+        result = await self._client.container_registry.delete_repository(repository_name, **kwargs)
         return DeleteRepositoryResult._from_generated(result)  # pylint: disable=protected-access
 
     @distributed_trace
