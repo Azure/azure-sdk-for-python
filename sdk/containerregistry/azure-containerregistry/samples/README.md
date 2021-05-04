@@ -16,7 +16,7 @@ The async versions of the samples require Python 3.6 or later.
 
 |**File Name**|**Description**|
 |-------------|---------------|
-|[sample_create_client.py][create_client] and [sample_create_client_async.py][create_client_async]|Instantiate a client | Authorizing a `ContainerRegistryClient` object and `ContainerRepositoryClient` object |
+|[sample_create_client.py][create_client] ([async version][create_client_async]) |Instantiate a client | Authorizing a `ContainerRegistryClient` object and `ContainerRepositoryClient` object |
 |[sample_delete_old_tags.py][delete_old_tags] and [sample_delete_old_tags_async.py][delete_old_tags_async] | Delete tags from a repository |
 
 ### Prerequisites
