@@ -3,7 +3,6 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
-from typing import Dict, Any
 from enum import Enum
 from typing import Any, Dict, Union, NamedTuple
 
