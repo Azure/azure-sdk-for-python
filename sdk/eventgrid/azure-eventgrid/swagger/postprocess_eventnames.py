@@ -11,7 +11,6 @@ def event_tuples(system_events):
         try:
             event_name = re.findall("Microsoft.[a-zA-Z]+.[a-zA-Z]+", event[1].__doc__)[0]
         except:
-            print(event[0])
             warnings.warn("Unable to generate the event mapping for {}", event[0])
             sys.exit(1)
         tup_list.append((class_name, event_name))
