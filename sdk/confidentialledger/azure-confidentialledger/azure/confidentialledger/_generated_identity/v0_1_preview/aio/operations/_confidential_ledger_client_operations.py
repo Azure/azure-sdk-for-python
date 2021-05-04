@@ -56,9 +56,9 @@ class ConfidentialLedgerClientOperationsMixin:
         # Construct URL
         url = self.get_ledger_identity.metadata["url"]  # type: ignore
         path_format_arguments = {
-            "identityServiceBaseUrl": self._serialize.url(
-                "self._config.identity_service_base_url",
-                self._config.identity_service_base_url,
+            "identityServiceUri": self._serialize.url(
+                "self._config.identity_service_uri",
+                self._config.identity_service_uri,
                 "str",
                 skip_quote=True,
             ),

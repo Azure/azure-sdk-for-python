@@ -24,21 +24,21 @@ class ConfidentialLedgerClientConfiguration(Configuration):
     Note that all parameters used to create this instance are saved as instance
     attributes.
 
-    :param identity_service_base_url: The Identity Service URL, for example https://identity.accledger.azure.com.
-    :type identity_service_base_url: str
+    :param identity_service_uri: The Identity Service URL, for example https://identity.accledger.azure.com.
+    :type identity_service_uri: str
     """
 
     def __init__(
         self,
-        identity_service_base_url,  # type: str
+        identity_service_uri,  # type: str
         **kwargs  # type: Any
     ):
         # type: (...) -> None
-        if identity_service_base_url is None:
-            raise ValueError("Parameter 'identity_service_base_url' must not be None.")
+        if identity_service_uri is None:
+            raise ValueError("Parameter 'identity_service_uri' must not be None.")
         super(ConfidentialLedgerClientConfiguration, self).__init__(**kwargs)
 
-        self.identity_service_base_url = identity_service_base_url
+        self.identity_service_uri = identity_service_uri
         self.api_version = "0.1-preview"
         kwargs.setdefault("sdk_moniker", "confidentialledger/{}".format(VERSION))
         self._configure(**kwargs)

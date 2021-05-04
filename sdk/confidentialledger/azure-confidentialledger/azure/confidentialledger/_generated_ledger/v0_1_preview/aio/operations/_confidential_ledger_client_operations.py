@@ -51,9 +51,9 @@ class ConfidentialLedgerClientOperationsMixin:
         # Construct URL
         url = self.get_constitution.metadata["url"]  # type: ignore
         path_format_arguments = {
-            "ledgerBaseUrl": self._serialize.url(
-                "self._config.ledger_base_url",
-                self._config.ledger_base_url,
+            "ledgerUri": self._serialize.url(
+                "self._config.ledger_uri",
+                self._config.ledger_uri,
                 "str",
                 skip_quote=True,
             ),
@@ -117,9 +117,9 @@ class ConfidentialLedgerClientOperationsMixin:
         # Construct URL
         url = self.get_consortium_members.metadata["url"]  # type: ignore
         path_format_arguments = {
-            "ledgerBaseUrl": self._serialize.url(
-                "self._config.ledger_base_url",
-                self._config.ledger_base_url,
+            "ledgerUri": self._serialize.url(
+                "self._config.ledger_uri",
+                self._config.ledger_uri,
                 "str",
                 skip_quote=True,
             ),
@@ -188,9 +188,9 @@ class ConfidentialLedgerClientOperationsMixin:
         # Construct URL
         url = self.get_enclave_quotes.metadata["url"]  # type: ignore
         path_format_arguments = {
-            "ledgerBaseUrl": self._serialize.url(
-                "self._config.ledger_base_url",
-                self._config.ledger_base_url,
+            "ledgerUri": self._serialize.url(
+                "self._config.ledger_uri",
+                self._config.ledger_uri,
                 "str",
                 skip_quote=True,
             ),
@@ -277,9 +277,9 @@ class ConfidentialLedgerClientOperationsMixin:
                 # Construct URL
                 url = self.get_ledger_entries.metadata["url"]  # type: ignore
                 path_format_arguments = {
-                    "ledgerBaseUrl": self._serialize.url(
-                        "self._config.ledger_base_url",
-                        self._config.ledger_base_url,
+                    "ledgerUri": self._serialize.url(
+                        "self._config.ledger_uri",
+                        self._config.ledger_uri,
                         "str",
                         skip_quote=True,
                     ),
@@ -308,9 +308,9 @@ class ConfidentialLedgerClientOperationsMixin:
                 url = next_link
                 query_parameters = {}  # type: Dict[str, Any]
                 path_format_arguments = {
-                    "ledgerBaseUrl": self._serialize.url(
-                        "self._config.ledger_base_url",
-                        self._config.ledger_base_url,
+                    "ledgerUri": self._serialize.url(
+                        "self._config.ledger_uri",
+                        self._config.ledger_uri,
                         "str",
                         skip_quote=True,
                     ),
@@ -383,9 +383,9 @@ class ConfidentialLedgerClientOperationsMixin:
         # Construct URL
         url = self.post_ledger_entry.metadata["url"]  # type: ignore
         path_format_arguments = {
-            "ledgerBaseUrl": self._serialize.url(
-                "self._config.ledger_base_url",
-                self._config.ledger_base_url,
+            "ledgerUri": self._serialize.url(
+                "self._config.ledger_uri",
+                self._config.ledger_uri,
                 "str",
                 skip_quote=True,
             ),
@@ -476,9 +476,9 @@ class ConfidentialLedgerClientOperationsMixin:
         # Construct URL
         url = self.get_ledger_entry.metadata["url"]  # type: ignore
         path_format_arguments = {
-            "ledgerBaseUrl": self._serialize.url(
-                "self._config.ledger_base_url",
-                self._config.ledger_base_url,
+            "ledgerUri": self._serialize.url(
+                "self._config.ledger_uri",
+                self._config.ledger_uri,
                 "str",
                 skip_quote=True,
             ),
@@ -553,9 +553,9 @@ class ConfidentialLedgerClientOperationsMixin:
         # Construct URL
         url = self.get_receipt.metadata["url"]  # type: ignore
         path_format_arguments = {
-            "ledgerBaseUrl": self._serialize.url(
-                "self._config.ledger_base_url",
-                self._config.ledger_base_url,
+            "ledgerUri": self._serialize.url(
+                "self._config.ledger_uri",
+                self._config.ledger_uri,
                 "str",
                 skip_quote=True,
             ),
@@ -626,9 +626,9 @@ class ConfidentialLedgerClientOperationsMixin:
         # Construct URL
         url = self.get_transaction_status.metadata["url"]  # type: ignore
         path_format_arguments = {
-            "ledgerBaseUrl": self._serialize.url(
-                "self._config.ledger_base_url",
-                self._config.ledger_base_url,
+            "ledgerUri": self._serialize.url(
+                "self._config.ledger_uri",
+                self._config.ledger_uri,
                 "str",
                 skip_quote=True,
             ),
@@ -699,9 +699,9 @@ class ConfidentialLedgerClientOperationsMixin:
         # Construct URL
         url = self.get_current_ledger_entry.metadata["url"]  # type: ignore
         path_format_arguments = {
-            "ledgerBaseUrl": self._serialize.url(
-                "self._config.ledger_base_url",
-                self._config.ledger_base_url,
+            "ledgerUri": self._serialize.url(
+                "self._config.ledger_uri",
+                self._config.ledger_uri,
                 "str",
                 skip_quote=True,
             ),
@@ -771,9 +771,9 @@ class ConfidentialLedgerClientOperationsMixin:
         # Construct URL
         url = self.delete_user.metadata["url"]  # type: ignore
         path_format_arguments = {
-            "ledgerBaseUrl": self._serialize.url(
-                "self._config.ledger_base_url",
-                self._config.ledger_base_url,
+            "ledgerUri": self._serialize.url(
+                "self._config.ledger_uri",
+                self._config.ledger_uri,
                 "str",
                 skip_quote=True,
             ),
@@ -836,9 +836,9 @@ class ConfidentialLedgerClientOperationsMixin:
         # Construct URL
         url = self.get_user.metadata["url"]  # type: ignore
         path_format_arguments = {
-            "ledgerBaseUrl": self._serialize.url(
-                "self._config.ledger_base_url",
-                self._config.ledger_base_url,
+            "ledgerUri": self._serialize.url(
+                "self._config.ledger_uri",
+                self._config.ledger_uri,
                 "str",
                 skip_quote=True,
             ),
@@ -880,7 +880,7 @@ class ConfidentialLedgerClientOperationsMixin:
 
     get_user.metadata = {"url": "/app/users/{userId}"}  # type: ignore
 
-    async def patch_user(
+    async def create_or_update_user(
         self,
         user_id: str,
         assigned_role: Union[str, "_models.ConfidentialLedgerUserRoleName"],
@@ -913,11 +913,11 @@ class ConfidentialLedgerClientOperationsMixin:
         accept = "application/json"
 
         # Construct URL
-        url = self.patch_user.metadata["url"]  # type: ignore
+        url = self.create_or_update_user.metadata["url"]  # type: ignore
         path_format_arguments = {
-            "ledgerBaseUrl": self._serialize.url(
-                "self._config.ledger_base_url",
-                self._config.ledger_base_url,
+            "ledgerUri": self._serialize.url(
+                "self._config.ledger_uri",
+                self._config.ledger_uri,
                 "str",
                 skip_quote=True,
             ),
@@ -965,4 +965,4 @@ class ConfidentialLedgerClientOperationsMixin:
 
         return deserialized
 
-    patch_user.metadata = {"url": "/app/users/{userId}"}  # type: ignore
+    create_or_update_user.metadata = {"url": "/app/users/{userId}"}  # type: ignore

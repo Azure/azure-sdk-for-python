@@ -23,14 +23,7 @@ if TYPE_CHECKING:
     from typing import Any, Union
 
 
-class ApiVersion(str, Enum):
-    """Confidential Ledger API versions supported by this package."""
-
-    #: this is the default version
-    V0_1 = "0.1-preview"
-
-
-DEFAULT_VERSION = ApiVersion.V0_1
+DEFAULT_VERSION = "0.1-preview"
 
 
 class ConfidentialLedgerClientBase(object):
@@ -112,9 +105,7 @@ class ConfidentialLedgerClientBase(object):
                 "This package doesn't support API version '{}'. ".format(
                     self.api_version
                 )
-                + "Supported versions: {}".format(
-                    ", ".join(v.value for v in ApiVersion)
-                )
+                + "Supported versions: 0.1-preview"
             ) from e
 
     @property

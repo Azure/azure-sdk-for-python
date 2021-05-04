@@ -5,7 +5,6 @@
 
 from .async_confidential_ledger_client_base import AsyncConfidentialLedgerClientBase
 from .confidential_ledger_client_base import (
-    ApiVersion,
     ConfidentialLedgerClientBase,
     DEFAULT_VERSION,
 )

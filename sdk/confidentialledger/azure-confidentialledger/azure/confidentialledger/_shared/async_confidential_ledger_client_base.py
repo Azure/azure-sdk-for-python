@@ -14,7 +14,7 @@ from azure.core.pipeline.transport import AioHttpTransport
 from .._generated_ledger.v0_1_preview.aio import (
     ConfidentialLedgerClient as _ConfidentialLedgerClient,
 )
-from .confidential_ledger_client_base import DEFAULT_VERSION, ApiVersion
+from .confidential_ledger_client_base import DEFAULT_VERSION
 from .credential import ConfidentialLedgerCertificateCredential
 
 if TYPE_CHECKING:
@@ -109,9 +109,7 @@ class AsyncConfidentialLedgerClientBase(object):
                 "This package doesn't support API version '{}'. ".format(
                     self.api_version
                 )
-                + "Supported versions: {}".format(
-                    ", ".join(v.value for v in ApiVersion)
-                )
+                + "Supported versions: 0.1-preview"
             ) from e
 
     @property

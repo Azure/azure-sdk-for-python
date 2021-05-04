@@ -17,11 +17,10 @@ from ._models import (
     TransactionReceipt,
     TransactionStatus,
 )
-from ._shared import ApiVersion, ConfidentialLedgerCertificateCredential
+from ._shared import ConfidentialLedgerCertificateCredential
 
 
 ___all__ = [
-    "ApiVersion",
     "ConfidentialLedgerCertificateCredential",
     "ConfidentialLedgerClient",
     # Enums

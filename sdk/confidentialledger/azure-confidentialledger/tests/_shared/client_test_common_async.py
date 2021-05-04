@@ -48,23 +48,26 @@ class AsyncConfidentialLedgerClientTestMixin:
             self.assertTrue(append_result.transaction_id)
             self.assertTrue(append_result.sub_ledger_id)
 
+            # Test unpacking
+            append_result_sub_ledger_id, append_result_transaction_id = append_result
+
             await self.client.wait_until_durable(
-                transaction_id=append_result.transaction_id
+                transaction_id=append_result_transaction_id
             )
 
             transaction_status = await self.client.get_transaction_status(
-                transaction_id=append_result.transaction_id
+                transaction_id=append_result_transaction_id
             )
             self.assertIsNotNone(transaction_status)
             self.assertIs(transaction_status.state, TransactionState.COMMITTED)
             self.assertEqual(
-                transaction_status.transaction_id, append_result.transaction_id
+                transaction_status.transaction_id, append_result_transaction_id
             )
 
             receipt = await self.client.get_transaction_receipt(
-                transaction_id=append_result.transaction_id
+                transaction_id=append_result_transaction_id
             )
-            self.assertEqual(receipt.transaction_id, append_result.transaction_id)
+            self.assertEqual(receipt.transaction_id, append_result_transaction_id)
             self.assertTrue(receipt.contents)
 
             latest_entry = await self.client.get_ledger_entry()
@@ -72,10 +75,10 @@ class AsyncConfidentialLedgerClientTestMixin:
             # operation occurs after the ledger append (e.g. because a node was restarted). Then,
             # the latest id will be higher.
             self.assertGreaterEqual(
-                latest_entry.transaction_id, append_result.transaction_id
+                latest_entry.transaction_id, append_result_transaction_id
             )
             self.assertEqual(latest_entry.contents, entry_contents)
-            self.assertEqual(latest_entry.sub_ledger_id, append_result.sub_ledger_id)
+            self.assertEqual(latest_entry.sub_ledger_id, append_result_sub_ledger_id)
 
             await self.client.append_to_ledger(
                 "Test entry 2 from Python SDK", wait_for_commit=True
@@ -83,19 +86,19 @@ class AsyncConfidentialLedgerClientTestMixin:
 
             latest_entry = await self.client.get_ledger_entry()
             self.assertNotEqual(
-                latest_entry.transaction_id, append_result.transaction_id
+                latest_entry.transaction_id, append_result_transaction_id
             )
             self.assertNotEqual(latest_entry.contents, entry_contents)
-            self.assertEqual(latest_entry.sub_ledger_id, append_result.sub_ledger_id)
+            self.assertEqual(latest_entry.sub_ledger_id, append_result_sub_ledger_id)
 
             original_entry = await self.client.get_ledger_entry(
-                transaction_id=append_result.transaction_id
+                transaction_id=append_result_transaction_id
             )
             self.assertEqual(
-                original_entry.transaction_id, append_result.transaction_id
+                original_entry.transaction_id, append_result_transaction_id
             )
             self.assertEqual(original_entry.contents, entry_contents)
-            self.assertEqual(original_entry.sub_ledger_id, append_result.sub_ledger_id)
+            self.assertEqual(original_entry.sub_ledger_id, append_result_sub_ledger_id)
 
         @AzureTestCase.await_prepared_test
         async def test_append_entry_flow_with_sub_ledger_id(self):
@@ -107,23 +110,26 @@ class AsyncConfidentialLedgerClientTestMixin:
             self.assertTrue(append_result.transaction_id)
             self.assertEqual(append_result.sub_ledger_id, sub_ledger_id)
 
+            # Test unpacking
+            append_result_sub_ledger_id, append_result_transaction_id = append_result
+
             await self.client.wait_until_durable(
-                transaction_id=append_result.transaction_id
+                transaction_id=append_result_transaction_id
             )
 
             transaction_status = await self.client.get_transaction_status(
-                transaction_id=append_result.transaction_id
+                transaction_id=append_result_transaction_id
             )
             self.assertIsNotNone(transaction_status)
             self.assertIs(transaction_status.state, TransactionState.COMMITTED)
             self.assertEqual(
-                transaction_status.transaction_id, append_result.transaction_id
+                transaction_status.transaction_id, append_result_transaction_id
             )
 
             receipt = await self.client.get_transaction_receipt(
-                transaction_id=append_result.transaction_id
+                transaction_id=append_result_transaction_id
             )
-            self.assertEqual(receipt.transaction_id, append_result.transaction_id)
+            self.assertEqual(receipt.transaction_id, append_result_transaction_id)
             self.assertTrue(receipt.contents)
 
             latest_entry = await self.client.get_ledger_entry(
@@ -133,10 +139,10 @@ class AsyncConfidentialLedgerClientTestMixin:
             # operation occurs after the ledger append (e.g. because a node was restarted). Then,
             # the latest id will be higher.
             self.assertGreaterEqual(
-                latest_entry.transaction_id, append_result.transaction_id
+                latest_entry.transaction_id, append_result_transaction_id
             )
             self.assertEqual(latest_entry.contents, entry_contents)
-            self.assertEqual(latest_entry.sub_ledger_id, append_result.sub_ledger_id)
+            self.assertEqual(latest_entry.sub_ledger_id, append_result_sub_ledger_id)
 
             await self.client.append_to_ledger(
                 "Test sub-ledger entry 2 from Python SDK",
@@ -148,19 +154,19 @@ class AsyncConfidentialLedgerClientTestMixin:
                 sub_ledger_id=sub_ledger_id
             )
             self.assertNotEqual(
-                latest_entry.transaction_id, append_result.transaction_id
+                latest_entry.transaction_id, append_result_transaction_id
             )
             self.assertNotEqual(latest_entry.contents, entry_contents)
             self.assertEqual(latest_entry.sub_ledger_id, sub_ledger_id)
 
             original_entry = await self.client.get_ledger_entry(
-                transaction_id=append_result.transaction_id, sub_ledger_id=sub_ledger_id
+                transaction_id=append_result_transaction_id, sub_ledger_id=sub_ledger_id
             )
             self.assertEqual(
-                original_entry.transaction_id, append_result.transaction_id
+                original_entry.transaction_id, append_result_transaction_id
             )
             self.assertEqual(original_entry.contents, entry_contents)
-            self.assertEqual(original_entry.sub_ledger_id, append_result.sub_ledger_id)
+            self.assertEqual(original_entry.sub_ledger_id, append_result_sub_ledger_id)
 
         @AzureTestCase.await_prepared_test
         async def test_range_query(self):

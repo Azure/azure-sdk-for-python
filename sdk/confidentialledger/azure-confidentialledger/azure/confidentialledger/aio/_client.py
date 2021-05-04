@@ -48,7 +48,9 @@ class ConfidentialLedgerClient(AsyncConfidentialLedgerClientBase):
     :type credential: ~azure.confidentialledger.ConfidentialLedgerCertificateCredential
     :param str ledger_certificate_path: The path to the ledger's TLS certificate.
     :keyword api_version: Version of the Confidential Ledger API to use. Defaults to the most recent.
-    :type api_version: ~azure.confidentialledger.ApiVersion
+        Support API versions:
+            - 0.1-preview
+    :type api_version: str
     """
 
     def __init__(
@@ -123,7 +125,7 @@ class ConfidentialLedgerClient(AsyncConfidentialLedgerClientBase):
         if user_id is None or role is None:
             raise ValueError("user_id or role cannot be None")
 
-        result = await self._client.patch_user(
+        result = await self._client.create_or_update_user(
             user_id=user_id,
             assigned_role=role.value if isinstance(role, LedgerUserRole) else role,
             **kwargs,

@@ -20,13 +20,13 @@ from .. import models
 class ConfidentialLedgerClient(ConfidentialLedgerClientOperationsMixin):
     """The ConfidentialLedgerClient writes and retrieves ledger entries against the Confidential Ledger service.
 
-    :param ledger_base_url: The Confidential Ledger URL, for example https://contoso.eastus.cloudapp.azure.com.
-    :type ledger_base_url: str
+    :param ledger_uri: The Confidential Ledger URL, for example https://contoso.confidentialledger.azure.com.
+    :type ledger_uri: str
     """
 
-    def __init__(self, ledger_base_url: str, **kwargs: Any) -> None:
-        base_url = "{ledgerBaseUrl}"
-        self._config = ConfidentialLedgerClientConfiguration(ledger_base_url, **kwargs)
+    def __init__(self, ledger_uri: str, **kwargs: Any) -> None:
+        base_url = "{ledgerUri}"
+        self._config = ConfidentialLedgerClientConfiguration(ledger_uri, **kwargs)
         self._client = AsyncPipelineClient(
             base_url=base_url, config=self._config, **kwargs
         )
@@ -50,9 +50,9 @@ class ConfidentialLedgerClient(ConfidentialLedgerClientOperationsMixin):
         :rtype: ~azure.core.pipeline.transport.AsyncHttpResponse
         """
         path_format_arguments = {
-            "ledgerBaseUrl": self._serialize.url(
-                "self._config.ledger_base_url",
-                self._config.ledger_base_url,
+            "ledgerUri": self._serialize.url(
+                "self._config.ledger_uri",
+                self._config.ledger_uri,
                 "str",
                 skip_quote=True,
             ),

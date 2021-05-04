@@ -3,6 +3,7 @@
 # Licensed under the MIT License.
 # ------------------------------------
 
+from collections import namedtuple
 
 from ._enums import LedgerUserRole, TransactionState
 
@@ -17,22 +18,17 @@ if TYPE_CHECKING:
     from typing import Dict, List
 
 
-class AppendResult(object):
+class AppendResult(namedtuple("AppendResult", ["sub_ledger_id", "transaction_id"])):
     """Result of appending to the ledger.
 
-    :param transaction_id: Identifier for when the append transaction was registered.
-    :type transaction_id: str
-    :param sub_ledger_id: Identifies the sub-ledger the entry was appended to.
-    :type sub_ledger_id: str
+    :ivar str transaction_id: Identifier for when the append transaction was registered.
+    :ivar str sub_ledger_id: Identifies the sub-ledger the entry was appended to.
     """
 
-    def __init__(
-        self,
-        transaction_id,  # type: str
-        sub_ledger_id,  # type: str
-    ):
-        self._transaction_id = transaction_id
-        self._sub_ledger_id = sub_ledger_id
+    __slots__ = ()
+
+    def __new__(cls, sub_ledger_id, transaction_id):
+        return super(AppendResult, cls).__new__(cls, sub_ledger_id, transaction_id)
 
     @classmethod
     def _from_pipeline_result(cls, _, deserialized, response_headers):
@@ -40,18 +36,6 @@ class AppendResult(object):
         return cls(
             transaction_id=transaction_id, sub_ledger_id=deserialized.sub_ledger_id
         )
-
-    @property
-    def transaction_id(self):
-        # type: () -> str
-        """Identifier for when the append transaction was registered."""
-        return self._transaction_id
-
-    @property
-    def sub_ledger_id(self):
-        # type: () -> str
-        """Identifier for the sub-ledger the entry was appended to."""
-        return self._sub_ledger_id
 
 
 class ConsortiumMember(object):
