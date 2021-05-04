@@ -223,8 +223,8 @@ class DocumentTranslationClient(object):
         :keyword int results_per_page: is the number of jobs returned per page.
         :keyword list[str] job_ids: job ids to filter by.
         :keyword list[str] statuses: job statuses to filter by.
-        :keyword Union[str, datetime.datetime] created_after: get jobs created after certian datetime.
-        :keyword Union[str, datetime.datetime] created_before: get jobs created before certian datetime.
+        :keyword Union[str, datetime.datetime] created_after: get jobs created after certain datetime.
+        :keyword Union[str, datetime.datetime] created_before: get jobs created before certain datetime.
         :keyword list[str] order_by: the sorting query for the jobs returned.
             format: ["parm1 asc/desc", "parm2 asc/desc", ...]
             (ex: 'createdDateTimeUtc asc', 'createdDateTimeUtc desc').
@@ -279,8 +279,8 @@ class DocumentTranslationClient(object):
         :keyword int results_per_page: is the number of documents returned per page.
         :keyword list[str] document_ids: document IDs to filter by.
         :keyword list[str] statuses: document statuses to filter by.
-        :keyword Union[str, datetime.datetime] translated_after: get document translated after certian datetime.
-        :keyword Union[str, datetime.datetime] translated_before: get document translated before certian datetime.
+        :keyword Union[str, datetime.datetime] translated_after: get document translated after certain datetime.
+        :keyword Union[str, datetime.datetime] translated_before: get document translated before certain datetime.
         :keyword list[str] order_by: the sorting query for the documents.
             format: ["parm1 asc/desc", "parm2 asc/desc", ...]
             (ex: 'createdDateTimeUtc asc', 'createdDateTimeUtc desc').
