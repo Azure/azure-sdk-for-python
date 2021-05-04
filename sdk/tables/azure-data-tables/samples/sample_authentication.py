@@ -71,13 +71,14 @@ class TableAuthSamples(object):
 
         # [START auth_from_sas]
         from azure.data.tables import TableServiceClient
+        from azure.core.credentials import AzureNamedKeyCredential
 
         # Create a SAS token to use for authentication of a client
         from azure.data.tables import generate_account_sas, ResourceTypes, AccountSasPermissions
         print("Account name: {}".format(self.account_name))
+        credential = AzureNamedKeyCredential(self.account_name, self.access_key)
         sas_token = generate_account_sas(
-            self.account_name,
-            self.access_key,
+            credential,
             resource_types=ResourceTypes(service=True),
             permission=AccountSasPermissions(read=True),
             expiry=datetime.utcnow() + timedelta(hours=1)
