@@ -130,7 +130,8 @@ steps:
           echo "$(activate.method) ${{ artifact.name }}"
           $(activate.method) ${{ artifact.name }}
 
-          python -m pip install -r dev_requirements.txt
+          echo "python -m pip install -r $(Build.SourcesDirectory)/eng/conda_test_requirements.txt"
+          python -m pip install -r $(Build.SourcesDirectory)/eng/conda_test_requirements.txt
         displayName: 'Install ${{ checkout.package }} Conda Package and Dev Requirements'
         workingDirectory: $(conda.build)/${{ checkout.checkout_path }}/${{ checkout.package }}
 
