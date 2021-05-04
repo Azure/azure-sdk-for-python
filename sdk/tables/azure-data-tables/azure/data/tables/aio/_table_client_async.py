@@ -322,7 +322,7 @@ class TableClient(AsyncTablesBaseClient):
         """Insert entity in a table.
 
         :param entity: The properties for the table entity.
-        :type entity: ~azure.data.tables.TableEntity or Dict[str,str]
+        :type entity: :class:`~azure.data.tables.TableEntity` or Dict[str,str]
         :return: Dictionary mapping operation metadata returned from the service
         :rtype: Dict[str,str]
         :raises: :class:`~azure.core.exceptions.ResourceExistsError` If the entity already exists
@@ -362,9 +362,9 @@ class TableClient(AsyncTablesBaseClient):
         """Update entity in a table.
 
         :param entity: The properties for the table entity.
-        :type entity: dict[str, str]
+        :type entity: :class:`~azure.data.tables.TableEntity` or Dict[str,str]
         :param mode: Merge or Replace entity
-        :type mode: ~azure.data.tables.UpdateMode
+        :type mode: :class:`~azure.data.tables.UpdateMode`
         :keyword str etag: Etag of the entity
         :keyword match_condition: MatchCondition
         :paramtype match_condition: ~azure.core.MatchCondition
@@ -550,9 +550,9 @@ class TableClient(AsyncTablesBaseClient):
         """Update/Merge or Insert entity into table.
 
         :param entity: The properties for the table entity.
-        :type entity: TableEntity or dict[str,str]
+        :type entity: :class:`~azure.data.tables.TableEntity` or Dict[str,str]
         :param mode: Merge or Replace entity
-        :type mode: ~azure.data.tables.UpdateMode
+        :type mode: :class:`~azure.data.tables.UpdateMode`
         :return: Dictionary mapping operation metadata returned from the service
         :rtype: Dict[str,str]
         :raises: :class:`~azure.core.exceptions.HttpResponseError`
