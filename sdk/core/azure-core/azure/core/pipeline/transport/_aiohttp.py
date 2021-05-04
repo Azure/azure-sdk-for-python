@@ -211,10 +211,9 @@ class AioHttpStreamDownloadGenerator(AsyncIterator):
         return self.content_length
 
     async def __anext__(self):
-        if self.pipeline:
-            raw = self.pipeline.transport.session.auto_decompress
-        if self._raw:
+        if self._raw and self.pipeline:
             try:
+                raw = self.pipeline.transport.session.auto_decompress
                 self.pipeline.transport.session.auto_decompress = False
             except AttributeError:
                 pass
@@ -226,7 +225,7 @@ class AioHttpStreamDownloadGenerator(AsyncIterator):
                 raise _ResponseStopIteration()
             return chunk
         except _ResponseStopIteration:
-            if self.pipeline:
+            if self._raw and self.pipeline:
                 try:
                     self.pipeline.transport.session.auto_decompress = raw
                 except AttributeError:
@@ -234,14 +233,14 @@ class AioHttpStreamDownloadGenerator(AsyncIterator):
             self.response.internal_response.close()
             raise StopAsyncIteration()
         except StreamConsumedError:
-            if self.pipeline:
+            if self._raw and self.pipeline:
                 try:
                     self.pipeline.transport.session.auto_decompress = raw
                 except AttributeError:
                     pass
             raise
         except Exception as err:
-            if self.pipeline:
+            if self._raw and self.pipeline:
                 try:
                     self.pipeline.transport.session.auto_decompress = raw
                 except AttributeError:
