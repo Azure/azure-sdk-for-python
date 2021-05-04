@@ -11,6 +11,7 @@ trigger:
     - restapi*
   paths:
     include:
+    - scripts/
     - sdk/confidentialledger/
 
 pr:
