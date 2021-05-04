@@ -5,6 +5,7 @@
 # -------------------------------------------------------------------------
 import binascii
 from requests.structures import CaseInsensitiveDict
+from typing import Dict, Optional, Any
 from azure.core import MatchConditions
 from azure.core.pipeline import Pipeline
 from azure.core.pipeline.policies import (
@@ -44,8 +45,6 @@ except ImportError:
     TYPE_CHECKING = False
 
 if TYPE_CHECKING:
-    # pylint:disable=unused-import,ungrouped-imports
-    from typing import Any, Optional
     from azure.core.paging import ItemPaged
 
 
@@ -54,7 +53,7 @@ class AzureAppConfigurationClient:
 
     :param str base_url: base url of the service
     :param credential: An object which can provide secrets for the app configuration service
-    :type credential: azure.AppConfigConnectionStringCredential
+    :type credential: :class:`~azure.appconfiguration.AppConfigConnectionStringCredential`
     :keyword Pipeline pipeline: If omitted, the standard pipeline is used.
     :keyword HttpTransport transport: If omitted, the standard pipeline is used.
     :keyword list[HTTPPolicy] policies: If omitted, the standard pipeline is used.
@@ -64,7 +63,7 @@ class AzureAppConfigurationClient:
     # pylint:disable=protected-access
 
     def __init__(self, base_url, credential, **kwargs):
-        # type: (str, Any, dict) -> None
+        # type: (str, Any, **Any) -> None
         try:
             if not base_url.lower().startswith("http"):
                 base_url = "https://" + base_url
@@ -101,7 +100,7 @@ class AzureAppConfigurationClient:
 
     @classmethod
     def from_connection_string(cls, connection_string, **kwargs):
-        # type: (str, dict) -> AzureAppConfigurationClient
+        # type: (str, Dict, **Any) -> AzureAppConfigurationClient
         """Create AzureAppConfigurationClient from a Connection String.
 
         :param connection_string: Connection String
@@ -109,7 +108,7 @@ class AzureAppConfigurationClient:
             used to access the Azure App Configuration.
         :type connection_string: str
         :return: An AzureAppConfigurationClient authenticated with the connection string
-        :rtype: AzureAppConfigurationClient
+        :rtype: :class:`~azure.appconfiguration.AzureAppConfigurationClient`
 
         Example
 
@@ -164,7 +163,7 @@ class AzureAppConfigurationClient:
     @distributed_trace
     def list_configuration_settings(
         self, key_filter=None, label_filter=None, **kwargs
-    ):  # type: (Optional[str], Optional[str], dict) -> ItemPaged[ConfigurationSetting]
+    ):  # type: (Optional[str], Optional[str], **Dict) -> ItemPaged[ConfigurationSetting]
 
         """List the configuration settings stored in the configuration service, optionally filtered by
         label and accept_datetime
@@ -230,7 +229,7 @@ class AzureAppConfigurationClient:
         etag="*",
         match_condition=MatchConditions.Unconditionally,
         **kwargs
-    ):  # type: (str, Optional[str], Optional[str], Optional[MatchConditions], dict) -> ConfigurationSetting
+    ):  # type: (str, Optional[str], Optional[str], Optional[MatchConditions], **Dict) -> ConfigurationSetting
 
         """Get the matched ConfigurationSetting from Azure App Configuration service
 
@@ -240,11 +239,12 @@ class AzureAppConfigurationClient:
         :type label: str
         :param etag: check if the ConfigurationSetting is changed. Set None to skip checking etag
         :type etag: str or None
-        :param ~azure.core.MatchConditions match_condition: the match condition to use upon the etag
+        :param match_condition: The match condition to use upon the etag
+        :type match_condition: :class:`~azure.core.MatchConditions`
         :keyword datetime accept_datetime: the retrieved ConfigurationSetting that created no later than this datetime
         :keyword dict headers: if "headers" exists, its value (a dict) will be added to the http request header
         :return: The matched ConfigurationSetting object
-        :rtype: ~azure.appconfiguration.ConfigurationSetting
+        :rtype: :class:`~azure.appconfiguration.ConfigurationSetting`
         :raises: :class:`HttpResponseError`, :class:`ClientAuthenticationError`, \
         :class:`ResourceNotFoundError`, :class:`ResourceModifiedError`, :class:`ResourceExistsError`
 
@@ -285,20 +285,16 @@ class AzureAppConfigurationClient:
             raise binascii.Error("Connection string secret has incorrect padding")
 
     @distributed_trace
-    def add_configuration_setting(
-        self,
-        configuration_setting,  # type: ConfigurationSetting
-        **kwargs  # type: dict
-    ):
-        # type: (...) -> ConfigurationSetting
+    def add_configuration_setting(self, configuration_setting, **kwargs):
+        # type: (ConfigurationSetting, **Dict) -> ConfigurationSetting
 
         """Add a ConfigurationSetting instance into the Azure App Configuration service.
 
         :param configuration_setting: the ConfigurationSetting object to be added
-        :type configuration_setting: :class:`ConfigurationSetting<azure.appconfiguration.ConfigurationSetting>`
+        :type configuration_setting: :class:`~azure.appconfiguration.ConfigurationSetting`
         :keyword dict headers: if "headers" exists, its value (a dict) will be added to the http request header
         :return: The ConfigurationSetting object returned from the App Configuration service
-        :rtype: ~azure.appconfiguration.ConfigurationSetting
+        :rtype: :class:`~azure.appconfiguration.ConfigurationSetting`
         :raises: :class:`HttpResponseError`, :class:`ClientAuthenticationError`, :class:`ResourceExistsError`
 
         Example
@@ -339,7 +335,7 @@ class AzureAppConfigurationClient:
         configuration_setting,
         match_condition=MatchConditions.Unconditionally,
         **kwargs
-    ):  # type: (ConfigurationSetting, Optional[MatchConditions], dict) -> ConfigurationSetting
+    ):  # type: (ConfigurationSetting, Optional[MatchConditions], **Dict) -> ConfigurationSetting
 
         """Add or update a ConfigurationSetting.
         If the configuration setting identified by key and label does not exist, this is a create.
@@ -348,10 +344,11 @@ class AzureAppConfigurationClient:
         :param configuration_setting: the ConfigurationSetting to be added (if not exists) \
         or updated (if exists) to the service
         :type configuration_setting: :class:`ConfigurationSetting`
-        :param ~azure.core.MatchConditions match_condition: the match condition to use upon the etag
+        :param match_condition: The match condition to use upon the etag
+        :type match_condition: :class:`~azure.core.MatchConditions`
         :keyword dict headers: if "headers" exists, its value (a dict) will be added to the http request header
         :return: The ConfigurationSetting returned from the service
-        :rtype: ~azure.appconfiguration.ConfigurationSetting
+        :rtype: :class:`~azure.appconfiguration.ConfigurationSetting`
         :raises: :class:`HttpResponseError`, :class:`ClientAuthenticationError`, \
         :class:`ResourceReadOnlyError`, :class:`ResourceModifiedError`, :class:`ResourceNotModifiedError`, \
         :class:`ResourceNotFoundError`, :class:`ResourceExistsError`
@@ -401,9 +398,8 @@ class AzureAppConfigurationClient:
             raise binascii.Error("Connection string secret has incorrect padding")
 
     @distributed_trace
-    def delete_configuration_setting(
-        self, key, label=None, **kwargs
-    ):  # type: (str, Optional[str], dict) -> ConfigurationSetting
+    def delete_configuration_setting(self, key, label=None, **kwargs):
+        # type: (str, Optional[str], **Dict) -> ConfigurationSetting
 
         """Delete a ConfigurationSetting if it exists
 
@@ -412,10 +408,11 @@ class AzureAppConfigurationClient:
         :param label: label used to identify the ConfigurationSetting
         :type label: str
         :keyword str etag: check if the ConfigurationSetting is changed. Set None to skip checking etag
-        :keyword ~azure.core.MatchConditions match_condition: the match condition to use upon the etag
+        :keyword match_condition: The match condition to use upon the etag
+        :paramtype match_condition: :class:`~azure.core.MatchConditions`
         :keyword dict headers: if "headers" exists, its value (a dict) will be added to the http request
         :return: The deleted ConfigurationSetting returned from the service, or None if it doesn't exist.
-        :rtype: ~azure.appconfiguration.ConfigurationSetting
+        :rtype: :class:`~azure.appconfiguration.ConfigurationSetting`
         :raises: :class:`HttpResponseError`, :class:`ClientAuthenticationError`, \
         :class:`ResourceReadOnlyError`, :class:`ResourceModifiedError`, :class:`ResourceNotModifiedError`, \
         :class:`ResourceNotFoundError`, :class:`ResourceExistsError`
@@ -457,9 +454,8 @@ class AzureAppConfigurationClient:
             raise binascii.Error("Connection string secret has incorrect padding")
 
     @distributed_trace
-    def list_revisions(
-        self, key_filter=None, label_filter=None, **kwargs
-    ):  # type: (Optional[str], Optional[str], dict) -> ItemPaged[ConfigurationSetting]
+    def list_revisions(self, key_filter=None, label_filter=None, **kwargs):
+        # type: (Optional[str], Optional[str], **Dict) -> ItemPaged[ConfigurationSetting]
 
         """
         Find the ConfigurationSetting revision history.
@@ -518,9 +514,8 @@ class AzureAppConfigurationClient:
             raise binascii.Error("Connection string secret has incorrect padding")
 
     @distributed_trace
-    def set_read_only(
-        self, configuration_setting, read_only=True, **kwargs
-    ):  # type: (ConfigurationSetting, Optional[bool], dict) -> ConfigurationSetting
+    def set_read_only(self, configuration_setting, read_only=True, **kwargs):
+        # type: (ConfigurationSetting, Optional[bool], **Dict) -> ConfigurationSetting
 
         """Set a configuration setting read only
 
@@ -528,10 +523,11 @@ class AzureAppConfigurationClient:
         :type configuration_setting: :class:`ConfigurationSetting`
         :param read_only: set the read only setting if true, else clear the read only setting
         :type read_only: bool
-        :keyword ~azure.core.MatchConditions match_condition: the match condition to use upon the etag
+        :keyword match_condition: The match condition to use upon the etag
+        :paramtype match_condition: :class:`~azure.core.MatchConditions`
         :keyword dict headers: if "headers" exists, its value (a dict) will be added to the http request header
         :return: The ConfigurationSetting returned from the service
-        :rtype: ~azure.appconfiguration.ConfigurationSetting
+        :rtype: :class:`~azure.appconfiguration.ConfigurationSetting`
         :raises: :class:`HttpResponseError`, :class:`ClientAuthenticationError`, :class:`ResourceNotFoundError`
 
         Example
@@ -591,8 +587,8 @@ class AzureAppConfigurationClient:
         # type: (str) -> None
 
         """Add a sync token to the internal list of tokens.
-        :param token: The sync token to be added to the internal list of tokens
-        :type token: str
+
+        :param str token: The sync token to be added to the internal list of tokens
         """
         if not self._sync_token_policy:
             raise AttributeError(
