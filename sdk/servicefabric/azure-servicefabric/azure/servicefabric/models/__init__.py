@@ -239,17 +239,22 @@ try:
     from ._models_py3 import ImageStoreCopyDescription
     from ._models_py3 import ImageStoreInfo
     from ._models_py3 import InlinedValueSecretResourceProperties
+    from ._models_py3 import InstanceLifecycleDescription
     from ._models_py3 import Int64PropertyValue
     from ._models_py3 import Int64RangePartitionInformation
     from ._models_py3 import InvokeDataLossResult
     from ._models_py3 import InvokeQuorumLossResult
     from ._models_py3 import KeyValueStoreReplicaStatus
+    from ._models_py3 import LoadedPartitionInformationQueryDescription
+    from ._models_py3 import LoadedPartitionInformationResult
+    from ._models_py3 import LoadedPartitionInformationResultList
     from ._models_py3 import LoadMetricInformation
     from ._models_py3 import LoadMetricReport
     from ._models_py3 import LoadMetricReportInfo
     from ._models_py3 import LocalNetworkResourceProperties
     from ._models_py3 import ManagedApplicationIdentity
     from ._models_py3 import ManagedApplicationIdentityDescription
+    from ._models_py3 import ManagedIdentityAzureBlobBackupStorageDescription
     from ._models_py3 import MetricLoadDescription
     from ._models_py3 import MonitoringPolicyDescription
     from ._models_py3 import NameDescription
@@ -289,8 +294,11 @@ try:
     from ._models_py3 import NodeRepairTargetDescription
     from ._models_py3 import NodeResult
     from ._models_py3 import NodesHealthEvaluation
+    from ._models_py3 import NodeTagsDescription
     from ._models_py3 import NodeTransitionProgress
     from ._models_py3 import NodeTransitionResult
+    from ._models_py3 import NodeTypeHealthPolicyMapItem
+    from ._models_py3 import NodeTypeNodesHealthEvaluation
     from ._models_py3 import NodeUpEvent
     from ._models_py3 import NodeUpgradeProgressInfo
     from ._models_py3 import OperationStatus
@@ -382,6 +390,7 @@ try:
     from ._models_py3 import ReplicaHealthStateChunkList
     from ._models_py3 import ReplicaHealthStateFilter
     from ._models_py3 import ReplicaInfo
+    from ._models_py3 import ReplicaLifecycleDescription
     from ._models_py3 import ReplicaMetricLoadDescription
     from ._models_py3 import ReplicasHealthEvaluation
     from ._models_py3 import ReplicaStatusBase
@@ -439,6 +448,7 @@ try:
     from ._models_py3 import ServiceNameInfo
     from ._models_py3 import ServiceNewHealthReportEvent
     from ._models_py3 import ServicePartitionInfo
+    from ._models_py3 import ServicePlacementAllowMultipleStatelessInstancesOnNodePolicyDescription
     from ._models_py3 import ServicePlacementInvalidDomainPolicyDescription
     from ._models_py3 import ServicePlacementNonPartiallyPlaceServicePolicyDescription
     from ._models_py3 import ServicePlacementPolicyDescription
@@ -746,17 +756,22 @@ except (SyntaxError, ImportError):
     from ._models import ImageStoreCopyDescription
     from ._models import ImageStoreInfo
     from ._models import InlinedValueSecretResourceProperties
+    from ._models import InstanceLifecycleDescription
     from ._models import Int64PropertyValue
     from ._models import Int64RangePartitionInformation
     from ._models import InvokeDataLossResult
     from ._models import InvokeQuorumLossResult
     from ._models import KeyValueStoreReplicaStatus
+    from ._models import LoadedPartitionInformationQueryDescription
+    from ._models import LoadedPartitionInformationResult
+    from ._models import LoadedPartitionInformationResultList
     from ._models import LoadMetricInformation
     from ._models import LoadMetricReport
     from ._models import LoadMetricReportInfo
     from ._models import LocalNetworkResourceProperties
     from ._models import ManagedApplicationIdentity
     from ._models import ManagedApplicationIdentityDescription
+    from ._models import ManagedIdentityAzureBlobBackupStorageDescription
     from ._models import MetricLoadDescription
     from ._models import MonitoringPolicyDescription
     from ._models import NameDescription
@@ -796,8 +811,11 @@ except (SyntaxError, ImportError):
     from ._models import NodeRepairTargetDescription
     from ._models import NodeResult
     from ._models import NodesHealthEvaluation
+    from ._models import NodeTagsDescription
     from ._models import NodeTransitionProgress
     from ._models import NodeTransitionResult
+    from ._models import NodeTypeHealthPolicyMapItem
+    from ._models import NodeTypeNodesHealthEvaluation
     from ._models import NodeUpEvent
     from ._models import NodeUpgradeProgressInfo
     from ._models import OperationStatus
@@ -889,6 +907,7 @@ except (SyntaxError, ImportError):
     from ._models import ReplicaHealthStateChunkList
     from ._models import ReplicaHealthStateFilter
     from ._models import ReplicaInfo
+    from ._models import ReplicaLifecycleDescription
     from ._models import ReplicaMetricLoadDescription
     from ._models import ReplicasHealthEvaluation
     from ._models import ReplicaStatusBase
@@ -946,6 +965,7 @@ except (SyntaxError, ImportError):
     from ._models import ServiceNameInfo
     from ._models import ServiceNewHealthReportEvent
     from ._models import ServicePartitionInfo
+    from ._models import ServicePlacementAllowMultipleStatelessInstancesOnNodePolicyDescription
     from ._models import ServicePlacementInvalidDomainPolicyDescription
     from ._models import ServicePlacementNonPartiallyPlaceServicePolicyDescription
     from ._models import ServicePlacementPolicyDescription
@@ -1071,6 +1091,7 @@ from ._service_fabric_client_ap_is_enums import (
     HostType,
     ImageRegistryPasswordType,
     ImpactLevel,
+    ManagedIdentityType,
     MoveCost,
     NetworkKind,
     NodeDeactivationIntent,
@@ -1083,6 +1104,7 @@ from ._service_fabric_client_ap_is_enums import (
     OperatingSystemType,
     OperationState,
     OperationType,
+    Ordering,
     PackageSharingPolicyScope,
     PartitionAccessStatus,
     PartitionScheme,
@@ -1366,17 +1388,22 @@ __all__ = [
     'ImageStoreCopyDescription',
     'ImageStoreInfo',
     'InlinedValueSecretResourceProperties',
+    'InstanceLifecycleDescription',
     'Int64PropertyValue',
     'Int64RangePartitionInformation',
     'InvokeDataLossResult',
     'InvokeQuorumLossResult',
     'KeyValueStoreReplicaStatus',
+    'LoadedPartitionInformationQueryDescription',
+    'LoadedPartitionInformationResult',
+    'LoadedPartitionInformationResultList',
     'LoadMetricInformation',
     'LoadMetricReport',
     'LoadMetricReportInfo',
     'LocalNetworkResourceProperties',
     'ManagedApplicationIdentity',
     'ManagedApplicationIdentityDescription',
+    'ManagedIdentityAzureBlobBackupStorageDescription',
     'MetricLoadDescription',
     'MonitoringPolicyDescription',
     'NameDescription',
@@ -1416,8 +1443,11 @@ __all__ = [
     'NodeRepairTargetDescription',
     'NodeResult',
     'NodesHealthEvaluation',
+    'NodeTagsDescription',
     'NodeTransitionProgress',
     'NodeTransitionResult',
+    'NodeTypeHealthPolicyMapItem',
+    'NodeTypeNodesHealthEvaluation',
     'NodeUpEvent',
     'NodeUpgradeProgressInfo',
     'OperationStatus',
@@ -1509,6 +1539,7 @@ __all__ = [
     'ReplicaHealthStateChunkList',
     'ReplicaHealthStateFilter',
     'ReplicaInfo',
+    'ReplicaLifecycleDescription',
     'ReplicaMetricLoadDescription',
     'ReplicasHealthEvaluation',
     'ReplicaStatusBase',
@@ -1566,6 +1597,7 @@ __all__ = [
     'ServiceNameInfo',
     'ServiceNewHealthReportEvent',
     'ServicePartitionInfo',
+    'ServicePlacementAllowMultipleStatelessInstancesOnNodePolicyDescription',
     'ServicePlacementInvalidDomainPolicyDescription',
     'ServicePlacementNonPartiallyPlaceServicePolicyDescription',
     'ServicePlacementPolicyDescription',
@@ -1667,6 +1699,7 @@ __all__ = [
     'EntityKind',
     'FabricEventKind',
     'HealthEvaluationKind',
+    'Ordering',
     'NodeDeactivationIntent',
     'NodeDeactivationStatus',
     'NodeDeactivationTaskType',
@@ -1714,6 +1747,7 @@ __all__ = [
     'BackupSuspensionScope',
     'RestoreState',
     'BackupType',
+    'ManagedIdentityType',
     'BackupScheduleFrequencyType',
     'DayOfWeek',
     'BackupState',

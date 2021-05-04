@@ -6,17 +6,14 @@
 from datetime import datetime
 import pytest
 
-from devtools_testutils import AzureTestCase
-
 from azure.containerregistry import (
-    DeletedRepositoryResult,
-    RepositoryProperties,
+    DeleteRepositoryResult,
+    ArtifactTagProperties,
     ContentProperties,
     RegistryArtifactOrderBy,
     RegistryArtifactProperties,
     TagOrderBy,
 )
-from azure.containerregistry.aio import ContainerRegistryClient, ContainerRepositoryClient
 from azure.core.exceptions import ResourceNotFoundError
 from azure.core.async_paging import AsyncItemPaged
 
@@ -119,8 +116,8 @@ class TestContainerRepositoryClient(AsyncContainerRegistryTestClass):
 
         repo_client = self.create_repository_client(containerregistry_endpoint, TO_BE_DELETED)
         result = await repo_client.delete()
-        assert isinstance(result, DeletedRepositoryResult)
-        assert result.deleted_registry_artifact_digests is not None
+        assert isinstance(result, DeleteRepositoryResult)
+        assert result.deleted_manifests is not None
         assert result.deleted_tags is not None
 
         existing_repos = []
@@ -320,3 +317,13 @@ class TestContainerRepositoryClient(AsyncContainerRegistryTestClass):
             count += 1
 
         assert count > 0
+
+    @acr_preparer()
+    async def test_get_tag(self, containerregistry_endpoint):
+        client = self.create_repository_client(containerregistry_endpoint, "library/busybox")
+
+        tag = await client.get_tag_properties("latest")
+
+        assert tag is not None
+        assert isinstance(tag, ArtifactTagProperties)
+        assert tag.repository == client.repository
