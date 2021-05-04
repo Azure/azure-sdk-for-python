@@ -226,7 +226,7 @@ class PhoneNumbersClientTestAsync(AsyncCommunicationTestCase):
         assert ex.value.message is not None
     
     @AsyncCommunicationTestCase.await_prepared_test
-    async def test_search_available_phone_numbers_with_no_country_code(self):
+    async def test_search_available_phone_numbers_with_invalid_country_code(self):
         capabilities = PhoneNumberCapabilities(
             calling = PhoneNumberCapabilityType.INBOUND,
             sms = PhoneNumberCapabilityType.INBOUND_OUTBOUND
@@ -235,7 +235,7 @@ class PhoneNumbersClientTestAsync(AsyncCommunicationTestCase):
         with pytest.raises(Exception) as ex:
             async with self.phone_number_client:
                 await self.phone_number_client.begin_search_available_phone_numbers(
-                    None,
+                    "XX",
                     PhoneNumberType.TOLL_FREE,
                     PhoneNumberAssignmentType.APPLICATION,
                     capabilities,

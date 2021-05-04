@@ -349,18 +349,18 @@ class FormRecognizerClient(FormRecognizerClientBaseAsync):
             raise e
 
     @distributed_trace_async
-    async def begin_recognize_id_documents(
-        self, id_document: Union[bytes, IO[bytes]], **kwargs: Any
+    async def begin_recognize_identity_documents(
+        self, identity_document: Union[bytes, IO[bytes]], **kwargs: Any
     ) -> AsyncLROPoller[List[RecognizedForm]]:
-        """Extract field text and semantic values from a given ID document.
+        """Extract field text and semantic values from a given identity document.
         The input document must be of one of the supported content types - 'application/pdf',
         'image/jpeg', 'image/png', 'image/tiff' or 'image/bmp'.
 
-        See fields found on an ID document here:
+        See fields found on an identity document here:
         https://aka.ms/formrecognizer/iddocumentfields
 
-        :param id_document: JPEG, PNG, PDF, TIFF, or BMP type file stream or bytes.
-        :type id_document: bytes or IO[bytes]
+        :param identity_document: JPEG, PNG, PDF, TIFF, or BMP type file stream or bytes.
+        :type identity_document: bytes or IO[bytes]
         :keyword bool include_field_elements:
             Whether or not to include all lines per page and field elements such as lines, words,
             and selection marks for each form field.
@@ -380,31 +380,31 @@ class FormRecognizerClient(FormRecognizerClientBaseAsync):
         :raises ~azure.core.exceptions.HttpResponseError:
 
         .. versionadded:: v2.1-preview
-            The *begin_recognize_id_documents* client method
+            The *begin_recognize_identity_documents* client method
 
         .. admonition:: Example:
 
-            .. literalinclude:: ../samples/async_samples/sample_recognize_id_documents_async.py
-                :start-after: [START recognize_id_documents_async]
-                :end-before: [END recognize_id_documents_async]
+            .. literalinclude:: ../samples/async_samples/sample_recognize_identity_documents_async.py
+                :start-after: [START recognize_identity_documents_async]
+                :end-before: [END recognize_identity_documents_async]
                 :language: python
                 :dedent: 8
-                :caption: Recognize ID documents from a file.
+                :caption: Recognize identity documents from a file.
         """
         content_type = kwargs.pop("content_type", None)
         if content_type == "application/json":
             raise TypeError(
-                "Call begin_recognize_id_documents_from_url() to analyze an ID document from a URL."
+                "Call begin_recognize_identity_documents_from_url() to analyze an identity document from a URL."
             )
 
         include_field_elements = kwargs.pop("include_field_elements", False)
 
         if content_type is None and kwargs.get("continuation_token", None) is None:
-            content_type = get_content_type(id_document)
+            content_type = get_content_type(identity_document)
 
         try:
             return await self._client.begin_analyze_id_document_async(  # type: ignore
-                file_stream=id_document,
+                file_stream=identity_document,
                 content_type=content_type,
                 include_text_details=include_field_elements,
                 cls=kwargs.pop("cls", self._prebuilt_callback),
@@ -414,22 +414,22 @@ class FormRecognizerClient(FormRecognizerClientBaseAsync):
         except ValueError as e:
             if "begin_analyze_id_document_async" in str(e):
                 raise ValueError(
-                    "Method 'begin_recognize_id_documents' is only available for API version V2_1_PREVIEW and up"
+                    "Method 'begin_recognize_identity_documents' is only available for API version V2_1_PREVIEW and up"
                 )
             raise e
 
     @distributed_trace_async
-    async def begin_recognize_id_documents_from_url(
-        self, id_document_url: str, **kwargs: Any
+    async def begin_recognize_identity_documents_from_url(
+        self, identity_document_url: str, **kwargs: Any
     ) -> AsyncLROPoller[List[RecognizedForm]]:
-        """Extract field text and semantic values from a given ID document.
-        The input document must be the location (URL) of the ID document to be analyzed.
+        """Extract field text and semantic values from a given identity document.
+        The input document must be the location (URL) of the identity document to be analyzed.
 
-        See fields found on an ID document here:
+        See fields found on an identity document here:
         https://aka.ms/formrecognizer/iddocumentfields
 
-        :param str id_document_url: The URL of the ID document to analyze. The input must be a valid, encoded URL
-            of one of the supported formats: JPEG, PNG, PDF, TIFF, or BMP.
+        :param str identity_document_url: The URL of the identity document to analyze. The input must be a valid,
+            encoded URL of one of the supported formats: JPEG, PNG, PDF, TIFF, or BMP.
         :keyword bool include_field_elements:
             Whether or not to include all lines per page and field elements such as lines, words,
             and selection marks for each form field.
@@ -445,14 +445,14 @@ class FormRecognizerClient(FormRecognizerClientBaseAsync):
         :raises ~azure.core.exceptions.HttpResponseError:
 
         .. versionadded:: v2.1-preview
-            The *begin_recognize_id_documents_from_url* client method
+            The *begin_recognize_identity_documents_from_url* client method
         """
 
         include_field_elements = kwargs.pop("include_field_elements", False)
 
         try:
             return await self._client.begin_analyze_id_document_async(  # type: ignore
-                file_stream={"source": id_document_url},
+                file_stream={"source": identity_document_url},
                 include_text_details=include_field_elements,
                 cls=kwargs.pop("cls", self._prebuilt_callback),
                 polling=True,
@@ -461,7 +461,7 @@ class FormRecognizerClient(FormRecognizerClientBaseAsync):
         except ValueError as e:
             if "begin_analyze_id_document_async" in str(e):
                 raise ValueError(
-                    "Method 'begin_recognize_id_documents_from_url' is "
+                    "Method 'begin_recognize_identity_documents_from_url' is "
                     "only available for API version V2_1_PREVIEW and up"
                 )
             raise e
