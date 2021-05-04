@@ -229,8 +229,8 @@ class TestSubmittedJobs(AsyncDocumentTranslationTest):
         start = datetime.utcnow().replace(tzinfo=pytz.utc)
         successful_job_ids = await self._create_and_submit_sample_translation_jobs_async(client, jobs_count, wait=True, docs_per_job=docs_per_job)
         cancelled_job_ids = await self._create_and_submit_sample_translation_jobs_async(client, jobs_count, wait=False, docs_per_job=docs_per_job)
-        for job in cancelled_job_ids:
-            await client.cancel_job(job.id)
+        for job_id in cancelled_job_ids:
+            await client.cancel_job(job_id)
         self.wait(15) # wait for status to propagate
         end = datetime.utcnow().replace(tzinfo=pytz.utc)
 
@@ -261,7 +261,7 @@ class TestSubmittedJobs(AsyncDocumentTranslationTest):
                 curr_time = job.created_on
                 # assert filters
                 assert(job.created_on.replace(tzinfo=None) <= end.replace(tzinfo=None))
-                assert(job.created_on >= start.replace(tzinfo=None))
+                assert(job.created_on.replace(tzinfo=None) >= start.replace(tzinfo=None))
                 self.assertIn(job.status, statuses)
 
             self.assertLessEqual(counter, results_per_page) # assert paging

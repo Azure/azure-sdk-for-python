@@ -207,7 +207,7 @@ class TestSubmittedJobs(DocumentTranslationTest):
     @DocumentTranslationClientPreparer()
     def test_list_submitted_jobs_mixed_filters(self, client):
         # create some jobs
-        jobs_count = 15
+        jobs_count = 10
         docs_per_job = 1
         results_per_page = 2
         statuses = ["Cancelled"]
@@ -217,9 +217,9 @@ class TestSubmittedJobs(DocumentTranslationTest):
         start = datetime.utcnow().replace(tzinfo=pytz.utc)
         successful_job_ids = self._create_and_submit_sample_translation_jobs(client, jobs_count, wait=True, docs_per_job=docs_per_job)
         cancelled_job_ids = self._create_and_submit_sample_translation_jobs(client, jobs_count, wait=False, docs_per_job=docs_per_job)
-        for job in cancelled_job_ids:
-            client.cancel_job(job.id)
-        self.wait(15) # wait for status to propagate
+        for job_id in cancelled_job_ids:
+            client.cancel_job(job_id)
+        self.wait(10) # wait for status to propagate
         end = datetime.utcnow().replace(tzinfo=pytz.utc)
 
         # list jobs
@@ -240,8 +240,8 @@ class TestSubmittedJobs(DocumentTranslationTest):
         for page in submitted_jobs:
             page_jobs = list(page)
             self.assertLessEqual(len(page_jobs), results_per_page) # assert paging
-            for job in page:
-                # assert id
+            for job in page_jobs:
+                assert id
                 self.assertIn(job.id, cancelled_job_ids)
                 self.assertNotIn(job.id, successful_job_ids)
                 # assert ordering
@@ -249,5 +249,5 @@ class TestSubmittedJobs(DocumentTranslationTest):
                 curr_time = job.created_on
                 # assert filters
                 assert(job.created_on.replace(tzinfo=None) <= end.replace(tzinfo=None))
-                assert(job.created_on >= start.replace(tzinfo=None))
+                assert(job.created_on.replace(tzinfo=None) >= start.replace(tzinfo=None))
                 self.assertIn(job.status, statuses)
