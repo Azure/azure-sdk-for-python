@@ -3,7 +3,6 @@ import pprint
 from azure.core.exceptions import HttpResponseError
 from azure.identity.aio import ClientSecretCredential
 from azure.farmbeats.aio import FarmBeatsClient
-from azure.farmbeats.models import Farmer, Boundary, Polygon, SatelliteDataIngestionJob, SatelliteData
 import asyncio
 from dotenv import find_dotenv, load_dotenv
 
@@ -68,11 +67,11 @@ try:
     farmer = loop.run_until_complete(
         client.farmers.create_or_update(
             farmer_id=farmer_id,
-            farmer=Farmer()
+            farmer={}
         )
     )
     print("Done")
-    print(farmer.as_dict())
+    print(farmer)
 except HttpResponseError as e:
     print("Ooops... here's the error:")
     print_error(e)
@@ -96,10 +95,11 @@ try:
             client.boundaries.create_or_update(
                 farmer_id=farmer_id,
                 boundary_id=boundary_id,
-                boundary=Boundary(
-                    description="Created by SDK",
-                    geometry=Polygon(
-                        coordinates = [
+                boundary={
+                    "description": "Created by SDK",
+                    "geometry": {
+                        "type": "Polygon",
+                        "coordinates": [
                             [
                                 [
                                     73.70457172393799,
@@ -131,13 +131,13 @@ try:
                                 ]
                             ]
                         ]
-                    )
-                )
+                    }
+                }
             )
         )
         print("Created")
 
-    print(boundary.as_dict())
+    print(boundary)
 except HttpResponseError as e:
     print("Ooops... here's the error:")
     print_error(e)
@@ -150,13 +150,10 @@ try:
     satellite_job_poller = loop.run_until_complete(
         client.scenes.begin_create_satellite_data_ingestion_job(
             job_id=job_id,
-            job=SatelliteDataIngestionJob(
-                farmer_id=farmer_id,
-                boundary_id=boundary_id,
-                start_date_time=start_date_time,
-                end_date_time=end_date_time,
-                data=SatelliteData(
-                    image_names=[
+            job={
+                "boundaryId": boundary_id,
+                "data": {
+                    "imageNames": [
                         # "B01",
                         # "B02",
                         # "B03",
@@ -164,8 +161,11 @@ try:
                         # "B05",
                         "LAI"
                     ]
-                )
-            ),
+                },
+                "farmerId": farmer_id,
+                "startDateTime": start_date_time,
+                "endDateTime": end_date_time,
+            },
             polling=True
         )
     )
@@ -174,7 +174,7 @@ try:
         satellite_job_poller.result()
     )
     print("Done")
-    print(satellite_job_result.as_dict())
+    print(satellite_job_result)
 except HttpResponseError as e:
     print_error(e)
     raise
@@ -184,8 +184,8 @@ except HttpResponseError as e:
 try:
     print("Getting scenes list... ", end="", flush=True)
     scenes_aiter = client.scenes.list(
-        boundary.farmer_id,
-        boundary.id,
+        farmer_id=boundary['farmerId'],
+        boundary_id=boundary['id'],
         start_date_time=start_date_time,
         end_date_time=end_date_time,
     )
@@ -194,7 +194,7 @@ try:
     )
     print("Done")
     print(scenes)
-    print(scenes[0].as_dict())
+    print(scenes[0])
 except HttpResponseError as e:
     print_error(e)
     raise
@@ -206,15 +206,15 @@ async def download_image(client, file_link, root_dir):
     out_path = Path(os.path.join(root_dir, file_path))
     out_path.parent.mkdir(parents=True, exist_ok=True)
     with open(out_path, 'wb') as tif_file:
-        file_stream = await client.scenes.download(file_path)
+        file_stream = await client.scenes.download(file_path=file_path)
         async for bits in file_stream:
             tif_file.write(bits)
     return str(out_path)
 
 files_to_download = list()
 for scene in scenes:
-    for image_file in scene.image_files:
-        files_to_download.append(image_file.file_link)
+    for image_file in scene['imageFiles']:
+        files_to_download.append(image_file['fileLink'])
 
 all_downloads = asyncio.gather(*[download_image(client, file_link, data_root_dir) for file_link in files_to_download])
 
