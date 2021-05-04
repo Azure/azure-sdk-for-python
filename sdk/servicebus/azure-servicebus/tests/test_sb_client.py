@@ -366,7 +366,7 @@ class ServiceBusClientTests(AzureMgmtTestCase):
                     sender.send_messages(ServiceBusMessage("foo"))
 
         # update back to the right key again
-        credential = AzureNamedKeyCredential(servicebus_namespace_key_name, servicebus_namespace_primary_key)
+        credential.update(servicebus_namespace_key_name, servicebus_namespace_primary_key)
         with client:
             with client.get_queue_sender(servicebus_queue.name) as sender:
                 sender.send_messages(ServiceBusMessage("foo"))

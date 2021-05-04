@@ -342,13 +342,13 @@ class ServiceBusClientAsyncTests(AzureMgmtTestCase):
                 await sender.send_messages(ServiceBusMessage("foo"))
         
         credential.update("foo", "bar")
-        async with pytest.raises(Exception):
+        with pytest.raises(Exception):
             async with client:
                 async with client.get_queue_sender(servicebus_queue.name) as sender:
                     await sender.send_messages(ServiceBusMessage("foo"))
 
         # update back to the right key again
-        credential = AzureNamedKeyCredential(servicebus_namespace_key_name, servicebus_namespace_primary_key)
+        credential.update(servicebus_namespace_key_name, servicebus_namespace_primary_key)
         async with client:
             async with client.get_queue_sender(servicebus_queue.name) as sender:
                 await sender.send_messages(ServiceBusMessage("foo"))
