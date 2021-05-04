@@ -125,6 +125,11 @@ class OpenTelemetrySpan(HttpSpanMixin, object):
     def kind(self, value):
         # type: (SpanKind) -> None
         """Set the span kind of this span."""
+        warnings.warn(
+            """Kind must be set while creating the span for Opentelemetry. It might be possible
+            that one of the packages you are using doesn't follow the latest Opentelemtry Spec.
+            Try updating the azure packages to the latest versions."""
+        )
         kind = (
             OpenTelemetrySpanKind.CLIENT if value == SpanKind.CLIENT else
             OpenTelemetrySpanKind.PRODUCER if value == SpanKind.PRODUCER else
@@ -299,3 +304,24 @@ class OpenTelemetrySpan(HttpSpanMixin, object):
                 detach(token)
 
         return call_with_current_context
+
+    def set_http_attributes(self, request, response=None):
+        # type: (HttpRequest, Optional[HttpResponseType]) -> None
+        """
+        Add correct attributes for a http client span.
+
+        :param request: The request made
+        :type request: HttpRequest
+        :param response: The response received by the server. Is None if no response received.
+        :type response: ~azure.core.pipeline.transport.HttpResponse or ~azure.core.pipeline.transport.AsyncHttpResponse
+        """
+        self.add_attribute(self._SPAN_COMPONENT, "http")
+        self.add_attribute(self._HTTP_METHOD, request.method)
+        self.add_attribute(self._HTTP_URL, request.url)
+        user_agent = request.headers.get("User-Agent")
+        if user_agent:
+            self.add_attribute(self._HTTP_USER_AGENT, user_agent)
+        if response and response.status_code:
+            self.add_attribute(self._HTTP_STATUS_CODE, response.status_code)
+        else:
+            self.add_attribute(self._HTTP_STATUS_CODE, 504)
