@@ -16,16 +16,13 @@ from cryptography.hazmat.primitives.asymmetric.dsa import DSAPublicKey
 from devtools_testutils import AzureTestCase, ResourceGroupPreparer, PowerShellPreparer
 import functools
 from cryptography.hazmat.primitives.asymmetric import ec, rsa
-from  cryptography.x509 import BasicConstraints, CertificateBuilder, NameOID
+from  cryptography.x509 import BasicConstraints, CertificateBuilder, NameOID, SubjectAlternativeName
 import base64
 import pytest
-from azure.security.attestation import AttestationToken, AttestationSigner, SigningKey
+from azure.security.attestation import AttestationToken, AttestationSigningKey
 
 
 class TestAzureAttestationToken(object):
-
-    def setUp(self):
-        super(TestAzureAttestationToken, self).setUp()
 
     def test_create_unsecured_token(self):
         token = AttestationToken(body={"val1":[1,2,3]})
@@ -35,8 +32,8 @@ class TestAzureAttestationToken(object):
         key = self._create_rsa_key()
         cert = self._create_x509_certificate(key, u'test certificate')
 
-        signer = SigningKey(key, cert)
-        assert signer.certificate.subject==cert.subject
+        signer = AttestationSigningKey(key, cert)
+        assert signer._certificate.subject==x509.Name([x509.NameAttribute(NameOID.COMMON_NAME, u'test certificate')])
 
     def test_create_signing_wrong_key(self):
         """ SigningKey should throw if the key and certificate don't match.
@@ -47,7 +44,7 @@ class TestAzureAttestationToken(object):
 
         # This should throw an exception, fail if the exception isn't thrown.
         with pytest.raises(Exception):
-            signer = SigningKey(key2, cert)
+            signer = AttestationSigningKey(key2, cert)
             print(signer) # reference signer so pylint is happy.
 
     def test_create_signer_ecds(self):
@@ -55,14 +52,14 @@ class TestAzureAttestationToken(object):
         """
         eckey = self._create_ecds_key()
         certificate = self._create_x509_certificate(eckey, u'attestation.test')
-        signer = SigningKey(eckey, certificate)
-        assert signer.certificate.subject== x509.Name([x509.NameAttribute(NameOID.COMMON_NAME, u'attestation.test')])
+        signer = AttestationSigningKey(eckey, certificate)
+        assert signer._certificate.subject== x509.Name([x509.NameAttribute(NameOID.COMMON_NAME, u'attestation.test')])
 
     def test_create_secured_token(self):
         key = self._create_rsa_key()
         cert = self._create_x509_certificate(key, u'test certificate')
 
-        signer = SigningKey(key, cert)
+        signer = AttestationSigningKey(key, cert)
 
         token = AttestationToken(body={"val1": [1, 2, 3]}, signer=signer)
         assert token.get_body()== {"val1": [1, 2, 3]}
@@ -71,14 +68,21 @@ class TestAzureAttestationToken(object):
     # Helper functions to create keys and certificates wrapping those keys.
     @staticmethod
     def _create_ecds_key(): #type() -> EllipticCurvePrivateKey
-        return ec.generate_private_key(ec.SECP256R1())
+        return ec.generate_private_key(ec.SECP256R1()).private_bytes(
+            serialization.Encoding.DER,
+            serialization.PrivateFormat.PKCS8,
+            serialization.NoEncryption())
 
     @staticmethod
     def _create_rsa_key(): #type() -> EllipticCurvePrivateKey
-        return rsa.generate_private_key(65537, 2048)
+        return rsa.generate_private_key(65537, 2048).private_bytes(
+            serialization.Encoding.DER,
+            serialization.PrivateFormat.PKCS8,
+            serialization.NoEncryption())
 
     @staticmethod
-    def _create_x509_certificate(key, subject_name): #type(Union[EllipticCurvePrivateKey,RSAPrivateKey], str) -> Certificate
+    def _create_x509_certificate(key_der, subject_name): #type(Union[EllipticCurvePrivateKey,RSAPrivateKey], str) -> Certificate
+        signing_key = serialization.load_der_private_key(key_der, password=None)
         builder = CertificateBuilder()
         builder = builder.subject_name(x509.Name([
             x509.NameAttribute(NameOID.COMMON_NAME, subject_name),
@@ -91,7 +95,7 @@ class TestAzureAttestationToken(object):
         builder = builder.not_valid_before(datetime.datetime.today() - one_day)
         builder = builder.not_valid_after(datetime.datetime.today() + (one_day * 30))
         builder = builder.serial_number(x509.random_serial_number())        
-        builder = builder.public_key(key.public_key())
-        builder = builder.add_extension(x509.SubjectAlternativeName([x509.DNSName(subject_name)]), critical=False)
-        builder = builder.add_extension(x509.BasicConstraints(ca=False, path_length=None), critical=True)
-        return builder.sign(private_key=key, algorithm=hashes.SHA256())
+        builder = builder.public_key(signing_key.public_key())
+        builder = builder.add_extension(SubjectAlternativeName([x509.DNSName(subject_name)]), critical=False)
+        builder = builder.add_extension(BasicConstraints(ca=False, path_length=None), critical=True)
+        return builder.sign(private_key=signing_key, algorithm=hashes.SHA256()).public_bytes(serialization.Encoding.DER)

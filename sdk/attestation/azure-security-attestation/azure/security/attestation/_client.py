@@ -21,7 +21,7 @@ if TYPE_CHECKING:
 from ._generated import AzureAttestationRestClient
 from ._generated.models import AttestationResult, RuntimeData, InitTimeData, DataType, AttestSgxEnclaveRequest, AttestOpenEnclaveRequest
 from ._configuration import AttestationClientConfiguration
-from ._models import AttestationSigner, AttestationToken, AttestationResponse
+from ._models import AttestationSigner, AttestationToken, AttestationResponse, AttestationData
 import base64
 import cryptography
 import cryptography.x509
@@ -75,23 +75,41 @@ class AttestationClient(object):
             certificates = []
             for x5c in key.x5_c:
                 der_cert = base64.b64decode(x5c)
-                cert = cryptography.x509.load_der_x509_certificate(der_cert)
-                certificates.append(cert)
+                certificates.append(der_cert)
             signers.append(AttestationSigner(certificates, key.kid))
         return signers
 
     @distributed_trace
-    def attest_sgx_enclave(self, quote, init_time_data, init_time_data_is_object, runtime_data, runtime_data_is_object, **kwargs):
-        # type:(bytes, Any, bool, Any, bool, Any) -> AttestationResponse[AttestationResult]
+    def attest_sgx_enclave(self, quote, inittime_data=None, runtime_data=None, draft_policy=None, **kwargs):
+        # type:(bytes, AttestationData, AttestationData, str, Any) -> AttestationResponse[AttestationResult]
+        """ Attests the validity of an SGX quote.
+
+        :param quote: An SGX quote generated from an Intel(tm) SGX enclave
+        :type quote: bytes
+        :param inittime_data: Data presented at the time that the SGX enclave was initialized.
+        :type inittime_data: AttestationData
+        :param runtime_data: Data presented at the time that the SGX quote was created.
+        :type runtime_data: AttestationData
+        :param draft_policy: "draft", or "experimental" policy to be used with
+        this attestation request. If this parameter is provided, then this 
+        policy document will be used for the attestation request.
+        This allows a caller to test various policy documents against actual data
+         before applying the policy document via the set_policy API.
+        :type draft_policy: str
+        """
         runtime = None
         if runtime_data:
-            runtime = RuntimeData(data=runtime_data, data_type=DataType.JSON if runtime_data_is_object else DataType.BINARY)
+            runtime = RuntimeData(data=runtime_data._data, data_type=DataType.JSON if runtime_data._is_json else DataType.BINARY)
 
         inittime = None
-        if init_time_data:
-            inittime = InitTimeData(data=init_time_data, data_type=DataType.JSON if init_time_data_is_object else DataType.BINARY)
+        if inittime_data:
+            inittime = InitTimeData(data=inittime_data._data, data_type=DataType.JSON if inittime_data._is_json else DataType.BINARY)
 
-        request = AttestSgxEnclaveRequest(quote=quote, init_time_data = inittime, runtime_data = runtime)
+        request = AttestSgxEnclaveRequest(
+            quote=quote,
+            init_time_data = inittime,
+            runtime_data = runtime,
+            draft_policy_for_attestation=draft_policy)
         result = self._client.attestation.attest_sgx_enclave(request, **kwargs)
         token = AttestationToken[AttestationResult](token=result.token,
             body_type=AttestationResult)
@@ -99,15 +117,36 @@ class AttestationClient(object):
         return AttestationResponse[AttestationResult](token, token.get_body())
 
     @distributed_trace
-    def attest_open_enclave(self, report, init_time_data, init_time_data_is_object, runtime_data, runtime_data_is_object, **kwargs):
-        # type:(bytes, Any, bool, Any, bool, Any) -> AttestationResponse[AttestationResult]
-        runtime = RuntimeData(
-            data=runtime_data, 
-            data_type=DataType.JSON if runtime_data_is_object else DataType.BINARY) if runtime_data is not None else None
-        inittime = InitTimeData(
-            data=init_time_data, 
-            data_type=DataType.JSON if init_time_data_is_object else DataType.BINARY) if init_time_data is not None else None
-        request = AttestOpenEnclaveRequest(report=report, init_time_data = inittime, runtime_data = runtime)
+    def attest_open_enclave(self, report, inittime_data=None, runtime_data=None, draft_policy=None, **kwargs):
+        # type:(bytes, AttestationData, AttestationData, str, Any) -> AttestationResponse[AttestationResult]
+        """ Attests the validity of an Open Enclave report.
+
+        :param quote: An open_enclave report generated from an Intel(tm) SGX enclave
+        :type quote: bytes
+        :param inittime_data: Data presented at the time that the SGX enclave was initialized.
+        :type inittime_data: AttestationData
+        :param runtime_data: Data presented at the time that the SGX quote was created.
+        :type runtime_data: AttestationData
+        :param draft_policy: "draft", or "experimental" policy to be used with
+        this attestation request. If this parameter is provided, then this 
+        policy document will be used for the attestation request.
+        This allows a caller to test various policy documents against actual data
+         before applying the policy document via the set_policy API.
+        :type draft_policy: str
+        """
+
+        runtime = None
+        if runtime_data:
+            runtime = RuntimeData(data=runtime_data._data, data_type=DataType.JSON if runtime_data._is_json else DataType.BINARY)
+
+        inittime = None
+        if inittime_data:
+            inittime = InitTimeData(data=inittime_data._data, data_type=DataType.JSON if inittime_data._is_json else DataType.BINARY)
+        request = AttestOpenEnclaveRequest(
+            report=report,
+            init_time_data = inittime,
+            runtime_data = runtime,
+            draft_policy_for_attestation = draft_policy)
         result = self._client.attestation.attest_open_enclave(request, **kwargs)
         token = AttestationToken[AttestationResult](token=result.token,
             body_type=AttestationResult)

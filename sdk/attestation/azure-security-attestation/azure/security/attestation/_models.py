@@ -1,7 +1,10 @@
 import base64
+import json
+from cryptography.hazmat.primitives import serialization
 
 from cryptography.hazmat.primitives.asymmetric import padding
 from cryptography.hazmat.primitives.hashes import SHA256
+from typing_extensions import runtime
 from ._common import Base64Url
 from ._generated.models import PolicyResult, PolicyCertificatesModificationResult, AttestationResult, StoredAttestationPolicy, JSONWebKey
 from typing import Any, Callable, List, Optional, Type, TypeVar, Generic, Union
@@ -20,10 +23,38 @@ class AttestationSigner(object):
 
     """
     def __init__(self, certificates, key_id, **kwargs):
-        # type: (List[Certificate], str, Any) -> None
+        # type: (List[bytes], str, Any) -> None
         self.certificates = certificates
         self.key_id = key_id
 
+class AttestationData(object):
+    """
+    AttestationData represents an object passed as an input to the Attestation Service.
+    
+    AttestationData comes in two forms: Binary and JSON. To distinguish between the two, when an <see cref="AttestationData"/>
+    object is created, the caller provides an indication that the input binary data will be treated as either JSON or Binary.
+
+    The AttestationData is reflected in the generated AttestationResult in two possible ways.
+    If the AttestationData is Binary, then the AttestationData is reflected in the AttestationResult.enclave_held_data claim.
+    If the AttestationData is JSON, then the AttestationData is expressed as JSON in the AttestationResult.runtime_claims or <see cref="AttestationResult.InittimeClaims"/> claim.
+    """
+    def __init__(self, data, is_json=None):
+        # type:(bytes, bool) -> None
+        self._data = data
+
+        # If the caller thought that the input data is JSON, then respect their 
+        # choice (this allows a caller to specify JSON data as if it was not JSON).
+        if is_json is not None:
+            self._is_json = is_json
+        else:
+            # The caller didn't say if the parameter is JSON or not, try parsing it,
+            # and if it parses, assume it's JSON.
+            try:
+                json.loads(data)
+                self._is_json = True
+            except Exception as e:
+                print("exception ", e)
+                self._is_json = False
 
 class TokenValidationOptions(object):
     """ Validation options for an Attestation Token object.
@@ -52,22 +83,26 @@ class TokenValidationOptions(object):
         self.validation_slack = kwargs.get('validation_slack')  # type:int
 
 
-class SigningKey(object):
+class AttestationSigningKey(object):
     """ Represents a signing key used by the attestation service.
 
     Typically the signing key used by the service consists of two components: An RSA or ECDS private key and an X.509 Certificate wrapped around
     the public key portion of the private key.
 
-    :var signing_key: The RSA or ECDS signing key to sign the token supplied to the customer.
-    :vartype signing_key: (rsa.RSAPrivateKey or EllipticCurvePrivateKey)
-    :var certificate: An X.509 Certificate whose public key matches the signing_key's public key.
-    :vartype certificate: Certificate
+    :var signing_key: The RSA or ECDS signing key to sign the token supplied to the customer DER encoded.
+    :vartype signing_key: bytes
+    :var certificate: A DER encoded X.509 Certificate whose public key matches the signing_key's public key.
+    :vartype certificate: bytes
     """
 
-    def __init__(self, signing_key, certificate):
-    # type: (Union[RSAPrivateKey, EllipticCurvePrivateKey], Certificate) -> None
-        self.signing_key = signing_key
-        self.certificate = certificate
+    def __init__(self, signing_key_der, certificate_der):
+    # type: (bytes, bytes) -> None
+        signing_key = serialization.load_der_private_key(signing_key_der, password=None)
+        certificate = load_der_x509_certificate(certificate_der)
+
+        self._signing_key = signing_key
+        self._certificate = certificate
+
 
         # We only support ECDS and RSA keys in the MAA service.
         if (not isinstance(signing_key, RSAPrivateKey) and not isinstance(signing_key, EllipticCurvePrivateKey)):
@@ -138,9 +173,9 @@ class AttestationToken(Generic[T]):
         :keyword Type body_type: The underlying type of the body of the 'token' parameter, used to deserialize the underlying body when parsing the token.
         """
         body = kwargs.get('body')  # type: Any
-        signer = kwargs.get('signer')  # type: SigningKey
-        if (body):
-            if (signer):
+        signer = kwargs.get('signer')  # type: AttestationSigningKey
+        if body:
+            if signer:
                 token = self._create_secured_jwt(body, signer)
             else:
                 token = self._create_unsecured_jwt(body)
@@ -448,16 +483,16 @@ class AttestationToken(Generic[T]):
 
     @staticmethod
     def _create_secured_jwt(body, signer):
-        # type: (Any, SigningKey) -> str
+        # type: (Any, AttestationSigningKey) -> str
         """ Return a secured JWT expressing the body, secured with the specified signing key.
         :type body:Any - The body of the token to be serialized.
         :type signer:SigningKey - the certificate and key to sign the token.
         """
         header = {
-            "alg": "RSA256" if isinstance(signer.signing_key, RSAPrivateKey) else "ECDH256",
+            "alg": "RSA256" if isinstance(signer._signing_key, RSAPrivateKey) else "ECDH256",
             "jwk": {
                 "x5c": [
-                    base64.b64encode(signer.certificate.public_bytes(
+                    base64.b64encode(signer._certificate.public_bytes(
                         Encoding.DER)).decode('utf-8')
                 ]
             }
@@ -474,13 +509,13 @@ class AttestationToken(Generic[T]):
         return_value += Base64Url.encode(json_body.encode('utf-8'))
 
         # Now we want to sign the return_value.
-        if isinstance(signer.signing_key, RSAPrivateKey):
-            signature = signer.signing_key.sign(
+        if isinstance(signer._signing_key, RSAPrivateKey):
+            signature = signer._signing_key.sign(
                 return_value.encode('utf-8'),
                 algorithm=SHA256(),
                 padding=padding.PKCS1v15())
         else:
-            signature = signer.signing_key.sign(
+            signature = signer._signing_key.sign(
                 return_value.encode('utf-8'),
                 algorithm=SHA256())
         # And finally append the base64url encoded signature.

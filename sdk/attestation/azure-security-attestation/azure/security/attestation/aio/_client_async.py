@@ -71,8 +71,7 @@ class AttestationClient(object):
             certificates = []
             for x5c in key.x5_c:
                 der_cert = base64.b64decode(x5c)
-                cert = cryptography.x509.load_der_x509_certificate(der_cert)
-                certificates.append(cert)
+                certificates.append(der_cert)
             signers.append(AttestationSigner(certificates, key.kid))
         return signers
 

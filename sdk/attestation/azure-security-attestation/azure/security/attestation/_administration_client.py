@@ -22,7 +22,7 @@ if TYPE_CHECKING:
 from ._generated import AzureAttestationRestClient
 from ._generated.models import AttestationType, PolicyResult
 from ._configuration import AttestationClientConfiguration
-from ._models import AttestationSigner, AttestationToken, AttestationResponse, StoredAttestationPolicy, SigningKey
+from ._models import AttestationSigner, AttestationToken, AttestationResponse, StoredAttestationPolicy, AttestationSigningKey
 from ._common import Base64Url
 import cryptography
 import cryptography.x509
@@ -79,9 +79,10 @@ class AttestationAdministrationClient(object):
 
     @distributed_trace
     def set_policy(self, attestation_type, attestation_policy, signing_key=None, **kwargs): 
-        #type:(AttestationType, str, SigningKey, Any) -> AttestationResponse[PolicyResult]
+        #type:(AttestationType, str, AttestationSigningKey, Any) -> AttestationResponse[PolicyResult]
         policy_token = AttestationToken[StoredAttestationPolicy](
             body=StoredAttestationPolicy(attestation_policy = attestation_policy.encode('ascii')),
+            signer=signing_key,
             body_type=StoredAttestationPolicy)
         policyResult = self._client.policy.set(attestation_type=attestation_type, new_attestation_policy=policy_token.serialize(), **kwargs)
         token = AttestationToken[PolicyResult](token=policyResult.token,
