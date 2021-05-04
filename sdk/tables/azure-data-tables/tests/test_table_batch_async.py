@@ -110,7 +110,7 @@ class StorageTableBatchTest(AzureTestCase, AsyncTableTestCase):
             'Birthday': datetime(1973, 10, 4, tzinfo=tzutc()),
             'birthday': datetime(1970, 10, 4, tzinfo=tzutc()),
             'binary': b'binary',
-            'other': EntityProperty(value=20, type=EdmType.INT32),
+            'other': EntityProperty(20, EdmType.INT32),
             'clsid': uuid.UUID('c9da6455-213d-42c9-9a79-3e9149a57833')
         }
         return TableEntity(**properties)
@@ -182,10 +182,10 @@ class StorageTableBatchTest(AzureTestCase, AsyncTableTestCase):
             entity = TableEntity()
             entity.PartitionKey = '001'
             entity.RowKey = 'batch_insert'
-            entity.test = EntityProperty(True)
+            entity.test = EntityProperty(True, EdmType.BOOLEAN)
             entity.test2 = 'value'
             entity.test3 = 3
-            entity.test4 = EntityProperty(1234567890)
+            entity.test4 = EntityProperty(1234567890, EdmType.INT32)
             entity.test5 = datetime.utcnow()
 
             batch = [('create', entity)]
@@ -212,10 +212,10 @@ class StorageTableBatchTest(AzureTestCase, AsyncTableTestCase):
             entity = TableEntity()
             entity.PartitionKey = '001'
             entity.RowKey = 'batch_insert'
-            entity.test = EntityProperty(True)
+            entity.test = EntityProperty(True, EdmType.BOOLEAN)
             entity.test2 = 'value'
             entity.test3 = 3
-            entity.test4 = EntityProperty(1234567890)
+            entity.test4 = EntityProperty(1234567890, EdmType.INT32)
             entity.test5 = datetime.utcnow()
 
             resp = await self.table.create_entity(entity)
@@ -247,10 +247,10 @@ class StorageTableBatchTest(AzureTestCase, AsyncTableTestCase):
             entity = TableEntity()
             entity.PartitionKey = u'001'
             entity.RowKey = u'batch_update'
-            entity.test = EntityProperty(True)
+            entity.test = EntityProperty(True, EdmType.BOOLEAN)
             entity.test2 = u'value'
             entity.test3 = 3
-            entity.test4 = EntityProperty(1234567890)
+            entity.test4 = EntityProperty(1234567890, EdmType.INT32)
             entity.test5 = datetime.utcnow()
             await self.table.create_entity(entity)
 
@@ -281,10 +281,10 @@ class StorageTableBatchTest(AzureTestCase, AsyncTableTestCase):
             entity = TableEntity()
             entity.PartitionKey = u'001'
             entity.RowKey = u'batch_merge'
-            entity.test = EntityProperty(True)
+            entity.test = EntityProperty(True, EdmType.BOOLEAN)
             entity.test2 = u'value'
             entity.test3 = 3
-            entity.test4 = EntityProperty(1234567890)
+            entity.test4 = EntityProperty(1234567890, EdmType.INT32)
             entity.test5 = datetime.utcnow()
             await self.table.create_entity(entity)
 
@@ -375,7 +375,7 @@ class StorageTableBatchTest(AzureTestCase, AsyncTableTestCase):
             entity.test = True
             entity.test2 = 'value'
             entity.test3 = 3
-            entity.test4 = EntityProperty(1234567890)
+            entity.test4 = EntityProperty(1234567890, EdmType.INT32)
             entity.test5 = datetime.utcnow()
 
             batch = [('upsert', entity, {'mode': UpdateMode.REPLACE})]
@@ -404,7 +404,7 @@ class StorageTableBatchTest(AzureTestCase, AsyncTableTestCase):
             entity.test = True
             entity.test2 = 'value'
             entity.test3 = 3
-            entity.test4 = EntityProperty(1234567890)
+            entity.test4 = EntityProperty(1234567890, EdmType.INT32)
             entity.test5 = datetime.utcnow()
 
             batch = [('upsert', entity, {'mode':UpdateMode.MERGE})]
@@ -430,10 +430,10 @@ class StorageTableBatchTest(AzureTestCase, AsyncTableTestCase):
             entity = TableEntity()
             entity.PartitionKey = u'001'
             entity.RowKey = u'batch_delete'
-            entity.test = EntityProperty(True)
+            entity.test = EntityProperty(True, EdmType.BOOLEAN)
             entity.test2 = u'value'
             entity.test3 = 3
-            entity.test4 = EntityProperty(1234567890)
+            entity.test4 = EntityProperty(1234567890, EdmType.INT32)
             entity.test5 = datetime.utcnow()
             await self.table.create_entity(entity)
 
@@ -460,10 +460,10 @@ class StorageTableBatchTest(AzureTestCase, AsyncTableTestCase):
             # Act
             entity = TableEntity()
             entity.PartitionKey = 'batch_inserts'
-            entity.test = EntityProperty(True)
+            entity.test = EntityProperty(True, EdmType.BOOLEAN)
             entity.test2 = 'value'
             entity.test3 = 3
-            entity.test4 = EntityProperty(1234567890)
+            entity.test4 = EntityProperty(1234567890, EdmType.INT32)
             transaction_count = 0
 
             batch = []
@@ -498,10 +498,10 @@ class StorageTableBatchTest(AzureTestCase, AsyncTableTestCase):
             entity = TableEntity()
             entity.PartitionKey = '003'
             entity.RowKey = 'batch_all_operations_together-1'
-            entity.test = EntityProperty(True)
+            entity.test = EntityProperty(True, EdmType.BOOLEAN)
             entity.test2 = 'value'
             entity.test3 = 3
-            entity.test4 = EntityProperty(1234567890)
+            entity.test4 = EntityProperty(1234567890, EdmType.INT32)
             entity.test5 = datetime.utcnow()
             await self.table.create_entity(entity)
             entity.RowKey = 'batch_all_operations_together-2'
@@ -708,10 +708,10 @@ class StorageTableBatchTest(AzureTestCase, AsyncTableTestCase):
 
             entity = TableEntity()
             entity.PartitionKey = 'batch_inserts'
-            entity.test = EntityProperty(True)
+            entity.test = EntityProperty(True, EdmType.BOOLEAN)
             entity.test2 = 'value'
             entity.test3 = 3
-            entity.test4 = EntityProperty(1234567890)
+            entity.test4 = EntityProperty(1234567890, EdmType.INT32)
 
             batch = []
             transaction_count = 0

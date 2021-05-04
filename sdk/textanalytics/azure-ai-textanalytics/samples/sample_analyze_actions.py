@@ -7,7 +7,7 @@
 # --------------------------------------------------------------------------
 
 """
-FILE: sample_analyze_batch_actions.py
+FILE: sample_analyze_actions.py
 
 DESCRIPTION:
     This sample demonstrates how to submit a collection of text documents for analysis, which consists of a variety
@@ -16,7 +16,7 @@ DESCRIPTION:
     actions specified in the request.
 
 USAGE:
-    python sample_analyze_batch_actions.py
+    python sample_analyze_actions.py
 
     Set the environment variables with your own values before running the sample:
     1) AZURE_TEXT_ANALYTICS_ENDPOINT - the endpoint to your Cognitive Services resource.
@@ -59,7 +59,7 @@ class AnalyzeSample(object):
             The only complaint I have is the food didn't come fast enough. Overall I highly recommend it!"
         ]
 
-        poller = text_analytics_client.begin_analyze_batch_actions(
+        poller = text_analytics_client.begin_analyze_actions(
             documents,
             display_name="Sample Text Analysis",
             actions=[

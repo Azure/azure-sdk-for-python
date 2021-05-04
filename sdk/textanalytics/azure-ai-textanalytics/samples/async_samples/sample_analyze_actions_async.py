@@ -7,7 +7,7 @@
 # --------------------------------------------------------------------------
 
 """
-FILE: sample_analyze_batch_actions_async.py
+FILE: sample_analyze_actions_async.py
 
 DESCRIPTION:
     This sample demonstrates how to submit a collection of text documents for analysis, which consists of a variety
@@ -16,7 +16,7 @@ DESCRIPTION:
     actions specified in the request.
 
 USAGE:
-    python sample_analyze_batch_actions_async.py
+    python sample_analyze_actions_async.py
 
     Set the environment variables with your own values before running the sample:
     1) AZURE_TEXT_ANALYTICS_ENDPOINT - the endpoint to your Cognitive Services resource.
@@ -39,7 +39,7 @@ class AnalyzeSampleAsync(object):
             RecognizePiiEntitiesAction,
             ExtractKeyPhrasesAction,
             AnalyzeSentimentAction,
-            AnalyzeBatchActionsType
+            AnalyzeActionsType
         )
 
         endpoint = os.environ["AZURE_TEXT_ANALYTICS_ENDPOINT"]
@@ -60,7 +60,7 @@ class AnalyzeSampleAsync(object):
         ]
 
         async with text_analytics_client:
-            poller = await text_analytics_client.begin_analyze_batch_actions(
+            poller = await text_analytics_client.begin_analyze_actions(
                 documents,
                 display_name="Sample Text Analysis",
                 actions=[
@@ -81,7 +81,7 @@ class AnalyzeSampleAsync(object):
                             action_result.error.message
                         )
                     )
-                if action_result.action_type == AnalyzeBatchActionsType.RECOGNIZE_ENTITIES:
+                if action_result.action_type == AnalyzeActionsType.RECOGNIZE_ENTITIES:
                     print("Results of Entities Recognition action:")
                     for idx, doc in enumerate(action_result.document_results):
                         print("\nDocument text: {}".format(documents[idx]))
@@ -92,7 +92,7 @@ class AnalyzeSampleAsync(object):
                             print("...Offset: {}".format(entity.offset))
                         print("------------------------------------------")
 
-                if action_result.action_type == AnalyzeBatchActionsType.RECOGNIZE_PII_ENTITIES:
+                if action_result.action_type == AnalyzeActionsType.RECOGNIZE_PII_ENTITIES:
                     print("Results of PII Entities Recognition action:")
                     for idx, doc in enumerate(action_result.document_results):
                         print("Document text: {}".format(documents[idx]))
@@ -102,14 +102,14 @@ class AnalyzeSampleAsync(object):
                             print("Confidence Score: {}\n".format(entity.confidence_score))
                         print("------------------------------------------")
 
-                if action_result.action_type == AnalyzeBatchActionsType.EXTRACT_KEY_PHRASES:
+                if action_result.action_type == AnalyzeActionsType.EXTRACT_KEY_PHRASES:
                     print("Results of Key Phrase Extraction action:")
                     for idx, doc in enumerate(action_result.document_results):
                         print("Document text: {}\n".format(documents[idx]))
                         print("Key Phrases: {}\n".format(doc.key_phrases))
                         print("------------------------------------------")
 
-                if action_result.action_type == AnalyzeBatchActionsType.RECOGNIZE_LINKED_ENTITIES:
+                if action_result.action_type == AnalyzeActionsType.RECOGNIZE_LINKED_ENTITIES:
                     print("Results of Linked Entities Recognition action:")
                     for idx, doc in enumerate(action_result.document_results):
                         print("Document text: {}\n".format(documents[idx]))
@@ -127,7 +127,7 @@ class AnalyzeSampleAsync(object):
                                 print(".........Length: {}".format(match.length))
                         print("------------------------------------------")
 
-                if action_result.action_type == AnalyzeBatchActionsType.ANALYZE_SENTIMENT:
+                if action_result.action_type == AnalyzeActionsType.ANALYZE_SENTIMENT:
                     print("Results of Sentiment Analysis action:")
                     for doc in action_result.document_results:
                         print("Overall sentiment: {}".format(doc.sentiment))

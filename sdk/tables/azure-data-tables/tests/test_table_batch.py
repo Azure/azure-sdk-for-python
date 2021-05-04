@@ -110,7 +110,7 @@ class StorageTableBatchTest(AzureTestCase, TableTestCase):
             'Birthday': datetime(1973, 10, 4, tzinfo=tzutc()),
             'birthday': datetime(1970, 10, 4, tzinfo=tzutc()),
             'binary': b'binary',
-            'other': EntityProperty(value=20, type=EdmType.INT32),
+            'other': EntityProperty(20, EdmType.INT32),
             'clsid': uuid.UUID('c9da6455-213d-42c9-9a79-3e9149a57833')
         }
         return TableEntity(**properties)
@@ -183,10 +183,10 @@ class StorageTableBatchTest(AzureTestCase, TableTestCase):
             entity = TableEntity()
             entity.PartitionKey = '001'
             entity.RowKey = 'batch_insert'
-            entity.test = EntityProperty(True)
+            entity.test = EntityProperty(True, EdmType.BOOLEAN)
             entity.test2 = 'value'
             entity.test3 = 3
-            entity.test4 = EntityProperty(1234567890)
+            entity.test4 = EntityProperty(1234567890, EdmType.INT32)
             entity.test5 = datetime.utcnow()
 
             batch = [('create', entity)]
@@ -214,10 +214,10 @@ class StorageTableBatchTest(AzureTestCase, TableTestCase):
             entity = TableEntity()
             entity.PartitionKey = '001'
             entity.RowKey = 'batch_insert'
-            entity.test = EntityProperty(True)
+            entity.test = EntityProperty(True, EdmType.BOOLEAN)
             entity.test2 = 'value'
             entity.test3 = 3
-            entity.test4 = EntityProperty(1234567890)
+            entity.test4 = EntityProperty(1234567890, EdmType.INT32)
             entity.test5 = datetime.utcnow()
 
             resp = self.table.create_entity(entity)
@@ -249,11 +249,12 @@ class StorageTableBatchTest(AzureTestCase, TableTestCase):
             entity = TableEntity()
             entity.PartitionKey = u'001'
             entity.RowKey = u'batch_update'
-            entity.test = EntityProperty(True)
+            entity.test = EntityProperty(True, EdmType.BOOLEAN)
             entity.test2 = u'value'
             entity.test3 = 3
-            entity.test4 = EntityProperty(1234567890)
+            entity.test4 = EntityProperty(1234567890, EdmType.INT32)
             entity.test5 = datetime.utcnow()
+            entity.test6 = (2 ** 40, "Edm.Int64")
             self.table.create_entity(entity)
 
             entity = self.table.get_entity(u'001', u'batch_update')
@@ -285,10 +286,10 @@ class StorageTableBatchTest(AzureTestCase, TableTestCase):
             entity = TableEntity()
             entity.PartitionKey = u'001'
             entity.RowKey = u'batch_merge'
-            entity.test = EntityProperty(True)
+            entity.test = EntityProperty(True, EdmType.BOOLEAN)
             entity.test2 = u'value'
             entity.test3 = 3
-            entity.test4 = EntityProperty(1234567890)
+            entity.test4 = EntityProperty(1234567890, EdmType.INT32)
             entity.test5 = datetime.utcnow()
             self.table.create_entity(entity)
 
@@ -377,10 +378,10 @@ class StorageTableBatchTest(AzureTestCase, TableTestCase):
             # Act
             entity = TableEntity()
             entity.PartitionKey = 'batch_inserts'
-            entity.test = EntityProperty(True)
+            entity.test = EntityProperty(True, EdmType.BOOLEAN)
             entity.test2 = 'value'
             entity.test3 = 3
-            entity.test4 = EntityProperty(1234567890)
+            entity.test4 = EntityProperty(1234567890, EdmType.INT32)
 
             batch = []
             transaction_count = 0
@@ -423,7 +424,7 @@ class StorageTableBatchTest(AzureTestCase, TableTestCase):
             entity.test = True
             entity.test2 = 'value'
             entity.test3 = 3
-            entity.test4 = EntityProperty(1234567890)
+            entity.test4 = EntityProperty(1234567890, EdmType.INT32)
             entity.test5 = datetime.utcnow()
 
             batch = [('upsert', entity, {'mode': UpdateMode.REPLACE})]
@@ -453,7 +454,7 @@ class StorageTableBatchTest(AzureTestCase, TableTestCase):
             entity.test = True
             entity.test2 = 'value'
             entity.test3 = 3
-            entity.test4 = EntityProperty(1234567890)
+            entity.test4 = EntityProperty(1234567890, EdmType.INT32)
             entity.test5 = datetime.utcnow()
 
             batch = [('upsert', entity, {'mode': UpdateMode.MERGE})]
@@ -480,10 +481,10 @@ class StorageTableBatchTest(AzureTestCase, TableTestCase):
             entity = TableEntity()
             entity.PartitionKey = u'001'
             entity.RowKey = u'batch_delete'
-            entity.test = EntityProperty(True)
+            entity.test = EntityProperty(True, EdmType.BOOLEAN)
             entity.test2 = u'value'
             entity.test3 = 3
-            entity.test4 = EntityProperty(1234567890)
+            entity.test4 = EntityProperty(1234567890, EdmType.INT32)
             entity.test5 = datetime.utcnow()
             self.table.create_entity(entity)
 
@@ -511,10 +512,10 @@ class StorageTableBatchTest(AzureTestCase, TableTestCase):
             # Act
             entity = TableEntity()
             entity.PartitionKey = 'batch_inserts'
-            entity.test = EntityProperty(True)
+            entity.test = EntityProperty(True, EdmType.BOOLEAN)
             entity.test2 = 'value'
             entity.test3 = 3
-            entity.test4 = EntityProperty(1234567890)
+            entity.test4 = EntityProperty(1234567890, EdmType.INT32)
 
             transaction_count = 0
             batch = []
@@ -547,10 +548,10 @@ class StorageTableBatchTest(AzureTestCase, TableTestCase):
             entity = TableEntity()
             entity.PartitionKey = '003'
             entity.RowKey = 'batch_all_operations_together-1'
-            entity.test = EntityProperty(True)
+            entity.test = EntityProperty(True, EdmType.BOOLEAN)
             entity.test2 = 'value'
             entity.test3 = 3
-            entity.test4 = EntityProperty(1234567890)
+            entity.test4 = EntityProperty(1234567890, EdmType.INT32)
             entity.test5 = datetime.utcnow()
             self.table.create_entity(entity)
             entity.RowKey = 'batch_all_operations_together-2'
@@ -619,10 +620,10 @@ class StorageTableBatchTest(AzureTestCase, TableTestCase):
             entity = TableEntity()
             entity.PartitionKey = '003'
             entity.RowKey = 'batch_all_operations_together-1'
-            entity.test = EntityProperty(True)
+            entity.test = EntityProperty(True, EdmType.BOOLEAN)
             entity.test2 = 'value'
             entity.test3 = 3
-            entity.test4 = EntityProperty(1234567890)
+            entity.test4 = EntityProperty(1234567890, EdmType.INT32)
             entity.test5 = datetime.utcnow()
 
             batch = []
@@ -815,10 +816,10 @@ class StorageTableBatchTest(AzureTestCase, TableTestCase):
 
             entity = TableEntity()
             entity.PartitionKey = 'batch_inserts'
-            entity.test = EntityProperty(True)
+            entity.test = EntityProperty(True, EdmType.BOOLEAN)
             entity.test2 = 'value'
             entity.test3 = 3
-            entity.test4 = EntityProperty(1234567890)
+            entity.test4 = EntityProperty(1234567890, EdmType.INT32)
 
             batch = []
             transaction_count = 0
@@ -862,33 +863,3 @@ class StorageTableBatchTest(AzureTestCase, TableTestCase):
 
         finally:
             self._tear_down()
-
-
-
-class TestTableUnitTest(TableTestCase):
-
-    #--Test cases for batch ---------------------------------------------
-    def test_inferred_types(self):
-        # Arrange
-        # Act
-        entity = TableEntity()
-        entity.PartitionKey = '003'
-        entity.RowKey = 'batch_all_operations_together-1'
-        entity.test = EntityProperty(True)
-        entity.test2 = EntityProperty(b'abcdef')
-        entity.test3 = EntityProperty(u'c9da6455-213d-42c9-9a79-3e9149a57833')
-        entity.test4 = EntityProperty(datetime(1973, 10, 4, tzinfo=tzutc()))
-        entity.test5 = EntityProperty(u"stringystring")
-        entity.test6 = EntityProperty(3.14159)
-        entity.test7 = EntityProperty(100)
-        entity.test8 = EntityProperty(2 ** 33, EdmType.INT64)
-
-        # Assert
-        assert entity.test.type ==  EdmType.BOOLEAN
-        assert entity.test2.type ==  EdmType.BINARY
-        assert entity.test3.type ==  EdmType.GUID
-        assert entity.test4.type ==  EdmType.DATETIME
-        assert entity.test5.type ==  EdmType.STRING
-        assert entity.test6.type ==  EdmType.DOUBLE
-        assert entity.test7.type ==  EdmType.INT32
-        assert entity.test8.type ==  EdmType.INT64
