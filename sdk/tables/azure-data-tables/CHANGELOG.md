@@ -1,6 +1,6 @@
 # Release History
 
-## 12.0.0b7 (Unreleased)
+## 12.0.0b7 (2021-05-11)
 **Breaking**
 * Removed explicit `LinearRetry` and `ExponentialRetry` in favor of keyword parameter.
 * Renamed `filter` parameter in query APIs to `query_filter`.
