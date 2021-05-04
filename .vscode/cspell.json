@@ -6,8 +6,8 @@
     "powershell"
   ],
   "ignorePaths": [
- 
+    ".vscode/cspell.json"
   ],
-  "words": [],
+  "words": ["azsdk", "conda"],
   "allowCompoundWords": false
 }
