@@ -214,7 +214,10 @@ class AioHttpStreamDownloadGenerator(AsyncIterator):
         if self.pipeline:
             raw = self.pipeline.transport.session.auto_decompress
         if self._raw:
-            self.pipeline.transport.session.auto_decompress = False
+            try:
+                self.pipeline.transport.session.auto_decompress = False
+            except AttributeError:
+                pass
         try:
             chunk = await self.response.internal_response.content.read(self.block_size)
             if self.pipeline:
@@ -224,16 +227,25 @@ class AioHttpStreamDownloadGenerator(AsyncIterator):
             return chunk
         except _ResponseStopIteration:
             if self.pipeline:
-                self.pipeline.transport.session.auto_decompress = raw
+                try:
+                    self.pipeline.transport.session.auto_decompress = raw
+                except AttributeError:
+                    pass
             self.response.internal_response.close()
             raise StopAsyncIteration()
         except StreamConsumedError:
             if self.pipeline:
-                self.pipeline.transport.session.auto_decompress = raw
+                try:
+                    self.pipeline.transport.session.auto_decompress = raw
+                except AttributeError:
+                    pass
             raise
         except Exception as err:
             if self.pipeline:
-                self.pipeline.transport.session.auto_decompress = raw
+                try:
+                    self.pipeline.transport.session.auto_decompress = raw
+                except AttributeError:
+                    pass
             _LOGGER.warning("Unable to stream download: %s", err)
             self.response.internal_response.close()
             raise
