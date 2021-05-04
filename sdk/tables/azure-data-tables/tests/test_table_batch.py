@@ -758,8 +758,8 @@ class StorageTableBatchTest(AzureTestCase, TableTestCase):
     @pytest.mark.skipif(sys.version_info < (3, 0), reason="requires Python3")
     @tables_decorator
     def test_new_invalid_key(self, tables_storage_account_name, tables_primary_storage_account_key):
-        # Arrange
         invalid_key = tables_primary_storage_account_key.named_key.key[0:-6] + "==" # cut off a bit from the end to invalidate
+        tables_primary_storage_account_key = AzureNamedKeyCredential(tables_storage_account_name, invalid_key)
         credential = AzureNamedKeyCredential(name=tables_storage_account_name, key=tables_primary_storage_account_key.named_key.key)
         self.ts = TableServiceClient(self.account_url(tables_storage_account_name, "table"), credential)
         self.table_name = self.get_resource_name('uttable')
@@ -797,7 +797,6 @@ class StorageTableBatchTest(AzureTestCase, TableTestCase):
         try:
 
             token = generate_table_sas(
-                tables_storage_account_name,
                 tables_primary_storage_account_key,
                 self.table_name,
                 permission=TableSasPermissions(add=True, read=True, update=True, delete=True),
