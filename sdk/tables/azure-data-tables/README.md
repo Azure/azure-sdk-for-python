@@ -199,7 +199,7 @@ Querying entities in the table:
 from azure.data.tables import TableClient
 my_filter = "PartitionKey eq 'RedMarker'"
 table_client = TableClient.from_connection_string(conn_str="<connection_string>", table_name="mytable")
-entities = table_client.query_entities(filter=my_filter)
+entities = table_client.query_entities(my_filter)
 for entity in entities:
     for key in entity.keys():
         print("Key: {}, Value: {}".format(key, entity[key]))
@@ -307,9 +307,9 @@ These code samples show common scenario operations with the Azure Data tables cl
 * Create and delete tables: [sample_create_delete_table.py](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/tables/azure-data-tables/samples/sample_create_delete_table.py) ([async version](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/tables/azure-data-tables/samples/async_samples/sample_create_delete_table_async.py))
 * List and query tables: [sample_query_tables.py](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/tables/azure-data-tables/samples/sample_query_tables.py) ([async version](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/tables/azure-data-tables/samples/async_samples/sample_query_tables_async.py))
 * Insert and delete entities: [sample_insert_delete_entities.py](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/tables/azure-data-tables/samples/sample_insert_delete_entities.py) ([async version](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/tables/azure-data-tables/samples/async_samples/sample_insert_delete_entities_async.py))
-* Query and list entities: [sample_query_tables.py](https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/tables/azure-data-tables/samples/sample_query_table.py) ([async version](https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/tables/azure-data-tables/samples/async_samples/sample_query_table_async.py))
+* Query and list entities: [sample_query_table.py](https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/tables/azure-data-tables/samples/sample_query_table.py) ([async version](https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/tables/azure-data-tables/samples/async_samples/sample_query_table_async.py))
 * Update, upsert, and merge entities: [sample_update_upsert_merge_entities.py](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/tables/azure-data-tables/samples/sample_update_upsert_merge_entities.py) ([async version](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/tables/azure-data-tables/samples/async_samples/sample_update_upsert_merge_entities_async.py))
-* Committing many requests in a single batch: [sample_batching.py](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/tables/azure-data-tables/samples/sample_batching.py) ([async version](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/tables/azure-data-tables/samples/async_samples/sample_batching_async.py))
+* Committing many requests in a single transaction: [sample_batching.py](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/tables/azure-data-tables/samples/sample_batching.py) ([async version](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/tables/azure-data-tables/samples/async_samples/sample_batching_async.py))
 
 ### Additional documentation
 For more extensive documentation on Azure Data Tables, see the [Azure Data Tables documentation][Tables_product_doc] on docs.microsoft.com.

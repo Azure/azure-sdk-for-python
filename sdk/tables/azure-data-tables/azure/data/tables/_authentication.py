@@ -24,8 +24,6 @@ try:
 except ImportError:
     pass
 
-from ._constants import DEV_ACCOUNT_NAME, DEV_ACCOUNT_SECONDARY_NAME
-
 from ._common_conversion import (
     _sign_string,
 )
@@ -87,13 +85,6 @@ class SharedKeyCredentialPolicy(SansIOHTTPPolicy):
                 return "/" + self.account_name + str(uri_path)
         except TypeError:
             pass
-
-        # for emulator, use the DEV_ACCOUNT_NAME instead of DEV_ACCOUNT_SECONDARY_NAME
-        # as this is how the emulator works
-        if self.is_emulated and uri_path.find(DEV_ACCOUNT_SECONDARY_NAME) == 1:
-            # only replace the first instance
-            uri_path = uri_path.replace(DEV_ACCOUNT_SECONDARY_NAME, DEV_ACCOUNT_NAME, 1)
-
         return "/" + self.account_name + uri_path
 
     def _get_canonicalized_headers(self, request):

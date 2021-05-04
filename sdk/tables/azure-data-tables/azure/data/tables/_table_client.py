@@ -5,9 +5,7 @@
 # --------------------------------------------------------------------------
 
 import functools
-from typing import TYPE_CHECKING
-
-
+from typing import Optional, Any, Union, List, Tuple, Dict, Mapping, Iterable
 try:
     from urllib.parse import urlparse, unquote
 except ImportError:
@@ -18,28 +16,35 @@ from azure.core.exceptions import HttpResponseError, ResourceNotFoundError
 from azure.core.paging import ItemPaged
 from azure.core.tracing.decorator import distributed_trace
 
-from ._constants import CONNECTION_TIMEOUT
 from ._deserialize import _convert_to_entity, _trim_service_metadata
 from ._entity import TableEntity
-from ._error import _process_table_error
-from ._generated import AzureTable
+from ._error import _process_table_error, _validate_table_name
 from ._generated.models import (
     SignedIdentifier,
     TableProperties,
 )
 from ._serialize import _get_match_headers, _add_entity_properties
-from ._base_client import parse_connection_str
-from ._table_client_base import TableClientBase
-from ._serialize import serialize_iso
+from ._base_client import parse_connection_str, TablesBaseClient
+from ._serialize import serialize_iso, _parameter_filter_substitution
 from ._deserialize import _return_headers_and_deserialized
 from ._table_batch import TableBatchOperations
-from ._models import TableEntityPropertiesPaged, UpdateMode, AccessPolicy
+from ._models import (
+    TableEntityPropertiesPaged,
+    UpdateMode,
+    AccessPolicy,
+    TransactionOperation
+)
 
-if TYPE_CHECKING:
-    from typing import Optional, Any, Union  # pylint: disable=ungrouped-imports
+EntityType = Union[TableEntity, Mapping[str, Any]]
+OperationType = Union[TransactionOperation, str]
+TransactionOperationType = Union[Tuple[OperationType, EntityType], Tuple[OperationType, EntityType, Mapping[str, Any]]]
 
-class TableClient(TableClientBase):
-    """ :ivar str account_name: Name of the storage account (Cosmos or Azure)"""
+
+class TableClient(TablesBaseClient):
+    """
+    :ivar str account_name: Name of the storage account (Cosmos or Azure)
+    :ivar str table_name: The name of the table
+    """
 
     def __init__(
         self,
@@ -65,15 +70,17 @@ class TableClient(TableClientBase):
 
         :returns: None
         """
-        super(TableClient, self).__init__(
-            account_url, table_name, credential=credential, **kwargs
-        )
-        kwargs['connection_timeout'] = kwargs.get('connection_timeout') or CONNECTION_TIMEOUT
-        self._client = AzureTable(
-            self.url,
-            policies=kwargs.pop('policies', self._policies),
-            **kwargs
-        )
+        if not table_name:
+            raise ValueError("Please specify a table name.")
+        _validate_table_name(table_name)
+        self.table_name = table_name
+        super(TableClient, self).__init__(account_url, credential=credential, **kwargs)
+
+    def _format_url(self, hostname):
+        """Format the endpoint URL according to the current location
+        mode hostname.
+        """
+        return "{}://{}{}".format(self.scheme, hostname, self._query_str)
 
     @classmethod
     def from_connection_string(
@@ -91,7 +98,7 @@ class TableClient(TableClientBase):
         :param table_name: The table name.
         :type table_name: str
         :returns: A table client.
-        :rtype: ~azure.data.tables.TableClient
+        :rtype: :class:`~azure.data.tables.TableClient`
 
         .. admonition:: Example:
 
@@ -103,7 +110,7 @@ class TableClient(TableClientBase):
                 :caption: Authenticating a TableServiceClient from a connection_string
         """
         account_url, credential = parse_connection_str(
-            conn_str=conn_str, credential=None, service="table", keyword_args=kwargs
+            conn_str=conn_str, credential=None, keyword_args=kwargs
         )
         return cls(account_url, table_name=table_name, credential=credential, **kwargs)
 
@@ -112,15 +119,14 @@ class TableClient(TableClientBase):
         # type: (str, Optional[Any], Any) -> TableClient
         """A client to interact with a specific Table.
 
-        :param table_url: The full URI to the table, including SAS token if used.
-        :type table_url: str
+        :param str table_url: The full URI to the table, including SAS token if used.
         :param credential:
             The credentials with which to authenticate. This is optional if the
             account URL already has a SAS token. The value can be a SAS token string, an account
             shared access key.
         :type credential: str
         :returns: A table client.
-        :rtype: ~azure.data.tables.TableClient
+        :rtype: :class:`~azure.data.tables.TableClient`
         """
         try:
             if not table_url.lower().startswith("http"):
@@ -158,8 +164,8 @@ class TableClient(TableClientBase):
         used with Shared Access Signatures.
 
         :return: Dictionary of SignedIdentifiers
-        :rtype: dict[str,AccessPolicy]
-        :raises ~azure.core.exceptions.HttpResponseError:
+        :rtype: Dict[str, :class:`~azure.data.tables.AccessPolicy`]
+        :raises: :class:`~azure.core.exceptions.HttpResponseError`
         """
         timeout = kwargs.pop("timeout", None)
         try:
@@ -182,13 +188,12 @@ class TableClient(TableClientBase):
         # type: (...) -> None
         """Sets stored access policies for the table that may be used with Shared Access Signatures.
 
-        :param signed_identifiers:
-        :type signed_identifiers: dict[str,AccessPolicy]
+        :param signed_identifiers: Access policies to set for the table
+        :type signed_identifiers: Dict[str, :class:`~azure.data.tables.AccessPolicy`]
         :return: None
         :rtype: None
-        :raises ~azure.core.exceptions.HttpResponseError:
+        :raises: :class:`~azure.core.exceptions.HttpResponseError`
         """
-        self._validate_signed_identifiers(signed_identifiers)
         identifiers = []
         for key, value in signed_identifiers.items():
             if value:
@@ -201,7 +206,16 @@ class TableClient(TableClientBase):
                 table=self.table_name, table_acl=signed_identifiers or None, **kwargs
             )
         except HttpResponseError as error:
-            _process_table_error(error)
+            try:
+                _process_table_error(error)
+            except HttpResponseError as table_error:
+                if (table_error.error_code == 'InvalidXmlDocument'
+                and len(signed_identifiers) > 5):
+                    raise ValueError(
+                        'Too many access policies provided. The server does not support setting '
+                        'more than 5 access policies on a single resource.'
+                    )
+                raise
 
     @distributed_trace
     def create_table(
@@ -211,8 +225,8 @@ class TableClient(TableClientBase):
         """Creates a new table under the current account.
 
         :return: Dictionary of operation metadata returned from service
-        :rtype: dict[str,str]
-        :raises ~azure.core.exceptions.ResourceExistsError: If the table already exists
+        :rtype: Dict[str,str]
+        :raises: :class:`~azure.core.exceptions.ResourceExistsError` If the entity already exists
 
         .. admonition:: Example:
 
@@ -243,7 +257,7 @@ class TableClient(TableClientBase):
 
         :return: None
         :rtype: None
-        :raises ~azure.core.exceptions.ResourceNotFoundError: If the table does not exist
+        :raises: :class:`~azure.core.exceptions.ResourceNotFoundError` If the table does not exist
 
         .. admonition:: Example:
 
@@ -274,10 +288,11 @@ class TableClient(TableClientBase):
         :param row_key: The row key of the entity.
         :type row_key: str
         :keyword str etag: Etag of the entity
-        :keyword ~azure.core.MatchConditions match_condition: MatchCondition
+        :keyword match_condition: MatchCondition
+        :paramtype match_condition: ~azure.core.MatchConditions
         :return: None
         :rtype: None
-        :raises ~azure.core.exceptions.ResourceNotFoundError: If the entity does not exist
+        :raises: :class:`~azure.core.exceptions.ResourceNotFoundError` If the entity already does not exist
 
         .. admonition:: Example:
 
@@ -313,17 +328,17 @@ class TableClient(TableClientBase):
     @distributed_trace
     def create_entity(
         self,
-        entity,  # type: Union[TableEntity, Dict[str,str]]
+        entity,  # type: EntityType
         **kwargs  # type: Any
     ):
         # type: (...) -> Dict[str,str]
         """Insert entity in a table.
 
         :param entity: The properties for the table entity.
-        :type entity: TableEntity or dict[str,str]
+        :type entity: ~azure.data.tables.TableEntity or Dict[str,str]
         :return: Dictionary mapping operation metadata returned from the service
-        :rtype: dict[str,str]
-        :raises ~azure.core.exceptions.ResourceExistsError: If the entity already exists
+        :rtype: Dict[str,str]
+        :raises: :class:`~azure.core.exceptions.ResourceExistsError` If the entity already exists
 
         .. admonition:: Example:
 
@@ -352,7 +367,7 @@ class TableClient(TableClientBase):
     @distributed_trace
     def update_entity(
         self,
-        entity,  # type: Union[TableEntity, Dict[str,str]]
+        entity,  # type: EntityType
         mode=UpdateMode.MERGE,  # type: UpdateMode
         **kwargs  # type: Any
     ):
@@ -360,16 +375,15 @@ class TableClient(TableClientBase):
         """Update entity in a table.
 
         :param entity: The properties for the table entity.
-        :type entity: TableEntity or dict[str,str]
+        :type entity: ~azure.data.tables.TableEntity or Dict[str,str]
         :param mode: Merge or Replace entity
         :type mode: ~azure.data.tables.UpdateMode
-        :keyword str partition_key: The partition key of the entity.
-        :keyword str row_key: The row key of the entity.
         :keyword str etag: Etag of the entity
-        :keyword ~azure.core.MatchConditions match_condition: MatchCondition
+        :keyword match_condition: MatchCondition
+        :paramtype match_condition: ~azure.core.MatchCondition
         :return: Dictionary mapping operation metadata returned from the service
-        :rtype: dict[str,str]
-        :raises ~azure.core.exceptions.HttpResponseError:
+        :rtype: Dict[str,str]
+        :raises: :class:`~azure.core.exceptions.HttpResponseError`
 
         .. admonition:: Example:
 
@@ -431,10 +445,10 @@ class TableClient(TableClientBase):
 
         :keyword int results_per_page: Number of entities per page in return ItemPaged
         :keyword select: Specify desired properties of an entity to return certain entities
-        :paramtype select: str or list[str]
-        :return: Query of table entities
-        :rtype: ~azure.core.paging.ItemPaged[~azure.data.tables.TableEntity]
-        :raises ~azure.core.exceptions.HttpResponseError:
+        :paramtype select: str or List[str]
+        :return: ItemPaged[:class:`~azure.data.tables.TableEntity`]
+        :rtype: ~azure.core.paging.ItemPaged
+        :raises: :class:`~azure.core.exceptions.HttpResponseError`
 
         .. admonition:: Example:
 
@@ -447,7 +461,7 @@ class TableClient(TableClientBase):
         """
         user_select = kwargs.pop("select", None)
         if user_select and not isinstance(user_select, str):
-            user_select = ", ".join(user_select)
+            user_select = ",".join(user_select)
         top = kwargs.pop("results_per_page", None)
 
         command = functools.partial(self._client.table.query_entities, **kwargs)
@@ -462,20 +476,20 @@ class TableClient(TableClientBase):
     @distributed_trace
     def query_entities(
         self,
-        filter,  # type: str  pylint: disable=redefined-builtin
+        query_filter,
         **kwargs
     ):
-        # type: (...) -> ItemPaged[TableEntity]
+        # type: (str, Dict[str, Any]) -> ItemPaged[TableEntity]
         """Lists entities in a table.
 
-        :param str filter: Specify a filter to return certain entities
+        :param str query_filter: Specify a filter to return certain entities
         :keyword int results_per_page: Number of entities per page in return ItemPaged
         :keyword select: Specify desired properties of an entity to return certain entities
-        :paramtype select: str or list[str]
-        :keyword dict parameters: Dictionary for formatting query with additional, user defined parameters
-        :return: Query of table entities
-        :rtype: ~azure.core.paging.ItemPaged[~azure.data.tables.TableEntity]
-        :raises ~azure.core.exceptions.HttpResponseError:
+        :paramtype select: str or List[str]
+        :keyword Dict[str, Any] parameters: Dictionary for formatting query with additional, user defined parameters
+        :return: ItemPaged[:class:`~azure.data.tables.TableEntity`]
+        :rtype: ~azure.core.paging.ItemPaged
+        :raises: :class:`~azure.core.exceptions.HttpResponseError`
 
         .. admonition:: Example:
 
@@ -487,8 +501,8 @@ class TableClient(TableClientBase):
                 :caption: Query entities held within a table
         """
         parameters = kwargs.pop("parameters", None)
-        filter = self._parameter_filter_substitution(
-            parameters, filter
+        query_filter = _parameter_filter_substitution(
+            parameters, query_filter
         )
         top = kwargs.pop("results_per_page", None)
         user_select = kwargs.pop("select", None)
@@ -500,7 +514,7 @@ class TableClient(TableClientBase):
             command,
             table=self.table_name,
             results_per_page=top,
-            filter=filter,
+            filter=query_filter,
             select=user_select,
             page_iterator_class=TableEntityPropertiesPaged,
         )
@@ -520,8 +534,8 @@ class TableClient(TableClientBase):
         :param row_key: The row key of the entity.
         :type row_key: str
         :return: Dictionary mapping operation metadata returned from the service
-        :rtype: ~azure.data.tables.TableEntity
-        :raises ~azure.core.exceptions.HttpResponseError:
+        :rtype: :class:`~azure.data.tables.TableEntity`
+        :raises: :class:`~azure.core.exceptions.HttpResponseError`
 
         .. admonition:: Example:
 
@@ -548,7 +562,7 @@ class TableClient(TableClientBase):
     @distributed_trace
     def upsert_entity(
         self,
-        entity,  # type: Union[TableEntity, Dict[str,str]]
+        entity,  # type: EntityType
         mode=UpdateMode.MERGE,  # type: UpdateMode
         **kwargs  # type: Any
     ):
@@ -556,12 +570,12 @@ class TableClient(TableClientBase):
         """Update/Merge or Insert entity into table.
 
         :param entity: The properties for the table entity.
-        :type entity: TableEntity or dict[str,str]
-        :param mode: Merge or Replace and Insert on fail
+        :type entity: ~azure.data.tables.TableEntity or Dict[str,str]
+        :param mode: Merge or Replace entity
         :type mode: ~azure.data.tables.UpdateMode
         :return: Dictionary mapping operation metadata returned from the service
-        :rtype: dict[str,str]
-        :raises ~azure.core.exceptions.HttpResponseError:
+        :rtype: Dict[str,str]
+        :raises: :class:`~azure.core.exceptions.HttpResponseError`
 
         .. admonition:: Example:
 
@@ -607,14 +621,23 @@ class TableClient(TableClientBase):
         except HttpResponseError as error:
             _process_table_error(error)
 
-    def create_batch(
-        self, **kwargs  # type: Dict[str, Any]
+    def submit_transaction(
+        self,
+        operations,  # type: Iterable[TransactionOperationType]
+        **kwargs  # type: Any
     ):
-        # type: (...) -> azure.data.tables.TableBatchOperations
-        """Create a Batching object from a Table Client
+        # type: (...) -> List[Mapping[str, Any]]
+        """Commit a list of operations as a single transaction.
 
-        :return: Object containing requests and responses
-        :rtype: ~azure.data.tables.TableBatchOperations
+        If any one of these operations fails, the entire transaction will be rejected.
+
+        :param operations: The list of operations to commit in a transaction. This should be a list of
+         tuples containing an operation name, the entity on which to operate, and optionally, a dict of additional
+         kwargs for that operation.
+        :type operations: Iterable[Tuple[str, EntityType]]
+        :return: A list of mappings with response metadata for each operation in the transaction.
+        :rtype: List[Mapping[str, Any]]
+        :raises ~azure.data.tables.TableTransactionError:
 
         .. admonition:: Example:
 
@@ -623,40 +646,23 @@ class TableClient(TableClientBase):
                 :end-before: [END batching]
                 :language: python
                 :dedent: 8
-                :caption: Using batches to send multiple requests at once
-        :raises None:
+                :caption: Using transactions to send multiple requests at once
         """
-        return TableBatchOperations(
+        batched_requests = TableBatchOperations(
             self._client,
             self._client._serialize,  # pylint: disable=protected-access
             self._client._deserialize,  # pylint: disable=protected-access
             self._client._config,  # pylint: disable=protected-access
             self.table_name,
-            self,
             **kwargs
         )
-
-    def send_batch(
-        self,
-        batch,  # type: azure.data.tables.BatchTransactionResult
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> BatchTransactionResult
-        """Commit a TableBatchOperations to send requests to the server
-
-        :return: Object containing requests and responses
-        :rtype: ~azure.data.tables.BatchTransactionResult
-        :raises ~azure.data.tables.BatchErrorException:
-
-        .. admonition:: Example:
-
-            .. literalinclude:: ../samples/sample_batching.py
-                :start-after: [START batching]
-                :end-before: [END batching]
-                :language: python
-                :dedent: 8
-                :caption: Using batches to send multiple requests at once
-        """
-        return self._batch_send(  # pylint: disable=protected-access
-            batch._entities, *batch._requests, **kwargs  # pylint: disable=protected-access
-        )
+        for operation in operations:
+            try:
+                operation_kwargs = operation[2]
+            except IndexError:
+                operation_kwargs = {}
+            try:
+                getattr(batched_requests, operation[0].lower())(operation[1], **operation_kwargs)
+            except AttributeError:
+                raise ValueError("Unrecognized operation: {}".format(operation[0]))
+        return self._batch_send(*batched_requests.requests, **kwargs)

@@ -18,7 +18,7 @@ interactions:
       connection: keep-alive
       content-length: '218'
       content-type: application/json; charset=utf-8
-      date: Wed, 07 Apr 2021 14:46:26 GMT
+      date: Wed, 28 Apr 2021 22:08:11 GMT
       docker-distribution-api-version: registry/2.0
       server: openresty
       strict-transport-security: max-age=31536000; includeSubDomains
@@ -46,11 +46,11 @@ interactions:
     headers:
       connection: keep-alive
       content-type: application/json; charset=utf-8
-      date: Wed, 07 Apr 2021 14:46:27 GMT
+      date: Wed, 28 Apr 2021 22:08:12 GMT
       server: openresty
       strict-transport-security: max-age=31536000; includeSubDomains
       transfer-encoding: chunked
-      x-ms-ratelimit-remaining-calls-per-second: '333.316667'
+      x-ms-ratelimit-remaining-calls-per-second: '166.616667'
     status:
       code: 200
       message: OK
@@ -74,11 +74,11 @@ interactions:
     headers:
       connection: keep-alive
       content-type: application/json; charset=utf-8
-      date: Wed, 07 Apr 2021 14:46:27 GMT
+      date: Wed, 28 Apr 2021 22:08:12 GMT
       server: openresty
       strict-transport-security: max-age=31536000; includeSubDomains
       transfer-encoding: chunked
-      x-ms-ratelimit-remaining-calls-per-second: '333.3'
+      x-ms-ratelimit-remaining-calls-per-second: '166.5'
     status:
       code: 200
       message: OK
@@ -96,60 +96,60 @@ interactions:
     body:
       string: '{"registry": "fake_url.azurecr.io", "imageName": "reposetb7cc1bf8",
         "manifests": [{"digest": "sha256:1b26826f602946860c279fce658f31050cff2c596583af237d971f4629b57792",
-        "imageSize": 0, "createdTime": "2021-04-07T14:46:18.7697062Z", "lastUpdateTime":
-        "2021-04-07T14:46:18.7697062Z", "architecture": "amd64", "os": "linux", "mediaType":
+        "imageSize": 525, "createdTime": "2021-04-28T22:08:01.3894846Z", "lastUpdateTime":
+        "2021-04-28T22:08:01.3894846Z", "architecture": "amd64", "os": "linux", "mediaType":
         "application/vnd.docker.distribution.manifest.v2+json", "changeableAttributes":
         {"deleteEnabled": true, "writeEnabled": true, "readEnabled": true, "listEnabled":
-        true, "quarantineState": "Passed"}}, {"digest": "sha256:308866a43596e83578c7dfa15e27a73011bdd402185a84c5cd7f32a88b501a24",
-        "imageSize": 0, "createdTime": "2021-04-07T14:46:16.0064179Z", "lastUpdateTime":
-        "2021-04-07T14:46:16.0064179Z", "mediaType": "application/vnd.docker.distribution.manifest.list.v2+json",
-        "tags": ["tagb7cc1bf8"], "changeableAttributes": {"deleteEnabled": true, "writeEnabled":
-        true, "readEnabled": true, "listEnabled": true}}, {"digest": "sha256:50b8560ad574c779908da71f7ce370c0a2471c098d44d1c8f6b513c5a55eeeb1",
-        "imageSize": 0, "createdTime": "2021-04-07T14:46:17.3404717Z", "lastUpdateTime":
-        "2021-04-07T14:46:17.3404717Z", "architecture": "arm", "os": "linux", "mediaType":
+        true, "quarantineState": "Passed"}}, {"digest": "sha256:50b8560ad574c779908da71f7ce370c0a2471c098d44d1c8f6b513c5a55eeeb1",
+        "imageSize": 525, "createdTime": "2021-04-28T22:08:01.4686287Z", "lastUpdateTime":
+        "2021-04-28T22:08:01.4686287Z", "architecture": "arm", "os": "linux", "mediaType":
         "application/vnd.docker.distribution.manifest.v2+json", "changeableAttributes":
         {"deleteEnabled": true, "writeEnabled": true, "readEnabled": true, "listEnabled":
         true, "quarantineState": "Passed"}}, {"digest": "sha256:88b2e00179bd6c4064612403c8d42a13de7ca809d61fee966ce9e129860a8a90",
-        "imageSize": 0, "createdTime": "2021-04-07T14:46:17.7809661Z", "lastUpdateTime":
-        "2021-04-07T14:46:17.7809661Z", "architecture": "mips64le", "os": "linux",
+        "imageSize": 525, "createdTime": "2021-04-28T22:08:01.8692554Z", "lastUpdateTime":
+        "2021-04-28T22:08:01.8692554Z", "architecture": "mips64le", "os": "linux",
         "mediaType": "application/vnd.docker.distribution.manifest.v2+json", "changeableAttributes":
         {"deleteEnabled": true, "writeEnabled": true, "readEnabled": true, "listEnabled":
         true, "quarantineState": "Passed"}}, {"digest": "sha256:963612c5503f3f1674f315c67089dee577d8cc6afc18565e0b4183ae355fb343",
-        "imageSize": 0, "createdTime": "2021-04-07T14:46:16.679345Z", "lastUpdateTime":
-        "2021-04-07T14:46:16.679345Z", "architecture": "arm64", "os": "linux", "mediaType":
+        "imageSize": 525, "createdTime": "2021-04-28T22:08:01.7547492Z", "lastUpdateTime":
+        "2021-04-28T22:08:01.7547492Z", "architecture": "arm64", "os": "linux", "mediaType":
         "application/vnd.docker.distribution.manifest.v2+json", "changeableAttributes":
         {"deleteEnabled": true, "writeEnabled": true, "readEnabled": true, "listEnabled":
-        true, "quarantineState": "Passed"}}, {"digest": "sha256:b0408a0f1d74eced127a2658429f336ed8fa48e36d59878f155b19865e5dbd70",
-        "imageSize": 0, "createdTime": "2021-04-07T14:46:16.8386028Z", "lastUpdateTime":
-        "2021-04-07T14:46:16.8386028Z", "architecture": "amd64", "os": "windows",
-        "mediaType": "application/vnd.docker.distribution.manifest.v2+json", "changeableAttributes":
-        {"deleteEnabled": true, "writeEnabled": true, "readEnabled": true, "listEnabled":
         true, "quarantineState": "Passed"}}, {"digest": "sha256:bb7ab0fa94fdd78aca84b27a1bd46c4b811051f9b69905d81f5f267fc6546a9d",
-        "imageSize": 0, "createdTime": "2021-04-07T14:46:17.3963026Z", "lastUpdateTime":
-        "2021-04-07T14:46:17.3963026Z", "architecture": "ppc64le", "os": "linux",
+        "imageSize": 525, "createdTime": "2021-04-28T22:08:02.2011859Z", "lastUpdateTime":
+        "2021-04-28T22:08:02.2011859Z", "architecture": "ppc64le", "os": "linux",
         "mediaType": "application/vnd.docker.distribution.manifest.v2+json", "changeableAttributes":
         {"deleteEnabled": true, "writeEnabled": true, "readEnabled": true, "listEnabled":
         true, "quarantineState": "Passed"}}, {"digest": "sha256:cb55d8f7347376e1ba38ca740904b43c9a52f66c7d2ae1ef1a0de1bc9f40df98",
-        "imageSize": 0, "createdTime": "2021-04-07T14:46:19.8874902Z", "lastUpdateTime":
-        "2021-04-07T14:46:19.8874902Z", "architecture": "386", "os": "linux", "mediaType":
+        "imageSize": 525, "createdTime": "2021-04-28T22:08:01.9216636Z", "lastUpdateTime":
+        "2021-04-28T22:08:01.9216636Z", "architecture": "386", "os": "linux", "mediaType":
         "application/vnd.docker.distribution.manifest.v2+json", "changeableAttributes":
         {"deleteEnabled": true, "writeEnabled": true, "readEnabled": true, "listEnabled":
         true, "quarantineState": "Passed"}}, {"digest": "sha256:e49abad529e5d9bd6787f3abeab94e09ba274fe34731349556a850b9aebbf7bf",
-        "imageSize": 0, "createdTime": "2021-04-07T14:46:16.7566071Z", "lastUpdateTime":
-        "2021-04-07T14:46:16.7566071Z", "architecture": "s390x", "os": "linux", "mediaType":
+        "imageSize": 525, "createdTime": "2021-04-28T22:08:02.2643519Z", "lastUpdateTime":
+        "2021-04-28T22:08:02.2643519Z", "architecture": "s390x", "os": "linux", "mediaType":
         "application/vnd.docker.distribution.manifest.v2+json", "changeableAttributes":
         {"deleteEnabled": true, "writeEnabled": true, "readEnabled": true, "listEnabled":
         true, "quarantineState": "Passed"}}, {"digest": "sha256:e5785cb0c62cebbed4965129bae371f0589cadd6d84798fb58c2c5f9e237efd9",
-        "imageSize": 0, "createdTime": "2021-04-07T14:46:17.1742286Z", "lastUpdateTime":
-        "2021-04-07T14:46:17.1742286Z", "architecture": "arm", "os": "linux", "mediaType":
+        "imageSize": 525, "createdTime": "2021-04-28T22:08:01.5677874Z", "lastUpdateTime":
+        "2021-04-28T22:08:01.5677874Z", "architecture": "arm", "os": "linux", "mediaType":
         "application/vnd.docker.distribution.manifest.v2+json", "changeableAttributes":
         {"deleteEnabled": true, "writeEnabled": true, "readEnabled": true, "listEnabled":
-        true, "quarantineState": "Passed"}}]}'
+        true, "quarantineState": "Passed"}}, {"digest": "sha256:ea0cfb27fd41ea0405d3095880c1efa45710f5bcdddb7d7d5a7317ad4825ae14",
+        "imageSize": 1125, "createdTime": "2021-04-28T22:08:02.7377961Z", "lastUpdateTime":
+        "2021-04-28T22:08:02.7377961Z", "architecture": "amd64", "os": "windows",
+        "mediaType": "application/vnd.docker.distribution.manifest.v2+json", "changeableAttributes":
+        {"deleteEnabled": true, "writeEnabled": true, "readEnabled": true, "listEnabled":
+        true, "quarantineState": "Passed"}}, {"digest": "sha256:f2266cbfc127c960fd30e76b7c792dc23b588c0db76233517e1891a4e357d519",
+        "imageSize": 5325, "createdTime": "2021-04-28T22:08:01.2695721Z", "lastUpdateTime":
+        "2021-04-28T22:08:01.2695721Z", "mediaType": "application/vnd.docker.distribution.manifest.list.v2+json",
+        "tags": ["tagb7cc1bf8"], "changeableAttributes": {"deleteEnabled": true, "writeEnabled":
+        true, "readEnabled": true, "listEnabled": true}}]}'
     headers:
       access-control-expose-headers: X-Ms-Correlation-Request-Id
       connection: keep-alive
       content-type: application/json; charset=utf-8
-      date: Wed, 07 Apr 2021 14:46:28 GMT
+      date: Wed, 28 Apr 2021 22:08:13 GMT
       docker-distribution-api-version: registry/2.0
       server: openresty
       strict-transport-security: max-age=31536000; includeSubDomains
@@ -183,7 +183,7 @@ interactions:
       connection: keep-alive
       content-length: '219'
       content-type: application/json; charset=utf-8
-      date: Wed, 07 Apr 2021 14:46:28 GMT
+      date: Wed, 28 Apr 2021 22:08:13 GMT
       docker-distribution-api-version: registry/2.0
       server: openresty
       strict-transport-security: max-age=31536000; includeSubDomains
@@ -193,33 +193,6 @@ interactions:
       code: 401
       message: Unauthorized
     url: https://fake_url.azurecr.io/acr/v1/reposetb7cc1bf8/_manifests/sha256:1b26826f602946860c279fce658f31050cff2c596583af237d971f4629b57792
-- request:
-    body:
-      access_token: REDACTED
-      grant_type: access_token
-      service: fake_url.azurecr.io
-    headers:
-      Accept:
-      - application/json
-      User-Agent:
-      - azsdk-python-azure-containerregistry/1.0.0b1 Python/3.9.0rc1 (Windows-10-10.0.19041-SP0)
-    method: POST
-    uri: https://fake_url.azurecr.io/oauth2/exchange
-  response:
-    body:
-      string: '{"refresh_token": "REDACTED"}'
-    headers:
-      connection: keep-alive
-      content-type: application/json; charset=utf-8
-      date: Wed, 07 Apr 2021 14:46:28 GMT
-      server: openresty
-      strict-transport-security: max-age=31536000; includeSubDomains
-      transfer-encoding: chunked
-      x-ms-ratelimit-remaining-calls-per-second: '333.283333'
-    status:
-      code: 200
-      message: OK
-    url: https://fake_url.azurecr.io/oauth2/exchange
 - request:
     body:
       grant_type: refresh_token
@@ -239,11 +212,11 @@ interactions:
     headers:
       connection: keep-alive
       content-type: application/json; charset=utf-8
-      date: Wed, 07 Apr 2021 14:46:28 GMT
+      date: Wed, 28 Apr 2021 22:08:13 GMT
       server: openresty
       strict-transport-security: max-age=31536000; includeSubDomains
       transfer-encoding: chunked
-      x-ms-ratelimit-remaining-calls-per-second: '333.266667'
+      x-ms-ratelimit-remaining-calls-per-second: '166.483333'
     status:
       code: 200
       message: OK
@@ -266,19 +239,20 @@ interactions:
     body:
       string: '{"registry": "fake_url.azurecr.io", "imageName": "reposetb7cc1bf8",
         "manifest": {"digest": "sha256:1b26826f602946860c279fce658f31050cff2c596583af237d971f4629b57792",
-        "imageSize": 0, "createdTime": "2021-04-07T14:46:18.7697062Z", "lastUpdateTime":
-        "2021-04-07T14:46:18.7697062Z", "architecture": "amd64", "os": "linux", "mediaType":
+        "imageSize": 525, "createdTime": "2021-04-28T22:08:01.3894846Z", "lastUpdateTime":
+        "2021-04-28T22:08:01.3894846Z", "architecture": "amd64", "os": "linux", "mediaType":
         "application/vnd.docker.distribution.manifest.v2+json", "changeableAttributes":
         {"deleteEnabled": false, "writeEnabled": false, "readEnabled": false, "listEnabled":
-        false, "quarantineDetails": "{\"state\":\"Scan Passed\",\"link\":\"https://aka.ms/test\",\"scanner\":\"Azure
-        Security Monitoring-Qualys Scanner\",\"result\":{\"version\":\"2021-04-02T20:09:40.8950004Z\",\"summary\":[{\"severity\":\"High\",\"count\":3},{\"severity\":\"Medium\",\"count\":8},{\"severity\":\"Low\",\"count\":0}]}}",
+        false, "quarantineDetails": "{\"state\":\"Scan Failed\",\"link\":\"https://aka.ms/test\",\"scanner\":\"Azure
+        Security Monitoring-Qualys Scanner\",\"result\":{\"version\":\"4/28/2021 10:08:13
+        PM\",\"summary\":[{\"severity\":\"High\",\"count\":0},{\"severity\":\"Medium\",\"count\":0},{\"severity\":\"Low\",\"count\":0}]}}",
         "quarantineState": "Passed"}}}'
     headers:
       access-control-expose-headers: X-Ms-Correlation-Request-Id
       connection: keep-alive
-      content-length: '827'
+      content-length: '822'
       content-type: application/json; charset=utf-8
-      date: Wed, 07 Apr 2021 14:46:29 GMT
+      date: Wed, 28 Apr 2021 22:08:13 GMT
       docker-distribution-api-version: registry/2.0
       server: openresty
       strict-transport-security: max-age=31536000; includeSubDomains
@@ -311,7 +285,7 @@ interactions:
       connection: keep-alive
       content-length: '219'
       content-type: application/json; charset=utf-8
-      date: Wed, 07 Apr 2021 14:46:30 GMT
+      date: Wed, 28 Apr 2021 22:08:14 GMT
       docker-distribution-api-version: registry/2.0
       server: openresty
       strict-transport-security: max-age=31536000; includeSubDomains
@@ -321,33 +295,6 @@ interactions:
       code: 401
       message: Unauthorized
     url: https://fake_url.azurecr.io/acr/v1/reposetb7cc1bf8/_manifests/sha256:1b26826f602946860c279fce658f31050cff2c596583af237d971f4629b57792
-- request:
-    body:
-      access_token: REDACTED
-      grant_type: access_token
-      service: fake_url.azurecr.io
-    headers:
-      Accept:
-      - application/json
-      User-Agent:
-      - azsdk-python-azure-containerregistry/1.0.0b1 Python/3.9.0rc1 (Windows-10-10.0.19041-SP0)
-    method: POST
-    uri: https://fake_url.azurecr.io/oauth2/exchange
-  response:
-    body:
-      string: '{"refresh_token": "REDACTED"}'
-    headers:
-      connection: keep-alive
-      content-type: application/json; charset=utf-8
-      date: Wed, 07 Apr 2021 14:46:30 GMT
-      server: openresty
-      strict-transport-security: max-age=31536000; includeSubDomains
-      transfer-encoding: chunked
-      x-ms-ratelimit-remaining-calls-per-second: '333.25'
-    status:
-      code: 200
-      message: OK
-    url: https://fake_url.azurecr.io/oauth2/exchange
 - request:
     body:
       grant_type: refresh_token
@@ -367,11 +314,11 @@ interactions:
     headers:
       connection: keep-alive
       content-type: application/json; charset=utf-8
-      date: Wed, 07 Apr 2021 14:46:30 GMT
+      date: Wed, 28 Apr 2021 22:08:14 GMT
       server: openresty
       strict-transport-security: max-age=31536000; includeSubDomains
       transfer-encoding: chunked
-      x-ms-ratelimit-remaining-calls-per-second: '333.233333'
+      x-ms-ratelimit-remaining-calls-per-second: '166.466667'
     status:
       code: 200
       message: OK
@@ -394,19 +341,20 @@ interactions:
     body:
       string: '{"registry": "fake_url.azurecr.io", "imageName": "reposetb7cc1bf8",
         "manifest": {"digest": "sha256:1b26826f602946860c279fce658f31050cff2c596583af237d971f4629b57792",
-        "imageSize": 0, "createdTime": "2021-04-07T14:46:18.7697062Z", "lastUpdateTime":
-        "2021-04-07T14:46:18.7697062Z", "architecture": "amd64", "os": "linux", "mediaType":
+        "imageSize": 525, "createdTime": "2021-04-28T22:08:01.3894846Z", "lastUpdateTime":
+        "2021-04-28T22:08:01.3894846Z", "architecture": "amd64", "os": "linux", "mediaType":
         "application/vnd.docker.distribution.manifest.v2+json", "changeableAttributes":
         {"deleteEnabled": true, "writeEnabled": true, "readEnabled": true, "listEnabled":
-        true, "quarantineDetails": "{\"state\":\"Scan Passed\",\"link\":\"https://aka.ms/test\",\"scanner\":\"Azure
-        Security Monitoring-Qualys Scanner\",\"result\":{\"version\":\"2021-04-02T20:09:40.8950004Z\",\"summary\":[{\"severity\":\"High\",\"count\":3},{\"severity\":\"Medium\",\"count\":8},{\"severity\":\"Low\",\"count\":0}]}}",
+        true, "quarantineDetails": "{\"state\":\"Scan Failed\",\"link\":\"https://aka.ms/test\",\"scanner\":\"Azure
+        Security Monitoring-Qualys Scanner\",\"result\":{\"version\":\"4/28/2021 10:08:13
+        PM\",\"summary\":[{\"severity\":\"High\",\"count\":0},{\"severity\":\"Medium\",\"count\":0},{\"severity\":\"Low\",\"count\":0}]}}",
         "quarantineState": "Passed"}}}'
     headers:
       access-control-expose-headers: X-Ms-Correlation-Request-Id
       connection: keep-alive
-      content-length: '823'
+      content-length: '818'
       content-type: application/json; charset=utf-8
-      date: Wed, 07 Apr 2021 14:46:30 GMT
+      date: Wed, 28 Apr 2021 22:08:14 GMT
       docker-distribution-api-version: registry/2.0
       server: openresty
       strict-transport-security: max-age=31536000; includeSubDomains
@@ -434,7 +382,7 @@ interactions:
       connection: keep-alive
       content-length: '211'
       content-type: application/json; charset=utf-8
-      date: Wed, 07 Apr 2021 14:46:40 GMT
+      date: Wed, 28 Apr 2021 22:08:14 GMT
       docker-distribution-api-version: registry/2.0
       server: openresty
       strict-transport-security: max-age=31536000; includeSubDomains
@@ -444,33 +392,6 @@ interactions:
       code: 401
       message: Unauthorized
     url: https://fake_url.azurecr.io/acr/v1/reposetb7cc1bf8
-- request:
-    body:
-      access_token: REDACTED
-      grant_type: access_token
-      service: fake_url.azurecr.io
-    headers:
-      Accept:
-      - application/json
-      User-Agent:
-      - azsdk-python-azure-containerregistry/1.0.0b1 Python/3.9.0rc1 (Windows-10-10.0.19041-SP0)
-    method: POST
-    uri: https://fake_url.azurecr.io/oauth2/exchange
-  response:
-    body:
-      string: '{"refresh_token": "REDACTED"}'
-    headers:
-      connection: keep-alive
-      content-type: application/json; charset=utf-8
-      date: Wed, 07 Apr 2021 14:46:41 GMT
-      server: openresty
-      strict-transport-security: max-age=31536000; includeSubDomains
-      transfer-encoding: chunked
-      x-ms-ratelimit-remaining-calls-per-second: '333.2'
-    status:
-      code: 200
-      message: OK
-    url: https://fake_url.azurecr.io/oauth2/exchange
 - request:
     body:
       grant_type: refresh_token
@@ -490,11 +411,11 @@ interactions:
     headers:
       connection: keep-alive
       content-type: application/json; charset=utf-8
-      date: Wed, 07 Apr 2021 14:46:41 GMT
+      date: Wed, 28 Apr 2021 22:08:14 GMT
       server: openresty
       strict-transport-security: max-age=31536000; includeSubDomains
       transfer-encoding: chunked
-      x-ms-ratelimit-remaining-calls-per-second: '333.183333'
+      x-ms-ratelimit-remaining-calls-per-second: '166.45'
     status:
       code: 200
       message: OK
@@ -511,27 +432,27 @@ interactions:
   response:
     body:
       string: '{"manifestsDeleted": ["sha256:1b26826f602946860c279fce658f31050cff2c596583af237d971f4629b57792",
-        "sha256:308866a43596e83578c7dfa15e27a73011bdd402185a84c5cd7f32a88b501a24",
         "sha256:50b8560ad574c779908da71f7ce370c0a2471c098d44d1c8f6b513c5a55eeeb1",
         "sha256:88b2e00179bd6c4064612403c8d42a13de7ca809d61fee966ce9e129860a8a90",
         "sha256:963612c5503f3f1674f315c67089dee577d8cc6afc18565e0b4183ae355fb343",
-        "sha256:b0408a0f1d74eced127a2658429f336ed8fa48e36d59878f155b19865e5dbd70",
         "sha256:bb7ab0fa94fdd78aca84b27a1bd46c4b811051f9b69905d81f5f267fc6546a9d",
         "sha256:cb55d8f7347376e1ba38ca740904b43c9a52f66c7d2ae1ef1a0de1bc9f40df98",
         "sha256:e49abad529e5d9bd6787f3abeab94e09ba274fe34731349556a850b9aebbf7bf",
-        "sha256:e5785cb0c62cebbed4965129bae371f0589cadd6d84798fb58c2c5f9e237efd9"],
+        "sha256:e5785cb0c62cebbed4965129bae371f0589cadd6d84798fb58c2c5f9e237efd9",
+        "sha256:ea0cfb27fd41ea0405d3095880c1efa45710f5bcdddb7d7d5a7317ad4825ae14",
+        "sha256:f2266cbfc127c960fd30e76b7c792dc23b588c0db76233517e1891a4e357d519"],
         "tagsDeleted": ["tagb7cc1bf8"]}'
     headers:
       access-control-expose-headers: X-Ms-Correlation-Request-Id
       connection: keep-alive
       content-length: '793'
       content-type: application/json; charset=utf-8
-      date: Wed, 07 Apr 2021 14:46:44 GMT
+      date: Wed, 28 Apr 2021 22:08:16 GMT
       docker-distribution-api-version: registry/2.0
       server: openresty
       strict-transport-security: max-age=31536000; includeSubDomains
       x-content-type-options: nosniff
-      x-ms-ratelimit-remaining-calls-per-second: '32.000000'
+      x-ms-ratelimit-remaining-calls-per-second: '8.000000'
     status:
       code: 202
       message: Accepted

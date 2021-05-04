@@ -23,6 +23,9 @@ class CertificateCredential(ClientCredentialBase):
 
     The certificate must have an RSA private key, because this credential signs assertions using RS256.
 
+    See Azure Active Directory documentation for more information on configuring certificate authentication:
+    https://docs.microsoft.com/azure/active-directory/develop/active-directory-certificate-credentials#register-your-certificate-with-microsoft-identity-platform
+
     :param str tenant_id: ID of the service principal's tenant. Also called its 'directory' ID.
     :param str client_id: the service principal's client ID
     :param str certificate_path: path to a PEM-encoded certificate file including the private key. If not provided,

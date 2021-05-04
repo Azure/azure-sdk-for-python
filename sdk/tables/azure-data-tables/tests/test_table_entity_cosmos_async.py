@@ -300,7 +300,7 @@ class StorageTableEntityTest(AzureTestCase, AsyncTableTestCase):
             await self.table.create_entity(entity)
 
             f = u"RowKey eq '{}'".format(entity["RowKey"])
-            entities = self.table.query_entities(filter=f)
+            entities = self.table.query_entities(f)
 
             count = 0
             async for e in entities:
@@ -312,7 +312,7 @@ class StorageTableEntityTest(AzureTestCase, AsyncTableTestCase):
 
             assert count == 1
 
-            entities = self.table.query_entities(filter=f)
+            entities = self.table.query_entities(f)
             count = 0
             async for e in entities:
                 count += 1
@@ -992,7 +992,7 @@ class StorageTableEntityTest(AzureTestCase, AsyncTableTestCase):
             await self.table.create_entity(entity=entity2)
             entities = []
             async for e in self.table.query_entities(
-                    filter="PartitionKey eq '{}'".format(entity['PartitionKey'])):
+                    "PartitionKey eq '{}'".format(entity['PartitionKey'])):
                 entities.append(e)
 
             # Assert
@@ -1018,7 +1018,7 @@ class StorageTableEntityTest(AzureTestCase, AsyncTableTestCase):
             await self.table.create_entity(entity=entity2)
             entities = []
             async for e in self.table.query_entities(
-                    filter="PartitionKey eq '{}'".format(entity['PartitionKey'])):
+                    "PartitionKey eq '{}'".format(entity['PartitionKey'])):
                 entities.append(e)
 
             # Assert
@@ -1036,24 +1036,21 @@ class StorageTableEntityTest(AzureTestCase, AsyncTableTestCase):
         row_key_with_single_quote = "a''''b"
         await self._set_up(tables_cosmos_account_name, tables_primary_cosmos_account_key)
         try:
-            entity, _ = await self._insert_random_entity(pk=partition_key_with_single_quote,
-                                                         rk=row_key_with_single_quote)
+            entity, _ = await self._insert_random_entity(pk=partition_key_with_single_quote, rk=row_key_with_single_quote)
 
             # Act
             sent_entity = self._create_updated_entity_dict(entity.PartitionKey, entity.RowKey)
             await self.table.upsert_entity(mode=UpdateMode.REPLACE, entity=sent_entity)
 
             # row key here only has 2 quotes
-            received_entity = await self.table.get_entity(
-                entity.PartitionKey, entity.RowKey)
+            received_entity = await self.table.get_entity(entity.PartitionKey, entity.RowKey)
             self._assert_updated_entity(received_entity)
 
             # Act
             sent_entity['newField'] = 'newFieldValue'
             await self.table.update_entity(mode=UpdateMode.REPLACE, entity=sent_entity)
 
-            received_entity = await self.table.get_entity(
-                entity.PartitionKey, entity.RowKey)
+            received_entity = await self.table.get_entity(entity.PartitionKey, entity.RowKey)
             self._assert_updated_entity(received_entity)
             assert received_entity['newField'] ==  'newFieldValue'
 
@@ -1138,7 +1135,6 @@ class StorageTableEntityTest(AzureTestCase, AsyncTableTestCase):
         finally:
             await self._tear_down()
 
-    @pytest.mark.skip("response time is three hours before the given one")
     @CosmosPreparer()
     async def test_timezone(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
         # Arrange
@@ -1204,7 +1200,7 @@ class StorageTableEntityTest(AzureTestCase, AsyncTableTestCase):
 
             entity_count = 0
             page_count = 0
-            async for entity_page in self.table.query_entities(filter=query_filter, results_per_page=2).by_page():
+            async for entity_page in self.table.query_entities(query_filter, results_per_page=2).by_page():
 
                 temp_count = 0
                 async for ent in entity_page:
@@ -1228,7 +1224,7 @@ class StorageTableEntityTest(AzureTestCase, AsyncTableTestCase):
             entity = await self._insert_two_opposite_entities()
 
             # Act
-            entities = self.table.query_entities(filter="married eq @my_param", parameters={'my_param': True})
+            entities = self.table.query_entities("married eq @my_param", parameters={'my_param': True})
 
             length = 0
             assert entities is not None
@@ -1253,7 +1249,7 @@ class StorageTableEntityTest(AzureTestCase, AsyncTableTestCase):
                 'my_param': True,
                 'rk': entity['RowKey']
             }
-            entities = self.table.query_entities(filter="married eq @my_param and RowKey eq @rk", parameters=parameters)
+            entities = self.table.query_entities("married eq @my_param and RowKey eq @rk", parameters=parameters)
 
             length = 0
             assert entities is not None
@@ -1276,7 +1272,7 @@ class StorageTableEntityTest(AzureTestCase, AsyncTableTestCase):
             parameters = {
                 'my_param': 40,
             }
-            entities = self.table.query_entities(filter="age lt @my_param", parameters=parameters)
+            entities = self.table.query_entities("age lt @my_param", parameters=parameters)
 
             length = 0
             assert entities is not None
@@ -1299,7 +1295,7 @@ class StorageTableEntityTest(AzureTestCase, AsyncTableTestCase):
             parameters = {
                 'my_param': entity['ratio'] + 1.0,
             }
-            entities = self.table.query_entities(filter="ratio lt @my_param", parameters=parameters)
+            entities = self.table.query_entities("ratio lt @my_param", parameters=parameters)
 
             length = 0
             assert entities is not None
@@ -1322,7 +1318,7 @@ class StorageTableEntityTest(AzureTestCase, AsyncTableTestCase):
             parameters = {
                 'my_param': entity['birthday'],
             }
-            entities = self.table.query_entities(filter="birthday eq @my_param", parameters=parameters)
+            entities = self.table.query_entities("birthday eq @my_param", parameters=parameters)
 
             length = 0
             assert entities is not None
@@ -1345,12 +1341,65 @@ class StorageTableEntityTest(AzureTestCase, AsyncTableTestCase):
             parameters = {
                 'my_param': entity['clsid']
             }
-            entities = self.table.query_entities(filter="clsid eq @my_param", parameters=parameters)
+            entities = self.table.query_entities("clsid eq @my_param", parameters=parameters)
 
             length = 0
             assert entities is not None
             async for entity in entities:
                 self._assert_default_entity(entity)
+                length += 1
+
+            assert length == 1
+        finally:
+            await self._tear_down()
+
+    @CosmosPreparer()
+    async def test_query_user_filter_binary(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
+        # Arrange
+        await self._set_up(tables_cosmos_account_name, tables_primary_cosmos_account_key)
+        try:
+            entity, _ = await self._insert_two_opposite_entities()
+
+            # Act
+            parameters = {
+                'my_param': entity['binary']
+            }
+            entities = self.table.query_entities("binary eq @my_param", parameters=parameters)
+
+            length = 0
+            assert entities is not None
+            async for entity in entities:
+                self._assert_default_entity(entity)
+                length += 1
+
+            assert length == 1
+        finally:
+            await self._tear_down()
+
+    @CosmosPreparer()
+    async def test_query_user_filter_int64(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
+        # Arrange
+        await self._set_up(tables_cosmos_account_name, tables_primary_cosmos_account_key)
+        try:
+            entity, _ = await self._insert_two_opposite_entities()
+            large_entity = {
+                u"PartitionKey": u"pk001",
+                u"RowKey": u"rk001",
+                u"large_int": EntityProperty(2 ** 40, EdmType.INT64),
+            }
+            await self.table.create_entity(large_entity)
+
+            # Act
+            parameters = {
+                'my_param': large_entity['large_int'].value
+            }
+            entities = self.table.query_entities("large_int eq @my_param", parameters=parameters)
+
+            length = 0
+            assert entities is not None
+            async for entity in entities:
+                # self._assert_default_entity(entity)
+                assert large_entity['large_int'] == entity['large_int']
                 length += 1
 
             assert length == 1
@@ -1424,7 +1473,7 @@ class StorageTableEntityTest(AzureTestCase, AsyncTableTestCase):
             # Act
             entities = []
             async for t in self.table.query_entities(
-                    filter="PartitionKey eq '{}'".format(entity.PartitionKey)):
+                    "PartitionKey eq '{}'".format(entity.PartitionKey)):
                 entities.append(t)
 
             # Assert
@@ -1544,31 +1593,29 @@ class StorageTableEntityTest(AzureTestCase, AsyncTableTestCase):
                 await self.table.create_entity(base_entity)
             # Act
             with pytest.raises(HttpResponseError):
-                async for t in self.table.query_entities(filter="aaa bbb ccc"):
+                async for t in self.table.query_entities("aaa bbb ccc"):
                     _ = t
         finally:
             await self._tear_down()
 
-    @pytest.mark.skip("returns ' sex' instead of deserializing into just 'sex'")
     @CosmosPreparer()
     async def test_query_entities_with_select(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
-        # Arrange
         await self._set_up(tables_cosmos_account_name, tables_primary_cosmos_account_key)
         try:
             table = await self._create_query_table(2)
 
             # Act
             entities = []
-            async for t in table.list_entities(select=["age, sex"]):
-                entities.append(t)
+            async for entity in table.list_entities(select=['age', 'sex']):
+                entities.append(entity)
+                assert entity.age == 39
+                assert entity.sex == 'male'
+                assert not hasattr(entity, "birthday")
+                assert not hasattr(entity, "married")
+                assert not hasattr(entity, "deceased")
 
             # Assert
-            assert len(entities) ==  2
-            assert entities[0].age ==  39
-            assert entities[0].sex ==  'male'
-            assert not hasattr(entities[0], "birthday")
-            assert not hasattr(entities[0], "married")
-            assert not hasattr(entities[0], "deceased")
+            assert len(entities) == 2
         finally:
             await self._tear_down()
 

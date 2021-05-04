@@ -9,7 +9,7 @@ import six
 from devtools_testutils import AzureTestCase
 
 from azure.containerregistry import (
-    DeletedRepositoryResult,
+    DeleteRepositoryResult,
     RepositoryProperties,
 )
 from azure.containerregistry.aio import ContainerRegistryClient, ContainerRepositoryClient
@@ -18,7 +18,7 @@ from azure.core.paging import ItemPaged
 from azure.core.pipeline.transport import AioHttpTransport
 
 from asynctestcase import AsyncContainerRegistryTestClass
-from constants import TO_BE_DELETED
+from constants import TO_BE_DELETED, HELLO_WORLD
 from preparer import acr_preparer
 
 
@@ -63,20 +63,16 @@ class TestContainerRegistryClient(AsyncContainerRegistryTestClass):
     @acr_preparer()
     async def test_delete_repository(self, containerregistry_endpoint, containerregistry_resource_group):
         repository = self.get_resource_name("repo")
-        self._import_tag_to_be_deleted(
-            containerregistry_endpoint, resource_group=containerregistry_resource_group, repository=repository
-        )
+        self.import_image(HELLO_WORLD, [TO_BE_DELETED])
         client = self.create_registry_client(containerregistry_endpoint)
 
-        result = await client.delete_repository(repository)
-        assert isinstance(result, DeletedRepositoryResult)
-        assert result.deleted_registry_artifact_digests is not None
+        result = await client.delete_repository(TO_BE_DELETED)
+        assert isinstance(result, DeleteRepositoryResult)
+        assert result.deleted_manifests is not None
         assert result.deleted_tags is not None
 
-        self.sleep(5)
-
         async for repo in client.list_repositories():
-            if repo == repository:
+            if repo == TO_BE_DELETED:
                 raise ValueError("Repository not deleted")
 
     @acr_preparer()
@@ -95,7 +91,7 @@ class TestContainerRegistryClient(AsyncContainerRegistryTestClass):
                 pass
             assert transport.session is not None
 
-            repo_client = client.get_repository_client("hello-world")
+            repo_client = client.get_repository_client(HELLO_WORLD)
             async with repo_client:
                 assert transport.session is not None
 

@@ -122,9 +122,10 @@ class AsyncEventHubAuthTests(AzureMgmtTestCase):
             batch.add(EventData(body='A single message'))
             await producer_client.send_batch(batch)
 
+        credential = EventHubSharedKeyCredential(eventhub_namespace_key_name, eventhub_namespace_primary_key)
         hostname = "{}.servicebus.windows.net".format(eventhub_namespace.name)
         auth_uri = "sb://{}/{}".format(hostname, eventhub.name)
-        token = (await credential.get_token(auth_uri)).token
+        token = (await credential.get_token(auth_uri)).token.decode()
         producer_client = EventHubProducerClient(fully_qualified_namespace=hostname,
                                                  eventhub_name=eventhub.name,
                                                  credential=AzureSasCredential(token))

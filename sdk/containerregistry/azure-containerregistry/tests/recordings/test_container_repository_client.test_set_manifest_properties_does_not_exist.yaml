@@ -34,7 +34,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Wed, 07 Apr 2021 14:46:04 GMT
+      - Wed, 28 Apr 2021 22:06:19 GMT
       docker-distribution-api-version:
       - registry/2.0
       server:
@@ -42,7 +42,8 @@ interactions:
       strict-transport-security:
       - max-age=31536000; includeSubDomains
       - max-age=31536000; includeSubDomains
-      www-authenticate: Bearer realm="https://fake_url.azurecr.io/oauth2/token",service="fake_url.azurecr.io",scope="fake_scope",error="invalid_token"
+      www-authenticate:
+      - Bearer realm="https://fake_url.azurecr.io/oauth2/token",service="fake_url.azurecr.io",scope="fake_scope",error="invalid_token"
       x-content-type-options:
       - nosniff
     status:
@@ -74,7 +75,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Wed, 07 Apr 2021 14:46:06 GMT
+      - Wed, 28 Apr 2021 22:06:20 GMT
       server:
       - openresty
       strict-transport-security:
@@ -82,7 +83,7 @@ interactions:
       transfer-encoding:
       - chunked
       x-ms-ratelimit-remaining-calls-per-second:
-      - '333.316667'
+      - '166.283333'
     status:
       code: 200
       message: OK
@@ -112,7 +113,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Wed, 07 Apr 2021 14:46:06 GMT
+      - Wed, 28 Apr 2021 22:06:20 GMT
       server:
       - openresty
       strict-transport-security:
@@ -120,7 +121,7 @@ interactions:
       transfer-encoding:
       - chunked
       x-ms-ratelimit-remaining-calls-per-second:
-      - '333.3'
+      - '166.233333'
     status:
       code: 200
       message: OK
@@ -157,7 +158,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Wed, 07 Apr 2021 14:46:07 GMT
+      - Wed, 28 Apr 2021 22:06:21 GMT
       docker-distribution-api-version:
       - registry/2.0
       server:

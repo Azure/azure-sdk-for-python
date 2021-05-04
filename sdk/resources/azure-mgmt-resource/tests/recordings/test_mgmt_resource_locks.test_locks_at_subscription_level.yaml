@@ -13,7 +13,8 @@ interactions:
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-azure-mgmt-resource/16.0.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+      - azsdk-python-azure-mgmt-resource/16.1.0 Python/3.8.9 (Linux-5.4.0-1043-azure-x86_64-with-glibc2.2.5)
+        VSTS_0fb41ef4-5012-48a9-bf39-4ee3de03ee35_build_2384_0
     method: PUT
     uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Authorization/locks/pylockrg?api-version=2016-09-01
   response:
@@ -27,7 +28,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Fri, 26 Feb 2021 06:55:01 GMT
+      - Fri, 16 Apr 2021 08:29:04 GMT
       expires:
       - '-1'
       pragma:
@@ -37,7 +38,7 @@ interactions:
       x-content-type-options:
       - nosniff
       x-ms-ratelimit-remaining-subscription-writes:
-      - '1198'
+      - '1199'
     status:
       code: 201
       message: Created
@@ -51,7 +52,8 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-azure-mgmt-resource/16.0.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+      - azsdk-python-azure-mgmt-resource/16.1.0 Python/3.8.9 (Linux-5.4.0-1043-azure-x86_64-with-glibc2.2.5)
+        VSTS_0fb41ef4-5012-48a9-bf39-4ee3de03ee35_build_2384_0
     method: GET
     uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Authorization/locks/pylockrg?api-version=2016-09-01
   response:
@@ -65,7 +67,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Fri, 26 Feb 2021 06:55:01 GMT
+      - Fri, 16 Apr 2021 08:29:04 GMT
       expires:
       - '-1'
       pragma:
@@ -91,21 +93,32 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-azure-mgmt-resource/16.0.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+      - azsdk-python-azure-mgmt-resource/16.1.0 Python/3.8.9 (Linux-5.4.0-1043-azure-x86_64-with-glibc2.2.5)
+        VSTS_0fb41ef4-5012-48a9-bf39-4ee3de03ee35_build_2384_0
     method: GET
     uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Authorization/locks?api-version=2016-09-01
   response:
     body:
-      string: '{"value":[{"properties":{"level":"CanNotDelete"},"id":"/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Authorization/locks/pylockrg","type":"Microsoft.Authorization/locks","name":"pylockrg"}]}'
+      string: "{\"value\":[{\"properties\":{\"level\":\"CanNotDelete\"},\"id\":\"/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Authorization/locks/pylockrg\",\"type\":\"Microsoft.Authorization/locks\",\"name\":\"pylockrg\"},{\"properties\":{\"level\":\"CanNotDelete\"},\"id\":\"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/fytest2/providers/Microsoft.Compute/snapshots/s1/providers/Microsoft.Authorization/locks/l4\",\"type\":\"Microsoft.Authorization/locks\",\"name\":\"l4\"},{\"properties\":{\"level\":\"CanNotDelete\"},\"id\":\"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/FYTEST2/providers/Microsoft.Compute/disks/vm1_disk1_acf86aae49414fe8b70f669510e33728/providers/Microsoft.Authorization/locks/l\",\"type\":\"Microsoft.Authorization/locks\",\"name\":\"l\"},{\"properties\":{\"level\":\"CanNotDelete\"},\"id\":\"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/fytest2/providers/Microsoft.Compute/virtualMachines/vm1/providers/Microsoft.Authorization/locks/l\",\"type\":\"Microsoft.Authorization/locks\",\"name\":\"l\"},{\"properties\":{\"level\":\"CanNotDelete\"},\"id\":\"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/fytest2/providers/Microsoft.Compute/galleries/g1/providers/Microsoft.Authorization/locks/l2\",\"type\":\"Microsoft.Authorization/locks\",\"name\":\"l2\"},{\"properties\":{\"level\":\"CanNotDelete\"},\"id\":\"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/fytest2/providers/Microsoft.Compute/galleries/g1/images/image1/providers/Microsoft.Authorization/locks/l3\",\"type\":\"Microsoft.Authorization/locks\",\"name\":\"l3\"},{\"properties\":{\"level\":\"CanNotDelete\"},\"id\":\"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/fytest2/providers/Microsoft.Compute/galleries/g1/images/image1/versions/1.0.0/providers/Microsoft.Authorization/locks/l\",\"type\":\"Microsoft.Authorization/locks\",\"name\":\"l\"},{\"properties\":{\"level\":\"CanNotDelete\"},\"id\":\"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/acctestRG-ibt-24/providers/Microsoft.Authorization/locks/DoNotDelete\",\"type\":\"Microsoft.Authorization/locks\",\"name\":\"DoNotDelete\"},{\"properties\":{\"level\":\"CanNotDelete\"},\"id\":\"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/cloud-shell-storage-southeastasia/providers/Microsoft.Storage/storageAccounts/cs1100320008debd5bc/providers/Microsoft.Authorization/locks/dl\",\"type\":\"Microsoft.Authorization/locks\",\"name\":\"dl\"},{\"properties\":{\"level\":\"CanNotDelete\"},\"id\":\"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/ljin-test/providers/Microsoft.KeyVault/vaults/kv-ljin-sni/providers/Microsoft.Authorization/locks/reserved\",\"type\":\"Microsoft.Authorization/locks\",\"name\":\"reserved\"},{\"properties\":{\"level\":\"CanNotDelete\"},\"id\":\"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/fybot/providers/Microsoft.Authorization/locks/l\",\"type\":\"Microsoft.Authorization/locks\",\"name\":\"l\"},{\"properties\":{\"level\":\"CanNotDelete\",\"notes\":\"for
+        Asir\"},\"id\":\"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/emerald-city-bookstore/providers/Microsoft.Authorization/locks/No-DELETE\",\"type\":\"Microsoft.Authorization/locks\",\"name\":\"No-DELETE\"},{\"properties\":{\"level\":\"CanNotDelete\",\"notes\":\"Nanxuan
+        uses this for troubleshooting a high pri issue\"},\"id\":\"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/acctestRG-201105133030970486/providers/Microsoft.Authorization/locks/DoNotDelete\",\"type\":\"Microsoft.Authorization/locks\",\"name\":\"DoNotDelete\"},{\"properties\":{\"level\":\"ReadOnly\"},\"id\":\"/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/cli_test_readonly_resource_locklucgtzf5vgc65f5gjnxtn3kf4axeyzdcowlatqmvexq3/providers/Microsoft.Network/virtualNetworks/cli.lock.rsrctghseyfj2qky7arbn/providers/Microsoft.Authorization/locks/cli-test-lockxjl4qh7c7dmei6gakhxdn4dx5etj6bbsgikpxf635qwkbtxezall4ysvef37t\",\"type\":\"Microsoft.Authorization/locks\",\"name\":\"cli-test-lockxjl4qh7c7dmei6gakhxdn4dx5etj6bbsgikpxf635qwkbtxezall4ysvef37t\"},{\"properties\":{\"level\":\"CanNotDelete\"},\"id\":\"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/IT_acctestRG-ibt-24_acctest-IBT-0710-2_4ebedb5a-e3b1-4675-aa4c-3c160fe70907/providers/Microsoft.Authorization/locks/DoNotDelete\",\"type\":\"Microsoft.Authorization/locks\",\"name\":\"DoNotDelete\"},{\"properties\":{\"level\":\"CanNotDelete\"},\"id\":\"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/fyvm/providers/Microsoft.Authorization/locks/l1\",\"type\":\"Microsoft.Authorization/locks\",\"name\":\"l1\"},{\"properties\":{\"level\":\"CanNotDelete\"},\"id\":\"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/portal2cli/providers/Microsoft.Web/sites/portal2cli/providers/Microsoft.Authorization/locks/lock\",\"type\":\"Microsoft.Authorization/locks\",\"name\":\"lock\"},{\"properties\":{\"level\":\"CanNotDelete\"},\"id\":\"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/portal2cli/providers/Microsoft.Web/sites/webp2c/providers/Microsoft.Authorization/locks/lock\",\"type\":\"Microsoft.Authorization/locks\",\"name\":\"lock\"},{\"properties\":{\"level\":\"CanNotDelete\"},\"id\":\"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/portal2cli/providers/Microsoft.Storage/storageAccounts/portal2clistorage/providers/Microsoft.Authorization/locks/lock\",\"type\":\"Microsoft.Authorization/locks\",\"name\":\"lock\"},{\"properties\":{\"level\":\"CanNotDelete\"},\"id\":\"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/FYTEST3/providers/Microsoft.Compute/disks/vm1_OsDisk_1_3eb858856d5643d0a15aca7514d2eecd/providers/Microsoft.Authorization/locks/l\",\"type\":\"Microsoft.Authorization/locks\",\"name\":\"l\"},{\"properties\":{\"level\":\"CanNotDelete\"},\"id\":\"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/fytest3/providers/Microsoft.Compute/images/image/providers/Microsoft.Authorization/locks/l\",\"type\":\"Microsoft.Authorization/locks\",\"name\":\"l\"},{\"properties\":{\"level\":\"CanNotDelete\"},\"id\":\"/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/feng-cli-rg/providers/Microsoft.Storage/storageAccounts/fengtestsa/providers/Microsoft.Authorization/locks/salock\",\"type\":\"Microsoft.Authorization/locks\",\"name\":\"salock\"},{\"properties\":{\"level\":\"CanNotDelete\",\"notes\":\"Auto-created
+        by Azure Backup for storage accounts registered with a Recovery Services Vault.
+        This lock is intended to guard against deletion of backups due to accidental
+        deletion of the storage account.\"},\"id\":\"/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/clitest.rg6i4hl6iakg/providers/microsoft.storage/storageAccounts/clitestu3p7a7ib4n4y7gt4m/providers/Microsoft.Authorization/locks/AzureBackupProtectionLock\",\"type\":\"Microsoft.Authorization/locks\",\"name\":\"AzureBackupProtectionLock\"},{\"properties\":{\"level\":\"CanNotDelete\"},\"id\":\"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rg-weidxu/providers/Microsoft.Storage/storageAccounts/lcok2weidxu/providers/Microsoft.Authorization/locks/inuse\",\"type\":\"Microsoft.Authorization/locks\",\"name\":\"inuse\"},{\"properties\":{\"level\":\"CanNotDelete\",\"notes\":\"\"},\"id\":\"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/new-experiences/providers/Microsoft.Authorization/locks/NO-DELETE\",\"type\":\"Microsoft.Authorization/locks\",\"name\":\"NO-DELETE\"},{\"properties\":{\"level\":\"CanNotDelete\"},\"id\":\"/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/cli-live-test-rg/providers/Microsoft.Storage/storageAccounts/locksa/providers/Microsoft.Authorization/locks/nodelete\",\"type\":\"Microsoft.Authorization/locks\",\"name\":\"nodelete\"},{\"properties\":{\"level\":\"CanNotDelete\"},\"id\":\"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/jiasli-cli-dev/providers/Microsoft.Authorization/locks/dl\",\"type\":\"Microsoft.Authorization/locks\",\"name\":\"dl\"},{\"properties\":{\"level\":\"CanNotDelete\"},\"id\":\"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/azure-cli-edge/providers/Microsoft.Authorization/locks/dl\",\"type\":\"Microsoft.Authorization/locks\",\"name\":\"dl\"},{\"properties\":{\"level\":\"CanNotDelete\"},\"id\":\"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/azure-cli-edge/providers/Microsoft.Storage/storageAccounts/azurecliedge/providers/Microsoft.Authorization/locks/azurecliedge-dl\",\"type\":\"Microsoft.Authorization/locks\",\"name\":\"azurecliedge-dl\"},{\"properties\":{\"level\":\"CanNotDelete\"},\"id\":\"/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/zhoxing-test/providers/Microsoft.Web/sites/zhoxing-test/providers/Microsoft.Authorization/locks/zhoxing-test\",\"type\":\"Microsoft.Authorization/locks\",\"name\":\"zhoxing-test\"},{\"properties\":{\"level\":\"CanNotDelete\",\"notes\":\"Deleting
+        this App Service certificate resource is final and can\u2019t be restored,
+        any bindings using this certificate will become invalid and you will need
+        to re-purchase the certificate.\"},\"id\":\"/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/zhoxing-test/providers/Microsoft.CertificateRegistration/certificateOrders/zhoxing-test/providers/Microsoft.Authorization/locks/zhoxing-test\",\"type\":\"Microsoft.Authorization/locks\",\"name\":\"zhoxing-test\"},{\"properties\":{\"level\":\"ReadOnly\"},\"id\":\"/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/zhoxing-test/providers/Microsoft.Network/virtualNetworks/zhoxing-test/providers/Microsoft.Authorization/locks/vnetlock\",\"type\":\"Microsoft.Authorization/locks\",\"name\":\"vnetlock\"},{\"properties\":{\"level\":\"ReadOnly\",\"notes\":\"sss\"},\"id\":\"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/zhoxing-test/providers/Microsoft.Network/virtualNetworks/zhoxing-test/providers/Microsoft.Authorization/locks/zz\",\"type\":\"Microsoft.Authorization/locks\",\"name\":\"zz\"},{\"properties\":{\"level\":\"ReadOnly\"},\"id\":\"/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/zhoxing-test/providers/Microsoft.Network/virtualNetworks/zhoxing-test/subnets/default/providers/Microsoft.Authorization/locks/vnetlock\",\"type\":\"Microsoft.Authorization/locks\",\"name\":\"vnetlock\"},{\"properties\":{\"level\":\"CanNotDelete\"},\"id\":\"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/fytest/providers/Microsoft.Storage/storageAccounts/sharedvmextension/providers/Microsoft.Authorization/locks/l1\",\"type\":\"Microsoft.Authorization/locks\",\"name\":\"l1\"},{\"properties\":{\"level\":\"CanNotDelete\"},\"id\":\"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/fytest/providers/Microsoft.Compute/images/img1/providers/Microsoft.Authorization/locks/l1\",\"type\":\"Microsoft.Authorization/locks\",\"name\":\"l1\"},{\"properties\":{\"level\":\"CanNotDelete\"},\"id\":\"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/fytest/providers/Microsoft.Compute/galleries/gallery1/images/image1/providers/Microsoft.Authorization/locks/l1\",\"type\":\"Microsoft.Authorization/locks\",\"name\":\"l1\"},{\"properties\":{\"level\":\"CanNotDelete\",\"notes\":\"In
+        case of deleting by incident\"},\"id\":\"/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/azuresdktest_reserved/providers/Microsoft.Authorization/locks/LockReservedResources\",\"type\":\"Microsoft.Authorization/locks\",\"name\":\"LockReservedResources\"},{\"properties\":{\"level\":\"CanNotDelete\"},\"id\":\"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/xz3-test/providers/Microsoft.Authorization/locks/delete\",\"type\":\"Microsoft.Authorization/locks\",\"name\":\"delete\"},{\"properties\":{\"level\":\"CanNotDelete\"},\"id\":\"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/cli-beta/providers/Microsoft.Authorization/locks/donotdelete\",\"type\":\"Microsoft.Authorization/locks\",\"name\":\"donotdelete\"},{\"properties\":{\"level\":\"CanNotDelete\"},\"id\":\"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/kairu-persist/providers/Microsoft.Authorization/locks/antidelete\",\"type\":\"Microsoft.Authorization/locks\",\"name\":\"antidelete\"},{\"properties\":{\"level\":\"CanNotDelete\"},\"id\":\"/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/azps-test-group/providers/Microsoft.Authorization/locks/do-not-delete\",\"type\":\"Microsoft.Authorization/locks\",\"name\":\"do-not-delete\"},{\"properties\":{\"level\":\"CanNotDelete\"},\"id\":\"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/qianwens/providers/Microsoft.Storage/storageAccounts/qianwendev/providers/Microsoft.Authorization/locks/donotedelete\",\"type\":\"Microsoft.Authorization/locks\",\"name\":\"donotedelete\"},{\"properties\":{\"level\":\"CanNotDelete\"},\"id\":\"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/clitestresult/providers/Microsoft.Authorization/locks/l\",\"type\":\"Microsoft.Authorization/locks\",\"name\":\"l\"},{\"properties\":{\"level\":\"CanNotDelete\"},\"id\":\"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/clitestresult/providers/Microsoft.Storage/storageAccounts/clitestresultstac/providers/Microsoft.Authorization/locks/l1\",\"type\":\"Microsoft.Authorization/locks\",\"name\":\"l1\"},{\"properties\":{\"level\":\"CanNotDelete\"},\"id\":\"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/clitestresult/providers/Microsoft.DBforMySQL/servers/clisqldbserver/providers/Microsoft.Authorization/locks/l1\",\"type\":\"Microsoft.Authorization/locks\",\"name\":\"l1\"},{\"properties\":{\"level\":\"CanNotDelete\",\"notes\":\"for
+        customer issue repro  (snowflake)\"},\"id\":\"/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/storage-v2rt-repro/providers/Microsoft.Authorization/locks/DontDelete\",\"type\":\"Microsoft.Authorization/locks\",\"name\":\"DontDelete\"},{\"properties\":{\"level\":\"CanNotDelete\"},\"id\":\"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/jl-vm-ssh/providers/Microsoft.Authorization/locks/dl\",\"type\":\"Microsoft.Authorization/locks\",\"name\":\"dl\"},{\"properties\":{\"level\":\"CanNotDelete\"},\"id\":\"/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/cli_test_cannotdelete_resource_lockbfuaftaa7m4m77urywe56rs3yfr4sr3ybmrsclix/providers/Microsoft.Network/virtualNetworks/cli.lock.rsrchikdj2r5lezlez4w6/providers/Microsoft.Authorization/locks/cli-test-locklxyko2yruqpd6z2mdw7bw43sff3nuyz2n5ygpm5opgtajrdjgyb7c7fau6kgw\",\"type\":\"Microsoft.Authorization/locks\",\"name\":\"cli-test-locklxyko2yruqpd6z2mdw7bw43sff3nuyz2n5ygpm5opgtajrdjgyb7c7fau6kgw\"},{\"properties\":{\"level\":\"CanNotDelete\"},\"id\":\"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/yishitest/providers/Microsoft.KeyVault/vaults/ase-testdevice-020dc7b13/providers/Microsoft.Authorization/locks/DoNotDelete\",\"type\":\"Microsoft.Authorization/locks\",\"name\":\"DoNotDelete\"},{\"properties\":{\"level\":\"CanNotDelete\"},\"id\":\"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/yishitest/providers/Microsoft.KeyVault/vaults/ase-ysgatewayd-e2960da93/providers/Microsoft.Authorization/locks/DoNotDelete\",\"type\":\"Microsoft.Authorization/locks\",\"name\":\"DoNotDelete\"},{\"properties\":{\"level\":\"CanNotDelete\"},\"id\":\"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/t-yakou2/providers/Microsoft.Web/sites/WebAppPortal2CLI20200827092707/providers/Microsoft.Authorization/locks/dont_delete_me\",\"type\":\"Microsoft.Authorization/locks\",\"name\":\"dont_delete_me\"},{\"properties\":{\"level\":\"CanNotDelete\"},\"id\":\"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/t-yueshi/providers/Microsoft.Authorization/locks/lock\",\"type\":\"Microsoft.Authorization/locks\",\"name\":\"lock\"}]}"
     headers:
       cache-control:
       - no-cache
       content-length:
-      - '216'
+      - '15178'
       content-type:
       - application/json; charset=utf-8
       date:
-      - Fri, 26 Feb 2021 06:55:01 GMT
+      - Fri, 16 Apr 2021 08:29:04 GMT
       expires:
       - '-1'
       pragma:
@@ -133,7 +146,8 @@ interactions:
       Content-Length:
       - '0'
       User-Agent:
-      - azsdk-python-azure-mgmt-resource/16.0.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+      - azsdk-python-azure-mgmt-resource/16.1.0 Python/3.8.9 (Linux-5.4.0-1043-azure-x86_64-with-glibc2.2.5)
+        VSTS_0fb41ef4-5012-48a9-bf39-4ee3de03ee35_build_2384_0
     method: DELETE
     uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Authorization/locks/pylockrg?api-version=2016-09-01
   response:
@@ -145,7 +159,7 @@ interactions:
       content-length:
       - '0'
       date:
-      - Fri, 26 Feb 2021 06:55:01 GMT
+      - Fri, 16 Apr 2021 08:29:04 GMT
       expires:
       - '-1'
       pragma:

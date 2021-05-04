@@ -30,7 +30,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Wed, 07 Apr 2021 12:51:43 GMT
+      - Wed, 28 Apr 2021 22:13:48 GMT
       docker-distribution-api-version:
       - registry/2.0
       server:
@@ -38,7 +38,8 @@ interactions:
       strict-transport-security:
       - max-age=31536000; includeSubDomains
       - max-age=31536000; includeSubDomains
-      www-authenticate: Bearer realm="https://fake_url.azurecr.io/oauth2/token",service="fake_url.azurecr.io",scope="fake_scope",error="invalid_token"
+      www-authenticate:
+      - Bearer realm="https://fake_url.azurecr.io/oauth2/token",service="fake_url.azurecr.io",scope="fake_scope",error="invalid_token"
       x-content-type-options:
       - nosniff
     status:
@@ -70,7 +71,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Wed, 07 Apr 2021 12:51:44 GMT
+      - Wed, 28 Apr 2021 22:13:49 GMT
       server:
       - openresty
       strict-transport-security:
@@ -78,7 +79,7 @@ interactions:
       transfer-encoding:
       - chunked
       x-ms-ratelimit-remaining-calls-per-second:
-      - '332.966667'
+      - '166.65'
     status:
       code: 200
       message: OK
@@ -108,7 +109,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Wed, 07 Apr 2021 12:51:44 GMT
+      - Wed, 28 Apr 2021 22:13:49 GMT
       server:
       - openresty
       strict-transport-security:
@@ -116,7 +117,7 @@ interactions:
       transfer-encoding:
       - chunked
       x-ms-ratelimit-remaining-calls-per-second:
-      - '332.95'
+      - '166.633333'
     status:
       code: 200
       message: OK
@@ -136,8 +137,8 @@ interactions:
   response:
     body:
       string: '{"registry": "fake_url.azurecr.io", "imageName": "repoeb7113db", "tag":
-        {"name": "tageb7113db", "digest": "sha256:308866a43596e83578c7dfa15e27a73011bdd402185a84c5cd7f32a88b501a24",
-        "createdTime": "2021-04-07T12:51:33.924208Z", "lastUpdateTime": "2021-04-07T12:51:33.924208Z",
+        {"name": "tageb7113db", "digest": "sha256:f2266cbfc127c960fd30e76b7c792dc23b588c0db76233517e1891a4e357d519",
+        "createdTime": "2021-04-28T22:13:37.9038522Z", "lastUpdateTime": "2021-04-28T22:13:37.9038522Z",
         "signed": false, "changeableAttributes": {"deleteEnabled": true, "writeEnabled":
         true, "readEnabled": true, "listEnabled": true}}}'
     headers:
@@ -149,11 +150,11 @@ interactions:
       connection:
       - keep-alive
       content-length:
-      - '384'
+      - '386'
       content-type:
       - application/json; charset=utf-8
       date:
-      - Wed, 07 Apr 2021 12:51:44 GMT
+      - Wed, 28 Apr 2021 22:13:50 GMT
       docker-distribution-api-version:
       - registry/2.0
       server:
@@ -199,7 +200,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Wed, 07 Apr 2021 12:51:45 GMT
+      - Wed, 28 Apr 2021 22:13:50 GMT
       docker-distribution-api-version:
       - registry/2.0
       server:
@@ -207,50 +208,13 @@ interactions:
       strict-transport-security:
       - max-age=31536000; includeSubDomains
       - max-age=31536000; includeSubDomains
-      www-authenticate: Bearer realm="https://fake_url.azurecr.io/oauth2/token",service="fake_url.azurecr.io",scope="fake_scope",error="invalid_token"
+      www-authenticate:
+      - Bearer realm="https://fake_url.azurecr.io/oauth2/token",service="fake_url.azurecr.io",scope="fake_scope",error="invalid_token"
       x-content-type-options:
       - nosniff
     status:
       code: 401
       message: Unauthorized
-- request:
-    body: grant_type=access_token&service=fake_url.azurecr.io&access_token=REDACTED
-    headers:
-      Accept:
-      - application/json
-      Accept-Encoding:
-      - gzip, deflate
-      Connection:
-      - keep-alive
-      Content-Length:
-      - '1343'
-      Content-Type:
-      - application/x-www-form-urlencoded
-      User-Agent:
-      - azsdk-python-azure-containerregistry/1.0.0b1 Python/3.9.0rc1 (Windows-10-10.0.19041-SP0)
-    method: POST
-    uri: https://fake_url.azurecr.io/oauth2/exchange
-  response:
-    body:
-      string: '{"refresh_token": "REDACTED"}'
-    headers:
-      connection:
-      - keep-alive
-      content-type:
-      - application/json; charset=utf-8
-      date:
-      - Wed, 07 Apr 2021 12:51:45 GMT
-      server:
-      - openresty
-      strict-transport-security:
-      - max-age=31536000; includeSubDomains
-      transfer-encoding:
-      - chunked
-      x-ms-ratelimit-remaining-calls-per-second:
-      - '333.25'
-    status:
-      code: 200
-      message: OK
 - request:
     body: grant_type=refresh_token&service=fake_url.azurecr.io&scope=repository%3Arepoeb7113db%3Adelete&refresh_token=REDACTED
     headers:
@@ -277,7 +241,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Wed, 07 Apr 2021 12:51:45 GMT
+      - Wed, 28 Apr 2021 22:13:50 GMT
       server:
       - openresty
       strict-transport-security:
@@ -285,7 +249,7 @@ interactions:
       transfer-encoding:
       - chunked
       x-ms-ratelimit-remaining-calls-per-second:
-      - '333.233333'
+      - '166.616667'
     status:
       code: 200
       message: OK
@@ -318,7 +282,7 @@ interactions:
       content-length:
       - '0'
       date:
-      - Wed, 07 Apr 2021 12:51:45 GMT
+      - Wed, 28 Apr 2021 22:13:50 GMT
       docker-distribution-api-version:
       - registry/2.0
       server:
@@ -329,9 +293,9 @@ interactions:
       x-content-type-options:
       - nosniff
       x-ms-int-docker-content-digest:
-      - sha256:308866a43596e83578c7dfa15e27a73011bdd402185a84c5cd7f32a88b501a24
+      - sha256:f2266cbfc127c960fd30e76b7c792dc23b588c0db76233517e1891a4e357d519
       x-ms-ratelimit-remaining-calls-per-second:
-      - '32.000000'
+      - '8.000000'
     status:
       code: 202
       message: Accepted
@@ -366,7 +330,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Wed, 07 Apr 2021 12:51:55 GMT
+      - Wed, 28 Apr 2021 22:13:55 GMT
       docker-distribution-api-version:
       - registry/2.0
       server:
@@ -374,50 +338,13 @@ interactions:
       strict-transport-security:
       - max-age=31536000; includeSubDomains
       - max-age=31536000; includeSubDomains
-      www-authenticate: Bearer realm="https://fake_url.azurecr.io/oauth2/token",service="fake_url.azurecr.io",scope="fake_scope",error="invalid_token"
+      www-authenticate:
+      - Bearer realm="https://fake_url.azurecr.io/oauth2/token",service="fake_url.azurecr.io",scope="fake_scope",error="invalid_token"
       x-content-type-options:
       - nosniff
     status:
       code: 401
       message: Unauthorized
-- request:
-    body: grant_type=access_token&service=fake_url.azurecr.io&access_token=REDACTED
-    headers:
-      Accept:
-      - application/json
-      Accept-Encoding:
-      - gzip, deflate
-      Connection:
-      - keep-alive
-      Content-Length:
-      - '1343'
-      Content-Type:
-      - application/x-www-form-urlencoded
-      User-Agent:
-      - azsdk-python-azure-containerregistry/1.0.0b1 Python/3.9.0rc1 (Windows-10-10.0.19041-SP0)
-    method: POST
-    uri: https://fake_url.azurecr.io/oauth2/exchange
-  response:
-    body:
-      string: '{"refresh_token": "REDACTED"}'
-    headers:
-      connection:
-      - keep-alive
-      content-type:
-      - application/json; charset=utf-8
-      date:
-      - Wed, 07 Apr 2021 12:51:56 GMT
-      server:
-      - openresty
-      strict-transport-security:
-      - max-age=31536000; includeSubDomains
-      transfer-encoding:
-      - chunked
-      x-ms-ratelimit-remaining-calls-per-second:
-      - '333.166667'
-    status:
-      code: 200
-      message: OK
 - request:
     body: grant_type=refresh_token&service=fake_url.azurecr.io&scope=repository%3Arepoeb7113db%3Ametadata_read&refresh_token=REDACTED
     headers:
@@ -444,7 +371,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Wed, 07 Apr 2021 12:51:56 GMT
+      - Wed, 28 Apr 2021 22:13:55 GMT
       server:
       - openresty
       strict-transport-security:
@@ -452,7 +379,7 @@ interactions:
       transfer-encoding:
       - chunked
       x-ms-ratelimit-remaining-calls-per-second:
-      - '333.15'
+      - '166.6'
     status:
       code: 200
       message: OK
@@ -486,7 +413,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Wed, 07 Apr 2021 12:51:56 GMT
+      - Wed, 28 Apr 2021 22:13:56 GMT
       docker-distribution-api-version:
       - registry/2.0
       server:

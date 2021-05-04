@@ -1,0 +1,207 @@
+interactions:
+- request:
+    body: 'b''{"source": "container_sas_url", "sourceFilter": {"prefix": "", "includeSubFolders":
+      false}, "useLabelFile": true}'''
+    headers:
+      Accept:
+      - application/json
+      Content-Length:
+      - '303'
+      Content-Type:
+      - application/json
+      User-Agent:
+      - azsdk-python-ai-formrecognizer/3.1.0b5 Python/3.9.0 (Windows-10-10.0.19041-SP0)
+    method: POST
+    uri: https://region.api.cognitive.microsoft.com/formrecognizer/v2.1-preview.3/custom/models
+  response:
+    body:
+      string: ''
+    headers:
+      apim-request-id: e0bc4f8c-28d0-40fc-bc46-3b1a8a5604af
+      content-length: '0'
+      date: Thu, 22 Apr 2021 01:02:55 GMT
+      location: https://region.api.cognitive.microsoft.com/formrecognizer/v2.1-preview.3/custom/models/747bee39-f021-4e7e-81a7-195ef72db354
+      strict-transport-security: max-age=31536000; includeSubDomains; preload
+      x-content-type-options: nosniff
+      x-envoy-upstream-service-time: '217'
+    status:
+      code: 201
+      message: Created
+    url: https://region.api.cognitive.microsoft.com/formrecognizer/v2.1-preview.3/custom/models
+- request:
+    body: null
+    headers:
+      User-Agent:
+      - azsdk-python-ai-formrecognizer/3.1.0b5 Python/3.9.0 (Windows-10-10.0.19041-SP0)
+    method: GET
+    uri: https://region.api.cognitive.microsoft.com/formrecognizer/v2.1-preview.3/custom/models/747bee39-f021-4e7e-81a7-195ef72db354?includeKeys=true
+  response:
+    body:
+      string: '{"modelInfo": {"modelId": "747bee39-f021-4e7e-81a7-195ef72db354", "attributes":
+        {"isComposed": false}, "status": "ready", "createdDateTime": "2021-04-22T01:02:55Z",
+        "lastUpdatedDateTime": "2021-04-22T01:02:57Z"}, "trainResult": {"averageModelAccuracy":
+        0.995, "trainingDocuments": [{"documentName": "label_table_variable_rows1.pdf",
+        "pages": 1, "status": "succeeded"}, {"documentName": "label_table_variable_rows2.pdf",
+        "pages": 1, "status": "succeeded"}, {"documentName": "label_table_variable_rows3.pdf",
+        "pages": 1, "status": "succeeded"}, {"documentName": "label_table_variable_rows4.pdf",
+        "pages": 1, "status": "succeeded"}, {"documentName": "label_table_variable_rows5.pdf",
+        "pages": 1, "status": "succeeded"}], "fields": [{"fieldName": "table", "accuracy":
+        0.995}, {"fieldName": "table: Item", "accuracy": 0.995}, {"fieldName": "table:
+        Price", "accuracy": 0.995}, {"fieldName": "table: Tax", "accuracy": 0.995},
+        {"fieldName": "table: Total", "accuracy": 0.995}], "errors": []}}'
+    headers:
+      apim-request-id: ffe7b620-28df-4de7-8aff-4a802d8b0822
+      content-length: '916'
+      content-type: application/json; charset=utf-8
+      date: Thu, 22 Apr 2021 01:03:00 GMT
+      strict-transport-security: max-age=31536000; includeSubDomains; preload
+      x-content-type-options: nosniff
+      x-envoy-upstream-service-time: '15'
+    status:
+      code: 200
+      message: OK
+    url: https://region.api.cognitive.microsoft.com/formrecognizer/v2.1-preview.3/custom/models/747bee39-f021-4e7e-81a7-195ef72db354?includeKeys=true
+- request:
+    body: 'b''{"source": "blob_sas_url"}'''
+    headers:
+      Accept:
+      - application/json
+      Content-Length:
+      - '233'
+      Content-Type:
+      - application/json
+      User-Agent:
+      - azsdk-python-ai-formrecognizer/3.1.0b5 Python/3.9.0 (Windows-10-10.0.19041-SP0)
+    method: POST
+    uri: https://region.api.cognitive.microsoft.com/formrecognizer/v2.1-preview.3/custom/models/747bee39-f021-4e7e-81a7-195ef72db354/analyze?includeTextDetails=false
+  response:
+    body:
+      string: ''
+    headers:
+      apim-request-id: 83e5e7a2-86b5-4db3-be19-47e6c5a2df79
+      content-length: '0'
+      date: Thu, 22 Apr 2021 01:03:00 GMT
+      operation-location: https://region.api.cognitive.microsoft.com/formrecognizer/v2.1-preview.3/custom/models/747bee39-f021-4e7e-81a7-195ef72db354/analyzeresults/fa322829-4150-49c2-80f4-1dc49201aba8
+      strict-transport-security: max-age=31536000; includeSubDomains; preload
+      x-content-type-options: nosniff
+      x-envoy-upstream-service-time: '376'
+    status:
+      code: 202
+      message: Accepted
+    url: https://region.api.cognitive.microsoft.com/formrecognizer/v2.1-preview.3/custom/models/747bee39-f021-4e7e-81a7-195ef72db354/analyze?includeTextDetails=false
+- request:
+    body: null
+    headers:
+      User-Agent:
+      - azsdk-python-ai-formrecognizer/3.1.0b5 Python/3.9.0 (Windows-10-10.0.19041-SP0)
+    method: GET
+    uri: https://region.api.cognitive.microsoft.com/formrecognizer/v2.1-preview.3/custom/models/747bee39-f021-4e7e-81a7-195ef72db354/analyzeresults/fa322829-4150-49c2-80f4-1dc49201aba8
+  response:
+    body:
+      string: '{"status": "notStarted", "createdDateTime": "2021-04-22T01:03:01Z",
+        "lastUpdatedDateTime": "2021-04-22T01:03:02Z"}'
+    headers:
+      apim-request-id: 5b66c722-0d45-45d2-a807-6793ca89b6f4
+      content-length: '109'
+      content-type: application/json; charset=utf-8
+      date: Thu, 22 Apr 2021 01:03:06 GMT
+      strict-transport-security: max-age=31536000; includeSubDomains; preload
+      x-content-type-options: nosniff
+      x-envoy-upstream-service-time: '18'
+    status:
+      code: 200
+      message: OK
+    url: https://region.api.cognitive.microsoft.com/formrecognizer/v2.1-preview.3/custom/models/747bee39-f021-4e7e-81a7-195ef72db354/analyzeresults/fa322829-4150-49c2-80f4-1dc49201aba8
+- request:
+    body: null
+    headers:
+      User-Agent:
+      - azsdk-python-ai-formrecognizer/3.1.0b5 Python/3.9.0 (Windows-10-10.0.19041-SP0)
+    method: GET
+    uri: https://region.api.cognitive.microsoft.com/formrecognizer/v2.1-preview.3/custom/models/747bee39-f021-4e7e-81a7-195ef72db354/analyzeresults/fa322829-4150-49c2-80f4-1dc49201aba8
+  response:
+    body:
+      string: '{"status": "succeeded", "createdDateTime": "2021-04-22T01:03:01Z",
+        "lastUpdatedDateTime": "2021-04-22T01:03:09Z", "analyzeResult": {"version":
+        "2.1.0", "readResults": [{"page": 1, "angle": 0, "width": 8.5, "height": 11,
+        "unit": "inch"}], "pageResults": [{"page": 1, "tables": [{"rows": 5, "columns":
+        4, "cells": [{"rowIndex": 0, "columnIndex": 0, "text": "Item", "boundingBox":
+        [0.9965, 1.6215, 2.2935, 1.6215, 2.2935, 1.8221, 0.9965, 1.8221]}, {"rowIndex":
+        0, "columnIndex": 1, "text": "Price", "boundingBox": [2.2935, 1.6215, 3.585,
+        1.6215, 3.5904, 1.8221, 2.2935, 1.8221]}, {"rowIndex": 0, "columnIndex": 2,
+        "text": "Tax", "boundingBox": [3.585, 1.6215, 4.8981, 1.6215, 4.8981, 1.8221,
+        3.5904, 1.8221]}, {"rowIndex": 0, "columnIndex": 3, "text": "Total", "boundingBox":
+        [4.8981, 1.6215, 6.1951, 1.6215, 6.1951, 1.8272, 4.8981, 1.8221]}, {"rowIndex":
+        1, "columnIndex": 0, "text": "Apple", "boundingBox": [0.9965, 1.8221, 2.2935,
+        1.8221, 2.2935, 2.0078, 0.9965, 2.0128]}, {"rowIndex": 1, "columnIndex": 1,
+        "text": "5.00", "boundingBox": [2.2935, 1.8221, 3.5904, 1.8221, 3.5904, 2.0078,
+        2.2935, 2.0078]}, {"rowIndex": 1, "columnIndex": 2, "text": "2.00", "boundingBox":
+        [3.5904, 1.8221, 4.8981, 1.8221, 4.8981, 2.0078, 3.5904, 2.0078]}, {"rowIndex":
+        1, "columnIndex": 3, "text": "7.00", "boundingBox": [4.8981, 1.8221, 6.1951,
+        1.8272, 6.1951, 2.0128, 4.8981, 2.0078]}, {"rowIndex": 2, "columnIndex": 0,
+        "text": "Orange", "boundingBox": [0.9965, 2.0128, 2.2935, 2.0078, 2.2935,
+        2.2034, 0.9965, 2.2084]}, {"rowIndex": 2, "columnIndex": 1, "text": "2.00",
+        "boundingBox": [2.2935, 2.0078, 3.5904, 2.0078, 3.5904, 2.2034, 2.2935, 2.2034]},
+        {"rowIndex": 2, "columnIndex": 2, "text": "1.00", "boundingBox": [3.5904,
+        2.0078, 4.8981, 2.0078, 4.8981, 2.2034, 3.5904, 2.2034]}, {"rowIndex": 2,
+        "columnIndex": 3, "text": "3.00", "boundingBox": [4.8981, 2.0078, 6.1951,
+        2.0128, 6.1951, 2.2034, 4.8981, 2.2034]}, {"rowIndex": 3, "columnIndex": 0,
+        "text": "", "boundingBox": [0.9965, 2.2084, 2.2935, 2.2034, 2.2935, 2.3991,
+        0.9965, 2.3991]}, {"rowIndex": 3, "columnIndex": 1, "text": "1.00", "boundingBox":
+        [2.2935, 2.2034, 3.5904, 2.2034, 3.5904, 2.3991, 2.2935, 2.3991]}, {"rowIndex":
+        3, "columnIndex": 2, "text": "4.00", "boundingBox": [3.5904, 2.2034, 4.8981,
+        2.2034, 4.8981, 2.3991, 3.5904, 2.3991]}, {"rowIndex": 3, "columnIndex": 3,
+        "text": "5.00", "boundingBox": [4.8981, 2.2034, 6.1951, 2.2034, 6.1951, 2.3991,
+        4.8981, 2.3991]}, {"rowIndex": 4, "columnIndex": 0, "text": "Pear", "boundingBox":
+        [0.9965, 2.3991, 2.2935, 2.3991, 2.2935, 2.5947, 0.9965, 2.5947]}, {"rowIndex":
+        4, "columnIndex": 1, "text": "", "boundingBox": [2.2935, 2.3991, 3.5904, 2.3991,
+        3.5958, 2.5947, 2.2935, 2.5947]}, {"rowIndex": 4, "columnIndex": 2, "text":
+        "2.00", "boundingBox": [3.5904, 2.3991, 4.8981, 2.3991, 4.8981, 2.5947, 3.5958,
+        2.5947]}, {"rowIndex": 4, "columnIndex": 3, "text": "2.00", "boundingBox":
+        [4.8981, 2.3991, 6.1951, 2.3991, 6.1951, 2.5947, 4.8981, 2.5947]}], "boundingBox":
+        [0.9979, 1.6139, 6.2003, 1.6153, 6.1999, 2.5942, 0.9973, 2.5931]}]}], "documentResults":
+        [{"docType": "custom:747bee39-f021-4e7e-81a7-195ef72db354", "modelId": "747bee39-f021-4e7e-81a7-195ef72db354",
+        "pageRange": [1, 1], "fields": {"table": {"type": "array", "valueArray": [{"type":
+        "object", "valueObject": {"Item": {"type": "string", "valueString": "Apple",
+        "text": "Apple", "page": 1, "boundingBox": [1.08, 1.865, 1.445, 1.865, 1.445,
+        1.995, 1.08, 1.995]}, "Price": {"type": "string", "valueString": "5.00", "text":
+        "5.00", "page": 1, "boundingBox": [2.385, 1.87, 2.645, 1.87, 2.645, 1.97,
+        2.385, 1.97]}, "Tax": {"type": "string", "valueString": "2.00", "text": "2.00",
+        "page": 1, "boundingBox": [3.685, 1.87, 3.945, 1.87, 3.945, 1.97, 3.685, 1.97]},
+        "Total": {"type": "string", "valueString": "7.00", "text": "7.00", "page":
+        1, "boundingBox": [4.985, 1.87, 5.245, 1.87, 5.245, 1.97, 4.985, 1.97]}}},
+        {"type": "object", "valueObject": {"Item": {"type": "string", "valueString":
+        "Orange", "text": "Orange", "page": 1, "boundingBox": [1.085, 2.065, 1.54,
+        2.065, 1.54, 2.19, 1.085, 2.19]}, "Price": {"type": "string", "valueString":
+        "2.00", "text": "2.00", "page": 1, "boundingBox": [2.385, 2.065, 2.645, 2.065,
+        2.645, 2.165, 2.385, 2.165]}, "Tax": {"type": "string", "valueString": "1.00",
+        "text": "1.00", "page": 1, "boundingBox": [3.69, 2.065, 3.945, 2.065, 3.945,
+        2.165, 3.69, 2.165]}, "Total": {"type": "string", "valueString": "3.00", "text":
+        "3.00", "page": 1, "boundingBox": [4.985, 2.065, 5.245, 2.065, 5.245, 2.165,
+        4.985, 2.165]}}}, {"type": "object", "valueObject": {"Item": null, "Price":
+        {"type": "string", "valueString": "1.00", "text": "1.00", "page": 1, "boundingBox":
+        [2.39, 2.26, 2.645, 2.26, 2.645, 2.36, 2.39, 2.36]}, "Tax": {"type": "string",
+        "valueString": "4.00", "text": "4.00", "page": 1, "boundingBox": [3.68, 2.26,
+        3.945, 2.26, 3.945, 2.36, 3.68, 2.36]}, "Total": {"type": "string", "valueString":
+        "5.00", "text": "5.00", "page": 1, "boundingBox": [4.985, 2.26, 5.245, 2.26,
+        5.245, 2.36, 4.985, 2.36]}}}, {"type": "object", "valueObject": {"Item": {"type":
+        "string", "valueString": "Pear", "text": "Pear", "page": 1, "boundingBox":
+        [1.09, 2.455, 1.365, 2.455, 1.365, 2.55, 1.09, 2.55]}, "Price": null, "Tax":
+        {"type": "string", "valueString": "2.00", "text": "2.00", "page": 1, "boundingBox":
+        [3.685, 2.45, 3.945, 2.45, 3.945, 2.55, 3.685, 2.55]}, "Total": {"type": "string",
+        "valueString": "2.00", "text": "2.00", "page": 1, "boundingBox": [4.985, 2.45,
+        5.245, 2.45, 5.245, 2.55, 4.985, 2.55]}}}]}}, "docTypeConfidence": 0.995}],
+        "errors": []}}'
+    headers:
+      apim-request-id: 394d5b4f-ab4a-4733-9b71-f9e90f98a37e
+      content-length: '4914'
+      content-type: application/json; charset=utf-8
+      date: Thu, 22 Apr 2021 01:03:11 GMT
+      strict-transport-security: max-age=31536000; includeSubDomains; preload
+      x-content-type-options: nosniff
+      x-envoy-upstream-service-time: '19'
+    status:
+      code: 200
+      message: OK
+    url: https://region.api.cognitive.microsoft.com/formrecognizer/v2.1-preview.3/custom/models/747bee39-f021-4e7e-81a7-195ef72db354/analyzeresults/fa322829-4150-49c2-80f4-1dc49201aba8
+version: 1
