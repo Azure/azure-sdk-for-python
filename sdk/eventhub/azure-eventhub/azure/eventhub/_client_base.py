@@ -174,7 +174,7 @@ class EventHubSharedKeyCredential(object):
             raise ValueError("No token scope provided.")
         return _generate_sas_token(scopes[0], self.policy, self.key)
 
-class AzureNamedKeyTokenCredential(object):
+class EventhubAzureNamedKeyTokenCredential(object):
     """The named key credential used for authentication.
 
     :param credential: The AzureNamedKeyCredential that should be used.
@@ -217,7 +217,7 @@ class EventHubSASTokenCredential(object):
         """
         return AccessToken(self.token, self.expiry)
 
-class AzureSasTokenCredential(object):
+class EventhubAzureSasTokenCredential(object):
     """The shared access token credential used for authentication
     when AzureSasCredential is provided.
 
@@ -254,9 +254,9 @@ class ClientBase(object):  # pylint:disable=too-many-instance-attributes
         self._address = _Address(hostname=fully_qualified_namespace, path=path)
         self._container_id = CONTAINER_PREFIX + str(uuid.uuid4())[:8]
         if isinstance(credential, AzureSasCredential):
-            self._credential = AzureSasTokenCredential(credential)
+            self._credential = EventhubAzureSasTokenCredential(credential)
         elif isinstance(credential, AzureNamedKeyCredential):
-            self._credential = AzureNamedKeyTokenCredential(credential) # type: ignore
+            self._credential = EventhubAzureNamedKeyTokenCredential(credential) # type: ignore
         else:
             self._credential = credential #type: ignore
         self._keep_alive = kwargs.get("keep_alive", 30)

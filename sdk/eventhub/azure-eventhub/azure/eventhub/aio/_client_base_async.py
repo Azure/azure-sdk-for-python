@@ -83,7 +83,7 @@ class EventHubSASTokenCredential(object):
         """
         return AccessToken(self.token, self.expiry)
 
-class AzureNamedKeyTokenCredentialAsync(object):
+class EventhubAzureNamedKeyTokenCredentialAsync(object):
     """The named key credential used for authentication.
 
     :param str credential: The AzureNamedKeyCredential that should be used
@@ -101,7 +101,7 @@ class AzureNamedKeyTokenCredentialAsync(object):
         return _generate_sas_token(scopes[0], name, key)
 
 
-class AzureSasTokenCredentialAsync(object):
+class EventhubAzureSasTokenCredentialAsync(object):
     """The shared access token credential used for authentication
     when AzureSasCredential is provided.
 
@@ -130,9 +130,9 @@ class ClientBaseAsync(ClientBase):
     ) -> None:
         self._loop = kwargs.pop("loop", None)
         if isinstance(credential, AzureSasCredential):
-            self._credential = AzureSasTokenCredentialAsync(credential) # type: ignore
+            self._credential = EventhubAzureSasTokenCredentialAsync(credential) # type: ignore
         elif isinstance(credential, AzureNamedKeyCredential):
-            self._credential = AzureNamedKeyTokenCredentialAsync(credential) # type: ignore
+            self._credential = EventhubAzureNamedKeyTokenCredentialAsync(credential) # type: ignore
         else:
             self._credential = credential # type: ignore
         super(ClientBaseAsync, self).__init__(
