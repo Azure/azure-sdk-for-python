@@ -57,7 +57,7 @@ setup(
     python_requires=">=3.6.0",
     install_requires=[
         'opentelemetry-api<2.0.0,>=1.0.0',
-        'azure-core<2.0.0,>=1.14.0',
+        'azure-core<2.0.0,>=1.13.0',
     ],
     extras_require={
         ":python_version<'3.5'": ['typing'],
