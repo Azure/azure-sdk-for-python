@@ -1,6 +1,13 @@
 # Release History
 
-## 5.4.1 (Unreleased)
+## 5.5.0 (Unreleased)
+
+**New Features**
+- Added support for using `azure.core.credentials.AzureNamedKeyCredential` as credential for authenticating producer and consumer clients.
+
+**Notes**
+
+- Updated azure-core dependency to 1.14.0.
 
 **Bug Fixes**
 
