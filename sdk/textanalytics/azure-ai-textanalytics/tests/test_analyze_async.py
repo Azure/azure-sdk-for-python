@@ -339,8 +339,6 @@ class TestAnalyzeAsync(AsyncTextAnalyticsTest):
                     polling_interval=self._interval()
                 )).result()
 
-    @pytest.mark.skip("Throws 400 on POST: (InvalidRequest) Job task parameter value bad is not supported for model-version "
-                 "parameter for job task type NamedEntityRecognition. Supported values latest,2019-10-01,2020-07-01")
     @GlobalTextAnalyticsAccountPreparer()
     @TextAnalyticsClientPreparer()
     async def test_out_of_order_ids_multiple_tasks(self, client):
@@ -353,7 +351,7 @@ class TestAnalyzeAsync(AsyncTextAnalyticsTest):
             response = await (await client.begin_analyze_actions(
                 docs,
                 actions=[
-                    RecognizeEntitiesAction(model_version="bad"),
+                    RecognizeEntitiesAction(),
                     ExtractKeyPhrasesAction(),
                     RecognizePiiEntitiesAction(),
                     RecognizeLinkedEntitiesAction(),
@@ -365,11 +363,13 @@ class TestAnalyzeAsync(AsyncTextAnalyticsTest):
             action_results = []
             async for p in response:
                 action_results.append(p)
-            assert len(action_results) == 3
+            assert len(action_results) == 5
 
-            assert action_results[0].is_error
+            assert action_results[0].action_type == AnalyzeActionsType.RECOGNIZE_ENTITIES
             assert action_results[1].action_type == AnalyzeActionsType.EXTRACT_KEY_PHRASES
             assert action_results[2].action_type == AnalyzeActionsType.RECOGNIZE_PII_ENTITIES
+            assert action_results[3].action_type == AnalyzeActionsType.RECOGNIZE_LINKED_ENTITIES
+            assert action_results[4].action_type == AnalyzeActionsType.ANALYZE_SENTIMENT
 
             action_results = [r for r in action_results if not r.is_error]
 
@@ -537,41 +537,25 @@ class TestAnalyzeAsync(AsyncTextAnalyticsTest):
     #             for doc in action_result.document_results:
     #                 assert doc.is_error
 
-    @pytest.mark.skip("Throws 400: (InvalidRequest) Job task parameter value bad is not supported for model-version "
-                 "parameter for job task type KeyPhraseExtraction. Supported values latest,2019-10-01,2020-07-01")
     @GlobalTextAnalyticsAccountPreparer()
     @TextAnalyticsClientPreparer()
-    async def test_bad_model_version_error_multiple_tasks(self, client):  # TODO: verify behavior of service
+    async def test_bad_model_version_error_multiple_tasks(self, client):
         docs = [{"id": "1", "language": "english", "text": "I did not like the hotel we stayed at."}]
 
         async with client:
-            response = await (await
-            client.begin_analyze_actions(
-                docs,
-                actions=[
-                    RecognizeEntitiesAction(model_version="latest"),
-                    ExtractKeyPhrasesAction(model_version="bad"),
-                    RecognizePiiEntitiesAction(model_version="bad"),
-                    RecognizeLinkedEntitiesAction(model_version="bad"),
-                    AnalyzeSentimentAction(model_version="bad")
-                ],
-                polling_interval=self._interval()
-            )).result()
-
-            action_results = []
-            async for p in response:
-                action_results.append(p)
-
-            assert action_results[0].is_error == False
-            assert action_results[0].action_type == AnalyzeActionsType.RECOGNIZE_ENTITIES
-            assert action_results[1].is_error == True
-            assert action_results[1].error.code == "InvalidRequest"
-            assert action_results[2].is_error == True
-            assert action_results[2].error.code == "InvalidRequest"
-            assert action_results[3].is_error == True
-            assert action_results[3].error.code == "InvalidRequest"
-            assert action_results[4].is_error == True
-            assert action_results[4].error.code == "InvalidRequest"
+            with pytest.raises(HttpResponseError):
+                response = await (await
+                client.begin_analyze_actions(
+                    docs,
+                    actions=[
+                        RecognizeEntitiesAction(model_version="latest"),
+                        ExtractKeyPhrasesAction(model_version="bad"),
+                        RecognizePiiEntitiesAction(model_version="bad"),
+                        RecognizeLinkedEntitiesAction(model_version="bad"),
+                        AnalyzeSentimentAction(model_version="bad")
+                    ],
+                    polling_interval=self._interval()
+                )).result()
 
     @GlobalTextAnalyticsAccountPreparer()
     @TextAnalyticsClientPreparer()
@@ -693,38 +677,6 @@ class TestAnalyzeAsync(AsyncTextAnalyticsTest):
             assert all([action_result for action_result in recognize_pii_entities_results if len(action_result.document_results) == len(docs)])
         assert all([action_result for action_result in recognize_linked_entities_results if len(action_result.document_results) == len(docs)])
         assert all([action_result for action_result in analyze_sentiment_results if len(action_result.document_results) == len(docs)])
-
-    @pytest.mark.skip("Throws 400 on POST: (InvalidRequest) Job task parameter value bad is not supported for model-version "
-                 "parameter for job task type NamedEntityRecognition. Supported values latest,2019-10-01,2020-07-01")
-    @GlobalTextAnalyticsAccountPreparer()
-    @TextAnalyticsClientPreparer()
-    async def test_multiple_pages_of_results_with_errors_returned_successfully(self, client):
-        single_doc = "hello world"
-        docs = [{"id": str(idx), "text": val} for (idx, val) in
-                enumerate(list(itertools.repeat(single_doc, 25)))]  # max number of documents is 25
-
-        async with client:
-            result = await (await client.begin_analyze_actions(
-                docs,
-                actions=[
-                    RecognizeEntitiesAction(model_version="bad"),
-                    ExtractKeyPhrasesAction(),
-                    RecognizePiiEntitiesAction(),
-                    RecognizeLinkedEntitiesAction(),
-                    AnalyzeSentimentAction()
-                ],
-                polling_interval=self._interval()
-            )).result()
-
-            pages = []
-            async for p in result:
-                pages.append(p)
-
-            for idx, action_result in enumerate(pages):
-                if idx % 5 == 0:
-                    assert action_result.is_error
-                else:
-                    assert all([doc for doc in action_result.document_results if not doc.is_error])
 
     @GlobalTextAnalyticsAccountPreparer()
     @TextAnalyticsClientPreparer()
