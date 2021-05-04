@@ -12,6 +12,7 @@ Example to demonstrate utilizing AzureNamedKeyCredential to authenticate with Ev
 # pylint: disable=C0111
 
 import os
+import asyncio
 import time
 from azure.core.credentials import AzureNamedKeyCredential
 from azure.eventhub.aio import EventHubProducerClient
