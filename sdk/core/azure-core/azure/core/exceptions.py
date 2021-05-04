@@ -108,7 +108,8 @@ class ODataV4Format(object):
     http://docs.oasis-open.org/odata/odata-json-format/v4.0/os/odata-json-format-v4.0-os.html#_Toc372793091
 
     Example of JSON:
-    error": {
+
+    error: {
             "code": "ValidationError",
             "message": "One or more fields contain incorrect values: ",
             "details": [
@@ -126,7 +127,7 @@ class ODataV4Format(object):
                     (schema https://github.com/OAI/OpenAPI-Specification/blob/master/schemas/v2.0/schema.json)."
                 }
             ]
-        }
+    }
 
     :param dict json_object: A Python dict representing a ODataV4 JSON
     :ivar str ~.code: Its value is a service-defined error code.
