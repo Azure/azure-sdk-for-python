@@ -132,7 +132,7 @@ class TestOpencensusWrapper(unittest.TestCase):
     def test_set_http_attributes(self):
         with ContextHelper():
             trace = tracer_module.Tracer(sampler=AlwaysOnSampler())
-            parent = trace.start_span()
+            parent = trace.start_span(span_kind=OpenCensusSpanKind.CLIENT)
             wrapped_class = OpenCensusSpan(span=parent)
             request = mock.Mock()
             setattr(request, "method", "GET")
@@ -141,6 +141,7 @@ class TestOpencensusWrapper(unittest.TestCase):
             setattr(request, "headers", {})
             setattr(response, "status_code", 200)
             wrapped_class.set_http_attributes(request)
+            assert wrapped_class.span_instance.kind == OpenCensusSpanKind.CLIENT
             assert wrapped_class.span_instance.attributes.get("http.method") == request.method
             assert wrapped_class.span_instance.attributes.get("component") == "http"
             assert wrapped_class.span_instance.attributes.get("http.url") == request.url
