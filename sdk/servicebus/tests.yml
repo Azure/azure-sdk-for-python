@@ -21,6 +21,7 @@ stages:
           MatrixFilters:
             - PythonVersion=^(?!pypy3).*
         Canary:
+          SubscriptionConfiguration: $(sub-config-azure-cloud-test-resources)
           Location: 'centraluseuap'
           MatrixFilters:
             - PythonVersion=^(?!pypy3).*
