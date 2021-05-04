@@ -92,7 +92,7 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
 
         .. admonition:: Example:
 
-            .. literalinclude:: ../samples//async_samples/sample_delete_old_tags_async.py
+            .. literalinclude:: ../samples/async_samples/sample_delete_old_tags_async.py
                 :start-after: [START list_repositories]
                 :end-before: [END list_repositories]
                 :language: python
