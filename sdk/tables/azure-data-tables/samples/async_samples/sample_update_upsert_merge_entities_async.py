@@ -129,14 +129,14 @@ class TableEntitySamples(object):
                 print("Inserted entity: {}".format(insert_entity))
 
                 # Try merge, and merge since already in table
-                created.text = "NewMarker"
+                created['text'] = "NewMarker"
                 merged_entity = await table.upsert_entity(mode=UpdateMode.MERGE, entity=entity)
                 print("Merged entity: {}".format(merged_entity))
                 # [END upsert_entity]
 
                 # [START update_entity]
                 # Update the entity
-                created.text = "NewMarker"
+                created['text'] = "NewMarker"
                 await table.update_entity(mode=UpdateMode.REPLACE, entity=created)
 
                 # Get the replaced entity
@@ -145,7 +145,7 @@ class TableEntitySamples(object):
                 print("Replaced entity: {}".format(replaced))
 
                 # Merge the entity
-                replaced.color = "Blue"
+                replaced['color'] = "Blue"
                 await table.update_entity(mode=UpdateMode.MERGE, entity=replaced)
 
                 # Get the merged entity

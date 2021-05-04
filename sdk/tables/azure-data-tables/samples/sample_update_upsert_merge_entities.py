@@ -63,8 +63,10 @@ class TableEntitySamples(object):
 
                 # [START get_entity]
                 # Get Entity by partition and row key
-                got_entity = table.get_entity(partition_key=my_entity['PartitionKey'],
-                                                                            row_key=my_entity['RowKey'])
+                got_entity = table.get_entity(
+                    partition_key=my_entity['PartitionKey'],
+                    row_key=my_entity['RowKey']
+                )
                 print("Received entity: {}".format(got_entity))
                 # [END get_entity]
 
@@ -122,14 +124,14 @@ class TableEntitySamples(object):
                 print("Inserted entity: {}".format(insert_entity))
 
                 # Try merge, and merge since already in table
-                created.text = "NewMarker"
+                created['text'] = "NewMarker"
                 merged_entity = table.upsert_entity(mode=UpdateMode.MERGE, entity=entity)
                 print("Merged entity: {}".format(merged_entity))
                 # [END upsert_entity]
 
                 # [START update_entity]
                 # Update the entity
-                created.text = "NewMarker"
+                created['text'] = "NewMarker"
                 table.update_entity(mode=UpdateMode.REPLACE, entity=created)
 
                 # Get the replaced entity
@@ -138,7 +140,7 @@ class TableEntitySamples(object):
                 print("Replaced entity: {}".format(replaced))
 
                 # Merge the entity
-                replaced.color = "Blue"
+                replaced['color'] = "Blue"
                 table.update_entity(mode=UpdateMode.MERGE, entity=replaced)
 
                 # Get the merged entity
