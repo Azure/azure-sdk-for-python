@@ -61,21 +61,21 @@ class ConfigurationSetting(Model):
         if key_value is None:
             return None
         if key_value.content_type is not None:
-            if key_value.content_type.startswith(
-                FeatureFlagConfigurationSetting._feature_flag_content_type  # pylint:disable=protected-access
-            ) and key_value.key.startswith(FeatureFlagConfigurationSetting.key_prefix):
-                try:
+            try:
+                if key_value.content_type.startswith(
+                    FeatureFlagConfigurationSetting._feature_flag_content_type  # pylint:disable=protected-access
+                ) and key_value.key.startswith(FeatureFlagConfigurationSetting.key_prefix):
                     return FeatureFlagConfigurationSetting._from_generated(  # pylint: disable=protected-access
                         key_value
                     )
-                except (KeyError, AttributeError, TypeError):
-                    pass
-            if key_value.content_type.startswith(
-                SecretReferenceConfigurationSetting._secret_reference_content_type  # pylint:disable=protected-access
-            ):
-                return SecretReferenceConfigurationSetting._from_generated(  # pylint: disable=protected-access
-                    key_value
-                )
+                if key_value.content_type.startswith(
+                    SecretReferenceConfigurationSetting._secret_reference_content_type  # pylint:disable=protected-access
+                ):
+                    return SecretReferenceConfigurationSetting._from_generated(  # pylint: disable=protected-access
+                        key_value
+                    )
+            except (KeyError, AttributeError, TypeError):
+                pass
 
         return cls(
             key=key_value.key,
@@ -147,7 +147,7 @@ class FeatureFlagConfigurationSetting(
     kind = "FeatureFlag"
 
     def __init__(self, feature_id, enabled, filters=[], **kwargs):  # pylint: disable=dangerous-default-value
-        # type: (str, bool, Optional[List[Dict[str, Any]]], Any) -> None
+        # type: (str, bool, Optional[List[Dict[str, Any]]], **Any) -> None
         super(FeatureFlagConfigurationSetting, self).__init__(**kwargs)
         if not feature_id.startswith(self.key_prefix):
             feature_id = self.key_prefix + feature_id
@@ -294,7 +294,7 @@ class SecretReferenceConfigurationSetting(ConfigurationSetting):
     kind = "SecretReference"
 
     def __init__(self, key, secret_uri, label=None, **kwargs):
-        # type: (str, str, str) -> None
+        # type: (str, str, str, **Any) -> None
         self._secret_uri = secret_uri
         super(SecretReferenceConfigurationSetting, self).__init__(**kwargs)
         self.key = key
@@ -338,6 +338,7 @@ class SecretReferenceConfigurationSetting(ConfigurationSetting):
                 key_value.value = json.loads(key_value.value)
             except json.decoder.JSONDecodeError:
                 pass
+
         return cls(
             key=key_value.key,
             secret_uri=key_value.value[u"secret_uri"],
