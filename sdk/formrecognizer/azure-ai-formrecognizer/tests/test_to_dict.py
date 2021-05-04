@@ -6,7 +6,7 @@
 # --------------------------------------------------------------------------
 
 import pytest
-import datetime
+from datetime import datetime
 from azure.ai.formrecognizer import _models
 
 
@@ -52,7 +52,7 @@ class TestToDict:
         assert d == final
 
     def test_form_line_to_dict(self):
-        form_word = _models.FormLine(
+        form_line = _models.FormLine(
             text="sample line",
             bounding_box=[
                 _models.Point(1427.0, 1669.0),
@@ -90,7 +90,7 @@ class TestToDict:
             ),
         )
 
-        d = form_word.to_dict()
+        d = form_line.to_dict()
         final = {
             "text": "sample line",
             "bounding_box": [
@@ -132,7 +132,7 @@ class TestToDict:
         assert d == final
 
     def test_form_selection_mark_to_dict(self):
-        form_word = _models.FormSelectionMark(
+        form_selection_mark = _models.FormSelectionMark(
             text="checkbox",
             state="selected",
             confidence=0.92,
@@ -145,7 +145,7 @@ class TestToDict:
             ],
         )
 
-        d = form_word.to_dict()
+        d = form_selection_mark.to_dict()
         final = {
             "text": "checkbox",
             "state": "selected",
@@ -162,7 +162,7 @@ class TestToDict:
         assert d == final
 
     def test_form_element_to_dict(self):
-        form_word = _models.FormElement(
+        form_element = _models.FormElement(
             kind="selectionMark",
             text="element",
             page_number=1,
@@ -174,7 +174,7 @@ class TestToDict:
             ],
         )
 
-        d = form_word.to_dict()
+        d = form_element.to_dict()
         final = {
             "text": "element",
             "bounding_box": [
@@ -296,6 +296,7 @@ class TestToDict:
                     {"x": 1427.0, "y": 1698.0},
                 ],
                 "page_number": 1,
+                "field_elements": []
             },
             "value_data": {
                 "text": "55554444",
@@ -306,6 +307,7 @@ class TestToDict:
                     {"x": 1427.0, "y": 1698.0},
                 ],
                 "page_number": 1,
+                "field_elements": []
             },
             "name": "phone",
             "value": "55554444",
@@ -347,6 +349,51 @@ class TestToDict:
                     confidence=0.99,
                 )
             ],
+            pages=[_models.FormPage(
+                page_number=1,
+                text_angle=180.0,
+                width=5.5,
+                height=8.0,
+                unit="pixel",
+                lines=[_models.FormLine(
+                        text="sample line",
+                        bounding_box=[
+                            _models.Point(1427.0, 1669.0),
+                            _models.Point(1527.0, 1669.0),
+                            _models.Point(1527.0, 1698.0),
+                            _models.Point(1427.0, 1698.0),
+                        ],
+                        words=[
+                            _models.FormWord(
+                                text="sample",
+                                confidence=0.92,
+                                page_number=1,
+                                bounding_box=[
+                                    _models.Point(1427.0, 1669.0),
+                                    _models.Point(1527.0, 1669.0),
+                                    _models.Point(1527.0, 1698.0),
+                                    _models.Point(1427.0, 1698.0),
+                                ],
+                            ),
+                            _models.FormWord(
+                                text="line",
+                                confidence=0.92,
+                                page_number=1,
+                                bounding_box=[
+                                    _models.Point(1427.0, 1669.0),
+                                    _models.Point(1527.0, 1669.0),
+                                    _models.Point(1527.0, 1698.0),
+                                    _models.Point(1427.0, 1698.0),
+                                ],
+                            ),
+                        ],
+                        page_number=2,
+                        appearance=_models.TextAppearance(
+                            style=_models.TextStyle(name="other", confidence=0.90)
+                        ),
+                    )],
+                )
+            ]
         )
 
         d = form.to_dict()
@@ -367,6 +414,7 @@ class TestToDict:
                             {"x": 1427.0, "y": 1698.0},
                         ],
                         "page_number": 1,
+                        "field_elements": []
                     },
                     "value_data": {
                         "text": "55554444",
@@ -377,11 +425,645 @@ class TestToDict:
                             {"x": 1427.0, "y": 1698.0},
                         ],
                         "page_number": 1,
+                        "field_elements": []
                     },
                     "name": "phone",
                     "value": "55554444",
                     "confidence": 0.99,
                 }
             ],
+            "pages": [{
+                "page_number": 1,
+                "text_angle": 180.0,
+                "width": 5.5,
+                "height": 8.0,
+                "unit": "pixel",
+                "lines": [{
+                    "text": "sample line",
+                    "bounding_box": [
+                        {"x": 1427.0, "y": 1669.0},
+                        {"x": 1527.0, "y": 1669.0},
+                        {"x": 1527.0, "y": 1698.0},
+                        {"x": 1427.0, "y": 1698.0},
+                    ],
+                    "words": [
+                        {
+                            "text": "sample",
+                            "bounding_box": [
+                                {"x": 1427.0, "y": 1669.0},
+                                {"x": 1527.0, "y": 1669.0},
+                                {"x": 1527.0, "y": 1698.0},
+                                {"x": 1427.0, "y": 1698.0},
+                            ],
+                            "confidence": 0.92,
+                            "page_number": 1,
+                            "kind": "word",
+                        },
+                        {
+                            "text": "line",
+                            "bounding_box": [
+                                {"x": 1427.0, "y": 1669.0},
+                                {"x": 1527.0, "y": 1669.0},
+                                {"x": 1527.0, "y": 1698.0},
+                                {"x": 1427.0, "y": 1698.0},
+                            ],
+                            "confidence": 0.92,
+                            "page_number": 1,
+                            "kind": "word",
+                        },
+                    ],
+                    "page_number": 2,
+                    "kind": "line",
+                    "appearance": {"style": {"name": "other", "confidence": 0.90}},
+                }],    
+                "selection_marks": [],
+                "tables": [],
+            }],
+        }
+        assert d == final
+
+    def test_form_page_to_dict(self):
+        form_page = _models.FormPage(
+            page_number=1,
+            text_angle=180.0,
+            width=5.5,
+            height=8.0,
+            unit="pixel",
+            tables= [
+                _models.FormTable(
+                    page_number=2,
+                    cells=[
+                        _models.FormTableCell(
+                            text="info",
+                            row_index=1,
+                            column_index=3,
+                            row_span=1,
+                            column_span=2,
+                            bounding_box=[
+                                    _models.Point(1427.0, 1669.0),
+                                    _models.Point(1527.0, 1669.0),
+                                    _models.Point(1527.0, 1698.0),
+                                    _models.Point(1427.0, 1698.0),
+                                ],
+                            confidence=0.87,
+                            is_header=False,
+                            is_footer=True,
+                            page_number=1,
+                            field_elements=[
+                                _models.FormWord(
+                                    text="word",
+                                    confidence=0.92,
+                                    page_number=1,
+                                    bounding_box=[
+                                        _models.Point(1427.0, 1669.0),
+                                        _models.Point(1527.0, 1669.0),
+                                        _models.Point(1527.0, 1698.0),
+                                        _models.Point(1427.0, 1698.0),
+                                    ],
+                                ),
+                            ]
+                        )
+                    ],
+                    row_count=10,
+                    column_count=5,
+                    bounding_box=[
+                        _models.Point(1427.0, 1669.0),
+                        _models.Point(1527.0, 1669.0),
+                        _models.Point(1527.0, 1698.0),
+                        _models.Point(1427.0, 1698.0),
+                    ],
+                ),
+            ],
+            lines=[_models.FormLine(
+                    text="sample line",
+                    bounding_box=[
+                        _models.Point(1427.0, 1669.0),
+                        _models.Point(1527.0, 1669.0),
+                        _models.Point(1527.0, 1698.0),
+                        _models.Point(1427.0, 1698.0),
+                    ],
+                    words=[
+                        _models.FormWord(
+                            text="sample",
+                            confidence=0.92,
+                            page_number=1,
+                            bounding_box=[
+                                _models.Point(1427.0, 1669.0),
+                                _models.Point(1527.0, 1669.0),
+                                _models.Point(1527.0, 1698.0),
+                                _models.Point(1427.0, 1698.0),
+                            ],
+                        ),
+                        _models.FormWord(
+                            text="line",
+                            confidence=0.92,
+                            page_number=1,
+                            bounding_box=[
+                                _models.Point(1427.0, 1669.0),
+                                _models.Point(1527.0, 1669.0),
+                                _models.Point(1527.0, 1698.0),
+                                _models.Point(1427.0, 1698.0),
+                            ],
+                        ),
+                    ],
+                    page_number=2,
+                    appearance=_models.TextAppearance(
+                        style=_models.TextStyle(name="other", confidence=0.90)
+                    ),
+                ),
+            ],
+            selection_marks=[_models.FormSelectionMark(
+                    text="checkbox",
+                    state="selected",
+                    confidence=0.92,
+                    page_number=1,
+                    bounding_box=[
+                        _models.Point(1427.0, 1669.0),
+                        _models.Point(1527.0, 1669.0),
+                        _models.Point(1527.0, 1698.0),
+                        _models.Point(1427.0, 1698.0),
+                    ],
+                ),
+            ],
+            )
+        d = form_page.to_dict()
+        final = {
+            "page_number": 1,
+            "text_angle": 180.0,
+            "width": 5.5,
+            "height": 8.0,
+            "unit": "pixel",
+            "tables": [
+                {"cells": [
+                    {
+                        "text": "info",
+                        "bounding_box": [
+                            {"x": 1427.0, "y": 1669.0},
+                            {"x": 1527.0, "y": 1669.0},
+                            {"x": 1527.0, "y": 1698.0},
+                            {"x": 1427.0, "y": 1698.0},
+                        ],
+                        "row_index": 1,
+                        "column_index": 3,
+                        "row_span": 1,
+                        "column_span": 2,
+                        "confidence": 0.87,
+                        "is_header": False,
+                        "is_footer": True,
+                        "page_number": 1,
+                        "field_elements": [
+                            {
+                                "text": "word",
+                                "bounding_box": [
+                                    {"x": 1427.0, "y": 1669.0},
+                                    {"x": 1527.0, "y": 1669.0},
+                                    {"x": 1527.0, "y": 1698.0},
+                                    {"x": 1427.0, "y": 1698.0},
+                                ],
+                                "confidence": 0.92,
+                                "page_number": 1,
+                                "kind": "word",
+                            }
+                        ],
+                    },
+                ],
+                "page_number": 2,
+                "row_count": 10,
+                "column_count": 5,
+                "bounding_box": [
+                    {"x": 1427.0, "y": 1669.0},
+                    {"x": 1527.0, "y": 1669.0},
+                    {"x": 1527.0, "y": 1698.0},
+                    {"x": 1427.0, "y": 1698.0},
+                ],
+            },
+            ],
+            "lines": [{
+                "text": "sample line",
+                "bounding_box": [
+                    {"x": 1427.0, "y": 1669.0},
+                    {"x": 1527.0, "y": 1669.0},
+                    {"x": 1527.0, "y": 1698.0},
+                    {"x": 1427.0, "y": 1698.0},
+                ],
+                "words": [
+                    {
+                        "text": "sample",
+                        "bounding_box": [
+                            {"x": 1427.0, "y": 1669.0},
+                            {"x": 1527.0, "y": 1669.0},
+                            {"x": 1527.0, "y": 1698.0},
+                            {"x": 1427.0, "y": 1698.0},
+                        ],
+                        "confidence": 0.92,
+                        "page_number": 1,
+                        "kind": "word",
+                    },
+                    {
+                        "text": "line",
+                        "bounding_box": [
+                            {"x": 1427.0, "y": 1669.0},
+                            {"x": 1527.0, "y": 1669.0},
+                            {"x": 1527.0, "y": 1698.0},
+                            {"x": 1427.0, "y": 1698.0},
+                        ],
+                        "confidence": 0.92,
+                        "page_number": 1,
+                        "kind": "word",
+                    },
+                ],
+                "page_number": 2,
+                "kind": "line",
+                "appearance": {"style": {"name": "other", "confidence": 0.90}},
+            }],
+            "selection_marks": [{
+                "text": "checkbox",
+                "state": "selected",
+                "bounding_box": [
+                    {"x": 1427.0, "y": 1669.0},
+                    {"x": 1527.0, "y": 1669.0},
+                    {"x": 1527.0, "y": 1698.0},
+                    {"x": 1427.0, "y": 1698.0},
+                ],
+                "confidence": 0.92,
+                "page_number": 1,
+                "kind": "selectionMark",
+            }],
+        }
+        assert d == final
+
+    def test_form_table_cell_to_dict(self):
+        table_cell = _models.FormTableCell(
+            text="info",
+            row_index=1,
+            column_index=3,
+            row_span=1,
+            column_span=2,
+            bounding_box=[
+                    _models.Point(1427.0, 1669.0),
+                    _models.Point(1527.0, 1669.0),
+                    _models.Point(1527.0, 1698.0),
+                    _models.Point(1427.0, 1698.0),
+                ],
+            confidence=0.87,
+            is_header=False,
+            is_footer=True,
+            page_number=1,
+            field_elements=[
+                _models.FormWord(
+                    text="word",
+                    confidence=0.92,
+                    page_number=1,
+                    bounding_box=[
+                        _models.Point(1427.0, 1669.0),
+                        _models.Point(1527.0, 1669.0),
+                        _models.Point(1527.0, 1698.0),
+                        _models.Point(1427.0, 1698.0),
+                    ],
+                ),
+            ]
+        )
+
+        d = table_cell.to_dict()
+        final = {
+            "text": "info",
+            "bounding_box": [
+                {"x": 1427.0, "y": 1669.0},
+                {"x": 1527.0, "y": 1669.0},
+                {"x": 1527.0, "y": 1698.0},
+                {"x": 1427.0, "y": 1698.0},
+            ],
+            "row_index": 1,
+            "column_index": 3,
+            "row_span": 1,
+            "column_span": 2,
+            "confidence": 0.87,
+            "is_header": False,
+            "is_footer": True,
+            "page_number": 1,
+            "field_elements": [
+                {
+                    "text": "word",
+                    "bounding_box": [
+                        {"x": 1427.0, "y": 1669.0},
+                        {"x": 1527.0, "y": 1669.0},
+                        {"x": 1527.0, "y": 1698.0},
+                        {"x": 1427.0, "y": 1698.0},
+                    ],
+                    "confidence": 0.92,
+                    "page_number": 1,
+                    "kind": "word",
+                }
+            ],
+        }
+        assert d == final
+
+    def test_form_table_to_dict(self):
+        table = _models.FormTable(
+            page_number=2,
+            cells=[
+                _models.FormTableCell(
+                    text="info",
+                    row_index=1,
+                    column_index=3,
+                    row_span=1,
+                    column_span=2,
+                    bounding_box=[
+                            _models.Point(1427.0, 1669.0),
+                            _models.Point(1527.0, 1669.0),
+                            _models.Point(1527.0, 1698.0),
+                            _models.Point(1427.0, 1698.0),
+                        ],
+                    confidence=0.87,
+                    is_header=False,
+                    is_footer=True,
+                    page_number=1,
+                    field_elements=[
+                        _models.FormWord(
+                            text="word",
+                            confidence=0.92,
+                            page_number=1,
+                            bounding_box=[
+                                _models.Point(1427.0, 1669.0),
+                                _models.Point(1527.0, 1669.0),
+                                _models.Point(1527.0, 1698.0),
+                                _models.Point(1427.0, 1698.0),
+                            ],
+                        ),
+                    ]
+                )
+            ],
+            row_count=10,
+            column_count=5,
+            bounding_box=[
+                _models.Point(1427.0, 1669.0),
+                _models.Point(1527.0, 1669.0),
+                _models.Point(1527.0, 1698.0),
+                _models.Point(1427.0, 1698.0),
+            ],
+        )
+
+        d = table.to_dict()
+        final = {
+            "cells": [
+                {
+                    "text": "info",
+                    "bounding_box": [
+                        {"x": 1427.0, "y": 1669.0},
+                        {"x": 1527.0, "y": 1669.0},
+                        {"x": 1527.0, "y": 1698.0},
+                        {"x": 1427.0, "y": 1698.0},
+                    ],
+                    "row_index": 1,
+                    "column_index": 3,
+                    "row_span": 1,
+                    "column_span": 2,
+                    "confidence": 0.87,
+                    "is_header": False,
+                    "is_footer": True,
+                    "page_number": 1,
+                    "field_elements": [
+                        {
+                            "text": "word",
+                            "bounding_box": [
+                                {"x": 1427.0, "y": 1669.0},
+                                {"x": 1527.0, "y": 1669.0},
+                                {"x": 1527.0, "y": 1698.0},
+                                {"x": 1427.0, "y": 1698.0},
+                            ],
+                            "confidence": 0.92,
+                            "page_number": 1,
+                            "kind": "word",
+                        }
+                    ],
+                },
+            ],
+            "page_number": 2,
+            "row_count": 10,
+            "column_count": 5,
+            "bounding_box": [
+                {"x": 1427.0, "y": 1669.0},
+                {"x": 1527.0, "y": 1669.0},
+                {"x": 1527.0, "y": 1698.0},
+                {"x": 1427.0, "y": 1698.0},
+            ],
+        }
+        assert d == final
+
+    def test_custom_form_model_properties_to_dict(self):
+        model = _models.CustomFormModelProperties(
+            is_composed_model=True,
+        )
+        d = model.to_dict()
+        final = {
+            "is_composed_model": True,
+        }
+        assert d == final
+
+    def test_account_properties_to_dict(self):
+        model = _models.AccountProperties(
+            custom_model_count=5,
+            custom_model_limit=10,
+        )
+        d = model.to_dict()
+        final = {
+            "custom_model_count": 5,
+            "custom_model_limit": 10,
+        }
+        assert d == final
+
+    def test_custom_form_model_info_to_dict(self):
+        model = _models.CustomFormModelInfo(
+            model_id="1234",
+            status="creating",
+            training_started_on=datetime(2021, 1, 10, 23, 55, 59, 342380),
+            training_completed_on=datetime(2021, 1, 10, 23, 55, 59, 342380),
+            model_name="sample_model",
+            properties=_models.CustomFormModelProperties(
+                is_composed_model=False,
+            )
+        )
+        d = model.to_dict()
+        final = {
+            "model_id": "1234",
+            "status": "creating",
+            "training_started_on": datetime(2021, 1, 10, 23, 55, 59, 342380),
+            "training_completed_on": datetime(2021, 1, 10, 23, 55, 59, 342380),
+            "model_name": "sample_model",
+            "properties": {
+                "is_composed_model": False,
+            }
+        }
+        assert d == final
+
+    def test_form_recognizer_error_to_dict(self):
+        model = _models.FormRecognizerError(
+            code=404,
+            message="error not found",
+        )
+        d = model.to_dict()
+        final = {
+            "code": 404,
+            "message": "error not found",
+        }
+        assert d == final
+
+    def test_training_document_info_to_dict(self):
+        model = _models.TrainingDocumentInfo(
+            name="sample doc",
+            status="succeeded",
+            page_count=3,
+            errors=[
+                _models.FormRecognizerError(
+                    code=404,
+                    message="error not found",
+                )
+            ],
+            model_id="1234",
+        )
+        d = model.to_dict()
+        final = {
+            "name": "sample doc",
+            "status": "succeeded",
+            "page_count": 3,
+            "errors": [
+                {
+                    "code": 404,
+                    "message": "error not found",
+                }
+            ],
+            "model_id": "1234",
+        }
+        assert d == final
+
+    def test_custom_form_model_field_to_dict(self):
+        model = _models.CustomFormModelField(
+            label="field_label",
+            name="field",
+            accuracy=0.98,
+        )
+        d = model.to_dict()
+        final = {
+            "label": "field_label",
+            "name": "field",
+            "accuracy": 0.98,
+        }
+        assert d == final
+
+    def test_custom_form_submodel_to_dict(self):
+        model = _models.CustomFormSubmodel(
+            model_id="1234",
+            form_type="submodel",
+            accuracy=0.98,
+            fields=[
+                _models.CustomFormModelField(
+                    label="field_label",
+                    name="field",
+                    accuracy=0.98,
+                )
+            ]
+        )
+        d = model.to_dict()
+        final = {
+            "model_id": "1234",
+            "form_type": "submodel",
+            "accuracy": 0.98,
+            "fields": [ 
+                {
+                    "label": "field_label",
+                    "name": "field",
+                    "accuracy": 0.98,
+                }
+            ]
+        }
+        assert d == final
+
+    def test_custom_form_model_to_dict(self):
+        model = _models.CustomFormModel(
+            model_id="1234",
+            status="ready",
+            training_started_on=datetime(2021, 1, 10, 23, 55, 59, 342380),
+            training_completed_on=datetime(2021, 1, 10, 23, 55, 59, 342380),
+            submodels=[
+                _models.CustomFormSubmodel(
+                    model_id="1234",
+                    form_type="submodel",
+                    accuracy=0.98,
+                    fields=[
+                        _models.CustomFormModelField(
+                            label="field_label",
+                            name="field",
+                            accuracy=0.98,
+                        )
+                    ]
+                )
+            ],
+            errors=[
+                _models.FormRecognizerError(
+                    code=404,
+                    message="error not found",
+                )
+            ],
+            training_documents=[
+                _models.TrainingDocumentInfo(
+                    name="sample doc",
+                    status="succeeded",
+                    page_count=3,
+                    errors=[
+                        _models.FormRecognizerError(
+                            code=404,
+                            message="error not found",
+                        )
+                    ],
+                    model_id="1234",
+                )
+            ],
+            model_name="sample model",
+            properties=_models.CustomFormModelProperties(
+                    is_composed_model=True,
+                )
+        )
+        d = model.to_dict()
+        final = {
+            "model_id": "1234",
+            "status": "ready",
+            "training_started_on": datetime(2021, 1, 10, 23, 55, 59, 342380),
+            "training_completed_on": datetime(2021, 1, 10, 23, 55, 59, 342380),
+            "submodels": [{
+                "model_id": "1234",
+                "form_type": "submodel",
+                "accuracy": 0.98,
+                "fields": [ 
+                    {
+                        "label": "field_label",
+                        "name": "field",
+                        "accuracy": 0.98,
+                    }
+                ]
+            }],
+            "errors": [
+                {
+                    "code": 404,
+                    "message": "error not found",
+                }
+            ],
+            "training_documents": [
+                {
+                    "name": "sample doc",
+                    "status": "succeeded",
+                    "page_count": 3,
+                    "errors": [
+                        {
+                            "code": 404,
+                            "message": "error not found",
+                        }
+                    ],
+                    "model_id": "1234",
+                }
+            ],
+            "model_name": "sample model",
+            "properties": {
+                "is_composed_model": True,
+            }
         }
         assert d == final

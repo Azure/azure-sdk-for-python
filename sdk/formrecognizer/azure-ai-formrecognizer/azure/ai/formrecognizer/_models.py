@@ -195,7 +195,7 @@ class FormElement(object):
     def to_dict(self):
         return {
             "text": self.text,
-            "bounding_box": [f.to_dict() for f in self.bounding_box],
+            "bounding_box": [f.to_dict() for f in self.bounding_box] if self.bounding_box else [],
             "page_number": self.page_number,
             "kind": self.kind,
         }
@@ -249,16 +249,14 @@ class RecognizedForm(object):
         )
 
     def to_dict(self):
-        d = {
-            "fields": [v.to_dict() for v in self.fields],
+        return {
+            "fields": [v.to_dict() for v in self.fields] if self.fields else [],
             "form_type": self.form_type,
-            # "pages": [v.to_dict() for v in self.pages],
+            "pages": [v.to_dict() for v in self.pages] if self.pages else [],
             "model_id": self.model_id,
             "form_type_confidence": self.form_type_confidence,
+            "page_range": self.page_range.to_dict() if self.page_range else None
         }
-        if self.page_range is not None:
-            d["page_range"] = self.page_range.to_dict()
-        return d
 
 
 class FormField(object):
@@ -332,21 +330,14 @@ class FormField(object):
         ]
 
     def to_dict(self):
-        d = {
+        return {
             "value_type": self.value_type,
             "name": self.name,
             "value": self.value,
             "confidence": self.confidence,
+            "label_data": self.label_data.to_dict() if self.label_data else None,
+            "value_data": self.value_data.to_dict() if self.value_data else None,
         }
-
-        if self.label_data is not None:
-            d["label_data"] = self.label_data.to_dict()
-
-        if self.value_data is not None:
-            d["value_data"] = self.value_data.to_dict()
-
-        return d
-
 
 class FieldData(object):
     """Contains the data for the form field. This includes the text,
@@ -417,14 +408,12 @@ class FieldData(object):
         ]
 
     def to_dict(self):
-        d = {
+        return {
             "text": self.text,
-            "bounding_box": [f.to_dict() for f in self.bounding_box],
+            "bounding_box": [f.to_dict() for f in self.bounding_box] if self.bounding_box else [],
             "page_number": self.page_number,
+            "field_elements": [f.to_dict() for f in self.field_elements] if self.field_elements else []
         }
-        if self.field_elements is not None:
-            d["field_elements"] = [f.to_dict() for f in self.field_elements]
-        return d
 
 
 class FormPage(object):
@@ -492,17 +481,10 @@ class FormPage(object):
             "width": self.width,
             "height": self.height,
             "unit": self.unit,
-            "tables": [
-                table.to_dict() for table in self.tables
-            ] if self.tables else None,
-            "lines": [
-                line.to_dict() for line in self.lines
-            ] if self.lines else None,
-            "selection_marks": [
-                mark.to_dict() for mark in self.selection_marks
-            ] if self.selection_marks else None
+            "tables": [table.to_dict() for table in self.tables] if self.tables else [],
+            "lines": [line.to_dict() for line in self.lines] if self.lines else [],
+            "selection_marks": [mark.to_dict() for mark in self.selection_marks] if self.selection_marks else []
         }
-
 
 class FormLine(FormElement):
     """An object representing an extracted line of text.
@@ -560,16 +542,14 @@ class FormLine(FormElement):
         ]
 
     def to_dict(self):
-        d = {
+        return {
             "text": self.text,
-            "bounding_box": [f.to_dict() for f in self.bounding_box],
-            "words": [f.to_dict() for f in self.words],
+            "bounding_box": [f.to_dict() for f in self.bounding_box] if self.bounding_box else [],
+            "words": [f.to_dict() for f in self.words] if self.words else [],
             "page_number": self.page_number,
             "kind": self.kind,
+            "appearance": self.appearance.to_dict() if self.appearance else None
         }
-        if self.appearance is not None:
-            d["appearance"] = self.appearance.to_dict()
-        return d
 
 
 class FormWord(FormElement):
@@ -925,13 +905,12 @@ class CustomFormModel(object):
             "status": self.status,
             "training_started_on": self.training_started_on,
             "training_completed_on": self.training_completed_on,
-            "submodels": [submodel.to_dict() for submodel in self.submodels],
-            "errors": [err.to_dict() for err in self.errors],
-            "training_documents": [doc.to_dict() for doc in self.training_documents],
+            "submodels": [submodel.to_dict() for submodel in self.submodels] if self.submodels else [],
+            "errors": [err.to_dict() for err in self.errors] if self.errors else [],
+            "training_documents": [doc.to_dict() for doc in self.training_documents] if self.training_documents else [],
             "model_name": self.model_name,
-            "properties": self.properties.to_dict()
+            "properties": self.properties.to_dict() if self.properties else None
         }
-
 
 class CustomFormSubmodel(object):
     """Represents a submodel that extracts fields from a specific type of form.
@@ -1030,7 +1009,7 @@ class CustomFormSubmodel(object):
         return {
             "model_id": self.model_id,
             "accuracy": self.accuracy,
-            "fields": {k: v.to_dict() for k, v in self.fields.items()},
+            "fields": [v.to_dict() for v in self.fields] if self.fields else [],
             "form_type": self.form_type
         }
 
@@ -1341,7 +1320,9 @@ class TextAppearance(object):
         return "TextAppearance(style={})".format(repr(self.style))
 
     def to_dict(self):
-        return {"style": self.style.to_dict()} if self.style else None
+        return {
+            "style": self.style.to_dict() if self.style else None
+        }
 
 
 class TextStyle(object):
