@@ -4,8 +4,8 @@
 # license information.
 # -------------------------------------------------------------------------
 import binascii
-from requests.structures import CaseInsensitiveDict
 from typing import Dict, Optional, Any
+from requests.structures import CaseInsensitiveDict
 from azure.core import MatchConditions
 from azure.core.pipeline import Pipeline
 from azure.core.pipeline.policies import (
