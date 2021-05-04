@@ -124,7 +124,7 @@ class AsyncHttpResponse(_HttpResponseBase):  # pylint: disable=abstract-method
     Allows for the asynchronous streaming of data from the response.
     """
 
-    def stream_download(self, pipeline, raw=False) -> AsyncIteratorType[bytes]:
+    def stream_download(self, pipeline, decode_content=True) -> AsyncIteratorType[bytes]:
         """Generator for streaming response body data.
 
         Should be implemented by sub-classes if streaming download
@@ -132,7 +132,8 @@ class AsyncHttpResponse(_HttpResponseBase):  # pylint: disable=abstract-method
 
         :param pipeline: The pipeline object
         :type pipeline: azure.core.pipeline.Pipeline
-        :param int raw: If returns the raw stream.
+        :param bool decode_content: If True which is default, will attempt to decode the body based
+            on the ‘content-encoding’ header.
         """
 
     def parts(self) -> AsyncIterator:

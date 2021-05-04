@@ -62,7 +62,7 @@ def test_connection_error_response():
     pipeline = Pipeline(MockTransport())
     http_response = HttpResponse(http_request, None)
     http_response.internal_response = MockInternalResponse()
-    stream = StreamDownloadGenerator(pipeline, http_response, raw=True)
+    stream = StreamDownloadGenerator(pipeline, http_response, decode_content=False)
     with mock.patch('time.sleep', return_value=None):
         with pytest.raises(requests.exceptions.ConnectionError):
             stream.__next__()

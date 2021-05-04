@@ -120,17 +120,18 @@ class StreamDownloadGenerator(object):
 
     :param pipeline: The pipeline object
     :param response: The response object.
-    :param int raw: If returns the raw stream.
+    :param bool decode_content: If True which is default, will attempt to decode the body based
+        on the ‘content-encoding’ header.
     """
-    def __init__(self, pipeline, response, raw=False):
+    def __init__(self, pipeline, response, decode_content=True):
         self.pipeline = pipeline
         self.request = response.request
         self.response = response
         self.block_size = response.block_size
-        if raw:
-            self.iter_content_func = _read_raw_stream(self.response.internal_response, self.block_size)
-        else:
+        if decode_content:
             self.iter_content_func = self.response.internal_response.iter_content(self.block_size)
+        else:
+            self.iter_content_func = _read_raw_stream(self.response.internal_response, self.block_size)
         self.content_length = int(response.headers.get('Content-Length', 0))
 
     def __len__(self):
@@ -160,10 +161,10 @@ class StreamDownloadGenerator(object):
 class RequestsTransportResponse(HttpResponse, _RequestsTransportResponseBase):
     """Streaming of data from the response.
     """
-    def stream_download(self, pipeline, raw=False):
+    def stream_download(self, pipeline, decode_content=True):
         # type: (PipelineType, bool) -> Iterator[bytes]
         """Generator for streaming request body data."""
-        return StreamDownloadGenerator(pipeline, self, raw=raw)
+        return StreamDownloadGenerator(pipeline, self, decode_content=decode_content)
 
 
 class RequestsTransport(HttpTransport):

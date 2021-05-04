@@ -69,7 +69,7 @@ async def test_connection_error_response():
     pipeline = AsyncPipeline(MockTransport())
     http_response = AsyncHttpResponse(http_request, None)
     http_response.internal_response = MockInternalResponse()
-    stream = AioHttpStreamDownloadGenerator(pipeline, http_response, raw=True)
+    stream = AioHttpStreamDownloadGenerator(pipeline, http_response, decode_content=False)
     with mock.patch('asyncio.sleep', new_callable=AsyncMock):
         with pytest.raises(ConnectionError):
             await stream.__anext__()
