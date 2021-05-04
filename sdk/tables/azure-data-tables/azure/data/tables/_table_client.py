@@ -309,12 +309,18 @@ class TableClient(TablesBaseClient):
                 :caption: Deleting an entity to a Table
         """
         try:
-            entity = kwargs.get('entity') or args[0]
+            entity = kwargs.pop('entity', None)
+            if not entity:
+                entity = args[0]
             partition_key = entity['PartitionKey']
             row_key = entity['RowKey']
-        except TypeError:
-            partition_key = kwargs.get('partition_key') or args[0]
-            row_key = kwargs.get('row_key') or args[1]
+        except (TypeError, IndexError):  # IndexError for if they send via pk, rk
+            partition_key = kwargs.pop('partition_key', None)
+            if not partition_key:
+                partition_key = args[0]
+            row_key = kwargs.pop('row_key', None) or args[1]
+            if not row_key:
+                row_key = args[1]
 
 
         if_match, _ = _get_match_headers(

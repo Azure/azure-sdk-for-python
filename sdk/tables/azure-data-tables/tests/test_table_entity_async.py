@@ -1056,6 +1056,34 @@ class StorageTableEntityTest(AzureTestCase, AsyncTableTestCase):
             await self._tear_down()
 
     @TablesPreparer()
+    async def test_delete_entity_overloads_kwargs(self, tables_storage_account_name, tables_primary_storage_account_key):
+        # Arrange
+        await self._set_up(tables_storage_account_name, tables_primary_storage_account_key)
+        try:
+            entity, _ = await self._insert_random_entity()
+
+            # Act
+            await self.table.delete_entity(entity=entity)
+
+            pk, rk = self._create_pk_rk("pk", "rk")
+            pk, rk = pk + u"2", rk + u"2"
+            entity2 = {
+                u"PartitionKey": pk,
+                u"RowKey": rk,
+                u"Value": 100
+            }
+            await self.table.create_entity(entity2)
+
+            await self.table.delete_entity(partition_key=pk, row_key=rk)
+
+            count = 0
+            async for entity in self.table.list_entities():
+                count += 1
+            assert count == 0
+        finally:
+            await self._tear_down()
+
+    @TablesPreparer()
     async def test_unicode_property_value(self, tables_storage_account_name, tables_primary_storage_account_key):
         ''' regression test for github issue #57'''
         # Arrange

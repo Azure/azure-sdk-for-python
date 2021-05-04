@@ -15,11 +15,11 @@ interactions:
       DataServiceVersion:
       - '3.0'
       Date:
-      - Mon, 03 May 2021 15:13:42 GMT
+      - Tue, 04 May 2021 19:43:32 GMT
       User-Agent:
       - azsdk-python-data-tables/12.0.0b7 Python/3.9.0rc1 (Windows-10-10.0.19041-SP0)
       x-ms-date:
-      - Mon, 03 May 2021 15:13:42 GMT
+      - Tue, 04 May 2021 19:43:32 GMT
       x-ms-version:
       - '2019-02-02'
     method: POST
@@ -31,9 +31,9 @@ interactions:
       content-type:
       - application/json;odata=minimalmetadata
       date:
-      - Mon, 03 May 2021 15:13:34 GMT
+      - Tue, 04 May 2021 19:43:33 GMT
       etag:
-      - W/"datetime'2021-05-03T15%3A13%3A34.8918280Z'"
+      - W/"datetime'2021-05-04T19%3A43%3A33.4303752Z'"
       location:
       - https://fake_cosmos_account.table.cosmos.azure.com/Tables('uttable51021601')
       server:
@@ -66,25 +66,25 @@ interactions:
       DataServiceVersion:
       - '3.0'
       Date:
-      - Mon, 03 May 2021 15:13:44 GMT
+      - Tue, 04 May 2021 19:43:33 GMT
       User-Agent:
       - azsdk-python-data-tables/12.0.0b7 Python/3.9.0rc1 (Windows-10-10.0.19041-SP0)
       x-ms-date:
-      - Mon, 03 May 2021 15:13:44 GMT
+      - Tue, 04 May 2021 19:43:33 GMT
       x-ms-version:
       - '2019-02-02'
     method: POST
     uri: https://fake_cosmos_account.table.cosmos.azure.com/uttable51021601
   response:
     body:
-      string: '{"odata.metadata":"https://fake_cosmos_account.table.cosmos.azure.com/uttable51021601/$metadata#uttable51021601/@Element","odata.etag":"W/\"datetime''2021-05-03T15%3A13%3A35.4524680Z''\"","PartitionKey":"pk51021601","RowKey":"rk51021601","age":39,"sex":"male","married":true,"deceased":false,"ratio":3.1,"evenratio":3.0,"large":933311100,"Birthday@odata.type":"Edm.DateTime","Birthday":"1973-10-04T00:00:00.0000000Z","birthday@odata.type":"Edm.DateTime","birthday":"1970-10-04T00:00:00.0000000Z","binary@odata.type":"Edm.Binary","binary":"YmluYXJ5","other":20,"clsid@odata.type":"Edm.Guid","clsid":"c9da6455-213d-42c9-9a79-3e9149a57833","Timestamp":"2021-05-03T15:13:35.4524680Z"}'
+      string: '{"odata.metadata":"https://fake_cosmos_account.table.cosmos.azure.com/uttable51021601/$metadata#uttable51021601/@Element","odata.etag":"W/\"datetime''2021-05-04T19%3A43%3A34.1011976Z''\"","PartitionKey":"pk51021601","RowKey":"rk51021601","age":39,"sex":"male","married":true,"deceased":false,"ratio":3.1,"evenratio":3.0,"large":933311100,"Birthday@odata.type":"Edm.DateTime","Birthday":"1973-10-04T00:00:00.0000000Z","birthday@odata.type":"Edm.DateTime","birthday":"1970-10-04T00:00:00.0000000Z","binary@odata.type":"Edm.Binary","binary":"YmluYXJ5","other":20,"clsid@odata.type":"Edm.Guid","clsid":"c9da6455-213d-42c9-9a79-3e9149a57833","Timestamp":"2021-05-04T19:43:34.1011976Z"}'
     headers:
       content-type:
       - application/json;odata=minimalmetadata
       date:
-      - Mon, 03 May 2021 15:13:34 GMT
+      - Tue, 04 May 2021 19:43:33 GMT
       etag:
-      - W/"datetime'2021-05-03T15%3A13%3A35.4524680Z'"
+      - W/"datetime'2021-05-04T19%3A43%3A34.1011976Z'"
       location:
       - https://fake_cosmos_account.table.cosmos.azure.com/uttable51021601(PartitionKey='pk51021601',RowKey='rk51021601')
       server:
@@ -108,13 +108,13 @@ interactions:
       DataServiceVersion:
       - '3.0'
       Date:
-      - Mon, 03 May 2021 15:13:44 GMT
+      - Tue, 04 May 2021 19:43:34 GMT
       If-Match:
       - '*'
       User-Agent:
       - azsdk-python-data-tables/12.0.0b7 Python/3.9.0rc1 (Windows-10-10.0.19041-SP0)
       x-ms-date:
-      - Mon, 03 May 2021 15:13:44 GMT
+      - Tue, 04 May 2021 19:43:34 GMT
       x-ms-version:
       - '2019-02-02'
     method: DELETE
@@ -126,7 +126,7 @@ interactions:
       content-length:
       - '0'
       date:
-      - Mon, 03 May 2021 15:13:34 GMT
+      - Tue, 04 May 2021 19:43:33 GMT
       server:
       - Microsoft-HTTPAPI/2.0
     status:
@@ -149,25 +149,25 @@ interactions:
       DataServiceVersion:
       - '3.0'
       Date:
-      - Mon, 03 May 2021 15:13:44 GMT
+      - Tue, 04 May 2021 19:43:34 GMT
       User-Agent:
       - azsdk-python-data-tables/12.0.0b7 Python/3.9.0rc1 (Windows-10-10.0.19041-SP0)
       x-ms-date:
-      - Mon, 03 May 2021 15:13:44 GMT
+      - Tue, 04 May 2021 19:43:34 GMT
       x-ms-version:
       - '2019-02-02'
     method: POST
     uri: https://fake_cosmos_account.table.cosmos.azure.com/uttable51021601
   response:
     body:
-      string: '{"odata.metadata":"https://fake_cosmos_account.table.cosmos.azure.com/uttable51021601/$metadata#uttable51021601/@Element","odata.etag":"W/\"datetime''2021-05-03T15%3A13%3A35.7201416Z''\"","PartitionKey":"pk2","RowKey":"rk2","Value":100,"Timestamp":"2021-05-03T15:13:35.7201416Z"}'
+      string: '{"odata.metadata":"https://fake_cosmos_account.table.cosmos.azure.com/uttable51021601/$metadata#uttable51021601/@Element","odata.etag":"W/\"datetime''2021-05-04T19%3A43%3A34.3622152Z''\"","PartitionKey":"pk2","RowKey":"rk2","Value":100,"Timestamp":"2021-05-04T19:43:34.3622152Z"}'
     headers:
       content-type:
       - application/json;odata=minimalmetadata
       date:
-      - Mon, 03 May 2021 15:13:34 GMT
+      - Tue, 04 May 2021 19:43:33 GMT
       etag:
-      - W/"datetime'2021-05-03T15%3A13%3A35.7201416Z'"
+      - W/"datetime'2021-05-04T19%3A43%3A34.3622152Z'"
       location:
       - https://fake_cosmos_account.table.cosmos.azure.com/uttable51021601(PartitionKey='pk2',RowKey='rk2')
       server:
@@ -191,13 +191,13 @@ interactions:
       DataServiceVersion:
       - '3.0'
       Date:
-      - Mon, 03 May 2021 15:13:44 GMT
+      - Tue, 04 May 2021 19:43:34 GMT
       If-Match:
       - '*'
       User-Agent:
       - azsdk-python-data-tables/12.0.0b7 Python/3.9.0rc1 (Windows-10-10.0.19041-SP0)
       x-ms-date:
-      - Mon, 03 May 2021 15:13:44 GMT
+      - Tue, 04 May 2021 19:43:34 GMT
       x-ms-version:
       - '2019-02-02'
     method: DELETE
@@ -209,7 +209,7 @@ interactions:
       content-length:
       - '0'
       date:
-      - Mon, 03 May 2021 15:13:34 GMT
+      - Tue, 04 May 2021 19:43:33 GMT
       server:
       - Microsoft-HTTPAPI/2.0
     status:
@@ -227,11 +227,11 @@ interactions:
       DataServiceVersion:
       - '3.0'
       Date:
-      - Mon, 03 May 2021 15:13:44 GMT
+      - Tue, 04 May 2021 19:43:34 GMT
       User-Agent:
       - azsdk-python-data-tables/12.0.0b7 Python/3.9.0rc1 (Windows-10-10.0.19041-SP0)
       x-ms-date:
-      - Mon, 03 May 2021 15:13:44 GMT
+      - Tue, 04 May 2021 19:43:34 GMT
       x-ms-version:
       - '2019-02-02'
     method: GET
@@ -243,7 +243,7 @@ interactions:
       content-type:
       - application/json;odata=minimalmetadata
       date:
-      - Mon, 03 May 2021 15:13:34 GMT
+      - Tue, 04 May 2021 19:43:33 GMT
       server:
       - Microsoft-HTTPAPI/2.0
       transfer-encoding:
@@ -263,11 +263,11 @@ interactions:
       Content-Length:
       - '0'
       Date:
-      - Mon, 03 May 2021 15:13:44 GMT
+      - Tue, 04 May 2021 19:43:34 GMT
       User-Agent:
       - azsdk-python-data-tables/12.0.0b7 Python/3.9.0rc1 (Windows-10-10.0.19041-SP0)
       x-ms-date:
-      - Mon, 03 May 2021 15:13:44 GMT
+      - Tue, 04 May 2021 19:43:34 GMT
       x-ms-version:
       - '2019-02-02'
     method: DELETE
@@ -279,7 +279,7 @@ interactions:
       content-length:
       - '0'
       date:
-      - Mon, 03 May 2021 15:13:36 GMT
+      - Tue, 04 May 2021 19:43:34 GMT
       server:
       - Microsoft-HTTPAPI/2.0
     status:
@@ -297,11 +297,11 @@ interactions:
       DataServiceVersion:
       - '3.0'
       Date:
-      - Mon, 03 May 2021 15:13:45 GMT
+      - Tue, 04 May 2021 19:43:35 GMT
       User-Agent:
       - azsdk-python-data-tables/12.0.0b7 Python/3.9.0rc1 (Windows-10-10.0.19041-SP0)
       x-ms-date:
-      - Mon, 03 May 2021 15:13:45 GMT
+      - Tue, 04 May 2021 19:43:35 GMT
       x-ms-version:
       - '2019-02-02'
     method: GET
@@ -313,7 +313,7 @@ interactions:
       content-type:
       - application/json;odata=minimalmetadata
       date:
-      - Mon, 03 May 2021 15:13:36 GMT
+      - Tue, 04 May 2021 19:43:34 GMT
       server:
       - Microsoft-HTTPAPI/2.0
       transfer-encoding:
