@@ -314,7 +314,7 @@ class TableClient(TablesBaseClient):
                 entity = args[0]
             partition_key = entity['PartitionKey']
             row_key = entity['RowKey']
-        except (TypeError, IndexError):  # IndexError for if they send via pk, rk
+        except (TypeError, IndexError):
             partition_key = kwargs.pop('partition_key', None)
             if not partition_key:
                 partition_key = args[0]
