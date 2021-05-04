@@ -86,7 +86,8 @@ class EventHubSASTokenCredential(object):
 class EventhubAzureNamedKeyTokenCredentialAsync(object):
     """The named key credential used for authentication.
 
-    :param str credential: The AzureNamedKeyCredential that should be used
+    :param credential: The AzureNamedKeyCredential that should be used.
+    :type credential: ~azure.core.credentials.AzureNamedKeyCredential
     """
 
     def __init__(self, azure_named_key_credential):
