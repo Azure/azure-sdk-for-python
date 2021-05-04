@@ -221,14 +221,14 @@ class TestAllDocumentStatuses(AsyncDocumentTranslationTest):
 
         # check statuses
         counter = 0
-        curr_time = datetime.max
+        curr_time = datetime.min
         async for page in filtered_docs:
             page_docs = []
             async for doc in page:
                 counter += 1
                 page_docs.append(doc)
                 # assert ordering
-                assert(doc.created_on.replace(tzinfo=None) <= curr_time.replace(tzinfo=None))
+                assert(doc.created_on.replace(tzinfo=None) >= curr_time.replace(tzinfo=None))
                 curr_time = doc.created_on
                 # assert filters
                 self.assertIn(doc.status, statuses)

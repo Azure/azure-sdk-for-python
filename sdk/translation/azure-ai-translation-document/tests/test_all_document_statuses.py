@@ -193,14 +193,14 @@ class TestAllDocumentStatuses(DocumentTranslationTest):
 
         # check statuses
         counter = 0
-        curr_time = datetime.max
+        curr_time = datetime.min
         for page in filtered_docs:
             page_docs = list(page)
             self.assertLessEqual(len(page_docs), results_per_page) # assert paging
             for doc in page:
                 counter += 1
                 # assert ordering
-                assert(doc.created_on.replace(tzinfo=None) <= curr_time.replace(tzinfo=None))
+                assert(doc.created_on.replace(tzinfo=None) >= curr_time.replace(tzinfo=None))
                 curr_time = doc.created_on
                 # assert filters
                 self.assertIn(doc.status, statuses)

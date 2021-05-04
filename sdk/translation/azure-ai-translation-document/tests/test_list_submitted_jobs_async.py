@@ -241,14 +241,14 @@ class TestSubmittedJobs(AsyncDocumentTranslationTest):
             created_after=start,
             created_before=end,
             # ordering
-            order_by=["createdDateTimeUtc desc"],
+            order_by=["createdDateTimeUtc asc"],
             # paging
             skip=skip,
             results_per_page=results_per_page
         ).by_page()
 
         # check statuses
-        curr_time = datetime.max
+        curr_time = datetime.min
         async for page in submitted_jobs:
             counter = 0
             async for job in page:
@@ -257,7 +257,7 @@ class TestSubmittedJobs(AsyncDocumentTranslationTest):
                 self.assertIn(job.id, cancelled_job_ids)
                 self.assertNotIn(job.id, successful_job_ids)
                 # assert ordering
-                assert(job.created_on.replace(tzinfo=None) <= curr_time.replace(tzinfo=None))
+                assert(job.created_on.replace(tzinfo=None) >= curr_time.replace(tzinfo=None))
                 curr_time = job.created_on
                 # assert filters
                 assert(job.created_on.replace(tzinfo=None) <= end.replace(tzinfo=None))
