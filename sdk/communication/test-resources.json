@@ -13,14 +13,6 @@
             "defaultValue": "communication",
             "type": "string"
         },
-        "communicationServicesEndpointSuffix": {
-            "defaultValue": ".communication.azure.com",
-            "type": "string"
-        },
-        "subscriptionId": {
-            "defaultValue": "[subscription().subscriptionId]",
-            "type": "string"
-        },
         "testApplicationOid": {
             "type": "string",
             "metadata": {
@@ -72,10 +64,6 @@
         }
     ],
     "outputs": {
-        "AZURE_SUBSCRIPTION_ID": {
-            "type": "string",
-            "value": "[parameters('subscriptionId')]"
-        },
         "AZURE_TENANT_ID": {
             "type": "string",
             "value": "[parameters('tenantId')]"
@@ -91,10 +79,6 @@
         "COMMUNICATION_CONNECTION_STRING": {
             "type": "string",
             "value": "[listKeys(resourceId('Microsoft.Communication/CommunicationServices',variables('uniqueSubDomainName')), '2020-08-20-preview').primaryConnectionString]"
-        },
-        "COMMUNICATION_SERVICE_ENDPOINT": {
-            "type": "string",
-            "value": "[concat('https://', parameters('baseName'), '-', parameters('endpointPrefix'), parameters('communicationServicesEndpointSuffix'))]"
-          }
+        }
     }
 }
