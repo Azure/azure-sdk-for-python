@@ -32,6 +32,7 @@ from threading import Lock
 
 class AttestationClient(object):
     """Describes the interface for the per-tenant enclave service.
+
     :param str base_url: base url of the service
     :param credential: An object which can provide secrets for the attestation service
     :type credential: ~azure.core.credentials.TokenCredentials
@@ -65,6 +66,8 @@ class AttestationClient(object):
     def get_signing_certificates(self, **kwargs): 
         # type: (Any) ->List[AttestationSigner]
         """ Returns the set of signing certificates used to sign attestation tokens.
+
+        :return List[AttestationSigner]: A list of :class:`AttestationSigner` objects.
         """
         signing_certificates = self._client.signing_certificates.get(**kwargs)
         signers = []
@@ -84,18 +87,14 @@ class AttestationClient(object):
         # type:(bytes, AttestationData, AttestationData, str, Any) -> AttestationResponse[AttestationResult]
         """ Attests the validity of an SGX quote.
 
-        :param quote: An SGX quote generated from an Intel(tm) SGX enclave
-        :type quote: bytes
-        :param inittime_data: Data presented at the time that the SGX enclave was initialized.
-        :type inittime_data: AttestationData
-        :param runtime_data: Data presented at the time that the SGX quote was created.
-        :type runtime_data: AttestationData
-        :param draft_policy: "draft", or "experimental" policy to be used with
-        this attestation request. If this parameter is provided, then this 
-        policy document will be used for the attestation request.
-        This allows a caller to test various policy documents against actual data
-         before applying the policy document via the set_policy API.
-        :type draft_policy: str
+        :param bytes quote: An SGX quote generated from an Intel(tm) SGX enclave
+        :param AttestationData inittime_data: Data presented at the time that the SGX enclave was initialized.
+        :param AttestationData runtime_data: Data presented at the time that the SGX quote was created.
+        :param str draft_policy: "draft", or "experimental" policy to be used with
+            this attestation request. If this parameter is provided, then this 
+            policy document will be used for the attestation request.
+            This allows a caller to test various policy documents against actual data
+            before applying the policy document via the set_policy API.
         """
         runtime = None
         if runtime_data:
@@ -121,17 +120,17 @@ class AttestationClient(object):
         # type:(bytes, AttestationData, AttestationData, str, Any) -> AttestationResponse[AttestationResult]
         """ Attests the validity of an Open Enclave report.
 
-        :param quote: An open_enclave report generated from an Intel(tm) SGX enclave
-        :type quote: bytes
+        :param report: An open_enclave report generated from an Intel(tm) SGX enclave
+        :type report: bytes
         :param inittime_data: Data presented at the time that the SGX enclave was initialized.
         :type inittime_data: AttestationData
         :param runtime_data: Data presented at the time that the SGX quote was created.
         :type runtime_data: AttestationData
         :param draft_policy: "draft", or "experimental" policy to be used with
-        this attestation request. If this parameter is provided, then this 
-        policy document will be used for the attestation request.
-        This allows a caller to test various policy documents against actual data
-         before applying the policy document via the set_policy API.
+            this attestation request. If this parameter is provided, then this 
+            policy document will be used for the attestation request.
+            This allows a caller to test various policy documents against actual data
+            before applying the policy document via the set_policy API.
         :type draft_policy: str
         """
 

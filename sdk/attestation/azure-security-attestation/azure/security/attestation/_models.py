@@ -4,7 +4,6 @@ from cryptography.hazmat.primitives import serialization
 
 from cryptography.hazmat.primitives.asymmetric import padding
 from cryptography.hazmat.primitives.hashes import SHA256
-from typing_extensions import runtime
 from ._common import Base64Url
 from ._generated.models import PolicyResult, PolicyCertificatesModificationResult, AttestationResult, StoredAttestationPolicy, JSONWebKey
 from typing import Any, Callable, List, Optional, Type, TypeVar, Generic, Union
@@ -21,6 +20,10 @@ T = TypeVar('T', PolicyResult, AttestationResult, StoredAttestationPolicy, Polic
 class AttestationSigner(object):
     """ Represents a signing certificate returned by the Attestation Service.
 
+    :keyword List[str] certificates: A list of Base64 encoded X.509 Certificates which may be used
+        to sign an :class:`AttestationToken`. 
+    :keyword str key_id: A string which identifies a signing key, :seealso `https://tools.ietf.org/html/rfc7517#section-4.5`:
+
     """
     def __init__(self, certificates, key_id, **kwargs):
         # type: (List[bytes], str, Any) -> None
@@ -28,8 +31,7 @@ class AttestationSigner(object):
         self.key_id = key_id
 
 class AttestationData(object):
-    """
-    AttestationData represents an object passed as an input to the Attestation Service.
+    """ AttestationData represents an object passed as an input to the Attestation Service.
     
     AttestationData comes in two forms: Binary and JSON. To distinguish between the two, when an <see cref="AttestationData"/>
     object is created, the caller provides an indication that the input binary data will be treated as either JSON or Binary.
@@ -58,6 +60,7 @@ class AttestationData(object):
 
 class TokenValidationOptions(object):
     """ Validation options for an Attestation Token object.
+
     :keyword bool validate_token: if True, validate the token, otherwise return the token unvalidated.
     :keyword Callable[['AttestationToken', 'AttestationSigner'], bool] validation_callback: Callback to allow clients to perform custom validation of the token.
     :keyword bool validate_signature: if True, validate the signature of the token being validated.
@@ -123,10 +126,8 @@ class AttestationToken(Generic[T]):
     :var algorithm: Json Web Token Header "algorithm". See https://www.rfc-editor.org/rfc/rfc7515.html#section-4.1.1 for details. If the value of algorithm attribute is "none" it indicates that the token is unsecured.
     :vartype algorithm: str
 
-    :var content_type: Json Web Token Header "content type". See https://www.rfc-editor.org/rfc/rfc7515.html#section-4.1.10 for details.
-    :vartype content_type: str
-    :var type:Json Web Token Header "type". See https://www.rfc-editor.org/rfc/rfc7515.html#section-4.1.9 for details. If present, the value for this field is normally "JWT".
-    :vartype type: str
+    :var str content_type: Json Web Token Header "content type". See https://www.rfc-editor.org/rfc/rfc7515.html#section-4.1.10 for details.
+    :var str type: Json Web Token Header "type". See https://www.rfc-editor.org/rfc/rfc7515.html#section-4.1.9 for details. If present, the value for this field is normally "JWT".
 
     :var critical: Optional critical indicator - indicates that the token must be valid.
     :vartype critical: Optional[bool]
@@ -148,13 +149,10 @@ class AttestationToken(Generic[T]):
     :vartype certificate_thumbprint: str
     :var certificate_sha256_thumbprint: The Base64 encoded SHA256 hash of the certificate which signed this token.
     :vartype certificate_sha256_thumbprint: str
-
-    :var header_bytes: Decoded header of the attestation token. See https://tools.ietf.org/html/rfc7515 for more details.
+    :var bytes header_bytes: Decoded header of the attestation token. See https://tools.ietf.org/html/rfc7515 for more details.
     :vartype header_bytes: bytes
-
     :var body_bytes: Decoded body of the attestation token. See https://tools.ietf.org/html/rfc7515 for more details.
     :vartype body_bytes: bytes
-
     :var signature_bytes: Decoded signature of the attestation token. See https://tools.ietf.org/html/rfc7515 for more details.
     :vartype signature_bytes: bytes
 
@@ -257,21 +255,21 @@ class AttestationToken(Generic[T]):
     @property
     def key_url(self): 
         #type:() -> str | None
-        """ Json Web Token Header "Key URL". See https://www.rfc-editor.org/rfc/rfc7515.html#section-4.1.2 for details.
+        """ Json Web Token Header "Key URL". See :seealso:`https://www.rfc-editor.org/rfc/rfc7515.html#section-4.1.2` for details.
         """
         return self._header.get('jku')
 
     @property
     def x509_url(self): 
         #type:() -> str | None
-        """  Json Web Token Header "X509 URL". See https://www.rfc-editor.org/rfc/rfc7515.html#section-4.1.5 for details.
+        """  Json Web Token Header "X509 URL". See :seealso:`https://www.rfc-editor.org/rfc/rfc7515.html#section-4.1.5` for details.
         """
         return self._header.get('x5u')
 
     @property
     def type(self):
         #type:() -> str | None
-        """ Json Web Token Header "type". See https://www.rfc-editor.org/rfc/rfc7515.html#section-4.1.9 for details."""
+        """ Json Web Token Header "type". :seealso:`https://www.rfc-editor.org/rfc/rfc7515.html#section-4.1.9` for details."""
         return self._header.get('typ')
 
     @property
