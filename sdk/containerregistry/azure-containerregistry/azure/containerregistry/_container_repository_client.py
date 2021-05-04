@@ -48,8 +48,8 @@ class ContainerRepositoryClient(ContainerRegistryBaseClient):
         .. admonition:: Example:
 
             .. literalinclude:: ../samples/sample_create_client.py
-                :start-after: [START create_registry_client]
-                :end-before: [END create_registry_client]
+                :start-after: [START create_repository_client]
+                :end-before: [END create_repository_client]
                 :language: python
                 :dedent: 8
                 :caption: Instantiate an instance of `ContainerRepositoryClient`
