@@ -219,7 +219,7 @@ class AioHttpStreamDownloadGenerator(AsyncIterator):
                 pass
         try:
             chunk = await self.response.internal_response.content.read(self.block_size)
-            if self.pipeline:
+            if self._raw and self.pipeline:
                 self.pipeline.transport.session.auto_decompress = raw
             if not chunk:
                 raise _ResponseStopIteration()
