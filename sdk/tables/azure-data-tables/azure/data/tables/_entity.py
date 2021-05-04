@@ -4,11 +4,9 @@
 # license information.
 # --------------------------------------------------------------------------
 from enum import Enum
-from datetime import datetime
-from uuid import UUID
-import six
+from typing import Any, Dict, Union, NamedTuple
 
-from ._error import _ERROR_ATTRIBUTE_MISSING, _ERROR_VALUE_TOO_LARGE
+from ._error import _ERROR_ATTRIBUTE_MISSING
 
 
 class TableEntity(dict):
@@ -68,69 +66,6 @@ class TableEntity(dict):
         return dir({}) + list(self.keys())
 
 
-class EntityProperty(object):
-    """
-    An entity property. Used to explicitly set :class:`~EdmType` when necessary.
-
-    Values which require explicit typing are GUID, INT64, and BINARY. Other EdmTypes
-    may be explicitly create as EntityProperty objects but need not be. For example,
-    the below with both create STRING typed properties on the entity::
-        entity = TableEntity()
-        entity.a = 'b'
-        entity.x = EntityProperty('y', EdmType.STRING)
-    """
-
-    def __init__(
-        self,
-        value=None,  # type: Any
-        type=None,  # type: Union[str,EdmType]  pylint: disable=redefined-builtin
-    ):
-        """
-        Represents an Azure Table. Returned by list_tables.
-
-        :param type: The type of the property.
-        :type type: str or EdmType
-        :param Any value: The value of the property.
-        """
-        self.value = value
-        if type is not None:
-            self.type = type
-        elif isinstance(value, six.text_type):
-            try:
-                self.value = UUID(value)
-                self.type = EdmType.GUID
-            except ValueError:
-                self.type = EdmType.STRING
-        elif isinstance(value, six.binary_type):
-            self.type = EdmType.BINARY
-        elif isinstance(value, bool):
-            self.type = EdmType.BOOLEAN
-        elif isinstance(value, six.integer_types):
-            if value.bit_length() <= 32:
-                self.type = EdmType.INT32
-            else:
-                raise TypeError(
-                    _ERROR_VALUE_TOO_LARGE.format(str(value), EdmType.INT32)
-                )
-        elif isinstance(value, datetime):
-            self.type = EdmType.DATETIME
-        elif isinstance(value, float):
-            self.type = EdmType.DOUBLE
-        else:
-            raise ValueError(
-                """Type of {} could not be inferred. Acceptable types are bytes, int, uuid.UUID,
-                datetime, string, int32, int64, float, and boolean. Refer to
-                azure.data.tables.EdmType for more information.
-                """.format(
-                    value
-                )
-            )
-
-    def __eq__(self, other):
-        # type: (TableEntity) -> bool
-        return self.value == other.value and self.type == other.type
-
-
 class EdmType(str, Enum):
     """
     Used by :class:`~.EntityProperty` to represent the type of the entity property
@@ -160,3 +95,21 @@ class EdmType(str, Enum):
 
     BOOLEAN = "Edm.Boolean"
     """ Represents a boolean. This type will be inferred for Python bools. """
+
+
+EntityProperty = NamedTuple("EntityProperty", [("value", Any), ("edm_type", Union[str, EdmType])])
+"""
+An entity property. Used to explicitly set :class:`~EdmType` when necessary.
+
+Values which require explicit typing are GUID, INT64, and BINARY. Other EdmTypes
+may be explicitly create as EntityProperty objects but need not be. For example,
+the below with both create STRING typed properties on the entity::
+    entity = TableEntity()
+    entity.a = 'b'
+    entity.x = EntityProperty('y', EdmType.STRING)
+
+:param value:
+:type value: Any
+:param edm_type: Type of the value
+:type edm_type: str or :class:`~azure.data.tables.EdmType`
+"""
