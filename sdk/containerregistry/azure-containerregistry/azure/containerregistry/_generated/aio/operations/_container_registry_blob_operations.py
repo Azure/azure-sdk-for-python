@@ -8,11 +8,9 @@ import warnings
 
 from azure.core.exceptions import ClientAuthenticationError, HttpResponseError, ResourceExistsError, ResourceNotFoundError, map_error
 from azure.core.pipeline import PipelineResponse
-from azure.core.pipeline.transport import AsyncHttpResponse
-from azure.core.rest import HttpRequest
+from azure.core.pipeline.transport import AsyncHttpResponse, HttpRequest
 
 from ... import models as _models
-from ..._rest import *
 
 T = TypeVar('T')
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]]
@@ -43,7 +41,7 @@ class ContainerRegistryBlobOperations:
         self,
         name: str,
         digest: str,
-        **kwargs: Any
+        **kwargs
     ) -> Optional[IO]:
         """Retrieve the blob from the registry identified by digest.
 
@@ -61,19 +59,25 @@ class ContainerRegistryBlobOperations:
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
+        accept = "application/octet-stream"
 
-        request = build_containerregistryblob_get_blob_request(
-            name=name,
-            digest=digest,
-            template_url=self.get_blob.metadata['url'],
-            **kwargs
-        )
+        # Construct URL
+        url = self.get_blob.metadata['url']  # type: ignore
         path_format_arguments = {
             'url': self._serialize.url("self._config.url", self._config.url, 'str', skip_quote=True),
+            'name': self._serialize.url("name", name, 'str'),
+            'digest': self._serialize.url("digest", digest, 'str'),
         }
-        request.url = self._client.format_url(request.url, **path_format_arguments)
-        kwargs.pop("content_type", None)
+        url = self._client.format_url(url, **path_format_arguments)
 
+        # Construct parameters
+        query_parameters = {}  # type: Dict[str, Any]
+
+        # Construct headers
+        header_parameters = {}  # type: Dict[str, Any]
+        header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
+
+        request = self._client.get(url, query_parameters, header_parameters)
         pipeline_response = await self._client._pipeline.run(request, stream=True, **kwargs)
         response = pipeline_response.http_response
 
@@ -81,30 +85,27 @@ class ContainerRegistryBlobOperations:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             raise HttpResponseError(response=response)
 
-        deserialized = None
         response_headers = {}
+        deserialized = None
         if response.status_code == 200:
             response_headers['Content-Length']=self._deserialize('long', response.headers.get('Content-Length'))
             response_headers['Docker-Content-Digest']=self._deserialize('str', response.headers.get('Docker-Content-Digest'))
-
             deserialized = response.stream_download(self._client._pipeline)
 
         if response.status_code == 307:
             response_headers['Location']=self._deserialize('str', response.headers.get('Location'))
 
-
         if cls:
             return cls(pipeline_response, deserialized, response_headers)
 
         return deserialized
-
     get_blob.metadata = {'url': '/v2/{name}/blobs/{digest}'}  # type: ignore
 
     async def check_blob_exists(
         self,
         name: str,
         digest: str,
-        **kwargs: Any
+        **kwargs
     ) -> None:
         """Same as GET, except only the headers are returned.
 
@@ -122,19 +123,25 @@ class ContainerRegistryBlobOperations:
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
+        accept = "application/json"
 
-        request = build_containerregistryblob_check_blob_exists_request(
-            name=name,
-            digest=digest,
-            template_url=self.check_blob_exists.metadata['url'],
-            **kwargs
-        )
+        # Construct URL
+        url = self.check_blob_exists.metadata['url']  # type: ignore
         path_format_arguments = {
             'url': self._serialize.url("self._config.url", self._config.url, 'str', skip_quote=True),
+            'name': self._serialize.url("name", name, 'str'),
+            'digest': self._serialize.url("digest", digest, 'str'),
         }
-        request.url = self._client.format_url(request.url, **path_format_arguments)
-        kwargs.pop("content_type", None)
+        url = self._client.format_url(url, **path_format_arguments)
 
+        # Construct parameters
+        query_parameters = {}  # type: Dict[str, Any]
+
+        # Construct headers
+        header_parameters = {}  # type: Dict[str, Any]
+        header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
+
+        request = self._client.head(url, query_parameters, header_parameters)
         pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
 
@@ -148,10 +155,8 @@ class ContainerRegistryBlobOperations:
             response_headers['Content-Length']=self._deserialize('long', response.headers.get('Content-Length'))
             response_headers['Docker-Content-Digest']=self._deserialize('str', response.headers.get('Docker-Content-Digest'))
 
-
         if response.status_code == 307:
             response_headers['Location']=self._deserialize('str', response.headers.get('Location'))
-
 
         if cls:
             return cls(pipeline_response, None, response_headers)
@@ -162,7 +167,7 @@ class ContainerRegistryBlobOperations:
         self,
         name: str,
         digest: str,
-        **kwargs: Any
+        **kwargs
     ) -> IO:
         """Removes an already uploaded blob.
 
@@ -180,19 +185,25 @@ class ContainerRegistryBlobOperations:
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
+        accept = "application/octet-stream"
 
-        request = build_containerregistryblob_delete_blob_request(
-            name=name,
-            digest=digest,
-            template_url=self.delete_blob.metadata['url'],
-            **kwargs
-        )
+        # Construct URL
+        url = self.delete_blob.metadata['url']  # type: ignore
         path_format_arguments = {
             'url': self._serialize.url("self._config.url", self._config.url, 'str', skip_quote=True),
+            'name': self._serialize.url("name", name, 'str'),
+            'digest': self._serialize.url("digest", digest, 'str'),
         }
-        request.url = self._client.format_url(request.url, **path_format_arguments)
-        kwargs.pop("content_type", None)
+        url = self._client.format_url(url, **path_format_arguments)
 
+        # Construct parameters
+        query_parameters = {}  # type: Dict[str, Any]
+
+        # Construct headers
+        header_parameters = {}  # type: Dict[str, Any]
+        header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
+
+        request = self._client.delete(url, query_parameters, header_parameters)
         pipeline_response = await self._client._pipeline.run(request, stream=True, **kwargs)
         response = pipeline_response.http_response
 
@@ -202,14 +213,12 @@ class ContainerRegistryBlobOperations:
 
         response_headers = {}
         response_headers['Docker-Content-Digest']=self._deserialize('str', response.headers.get('Docker-Content-Digest'))
-
         deserialized = response.stream_download(self._client._pipeline)
 
         if cls:
             return cls(pipeline_response, deserialized, response_headers)
 
         return deserialized
-
     delete_blob.metadata = {'url': '/v2/{name}/blobs/{digest}'}  # type: ignore
 
     async def mount_blob(
@@ -217,7 +226,7 @@ class ContainerRegistryBlobOperations:
         name: str,
         from_parameter: str,
         mount: str,
-        **kwargs: Any
+        **kwargs
     ) -> None:
         """Mount a blob identified by the ``mount`` parameter from another repository.
 
@@ -237,20 +246,26 @@ class ContainerRegistryBlobOperations:
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
+        accept = "application/json"
 
-        request = build_containerregistryblob_mount_blob_request(
-            name=name,
-            from_parameter=from_parameter,
-            mount=mount,
-            template_url=self.mount_blob.metadata['url'],
-            **kwargs
-        )
+        # Construct URL
+        url = self.mount_blob.metadata['url']  # type: ignore
         path_format_arguments = {
             'url': self._serialize.url("self._config.url", self._config.url, 'str', skip_quote=True),
+            'name': self._serialize.url("name", name, 'str'),
         }
-        request.url = self._client.format_url(request.url, **path_format_arguments)
-        kwargs.pop("content_type", None)
+        url = self._client.format_url(url, **path_format_arguments)
 
+        # Construct parameters
+        query_parameters = {}  # type: Dict[str, Any]
+        query_parameters['from'] = self._serialize.query("from_parameter", from_parameter, 'str')
+        query_parameters['mount'] = self._serialize.query("mount", mount, 'str')
+
+        # Construct headers
+        header_parameters = {}  # type: Dict[str, Any]
+        header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
+
+        request = self._client.post(url, query_parameters, header_parameters)
         pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
 
@@ -264,7 +279,6 @@ class ContainerRegistryBlobOperations:
         response_headers['Docker-Upload-UUID']=self._deserialize('str', response.headers.get('Docker-Upload-UUID'))
         response_headers['Docker-Content-Digest']=self._deserialize('str', response.headers.get('Docker-Content-Digest'))
 
-
         if cls:
             return cls(pipeline_response, None, response_headers)
 
@@ -273,7 +287,7 @@ class ContainerRegistryBlobOperations:
     async def get_upload_status(
         self,
         location: str,
-        **kwargs: Any
+        **kwargs
     ) -> None:
         """Retrieve status of upload identified by uuid. The primary purpose of this endpoint is to
         resolve the current status of a resumable upload.
@@ -291,18 +305,24 @@ class ContainerRegistryBlobOperations:
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
+        accept = "application/json"
 
-        request = build_containerregistryblob_get_upload_status_request(
-            location=location,
-            template_url=self.get_upload_status.metadata['url'],
-            **kwargs
-        )
+        # Construct URL
+        url = self.get_upload_status.metadata['url']  # type: ignore
         path_format_arguments = {
             'url': self._serialize.url("self._config.url", self._config.url, 'str', skip_quote=True),
+            'nextBlobUuidLink': self._serialize.url("location", location, 'str', skip_quote=True),
         }
-        request.url = self._client.format_url(request.url, **path_format_arguments)
-        kwargs.pop("content_type", None)
+        url = self._client.format_url(url, **path_format_arguments)
 
+        # Construct parameters
+        query_parameters = {}  # type: Dict[str, Any]
+
+        # Construct headers
+        header_parameters = {}  # type: Dict[str, Any]
+        header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
+
+        request = self._client.get(url, query_parameters, header_parameters)
         pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
 
@@ -315,7 +335,6 @@ class ContainerRegistryBlobOperations:
         response_headers['Range']=self._deserialize('str', response.headers.get('Range'))
         response_headers['Docker-Upload-UUID']=self._deserialize('str', response.headers.get('Docker-Upload-UUID'))
 
-
         if cls:
             return cls(pipeline_response, None, response_headers)
 
@@ -325,7 +344,7 @@ class ContainerRegistryBlobOperations:
         self,
         location: str,
         value: IO,
-        **kwargs: Any
+        **kwargs
     ) -> None:
         """Upload a stream of data without completing the upload.
 
@@ -344,24 +363,28 @@ class ContainerRegistryBlobOperations:
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-
         content_type = kwargs.pop("content_type", "application/octet-stream")
-        content = value
+        accept = "application/json"
 
-
-        request = build_containerregistryblob_upload_chunk_request(
-            location=location,
-            content=content,
-            content_type=content_type,
-            template_url=self.upload_chunk.metadata['url'],
-            **kwargs
-        )
+        # Construct URL
+        url = self.upload_chunk.metadata['url']  # type: ignore
         path_format_arguments = {
             'url': self._serialize.url("self._config.url", self._config.url, 'str', skip_quote=True),
+            'nextBlobUuidLink': self._serialize.url("location", location, 'str', skip_quote=True),
         }
-        request.url = self._client.format_url(request.url, **path_format_arguments)
-        kwargs.pop("content_type", None)
+        url = self._client.format_url(url, **path_format_arguments)
 
+        # Construct parameters
+        query_parameters = {}  # type: Dict[str, Any]
+
+        # Construct headers
+        header_parameters = {}  # type: Dict[str, Any]
+        header_parameters['Content-Type'] = self._serialize.header("content_type", content_type, 'str')
+        header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
+
+        body_content_kwargs = {}  # type: Dict[str, Any]
+        body_content_kwargs['stream_content'] = value
+        request = self._client.patch(url, query_parameters, header_parameters, **body_content_kwargs)
         pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
 
@@ -375,7 +398,6 @@ class ContainerRegistryBlobOperations:
         response_headers['Range']=self._deserialize('str', response.headers.get('Range'))
         response_headers['Docker-Upload-UUID']=self._deserialize('str', response.headers.get('Docker-Upload-UUID'))
 
-
         if cls:
             return cls(pipeline_response, None, response_headers)
 
@@ -386,7 +408,7 @@ class ContainerRegistryBlobOperations:
         digest: str,
         location: str,
         value: Optional[IO] = None,
-        **kwargs: Any
+        **kwargs
     ) -> None:
         """Complete the upload, providing all the data in the body, if necessary. A request without a body
         will just complete the upload with previously uploaded content.
@@ -408,25 +430,29 @@ class ContainerRegistryBlobOperations:
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-
         content_type = kwargs.pop("content_type", "application/octet-stream")
-        content = value
+        accept = "application/json"
 
-
-        request = build_containerregistryblob_complete_upload_request(
-            location=location,
-            digest=digest,
-            content=content,
-            content_type=content_type,
-            template_url=self.complete_upload.metadata['url'],
-            **kwargs
-        )
+        # Construct URL
+        url = self.complete_upload.metadata['url']  # type: ignore
         path_format_arguments = {
             'url': self._serialize.url("self._config.url", self._config.url, 'str', skip_quote=True),
+            'nextBlobUuidLink': self._serialize.url("location", location, 'str', skip_quote=True),
         }
-        request.url = self._client.format_url(request.url, **path_format_arguments)
-        kwargs.pop("content_type", None)
+        url = self._client.format_url(url, **path_format_arguments)
 
+        # Construct parameters
+        query_parameters = {}  # type: Dict[str, Any]
+        query_parameters['digest'] = self._serialize.query("digest", digest, 'str')
+
+        # Construct headers
+        header_parameters = {}  # type: Dict[str, Any]
+        header_parameters['Content-Type'] = self._serialize.header("content_type", content_type, 'str')
+        header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
+
+        body_content_kwargs = {}  # type: Dict[str, Any]
+        body_content_kwargs['stream_content'] = value
+        request = self._client.put(url, query_parameters, header_parameters, **body_content_kwargs)
         pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
 
@@ -440,7 +466,6 @@ class ContainerRegistryBlobOperations:
         response_headers['Range']=self._deserialize('str', response.headers.get('Range'))
         response_headers['Docker-Content-Digest']=self._deserialize('str', response.headers.get('Docker-Content-Digest'))
 
-
         if cls:
             return cls(pipeline_response, None, response_headers)
 
@@ -449,7 +474,7 @@ class ContainerRegistryBlobOperations:
     async def cancel_upload(
         self,
         location: str,
-        **kwargs: Any
+        **kwargs
     ) -> None:
         """Cancel outstanding upload processes, releasing associated resources. If this is not called, the
         unfinished uploads will eventually timeout.
@@ -467,18 +492,24 @@ class ContainerRegistryBlobOperations:
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
+        accept = "application/json"
 
-        request = build_containerregistryblob_cancel_upload_request(
-            location=location,
-            template_url=self.cancel_upload.metadata['url'],
-            **kwargs
-        )
+        # Construct URL
+        url = self.cancel_upload.metadata['url']  # type: ignore
         path_format_arguments = {
             'url': self._serialize.url("self._config.url", self._config.url, 'str', skip_quote=True),
+            'nextBlobUuidLink': self._serialize.url("location", location, 'str', skip_quote=True),
         }
-        request.url = self._client.format_url(request.url, **path_format_arguments)
-        kwargs.pop("content_type", None)
+        url = self._client.format_url(url, **path_format_arguments)
 
+        # Construct parameters
+        query_parameters = {}  # type: Dict[str, Any]
+
+        # Construct headers
+        header_parameters = {}  # type: Dict[str, Any]
+        header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
+
+        request = self._client.delete(url, query_parameters, header_parameters)
         pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
 
@@ -495,7 +526,7 @@ class ContainerRegistryBlobOperations:
     async def start_upload(
         self,
         name: str,
-        **kwargs: Any
+        **kwargs
     ) -> None:
         """Initiate a resumable blob upload with an empty request body.
 
@@ -511,18 +542,24 @@ class ContainerRegistryBlobOperations:
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
+        accept = "application/json"
 
-        request = build_containerregistryblob_start_upload_request(
-            name=name,
-            template_url=self.start_upload.metadata['url'],
-            **kwargs
-        )
+        # Construct URL
+        url = self.start_upload.metadata['url']  # type: ignore
         path_format_arguments = {
             'url': self._serialize.url("self._config.url", self._config.url, 'str', skip_quote=True),
+            'name': self._serialize.url("name", name, 'str'),
         }
-        request.url = self._client.format_url(request.url, **path_format_arguments)
-        kwargs.pop("content_type", None)
+        url = self._client.format_url(url, **path_format_arguments)
 
+        # Construct parameters
+        query_parameters = {}  # type: Dict[str, Any]
+
+        # Construct headers
+        header_parameters = {}  # type: Dict[str, Any]
+        header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
+
+        request = self._client.post(url, query_parameters, header_parameters)
         pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
 
@@ -536,7 +573,6 @@ class ContainerRegistryBlobOperations:
         response_headers['Range']=self._deserialize('str', response.headers.get('Range'))
         response_headers['Docker-Upload-UUID']=self._deserialize('str', response.headers.get('Docker-Upload-UUID'))
 
-
         if cls:
             return cls(pipeline_response, None, response_headers)
 
@@ -547,7 +583,7 @@ class ContainerRegistryBlobOperations:
         name: str,
         digest: str,
         range: str,
-        **kwargs: Any
+        **kwargs
     ) -> IO:
         """Retrieve the blob from the registry identified by ``digest``. This endpoint may also support
         RFC7233 compliant range requests. Support can be detected by issuing a HEAD request. If the
@@ -571,20 +607,26 @@ class ContainerRegistryBlobOperations:
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
+        accept = "application/octet-stream"
 
-        request = build_containerregistryblob_get_chunk_request(
-            name=name,
-            digest=digest,
-            range=range,
-            template_url=self.get_chunk.metadata['url'],
-            **kwargs
-        )
+        # Construct URL
+        url = self.get_chunk.metadata['url']  # type: ignore
         path_format_arguments = {
             'url': self._serialize.url("self._config.url", self._config.url, 'str', skip_quote=True),
+            'name': self._serialize.url("name", name, 'str'),
+            'digest': self._serialize.url("digest", digest, 'str'),
         }
-        request.url = self._client.format_url(request.url, **path_format_arguments)
-        kwargs.pop("content_type", None)
+        url = self._client.format_url(url, **path_format_arguments)
 
+        # Construct parameters
+        query_parameters = {}  # type: Dict[str, Any]
+
+        # Construct headers
+        header_parameters = {}  # type: Dict[str, Any]
+        header_parameters['Range'] = self._serialize.header("range", range, 'str')
+        header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
+
+        request = self._client.get(url, query_parameters, header_parameters)
         pipeline_response = await self._client._pipeline.run(request, stream=True, **kwargs)
         response = pipeline_response.http_response
 
@@ -595,14 +637,12 @@ class ContainerRegistryBlobOperations:
         response_headers = {}
         response_headers['Content-Length']=self._deserialize('long', response.headers.get('Content-Length'))
         response_headers['Content-Range']=self._deserialize('str', response.headers.get('Content-Range'))
-
         deserialized = response.stream_download(self._client._pipeline)
 
         if cls:
             return cls(pipeline_response, deserialized, response_headers)
 
         return deserialized
-
     get_chunk.metadata = {'url': '/v2/{name}/blobs/{digest}'}  # type: ignore
 
     async def check_chunk_exists(
@@ -610,7 +650,7 @@ class ContainerRegistryBlobOperations:
         name: str,
         digest: str,
         range: str,
-        **kwargs: Any
+        **kwargs
     ) -> None:
         """Same as GET, except only the headers are returned.
 
@@ -631,20 +671,26 @@ class ContainerRegistryBlobOperations:
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
+        accept = "application/json"
 
-        request = build_containerregistryblob_check_chunk_exists_request(
-            name=name,
-            digest=digest,
-            range=range,
-            template_url=self.check_chunk_exists.metadata['url'],
-            **kwargs
-        )
+        # Construct URL
+        url = self.check_chunk_exists.metadata['url']  # type: ignore
         path_format_arguments = {
             'url': self._serialize.url("self._config.url", self._config.url, 'str', skip_quote=True),
+            'name': self._serialize.url("name", name, 'str'),
+            'digest': self._serialize.url("digest", digest, 'str'),
         }
-        request.url = self._client.format_url(request.url, **path_format_arguments)
-        kwargs.pop("content_type", None)
+        url = self._client.format_url(url, **path_format_arguments)
 
+        # Construct parameters
+        query_parameters = {}  # type: Dict[str, Any]
+
+        # Construct headers
+        header_parameters = {}  # type: Dict[str, Any]
+        header_parameters['Range'] = self._serialize.header("range", range, 'str')
+        header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
+
+        request = self._client.head(url, query_parameters, header_parameters)
         pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
 
@@ -656,7 +702,6 @@ class ContainerRegistryBlobOperations:
         response_headers = {}
         response_headers['Content-Length']=self._deserialize('long', response.headers.get('Content-Length'))
         response_headers['Content-Range']=self._deserialize('str', response.headers.get('Content-Range'))
-
 
         if cls:
             return cls(pipeline_response, None, response_headers)

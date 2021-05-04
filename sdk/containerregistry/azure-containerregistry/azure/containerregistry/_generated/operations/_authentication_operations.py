@@ -8,11 +8,9 @@ import warnings
 
 from azure.core.exceptions import ClientAuthenticationError, HttpResponseError, ResourceExistsError, ResourceNotFoundError, map_error
 from azure.core.pipeline import PipelineResponse
-from azure.core.pipeline.transport import HttpResponse
-from azure.core.rest import HttpRequest
+from azure.core.pipeline.transport import HttpRequest, HttpResponse
 
 from .. import models as _models
-from .._rest import *
 
 if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
@@ -67,25 +65,32 @@ class AuthenticationOperations(object):
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-
         content_type = kwargs.pop("content_type", "application/x-www-form-urlencoded")
         grant_type = "access_token"
-        content = self._serialize.body(grant_type, 'str')
-        content = json.dumps(content)
+        accept = "application/json"
 
-
-        request = build_authentication_exchange_aad_access_token_for_acr_refresh_token_request(
-            data=data,
-            content_type=content_type,
-            template_url=self.exchange_aad_access_token_for_acr_refresh_token.metadata['url'],
-            **kwargs
-        )
+        # Construct URL
+        url = self.exchange_aad_access_token_for_acr_refresh_token.metadata['url']  # type: ignore
         path_format_arguments = {
             'url': self._serialize.url("self._config.url", self._config.url, 'str', skip_quote=True),
         }
-        request.url = self._client.format_url(request.url, **path_format_arguments)
-        kwargs.pop("content_type", None)
+        url = self._client.format_url(url, **path_format_arguments)
 
+        # Construct parameters
+        query_parameters = {}  # type: Dict[str, Any]
+
+        # Construct headers
+        header_parameters = {}  # type: Dict[str, Any]
+        header_parameters['Content-Type'] = self._serialize.header("content_type", content_type, 'str')
+        header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
+
+        # Construct form data
+        _form_content = {
+            'grant_type': grant_type,
+            'service': service,
+            'access_token': access_token,
+        }
+        request = self._client.post(url, query_parameters, header_parameters, form_content=_form_content)
         pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
 
@@ -100,7 +105,6 @@ class AuthenticationOperations(object):
             return cls(pipeline_response, deserialized, {})
 
         return deserialized
-
     exchange_aad_access_token_for_acr_refresh_token.metadata = {'url': '/oauth2/exchange'}  # type: ignore
 
     def exchange_acr_refresh_token_for_acr_access_token(
@@ -131,25 +135,33 @@ class AuthenticationOperations(object):
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-
         content_type = kwargs.pop("content_type", "application/x-www-form-urlencoded")
         grant_type = "refresh_token"
-        content = self._serialize.body(grant_type, 'str')
-        content = json.dumps(content)
+        accept = "application/json"
 
-
-        request = build_authentication_exchange_acr_refresh_token_for_acr_access_token_request(
-            data=data,
-            content_type=content_type,
-            template_url=self.exchange_acr_refresh_token_for_acr_access_token.metadata['url'],
-            **kwargs
-        )
+        # Construct URL
+        url = self.exchange_acr_refresh_token_for_acr_access_token.metadata['url']  # type: ignore
         path_format_arguments = {
             'url': self._serialize.url("self._config.url", self._config.url, 'str', skip_quote=True),
         }
-        request.url = self._client.format_url(request.url, **path_format_arguments)
-        kwargs.pop("content_type", None)
+        url = self._client.format_url(url, **path_format_arguments)
 
+        # Construct parameters
+        query_parameters = {}  # type: Dict[str, Any]
+
+        # Construct headers
+        header_parameters = {}  # type: Dict[str, Any]
+        header_parameters['Content-Type'] = self._serialize.header("content_type", content_type, 'str')
+        header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
+
+        # Construct form data
+        _form_content = {
+            'grant_type': grant_type,
+            'service': service,
+            'scope': scope,
+            'refresh_token': refresh_token,
+        }
+        request = self._client.post(url, query_parameters, header_parameters, form_content=_form_content)
         pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
 
@@ -164,5 +176,4 @@ class AuthenticationOperations(object):
             return cls(pipeline_response, deserialized, {})
 
         return deserialized
-
     exchange_acr_refresh_token_for_acr_access_token.metadata = {'url': '/oauth2/token'}  # type: ignore
