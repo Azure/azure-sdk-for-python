@@ -6,7 +6,12 @@ The preview features related to AMQPAnnotatedMessage introduced in 7.2.0b1 are n
 
 **New Features**
 
+* Added support for using `azure.core.credentials.AzureNamedKeyCredential` as credential for authenticating the clients.
 * Support for using `azure.core.credentials.AzureSasCredential` as credential for authenticating the clients is now GA.
+
+**Notes**
+
+* Updated azure-core dependency to 1.14.0.
 
 ## 7.2.0b1 (2021-04-07)
 
