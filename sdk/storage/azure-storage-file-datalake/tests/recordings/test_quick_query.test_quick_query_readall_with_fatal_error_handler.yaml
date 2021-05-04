@@ -11,15 +11,15 @@ interactions:
       Content-Length:
       - '0'
       User-Agent:
-      - azsdk-python-storage-dfs/12.1.0b1 Python/3.7.3 (Windows-10-10.0.18362-SP0)
+      - azsdk-python-storage-dfs/12.2.1 Python/3.7.3 (Windows-10-10.0.19041-SP0)
       x-ms-client-request-id:
-      - 8becf6e2-ce00-11ea-8378-001a7dda7113
+      - 20c445a4-38ce-11eb-a707-001a7dda7113
       x-ms-date:
-      - Fri, 24 Jul 2020 22:53:53 GMT
+      - Mon, 07 Dec 2020 20:52:32 GMT
       x-ms-properties:
       - ''
       x-ms-version:
-      - '2019-12-12'
+      - '2020-02-10'
     method: PUT
     uri: https://storagename.dfs.core.windows.net/utqqcontainer968b1b4d/csvfile968b1b4d?resource=file
   response:
@@ -29,17 +29,17 @@ interactions:
       Content-Length:
       - '0'
       Date:
-      - Fri, 24 Jul 2020 22:53:53 GMT
+      - Mon, 07 Dec 2020 20:52:32 GMT
       ETag:
-      - '"0x8D8302470483151"'
+      - '"0x8D89AF20548443E"'
       Last-Modified:
-      - Fri, 24 Jul 2020 22:53:53 GMT
+      - Mon, 07 Dec 2020 20:52:33 GMT
       Server:
       - Windows-Azure-HDFS/1.0 Microsoft-HTTPAPI/2.0
       x-ms-request-id:
-      - c3264c14-601f-0019-640d-62cd2f000000
+      - 6d635e37-c01f-0044-15da-cc7c1e000000
       x-ms-version:
-      - '2019-12-12'
+      - '2020-02-10'
     status:
       code: 201
       message: Created
@@ -61,13 +61,13 @@ interactions:
       Content-Type:
       - application/json; charset=utf-8
       User-Agent:
-      - azsdk-python-storage-dfs/12.1.0b1 Python/3.7.3 (Windows-10-10.0.18362-SP0)
+      - azsdk-python-storage-dfs/12.2.1 Python/3.7.3 (Windows-10-10.0.19041-SP0)
       x-ms-client-request-id:
-      - 8c197428-ce00-11ea-8a6c-001a7dda7113
+      - 211b6936-38ce-11eb-8dcd-001a7dda7113
       x-ms-date:
-      - Fri, 24 Jul 2020 22:53:53 GMT
+      - Mon, 07 Dec 2020 20:52:33 GMT
       x-ms-version:
-      - '2019-12-12'
+      - '2020-02-10'
     method: PATCH
     uri: https://storagename.dfs.core.windows.net/utqqcontainer968b1b4d/csvfile968b1b4d?position=0&action=append
   response:
@@ -77,15 +77,15 @@ interactions:
       Content-Length:
       - '0'
       Date:
-      - Fri, 24 Jul 2020 22:53:53 GMT
+      - Mon, 07 Dec 2020 20:52:32 GMT
       Server:
       - Windows-Azure-HDFS/1.0 Microsoft-HTTPAPI/2.0
       x-ms-request-id:
-      - c3264c15-601f-0019-650d-62cd2f000000
+      - 6d635e3a-c01f-0044-18da-cc7c1e000000
       x-ms-request-server-encrypted:
       - 'true'
       x-ms-version:
-      - '2019-12-12'
+      - '2020-02-10'
     status:
       code: 202
       message: Accepted
@@ -101,17 +101,17 @@ interactions:
       Content-Length:
       - '0'
       If-Match:
-      - '"0x8D8302470483151"'
+      - '"0x8D89AF20548443E"'
       User-Agent:
-      - azsdk-python-storage-dfs/12.1.0b1 Python/3.7.3 (Windows-10-10.0.18362-SP0)
+      - azsdk-python-storage-dfs/12.2.1 Python/3.7.3 (Windows-10-10.0.19041-SP0)
       x-ms-client-request-id:
-      - 8c276bd4-ce00-11ea-a3f4-001a7dda7113
+      - 2130399c-38ce-11eb-b7c8-001a7dda7113
       x-ms-date:
-      - Fri, 24 Jul 2020 22:53:53 GMT
+      - Mon, 07 Dec 2020 20:52:33 GMT
       x-ms-version:
-      - '2019-12-12'
+      - '2020-02-10'
     method: PATCH
-    uri: https://storagename.dfs.core.windows.net/utqqcontainer968b1b4d/csvfile968b1b4d?position=43&action=flush
+    uri: https://storagename.dfs.core.windows.net/utqqcontainer968b1b4d/csvfile968b1b4d?position=43&close=true&action=flush
   response:
     body:
       string: ''
@@ -119,19 +119,19 @@ interactions:
       Content-Length:
       - '0'
       Date:
-      - Fri, 24 Jul 2020 22:53:53 GMT
+      - Mon, 07 Dec 2020 20:52:33 GMT
       ETag:
-      - '"0x8D830247065C2CC"'
+      - '"0x8D89AF205796A7D"'
       Last-Modified:
-      - Fri, 24 Jul 2020 22:53:53 GMT
+      - Mon, 07 Dec 2020 20:52:33 GMT
       Server:
       - Windows-Azure-HDFS/1.0 Microsoft-HTTPAPI/2.0
       x-ms-request-id:
-      - c3264c16-601f-0019-660d-62cd2f000000
+      - 6d635e3b-c01f-0044-19da-cc7c1e000000
       x-ms-request-server-encrypted:
       - 'false'
       x-ms-version:
-      - '2019-12-12'
+      - '2020-02-10'
     status:
       code: 200
       message: OK
@@ -153,13 +153,13 @@ interactions:
       Content-Type:
       - application/xml; charset=utf-8
       User-Agent:
-      - azsdk-python-storage-dfs/12.1.0b1 Python/3.7.3 (Windows-10-10.0.18362-SP0)
+      - azsdk-python-storage-dfs/12.2.1 Python/3.7.3 (Windows-10-10.0.19041-SP0)
       x-ms-client-request-id:
-      - 8c37350c-ce00-11ea-9030-001a7dda7113
+      - 214cac24-38ce-11eb-80a2-001a7dda7113
       x-ms-date:
-      - Fri, 24 Jul 2020 22:53:53 GMT
+      - Mon, 07 Dec 2020 20:52:33 GMT
       x-ms-version:
-      - '2019-12-12'
+      - '2020-02-10'
     method: POST
     uri: https://storagename.blob.core.windows.net/utqqcontainer968b1b4d/csvfile968b1b4d?comp=query
   response:
@@ -199,20 +199,21 @@ interactions:
         aGF0IGFsbCByZXN1bHRzIGhhdmUgYmVlbiBzZW50LiIsCiAgICAiZmllbGRzIjogWwogICAgICB7
         CiAgICAgICAgIm5hbWUiOiAidG90YWxCeXRlcyIsCiAgICAgICAgInR5cGUiOiAibG9uZyIsCiAg
         ICAgICAgImRvYyI6ICJUaGUgdG90YWwgbnVtYmVyIG9mIGJ5dGVzIHRvIGJlIHNjYW5uZWQgaW4g
-        dGhpcyBxdWVyeSIKICAgICAgfQogICAgXQogIH0KXQoAi+YPPdQSRUaa0quIp4g4UgIEAACL5g89
-        1BJFRprSq4iniDhSAlYCARpJbnRlcm5hbEVycm9yMkludGVybmFsIHBhcnNlIGV4Y2VwdGlvbi4A
-        i+YPPdQSRUaa0quIp4g4UgIGBFZWi+YPPdQSRUaa0quIp4g4UgIEBlaL5g891BJFRprSq4iniDhS
+        dGhpcyBxdWVyeSIKICAgICAgfQogICAgXQogIH0KXQoANDeIMGlUsUG7PDIOp9NkqAIEAAA0N4gw
+        aVSxQbs8Mg6n02SoAo4BAgEUUGFyc2VFcnJvcnBVbmV4cGVjdGVkIHRva2VuICduJyBhdCBbYnl0
+        ZTogMV0uIEV4cGVjdGluZyB0b2tlbiAnIicuIAA0N4gwaVSxQbs8Mg6n02SoAgYEVlY0N4gwaVSx
+        Qbs8Mg6n02SoAgQGVjQ3iDBpVLFBuzwyDqfTZKg=
     headers:
       Accept-Ranges:
       - bytes
       Content-Type:
       - avro/binary
       Date:
-      - Fri, 24 Jul 2020 22:53:53 GMT
+      - Mon, 07 Dec 2020 20:52:33 GMT
       ETag:
-      - '"0x8D830247065C2CC"'
+      - '"0x8D89AF205796A7D"'
       Last-Modified:
-      - Fri, 24 Jul 2020 22:53:53 GMT
+      - Mon, 07 Dec 2020 20:52:33 GMT
       Server:
       - Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
       Transfer-Encoding:
@@ -220,15 +221,17 @@ interactions:
       x-ms-blob-type:
       - BlockBlob
       x-ms-creation-time:
-      - Fri, 24 Jul 2020 22:53:53 GMT
+      - Mon, 07 Dec 2020 20:52:33 GMT
       x-ms-lease-state:
       - available
       x-ms-lease-status:
       - unlocked
       x-ms-request-id:
-      - a34c1a01-901e-0032-4e0d-624de3000000
+      - 72abb1f9-101e-00a3-3eda-cc93e4000000
+      x-ms-server-encrypted:
+      - 'false'
       x-ms-version:
-      - '2019-12-12'
+      - '2020-02-10'
     status:
       code: 200
       message: OK

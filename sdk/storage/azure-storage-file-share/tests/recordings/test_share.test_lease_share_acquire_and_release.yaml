@@ -1,0 +1,130 @@
+interactions:
+- request:
+    body: null
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '0'
+      User-Agent:
+      - azsdk-python-storage-file-share/12.2.0 Python/3.8.5 (Windows-10-10.0.18362-SP0)
+      x-ms-date:
+      - Fri, 11 Sep 2020 01:35:52 GMT
+      x-ms-version:
+      - '2020-02-10'
+    method: PUT
+    uri: https://storagename.file.core.windows.net/testcb2f1317?restype=share
+  response:
+    body:
+      string: ''
+    headers:
+      content-length:
+      - '0'
+      date:
+      - Fri, 11 Sep 2020 01:35:53 GMT
+      etag:
+      - '"0x8D855F305C89D8C"'
+      last-modified:
+      - Fri, 11 Sep 2020 01:35:53 GMT
+      server:
+      - Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
+      x-ms-version:
+      - '2020-02-10'
+    status:
+      code: 201
+      message: Created
+- request:
+    body: null
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '0'
+      User-Agent:
+      - azsdk-python-storage-file-share/12.2.0 Python/3.8.5 (Windows-10-10.0.18362-SP0)
+      x-ms-date:
+      - Fri, 11 Sep 2020 01:35:53 GMT
+      x-ms-lease-action:
+      - acquire
+      x-ms-lease-duration:
+      - '-1'
+      x-ms-proposed-lease-id:
+      - 6816fa25-bfb6-4069-afde-775923c277e7
+      x-ms-version:
+      - '2020-02-10'
+    method: PUT
+    uri: https://storagename.file.core.windows.net/testcb2f1317?comp=lease&restype=share
+  response:
+    body:
+      string: ''
+    headers:
+      content-length:
+      - '0'
+      date:
+      - Fri, 11 Sep 2020 01:35:53 GMT
+      etag:
+      - '"0x8D855F305C89D8C"'
+      last-modified:
+      - Fri, 11 Sep 2020 01:35:53 GMT
+      server:
+      - Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
+      x-ms-lease-id:
+      - 6816fa25-bfb6-4069-afde-775923c277e7
+      x-ms-version:
+      - '2020-02-10'
+    status:
+      code: 201
+      message: Created
+- request:
+    body: null
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '0'
+      User-Agent:
+      - azsdk-python-storage-file-share/12.2.0 Python/3.8.5 (Windows-10-10.0.18362-SP0)
+      x-ms-date:
+      - Fri, 11 Sep 2020 01:35:53 GMT
+      x-ms-lease-action:
+      - renew
+      x-ms-lease-id:
+      - 6816fa25-bfb6-4069-afde-775923c277e7
+      x-ms-version:
+      - '2020-02-10'
+    method: PUT
+    uri: https://storagename.file.core.windows.net/testcb2f1317?comp=lease&restype=share
+  response:
+    body:
+      string: ''
+    headers:
+      content-length:
+      - '0'
+      date:
+      - Fri, 11 Sep 2020 01:35:53 GMT
+      etag:
+      - '"0x8D855F305C89D8C"'
+      last-modified:
+      - Fri, 11 Sep 2020 01:35:53 GMT
+      server:
+      - Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
+      x-ms-lease-id:
+      - 6816fa25-bfb6-4069-afde-775923c277e7
+      x-ms-version:
+      - '2020-02-10'
+    status:
+      code: 200
+      message: OK
+version: 1

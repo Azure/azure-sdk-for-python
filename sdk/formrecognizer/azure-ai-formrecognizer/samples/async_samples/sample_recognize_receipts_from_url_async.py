@@ -10,7 +10,7 @@
 FILE: sample_recognize_receipts_from_url_async.py
 
 DESCRIPTION:
-    This sample demonstrates how to recognize and extract common fields from a US receipt URL,
+    This sample demonstrates how to recognize and extract common fields from a receipt URL,
     using a pre-trained receipt model. For a suggested approach to extracting information
     from receipts, see sample_strongly_typed_recognized_form_async.py.
 

@@ -20,10 +20,18 @@ if TYPE_CHECKING:
     from ._generated.models import PageList
 
 
+def deserialize_pipeline_response_into_cls(cls_method, response, obj, headers):
+    try:
+        deserialized_response = response.http_response
+    except AttributeError:
+        deserialized_response = response
+    return cls_method(deserialized_response, obj, headers)
+
+
 def deserialize_blob_properties(response, obj, headers):
     blob_properties = BlobProperties(
         metadata=deserialize_metadata(response, obj, headers),
-        object_replication_source_properties=deserialize_ors_policies(response.headers),
+        object_replication_source_properties=deserialize_ors_policies(response.http_response.headers),
         **headers
     )
     if 'Content-Range' in headers:
@@ -64,7 +72,7 @@ def deserialize_ors_policies(policy_dictionary):
 def deserialize_blob_stream(response, obj, headers):
     blob_properties = deserialize_blob_properties(response, obj, headers)
     obj.properties = blob_properties
-    return response.location_mode, obj
+    return response.http_response.location_mode, obj
 
 
 def deserialize_container_properties(response, obj, headers):
@@ -144,6 +152,7 @@ def get_blob_properties_from_generated_code(generated):
     blob.tag_count = generated.properties.tag_count
     blob.tags = parse_tags(generated.blob_tags)  # pylint: disable=protected-access
     blob.object_replication_source_properties = deserialize_ors_policies(generated.object_replication_metadata)
+    blob.last_accessed_on = generated.properties.last_accessed_on
     return blob
 
 

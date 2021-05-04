@@ -12,7 +12,7 @@ import unittest
 volumes = [TEST_VOL_1, TEST_VOL_2]
 
 # to skip tests use
-#raise unittest.SkipTest("Skipping Volume test")
+raise unittest.SkipTest("Skipping Volume test")
 
 
 def create_volume_body(volume_name, location, rg=TEST_RG, vnet=VNET):

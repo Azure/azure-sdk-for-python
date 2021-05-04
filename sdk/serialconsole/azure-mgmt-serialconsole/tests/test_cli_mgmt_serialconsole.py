@@ -23,6 +23,7 @@ from devtools_testutils import AzureMgmtTestCase, ResourceGroupPreparer
 
 AZURE_LOCATION = 'eastus'
 
+@unittest.skip("skip test")
 class MgmtMicrosoftSerialConsoleClientTest(AzureMgmtTestCase):
 
     def setUp(self):

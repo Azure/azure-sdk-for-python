@@ -54,7 +54,7 @@ class MgmtCdnTest(AzureMgmtTestCase):
             "name": "Standard_Verizon"
           }
         }
-        result = self.mgmt_client.profiles.create(resource_group.name, PROFILE_NAME, BODY)
+        result = self.mgmt_client.profiles.begin_create(resource_group.name, PROFILE_NAME, BODY)
         result = result.result()
 
         """
@@ -245,7 +245,7 @@ class MgmtCdnTest(AzureMgmtTestCase):
             "kay1": "value1"
           }
         }
-        result = self.mgmt_client.endpoints.create(resource_group.name, PROFILE_NAME, ENDPOINT_NAME, BODY)
+        result = self.mgmt_client.endpoints.begin_create(resource_group.name, PROFILE_NAME, ENDPOINT_NAME, BODY)
         result = result.result()
 
         """
@@ -340,7 +340,7 @@ class MgmtCdnTest(AzureMgmtTestCase):
           "http_port": "42",
           "https_port": "43"
         }
-        result = self.mgmt_client.origins.update(resource_group.name, PROFILE_NAME, ENDPOINT_NAME, ORIGIN_NAME, BODY)
+        result = self.mgmt_client.origins.begin_update(resource_group.name, PROFILE_NAME, ENDPOINT_NAME, ORIGIN_NAME, BODY)
         result = result.result()
 
         """
@@ -454,41 +454,41 @@ class MgmtCdnTest(AzureMgmtTestCase):
         """
 
         # Endpoints_ValidateCustomDomain[post]
-        # BODY = {
-        #   "host_name": "www.someDomain.com"
-        # }
-        HOST_NAME = "www.someDomain.com"
-        result = self.mgmt_client.endpoints.validate_custom_domain(resource_group.name, PROFILE_NAME, ENDPOINT_NAME, HOST_NAME)
+        BODY = {
+          "host_name": "www.someDomain.com"
+        }
+        # HOST_NAME = "www.someDomain.com"
+        result = self.mgmt_client.endpoints.validate_custom_domain(resource_group.name, PROFILE_NAME, ENDPOINT_NAME, BODY)
 
         # Endpoints_ListResourceUsage[post]
         result = self.mgmt_client.endpoints.list_resource_usage(resource_group.name, PROFILE_NAME, ENDPOINT_NAME)
 
         # Endpoints_PurgeContent[post]
-        # BODY = {
-        #   "content_paths": [
-        #     "/folder1"
-        #   ]
-        # }
-        CONTENT_PATHS = ["/folder1"]
-        result = self.mgmt_client.endpoints.purge_content(resource_group.name, PROFILE_NAME, ENDPOINT_NAME, CONTENT_PATHS)
+        BODY = {
+          "content_paths": [
+            "/folder1"
+          ]
+        }
+        # CONTENT_PATHS = ["/folder1"]
+        result = self.mgmt_client.endpoints.begin_purge_content(resource_group.name, PROFILE_NAME, ENDPOINT_NAME, BODY)
         result = result.result()
 
         # Endpoints_Stop[post]
-        result = self.mgmt_client.endpoints.stop(resource_group.name, PROFILE_NAME, ENDPOINT_NAME)
+        result = self.mgmt_client.endpoints.begin_stop(resource_group.name, PROFILE_NAME, ENDPOINT_NAME)
         result = result.result()
 
         # Endpoints_Start[post]
-        result = self.mgmt_client.endpoints.start(resource_group.name, PROFILE_NAME, ENDPOINT_NAME)
+        result = self.mgmt_client.endpoints.begin_start(resource_group.name, PROFILE_NAME, ENDPOINT_NAME)
         result = result.result()
 
         # Endpoints_LoadContent[post]
-        # BODY = {
-        #   "content_paths": [
-        #     "/folder1"
-        #   ]
-        # }
-        CONTENT_PATHS = ["/folder1"]
-        result = self.mgmt_client.endpoints.load_content(resource_group.name, PROFILE_NAME, ENDPOINT_NAME, CONTENT_PATHS)
+        BODY = {
+          "content_paths": [
+            "/folder1"
+          ]
+        }
+        # CONTENT_PATHS = ["/folder1"]
+        result = self.mgmt_client.endpoints.begin_load_content(resource_group.name, PROFILE_NAME, ENDPOINT_NAME, BODY)
         result = result.result()
 
         # Profiles_ListSupportedOptimizationTypes[post]
@@ -503,7 +503,7 @@ class MgmtCdnTest(AzureMgmtTestCase):
           #   "id": "/subscriptions/" + SUBSCRIPTION_ID + "/resourceGroups/" + RESOURCE_GROUP + "/providers/Microsoft.Cdn/CdnWebApplicationFirewallPolicies/" + CDN_WEB_APPLICATION_FIREWALL_POLICY_NAME + ""
           # }
         }
-        result = self.mgmt_client.endpoints.update(resource_group.name, PROFILE_NAME, ENDPOINT_NAME, BODY)
+        result = self.mgmt_client.endpoints.begin_update(resource_group.name, PROFILE_NAME, ENDPOINT_NAME, BODY)
         result = result.result()
 
         # Profiles_ListResourceUsage[post]
@@ -518,37 +518,37 @@ class MgmtCdnTest(AzureMgmtTestCase):
             "additional_properties": "Tag1"
           }
         }
-        result = self.mgmt_client.profiles.update(resource_group.name, PROFILE_NAME, BODY)
+        result = self.mgmt_client.profiles.begin_update(resource_group.name, PROFILE_NAME, BODY)
         result = result.result()
 
         # CheckNameAvailabilityWithSubscription[post]
-        # BODY = {
-        #   "name": "sampleName",
-        #   "type": "Microsoft.Cdn/Profiles/Endpoints"
-        # }
-        CHECK_NAME = "sampleName"
-        result = self.mgmt_client.check_name_availability_with_subscription(CHECK_NAME)
+        BODY = {
+          "name": "sampleName",
+          "type": "Microsoft.Cdn/Profiles/Endpoints"
+        }
+        # CHECK_NAME = "sampleName"
+        result = self.mgmt_client.check_name_availability_with_subscription(BODY)
 
         # ResourceUsage_List[post]
         result = self.mgmt_client.resource_usage.list()
 
         # ValidateProbe[post]
-        # BODY = {
-        #   "probe_url": "https://www.bing.com/image"
-        # }
-        PROBEURL = "https://www.bing.com/image"
-        result = self.mgmt_client.validate_probe(PROBEURL)
+        BODY = {
+          "probe_url": "https://www.bing.com/image"
+        }
+        # PROBEURL = "https://www.bing.com/image"
+        result = self.mgmt_client.validate_probe(BODY)
 
         # CheckNameAvailability[post]
-        # BODY = {
-        #   "name": "sampleName",
-        #   "type": "Microsoft.Cdn/Profiles/Endpoints"
-        # }
-        CHECKNAME = "sampleName"
-        result = self.mgmt_client.check_name_availability(CHECKNAME)
+        BODY = {
+          "name": "sampleName",
+          "type": "Microsoft.Cdn/Profiles/Endpoints"
+        }
+        # CHECKNAME = "sampleName"
+        result = self.mgmt_client.check_name_availability(BODY)
 
         # CustomDomains_Delete[delete]
-        result = self.mgmt_client.custom_domains.delete(resource_group.name, PROFILE_NAME, ENDPOINT_NAME, CUSTOM_DOMAIN_NAME)
+        result = self.mgmt_client.custom_domains.begin_delete(resource_group.name, PROFILE_NAME, ENDPOINT_NAME, CUSTOM_DOMAIN_NAME)
         result = result.result()
 
         """
@@ -557,11 +557,11 @@ class MgmtCdnTest(AzureMgmtTestCase):
         """
 
         # Endpoints_Delete[delete]
-        result = self.mgmt_client.endpoints.delete(resource_group.name, PROFILE_NAME, ENDPOINT_NAME)
+        result = self.mgmt_client.endpoints.begin_delete(resource_group.name, PROFILE_NAME, ENDPOINT_NAME)
         result = result.result()
 
         # Profiles_Delete[delete]
-        result = self.mgmt_client.profiles.delete(resource_group.name, PROFILE_NAME)
+        result = self.mgmt_client.profiles.begin_delete(resource_group.name, PROFILE_NAME)
         result = result.result()
 
 

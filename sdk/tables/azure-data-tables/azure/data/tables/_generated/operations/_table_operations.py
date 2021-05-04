@@ -12,7 +12,7 @@ from azure.core.exceptions import ClientAuthenticationError, HttpResponseError, 
 from azure.core.pipeline import PipelineResponse
 from azure.core.pipeline.transport import HttpRequest, HttpResponse
 
-from .. import models
+from .. import models as _models
 
 if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
@@ -35,7 +35,7 @@ class TableOperations(object):
     :param deserializer: An object model deserializer.
     """
 
-    models = models
+    models = _models
 
     def __init__(self, client, config, serializer, deserializer):
         self._client = client
@@ -47,10 +47,10 @@ class TableOperations(object):
         self,
         request_id_parameter=None,  # type: Optional[str]
         next_table_name=None,  # type: Optional[str]
-        query_options=None,  # type: Optional["models.QueryOptions"]
+        query_options=None,  # type: Optional["_models.QueryOptions"]
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.TableQueryResponse"
+        # type: (...) -> "_models.TableQueryResponse"
         """Queries tables under the given account.
 
         :param request_id_parameter: Provides a client-generated, opaque value with a 1 KB character
@@ -65,7 +65,7 @@ class TableOperations(object):
         :rtype: ~azure.data.tables.models.TableQueryResponse
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.TableQueryResponse"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.TableQueryResponse"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -117,8 +117,7 @@ class TableOperations(object):
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.TableServiceError, response)
-            raise HttpResponseError(response=response, model=error)
+            raise HttpResponseError(response=response)
 
         response_headers = {}
         response_headers['x-ms-client-request-id']=self._deserialize('str', response.headers.get('x-ms-client-request-id'))
@@ -136,13 +135,13 @@ class TableOperations(object):
 
     def create(
         self,
-        table_properties,  # type: "models.TableProperties"
+        table_properties,  # type: "_models.TableProperties"
         request_id_parameter=None,  # type: Optional[str]
-        response_preference=None,  # type: Optional[Union[str, "models.ResponseFormat"]]
-        query_options=None,  # type: Optional["models.QueryOptions"]
+        response_preference=None,  # type: Optional[Union[str, "_models.ResponseFormat"]]
+        query_options=None,  # type: Optional["_models.QueryOptions"]
         **kwargs  # type: Any
     ):
-        # type: (...) -> Optional["models.TableResponse"]
+        # type: (...) -> Optional["_models.TableResponse"]
         """Creates a new table under the given account.
 
         :param table_properties: The Table properties.
@@ -160,7 +159,7 @@ class TableOperations(object):
         :rtype: ~azure.data.tables.models.TableResponse or None
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType[Optional["models.TableResponse"]]
+        cls = kwargs.pop('cls', None)  # type: ClsType[Optional["_models.TableResponse"]]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -205,7 +204,7 @@ class TableOperations(object):
 
         if response.status_code not in [201, 204]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.TableServiceError, response)
+            error = self._deserialize(_models.TableServiceError, response)
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
@@ -281,7 +280,7 @@ class TableOperations(object):
 
         if response.status_code not in [204]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.TableServiceError, response)
+            error = self._deserialize(_models.TableServiceError, response)
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
@@ -302,10 +301,10 @@ class TableOperations(object):
         request_id_parameter=None,  # type: Optional[str]
         next_partition_key=None,  # type: Optional[str]
         next_row_key=None,  # type: Optional[str]
-        query_options=None,  # type: Optional["models.QueryOptions"]
+        query_options=None,  # type: Optional["_models.QueryOptions"]
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.TableEntityQueryResponse"
+        # type: (...) -> "_models.TableEntityQueryResponse"
         """Queries entities in a table.
 
         :param table: The name of the table.
@@ -326,7 +325,7 @@ class TableOperations(object):
         :rtype: ~azure.data.tables.models.TableEntityQueryResponse
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.TableEntityQueryResponse"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.TableEntityQueryResponse"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -383,7 +382,7 @@ class TableOperations(object):
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.TableServiceError, response)
+            error = self._deserialize(_models.TableServiceError, response)
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
@@ -401,18 +400,18 @@ class TableOperations(object):
         return deserialized
     query_entities.metadata = {'url': '/{table}()'}  # type: ignore
 
-    def query_entities_with_partition_and_row_key(
+    def query_entity_with_partition_and_row_key(
         self,
         table,  # type: str
         partition_key,  # type: str
         row_key,  # type: str
         timeout=None,  # type: Optional[int]
         request_id_parameter=None,  # type: Optional[str]
-        query_options=None,  # type: Optional["models.QueryOptions"]
+        query_options=None,  # type: Optional["_models.QueryOptions"]
         **kwargs  # type: Any
     ):
         # type: (...) -> Dict[str, object]
-        """Queries entities in a table.
+        """Queries a single entity in a table.
 
         :param table: The name of the table.
         :type table: str
@@ -449,7 +448,7 @@ class TableOperations(object):
         accept = "application/json;odata=minimalmetadata"
 
         # Construct URL
-        url = self.query_entities_with_partition_and_row_key.metadata['url']  # type: ignore
+        url = self.query_entity_with_partition_and_row_key.metadata['url']  # type: ignore
         path_format_arguments = {
             'url': self._serialize.url("self._config.url", self._config.url, 'str', skip_quote=True),
             'table': self._serialize.url("table", table, 'str'),
@@ -483,7 +482,7 @@ class TableOperations(object):
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.TableServiceError, response)
+            error = self._deserialize(_models.TableServiceError, response)
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
@@ -500,7 +499,7 @@ class TableOperations(object):
             return cls(pipeline_response, deserialized, response_headers)
 
         return deserialized
-    query_entities_with_partition_and_row_key.metadata = {'url': '/{table}(PartitionKey=\'{partitionKey}\',RowKey=\'{rowKey}\')'}  # type: ignore
+    query_entity_with_partition_and_row_key.metadata = {'url': '/{table}(PartitionKey=\'{partitionKey}\',RowKey=\'{rowKey}\')'}  # type: ignore
 
     def update_entity(
         self,
@@ -511,7 +510,7 @@ class TableOperations(object):
         request_id_parameter=None,  # type: Optional[str]
         if_match=None,  # type: Optional[str]
         table_entity_properties=None,  # type: Optional[Dict[str, object]]
-        query_options=None,  # type: Optional["models.QueryOptions"]
+        query_options=None,  # type: Optional["_models.QueryOptions"]
         **kwargs  # type: Any
     ):
         # type: (...) -> None
@@ -595,7 +594,7 @@ class TableOperations(object):
 
         if response.status_code not in [204]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.TableServiceError, response)
+            error = self._deserialize(_models.TableServiceError, response)
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
@@ -619,7 +618,7 @@ class TableOperations(object):
         request_id_parameter=None,  # type: Optional[str]
         if_match=None,  # type: Optional[str]
         table_entity_properties=None,  # type: Optional[Dict[str, object]]
-        query_options=None,  # type: Optional["models.QueryOptions"]
+        query_options=None,  # type: Optional["_models.QueryOptions"]
         **kwargs  # type: Any
     ):
         # type: (...) -> None
@@ -703,7 +702,7 @@ class TableOperations(object):
 
         if response.status_code not in [204]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.TableServiceError, response)
+            error = self._deserialize(_models.TableServiceError, response)
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
@@ -726,7 +725,7 @@ class TableOperations(object):
         if_match,  # type: str
         timeout=None,  # type: Optional[int]
         request_id_parameter=None,  # type: Optional[str]
-        query_options=None,  # type: Optional["models.QueryOptions"]
+        query_options=None,  # type: Optional["_models.QueryOptions"]
         **kwargs  # type: Any
     ):
         # type: (...) -> None
@@ -798,7 +797,7 @@ class TableOperations(object):
 
         if response.status_code not in [204]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.TableServiceError, response)
+            error = self._deserialize(_models.TableServiceError, response)
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
@@ -817,9 +816,9 @@ class TableOperations(object):
         table,  # type: str
         timeout=None,  # type: Optional[int]
         request_id_parameter=None,  # type: Optional[str]
-        response_preference=None,  # type: Optional[Union[str, "models.ResponseFormat"]]
+        response_preference=None,  # type: Optional[Union[str, "_models.ResponseFormat"]]
         table_entity_properties=None,  # type: Optional[Dict[str, object]]
-        query_options=None,  # type: Optional["models.QueryOptions"]
+        query_options=None,  # type: Optional["_models.QueryOptions"]
         **kwargs  # type: Any
     ):
         # type: (...) -> Optional[Dict[str, object]]
@@ -895,7 +894,7 @@ class TableOperations(object):
 
         if response.status_code not in [201, 204]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.TableServiceError, response)
+            error = self._deserialize(_models.TableServiceError, response)
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
@@ -932,7 +931,7 @@ class TableOperations(object):
         request_id_parameter=None,  # type: Optional[str]
         **kwargs  # type: Any
     ):
-        # type: (...) -> List["models.SignedIdentifier"]
+        # type: (...) -> List["_models.SignedIdentifier"]
         """Retrieves details about any stored access policies specified on the table that may be used with
         Shared Access Signatures.
 
@@ -948,7 +947,7 @@ class TableOperations(object):
         :rtype: list[~azure.data.tables.models.SignedIdentifier]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType[List["models.SignedIdentifier"]]
+        cls = kwargs.pop('cls', None)  # type: ClsType[List["_models.SignedIdentifier"]]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -983,7 +982,7 @@ class TableOperations(object):
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.TableServiceError, response)
+            error = self._deserialize(_models.TableServiceError, response)
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
@@ -1004,7 +1003,7 @@ class TableOperations(object):
         table,  # type: str
         timeout=None,  # type: Optional[int]
         request_id_parameter=None,  # type: Optional[str]
-        table_acl=None,  # type: Optional[List["models.SignedIdentifier"]]
+        table_acl=None,  # type: Optional[List["_models.SignedIdentifier"]]
         **kwargs  # type: Any
     ):
         # type: (...) -> None
@@ -1068,7 +1067,7 @@ class TableOperations(object):
 
         if response.status_code not in [204]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.TableServiceError, response)
+            error = self._deserialize(_models.TableServiceError, response)
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}

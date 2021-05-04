@@ -16,7 +16,7 @@ from azure.core.polling import LROPoller, NoPolling, PollingMethod
 from azure.mgmt.core.exceptions import ARMErrorFormat
 from azure.mgmt.core.polling.arm_polling import ARMPolling
 
-from .. import models
+from .. import models as _models
 
 if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
@@ -39,7 +39,7 @@ class ExpressRoutePortsOperations(object):
     :param deserializer: An object model deserializer.
     """
 
-    models = models
+    models = _models
 
     def __init__(self, client, config, serializer, deserializer):
         self._client = client
@@ -135,7 +135,13 @@ class ExpressRoutePortsOperations(object):
             if cls:
                 return cls(pipeline_response, None, {})
 
-        if polling is True: polling_method = ARMPolling(lro_delay,  **kwargs)
+        path_format_arguments = {
+            'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
+            'expressRoutePortName': self._serialize.url("express_route_port_name", express_route_port_name, 'str'),
+        }
+
+        if polling is True: polling_method = ARMPolling(lro_delay, path_format_arguments=path_format_arguments,  **kwargs)
         elif polling is False: polling_method = NoPolling()
         else: polling_method = polling
         if cont_token:
@@ -155,7 +161,7 @@ class ExpressRoutePortsOperations(object):
         express_route_port_name,  # type: str
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.ExpressRoutePort"
+        # type: (...) -> "_models.ExpressRoutePort"
         """Retrieves the requested ExpressRoutePort resource.
 
         :param resource_group_name: The name of the resource group.
@@ -167,7 +173,7 @@ class ExpressRoutePortsOperations(object):
         :rtype: ~azure.mgmt.network.v2018_12_01.models.ExpressRoutePort
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.ExpressRoutePort"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.ExpressRoutePort"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -212,11 +218,11 @@ class ExpressRoutePortsOperations(object):
         self,
         resource_group_name,  # type: str
         express_route_port_name,  # type: str
-        parameters,  # type: "models.ExpressRoutePort"
+        parameters,  # type: "_models.ExpressRoutePort"
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.ExpressRoutePort"
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.ExpressRoutePort"]
+        # type: (...) -> "_models.ExpressRoutePort"
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.ExpressRoutePort"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -270,10 +276,10 @@ class ExpressRoutePortsOperations(object):
         self,
         resource_group_name,  # type: str
         express_route_port_name,  # type: str
-        parameters,  # type: "models.ExpressRoutePort"
+        parameters,  # type: "_models.ExpressRoutePort"
         **kwargs  # type: Any
     ):
-        # type: (...) -> LROPoller["models.ExpressRoutePort"]
+        # type: (...) -> LROPoller["_models.ExpressRoutePort"]
         """Creates or updates the specified ExpressRoutePort resource.
 
         :param resource_group_name: The name of the resource group.
@@ -293,7 +299,7 @@ class ExpressRoutePortsOperations(object):
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         polling = kwargs.pop('polling', True)  # type: Union[bool, PollingMethod]
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.ExpressRoutePort"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.ExpressRoutePort"]
         lro_delay = kwargs.pop(
             'polling_interval',
             self._config.polling_interval
@@ -318,7 +324,13 @@ class ExpressRoutePortsOperations(object):
                 return cls(pipeline_response, deserialized, {})
             return deserialized
 
-        if polling is True: polling_method = ARMPolling(lro_delay,  **kwargs)
+        path_format_arguments = {
+            'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
+            'expressRoutePortName': self._serialize.url("express_route_port_name", express_route_port_name, 'str'),
+        }
+
+        if polling is True: polling_method = ARMPolling(lro_delay, path_format_arguments=path_format_arguments,  **kwargs)
         elif polling is False: polling_method = NoPolling()
         else: polling_method = polling
         if cont_token:
@@ -336,11 +348,11 @@ class ExpressRoutePortsOperations(object):
         self,
         resource_group_name,  # type: str
         express_route_port_name,  # type: str
-        parameters,  # type: "models.TagsObject"
+        parameters,  # type: "_models.TagsObject"
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.ExpressRoutePort"
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.ExpressRoutePort"]
+        # type: (...) -> "_models.ExpressRoutePort"
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.ExpressRoutePort"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -390,10 +402,10 @@ class ExpressRoutePortsOperations(object):
         self,
         resource_group_name,  # type: str
         express_route_port_name,  # type: str
-        parameters,  # type: "models.TagsObject"
+        parameters,  # type: "_models.TagsObject"
         **kwargs  # type: Any
     ):
-        # type: (...) -> LROPoller["models.ExpressRoutePort"]
+        # type: (...) -> LROPoller["_models.ExpressRoutePort"]
         """Update ExpressRoutePort tags.
 
         :param resource_group_name: The name of the resource group.
@@ -413,7 +425,7 @@ class ExpressRoutePortsOperations(object):
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         polling = kwargs.pop('polling', True)  # type: Union[bool, PollingMethod]
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.ExpressRoutePort"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.ExpressRoutePort"]
         lro_delay = kwargs.pop(
             'polling_interval',
             self._config.polling_interval
@@ -438,7 +450,13 @@ class ExpressRoutePortsOperations(object):
                 return cls(pipeline_response, deserialized, {})
             return deserialized
 
-        if polling is True: polling_method = ARMPolling(lro_delay,  **kwargs)
+        path_format_arguments = {
+            'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
+            'expressRoutePortName': self._serialize.url("express_route_port_name", express_route_port_name, 'str'),
+        }
+
+        if polling is True: polling_method = ARMPolling(lro_delay, path_format_arguments=path_format_arguments,  **kwargs)
         elif polling is False: polling_method = NoPolling()
         else: polling_method = polling
         if cont_token:
@@ -457,7 +475,7 @@ class ExpressRoutePortsOperations(object):
         resource_group_name,  # type: str
         **kwargs  # type: Any
     ):
-        # type: (...) -> Iterable["models.ExpressRoutePortListResult"]
+        # type: (...) -> Iterable["_models.ExpressRoutePortListResult"]
         """List all the ExpressRoutePort resources in the specified resource group.
 
         :param resource_group_name: The name of the resource group.
@@ -467,7 +485,7 @@ class ExpressRoutePortsOperations(object):
         :rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.network.v2018_12_01.models.ExpressRoutePortListResult]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.ExpressRoutePortListResult"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.ExpressRoutePortListResult"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -527,7 +545,7 @@ class ExpressRoutePortsOperations(object):
         self,
         **kwargs  # type: Any
     ):
-        # type: (...) -> Iterable["models.ExpressRoutePortListResult"]
+        # type: (...) -> Iterable["_models.ExpressRoutePortListResult"]
         """List all the ExpressRoutePort resources in the specified subscription.
 
         :keyword callable cls: A custom type or function that will be passed the direct response
@@ -535,7 +553,7 @@ class ExpressRoutePortsOperations(object):
         :rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.network.v2018_12_01.models.ExpressRoutePortListResult]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.ExpressRoutePortListResult"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.ExpressRoutePortListResult"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }

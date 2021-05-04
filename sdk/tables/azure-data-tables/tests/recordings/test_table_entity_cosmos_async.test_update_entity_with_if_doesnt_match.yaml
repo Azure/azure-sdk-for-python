@@ -1,0 +1,146 @@
+interactions:
+- request:
+    body: '{"TableName": "uttable7fe1d01"}'
+    headers:
+      Accept:
+      - application/json;odata=minimalmetadata
+      Content-Length:
+      - '31'
+      Content-Type:
+      - application/json;odata=nometadata
+      DataServiceVersion:
+      - '3.0'
+      Date:
+      - Fri, 18 Dec 2020 16:54:02 GMT
+      User-Agent:
+      - azsdk-python-data-tables/12.0.0b4 Python/3.9.0rc1 (Windows-10-10.0.19041-SP0)
+      x-ms-date:
+      - Fri, 18 Dec 2020 16:54:02 GMT
+      x-ms-version:
+      - '2019-02-02'
+    method: POST
+    uri: https://fake_cosmos_account.table.cosmos.azure.com/Tables
+  response:
+    body:
+      string: '{"TableName":"uttable7fe1d01","odata.metadata":"https://fake_cosmos_account.table.cosmos.azure.com/$metadata#Tables/@Element"}'
+    headers:
+      content-type: application/json;odata=minimalmetadata
+      date: Fri, 18 Dec 2020 16:54:03 GMT
+      etag: W/"datetime'2020-12-18T16%3A54%3A03.1532040Z'"
+      location: https://fake_cosmos_account.table.cosmos.azure.com/Tables('uttable7fe1d01')
+      server: Microsoft-HTTPAPI/2.0
+      transfer-encoding: chunked
+    status:
+      code: 201
+      message: Ok
+    url: https://seankaneprim.table.cosmos.azure.com/Tables
+- request:
+    body: '{"PartitionKey": "pk7fe1d01", "PartitionKey@odata.type": "Edm.String",
+      "RowKey": "rk7fe1d01", "RowKey@odata.type": "Edm.String", "age": 39, "sex":
+      "male", "sex@odata.type": "Edm.String", "married": true, "deceased": false,
+      "ratio": 3.1, "evenratio": 3.0, "large": 933311100, "Birthday": "1973-10-04T00:00:00Z",
+      "Birthday@odata.type": "Edm.DateTime", "birthday": "1970-10-04T00:00:00Z", "birthday@odata.type":
+      "Edm.DateTime", "binary": "YmluYXJ5", "binary@odata.type": "Edm.Binary", "other":
+      20, "clsid": "c9da6455-213d-42c9-9a79-3e9149a57833", "clsid@odata.type": "Edm.Guid"}'
+    headers:
+      Accept:
+      - application/json;odata=minimalmetadata
+      Content-Length:
+      - '575'
+      Content-Type:
+      - application/json;odata=nometadata
+      DataServiceVersion:
+      - '3.0'
+      Date:
+      - Fri, 18 Dec 2020 16:54:03 GMT
+      User-Agent:
+      - azsdk-python-data-tables/12.0.0b4 Python/3.9.0rc1 (Windows-10-10.0.19041-SP0)
+      x-ms-date:
+      - Fri, 18 Dec 2020 16:54:03 GMT
+      x-ms-version:
+      - '2019-02-02'
+    method: POST
+    uri: https://fake_cosmos_account.table.cosmos.azure.com/uttable7fe1d01
+  response:
+    body:
+      string: '{"odata.metadata":"https://fake_cosmos_account.table.cosmos.azure.com/uttable7fe1d01/$metadata#uttable7fe1d01/@Element","odata.etag":"W/\"datetime''2020-12-18T16%3A54%3A03.7655560Z''\"","PartitionKey":"pk7fe1d01","RowKey":"rk7fe1d01","age":39,"sex":"male","married":true,"deceased":false,"ratio":3.1,"evenratio":3.0,"large":933311100,"Birthday@odata.type":"Edm.DateTime","Birthday":"1973-10-04T00:00:00.0000000Z","birthday@odata.type":"Edm.DateTime","birthday":"1970-10-04T00:00:00.0000000Z","binary@odata.type":"Edm.Binary","binary":"YmluYXJ5","other":20,"clsid@odata.type":"Edm.Guid","clsid":"c9da6455-213d-42c9-9a79-3e9149a57833","Timestamp":"2020-12-18T16:54:03.7655560Z"}'
+    headers:
+      content-type: application/json;odata=minimalmetadata
+      date: Fri, 18 Dec 2020 16:54:03 GMT
+      etag: W/"datetime'2020-12-18T16%3A54%3A03.7655560Z'"
+      location: https://fake_cosmos_account.table.cosmos.azure.com/uttable7fe1d01(PartitionKey='pk7fe1d01',RowKey='rk7fe1d01')
+      server: Microsoft-HTTPAPI/2.0
+      transfer-encoding: chunked
+    status:
+      code: 201
+      message: Created
+    url: https://seankaneprim.table.cosmos.azure.com/uttable7fe1d01
+- request:
+    body: '{"PartitionKey": "pk7fe1d01", "PartitionKey@odata.type": "Edm.String",
+      "RowKey": "rk7fe1d01", "RowKey@odata.type": "Edm.String", "age": "abc", "age@odata.type":
+      "Edm.String", "sex": "female", "sex@odata.type": "Edm.String", "sign": "aquarius",
+      "sign@odata.type": "Edm.String", "birthday": "1991-10-04T00:00:00Z", "birthday@odata.type":
+      "Edm.DateTime"}'
+    headers:
+      Accept:
+      - application/json
+      Content-Length:
+      - '351'
+      Content-Type:
+      - application/json
+      DataServiceVersion:
+      - '3.0'
+      Date:
+      - Fri, 18 Dec 2020 16:54:03 GMT
+      If-Match:
+      - W/"datetime'2012-06-15T22%3A51%3A44.9662825Z'"
+      User-Agent:
+      - azsdk-python-data-tables/12.0.0b4 Python/3.9.0rc1 (Windows-10-10.0.19041-SP0)
+      x-ms-date:
+      - Fri, 18 Dec 2020 16:54:03 GMT
+      x-ms-version:
+      - '2019-02-02'
+    method: PUT
+    uri: https://fake_cosmos_account.table.cosmos.azure.com/uttable7fe1d01(PartitionKey='pk7fe1d01',RowKey='rk7fe1d01')
+  response:
+    body:
+      string: "{\"odata.error\":{\"code\":\"UpdateConditionNotSatisfied\",\"message\"\
+        :{\"lang\":\"en-us\",\"value\":\"The update condition specified in the request\
+        \ was not satisfied.\\nRequestID:a2389f26-4151-11eb-90ed-58961df361d1\\n\"\
+        }}}\r\n"
+    headers:
+      content-type: application/json;odata=fullmetadata
+      date: Fri, 18 Dec 2020 16:54:03 GMT
+      server: Microsoft-HTTPAPI/2.0
+      transfer-encoding: chunked
+    status:
+      code: 412
+      message: Precondition Failed
+    url: https://seankaneprim.table.cosmos.azure.com/uttable7fe1d01(PartitionKey='pk7fe1d01',RowKey='rk7fe1d01')
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      Date:
+      - Fri, 18 Dec 2020 16:54:03 GMT
+      User-Agent:
+      - azsdk-python-data-tables/12.0.0b4 Python/3.9.0rc1 (Windows-10-10.0.19041-SP0)
+      x-ms-date:
+      - Fri, 18 Dec 2020 16:54:03 GMT
+      x-ms-version:
+      - '2019-02-02'
+    method: DELETE
+    uri: https://fake_cosmos_account.table.cosmos.azure.com/Tables('uttable7fe1d01')
+  response:
+    body:
+      string: ''
+    headers:
+      content-length: '0'
+      date: Fri, 18 Dec 2020 16:54:03 GMT
+      server: Microsoft-HTTPAPI/2.0
+    status:
+      code: 204
+      message: No Content
+    url: https://seankaneprim.table.cosmos.azure.com/Tables('uttable7fe1d01')
+version: 1

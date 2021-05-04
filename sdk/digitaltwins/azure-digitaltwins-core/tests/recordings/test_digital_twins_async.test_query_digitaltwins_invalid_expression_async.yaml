@@ -1,0 +1,29 @@
+interactions:
+- request:
+    body: '{"query": "foo"}'
+    headers:
+      Accept:
+      - application/json
+      Content-Length:
+      - '16'
+      Content-Type:
+      - application/json
+      User-Agent:
+      - azsdk-python-digitaltwins-core/1.1.0 Python/3.7.4 (Windows-10-10.0.19041-SP0)
+    method: POST
+    uri: https://dttestdigitaltwinsname.api.wcus.digitaltwins.azure.net/query?api-version=2020-10-31
+  response:
+    body:
+      string: '{"error":{"code":"SqlQueryError","message":"SQL query parse failed:
+        SQL Parser Error, Line=1, Position=0, Message=missing SELECT at ''foo'' See
+        samples in http://aka.ms/adtv2query for the correct syntax."}}'
+    headers:
+      content-type: application/json; charset=utf-8
+      date: Tue, 24 Nov 2020 21:07:57 GMT
+      strict-transport-security: max-age=2592000
+      transfer-encoding: chunked
+    status:
+      code: 400
+      message: Bad Request
+    url: https://dttestdigitaltwinsname.api.wcus.digitaltwins.azure.net/query?api-version=2020-10-31
+version: 1

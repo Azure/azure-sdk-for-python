@@ -14,13 +14,13 @@ interactions:
     uri: https://servicebustestsbname.servicebus.windows.net/$Resources/topics?$skip=0&$top=100&api-version=2017-04
   response:
     body:
-      string: <feed xmlns="http://www.w3.org/2005/Atom"><title type="text">Topics</title><id>https://servicebustest32ip2wgoaa.servicebus.windows.net/$Resources/topics?$skip=0&amp;$top=100&amp;api-version=2017-04</id><updated>2020-08-17T08:07:25Z</updated><link
-        rel="self" href="https://servicebustest32ip2wgoaa.servicebus.windows.net/$Resources/topics?$skip=0&amp;$top=100&amp;api-version=2017-04"/></feed>
+      string: <feed xmlns="http://www.w3.org/2005/Atom"><title type="text">Topics</title><id>https://servicebustestafjalzt3of.servicebus.windows.net/$Resources/topics?$skip=0&amp;$top=100&amp;api-version=2017-04</id><updated>2020-12-03T18:23:33Z</updated><link
+        rel="self" href="https://servicebustestafjalzt3of.servicebus.windows.net/$Resources/topics?$skip=0&amp;$top=100&amp;api-version=2017-04"/></feed>
     headers:
       content-type:
       - application/atom+xml;type=feed;charset=utf-8
       date:
-      - Mon, 17 Aug 2020 08:07:25 GMT
+      - Thu, 03 Dec 2020 18:23:32 GMT
       server:
       - Microsoft-HTTPAPI/2.0
       transfer-encoding:
@@ -50,16 +50,16 @@ interactions:
     uri: https://servicebustestsbname.servicebus.windows.net/fjrui?api-version=2017-04
   response:
     body:
-      string: <entry xmlns="http://www.w3.org/2005/Atom"><id>https://servicebustest32ip2wgoaa.servicebus.windows.net/fjrui?api-version=2017-04</id><title
-        type="text">fjrui</title><published>2020-08-17T08:07:26Z</published><updated>2020-08-17T08:07:26Z</updated><author><name>servicebustest32ip2wgoaa</name></author><link
-        rel="self" href="https://servicebustest32ip2wgoaa.servicebus.windows.net/fjrui?api-version=2017-04"/><content
+      string: <entry xmlns="http://www.w3.org/2005/Atom"><id>https://servicebustestafjalzt3of.servicebus.windows.net/fjrui?api-version=2017-04</id><title
+        type="text">fjrui</title><published>2020-12-03T18:23:33Z</published><updated>2020-12-03T18:23:33Z</updated><author><name>servicebustestafjalzt3of</name></author><link
+        rel="self" href="https://servicebustestafjalzt3of.servicebus.windows.net/fjrui?api-version=2017-04"/><content
         type="application/xml"><TopicDescription xmlns="http://schemas.microsoft.com/netservices/2010/10/servicebus/connect"
-        xmlns:i="http://www.w3.org/2001/XMLSchema-instance"><DefaultMessageTimeToLive>P10675199DT2H48M5.4775807S</DefaultMessageTimeToLive><MaxSizeInMegabytes>1024</MaxSizeInMegabytes><RequiresDuplicateDetection>false</RequiresDuplicateDetection><DuplicateDetectionHistoryTimeWindow>PT10M</DuplicateDetectionHistoryTimeWindow><EnableBatchedOperations>true</EnableBatchedOperations><SizeInBytes>0</SizeInBytes><FilteringMessagesBeforePublishing>false</FilteringMessagesBeforePublishing><IsAnonymousAccessible>false</IsAnonymousAccessible><AuthorizationRules></AuthorizationRules><Status>Active</Status><CreatedAt>2020-08-17T08:07:26.443Z</CreatedAt><UpdatedAt>2020-08-17T08:07:26.47Z</UpdatedAt><SupportOrdering>true</SupportOrdering><AutoDeleteOnIdle>P10675199DT2H48M5.4775807S</AutoDeleteOnIdle><EnablePartitioning>false</EnablePartitioning><EntityAvailabilityStatus>Available</EntityAvailabilityStatus><EnableSubscriptionPartitioning>false</EnableSubscriptionPartitioning><EnableExpress>false</EnableExpress></TopicDescription></content></entry>
+        xmlns:i="http://www.w3.org/2001/XMLSchema-instance"><DefaultMessageTimeToLive>P10675199DT2H48M5.4775807S</DefaultMessageTimeToLive><MaxSizeInMegabytes>1024</MaxSizeInMegabytes><RequiresDuplicateDetection>false</RequiresDuplicateDetection><DuplicateDetectionHistoryTimeWindow>PT10M</DuplicateDetectionHistoryTimeWindow><EnableBatchedOperations>true</EnableBatchedOperations><SizeInBytes>0</SizeInBytes><FilteringMessagesBeforePublishing>false</FilteringMessagesBeforePublishing><IsAnonymousAccessible>false</IsAnonymousAccessible><AuthorizationRules></AuthorizationRules><Status>Active</Status><CreatedAt>2020-12-03T18:23:33.547Z</CreatedAt><UpdatedAt>2020-12-03T18:23:33.6Z</UpdatedAt><SupportOrdering>true</SupportOrdering><AutoDeleteOnIdle>P10675199DT2H48M5.4775807S</AutoDeleteOnIdle><EnablePartitioning>false</EnablePartitioning><EntityAvailabilityStatus>Available</EntityAvailabilityStatus><EnableSubscriptionPartitioning>false</EnableSubscriptionPartitioning><EnableExpress>false</EnableExpress></TopicDescription></content></entry>
     headers:
       content-type:
       - application/atom+xml;type=entry;charset=utf-8
       date:
-      - Mon, 17 Aug 2020 08:07:26 GMT
+      - Thu, 03 Dec 2020 18:23:33 GMT
       server:
       - Microsoft-HTTPAPI/2.0
       strict-transport-security:
@@ -91,18 +91,18 @@ interactions:
     uri: https://servicebustestsbname.servicebus.windows.net/fjrui/subscriptions/eqkovc?api-version=2017-04
   response:
     body:
-      string: <entry xmlns="http://www.w3.org/2005/Atom"><id>https://servicebustest32ip2wgoaa.servicebus.windows.net/fjrui/subscriptions/eqkovc?api-version=2017-04</id><title
-        type="text">eqkovc</title><published>2020-08-17T08:07:27Z</published><updated>2020-08-17T08:07:27Z</updated><link
-        rel="self" href="https://servicebustest32ip2wgoaa.servicebus.windows.net/fjrui/subscriptions/eqkovc?api-version=2017-04"/><content
+      string: <entry xmlns="http://www.w3.org/2005/Atom"><id>https://servicebustestafjalzt3of.servicebus.windows.net/fjrui/subscriptions/eqkovc?api-version=2017-04</id><title
+        type="text">eqkovc</title><published>2020-12-03T18:23:34Z</published><updated>2020-12-03T18:23:34Z</updated><link
+        rel="self" href="https://servicebustestafjalzt3of.servicebus.windows.net/fjrui/subscriptions/eqkovc?api-version=2017-04"/><content
         type="application/xml"><SubscriptionDescription xmlns="http://schemas.microsoft.com/netservices/2010/10/servicebus/connect"
-        xmlns:i="http://www.w3.org/2001/XMLSchema-instance"><LockDuration>PT1M</LockDuration><RequiresSession>false</RequiresSession><DefaultMessageTimeToLive>P10675199DT2H48M5.4775807S</DefaultMessageTimeToLive><DeadLetteringOnMessageExpiration>false</DeadLetteringOnMessageExpiration><DeadLetteringOnFilterEvaluationExceptions>true</DeadLetteringOnFilterEvaluationExceptions><MessageCount>0</MessageCount><MaxDeliveryCount>10</MaxDeliveryCount><EnableBatchedOperations>true</EnableBatchedOperations><Status>Active</Status><CreatedAt>2020-08-17T08:07:27.3010686Z</CreatedAt><UpdatedAt>2020-08-17T08:07:27.3010686Z</UpdatedAt><AccessedAt>0001-01-01T00:00:00</AccessedAt><AutoDeleteOnIdle>P10675199DT2H48M5.4775807S</AutoDeleteOnIdle><EntityAvailabilityStatus>Available</EntityAvailabilityStatus></SubscriptionDescription></content></entry>
+        xmlns:i="http://www.w3.org/2001/XMLSchema-instance"><LockDuration>PT1M</LockDuration><RequiresSession>false</RequiresSession><DefaultMessageTimeToLive>P10675199DT2H48M5.4775807S</DefaultMessageTimeToLive><DeadLetteringOnMessageExpiration>false</DeadLetteringOnMessageExpiration><DeadLetteringOnFilterEvaluationExceptions>true</DeadLetteringOnFilterEvaluationExceptions><MessageCount>0</MessageCount><MaxDeliveryCount>10</MaxDeliveryCount><EnableBatchedOperations>true</EnableBatchedOperations><Status>Active</Status><CreatedAt>2020-12-03T18:23:34.0827453Z</CreatedAt><UpdatedAt>2020-12-03T18:23:34.0827453Z</UpdatedAt><AccessedAt>0001-01-01T00:00:00</AccessedAt><AutoDeleteOnIdle>P10675199DT2H48M5.4775807S</AutoDeleteOnIdle><EntityAvailabilityStatus>Available</EntityAvailabilityStatus></SubscriptionDescription></content></entry>
     headers:
       content-type:
       - application/atom+xml;type=entry;charset=utf-8
       date:
-      - Mon, 17 Aug 2020 08:07:26 GMT
+      - Thu, 03 Dec 2020 18:23:33 GMT
       etag:
-      - '637332484464700000'
+      - '637426166136000000'
       server:
       - Microsoft-HTTPAPI/2.0
       strict-transport-security:
@@ -117,7 +117,7 @@ interactions:
 
       <ns0:entry xmlns:ns0="http://www.w3.org/2005/Atom" xmlns="http://schemas.microsoft.com/netservices/2010/10/servicebus/connect"
       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><ns0:content type="application/xml"><RuleDescription><Filter
-      xsi:type="SqlFilter"><SqlExpression>Priority = ''low''</SqlExpression><CompatibilityLevel>20</CompatibilityLevel></Filter><Action
+      xsi:type="SqlFilter"><SqlExpression>Priority = ''low''</SqlExpression><CompatibilityLevel>20</CompatibilityLevel><RequiresPreprocessing>true</RequiresPreprocessing></Filter><Action
       xsi:type="EmptyRuleAction" /><Name>rule</Name></RuleDescription></ns0:content></ns0:entry>'
     headers:
       Accept:
@@ -127,7 +127,7 @@ interactions:
       Connection:
       - keep-alive
       Content-Length:
-      - '499'
+      - '550'
       Content-Type:
       - application/atom+xml
       User-Agent:
@@ -136,20 +136,20 @@ interactions:
     uri: https://servicebustestsbname.servicebus.windows.net/fjrui/subscriptions/eqkovc/rules/rule?api-version=2017-04
   response:
     body:
-      string: <entry xmlns="http://www.w3.org/2005/Atom"><id>https://servicebustest32ip2wgoaa.servicebus.windows.net/fjrui/subscriptions/eqkovc/rules/rule?api-version=2017-04</id><title
-        type="text">rule</title><published>2020-08-17T08:07:27Z</published><updated>2020-08-17T08:07:27Z</updated><link
-        rel="self" href="https://servicebustest32ip2wgoaa.servicebus.windows.net/fjrui/subscriptions/eqkovc/rules/rule?api-version=2017-04"/><content
+      string: <entry xmlns="http://www.w3.org/2005/Atom"><id>https://servicebustestafjalzt3of.servicebus.windows.net/fjrui/subscriptions/eqkovc/rules/rule?api-version=2017-04</id><title
+        type="text">rule</title><published>2020-12-03T18:23:34Z</published><updated>2020-12-03T18:23:34Z</updated><link
+        rel="self" href="https://servicebustestafjalzt3of.servicebus.windows.net/fjrui/subscriptions/eqkovc/rules/rule?api-version=2017-04"/><content
         type="application/xml"><RuleDescription xmlns="http://schemas.microsoft.com/netservices/2010/10/servicebus/connect"
         xmlns:i="http://www.w3.org/2001/XMLSchema-instance"><Filter i:type="SqlFilter"><SqlExpression>Priority
-        = 'low'</SqlExpression><CompatibilityLevel>20</CompatibilityLevel></Filter><Action
-        i:type="EmptyRuleAction"/><CreatedAt>2020-08-17T08:07:27.5041859Z</CreatedAt><Name>rule</Name></RuleDescription></content></entry>
+        = 'low'</SqlExpression><CompatibilityLevel>20</CompatibilityLevel><RequiresPreprocessing>true</RequiresPreprocessing></Filter><Action
+        i:type="EmptyRuleAction"/><CreatedAt>2020-12-03T18:23:34.2858696Z</CreatedAt><Name>rule</Name></RuleDescription></content></entry>
     headers:
       content-type:
       - application/atom+xml;type=entry;charset=utf-8
       date:
-      - Mon, 17 Aug 2020 08:07:26 GMT
+      - Thu, 03 Dec 2020 18:23:33 GMT
       etag:
-      - '637332484464700000'
+      - '637426166136000000'
       server:
       - Microsoft-HTTPAPI/2.0
       strict-transport-security:
@@ -174,20 +174,20 @@ interactions:
     uri: https://servicebustestsbname.servicebus.windows.net/fjrui/subscriptions/eqkovc/rules/rule?enrich=false&api-version=2017-04
   response:
     body:
-      string: <entry xmlns="http://www.w3.org/2005/Atom"><id>sb://servicebustest32ip2wgoaa.servicebus.windows.net/fjrui/subscriptions/eqkovc/rules/rule?enrich=false&amp;api-version=2017-04</id><title
-        type="text">rule</title><published>2020-08-17T08:07:27Z</published><updated>2020-08-17T08:07:27Z</updated><link
-        rel="self" href="sb://servicebustest32ip2wgoaa.servicebus.windows.net/fjrui/subscriptions/eqkovc/rules/rule?enrich=false&amp;api-version=2017-04"/><content
+      string: <entry xmlns="http://www.w3.org/2005/Atom"><id>sb://servicebustestafjalzt3of.servicebus.windows.net/fjrui/subscriptions/eqkovc/rules/rule?enrich=false&amp;api-version=2017-04</id><title
+        type="text">rule</title><published>2020-12-03T18:23:34Z</published><updated>2020-12-03T18:23:34Z</updated><link
+        rel="self" href="sb://servicebustestafjalzt3of.servicebus.windows.net/fjrui/subscriptions/eqkovc/rules/rule?enrich=false&amp;api-version=2017-04"/><content
         type="application/xml"><RuleDescription xmlns="http://schemas.microsoft.com/netservices/2010/10/servicebus/connect"
         xmlns:i="http://www.w3.org/2001/XMLSchema-instance"><Filter i:type="SqlFilter"><SqlExpression>Priority
-        = 'low'</SqlExpression><CompatibilityLevel>20</CompatibilityLevel><Parameters/></Filter><Action
-        i:type="EmptyRuleAction"/><CreatedAt>2020-08-17T08:07:27.4989085Z</CreatedAt><Name>rule</Name></RuleDescription></content></entry>
+        = 'low'</SqlExpression><CompatibilityLevel>20</CompatibilityLevel><RequiresPreprocessing>true</RequiresPreprocessing><Parameters/></Filter><Action
+        i:type="EmptyRuleAction"/><CreatedAt>2020-12-03T18:23:34.2878054Z</CreatedAt><Name>rule</Name></RuleDescription></content></entry>
     headers:
       content-type:
       - application/atom+xml;type=entry;charset=utf-8
       date:
-      - Mon, 17 Aug 2020 08:07:26 GMT
+      - Thu, 03 Dec 2020 18:23:33 GMT
       etag:
-      - '637332484464700000'
+      - '637426166136000000'
       server:
       - Microsoft-HTTPAPI/2.0
       strict-transport-security:
@@ -203,7 +203,7 @@ interactions:
       <ns0:entry xmlns:ns0="http://www.w3.org/2005/Atom" xmlns="http://schemas.microsoft.com/netservices/2010/10/servicebus/connect"
       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><ns0:content type="application/xml"><RuleDescription><Filter
       xsi:type="CorrelationFilter"><CorrelationId>testcid</CorrelationId></Filter><Action
-      xsi:type="SqlRuleAction"><SqlExpression>SET Priority = ''low''</SqlExpression><CompatibilityLevel>20</CompatibilityLevel></Action><CreatedAt>2020-08-17T08:07:27.498908Z</CreatedAt><Name>rule</Name></RuleDescription></ns0:content></ns0:entry>'
+      xsi:type="SqlRuleAction"><SqlExpression>SET Priority = ''low''</SqlExpression><CompatibilityLevel>20</CompatibilityLevel><RequiresPreprocessing>true</RequiresPreprocessing></Action><CreatedAt>2020-12-03T18:23:34.287805Z</CreatedAt><Name>rule</Name></RuleDescription></ns0:content></ns0:entry>'
     headers:
       Accept:
       - application/xml
@@ -212,7 +212,7 @@ interactions:
       Connection:
       - keep-alive
       Content-Length:
-      - '604'
+      - '655'
       Content-Type:
       - application/atom+xml
       If-Match:
@@ -223,19 +223,19 @@ interactions:
     uri: https://servicebustestsbname.servicebus.windows.net/fjrui/subscriptions/eqkovc/rules/rule?api-version=2017-04
   response:
     body:
-      string: <entry xmlns="http://www.w3.org/2005/Atom"><id>https://servicebustest32ip2wgoaa.servicebus.windows.net/fjrui/subscriptions/eqkovc/rules/rule?api-version=2017-04</id><title
-        type="text">rule</title><published>2020-08-17T08:07:27Z</published><updated>2020-08-17T08:07:27Z</updated><link
-        rel="self" href="https://servicebustest32ip2wgoaa.servicebus.windows.net/fjrui/subscriptions/eqkovc/rules/rule?api-version=2017-04"/><content
+      string: <entry xmlns="http://www.w3.org/2005/Atom"><id>https://servicebustestafjalzt3of.servicebus.windows.net/fjrui/subscriptions/eqkovc/rules/rule?api-version=2017-04</id><title
+        type="text">rule</title><published>2020-12-03T18:23:34Z</published><updated>2020-12-03T18:23:34Z</updated><link
+        rel="self" href="https://servicebustestafjalzt3of.servicebus.windows.net/fjrui/subscriptions/eqkovc/rules/rule?api-version=2017-04"/><content
         type="application/xml"><RuleDescription xmlns="http://schemas.microsoft.com/netservices/2010/10/servicebus/connect"
         xmlns:i="http://www.w3.org/2001/XMLSchema-instance"><Filter i:type="CorrelationFilter"><CorrelationId>testcid</CorrelationId></Filter><Action
-        i:type="SqlRuleAction"><SqlExpression>SET Priority = 'low'</SqlExpression><CompatibilityLevel>20</CompatibilityLevel></Action><CreatedAt>2020-08-17T08:07:27.613572Z</CreatedAt><Name>rule</Name></RuleDescription></content></entry>
+        i:type="SqlRuleAction"><SqlExpression>SET Priority = 'low'</SqlExpression><CompatibilityLevel>20</CompatibilityLevel><RequiresPreprocessing>true</RequiresPreprocessing></Action><CreatedAt>2020-12-03T18:23:34.488995Z</CreatedAt><Name>rule</Name></RuleDescription></content></entry>
     headers:
       content-type:
       - application/atom+xml;type=entry;charset=utf-8
       date:
-      - Mon, 17 Aug 2020 08:07:26 GMT
+      - Thu, 03 Dec 2020 18:23:34 GMT
       etag:
-      - '637332484464700000'
+      - '637426166136000000'
       server:
       - Microsoft-HTTPAPI/2.0
       strict-transport-security:
@@ -260,19 +260,19 @@ interactions:
     uri: https://servicebustestsbname.servicebus.windows.net/fjrui/subscriptions/eqkovc/rules/rule?enrich=false&api-version=2017-04
   response:
     body:
-      string: <entry xmlns="http://www.w3.org/2005/Atom"><id>sb://servicebustest32ip2wgoaa.servicebus.windows.net/fjrui/subscriptions/eqkovc/rules/rule?enrich=false&amp;api-version=2017-04</id><title
-        type="text">rule</title><published>2020-08-17T08:07:27Z</published><updated>2020-08-17T08:07:27Z</updated><link
-        rel="self" href="sb://servicebustest32ip2wgoaa.servicebus.windows.net/fjrui/subscriptions/eqkovc/rules/rule?enrich=false&amp;api-version=2017-04"/><content
+      string: <entry xmlns="http://www.w3.org/2005/Atom"><id>sb://servicebustestafjalzt3of.servicebus.windows.net/fjrui/subscriptions/eqkovc/rules/rule?enrich=false&amp;api-version=2017-04</id><title
+        type="text">rule</title><published>2020-12-03T18:23:34Z</published><updated>2020-12-03T18:23:34Z</updated><link
+        rel="self" href="sb://servicebustestafjalzt3of.servicebus.windows.net/fjrui/subscriptions/eqkovc/rules/rule?enrich=false&amp;api-version=2017-04"/><content
         type="application/xml"><RuleDescription xmlns="http://schemas.microsoft.com/netservices/2010/10/servicebus/connect"
         xmlns:i="http://www.w3.org/2001/XMLSchema-instance"><Filter i:type="CorrelationFilter"><CorrelationId>testcid</CorrelationId></Filter><Action
-        i:type="SqlRuleAction"><SqlExpression>SET Priority = 'low'</SqlExpression><CompatibilityLevel>20</CompatibilityLevel></Action><CreatedAt>2020-08-17T08:07:27.4989085Z</CreatedAt><Name>rule</Name></RuleDescription></content></entry>
+        i:type="SqlRuleAction"><SqlExpression>SET Priority = 'low'</SqlExpression><CompatibilityLevel>20</CompatibilityLevel><RequiresPreprocessing>true</RequiresPreprocessing></Action><CreatedAt>2020-12-03T18:23:34.2878054Z</CreatedAt><Name>rule</Name></RuleDescription></content></entry>
     headers:
       content-type:
       - application/atom+xml;type=entry;charset=utf-8
       date:
-      - Mon, 17 Aug 2020 08:07:27 GMT
+      - Thu, 03 Dec 2020 18:23:34 GMT
       etag:
-      - '637332484464700000'
+      - '637426166136000000'
       server:
       - Microsoft-HTTPAPI/2.0
       strict-transport-security:
@@ -304,9 +304,9 @@ interactions:
       content-length:
       - '0'
       date:
-      - Mon, 17 Aug 2020 08:07:27 GMT
+      - Thu, 03 Dec 2020 18:23:34 GMT
       etag:
-      - '637332484464700000'
+      - '637426166136000000'
       server:
       - Microsoft-HTTPAPI/2.0
       strict-transport-security:
@@ -336,9 +336,9 @@ interactions:
       content-length:
       - '0'
       date:
-      - Mon, 17 Aug 2020 08:07:27 GMT
+      - Thu, 03 Dec 2020 18:23:34 GMT
       etag:
-      - '637332484464700000'
+      - '637426166136000000'
       server:
       - Microsoft-HTTPAPI/2.0
       strict-transport-security:
@@ -368,9 +368,9 @@ interactions:
       content-length:
       - '0'
       date:
-      - Mon, 17 Aug 2020 08:07:27 GMT
+      - Thu, 03 Dec 2020 18:23:34 GMT
       etag:
-      - '637332484464700000'
+      - '637426166136000000'
       server:
       - Microsoft-HTTPAPI/2.0
       strict-transport-security:

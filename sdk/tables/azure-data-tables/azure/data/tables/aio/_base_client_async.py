@@ -4,50 +4,55 @@
 # license information.
 # --------------------------------------------------------------------------
 
-from typing import (  # pylint: disable=unused-import
-    Union, Optional, Any, Iterable, Dict, List, Type, Tuple,
-    TYPE_CHECKING
-)
-import logging
-from azure.core.pipeline import AsyncPipeline
-from azure.core.async_paging import AsyncList
-from azure.core.exceptions import HttpResponseError
+from typing import Any, List, Mapping
+from uuid import uuid4
+
+from azure.core.credentials import AzureSasCredential
 from azure.core.pipeline.policies import (
     ContentDecodePolicy,
     AsyncBearerTokenCredentialPolicy,
     AsyncRedirectPolicy,
     DistributedTracingPolicy,
     HttpLoggingPolicy,
+    UserAgentPolicy,
+    ProxyPolicy,
+    AzureSasCredentialPolicy,
+    RequestIdPolicy,
+    CustomHookPolicy,
+    NetworkTraceLoggingPolicy
 )
-from azure.core.pipeline.transport import AsyncHttpTransport
+from azure.core.pipeline.transport import (
+    AsyncHttpTransport,
+    HttpRequest,
+)
 
-from .._constants import STORAGE_OAUTH_SCOPE, CONNECTION_TIMEOUT, READ_TIMEOUT
+from .._generated.aio import AzureTable
+from .._base_client import AccountHostsMixin, get_api_version, extract_batch_part_metadata
 from .._authentication import SharedKeyCredentialPolicy
-from .._base_client import create_configuration
-from .._policies import (
-    StorageContentValidation,
-    StorageRequestHook,
-    StorageHosts,
-    StorageHeadersPolicy
-)
-from ._policies_async import AsyncStorageResponseHook
-from .._error import _process_table_error
-from .._models import PartialBatchErrorException
-
-if TYPE_CHECKING:
-    from azure.core.pipeline import Pipeline
-    from azure.core.pipeline.transport import HttpRequest
-    from azure.core.configuration import Configuration
-_LOGGER = logging.getLogger(__name__)
+from .._constants import STORAGE_OAUTH_SCOPE
+from .._error import RequestTooLargeError, TableTransactionError, _decode_error
+from .._policies import StorageHosts, StorageHeadersPolicy
+from .._sdk_moniker import SDK_MONIKER
+from ._policies_async import AsyncTablesRetryPolicy
 
 
-class AsyncStorageAccountHostsMixin(object):
+class AsyncTablesBaseClient(AccountHostsMixin):
 
-    def __enter__(self):
-        raise TypeError("Async client only supports 'async with'.")
+    def __init__(
+        self,
+        account_url,  # type: str
+        credential=None,  # type: str
+        **kwargs  # type: Any
+    ):
+        # type: (...) -> None
+        super(AsyncTablesBaseClient, self).__init__(account_url, credential=credential, **kwargs)
+        self._client = AzureTable(
+            self.url,
+            policies=kwargs.pop('policies', self._policies),
+            **kwargs
+        )
+        self._client._config.version = get_api_version(kwargs, self._client._config.version)  # pylint: disable=protected-access
 
-    def __exit__(self, *args):
-        pass
 
     async def __aenter__(self):
         await self._client.__aenter__()
@@ -56,98 +61,95 @@ class AsyncStorageAccountHostsMixin(object):
     async def __aexit__(self, *args):
         await self._client.__aexit__(*args)
 
-    async def close(self):
-        """ This method is to close the sockets opened by the client.
+    async def close(self) -> None:
+        """This method is to close the sockets opened by the client.
         It need not be used when using with a context manager.
         """
         await self._client.close()
 
-    def _create_pipeline(self, credential, **kwargs):
-        # type: (Any, **Any) -> Tuple[Configuration, Pipeline]
-        self._credential_policy = None
-        if hasattr(credential, 'get_token'):
-            self._credential_policy = AsyncBearerTokenCredentialPolicy(credential, STORAGE_OAUTH_SCOPE)
+    def _configure_credential(self, credential):
+        # type: (Any) -> None
+        if hasattr(credential, "get_token"):
+            self._credential_policy = AsyncBearerTokenCredentialPolicy(
+                credential, STORAGE_OAUTH_SCOPE
+            )
         elif isinstance(credential, SharedKeyCredentialPolicy):
             self._credential_policy = credential
+        elif isinstance(credential, AzureSasCredential):
+            self._credential_policy = AzureSasCredentialPolicy(credential)
         elif credential is not None:
             raise TypeError("Unsupported credential: {}".format(credential))
-        config = kwargs.get('_configuration') or create_configuration(**kwargs)
-        if kwargs.get('_pipeline'):
-            return config, kwargs['_pipeline']
-        config.transport = kwargs.get('transport')  # type: ignore
-        kwargs.setdefault("connection_timeout", CONNECTION_TIMEOUT)
-        kwargs.setdefault("read_timeout", READ_TIMEOUT)
-        if not config.transport:
-            try:
-                from azure.core.pipeline.transport import AioHttpTransport
-            except ImportError:
-                raise ImportError("Unable to create async transport. Please check aiohttp is installed.")
-            config.transport = AioHttpTransport(**kwargs)
-        policies = [
-            config.headers_policy,
-            config.proxy_policy,
-            config.user_agent_policy,
-            StorageContentValidation(),
-            StorageRequestHook(**kwargs),
+
+    def _configure_policies(self, **kwargs):
+        return [
+            RequestIdPolicy(**kwargs),
+            StorageHeadersPolicy(**kwargs),
+            UserAgentPolicy(sdk_moniker=SDK_MONIKER, **kwargs),
+            ProxyPolicy(**kwargs),
             self._credential_policy,
             ContentDecodePolicy(response_encoding="utf-8"),
             AsyncRedirectPolicy(**kwargs),
-            StorageHosts(hosts=self._hosts, **kwargs), # type: ignore
-            config.retry_policy,
-            config.logging_policy,
-            AsyncStorageResponseHook(**kwargs),
+            StorageHosts(**kwargs),
+            AsyncTablesRetryPolicy(**kwargs),
+            CustomHookPolicy(**kwargs),
+            NetworkTraceLoggingPolicy(**kwargs),
             DistributedTracingPolicy(**kwargs),
             HttpLoggingPolicy(**kwargs),
         ]
-        return config, AsyncPipeline(config.transport, policies=policies)
 
-    async def _batch_send(
-        self, *reqs: 'HttpRequest',
-        **kwargs
-    ):
-        """Given a series of request, do a Storage batch call.
-        """
+    async def _batch_send(self, *reqs: "HttpRequest", **kwargs) -> List[Mapping[str, Any]]:
+        """Given a series of request, do a Storage batch call."""
         # Pop it here, so requests doesn't feel bad about additional kwarg
-        raise_on_any_failure = kwargs.pop("raise_on_any_failure", True)
+        policies = [StorageHeadersPolicy()]
+
+        changeset = HttpRequest("POST", None)
+        changeset.set_multipart_mixed(
+            *reqs, policies=policies, boundary="changeset_{}".format(uuid4())
+        )
         request = self._client._client.post(  # pylint: disable=protected-access
-            url='https://{}/?comp=batch'.format(self.primary_hostname),
+            url="https://{}/$batch".format(self._primary_hostname),
             headers={
-                'x-ms-version': self.api_version
-            }
+                "x-ms-version": self.api_version,
+                "DataServiceVersion": "3.0",
+                "MaxDataServiceVersion": "3.0;NetFx",
+                "Content-Type": "application/json",
+                "Accept": "application/json"
+            },
         )
-
         request.set_multipart_mixed(
-            *reqs,
-            policies=[
-                StorageHeadersPolicy(),
-                self._credential_policy
-            ],
-            enforce_https=False
+            changeset,
+            policies=policies,
+            enforce_https=False,
+            boundary="batch_{}".format(uuid4()),
         )
 
-        pipeline_response = await self._pipeline.run(
-            request, **kwargs
-        )
+        pipeline_response = await self._client._client._pipeline.run(request, **kwargs)  # pylint: disable=protected-access
         response = pipeline_response.http_response
+        # TODO: Check for proper error model deserialization
+        if response.status_code == 413:
+            raise _decode_error(
+                response,
+                error_message="The transaction request was too large",
+                error_type=RequestTooLargeError)
+        if response.status_code != 202:
+            raise _decode_error(response)
 
-        try:
-            if response.status_code not in [202]:
-                raise HttpResponseError(response=response)
-            parts = response.parts() # Return an AsyncIterator
-            if raise_on_any_failure:
-                parts_list = []
-                async for part in parts:
-                    parts_list.append(part)
-                if any(p for p in parts_list if not 200 <= p.status_code < 300):
-                    error = PartialBatchErrorException(
-                        message="There is a partial failure in the batch operation.",
-                        response=response, parts=parts_list
-                    )
-                    raise error
-                return AsyncList(parts_list)
-            return parts
-        except HttpResponseError as error:
-            _process_table_error(error)
+        parts_iter = response.parts()
+        parts = []
+        async for p in parts_iter:
+            parts.append(p)
+        error_parts = [p for p in parts if not 200 <= p.status_code < 300]
+        if any(error_parts):
+            if error_parts[0].status_code == 413:
+                raise _decode_error(
+                    response,
+                    error_message="The transaction request was too large",
+                    error_type=RequestTooLargeError)
+            raise _decode_error(
+                response=error_parts[0],
+                error_type=TableTransactionError,
+            )
+        return [extract_batch_part_metadata(p) for p in parts]
 
 
 class AsyncTransportWrapper(AsyncHttpTransport):

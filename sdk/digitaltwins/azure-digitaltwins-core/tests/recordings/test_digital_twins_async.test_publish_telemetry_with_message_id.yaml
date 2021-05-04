@@ -1,0 +1,57 @@
+interactions:
+- request:
+    body: '{"$metadata": {"$model": "dtmi:samples:DTTestBuilding;1"}, "AverageTemperature":
+      68}'
+    headers:
+      Accept:
+      - application/json
+      Content-Length:
+      - '84'
+      Content-Type:
+      - application/json
+      User-Agent:
+      - azsdk-python-digitaltwins-core/1.1.0 Python/3.7.4 (Windows-10-10.0.19041-SP0)
+    method: PUT
+    uri: https://dttestdigitaltwinsname.api.wcus.digitaltwins.azure.net/digitaltwins/digitalTwin-451d1a18?api-version=2020-10-31
+  response:
+    body:
+      string: '{"$dtId":"digitalTwin-451d1a18","$etag":"W/\"a7403317-fd8f-4721-bae6-cd9cd99e3f2f\"","AverageTemperature":68,"$metadata":{"$model":"dtmi:samples:DTTestBuilding;1","AverageTemperature":{"lastUpdateTime":"2020-11-24T21:07:37.0748669Z"}}}'
+    headers:
+      content-length: '235'
+      content-type: application/json; charset=utf-8
+      date: Tue, 24 Nov 2020 21:07:36 GMT
+      etag: W/"a7403317-fd8f-4721-bae6-cd9cd99e3f2f"
+      strict-transport-security: max-age=2592000
+    status:
+      code: 200
+      message: OK
+    url: https://dttestdigitaltwinsname.api.wcus.digitaltwins.azure.net/digitaltwins/digitalTwin-451d1a18?api-version=2020-10-31
+- request:
+    body: '{"ComponentTelemetry1": 5}'
+    headers:
+      Accept:
+      - application/json
+      Content-Length:
+      - '26'
+      Content-Type:
+      - application/json
+      Message-Id:
+      - message-451d1a18
+      Telemetry-Source-Time:
+      - '2020-11-25 10:07:37.210547'
+      User-Agent:
+      - azsdk-python-digitaltwins-core/1.1.0 Python/3.7.4 (Windows-10-10.0.19041-SP0)
+    method: POST
+    uri: https://dttestdigitaltwinsname.api.wcus.digitaltwins.azure.net/digitaltwins/digitalTwin-451d1a18/telemetry?api-version=2020-10-31
+  response:
+    body:
+      string: ''
+    headers:
+      content-length: '0'
+      date: Tue, 24 Nov 2020 21:07:37 GMT
+      strict-transport-security: max-age=2592000
+    status:
+      code: 204
+      message: No Content
+    url: https://dttestdigitaltwinsname.api.wcus.digitaltwins.azure.net/digitaltwins/digitalTwin-451d1a18/telemetry?api-version=2020-10-31
+version: 1

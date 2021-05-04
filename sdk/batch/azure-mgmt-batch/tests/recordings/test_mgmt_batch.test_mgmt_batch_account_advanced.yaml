@@ -1,7 +1,7 @@
 interactions:
 - request:
-    body: '{"location": "westcentralus", "properties": {"publicNetworkAccess": "Disabled"},
-      "identity": {"type": "SystemAssigned"}}'
+    body: '{"location": "westcentralus", "identity": {"type": "SystemAssigned"}, "properties":
+      {"publicNetworkAccess": "Disabled"}}'
     headers:
       Accept:
       - application/json
@@ -12,14 +12,11 @@ interactions:
       Content-Length:
       - '120'
       Content-Type:
-      - application/json; charset=utf-8
+      - application/json
       User-Agent:
-      - python/3.7.3 (Windows-10-10.0.18362-SP0) msrest/0.6.14 msrest_azure/0.4.34
-        azure-mgmt-batch/9.0.0 Azure-SDK-For-Python
-      accept-language:
-      - en-US
+      - azsdk-python-mgmt-batch/14.0.0b2 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: PUT
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Batch/batchAccounts/batchpendpointdefb137a?api-version=2020-05-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Batch/batchAccounts/batchpendpointdefb137a?api-version=2021-01-01
   response:
     body:
       string: ''
@@ -29,11 +26,11 @@ interactions:
       content-length:
       - '0'
       date:
-      - Fri, 29 May 2020 03:08:12 GMT
+      - Thu, 28 Jan 2021 07:49:46 GMT
       expires:
       - '-1'
       location:
-      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Batch/batchAccounts/batchpendpointdefb137a/operationResults/153cbbf5-472d-46c4-8772-0728a64cef0f?api-version=2020-05-01
+      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Batch/batchAccounts/batchpendpointdefb137a/operationResults/0ca6e739-4925-40cf-91d3-95ce593ce32c?api-version=2021-01-01
       pragma:
       - no-cache
       server:
@@ -51,34 +48,33 @@ interactions:
     body: null
     headers:
       Accept:
-      - application/json
+      - '*/*'
       Accept-Encoding:
       - gzip, deflate
       Connection:
       - keep-alive
       User-Agent:
-      - python/3.7.3 (Windows-10-10.0.18362-SP0) msrest/0.6.14 msrest_azure/0.4.34
-        azure-mgmt-batch/9.0.0 Azure-SDK-For-Python
+      - azsdk-python-mgmt-batch/14.0.0b2 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Batch/batchAccounts/batchpendpointdefb137a/operationResults/153cbbf5-472d-46c4-8772-0728a64cef0f?api-version=2020-05-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Batch/batchAccounts/batchpendpointdefb137a/operationResults/0ca6e739-4925-40cf-91d3-95ce593ce32c?api-version=2021-01-01
   response:
     body:
-      string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Batch/batchAccounts/batchpendpointdefb137a","name":"batchpendpointdefb137a","type":"Microsoft.Batch/batchAccounts","location":"westcentralus","properties":{"accountEndpoint":"batchpendpointdefb137a.westcentralus.batch.azure.com","provisioningState":"Succeeded","dedicatedCoreQuota":700,"dedicatedCoreQuotaPerVMFamily":[{"name":"standardAv2Family","coreQuota":100},{"name":"standardDv2Family","coreQuota":100},{"name":"standardDv3Family","coreQuota":100},{"name":"standardEv3Family","coreQuota":50},{"name":"standardDSv2Family","coreQuota":100},{"name":"standardDSv3Family","coreQuota":100},{"name":"standardESv3Family","coreQuota":50},{"name":"standardFFamily","coreQuota":50},{"name":"standardFSFamily","coreQuota":50},{"name":"standardA0_A7Family","coreQuota":0},{"name":"standardA8_A11Family","coreQuota":0},{"name":"standardDFamily","coreQuota":0},{"name":"standardGFamily","coreQuota":0},{"name":"basicAFamily","coreQuota":0},{"name":"standardNVFamily","coreQuota":0},{"name":"standardNVPromoFamily","coreQuota":0},{"name":"standardNCFamily","coreQuota":0},{"name":"standardNCPromoFamily","coreQuota":0},{"name":"standardHFamily","coreQuota":0},{"name":"standardHPromoFamily","coreQuota":0},{"name":"standardMSFamily","coreQuota":0},{"name":"standardDSFamily","coreQuota":0},{"name":"standardGSFamily","coreQuota":0},{"name":"standardLSFamily","coreQuota":0},{"name":"standardLSv2Family","coreQuota":0},{"name":"standardNCSv2Family","coreQuota":0},{"name":"standardNDSFamily","coreQuota":0},{"name":"standardNCSv3Family","coreQuota":0},{"name":"standardFSv2Family","coreQuota":0},{"name":"standardHBSFamily","coreQuota":0},{"name":"standardHCSFamily","coreQuota":0},{"name":"standardNVSv3Family","coreQuota":0},{"name":"standardHBrsv2Family","coreQuota":0},{"name":"standardDASv4Family","coreQuota":0},{"name":"standardEAv4Family","coreQuota":0},{"name":"standardEASv4Family","coreQuota":0}],"dedicatedCoreQuotaPerVMFamilyEnforced":false,"lowPriorityCoreQuota":500,"poolQuota":100,"activeJobAndJobScheduleQuota":300,"poolAllocationMode":"BatchService","publicNetworkAccess":"Disabled","privateEndpointConnections":[],"encryption":{"keySource":"Microsoft.Batch"}},"identity":{"principalId":"9f75e0be-fe8d-4314-bf11-d49e7f28ceeb","tenantId":"72f988bf-86f1-41af-91ab-2d7cd011db47","type":"SystemAssigned"}}'
+      string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Batch/batchAccounts/batchpendpointdefb137a","name":"batchpendpointdefb137a","type":"Microsoft.Batch/batchAccounts","location":"westcentralus","properties":{"accountEndpoint":"batchpendpointdefb137a.westcentralus.batch.azure.com","provisioningState":"Succeeded","dedicatedCoreQuota":700,"dedicatedCoreQuotaPerVMFamily":[{"name":"standardAv2Family","coreQuota":100},{"name":"standardDv2Family","coreQuota":100},{"name":"standardDv3Family","coreQuota":100},{"name":"standardEv3Family","coreQuota":50},{"name":"standardDSv2Family","coreQuota":100},{"name":"standardDSv3Family","coreQuota":100},{"name":"standardESv3Family","coreQuota":50},{"name":"standardFFamily","coreQuota":50},{"name":"standardFSFamily","coreQuota":50},{"name":"standardA0_A7Family","coreQuota":0},{"name":"standardA8_A11Family","coreQuota":0},{"name":"standardDFamily","coreQuota":0},{"name":"standardGFamily","coreQuota":0},{"name":"basicAFamily","coreQuota":0},{"name":"standardNVFamily","coreQuota":0},{"name":"standardNVPromoFamily","coreQuota":0},{"name":"standardNCFamily","coreQuota":0},{"name":"standardNCPromoFamily","coreQuota":0},{"name":"standardHFamily","coreQuota":0},{"name":"standardHPromoFamily","coreQuota":0},{"name":"standardMSFamily","coreQuota":0},{"name":"standardDSFamily","coreQuota":0},{"name":"standardGSFamily","coreQuota":0},{"name":"standardLSFamily","coreQuota":0},{"name":"standardLSv2Family","coreQuota":0},{"name":"standardNCSv2Family","coreQuota":0},{"name":"standardNDSFamily","coreQuota":0},{"name":"standardNCSv3Family","coreQuota":0},{"name":"standardFSv2Family","coreQuota":0},{"name":"standardHBSFamily","coreQuota":0},{"name":"standardHCSFamily","coreQuota":0},{"name":"standardNVSv3Family","coreQuota":0},{"name":"standardHBrsv2Family","coreQuota":0},{"name":"standardDAv4Family","coreQuota":0},{"name":"standardDASv4Family","coreQuota":0},{"name":"standardEAv4Family","coreQuota":0},{"name":"standardEASv4Family","coreQuota":0},{"name":"standardDDv4Family","coreQuota":0},{"name":"standardDDSv4Family","coreQuota":0},{"name":"standardEDv4Family","coreQuota":0},{"name":"standardEDSv4Family","coreQuota":0},{"name":"standardMSv2Family","coreQuota":0},{"name":"standardEIv3Family","coreQuota":0},{"name":"standardNVSv4Family","coreQuota":0},{"name":"standardXEIDSv4Family","coreQuota":0}],"dedicatedCoreQuotaPerVMFamilyEnforced":true,"lowPriorityCoreQuota":500,"poolQuota":100,"activeJobAndJobScheduleQuota":300,"poolAllocationMode":"BatchService","publicNetworkAccess":"Disabled","privateEndpointConnections":[],"encryption":{"keySource":"Microsoft.Batch"}},"identity":{"principalId":"c8cfbfab-b16e-421d-be47-af69f845c0ad","tenantId":"00000000-0000-0000-0000-000000000000","type":"SystemAssigned"}}'
     headers:
       cache-control:
       - no-cache
       content-length:
-      - '2478'
+      - '2879'
       content-type:
       - application/json; charset=utf-8
       date:
-      - Fri, 29 May 2020 03:08:28 GMT
+      - Thu, 28 Jan 2021 07:50:01 GMT
       etag:
-      - '"0x8D8037D8F629560"'
+      - '"0x8D8C361513A6E2D"'
       expires:
       - '-1'
       last-modified:
-      - Fri, 29 May 2020 03:08:28 GMT
+      - Thu, 28 Jan 2021 07:50:01 GMT
       pragma:
       - no-cache
       server:
@@ -96,8 +92,8 @@ interactions:
       message: OK
 - request:
     body: '{"location": "westcentralus", "properties": {"addressSpace": {"addressPrefixes":
-      ["10.0.0.0/16"]}, "subnets": [{"properties": {"addressPrefix": "10.0.0.0/24",
-      "privateEndpointNetworkPolicies": "Disabled"}, "name": "subnetdefb137a"}], "enableDdosProtection":
+      ["10.0.0.0/16"]}, "subnets": [{"name": "subnetdefb137a", "properties": {"addressPrefix":
+      "10.0.0.0/24", "privateEndpointNetworkPolicies": "Disabled"}}], "enableDdosProtection":
       false, "enableVmProtection": false}}'
     headers:
       Accept:
@@ -109,35 +105,34 @@ interactions:
       Content-Length:
       - '294'
       Content-Type:
-      - application/json; charset=utf-8
+      - application/json
       User-Agent:
-      - python/3.7.3 (Windows-10-10.0.18362-SP0) msrest/0.6.14 msrest_azure/0.4.34
-        azure-mgmt-network/10.2.0 Azure-SDK-For-Python
-      accept-language:
-      - en-US
+      - azsdk-python-azure-mgmt-network/17.0.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: PUT
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/virtualNetworks/vnetdefb137a?api-version=2020-04-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/virtualNetworks/vnetdefb137a?api-version=2020-07-01
   response:
     body:
-      string: "{\r\n  \"name\": \"vnetdefb137a\",\r\n  \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/virtualNetworks/vnetdefb137a\",\r\n
-        \ \"etag\": \"W/\\\"073eb38c-eca8-4e64-99c7-b0c40922e9a8\\\"\",\r\n  \"type\":
-        \"Microsoft.Network/virtualNetworks\",\r\n  \"location\": \"westcentralus\",\r\n
-        \ \"properties\": {\r\n    \"provisioningState\": \"Updating\",\r\n    \"resourceGuid\":
-        \"12559fdb-fc54-42fb-8c53-fbf3491609e6\",\r\n    \"addressSpace\": {\r\n      \"addressPrefixes\":
-        [\r\n        \"10.0.0.0/16\"\r\n      ]\r\n    },\r\n    \"subnets\": [\r\n
-        \     {\r\n        \"name\": \"subnetdefb137a\",\r\n        \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/virtualNetworks/vnetdefb137a/subnets/subnetdefb137a\",\r\n
-        \       \"etag\": \"W/\\\"073eb38c-eca8-4e64-99c7-b0c40922e9a8\\\"\",\r\n
-        \       \"properties\": {\r\n          \"provisioningState\": \"Updating\",\r\n
-        \         \"addressPrefix\": \"10.0.0.0/24\",\r\n          \"delegations\":
-        [],\r\n          \"privateEndpointNetworkPolicies\": \"Disabled\",\r\n          \"privateLinkServiceNetworkPolicies\":
-        \"Enabled\"\r\n        },\r\n        \"type\": \"Microsoft.Network/virtualNetworks/subnets\"\r\n
-        \     }\r\n    ],\r\n    \"virtualNetworkPeerings\": [],\r\n    \"enableDdosProtection\":
-        false,\r\n    \"enableVmProtection\": false\r\n  }\r\n}"
+      string: "{\r\n  \"name\": \"vnetdefb137a\",\r\n  \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/virtualNetworks/vnetdefb137a\"\
+        ,\r\n  \"etag\": \"W/\\\"9457a05b-7e33-4457-8071-155d478573e1\\\"\",\r\n \
+        \ \"type\": \"Microsoft.Network/virtualNetworks\",\r\n  \"location\": \"westcentralus\"\
+        ,\r\n  \"properties\": {\r\n    \"provisioningState\": \"Updating\",\r\n \
+        \   \"resourceGuid\": \"2df93329-24f4-4349-9456-2b2981f0e6c0\",\r\n    \"\
+        addressSpace\": {\r\n      \"addressPrefixes\": [\r\n        \"10.0.0.0/16\"\
+        \r\n      ]\r\n    },\r\n    \"subnets\": [\r\n      {\r\n        \"name\"\
+        : \"subnetdefb137a\",\r\n        \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/virtualNetworks/vnetdefb137a/subnets/subnetdefb137a\"\
+        ,\r\n        \"etag\": \"W/\\\"9457a05b-7e33-4457-8071-155d478573e1\\\"\"\
+        ,\r\n        \"properties\": {\r\n          \"provisioningState\": \"Updating\"\
+        ,\r\n          \"addressPrefix\": \"10.0.0.0/24\",\r\n          \"delegations\"\
+        : [],\r\n          \"privateEndpointNetworkPolicies\": \"Disabled\",\r\n \
+        \         \"privateLinkServiceNetworkPolicies\": \"Enabled\"\r\n        },\r\
+        \n        \"type\": \"Microsoft.Network/virtualNetworks/subnets\"\r\n    \
+        \  }\r\n    ],\r\n    \"virtualNetworkPeerings\": [],\r\n    \"enableDdosProtection\"\
+        : false,\r\n    \"enableVmProtection\": false\r\n  }\r\n}"
     headers:
       azure-asyncnotification:
       - Enabled
       azure-asyncoperation:
-      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/westcentralus/operations/bd1050e4-8401-42b0-a699-c147f1a53417?api-version=2020-04-01
+      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/westcentralus/operations/a8896261-ad0f-4204-acc8-4ad10ac3f9b6?api-version=2020-07-01
       cache-control:
       - no-cache
       content-length:
@@ -145,7 +140,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Fri, 29 May 2020 03:08:29 GMT
+      - Thu, 28 Jan 2021 07:50:09 GMT
       expires:
       - '-1'
       pragma:
@@ -158,9 +153,9 @@ interactions:
       x-content-type-options:
       - nosniff
       x-ms-arm-service-request-id:
-      - ee96102a-72a3-4b5b-9f34-99c60019b5f8
+      - 96e861f2-d87c-42e2-9ad2-2a999769190e
       x-ms-ratelimit-remaining-subscription-writes:
-      - '1199'
+      - '1197'
     status:
       code: 201
       message: Created
@@ -168,16 +163,15 @@ interactions:
     body: null
     headers:
       Accept:
-      - application/json
+      - '*/*'
       Accept-Encoding:
       - gzip, deflate
       Connection:
       - keep-alive
       User-Agent:
-      - python/3.7.3 (Windows-10-10.0.18362-SP0) msrest/0.6.14 msrest_azure/0.4.34
-        azure-mgmt-network/10.2.0 Azure-SDK-For-Python
+      - azsdk-python-azure-mgmt-network/17.0.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/westcentralus/operations/bd1050e4-8401-42b0-a699-c147f1a53417?api-version=2020-04-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/westcentralus/operations/a8896261-ad0f-4204-acc8-4ad10ac3f9b6?api-version=2020-07-01
   response:
     body:
       string: "{\r\n  \"status\": \"Succeeded\"\r\n}"
@@ -189,7 +183,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Fri, 29 May 2020 03:08:34 GMT
+      - Thu, 28 Jan 2021 07:50:12 GMT
       expires:
       - '-1'
       pragma:
@@ -206,7 +200,7 @@ interactions:
       x-content-type-options:
       - nosniff
       x-ms-arm-service-request-id:
-      - f38bcfe2-4680-42e0-b5cb-5d0682aae247
+      - 57a90e37-10fb-4bfd-872a-304b8aa1eed6
     status:
       code: 200
       message: OK
@@ -214,32 +208,33 @@ interactions:
     body: null
     headers:
       Accept:
-      - application/json
+      - '*/*'
       Accept-Encoding:
       - gzip, deflate
       Connection:
       - keep-alive
       User-Agent:
-      - python/3.7.3 (Windows-10-10.0.18362-SP0) msrest/0.6.14 msrest_azure/0.4.34
-        azure-mgmt-network/10.2.0 Azure-SDK-For-Python
+      - azsdk-python-azure-mgmt-network/17.0.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/virtualNetworks/vnetdefb137a?api-version=2020-04-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/virtualNetworks/vnetdefb137a?api-version=2020-07-01
   response:
     body:
-      string: "{\r\n  \"name\": \"vnetdefb137a\",\r\n  \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/virtualNetworks/vnetdefb137a\",\r\n
-        \ \"etag\": \"W/\\\"6618c5b8-665c-4eb8-b461-3aa12538cfda\\\"\",\r\n  \"type\":
-        \"Microsoft.Network/virtualNetworks\",\r\n  \"location\": \"westcentralus\",\r\n
-        \ \"properties\": {\r\n    \"provisioningState\": \"Succeeded\",\r\n    \"resourceGuid\":
-        \"12559fdb-fc54-42fb-8c53-fbf3491609e6\",\r\n    \"addressSpace\": {\r\n      \"addressPrefixes\":
-        [\r\n        \"10.0.0.0/16\"\r\n      ]\r\n    },\r\n    \"subnets\": [\r\n
-        \     {\r\n        \"name\": \"subnetdefb137a\",\r\n        \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/virtualNetworks/vnetdefb137a/subnets/subnetdefb137a\",\r\n
-        \       \"etag\": \"W/\\\"6618c5b8-665c-4eb8-b461-3aa12538cfda\\\"\",\r\n
-        \       \"properties\": {\r\n          \"provisioningState\": \"Succeeded\",\r\n
-        \         \"addressPrefix\": \"10.0.0.0/24\",\r\n          \"delegations\":
-        [],\r\n          \"privateEndpointNetworkPolicies\": \"Disabled\",\r\n          \"privateLinkServiceNetworkPolicies\":
-        \"Enabled\"\r\n        },\r\n        \"type\": \"Microsoft.Network/virtualNetworks/subnets\"\r\n
-        \     }\r\n    ],\r\n    \"virtualNetworkPeerings\": [],\r\n    \"enableDdosProtection\":
-        false,\r\n    \"enableVmProtection\": false\r\n  }\r\n}"
+      string: "{\r\n  \"name\": \"vnetdefb137a\",\r\n  \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/virtualNetworks/vnetdefb137a\"\
+        ,\r\n  \"etag\": \"W/\\\"7f584472-8814-4cd9-80d6-7cb18250169b\\\"\",\r\n \
+        \ \"type\": \"Microsoft.Network/virtualNetworks\",\r\n  \"location\": \"westcentralus\"\
+        ,\r\n  \"properties\": {\r\n    \"provisioningState\": \"Succeeded\",\r\n\
+        \    \"resourceGuid\": \"2df93329-24f4-4349-9456-2b2981f0e6c0\",\r\n    \"\
+        addressSpace\": {\r\n      \"addressPrefixes\": [\r\n        \"10.0.0.0/16\"\
+        \r\n      ]\r\n    },\r\n    \"subnets\": [\r\n      {\r\n        \"name\"\
+        : \"subnetdefb137a\",\r\n        \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/virtualNetworks/vnetdefb137a/subnets/subnetdefb137a\"\
+        ,\r\n        \"etag\": \"W/\\\"7f584472-8814-4cd9-80d6-7cb18250169b\\\"\"\
+        ,\r\n        \"properties\": {\r\n          \"provisioningState\": \"Succeeded\"\
+        ,\r\n          \"addressPrefix\": \"10.0.0.0/24\",\r\n          \"delegations\"\
+        : [],\r\n          \"privateEndpointNetworkPolicies\": \"Disabled\",\r\n \
+        \         \"privateLinkServiceNetworkPolicies\": \"Enabled\"\r\n        },\r\
+        \n        \"type\": \"Microsoft.Network/virtualNetworks/subnets\"\r\n    \
+        \  }\r\n    ],\r\n    \"virtualNetworkPeerings\": [],\r\n    \"enableDdosProtection\"\
+        : false,\r\n    \"enableVmProtection\": false\r\n  }\r\n}"
     headers:
       cache-control:
       - no-cache
@@ -248,9 +243,9 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Fri, 29 May 2020 03:08:34 GMT
+      - Thu, 28 Jan 2021 07:50:13 GMT
       etag:
-      - W/"6618c5b8-665c-4eb8-b461-3aa12538cfda"
+      - W/"7f584472-8814-4cd9-80d6-7cb18250169b"
       expires:
       - '-1'
       pragma:
@@ -267,16 +262,15 @@ interactions:
       x-content-type-options:
       - nosniff
       x-ms-arm-service-request-id:
-      - 058492e9-1099-430c-a5b1-4bc2e1d1a037
+      - 79cc7146-7787-4ecb-84af-bde79298594c
     status:
       code: 200
       message: OK
 - request:
-    body: 'b''b\''b\\\''{"location": "westcentralus", "properties": {"subnet": {"id":
-      "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/virtualNetworks/vnetdefb137a/subnets/subnetdefb137a"},
-      "manualPrivateLinkServiceConnections": [{"properties": {"privateLinkServiceId":
-      "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Batch/batchAccounts/batchpendpointdefb137a",
-      "groupIds": ["batchAccount"]}, "name": "pecdefb137a"}]}}\\\''\'''''
+    body: '{"location": "westcentralus", "properties": {"subnet": {"id": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/virtualNetworks/vnetdefb137a/subnets/subnetdefb137a"},
+      "manualPrivateLinkServiceConnections": [{"name": "pecdefb137a", "properties":
+      {"privateLinkServiceId": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Batch/batchAccounts/batchpendpointdefb137a",
+      "groupIds": ["batchAccount"]}}]}}'
     headers:
       Accept:
       - application/json
@@ -287,38 +281,38 @@ interactions:
       Content-Length:
       - '634'
       Content-Type:
-      - application/json; charset=utf-8
+      - application/json
       User-Agent:
-      - python/3.7.3 (Windows-10-10.0.18362-SP0) msrest/0.6.14 msrest_azure/0.4.34
-        azure-mgmt-network/10.2.0 Azure-SDK-For-Python
-      accept-language:
-      - en-US
+      - azsdk-python-azure-mgmt-network/17.0.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: PUT
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/privateEndpoints/pedefb137a?api-version=2020-04-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/privateEndpoints/pedefb137a?api-version=2020-07-01
   response:
     body:
-      string: "{\r\n  \"name\": \"pedefb137a\",\r\n  \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/privateEndpoints/pedefb137a\",\r\n
-        \ \"etag\": \"W/\\\"aaddeb06-c44f-4ffb-9870-20d50a6f4bb8\\\"\",\r\n  \"type\":
-        \"Microsoft.Network/privateEndpoints\",\r\n  \"location\": \"westcentralus\",\r\n
-        \ \"properties\": {\r\n    \"provisioningState\": \"Updating\",\r\n    \"resourceGuid\":
-        \"1dfeba6e-c3e8-4a61-8c02-cb28211cead2\",\r\n    \"privateLinkServiceConnections\":
-        [],\r\n    \"manualPrivateLinkServiceConnections\": [\r\n      {\r\n        \"name\":
-        \"pecdefb137a\",\r\n        \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/privateEndpoints/pedefb137a/manualPrivateLinkServiceConnections/pecdefb137a\",\r\n
-        \       \"etag\": \"W/\\\"aaddeb06-c44f-4ffb-9870-20d50a6f4bb8\\\"\",\r\n
-        \       \"properties\": {\r\n          \"provisioningState\": \"Succeeded\",\r\n
-        \         \"privateLinkServiceId\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Batch/batchAccounts/batchpendpointdefb137a\",\r\n
-        \         \"groupIds\": [\r\n            \"batchAccount\"\r\n          ],\r\n
-        \         \"privateLinkServiceConnectionState\": {\r\n            \"status\":
-        \"Pending\",\r\n            \"description\": \"Awaiting Approval\",\r\n            \"actionsRequired\":
-        \"None\"\r\n          }\r\n        },\r\n        \"type\": \"Microsoft.Network/privateEndpoints/manualPrivateLinkServiceConnections\"\r\n
-        \     }\r\n    ],\r\n    \"subnet\": {\r\n      \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/virtualNetworks/vnetdefb137a/subnets/subnetdefb137a\"\r\n
-        \   },\r\n    \"networkInterfaces\": [\r\n      {\r\n        \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/networkInterfaces/pedefb137a.nic.2ebb2359-4cf0-41fd-8411-03c4ed7dc473\"\r\n
-        \     }\r\n    ],\r\n    \"customDnsConfigs\": []\r\n  }\r\n}"
+      string: "{\r\n  \"name\": \"pedefb137a\",\r\n  \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/privateEndpoints/pedefb137a\"\
+        ,\r\n  \"etag\": \"W/\\\"911708d4-6046-469d-b75f-5cb3ac6bfc85\\\"\",\r\n \
+        \ \"type\": \"Microsoft.Network/privateEndpoints\",\r\n  \"location\": \"\
+        westcentralus\",\r\n  \"properties\": {\r\n    \"provisioningState\": \"Updating\"\
+        ,\r\n    \"resourceGuid\": \"371a52b2-7650-42d1-96fc-9ad7b92298f5\",\r\n \
+        \   \"privateLinkServiceConnections\": [],\r\n    \"manualPrivateLinkServiceConnections\"\
+        : [\r\n      {\r\n        \"name\": \"pecdefb137a\",\r\n        \"id\": \"\
+        /subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/privateEndpoints/pedefb137a/manualPrivateLinkServiceConnections/pecdefb137a\"\
+        ,\r\n        \"etag\": \"W/\\\"911708d4-6046-469d-b75f-5cb3ac6bfc85\\\"\"\
+        ,\r\n        \"properties\": {\r\n          \"provisioningState\": \"Succeeded\"\
+        ,\r\n          \"privateLinkServiceId\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Batch/batchAccounts/batchpendpointdefb137a\"\
+        ,\r\n          \"groupIds\": [\r\n            \"batchAccount\"\r\n       \
+        \   ],\r\n          \"privateLinkServiceConnectionState\": {\r\n         \
+        \   \"status\": \"Pending\",\r\n            \"description\": \"Awaiting Approval\"\
+        ,\r\n            \"actionsRequired\": \"None\"\r\n          }\r\n        },\r\
+        \n        \"type\": \"Microsoft.Network/privateEndpoints/manualPrivateLinkServiceConnections\"\
+        \r\n      }\r\n    ],\r\n    \"subnet\": {\r\n      \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/virtualNetworks/vnetdefb137a/subnets/subnetdefb137a\"\
+        \r\n    },\r\n    \"networkInterfaces\": [\r\n      {\r\n        \"id\": \"\
+        /subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/networkInterfaces/pedefb137a.nic.5cd1e9da-0528-4cca-b2e3-eebbc71f12d2\"\
+        \r\n      }\r\n    ],\r\n    \"customDnsConfigs\": []\r\n  }\r\n}"
     headers:
       azure-asyncnotification:
       - Enabled
       azure-asyncoperation:
-      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/westcentralus/operations/1487798a-65a1-45c7-8cf0-01c3502111d5?api-version=2020-04-01
+      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/westcentralus/operations/43bcd897-3d26-4a2a-b7bf-942a17e9e89e?api-version=2020-07-01
       cache-control:
       - no-cache
       content-length:
@@ -326,7 +320,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Fri, 29 May 2020 03:08:36 GMT
+      - Thu, 28 Jan 2021 07:50:18 GMT
       expires:
       - '-1'
       pragma:
@@ -339,9 +333,9 @@ interactions:
       x-content-type-options:
       - nosniff
       x-ms-arm-service-request-id:
-      - 340013b5-d7ac-49c7-a079-ace3d430f8dd
+      - d935e2fe-e8af-49c9-a739-a6fb3493ebde
       x-ms-ratelimit-remaining-subscription-writes:
-      - '1198'
+      - '1196'
     status:
       code: 201
       message: Created
@@ -349,16 +343,15 @@ interactions:
     body: null
     headers:
       Accept:
-      - application/json
+      - '*/*'
       Accept-Encoding:
       - gzip, deflate
       Connection:
       - keep-alive
       User-Agent:
-      - python/3.7.3 (Windows-10-10.0.18362-SP0) msrest/0.6.14 msrest_azure/0.4.34
-        azure-mgmt-network/10.2.0 Azure-SDK-For-Python
+      - azsdk-python-azure-mgmt-network/17.0.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/westcentralus/operations/1487798a-65a1-45c7-8cf0-01c3502111d5?api-version=2020-04-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/westcentralus/operations/43bcd897-3d26-4a2a-b7bf-942a17e9e89e?api-version=2020-07-01
   response:
     body:
       string: "{\r\n  \"status\": \"Succeeded\"\r\n}"
@@ -370,7 +363,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Fri, 29 May 2020 03:08:47 GMT
+      - Thu, 28 Jan 2021 07:50:29 GMT
       expires:
       - '-1'
       pragma:
@@ -387,7 +380,7 @@ interactions:
       x-content-type-options:
       - nosniff
       x-ms-arm-service-request-id:
-      - a5e6dadd-65ab-4115-89e1-202075f60d21
+      - 8af0949b-c311-4c8f-b896-c3c5d69c125f
     status:
       code: 200
       message: OK
@@ -395,36 +388,37 @@ interactions:
     body: null
     headers:
       Accept:
-      - application/json
+      - '*/*'
       Accept-Encoding:
       - gzip, deflate
       Connection:
       - keep-alive
       User-Agent:
-      - python/3.7.3 (Windows-10-10.0.18362-SP0) msrest/0.6.14 msrest_azure/0.4.34
-        azure-mgmt-network/10.2.0 Azure-SDK-For-Python
+      - azsdk-python-azure-mgmt-network/17.0.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/privateEndpoints/pedefb137a?api-version=2020-04-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/privateEndpoints/pedefb137a?api-version=2020-07-01
   response:
     body:
-      string: "{\r\n  \"name\": \"pedefb137a\",\r\n  \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/privateEndpoints/pedefb137a\",\r\n
-        \ \"etag\": \"W/\\\"3f048a5b-91b3-4d59-9154-626a601d0f44\\\"\",\r\n  \"type\":
-        \"Microsoft.Network/privateEndpoints\",\r\n  \"location\": \"westcentralus\",\r\n
-        \ \"properties\": {\r\n    \"provisioningState\": \"Succeeded\",\r\n    \"resourceGuid\":
-        \"1dfeba6e-c3e8-4a61-8c02-cb28211cead2\",\r\n    \"privateLinkServiceConnections\":
-        [],\r\n    \"manualPrivateLinkServiceConnections\": [\r\n      {\r\n        \"name\":
-        \"pecdefb137a\",\r\n        \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/privateEndpoints/pedefb137a/manualPrivateLinkServiceConnections/pecdefb137a\",\r\n
-        \       \"etag\": \"W/\\\"3f048a5b-91b3-4d59-9154-626a601d0f44\\\"\",\r\n
-        \       \"properties\": {\r\n          \"provisioningState\": \"Succeeded\",\r\n
-        \         \"privateLinkServiceId\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Batch/batchAccounts/batchpendpointdefb137a\",\r\n
-        \         \"groupIds\": [\r\n            \"batchAccount\"\r\n          ],\r\n
-        \         \"privateLinkServiceConnectionState\": {\r\n            \"status\":
-        \"Pending\",\r\n            \"description\": \"Manual approval still required\",\r\n
-        \           \"actionsRequired\": \"Manual approval request\"\r\n          }\r\n
-        \       },\r\n        \"type\": \"Microsoft.Network/privateEndpoints/manualPrivateLinkServiceConnections\"\r\n
-        \     }\r\n    ],\r\n    \"subnet\": {\r\n      \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/virtualNetworks/vnetdefb137a/subnets/subnetdefb137a\"\r\n
-        \   },\r\n    \"networkInterfaces\": [\r\n      {\r\n        \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/networkInterfaces/pedefb137a.nic.2ebb2359-4cf0-41fd-8411-03c4ed7dc473\"\r\n
-        \     }\r\n    ],\r\n    \"customDnsConfigs\": []\r\n  }\r\n}"
+      string: "{\r\n  \"name\": \"pedefb137a\",\r\n  \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/privateEndpoints/pedefb137a\"\
+        ,\r\n  \"etag\": \"W/\\\"5cbe5015-700f-47ae-af88-e1047bb2a79b\\\"\",\r\n \
+        \ \"type\": \"Microsoft.Network/privateEndpoints\",\r\n  \"location\": \"\
+        westcentralus\",\r\n  \"properties\": {\r\n    \"provisioningState\": \"Succeeded\"\
+        ,\r\n    \"resourceGuid\": \"371a52b2-7650-42d1-96fc-9ad7b92298f5\",\r\n \
+        \   \"privateLinkServiceConnections\": [],\r\n    \"manualPrivateLinkServiceConnections\"\
+        : [\r\n      {\r\n        \"name\": \"pecdefb137a\",\r\n        \"id\": \"\
+        /subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/privateEndpoints/pedefb137a/manualPrivateLinkServiceConnections/pecdefb137a\"\
+        ,\r\n        \"etag\": \"W/\\\"5cbe5015-700f-47ae-af88-e1047bb2a79b\\\"\"\
+        ,\r\n        \"properties\": {\r\n          \"provisioningState\": \"Succeeded\"\
+        ,\r\n          \"privateLinkServiceId\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Batch/batchAccounts/batchpendpointdefb137a\"\
+        ,\r\n          \"groupIds\": [\r\n            \"batchAccount\"\r\n       \
+        \   ],\r\n          \"privateLinkServiceConnectionState\": {\r\n         \
+        \   \"status\": \"Pending\",\r\n            \"description\": \"Manual approval\
+        \ still required\",\r\n            \"actionsRequired\": \"Manual approval\
+        \ request\"\r\n          }\r\n        },\r\n        \"type\": \"Microsoft.Network/privateEndpoints/manualPrivateLinkServiceConnections\"\
+        \r\n      }\r\n    ],\r\n    \"subnet\": {\r\n      \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/virtualNetworks/vnetdefb137a/subnets/subnetdefb137a\"\
+        \r\n    },\r\n    \"networkInterfaces\": [\r\n      {\r\n        \"id\": \"\
+        /subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/networkInterfaces/pedefb137a.nic.5cd1e9da-0528-4cca-b2e3-eebbc71f12d2\"\
+        \r\n      }\r\n    ],\r\n    \"customDnsConfigs\": []\r\n  }\r\n}"
     headers:
       cache-control:
       - no-cache
@@ -433,9 +427,9 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Fri, 29 May 2020 03:08:47 GMT
+      - Thu, 28 Jan 2021 07:50:29 GMT
       etag:
-      - W/"3f048a5b-91b3-4d59-9154-626a601d0f44"
+      - W/"5cbe5015-700f-47ae-af88-e1047bb2a79b"
       expires:
       - '-1'
       pragma:
@@ -452,7 +446,7 @@ interactions:
       x-content-type-options:
       - nosniff
       x-ms-arm-service-request-id:
-      - 60d27e08-ac5e-4d0e-8b39-e0df149e6f08
+      - f287cac9-757a-40aa-a892-f5e5d5b33d00
     status:
       code: 200
       message: OK
@@ -466,12 +460,9 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - python/3.7.3 (Windows-10-10.0.18362-SP0) msrest/0.6.14 msrest_azure/0.4.34
-        azure-mgmt-batch/9.0.0 Azure-SDK-For-Python
-      accept-language:
-      - en-US
+      - azsdk-python-mgmt-batch/14.0.0b2 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Batch/batchAccounts/batchpendpointdefb137a/privateLinkResources?api-version=2020-05-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Batch/batchAccounts/batchpendpointdefb137a/privateLinkResources?api-version=2021-01-01
   response:
     body:
       string: '{"value":[{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Batch/batchAccounts/batchpendpointdefb137a/privateLinkResources/batchpendpointdefb137a","name":"batchpendpointdefb137a","type":"Microsoft.Batch/batchAccounts/privateLinkResources","properties":{"groupId":"batchAccount","requiredMembers":["batchAccount"],"requiredZoneNames":["privatelink.westcentralus.batch.azure.com"]}}]}'
@@ -483,7 +474,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Fri, 29 May 2020 03:08:47 GMT
+      - Thu, 28 Jan 2021 07:50:30 GMT
       expires:
       - '-1'
       pragma:
@@ -511,12 +502,9 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - python/3.7.3 (Windows-10-10.0.18362-SP0) msrest/0.6.14 msrest_azure/0.4.34
-        azure-mgmt-batch/9.0.0 Azure-SDK-For-Python
-      accept-language:
-      - en-US
+      - azsdk-python-mgmt-batch/14.0.0b2 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Batch/batchAccounts/batchpendpointdefb137a/privateLinkResources/batchpendpointdefb137a?api-version=2020-05-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Batch/batchAccounts/batchpendpointdefb137a/privateLinkResources/batchpendpointdefb137a?api-version=2021-01-01
   response:
     body:
       string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Batch/batchAccounts/batchpendpointdefb137a/privateLinkResources/batchpendpointdefb137a","name":"batchpendpointdefb137a","type":"Microsoft.Batch/batchAccounts/privateLinkResources","properties":{"groupId":"batchAccount","requiredMembers":["batchAccount"],"requiredZoneNames":["privatelink.westcentralus.batch.azure.com"]}}'
@@ -528,7 +516,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Fri, 29 May 2020 03:08:48 GMT
+      - Thu, 28 Jan 2021 07:50:30 GMT
       expires:
       - '-1'
       pragma:
@@ -556,15 +544,12 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - python/3.7.3 (Windows-10-10.0.18362-SP0) msrest/0.6.14 msrest_azure/0.4.34
-        azure-mgmt-batch/9.0.0 Azure-SDK-For-Python
-      accept-language:
-      - en-US
+      - azsdk-python-mgmt-batch/14.0.0b2 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Batch/batchAccounts/batchpendpointdefb137a/privateEndpointConnections?api-version=2020-05-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Batch/batchAccounts/batchpendpointdefb137a/privateEndpointConnections?api-version=2021-01-01
   response:
     body:
-      string: '{"value":[{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Batch/batchAccounts/batchpendpointdefb137a/privateEndpointConnections/pedefb137a.1dfeba6e-c3e8-4a61-8c02-cb28211cead2","name":"pedefb137a.1dfeba6e-c3e8-4a61-8c02-cb28211cead2","type":"Microsoft.Batch/batchAccounts/privateEndpointConnections","etag":"W/\"0x8D8037D9843C789\"","properties":{"provisioningState":"Succeeded","privateEndpoint":{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/privateEndpoints/pedefb137a"},"privateLinkServiceConnectionState":{"status":"Pending","description":"Manual
+      string: '{"value":[{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Batch/batchAccounts/batchpendpointdefb137a/privateEndpointConnections/pedefb137a.371a52b2-7650-42d1-96fc-9ad7b92298f5","name":"pedefb137a.371a52b2-7650-42d1-96fc-9ad7b92298f5","type":"Microsoft.Batch/batchAccounts/privateEndpointConnections","etag":"W/\"0x8D8C3615C515A58\"","properties":{"provisioningState":"Succeeded","privateEndpoint":{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/privateEndpoints/pedefb137a"},"privateLinkServiceConnectionState":{"status":"Pending","description":"Manual
         approval still required","actionsRequired":"Manual approval request"}}}]}'
     headers:
       cache-control:
@@ -574,7 +559,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Fri, 29 May 2020 03:08:48 GMT
+      - Thu, 28 Jan 2021 07:50:30 GMT
       expires:
       - '-1'
       pragma:
@@ -602,15 +587,12 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - python/3.7.3 (Windows-10-10.0.18362-SP0) msrest/0.6.14 msrest_azure/0.4.34
-        azure-mgmt-batch/9.0.0 Azure-SDK-For-Python
-      accept-language:
-      - en-US
+      - azsdk-python-mgmt-batch/14.0.0b2 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Batch/batchAccounts/batchpendpointdefb137a/privateEndpointConnections/pedefb137a.1dfeba6e-c3e8-4a61-8c02-cb28211cead2?api-version=2020-05-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Batch/batchAccounts/batchpendpointdefb137a/privateEndpointConnections/pedefb137a.371a52b2-7650-42d1-96fc-9ad7b92298f5?api-version=2021-01-01
   response:
     body:
-      string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Batch/batchAccounts/batchpendpointdefb137a/privateEndpointConnections/pedefb137a.1dfeba6e-c3e8-4a61-8c02-cb28211cead2","name":"pedefb137a.1dfeba6e-c3e8-4a61-8c02-cb28211cead2","type":"Microsoft.Batch/batchAccounts/privateEndpointConnections","etag":"W/\"0x8D8037D9843C789\"","properties":{"provisioningState":"Succeeded","privateEndpoint":{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/privateEndpoints/pedefb137a"},"privateLinkServiceConnectionState":{"status":"Pending","description":"Manual
+      string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Batch/batchAccounts/batchpendpointdefb137a/privateEndpointConnections/pedefb137a.371a52b2-7650-42d1-96fc-9ad7b92298f5","name":"pedefb137a.371a52b2-7650-42d1-96fc-9ad7b92298f5","type":"Microsoft.Batch/batchAccounts/privateEndpointConnections","etag":"W/\"0x8D8C3615C515A58\"","properties":{"provisioningState":"Succeeded","privateEndpoint":{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/privateEndpoints/pedefb137a"},"privateLinkServiceConnectionState":{"status":"Pending","description":"Manual
         approval still required","actionsRequired":"Manual approval request"}}}'
     headers:
       cache-control:
@@ -620,13 +602,13 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Fri, 29 May 2020 03:08:48 GMT
+      - Thu, 28 Jan 2021 07:50:31 GMT
       etag:
-      - W/"0x8D8037D9843C789"
+      - W/"0x8D8C3615C515A58"
       expires:
       - '-1'
       last-modified:
-      - Fri, 29 May 2020 03:08:43 GMT
+      - Thu, 28 Jan 2021 07:50:20 GMT
       pragma:
       - no-cache
       server:
@@ -655,21 +637,18 @@ interactions:
       Content-Length:
       - '113'
       Content-Type:
-      - application/json; charset=utf-8
+      - application/json
       User-Agent:
-      - python/3.7.3 (Windows-10-10.0.18362-SP0) msrest/0.6.14 msrest_azure/0.4.34
-        azure-mgmt-batch/9.0.0 Azure-SDK-For-Python
-      accept-language:
-      - en-US
+      - azsdk-python-mgmt-batch/14.0.0b2 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: PATCH
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Batch/batchAccounts/batchpendpointdefb137a/privateEndpointConnections/pedefb137a.1dfeba6e-c3e8-4a61-8c02-cb28211cead2?api-version=2020-05-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Batch/batchAccounts/batchpendpointdefb137a/privateEndpointConnections/pedefb137a.371a52b2-7650-42d1-96fc-9ad7b92298f5?api-version=2021-01-01
   response:
     body:
-      string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Batch/batchAccounts/batchpendpointdefb137a/privateEndpointConnections/pedefb137a.1dfeba6e-c3e8-4a61-8c02-cb28211cead2","name":"pedefb137a.1dfeba6e-c3e8-4a61-8c02-cb28211cead2","type":"Microsoft.Batch/batchAccounts/privateEndpointConnections","etag":"W/\"0x8D8037D9843C789\"","properties":{"provisioningState":"Updating","privateEndpoint":{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/privateEndpoints/pedefb137a"},"privateLinkServiceConnectionState":{"status":"Approved","description":"Approved
+      string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Batch/batchAccounts/batchpendpointdefb137a/privateEndpointConnections/pedefb137a.371a52b2-7650-42d1-96fc-9ad7b92298f5","name":"pedefb137a.371a52b2-7650-42d1-96fc-9ad7b92298f5","type":"Microsoft.Batch/batchAccounts/privateEndpointConnections","etag":"W/\"0x8D8C3615C515A58\"","properties":{"provisioningState":"Updating","privateEndpoint":{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/privateEndpoints/pedefb137a"},"privateLinkServiceConnectionState":{"status":"Approved","description":"Approved
         for test","actionsRequired":"Manual approval request"}}}'
     headers:
       azure-asyncoperation:
-      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Batch/batchAccounts/batchpendpointdefb137a/privateEndpointConnectionResults/Updating$pedefb137a.1dfeba6e-c3e8-4a61-8c02-cb28211cead2$88aef38e-9cc1-467f-9ff4-0b2479f53650?api-version=2020-05-01
+      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Batch/batchAccounts/batchpendpointdefb137a/privateEndpointConnectionResults/Updating$pedefb137a.371a52b2-7650-42d1-96fc-9ad7b92298f5$deb2dad8-fbd2-4d33-b471-24b89706a2f0?api-version=2021-01-01
       cache-control:
       - no-cache
       content-length:
@@ -677,15 +656,15 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Fri, 29 May 2020 03:08:48 GMT
+      - Thu, 28 Jan 2021 07:50:31 GMT
       etag:
-      - W/"0x8D8037D9843C789"
+      - W/"0x8D8C3615C515A58"
       expires:
       - '-1'
       last-modified:
-      - Fri, 29 May 2020 03:08:43 GMT
+      - Thu, 28 Jan 2021 07:50:20 GMT
       location:
-      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Batch/batchAccounts/batchpendpointdefb137a/privateEndpointConnectionResults/Updating$pedefb137a.1dfeba6e-c3e8-4a61-8c02-cb28211cead2$88aef38e-9cc1-467f-9ff4-0b2479f53650?api-version=2020-05-01
+      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Batch/batchAccounts/batchpendpointdefb137a/privateEndpointConnectionResults/Updating$pedefb137a.371a52b2-7650-42d1-96fc-9ad7b92298f5$deb2dad8-fbd2-4d33-b471-24b89706a2f0?api-version=2021-01-01
       pragma:
       - no-cache
       server:
@@ -703,16 +682,15 @@ interactions:
     body: null
     headers:
       Accept:
-      - application/json
+      - '*/*'
       Accept-Encoding:
       - gzip, deflate
       Connection:
       - keep-alive
       User-Agent:
-      - python/3.7.3 (Windows-10-10.0.18362-SP0) msrest/0.6.14 msrest_azure/0.4.34
-        azure-mgmt-batch/9.0.0 Azure-SDK-For-Python
+      - azsdk-python-mgmt-batch/14.0.0b2 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Batch/batchAccounts/batchpendpointdefb137a/privateEndpointConnectionResults/Updating$pedefb137a.1dfeba6e-c3e8-4a61-8c02-cb28211cead2$88aef38e-9cc1-467f-9ff4-0b2479f53650?api-version=2020-05-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Batch/batchAccounts/batchpendpointdefb137a/privateEndpointConnectionResults/Updating$pedefb137a.371a52b2-7650-42d1-96fc-9ad7b92298f5$deb2dad8-fbd2-4d33-b471-24b89706a2f0?api-version=2021-01-01
   response:
     body:
       string: '{"status":"Succeeded","retryAfter":0}'
@@ -724,7 +702,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Fri, 29 May 2020 03:09:04 GMT
+      - Thu, 28 Jan 2021 07:50:46 GMT
       expires:
       - '-1'
       pragma:
@@ -746,19 +724,18 @@ interactions:
     body: null
     headers:
       Accept:
-      - application/json
+      - '*/*'
       Accept-Encoding:
       - gzip, deflate
       Connection:
       - keep-alive
       User-Agent:
-      - python/3.7.3 (Windows-10-10.0.18362-SP0) msrest/0.6.14 msrest_azure/0.4.34
-        azure-mgmt-batch/9.0.0 Azure-SDK-For-Python
+      - azsdk-python-mgmt-batch/14.0.0b2 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Batch/batchAccounts/batchpendpointdefb137a/privateEndpointConnections/pedefb137a.1dfeba6e-c3e8-4a61-8c02-cb28211cead2?api-version=2020-05-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Batch/batchAccounts/batchpendpointdefb137a/privateEndpointConnections/pedefb137a.371a52b2-7650-42d1-96fc-9ad7b92298f5?api-version=2021-01-01
   response:
     body:
-      string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Batch/batchAccounts/batchpendpointdefb137a/privateEndpointConnections/pedefb137a.1dfeba6e-c3e8-4a61-8c02-cb28211cead2","name":"pedefb137a.1dfeba6e-c3e8-4a61-8c02-cb28211cead2","type":"Microsoft.Batch/batchAccounts/privateEndpointConnections","etag":"W/\"0x8D8037D9843C789\"","properties":{"provisioningState":"Succeeded","privateEndpoint":{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/privateEndpoints/pedefb137a"},"privateLinkServiceConnectionState":{"status":"Approved","description":"Approved
+      string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Batch/batchAccounts/batchpendpointdefb137a/privateEndpointConnections/pedefb137a.371a52b2-7650-42d1-96fc-9ad7b92298f5","name":"pedefb137a.371a52b2-7650-42d1-96fc-9ad7b92298f5","type":"Microsoft.Batch/batchAccounts/privateEndpointConnections","etag":"W/\"0x8D8C3615C515A58\"","properties":{"provisioningState":"Succeeded","privateEndpoint":{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/privateEndpoints/pedefb137a"},"privateLinkServiceConnectionState":{"status":"Approved","description":"Approved
         for test","actionsRequired":"Manual approval request"}}}'
     headers:
       cache-control:
@@ -768,13 +745,13 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Fri, 29 May 2020 03:09:04 GMT
+      - Thu, 28 Jan 2021 07:50:47 GMT
       etag:
-      - W/"0x8D8037D9843C789"
+      - W/"0x8D8C3615C515A58"
       expires:
       - '-1'
       last-modified:
-      - Fri, 29 May 2020 03:08:43 GMT
+      - Thu, 28 Jan 2021 07:50:20 GMT
       pragma:
       - no-cache
       server:

@@ -12,9 +12,9 @@ interactions:
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-ai-textanalytics/5.1.0b1 Python/3.8.5 (macOS-10.13.6-x86_64-i386-64bit)
+      - azsdk-python-ai-textanalytics/5.1.0b7 Python/3.9.0 (Windows-10-10.0.19041-SP0)
     method: POST
-    uri: https://westcentralus.api.cognitive.microsoft.com/text/analytics/v3.1-preview.2/sentiment?showStats=false&stringIndexType=UnicodeCodePoint
+    uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.1-preview.5/sentiment?showStats=false&stringIndexType=UnicodeCodePoint
   response:
     body:
       string: '{"documents":[{"id":"1","sentiment":"neutral","confidenceScores":{"positive":0.04,"neutral":0.95,"negative":0.01},"sentences":[{"sentiment":"neutral","confidenceScores":{"positive":0.04,"neutral":0.95,"negative":0.01},"offset":0,"length":22,"text":"I
@@ -22,18 +22,18 @@ interactions:
         did not like the hotel we stayed at."}],"warnings":[]},{"id":"3","sentiment":"positive","confidenceScores":{"positive":0.97,"neutral":0.02,"negative":0.01},"sentences":[{"sentiment":"positive","confidenceScores":{"positive":0.97,"neutral":0.02,"negative":0.01},"offset":0,"length":36,"text":"The
         restaurant had really good food."}],"warnings":[]}],"errors":[],"modelVersion":"2020-04-01"}'
     headers:
-      apim-request-id: 8f20dc9f-4f08-4721-93e0-ea2ff6b09e35
+      apim-request-id: 662188b4-41df-4bff-9d0d-dfeefb24a5bd
       content-type: application/json; charset=utf-8
-      csp-billing-usage: CognitiveServices.TextAnalytics.BatchScoring=3
-      date: Thu, 10 Sep 2020 15:25:25 GMT
+      csp-billing-usage: CognitiveServices.TextAnalytics.BatchScoring=3,CognitiveServices.TextAnalytics.TextRecords=3
+      date: Tue, 27 Apr 2021 19:38:57 GMT
       strict-transport-security: max-age=31536000; includeSubDomains; preload
       transfer-encoding: chunked
       x-content-type-options: nosniff
-      x-envoy-upstream-service-time: '81'
+      x-envoy-upstream-service-time: '123'
     status:
       code: 200
       message: OK
-    url: https://westcentralus.api.cognitive.microsoft.com//text/analytics/v3.1-preview.2/sentiment?showStats=false&stringIndexType=UnicodeCodePoint
+    url: https://westus2.api.cognitive.microsoft.com//text/analytics/v3.1-preview.5/sentiment?showStats=false&stringIndexType=UnicodeCodePoint
 - request:
     body: '{"documents": [{"id": "1", "text": "I will go to the park.", "language":
       "en"}, {"id": "2", "text": "I did not like the hotel we stayed at.", "language":
@@ -47,9 +47,9 @@ interactions:
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-ai-textanalytics/5.1.0b1 Python/3.8.5 (macOS-10.13.6-x86_64-i386-64bit)
+      - azsdk-python-ai-textanalytics/5.1.0b7 Python/3.9.0 (Windows-10-10.0.19041-SP0)
     method: POST
-    uri: https://westcentralus.api.cognitive.microsoft.com/text/analytics/v3.1-preview.2/sentiment?showStats=false&stringIndexType=UnicodeCodePoint
+    uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.1-preview.5/sentiment?showStats=false&stringIndexType=UnicodeCodePoint
   response:
     body:
       string: '{"documents":[{"id":"1","sentiment":"neutral","confidenceScores":{"positive":0.09,"neutral":0.9,"negative":0.01},"sentences":[{"sentiment":"neutral","confidenceScores":{"positive":0.09,"neutral":0.9,"negative":0.01},"offset":0,"length":22,"text":"I
@@ -57,18 +57,18 @@ interactions:
         did not like the hotel we stayed at."}],"warnings":[]},{"id":"3","sentiment":"positive","confidenceScores":{"positive":1.0,"neutral":0.0,"negative":0.0},"sentences":[{"sentiment":"positive","confidenceScores":{"positive":1.0,"neutral":0.0,"negative":0.0},"offset":0,"length":36,"text":"The
         restaurant had really good food."}],"warnings":[]}],"errors":[],"modelVersion":"2020-04-01"}'
     headers:
-      apim-request-id: 9f8aec98-3401-4164-9646-95d998a98bc9
+      apim-request-id: 36e84590-1e1c-4f22-8baf-c21841ae2ed1
       content-type: application/json; charset=utf-8
-      csp-billing-usage: CognitiveServices.TextAnalytics.BatchScoring=3
-      date: Thu, 10 Sep 2020 15:25:25 GMT
+      csp-billing-usage: CognitiveServices.TextAnalytics.BatchScoring=3,CognitiveServices.TextAnalytics.TextRecords=3
+      date: Tue, 27 Apr 2021 19:38:57 GMT
       strict-transport-security: max-age=31536000; includeSubDomains; preload
       transfer-encoding: chunked
       x-content-type-options: nosniff
-      x-envoy-upstream-service-time: '85'
+      x-envoy-upstream-service-time: '103'
     status:
       code: 200
       message: OK
-    url: https://westcentralus.api.cognitive.microsoft.com//text/analytics/v3.1-preview.2/sentiment?showStats=false&stringIndexType=UnicodeCodePoint
+    url: https://westus2.api.cognitive.microsoft.com//text/analytics/v3.1-preview.5/sentiment?showStats=false&stringIndexType=UnicodeCodePoint
 - request:
     body: '{"documents": [{"id": "1", "text": "I will go to the park.", "language":
       "es"}, {"id": "2", "text": "I did not like the hotel we stayed at.", "language":
@@ -82,9 +82,9 @@ interactions:
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-ai-textanalytics/5.1.0b1 Python/3.8.5 (macOS-10.13.6-x86_64-i386-64bit)
+      - azsdk-python-ai-textanalytics/5.1.0b7 Python/3.9.0 (Windows-10-10.0.19041-SP0)
     method: POST
-    uri: https://westcentralus.api.cognitive.microsoft.com/text/analytics/v3.1-preview.2/sentiment?showStats=false&stringIndexType=UnicodeCodePoint
+    uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.1-preview.5/sentiment?showStats=false&stringIndexType=UnicodeCodePoint
   response:
     body:
       string: '{"documents":[{"id":"1","sentiment":"neutral","confidenceScores":{"positive":0.04,"neutral":0.95,"negative":0.01},"sentences":[{"sentiment":"neutral","confidenceScores":{"positive":0.04,"neutral":0.95,"negative":0.01},"offset":0,"length":22,"text":"I
@@ -92,16 +92,16 @@ interactions:
         did not like the hotel we stayed at."}],"warnings":[]},{"id":"3","sentiment":"positive","confidenceScores":{"positive":0.97,"neutral":0.02,"negative":0.01},"sentences":[{"sentiment":"positive","confidenceScores":{"positive":0.97,"neutral":0.02,"negative":0.01},"offset":0,"length":36,"text":"The
         restaurant had really good food."}],"warnings":[]}],"errors":[],"modelVersion":"2020-04-01"}'
     headers:
-      apim-request-id: 11013c10-1253-4197-8a01-ce514591a71b
+      apim-request-id: 07dbae6a-5faa-4ac6-9f64-d1a9ee95b8f0
       content-type: application/json; charset=utf-8
-      csp-billing-usage: CognitiveServices.TextAnalytics.BatchScoring=3
-      date: Thu, 10 Sep 2020 15:25:25 GMT
+      csp-billing-usage: CognitiveServices.TextAnalytics.BatchScoring=3,CognitiveServices.TextAnalytics.TextRecords=3
+      date: Tue, 27 Apr 2021 19:38:57 GMT
       strict-transport-security: max-age=31536000; includeSubDomains; preload
       transfer-encoding: chunked
       x-content-type-options: nosniff
-      x-envoy-upstream-service-time: '91'
+      x-envoy-upstream-service-time: '113'
     status:
       code: 200
       message: OK
-    url: https://westcentralus.api.cognitive.microsoft.com//text/analytics/v3.1-preview.2/sentiment?showStats=false&stringIndexType=UnicodeCodePoint
+    url: https://westus2.api.cognitive.microsoft.com//text/analytics/v3.1-preview.5/sentiment?showStats=false&stringIndexType=UnicodeCodePoint
 version: 1

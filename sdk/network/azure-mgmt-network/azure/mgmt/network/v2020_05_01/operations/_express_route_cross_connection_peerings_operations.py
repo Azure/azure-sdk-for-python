@@ -16,7 +16,7 @@ from azure.core.polling import LROPoller, NoPolling, PollingMethod
 from azure.mgmt.core.exceptions import ARMErrorFormat
 from azure.mgmt.core.polling.arm_polling import ARMPolling
 
-from .. import models
+from .. import models as _models
 
 if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
@@ -39,7 +39,7 @@ class ExpressRouteCrossConnectionPeeringsOperations(object):
     :param deserializer: An object model deserializer.
     """
 
-    models = models
+    models = _models
 
     def __init__(self, client, config, serializer, deserializer):
         self._client = client
@@ -53,7 +53,7 @@ class ExpressRouteCrossConnectionPeeringsOperations(object):
         cross_connection_name,  # type: str
         **kwargs  # type: Any
     ):
-        # type: (...) -> Iterable["models.ExpressRouteCrossConnectionPeeringList"]
+        # type: (...) -> Iterable["_models.ExpressRouteCrossConnectionPeeringList"]
         """Gets all peerings in a specified ExpressRouteCrossConnection.
 
         :param resource_group_name: The name of the resource group.
@@ -65,7 +65,7 @@ class ExpressRouteCrossConnectionPeeringsOperations(object):
         :rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.network.v2020_05_01.models.ExpressRouteCrossConnectionPeeringList]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.ExpressRouteCrossConnectionPeeringList"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.ExpressRouteCrossConnectionPeeringList"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -218,7 +218,14 @@ class ExpressRouteCrossConnectionPeeringsOperations(object):
             if cls:
                 return cls(pipeline_response, None, {})
 
-        if polling is True: polling_method = ARMPolling(lro_delay, lro_options={'final-state-via': 'location'},  **kwargs)
+        path_format_arguments = {
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
+            'crossConnectionName': self._serialize.url("cross_connection_name", cross_connection_name, 'str'),
+            'peeringName': self._serialize.url("peering_name", peering_name, 'str'),
+            'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
+        }
+
+        if polling is True: polling_method = ARMPolling(lro_delay, lro_options={'final-state-via': 'location'}, path_format_arguments=path_format_arguments,  **kwargs)
         elif polling is False: polling_method = NoPolling()
         else: polling_method = polling
         if cont_token:
@@ -239,7 +246,7 @@ class ExpressRouteCrossConnectionPeeringsOperations(object):
         peering_name,  # type: str
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.ExpressRouteCrossConnectionPeering"
+        # type: (...) -> "_models.ExpressRouteCrossConnectionPeering"
         """Gets the specified peering for the ExpressRouteCrossConnection.
 
         :param resource_group_name: The name of the resource group.
@@ -253,7 +260,7 @@ class ExpressRouteCrossConnectionPeeringsOperations(object):
         :rtype: ~azure.mgmt.network.v2020_05_01.models.ExpressRouteCrossConnectionPeering
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.ExpressRouteCrossConnectionPeering"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.ExpressRouteCrossConnectionPeering"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -300,11 +307,11 @@ class ExpressRouteCrossConnectionPeeringsOperations(object):
         resource_group_name,  # type: str
         cross_connection_name,  # type: str
         peering_name,  # type: str
-        peering_parameters,  # type: "models.ExpressRouteCrossConnectionPeering"
+        peering_parameters,  # type: "_models.ExpressRouteCrossConnectionPeering"
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.ExpressRouteCrossConnectionPeering"
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.ExpressRouteCrossConnectionPeering"]
+        # type: (...) -> "_models.ExpressRouteCrossConnectionPeering"
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.ExpressRouteCrossConnectionPeering"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -360,10 +367,10 @@ class ExpressRouteCrossConnectionPeeringsOperations(object):
         resource_group_name,  # type: str
         cross_connection_name,  # type: str
         peering_name,  # type: str
-        peering_parameters,  # type: "models.ExpressRouteCrossConnectionPeering"
+        peering_parameters,  # type: "_models.ExpressRouteCrossConnectionPeering"
         **kwargs  # type: Any
     ):
-        # type: (...) -> LROPoller["models.ExpressRouteCrossConnectionPeering"]
+        # type: (...) -> LROPoller["_models.ExpressRouteCrossConnectionPeering"]
         """Creates or updates a peering in the specified ExpressRouteCrossConnection.
 
         :param resource_group_name: The name of the resource group.
@@ -386,7 +393,7 @@ class ExpressRouteCrossConnectionPeeringsOperations(object):
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         polling = kwargs.pop('polling', True)  # type: Union[bool, PollingMethod]
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.ExpressRouteCrossConnectionPeering"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.ExpressRouteCrossConnectionPeering"]
         lro_delay = kwargs.pop(
             'polling_interval',
             self._config.polling_interval
@@ -412,7 +419,14 @@ class ExpressRouteCrossConnectionPeeringsOperations(object):
                 return cls(pipeline_response, deserialized, {})
             return deserialized
 
-        if polling is True: polling_method = ARMPolling(lro_delay, lro_options={'final-state-via': 'azure-async-operation'},  **kwargs)
+        path_format_arguments = {
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
+            'crossConnectionName': self._serialize.url("cross_connection_name", cross_connection_name, 'str'),
+            'peeringName': self._serialize.url("peering_name", peering_name, 'str'),
+            'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
+        }
+
+        if polling is True: polling_method = ARMPolling(lro_delay, lro_options={'final-state-via': 'azure-async-operation'}, path_format_arguments=path_format_arguments,  **kwargs)
         elif polling is False: polling_method = NoPolling()
         else: polling_method = polling
         if cont_token:

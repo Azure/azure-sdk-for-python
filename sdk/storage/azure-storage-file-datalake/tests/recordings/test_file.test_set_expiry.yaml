@@ -1,0 +1,208 @@
+interactions:
+- request:
+    body: null
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '0'
+      User-Agent:
+      - azsdk-python-storage-dfs/12.0.2 Python/3.7.3 (Windows-10-10.0.18362-SP0)
+      x-ms-client-request-id:
+      - 08a85f0a-9f22-11ea-b31d-001a7dda7113
+      x-ms-date:
+      - Tue, 26 May 2020 07:25:11 GMT
+      x-ms-properties:
+      - ''
+      x-ms-version:
+      - '2019-12-12'
+    method: PUT
+    uri: https://storagename.dfs.core.windows.net/filesystem84ed0a59/directory84ed0a59?resource=directory
+  response:
+    body:
+      string: ''
+    headers:
+      Content-Length:
+      - '0'
+      Date:
+      - Tue, 26 May 2020 07:25:11 GMT
+      ETag:
+      - '"0x8D80145ED25E619"'
+      Last-Modified:
+      - Tue, 26 May 2020 07:25:11 GMT
+      Server:
+      - Windows-Azure-HDFS/1.0 Microsoft-HTTPAPI/2.0
+      x-ms-request-id:
+      - 9388e921-901f-0066-392e-330280000000
+      x-ms-version:
+      - '2019-12-12'
+    status:
+      code: 201
+      message: Created
+- request:
+    body: null
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '0'
+      User-Agent:
+      - azsdk-python-storage-dfs/12.0.2 Python/3.7.3 (Windows-10-10.0.18362-SP0)
+      x-ms-client-request-id:
+      - 08fa93dc-9f22-11ea-bf47-001a7dda7113
+      x-ms-content-disposition:
+      - inline
+      x-ms-content-language:
+      - spanish
+      x-ms-date:
+      - Tue, 26 May 2020 07:25:11 GMT
+      x-ms-properties:
+      - hello=d29ybGQ=,number=NDI=
+      x-ms-version:
+      - '2019-12-12'
+    method: PUT
+    uri: https://storagename.dfs.core.windows.net/filesystem84ed0a59/directory84ed0a59%2Fnewfile?resource=file
+  response:
+    body:
+      string: ''
+    headers:
+      Content-Length:
+      - '0'
+      Date:
+      - Tue, 26 May 2020 07:25:11 GMT
+      ETag:
+      - '"0x8D80145ED335B0A"'
+      Last-Modified:
+      - Tue, 26 May 2020 07:25:11 GMT
+      Server:
+      - Windows-Azure-HDFS/1.0 Microsoft-HTTPAPI/2.0
+      x-ms-request-id:
+      - 9388e922-901f-0066-3a2e-330280000000
+      x-ms-version:
+      - '2019-12-12'
+    status:
+      code: 201
+      message: Created
+- request:
+    body: null
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '0'
+      User-Agent:
+      - azsdk-python-storage-dfs/12.0.2 Python/3.7.3 (Windows-10-10.0.18362-SP0)
+      x-ms-client-request-id:
+      - 09086e8c-9f22-11ea-bd32-001a7dda7113
+      x-ms-date:
+      - Tue, 26 May 2020 07:25:11 GMT
+      x-ms-expiry-option:
+      - Absolute
+      x-ms-expiry-time:
+      - Tue, 26 May 2020 08:25:11 GMT
+      x-ms-version:
+      - '2019-12-12'
+    method: PUT
+    uri: https://storagename.blob.core.windows.net/filesystem84ed0a59/directory84ed0a59/newfile?comp=expiry
+  response:
+    body:
+      string: ''
+    headers:
+      Content-Length:
+      - '0'
+      Date:
+      - Tue, 26 May 2020 07:25:12 GMT
+      ETag:
+      - '"0x8D80145ED335B0A"'
+      Last-Modified:
+      - Tue, 26 May 2020 07:25:11 GMT
+      Server:
+      - Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
+      x-ms-request-id:
+      - 8528af15-701e-009a-2a2e-33d379000000
+      x-ms-version:
+      - '2019-12-12'
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - azsdk-python-storage-dfs/12.0.2 Python/3.7.3 (Windows-10-10.0.18362-SP0)
+      x-ms-client-request-id:
+      - 098639e8-9f22-11ea-8208-001a7dda7113
+      x-ms-date:
+      - Tue, 26 May 2020 07:25:12 GMT
+      x-ms-version:
+      - '2019-12-12'
+    method: HEAD
+    uri: https://storagename.blob.core.windows.net/filesystem84ed0a59/directory84ed0a59/newfile
+  response:
+    body:
+      string: ''
+    headers:
+      Accept-Ranges:
+      - bytes
+      Content-Disposition:
+      - inline
+      Content-Language:
+      - spanish
+      Content-Length:
+      - '0'
+      Content-Type:
+      - application/octet-stream
+      Date:
+      - Tue, 26 May 2020 07:25:12 GMT
+      ETag:
+      - '"0x8D80145ED335B0A"'
+      Last-Modified:
+      - Tue, 26 May 2020 07:25:11 GMT
+      Server:
+      - Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
+      x-ms-access-tier:
+      - Hot
+      x-ms-access-tier-inferred:
+      - 'true'
+      x-ms-blob-type:
+      - BlockBlob
+      x-ms-creation-time:
+      - Tue, 26 May 2020 07:25:11 GMT
+      x-ms-expiry-time:
+      - Tue, 26 May 2020 08:25:11 GMT
+      x-ms-lease-state:
+      - available
+      x-ms-lease-status:
+      - unlocked
+      x-ms-meta-hello:
+      - world
+      x-ms-meta-number:
+      - '42'
+      x-ms-request-id:
+      - 8528af6d-701e-009a-792e-33d379000000
+      x-ms-server-encrypted:
+      - 'true'
+      x-ms-version:
+      - '2019-12-12'
+    status:
+      code: 200
+      message: OK
+version: 1

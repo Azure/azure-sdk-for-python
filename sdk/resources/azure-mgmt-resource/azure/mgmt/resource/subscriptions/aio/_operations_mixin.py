@@ -22,9 +22,9 @@ class SubscriptionClientOperationsMixin(object):
 
     async def check_resource_name(
         self,
-        resource_name_definition: Optional["models.ResourceName"] = None,
+        resource_name_definition: Optional["_models.ResourceName"] = None,
         **kwargs
-    ) -> "models.CheckResourceNameResult":
+    ) -> "_models.CheckResourceNameResult":
         """Checks resource name validity.
 
         A resource name is valid if it is not a reserved word, does not contains a reserved word and
@@ -53,5 +53,6 @@ class SubscriptionClientOperationsMixin(object):
         mixin_instance._client = self._client
         mixin_instance._config = self._config
         mixin_instance._serialize = Serializer(self._models_dict(api_version))
+        mixin_instance._serialize.client_side_validation = False
         mixin_instance._deserialize = Deserializer(self._models_dict(api_version))
         return await mixin_instance.check_resource_name(resource_name_definition, **kwargs)

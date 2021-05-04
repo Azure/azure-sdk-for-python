@@ -8,7 +8,7 @@ from xml.etree.ElementTree import ElementTree
 
 import urllib.parse as urlparse
 
-from azure.servicebus.management import _constants as constants
+from ...management import _constants as constants
 from ...management._handle_response_error import _handle_response_error
 
 # This module defines functions get_next_template and extract_data_template.
@@ -70,6 +70,7 @@ from ...management._handle_response_error import _handle_response_error
 # 	</entry>
 # </feed>
 
+
 async def extract_data_template(feed_class, convert, feed_element):
     """A function that will be partialized to build a function used by AsyncItemPaged.
 
@@ -86,7 +87,9 @@ async def extract_data_template(feed_class, convert, feed_element):
     # when the response xml has two <link> tags, the 2nd if the next-page link.
     if deserialized.link and len(deserialized.link) == 2:
         next_link = deserialized.link[1].href
-    return next_link, iter(list_of_qd)  # when next_page is None, AsyncPagedItem will stop fetch next page data.
+    return next_link, iter(
+        list_of_qd
+    )  # when next_page is None, AsyncPagedItem will stop fetch next page data.
 
 
 async def extract_rule_data_template(feed_class, convert, feed_element):
@@ -104,15 +107,19 @@ async def extract_rule_data_template(feed_class, convert, feed_element):
         next_link = deserialized.link[1].href
     if deserialized.entry:
         list_of_entities = [
-            convert(*x) if convert else x for x in zip(feed_element.findall(
-                constants.ATOM_ENTRY_TAG), deserialized.entry)
+            convert(*x) if convert else x
+            for x in zip(
+                feed_element.findall(constants.ATOM_ENTRY_TAG), deserialized.entry
+            )
         ]
     else:
         list_of_entities = []
     return next_link, iter(list_of_entities)
 
 
-async def get_next_template(list_func, *args, start_index=0, max_page_size=100, **kwargs):
+async def get_next_template(
+    list_func, *args, start_index=0, max_page_size=100, **kwargs
+):
     """Call list_func to get the XML data and deserialize it to XML ElementTree.
 
     azure.core.async_paging.AsyncItemPaged will call `extract_data_template` and use the returned
@@ -129,9 +136,7 @@ async def get_next_template(list_func, *args, start_index=0, max_page_size=100, 
         feed_element = cast(
             ElementTree,
             await list_func(
-                skip=start_index, top=max_page_size,
-                api_version=api_version,
-                **kwargs
-            )
+                skip=start_index, top=max_page_size, api_version=api_version, **kwargs
+            ),
         )
     return feed_element

@@ -25,6 +25,7 @@
 #--------------------------------------------------------------------------
 
 from azure.core.paging import ItemPaged
+from azure.core.exceptions import HttpResponseError
 
 import pytest
 
@@ -142,3 +143,21 @@ class TestPaging(object):
         pager = ItemPaged(get_next, extract_data)
         output = repr(pager)
         assert output.startswith('<iterator object azure.core.paging.ItemPaged at')
+
+    def test_paging_continue_on_error(self):
+        def get_next(continuation_token=None):
+            if not continuation_token:
+                return {
+                    'nextLink': 'foo',
+                    'value': ['bar']
+                }
+            else:
+                raise HttpResponseError()
+        def extract_data(response):
+            return response['nextLink'], iter(response['value'] or [])
+        
+        pager = ItemPaged(get_next, extract_data)
+        assert next(pager) == 'bar'
+        with pytest.raises(HttpResponseError) as err:
+            next(pager)
+        assert err.value.continuation_token == 'foo'

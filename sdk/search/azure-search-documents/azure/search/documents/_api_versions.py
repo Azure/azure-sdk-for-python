@@ -3,22 +3,11 @@
 # Licensed under the MIT License.
 # ------------------------------------
 
-_SUPPORTED_API_VERSIONS = [
-    "2019-05-06-Preview",
-]
+from enum import Enum
 
-def validate_api_version(api_version):
-    # type: (str) -> None
-    """Raise error if api_version is invalid """
-    if not api_version:
-        return
-    if api_version not in _SUPPORTED_API_VERSIONS:
-        versions = '\n'.join(_SUPPORTED_API_VERSIONS)
-        raise ValueError("Unsupported API version '{}'. Please select from:\n{}".format(api_version, versions))
+class ApiVersion(str, Enum):
+    #: this is the default version
+    V2020_06_30 = "2020-06-30"
+    V2020_06_30_preview = "2020-06-30-Preview"
 
-
-def get_api_version(kwargs, default):
-    # type: (Dict[str, Any], str) -> str
-    api_version = kwargs.pop('api_version', None)
-    validate_api_version(api_version)
-    return api_version or default
+DEFAULT_VERSION = ApiVersion.V2020_06_30_preview

@@ -28,6 +28,7 @@ try:
     from ._models_py3 import ApplicationHealthPolicies
     from ._models_py3 import ApplicationHealthPolicy
     from ._models_py3 import ApplicationHealthPolicyMapItem
+    from ._models_py3 import ApplicationHealthPolicyMapObject
     from ._models_py3 import ApplicationHealthReportExpiredEvent
     from ._models_py3 import ApplicationHealthState
     from ._models_py3 import ApplicationHealthStateChunk
@@ -183,6 +184,7 @@ try:
     from ._models_py3 import DisableBackupDescription
     from ._models_py3 import DiskInfo
     from ._models_py3 import DoublePropertyValue
+    from ._models_py3 import DsmsAzureBlobBackupStorageDescription
     from ._models_py3 import EnableBackupDescription
     from ._models_py3 import EndpointProperties
     from ._models_py3 import EndpointRef
@@ -237,17 +239,23 @@ try:
     from ._models_py3 import ImageStoreCopyDescription
     from ._models_py3 import ImageStoreInfo
     from ._models_py3 import InlinedValueSecretResourceProperties
+    from ._models_py3 import InstanceLifecycleDescription
     from ._models_py3 import Int64PropertyValue
     from ._models_py3 import Int64RangePartitionInformation
     from ._models_py3 import InvokeDataLossResult
     from ._models_py3 import InvokeQuorumLossResult
     from ._models_py3 import KeyValueStoreReplicaStatus
+    from ._models_py3 import LoadedPartitionInformationQueryDescription
+    from ._models_py3 import LoadedPartitionInformationResult
+    from ._models_py3 import LoadedPartitionInformationResultList
     from ._models_py3 import LoadMetricInformation
     from ._models_py3 import LoadMetricReport
     from ._models_py3 import LoadMetricReportInfo
     from ._models_py3 import LocalNetworkResourceProperties
     from ._models_py3 import ManagedApplicationIdentity
     from ._models_py3 import ManagedApplicationIdentityDescription
+    from ._models_py3 import ManagedIdentityAzureBlobBackupStorageDescription
+    from ._models_py3 import MetricLoadDescription
     from ._models_py3 import MonitoringPolicyDescription
     from ._models_py3 import NameDescription
     from ._models_py3 import NamedPartitionInformation
@@ -286,8 +294,11 @@ try:
     from ._models_py3 import NodeRepairTargetDescription
     from ._models_py3 import NodeResult
     from ._models_py3 import NodesHealthEvaluation
+    from ._models_py3 import NodeTagsDescription
     from ._models_py3 import NodeTransitionProgress
     from ._models_py3 import NodeTransitionResult
+    from ._models_py3 import NodeTypeHealthPolicyMapItem
+    from ._models_py3 import NodeTypeNodesHealthEvaluation
     from ._models_py3 import NodeUpEvent
     from ._models_py3 import NodeUpgradeProgressInfo
     from ._models_py3 import OperationStatus
@@ -313,6 +324,7 @@ try:
     from ._models_py3 import PagedServiceReplicaDescriptionList
     from ._models_py3 import PagedServiceResourceDescriptionList
     from ._models_py3 import PagedSubNameInfoList
+    from ._models_py3 import PagedUpdatePartitionLoadResultList
     from ._models_py3 import PagedVolumeResourceDescriptionList
     from ._models_py3 import PartitionAnalysisEvent
     from ._models_py3 import PartitionBackupConfigurationInfo
@@ -329,6 +341,7 @@ try:
     from ._models_py3 import PartitionInformation
     from ._models_py3 import PartitionInstanceCountScaleMechanism
     from ._models_py3 import PartitionLoadInformation
+    from ._models_py3 import PartitionMetricLoadDescription
     from ._models_py3 import PartitionNewHealthReportEvent
     from ._models_py3 import PartitionPrimaryMoveAnalysisEvent
     from ._models_py3 import PartitionQuorumLossProgress
@@ -377,6 +390,8 @@ try:
     from ._models_py3 import ReplicaHealthStateChunkList
     from ._models_py3 import ReplicaHealthStateFilter
     from ._models_py3 import ReplicaInfo
+    from ._models_py3 import ReplicaLifecycleDescription
+    from ._models_py3 import ReplicaMetricLoadDescription
     from ._models_py3 import ReplicasHealthEvaluation
     from ._models_py3 import ReplicaStatusBase
     from ._models_py3 import ReplicatorQueueStatus
@@ -433,6 +448,7 @@ try:
     from ._models_py3 import ServiceNameInfo
     from ._models_py3 import ServiceNewHealthReportEvent
     from ._models_py3 import ServicePartitionInfo
+    from ._models_py3 import ServicePlacementAllowMultipleStatelessInstancesOnNodePolicyDescription
     from ._models_py3 import ServicePlacementInvalidDomainPolicyDescription
     from ._models_py3 import ServicePlacementNonPartiallyPlaceServicePolicyDescription
     from ._models_py3 import ServicePlacementPolicyDescription
@@ -491,6 +507,7 @@ try:
     from ._models_py3 import UnprovisionApplicationTypeDescriptionInfo
     from ._models_py3 import UnprovisionFabricDescription
     from ._models_py3 import UpdateClusterUpgradeDescription
+    from ._models_py3 import UpdatePartitionLoadResult
     from ._models_py3 import UpgradeDomainDeltaNodesCheckHealthEvaluation
     from ._models_py3 import UpgradeDomainInfo
     from ._models_py3 import UpgradeDomainNodesHealthEvaluation
@@ -528,6 +545,7 @@ except (SyntaxError, ImportError):
     from ._models import ApplicationHealthPolicies
     from ._models import ApplicationHealthPolicy
     from ._models import ApplicationHealthPolicyMapItem
+    from ._models import ApplicationHealthPolicyMapObject
     from ._models import ApplicationHealthReportExpiredEvent
     from ._models import ApplicationHealthState
     from ._models import ApplicationHealthStateChunk
@@ -683,6 +701,7 @@ except (SyntaxError, ImportError):
     from ._models import DisableBackupDescription
     from ._models import DiskInfo
     from ._models import DoublePropertyValue
+    from ._models import DsmsAzureBlobBackupStorageDescription
     from ._models import EnableBackupDescription
     from ._models import EndpointProperties
     from ._models import EndpointRef
@@ -737,17 +756,23 @@ except (SyntaxError, ImportError):
     from ._models import ImageStoreCopyDescription
     from ._models import ImageStoreInfo
     from ._models import InlinedValueSecretResourceProperties
+    from ._models import InstanceLifecycleDescription
     from ._models import Int64PropertyValue
     from ._models import Int64RangePartitionInformation
     from ._models import InvokeDataLossResult
     from ._models import InvokeQuorumLossResult
     from ._models import KeyValueStoreReplicaStatus
+    from ._models import LoadedPartitionInformationQueryDescription
+    from ._models import LoadedPartitionInformationResult
+    from ._models import LoadedPartitionInformationResultList
     from ._models import LoadMetricInformation
     from ._models import LoadMetricReport
     from ._models import LoadMetricReportInfo
     from ._models import LocalNetworkResourceProperties
     from ._models import ManagedApplicationIdentity
     from ._models import ManagedApplicationIdentityDescription
+    from ._models import ManagedIdentityAzureBlobBackupStorageDescription
+    from ._models import MetricLoadDescription
     from ._models import MonitoringPolicyDescription
     from ._models import NameDescription
     from ._models import NamedPartitionInformation
@@ -786,8 +811,11 @@ except (SyntaxError, ImportError):
     from ._models import NodeRepairTargetDescription
     from ._models import NodeResult
     from ._models import NodesHealthEvaluation
+    from ._models import NodeTagsDescription
     from ._models import NodeTransitionProgress
     from ._models import NodeTransitionResult
+    from ._models import NodeTypeHealthPolicyMapItem
+    from ._models import NodeTypeNodesHealthEvaluation
     from ._models import NodeUpEvent
     from ._models import NodeUpgradeProgressInfo
     from ._models import OperationStatus
@@ -813,6 +841,7 @@ except (SyntaxError, ImportError):
     from ._models import PagedServiceReplicaDescriptionList
     from ._models import PagedServiceResourceDescriptionList
     from ._models import PagedSubNameInfoList
+    from ._models import PagedUpdatePartitionLoadResultList
     from ._models import PagedVolumeResourceDescriptionList
     from ._models import PartitionAnalysisEvent
     from ._models import PartitionBackupConfigurationInfo
@@ -829,6 +858,7 @@ except (SyntaxError, ImportError):
     from ._models import PartitionInformation
     from ._models import PartitionInstanceCountScaleMechanism
     from ._models import PartitionLoadInformation
+    from ._models import PartitionMetricLoadDescription
     from ._models import PartitionNewHealthReportEvent
     from ._models import PartitionPrimaryMoveAnalysisEvent
     from ._models import PartitionQuorumLossProgress
@@ -877,6 +907,8 @@ except (SyntaxError, ImportError):
     from ._models import ReplicaHealthStateChunkList
     from ._models import ReplicaHealthStateFilter
     from ._models import ReplicaInfo
+    from ._models import ReplicaLifecycleDescription
+    from ._models import ReplicaMetricLoadDescription
     from ._models import ReplicasHealthEvaluation
     from ._models import ReplicaStatusBase
     from ._models import ReplicatorQueueStatus
@@ -933,6 +965,7 @@ except (SyntaxError, ImportError):
     from ._models import ServiceNameInfo
     from ._models import ServiceNewHealthReportEvent
     from ._models import ServicePartitionInfo
+    from ._models import ServicePlacementAllowMultipleStatelessInstancesOnNodePolicyDescription
     from ._models import ServicePlacementInvalidDomainPolicyDescription
     from ._models import ServicePlacementNonPartiallyPlaceServicePolicyDescription
     from ._models import ServicePlacementPolicyDescription
@@ -991,6 +1024,7 @@ except (SyntaxError, ImportError):
     from ._models import UnprovisionApplicationTypeDescriptionInfo
     from ._models import UnprovisionFabricDescription
     from ._models import UpdateClusterUpgradeDescription
+    from ._models import UpdatePartitionLoadResult
     from ._models import UpgradeDomainDeltaNodesCheckHealthEvaluation
     from ._models import UpgradeDomainInfo
     from ._models import UpgradeDomainNodesHealthEvaluation
@@ -1057,6 +1091,7 @@ from ._service_fabric_client_ap_is_enums import (
     HostType,
     ImageRegistryPasswordType,
     ImpactLevel,
+    ManagedIdentityType,
     MoveCost,
     NetworkKind,
     NodeDeactivationIntent,
@@ -1069,6 +1104,7 @@ from ._service_fabric_client_ap_is_enums import (
     OperatingSystemType,
     OperationState,
     OperationType,
+    Ordering,
     PackageSharingPolicyScope,
     PartitionAccessStatus,
     PartitionScheme,
@@ -1141,6 +1177,7 @@ __all__ = [
     'ApplicationHealthPolicies',
     'ApplicationHealthPolicy',
     'ApplicationHealthPolicyMapItem',
+    'ApplicationHealthPolicyMapObject',
     'ApplicationHealthReportExpiredEvent',
     'ApplicationHealthState',
     'ApplicationHealthStateChunk',
@@ -1296,6 +1333,7 @@ __all__ = [
     'DisableBackupDescription',
     'DiskInfo',
     'DoublePropertyValue',
+    'DsmsAzureBlobBackupStorageDescription',
     'EnableBackupDescription',
     'EndpointProperties',
     'EndpointRef',
@@ -1350,17 +1388,23 @@ __all__ = [
     'ImageStoreCopyDescription',
     'ImageStoreInfo',
     'InlinedValueSecretResourceProperties',
+    'InstanceLifecycleDescription',
     'Int64PropertyValue',
     'Int64RangePartitionInformation',
     'InvokeDataLossResult',
     'InvokeQuorumLossResult',
     'KeyValueStoreReplicaStatus',
+    'LoadedPartitionInformationQueryDescription',
+    'LoadedPartitionInformationResult',
+    'LoadedPartitionInformationResultList',
     'LoadMetricInformation',
     'LoadMetricReport',
     'LoadMetricReportInfo',
     'LocalNetworkResourceProperties',
     'ManagedApplicationIdentity',
     'ManagedApplicationIdentityDescription',
+    'ManagedIdentityAzureBlobBackupStorageDescription',
+    'MetricLoadDescription',
     'MonitoringPolicyDescription',
     'NameDescription',
     'NamedPartitionInformation',
@@ -1399,8 +1443,11 @@ __all__ = [
     'NodeRepairTargetDescription',
     'NodeResult',
     'NodesHealthEvaluation',
+    'NodeTagsDescription',
     'NodeTransitionProgress',
     'NodeTransitionResult',
+    'NodeTypeHealthPolicyMapItem',
+    'NodeTypeNodesHealthEvaluation',
     'NodeUpEvent',
     'NodeUpgradeProgressInfo',
     'OperationStatus',
@@ -1426,6 +1473,7 @@ __all__ = [
     'PagedServiceReplicaDescriptionList',
     'PagedServiceResourceDescriptionList',
     'PagedSubNameInfoList',
+    'PagedUpdatePartitionLoadResultList',
     'PagedVolumeResourceDescriptionList',
     'PartitionAnalysisEvent',
     'PartitionBackupConfigurationInfo',
@@ -1442,6 +1490,7 @@ __all__ = [
     'PartitionInformation',
     'PartitionInstanceCountScaleMechanism',
     'PartitionLoadInformation',
+    'PartitionMetricLoadDescription',
     'PartitionNewHealthReportEvent',
     'PartitionPrimaryMoveAnalysisEvent',
     'PartitionQuorumLossProgress',
@@ -1490,6 +1539,8 @@ __all__ = [
     'ReplicaHealthStateChunkList',
     'ReplicaHealthStateFilter',
     'ReplicaInfo',
+    'ReplicaLifecycleDescription',
+    'ReplicaMetricLoadDescription',
     'ReplicasHealthEvaluation',
     'ReplicaStatusBase',
     'ReplicatorQueueStatus',
@@ -1546,6 +1597,7 @@ __all__ = [
     'ServiceNameInfo',
     'ServiceNewHealthReportEvent',
     'ServicePartitionInfo',
+    'ServicePlacementAllowMultipleStatelessInstancesOnNodePolicyDescription',
     'ServicePlacementInvalidDomainPolicyDescription',
     'ServicePlacementNonPartiallyPlaceServicePolicyDescription',
     'ServicePlacementPolicyDescription',
@@ -1604,6 +1656,7 @@ __all__ = [
     'UnprovisionApplicationTypeDescriptionInfo',
     'UnprovisionFabricDescription',
     'UpdateClusterUpgradeDescription',
+    'UpdatePartitionLoadResult',
     'UpgradeDomainDeltaNodesCheckHealthEvaluation',
     'UpgradeDomainInfo',
     'UpgradeDomainNodesHealthEvaluation',
@@ -1646,6 +1699,7 @@ __all__ = [
     'EntityKind',
     'FabricEventKind',
     'HealthEvaluationKind',
+    'Ordering',
     'NodeDeactivationIntent',
     'NodeDeactivationStatus',
     'NodeDeactivationTaskType',
@@ -1693,6 +1747,7 @@ __all__ = [
     'BackupSuspensionScope',
     'RestoreState',
     'BackupType',
+    'ManagedIdentityType',
     'BackupScheduleFrequencyType',
     'DayOfWeek',
     'BackupState',

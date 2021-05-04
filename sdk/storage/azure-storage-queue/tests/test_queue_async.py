@@ -8,6 +8,8 @@
 import unittest
 import pytest
 import asyncio
+
+from azure.core.credentials import AzureSasCredential
 from dateutil.tz import tzutc
 from datetime import (
     datetime,
@@ -62,7 +64,7 @@ class StorageQueueTestAsync(AsyncStorageTestCase):
         queue = qsc.get_queue_client(queue_name)
         return queue
 
-    async def _create_queue(self, qsc, prefix=TEST_QUEUE_PREFIX, queue_list = None):
+    async def _create_queue(self, qsc, prefix=TEST_QUEUE_PREFIX, queue_list=None):
         queue = self._get_queue_reference(qsc, prefix)
         created = await queue.create_queue()
         if queue_list:
@@ -355,6 +357,38 @@ class StorageQueueTestAsync(AsyncStorageTestCase):
 
     @GlobalStorageAccountPreparer()
     @AsyncStorageTestCase.await_prepared_test
+    async def test_receive_one_message(self, resource_group, location, storage_account, storage_account_key):
+        # Action
+        qsc = QueueServiceClient(self.account_url(storage_account, "queue"), storage_account_key, transport=AiohttpTestTransport())
+        queue_client = await self._create_queue(qsc)
+        self.assertIsNone(await queue_client.receive_message())
+
+        await queue_client.send_message(u'message1')
+        await queue_client.send_message(u'message2')
+        await queue_client.send_message(u'message3')
+
+        message1 = await queue_client.receive_message()
+        message2 = await queue_client.receive_message()
+        peeked_message3 = await queue_client.peek_messages()
+
+        # Asserts
+        self.assertIsNotNone(message1)
+        self.assertNotEqual('', message1.id)
+        self.assertEqual(u'message1', message1.content)
+        self.assertNotEqual('', message1.pop_receipt)
+        self.assertEqual(1, message1.dequeue_count)
+
+        self.assertIsNotNone(message2)
+        self.assertNotEqual('', message2.id)
+        self.assertEqual(u'message2', message2.content)
+        self.assertNotEqual('', message2.pop_receipt)
+        self.assertEqual(1, message2.dequeue_count)
+
+        self.assertEqual(u'message3', peeked_message3[0].content)
+        self.assertEqual(0, peeked_message3[0].dequeue_count)
+
+    @GlobalStorageAccountPreparer()
+    @AsyncStorageTestCase.await_prepared_test
     async def test_get_messages_with_options(self, resource_group, location, storage_account, storage_account_key):
         # Action
         qsc = QueueServiceClient(self.account_url(storage_account, "queue"), storage_account_key, transport=AiohttpTestTransport())
@@ -571,20 +605,28 @@ class StorageQueueTestAsync(AsyncStorageTestCase):
         )
 
         # Act
-        service = QueueServiceClient(
-            account_url=qsc.url,
-            credential=token,
-        )
-        new_queue_client = service.get_queue_client(queue_client.queue_name)
-        result = await new_queue_client.peek_messages()
+        for credential in [token, AzureSasCredential(token)]:
+            service = QueueServiceClient(
+                account_url=qsc.url,
+                credential=credential,
+            )
+            new_queue_client = service.get_queue_client(queue_client.queue_name)
+            result = await new_queue_client.peek_messages()
 
-        # Assert
-        self.assertIsNotNone(result)
-        self.assertEqual(1, len(result))
-        message = result[0]
-        self.assertIsNotNone(message)
-        self.assertNotEqual('', message.id)
-        self.assertEqual(u'message1', message.content)
+            # Assert
+            self.assertIsNotNone(result)
+            self.assertEqual(1, len(result))
+            message = result[0]
+            self.assertIsNotNone(message)
+            self.assertNotEqual('', message.id)
+            self.assertEqual(u'message1', message.content)
+
+    @GlobalStorageAccountPreparer()
+    def test_account_sas_raises_if_sas_already_in_uri(self, resource_group, location, storage_account, storage_account_key):
+        with self.assertRaises(ValueError):
+            QueueServiceClient(
+                self.account_url(storage_account, "queue") + "?sig=foo",
+                credential=AzureSasCredential("?foo=bar"))
 
     @pytest.mark.live_test_only
     @GlobalStorageAccountPreparer()

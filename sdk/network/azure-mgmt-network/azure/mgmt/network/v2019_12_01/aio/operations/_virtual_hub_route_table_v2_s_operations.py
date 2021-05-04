@@ -16,7 +16,7 @@ from azure.core.polling import AsyncLROPoller, AsyncNoPolling, AsyncPollingMetho
 from azure.mgmt.core.exceptions import ARMErrorFormat
 from azure.mgmt.core.polling.async_arm_polling import AsyncARMPolling
 
-from ... import models
+from ... import models as _models
 
 T = TypeVar('T')
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]]
@@ -35,7 +35,7 @@ class VirtualHubRouteTableV2SOperations:
     :param deserializer: An object model deserializer.
     """
 
-    models = models
+    models = _models
 
     def __init__(self, client, config, serializer, deserializer) -> None:
         self._client = client
@@ -49,7 +49,7 @@ class VirtualHubRouteTableV2SOperations:
         virtual_hub_name: str,
         route_table_name: str,
         **kwargs
-    ) -> "models.VirtualHubRouteTableV2":
+    ) -> "_models.VirtualHubRouteTableV2":
         """Retrieves the details of a VirtualHubRouteTableV2.
 
         :param resource_group_name: The resource group name of the VirtualHubRouteTableV2.
@@ -63,7 +63,7 @@ class VirtualHubRouteTableV2SOperations:
         :rtype: ~azure.mgmt.network.v2019_12_01.models.VirtualHubRouteTableV2
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.VirtualHubRouteTableV2"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.VirtualHubRouteTableV2"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -95,7 +95,7 @@ class VirtualHubRouteTableV2SOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.Error, response)
+            error = self._deserialize(_models.Error, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('VirtualHubRouteTableV2', pipeline_response)
@@ -111,10 +111,10 @@ class VirtualHubRouteTableV2SOperations:
         resource_group_name: str,
         virtual_hub_name: str,
         route_table_name: str,
-        virtual_hub_route_table_v2_parameters: "models.VirtualHubRouteTableV2",
+        virtual_hub_route_table_v2_parameters: "_models.VirtualHubRouteTableV2",
         **kwargs
-    ) -> "models.VirtualHubRouteTableV2":
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.VirtualHubRouteTableV2"]
+    ) -> "_models.VirtualHubRouteTableV2":
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.VirtualHubRouteTableV2"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -151,7 +151,7 @@ class VirtualHubRouteTableV2SOperations:
 
         if response.status_code not in [200, 201]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.Error, response)
+            error = self._deserialize(_models.Error, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if response.status_code == 200:
@@ -171,9 +171,9 @@ class VirtualHubRouteTableV2SOperations:
         resource_group_name: str,
         virtual_hub_name: str,
         route_table_name: str,
-        virtual_hub_route_table_v2_parameters: "models.VirtualHubRouteTableV2",
+        virtual_hub_route_table_v2_parameters: "_models.VirtualHubRouteTableV2",
         **kwargs
-    ) -> AsyncLROPoller["models.VirtualHubRouteTableV2"]:
+    ) -> AsyncLROPoller["_models.VirtualHubRouteTableV2"]:
         """Creates a VirtualHubRouteTableV2 resource if it doesn't exist else updates the existing
         VirtualHubRouteTableV2.
 
@@ -197,7 +197,7 @@ class VirtualHubRouteTableV2SOperations:
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         polling = kwargs.pop('polling', True)  # type: Union[bool, AsyncPollingMethod]
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.VirtualHubRouteTableV2"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.VirtualHubRouteTableV2"]
         lro_delay = kwargs.pop(
             'polling_interval',
             self._config.polling_interval
@@ -223,7 +223,14 @@ class VirtualHubRouteTableV2SOperations:
                 return cls(pipeline_response, deserialized, {})
             return deserialized
 
-        if polling is True: polling_method = AsyncARMPolling(lro_delay, lro_options={'final-state-via': 'azure-async-operation'},  **kwargs)
+        path_format_arguments = {
+            'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
+            'virtualHubName': self._serialize.url("virtual_hub_name", virtual_hub_name, 'str'),
+            'routeTableName': self._serialize.url("route_table_name", route_table_name, 'str'),
+        }
+
+        if polling is True: polling_method = AsyncARMPolling(lro_delay, lro_options={'final-state-via': 'azure-async-operation'}, path_format_arguments=path_format_arguments,  **kwargs)
         elif polling is False: polling_method = AsyncNoPolling()
         else: polling_method = polling
         if cont_token:
@@ -276,7 +283,7 @@ class VirtualHubRouteTableV2SOperations:
 
         if response.status_code not in [200, 202, 204]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.Error, response)
+            error = self._deserialize(_models.Error, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if cls:
@@ -332,7 +339,14 @@ class VirtualHubRouteTableV2SOperations:
             if cls:
                 return cls(pipeline_response, None, {})
 
-        if polling is True: polling_method = AsyncARMPolling(lro_delay, lro_options={'final-state-via': 'location'},  **kwargs)
+        path_format_arguments = {
+            'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
+            'virtualHubName': self._serialize.url("virtual_hub_name", virtual_hub_name, 'str'),
+            'routeTableName': self._serialize.url("route_table_name", route_table_name, 'str'),
+        }
+
+        if polling is True: polling_method = AsyncARMPolling(lro_delay, lro_options={'final-state-via': 'location'}, path_format_arguments=path_format_arguments,  **kwargs)
         elif polling is False: polling_method = AsyncNoPolling()
         else: polling_method = polling
         if cont_token:
@@ -351,7 +365,7 @@ class VirtualHubRouteTableV2SOperations:
         resource_group_name: str,
         virtual_hub_name: str,
         **kwargs
-    ) -> AsyncIterable["models.ListVirtualHubRouteTableV2SResult"]:
+    ) -> AsyncIterable["_models.ListVirtualHubRouteTableV2SResult"]:
         """Retrieves the details of all VirtualHubRouteTableV2s.
 
         :param resource_group_name: The resource group name of the VirtualHub.
@@ -363,7 +377,7 @@ class VirtualHubRouteTableV2SOperations:
         :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.network.v2019_12_01.models.ListVirtualHubRouteTableV2SResult]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.ListVirtualHubRouteTableV2SResult"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.ListVirtualHubRouteTableV2SResult"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }

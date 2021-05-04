@@ -8,8 +8,8 @@ import os
 import uuid
 import concurrent
 
-from azure.servicebus import ServiceBusClient, Message, AutoLockRenew
-from azure.servicebus.exceptions import NoActiveSession
+from azure.servicebus import ServiceBusClient, ServiceBusMessage, AutoLockRenewer, NEXT_AVAILABLE_SESSION
+from azure.servicebus.exceptions import OperationTimeoutError
 
 CONNECTION_STR = os.environ['SERVICE_BUS_CONNECTION_STR']
 # Note: This must be a session-enabled queue.
@@ -19,9 +19,9 @@ SESSION_QUEUE_NAME = os.environ["SERVICE_BUS_SESSION_QUEUE_NAME"]
 def message_processing(sb_client, queue_name, messages):
     while True:
         try:
-            with sb_client.get_queue_session_receiver(queue_name, max_wait_time=1) as receiver:
-                renewer = AutoLockRenew()
-                renewer.register(receiver.session)
+            with sb_client.get_queue_receiver(queue_name, max_wait_time=1, session_id=NEXT_AVAILABLE_SESSION) as receiver:
+                renewer = AutoLockRenewer()
+                renewer.register(receiver, receiver.session)
                 receiver.session.set_state("OPEN")
                 for message in receiver:
                     messages.append(message)
@@ -33,12 +33,14 @@ def message_processing(sb_client, queue_name, messages):
                     print("Locked until: {}".format(message.locked_until_utc))
                     print("Lock Token: {}".format(message.lock_token))
                     print("Enqueued time: {}".format(message.enqueued_time_utc))
-                    message.complete()
+                    receiver.complete_message(message)
                     if str(message) == 'shutdown':
                         receiver.session.set_state("CLOSED")
                 renewer.close()
-        except NoActiveSession:
-            print("There are no non-empty sessions remaining; exiting.  This may present as a UserError in the azure portal.")
+        except OperationTimeoutError:
+            print("If timeout occurs during connecting to a session,"
+                  "It indicates that there might be no non-empty sessions remaining; exiting."
+                  "This may present as a UserError in the azure portal metric.")
             return
 
 
@@ -51,7 +53,7 @@ def sample_session_send_receive_with_pool(connection_string, queue_name):
         with client.get_queue_sender(queue_name) as sender:
             for session_id in sessions:
                 for i in range(20):
-                    message = Message("Sample message no. {}".format(i), session_id=session_id)
+                    message = ServiceBusMessage("Sample message no. {}".format(i), session_id=session_id)
                     sender.send_messages(message)
 
         all_messages = []

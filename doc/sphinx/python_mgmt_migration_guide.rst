@@ -98,13 +98,13 @@ To the show the code snippets for the change:
 
 .. code:: python
 
-    import azure.mmgt.compute
+    import azure.mgmt.compute
     from azure.identity import ClientSecretCredential
 
     credential = ClientSecretCredential(
-        tenant_id=tenant_id,
+        client_secret=client_secret,
         client_id=client_id,
-        tenant_id=tenant_id
+        client_secret=client_secret
     )
     compute_client = azure.mgmt.compute.ComputeManagementClient(credential=credential, subscription_id=self.subscription_id)
 
@@ -167,3 +167,4 @@ If you have encountered an issue during migration, please file an issue
 via `Github
 Issues <https://github.com/Azure/azure-sdk-for-python/issues>`__ and
 make sure you add the "Preview" label to the issue
+

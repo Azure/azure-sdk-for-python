@@ -16,7 +16,7 @@ from azure.core.polling import LROPoller, NoPolling, PollingMethod
 from azure.mgmt.core.exceptions import ARMErrorFormat
 from azure.mgmt.core.polling.arm_polling import ARMPolling
 
-from .. import models
+from .. import models as _models
 
 if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
@@ -39,7 +39,7 @@ class PrivateLinkServicesOperations(object):
     :param deserializer: An object model deserializer.
     """
 
-    models = models
+    models = _models
 
     def __init__(self, client, config, serializer, deserializer):
         self._client = client
@@ -85,7 +85,7 @@ class PrivateLinkServicesOperations(object):
 
         if response.status_code not in [200, 202, 204]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.Error, response)
+            error = self._deserialize(_models.Error, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if cls:
@@ -138,7 +138,13 @@ class PrivateLinkServicesOperations(object):
             if cls:
                 return cls(pipeline_response, None, {})
 
-        if polling is True: polling_method = ARMPolling(lro_delay, lro_options={'final-state-via': 'location'},  **kwargs)
+        path_format_arguments = {
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
+            'serviceName': self._serialize.url("service_name", service_name, 'str'),
+            'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
+        }
+
+        if polling is True: polling_method = ARMPolling(lro_delay, lro_options={'final-state-via': 'location'}, path_format_arguments=path_format_arguments,  **kwargs)
         elif polling is False: polling_method = NoPolling()
         else: polling_method = polling
         if cont_token:
@@ -159,7 +165,7 @@ class PrivateLinkServicesOperations(object):
         expand=None,  # type: Optional[str]
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.PrivateLinkService"
+        # type: (...) -> "_models.PrivateLinkService"
         """Gets the specified private link service by resource group.
 
         :param resource_group_name: The name of the resource group.
@@ -173,7 +179,7 @@ class PrivateLinkServicesOperations(object):
         :rtype: ~azure.mgmt.network.v2020_05_01.models.PrivateLinkService
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.PrivateLinkService"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.PrivateLinkService"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -206,7 +212,7 @@ class PrivateLinkServicesOperations(object):
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.Error, response)
+            error = self._deserialize(_models.Error, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('PrivateLinkService', pipeline_response)
@@ -221,11 +227,11 @@ class PrivateLinkServicesOperations(object):
         self,
         resource_group_name,  # type: str
         service_name,  # type: str
-        parameters,  # type: "models.PrivateLinkService"
+        parameters,  # type: "_models.PrivateLinkService"
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.PrivateLinkService"
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.PrivateLinkService"]
+        # type: (...) -> "_models.PrivateLinkService"
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.PrivateLinkService"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -261,7 +267,7 @@ class PrivateLinkServicesOperations(object):
 
         if response.status_code not in [200, 201]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.Error, response)
+            error = self._deserialize(_models.Error, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if response.status_code == 200:
@@ -280,10 +286,10 @@ class PrivateLinkServicesOperations(object):
         self,
         resource_group_name,  # type: str
         service_name,  # type: str
-        parameters,  # type: "models.PrivateLinkService"
+        parameters,  # type: "_models.PrivateLinkService"
         **kwargs  # type: Any
     ):
-        # type: (...) -> LROPoller["models.PrivateLinkService"]
+        # type: (...) -> LROPoller["_models.PrivateLinkService"]
         """Creates or updates an private link service in the specified resource group.
 
         :param resource_group_name: The name of the resource group.
@@ -303,7 +309,7 @@ class PrivateLinkServicesOperations(object):
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         polling = kwargs.pop('polling', True)  # type: Union[bool, PollingMethod]
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.PrivateLinkService"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.PrivateLinkService"]
         lro_delay = kwargs.pop(
             'polling_interval',
             self._config.polling_interval
@@ -328,7 +334,13 @@ class PrivateLinkServicesOperations(object):
                 return cls(pipeline_response, deserialized, {})
             return deserialized
 
-        if polling is True: polling_method = ARMPolling(lro_delay, lro_options={'final-state-via': 'azure-async-operation'},  **kwargs)
+        path_format_arguments = {
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
+            'serviceName': self._serialize.url("service_name", service_name, 'str'),
+            'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
+        }
+
+        if polling is True: polling_method = ARMPolling(lro_delay, lro_options={'final-state-via': 'azure-async-operation'}, path_format_arguments=path_format_arguments,  **kwargs)
         elif polling is False: polling_method = NoPolling()
         else: polling_method = polling
         if cont_token:
@@ -347,7 +359,7 @@ class PrivateLinkServicesOperations(object):
         resource_group_name,  # type: str
         **kwargs  # type: Any
     ):
-        # type: (...) -> Iterable["models.PrivateLinkServiceListResult"]
+        # type: (...) -> Iterable["_models.PrivateLinkServiceListResult"]
         """Gets all private link services in a resource group.
 
         :param resource_group_name: The name of the resource group.
@@ -357,7 +369,7 @@ class PrivateLinkServicesOperations(object):
         :rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.network.v2020_05_01.models.PrivateLinkServiceListResult]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.PrivateLinkServiceListResult"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.PrivateLinkServiceListResult"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -403,7 +415,7 @@ class PrivateLinkServicesOperations(object):
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
-                error = self._deserialize(models.Error, response)
+                error = self._deserialize(_models.Error, response)
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
@@ -418,7 +430,7 @@ class PrivateLinkServicesOperations(object):
         self,
         **kwargs  # type: Any
     ):
-        # type: (...) -> Iterable["models.PrivateLinkServiceListResult"]
+        # type: (...) -> Iterable["_models.PrivateLinkServiceListResult"]
         """Gets all private link service in a subscription.
 
         :keyword callable cls: A custom type or function that will be passed the direct response
@@ -426,7 +438,7 @@ class PrivateLinkServicesOperations(object):
         :rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.network.v2020_05_01.models.PrivateLinkServiceListResult]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.PrivateLinkServiceListResult"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.PrivateLinkServiceListResult"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -471,7 +483,7 @@ class PrivateLinkServicesOperations(object):
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
-                error = self._deserialize(models.Error, response)
+                error = self._deserialize(_models.Error, response)
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
@@ -490,7 +502,7 @@ class PrivateLinkServicesOperations(object):
         expand=None,  # type: Optional[str]
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.PrivateEndpointConnection"
+        # type: (...) -> "_models.PrivateEndpointConnection"
         """Get the specific private end point connection by specific private link service in the resource
         group.
 
@@ -507,7 +519,7 @@ class PrivateLinkServicesOperations(object):
         :rtype: ~azure.mgmt.network.v2020_05_01.models.PrivateEndpointConnection
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.PrivateEndpointConnection"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.PrivateEndpointConnection"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -541,7 +553,7 @@ class PrivateLinkServicesOperations(object):
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.Error, response)
+            error = self._deserialize(_models.Error, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('PrivateEndpointConnection', pipeline_response)
@@ -557,10 +569,10 @@ class PrivateLinkServicesOperations(object):
         resource_group_name,  # type: str
         service_name,  # type: str
         pe_connection_name,  # type: str
-        parameters,  # type: "models.PrivateEndpointConnection"
+        parameters,  # type: "_models.PrivateEndpointConnection"
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.PrivateEndpointConnection"
+        # type: (...) -> "_models.PrivateEndpointConnection"
         """Approve or reject private end point connection for a private link service in a subscription.
 
         :param resource_group_name: The name of the resource group.
@@ -576,7 +588,7 @@ class PrivateLinkServicesOperations(object):
         :rtype: ~azure.mgmt.network.v2020_05_01.models.PrivateEndpointConnection
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.PrivateEndpointConnection"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.PrivateEndpointConnection"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -613,7 +625,7 @@ class PrivateLinkServicesOperations(object):
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.Error, response)
+            error = self._deserialize(_models.Error, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('PrivateEndpointConnection', pipeline_response)
@@ -664,7 +676,7 @@ class PrivateLinkServicesOperations(object):
 
         if response.status_code not in [200, 202, 204]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.Error, response)
+            error = self._deserialize(_models.Error, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if cls:
@@ -721,7 +733,14 @@ class PrivateLinkServicesOperations(object):
             if cls:
                 return cls(pipeline_response, None, {})
 
-        if polling is True: polling_method = ARMPolling(lro_delay, lro_options={'final-state-via': 'location'},  **kwargs)
+        path_format_arguments = {
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
+            'serviceName': self._serialize.url("service_name", service_name, 'str'),
+            'peConnectionName': self._serialize.url("pe_connection_name", pe_connection_name, 'str'),
+            'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
+        }
+
+        if polling is True: polling_method = ARMPolling(lro_delay, lro_options={'final-state-via': 'location'}, path_format_arguments=path_format_arguments,  **kwargs)
         elif polling is False: polling_method = NoPolling()
         else: polling_method = polling
         if cont_token:
@@ -741,7 +760,7 @@ class PrivateLinkServicesOperations(object):
         service_name,  # type: str
         **kwargs  # type: Any
     ):
-        # type: (...) -> Iterable["models.PrivateEndpointConnectionListResult"]
+        # type: (...) -> Iterable["_models.PrivateEndpointConnectionListResult"]
         """Gets all private end point connections for a specific private link service.
 
         :param resource_group_name: The name of the resource group.
@@ -753,7 +772,7 @@ class PrivateLinkServicesOperations(object):
         :rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.network.v2020_05_01.models.PrivateEndpointConnectionListResult]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.PrivateEndpointConnectionListResult"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.PrivateEndpointConnectionListResult"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -800,7 +819,7 @@ class PrivateLinkServicesOperations(object):
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
-                error = self._deserialize(models.Error, response)
+                error = self._deserialize(_models.Error, response)
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
@@ -814,11 +833,11 @@ class PrivateLinkServicesOperations(object):
     def _check_private_link_service_visibility_initial(
         self,
         location,  # type: str
-        parameters,  # type: "models.CheckPrivateLinkServiceVisibilityRequest"
+        parameters,  # type: "_models.CheckPrivateLinkServiceVisibilityRequest"
         **kwargs  # type: Any
     ):
-        # type: (...) -> Optional["models.PrivateLinkServiceVisibility"]
-        cls = kwargs.pop('cls', None)  # type: ClsType[Optional["models.PrivateLinkServiceVisibility"]]
+        # type: (...) -> Optional["_models.PrivateLinkServiceVisibility"]
+        cls = kwargs.pop('cls', None)  # type: ClsType[Optional["_models.PrivateLinkServiceVisibility"]]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -868,10 +887,10 @@ class PrivateLinkServicesOperations(object):
     def begin_check_private_link_service_visibility(
         self,
         location,  # type: str
-        parameters,  # type: "models.CheckPrivateLinkServiceVisibilityRequest"
+        parameters,  # type: "_models.CheckPrivateLinkServiceVisibilityRequest"
         **kwargs  # type: Any
     ):
-        # type: (...) -> LROPoller["models.PrivateLinkServiceVisibility"]
+        # type: (...) -> LROPoller["_models.PrivateLinkServiceVisibility"]
         """Checks whether the subscription is visible to private link service.
 
         :param location: The location of the domain name.
@@ -889,7 +908,7 @@ class PrivateLinkServicesOperations(object):
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         polling = kwargs.pop('polling', True)  # type: Union[bool, PollingMethod]
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.PrivateLinkServiceVisibility"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.PrivateLinkServiceVisibility"]
         lro_delay = kwargs.pop(
             'polling_interval',
             self._config.polling_interval
@@ -913,7 +932,12 @@ class PrivateLinkServicesOperations(object):
                 return cls(pipeline_response, deserialized, {})
             return deserialized
 
-        if polling is True: polling_method = ARMPolling(lro_delay, lro_options={'final-state-via': 'location'},  **kwargs)
+        path_format_arguments = {
+            'location': self._serialize.url("location", location, 'str'),
+            'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
+        }
+
+        if polling is True: polling_method = ARMPolling(lro_delay, lro_options={'final-state-via': 'location'}, path_format_arguments=path_format_arguments,  **kwargs)
         elif polling is False: polling_method = NoPolling()
         else: polling_method = polling
         if cont_token:
@@ -931,11 +955,11 @@ class PrivateLinkServicesOperations(object):
         self,
         location,  # type: str
         resource_group_name,  # type: str
-        parameters,  # type: "models.CheckPrivateLinkServiceVisibilityRequest"
+        parameters,  # type: "_models.CheckPrivateLinkServiceVisibilityRequest"
         **kwargs  # type: Any
     ):
-        # type: (...) -> Optional["models.PrivateLinkServiceVisibility"]
-        cls = kwargs.pop('cls', None)  # type: ClsType[Optional["models.PrivateLinkServiceVisibility"]]
+        # type: (...) -> Optional["_models.PrivateLinkServiceVisibility"]
+        cls = kwargs.pop('cls', None)  # type: ClsType[Optional["_models.PrivateLinkServiceVisibility"]]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -987,10 +1011,10 @@ class PrivateLinkServicesOperations(object):
         self,
         location,  # type: str
         resource_group_name,  # type: str
-        parameters,  # type: "models.CheckPrivateLinkServiceVisibilityRequest"
+        parameters,  # type: "_models.CheckPrivateLinkServiceVisibilityRequest"
         **kwargs  # type: Any
     ):
-        # type: (...) -> LROPoller["models.PrivateLinkServiceVisibility"]
+        # type: (...) -> LROPoller["_models.PrivateLinkServiceVisibility"]
         """Checks whether the subscription is visible to private link service in the specified resource
         group.
 
@@ -1011,7 +1035,7 @@ class PrivateLinkServicesOperations(object):
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         polling = kwargs.pop('polling', True)  # type: Union[bool, PollingMethod]
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.PrivateLinkServiceVisibility"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.PrivateLinkServiceVisibility"]
         lro_delay = kwargs.pop(
             'polling_interval',
             self._config.polling_interval
@@ -1036,7 +1060,13 @@ class PrivateLinkServicesOperations(object):
                 return cls(pipeline_response, deserialized, {})
             return deserialized
 
-        if polling is True: polling_method = ARMPolling(lro_delay, lro_options={'final-state-via': 'location'},  **kwargs)
+        path_format_arguments = {
+            'location': self._serialize.url("location", location, 'str'),
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
+            'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
+        }
+
+        if polling is True: polling_method = ARMPolling(lro_delay, lro_options={'final-state-via': 'location'}, path_format_arguments=path_format_arguments,  **kwargs)
         elif polling is False: polling_method = NoPolling()
         else: polling_method = polling
         if cont_token:
@@ -1055,7 +1085,7 @@ class PrivateLinkServicesOperations(object):
         location,  # type: str
         **kwargs  # type: Any
     ):
-        # type: (...) -> Iterable["models.AutoApprovedPrivateLinkServicesResult"]
+        # type: (...) -> Iterable["_models.AutoApprovedPrivateLinkServicesResult"]
         """Returns all of the private link service ids that can be linked to a Private Endpoint with auto
         approved in this subscription in this region.
 
@@ -1066,7 +1096,7 @@ class PrivateLinkServicesOperations(object):
         :rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.network.v2020_05_01.models.AutoApprovedPrivateLinkServicesResult]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.AutoApprovedPrivateLinkServicesResult"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.AutoApprovedPrivateLinkServicesResult"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -1128,7 +1158,7 @@ class PrivateLinkServicesOperations(object):
         resource_group_name,  # type: str
         **kwargs  # type: Any
     ):
-        # type: (...) -> Iterable["models.AutoApprovedPrivateLinkServicesResult"]
+        # type: (...) -> Iterable["_models.AutoApprovedPrivateLinkServicesResult"]
         """Returns all of the private link service ids that can be linked to a Private Endpoint with auto
         approved in this subscription in this region.
 
@@ -1141,7 +1171,7 @@ class PrivateLinkServicesOperations(object):
         :rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.network.v2020_05_01.models.AutoApprovedPrivateLinkServicesResult]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.AutoApprovedPrivateLinkServicesResult"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.AutoApprovedPrivateLinkServicesResult"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }

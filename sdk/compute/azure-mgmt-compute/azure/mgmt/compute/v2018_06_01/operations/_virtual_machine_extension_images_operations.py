@@ -13,7 +13,7 @@ from azure.core.pipeline import PipelineResponse
 from azure.core.pipeline.transport import HttpRequest, HttpResponse
 from azure.mgmt.core.exceptions import ARMErrorFormat
 
-from .. import models
+from .. import models as _models
 
 if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
@@ -36,7 +36,7 @@ class VirtualMachineExtensionImagesOperations(object):
     :param deserializer: An object model deserializer.
     """
 
-    models = models
+    models = _models
 
     def __init__(self, client, config, serializer, deserializer):
         self._client = client
@@ -52,7 +52,7 @@ class VirtualMachineExtensionImagesOperations(object):
         version,  # type: str
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.VirtualMachineExtensionImage"
+        # type: (...) -> "_models.VirtualMachineExtensionImage"
         """Gets a virtual machine extension image.
 
         :param location: The name of a supported Azure region.
@@ -68,7 +68,7 @@ class VirtualMachineExtensionImagesOperations(object):
         :rtype: ~azure.mgmt.compute.v2018_06_01.models.VirtualMachineExtensionImage
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.VirtualMachineExtensionImage"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.VirtualMachineExtensionImage"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -117,7 +117,7 @@ class VirtualMachineExtensionImagesOperations(object):
         publisher_name,  # type: str
         **kwargs  # type: Any
     ):
-        # type: (...) -> List["models.VirtualMachineExtensionImage"]
+        # type: (...) -> List["_models.VirtualMachineExtensionImage"]
         """Gets a list of virtual machine extension image types.
 
         :param location: The name of a supported Azure region.
@@ -129,7 +129,7 @@ class VirtualMachineExtensionImagesOperations(object):
         :rtype: list[~azure.mgmt.compute.v2018_06_01.models.VirtualMachineExtensionImage]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType[List["models.VirtualMachineExtensionImage"]]
+        cls = kwargs.pop('cls', None)  # type: ClsType[List["_models.VirtualMachineExtensionImage"]]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -180,7 +180,7 @@ class VirtualMachineExtensionImagesOperations(object):
         orderby=None,  # type: Optional[str]
         **kwargs  # type: Any
     ):
-        # type: (...) -> List["models.VirtualMachineExtensionImage"]
+        # type: (...) -> List["_models.VirtualMachineExtensionImage"]
         """Gets a list of virtual machine extension image versions.
 
         :param location: The name of a supported Azure region.
@@ -200,7 +200,7 @@ class VirtualMachineExtensionImagesOperations(object):
         :rtype: list[~azure.mgmt.compute.v2018_06_01.models.VirtualMachineExtensionImage]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType[List["models.VirtualMachineExtensionImage"]]
+        cls = kwargs.pop('cls', None)  # type: ClsType[List["_models.VirtualMachineExtensionImage"]]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }

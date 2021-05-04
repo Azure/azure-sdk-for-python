@@ -88,6 +88,15 @@ client = FooServiceClient(
 response = client.get_foo_properties()
 ```
 
+### Pipeline client configurations
+
+| Parameters | Description |
+| --- | --- |
+| `pipeline` | While `PipelineClient` will create a default pipeline, users can opt to use their own pipeline by passing in a `Pipeline` object. If passed in, the other configurations will be ignored.  |
+| `config` | While `PipelineClient` will create a default `Configuration`, users can opt to use their own configuration by passing in a `Configuration` object. If passed in, it will be used to create a `Pipeline` object. |
+| `transport` | While `PipelineClient` will create a default `RequestsTransport`, users can opt to use their own transport by passing in a `RequestsTransport` object. If it is omitted, `PipelineClient` will honor the other described [transport customizations](#transport). |
+
+
 ### Transport
 
 Various combinations of sync/async HTTP libraries as well as alternative event loop implementations are available. Therefore to support the widest range of customer scenarios, we must allow a customer to easily swap out the HTTP transport layer to one of those supported.
@@ -141,19 +150,6 @@ transport = AioHttpTransport(
         connection_data_block_size=4096
 )
 ```
-
-#### Transport configurations
-
-| Parameters | Description |
-| --- | --- |
-| connection_timeout | A single float in seconds for the connection timeout. Defaults to 300 seconds. |
-| read_timeout | A single float in seconds for the read timeout. Defaults to 300 seconds. |
-| connection_verify | SSL certificate verification. Enabled by default. Set to False to disable, alternatively can be set to the path to a CA_BUNDLE file or directory with certificates of trusted CAs. |
-| connection_cert | Client-side certificates. You can specify a local cert to use as client side certificate, as a single file (containing the private key and the certificate) or as a tuple of both files' paths. |
-| proxies | Dictionary mapping protocol or protocol and hostname to the URL of the proxy. |
-| cookies | Dict or CookieJar object to send with the `Request`. |
-| stream | whether to immediately download the response content. Defaults to ``False``. |
-| connection_data_block_size | The block size of data sent over the connection. Defaults to 4096 bytes. |
 
 ### Proxy Settings
 
@@ -399,50 +395,60 @@ from azure.core.pipeline.policies import (
 
 #### Available Policies
 
-| Name | Policy Flavor | Parameters accepted in Init | Parameters accepted in Request |
-| --- | --- | --- | --- |
-| HeadersPolicy | SansIOHTTPPolicy | base_headers | headers |
-|  |  | headers | |
-| RequestIdPolicy | SansIOHTTPPolicy | request_id | request_id |
-|  |  | auto_request_id | |
-| UserAgentPolicy | SansIOHTTPPolicy | base_user_agent | user_agent |
-|  |  | user_agent_overwrite | |
-|  |  | user_agent_use_env | |
-|  |  | user_agent | |
-|  |  | sdk_moniker | |
-| NetworkTraceLoggingPolicy | SansIOHTTPPolicy | logging_enable | logging_enable |
-| HttpLoggingPolicy | SansIOHTTPPolicy | logger | logger |
-| ContentDecodePolicy | SansIOHTTPPolicy | response_encoding | response_encoding |
-| ProxyPolicy | SansIOHTTPPolicy | proxies | proxies |
-| CustomHookPolicy | SansIOHTTPPolicy | raw_request_hook | raw_request_hook |
-|  |  | raw_response_hook | raw_response_hook |
-| DistributedTracingPolicy | SansIOHTTPPolicy | network_span_namer | network_span_namer |
-|  |  | tracing_attributes | |
-| --- | --- | --- | --- |
-| RedirectPolicy | HTTPPolicy | permit_redirects | permit_redirects |
-|  |  | redirect_max | redirect_max |
-|  |  | redirect_remove_headers | |
-|  |  | redirect_on_status_codes | |
-| AsyncRedirectPolicy | AsyncHTTPPolicy | permit_redirects | permit_redirects |
-|  |  | redirect_max | redirect_max |
-|  |  | redirect_remove_headers | |
-|  |  | redirect_on_status_codes | |
-| RetryPolicy | HTTPPolicy | retry_total | retry_total |
-|  |  | retry_connect | retry_connect |
-|  |  | retry_read | retry_read |
-|  |  | retry_status | retry_status |
-|  |  | retry_backoff_factor | retry_backoff_factor |
-|  |  | retry_backoff_max | retry_backoff_max |
-|  |  | retry_mode | retry_mode |
-|  |  | retry_on_status_codes | retry_on_status_codes |
-| AsyncRetryPolicy | AsyncHTTPPolicy | retry_total | retry_total |
-|  |  | retry_connect | retry_connect |
-|  |  | retry_read | retry_read |
-|  |  | retry_status | retry_status |
-|  |  | retry_backoff_factor | retry_backoff_factor |
-|  |  | retry_backoff_max | retry_backoff_max |
-|  |  | retry_mode | retry_mode |
-|  |  | retry_on_status_codes | retry_on_status_codes |
+| Name | Policy Flavor | Parameters | Accepted in Init? | Accepted in Request? | Description |
+| --- | --- | --- | --- | --- | --- |
+| HeadersPolicy | SansIOHTTPPolicy |  |  |  |  |
+|  |  | base_headers | x |  | Headers to send with the request. |
+|  |  | headers | x | x | The HTTP Request headers. |
+| RequestIdPolicy | SansIOHTTPPolicy |  |  |  |  |
+|  |  | request_id | x | x | The request id to be added into header. |
+|  |  | auto_request_id | x |  | Auto generates a unique request ID per call if `True` which is by default. |
+| UserAgentPolicy | SansIOHTTPPolicy |  |  |  |  |
+|  |  | base_user_agent | x |  | Sets the base user agent value. |
+|  |  | user_agent_overwrite | x |  | Overwrites User-Agent when True. Defaults to `False`. |
+|  |  | user_agent_use_env | x |  | Gets user-agent from environment. Defaults to `True`. |
+|  |  | user_agent | x | x | If specified, this will be added in front of the user agent string. |
+|  |  | sdk_moniker | x |  | If specified, the user agent string will be `azsdk-python-[sdk_moniker] Python/[python_version] ([platform_version])` |
+| NetworkTraceLoggingPolicy | SansIOHTTPPolicy |  |  |  |  |
+|  |  | logging_enable | x | x | Use to enable per operation. Defaults to `False`. |
+| HttpLoggingPolicy | SansIOHTTPPolicy |  |  |  |  |
+|  |  | logger | x | x | If specified, it will be used to log information |
+| ContentDecodePolicy | SansIOHTTPPolicy |  |  |  |  |
+|  |  | response_encoding | x | x | The encoding to use if known for this service (will disable auto-detection). |
+| ProxyPolicy | SansIOHTTPPolicy |  |  |  |  |
+|  |  | proxies | x | x | Maps protocol or protocol and hostname to the URL of the proxy. |
+| CustomHookPolicy | SansIOHTTPPolicy |  |  |  |  |
+|  |  | raw_request_hook | x | x | Callback function. Will be invoked on request. |
+|  |  | raw_response_hook | x | x | Callback function. Will be invoked on response. |
+| DistributedTracingPolicy | SansIOHTTPPolicy |  |  |  |  |
+|  |  | network_span_namer | x | x | A callable to customize the span name. |
+|  |  | tracing_attributes | x | x | Attributes to set on all created spans. |
+| --- | --- | --- | --- | --- | --- |
+| RedirectPolicy | HTTPPolicy |  |  |  |  |
+|  |  | permit_redirects | x | x | Whether the client allows redirects. Defaults to `True`. |
+|  |  | redirect_max | x | x | The maximum allowed redirects. Defaults to `30`. |
+| AsyncRedirectPolicy | AsyncHTTPPolicy |  |  |  |  |
+|  |  | permit_redirects | x | x | Whether the client allows redirects. Defaults to `True`. |
+|  |  | redirect_max | x | x | The maximum allowed redirects. Defaults to `30`. |
+| RetryPolicy | HTTPPolicy |  |  |  |  |
+|  |  | retry_total | x | x | Total number of retries to allow. Takes precedence over other counts. Default value is `10`. |
+|  |  | retry_connect | x | x | How many connection-related errors to retry on. These are errors raised before the request is sent to the remote server, which we assume has not triggered the server to process the request. Default value is `3`. |
+|  |  | retry_read | x | x | How many times to retry on read errors. These errors are raised after the request was sent to the server, so the request may have side-effects. Default value is `3`. |
+|  |  | retry_status | x | x | How many times to retry on bad status codes. Default value is `3`. |
+|  |  | retry_backoff_factor | x | x | A backoff factor to apply between attempts after the second try (most errors are resolved immediately by a second try without a delay). Retry policy will sleep for: `{backoff factor} * (2 ** ({number of total retries} - 1))` seconds. If the backoff_factor is 0.1, then the retry will sleep for [0.0s, 0.2s, 0.4s, ...] between retries. The default value is `0.8`. |
+|  |  | retry_backoff_max | x | x | The maximum back off time. Default value is `120` seconds (2 minutes). |
+|  |  | retry_mode | x | x | Fixed or exponential delay between attemps, default is `exponential`. |
+|  |  | timeout | x | x | Timeout setting for the operation in seconds, default is `604800s` (7 days). |
+| AsyncRetryPolicy | AsyncHTTPPolicy |  |  |  |  |
+|  |  | retry_total | x | x | Total number of retries to allow. Takes precedence over other counts. Default value is `10`. |
+|  |  | retry_connect | x | x | How many connection-related errors to retry on. These are errors raised before the request is sent to the remote server, which we assume has not triggered the server to process the request. Default value is `3`. |
+|  |  | retry_read | x | x | How many times to retry on read errors. These errors are raised after the request was sent to the server, so the request may have side-effects. Default value is `3`. |
+|  |  | retry_status | x | x | How many times to retry on bad status codes. Default value is `3`. |
+|  |  | retry_backoff_factor | x | x | A backoff factor to apply between attempts after the second try (most errors are resolved immediately by a second try without a delay). Retry policy will sleep for: `{backoff factor} * (2 ** ({number of total retries} - 1))` seconds. If the backoff_factor is 0.1, then the retry will sleep for [0.0s, 0.2s, 0.4s, ...] between retries. The default value is `0.8`. |
+|  |  | retry_backoff_max | x | x | The maximum back off time. Default value is `120` seconds (2 minutes). |
+|  |  | retry_mode | x | x | Fixed or exponential delay between attemps, default is exponential. |
+|  |  | timeout | x | x | Timeout setting for the operation in seconds, default is `604800s` (7 days). |
+
 
 ### The Pipeline
 

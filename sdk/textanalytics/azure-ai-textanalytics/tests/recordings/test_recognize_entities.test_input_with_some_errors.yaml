@@ -15,28 +15,29 @@ interactions:
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-ai-textanalytics/5.1.0b1 Python/3.8.5 (macOS-10.13.6-x86_64-i386-64bit)
+      - azsdk-python-ai-textanalytics/5.1.0b7 Python/3.9.0 (Windows-10-10.0.19041-SP0)
     method: POST
-    uri: https://westcentralus.api.cognitive.microsoft.com/text/analytics/v3.1-preview.2/entities/recognition/general?showStats=false&stringIndexType=UnicodeCodePoint
+    uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.1-preview.5/entities/recognition/general?showStats=false&stringIndexType=UnicodeCodePoint
   response:
     body:
-      string: '{"documents":[{"id":"1","entities":[{"text":"Microsoft","category":"Organization","offset":0,"length":9,"confidenceScore":0.8},{"text":"Bill
-        Gates","category":"Person","offset":25,"length":10,"confidenceScore":0.83},{"text":"Paul
-        Allen","category":"Person","offset":40,"length":10,"confidenceScore":0.87},{"text":"April
+      string: '{"documents":[{"id":"1","entities":[{"text":"Microsoft","category":"Organization","offset":0,"length":9,"confidenceScore":0.96},{"text":"Bill
+        Gates","category":"Person","offset":25,"length":10,"confidenceScore":0.99},{"text":"Paul
+        Allen","category":"Person","offset":40,"length":10,"confidenceScore":0.99},{"text":"April
         4, 1975","category":"DateTime","subcategory":"Date","offset":54,"length":13,"confidenceScore":0.8}],"warnings":[]}],"errors":[{"id":"2","error":{"code":"InvalidArgument","message":"Invalid
         Language Code.","innererror":{"code":"UnsupportedLanguageCode","message":"Invalid
-        language code. Supported languages: ar,cs,da,de,en,es,fi,fr,hu,it,ja,ko,nl,no,pl,pt-BR,pt-PT,ru,sv,tr,zh-Hans"}}},{"id":"3","error":{"code":"InvalidArgument","message":"Invalid
+        language code. Supported languages: ar,cs,da,de,en,es,fi,fr,hu,it,ja,ko,nl,no,pl,pt-BR,pt-PT,ru,sv,tr,zh-Hans.
+        For additional details see https://docs.microsoft.com/en-us/azure/cognitive-services/text-analytics/language-support?tabs=named-entity-recognition"}}},{"id":"3","error":{"code":"InvalidArgument","message":"Invalid
         document in request.","innererror":{"code":"InvalidDocument","message":"Document
-        text is empty."}}}],"modelVersion":"2020-04-01"}'
+        text is empty."}}}],"modelVersion":"2021-01-15"}'
     headers:
       apim-request-id:
-      - c47aedff-ec89-4e1e-a5be-771cc61573f3
+      - 85b1979a-26a8-494a-a6f5-724bc6526d75
       content-type:
       - application/json; charset=utf-8
       csp-billing-usage:
-      - CognitiveServices.TextAnalytics.BatchScoring=1
+      - CognitiveServices.TextAnalytics.BatchScoring=1,CognitiveServices.TextAnalytics.TextRecords=1
       date:
-      - Thu, 10 Sep 2020 15:25:33 GMT
+      - Tue, 27 Apr 2021 20:10:15 GMT
       strict-transport-security:
       - max-age=31536000; includeSubDomains; preload
       transfer-encoding:
@@ -44,7 +45,7 @@ interactions:
       x-content-type-options:
       - nosniff
       x-envoy-upstream-service-time:
-      - '95'
+      - '23'
     status:
       code: 200
       message: OK

@@ -14,7 +14,7 @@ from azure.core.pipeline import PipelineResponse
 from azure.core.pipeline.transport import AsyncHttpResponse, HttpRequest
 from azure.mgmt.core.exceptions import ARMErrorFormat
 
-from ... import models
+from ... import models as _models
 
 T = TypeVar('T')
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]]
@@ -33,7 +33,7 @@ class DefaultSecurityRulesOperations:
     :param deserializer: An object model deserializer.
     """
 
-    models = models
+    models = _models
 
     def __init__(self, client, config, serializer, deserializer) -> None:
         self._client = client
@@ -46,7 +46,7 @@ class DefaultSecurityRulesOperations:
         resource_group_name: str,
         network_security_group_name: str,
         **kwargs
-    ) -> AsyncIterable["models.SecurityRuleListResult"]:
+    ) -> AsyncIterable["_models.SecurityRuleListResult"]:
         """Gets all default security rules in a network security group.
 
         :param resource_group_name: The name of the resource group.
@@ -58,7 +58,7 @@ class DefaultSecurityRulesOperations:
         :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.network.v2019_11_01.models.SecurityRuleListResult]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.SecurityRuleListResult"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.SecurityRuleListResult"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -121,7 +121,7 @@ class DefaultSecurityRulesOperations:
         network_security_group_name: str,
         default_security_rule_name: str,
         **kwargs
-    ) -> "models.SecurityRule":
+    ) -> "_models.SecurityRule":
         """Get the specified default network security rule.
 
         :param resource_group_name: The name of the resource group.
@@ -135,7 +135,7 @@ class DefaultSecurityRulesOperations:
         :rtype: ~azure.mgmt.network.v2019_11_01.models.SecurityRule
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.SecurityRule"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.SecurityRule"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }

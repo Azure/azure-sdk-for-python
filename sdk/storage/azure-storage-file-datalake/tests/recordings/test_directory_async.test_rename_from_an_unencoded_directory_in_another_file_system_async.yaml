@@ -3,13 +3,13 @@ interactions:
     body: null
     headers:
       User-Agent:
-      - azsdk-python-storage-dfs/12.0.2 Python/3.7.3 (Windows-10-10.0.18362-SP0)
+      - azsdk-python-storage-dfs/12.1.2 Python/3.7.3 (Windows-10-10.0.19041-SP0)
       x-ms-client-request-id:
-      - 069607a4-af4d-11ea-8659-001a7dda7113
+      - 18555946-04c6-11eb-a875-001a7dda7113
       x-ms-date:
-      - Mon, 15 Jun 2020 21:13:14 GMT
+      - Fri, 02 Oct 2020 15:44:02 GMT
       x-ms-version:
-      - '2019-07-07'
+      - '2020-02-10'
     method: PUT
     uri: https://storagename.blob.core.windows.net/oldfilesystem745924c6?restype=container
   response:
@@ -17,12 +17,12 @@ interactions:
       string: ''
     headers:
       Content-Length: '0'
-      Date: Mon, 15 Jun 2020 21:13:13 GMT
-      Etag: '"0x8D81170EAC23846"'
-      Last-Modified: Mon, 15 Jun 2020 21:13:14 GMT
+      Date: Fri, 02 Oct 2020 15:44:02 GMT
+      Etag: '"0x8D866E9FC87D398"'
+      Last-Modified: Fri, 02 Oct 2020 15:44:02 GMT
       Server: Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
-      x-ms-request-id: 7002d3d9-201e-0027-4459-435a50000000
-      x-ms-version: '2019-07-07'
+      x-ms-request-id: 0508d5ce-d01e-0033-04d2-98123f000000
+      x-ms-version: '2020-02-10'
     status:
       code: 201
       message: Created
@@ -31,15 +31,15 @@ interactions:
     body: null
     headers:
       User-Agent:
-      - azsdk-python-storage-dfs/12.0.2 Python/3.7.3 (Windows-10-10.0.18362-SP0)
+      - azsdk-python-storage-dfs/12.1.2 Python/3.7.3 (Windows-10-10.0.19041-SP0)
       x-ms-client-request-id:
-      - 069f4622-af4d-11ea-b1a2-001a7dda7113
+      - 18608de6-04c6-11eb-885b-001a7dda7113
       x-ms-date:
-      - Mon, 15 Jun 2020 21:13:14 GMT
+      - Fri, 02 Oct 2020 15:44:02 GMT
       x-ms-properties:
       - ''
       x-ms-version:
-      - '2019-02-02'
+      - '2020-02-10'
     method: PUT
     uri: https://storagename.dfs.core.windows.net/oldfilesystem745924c6/old%20dir?resource=directory
   response:
@@ -47,12 +47,12 @@ interactions:
       string: ''
     headers:
       Content-Length: '0'
-      Date: Mon, 15 Jun 2020 21:13:14 GMT
-      Etag: '"0x8D81170EAFDE328"'
-      Last-Modified: Mon, 15 Jun 2020 21:13:14 GMT
+      Date: Fri, 02 Oct 2020 15:44:02 GMT
+      Etag: '"0x8D866E9FCBCFF74"'
+      Last-Modified: Fri, 02 Oct 2020 15:44:02 GMT
       Server: Windows-Azure-HDFS/1.0 Microsoft-HTTPAPI/2.0
-      x-ms-request-id: 0acd1f81-d01f-0033-2559-43123f000000
-      x-ms-version: '2019-02-02'
+      x-ms-request-id: 7e784b8c-801f-003e-09d2-98daeb000000
+      x-ms-version: '2020-02-10'
     status:
       code: 201
       message: Created
@@ -61,15 +61,15 @@ interactions:
     body: null
     headers:
       User-Agent:
-      - azsdk-python-storage-dfs/12.0.2 Python/3.7.3 (Windows-10-10.0.18362-SP0)
+      - azsdk-python-storage-dfs/12.1.2 Python/3.7.3 (Windows-10-10.0.19041-SP0)
       x-ms-client-request-id:
-      - 06d99d0a-af4d-11ea-a19e-001a7dda7113
+      - 1891a49c-04c6-11eb-8c60-001a7dda7113
       x-ms-date:
-      - Mon, 15 Jun 2020 21:13:15 GMT
+      - Fri, 02 Oct 2020 15:44:02 GMT
       x-ms-properties:
       - ''
       x-ms-version:
-      - '2019-02-02'
+      - '2020-02-10'
     method: PUT
     uri: https://storagename.dfs.core.windows.net/oldfilesystem745924c6/old%20dir%2Foldfile?resource=file
   response:
@@ -77,12 +77,12 @@ interactions:
       string: ''
     headers:
       Content-Length: '0'
-      Date: Mon, 15 Jun 2020 21:13:14 GMT
-      Etag: '"0x8D81170EB0AD1B0"'
-      Last-Modified: Mon, 15 Jun 2020 21:13:15 GMT
+      Date: Fri, 02 Oct 2020 15:44:02 GMT
+      Etag: '"0x8D866E9FCC56CB7"'
+      Last-Modified: Fri, 02 Oct 2020 15:44:02 GMT
       Server: Windows-Azure-HDFS/1.0 Microsoft-HTTPAPI/2.0
-      x-ms-request-id: 0acd1f82-d01f-0033-2659-43123f000000
-      x-ms-version: '2019-02-02'
+      x-ms-request-id: 7e784b90-801f-003e-0dd2-98daeb000000
+      x-ms-version: '2020-02-10'
     status:
       code: 201
       message: Created
@@ -91,13 +91,13 @@ interactions:
     body: null
     headers:
       User-Agent:
-      - azsdk-python-storage-dfs/12.0.2 Python/3.7.3 (Windows-10-10.0.18362-SP0)
+      - azsdk-python-storage-dfs/12.1.2 Python/3.7.3 (Windows-10-10.0.19041-SP0)
       x-ms-client-request-id:
-      - 06e68d48-af4d-11ea-806f-001a7dda7113
+      - 189a0eb6-04c6-11eb-86aa-001a7dda7113
       x-ms-date:
-      - Mon, 15 Jun 2020 21:13:15 GMT
+      - Fri, 02 Oct 2020 15:44:02 GMT
       x-ms-version:
-      - '2019-07-07'
+      - '2020-02-10'
     method: PUT
     uri: https://storagename.blob.core.windows.net/newfilesystem745924c6?restype=container
   response:
@@ -105,12 +105,12 @@ interactions:
       string: ''
     headers:
       Content-Length: '0'
-      Date: Mon, 15 Jun 2020 21:13:14 GMT
-      Etag: '"0x8D81170EB134D3D"'
-      Last-Modified: Mon, 15 Jun 2020 21:13:15 GMT
+      Date: Fri, 02 Oct 2020 15:44:02 GMT
+      Etag: '"0x8D866E9FCCCB14E"'
+      Last-Modified: Fri, 02 Oct 2020 15:44:02 GMT
       Server: Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
-      x-ms-request-id: 7002d55e-201e-0027-3059-435a50000000
-      x-ms-version: '2019-07-07'
+      x-ms-request-id: 0508d75a-d01e-0033-67d2-98123f000000
+      x-ms-version: '2020-02-10'
     status:
       code: 201
       message: Created
@@ -119,15 +119,15 @@ interactions:
     body: null
     headers:
       User-Agent:
-      - azsdk-python-storage-dfs/12.0.2 Python/3.7.3 (Windows-10-10.0.18362-SP0)
+      - azsdk-python-storage-dfs/12.1.2 Python/3.7.3 (Windows-10-10.0.19041-SP0)
       x-ms-client-request-id:
-      - 06f1bfd8-af4d-11ea-ac66-001a7dda7113
+      - 18a3f81e-04c6-11eb-8989-001a7dda7113
       x-ms-date:
-      - Mon, 15 Jun 2020 21:13:15 GMT
+      - Fri, 02 Oct 2020 15:44:02 GMT
       x-ms-properties:
       - ''
       x-ms-version:
-      - '2019-02-02'
+      - '2020-02-10'
     method: PUT
     uri: https://storagename.dfs.core.windows.net/newfilesystem745924c6/new%20name%2Fsub%20dir?resource=directory
   response:
@@ -135,12 +135,12 @@ interactions:
       string: ''
     headers:
       Content-Length: '0'
-      Date: Mon, 15 Jun 2020 21:13:14 GMT
-      Etag: '"0x8D81170EB1FE596"'
-      Last-Modified: Mon, 15 Jun 2020 21:13:15 GMT
+      Date: Fri, 02 Oct 2020 15:44:02 GMT
+      Etag: '"0x8D866E9FCD841C3"'
+      Last-Modified: Fri, 02 Oct 2020 15:44:02 GMT
       Server: Windows-Azure-HDFS/1.0 Microsoft-HTTPAPI/2.0
-      x-ms-request-id: 0acd1f83-d01f-0033-2759-43123f000000
-      x-ms-version: '2019-02-02'
+      x-ms-request-id: 7e784b91-801f-003e-0ed2-98daeb000000
+      x-ms-version: '2020-02-10'
     status:
       code: 201
       message: Created
@@ -149,17 +149,17 @@ interactions:
     body: null
     headers:
       User-Agent:
-      - azsdk-python-storage-dfs/12.0.2 Python/3.7.3 (Windows-10-10.0.18362-SP0)
+      - azsdk-python-storage-dfs/12.1.2 Python/3.7.3 (Windows-10-10.0.19041-SP0)
       x-ms-client-request-id:
-      - 06fb6a78-af4d-11ea-aca6-001a7dda7113
+      - 18ada44a-04c6-11eb-a789-001a7dda7113
       x-ms-date:
-      - Mon, 15 Jun 2020 21:13:15 GMT
+      - Fri, 02 Oct 2020 15:44:02 GMT
       x-ms-rename-source:
       - /oldfilesystem745924c6/old%20dir
       x-ms-source-lease-id:
       - ''
       x-ms-version:
-      - '2019-02-02'
+      - '2020-02-10'
     method: PUT
     uri: https://storagename.dfs.core.windows.net/newfilesystem745924c6/new%20name%2Fsub%20dir?mode=legacy
   response:
@@ -167,10 +167,10 @@ interactions:
       string: ''
     headers:
       Content-Length: '0'
-      Date: Mon, 15 Jun 2020 21:13:14 GMT
+      Date: Fri, 02 Oct 2020 15:44:02 GMT
       Server: Windows-Azure-HDFS/1.0 Microsoft-HTTPAPI/2.0
-      x-ms-request-id: 0acd1f84-d01f-0033-2859-43123f000000
-      x-ms-version: '2019-02-02'
+      x-ms-request-id: 7e784b92-801f-003e-0fd2-98daeb000000
+      x-ms-version: '2020-02-10'
     status:
       code: 201
       message: Created
@@ -179,13 +179,13 @@ interactions:
     body: null
     headers:
       User-Agent:
-      - azsdk-python-storage-dfs/12.0.2 Python/3.7.3 (Windows-10-10.0.18362-SP0)
+      - azsdk-python-storage-dfs/12.1.2 Python/3.7.3 (Windows-10-10.0.19041-SP0)
       x-ms-client-request-id:
-      - 070734ec-af4d-11ea-9d7b-001a7dda7113
+      - 18ba1b98-04c6-11eb-a810-001a7dda7113
       x-ms-date:
-      - Mon, 15 Jun 2020 21:13:15 GMT
+      - Fri, 02 Oct 2020 15:44:02 GMT
       x-ms-version:
-      - '2019-07-07'
+      - '2020-02-10'
     method: HEAD
     uri: https://storagename.blob.core.windows.net/newfilesystem745924c6/new%20name/sub%20dir
   response:
@@ -195,20 +195,20 @@ interactions:
       Accept-Ranges: bytes
       Content-Length: '0'
       Content-Type: application/octet-stream
-      Date: Mon, 15 Jun 2020 21:13:14 GMT
-      Etag: '"0x8D81170EAFDE328"'
-      Last-Modified: Mon, 15 Jun 2020 21:13:14 GMT
+      Date: Fri, 02 Oct 2020 15:44:02 GMT
+      Etag: '"0x8D866E9FCBCFF74"'
+      Last-Modified: Fri, 02 Oct 2020 15:44:02 GMT
       Server: Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
       x-ms-access-tier: Hot
       x-ms-access-tier-inferred: 'true'
       x-ms-blob-type: BlockBlob
-      x-ms-creation-time: Mon, 15 Jun 2020 21:13:14 GMT
+      x-ms-creation-time: Fri, 02 Oct 2020 15:44:02 GMT
       x-ms-lease-state: available
       x-ms-lease-status: unlocked
       x-ms-meta-hdi_isfolder: 'true'
-      x-ms-request-id: 7002d5fc-201e-0027-4959-435a50000000
+      x-ms-request-id: 0508d815-d01e-0033-11d2-98123f000000
       x-ms-server-encrypted: 'true'
-      x-ms-version: '2019-07-07'
+      x-ms-version: '2020-02-10'
     status:
       code: 200
       message: OK
@@ -217,13 +217,13 @@ interactions:
     body: null
     headers:
       User-Agent:
-      - azsdk-python-storage-dfs/12.0.2 Python/3.7.3 (Windows-10-10.0.18362-SP0)
+      - azsdk-python-storage-dfs/12.1.2 Python/3.7.3 (Windows-10-10.0.19041-SP0)
       x-ms-client-request-id:
-      - 0712fbcc-af4d-11ea-beb5-001a7dda7113
+      - 18c2c01e-04c6-11eb-84c1-001a7dda7113
       x-ms-date:
-      - Mon, 15 Jun 2020 21:13:15 GMT
+      - Fri, 02 Oct 2020 15:44:03 GMT
       x-ms-version:
-      - '2019-07-07'
+      - '2020-02-10'
     method: HEAD
     uri: https://storagename.blob.core.windows.net/newfilesystem745924c6/new%20name/sub%20dir/oldfile
   response:
@@ -233,19 +233,19 @@ interactions:
       Accept-Ranges: bytes
       Content-Length: '0'
       Content-Type: application/octet-stream
-      Date: Mon, 15 Jun 2020 21:13:14 GMT
-      Etag: '"0x8D81170EB0AD1B0"'
-      Last-Modified: Mon, 15 Jun 2020 21:13:15 GMT
+      Date: Fri, 02 Oct 2020 15:44:02 GMT
+      Etag: '"0x8D866E9FCC56CB7"'
+      Last-Modified: Fri, 02 Oct 2020 15:44:02 GMT
       Server: Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
       x-ms-access-tier: Hot
       x-ms-access-tier-inferred: 'true'
       x-ms-blob-type: BlockBlob
-      x-ms-creation-time: Mon, 15 Jun 2020 21:13:15 GMT
+      x-ms-creation-time: Fri, 02 Oct 2020 15:44:02 GMT
       x-ms-lease-state: available
       x-ms-lease-status: unlocked
-      x-ms-request-id: 7002d66d-201e-0027-3259-435a50000000
+      x-ms-request-id: 0508d831-d01e-0033-2bd2-98123f000000
       x-ms-server-encrypted: 'true'
-      x-ms-version: '2019-07-07'
+      x-ms-version: '2020-02-10'
     status:
       code: 200
       message: OK
@@ -254,13 +254,13 @@ interactions:
     body: null
     headers:
       User-Agent:
-      - azsdk-python-storage-dfs/12.0.2 Python/3.7.3 (Windows-10-10.0.18362-SP0)
+      - azsdk-python-storage-dfs/12.1.2 Python/3.7.3 (Windows-10-10.0.19041-SP0)
       x-ms-client-request-id:
-      - 071b6800-af4d-11ea-8427-001a7dda7113
+      - 18cb0a86-04c6-11eb-a812-001a7dda7113
       x-ms-date:
-      - Mon, 15 Jun 2020 21:13:15 GMT
+      - Fri, 02 Oct 2020 15:44:03 GMT
       x-ms-version:
-      - '2019-07-07'
+      - '2020-02-10'
     method: DELETE
     uri: https://storagename.blob.core.windows.net/oldfilesystem745924c6?restype=container
   response:
@@ -268,10 +268,10 @@ interactions:
       string: ''
     headers:
       Content-Length: '0'
-      Date: Mon, 15 Jun 2020 21:13:14 GMT
+      Date: Fri, 02 Oct 2020 15:44:02 GMT
       Server: Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
-      x-ms-request-id: 7002d6a0-201e-0027-6259-435a50000000
-      x-ms-version: '2019-07-07'
+      x-ms-request-id: 0508d869-d01e-0033-5ed2-98123f000000
+      x-ms-version: '2020-02-10'
     status:
       code: 202
       message: Accepted

@@ -9,51 +9,167 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from msrest.service_client import SDKClient
+from azure.mgmt.core import ARMPipelineClient
 from msrest import Serializer, Deserializer
 
+from azure.profiles import KnownProfiles, ProfileDefinition
+from azure.profiles.multiapiclient import MultiApiClientMixin
 from ._configuration import DataBoxManagementClientConfiguration
-from .operations import Operations
-from .operations import JobsOperations
-from .operations import ServiceOperations
-from . import models
 
+class _SDKClient(object):
+    def __init__(self, *args, **kwargs):
+        """This is a fake class to support current implemetation of MultiApiClientMixin."
+        Will be removed in final version of multiapi azure-core based client
+        """
+        pass
 
-class DataBoxManagementClient(SDKClient):
-    """DataBoxManagementClient
+class DataBoxManagementClient(MultiApiClientMixin, _SDKClient):
+    """The DataBox Client.
 
-    :ivar config: Configuration for client.
-    :vartype config: DataBoxManagementClientConfiguration
+    This ready contains multiple API versions, to help you deal with all of the Azure clouds
+    (Azure Stack, Azure Government, Azure China, etc.).
+    By default, it uses the latest API version available on public Azure.
+    For production, you should stick to a particular api-version and/or profile.
+    The profile sets a mapping between an operation group and its API version.
+    The api-version parameter sets the default API version if the operation
+    group is not described in the profile.
 
-    :ivar operations: Operations operations
-    :vartype operations: azure.mgmt.databox.operations.Operations
-    :ivar jobs: Jobs operations
-    :vartype jobs: azure.mgmt.databox.operations.JobsOperations
-    :ivar service: Service operations
-    :vartype service: azure.mgmt.databox.operations.ServiceOperations
-
-    :param credentials: Credentials needed for the client to connect to Azure.
-    :type credentials: :mod:`A msrestazure Credentials
-     object<msrestazure.azure_active_directory>`
-    :param subscription_id: The Subscription Id
+    :param credential: Credential needed for the client to connect to Azure.
+    :type credential: ~azure.core.credentials.TokenCredential
+    :param subscription_id: The Subscription Id.
     :type subscription_id: str
+    :param str api_version: API version to use if no profile is provided, or if
+     missing in profile.
     :param str base_url: Service URL
+    :param profile: A profile definition, from KnownProfiles to dict.
+    :type profile: azure.profiles.KnownProfiles
+    :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
     """
 
+    DEFAULT_API_VERSION = '2020-11-01'
+    _PROFILE_TAG = "azure.mgmt.databox.DataBoxManagementClient"
+    LATEST_PROFILE = ProfileDefinition({
+        _PROFILE_TAG: {
+            None: DEFAULT_API_VERSION,
+        }},
+        _PROFILE_TAG + " latest"
+    )
+
     def __init__(
-            self, credentials, subscription_id, base_url=None):
+        self,
+        credential,  # type: "TokenCredential"
+        subscription_id,  # type: str
+        api_version=None,
+        base_url=None,
+        profile=KnownProfiles.default,
+        **kwargs  # type: Any
+    ):
+        if not base_url:
+            base_url = 'https://management.azure.com'
+        self._config = DataBoxManagementClientConfiguration(credential, subscription_id, **kwargs)
+        self._client = ARMPipelineClient(base_url=base_url, config=self._config, **kwargs)
+        super(DataBoxManagementClient, self).__init__(
+            api_version=api_version,
+            profile=profile
+        )
 
-        self.config = DataBoxManagementClientConfiguration(credentials, subscription_id, base_url)
-        super(DataBoxManagementClient, self).__init__(self.config.credentials, self.config)
+    @classmethod
+    def _models_dict(cls, api_version):
+        return {k: v for k, v in cls.models(api_version).__dict__.items() if isinstance(v, type)}
 
-        client_models = {k: v for k, v in models.__dict__.items() if isinstance(v, type)}
-        self.api_version = '2019-09-01'
-        self._serialize = Serializer(client_models)
-        self._deserialize = Deserializer(client_models)
+    @classmethod
+    def models(cls, api_version=DEFAULT_API_VERSION):
+        """Module depends on the API version:
 
-        self.operations = Operations(
-            self._client, self.config, self._serialize, self._deserialize)
-        self.jobs = JobsOperations(
-            self._client, self.config, self._serialize, self._deserialize)
-        self.service = ServiceOperations(
-            self._client, self.config, self._serialize, self._deserialize)
+           * 2018-01-01: :mod:`v2018_01_01.models<azure.mgmt.databox.v2018_01_01.models>`
+           * 2019-09-01: :mod:`v2019_09_01.models<azure.mgmt.databox.v2019_09_01.models>`
+           * 2020-04-01: :mod:`v2020_04_01.models<azure.mgmt.databox.v2020_04_01.models>`
+           * 2020-11-01: :mod:`v2020_11_01.models<azure.mgmt.databox.v2020_11_01.models>`
+        """
+        if api_version == '2018-01-01':
+            from .v2018_01_01 import models
+            return models
+        elif api_version == '2019-09-01':
+            from .v2019_09_01 import models
+            return models
+        elif api_version == '2020-04-01':
+            from .v2020_04_01 import models
+            return models
+        elif api_version == '2020-11-01':
+            from .v2020_11_01 import models
+            return models
+        raise ValueError("API version {} is not available".format(api_version))
+
+    @property
+    def jobs(self):
+        """Instance depends on the API version:
+
+           * 2018-01-01: :class:`JobsOperations<azure.mgmt.databox.v2018_01_01.operations.JobsOperations>`
+           * 2019-09-01: :class:`JobsOperations<azure.mgmt.databox.v2019_09_01.operations.JobsOperations>`
+           * 2020-04-01: :class:`JobsOperations<azure.mgmt.databox.v2020_04_01.operations.JobsOperations>`
+           * 2020-11-01: :class:`JobsOperations<azure.mgmt.databox.v2020_11_01.operations.JobsOperations>`
+        """
+        api_version = self._get_api_version('jobs')
+        if api_version == '2018-01-01':
+            from .v2018_01_01.operations import JobsOperations as OperationClass
+        elif api_version == '2019-09-01':
+            from .v2019_09_01.operations import JobsOperations as OperationClass
+        elif api_version == '2020-04-01':
+            from .v2020_04_01.operations import JobsOperations as OperationClass
+        elif api_version == '2020-11-01':
+            from .v2020_11_01.operations import JobsOperations as OperationClass
+        else:
+            raise ValueError("API version {} does not have operation group 'jobs'".format(api_version))
+        return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
+
+    @property
+    def operations(self):
+        """Instance depends on the API version:
+
+           * 2018-01-01: :class:`Operations<azure.mgmt.databox.v2018_01_01.operations.Operations>`
+           * 2019-09-01: :class:`Operations<azure.mgmt.databox.v2019_09_01.operations.Operations>`
+           * 2020-04-01: :class:`Operations<azure.mgmt.databox.v2020_04_01.operations.Operations>`
+           * 2020-11-01: :class:`Operations<azure.mgmt.databox.v2020_11_01.operations.Operations>`
+        """
+        api_version = self._get_api_version('operations')
+        if api_version == '2018-01-01':
+            from .v2018_01_01.operations import Operations as OperationClass
+        elif api_version == '2019-09-01':
+            from .v2019_09_01.operations import Operations as OperationClass
+        elif api_version == '2020-04-01':
+            from .v2020_04_01.operations import Operations as OperationClass
+        elif api_version == '2020-11-01':
+            from .v2020_11_01.operations import Operations as OperationClass
+        else:
+            raise ValueError("API version {} does not have operation group 'operations'".format(api_version))
+        return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
+
+    @property
+    def service(self):
+        """Instance depends on the API version:
+
+           * 2018-01-01: :class:`ServiceOperations<azure.mgmt.databox.v2018_01_01.operations.ServiceOperations>`
+           * 2019-09-01: :class:`ServiceOperations<azure.mgmt.databox.v2019_09_01.operations.ServiceOperations>`
+           * 2020-04-01: :class:`ServiceOperations<azure.mgmt.databox.v2020_04_01.operations.ServiceOperations>`
+           * 2020-11-01: :class:`ServiceOperations<azure.mgmt.databox.v2020_11_01.operations.ServiceOperations>`
+        """
+        api_version = self._get_api_version('service')
+        if api_version == '2018-01-01':
+            from .v2018_01_01.operations import ServiceOperations as OperationClass
+        elif api_version == '2019-09-01':
+            from .v2019_09_01.operations import ServiceOperations as OperationClass
+        elif api_version == '2020-04-01':
+            from .v2020_04_01.operations import ServiceOperations as OperationClass
+        elif api_version == '2020-11-01':
+            from .v2020_11_01.operations import ServiceOperations as OperationClass
+        else:
+            raise ValueError("API version {} does not have operation group 'service'".format(api_version))
+        return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
+
+    def close(self):
+        self._client.close()
+    def __enter__(self):
+        self._client.__enter__()
+        return self
+    def __exit__(self, *exc_details):
+        self._client.__exit__(*exc_details)

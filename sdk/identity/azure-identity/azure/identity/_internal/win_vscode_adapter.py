@@ -39,7 +39,7 @@ class _CREDENTIAL(ct.Structure):
 
 _PCREDENTIAL = ct.POINTER(_CREDENTIAL)
 
-_advapi = ct.WinDLL("advapi32")
+_advapi = ct.WinDLL("advapi32")  # type: ignore
 _advapi.CredReadW.argtypes = [wt.LPCWSTR, wt.DWORD, wt.DWORD, ct.POINTER(_PCREDENTIAL)]
 _advapi.CredReadW.restype = wt.BOOL
 _advapi.CredFree.argtypes = [_PCREDENTIAL]
@@ -67,10 +67,10 @@ def _get_user_settings():
     try:
         with open(path) as file:
             data = json.load(file)
-            environment_name = data.get("azure.cloud", "Azure")
+            environment_name = data.get("azure.cloud", "AzureCloud")
             return environment_name
     except IOError:
-        return "Azure"
+        return "AzureCloud"
 
 
 def _get_refresh_token(service_name, account_name):

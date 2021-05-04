@@ -8,12 +8,12 @@
 from typing import TYPE_CHECKING
 import warnings
 
-from azure.core.exceptions import HttpResponseError, ResourceExistsError, ResourceNotFoundError, map_error
+from azure.core.exceptions import ClientAuthenticationError, HttpResponseError, ResourceExistsError, ResourceNotFoundError, map_error
 from azure.core.paging import ItemPaged
 from azure.core.pipeline import PipelineResponse
 from azure.core.pipeline.transport import HttpRequest, HttpResponse
 
-from .. import models
+from .. import models as _models
 
 if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
@@ -28,10 +28,10 @@ class KeyVaultClientOperationsMixin(object):
         self,
         vault_base_url,  # type: str
         key_name,  # type: str
-        parameters,  # type: "models.KeyCreateParameters"
+        parameters,  # type: "_models.KeyCreateParameters"
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.KeyBundle"
+        # type: (...) -> "_models.KeyBundle"
         """Creates a new key, stores it, then returns key parameters and attributes to the client.
 
         The create key operation can be used to create any key type in Azure Key Vault. If the named
@@ -50,11 +50,14 @@ class KeyVaultClientOperationsMixin(object):
         :rtype: ~azure.keyvault.v7_0.models.KeyBundle
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.KeyBundle"]
-        error_map = {404: ResourceNotFoundError, 409: ResourceExistsError}
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.KeyBundle"]
+        error_map = {
+            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
+        }
         error_map.update(kwargs.pop('error_map', {}))
         api_version = "7.0"
         content_type = kwargs.pop("content_type", "application/json")
+        accept = "application/json"
 
         # Construct URL
         url = self.create_key.metadata['url']  # type: ignore
@@ -71,19 +74,18 @@ class KeyVaultClientOperationsMixin(object):
         # Construct headers
         header_parameters = {}  # type: Dict[str, Any]
         header_parameters['Content-Type'] = self._serialize.header("content_type", content_type, 'str')
-        header_parameters['Accept'] = 'application/json'
+        header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
 
         body_content_kwargs = {}  # type: Dict[str, Any]
         body_content = self._serialize.body(parameters, 'KeyCreateParameters')
         body_content_kwargs['content'] = body_content
         request = self._client.post(url, query_parameters, header_parameters, **body_content_kwargs)
-
         pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.KeyVaultError, response)
+            error = self._deserialize.failsafe_deserialize(_models.KeyVaultError, response)
             raise HttpResponseError(response=response, model=error)
 
         deserialized = self._deserialize('KeyBundle', pipeline_response)
@@ -98,10 +100,10 @@ class KeyVaultClientOperationsMixin(object):
         self,
         vault_base_url,  # type: str
         key_name,  # type: str
-        parameters,  # type: "models.KeyImportParameters"
+        parameters,  # type: "_models.KeyImportParameters"
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.KeyBundle"
+        # type: (...) -> "_models.KeyBundle"
         """Imports an externally created key, stores it, and returns key parameters and attributes to the client.
 
         The import key operation may be used to import any key type into an Azure Key Vault. If the
@@ -119,11 +121,14 @@ class KeyVaultClientOperationsMixin(object):
         :rtype: ~azure.keyvault.v7_0.models.KeyBundle
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.KeyBundle"]
-        error_map = {404: ResourceNotFoundError, 409: ResourceExistsError}
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.KeyBundle"]
+        error_map = {
+            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
+        }
         error_map.update(kwargs.pop('error_map', {}))
         api_version = "7.0"
         content_type = kwargs.pop("content_type", "application/json")
+        accept = "application/json"
 
         # Construct URL
         url = self.import_key.metadata['url']  # type: ignore
@@ -140,19 +145,18 @@ class KeyVaultClientOperationsMixin(object):
         # Construct headers
         header_parameters = {}  # type: Dict[str, Any]
         header_parameters['Content-Type'] = self._serialize.header("content_type", content_type, 'str')
-        header_parameters['Accept'] = 'application/json'
+        header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
 
         body_content_kwargs = {}  # type: Dict[str, Any]
         body_content = self._serialize.body(parameters, 'KeyImportParameters')
         body_content_kwargs['content'] = body_content
         request = self._client.put(url, query_parameters, header_parameters, **body_content_kwargs)
-
         pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.KeyVaultError, response)
+            error = self._deserialize.failsafe_deserialize(_models.KeyVaultError, response)
             raise HttpResponseError(response=response, model=error)
 
         deserialized = self._deserialize('KeyBundle', pipeline_response)
@@ -169,7 +173,7 @@ class KeyVaultClientOperationsMixin(object):
         key_name,  # type: str
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.DeletedKeyBundle"
+        # type: (...) -> "_models.DeletedKeyBundle"
         """Deletes a key of any type from storage in Azure Key Vault.
 
         The delete key operation cannot be used to remove individual versions of a key. This operation
@@ -186,10 +190,13 @@ class KeyVaultClientOperationsMixin(object):
         :rtype: ~azure.keyvault.v7_0.models.DeletedKeyBundle
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.DeletedKeyBundle"]
-        error_map = {404: ResourceNotFoundError, 409: ResourceExistsError}
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.DeletedKeyBundle"]
+        error_map = {
+            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
+        }
         error_map.update(kwargs.pop('error_map', {}))
         api_version = "7.0"
+        accept = "application/json"
 
         # Construct URL
         url = self.delete_key.metadata['url']  # type: ignore
@@ -205,7 +212,7 @@ class KeyVaultClientOperationsMixin(object):
 
         # Construct headers
         header_parameters = {}  # type: Dict[str, Any]
-        header_parameters['Accept'] = 'application/json'
+        header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
 
         request = self._client.delete(url, query_parameters, header_parameters)
         pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
@@ -213,7 +220,7 @@ class KeyVaultClientOperationsMixin(object):
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.KeyVaultError, response)
+            error = self._deserialize.failsafe_deserialize(_models.KeyVaultError, response)
             raise HttpResponseError(response=response, model=error)
 
         deserialized = self._deserialize('DeletedKeyBundle', pipeline_response)
@@ -229,10 +236,10 @@ class KeyVaultClientOperationsMixin(object):
         vault_base_url,  # type: str
         key_name,  # type: str
         key_version,  # type: str
-        parameters,  # type: "models.KeyUpdateParameters"
+        parameters,  # type: "_models.KeyUpdateParameters"
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.KeyBundle"
+        # type: (...) -> "_models.KeyBundle"
         """The update key operation changes specified attributes of a stored key and can be applied to any key type and key version stored in Azure Key Vault.
 
         In order to perform this operation, the key must already exist in the Key Vault. Note: The
@@ -252,11 +259,14 @@ class KeyVaultClientOperationsMixin(object):
         :rtype: ~azure.keyvault.v7_0.models.KeyBundle
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.KeyBundle"]
-        error_map = {404: ResourceNotFoundError, 409: ResourceExistsError}
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.KeyBundle"]
+        error_map = {
+            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
+        }
         error_map.update(kwargs.pop('error_map', {}))
         api_version = "7.0"
         content_type = kwargs.pop("content_type", "application/json")
+        accept = "application/json"
 
         # Construct URL
         url = self.update_key.metadata['url']  # type: ignore
@@ -274,19 +284,18 @@ class KeyVaultClientOperationsMixin(object):
         # Construct headers
         header_parameters = {}  # type: Dict[str, Any]
         header_parameters['Content-Type'] = self._serialize.header("content_type", content_type, 'str')
-        header_parameters['Accept'] = 'application/json'
+        header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
 
         body_content_kwargs = {}  # type: Dict[str, Any]
         body_content = self._serialize.body(parameters, 'KeyUpdateParameters')
         body_content_kwargs['content'] = body_content
         request = self._client.patch(url, query_parameters, header_parameters, **body_content_kwargs)
-
         pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.KeyVaultError, response)
+            error = self._deserialize.failsafe_deserialize(_models.KeyVaultError, response)
             raise HttpResponseError(response=response, model=error)
 
         deserialized = self._deserialize('KeyBundle', pipeline_response)
@@ -304,7 +313,7 @@ class KeyVaultClientOperationsMixin(object):
         key_version,  # type: str
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.KeyBundle"
+        # type: (...) -> "_models.KeyBundle"
         """Gets the public part of a stored key.
 
         The get key operation is applicable to all key types. If the requested key is symmetric, then
@@ -322,10 +331,13 @@ class KeyVaultClientOperationsMixin(object):
         :rtype: ~azure.keyvault.v7_0.models.KeyBundle
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.KeyBundle"]
-        error_map = {404: ResourceNotFoundError, 409: ResourceExistsError}
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.KeyBundle"]
+        error_map = {
+            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
+        }
         error_map.update(kwargs.pop('error_map', {}))
         api_version = "7.0"
+        accept = "application/json"
 
         # Construct URL
         url = self.get_key.metadata['url']  # type: ignore
@@ -342,7 +354,7 @@ class KeyVaultClientOperationsMixin(object):
 
         # Construct headers
         header_parameters = {}  # type: Dict[str, Any]
-        header_parameters['Accept'] = 'application/json'
+        header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
 
         request = self._client.get(url, query_parameters, header_parameters)
         pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
@@ -350,7 +362,7 @@ class KeyVaultClientOperationsMixin(object):
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.KeyVaultError, response)
+            error = self._deserialize.failsafe_deserialize(_models.KeyVaultError, response)
             raise HttpResponseError(response=response, model=error)
 
         deserialized = self._deserialize('KeyBundle', pipeline_response)
@@ -368,7 +380,7 @@ class KeyVaultClientOperationsMixin(object):
         maxresults=None,  # type: Optional[int]
         **kwargs  # type: Any
     ):
-        # type: (...) -> Iterable["models.KeyListResult"]
+        # type: (...) -> Iterable["_models.KeyListResult"]
         """Retrieves a list of individual key versions with the same key name.
 
         The full key identifier, attributes, and tags are provided in the response. This operation
@@ -386,15 +398,18 @@ class KeyVaultClientOperationsMixin(object):
         :rtype: ~azure.core.paging.ItemPaged[~azure.keyvault.v7_0.models.KeyListResult]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.KeyListResult"]
-        error_map = {404: ResourceNotFoundError, 409: ResourceExistsError}
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.KeyListResult"]
+        error_map = {
+            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
+        }
         error_map.update(kwargs.pop('error_map', {}))
         api_version = "7.0"
+        accept = "application/json"
 
         def prepare_request(next_link=None):
             # Construct headers
             header_parameters = {}  # type: Dict[str, Any]
-            header_parameters['Accept'] = 'application/json'
+            header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
 
             if not next_link:
                 # Construct URL
@@ -436,7 +451,7 @@ class KeyVaultClientOperationsMixin(object):
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
-                error = self._deserialize(models.KeyVaultError, response)
+                error = self._deserialize.failsafe_deserialize(_models.KeyVaultError, response)
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
                 raise HttpResponseError(response=response, model=error)
 
@@ -453,7 +468,7 @@ class KeyVaultClientOperationsMixin(object):
         maxresults=None,  # type: Optional[int]
         **kwargs  # type: Any
     ):
-        # type: (...) -> Iterable["models.KeyListResult"]
+        # type: (...) -> Iterable["_models.KeyListResult"]
         """List keys in the specified vault.
 
         Retrieves a list of the keys in the Key Vault as JSON Web Key structures that contain the
@@ -471,15 +486,18 @@ class KeyVaultClientOperationsMixin(object):
         :rtype: ~azure.core.paging.ItemPaged[~azure.keyvault.v7_0.models.KeyListResult]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.KeyListResult"]
-        error_map = {404: ResourceNotFoundError, 409: ResourceExistsError}
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.KeyListResult"]
+        error_map = {
+            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
+        }
         error_map.update(kwargs.pop('error_map', {}))
         api_version = "7.0"
+        accept = "application/json"
 
         def prepare_request(next_link=None):
             # Construct headers
             header_parameters = {}  # type: Dict[str, Any]
-            header_parameters['Accept'] = 'application/json'
+            header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
 
             if not next_link:
                 # Construct URL
@@ -519,7 +537,7 @@ class KeyVaultClientOperationsMixin(object):
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
-                error = self._deserialize(models.KeyVaultError, response)
+                error = self._deserialize.failsafe_deserialize(_models.KeyVaultError, response)
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
                 raise HttpResponseError(response=response, model=error)
 
@@ -536,7 +554,7 @@ class KeyVaultClientOperationsMixin(object):
         key_name,  # type: str
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.BackupKeyResult"
+        # type: (...) -> "_models.BackupKeyResult"
         """Requests that a backup of the specified key be downloaded to the client.
 
         The Key Backup operation exports a key from Azure Key Vault in a protected form. Note that this
@@ -560,10 +578,13 @@ class KeyVaultClientOperationsMixin(object):
         :rtype: ~azure.keyvault.v7_0.models.BackupKeyResult
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.BackupKeyResult"]
-        error_map = {404: ResourceNotFoundError, 409: ResourceExistsError}
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.BackupKeyResult"]
+        error_map = {
+            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
+        }
         error_map.update(kwargs.pop('error_map', {}))
         api_version = "7.0"
+        accept = "application/json"
 
         # Construct URL
         url = self.backup_key.metadata['url']  # type: ignore
@@ -579,7 +600,7 @@ class KeyVaultClientOperationsMixin(object):
 
         # Construct headers
         header_parameters = {}  # type: Dict[str, Any]
-        header_parameters['Accept'] = 'application/json'
+        header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
 
         request = self._client.post(url, query_parameters, header_parameters)
         pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
@@ -587,7 +608,7 @@ class KeyVaultClientOperationsMixin(object):
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.KeyVaultError, response)
+            error = self._deserialize.failsafe_deserialize(_models.KeyVaultError, response)
             raise HttpResponseError(response=response, model=error)
 
         deserialized = self._deserialize('BackupKeyResult', pipeline_response)
@@ -601,10 +622,10 @@ class KeyVaultClientOperationsMixin(object):
     def restore_key(
         self,
         vault_base_url,  # type: str
-        parameters,  # type: "models.KeyRestoreParameters"
+        parameters,  # type: "_models.KeyRestoreParameters"
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.KeyBundle"
+        # type: (...) -> "_models.KeyBundle"
         """Restores a backed up key to a vault.
 
         Imports a previously backed up key into Azure Key Vault, restoring the key, its key identifier,
@@ -627,11 +648,14 @@ class KeyVaultClientOperationsMixin(object):
         :rtype: ~azure.keyvault.v7_0.models.KeyBundle
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.KeyBundle"]
-        error_map = {404: ResourceNotFoundError, 409: ResourceExistsError}
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.KeyBundle"]
+        error_map = {
+            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
+        }
         error_map.update(kwargs.pop('error_map', {}))
         api_version = "7.0"
         content_type = kwargs.pop("content_type", "application/json")
+        accept = "application/json"
 
         # Construct URL
         url = self.restore_key.metadata['url']  # type: ignore
@@ -647,19 +671,18 @@ class KeyVaultClientOperationsMixin(object):
         # Construct headers
         header_parameters = {}  # type: Dict[str, Any]
         header_parameters['Content-Type'] = self._serialize.header("content_type", content_type, 'str')
-        header_parameters['Accept'] = 'application/json'
+        header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
 
         body_content_kwargs = {}  # type: Dict[str, Any]
         body_content = self._serialize.body(parameters, 'KeyRestoreParameters')
         body_content_kwargs['content'] = body_content
         request = self._client.post(url, query_parameters, header_parameters, **body_content_kwargs)
-
         pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.KeyVaultError, response)
+            error = self._deserialize.failsafe_deserialize(_models.KeyVaultError, response)
             raise HttpResponseError(response=response, model=error)
 
         deserialized = self._deserialize('KeyBundle', pipeline_response)
@@ -675,10 +698,10 @@ class KeyVaultClientOperationsMixin(object):
         vault_base_url,  # type: str
         key_name,  # type: str
         key_version,  # type: str
-        parameters,  # type: "models.KeyOperationsParameters"
+        parameters,  # type: "_models.KeyOperationsParameters"
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.KeyOperationResult"
+        # type: (...) -> "_models.KeyOperationResult"
         """Encrypts an arbitrary sequence of bytes using an encryption key that is stored in a key vault.
 
         The ENCRYPT operation encrypts an arbitrary sequence of bytes using an encryption key that is
@@ -703,11 +726,14 @@ class KeyVaultClientOperationsMixin(object):
         :rtype: ~azure.keyvault.v7_0.models.KeyOperationResult
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.KeyOperationResult"]
-        error_map = {404: ResourceNotFoundError, 409: ResourceExistsError}
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.KeyOperationResult"]
+        error_map = {
+            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
+        }
         error_map.update(kwargs.pop('error_map', {}))
         api_version = "7.0"
         content_type = kwargs.pop("content_type", "application/json")
+        accept = "application/json"
 
         # Construct URL
         url = self.encrypt.metadata['url']  # type: ignore
@@ -725,19 +751,18 @@ class KeyVaultClientOperationsMixin(object):
         # Construct headers
         header_parameters = {}  # type: Dict[str, Any]
         header_parameters['Content-Type'] = self._serialize.header("content_type", content_type, 'str')
-        header_parameters['Accept'] = 'application/json'
+        header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
 
         body_content_kwargs = {}  # type: Dict[str, Any]
         body_content = self._serialize.body(parameters, 'KeyOperationsParameters')
         body_content_kwargs['content'] = body_content
         request = self._client.post(url, query_parameters, header_parameters, **body_content_kwargs)
-
         pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.KeyVaultError, response)
+            error = self._deserialize.failsafe_deserialize(_models.KeyVaultError, response)
             raise HttpResponseError(response=response, model=error)
 
         deserialized = self._deserialize('KeyOperationResult', pipeline_response)
@@ -753,10 +778,10 @@ class KeyVaultClientOperationsMixin(object):
         vault_base_url,  # type: str
         key_name,  # type: str
         key_version,  # type: str
-        parameters,  # type: "models.KeyOperationsParameters"
+        parameters,  # type: "_models.KeyOperationsParameters"
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.KeyOperationResult"
+        # type: (...) -> "_models.KeyOperationResult"
         """Decrypts a single block of encrypted data.
 
         The DECRYPT operation decrypts a well-formed block of ciphertext using the target encryption
@@ -779,11 +804,14 @@ class KeyVaultClientOperationsMixin(object):
         :rtype: ~azure.keyvault.v7_0.models.KeyOperationResult
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.KeyOperationResult"]
-        error_map = {404: ResourceNotFoundError, 409: ResourceExistsError}
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.KeyOperationResult"]
+        error_map = {
+            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
+        }
         error_map.update(kwargs.pop('error_map', {}))
         api_version = "7.0"
         content_type = kwargs.pop("content_type", "application/json")
+        accept = "application/json"
 
         # Construct URL
         url = self.decrypt.metadata['url']  # type: ignore
@@ -801,19 +829,18 @@ class KeyVaultClientOperationsMixin(object):
         # Construct headers
         header_parameters = {}  # type: Dict[str, Any]
         header_parameters['Content-Type'] = self._serialize.header("content_type", content_type, 'str')
-        header_parameters['Accept'] = 'application/json'
+        header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
 
         body_content_kwargs = {}  # type: Dict[str, Any]
         body_content = self._serialize.body(parameters, 'KeyOperationsParameters')
         body_content_kwargs['content'] = body_content
         request = self._client.post(url, query_parameters, header_parameters, **body_content_kwargs)
-
         pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.KeyVaultError, response)
+            error = self._deserialize.failsafe_deserialize(_models.KeyVaultError, response)
             raise HttpResponseError(response=response, model=error)
 
         deserialized = self._deserialize('KeyOperationResult', pipeline_response)
@@ -829,10 +856,10 @@ class KeyVaultClientOperationsMixin(object):
         vault_base_url,  # type: str
         key_name,  # type: str
         key_version,  # type: str
-        parameters,  # type: "models.KeySignParameters"
+        parameters,  # type: "_models.KeySignParameters"
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.KeyOperationResult"
+        # type: (...) -> "_models.KeyOperationResult"
         """Creates a signature from a digest using the specified key.
 
         The SIGN operation is applicable to asymmetric and symmetric keys stored in Azure Key Vault
@@ -852,11 +879,14 @@ class KeyVaultClientOperationsMixin(object):
         :rtype: ~azure.keyvault.v7_0.models.KeyOperationResult
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.KeyOperationResult"]
-        error_map = {404: ResourceNotFoundError, 409: ResourceExistsError}
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.KeyOperationResult"]
+        error_map = {
+            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
+        }
         error_map.update(kwargs.pop('error_map', {}))
         api_version = "7.0"
         content_type = kwargs.pop("content_type", "application/json")
+        accept = "application/json"
 
         # Construct URL
         url = self.sign.metadata['url']  # type: ignore
@@ -874,19 +904,18 @@ class KeyVaultClientOperationsMixin(object):
         # Construct headers
         header_parameters = {}  # type: Dict[str, Any]
         header_parameters['Content-Type'] = self._serialize.header("content_type", content_type, 'str')
-        header_parameters['Accept'] = 'application/json'
+        header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
 
         body_content_kwargs = {}  # type: Dict[str, Any]
         body_content = self._serialize.body(parameters, 'KeySignParameters')
         body_content_kwargs['content'] = body_content
         request = self._client.post(url, query_parameters, header_parameters, **body_content_kwargs)
-
         pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.KeyVaultError, response)
+            error = self._deserialize.failsafe_deserialize(_models.KeyVaultError, response)
             raise HttpResponseError(response=response, model=error)
 
         deserialized = self._deserialize('KeyOperationResult', pipeline_response)
@@ -902,10 +931,10 @@ class KeyVaultClientOperationsMixin(object):
         vault_base_url,  # type: str
         key_name,  # type: str
         key_version,  # type: str
-        parameters,  # type: "models.KeyVerifyParameters"
+        parameters,  # type: "_models.KeyVerifyParameters"
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.KeyVerifyResult"
+        # type: (...) -> "_models.KeyVerifyResult"
         """Verifies a signature using a specified key.
 
         The VERIFY operation is applicable to symmetric keys stored in Azure Key Vault. VERIFY is not
@@ -927,11 +956,14 @@ class KeyVaultClientOperationsMixin(object):
         :rtype: ~azure.keyvault.v7_0.models.KeyVerifyResult
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.KeyVerifyResult"]
-        error_map = {404: ResourceNotFoundError, 409: ResourceExistsError}
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.KeyVerifyResult"]
+        error_map = {
+            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
+        }
         error_map.update(kwargs.pop('error_map', {}))
         api_version = "7.0"
         content_type = kwargs.pop("content_type", "application/json")
+        accept = "application/json"
 
         # Construct URL
         url = self.verify.metadata['url']  # type: ignore
@@ -949,19 +981,18 @@ class KeyVaultClientOperationsMixin(object):
         # Construct headers
         header_parameters = {}  # type: Dict[str, Any]
         header_parameters['Content-Type'] = self._serialize.header("content_type", content_type, 'str')
-        header_parameters['Accept'] = 'application/json'
+        header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
 
         body_content_kwargs = {}  # type: Dict[str, Any]
         body_content = self._serialize.body(parameters, 'KeyVerifyParameters')
         body_content_kwargs['content'] = body_content
         request = self._client.post(url, query_parameters, header_parameters, **body_content_kwargs)
-
         pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.KeyVaultError, response)
+            error = self._deserialize.failsafe_deserialize(_models.KeyVaultError, response)
             raise HttpResponseError(response=response, model=error)
 
         deserialized = self._deserialize('KeyVerifyResult', pipeline_response)
@@ -977,10 +1008,10 @@ class KeyVaultClientOperationsMixin(object):
         vault_base_url,  # type: str
         key_name,  # type: str
         key_version,  # type: str
-        parameters,  # type: "models.KeyOperationsParameters"
+        parameters,  # type: "_models.KeyOperationsParameters"
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.KeyOperationResult"
+        # type: (...) -> "_models.KeyOperationResult"
         """Wraps a symmetric key using a specified key.
 
         The WRAP operation supports encryption of a symmetric key using a key encryption key that has
@@ -1003,11 +1034,14 @@ class KeyVaultClientOperationsMixin(object):
         :rtype: ~azure.keyvault.v7_0.models.KeyOperationResult
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.KeyOperationResult"]
-        error_map = {404: ResourceNotFoundError, 409: ResourceExistsError}
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.KeyOperationResult"]
+        error_map = {
+            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
+        }
         error_map.update(kwargs.pop('error_map', {}))
         api_version = "7.0"
         content_type = kwargs.pop("content_type", "application/json")
+        accept = "application/json"
 
         # Construct URL
         url = self.wrap_key.metadata['url']  # type: ignore
@@ -1025,19 +1059,18 @@ class KeyVaultClientOperationsMixin(object):
         # Construct headers
         header_parameters = {}  # type: Dict[str, Any]
         header_parameters['Content-Type'] = self._serialize.header("content_type", content_type, 'str')
-        header_parameters['Accept'] = 'application/json'
+        header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
 
         body_content_kwargs = {}  # type: Dict[str, Any]
         body_content = self._serialize.body(parameters, 'KeyOperationsParameters')
         body_content_kwargs['content'] = body_content
         request = self._client.post(url, query_parameters, header_parameters, **body_content_kwargs)
-
         pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.KeyVaultError, response)
+            error = self._deserialize.failsafe_deserialize(_models.KeyVaultError, response)
             raise HttpResponseError(response=response, model=error)
 
         deserialized = self._deserialize('KeyOperationResult', pipeline_response)
@@ -1053,10 +1086,10 @@ class KeyVaultClientOperationsMixin(object):
         vault_base_url,  # type: str
         key_name,  # type: str
         key_version,  # type: str
-        parameters,  # type: "models.KeyOperationsParameters"
+        parameters,  # type: "_models.KeyOperationsParameters"
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.KeyOperationResult"
+        # type: (...) -> "_models.KeyOperationResult"
         """Unwraps a symmetric key using the specified key that was initially used for wrapping that key.
 
         The UNWRAP operation supports decryption of a symmetric key using the target key encryption
@@ -1077,11 +1110,14 @@ class KeyVaultClientOperationsMixin(object):
         :rtype: ~azure.keyvault.v7_0.models.KeyOperationResult
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.KeyOperationResult"]
-        error_map = {404: ResourceNotFoundError, 409: ResourceExistsError}
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.KeyOperationResult"]
+        error_map = {
+            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
+        }
         error_map.update(kwargs.pop('error_map', {}))
         api_version = "7.0"
         content_type = kwargs.pop("content_type", "application/json")
+        accept = "application/json"
 
         # Construct URL
         url = self.unwrap_key.metadata['url']  # type: ignore
@@ -1099,19 +1135,18 @@ class KeyVaultClientOperationsMixin(object):
         # Construct headers
         header_parameters = {}  # type: Dict[str, Any]
         header_parameters['Content-Type'] = self._serialize.header("content_type", content_type, 'str')
-        header_parameters['Accept'] = 'application/json'
+        header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
 
         body_content_kwargs = {}  # type: Dict[str, Any]
         body_content = self._serialize.body(parameters, 'KeyOperationsParameters')
         body_content_kwargs['content'] = body_content
         request = self._client.post(url, query_parameters, header_parameters, **body_content_kwargs)
-
         pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.KeyVaultError, response)
+            error = self._deserialize.failsafe_deserialize(_models.KeyVaultError, response)
             raise HttpResponseError(response=response, model=error)
 
         deserialized = self._deserialize('KeyOperationResult', pipeline_response)
@@ -1128,7 +1163,7 @@ class KeyVaultClientOperationsMixin(object):
         maxresults=None,  # type: Optional[int]
         **kwargs  # type: Any
     ):
-        # type: (...) -> Iterable["models.DeletedKeyListResult"]
+        # type: (...) -> Iterable["_models.DeletedKeyListResult"]
         """Lists the deleted keys in the specified vault.
 
         Retrieves a list of the keys in the Key Vault as JSON Web Key structures that contain the
@@ -1147,15 +1182,18 @@ class KeyVaultClientOperationsMixin(object):
         :rtype: ~azure.core.paging.ItemPaged[~azure.keyvault.v7_0.models.DeletedKeyListResult]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.DeletedKeyListResult"]
-        error_map = {404: ResourceNotFoundError, 409: ResourceExistsError}
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.DeletedKeyListResult"]
+        error_map = {
+            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
+        }
         error_map.update(kwargs.pop('error_map', {}))
         api_version = "7.0"
+        accept = "application/json"
 
         def prepare_request(next_link=None):
             # Construct headers
             header_parameters = {}  # type: Dict[str, Any]
-            header_parameters['Accept'] = 'application/json'
+            header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
 
             if not next_link:
                 # Construct URL
@@ -1195,7 +1233,7 @@ class KeyVaultClientOperationsMixin(object):
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
-                error = self._deserialize(models.KeyVaultError, response)
+                error = self._deserialize.failsafe_deserialize(_models.KeyVaultError, response)
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
                 raise HttpResponseError(response=response, model=error)
 
@@ -1212,7 +1250,7 @@ class KeyVaultClientOperationsMixin(object):
         key_name,  # type: str
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.DeletedKeyBundle"
+        # type: (...) -> "_models.DeletedKeyBundle"
         """Gets the public part of a deleted key.
 
         The Get Deleted Key operation is applicable for soft-delete enabled vaults. While the operation
@@ -1228,10 +1266,13 @@ class KeyVaultClientOperationsMixin(object):
         :rtype: ~azure.keyvault.v7_0.models.DeletedKeyBundle
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.DeletedKeyBundle"]
-        error_map = {404: ResourceNotFoundError, 409: ResourceExistsError}
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.DeletedKeyBundle"]
+        error_map = {
+            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
+        }
         error_map.update(kwargs.pop('error_map', {}))
         api_version = "7.0"
+        accept = "application/json"
 
         # Construct URL
         url = self.get_deleted_key.metadata['url']  # type: ignore
@@ -1247,7 +1288,7 @@ class KeyVaultClientOperationsMixin(object):
 
         # Construct headers
         header_parameters = {}  # type: Dict[str, Any]
-        header_parameters['Accept'] = 'application/json'
+        header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
 
         request = self._client.get(url, query_parameters, header_parameters)
         pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
@@ -1255,7 +1296,7 @@ class KeyVaultClientOperationsMixin(object):
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.KeyVaultError, response)
+            error = self._deserialize.failsafe_deserialize(_models.KeyVaultError, response)
             raise HttpResponseError(response=response, model=error)
 
         deserialized = self._deserialize('DeletedKeyBundle', pipeline_response)
@@ -1289,9 +1330,12 @@ class KeyVaultClientOperationsMixin(object):
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType[None]
-        error_map = {404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map = {
+            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
+        }
         error_map.update(kwargs.pop('error_map', {}))
         api_version = "7.0"
+        accept = "application/json"
 
         # Construct URL
         url = self.purge_deleted_key.metadata['url']  # type: ignore
@@ -1307,6 +1351,7 @@ class KeyVaultClientOperationsMixin(object):
 
         # Construct headers
         header_parameters = {}  # type: Dict[str, Any]
+        header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
 
         request = self._client.delete(url, query_parameters, header_parameters)
         pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
@@ -1314,7 +1359,7 @@ class KeyVaultClientOperationsMixin(object):
 
         if response.status_code not in [204]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.KeyVaultError, response)
+            error = self._deserialize.failsafe_deserialize(_models.KeyVaultError, response)
             raise HttpResponseError(response=response, model=error)
 
         if cls:
@@ -1328,7 +1373,7 @@ class KeyVaultClientOperationsMixin(object):
         key_name,  # type: str
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.KeyBundle"
+        # type: (...) -> "_models.KeyBundle"
         """Recovers the deleted key to its latest version.
 
         The Recover Deleted Key operation is applicable for deleted keys in soft-delete enabled vaults.
@@ -1345,10 +1390,13 @@ class KeyVaultClientOperationsMixin(object):
         :rtype: ~azure.keyvault.v7_0.models.KeyBundle
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.KeyBundle"]
-        error_map = {404: ResourceNotFoundError, 409: ResourceExistsError}
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.KeyBundle"]
+        error_map = {
+            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
+        }
         error_map.update(kwargs.pop('error_map', {}))
         api_version = "7.0"
+        accept = "application/json"
 
         # Construct URL
         url = self.recover_deleted_key.metadata['url']  # type: ignore
@@ -1364,7 +1412,7 @@ class KeyVaultClientOperationsMixin(object):
 
         # Construct headers
         header_parameters = {}  # type: Dict[str, Any]
-        header_parameters['Accept'] = 'application/json'
+        header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
 
         request = self._client.post(url, query_parameters, header_parameters)
         pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
@@ -1372,7 +1420,7 @@ class KeyVaultClientOperationsMixin(object):
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.KeyVaultError, response)
+            error = self._deserialize.failsafe_deserialize(_models.KeyVaultError, response)
             raise HttpResponseError(response=response, model=error)
 
         deserialized = self._deserialize('KeyBundle', pipeline_response)
@@ -1387,10 +1435,10 @@ class KeyVaultClientOperationsMixin(object):
         self,
         vault_base_url,  # type: str
         secret_name,  # type: str
-        parameters,  # type: "models.SecretSetParameters"
+        parameters,  # type: "_models.SecretSetParameters"
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.SecretBundle"
+        # type: (...) -> "_models.SecretBundle"
         """Sets a secret in a specified key vault.
 
         The SET operation adds a secret to the Azure Key Vault. If the named secret already exists,
@@ -1408,11 +1456,14 @@ class KeyVaultClientOperationsMixin(object):
         :rtype: ~azure.keyvault.v7_0.models.SecretBundle
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.SecretBundle"]
-        error_map = {404: ResourceNotFoundError, 409: ResourceExistsError}
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.SecretBundle"]
+        error_map = {
+            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
+        }
         error_map.update(kwargs.pop('error_map', {}))
         api_version = "7.0"
         content_type = kwargs.pop("content_type", "application/json")
+        accept = "application/json"
 
         # Construct URL
         url = self.set_secret.metadata['url']  # type: ignore
@@ -1429,19 +1480,18 @@ class KeyVaultClientOperationsMixin(object):
         # Construct headers
         header_parameters = {}  # type: Dict[str, Any]
         header_parameters['Content-Type'] = self._serialize.header("content_type", content_type, 'str')
-        header_parameters['Accept'] = 'application/json'
+        header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
 
         body_content_kwargs = {}  # type: Dict[str, Any]
         body_content = self._serialize.body(parameters, 'SecretSetParameters')
         body_content_kwargs['content'] = body_content
         request = self._client.put(url, query_parameters, header_parameters, **body_content_kwargs)
-
         pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.KeyVaultError, response)
+            error = self._deserialize.failsafe_deserialize(_models.KeyVaultError, response)
             raise HttpResponseError(response=response, model=error)
 
         deserialized = self._deserialize('SecretBundle', pipeline_response)
@@ -1458,7 +1508,7 @@ class KeyVaultClientOperationsMixin(object):
         secret_name,  # type: str
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.DeletedSecretBundle"
+        # type: (...) -> "_models.DeletedSecretBundle"
         """Deletes a secret from a specified key vault.
 
         The DELETE operation applies to any secret stored in Azure Key Vault. DELETE cannot be applied
@@ -1473,10 +1523,13 @@ class KeyVaultClientOperationsMixin(object):
         :rtype: ~azure.keyvault.v7_0.models.DeletedSecretBundle
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.DeletedSecretBundle"]
-        error_map = {404: ResourceNotFoundError, 409: ResourceExistsError}
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.DeletedSecretBundle"]
+        error_map = {
+            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
+        }
         error_map.update(kwargs.pop('error_map', {}))
         api_version = "7.0"
+        accept = "application/json"
 
         # Construct URL
         url = self.delete_secret.metadata['url']  # type: ignore
@@ -1492,7 +1545,7 @@ class KeyVaultClientOperationsMixin(object):
 
         # Construct headers
         header_parameters = {}  # type: Dict[str, Any]
-        header_parameters['Accept'] = 'application/json'
+        header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
 
         request = self._client.delete(url, query_parameters, header_parameters)
         pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
@@ -1500,7 +1553,7 @@ class KeyVaultClientOperationsMixin(object):
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.KeyVaultError, response)
+            error = self._deserialize.failsafe_deserialize(_models.KeyVaultError, response)
             raise HttpResponseError(response=response, model=error)
 
         deserialized = self._deserialize('DeletedSecretBundle', pipeline_response)
@@ -1516,10 +1569,10 @@ class KeyVaultClientOperationsMixin(object):
         vault_base_url,  # type: str
         secret_name,  # type: str
         secret_version,  # type: str
-        parameters,  # type: "models.SecretUpdateParameters"
+        parameters,  # type: "_models.SecretUpdateParameters"
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.SecretBundle"
+        # type: (...) -> "_models.SecretBundle"
         """Updates the attributes associated with a specified secret in a given key vault.
 
         The UPDATE operation changes specified attributes of an existing stored secret. Attributes that
@@ -1539,11 +1592,14 @@ class KeyVaultClientOperationsMixin(object):
         :rtype: ~azure.keyvault.v7_0.models.SecretBundle
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.SecretBundle"]
-        error_map = {404: ResourceNotFoundError, 409: ResourceExistsError}
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.SecretBundle"]
+        error_map = {
+            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
+        }
         error_map.update(kwargs.pop('error_map', {}))
         api_version = "7.0"
         content_type = kwargs.pop("content_type", "application/json")
+        accept = "application/json"
 
         # Construct URL
         url = self.update_secret.metadata['url']  # type: ignore
@@ -1561,19 +1617,18 @@ class KeyVaultClientOperationsMixin(object):
         # Construct headers
         header_parameters = {}  # type: Dict[str, Any]
         header_parameters['Content-Type'] = self._serialize.header("content_type", content_type, 'str')
-        header_parameters['Accept'] = 'application/json'
+        header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
 
         body_content_kwargs = {}  # type: Dict[str, Any]
         body_content = self._serialize.body(parameters, 'SecretUpdateParameters')
         body_content_kwargs['content'] = body_content
         request = self._client.patch(url, query_parameters, header_parameters, **body_content_kwargs)
-
         pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.KeyVaultError, response)
+            error = self._deserialize.failsafe_deserialize(_models.KeyVaultError, response)
             raise HttpResponseError(response=response, model=error)
 
         deserialized = self._deserialize('SecretBundle', pipeline_response)
@@ -1591,7 +1646,7 @@ class KeyVaultClientOperationsMixin(object):
         secret_version,  # type: str
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.SecretBundle"
+        # type: (...) -> "_models.SecretBundle"
         """Get a specified secret from a given key vault.
 
         The GET operation is applicable to any secret stored in Azure Key Vault. This operation
@@ -1609,10 +1664,13 @@ class KeyVaultClientOperationsMixin(object):
         :rtype: ~azure.keyvault.v7_0.models.SecretBundle
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.SecretBundle"]
-        error_map = {404: ResourceNotFoundError, 409: ResourceExistsError}
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.SecretBundle"]
+        error_map = {
+            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
+        }
         error_map.update(kwargs.pop('error_map', {}))
         api_version = "7.0"
+        accept = "application/json"
 
         # Construct URL
         url = self.get_secret.metadata['url']  # type: ignore
@@ -1629,7 +1687,7 @@ class KeyVaultClientOperationsMixin(object):
 
         # Construct headers
         header_parameters = {}  # type: Dict[str, Any]
-        header_parameters['Accept'] = 'application/json'
+        header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
 
         request = self._client.get(url, query_parameters, header_parameters)
         pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
@@ -1637,7 +1695,7 @@ class KeyVaultClientOperationsMixin(object):
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.KeyVaultError, response)
+            error = self._deserialize.failsafe_deserialize(_models.KeyVaultError, response)
             raise HttpResponseError(response=response, model=error)
 
         deserialized = self._deserialize('SecretBundle', pipeline_response)
@@ -1654,7 +1712,7 @@ class KeyVaultClientOperationsMixin(object):
         maxresults=None,  # type: Optional[int]
         **kwargs  # type: Any
     ):
-        # type: (...) -> Iterable["models.SecretListResult"]
+        # type: (...) -> Iterable["_models.SecretListResult"]
         """List secrets in a specified key vault.
 
         The Get Secrets operation is applicable to the entire vault. However, only the base secret
@@ -1671,15 +1729,18 @@ class KeyVaultClientOperationsMixin(object):
         :rtype: ~azure.core.paging.ItemPaged[~azure.keyvault.v7_0.models.SecretListResult]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.SecretListResult"]
-        error_map = {404: ResourceNotFoundError, 409: ResourceExistsError}
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.SecretListResult"]
+        error_map = {
+            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
+        }
         error_map.update(kwargs.pop('error_map', {}))
         api_version = "7.0"
+        accept = "application/json"
 
         def prepare_request(next_link=None):
             # Construct headers
             header_parameters = {}  # type: Dict[str, Any]
-            header_parameters['Accept'] = 'application/json'
+            header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
 
             if not next_link:
                 # Construct URL
@@ -1719,7 +1780,7 @@ class KeyVaultClientOperationsMixin(object):
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
-                error = self._deserialize(models.KeyVaultError, response)
+                error = self._deserialize.failsafe_deserialize(_models.KeyVaultError, response)
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
                 raise HttpResponseError(response=response, model=error)
 
@@ -1737,7 +1798,7 @@ class KeyVaultClientOperationsMixin(object):
         maxresults=None,  # type: Optional[int]
         **kwargs  # type: Any
     ):
-        # type: (...) -> Iterable["models.SecretListResult"]
+        # type: (...) -> Iterable["_models.SecretListResult"]
         """List all versions of the specified secret.
 
         The full secret identifier and attributes are provided in the response. No values are returned
@@ -1755,15 +1816,18 @@ class KeyVaultClientOperationsMixin(object):
         :rtype: ~azure.core.paging.ItemPaged[~azure.keyvault.v7_0.models.SecretListResult]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.SecretListResult"]
-        error_map = {404: ResourceNotFoundError, 409: ResourceExistsError}
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.SecretListResult"]
+        error_map = {
+            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
+        }
         error_map.update(kwargs.pop('error_map', {}))
         api_version = "7.0"
+        accept = "application/json"
 
         def prepare_request(next_link=None):
             # Construct headers
             header_parameters = {}  # type: Dict[str, Any]
-            header_parameters['Accept'] = 'application/json'
+            header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
 
             if not next_link:
                 # Construct URL
@@ -1805,7 +1869,7 @@ class KeyVaultClientOperationsMixin(object):
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
-                error = self._deserialize(models.KeyVaultError, response)
+                error = self._deserialize.failsafe_deserialize(_models.KeyVaultError, response)
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
                 raise HttpResponseError(response=response, model=error)
 
@@ -1822,7 +1886,7 @@ class KeyVaultClientOperationsMixin(object):
         maxresults=None,  # type: Optional[int]
         **kwargs  # type: Any
     ):
-        # type: (...) -> Iterable["models.DeletedSecretListResult"]
+        # type: (...) -> Iterable["_models.DeletedSecretListResult"]
         """Lists deleted secrets for the specified vault.
 
         The Get Deleted Secrets operation returns the secrets that have been deleted for a vault
@@ -1838,15 +1902,18 @@ class KeyVaultClientOperationsMixin(object):
         :rtype: ~azure.core.paging.ItemPaged[~azure.keyvault.v7_0.models.DeletedSecretListResult]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.DeletedSecretListResult"]
-        error_map = {404: ResourceNotFoundError, 409: ResourceExistsError}
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.DeletedSecretListResult"]
+        error_map = {
+            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
+        }
         error_map.update(kwargs.pop('error_map', {}))
         api_version = "7.0"
+        accept = "application/json"
 
         def prepare_request(next_link=None):
             # Construct headers
             header_parameters = {}  # type: Dict[str, Any]
-            header_parameters['Accept'] = 'application/json'
+            header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
 
             if not next_link:
                 # Construct URL
@@ -1886,7 +1953,7 @@ class KeyVaultClientOperationsMixin(object):
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
-                error = self._deserialize(models.KeyVaultError, response)
+                error = self._deserialize.failsafe_deserialize(_models.KeyVaultError, response)
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
                 raise HttpResponseError(response=response, model=error)
 
@@ -1903,7 +1970,7 @@ class KeyVaultClientOperationsMixin(object):
         secret_name,  # type: str
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.DeletedSecretBundle"
+        # type: (...) -> "_models.DeletedSecretBundle"
         """Gets the specified deleted secret.
 
         The Get Deleted Secret operation returns the specified deleted secret along with its
@@ -1918,10 +1985,13 @@ class KeyVaultClientOperationsMixin(object):
         :rtype: ~azure.keyvault.v7_0.models.DeletedSecretBundle
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.DeletedSecretBundle"]
-        error_map = {404: ResourceNotFoundError, 409: ResourceExistsError}
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.DeletedSecretBundle"]
+        error_map = {
+            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
+        }
         error_map.update(kwargs.pop('error_map', {}))
         api_version = "7.0"
+        accept = "application/json"
 
         # Construct URL
         url = self.get_deleted_secret.metadata['url']  # type: ignore
@@ -1937,7 +2007,7 @@ class KeyVaultClientOperationsMixin(object):
 
         # Construct headers
         header_parameters = {}  # type: Dict[str, Any]
-        header_parameters['Accept'] = 'application/json'
+        header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
 
         request = self._client.get(url, query_parameters, header_parameters)
         pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
@@ -1945,7 +2015,7 @@ class KeyVaultClientOperationsMixin(object):
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.KeyVaultError, response)
+            error = self._deserialize.failsafe_deserialize(_models.KeyVaultError, response)
             raise HttpResponseError(response=response, model=error)
 
         deserialized = self._deserialize('DeletedSecretBundle', pipeline_response)
@@ -1979,9 +2049,12 @@ class KeyVaultClientOperationsMixin(object):
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType[None]
-        error_map = {404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map = {
+            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
+        }
         error_map.update(kwargs.pop('error_map', {}))
         api_version = "7.0"
+        accept = "application/json"
 
         # Construct URL
         url = self.purge_deleted_secret.metadata['url']  # type: ignore
@@ -1997,6 +2070,7 @@ class KeyVaultClientOperationsMixin(object):
 
         # Construct headers
         header_parameters = {}  # type: Dict[str, Any]
+        header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
 
         request = self._client.delete(url, query_parameters, header_parameters)
         pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
@@ -2004,7 +2078,7 @@ class KeyVaultClientOperationsMixin(object):
 
         if response.status_code not in [204]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.KeyVaultError, response)
+            error = self._deserialize.failsafe_deserialize(_models.KeyVaultError, response)
             raise HttpResponseError(response=response, model=error)
 
         if cls:
@@ -2018,7 +2092,7 @@ class KeyVaultClientOperationsMixin(object):
         secret_name,  # type: str
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.SecretBundle"
+        # type: (...) -> "_models.SecretBundle"
         """Recovers the deleted secret to the latest version.
 
         Recovers the deleted secret in the specified vault. This operation can only be performed on a
@@ -2033,10 +2107,13 @@ class KeyVaultClientOperationsMixin(object):
         :rtype: ~azure.keyvault.v7_0.models.SecretBundle
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.SecretBundle"]
-        error_map = {404: ResourceNotFoundError, 409: ResourceExistsError}
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.SecretBundle"]
+        error_map = {
+            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
+        }
         error_map.update(kwargs.pop('error_map', {}))
         api_version = "7.0"
+        accept = "application/json"
 
         # Construct URL
         url = self.recover_deleted_secret.metadata['url']  # type: ignore
@@ -2052,7 +2129,7 @@ class KeyVaultClientOperationsMixin(object):
 
         # Construct headers
         header_parameters = {}  # type: Dict[str, Any]
-        header_parameters['Accept'] = 'application/json'
+        header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
 
         request = self._client.post(url, query_parameters, header_parameters)
         pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
@@ -2060,7 +2137,7 @@ class KeyVaultClientOperationsMixin(object):
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.KeyVaultError, response)
+            error = self._deserialize.failsafe_deserialize(_models.KeyVaultError, response)
             raise HttpResponseError(response=response, model=error)
 
         deserialized = self._deserialize('SecretBundle', pipeline_response)
@@ -2077,7 +2154,7 @@ class KeyVaultClientOperationsMixin(object):
         secret_name,  # type: str
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.BackupSecretResult"
+        # type: (...) -> "_models.BackupSecretResult"
         """Backs up the specified secret.
 
         Requests that a backup of the specified secret be downloaded to the client. All versions of the
@@ -2092,10 +2169,13 @@ class KeyVaultClientOperationsMixin(object):
         :rtype: ~azure.keyvault.v7_0.models.BackupSecretResult
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.BackupSecretResult"]
-        error_map = {404: ResourceNotFoundError, 409: ResourceExistsError}
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.BackupSecretResult"]
+        error_map = {
+            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
+        }
         error_map.update(kwargs.pop('error_map', {}))
         api_version = "7.0"
+        accept = "application/json"
 
         # Construct URL
         url = self.backup_secret.metadata['url']  # type: ignore
@@ -2111,7 +2191,7 @@ class KeyVaultClientOperationsMixin(object):
 
         # Construct headers
         header_parameters = {}  # type: Dict[str, Any]
-        header_parameters['Accept'] = 'application/json'
+        header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
 
         request = self._client.post(url, query_parameters, header_parameters)
         pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
@@ -2119,7 +2199,7 @@ class KeyVaultClientOperationsMixin(object):
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.KeyVaultError, response)
+            error = self._deserialize.failsafe_deserialize(_models.KeyVaultError, response)
             raise HttpResponseError(response=response, model=error)
 
         deserialized = self._deserialize('BackupSecretResult', pipeline_response)
@@ -2133,10 +2213,10 @@ class KeyVaultClientOperationsMixin(object):
     def restore_secret(
         self,
         vault_base_url,  # type: str
-        parameters,  # type: "models.SecretRestoreParameters"
+        parameters,  # type: "_models.SecretRestoreParameters"
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.SecretBundle"
+        # type: (...) -> "_models.SecretBundle"
         """Restores a backed up secret to a vault.
 
         Restores a backed up secret, and all its versions, to a vault. This operation requires the
@@ -2151,11 +2231,14 @@ class KeyVaultClientOperationsMixin(object):
         :rtype: ~azure.keyvault.v7_0.models.SecretBundle
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.SecretBundle"]
-        error_map = {404: ResourceNotFoundError, 409: ResourceExistsError}
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.SecretBundle"]
+        error_map = {
+            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
+        }
         error_map.update(kwargs.pop('error_map', {}))
         api_version = "7.0"
         content_type = kwargs.pop("content_type", "application/json")
+        accept = "application/json"
 
         # Construct URL
         url = self.restore_secret.metadata['url']  # type: ignore
@@ -2171,19 +2254,18 @@ class KeyVaultClientOperationsMixin(object):
         # Construct headers
         header_parameters = {}  # type: Dict[str, Any]
         header_parameters['Content-Type'] = self._serialize.header("content_type", content_type, 'str')
-        header_parameters['Accept'] = 'application/json'
+        header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
 
         body_content_kwargs = {}  # type: Dict[str, Any]
         body_content = self._serialize.body(parameters, 'SecretRestoreParameters')
         body_content_kwargs['content'] = body_content
         request = self._client.post(url, query_parameters, header_parameters, **body_content_kwargs)
-
         pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.KeyVaultError, response)
+            error = self._deserialize.failsafe_deserialize(_models.KeyVaultError, response)
             raise HttpResponseError(response=response, model=error)
 
         deserialized = self._deserialize('SecretBundle', pipeline_response)
@@ -2201,7 +2283,7 @@ class KeyVaultClientOperationsMixin(object):
         include_pending=None,  # type: Optional[bool]
         **kwargs  # type: Any
     ):
-        # type: (...) -> Iterable["models.CertificateListResult"]
+        # type: (...) -> Iterable["_models.CertificateListResult"]
         """List certificates in a specified key vault.
 
         The GetCertificates operation returns the set of certificates resources in the specified key
@@ -2220,15 +2302,18 @@ class KeyVaultClientOperationsMixin(object):
         :rtype: ~azure.core.paging.ItemPaged[~azure.keyvault.v7_0.models.CertificateListResult]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.CertificateListResult"]
-        error_map = {404: ResourceNotFoundError, 409: ResourceExistsError}
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.CertificateListResult"]
+        error_map = {
+            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
+        }
         error_map.update(kwargs.pop('error_map', {}))
         api_version = "7.0"
+        accept = "application/json"
 
         def prepare_request(next_link=None):
             # Construct headers
             header_parameters = {}  # type: Dict[str, Any]
-            header_parameters['Accept'] = 'application/json'
+            header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
 
             if not next_link:
                 # Construct URL
@@ -2270,7 +2355,7 @@ class KeyVaultClientOperationsMixin(object):
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
-                error = self._deserialize(models.KeyVaultError, response)
+                error = self._deserialize.failsafe_deserialize(_models.KeyVaultError, response)
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
                 raise HttpResponseError(response=response, model=error)
 
@@ -2287,7 +2372,7 @@ class KeyVaultClientOperationsMixin(object):
         certificate_name,  # type: str
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.DeletedCertificateBundle"
+        # type: (...) -> "_models.DeletedCertificateBundle"
         """Deletes a certificate from a specified key vault.
 
         Deletes all versions of a certificate object along with its associated policy. Delete
@@ -2303,10 +2388,13 @@ class KeyVaultClientOperationsMixin(object):
         :rtype: ~azure.keyvault.v7_0.models.DeletedCertificateBundle
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.DeletedCertificateBundle"]
-        error_map = {404: ResourceNotFoundError, 409: ResourceExistsError}
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.DeletedCertificateBundle"]
+        error_map = {
+            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
+        }
         error_map.update(kwargs.pop('error_map', {}))
         api_version = "7.0"
+        accept = "application/json"
 
         # Construct URL
         url = self.delete_certificate.metadata['url']  # type: ignore
@@ -2322,7 +2410,7 @@ class KeyVaultClientOperationsMixin(object):
 
         # Construct headers
         header_parameters = {}  # type: Dict[str, Any]
-        header_parameters['Accept'] = 'application/json'
+        header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
 
         request = self._client.delete(url, query_parameters, header_parameters)
         pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
@@ -2330,7 +2418,7 @@ class KeyVaultClientOperationsMixin(object):
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.KeyVaultError, response)
+            error = self._deserialize.failsafe_deserialize(_models.KeyVaultError, response)
             raise HttpResponseError(response=response, model=error)
 
         deserialized = self._deserialize('DeletedCertificateBundle', pipeline_response)
@@ -2344,10 +2432,10 @@ class KeyVaultClientOperationsMixin(object):
     def set_certificate_contacts(
         self,
         vault_base_url,  # type: str
-        contacts,  # type: "models.Contacts"
+        contacts,  # type: "_models.Contacts"
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.Contacts"
+        # type: (...) -> "_models.Contacts"
         """Sets the certificate contacts for the specified key vault.
 
         Sets the certificate contacts for the specified key vault. This operation requires the
@@ -2362,11 +2450,14 @@ class KeyVaultClientOperationsMixin(object):
         :rtype: ~azure.keyvault.v7_0.models.Contacts
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.Contacts"]
-        error_map = {404: ResourceNotFoundError, 409: ResourceExistsError}
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.Contacts"]
+        error_map = {
+            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
+        }
         error_map.update(kwargs.pop('error_map', {}))
         api_version = "7.0"
         content_type = kwargs.pop("content_type", "application/json")
+        accept = "application/json"
 
         # Construct URL
         url = self.set_certificate_contacts.metadata['url']  # type: ignore
@@ -2382,19 +2473,18 @@ class KeyVaultClientOperationsMixin(object):
         # Construct headers
         header_parameters = {}  # type: Dict[str, Any]
         header_parameters['Content-Type'] = self._serialize.header("content_type", content_type, 'str')
-        header_parameters['Accept'] = 'application/json'
+        header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
 
         body_content_kwargs = {}  # type: Dict[str, Any]
         body_content = self._serialize.body(contacts, 'Contacts')
         body_content_kwargs['content'] = body_content
         request = self._client.put(url, query_parameters, header_parameters, **body_content_kwargs)
-
         pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.KeyVaultError, response)
+            error = self._deserialize.failsafe_deserialize(_models.KeyVaultError, response)
             raise HttpResponseError(response=response, model=error)
 
         deserialized = self._deserialize('Contacts', pipeline_response)
@@ -2410,7 +2500,7 @@ class KeyVaultClientOperationsMixin(object):
         vault_base_url,  # type: str
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.Contacts"
+        # type: (...) -> "_models.Contacts"
         """Lists the certificate contacts for a specified key vault.
 
         The GetCertificateContacts operation returns the set of certificate contact resources in the
@@ -2423,10 +2513,13 @@ class KeyVaultClientOperationsMixin(object):
         :rtype: ~azure.keyvault.v7_0.models.Contacts
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.Contacts"]
-        error_map = {404: ResourceNotFoundError, 409: ResourceExistsError}
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.Contacts"]
+        error_map = {
+            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
+        }
         error_map.update(kwargs.pop('error_map', {}))
         api_version = "7.0"
+        accept = "application/json"
 
         # Construct URL
         url = self.get_certificate_contacts.metadata['url']  # type: ignore
@@ -2441,7 +2534,7 @@ class KeyVaultClientOperationsMixin(object):
 
         # Construct headers
         header_parameters = {}  # type: Dict[str, Any]
-        header_parameters['Accept'] = 'application/json'
+        header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
 
         request = self._client.get(url, query_parameters, header_parameters)
         pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
@@ -2449,7 +2542,7 @@ class KeyVaultClientOperationsMixin(object):
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.KeyVaultError, response)
+            error = self._deserialize.failsafe_deserialize(_models.KeyVaultError, response)
             raise HttpResponseError(response=response, model=error)
 
         deserialized = self._deserialize('Contacts', pipeline_response)
@@ -2465,7 +2558,7 @@ class KeyVaultClientOperationsMixin(object):
         vault_base_url,  # type: str
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.Contacts"
+        # type: (...) -> "_models.Contacts"
         """Deletes the certificate contacts for a specified key vault.
 
         Deletes the certificate contacts for a specified key vault certificate. This operation requires
@@ -2478,10 +2571,13 @@ class KeyVaultClientOperationsMixin(object):
         :rtype: ~azure.keyvault.v7_0.models.Contacts
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.Contacts"]
-        error_map = {404: ResourceNotFoundError, 409: ResourceExistsError}
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.Contacts"]
+        error_map = {
+            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
+        }
         error_map.update(kwargs.pop('error_map', {}))
         api_version = "7.0"
+        accept = "application/json"
 
         # Construct URL
         url = self.delete_certificate_contacts.metadata['url']  # type: ignore
@@ -2496,7 +2592,7 @@ class KeyVaultClientOperationsMixin(object):
 
         # Construct headers
         header_parameters = {}  # type: Dict[str, Any]
-        header_parameters['Accept'] = 'application/json'
+        header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
 
         request = self._client.delete(url, query_parameters, header_parameters)
         pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
@@ -2504,7 +2600,7 @@ class KeyVaultClientOperationsMixin(object):
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.KeyVaultError, response)
+            error = self._deserialize.failsafe_deserialize(_models.KeyVaultError, response)
             raise HttpResponseError(response=response, model=error)
 
         deserialized = self._deserialize('Contacts', pipeline_response)
@@ -2521,7 +2617,7 @@ class KeyVaultClientOperationsMixin(object):
         maxresults=None,  # type: Optional[int]
         **kwargs  # type: Any
     ):
-        # type: (...) -> Iterable["models.CertificateIssuerListResult"]
+        # type: (...) -> Iterable["_models.CertificateIssuerListResult"]
         """List certificate issuers for a specified key vault.
 
         The GetCertificateIssuers operation returns the set of certificate issuer resources in the
@@ -2538,15 +2634,18 @@ class KeyVaultClientOperationsMixin(object):
         :rtype: ~azure.core.paging.ItemPaged[~azure.keyvault.v7_0.models.CertificateIssuerListResult]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.CertificateIssuerListResult"]
-        error_map = {404: ResourceNotFoundError, 409: ResourceExistsError}
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.CertificateIssuerListResult"]
+        error_map = {
+            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
+        }
         error_map.update(kwargs.pop('error_map', {}))
         api_version = "7.0"
+        accept = "application/json"
 
         def prepare_request(next_link=None):
             # Construct headers
             header_parameters = {}  # type: Dict[str, Any]
-            header_parameters['Accept'] = 'application/json'
+            header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
 
             if not next_link:
                 # Construct URL
@@ -2586,7 +2685,7 @@ class KeyVaultClientOperationsMixin(object):
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
-                error = self._deserialize(models.KeyVaultError, response)
+                error = self._deserialize.failsafe_deserialize(_models.KeyVaultError, response)
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
                 raise HttpResponseError(response=response, model=error)
 
@@ -2601,10 +2700,10 @@ class KeyVaultClientOperationsMixin(object):
         self,
         vault_base_url,  # type: str
         issuer_name,  # type: str
-        parameter,  # type: "models.CertificateIssuerSetParameters"
+        parameter,  # type: "_models.CertificateIssuerSetParameters"
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.IssuerBundle"
+        # type: (...) -> "_models.IssuerBundle"
         """Sets the specified certificate issuer.
 
         The SetCertificateIssuer operation adds or updates the specified certificate issuer. This
@@ -2621,11 +2720,14 @@ class KeyVaultClientOperationsMixin(object):
         :rtype: ~azure.keyvault.v7_0.models.IssuerBundle
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.IssuerBundle"]
-        error_map = {404: ResourceNotFoundError, 409: ResourceExistsError}
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.IssuerBundle"]
+        error_map = {
+            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
+        }
         error_map.update(kwargs.pop('error_map', {}))
         api_version = "7.0"
         content_type = kwargs.pop("content_type", "application/json")
+        accept = "application/json"
 
         # Construct URL
         url = self.set_certificate_issuer.metadata['url']  # type: ignore
@@ -2642,19 +2744,18 @@ class KeyVaultClientOperationsMixin(object):
         # Construct headers
         header_parameters = {}  # type: Dict[str, Any]
         header_parameters['Content-Type'] = self._serialize.header("content_type", content_type, 'str')
-        header_parameters['Accept'] = 'application/json'
+        header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
 
         body_content_kwargs = {}  # type: Dict[str, Any]
         body_content = self._serialize.body(parameter, 'CertificateIssuerSetParameters')
         body_content_kwargs['content'] = body_content
         request = self._client.put(url, query_parameters, header_parameters, **body_content_kwargs)
-
         pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.KeyVaultError, response)
+            error = self._deserialize.failsafe_deserialize(_models.KeyVaultError, response)
             raise HttpResponseError(response=response, model=error)
 
         deserialized = self._deserialize('IssuerBundle', pipeline_response)
@@ -2669,10 +2770,10 @@ class KeyVaultClientOperationsMixin(object):
         self,
         vault_base_url,  # type: str
         issuer_name,  # type: str
-        parameter,  # type: "models.CertificateIssuerUpdateParameters"
+        parameter,  # type: "_models.CertificateIssuerUpdateParameters"
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.IssuerBundle"
+        # type: (...) -> "_models.IssuerBundle"
         """Updates the specified certificate issuer.
 
         The UpdateCertificateIssuer operation performs an update on the specified certificate issuer
@@ -2689,11 +2790,14 @@ class KeyVaultClientOperationsMixin(object):
         :rtype: ~azure.keyvault.v7_0.models.IssuerBundle
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.IssuerBundle"]
-        error_map = {404: ResourceNotFoundError, 409: ResourceExistsError}
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.IssuerBundle"]
+        error_map = {
+            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
+        }
         error_map.update(kwargs.pop('error_map', {}))
         api_version = "7.0"
         content_type = kwargs.pop("content_type", "application/json")
+        accept = "application/json"
 
         # Construct URL
         url = self.update_certificate_issuer.metadata['url']  # type: ignore
@@ -2710,19 +2814,18 @@ class KeyVaultClientOperationsMixin(object):
         # Construct headers
         header_parameters = {}  # type: Dict[str, Any]
         header_parameters['Content-Type'] = self._serialize.header("content_type", content_type, 'str')
-        header_parameters['Accept'] = 'application/json'
+        header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
 
         body_content_kwargs = {}  # type: Dict[str, Any]
         body_content = self._serialize.body(parameter, 'CertificateIssuerUpdateParameters')
         body_content_kwargs['content'] = body_content
         request = self._client.patch(url, query_parameters, header_parameters, **body_content_kwargs)
-
         pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.KeyVaultError, response)
+            error = self._deserialize.failsafe_deserialize(_models.KeyVaultError, response)
             raise HttpResponseError(response=response, model=error)
 
         deserialized = self._deserialize('IssuerBundle', pipeline_response)
@@ -2739,7 +2842,7 @@ class KeyVaultClientOperationsMixin(object):
         issuer_name,  # type: str
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.IssuerBundle"
+        # type: (...) -> "_models.IssuerBundle"
         """Lists the specified certificate issuer.
 
         The GetCertificateIssuer operation returns the specified certificate issuer resources in the
@@ -2755,10 +2858,13 @@ class KeyVaultClientOperationsMixin(object):
         :rtype: ~azure.keyvault.v7_0.models.IssuerBundle
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.IssuerBundle"]
-        error_map = {404: ResourceNotFoundError, 409: ResourceExistsError}
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.IssuerBundle"]
+        error_map = {
+            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
+        }
         error_map.update(kwargs.pop('error_map', {}))
         api_version = "7.0"
+        accept = "application/json"
 
         # Construct URL
         url = self.get_certificate_issuer.metadata['url']  # type: ignore
@@ -2774,7 +2880,7 @@ class KeyVaultClientOperationsMixin(object):
 
         # Construct headers
         header_parameters = {}  # type: Dict[str, Any]
-        header_parameters['Accept'] = 'application/json'
+        header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
 
         request = self._client.get(url, query_parameters, header_parameters)
         pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
@@ -2782,7 +2888,7 @@ class KeyVaultClientOperationsMixin(object):
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.KeyVaultError, response)
+            error = self._deserialize.failsafe_deserialize(_models.KeyVaultError, response)
             raise HttpResponseError(response=response, model=error)
 
         deserialized = self._deserialize('IssuerBundle', pipeline_response)
@@ -2799,7 +2905,7 @@ class KeyVaultClientOperationsMixin(object):
         issuer_name,  # type: str
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.IssuerBundle"
+        # type: (...) -> "_models.IssuerBundle"
         """Deletes the specified certificate issuer.
 
         The DeleteCertificateIssuer operation permanently removes the specified certificate issuer from
@@ -2814,10 +2920,13 @@ class KeyVaultClientOperationsMixin(object):
         :rtype: ~azure.keyvault.v7_0.models.IssuerBundle
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.IssuerBundle"]
-        error_map = {404: ResourceNotFoundError, 409: ResourceExistsError}
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.IssuerBundle"]
+        error_map = {
+            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
+        }
         error_map.update(kwargs.pop('error_map', {}))
         api_version = "7.0"
+        accept = "application/json"
 
         # Construct URL
         url = self.delete_certificate_issuer.metadata['url']  # type: ignore
@@ -2833,7 +2942,7 @@ class KeyVaultClientOperationsMixin(object):
 
         # Construct headers
         header_parameters = {}  # type: Dict[str, Any]
-        header_parameters['Accept'] = 'application/json'
+        header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
 
         request = self._client.delete(url, query_parameters, header_parameters)
         pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
@@ -2841,7 +2950,7 @@ class KeyVaultClientOperationsMixin(object):
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.KeyVaultError, response)
+            error = self._deserialize.failsafe_deserialize(_models.KeyVaultError, response)
             raise HttpResponseError(response=response, model=error)
 
         deserialized = self._deserialize('IssuerBundle', pipeline_response)
@@ -2856,10 +2965,10 @@ class KeyVaultClientOperationsMixin(object):
         self,
         vault_base_url,  # type: str
         certificate_name,  # type: str
-        parameters,  # type: "models.CertificateCreateParameters"
+        parameters,  # type: "_models.CertificateCreateParameters"
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.CertificateOperation"
+        # type: (...) -> "_models.CertificateOperation"
         """Creates a new certificate.
 
         If this is the first version, the certificate resource is created. This operation requires the
@@ -2876,11 +2985,14 @@ class KeyVaultClientOperationsMixin(object):
         :rtype: ~azure.keyvault.v7_0.models.CertificateOperation
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.CertificateOperation"]
-        error_map = {404: ResourceNotFoundError, 409: ResourceExistsError}
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.CertificateOperation"]
+        error_map = {
+            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
+        }
         error_map.update(kwargs.pop('error_map', {}))
         api_version = "7.0"
         content_type = kwargs.pop("content_type", "application/json")
+        accept = "application/json"
 
         # Construct URL
         url = self.create_certificate.metadata['url']  # type: ignore
@@ -2897,19 +3009,18 @@ class KeyVaultClientOperationsMixin(object):
         # Construct headers
         header_parameters = {}  # type: Dict[str, Any]
         header_parameters['Content-Type'] = self._serialize.header("content_type", content_type, 'str')
-        header_parameters['Accept'] = 'application/json'
+        header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
 
         body_content_kwargs = {}  # type: Dict[str, Any]
         body_content = self._serialize.body(parameters, 'CertificateCreateParameters')
         body_content_kwargs['content'] = body_content
         request = self._client.post(url, query_parameters, header_parameters, **body_content_kwargs)
-
         pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
 
         if response.status_code not in [202]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.KeyVaultError, response)
+            error = self._deserialize.failsafe_deserialize(_models.KeyVaultError, response)
             raise HttpResponseError(response=response, model=error)
 
         deserialized = self._deserialize('CertificateOperation', pipeline_response)
@@ -2924,10 +3035,10 @@ class KeyVaultClientOperationsMixin(object):
         self,
         vault_base_url,  # type: str
         certificate_name,  # type: str
-        parameters,  # type: "models.CertificateImportParameters"
+        parameters,  # type: "_models.CertificateImportParameters"
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.CertificateBundle"
+        # type: (...) -> "_models.CertificateBundle"
         """Imports a certificate into a specified key vault.
 
         Imports an existing valid certificate, containing a private key, into Azure Key Vault. The
@@ -2946,11 +3057,14 @@ class KeyVaultClientOperationsMixin(object):
         :rtype: ~azure.keyvault.v7_0.models.CertificateBundle
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.CertificateBundle"]
-        error_map = {404: ResourceNotFoundError, 409: ResourceExistsError}
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.CertificateBundle"]
+        error_map = {
+            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
+        }
         error_map.update(kwargs.pop('error_map', {}))
         api_version = "7.0"
         content_type = kwargs.pop("content_type", "application/json")
+        accept = "application/json"
 
         # Construct URL
         url = self.import_certificate.metadata['url']  # type: ignore
@@ -2967,19 +3081,18 @@ class KeyVaultClientOperationsMixin(object):
         # Construct headers
         header_parameters = {}  # type: Dict[str, Any]
         header_parameters['Content-Type'] = self._serialize.header("content_type", content_type, 'str')
-        header_parameters['Accept'] = 'application/json'
+        header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
 
         body_content_kwargs = {}  # type: Dict[str, Any]
         body_content = self._serialize.body(parameters, 'CertificateImportParameters')
         body_content_kwargs['content'] = body_content
         request = self._client.post(url, query_parameters, header_parameters, **body_content_kwargs)
-
         pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.KeyVaultError, response)
+            error = self._deserialize.failsafe_deserialize(_models.KeyVaultError, response)
             raise HttpResponseError(response=response, model=error)
 
         deserialized = self._deserialize('CertificateBundle', pipeline_response)
@@ -2997,7 +3110,7 @@ class KeyVaultClientOperationsMixin(object):
         maxresults=None,  # type: Optional[int]
         **kwargs  # type: Any
     ):
-        # type: (...) -> Iterable["models.CertificateListResult"]
+        # type: (...) -> Iterable["_models.CertificateListResult"]
         """List the versions of a certificate.
 
         The GetCertificateVersions operation returns the versions of a certificate in the specified key
@@ -3015,15 +3128,18 @@ class KeyVaultClientOperationsMixin(object):
         :rtype: ~azure.core.paging.ItemPaged[~azure.keyvault.v7_0.models.CertificateListResult]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.CertificateListResult"]
-        error_map = {404: ResourceNotFoundError, 409: ResourceExistsError}
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.CertificateListResult"]
+        error_map = {
+            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
+        }
         error_map.update(kwargs.pop('error_map', {}))
         api_version = "7.0"
+        accept = "application/json"
 
         def prepare_request(next_link=None):
             # Construct headers
             header_parameters = {}  # type: Dict[str, Any]
-            header_parameters['Accept'] = 'application/json'
+            header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
 
             if not next_link:
                 # Construct URL
@@ -3065,7 +3181,7 @@ class KeyVaultClientOperationsMixin(object):
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
-                error = self._deserialize(models.KeyVaultError, response)
+                error = self._deserialize.failsafe_deserialize(_models.KeyVaultError, response)
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
                 raise HttpResponseError(response=response, model=error)
 
@@ -3082,7 +3198,7 @@ class KeyVaultClientOperationsMixin(object):
         certificate_name,  # type: str
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.CertificatePolicy"
+        # type: (...) -> "_models.CertificatePolicy"
         """Lists the policy for a certificate.
 
         The GetCertificatePolicy operation returns the specified certificate policy resources in the
@@ -3097,10 +3213,13 @@ class KeyVaultClientOperationsMixin(object):
         :rtype: ~azure.keyvault.v7_0.models.CertificatePolicy
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.CertificatePolicy"]
-        error_map = {404: ResourceNotFoundError, 409: ResourceExistsError}
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.CertificatePolicy"]
+        error_map = {
+            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
+        }
         error_map.update(kwargs.pop('error_map', {}))
         api_version = "7.0"
+        accept = "application/json"
 
         # Construct URL
         url = self.get_certificate_policy.metadata['url']  # type: ignore
@@ -3116,7 +3235,7 @@ class KeyVaultClientOperationsMixin(object):
 
         # Construct headers
         header_parameters = {}  # type: Dict[str, Any]
-        header_parameters['Accept'] = 'application/json'
+        header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
 
         request = self._client.get(url, query_parameters, header_parameters)
         pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
@@ -3124,7 +3243,7 @@ class KeyVaultClientOperationsMixin(object):
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.KeyVaultError, response)
+            error = self._deserialize.failsafe_deserialize(_models.KeyVaultError, response)
             raise HttpResponseError(response=response, model=error)
 
         deserialized = self._deserialize('CertificatePolicy', pipeline_response)
@@ -3139,10 +3258,10 @@ class KeyVaultClientOperationsMixin(object):
         self,
         vault_base_url,  # type: str
         certificate_name,  # type: str
-        certificate_policy,  # type: "models.CertificatePolicy"
+        certificate_policy,  # type: "_models.CertificatePolicy"
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.CertificatePolicy"
+        # type: (...) -> "_models.CertificatePolicy"
         """Updates the policy for a certificate.
 
         Set specified members in the certificate policy. Leave others as null. This operation requires
@@ -3159,11 +3278,14 @@ class KeyVaultClientOperationsMixin(object):
         :rtype: ~azure.keyvault.v7_0.models.CertificatePolicy
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.CertificatePolicy"]
-        error_map = {404: ResourceNotFoundError, 409: ResourceExistsError}
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.CertificatePolicy"]
+        error_map = {
+            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
+        }
         error_map.update(kwargs.pop('error_map', {}))
         api_version = "7.0"
         content_type = kwargs.pop("content_type", "application/json")
+        accept = "application/json"
 
         # Construct URL
         url = self.update_certificate_policy.metadata['url']  # type: ignore
@@ -3180,19 +3302,18 @@ class KeyVaultClientOperationsMixin(object):
         # Construct headers
         header_parameters = {}  # type: Dict[str, Any]
         header_parameters['Content-Type'] = self._serialize.header("content_type", content_type, 'str')
-        header_parameters['Accept'] = 'application/json'
+        header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
 
         body_content_kwargs = {}  # type: Dict[str, Any]
         body_content = self._serialize.body(certificate_policy, 'CertificatePolicy')
         body_content_kwargs['content'] = body_content
         request = self._client.patch(url, query_parameters, header_parameters, **body_content_kwargs)
-
         pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.KeyVaultError, response)
+            error = self._deserialize.failsafe_deserialize(_models.KeyVaultError, response)
             raise HttpResponseError(response=response, model=error)
 
         deserialized = self._deserialize('CertificatePolicy', pipeline_response)
@@ -3208,10 +3329,10 @@ class KeyVaultClientOperationsMixin(object):
         vault_base_url,  # type: str
         certificate_name,  # type: str
         certificate_version,  # type: str
-        parameters,  # type: "models.CertificateUpdateParameters"
+        parameters,  # type: "_models.CertificateUpdateParameters"
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.CertificateBundle"
+        # type: (...) -> "_models.CertificateBundle"
         """Updates the specified attributes associated with the given certificate.
 
         The UpdateCertificate operation applies the specified update on the given certificate; the only
@@ -3231,11 +3352,14 @@ class KeyVaultClientOperationsMixin(object):
         :rtype: ~azure.keyvault.v7_0.models.CertificateBundle
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.CertificateBundle"]
-        error_map = {404: ResourceNotFoundError, 409: ResourceExistsError}
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.CertificateBundle"]
+        error_map = {
+            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
+        }
         error_map.update(kwargs.pop('error_map', {}))
         api_version = "7.0"
         content_type = kwargs.pop("content_type", "application/json")
+        accept = "application/json"
 
         # Construct URL
         url = self.update_certificate.metadata['url']  # type: ignore
@@ -3253,19 +3377,18 @@ class KeyVaultClientOperationsMixin(object):
         # Construct headers
         header_parameters = {}  # type: Dict[str, Any]
         header_parameters['Content-Type'] = self._serialize.header("content_type", content_type, 'str')
-        header_parameters['Accept'] = 'application/json'
+        header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
 
         body_content_kwargs = {}  # type: Dict[str, Any]
         body_content = self._serialize.body(parameters, 'CertificateUpdateParameters')
         body_content_kwargs['content'] = body_content
         request = self._client.patch(url, query_parameters, header_parameters, **body_content_kwargs)
-
         pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.KeyVaultError, response)
+            error = self._deserialize.failsafe_deserialize(_models.KeyVaultError, response)
             raise HttpResponseError(response=response, model=error)
 
         deserialized = self._deserialize('CertificateBundle', pipeline_response)
@@ -3283,7 +3406,7 @@ class KeyVaultClientOperationsMixin(object):
         certificate_version,  # type: str
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.CertificateBundle"
+        # type: (...) -> "_models.CertificateBundle"
         """Gets information about a certificate.
 
         Gets information about a specific certificate. This operation requires the certificates/get
@@ -3301,10 +3424,13 @@ class KeyVaultClientOperationsMixin(object):
         :rtype: ~azure.keyvault.v7_0.models.CertificateBundle
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.CertificateBundle"]
-        error_map = {404: ResourceNotFoundError, 409: ResourceExistsError}
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.CertificateBundle"]
+        error_map = {
+            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
+        }
         error_map.update(kwargs.pop('error_map', {}))
         api_version = "7.0"
+        accept = "application/json"
 
         # Construct URL
         url = self.get_certificate.metadata['url']  # type: ignore
@@ -3321,7 +3447,7 @@ class KeyVaultClientOperationsMixin(object):
 
         # Construct headers
         header_parameters = {}  # type: Dict[str, Any]
-        header_parameters['Accept'] = 'application/json'
+        header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
 
         request = self._client.get(url, query_parameters, header_parameters)
         pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
@@ -3329,7 +3455,7 @@ class KeyVaultClientOperationsMixin(object):
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.KeyVaultError, response)
+            error = self._deserialize.failsafe_deserialize(_models.KeyVaultError, response)
             raise HttpResponseError(response=response, model=error)
 
         deserialized = self._deserialize('CertificateBundle', pipeline_response)
@@ -3344,10 +3470,10 @@ class KeyVaultClientOperationsMixin(object):
         self,
         vault_base_url,  # type: str
         certificate_name,  # type: str
-        certificate_operation,  # type: "models.CertificateOperationUpdateParameter"
+        certificate_operation,  # type: "_models.CertificateOperationUpdateParameter"
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.CertificateOperation"
+        # type: (...) -> "_models.CertificateOperation"
         """Updates a certificate operation.
 
         Updates a certificate creation operation that is already in progress. This operation requires
@@ -3364,11 +3490,14 @@ class KeyVaultClientOperationsMixin(object):
         :rtype: ~azure.keyvault.v7_0.models.CertificateOperation
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.CertificateOperation"]
-        error_map = {404: ResourceNotFoundError, 409: ResourceExistsError}
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.CertificateOperation"]
+        error_map = {
+            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
+        }
         error_map.update(kwargs.pop('error_map', {}))
         api_version = "7.0"
         content_type = kwargs.pop("content_type", "application/json")
+        accept = "application/json"
 
         # Construct URL
         url = self.update_certificate_operation.metadata['url']  # type: ignore
@@ -3385,19 +3514,18 @@ class KeyVaultClientOperationsMixin(object):
         # Construct headers
         header_parameters = {}  # type: Dict[str, Any]
         header_parameters['Content-Type'] = self._serialize.header("content_type", content_type, 'str')
-        header_parameters['Accept'] = 'application/json'
+        header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
 
         body_content_kwargs = {}  # type: Dict[str, Any]
         body_content = self._serialize.body(certificate_operation, 'CertificateOperationUpdateParameter')
         body_content_kwargs['content'] = body_content
         request = self._client.patch(url, query_parameters, header_parameters, **body_content_kwargs)
-
         pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.KeyVaultError, response)
+            error = self._deserialize.failsafe_deserialize(_models.KeyVaultError, response)
             raise HttpResponseError(response=response, model=error)
 
         deserialized = self._deserialize('CertificateOperation', pipeline_response)
@@ -3414,7 +3542,7 @@ class KeyVaultClientOperationsMixin(object):
         certificate_name,  # type: str
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.CertificateOperation"
+        # type: (...) -> "_models.CertificateOperation"
         """Gets the creation operation of a certificate.
 
         Gets the creation operation associated with a specified certificate. This operation requires
@@ -3429,10 +3557,13 @@ class KeyVaultClientOperationsMixin(object):
         :rtype: ~azure.keyvault.v7_0.models.CertificateOperation
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.CertificateOperation"]
-        error_map = {404: ResourceNotFoundError, 409: ResourceExistsError}
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.CertificateOperation"]
+        error_map = {
+            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
+        }
         error_map.update(kwargs.pop('error_map', {}))
         api_version = "7.0"
+        accept = "application/json"
 
         # Construct URL
         url = self.get_certificate_operation.metadata['url']  # type: ignore
@@ -3448,7 +3579,7 @@ class KeyVaultClientOperationsMixin(object):
 
         # Construct headers
         header_parameters = {}  # type: Dict[str, Any]
-        header_parameters['Accept'] = 'application/json'
+        header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
 
         request = self._client.get(url, query_parameters, header_parameters)
         pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
@@ -3456,7 +3587,7 @@ class KeyVaultClientOperationsMixin(object):
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.KeyVaultError, response)
+            error = self._deserialize.failsafe_deserialize(_models.KeyVaultError, response)
             raise HttpResponseError(response=response, model=error)
 
         deserialized = self._deserialize('CertificateOperation', pipeline_response)
@@ -3473,7 +3604,7 @@ class KeyVaultClientOperationsMixin(object):
         certificate_name,  # type: str
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.CertificateOperation"
+        # type: (...) -> "_models.CertificateOperation"
         """Deletes the creation operation for a specific certificate.
 
         Deletes the creation operation for a specified certificate that is in the process of being
@@ -3489,10 +3620,13 @@ class KeyVaultClientOperationsMixin(object):
         :rtype: ~azure.keyvault.v7_0.models.CertificateOperation
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.CertificateOperation"]
-        error_map = {404: ResourceNotFoundError, 409: ResourceExistsError}
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.CertificateOperation"]
+        error_map = {
+            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
+        }
         error_map.update(kwargs.pop('error_map', {}))
         api_version = "7.0"
+        accept = "application/json"
 
         # Construct URL
         url = self.delete_certificate_operation.metadata['url']  # type: ignore
@@ -3508,7 +3642,7 @@ class KeyVaultClientOperationsMixin(object):
 
         # Construct headers
         header_parameters = {}  # type: Dict[str, Any]
-        header_parameters['Accept'] = 'application/json'
+        header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
 
         request = self._client.delete(url, query_parameters, header_parameters)
         pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
@@ -3516,7 +3650,7 @@ class KeyVaultClientOperationsMixin(object):
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.KeyVaultError, response)
+            error = self._deserialize.failsafe_deserialize(_models.KeyVaultError, response)
             raise HttpResponseError(response=response, model=error)
 
         deserialized = self._deserialize('CertificateOperation', pipeline_response)
@@ -3531,10 +3665,10 @@ class KeyVaultClientOperationsMixin(object):
         self,
         vault_base_url,  # type: str
         certificate_name,  # type: str
-        parameters,  # type: "models.CertificateMergeParameters"
+        parameters,  # type: "_models.CertificateMergeParameters"
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.CertificateBundle"
+        # type: (...) -> "_models.CertificateBundle"
         """Merges a certificate or a certificate chain with a key pair existing on the server.
 
         The MergeCertificate operation performs the merging of a certificate or certificate chain with
@@ -3552,11 +3686,14 @@ class KeyVaultClientOperationsMixin(object):
         :rtype: ~azure.keyvault.v7_0.models.CertificateBundle
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.CertificateBundle"]
-        error_map = {404: ResourceNotFoundError, 409: ResourceExistsError}
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.CertificateBundle"]
+        error_map = {
+            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
+        }
         error_map.update(kwargs.pop('error_map', {}))
         api_version = "7.0"
         content_type = kwargs.pop("content_type", "application/json")
+        accept = "application/json"
 
         # Construct URL
         url = self.merge_certificate.metadata['url']  # type: ignore
@@ -3573,19 +3710,18 @@ class KeyVaultClientOperationsMixin(object):
         # Construct headers
         header_parameters = {}  # type: Dict[str, Any]
         header_parameters['Content-Type'] = self._serialize.header("content_type", content_type, 'str')
-        header_parameters['Accept'] = 'application/json'
+        header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
 
         body_content_kwargs = {}  # type: Dict[str, Any]
         body_content = self._serialize.body(parameters, 'CertificateMergeParameters')
         body_content_kwargs['content'] = body_content
         request = self._client.post(url, query_parameters, header_parameters, **body_content_kwargs)
-
         pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
 
         if response.status_code not in [201]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.KeyVaultError, response)
+            error = self._deserialize.failsafe_deserialize(_models.KeyVaultError, response)
             raise HttpResponseError(response=response, model=error)
 
         deserialized = self._deserialize('CertificateBundle', pipeline_response)
@@ -3602,7 +3738,7 @@ class KeyVaultClientOperationsMixin(object):
         certificate_name,  # type: str
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.BackupCertificateResult"
+        # type: (...) -> "_models.BackupCertificateResult"
         """Backs up the specified certificate.
 
         Requests that a backup of the specified certificate be downloaded to the client. All versions
@@ -3618,10 +3754,13 @@ class KeyVaultClientOperationsMixin(object):
         :rtype: ~azure.keyvault.v7_0.models.BackupCertificateResult
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.BackupCertificateResult"]
-        error_map = {404: ResourceNotFoundError, 409: ResourceExistsError}
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.BackupCertificateResult"]
+        error_map = {
+            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
+        }
         error_map.update(kwargs.pop('error_map', {}))
         api_version = "7.0"
+        accept = "application/json"
 
         # Construct URL
         url = self.backup_certificate.metadata['url']  # type: ignore
@@ -3637,7 +3776,7 @@ class KeyVaultClientOperationsMixin(object):
 
         # Construct headers
         header_parameters = {}  # type: Dict[str, Any]
-        header_parameters['Accept'] = 'application/json'
+        header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
 
         request = self._client.post(url, query_parameters, header_parameters)
         pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
@@ -3645,7 +3784,7 @@ class KeyVaultClientOperationsMixin(object):
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.KeyVaultError, response)
+            error = self._deserialize.failsafe_deserialize(_models.KeyVaultError, response)
             raise HttpResponseError(response=response, model=error)
 
         deserialized = self._deserialize('BackupCertificateResult', pipeline_response)
@@ -3659,10 +3798,10 @@ class KeyVaultClientOperationsMixin(object):
     def restore_certificate(
         self,
         vault_base_url,  # type: str
-        parameters,  # type: "models.CertificateRestoreParameters"
+        parameters,  # type: "_models.CertificateRestoreParameters"
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.CertificateBundle"
+        # type: (...) -> "_models.CertificateBundle"
         """Restores a backed up certificate to a vault.
 
         Restores a backed up certificate, and all its versions, to a vault. This operation requires the
@@ -3677,11 +3816,14 @@ class KeyVaultClientOperationsMixin(object):
         :rtype: ~azure.keyvault.v7_0.models.CertificateBundle
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.CertificateBundle"]
-        error_map = {404: ResourceNotFoundError, 409: ResourceExistsError}
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.CertificateBundle"]
+        error_map = {
+            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
+        }
         error_map.update(kwargs.pop('error_map', {}))
         api_version = "7.0"
         content_type = kwargs.pop("content_type", "application/json")
+        accept = "application/json"
 
         # Construct URL
         url = self.restore_certificate.metadata['url']  # type: ignore
@@ -3697,19 +3839,18 @@ class KeyVaultClientOperationsMixin(object):
         # Construct headers
         header_parameters = {}  # type: Dict[str, Any]
         header_parameters['Content-Type'] = self._serialize.header("content_type", content_type, 'str')
-        header_parameters['Accept'] = 'application/json'
+        header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
 
         body_content_kwargs = {}  # type: Dict[str, Any]
         body_content = self._serialize.body(parameters, 'CertificateRestoreParameters')
         body_content_kwargs['content'] = body_content
         request = self._client.post(url, query_parameters, header_parameters, **body_content_kwargs)
-
         pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.KeyVaultError, response)
+            error = self._deserialize.failsafe_deserialize(_models.KeyVaultError, response)
             raise HttpResponseError(response=response, model=error)
 
         deserialized = self._deserialize('CertificateBundle', pipeline_response)
@@ -3727,7 +3868,7 @@ class KeyVaultClientOperationsMixin(object):
         include_pending=None,  # type: Optional[bool]
         **kwargs  # type: Any
     ):
-        # type: (...) -> Iterable["models.DeletedCertificateListResult"]
+        # type: (...) -> Iterable["_models.DeletedCertificateListResult"]
         """Lists the deleted certificates in the specified vault currently available for recovery.
 
         The GetDeletedCertificates operation retrieves the certificates in the current vault which are
@@ -3748,15 +3889,18 @@ class KeyVaultClientOperationsMixin(object):
         :rtype: ~azure.core.paging.ItemPaged[~azure.keyvault.v7_0.models.DeletedCertificateListResult]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.DeletedCertificateListResult"]
-        error_map = {404: ResourceNotFoundError, 409: ResourceExistsError}
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.DeletedCertificateListResult"]
+        error_map = {
+            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
+        }
         error_map.update(kwargs.pop('error_map', {}))
         api_version = "7.0"
+        accept = "application/json"
 
         def prepare_request(next_link=None):
             # Construct headers
             header_parameters = {}  # type: Dict[str, Any]
-            header_parameters['Accept'] = 'application/json'
+            header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
 
             if not next_link:
                 # Construct URL
@@ -3798,7 +3942,7 @@ class KeyVaultClientOperationsMixin(object):
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
-                error = self._deserialize(models.KeyVaultError, response)
+                error = self._deserialize.failsafe_deserialize(_models.KeyVaultError, response)
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
                 raise HttpResponseError(response=response, model=error)
 
@@ -3815,7 +3959,7 @@ class KeyVaultClientOperationsMixin(object):
         certificate_name,  # type: str
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.DeletedCertificateBundle"
+        # type: (...) -> "_models.DeletedCertificateBundle"
         """Retrieves information about the specified deleted certificate.
 
         The GetDeletedCertificate operation retrieves the deleted certificate information plus its
@@ -3831,10 +3975,13 @@ class KeyVaultClientOperationsMixin(object):
         :rtype: ~azure.keyvault.v7_0.models.DeletedCertificateBundle
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.DeletedCertificateBundle"]
-        error_map = {404: ResourceNotFoundError, 409: ResourceExistsError}
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.DeletedCertificateBundle"]
+        error_map = {
+            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
+        }
         error_map.update(kwargs.pop('error_map', {}))
         api_version = "7.0"
+        accept = "application/json"
 
         # Construct URL
         url = self.get_deleted_certificate.metadata['url']  # type: ignore
@@ -3850,7 +3997,7 @@ class KeyVaultClientOperationsMixin(object):
 
         # Construct headers
         header_parameters = {}  # type: Dict[str, Any]
-        header_parameters['Accept'] = 'application/json'
+        header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
 
         request = self._client.get(url, query_parameters, header_parameters)
         pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
@@ -3858,7 +4005,7 @@ class KeyVaultClientOperationsMixin(object):
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.KeyVaultError, response)
+            error = self._deserialize.failsafe_deserialize(_models.KeyVaultError, response)
             raise HttpResponseError(response=response, model=error)
 
         deserialized = self._deserialize('DeletedCertificateBundle', pipeline_response)
@@ -3892,9 +4039,12 @@ class KeyVaultClientOperationsMixin(object):
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType[None]
-        error_map = {404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map = {
+            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
+        }
         error_map.update(kwargs.pop('error_map', {}))
         api_version = "7.0"
+        accept = "application/json"
 
         # Construct URL
         url = self.purge_deleted_certificate.metadata['url']  # type: ignore
@@ -3910,6 +4060,7 @@ class KeyVaultClientOperationsMixin(object):
 
         # Construct headers
         header_parameters = {}  # type: Dict[str, Any]
+        header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
 
         request = self._client.delete(url, query_parameters, header_parameters)
         pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
@@ -3917,7 +4068,7 @@ class KeyVaultClientOperationsMixin(object):
 
         if response.status_code not in [204]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.KeyVaultError, response)
+            error = self._deserialize.failsafe_deserialize(_models.KeyVaultError, response)
             raise HttpResponseError(response=response, model=error)
 
         if cls:
@@ -3931,7 +4082,7 @@ class KeyVaultClientOperationsMixin(object):
         certificate_name,  # type: str
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.CertificateBundle"
+        # type: (...) -> "_models.CertificateBundle"
         """Recovers the deleted certificate back to its current version under /certificates.
 
         The RecoverDeletedCertificate operation performs the reversal of the Delete operation. The
@@ -3948,10 +4099,13 @@ class KeyVaultClientOperationsMixin(object):
         :rtype: ~azure.keyvault.v7_0.models.CertificateBundle
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.CertificateBundle"]
-        error_map = {404: ResourceNotFoundError, 409: ResourceExistsError}
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.CertificateBundle"]
+        error_map = {
+            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
+        }
         error_map.update(kwargs.pop('error_map', {}))
         api_version = "7.0"
+        accept = "application/json"
 
         # Construct URL
         url = self.recover_deleted_certificate.metadata['url']  # type: ignore
@@ -3967,7 +4121,7 @@ class KeyVaultClientOperationsMixin(object):
 
         # Construct headers
         header_parameters = {}  # type: Dict[str, Any]
-        header_parameters['Accept'] = 'application/json'
+        header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
 
         request = self._client.post(url, query_parameters, header_parameters)
         pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
@@ -3975,7 +4129,7 @@ class KeyVaultClientOperationsMixin(object):
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.KeyVaultError, response)
+            error = self._deserialize.failsafe_deserialize(_models.KeyVaultError, response)
             raise HttpResponseError(response=response, model=error)
 
         deserialized = self._deserialize('CertificateBundle', pipeline_response)
@@ -3992,7 +4146,7 @@ class KeyVaultClientOperationsMixin(object):
         maxresults=None,  # type: Optional[int]
         **kwargs  # type: Any
     ):
-        # type: (...) -> Iterable["models.StorageListResult"]
+        # type: (...) -> Iterable["_models.StorageListResult"]
         """List storage accounts managed by the specified key vault. This operation requires the
         storage/list permission.
 
@@ -4006,15 +4160,18 @@ class KeyVaultClientOperationsMixin(object):
         :rtype: ~azure.core.paging.ItemPaged[~azure.keyvault.v7_0.models.StorageListResult]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.StorageListResult"]
-        error_map = {404: ResourceNotFoundError, 409: ResourceExistsError}
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.StorageListResult"]
+        error_map = {
+            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
+        }
         error_map.update(kwargs.pop('error_map', {}))
         api_version = "7.0"
+        accept = "application/json"
 
         def prepare_request(next_link=None):
             # Construct headers
             header_parameters = {}  # type: Dict[str, Any]
-            header_parameters['Accept'] = 'application/json'
+            header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
 
             if not next_link:
                 # Construct URL
@@ -4054,7 +4211,7 @@ class KeyVaultClientOperationsMixin(object):
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
-                error = self._deserialize(models.KeyVaultError, response)
+                error = self._deserialize.failsafe_deserialize(_models.KeyVaultError, response)
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
                 raise HttpResponseError(response=response, model=error)
 
@@ -4071,7 +4228,7 @@ class KeyVaultClientOperationsMixin(object):
         maxresults=None,  # type: Optional[int]
         **kwargs  # type: Any
     ):
-        # type: (...) -> Iterable["models.DeletedStorageListResult"]
+        # type: (...) -> Iterable["_models.DeletedStorageListResult"]
         """Lists deleted storage accounts for the specified vault.
 
         The Get Deleted Storage Accounts operation returns the storage accounts that have been deleted
@@ -4087,15 +4244,18 @@ class KeyVaultClientOperationsMixin(object):
         :rtype: ~azure.core.paging.ItemPaged[~azure.keyvault.v7_0.models.DeletedStorageListResult]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.DeletedStorageListResult"]
-        error_map = {404: ResourceNotFoundError, 409: ResourceExistsError}
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.DeletedStorageListResult"]
+        error_map = {
+            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
+        }
         error_map.update(kwargs.pop('error_map', {}))
         api_version = "7.0"
+        accept = "application/json"
 
         def prepare_request(next_link=None):
             # Construct headers
             header_parameters = {}  # type: Dict[str, Any]
-            header_parameters['Accept'] = 'application/json'
+            header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
 
             if not next_link:
                 # Construct URL
@@ -4135,7 +4295,7 @@ class KeyVaultClientOperationsMixin(object):
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
-                error = self._deserialize(models.KeyVaultError, response)
+                error = self._deserialize.failsafe_deserialize(_models.KeyVaultError, response)
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
                 raise HttpResponseError(response=response, model=error)
 
@@ -4152,7 +4312,7 @@ class KeyVaultClientOperationsMixin(object):
         storage_account_name,  # type: str
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.DeletedStorageBundle"
+        # type: (...) -> "_models.DeletedStorageBundle"
         """Gets the specified deleted storage account.
 
         The Get Deleted Storage Account operation returns the specified deleted storage account along
@@ -4167,10 +4327,13 @@ class KeyVaultClientOperationsMixin(object):
         :rtype: ~azure.keyvault.v7_0.models.DeletedStorageBundle
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.DeletedStorageBundle"]
-        error_map = {404: ResourceNotFoundError, 409: ResourceExistsError}
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.DeletedStorageBundle"]
+        error_map = {
+            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
+        }
         error_map.update(kwargs.pop('error_map', {}))
         api_version = "7.0"
+        accept = "application/json"
 
         # Construct URL
         url = self.get_deleted_storage_account.metadata['url']  # type: ignore
@@ -4186,7 +4349,7 @@ class KeyVaultClientOperationsMixin(object):
 
         # Construct headers
         header_parameters = {}  # type: Dict[str, Any]
-        header_parameters['Accept'] = 'application/json'
+        header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
 
         request = self._client.get(url, query_parameters, header_parameters)
         pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
@@ -4194,7 +4357,7 @@ class KeyVaultClientOperationsMixin(object):
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.KeyVaultError, response)
+            error = self._deserialize.failsafe_deserialize(_models.KeyVaultError, response)
             raise HttpResponseError(response=response, model=error)
 
         deserialized = self._deserialize('DeletedStorageBundle', pipeline_response)
@@ -4228,9 +4391,12 @@ class KeyVaultClientOperationsMixin(object):
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType[None]
-        error_map = {404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map = {
+            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
+        }
         error_map.update(kwargs.pop('error_map', {}))
         api_version = "7.0"
+        accept = "application/json"
 
         # Construct URL
         url = self.purge_deleted_storage_account.metadata['url']  # type: ignore
@@ -4246,6 +4412,7 @@ class KeyVaultClientOperationsMixin(object):
 
         # Construct headers
         header_parameters = {}  # type: Dict[str, Any]
+        header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
 
         request = self._client.delete(url, query_parameters, header_parameters)
         pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
@@ -4253,7 +4420,7 @@ class KeyVaultClientOperationsMixin(object):
 
         if response.status_code not in [204]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.KeyVaultError, response)
+            error = self._deserialize.failsafe_deserialize(_models.KeyVaultError, response)
             raise HttpResponseError(response=response, model=error)
 
         if cls:
@@ -4267,7 +4434,7 @@ class KeyVaultClientOperationsMixin(object):
         storage_account_name,  # type: str
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.StorageBundle"
+        # type: (...) -> "_models.StorageBundle"
         """Recovers the deleted storage account.
 
         Recovers the deleted storage account in the specified vault. This operation can only be
@@ -4283,10 +4450,13 @@ class KeyVaultClientOperationsMixin(object):
         :rtype: ~azure.keyvault.v7_0.models.StorageBundle
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.StorageBundle"]
-        error_map = {404: ResourceNotFoundError, 409: ResourceExistsError}
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.StorageBundle"]
+        error_map = {
+            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
+        }
         error_map.update(kwargs.pop('error_map', {}))
         api_version = "7.0"
+        accept = "application/json"
 
         # Construct URL
         url = self.recover_deleted_storage_account.metadata['url']  # type: ignore
@@ -4302,7 +4472,7 @@ class KeyVaultClientOperationsMixin(object):
 
         # Construct headers
         header_parameters = {}  # type: Dict[str, Any]
-        header_parameters['Accept'] = 'application/json'
+        header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
 
         request = self._client.post(url, query_parameters, header_parameters)
         pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
@@ -4310,7 +4480,7 @@ class KeyVaultClientOperationsMixin(object):
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.KeyVaultError, response)
+            error = self._deserialize.failsafe_deserialize(_models.KeyVaultError, response)
             raise HttpResponseError(response=response, model=error)
 
         deserialized = self._deserialize('StorageBundle', pipeline_response)
@@ -4327,7 +4497,7 @@ class KeyVaultClientOperationsMixin(object):
         storage_account_name,  # type: str
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.BackupStorageResult"
+        # type: (...) -> "_models.BackupStorageResult"
         """Backs up the specified storage account.
 
         Requests that a backup of the specified storage account be downloaded to the client. This
@@ -4342,10 +4512,13 @@ class KeyVaultClientOperationsMixin(object):
         :rtype: ~azure.keyvault.v7_0.models.BackupStorageResult
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.BackupStorageResult"]
-        error_map = {404: ResourceNotFoundError, 409: ResourceExistsError}
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.BackupStorageResult"]
+        error_map = {
+            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
+        }
         error_map.update(kwargs.pop('error_map', {}))
         api_version = "7.0"
+        accept = "application/json"
 
         # Construct URL
         url = self.backup_storage_account.metadata['url']  # type: ignore
@@ -4361,7 +4534,7 @@ class KeyVaultClientOperationsMixin(object):
 
         # Construct headers
         header_parameters = {}  # type: Dict[str, Any]
-        header_parameters['Accept'] = 'application/json'
+        header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
 
         request = self._client.post(url, query_parameters, header_parameters)
         pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
@@ -4369,7 +4542,7 @@ class KeyVaultClientOperationsMixin(object):
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.KeyVaultError, response)
+            error = self._deserialize.failsafe_deserialize(_models.KeyVaultError, response)
             raise HttpResponseError(response=response, model=error)
 
         deserialized = self._deserialize('BackupStorageResult', pipeline_response)
@@ -4383,10 +4556,10 @@ class KeyVaultClientOperationsMixin(object):
     def restore_storage_account(
         self,
         vault_base_url,  # type: str
-        parameters,  # type: "models.StorageRestoreParameters"
+        parameters,  # type: "_models.StorageRestoreParameters"
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.StorageBundle"
+        # type: (...) -> "_models.StorageBundle"
         """Restores a backed up storage account to a vault.
 
         Restores a backed up storage account to a vault. This operation requires the storage/restore
@@ -4401,11 +4574,14 @@ class KeyVaultClientOperationsMixin(object):
         :rtype: ~azure.keyvault.v7_0.models.StorageBundle
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.StorageBundle"]
-        error_map = {404: ResourceNotFoundError, 409: ResourceExistsError}
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.StorageBundle"]
+        error_map = {
+            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
+        }
         error_map.update(kwargs.pop('error_map', {}))
         api_version = "7.0"
         content_type = kwargs.pop("content_type", "application/json")
+        accept = "application/json"
 
         # Construct URL
         url = self.restore_storage_account.metadata['url']  # type: ignore
@@ -4421,19 +4597,18 @@ class KeyVaultClientOperationsMixin(object):
         # Construct headers
         header_parameters = {}  # type: Dict[str, Any]
         header_parameters['Content-Type'] = self._serialize.header("content_type", content_type, 'str')
-        header_parameters['Accept'] = 'application/json'
+        header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
 
         body_content_kwargs = {}  # type: Dict[str, Any]
         body_content = self._serialize.body(parameters, 'StorageRestoreParameters')
         body_content_kwargs['content'] = body_content
         request = self._client.post(url, query_parameters, header_parameters, **body_content_kwargs)
-
         pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.KeyVaultError, response)
+            error = self._deserialize.failsafe_deserialize(_models.KeyVaultError, response)
             raise HttpResponseError(response=response, model=error)
 
         deserialized = self._deserialize('StorageBundle', pipeline_response)
@@ -4450,7 +4625,7 @@ class KeyVaultClientOperationsMixin(object):
         storage_account_name,  # type: str
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.DeletedStorageBundle"
+        # type: (...) -> "_models.DeletedStorageBundle"
         """Deletes a storage account. This operation requires the storage/delete permission.
 
         :param vault_base_url: The vault name, for example https://myvault.vault.azure.net.
@@ -4462,10 +4637,13 @@ class KeyVaultClientOperationsMixin(object):
         :rtype: ~azure.keyvault.v7_0.models.DeletedStorageBundle
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.DeletedStorageBundle"]
-        error_map = {404: ResourceNotFoundError, 409: ResourceExistsError}
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.DeletedStorageBundle"]
+        error_map = {
+            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
+        }
         error_map.update(kwargs.pop('error_map', {}))
         api_version = "7.0"
+        accept = "application/json"
 
         # Construct URL
         url = self.delete_storage_account.metadata['url']  # type: ignore
@@ -4481,7 +4659,7 @@ class KeyVaultClientOperationsMixin(object):
 
         # Construct headers
         header_parameters = {}  # type: Dict[str, Any]
-        header_parameters['Accept'] = 'application/json'
+        header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
 
         request = self._client.delete(url, query_parameters, header_parameters)
         pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
@@ -4489,7 +4667,7 @@ class KeyVaultClientOperationsMixin(object):
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.KeyVaultError, response)
+            error = self._deserialize.failsafe_deserialize(_models.KeyVaultError, response)
             raise HttpResponseError(response=response, model=error)
 
         deserialized = self._deserialize('DeletedStorageBundle', pipeline_response)
@@ -4506,7 +4684,7 @@ class KeyVaultClientOperationsMixin(object):
         storage_account_name,  # type: str
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.StorageBundle"
+        # type: (...) -> "_models.StorageBundle"
         """Gets information about a specified storage account. This operation requires the storage/get
         permission.
 
@@ -4519,10 +4697,13 @@ class KeyVaultClientOperationsMixin(object):
         :rtype: ~azure.keyvault.v7_0.models.StorageBundle
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.StorageBundle"]
-        error_map = {404: ResourceNotFoundError, 409: ResourceExistsError}
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.StorageBundle"]
+        error_map = {
+            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
+        }
         error_map.update(kwargs.pop('error_map', {}))
         api_version = "7.0"
+        accept = "application/json"
 
         # Construct URL
         url = self.get_storage_account.metadata['url']  # type: ignore
@@ -4538,7 +4719,7 @@ class KeyVaultClientOperationsMixin(object):
 
         # Construct headers
         header_parameters = {}  # type: Dict[str, Any]
-        header_parameters['Accept'] = 'application/json'
+        header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
 
         request = self._client.get(url, query_parameters, header_parameters)
         pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
@@ -4546,7 +4727,7 @@ class KeyVaultClientOperationsMixin(object):
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.KeyVaultError, response)
+            error = self._deserialize.failsafe_deserialize(_models.KeyVaultError, response)
             raise HttpResponseError(response=response, model=error)
 
         deserialized = self._deserialize('StorageBundle', pipeline_response)
@@ -4561,10 +4742,10 @@ class KeyVaultClientOperationsMixin(object):
         self,
         vault_base_url,  # type: str
         storage_account_name,  # type: str
-        parameters,  # type: "models.StorageAccountCreateParameters"
+        parameters,  # type: "_models.StorageAccountCreateParameters"
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.StorageBundle"
+        # type: (...) -> "_models.StorageBundle"
         """Creates or updates a new storage account. This operation requires the storage/set permission.
 
         :param vault_base_url: The vault name, for example https://myvault.vault.azure.net.
@@ -4578,11 +4759,14 @@ class KeyVaultClientOperationsMixin(object):
         :rtype: ~azure.keyvault.v7_0.models.StorageBundle
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.StorageBundle"]
-        error_map = {404: ResourceNotFoundError, 409: ResourceExistsError}
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.StorageBundle"]
+        error_map = {
+            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
+        }
         error_map.update(kwargs.pop('error_map', {}))
         api_version = "7.0"
         content_type = kwargs.pop("content_type", "application/json")
+        accept = "application/json"
 
         # Construct URL
         url = self.set_storage_account.metadata['url']  # type: ignore
@@ -4599,19 +4783,18 @@ class KeyVaultClientOperationsMixin(object):
         # Construct headers
         header_parameters = {}  # type: Dict[str, Any]
         header_parameters['Content-Type'] = self._serialize.header("content_type", content_type, 'str')
-        header_parameters['Accept'] = 'application/json'
+        header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
 
         body_content_kwargs = {}  # type: Dict[str, Any]
         body_content = self._serialize.body(parameters, 'StorageAccountCreateParameters')
         body_content_kwargs['content'] = body_content
         request = self._client.put(url, query_parameters, header_parameters, **body_content_kwargs)
-
         pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.KeyVaultError, response)
+            error = self._deserialize.failsafe_deserialize(_models.KeyVaultError, response)
             raise HttpResponseError(response=response, model=error)
 
         deserialized = self._deserialize('StorageBundle', pipeline_response)
@@ -4626,10 +4809,10 @@ class KeyVaultClientOperationsMixin(object):
         self,
         vault_base_url,  # type: str
         storage_account_name,  # type: str
-        parameters,  # type: "models.StorageAccountUpdateParameters"
+        parameters,  # type: "_models.StorageAccountUpdateParameters"
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.StorageBundle"
+        # type: (...) -> "_models.StorageBundle"
         """Updates the specified attributes associated with the given storage account. This operation
         requires the storage/set/update permission.
 
@@ -4644,11 +4827,14 @@ class KeyVaultClientOperationsMixin(object):
         :rtype: ~azure.keyvault.v7_0.models.StorageBundle
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.StorageBundle"]
-        error_map = {404: ResourceNotFoundError, 409: ResourceExistsError}
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.StorageBundle"]
+        error_map = {
+            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
+        }
         error_map.update(kwargs.pop('error_map', {}))
         api_version = "7.0"
         content_type = kwargs.pop("content_type", "application/json")
+        accept = "application/json"
 
         # Construct URL
         url = self.update_storage_account.metadata['url']  # type: ignore
@@ -4665,19 +4851,18 @@ class KeyVaultClientOperationsMixin(object):
         # Construct headers
         header_parameters = {}  # type: Dict[str, Any]
         header_parameters['Content-Type'] = self._serialize.header("content_type", content_type, 'str')
-        header_parameters['Accept'] = 'application/json'
+        header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
 
         body_content_kwargs = {}  # type: Dict[str, Any]
         body_content = self._serialize.body(parameters, 'StorageAccountUpdateParameters')
         body_content_kwargs['content'] = body_content
         request = self._client.patch(url, query_parameters, header_parameters, **body_content_kwargs)
-
         pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.KeyVaultError, response)
+            error = self._deserialize.failsafe_deserialize(_models.KeyVaultError, response)
             raise HttpResponseError(response=response, model=error)
 
         deserialized = self._deserialize('StorageBundle', pipeline_response)
@@ -4692,10 +4877,10 @@ class KeyVaultClientOperationsMixin(object):
         self,
         vault_base_url,  # type: str
         storage_account_name,  # type: str
-        parameters,  # type: "models.StorageAccountRegenerteKeyParameters"
+        parameters,  # type: "_models.StorageAccountRegenerteKeyParameters"
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.StorageBundle"
+        # type: (...) -> "_models.StorageBundle"
         """Regenerates the specified key value for the given storage account. This operation requires the
         storage/regeneratekey permission.
 
@@ -4710,11 +4895,14 @@ class KeyVaultClientOperationsMixin(object):
         :rtype: ~azure.keyvault.v7_0.models.StorageBundle
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.StorageBundle"]
-        error_map = {404: ResourceNotFoundError, 409: ResourceExistsError}
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.StorageBundle"]
+        error_map = {
+            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
+        }
         error_map.update(kwargs.pop('error_map', {}))
         api_version = "7.0"
         content_type = kwargs.pop("content_type", "application/json")
+        accept = "application/json"
 
         # Construct URL
         url = self.regenerate_storage_account_key.metadata['url']  # type: ignore
@@ -4731,19 +4919,18 @@ class KeyVaultClientOperationsMixin(object):
         # Construct headers
         header_parameters = {}  # type: Dict[str, Any]
         header_parameters['Content-Type'] = self._serialize.header("content_type", content_type, 'str')
-        header_parameters['Accept'] = 'application/json'
+        header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
 
         body_content_kwargs = {}  # type: Dict[str, Any]
         body_content = self._serialize.body(parameters, 'StorageAccountRegenerteKeyParameters')
         body_content_kwargs['content'] = body_content
         request = self._client.post(url, query_parameters, header_parameters, **body_content_kwargs)
-
         pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.KeyVaultError, response)
+            error = self._deserialize.failsafe_deserialize(_models.KeyVaultError, response)
             raise HttpResponseError(response=response, model=error)
 
         deserialized = self._deserialize('StorageBundle', pipeline_response)
@@ -4761,7 +4948,7 @@ class KeyVaultClientOperationsMixin(object):
         maxresults=None,  # type: Optional[int]
         **kwargs  # type: Any
     ):
-        # type: (...) -> Iterable["models.SasDefinitionListResult"]
+        # type: (...) -> Iterable["_models.SasDefinitionListResult"]
         """List storage SAS definitions for the given storage account. This operation requires the
         storage/listsas permission.
 
@@ -4777,15 +4964,18 @@ class KeyVaultClientOperationsMixin(object):
         :rtype: ~azure.core.paging.ItemPaged[~azure.keyvault.v7_0.models.SasDefinitionListResult]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.SasDefinitionListResult"]
-        error_map = {404: ResourceNotFoundError, 409: ResourceExistsError}
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.SasDefinitionListResult"]
+        error_map = {
+            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
+        }
         error_map.update(kwargs.pop('error_map', {}))
         api_version = "7.0"
+        accept = "application/json"
 
         def prepare_request(next_link=None):
             # Construct headers
             header_parameters = {}  # type: Dict[str, Any]
-            header_parameters['Accept'] = 'application/json'
+            header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
 
             if not next_link:
                 # Construct URL
@@ -4827,7 +5017,7 @@ class KeyVaultClientOperationsMixin(object):
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
-                error = self._deserialize(models.KeyVaultError, response)
+                error = self._deserialize.failsafe_deserialize(_models.KeyVaultError, response)
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
                 raise HttpResponseError(response=response, model=error)
 
@@ -4845,7 +5035,7 @@ class KeyVaultClientOperationsMixin(object):
         maxresults=None,  # type: Optional[int]
         **kwargs  # type: Any
     ):
-        # type: (...) -> Iterable["models.DeletedSasDefinitionListResult"]
+        # type: (...) -> Iterable["_models.DeletedSasDefinitionListResult"]
         """Lists deleted SAS definitions for the specified vault and storage account.
 
         The Get Deleted Sas Definitions operation returns the SAS definitions that have been deleted
@@ -4863,15 +5053,18 @@ class KeyVaultClientOperationsMixin(object):
         :rtype: ~azure.core.paging.ItemPaged[~azure.keyvault.v7_0.models.DeletedSasDefinitionListResult]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.DeletedSasDefinitionListResult"]
-        error_map = {404: ResourceNotFoundError, 409: ResourceExistsError}
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.DeletedSasDefinitionListResult"]
+        error_map = {
+            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
+        }
         error_map.update(kwargs.pop('error_map', {}))
         api_version = "7.0"
+        accept = "application/json"
 
         def prepare_request(next_link=None):
             # Construct headers
             header_parameters = {}  # type: Dict[str, Any]
-            header_parameters['Accept'] = 'application/json'
+            header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
 
             if not next_link:
                 # Construct URL
@@ -4913,7 +5106,7 @@ class KeyVaultClientOperationsMixin(object):
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
-                error = self._deserialize(models.KeyVaultError, response)
+                error = self._deserialize.failsafe_deserialize(_models.KeyVaultError, response)
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
                 raise HttpResponseError(response=response, model=error)
 
@@ -4931,7 +5124,7 @@ class KeyVaultClientOperationsMixin(object):
         sas_definition_name,  # type: str
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.DeletedSasDefinitionBundle"
+        # type: (...) -> "_models.DeletedSasDefinitionBundle"
         """Gets the specified deleted sas definition.
 
         The Get Deleted SAS Definition operation returns the specified deleted SAS definition along
@@ -4948,10 +5141,13 @@ class KeyVaultClientOperationsMixin(object):
         :rtype: ~azure.keyvault.v7_0.models.DeletedSasDefinitionBundle
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.DeletedSasDefinitionBundle"]
-        error_map = {404: ResourceNotFoundError, 409: ResourceExistsError}
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.DeletedSasDefinitionBundle"]
+        error_map = {
+            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
+        }
         error_map.update(kwargs.pop('error_map', {}))
         api_version = "7.0"
+        accept = "application/json"
 
         # Construct URL
         url = self.get_deleted_sas_definition.metadata['url']  # type: ignore
@@ -4968,7 +5164,7 @@ class KeyVaultClientOperationsMixin(object):
 
         # Construct headers
         header_parameters = {}  # type: Dict[str, Any]
-        header_parameters['Accept'] = 'application/json'
+        header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
 
         request = self._client.get(url, query_parameters, header_parameters)
         pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
@@ -4976,7 +5172,7 @@ class KeyVaultClientOperationsMixin(object):
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.KeyVaultError, response)
+            error = self._deserialize.failsafe_deserialize(_models.KeyVaultError, response)
             raise HttpResponseError(response=response, model=error)
 
         deserialized = self._deserialize('DeletedSasDefinitionBundle', pipeline_response)
@@ -4994,7 +5190,7 @@ class KeyVaultClientOperationsMixin(object):
         sas_definition_name,  # type: str
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.SasDefinitionBundle"
+        # type: (...) -> "_models.SasDefinitionBundle"
         """Recovers the deleted SAS definition.
 
         Recovers the deleted SAS definition for the specified storage account. This operation can only
@@ -5012,10 +5208,13 @@ class KeyVaultClientOperationsMixin(object):
         :rtype: ~azure.keyvault.v7_0.models.SasDefinitionBundle
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.SasDefinitionBundle"]
-        error_map = {404: ResourceNotFoundError, 409: ResourceExistsError}
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.SasDefinitionBundle"]
+        error_map = {
+            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
+        }
         error_map.update(kwargs.pop('error_map', {}))
         api_version = "7.0"
+        accept = "application/json"
 
         # Construct URL
         url = self.recover_deleted_sas_definition.metadata['url']  # type: ignore
@@ -5032,7 +5231,7 @@ class KeyVaultClientOperationsMixin(object):
 
         # Construct headers
         header_parameters = {}  # type: Dict[str, Any]
-        header_parameters['Accept'] = 'application/json'
+        header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
 
         request = self._client.post(url, query_parameters, header_parameters)
         pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
@@ -5040,7 +5239,7 @@ class KeyVaultClientOperationsMixin(object):
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.KeyVaultError, response)
+            error = self._deserialize.failsafe_deserialize(_models.KeyVaultError, response)
             raise HttpResponseError(response=response, model=error)
 
         deserialized = self._deserialize('SasDefinitionBundle', pipeline_response)
@@ -5058,7 +5257,7 @@ class KeyVaultClientOperationsMixin(object):
         sas_definition_name,  # type: str
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.DeletedSasDefinitionBundle"
+        # type: (...) -> "_models.DeletedSasDefinitionBundle"
         """Deletes a SAS definition from a specified storage account. This operation requires the
         storage/deletesas permission.
 
@@ -5073,10 +5272,13 @@ class KeyVaultClientOperationsMixin(object):
         :rtype: ~azure.keyvault.v7_0.models.DeletedSasDefinitionBundle
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.DeletedSasDefinitionBundle"]
-        error_map = {404: ResourceNotFoundError, 409: ResourceExistsError}
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.DeletedSasDefinitionBundle"]
+        error_map = {
+            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
+        }
         error_map.update(kwargs.pop('error_map', {}))
         api_version = "7.0"
+        accept = "application/json"
 
         # Construct URL
         url = self.delete_sas_definition.metadata['url']  # type: ignore
@@ -5093,7 +5295,7 @@ class KeyVaultClientOperationsMixin(object):
 
         # Construct headers
         header_parameters = {}  # type: Dict[str, Any]
-        header_parameters['Accept'] = 'application/json'
+        header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
 
         request = self._client.delete(url, query_parameters, header_parameters)
         pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
@@ -5101,7 +5303,7 @@ class KeyVaultClientOperationsMixin(object):
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.KeyVaultError, response)
+            error = self._deserialize.failsafe_deserialize(_models.KeyVaultError, response)
             raise HttpResponseError(response=response, model=error)
 
         deserialized = self._deserialize('DeletedSasDefinitionBundle', pipeline_response)
@@ -5119,7 +5321,7 @@ class KeyVaultClientOperationsMixin(object):
         sas_definition_name,  # type: str
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.SasDefinitionBundle"
+        # type: (...) -> "_models.SasDefinitionBundle"
         """Gets information about a SAS definition for the specified storage account. This operation
         requires the storage/getsas permission.
 
@@ -5134,10 +5336,13 @@ class KeyVaultClientOperationsMixin(object):
         :rtype: ~azure.keyvault.v7_0.models.SasDefinitionBundle
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.SasDefinitionBundle"]
-        error_map = {404: ResourceNotFoundError, 409: ResourceExistsError}
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.SasDefinitionBundle"]
+        error_map = {
+            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
+        }
         error_map.update(kwargs.pop('error_map', {}))
         api_version = "7.0"
+        accept = "application/json"
 
         # Construct URL
         url = self.get_sas_definition.metadata['url']  # type: ignore
@@ -5154,7 +5359,7 @@ class KeyVaultClientOperationsMixin(object):
 
         # Construct headers
         header_parameters = {}  # type: Dict[str, Any]
-        header_parameters['Accept'] = 'application/json'
+        header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
 
         request = self._client.get(url, query_parameters, header_parameters)
         pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
@@ -5162,7 +5367,7 @@ class KeyVaultClientOperationsMixin(object):
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.KeyVaultError, response)
+            error = self._deserialize.failsafe_deserialize(_models.KeyVaultError, response)
             raise HttpResponseError(response=response, model=error)
 
         deserialized = self._deserialize('SasDefinitionBundle', pipeline_response)
@@ -5178,10 +5383,10 @@ class KeyVaultClientOperationsMixin(object):
         vault_base_url,  # type: str
         storage_account_name,  # type: str
         sas_definition_name,  # type: str
-        parameters,  # type: "models.SasDefinitionCreateParameters"
+        parameters,  # type: "_models.SasDefinitionCreateParameters"
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.SasDefinitionBundle"
+        # type: (...) -> "_models.SasDefinitionBundle"
         """Creates or updates a new SAS definition for the specified storage account. This operation
         requires the storage/setsas permission.
 
@@ -5198,11 +5403,14 @@ class KeyVaultClientOperationsMixin(object):
         :rtype: ~azure.keyvault.v7_0.models.SasDefinitionBundle
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.SasDefinitionBundle"]
-        error_map = {404: ResourceNotFoundError, 409: ResourceExistsError}
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.SasDefinitionBundle"]
+        error_map = {
+            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
+        }
         error_map.update(kwargs.pop('error_map', {}))
         api_version = "7.0"
         content_type = kwargs.pop("content_type", "application/json")
+        accept = "application/json"
 
         # Construct URL
         url = self.set_sas_definition.metadata['url']  # type: ignore
@@ -5220,19 +5428,18 @@ class KeyVaultClientOperationsMixin(object):
         # Construct headers
         header_parameters = {}  # type: Dict[str, Any]
         header_parameters['Content-Type'] = self._serialize.header("content_type", content_type, 'str')
-        header_parameters['Accept'] = 'application/json'
+        header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
 
         body_content_kwargs = {}  # type: Dict[str, Any]
         body_content = self._serialize.body(parameters, 'SasDefinitionCreateParameters')
         body_content_kwargs['content'] = body_content
         request = self._client.put(url, query_parameters, header_parameters, **body_content_kwargs)
-
         pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.KeyVaultError, response)
+            error = self._deserialize.failsafe_deserialize(_models.KeyVaultError, response)
             raise HttpResponseError(response=response, model=error)
 
         deserialized = self._deserialize('SasDefinitionBundle', pipeline_response)
@@ -5248,10 +5455,10 @@ class KeyVaultClientOperationsMixin(object):
         vault_base_url,  # type: str
         storage_account_name,  # type: str
         sas_definition_name,  # type: str
-        parameters,  # type: "models.SasDefinitionUpdateParameters"
+        parameters,  # type: "_models.SasDefinitionUpdateParameters"
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.SasDefinitionBundle"
+        # type: (...) -> "_models.SasDefinitionBundle"
         """Updates the specified attributes associated with the given SAS definition. This operation
         requires the storage/setsas permission.
 
@@ -5268,11 +5475,14 @@ class KeyVaultClientOperationsMixin(object):
         :rtype: ~azure.keyvault.v7_0.models.SasDefinitionBundle
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.SasDefinitionBundle"]
-        error_map = {404: ResourceNotFoundError, 409: ResourceExistsError}
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.SasDefinitionBundle"]
+        error_map = {
+            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
+        }
         error_map.update(kwargs.pop('error_map', {}))
         api_version = "7.0"
         content_type = kwargs.pop("content_type", "application/json")
+        accept = "application/json"
 
         # Construct URL
         url = self.update_sas_definition.metadata['url']  # type: ignore
@@ -5290,19 +5500,18 @@ class KeyVaultClientOperationsMixin(object):
         # Construct headers
         header_parameters = {}  # type: Dict[str, Any]
         header_parameters['Content-Type'] = self._serialize.header("content_type", content_type, 'str')
-        header_parameters['Accept'] = 'application/json'
+        header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
 
         body_content_kwargs = {}  # type: Dict[str, Any]
         body_content = self._serialize.body(parameters, 'SasDefinitionUpdateParameters')
         body_content_kwargs['content'] = body_content
         request = self._client.patch(url, query_parameters, header_parameters, **body_content_kwargs)
-
         pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.KeyVaultError, response)
+            error = self._deserialize.failsafe_deserialize(_models.KeyVaultError, response)
             raise HttpResponseError(response=response, model=error)
 
         deserialized = self._deserialize('SasDefinitionBundle', pipeline_response)

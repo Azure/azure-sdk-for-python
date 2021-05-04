@@ -11,23 +11,28 @@ import uuid
 import warnings
 
 from azure.eventhub.extensions.checkpointstoreblob import BlobCheckpointStore
-from azure.eventhub.extensions.checkpointstoreblob._vendor.storage.blob import BlobServiceClient, ContainerClient
+from azure.eventhub.extensions.checkpointstoreblob._vendor.storage.blob import BlobServiceClient
 
-def get_live_storage_blob_client():
+
+STORAGE_ENV_KEYS = [
+    "AZURE_STORAGE_CONN_STR",
+    "AZURE_STORAGE_DATA_LAKE_ENABLED_CONN_STR"
+]
+
+
+def get_live_storage_blob_client(conn_str_env_key):
     try:
-        storage_connection_str = os.environ['AZURE_STORAGE_CONN_STR']
-    except KeyError:
-        return None, None
+        storage_connection_str = os.environ[conn_str_env_key]
+        container_name = str(uuid.uuid4())
+        blob_service_client = BlobServiceClient.from_connection_string(storage_connection_str)
+        blob_service_client.create_container(container_name)
+        return storage_connection_str, container_name
+    except:
+        pytest.skip("Storage blob client can't be created")
 
-    container_name = str(uuid.uuid4())
-    blob_service_client = BlobServiceClient.from_connection_string(storage_connection_str)
-    blob_service_client.create_container(container_name)
-    return storage_connection_str, container_name
 
-
-def remove_live_storage_blob_client(container_name):
+def remove_live_storage_blob_client(storage_connection_str, container_name):
     try:
-        storage_connection_str = os.environ['AZURE_STORAGE_CONN_STR']
         blob_service_client = BlobServiceClient.from_connection_string(storage_connection_str)
         blob_service_client.delete_container(container_name)
     except:
@@ -72,17 +77,6 @@ def _claim_and_list_ownership(storage_connection_str, container_name):
         assert len(ownership_list) == ownership_cnt
 
 
-@pytest.mark.liveTest
-def test_claim_and_list_ownership():
-    storage_connection_str, container_name = get_live_storage_blob_client()
-    if not storage_connection_str:
-        pytest.skip("Storage blob client can't be created")
-    try:
-        _claim_and_list_ownership(storage_connection_str, container_name)
-    finally:
-        remove_live_storage_blob_client(container_name)
-
-
 def _update_checkpoint(storage_connection_str, container_name):
     fully_qualified_namespace = 'test_namespace'
     eventhub_name = 'eventhub'
@@ -113,12 +107,21 @@ def _update_checkpoint(storage_connection_str, container_name):
             assert checkpoint['sequence_number'] == 20
 
 
+@pytest.mark.parametrize("conn_str_env_key", STORAGE_ENV_KEYS)
 @pytest.mark.liveTest
-def test_update_checkpoint():
-    storage_connection_str, container_name = get_live_storage_blob_client()
-    if not storage_connection_str:
-        pytest.skip("Storage blob client can't be created")
+def test_claim_and_list_ownership(conn_str_env_key):
+    storage_connection_str, container_name = get_live_storage_blob_client(conn_str_env_key)
+    try:
+        _claim_and_list_ownership(storage_connection_str, container_name)
+    finally:
+        remove_live_storage_blob_client(storage_connection_str, container_name)
+
+
+@pytest.mark.parametrize("conn_str_env_key", STORAGE_ENV_KEYS)
+@pytest.mark.liveTest
+def test_update_checkpoint(conn_str_env_key):
+    storage_connection_str, container_name = get_live_storage_blob_client(conn_str_env_key)
     try:
         _update_checkpoint(storage_connection_str, container_name)
     finally:
-        remove_live_storage_blob_client(container_name)
+        remove_live_storage_blob_client(storage_connection_str, container_name)

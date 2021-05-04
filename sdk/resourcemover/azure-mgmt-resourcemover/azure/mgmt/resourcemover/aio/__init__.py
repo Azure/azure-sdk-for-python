@@ -6,5 +6,5 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-from ._resource_mover_service_api_async import ResourceMoverServiceAPI
+from ._resource_mover_service_api import ResourceMoverServiceAPI
 __all__ = ['ResourceMoverServiceAPI']

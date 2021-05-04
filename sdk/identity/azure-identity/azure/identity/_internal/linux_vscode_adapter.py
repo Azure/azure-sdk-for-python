@@ -46,7 +46,7 @@ try:
     _libsecret.secret_password_lookup_sync.restype = ct.c_char_p
     _libsecret.secret_password_free.argtypes = [ct.c_char_p]
 except OSError:
-    _libsecret = None
+    _libsecret = None  # type: ignore
 
 
 def _get_user_settings_path():
@@ -59,10 +59,10 @@ def _get_user_settings():
     try:
         with open(path) as file:
             data = json.load(file)
-            environment_name = data.get("azure.cloud", "Azure")
+            environment_name = data.get("azure.cloud", "AzureCloud")
             return environment_name
     except IOError:
-        return "Azure"
+        return "AzureCloud"
 
 
 def _get_refresh_token(service_name, account_name):

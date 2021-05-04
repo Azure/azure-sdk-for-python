@@ -4,7 +4,7 @@
 # ------------------------------------
 from typing import TYPE_CHECKING
 
-from six.moves.urllib_parse import parse_qs, urlparse
+from six.moves.urllib_parse import parse_qs
 
 try:
     from http.server import HTTPServer, BaseHTTPRequestHandler
@@ -27,8 +27,8 @@ class AuthCodeRedirectHandler(BaseHTTPRequestHandler):
             return
 
         query = self.path.split("?", 1)[-1]
-        query = parse_qs(query, keep_blank_values=True)
-        self.server.query_params = query
+        parsed = parse_qs(query, keep_blank_values=True)
+        self.server.query_params = {k: v[0] if isinstance(v, list) and len(v) == 1 else v for k, v in parsed.items()}
 
         self.send_response(200)
         self.send_header("Content-Type", "text/html")
@@ -45,10 +45,9 @@ class AuthCodeRedirectServer(HTTPServer):
 
     query_params = {}  # type: Mapping[str, Any]
 
-    def __init__(self, uri, timeout):
-        # type: (str, int) -> None
-        parsed = urlparse(uri)
-        HTTPServer.__init__(self, (parsed.hostname, parsed.port), AuthCodeRedirectHandler)
+    def __init__(self, hostname, port, timeout):
+        # type: (str, int, int) -> None
+        HTTPServer.__init__(self, (hostname, port), AuthCodeRedirectHandler)
         self.timeout = timeout
 
     def wait_for_redirect(self):
@@ -56,7 +55,7 @@ class AuthCodeRedirectServer(HTTPServer):
         while not self.query_params:
             try:
                 self.handle_request()
-            except ValueError:
+            except (IOError, ValueError):
                 # socket has been closed, probably by handle_timeout
                 break
 

@@ -4,13 +4,18 @@
 # license information.
 # --------------------------------------------------------------------------
 
+from uuid import uuid4
+from datetime import datetime
 from azure.core.tracing.decorator import distributed_trace
-from azure.communication.sms._generated.models import SendMessageRequest
-from azure.communication.sms._generated.models import SendSmsResponse
+from azure.communication.sms._generated.models import (
+    SendMessageRequest,
+    SmsRecipient,
+    SmsSendOptions,
+)
+from azure.communication.sms._models import SmsSendResult
 
 from ._generated._azure_communication_sms_service import AzureCommunicationSMSService
-from ._shared.policy import HMACCredentialsPolicy
-from ._shared.utils import parse_connection_str
+from ._shared.utils import parse_connection_str, get_authentication_policy
 from ._version import SDK_MONIKER
 
 class SmsClient(object):
@@ -20,13 +25,12 @@ class SmsClient(object):
 
     :param str endpoint:
         The endpoint url for Azure Communication Service resource.
-    :param str credential:
-        The credentials with which to authenticate. The value is an account
-        shared access key
+    :param TokenCredential credential:
+        The TokenCredential we use to authenticate against the service.
     """
     def __init__(
             self, endpoint, # type: str
-            credential, # type: str
+            credential, # type: TokenCredential
             **kwargs # type: Any
         ):
         # type: (...) -> None
@@ -41,8 +45,7 @@ class SmsClient(object):
                 "invalid credential from connection string.")
 
         self._endpoint = endpoint
-        self._authentication_policy = HMACCredentialsPolicy(endpoint, credential)
-
+        self._authentication_policy = get_authentication_policy(endpoint, credential)
         self._sms_service_client = AzureCommunicationSMSService(
             self._endpoint,
             authentication_policy=self._authentication_policy,
@@ -74,31 +77,58 @@ class SmsClient(object):
         return cls(endpoint, access_key, **kwargs)
 
     @distributed_trace
-    def send(self, from_phone_number, # type: ~azure.communication.sms.PhoneNumber
-             to_phone_numbers, # type: list[~azure.communication.sms.PhoneNumber]
+    def send(self, from_, # type: str
+             to, # type: Union[str, List[str]]
              message, # type: str
-             **kwargs  #type: Any
-        ): # type: (...) -> SendSmsResponse
+             **kwargs #type: Any
+        ): # type: (...) -> [SmsSendResult]
         """Sends SMSs to phone numbers.
 
-        :param from_phone_number: the sender of the SMS.
-        :type from_phone_number: ~azure.communication.sms.PhoneNumber
-        :param to_phone_numbers: the list of recipients of the SMS.
-        :type to_phone_numbers: list[~azure.communication.sms.PhoneNumber]
+        :param str from_: The sender of the SMS.
+        :param to: The single recipient or the list of recipients of the SMS.
+        :type to: Union[str, List[str]]
         :param str message: The message in the SMS
-        :keyword send_sms_options: the options object to configure delivery reporting.
-        :type send_sms_options: ~azure.communication.sms.models.SendSmsOptions
-        :return: The response object with the message_id
-        :rtype: SendMessageResponse: ~azure.communication.sms.models.SendMessageResponse
+        :keyword bool enable_delivery_report: Enable this flag to receive a delivery report for this
+         message on the Azure Resource EventGrid.
+        :keyword str tag: Use this field to provide metadata that will then be sent back in the corresponding
+         Delivery Report.
+        :return: A list of SmsSendResult.
+        :rtype: [~azure.communication.sms.models.SmsSendResult]
         """
 
-        send_sms_options = kwargs.pop('send_sms_options', None)
+        if isinstance(to, str):
+            to = [to]
+
+        enable_delivery_report = kwargs.pop('enable_delivery_report', False)
+        tag = kwargs.pop('tag', None)
+
+        sms_send_options = SmsSendOptions(
+            enable_delivery_report=enable_delivery_report,
+            tag=tag
+        )
 
         request = SendMessageRequest(
-            from_property=from_phone_number,
-            to=to_phone_numbers,
+            from_property=from_,
+            sms_recipients=[
+                SmsRecipient(
+                    to=p,
+                    repeatability_request_id=str(uuid4()),
+                    repeatability_first_sent=datetime.utcnow()
+                ) for p in to
+            ],
             message=message,
-            send_sms_options=send_sms_options,
+            sms_send_options=sms_send_options,
             **kwargs)
 
-        return self._sms_service_client.sms.send(request, **kwargs)
+        return self._sms_service_client.sms.send(
+            request,
+            cls=lambda pr, r, e: [
+                SmsSendResult(
+                    to=item.to,
+                    message_id=item.message_id,
+                    http_status_code=item.http_status_code,
+                    successful=item.successful,
+                    error_message=item.error_message
+                ) for item in r.value
+            ],
+            **kwargs)

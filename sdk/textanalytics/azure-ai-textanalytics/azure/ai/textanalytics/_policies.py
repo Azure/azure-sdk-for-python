@@ -18,14 +18,16 @@ class TextAnalyticsResponseHookPolicy(SansIOHTTPPolicy):
         self._response_callback = request.context.options.pop("raw_response_hook", self._response_callback)
 
     def on_response(self, request, response):
+
         if self._response_callback:
             data = ContentDecodePolicy.deserialize_from_http_generics(response.http_response)
-            statistics = data.get("statistics", None)
-            model_version = data.get("modelVersion", None)
+            if data:
+                statistics = data.get("statistics", None)
+                model_version = data.get("modelVersion", None)
 
-            if statistics or model_version:
-                batch_statistics = TextDocumentBatchStatistics._from_generated(statistics)  # pylint: disable=protected-access
-                response.statistics = batch_statistics
-                response.model_version = model_version
-                response.raw_response = data
-                self._response_callback(response)
+                if statistics or model_version:
+                    batch_statistics = TextDocumentBatchStatistics._from_generated(statistics)  # pylint: disable=protected-access
+                    response.statistics = batch_statistics
+                    response.model_version = model_version
+            response.raw_response = data
+            self._response_callback(response)

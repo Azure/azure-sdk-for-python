@@ -8,7 +8,10 @@
 MYPY_HARD_FAILURE_OPTED = [
   "azure-core",
   "azure-eventhub",
+  "azure-identity",
   "azure-servicebus",
   "azure-ai-textanalytics",
-  "azure-ai-formrecognizer"
+  "azure-ai-formrecognizer",
+  "azure-ai-metricsadvisor",
+  "azure-eventgrid",
 ]

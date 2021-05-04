@@ -13,7 +13,7 @@ from azure.core.pipeline import PipelineResponse
 from azure.core.pipeline.transport import AsyncHttpResponse, HttpRequest
 from azure.mgmt.core.exceptions import ARMErrorFormat
 
-from ... import models
+from ... import models as _models
 
 T = TypeVar('T')
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]]
@@ -32,7 +32,7 @@ class VpnSiteLinkConnectionsOperations:
     :param deserializer: An object model deserializer.
     """
 
-    models = models
+    models = _models
 
     def __init__(self, client, config, serializer, deserializer) -> None:
         self._client = client
@@ -47,7 +47,7 @@ class VpnSiteLinkConnectionsOperations:
         connection_name: str,
         link_connection_name: str,
         **kwargs
-    ) -> "models.VpnSiteLinkConnection":
+    ) -> "_models.VpnSiteLinkConnection":
         """Retrieves the details of a vpn site link connection.
 
         :param resource_group_name: The resource group name of the VpnGateway.
@@ -63,7 +63,7 @@ class VpnSiteLinkConnectionsOperations:
         :rtype: ~azure.mgmt.network.v2019_09_01.models.VpnSiteLinkConnection
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.VpnSiteLinkConnection"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.VpnSiteLinkConnection"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }

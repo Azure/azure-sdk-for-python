@@ -1,8 +1,8 @@
-msrest
 trio; python_version >= '3.5'
 aiohttp>=3.0; python_version >= '3.5'
-aiodns>=2.0; python_version >= '3.5'
 typing_extensions>=3.7.2
 -e ../azure-core
 mock;python_version<="2.7"
 httpretty
+-e ../../../tools/azure-sdk-tools
+-e ../../../tools/azure-devtools

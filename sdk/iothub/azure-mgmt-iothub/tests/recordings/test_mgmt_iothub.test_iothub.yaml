@@ -11,12 +11,9 @@ interactions:
       Content-Length:
       - '23'
       Content-Type:
-      - application/json; charset=utf-8
+      - application/json
       User-Agent:
-      - python/3.8.1 (Windows-10-10.0.18362-SP0) msrest/0.6.11 msrest_azure/0.4.34
-        azure-mgmt-iothub/0.12.0 Azure-SDK-For-Python
-      accept-language:
-      - en-US
+      - azsdk-python-azure-mgmt-iothub/1.0.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: POST
     uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Devices/checkNameAvailability?api-version=2020-03-01
   response:
@@ -30,7 +27,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Tue, 12 May 2020 04:34:44 GMT
+      - Fri, 18 Dec 2020 03:15:33 GMT
       expires:
       - '-1'
       pragma:
@@ -63,12 +60,9 @@ interactions:
       Content-Length:
       - '136'
       Content-Type:
-      - application/json; charset=utf-8
+      - application/json
       User-Agent:
-      - python/3.8.1 (Windows-10-10.0.18362-SP0) msrest/0.6.11 msrest_azure/0.4.34
-        azure-mgmt-iothub/0.12.0 Azure-SDK-For-Python
-      accept-language:
-      - en-US
+      - azsdk-python-azure-mgmt-iothub/1.0.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: PUT
     uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_iothub_test_iothuba8d80b97/providers/Microsoft.Devices/IotHubs/iota8d80b97?api-version=2020-03-01
   response:
@@ -76,7 +70,7 @@ interactions:
       string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_iothub_test_iothuba8d80b97/providers/Microsoft.Devices/IotHubs/iota8d80b97","name":"iota8d80b97","type":"Microsoft.Devices/IotHubs","location":"westus","tags":{},"subscriptionid":"00000000-0000-0000-0000-000000000000","resourcegroup":"test_mgmt_iothub_test_iothuba8d80b97","properties":{"state":"Activating","provisioningState":"Accepted","enableFileUploadNotifications":false,"cloudToDevice":{"maxDeliveryCount":10,"defaultTtlAsIso8601":"PT1H","feedback":{"lockDurationAsIso8601":"PT1M","ttlAsIso8601":"PT1H","maxDeliveryCount":10}},"features":"None"},"sku":{"name":"S1","tier":"Standard","capacity":2}}'
     headers:
       azure-asyncoperation:
-      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Devices/operationResults/b3NfaWhfNjIxNGRhMWYtYmFkYS00OWZjLTg1OTctZWRjMGZlZDhlZmM3?api-version=2020-03-01&operationSource=os_ih&asyncinfo
+      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Devices/operationResults/b3NfaWhfZGZlZGQwNGUtZWQxNC00N2MxLWFmMDYtMDAwNmU3ZWUwY2E0?api-version=2020-03-01&operationSource=os_ih&asyncinfo
       cache-control:
       - no-cache
       content-length:
@@ -84,7 +78,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Tue, 12 May 2020 04:34:56 GMT
+      - Fri, 18 Dec 2020 03:15:43 GMT
       expires:
       - '-1'
       pragma:
@@ -104,16 +98,15 @@ interactions:
     body: null
     headers:
       Accept:
-      - application/json
+      - '*/*'
       Accept-Encoding:
       - gzip, deflate
       Connection:
       - keep-alive
       User-Agent:
-      - python/3.8.1 (Windows-10-10.0.18362-SP0) msrest/0.6.11 msrest_azure/0.4.34
-        azure-mgmt-iothub/0.12.0 Azure-SDK-For-Python
+      - azsdk-python-azure-mgmt-iothub/1.0.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Devices/operationResults/b3NfaWhfNjIxNGRhMWYtYmFkYS00OWZjLTg1OTctZWRjMGZlZDhlZmM3?api-version=2020-03-01&operationSource=os_ih&asyncinfo
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Devices/operationResults/b3NfaWhfZGZlZGQwNGUtZWQxNC00N2MxLWFmMDYtMDAwNmU3ZWUwY2E0?api-version=2020-03-01&operationSource=os_ih&asyncinfo
   response:
     body:
       string: '{"status":"Running"}'
@@ -125,7 +118,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Tue, 12 May 2020 04:35:27 GMT
+      - Fri, 18 Dec 2020 03:16:13 GMT
       expires:
       - '-1'
       pragma:
@@ -147,16 +140,15 @@ interactions:
     body: null
     headers:
       Accept:
-      - application/json
+      - '*/*'
       Accept-Encoding:
       - gzip, deflate
       Connection:
       - keep-alive
       User-Agent:
-      - python/3.8.1 (Windows-10-10.0.18362-SP0) msrest/0.6.11 msrest_azure/0.4.34
-        azure-mgmt-iothub/0.12.0 Azure-SDK-For-Python
+      - azsdk-python-azure-mgmt-iothub/1.0.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Devices/operationResults/b3NfaWhfNjIxNGRhMWYtYmFkYS00OWZjLTg1OTctZWRjMGZlZDhlZmM3?api-version=2020-03-01&operationSource=os_ih&asyncinfo
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Devices/operationResults/b3NfaWhfZGZlZGQwNGUtZWQxNC00N2MxLWFmMDYtMDAwNmU3ZWUwY2E0?api-version=2020-03-01&operationSource=os_ih&asyncinfo
   response:
     body:
       string: '{"status":"Running"}'
@@ -168,7 +160,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Tue, 12 May 2020 04:35:57 GMT
+      - Fri, 18 Dec 2020 03:16:44 GMT
       expires:
       - '-1'
       pragma:
@@ -190,16 +182,57 @@ interactions:
     body: null
     headers:
       Accept:
-      - application/json
+      - '*/*'
       Accept-Encoding:
       - gzip, deflate
       Connection:
       - keep-alive
       User-Agent:
-      - python/3.8.1 (Windows-10-10.0.18362-SP0) msrest/0.6.11 msrest_azure/0.4.34
-        azure-mgmt-iothub/0.12.0 Azure-SDK-For-Python
+      - azsdk-python-azure-mgmt-iothub/1.0.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Devices/operationResults/b3NfaWhfNjIxNGRhMWYtYmFkYS00OWZjLTg1OTctZWRjMGZlZDhlZmM3?api-version=2020-03-01&operationSource=os_ih&asyncinfo
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Devices/operationResults/b3NfaWhfZGZlZGQwNGUtZWQxNC00N2MxLWFmMDYtMDAwNmU3ZWUwY2E0?api-version=2020-03-01&operationSource=os_ih&asyncinfo
+  response:
+    body:
+      string: '{"status":"Running"}'
+    headers:
+      cache-control:
+      - no-cache
+      content-length:
+      - '20'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Fri, 18 Dec 2020 03:17:14 GMT
+      expires:
+      - '-1'
+      pragma:
+      - no-cache
+      server:
+      - Microsoft-HTTPAPI/2.0
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      transfer-encoding:
+      - chunked
+      vary:
+      - Accept-Encoding
+      x-content-type-options:
+      - nosniff
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - azsdk-python-azure-mgmt-iothub/1.0.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+    method: GET
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Devices/operationResults/b3NfaWhfZGZlZGQwNGUtZWQxNC00N2MxLWFmMDYtMDAwNmU3ZWUwY2E0?api-version=2020-03-01&operationSource=os_ih&asyncinfo
   response:
     body:
       string: '{"status":"Succeeded"}'
@@ -211,7 +244,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Tue, 12 May 2020 04:36:29 GMT
+      - Fri, 18 Dec 2020 03:17:45 GMT
       expires:
       - '-1'
       pragma:
@@ -233,29 +266,28 @@ interactions:
     body: null
     headers:
       Accept:
-      - application/json
+      - '*/*'
       Accept-Encoding:
       - gzip, deflate
       Connection:
       - keep-alive
       User-Agent:
-      - python/3.8.1 (Windows-10-10.0.18362-SP0) msrest/0.6.11 msrest_azure/0.4.34
-        azure-mgmt-iothub/0.12.0 Azure-SDK-For-Python
+      - azsdk-python-azure-mgmt-iothub/1.0.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: GET
     uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_iothub_test_iothuba8d80b97/providers/Microsoft.Devices/IotHubs/iota8d80b97?api-version=2020-03-01
   response:
     body:
-      string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_iothub_test_iothuba8d80b97/providers/Microsoft.Devices/IotHubs/iota8d80b97","name":"iota8d80b97","type":"Microsoft.Devices/IotHubs","location":"westus","tags":{},"subscriptionid":"00000000-0000-0000-0000-000000000000","resourcegroup":"test_mgmt_iothub_test_iothuba8d80b97","etag":"AAAAAA2OkVw=","properties":{"locations":[{"location":"West
-        US","role":"primary"},{"location":"East US","role":"secondary"}],"state":"Active","provisioningState":"Succeeded","ipFilterRules":[],"hostName":"iota8d80b97.azure-devices.net","eventHubEndpoints":{"events":{"retentionTimeInDays":1,"partitionCount":4,"partitionIds":["0","1","2","3"],"path":"iota8d80b97","endpoint":"sb://iothub-ns-iota8d80b9-3420149-174bcb6e94.servicebus.windows.net/"}},"routing":{"endpoints":{"serviceBusQueues":[],"serviceBusTopics":[],"eventHubs":[],"storageContainers":[]},"routes":[],"fallbackRoute":{"name":"$fallback","source":"DeviceMessages","condition":"true","endpointNames":["events"],"isEnabled":true}},"storageEndpoints":{"$default":{"sasTtlAsIso8601":"PT1H","connectionString":"","containerName":""}},"messagingEndpoints":{"fileNotifications":{"lockDurationAsIso8601":"PT1M","ttlAsIso8601":"PT1H","maxDeliveryCount":10}},"enableFileUploadNotifications":false,"cloudToDevice":{"maxDeliveryCount":10,"defaultTtlAsIso8601":"PT1H","feedback":{"lockDurationAsIso8601":"PT1M","ttlAsIso8601":"PT1H","maxDeliveryCount":10}},"features":"None"},"sku":{"name":"S1","tier":"Standard","capacity":2}}'
+      string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_iothub_test_iothuba8d80b97/providers/Microsoft.Devices/IotHubs/iota8d80b97","name":"iota8d80b97","type":"Microsoft.Devices/IotHubs","location":"westus","tags":{},"subscriptionid":"00000000-0000-0000-0000-000000000000","resourcegroup":"test_mgmt_iothub_test_iothuba8d80b97","etag":"AAAABor6H1E=","properties":{"locations":[{"location":"West
+        US","role":"primary"},{"location":"East US","role":"secondary"}],"state":"Active","provisioningState":"Succeeded","ipFilterRules":[],"hostName":"iota8d80b97.azure-devices.net","eventHubEndpoints":{"events":{"retentionTimeInDays":1,"partitionCount":4,"partitionIds":["0","1","2","3"],"path":"iota8d80b97","endpoint":"sb://iothub-ns-iota8d80b9-6681843-67b5fb8079.servicebus.windows.net/"}},"routing":{"endpoints":{"serviceBusQueues":[],"serviceBusTopics":[],"eventHubs":[],"storageContainers":[]},"routes":[],"fallbackRoute":{"name":"$fallback","source":"DeviceMessages","condition":"true","endpointNames":["events"],"isEnabled":true}},"storageEndpoints":{"$default":{"sasTtlAsIso8601":"PT1H","connectionString":"","containerName":""}},"messagingEndpoints":{"fileNotifications":{"lockDurationAsIso8601":"PT1M","ttlAsIso8601":"PT1H","maxDeliveryCount":10}},"enableFileUploadNotifications":false,"cloudToDevice":{"maxDeliveryCount":10,"defaultTtlAsIso8601":"PT1H","feedback":{"lockDurationAsIso8601":"PT1M","ttlAsIso8601":"PT1H","maxDeliveryCount":10}},"features":"None"},"sku":{"name":"S1","tier":"Standard","capacity":2},"identity":{"type":"None"}}'
     headers:
       cache-control:
       - no-cache
       content-length:
-      - '1543'
+      - '1570'
       content-type:
       - application/json; charset=utf-8
       date:
-      - Tue, 12 May 2020 04:36:30 GMT
+      - Fri, 18 Dec 2020 03:17:46 GMT
       expires:
       - '-1'
       pragma:
@@ -283,25 +315,22 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - python/3.8.1 (Windows-10-10.0.18362-SP0) msrest/0.6.11 msrest_azure/0.4.34
-        azure-mgmt-iothub/0.12.0 Azure-SDK-For-Python
-      accept-language:
-      - en-US
+      - azsdk-python-azure-mgmt-iothub/1.0.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: GET
     uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_iothub_test_iothuba8d80b97/providers/Microsoft.Devices/IotHubs/iota8d80b97?api-version=2020-03-01
   response:
     body:
-      string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_iothub_test_iothuba8d80b97/providers/Microsoft.Devices/IotHubs/iota8d80b97","name":"iota8d80b97","type":"Microsoft.Devices/IotHubs","location":"westus","tags":{},"subscriptionid":"00000000-0000-0000-0000-000000000000","resourcegroup":"test_mgmt_iothub_test_iothuba8d80b97","etag":"AAAAAA2OkVw=","properties":{"locations":[{"location":"West
-        US","role":"primary"},{"location":"East US","role":"secondary"}],"state":"Active","provisioningState":"Succeeded","ipFilterRules":[],"hostName":"iota8d80b97.azure-devices.net","eventHubEndpoints":{"events":{"retentionTimeInDays":1,"partitionCount":4,"partitionIds":["0","1","2","3"],"path":"iota8d80b97","endpoint":"sb://iothub-ns-iota8d80b9-3420149-174bcb6e94.servicebus.windows.net/"}},"routing":{"endpoints":{"serviceBusQueues":[],"serviceBusTopics":[],"eventHubs":[],"storageContainers":[]},"routes":[],"fallbackRoute":{"name":"$fallback","source":"DeviceMessages","condition":"true","endpointNames":["events"],"isEnabled":true}},"storageEndpoints":{"$default":{"sasTtlAsIso8601":"PT1H","connectionString":"","containerName":""}},"messagingEndpoints":{"fileNotifications":{"lockDurationAsIso8601":"PT1M","ttlAsIso8601":"PT1H","maxDeliveryCount":10}},"enableFileUploadNotifications":false,"cloudToDevice":{"maxDeliveryCount":10,"defaultTtlAsIso8601":"PT1H","feedback":{"lockDurationAsIso8601":"PT1M","ttlAsIso8601":"PT1H","maxDeliveryCount":10}},"features":"None"},"sku":{"name":"S1","tier":"Standard","capacity":2}}'
+      string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_iothub_test_iothuba8d80b97/providers/Microsoft.Devices/IotHubs/iota8d80b97","name":"iota8d80b97","type":"Microsoft.Devices/IotHubs","location":"westus","tags":{},"subscriptionid":"00000000-0000-0000-0000-000000000000","resourcegroup":"test_mgmt_iothub_test_iothuba8d80b97","etag":"AAAABor6H1E=","properties":{"locations":[{"location":"West
+        US","role":"primary"},{"location":"East US","role":"secondary"}],"state":"Active","provisioningState":"Succeeded","ipFilterRules":[],"hostName":"iota8d80b97.azure-devices.net","eventHubEndpoints":{"events":{"retentionTimeInDays":1,"partitionCount":4,"partitionIds":["0","1","2","3"],"path":"iota8d80b97","endpoint":"sb://iothub-ns-iota8d80b9-6681843-67b5fb8079.servicebus.windows.net/"}},"routing":{"endpoints":{"serviceBusQueues":[],"serviceBusTopics":[],"eventHubs":[],"storageContainers":[]},"routes":[],"fallbackRoute":{"name":"$fallback","source":"DeviceMessages","condition":"true","endpointNames":["events"],"isEnabled":true}},"storageEndpoints":{"$default":{"sasTtlAsIso8601":"PT1H","connectionString":"","containerName":""}},"messagingEndpoints":{"fileNotifications":{"lockDurationAsIso8601":"PT1M","ttlAsIso8601":"PT1H","maxDeliveryCount":10}},"enableFileUploadNotifications":false,"cloudToDevice":{"maxDeliveryCount":10,"defaultTtlAsIso8601":"PT1H","feedback":{"lockDurationAsIso8601":"PT1M","ttlAsIso8601":"PT1H","maxDeliveryCount":10}},"features":"None"},"sku":{"name":"S1","tier":"Standard","capacity":2},"identity":{"type":"None"}}'
     headers:
       cache-control:
       - no-cache
       content-length:
-      - '1543'
+      - '1570'
       content-type:
       - application/json; charset=utf-8
       date:
-      - Tue, 12 May 2020 04:36:31 GMT
+      - Fri, 18 Dec 2020 03:17:47 GMT
       expires:
       - '-1'
       pragma:
@@ -329,25 +358,22 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - python/3.8.1 (Windows-10-10.0.18362-SP0) msrest/0.6.11 msrest_azure/0.4.34
-        azure-mgmt-iothub/0.12.0 Azure-SDK-For-Python
-      accept-language:
-      - en-US
+      - azsdk-python-azure-mgmt-iothub/1.0.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: GET
     uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_iothub_test_iothuba8d80b97/providers/Microsoft.Devices/IotHubs?api-version=2020-03-01
   response:
     body:
-      string: '{"value":[{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_iothub_test_iothuba8d80b97/providers/Microsoft.Devices/IotHubs/iota8d80b97","name":"iota8d80b97","type":"Microsoft.Devices/IotHubs","location":"westus","tags":{},"subscriptionid":"00000000-0000-0000-0000-000000000000","resourcegroup":"test_mgmt_iothub_test_iothuba8d80b97","etag":"AAAAAA2OkVw=","properties":{"locations":[{"location":"West
-        US","role":"primary"},{"location":"East US","role":"secondary"}],"state":"Active","provisioningState":"Succeeded","ipFilterRules":[],"hostName":"iota8d80b97.azure-devices.net","eventHubEndpoints":{"events":{"retentionTimeInDays":1,"partitionCount":4,"partitionIds":["0","1","2","3"],"path":"iota8d80b97","endpoint":"sb://iothub-ns-iota8d80b9-3420149-174bcb6e94.servicebus.windows.net/"}},"routing":{"endpoints":{"serviceBusQueues":[],"serviceBusTopics":[],"eventHubs":[],"storageContainers":[]},"routes":[],"fallbackRoute":{"name":"$fallback","source":"DeviceMessages","condition":"true","endpointNames":["events"],"isEnabled":true}},"storageEndpoints":{"$default":{"sasTtlAsIso8601":"PT1H","connectionString":"","containerName":""}},"messagingEndpoints":{"fileNotifications":{"lockDurationAsIso8601":"PT1M","ttlAsIso8601":"PT1H","maxDeliveryCount":10}},"enableFileUploadNotifications":false,"cloudToDevice":{"maxDeliveryCount":10,"defaultTtlAsIso8601":"PT1H","feedback":{"lockDurationAsIso8601":"PT1M","ttlAsIso8601":"PT1H","maxDeliveryCount":10}},"features":"None"},"sku":{"name":"S1","tier":"Standard","capacity":2}}]}'
+      string: '{"value":[{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_iothub_test_iothuba8d80b97/providers/Microsoft.Devices/IotHubs/iota8d80b97","name":"iota8d80b97","type":"Microsoft.Devices/IotHubs","location":"westus","tags":{},"subscriptionid":"00000000-0000-0000-0000-000000000000","resourcegroup":"test_mgmt_iothub_test_iothuba8d80b97","etag":"AAAABor6H1E=","properties":{"locations":[{"location":"West
+        US","role":"primary"},{"location":"East US","role":"secondary"}],"state":"Active","provisioningState":"Succeeded","ipFilterRules":[],"hostName":"iota8d80b97.azure-devices.net","eventHubEndpoints":{"events":{"retentionTimeInDays":1,"partitionCount":4,"partitionIds":["0","1","2","3"],"path":"iota8d80b97","endpoint":"sb://iothub-ns-iota8d80b9-6681843-67b5fb8079.servicebus.windows.net/"}},"routing":{"endpoints":{"serviceBusQueues":[],"serviceBusTopics":[],"eventHubs":[],"storageContainers":[]},"routes":[],"fallbackRoute":{"name":"$fallback","source":"DeviceMessages","condition":"true","endpointNames":["events"],"isEnabled":true}},"storageEndpoints":{"$default":{"sasTtlAsIso8601":"PT1H","connectionString":"","containerName":""}},"messagingEndpoints":{"fileNotifications":{"lockDurationAsIso8601":"PT1M","ttlAsIso8601":"PT1H","maxDeliveryCount":10}},"enableFileUploadNotifications":false,"cloudToDevice":{"maxDeliveryCount":10,"defaultTtlAsIso8601":"PT1H","feedback":{"lockDurationAsIso8601":"PT1M","ttlAsIso8601":"PT1H","maxDeliveryCount":10}},"features":"None"},"sku":{"name":"S1","tier":"Standard","capacity":2},"identity":{"type":"None"}}]}'
     headers:
       cache-control:
       - no-cache
       content-length:
-      - '1555'
+      - '1582'
       content-type:
       - application/json; charset=utf-8
       date:
-      - Tue, 12 May 2020 04:36:31 GMT
+      - Fri, 18 Dec 2020 03:17:47 GMT
       expires:
       - '-1'
       pragma:
@@ -375,25 +401,22 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - python/3.8.1 (Windows-10-10.0.18362-SP0) msrest/0.6.11 msrest_azure/0.4.34
-        azure-mgmt-iothub/0.12.0 Azure-SDK-For-Python
-      accept-language:
-      - en-US
+      - azsdk-python-azure-mgmt-iothub/1.0.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: GET
     uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Devices/IotHubs?api-version=2020-03-01
   response:
     body:
-      string: '{"value":[{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_iothub_test_iothuba8d80b97/providers/Microsoft.Devices/IotHubs/iota8d80b97","name":"iota8d80b97","type":"Microsoft.Devices/IotHubs","location":"westus","tags":{},"subscriptionid":"00000000-0000-0000-0000-000000000000","resourcegroup":"test_mgmt_iothub_test_iothuba8d80b97","etag":"AAAAAA2OkVw=","properties":{"locations":[{"location":"West
-        US","role":"primary"},{"location":"East US","role":"secondary"}],"state":"Active","provisioningState":"Succeeded","ipFilterRules":[],"hostName":"iota8d80b97.azure-devices.net","eventHubEndpoints":{"events":{"retentionTimeInDays":1,"partitionCount":4,"partitionIds":["0","1","2","3"],"path":"iota8d80b97","endpoint":"sb://iothub-ns-iota8d80b9-3420149-174bcb6e94.servicebus.windows.net/"}},"routing":{"endpoints":{"serviceBusQueues":[],"serviceBusTopics":[],"eventHubs":[],"storageContainers":[]},"routes":[],"fallbackRoute":{"name":"$fallback","source":"DeviceMessages","condition":"true","endpointNames":["events"],"isEnabled":true}},"storageEndpoints":{"$default":{"sasTtlAsIso8601":"PT1H","connectionString":"","containerName":""}},"messagingEndpoints":{"fileNotifications":{"lockDurationAsIso8601":"PT1M","ttlAsIso8601":"PT1H","maxDeliveryCount":10}},"enableFileUploadNotifications":false,"cloudToDevice":{"maxDeliveryCount":10,"defaultTtlAsIso8601":"PT1H","feedback":{"lockDurationAsIso8601":"PT1M","ttlAsIso8601":"PT1H","maxDeliveryCount":10}},"features":"None"},"sku":{"name":"S1","tier":"Standard","capacity":2}}]}'
+      string: '{"value":[{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_iothub_test_iothuba8d80b97/providers/Microsoft.Devices/IotHubs/iota8d80b97","name":"iota8d80b97","type":"Microsoft.Devices/IotHubs","location":"westus","tags":{},"subscriptionid":"00000000-0000-0000-0000-000000000000","resourcegroup":"test_mgmt_iothub_test_iothuba8d80b97","etag":"AAAABor6H1E=","properties":{"locations":[{"location":"West
+        US","role":"primary"},{"location":"East US","role":"secondary"}],"state":"Active","provisioningState":"Succeeded","ipFilterRules":[],"hostName":"iota8d80b97.azure-devices.net","eventHubEndpoints":{"events":{"retentionTimeInDays":1,"partitionCount":4,"partitionIds":["0","1","2","3"],"path":"iota8d80b97","endpoint":"sb://iothub-ns-iota8d80b9-6681843-67b5fb8079.servicebus.windows.net/"}},"routing":{"endpoints":{"serviceBusQueues":[],"serviceBusTopics":[],"eventHubs":[],"storageContainers":[]},"routes":[],"fallbackRoute":{"name":"$fallback","source":"DeviceMessages","condition":"true","endpointNames":["events"],"isEnabled":true}},"storageEndpoints":{"$default":{"sasTtlAsIso8601":"PT1H","connectionString":"","containerName":""}},"messagingEndpoints":{"fileNotifications":{"lockDurationAsIso8601":"PT1M","ttlAsIso8601":"PT1H","maxDeliveryCount":10}},"enableFileUploadNotifications":false,"cloudToDevice":{"maxDeliveryCount":10,"defaultTtlAsIso8601":"PT1H","feedback":{"lockDurationAsIso8601":"PT1M","ttlAsIso8601":"PT1H","maxDeliveryCount":10}},"features":"None"},"sku":{"name":"S1","tier":"Standard","capacity":2},"identity":{"type":"None"}}]}'
     headers:
       cache-control:
       - no-cache
       content-length:
-      - '1555'
+      - '1582'
       content-type:
       - application/json; charset=utf-8
       date:
-      - Tue, 12 May 2020 04:36:32 GMT
+      - Fri, 18 Dec 2020 03:17:48 GMT
       expires:
       - '-1'
       pragma:
@@ -421,10 +444,7 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - python/3.8.1 (Windows-10-10.0.18362-SP0) msrest/0.6.11 msrest_azure/0.4.34
-        azure-mgmt-iothub/0.12.0 Azure-SDK-For-Python
-      accept-language:
-      - en-US
+      - azsdk-python-azure-mgmt-iothub/1.0.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: GET
     uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_iothub_test_iothuba8d80b97/providers/Microsoft.Devices/IotHubs/iota8d80b97/IotHubStats?api-version=2020-03-01
   response:
@@ -438,7 +458,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Tue, 12 May 2020 04:36:32 GMT
+      - Fri, 18 Dec 2020 03:17:48 GMT
       expires:
       - '-1'
       pragma:
@@ -466,10 +486,7 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - python/3.8.1 (Windows-10-10.0.18362-SP0) msrest/0.6.11 msrest_azure/0.4.34
-        azure-mgmt-iothub/0.12.0 Azure-SDK-For-Python
-      accept-language:
-      - en-US
+      - azsdk-python-azure-mgmt-iothub/1.0.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: GET
     uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_iothub_test_iothuba8d80b97/providers/Microsoft.Devices/IotHubs/iota8d80b97/skus?api-version=2020-03-01
   response:
@@ -483,7 +500,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Tue, 12 May 2020 04:36:33 GMT
+      - Fri, 18 Dec 2020 03:17:49 GMT
       expires:
       - '-1'
       pragma:
@@ -511,10 +528,7 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - python/3.8.1 (Windows-10-10.0.18362-SP0) msrest/0.6.11 msrest_azure/0.4.34
-        azure-mgmt-iothub/0.12.0 Azure-SDK-For-Python
-      accept-language:
-      - en-US
+      - azsdk-python-azure-mgmt-iothub/1.0.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: GET
     uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_iothub_test_iothuba8d80b97/providers/Microsoft.Devices/IotHubs/iota8d80b97/jobs?api-version=2020-03-01
   response:
@@ -528,7 +542,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Tue, 12 May 2020 04:36:33 GMT
+      - Fri, 18 Dec 2020 03:17:49 GMT
       expires:
       - '-1'
       pragma:
@@ -556,10 +570,7 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - python/3.8.1 (Windows-10-10.0.18362-SP0) msrest/0.6.11 msrest_azure/0.4.34
-        azure-mgmt-iothub/0.12.0 Azure-SDK-For-Python
-      accept-language:
-      - en-US
+      - azsdk-python-azure-mgmt-iothub/1.0.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: GET
     uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_iothub_test_iothuba8d80b97/providers/Microsoft.Devices/IotHubs/iota8d80b97/quotaMetrics?api-version=2020-03-01
   response:
@@ -573,7 +584,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Tue, 12 May 2020 04:36:34 GMT
+      - Fri, 18 Dec 2020 03:17:49 GMT
       expires:
       - '-1'
       pragma:
@@ -603,10 +614,7 @@ interactions:
       Content-Length:
       - '0'
       User-Agent:
-      - python/3.8.1 (Windows-10-10.0.18362-SP0) msrest/0.6.11 msrest_azure/0.4.34
-        azure-mgmt-iothub/0.12.0 Azure-SDK-For-Python
-      accept-language:
-      - en-US
+      - azsdk-python-azure-mgmt-iothub/1.0.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: DELETE
     uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_iothub_test_iothuba8d80b97/providers/Microsoft.Devices/IotHubs/iota8d80b97?api-version=2020-03-01
   response:
@@ -614,7 +622,7 @@ interactions:
       string: 'null'
     headers:
       azure-asyncoperation:
-      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Devices/operationResults/b3NfaWhfNjlkMWI4MzAtYmExNy00OTMyLTkzODItMDQ1MGRmM2MzOGY2?api-version=2020-03-01&operationSource=os_ih&asyncinfo
+      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Devices/operationResults/b3NfaWhfYTgyOGZkNDUtZTllYy00MGZkLWI5OGMtNjE2ZmYyNGNiYTg1?api-version=2020-03-01&operationSource=os_ih&asyncinfo
       cache-control:
       - no-cache
       content-length:
@@ -622,11 +630,11 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Tue, 12 May 2020 04:36:35 GMT
+      - Fri, 18 Dec 2020 03:17:51 GMT
       expires:
       - '-1'
       location:
-      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Devices/operationResults/b3NfaWhfNjlkMWI4MzAtYmExNy00OTMyLTkzODItMDQ1MGRmM2MzOGY2?api-version=2020-03-01&operationSource=os_ih
+      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Devices/operationResults/b3NfaWhfYTgyOGZkNDUtZTllYy00MGZkLWI5OGMtNjE2ZmYyNGNiYTg1?api-version=2020-03-01&operationSource=os_ih
       pragma:
       - no-cache
       server:
@@ -644,16 +652,15 @@ interactions:
     body: null
     headers:
       Accept:
-      - application/json
+      - '*/*'
       Accept-Encoding:
       - gzip, deflate
       Connection:
       - keep-alive
       User-Agent:
-      - python/3.8.1 (Windows-10-10.0.18362-SP0) msrest/0.6.11 msrest_azure/0.4.34
-        azure-mgmt-iothub/0.12.0 Azure-SDK-For-Python
+      - azsdk-python-azure-mgmt-iothub/1.0.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Devices/operationResults/b3NfaWhfNjlkMWI4MzAtYmExNy00OTMyLTkzODItMDQ1MGRmM2MzOGY2?api-version=2020-03-01&operationSource=os_ih&asyncinfo
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Devices/operationResults/b3NfaWhfYTgyOGZkNDUtZTllYy00MGZkLWI5OGMtNjE2ZmYyNGNiYTg1?api-version=2020-03-01&operationSource=os_ih&asyncinfo
   response:
     body:
       string: '{"status":"Succeeded"}'
@@ -665,7 +672,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Tue, 12 May 2020 04:36:52 GMT
+      - Fri, 18 Dec 2020 03:18:07 GMT
       expires:
       - '-1'
       pragma:

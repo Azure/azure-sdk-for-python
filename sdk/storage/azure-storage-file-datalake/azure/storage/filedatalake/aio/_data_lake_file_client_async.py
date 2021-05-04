@@ -4,17 +4,18 @@
 # license information.
 # --------------------------------------------------------------------------
 # pylint: disable=invalid-overridden-method
-
+from typing import Any
 try:
     from urllib.parse import quote, unquote
 except ImportError:
     from urllib2 import quote, unquote # type: ignore
 
+from azure.core.exceptions import HttpResponseError
 from ._download_async import StorageStreamDownloader
 from ._path_client_async import PathClient
 from .._data_lake_file_client import DataLakeFileClient as DataLakeFileClientBase
-from .._deserialize import process_storage_error
-from .._generated.models import StorageErrorException
+from .._serialize import convert_datetime_to_rfc1123
+from .._deserialize import process_storage_error, deserialize_file_properties
 from .._models import FileProperties
 from ..aio._upload_helper import upload_datalake_file
 
@@ -39,9 +40,11 @@ class DataLakeFileClient(PathClient, DataLakeFileClientBase):
     :type file_path: str
     :param credential:
         The credentials with which to authenticate. This is optional if the
-        account URL already has a SAS token. The value can be a SAS token string, and account
+        account URL already has a SAS token. The value can be a SAS token string,
+        an instance of a AzureSasCredential from azure.core.credentials, an account
         shared access key, or an instance of a TokenCredentials class from azure.identity.
-        If the URL already has a SAS token, specifying an explicit credential will take priority.
+        If the resource URI already contains a SAS token, this will be ignored in favor of an explicit credential
+        - except in the case of AzureSasCredential, where the conflicting SAS tokens will raise a ValueError.
 
     .. admonition:: Example:
 
@@ -127,6 +130,17 @@ class DataLakeFileClient(PathClient, DataLakeFileClientBase):
         """
         return await self._create('file', content_settings=content_settings, metadata=metadata, **kwargs)
 
+    async def exists(self, **kwargs):
+        # type: (**Any) -> bool
+        """
+        Returns True if a file exists and returns False otherwise.
+
+        :kwarg int timeout:
+            The timeout parameter is expressed in seconds.
+        :returns: boolean
+        """
+        return await self._exists(**kwargs)
+
     async def delete_file(self, **kwargs):
         # type: (...) -> None
         """
@@ -207,8 +221,30 @@ class DataLakeFileClient(PathClient, DataLakeFileClientBase):
                 :dedent: 4
                 :caption: Getting the properties for a file.
         """
-        blob_properties = await self._get_path_properties(**kwargs)
-        return FileProperties._from_blob_properties(blob_properties)  # pylint: disable=protected-access
+        return await self._get_path_properties(cls=deserialize_file_properties, **kwargs)  # pylint: disable=protected-access
+
+    async def set_file_expiry(self, expiry_options,  # type: str
+                              expires_on=None,  # type: Optional[Union[datetime, int]]
+                              **kwargs):
+        # type: (str, Optional[Union[datetime, int]], **Any) -> None
+        """Sets the time a file will expire and be deleted.
+
+        :param str expiry_options:
+            Required. Indicates mode of the expiry time.
+            Possible values include: 'NeverExpire', 'RelativeToCreation', 'RelativeToNow', 'Absolute'
+        :param datetime or int expires_on:
+            The time to set the file to expiry.
+            When expiry_options is RelativeTo*, expires_on should be an int in milliseconds
+        :keyword int timeout:
+            The timeout parameter is expressed in seconds.
+        :rtype: None
+        """
+        try:
+            expires_on = convert_datetime_to_rfc1123(expires_on)
+        except AttributeError:
+            expires_on = str(expires_on)
+        await self._datalake_client_for_blob_operation.path.set_expiry(expiry_options, expires_on=expires_on,
+                                                                       **kwargs)  # pylint: disable=protected-access
 
     async def upload_data(self, data,  # type: Union[AnyStr, Iterable[AnyStr], IO[AnyStr]]
                           length=None,  # type: Optional[int]
@@ -254,6 +290,15 @@ class DataLakeFileClient(PathClient, DataLakeFileClientBase):
             If a date is passed in without timezone info, it is assumed to be UTC.
             Specify this header to perform the operation only if
             the resource has not been modified since the specified date/time.
+        :keyword bool validate_content:
+            If true, calculates an MD5 hash for each chunk of the file. The storage
+            service checks the hash of the content that has arrived with the hash
+            that was sent. This is primarily valuable for detecting bitflips on
+            the wire if using http instead of https, as https (the default), will
+            already validate. Note that this MD5 hash is not stored with the
+            blob. Also note that if enabled, the memory-efficient upload algorithm
+            will not be used because computing the MD5 hash requires buffering
+            entire blocks, and doing so defeats the purpose of the memory-efficient algorithm.
         :keyword str etag:
             An ETag value, or the wildcard character (*). Used to check if the resource has changed,
             and act according to the condition specified by the `match_condition` parameter.
@@ -312,7 +357,7 @@ class DataLakeFileClient(PathClient, DataLakeFileClientBase):
             **kwargs)
         try:
             return await self._client.path.append_data(**options)
-        except StorageErrorException as error:
+        except HttpResponseError as error:
             process_storage_error(error)
 
     async def flush_data(self, offset,  # type: int
@@ -379,14 +424,14 @@ class DataLakeFileClient(PathClient, DataLakeFileClientBase):
             retain_uncommitted_data=retain_uncommitted_data, **kwargs)
         try:
             return await self._client.path.flush_data(**options)
-        except StorageErrorException as error:
+        except HttpResponseError as error:
             process_storage_error(error)
 
     async def download_file(self, offset=None, length=None, **kwargs):
         # type: (Optional[int], Optional[int], Any) -> StorageStreamDownloader
         """Downloads a file to the StorageStreamDownloader. The readall() method must
         be used to read all the content, or readinto() must be used to download the file into
-        a stream.
+        a stream. Using chunks() returns an async iterator which allows the user to iterate over the content in chunks.
 
         :param int offset:
             Start of byte range to use for downloading a section of the file.
@@ -436,9 +481,8 @@ class DataLakeFileClient(PathClient, DataLakeFileClientBase):
         downloader = await self._blob_client.download_blob(offset=offset, length=length, **kwargs)
         return StorageStreamDownloader(downloader)
 
-    async def rename_file(self, new_name,  # type: str
-                          **kwargs):
-        # type: (**Any) -> DataLakeFileClient
+    async def rename_file(self, new_name, **kwargs):
+        # type: (str, **Any) -> DataLakeFileClient
         """
         Rename the source file.
 
@@ -505,7 +549,7 @@ class DataLakeFileClient(PathClient, DataLakeFileClientBase):
         """
         new_name = new_name.strip('/')
         new_file_system = new_name.split('/')[0]
-        new_path_and_token = new_name[len(new_file_system):].split('?')
+        new_path_and_token = new_name[len(new_file_system):].strip('/').split('?')
         new_path = new_path_and_token[0]
         try:
             new_file_sas = new_path_and_token[1] or self._query_str.strip('?')

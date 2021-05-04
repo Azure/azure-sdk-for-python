@@ -20,6 +20,7 @@ class MgmtMPOTest(AzureMgmtTestCase):
     def test_basic(self):
 
         result = self.client.marketplace_agreements.get(
+            offer_type="virtualmachine",
             publisher_id="intel-bigdl",
             offer_id="bigdl_vm",
             plan_id="bigdl_vm_0p4"

@@ -17,9 +17,9 @@ interactions:
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-ai-textanalytics/5.1.0b1 Python/3.8.5 (macOS-10.13.6-x86_64-i386-64bit)
+      - azsdk-python-ai-textanalytics/5.1.0b7 Python/3.9.0 (Windows-10-10.0.19041-SP0)
     method: POST
-    uri: https://westcentralus.api.cognitive.microsoft.com/text/analytics/v3.1-preview.2/sentiment?showStats=false&stringIndexType=UnicodeCodePoint
+    uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.1-preview.5/sentiment?showStats=false&stringIndexType=UnicodeCodePoint
   response:
     body:
       string: '{"documents":[{"id":"0","sentiment":"neutral","confidenceScores":{"positive":0.01,"neutral":0.99,"negative":0.0},"sentences":[{"sentiment":"neutral","confidenceScores":{"positive":0.01,"neutral":0.99,"negative":0.0},"offset":0,"length":51,"text":"Microsoft
@@ -32,13 +32,13 @@ interactions:
         text is empty."}}}],"modelVersion":"2020-04-01"}'
     headers:
       apim-request-id:
-      - 423f5efe-bd9a-4a06-8015-9b9badd25c6c
+      - 49519080-2154-4b47-a0fe-06f422665231
       content-type:
       - application/json; charset=utf-8
       csp-billing-usage:
-      - CognitiveServices.TextAnalytics.BatchScoring=3
+      - CognitiveServices.TextAnalytics.BatchScoring=3,CognitiveServices.TextAnalytics.TextRecords=3
       date:
-      - Thu, 10 Sep 2020 15:25:21 GMT
+      - Tue, 27 Apr 2021 19:38:49 GMT
       strict-transport-security:
       - max-age=31536000; includeSubDomains; preload
       transfer-encoding:
@@ -46,7 +46,7 @@ interactions:
       x-content-type-options:
       - nosniff
       x-envoy-upstream-service-time:
-      - '93'
+      - '158'
     status:
       code: 200
       message: OK

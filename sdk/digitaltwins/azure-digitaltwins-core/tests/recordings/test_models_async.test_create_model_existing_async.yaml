@@ -1,0 +1,133 @@
+interactions:
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      User-Agent:
+      - azsdk-python-digitaltwins-core/1.1.0 Python/3.7.4 (Windows-10-10.0.19041-SP0)
+    method: GET
+    uri: https://dttestdigitaltwinsname.api.wcus.digitaltwins.azure.net/models/dtmi:com:samples:TempModelcaf1499;1?includeModelDefinition=false&api-version=2020-10-31
+  response:
+    body:
+      string: '{"error":{"code":"ModelNotFound","message":"There is no Model(s) available
+        that matches the provided id(s) dtmi:com:samples:TempModelcaf1499;1. Check
+        that the Model ID provided is valid by doing a Model_List API call."}}'
+    headers:
+      content-length: '220'
+      content-type: application/json; charset=utf-8
+      date: Tue, 24 Nov 2020 21:10:06 GMT
+      strict-transport-security: max-age=2592000
+    status:
+      code: 404
+      message: Not Found
+    url: https://dttestdigitaltwinsname.api.wcus.digitaltwins.azure.net/models/dtmi:com:samples:TempModelcaf1499;1?includeModelDefinition=false&api-version=2020-10-31
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      User-Agent:
+      - azsdk-python-digitaltwins-core/1.1.0 Python/3.7.4 (Windows-10-10.0.19041-SP0)
+    method: GET
+    uri: https://dttestdigitaltwinsname.api.wcus.digitaltwins.azure.net/models/dtmi:com:samples:ComponentModelcaf1499;1?includeModelDefinition=false&api-version=2020-10-31
+  response:
+    body:
+      string: '{"error":{"code":"ModelNotFound","message":"There is no Model(s) available
+        that matches the provided id(s) dtmi:com:samples:ComponentModelcaf1499;1.
+        Check that the Model ID provided is valid by doing a Model_List API call."}}'
+    headers:
+      content-length: '225'
+      content-type: application/json; charset=utf-8
+      date: Tue, 24 Nov 2020 21:10:06 GMT
+      strict-transport-security: max-age=2592000
+    status:
+      code: 404
+      message: Not Found
+    url: https://dttestdigitaltwinsname.api.wcus.digitaltwins.azure.net/models/dtmi:com:samples:ComponentModelcaf1499;1?includeModelDefinition=false&api-version=2020-10-31
+- request:
+    body: '[{"@id": "dtmi:com:samples:TempModelcaf1499;1", "@type": "Interface", "@context":
+      "dtmi:dtdl:context;2", "displayName": "TempModel", "contents": [{"@type": "Property",
+      "name": "Prop1", "schema": "string"}, {"@type": "Telemetry", "name": "Telemetry1",
+      "schema": "integer"}]}]'
+    headers:
+      Accept:
+      - application/json
+      Content-Length:
+      - '274'
+      Content-Type:
+      - application/json
+      User-Agent:
+      - azsdk-python-digitaltwins-core/1.1.0 Python/3.7.4 (Windows-10-10.0.19041-SP0)
+    method: POST
+    uri: https://dttestdigitaltwinsname.api.wcus.digitaltwins.azure.net/models?api-version=2020-10-31
+  response:
+    body:
+      string: '[{"id":"dtmi:com:samples:TempModelcaf1499;1","description":{},"displayName":{"en":"TempModel"},"decommissioned":false,"uploadTime":"2020-11-24T21:10:07.1183699+00:00"}]'
+    headers:
+      content-length: '168'
+      content-type: application/json; charset=utf-8
+      date: Tue, 24 Nov 2020 21:10:07 GMT
+      strict-transport-security: max-age=2592000
+    status:
+      code: 201
+      message: Created
+    url: https://dttestdigitaltwinsname.api.wcus.digitaltwins.azure.net/models?api-version=2020-10-31
+- request:
+    body: '[{"@id": "dtmi:com:samples:ComponentModelcaf1499;1", "@type": "Interface",
+      "@context": "dtmi:dtdl:context;2", "displayName": "Component1", "contents":
+      [{"@type": "Property", "name": "ComponentProp1", "schema": "string"}, {"@type":
+      "Telemetry", "name": "ComponentTelemetry1", "schema": "integer"}]}, {"@id":
+      "dtmi:com:samples:TempModelcaf1499;1", "@type": "Interface", "@context": "dtmi:dtdl:context;2",
+      "displayName": "TempModel", "contents": [{"@type": "Property", "name": "Prop1",
+      "schema": "string"}, {"@type": "Telemetry", "name": "Telemetry1", "schema":
+      "integer"}]}]'
+    headers:
+      Accept:
+      - application/json
+      Content-Length:
+      - '572'
+      Content-Type:
+      - application/json
+      User-Agent:
+      - azsdk-python-digitaltwins-core/1.1.0 Python/3.7.4 (Windows-10-10.0.19041-SP0)
+    method: POST
+    uri: https://dttestdigitaltwinsname.api.wcus.digitaltwins.azure.net/models?api-version=2020-10-31
+  response:
+    body:
+      string: '{"error":{"code":"ModelIdAlreadyExists","message":"Some of the model
+        ids already exist: dtmi:com:samples:TempModelcaf1499;1. Use Model_List API
+        to view models that already exist. See the Swagger example (http://aka.ms/ModelListSwSmpl)."}}'
+    headers:
+      content-length: '238'
+      content-type: application/json; charset=utf-8
+      date: Tue, 24 Nov 2020 21:10:07 GMT
+      strict-transport-security: max-age=2592000
+    status:
+      code: 409
+      message: Conflict
+    url: https://dttestdigitaltwinsname.api.wcus.digitaltwins.azure.net/models?api-version=2020-10-31
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      User-Agent:
+      - azsdk-python-digitaltwins-core/1.1.0 Python/3.7.4 (Windows-10-10.0.19041-SP0)
+    method: GET
+    uri: https://dttestdigitaltwinsname.api.wcus.digitaltwins.azure.net/models/dtmi:com:samples:ComponentModelcaf1499;1?includeModelDefinition=false&api-version=2020-10-31
+  response:
+    body:
+      string: '{"error":{"code":"ModelNotFound","message":"There is no Model(s) available
+        that matches the provided id(s) dtmi:com:samples:ComponentModelcaf1499;1.
+        Check that the Model ID provided is valid by doing a Model_List API call."}}'
+    headers:
+      content-length: '225'
+      content-type: application/json; charset=utf-8
+      date: Tue, 24 Nov 2020 21:10:07 GMT
+      strict-transport-security: max-age=2592000
+    status:
+      code: 404
+      message: Not Found
+    url: https://dttestdigitaltwinsname.api.wcus.digitaltwins.azure.net/models/dtmi:com:samples:ComponentModelcaf1499;1?includeModelDefinition=false&api-version=2020-10-31
+version: 1

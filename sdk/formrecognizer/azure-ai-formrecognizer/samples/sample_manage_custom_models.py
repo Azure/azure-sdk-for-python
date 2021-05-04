@@ -19,6 +19,7 @@ USAGE:
     Set the environment variables with your own values before running the sample:
     1) AZURE_FORM_RECOGNIZER_ENDPOINT - the endpoint to your Cognitive Services resource.
     2) AZURE_FORM_RECOGNIZER_KEY - your Form Recognizer API key
+    3) CONTAINER_SAS_URL - The shared access signature (SAS) Url of your Azure Blob Storage container
 """
 
 import os
@@ -27,14 +28,15 @@ import os
 class ManageCustomModelsSample(object):
 
     def manage_custom_models(self):
-        # [START get_account_properties]
         from azure.core.credentials import AzureKeyCredential
         from azure.core.exceptions import ResourceNotFoundError
         from azure.ai.formrecognizer import FormTrainingClient
 
         endpoint = os.environ["AZURE_FORM_RECOGNIZER_ENDPOINT"]
         key = os.environ["AZURE_FORM_RECOGNIZER_KEY"]
+        container_sas_url = os.environ["CONTAINER_SAS_URL"]
 
+        # [START get_account_properties]
         form_training_client = FormTrainingClient(endpoint=endpoint, credential=AzureKeyCredential(key))
         # First, we see how many custom models we have, and what our limit is
         account_properties = form_training_client.get_account_properties()
@@ -48,19 +50,21 @@ class ManageCustomModelsSample(object):
         custom_models = form_training_client.list_custom_models()
 
         print("We have models with the following IDs:")
-
-        # Let's pull out the first model
-        first_model = next(custom_models)
-        print(first_model.model_id)
         for model in custom_models:
             print(model.model_id)
         # [END list_custom_models]
 
-        # Now we'll get information for the first custom model in the paged list
+        # let's train a model to use for this sample
+        poller = form_training_client.begin_training(container_sas_url, use_training_labels=False)
+        model = poller.result()
+
+        # Now we'll get information for the model we just trained
         # [START get_custom_model]
-        custom_model = form_training_client.get_custom_model(model_id=first_model.model_id)
+        custom_model = form_training_client.get_custom_model(model_id=model.model_id)
         print("\nModel ID: {}".format(custom_model.model_id))
         print("Status: {}".format(custom_model.status))
+        print("Model name: {}".format(custom_model.model_name))
+        print("Is this a composed model?: {}".format(custom_model.properties.is_composed_model))
         print("Training started on: {}".format(custom_model.training_started_on))
         print("Training completed on: {}".format(custom_model.training_completed_on))
         # [END get_custom_model]

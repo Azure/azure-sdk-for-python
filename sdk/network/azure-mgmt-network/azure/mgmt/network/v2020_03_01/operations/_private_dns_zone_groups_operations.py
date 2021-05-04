@@ -16,7 +16,7 @@ from azure.core.polling import LROPoller, NoPolling, PollingMethod
 from azure.mgmt.core.exceptions import ARMErrorFormat
 from azure.mgmt.core.polling.arm_polling import ARMPolling
 
-from .. import models
+from .. import models as _models
 
 if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
@@ -39,7 +39,7 @@ class PrivateDnsZoneGroupsOperations(object):
     :param deserializer: An object model deserializer.
     """
 
-    models = models
+    models = _models
 
     def __init__(self, client, config, serializer, deserializer):
         self._client = client
@@ -143,7 +143,14 @@ class PrivateDnsZoneGroupsOperations(object):
             if cls:
                 return cls(pipeline_response, None, {})
 
-        if polling is True: polling_method = ARMPolling(lro_delay, lro_options={'final-state-via': 'location'},  **kwargs)
+        path_format_arguments = {
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
+            'privateEndpointName': self._serialize.url("private_endpoint_name", private_endpoint_name, 'str'),
+            'privateDnsZoneGroupName': self._serialize.url("private_dns_zone_group_name", private_dns_zone_group_name, 'str'),
+            'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
+        }
+
+        if polling is True: polling_method = ARMPolling(lro_delay, lro_options={'final-state-via': 'location'}, path_format_arguments=path_format_arguments,  **kwargs)
         elif polling is False: polling_method = NoPolling()
         else: polling_method = polling
         if cont_token:
@@ -164,7 +171,7 @@ class PrivateDnsZoneGroupsOperations(object):
         private_dns_zone_group_name,  # type: str
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.PrivateDnsZoneGroup"
+        # type: (...) -> "_models.PrivateDnsZoneGroup"
         """Gets the private dns zone group resource by specified private dns zone group name.
 
         :param resource_group_name: The name of the resource group.
@@ -178,7 +185,7 @@ class PrivateDnsZoneGroupsOperations(object):
         :rtype: ~azure.mgmt.network.v2020_03_01.models.PrivateDnsZoneGroup
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.PrivateDnsZoneGroup"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.PrivateDnsZoneGroup"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -225,11 +232,11 @@ class PrivateDnsZoneGroupsOperations(object):
         resource_group_name,  # type: str
         private_endpoint_name,  # type: str
         private_dns_zone_group_name,  # type: str
-        parameters,  # type: "models.PrivateDnsZoneGroup"
+        parameters,  # type: "_models.PrivateDnsZoneGroup"
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.PrivateDnsZoneGroup"
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.PrivateDnsZoneGroup"]
+        # type: (...) -> "_models.PrivateDnsZoneGroup"
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.PrivateDnsZoneGroup"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -285,10 +292,10 @@ class PrivateDnsZoneGroupsOperations(object):
         resource_group_name,  # type: str
         private_endpoint_name,  # type: str
         private_dns_zone_group_name,  # type: str
-        parameters,  # type: "models.PrivateDnsZoneGroup"
+        parameters,  # type: "_models.PrivateDnsZoneGroup"
         **kwargs  # type: Any
     ):
-        # type: (...) -> LROPoller["models.PrivateDnsZoneGroup"]
+        # type: (...) -> LROPoller["_models.PrivateDnsZoneGroup"]
         """Creates or updates a private dns zone group in the specified private endpoint.
 
         :param resource_group_name: The name of the resource group.
@@ -311,7 +318,7 @@ class PrivateDnsZoneGroupsOperations(object):
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         polling = kwargs.pop('polling', True)  # type: Union[bool, PollingMethod]
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.PrivateDnsZoneGroup"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.PrivateDnsZoneGroup"]
         lro_delay = kwargs.pop(
             'polling_interval',
             self._config.polling_interval
@@ -337,7 +344,14 @@ class PrivateDnsZoneGroupsOperations(object):
                 return cls(pipeline_response, deserialized, {})
             return deserialized
 
-        if polling is True: polling_method = ARMPolling(lro_delay, lro_options={'final-state-via': 'azure-async-operation'},  **kwargs)
+        path_format_arguments = {
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
+            'privateEndpointName': self._serialize.url("private_endpoint_name", private_endpoint_name, 'str'),
+            'privateDnsZoneGroupName': self._serialize.url("private_dns_zone_group_name", private_dns_zone_group_name, 'str'),
+            'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
+        }
+
+        if polling is True: polling_method = ARMPolling(lro_delay, lro_options={'final-state-via': 'azure-async-operation'}, path_format_arguments=path_format_arguments,  **kwargs)
         elif polling is False: polling_method = NoPolling()
         else: polling_method = polling
         if cont_token:
@@ -357,7 +371,7 @@ class PrivateDnsZoneGroupsOperations(object):
         resource_group_name,  # type: str
         **kwargs  # type: Any
     ):
-        # type: (...) -> Iterable["models.PrivateDnsZoneGroupListResult"]
+        # type: (...) -> Iterable["_models.PrivateDnsZoneGroupListResult"]
         """Gets all private dns zone groups in a private endpoint.
 
         :param private_endpoint_name: The name of the private endpoint.
@@ -369,7 +383,7 @@ class PrivateDnsZoneGroupsOperations(object):
         :rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.network.v2020_03_01.models.PrivateDnsZoneGroupListResult]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.PrivateDnsZoneGroupListResult"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.PrivateDnsZoneGroupListResult"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -416,7 +430,7 @@ class PrivateDnsZoneGroupsOperations(object):
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
-                error = self._deserialize(models.Error, response)
+                error = self._deserialize(_models.Error, response)
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 

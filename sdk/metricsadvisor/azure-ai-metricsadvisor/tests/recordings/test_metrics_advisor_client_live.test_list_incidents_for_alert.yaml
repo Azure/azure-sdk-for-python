@@ -1,0 +1,39 @@
+interactions:
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - azsdk-python-ai-metricsadvisor/1.0.0b3 Python/3.8.6 (Windows-10-10.0.19041-SP0)
+    method: GET
+    uri: https://js-metrics-advisor.cognitiveservices.azure.com/metricsadvisor/v1.0/alert/anomaly/configurations/anomaly_alert_configuration_id/alerts/alert_id/incidents
+  response:
+    body:
+      string: '{"value":[{"metricId":"metric_id","anomalyDetectionConfigurationId":"anomaly_detection_configuration_id","incidentId":"51d849d03277901eadfa9a0e7665b4ad-alert_id","startTime":"2020-10-20T00:00:00Z","lastTime":"2020-10-20T00:00:00Z","rootNode":{"dimension":{"dimension_name":"Delhi","category":"Shoes
+        Handbags & Sunglasses"}},"property":{"incidentStatus":"Resolved"}},{"metricId":"metric_id","anomalyDetectionConfigurationId":"anomaly_detection_configuration_id","incidentId":"daceb039d9ec34d28f04654dd61aee57-alert_id","startTime":"2020-10-20T00:00:00Z","lastTime":"2020-10-20T00:00:00Z","rootNode":{"dimension":{"dimension_name":"Karachi","category":"Handmade"}},"property":{"maxSeverity":"Medium","incidentStatus":"Active"}}],"@nextLink":null}'
+    headers:
+      apim-request-id:
+      - f3e1f049-bf84-4d7d-b6ff-3f4487393dc9
+      content-length:
+      - '788'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Fri, 22 Jan 2021 01:03:27 GMT
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains; preload
+      x-content-type-options:
+      - nosniff
+      x-envoy-upstream-service-time:
+      - '338'
+      x-request-id:
+      - f3e1f049-bf84-4d7d-b6ff-3f4487393dc9
+    status:
+      code: 200
+      message: OK
+version: 1

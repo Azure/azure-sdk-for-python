@@ -14,7 +14,7 @@ from azure.core.pipeline import PipelineResponse
 from azure.core.pipeline.transport import AsyncHttpResponse, HttpRequest
 from azure.mgmt.core.exceptions import ARMErrorFormat
 
-from ... import models
+from ... import models as _models
 
 T = TypeVar('T')
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]]
@@ -33,7 +33,7 @@ class FeaturesOperations:
     :param deserializer: An object model deserializer.
     """
 
-    models = models
+    models = _models
 
     def __init__(self, client, config, serializer, deserializer) -> None:
         self._client = client
@@ -44,7 +44,7 @@ class FeaturesOperations:
     def list_all(
         self,
         **kwargs
-    ) -> AsyncIterable["models.FeatureOperationsListResult"]:
+    ) -> AsyncIterable["_models.FeatureOperationsListResult"]:
         """Gets all the preview features that are available through AFEC for the subscription.
 
         :keyword callable cls: A custom type or function that will be passed the direct response
@@ -52,7 +52,7 @@ class FeaturesOperations:
         :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.resource.features.v2015_12_01.models.FeatureOperationsListResult]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.FeatureOperationsListResult"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.FeatureOperationsListResult"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -111,7 +111,7 @@ class FeaturesOperations:
         self,
         resource_provider_namespace: str,
         **kwargs
-    ) -> AsyncIterable["models.FeatureOperationsListResult"]:
+    ) -> AsyncIterable["_models.FeatureOperationsListResult"]:
         """Gets all the preview features in a provider namespace that are available through AFEC for the
         subscription.
 
@@ -123,7 +123,7 @@ class FeaturesOperations:
         :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.resource.features.v2015_12_01.models.FeatureOperationsListResult]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.FeatureOperationsListResult"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.FeatureOperationsListResult"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -184,7 +184,7 @@ class FeaturesOperations:
         resource_provider_namespace: str,
         feature_name: str,
         **kwargs
-    ) -> "models.FeatureResult":
+    ) -> "_models.FeatureResult":
         """Gets the preview feature with the specified name.
 
         :param resource_provider_namespace: The resource provider namespace for the feature.
@@ -196,7 +196,7 @@ class FeaturesOperations:
         :rtype: ~azure.mgmt.resource.features.v2015_12_01.models.FeatureResult
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.FeatureResult"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.FeatureResult"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -242,7 +242,7 @@ class FeaturesOperations:
         resource_provider_namespace: str,
         feature_name: str,
         **kwargs
-    ) -> "models.FeatureResult":
+    ) -> "_models.FeatureResult":
         """Registers the preview feature for the subscription.
 
         :param resource_provider_namespace: The namespace of the resource provider.
@@ -254,7 +254,7 @@ class FeaturesOperations:
         :rtype: ~azure.mgmt.resource.features.v2015_12_01.models.FeatureResult
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.FeatureResult"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.FeatureResult"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -300,7 +300,7 @@ class FeaturesOperations:
         resource_provider_namespace: str,
         feature_name: str,
         **kwargs
-    ) -> "models.FeatureResult":
+    ) -> "_models.FeatureResult":
         """Unregisters the preview feature for the subscription.
 
         :param resource_provider_namespace: The namespace of the resource provider.
@@ -312,7 +312,7 @@ class FeaturesOperations:
         :rtype: ~azure.mgmt.resource.features.v2015_12_01.models.FeatureResult
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.FeatureResult"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.FeatureResult"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }

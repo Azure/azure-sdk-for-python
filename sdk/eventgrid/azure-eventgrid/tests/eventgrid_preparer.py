@@ -62,11 +62,10 @@ class EventGridTopicPreparer(AzureMgmtPreparer):
                 topic = Topic(location=self.parameter_location, tags=None, input_schema=CUSTOM_EVENT_SCHEMA, input_schema_mapping=CUSTOM_JSON_INPUT_SCHEMA_MAPPING)
             else:
                 topic = Topic(location=self.parameter_location)
-            topic_operation = self.client.topics.create_or_update(
+            topic_operation = self.client.topics.begin_create_or_update(
                 group.name,
                 name,
                 topic,
-                {}
             )
             self.resource = topic_operation.result()
             key = self.client.topics.list_shared_access_keys(group.name, name)
@@ -85,7 +84,7 @@ class EventGridTopicPreparer(AzureMgmtPreparer):
     def remove_resource(self, name, **kwargs):
         if self.is_live:
             group = self._get_resource_group(**kwargs)
-            self.client.topics.delete(group.name, name, polling=False)
+            self.client.topics.begin_delete(group.name, name, polling=False)
 
     def _get_resource_group(self, **kwargs):
         try:

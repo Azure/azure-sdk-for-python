@@ -1,0 +1,76 @@
+interactions:
+- request:
+    body: '{"documents": [{"id": "0", "text": "Test passing cls to endpoint", "language":
+      "en"}]}'
+    headers:
+      Accept:
+      - application/json, text/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '86'
+      Content-Type:
+      - application/json
+      User-Agent:
+      - azsdk-python-ai-textanalytics/5.1.0b6 Python/3.9.1 (macOS-10.13.6-x86_64-i386-64bit)
+    method: POST
+    uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.1-preview.4/entities/health/jobs?stringIndexType=UnicodeCodePoint
+  response:
+    body:
+      string: ''
+    headers:
+      apim-request-id:
+      - 4e689706-4e88-4c29-813b-097ce878a8e6
+      date:
+      - Mon, 01 Mar 2021 19:49:42 GMT
+      operation-location:
+      - https://westus2.api.cognitive.microsoft.com/text/analytics/v3.1-preview.4/entities/health/jobs/ff608e44-6583-4f19-ba9e-4fc3bdfef7d4
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains; preload
+      transfer-encoding:
+      - chunked
+      x-content-type-options:
+      - nosniff
+      x-envoy-upstream-service-time:
+      - '99'
+    status:
+      code: 202
+      message: Accepted
+- request:
+    body: null
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - azsdk-python-ai-textanalytics/5.1.0b6 Python/3.9.1 (macOS-10.13.6-x86_64-i386-64bit)
+    method: GET
+    uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.1-preview.4/entities/health/jobs/ff608e44-6583-4f19-ba9e-4fc3bdfef7d4
+  response:
+    body:
+      string: '{"jobId":"ff608e44-6583-4f19-ba9e-4fc3bdfef7d4","lastUpdateDateTime":"2021-03-01T19:49:44Z","createdDateTime":"2021-03-01T19:49:42Z","expirationDateTime":"2021-03-02T19:49:42Z","status":"succeeded","errors":[],"results":{"documents":[{"id":"0","entities":[{"offset":5,"length":11,"text":"passing
+        cls","category":"Diagnosis","confidenceScore":0.93}],"relations":[],"warnings":[]}],"errors":[],"modelVersion":"2021-01-11"}}'
+    headers:
+      apim-request-id:
+      - a6cac610-faec-455d-bc07-42a8030eeb6f
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Mon, 01 Mar 2021 19:49:47 GMT
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains; preload
+      transfer-encoding:
+      - chunked
+      x-content-type-options:
+      - nosniff
+      x-envoy-upstream-service-time:
+      - '31'
+    status:
+      code: 200
+      message: OK
+version: 1

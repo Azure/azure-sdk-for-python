@@ -1,0 +1,243 @@
+interactions:
+- request:
+    body: null
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '0'
+      User-Agent:
+      - azsdk-python-storage-dfs/12.2.1 Python/3.7.3 (Windows-10-10.0.19041-SP0)
+      x-ms-client-request-id:
+      - 1b9fe46c-38ce-11eb-9601-001a7dda7113
+      x-ms-date:
+      - Mon, 07 Dec 2020 20:52:24 GMT
+      x-ms-properties:
+      - ''
+      x-ms-version:
+      - '2020-02-10'
+    method: PUT
+    uri: https://storagename.dfs.core.windows.net/utqqcontainer9d4d1789/csvfile9d4d1789?resource=file
+  response:
+    body:
+      string: ''
+    headers:
+      Content-Length:
+      - '0'
+      Date:
+      - Mon, 07 Dec 2020 20:52:23 GMT
+      ETag:
+      - '"0x8D89AF200232944"'
+      Last-Modified:
+      - Mon, 07 Dec 2020 20:52:24 GMT
+      Server:
+      - Windows-Azure-HDFS/1.0 Microsoft-HTTPAPI/2.0
+      x-ms-request-id:
+      - 807a4670-d01f-00bc-48da-cc20e0000000
+      x-ms-version:
+      - '2020-02-10'
+    status:
+      code: 201
+      message: Created
+- request:
+    body: '100,200,300,400
+
+      300,400,500,600
+
+      '
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '32'
+      Content-Type:
+      - application/json; charset=utf-8
+      User-Agent:
+      - azsdk-python-storage-dfs/12.2.1 Python/3.7.3 (Windows-10-10.0.19041-SP0)
+      x-ms-client-request-id:
+      - 1bf5a4f8-38ce-11eb-996c-001a7dda7113
+      x-ms-date:
+      - Mon, 07 Dec 2020 20:52:24 GMT
+      x-ms-version:
+      - '2020-02-10'
+    method: PATCH
+    uri: https://storagename.dfs.core.windows.net/utqqcontainer9d4d1789/csvfile9d4d1789?position=0&action=append
+  response:
+    body:
+      string: ''
+    headers:
+      Content-Length:
+      - '0'
+      Date:
+      - Mon, 07 Dec 2020 20:52:24 GMT
+      Server:
+      - Windows-Azure-HDFS/1.0 Microsoft-HTTPAPI/2.0
+      x-ms-request-id:
+      - 807a4671-d01f-00bc-49da-cc20e0000000
+      x-ms-request-server-encrypted:
+      - 'true'
+      x-ms-version:
+      - '2020-02-10'
+    status:
+      code: 202
+      message: Accepted
+- request:
+    body: null
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '0'
+      If-Match:
+      - '"0x8D89AF200232944"'
+      User-Agent:
+      - azsdk-python-storage-dfs/12.2.1 Python/3.7.3 (Windows-10-10.0.19041-SP0)
+      x-ms-client-request-id:
+      - 1c0c581c-38ce-11eb-a2d8-001a7dda7113
+      x-ms-date:
+      - Mon, 07 Dec 2020 20:52:24 GMT
+      x-ms-version:
+      - '2020-02-10'
+    method: PATCH
+    uri: https://storagename.dfs.core.windows.net/utqqcontainer9d4d1789/csvfile9d4d1789?position=32&close=true&action=flush
+  response:
+    body:
+      string: ''
+    headers:
+      Content-Length:
+      - '0'
+      Date:
+      - Mon, 07 Dec 2020 20:52:24 GMT
+      ETag:
+      - '"0x8D89AF200536F83"'
+      Last-Modified:
+      - Mon, 07 Dec 2020 20:52:25 GMT
+      Server:
+      - Windows-Azure-HDFS/1.0 Microsoft-HTTPAPI/2.0
+      x-ms-request-id:
+      - 807a4672-d01f-00bc-4ada-cc20e0000000
+      x-ms-request-server-encrypted:
+      - 'false'
+      x-ms-version:
+      - '2020-02-10'
+    status:
+      code: 200
+      message: OK
+- request:
+    body: '<?xml version=''1.0'' encoding=''utf-8''?>
+
+      <QueryRequest><QueryType>SQL</QueryType><Expression>SELECT _2 from BlobStorage
+      WHERE _1 &gt; 250</Expression><OutputSerialization><Format><Type>arrow</Type><ArrowConfiguration><Schema><Field><Type>decimal</Type><Name>abc</Name><Precision>4</Precision><Scale>2</Scale></Field></Schema></ArrowConfiguration></Format></OutputSerialization></QueryRequest>'
+    headers:
+      Accept:
+      - application/xml
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '390'
+      Content-Type:
+      - application/xml; charset=utf-8
+      User-Agent:
+      - azsdk-python-storage-dfs/12.2.1 Python/3.7.3 (Windows-10-10.0.19041-SP0)
+      x-ms-client-request-id:
+      - 1c261666-38ce-11eb-ba10-001a7dda7113
+      x-ms-date:
+      - Mon, 07 Dec 2020 20:52:25 GMT
+      x-ms-version:
+      - '2020-02-10'
+    method: POST
+    uri: https://storagename.blob.core.windows.net/utqqcontainer9d4d1789/csvfile9d4d1789?comp=query
+  response:
+    body:
+      string: !!binary |
+        T2JqAQIWYXZyby5zY2hlbWG+HlsKICB7CiAgICAidHlwZSI6ICJyZWNvcmQiLAogICAgIm5hbWUi
+        OiAiY29tLm1pY3Jvc29mdC5henVyZS5zdG9yYWdlLnF1ZXJ5QmxvYkNvbnRlbnRzLnJlc3VsdERh
+        dGEiLAogICAgImRvYyI6ICJIb2xkcyByZXN1bHQgZGF0YSBpbiB0aGUgZm9ybWF0IHNwZWNpZmll
+        ZCBmb3IgdGhpcyBxdWVyeSAoQ1NWLCBKU09OLCBldGMuKS4iLAogICAgImZpZWxkcyI6IFsKICAg
+        ICAgewogICAgICAgICJuYW1lIjogImRhdGEiLAogICAgICAgICJ0eXBlIjogImJ5dGVzIgogICAg
+        ICB9CiAgICBdCiAgfSwKICB7CiAgICAidHlwZSI6ICJyZWNvcmQiLAogICAgIm5hbWUiOiAiY29t
+        Lm1pY3Jvc29mdC5henVyZS5zdG9yYWdlLnF1ZXJ5QmxvYkNvbnRlbnRzLmVycm9yIiwKICAgICJk
+        b2MiOiAiQW4gZXJyb3IgdGhhdCBvY2N1cnJlZCB3aGlsZSBwcm9jZXNzaW5nIHRoZSBxdWVyeS4i
+        LAogICAgImZpZWxkcyI6IFsKICAgICAgewogICAgICAgICJuYW1lIjogImZhdGFsIiwKICAgICAg
+        ICAidHlwZSI6ICJib29sZWFuIiwKICAgICAgICAiZG9jIjogIklmIHRydWUsIHRoaXMgZXJyb3Ig
+        cHJldmVudHMgZnVydGhlciBxdWVyeSBwcm9jZXNzaW5nLiAgTW9yZSByZXN1bHQgZGF0YSBtYXkg
+        YmUgcmV0dXJuZWQsIGJ1dCB0aGVyZSBpcyBubyBndWFyYW50ZWUgdGhhdCBhbGwgb2YgdGhlIG9y
+        aWdpbmFsIGRhdGEgd2lsbCBiZSBwcm9jZXNzZWQuICBJZiBmYWxzZSwgdGhpcyBlcnJvciBkb2Vz
+        IG5vdCBwcmV2ZW50IGZ1cnRoZXIgcXVlcnkgcHJvY2Vzc2luZy4iCiAgICAgIH0sCiAgICAgIHsK
+        ICAgICAgICAibmFtZSI6ICJuYW1lIiwKICAgICAgICAidHlwZSI6ICJzdHJpbmciLAogICAgICAg
+        ICJkb2MiOiAiVGhlIG5hbWUgb2YgdGhlIGVycm9yIgogICAgICB9LAogICAgICB7CiAgICAgICAg
+        Im5hbWUiOiAiZGVzY3JpcHRpb24iLAogICAgICAgICJ0eXBlIjogInN0cmluZyIsCiAgICAgICAg
+        ImRvYyI6ICJBIGRlc2NyaXB0aW9uIG9mIHRoZSBlcnJvciIKICAgICAgfSwKICAgICAgewogICAg
+        ICAgICJuYW1lIjogInBvc2l0aW9uIiwKICAgICAgICAidHlwZSI6ICJsb25nIiwKICAgICAgICAi
+        ZG9jIjogIlRoZSBibG9iIG9mZnNldCBhdCB3aGljaCB0aGUgZXJyb3Igb2NjdXJyZWQiCiAgICAg
+        IH0KICAgIF0KICB9LAogIHsKICAgICJ0eXBlIjogInJlY29yZCIsCiAgICAibmFtZSI6ICJjb20u
+        bWljcm9zb2Z0LmF6dXJlLnN0b3JhZ2UucXVlcnlCbG9iQ29udGVudHMucHJvZ3Jlc3MiLAogICAg
+        ImRvYyI6ICJJbmZvcm1hdGlvbiBhYm91dCB0aGUgcHJvZ3Jlc3Mgb2YgdGhlIHF1ZXJ5IiwKICAg
+        ICJmaWVsZHMiOiBbCiAgICAgIHsKICAgICAgICAibmFtZSI6ICJieXRlc1NjYW5uZWQiLAogICAg
+        ICAgICJ0eXBlIjogImxvbmciLAogICAgICAgICJkb2MiOiAiVGhlIG51bWJlciBvZiBieXRlcyB0
+        aGF0IGhhdmUgYmVlbiBzY2FubmVkIgogICAgICB9LAogICAgICB7CiAgICAgICAgIm5hbWUiOiAi
+        dG90YWxCeXRlcyIsCiAgICAgICAgInR5cGUiOiAibG9uZyIsCiAgICAgICAgImRvYyI6ICJUaGUg
+        dG90YWwgbnVtYmVyIG9mIGJ5dGVzIHRvIGJlIHNjYW5uZWQgaW4gdGhpcyBxdWVyeSIKICAgICAg
+        fQogICAgXQogIH0sCiAgewogICAgInR5cGUiOiAicmVjb3JkIiwKICAgICJuYW1lIjogImNvbS5t
+        aWNyb3NvZnQuYXp1cmUuc3RvcmFnZS5xdWVyeUJsb2JDb250ZW50cy5lbmQiLAogICAgImRvYyI6
+        ICJTZW50IGFzIHRoZSBmaW5hbCBtZXNzYWdlIG9mIHRoZSByZXNwb25zZSwgaW5kaWNhdGluZyB0
+        aGF0IGFsbCByZXN1bHRzIGhhdmUgYmVlbiBzZW50LiIsCiAgICAiZmllbGRzIjogWwogICAgICB7
+        CiAgICAgICAgIm5hbWUiOiAidG90YWxCeXRlcyIsCiAgICAgICAgInR5cGUiOiAibG9uZyIsCiAg
+        ICAgICAgImRvYyI6ICJUaGUgdG90YWwgbnVtYmVyIG9mIGJ5dGVzIHRvIGJlIHNjYW5uZWQgaW4g
+        dGhpcyBxdWVyeSIKICAgICAgfQogICAgXQogIH0KXQoARqP3wuZdrEKJENLgeVxZCgL2AwDwA///
+        //94AAAAEAAAAAAACgAMAAYABQAIAAoAAAAAAQMADAAAAAgACAAAAAQACAAAAAQAAAABAAAAFAAA
+        ABAAFAAIAAYABwAMAAAAEAAQAAAAAAABByQAAAAUAAAABAAAAAAAAAAIAAwABAAIAAgAAAAEAAAA
+        AgAAAAMAAABhYmMA/////3AAAAAQAAAAAAAKAA4ABgAFAAgACgAAAAADAwAQAAAAAAAKAAwAAAAE
+        AAgACgAAADAAAAAEAAAAAgAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAEA
+        AAAAAAAAAAAAAAAAAAAAAAAARqP3wuZdrEKJENLgeVxZCgLGAgDAAv////+IAAAAFAAAAAAAAAAM
+        ABYABgAFAAgADAAMAAAAAAMDABgAAAAQAAAAAAAAAAAACgAYAAwABAAIAAoAAAA8AAAAEAAAAAEA
+        AAAAAAAAAAAAAAIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAQAAAAAAAAAAAAAAABAAAAAQAA
+        AAAAAAAAAAAAAAAAAJABAAAAAAAAAAAAAAAAAABGo/fC5l2sQokQ0uB5XFkKAgYEQEBGo/fC5l2s
+        QokQ0uB5XFkKAgQGQEaj98LmXaxCiRDS4HlcWQo=
+    headers:
+      Accept-Ranges:
+      - bytes
+      Content-Type:
+      - avro/binary
+      Date:
+      - Mon, 07 Dec 2020 20:52:26 GMT
+      ETag:
+      - '"0x8D89AF200536F83"'
+      Last-Modified:
+      - Mon, 07 Dec 2020 20:52:25 GMT
+      Server:
+      - Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
+      Transfer-Encoding:
+      - chunked
+      x-ms-blob-type:
+      - BlockBlob
+      x-ms-creation-time:
+      - Mon, 07 Dec 2020 20:52:24 GMT
+      x-ms-lease-state:
+      - available
+      x-ms-lease-status:
+      - unlocked
+      x-ms-request-id:
+      - 7b7b2fb0-f01e-00c9-2ada-cc4bcc000000
+      x-ms-server-encrypted:
+      - 'false'
+      x-ms-version:
+      - '2020-02-10'
+    status:
+      code: 200
+      message: OK
+version: 1

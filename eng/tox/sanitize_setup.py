@@ -13,16 +13,18 @@ import os
 import logging
 import glob
 from packaging.specifiers import SpecifierSet
+from packaging.version import Version
 from pkg_resources import Requirement
-from pypi_tools.pypi import PyPIClient
 
 root_dir = os.path.abspath(os.path.join(os.path.abspath(__file__), "..", "..", ".."))
 setup_parser_path = os.path.abspath(os.path.join(root_dir, "eng", "versioning"))
+pypi_tools_path = os.path.join(root_dir, "tools", "azure-sdk-tools", "pypi_tools")
 
-sys.path.append(setup_parser_path)
+sys.path += [setup_parser_path, pypi_tools_path]
 from setup_parser import get_install_requires, parse_setup
+from pypi import PyPIClient
 
-DEV_BUILD_IDENTIFIER = ".dev"
+DEV_BUILD_IDENTIFIER = "a"
 
 def update_requires(setup_py_path, requires_dict):
     # This method changes package requirement by overriding the specifier
@@ -62,12 +64,31 @@ def get_version(pkg_name):
         # When building package with dev build version, version for packages in same service is updated to dev build 
         # and other packages will not have dev build number
         # strip dev build number so we can check if package exists in PyPI and replace
-        if DEV_BUILD_IDENTIFIER in version:
-            version = version[:version.find(DEV_BUILD_IDENTIFIER)]
+        
+        version_obj = Version(version)
+        if version_obj.pre:
+            if version_obj.pre[0] == DEV_BUILD_IDENTIFIER:
+                version = version_obj.base_version
+
         return version
     else:
-        logging.error("setyp.py is not found for package {} to identify current version".format(pkg_name))
+        logging.error("setup.py is not found for package {} to identify current version".format(pkg_name))
         exit(1)
+
+
+def get_base_version(pkg_name):
+    # find version for the package from source. This logic should be revisited to find version from devops feed
+    glob_path = os.path.join(root_dir, "sdk", "*", pkg_name, "setup.py")
+    paths = glob.glob(glob_path)
+    if paths:
+        setup_py_path = paths[0]
+        _, version, _ = parse_setup(setup_py_path)
+        version_obj = Version(version)
+        return version_obj.base_version
+    else:
+        logging.error("setup.py is not found for package {} to identify current version".format(pkg_name))
+        exit(1)
+
 
 def process_requires(setup_py_path):
     # This method process package requirement to verify if all required packages are available on PyPI
@@ -82,11 +103,13 @@ def process_requires(setup_py_path):
     for req in requires:
         pkg_name = req.key
         spec = SpecifierSet(str(req).replace(pkg_name, ""))
+
         if not is_required_version_on_pypi(pkg_name, spec):
             old_req = str(req)
             version = get_version(pkg_name)
+            base_version = get_base_version(pkg_name)
             logging.info("Updating version {0} in requirement {1} to dev build version".format(version, old_req))
-            new_req = old_req.replace(version, "{}.dev".format(version))
+            new_req = old_req.replace(version, "{}{}".format(base_version, DEV_BUILD_IDENTIFIER))
             logging.info("New requirement for package {0}: {1}".format(pkg_name, new_req))
             requirement_to_update[old_req] = new_req
 

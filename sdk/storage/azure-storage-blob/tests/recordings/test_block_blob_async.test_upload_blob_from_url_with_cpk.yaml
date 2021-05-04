@@ -1,0 +1,168 @@
+interactions:
+- request:
+    body: null
+    headers:
+      User-Agent:
+      - azsdk-python-storage-blob/12.6.1 Python/3.7.3 (Windows-10-10.0.19041-SP0)
+      x-ms-date:
+      - Fri, 18 Dec 2020 01:10:25 GMT
+      x-ms-version:
+      - '2020-04-08'
+    method: PUT
+    uri: https://storagename.blob.core.windows.net/utcontainer8c7016f3?restype=container
+  response:
+    body:
+      string: ''
+    headers:
+      content-length: '0'
+      date: Fri, 18 Dec 2020 01:10:25 GMT
+      etag: '"0x8D8A2F1B41BA7DE"'
+      last-modified: Fri, 18 Dec 2020 01:10:26 GMT
+      server: Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
+      x-ms-version: '2020-04-08'
+    status:
+      code: 201
+      message: Created
+    url: https://emilydevtest.blob.core.windows.net/utcontainer8c7016f3?restype=container
+- request:
+    body: This is test data to be copied over.
+    headers:
+      Content-Length:
+      - '36'
+      Content-Type:
+      - application/octet-stream
+      If-None-Match:
+      - '*'
+      User-Agent:
+      - azsdk-python-storage-blob/12.6.1 Python/3.7.3 (Windows-10-10.0.19041-SP0)
+      x-ms-blob-type:
+      - BlockBlob
+      x-ms-date:
+      - Fri, 18 Dec 2020 01:10:26 GMT
+      x-ms-version:
+      - '2020-04-08'
+    method: PUT
+    uri: https://storagename.blob.core.windows.net/utcontainer8c7016f3/blob8c7016f3
+  response:
+    body:
+      string: ''
+    headers:
+      content-length: '0'
+      content-md5: BmRZdU7mXzYVn1nIbsazYg==
+      date: Fri, 18 Dec 2020 01:10:25 GMT
+      etag: '"0x8D8A2F1B41FE1FD"'
+      last-modified: Fri, 18 Dec 2020 01:10:26 GMT
+      server: Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
+      x-ms-content-crc64: OIyBbegbJhU=
+      x-ms-request-server-encrypted: 'true'
+      x-ms-version: '2020-04-08'
+    status:
+      code: 201
+      message: Created
+    url: https://emilydevtest.blob.core.windows.net/utcontainer8c7016f3/blob8c7016f3
+- request:
+    body: null
+    headers:
+      Content-Length:
+      - '0'
+      If-None-Match:
+      - '*'
+      User-Agent:
+      - azsdk-python-storage-blob/12.6.1 Python/3.7.3 (Windows-10-10.0.19041-SP0)
+      x-ms-blob-type:
+      - BlockBlob
+      x-ms-copy-source:
+      - https://emilydevtest.blob.core.windows.net/utcontainer8c7016f3/blob8c7016f3?se=2020-12-18T02%3A10%3A26Z&sp=rt&sv=2020-04-08&sr=b&sig=vLV11ExKvqCDwRck2PdbXYNe73kBjWcyVJUtJztPxg8%3D
+      x-ms-copy-source-blob-properties:
+      - 'true'
+      x-ms-date:
+      - Fri, 18 Dec 2020 01:10:26 GMT
+      x-ms-encryption-algorithm:
+      - AES256
+      x-ms-encryption-key:
+      - MDEyMzQ1NjcwMTIzNDU2NzAxMjM0NTY3MDEyMzQ1Njc=
+      x-ms-encryption-key-sha256:
+      - 3QFFFpRA5+XANHqwwbT4yXDmrT/2JaLt/FKHjzhOdoE=
+      x-ms-version:
+      - '2020-04-08'
+    method: PUT
+    uri: https://storagename.blob.core.windows.net/utcontainer8c7016f3/blobcopy8c7016f3
+  response:
+    body:
+      string: ''
+    headers:
+      content-length: '0'
+      date: Fri, 18 Dec 2020 01:10:27 GMT
+      etag: '"0x8D8A2F1B4F95247"'
+      last-modified: Fri, 18 Dec 2020 01:10:27 GMT
+      server: Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
+      x-ms-content-crc64: OIyBbegbJhU=
+      x-ms-encryption-key-sha256: 3QFFFpRA5+XANHqwwbT4yXDmrT/2JaLt/FKHjzhOdoE=
+      x-ms-request-server-encrypted: 'true'
+      x-ms-version: '2020-04-08'
+    status:
+      code: 201
+      message: Created
+    url: https://emilydevtest.blob.core.windows.net/utcontainer8c7016f3/blobcopy8c7016f3
+- request:
+    body: null
+    headers:
+      User-Agent:
+      - azsdk-python-storage-blob/12.6.1 Python/3.7.3 (Windows-10-10.0.19041-SP0)
+      x-ms-date:
+      - Fri, 18 Dec 2020 01:10:28 GMT
+      x-ms-version:
+      - '2020-04-08'
+    method: PUT
+    uri: https://storagename.blob.core.windows.net/utcontainer8c7016f3/blobcopy8c7016f3?comp=snapshot
+  response:
+    body:
+      string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><Error><Code>BlobUsesCustomerSpecifiedEncryption</Code><Message>The
+        blob is encrypted with customer specified encryption, but it was not provided
+        in the request.\nRequestId:e5feacdf-201e-0042-09da-d4ea74000000\nTime:2020-12-18T01:10:28.7510146Z</Message></Error>"
+    headers:
+      content-length: '301'
+      content-type: application/xml
+      date: Fri, 18 Dec 2020 01:10:27 GMT
+      server: Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
+      x-ms-error-code: BlobUsesCustomerSpecifiedEncryption
+      x-ms-version: '2020-04-08'
+    status:
+      code: 409
+      message: The blob is encrypted with customer specified encryption, but it was
+        not provided in the request.
+    url: https://emilydevtest.blob.core.windows.net/utcontainer8c7016f3/blobcopy8c7016f3?comp=snapshot
+- request:
+    body: null
+    headers:
+      User-Agent:
+      - azsdk-python-storage-blob/12.6.1 Python/3.7.3 (Windows-10-10.0.19041-SP0)
+      x-ms-date:
+      - Fri, 18 Dec 2020 01:10:28 GMT
+      x-ms-encryption-algorithm:
+      - AES256
+      x-ms-encryption-key:
+      - MDEyMzQ1NjcwMTIzNDU2NzAxMjM0NTY3MDEyMzQ1Njc=
+      x-ms-encryption-key-sha256:
+      - 3QFFFpRA5+XANHqwwbT4yXDmrT/2JaLt/FKHjzhOdoE=
+      x-ms-version:
+      - '2020-04-08'
+    method: PUT
+    uri: https://storagename.blob.core.windows.net/utcontainer8c7016f3/blobcopy8c7016f3?comp=snapshot
+  response:
+    body:
+      string: ''
+    headers:
+      content-length: '0'
+      date: Fri, 18 Dec 2020 01:10:28 GMT
+      etag: '"0x8D8A2F1B4F95247"'
+      last-modified: Fri, 18 Dec 2020 01:10:27 GMT
+      server: Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
+      x-ms-request-server-encrypted: 'false'
+      x-ms-snapshot: '2020-12-18T01:10:28.7707081Z'
+      x-ms-version: '2020-04-08'
+    status:
+      code: 201
+      message: Created
+    url: https://emilydevtest.blob.core.windows.net/utcontainer8c7016f3/blobcopy8c7016f3?comp=snapshot
+version: 1

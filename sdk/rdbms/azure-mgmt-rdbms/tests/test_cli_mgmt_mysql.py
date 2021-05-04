@@ -1,10 +1,10 @@
 # coding: utf-8
 
-#-------------------------------------------------------------------------
+# -------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
-#--------------------------------------------------------------------------
+# --------------------------------------------------------------------------
 
 
 # TEST SCENARIO COVERAGE
@@ -24,6 +24,7 @@ from devtools_testutils import AzureMgmtTestCase, ResourceGroupPreparer
 
 AZURE_LOCATION = 'eastus'
 ZERO = dt.timedelta(0)
+
 
 class UTC(dt.tzinfo):
     """UTC"""
@@ -45,17 +46,16 @@ class MgmtMySQLTest(AzureMgmtTestCase):
         self.mgmt_client = self.create_mgmt_client(
             azure.mgmt.rdbms.mysql.MySQLManagementClient
         )
-    
+
     @ResourceGroupPreparer(location=AZURE_LOCATION)
     def test_mysql(self, resource_group):
-
-        SERVER_NAME = "testserver2134"
+        SERVER_NAME = "testserver21341"
         SUBSCRIPTION_ID = self.settings.SUBSCRIPTION_ID
         RESOURCE_GROUP = resource_group.name
-        SERVER_GEO_NAME = "servergeo2134"
-        SERVER_REPLICA_NAME = "serverreplica2134"
-        SERVER_POINT_NAME = "serverpoint2134"
-        DATABASE_NAME = "testdatabase2134"
+        SERVER_GEO_NAME = "servergeo21341"
+        SERVER_REPLICA_NAME = "serverreplica21341"
+        SERVER_POINT_NAME = "serverpoint21341"
+        DATABASE_NAME = "testdatabase21341"
         FIREWALL_RULE_NAME = "firewallrule"
         CONFIGURATION_NAME = "configuration"
         VIRTUAL_NETWORK_RULE_NAME = "virutal_networkrule"
@@ -64,29 +64,29 @@ class MgmtMySQLTest(AzureMgmtTestCase):
 
         # Create a new server[put]
         BODY = {
-          "location": "eastus",
-          "properties":{
-            "administrator_login": "cloudsa",
-            "administrator_login_password": "pass$w0rd",
-            "ssl_enforcement": "Enabled",
-            "storage_profile": {
-              "storage_mb": "128000",
-              "backup_retention_days": "7",
-              "geo_redundant_backup": "Enabled"
+            "location": "eastus",
+            "properties": {
+                "administrator_login": "cloudsa",
+                "administrator_login_password": "pass$w0rd",
+                "ssl_enforcement": "Enabled",
+                "storage_profile": {
+                    "storage_mb": "128000",
+                    "backup_retention_days": "7",
+                    "geo_redundant_backup": "Enabled"
+                },
+                "create_mode": "Default"
             },
-            "create_mode": "Default"
-          },
-          "sku": {
-            "name": "GP_Gen5_2",
-            "tier": "GeneralPurpose",
-            "capacity": "2",
-            "family": "Gen5"
-          },
-          "tags": {
-            "elastic_server": "1"
-          }
+            "sku": {
+                "name": "GP_Gen5_2",
+                "tier": "GeneralPurpose",
+                "capacity": "2",
+                "family": "Gen5"
+            },
+            "tags": {
+                "elastic_server": "1"
+            }
         }
-        result = self.mgmt_client.servers.create(resource_group.name, SERVER_NAME, BODY)
+        result = self.mgmt_client.servers.begin_create(resource_group.name, SERVER_NAME, BODY)
         result = result.result()
 
         # Create a server as a geo restore [put]
@@ -111,18 +111,18 @@ class MgmtMySQLTest(AzureMgmtTestCase):
 
         # Create a replica server[put]
         BODY = {
-          "location": "eastus",
-          "properties": {
-            "create_mode": "Replica",
-            "source_server_id": "/subscriptions/" + SUBSCRIPTION_ID + "/resourceGroups/" + RESOURCE_GROUP + "/providers/Microsoft.DBforMySQL/servers/" + SERVER_NAME + ""
-          }
+            "location": "eastus",
+            "properties": {
+                "create_mode": "Replica",
+                "source_server_id": "/subscriptions/" + SUBSCRIPTION_ID + "/resourceGroups/" + RESOURCE_GROUP + "/providers/Microsoft.DBforMySQL/servers/" + SERVER_NAME + ""
+            }
         }
-        result = self.mgmt_client.servers.create(resource_group.name, SERVER_REPLICA_NAME, BODY)
+        result = self.mgmt_client.servers.begin_create(resource_group.name, SERVER_REPLICA_NAME, BODY)
         result = result.result()
 
         # Create a database as a point in time restore[put]
-        #point_in_time = (dt.datetime.now(tz=UTC()) - dt.timedelta(minutes=1)).isoformat()
-        #BODY = {
+        # point_in_time = (dt.datetime.now(tz=UTC()) - dt.timedelta(minutes=1)).isoformat()
+        # BODY = {
         #  "location": "eastus",
         #  "properties":{
         #    "restore_point_in_time": point_in_time,
@@ -138,18 +138,18 @@ class MgmtMySQLTest(AzureMgmtTestCase):
         #  "tags": {
         #    "elastic_server": "1"
         #  }
-        #}
-        #result = self.mgmt_client.servers.create(resource_group.name, SERVER_POINT_NAME, BODY)
-        #result = result.result()
+        # }
+        # result = self.mgmt_client.servers.create(resource_group.name, SERVER_POINT_NAME, BODY)
+        # result = result.result()
 
         # DatabaseCreate[put]
         BODY = {
-          "properties": {
-            "charset": "utf8",
-            "collation": "utf8_general_ci"
-          }
+            "properties": {
+                "charset": "utf8",
+                "collation": "utf8_general_ci"
+            }
         }
-        result = self.mgmt_client.databases.create_or_update(resource_group.name, SERVER_NAME, DATABASE_NAME, BODY)
+        result = self.mgmt_client.databases.begin_create_or_update(resource_group.name, SERVER_NAME, DATABASE_NAME, BODY)
         result = result.result()
 
         # FirewallRuleCreate[put]
@@ -159,9 +159,9 @@ class MgmtMySQLTest(AzureMgmtTestCase):
         #     "end_ip_address": "255.255.255.255"
         #   }
         # }
-        START_IP_ADDRESS = "0.0.0.0"
-        END_IP_ADDRESS = "255.255.255.255"
-        result = self.mgmt_client.firewall_rules.create_or_update(resource_group.name, SERVER_NAME, FIREWALL_RULE_NAME, START_IP_ADDRESS, END_IP_ADDRESS)
+        from azure.mgmt.rdbms.mysql.models import FirewallRule
+        firewall_rule = FirewallRule(start_ip_address='0.0.0.0', end_ip_address='255.255.255.255')
+        result = self.mgmt_client.firewall_rules.begin_create_or_update(resource_group.name, SERVER_NAME, FIREWALL_RULE_NAME, firewall_rule)
         result = result.result()
 
         # ConfigurationCreateOrUpdate[put]
@@ -189,36 +189,43 @@ class MgmtMySQLTest(AzureMgmtTestCase):
 
         # Update a server's threat detection policy with all parameters[put]
         BODY = {
-          "properties": {
-            "state": "Enabled",
-            "email_account_admins": True,
-            "email_addresses": [
-              "testSecurityAlert@microsoft.com"
-            ],
-            "disabled_alerts": [
-              "Access_Anomaly",
-              "Usage_Anomaly"
-            ],
-            "retention_days": "5",
-            "storage_account_access_key": "sdlfkjabc+sdlfkjsdlkfsjdfLDKFTERLKFDFKLjsdfksjdflsdkfD2342309432849328476458/3RSD==",
-            "storage_endpoint": "https://mystorage.blob.core.windows.net"
-          }
+            "properties": {
+                "state": "Enabled",
+                "email_account_admins": True,
+                "email_addresses": [
+                    "testSecurityAlert@microsoft.com"
+                ],
+                "disabled_alerts": [
+                    "Access_Anomaly",
+                    "Usage_Anomaly"
+                ],
+                "retention_days": "5",
+                "storage_account_access_key": "sdlfkjabc+sdlfkjsdlkfsjdfLDKFTERLKFDFKLjsdfksjdflsdkfD2342309432849328476458/3RSD==",
+                "storage_endpoint": "https://mystorage.blob.core.windows.net"
+            }
         }
-        result = self.mgmt_client.server_security_alert_policies.create_or_update(resource_group.name, SERVER_NAME, BODY)
+        result = self.mgmt_client.server_security_alert_policies.begin_create_or_update(resource_group.name,
+                                                                                        SERVER_NAME,
+                                                                                        SECURITY_ALERT_POLICY_NAME,
+                                                                                        BODY)
         result = result.result()
 
         # Update a server's threat detection policy with minimal parameters[put]
         BODY = {
-          "properties": {
-            "state": "Disabled",
-            "email_account_admins": True
-          }
+            "properties": {
+                "state": "Disabled",
+                "email_account_admins": True
+            }
         }
-        result = self.mgmt_client.server_security_alert_policies.create_or_update(resource_group.name, SERVER_NAME, BODY)
+        result = self.mgmt_client.server_security_alert_policies.begin_create_or_update(resource_group.name,
+                                                                                        SERVER_NAME,
+                                                                                        SECURITY_ALERT_POLICY_NAME,
+                                                                                        BODY)
         result = result.result()
 
         # Get a server's threat detection policy[get]
-        result = self.mgmt_client.server_security_alert_policies.get(resource_group.name, SERVER_NAME)
+        result = self.mgmt_client.server_security_alert_policies.get(resource_group.name, SERVER_NAME,
+                                                                     SECURITY_ALERT_POLICY_NAME)
 
         # # Gets a virtual network rule[get]
         # result = self.mgmt_client.virtual_network_rules.get(resource_group.name, SERVER_NAME, VIRTUAL_NETWORK_RULE_NAME)
@@ -266,17 +273,17 @@ class MgmtMySQLTest(AzureMgmtTestCase):
         result = self.mgmt_client.operations.list()
 
         # ServerRestart[post]
-        result = self.mgmt_client.servers.restart(resource_group.name, SERVER_NAME)
+        result = self.mgmt_client.servers.begin_restart(resource_group.name, SERVER_NAME)
         result = result.result()
 
         # ServerUpdate[patch]
         BODY = {
-          "properties": {
-            "administrator_login_password": "newpa$$w0rd",
-            "ssl_enforcement": "Disabled"
-          }
+            "properties": {
+                "administrator_login_password": "newpa$$w0rd",
+                "ssl_enforcement": "Disabled"
+            }
         }
-        result = self.mgmt_client.servers.update(resource_group.name, SERVER_NAME, BODY)
+        result = self.mgmt_client.servers.begin_update(resource_group.name, SERVER_NAME, BODY)
         result = result.result()
 
         # NameAvailability[post]
@@ -284,27 +291,28 @@ class MgmtMySQLTest(AzureMgmtTestCase):
         #   "name": "name1",
         #   "type": "Microsoft.DBforMySQL"
         # }
-        NAME = "name1"
-        TYPE = "Microsoft.DBforMySQL"
-        result = self.mgmt_client.check_name_availability.execute(NAME, TYPE)
+        NAME = self.create_random_name("name1")
+        from azure.mgmt.rdbms.mysql.models import NameAvailabilityRequest
+        nameAvailabilityRequest = NameAvailabilityRequest(name=NAME, type="Microsoft.DBforMySQL")
+        result = self.mgmt_client.check_name_availability.execute(nameAvailabilityRequest)
 
         # # Delete a virtual network rule[delete]
         # result = self.mgmt_client.virtual_network_rules.delete(resource_group.name, SERVER_NAME, VIRTUAL_NETWORK_RULE_NAME)
         # result = result.result()
 
         # FirewallRuleDelete[delete]
-        result = self.mgmt_client.firewall_rules.delete(resource_group.name, SERVER_NAME, FIREWALL_RULE_NAME)
+        result = self.mgmt_client.firewall_rules.begin_delete(resource_group.name, SERVER_NAME, FIREWALL_RULE_NAME)
         result = result.result()
 
         # DatabaseDelete[delete]
-        result = self.mgmt_client.databases.delete(resource_group.name, SERVER_NAME, DATABASE_NAME)
+        result = self.mgmt_client.databases.begin_delete(resource_group.name, SERVER_NAME, DATABASE_NAME)
         result = result.result()
 
         # ServerDelete[delete]
-        result = self.mgmt_client.servers.delete(resource_group.name, SERVER_NAME)
+        result = self.mgmt_client.servers.begin_delete(resource_group.name, SERVER_NAME)
         result = result.result()
 
 
-#------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------
 if __name__ == '__main__':
     unittest.main()

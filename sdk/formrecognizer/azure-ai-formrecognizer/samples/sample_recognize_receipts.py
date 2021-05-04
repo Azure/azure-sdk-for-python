@@ -10,7 +10,7 @@
 FILE: sample_recognize_receipts.py
 
 DESCRIPTION:
-    This sample demonstrates how to recognize and extract common fields from US receipts,
+    This sample demonstrates how to recognize and extract common fields from receipts,
     using a pre-trained receipt model. For a suggested approach to extracting information
     from receipts, see sample_strongly_typed_recognized_form.py.
 
@@ -44,7 +44,7 @@ class RecognizeReceiptsSample(object):
             endpoint=endpoint, credential=AzureKeyCredential(key)
         )
         with open(path_to_sample_forms, "rb") as f:
-            poller = form_recognizer_client.begin_recognize_receipts(receipt=f)
+            poller = form_recognizer_client.begin_recognize_receipts(receipt=f, locale="en-US")
         receipts = poller.result()
 
         for idx, receipt in enumerate(receipts):

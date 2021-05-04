@@ -1,5 +1,26 @@
 # Release History
 
+## 1.0.0 (2021-03-29)
+
+**Features**
+
+  - Model CommunicationServiceResource has a new parameter system_data
+  - Model Operation has a new parameter action_type
+  - Model Operation has a new parameter is_data_action
+  - Added operation CommunicationServiceOperations.check_name_availability
+
+**Breaking changes**
+
+  - Model Operation no longer has parameter properties
+
+
+
+## 1.0.0b4 (2020-11-16)
+- Updated `azure-mgmt-communication` version.
+
+## 1.0.0b3 (2020-10-06)
+- Updated `azure-mgmt-communication` version.
+
 ## 1.0.0b2 (2020-09-22)
 
 This version uses a next-generation code generator that introduces important breaking changes, but also important new features (like unified authentication and async programming).

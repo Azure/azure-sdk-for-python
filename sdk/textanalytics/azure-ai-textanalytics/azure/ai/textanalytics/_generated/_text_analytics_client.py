@@ -9,13 +9,23 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from azure.core import PipelineClient
-from msrest import Serializer, Deserializer
+from typing import TYPE_CHECKING
 
+from azure.core import PipelineClient
 from azure.profiles import KnownProfiles, ProfileDefinition
 from azure.profiles.multiapiclient import MultiApiClientMixin
+from msrest import Deserializer, Serializer
+
 from ._configuration import TextAnalyticsClientConfiguration
 from ._operations_mixin import TextAnalyticsClientOperationsMixin
+
+if TYPE_CHECKING:
+    # pylint: disable=unused-import,ungrouped-imports
+    from typing import Any, Optional
+
+    from azure.core.credentials import TokenCredential
+    from azure.core.pipeline.transport import HttpRequest, HttpResponse
+
 class _SDKClient(object):
     def __init__(self, *args, **kwargs):
         """This is a fake class to support current implemetation of MultiApiClientMixin."
@@ -38,10 +48,11 @@ class TextAnalyticsClient(TextAnalyticsClientOperationsMixin, MultiApiClientMixi
     :type credential: ~azure.core.credentials.TokenCredential
     :param endpoint: Supported Cognitive Services endpoints (protocol and hostname, for example: https://westus.api.cognitive.microsoft.com).
     :type endpoint: str
-    :param str api_version: API version to use if no profile is provided, or if
-     missing in profile.
+    :param api_version: API version to use if no profile is provided, or if missing in profile.
+    :type api_version: str
     :param profile: A profile definition, from KnownProfiles to dict.
     :type profile: azure.profiles.KnownProfiles
+    :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
     """
 
     DEFAULT_API_VERSION = 'v3.0'
@@ -57,18 +68,16 @@ class TextAnalyticsClient(TextAnalyticsClientOperationsMixin, MultiApiClientMixi
         self,
         credential,  # type: "TokenCredential"
         endpoint,  # type: str
-        api_version=None,
-        profile=KnownProfiles.default,
+        api_version=None, # type: Optional[str]
+        profile=KnownProfiles.default, # type: KnownProfiles
         **kwargs  # type: Any
     ):
         if api_version == 'v3.0':
             base_url = '{Endpoint}/text/analytics/v3.0'
-        elif api_version == 'v3.1-preview.1':
-            base_url = '{Endpoint}/text/analytics/v3.1-preview.1'
-        elif api_version == 'v3.1-preview.2':
-            base_url = '{Endpoint}/text/analytics/v3.1-preview.2'
+        elif api_version == 'v3.1-preview.5':
+            base_url = '{Endpoint}/text/analytics/v3.1-preview.5'
         else:
-            raise NotImplementedError("APIVersion {} is not available".format(api_version))
+            raise ValueError("API version {} is not available".format(api_version))
         self._config = TextAnalyticsClientConfiguration(credential, endpoint, **kwargs)
         self._client = PipelineClient(base_url=base_url, config=self._config, **kwargs)
         super(TextAnalyticsClient, self).__init__(
@@ -85,19 +94,15 @@ class TextAnalyticsClient(TextAnalyticsClientOperationsMixin, MultiApiClientMixi
         """Module depends on the API version:
 
            * v3.0: :mod:`v3_0.models<azure.ai.textanalytics.v3_0.models>`
-           * v3.1-preview.1: :mod:`v3_1_preview_1.models<azure.ai.textanalytics.v3_1_preview_1.models>`
-           * v3.1-preview.2: :mod:`v3_1_preview_2.models<azure.ai.textanalytics.v3_1_preview_2.models>`
+           * v3.1-preview.5: :mod:`v3_1_preview_5.models<azure.ai.textanalytics.v3_1_preview_5.models>`
         """
         if api_version == 'v3.0':
             from .v3_0 import models
             return models
-        elif api_version == 'v3.1-preview.1':
-            from .v3_1_preview_1 import models
+        elif api_version == 'v3.1-preview.5':
+            from .v3_1_preview_5 import models
             return models
-        elif api_version == 'v3.1-preview.2':
-            from .v3_1_preview_2 import models
-            return models
-        raise NotImplementedError("APIVersion {} is not available".format(api_version))
+        raise ValueError("API version {} is not available".format(api_version))
 
     def close(self):
         self._client.close()

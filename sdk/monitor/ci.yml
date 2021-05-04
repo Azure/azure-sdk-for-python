@@ -4,6 +4,7 @@ trigger:
   branches:
     include:
     - master
+    - main
     - hotfix/*
     - release/*
     - restapi*
@@ -15,6 +16,7 @@ pr:
   branches:
     include:
     - master
+    - main
     - feature/*
     - hotfix/*
     - release/*
@@ -27,6 +29,9 @@ extends:
   template: ../../eng/pipelines/templates/stages/archetype-sdk-client.yml
   parameters:
     ServiceDirectory: monitor
+    BuildTargetingString: '*'
     Artifacts:
-    - name: azure_mgmt_monitor
+    - name: azure-mgmt-monitor
       safeName: azuremgmtmonitor
+    - name: azure-monitor-opentelemetry-exporter
+      safeName: azuremonitoropentelemetryexporter

@@ -8,15 +8,15 @@ from typing import (  # pylint: disable=unused-import
     Union, Optional, Any, TYPE_CHECKING
 )
 
-from azure.storage.blob._shared import sign_string, url_quote
-from azure.storage.blob._shared.constants import X_MS_VERSION
-from azure.storage.blob._shared.models import Services
-from azure.storage.blob._shared.shared_access_signature import SharedAccessSignature, _SharedAccessHelper, \
+from ._shared import sign_string, url_quote
+from ._shared.constants import X_MS_VERSION
+from ._shared.models import Services
+from ._shared.shared_access_signature import SharedAccessSignature, _SharedAccessHelper, \
     QueryStringConstants
 
 if TYPE_CHECKING:
     from datetime import datetime
-    from azure.storage.blob import (
+    from ..blob import (
         ResourceTypes,
         AccountSasPermissions,
         UserDelegationKey,
@@ -55,7 +55,7 @@ class BlobSharedAccessSignature(SharedAccessSignature):
                       expiry=None, start=None, policy_id=None, ip=None, protocol=None,
                       cache_control=None, content_disposition=None,
                       content_encoding=None, content_language=None,
-                      content_type=None):
+                      content_type=None, **kwargs):
         '''
         Generates a shared access signature for the blob or one of its snapshots.
         Use the returned signature with the sas_token parameter of any BlobService.
@@ -126,12 +126,14 @@ class BlobSharedAccessSignature(SharedAccessSignature):
 
         resource = 'bs' if snapshot else 'b'
         resource = 'bv' if version_id else resource
+        resource = 'd' if kwargs.pop("is_directory", None) else resource
         sas.add_resource(resource)
 
         sas.add_timestamp(snapshot or version_id)
         sas.add_override_response_headers(cache_control, content_disposition,
                                           content_encoding, content_language,
                                           content_type)
+        sas.add_info_for_hns_account(**kwargs)
         sas.add_resource_signature(self.account_name, self.account_key, resource_path,
                                    user_delegation_key=self.user_delegation_key)
 
@@ -141,7 +143,7 @@ class BlobSharedAccessSignature(SharedAccessSignature):
                            start=None, policy_id=None, ip=None, protocol=None,
                            cache_control=None, content_disposition=None,
                            content_encoding=None, content_language=None,
-                           content_type=None):
+                           content_type=None, **kwargs):
         '''
         Generates a shared access signature for the container.
         Use the returned signature with the sas_token parameter of any BlobService.
@@ -206,6 +208,7 @@ class BlobSharedAccessSignature(SharedAccessSignature):
         sas.add_override_response_headers(cache_control, content_disposition,
                                           content_encoding, content_language,
                                           content_type)
+        sas.add_info_for_hns_account(**kwargs)
         sas.add_resource_signature(self.account_name, self.account_key, container_name,
                                    user_delegation_key=self.user_delegation_key)
         return sas.get_token()
@@ -215,6 +218,12 @@ class _BlobSharedAccessHelper(_SharedAccessHelper):
 
     def add_timestamp(self, timestamp):
         self._add_query(BlobQueryStringConstants.SIGNED_TIMESTAMP, timestamp)
+
+    def add_info_for_hns_account(self, **kwargs):
+        self._add_query(QueryStringConstants.SIGNED_DIRECTORY_DEPTH, kwargs.pop('sdd', None))
+        self._add_query(QueryStringConstants.SIGNED_AUTHORIZED_OID, kwargs.pop('preauthorized_agent_object_id', None))
+        self._add_query(QueryStringConstants.SIGNED_UNAUTHORIZED_OID, kwargs.pop('agent_object_id', None))
+        self._add_query(QueryStringConstants.SIGNED_CORRELATION_ID, kwargs.pop('correlation_id', None))
 
     def get_value_to_append(self, query):
         return_value = self.query_dict.get(query) or ''
@@ -249,7 +258,10 @@ class _BlobSharedAccessHelper(_SharedAccessHelper):
                  self.get_value_to_append(QueryStringConstants.SIGNED_KEY_START) +
                  self.get_value_to_append(QueryStringConstants.SIGNED_KEY_EXPIRY) +
                  self.get_value_to_append(QueryStringConstants.SIGNED_KEY_SERVICE) +
-                 self.get_value_to_append(QueryStringConstants.SIGNED_KEY_VERSION))
+                 self.get_value_to_append(QueryStringConstants.SIGNED_KEY_VERSION) +
+                 self.get_value_to_append(QueryStringConstants.SIGNED_AUTHORIZED_OID) +
+                 self.get_value_to_append(QueryStringConstants.SIGNED_UNAUTHORIZED_OID) +
+                 self.get_value_to_append(QueryStringConstants.SIGNED_CORRELATION_ID))
         else:
             string_to_sign += self.get_value_to_append(QueryStringConstants.SIGNED_IDENTIFIER)
 

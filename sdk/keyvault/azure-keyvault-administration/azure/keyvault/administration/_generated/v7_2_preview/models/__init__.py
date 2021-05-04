@@ -21,8 +21,10 @@ try:
     from ._models_py3 import RoleAssignmentProperties
     from ._models_py3 import RoleAssignmentPropertiesWithScope
     from ._models_py3 import RoleDefinition
+    from ._models_py3 import RoleDefinitionCreateParameters
     from ._models_py3 import RoleDefinitionFilter
     from ._models_py3 import RoleDefinitionListResult
+    from ._models_py3 import RoleDefinitionProperties
     from ._models_py3 import SASTokenParameter
     from ._models_py3 import SelectiveKeyRestoreOperation
     from ._models_py3 import SelectiveKeyRestoreOperationParameters
@@ -41,11 +43,20 @@ except (SyntaxError, ImportError):
     from ._models import RoleAssignmentProperties  # type: ignore
     from ._models import RoleAssignmentPropertiesWithScope  # type: ignore
     from ._models import RoleDefinition  # type: ignore
+    from ._models import RoleDefinitionCreateParameters  # type: ignore
     from ._models import RoleDefinitionFilter  # type: ignore
     from ._models import RoleDefinitionListResult  # type: ignore
+    from ._models import RoleDefinitionProperties  # type: ignore
     from ._models import SASTokenParameter  # type: ignore
     from ._models import SelectiveKeyRestoreOperation  # type: ignore
     from ._models import SelectiveKeyRestoreOperationParameters  # type: ignore
+
+from ._key_vault_client_enums import (
+    DataAction,
+    RoleDefinitionType,
+    RoleScope,
+    RoleType,
+)
 
 __all__ = [
     'Attributes',
@@ -62,9 +73,15 @@ __all__ = [
     'RoleAssignmentProperties',
     'RoleAssignmentPropertiesWithScope',
     'RoleDefinition',
+    'RoleDefinitionCreateParameters',
     'RoleDefinitionFilter',
     'RoleDefinitionListResult',
+    'RoleDefinitionProperties',
     'SASTokenParameter',
     'SelectiveKeyRestoreOperation',
     'SelectiveKeyRestoreOperationParameters',
+    'DataAction',
+    'RoleDefinitionType',
+    'RoleScope',
+    'RoleType',
 ]

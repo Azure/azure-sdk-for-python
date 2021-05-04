@@ -26,7 +26,6 @@
 from __future__ import absolute_import
 import logging
 from typing import Iterator, Optional, Any, Union, TypeVar
-import time
 import urllib3 # type: ignore
 from urllib3.util.retry import Retry # type: ignore
 import requests
@@ -43,6 +42,7 @@ from ._base import (
     HttpResponse,
     _HttpResponseBase
 )
+from ._bigger_block_size_http_adapters import BiggerBlockSizeHTTPAdapter
 
 PipelineType = TypeVar("PipelineType")
 
@@ -106,7 +106,6 @@ class StreamDownloadGenerator(object):
         self.block_size = response.block_size
         self.iter_content_func = self.response.internal_response.iter_content(self.block_size)
         self.content_length = int(response.headers.get('Content-Length', 0))
-        self.downloaded = 0
 
     def __len__(self):
         return self.content_length
@@ -115,42 +114,20 @@ class StreamDownloadGenerator(object):
         return self
 
     def __next__(self):
-        retry_active = True
-        retry_total = 3
-        retry_interval = 1000
-        while retry_active:
-            try:
-                chunk = next(self.iter_content_func)
-                if not chunk:
-                    raise StopIteration()
-                self.downloaded += self.block_size
-                return chunk
-            except StopIteration:
-                self.response.internal_response.close()
+        try:
+            chunk = next(self.iter_content_func)
+            if not chunk:
                 raise StopIteration()
-            except (requests.exceptions.ChunkedEncodingError,
-                    requests.exceptions.ConnectionError):
-                retry_total -= 1
-                if retry_total <= 0:
-                    retry_active = False
-                else:
-                    time.sleep(retry_interval)
-                    headers = {'range': 'bytes=' + str(self.downloaded) + '-'}
-                    resp = self.pipeline.run(self.request, stream=True, headers=headers)
-                    if resp.http_response.status_code == 416:
-                        raise
-                    chunk = next(self.iter_content_func)
-                    if not chunk:
-                        raise StopIteration()
-                    self.downloaded += len(chunk)
-                    return chunk
-                continue
-            except requests.exceptions.StreamConsumedError:
-                raise
-            except Exception as err:
-                _LOGGER.warning("Unable to stream download: %s", err)
-                self.response.internal_response.close()
-                raise
+            return chunk
+        except StopIteration:
+            self.response.internal_response.close()
+            raise StopIteration()
+        except requests.exceptions.StreamConsumedError:
+            raise
+        except Exception as err:
+            _LOGGER.warning("Unable to stream download: %s", err)
+            self.response.internal_response.close()
+            raise
     next = __next__  # Python 2 compatibility.
 
 
@@ -213,7 +190,7 @@ class RequestsTransport(HttpTransport):
         """
         session.trust_env = self._use_env_settings
         disable_retries = Retry(total=False, redirect=False, raise_on_status=False)
-        adapter = requests.adapters.HTTPAdapter(max_retries=disable_retries)
+        adapter = BiggerBlockSizeHTTPAdapter(max_retries=disable_retries)
         for p in self._protocols:
             session.mount(p, adapter)
 

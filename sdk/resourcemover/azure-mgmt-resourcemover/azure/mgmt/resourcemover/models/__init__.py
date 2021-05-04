@@ -11,12 +11,15 @@ try:
     from ._models_py3 import AutomaticResolutionProperties
     from ._models_py3 import AvailabilitySetResourceSettings
     from ._models_py3 import AzureResourceReference
+    from ._models_py3 import BulkRemoveRequest
     from ._models_py3 import CloudErrorBody
     from ._models_py3 import CommitRequest
     from ._models_py3 import DiscardRequest
+    from ._models_py3 import DiskEncryptionSetResourceSettings
     from ._models_py3 import Display
     from ._models_py3 import Identity
     from ._models_py3 import JobStatus
+    from ._models_py3 import KeyVaultResourceSettings
     from ._models_py3 import LBBackendAddressPoolResourceSettings
     from ._models_py3 import LBFrontendIPConfigurationResourceSettings
     from ._models_py3 import LoadBalancerBackendAddressPoolReference
@@ -25,6 +28,7 @@ try:
     from ._models_py3 import ManualResolutionProperties
     from ._models_py3 import MoveCollection
     from ._models_py3 import MoveCollectionProperties
+    from ._models_py3 import MoveCollectionPropertiesErrors
     from ._models_py3 import MoveCollectionResultList
     from ._models_py3 import MoveErrorInfo
     from ._models_py3 import MoveResource
@@ -38,11 +42,11 @@ try:
     from ._models_py3 import MoveResourceProperties
     from ._models_py3 import MoveResourcePropertiesErrors
     from ._models_py3 import MoveResourcePropertiesMoveStatus
-    from ._models_py3 import MoveResourcePropertiesSourceResourceSettings
     from ._models_py3 import MoveResourceStatus
     from ._models_py3 import NetworkInterfaceResourceSettings
     from ._models_py3 import NetworkSecurityGroupResourceSettings
     from ._models_py3 import NicIpConfigurationResourceSettings
+    from ._models_py3 import NsgReference
     from ._models_py3 import NsgSecurityRule
     from ._models_py3 import OperationErrorAdditionalInfo
     from ._models_py3 import OperationStatus
@@ -52,6 +56,8 @@ try:
     from ._models_py3 import PrepareRequest
     from ._models_py3 import ProxyResourceReference
     from ._models_py3 import PublicIPAddressResourceSettings
+    from ._models_py3 import PublicIpReference
+    from ._models_py3 import RequiredForResourcesCollection
     from ._models_py3 import ResourceGroupResourceSettings
     from ._models_py3 import ResourceMoveRequest
     from ._models_py3 import ResourceSettings
@@ -60,6 +66,10 @@ try:
     from ._models_py3 import SqlServerResourceSettings
     from ._models_py3 import SubnetReference
     from ._models_py3 import SubnetResourceSettings
+    from ._models_py3 import Summary
+    from ._models_py3 import SummaryCollection
+    from ._models_py3 import UnresolvedDependenciesFilter
+    from ._models_py3 import UnresolvedDependenciesFilterProperties
     from ._models_py3 import UnresolvedDependency
     from ._models_py3 import UnresolvedDependencyCollection
     from ._models_py3 import UpdateMoveCollectionRequest
@@ -70,12 +80,15 @@ except (SyntaxError, ImportError):
     from ._models import AutomaticResolutionProperties  # type: ignore
     from ._models import AvailabilitySetResourceSettings  # type: ignore
     from ._models import AzureResourceReference  # type: ignore
+    from ._models import BulkRemoveRequest  # type: ignore
     from ._models import CloudErrorBody  # type: ignore
     from ._models import CommitRequest  # type: ignore
     from ._models import DiscardRequest  # type: ignore
+    from ._models import DiskEncryptionSetResourceSettings  # type: ignore
     from ._models import Display  # type: ignore
     from ._models import Identity  # type: ignore
     from ._models import JobStatus  # type: ignore
+    from ._models import KeyVaultResourceSettings  # type: ignore
     from ._models import LBBackendAddressPoolResourceSettings  # type: ignore
     from ._models import LBFrontendIPConfigurationResourceSettings  # type: ignore
     from ._models import LoadBalancerBackendAddressPoolReference  # type: ignore
@@ -84,6 +97,7 @@ except (SyntaxError, ImportError):
     from ._models import ManualResolutionProperties  # type: ignore
     from ._models import MoveCollection  # type: ignore
     from ._models import MoveCollectionProperties  # type: ignore
+    from ._models import MoveCollectionPropertiesErrors  # type: ignore
     from ._models import MoveCollectionResultList  # type: ignore
     from ._models import MoveErrorInfo  # type: ignore
     from ._models import MoveResource  # type: ignore
@@ -97,11 +111,11 @@ except (SyntaxError, ImportError):
     from ._models import MoveResourceProperties  # type: ignore
     from ._models import MoveResourcePropertiesErrors  # type: ignore
     from ._models import MoveResourcePropertiesMoveStatus  # type: ignore
-    from ._models import MoveResourcePropertiesSourceResourceSettings  # type: ignore
     from ._models import MoveResourceStatus  # type: ignore
     from ._models import NetworkInterfaceResourceSettings  # type: ignore
     from ._models import NetworkSecurityGroupResourceSettings  # type: ignore
     from ._models import NicIpConfigurationResourceSettings  # type: ignore
+    from ._models import NsgReference  # type: ignore
     from ._models import NsgSecurityRule  # type: ignore
     from ._models import OperationErrorAdditionalInfo  # type: ignore
     from ._models import OperationStatus  # type: ignore
@@ -111,6 +125,8 @@ except (SyntaxError, ImportError):
     from ._models import PrepareRequest  # type: ignore
     from ._models import ProxyResourceReference  # type: ignore
     from ._models import PublicIPAddressResourceSettings  # type: ignore
+    from ._models import PublicIpReference  # type: ignore
+    from ._models import RequiredForResourcesCollection  # type: ignore
     from ._models import ResourceGroupResourceSettings  # type: ignore
     from ._models import ResourceMoveRequest  # type: ignore
     from ._models import ResourceSettings  # type: ignore
@@ -119,6 +135,10 @@ except (SyntaxError, ImportError):
     from ._models import SqlServerResourceSettings  # type: ignore
     from ._models import SubnetReference  # type: ignore
     from ._models import SubnetResourceSettings  # type: ignore
+    from ._models import Summary  # type: ignore
+    from ._models import SummaryCollection  # type: ignore
+    from ._models import UnresolvedDependenciesFilter  # type: ignore
+    from ._models import UnresolvedDependenciesFilterProperties  # type: ignore
     from ._models import UnresolvedDependency  # type: ignore
     from ._models import UnresolvedDependencyCollection  # type: ignore
     from ._models import UpdateMoveCollectionRequest  # type: ignore
@@ -126,7 +146,9 @@ except (SyntaxError, ImportError):
     from ._models import VirtualNetworkResourceSettings  # type: ignore
 
 from ._resource_mover_service_api_enums import (
+    DependencyLevel,
     DependencyType,
+    JobName,
     MoveResourceInputType,
     MoveState,
     ProvisioningState,
@@ -141,12 +163,15 @@ __all__ = [
     'AutomaticResolutionProperties',
     'AvailabilitySetResourceSettings',
     'AzureResourceReference',
+    'BulkRemoveRequest',
     'CloudErrorBody',
     'CommitRequest',
     'DiscardRequest',
+    'DiskEncryptionSetResourceSettings',
     'Display',
     'Identity',
     'JobStatus',
+    'KeyVaultResourceSettings',
     'LBBackendAddressPoolResourceSettings',
     'LBFrontendIPConfigurationResourceSettings',
     'LoadBalancerBackendAddressPoolReference',
@@ -155,6 +180,7 @@ __all__ = [
     'ManualResolutionProperties',
     'MoveCollection',
     'MoveCollectionProperties',
+    'MoveCollectionPropertiesErrors',
     'MoveCollectionResultList',
     'MoveErrorInfo',
     'MoveResource',
@@ -168,11 +194,11 @@ __all__ = [
     'MoveResourceProperties',
     'MoveResourcePropertiesErrors',
     'MoveResourcePropertiesMoveStatus',
-    'MoveResourcePropertiesSourceResourceSettings',
     'MoveResourceStatus',
     'NetworkInterfaceResourceSettings',
     'NetworkSecurityGroupResourceSettings',
     'NicIpConfigurationResourceSettings',
+    'NsgReference',
     'NsgSecurityRule',
     'OperationErrorAdditionalInfo',
     'OperationStatus',
@@ -182,6 +208,8 @@ __all__ = [
     'PrepareRequest',
     'ProxyResourceReference',
     'PublicIPAddressResourceSettings',
+    'PublicIpReference',
+    'RequiredForResourcesCollection',
     'ResourceGroupResourceSettings',
     'ResourceMoveRequest',
     'ResourceSettings',
@@ -190,12 +218,18 @@ __all__ = [
     'SqlServerResourceSettings',
     'SubnetReference',
     'SubnetResourceSettings',
+    'Summary',
+    'SummaryCollection',
+    'UnresolvedDependenciesFilter',
+    'UnresolvedDependenciesFilterProperties',
     'UnresolvedDependency',
     'UnresolvedDependencyCollection',
     'UpdateMoveCollectionRequest',
     'VirtualMachineResourceSettings',
     'VirtualNetworkResourceSettings',
+    'DependencyLevel',
     'DependencyType',
+    'JobName',
     'MoveResourceInputType',
     'MoveState',
     'ProvisioningState',

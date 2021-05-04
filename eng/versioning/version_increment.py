@@ -37,7 +37,7 @@ if __name__ == '__main__':
             'Examples: All = "azure-*", Single = "azure-keyvault", Targeted Multiple = "azure-keyvault,azure-mgmt-resource"'
         ),
     )
-    parser.add_argument('--service', help='name of the service for which to set the dev build id (e.g. keyvault)')
+    parser.add_argument('--service', required=True, help='name of the service for which to set the dev build id (e.g. keyvault)')
     args = parser.parse_args()
 
     package_name = args.package_name.replace('_', '-')
@@ -56,4 +56,4 @@ if __name__ == '__main__':
 
     set_version_py(target_package[0], new_version)
     set_dev_classifier(target_package[0], new_version)
-    update_change_log(target_package[0], new_version, True, False)
+    update_change_log(target_package[0], new_version, args.service, args.package_name, True, False)

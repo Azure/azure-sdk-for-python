@@ -15,7 +15,7 @@ from azure.core.polling import LROPoller, NoPolling, PollingMethod
 from azure.mgmt.core.exceptions import ARMErrorFormat
 from azure.mgmt.core.polling.arm_polling import ARMPolling
 
-from .. import models
+from .. import models as _models
 
 if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
@@ -38,7 +38,7 @@ class ExpressRouteGatewaysOperations(object):
     :param deserializer: An object model deserializer.
     """
 
-    models = models
+    models = _models
 
     def __init__(self, client, config, serializer, deserializer):
         self._client = client
@@ -50,7 +50,7 @@ class ExpressRouteGatewaysOperations(object):
         self,
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.ExpressRouteGatewayList"
+        # type: (...) -> "_models.ExpressRouteGatewayList"
         """Lists ExpressRoute gateways under a given subscription.
 
         :keyword callable cls: A custom type or function that will be passed the direct response
@@ -58,7 +58,7 @@ class ExpressRouteGatewaysOperations(object):
         :rtype: ~azure.mgmt.network.v2020_03_01.models.ExpressRouteGatewayList
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.ExpressRouteGatewayList"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.ExpressRouteGatewayList"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -102,7 +102,7 @@ class ExpressRouteGatewaysOperations(object):
         resource_group_name,  # type: str
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.ExpressRouteGatewayList"
+        # type: (...) -> "_models.ExpressRouteGatewayList"
         """Lists ExpressRoute gateways in a given resource group.
 
         :param resource_group_name: The name of the resource group.
@@ -112,7 +112,7 @@ class ExpressRouteGatewaysOperations(object):
         :rtype: ~azure.mgmt.network.v2020_03_01.models.ExpressRouteGatewayList
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.ExpressRouteGatewayList"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.ExpressRouteGatewayList"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -156,11 +156,11 @@ class ExpressRouteGatewaysOperations(object):
         self,
         resource_group_name,  # type: str
         express_route_gateway_name,  # type: str
-        put_express_route_gateway_parameters,  # type: "models.ExpressRouteGateway"
+        put_express_route_gateway_parameters,  # type: "_models.ExpressRouteGateway"
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.ExpressRouteGateway"
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.ExpressRouteGateway"]
+        # type: (...) -> "_models.ExpressRouteGateway"
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.ExpressRouteGateway"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -214,10 +214,10 @@ class ExpressRouteGatewaysOperations(object):
         self,
         resource_group_name,  # type: str
         express_route_gateway_name,  # type: str
-        put_express_route_gateway_parameters,  # type: "models.ExpressRouteGateway"
+        put_express_route_gateway_parameters,  # type: "_models.ExpressRouteGateway"
         **kwargs  # type: Any
     ):
-        # type: (...) -> LROPoller["models.ExpressRouteGateway"]
+        # type: (...) -> LROPoller["_models.ExpressRouteGateway"]
         """Creates or updates a ExpressRoute gateway in a specified resource group.
 
         :param resource_group_name: The name of the resource group.
@@ -238,7 +238,7 @@ class ExpressRouteGatewaysOperations(object):
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         polling = kwargs.pop('polling', True)  # type: Union[bool, PollingMethod]
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.ExpressRouteGateway"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.ExpressRouteGateway"]
         lro_delay = kwargs.pop(
             'polling_interval',
             self._config.polling_interval
@@ -263,7 +263,13 @@ class ExpressRouteGatewaysOperations(object):
                 return cls(pipeline_response, deserialized, {})
             return deserialized
 
-        if polling is True: polling_method = ARMPolling(lro_delay, lro_options={'final-state-via': 'azure-async-operation'},  **kwargs)
+        path_format_arguments = {
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
+            'expressRouteGatewayName': self._serialize.url("express_route_gateway_name", express_route_gateway_name, 'str'),
+            'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
+        }
+
+        if polling is True: polling_method = ARMPolling(lro_delay, lro_options={'final-state-via': 'azure-async-operation'}, path_format_arguments=path_format_arguments,  **kwargs)
         elif polling is False: polling_method = NoPolling()
         else: polling_method = polling
         if cont_token:
@@ -283,7 +289,7 @@ class ExpressRouteGatewaysOperations(object):
         express_route_gateway_name,  # type: str
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.ExpressRouteGateway"
+        # type: (...) -> "_models.ExpressRouteGateway"
         """Fetches the details of a ExpressRoute gateway in a resource group.
 
         :param resource_group_name: The name of the resource group.
@@ -295,7 +301,7 @@ class ExpressRouteGatewaysOperations(object):
         :rtype: ~azure.mgmt.network.v2020_03_01.models.ExpressRouteGateway
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.ExpressRouteGateway"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.ExpressRouteGateway"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -427,7 +433,13 @@ class ExpressRouteGatewaysOperations(object):
             if cls:
                 return cls(pipeline_response, None, {})
 
-        if polling is True: polling_method = ARMPolling(lro_delay, lro_options={'final-state-via': 'location'},  **kwargs)
+        path_format_arguments = {
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
+            'expressRouteGatewayName': self._serialize.url("express_route_gateway_name", express_route_gateway_name, 'str'),
+            'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
+        }
+
+        if polling is True: polling_method = ARMPolling(lro_delay, lro_options={'final-state-via': 'location'}, path_format_arguments=path_format_arguments,  **kwargs)
         elif polling is False: polling_method = NoPolling()
         else: polling_method = polling
         if cont_token:

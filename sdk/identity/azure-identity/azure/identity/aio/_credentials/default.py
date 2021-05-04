@@ -16,7 +16,9 @@ from .shared_cache import SharedTokenCacheCredential
 from .vscode import VisualStudioCodeCredential
 
 if TYPE_CHECKING:
-    from typing import Any
+    from typing import Any, List
+    from azure.core.credentials import AccessToken
+    from azure.core.credentials_async import AsyncTokenCredential
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -83,7 +85,7 @@ class DefaultAzureCredential(ChainedTokenCredential):
         exclude_managed_identity_credential = kwargs.pop("exclude_managed_identity_credential", False)
         exclude_shared_token_cache_credential = kwargs.pop("exclude_shared_token_cache_credential", False)
 
-        credentials = []
+        credentials = []  # type: List[AsyncTokenCredential]
         if not exclude_environment_credential:
             credentials.append(EnvironmentCredential(authority=authority, **kwargs))
         if not exclude_managed_identity_credential:
@@ -98,7 +100,6 @@ class DefaultAzureCredential(ChainedTokenCredential):
                 )
                 credentials.append(shared_cache)
             except Exception as ex:  # pylint:disable=broad-except
-                # transitive dependency pywin32 doesn't support 3.8 (https://github.com/mhammond/pywin32/issues/1431)
                 _LOGGER.info("Shared token cache is unavailable: '%s'", ex)
         if not exclude_visual_studio_code_credential:
             credentials.append(VisualStudioCodeCredential(tenant_id=vscode_tenant_id))
@@ -107,10 +108,10 @@ class DefaultAzureCredential(ChainedTokenCredential):
 
         super().__init__(*credentials)
 
-    async def get_token(self, *scopes: str, **kwargs: "Any"):
+    async def get_token(self, *scopes: str, **kwargs: "Any") -> "AccessToken":
         """Asynchronously request an access token for `scopes`.
 
-        .. note:: This method is called by Azure SDK clients. It isn't intended for use in application code.
+        This method is called automatically by Azure SDK clients.
 
         :param str scopes: desired scopes for the access token. This method requires at least one scope.
         :raises ~azure.core.exceptions.ClientAuthenticationError: authentication failed. The exception has a

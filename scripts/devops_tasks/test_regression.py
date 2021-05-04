@@ -23,7 +23,9 @@ from common_tasks import (
     find_packages_missing_on_pypi,
     find_whl,
     find_tools_packages,
-    get_installed_packages
+    get_installed_packages,
+    extend_dev_requirements,
+    str_to_bool
 )
 from git_helper import get_release_tag, git_checkout_tag, git_checkout_branch, clone_repo
 
@@ -38,8 +40,9 @@ VENV_NAME = "regressionenv"
 AZURE_SDK_FOR_PYTHON_GIT_URL = "https://github.com/Azure/azure-sdk-for-python.git"
 TEMP_FOLDER_NAME = ".tmp_code_path"
 
-logging.getLogger().setLevel(logging.INFO)
+OLDEST_EXTENSION_PKGS = ['msrestazure','adal']
 
+logging.getLogger().setLevel(logging.INFO)
 
 class CustomVirtualEnv:
     def __init__(self, path):
@@ -106,7 +109,8 @@ class RegressionTest:
         pkg_name = self.context.package_name
         if pkg_name in self.package_dependency_dict:
             logging.info("Running regression test for {}".format(pkg_name))
-            self.whl_path = find_whl(pkg_name, self.context.pkg_version, self.context.whl_directory)
+
+            self.whl_path = os.path.join(self.context.whl_directory, find_whl(pkg_name, self.context.pkg_version, self.context.whl_directory))
             if find_packages_missing_on_pypi(self.whl_path):
                 logging.error("Required packages are not available on PyPI. Skipping regression test")
                 exit(0)
@@ -115,6 +119,7 @@ class RegressionTest:
             logging.info("Dependent packages for [{0}]: {1}".format(pkg_name, dep_packages))
             for dep_pkg_path in dep_packages:
                 dep_pkg_name, _, _, _ = parse_setup(dep_pkg_path)
+
                 logging.info(
                     "Starting regression test of {0} against released {1}".format(
                         pkg_name, dep_pkg_name
@@ -165,21 +170,30 @@ class RegressionTest:
                 dep_pkg_path
             )
 
-            # Install pre-built whl for current package
+            # Install pre-built whl for current package.
             install_package_from_whl(
                 self.whl_path,
                 self.context.temp_path,
                 self.context.venv.python_executable,
             )
-            # install package to be tested and run pytest
+
+            # install dependent package from source
+            self._install_packages(dep_pkg_path, self.context.package_name)
+            
+            # try install of pre-built whl for current package again. if unnecessary, pip does nothing.
+            # we do this to ensure that the correct development version is installed. on non-dev builds
+            # this step will just skip through.
+            install_package_from_whl(
+                self.whl_path,
+                self.context.temp_path,
+                self.context.venv.python_executable,
+            )
+
             self._execute_test(dep_pkg_path)
         finally:
             self.context.deinitialize(dep_pkg_path)
 
     def _execute_test(self, dep_pkg_path):
-        # install dependent package from source
-        self._install_packages(dep_pkg_path, self.context.package_name)
-
         #  Ensure correct version of package is installed
         if not self._is_package_installed(self.context.package_name, self.context.pkg_version):
             logging.error("Incorrect version of package {0} is installed. Expected version {1}".format(self.context.package_name, self.context.pkg_version))
@@ -221,7 +235,7 @@ class RegressionTest:
         working_dir = self.context.package_root_path
         temp_dir = self.context.temp_path
 
-        list_to_exclude = [pkg_to_exclude,]
+        list_to_exclude = [pkg_to_exclude, 'azure-sdk-tools', 'azure-devtools' ]
         installed_pkgs = [p.split('==')[0] for p in get_installed_packages(self.context.venv.lib_paths) if p.startswith('azure-')]
         logging.info("Installed azure sdk packages:{}".format(installed_pkgs))
 
@@ -236,7 +250,26 @@ class RegressionTest:
             dependent_pkg_path, list_to_exclude, dependent_pkg_path
         )
 
+        # early versions of azure-sdk-tools had an unpinned version of azure-mgmt packages. 
+        # that unpinned version hits an a code path in azure-sdk-tools that hits this error.
+        if filtered_dev_req_path and self.context.is_latest_depend_test == False:
+            logging.info(
+                "Extending dev requirements with {}".format(OLDEST_EXTENSION_PKGS)
+            )
+            extend_dev_requirements(
+                filtered_dev_req_path, OLDEST_EXTENSION_PKGS
+            )
+        else:
+            logging.info("Not extending dev requirements {} {}".format(filtered_dev_req_path, self.context.is_latest_depend_test))
+
         if filtered_dev_req_path:
+            logging.info("Extending dev requirement to include azure-sdk-tools")
+            extend_dev_requirements(
+                filtered_dev_req_path, [
+                    "../../../tools/azure-sdk-tools",
+                    "../../../tools/azure-devtools"
+                ]
+            )
             logging.info(
                 "Installing filtered dev requirements from {}".format(filtered_dev_req_path)
             )
@@ -290,7 +323,6 @@ def find_package_dependency(glob_string, repo_root_dir):
 
 # This is the main function which identifies packages to test, find dependency matrix and trigger test
 def run_main(args):
-
     temp_dir = ""
     if args.temp_dir:
         temp_dir = args.temp_dir
@@ -319,7 +351,7 @@ def run_main(args):
     if len(targeted_packages) == 0:
         exit(0)
 
-    # clone code repo only if it doesn't exists
+    # clone code repo only if it doesn't exist
     if not os.path.exists(code_repo_root):
         clone_repo(temp_dir, AZURE_SDK_FOR_PYTHON_GIT_URL)
     else:
@@ -334,7 +366,7 @@ def run_main(args):
 
     # Create regression text context. One context object will be reused for all packages
     context = RegressionContext(
-        args.whl_dir, temp_dir, args.verify_latest, args.mark_arg
+        args.whl_dir, temp_dir, str_to_bool(args.verify_latest), args.mark_arg
     )
 
     for pkg_path in targeted_packages:

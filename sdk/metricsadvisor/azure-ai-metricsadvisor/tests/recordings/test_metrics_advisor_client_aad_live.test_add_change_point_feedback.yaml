@@ -1,0 +1,44 @@
+interactions:
+- request:
+    body: '{"feedbackType": "ChangePoint", "metricId": "metric_id", "dimensionFilter":
+      {"dimension": {"dimension_name": "Los Angeles"}}, "startTime": "2020-08-05T00:00:00.000Z",
+      "endTime": "2020-10-21T00:00:00.000Z", "value": {"changePointValue": "NotChangePoint"}}'
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '271'
+      Content-Type:
+      - application/json
+      User-Agent:
+      - azsdk-python-ai-metricsadvisor/1.0.0b3 Python/3.8.6 (Windows-10-10.0.19041-SP0)
+    method: POST
+    uri: https://js-metrics-advisor.cognitiveservices.azure.com/metricsadvisor/v1.0/feedback/metric
+  response:
+    body:
+      string: ''
+    headers:
+      apim-request-id:
+      - c1c4a49d-0abb-4c60-8519-6384f7e0ccc8
+      content-length:
+      - '0'
+      date:
+      - Fri, 22 Jan 2021 01:00:30 GMT
+      location:
+      - https://js-metrics-advisor.cognitiveservices.azure.com/metricsadvisor/v1.0/feedback/metric/a78389c1-9099-49c2-95e3-80e7b2df68df
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains; preload
+      x-content-type-options:
+      - nosniff
+      x-envoy-upstream-service-time:
+      - '189'
+      x-request-id:
+      - c1c4a49d-0abb-4c60-8519-6384f7e0ccc8
+    status:
+      code: 201
+      message: Created
+version: 1

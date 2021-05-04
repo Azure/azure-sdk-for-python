@@ -9,18 +9,18 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-servicebusmanagementclient/2017-04 Python/3.8.2 (Windows-10-10.0.18362-SP0)
+      - azsdk-python-servicebusmanagementclient/2017-04 Python/3.7.7 (Windows-10-10.0.19041-SP0)
     method: GET
     uri: https://servicebustestsbname.servicebus.windows.net/$Resources/topics?$skip=0&$top=100&api-version=2017-04
   response:
     body:
-      string: <feed xmlns="http://www.w3.org/2005/Atom"><title type="text">Topics</title><id>https://servicebustest32ip2wgoaa.servicebus.windows.net/$Resources/topics?$skip=0&amp;$top=100&amp;api-version=2017-04</id><updated>2020-08-17T08:07:10Z</updated><link
-        rel="self" href="https://servicebustest32ip2wgoaa.servicebus.windows.net/$Resources/topics?$skip=0&amp;$top=100&amp;api-version=2017-04"/></feed>
+      string: <feed xmlns="http://www.w3.org/2005/Atom"><title type="text">Topics</title><id>https://servicebustestssikhu6c5u.servicebus.windows.net/$Resources/topics?$skip=0&amp;$top=100&amp;api-version=2017-04</id><updated>2020-11-23T20:27:31Z</updated><link
+        rel="self" href="https://servicebustestssikhu6c5u.servicebus.windows.net/$Resources/topics?$skip=0&amp;$top=100&amp;api-version=2017-04"/></feed>
     headers:
       content-type:
       - application/atom+xml;type=feed;charset=utf-8
       date:
-      - Mon, 17 Aug 2020 08:07:09 GMT
+      - Mon, 23 Nov 2020 20:27:31 GMT
       server:
       - Microsoft-HTTPAPI/2.0
       transfer-encoding:
@@ -45,21 +45,21 @@ interactions:
       Content-Type:
       - application/atom+xml
       User-Agent:
-      - azsdk-python-servicebusmanagementclient/2017-04 Python/3.8.2 (Windows-10-10.0.18362-SP0)
+      - azsdk-python-servicebusmanagementclient/2017-04 Python/3.7.7 (Windows-10-10.0.19041-SP0)
     method: PUT
     uri: https://servicebustestsbname.servicebus.windows.net/dqkodq?api-version=2017-04
   response:
     body:
-      string: <entry xmlns="http://www.w3.org/2005/Atom"><id>https://servicebustest32ip2wgoaa.servicebus.windows.net/dqkodq?api-version=2017-04</id><title
-        type="text">dqkodq</title><published>2020-08-17T08:07:10Z</published><updated>2020-08-17T08:07:10Z</updated><author><name>servicebustest32ip2wgoaa</name></author><link
-        rel="self" href="https://servicebustest32ip2wgoaa.servicebus.windows.net/dqkodq?api-version=2017-04"/><content
+      string: <entry xmlns="http://www.w3.org/2005/Atom"><id>https://servicebustestssikhu6c5u.servicebus.windows.net/dqkodq?api-version=2017-04</id><title
+        type="text">dqkodq</title><published>2020-11-23T20:27:32Z</published><updated>2020-11-23T20:27:32Z</updated><author><name>servicebustestssikhu6c5u</name></author><link
+        rel="self" href="https://servicebustestssikhu6c5u.servicebus.windows.net/dqkodq?api-version=2017-04"/><content
         type="application/xml"><TopicDescription xmlns="http://schemas.microsoft.com/netservices/2010/10/servicebus/connect"
-        xmlns:i="http://www.w3.org/2001/XMLSchema-instance"><DefaultMessageTimeToLive>P10675199DT2H48M5.4775807S</DefaultMessageTimeToLive><MaxSizeInMegabytes>1024</MaxSizeInMegabytes><RequiresDuplicateDetection>false</RequiresDuplicateDetection><DuplicateDetectionHistoryTimeWindow>PT10M</DuplicateDetectionHistoryTimeWindow><EnableBatchedOperations>true</EnableBatchedOperations><SizeInBytes>0</SizeInBytes><FilteringMessagesBeforePublishing>false</FilteringMessagesBeforePublishing><IsAnonymousAccessible>false</IsAnonymousAccessible><AuthorizationRules></AuthorizationRules><Status>Active</Status><CreatedAt>2020-08-17T08:07:10.893Z</CreatedAt><UpdatedAt>2020-08-17T08:07:10.93Z</UpdatedAt><SupportOrdering>true</SupportOrdering><AutoDeleteOnIdle>P10675199DT2H48M5.4775807S</AutoDeleteOnIdle><EnablePartitioning>false</EnablePartitioning><EntityAvailabilityStatus>Available</EntityAvailabilityStatus><EnableSubscriptionPartitioning>false</EnableSubscriptionPartitioning><EnableExpress>false</EnableExpress></TopicDescription></content></entry>
+        xmlns:i="http://www.w3.org/2001/XMLSchema-instance"><DefaultMessageTimeToLive>P10675199DT2H48M5.4775807S</DefaultMessageTimeToLive><MaxSizeInMegabytes>1024</MaxSizeInMegabytes><RequiresDuplicateDetection>false</RequiresDuplicateDetection><DuplicateDetectionHistoryTimeWindow>PT10M</DuplicateDetectionHistoryTimeWindow><EnableBatchedOperations>true</EnableBatchedOperations><SizeInBytes>0</SizeInBytes><FilteringMessagesBeforePublishing>false</FilteringMessagesBeforePublishing><IsAnonymousAccessible>false</IsAnonymousAccessible><AuthorizationRules></AuthorizationRules><Status>Active</Status><CreatedAt>2020-11-23T20:27:32.087Z</CreatedAt><UpdatedAt>2020-11-23T20:27:32.15Z</UpdatedAt><SupportOrdering>true</SupportOrdering><AutoDeleteOnIdle>P10675199DT2H48M5.4775807S</AutoDeleteOnIdle><EnablePartitioning>false</EnablePartitioning><EntityAvailabilityStatus>Available</EntityAvailabilityStatus><EnableSubscriptionPartitioning>false</EnableSubscriptionPartitioning><EnableExpress>false</EnableExpress></TopicDescription></content></entry>
     headers:
       content-type:
       - application/atom+xml;type=entry;charset=utf-8
       date:
-      - Mon, 17 Aug 2020 08:07:10 GMT
+      - Mon, 23 Nov 2020 20:27:32 GMT
       server:
       - Microsoft-HTTPAPI/2.0
       strict-transport-security:
@@ -86,23 +86,23 @@ interactions:
       Content-Type:
       - application/atom+xml
       User-Agent:
-      - azsdk-python-servicebusmanagementclient/2017-04 Python/3.8.2 (Windows-10-10.0.18362-SP0)
+      - azsdk-python-servicebusmanagementclient/2017-04 Python/3.7.7 (Windows-10-10.0.19041-SP0)
     method: PUT
     uri: https://servicebustestsbname.servicebus.windows.net/dqkodq/subscriptions/kkaqo?api-version=2017-04
   response:
     body:
-      string: <entry xmlns="http://www.w3.org/2005/Atom"><id>https://servicebustest32ip2wgoaa.servicebus.windows.net/dqkodq/subscriptions/kkaqo?api-version=2017-04</id><title
-        type="text">kkaqo</title><published>2020-08-17T08:07:11Z</published><updated>2020-08-17T08:07:11Z</updated><link
-        rel="self" href="https://servicebustest32ip2wgoaa.servicebus.windows.net/dqkodq/subscriptions/kkaqo?api-version=2017-04"/><content
+      string: <entry xmlns="http://www.w3.org/2005/Atom"><id>https://servicebustestssikhu6c5u.servicebus.windows.net/dqkodq/subscriptions/kkaqo?api-version=2017-04</id><title
+        type="text">kkaqo</title><published>2020-11-23T20:27:32Z</published><updated>2020-11-23T20:27:32Z</updated><link
+        rel="self" href="https://servicebustestssikhu6c5u.servicebus.windows.net/dqkodq/subscriptions/kkaqo?api-version=2017-04"/><content
         type="application/xml"><SubscriptionDescription xmlns="http://schemas.microsoft.com/netservices/2010/10/servicebus/connect"
-        xmlns:i="http://www.w3.org/2001/XMLSchema-instance"><LockDuration>PT1M</LockDuration><RequiresSession>false</RequiresSession><DefaultMessageTimeToLive>P10675199DT2H48M5.4775807S</DefaultMessageTimeToLive><DeadLetteringOnMessageExpiration>false</DeadLetteringOnMessageExpiration><DeadLetteringOnFilterEvaluationExceptions>true</DeadLetteringOnFilterEvaluationExceptions><MessageCount>0</MessageCount><MaxDeliveryCount>10</MaxDeliveryCount><EnableBatchedOperations>true</EnableBatchedOperations><Status>Active</Status><CreatedAt>2020-08-17T08:07:11.641507Z</CreatedAt><UpdatedAt>2020-08-17T08:07:11.641507Z</UpdatedAt><AccessedAt>0001-01-01T00:00:00</AccessedAt><AutoDeleteOnIdle>P10675199DT2H48M5.4775807S</AutoDeleteOnIdle><EntityAvailabilityStatus>Available</EntityAvailabilityStatus></SubscriptionDescription></content></entry>
+        xmlns:i="http://www.w3.org/2001/XMLSchema-instance"><LockDuration>PT1M</LockDuration><RequiresSession>false</RequiresSession><DefaultMessageTimeToLive>P10675199DT2H48M5.4775807S</DefaultMessageTimeToLive><DeadLetteringOnMessageExpiration>false</DeadLetteringOnMessageExpiration><DeadLetteringOnFilterEvaluationExceptions>true</DeadLetteringOnFilterEvaluationExceptions><MessageCount>0</MessageCount><MaxDeliveryCount>10</MaxDeliveryCount><EnableBatchedOperations>true</EnableBatchedOperations><Status>Active</Status><CreatedAt>2020-11-23T20:27:32.6012538Z</CreatedAt><UpdatedAt>2020-11-23T20:27:32.6012538Z</UpdatedAt><AccessedAt>0001-01-01T00:00:00</AccessedAt><AutoDeleteOnIdle>P10675199DT2H48M5.4775807S</AutoDeleteOnIdle><EntityAvailabilityStatus>Available</EntityAvailabilityStatus></SubscriptionDescription></content></entry>
     headers:
       content-type:
       - application/atom+xml;type=entry;charset=utf-8
       date:
-      - Mon, 17 Aug 2020 08:07:11 GMT
+      - Mon, 23 Nov 2020 20:27:32 GMT
       etag:
-      - '637332484309300000'
+      - '637417600521500000'
       server:
       - Microsoft-HTTPAPI/2.0
       strict-transport-security:
@@ -117,7 +117,7 @@ interactions:
 
       <ns0:entry xmlns:ns0="http://www.w3.org/2005/Atom" xmlns="http://schemas.microsoft.com/netservices/2010/10/servicebus/connect"
       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><ns0:content type="application/xml"><RuleDescription><Filter
-      xsi:type="SqlFilter"><SqlExpression>Priority = ''low''</SqlExpression><CompatibilityLevel>20</CompatibilityLevel></Filter><Action
+      xsi:type="SqlFilter"><SqlExpression>Priority = ''low''</SqlExpression><CompatibilityLevel>20</CompatibilityLevel><RequiresPreprocessing>true</RequiresPreprocessing></Filter><Action
       xsi:type="EmptyRuleAction" /><Name>rule</Name></RuleDescription></ns0:content></ns0:entry>'
     headers:
       Accept:
@@ -127,29 +127,29 @@ interactions:
       Connection:
       - keep-alive
       Content-Length:
-      - '499'
+      - '550'
       Content-Type:
       - application/atom+xml
       User-Agent:
-      - azsdk-python-servicebusmanagementclient/2017-04 Python/3.8.2 (Windows-10-10.0.18362-SP0)
+      - azsdk-python-servicebusmanagementclient/2017-04 Python/3.7.7 (Windows-10-10.0.19041-SP0)
     method: PUT
     uri: https://servicebustestsbname.servicebus.windows.net/dqkodq/subscriptions/kkaqo/rules/rule?api-version=2017-04
   response:
     body:
-      string: <entry xmlns="http://www.w3.org/2005/Atom"><id>https://servicebustest32ip2wgoaa.servicebus.windows.net/dqkodq/subscriptions/kkaqo/rules/rule?api-version=2017-04</id><title
-        type="text">rule</title><published>2020-08-17T08:07:11Z</published><updated>2020-08-17T08:07:11Z</updated><link
-        rel="self" href="https://servicebustest32ip2wgoaa.servicebus.windows.net/dqkodq/subscriptions/kkaqo/rules/rule?api-version=2017-04"/><content
+      string: <entry xmlns="http://www.w3.org/2005/Atom"><id>https://servicebustestssikhu6c5u.servicebus.windows.net/dqkodq/subscriptions/kkaqo/rules/rule?api-version=2017-04</id><title
+        type="text">rule</title><published>2020-11-23T20:27:32Z</published><updated>2020-11-23T20:27:32Z</updated><link
+        rel="self" href="https://servicebustestssikhu6c5u.servicebus.windows.net/dqkodq/subscriptions/kkaqo/rules/rule?api-version=2017-04"/><content
         type="application/xml"><RuleDescription xmlns="http://schemas.microsoft.com/netservices/2010/10/servicebus/connect"
         xmlns:i="http://www.w3.org/2001/XMLSchema-instance"><Filter i:type="SqlFilter"><SqlExpression>Priority
-        = 'low'</SqlExpression><CompatibilityLevel>20</CompatibilityLevel></Filter><Action
-        i:type="EmptyRuleAction"/><CreatedAt>2020-08-17T08:07:11.938343Z</CreatedAt><Name>rule</Name></RuleDescription></content></entry>
+        = 'low'</SqlExpression><CompatibilityLevel>20</CompatibilityLevel><RequiresPreprocessing>true</RequiresPreprocessing></Filter><Action
+        i:type="EmptyRuleAction"/><CreatedAt>2020-11-23T20:27:32.773151Z</CreatedAt><Name>rule</Name></RuleDescription></content></entry>
     headers:
       content-type:
       - application/atom+xml;type=entry;charset=utf-8
       date:
-      - Mon, 17 Aug 2020 08:07:11 GMT
+      - Mon, 23 Nov 2020 20:27:32 GMT
       etag:
-      - '637332484309300000'
+      - '637417600521500000'
       server:
       - Microsoft-HTTPAPI/2.0
       strict-transport-security:
@@ -164,7 +164,7 @@ interactions:
 
       <ns0:entry xmlns:ns0="http://www.w3.org/2005/Atom" xmlns="http://schemas.microsoft.com/netservices/2010/10/servicebus/connect"
       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><ns0:content type="application/xml"><RuleDescription><Filter
-      xsi:type="SqlFilter"><SqlExpression>Priority = ''low''</SqlExpression><CompatibilityLevel>20</CompatibilityLevel></Filter><Action
+      xsi:type="SqlFilter"><SqlExpression>Priority = ''low''</SqlExpression><CompatibilityLevel>20</CompatibilityLevel><RequiresPreprocessing>true</RequiresPreprocessing></Filter><Action
       xsi:type="EmptyRuleAction" /><Name>rule</Name></RuleDescription></ns0:content></ns0:entry>'
     headers:
       Accept:
@@ -174,25 +174,25 @@ interactions:
       Connection:
       - keep-alive
       Content-Length:
-      - '499'
+      - '550'
       Content-Type:
       - application/atom+xml
       User-Agent:
-      - azsdk-python-servicebusmanagementclient/2017-04 Python/3.8.2 (Windows-10-10.0.18362-SP0)
+      - azsdk-python-servicebusmanagementclient/2017-04 Python/3.7.7 (Windows-10-10.0.19041-SP0)
     method: PUT
     uri: https://servicebustestsbname.servicebus.windows.net/dqkodq/subscriptions/kkaqo/rules/rule?api-version=2017-04
   response:
     body:
       string: <Error><Code>409</Code><Detail>The messaging entity 'servicebustestsbname:Topic:dqkodq|kkaqo|rule'
-        already exists. To know more visit https://aka.ms/sbResourceMgrExceptions.  TrackingId:e6d88467-51c8-49b8-adb3-2c7bdc3b26f8_B11,
-        SystemTracker:NoSystemTracker, Timestamp:2020-08-17T08:07:12</Detail></Error>
+        already exists. To know more visit https://aka.ms/sbResourceMgrExceptions.  TrackingId:5f45bfb3-6946-4c55-a2b3-c3449d24e8be_B2,
+        SystemTracker:NoSystemTracker, Timestamp:2020-11-23T20:27:33</Detail></Error>
     headers:
       content-type:
       - application/xml; charset=utf-8
       date:
-      - Mon, 17 Aug 2020 08:07:12 GMT
+      - Mon, 23 Nov 2020 20:27:33 GMT
       etag:
-      - '637332484309300000'
+      - '637417600521500000'
       server:
       - Microsoft-HTTPAPI/2.0
       strict-transport-security:
@@ -214,7 +214,7 @@ interactions:
       Content-Length:
       - '0'
       User-Agent:
-      - azsdk-python-servicebusmanagementclient/2017-04 Python/3.8.2 (Windows-10-10.0.18362-SP0)
+      - azsdk-python-servicebusmanagementclient/2017-04 Python/3.7.7 (Windows-10-10.0.19041-SP0)
     method: DELETE
     uri: https://servicebustestsbname.servicebus.windows.net/dqkodq/subscriptions/kkaqo/rules/rule?api-version=2017-04
   response:
@@ -224,9 +224,9 @@ interactions:
       content-length:
       - '0'
       date:
-      - Mon, 17 Aug 2020 08:07:12 GMT
+      - Mon, 23 Nov 2020 20:27:33 GMT
       etag:
-      - '637332484309300000'
+      - '637417600521500000'
       server:
       - Microsoft-HTTPAPI/2.0
       strict-transport-security:
@@ -246,7 +246,7 @@ interactions:
       Content-Length:
       - '0'
       User-Agent:
-      - azsdk-python-servicebusmanagementclient/2017-04 Python/3.8.2 (Windows-10-10.0.18362-SP0)
+      - azsdk-python-servicebusmanagementclient/2017-04 Python/3.7.7 (Windows-10-10.0.19041-SP0)
     method: DELETE
     uri: https://servicebustestsbname.servicebus.windows.net/dqkodq/subscriptions/kkaqo?api-version=2017-04
   response:
@@ -256,9 +256,9 @@ interactions:
       content-length:
       - '0'
       date:
-      - Mon, 17 Aug 2020 08:07:12 GMT
+      - Mon, 23 Nov 2020 20:27:33 GMT
       etag:
-      - '637332484309300000'
+      - '637417600521500000'
       server:
       - Microsoft-HTTPAPI/2.0
       strict-transport-security:
@@ -278,7 +278,7 @@ interactions:
       Content-Length:
       - '0'
       User-Agent:
-      - azsdk-python-servicebusmanagementclient/2017-04 Python/3.8.2 (Windows-10-10.0.18362-SP0)
+      - azsdk-python-servicebusmanagementclient/2017-04 Python/3.7.7 (Windows-10-10.0.19041-SP0)
     method: DELETE
     uri: https://servicebustestsbname.servicebus.windows.net/dqkodq?api-version=2017-04
   response:
@@ -288,9 +288,9 @@ interactions:
       content-length:
       - '0'
       date:
-      - Mon, 17 Aug 2020 08:07:13 GMT
+      - Mon, 23 Nov 2020 20:27:34 GMT
       etag:
-      - '637332484309300000'
+      - '637417600521500000'
       server:
       - Microsoft-HTTPAPI/2.0
       strict-transport-security:

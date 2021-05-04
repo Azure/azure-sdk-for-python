@@ -16,7 +16,7 @@ from azure.core.polling import LROPoller, NoPolling, PollingMethod
 from azure.mgmt.core.exceptions import ARMErrorFormat
 from azure.mgmt.core.polling.arm_polling import ARMPolling
 
-from .. import models
+from .. import models as _models
 
 if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
@@ -39,7 +39,7 @@ class RouteTablesOperations(object):
     :param deserializer: An object model deserializer.
     """
 
-    models = models
+    models = _models
 
     def __init__(self, client, config, serializer, deserializer):
         self._client = client
@@ -135,7 +135,13 @@ class RouteTablesOperations(object):
             if cls:
                 return cls(pipeline_response, None, {})
 
-        if polling is True: polling_method = ARMPolling(lro_delay,  **kwargs)
+        path_format_arguments = {
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
+            'routeTableName': self._serialize.url("route_table_name", route_table_name, 'str'),
+            'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
+        }
+
+        if polling is True: polling_method = ARMPolling(lro_delay, path_format_arguments=path_format_arguments,  **kwargs)
         elif polling is False: polling_method = NoPolling()
         else: polling_method = polling
         if cont_token:
@@ -156,7 +162,7 @@ class RouteTablesOperations(object):
         expand=None,  # type: Optional[str]
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.RouteTable"
+        # type: (...) -> "_models.RouteTable"
         """Gets the specified route table.
 
         :param resource_group_name: The name of the resource group.
@@ -170,7 +176,7 @@ class RouteTablesOperations(object):
         :rtype: ~azure.mgmt.network.v2018_08_01.models.RouteTable
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.RouteTable"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.RouteTable"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -217,11 +223,11 @@ class RouteTablesOperations(object):
         self,
         resource_group_name,  # type: str
         route_table_name,  # type: str
-        parameters,  # type: "models.RouteTable"
+        parameters,  # type: "_models.RouteTable"
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.RouteTable"
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.RouteTable"]
+        # type: (...) -> "_models.RouteTable"
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.RouteTable"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -275,10 +281,10 @@ class RouteTablesOperations(object):
         self,
         resource_group_name,  # type: str
         route_table_name,  # type: str
-        parameters,  # type: "models.RouteTable"
+        parameters,  # type: "_models.RouteTable"
         **kwargs  # type: Any
     ):
-        # type: (...) -> LROPoller["models.RouteTable"]
+        # type: (...) -> LROPoller["_models.RouteTable"]
         """Create or updates a route table in a specified resource group.
 
         :param resource_group_name: The name of the resource group.
@@ -298,7 +304,7 @@ class RouteTablesOperations(object):
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         polling = kwargs.pop('polling', True)  # type: Union[bool, PollingMethod]
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.RouteTable"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.RouteTable"]
         lro_delay = kwargs.pop(
             'polling_interval',
             self._config.polling_interval
@@ -323,7 +329,13 @@ class RouteTablesOperations(object):
                 return cls(pipeline_response, deserialized, {})
             return deserialized
 
-        if polling is True: polling_method = ARMPolling(lro_delay,  **kwargs)
+        path_format_arguments = {
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
+            'routeTableName': self._serialize.url("route_table_name", route_table_name, 'str'),
+            'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
+        }
+
+        if polling is True: polling_method = ARMPolling(lro_delay, path_format_arguments=path_format_arguments,  **kwargs)
         elif polling is False: polling_method = NoPolling()
         else: polling_method = polling
         if cont_token:
@@ -341,11 +353,11 @@ class RouteTablesOperations(object):
         self,
         resource_group_name,  # type: str
         route_table_name,  # type: str
-        parameters,  # type: "models.TagsObject"
+        parameters,  # type: "_models.TagsObject"
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.RouteTable"
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.RouteTable"]
+        # type: (...) -> "_models.RouteTable"
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.RouteTable"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -395,10 +407,10 @@ class RouteTablesOperations(object):
         self,
         resource_group_name,  # type: str
         route_table_name,  # type: str
-        parameters,  # type: "models.TagsObject"
+        parameters,  # type: "_models.TagsObject"
         **kwargs  # type: Any
     ):
-        # type: (...) -> LROPoller["models.RouteTable"]
+        # type: (...) -> LROPoller["_models.RouteTable"]
         """Updates a route table tags.
 
         :param resource_group_name: The name of the resource group.
@@ -418,7 +430,7 @@ class RouteTablesOperations(object):
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         polling = kwargs.pop('polling', True)  # type: Union[bool, PollingMethod]
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.RouteTable"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.RouteTable"]
         lro_delay = kwargs.pop(
             'polling_interval',
             self._config.polling_interval
@@ -443,7 +455,13 @@ class RouteTablesOperations(object):
                 return cls(pipeline_response, deserialized, {})
             return deserialized
 
-        if polling is True: polling_method = ARMPolling(lro_delay,  **kwargs)
+        path_format_arguments = {
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
+            'routeTableName': self._serialize.url("route_table_name", route_table_name, 'str'),
+            'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
+        }
+
+        if polling is True: polling_method = ARMPolling(lro_delay, path_format_arguments=path_format_arguments,  **kwargs)
         elif polling is False: polling_method = NoPolling()
         else: polling_method = polling
         if cont_token:
@@ -462,7 +480,7 @@ class RouteTablesOperations(object):
         resource_group_name,  # type: str
         **kwargs  # type: Any
     ):
-        # type: (...) -> Iterable["models.RouteTableListResult"]
+        # type: (...) -> Iterable["_models.RouteTableListResult"]
         """Gets all route tables in a resource group.
 
         :param resource_group_name: The name of the resource group.
@@ -472,7 +490,7 @@ class RouteTablesOperations(object):
         :rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.network.v2018_08_01.models.RouteTableListResult]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.RouteTableListResult"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.RouteTableListResult"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -532,7 +550,7 @@ class RouteTablesOperations(object):
         self,
         **kwargs  # type: Any
     ):
-        # type: (...) -> Iterable["models.RouteTableListResult"]
+        # type: (...) -> Iterable["_models.RouteTableListResult"]
         """Gets all route tables in a subscription.
 
         :keyword callable cls: A custom type or function that will be passed the direct response
@@ -540,7 +558,7 @@ class RouteTablesOperations(object):
         :rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.network.v2018_08_01.models.RouteTableListResult]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.RouteTableListResult"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.RouteTableListResult"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }

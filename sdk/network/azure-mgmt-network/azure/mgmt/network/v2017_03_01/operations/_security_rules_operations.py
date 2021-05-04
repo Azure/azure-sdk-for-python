@@ -16,7 +16,7 @@ from azure.core.polling import LROPoller, NoPolling, PollingMethod
 from azure.mgmt.core.exceptions import ARMErrorFormat
 from azure.mgmt.core.polling.arm_polling import ARMPolling
 
-from .. import models
+from .. import models as _models
 
 if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
@@ -39,7 +39,7 @@ class SecurityRulesOperations(object):
     :param deserializer: An object model deserializer.
     """
 
-    models = models
+    models = _models
 
     def __init__(self, client, config, serializer, deserializer):
         self._client = client
@@ -141,7 +141,14 @@ class SecurityRulesOperations(object):
             if cls:
                 return cls(pipeline_response, None, {})
 
-        if polling is True: polling_method = ARMPolling(lro_delay,  **kwargs)
+        path_format_arguments = {
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
+            'networkSecurityGroupName': self._serialize.url("network_security_group_name", network_security_group_name, 'str'),
+            'securityRuleName': self._serialize.url("security_rule_name", security_rule_name, 'str'),
+            'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
+        }
+
+        if polling is True: polling_method = ARMPolling(lro_delay, path_format_arguments=path_format_arguments,  **kwargs)
         elif polling is False: polling_method = NoPolling()
         else: polling_method = polling
         if cont_token:
@@ -162,7 +169,7 @@ class SecurityRulesOperations(object):
         security_rule_name,  # type: str
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.SecurityRule"
+        # type: (...) -> "_models.SecurityRule"
         """Get the specified network security rule.
 
         :param resource_group_name: The name of the resource group.
@@ -176,7 +183,7 @@ class SecurityRulesOperations(object):
         :rtype: ~azure.mgmt.network.v2017_03_01.models.SecurityRule
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.SecurityRule"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.SecurityRule"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -223,11 +230,11 @@ class SecurityRulesOperations(object):
         resource_group_name,  # type: str
         network_security_group_name,  # type: str
         security_rule_name,  # type: str
-        security_rule_parameters,  # type: "models.SecurityRule"
+        security_rule_parameters,  # type: "_models.SecurityRule"
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.SecurityRule"
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.SecurityRule"]
+        # type: (...) -> "_models.SecurityRule"
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.SecurityRule"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -283,10 +290,10 @@ class SecurityRulesOperations(object):
         resource_group_name,  # type: str
         network_security_group_name,  # type: str
         security_rule_name,  # type: str
-        security_rule_parameters,  # type: "models.SecurityRule"
+        security_rule_parameters,  # type: "_models.SecurityRule"
         **kwargs  # type: Any
     ):
-        # type: (...) -> LROPoller["models.SecurityRule"]
+        # type: (...) -> LROPoller["_models.SecurityRule"]
         """Creates or updates a security rule in the specified network security group.
 
         :param resource_group_name: The name of the resource group.
@@ -309,7 +316,7 @@ class SecurityRulesOperations(object):
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         polling = kwargs.pop('polling', True)  # type: Union[bool, PollingMethod]
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.SecurityRule"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.SecurityRule"]
         lro_delay = kwargs.pop(
             'polling_interval',
             self._config.polling_interval
@@ -335,7 +342,14 @@ class SecurityRulesOperations(object):
                 return cls(pipeline_response, deserialized, {})
             return deserialized
 
-        if polling is True: polling_method = ARMPolling(lro_delay,  **kwargs)
+        path_format_arguments = {
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
+            'networkSecurityGroupName': self._serialize.url("network_security_group_name", network_security_group_name, 'str'),
+            'securityRuleName': self._serialize.url("security_rule_name", security_rule_name, 'str'),
+            'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
+        }
+
+        if polling is True: polling_method = ARMPolling(lro_delay, path_format_arguments=path_format_arguments,  **kwargs)
         elif polling is False: polling_method = NoPolling()
         else: polling_method = polling
         if cont_token:
@@ -355,7 +369,7 @@ class SecurityRulesOperations(object):
         network_security_group_name,  # type: str
         **kwargs  # type: Any
     ):
-        # type: (...) -> Iterable["models.SecurityRuleListResult"]
+        # type: (...) -> Iterable["_models.SecurityRuleListResult"]
         """Gets all security rules in a network security group.
 
         :param resource_group_name: The name of the resource group.
@@ -367,7 +381,7 @@ class SecurityRulesOperations(object):
         :rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.network.v2017_03_01.models.SecurityRuleListResult]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.SecurityRuleListResult"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.SecurityRuleListResult"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }

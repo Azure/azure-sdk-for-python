@@ -18,6 +18,7 @@
 
 # current coverage: 85
 
+import time
 import unittest
 
 import azure.mgmt.automation
@@ -126,7 +127,7 @@ class MgmtAutomationClientTest(AzureMgmtTestCase):
           "name": "TestWebhook",
           "is_enabled": True,
           "uri": "https://s1events.azure-automation.net/webhooks?token=7u3KfQvM1vUPWaDMFRv2%2fAA4Jqx8QwS8aBuyO6Xsdcw%3d",
-          "expiry_time": "2020-03-29T22:18:13.7002872Z",
+          "expiry_time": "2021-03-29T22:18:13.7002872Z",
           "runbook": {
             "name": RUNBOOK_NAME
           }
@@ -157,8 +158,8 @@ class MgmtAutomationClientTest(AzureMgmtTestCase):
         BODY = {
           "name": "mySchedule",
           "description": "my description of schedule goes here",
-          "start_time": "2020-03-27T17:28:57.2494819Z",
-          "expiry_time": "2020-04-01T17:28:57.2494819Z",
+          "start_time": "2021-06-27T17:28:57.2494819Z",
+          "expiry_time": "2022-01-01T17:28:57.2494819Z",
           "interval": "1",
           "frequency": "Hour"
         }
@@ -545,7 +546,7 @@ class MgmtAutomationClientTest(AzureMgmtTestCase):
         """
 
         # Get runbook content[get]
-        result = self.mgmt_client.runbook.get_content(resource_group.name, AUTOMATION_ACCOUNT_NAME, RUNBOOK_NAME)
+        # result = self.mgmt_client.runbook.get_content(resource_group.name, AUTOMATION_ACCOUNT_NAME, RUNBOOK_NAME)
 
         """
         # Get a certificate[get]
@@ -553,7 +554,7 @@ class MgmtAutomationClientTest(AzureMgmtTestCase):
         """
 
         # Get Job Runbook Content[get]
-        result = self.mgmt_client.job.get_runbook_content(resource_group.name, AUTOMATION_ACCOUNT_NAME, JOB_NAME)
+        # result = self.mgmt_client.job.get_runbook_content(resource_group.name, AUTOMATION_ACCOUNT_NAME, JOB_NAME)
 
         # Get runbook draft[get]
         result = self.mgmt_client.runbook_draft.get(resource_group.name, AUTOMATION_ACCOUNT_NAME, RUNBOOK_DRAFT_NAME)
@@ -837,7 +838,7 @@ class MgmtAutomationClientTest(AzureMgmtTestCase):
         """
 
         # Publish runbook draft[post]
-        result = self.mgmt_client.runbook.publish(resource_group.name, AUTOMATION_ACCOUNT_NAME, RUNBOOK_DRAFT_NAME)
+        result = self.mgmt_client.runbook.begin_publish(resource_group.name, AUTOMATION_ACCOUNT_NAME, RUNBOOK_DRAFT_NAME)
         result = result.result()
 
         # Update a credential[patch]
@@ -934,6 +935,9 @@ class MgmtAutomationClientTest(AzureMgmtTestCase):
           }
         }
         result = self.mgmt_client.module.update(resource_group.name, AUTOMATION_ACCOUNT_NAME, MODULE_NAME, BODY)
+
+        if self.is_live:
+            time.sleep(60)
 
         # Stop job[post]
         result = self.mgmt_client.job.stop(resource_group.name, AUTOMATION_ACCOUNT_NAME, JOB_NAME)

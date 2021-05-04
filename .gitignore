@@ -8,6 +8,9 @@ __pycache__/
 # Virtual environment
 env*/
 
+# Codespace virtual environment
+pythonenv*/
+
 # PTVS analysis
 .ptvs/
 
@@ -30,6 +33,7 @@ build/
 
 # Test results
 TestResults/
+ENV_DIR/
 
 # tox generated artifacts
 test-junit-*.xml
@@ -97,3 +101,6 @@ sdk/cosmos/azure-cosmos/test/test_config.py
 
 # temp path to to run regression test
 .tmp_code_path/
+
+# env vars
+.env

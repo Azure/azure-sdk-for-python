@@ -1,0 +1,92 @@
+interactions:
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - azsdk-python-azure-mgmt-authorization/1.0.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+    method: GET
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Authorization/roleDefinitions/7b266cd7-0bba-4ae2-8423-90ede5e1e898?api-version=2015-07-01
+  response:
+    body:
+      string: '{"properties":{"roleName":"CAL-Custom-Role","type":"CustomRole","description":"Lets
+        SAP Cloud Appliance Library application manage Network and Compute services,
+        manage Resource Groups and Management locks.","assignableScopes":["/"],"permissions":[{"actions":["Microsoft.Authorization/locks/*","Microsoft.Authorization/roleDefinitions/*","Microsoft.Authorization/roleAssignments/*","Microsoft.Compute/*","Microsoft.Network/*","Microsoft.Resources/*","Microsoft.Storage/*","Microsoft.ContainerService/*","Microsoft.ContainerRegistry/*"],"notActions":[]}],"createdOn":"2018-05-14T19:30:51.0664585Z","updatedOn":"2019-02-19T19:11:57.5963229Z","createdBy":"dda50086-5e3d-4a4b-b8bc-f54771104d89","updatedBy":null},"id":"/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Authorization/roleDefinitions/7b266cd7-0bba-4ae2-8423-90ede5e1e898","type":"Microsoft.Authorization/roleDefinitions","name":"7b266cd7-0bba-4ae2-8423-90ede5e1e898"}'
+    headers:
+      cache-control:
+      - no-cache
+      content-length:
+      - '949'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Mon, 23 Nov 2020 07:35:05 GMT
+      expires:
+      - '-1'
+      pragma:
+      - no-cache
+      set-cookie:
+      - x-ms-gateway-slice=Production; path=/; secure; samesite=none; httponly
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      transfer-encoding:
+      - chunked
+      vary:
+      - Accept-Encoding
+      x-content-type-options:
+      - nosniff
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Cookie:
+      - x-ms-gateway-slice=Production
+      User-Agent:
+      - azsdk-python-azure-mgmt-authorization/1.0.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+    method: GET
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Authorization/roleDefinitions/7b266cd7-0bba-4ae2-8423-90ede5e1e898?api-version=2015-07-01
+  response:
+    body:
+      string: '{"properties":{"roleName":"CAL-Custom-Role","type":"CustomRole","description":"Lets
+        SAP Cloud Appliance Library application manage Network and Compute services,
+        manage Resource Groups and Management locks.","assignableScopes":["/"],"permissions":[{"actions":["Microsoft.Authorization/locks/*","Microsoft.Authorization/roleDefinitions/*","Microsoft.Authorization/roleAssignments/*","Microsoft.Compute/*","Microsoft.Network/*","Microsoft.Resources/*","Microsoft.Storage/*","Microsoft.ContainerService/*","Microsoft.ContainerRegistry/*"],"notActions":[]}],"createdOn":"2018-05-14T19:30:51.0664585Z","updatedOn":"2019-02-19T19:11:57.5963229Z","createdBy":"dda50086-5e3d-4a4b-b8bc-f54771104d89","updatedBy":null},"id":"/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Authorization/roleDefinitions/7b266cd7-0bba-4ae2-8423-90ede5e1e898","type":"Microsoft.Authorization/roleDefinitions","name":"7b266cd7-0bba-4ae2-8423-90ede5e1e898"}'
+    headers:
+      cache-control:
+      - no-cache
+      content-length:
+      - '949'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Mon, 23 Nov 2020 07:35:05 GMT
+      expires:
+      - '-1'
+      pragma:
+      - no-cache
+      set-cookie:
+      - x-ms-gateway-slice=Production; path=/; secure; samesite=none; httponly
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      transfer-encoding:
+      - chunked
+      vary:
+      - Accept-Encoding
+      x-content-type-options:
+      - nosniff
+    status:
+      code: 200
+      message: OK
+version: 1

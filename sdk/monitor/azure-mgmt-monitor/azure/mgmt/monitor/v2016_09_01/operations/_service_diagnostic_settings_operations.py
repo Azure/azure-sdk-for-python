@@ -13,7 +13,7 @@ from azure.core.pipeline import PipelineResponse
 from azure.core.pipeline.transport import HttpRequest, HttpResponse
 from azure.mgmt.core.exceptions import ARMErrorFormat
 
-from .. import models
+from .. import models as _models
 
 if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
@@ -36,7 +36,7 @@ class ServiceDiagnosticSettingsOperations(object):
     :param deserializer: An object model deserializer.
     """
 
-    models = models
+    models = _models
 
     def __init__(self, client, config, serializer, deserializer):
         self._client = client
@@ -49,7 +49,7 @@ class ServiceDiagnosticSettingsOperations(object):
         resource_uri,  # type: str
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.ServiceDiagnosticSettingsResource"
+        # type: (...) -> "_models.ServiceDiagnosticSettingsResource"
         """Gets the active diagnostic settings for the specified resource. **WARNING**\ : This method will
         be deprecated in future releases.
 
@@ -60,7 +60,7 @@ class ServiceDiagnosticSettingsOperations(object):
         :rtype: ~$(python-base-namespace).v2016_09_01.models.ServiceDiagnosticSettingsResource
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.ServiceDiagnosticSettingsResource"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.ServiceDiagnosticSettingsResource"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -89,7 +89,7 @@ class ServiceDiagnosticSettingsOperations(object):
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.ErrorResponse, response)
+            error = self._deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('ServiceDiagnosticSettingsResource', pipeline_response)
@@ -103,10 +103,10 @@ class ServiceDiagnosticSettingsOperations(object):
     def create_or_update(
         self,
         resource_uri,  # type: str
-        parameters,  # type: "models.ServiceDiagnosticSettingsResource"
+        parameters,  # type: "_models.ServiceDiagnosticSettingsResource"
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.ServiceDiagnosticSettingsResource"
+        # type: (...) -> "_models.ServiceDiagnosticSettingsResource"
         """Create or update new diagnostic settings for the specified resource. **WARNING**\ : This method
         will be deprecated in future releases.
 
@@ -119,7 +119,7 @@ class ServiceDiagnosticSettingsOperations(object):
         :rtype: ~$(python-base-namespace).v2016_09_01.models.ServiceDiagnosticSettingsResource
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.ServiceDiagnosticSettingsResource"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.ServiceDiagnosticSettingsResource"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -166,10 +166,10 @@ class ServiceDiagnosticSettingsOperations(object):
     def update(
         self,
         resource_uri,  # type: str
-        service_diagnostic_settings_resource,  # type: "models.ServiceDiagnosticSettingsResourcePatch"
+        service_diagnostic_settings_resource,  # type: "_models.ServiceDiagnosticSettingsResourcePatch"
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.ServiceDiagnosticSettingsResource"
+        # type: (...) -> "_models.ServiceDiagnosticSettingsResource"
         """Updates an existing ServiceDiagnosticSettingsResource. To update other fields use the
         CreateOrUpdate method. **WARNING**\ : This method will be deprecated in future releases.
 
@@ -182,7 +182,7 @@ class ServiceDiagnosticSettingsOperations(object):
         :rtype: ~$(python-base-namespace).v2016_09_01.models.ServiceDiagnosticSettingsResource
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.ServiceDiagnosticSettingsResource"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.ServiceDiagnosticSettingsResource"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -216,7 +216,7 @@ class ServiceDiagnosticSettingsOperations(object):
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.ErrorResponse, response)
+            error = self._deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('ServiceDiagnosticSettingsResource', pipeline_response)

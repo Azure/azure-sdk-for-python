@@ -1,0 +1,262 @@
+interactions:
+- request:
+    body: null
+    headers:
+      User-Agent:
+      - azsdk-python-storage-file-share/12.3.0b2 Python/3.8.5 (Windows-10-10.0.19041-SP0)
+      x-ms-date:
+      - Fri, 13 Nov 2020 22:18:24 GMT
+      x-ms-enabled-protocols:
+      - NFS
+      x-ms-version:
+      - '2020-04-08'
+    method: PUT
+    uri: https://storagename.file.core.windows.net/share1dd031899?restype=share
+  response:
+    body:
+      string: ''
+    headers:
+      date: Fri, 13 Nov 2020 22:18:25 GMT
+      etag: '"0x8D888220A7DB04D"'
+      last-modified: Fri, 13 Nov 2020 22:18:25 GMT
+      server: Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
+      transfer-encoding: chunked
+      x-ms-version: '2020-04-08'
+    status:
+      code: 201
+      message: Created
+    url: https://seancanarypremiumfile2.file.core.windows.net/share1dd031899?restype=share
+- request:
+    body: null
+    headers:
+      User-Agent:
+      - azsdk-python-storage-file-share/12.3.0b2 Python/3.8.5 (Windows-10-10.0.19041-SP0)
+      x-ms-date:
+      - Fri, 13 Nov 2020 22:18:25 GMT
+      x-ms-enabled-protocols:
+      - NFS
+      x-ms-version:
+      - '2020-04-08'
+    method: PUT
+    uri: https://storagename.file.core.windows.net/share2dd031899?restype=share
+  response:
+    body:
+      string: ''
+    headers:
+      date: Fri, 13 Nov 2020 22:18:25 GMT
+      etag: '"0x8D888220A88AED7"'
+      last-modified: Fri, 13 Nov 2020 22:18:25 GMT
+      server: Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
+      transfer-encoding: chunked
+      x-ms-version: '2020-04-08'
+    status:
+      code: 201
+      message: Created
+    url: https://seancanarypremiumfile2.file.core.windows.net/share2dd031899?restype=share
+- request:
+    body: null
+    headers:
+      User-Agent:
+      - azsdk-python-storage-file-share/12.3.0b2 Python/3.8.5 (Windows-10-10.0.19041-SP0)
+      x-ms-date:
+      - Fri, 13 Nov 2020 22:18:25 GMT
+      x-ms-root-squash:
+      - NoRootSquash
+      x-ms-version:
+      - '2020-04-08'
+    method: PUT
+    uri: https://storagename.file.core.windows.net/share1dd031899?restype=share&comp=properties
+  response:
+    body:
+      string: ''
+    headers:
+      date: Fri, 13 Nov 2020 22:18:25 GMT
+      etag: '"0x8D888220A94325A"'
+      last-modified: Fri, 13 Nov 2020 22:18:26 GMT
+      server: Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
+      transfer-encoding: chunked
+      x-ms-version: '2020-04-08'
+    status:
+      code: 200
+      message: OK
+    url: https://seancanarypremiumfile2.file.core.windows.net/share1dd031899?restype=share&comp=properties
+- request:
+    body: null
+    headers:
+      User-Agent:
+      - azsdk-python-storage-file-share/12.3.0b2 Python/3.8.5 (Windows-10-10.0.19041-SP0)
+      x-ms-date:
+      - Fri, 13 Nov 2020 22:18:25 GMT
+      x-ms-root-squash:
+      - RootSquash
+      x-ms-version:
+      - '2020-04-08'
+    method: PUT
+    uri: https://storagename.file.core.windows.net/share2dd031899?restype=share&comp=properties
+  response:
+    body:
+      string: ''
+    headers:
+      date: Fri, 13 Nov 2020 22:18:25 GMT
+      etag: '"0x8D888220A9DD11B"'
+      last-modified: Fri, 13 Nov 2020 22:18:26 GMT
+      server: Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
+      transfer-encoding: chunked
+      x-ms-version: '2020-04-08'
+    status:
+      code: 200
+      message: OK
+    url: https://seancanarypremiumfile2.file.core.windows.net/share2dd031899?restype=share&comp=properties
+- request:
+    body: null
+    headers:
+      User-Agent:
+      - azsdk-python-storage-file-share/12.3.0b2 Python/3.8.5 (Windows-10-10.0.19041-SP0)
+      x-ms-date:
+      - Fri, 13 Nov 2020 22:18:25 GMT
+      x-ms-version:
+      - '2020-04-08'
+    method: GET
+    uri: https://storagename.file.core.windows.net/share1dd031899?restype=share
+  response:
+    body:
+      string: ''
+    headers:
+      date: Fri, 13 Nov 2020 22:18:25 GMT
+      etag: '"0x8D888220A94325A"'
+      last-modified: Fri, 13 Nov 2020 22:18:26 GMT
+      server: Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
+      transfer-encoding: chunked
+      x-ms-access-tier: Premium
+      x-ms-enabled-protocols: NFS
+      x-ms-has-immutability-policy: 'false'
+      x-ms-has-legal-hold: 'false'
+      x-ms-root-squash: NoRootSquash
+      x-ms-share-next-allowed-quota-downgrade-time: Fri, 13 Nov 2020 22:18:25 GMT
+      x-ms-share-provisioned-egress-mbps: '66'
+      x-ms-share-provisioned-ingress-mbps: '44'
+      x-ms-share-provisioned-iops: '500'
+      x-ms-share-quota: '100'
+      x-ms-version: '2020-04-08'
+    status:
+      code: 200
+      message: OK
+    url: https://seancanarypremiumfile2.file.core.windows.net/share1dd031899?restype=share
+- request:
+    body: null
+    headers:
+      User-Agent:
+      - azsdk-python-storage-file-share/12.3.0b2 Python/3.8.5 (Windows-10-10.0.19041-SP0)
+      x-ms-date:
+      - Fri, 13 Nov 2020 22:18:25 GMT
+      x-ms-version:
+      - '2020-04-08'
+    method: GET
+    uri: https://storagename.file.core.windows.net/share2dd031899?restype=share
+  response:
+    body:
+      string: ''
+    headers:
+      date: Fri, 13 Nov 2020 22:18:25 GMT
+      etag: '"0x8D888220A9DD11B"'
+      last-modified: Fri, 13 Nov 2020 22:18:26 GMT
+      server: Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
+      transfer-encoding: chunked
+      x-ms-access-tier: Premium
+      x-ms-enabled-protocols: NFS
+      x-ms-has-immutability-policy: 'false'
+      x-ms-has-legal-hold: 'false'
+      x-ms-root-squash: RootSquash
+      x-ms-share-next-allowed-quota-downgrade-time: Fri, 13 Nov 2020 22:18:25 GMT
+      x-ms-share-provisioned-egress-mbps: '66'
+      x-ms-share-provisioned-ingress-mbps: '44'
+      x-ms-share-provisioned-iops: '500'
+      x-ms-share-quota: '100'
+      x-ms-version: '2020-04-08'
+    status:
+      code: 200
+      message: OK
+    url: https://seancanarypremiumfile2.file.core.windows.net/share2dd031899?restype=share
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/xml
+      User-Agent:
+      - azsdk-python-storage-file-share/12.3.0b2 Python/3.8.5 (Windows-10-10.0.19041-SP0)
+      x-ms-date:
+      - Fri, 13 Nov 2020 22:18:25 GMT
+      x-ms-version:
+      - '2020-04-08'
+    method: GET
+    uri: https://storagename.file.core.windows.net/?include=snapshots&comp=list
+  response:
+    body:
+      string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><EnumerationResults
+        ServiceEndpoint=\"https://storagename.file.core.windows.net/\"><Shares><Share><Name>share1dd031899</Name><Properties><Last-Modified>Fri,
+        13 Nov 2020 22:18:26 GMT</Last-Modified><Etag>\"0x8D888220A94325A\"</Etag><Quota>100</Quota><EnabledProtocols>NFS</EnabledProtocols><RootSquash>NoRootSquash</RootSquash><AccessTier>Premium</AccessTier><ProvisionedIops>500</ProvisionedIops><ProvisionedIngressMBps>44</ProvisionedIngressMBps><ProvisionedEgressMBps>66</ProvisionedEgressMBps><NextAllowedQuotaDowngradeTime>Fri,
+        13 Nov 2020 22:18:25 GMT</NextAllowedQuotaDowngradeTime><DefaultEncryptionScope>$account-encryption-key</DefaultEncryptionScope><DenyEncryptionScopeOverride>false</DenyEncryptionScopeOverride></Properties></Share><Share><Name>share2dd031899</Name><Properties><Last-Modified>Fri,
+        13 Nov 2020 22:18:26 GMT</Last-Modified><Etag>\"0x8D888220A9DD11B\"</Etag><Quota>100</Quota><EnabledProtocols>NFS</EnabledProtocols><RootSquash>RootSquash</RootSquash><AccessTier>Premium</AccessTier><ProvisionedIops>500</ProvisionedIops><ProvisionedIngressMBps>44</ProvisionedIngressMBps><ProvisionedEgressMBps>66</ProvisionedEgressMBps><NextAllowedQuotaDowngradeTime>Fri,
+        13 Nov 2020 22:18:25 GMT</NextAllowedQuotaDowngradeTime><DefaultEncryptionScope>$account-encryption-key</DefaultEncryptionScope><DenyEncryptionScopeOverride>false</DenyEncryptionScopeOverride></Properties></Share></Shares><NextMarker
+        /></EnumerationResults>"
+    headers:
+      content-type: application/xml
+      date: Fri, 13 Nov 2020 22:18:25 GMT
+      server: Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
+      transfer-encoding: chunked
+      x-ms-version: '2020-04-08'
+    status:
+      code: 200
+      message: OK
+    url: https://seancanarypremiumfile2.file.core.windows.net/?include=snapshots&comp=list
+- request:
+    body: null
+    headers:
+      User-Agent:
+      - azsdk-python-storage-file-share/12.3.0b2 Python/3.8.5 (Windows-10-10.0.19041-SP0)
+      x-ms-date:
+      - Fri, 13 Nov 2020 22:18:25 GMT
+      x-ms-delete-snapshots:
+      - include
+      x-ms-version:
+      - '2020-04-08'
+    method: DELETE
+    uri: https://storagename.file.core.windows.net/share1dd031899?restype=share
+  response:
+    body:
+      string: ''
+    headers:
+      date: Fri, 13 Nov 2020 22:18:25 GMT
+      server: Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
+      transfer-encoding: chunked
+      x-ms-version: '2020-04-08'
+    status:
+      code: 202
+      message: Accepted
+    url: https://seancanarypremiumfile2.file.core.windows.net/share1dd031899?restype=share
+- request:
+    body: null
+    headers:
+      User-Agent:
+      - azsdk-python-storage-file-share/12.3.0b2 Python/3.8.5 (Windows-10-10.0.19041-SP0)
+      x-ms-date:
+      - Fri, 13 Nov 2020 22:18:25 GMT
+      x-ms-delete-snapshots:
+      - include
+      x-ms-version:
+      - '2020-04-08'
+    method: DELETE
+    uri: https://storagename.file.core.windows.net/share2dd031899?restype=share
+  response:
+    body:
+      string: ''
+    headers:
+      date: Fri, 13 Nov 2020 22:18:25 GMT
+      server: Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
+      transfer-encoding: chunked
+      x-ms-version: '2020-04-08'
+    status:
+      code: 202
+      message: Accepted
+    url: https://seancanarypremiumfile2.file.core.windows.net/share2dd031899?restype=share
+version: 1

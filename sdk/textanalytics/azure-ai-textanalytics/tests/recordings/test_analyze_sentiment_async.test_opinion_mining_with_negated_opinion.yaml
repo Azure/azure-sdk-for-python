@@ -10,24 +10,24 @@ interactions:
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-ai-textanalytics/5.1.0b1 Python/3.8.5 (macOS-10.13.6-x86_64-i386-64bit)
+      - azsdk-python-ai-textanalytics/5.1.0b7 Python/3.9.0 (Windows-10-10.0.19041-SP0)
     method: POST
-    uri: https://westcentralus.api.cognitive.microsoft.com/text/analytics/v3.1-preview.2/sentiment?showStats=false&opinionMining=true&stringIndexType=UnicodeCodePoint
+    uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.1-preview.5/sentiment?showStats=false&opinionMining=true&stringIndexType=UnicodeCodePoint
   response:
     body:
       string: '{"documents":[{"id":"0","sentiment":"negative","confidenceScores":{"positive":0.0,"neutral":0.0,"negative":1.0},"sentences":[{"sentiment":"negative","confidenceScores":{"positive":0.0,"neutral":0.0,"negative":1.0},"offset":0,"length":32,"text":"The
-        food and service is not good","aspects":[{"sentiment":"negative","confidenceScores":{"positive":0.01,"negative":0.99},"offset":4,"length":4,"text":"food","relations":[{"relationType":"opinion","ref":"#/documents/0/sentences/0/opinions/0"}]},{"sentiment":"negative","confidenceScores":{"positive":0.01,"negative":0.99},"offset":13,"length":7,"text":"service","relations":[{"relationType":"opinion","ref":"#/documents/0/sentences/0/opinions/0"}]}],"opinions":[{"sentiment":"negative","confidenceScores":{"positive":0.01,"negative":0.99},"offset":28,"length":4,"text":"good","isNegated":true}]}],"warnings":[]}],"errors":[],"modelVersion":"2020-04-01"}'
+        food and service is not good","targets":[{"sentiment":"negative","confidenceScores":{"positive":0.01,"negative":0.99},"offset":4,"length":4,"text":"food","relations":[{"relationType":"assessment","ref":"#/documents/0/sentences/0/assessments/0"}]},{"sentiment":"negative","confidenceScores":{"positive":0.01,"negative":0.99},"offset":13,"length":7,"text":"service","relations":[{"relationType":"assessment","ref":"#/documents/0/sentences/0/assessments/0"}]}],"assessments":[{"sentiment":"negative","confidenceScores":{"positive":0.01,"negative":0.99},"offset":28,"length":4,"text":"good","isNegated":true}]}],"warnings":[]}],"errors":[],"modelVersion":"2020-04-01"}'
     headers:
-      apim-request-id: 3bc4d2a6-173f-4c6c-a38c-114670d9799a
+      apim-request-id: e179f0e0-2893-44ca-a52b-3ac5fc6fe807
       content-type: application/json; charset=utf-8
-      csp-billing-usage: CognitiveServices.TextAnalytics.BatchScoring=1
-      date: Thu, 10 Sep 2020 15:25:22 GMT
+      csp-billing-usage: CognitiveServices.TextAnalytics.BatchScoring=1,CognitiveServices.TextAnalytics.TextRecords=1
+      date: Tue, 27 Apr 2021 19:39:05 GMT
       strict-transport-security: max-age=31536000; includeSubDomains; preload
       transfer-encoding: chunked
       x-content-type-options: nosniff
-      x-envoy-upstream-service-time: '96'
+      x-envoy-upstream-service-time: '129'
     status:
       code: 200
       message: OK
-    url: https://westcentralus.api.cognitive.microsoft.com//text/analytics/v3.1-preview.2/sentiment?showStats=false&opinionMining=true&stringIndexType=UnicodeCodePoint
+    url: https://westus2.api.cognitive.microsoft.com//text/analytics/v3.1-preview.5/sentiment?showStats=false&opinionMining=true&stringIndexType=UnicodeCodePoint
 version: 1

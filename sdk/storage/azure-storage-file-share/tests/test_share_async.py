@@ -22,13 +22,15 @@ from azure.core.exceptions import (
 from azure.storage.fileshare import (
     AccessPolicy,
     ShareSasPermissions,
+    ShareAccessTier,
     generate_share_sas,
+    ShareRootSquash, ShareProtocols
 )
 from azure.storage.fileshare.aio import (
     ShareServiceClient,
     ShareDirectoryClient,
     ShareFileClient,
-    ShareClient
+    ShareClient,
 )
 from azure.storage.fileshare._generated.models import DeleteSnapshotsOptionType, ListSharesIncludeType
 from devtools_testutils import ResourceGroupPreparer, StorageAccountPreparer
@@ -84,10 +86,10 @@ class StorageShareTest(AsyncStorageTestCase):
         self.test_shares.append(share)
         return share
 
-    async def _create_share(self, prefix=TEST_SHARE_PREFIX):
+    async def _create_share(self, prefix=TEST_SHARE_PREFIX, **kwargs):
         share_client = self._get_share_reference(prefix)
         try:
-            await share_client.create_share()
+            await share_client.create_share(**kwargs)
         except:
             pass
         return share_client
@@ -200,6 +202,269 @@ class StorageShareTest(AsyncStorageTestCase):
                 props = await restored_share_client.get_share_properties()
                 self.assertIsNotNone(props)
                 break
+
+    @pytest.mark.skip("Share leases are currently unavailable.")
+    @GlobalStorageAccountPreparer()
+    @AsyncStorageTestCase.await_prepared_test
+    async def test_lease_share_acquire_and_release(self, resource_group, location, storage_account, storage_account_key):
+        self._setup(storage_account, storage_account_key)
+        share_client = await self._create_share('test')
+        # Act
+        lease = await share_client.acquire_lease()
+        await lease.release()
+        # Assert
+
+    @pytest.mark.skip("Share leases are currently unavailable.")
+    @GlobalStorageAccountPreparer()
+    @AsyncStorageTestCase.await_prepared_test
+    async def test_acquire_lease_on_sharesnapshot(self, resource_group, location, storage_account, storage_account_key):
+        self._setup(storage_account, storage_account_key)
+        share = self._get_share_reference()
+
+        # Act
+        await share.create_share()
+        snapshot = await share.create_snapshot()
+
+        snapshot_client = ShareClient(
+            self.account_url(storage_account, "file"),
+            share_name=share.share_name,
+            snapshot=snapshot,
+            credential=storage_account_key
+        )
+
+        share_lease = await share.acquire_lease()
+        share_snapshot_lease = await snapshot_client.acquire_lease()
+
+        # Assert
+        with self.assertRaises(HttpResponseError):
+            await share.get_share_properties(lease=share_snapshot_lease)
+
+        with self.assertRaises(HttpResponseError):
+            await snapshot_client.get_share_properties(lease=share_lease)
+
+        self.assertIsNotNone(snapshot['snapshot'])
+        self.assertIsNotNone(snapshot['etag'])
+        self.assertIsNotNone(snapshot['last_modified'])
+        self.assertIsNotNone(share_lease)
+        self.assertIsNotNone(share_snapshot_lease)
+        self.assertNotEqual(share_lease, share_snapshot_lease)
+
+        await share_snapshot_lease.release()
+        await share_lease.release()
+        await self._delete_shares(share.share_name)
+
+    @pytest.mark.skip("Share leases are currently unavailable.")
+    @GlobalStorageAccountPreparer()
+    @AsyncStorageTestCase.await_prepared_test
+    async def test_lease_share_renew(self, resource_group, location, storage_account, storage_account_key):
+        self._setup(storage_account, storage_account_key)
+        share_client = await self._create_share('test')
+        lease = await share_client.acquire_lease(lease_duration=15)
+        self.sleep(10)
+        lease_id_start = lease.id
+
+        # Act
+        await lease.renew()
+
+        # Assert
+        self.assertEqual(lease.id, lease_id_start)
+        self.sleep(5)
+        with self.assertRaises(HttpResponseError):
+            await share_client.delete_share()
+        self.sleep(10)
+        await share_client.delete_share()
+
+    @pytest.mark.skip("Share leases are currently unavailable.")
+    @GlobalStorageAccountPreparer()
+    @AsyncStorageTestCase.await_prepared_test
+    async def test_lease_share_with_duration(self, resource_group, location, storage_account, storage_account_key):
+        self._setup(storage_account, storage_account_key)
+        share_client = await self._create_share('test')
+
+        # Act
+        lease = await share_client.acquire_lease(lease_duration=15)
+
+        # Assert
+        with self.assertRaises(HttpResponseError):
+            await share_client.acquire_lease()
+        self.sleep(15)
+        await share_client.acquire_lease()
+
+    @pytest.mark.skip("Share leases are currently unavailable.")
+    @GlobalStorageAccountPreparer()
+    @AsyncStorageTestCase.await_prepared_test
+    async def test_lease_share_twice(self, resource_group, location, storage_account, storage_account_key):
+        self._setup(storage_account, storage_account_key)
+        share_client = await self._create_share('test')
+
+        # Act
+        lease = await share_client.acquire_lease(lease_duration=15)
+
+        # Assert
+        lease2 = await share_client.acquire_lease(lease_id=lease.id)
+        self.assertEqual(lease.id, lease2.id)
+
+    @pytest.mark.skip("Share leases are currently unavailable.")
+    @GlobalStorageAccountPreparer()
+    @AsyncStorageTestCase.await_prepared_test
+    async def test_lease_share_with_proposed_lease_id(self, resource_group, location, storage_account, storage_account_key):
+        self._setup(storage_account, storage_account_key)
+        share_client = await self._create_share('test')
+
+        # Act
+        proposed_lease_id = '55e97f64-73e8-4390-838d-d9e84a374321'
+        lease = await share_client.acquire_lease(lease_id=proposed_lease_id)
+
+        # Assert
+        self.assertEqual(proposed_lease_id, lease.id)
+
+    @pytest.mark.skip("Share leases are currently unavailable.")
+    @GlobalStorageAccountPreparer()
+    @AsyncStorageTestCase.await_prepared_test
+    async def test_lease_share_change_lease_id(self, resource_group, location, storage_account, storage_account_key):
+        self._setup(storage_account, storage_account_key)
+        share_client = await self._create_share('test')
+
+        # Act
+        lease_id = '29e0b239-ecda-4f69-bfa3-95f6af91464c'
+        lease = await share_client.acquire_lease()
+        lease_id1 = lease.id
+        await lease.change(proposed_lease_id=lease_id)
+        await lease.renew()
+        lease_id2 = lease.id
+
+        # Assert
+        self.assertIsNotNone(lease_id1)
+        self.assertIsNotNone(lease_id2)
+        self.assertNotEqual(lease_id1, lease_id)
+        self.assertEqual(lease_id2, lease_id)
+
+    @pytest.mark.skip("Share leases are currently unavailable.")
+    @GlobalStorageAccountPreparer()
+    @AsyncStorageTestCase.await_prepared_test
+    async def test_set_share_metadata_with_lease_id(self, resource_group, location, storage_account, storage_account_key):
+        self._setup(storage_account, storage_account_key)
+        share_client = await self._create_share('test1')
+        metadata = {'hello': 'world', 'number': '43'}
+        lease_id = await share_client.acquire_lease()
+
+        # Act
+        await share_client.set_share_metadata(metadata, lease=lease_id)
+
+        # Assert
+        props = await share_client.get_share_properties()
+        md = props.metadata
+        self.assertDictEqual(md, metadata)
+
+    @pytest.mark.skip("Share leases are currently unavailable.")
+    @GlobalStorageAccountPreparer()
+    @AsyncStorageTestCase.await_prepared_test
+    async def test_get_share_metadata_with_lease_id(self, resource_group, location, storage_account, storage_account_key):
+        self._setup(storage_account, storage_account_key)
+        share_client = await self._create_share('test')
+        metadata = {'hello': 'world', 'number': '43'}
+        await share_client.set_share_metadata(metadata)
+        lease_id = await share_client.acquire_lease()
+
+        # Act
+        props = await share_client.get_share_properties(lease=lease_id)
+        md = props.metadata
+
+        # Assert
+        self.assertDictEqual(md, metadata)
+
+    @pytest.mark.skip("Share leases are currently unavailable.")
+    @GlobalStorageAccountPreparer()
+    @AsyncStorageTestCase.await_prepared_test
+    async def test_get_share_properties_with_lease_id(self, resource_group, location, storage_account, storage_account_key):
+        self._setup(storage_account, storage_account_key)
+        share_client = await self._create_share('test')
+        metadata = {'hello': 'world', 'number': '43'}
+        await share_client.set_share_metadata(metadata)
+        lease_id = await share_client.acquire_lease()
+
+        # Act
+        props = await share_client.get_share_properties(lease=lease_id)
+        await lease_id.break_lease()
+
+        # Assert
+        self.assertIsNotNone(props)
+        self.assertDictEqual(props.metadata, metadata)
+        self.assertEqual(props.lease.duration, 'infinite')
+        self.assertEqual(props.lease.state, 'leased')
+        self.assertEqual(props.lease.status, 'locked')
+
+    @pytest.mark.skip("Share leases are currently unavailable.")
+    @GlobalStorageAccountPreparer()
+    @AsyncStorageTestCase.await_prepared_test
+    async def test_get_share_acl_with_lease_id(self, resource_group, location, storage_account, storage_account_key):
+        self._setup(storage_account, storage_account_key)
+        share_client = await self._create_share('test')
+        lease_id = await share_client.acquire_lease()
+
+        # Act
+        acl = await share_client.get_share_access_policy(lease=lease_id)
+
+        # Assert
+        self.assertIsNotNone(acl)
+        self.assertIsNone(acl.get('public_access'))
+
+    @pytest.mark.skip("Share leases are currently unavailable.")
+    @GlobalStorageAccountPreparer()
+    @AsyncStorageTestCase.await_prepared_test
+    async def test_set_share_acl_with_lease_id(self, resource_group, location, storage_account, storage_account_key):
+        self._setup(storage_account, storage_account_key)
+        share_client = await self._create_share('test')
+        lease_id = await share_client.acquire_lease()
+
+        # Act
+        access_policy = AccessPolicy(permission=ShareSasPermissions(read=True),
+                                     expiry=datetime.utcnow() + timedelta(hours=1),
+                                     start=datetime.utcnow())
+        signed_identifiers = {'testid': access_policy}
+
+        await share_client.set_share_access_policy(signed_identifiers, lease=lease_id)
+
+        # Assert
+        acl = await share_client.get_share_access_policy()
+        self.assertIsNotNone(acl)
+        self.assertIsNone(acl.get('public_access'))
+
+    @pytest.mark.skip("Share leases are currently unavailable.")
+    @GlobalStorageAccountPreparer()
+    @AsyncStorageTestCase.await_prepared_test
+    async def test_lease_share_break_period(self, resource_group, location, storage_account, storage_account_key):
+        self._setup(storage_account, storage_account_key)
+        share_client = await self._create_share('test')
+
+        # Act
+        lease = await share_client.acquire_lease(lease_duration=15)
+
+        # Assert
+        await lease.break_lease(lease_break_period=5)
+        self.sleep(6)
+        with self.assertRaises(HttpResponseError):
+            await share_client.delete_share(lease=lease)
+
+    @pytest.mark.skip("Share leases are currently unavailable.")
+    @GlobalStorageAccountPreparer()
+    @AsyncStorageTestCase.await_prepared_test
+    async def test_delete_share_with_lease_id(self, resource_group, location, storage_account, storage_account_key):
+        self._setup(storage_account, storage_account_key)
+        share_client = await self._create_share('test')
+        lease = await share_client.acquire_lease(lease_duration=15)
+
+        # Assert
+        with self.assertRaises(HttpResponseError):
+            await share_client.delete_share()
+
+        # Act
+        deleted = await share_client.delete_share(lease=lease)
+
+        # Assert
+        self.assertIsNone(deleted)
+        with self.assertRaises(ResourceNotFoundError):
+            await share_client.get_share_properties()
 
     @pytest.mark.playback_test_only
     @GlobalStorageAccountPreparer()
@@ -315,6 +580,21 @@ class StorageShareTest(AsyncStorageTestCase):
 
     @GlobalStorageAccountPreparer()
     @AsyncStorageTestCase.await_prepared_test
+    async def test_create_share_with_access_tier(self, resource_group, location, storage_account, storage_account_key):
+        self._setup(storage_account, storage_account_key)
+
+        # Act
+        client = self._get_share_reference()
+        created = await client.create_share(access_tier="Hot")
+
+        # Assert
+        props = await client.get_share_properties()
+        self.assertTrue(created)
+        self.assertEqual(props.access_tier, "Hot")
+        await self._delete_shares(client.share_name)
+
+    @GlobalStorageAccountPreparer()
+    @AsyncStorageTestCase.await_prepared_test
     async def test_share_exists_async(self, resource_group, location, storage_account, storage_account_key):
         self._setup(storage_account, storage_account_key)
         share = await self._create_share()
@@ -425,6 +705,30 @@ class StorageShareTest(AsyncStorageTestCase):
         self.assertIsNotNone(shares[0].next_allowed_quota_downgrade_time)
         await self._delete_shares(share.share_name)
 
+    @pytest.mark.skip("Share leases are currently unavailable.")
+    @GlobalStorageAccountPreparer()
+    @AsyncStorageTestCase.await_prepared_test
+    async def test_list_shares_leased_share(self, resource_group, location, storage_account, storage_account_key):
+        self._setup(storage_account, storage_account_key)
+        share = await self._create_share()
+
+        # Act
+        lease = await share.acquire_lease()
+        resp = []
+        async for s in self.fsc.list_shares():
+            resp.append(s)
+
+        # Assert
+        self.assertIsNotNone(resp)
+        self.assertGreaterEqual(len(resp), 1)
+        self.assertIsNotNone(resp[0])
+        self.assertEqual(resp[0].lease.duration, 'infinite')
+        self.assertEqual(resp[0].lease.status, 'locked')
+        self.assertEqual(resp[0].lease.state, 'leased')
+        await lease.release()
+        await self._delete_shares()
+
+    @pytest.mark.playback_test_only
     @GlobalStorageAccountPreparer()
     @AsyncStorageTestCase.await_prepared_test
     async def test_list_shares_with_snapshot_async(self, resource_group, location, storage_account, storage_account_key):
@@ -448,6 +752,7 @@ class StorageShareTest(AsyncStorageTestCase):
         self.assertNamedItemInContainer(all_shares, snapshot2['snapshot'])
         await self._delete_shares(share.share_name)
 
+    @pytest.mark.playback_test_only
     @GlobalStorageAccountPreparer()
     @AsyncStorageTestCase.await_prepared_test
     async def test_list_shares_with_prefix_async(self, resource_group, location, storage_account, storage_account_key):
@@ -578,16 +883,97 @@ class StorageShareTest(AsyncStorageTestCase):
     @AsyncStorageTestCase.await_prepared_test
     async def test_set_share_properties_async(self, resource_group, location, storage_account, storage_account_key):
         self._setup(storage_account, storage_account_key)
-        share = await self._create_share()
-        await share.set_share_quota(1)
+        share1 = await self._create_share("share1")
+        share2 = await self._create_share("share2")
+
+        await share1.set_share_quota(3)
+        await share1.set_share_properties(access_tier="Hot")
+
+        await share2.set_share_properties(access_tier=ShareAccessTier("Cool"), quota=2)
 
         # Act
-        props = await share.get_share_properties()
+        props1 = await share1.get_share_properties()
+        props2 = await share2.get_share_properties()
+
+        share1_quota = props1.quota
+        share1_tier = props1.access_tier
+
+        share2_quota = props2.quota
+        share2_tier = props2.access_tier
 
         # Assert
-        self.assertIsNotNone(props)
-        self.assertEqual(props.quota, 1)
-        await self._delete_shares(share.share_name)
+        self.assertEqual(share1_quota, 3)
+        self.assertEqual(share1_tier, "Hot")
+        self.assertEqual(share2_quota, 2)
+        self.assertEqual(share2_tier, "Cool")
+        await self._delete_shares()
+
+    @pytest.mark.playback_test_only
+    @GlobalStorageAccountPreparer()
+    @AsyncStorageTestCase.await_prepared_test
+    async def test_create_share_with_protocol(self, resource_group, location, storage_account, storage_account_key):
+        self._setup(storage_account, storage_account_key)
+
+        # Act
+        share_client = self._get_share_reference("testshare2")
+        with self.assertRaises(ValueError):
+            await share_client.create_share(protocols="SMB", root_squash=ShareRootSquash.all_squash)
+        await share_client.create_share(protocols="NFS", root_squash=ShareRootSquash.root_squash)
+        props = await share_client.get_share_properties()
+        share_enabled_protocol = props.protocols
+        share_root_squash = props.root_squash
+
+        # Assert
+        self.assertEqual(share_enabled_protocol, ["NFS"])
+        self.assertEqual(share_root_squash, ShareRootSquash.root_squash)
+        await share_client.delete_share()
+
+    @pytest.mark.playback_test_only
+    @GlobalStorageAccountPreparer()
+    @AsyncStorageTestCase.await_prepared_test
+    async def test_set_share_properties_with_root_squash(self, resource_group, location, storage_account, storage_account_key):
+        self._setup(storage_account, storage_account_key)
+        share1 = await self._create_share("share1", protocols=ShareProtocols.NFS)
+        share2 = await self._create_share("share2", protocols=ShareProtocols.NFS)
+
+        await share1.set_share_properties(root_squash="NoRootSquash")
+
+        await share2.set_share_properties(root_squash=ShareRootSquash.root_squash)
+
+        # Act
+        props1 = await share1.get_share_properties()
+        share1_root_squash = props1.root_squash
+        props2 = await share2.get_share_properties()
+        share2_root_squash = props2.root_squash
+
+        # Assert
+        self.assertEqual(share1_root_squash, ShareRootSquash.no_root_squash)
+        self.assertEqual(share2_root_squash, ShareRootSquash.root_squash)
+        await self._delete_shares()
+
+    @pytest.mark.playback_test_only
+    @GlobalStorageAccountPreparer()
+    @AsyncStorageTestCase.await_prepared_test
+    async def test_list_shares_with_root_squash_and_protocols(
+            self, resource_group, location, storage_account, storage_account_key):
+        self._setup(storage_account, storage_account_key)
+        await self._create_share(prefix="testshare1", protocols="NFS", root_squash=ShareRootSquash.all_squash)
+        await self._create_share(prefix="testshare2", protocols=ShareProtocols.SMB)
+        # Act
+        shares = []
+        async for s in self.fsc.list_shares():
+            shares.append(s)
+        share1_props = shares[0]
+        share2_props = shares[1]
+
+        # Assert
+        self.assertIsNotNone(shares)
+        self.assertGreaterEqual(len(shares), 2)
+        self.assertEqual(share1_props.root_squash, ShareRootSquash.all_squash)
+        self.assertEqual(share1_props.protocols, ["NFS"])
+        self.assertEqual(share2_props.root_squash, None)
+        self.assertEqual(share2_props.protocols, ["SMB"])
+        await self._delete_shares()
 
     @GlobalResourceGroupPreparer()
     @StorageAccountPreparer(random_name_enabled=True, sku='premium_LRS', name_prefix='pyacrstorage', kind='FileStorage')

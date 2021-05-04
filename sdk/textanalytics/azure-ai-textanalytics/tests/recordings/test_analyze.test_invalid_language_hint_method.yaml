@@ -1,0 +1,292 @@
+interactions:
+- request:
+    body: '{"tasks": {"entityRecognitionTasks": [{"parameters": {"model-version":
+      "latest", "loggingOptOut": false, "stringIndexType": "UnicodeCodePoint"}}],
+      "entityRecognitionPiiTasks": [{"parameters": {"model-version": "latest", "loggingOptOut":
+      true, "stringIndexType": "UnicodeCodePoint"}}], "keyPhraseExtractionTasks":
+      [{"parameters": {"model-version": "latest", "loggingOptOut": false}}], "entityLinkingTasks":
+      [{"parameters": {"model-version": "latest", "loggingOptOut": false, "stringIndexType":
+      "UnicodeCodePoint"}}], "sentimentAnalysisTasks": [{"parameters": {"model-version":
+      "latest", "loggingOptOut": false, "opinionMining": false}}]}, "analysisInput":
+      {"documents": [{"id": "0", "text": "This should fail because we''re passing
+      in an invalid language hint", "language": "notalanguage"}]}}'
+    headers:
+      Accept:
+      - application/json, text/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '790'
+      Content-Type:
+      - application/json
+      User-Agent:
+      - azsdk-python-ai-textanalytics/5.1.0b7 Python/3.9.0 (Windows-10-10.0.19041-SP0)
+    method: POST
+    uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.1-preview.5/analyze
+  response:
+    body:
+      string: ''
+    headers:
+      apim-request-id:
+      - cf1b346c-82e0-452c-89d6-1f1236b0502d
+      date:
+      - Thu, 29 Apr 2021 03:34:22 GMT
+      operation-location:
+      - https://westus2.api.cognitive.microsoft.com/text/analytics/v3.1-preview.5/analyze/jobs/7435b5a9-4378-4518-945b-8f6218441f6c
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains; preload
+      transfer-encoding:
+      - chunked
+      x-content-type-options:
+      - nosniff
+      x-envoy-upstream-service-time:
+      - '2914'
+    status:
+      code: 202
+      message: Accepted
+- request:
+    body: null
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - azsdk-python-ai-textanalytics/5.1.0b7 Python/3.9.0 (Windows-10-10.0.19041-SP0)
+    method: GET
+    uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.1-preview.5/analyze/jobs/7435b5a9-4378-4518-945b-8f6218441f6c
+  response:
+    body:
+      string: '{"jobId":"7435b5a9-4378-4518-945b-8f6218441f6c","lastUpdateDateTime":"2021-04-29T03:34:24Z","createdDateTime":"2021-04-29T03:34:20Z","expirationDateTime":"2021-04-30T03:34:20Z","status":"running","errors":[],"displayName":"NA","tasks":{"details":{"name":"NA","lastUpdateDateTime":"2021-04-29T03:34:24Z"},"completed":1,"failed":0,"inProgress":4,"total":5,"entityLinkingTasks":[{"lastUpdateDateTime":"2021-04-29T03:34:24.029076Z","name":"NA","state":"succeeded","results":{"documents":[],"errors":[{"id":"0","error":{"code":"InvalidArgument","message":"Invalid
+        Language Code.","innererror":{"code":"UnsupportedLanguageCode","message":"Invalid
+        language code. Supported languages: en,es. For additional details see https://docs.microsoft.com/en-us/azure/cognitive-services/text-analytics/language-support?tabs=entity-linking"}}}],"modelVersion":"2020-02-01"}}]}}'
+    headers:
+      apim-request-id:
+      - 5803b012-bdf9-448f-b730-086a78a3cf52
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Thu, 29 Apr 2021 03:34:27 GMT
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains; preload
+      transfer-encoding:
+      - chunked
+      x-content-type-options:
+      - nosniff
+      x-envoy-upstream-service-time:
+      - '143'
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - azsdk-python-ai-textanalytics/5.1.0b7 Python/3.9.0 (Windows-10-10.0.19041-SP0)
+    method: GET
+    uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.1-preview.5/analyze/jobs/7435b5a9-4378-4518-945b-8f6218441f6c
+  response:
+    body:
+      string: '{"jobId":"7435b5a9-4378-4518-945b-8f6218441f6c","lastUpdateDateTime":"2021-04-29T03:34:32Z","createdDateTime":"2021-04-29T03:34:20Z","expirationDateTime":"2021-04-30T03:34:20Z","status":"running","errors":[],"displayName":"NA","tasks":{"details":{"name":"NA","lastUpdateDateTime":"2021-04-29T03:34:32Z"},"completed":1,"failed":0,"inProgress":4,"total":5,"entityLinkingTasks":[{"lastUpdateDateTime":"2021-04-29T03:34:24.029076Z","name":"NA","state":"succeeded","results":{"documents":[],"errors":[{"id":"0","error":{"code":"InvalidArgument","message":"Invalid
+        Language Code.","innererror":{"code":"UnsupportedLanguageCode","message":"Invalid
+        language code. Supported languages: en,es. For additional details see https://docs.microsoft.com/en-us/azure/cognitive-services/text-analytics/language-support?tabs=entity-linking"}}}],"modelVersion":"2020-02-01"}}]}}'
+    headers:
+      apim-request-id:
+      - 859a1aaa-d2d1-468e-b34a-25d106cf80af
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Thu, 29 Apr 2021 03:34:35 GMT
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains; preload
+      transfer-encoding:
+      - chunked
+      x-content-type-options:
+      - nosniff
+      x-envoy-upstream-service-time:
+      - '2655'
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - azsdk-python-ai-textanalytics/5.1.0b7 Python/3.9.0 (Windows-10-10.0.19041-SP0)
+    method: GET
+    uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.1-preview.5/analyze/jobs/7435b5a9-4378-4518-945b-8f6218441f6c
+  response:
+    body:
+      string: '{"jobId":"7435b5a9-4378-4518-945b-8f6218441f6c","lastUpdateDateTime":"2021-04-29T03:34:32Z","createdDateTime":"2021-04-29T03:34:20Z","expirationDateTime":"2021-04-30T03:34:20Z","status":"running","errors":[],"displayName":"NA","tasks":{"details":{"name":"NA","lastUpdateDateTime":"2021-04-29T03:34:32Z"},"completed":1,"failed":0,"inProgress":4,"total":5,"entityLinkingTasks":[{"lastUpdateDateTime":"2021-04-29T03:34:24.029076Z","name":"NA","state":"succeeded","results":{"documents":[],"errors":[{"id":"0","error":{"code":"InvalidArgument","message":"Invalid
+        Language Code.","innererror":{"code":"UnsupportedLanguageCode","message":"Invalid
+        language code. Supported languages: en,es. For additional details see https://docs.microsoft.com/en-us/azure/cognitive-services/text-analytics/language-support?tabs=entity-linking"}}}],"modelVersion":"2020-02-01"}}]}}'
+    headers:
+      apim-request-id:
+      - 4c2f2359-538b-485d-a030-b72f5e21fb91
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Thu, 29 Apr 2021 03:34:48 GMT
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains; preload
+      transfer-encoding:
+      - chunked
+      x-content-type-options:
+      - nosniff
+      x-envoy-upstream-service-time:
+      - '7602'
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - azsdk-python-ai-textanalytics/5.1.0b7 Python/3.9.0 (Windows-10-10.0.19041-SP0)
+    method: GET
+    uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.1-preview.5/analyze/jobs/7435b5a9-4378-4518-945b-8f6218441f6c
+  response:
+    body:
+      string: '{"jobId":"7435b5a9-4378-4518-945b-8f6218441f6c","lastUpdateDateTime":"2021-04-29T03:34:53Z","createdDateTime":"2021-04-29T03:34:20Z","expirationDateTime":"2021-04-30T03:34:20Z","status":"running","errors":[],"displayName":"NA","tasks":{"details":{"name":"NA","lastUpdateDateTime":"2021-04-29T03:34:53Z"},"completed":3,"failed":0,"inProgress":2,"total":5,"entityLinkingTasks":[{"lastUpdateDateTime":"2021-04-29T03:34:24.029076Z","name":"NA","state":"succeeded","results":{"documents":[],"errors":[{"id":"0","error":{"code":"InvalidArgument","message":"Invalid
+        Language Code.","innererror":{"code":"UnsupportedLanguageCode","message":"Invalid
+        language code. Supported languages: en,es. For additional details see https://docs.microsoft.com/en-us/azure/cognitive-services/text-analytics/language-support?tabs=entity-linking"}}}],"modelVersion":"2020-02-01"}}],"keyPhraseExtractionTasks":[{"lastUpdateDateTime":"2021-04-29T03:34:52.6038041Z","name":"NA","state":"succeeded","results":{"documents":[],"errors":[{"id":"0","error":{"code":"InvalidArgument","message":"Invalid
+        Language Code.","innererror":{"code":"UnsupportedLanguageCode","message":"Invalid
+        language code. Supported languages: da,de,en,es,fi,fr,it,ja,ko,nl,pl,pt-BR,pt-PT,ru,sv,af,bg,ca,el,et,hr,hu,id,lv,no,ro,sk,sl,tr.
+        For additional details see https://docs.microsoft.com/en-us/azure/cognitive-services/text-analytics/language-support?tabs=key-phrase-extraction"}}}],"modelVersion":"2020-07-01"}}],"sentimentAnalysisTasks":[{"lastUpdateDateTime":"2021-04-29T03:34:53.5180635Z","name":"NA","state":"succeeded","results":{"documents":[],"errors":[{"id":"0","error":{"code":"InvalidArgument","message":"Invalid
+        Language Code.","innererror":{"code":"UnsupportedLanguageCode","message":"Invalid
+        language code. Supported languages: en,ja,ko,zh-Hans,zh-Hant,de,es,fr,hi,no,tr,it,nl,pt-BR,pt-PT.
+        For additional details see https://docs.microsoft.com/en-us/azure/cognitive-services/text-analytics/language-support?tabs=sentiment-analysis"}}}],"modelVersion":"2020-04-01"}}]}}'
+    headers:
+      apim-request-id:
+      - 117a214f-6512-4c23-9fc1-0cc111483fac
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Thu, 29 Apr 2021 03:34:56 GMT
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains; preload
+      transfer-encoding:
+      - chunked
+      x-content-type-options:
+      - nosniff
+      x-envoy-upstream-service-time:
+      - '2605'
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - azsdk-python-ai-textanalytics/5.1.0b7 Python/3.9.0 (Windows-10-10.0.19041-SP0)
+    method: GET
+    uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.1-preview.5/analyze/jobs/7435b5a9-4378-4518-945b-8f6218441f6c
+  response:
+    body:
+      string: '{"jobId":"7435b5a9-4378-4518-945b-8f6218441f6c","lastUpdateDateTime":"2021-04-29T03:34:56Z","createdDateTime":"2021-04-29T03:34:20Z","expirationDateTime":"2021-04-30T03:34:20Z","status":"running","errors":[],"displayName":"NA","tasks":{"details":{"name":"NA","lastUpdateDateTime":"2021-04-29T03:34:56Z"},"completed":4,"failed":0,"inProgress":1,"total":5,"entityLinkingTasks":[{"lastUpdateDateTime":"2021-04-29T03:34:24.029076Z","name":"NA","state":"succeeded","results":{"documents":[],"errors":[{"id":"0","error":{"code":"InvalidArgument","message":"Invalid
+        Language Code.","innererror":{"code":"UnsupportedLanguageCode","message":"Invalid
+        language code. Supported languages: en,es. For additional details see https://docs.microsoft.com/en-us/azure/cognitive-services/text-analytics/language-support?tabs=entity-linking"}}}],"modelVersion":"2020-02-01"}}],"entityRecognitionPiiTasks":[{"lastUpdateDateTime":"2021-04-29T03:34:56.8297306Z","name":"NA","state":"succeeded","results":{"documents":[],"errors":[{"id":"0","error":{"code":"InvalidArgument","message":"Invalid
+        Language Code.","innererror":{"code":"UnsupportedLanguageCode","message":"Invalid
+        language code. Supported languages: ja,ko,zh-Hans,de,en,es,fr,it,pt-BR,pt-PT.
+        For additional details see https://docs.microsoft.com/en-us/azure/cognitive-services/text-analytics/language-support?tabs=named-entity-recognition"}}}],"modelVersion":"2021-01-15"}}],"keyPhraseExtractionTasks":[{"lastUpdateDateTime":"2021-04-29T03:34:52.6038041Z","name":"NA","state":"succeeded","results":{"documents":[],"errors":[{"id":"0","error":{"code":"InvalidArgument","message":"Invalid
+        Language Code.","innererror":{"code":"UnsupportedLanguageCode","message":"Invalid
+        language code. Supported languages: da,de,en,es,fi,fr,it,ja,ko,nl,pl,pt-BR,pt-PT,ru,sv,af,bg,ca,el,et,hr,hu,id,lv,no,ro,sk,sl,tr.
+        For additional details see https://docs.microsoft.com/en-us/azure/cognitive-services/text-analytics/language-support?tabs=key-phrase-extraction"}}}],"modelVersion":"2020-07-01"}}],"sentimentAnalysisTasks":[{"lastUpdateDateTime":"2021-04-29T03:34:53.5180635Z","name":"NA","state":"succeeded","results":{"documents":[],"errors":[{"id":"0","error":{"code":"InvalidArgument","message":"Invalid
+        Language Code.","innererror":{"code":"UnsupportedLanguageCode","message":"Invalid
+        language code. Supported languages: en,ja,ko,zh-Hans,zh-Hant,de,es,fr,hi,no,tr,it,nl,pt-BR,pt-PT.
+        For additional details see https://docs.microsoft.com/en-us/azure/cognitive-services/text-analytics/language-support?tabs=sentiment-analysis"}}}],"modelVersion":"2020-04-01"}}]}}'
+    headers:
+      apim-request-id:
+      - 73e7813d-6cec-4a65-a2ac-e81cebe5e8d3
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Thu, 29 Apr 2021 03:35:01 GMT
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains; preload
+      transfer-encoding:
+      - chunked
+      x-content-type-options:
+      - nosniff
+      x-envoy-upstream-service-time:
+      - '132'
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - azsdk-python-ai-textanalytics/5.1.0b7 Python/3.9.0 (Windows-10-10.0.19041-SP0)
+    method: GET
+    uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.1-preview.5/analyze/jobs/7435b5a9-4378-4518-945b-8f6218441f6c
+  response:
+    body:
+      string: '{"jobId":"7435b5a9-4378-4518-945b-8f6218441f6c","lastUpdateDateTime":"2021-04-29T03:35:05Z","createdDateTime":"2021-04-29T03:34:20Z","expirationDateTime":"2021-04-30T03:34:20Z","status":"succeeded","errors":[],"displayName":"NA","tasks":{"details":{"name":"NA","lastUpdateDateTime":"2021-04-29T03:35:05Z"},"completed":5,"failed":0,"inProgress":0,"total":5,"entityRecognitionTasks":[{"lastUpdateDateTime":"2021-04-29T03:35:05.0161605Z","name":"NA","state":"succeeded","results":{"documents":[],"errors":[{"id":"0","error":{"code":"InvalidArgument","message":"Invalid
+        Language Code.","innererror":{"code":"UnsupportedLanguageCode","message":"Invalid
+        language code. Supported languages: en,es,de,fr,zh-Hans,ar,cs,da,fi,hu,it,ja,ko,no,nl,pl,pt-BR,pt-PT,ru,sv,tr.
+        For additional details see https://docs.microsoft.com/en-us/azure/cognitive-services/text-analytics/language-support?tabs=named-entity-recognition"}}}],"modelVersion":"2021-01-15"}}],"entityLinkingTasks":[{"lastUpdateDateTime":"2021-04-29T03:34:24.029076Z","name":"NA","state":"succeeded","results":{"documents":[],"errors":[{"id":"0","error":{"code":"InvalidArgument","message":"Invalid
+        Language Code.","innererror":{"code":"UnsupportedLanguageCode","message":"Invalid
+        language code. Supported languages: en,es. For additional details see https://docs.microsoft.com/en-us/azure/cognitive-services/text-analytics/language-support?tabs=entity-linking"}}}],"modelVersion":"2020-02-01"}}],"entityRecognitionPiiTasks":[{"lastUpdateDateTime":"2021-04-29T03:34:56.8297306Z","name":"NA","state":"succeeded","results":{"documents":[],"errors":[{"id":"0","error":{"code":"InvalidArgument","message":"Invalid
+        Language Code.","innererror":{"code":"UnsupportedLanguageCode","message":"Invalid
+        language code. Supported languages: ja,ko,zh-Hans,de,en,es,fr,it,pt-BR,pt-PT.
+        For additional details see https://docs.microsoft.com/en-us/azure/cognitive-services/text-analytics/language-support?tabs=named-entity-recognition"}}}],"modelVersion":"2021-01-15"}}],"keyPhraseExtractionTasks":[{"lastUpdateDateTime":"2021-04-29T03:34:52.6038041Z","name":"NA","state":"succeeded","results":{"documents":[],"errors":[{"id":"0","error":{"code":"InvalidArgument","message":"Invalid
+        Language Code.","innererror":{"code":"UnsupportedLanguageCode","message":"Invalid
+        language code. Supported languages: da,de,en,es,fi,fr,it,ja,ko,nl,pl,pt-BR,pt-PT,ru,sv,af,bg,ca,el,et,hr,hu,id,lv,no,ro,sk,sl,tr.
+        For additional details see https://docs.microsoft.com/en-us/azure/cognitive-services/text-analytics/language-support?tabs=key-phrase-extraction"}}}],"modelVersion":"2020-07-01"}}],"sentimentAnalysisTasks":[{"lastUpdateDateTime":"2021-04-29T03:34:53.5180635Z","name":"NA","state":"succeeded","results":{"documents":[],"errors":[{"id":"0","error":{"code":"InvalidArgument","message":"Invalid
+        Language Code.","innererror":{"code":"UnsupportedLanguageCode","message":"Invalid
+        language code. Supported languages: en,ja,ko,zh-Hans,zh-Hant,de,es,fr,hi,no,tr,it,nl,pt-BR,pt-PT.
+        For additional details see https://docs.microsoft.com/en-us/azure/cognitive-services/text-analytics/language-support?tabs=sentiment-analysis"}}}],"modelVersion":"2020-04-01"}}]}}'
+    headers:
+      apim-request-id:
+      - 310d7a5b-7bff-4256-9f0f-6c652612ab33
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Thu, 29 Apr 2021 03:35:06 GMT
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains; preload
+      transfer-encoding:
+      - chunked
+      x-content-type-options:
+      - nosniff
+      x-envoy-upstream-service-time:
+      - '120'
+    status:
+      code: 200
+      message: OK
+version: 1

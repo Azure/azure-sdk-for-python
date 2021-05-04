@@ -21,7 +21,7 @@ except (SyntaxError, ImportError):
     from ._models import VMInsightsOnboardingStatus  # type: ignore
     from ._models import WorkspaceInfo  # type: ignore
 
-from ._monitor_client_enums import (
+from ._monitor_management_client_enums import (
     DataStatus,
     OnboardingStatus,
 )

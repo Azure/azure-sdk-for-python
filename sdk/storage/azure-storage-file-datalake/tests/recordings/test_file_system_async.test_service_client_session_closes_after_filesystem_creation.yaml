@@ -1,0 +1,90 @@
+interactions:
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/xml
+      User-Agent:
+      - azsdk-python-storage-dfs/12.2.3 Python/3.8.5 (Windows-10-10.0.19041-SP0)
+      x-ms-client-request-id:
+      - 1407f955-61c4-11eb-a0f0-c8348e5fffbf
+      x-ms-date:
+      - Thu, 28 Jan 2021 23:53:54 GMT
+      x-ms-version:
+      - '2020-04-08'
+    method: PUT
+    uri: https://storagename.blob.core.windows.net/fs1a55d2271?restype=container
+  response:
+    body:
+      string: ''
+    headers:
+      Date: Thu, 28 Jan 2021 23:53:54 GMT
+      ETag: '"0x8D8C3E7F8AA6AA7"'
+      Last-Modified: Thu, 28 Jan 2021 23:53:54 GMT
+      Server: Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
+      Transfer-Encoding: chunked
+      x-ms-request-id: 26abe84d-601e-0022-14d0-f50386000000
+      x-ms-version: '2020-04-08'
+    status:
+      code: 201
+      message: Created
+    url: https://storagename.blob.core.windows.net/fs1a55d2271?restype=container
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/xml
+      User-Agent:
+      - azsdk-python-storage-dfs/12.2.3 Python/3.8.5 (Windows-10-10.0.19041-SP0)
+      x-ms-client-request-id:
+      - 14448d10-61c4-11eb-9006-c8348e5fffbf
+      x-ms-date:
+      - Thu, 28 Jan 2021 23:53:54 GMT
+      x-ms-version:
+      - '2020-04-08'
+    method: DELETE
+    uri: https://storagename.blob.core.windows.net/fs1a55d2271?restype=container
+  response:
+    body:
+      string: ''
+    headers:
+      Date: Thu, 28 Jan 2021 23:53:54 GMT
+      Server: Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
+      Transfer-Encoding: chunked
+      x-ms-request-id: 26abe85b-601e-0022-18d0-f50386000000
+      x-ms-version: '2020-04-08'
+    status:
+      code: 202
+      message: Accepted
+    url: https://storagename.blob.core.windows.net/fs1a55d2271?restype=container
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/xml
+      User-Agent:
+      - azsdk-python-storage-dfs/12.2.3 Python/3.8.5 (Windows-10-10.0.19041-SP0)
+      x-ms-client-request-id:
+      - 144f627f-61c4-11eb-b938-c8348e5fffbf
+      x-ms-date:
+      - Thu, 28 Jan 2021 23:53:54 GMT
+      x-ms-version:
+      - '2020-04-08'
+    method: PUT
+    uri: https://storagename.blob.core.windows.net/fs2a55d2271?restype=container
+  response:
+    body:
+      string: ''
+    headers:
+      Date: Thu, 28 Jan 2021 23:53:54 GMT
+      ETag: '"0x8D8C3E7F8E04FCB"'
+      Last-Modified: Thu, 28 Jan 2021 23:53:55 GMT
+      Server: Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
+      Transfer-Encoding: chunked
+      x-ms-request-id: 7145ae31-f01e-0011-7ad0-f51774000000
+      x-ms-version: '2020-04-08'
+    status:
+      code: 201
+      message: Created
+    url: https://storagename.blob.core.windows.net/fs2a55d2271?restype=container
+version: 1

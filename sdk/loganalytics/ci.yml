@@ -4,6 +4,7 @@ trigger:
   branches:
     include:
     - master
+    - main
     - hotfix/*
     - release/*
     - restapi*
@@ -15,6 +16,7 @@ pr:
   branches:
     include:
     - master
+    - main
     - feature/*
     - hotfix/*
     - release/*
@@ -28,7 +30,7 @@ extends:
   parameters:
     ServiceDirectory: loganalytics
     Artifacts:
-    - name: azure_loganalytics
+    - name: azure-loganalytics
       safeName: azureloganalytics
-    - name: azure_mgmt_loganalytics
+    - name: azure-mgmt-loganalytics
       safeName: azuremgmtloganalytics

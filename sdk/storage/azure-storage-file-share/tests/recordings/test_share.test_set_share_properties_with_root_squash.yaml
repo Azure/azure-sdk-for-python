@@ -1,0 +1,274 @@
+interactions:
+- request:
+    body: null
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '0'
+      User-Agent:
+      - azsdk-python-storage-file-share/12.3.0b2 Python/3.8.5 (Windows-10-10.0.19041-SP0)
+      x-ms-date:
+      - Fri, 13 Nov 2020 22:18:53 GMT
+      x-ms-enabled-protocols:
+      - NFS
+      x-ms-version:
+      - '2020-04-08'
+    method: PUT
+    uri: https://storagename.file.core.windows.net/share1503d161c?restype=share
+  response:
+    body:
+      string: ''
+    headers:
+      date:
+      - Fri, 13 Nov 2020 22:18:54 GMT
+      etag:
+      - '"0x8D888221BA28AAD"'
+      last-modified:
+      - Fri, 13 Nov 2020 22:18:54 GMT
+      server:
+      - Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
+      transfer-encoding:
+      - chunked
+      x-ms-version:
+      - '2020-04-08'
+    status:
+      code: 201
+      message: Created
+- request:
+    body: null
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '0'
+      User-Agent:
+      - azsdk-python-storage-file-share/12.3.0b2 Python/3.8.5 (Windows-10-10.0.19041-SP0)
+      x-ms-date:
+      - Fri, 13 Nov 2020 22:18:53 GMT
+      x-ms-enabled-protocols:
+      - NFS
+      x-ms-version:
+      - '2020-04-08'
+    method: PUT
+    uri: https://storagename.file.core.windows.net/share2503d161c?restype=share
+  response:
+    body:
+      string: ''
+    headers:
+      date:
+      - Fri, 13 Nov 2020 22:18:54 GMT
+      etag:
+      - '"0x8D888221BC2C301"'
+      last-modified:
+      - Fri, 13 Nov 2020 22:18:54 GMT
+      server:
+      - Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
+      transfer-encoding:
+      - chunked
+      x-ms-version:
+      - '2020-04-08'
+    status:
+      code: 201
+      message: Created
+- request:
+    body: null
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '0'
+      User-Agent:
+      - azsdk-python-storage-file-share/12.3.0b2 Python/3.8.5 (Windows-10-10.0.19041-SP0)
+      x-ms-date:
+      - Fri, 13 Nov 2020 22:18:54 GMT
+      x-ms-root-squash:
+      - NoRootSquash
+      x-ms-version:
+      - '2020-04-08'
+    method: PUT
+    uri: https://storagename.file.core.windows.net/share1503d161c?restype=share&comp=properties
+  response:
+    body:
+      string: ''
+    headers:
+      date:
+      - Fri, 13 Nov 2020 22:18:54 GMT
+      etag:
+      - '"0x8D888221BD7F4AB"'
+      last-modified:
+      - Fri, 13 Nov 2020 22:18:55 GMT
+      server:
+      - Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
+      transfer-encoding:
+      - chunked
+      x-ms-version:
+      - '2020-04-08'
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '0'
+      User-Agent:
+      - azsdk-python-storage-file-share/12.3.0b2 Python/3.8.5 (Windows-10-10.0.19041-SP0)
+      x-ms-date:
+      - Fri, 13 Nov 2020 22:18:54 GMT
+      x-ms-root-squash:
+      - RootSquash
+      x-ms-version:
+      - '2020-04-08'
+    method: PUT
+    uri: https://storagename.file.core.windows.net/share2503d161c?restype=share&comp=properties
+  response:
+    body:
+      string: ''
+    headers:
+      date:
+      - Fri, 13 Nov 2020 22:18:54 GMT
+      etag:
+      - '"0x8D888221BEA2084"'
+      last-modified:
+      - Fri, 13 Nov 2020 22:18:55 GMT
+      server:
+      - Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
+      transfer-encoding:
+      - chunked
+      x-ms-version:
+      - '2020-04-08'
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - azsdk-python-storage-file-share/12.3.0b2 Python/3.8.5 (Windows-10-10.0.19041-SP0)
+      x-ms-date:
+      - Fri, 13 Nov 2020 22:18:54 GMT
+      x-ms-version:
+      - '2020-04-08'
+    method: GET
+    uri: https://storagename.file.core.windows.net/share1503d161c?restype=share
+  response:
+    body:
+      string: ''
+    headers:
+      date:
+      - Fri, 13 Nov 2020 22:18:54 GMT
+      etag:
+      - '"0x8D888221BD7F4AB"'
+      last-modified:
+      - Fri, 13 Nov 2020 22:18:55 GMT
+      server:
+      - Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
+      transfer-encoding:
+      - chunked
+      x-ms-access-tier:
+      - Premium
+      x-ms-enabled-protocols:
+      - NFS
+      x-ms-has-immutability-policy:
+      - 'false'
+      x-ms-has-legal-hold:
+      - 'false'
+      x-ms-root-squash:
+      - NoRootSquash
+      x-ms-share-next-allowed-quota-downgrade-time:
+      - Fri, 13 Nov 2020 22:18:54 GMT
+      x-ms-share-provisioned-egress-mbps:
+      - '66'
+      x-ms-share-provisioned-ingress-mbps:
+      - '44'
+      x-ms-share-provisioned-iops:
+      - '500'
+      x-ms-share-quota:
+      - '100'
+      x-ms-version:
+      - '2020-04-08'
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - azsdk-python-storage-file-share/12.3.0b2 Python/3.8.5 (Windows-10-10.0.19041-SP0)
+      x-ms-date:
+      - Fri, 13 Nov 2020 22:18:54 GMT
+      x-ms-version:
+      - '2020-04-08'
+    method: GET
+    uri: https://storagename.file.core.windows.net/share2503d161c?restype=share
+  response:
+    body:
+      string: ''
+    headers:
+      date:
+      - Fri, 13 Nov 2020 22:18:55 GMT
+      etag:
+      - '"0x8D888221BEA2084"'
+      last-modified:
+      - Fri, 13 Nov 2020 22:18:55 GMT
+      server:
+      - Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
+      transfer-encoding:
+      - chunked
+      x-ms-access-tier:
+      - Premium
+      x-ms-enabled-protocols:
+      - NFS
+      x-ms-has-immutability-policy:
+      - 'false'
+      x-ms-has-legal-hold:
+      - 'false'
+      x-ms-root-squash:
+      - RootSquash
+      x-ms-share-next-allowed-quota-downgrade-time:
+      - Fri, 13 Nov 2020 22:18:54 GMT
+      x-ms-share-provisioned-egress-mbps:
+      - '66'
+      x-ms-share-provisioned-ingress-mbps:
+      - '44'
+      x-ms-share-provisioned-iops:
+      - '500'
+      x-ms-share-quota:
+      - '100'
+      x-ms-version:
+      - '2020-04-08'
+    status:
+      code: 200
+      message: OK
+version: 1

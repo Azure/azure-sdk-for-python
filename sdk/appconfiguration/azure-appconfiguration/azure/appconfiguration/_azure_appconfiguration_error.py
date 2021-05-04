@@ -5,6 +5,7 @@
 # -------------------------------------------------------------------------
 from azure.core.exceptions import HttpResponseError
 
+
 class ResourceReadOnlyError(HttpResponseError):
     """An error response with status code 409
 

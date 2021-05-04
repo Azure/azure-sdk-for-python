@@ -16,7 +16,7 @@ from azure.core.polling import AsyncLROPoller, AsyncNoPolling, AsyncPollingMetho
 from azure.mgmt.core.exceptions import ARMErrorFormat
 from azure.mgmt.core.polling.async_arm_polling import AsyncARMPolling
 
-from ... import models
+from ... import models as _models
 
 T = TypeVar('T')
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]]
@@ -35,7 +35,7 @@ class VpnConnectionsOperations:
     :param deserializer: An object model deserializer.
     """
 
-    models = models
+    models = _models
 
     def __init__(self, client, config, serializer, deserializer) -> None:
         self._client = client
@@ -49,7 +49,7 @@ class VpnConnectionsOperations:
         gateway_name: str,
         connection_name: str,
         **kwargs
-    ) -> "models.VpnConnection":
+    ) -> "_models.VpnConnection":
         """Retrieves the details of a vpn connection.
 
         :param resource_group_name: The resource group name of the VpnGateway.
@@ -63,7 +63,7 @@ class VpnConnectionsOperations:
         :rtype: ~azure.mgmt.network.v2019_08_01.models.VpnConnection
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.VpnConnection"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.VpnConnection"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -110,10 +110,10 @@ class VpnConnectionsOperations:
         resource_group_name: str,
         gateway_name: str,
         connection_name: str,
-        vpn_connection_parameters: "models.VpnConnection",
+        vpn_connection_parameters: "_models.VpnConnection",
         **kwargs
-    ) -> "models.VpnConnection":
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.VpnConnection"]
+    ) -> "_models.VpnConnection":
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.VpnConnection"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -169,9 +169,9 @@ class VpnConnectionsOperations:
         resource_group_name: str,
         gateway_name: str,
         connection_name: str,
-        vpn_connection_parameters: "models.VpnConnection",
+        vpn_connection_parameters: "_models.VpnConnection",
         **kwargs
-    ) -> AsyncLROPoller["models.VpnConnection"]:
+    ) -> AsyncLROPoller["_models.VpnConnection"]:
         """Creates a vpn connection to a scalable vpn gateway if it doesn't exist else updates the
         existing connection.
 
@@ -194,7 +194,7 @@ class VpnConnectionsOperations:
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         polling = kwargs.pop('polling', True)  # type: Union[bool, AsyncPollingMethod]
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.VpnConnection"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.VpnConnection"]
         lro_delay = kwargs.pop(
             'polling_interval',
             self._config.polling_interval
@@ -220,7 +220,14 @@ class VpnConnectionsOperations:
                 return cls(pipeline_response, deserialized, {})
             return deserialized
 
-        if polling is True: polling_method = AsyncARMPolling(lro_delay, lro_options={'final-state-via': 'azure-async-operation'},  **kwargs)
+        path_format_arguments = {
+            'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
+            'gatewayName': self._serialize.url("gateway_name", gateway_name, 'str'),
+            'connectionName': self._serialize.url("connection_name", connection_name, 'str'),
+        }
+
+        if polling is True: polling_method = AsyncARMPolling(lro_delay, lro_options={'final-state-via': 'azure-async-operation'}, path_format_arguments=path_format_arguments,  **kwargs)
         elif polling is False: polling_method = AsyncNoPolling()
         else: polling_method = polling
         if cont_token:
@@ -328,7 +335,14 @@ class VpnConnectionsOperations:
             if cls:
                 return cls(pipeline_response, None, {})
 
-        if polling is True: polling_method = AsyncARMPolling(lro_delay, lro_options={'final-state-via': 'location'},  **kwargs)
+        path_format_arguments = {
+            'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
+            'gatewayName': self._serialize.url("gateway_name", gateway_name, 'str'),
+            'connectionName': self._serialize.url("connection_name", connection_name, 'str'),
+        }
+
+        if polling is True: polling_method = AsyncARMPolling(lro_delay, lro_options={'final-state-via': 'location'}, path_format_arguments=path_format_arguments,  **kwargs)
         elif polling is False: polling_method = AsyncNoPolling()
         else: polling_method = polling
         if cont_token:
@@ -347,7 +361,7 @@ class VpnConnectionsOperations:
         resource_group_name: str,
         gateway_name: str,
         **kwargs
-    ) -> AsyncIterable["models.ListVpnConnectionsResult"]:
+    ) -> AsyncIterable["_models.ListVpnConnectionsResult"]:
         """Retrieves all vpn connections for a particular virtual wan vpn gateway.
 
         :param resource_group_name: The resource group name of the VpnGateway.
@@ -359,7 +373,7 @@ class VpnConnectionsOperations:
         :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.network.v2019_08_01.models.ListVpnConnectionsResult]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.ListVpnConnectionsResult"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.ListVpnConnectionsResult"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }

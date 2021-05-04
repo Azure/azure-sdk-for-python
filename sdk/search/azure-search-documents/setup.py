@@ -48,6 +48,7 @@ if not version:
 setup(
     name=PACKAGE_NAME,
     version=version,
+    include_package_data=True,
     description='Microsoft {} Client Library for Python'.format(PACKAGE_PPRINT_NAME),
     long_description=open('README.md', 'r').read(),
     long_description_content_type='text/markdown',
@@ -65,6 +66,7 @@ setup(
         'Programming Language :: Python :: 3.6',
         'Programming Language :: Python :: 3.7',
         'Programming Language :: Python :: 3.8',
+        'Programming Language :: Python :: 3.9',
         'License :: OSI Approved :: MIT License',
     ],
     zip_safe=False,
@@ -76,8 +78,9 @@ setup(
         'azure.search',
     ]),
     install_requires=[
-        "azure-core<2.0.0,>=1.4.0",
-        "msrest>=0.6.10",
+        "azure-core<2.0.0,>=1.6.0",
+        "msrest>=0.6.21",
+        "azure-common~=1.1",
         "typing-extensions"
     ],
     extras_require={

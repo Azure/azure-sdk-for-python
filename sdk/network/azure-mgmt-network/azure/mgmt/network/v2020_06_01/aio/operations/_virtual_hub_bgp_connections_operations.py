@@ -16,7 +16,7 @@ from azure.core.polling import AsyncLROPoller, AsyncNoPolling, AsyncPollingMetho
 from azure.mgmt.core.exceptions import ARMErrorFormat
 from azure.mgmt.core.polling.async_arm_polling import AsyncARMPolling
 
-from ... import models
+from ... import models as _models
 
 T = TypeVar('T')
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]]
@@ -35,7 +35,7 @@ class VirtualHubBgpConnectionsOperations:
     :param deserializer: An object model deserializer.
     """
 
-    models = models
+    models = _models
 
     def __init__(self, client, config, serializer, deserializer) -> None:
         self._client = client
@@ -48,7 +48,7 @@ class VirtualHubBgpConnectionsOperations:
         resource_group_name: str,
         virtual_hub_name: str,
         **kwargs
-    ) -> AsyncIterable["models.ListVirtualHubBgpConnectionResults"]:
+    ) -> AsyncIterable["_models.ListVirtualHubBgpConnectionResults"]:
         """Retrieves the details of all VirtualHubBgpConnections.
 
         :param resource_group_name: The resource group name of the VirtualHub.
@@ -60,7 +60,7 @@ class VirtualHubBgpConnectionsOperations:
         :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.network.v2020_06_01.models.ListVirtualHubBgpConnectionResults]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.ListVirtualHubBgpConnectionResults"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.ListVirtualHubBgpConnectionResults"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -123,8 +123,8 @@ class VirtualHubBgpConnectionsOperations:
         hub_name: str,
         connection_name: str,
         **kwargs
-    ) -> Optional["models.PeerRouteList"]:
-        cls = kwargs.pop('cls', None)  # type: ClsType[Optional["models.PeerRouteList"]]
+    ) -> Optional["_models.PeerRouteList"]:
+        cls = kwargs.pop('cls', None)  # type: ClsType[Optional["_models.PeerRouteList"]]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -174,7 +174,7 @@ class VirtualHubBgpConnectionsOperations:
         hub_name: str,
         connection_name: str,
         **kwargs
-    ) -> AsyncLROPoller["models.PeerRouteList"]:
+    ) -> AsyncLROPoller["_models.PeerRouteList"]:
         """Retrieves a list of routes the virtual hub bgp connection has learned.
 
         :param resource_group_name: The name of the resource group.
@@ -194,7 +194,7 @@ class VirtualHubBgpConnectionsOperations:
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         polling = kwargs.pop('polling', True)  # type: Union[bool, AsyncPollingMethod]
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.PeerRouteList"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.PeerRouteList"]
         lro_delay = kwargs.pop(
             'polling_interval',
             self._config.polling_interval
@@ -219,7 +219,14 @@ class VirtualHubBgpConnectionsOperations:
                 return cls(pipeline_response, deserialized, {})
             return deserialized
 
-        if polling is True: polling_method = AsyncARMPolling(lro_delay, lro_options={'final-state-via': 'location'},  **kwargs)
+        path_format_arguments = {
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
+            'hubName': self._serialize.url("hub_name", hub_name, 'str'),
+            'connectionName': self._serialize.url("connection_name", connection_name, 'str'),
+            'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
+        }
+
+        if polling is True: polling_method = AsyncARMPolling(lro_delay, lro_options={'final-state-via': 'location'}, path_format_arguments=path_format_arguments,  **kwargs)
         elif polling is False: polling_method = AsyncNoPolling()
         else: polling_method = polling
         if cont_token:
@@ -239,8 +246,8 @@ class VirtualHubBgpConnectionsOperations:
         hub_name: str,
         connection_name: str,
         **kwargs
-    ) -> Optional["models.PeerRouteList"]:
-        cls = kwargs.pop('cls', None)  # type: ClsType[Optional["models.PeerRouteList"]]
+    ) -> Optional["_models.PeerRouteList"]:
+        cls = kwargs.pop('cls', None)  # type: ClsType[Optional["_models.PeerRouteList"]]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -290,7 +297,7 @@ class VirtualHubBgpConnectionsOperations:
         hub_name: str,
         connection_name: str,
         **kwargs
-    ) -> AsyncLROPoller["models.PeerRouteList"]:
+    ) -> AsyncLROPoller["_models.PeerRouteList"]:
         """Retrieves a list of routes the virtual hub bgp connection is advertising to the specified peer.
 
         :param resource_group_name: The name of the resource group.
@@ -310,7 +317,7 @@ class VirtualHubBgpConnectionsOperations:
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         polling = kwargs.pop('polling', True)  # type: Union[bool, AsyncPollingMethod]
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.PeerRouteList"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.PeerRouteList"]
         lro_delay = kwargs.pop(
             'polling_interval',
             self._config.polling_interval
@@ -335,7 +342,14 @@ class VirtualHubBgpConnectionsOperations:
                 return cls(pipeline_response, deserialized, {})
             return deserialized
 
-        if polling is True: polling_method = AsyncARMPolling(lro_delay, lro_options={'final-state-via': 'location'},  **kwargs)
+        path_format_arguments = {
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
+            'hubName': self._serialize.url("hub_name", hub_name, 'str'),
+            'connectionName': self._serialize.url("connection_name", connection_name, 'str'),
+            'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
+        }
+
+        if polling is True: polling_method = AsyncARMPolling(lro_delay, lro_options={'final-state-via': 'location'}, path_format_arguments=path_format_arguments,  **kwargs)
         elif polling is False: polling_method = AsyncNoPolling()
         else: polling_method = polling
         if cont_token:

@@ -1,0 +1,422 @@
+interactions:
+- request:
+    body: '{"location": "global", "properties": {"dataLocation": "UnitedStates"}}'
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '70'
+      Content-Type:
+      - application/json
+      User-Agent:
+      - azsdk-python-mgmt-communication/1.0.0b5 Python/3.8.3 (Windows-10-10.0.21264-SP0)
+    method: PUT
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_communication_test_communication_crudd4a6137a/providers/Microsoft.Communication/communicationServices/test-resource-crudd4a6137a?api-version=2020-08-20-preview
+  response:
+    body:
+      string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_communication_test_communication_crudd4a6137a/providers/Microsoft.Communication/communicationServices/test-resource-crudd4a6137a","name":"test-resource-crudd4a6137a","type":"Microsoft.Communication/communicationServices","location":"global","properties":{"provisioningState":"Accepted","hostName":"test-resource-crudd4a6137a.communication.azure.com","immutableResourceId":"30248fb9-c069-4099-a669-496197669485","dataLocation":"UnitedStates"}}'
+    headers:
+      azure-asyncoperation:
+      - https://management.azure.com/providers/Microsoft.Communication/locations/WESTUS2/operationStatuses/9185421a-c6c2-4439-b7b3-522380783beb?api-version=2020-08-20-preview
+      cache-control:
+      - no-cache
+      content-length:
+      - '526'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Tue, 15 Dec 2020 00:42:37 GMT
+      etag:
+      - '"5000abf3-0000-0700-0000-5fd8067e0000"'
+      expires:
+      - '-1'
+      location:
+      - https://management.azure.com/providers/Microsoft.Communication/locations/WESTUS2/operationStatuses/9185421a-c6c2-4439-b7b3-522380783beb?api-version=2020-08-20-preview
+      pragma:
+      - no-cache
+      server:
+      - Kestrel
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      x-content-type-options:
+      - nosniff
+      x-ms-ratelimit-remaining-subscription-writes:
+      - '1199'
+    status:
+      code: 201
+      message: Created
+- request:
+    body: null
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - azsdk-python-mgmt-communication/1.0.0b5 Python/3.8.3 (Windows-10-10.0.21264-SP0)
+    method: GET
+    uri: https://management.azure.com/providers/Microsoft.Communication/locations/WESTUS2/operationStatuses/9185421a-c6c2-4439-b7b3-522380783beb?api-version=2020-08-20-preview
+  response:
+    body:
+      string: '{"id":"/providers/Microsoft.Communication/locations/WESTUS2/operationStatuses/9185421a-c6c2-4439-b7b3-522380783beb","name":"9185421a-c6c2-4439-b7b3-522380783beb","resourceId":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_communication_test_communication_crudd4a6137a/providers/Microsoft.Communication/communicationServices/test-resource-crudd4a6137a","status":"Succeeded","startTime":"2020-12-15T00:42:37.7728497Z","endTime":"2020-12-15T00:42:38.988801Z","percentComplete":100.0,"properties":null}'
+    headers:
+      cache-control:
+      - no-cache
+      content-length:
+      - '529'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Tue, 15 Dec 2020 00:43:07 GMT
+      etag:
+      - '"e20bd49f-0000-0800-0000-5fd8067f0000"'
+      expires:
+      - '-1'
+      pragma:
+      - no-cache
+      server:
+      - Kestrel
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      transfer-encoding:
+      - chunked
+      vary:
+      - Accept-Encoding
+      x-content-type-options:
+      - nosniff
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - azsdk-python-mgmt-communication/1.0.0b5 Python/3.8.3 (Windows-10-10.0.21264-SP0)
+    method: GET
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_communication_test_communication_crudd4a6137a/providers/Microsoft.Communication/communicationServices/test-resource-crudd4a6137a?api-version=2020-08-20-preview
+  response:
+    body:
+      string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_communication_test_communication_crudd4a6137a/providers/Microsoft.Communication/communicationServices/test-resource-crudd4a6137a","name":"test-resource-crudd4a6137a","type":"Microsoft.Communication/communicationServices","location":"global","properties":{"provisioningState":"Succeeded","hostName":"test-resource-crudd4a6137a.communication.azure.com","immutableResourceId":"30248fb9-c069-4099-a669-496197669485","dataLocation":"UnitedStates"}}'
+    headers:
+      cache-control:
+      - no-cache
+      content-length:
+      - '527'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Tue, 15 Dec 2020 00:43:07 GMT
+      etag:
+      - '"5000acf3-0000-0700-0000-5fd8067f0000"'
+      expires:
+      - '-1'
+      pragma:
+      - no-cache
+      server:
+      - Kestrel
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      transfer-encoding:
+      - chunked
+      vary:
+      - Accept-Encoding
+      x-content-type-options:
+      - nosniff
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - azsdk-python-mgmt-communication/1.0.0b5 Python/3.8.3 (Windows-10-10.0.21264-SP0)
+    method: GET
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_communication_test_communication_crudd4a6137a/providers/Microsoft.Communication/communicationServices/test-resource-crudd4a6137a?api-version=2020-08-20-preview
+  response:
+    body:
+      string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_communication_test_communication_crudd4a6137a/providers/Microsoft.Communication/communicationServices/test-resource-crudd4a6137a","name":"test-resource-crudd4a6137a","type":"Microsoft.Communication/communicationServices","location":"global","properties":{"provisioningState":"Succeeded","hostName":"test-resource-crudd4a6137a.communication.azure.com","immutableResourceId":"30248fb9-c069-4099-a669-496197669485","dataLocation":"UnitedStates"}}'
+    headers:
+      cache-control:
+      - no-cache
+      content-length:
+      - '527'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Tue, 15 Dec 2020 00:43:07 GMT
+      etag:
+      - '"5000acf3-0000-0700-0000-5fd8067f0000"'
+      expires:
+      - '-1'
+      pragma:
+      - no-cache
+      server:
+      - Kestrel
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      transfer-encoding:
+      - chunked
+      vary:
+      - Accept-Encoding
+      x-content-type-options:
+      - nosniff
+    status:
+      code: 200
+      message: OK
+- request:
+    body: '{"tags": {"tag1": "tag1val", "tag2": "tag2val"}}'
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '48'
+      Content-Type:
+      - application/json
+      User-Agent:
+      - azsdk-python-mgmt-communication/1.0.0b5 Python/3.8.3 (Windows-10-10.0.21264-SP0)
+    method: PATCH
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_communication_test_communication_crudd4a6137a/providers/Microsoft.Communication/communicationServices/test-resource-crudd4a6137a?api-version=2020-08-20-preview
+  response:
+    body:
+      string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_communication_test_communication_crudd4a6137a/providers/Microsoft.Communication/communicationServices/test-resource-crudd4a6137a","name":"test-resource-crudd4a6137a","type":"Microsoft.Communication/communicationServices","location":"global","tags":{"tag1":"tag1val","tag2":"tag2val"},"properties":{"provisioningState":"Succeeded","hostName":"test-resource-crudd4a6137a.communication.azure.com","immutableResourceId":"30248fb9-c069-4099-a669-496197669485","dataLocation":"UnitedStates"}}'
+    headers:
+      cache-control:
+      - no-cache
+      content-length:
+      - '570'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Tue, 15 Dec 2020 00:43:08 GMT
+      etag:
+      - '"500053f4-0000-0700-0000-5fd8069d0000"'
+      expires:
+      - '-1'
+      pragma:
+      - no-cache
+      server:
+      - Kestrel
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      transfer-encoding:
+      - chunked
+      vary:
+      - Accept-Encoding
+      x-content-type-options:
+      - nosniff
+      x-ms-ratelimit-remaining-subscription-writes:
+      - '1198'
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '0'
+      User-Agent:
+      - azsdk-python-mgmt-communication/1.0.0b5 Python/3.8.3 (Windows-10-10.0.21264-SP0)
+    method: POST
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_communication_test_communication_crudd4a6137a/providers/Microsoft.Communication/communicationServices/test-resource-crudd4a6137a/listKeys?api-version=2020-08-20-preview
+  response:
+    body:
+      string: '{"primaryKey":"SANITIZED1","secondaryKey":"SANITIZED2","primaryConnectionString":"endpoint=https://test-resource-crudd4a6137a.communication.azure.com/;accesskey=SANITIZED1","secondaryConnectionString":"endpoint=https://test-resource-crudd4a6137a.communication.azure.com/;accesskey=SANITIZED2"}'
+    headers:
+      cache-control:
+      - no-cache
+      content-length:
+      - '605'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Tue, 15 Dec 2020 00:43:08 GMT
+      expires:
+      - '-1'
+      pragma:
+      - no-cache
+      server:
+      - Kestrel
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      transfer-encoding:
+      - chunked
+      vary:
+      - Accept-Encoding
+      x-content-type-options:
+      - nosniff
+      x-ms-ratelimit-remaining-subscription-writes:
+      - '1199'
+    status:
+      code: 200
+      message: OK
+- request:
+    body: '{"keyType": "Primary"}'
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '22'
+      Content-Type:
+      - application/json
+      User-Agent:
+      - azsdk-python-mgmt-communication/1.0.0b5 Python/3.8.3 (Windows-10-10.0.21264-SP0)
+    method: POST
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_communication_test_communication_crudd4a6137a/providers/Microsoft.Communication/communicationServices/test-resource-crudd4a6137a/regenerateKey?api-version=2020-08-20-preview
+  response:
+    body:
+      string: '{"primaryKey":"SANITIZED3","primaryConnectionString":"endpoint=https://test-resource-crudd4a6137a.communication.azure.com/;accesskey=SANITIZED3"}'
+    headers:
+      cache-control:
+      - no-cache
+      content-length:
+      - '301'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Tue, 15 Dec 2020 00:43:08 GMT
+      expires:
+      - '-1'
+      pragma:
+      - no-cache
+      server:
+      - Kestrel
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      transfer-encoding:
+      - chunked
+      vary:
+      - Accept-Encoding
+      x-content-type-options:
+      - nosniff
+      x-ms-ratelimit-remaining-subscription-writes:
+      - '1198'
+    status:
+      code: 200
+      message: OK
+- request:
+    body: '{"keyType": "Secondary"}'
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '24'
+      Content-Type:
+      - application/json
+      User-Agent:
+      - azsdk-python-mgmt-communication/1.0.0b5 Python/3.8.3 (Windows-10-10.0.21264-SP0)
+    method: POST
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_communication_test_communication_crudd4a6137a/providers/Microsoft.Communication/communicationServices/test-resource-crudd4a6137a/regenerateKey?api-version=2020-08-20-preview
+  response:
+    body:
+      string: '{"secondaryKey":"SANITIZED4","secondaryConnectionString":"endpoint=https://test-resource-crudd4a6137a.communication.azure.com/;accesskey=SANITIZED4"}'
+    headers:
+      cache-control:
+      - no-cache
+      content-length:
+      - '305'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Tue, 15 Dec 2020 00:43:09 GMT
+      expires:
+      - '-1'
+      pragma:
+      - no-cache
+      server:
+      - Kestrel
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      transfer-encoding:
+      - chunked
+      vary:
+      - Accept-Encoding
+      x-content-type-options:
+      - nosniff
+      x-ms-ratelimit-remaining-subscription-writes:
+      - '1197'
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '0'
+      User-Agent:
+      - azsdk-python-mgmt-communication/1.0.0b5 Python/3.8.3 (Windows-10-10.0.21264-SP0)
+    method: DELETE
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_communication_test_communication_crudd4a6137a/providers/Microsoft.Communication/communicationServices/test-resource-crudd4a6137a?api-version=2020-08-20-preview
+  response:
+    body:
+      string: 'null'
+    headers:
+      cache-control:
+      - no-cache
+      content-length:
+      - '4'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Tue, 15 Dec 2020 00:43:09 GMT
+      etag:
+      - '"500055f4-0000-0700-0000-5fd8069e0000"'
+      expires:
+      - '-1'
+      location:
+      - https://management.azure.com/providers/Microsoft.Communication/locations/WESTUS2/operationStatuses/aea8b4d0-55b9-49a8-8279-d64642742183?api-version=2020-08-20-preview
+      pragma:
+      - no-cache
+      server:
+      - Kestrel
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      x-content-type-options:
+      - nosniff
+      x-ms-ratelimit-remaining-subscription-deletes:
+      - '14999'
+    status:
+      code: 202
+      message: Accepted
+version: 1

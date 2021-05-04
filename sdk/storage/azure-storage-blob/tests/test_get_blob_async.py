@@ -34,7 +34,6 @@ from _shared.asynctestcase import AsyncStorageTestCase
 TEST_BLOB_PREFIX = 'blob'
 
 
-
 # ------------------------------------------------------------------------------
 
 class AiohttpTestTransport(AioHttpTransport):
@@ -345,6 +344,29 @@ class StorageGetBlobTestAsync(AsyncStorageTestCase):
             actual = stream.read()
             self.assertEqual(self.byte_data, actual)
         self._teardown(FILE_PATH)
+
+    @pytest.mark.live_test_only
+    @GlobalStorageAccountPreparer()
+    @AsyncStorageTestCase.await_prepared_test
+    async def test_readinto_raises_exceptions(self, resource_group, location, storage_account, storage_account_key):
+        # parallel tests introduce random order of requests, can only run live
+        callback_counter = {'value': 0}
+
+        def callback(response):
+            callback_counter['value'] += 1
+            if callback_counter['value'] > 3:
+                raise ValueError()
+
+        # Arrange
+        await self._setup(storage_account, storage_account_key)
+        blob = self.bsc.get_blob_client(self.container_name, self.byte_blob)
+
+        # Act
+        FILE_PATH = 'get_blob_to_stream_async.temp.{}.dat'.format(str(uuid.uuid4()))
+        with open(FILE_PATH, 'wb') as stream:
+            downloader = await blob.download_blob(max_concurrency=2, raw_response_hook=callback)
+            with self.assertRaises(ValueError):
+                await downloader.readinto(stream)
 
     @pytest.mark.live_test_only
     @GlobalStorageAccountPreparer()

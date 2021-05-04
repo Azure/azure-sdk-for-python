@@ -1,4 +1,67 @@
 # Release History
+
+## 12.3.1 (2021-04-20)
+**Fixes**
+- Fixed `recursive=True` on file deletion
+- Make `AccountName`, `AccountKey` etc. in conn_str case insensitive
+- Fixed `downloader.chunks()` return chunks in different size (#9419, #15648)
+- Optimized memory usage for datalake file uploads large chunks (#16890)
+- Fixed unclosed `ThreadPoolExecutor` (#8955)
+
+**New Features**
+- Added `get_account_information()` API
+
+
+## 12.3.0 (2021-03-01)
+**Stable release of preview features**
+- Added support for `DatalakeServiceClient.undelete_filesystem()`
+- Added support for `DirectoryClient.exists()`, `FileClient.exists()` and `FileSystemClient.exists()`
+
+**Fixes**
+- Fixed `DatalakeServiceClient` context manager/session closure issue (#15358)
+- `PurePosixPath` is now handled correctly if passed as a path (#16159)
+
+## 12.3.0b1 (2021-02-10)
+**New Features**
+- Added support for `DatalakeServiceClient.undelete_filesystem()`
+
+**Fixes**
+- Fixed `DatalakeServiceClient` context manager/session closure issue (#15358)
+- `PurePosixPath` is now handled correctly if passed as a path (#16159)
+
+## 12.2.3 (2021-02-08)
+**Fixes**
+- Fixed paging issue (#16531)
+
+## 12.2.2 (2021-01-20)
+**Fixes**
+- Fixed msrest dependency issue (#16250)
+
+## 12.2.1 (2021-01-13)
+**New features**
+- Added support for `AzureSasCredential` to allow SAS rotation in long living clients.
+
+**Fixes**
+- Converted PathProperties.last_modified to datetime format (#16019)
+
+## 12.2.0 (2020-11-10)
+**Stable release of preview features**
+- Preview feature set/update/remove access control recursively.
+- Preview feature `set_file_expiry` on DataLakeFileClient.
+- Preview feature generating directory level sas.
+
+**Fixes**
+- Fixed session closure of filesystem (#14497)
+
+**Notes**
+- Updated dependency `azure-core` from  azure-core<2.0.0,>=1.6.0 to azure-core<2.0.0,>=1.9.0
+
+## 12.2.0b1 (2020-10-02)
+**New Features**
+- Added support for recursive set/update/remove Access Control on a path and sub-paths.
+- Added support for setting an expiry on files where the file gets deleted once it expires.
+- Added support to generate directory SAS and added support to specify additional user ids and correlation ids for user delegation SAS.
+
 ## 12.1.2 (2020-09-10)
 **Fixes**
 - Fixed renaming with SAS string (#12057).
@@ -13,7 +76,7 @@
 **New Feature**
 - Block size is increased to 4GB at maximum, max single put size is increased to 5GB.
 
-## 12.0.2 (2020-6-12)
+## 12.0.2 
 **Fixes**
 - Improve the performance of upload when using max_concurrency
 

@@ -22,8 +22,8 @@ except ImportError:
     TYPE_CHECKING = False
 
 if TYPE_CHECKING:
-    from typing import Any
-    from azure.core.credentials import AccessToken
+    from typing import Any, List
+    from azure.core.credentials import AccessToken, TokenCredential
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -101,7 +101,7 @@ class DefaultAzureCredential(ChainedTokenCredential):
         exclude_cli_credential = kwargs.pop("exclude_cli_credential", False)
         exclude_interactive_browser_credential = kwargs.pop("exclude_interactive_browser_credential", True)
 
-        credentials = []
+        credentials = []  # type: List[TokenCredential]
         if not exclude_environment_credential:
             credentials.append(EnvironmentCredential(authority=authority, **kwargs))
         if not exclude_managed_identity_credential:
@@ -128,7 +128,7 @@ class DefaultAzureCredential(ChainedTokenCredential):
         # type: (*str, **Any) -> AccessToken
         """Request an access token for `scopes`.
 
-        .. note:: This method is called by Azure SDK clients. It isn't intended for use in application code.
+        This method is called automatically by Azure SDK clients.
 
         :param str scopes: desired scopes for the access token. This method requires at least one scope.
         :raises ~azure.core.exceptions.ClientAuthenticationError: authentication failed. The exception has a

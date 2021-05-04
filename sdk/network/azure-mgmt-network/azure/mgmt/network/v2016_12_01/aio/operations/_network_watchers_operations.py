@@ -16,7 +16,7 @@ from azure.core.polling import AsyncLROPoller, AsyncNoPolling, AsyncPollingMetho
 from azure.mgmt.core.exceptions import ARMErrorFormat
 from azure.mgmt.core.polling.async_arm_polling import AsyncARMPolling
 
-from ... import models
+from ... import models as _models
 
 T = TypeVar('T')
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]]
@@ -35,7 +35,7 @@ class NetworkWatchersOperations:
     :param deserializer: An object model deserializer.
     """
 
-    models = models
+    models = _models
 
     def __init__(self, client, config, serializer, deserializer) -> None:
         self._client = client
@@ -47,9 +47,9 @@ class NetworkWatchersOperations:
         self,
         resource_group_name: str,
         network_watcher_name: str,
-        parameters: "models.NetworkWatcher",
+        parameters: "_models.NetworkWatcher",
         **kwargs
-    ) -> "models.NetworkWatcher":
+    ) -> "_models.NetworkWatcher":
         """Creates or updates a network watcher in the specified resource group.
 
         :param resource_group_name: The name of the resource group.
@@ -63,7 +63,7 @@ class NetworkWatchersOperations:
         :rtype: ~azure.mgmt.network.v2016_12_01.models.NetworkWatcher
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.NetworkWatcher"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.NetworkWatcher"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -118,7 +118,7 @@ class NetworkWatchersOperations:
         resource_group_name: str,
         network_watcher_name: str,
         **kwargs
-    ) -> "models.NetworkWatcher":
+    ) -> "_models.NetworkWatcher":
         """Gets the specified network watcher by resource group.
 
         :param resource_group_name: The name of the resource group.
@@ -130,7 +130,7 @@ class NetworkWatchersOperations:
         :rtype: ~azure.mgmt.network.v2016_12_01.models.NetworkWatcher
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.NetworkWatcher"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.NetworkWatcher"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -257,7 +257,13 @@ class NetworkWatchersOperations:
             if cls:
                 return cls(pipeline_response, None, {})
 
-        if polling is True: polling_method = AsyncARMPolling(lro_delay,  **kwargs)
+        path_format_arguments = {
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
+            'networkWatcherName': self._serialize.url("network_watcher_name", network_watcher_name, 'str'),
+            'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
+        }
+
+        if polling is True: polling_method = AsyncARMPolling(lro_delay, path_format_arguments=path_format_arguments,  **kwargs)
         elif polling is False: polling_method = AsyncNoPolling()
         else: polling_method = polling
         if cont_token:
@@ -275,7 +281,7 @@ class NetworkWatchersOperations:
         self,
         resource_group_name: str,
         **kwargs
-    ) -> AsyncIterable["models.NetworkWatcherListResult"]:
+    ) -> AsyncIterable["_models.NetworkWatcherListResult"]:
         """Gets all network watchers by resource group.
 
         :param resource_group_name: The name of the resource group.
@@ -285,7 +291,7 @@ class NetworkWatchersOperations:
         :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.network.v2016_12_01.models.NetworkWatcherListResult]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.NetworkWatcherListResult"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.NetworkWatcherListResult"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -344,7 +350,7 @@ class NetworkWatchersOperations:
     def list_all(
         self,
         **kwargs
-    ) -> AsyncIterable["models.NetworkWatcherListResult"]:
+    ) -> AsyncIterable["_models.NetworkWatcherListResult"]:
         """Gets all network watchers by subscription.
 
         :keyword callable cls: A custom type or function that will be passed the direct response
@@ -352,7 +358,7 @@ class NetworkWatchersOperations:
         :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.network.v2016_12_01.models.NetworkWatcherListResult]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.NetworkWatcherListResult"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.NetworkWatcherListResult"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -411,9 +417,9 @@ class NetworkWatchersOperations:
         self,
         resource_group_name: str,
         network_watcher_name: str,
-        parameters: "models.TopologyParameters",
+        parameters: "_models.TopologyParameters",
         **kwargs
-    ) -> "models.Topology":
+    ) -> "_models.Topology":
         """Gets the current network topology by resource group.
 
         :param resource_group_name: The name of the resource group.
@@ -427,7 +433,7 @@ class NetworkWatchersOperations:
         :rtype: ~azure.mgmt.network.v2016_12_01.models.Topology
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.Topology"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.Topology"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -477,10 +483,10 @@ class NetworkWatchersOperations:
         self,
         resource_group_name: str,
         network_watcher_name: str,
-        parameters: "models.VerificationIPFlowParameters",
+        parameters: "_models.VerificationIPFlowParameters",
         **kwargs
-    ) -> "models.VerificationIPFlowResult":
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.VerificationIPFlowResult"]
+    ) -> "_models.VerificationIPFlowResult":
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.VerificationIPFlowResult"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -534,9 +540,9 @@ class NetworkWatchersOperations:
         self,
         resource_group_name: str,
         network_watcher_name: str,
-        parameters: "models.VerificationIPFlowParameters",
+        parameters: "_models.VerificationIPFlowParameters",
         **kwargs
-    ) -> AsyncLROPoller["models.VerificationIPFlowResult"]:
+    ) -> AsyncLROPoller["_models.VerificationIPFlowResult"]:
         """Verify IP flow from the specified VM to a location given the currently configured NSG rules.
 
         :param resource_group_name: The name of the resource group.
@@ -556,7 +562,7 @@ class NetworkWatchersOperations:
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         polling = kwargs.pop('polling', True)  # type: Union[bool, AsyncPollingMethod]
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.VerificationIPFlowResult"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.VerificationIPFlowResult"]
         lro_delay = kwargs.pop(
             'polling_interval',
             self._config.polling_interval
@@ -581,7 +587,13 @@ class NetworkWatchersOperations:
                 return cls(pipeline_response, deserialized, {})
             return deserialized
 
-        if polling is True: polling_method = AsyncARMPolling(lro_delay,  **kwargs)
+        path_format_arguments = {
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
+            'networkWatcherName': self._serialize.url("network_watcher_name", network_watcher_name, 'str'),
+            'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
+        }
+
+        if polling is True: polling_method = AsyncARMPolling(lro_delay, path_format_arguments=path_format_arguments,  **kwargs)
         elif polling is False: polling_method = AsyncNoPolling()
         else: polling_method = polling
         if cont_token:
@@ -599,10 +611,10 @@ class NetworkWatchersOperations:
         self,
         resource_group_name: str,
         network_watcher_name: str,
-        parameters: "models.NextHopParameters",
+        parameters: "_models.NextHopParameters",
         **kwargs
-    ) -> "models.NextHopResult":
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.NextHopResult"]
+    ) -> "_models.NextHopResult":
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.NextHopResult"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -656,9 +668,9 @@ class NetworkWatchersOperations:
         self,
         resource_group_name: str,
         network_watcher_name: str,
-        parameters: "models.NextHopParameters",
+        parameters: "_models.NextHopParameters",
         **kwargs
-    ) -> AsyncLROPoller["models.NextHopResult"]:
+    ) -> AsyncLROPoller["_models.NextHopResult"]:
         """Gets the next hop from the specified VM.
 
         :param resource_group_name: The name of the resource group.
@@ -678,7 +690,7 @@ class NetworkWatchersOperations:
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         polling = kwargs.pop('polling', True)  # type: Union[bool, AsyncPollingMethod]
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.NextHopResult"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.NextHopResult"]
         lro_delay = kwargs.pop(
             'polling_interval',
             self._config.polling_interval
@@ -703,7 +715,13 @@ class NetworkWatchersOperations:
                 return cls(pipeline_response, deserialized, {})
             return deserialized
 
-        if polling is True: polling_method = AsyncARMPolling(lro_delay,  **kwargs)
+        path_format_arguments = {
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
+            'networkWatcherName': self._serialize.url("network_watcher_name", network_watcher_name, 'str'),
+            'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
+        }
+
+        if polling is True: polling_method = AsyncARMPolling(lro_delay, path_format_arguments=path_format_arguments,  **kwargs)
         elif polling is False: polling_method = AsyncNoPolling()
         else: polling_method = polling
         if cont_token:
@@ -721,10 +739,10 @@ class NetworkWatchersOperations:
         self,
         resource_group_name: str,
         network_watcher_name: str,
-        parameters: "models.SecurityGroupViewParameters",
+        parameters: "_models.SecurityGroupViewParameters",
         **kwargs
-    ) -> "models.SecurityGroupViewResult":
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.SecurityGroupViewResult"]
+    ) -> "_models.SecurityGroupViewResult":
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.SecurityGroupViewResult"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -778,9 +796,9 @@ class NetworkWatchersOperations:
         self,
         resource_group_name: str,
         network_watcher_name: str,
-        parameters: "models.SecurityGroupViewParameters",
+        parameters: "_models.SecurityGroupViewParameters",
         **kwargs
-    ) -> AsyncLROPoller["models.SecurityGroupViewResult"]:
+    ) -> AsyncLROPoller["_models.SecurityGroupViewResult"]:
         """Gets the configured and effective security group rules on the specified VM.
 
         :param resource_group_name: The name of the resource group.
@@ -800,7 +818,7 @@ class NetworkWatchersOperations:
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         polling = kwargs.pop('polling', True)  # type: Union[bool, AsyncPollingMethod]
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.SecurityGroupViewResult"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.SecurityGroupViewResult"]
         lro_delay = kwargs.pop(
             'polling_interval',
             self._config.polling_interval
@@ -825,7 +843,13 @@ class NetworkWatchersOperations:
                 return cls(pipeline_response, deserialized, {})
             return deserialized
 
-        if polling is True: polling_method = AsyncARMPolling(lro_delay,  **kwargs)
+        path_format_arguments = {
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
+            'networkWatcherName': self._serialize.url("network_watcher_name", network_watcher_name, 'str'),
+            'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
+        }
+
+        if polling is True: polling_method = AsyncARMPolling(lro_delay, path_format_arguments=path_format_arguments,  **kwargs)
         elif polling is False: polling_method = AsyncNoPolling()
         else: polling_method = polling
         if cont_token:
@@ -843,10 +867,10 @@ class NetworkWatchersOperations:
         self,
         resource_group_name: str,
         network_watcher_name: str,
-        parameters: "models.TroubleshootingParameters",
+        parameters: "_models.TroubleshootingParameters",
         **kwargs
-    ) -> "models.TroubleshootingResult":
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.TroubleshootingResult"]
+    ) -> "_models.TroubleshootingResult":
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.TroubleshootingResult"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -900,9 +924,9 @@ class NetworkWatchersOperations:
         self,
         resource_group_name: str,
         network_watcher_name: str,
-        parameters: "models.TroubleshootingParameters",
+        parameters: "_models.TroubleshootingParameters",
         **kwargs
-    ) -> AsyncLROPoller["models.TroubleshootingResult"]:
+    ) -> AsyncLROPoller["_models.TroubleshootingResult"]:
         """Initiate troubleshooting on a specified resource.
 
         :param resource_group_name: The name of the resource group.
@@ -922,7 +946,7 @@ class NetworkWatchersOperations:
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         polling = kwargs.pop('polling', True)  # type: Union[bool, AsyncPollingMethod]
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.TroubleshootingResult"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.TroubleshootingResult"]
         lro_delay = kwargs.pop(
             'polling_interval',
             self._config.polling_interval
@@ -947,7 +971,13 @@ class NetworkWatchersOperations:
                 return cls(pipeline_response, deserialized, {})
             return deserialized
 
-        if polling is True: polling_method = AsyncARMPolling(lro_delay,  **kwargs)
+        path_format_arguments = {
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
+            'networkWatcherName': self._serialize.url("network_watcher_name", network_watcher_name, 'str'),
+            'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
+        }
+
+        if polling is True: polling_method = AsyncARMPolling(lro_delay, path_format_arguments=path_format_arguments,  **kwargs)
         elif polling is False: polling_method = AsyncNoPolling()
         else: polling_method = polling
         if cont_token:
@@ -965,10 +995,10 @@ class NetworkWatchersOperations:
         self,
         resource_group_name: str,
         network_watcher_name: str,
-        parameters: "models.QueryTroubleshootingParameters",
+        parameters: "_models.QueryTroubleshootingParameters",
         **kwargs
-    ) -> "models.TroubleshootingResult":
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.TroubleshootingResult"]
+    ) -> "_models.TroubleshootingResult":
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.TroubleshootingResult"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -1022,9 +1052,9 @@ class NetworkWatchersOperations:
         self,
         resource_group_name: str,
         network_watcher_name: str,
-        parameters: "models.QueryTroubleshootingParameters",
+        parameters: "_models.QueryTroubleshootingParameters",
         **kwargs
-    ) -> AsyncLROPoller["models.TroubleshootingResult"]:
+    ) -> AsyncLROPoller["_models.TroubleshootingResult"]:
         """Get the last completed troubleshooting result on a specified resource.
 
         :param resource_group_name: The name of the resource group.
@@ -1044,7 +1074,7 @@ class NetworkWatchersOperations:
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         polling = kwargs.pop('polling', True)  # type: Union[bool, AsyncPollingMethod]
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.TroubleshootingResult"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.TroubleshootingResult"]
         lro_delay = kwargs.pop(
             'polling_interval',
             self._config.polling_interval
@@ -1069,7 +1099,13 @@ class NetworkWatchersOperations:
                 return cls(pipeline_response, deserialized, {})
             return deserialized
 
-        if polling is True: polling_method = AsyncARMPolling(lro_delay,  **kwargs)
+        path_format_arguments = {
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
+            'networkWatcherName': self._serialize.url("network_watcher_name", network_watcher_name, 'str'),
+            'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
+        }
+
+        if polling is True: polling_method = AsyncARMPolling(lro_delay, path_format_arguments=path_format_arguments,  **kwargs)
         elif polling is False: polling_method = AsyncNoPolling()
         else: polling_method = polling
         if cont_token:
@@ -1087,10 +1123,10 @@ class NetworkWatchersOperations:
         self,
         resource_group_name: str,
         network_watcher_name: str,
-        parameters: "models.FlowLogInformation",
+        parameters: "_models.FlowLogInformation",
         **kwargs
-    ) -> "models.FlowLogInformation":
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.FlowLogInformation"]
+    ) -> "_models.FlowLogInformation":
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.FlowLogInformation"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -1144,9 +1180,9 @@ class NetworkWatchersOperations:
         self,
         resource_group_name: str,
         network_watcher_name: str,
-        parameters: "models.FlowLogInformation",
+        parameters: "_models.FlowLogInformation",
         **kwargs
-    ) -> AsyncLROPoller["models.FlowLogInformation"]:
+    ) -> AsyncLROPoller["_models.FlowLogInformation"]:
         """Configures flow log on a specified resource.
 
         :param resource_group_name: The name of the network watcher resource group.
@@ -1166,7 +1202,7 @@ class NetworkWatchersOperations:
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         polling = kwargs.pop('polling', True)  # type: Union[bool, AsyncPollingMethod]
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.FlowLogInformation"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.FlowLogInformation"]
         lro_delay = kwargs.pop(
             'polling_interval',
             self._config.polling_interval
@@ -1191,7 +1227,13 @@ class NetworkWatchersOperations:
                 return cls(pipeline_response, deserialized, {})
             return deserialized
 
-        if polling is True: polling_method = AsyncARMPolling(lro_delay,  **kwargs)
+        path_format_arguments = {
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
+            'networkWatcherName': self._serialize.url("network_watcher_name", network_watcher_name, 'str'),
+            'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
+        }
+
+        if polling is True: polling_method = AsyncARMPolling(lro_delay, path_format_arguments=path_format_arguments,  **kwargs)
         elif polling is False: polling_method = AsyncNoPolling()
         else: polling_method = polling
         if cont_token:
@@ -1209,10 +1251,10 @@ class NetworkWatchersOperations:
         self,
         resource_group_name: str,
         network_watcher_name: str,
-        parameters: "models.FlowLogStatusParameters",
+        parameters: "_models.FlowLogStatusParameters",
         **kwargs
-    ) -> "models.FlowLogInformation":
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.FlowLogInformation"]
+    ) -> "_models.FlowLogInformation":
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.FlowLogInformation"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -1266,9 +1308,9 @@ class NetworkWatchersOperations:
         self,
         resource_group_name: str,
         network_watcher_name: str,
-        parameters: "models.FlowLogStatusParameters",
+        parameters: "_models.FlowLogStatusParameters",
         **kwargs
-    ) -> AsyncLROPoller["models.FlowLogInformation"]:
+    ) -> AsyncLROPoller["_models.FlowLogInformation"]:
         """Queries status of flow log on a specified resource.
 
         :param resource_group_name: The name of the network watcher resource group.
@@ -1288,7 +1330,7 @@ class NetworkWatchersOperations:
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         polling = kwargs.pop('polling', True)  # type: Union[bool, AsyncPollingMethod]
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.FlowLogInformation"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.FlowLogInformation"]
         lro_delay = kwargs.pop(
             'polling_interval',
             self._config.polling_interval
@@ -1313,7 +1355,13 @@ class NetworkWatchersOperations:
                 return cls(pipeline_response, deserialized, {})
             return deserialized
 
-        if polling is True: polling_method = AsyncARMPolling(lro_delay,  **kwargs)
+        path_format_arguments = {
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
+            'networkWatcherName': self._serialize.url("network_watcher_name", network_watcher_name, 'str'),
+            'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
+        }
+
+        if polling is True: polling_method = AsyncARMPolling(lro_delay, path_format_arguments=path_format_arguments,  **kwargs)
         elif polling is False: polling_method = AsyncNoPolling()
         else: polling_method = polling
         if cont_token:

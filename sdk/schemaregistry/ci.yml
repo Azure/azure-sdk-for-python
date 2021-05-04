@@ -4,6 +4,7 @@ trigger:
   branches:
     include:
     - master
+    - main
     - hotfix/*
     - release/*
     - restapi*
@@ -15,6 +16,7 @@ pr:
   branches:
     include:
     - master
+    - main
     - feature/*
     - hotfix/*
     - release/*
@@ -28,7 +30,7 @@ extends:
   parameters:
     ServiceDirectory: schemaregistry
     Artifacts:
-    - name: azure_schemaregistry
+    - name: azure-schemaregistry
       safeName: azureschemaregistry
-    - name: azure_schemaregistry_avroserializer
+    - name: azure-schemaregistry-avroserializer
       safeName: azureschemaregistryavroserializer

@@ -1,0 +1,1 @@
+azure-storage-file==2.1.0

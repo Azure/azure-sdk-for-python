@@ -16,7 +16,7 @@ from azure.core.polling import AsyncLROPoller, AsyncNoPolling, AsyncPollingMetho
 from azure.mgmt.core.exceptions import ARMErrorFormat
 from azure.mgmt.core.polling.async_arm_polling import AsyncARMPolling
 
-from ... import models
+from ... import models as _models
 
 T = TypeVar('T')
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]]
@@ -35,7 +35,7 @@ class ApplicationGatewaysOperations:
     :param deserializer: An object model deserializer.
     """
 
-    models = models
+    models = _models
 
     def __init__(self, client, config, serializer, deserializer) -> None:
         self._client = client
@@ -129,7 +129,13 @@ class ApplicationGatewaysOperations:
             if cls:
                 return cls(pipeline_response, None, {})
 
-        if polling is True: polling_method = AsyncARMPolling(lro_delay,  **kwargs)
+        path_format_arguments = {
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
+            'applicationGatewayName': self._serialize.url("application_gateway_name", application_gateway_name, 'str'),
+            'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
+        }
+
+        if polling is True: polling_method = AsyncARMPolling(lro_delay, path_format_arguments=path_format_arguments,  **kwargs)
         elif polling is False: polling_method = AsyncNoPolling()
         else: polling_method = polling
         if cont_token:
@@ -148,7 +154,7 @@ class ApplicationGatewaysOperations:
         resource_group_name: str,
         application_gateway_name: str,
         **kwargs
-    ) -> "models.ApplicationGateway":
+    ) -> "_models.ApplicationGateway":
         """Gets the specified application gateway.
 
         :param resource_group_name: The name of the resource group.
@@ -160,7 +166,7 @@ class ApplicationGatewaysOperations:
         :rtype: ~azure.mgmt.network.v2018_02_01.models.ApplicationGateway
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.ApplicationGateway"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.ApplicationGateway"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -205,10 +211,10 @@ class ApplicationGatewaysOperations:
         self,
         resource_group_name: str,
         application_gateway_name: str,
-        parameters: "models.ApplicationGateway",
+        parameters: "_models.ApplicationGateway",
         **kwargs
-    ) -> "models.ApplicationGateway":
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.ApplicationGateway"]
+    ) -> "_models.ApplicationGateway":
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.ApplicationGateway"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -262,9 +268,9 @@ class ApplicationGatewaysOperations:
         self,
         resource_group_name: str,
         application_gateway_name: str,
-        parameters: "models.ApplicationGateway",
+        parameters: "_models.ApplicationGateway",
         **kwargs
-    ) -> AsyncLROPoller["models.ApplicationGateway"]:
+    ) -> AsyncLROPoller["_models.ApplicationGateway"]:
         """Creates or updates the specified application gateway.
 
         :param resource_group_name: The name of the resource group.
@@ -284,7 +290,7 @@ class ApplicationGatewaysOperations:
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         polling = kwargs.pop('polling', True)  # type: Union[bool, AsyncPollingMethod]
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.ApplicationGateway"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.ApplicationGateway"]
         lro_delay = kwargs.pop(
             'polling_interval',
             self._config.polling_interval
@@ -309,7 +315,13 @@ class ApplicationGatewaysOperations:
                 return cls(pipeline_response, deserialized, {})
             return deserialized
 
-        if polling is True: polling_method = AsyncARMPolling(lro_delay,  **kwargs)
+        path_format_arguments = {
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
+            'applicationGatewayName': self._serialize.url("application_gateway_name", application_gateway_name, 'str'),
+            'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
+        }
+
+        if polling is True: polling_method = AsyncARMPolling(lro_delay, path_format_arguments=path_format_arguments,  **kwargs)
         elif polling is False: polling_method = AsyncNoPolling()
         else: polling_method = polling
         if cont_token:
@@ -327,10 +339,10 @@ class ApplicationGatewaysOperations:
         self,
         resource_group_name: str,
         application_gateway_name: str,
-        parameters: "models.TagsObject",
+        parameters: "_models.TagsObject",
         **kwargs
-    ) -> "models.ApplicationGateway":
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.ApplicationGateway"]
+    ) -> "_models.ApplicationGateway":
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.ApplicationGateway"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -380,9 +392,9 @@ class ApplicationGatewaysOperations:
         self,
         resource_group_name: str,
         application_gateway_name: str,
-        parameters: "models.TagsObject",
+        parameters: "_models.TagsObject",
         **kwargs
-    ) -> AsyncLROPoller["models.ApplicationGateway"]:
+    ) -> AsyncLROPoller["_models.ApplicationGateway"]:
         """Updates the specified application gateway tags.
 
         :param resource_group_name: The name of the resource group.
@@ -402,7 +414,7 @@ class ApplicationGatewaysOperations:
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         polling = kwargs.pop('polling', True)  # type: Union[bool, AsyncPollingMethod]
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.ApplicationGateway"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.ApplicationGateway"]
         lro_delay = kwargs.pop(
             'polling_interval',
             self._config.polling_interval
@@ -427,7 +439,13 @@ class ApplicationGatewaysOperations:
                 return cls(pipeline_response, deserialized, {})
             return deserialized
 
-        if polling is True: polling_method = AsyncARMPolling(lro_delay,  **kwargs)
+        path_format_arguments = {
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
+            'applicationGatewayName': self._serialize.url("application_gateway_name", application_gateway_name, 'str'),
+            'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
+        }
+
+        if polling is True: polling_method = AsyncARMPolling(lro_delay, path_format_arguments=path_format_arguments,  **kwargs)
         elif polling is False: polling_method = AsyncNoPolling()
         else: polling_method = polling
         if cont_token:
@@ -445,7 +463,7 @@ class ApplicationGatewaysOperations:
         self,
         resource_group_name: str,
         **kwargs
-    ) -> AsyncIterable["models.ApplicationGatewayListResult"]:
+    ) -> AsyncIterable["_models.ApplicationGatewayListResult"]:
         """Lists all application gateways in a resource group.
 
         :param resource_group_name: The name of the resource group.
@@ -455,7 +473,7 @@ class ApplicationGatewaysOperations:
         :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.network.v2018_02_01.models.ApplicationGatewayListResult]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.ApplicationGatewayListResult"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.ApplicationGatewayListResult"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -514,7 +532,7 @@ class ApplicationGatewaysOperations:
     def list_all(
         self,
         **kwargs
-    ) -> AsyncIterable["models.ApplicationGatewayListResult"]:
+    ) -> AsyncIterable["_models.ApplicationGatewayListResult"]:
         """Gets all the application gateways in a subscription.
 
         :keyword callable cls: A custom type or function that will be passed the direct response
@@ -522,7 +540,7 @@ class ApplicationGatewaysOperations:
         :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.network.v2018_02_01.models.ApplicationGatewayListResult]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.ApplicationGatewayListResult"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.ApplicationGatewayListResult"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -663,7 +681,13 @@ class ApplicationGatewaysOperations:
             if cls:
                 return cls(pipeline_response, None, {})
 
-        if polling is True: polling_method = AsyncARMPolling(lro_delay,  **kwargs)
+        path_format_arguments = {
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
+            'applicationGatewayName': self._serialize.url("application_gateway_name", application_gateway_name, 'str'),
+            'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
+        }
+
+        if polling is True: polling_method = AsyncARMPolling(lro_delay, path_format_arguments=path_format_arguments,  **kwargs)
         elif polling is False: polling_method = AsyncNoPolling()
         else: polling_method = polling
         if cont_token:
@@ -763,7 +787,13 @@ class ApplicationGatewaysOperations:
             if cls:
                 return cls(pipeline_response, None, {})
 
-        if polling is True: polling_method = AsyncARMPolling(lro_delay,  **kwargs)
+        path_format_arguments = {
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
+            'applicationGatewayName': self._serialize.url("application_gateway_name", application_gateway_name, 'str'),
+            'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
+        }
+
+        if polling is True: polling_method = AsyncARMPolling(lro_delay, path_format_arguments=path_format_arguments,  **kwargs)
         elif polling is False: polling_method = AsyncNoPolling()
         else: polling_method = polling
         if cont_token:
@@ -783,8 +813,8 @@ class ApplicationGatewaysOperations:
         application_gateway_name: str,
         expand: Optional[str] = None,
         **kwargs
-    ) -> Optional["models.ApplicationGatewayBackendHealth"]:
-        cls = kwargs.pop('cls', None)  # type: ClsType[Optional["models.ApplicationGatewayBackendHealth"]]
+    ) -> Optional["_models.ApplicationGatewayBackendHealth"]:
+        cls = kwargs.pop('cls', None)  # type: ClsType[Optional["_models.ApplicationGatewayBackendHealth"]]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -835,7 +865,7 @@ class ApplicationGatewaysOperations:
         application_gateway_name: str,
         expand: Optional[str] = None,
         **kwargs
-    ) -> AsyncLROPoller["models.ApplicationGatewayBackendHealth"]:
+    ) -> AsyncLROPoller["_models.ApplicationGatewayBackendHealth"]:
         """Gets the backend health of the specified application gateway in a resource group.
 
         :param resource_group_name: The name of the resource group.
@@ -855,7 +885,7 @@ class ApplicationGatewaysOperations:
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         polling = kwargs.pop('polling', True)  # type: Union[bool, AsyncPollingMethod]
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.ApplicationGatewayBackendHealth"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.ApplicationGatewayBackendHealth"]
         lro_delay = kwargs.pop(
             'polling_interval',
             self._config.polling_interval
@@ -880,7 +910,13 @@ class ApplicationGatewaysOperations:
                 return cls(pipeline_response, deserialized, {})
             return deserialized
 
-        if polling is True: polling_method = AsyncARMPolling(lro_delay,  **kwargs)
+        path_format_arguments = {
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
+            'applicationGatewayName': self._serialize.url("application_gateway_name", application_gateway_name, 'str'),
+            'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
+        }
+
+        if polling is True: polling_method = AsyncARMPolling(lro_delay, path_format_arguments=path_format_arguments,  **kwargs)
         elif polling is False: polling_method = AsyncNoPolling()
         else: polling_method = polling
         if cont_token:
@@ -897,7 +933,7 @@ class ApplicationGatewaysOperations:
     async def list_available_waf_rule_sets(
         self,
         **kwargs
-    ) -> "models.ApplicationGatewayAvailableWafRuleSetsResult":
+    ) -> "_models.ApplicationGatewayAvailableWafRuleSetsResult":
         """Lists all available web application firewall rule sets.
 
         :keyword callable cls: A custom type or function that will be passed the direct response
@@ -905,7 +941,7 @@ class ApplicationGatewaysOperations:
         :rtype: ~azure.mgmt.network.v2018_02_01.models.ApplicationGatewayAvailableWafRuleSetsResult
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.ApplicationGatewayAvailableWafRuleSetsResult"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.ApplicationGatewayAvailableWafRuleSetsResult"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -947,7 +983,7 @@ class ApplicationGatewaysOperations:
     async def list_available_ssl_options(
         self,
         **kwargs
-    ) -> "models.ApplicationGatewayAvailableSslOptions":
+    ) -> "_models.ApplicationGatewayAvailableSslOptions":
         """Lists available Ssl options for configuring Ssl policy.
 
         :keyword callable cls: A custom type or function that will be passed the direct response
@@ -955,7 +991,7 @@ class ApplicationGatewaysOperations:
         :rtype: ~azure.mgmt.network.v2018_02_01.models.ApplicationGatewayAvailableSslOptions
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.ApplicationGatewayAvailableSslOptions"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.ApplicationGatewayAvailableSslOptions"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -997,7 +1033,7 @@ class ApplicationGatewaysOperations:
     def list_available_ssl_predefined_policies(
         self,
         **kwargs
-    ) -> AsyncIterable["models.ApplicationGatewayAvailableSslPredefinedPolicies"]:
+    ) -> AsyncIterable["_models.ApplicationGatewayAvailableSslPredefinedPolicies"]:
         """Lists all SSL predefined policies for configuring Ssl policy.
 
         :keyword callable cls: A custom type or function that will be passed the direct response
@@ -1005,7 +1041,7 @@ class ApplicationGatewaysOperations:
         :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.network.v2018_02_01.models.ApplicationGatewayAvailableSslPredefinedPolicies]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.ApplicationGatewayAvailableSslPredefinedPolicies"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.ApplicationGatewayAvailableSslPredefinedPolicies"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -1064,7 +1100,7 @@ class ApplicationGatewaysOperations:
         self,
         predefined_policy_name: str,
         **kwargs
-    ) -> "models.ApplicationGatewaySslPredefinedPolicy":
+    ) -> "_models.ApplicationGatewaySslPredefinedPolicy":
         """Gets Ssl predefined policy with the specified policy name.
 
         :param predefined_policy_name: Name of Ssl predefined policy.
@@ -1074,7 +1110,7 @@ class ApplicationGatewaysOperations:
         :rtype: ~azure.mgmt.network.v2018_02_01.models.ApplicationGatewaySslPredefinedPolicy
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.ApplicationGatewaySslPredefinedPolicy"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.ApplicationGatewaySslPredefinedPolicy"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }

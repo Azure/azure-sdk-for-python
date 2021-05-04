@@ -2,12 +2,12 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 # -------------------------------------
+import unittest
 
 from devtools_testutils import AzureMgmtTestCase
 from azure.mgmt.hybridcompute import HybridComputeManagementClient
-from azure.mgmt.hybridcompute.models import ErrorResponseException
 
-
+@unittest.skip("skip test")
 class HybridComputeTests(AzureMgmtTestCase):
     def setUp(self):
         super(HybridComputeTests, self).setUp()

@@ -16,7 +16,7 @@ from azure.core.polling import AsyncLROPoller, AsyncNoPolling, AsyncPollingMetho
 from azure.mgmt.core.exceptions import ARMErrorFormat
 from azure.mgmt.core.polling.async_arm_polling import AsyncARMPolling
 
-from ... import models
+from ... import models as _models
 
 T = TypeVar('T')
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]]
@@ -35,7 +35,7 @@ class VirtualHubsOperations:
     :param deserializer: An object model deserializer.
     """
 
-    models = models
+    models = _models
 
     def __init__(self, client, config, serializer, deserializer) -> None:
         self._client = client
@@ -48,7 +48,7 @@ class VirtualHubsOperations:
         resource_group_name: str,
         virtual_hub_name: str,
         **kwargs
-    ) -> "models.VirtualHub":
+    ) -> "_models.VirtualHub":
         """Retrieves the details of a VirtualHub.
 
         :param resource_group_name: The resource group name of the VirtualHub.
@@ -60,7 +60,7 @@ class VirtualHubsOperations:
         :rtype: ~azure.mgmt.network.v2020_05_01.models.VirtualHub
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.VirtualHub"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.VirtualHub"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -105,10 +105,10 @@ class VirtualHubsOperations:
         self,
         resource_group_name: str,
         virtual_hub_name: str,
-        virtual_hub_parameters: "models.VirtualHub",
+        virtual_hub_parameters: "_models.VirtualHub",
         **kwargs
-    ) -> "models.VirtualHub":
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.VirtualHub"]
+    ) -> "_models.VirtualHub":
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.VirtualHub"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -162,9 +162,9 @@ class VirtualHubsOperations:
         self,
         resource_group_name: str,
         virtual_hub_name: str,
-        virtual_hub_parameters: "models.VirtualHub",
+        virtual_hub_parameters: "_models.VirtualHub",
         **kwargs
-    ) -> AsyncLROPoller["models.VirtualHub"]:
+    ) -> AsyncLROPoller["_models.VirtualHub"]:
         """Creates a VirtualHub resource if it doesn't exist else updates the existing VirtualHub.
 
         :param resource_group_name: The resource group name of the VirtualHub.
@@ -184,7 +184,7 @@ class VirtualHubsOperations:
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         polling = kwargs.pop('polling', True)  # type: Union[bool, AsyncPollingMethod]
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.VirtualHub"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.VirtualHub"]
         lro_delay = kwargs.pop(
             'polling_interval',
             self._config.polling_interval
@@ -209,7 +209,13 @@ class VirtualHubsOperations:
                 return cls(pipeline_response, deserialized, {})
             return deserialized
 
-        if polling is True: polling_method = AsyncARMPolling(lro_delay, lro_options={'final-state-via': 'azure-async-operation'},  **kwargs)
+        path_format_arguments = {
+            'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
+            'virtualHubName': self._serialize.url("virtual_hub_name", virtual_hub_name, 'str'),
+        }
+
+        if polling is True: polling_method = AsyncARMPolling(lro_delay, lro_options={'final-state-via': 'azure-async-operation'}, path_format_arguments=path_format_arguments,  **kwargs)
         elif polling is False: polling_method = AsyncNoPolling()
         else: polling_method = polling
         if cont_token:
@@ -227,9 +233,9 @@ class VirtualHubsOperations:
         self,
         resource_group_name: str,
         virtual_hub_name: str,
-        virtual_hub_parameters: "models.TagsObject",
+        virtual_hub_parameters: "_models.TagsObject",
         **kwargs
-    ) -> "models.VirtualHub":
+    ) -> "_models.VirtualHub":
         """Updates VirtualHub tags.
 
         :param resource_group_name: The resource group name of the VirtualHub.
@@ -243,7 +249,7 @@ class VirtualHubsOperations:
         :rtype: ~azure.mgmt.network.v2020_05_01.models.VirtualHub
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.VirtualHub"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.VirtualHub"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -377,7 +383,13 @@ class VirtualHubsOperations:
             if cls:
                 return cls(pipeline_response, None, {})
 
-        if polling is True: polling_method = AsyncARMPolling(lro_delay, lro_options={'final-state-via': 'location'},  **kwargs)
+        path_format_arguments = {
+            'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
+            'virtualHubName': self._serialize.url("virtual_hub_name", virtual_hub_name, 'str'),
+        }
+
+        if polling is True: polling_method = AsyncARMPolling(lro_delay, lro_options={'final-state-via': 'location'}, path_format_arguments=path_format_arguments,  **kwargs)
         elif polling is False: polling_method = AsyncNoPolling()
         else: polling_method = polling
         if cont_token:
@@ -395,7 +407,7 @@ class VirtualHubsOperations:
         self,
         resource_group_name: str,
         **kwargs
-    ) -> AsyncIterable["models.ListVirtualHubsResult"]:
+    ) -> AsyncIterable["_models.ListVirtualHubsResult"]:
         """Lists all the VirtualHubs in a resource group.
 
         :param resource_group_name: The resource group name of the VirtualHub.
@@ -405,7 +417,7 @@ class VirtualHubsOperations:
         :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.network.v2020_05_01.models.ListVirtualHubsResult]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.ListVirtualHubsResult"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.ListVirtualHubsResult"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -464,7 +476,7 @@ class VirtualHubsOperations:
     def list(
         self,
         **kwargs
-    ) -> AsyncIterable["models.ListVirtualHubsResult"]:
+    ) -> AsyncIterable["_models.ListVirtualHubsResult"]:
         """Lists all the VirtualHubs in a subscription.
 
         :keyword callable cls: A custom type or function that will be passed the direct response
@@ -472,7 +484,7 @@ class VirtualHubsOperations:
         :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.network.v2020_05_01.models.ListVirtualHubsResult]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.ListVirtualHubsResult"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.ListVirtualHubsResult"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -531,7 +543,7 @@ class VirtualHubsOperations:
         self,
         resource_group_name: str,
         virtual_hub_name: str,
-        effective_routes_parameters: Optional["models.EffectiveRoutesParameters"] = None,
+        effective_routes_parameters: Optional["_models.EffectiveRoutesParameters"] = None,
         **kwargs
     ) -> None:
         cls = kwargs.pop('cls', None)  # type: ClsType[None]
@@ -584,7 +596,7 @@ class VirtualHubsOperations:
         self,
         resource_group_name: str,
         virtual_hub_name: str,
-        effective_routes_parameters: Optional["models.EffectiveRoutesParameters"] = None,
+        effective_routes_parameters: Optional["_models.EffectiveRoutesParameters"] = None,
         **kwargs
     ) -> AsyncLROPoller[None]:
         """Gets the effective routes configured for the Virtual Hub resource or the specified resource .
@@ -629,7 +641,13 @@ class VirtualHubsOperations:
             if cls:
                 return cls(pipeline_response, None, {})
 
-        if polling is True: polling_method = AsyncARMPolling(lro_delay, lro_options={'final-state-via': 'location'},  **kwargs)
+        path_format_arguments = {
+            'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
+            'virtualHubName': self._serialize.url("virtual_hub_name", virtual_hub_name, 'str'),
+        }
+
+        if polling is True: polling_method = AsyncARMPolling(lro_delay, lro_options={'final-state-via': 'location'}, path_format_arguments=path_format_arguments,  **kwargs)
         elif polling is False: polling_method = AsyncNoPolling()
         else: polling_method = polling
         if cont_token:

@@ -4,6 +4,7 @@ from azure.eventhub.aio import EventHubConsumerClient
 from azure.eventhub.extensions.checkpointstoreblobaio import BlobCheckpointStore
 
 CONNECTION_STR = os.environ["EVENT_HUB_CONN_STR"]
+EVENTHUB_NAME = os.environ['EVENT_HUB_NAME']
 STORAGE_CONNECTION_STR = os.environ["AZURE_STORAGE_CONN_STR"]
 BLOB_CONTAINER_NAME = "your-blob-container-name"  # Please make sure the blob container resource exists.
 
@@ -27,7 +28,8 @@ if __name__ == '__main__':
     )
     client = EventHubConsumerClient.from_connection_string(
         CONNECTION_STR,
-        "$Default",
+        consumer_group='$Default',
+        eventhub_name=EVENTHUB_NAME,
         checkpoint_store=checkpoint_store
     )
     try:

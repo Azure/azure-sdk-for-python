@@ -1,5 +1,87 @@
 # Release History
 
+## 1.0.0 (2021-04-12)
+
+**Features**
+
+  - Model BlobContainerDataSetMapping has a new parameter system_data
+  - Model SqlDWTableDataSet has a new parameter system_data
+  - Model ADLSGen1FolderDataSet has a new parameter system_data
+  - Model KustoDatabaseDataSetMapping has a new parameter system_data
+  - Model ConsumerSourceDataSet has a new parameter system_data
+  - Model ScheduledTrigger has a new parameter system_data
+  - Model DataSet has a new parameter system_data
+  - Model KustoClusterDataSetMapping has a new parameter system_data
+  - Model BlobDataSet has a new parameter system_data
+  - Model SynchronizationSetting has a new parameter system_data
+  - Model BlobFolderDataSetMapping has a new parameter system_data
+  - Model OperationMetaMetricSpecification has a new parameter fill_gap_with_zero
+  - Model ConsumerInvitation has a new parameter expiration_date
+  - Model ConsumerInvitation has a new parameter system_data
+  - Model ProviderShareSubscription has a new parameter expiration_date
+  - Model ProviderShareSubscription has a new parameter system_data
+  - Model ProxyDto has a new parameter system_data
+  - Model BlobFolderDataSet has a new parameter system_data
+  - Model ADLSGen2FolderDataSet has a new parameter system_data
+  - Model ScheduledSynchronizationSetting has a new parameter system_data
+  - Model SqlDBTableDataSet has a new parameter system_data
+  - Model Trigger has a new parameter system_data
+  - Model ADLSGen2FileDataSetMapping has a new parameter system_data
+  - Model BlobContainerDataSet has a new parameter system_data
+  - Model BlobDataSetMapping has a new parameter system_data
+  - Model DefaultDto has a new parameter system_data
+  - Model DataSetMapping has a new parameter system_data
+  - Model KustoDatabaseDataSet has a new parameter system_data
+  - Model ShareSubscription has a new parameter expiration_date
+  - Model ShareSubscription has a new parameter system_data
+  - Model KustoClusterDataSet has a new parameter system_data
+  - Model SqlDBTableDataSetMapping has a new parameter system_data
+  - Model SqlDWTableDataSetMapping has a new parameter system_data
+  - Model Account has a new parameter system_data
+  - Model Share has a new parameter system_data
+  - Model Invitation has a new parameter expiration_date
+  - Model Invitation has a new parameter system_data
+  - Model ADLSGen2FileSystemDataSetMapping has a new parameter system_data
+  - Model ADLSGen2FolderDataSetMapping has a new parameter system_data
+  - Model ADLSGen2FileDataSet has a new parameter system_data
+  - Model ADLSGen1FileDataSet has a new parameter system_data
+  - Model ADLSGen2FileSystemDataSet has a new parameter system_data
+  - Added operation ProviderShareSubscriptionsOperations.adjust
+
+**Breaking changes**
+
+  - Operation ProviderShareSubscriptionsOperations.reinstate has a new signature
+
+## 1.0.0b1 (2020-12-04)
+
+This is beta preview version.
+
+This version uses a next-generation code generator that introduces important breaking changes, but also important new features (like unified authentication and async programming).
+
+**General breaking changes**
+
+- Credential system has been completly revamped:
+
+  - `azure.common.credentials` or `msrestazure.azure_active_directory` instances are no longer supported, use the `azure-identity` classes instead: https://pypi.org/project/azure-identity/
+  - `credentials` parameter has been renamed `credential`
+
+- The `config` attribute no longer exists on a client, configuration should be passed as kwarg. Example: `MyClient(credential, subscription_id, enable_logging=True)`. For a complete set of
+  supported options, see the [parameters accept in init documentation of azure-core](https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/core/azure-core/CLIENT_LIBRARY_DEVELOPER.md#available-policies)
+- You can't import a `version` module anymore, use `__version__` instead
+- Operations that used to return a `msrest.polling.LROPoller` now returns a `azure.core.polling.LROPoller` and are prefixed with `begin_`.
+- Exceptions tree have been simplified and most exceptions are now `azure.core.exceptions.HttpResponseError` (`CloudError` has been removed).
+- Most of the operation kwarg have changed. Some of the most noticeable:
+
+  - `raw` has been removed. Equivalent feature can be found using `cls`, a callback that will give access to internal HTTP response for advanced user
+  - For a complete set of
+  supported options, see the [parameters accept in Request documentation of azure-core](https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/core/azure-core/CLIENT_LIBRARY_DEVELOPER.md#available-policies)
+
+**General new features**
+
+- Type annotations support using `typing`. SDKs are mypy ready.
+- This client has now stable and official support for async. Check the `aio` namespace of your package to find the async client.
+- This client now support natively tracing library like OpenCensus or OpenTelemetry. See this [tracing quickstart](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/core/azure-core-tracing-opentelemetry) for an overview.
+
 ## 0.2.0 (2020-05-14)
 
 **Features**

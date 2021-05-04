@@ -16,7 +16,7 @@ from ._constants import ALL_PARTITIONS
 from ._common import EventDataBatch, EventData
 
 if TYPE_CHECKING:
-    from azure.core.credentials import TokenCredential
+    from azure.core.credentials import TokenCredential, AzureSasCredential, AzureNamedKeyCredential
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -28,25 +28,37 @@ class EventHubProducerClient(ClientBase):
     :param str fully_qualified_namespace: The fully qualified host name for the Event Hubs namespace.
      This is likely to be similar to <yournamespace>.servicebus.windows.net
     :param str eventhub_name: The path of the specific Event Hub to connect the client to.
-    :param ~azure.core.credentials.TokenCredential credential: The credential object used for authentication which
+    :param credential: The credential object used for authentication which
      implements a particular interface for getting tokens. It accepts
      :class:`EventHubSharedKeyCredential<azure.eventhub.EventHubSharedKeyCredential>`, or credential objects generated
      by the azure-identity library and objects that implement the `get_token(self, *scopes)` method.
+    :type credential: ~azure.core.credentials.TokenCredential or ~azure.core.credentials.AzureSasCredential
+     or ~azure.core.credentials.AzureNamedKeyCredential
     :keyword bool logging_enable: Whether to output network trace logs to the logger. Default is `False`.
     :keyword float auth_timeout: The time in seconds to wait for a token to be authorized by the service.
      The default value is 60 seconds. If set to 0, no timeout will be enforced from the client.
-    :keyword str user_agent: The user agent that should be appended to the built-in user agent string.
+    :keyword str user_agent: If specified, this will be added in front of the user agent string.
     :keyword int retry_total: The total number of attempts to redo a failed operation when an error occurs. Default
      value is 3.
     :keyword float idle_timeout: Timeout, in seconds, after which this client will close the underlying connection
      if there is no activity. By default the value is None, meaning that the client will not shutdown due to inactivity
      unless initiated by the service.
     :keyword transport_type: The type of transport protocol that will be used for communicating with
-     the Event Hubs service. Default is `TransportType.Amqp`.
+     the Event Hubs service. Default is `TransportType.Amqp` in which case port 5671 is used.
+     If the port 5671 is unavailable/blocked in the network environment, `TransportType.AmqpOverWebsocket` could
+     be used instead which uses port 443 for communication.
     :paramtype transport_type: ~azure.eventhub.TransportType
     :keyword dict http_proxy: HTTP proxy settings. This must be a dictionary with the following
      keys: `'proxy_hostname'` (str value) and `'proxy_port'` (int value).
      Additionally the following keys may also be present: `'username', 'password'`.
+    :keyword str custom_endpoint_address: The custom endpoint address to use for establishing a connection to
+     the Event Hubs service, allowing network requests to be routed through any application gateways or
+     other paths needed for the host environment. Default is None.
+     The format would be like "sb://<custom_endpoint_hostname>:<custom_endpoint_port>".
+     If port is not specified in the `custom_endpoint_address`, by default port 443 will be used.
+    :keyword str connection_verify: Path to the custom CA_BUNDLE file of the SSL certificate which is used to
+     authenticate the identity of the connection endpoint.
+     Default is None in which case `certifi.where()` will be used.
 
     .. admonition:: Example:
 
@@ -63,7 +75,7 @@ class EventHubProducerClient(ClientBase):
         self,
         fully_qualified_namespace,  # type: str
         eventhub_name,  # type: str
-        credential,  # type: TokenCredential
+        credential,  # type: Union[AzureSasCredential, TokenCredential, AzureNamedKeyCredential]
         **kwargs  # type: Any
     ):
         # type:(...) -> None
@@ -160,15 +172,25 @@ class EventHubProducerClient(ClientBase):
          Additionally the following keys may also be present: `'username', 'password'`.
         :keyword float auth_timeout: The time in seconds to wait for a token to be authorized by the service.
          The default value is 60 seconds. If set to 0, no timeout will be enforced from the client.
-        :keyword str user_agent: The user agent that should be appended to the built-in user agent string.
+        :keyword str user_agent: If specified, this will be added in front of the user agent string.
         :keyword int retry_total: The total number of attempts to redo a failed operation when an error occurs.
          Default value is 3.
         :keyword float idle_timeout: Timeout, in seconds, after which this client will close the underlying connection
          if there is no activity. By default the value is None, meaning that the client will not shutdown due to
          inactivity unless initiated by the service.
         :keyword transport_type: The type of transport protocol that will be used for communicating with
-         the Event Hubs service. Default is `TransportType.Amqp`.
+         the Event Hubs service. Default is `TransportType.Amqp` in which case port 5671 is used.
+         If the port 5671 is unavailable/blocked in the network environment, `TransportType.AmqpOverWebsocket` could
+         be used instead which uses port 443 for communication.
         :paramtype transport_type: ~azure.eventhub.TransportType
+        :keyword str custom_endpoint_address: The custom endpoint address to use for establishing a connection to
+         the Event Hubs service, allowing network requests to be routed through any application gateways or
+         other paths needed for the host environment. Default is None.
+         The format would be like "sb://<custom_endpoint_hostname>:<custom_endpoint_port>".
+         If port is not specified in the `custom_endpoint_address`, by default port 443 will be used.
+        :keyword str connection_verify: Path to the custom CA_BUNDLE file of the SSL certificate which is used to
+         authenticate the identity of the connection endpoint.
+         Default is None in which case `certifi.where()` will be used.
         :rtype: ~azure.eventhub.EventHubProducerClient
 
         .. admonition:: Example:
@@ -206,6 +228,10 @@ class EventHubProducerClient(ClientBase):
          A `TypeError` will be raised if partition_key is specified and event_data_batch is an `EventDataBatch` because
          `EventDataBatch` itself has partition_key.
          If both partition_id and partition_key are provided, the partition_id will take precedence.
+         **WARNING: Setting partition_key of non-string value on the events to be sent is discouraged
+         as the partition_key will be ignored by the Event Hub service and events will be assigned
+         to all partitions using round-robin. Furthermore, there are SDKs for consuming events which expect
+         partition_key to only be string type, they might fail to parse the non-string value.**
         :rtype: None
         :raises: :class:`AuthenticationError<azure.eventhub.exceptions.AuthenticationError>`
          :class:`ConnectError<azure.eventhub.exceptions.ConnectError>`
@@ -228,6 +254,7 @@ class EventHubProducerClient(ClientBase):
         """
         partition_id = kwargs.get("partition_id")
         partition_key = kwargs.get("partition_key")
+
         if isinstance(event_data_batch, EventDataBatch):
             if partition_id or partition_key:
                 raise TypeError("partition_id and partition_key should be None when sending an EventDataBatch "
@@ -239,6 +266,10 @@ class EventHubProducerClient(ClientBase):
         partition_id = (
             to_send_batch._partition_id or ALL_PARTITIONS  # pylint:disable=protected-access
         )
+
+        if len(to_send_batch) == 0:
+            return
+
         send_timeout = kwargs.pop("timeout", None)
         try:
             cast(EventHubProducer, self._producers[partition_id]).send(
@@ -261,6 +292,10 @@ class EventHubProducerClient(ClientBase):
         :keyword str partition_key: With the given partition_key, event data will be sent to
          a particular partition of the Event Hub decided by the service.
          If both partition_id and partition_key are provided, the partition_id will take precedence.
+         **WARNING: Setting partition_key of non-string value on the events to be sent is discouraged
+         as the partition_key will be ignored by the Event Hub service and events will be assigned
+         to all partitions using round-robin. Furthermore, there are SDKs for consuming events which expect
+         partition_key to only be string type, they might fail to parse the non-string value.**
         :keyword int max_size_in_bytes: The maximum size of bytes data that an EventDataBatch object can hold. By
          default, the value is determined by your Event Hubs tier.
         :rtype: ~azure.eventhub.EventDataBatch

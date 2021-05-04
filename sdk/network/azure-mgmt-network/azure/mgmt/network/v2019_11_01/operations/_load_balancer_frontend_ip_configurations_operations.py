@@ -14,7 +14,7 @@ from azure.core.pipeline import PipelineResponse
 from azure.core.pipeline.transport import HttpRequest, HttpResponse
 from azure.mgmt.core.exceptions import ARMErrorFormat
 
-from .. import models
+from .. import models as _models
 
 if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
@@ -37,7 +37,7 @@ class LoadBalancerFrontendIPConfigurationsOperations(object):
     :param deserializer: An object model deserializer.
     """
 
-    models = models
+    models = _models
 
     def __init__(self, client, config, serializer, deserializer):
         self._client = client
@@ -51,7 +51,7 @@ class LoadBalancerFrontendIPConfigurationsOperations(object):
         load_balancer_name,  # type: str
         **kwargs  # type: Any
     ):
-        # type: (...) -> Iterable["models.LoadBalancerFrontendIPConfigurationListResult"]
+        # type: (...) -> Iterable["_models.LoadBalancerFrontendIPConfigurationListResult"]
         """Gets all the load balancer frontend IP configurations.
 
         :param resource_group_name: The name of the resource group.
@@ -63,7 +63,7 @@ class LoadBalancerFrontendIPConfigurationsOperations(object):
         :rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.network.v2019_11_01.models.LoadBalancerFrontendIPConfigurationListResult]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.LoadBalancerFrontendIPConfigurationListResult"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.LoadBalancerFrontendIPConfigurationListResult"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -127,7 +127,7 @@ class LoadBalancerFrontendIPConfigurationsOperations(object):
         frontend_ip_configuration_name,  # type: str
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.FrontendIPConfiguration"
+        # type: (...) -> "_models.FrontendIPConfiguration"
         """Gets load balancer frontend IP configuration.
 
         :param resource_group_name: The name of the resource group.
@@ -141,7 +141,7 @@ class LoadBalancerFrontendIPConfigurationsOperations(object):
         :rtype: ~azure.mgmt.network.v2019_11_01.models.FrontendIPConfiguration
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.FrontendIPConfiguration"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.FrontendIPConfiguration"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }

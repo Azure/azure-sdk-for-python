@@ -25,6 +25,7 @@ These sample programs show common scenarios for the Tables client's offerings.
 |[sample_insert_delete_entities.py][insert_delete_entities] and [sample_insert_delete_entities_async.py][insert_delete_entities_async]|Inserting and deleting individual entities in a table|
 |[sample_query_tables.py][query_tables] and [sample_query_tables_async.py][query_tables_async]|Querying tables in a storage account|
 |[sample_update_upsert_merge_entities.py][update_upsert_merge] and [sample_update_upsert_merge_entities_async.py][update_upsert_merge_async]| Updating, upserting, and merging entities|
+|[sample_batching.py][sample_batch] and [sample_batching_async.py][sample_batch_async]| Committing many requests in a single batch|
 
 
 ### Prerequisites
@@ -47,6 +48,79 @@ pip install --pre azure-data-tables
 2. Set the environment variables specified in the sample file you wish to run.
 3. Follow the usage described in the file, e.g. `python sample_create_table.py`
 
+## Writing Filters
+
+### Supported Comparison Operators
+|**Operator**|**URI expression**|
+|------------|------------------|
+|`Equal`|`eq`|
+|`GreaterThan`|`gt`|
+|`GreaterThanOrEqual`|`ge`|
+|`LessThan`|`lt`|
+|`LessThanOrEqual`|`le`|
+|`NotEqual`|`ne`|
+|`And`|`and`|
+|`Not`|`not`|
+|`Or`|`or`|
+
+### Example Filters
+
+#### Filter on `PartitionKey` and `RowKey`:
+```python
+parameters = {
+    "pk": PartitionKey,
+    "rk": RowKey
+}
+query_filter = "PartitionKey eq @pk and RowKey eq @rk"
+table_client.query_entities(query_filter, parameter=pk)
+```
+
+#### Filter on Properties
+```python
+parameters = {
+    "first": first_name,
+    "last": last_name
+}
+query_filter = "FirstName eq @first or LastName eq @last"
+table_client.query_entities(query_filter, parameter=pk)
+```
+
+#### Filter with string comparison operators
+```python
+query_filter = "LastName ge 'A' and LastName lt 'B'"
+table_client.query_entities(query_filter)
+```
+
+#### Filter with numeric properties
+```python
+query_filter = "Age gt 30"
+table_client.query_entities(query_filter)
+```
+
+```python
+query_filter = "AmountDue le 100.25"
+table_client.query_entities(query_filter)
+```
+
+#### Filter with boolean properties
+```python
+query_filter = "IsActive eq true"
+table_client.query_entities(query_filter)
+```
+
+#### Filter with DateTime properties
+```python
+query_filter = "CustomerSince eq datetime'2008-07-10T00:00:00Z'"
+table_client.query_entities(query_filter)
+```
+
+#### Filter with GUID properties
+```python
+query_filter = "GuidValue eq guid'a455c695-df98-5678-aaaa-81d3367e5a34'"
+table_client.query_entities(query_filter)
+```
+
+
 ## Next steps
 
 Check out the [API reference documentation][api_reference_documentation] to learn more about
@@ -54,7 +128,7 @@ what you can do with the Azure Data Tables client library.
 
 
 <!-- LINKS -->
-[api_reference_documentation]: https://aka.ms/azsdk/python/tables/docs
+[api_reference_documentation]: https://docs.microsoft.com/rest/api/storageservices/table-service-rest-api
 
 [sample_authentication]:https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/tables/azure-data-tables/samples/sample_authentication.py
 [sample_authentication_async]: https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/tables/azure-data-tables/samples/async_samples/sample_authentication_async.py
@@ -76,4 +150,7 @@ what you can do with the Azure Data Tables client library.
 
 [update_upsert_merge]: https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/tables/azure-data-tables/samples/sample_update_upsert_merge_entities.py
 [update_upsert_merge_async]: https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/tables/azure-data-tables/samples/async_samples/sample_update_upsert_merge_entities_async.py
+
+[sample_batch]: https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/tables/azure-data-tables/samples/sample_batching.py
+[sample_batch_async]: https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/tables/azure-data-tables/samples/async_samples/sample_batching_async.py
 ![Impressions](https://azure-sdk-impressions.azurewebsites.net/api/impressions/azure-sdk-for-python/sdk/tables/azure-data-tables/README.png)

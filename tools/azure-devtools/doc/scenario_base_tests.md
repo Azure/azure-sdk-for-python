@@ -51,7 +51,7 @@ of which the first takes precedence:
 "Live" and "playback" mode are actually just shorthand for recording modes
 in the underlying VCR.py package;
 they correspond to "all" and "once"
-as described in the [VCR.py documentation](http://vcrpy.readthedocs.io/en/latest/usage.html#record-modes).
+as described in the [VCR.py documentation](https://vcrpy.readthedocs.io/en/latest/usage.html#record-modes).
 
 ### Subclassing ReplayableTest and features
 

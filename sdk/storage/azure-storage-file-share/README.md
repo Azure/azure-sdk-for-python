@@ -142,7 +142,7 @@ Four different clients are provided to interact with the various components of t
     create, delete, or enumerate the contents of an immediate or nested subdirectory, and includes operations to create
     and delete files within it. For operations relating to a specific subdirectory or file, a client for that entity can
     also be retrieved using the `get_subdirectory_client` and `get_file_client` functions.
-4. [ShareFileClient](http://aka.ms/azsdk-python-storage-fileshare-sharefileclient) -
+4. [ShareFileClient](https://aka.ms/azsdk-python-storage-fileshare-sharefileclient) -
     this client represents interaction with a specific file (which need not exist yet). It provides operations to
     upload, download, create, delete, and copy a file.
 
@@ -288,7 +288,8 @@ the client level to enable it for all requests.
 ## Troubleshooting
 ### General
 Storage File clients raise exceptions defined in [Azure Core](https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/core/azure-core/README.md).
-All File service operations will throw a `StorageErrorException` on failure with helpful [error codes](https://docs.microsoft.com/rest/api/storageservices/file-service-error-codes).
+
+This list can be used for reference to catch thrown exceptions. To get the specific error code of the exception, use the `error_code` attribute, i.e, `exception.error_code`.
 
 ### Logging
 This library uses the standard

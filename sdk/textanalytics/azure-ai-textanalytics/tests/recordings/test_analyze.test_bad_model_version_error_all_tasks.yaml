@@ -1,0 +1,50 @@
+interactions:
+- request:
+    body: '{"tasks": {"entityRecognitionTasks": [{"parameters": {"model-version":
+      "bad", "loggingOptOut": false, "stringIndexType": "UnicodeCodePoint"}}], "entityRecognitionPiiTasks":
+      [{"parameters": {"model-version": "bad", "loggingOptOut": true, "stringIndexType":
+      "UnicodeCodePoint"}}], "keyPhraseExtractionTasks": [{"parameters": {"model-version":
+      "bad", "loggingOptOut": false}}], "entityLinkingTasks": [{"parameters": {"model-version":
+      "bad", "loggingOptOut": false, "stringIndexType": "UnicodeCodePoint"}}], "sentimentAnalysisTasks":
+      [{"parameters": {"model-version": "bad", "loggingOptOut": false, "opinionMining":
+      false}}]}, "analysisInput": {"documents": [{"id": "1", "text": "I did not like
+      the hotel we stayed at.", "language": "english"}]}}'
+    headers:
+      Accept:
+      - application/json, text/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '742'
+      Content-Type:
+      - application/json
+      User-Agent:
+      - azsdk-python-ai-textanalytics/5.1.0b7 Python/3.9.0 (Windows-10-10.0.19041-SP0)
+    method: POST
+    uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.1-preview.5/analyze
+  response:
+    body:
+      string: '{"error":{"code":"InvalidRequest","message":"Job task parameter value
+        bad is not supported for model-version parameter for job task type KeyPhraseExtraction.
+        Supported values latest,2019-10-01,2020-07-01."}}'
+    headers:
+      apim-request-id:
+      - 6a187ef3-c4e7-4f07-a80c-bfbef6f57ace
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Thu, 29 Apr 2021 03:35:34 GMT
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains; preload
+      transfer-encoding:
+      - chunked
+      x-content-type-options:
+      - nosniff
+      x-envoy-upstream-service-time:
+      - '7'
+    status:
+      code: 400
+      message: Bad Request
+version: 1

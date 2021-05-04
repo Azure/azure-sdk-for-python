@@ -23,7 +23,7 @@ except (SyntaxError, ImportError):
     from ._models import LocalizableString  # type: ignore
     from ._models import TimeSeriesInformation  # type: ignore
 
-from ._monitor_client_enums import (
+from ._monitor_management_client_enums import (
     ResultType,
     Sensitivity,
 )

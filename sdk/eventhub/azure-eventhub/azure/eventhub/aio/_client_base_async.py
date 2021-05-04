@@ -19,10 +19,10 @@ from uamqp import (
     Message,
     AMQPClientAsync,
 )
-from azure.core.credentials import AccessToken
+from azure.core.credentials import AccessToken, AzureSasCredential, AzureNamedKeyCredential
 
 from .._client_base import ClientBase, _generate_sas_token, _parse_conn_str
-from .._utils import utc_from_timestamp
+from .._utils import utc_from_timestamp, parse_sas_credential
 from ..exceptions import ClientClosedError, ConnectError
 from .._constants import (
     JWT_TOKEN_SCOPE,
@@ -35,8 +35,7 @@ from ._connection_manager_async import get_connection_manager
 from ._error_async import _handle_exception
 
 if TYPE_CHECKING:
-    from azure.core.credentials import TokenCredential
-
+    from azure.core.credentials_async import AsyncTokenCredential
     try:
         from typing_extensions import Protocol
     except ImportError:
@@ -84,20 +83,63 @@ class EventHubSASTokenCredential(object):
         """
         return AccessToken(self.token, self.expiry)
 
+class EventhubAzureNamedKeyTokenCredentialAsync(object):
+    """The named key credential used for authentication.
+
+    :param credential: The AzureNamedKeyCredential that should be used.
+    :type credential: ~azure.core.credentials.AzureNamedKeyCredential
+    """
+
+    def __init__(self, azure_named_key_credential):
+        # type: (AzureNamedKeyCredential) -> None
+        self._credential = azure_named_key_credential
+        self.token_type = b"servicebus.windows.net:sastoken"
+
+    async def get_token(self, *scopes, **kwargs):  # pylint:disable=unused-argument
+        if not scopes:
+            raise ValueError("No token scope provided.")
+        name, key = self._credential.named_key
+        return _generate_sas_token(scopes[0], name, key)
+
+
+class EventhubAzureSasTokenCredentialAsync(object):
+    """The shared access token credential used for authentication
+    when AzureSasCredential is provided.
+
+    :param azure_sas_credential: The credential to be used for authentication.
+    :type azure_sas_credential: ~azure.core.credentials.AzureSasCredential
+    """
+    def __init__(self, azure_sas_credential: AzureSasCredential) -> None:
+        self._credential = azure_sas_credential
+        self.token_type = b"servicebus.windows.net:sastoken"
+
+    async def get_token(self, *scopes: str, **kwargs: Any) -> AccessToken:  # pylint:disable=unused-argument
+        """
+        This method is automatically called when token is about to expire.
+        """
+        signature, expiry = parse_sas_credential(self._credential)
+        return AccessToken(signature, expiry)
+
 
 class ClientBaseAsync(ClientBase):
     def __init__(
         self,
         fully_qualified_namespace: str,
         eventhub_name: str,
-        credential: "TokenCredential",
+        credential: Union["AsyncTokenCredential", AzureSasCredential, AzureNamedKeyCredential],
         **kwargs: Any
     ) -> None:
         self._loop = kwargs.pop("loop", None)
+        if isinstance(credential, AzureSasCredential):
+            self._credential = EventhubAzureSasTokenCredentialAsync(credential) # type: ignore
+        elif isinstance(credential, AzureNamedKeyCredential):
+            self._credential = EventhubAzureNamedKeyTokenCredentialAsync(credential) # type: ignore
+        else:
+            self._credential = credential # type: ignore
         super(ClientBaseAsync, self).__init__(
             fully_qualified_namespace=fully_qualified_namespace,
             eventhub_name=eventhub_name,
-            credential=credential,
+            credential=self._credential,
             **kwargs
         )
         self._conn_manager_async = get_connection_manager(loop=self._loop, **kwargs)
@@ -109,7 +151,7 @@ class ClientBaseAsync(ClientBase):
 
     @staticmethod
     def _from_connection_string(conn_str: str, **kwargs) -> Dict[str, Any]:
-        host, policy, key, entity, token, token_expiry = _parse_conn_str(conn_str, kwargs)
+        host, policy, key, entity, token, token_expiry = _parse_conn_str(conn_str, **kwargs)
         kwargs["fully_qualified_namespace"] = host
         kwargs["eventhub_name"] = entity
         if token and token_expiry:
@@ -138,6 +180,9 @@ class ClientBaseAsync(ClientBase):
                 timeout=self._config.auth_timeout,
                 http_proxy=self._config.http_proxy,
                 transport_type=self._config.transport_type,
+                custom_endpoint_hostname=self._config.custom_endpoint_hostname,
+                port=self._config.connection_port,
+                verify=self._config.connection_verify
             )
             await auth.update_token()
             return auth
@@ -149,6 +194,9 @@ class ClientBaseAsync(ClientBase):
             timeout=self._config.auth_timeout,
             http_proxy=self._config.http_proxy,
             transport_type=self._config.transport_type,
+            custom_endpoint_hostname=self._config.custom_endpoint_hostname,
+            port=self._config.connection_port,
+            verify=self._config.connection_verify
         )
 
     async def _close_connection_async(self) -> None:

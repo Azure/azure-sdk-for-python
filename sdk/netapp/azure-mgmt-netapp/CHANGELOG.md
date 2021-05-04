@@ -1,5 +1,78 @@
 # Release History
 
+## 2.0.0 (2021-03-16)
+
+**Features**
+
+  - Model Volume has a new parameter ldap_enabled
+  - Model Backup has a new parameter volume_name
+  - Model ActiveDirectory has a new parameter allow_local_nfs_users_with_ldap
+  - Model BackupPatch has a new parameter volume_name
+  - Added operation BackupsOperations.begin_update
+  - Added operation group VolumeBackupStatusOperations
+
+**Breaking changes**
+
+  - Model SnapshotPolicyDetails no longer has parameter name_properties_name
+  - Model SnapshotPolicyPatch no longer has parameter name_properties_name
+  - Model Volume no longer has parameter name_properties_name
+  - Model SnapshotPolicy no longer has parameter name_properties_name
+  - Removed operation BackupsOperations.update
+
+## 1.0.0 (2021-02-04)
+
+**Features**
+
+  - Model VolumeList has a new parameter next_link
+  - Model BackupPatch has a new parameter failure_reason
+  - Model Backup has a new parameter failure_reason
+  - Model NetAppAccountList has a new parameter next_link
+  - Model ActiveDirectory has a new parameter security_operators
+  - Model ActiveDirectory has a new parameter ldap_over_tls
+  - Model NetAppAccountPatch has a new parameter encryption
+  - Model CapacityPoolList has a new parameter next_link
+  - Model Volume has a new parameter encryption_key_source
+  - Model Volume has a new parameter smb_encryption
+  - Model Volume has a new parameter smb_continuously_available
+  - Model Volume has a new parameter name_properties_name
+  - Model NetAppAccount has a new parameter system_data
+  - Model NetAppAccount has a new parameter encryption
+  - Added operation SnapshotPoliciesOperations.begin_update
+
+**Breaking changes**
+
+  - Removed operation SnapshotPoliciesOperations.update
+
+## 1.0.0b1 (2020-12-01)
+
+This is beta preview version.
+
+This version uses a next-generation code generator that introduces important breaking changes, but also important new features (like unified authentication and async programming).
+
+**General breaking changes**
+
+- Credential system has been completly revamped:
+
+  - `azure.common.credentials` or `msrestazure.azure_active_directory` instances are no longer supported, use the `azure-identity` classes instead: https://pypi.org/project/azure-identity/
+  - `credentials` parameter has been renamed `credential`
+
+- The `config` attribute no longer exists on a client, configuration should be passed as kwarg. Example: `MyClient(credential, subscription_id, enable_logging=True)`. For a complete set of
+  supported options, see the [parameters accept in init documentation of azure-core](https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/core/azure-core/CLIENT_LIBRARY_DEVELOPER.md#available-policies)
+- You can't import a `version` module anymore, use `__version__` instead
+- Operations that used to return a `msrest.polling.LROPoller` now returns a `azure.core.polling.LROPoller` and are prefixed with `begin_`.
+- Exceptions tree have been simplified and most exceptions are now `azure.core.exceptions.HttpResponseError` (`CloudError` has been removed).
+- Most of the operation kwarg have changed. Some of the most noticeable:
+
+  - `raw` has been removed. Equivalent feature can be found using `cls`, a callback that will give access to internal HTTP response for advanced user
+  - For a complete set of
+  supported options, see the [parameters accept in Request documentation of azure-core](https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/core/azure-core/CLIENT_LIBRARY_DEVELOPER.md#available-policies)
+
+**General new features**
+
+- Type annotations support using `typing`. SDKs are mypy ready.
+- This client has now stable and official support for async. Check the `aio` namespace of your package to find the async client.
+- This client now support natively tracing library like OpenCensus or OpenTelemetry. See this [tracing quickstart](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/core/azure-core-tracing-opentelemetry) for an overview.
+
 ## 0.10.0 (2020-04-21)
 
 **Features**

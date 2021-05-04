@@ -14,7 +14,7 @@ from azure.core.pipeline import PipelineResponse
 from azure.core.pipeline.transport import HttpRequest, HttpResponse
 from azure.mgmt.core.exceptions import ARMErrorFormat
 
-from .. import models
+from .. import models as _models
 
 if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
@@ -37,7 +37,7 @@ class ProvidersOperations(object):
     :param deserializer: An object model deserializer.
     """
 
-    models = models
+    models = _models
 
     def __init__(self, client, config, serializer, deserializer):
         self._client = client
@@ -50,7 +50,7 @@ class ProvidersOperations(object):
         resource_provider_namespace,  # type: str
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.Provider"
+        # type: (...) -> "_models.Provider"
         """Unregisters a subscription from a resource provider.
 
         :param resource_provider_namespace: The namespace of the resource provider to unregister.
@@ -60,7 +60,7 @@ class ProvidersOperations(object):
         :rtype: ~azure.mgmt.resource.resources.v2020_06_01.models.Provider
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.Provider"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.Provider"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -100,12 +100,67 @@ class ProvidersOperations(object):
         return deserialized
     unregister.metadata = {'url': '/subscriptions/{subscriptionId}/providers/{resourceProviderNamespace}/unregister'}  # type: ignore
 
+    def register_at_management_group_scope(
+        self,
+        resource_provider_namespace,  # type: str
+        group_id,  # type: str
+        **kwargs  # type: Any
+    ):
+        # type: (...) -> None
+        """Registers a management group with a resource provider.
+
+        :param resource_provider_namespace: The namespace of the resource provider to register.
+        :type resource_provider_namespace: str
+        :param group_id: The management group ID.
+        :type group_id: str
+        :keyword callable cls: A custom type or function that will be passed the direct response
+        :return: None, or the result of cls(response)
+        :rtype: None
+        :raises: ~azure.core.exceptions.HttpResponseError
+        """
+        cls = kwargs.pop('cls', None)  # type: ClsType[None]
+        error_map = {
+            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
+        }
+        error_map.update(kwargs.pop('error_map', {}))
+        api_version = "2020-06-01"
+        accept = "application/json"
+
+        # Construct URL
+        url = self.register_at_management_group_scope.metadata['url']  # type: ignore
+        path_format_arguments = {
+            'resourceProviderNamespace': self._serialize.url("resource_provider_namespace", resource_provider_namespace, 'str'),
+            'groupId': self._serialize.url("group_id", group_id, 'str', max_length=90, min_length=1),
+        }
+        url = self._client.format_url(url, **path_format_arguments)
+
+        # Construct parameters
+        query_parameters = {}  # type: Dict[str, Any]
+        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
+
+        # Construct headers
+        header_parameters = {}  # type: Dict[str, Any]
+        header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
+
+        request = self._client.post(url, query_parameters, header_parameters)
+        pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            raise HttpResponseError(response=response, error_format=ARMErrorFormat)
+
+        if cls:
+            return cls(pipeline_response, None, {})
+
+    register_at_management_group_scope.metadata = {'url': '/providers/Microsoft.Management/managementGroups/{groupId}/providers/{resourceProviderNamespace}/register'}  # type: ignore
+
     def register(
         self,
         resource_provider_namespace,  # type: str
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.Provider"
+        # type: (...) -> "_models.Provider"
         """Registers a subscription with a resource provider.
 
         :param resource_provider_namespace: The namespace of the resource provider to register.
@@ -115,7 +170,7 @@ class ProvidersOperations(object):
         :rtype: ~azure.mgmt.resource.resources.v2020_06_01.models.Provider
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.Provider"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.Provider"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -161,7 +216,7 @@ class ProvidersOperations(object):
         expand=None,  # type: Optional[str]
         **kwargs  # type: Any
     ):
-        # type: (...) -> Iterable["models.ProviderListResult"]
+        # type: (...) -> Iterable["_models.ProviderListResult"]
         """Gets all resource providers for a subscription.
 
         :param top: The number of results to return. If null is passed returns all deployments.
@@ -175,7 +230,7 @@ class ProvidersOperations(object):
         :rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.resource.resources.v2020_06_01.models.ProviderListResult]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.ProviderListResult"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.ProviderListResult"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -240,7 +295,7 @@ class ProvidersOperations(object):
         expand=None,  # type: Optional[str]
         **kwargs  # type: Any
     ):
-        # type: (...) -> Iterable["models.ProviderListResult"]
+        # type: (...) -> Iterable["_models.ProviderListResult"]
         """Gets all resource providers for the tenant.
 
         :param top: The number of results to return. If null is passed returns all providers.
@@ -254,7 +309,7 @@ class ProvidersOperations(object):
         :rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.resource.resources.v2020_06_01.models.ProviderListResult]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.ProviderListResult"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.ProviderListResult"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -315,7 +370,7 @@ class ProvidersOperations(object):
         expand=None,  # type: Optional[str]
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.Provider"
+        # type: (...) -> "_models.Provider"
         """Gets the specified resource provider.
 
         :param resource_provider_namespace: The namespace of the resource provider.
@@ -328,7 +383,7 @@ class ProvidersOperations(object):
         :rtype: ~azure.mgmt.resource.resources.v2020_06_01.models.Provider
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.Provider"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.Provider"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -376,7 +431,7 @@ class ProvidersOperations(object):
         expand=None,  # type: Optional[str]
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.Provider"
+        # type: (...) -> "_models.Provider"
         """Gets the specified resource provider at the tenant level.
 
         :param resource_provider_namespace: The namespace of the resource provider.
@@ -389,7 +444,7 @@ class ProvidersOperations(object):
         :rtype: ~azure.mgmt.resource.resources.v2020_06_01.models.Provider
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.Provider"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.Provider"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }

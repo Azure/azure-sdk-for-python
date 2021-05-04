@@ -13,7 +13,7 @@ from azure.core.pipeline import PipelineResponse
 from azure.core.pipeline.transport import AsyncHttpResponse, HttpRequest
 from azure.mgmt.core.exceptions import ARMErrorFormat
 
-from ... import models
+from ... import models as _models
 
 T = TypeVar('T')
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]]
@@ -32,7 +32,7 @@ class VirtualMachineImagesOperations:
     :param deserializer: An object model deserializer.
     """
 
-    models = models
+    models = _models
 
     def __init__(self, client, config, serializer, deserializer) -> None:
         self._client = client
@@ -48,7 +48,7 @@ class VirtualMachineImagesOperations:
         skus: str,
         version: str,
         **kwargs
-    ) -> "models.VirtualMachineImage":
+    ) -> "_models.VirtualMachineImage":
         """Gets a virtual machine image.
 
         :param location: The name of a supported Azure region.
@@ -66,7 +66,7 @@ class VirtualMachineImagesOperations:
         :rtype: ~azure.mgmt.compute.v2019_12_01.models.VirtualMachineImage
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.VirtualMachineImage"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.VirtualMachineImage"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -120,7 +120,7 @@ class VirtualMachineImagesOperations:
         top: Optional[int] = None,
         orderby: Optional[str] = None,
         **kwargs
-    ) -> List["models.VirtualMachineImageResource"]:
+    ) -> List["_models.VirtualMachineImageResource"]:
         """Gets a list of all virtual machine image versions for the specified location, publisher, offer,
         and SKU.
 
@@ -143,7 +143,7 @@ class VirtualMachineImagesOperations:
         :rtype: list[~azure.mgmt.compute.v2019_12_01.models.VirtualMachineImageResource]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType[List["models.VirtualMachineImageResource"]]
+        cls = kwargs.pop('cls', None)  # type: ClsType[List["_models.VirtualMachineImageResource"]]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -197,7 +197,7 @@ class VirtualMachineImagesOperations:
         location: str,
         publisher_name: str,
         **kwargs
-    ) -> List["models.VirtualMachineImageResource"]:
+    ) -> List["_models.VirtualMachineImageResource"]:
         """Gets a list of virtual machine image offers for the specified location and publisher.
 
         :param location: The name of a supported Azure region.
@@ -209,7 +209,7 @@ class VirtualMachineImagesOperations:
         :rtype: list[~azure.mgmt.compute.v2019_12_01.models.VirtualMachineImageResource]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType[List["models.VirtualMachineImageResource"]]
+        cls = kwargs.pop('cls', None)  # type: ClsType[List["_models.VirtualMachineImageResource"]]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -254,7 +254,7 @@ class VirtualMachineImagesOperations:
         self,
         location: str,
         **kwargs
-    ) -> List["models.VirtualMachineImageResource"]:
+    ) -> List["_models.VirtualMachineImageResource"]:
         """Gets a list of virtual machine image publishers for the specified Azure location.
 
         :param location: The name of a supported Azure region.
@@ -264,7 +264,7 @@ class VirtualMachineImagesOperations:
         :rtype: list[~azure.mgmt.compute.v2019_12_01.models.VirtualMachineImageResource]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType[List["models.VirtualMachineImageResource"]]
+        cls = kwargs.pop('cls', None)  # type: ClsType[List["_models.VirtualMachineImageResource"]]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -310,7 +310,7 @@ class VirtualMachineImagesOperations:
         publisher_name: str,
         offer: str,
         **kwargs
-    ) -> List["models.VirtualMachineImageResource"]:
+    ) -> List["_models.VirtualMachineImageResource"]:
         """Gets a list of virtual machine image SKUs for the specified location, publisher, and offer.
 
         :param location: The name of a supported Azure region.
@@ -324,7 +324,7 @@ class VirtualMachineImagesOperations:
         :rtype: list[~azure.mgmt.compute.v2019_12_01.models.VirtualMachineImageResource]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType[List["models.VirtualMachineImageResource"]]
+        cls = kwargs.pop('cls', None)  # type: ClsType[List["_models.VirtualMachineImageResource"]]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }

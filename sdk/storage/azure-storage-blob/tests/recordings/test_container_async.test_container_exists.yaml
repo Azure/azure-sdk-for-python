@@ -1,0 +1,92 @@
+interactions:
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/xml
+      User-Agent:
+      - azsdk-python-storage-blob/12.7.2 Python/3.8.5 (Windows-10-10.0.19041-SP0)
+      x-ms-date:
+      - Sun, 24 Jan 2021 23:08:38 GMT
+      x-ms-version:
+      - '2020-04-08'
+    method: PUT
+    uri: https://storagename.blob.core.windows.net/container175a3116f?restype=container
+  response:
+    body:
+      string: ''
+    headers:
+      content-length: '0'
+      date: Sun, 24 Jan 2021 23:08:37 GMT
+      etag: '"0x8D8C0BCFBA744BA"'
+      last-modified: Sun, 24 Jan 2021 23:08:38 GMT
+      server: Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
+      x-ms-version: '2020-04-08'
+    status:
+      code: 201
+      message: Created
+    url: https://emilydevtest.blob.core.windows.net/container175a3116f?restype=container
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/xml
+      User-Agent:
+      - azsdk-python-storage-blob/12.7.2 Python/3.8.5 (Windows-10-10.0.19041-SP0)
+      x-ms-date:
+      - Sun, 24 Jan 2021 23:08:38 GMT
+      x-ms-version:
+      - '2020-04-08'
+    method: GET
+    uri: https://storagename.blob.core.windows.net/container175a3116f?restype=container
+  response:
+    body:
+      string: ''
+    headers:
+      content-length: '0'
+      date: Sun, 24 Jan 2021 23:08:37 GMT
+      etag: '"0x8D8C0BCFBA744BA"'
+      last-modified: Sun, 24 Jan 2021 23:08:38 GMT
+      server: Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
+      vary: Origin
+      x-ms-default-encryption-scope: $account-encryption-key
+      x-ms-deny-encryption-scope-override: 'false'
+      x-ms-has-immutability-policy: 'false'
+      x-ms-has-legal-hold: 'false'
+      x-ms-lease-state: available
+      x-ms-lease-status: unlocked
+      x-ms-version: '2020-04-08'
+    status:
+      code: 200
+      message: OK
+    url: https://emilydevtest.blob.core.windows.net/container175a3116f?restype=container
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/xml
+      User-Agent:
+      - azsdk-python-storage-blob/12.7.2 Python/3.8.5 (Windows-10-10.0.19041-SP0)
+      x-ms-date:
+      - Sun, 24 Jan 2021 23:08:38 GMT
+      x-ms-version:
+      - '2020-04-08'
+    method: GET
+    uri: https://storagename.blob.core.windows.net/container275a3116f?restype=container
+  response:
+    body:
+      string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><Error><Code>ContainerNotFound</Code><Message>The
+        specified container does not exist.\nRequestId:f0e7bd23-001e-00b1-54a5-f24de1000000\nTime:2021-01-24T23:08:38.1833494Z</Message></Error>"
+    headers:
+      content-length: '225'
+      content-type: application/xml
+      date: Sun, 24 Jan 2021 23:08:37 GMT
+      server: Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
+      vary: Origin
+      x-ms-error-code: ContainerNotFound
+      x-ms-version: '2020-04-08'
+    status:
+      code: 404
+      message: The specified container does not exist.
+    url: https://emilydevtest.blob.core.windows.net/container275a3116f?restype=container
+version: 1

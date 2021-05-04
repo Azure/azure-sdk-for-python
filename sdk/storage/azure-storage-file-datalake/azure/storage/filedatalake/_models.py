@@ -5,24 +5,20 @@
 # --------------------------------------------------------------------------
 # pylint: disable=too-few-public-methods, too-many-instance-attributes
 # pylint: disable=super-init-not-called, too-many-lines
+from datetime import datetime
 from enum import Enum
 
-from azure.core.paging import PageIterator
 from azure.storage.blob import LeaseProperties as BlobLeaseProperties
 from azure.storage.blob import AccountSasPermissions as BlobAccountSasPermissions
 from azure.storage.blob import ResourceTypes as BlobResourceTypes
 from azure.storage.blob import UserDelegationKey as BlobUserDelegationKey
 from azure.storage.blob import ContentSettings as BlobContentSettings
-from azure.storage.blob import ContainerSasPermissions, BlobSasPermissions
 from azure.storage.blob import AccessPolicy as BlobAccessPolicy
 from azure.storage.blob import DelimitedTextDialect as BlobDelimitedTextDialect
 from azure.storage.blob import DelimitedJsonDialect as BlobDelimitedJSON
-from azure.storage.blob._generated.models import StorageErrorException
+from azure.storage.blob import ArrowDialect as BlobArrowDialect
 from azure.storage.blob._models import ContainerPropertiesPaged
-from ._deserialize import return_headers_and_deserialized_path_list
-from ._generated.models import Path
 from ._shared.models import DictMixin
-from ._shared.response_handlers import process_storage_error
 
 
 class FileSystemProperties(object):
@@ -43,11 +39,16 @@ class FileSystemProperties(object):
         Represents whether the file system has a legal hold.
     :ivar dict metadata: A dict with name-value pairs to associate with the
         file system as metadata.
+    :ivar bool deleted:
+        Whether this file system was deleted.
+    :ivar str deleted_version:
+        The version of a deleted file system.
 
     Returned ``FileSystemProperties`` instances expose these values through a
     dictionary interface, for example: ``file_system_props["last_modified"]``.
     Additionally, the file system name is available as ``file_system_props["name"]``.
     """
+
     def __init__(self):
         self.name = None
         self.last_modified = None
@@ -57,12 +58,16 @@ class FileSystemProperties(object):
         self.has_immutability_policy = None
         self.has_legal_hold = None
         self.metadata = None
+        self.deleted = None
+        self.deleted_version = None
 
     @classmethod
     def _from_generated(cls, generated):
         props = cls()
         props.name = generated.name
         props.last_modified = generated.properties.last_modified
+        props.deleted = generated.deleted
+        props.deleted_version = generated.version
         props.etag = generated.properties.etag
         props.lease = LeaseProperties._from_generated(generated)  # pylint: disable=protected-access
         props.public_access = PublicAccess._from_generated(  # pylint: disable=protected-access
@@ -130,34 +135,17 @@ class DirectoryProperties(DictMixin):
         before being permanently deleted by the service.
     :var ~azure.storage.filedatalake.ContentSettings content_settings:
     """
+
     def __init__(self, **kwargs):
-        super(DirectoryProperties, self).__init__(
-            **kwargs
-        )
-        self.name = None
-        self.etag = None
-        self.deleted = None
-        self.metadata = None
-        self.lease = None
-        self.last_modified = None
-        self.creation_time = None
+        self.name = kwargs.get('name')
+        self.etag = kwargs.get('ETag')
+        self.deleted = False
+        self.metadata = kwargs.get('metadata')
+        self.lease = LeaseProperties(**kwargs)
+        self.last_modified = kwargs.get('Last-Modified')
+        self.creation_time = kwargs.get('x-ms-creation-time')
         self.deleted_time = None
         self.remaining_retention_days = None
-
-    @classmethod
-    def _from_blob_properties(cls, blob_properties):
-        directory_props = DirectoryProperties()
-        directory_props.name = blob_properties.name
-        directory_props.etag = blob_properties.etag
-        directory_props.deleted = blob_properties.deleted
-        directory_props.metadata = blob_properties.metadata
-        directory_props.lease = blob_properties.lease
-        directory_props.lease.__class__ = LeaseProperties
-        directory_props.last_modified = blob_properties.last_modified
-        directory_props.creation_time = blob_properties.creation_time
-        directory_props.deleted_time = blob_properties.deleted_time
-        directory_props.remaining_retention_days = blob_properties.remaining_retention_days
-        return directory_props
 
 
 class FileProperties(DictMixin):
@@ -178,38 +166,20 @@ class FileProperties(DictMixin):
         before being permanently deleted by the service.
     :var ~azure.storage.filedatalake.ContentSettings content_settings:
     """
-    def __init__(self, **kwargs):
-        super(FileProperties, self).__init__(
-            **kwargs
-        )
-        self.name = None
-        self.etag = None
-        self.deleted = None
-        self.metadata = None
-        self.lease = None
-        self.last_modified = None
-        self.creation_time = None
-        self.size = None
-        self.deleted_time = None
-        self.remaining_retention_days = None
-        self.content_settings = None
 
-    @classmethod
-    def _from_blob_properties(cls, blob_properties):
-        file_props = FileProperties()
-        file_props.name = blob_properties.name
-        file_props.etag = blob_properties.etag
-        file_props.deleted = blob_properties.deleted
-        file_props.metadata = blob_properties.metadata
-        file_props.lease = blob_properties.lease
-        file_props.lease.__class__ = LeaseProperties
-        file_props.last_modified = blob_properties.last_modified
-        file_props.creation_time = blob_properties.creation_time
-        file_props.size = blob_properties.size
-        file_props.deleted_time = blob_properties.deleted_time
-        file_props.remaining_retention_days = blob_properties.remaining_retention_days
-        file_props.content_settings = blob_properties.content_settings
-        return file_props
+    def __init__(self, **kwargs):
+        self.name = kwargs.get('name')
+        self.etag = kwargs.get('ETag')
+        self.deleted = False
+        self.metadata = kwargs.get('metadata')
+        self.lease = LeaseProperties(**kwargs)
+        self.last_modified = kwargs.get('Last-Modified')
+        self.creation_time = kwargs.get('x-ms-creation-time')
+        self.size = kwargs.get('Content-Length')
+        self.deleted_time = None
+        self.expiry_time = kwargs.get("x-ms-expiry-time")
+        self.remaining_retention_days = None
+        self.content_settings = ContentSettings(**kwargs)
 
 
 class PathProperties(object):
@@ -229,6 +199,7 @@ class PathProperties(object):
         conditionally.
     :ivar content_length: the size of file if the path is a file.
     """
+
     def __init__(self, **kwargs):
         super(PathProperties, self).__init__(
             **kwargs
@@ -249,73 +220,11 @@ class PathProperties(object):
         path_prop.owner = generated.owner
         path_prop.group = generated.group
         path_prop.permissions = generated.permissions
-        path_prop.last_modified = generated.last_modified
+        path_prop.last_modified = datetime.strptime(generated.last_modified, "%a, %d %b %Y %H:%M:%S %Z")
         path_prop.is_directory = bool(generated.is_directory)
         path_prop.etag = generated.additional_properties.get('etag')
         path_prop.content_length = generated.content_length
         return path_prop
-
-
-class PathPropertiesPaged(PageIterator):
-    """An Iterable of Path properties.
-
-    :ivar str path: Filters the results to return only paths under the specified path.
-    :ivar int results_per_page: The maximum number of results retrieved per API call.
-    :ivar str continuation_token: The continuation token to retrieve the next page of results.
-    :ivar list(~azure.storage.filedatalake.PathProperties) current_page: The current page of listed results.
-
-    :param callable command: Function to retrieve the next page of items.
-    :param str path: Filters the results to return only paths under the specified path.
-    :param int max_results: The maximum number of psths to retrieve per
-        call.
-    :param str continuation_token: An opaque continuation token.
-    """
-    def __init__(
-            self, command,
-            recursive,
-            path=None,
-            max_results=None,
-            continuation_token=None,
-            upn=None):
-        super(PathPropertiesPaged, self).__init__(
-            get_next=self._get_next_cb,
-            extract_data=self._extract_data_cb,
-            continuation_token=continuation_token or ""
-        )
-        self._command = command
-        self.recursive = recursive
-        self.results_per_page = max_results
-        self.path = path
-        self.upn = upn
-        self.current_page = None
-        self.path_list = None
-
-    def _get_next_cb(self, continuation_token):
-        try:
-            return self._command(
-                self.recursive,
-                continuation=continuation_token or None,
-                path=self.path,
-                max_results=self.results_per_page,
-                upn=self.upn,
-                cls=return_headers_and_deserialized_path_list)
-        except StorageErrorException as error:
-            process_storage_error(error)
-
-    def _extract_data_cb(self, get_next_return):
-        self.path_list, self._response = get_next_return
-        self.current_page = [self._build_item(item) for item in self.path_list]
-
-        return self._response['continuation'] or None, self.current_page
-
-    @staticmethod
-    def _build_item(item):
-        if isinstance(item, PathProperties):
-            return item
-        if isinstance(item, Path):
-            path = PathProperties._from_generated(item)  # pylint: disable=protected-access
-            return path
-        return item
 
 
 class LeaseProperties(BlobLeaseProperties):
@@ -328,10 +237,6 @@ class LeaseProperties(BlobLeaseProperties):
     :ivar str duration:
         When a file is leased, specifies whether the lease is of infinite or fixed duration.
     """
-    def __init__(self):
-        self.status = None
-        self.state = None
-        self.duration = None
 
 
 class ContentSettings(BlobContentSettings):
@@ -354,7 +259,7 @@ class ContentSettings(BlobContentSettings):
     :ivar str cache_control:
         If the cache_control has previously been set for
         the file, that value is stored.
-    :ivar str content_md5:
+    :ivar bytearray content_md5:
         If the content_md5 has been set for the file, this response
         header is stored so that the client can check for message content
         integrity.
@@ -375,11 +280,12 @@ class ContentSettings(BlobContentSettings):
     :keyword str cache_control:
         If the cache_control has previously been set for
         the file, that value is stored.
-    :keyword str content_md5:
+    :keyword bytearray content_md5:
         If the content_md5 has been set for the file, this response
         header is stored so that the client can check for message content
         integrity.
     """
+
     def __init__(
             self, **kwargs):
         super(ContentSettings, self).__init__(
@@ -396,7 +302,7 @@ class AccountSasPermissions(BlobAccountSasPermissions):
         )
 
 
-class FileSystemSasPermissions(ContainerSasPermissions):
+class FileSystemSasPermissions(object):
     """FileSystemSasPermissions class to be used with the
     :func:`~azure.storage.filedatalake.generate_file_system_sas` function.
 
@@ -408,15 +314,72 @@ class FileSystemSasPermissions(ContainerSasPermissions):
         Delete the file system.
     :param bool list:
         List paths in the file system.
+    :keyword bool move:
+        Move any file in the directory to a new location.
+        Note the move operation can optionally be restricted to the child file or directory owner or
+        the parent directory owner if the saoid parameter is included in the token and the sticky bit is set
+        on the parent directory.
+    :keyword bool execute:
+        Get the status (system defined properties) and ACL of any file in the directory.
+        If the caller is the owner, set access control on any file in the directory.
+    :keyword bool manage_ownership:
+        Allows the user to set owner, owning group, or act as the owner when renaming or deleting a file or directory
+        within a folder that has the sticky bit set.
+    :keyword bool manage_access_control:
+         Allows the user to set permissions and POSIX ACLs on files and directories.
     """
-    def __init__(self, read=False, write=False, delete=False, list=False  # pylint: disable=redefined-builtin
-                 ):
-        super(FileSystemSasPermissions, self).__init__(
-            read=read, write=write, delete=delete, list=list
-        )
+
+    def __init__(self, read=False, write=False, delete=False, list=False,  # pylint: disable=redefined-builtin
+                 **kwargs):
+        self.read = read
+        self.write = write
+        self.delete = delete
+        self.list = list
+        self.move = kwargs.pop('move', None)
+        self.execute = kwargs.pop('execute', None)
+        self.manage_ownership = kwargs.pop('manage_ownership', None)
+        self.manage_access_control = kwargs.pop('manage_access_control', None)
+        self._str = (('r' if self.read else '') +
+                     ('w' if self.write else '') +
+                     ('d' if self.delete else '') +
+                     ('l' if self.list else '') +
+                     ('m' if self.move else '') +
+                     ('e' if self.execute else '') +
+                     ('o' if self.manage_ownership else '') +
+                     ('p' if self.manage_access_control else ''))
+
+    def __str__(self):
+        return self._str
+
+    @classmethod
+    def from_string(cls, permission):
+        """Create a FileSystemSasPermissions from a string.
+
+        To specify read, write, or delete permissions you need only to
+        include the first letter of the word in the string. E.g. For read and
+        write permissions, you would provide a string "rw".
+
+        :param str permission: The string which dictates the read, add, create,
+            write, or delete permissions.
+        :return: A FileSystemSasPermissions object
+        :rtype: ~azure.storage.fildatalake.FileSystemSasPermissions
+        """
+        p_read = 'r' in permission
+        p_write = 'w' in permission
+        p_delete = 'd' in permission
+        p_list = 'l' in permission
+        p_move = 'm' in permission
+        p_execute = 'e' in permission
+        p_manage_ownership = 'o' in permission
+        p_manage_access_control = 'p' in permission
+
+        parsed = cls(read=p_read, write=p_write, delete=p_delete,
+                     list=p_list, move=p_move, execute=p_execute, manage_ownership=p_manage_ownership,
+                     manage_access_control=p_manage_access_control)
+        return parsed
 
 
-class DirectorySasPermissions(BlobSasPermissions):
+class DirectorySasPermissions(object):
     """DirectorySasPermissions class to be used with the
     :func:`~azure.storage.filedatalake.generate_directory_sas` function.
 
@@ -428,16 +391,77 @@ class DirectorySasPermissions(BlobSasPermissions):
         Create or write content, properties, metadata. Lease the directory.
     :param bool delete:
         Delete the directory.
+    :keyword bool list:
+        List any files in the directory. Implies Execute.
+    :keyword bool move:
+        Move any file in the directory to a new location.
+        Note the move operation can optionally be restricted to the child file or directory owner or
+        the parent directory owner if the saoid parameter is included in the token and the sticky bit is set
+        on the parent directory.
+    :keyword bool execute:
+        Get the status (system defined properties) and ACL of any file in the directory.
+        If the caller is the owner, set access control on any file in the directory.
+    :keyword bool manage_ownership:
+        Allows the user to set owner, owning group, or act as the owner when renaming or deleting a file or directory
+        within a folder that has the sticky bit set.
+    :keyword bool manage_access_control:
+         Allows the user to set permissions and POSIX ACLs on files and directories.
     """
+
     def __init__(self, read=False, create=False, write=False,
-                 delete=False):
-        super(DirectorySasPermissions, self).__init__(
-            read=read, create=create, write=write,
-            delete=delete
-        )
+                 delete=False, **kwargs):
+        self.read = read
+        self.create = create
+        self.write = write
+        self.delete = delete
+        self.list = kwargs.pop('list', None)
+        self.move = kwargs.pop('move', None)
+        self.execute = kwargs.pop('execute', None)
+        self.manage_ownership = kwargs.pop('manage_ownership', None)
+        self.manage_access_control = kwargs.pop('manage_access_control', None)
+        self._str = (('r' if self.read else '') +
+                     ('c' if self.create else '') +
+                     ('w' if self.write else '') +
+                     ('d' if self.delete else '') +
+                     ('l' if self.list else '') +
+                     ('m' if self.move else '') +
+                     ('e' if self.execute else '') +
+                     ('o' if self.manage_ownership else '') +
+                     ('p' if self.manage_access_control else ''))
+
+    def __str__(self):
+        return self._str
+
+    @classmethod
+    def from_string(cls, permission):
+        """Create a DirectorySasPermissions from a string.
+
+        To specify read, create, write, or delete permissions you need only to
+        include the first letter of the word in the string. E.g. For read and
+        write permissions, you would provide a string "rw".
+
+        :param str permission: The string which dictates the read, add, create,
+            write, or delete permissions.
+        :return: A DirectorySasPermissions object
+        :rtype: ~azure.storage.filedatalake.DirectorySasPermissions
+        """
+        p_read = 'r' in permission
+        p_create = 'c' in permission
+        p_write = 'w' in permission
+        p_delete = 'd' in permission
+        p_list = 'l' in permission
+        p_move = 'm' in permission
+        p_execute = 'e' in permission
+        p_manage_ownership = 'o' in permission
+        p_manage_access_control = 'p' in permission
+
+        parsed = cls(read=p_read, create=p_create, write=p_write, delete=p_delete,
+                     list=p_list, move=p_move, execute=p_execute, manage_ownership=p_manage_ownership,
+                     manage_access_control=p_manage_access_control)
+        return parsed
 
 
-class FileSasPermissions(BlobSasPermissions):
+class FileSasPermissions(object):
     """FileSasPermissions class to be used with the
     :func:`~azure.storage.filedatalake.generate_file_sas` function.
 
@@ -450,13 +474,69 @@ class FileSasPermissions(BlobSasPermissions):
         Create or write content, properties, metadata. Lease the file.
     :param bool delete:
         Delete the file.
+    :keyword bool move:
+        Move any file in the directory to a new location.
+        Note the move operation can optionally be restricted to the child file or directory owner or
+        the parent directory owner if the saoid parameter is included in the token and the sticky bit is set
+        on the parent directory.
+    :keyword bool execute:
+        Get the status (system defined properties) and ACL of any file in the directory.
+        If the caller is the owner, set access control on any file in the directory.
+    :keyword bool manage_ownership:
+        Allows the user to set owner, owning group, or act as the owner when renaming or deleting a file or directory
+        within a folder that has the sticky bit set.
+    :keyword bool manage_access_control:
+         Allows the user to set permissions and POSIX ACLs on files and directories.
     """
-    def __init__(self, read=False, create=False, write=False,
-                 delete=False):
-        super(FileSasPermissions, self).__init__(
-            read=read, create=create, write=write,
-            delete=delete
-        )
+
+    def __init__(self, read=False, create=False, write=False, delete=False, **kwargs):
+        self.read = read
+        self.create = create
+        self.write = write
+        self.delete = delete
+        self.list = list
+        self.move = kwargs.pop('move', None)
+        self.execute = kwargs.pop('execute', None)
+        self.manage_ownership = kwargs.pop('manage_ownership', None)
+        self.manage_access_control = kwargs.pop('manage_access_control', None)
+        self._str = (('r' if self.read else '') +
+                     ('c' if self.create else '') +
+                     ('w' if self.write else '') +
+                     ('d' if self.delete else '') +
+                     ('m' if self.move else '') +
+                     ('e' if self.execute else '') +
+                     ('o' if self.manage_ownership else '') +
+                     ('p' if self.manage_access_control else ''))
+
+    def __str__(self):
+        return self._str
+
+    @classmethod
+    def from_string(cls, permission):
+        """Create a FileSasPermissions from a string.
+
+        To specify read, write, or delete permissions you need only to
+        include the first letter of the word in the string. E.g. For read and
+        write permissions, you would provide a string "rw".
+
+        :param str permission: The string which dictates the read, add, create,
+            write, or delete permissions.
+        :return: A FileSasPermissions object
+        :rtype: ~azure.storage.fildatalake.FileSasPermissions
+        """
+        p_read = 'r' in permission
+        p_create = 'c' in permission
+        p_write = 'w' in permission
+        p_delete = 'd' in permission
+        p_move = 'm' in permission
+        p_execute = 'e' in permission
+        p_manage_ownership = 'o' in permission
+        p_manage_access_control = 'p' in permission
+
+        parsed = cls(read=p_read, create=p_create, write=p_write, delete=p_delete,
+                     move=p_move, execute=p_execute, manage_ownership=p_manage_ownership,
+                     manage_access_control=p_manage_access_control)
+        return parsed
 
 
 class AccessPolicy(BlobAccessPolicy):
@@ -502,6 +582,7 @@ class AccessPolicy(BlobAccessPolicy):
         be UTC.
     :paramtype start: ~datetime.datetime or str
     """
+
     def __init__(self, permission=None, expiry=None, **kwargs):
         super(AccessPolicy, self).__init__(
             permission=permission, expiry=expiry, start=kwargs.pop('start', None)
@@ -521,6 +602,7 @@ class ResourceTypes(BlobResourceTypes):
         Access to object-level APIs for
         files(e.g. Create File, etc.)
     """
+
     def __init__(self, service=False, file_system=False, object=False  # pylint: disable=redefined-builtin
                  ):
         super(ResourceTypes, self).__init__(service=service, container=file_system, object=object)
@@ -549,6 +631,7 @@ class UserDelegationKey(BlobUserDelegationKey):
     :ivar str value:
         The user delegation key.
     """
+
     @classmethod
     def _from_generated(cls, generated):
         delegation_key = cls()
@@ -627,6 +710,28 @@ class DelimitedTextDialect(BlobDelimitedTextDialect):
     """
 
 
+class ArrowDialect(BlobArrowDialect):
+    """field of an arrow schema.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param str type: Required.
+    :keyword str name: The name of the field.
+    :keyword int precision: The precision of the field.
+    :keyword int scale: The scale of the field.
+    """
+
+
+class ArrowType(str, Enum):
+
+    INT64 = "int64"
+    BOOL = "bool"
+    TIMESTAMP_MS = "timestamp[ms]"
+    STRING = "string"
+    DOUBLE = "double"
+    DECIMAL = 'decimal'
+
+
 class DataLakeFileQueryError(object):
     """The error happened during quick query operation.
 
@@ -641,8 +746,84 @@ class DataLakeFileQueryError(object):
     :ivar int position:
         The blob offset at which the error occurred.
     """
+
     def __init__(self, error=None, is_fatal=False, description=None, position=None):
         self.error = error
         self.is_fatal = is_fatal
         self.description = description
         self.position = position
+
+
+class AccessControlChangeCounters(DictMixin):
+    """
+    AccessControlChangeCounters contains counts of operations that change Access Control Lists recursively.
+
+    :ivar int directories_successful:
+        Number of directories where Access Control List has been updated successfully.
+    :ivar int files_successful:
+        Number of files where Access Control List has been updated successfully.
+    :ivar int failure_count:
+        Number of paths where Access Control List update has failed.
+    """
+
+    def __init__(self, directories_successful, files_successful, failure_count):
+        self.directories_successful = directories_successful
+        self.files_successful = files_successful
+        self.failure_count = failure_count
+
+
+class AccessControlChangeResult(DictMixin):
+    """
+    AccessControlChangeResult contains result of operations that change Access Control Lists recursively.
+
+    :ivar ~azure.storage.filedatalake.AccessControlChangeCounters counters:
+        Contains counts of paths changed from start of the operation.
+    :ivar str continuation:
+        Optional continuation token.
+        Value is present when operation is split into multiple batches and can be used to resume progress.
+    """
+
+    def __init__(self, counters, continuation):
+        self.counters = counters
+        self.continuation = continuation
+
+
+class AccessControlChangeFailure(DictMixin):
+    """
+    Represents an entry that failed to update Access Control List.
+
+    :ivar str name:
+        Name of the entry.
+    :ivar bool is_directory:
+        Indicates whether the entry is a directory.
+    :ivar str error_message:
+        Indicates the reason why the entry failed to update.
+    """
+
+    def __init__(self, name, is_directory, error_message):
+        self.name = name
+        self.is_directory = is_directory
+        self.error_message = error_message
+
+
+class AccessControlChanges(DictMixin):
+    """
+    AccessControlChanges contains batch and cumulative counts of operations
+    that change Access Control Lists recursively.
+    Additionally it exposes path entries that failed to update while these operations progress.
+
+    :ivar ~azure.storage.filedatalake.AccessControlChangeCounters batch_counters:
+        Contains counts of paths changed within single batch.
+    :ivar ~azure.storage.filedatalake.AccessControlChangeCounters aggregate_counters:
+        Contains counts of paths changed from start of the operation.
+    :ivar list(~azure.storage.filedatalake.AccessControlChangeFailure) batch_failures:
+        List of path entries that failed to update Access Control List within single batch.
+    :ivar str continuation:
+        An opaque continuation token that may be used to resume the operations in case of failures.
+    """
+
+    def __init__(self, batch_counters, aggregate_counters, batch_failures, continuation):
+        self.batch_counters = batch_counters
+        self.aggregate_counters = aggregate_counters
+        self.batch_failures = batch_failures
+        self.continuation = continuation

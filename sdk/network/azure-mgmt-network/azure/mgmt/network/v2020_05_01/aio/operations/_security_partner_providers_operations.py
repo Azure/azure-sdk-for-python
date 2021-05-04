@@ -16,7 +16,7 @@ from azure.core.polling import AsyncLROPoller, AsyncNoPolling, AsyncPollingMetho
 from azure.mgmt.core.exceptions import ARMErrorFormat
 from azure.mgmt.core.polling.async_arm_polling import AsyncARMPolling
 
-from ... import models
+from ... import models as _models
 
 T = TypeVar('T')
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]]
@@ -35,7 +35,7 @@ class SecurityPartnerProvidersOperations:
     :param deserializer: An object model deserializer.
     """
 
-    models = models
+    models = _models
 
     def __init__(self, client, config, serializer, deserializer) -> None:
         self._client = client
@@ -131,7 +131,13 @@ class SecurityPartnerProvidersOperations:
             if cls:
                 return cls(pipeline_response, None, {})
 
-        if polling is True: polling_method = AsyncARMPolling(lro_delay, lro_options={'final-state-via': 'location'},  **kwargs)
+        path_format_arguments = {
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
+            'securityPartnerProviderName': self._serialize.url("security_partner_provider_name", security_partner_provider_name, 'str'),
+            'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
+        }
+
+        if polling is True: polling_method = AsyncARMPolling(lro_delay, lro_options={'final-state-via': 'location'}, path_format_arguments=path_format_arguments,  **kwargs)
         elif polling is False: polling_method = AsyncNoPolling()
         else: polling_method = polling
         if cont_token:
@@ -150,7 +156,7 @@ class SecurityPartnerProvidersOperations:
         resource_group_name: str,
         security_partner_provider_name: str,
         **kwargs
-    ) -> "models.SecurityPartnerProvider":
+    ) -> "_models.SecurityPartnerProvider":
         """Gets the specified Security Partner Provider.
 
         :param resource_group_name: The name of the resource group.
@@ -162,7 +168,7 @@ class SecurityPartnerProvidersOperations:
         :rtype: ~azure.mgmt.network.v2020_05_01.models.SecurityPartnerProvider
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.SecurityPartnerProvider"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.SecurityPartnerProvider"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -207,10 +213,10 @@ class SecurityPartnerProvidersOperations:
         self,
         resource_group_name: str,
         security_partner_provider_name: str,
-        parameters: "models.SecurityPartnerProvider",
+        parameters: "_models.SecurityPartnerProvider",
         **kwargs
-    ) -> "models.SecurityPartnerProvider":
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.SecurityPartnerProvider"]
+    ) -> "_models.SecurityPartnerProvider":
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.SecurityPartnerProvider"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -264,9 +270,9 @@ class SecurityPartnerProvidersOperations:
         self,
         resource_group_name: str,
         security_partner_provider_name: str,
-        parameters: "models.SecurityPartnerProvider",
+        parameters: "_models.SecurityPartnerProvider",
         **kwargs
-    ) -> AsyncLROPoller["models.SecurityPartnerProvider"]:
+    ) -> AsyncLROPoller["_models.SecurityPartnerProvider"]:
         """Creates or updates the specified Security Partner Provider.
 
         :param resource_group_name: The name of the resource group.
@@ -287,7 +293,7 @@ class SecurityPartnerProvidersOperations:
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         polling = kwargs.pop('polling', True)  # type: Union[bool, AsyncPollingMethod]
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.SecurityPartnerProvider"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.SecurityPartnerProvider"]
         lro_delay = kwargs.pop(
             'polling_interval',
             self._config.polling_interval
@@ -312,7 +318,13 @@ class SecurityPartnerProvidersOperations:
                 return cls(pipeline_response, deserialized, {})
             return deserialized
 
-        if polling is True: polling_method = AsyncARMPolling(lro_delay, lro_options={'final-state-via': 'azure-async-operation'},  **kwargs)
+        path_format_arguments = {
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
+            'securityPartnerProviderName': self._serialize.url("security_partner_provider_name", security_partner_provider_name, 'str'),
+            'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
+        }
+
+        if polling is True: polling_method = AsyncARMPolling(lro_delay, lro_options={'final-state-via': 'azure-async-operation'}, path_format_arguments=path_format_arguments,  **kwargs)
         elif polling is False: polling_method = AsyncNoPolling()
         else: polling_method = polling
         if cont_token:
@@ -330,9 +342,9 @@ class SecurityPartnerProvidersOperations:
         self,
         resource_group_name: str,
         security_partner_provider_name: str,
-        parameters: "models.TagsObject",
+        parameters: "_models.TagsObject",
         **kwargs
-    ) -> "models.SecurityPartnerProvider":
+    ) -> "_models.SecurityPartnerProvider":
         """Updates tags of a Security Partner Provider resource.
 
         :param resource_group_name: The name of the resource group.
@@ -346,7 +358,7 @@ class SecurityPartnerProvidersOperations:
         :rtype: ~azure.mgmt.network.v2020_05_01.models.SecurityPartnerProvider
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.SecurityPartnerProvider"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.SecurityPartnerProvider"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -396,7 +408,7 @@ class SecurityPartnerProvidersOperations:
         self,
         resource_group_name: str,
         **kwargs
-    ) -> AsyncIterable["models.SecurityPartnerProviderListResult"]:
+    ) -> AsyncIterable["_models.SecurityPartnerProviderListResult"]:
         """Lists all Security Partner Providers in a resource group.
 
         :param resource_group_name: The name of the resource group.
@@ -406,7 +418,7 @@ class SecurityPartnerProvidersOperations:
         :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.network.v2020_05_01.models.SecurityPartnerProviderListResult]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.SecurityPartnerProviderListResult"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.SecurityPartnerProviderListResult"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -465,7 +477,7 @@ class SecurityPartnerProvidersOperations:
     def list(
         self,
         **kwargs
-    ) -> AsyncIterable["models.SecurityPartnerProviderListResult"]:
+    ) -> AsyncIterable["_models.SecurityPartnerProviderListResult"]:
         """Gets all the Security Partner Providers in a subscription.
 
         :keyword callable cls: A custom type or function that will be passed the direct response
@@ -473,7 +485,7 @@ class SecurityPartnerProvidersOperations:
         :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.network.v2020_05_01.models.SecurityPartnerProviderListResult]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.SecurityPartnerProviderListResult"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.SecurityPartnerProviderListResult"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }

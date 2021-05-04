@@ -16,7 +16,7 @@ from azure.core.polling import AsyncLROPoller, AsyncNoPolling, AsyncPollingMetho
 from azure.mgmt.core.exceptions import ARMErrorFormat
 from azure.mgmt.core.polling.async_arm_polling import AsyncARMPolling
 
-from ... import models
+from ... import models as _models
 
 T = TypeVar('T')
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]]
@@ -35,7 +35,7 @@ class PrivateLinkScopesOperations:
     :param deserializer: An object model deserializer.
     """
 
-    models = models
+    models = _models
 
     def __init__(self, client, config, serializer, deserializer) -> None:
         self._client = client
@@ -46,7 +46,7 @@ class PrivateLinkScopesOperations:
     def list(
         self,
         **kwargs
-    ) -> AsyncIterable["models.AzureMonitorPrivateLinkScopeListResult"]:
+    ) -> AsyncIterable["_models.AzureMonitorPrivateLinkScopeListResult"]:
         """Gets a list of all Azure Monitor PrivateLinkScopes within a subscription.
 
         :keyword callable cls: A custom type or function that will be passed the direct response
@@ -54,7 +54,7 @@ class PrivateLinkScopesOperations:
         :rtype: ~azure.core.async_paging.AsyncItemPaged[~$(python-base-namespace).v2019_10_17.models.AzureMonitorPrivateLinkScopeListResult]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.AzureMonitorPrivateLinkScopeListResult"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.AzureMonitorPrivateLinkScopeListResult"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -113,7 +113,7 @@ class PrivateLinkScopesOperations:
         self,
         resource_group_name: str,
         **kwargs
-    ) -> AsyncIterable["models.AzureMonitorPrivateLinkScopeListResult"]:
+    ) -> AsyncIterable["_models.AzureMonitorPrivateLinkScopeListResult"]:
         """Gets a list of Azure Monitor PrivateLinkScopes within a resource group.
 
         :param resource_group_name: The name of the resource group.
@@ -123,7 +123,7 @@ class PrivateLinkScopesOperations:
         :rtype: ~azure.core.async_paging.AsyncItemPaged[~$(python-base-namespace).v2019_10_17.models.AzureMonitorPrivateLinkScopeListResult]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.AzureMonitorPrivateLinkScopeListResult"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.AzureMonitorPrivateLinkScopeListResult"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -265,7 +265,13 @@ class PrivateLinkScopesOperations:
             if cls:
                 return cls(pipeline_response, None, {})
 
-        if polling is True: polling_method = AsyncARMPolling(lro_delay,  **kwargs)
+        path_format_arguments = {
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
+            'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
+            'scopeName': self._serialize.url("scope_name", scope_name, 'str'),
+        }
+
+        if polling is True: polling_method = AsyncARMPolling(lro_delay, path_format_arguments=path_format_arguments,  **kwargs)
         elif polling is False: polling_method = AsyncNoPolling()
         else: polling_method = polling
         if cont_token:
@@ -284,7 +290,7 @@ class PrivateLinkScopesOperations:
         resource_group_name: str,
         scope_name: str,
         **kwargs
-    ) -> "models.AzureMonitorPrivateLinkScope":
+    ) -> "_models.AzureMonitorPrivateLinkScope":
         """Returns a Azure Monitor PrivateLinkScope.
 
         :param resource_group_name: The name of the resource group.
@@ -296,7 +302,7 @@ class PrivateLinkScopesOperations:
         :rtype: ~$(python-base-namespace).v2019_10_17.models.AzureMonitorPrivateLinkScope
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.AzureMonitorPrivateLinkScope"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.AzureMonitorPrivateLinkScope"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -341,9 +347,9 @@ class PrivateLinkScopesOperations:
         self,
         resource_group_name: str,
         scope_name: str,
-        azure_monitor_private_link_scope_payload: "models.AzureMonitorPrivateLinkScope",
+        azure_monitor_private_link_scope_payload: "_models.AzureMonitorPrivateLinkScope",
         **kwargs
-    ) -> "models.AzureMonitorPrivateLinkScope":
+    ) -> "_models.AzureMonitorPrivateLinkScope":
         """Creates (or updates) a Azure Monitor PrivateLinkScope. Note: You cannot specify a different
         value for InstrumentationKey nor AppId in the Put operation.
 
@@ -359,7 +365,7 @@ class PrivateLinkScopesOperations:
         :rtype: ~$(python-base-namespace).v2019_10_17.models.AzureMonitorPrivateLinkScope
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.AzureMonitorPrivateLinkScope"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.AzureMonitorPrivateLinkScope"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -413,9 +419,9 @@ class PrivateLinkScopesOperations:
         self,
         resource_group_name: str,
         scope_name: str,
-        private_link_scope_tags: "models.TagsResource",
+        private_link_scope_tags: "_models.TagsResource",
         **kwargs
-    ) -> "models.AzureMonitorPrivateLinkScope":
+    ) -> "_models.AzureMonitorPrivateLinkScope":
         """Updates an existing PrivateLinkScope's tags. To update other fields use the CreateOrUpdate
         method.
 
@@ -431,7 +437,7 @@ class PrivateLinkScopesOperations:
         :rtype: ~$(python-base-namespace).v2019_10_17.models.AzureMonitorPrivateLinkScope
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.AzureMonitorPrivateLinkScope"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.AzureMonitorPrivateLinkScope"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }

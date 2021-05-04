@@ -15,39 +15,27 @@ interactions:
       DataServiceVersion:
       - '3.0'
       Date:
-<<<<<<< HEAD
-      - Wed, 02 Sep 2020 21:16:48 GMT
+      - Fri, 18 Dec 2020 17:28:44 GMT
       User-Agent:
-      - azsdk-python-data-tables/12.0.0b1 Python/3.8.4 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-data-tables/12.0.0b4 Python/3.9.0rc1 (Windows-10-10.0.19041-SP0)
       x-ms-date:
-      - Wed, 02 Sep 2020 21:16:48 GMT
-=======
-      - Fri, 28 Aug 2020 15:07:23 GMT
-      User-Agent:
-      - azsdk-python-data-tables/2019-07-07 Python/3.8.4 (Windows-10-10.0.19041-SP0)
-      x-ms-date:
-      - Fri, 28 Aug 2020 15:07:23 GMT
->>>>>>> d32cfe4cfd2236cef594b5f013a80e80e9becdde
+      - Fri, 18 Dec 2020 17:28:44 GMT
       x-ms-version:
       - '2019-02-02'
     method: POST
-    uri: https://storagename.table.core.windows.net/Tables
+    uri: https://fake_table_account.table.core.windows.net/Tables
   response:
     body:
-      string: '{"odata.metadata":"https://storagename.table.core.windows.net/$metadata#Tables/@Element","TableName":"pytablesynca68e0b85"}'
+      string: '{"odata.metadata":"https://fake_table_account.table.core.windows.net/$metadata#Tables/@Element","TableName":"pytablesynca68e0b85"}'
     headers:
       cache-control:
       - no-cache
       content-type:
       - application/json;odata=minimalmetadata;streaming=true;charset=utf-8
       date:
-<<<<<<< HEAD
-      - Wed, 02 Sep 2020 21:16:47 GMT
-=======
-      - Fri, 28 Aug 2020 15:07:23 GMT
->>>>>>> d32cfe4cfd2236cef594b5f013a80e80e9becdde
+      - Fri, 18 Dec 2020 17:28:44 GMT
       location:
-      - https://storagename.table.core.windows.net/Tables('pytablesynca68e0b85')
+      - https://fake_table_account.table.core.windows.net/Tables('pytablesynca68e0b85')
       server:
       - Windows-Azure-Table/1.0 Microsoft-HTTPAPI/2.0
       transfer-encoding:
@@ -71,79 +59,25 @@ interactions:
       DataServiceVersion:
       - '3.0'
       Date:
-<<<<<<< HEAD
-      - Wed, 02 Sep 2020 21:16:48 GMT
+      - Fri, 18 Dec 2020 17:28:45 GMT
       User-Agent:
-      - azsdk-python-data-tables/12.0.0b1 Python/3.8.4 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-data-tables/12.0.0b4 Python/3.9.0rc1 (Windows-10-10.0.19041-SP0)
       x-ms-date:
-      - Wed, 02 Sep 2020 21:16:48 GMT
-=======
-      - Fri, 28 Aug 2020 15:07:23 GMT
-      User-Agent:
-      - azsdk-python-data-tables/2019-07-07 Python/3.8.4 (Windows-10-10.0.19041-SP0)
-      x-ms-date:
-      - Fri, 28 Aug 2020 15:07:23 GMT
->>>>>>> d32cfe4cfd2236cef594b5f013a80e80e9becdde
+      - Fri, 18 Dec 2020 17:28:45 GMT
       x-ms-version:
       - '2019-02-02'
     method: GET
-    uri: https://storagename.table.core.windows.net/Tables
+    uri: https://fake_table_account.table.core.windows.net/Tables
   response:
     body:
-      string: '{"odata.metadata":"https://storagename.table.core.windows.net/$metadata#Tables","value":[{"TableName":"pytablesynca68e0b85"}]}'
+      string: '{"odata.metadata":"https://fake_table_account.table.core.windows.net/$metadata#Tables","value":[{"TableName":"listtable0cac14c3"},{"TableName":"listtable1cac14c3"},{"TableName":"listtable2cac14c3"},{"TableName":"listtable3cac14c3"},{"TableName":"pytablesynca68e0b85"}]}'
     headers:
       cache-control:
       - no-cache
       content-type:
       - application/json;odata=minimalmetadata;streaming=true;charset=utf-8
       date:
-<<<<<<< HEAD
-      - Wed, 02 Sep 2020 21:16:47 GMT
-=======
-      - Fri, 28 Aug 2020 15:07:23 GMT
-      server:
-      - Windows-Azure-Table/1.0 Microsoft-HTTPAPI/2.0
-      transfer-encoding:
-      - chunked
-      x-content-type-options:
-      - nosniff
-      x-ms-version:
-      - '2019-07-07'
-    status:
-      code: 200
-      message: OK
-- request:
-    body: null
-    headers:
-      Accept:
-      - application/json;odata=minimalmetadata
-      Accept-Encoding:
-      - gzip, deflate
-      Connection:
-      - keep-alive
-      DataServiceVersion:
-      - '3.0'
-      Date:
-      - Fri, 28 Aug 2020 15:07:23 GMT
-      User-Agent:
-      - azsdk-python-data-tables/2019-07-07 Python/3.8.4 (Windows-10-10.0.19041-SP0)
-      x-ms-date:
-      - Fri, 28 Aug 2020 15:07:23 GMT
-      x-ms-version:
-      - '2019-07-07'
-    method: GET
-    uri: https://storagename.table.core.windows.net/Tables
-  response:
-    body:
-      string: '{"odata.metadata":"https://storagename.table.core.windows.net/$metadata#Tables","value":[{"TableName":"pytablesynca68e0b85"}]}'
-    headers:
-      cache-control:
-      - no-cache
-      content-type:
-      - application/json;odata=minimalmetadata;streaming=true;charset=utf-8
-      date:
-      - Fri, 28 Aug 2020 15:07:23 GMT
->>>>>>> d32cfe4cfd2236cef594b5f013a80e80e9becdde
+      - Fri, 18 Dec 2020 17:28:44 GMT
       server:
       - Windows-Azure-Table/1.0 Microsoft-HTTPAPI/2.0
       transfer-encoding:
@@ -167,23 +101,15 @@ interactions:
       Content-Length:
       - '0'
       Date:
-<<<<<<< HEAD
-      - Wed, 02 Sep 2020 21:16:48 GMT
+      - Fri, 18 Dec 2020 17:28:45 GMT
       User-Agent:
-      - azsdk-python-data-tables/12.0.0b1 Python/3.8.4 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-data-tables/12.0.0b4 Python/3.9.0rc1 (Windows-10-10.0.19041-SP0)
       x-ms-date:
-      - Wed, 02 Sep 2020 21:16:48 GMT
-=======
-      - Fri, 28 Aug 2020 15:07:23 GMT
-      User-Agent:
-      - azsdk-python-data-tables/2019-07-07 Python/3.8.4 (Windows-10-10.0.19041-SP0)
-      x-ms-date:
-      - Fri, 28 Aug 2020 15:07:23 GMT
->>>>>>> d32cfe4cfd2236cef594b5f013a80e80e9becdde
+      - Fri, 18 Dec 2020 17:28:45 GMT
       x-ms-version:
       - '2019-02-02'
     method: DELETE
-    uri: https://storagename.table.core.windows.net/Tables('pytablesynca68e0b85')
+    uri: https://fake_table_account.table.core.windows.net/Tables('pytablesynca68e0b85')
   response:
     body:
       string: ''
@@ -193,11 +119,7 @@ interactions:
       content-length:
       - '0'
       date:
-<<<<<<< HEAD
-      - Wed, 02 Sep 2020 21:16:47 GMT
-=======
-      - Fri, 28 Aug 2020 15:07:23 GMT
->>>>>>> d32cfe4cfd2236cef594b5f013a80e80e9becdde
+      - Fri, 18 Dec 2020 17:28:45 GMT
       server:
       - Windows-Azure-Table/1.0 Microsoft-HTTPAPI/2.0
       x-content-type-options:

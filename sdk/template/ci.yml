@@ -4,18 +4,20 @@ trigger:
   branches:
     include:
     - master
+    - main
     - hotfix/*
     - release/*
     - restapi*
   paths:
     include:
     - sdk/template/
-    - eng/common/
+    - scripts/
 
 pr:
   branches:
     include:
     - master
+    - main
     - feature/*
     - hotfix/*
     - release/*
@@ -29,5 +31,5 @@ extends:
   parameters:
     ServiceDirectory: template
     Artifacts:
-    - name: azure_template
+    - name: azure-template
       safeName: azuretemplate

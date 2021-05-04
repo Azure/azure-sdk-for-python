@@ -7,6 +7,8 @@
 from typing import (  # pylint: disable=unused-import
     Optional, Union, Dict, Any, Iterable, TYPE_CHECKING
 )
+
+
 try:
     from urllib.parse import urlparse, quote, unquote
 except ImportError:
@@ -14,6 +16,7 @@ except ImportError:
     from urllib2 import quote, unquote # type: ignore
 
 import six
+from azure.core.exceptions import HttpResponseError
 from azure.core.tracing.decorator import distributed_trace
 from azure.core.pipeline import Pipeline
 from ._shared.base_client import StorageAccountHostsMixin, TransportWrapper, parse_connection_str, parse_query
@@ -23,9 +26,7 @@ from ._shared.response_handlers import (
     process_storage_error,
     return_headers_and_deserialized)
 from ._generated import AzureFileStorage
-from ._generated.version import VERSION
 from ._generated.models import (
-    StorageErrorException,
     SignedIdentifier,
     DeleteSnapshotsOptionType,
     SharePermission)
@@ -33,6 +34,9 @@ from ._deserialize import deserialize_share_properties, deserialize_permission_k
 from ._serialize import get_api_version
 from ._directory_client import ShareDirectoryClient
 from ._file_client import ShareFileClient
+from ._lease import ShareLeaseClient
+from ._models import ShareProtocols
+
 
 if TYPE_CHECKING:
     from ._models import ShareProperties, AccessPolicy
@@ -43,6 +47,10 @@ class ShareClient(StorageAccountHostsMixin):
 
     For operations relating to a specific directory or file in this share, the clients for
     those entities can also be retrieved using the :func:`get_directory_client` and :func:`get_file_client` functions.
+
+    For more optional configuration, please click
+    `here <https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/storage/azure-storage-file-share
+    #optional-configuration>`_.
 
     :param str account_url:
         The URI to the storage account. In order to create a client given the full URI to the share,
@@ -55,7 +63,8 @@ class ShareClient(StorageAccountHostsMixin):
         or the response returned from :func:`create_snapshot`.
     :param credential:
         The credential with which to authenticate. This is optional if the
-        account URL already has a SAS token. The value can be a SAS token string or an account
+        account URL already has a SAS token. The value can be a SAS token string,
+        an instance of a AzureSasCredential from azure.core.credentials or an account
         shared access key.
     :keyword str api_version:
         The Storage API version to use for requests. Default value is '2019-07-07'.
@@ -105,8 +114,9 @@ class ShareClient(StorageAccountHostsMixin):
         self._query_str, credential = self._format_query_string(
             sas_token, credential, share_snapshot=self.snapshot)
         super(ShareClient, self).__init__(parsed_url, service='file-share', credential=credential, **kwargs)
-        self._client = AzureFileStorage(version=VERSION, url=self.url, pipeline=self._pipeline)
-        self._client._config.version = get_api_version(kwargs, VERSION)  # pylint: disable=protected-access
+        self._client = AzureFileStorage(url=self.url, pipeline=self._pipeline)
+        default_api_version = self._client._config.version  # pylint: disable=protected-access
+        self._client._config.version = get_api_version(kwargs, default_api_version) # pylint: disable=protected-access
 
     @classmethod
     def from_share_url(cls, share_url,  # type: str
@@ -122,7 +132,8 @@ class ShareClient(StorageAccountHostsMixin):
             or the response returned from :func:`create_snapshot`.
         :param credential:
             The credential with which to authenticate. This is optional if the
-            account URL already has a SAS token. The value can be a SAS token string or an account
+            account URL already has a SAS token. The value can be a SAS token string,
+            an instance of a AzureSasCredential from azure.core.credentials or an account
             shared access key.
         :returns: A share client.
         :rtype: ~azure.storage.fileshare.ShareClient
@@ -194,7 +205,8 @@ class ShareClient(StorageAccountHostsMixin):
             or the response returned from :func:`create_snapshot`.
         :param credential:
             The credential with which to authenticate. This is optional if the
-            account URL already has a SAS token. The value can be a SAS token string or an account
+            account URL already has a SAS token. The value can be a SAS token string,
+            an instance of a AzureSasCredential from azure.core.credentials or an account
             shared access key.
         :returns: A share client.
         :rtype: ~azure.storage.fileshare.ShareClient
@@ -257,6 +269,44 @@ class ShareClient(StorageAccountHostsMixin):
             _pipeline=_pipeline, _location_mode=self._location_mode)
 
     @distributed_trace
+    def _acquire_lease(self, lease_duration=-1, lease_id=None, **kwargs):
+        # type: (int, Optional[str], **Any) -> ShareLeaseClient
+        """Requests a new lease.
+
+        If the share does not have an active lease, the Share
+        Service creates a lease on the share and returns a new lease.
+
+        .. versionadded:: 12.6.0
+
+        :param int lease_duration:
+            Specifies the duration of the lease, in seconds, or negative one
+            (-1) for a lease that never expires. A non-infinite lease can be
+            between 15 and 60 seconds. A lease duration cannot be changed
+            using renew or change. Default is -1 (infinite lease).
+        :param str lease_id:
+            Proposed lease ID, in a GUID string format. The Share Service
+            returns 400 (Invalid request) if the proposed lease ID is not
+            in the correct format.
+        :keyword int timeout:
+            The timeout parameter is expressed in seconds.
+        :returns: A ShareLeaseClient object.
+        :rtype: ~azure.storage.fileshare.ShareLeaseClient
+
+        .. admonition:: Example:
+
+            .. literalinclude:: ../samples/file_samples_share.py
+                :start-after: [START acquire_and_release_lease_on_share]
+                :end-before: [END acquire_and_release_lease_on_share]
+                :language: python
+                :dedent: 8
+                :caption: Acquiring a lease on a share.
+        """
+        kwargs['lease_duration'] = lease_duration
+        lease = ShareLeaseClient(self, lease_id=lease_id)  # type: ignore
+        lease.acquire(**kwargs)
+        return lease
+
+    @distributed_trace
     def create_share(self, **kwargs):
         # type: (Any) -> Dict[str, Any]
         """Creates a new Share under the account. If a share with the
@@ -266,8 +316,22 @@ class ShareClient(StorageAccountHostsMixin):
             Name-value pairs associated with the share as metadata.
         :keyword int quota:
             The quota to be allotted.
+        :keyword access_tier:
+            Specifies the access tier of the share.
+            Possible values: 'TransactionOptimized', 'Hot', 'Cool'
+        :paramtype access_tier: str or ~azure.storage.fileshare.models.ShareAccessTier
+
+            .. versionadded:: 12.6.0
+
         :keyword int timeout:
             The timeout parameter is expressed in seconds.
+        :keyword protocols:
+            Protocols to enable on the share. Only one protocol can be enabled on the share.
+        :paramtype protocols: str or ~azure.storage.fileshare.ShareProtocols
+        :keyword root_squash:
+            Root squash to set on the share.
+            Only valid for NFS shares. Possible values include: 'NoRootSquash', 'RootSquash', 'AllSquash'.
+        :paramtype root_squash: str or ~azure.storage.fileshare.ShareRootSquash
         :returns: Share-updated property dict (Etag and last modified).
         :rtype: dict(str, Any)
 
@@ -282,7 +346,14 @@ class ShareClient(StorageAccountHostsMixin):
         """
         metadata = kwargs.pop('metadata', None)
         quota = kwargs.pop('quota', None)
+        access_tier = kwargs.pop('access_tier', None)
         timeout = kwargs.pop('timeout', None)
+        root_squash = kwargs.pop('root_squash', None)
+        protocols = kwargs.pop('protocols', None)
+        if protocols and protocols not in ['NFS', 'SMB', ShareProtocols.SMB, ShareProtocols.NFS]:
+            raise ValueError("The enabled protocol must be set to either SMB or NFS.")
+        if root_squash and protocols not in ['NFS', ShareProtocols.NFS]:
+            raise ValueError("The 'root_squash' keyword can only be used on NFS enabled shares.")
         headers = kwargs.pop('headers', {})
         headers.update(add_metadata_headers(metadata)) # type: ignore
 
@@ -291,10 +362,13 @@ class ShareClient(StorageAccountHostsMixin):
                 timeout=timeout,
                 metadata=metadata,
                 quota=quota,
+                access_tier=access_tier,
+                root_squash=root_squash,
+                enabled_protocols=protocols,
                 cls=return_response_headers,
                 headers=headers,
                 **kwargs)
-        except StorageErrorException as error:
+        except HttpResponseError as error:
             process_storage_error(error)
 
     @distributed_trace
@@ -339,7 +413,7 @@ class ShareClient(StorageAccountHostsMixin):
                 cls=return_response_headers,
                 headers=headers,
                 **kwargs)
-        except StorageErrorException as error:
+        except HttpResponseError as error:
             process_storage_error(error)
 
     @distributed_trace
@@ -355,7 +429,6 @@ class ShareClient(StorageAccountHostsMixin):
             Indicates if snapshots are to be deleted.
         :keyword int timeout:
             The timeout parameter is expressed in seconds.
-        :rtype: None
 
         .. admonition:: Example:
 
@@ -376,7 +449,7 @@ class ShareClient(StorageAccountHostsMixin):
                 sharesnapshot=self.snapshot,
                 delete_snapshots=delete_include,
                 **kwargs)
-        except StorageErrorException as error:
+        except HttpResponseError as error:
             process_storage_error(error)
 
     @distributed_trace
@@ -407,7 +480,7 @@ class ShareClient(StorageAccountHostsMixin):
                 sharesnapshot=self.snapshot,
                 cls=deserialize_share_properties,
                 **kwargs)
-        except StorageErrorException as error:
+        except HttpResponseError as error:
             process_storage_error(error)
         props.name = self.share_name
         props.snapshot = self.snapshot
@@ -437,12 +510,62 @@ class ShareClient(StorageAccountHostsMixin):
         """
         timeout = kwargs.pop('timeout', None)
         try:
-            return self._client.share.set_quota( # type: ignore
+            return self._client.share.set_properties( # type: ignore
                 timeout=timeout,
                 quota=quota,
+                access_tier=None,
                 cls=return_response_headers,
                 **kwargs)
-        except StorageErrorException as error:
+        except HttpResponseError as error:
+            process_storage_error(error)
+
+    @distributed_trace
+    def set_share_properties(self, **kwargs):
+        # type: (Any) ->  Dict[str, Any]
+        """Sets the share properties.
+
+        .. versionadded:: 12.6.0
+
+        :keyword access_tier:
+            Specifies the access tier of the share.
+            Possible values: 'TransactionOptimized', 'Hot', and 'Cool'
+        :paramtype access_tier: str or ~azure.storage.fileshare.models.ShareAccessTier
+        :keyword int quota:
+            Specifies the maximum size of the share, in gigabytes.
+            Must be greater than 0, and less than or equal to 5TB.
+        :keyword int timeout:
+            The timeout parameter is expressed in seconds.
+        :keyword root_squash:
+            Root squash to set on the share.
+            Only valid for NFS shares. Possible values include: 'NoRootSquash', 'RootSquash', 'AllSquash'.
+        :paramtype root_squash: str or ~azure.storage.fileshare.ShareRootSquash
+        :returns: Share-updated property dict (Etag and last modified).
+        :rtype: dict(str, Any)
+
+        .. admonition:: Example:
+
+            .. literalinclude:: ../samples/file_samples_share.py
+                :start-after: [START set_share_properties]
+                :end-before: [END set_share_properties]
+                :language: python
+                :dedent: 12
+                :caption: Sets the share properties.
+        """
+        timeout = kwargs.pop('timeout', None)
+        access_tier = kwargs.pop('access_tier', None)
+        quota = kwargs.pop('quota', None)
+        root_squash = kwargs.pop('root_squash', None)
+        if all(parameter is None for parameter in [access_tier, quota, root_squash]):
+            raise ValueError("set_share_properties should be called with at least one parameter.")
+        try:
+            return self._client.share.set_properties( # type: ignore
+                timeout=timeout,
+                quota=quota,
+                access_tier=access_tier,
+                root_squash=root_squash,
+                cls=return_response_headers,
+                **kwargs)
+        except HttpResponseError as error:
             process_storage_error(error)
 
     @distributed_trace
@@ -480,7 +603,7 @@ class ShareClient(StorageAccountHostsMixin):
                 cls=return_response_headers,
                 headers=headers,
                 **kwargs)
-        except StorageErrorException as error:
+        except HttpResponseError as error:
             process_storage_error(error)
 
     @distributed_trace
@@ -500,7 +623,7 @@ class ShareClient(StorageAccountHostsMixin):
                 timeout=timeout,
                 cls=return_headers_and_deserialized,
                 **kwargs)
-        except StorageErrorException as error:
+        except HttpResponseError as error:
             process_storage_error(error)
         return {
             'public_access': response.get('share_public_access'),
@@ -542,7 +665,7 @@ class ShareClient(StorageAccountHostsMixin):
                 timeout=timeout,
                 cls=return_response_headers,
                 **kwargs)
-        except StorageErrorException as error:
+        except HttpResponseError as error:
             process_storage_error(error)
 
     @distributed_trace
@@ -564,7 +687,7 @@ class ShareClient(StorageAccountHostsMixin):
                 timeout=timeout,
                 **kwargs)
             return stats.share_usage_bytes # type: ignore
-        except StorageErrorException as error:
+        except HttpResponseError as error:
             process_storage_error(error)
 
     @distributed_trace
@@ -638,7 +761,7 @@ class ShareClient(StorageAccountHostsMixin):
         options = self._create_permission_for_share_options(file_permission, timeout=timeout, **kwargs)
         try:
             return self._client.share.create_permission(**options)
-        except StorageErrorException as error:
+        except HttpResponseError as error:
             process_storage_error(error)
 
     @distributed_trace
@@ -665,7 +788,7 @@ class ShareClient(StorageAccountHostsMixin):
                 cls=deserialize_permission,
                 timeout=timeout,
                 **kwargs)
-        except StorageErrorException as error:
+        except HttpResponseError as error:
             process_storage_error(error)
 
     @distributed_trace

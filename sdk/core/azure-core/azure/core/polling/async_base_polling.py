@@ -43,10 +43,12 @@ class AsyncLROBasePolling(LROBasePolling):
     async def run(self):  # pylint:disable=invalid-overridden-method
         try:
             await self._poll()
+
         except BadStatus as err:
             self._status = "Failed"
             raise HttpResponseError(
-                response=self._pipeline_response.http_response, error=err
+                response=self._pipeline_response.http_response,
+                error=err
             )
 
         except BadResponse as err:
@@ -54,12 +56,13 @@ class AsyncLROBasePolling(LROBasePolling):
             raise HttpResponseError(
                 response=self._pipeline_response.http_response,
                 message=str(err),
-                error=err,
+                error=err
             )
 
         except OperationFailed as err:
             raise HttpResponseError(
-                response=self._pipeline_response.http_response, error=err
+                response=self._pipeline_response.http_response,
+                error=err
             )
 
     async def _poll(self):  # pylint:disable=invalid-overridden-method
@@ -111,6 +114,8 @@ class AsyncLROBasePolling(LROBasePolling):
 
         :rtype: azure.core.pipeline.PipelineResponse
         """
+        if self._path_format_arguments:
+            status_link = self._client.format_url(status_link, **self._path_format_arguments)
         request = self._client.get(status_link)
         # Re-inject 'x-ms-client-request-id' while polling
         if "request_id" not in self._operation_config:

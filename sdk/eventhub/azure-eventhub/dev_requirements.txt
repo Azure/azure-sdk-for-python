@@ -4,6 +4,4 @@
 -e ../azure-mgmt-eventhub
 -e ../../resources/azure-mgmt-resource
 aiohttp>=3.0; python_version >= '3.5'
-docutils>=0.14
-pygments>=2.2.0
-behave==1.2.6
+-e ../../../tools/azure-devtools

@@ -7,6 +7,7 @@ import time
 
 from azure.core.exceptions import ClientAuthenticationError
 
+from .._constants import DEVELOPER_SIGN_ON_CLIENT_ID
 from .._internal import InteractiveCredential, wrap_exceptions
 
 try:
@@ -26,10 +27,12 @@ class DeviceCodeCredential(InteractiveCredential):
     A user must browse to the URL, enter the code, and authenticate with Azure Active Directory. If the user
     authenticates successfully, the credential receives an access token.
 
-    For more information about the device code flow, see Azure Active Directory documentation:
-    https://docs.microsoft.com/en-us/azure/active-directory/develop/v2-oauth2-device-code
+    This credential is primarily useful for authenticating a user in an environment without a web browser, such as an
+    SSH session. If a web browser is available, :class:`~azure.identity.InteractiveBrowserCredential` is more
+    convenient because it automatically opens a browser to the login page.
 
-    :param str client_id: the application's ID
+    :param str client_id: client ID of the application users will authenticate to. When not specified users will
+          authenticate to an Azure development application.
 
     :keyword str authority: Authority of an Azure Active Directory endpoint, for example 'login.microsoftonline.com',
           the authority for Azure Public Cloud (which is the default). :class:`~azure.identity.AzureAuthorityHosts`
@@ -49,14 +52,13 @@ class DeviceCodeCredential(InteractiveCredential):
     :keyword AuthenticationRecord authentication_record: :class:`AuthenticationRecord` returned by :func:`authenticate`
     :keyword bool disable_automatic_authentication: if True, :func:`get_token` will raise
           :class:`AuthenticationRequiredError` when user interaction is required to acquire a token. Defaults to False.
-    :keyword bool enable_persistent_cache: if True, the credential will store tokens in a persistent cache shared by
-         other user credentials. Defaults to False.
-    :keyword bool allow_unencrypted_cache: if True, the credential will fall back to a plaintext cache on platforms
-          where encryption is unavailable. Default to False. Has no effect when `enable_persistent_cache` is False.
+    :keyword cache_persistence_options: configuration for persistent token caching. If unspecified, the credential
+          will cache tokens in memory.
+    :paramtype cache_persistence_options: ~azure.identity.TokenCachePersistenceOptions
     """
 
-    def __init__(self, client_id, **kwargs):
-        # type: (str, **Any) -> None
+    def __init__(self, client_id=DEVELOPER_SIGN_ON_CLIENT_ID, **kwargs):
+        # type: (Optional[str], **Any) -> None
         self._timeout = kwargs.pop("timeout", None)  # type: Optional[int]
         self._prompt_callback = kwargs.pop("prompt_callback", None)
         super(DeviceCodeCredential, self).__init__(client_id=client_id, **kwargs)
@@ -85,16 +87,16 @@ class DeviceCodeCredential(InteractiveCredential):
         if self._timeout is not None and self._timeout < flow["expires_in"]:
             # user specified an effective timeout we will observe
             deadline = int(time.time()) + self._timeout
-            result = app.acquire_token_by_device_flow(flow, exit_condition=lambda flow: time.time() > deadline)
+            result = app.acquire_token_by_device_flow(
+                flow, exit_condition=lambda flow: time.time() > deadline, claims_challenge=kwargs.get("claims")
+            )
         else:
             # MSAL will stop polling when the device code expires
-            result = app.acquire_token_by_device_flow(flow)
+            result = app.acquire_token_by_device_flow(flow, claims_challenge=kwargs.get("claims"))
 
-        if "access_token" not in result:
-            if result.get("error") == "authorization_pending":
-                message = "Timed out waiting for user to authenticate"
-            else:
-                message = "Authentication failed: {}".format(result.get("error_description") or result.get("error"))
-            raise ClientAuthenticationError(message=message)
+        # raise for a timeout here because the error is particular to this class
+        if "access_token" not in result and result.get("error") == "authorization_pending":
+            raise ClientAuthenticationError(message="Timed out waiting for user to authenticate")
 
+        # base class will raise for other errors
         return result

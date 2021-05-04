@@ -16,7 +16,7 @@ from azure.core.polling import LROPoller, NoPolling, PollingMethod
 from azure.mgmt.core.exceptions import ARMErrorFormat
 from azure.mgmt.core.polling.arm_polling import ARMPolling
 
-from .. import models
+from .. import models as _models
 
 if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
@@ -39,7 +39,7 @@ class DscpConfigurationOperations(object):
     :param deserializer: An object model deserializer.
     """
 
-    models = models
+    models = _models
 
     def __init__(self, client, config, serializer, deserializer):
         self._client = client
@@ -51,11 +51,11 @@ class DscpConfigurationOperations(object):
         self,
         resource_group_name,  # type: str
         dscp_configuration_name,  # type: str
-        parameters,  # type: "models.DscpConfiguration"
+        parameters,  # type: "_models.DscpConfiguration"
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.DscpConfiguration"
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.DscpConfiguration"]
+        # type: (...) -> "_models.DscpConfiguration"
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.DscpConfiguration"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -109,10 +109,10 @@ class DscpConfigurationOperations(object):
         self,
         resource_group_name,  # type: str
         dscp_configuration_name,  # type: str
-        parameters,  # type: "models.DscpConfiguration"
+        parameters,  # type: "_models.DscpConfiguration"
         **kwargs  # type: Any
     ):
-        # type: (...) -> LROPoller["models.DscpConfiguration"]
+        # type: (...) -> LROPoller["_models.DscpConfiguration"]
         """Creates or updates a DSCP Configuration.
 
         :param resource_group_name: The name of the resource group.
@@ -132,7 +132,7 @@ class DscpConfigurationOperations(object):
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         polling = kwargs.pop('polling', True)  # type: Union[bool, PollingMethod]
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.DscpConfiguration"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.DscpConfiguration"]
         lro_delay = kwargs.pop(
             'polling_interval',
             self._config.polling_interval
@@ -157,7 +157,13 @@ class DscpConfigurationOperations(object):
                 return cls(pipeline_response, deserialized, {})
             return deserialized
 
-        if polling is True: polling_method = ARMPolling(lro_delay, lro_options={'final-state-via': 'location'},  **kwargs)
+        path_format_arguments = {
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
+            'dscpConfigurationName': self._serialize.url("dscp_configuration_name", dscp_configuration_name, 'str'),
+            'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
+        }
+
+        if polling is True: polling_method = ARMPolling(lro_delay, lro_options={'final-state-via': 'location'}, path_format_arguments=path_format_arguments,  **kwargs)
         elif polling is False: polling_method = NoPolling()
         else: polling_method = polling
         if cont_token:
@@ -261,7 +267,13 @@ class DscpConfigurationOperations(object):
             if cls:
                 return cls(pipeline_response, None, {})
 
-        if polling is True: polling_method = ARMPolling(lro_delay, lro_options={'final-state-via': 'location'},  **kwargs)
+        path_format_arguments = {
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
+            'dscpConfigurationName': self._serialize.url("dscp_configuration_name", dscp_configuration_name, 'str'),
+            'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
+        }
+
+        if polling is True: polling_method = ARMPolling(lro_delay, lro_options={'final-state-via': 'location'}, path_format_arguments=path_format_arguments,  **kwargs)
         elif polling is False: polling_method = NoPolling()
         else: polling_method = polling
         if cont_token:
@@ -281,7 +293,7 @@ class DscpConfigurationOperations(object):
         dscp_configuration_name,  # type: str
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.DscpConfiguration"
+        # type: (...) -> "_models.DscpConfiguration"
         """Gets a DSCP Configuration.
 
         :param resource_group_name: The name of the resource group.
@@ -293,7 +305,7 @@ class DscpConfigurationOperations(object):
         :rtype: ~azure.mgmt.network.v2020_06_01.models.DscpConfiguration
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.DscpConfiguration"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.DscpConfiguration"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -339,7 +351,7 @@ class DscpConfigurationOperations(object):
         resource_group_name,  # type: str
         **kwargs  # type: Any
     ):
-        # type: (...) -> Iterable["models.DscpConfigurationListResult"]
+        # type: (...) -> Iterable["_models.DscpConfigurationListResult"]
         """Gets a DSCP Configuration.
 
         :param resource_group_name: The name of the resource group.
@@ -349,7 +361,7 @@ class DscpConfigurationOperations(object):
         :rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.network.v2020_06_01.models.DscpConfigurationListResult]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.DscpConfigurationListResult"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.DscpConfigurationListResult"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -409,7 +421,7 @@ class DscpConfigurationOperations(object):
         self,
         **kwargs  # type: Any
     ):
-        # type: (...) -> Iterable["models.DscpConfigurationListResult"]
+        # type: (...) -> Iterable["_models.DscpConfigurationListResult"]
         """Gets all dscp configurations in a subscription.
 
         :keyword callable cls: A custom type or function that will be passed the direct response
@@ -417,7 +429,7 @@ class DscpConfigurationOperations(object):
         :rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.network.v2020_06_01.models.DscpConfigurationListResult]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.DscpConfigurationListResult"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.DscpConfigurationListResult"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }

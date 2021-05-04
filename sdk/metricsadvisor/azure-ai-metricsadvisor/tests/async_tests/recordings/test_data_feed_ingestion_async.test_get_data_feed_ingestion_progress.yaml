@@ -1,0 +1,27 @@
+interactions:
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      User-Agent:
+      - azsdk-python-ai-metricsadvisor/1.0.0b3 Python/3.8.6 (Windows-10-10.0.19041-SP0)
+    method: GET
+    uri: https://js-metrics-advisor.cognitiveservices.azure.com/metricsadvisor/v1.0/dataFeeds/data_feed_id/ingestionProgress
+  response:
+    body:
+      string: '{"latestSuccessTimestamp":"2021-01-21T00:00:00Z","latestActiveTimestamp":"2021-01-21T00:00:00Z"}'
+    headers:
+      apim-request-id: 8469e0df-f085-4ef8-b6e5-7fed0d07240a
+      content-length: '96'
+      content-type: application/json; charset=utf-8
+      date: Fri, 22 Jan 2021 01:05:16 GMT
+      strict-transport-security: max-age=31536000; includeSubDomains; preload
+      x-content-type-options: nosniff
+      x-envoy-upstream-service-time: '247'
+      x-request-id: 8469e0df-f085-4ef8-b6e5-7fed0d07240a
+    status:
+      code: 200
+      message: OK
+    url: https://js-metrics-advisor.cognitiveservices.azure.com//metricsadvisor/v1.0/dataFeeds/9860df01-e740-40ec-94a2-6351813552ba/ingestionProgress
+version: 1

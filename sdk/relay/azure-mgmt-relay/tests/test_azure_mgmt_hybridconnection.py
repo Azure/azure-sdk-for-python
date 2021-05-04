@@ -8,11 +8,8 @@
 import unittest
 import time
 
-from msrestazure.azure_exceptions import CloudError
 import azure.mgmt.relay.models
-from azure.mgmt.relay.models import RelayNamespace, Sku, SkuTier, AccessRights
-from azure.common.credentials import ServicePrincipalCredentials
-
+from azure.mgmt.relay.models import RelayNamespace, Sku, AccessRights
 from devtools_testutils import AzureMgmtTestCase, ResourceGroupPreparer
 
 
@@ -22,7 +19,7 @@ class MgmtHybridConnectionTest(AzureMgmtTestCase):
         super(MgmtHybridConnectionTest, self).setUp()
 
         self.relay_client = self.create_mgmt_client(
-            azure.mgmt.relay.RelayManagementClient
+            azure.mgmt.relay.RelayAPI
         )
 
     @ResourceGroupPreparer()
@@ -33,8 +30,8 @@ class MgmtHybridConnectionTest(AzureMgmtTestCase):
         #Create a Namespace
         namespace_name = "testingpythontestcasenamespacehybridconnection"
 
-        namespaceparameter = RelayNamespace(location=location, tags={'tag1': 'value1', 'tag2': 'value2'}, sku=Sku(tier=SkuTier.standard))
-        creatednamespace = self.relay_client.namespaces.create_or_update(resource_group_name, namespace_name, namespaceparameter).result()
+        namespaceparameter = RelayNamespace(location=location, tags={'tag1': 'value1', 'tag2': 'value2'}, sku=Sku(tier="standard"))
+        creatednamespace = self.relay_client.namespaces.begin_create_or_update(resource_group_name, namespace_name, namespaceparameter).result()
         self.assertEqual(creatednamespace.name, namespace_name)
 
         #
@@ -46,7 +43,10 @@ class MgmtHybridConnectionTest(AzureMgmtTestCase):
         # Create a HybridConnection
         hybridconnection_name = "testingpythontestcasehybridconnection"
 
-        createdhybridconnectionresponse = self.relay_client.hybrid_connections.create_or_update(resource_group_name, namespace_name, hybridconnection_name, True, "User data for HybridConnection")
+        createdhybridconnectionresponse = self.relay_client.hybrid_connections.create_or_update(resource_group_name, namespace_name, hybridconnection_name, {
+            "requires_client_authorization": True,
+            "user_metadata": "User data for HybridConnection"
+        })
 
         self.assertEqual(createdhybridconnectionresponse.name, hybridconnection_name)
         self.assertEqual(createdhybridconnectionresponse.requires_client_authorization, True)
@@ -60,7 +60,9 @@ class MgmtHybridConnectionTest(AzureMgmtTestCase):
         getlistbynamespacehybridconnectionresponse = list(self.relay_client.hybrid_connections.list_by_namespace(resource_group_name, namespace_name))
         self.assertGreater(len(getlistbynamespacehybridconnectionresponse), 0)
 
-        updatehybridconnectionresponse = self.relay_client.hybrid_connections.create_or_update(resource_group_name, namespace_name, hybridconnection_name, None, "User data for HybridConnection updated")
+        updatehybridconnectionresponse = self.relay_client.hybrid_connections.create_or_update(resource_group_name, namespace_name, hybridconnection_name, {
+            "user_metadata": "User data for HybridConnection updated"
+        })
 
         self.assertEqual(updatehybridconnectionresponse.name, hybridconnection_name)
         self.assertEqual(updatehybridconnectionresponse.requires_client_authorization, True)
@@ -68,7 +70,9 @@ class MgmtHybridConnectionTest(AzureMgmtTestCase):
 
         # Create a new authorizationrule
         authoRule_name = "testingauthrulepy"
-        createhybridconnectionauthorule = self.relay_client.hybrid_connections.create_or_update_authorization_rule(resource_group_name, namespace_name, hybridconnection_name, authoRule_name,[AccessRights('Send'),AccessRights('Listen')])
+        createhybridconnectionauthorule = self.relay_client.hybrid_connections.create_or_update_authorization_rule(resource_group_name, namespace_name, hybridconnection_name, authoRule_name,{
+            "rights": [AccessRights('Send'),AccessRights('Listen')]
+        })
         self.assertEqual(createhybridconnectionauthorule.name, authoRule_name, "Authorization rule name not as created - create_or_update_authorization_rule ")
         self.assertEqual(len(createhybridconnectionauthorule.rights), 2)
 
@@ -79,7 +83,7 @@ class MgmtHybridConnectionTest(AzureMgmtTestCase):
 
         # update the rights of the authorizatiorule
         gethybridconnectionauthorule.rights.append('Manage')
-        updatehybridconnectionauthorule = self.relay_client.hybrid_connections.create_or_update_authorization_rule(resource_group_name, namespace_name, hybridconnection_name, authoRule_name, gethybridconnectionauthorule.rights)
+        updatehybridconnectionauthorule = self.relay_client.hybrid_connections.create_or_update_authorization_rule(resource_group_name, namespace_name, hybridconnection_name, authoRule_name, gethybridconnectionauthorule)
         self.assertEqual(updatehybridconnectionauthorule.name, authoRule_name, "Authorization rule name not as passed as parameter for update call - create_or_update_authorization_rule ")
         self.assertEqual(len(updatehybridconnectionauthorule.rights), 3, "Access rights mis match as updated  - create_or_update_authorization_rule ")
 
@@ -92,11 +96,15 @@ class MgmtHybridConnectionTest(AzureMgmtTestCase):
         self.assertIsNotNone(listkeysauthorizationrule)
 
         # regenerate Keys for authorizationrule - Primary
-        regenratePrimarykeyauthorizationrule = self.relay_client.hybrid_connections.regenerate_keys(resource_group_name, namespace_name, hybridconnection_name, authoRule_name, 'PrimaryKey')
+        regenratePrimarykeyauthorizationrule = self.relay_client.hybrid_connections.regenerate_keys(resource_group_name, namespace_name, hybridconnection_name, authoRule_name, {
+            "key_type": 'PrimaryKey'
+        })
         self.assertNotEqual(listkeysauthorizationrule.primary_key,regenratePrimarykeyauthorizationrule.primary_key)
 
         # regenerate Keys for authorizationrule - Primary
-        regenrateSecondarykeyauthorizationrule = self.relay_client.hybrid_connections.regenerate_keys(resource_group_name,namespace_name, hybridconnection_name, authoRule_name, 'SecondaryKey')
+        regenrateSecondarykeyauthorizationrule = self.relay_client.hybrid_connections.regenerate_keys(resource_group_name,namespace_name, hybridconnection_name, authoRule_name, {
+            "key_type": 'SecondaryKey'
+        })
         self.assertNotEqual(listkeysauthorizationrule.secondary_key, regenrateSecondarykeyauthorizationrule.secondary_key)
 
         # delete the authorizationrule
@@ -106,7 +114,7 @@ class MgmtHybridConnectionTest(AzureMgmtTestCase):
         gethybridconnectionresponse = self.relay_client.hybrid_connections.delete(resource_group_name, namespace_name, hybridconnection_name)
 
         # Delete the create namespace
-        self.relay_client.namespaces.delete(resource_group_name, namespace_name).result()
+        self.relay_client.namespaces.begin_delete(resource_group_name, namespace_name).result()
 
 
 # ------------------------------------------------------------------------------

@@ -8,10 +8,10 @@
 
 from typing import List # pylint: disable=unused-import
 from azure.core.async_paging import AsyncPageIterator
+from azure.core.exceptions import HttpResponseError
 from .._shared.response_handlers import (
     process_storage_error,
     return_context_and_deserialized)
-from .._generated.models import StorageErrorException
 from .._models import QueueMessage, QueueProperties
 
 
@@ -36,7 +36,7 @@ class MessagesPaged(AsyncPageIterator):
     async def _get_next_cb(self, continuation_token):
         try:
             return await self._command(number_of_messages=self.results_per_page)
-        except StorageErrorException as error:
+        except HttpResponseError as error:
             process_storage_error(error)
 
     async def _extract_data_cb(self, messages):
@@ -83,7 +83,7 @@ class QueuePropertiesPaged(AsyncPageIterator):
                 maxresults=self.results_per_page,
                 cls=return_context_and_deserialized,
                 use_location=self.location_mode)
-        except StorageErrorException as error:
+        except HttpResponseError as error:
             process_storage_error(error)
 
     async def _extract_data_cb(self, get_next_return):

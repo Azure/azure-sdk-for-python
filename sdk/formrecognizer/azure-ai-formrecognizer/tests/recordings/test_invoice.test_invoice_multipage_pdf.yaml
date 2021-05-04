@@ -1,0 +1,252 @@
+interactions:
+- request:
+    body: '!!! The request body has been omitted from the recording because its size
+      711607 is larger than 128KB. !!!'
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '711607'
+      Content-Type:
+      - application/pdf
+      User-Agent:
+      - azsdk-python-ai-formrecognizer/3.1.0b4 Python/3.9.0 (Windows-10-10.0.19041-SP0)
+    method: POST
+    uri: https://region.api.cognitive.microsoft.com/formrecognizer/v2.1-preview.3/prebuilt/invoice/analyze?includeTextDetails=false
+  response:
+    body:
+      string: ''
+    headers:
+      apim-request-id:
+      - 68977888-091f-4058-aa88-5a3b4a402a06
+      content-length:
+      - '0'
+      date:
+      - Fri, 19 Mar 2021 21:36:04 GMT
+      operation-location:
+      - https://region.api.cognitive.microsoft.com/formrecognizer/v2.1-preview.3/prebuilt/invoice/analyzeResults/68977888-091f-4058-aa88-5a3b4a402a06
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains; preload
+      x-content-type-options:
+      - nosniff
+      x-envoy-upstream-service-time:
+      - '398'
+    status:
+      code: 202
+      message: Accepted
+- request:
+    body: null
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - azsdk-python-ai-formrecognizer/3.1.0b4 Python/3.9.0 (Windows-10-10.0.19041-SP0)
+    method: GET
+    uri: https://region.api.cognitive.microsoft.com/formrecognizer/v2.1-preview.3/prebuilt/invoice/analyzeResults/68977888-091f-4058-aa88-5a3b4a402a06
+  response:
+    body:
+      string: '{"status": "running", "createdDateTime": "2021-03-19T21:36:05Z", "lastUpdatedDateTime":
+        "2021-03-19T21:36:05Z"}'
+    headers:
+      apim-request-id:
+      - ddb11fb4-ad38-42ba-bba5-c5baf5e9a026
+      content-length:
+      - '106'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Fri, 19 Mar 2021 21:36:09 GMT
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains; preload
+      x-content-type-options:
+      - nosniff
+      x-envoy-upstream-service-time:
+      - '15'
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - azsdk-python-ai-formrecognizer/3.1.0b4 Python/3.9.0 (Windows-10-10.0.19041-SP0)
+    method: GET
+    uri: https://region.api.cognitive.microsoft.com/formrecognizer/v2.1-preview.3/prebuilt/invoice/analyzeResults/68977888-091f-4058-aa88-5a3b4a402a06
+  response:
+    body:
+      string: '{"status": "succeeded", "createdDateTime": "2021-03-19T21:36:05Z",
+        "lastUpdatedDateTime": "2021-03-19T21:36:11Z", "analyzeResult": {"version":
+        "2.1.0", "readResults": [{"page": 1, "angle": 0, "width": 8.5, "height": 11,
+        "unit": "inch"}, {"page": 2, "angle": 0, "width": 8.5, "height": 11, "unit":
+        "inch"}], "pageResults": [{"page": 1, "tables": [{"rows": 13, "columns": 4,
+        "cells": [{"rowIndex": 0, "columnIndex": 0, "text": "Package", "boundingBox":
+        [0.9975, 4.6436, 2.6168, 4.6436, 2.6168, 4.8578, 0.9975, 4.8578]}, {"rowIndex":
+        0, "columnIndex": 1, "columnSpan": 2, "text": "Included", "boundingBox": [2.6168,
+        4.6436, 5.7422, 4.6436, 5.7422, 4.8578, 2.6168, 4.8578]}, {"rowIndex": 0,
+        "columnIndex": 3, "text": "Price", "boundingBox": [5.7422, 4.6436, 7.4882,
+        4.6436, 7.4882, 4.8513, 5.7422, 4.8578]}, {"rowIndex": 1, "columnIndex": 0,
+        "text": "Gold Sponsor", "boundingBox": [0.9975, 4.8578, 2.6168, 4.8578, 2.6168,
+        5.0849, 0.9975, 5.0914]}, {"rowIndex": 1, "columnIndex": 1, "text": "\uf0b7",
+        "boundingBox": [2.6168, 4.8578, 3.15, 4.8578, 3.15, 5.0849, 2.6168, 5.0849]},
+        {"rowIndex": 1, "columnIndex": 2, "text": "Full booth", "boundingBox": [3.15,
+        4.8578, 5.7422, 4.8578, 5.7422, 5.0849, 3.15, 5.0849]}, {"rowIndex": 1, "columnIndex":
+        3, "text": "$1,500", "boundingBox": [5.7422, 4.8578, 7.4882, 4.8513, 7.4882,
+        5.0849, 5.7422, 5.0849]}, {"rowIndex": 2, "columnIndex": 0, "rowSpan": 3,
+        "boundingBox": [0.9975, 5.0914, 2.6168, 5.0849, 2.6168, 5.9222, 0.9975, 5.9222],
+        "text": ""}, {"rowIndex": 2, "columnIndex": 1, "text": "\uf0b7 \uf0b7", "boundingBox":
+        [2.6168, 5.0849, 3.15, 5.0849, 3.15, 5.5198, 2.6168, 5.5198]}, {"rowIndex":
+        2, "columnIndex": 2, "text": "Pre-keynote thank you Logo on poster", "boundingBox":
+        [3.15, 5.0849, 5.7422, 5.0849, 5.7489, 5.5133, 3.15, 5.5198]}, {"rowIndex":
+        2, "columnIndex": 3, "boundingBox": [5.7422, 5.0849, 7.4882, 5.0849, 7.4882,
+        5.5198, 5.7489, 5.5133], "text": ""}, {"rowIndex": 3, "columnIndex": 1, "columnSpan":
+        2, "text": "\uf0b7 Full page ad in program guide", "boundingBox": [2.6168,
+        5.5198, 5.7489, 5.5133, 5.7489, 5.7404, 2.6168, 5.7534]}, {"rowIndex": 3,
+        "columnIndex": 3, "boundingBox": [5.7489, 5.5133, 7.4882, 5.5198, 7.4882,
+        5.7469, 5.7489, 5.7404], "text": ""}, {"rowIndex": 4, "columnIndex": 1, "columnSpan":
+        2, "text": "\uf0b7", "boundingBox": [2.6168, 5.7534, 5.7489, 5.7404, 5.7489,
+        5.9222, 2.6168, 5.9222]}, {"rowIndex": 4, "columnIndex": 3, "boundingBox":
+        [5.7489, 5.7404, 7.4882, 5.7469, 7.4948, 5.9222, 5.7489, 5.9222], "text":
+        ""}, {"rowIndex": 5, "columnIndex": 0, "rowSpan": 2, "text": "Silver Sponsor",
+        "boundingBox": [0.9975, 5.9222, 2.6168, 5.9222, 2.6168, 6.7853, 0.9975, 6.7788]},
+        {"rowIndex": 5, "columnIndex": 1, "rowSpan": 2, "text": "\uf0b7 \uf0b7 \uf0b7
+        \uf0b7", "boundingBox": [2.6168, 5.9222, 3.15, 5.9222, 3.15, 6.7853, 2.6168,
+        6.7853]}, {"rowIndex": 5, "columnIndex": 2, "rowSpan": 2, "text": "Full booth
+        Post-keynote thank you Logo on poster Half page ad in program guide", "boundingBox":
+        [3.15, 5.9222, 5.7489, 5.9222, 5.7489, 6.7853, 3.15, 6.7853]}, {"rowIndex":
+        5, "columnIndex": 3, "rowSpan": 2, "text": "$1,200", "boundingBox": [5.7489,
+        5.9222, 7.4948, 5.9222, 7.4948, 6.7788, 5.7489, 6.7853]}, {"rowIndex": 7,
+        "columnIndex": 0, "rowSpan": 2, "text": "Bronze Sponsor", "boundingBox": [0.9975,
+        6.7788, 2.6168, 6.7853, 2.6168, 7.6355, 0.9975, 7.629]}, {"rowIndex": 7, "columnIndex":
+        1, "text": "\uf0b7", "boundingBox": [2.6168, 6.7853, 3.15, 6.7853, 3.15, 7.019,
+        2.6168, 7.019]}, {"rowIndex": 7, "columnIndex": 2, "rowSpan": 2, "text": "Full
+        booth Logo on poster 50% discount on program guide advertisements", "boundingBox":
+        [3.15, 6.7853, 5.7489, 6.7853, 5.7489, 7.6355, 3.1433, 7.6355]}, {"rowIndex":
+        7, "columnIndex": 3, "rowSpan": 2, "text": "$1,000", "boundingBox": [5.7489,
+        6.7853, 7.4948, 6.7788, 7.4948, 7.6355, 5.7489, 7.6355]}, {"rowIndex": 8,
+        "columnIndex": 1, "text": "\uf0b7 \uf0b7", "boundingBox": [2.6168, 7.019,
+        3.15, 7.019, 3.1433, 7.6355, 2.6168, 7.6355]}, {"rowIndex": 9, "columnIndex":
+        0, "rowSpan": 2, "text": "Full Booth", "boundingBox": [0.9975, 7.629, 2.6168,
+        7.6355, 2.6102, 8.2651, 0.9975, 8.2651]}, {"rowIndex": 9, "columnIndex": 1,
+        "rowSpan": 2, "columnSpan": 2, "text": "\uf0b7 Full booth \uf0b7 50% discount
+        on program guide advertisements", "boundingBox": [2.6168, 7.6355, 5.7489,
+        7.6355, 5.7489, 8.2651, 2.6102, 8.2651]}, {"rowIndex": 9, "columnIndex": 3,
+        "rowSpan": 2, "text": "$600", "boundingBox": [5.7489, 7.6355, 7.4948, 7.6355,
+        7.4948, 8.2651, 5.7489, 8.2651]}, {"rowIndex": 11, "columnIndex": 0, "rowSpan":
+        2, "text": "Half Booth", "boundingBox": [0.9975, 8.2651, 2.6102, 8.2651, 2.6102,
+        8.9011, 0.9975, 8.9011]}, {"rowIndex": 11, "columnIndex": 1, "rowSpan": 2,
+        "columnSpan": 2, "text": "\uf0b7 Full booth \uf0b7 25% discount on program
+        guide advertisements", "boundingBox": [2.6102, 8.2651, 5.7489, 8.2651, 5.7489,
+        8.9011, 2.6102, 8.9011]}, {"rowIndex": 11, "columnIndex": 3, "rowSpan": 2,
+        "text": "$350", "boundingBox": [5.7489, 8.2651, 7.4948, 8.2651, 7.4948, 8.9011,
+        5.7489, 8.9011]}], "boundingBox": [0.994, 4.6469, 7.4953, 4.6454, 7.4964,
+        8.9061, 0.9936, 8.9066]}]}, {"page": 2}], "documentResults": [{"docType":
+        "prebuilt:invoice", "pageRange": [1, 2], "fields": {"Items": {"type": "array",
+        "valueArray": [{"type": "object", "valueObject": {"Amount": {"type": "number",
+        "valueNumber": 1500, "text": "$1,500", "boundingBox": [5.8328, 4.8977, 6.2829,
+        4.8977, 6.2829, 5.0468, 5.8328, 5.0468], "page": 1, "confidence": 0.782},
+        "Description": {"type": "string", "valueString": "Full booth \uf0b7 Pre-keynote
+        thank you \uf0b7 Logo on poster \uf0b7 Full page ad in program guide", "text":
+        "Full booth \uf0b7 Pre-keynote thank you \uf0b7 Logo on poster \uf0b7 Full
+        page ad in program guide", "boundingBox": [2.9586, 4.9169, 5.201, 4.9169,
+        5.201, 5.6994, 2.9586, 5.6994], "page": 1, "confidence": 0.377}, "ProductCode":
+        {"type": "string", "valueString": "Gold Sponsor", "text": "Gold Sponsor",
+        "boundingBox": [1.0857, 4.9086, 1.9831, 4.9086, 1.9831, 5.0528, 1.0857, 5.0528],
+        "page": 1, "confidence": 0.082}}, "text": "Gold Sponsor \uf0b7 Full booth
+        $1,500 \uf0b7 Pre-keynote thank you \uf0b7 Logo on poster \uf0b7 Full page
+        ad in program guide", "boundingBox": [1.0857, 4.8977, 6.2829, 4.8977, 6.2829,
+        5.6994, 1.0857, 5.6994], "page": 1, "confidence": 0.953}, {"type": "object",
+        "valueObject": {"Amount": {"type": "number", "valueNumber": 1200, "text":
+        "$1,200", "boundingBox": [5.8328, 5.9677, 6.2829, 5.9677, 6.2829, 6.1168,
+        5.8328, 6.1168], "page": 1, "confidence": 0.77}, "Description": {"type": "string",
+        "valueString": "Full booth \uf0b7 Post-keynote thank you \uf0b7 Logo on poster
+        \uf0b7 Half page ad in program guide", "text": "Full booth \uf0b7 Post-keynote
+        thank you \uf0b7 Logo on poster \uf0b7 Half page ad in program guide", "boundingBox":
+        [2.9586, 5.9869, 5.2314, 5.9869, 5.2314, 6.7678, 2.9586, 6.7678], "page":
+        1, "confidence": 0.598}, "ProductCode": {"type": "string", "valueString":
+        "Sponsor", "text": "Sponsor", "boundingBox": [1.4904, 5.985, 2.0339, 5.985,
+        2.0339, 6.1228, 1.4904, 6.1228], "page": 1, "confidence": 0.344}}, "text":
+        "Silver Sponsor \uf0b7 Full booth $1,200 \uf0b7 Post-keynote thank you \uf0b7
+        Logo on poster \uf0b7 Half page ad in program guide", "boundingBox": [1.0842,
+        5.9677, 6.2829, 5.9677, 6.2829, 6.7678, 1.0842, 6.7678], "page": 1, "confidence":
+        0.954}, {"type": "object", "valueObject": {"Amount": {"type": "number", "valueNumber":
+        1000, "text": "$1,000", "boundingBox": [5.8328, 6.8227, 6.2829, 6.8227, 6.2829,
+        6.9718, 5.8328, 6.9718], "page": 1, "confidence": 0.778}, "Description": {"type":
+        "string", "valueString": "Full booth \uf0b7 Logo on poster \uf0b7 50% discount
+        on program guide advertisements", "text": "Full booth \uf0b7 Logo on poster
+        \uf0b7 50% discount on program guide advertisements", "boundingBox": [2.9586,
+        6.8419, 5.3419, 6.8419, 5.3419, 7.5863, 2.9586, 7.5863], "page": 1, "confidence":
+        0.563}, "ProductCode": {"type": "string", "valueString": "Bronze Sponsor",
+        "text": "Bronze Sponsor", "boundingBox": [1.0923, 6.84, 2.1362, 6.84, 2.1362,
+        6.9778, 1.0923, 6.9778], "page": 1, "confidence": 0.092}}, "text": "Bronze
+        Sponsor \uf0b7 Full booth $1,000 \uf0b7 Logo on poster \uf0b7 50% discount
+        on program guide advertisements", "boundingBox": [1.0923, 6.8227, 6.2829,
+        6.8227, 6.2829, 7.5863, 1.0923, 7.5863], "page": 1, "confidence": 0.949},
+        {"type": "object", "valueObject": {"Amount": {"type": "number", "valueNumber":
+        600, "text": "$600", "boundingBox": [5.8328, 7.6711, 6.1586, 7.6711, 6.1586,
+        7.8165, 5.8328, 7.8165], "page": 1, "confidence": 0.803}, "Description": {"type":
+        "string", "valueString": "Full booth \uf0b7 50% discount on program guide
+        advertisements", "text": "Full booth \uf0b7 50% discount on program guide
+        advertisements", "boundingBox": [2.9586, 7.6902, 5.3419, 7.6902, 5.3419, 8.2213,
+        2.9586, 8.2213], "page": 1, "confidence": 0.693}}, "text": "Full Booth \uf0b7
+        Full booth $600 \uf0b7 50% discount on program guide advertisements", "boundingBox":
+        [1.0923, 7.6711, 6.1586, 7.6711, 6.1586, 8.2213, 1.0923, 8.2213], "page":
+        1, "confidence": 0.952}, {"type": "object", "valueObject": {"Amount": {"type":
+        "number", "valueNumber": 350, "text": "$350", "boundingBox": [5.8328, 8.3061,
+        6.1586, 8.3061, 6.1586, 8.4515, 5.8328, 8.4515], "page": 1, "confidence":
+        0.83}, "Description": {"type": "string", "valueString": "Full booth \uf0b7
+        25% discount on program guide advertisements", "text": "Full booth \uf0b7
+        25% discount on program guide advertisements", "boundingBox": [2.9586, 8.3252,
+        5.3419, 8.3252, 5.3419, 8.8563, 2.9586, 8.8563], "page": 1, "confidence":
+        0.69}, "ProductCode": {"type": "string", "valueString": "Half", "text": "Half",
+        "boundingBox": [1.0923, 8.3162, 1.3522, 8.3162, 1.3522, 8.433, 1.0923, 8.433],
+        "page": 1, "confidence": 0.31}}, "text": "Half Booth \uf0b7 Full booth $350
+        \uf0b7 25% discount on program guide advertisements", "boundingBox": [1.0923,
+        8.3061, 6.1586, 8.3061, 6.1586, 8.8563, 1.0923, 8.8563], "page": 1, "confidence":
+        0.957}]}, "RemittanceAddress": {"type": "string", "valueString": "2345 Dogwood
+        Lane Birch, Kansas 98123", "text": "2345 Dogwood Lane Birch, Kansas 98123",
+        "boundingBox": [1.0093, 3.7939, 2.3768, 3.7939, 2.3768, 4.1518, 1.0093, 4.1518],
+        "page": 1, "confidence": 0.844}, "RemittanceAddressRecipient": {"type": "string",
+        "valueString": "Contoso Ltd.", "text": "Contoso Ltd.", "boundingBox": [1.0078,
+        3.5739, 1.843, 3.5739, 1.843, 3.6897, 1.0078, 3.6897], "page": 1, "confidence":
+        0.942}, "VendorAddress": {"type": "string", "valueString": "Elm Conference
+        Center in", "text": "Elm Conference Center in", "boundingBox": [5.3787, 2.5846,
+        7.0776, 2.5846, 7.0776, 2.7013, 5.3787, 2.7013], "page": 1, "confidence":
+        0.675}, "VendorAddressRecipient": {"type": "string", "valueString": "Contoso
+        Ltd.", "text": "Contoso Ltd.", "boundingBox": [1.0078, 2.5856, 1.843, 2.5856,
+        1.843, 2.7013, 1.0078, 2.7013], "page": 1, "confidence": 0.528}, "VendorName":
+        {"type": "string", "valueString": "Southridge Video", "text": "Southridge
+        Video", "boundingBox": [2.1925, 2.7686, 3.3477, 2.7686, 3.3477, 2.9128, 2.1925,
+        2.9128], "page": 2, "confidence": 0.95}}}]}}'
+    headers:
+      apim-request-id:
+      - 7e634ae2-24d3-4a72-bb5f-810aa28c6ba2
+      content-length:
+      - '9928'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Fri, 19 Mar 2021 21:36:15 GMT
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains; preload
+      x-content-type-options:
+      - nosniff
+      x-envoy-upstream-service-time:
+      - '22'
+    status:
+      code: 200
+      message: OK
+version: 1

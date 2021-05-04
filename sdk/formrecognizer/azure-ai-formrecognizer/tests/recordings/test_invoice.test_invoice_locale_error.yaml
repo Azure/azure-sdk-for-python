@@ -1,0 +1,43 @@
+interactions:
+- request:
+    body: '!!! The request body has been omitted from the recording because its size
+      147362 is larger than 128KB. !!!'
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '147362'
+      Content-Type:
+      - application/pdf
+      User-Agent:
+      - azsdk-python-ai-formrecognizer/3.1.0b4 Python/3.9.0 (Windows-10-10.0.19041-SP0)
+    method: POST
+    uri: https://region.api.cognitive.microsoft.com/formrecognizer/v2.1-preview.3/prebuilt/invoice/analyze?includeTextDetails=false&locale=not%20a%20locale
+  response:
+    body:
+      string: '{"error": {"code": "UnsupportedLocale", "innerError": {"requestId":
+        "11c1ae3b-bf8d-49c3-a028-c9640d10a39e"}, "message": "Locale unsupported. Supported
+        locale includes en-US."}}'
+    headers:
+      apim-request-id:
+      - 11c1ae3b-bf8d-49c3-a028-c9640d10a39e
+      content-length:
+      - '169'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Fri, 19 Mar 2021 21:35:56 GMT
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains; preload
+      x-content-type-options:
+      - nosniff
+      x-envoy-upstream-service-time:
+      - '172'
+    status:
+      code: 400
+      message: Bad Request
+version: 1

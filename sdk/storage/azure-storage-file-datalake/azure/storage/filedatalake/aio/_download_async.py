@@ -3,8 +3,9 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
+from typing import AsyncIterator
 
-from .._models import FileProperties
+from .._deserialize import from_blob_properties
 
 
 class StorageStreamDownloader(object):
@@ -23,13 +24,18 @@ class StorageStreamDownloader(object):
     def __init__(self, downloader):
         self._downloader = downloader
         self.name = self._downloader.name
-        self.properties = FileProperties._from_blob_properties(self._downloader.properties)  # pylint: disable=protected-access
+        self.properties = from_blob_properties(self._downloader.properties)  # pylint: disable=protected-access
         self.size = self._downloader.size
 
     def __len__(self):
         return self.size
 
     def chunks(self):
+        # type: () -> AsyncIterator[bytes]
+        """Iterate over chunks in the download stream.
+
+        :rtype: AsyncIterator[bytes]
+        """
         return self._downloader.chunks()
 
     async def readall(self):

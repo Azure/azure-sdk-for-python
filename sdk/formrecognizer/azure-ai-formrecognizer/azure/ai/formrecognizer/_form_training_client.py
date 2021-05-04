@@ -11,44 +11,44 @@ from typing import (
     Any,
     Dict,
     Union,
+    List,
     TYPE_CHECKING,
 )
 from azure.core.tracing.decorator import distributed_trace
 from azure.core.polling import LROPoller
 from azure.core.polling.base_polling import LROBasePolling
 from azure.core.pipeline import Pipeline
-from ._generated._form_recognizer_client import FormRecognizerClient as FormRecognizer
 from ._generated.models import (
     TrainRequest,
     TrainSourceFilter,
     CopyRequest,
-    CopyAuthorizationResult
+    CopyAuthorizationResult,
 )
-from ._helpers import (
-    error_map, get_authentication_policy, POLLING_INTERVAL, TransportWrapper, _get_deserialize
-)
+from ._helpers import TransportWrapper
+
 from ._models import (
     CustomFormModelInfo,
     AccountProperties,
     CustomFormModel,
 )
 from ._polling import TrainingPolling, CopyPolling
-from ._user_agent import USER_AGENT
 from ._form_recognizer_client import FormRecognizerClient
-from ._api_versions import FormRecognizerApiVersion, validate_api_version
+from ._form_base_client import FormRecognizerClientBase
+
 if TYPE_CHECKING:
-    from azure.core.credentials import AzureKeyCredential, TokenCredential
     from azure.core.pipeline import PipelineResponse
     from azure.core.pipeline.transport import HttpResponse
     from azure.core.paging import ItemPaged
+
     PipelineResponseType = HttpResponse
 
 
-class FormTrainingClient(object):
-    """FormTrainingClient is the Form Recognizer interface to use for creating,
+class FormTrainingClient(FormRecognizerClientBase):
+    """FormTrainingClient is the Form Recognizer interface to use for creating
     and managing custom models. It provides methods for training models on the forms
     you provide, as well as methods for viewing and deleting models, accessing
-    account properties, and copying a model to another Form Recognizer resource.
+    account properties, copying models to another Form Recognizer resource, and
+    composing models from a collection of existing models trained with labels.
 
     :param str endpoint: Supported Cognitive Services endpoints (protocol and hostname,
         for example: https://westus2.api.cognitive.microsoft.com).
@@ -79,26 +79,6 @@ class FormTrainingClient(object):
             :caption: Creating the FormTrainingClient with a token credential.
     """
 
-    def __init__(self, endpoint, credential, **kwargs):
-        # type: (str, Union[AzureKeyCredential, TokenCredential], Any) -> None
-        self._endpoint = endpoint
-        self._credential = credential
-        authentication_policy = get_authentication_policy(credential)
-        polling_interval = kwargs.pop("polling_interval", POLLING_INTERVAL)
-        self.api_version = kwargs.pop('api_version', FormRecognizerApiVersion.V2_1_PREVIEW_1)
-        validate_api_version(self.api_version)
-        self._client = FormRecognizer(
-            endpoint=self._endpoint,
-            credential=self._credential,  # type: ignore
-            api_version=self.api_version,
-            sdk_moniker=USER_AGENT,
-            authentication_policy=authentication_policy,
-            polling_interval=polling_interval,
-            **kwargs
-        )
-        self._deserialize = _get_deserialize()
-        self._generated_models = self._client.models(self.api_version)
-
     @distributed_trace
     def begin_training(self, training_files_url, use_training_labels, **kwargs):
         # type: (str, bool, Any) -> LROPoller[CustomFormModel]
@@ -106,7 +86,7 @@ class FormTrainingClient(object):
         externally accessible Azure storage blob container URI (preferably a Shared Access Signature URI). Note that
         a container URI (without SAS) is accepted only when the container is public.
         Models are trained using documents that are of the following content type - 'application/pdf',
-        'image/jpeg', 'image/png', 'image/tiff'. Other type of content in the container is ignored.
+        'image/jpeg', 'image/png', 'image/tiff', or 'image/bmp'. Other types of content in the container is ignored.
 
         :param str training_files_url: An Azure Storage blob container's SAS URI. A container URI (without SAS)
             can be used if the container is public. For more information on setting up a training data set, see:
@@ -119,6 +99,7 @@ class FormTrainingClient(object):
         :keyword bool include_subfolders: A flag to indicate if subfolders within the set of prefix folders
             will also need to be included when searching for content to be preprocessed. Not supported if
             training with labels.
+        :keyword str model_name: An optional, user-defined name to associate with your model.
         :keyword int polling_interval: Waiting time between two polls for LRO operations
             if no Retry-After header is present. Defaults to 5 seconds.
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
@@ -128,6 +109,9 @@ class FormTrainingClient(object):
         :raises ~azure.core.exceptions.HttpResponseError:
             Note that if the training fails, the exception is raised, but a model with an
             "invalid" status is still created. You can delete this model by calling :func:`~delete_model()`
+
+        .. versionadded:: v2.1-preview
+            The *model_name* keyword argument
 
         .. admonition:: Example:
 
@@ -141,26 +125,35 @@ class FormTrainingClient(object):
 
         def callback_v2_0(raw_response):
             model = self._deserialize(self._generated_models.Model, raw_response)
-            return CustomFormModel._from_generated(model)
+            return CustomFormModel._from_generated(model, api_version=self._api_version)
 
         def callback_v2_1(raw_response, _, headers):  # pylint: disable=unused-argument
             model = self._deserialize(self._generated_models.Model, raw_response)
-            return CustomFormModel._from_generated(model)
+            return CustomFormModel._from_generated(model, api_version=self._api_version)
 
         cls = kwargs.pop("cls", None)
+        model_name = kwargs.pop("model_name", None)
+        if model_name and self._api_version == "2.0":
+            raise ValueError(
+                "'model_name' is only available for API version V2_1_PREVIEW and up"
+            )
         continuation_token = kwargs.pop("continuation_token", None)
-        polling_interval = kwargs.pop("polling_interval", self._client._config.polling_interval)
+        polling_interval = kwargs.pop(
+            "polling_interval", self._client._config.polling_interval
+        )
 
-        if self.api_version == "2.0":
+        if self._api_version == "2.0":
             deserialization_callback = cls if cls else callback_v2_0
             if continuation_token:
                 return LROPoller.from_continuation_token(
                     polling_method=LROBasePolling(
-                        timeout=polling_interval, lro_algorithms=[TrainingPolling()], **kwargs
+                        timeout=polling_interval,
+                        lro_algorithms=[TrainingPolling()],
+                        **kwargs
                     ),
                     continuation_token=continuation_token,
                     client=self._client._client,
-                    deserialization_callback=deserialization_callback
+                    deserialization_callback=deserialization_callback,
                 )
 
             response = self._client.train_custom_model_async(  # type: ignore
@@ -170,10 +163,9 @@ class FormTrainingClient(object):
                     source_filter=TrainSourceFilter(
                         prefix=kwargs.pop("prefix", ""),
                         include_sub_folders=kwargs.pop("include_subfolders", False),
-                    )
+                    ),
                 ),
                 cls=lambda pipeline_response, _, response_headers: pipeline_response,
-                error_map=error_map,
                 **kwargs
             )  # type: PipelineResponseType
 
@@ -181,7 +173,11 @@ class FormTrainingClient(object):
                 self._client._client,
                 response,
                 deserialization_callback,
-                LROBasePolling(timeout=polling_interval, lro_algorithms=[TrainingPolling()], **kwargs)
+                LROBasePolling(
+                    timeout=polling_interval,
+                    lro_algorithms=[TrainingPolling()],
+                    **kwargs
+                ),
             )
 
         deserialization_callback = cls if cls else callback_v2_1
@@ -193,11 +189,13 @@ class FormTrainingClient(object):
                     prefix=kwargs.pop("prefix", ""),
                     include_sub_folders=kwargs.pop("include_subfolders", False),
                 ),
+                model_name=model_name,
             ),
             cls=deserialization_callback,
             continuation_token=continuation_token,
-            polling=LROBasePolling(timeout=polling_interval, lro_algorithms=[TrainingPolling()], **kwargs),
-            error_map=error_map,
+            polling=LROBasePolling(
+                timeout=polling_interval, lro_algorithms=[TrainingPolling()], **kwargs
+            ),
             **kwargs
         )
 
@@ -225,11 +223,7 @@ class FormTrainingClient(object):
         if not model_id:
             raise ValueError("model_id cannot be None or empty.")
 
-        self._client.delete_custom_model(
-            model_id=model_id,
-            error_map=error_map,
-            **kwargs
-        )
+        self._client.delete_custom_model(model_id=model_id, **kwargs)
 
     @distributed_trace
     def list_custom_models(self, **kwargs):
@@ -251,8 +245,15 @@ class FormTrainingClient(object):
                 :caption: List model information for each model on the account.
         """
         return self._client.list_custom_models(  # type: ignore
-            cls=kwargs.pop("cls", lambda objs: [CustomFormModelInfo._from_generated(x) for x in objs]),
-            error_map=error_map,
+            cls=kwargs.pop(
+                "cls",
+                lambda objs: [
+                    CustomFormModelInfo._from_generated(
+                        x, api_version=self._api_version
+                    )
+                    for x in objs
+                ],
+            ),
             **kwargs
         )
 
@@ -275,7 +276,7 @@ class FormTrainingClient(object):
                 :dedent: 8
                 :caption: Get properties for the form recognizer account.
         """
-        response = self._client.get_custom_models(error_map=error_map, **kwargs)
+        response = self._client.get_custom_models(**kwargs)
         return AccountProperties._from_generated(response.summary)
 
     @distributed_trace
@@ -302,8 +303,15 @@ class FormTrainingClient(object):
         if not model_id:
             raise ValueError("model_id cannot be None or empty.")
 
-        response = self._client.get_custom_model(model_id=model_id, include_keys=True, error_map=error_map, **kwargs)
-        return CustomFormModel._from_generated(response)
+        response = self._client.get_custom_model(
+            model_id=model_id, include_keys=True, **kwargs
+        )
+        if (
+            hasattr(response, "composed_train_results")
+            and response.composed_train_results
+        ):
+            return CustomFormModel._from_generated_composed(response)
+        return CustomFormModel._from_generated(response, api_version=self._api_version)
 
     @distributed_trace
     def get_copy_authorization(self, resource_id, resource_region, **kwargs):
@@ -335,7 +343,6 @@ class FormTrainingClient(object):
 
         response = self._client.generate_model_copy_authorization(  # type: ignore
             cls=lambda pipeline_response, deserialized, response_headers: pipeline_response,
-            error_map=error_map,
             **kwargs
         )  # type: PipelineResponse
         target = json.loads(response.http_response.text())
@@ -381,12 +388,31 @@ class FormTrainingClient(object):
         if not model_id:
             raise ValueError("model_id cannot be None or empty.")
 
-        polling_interval = kwargs.pop("polling_interval", self._client._config.polling_interval)
+        polling_interval = kwargs.pop(
+            "polling_interval", self._client._config.polling_interval
+        )
         continuation_token = kwargs.pop("continuation_token", None)
 
         def _copy_callback(raw_response, _, headers):  # pylint: disable=unused-argument
-            copy_result = self._deserialize(self._generated_models.CopyOperationResult, raw_response)
-            return CustomFormModelInfo._from_generated(copy_result, target["modelId"])
+            copy_operation = self._deserialize(
+                self._generated_models.CopyOperationResult, raw_response
+            )
+            model_id = (
+                copy_operation.copy_result.model_id
+                if hasattr(copy_operation, "copy_result")
+                else None
+            )
+            if model_id:
+                return CustomFormModelInfo._from_generated(
+                    copy_operation, model_id, api_version=self._api_version
+                )
+            if target:
+                return CustomFormModelInfo._from_generated(
+                    copy_operation, target["model_id"], api_version=self._api_version
+                )
+            return CustomFormModelInfo._from_generated(
+                copy_operation, None, api_version=self._api_version
+            )
 
         return self._client.begin_copy_custom_model(  # type: ignore
             model_id=model_id,
@@ -396,15 +422,78 @@ class FormTrainingClient(object):
                 copy_authorization=CopyAuthorizationResult(
                     access_token=target["accessToken"],
                     model_id=target["modelId"],
-                    expiration_date_time_ticks=target["expirationDateTimeTicks"]
-                )
-            ),
+                    expiration_date_time_ticks=target["expirationDateTimeTicks"],
+                ),
+            )
+            if target
+            else None,
             cls=kwargs.pop("cls", _copy_callback),
-            polling=LROBasePolling(timeout=polling_interval, lro_algorithms=[CopyPolling()], **kwargs),
-            error_map=error_map,
+            polling=LROBasePolling(
+                timeout=polling_interval, lro_algorithms=[CopyPolling()], **kwargs
+            ),
             continuation_token=continuation_token,
             **kwargs
         )
+
+    @distributed_trace
+    def begin_create_composed_model(self, model_ids, **kwargs):
+        # type: (List[str], Any) -> LROPoller[CustomFormModel]
+        """Creates a composed model from a collection of existing models that were trained with labels.
+
+        A composed model allows multiple models to be called with a single model ID. When a document is
+        submitted to be analyzed with a composed model ID, a classification step is first performed to
+        route it to the correct custom model
+
+        :param list[str] model_ids: List of model IDs to use in the composed model.
+        :keyword str model_name: An optional, user-defined name to associate with your model.
+        :keyword int polling_interval: Default waiting time between two polls for LRO operations if
+            no Retry-After header is present.
+        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
+        :return: An instance of an LROPoller. Call `result()` on the poller
+            object to return a :class:`~azure.ai.formrecognizer.CustomFormModel`.
+        :rtype: ~azure.core.polling.LROPoller[~azure.ai.formrecognizer.CustomFormModel]
+        :raises ~azure.core.exceptions.HttpResponseError:
+
+        .. versionadded:: v2.1-preview
+            The *begin_create_composed_model* client method
+
+        .. admonition:: Example:
+
+            .. literalinclude:: ../samples/sample_create_composed_model.py
+                :start-after: [START begin_create_composed_model]
+                :end-before: [END begin_create_composed_model]
+                :language: python
+                :dedent: 8
+                :caption: Create a composed model
+        """
+
+        def _compose_callback(
+            raw_response, _, headers
+        ):  # pylint: disable=unused-argument
+            model = self._deserialize(self._generated_models.Model, raw_response)
+            return CustomFormModel._from_generated_composed(model)
+
+        model_name = kwargs.pop("model_name", None)
+        polling_interval = kwargs.pop(
+            "polling_interval", self._client._config.polling_interval
+        )
+        continuation_token = kwargs.pop("continuation_token", None)
+        try:
+            return self._client.begin_compose_custom_models_async(
+                {"model_ids": model_ids, "model_name": model_name},
+                cls=kwargs.pop("cls", _compose_callback),
+                polling=LROBasePolling(
+                    timeout=polling_interval,
+                    lro_algorithms=[TrainingPolling()],
+                    **kwargs
+                ),
+                continuation_token=continuation_token,
+                **kwargs
+            )
+        except ValueError:
+            raise ValueError(
+                "Method 'begin_create_composed_model' is only available for API version V2_1_PREVIEW and up"
+            )
 
     def get_form_recognizer_client(self, **kwargs):
         # type: (Any) -> FormRecognizerClient
@@ -416,13 +505,13 @@ class FormTrainingClient(object):
 
         _pipeline = Pipeline(
             transport=TransportWrapper(self._client._client._pipeline._transport),
-            policies=self._client._client._pipeline._impl_policies
+            policies=self._client._client._pipeline._impl_policies,
         )  # type: Pipeline
         client = FormRecognizerClient(
             endpoint=self._endpoint,
             credential=self._credential,
             pipeline=_pipeline,
-            api_version=self.api_version,
+            api_version=self._api_version,
             **kwargs
         )
         # need to share config, but can't pass as a keyword into client
@@ -431,8 +520,7 @@ class FormTrainingClient(object):
 
     def close(self):
         # type: () -> None
-        """Close the :class:`~azure.ai.formrecognizer.FormTrainingClient` session.
-        """
+        """Close the :class:`~azure.ai.formrecognizer.FormTrainingClient` session."""
         return self._client.close()
 
     def __enter__(self):

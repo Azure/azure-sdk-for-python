@@ -10,6 +10,8 @@ import os
 import unittest
 from datetime import datetime, timedelta
 import asyncio
+
+from azure.core.credentials import AzureSasCredential
 from azure.core.pipeline.transport import AioHttpTransport
 from multidict import CIMultiDict, CIMultiDictProxy
 import requests
@@ -646,6 +648,19 @@ class StorageFileAsyncTest(AsyncStorageTestCase):
     @pytest.mark.live_test_only
     @GlobalStorageAccountPreparer()
     @AsyncStorageTestCase.await_prepared_test
+    async def test_break_lease_with_broken_period_fails(self, resource_group, location, storage_account, storage_account_key):
+        self._setup(storage_account, storage_account_key)
+        file_client = await self._create_file(storage_account, storage_account_key)
+        lease = await file_client.acquire_lease()
+
+        # Assert
+        self.assertIsNotNone(lease)
+        with self.assertRaises(TypeError):
+            await lease.break_lease(lease_break_period=5)
+
+    @pytest.mark.live_test_only
+    @GlobalStorageAccountPreparer()
+    @AsyncStorageTestCase.await_prepared_test
     async def test_set_file_metadata_with_broken_lease_async(self, resource_group, location, storage_account, storage_account_key):
         # Make this test live test only, for the reason that metadata can only be recorded in lower case.
         self._setup(storage_account, storage_account_key)
@@ -974,6 +989,52 @@ class StorageFileAsyncTest(AsyncStorageTestCase):
         # Assert
         self.assertIsNotNone(ranges)
         self.assertEqual(len(ranges), 0)
+
+    @pytest.mark.playback_test_only
+    @GlobalStorageAccountPreparer()
+    @AsyncStorageTestCase.await_prepared_test
+    async def test_list_ranges_diff(self, resource_group, location, storage_account, storage_account_key):
+        self._setup(storage_account, storage_account_key)
+        file_name = self._get_file_reference()
+        await self._setup_share(storage_account, storage_account_key)
+        file_client = ShareFileClient(
+            self.account_url(storage_account, "file"),
+            share_name=self.share_name,
+            file_path=file_name,
+            credential=storage_account_key)
+
+        await file_client.create_file(2048)
+        share_client = self.fsc.get_share_client(self.share_name)
+        snapshot1 = await share_client.create_snapshot()
+
+        data = self.get_random_bytes(1536)
+        await file_client.upload_range(data, offset=0, length=1536)
+        snapshot2 = await share_client.create_snapshot()
+        await file_client.clear_range(offset=512, length=512)
+
+        ranges1, cleared1 = await file_client.get_ranges_diff(previous_sharesnapshot=snapshot1)
+        ranges2, cleared2 = await file_client.get_ranges_diff(previous_sharesnapshot=snapshot2['snapshot'])
+
+        # Assert
+        self.assertIsNotNone(ranges1)
+        self.assertIsInstance(ranges1, list)
+        self.assertEqual(len(ranges1), 2)
+        self.assertIsInstance(cleared1, list)
+        self.assertEqual(len(cleared1), 1)
+        self.assertEqual(ranges1[0]['start'], 0)
+        self.assertEqual(ranges1[0]['end'], 511)
+        self.assertEqual(cleared1[0]['start'], 512)
+        self.assertEqual(cleared1[0]['end'], 1023)
+        self.assertEqual(ranges1[1]['start'], 1024)
+        self.assertEqual(ranges1[1]['end'], 1535)
+
+        self.assertIsNotNone(ranges2)
+        self.assertIsInstance(ranges2, list)
+        self.assertEqual(len(ranges2), 0)
+        self.assertIsInstance(cleared2, list)
+        self.assertEqual(len(cleared2), 1)
+        self.assertEqual(cleared2[0]['start'], 512)
+        self.assertEqual(cleared2[0]['end'], 1023)
 
     @GlobalStorageAccountPreparer()
     @AsyncStorageTestCase.await_prepared_test
@@ -1977,6 +2038,44 @@ class StorageFileAsyncTest(AsyncStorageTestCase):
         # Assert
         self.assertTrue(response.ok)
         self.assertEqual(self.short_byte_data, response.content)
+
+    @GlobalStorageAccountPreparer()
+    @AsyncStorageTestCase.await_prepared_test
+    async def test_account_sas_credential_async(self, resource_group, location, storage_account, storage_account_key):
+        # SAS URL is calculated from storage key, so this test runs live only
+        if not self.is_live:
+            return
+
+        self._setup(storage_account, storage_account_key)
+        file_client = await self._create_file(storage_account, storage_account_key)
+        token = generate_account_sas(
+            self.fsc.account_name,
+            self.fsc.credential.account_key,
+            ResourceTypes(object=True),
+            AccountSasPermissions(read=True),
+            datetime.utcnow() + timedelta(hours=1),
+        )
+
+        # Act
+        file_client = ShareFileClient(
+            self.account_url(storage_account, "file"),
+            share_name=self.share_name,
+            file_path=file_client.file_name,
+            credential=AzureSasCredential(token))
+
+        properties = await file_client.get_file_properties()
+
+        # Assert
+        self.assertIsNotNone(properties)
+
+    @GlobalStorageAccountPreparer()
+    def test_account_sas_raises_if_sas_already_in_uri(self, resource_group, location, storage_account, storage_account_key):
+        with self.assertRaises(ValueError):
+            ShareFileClient(
+                self.account_url(storage_account, "file") + "?sig=foo",
+                share_name="foo",
+                file_path="foo",
+                credential=AzureSasCredential("?foo=bar"))
 
     @GlobalStorageAccountPreparer()
     @AsyncStorageTestCase.await_prepared_test

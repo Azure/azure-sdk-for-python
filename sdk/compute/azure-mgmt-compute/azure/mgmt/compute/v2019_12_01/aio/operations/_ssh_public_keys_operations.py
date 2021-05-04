@@ -14,7 +14,7 @@ from azure.core.pipeline import PipelineResponse
 from azure.core.pipeline.transport import AsyncHttpResponse, HttpRequest
 from azure.mgmt.core.exceptions import ARMErrorFormat
 
-from ... import models
+from ... import models as _models
 
 T = TypeVar('T')
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]]
@@ -33,7 +33,7 @@ class SshPublicKeysOperations:
     :param deserializer: An object model deserializer.
     """
 
-    models = models
+    models = _models
 
     def __init__(self, client, config, serializer, deserializer) -> None:
         self._client = client
@@ -44,7 +44,7 @@ class SshPublicKeysOperations:
     def list_by_subscription(
         self,
         **kwargs
-    ) -> AsyncIterable["models.SshPublicKeysGroupListResult"]:
+    ) -> AsyncIterable["_models.SshPublicKeysGroupListResult"]:
         """Lists all of the SSH public keys in the subscription. Use the nextLink property in the response
         to get the next page of SSH public keys.
 
@@ -53,7 +53,7 @@ class SshPublicKeysOperations:
         :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.compute.v2019_12_01.models.SshPublicKeysGroupListResult]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.SshPublicKeysGroupListResult"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.SshPublicKeysGroupListResult"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -112,7 +112,7 @@ class SshPublicKeysOperations:
         self,
         resource_group_name: str,
         **kwargs
-    ) -> AsyncIterable["models.SshPublicKeysGroupListResult"]:
+    ) -> AsyncIterable["_models.SshPublicKeysGroupListResult"]:
         """Lists all of the SSH public keys in the specified resource group. Use the nextLink property in
         the response to get the next page of SSH public keys.
 
@@ -123,7 +123,7 @@ class SshPublicKeysOperations:
         :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.compute.v2019_12_01.models.SshPublicKeysGroupListResult]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.SshPublicKeysGroupListResult"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.SshPublicKeysGroupListResult"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -183,9 +183,9 @@ class SshPublicKeysOperations:
         self,
         resource_group_name: str,
         ssh_public_key_name: str,
-        parameters: "models.SshPublicKeyResource",
+        parameters: "_models.SshPublicKeyResource",
         **kwargs
-    ) -> "models.SshPublicKeyResource":
+    ) -> "_models.SshPublicKeyResource":
         """Creates a new SSH public key resource.
 
         :param resource_group_name: The name of the resource group.
@@ -199,7 +199,7 @@ class SshPublicKeysOperations:
         :rtype: ~azure.mgmt.compute.v2019_12_01.models.SshPublicKeyResource
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.SshPublicKeyResource"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.SshPublicKeyResource"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -253,9 +253,9 @@ class SshPublicKeysOperations:
         self,
         resource_group_name: str,
         ssh_public_key_name: str,
-        parameters: "models.SshPublicKeyUpdateResource",
+        parameters: "_models.SshPublicKeyUpdateResource",
         **kwargs
-    ) -> "models.SshPublicKeyResource":
+    ) -> "_models.SshPublicKeyResource":
         """Updates a new SSH public key resource.
 
         :param resource_group_name: The name of the resource group.
@@ -269,7 +269,7 @@ class SshPublicKeysOperations:
         :rtype: ~azure.mgmt.compute.v2019_12_01.models.SshPublicKeyResource
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.SshPublicKeyResource"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.SshPublicKeyResource"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -373,7 +373,7 @@ class SshPublicKeysOperations:
         resource_group_name: str,
         ssh_public_key_name: str,
         **kwargs
-    ) -> "models.SshPublicKeyResource":
+    ) -> "_models.SshPublicKeyResource":
         """Retrieves information about an SSH public key.
 
         :param resource_group_name: The name of the resource group.
@@ -385,7 +385,7 @@ class SshPublicKeysOperations:
         :rtype: ~azure.mgmt.compute.v2019_12_01.models.SshPublicKeyResource
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.SshPublicKeyResource"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.SshPublicKeyResource"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -431,7 +431,7 @@ class SshPublicKeysOperations:
         resource_group_name: str,
         ssh_public_key_name: str,
         **kwargs
-    ) -> "models.SshPublicKeyGenerateKeyPairResult":
+    ) -> "_models.SshPublicKeyGenerateKeyPairResult":
         """Generates and returns a public/private key pair and populates the SSH public key resource with
         the public key. The length of the key will be 3072 bits. This operation can only be performed
         once per SSH public key resource.
@@ -445,7 +445,7 @@ class SshPublicKeysOperations:
         :rtype: ~azure.mgmt.compute.v2019_12_01.models.SshPublicKeyGenerateKeyPairResult
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.SshPublicKeyGenerateKeyPairResult"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.SshPublicKeyGenerateKeyPairResult"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }

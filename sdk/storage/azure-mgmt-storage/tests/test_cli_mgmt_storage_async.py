@@ -351,9 +351,9 @@ class MgmtStorageTest(AzureMgmtAsyncTestCase):
         )
 
         # PutShares[put]
-        result = self.event_loop.run_until_complete(
-            self.mgmt_client.file_shares.create(resource_group.name, STORAGE_ACCOUNT_NAME, SHARE_NAME, {})
-        )
+        # result = self.event_loop.run_until_complete(
+        #     self.mgmt_client.file_shares.create(resource_group.name, STORAGE_ACCOUNT_NAME, SHARE_NAME, {})
+        # )
 
         # StorageAccountGetProperties[get]
         storageaccount = self.event_loop.run_until_complete(
@@ -428,9 +428,9 @@ class MgmtStorageTest(AzureMgmtAsyncTestCase):
         )
 
         # GetShares[get]
-        result = self.event_loop.run_until_complete(
-            self.mgmt_client.file_shares.get(resource_group.name, STORAGE_ACCOUNT_NAME, SHARE_NAME)
-        )
+        # result = self.event_loop.run_until_complete(
+        #     self.mgmt_client.file_shares.get(resource_group.name, STORAGE_ACCOUNT_NAME, SHARE_NAME)
+        # )
 
         # StorageAccountGetManagementPolicies[get]
         result = self.event_loop.run_until_complete(
@@ -448,9 +448,9 @@ class MgmtStorageTest(AzureMgmtAsyncTestCase):
         )
 
         # ListShares[get]
-        result = self.to_list(
-            self.mgmt_client.file_shares.list(resource_group.name, STORAGE_ACCOUNT_NAME)
-        )
+        # result = self.to_list(
+        #     self.mgmt_client.file_shares.list(resource_group.name, STORAGE_ACCOUNT_NAME)
+        # )
 
         # GetBlobServices[get]
         result = self.event_loop.run_until_complete(
@@ -577,9 +577,9 @@ class MgmtStorageTest(AzureMgmtAsyncTestCase):
             }
           }
         }
-        result = self.event_loop.run_until_complete(
-            self.mgmt_client.file_shares.update(resource_group.name, STORAGE_ACCOUNT_NAME, SHARE_NAME, BODY)
-        )
+        # result = self.event_loop.run_until_complete(
+        #     self.mgmt_client.file_shares.update(resource_group.name, STORAGE_ACCOUNT_NAME, SHARE_NAME, BODY)
+        # )
 
         # # StorageAccountPatchEncryptionScope[patch]
         BODY = {
@@ -667,9 +667,9 @@ class MgmtStorageTest(AzureMgmtAsyncTestCase):
         )
 
         # DeleteShares[delete]
-        result = self.event_loop.run_until_complete(
-            self.mgmt_client.file_shares.delete(resource_group.name, STORAGE_ACCOUNT_NAME, SHARE_NAME)
-        )
+        # result = self.event_loop.run_until_complete(
+        #     self.mgmt_client.file_shares.delete(resource_group.name, STORAGE_ACCOUNT_NAME, SHARE_NAME)
+        # )
 
         # StorageAccountDeleteManagementPolicies[delete]
         result = self.event_loop.run_until_complete(

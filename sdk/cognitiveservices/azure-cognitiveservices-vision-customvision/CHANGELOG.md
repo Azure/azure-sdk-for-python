@@ -1,5 +1,13 @@
 # Release History
 
+## 3.1.0 (2020-11-10)
+
+*Training 3.4-preview*
+
+**Features**
+
+  - Support for `3.4-preview` API version.
+
 ## 3.0.0 (2020-06-22)
 
 *Training 3.3*

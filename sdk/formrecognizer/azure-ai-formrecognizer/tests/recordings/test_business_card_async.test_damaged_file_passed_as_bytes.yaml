@@ -1,0 +1,29 @@
+interactions:
+- request:
+    body: '%PDFUUU'
+    headers:
+      Accept:
+      - application/json
+      Content-Type:
+      - application/pdf
+      User-Agent:
+      - azsdk-python-ai-formrecognizer/3.1.0b4 Python/3.8.5 (Windows-10-10.0.19041-SP0)
+    method: POST
+    uri: https://region.api.cognitive.microsoft.com/formrecognizer/v2.1-preview.3/prebuilt/businessCard/analyze?includeTextDetails=false
+  response:
+    body:
+      string: '{"error": {"code": "BadArgument", "innerError": {"requestId": "17e9e414-6cad-4f8e-bf69-e05c1ed9bb6b"},
+        "message": "Bad or unrecognizable request JSON or binary file."}}'
+    headers:
+      apim-request-id: 17e9e414-6cad-4f8e-bf69-e05c1ed9bb6b
+      content-length: '161'
+      content-type: application/json; charset=utf-8
+      date: Thu, 18 Mar 2021 03:05:43 GMT
+      strict-transport-security: max-age=31536000; includeSubDomains; preload
+      x-content-type-options: nosniff
+      x-envoy-upstream-service-time: '3'
+    status:
+      code: 400
+      message: Bad Request
+    url: https://region.api.cognitive.microsoft.com/formrecognizer/v2.1-preview.3/prebuilt/businessCard/analyze?includeTextDetails=false
+version: 1

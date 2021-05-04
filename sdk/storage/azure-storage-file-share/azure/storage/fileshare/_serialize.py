@@ -14,7 +14,9 @@ from ._generated.models import SourceModifiedAccessConditions, LeaseAccessCondit
 _SUPPORTED_API_VERSIONS = [
     '2019-02-02',
     '2019-07-07',
-    '2019-12-12'
+    '2019-12-12',
+    '2020-02-10',
+    '2020-04-08'
 ]
 
 

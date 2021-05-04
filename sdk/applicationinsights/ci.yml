@@ -4,6 +4,7 @@ trigger:
   branches:
     include:
     - master
+    - main
     - hotfix/*
     - release/*
     - restapi*
@@ -15,6 +16,7 @@ pr:
   branches:
     include:
     - master
+    - main
     - feature/*
     - hotfix/*
     - release/*
@@ -28,7 +30,7 @@ extends:
   parameters:
     ServiceDirectory: applicationinsights
     Artifacts:
-    - name: azure_mgmt_applicationinsights
+    - name: azure-mgmt-applicationinsights
       safeName: azuremgmtapplicationinsights
-    - name: azure_applicationinsights
+    - name: azure-applicationinsights
       safeName: azureapplicationinsights

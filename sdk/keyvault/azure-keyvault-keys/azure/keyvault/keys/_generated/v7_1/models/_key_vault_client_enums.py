@@ -32,22 +32,55 @@ class DeletionRecoveryLevel(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum))
     the system can purge the key, at the end of the retention interval.
     """
 
-    PURGEABLE = "Purgeable"  #: Denotes a vault state in which deletion is an irreversible operation, without the possibility for recovery. This level corresponds to no protection being available against a Delete operation; the data is irretrievably lost upon accepting a Delete operation at the entity level or higher (vault, resource group, subscription etc.).
-    RECOVERABLE_PURGEABLE = "Recoverable+Purgeable"  #: Denotes a vault state in which deletion is recoverable, and which also permits immediate and permanent deletion (i.e. purge). This level guarantees the recoverability of the deleted entity during the retention interval (90 days), unless a Purge operation is requested, or the subscription is cancelled. System wil permanently delete it after 90 days, if not recovered.
-    RECOVERABLE = "Recoverable"  #: Denotes a vault state in which deletion is recoverable without the possibility for immediate and permanent deletion (i.e. purge). This level guarantees the recoverability of the deleted entity during the retention interval(90 days) and while the subscription is still available. System wil permanently delete it after 90 days, if not recovered.
-    RECOVERABLE_PROTECTED_SUBSCRIPTION = "Recoverable+ProtectedSubscription"  #: Denotes a vault and subscription state in which deletion is recoverable within retention interval (90 days), immediate and permanent deletion (i.e. purge) is not permitted, and in which the subscription itself  cannot be permanently canceled. System wil permanently delete it after 90 days, if not recovered.
-    CUSTOMIZED_RECOVERABLE_PURGEABLE = "CustomizedRecoverable+Purgeable"  #: Denotes a vault state in which deletion is recoverable, and which also permits immediate and permanent deletion (i.e. purge when 7<= SoftDeleteRetentionInDays < 90). This level guarantees the recoverability of the deleted entity during the retention interval, unless a Purge operation is requested, or the subscription is cancelled.
-    CUSTOMIZED_RECOVERABLE = "CustomizedRecoverable"  #: Denotes a vault state in which deletion is recoverable without the possibility for immediate and permanent deletion (i.e. purge when 7<= SoftDeleteRetentionInDays < 90).This level guarantees the recoverability of the deleted entity during the retention interval and while the subscription is still available.
-    CUSTOMIZED_RECOVERABLE_PROTECTED_SUBSCRIPTION = "CustomizedRecoverable+ProtectedSubscription"  #: Denotes a vault and subscription state in which deletion is recoverable, immediate and permanent deletion (i.e. purge) is not permitted, and in which the subscription itself cannot be permanently canceled when 7<= SoftDeleteRetentionInDays < 90. This level guarantees the recoverability of the deleted entity during the retention interval, and also reflects the fact that the subscription itself cannot be cancelled.
+    #: Denotes a vault state in which deletion is an irreversible operation, without the possibility
+    #: for recovery. This level corresponds to no protection being available against a Delete
+    #: operation; the data is irretrievably lost upon accepting a Delete operation at the entity level
+    #: or higher (vault, resource group, subscription etc.).
+    PURGEABLE = "Purgeable"
+    #: Denotes a vault state in which deletion is recoverable, and which also permits immediate and
+    #: permanent deletion (i.e. purge). This level guarantees the recoverability of the deleted entity
+    #: during the retention interval (90 days), unless a Purge operation is requested, or the
+    #: subscription is cancelled. System wil permanently delete it after 90 days, if not recovered.
+    RECOVERABLE_PURGEABLE = "Recoverable+Purgeable"
+    #: Denotes a vault state in which deletion is recoverable without the possibility for immediate
+    #: and permanent deletion (i.e. purge). This level guarantees the recoverability of the deleted
+    #: entity during the retention interval(90 days) and while the subscription is still available.
+    #: System wil permanently delete it after 90 days, if not recovered.
+    RECOVERABLE = "Recoverable"
+    #: Denotes a vault and subscription state in which deletion is recoverable within retention
+    #: interval (90 days), immediate and permanent deletion (i.e. purge) is not permitted, and in
+    #: which the subscription itself  cannot be permanently canceled. System wil permanently delete it
+    #: after 90 days, if not recovered.
+    RECOVERABLE_PROTECTED_SUBSCRIPTION = "Recoverable+ProtectedSubscription"
+    #: Denotes a vault state in which deletion is recoverable, and which also permits immediate and
+    #: permanent deletion (i.e. purge when 7<= SoftDeleteRetentionInDays < 90). This level guarantees
+    #: the recoverability of the deleted entity during the retention interval, unless a Purge
+    #: operation is requested, or the subscription is cancelled.
+    CUSTOMIZED_RECOVERABLE_PURGEABLE = "CustomizedRecoverable+Purgeable"
+    #: Denotes a vault state in which deletion is recoverable without the possibility for immediate
+    #: and permanent deletion (i.e. purge when 7<= SoftDeleteRetentionInDays < 90).This level
+    #: guarantees the recoverability of the deleted entity during the retention interval and while the
+    #: subscription is still available.
+    CUSTOMIZED_RECOVERABLE = "CustomizedRecoverable"
+    #: Denotes a vault and subscription state in which deletion is recoverable, immediate and
+    #: permanent deletion (i.e. purge) is not permitted, and in which the subscription itself cannot
+    #: be permanently canceled when 7<= SoftDeleteRetentionInDays < 90. This level guarantees the
+    #: recoverability of the deleted entity during the retention interval, and also reflects the fact
+    #: that the subscription itself cannot be cancelled.
+    CUSTOMIZED_RECOVERABLE_PROTECTED_SUBSCRIPTION = "CustomizedRecoverable+ProtectedSubscription"
 
 class JsonWebKeyCurveName(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     """Elliptic curve name. For valid values, see JsonWebKeyCurveName.
     """
 
-    P256 = "P-256"  #: The NIST P-256 elliptic curve, AKA SECG curve SECP256R1.
-    P384 = "P-384"  #: The NIST P-384 elliptic curve, AKA SECG curve SECP384R1.
-    P521 = "P-521"  #: The NIST P-521 elliptic curve, AKA SECG curve SECP521R1.
-    P256_K = "P-256K"  #: The SECG SECP256K1 elliptic curve.
+    #: The NIST P-256 elliptic curve, AKA SECG curve SECP256R1.
+    P256 = "P-256"
+    #: The NIST P-384 elliptic curve, AKA SECG curve SECP384R1.
+    P384 = "P-384"
+    #: The NIST P-521 elliptic curve, AKA SECG curve SECP521R1.
+    P521 = "P-521"
+    #: The SECG SECP256K1 elliptic curve.
+    P256_K = "P-256K"
 
 class JsonWebKeyEncryptionAlgorithm(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     """algorithm identifier
@@ -74,25 +107,44 @@ class JsonWebKeySignatureAlgorithm(with_metaclass(_CaseInsensitiveEnumMeta, str,
     types, see JsonWebKeySignatureAlgorithm.
     """
 
-    PS256 = "PS256"  #: RSASSA-PSS using SHA-256 and MGF1 with SHA-256, as described in https://tools.ietf.org/html/rfc7518.
-    PS384 = "PS384"  #: RSASSA-PSS using SHA-384 and MGF1 with SHA-384, as described in https://tools.ietf.org/html/rfc7518.
-    PS512 = "PS512"  #: RSASSA-PSS using SHA-512 and MGF1 with SHA-512, as described in https://tools.ietf.org/html/rfc7518.
-    RS256 = "RS256"  #: RSASSA-PKCS1-v1_5 using SHA-256, as described in https://tools.ietf.org/html/rfc7518.
-    RS384 = "RS384"  #: RSASSA-PKCS1-v1_5 using SHA-384, as described in https://tools.ietf.org/html/rfc7518.
-    RS512 = "RS512"  #: RSASSA-PKCS1-v1_5 using SHA-512, as described in https://tools.ietf.org/html/rfc7518.
-    RSNULL = "RSNULL"  #: Reserved.
-    ES256 = "ES256"  #: ECDSA using P-256 and SHA-256, as described in https://tools.ietf.org/html/rfc7518.
-    ES384 = "ES384"  #: ECDSA using P-384 and SHA-384, as described in https://tools.ietf.org/html/rfc7518.
-    ES512 = "ES512"  #: ECDSA using P-521 and SHA-512, as described in https://tools.ietf.org/html/rfc7518.
-    ES256_K = "ES256K"  #: ECDSA using P-256K and SHA-256, as described in https://tools.ietf.org/html/rfc7518.
+    #: RSASSA-PSS using SHA-256 and MGF1 with SHA-256, as described in
+    #: https://tools.ietf.org/html/rfc7518.
+    PS256 = "PS256"
+    #: RSASSA-PSS using SHA-384 and MGF1 with SHA-384, as described in
+    #: https://tools.ietf.org/html/rfc7518.
+    PS384 = "PS384"
+    #: RSASSA-PSS using SHA-512 and MGF1 with SHA-512, as described in
+    #: https://tools.ietf.org/html/rfc7518.
+    PS512 = "PS512"
+    #: RSASSA-PKCS1-v1_5 using SHA-256, as described in https://tools.ietf.org/html/rfc7518.
+    RS256 = "RS256"
+    #: RSASSA-PKCS1-v1_5 using SHA-384, as described in https://tools.ietf.org/html/rfc7518.
+    RS384 = "RS384"
+    #: RSASSA-PKCS1-v1_5 using SHA-512, as described in https://tools.ietf.org/html/rfc7518.
+    RS512 = "RS512"
+    #: Reserved.
+    RSNULL = "RSNULL"
+    #: ECDSA using P-256 and SHA-256, as described in https://tools.ietf.org/html/rfc7518.
+    ES256 = "ES256"
+    #: ECDSA using P-384 and SHA-384, as described in https://tools.ietf.org/html/rfc7518.
+    ES384 = "ES384"
+    #: ECDSA using P-521 and SHA-512, as described in https://tools.ietf.org/html/rfc7518.
+    ES512 = "ES512"
+    #: ECDSA using P-256K and SHA-256, as described in https://tools.ietf.org/html/rfc7518.
+    ES256_K = "ES256K"
 
 class JsonWebKeyType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     """JsonWebKey Key Type (kty), as defined in https://tools.ietf.org/html/draft-ietf-jose-json-web-
     algorithms-40.
     """
 
-    EC = "EC"  #: Elliptic Curve.
-    EC_HSM = "EC-HSM"  #: Elliptic Curve with a private key which is not exportable from the HSM.
-    RSA = "RSA"  #: RSA (https://tools.ietf.org/html/rfc3447).
-    RSA_HSM = "RSA-HSM"  #: RSA with a private key which is not exportable from the HSM.
-    OCT = "oct"  #: Octet sequence (used to represent symmetric keys).
+    #: Elliptic Curve.
+    EC = "EC"
+    #: Elliptic Curve with a private key which is not exportable from the HSM.
+    EC_HSM = "EC-HSM"
+    #: RSA (https://tools.ietf.org/html/rfc3447).
+    RSA = "RSA"
+    #: RSA with a private key which is not exportable from the HSM.
+    RSA_HSM = "RSA-HSM"
+    #: Not supported in this version. Octet sequence (used to represent symmetric keys).
+    OCT = "oct"

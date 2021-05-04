@@ -3,15 +3,17 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
+from typing import Any
 
 try:
     from urllib.parse import quote, unquote
 except ImportError:
     from urllib2 import quote, unquote # type: ignore
-
-from ._shared.base_client import parse_connection_str
+from azure.core.pipeline import Pipeline
+from ._deserialize import deserialize_dir_properties
+from ._shared.base_client import TransportWrapper, parse_connection_str
 from ._data_lake_file_client import DataLakeFileClient
-from ._models import DirectoryProperties
+from ._models import DirectoryProperties, FileProperties
 from ._path_client import PathClient
 
 
@@ -37,9 +39,11 @@ class DataLakeDirectoryClient(PathClient):
     :type directory_name: str
     :param credential:
         The credentials with which to authenticate. This is optional if the
-        account URL already has a SAS token. The value can be a SAS token string, and account
+        account URL already has a SAS token. The value can be a SAS token string,
+        an instance of a AzureSasCredential from azure.core.credentials, and account
         shared access key, or an instance of a TokenCredentials class from azure.identity.
-        If the URL already has a SAS token, specifying an explicit credential will take priority.
+        If the resource URI already contains a SAS token, this will be ignored in favor of an explicit credential
+        - except in the case of AzureSasCredential, where the conflicting SAS tokens will raise a ValueError.
 
     .. admonition:: Example:
 
@@ -83,7 +87,8 @@ class DataLakeDirectoryClient(PathClient):
         :param credential:
             The credentials with which to authenticate. This is optional if the
             account URL already has a SAS token, or the connection string already has shared
-            access key values. The value can be a SAS token string, and account shared access
+            access key values. The value can be a SAS token string,
+            an instance of a AzureSasCredential from azure.core.credentials, and account shared access
             key, or an instance of a TokenCredentials class from azure.identity.
             Credentials provided here will take precedence over those in the connection string.
         :return a DataLakeDirectoryClient
@@ -195,7 +200,7 @@ class DataLakeDirectoryClient(PathClient):
                 :dedent: 4
                 :caption: Delete directory.
         """
-        return self._delete(**kwargs)
+        return self._delete(recursive=True, **kwargs)
 
     def get_directory_properties(self, **kwargs):
         # type: (**Any) -> DirectoryProperties
@@ -236,12 +241,21 @@ class DataLakeDirectoryClient(PathClient):
                 :dedent: 4
                 :caption: Getting the properties for a file/directory.
         """
-        blob_properties = self._get_path_properties(**kwargs)
-        return DirectoryProperties._from_blob_properties(blob_properties)  # pylint: disable=protected-access
+        return self._get_path_properties(cls=deserialize_dir_properties, **kwargs)  # pylint: disable=protected-access
 
-    def rename_directory(self, new_name,  # type: str
-                         **kwargs):
-        # type: (**Any) -> DataLakeDirectoryClient
+    def exists(self, **kwargs):
+        # type: (**Any) -> bool
+        """
+        Returns True if a directory exists and returns False otherwise.
+
+        :kwarg int timeout:
+            The timeout parameter is expressed in seconds.
+        :returns: boolean
+        """
+        return self._exists(**kwargs)
+
+    def rename_directory(self, new_name, **kwargs):
+        # type: (str, **Any) -> DataLakeDirectoryClient
         """
         Rename the source directory.
 
@@ -306,7 +320,7 @@ class DataLakeDirectoryClient(PathClient):
         """
         new_name = new_name.strip('/')
         new_file_system = new_name.split('/')[0]
-        new_path_and_token = new_name[len(new_file_system):].split('?')
+        new_path_and_token = new_name[len(new_file_system):].strip('/').split('?')
         new_path = new_path_and_token[0]
         try:
             new_dir_sas = new_path_and_token[1] or self._query_str.strip('?')
@@ -500,13 +514,17 @@ class DataLakeDirectoryClient(PathClient):
             or an instance of FileProperties. eg. directory/subdirectory/file
         :type file: str or ~azure.storage.filedatalake.FileProperties
         :returns: A DataLakeFileClient.
-        :rtype: ~azure.storage.filedatalake..DataLakeFileClient
+        :rtype: ~azure.storage.filedatalake.DataLakeFileClient
         """
         try:
-            file_path = file.name
+            file_path = file.get('name')
         except AttributeError:
-            file_path = self.path_name + '/' + file
+            file_path = self.path_name + '/' + str(file)
 
+        _pipeline = Pipeline(
+            transport=TransportWrapper(self._pipeline._transport), # pylint: disable = protected-access
+            policies=self._pipeline._impl_policies # pylint: disable = protected-access
+        )
         return DataLakeFileClient(
             self.url, self.file_system_name, file_path=file_path, credential=self._raw_credential,
             _hosts=self._hosts, _configuration=self._config, _pipeline=self._pipeline,
@@ -529,10 +547,14 @@ class DataLakeDirectoryClient(PathClient):
         :rtype: ~azure.storage.filedatalake.DataLakeDirectoryClient
         """
         try:
-            subdir_path = sub_directory.name
+            subdir_path = sub_directory.get('name')
         except AttributeError:
-            subdir_path = self.path_name + '/' + sub_directory
+            subdir_path = self.path_name + '/' + str(sub_directory)
 
+        _pipeline = Pipeline(
+            transport=TransportWrapper(self._pipeline._transport), # pylint: disable = protected-access
+            policies=self._pipeline._impl_policies # pylint: disable = protected-access
+        )
         return DataLakeDirectoryClient(
             self.url, self.file_system_name, directory_name=subdir_path, credential=self._raw_credential,
             _hosts=self._hosts, _configuration=self._config, _pipeline=self._pipeline,

@@ -2,6 +2,7 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 # ------------------------------------
+import time
 from unittest import mock
 from urllib.parse import urlparse
 
@@ -14,7 +15,20 @@ from azure.core.pipeline.policies import SansIOHTTPPolicy
 import pytest
 
 from helpers import build_aad_response, mock_response, Request
-from helpers_async import async_validating_transport, AsyncMockTransport, wrap_in_future
+from helpers_async import async_validating_transport, wrap_in_future
+
+
+def test_tenant_id_validation():
+    """The credential should raise ValueError when given an invalid tenant_id"""
+
+    valid_ids = {"c878a2ab-8ef4-413b-83a0-199afb84d7fb", "contoso.onmicrosoft.com", "organizations", "common"}
+    for tenant in valid_ids:
+        VisualStudioCodeCredential(tenant_id=tenant)
+
+    invalid_ids = {"my tenant", "my_tenant", "/", "\\", '"my-tenant"', "'my-tenant'"}
+    for tenant in invalid_ids:
+        with pytest.raises(ValueError):
+            VisualStudioCodeCredential(tenant_id=tenant)
 
 
 @pytest.mark.asyncio
@@ -56,7 +70,7 @@ async def test_user_agent():
 async def test_request_url(authority):
     """the credential should accept an authority, with or without scheme, as an argument or environment variable"""
 
-    tenant_id = "expected_tenant"
+    tenant_id = "expected-tenant"
     access_token = "***"
     parsed_authority = urlparse(authority)
     expected_netloc = parsed_authority.netloc or authority  # "localhost" parses to netloc "", path "localhost"
@@ -70,7 +84,9 @@ async def test_request_url(authority):
         assert request.body["refresh_token"] == expected_refresh_token
         return mock_response(json_payload={"token_type": "Bearer", "expires_in": 42, "access_token": access_token})
 
-    credential = VisualStudioCodeCredential(tenant_id=tenant_id, transport=mock.Mock(send=mock_send), authority=authority)
+    credential = VisualStudioCodeCredential(
+        tenant_id=tenant_id, transport=mock.Mock(send=mock_send), authority=authority
+    )
     with mock.patch(VisualStudioCodeCredential.__module__ + ".get_credentials", return_value=expected_refresh_token):
         token = await credential.get_token("scope")
     assert token.token == access_token
@@ -78,7 +94,9 @@ async def test_request_url(authority):
     # authority can be configured via environment variable
     with mock.patch.dict("os.environ", {EnvironmentVariables.AZURE_AUTHORITY_HOST: authority}, clear=True):
         credential = VisualStudioCodeCredential(tenant_id=tenant_id, transport=mock.Mock(send=mock_send))
-        with mock.patch(VisualStudioCodeCredential.__module__ + ".get_credentials", return_value=expected_refresh_token):
+        with mock.patch(
+            VisualStudioCodeCredential.__module__ + ".get_credentials", return_value=expected_refresh_token
+        ):
             await credential.get_token("scope")
     assert token.token == access_token
 
@@ -128,17 +146,24 @@ async def test_cache_refresh_token():
 
 @pytest.mark.asyncio
 async def test_no_obtain_token_if_cached():
-    expected_token = AccessToken("token", 42)
+    expected_token = AccessToken("token", time.time() + 3600)
 
-    mock_client = mock.Mock(should_refresh=lambda _: False)
     token_by_refresh_token = mock.Mock(return_value=expected_token)
-    mock_client.obtain_token_by_refresh_token = wrap_in_future(token_by_refresh_token)
-    mock_client.get_cached_access_token = mock.Mock(return_value="VALUE")
+    mock_client = mock.Mock(
+        get_cached_access_token=mock.Mock(return_value=expected_token),
+        obtain_token_by_refresh_token=wrap_in_future(token_by_refresh_token)
+    )
 
-    with mock.patch(VisualStudioCodeCredential.__module__ + ".get_credentials", return_value="VALUE"):
-        credential = VisualStudioCodeCredential(_client=mock_client)
+    credential = VisualStudioCodeCredential(_client=mock_client)
+    with mock.patch(
+        VisualStudioCodeCredential.__module__ + ".get_credentials",
+        mock.Mock(side_effect=Exception("credential should not acquire a new token")),
+    ):
         token = await credential.get_token("scope")
-        assert token_by_refresh_token.call_count == 0
+
+    assert token_by_refresh_token.call_count == 0
+    assert token.token == expected_token.token
+    assert token.expires_on == expected_token.expires_on
 
 
 @pytest.mark.asyncio

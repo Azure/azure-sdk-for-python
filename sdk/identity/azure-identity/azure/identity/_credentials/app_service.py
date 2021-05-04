@@ -25,13 +25,14 @@ class AppServiceCredential(GetTokenMixin):
 
         client_args = _get_client_args(**kwargs)
         if client_args:
+            self._available = True
             self._client = ManagedIdentityClient(**client_args)
         else:
-            self._client = None
+            self._available = False
 
     def get_token(self, *scopes, **kwargs):
         # type: (*str, **Any) -> AccessToken
-        if not self._client:
+        if not self._available:
             raise CredentialUnavailableError(
                 message="App Service managed identity configuration not found in environment"
             )
@@ -50,38 +51,28 @@ def _get_client_args(**kwargs):
     # type: (dict) -> Optional[dict]
     identity_config = kwargs.pop("identity_config", None) or {}
 
-    url = os.environ.get(EnvironmentVariables.IDENTITY_ENDPOINT)
-    secret = os.environ.get(EnvironmentVariables.IDENTITY_HEADER)
-    if url and secret:
-        version = "2019-08-01"
-        base_headers = {"X-IDENTITY-HEADER": secret}
-        content_callback = None
-    else:
-        url = os.environ.get(EnvironmentVariables.MSI_ENDPOINT)
-        secret = os.environ.get(EnvironmentVariables.MSI_SECRET)
-        if not (url and secret):
-            # App Service managed identity isn't available in this environment
-            return None
+    url = os.environ.get(EnvironmentVariables.MSI_ENDPOINT)
+    secret = os.environ.get(EnvironmentVariables.MSI_SECRET)
+    if not (url and secret):
+        # App Service managed identity isn't available in this environment
+        return None
 
-        version = "2017-09-01"
-        base_headers = {"secret": secret}
-        content_callback = _parse_app_service_expires_on
-        if kwargs.get("client_id"):
-            identity_config["clientid"] = kwargs.pop("client_id")
+    if kwargs.get("client_id"):
+        identity_config["clientid"] = kwargs.pop("client_id")
 
     return dict(
         kwargs,
-        _content_callback=content_callback,
+        _content_callback=_parse_app_service_expires_on,
         _identity_config=identity_config,
-        base_headers=base_headers,
-        request_factory=functools.partial(_get_request, url, version),
+        base_headers={"secret": secret},
+        request_factory=functools.partial(_get_request, url),
     )
 
 
-def _get_request(url, version, scope, identity_config):
-    # type: (str, str, str, dict) -> HttpRequest
+def _get_request(url, scope, identity_config):
+    # type: (str, str, dict) -> HttpRequest
     request = HttpRequest("GET", url)
-    request.format_parameters(dict({"api-version": version, "resource": scope}, **identity_config))
+    request.format_parameters(dict({"api-version": "2017-09-01", "resource": scope}, **identity_config))
     return request
 
 
@@ -95,10 +86,18 @@ def _parse_app_service_expires_on(content):
 
     :raises ValueError: ``expires_on`` didn't match an expected format
     """
+
+    # Azure ML sets the same environment variables as App Service but returns expires_on as an integer.
+    # That means we could have an Azure ML response here, so let's first try to parse expires_on as an int.
+    try:
+        content["expires_on"] = int(content["expires_on"])
+        return
+    except ValueError:
+        pass
+
     import calendar
     import time
 
-    # parse the string minus the timezone offset
     expires_on = content["expires_on"]
     if expires_on.endswith(" +00:00"):
         date_string = expires_on[: -len(" +00:00")]

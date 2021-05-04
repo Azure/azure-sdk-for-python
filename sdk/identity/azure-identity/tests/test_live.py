@@ -12,7 +12,7 @@ from azure.identity import (
     InteractiveBrowserCredential,
     UsernamePasswordCredential,
 )
-from azure.identity._constants import AZURE_CLI_CLIENT_ID
+from azure.identity._constants import DEVELOPER_SIGN_ON_CLIENT_ID
 
 ARM_SCOPE = "https://management.azure.com/.default"
 
@@ -25,18 +25,25 @@ def get_token(credential):
 
 
 def test_certificate_credential(live_certificate):
+    tenant_id = live_certificate["tenant_id"]
+    client_id = live_certificate["client_id"]
+
+    credential = CertificateCredential(tenant_id, client_id, live_certificate["cert_path"])
+    get_token(credential)
+
     credential = CertificateCredential(
-        live_certificate["tenant_id"], live_certificate["client_id"], live_certificate["cert_path"]
+        tenant_id, client_id, live_certificate["cert_with_password_path"], password=live_certificate["password"]
     )
     get_token(credential)
 
+    credential = CertificateCredential(tenant_id, client_id, certificate_data=live_certificate["cert_bytes"])
+    get_token(credential)
 
-def test_certificate_credential_with_password(live_certificate_with_password):
     credential = CertificateCredential(
-        live_certificate_with_password["tenant_id"],
-        live_certificate_with_password["client_id"],
-        live_certificate_with_password["cert_path"],
-        password=live_certificate_with_password["password"],
+        tenant_id,
+        client_id,
+        certificate_data=live_certificate["cert_with_password_bytes"],
+        password=live_certificate["password"],
     )
     get_token(credential)
 
@@ -74,11 +81,5 @@ def test_device_code():
         print("opening a browser to '{}', enter device code {}".format(url, user_code))
         webbrowser.open_new_tab(url)
 
-    credential = DeviceCodeCredential(client_id=AZURE_CLI_CLIENT_ID, prompt_callback=prompt, timeout=40)
-    get_token(credential)
-
-
-@pytest.mark.manual
-def test_browser_auth():
-    credential = InteractiveBrowserCredential(client_id=AZURE_CLI_CLIENT_ID, timeout=40)
+    credential = DeviceCodeCredential(client_id=DEVELOPER_SIGN_ON_CLIENT_ID, prompt_callback=prompt, timeout=40)
     get_token(credential)

@@ -127,7 +127,7 @@ from azure.storage.filedatalake import DataLakeFileClient
 data = b"abc"
 file = DataLakeFileClient.from_connection_string("my_connection_string", 
                                                  file_system_name="myfilesystem", file_path="myfile")
-
+file.create_file ()
 file.append_data(data, offset=0, length=len(data))
 file.flush_data(len(data))
 ```
@@ -163,7 +163,7 @@ for path in paths:
 ### General
 DataLake Storage clients raise exceptions defined in [Azure Core](https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/core/azure-core/README.md).
 
-All DataLake service operations will throw a StorageErrorException on failure with helpful [error codes](https://docs.microsoft.com/rest/api/storageservices/blob-service-error-codes).
+This list can be used for reference to catch thrown exceptions. To get the specific error code of the exception, use the `error_code` attribute, i.e, `exception.error_code`.
 
 ### Logging
 This library uses the standard

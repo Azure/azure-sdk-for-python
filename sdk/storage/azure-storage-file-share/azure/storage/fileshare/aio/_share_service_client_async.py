@@ -11,6 +11,7 @@ from typing import (  # pylint: disable=unused-import
 )
 
 from azure.core.async_paging import AsyncItemPaged
+from azure.core.exceptions import HttpResponseError
 from azure.core.tracing.decorator import distributed_trace
 from azure.core.pipeline import AsyncPipeline
 from azure.core.tracing.decorator_async import distributed_trace_async
@@ -19,8 +20,7 @@ from .._shared.base_client_async import AsyncStorageAccountHostsMixin, AsyncTran
 from .._shared.response_handlers import process_storage_error
 from .._shared.policies_async import ExponentialRetry
 from .._generated.aio import AzureFileStorage
-from .._generated.models import StorageErrorException, StorageServiceProperties
-from .._generated.version import VERSION
+from .._generated.models import StorageServiceProperties
 from .._share_service_client import ShareServiceClient as ShareServiceClientBase
 from .._serialize import get_api_version
 from ._share_client_async import ShareClient
@@ -34,6 +34,7 @@ if TYPE_CHECKING:
         ShareProperties,
         Metrics,
         CorsRule,
+        ShareProtocolSettings,
     )
 
 
@@ -51,7 +52,8 @@ class ShareServiceClient(AsyncStorageAccountHostsMixin, ShareServiceClientBase):
         authenticated with a SAS token.
     :param credential:
         The credential with which to authenticate. This is optional if the
-        account URL already has a SAS token. The value can be a SAS token string or an account
+        account URL already has a SAS token. The value can be a SAS token string,
+        an instance of a AzureSasCredential from azure.core.credentials or an account
         shared access key.
     :keyword str api_version:
         The Storage API version to use for requests. Default value is '2019-07-07'.
@@ -87,8 +89,9 @@ class ShareServiceClient(AsyncStorageAccountHostsMixin, ShareServiceClientBase):
             credential=credential,
             loop=loop,
             **kwargs)
-        self._client = AzureFileStorage(version=VERSION, url=self.url, pipeline=self._pipeline, loop=loop)
-        self._client._config.version = get_api_version(kwargs, VERSION)  # pylint: disable=protected-access
+        self._client = AzureFileStorage(url=self.url, pipeline=self._pipeline, loop=loop)
+        default_api_version = self._client._config.version  # pylint: disable=protected-access
+        self._client._config.version = get_api_version(kwargs, default_api_version)  # pylint: disable=protected-access
         self._loop = loop
 
     @distributed_trace_async
@@ -116,7 +119,7 @@ class ShareServiceClient(AsyncStorageAccountHostsMixin, ShareServiceClientBase):
         try:
             service_props = await self._client.service.get_properties(timeout=timeout, **kwargs)
             return service_properties_deserialize(service_props)
-        except StorageErrorException as error:
+        except HttpResponseError as error:
             process_storage_error(error)
 
     @distributed_trace_async
@@ -124,6 +127,7 @@ class ShareServiceClient(AsyncStorageAccountHostsMixin, ShareServiceClientBase):
             self, hour_metrics=None,  # type: Optional[Metrics]
             minute_metrics=None,  # type: Optional[Metrics]
             cors=None,  # type: Optional[List[CorsRule]]
+            protocol=None,  # type: Optional[ShareProtocolSettings],
             **kwargs
         ):
         # type: (...) -> None
@@ -144,6 +148,9 @@ class ShareServiceClient(AsyncStorageAccountHostsMixin, ShareServiceClientBase):
             list. If an empty list is specified, all CORS rules will be deleted,
             and CORS will be disabled for the service.
         :type cors: list(:class:`~azure.storage.fileshare.CorsRule`)
+        :param protocol_settings:
+            Sets protocol settings
+        :type protocol: ~azure.storage.fileshare.ShareProtocolSettings
         :keyword int timeout:
             The timeout parameter is expressed in seconds.
         :rtype: None
@@ -161,11 +168,12 @@ class ShareServiceClient(AsyncStorageAccountHostsMixin, ShareServiceClientBase):
         props = StorageServiceProperties(
             hour_metrics=hour_metrics,
             minute_metrics=minute_metrics,
-            cors=cors
+            cors=cors,
+            protocol=protocol
         )
         try:
             await self._client.service.set_properties(props, timeout=timeout, **kwargs)
-        except StorageErrorException as error:
+        except HttpResponseError as error:
             process_storage_error(error)
 
     @distributed_trace
@@ -320,7 +328,7 @@ class ShareServiceClient(AsyncStorageAccountHostsMixin, ShareServiceClientBase):
                                               deleted_share_version=deleted_share_version,
                                               timeout=kwargs.pop('timeout', None), **kwargs)
             return share
-        except StorageErrorException as error:
+        except HttpResponseError as error:
             process_storage_error(error)
 
     def get_share_client(self, share, snapshot=None):

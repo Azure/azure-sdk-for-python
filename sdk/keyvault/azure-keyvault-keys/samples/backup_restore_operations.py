@@ -3,6 +3,7 @@
 # Licensed under the MIT License.
 # ------------------------------------
 import os
+import time
 from azure.keyvault.keys import KeyClient
 from azure.identity import DefaultAzureCredential
 from azure.core.exceptions import HttpResponseError
@@ -25,7 +26,9 @@ from azure.core.exceptions import HttpResponseError
 #
 # 3. Delete a key (begin_delete_key)
 #
-# 4. Restore a key (restore_key_backup)
+# 4. Purge a key (purge_deleted_key)
+#
+# 5. Restore a key (restore_key_backup)
 # ----------------------------------------------------------------------------------------------------------
 
 # Instantiate a key client that will be used to call the service.
@@ -50,13 +53,22 @@ try:
 
     # The rsa key is no longer in use, so you delete it.
     print("\n.. Delete the key")
-    deleted_key = client.begin_delete_key(key.name).result()
-    print("Deleted Key with name '{0}'".format(deleted_key.name))
+    delete_operation = client.begin_delete_key(key.name)
+    deleted_key = delete_operation.result()
+    print("Deleted key with name '{0}'".format(deleted_key.name))
 
-    # In future, if the key is required again, we can use the backup value to restore it in the Key Vault.
+    # Wait for the deletion to complete before purging the key.
+    # The purge will take some time, so wait before restoring the backup to avoid a conflict.
+    delete_operation.wait()
+    print("\n.. Purge the key")
+    client.purge_deleted_key(key.name)
+    time.sleep(60)
+    print("Purged key with name '{0}'".format(deleted_key.name))
+
+    # In the future, if the key is required again, we can use the backup value to restore it in the Key Vault.
     print("\n.. Restore the key using the backed up key bytes")
     key = client.restore_key_backup(key_backup)
-    print("Restored Key with name '{0}'".format(key.name))
+    print("Restored key with name '{0}'".format(key.name))
 
 except HttpResponseError as e:
     print("\nThis sample has caught an error. {0}".format(e.message))

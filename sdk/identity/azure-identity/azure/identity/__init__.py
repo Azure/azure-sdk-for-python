@@ -22,6 +22,7 @@ from ._credentials import (
     UsernamePasswordCredential,
     VisualStudioCodeCredential,
 )
+from ._persistent_cache import TokenCachePersistenceOptions
 
 
 __all__ = [
@@ -41,6 +42,7 @@ __all__ = [
     "KnownAuthorities",
     "ManagedIdentityCredential",
     "SharedTokenCacheCredential",
+    "TokenCachePersistenceOptions",
     "UsernamePasswordCredential",
     "VisualStudioCodeCredential",
 ]

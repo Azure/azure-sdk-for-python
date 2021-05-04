@@ -88,3 +88,18 @@ def get_files_in_commit(git_folder, commit_id="HEAD"):
     repo = Repo(str(git_folder))
     output = repo.git.diff("--name-only", commit_id+"^", commit_id)
     return output.splitlines()
+
+def get_diff_file_list(git_folder):
+    """List of unstaged files.
+    """
+    repo = Repo(str(git_folder))
+    output = repo.git.diff("--name-only")
+    return output.splitlines()
+	
+def get_add_diff_file_list(git_folder):
+    """List of new files.
+    """
+    repo = Repo(str(git_folder))
+    repo.git.add("sdk")
+    output = repo.git.diff("HEAD", "--name-only")
+    return output.splitlines()

@@ -9,7 +9,8 @@
 from enum import Enum
 
 from azure.core.paging import PageIterator
-from azure.storage.blob._generated.models import FilterBlobItem
+from azure.core.exceptions import HttpResponseError
+from ._generated.models import ArrowField
 
 from ._shared import decode_base64_to_text
 from ._shared.response_handlers import return_context_and_deserialized, process_storage_error
@@ -20,7 +21,6 @@ from ._generated.models import RetentionPolicy as GeneratedRetentionPolicy
 from ._generated.models import StaticWebsite as GeneratedStaticWebsite
 from ._generated.models import CorsRule as GeneratedCorsRule
 from ._generated.models import AccessPolicy as GenAccessPolicy
-from ._generated.models import StorageErrorException
 
 
 class BlobType(str, Enum):
@@ -196,8 +196,7 @@ class RetentionPolicy(GeneratedRetentionPolicy):
     """
 
     def __init__(self, enabled=False, days=None):
-        self.enabled = enabled
-        self.days = days
+        super(RetentionPolicy, self).__init__(enabled=enabled, days=days, allow_permanent_delete=None)
         if self.enabled and (self.days is None):
             raise ValueError("If policy is enabled, 'days' must be specified.")
 
@@ -318,6 +317,10 @@ class ContainerProperties(DictMixin):
         container as metadata.
     :ivar ~azure.storage.blob.ContainerEncryptionScope encryption_scope:
         The default encryption scope configuration for the container.
+    :ivar bool deleted:
+        Whether this container was deleted.
+    :ivar str version:
+        The version of a deleted container.
     """
 
     def __init__(self, **kwargs):
@@ -397,7 +400,7 @@ class ContainerPropertiesPaged(PageIterator):
                 maxresults=self.results_per_page,
                 cls=return_context_and_deserialized,
                 use_location=self.location_mode)
-        except StorageErrorException as error:
+        except HttpResponseError as error:
             process_storage_error(error)
 
     def _extract_data_cb(self, get_next_return):
@@ -502,6 +505,11 @@ class BlobProperties(DictMixin):
 
         .. versionadded:: 12.4.0
 
+    :ivar ~datetime.datetime last_accessed_on:
+        Indicates when the last Read/Write operation was performed on a Blob.
+
+        .. versionadded:: 12.6.0
+
     :ivar int tag_count:
         Tags count on this blob.
 
@@ -548,6 +556,7 @@ class BlobProperties(DictMixin):
         self.request_server_encrypted = kwargs.get('x-ms-server-encrypted')
         self.object_replication_source_properties = kwargs.get('object_replication_source_properties')
         self.object_replication_destination_policy = kwargs.get('x-ms-or-policy-id')
+        self.last_accessed_on = kwargs.get('x-ms-last-access-time')
         self.tag_count = kwargs.get('x-ms-tag-count')
         self.tags = None
 
@@ -559,78 +568,13 @@ class FilteredBlob(DictMixin):
     :type name: str
     :ivar container_name: Container name.
     :type container_name: str
+    :ivar tags: Key value pairs of blob tags.
+    :type tags: Dict[str, str]
     """
     def __init__(self, **kwargs):
         self.name = kwargs.get('name', None)
         self.container_name = kwargs.get('container_name', None)
-
-
-class FilteredBlobPaged(PageIterator):
-    """An Iterable of Blob properties.
-
-    :ivar str service_endpoint: The service URL.
-    :ivar str prefix: A blob name prefix being used to filter the list.
-    :ivar str marker: The continuation token of the current page of results.
-    :ivar int results_per_page: The maximum number of results retrieved per API call.
-    :ivar str continuation_token: The continuation token to retrieve the next page of results.
-    :ivar str location_mode: The location mode being used to list results. The available
-        options include "primary" and "secondary".
-    :ivar current_page: The current page of listed results.
-    :vartype current_page: list(~azure.storage.blob.FilteredBlob)
-    :ivar str container: The container that the blobs are listed from.
-
-    :param callable command: Function to retrieve the next page of items.
-    :param str container: The name of the container.
-    :param int results_per_page: The maximum number of blobs to retrieve per
-        call.
-    :param str continuation_token: An opaque continuation token.
-    :param location_mode: Specifies the location the request should be sent to.
-        This mode only applies for RA-GRS accounts which allow secondary read access.
-        Options include 'primary' or 'secondary'.
-    """
-    def __init__(
-            self, command,
-            container=None,
-            results_per_page=None,
-            continuation_token=None,
-            location_mode=None):
-        super(FilteredBlobPaged, self).__init__(
-            get_next=self._get_next_cb,
-            extract_data=self._extract_data_cb,
-            continuation_token=continuation_token or ""
-        )
-        self._command = command
-        self.service_endpoint = None
-        self.marker = continuation_token
-        self.results_per_page = results_per_page
-        self.container = container
-        self.current_page = None
-        self.location_mode = location_mode
-
-    def _get_next_cb(self, continuation_token):
-        try:
-            return self._command(
-                marker=continuation_token or None,
-                maxresults=self.results_per_page,
-                cls=return_context_and_deserialized,
-                use_location=self.location_mode)
-        except StorageErrorException as error:
-            process_storage_error(error)
-
-    def _extract_data_cb(self, get_next_return):
-        self.location_mode, self._response = get_next_return
-        self.service_endpoint = self._response.service_endpoint
-        self.marker = self._response.next_marker
-        self.current_page = [self._build_item(item) for item in self._response.blobs]
-
-        return self._response.next_marker or None, self.current_page
-
-    @staticmethod
-    def _build_item(item):
-        if isinstance(item, FilterBlobItem):
-            blob = FilteredBlob(name=item.name, container_name=item.container_name)  # pylint: disable=protected-access
-            return blob
-        return item
+        self.tags = kwargs.get('tags', None)
 
 
 class LeaseProperties(DictMixin):
@@ -678,7 +622,7 @@ class ContentSettings(DictMixin):
     :param str cache_control:
         If the cache_control has previously been set for
         the blob, that value is stored.
-    :param str content_md5:
+    :param bytearray content_md5:
         If the content_md5 has been set for the blob, this response
         header is stored so that the client can check for message content
         integrity.
@@ -1091,6 +1035,30 @@ class DelimitedTextDialect(object):
         self.lineterminator = kwargs.pop('lineterminator', '\n')
         self.escapechar = kwargs.pop('escapechar', "")
         self.has_header = kwargs.pop('has_header', False)
+
+
+class ArrowDialect(ArrowField):
+    """field of an arrow schema.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param ~azure.storage.blob.ArrowType type: Arrow field type.
+    :keyword str name: The name of the field.
+    :keyword int precision: The precision of the field.
+    :keyword int scale: The scale of the field.
+    """
+    def __init__(self, type, **kwargs):   # pylint: disable=redefined-builtin
+        super(ArrowDialect, self).__init__(type=type, **kwargs)
+
+
+class ArrowType(str, Enum):
+
+    INT64 = "int64"
+    BOOL = "bool"
+    TIMESTAMP_MS = "timestamp[ms]"
+    STRING = "string"
+    DOUBLE = "double"
+    DECIMAL = 'decimal'
 
 
 class ObjectReplicationPolicy(DictMixin):

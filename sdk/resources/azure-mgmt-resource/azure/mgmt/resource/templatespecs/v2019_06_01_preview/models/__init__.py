@@ -16,6 +16,7 @@ try:
     from ._models_py3 import TemplateSpecTemplateArtifact
     from ._models_py3 import TemplateSpecUpdateModel
     from ._models_py3 import TemplateSpecVersion
+    from ._models_py3 import TemplateSpecVersionInfo
     from ._models_py3 import TemplateSpecVersionUpdateModel
     from ._models_py3 import TemplateSpecVersionsListResult
     from ._models_py3 import TemplateSpecsError
@@ -30,6 +31,7 @@ except (SyntaxError, ImportError):
     from ._models import TemplateSpecTemplateArtifact  # type: ignore
     from ._models import TemplateSpecUpdateModel  # type: ignore
     from ._models import TemplateSpecVersion  # type: ignore
+    from ._models import TemplateSpecVersionInfo  # type: ignore
     from ._models import TemplateSpecVersionUpdateModel  # type: ignore
     from ._models import TemplateSpecVersionsListResult  # type: ignore
     from ._models import TemplateSpecsError  # type: ignore
@@ -38,6 +40,7 @@ except (SyntaxError, ImportError):
 from ._template_specs_client_enums import (
     CreatedByType,
     TemplateSpecArtifactKind,
+    TemplateSpecExpandKind,
 )
 
 __all__ = [
@@ -50,10 +53,12 @@ __all__ = [
     'TemplateSpecTemplateArtifact',
     'TemplateSpecUpdateModel',
     'TemplateSpecVersion',
+    'TemplateSpecVersionInfo',
     'TemplateSpecVersionUpdateModel',
     'TemplateSpecVersionsListResult',
     'TemplateSpecsError',
     'TemplateSpecsListResult',
     'CreatedByType',
     'TemplateSpecArtifactKind',
+    'TemplateSpecExpandKind',
 ]

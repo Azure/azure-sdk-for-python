@@ -14,7 +14,7 @@ from azure.core.pipeline import PipelineResponse
 from azure.core.pipeline.transport import HttpRequest, HttpResponse
 from azure.mgmt.core.exceptions import ARMErrorFormat
 
-from .. import models
+from .. import models as _models
 
 if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
@@ -37,7 +37,7 @@ class TagsOperations(object):
     :param deserializer: An object model deserializer.
     """
 
-    models = models
+    models = _models
 
     def __init__(self, client, config, serializer, deserializer):
         self._client = client
@@ -111,7 +111,7 @@ class TagsOperations(object):
         tag_value,  # type: str
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.TagValue"
+        # type: (...) -> "_models.TagValue"
         """Creates a predefined value for a predefined tag name.
 
         This operation allows adding a value to the list of predefined values for an existing
@@ -126,7 +126,7 @@ class TagsOperations(object):
         :rtype: ~azure.mgmt.resource.resources.v2019_10_01.models.TagValue
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.TagValue"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.TagValue"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -176,7 +176,7 @@ class TagsOperations(object):
         tag_name,  # type: str
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.TagDetails"
+        # type: (...) -> "_models.TagDetails"
         """Creates a predefined tag name.
 
         This operation allows adding a name to the list of predefined tag names for the given
@@ -191,7 +191,7 @@ class TagsOperations(object):
         :rtype: ~azure.mgmt.resource.resources.v2019_10_01.models.TagDetails
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.TagDetails"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.TagDetails"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -295,7 +295,7 @@ class TagsOperations(object):
         self,
         **kwargs  # type: Any
     ):
-        # type: (...) -> Iterable["models.TagsListResult"]
+        # type: (...) -> Iterable["_models.TagsListResult"]
         """Gets a summary of tag usage under the subscription.
 
         This operation performs a union of predefined tags, resource tags, resource group tags and
@@ -308,7 +308,7 @@ class TagsOperations(object):
         :rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.resource.resources.v2019_10_01.models.TagsListResult]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.TagsListResult"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.TagsListResult"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -366,10 +366,10 @@ class TagsOperations(object):
     def create_or_update_at_scope(
         self,
         scope,  # type: str
-        parameters,  # type: "models.TagsResource"
+        parameters,  # type: "_models.TagsResource"
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.TagsResource"
+        # type: (...) -> "_models.TagsResource"
         """Creates or updates the entire set of tags on a resource or subscription.
 
         This operation allows adding or replacing the entire set of tags on the specified resource or
@@ -384,7 +384,7 @@ class TagsOperations(object):
         :rtype: ~azure.mgmt.resource.resources.v2019_10_01.models.TagsResource
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.TagsResource"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.TagsResource"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -431,10 +431,10 @@ class TagsOperations(object):
     def update_at_scope(
         self,
         scope,  # type: str
-        parameters,  # type: "models.TagsPatchResource"
+        parameters,  # type: "_models.TagsPatchResource"
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.TagsResource"
+        # type: (...) -> "_models.TagsResource"
         """Selectively updates the set of tags on a resource or subscription.
 
         This operation allows replacing, merging or selectively deleting tags on the specified resource
@@ -453,7 +453,7 @@ class TagsOperations(object):
         :rtype: ~azure.mgmt.resource.resources.v2019_10_01.models.TagsResource
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.TagsResource"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.TagsResource"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -502,7 +502,7 @@ class TagsOperations(object):
         scope,  # type: str
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.TagsResource"
+        # type: (...) -> "_models.TagsResource"
         """Gets the entire set of tags on a resource or subscription.
 
         Gets the entire set of tags on a resource or subscription.
@@ -514,7 +514,7 @@ class TagsOperations(object):
         :rtype: ~azure.mgmt.resource.resources.v2019_10_01.models.TagsResource
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.TagsResource"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.TagsResource"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }

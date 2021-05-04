@@ -5,6 +5,7 @@
 import asyncio
 import sys
 import os
+from typing import TYPE_CHECKING
 
 from azure.core.exceptions import ClientAuthenticationError
 from .._internal import AsyncContextManager
@@ -21,6 +22,10 @@ from ..._credentials.azure_cli import (
 )
 from ..._internal import _scopes_to_resource
 
+if TYPE_CHECKING:
+    from typing import Any
+    from azure.core.credentials import AccessToken
+
 
 class AzureCliCredential(AsyncContextManager):
     """Authenticates by requesting a token from the Azure CLI.
@@ -29,12 +34,11 @@ class AzureCliCredential(AsyncContextManager):
     """
 
     @log_get_token_async
-    async def get_token(self, *scopes, **kwargs):
+    async def get_token(self, *scopes: str, **kwargs: "Any") -> "AccessToken":
         """Request an access token for `scopes`.
 
-        .. note:: This method is called by Azure SDK clients. It isn't intended for use in application code.
-
-        This credential won't cache tokens. Every call invokes the Azure CLI.
+        This method is called automatically by Azure SDK clients. Applications calling this method directly must
+        also handle token caching because this credential doesn't cache the tokens it acquires.
 
         :param str scopes: desired scope for the access token. This credential allows only one scope per request.
         :rtype: :class:`azure.core.credentials.AccessToken`
@@ -61,7 +65,7 @@ class AzureCliCredential(AsyncContextManager):
         """Calling this method is unnecessary"""
 
 
-async def _run_command(command):
+async def _run_command(command: str) -> str:
     if sys.platform.startswith("win"):
         args = ("cmd", "/c " + command)
     else:

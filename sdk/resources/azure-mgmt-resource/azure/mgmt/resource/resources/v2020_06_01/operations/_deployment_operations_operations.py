@@ -14,7 +14,7 @@ from azure.core.pipeline import PipelineResponse
 from azure.core.pipeline.transport import HttpRequest, HttpResponse
 from azure.mgmt.core.exceptions import ARMErrorFormat
 
-from .. import models
+from .. import models as _models
 
 if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
@@ -37,7 +37,7 @@ class DeploymentOperationsOperations(object):
     :param deserializer: An object model deserializer.
     """
 
-    models = models
+    models = _models
 
     def __init__(self, client, config, serializer, deserializer):
         self._client = client
@@ -52,7 +52,7 @@ class DeploymentOperationsOperations(object):
         operation_id,  # type: str
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.DeploymentOperation"
+        # type: (...) -> "_models.DeploymentOperation"
         """Gets a deployments operation.
 
         :param scope: The resource scope.
@@ -66,7 +66,7 @@ class DeploymentOperationsOperations(object):
         :rtype: ~azure.mgmt.resource.resources.v2020_06_01.models.DeploymentOperation
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.DeploymentOperation"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.DeploymentOperation"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -78,7 +78,7 @@ class DeploymentOperationsOperations(object):
         url = self.get_at_scope.metadata['url']  # type: ignore
         path_format_arguments = {
             'scope': self._serialize.url("scope", scope, 'str', skip_quote=True),
-            'deploymentName': self._serialize.url("deployment_name", deployment_name, 'str', max_length=64, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
+            'deploymentName': self._serialize.url("deployment_name", deployment_name, 'str', max_length=64, min_length=1),
             'operationId': self._serialize.url("operation_id", operation_id, 'str'),
         }
         url = self._client.format_url(url, **path_format_arguments)
@@ -114,7 +114,7 @@ class DeploymentOperationsOperations(object):
         top=None,  # type: Optional[int]
         **kwargs  # type: Any
     ):
-        # type: (...) -> Iterable["models.DeploymentOperationsListResult"]
+        # type: (...) -> Iterable["_models.DeploymentOperationsListResult"]
         """Gets all deployments operations for a deployment.
 
         :param scope: The resource scope.
@@ -128,7 +128,7 @@ class DeploymentOperationsOperations(object):
         :rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.resource.resources.v2020_06_01.models.DeploymentOperationsListResult]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.DeploymentOperationsListResult"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.DeploymentOperationsListResult"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -146,7 +146,7 @@ class DeploymentOperationsOperations(object):
                 url = self.list_at_scope.metadata['url']  # type: ignore
                 path_format_arguments = {
                     'scope': self._serialize.url("scope", scope, 'str', skip_quote=True),
-                    'deploymentName': self._serialize.url("deployment_name", deployment_name, 'str', max_length=64, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
+                    'deploymentName': self._serialize.url("deployment_name", deployment_name, 'str', max_length=64, min_length=1),
                 }
                 url = self._client.format_url(url, **path_format_arguments)
                 # Construct parameters
@@ -192,7 +192,7 @@ class DeploymentOperationsOperations(object):
         operation_id,  # type: str
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.DeploymentOperation"
+        # type: (...) -> "_models.DeploymentOperation"
         """Gets a deployments operation.
 
         :param deployment_name: The name of the deployment.
@@ -204,7 +204,7 @@ class DeploymentOperationsOperations(object):
         :rtype: ~azure.mgmt.resource.resources.v2020_06_01.models.DeploymentOperation
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.DeploymentOperation"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.DeploymentOperation"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -215,7 +215,7 @@ class DeploymentOperationsOperations(object):
         # Construct URL
         url = self.get_at_tenant_scope.metadata['url']  # type: ignore
         path_format_arguments = {
-            'deploymentName': self._serialize.url("deployment_name", deployment_name, 'str', max_length=64, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
+            'deploymentName': self._serialize.url("deployment_name", deployment_name, 'str', max_length=64, min_length=1),
             'operationId': self._serialize.url("operation_id", operation_id, 'str'),
         }
         url = self._client.format_url(url, **path_format_arguments)
@@ -250,7 +250,7 @@ class DeploymentOperationsOperations(object):
         top=None,  # type: Optional[int]
         **kwargs  # type: Any
     ):
-        # type: (...) -> Iterable["models.DeploymentOperationsListResult"]
+        # type: (...) -> Iterable["_models.DeploymentOperationsListResult"]
         """Gets all deployments operations for a deployment.
 
         :param deployment_name: The name of the deployment.
@@ -262,7 +262,7 @@ class DeploymentOperationsOperations(object):
         :rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.resource.resources.v2020_06_01.models.DeploymentOperationsListResult]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.DeploymentOperationsListResult"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.DeploymentOperationsListResult"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -279,7 +279,7 @@ class DeploymentOperationsOperations(object):
                 # Construct URL
                 url = self.list_at_tenant_scope.metadata['url']  # type: ignore
                 path_format_arguments = {
-                    'deploymentName': self._serialize.url("deployment_name", deployment_name, 'str', max_length=64, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
+                    'deploymentName': self._serialize.url("deployment_name", deployment_name, 'str', max_length=64, min_length=1),
                 }
                 url = self._client.format_url(url, **path_format_arguments)
                 # Construct parameters
@@ -326,7 +326,7 @@ class DeploymentOperationsOperations(object):
         operation_id,  # type: str
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.DeploymentOperation"
+        # type: (...) -> "_models.DeploymentOperation"
         """Gets a deployments operation.
 
         :param group_id: The management group ID.
@@ -340,7 +340,7 @@ class DeploymentOperationsOperations(object):
         :rtype: ~azure.mgmt.resource.resources.v2020_06_01.models.DeploymentOperation
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.DeploymentOperation"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.DeploymentOperation"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -352,7 +352,7 @@ class DeploymentOperationsOperations(object):
         url = self.get_at_management_group_scope.metadata['url']  # type: ignore
         path_format_arguments = {
             'groupId': self._serialize.url("group_id", group_id, 'str', max_length=90, min_length=1),
-            'deploymentName': self._serialize.url("deployment_name", deployment_name, 'str', max_length=64, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
+            'deploymentName': self._serialize.url("deployment_name", deployment_name, 'str', max_length=64, min_length=1),
             'operationId': self._serialize.url("operation_id", operation_id, 'str'),
         }
         url = self._client.format_url(url, **path_format_arguments)
@@ -388,7 +388,7 @@ class DeploymentOperationsOperations(object):
         top=None,  # type: Optional[int]
         **kwargs  # type: Any
     ):
-        # type: (...) -> Iterable["models.DeploymentOperationsListResult"]
+        # type: (...) -> Iterable["_models.DeploymentOperationsListResult"]
         """Gets all deployments operations for a deployment.
 
         :param group_id: The management group ID.
@@ -402,7 +402,7 @@ class DeploymentOperationsOperations(object):
         :rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.resource.resources.v2020_06_01.models.DeploymentOperationsListResult]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.DeploymentOperationsListResult"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.DeploymentOperationsListResult"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -420,7 +420,7 @@ class DeploymentOperationsOperations(object):
                 url = self.list_at_management_group_scope.metadata['url']  # type: ignore
                 path_format_arguments = {
                     'groupId': self._serialize.url("group_id", group_id, 'str', max_length=90, min_length=1),
-                    'deploymentName': self._serialize.url("deployment_name", deployment_name, 'str', max_length=64, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
+                    'deploymentName': self._serialize.url("deployment_name", deployment_name, 'str', max_length=64, min_length=1),
                 }
                 url = self._client.format_url(url, **path_format_arguments)
                 # Construct parameters
@@ -466,7 +466,7 @@ class DeploymentOperationsOperations(object):
         operation_id,  # type: str
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.DeploymentOperation"
+        # type: (...) -> "_models.DeploymentOperation"
         """Gets a deployments operation.
 
         :param deployment_name: The name of the deployment.
@@ -478,7 +478,7 @@ class DeploymentOperationsOperations(object):
         :rtype: ~azure.mgmt.resource.resources.v2020_06_01.models.DeploymentOperation
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.DeploymentOperation"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.DeploymentOperation"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -489,7 +489,7 @@ class DeploymentOperationsOperations(object):
         # Construct URL
         url = self.get_at_subscription_scope.metadata['url']  # type: ignore
         path_format_arguments = {
-            'deploymentName': self._serialize.url("deployment_name", deployment_name, 'str', max_length=64, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
+            'deploymentName': self._serialize.url("deployment_name", deployment_name, 'str', max_length=64, min_length=1),
             'operationId': self._serialize.url("operation_id", operation_id, 'str'),
             'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
         }
@@ -525,7 +525,7 @@ class DeploymentOperationsOperations(object):
         top=None,  # type: Optional[int]
         **kwargs  # type: Any
     ):
-        # type: (...) -> Iterable["models.DeploymentOperationsListResult"]
+        # type: (...) -> Iterable["_models.DeploymentOperationsListResult"]
         """Gets all deployments operations for a deployment.
 
         :param deployment_name: The name of the deployment.
@@ -537,7 +537,7 @@ class DeploymentOperationsOperations(object):
         :rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.resource.resources.v2020_06_01.models.DeploymentOperationsListResult]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.DeploymentOperationsListResult"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.DeploymentOperationsListResult"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -554,7 +554,7 @@ class DeploymentOperationsOperations(object):
                 # Construct URL
                 url = self.list_at_subscription_scope.metadata['url']  # type: ignore
                 path_format_arguments = {
-                    'deploymentName': self._serialize.url("deployment_name", deployment_name, 'str', max_length=64, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
+                    'deploymentName': self._serialize.url("deployment_name", deployment_name, 'str', max_length=64, min_length=1),
                     'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
                 }
                 url = self._client.format_url(url, **path_format_arguments)
@@ -602,7 +602,7 @@ class DeploymentOperationsOperations(object):
         operation_id,  # type: str
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.DeploymentOperation"
+        # type: (...) -> "_models.DeploymentOperation"
         """Gets a deployments operation.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
@@ -616,7 +616,7 @@ class DeploymentOperationsOperations(object):
         :rtype: ~azure.mgmt.resource.resources.v2020_06_01.models.DeploymentOperation
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.DeploymentOperation"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.DeploymentOperation"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -627,8 +627,8 @@ class DeploymentOperationsOperations(object):
         # Construct URL
         url = self.get.metadata['url']  # type: ignore
         path_format_arguments = {
-            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
-            'deploymentName': self._serialize.url("deployment_name", deployment_name, 'str', max_length=64, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1),
+            'deploymentName': self._serialize.url("deployment_name", deployment_name, 'str', max_length=64, min_length=1),
             'operationId': self._serialize.url("operation_id", operation_id, 'str'),
             'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
         }
@@ -665,7 +665,7 @@ class DeploymentOperationsOperations(object):
         top=None,  # type: Optional[int]
         **kwargs  # type: Any
     ):
-        # type: (...) -> Iterable["models.DeploymentOperationsListResult"]
+        # type: (...) -> Iterable["_models.DeploymentOperationsListResult"]
         """Gets all deployments operations for a deployment.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
@@ -679,7 +679,7 @@ class DeploymentOperationsOperations(object):
         :rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.resource.resources.v2020_06_01.models.DeploymentOperationsListResult]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.DeploymentOperationsListResult"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.DeploymentOperationsListResult"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -696,8 +696,8 @@ class DeploymentOperationsOperations(object):
                 # Construct URL
                 url = self.list.metadata['url']  # type: ignore
                 path_format_arguments = {
-                    'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
-                    'deploymentName': self._serialize.url("deployment_name", deployment_name, 'str', max_length=64, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
+                    'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1),
+                    'deploymentName': self._serialize.url("deployment_name", deployment_name, 'str', max_length=64, min_length=1),
                     'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
                 }
                 url = self._client.format_url(url, **path_format_arguments)

@@ -1,0 +1,139 @@
+interactions:
+- request:
+    body: '{"hookType": "Webhook", "hookName": "testhooke691958", "description": "my
+      web hook", "externalLink": "external link", "hookParameter": {"endpoint": "https://httpbin.org/post",
+      "username": "krista", "password": "123"}}'
+    headers:
+      Accept:
+      - application/json
+      Content-Length:
+      - '217'
+      Content-Type:
+      - application/json
+      User-Agent:
+      - azsdk-python-ai-metricsadvisor/1.0.0b3 Python/3.8.6 (Windows-10-10.0.19041-SP0)
+    method: POST
+    uri: https://js-metrics-advisor.cognitiveservices.azure.com/metricsadvisor/v1.0/hooks
+  response:
+    body:
+      string: ''
+    headers:
+      apim-request-id: aeb9e12d-6923-45b8-832d-5b444cbbcca2
+      content-length: '0'
+      date: Fri, 22 Jan 2021 01:07:48 GMT
+      location: https://js-metrics-advisor.cognitiveservices.azure.com/metricsadvisor/v1.0/hooks/3126f6ae-77df-40e0-9fa3-8c3ff13bebfc
+      strict-transport-security: max-age=31536000; includeSubDomains; preload
+      x-content-type-options: nosniff
+      x-envoy-upstream-service-time: '799'
+      x-request-id: aeb9e12d-6923-45b8-832d-5b444cbbcca2
+    status:
+      code: 201
+      message: Created
+    url: https://js-metrics-advisor.cognitiveservices.azure.com//metricsadvisor/v1.0/hooks
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      User-Agent:
+      - azsdk-python-ai-metricsadvisor/1.0.0b3 Python/3.8.6 (Windows-10-10.0.19041-SP0)
+    method: GET
+    uri: https://js-metrics-advisor.cognitiveservices.azure.com/metricsadvisor/v1.0/hooks/3126f6ae-77df-40e0-9fa3-8c3ff13bebfc
+  response:
+    body:
+      string: '{"hookId":"3126f6ae-77df-40e0-9fa3-8c3ff13bebfc","hookName":"testhooke691958","hookType":"Webhook","externalLink":"external
+        link","description":"my web hook","admins":["krpratic@microsoft.com"],"hookParameter":{"endpoint":"https://httpbin.org/post","username":"krista","password":"123","headers":{},"certificateKey":"","certificatePassword":""}}'
+    headers:
+      apim-request-id: 13cc2865-4fd5-4047-885a-a989e8b27d66
+      content-length: '345'
+      content-type: application/json; charset=utf-8
+      date: Fri, 22 Jan 2021 01:07:48 GMT
+      strict-transport-security: max-age=31536000; includeSubDomains; preload
+      x-content-type-options: nosniff
+      x-envoy-upstream-service-time: '164'
+      x-request-id: 13cc2865-4fd5-4047-885a-a989e8b27d66
+    status:
+      code: 200
+      message: OK
+    url: https://js-metrics-advisor.cognitiveservices.azure.com//metricsadvisor/v1.0/hooks/3126f6ae-77df-40e0-9fa3-8c3ff13bebfc
+- request:
+    body: '{"hookName": "reset", "description": null, "externalLink": null, "hookType":
+      "Webhook", "hookParameter": {"endpoint": "https://httpbin.org/post", "username":
+      "myusername", "password": null}}'
+    headers:
+      Accept:
+      - application/json
+      Content-Length:
+      - '190'
+      Content-Type:
+      - application/merge-patch+json
+      User-Agent:
+      - azsdk-python-ai-metricsadvisor/1.0.0b3 Python/3.8.6 (Windows-10-10.0.19041-SP0)
+    method: PATCH
+    uri: https://js-metrics-advisor.cognitiveservices.azure.com/metricsadvisor/v1.0/hooks/3126f6ae-77df-40e0-9fa3-8c3ff13bebfc
+  response:
+    body:
+      string: ''
+    headers:
+      apim-request-id: cfe737b7-ef18-4e69-a014-827843e41ef7
+      content-length: '0'
+      date: Fri, 22 Jan 2021 01:07:49 GMT
+      strict-transport-security: max-age=31536000; includeSubDomains; preload
+      x-content-type-options: nosniff
+      x-envoy-upstream-service-time: '631'
+      x-request-id: cfe737b7-ef18-4e69-a014-827843e41ef7
+    status:
+      code: 204
+      message: No Content
+    url: https://js-metrics-advisor.cognitiveservices.azure.com//metricsadvisor/v1.0/hooks/3126f6ae-77df-40e0-9fa3-8c3ff13bebfc
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      User-Agent:
+      - azsdk-python-ai-metricsadvisor/1.0.0b3 Python/3.8.6 (Windows-10-10.0.19041-SP0)
+    method: GET
+    uri: https://js-metrics-advisor.cognitiveservices.azure.com/metricsadvisor/v1.0/hooks/3126f6ae-77df-40e0-9fa3-8c3ff13bebfc
+  response:
+    body:
+      string: '{"hookId":"3126f6ae-77df-40e0-9fa3-8c3ff13bebfc","hookName":"reset","hookType":"Webhook","externalLink":"external
+        link","description":"my web hook","admins":["krpratic@microsoft.com"],"hookParameter":{"endpoint":"https://httpbin.org/post","username":"myusername","password":"","headers":{},"certificateKey":"","certificatePassword":""}}'
+    headers:
+      apim-request-id: f05a31e8-4931-4160-ad14-a028b84d65e5
+      content-length: '336'
+      content-type: application/json; charset=utf-8
+      date: Fri, 22 Jan 2021 01:07:49 GMT
+      strict-transport-security: max-age=31536000; includeSubDomains; preload
+      x-content-type-options: nosniff
+      x-envoy-upstream-service-time: '158'
+      x-request-id: f05a31e8-4931-4160-ad14-a028b84d65e5
+    status:
+      code: 200
+      message: OK
+    url: https://js-metrics-advisor.cognitiveservices.azure.com//metricsadvisor/v1.0/hooks/3126f6ae-77df-40e0-9fa3-8c3ff13bebfc
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      User-Agent:
+      - azsdk-python-ai-metricsadvisor/1.0.0b3 Python/3.8.6 (Windows-10-10.0.19041-SP0)
+    method: DELETE
+    uri: https://js-metrics-advisor.cognitiveservices.azure.com/metricsadvisor/v1.0/hooks/3126f6ae-77df-40e0-9fa3-8c3ff13bebfc
+  response:
+    body:
+      string: ''
+    headers:
+      apim-request-id: d4daa5c9-a687-46dc-b0b3-6900d5a95dd1
+      content-length: '0'
+      date: Fri, 22 Jan 2021 01:07:50 GMT
+      strict-transport-security: max-age=31536000; includeSubDomains; preload
+      x-content-type-options: nosniff
+      x-envoy-upstream-service-time: '184'
+      x-request-id: d4daa5c9-a687-46dc-b0b3-6900d5a95dd1
+    status:
+      code: 204
+      message: No Content
+    url: https://js-metrics-advisor.cognitiveservices.azure.com//metricsadvisor/v1.0/hooks/3126f6ae-77df-40e0-9fa3-8c3ff13bebfc
+version: 1

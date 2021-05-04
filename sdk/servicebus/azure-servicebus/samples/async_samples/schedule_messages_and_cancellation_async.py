@@ -15,14 +15,14 @@ import os
 import asyncio
 import datetime
 from azure.servicebus.aio import ServiceBusClient
-from azure.servicebus import Message
+from azure.servicebus import ServiceBusMessage
 
 CONNECTION_STR = os.environ['SERVICE_BUS_CONNECTION_STR']
 QUEUE_NAME = os.environ["SERVICE_BUS_QUEUE_NAME"]
 
 
 async def schedule_single_message(sender):
-    message = Message("Message to be scheduled")
+    message = ServiceBusMessage("ServiceBusMessage to be scheduled")
     scheduled_time_utc = datetime.datetime.utcnow() + datetime.timedelta(seconds=30)
     sequence_number = await sender.schedule_messages(message, scheduled_time_utc)
     return sequence_number
@@ -31,7 +31,7 @@ async def schedule_single_message(sender):
 async def schedule_multiple_messages(sender):
     messages_to_schedule = []
     for _ in range(10):
-        messages_to_schedule.append(Message("Message to be scheduled"))
+        messages_to_schedule.append(ServiceBusMessage("Message to be scheduled"))
 
     scheduled_time_utc = datetime.datetime.utcnow() + datetime.timedelta(seconds=30)
     sequence_numbers = await sender.schedule_messages(messages_to_schedule, scheduled_time_utc)

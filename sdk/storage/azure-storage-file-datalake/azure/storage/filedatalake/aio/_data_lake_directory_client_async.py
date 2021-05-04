@@ -4,14 +4,19 @@
 # license information.
 # --------------------------------------------------------------------------
 # pylint: disable=invalid-overridden-method
+from typing import Any
+
 try:
     from urllib.parse import quote, unquote
 except ImportError:
     from urllib2 import quote, unquote # type: ignore
+from azure.core.pipeline import AsyncPipeline
 from ._data_lake_file_client_async import DataLakeFileClient
 from .._data_lake_directory_client import DataLakeDirectoryClient as DataLakeDirectoryClientBase
-from .._models import DirectoryProperties
+from .._models import DirectoryProperties, FileProperties
+from .._deserialize import deserialize_dir_properties
 from ._path_client_async import PathClient
+from .._shared.base_client_async import AsyncTransportWrapper
 
 
 class DataLakeDirectoryClient(PathClient, DataLakeDirectoryClientBase):
@@ -36,9 +41,11 @@ class DataLakeDirectoryClient(PathClient, DataLakeDirectoryClientBase):
     :type directory_name: str
     :param credential:
         The credentials with which to authenticate. This is optional if the
-        account URL already has a SAS token. The value can be a SAS token string, and account
+        account URL already has a SAS token. The value can be a SAS token string,
+        an instance of a AzureSasCredential from azure.core.credentials, an account
         shared access key, or an instance of a TokenCredentials class from azure.identity.
-        If the URL already has a SAS token, specifying an explicit credential will take priority.
+        If the resource URI already contains a SAS token, this will be ignored in favor of an explicit credential
+        - except in the case of AzureSasCredential, where the conflicting SAS tokens will raise a ValueError.
 
     .. admonition:: Example:
 
@@ -123,6 +130,17 @@ class DataLakeDirectoryClient(PathClient, DataLakeDirectoryClientBase):
         """
         return await self._create('directory', metadata=metadata, **kwargs)
 
+    async def exists(self, **kwargs):
+        # type: (**Any) -> bool
+        """
+        Returns True if a directory exists and returns False otherwise.
+
+        :kwarg int timeout:
+            The timeout parameter is expressed in seconds.
+        :returns: boolean
+        """
+        return await self._exists(**kwargs)
+
     async def delete_directory(self, **kwargs):
         # type: (...) -> None
         """
@@ -162,7 +180,7 @@ class DataLakeDirectoryClient(PathClient, DataLakeDirectoryClientBase):
                 :dedent: 4
                 :caption: Delete directory.
         """
-        return await self._delete(**kwargs)
+        return await self._delete(recursive=True, **kwargs)
 
     async def get_directory_properties(self, **kwargs):
         # type: (**Any) -> DirectoryProperties
@@ -203,8 +221,7 @@ class DataLakeDirectoryClient(PathClient, DataLakeDirectoryClientBase):
                 :dedent: 4
                 :caption: Getting the properties for a file/directory.
         """
-        blob_properties = await self._get_path_properties(**kwargs)
-        return DirectoryProperties._from_blob_properties(blob_properties)  # pylint: disable=protected-access
+        return await self._get_path_properties(cls=deserialize_dir_properties, **kwargs)  # pylint: disable=protected-access
 
     async def rename_directory(self, new_name,  # type: str
                                **kwargs):
@@ -273,7 +290,7 @@ class DataLakeDirectoryClient(PathClient, DataLakeDirectoryClientBase):
         """
         new_name = new_name.strip('/')
         new_file_system = new_name.split('/')[0]
-        new_path_and_token = new_name[len(new_file_system):].split('?')
+        new_path_and_token = new_name[len(new_file_system):].strip('/').split('?')
         new_path = new_path_and_token[0]
         try:
             new_dir_sas = new_path_and_token[1] or self._query_str.strip('?')
@@ -479,10 +496,14 @@ class DataLakeDirectoryClient(PathClient, DataLakeDirectoryClientBase):
                 :caption: Getting the file client to interact with a specific file.
         """
         try:
-            file_path = file.name
+            file_path = file.get('name')
         except AttributeError:
-            file_path = self.path_name + '/' + file
+            file_path = self.path_name + '/' + str(file)
 
+        _pipeline = AsyncPipeline(
+            transport=AsyncTransportWrapper(self._pipeline._transport), # pylint: disable = protected-access
+            policies=self._pipeline._impl_policies # pylint: disable = protected-access
+        )
         return DataLakeFileClient(
             self.url, self.file_system_name, file_path=file_path, credential=self._raw_credential,
             _hosts=self._hosts, _configuration=self._config, _pipeline=self._pipeline,
@@ -514,10 +535,14 @@ class DataLakeDirectoryClient(PathClient, DataLakeDirectoryClientBase):
                 :caption: Getting the directory client to interact with a specific directory.
         """
         try:
-            subdir_path = sub_directory.name
+            subdir_path = sub_directory.get('name')
         except AttributeError:
-            subdir_path = self.path_name + '/' + sub_directory
+            subdir_path = self.path_name + '/' + str(sub_directory)
 
+        _pipeline = AsyncPipeline(
+            transport=AsyncTransportWrapper(self._pipeline._transport), # pylint: disable = protected-access
+            policies=self._pipeline._impl_policies # pylint: disable = protected-access
+        )
         return DataLakeDirectoryClient(
             self.url, self.file_system_name, directory_name=subdir_path, credential=self._raw_credential,
             _hosts=self._hosts, _configuration=self._config, _pipeline=self._pipeline,

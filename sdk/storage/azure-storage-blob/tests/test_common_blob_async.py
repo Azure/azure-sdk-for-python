@@ -17,6 +17,7 @@ import uuid
 from datetime import datetime, timedelta
 
 from azure.core import MatchConditions
+from azure.core.credentials import AzureSasCredential
 from azure.core.exceptions import (
     HttpResponseError,
     ResourceNotFoundError,
@@ -226,6 +227,25 @@ class StorageCommonBlobAsyncTest(AsyncStorageTestCase):
         self.assertTrue(prop)
         self.assertEqual(snapshot['snapshot'], prop.snapshot)
 
+    @GlobalStorageAccountPreparer()
+    @AsyncStorageTestCase.await_prepared_test
+    async def test_upload_blob_from_generator(self, resource_group, location, storage_account, storage_account_key):
+        await self._setup(storage_account, storage_account_key)
+        blob_name = self._get_blob_reference()
+        # Act
+        raw_data = self.get_random_bytes(3 * 1024 * 1024) + b"hello random text"
+
+        def data_generator():
+            for i in range(0, 2):
+                yield raw_data
+
+        blob = self.bsc.get_blob_client(self.container_name, blob_name)
+        await blob.upload_blob(data=data_generator())
+        dl_blob = await blob.download_blob()
+        data = await dl_blob.readall()
+
+        # Assert
+        self.assertEqual(data, raw_data*2)
 
     @GlobalStorageAccountPreparer()
     @AsyncStorageTestCase.await_prepared_test
@@ -1452,7 +1472,7 @@ class StorageCommonBlobAsyncTest(AsyncStorageTestCase):
         target_blob = self.bsc.get_blob_client(self.container_name, target_blob_name)
 
         # Assert
-        with self.assertRaises(ResourceNotFoundError):
+        with self.assertRaises(ClientAuthenticationError):
             await target_blob.start_copy_from_url(source_blob.url)
 
 
@@ -1867,6 +1887,34 @@ class StorageCommonBlobAsyncTest(AsyncStorageTestCase):
         self.assertTrue(blob_response.ok)
         self.assertEqual(self.byte_data, blob_response.content)
         self.assertTrue(container_response.ok)
+
+    @pytest.mark.live_test_only
+    @GlobalStorageAccountPreparer()
+    async def test_account_sas_credential(self, resource_group, location, storage_account, storage_account_key):
+        # SAS URL is calculated from storage key, so this test runs live only
+
+        await self._setup(storage_account, storage_account_key)
+        blob_name = await self._create_block_blob()
+
+        token = generate_account_sas(
+            self.bsc.account_name,
+            self.bsc.credential.account_key,
+            ResourceTypes(container=True, object=True),
+            AccountSasPermissions(read=True),
+            datetime.utcnow() + timedelta(hours=1),
+        )
+
+        # Act
+        blob = BlobClient(
+            self.bsc.url, container_name=self.container_name, blob_name=blob_name, credential=AzureSasCredential(token))
+        container = ContainerClient(
+            self.bsc.url, container_name=self.container_name, credential=AzureSasCredential(token))
+        blob_properties = await blob.get_blob_properties()
+        container_properties = await container.get_container_properties()
+
+        # Assert
+        self.assertEqual(blob_name, blob_properties.name)
+        self.assertEqual(self.container_name, container_properties.name)
 
     @pytest.mark.live_test_only
     @GlobalStorageAccountPreparer()

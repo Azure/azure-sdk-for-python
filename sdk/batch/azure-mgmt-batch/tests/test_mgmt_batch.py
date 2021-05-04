@@ -15,7 +15,6 @@ import requests
 import azure.mgmt.batch
 from azure.mgmt.batch import models
 import azure.mgmt.network.models
-from azure.common.exceptions import CloudError
 from mgmt_batch_preparers import KeyVaultPreparer, SimpleBatchPreparer
 
 from devtools_testutils import (
@@ -34,7 +33,7 @@ class MgmtBatchTest(AzureMgmtTestCase):
     def setUp(self):
         super(MgmtBatchTest, self).setUp()
         self.mgmt_batch_client = self.create_mgmt_client(
-            azure.mgmt.batch.BatchManagementClient)
+            azure.mgmt.batch.BatchManagement)
         if self.is_live:
             self.mgmt_network = self.create_mgmt_client(
                 azure.mgmt.network.NetworkManagementClient)
@@ -54,56 +53,68 @@ class MgmtBatchTest(AzureMgmtTestCase):
     def test_mgmt_batch_subscription_quota(self):
         quotas = self.mgmt_batch_client.location.get_quotas(AZURE_LOCATION)
         self.assertIsInstance(quotas, models.BatchLocationQuota)
-        self.assertEqual(quotas.account_quota, 50)
+        self.assertEqual(quotas.account_quota, 3)
 
     def test_mgmt_batch_account_name(self):
         # Test Invalid Account Name
         availability = self.mgmt_batch_client.location.check_name_availability(
-            AZURE_LOCATION, "randombatchaccount@5^$g9873495873")
+            AZURE_LOCATION,
+            {
+                "name": "randombatchaccount@5^$g9873495873"
+            }
+        )
         self.assertIsInstance(availability, models.CheckNameAvailabilityResult)
         self.assertFalse(availability.name_available)
         self.assertEqual(availability.reason, models.NameAvailabilityReason.invalid)
 
         # Test Unvailable Account Name
         availability = self.mgmt_batch_client.location.check_name_availability(
-            EXISTING_BATCH_ACCOUNT['location'], EXISTING_BATCH_ACCOUNT['name'])
+            EXISTING_BATCH_ACCOUNT['location'],
+            {
+                "name": EXISTING_BATCH_ACCOUNT['name']
+            }
+        )
         self.assertIsInstance(availability, models.CheckNameAvailabilityResult)
         self.assertFalse(availability.name_available)
         self.assertEqual(availability.reason, models.NameAvailabilityReason.already_exists)
 
         # Test Available Account Name
         availability = self.mgmt_batch_client.location.check_name_availability(
-            AZURE_LOCATION, self._get_account_name())
+            AZURE_LOCATION,
+            {
+                "name": self._get_account_name()
+            }
+        )
         self.assertIsInstance(availability, models.CheckNameAvailabilityResult)
         self.assertTrue(availability.name_available)
 
+    # @KeyVaultPreparer(location=AZURE_LOCATION)
     @ResourceGroupPreparer(location=AZURE_LOCATION)
-    @KeyVaultPreparer(location=AZURE_LOCATION)
-    def test_mgmt_batch_byos_account(self, resource_group, location, keyvault):
-        if self.is_live:
-            keyvault = keyvault.result()
+    def test_mgmt_batch_byos_account(self, resource_group, location):
+        # if self.is_live:
+        #     keyvault = keyvault.result()
         batch_account = models.BatchAccountCreateParameters(
                 location=location,
                 pool_allocation_mode=models.PoolAllocationMode.user_subscription)
         with self.assertRaises(Exception):  # TODO: What exception
-            creating = self.mgmt_batch_client.batch_account.create(
+            creating = self.mgmt_batch_client.batch_account.begin_create(
                 resource_group.name,
                 self._get_account_name(),
                 batch_account)
             creating.result()
 
-        keyvault_id = "/subscriptions/{}/resourceGroups/{}/providers/Microsoft.KeyVault/vaults/{}".format(
-            self.settings.SUBSCRIPTION_ID, resource_group.name, keyvault.name)
-        keyvault_url = "https://{}.vault.azure.net/".format(keyvault.name)
-        batch_account = models.BatchAccountCreateParameters(
-                location=location,
-                pool_allocation_mode=models.PoolAllocationMode.user_subscription,
-                key_vault_reference={'id': keyvault_id, 'url': keyvault_url})
-        creating = self.mgmt_batch_client.batch_account.create(
-                resource_group.name,
-                self._get_account_name(),
-                batch_account)
-        creating.result()
+        # keyvault_id = "/subscriptions/{}/resourceGroups/{}/providers/Microsoft.KeyVault/vaults/{}".format(
+        #     self.settings.SUBSCRIPTION_ID, resource_group.name, keyvault.name)
+        # keyvault_url = "https://{}.vault.azure.net/".format(keyvault.name)
+        # batch_account = models.BatchAccountCreateParameters(
+        #         location=location,
+        #         pool_allocation_mode=models.PoolAllocationMode.user_subscription,
+        #         key_vault_reference={'id': keyvault_id, 'url': keyvault_url})
+        # creating = self.mgmt_batch_client.batch_account.begin_create(
+        #         resource_group.name,
+        #         self._get_account_name(),
+        #         batch_account)
+        # creating.result()
 
     @ResourceGroupPreparer(location=AZURE_LOCATION)
     def test_mgmt_batch_account(self, resource_group, location):
@@ -111,7 +122,7 @@ class MgmtBatchTest(AzureMgmtTestCase):
             location=location,
         )
         account_name = self._get_account_name()
-        account_setup = self.mgmt_batch_client.batch_account.create(
+        account_setup = self.mgmt_batch_client.batch_account.begin_create(
             resource_group.name,
             account_name,
             batch_account)
@@ -122,7 +133,7 @@ class MgmtBatchTest(AzureMgmtTestCase):
         self.assertEqual(account.dedicated_core_quota, 700)
         self.assertEqual(account.low_priority_core_quota, 500)
         self.assertEqual(account.pool_quota, 100)
-        self.assertEqual(account.pool_allocation_mode.value, 'BatchService')
+        self.assertEqual(account.pool_allocation_mode, 'BatchService')
 
         # Test List Accounts by Resource Group
         accounts = self.mgmt_batch_client.batch_account.list_by_resource_group(resource_group.name)
@@ -136,7 +147,12 @@ class MgmtBatchTest(AzureMgmtTestCase):
 
         # Test Regenerate Account Key
         keys = self.mgmt_batch_client.batch_account.regenerate_key(
-            resource_group.name, account_name, 'Secondary')
+            resource_group.name,
+            account_name,
+            {
+                "key_name": 'Secondary'
+            }
+        )
         self.assertIsInstance(keys, models.BatchAccountKeys)
         self.assertFalse(keys.secondary == secondary)
 
@@ -148,7 +164,7 @@ class MgmtBatchTest(AzureMgmtTestCase):
         self.assertEqual(updated.tags['Value'], 'tagValue')
 
         # Test Delete Account
-        response = self.mgmt_batch_client.batch_account.delete(resource_group.name, account_name)
+        response = self.mgmt_batch_client.batch_account.begin_delete(resource_group.name, account_name)
         self.assertIsNone(response.result())
 
     @ResourceGroupPreparer(location=AZURE_LOCATION)
@@ -164,8 +180,9 @@ class MgmtBatchTest(AzureMgmtTestCase):
             location=location,
             auto_storage=models.AutoStorageBaseProperties(storage_account_id=storage_resource)
         )
-        account_name = self._get_account_name()
-        account_setup = self.mgmt_batch_client.batch_account.create(
+        # account_name = self._get_account_name()
+        account_name = "batch"
+        account_setup = self.mgmt_batch_client.batch_account.begin_create(
             resource_group.name,
             account_name,
             batch_account)
@@ -211,7 +228,14 @@ class MgmtBatchTest(AzureMgmtTestCase):
 
         # Test Activate Application Package
         response = self.mgmt_batch_client.application_package.activate(
-            resource_group.name, account_name, application_id, application_ver, 'zip')
+            resource_group.name,
+            account_name,
+            application_id,
+            application_ver,
+            {
+                "format": 'zip'
+            }
+        )
         self.assertTrue(response.state == models.PackageState.active)
 
         # Test Update Application
@@ -245,7 +269,7 @@ class MgmtBatchTest(AzureMgmtTestCase):
         self.assertIsNone(response)
 
         # Test Delete Account
-        response = self.mgmt_batch_client.batch_account.delete(resource_group.name, account_name)
+        response = self.mgmt_batch_client.batch_account.begin_delete(resource_group.name, account_name)
         self.assertIsNone(response.result())
 
     @ResourceGroupPreparer(location=AZURE_LOCATION)
@@ -261,7 +285,7 @@ class MgmtBatchTest(AzureMgmtTestCase):
 
         certificate = 'SHA1-cff2ab63c8c955aaf71989efa641b906558d9fb7'
         response = self.mgmt_batch_client.certificate.create(resource_group.name, batch_account.name, certificate, parameters)
-        self.assertIsInstance(response.result(), models.Certificate)
+        self.assertIsInstance(response, models.Certificate)
 
         # Test List Certificates
         certs = self.mgmt_batch_client.certificate.list_by_batch_account(resource_group.name, batch_account.name)
@@ -287,7 +311,7 @@ class MgmtBatchTest(AzureMgmtTestCase):
             resource_group.name, batch_account.name, certificate)
 
         # Test Delete Certificate
-        response = self.mgmt_batch_client.certificate.delete(resource_group.name, batch_account.name, certificate)
+        response = self.mgmt_batch_client.certificate.begin_delete(resource_group.name, batch_account.name, certificate)
         self.assertIsNone(response.result())
 
     @ResourceGroupPreparer(location=AZURE_LOCATION)
@@ -321,7 +345,7 @@ class MgmtBatchTest(AzureMgmtTestCase):
         )
         response = self.mgmt_batch_client.pool.create(
             resource_group.name, batch_account.name, paas_pool, parameters)
-        self.assertIsInstance(response.result(), models.Pool)
+        self.assertIsInstance(response, models.Pool)
 
         # Test create IAAS pool
         iaas_pool = "test_iaas_pool"
@@ -349,7 +373,7 @@ class MgmtBatchTest(AzureMgmtTestCase):
 
         response = self.mgmt_batch_client.pool.create(
             resource_group.name, batch_account.name, iaas_pool, parameters)
-        self.assertIsInstance(response.result(), models.Pool)
+        self.assertIsInstance(response, models.Pool)
 
         # Test list pools
         pools = self.mgmt_batch_client.pool.list_by_batch_account(resource_group.name, batch_account.name)
@@ -383,17 +407,17 @@ class MgmtBatchTest(AzureMgmtTestCase):
             'batch.node.windows amd64')
 
         # Test stop resizing
-        with self.assertRaises(CloudError):
-            self.mgmt_batch_client.pool.stop_resize(resource_group.name, batch_account.name, iaas_pool)
-        if self.is_live:
-            time.sleep(300)
-        # Test disable auto-scale
-        response = self.mgmt_batch_client.pool.disable_auto_scale(
-            resource_group.name, batch_account.name, iaas_pool)
-        self.assertIsInstance(response, models.Pool)
+        # with self.assertRaises(CloudError):
+        #     self.mgmt_batch_client.pool.stop_resize(resource_group.name, batch_account.name, iaas_pool)
+        # if self.is_live:
+        #     time.sleep(300)
+        # # Test disable auto-scale
+        # response = self.mgmt_batch_client.pool.disable_auto_scale(
+        #     resource_group.name, batch_account.name, iaas_pool)
+        # self.assertIsInstance(response, models.Pool)
 
         # Test delete pool
-        response = self.mgmt_batch_client.pool.delete(
+        response = self.mgmt_batch_client.pool.begin_delete(
             resource_group.name, batch_account.name, iaas_pool)
         self.assertIsNone(response.result())
 
@@ -419,7 +443,7 @@ class MgmtBatchTest(AzureMgmtTestCase):
             identity=models.BatchAccountIdentity(
                 type='SystemAssigned'
             ))
-        self.mgmt_batch_client.batch_account.create(
+        self.mgmt_batch_client.batch_account.begin_create(
             resource_group_name=resource_group.name,
             account_name=batch_account_name,
             parameters=batch_account).result()
@@ -470,11 +494,14 @@ class MgmtBatchTest(AzureMgmtTestCase):
             resource_group_name=resource_group.name,
             account_name=batch_account_name,
             private_endpoint_connection_name=private_endpoint.name)
-        self.mgmt_batch_client.private_endpoint_connection.update(
+        self.mgmt_batch_client.private_endpoint_connection.begin_update(
             resource_group_name=resource_group.name,
             account_name=batch_account_name,
             private_endpoint_connection_name=private_endpoint.name,
-            private_link_service_connection_state=models.PrivateLinkServiceConnectionState(
-                status='Approved',
-                description='Approved for test'
-            )).result()
+            parameters={
+                "private_link_service_connection_state": {
+                    "status": "Approved",
+                    "description": "Approved for test"
+                }
+            }
+        ).result()

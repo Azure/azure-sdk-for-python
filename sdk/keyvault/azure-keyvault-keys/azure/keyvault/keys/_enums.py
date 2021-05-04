@@ -34,3 +34,4 @@ class KeyType(str, Enum):
     rsa = "RSA"
     rsa_hsm = "RSA-HSM"  #: RSA with a private key which is not exportable from the HSM
     oct = "oct"  #: Octet sequence (used to represent symmetric keys)
+    oct_hsm = "oct-HSM"  #: Octet sequence with a private key which is not exportable from the HSM

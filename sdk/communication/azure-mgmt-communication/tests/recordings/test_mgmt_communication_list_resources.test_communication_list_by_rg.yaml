@@ -1,0 +1,182 @@
+interactions:
+- request:
+    body: '{"location": "global", "properties": {"dataLocation": "UnitedStates"}}'
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '70'
+      Content-Type:
+      - application/json
+      User-Agent:
+      - azsdk-python-mgmt-communication/1.0.0b5 Python/3.8.3 (Windows-10-10.0.21264-SP0)
+    method: PUT
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_communication_list_resources_test_communication_list_by_rgd3a91c4f/providers/Microsoft.Communication/communicationServices/test-resource-list-by-rgd3a91c4f?api-version=2020-08-20-preview
+  response:
+    body:
+      string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_communication_list_resources_test_communication_list_by_rgd3a91c4f/providers/Microsoft.Communication/communicationServices/test-resource-list-by-rgd3a91c4f","name":"test-resource-list-by-rgd3a91c4f","type":"Microsoft.Communication/communicationServices","location":"global","properties":{"provisioningState":"Accepted","hostName":"test-resource-list-by-rgd3a91c4f.communication.azure.com","immutableResourceId":"e6c1d48e-5265-4c58-9823-19c5dd6c3303","dataLocation":"UnitedStates"}}'
+    headers:
+      azure-asyncoperation:
+      - https://management.azure.com/providers/Microsoft.Communication/locations/WESTUS2/operationStatuses/14313a6a-8461-418f-bd0f-f8e2dc8cebf0?api-version=2020-08-20-preview
+      cache-control:
+      - no-cache
+      content-length:
+      - '565'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Tue, 15 Dec 2020 00:43:14 GMT
+      etag:
+      - '"50006af4-0000-0700-0000-5fd806a20000"'
+      expires:
+      - '-1'
+      location:
+      - https://management.azure.com/providers/Microsoft.Communication/locations/WESTUS2/operationStatuses/14313a6a-8461-418f-bd0f-f8e2dc8cebf0?api-version=2020-08-20-preview
+      pragma:
+      - no-cache
+      server:
+      - Kestrel
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      x-content-type-options:
+      - nosniff
+      x-ms-ratelimit-remaining-subscription-writes:
+      - '1199'
+    status:
+      code: 201
+      message: Created
+- request:
+    body: null
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - azsdk-python-mgmt-communication/1.0.0b5 Python/3.8.3 (Windows-10-10.0.21264-SP0)
+    method: GET
+    uri: https://management.azure.com/providers/Microsoft.Communication/locations/WESTUS2/operationStatuses/14313a6a-8461-418f-bd0f-f8e2dc8cebf0?api-version=2020-08-20-preview
+  response:
+    body:
+      string: '{"id":"/providers/Microsoft.Communication/locations/WESTUS2/operationStatuses/14313a6a-8461-418f-bd0f-f8e2dc8cebf0","name":"14313a6a-8461-418f-bd0f-f8e2dc8cebf0","resourceId":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_communication_list_resources_test_communication_list_by_rgd3a91c4f/providers/Microsoft.Communication/communicationServices/test-resource-list-by-rgd3a91c4f","status":"Succeeded","startTime":"2020-12-15T00:43:14.3302233Z","endTime":"2020-12-15T00:43:15.6518082Z","percentComplete":100.0,"properties":null}'
+    headers:
+      cache-control:
+      - no-cache
+      content-length:
+      - '557'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Tue, 15 Dec 2020 00:43:44 GMT
+      etag:
+      - '"e20b75a0-0000-0800-0000-5fd806a30000"'
+      expires:
+      - '-1'
+      pragma:
+      - no-cache
+      server:
+      - Kestrel
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      transfer-encoding:
+      - chunked
+      vary:
+      - Accept-Encoding
+      x-content-type-options:
+      - nosniff
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - azsdk-python-mgmt-communication/1.0.0b5 Python/3.8.3 (Windows-10-10.0.21264-SP0)
+    method: GET
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_communication_list_resources_test_communication_list_by_rgd3a91c4f/providers/Microsoft.Communication/communicationServices/test-resource-list-by-rgd3a91c4f?api-version=2020-08-20-preview
+  response:
+    body:
+      string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_communication_list_resources_test_communication_list_by_rgd3a91c4f/providers/Microsoft.Communication/communicationServices/test-resource-list-by-rgd3a91c4f","name":"test-resource-list-by-rgd3a91c4f","type":"Microsoft.Communication/communicationServices","location":"global","properties":{"provisioningState":"Succeeded","hostName":"test-resource-list-by-rgd3a91c4f.communication.azure.com","immutableResourceId":"e6c1d48e-5265-4c58-9823-19c5dd6c3303","dataLocation":"UnitedStates"}}'
+    headers:
+      cache-control:
+      - no-cache
+      content-length:
+      - '566'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Tue, 15 Dec 2020 00:43:44 GMT
+      etag:
+      - '"50007af4-0000-0700-0000-5fd806a30000"'
+      expires:
+      - '-1'
+      pragma:
+      - no-cache
+      server:
+      - Kestrel
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      transfer-encoding:
+      - chunked
+      vary:
+      - Accept-Encoding
+      x-content-type-options:
+      - nosniff
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - azsdk-python-mgmt-communication/1.0.0b5 Python/3.8.3 (Windows-10-10.0.21264-SP0)
+    method: GET
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_communication_list_resources_test_communication_list_by_rgd3a91c4f/providers/Microsoft.Communication/communicationServices?api-version=2020-08-20-preview
+  response:
+    body:
+      string: '{"value":[{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_communication_list_resources_test_communication_list_by_rgd3a91c4f/providers/Microsoft.Communication/communicationServices/test-resource-list-by-rgd3a91c4f","name":"test-resource-list-by-rgd3a91c4f","type":"Microsoft.Communication/communicationServices","location":"global","properties":{"provisioningState":"Succeeded","hostName":"test-resource-list-by-rgd3a91c4f.communication.azure.com","immutableResourceId":"e6c1d48e-5265-4c58-9823-19c5dd6c3303","dataLocation":"UnitedStates"}}]}'
+    headers:
+      cache-control:
+      - no-cache
+      content-length:
+      - '578'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Tue, 15 Dec 2020 00:43:45 GMT
+      expires:
+      - '-1'
+      pragma:
+      - no-cache
+      server:
+      - Kestrel
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      transfer-encoding:
+      - chunked
+      vary:
+      - Accept-Encoding
+      x-content-type-options:
+      - nosniff
+    status:
+      code: 200
+      message: OK
+version: 1

@@ -1,7 +1,134 @@
 # Release History
 
-## 1.5.0b2 (Unreleased)
+## 1.6.0b4 (Unreleased)
 
+
+## 1.6.0b3 (2021-04-06)
+### Breaking Changes
+> These changes do not impact the API of stable versions such as 1.5.0.
+> Only code written against a beta version such as 1.6.0b1 may be affected.
+- Removed property `AuthenticationRequiredError.error_details`
+
+### Fixed
+- Credentials consistently retry token requests after connection failures, or
+  when instructed to by a Retry-After header
+- ManagedIdentityCredential caches tokens correctly
+
+### Added
+- `InteractiveBrowserCredential` functions in more WSL environments
+  ([#17615](https://github.com/Azure/azure-sdk-for-python/issues/17615))
+
+## 1.6.0b2 (2021-03-09)
+### Breaking Changes
+> These changes do not impact the API of stable versions such as 1.5.0.
+> Only code written against a beta version such as 1.6.0b1 may be affected.
+- Renamed `CertificateCredential` keyword argument `certificate_bytes` to
+  `certificate_data`
+- Credentials accepting keyword arguments `allow_unencrypted_cache` and
+  `enable_persistent_cache` to configure persistent caching accept a
+  `cache_persistence_options` argument instead whose value should be an
+  instance of `TokenCachePersistenceOptions`. For example:
+  ```
+  # before (e.g. in 1.6.0b1):
+  DeviceCodeCredential(enable_persistent_cache=True, allow_unencrypted_cache=True)
+
+  # after:
+  cache_options = TokenCachePersistenceOptions(allow_unencrypted_storage=True)
+  DeviceCodeCredential(cache_persistence_options=cache_options)
+  ```
+
+  See the documentation and samples for more details.
+
+### Added
+- New class `TokenCachePersistenceOptions` configures persistent caching
+- The `AuthenticationRequiredError.claims` property provides any additional
+  claims required by a user credential's `authenticate()` method
+
+## 1.6.0b1 (2021-02-09)
+### Changed
+- Raised minimum msal version to 1.7.0
+- Raised minimum six version to 1.12.0
+
+### Added
+- `InteractiveBrowserCredential` uses PKCE internally to protect authorization
+  codes
+- `CertificateCredential` can load a certificate from bytes instead of a file
+  path. To provide a certificate as bytes, use the keyword argument
+  `certificate_bytes` instead of `certificate_path`, for example:
+  `CertificateCredential(tenant_id, client_id, certificate_bytes=cert_bytes)`
+  ([#14055](https://github.com/Azure/azure-sdk-for-python/issues/14055))
+- User credentials support Continuous Access Evaluation (CAE)
+- Application authentication APIs from 1.5.0b2
+
+### Fixed
+- `ManagedIdentityCredential` correctly parses responses from the current
+  (preview) version of Azure ML managed identity
+  ([#15361](https://github.com/Azure/azure-sdk-for-python/issues/15361))
+
+## 1.5.0 (2020-11-11)
+### Breaking Changes
+- Renamed optional `CertificateCredential` keyword argument `send_certificate`
+  (added in 1.5.0b1) to `send_certificate_chain`
+- Removed user authentication APIs added in prior betas. These will be
+  reintroduced in 1.6.0b1. Passing the keyword arguments below
+  generally won't cause a runtime error, but the arguments have no effect.
+  ([#14601](https://github.com/Azure/azure-sdk-for-python/issues/14601))
+  - Removed `authenticate` method from `DeviceCodeCredential`,
+    `InteractiveBrowserCredential`, and `UsernamePasswordCredential`
+  - Removed `allow_unencrypted_cache` and `enable_persistent_cache` keyword
+    arguments from `CertificateCredential`, `ClientSecretCredential`,
+    `DeviceCodeCredential`, `InteractiveBrowserCredential`, and
+    `UsernamePasswordCredential`
+  - Removed `disable_automatic_authentication` keyword argument from
+    `DeviceCodeCredential` and `InteractiveBrowserCredential`
+  - Removed `allow_unencrypted_cache` keyword argument from
+    `SharedTokenCacheCredential`
+  - Removed classes `AuthenticationRecord` and `AuthenticationRequiredError`
+- Removed `identity_config` keyword argument from `ManagedIdentityCredential`
+  (was added in 1.5.0b1)
+
+### Changed
+- `DeviceCodeCredential` parameter `client_id` is now optional. When not
+   provided, the credential will authenticate users to an Azure development
+   application.
+   ([#14354](https://github.com/Azure/azure-sdk-for-python/issues/14354))
+- Credentials raise `ValueError` when constructed with tenant IDs containing
+  invalid characters
+  ([#14821](https://github.com/Azure/azure-sdk-for-python/issues/14821))
+- Raised minimum msal version to 1.6.0
+
+### Added
+- `ManagedIdentityCredential` supports Service Fabric
+  ([#12705](https://github.com/Azure/azure-sdk-for-python/issues/12705))
+  and Azure Arc
+  ([#12702](https://github.com/Azure/azure-sdk-for-python/issues/12702))
+
+### Fixed
+- Prevent `VisualStudioCodeCredential` using invalid authentication data when
+  no user is signed in to Visual Studio Code
+  ([#14438](https://github.com/Azure/azure-sdk-for-python/issues/14438))
+- `ManagedIdentityCredential` uses the API version supported by Azure Functions
+  on Linux consumption hosting plans
+  ([#14670](https://github.com/Azure/azure-sdk-for-python/issues/14670))
+- `InteractiveBrowserCredential.get_token()` raises a clearer error message when
+  it times out waiting for a user to authenticate on Python 2.7
+  ([#14773](https://github.com/Azure/azure-sdk-for-python/pull/14773))
+
+## 1.5.0b2 (2020-10-07)
+### Fixed
+- `AzureCliCredential.get_token` correctly sets token expiration time,
+  preventing clients from using expired tokens
+  ([#14345](https://github.com/Azure/azure-sdk-for-python/issues/14345))
+
+### Changed
+- Adopted msal-extensions 0.3.0
+([#13107](https://github.com/Azure/azure-sdk-for-python/issues/13107))
+
+## 1.4.1 (2020-10-07)
+### Fixed
+- `AzureCliCredential.get_token` correctly sets token expiration time,
+  preventing clients from using expired tokens
+  ([#14345](https://github.com/Azure/azure-sdk-for-python/issues/14345))
 
 ## 1.5.0b1 (2020-09-08)
 ### Added
@@ -10,7 +137,7 @@
   ([#11346](https://github.com/Azure/azure-sdk-for-python/issues/11346))
 - `DefaultAzureCredential` allows specifying the client ID of a user-assigned
   managed identity via keyword argument `managed_identity_client_id`
-  ([#12991](https://github.com/Azure/azure-sdk-for-python/issues/12991)) 
+  ([#12991](https://github.com/Azure/azure-sdk-for-python/issues/12991))
 - `CertificateCredential` supports Subject Name/Issuer authentication when
   created with `send_certificate=True`. The async `CertificateCredential`
   (`azure.identity.aio.CertificateCredential`) will support this in a
@@ -26,7 +153,7 @@
   ([#12696](https://github.com/Azure/azure-sdk-for-python/issues/12696))
 - `InteractiveBrowserCredential` keyword argument `redirect_uri` enables
   authentication with a user-specified application having a custom redirect URI
-  ([#13344](https://github.com/Azure/azure-sdk-for-python/issues/13344))  
+  ([#13344](https://github.com/Azure/azure-sdk-for-python/issues/13344))
 
 ### Breaking changes
 - Removed `authentication_record` keyword argument from the async

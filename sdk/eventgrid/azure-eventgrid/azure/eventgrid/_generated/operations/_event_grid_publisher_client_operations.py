@@ -8,11 +8,11 @@
 from typing import TYPE_CHECKING
 import warnings
 
-from azure.core.exceptions import HttpResponseError, ResourceExistsError, ResourceNotFoundError, map_error
+from azure.core.exceptions import ClientAuthenticationError, HttpResponseError, ResourceExistsError, ResourceNotFoundError, map_error
 from azure.core.pipeline import PipelineResponse
 from azure.core.pipeline.transport import HttpRequest, HttpResponse
 
-from .. import models
+from .. import models as _models
 
 if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
@@ -26,7 +26,7 @@ class EventGridPublisherClientOperationsMixin(object):
     def publish_events(
         self,
         topic_hostname,  # type: str
-        events,  # type: List["models.EventGridEvent"]
+        events,  # type: List["_models.EventGridEvent"]
         **kwargs  # type: Any
     ):
         # type: (...) -> None
@@ -42,7 +42,9 @@ class EventGridPublisherClientOperationsMixin(object):
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType[None]
-        error_map = {404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map = {
+            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
+        }
         error_map.update(kwargs.pop('error_map', {}))
         api_version = "2018-01-01"
         content_type = kwargs.pop("content_type", "application/json")
@@ -66,7 +68,6 @@ class EventGridPublisherClientOperationsMixin(object):
         body_content = self._serialize.body(events, '[EventGridEvent]')
         body_content_kwargs['content'] = body_content
         request = self._client.post(url, query_parameters, header_parameters, **body_content_kwargs)
-
         pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
 
@@ -82,7 +83,7 @@ class EventGridPublisherClientOperationsMixin(object):
     def publish_cloud_event_events(
         self,
         topic_hostname,  # type: str
-        events,  # type: List["models.CloudEvent"]
+        events,  # type: List["_models.CloudEvent"]
         **kwargs  # type: Any
     ):
         # type: (...) -> None
@@ -98,7 +99,9 @@ class EventGridPublisherClientOperationsMixin(object):
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType[None]
-        error_map = {404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map = {
+            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
+        }
         error_map.update(kwargs.pop('error_map', {}))
         api_version = "2018-01-01"
         content_type = kwargs.pop("content_type", "application/cloudevents-batch+json; charset=utf-8")
@@ -122,7 +125,6 @@ class EventGridPublisherClientOperationsMixin(object):
         body_content = self._serialize.body(events, '[CloudEvent]')
         body_content_kwargs['content'] = body_content
         request = self._client.post(url, query_parameters, header_parameters, **body_content_kwargs)
-
         pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
 
@@ -154,7 +156,9 @@ class EventGridPublisherClientOperationsMixin(object):
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType[None]
-        error_map = {404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map = {
+            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
+        }
         error_map.update(kwargs.pop('error_map', {}))
         api_version = "2018-01-01"
         content_type = kwargs.pop("content_type", "application/json")
@@ -178,7 +182,6 @@ class EventGridPublisherClientOperationsMixin(object):
         body_content = self._serialize.body(events, '[object]')
         body_content_kwargs['content'] = body_content
         request = self._client.post(url, query_parameters, header_parameters, **body_content_kwargs)
-
         pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
 
@@ -189,4 +192,4 @@ class EventGridPublisherClientOperationsMixin(object):
         if cls:
             return cls(pipeline_response, None, {})
 
-    publish_custom_event_events.metadata = {'url': '/api/events'}  # type: ignore
+    publish_custom_event_events.metadata = {'url': ''}  # type: ignore

@@ -3,7 +3,7 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
-
+# pylint: disable=too-many-instance-attributes
 from enum import Enum
 
 
@@ -24,6 +24,7 @@ class StorageErrorCode(str, Enum):
     account_is_disabled = "AccountIsDisabled"
     authentication_failed = "AuthenticationFailed"
     authorization_failure = "AuthorizationFailure"
+    no_authentication_information = "NoAuthenticationInformation"
     condition_headers_not_supported = "ConditionHeadersNotSupported"
     condition_not_met = "ConditionNotMet"
     empty_metadata_key = "EmptyMetadataKey"
@@ -158,6 +159,28 @@ class StorageErrorCode(str, Enum):
     share_has_snapshots = "ShareHasSnapshots"
     container_quota_downgrade_not_allowed = "ContainerQuotaDowngradeNotAllowed"
 
+    # DataLake values
+    content_length_must_be_zero = 'ContentLengthMustBeZero'
+    path_already_exists = 'PathAlreadyExists'
+    invalid_flush_position = 'InvalidFlushPosition'
+    invalid_property_name = 'InvalidPropertyName'
+    invalid_source_uri = 'InvalidSourceUri'
+    unsupported_rest_version = 'UnsupportedRestVersion'
+    file_system_not_found = 'FilesystemNotFound'
+    path_not_found = 'PathNotFound'
+    rename_destination_parent_path_not_found = 'RenameDestinationParentPathNotFound'
+    source_path_not_found = 'SourcePathNotFound'
+    destination_path_is_being_deleted = 'DestinationPathIsBeingDeleted'
+    file_system_already_exists = 'FilesystemAlreadyExists'
+    file_system_being_deleted = 'FilesystemBeingDeleted'
+    invalid_destination_path = 'InvalidDestinationPath'
+    invalid_rename_source_path = 'InvalidRenameSourcePath'
+    invalid_source_or_destination_resource_type = 'InvalidSourceOrDestinationResourceType'
+    lease_is_already_broken = 'LeaseIsAlreadyBroken'
+    lease_name_mismatch = 'LeaseNameMismatch'
+    path_conflict = 'PathConflict'
+    source_path_is_being_deleted = 'SourcePathIsBeingDeleted'
+
 
 class DictMixin(object):
 
@@ -287,6 +310,8 @@ class AccountSasPermissions(object):
         Permits write permissions to the specified resource type.
     :param bool delete:
         Valid for Container and Object resource types, except for queue messages.
+    :param bool delete_previous_version:
+        Delete the previous blob version for the versioning enabled storage account.
     :param bool list:
         Valid for Service and Container resource types only.
     :param bool add:
@@ -299,25 +324,37 @@ class AccountSasPermissions(object):
         Valid for the following Object resource types only: queue messages.
     :param bool process:
         Valid for the following Object resource type only: queue messages.
+    :keyword bool tag:
+        To enable set or get tags on the blobs in the container.
+    :keyword bool filter_by_tags:
+        To enable get blobs by tags, this should be used together with list permission.
     """
-    def __init__(self, read=False, write=False, delete=False, list=False,  # pylint: disable=redefined-builtin
-                 add=False, create=False, update=False, process=False):
+    def __init__(self, read=False, write=False, delete=False,
+                 list=False,  # pylint: disable=redefined-builtin
+                 add=False, create=False, update=False, process=False, delete_previous_version=False, **kwargs):
         self.read = read
         self.write = write
         self.delete = delete
+        self.delete_previous_version = delete_previous_version
         self.list = list
         self.add = add
         self.create = create
         self.update = update
         self.process = process
+        self.tag = kwargs.pop('tag', False)
+        self.filter_by_tags = kwargs.pop('filter_by_tags', False)
         self._str = (('r' if self.read else '') +
-                     ('w' if  self.write else '') +
+                     ('w' if self.write else '') +
                      ('d' if self.delete else '') +
+                     ('x' if self.delete_previous_version else '') +
                      ('l' if self.list else '') +
                      ('a' if self.add else '') +
                      ('c' if self.create else '') +
                      ('u' if self.update else '') +
-                     ('p' if self.process else ''))
+                     ('p' if self.process else '') +
+                     ('f' if self.filter_by_tags else '') +
+                     ('t' if self.tag else '')
+                     )
 
     def __str__(self):
         return self._str
@@ -332,20 +369,24 @@ class AccountSasPermissions(object):
 
         :param str permission: Specify permissions in
             the string with the first letter of the word.
-        :return: A AccountSasPermissions object
+        :return: An AccountSasPermissions object
         :rtype: ~azure.storage.blob.AccountSasPermissions
         """
         p_read = 'r' in permission
         p_write = 'w' in permission
         p_delete = 'd' in permission
+        p_delete_previous_version = 'x' in permission
         p_list = 'l' in permission
         p_add = 'a' in permission
         p_create = 'c' in permission
         p_update = 'u' in permission
         p_process = 'p' in permission
+        p_tag = 't' in permission
+        p_filter_by_tags = 'f' in permission
+        parsed = cls(read=p_read, write=p_write, delete=p_delete, delete_previous_version=p_delete_previous_version,
+                     list=p_list, add=p_add, create=p_create, update=p_update, process=p_process, tag=p_tag,
+                     filter_by_tags=p_filter_by_tags)
 
-        parsed = cls(p_read, p_write, p_delete, p_list, p_add, p_create, p_update, p_process)
-        parsed._str = permission # pylint: disable = protected-access
         return parsed
 
 class Services(object):

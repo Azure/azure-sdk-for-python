@@ -1,0 +1,91 @@
+interactions:
+- request:
+    body: null
+    headers:
+      User-Agent:
+      - azsdk-python-storage-file-share/12.2.0 Python/3.8.5 (Windows-10-10.0.18362-SP0)
+      x-ms-date:
+      - Fri, 11 Sep 2020 13:47:59 GMT
+      x-ms-version:
+      - '2020-02-10'
+    method: PUT
+    uri: https://storagename.file.core.windows.net/test403e0ff4?restype=share
+  response:
+    body:
+      string: ''
+    headers:
+      content-length: '0'
+      date: Fri, 11 Sep 2020 13:48:01 GMT
+      etag: '"0x8D856594D05BB2E"'
+      last-modified: Fri, 11 Sep 2020 13:48:01 GMT
+      server: Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
+      x-ms-version: '2020-02-10'
+    status:
+      code: 201
+      message: Created
+    url: https://seanmcccanary3.file.core.windows.net/test403e0ff4?restype=share
+- request:
+    body: null
+    headers:
+      User-Agent:
+      - azsdk-python-storage-file-share/12.2.0 Python/3.8.5 (Windows-10-10.0.18362-SP0)
+      x-ms-date:
+      - Fri, 11 Sep 2020 13:48:01 GMT
+      x-ms-lease-action:
+      - acquire
+      x-ms-lease-duration:
+      - '15'
+      x-ms-proposed-lease-id:
+      - 1057ec6d-d171-4e3f-8ae1-86963b4f353c
+      x-ms-version:
+      - '2020-02-10'
+    method: PUT
+    uri: https://storagename.file.core.windows.net/test403e0ff4?comp=lease&restype=share
+  response:
+    body:
+      string: ''
+    headers:
+      content-length: '0'
+      date: Fri, 11 Sep 2020 13:48:02 GMT
+      etag: '"0x8D856594D05BB2E"'
+      last-modified: Fri, 11 Sep 2020 13:48:01 GMT
+      server: Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
+      x-ms-lease-id: 1057ec6d-d171-4e3f-8ae1-86963b4f353c
+      x-ms-version: '2020-02-10'
+    status:
+      code: 201
+      message: Created
+    url: https://seanmcccanary3.file.core.windows.net/test403e0ff4?comp=lease&restype=share
+- request:
+    body: null
+    headers:
+      User-Agent:
+      - azsdk-python-storage-file-share/12.2.0 Python/3.8.5 (Windows-10-10.0.18362-SP0)
+      x-ms-date:
+      - Fri, 11 Sep 2020 13:48:02 GMT
+      x-ms-lease-action:
+      - acquire
+      x-ms-lease-duration:
+      - '-1'
+      x-ms-proposed-lease-id:
+      - 1057ec6d-d171-4e3f-8ae1-86963b4f353c
+      x-ms-version:
+      - '2020-02-10'
+    method: PUT
+    uri: https://storagename.file.core.windows.net/test403e0ff4?comp=lease&restype=share
+  response:
+    body:
+      string: ''
+    headers:
+      content-length: '0'
+      date: Fri, 11 Sep 2020 13:48:02 GMT
+      etag: '"0x8D856594D05BB2E"'
+      last-modified: Fri, 11 Sep 2020 13:48:01 GMT
+      server: Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
+      x-ms-lease-id: 1057ec6d-d171-4e3f-8ae1-86963b4f353c
+      x-ms-version: '2020-02-10'
+    status:
+      code: 201
+      message: Created
+    url: https://seanmcccanary3.file.core.windows.net/test403e0ff4?comp=lease&restype=share
+version: 1

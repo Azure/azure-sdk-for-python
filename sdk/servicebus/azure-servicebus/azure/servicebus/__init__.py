@@ -6,31 +6,44 @@
 from uamqp import constants
 
 from ._version import VERSION
+
 __version__ = VERSION
 
 from ._servicebus_client import ServiceBusClient
 from ._servicebus_sender import ServiceBusSender
 from ._servicebus_receiver import ServiceBusReceiver
-from ._servicebus_session_receiver import ServiceBusSessionReceiver
 from ._servicebus_session import ServiceBusSession
-from ._common.message import Message, BatchMessage, PeekedMessage, ReceivedMessage
-from ._common.constants import ReceiveMode, SubQueue
-from ._common.auto_lock_renewer import AutoLockRenew
+from ._common.message import (
+    ServiceBusMessage,
+    ServiceBusMessageBatch,
+    ServiceBusReceivedMessage,
+)
+from ._common.constants import (
+    ServiceBusReceiveMode,
+    ServiceBusSubQueue,
+    NEXT_AVAILABLE_SESSION,
+)
+from ._common.auto_lock_renewer import AutoLockRenewer
+from ._common._connection_string_parser import (
+    parse_connection_string,
+    ServiceBusConnectionStringProperties,
+)
 
 TransportType = constants.TransportType
 
 __all__ = [
-    'Message',
-    'BatchMessage',
-    'PeekedMessage',
-    'ReceivedMessage',
-    'SubQueue',
-    'ReceiveMode',
-    'ServiceBusClient',
-    'ServiceBusReceiver',
-    'ServiceBusSessionReceiver',
-    'ServiceBusSession',
-    'ServiceBusSender',
-    'TransportType',
-    'AutoLockRenew'
+    "ServiceBusMessage",
+    "ServiceBusMessageBatch",
+    "ServiceBusReceivedMessage",
+    "NEXT_AVAILABLE_SESSION",
+    "ServiceBusSubQueue",
+    "ServiceBusReceiveMode",
+    "ServiceBusClient",
+    "ServiceBusReceiver",
+    "ServiceBusSession",
+    "ServiceBusSender",
+    "TransportType",
+    "AutoLockRenewer",
+    "parse_connection_string",
+    "ServiceBusConnectionStringProperties",
 ]

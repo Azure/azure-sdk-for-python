@@ -42,7 +42,7 @@ def combine_coverage_files(coverage_files):
     if os.path.isfile(tox_ini_file):
         # for every individual coverage file, run coverage combine to combine path
         for coverage_file in coverage_files:
-            cov_cmd_array = [sys.executable, "-m", "coverage", "combine"]
+            cov_cmd_array = [sys.executable, "-m", "coverage", "combine", "--append"]
             # tox.ini file has coverage paths to combine
             # Pas tox.ini as coverage config file
             cov_cmd_array.extend([config_file_flag, coverage_file])
@@ -222,7 +222,7 @@ if __name__ == "__main__":
     parser.add_argument(
         "--tparallel",
         default=False,
-        help=("Flag  that enables parallel tox invocation."),
+        help=("Flag that enables parallel tox invocation."),
         action="store_true",
     )
 

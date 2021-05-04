@@ -1,0 +1,196 @@
+interactions:
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '0'
+      User-Agent:
+      - azsdk-python-storage-dfs/12.3.0b2 Python/3.8.5 (Windows-10-10.0.19041-SP0)
+      x-ms-client-request-id:
+      - 8b3c6806-6d94-11eb-8ce0-c8348e5fffbf
+      x-ms-date:
+      - Sat, 13 Feb 2021 00:43:52 GMT
+      x-ms-properties:
+      - ''
+      x-ms-version:
+      - '2020-02-10'
+    method: PUT
+    uri: https://storagename.dfs.core.windows.net/filesystem8ebf0aac/directory8ebf0aac?resource=directory
+  response:
+    body:
+      string: ''
+    headers:
+      Content-Length:
+      - '0'
+      Date:
+      - Sat, 13 Feb 2021 00:43:51 GMT
+      ETag:
+      - '"0x8D8CFB86FA2ADD0"'
+      Last-Modified:
+      - Sat, 13 Feb 2021 00:43:52 GMT
+      Server:
+      - Windows-Azure-HDFS/1.0 Microsoft-HTTPAPI/2.0
+      x-ms-request-id:
+      - a55bcdb1-901f-00db-42a1-010c61000000
+      x-ms-version:
+      - '2020-02-10'
+    status:
+      code: 201
+      message: Created
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '0'
+      User-Agent:
+      - azsdk-python-storage-dfs/12.3.0b2 Python/3.8.5 (Windows-10-10.0.19041-SP0)
+      x-ms-client-request-id:
+      - 8b6e509d-6d94-11eb-a8ab-c8348e5fffbf
+      x-ms-date:
+      - Sat, 13 Feb 2021 00:43:52 GMT
+      x-ms-properties:
+      - ''
+      x-ms-version:
+      - '2020-02-10'
+    method: PUT
+    uri: https://storagename.dfs.core.windows.net/filesystem8ebf0aac/directory8ebf0aac%2Ffilename?resource=file
+  response:
+    body:
+      string: ''
+    headers:
+      Content-Length:
+      - '0'
+      Date:
+      - Sat, 13 Feb 2021 00:43:52 GMT
+      ETag:
+      - '"0x8D8CFB86FAF6634"'
+      Last-Modified:
+      - Sat, 13 Feb 2021 00:43:52 GMT
+      Server:
+      - Windows-Azure-HDFS/1.0 Microsoft-HTTPAPI/2.0
+      x-ms-request-id:
+      - a55bcdb9-901f-00db-4aa1-010c61000000
+      x-ms-version:
+      - '2020-02-10'
+    status:
+      code: 201
+      message: Created
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/xml
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - azsdk-python-storage-dfs/12.3.0b2 Python/3.8.5 (Windows-10-10.0.19041-SP0)
+      x-ms-client-request-id:
+      - 8b7afa0e-6d94-11eb-b96b-c8348e5fffbf
+      x-ms-date:
+      - Sat, 13 Feb 2021 00:43:52 GMT
+      x-ms-encryption-algorithm:
+      - AES256
+      x-ms-version:
+      - '2020-06-12'
+    method: HEAD
+    uri: https://storagename.blob.core.windows.net/filesystem8ebf0aac/directory8ebf0aac/filename
+  response:
+    body:
+      string: ''
+    headers:
+      Accept-Ranges:
+      - bytes
+      Content-Length:
+      - '0'
+      Content-Type:
+      - application/octet-stream
+      Date:
+      - Sat, 13 Feb 2021 00:43:52 GMT
+      ETag:
+      - '"0x8D8CFB86FAF6634"'
+      Last-Modified:
+      - Sat, 13 Feb 2021 00:43:52 GMT
+      Server:
+      - Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
+      x-ms-access-tier:
+      - Hot
+      x-ms-access-tier-inferred:
+      - 'true'
+      x-ms-blob-type:
+      - BlockBlob
+      x-ms-creation-time:
+      - Sat, 13 Feb 2021 00:43:52 GMT
+      x-ms-group:
+      - $superuser
+      x-ms-lease-state:
+      - available
+      x-ms-lease-status:
+      - unlocked
+      x-ms-owner:
+      - $superuser
+      x-ms-permissions:
+      - rw-r-----
+      x-ms-request-id:
+      - 430eeb87-701e-008e-3ba1-011cea000000
+      x-ms-server-encrypted:
+      - 'true'
+      x-ms-version:
+      - '2020-06-12'
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/xml
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - azsdk-python-storage-dfs/12.3.0b2 Python/3.8.5 (Windows-10-10.0.19041-SP0)
+      x-ms-client-request-id:
+      - 8ba2cd58-6d94-11eb-8c8b-c8348e5fffbf
+      x-ms-date:
+      - Sat, 13 Feb 2021 00:43:53 GMT
+      x-ms-encryption-algorithm:
+      - AES256
+      x-ms-version:
+      - '2020-06-12'
+    method: HEAD
+    uri: https://storagename.blob.core.windows.net/filesystem8ebf0aac/directory8ebf0aac/nonexistentfile
+  response:
+    body:
+      string: ''
+    headers:
+      Date:
+      - Sat, 13 Feb 2021 00:43:52 GMT
+      Server:
+      - Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
+      Transfer-Encoding:
+      - chunked
+      x-ms-error-code:
+      - BlobNotFound
+      x-ms-request-id:
+      - 430eebc7-701e-008e-73a1-011cea000000
+      x-ms-version:
+      - '2020-06-12'
+    status:
+      code: 404
+      message: The specified blob does not exist.
+version: 1

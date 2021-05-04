@@ -12,7 +12,7 @@ from azure.core.exceptions import ClientAuthenticationError, HttpResponseError, 
 from azure.core.pipeline import PipelineResponse
 from azure.core.pipeline.transport import AsyncHttpResponse, HttpRequest
 
-from ... import models
+from ... import models as _models
 
 T = TypeVar('T')
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]]
@@ -31,7 +31,7 @@ class SparkSessionOperations:
     :param deserializer: An object model deserializer.
     """
 
-    models = models
+    models = _models
 
     def __init__(self, client, config, serializer, deserializer) -> None:
         self._client = client
@@ -45,7 +45,7 @@ class SparkSessionOperations:
         size: Optional[int] = None,
         detailed: Optional[bool] = None,
         **kwargs
-    ) -> "models.SparkSessionCollection":
+    ) -> "_models.SparkSessionCollection":
         """List all spark sessions which are running under a particular spark pool.
 
         :param from_parameter: Optional param specifying which index the list should begin from.
@@ -61,7 +61,7 @@ class SparkSessionOperations:
         :rtype: ~azure.synapse.spark.models.SparkSessionCollection
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.SparkSessionCollection"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.SparkSessionCollection"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -108,10 +108,10 @@ class SparkSessionOperations:
 
     async def create_spark_session(
         self,
-        spark_session_options: "models.SparkSessionOptions",
+        spark_session_options: "_models.SparkSessionOptions",
         detailed: Optional[bool] = None,
         **kwargs
-    ) -> "models.SparkSession":
+    ) -> "_models.SparkSession":
         """Create new spark session.
 
         :param spark_session_options: Livy compatible batch job request payload.
@@ -124,7 +124,7 @@ class SparkSessionOperations:
         :rtype: ~azure.synapse.spark.models.SparkSession
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.SparkSession"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.SparkSession"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -175,7 +175,7 @@ class SparkSessionOperations:
         session_id: int,
         detailed: Optional[bool] = None,
         **kwargs
-    ) -> "models.SparkSession":
+    ) -> "_models.SparkSession":
         """Gets a single spark session.
 
         :param session_id: Identifier for the session.
@@ -188,7 +188,7 @@ class SparkSessionOperations:
         :rtype: ~azure.synapse.spark.models.SparkSession
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.SparkSession"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.SparkSession"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -332,7 +332,7 @@ class SparkSessionOperations:
         self,
         session_id: int,
         **kwargs
-    ) -> "models.SparkStatementCollection":
+    ) -> "_models.SparkStatementCollection":
         """Gets a list of statements within a spark session.
 
         :param session_id: Identifier for the session.
@@ -342,7 +342,7 @@ class SparkSessionOperations:
         :rtype: ~azure.synapse.spark.models.SparkStatementCollection
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.SparkStatementCollection"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.SparkStatementCollection"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -385,9 +385,9 @@ class SparkSessionOperations:
     async def create_spark_statement(
         self,
         session_id: int,
-        spark_statement_options: "models.SparkStatementOptions",
+        spark_statement_options: "_models.SparkStatementOptions",
         **kwargs
-    ) -> "models.SparkStatement":
+    ) -> "_models.SparkStatement":
         """Create statement within a spark session.
 
         :param session_id: Identifier for the session.
@@ -399,7 +399,7 @@ class SparkSessionOperations:
         :rtype: ~azure.synapse.spark.models.SparkStatement
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.SparkStatement"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.SparkStatement"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -449,7 +449,7 @@ class SparkSessionOperations:
         session_id: int,
         statement_id: int,
         **kwargs
-    ) -> "models.SparkStatement":
+    ) -> "_models.SparkStatement":
         """Gets a single statement within a spark session.
 
         :param session_id: Identifier for the session.
@@ -461,7 +461,7 @@ class SparkSessionOperations:
         :rtype: ~azure.synapse.spark.models.SparkStatement
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.SparkStatement"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.SparkStatement"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -507,7 +507,7 @@ class SparkSessionOperations:
         session_id: int,
         statement_id: int,
         **kwargs
-    ) -> "models.SparkStatementCancellationResult":
+    ) -> "_models.SparkStatementCancellationResult":
         """Kill a statement within a session.
 
         :param session_id: Identifier for the session.
@@ -519,7 +519,7 @@ class SparkSessionOperations:
         :rtype: ~azure.synapse.spark.models.SparkStatementCancellationResult
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.SparkStatementCancellationResult"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.SparkStatementCancellationResult"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }

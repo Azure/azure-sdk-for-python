@@ -62,6 +62,12 @@ def is_text_payload(entity):
     return True
 
 
+def is_batch_payload(entity):
+    if _get_content_type(entity) == "multipart/mixed" and "&comp=batch" in entity.uri:
+        return True
+    return False
+
+
 def is_json_payload(entity):
     return _get_content_type(entity) == 'application/json'
 

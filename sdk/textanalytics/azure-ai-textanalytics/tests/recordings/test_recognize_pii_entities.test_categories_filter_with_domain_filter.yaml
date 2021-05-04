@@ -1,0 +1,44 @@
+interactions:
+- request:
+    body: '{"documents": [{"id": "0", "text": "My name is Inigo Montoya, my SSN in
+      243-56-0987 and my phone number is 333-3333.", "language": "en"}]}'
+    headers:
+      Accept:
+      - application/json, text/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '138'
+      Content-Type:
+      - application/json
+      User-Agent:
+      - azsdk-python-ai-textanalytics/5.1.0b7 Python/3.9.0 (Windows-10-10.0.19041-SP0)
+    method: POST
+    uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.1-preview.5/entities/recognition/pii?showStats=false&domain=phi&stringIndexType=UnicodeCodePoint&piiCategories=USSocialSecurityNumber
+  response:
+    body:
+      string: '{"documents":[{"redactedText":"My name is Inigo Montoya, my SSN in
+        *********** and my phone number is 333-3333.","id":"0","entities":[{"text":"243-56-0987","category":"USSocialSecurityNumber","offset":36,"length":11,"confidenceScore":0.85}],"warnings":[]}],"errors":[],"modelVersion":"2021-01-15"}'
+    headers:
+      apim-request-id:
+      - c12041e3-41fb-469f-8893-4d4e184d3c0e
+      content-type:
+      - application/json; charset=utf-8
+      csp-billing-usage:
+      - CognitiveServices.TextAnalytics.BatchScoring=1,CognitiveServices.TextAnalytics.TextRecords=1
+      date:
+      - Tue, 27 Apr 2021 20:13:09 GMT
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains; preload
+      transfer-encoding:
+      - chunked
+      x-content-type-options:
+      - nosniff
+      x-envoy-upstream-service-time:
+      - '33'
+    status:
+      code: 200
+      message: OK
+version: 1

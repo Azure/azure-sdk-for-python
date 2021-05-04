@@ -1,13 +1,15 @@
 trigger: none
 
-jobs:
-  - template: ../../eng/pipelines/templates/jobs/archetype-sdk-tests.yml
+stages:
+  - template: ../../eng/pipelines/templates/stages/archetype-sdk-tests.yml
     parameters:
       BuildTargetingString: $(BuildTargetingString)
       ServiceDirectory: textanalytics
       EnvVars:
         AZURE_SUBSCRIPTION_ID: $(azure-subscription-id)
-        AZURE_TEXT_ANALYTICS_ENDPOINT: $(python-textanalytics-test-textanalytics-account-name)
+        AZURE_WHITELISTED_SUBSCRIPTION_ID: $(azure-whitelisted-subscription-id)
+        AZURE_TEXT_ANALYTICS_ENDPOINT_STABLE: $(python-textanalytics-test-textanalytics-account-name)
+        AZURE_TEXT_ANALYTICS_ENDPOINT: $(python-textanalytics-test-textanalytics-account-name-gated-preview)
         AZURE_TEXT_ANALYTICS_KEY: $(python-textanalytics-test-textanalytics-account-key)
         AZURE_TENANT_ID: $(aad-azure-sdk-test-tenant-id)
         AZURE_CLIENT_SECRET: $(aad-azure-sdk-test-client-secret)

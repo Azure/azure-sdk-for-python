@@ -14,7 +14,7 @@ from azure.core.pipeline import PipelineResponse
 from azure.core.pipeline.transport import HttpRequest, HttpResponse
 from azure.mgmt.core.exceptions import ARMErrorFormat
 
-from .. import models
+from .. import models as _models
 
 if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
@@ -37,7 +37,7 @@ class VirtualMachineRunCommandsOperations(object):
     :param deserializer: An object model deserializer.
     """
 
-    models = models
+    models = _models
 
     def __init__(self, client, config, serializer, deserializer):
         self._client = client
@@ -50,7 +50,7 @@ class VirtualMachineRunCommandsOperations(object):
         location,  # type: str
         **kwargs  # type: Any
     ):
-        # type: (...) -> Iterable["models.RunCommandListResult"]
+        # type: (...) -> Iterable["_models.RunCommandListResult"]
         """Lists all available run commands for a subscription in a location.
 
         :param location: The location upon which run commands is queried.
@@ -60,7 +60,7 @@ class VirtualMachineRunCommandsOperations(object):
         :rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.compute.v2018_06_01.models.RunCommandListResult]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.RunCommandListResult"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.RunCommandListResult"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -122,7 +122,7 @@ class VirtualMachineRunCommandsOperations(object):
         command_id,  # type: str
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.RunCommandDocument"
+        # type: (...) -> "_models.RunCommandDocument"
         """Gets specific run command for a subscription in a location.
 
         :param location: The location upon which run commands is queried.
@@ -134,7 +134,7 @@ class VirtualMachineRunCommandsOperations(object):
         :rtype: ~azure.mgmt.compute.v2018_06_01.models.RunCommandDocument
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.RunCommandDocument"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.RunCommandDocument"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }

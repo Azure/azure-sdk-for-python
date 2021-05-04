@@ -16,7 +16,7 @@ from azure.core.polling import AsyncLROPoller, AsyncNoPolling, AsyncPollingMetho
 from azure.mgmt.core.exceptions import ARMErrorFormat
 from azure.mgmt.core.polling.async_arm_polling import AsyncARMPolling
 
-from ... import models
+from ... import models as _models
 
 T = TypeVar('T')
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]]
@@ -35,7 +35,7 @@ class LoadBalancerBackendAddressPoolsOperations:
     :param deserializer: An object model deserializer.
     """
 
-    models = models
+    models = _models
 
     def __init__(self, client, config, serializer, deserializer) -> None:
         self._client = client
@@ -48,7 +48,7 @@ class LoadBalancerBackendAddressPoolsOperations:
         resource_group_name: str,
         load_balancer_name: str,
         **kwargs
-    ) -> AsyncIterable["models.LoadBalancerBackendAddressPoolListResult"]:
+    ) -> AsyncIterable["_models.LoadBalancerBackendAddressPoolListResult"]:
         """Gets all the load balancer backed address pools.
 
         :param resource_group_name: The name of the resource group.
@@ -60,7 +60,7 @@ class LoadBalancerBackendAddressPoolsOperations:
         :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.network.v2020_06_01.models.LoadBalancerBackendAddressPoolListResult]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.LoadBalancerBackendAddressPoolListResult"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.LoadBalancerBackendAddressPoolListResult"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -123,7 +123,7 @@ class LoadBalancerBackendAddressPoolsOperations:
         load_balancer_name: str,
         backend_address_pool_name: str,
         **kwargs
-    ) -> "models.BackendAddressPool":
+    ) -> "_models.BackendAddressPool":
         """Gets load balancer backend address pool.
 
         :param resource_group_name: The name of the resource group.
@@ -137,7 +137,7 @@ class LoadBalancerBackendAddressPoolsOperations:
         :rtype: ~azure.mgmt.network.v2020_06_01.models.BackendAddressPool
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.BackendAddressPool"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.BackendAddressPool"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -184,10 +184,10 @@ class LoadBalancerBackendAddressPoolsOperations:
         resource_group_name: str,
         load_balancer_name: str,
         backend_address_pool_name: str,
-        parameters: "models.BackendAddressPool",
+        parameters: "_models.BackendAddressPool",
         **kwargs
-    ) -> "models.BackendAddressPool":
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.BackendAddressPool"]
+    ) -> "_models.BackendAddressPool":
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.BackendAddressPool"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -243,9 +243,9 @@ class LoadBalancerBackendAddressPoolsOperations:
         resource_group_name: str,
         load_balancer_name: str,
         backend_address_pool_name: str,
-        parameters: "models.BackendAddressPool",
+        parameters: "_models.BackendAddressPool",
         **kwargs
-    ) -> AsyncLROPoller["models.BackendAddressPool"]:
+    ) -> AsyncLROPoller["_models.BackendAddressPool"]:
         """Creates or updates a load balancer backend address pool.
 
         :param resource_group_name: The name of the resource group.
@@ -268,7 +268,7 @@ class LoadBalancerBackendAddressPoolsOperations:
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         polling = kwargs.pop('polling', True)  # type: Union[bool, AsyncPollingMethod]
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.BackendAddressPool"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.BackendAddressPool"]
         lro_delay = kwargs.pop(
             'polling_interval',
             self._config.polling_interval
@@ -294,7 +294,14 @@ class LoadBalancerBackendAddressPoolsOperations:
                 return cls(pipeline_response, deserialized, {})
             return deserialized
 
-        if polling is True: polling_method = AsyncARMPolling(lro_delay, lro_options={'final-state-via': 'azure-async-operation'},  **kwargs)
+        path_format_arguments = {
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
+            'loadBalancerName': self._serialize.url("load_balancer_name", load_balancer_name, 'str'),
+            'backendAddressPoolName': self._serialize.url("backend_address_pool_name", backend_address_pool_name, 'str'),
+            'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
+        }
+
+        if polling is True: polling_method = AsyncARMPolling(lro_delay, lro_options={'final-state-via': 'azure-async-operation'}, path_format_arguments=path_format_arguments,  **kwargs)
         elif polling is False: polling_method = AsyncNoPolling()
         else: polling_method = polling
         if cont_token:
@@ -402,7 +409,14 @@ class LoadBalancerBackendAddressPoolsOperations:
             if cls:
                 return cls(pipeline_response, None, {})
 
-        if polling is True: polling_method = AsyncARMPolling(lro_delay, lro_options={'final-state-via': 'location'},  **kwargs)
+        path_format_arguments = {
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
+            'loadBalancerName': self._serialize.url("load_balancer_name", load_balancer_name, 'str'),
+            'backendAddressPoolName': self._serialize.url("backend_address_pool_name", backend_address_pool_name, 'str'),
+            'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
+        }
+
+        if polling is True: polling_method = AsyncARMPolling(lro_delay, lro_options={'final-state-via': 'location'}, path_format_arguments=path_format_arguments,  **kwargs)
         elif polling is False: polling_method = AsyncNoPolling()
         else: polling_method = polling
         if cont_token:

@@ -58,3 +58,7 @@ class TestContentType(FormRecognizerTest):
     def test_tiff_big_endian(self):
         content_type = get_content_type(b"\x4D\x4D\x00\x2A")
         self.assertEqual(content_type, "image/tiff")
+
+    def test_bmp(self):
+        content_type = get_content_type(b"\x42\x4D\x00\x00")
+        self.assertEqual(content_type, "image/bmp")

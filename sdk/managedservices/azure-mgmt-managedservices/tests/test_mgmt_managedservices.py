@@ -12,6 +12,7 @@ from devtools_testutils import AzureMgmtTestCase
 from azure.mgmt.managedservices import ManagedServicesClient
 
 
+@unittest.skip("skip test")
 class MgmtManagedServicesTest(AzureMgmtTestCase):
     def setUp(self):
         super(MgmtManagedServicesTest, self).setUp()

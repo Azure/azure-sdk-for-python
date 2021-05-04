@@ -4,31 +4,68 @@ interactions:
     headers:
       Accept:
       - application/json
+      Content-Length:
+      - '0'
       User-Agent:
-      - azsdk-python-keyvault-administration/1.0.0b1 Python/3.5.4 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-keyvault-administration/4.0.0b3 Python/3.5.3 (Windows-10-10.0.19041-SP0)
     method: GET
-    uri: https://vaultname.vault.azure.net/providers/Microsoft.Authorization/roleDefinitions?api-version=7.2-preview
+    uri: https://managedhsm/providers/Microsoft.Authorization/roleDefinitions?api-version=7.2-preview
   response:
     body:
-      string: '{"value":[{"id":"Microsoft.KeyVault/providers/Microsoft.Authorization/roleDefinitions/a290e904-7015-4bba-90c8-60543313cdb4","name":"a290e904-7015-4bba-90c8-60543313cdb4","properties":{"assignableScopes":["/"],"description":"","permissions":[{"actions":[],"dataActions":["Microsoft.KeyVault/managedHsm/keys/read/action","Microsoft.KeyVault/managedHsm/keys/write/action","Microsoft.KeyVault/managedHsm/keys/deletedKeys/read/action","Microsoft.KeyVault/managedHsm/keys/deletedKeys/recover/action","Microsoft.KeyVault/managedHsm/keys/backup/action","Microsoft.KeyVault/managedHsm/keys/restore/action","Microsoft.KeyVault/managedHsm/roleAssignments/delete/action","Microsoft.KeyVault/managedHsm/roleAssignments/read/action","Microsoft.KeyVault/managedHsm/roleAssignments/write/action","Microsoft.KeyVault/managedHsm/roleDefinitions/read/action","Microsoft.KeyVault/managedHsm/keys/encrypt/action","Microsoft.KeyVault/managedHsm/keys/decrypt/action","Microsoft.KeyVault/managedHsm/keys/wrap/action","Microsoft.KeyVault/managedHsm/keys/unwrap/action","Microsoft.KeyVault/managedHsm/keys/sign/action","Microsoft.KeyVault/managedHsm/keys/verify/action","Microsoft.KeyVault/managedHsm/keys/create","Microsoft.KeyVault/managedHsm/keys/delete","Microsoft.KeyVault/managedHsm/keys/export/action","Microsoft.KeyVault/managedHsm/keys/import/action","Microsoft.KeyVault/managedHsm/keys/deletedKeys/delete"],"notActions":[],"notDataActions":[]}],"roleName":"Azure
-        Key Vault Managed HSM Administrator","type":""},"type":"Microsoft.Authorization/roleDefinitions"},{"id":"Microsoft.KeyVault/providers/Microsoft.Authorization/roleDefinitions/515eb02d-2335-4d2d-92f2-b1cbdf9c3778","name":"515eb02d-2335-4d2d-92f2-b1cbdf9c3778","properties":{"assignableScopes":["/"],"description":"","permissions":[{"actions":[],"dataActions":["Microsoft.KeyVault/managedHsm/keys/read/action","Microsoft.KeyVault/managedHsm/keys/write/action","Microsoft.KeyVault/managedHsm/keys/deletedKeys/read/action","Microsoft.KeyVault/managedHsm/keys/deletedKeys/recover/action","Microsoft.KeyVault/managedHsm/keys/backup/action","Microsoft.KeyVault/managedHsm/keys/restore/action","Microsoft.KeyVault/managedHsm/keys/encrypt/action","Microsoft.KeyVault/managedHsm/keys/decrypt/action","Microsoft.KeyVault/managedHsm/keys/sign/action","Microsoft.KeyVault/managedHsm/keys/verify/action","Microsoft.KeyVault/managedHsm/keys/wrap/action","Microsoft.KeyVault/managedHsm/keys/unwrap/action","Microsoft.KeyVault/managedHsm/keys/create","Microsoft.KeyVault/managedHsm/keys/delete","Microsoft.KeyVault/managedHsm/keys/export/action","Microsoft.KeyVault/managedHsm/keys/import/action","Microsoft.KeyVault/managedHsm/keys/deletedKeys/delete"],"notActions":[],"notDataActions":[]}],"roleName":"Azure
-        Key Vault Managed HSM Crypto Officer","type":""},"type":"Microsoft.Authorization/roleDefinitions"},{"id":"Microsoft.KeyVault/providers/Microsoft.Authorization/roleDefinitions/21dbd100-6940-42c2-9190-5d6cb909625b","name":"21dbd100-6940-42c2-9190-5d6cb909625b","properties":{"assignableScopes":["/"],"description":"","permissions":[{"actions":[],"dataActions":["Microsoft.KeyVault/managedHsm/keys/read/action","Microsoft.KeyVault/managedHsm/keys/write/action","Microsoft.KeyVault/managedHsm/keys/backup/action","Microsoft.KeyVault/managedHsm/keys/create","Microsoft.KeyVault/managedHsm/keys/encrypt/action","Microsoft.KeyVault/managedHsm/keys/decrypt/action","Microsoft.KeyVault/managedHsm/keys/wrap/action","Microsoft.KeyVault/managedHsm/keys/unwrap/action","Microsoft.KeyVault/managedHsm/keys/sign/action","Microsoft.KeyVault/managedHsm/keys/verify/action"],"notActions":[],"notDataActions":[]}],"roleName":"Azure
-        Key Vault Managed HSM Crypto User","type":""},"type":"Microsoft.Authorization/roleDefinitions"},{"id":"Microsoft.KeyVault/providers/Microsoft.Authorization/roleDefinitions/4bd23610-cdcf-4971-bdee-bdc562cc28e4","name":"4bd23610-cdcf-4971-bdee-bdc562cc28e4","properties":{"assignableScopes":["/"],"description":"","permissions":[{"actions":[],"dataActions":["Microsoft.KeyVault/managedHsm/roleDefinitions/read/action","Microsoft.KeyVault/managedHsm/roleAssignments/read/action","Microsoft.KeyVault/managedHsm/roleAssignments/write/action","Microsoft.KeyVault/managedHsm/roleAssignments/delete/action"],"notActions":[],"notDataActions":[]}],"roleName":"Azure
-        Key Vault Managed HSM Policy Administrator","type":""},"type":"Microsoft.Authorization/roleDefinitions"},{"id":"Microsoft.KeyVault/providers/Microsoft.Authorization/roleDefinitions/2c18b078-7c48-4d3a-af88-5a3a1b3f82b3","name":"2c18b078-7c48-4d3a-af88-5a3a1b3f82b3","properties":{"assignableScopes":["/"],"description":"","permissions":[{"actions":[],"dataActions":["Microsoft.KeyVault/managedHsm/keys/read/action","Microsoft.KeyVault/managedHsm/keys/deletedKeys/read/action"],"notActions":[],"notDataActions":[]}],"roleName":"Azure
-        Key Vault Managed HSM Crypto Auditor","type":""},"type":"Microsoft.Authorization/roleDefinitions"},{"id":"Microsoft.KeyVault/providers/Microsoft.Authorization/roleDefinitions/33413926-3206-4cdd-b39a-83574fe37a17","name":"33413926-3206-4cdd-b39a-83574fe37a17","properties":{"assignableScopes":["/"],"description":"","permissions":[{"actions":[],"dataActions":["Microsoft.KeyVault/managedHsm/keys/read/action","Microsoft.KeyVault/managedHsm/keys/wrap/action","Microsoft.KeyVault/managedHsm/keys/unwrap/action"],"notActions":[],"notDataActions":[]}],"roleName":"Azure
-        Key Vault Managed HSM Crypto Service Encryption","type":""},"type":"Microsoft.Authorization/roleDefinitions"}]}'
+      string: OK
     headers:
-      content-length: '5517'
-      content-type: application/json
+      cache-control: no-cache
+      content-length: '2'
+      content-security-policy: default-src 'self'
+      content-type: application/json; charset=utf-8
+      strict-transport-security: max-age=31536000; includeSubDomains
+      www-authenticate: Bearer authorization="https://login.microsoftonline.com/72f988bf-86f1-41af-91ab-2d7cd011db47",
+        resource="https://managedhsm.azure.net"
       x-content-type-options: nosniff
-      x-ms-keyvault-network-info: addr=24.17.201.78
-      x-ms-keyvault-region: EASTUS
+      x-frame-options: SAMEORIGIN
+      x-ms-build-version: 1.0.20210128-1-4c3070d1-develop
+      x-ms-server-latency: '1'
+    status:
+      code: 401
+      message: Unauthorized
+    url: https://mcpatinotesthsm.managedhsm.azure.net/providers/Microsoft.Authorization/roleDefinitions?api-version=7.2-preview
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      User-Agent:
+      - azsdk-python-keyvault-administration/4.0.0b3 Python/3.5.3 (Windows-10-10.0.19041-SP0)
+    method: GET
+    uri: https://managedhsm/providers/Microsoft.Authorization/roleDefinitions?api-version=7.2-preview
+  response:
+    body:
+      string: '{"value":[{"id":"Microsoft.KeyVault/providers/Microsoft.Authorization/roleDefinitions/7b127d3c-77bd-4e3e-bbe0-dbb8971fa7f8","name":"7b127d3c-77bd-4e3e-bbe0-dbb8971fa7f8","properties":{"assignableScopes":["/"],"description":"","permissions":[{"actions":[],"dataActions":["Microsoft.KeyVault/managedHsm/backup/start/action","Microsoft.KeyVault/managedHsm/backup/status/action","Microsoft.KeyVault/managedHsm/keys/backup/action"],"notActions":[],"notDataActions":[]}],"roleName":"Managed
+        HSM Backup","type":"AKVBuiltInRole"},"type":"Microsoft.Authorization/roleDefinitions"},{"id":"Microsoft.KeyVault/providers/Microsoft.Authorization/roleDefinitions/33413926-3206-4cdd-b39a-83574fe37a17","name":"33413926-3206-4cdd-b39a-83574fe37a17","properties":{"assignableScopes":["/"],"description":"","permissions":[{"actions":[],"dataActions":["Microsoft.KeyVault/managedHsm/keys/read/action","Microsoft.KeyVault/managedHsm/keys/wrap/action","Microsoft.KeyVault/managedHsm/keys/unwrap/action"],"notActions":[],"notDataActions":[]}],"roleName":"Managed
+        HSM Crypto Service Encryption","type":"AKVBuiltInRole"},"type":"Microsoft.Authorization/roleDefinitions"},{"id":"Microsoft.KeyVault/providers/Microsoft.Authorization/roleDefinitions/2c18b078-7c48-4d3a-af88-5a3a1b3f82b3","name":"2c18b078-7c48-4d3a-af88-5a3a1b3f82b3","properties":{"assignableScopes":["/"],"description":"","permissions":[{"actions":[],"dataActions":["Microsoft.KeyVault/managedHsm/keys/read/action","Microsoft.KeyVault/managedHsm/keys/deletedKeys/read/action"],"notActions":[],"notDataActions":[]}],"roleName":"Managed
+        HSM Crypto Auditor","type":"AKVBuiltInRole"},"type":"Microsoft.Authorization/roleDefinitions"},{"id":"Microsoft.KeyVault/providers/Microsoft.Authorization/roleDefinitions/4bd23610-cdcf-4971-bdee-bdc562cc28e4","name":"4bd23610-cdcf-4971-bdee-bdc562cc28e4","properties":{"assignableScopes":["/"],"description":"","permissions":[{"actions":[],"dataActions":["Microsoft.KeyVault/managedHsm/roleDefinitions/read/action","Microsoft.KeyVault/managedHsm/roleDefinitions/write/action","Microsoft.KeyVault/managedHsm/roleDefinitions/delete/action","Microsoft.KeyVault/managedHsm/roleAssignments/read/action","Microsoft.KeyVault/managedHsm/roleAssignments/write/action","Microsoft.KeyVault/managedHsm/roleAssignments/delete/action"],"notActions":[],"notDataActions":[]}],"roleName":"Managed
+        HSM Policy Administrator","type":"AKVBuiltInRole"},"type":"Microsoft.Authorization/roleDefinitions"},{"id":"Microsoft.KeyVault/providers/Microsoft.Authorization/roleDefinitions/21dbd100-6940-42c2-9190-5d6cb909625b","name":"21dbd100-6940-42c2-9190-5d6cb909625b","properties":{"assignableScopes":["/"],"description":"","permissions":[{"actions":[],"dataActions":["Microsoft.KeyVault/managedHsm/keys/read/action","Microsoft.KeyVault/managedHsm/keys/write/action","Microsoft.KeyVault/managedHsm/keys/backup/action","Microsoft.KeyVault/managedHsm/keys/create","Microsoft.KeyVault/managedHsm/keys/encrypt/action","Microsoft.KeyVault/managedHsm/keys/decrypt/action","Microsoft.KeyVault/managedHsm/keys/wrap/action","Microsoft.KeyVault/managedHsm/keys/unwrap/action","Microsoft.KeyVault/managedHsm/keys/sign/action","Microsoft.KeyVault/managedHsm/keys/verify/action"],"notActions":[],"notDataActions":[]}],"roleName":"Managed
+        HSM Crypto User","type":"AKVBuiltInRole"},"type":"Microsoft.Authorization/roleDefinitions"},{"id":"Microsoft.KeyVault/providers/Microsoft.Authorization/roleDefinitions/515eb02d-2335-4d2d-92f2-b1cbdf9c3778","name":"515eb02d-2335-4d2d-92f2-b1cbdf9c3778","properties":{"assignableScopes":["/"],"description":"","permissions":[{"actions":[],"dataActions":["Microsoft.KeyVault/managedHsm/keys/read/action","Microsoft.KeyVault/managedHsm/keys/write/action","Microsoft.KeyVault/managedHsm/keys/deletedKeys/read/action","Microsoft.KeyVault/managedHsm/keys/deletedKeys/recover/action","Microsoft.KeyVault/managedHsm/keys/backup/action","Microsoft.KeyVault/managedHsm/keys/restore/action","Microsoft.KeyVault/managedHsm/keys/encrypt/action","Microsoft.KeyVault/managedHsm/keys/decrypt/action","Microsoft.KeyVault/managedHsm/keys/sign/action","Microsoft.KeyVault/managedHsm/keys/verify/action","Microsoft.KeyVault/managedHsm/keys/wrap/action","Microsoft.KeyVault/managedHsm/keys/unwrap/action","Microsoft.KeyVault/managedHsm/keys/create","Microsoft.KeyVault/managedHsm/keys/delete","Microsoft.KeyVault/managedHsm/keys/export/action","Microsoft.KeyVault/managedHsm/keys/import/action","Microsoft.KeyVault/managedHsm/keys/deletedKeys/delete"],"notActions":[],"notDataActions":[]}],"roleName":"Managed
+        HSM Crypto Officer","type":"AKVBuiltInRole"},"type":"Microsoft.Authorization/roleDefinitions"},{"id":"Microsoft.KeyVault/providers/Microsoft.Authorization/roleDefinitions/a290e904-7015-4bba-90c8-60543313cdb4","name":"a290e904-7015-4bba-90c8-60543313cdb4","properties":{"assignableScopes":["/"],"description":"","permissions":[{"actions":[],"dataActions":["Microsoft.KeyVault/managedHsm/keys/read/action","Microsoft.KeyVault/managedHsm/keys/write/action","Microsoft.KeyVault/managedHsm/keys/deletedKeys/read/action","Microsoft.KeyVault/managedHsm/keys/deletedKeys/recover/action","Microsoft.KeyVault/managedHsm/keys/backup/action","Microsoft.KeyVault/managedHsm/keys/restore/action","Microsoft.KeyVault/managedHsm/roleAssignments/delete/action","Microsoft.KeyVault/managedHsm/roleAssignments/read/action","Microsoft.KeyVault/managedHsm/roleAssignments/write/action","Microsoft.KeyVault/managedHsm/roleDefinitions/read/action","Microsoft.KeyVault/managedHsm/roleDefinitions/write/action","Microsoft.KeyVault/managedHsm/roleDefinitions/delete/action","Microsoft.KeyVault/managedHsm/keys/encrypt/action","Microsoft.KeyVault/managedHsm/keys/decrypt/action","Microsoft.KeyVault/managedHsm/keys/wrap/action","Microsoft.KeyVault/managedHsm/keys/unwrap/action","Microsoft.KeyVault/managedHsm/keys/sign/action","Microsoft.KeyVault/managedHsm/keys/verify/action","Microsoft.KeyVault/managedHsm/keys/create","Microsoft.KeyVault/managedHsm/keys/delete","Microsoft.KeyVault/managedHsm/keys/export/action","Microsoft.KeyVault/managedHsm/keys/import/action","Microsoft.KeyVault/managedHsm/keys/deletedKeys/delete","Microsoft.KeyVault/managedHsm/securitydomain/download/action","Microsoft.KeyVault/managedHsm/securitydomain/upload/action","Microsoft.KeyVault/managedHsm/securitydomain/upload/read","Microsoft.KeyVault/managedHsm/securitydomain/transferkey/read","Microsoft.KeyVault/managedHsm/backup/start/action","Microsoft.KeyVault/managedHsm/restore/start/action","Microsoft.KeyVault/managedHsm/backup/status/action","Microsoft.KeyVault/managedHsm/restore/status/action"],"notActions":[],"notDataActions":[]}],"roleName":"Managed
+        HSM Administrator","type":"AKVBuiltInRole"},"type":"Microsoft.Authorization/roleDefinitions"}]}'
+    headers:
+      cache-control: no-cache
+      content-length: '6772'
+      content-security-policy: default-src 'self'
+      content-type: application/json; charset=utf-8
+      strict-transport-security: max-age=31536000; includeSubDomains
+      x-content-type-options: nosniff
+      x-frame-options: SAMEORIGIN
+      x-ms-build-version: 1.0.20210128-1-4c3070d1-develop
+      x-ms-keyvault-network-info: addr=174.127.232.53
+      x-ms-keyvault-region: northeurope
+      x-ms-server-latency: '347'
     status:
       code: 200
       message: OK
-    url: https://eastus.clitest.managedhsm-preview.azure.net/providers/Microsoft.Authorization/roleDefinitions?api-version=7.2-preview
+    url: https://mcpatinotesthsm.managedhsm.azure.net/providers/Microsoft.Authorization/roleDefinitions?api-version=7.2-preview
 - request:
-    body: '{"properties": {"roleDefinitionId": "Microsoft.KeyVault/providers/Microsoft.Authorization/roleDefinitions/a290e904-7015-4bba-90c8-60543313cdb4",
+    body: '{"properties": {"roleDefinitionId": "Microsoft.KeyVault/providers/Microsoft.Authorization/roleDefinitions/7b127d3c-77bd-4e3e-bbe0-dbb8971fa7f8",
       "principalId": "service-principal-id"}}'
     headers:
       Accept:
@@ -38,108 +75,136 @@ interactions:
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-keyvault-administration/1.0.0b1 Python/3.5.4 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-keyvault-administration/4.0.0b3 Python/3.5.3 (Windows-10-10.0.19041-SP0)
     method: PUT
-    uri: https://vaultname.vault.azure.net/providers/Microsoft.Authorization/roleAssignments/some-uuid?api-version=7.2-preview
+    uri: https://managedhsm/providers/Microsoft.Authorization/roleAssignments/some-uuid?api-version=7.2-preview
   response:
     body:
-      string: '{"id":"/providers/Microsoft.Authorization/roleAssignments/some-uuid","name":"some-uuid","properties":{"principalId":"service-principal-id","roleDefinitionId":"Microsoft.KeyVault/providers/Microsoft.Authorization/roleDefinitions/a290e904-7015-4bba-90c8-60543313cdb4","scope":"/"},"type":"Microsoft.Authorization/roleAssignments"}'
+      string: '{"id":"/providers/Microsoft.Authorization/roleAssignments/some-uuid","name":"some-uuid","properties":{"principalId":"service-principal-id","roleDefinitionId":"Microsoft.KeyVault/providers/Microsoft.Authorization/roleDefinitions/7b127d3c-77bd-4e3e-bbe0-dbb8971fa7f8","scope":"/"},"type":"Microsoft.Authorization/roleAssignments"}'
     headers:
+      cache-control: no-cache
       content-length: '398'
-      content-type: application/json
+      content-security-policy: default-src 'self'
+      content-type: application/json; charset=utf-8
+      strict-transport-security: max-age=31536000; includeSubDomains
       x-content-type-options: nosniff
-      x-ms-keyvault-network-info: addr=24.17.201.78
-      x-ms-keyvault-region: EASTUS
+      x-frame-options: SAMEORIGIN
+      x-ms-keyvault-network-info: addr=174.127.232.53
+      x-ms-keyvault-region: northeurope
+      x-ms-server-latency: '58'
     status:
       code: 201
       message: Created
-    url: https://eastus.clitest.managedhsm-preview.azure.net/providers/Microsoft.Authorization/roleAssignments/4af0820d-e870-4795-878e-1869f6f0888e?api-version=7.2-preview
+    url: https://mcpatinotesthsm.managedhsm.azure.net/providers/Microsoft.Authorization/roleAssignments/f5a832df-251b-4eb8-beaf-f7d3ab5c8c40?api-version=7.2-preview
 - request:
     body: null
     headers:
       Accept:
       - application/json
       User-Agent:
-      - azsdk-python-keyvault-administration/1.0.0b1 Python/3.5.4 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-keyvault-administration/4.0.0b3 Python/3.5.3 (Windows-10-10.0.19041-SP0)
     method: GET
-    uri: https://vaultname.vault.azure.net/providers/Microsoft.Authorization/roleAssignments/some-uuid?api-version=7.2-preview
+    uri: https://managedhsm/providers/Microsoft.Authorization/roleAssignments/some-uuid?api-version=7.2-preview
   response:
     body:
-      string: '{"id":"/providers/Microsoft.Authorization/roleAssignments/some-uuid","name":"some-uuid","properties":{"principalId":"service-principal-id","roleDefinitionId":"Microsoft.KeyVault/providers/Microsoft.Authorization/roleDefinitions/a290e904-7015-4bba-90c8-60543313cdb4","scope":"/"},"type":"Microsoft.Authorization/roleAssignments"}'
+      string: '{"id":"/providers/Microsoft.Authorization/roleAssignments/some-uuid","name":"some-uuid","properties":{"principalId":"service-principal-id","roleDefinitionId":"Microsoft.KeyVault/providers/Microsoft.Authorization/roleDefinitions/7b127d3c-77bd-4e3e-bbe0-dbb8971fa7f8","scope":"/"},"type":"Microsoft.Authorization/roleAssignments"}'
     headers:
+      cache-control: no-cache
       content-length: '398'
-      content-type: application/json
+      content-security-policy: default-src 'self'
+      content-type: application/json; charset=utf-8
+      strict-transport-security: max-age=31536000; includeSubDomains
       x-content-type-options: nosniff
-      x-ms-keyvault-network-info: addr=24.17.201.78
-      x-ms-keyvault-region: EASTUS
+      x-frame-options: SAMEORIGIN
+      x-ms-build-version: 1.0.20210128-1-4c3070d1-develop
+      x-ms-keyvault-network-info: addr=174.127.232.53
+      x-ms-keyvault-region: northeurope
+      x-ms-server-latency: '0'
     status:
       code: 200
       message: OK
-    url: https://eastus.clitest.managedhsm-preview.azure.net/providers/Microsoft.Authorization/roleAssignments/4af0820d-e870-4795-878e-1869f6f0888e?api-version=7.2-preview
+    url: https://mcpatinotesthsm.managedhsm.azure.net/providers/Microsoft.Authorization/roleAssignments/f5a832df-251b-4eb8-beaf-f7d3ab5c8c40?api-version=7.2-preview
 - request:
     body: null
     headers:
       Accept:
       - application/json
       User-Agent:
-      - azsdk-python-keyvault-administration/1.0.0b1 Python/3.5.4 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-keyvault-administration/4.0.0b3 Python/3.5.3 (Windows-10-10.0.19041-SP0)
     method: GET
-    uri: https://vaultname.vault.azure.net/providers/Microsoft.Authorization/roleAssignments?api-version=7.2-preview
+    uri: https://managedhsm/providers/Microsoft.Authorization/roleAssignments?api-version=7.2-preview
   response:
     body:
-      string: '{"value":[{"id":"/providers/Microsoft.Authorization/roleAssignments/e1392147-41b5-498b-847d-ca061e8808a3","name":"e1392147-41b5-498b-847d-ca061e8808a3","properties":{"principalId":"67ca7f59-968b-4cde-8582-d6a5341fa721","roleDefinitionId":"Microsoft.KeyVault/providers/Microsoft.Authorization/roleDefinitions/a290e904-7015-4bba-90c8-60543313cdb4","scope":"/"},"type":"Microsoft.Authorization/roleAssignments"},{"id":"/providers/Microsoft.Authorization/roleAssignments/f35aa2fd-545a-4f42-a44b-f862a530d4f1","name":"f35aa2fd-545a-4f42-a44b-f862a530d4f1","properties":{"principalId":"f84ae8f9-c979-4750-a2fe-b350a00bebff","roleDefinitionId":"Microsoft.KeyVault/providers/Microsoft.Authorization/roleDefinitions/a290e904-7015-4bba-90c8-60543313cdb4","scope":"/"},"type":"Microsoft.Authorization/roleAssignments"},{"id":"/providers/Microsoft.Authorization/roleAssignments/457acfe4-7ff8-4608-b3ac-87139804539e","name":"457acfe4-7ff8-4608-b3ac-87139804539e","properties":{"principalId":"693a17da-7022-4cdd-9d4e-4e72e4ad449d","roleDefinitionId":"Microsoft.KeyVault/providers/Microsoft.Authorization/roleDefinitions/a290e904-7015-4bba-90c8-60543313cdb4","scope":"/"},"type":"Microsoft.Authorization/roleAssignments"},{"id":"/providers/Microsoft.Authorization/roleAssignments/c6de6e40-d764-49e1-8e7c-be2f2a27de81","name":"c6de6e40-d764-49e1-8e7c-be2f2a27de81","properties":{"principalId":"3c1303ad-140b-493c-ab45-bed8ddbfa72c","roleDefinitionId":"Microsoft.KeyVault/providers/Microsoft.Authorization/roleDefinitions/a290e904-7015-4bba-90c8-60543313cdb4","scope":"/"},"type":"Microsoft.Authorization/roleAssignments"},{"id":"/providers/Microsoft.Authorization/roleAssignments/2f070682-b1a6-0ad3-acd3-7b891e5c79b0","name":"2f070682-b1a6-0ad3-acd3-7b891e5c79b0","properties":{"principalId":"bf0cee9f-b26b-4e25-b4ab-92ec7466cf33","roleDefinitionId":"Microsoft.KeyVault/providers/Microsoft.Authorization/roleDefinitions/a290e904-7015-4bba-90c8-60543313cdb4","scope":"/"},"type":"Microsoft.Authorization/roleAssignments"},{"id":"/providers/Microsoft.Authorization/roleAssignments/some-uuid","name":"some-uuid","properties":{"principalId":"service-principal-id","roleDefinitionId":"Microsoft.KeyVault/providers/Microsoft.Authorization/roleDefinitions/a290e904-7015-4bba-90c8-60543313cdb4","scope":"/"},"type":"Microsoft.Authorization/roleAssignments"},{"id":"/providers/Microsoft.Authorization/roleAssignments/0480f9fc-1294-4668-b31e-e5d8bae7d5b3","name":"0480f9fc-1294-4668-b31e-e5d8bae7d5b3","properties":{"principalId":"74677558-f369-4792-afe5-f99738b5fa7c","roleDefinitionId":"Microsoft.KeyVault/providers/Microsoft.Authorization/roleDefinitions/a290e904-7015-4bba-90c8-60543313cdb4","scope":"/"},"type":"Microsoft.Authorization/roleAssignments"}]}'
+      string: '{"value":[{"id":"/providers/Microsoft.Authorization/roleAssignments/some-uuid","name":"some-uuid","properties":{"principalId":"service-principal-id","roleDefinitionId":"Microsoft.KeyVault/providers/Microsoft.Authorization/roleDefinitions/7b127d3c-77bd-4e3e-bbe0-dbb8971fa7f8","scope":"/"},"type":"Microsoft.Authorization/roleAssignments"},{"id":"/providers/Microsoft.Authorization/roleAssignments/d1dd605c-1243-400b-16d4-9548525eb240","name":"d1dd605c-1243-400b-16d4-9548525eb240","properties":{"principalId":"47a2c409-7d58-4e1b-a121-9dccf4ce4035","roleDefinitionId":"Microsoft.KeyVault/providers/Microsoft.Authorization/roleDefinitions/a290e904-7015-4bba-90c8-60543313cdb4","scope":"/"},"type":"Microsoft.Authorization/roleAssignments"}]}'
     headers:
-      content-length: '2804'
-      content-type: application/json
+      cache-control: no-cache
+      content-length: '809'
+      content-security-policy: default-src 'self'
+      content-type: application/json; charset=utf-8
+      strict-transport-security: max-age=31536000; includeSubDomains
       x-content-type-options: nosniff
-      x-ms-keyvault-network-info: addr=24.17.201.78
-      x-ms-keyvault-region: EASTUS
+      x-frame-options: SAMEORIGIN
+      x-ms-build-version: 1.0.20210128-1-4c3070d1-develop
+      x-ms-keyvault-network-info: addr=174.127.232.53
+      x-ms-keyvault-region: northeurope
+      x-ms-server-latency: '1'
     status:
       code: 200
       message: OK
-    url: https://eastus.clitest.managedhsm-preview.azure.net/providers/Microsoft.Authorization/roleAssignments?api-version=7.2-preview
+    url: https://mcpatinotesthsm.managedhsm.azure.net/providers/Microsoft.Authorization/roleAssignments?api-version=7.2-preview
 - request:
     body: null
     headers:
       Accept:
       - application/json
       User-Agent:
-      - azsdk-python-keyvault-administration/1.0.0b1 Python/3.5.4 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-keyvault-administration/4.0.0b3 Python/3.5.3 (Windows-10-10.0.19041-SP0)
     method: DELETE
-    uri: https://vaultname.vault.azure.net/providers/Microsoft.Authorization/roleAssignments/some-uuid?api-version=7.2-preview
+    uri: https://managedhsm/providers/Microsoft.Authorization/roleAssignments/some-uuid?api-version=7.2-preview
   response:
     body:
-      string: '{"id":"/providers/Microsoft.Authorization/roleAssignments/some-uuid","name":"some-uuid","properties":{"principalId":"service-principal-id","roleDefinitionId":"Microsoft.KeyVault/providers/Microsoft.Authorization/roleDefinitions/a290e904-7015-4bba-90c8-60543313cdb4","scope":"/"},"type":"Microsoft.Authorization/roleAssignments"}'
+      string: '{"id":"/providers/Microsoft.Authorization/roleAssignments/some-uuid","name":"some-uuid","properties":{"principalId":"service-principal-id","roleDefinitionId":"Microsoft.KeyVault/providers/Microsoft.Authorization/roleDefinitions/7b127d3c-77bd-4e3e-bbe0-dbb8971fa7f8","scope":"/"},"type":"Microsoft.Authorization/roleAssignments"}'
     headers:
+      cache-control: no-cache
       content-length: '398'
-      content-type: application/json
+      content-security-policy: default-src 'self'
+      content-type: application/json; charset=utf-8
+      strict-transport-security: max-age=31536000; includeSubDomains
       x-content-type-options: nosniff
-      x-ms-keyvault-network-info: addr=24.17.201.78
-      x-ms-keyvault-region: EASTUS
+      x-frame-options: SAMEORIGIN
+      x-ms-keyvault-network-info: addr=174.127.232.53
+      x-ms-keyvault-region: northeurope
+      x-ms-server-latency: '65'
     status:
       code: 200
       message: OK
-    url: https://eastus.clitest.managedhsm-preview.azure.net/providers/Microsoft.Authorization/roleAssignments/4af0820d-e870-4795-878e-1869f6f0888e?api-version=7.2-preview
+    url: https://mcpatinotesthsm.managedhsm.azure.net/providers/Microsoft.Authorization/roleAssignments/f5a832df-251b-4eb8-beaf-f7d3ab5c8c40?api-version=7.2-preview
 - request:
     body: null
     headers:
       Accept:
       - application/json
       User-Agent:
-      - azsdk-python-keyvault-administration/1.0.0b1 Python/3.5.4 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-keyvault-administration/4.0.0b3 Python/3.5.3 (Windows-10-10.0.19041-SP0)
     method: GET
-    uri: https://vaultname.vault.azure.net/providers/Microsoft.Authorization/roleAssignments?api-version=7.2-preview
+    uri: https://managedhsm/providers/Microsoft.Authorization/roleAssignments?api-version=7.2-preview
   response:
     body:
-      string: '{"value":[{"id":"/providers/Microsoft.Authorization/roleAssignments/e1392147-41b5-498b-847d-ca061e8808a3","name":"e1392147-41b5-498b-847d-ca061e8808a3","properties":{"principalId":"67ca7f59-968b-4cde-8582-d6a5341fa721","roleDefinitionId":"Microsoft.KeyVault/providers/Microsoft.Authorization/roleDefinitions/a290e904-7015-4bba-90c8-60543313cdb4","scope":"/"},"type":"Microsoft.Authorization/roleAssignments"},{"id":"/providers/Microsoft.Authorization/roleAssignments/f35aa2fd-545a-4f42-a44b-f862a530d4f1","name":"f35aa2fd-545a-4f42-a44b-f862a530d4f1","properties":{"principalId":"f84ae8f9-c979-4750-a2fe-b350a00bebff","roleDefinitionId":"Microsoft.KeyVault/providers/Microsoft.Authorization/roleDefinitions/a290e904-7015-4bba-90c8-60543313cdb4","scope":"/"},"type":"Microsoft.Authorization/roleAssignments"},{"id":"/providers/Microsoft.Authorization/roleAssignments/457acfe4-7ff8-4608-b3ac-87139804539e","name":"457acfe4-7ff8-4608-b3ac-87139804539e","properties":{"principalId":"693a17da-7022-4cdd-9d4e-4e72e4ad449d","roleDefinitionId":"Microsoft.KeyVault/providers/Microsoft.Authorization/roleDefinitions/a290e904-7015-4bba-90c8-60543313cdb4","scope":"/"},"type":"Microsoft.Authorization/roleAssignments"},{"id":"/providers/Microsoft.Authorization/roleAssignments/c6de6e40-d764-49e1-8e7c-be2f2a27de81","name":"c6de6e40-d764-49e1-8e7c-be2f2a27de81","properties":{"principalId":"3c1303ad-140b-493c-ab45-bed8ddbfa72c","roleDefinitionId":"Microsoft.KeyVault/providers/Microsoft.Authorization/roleDefinitions/a290e904-7015-4bba-90c8-60543313cdb4","scope":"/"},"type":"Microsoft.Authorization/roleAssignments"},{"id":"/providers/Microsoft.Authorization/roleAssignments/2f070682-b1a6-0ad3-acd3-7b891e5c79b0","name":"2f070682-b1a6-0ad3-acd3-7b891e5c79b0","properties":{"principalId":"bf0cee9f-b26b-4e25-b4ab-92ec7466cf33","roleDefinitionId":"Microsoft.KeyVault/providers/Microsoft.Authorization/roleDefinitions/a290e904-7015-4bba-90c8-60543313cdb4","scope":"/"},"type":"Microsoft.Authorization/roleAssignments"},{"id":"/providers/Microsoft.Authorization/roleAssignments/0480f9fc-1294-4668-b31e-e5d8bae7d5b3","name":"0480f9fc-1294-4668-b31e-e5d8bae7d5b3","properties":{"principalId":"74677558-f369-4792-afe5-f99738b5fa7c","roleDefinitionId":"Microsoft.KeyVault/providers/Microsoft.Authorization/roleDefinitions/a290e904-7015-4bba-90c8-60543313cdb4","scope":"/"},"type":"Microsoft.Authorization/roleAssignments"}]}'
+      string: '{"value":[{"id":"/providers/Microsoft.Authorization/roleAssignments/d1dd605c-1243-400b-16d4-9548525eb240","name":"d1dd605c-1243-400b-16d4-9548525eb240","properties":{"principalId":"47a2c409-7d58-4e1b-a121-9dccf4ce4035","roleDefinitionId":"Microsoft.KeyVault/providers/Microsoft.Authorization/roleDefinitions/a290e904-7015-4bba-90c8-60543313cdb4","scope":"/"},"type":"Microsoft.Authorization/roleAssignments"}]}'
     headers:
-      content-length: '2405'
-      content-type: application/json
+      cache-control: no-cache
+      content-length: '410'
+      content-security-policy: default-src 'self'
+      content-type: application/json; charset=utf-8
+      strict-transport-security: max-age=31536000; includeSubDomains
       x-content-type-options: nosniff
-      x-ms-keyvault-network-info: addr=24.17.201.78
-      x-ms-keyvault-region: EASTUS
+      x-frame-options: SAMEORIGIN
+      x-ms-build-version: 1.0.20210128-1-4c3070d1-develop
+      x-ms-keyvault-network-info: addr=174.127.232.53
+      x-ms-keyvault-region: northeurope
+      x-ms-server-latency: '0'
     status:
       code: 200
       message: OK
-    url: https://eastus.clitest.managedhsm-preview.azure.net/providers/Microsoft.Authorization/roleAssignments?api-version=7.2-preview
+    url: https://mcpatinotesthsm.managedhsm.azure.net/providers/Microsoft.Authorization/roleAssignments?api-version=7.2-preview
 version: 1

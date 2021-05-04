@@ -1,7 +1,7 @@
 interactions:
 - request:
     body: '[{"customSubject": "sample", "customEventType": "sample.event", "customDataVersion":
-      "2.0", "customId": "1234", "customEventTime": "2020-09-03T21:37:49.762229+00:00",
+      "2.0", "customId": "1234", "customEventTime": "2021-03-09T23:37:24.167980+00:00",
       "customData": "sample data"}]'
     headers:
       Content-Length:
@@ -9,7 +9,7 @@ interactions:
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-eventgridpublisherclient/unknown Python/3.7.3 (Windows-10-10.0.18362-SP0)
+      - azsdk-python-eventgridpublisherclient/4.0.0 Python/3.7.3 (Windows-10-10.0.18362-SP0)
     method: POST
     uri: https://customeventgridtestegtopic.westus-1.eventgrid.azure.net/api/events?api-version=2018-01-01
   response:
@@ -18,11 +18,11 @@ interactions:
     headers:
       api-supported-versions: '2018-01-01'
       content-length: '0'
-      date: Thu, 03 Sep 2020 21:37:47 GMT
+      date: Tue, 09 Mar 2021 23:37:24 GMT
       server: Microsoft-HTTPAPI/2.0
       strict-transport-security: max-age=31536000; includeSubDomains
     status:
       code: 200
       message: OK
-    url: https://customeventgridtestyjs7n.westus-1.eventgrid.azure.net/api/events?api-version=2018-01-01
+    url: https://customeventgridtestbz4pr.westus-1.eventgrid.azure.net/api/events?api-version=2018-01-01
 version: 1

@@ -28,7 +28,7 @@ async def main():
             received_msgs = await receiver.receive_messages(max_message_count=10, max_wait_time=5)
             for msg in received_msgs:
                 print(str(msg))
-                await msg.complete()
+                await receiver.complete_message(msg)
 
 loop = asyncio.get_event_loop()
 loop.run_until_complete(main())

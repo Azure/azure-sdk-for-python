@@ -16,7 +16,7 @@ from azure.core.polling import LROPoller, NoPolling, PollingMethod
 from azure.mgmt.core.exceptions import ARMErrorFormat
 from azure.mgmt.core.polling.arm_polling import ARMPolling
 
-from .. import models
+from .. import models as _models
 
 if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
@@ -39,7 +39,7 @@ class ApplicationGatewaysOperations(object):
     :param deserializer: An object model deserializer.
     """
 
-    models = models
+    models = _models
 
     def __init__(self, client, config, serializer, deserializer):
         self._client = client
@@ -135,7 +135,13 @@ class ApplicationGatewaysOperations(object):
             if cls:
                 return cls(pipeline_response, None, {})
 
-        if polling is True: polling_method = ARMPolling(lro_delay,  **kwargs)
+        path_format_arguments = {
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
+            'applicationGatewayName': self._serialize.url("application_gateway_name", application_gateway_name, 'str'),
+            'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
+        }
+
+        if polling is True: polling_method = ARMPolling(lro_delay, path_format_arguments=path_format_arguments,  **kwargs)
         elif polling is False: polling_method = NoPolling()
         else: polling_method = polling
         if cont_token:
@@ -155,7 +161,7 @@ class ApplicationGatewaysOperations(object):
         application_gateway_name,  # type: str
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.ApplicationGateway"
+        # type: (...) -> "_models.ApplicationGateway"
         """Gets the specified application gateway.
 
         :param resource_group_name: The name of the resource group.
@@ -167,7 +173,7 @@ class ApplicationGatewaysOperations(object):
         :rtype: ~azure.mgmt.network.v2015_06_15.models.ApplicationGateway
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.ApplicationGateway"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.ApplicationGateway"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -212,11 +218,11 @@ class ApplicationGatewaysOperations(object):
         self,
         resource_group_name,  # type: str
         application_gateway_name,  # type: str
-        parameters,  # type: "models.ApplicationGateway"
+        parameters,  # type: "_models.ApplicationGateway"
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.ApplicationGateway"
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.ApplicationGateway"]
+        # type: (...) -> "_models.ApplicationGateway"
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.ApplicationGateway"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -270,10 +276,10 @@ class ApplicationGatewaysOperations(object):
         self,
         resource_group_name,  # type: str
         application_gateway_name,  # type: str
-        parameters,  # type: "models.ApplicationGateway"
+        parameters,  # type: "_models.ApplicationGateway"
         **kwargs  # type: Any
     ):
-        # type: (...) -> LROPoller["models.ApplicationGateway"]
+        # type: (...) -> LROPoller["_models.ApplicationGateway"]
         """Creates or updates the specified application gateway.
 
         :param resource_group_name: The name of the resource group.
@@ -293,7 +299,7 @@ class ApplicationGatewaysOperations(object):
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         polling = kwargs.pop('polling', True)  # type: Union[bool, PollingMethod]
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.ApplicationGateway"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.ApplicationGateway"]
         lro_delay = kwargs.pop(
             'polling_interval',
             self._config.polling_interval
@@ -318,7 +324,13 @@ class ApplicationGatewaysOperations(object):
                 return cls(pipeline_response, deserialized, {})
             return deserialized
 
-        if polling is True: polling_method = ARMPolling(lro_delay,  **kwargs)
+        path_format_arguments = {
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
+            'applicationGatewayName': self._serialize.url("application_gateway_name", application_gateway_name, 'str'),
+            'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
+        }
+
+        if polling is True: polling_method = ARMPolling(lro_delay, path_format_arguments=path_format_arguments,  **kwargs)
         elif polling is False: polling_method = NoPolling()
         else: polling_method = polling
         if cont_token:
@@ -337,7 +349,7 @@ class ApplicationGatewaysOperations(object):
         resource_group_name,  # type: str
         **kwargs  # type: Any
     ):
-        # type: (...) -> Iterable["models.ApplicationGatewayListResult"]
+        # type: (...) -> Iterable["_models.ApplicationGatewayListResult"]
         """Lists all application gateways in a resource group.
 
         :param resource_group_name: The name of the resource group.
@@ -347,7 +359,7 @@ class ApplicationGatewaysOperations(object):
         :rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.network.v2015_06_15.models.ApplicationGatewayListResult]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.ApplicationGatewayListResult"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.ApplicationGatewayListResult"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -407,7 +419,7 @@ class ApplicationGatewaysOperations(object):
         self,
         **kwargs  # type: Any
     ):
-        # type: (...) -> Iterable["models.ApplicationGatewayListResult"]
+        # type: (...) -> Iterable["_models.ApplicationGatewayListResult"]
         """Gets all the application gateways in a subscription.
 
         :keyword callable cls: A custom type or function that will be passed the direct response
@@ -415,7 +427,7 @@ class ApplicationGatewaysOperations(object):
         :rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.network.v2015_06_15.models.ApplicationGatewayListResult]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.ApplicationGatewayListResult"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.ApplicationGatewayListResult"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -558,7 +570,13 @@ class ApplicationGatewaysOperations(object):
             if cls:
                 return cls(pipeline_response, None, {})
 
-        if polling is True: polling_method = ARMPolling(lro_delay,  **kwargs)
+        path_format_arguments = {
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
+            'applicationGatewayName': self._serialize.url("application_gateway_name", application_gateway_name, 'str'),
+            'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
+        }
+
+        if polling is True: polling_method = ARMPolling(lro_delay, path_format_arguments=path_format_arguments,  **kwargs)
         elif polling is False: polling_method = NoPolling()
         else: polling_method = polling
         if cont_token:
@@ -660,7 +678,13 @@ class ApplicationGatewaysOperations(object):
             if cls:
                 return cls(pipeline_response, None, {})
 
-        if polling is True: polling_method = ARMPolling(lro_delay,  **kwargs)
+        path_format_arguments = {
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
+            'applicationGatewayName': self._serialize.url("application_gateway_name", application_gateway_name, 'str'),
+            'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
+        }
+
+        if polling is True: polling_method = ARMPolling(lro_delay, path_format_arguments=path_format_arguments,  **kwargs)
         elif polling is False: polling_method = NoPolling()
         else: polling_method = polling
         if cont_token:

@@ -14,7 +14,7 @@ from azure.core.pipeline import PipelineResponse
 from azure.core.pipeline.transport import HttpRequest, HttpResponse
 from azure.mgmt.core.exceptions import ARMErrorFormat
 
-from .. import models
+from .. import models as _models
 
 if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
@@ -37,7 +37,7 @@ class ExpressRoutePortsLocationsOperations(object):
     :param deserializer: An object model deserializer.
     """
 
-    models = models
+    models = _models
 
     def __init__(self, client, config, serializer, deserializer):
         self._client = client
@@ -49,7 +49,7 @@ class ExpressRoutePortsLocationsOperations(object):
         self,
         **kwargs  # type: Any
     ):
-        # type: (...) -> Iterable["models.ExpressRoutePortsLocationListResult"]
+        # type: (...) -> Iterable["_models.ExpressRoutePortsLocationListResult"]
         """Retrieves all ExpressRoutePort peering locations. Does not return available bandwidths for each
         location. Available bandwidths can only be obtained when retrieving a specific peering
         location.
@@ -59,7 +59,7 @@ class ExpressRoutePortsLocationsOperations(object):
         :rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.network.v2019_07_01.models.ExpressRoutePortsLocationListResult]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.ExpressRoutePortsLocationListResult"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.ExpressRoutePortsLocationListResult"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -119,7 +119,7 @@ class ExpressRoutePortsLocationsOperations(object):
         location_name,  # type: str
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.ExpressRoutePortsLocation"
+        # type: (...) -> "_models.ExpressRoutePortsLocation"
         """Retrieves a single ExpressRoutePort peering location, including the list of available
         bandwidths available at said peering location.
 
@@ -130,7 +130,7 @@ class ExpressRoutePortsLocationsOperations(object):
         :rtype: ~azure.mgmt.network.v2019_07_01.models.ExpressRoutePortsLocation
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.ExpressRoutePortsLocation"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.ExpressRoutePortsLocation"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }

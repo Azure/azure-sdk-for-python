@@ -1,0 +1,42 @@
+interactions:
+- request:
+    body: 'b''{"source": "https://fakeuri.com/blank%20space"}'''
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '47'
+      Content-Type:
+      - application/json
+      User-Agent:
+      - azsdk-python-ai-formrecognizer/3.1.0b4 Python/3.8.5 (Windows-10-10.0.19041-SP0)
+    method: POST
+    uri: https://region.api.cognitive.microsoft.com/formrecognizer/v2.1-preview.3/prebuilt/businessCard/analyze?includeTextDetails=false
+  response:
+    body:
+      string: '{"error": {"code": "FailedToDownloadImage", "innerError": {"requestId":
+        "44417c1a-e671-4af6-a2a1-9ccb2fff5319"}, "message": "Failed to download image
+        from input URL."}}'
+    headers:
+      apim-request-id:
+      - 44417c1a-e671-4af6-a2a1-9ccb2fff5319
+      content-length:
+      - '161'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Thu, 18 Mar 2021 03:15:14 GMT
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains; preload
+      x-content-type-options:
+      - nosniff
+      x-envoy-upstream-service-time:
+      - '4046'
+    status:
+      code: 400
+      message: Bad Request
+version: 1

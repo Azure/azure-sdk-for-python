@@ -1,0 +1,25 @@
+﻿<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<ApplicationManifest ApplicationTypeName="sfmitestsystemType" ApplicationTypeVersion="1.0.0" xmlns="http://schemas.microsoft.com/2011/01/fabric" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+  <ServiceManifestImport>
+    <ServiceManifestRef ServiceManifestName="sfmitestsystemfrontPkg" ServiceManifestVersion="1.0.0"/>
+    <Policies>
+      <ContainerHostPolicies CodePackageRef="Code">
+      <RepositoryCredentials AccountName="<ACR_NAME>" Password="<found in Access keys page of registry in Portal>" PasswordEncrypted="false"/>
+        <PortBinding ContainerPort="80" EndpointRef="sfmitestsystemfrontTypeEndpoint"/>
+      </ContainerHostPolicies>
+      <IdentityBindingPolicy ServiceIdentityRef="WebAdmin" ApplicationIdentityRef="SystemAssigned" />
+    </Policies>
+  </ServiceManifestImport>
+  <DefaultServices>
+    <Service Name="sfmitestsystemfront">
+      <StatelessService ServiceTypeName="sfmitestsystemfrontType" InstanceCount="1">
+        <SingletonPartition/>
+      </StatelessService>
+    </Service>
+  </DefaultServices>
+  <Principals>
+    <ManagedIdentities>
+      <ManagedIdentity Name="SystemAssigned" />
+    </ManagedIdentities>
+  </Principals>
+</ApplicationManifest>

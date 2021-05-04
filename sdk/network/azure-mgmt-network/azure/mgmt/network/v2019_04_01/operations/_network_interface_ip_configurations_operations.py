@@ -14,7 +14,7 @@ from azure.core.pipeline import PipelineResponse
 from azure.core.pipeline.transport import HttpRequest, HttpResponse
 from azure.mgmt.core.exceptions import ARMErrorFormat
 
-from .. import models
+from .. import models as _models
 
 if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
@@ -37,7 +37,7 @@ class NetworkInterfaceIPConfigurationsOperations(object):
     :param deserializer: An object model deserializer.
     """
 
-    models = models
+    models = _models
 
     def __init__(self, client, config, serializer, deserializer):
         self._client = client
@@ -51,7 +51,7 @@ class NetworkInterfaceIPConfigurationsOperations(object):
         network_interface_name,  # type: str
         **kwargs  # type: Any
     ):
-        # type: (...) -> Iterable["models.NetworkInterfaceIPConfigurationListResult"]
+        # type: (...) -> Iterable["_models.NetworkInterfaceIPConfigurationListResult"]
         """Get all ip configurations in a network interface.
 
         :param resource_group_name: The name of the resource group.
@@ -63,7 +63,7 @@ class NetworkInterfaceIPConfigurationsOperations(object):
         :rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.network.v2019_04_01.models.NetworkInterfaceIPConfigurationListResult]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.NetworkInterfaceIPConfigurationListResult"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.NetworkInterfaceIPConfigurationListResult"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -127,7 +127,7 @@ class NetworkInterfaceIPConfigurationsOperations(object):
         ip_configuration_name,  # type: str
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.NetworkInterfaceIPConfiguration"
+        # type: (...) -> "_models.NetworkInterfaceIPConfiguration"
         """Gets the specified network interface ip configuration.
 
         :param resource_group_name: The name of the resource group.
@@ -141,7 +141,7 @@ class NetworkInterfaceIPConfigurationsOperations(object):
         :rtype: ~azure.mgmt.network.v2019_04_01.models.NetworkInterfaceIPConfiguration
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.NetworkInterfaceIPConfiguration"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.NetworkInterfaceIPConfiguration"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }

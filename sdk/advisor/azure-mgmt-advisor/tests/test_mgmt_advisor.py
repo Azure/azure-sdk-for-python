@@ -33,8 +33,11 @@ class MgmtAdvisorTest(AzureMgmtTestCase):
 
     def test_generate_recommendations(self):
 
+        def call(response, *args, **kwargs):
+            return response.http_response
+
         # trigger generate recommendations
-        response = self.client.recommendations.generate(raw=True)
+        response = self.client.recommendations.generate(cls=call)
 
         # we should get a valid Location header back
         self.assertTrue('Location' in response.headers)
@@ -49,14 +52,15 @@ class MgmtAdvisorTest(AzureMgmtTestCase):
 
         # we should be able to get generation status for this operation ID
         response = self.client.recommendations.get_generate_status(
-            raw=True,
+            cls=call,
             operation_id = operation_id[0]
         )
-        status_code = response.response.status_code
+        status_code = response.status_code
 
         # and the status should be 202 or 204
         self.assertTrue(status_code == 202 or status_code == 204)
 
+    @unittest.skip("unavailable")
     def test_suppressions(self):
 
         # first, get all recommendations
@@ -130,6 +134,7 @@ class MgmtAdvisorTest(AzureMgmtTestCase):
         #for sup in response:
         #    self.assertNotEqual(sup.Name, suppressionName)
 
+    @unittest.skip("unavailable")
     def test_configurations_subscription(self):
 
         # create a new configuration to update low CPU threshold to 20
@@ -158,6 +163,7 @@ class MgmtAdvisorTest(AzureMgmtTestCase):
     @ResourceGroupPreparer()
     def test_configurations_resourcegroup(self, resource_group):
         resourceGroupName = resource_group.name
+        configurationName = "default"
 
         # create a new configuration to update exclude to True
         input = ConfigData()
@@ -165,8 +171,10 @@ class MgmtAdvisorTest(AzureMgmtTestCase):
 
         # update the configuration
         self.client.configurations.create_in_resource_group(
-            config_contract = input,
-            resource_group = resourceGroupName)
+            configuration_name=configurationName,
+            resource_group=resourceGroupName,
+            config_contract=input
+        )
 
         # retrieve the configurations
         output = list(self.client.configurations.list_by_resource_group(resource_group = resourceGroupName))[0]
@@ -177,8 +185,10 @@ class MgmtAdvisorTest(AzureMgmtTestCase):
         # restore the default configuration
         input.exclude=False
         self.client.configurations.create_in_resource_group(
-            config_contract = input,
-            resource_group = resourceGroupName)
+            configuration_name=configurationName,
+            resource_group=resourceGroupName,
+            config_contract=input
+        )
 
         # retrieve the configurations
         output = list(self.client.configurations.list_by_resource_group(resource_group = resourceGroupName))[0]

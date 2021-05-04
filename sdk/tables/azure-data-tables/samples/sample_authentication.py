@@ -29,41 +29,51 @@ USAGE:
 
 from datetime import datetime, timedelta
 import os
+from dotenv import find_dotenv, load_dotenv
 
 
 class TableAuthSamples(object):
-    connection_string = os.getenv("AZURE_TABLES_CONNECTION_STRING")
-    access_key = os.getenv("AZURE_TABLES_KEY")
-    account_url = os.getenv("AZURE_TABLES_ACCOUNT_URL")
-    account_name = os.getenv("AZURE_TABLES_ACCOUNT_NAME")
+
+    def __init__(self):
+        load_dotenv(find_dotenv())
+        # self.connection_string = os.getenv("AZURE_TABLES_CONNECTION_STRING")
+        self.access_key = os.getenv("TABLES_PRIMARY_STORAGE_ACCOUNT_KEY")
+        self.endpoint = os.getenv("TABLES_STORAGE_ENDPOINT_SUFFIX")
+        self.account_name = os.getenv("TABLES_STORAGE_ACCOUNT_NAME")
+        self.account_url = "{}.table.{}".format(self.account_name, self.endpoint)
+        self.connection_string = "DefaultEndpointsProtocol=https;AccountName={};AccountKey={};EndpointSuffix={}".format(
+            self.account_name,
+            self.access_key,
+            self.endpoint
+        )
 
     def authentication_by_connection_string(self):
         # Instantiate a TableServiceClient using a connection string
         # [START auth_from_connection_string]
         from azure.data.tables import TableServiceClient
-        table_service = TableServiceClient.from_connection_string(conn_str=self.connection_string)
-        properties = table_service.get_service_properties()
-        print("Connection String: {}".format(properties))
+        with TableServiceClient.from_connection_string(conn_str=self.connection_string) as table_service:
+            properties = table_service.get_service_properties()
+            print("Connection String: {}".format(properties))
         # [END auth_from_connection_string]
 
     def authentication_by_shared_key(self):
         # Instantiate a TableServiceClient using a shared access key
         # [START auth_from_shared_key]
         from azure.data.tables import TableServiceClient
-        table_service = TableServiceClient(account_url=self.account_url, credential=self.access_key)
-        properties = table_service.get_service_properties()
-        print("Shared Key: {}".format(properties))
+        with TableServiceClient(account_url=self.account_url, credential=self.access_key) as table_service:
+            properties = table_service.get_service_properties()
+            print("Shared Key: {}".format(properties))
         # [END auth_from_shared_key]
 
     def authentication_by_shared_access_signature(self):
         # Instantiate a TableServiceClient using a connection string
+
+        # [START auth_from_sas]
         from azure.data.tables import TableServiceClient
-        table_service = TableServiceClient.from_connection_string(conn_str=self.connection_string)
 
         # Create a SAS token to use for authentication of a client
-        # [START auth_from_sas]
         from azure.data.tables import generate_account_sas, ResourceTypes, AccountSasPermissions
-        print(self.account_name)
+        print("Account name: {}".format(self.account_name))
         sas_token = generate_account_sas(
             self.account_name,
             self.access_key,
@@ -72,10 +82,9 @@ class TableAuthSamples(object):
             expiry=datetime.utcnow() + timedelta(hours=1)
         )
 
-        token_auth_table_service = TableServiceClient(account_url=self.account_url, credential=sas_token)
-
-        properties = table_service.get_service_properties()
-        print("Shared Access Signature: {}".format(properties))
+        with TableServiceClient(account_url=self.account_url, credential=sas_token) as token_auth_table_service:
+            properties = token_auth_table_service.get_service_properties()
+            print("Shared Access Signature: {}".format(properties))
         # [END auth_from_sas]
 
 if __name__ == '__main__':

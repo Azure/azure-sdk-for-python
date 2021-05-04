@@ -14,7 +14,7 @@ from azure.core.pipeline import PipelineResponse
 from azure.core.pipeline.transport import AsyncHttpResponse, HttpRequest
 from azure.mgmt.core.exceptions import ARMErrorFormat
 
-from ... import models
+from ... import models as _models
 
 T = TypeVar('T')
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]]
@@ -33,7 +33,7 @@ class AvailableEndpointServicesOperations:
     :param deserializer: An object model deserializer.
     """
 
-    models = models
+    models = _models
 
     def __init__(self, client, config, serializer, deserializer) -> None:
         self._client = client
@@ -45,7 +45,7 @@ class AvailableEndpointServicesOperations:
         self,
         location: str,
         **kwargs
-    ) -> AsyncIterable["models.EndpointServicesListResult"]:
+    ) -> AsyncIterable["_models.EndpointServicesListResult"]:
         """List what values of endpoint services are available for use.
 
         :param location: The location to check available endpoint services.
@@ -55,7 +55,7 @@ class AvailableEndpointServicesOperations:
         :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.network.v2018_12_01.models.EndpointServicesListResult]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.EndpointServicesListResult"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.EndpointServicesListResult"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }

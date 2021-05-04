@@ -17,7 +17,7 @@ from devtools_testutils import (
 from devtools_testutils.cognitiveservices_testcase import CognitiveServicesAccountPreparer
 from azure_devtools.scenario_tests import ReplayableTest
 
-REGION = 'westcentralus'
+REGION = 'westus2'
 
 
 class FakeTokenCredential(object):
@@ -38,7 +38,7 @@ class TextAnalyticsTest(AzureTestCase):
         super(TextAnalyticsTest, self).__init__(method_name)
 
     def get_oauth_endpoint(self):
-        return self.get_settings_value("TEXT_ANALYTICS_ENDPOINT")
+        return self.get_settings_value("TEXT_ANALYTICS_ENDPOINT_STABLE")
 
     def generate_oauth_token(self):
         if self.is_live:
@@ -60,7 +60,6 @@ class TextAnalyticsTest(AzureTestCase):
         self.assertEqual(opinion_one.confidence_scores.negative, opinion_two.confidence_scores.negative)
         self.validateConfidenceScores(opinion_one.confidence_scores)
         self.assertEqual(opinion_one.offset, opinion_two.offset)
-        self.assertEqual(opinion_one.length, opinion_two.length)
         self.assertEqual(opinion_one.text, opinion_two.text)
         self.assertEqual(opinion_one.is_negated, opinion_two.is_negated)
 
@@ -71,6 +70,22 @@ class TextAnalyticsTest(AzureTestCase):
         self.assertEqual(
             confidence_scores.positive + confidence_scores.neutral + confidence_scores.negative, 1
         )
+
+    def assert_healthcare_data_sources_equal(self, data_sources_a, data_sources_b):
+        assert len(data_sources_a) == len(data_sources_b)
+        for data_source_a, data_source_b in zip(data_sources_a, data_sources_b):
+            assert data_source_a.entity_id == data_source_b.entity_id
+            assert data_source_a.name == data_source_b.name
+
+
+    def assert_healthcare_entities_equal(self, entity_a, entity_b):
+        assert entity_a.text == entity_b.text
+        assert entity_a.category == entity_b.category
+        assert entity_a.subcategory == entity_b.subcategory
+        assert len(entity_a.data_sources) == len(entity_b.data_sources)
+        self.assert_healthcare_data_sources_equal(entity_a.data_sources, entity_b.data_sources)
+        assert entity_a.length == entity_b.length
+        assert entity_a.offset == entity_b.offset
 
 
 class GlobalResourceGroupPreparer(AzureMgmtPreparer):

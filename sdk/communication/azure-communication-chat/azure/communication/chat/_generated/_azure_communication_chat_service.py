@@ -15,14 +15,21 @@ if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
     from typing import Any
 
+    from azure.core.pipeline.transport import HttpRequest, HttpResponse
+
 from ._configuration import AzureCommunicationChatServiceConfiguration
-from .operations import AzureCommunicationChatServiceOperationsMixin
+from .operations import ChatThreadOperations
+from .operations import ChatOperations
 from . import models
 
 
-class AzureCommunicationChatService(AzureCommunicationChatServiceOperationsMixin):
+class AzureCommunicationChatService(object):
     """Azure Communication Chat Service.
 
+    :ivar chat_thread: ChatThreadOperations operations
+    :vartype chat_thread: azure.communication.chat.operations.ChatThreadOperations
+    :ivar chat: ChatOperations operations
+    :vartype chat: azure.communication.chat.operations.ChatOperations
     :param endpoint: The endpoint of the Azure Communication resource.
     :type endpoint: str
     """
@@ -39,8 +46,31 @@ class AzureCommunicationChatService(AzureCommunicationChatServiceOperationsMixin
 
         client_models = {k: v for k, v in models.__dict__.items() if isinstance(v, type)}
         self._serialize = Serializer(client_models)
+        self._serialize.client_side_validation = False
         self._deserialize = Deserializer(client_models)
 
+        self.chat_thread = ChatThreadOperations(
+            self._client, self._config, self._serialize, self._deserialize)
+        self.chat = ChatOperations(
+            self._client, self._config, self._serialize, self._deserialize)
+
+    def _send_request(self, http_request, **kwargs):
+        # type: (HttpRequest, Any) -> HttpResponse
+        """Runs the network request through the client's chained policies.
+
+        :param http_request: The network request you want to make. Required.
+        :type http_request: ~azure.core.pipeline.transport.HttpRequest
+        :keyword bool stream: Whether the response payload will be streamed. Defaults to True.
+        :return: The response of your network call. Does not do error handling on your response.
+        :rtype: ~azure.core.pipeline.transport.HttpResponse
+        """
+        path_format_arguments = {
+            'endpoint': self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
+        }
+        http_request.url = self._client.format_url(http_request.url, **path_format_arguments)
+        stream = kwargs.pop("stream", True)
+        pipeline_response = self._client._pipeline.run(http_request, stream=stream, **kwargs)
+        return pipeline_response.http_response
 
     def close(self):
         # type: () -> None

@@ -59,7 +59,7 @@ class BigDataPoolReferenceType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enu
 
     BIG_DATA_POOL_REFERENCE = "BigDataPoolReference"
 
-class BlobEventTypes(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class BlobEventType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
 
     MICROSOFT_STORAGE_BLOB_CREATED = "Microsoft.Storage.BlobCreated"
     MICROSOFT_STORAGE_BLOB_DELETED = "Microsoft.Storage.BlobDeleted"
@@ -91,6 +91,17 @@ class CellOutputType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     STREAM = "stream"
     ERROR = "error"
 
+class CompressionCodec(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+
+    BZIP2 = "bzip2"
+    GZIP = "gzip"
+    DEFLATE = "deflate"
+    ZIP_DEFLATE = "zipDeflate"
+    SNAPPY = "snappy"
+    LZ4 = "lz4"
+    TAR = "tar"
+    TAR_G_ZIP = "tarGZip"
+
 class CopyBehaviorType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     """All available types of copy behavior.
     """
@@ -114,8 +125,6 @@ class DataFlowReferenceType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum))
     DATA_FLOW_REFERENCE = "DataFlowReference"
 
 class DatasetCompressionLevel(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
-    """All available compression levels.
-    """
 
     OPTIMAL = "Optimal"
     FASTEST = "Fastest"
@@ -137,19 +146,11 @@ class DayOfWeek(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     SATURDAY = "Saturday"
 
 class Db2AuthenticationType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
-    """AuthenticationType to be used for connection.
+    """AuthenticationType to be used for connection. It is mutually exclusive with connectionString
+    property.
     """
 
     BASIC = "Basic"
-
-class DelimitedTextCompressionCodec(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
-
-    BZIP2 = "bzip2"
-    GZIP = "gzip"
-    DEFLATE = "deflate"
-    ZIP_DEFLATE = "zipDeflate"
-    SNAPPY = "snappy"
-    LZ4 = "lz4"
 
 class DependencyCondition(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
 
@@ -187,7 +188,7 @@ class DynamicsServicePrincipalCredentialType(with_metaclass(_CaseInsensitiveEnum
     SERVICE_PRINCIPAL_CERT = "ServicePrincipalCert"
 
 class DynamicsSinkWriteBehavior(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
-    """The write behavior for the operation.
+    """Defines values for DynamicsSinkWriteBehavior.
     """
 
     UPSERT = "Upsert"
@@ -396,6 +397,7 @@ class NodeSize(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     LARGE = "Large"
     X_LARGE = "XLarge"
     XX_LARGE = "XXLarge"
+    XXX_LARGE = "XXXLarge"
 
 class NodeSizeFamily(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     """The kind of nodes that the Big Data pool provides.
@@ -440,6 +442,7 @@ class OrcCompressionCodec(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     NONE = "none"
     ZLIB = "zlib"
     SNAPPY = "snappy"
+    LZO = "lzo"
 
 class ParameterType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     """Parameter type.
@@ -453,7 +456,7 @@ class ParameterType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     ARRAY = "Array"
     SECURE_STRING = "SecureString"
 
-class ParquetCompressionCodec(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class ParquetCompressionCodecEnum(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
 
     NONE = "none"
     GZIP = "gzip"
@@ -497,15 +500,6 @@ class PrestoAuthenticationType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enu
 
     ANONYMOUS = "Anonymous"
     LDAP = "LDAP"
-
-class PrivateLinkServiceConnectionStateStatus(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
-    """The private link service connection status.
-    """
-
-    APPROVED = "Approved"
-    PENDING = "Pending"
-    REJECTED = "Rejected"
-    DISCONNECTED = "Disconnected"
 
 class RecurrenceFrequency(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     """Enumerates possible frequency option for the schedule trigger.
@@ -716,6 +710,14 @@ class SqlConnectionType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     SQL_ON_DEMAND = "SqlOnDemand"
     SQL_POOL = "SqlPool"
 
+class SqlPartitionOption(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+    """The partition mechanism that will be used for Sql read in parallel.
+    """
+
+    NONE = "None"
+    PHYSICAL_PARTITIONS_OF_TABLE = "PhysicalPartitionsOfTable"
+    DYNAMIC_RANGE = "DynamicRange"
+
 class SqlPoolReferenceType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     """SQL pool reference type.
     """
@@ -741,6 +743,7 @@ class SsisPackageLocationType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum
     SSISDB = "SSISDB"
     FILE = "File"
     INLINE_PACKAGE = "InlinePackage"
+    PACKAGE_STORE = "PackageStore"
 
 class StoredProcedureParameterType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     """Stored procedure parameter type.
@@ -804,6 +807,7 @@ class TumblingWindowFrequency(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum
 
     MINUTE = "Minute"
     HOUR = "Hour"
+    MONTH = "Month"
 
 class Type(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     """Linked service reference type.

@@ -479,66 +479,6 @@ class BootDiagnosticsInstanceView(msrest.serialization.Model):
         self.status = None
 
 
-class Components1H8M3EpSchemasVirtualmachineidentityPropertiesUserassignedidentitiesAdditionalproperties(msrest.serialization.Model):
-    """Components1H8M3EpSchemasVirtualmachineidentityPropertiesUserassignedidentitiesAdditionalproperties.
-
-    Variables are only populated by the server, and will be ignored when sending a request.
-
-    :ivar principal_id: The principal id of user assigned identity.
-    :vartype principal_id: str
-    :ivar client_id: The client id of user assigned identity.
-    :vartype client_id: str
-    """
-
-    _validation = {
-        'principal_id': {'readonly': True},
-        'client_id': {'readonly': True},
-    }
-
-    _attribute_map = {
-        'principal_id': {'key': 'principalId', 'type': 'str'},
-        'client_id': {'key': 'clientId', 'type': 'str'},
-    }
-
-    def __init__(
-        self,
-        **kwargs
-    ):
-        super(Components1H8M3EpSchemasVirtualmachineidentityPropertiesUserassignedidentitiesAdditionalproperties, self).__init__(**kwargs)
-        self.principal_id = None
-        self.client_id = None
-
-
-class ComponentsNj115SSchemasVirtualmachinescalesetidentityPropertiesUserassignedidentitiesAdditionalproperties(msrest.serialization.Model):
-    """ComponentsNj115SSchemasVirtualmachinescalesetidentityPropertiesUserassignedidentitiesAdditionalproperties.
-
-    Variables are only populated by the server, and will be ignored when sending a request.
-
-    :ivar principal_id: The principal id of user assigned identity.
-    :vartype principal_id: str
-    :ivar client_id: The client id of user assigned identity.
-    :vartype client_id: str
-    """
-
-    _validation = {
-        'principal_id': {'readonly': True},
-        'client_id': {'readonly': True},
-    }
-
-    _attribute_map = {
-        'principal_id': {'key': 'principalId', 'type': 'str'},
-        'client_id': {'key': 'clientId', 'type': 'str'},
-    }
-
-    def __init__(
-        self,
-        **kwargs
-    ):
-        super(ComponentsNj115SSchemasVirtualmachinescalesetidentityPropertiesUserassignedidentitiesAdditionalproperties, self).__init__(**kwargs)
-        self.principal_id = None
-        self.client_id = None
-
-
 class ComputeOperationListResult(msrest.serialization.Model):
     """The List Compute Operation operation response.
 
@@ -1639,8 +1579,8 @@ class GalleryImageVersionStorageProfile(msrest.serialization.Model):
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    :ivar os_disk_image: This is the disk image base class.
-    :vartype os_disk_image: ~azure.mgmt.compute.v2018_06_01.models.GalleryDiskImage
+    :ivar os_disk_image: This is the OS disk image.
+    :vartype os_disk_image: ~azure.mgmt.compute.v2018_06_01.models.GalleryOSDiskImage
     :ivar data_disk_images: A list of data disk images.
     :vartype data_disk_images: list[~azure.mgmt.compute.v2018_06_01.models.GalleryDataDiskImage]
     """
@@ -1651,7 +1591,7 @@ class GalleryImageVersionStorageProfile(msrest.serialization.Model):
     }
 
     _attribute_map = {
-        'os_disk_image': {'key': 'osDiskImage', 'type': 'GalleryDiskImage'},
+        'os_disk_image': {'key': 'osDiskImage', 'type': 'GalleryOSDiskImage'},
         'data_disk_images': {'key': 'dataDiskImages', 'type': '[GalleryDataDiskImage]'},
     }
 
@@ -4389,6 +4329,36 @@ class UsageName(msrest.serialization.Model):
         self.localized_value = kwargs.get('localized_value', None)
 
 
+class UserAssignedIdentitiesValue(msrest.serialization.Model):
+    """UserAssignedIdentitiesValue.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar principal_id: The principal id of user assigned identity.
+    :vartype principal_id: str
+    :ivar client_id: The client id of user assigned identity.
+    :vartype client_id: str
+    """
+
+    _validation = {
+        'principal_id': {'readonly': True},
+        'client_id': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'principal_id': {'key': 'principalId', 'type': 'str'},
+        'client_id': {'key': 'clientId', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(UserAssignedIdentitiesValue, self).__init__(**kwargs)
+        self.principal_id = None
+        self.client_id = None
+
+
 class VaultCertificate(msrest.serialization.Model):
     """Describes a single certificate reference in a Key Vault, and where the certificate should reside on the VM.
 
@@ -5033,7 +5003,7 @@ class VirtualMachineIdentity(msrest.serialization.Model):
      Machine. The user identity dictionary key references will be ARM resource ids in the form:
      '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ManagedIdentity/userAssignedIdentities/{identityName}'.
     :type user_assigned_identities: dict[str,
-     ~azure.mgmt.compute.v2018_06_01.models.Components1H8M3EpSchemasVirtualmachineidentityPropertiesUserassignedidentitiesAdditionalproperties]
+     ~azure.mgmt.compute.v2018_06_01.models.UserAssignedIdentitiesValue]
     """
 
     _validation = {
@@ -5045,7 +5015,7 @@ class VirtualMachineIdentity(msrest.serialization.Model):
         'principal_id': {'key': 'principalId', 'type': 'str'},
         'tenant_id': {'key': 'tenantId', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
-        'user_assigned_identities': {'key': 'userAssignedIdentities', 'type': '{Components1H8M3EpSchemasVirtualmachineidentityPropertiesUserassignedidentitiesAdditionalproperties}'},
+        'user_assigned_identities': {'key': 'userAssignedIdentities', 'type': '{UserAssignedIdentitiesValue}'},
     }
 
     def __init__(
@@ -5573,7 +5543,7 @@ class VirtualMachineScaleSetIdentity(msrest.serialization.Model):
      form:
      '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ManagedIdentity/userAssignedIdentities/{identityName}'.
     :type user_assigned_identities: dict[str,
-     ~azure.mgmt.compute.v2018_06_01.models.ComponentsNj115SSchemasVirtualmachinescalesetidentityPropertiesUserassignedidentitiesAdditionalproperties]
+     ~azure.mgmt.compute.v2018_06_01.models.VirtualMachineScaleSetIdentityUserAssignedIdentitiesValue]
     """
 
     _validation = {
@@ -5585,7 +5555,7 @@ class VirtualMachineScaleSetIdentity(msrest.serialization.Model):
         'principal_id': {'key': 'principalId', 'type': 'str'},
         'tenant_id': {'key': 'tenantId', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
-        'user_assigned_identities': {'key': 'userAssignedIdentities', 'type': '{ComponentsNj115SSchemasVirtualmachinescalesetidentityPropertiesUserassignedidentitiesAdditionalproperties}'},
+        'user_assigned_identities': {'key': 'userAssignedIdentities', 'type': '{VirtualMachineScaleSetIdentityUserAssignedIdentitiesValue}'},
     }
 
     def __init__(
@@ -5597,6 +5567,36 @@ class VirtualMachineScaleSetIdentity(msrest.serialization.Model):
         self.tenant_id = None
         self.type = kwargs.get('type', None)
         self.user_assigned_identities = kwargs.get('user_assigned_identities', None)
+
+
+class VirtualMachineScaleSetIdentityUserAssignedIdentitiesValue(msrest.serialization.Model):
+    """VirtualMachineScaleSetIdentityUserAssignedIdentitiesValue.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar principal_id: The principal id of user assigned identity.
+    :vartype principal_id: str
+    :ivar client_id: The client id of user assigned identity.
+    :vartype client_id: str
+    """
+
+    _validation = {
+        'principal_id': {'readonly': True},
+        'client_id': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'principal_id': {'key': 'principalId', 'type': 'str'},
+        'client_id': {'key': 'clientId', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(VirtualMachineScaleSetIdentityUserAssignedIdentitiesValue, self).__init__(**kwargs)
+        self.principal_id = None
+        self.client_id = None
 
 
 class VirtualMachineScaleSetInstanceView(msrest.serialization.Model):
@@ -5880,9 +5880,10 @@ class VirtualMachineScaleSetListWithLinkResult(msrest.serialization.Model):
 class VirtualMachineScaleSetManagedDiskParameters(msrest.serialization.Model):
     """Describes the parameters of a ScaleSet managed disk.
 
-    :param storage_account_type: Specifies the storage account type for the managed disk. NOTE:
-     UltraSSD_LRS can only be used with data disks, it cannot be used with OS Disk. Possible values
-     include: "Standard_LRS", "Premium_LRS", "StandardSSD_LRS", "UltraSSD_LRS".
+    :param storage_account_type: Specifies the storage account type for the managed disk. Managed
+     OS disk storage account type can only be set when you create the scale set. NOTE: UltraSSD_LRS
+     can only be used with data disks, it cannot be used with OS Disk. Possible values include:
+     "Standard_LRS", "Premium_LRS", "StandardSSD_LRS", "UltraSSD_LRS".
     :type storage_account_type: str or ~azure.mgmt.compute.v2018_06_01.models.StorageAccountTypes
     """
 
@@ -6233,7 +6234,26 @@ class VirtualMachineScaleSetPublicIPAddressConfigurationDnsSettings(msrest.seria
         self.domain_name_label = kwargs['domain_name_label']
 
 
-class VirtualMachineScaleSetReimageParameters(VirtualMachineReimageParameters):
+class VirtualMachineScaleSetVMReimageParameters(VirtualMachineReimageParameters):
+    """Describes a Virtual Machine Scale Set VM Reimage Parameters.
+
+    :param temp_disk: Specifies whether to reimage temp disk. Default value: false. Note: This temp
+     disk reimage parameter is only supported for VM/VMSS with Ephemeral OS disk.
+    :type temp_disk: bool
+    """
+
+    _attribute_map = {
+        'temp_disk': {'key': 'tempDisk', 'type': 'bool'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(VirtualMachineScaleSetVMReimageParameters, self).__init__(**kwargs)
+
+
+class VirtualMachineScaleSetReimageParameters(VirtualMachineScaleSetVMReimageParameters):
     """Describes a Virtual Machine Scale Set VM Reimage Parameters.
 
     :param temp_disk: Specifies whether to reimage temp disk. Default value: false. Note: This temp
@@ -7127,25 +7147,6 @@ class VirtualMachineScaleSetVMProfile(msrest.serialization.Model):
         self.license_type = kwargs.get('license_type', None)
         self.priority = kwargs.get('priority', None)
         self.eviction_policy = kwargs.get('eviction_policy', None)
-
-
-class VirtualMachineScaleSetVMReimageParameters(VirtualMachineReimageParameters):
-    """Describes a Virtual Machine Scale Set VM Reimage Parameters.
-
-    :param temp_disk: Specifies whether to reimage temp disk. Default value: false. Note: This temp
-     disk reimage parameter is only supported for VM/VMSS with Ephemeral OS disk.
-    :type temp_disk: bool
-    """
-
-    _attribute_map = {
-        'temp_disk': {'key': 'tempDisk', 'type': 'bool'},
-    }
-
-    def __init__(
-        self,
-        **kwargs
-    ):
-        super(VirtualMachineScaleSetVMReimageParameters, self).__init__(**kwargs)
 
 
 class VirtualMachineSize(msrest.serialization.Model):

@@ -57,7 +57,7 @@ class SparkClientConfiguration(Configuration):
         self.spark_pool_name = spark_pool_name
         self.livy_api_version = livy_api_version
         self.credential_scopes = kwargs.pop('credential_scopes', ['https://dev.azuresynapse.net/.default'])
-        kwargs.setdefault('sdk_moniker', 'synapse/{}'.format(VERSION))
+        kwargs.setdefault('sdk_moniker', 'synapse-spark/{}'.format(VERSION))
         self._configure(**kwargs)
 
     def _configure(

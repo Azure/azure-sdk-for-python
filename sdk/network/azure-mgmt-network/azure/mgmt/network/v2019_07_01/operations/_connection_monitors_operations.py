@@ -16,7 +16,7 @@ from azure.core.polling import LROPoller, NoPolling, PollingMethod
 from azure.mgmt.core.exceptions import ARMErrorFormat
 from azure.mgmt.core.polling.arm_polling import ARMPolling
 
-from .. import models
+from .. import models as _models
 
 if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
@@ -39,7 +39,7 @@ class ConnectionMonitorsOperations(object):
     :param deserializer: An object model deserializer.
     """
 
-    models = models
+    models = _models
 
     def __init__(self, client, config, serializer, deserializer):
         self._client = client
@@ -52,11 +52,11 @@ class ConnectionMonitorsOperations(object):
         resource_group_name,  # type: str
         network_watcher_name,  # type: str
         connection_monitor_name,  # type: str
-        parameters,  # type: "models.ConnectionMonitor"
+        parameters,  # type: "_models.ConnectionMonitor"
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.ConnectionMonitorResult"
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.ConnectionMonitorResult"]
+        # type: (...) -> "_models.ConnectionMonitorResult"
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.ConnectionMonitorResult"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -93,7 +93,7 @@ class ConnectionMonitorsOperations(object):
 
         if response.status_code not in [200, 201]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.ErrorResponse, response)
+            error = self._deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if response.status_code == 200:
@@ -113,10 +113,10 @@ class ConnectionMonitorsOperations(object):
         resource_group_name,  # type: str
         network_watcher_name,  # type: str
         connection_monitor_name,  # type: str
-        parameters,  # type: "models.ConnectionMonitor"
+        parameters,  # type: "_models.ConnectionMonitor"
         **kwargs  # type: Any
     ):
-        # type: (...) -> LROPoller["models.ConnectionMonitorResult"]
+        # type: (...) -> LROPoller["_models.ConnectionMonitorResult"]
         """Create or update a connection monitor.
 
         :param resource_group_name: The name of the resource group containing Network Watcher.
@@ -138,7 +138,7 @@ class ConnectionMonitorsOperations(object):
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         polling = kwargs.pop('polling', True)  # type: Union[bool, PollingMethod]
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.ConnectionMonitorResult"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.ConnectionMonitorResult"]
         lro_delay = kwargs.pop(
             'polling_interval',
             self._config.polling_interval
@@ -164,7 +164,14 @@ class ConnectionMonitorsOperations(object):
                 return cls(pipeline_response, deserialized, {})
             return deserialized
 
-        if polling is True: polling_method = ARMPolling(lro_delay, lro_options={'final-state-via': 'azure-async-operation'},  **kwargs)
+        path_format_arguments = {
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
+            'networkWatcherName': self._serialize.url("network_watcher_name", network_watcher_name, 'str'),
+            'connectionMonitorName': self._serialize.url("connection_monitor_name", connection_monitor_name, 'str'),
+            'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
+        }
+
+        if polling is True: polling_method = ARMPolling(lro_delay, lro_options={'final-state-via': 'azure-async-operation'}, path_format_arguments=path_format_arguments,  **kwargs)
         elif polling is False: polling_method = NoPolling()
         else: polling_method = polling
         if cont_token:
@@ -185,7 +192,7 @@ class ConnectionMonitorsOperations(object):
         connection_monitor_name,  # type: str
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.ConnectionMonitorResult"
+        # type: (...) -> "_models.ConnectionMonitorResult"
         """Gets a connection monitor by name.
 
         :param resource_group_name: The name of the resource group containing Network Watcher.
@@ -199,7 +206,7 @@ class ConnectionMonitorsOperations(object):
         :rtype: ~azure.mgmt.network.v2019_07_01.models.ConnectionMonitorResult
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.ConnectionMonitorResult"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.ConnectionMonitorResult"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -231,7 +238,7 @@ class ConnectionMonitorsOperations(object):
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.ErrorResponse, response)
+            error = self._deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('ConnectionMonitorResult', pipeline_response)
@@ -282,7 +289,7 @@ class ConnectionMonitorsOperations(object):
 
         if response.status_code not in [202, 204]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.ErrorResponse, response)
+            error = self._deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if cls:
@@ -339,7 +346,14 @@ class ConnectionMonitorsOperations(object):
             if cls:
                 return cls(pipeline_response, None, {})
 
-        if polling is True: polling_method = ARMPolling(lro_delay, lro_options={'final-state-via': 'location'},  **kwargs)
+        path_format_arguments = {
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
+            'networkWatcherName': self._serialize.url("network_watcher_name", network_watcher_name, 'str'),
+            'connectionMonitorName': self._serialize.url("connection_monitor_name", connection_monitor_name, 'str'),
+            'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
+        }
+
+        if polling is True: polling_method = ARMPolling(lro_delay, lro_options={'final-state-via': 'location'}, path_format_arguments=path_format_arguments,  **kwargs)
         elif polling is False: polling_method = NoPolling()
         else: polling_method = polling
         if cont_token:
@@ -358,10 +372,10 @@ class ConnectionMonitorsOperations(object):
         resource_group_name,  # type: str
         network_watcher_name,  # type: str
         connection_monitor_name,  # type: str
-        parameters,  # type: "models.TagsObject"
+        parameters,  # type: "_models.TagsObject"
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.ConnectionMonitorResult"
+        # type: (...) -> "_models.ConnectionMonitorResult"
         """Update tags of the specified connection monitor.
 
         :param resource_group_name: The name of the resource group.
@@ -377,7 +391,7 @@ class ConnectionMonitorsOperations(object):
         :rtype: ~azure.mgmt.network.v2019_07_01.models.ConnectionMonitorResult
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.ConnectionMonitorResult"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.ConnectionMonitorResult"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -414,7 +428,7 @@ class ConnectionMonitorsOperations(object):
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.ErrorResponse, response)
+            error = self._deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('ConnectionMonitorResult', pipeline_response)
@@ -465,7 +479,7 @@ class ConnectionMonitorsOperations(object):
 
         if response.status_code not in [200, 202]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.ErrorResponse, response)
+            error = self._deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if cls:
@@ -522,7 +536,14 @@ class ConnectionMonitorsOperations(object):
             if cls:
                 return cls(pipeline_response, None, {})
 
-        if polling is True: polling_method = ARMPolling(lro_delay, lro_options={'final-state-via': 'location'},  **kwargs)
+        path_format_arguments = {
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
+            'networkWatcherName': self._serialize.url("network_watcher_name", network_watcher_name, 'str'),
+            'connectionMonitorName': self._serialize.url("connection_monitor_name", connection_monitor_name, 'str'),
+            'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
+        }
+
+        if polling is True: polling_method = ARMPolling(lro_delay, lro_options={'final-state-via': 'location'}, path_format_arguments=path_format_arguments,  **kwargs)
         elif polling is False: polling_method = NoPolling()
         else: polling_method = polling
         if cont_token:
@@ -576,7 +597,7 @@ class ConnectionMonitorsOperations(object):
 
         if response.status_code not in [200, 202]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.ErrorResponse, response)
+            error = self._deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if cls:
@@ -633,7 +654,14 @@ class ConnectionMonitorsOperations(object):
             if cls:
                 return cls(pipeline_response, None, {})
 
-        if polling is True: polling_method = ARMPolling(lro_delay, lro_options={'final-state-via': 'location'},  **kwargs)
+        path_format_arguments = {
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
+            'networkWatcherName': self._serialize.url("network_watcher_name", network_watcher_name, 'str'),
+            'connectionMonitorName': self._serialize.url("connection_monitor_name", connection_monitor_name, 'str'),
+            'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
+        }
+
+        if polling is True: polling_method = ARMPolling(lro_delay, lro_options={'final-state-via': 'location'}, path_format_arguments=path_format_arguments,  **kwargs)
         elif polling is False: polling_method = NoPolling()
         else: polling_method = polling
         if cont_token:
@@ -654,8 +682,8 @@ class ConnectionMonitorsOperations(object):
         connection_monitor_name,  # type: str
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.ConnectionMonitorQueryResult"
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.ConnectionMonitorQueryResult"]
+        # type: (...) -> "_models.ConnectionMonitorQueryResult"
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.ConnectionMonitorQueryResult"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -687,7 +715,7 @@ class ConnectionMonitorsOperations(object):
 
         if response.status_code not in [200, 202]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.ErrorResponse, response)
+            error = self._deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if response.status_code == 200:
@@ -709,7 +737,7 @@ class ConnectionMonitorsOperations(object):
         connection_monitor_name,  # type: str
         **kwargs  # type: Any
     ):
-        # type: (...) -> LROPoller["models.ConnectionMonitorQueryResult"]
+        # type: (...) -> LROPoller["_models.ConnectionMonitorQueryResult"]
         """Query a snapshot of the most recent connection states.
 
         :param resource_group_name: The name of the resource group containing Network Watcher.
@@ -729,7 +757,7 @@ class ConnectionMonitorsOperations(object):
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         polling = kwargs.pop('polling', True)  # type: Union[bool, PollingMethod]
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.ConnectionMonitorQueryResult"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.ConnectionMonitorQueryResult"]
         lro_delay = kwargs.pop(
             'polling_interval',
             self._config.polling_interval
@@ -754,7 +782,14 @@ class ConnectionMonitorsOperations(object):
                 return cls(pipeline_response, deserialized, {})
             return deserialized
 
-        if polling is True: polling_method = ARMPolling(lro_delay, lro_options={'final-state-via': 'location'},  **kwargs)
+        path_format_arguments = {
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
+            'networkWatcherName': self._serialize.url("network_watcher_name", network_watcher_name, 'str'),
+            'connectionMonitorName': self._serialize.url("connection_monitor_name", connection_monitor_name, 'str'),
+            'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
+        }
+
+        if polling is True: polling_method = ARMPolling(lro_delay, lro_options={'final-state-via': 'location'}, path_format_arguments=path_format_arguments,  **kwargs)
         elif polling is False: polling_method = NoPolling()
         else: polling_method = polling
         if cont_token:
@@ -774,7 +809,7 @@ class ConnectionMonitorsOperations(object):
         network_watcher_name,  # type: str
         **kwargs  # type: Any
     ):
-        # type: (...) -> Iterable["models.ConnectionMonitorListResult"]
+        # type: (...) -> Iterable["_models.ConnectionMonitorListResult"]
         """Lists all connection monitors for the specified Network Watcher.
 
         :param resource_group_name: The name of the resource group containing Network Watcher.
@@ -786,7 +821,7 @@ class ConnectionMonitorsOperations(object):
         :rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.network.v2019_07_01.models.ConnectionMonitorListResult]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.ConnectionMonitorListResult"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.ConnectionMonitorListResult"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -833,7 +868,7 @@ class ConnectionMonitorsOperations(object):
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
-                error = self._deserialize(models.ErrorResponse, response)
+                error = self._deserialize(_models.ErrorResponse, response)
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 

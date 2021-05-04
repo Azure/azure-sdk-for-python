@@ -28,6 +28,8 @@ def test_send_with_partition_key(connstr_receivers):
                 data_val += 1
                 client.send_batch(batch)
 
+        client.send_batch(client.create_batch())
+
     found_partition_keys = {}
     for index, partition in enumerate(receivers):
         received = partition.receive_message_batch(timeout=5000)
@@ -209,8 +211,7 @@ def test_send_list_partition(connstr_receivers):
 
 
 @pytest.mark.parametrize("to_send, exception_type",
-                         [([], EventDataSendError),
-                          ([EventData("A"*1024)]*1100, ValueError),
+                         [([EventData("A"*1024)]*1100, ValueError),
                           ("any str", AttributeError)
                           ])
 @pytest.mark.liveTest

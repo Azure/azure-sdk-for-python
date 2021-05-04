@@ -9,19 +9,21 @@ from typing import (  # pylint: disable=unused-import
     Union, Optional, Any, Dict, List,
     TYPE_CHECKING
 )
+
+
 try:
     from urllib.parse import urlparse
 except ImportError:
     from urlparse import urlparse # type: ignore
 
+from azure.core.exceptions import HttpResponseError
 from azure.core.paging import ItemPaged
 from azure.core.tracing.decorator import distributed_trace
 from azure.core.pipeline import Pipeline
 from ._shared.base_client import StorageAccountHostsMixin, TransportWrapper, parse_connection_str, parse_query
 from ._shared.response_handlers import process_storage_error
 from ._generated import AzureFileStorage
-from ._generated.models import StorageErrorException, StorageServiceProperties
-from ._generated.version import VERSION
+from ._generated.models import StorageServiceProperties
 from ._share_client import ShareClient
 from ._serialize import get_api_version
 from ._models import (
@@ -35,6 +37,7 @@ if TYPE_CHECKING:
         ShareProperties,
         Metrics,
         CorsRule,
+        ShareProtocolSettings
     )
 
 
@@ -46,13 +49,18 @@ class ShareServiceClient(StorageAccountHostsMixin):
     For operations relating to a specific share, a client for that entity
     can also be retrieved using the :func:`get_share_client` function.
 
+    For more optional configuration, please click
+    `here <https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/storage/azure-storage-file-share
+    #optional-configuration>`_.
+
     :param str account_url:
         The URL to the file share storage account. Any other entities included
         in the URL path (e.g. share or file) will be discarded. This URL can be optionally
         authenticated with a SAS token.
     :param credential:
         The credential with which to authenticate. This is optional if the
-        account URL already has a SAS token. The value can be a SAS token string or an account
+        account URL already has a SAS token. The value can be a SAS token string,
+        an instance of a AzureSasCredential from azure.core.credentials or an account
         shared access key.
     :keyword str api_version:
         The Storage API version to use for requests. Default value is '2019-07-07'.
@@ -96,8 +104,9 @@ class ShareServiceClient(StorageAccountHostsMixin):
                 'You need to provide either an account shared key or SAS token when creating a storage service.')
         self._query_str, credential = self._format_query_string(sas_token, credential)
         super(ShareServiceClient, self).__init__(parsed_url, service='file-share', credential=credential, **kwargs)
-        self._client = AzureFileStorage(version=VERSION, url=self.url, pipeline=self._pipeline)
-        self._client._config.version = get_api_version(kwargs, VERSION)  # pylint: disable=protected-access
+        self._client = AzureFileStorage(url=self.url, pipeline=self._pipeline)
+        default_api_version = self._client._config.version  # pylint: disable=protected-access
+        self._client._config.version = get_api_version(kwargs, default_api_version) # pylint: disable=protected-access
 
     def _format_url(self, hostname):
         """Format the endpoint URL according to the current location
@@ -117,7 +126,8 @@ class ShareServiceClient(StorageAccountHostsMixin):
             A connection string to an Azure Storage account.
         :param credential:
             The credential with which to authenticate. This is optional if the
-            account URL already has a SAS token. The value can be a SAS token string or an account
+            account URL already has a SAS token. The value can be a SAS token string,
+            an instance of a AzureSasCredential from azure.core.credentials or an account
             shared access key.
         :returns: A File Share service client.
         :rtype: ~azure.storage.fileshare.ShareServiceClient
@@ -161,7 +171,7 @@ class ShareServiceClient(StorageAccountHostsMixin):
         try:
             service_props = self._client.service.get_properties(timeout=timeout, **kwargs)
             return service_properties_deserialize(service_props)
-        except StorageErrorException as error:
+        except HttpResponseError as error:
             process_storage_error(error)
 
     @distributed_trace
@@ -169,6 +179,7 @@ class ShareServiceClient(StorageAccountHostsMixin):
             self, hour_metrics=None,  # type: Optional[Metrics]
             minute_metrics=None,  # type: Optional[Metrics]
             cors=None,  # type: Optional[List[CorsRule]]
+            protocol=None,  # type: Optional[ShareProtocolSettings],
             **kwargs
         ):
         # type: (...) -> None
@@ -189,6 +200,9 @@ class ShareServiceClient(StorageAccountHostsMixin):
             list. If an empty list is specified, all CORS rules will be deleted,
             and CORS will be disabled for the service.
         :type cors: list(:class:`~azure.storage.fileshare.CorsRule`)
+        :param protocol:
+            Sets protocol settings
+        :type protocol: ~azure.storage.fileshare.ShareProtocolSettings
         :keyword int timeout:
             The timeout parameter is expressed in seconds.
         :rtype: None
@@ -206,11 +220,12 @@ class ShareServiceClient(StorageAccountHostsMixin):
         props = StorageServiceProperties(
             hour_metrics=hour_metrics,
             minute_metrics=minute_metrics,
-            cors=cors
+            cors=cors,
+            protocol=protocol
         )
         try:
-            self._client.service.set_properties(props, timeout=timeout, **kwargs)
-        except StorageErrorException as error:
+            self._client.service.set_properties(storage_service_properties=props, timeout=timeout, **kwargs)
+        except HttpResponseError as error:
             process_storage_error(error)
 
     @distributed_trace
@@ -367,7 +382,7 @@ class ShareServiceClient(StorageAccountHostsMixin):
                                         deleted_share_version=deleted_share_version,
                                         timeout=kwargs.pop('timeout', None), **kwargs)
             return share
-        except StorageErrorException as error:
+        except HttpResponseError as error:
             process_storage_error(error)
 
     def get_share_client(self, share, snapshot=None):

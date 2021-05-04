@@ -1,0 +1,247 @@
+interactions:
+- request:
+    body: null
+    headers:
+      User-Agent:
+      - azsdk-python-storage-queue/12.1.4 Python/3.8.5 (Windows-10-10.0.19041-SP0)
+      x-ms-date:
+      - Thu, 29 Oct 2020 02:48:29 GMT
+      x-ms-version:
+      - '2018-03-28'
+    method: PUT
+    uri: https://storagename.queue.core.windows.net/pyqueueasync640e10d7
+  response:
+    body:
+      string: ''
+    headers:
+      content-length: '0'
+      date: Thu, 29 Oct 2020 02:48:29 GMT
+      server: Windows-Azure-Queue/1.0 Microsoft-HTTPAPI/2.0
+      x-ms-version: '2018-03-28'
+    status:
+      code: 201
+      message: Created
+    url: https://seanmcccanary3.queue.core.windows.net/pyqueueasync640e10d7
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/xml
+      User-Agent:
+      - azsdk-python-storage-queue/12.1.4 Python/3.8.5 (Windows-10-10.0.19041-SP0)
+      x-ms-date:
+      - Thu, 29 Oct 2020 02:48:30 GMT
+      x-ms-version:
+      - '2018-03-28'
+    method: GET
+    uri: https://storagename.queue.core.windows.net/pyqueueasync640e10d7/messages?numofmessages=1
+  response:
+    body:
+      string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><QueueMessagesList
+        />"
+    headers:
+      cache-control: no-cache
+      content-type: application/xml
+      date: Thu, 29 Oct 2020 02:48:29 GMT
+      server: Windows-Azure-Queue/1.0 Microsoft-HTTPAPI/2.0
+      transfer-encoding: chunked
+      x-ms-version: '2018-03-28'
+    status:
+      code: 200
+      message: OK
+    url: https://seanmcccanary3.queue.core.windows.net/pyqueueasync640e10d7/messages?numofmessages=1
+- request:
+    body: '<?xml version=''1.0'' encoding=''utf-8''?>
+
+      <QueueMessage><MessageText>message1</MessageText></QueueMessage>'
+    headers:
+      Accept:
+      - application/xml
+      Content-Length:
+      - '103'
+      Content-Type:
+      - application/xml; charset=utf-8
+      User-Agent:
+      - azsdk-python-storage-queue/12.1.4 Python/3.8.5 (Windows-10-10.0.19041-SP0)
+      x-ms-date:
+      - Thu, 29 Oct 2020 02:48:30 GMT
+      x-ms-version:
+      - '2018-03-28'
+    method: POST
+    uri: https://storagename.queue.core.windows.net/pyqueueasync640e10d7/messages
+  response:
+    body:
+      string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><QueueMessagesList><QueueMessage><MessageId>c25fa1f7-cb36-4d2a-bf09-6f75389bbc98</MessageId><InsertionTime>Thu,
+        29 Oct 2020 02:48:30 GMT</InsertionTime><ExpirationTime>Thu, 05 Nov 2020 02:48:30
+        GMT</ExpirationTime><PopReceipt>AgAAAAMAAAAAAAAAv+re+52t1gE=</PopReceipt><TimeNextVisible>Thu,
+        29 Oct 2020 02:48:30 GMT</TimeNextVisible></QueueMessage></QueueMessagesList>"
+    headers:
+      content-type: application/xml
+      date: Thu, 29 Oct 2020 02:48:29 GMT
+      server: Windows-Azure-Queue/1.0 Microsoft-HTTPAPI/2.0
+      transfer-encoding: chunked
+      x-ms-version: '2018-03-28'
+    status:
+      code: 201
+      message: Created
+    url: https://seanmcccanary3.queue.core.windows.net/pyqueueasync640e10d7/messages
+- request:
+    body: '<?xml version=''1.0'' encoding=''utf-8''?>
+
+      <QueueMessage><MessageText>message2</MessageText></QueueMessage>'
+    headers:
+      Accept:
+      - application/xml
+      Content-Length:
+      - '103'
+      Content-Type:
+      - application/xml; charset=utf-8
+      User-Agent:
+      - azsdk-python-storage-queue/12.1.4 Python/3.8.5 (Windows-10-10.0.19041-SP0)
+      x-ms-date:
+      - Thu, 29 Oct 2020 02:48:30 GMT
+      x-ms-version:
+      - '2018-03-28'
+    method: POST
+    uri: https://storagename.queue.core.windows.net/pyqueueasync640e10d7/messages
+  response:
+    body:
+      string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><QueueMessagesList><QueueMessage><MessageId>9159ff30-0b69-4916-8efb-7624a7b1acdb</MessageId><InsertionTime>Thu,
+        29 Oct 2020 02:48:30 GMT</InsertionTime><ExpirationTime>Thu, 05 Nov 2020 02:48:30
+        GMT</ExpirationTime><PopReceipt>AgAAAAMAAAAAAAAAi7Do+52t1gE=</PopReceipt><TimeNextVisible>Thu,
+        29 Oct 2020 02:48:30 GMT</TimeNextVisible></QueueMessage></QueueMessagesList>"
+    headers:
+      content-type: application/xml
+      date: Thu, 29 Oct 2020 02:48:29 GMT
+      server: Windows-Azure-Queue/1.0 Microsoft-HTTPAPI/2.0
+      transfer-encoding: chunked
+      x-ms-version: '2018-03-28'
+    status:
+      code: 201
+      message: Created
+    url: https://seanmcccanary3.queue.core.windows.net/pyqueueasync640e10d7/messages
+- request:
+    body: '<?xml version=''1.0'' encoding=''utf-8''?>
+
+      <QueueMessage><MessageText>message3</MessageText></QueueMessage>'
+    headers:
+      Accept:
+      - application/xml
+      Content-Length:
+      - '103'
+      Content-Type:
+      - application/xml; charset=utf-8
+      User-Agent:
+      - azsdk-python-storage-queue/12.1.4 Python/3.8.5 (Windows-10-10.0.19041-SP0)
+      x-ms-date:
+      - Thu, 29 Oct 2020 02:48:30 GMT
+      x-ms-version:
+      - '2018-03-28'
+    method: POST
+    uri: https://storagename.queue.core.windows.net/pyqueueasync640e10d7/messages
+  response:
+    body:
+      string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><QueueMessagesList><QueueMessage><MessageId>d39f0f34-a85b-4488-924c-d5cf002f4b68</MessageId><InsertionTime>Thu,
+        29 Oct 2020 02:48:30 GMT</InsertionTime><ExpirationTime>Thu, 05 Nov 2020 02:48:30
+        GMT</ExpirationTime><PopReceipt>AgAAAAMAAAAAAAAAFyjy+52t1gE=</PopReceipt><TimeNextVisible>Thu,
+        29 Oct 2020 02:48:30 GMT</TimeNextVisible></QueueMessage></QueueMessagesList>"
+    headers:
+      content-type: application/xml
+      date: Thu, 29 Oct 2020 02:48:29 GMT
+      server: Windows-Azure-Queue/1.0 Microsoft-HTTPAPI/2.0
+      transfer-encoding: chunked
+      x-ms-version: '2018-03-28'
+    status:
+      code: 201
+      message: Created
+    url: https://seanmcccanary3.queue.core.windows.net/pyqueueasync640e10d7/messages
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/xml
+      User-Agent:
+      - azsdk-python-storage-queue/12.1.4 Python/3.8.5 (Windows-10-10.0.19041-SP0)
+      x-ms-date:
+      - Thu, 29 Oct 2020 02:48:30 GMT
+      x-ms-version:
+      - '2018-03-28'
+    method: GET
+    uri: https://storagename.queue.core.windows.net/pyqueueasync640e10d7/messages?numofmessages=1
+  response:
+    body:
+      string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><QueueMessagesList><QueueMessage><MessageId>c25fa1f7-cb36-4d2a-bf09-6f75389bbc98</MessageId><InsertionTime>Thu,
+        29 Oct 2020 02:48:30 GMT</InsertionTime><ExpirationTime>Thu, 05 Nov 2020 02:48:30
+        GMT</ExpirationTime><PopReceipt>AgAAAAMAAAAAAAAAyWndDZ6t1gE=</PopReceipt><TimeNextVisible>Thu,
+        29 Oct 2020 02:49:00 GMT</TimeNextVisible><DequeueCount>1</DequeueCount><MessageText>message1</MessageText></QueueMessage></QueueMessagesList>"
+    headers:
+      cache-control: no-cache
+      content-type: application/xml
+      date: Thu, 29 Oct 2020 02:48:29 GMT
+      server: Windows-Azure-Queue/1.0 Microsoft-HTTPAPI/2.0
+      transfer-encoding: chunked
+      x-ms-version: '2018-03-28'
+    status:
+      code: 200
+      message: OK
+    url: https://seanmcccanary3.queue.core.windows.net/pyqueueasync640e10d7/messages?numofmessages=1
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/xml
+      User-Agent:
+      - azsdk-python-storage-queue/12.1.4 Python/3.8.5 (Windows-10-10.0.19041-SP0)
+      x-ms-date:
+      - Thu, 29 Oct 2020 02:48:30 GMT
+      x-ms-version:
+      - '2018-03-28'
+    method: GET
+    uri: https://storagename.queue.core.windows.net/pyqueueasync640e10d7/messages?numofmessages=1
+  response:
+    body:
+      string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><QueueMessagesList><QueueMessage><MessageId>9159ff30-0b69-4916-8efb-7624a7b1acdb</MessageId><InsertionTime>Thu,
+        29 Oct 2020 02:48:30 GMT</InsertionTime><ExpirationTime>Thu, 05 Nov 2020 02:48:30
+        GMT</ExpirationTime><PopReceipt>AgAAAAMAAAAAAAAAs1bnDZ6t1gE=</PopReceipt><TimeNextVisible>Thu,
+        29 Oct 2020 02:49:00 GMT</TimeNextVisible><DequeueCount>1</DequeueCount><MessageText>message2</MessageText></QueueMessage></QueueMessagesList>"
+    headers:
+      cache-control: no-cache
+      content-type: application/xml
+      date: Thu, 29 Oct 2020 02:48:29 GMT
+      server: Windows-Azure-Queue/1.0 Microsoft-HTTPAPI/2.0
+      transfer-encoding: chunked
+      x-ms-version: '2018-03-28'
+    status:
+      code: 200
+      message: OK
+    url: https://seanmcccanary3.queue.core.windows.net/pyqueueasync640e10d7/messages?numofmessages=1
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/xml
+      User-Agent:
+      - azsdk-python-storage-queue/12.1.4 Python/3.8.5 (Windows-10-10.0.19041-SP0)
+      x-ms-date:
+      - Thu, 29 Oct 2020 02:48:30 GMT
+      x-ms-version:
+      - '2018-03-28'
+    method: GET
+    uri: https://storagename.queue.core.windows.net/pyqueueasync640e10d7/messages?peekonly=true
+  response:
+    body:
+      string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><QueueMessagesList><QueueMessage><MessageId>d39f0f34-a85b-4488-924c-d5cf002f4b68</MessageId><InsertionTime>Thu,
+        29 Oct 2020 02:48:30 GMT</InsertionTime><ExpirationTime>Thu, 05 Nov 2020 02:48:30
+        GMT</ExpirationTime><DequeueCount>0</DequeueCount><MessageText>message3</MessageText></QueueMessage></QueueMessagesList>"
+    headers:
+      cache-control: no-cache
+      content-type: application/xml
+      date: Thu, 29 Oct 2020 02:48:29 GMT
+      server: Windows-Azure-Queue/1.0 Microsoft-HTTPAPI/2.0
+      transfer-encoding: chunked
+      x-ms-version: '2018-03-28'
+    status:
+      code: 200
+      message: OK
+    url: https://seanmcccanary3.queue.core.windows.net/pyqueueasync640e10d7/messages?peekonly=true
+version: 1

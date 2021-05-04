@@ -179,7 +179,11 @@ class ChangeFeed(object):
         return None
 
     def _get_segment_paths(self, start_year=""):
-        cur_year = datetime.today().year
+        try:
+            cur_year = self.end_time.year
+        except AttributeError:
+            cur_year = datetime.today().year
+
         while not start_year or start_year <= cur_year:
             paths = self.client.list_blobs(name_starts_with=SEGMENT_COMMON_PATH + str(start_year))
             for path in paths:

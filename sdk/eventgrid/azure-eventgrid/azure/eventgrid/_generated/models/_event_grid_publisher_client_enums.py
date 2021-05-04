@@ -30,75 +30,130 @@ class AppAction(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     """Type of action of the operation.
     """
 
-    RESTARTED = "Restarted"  #: Web app was restarted.
-    STOPPED = "Stopped"  #: Web app was stopped.
-    CHANGED_APP_SETTINGS = "ChangedAppSettings"  #: There was an operation to change app setting on the web app.
-    STARTED = "Started"  #: The job has started.
-    COMPLETED = "Completed"  #: The job has completed.
-    FAILED = "Failed"  #: The job has failed to complete.
+    #: Web app was restarted.
+    RESTARTED = "Restarted"
+    #: Web app was stopped.
+    STOPPED = "Stopped"
+    #: There was an operation to change app setting on the web app.
+    CHANGED_APP_SETTINGS = "ChangedAppSettings"
+    #: The job has started.
+    STARTED = "Started"
+    #: The job has completed.
+    COMPLETED = "Completed"
+    #: The job has failed to complete.
+    FAILED = "Failed"
 
 class AppServicePlanAction(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     """Type of action on the app service plan.
     """
 
-    UPDATED = "Updated"  #: App Service plan is being updated.
+    #: App Service plan is being updated.
+    UPDATED = "Updated"
 
 class AsyncStatus(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     """Asynchronous operation status of the operation on the app service plan.
     """
 
-    STARTED = "Started"  #: Async operation has started.
-    COMPLETED = "Completed"  #: Async operation has completed.
-    FAILED = "Failed"  #: Async operation failed to complete.
+    #: Async operation has started.
+    STARTED = "Started"
+    #: Async operation has completed.
+    COMPLETED = "Completed"
+    #: Async operation failed to complete.
+    FAILED = "Failed"
+
+class CommunicationCloudEnvironmentModel(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+    """The cloud that the identifier belongs to.
+    """
+
+    PUBLIC = "public"
+    DOD = "dod"
+    GCCH = "gcch"
 
 class MediaJobErrorCategory(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     """Helps with categorization of errors.
     """
 
-    SERVICE = "Service"  #: The error is service related.
-    DOWNLOAD = "Download"  #: The error is download related.
-    UPLOAD = "Upload"  #: The error is upload related.
-    CONFIGURATION = "Configuration"  #: The error is configuration related.
-    CONTENT = "Content"  #: The error is related to data in the input files.
+    #: The error is service related.
+    SERVICE = "Service"
+    #: The error is download related.
+    DOWNLOAD = "Download"
+    #: The error is upload related.
+    UPLOAD = "Upload"
+    #: The error is configuration related.
+    CONFIGURATION = "Configuration"
+    #: The error is related to data in the input files.
+    CONTENT = "Content"
 
 class MediaJobErrorCode(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     """Error code describing the error.
     """
 
-    SERVICE_ERROR = "ServiceError"  #: Fatal service error, please contact support.
-    SERVICE_TRANSIENT_ERROR = "ServiceTransientError"  #: Transient error, please retry, if retry is unsuccessful, please contact support.
-    DOWNLOAD_NOT_ACCESSIBLE = "DownloadNotAccessible"  #: While trying to download the input files, the files were not accessible, please check the availability of the source.
-    DOWNLOAD_TRANSIENT_ERROR = "DownloadTransientError"  #: While trying to download the input files, there was an issue during transfer (storage service, network errors), see details and check your source.
-    UPLOAD_NOT_ACCESSIBLE = "UploadNotAccessible"  #: While trying to upload the output files, the destination was not reachable, please check the availability of the destination.
-    UPLOAD_TRANSIENT_ERROR = "UploadTransientError"  #: While trying to upload the output files, there was an issue during transfer (storage service, network errors), see details and check your destination.
-    CONFIGURATION_UNSUPPORTED = "ConfigurationUnsupported"  #: There was a problem with the combination of input files and the configuration settings applied, fix the configuration settings and retry with the same input, or change input to match the configuration.
-    CONTENT_MALFORMED = "ContentMalformed"  #: There was a problem with the input content (for example: zero byte files, or corrupt/non-decodable files), check the input files.
-    CONTENT_UNSUPPORTED = "ContentUnsupported"  #: There was a problem with the format of the input (not valid media file, or an unsupported file/codec), check the validity of the input files.
+    #: Fatal service error, please contact support.
+    SERVICE_ERROR = "ServiceError"
+    #: Transient error, please retry, if retry is unsuccessful, please contact support.
+    SERVICE_TRANSIENT_ERROR = "ServiceTransientError"
+    #: While trying to download the input files, the files were not accessible, please check the
+    #: availability of the source.
+    DOWNLOAD_NOT_ACCESSIBLE = "DownloadNotAccessible"
+    #: While trying to download the input files, there was an issue during transfer (storage service,
+    #: network errors), see details and check your source.
+    DOWNLOAD_TRANSIENT_ERROR = "DownloadTransientError"
+    #: While trying to upload the output files, the destination was not reachable, please check the
+    #: availability of the destination.
+    UPLOAD_NOT_ACCESSIBLE = "UploadNotAccessible"
+    #: While trying to upload the output files, there was an issue during transfer (storage service,
+    #: network errors), see details and check your destination.
+    UPLOAD_TRANSIENT_ERROR = "UploadTransientError"
+    #: There was a problem with the combination of input files and the configuration settings applied,
+    #: fix the configuration settings and retry with the same input, or change input to match the
+    #: configuration.
+    CONFIGURATION_UNSUPPORTED = "ConfigurationUnsupported"
+    #: There was a problem with the input content (for example: zero byte files, or corrupt/non-
+    #: decodable files), check the input files.
+    CONTENT_MALFORMED = "ContentMalformed"
+    #: There was a problem with the format of the input (not valid media file, or an unsupported
+    #: file/codec), check the validity of the input files.
+    CONTENT_UNSUPPORTED = "ContentUnsupported"
 
 class MediaJobRetry(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     """Indicates that it may be possible to retry the Job. If retry is unsuccessful, please contact
     Azure support via Azure Portal.
     """
 
-    DO_NOT_RETRY = "DoNotRetry"  #: Issue needs to be investigated and then the job resubmitted with corrections or retried once the underlying issue has been corrected.
-    MAY_RETRY = "MayRetry"  #: Issue may be resolved after waiting for a period of time and resubmitting the same Job.
+    #: Issue needs to be investigated and then the job resubmitted with corrections or retried once
+    #: the underlying issue has been corrected.
+    DO_NOT_RETRY = "DoNotRetry"
+    #: Issue may be resolved after waiting for a period of time and resubmitting the same Job.
+    MAY_RETRY = "MayRetry"
 
 class MediaJobState(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     """The previous state of the Job.
     """
 
-    CANCELED = "Canceled"  #: The job was canceled. This is a final state for the job.
-    CANCELING = "Canceling"  #: The job is in the process of being canceled. This is a transient state for the job.
-    ERROR = "Error"  #: The job has encountered an error. This is a final state for the job.
-    FINISHED = "Finished"  #: The job is finished. This is a final state for the job.
-    PROCESSING = "Processing"  #: The job is processing. This is a transient state for the job.
-    QUEUED = "Queued"  #: The job is in a queued state, waiting for resources to become available. This is a transient state.
-    SCHEDULED = "Scheduled"  #: The job is being scheduled to run on an available resource. This is a transient state, between queued and processing states.
+    #: The job was canceled. This is a final state for the job.
+    CANCELED = "Canceled"
+    #: The job is in the process of being canceled. This is a transient state for the job.
+    CANCELING = "Canceling"
+    #: The job has encountered an error. This is a final state for the job.
+    ERROR = "Error"
+    #: The job is finished. This is a final state for the job.
+    FINISHED = "Finished"
+    #: The job is processing. This is a transient state for the job.
+    PROCESSING = "Processing"
+    #: The job is in a queued state, waiting for resources to become available. This is a transient
+    #: state.
+    QUEUED = "Queued"
+    #: The job is being scheduled to run on an available resource. This is a transient state, between
+    #: queued and processing states.
+    SCHEDULED = "Scheduled"
 
 class StampKind(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     """Kind of environment where app service plan is.
     """
 
-    PUBLIC = "Public"  #: App Service Plan is running on a public stamp.
-    ASE_V1 = "AseV1"  #: App Service Plan is running on an App Service Environment V1.
-    ASE_V2 = "AseV2"  #: App Service Plan is running on an App Service Environment V2.
+    #: App Service Plan is running on a public stamp.
+    PUBLIC = "Public"
+    #: App Service Plan is running on an App Service Environment V1.
+    ASE_V1 = "AseV1"
+    #: App Service Plan is running on an App Service Environment V2.
+    ASE_V2 = "AseV2"

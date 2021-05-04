@@ -8,12 +8,12 @@
 from typing import TYPE_CHECKING
 import warnings
 
-from azure.core.exceptions import HttpResponseError, ResourceExistsError, ResourceNotFoundError, map_error
+from azure.core.exceptions import ClientAuthenticationError, HttpResponseError, ResourceExistsError, ResourceNotFoundError, map_error
 from azure.core.paging import ItemPaged
 from azure.core.pipeline import PipelineResponse
 from azure.core.pipeline.transport import HttpRequest, HttpResponse
 
-from .. import models
+from .. import models as _models
 
 if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
@@ -36,7 +36,7 @@ class RoleAssignmentsOperations(object):
     :param deserializer: An object model deserializer.
     """
 
-    models = models
+    models = _models
 
     def __init__(self, client, config, serializer, deserializer):
         self._client = client
@@ -51,7 +51,7 @@ class RoleAssignmentsOperations(object):
         role_assignment_name,  # type: str
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.RoleAssignment"
+        # type: (...) -> "_models.RoleAssignment"
         """Deletes a role assignment.
 
         :param vault_base_url: The vault name, for example https://myvault.vault.azure.net.
@@ -65,10 +65,13 @@ class RoleAssignmentsOperations(object):
         :rtype: ~azure.keyvault.v7_2.models.RoleAssignment
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.RoleAssignment"]
-        error_map = {404: ResourceNotFoundError, 409: ResourceExistsError}
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.RoleAssignment"]
+        error_map = {
+            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
+        }
         error_map.update(kwargs.pop('error_map', {}))
         api_version = "7.2-preview"
+        accept = "application/json"
 
         # Construct URL
         url = self.delete.metadata['url']  # type: ignore
@@ -85,7 +88,7 @@ class RoleAssignmentsOperations(object):
 
         # Construct headers
         header_parameters = {}  # type: Dict[str, Any]
-        header_parameters['Accept'] = 'application/json'
+        header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
 
         request = self._client.delete(url, query_parameters, header_parameters)
         pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
@@ -93,7 +96,7 @@ class RoleAssignmentsOperations(object):
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.KeyVaultError, response)
+            error = self._deserialize.failsafe_deserialize(_models.KeyVaultError, response)
             raise HttpResponseError(response=response, model=error)
 
         deserialized = self._deserialize('RoleAssignment', pipeline_response)
@@ -109,10 +112,10 @@ class RoleAssignmentsOperations(object):
         vault_base_url,  # type: str
         scope,  # type: str
         role_assignment_name,  # type: str
-        parameters,  # type: "models.RoleAssignmentCreateParameters"
+        parameters,  # type: "_models.RoleAssignmentCreateParameters"
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.RoleAssignment"
+        # type: (...) -> "_models.RoleAssignment"
         """Creates a role assignment.
 
         :param vault_base_url: The vault name, for example https://myvault.vault.azure.net.
@@ -129,11 +132,14 @@ class RoleAssignmentsOperations(object):
         :rtype: ~azure.keyvault.v7_2.models.RoleAssignment
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.RoleAssignment"]
-        error_map = {404: ResourceNotFoundError, 409: ResourceExistsError}
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.RoleAssignment"]
+        error_map = {
+            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
+        }
         error_map.update(kwargs.pop('error_map', {}))
         api_version = "7.2-preview"
         content_type = kwargs.pop("content_type", "application/json")
+        accept = "application/json"
 
         # Construct URL
         url = self.create.metadata['url']  # type: ignore
@@ -151,19 +157,18 @@ class RoleAssignmentsOperations(object):
         # Construct headers
         header_parameters = {}  # type: Dict[str, Any]
         header_parameters['Content-Type'] = self._serialize.header("content_type", content_type, 'str')
-        header_parameters['Accept'] = 'application/json'
+        header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
 
         body_content_kwargs = {}  # type: Dict[str, Any]
         body_content = self._serialize.body(parameters, 'RoleAssignmentCreateParameters')
         body_content_kwargs['content'] = body_content
         request = self._client.put(url, query_parameters, header_parameters, **body_content_kwargs)
-
         pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
 
         if response.status_code not in [201]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.KeyVaultError, response)
+            error = self._deserialize.failsafe_deserialize(_models.KeyVaultError, response)
             raise HttpResponseError(response=response, model=error)
 
         deserialized = self._deserialize('RoleAssignment', pipeline_response)
@@ -181,7 +186,7 @@ class RoleAssignmentsOperations(object):
         role_assignment_name,  # type: str
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.RoleAssignment"
+        # type: (...) -> "_models.RoleAssignment"
         """Get the specified role assignment.
 
         :param vault_base_url: The vault name, for example https://myvault.vault.azure.net.
@@ -195,10 +200,13 @@ class RoleAssignmentsOperations(object):
         :rtype: ~azure.keyvault.v7_2.models.RoleAssignment
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.RoleAssignment"]
-        error_map = {404: ResourceNotFoundError, 409: ResourceExistsError}
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.RoleAssignment"]
+        error_map = {
+            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
+        }
         error_map.update(kwargs.pop('error_map', {}))
         api_version = "7.2-preview"
+        accept = "application/json"
 
         # Construct URL
         url = self.get.metadata['url']  # type: ignore
@@ -215,7 +223,7 @@ class RoleAssignmentsOperations(object):
 
         # Construct headers
         header_parameters = {}  # type: Dict[str, Any]
-        header_parameters['Accept'] = 'application/json'
+        header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
 
         request = self._client.get(url, query_parameters, header_parameters)
         pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
@@ -223,7 +231,7 @@ class RoleAssignmentsOperations(object):
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.KeyVaultError, response)
+            error = self._deserialize.failsafe_deserialize(_models.KeyVaultError, response)
             raise HttpResponseError(response=response, model=error)
 
         deserialized = self._deserialize('RoleAssignment', pipeline_response)
@@ -241,7 +249,7 @@ class RoleAssignmentsOperations(object):
         filter=None,  # type: Optional[str]
         **kwargs  # type: Any
     ):
-        # type: (...) -> Iterable["models.RoleAssignmentListResult"]
+        # type: (...) -> Iterable["_models.RoleAssignmentListResult"]
         """Gets role assignments for a scope.
 
         :param vault_base_url: The vault name, for example https://myvault.vault.azure.net.
@@ -257,15 +265,18 @@ class RoleAssignmentsOperations(object):
         :rtype: ~azure.core.paging.ItemPaged[~azure.keyvault.v7_2.models.RoleAssignmentListResult]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.RoleAssignmentListResult"]
-        error_map = {404: ResourceNotFoundError, 409: ResourceExistsError}
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.RoleAssignmentListResult"]
+        error_map = {
+            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
+        }
         error_map.update(kwargs.pop('error_map', {}))
         api_version = "7.2-preview"
+        accept = "application/json"
 
         def prepare_request(next_link=None):
             # Construct headers
             header_parameters = {}  # type: Dict[str, Any]
-            header_parameters['Accept'] = 'application/json'
+            header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
 
             if not next_link:
                 # Construct URL
@@ -307,7 +318,7 @@ class RoleAssignmentsOperations(object):
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
-                error = self._deserialize(models.KeyVaultError, response)
+                error = self._deserialize.failsafe_deserialize(_models.KeyVaultError, response)
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
                 raise HttpResponseError(response=response, model=error)
 

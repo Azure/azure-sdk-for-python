@@ -936,7 +936,7 @@ class HealthEvaluation(Model):
     ReplicasHealthEvaluation, ServiceHealthEvaluation,
     ServicesHealthEvaluation, SystemApplicationHealthEvaluation,
     UpgradeDomainDeltaNodesCheckHealthEvaluation,
-    UpgradeDomainNodesHealthEvaluation
+    UpgradeDomainNodesHealthEvaluation, NodeTypeNodesHealthEvaluation
 
     All required parameters must be populated in order to send to Azure.
 
@@ -964,7 +964,7 @@ class HealthEvaluation(Model):
     }
 
     _subtype_map = {
-        'kind': {'Application': 'ApplicationHealthEvaluation', 'Applications': 'ApplicationsHealthEvaluation', 'ApplicationTypeApplications': 'ApplicationTypeApplicationsHealthEvaluation', 'DeltaNodesCheck': 'DeltaNodesCheckHealthEvaluation', 'DeployedApplication': 'DeployedApplicationHealthEvaluation', 'DeployedApplications': 'DeployedApplicationsHealthEvaluation', 'DeployedServicePackage': 'DeployedServicePackageHealthEvaluation', 'DeployedServicePackages': 'DeployedServicePackagesHealthEvaluation', 'Event': 'EventHealthEvaluation', 'Node': 'NodeHealthEvaluation', 'Nodes': 'NodesHealthEvaluation', 'Partition': 'PartitionHealthEvaluation', 'Partitions': 'PartitionsHealthEvaluation', 'Replica': 'ReplicaHealthEvaluation', 'Replicas': 'ReplicasHealthEvaluation', 'Service': 'ServiceHealthEvaluation', 'Services': 'ServicesHealthEvaluation', 'SystemApplication': 'SystemApplicationHealthEvaluation', 'UpgradeDomainDeltaNodesCheck': 'UpgradeDomainDeltaNodesCheckHealthEvaluation', 'UpgradeDomainNodes': 'UpgradeDomainNodesHealthEvaluation'}
+        'kind': {'Application': 'ApplicationHealthEvaluation', 'Applications': 'ApplicationsHealthEvaluation', 'ApplicationTypeApplications': 'ApplicationTypeApplicationsHealthEvaluation', 'DeltaNodesCheck': 'DeltaNodesCheckHealthEvaluation', 'DeployedApplication': 'DeployedApplicationHealthEvaluation', 'DeployedApplications': 'DeployedApplicationsHealthEvaluation', 'DeployedServicePackage': 'DeployedServicePackageHealthEvaluation', 'DeployedServicePackages': 'DeployedServicePackagesHealthEvaluation', 'Event': 'EventHealthEvaluation', 'Node': 'NodeHealthEvaluation', 'Nodes': 'NodesHealthEvaluation', 'Partition': 'PartitionHealthEvaluation', 'Partitions': 'PartitionsHealthEvaluation', 'Replica': 'ReplicaHealthEvaluation', 'Replicas': 'ReplicasHealthEvaluation', 'Service': 'ServiceHealthEvaluation', 'Services': 'ServicesHealthEvaluation', 'SystemApplication': 'SystemApplicationHealthEvaluation', 'UpgradeDomainDeltaNodesCheck': 'UpgradeDomainDeltaNodesCheckHealthEvaluation', 'UpgradeDomainNodes': 'UpgradeDomainNodesHealthEvaluation', 'NodeTypeNodes': 'NodeTypeNodesHealthEvaluation'}
     }
 
     def __init__(self, **kwargs):
@@ -1113,6 +1113,32 @@ class ApplicationHealthPolicyMapItem(Model):
         super(ApplicationHealthPolicyMapItem, self).__init__(**kwargs)
         self.key = kwargs.get('key', None)
         self.value = kwargs.get('value', None)
+
+
+class ApplicationHealthPolicyMapObject(Model):
+    """Represents the map of application health policies for a ServiceFabric
+    cluster upgrade.
+
+    :param application_health_policy_map: Defines a map that contains specific
+     application health policies for different applications.
+     Each entry specifies as key the application name and as value an
+     ApplicationHealthPolicy used to evaluate the application health.
+     If an application is not specified in the map, the application health
+     evaluation uses the ApplicationHealthPolicy found in its application
+     manifest or the default application health policy (if no health policy is
+     defined in the manifest).
+     The map is empty by default.
+    :type application_health_policy_map:
+     list[~azure.servicefabric.models.ApplicationHealthPolicyMapItem]
+    """
+
+    _attribute_map = {
+        'application_health_policy_map': {'key': 'ApplicationHealthPolicyMap', 'type': '[ApplicationHealthPolicyMapItem]'},
+    }
+
+    def __init__(self, **kwargs):
+        super(ApplicationHealthPolicyMapObject, self).__init__(**kwargs)
+        self.application_health_policy_map = kwargs.get('application_health_policy_map', None)
 
 
 class ApplicationHealthReportExpiredEvent(ApplicationEvent):
@@ -1491,6 +1517,10 @@ class ApplicationInfo(Model):
      'ServiceFabricApplicationDescription', 'Compose'
     :type application_definition_kind: str or
      ~azure.servicefabric.models.ApplicationDefinitionKind
+    :param managed_application_identity: Managed application identity
+     description.
+    :type managed_application_identity:
+     ~azure.servicefabric.models.ManagedApplicationIdentityDescription
     """
 
     _attribute_map = {
@@ -1502,6 +1532,7 @@ class ApplicationInfo(Model):
         'parameters': {'key': 'Parameters', 'type': '[ApplicationParameter]'},
         'health_state': {'key': 'HealthState', 'type': 'str'},
         'application_definition_kind': {'key': 'ApplicationDefinitionKind', 'type': 'str'},
+        'managed_application_identity': {'key': 'ManagedApplicationIdentity', 'type': 'ManagedApplicationIdentityDescription'},
     }
 
     def __init__(self, **kwargs):
@@ -1514,6 +1545,7 @@ class ApplicationInfo(Model):
         self.parameters = kwargs.get('parameters', None)
         self.health_state = kwargs.get('health_state', None)
         self.application_definition_kind = kwargs.get('application_definition_kind', None)
+        self.managed_application_identity = kwargs.get('managed_application_identity', None)
 
 
 class ApplicationLoadInfo(Model):
@@ -2583,6 +2615,10 @@ class ApplicationUpgradeDescription(Model):
      4294967295, which indicates that the behavior will entirely depend on the
      delay configured in the stateless service description.
     :type instance_close_delay_duration_in_seconds: long
+    :param managed_application_identity: Managed application identity
+     description.
+    :type managed_application_identity:
+     ~azure.servicefabric.models.ManagedApplicationIdentityDescription
     """
 
     _validation = {
@@ -2603,6 +2639,7 @@ class ApplicationUpgradeDescription(Model):
         'monitoring_policy': {'key': 'MonitoringPolicy', 'type': 'MonitoringPolicyDescription'},
         'application_health_policy': {'key': 'ApplicationHealthPolicy', 'type': 'ApplicationHealthPolicy'},
         'instance_close_delay_duration_in_seconds': {'key': 'InstanceCloseDelayDurationInSeconds', 'type': 'long'},
+        'managed_application_identity': {'key': 'ManagedApplicationIdentity', 'type': 'ManagedApplicationIdentityDescription'},
     }
 
     def __init__(self, **kwargs):
@@ -2618,6 +2655,7 @@ class ApplicationUpgradeDescription(Model):
         self.monitoring_policy = kwargs.get('monitoring_policy', None)
         self.application_health_policy = kwargs.get('application_health_policy', None)
         self.instance_close_delay_duration_in_seconds = kwargs.get('instance_close_delay_duration_in_seconds', None)
+        self.managed_application_identity = kwargs.get('managed_application_identity', None)
 
 
 class ApplicationUpgradeDomainCompletedEvent(ApplicationEvent):
@@ -3346,6 +3384,13 @@ class AverageServiceLoadScalingTrigger(ScalingTriggerDescription):
     :param scale_interval_in_seconds: Required. The period in seconds on which
      a decision is made whether to scale or not.
     :type scale_interval_in_seconds: long
+    :param use_only_primary_load: Required. Flag determines whether only the
+     load of primary replica should be considered for scaling.
+     If set to true, then trigger will only consider the load of primary
+     replicas of stateful service.
+     If set to false, trigger will consider load of all replicas.
+     This parameter cannot be set to true for stateless service.
+    :type use_only_primary_load: bool
     """
 
     _validation = {
@@ -3354,6 +3399,7 @@ class AverageServiceLoadScalingTrigger(ScalingTriggerDescription):
         'lower_load_threshold': {'required': True},
         'upper_load_threshold': {'required': True},
         'scale_interval_in_seconds': {'required': True, 'maximum': 4294967295, 'minimum': 0},
+        'use_only_primary_load': {'required': True},
     }
 
     _attribute_map = {
@@ -3362,6 +3408,7 @@ class AverageServiceLoadScalingTrigger(ScalingTriggerDescription):
         'lower_load_threshold': {'key': 'LowerLoadThreshold', 'type': 'str'},
         'upper_load_threshold': {'key': 'UpperLoadThreshold', 'type': 'str'},
         'scale_interval_in_seconds': {'key': 'ScaleIntervalInSeconds', 'type': 'long'},
+        'use_only_primary_load': {'key': 'UseOnlyPrimaryLoad', 'type': 'bool'},
     }
 
     def __init__(self, **kwargs):
@@ -3370,6 +3417,7 @@ class AverageServiceLoadScalingTrigger(ScalingTriggerDescription):
         self.lower_load_threshold = kwargs.get('lower_load_threshold', None)
         self.upper_load_threshold = kwargs.get('upper_load_threshold', None)
         self.scale_interval_in_seconds = kwargs.get('scale_interval_in_seconds', None)
+        self.use_only_primary_load = kwargs.get('use_only_primary_load', None)
         self.kind = 'AverageServiceLoad'
 
 
@@ -3378,7 +3426,8 @@ class BackupStorageDescription(Model):
 
     You probably want to use the sub-classes and not this class directly. Known
     sub-classes are: AzureBlobBackupStorageDescription,
-    FileShareBackupStorageDescription
+    FileShareBackupStorageDescription, DsmsAzureBlobBackupStorageDescription,
+    ManagedIdentityAzureBlobBackupStorageDescription
 
     All required parameters must be populated in order to send to Azure.
 
@@ -3398,7 +3447,7 @@ class BackupStorageDescription(Model):
     }
 
     _subtype_map = {
-        'storage_kind': {'AzureBlobStore': 'AzureBlobBackupStorageDescription', 'FileShare': 'FileShareBackupStorageDescription'}
+        'storage_kind': {'AzureBlobStore': 'AzureBlobBackupStorageDescription', 'FileShare': 'FileShareBackupStorageDescription', 'DsmsAzureBlobStore': 'DsmsAzureBlobBackupStorageDescription', 'ManagedIdentityAzureBlobStore': 'ManagedIdentityAzureBlobBackupStorageDescription'}
     }
 
     def __init__(self, **kwargs):
@@ -5662,6 +5711,45 @@ class ClusterHealthPolicy(Model):
      HealthManager/EnableApplicationTypeHealthEvaluation.
     :type application_type_health_policy_map:
      list[~azure.servicefabric.models.ApplicationTypeHealthPolicyMapItem]
+    :param node_type_health_policy_map: Defines a map with max percentage
+     unhealthy nodes for specific node types.
+     Each entry specifies as key the node type name and as value an integer
+     that represents the MaxPercentUnhealthyNodes percentage used to evaluate
+     the nodes of the specified node type.
+     The node type health policy map can be used during cluster health
+     evaluation to describe special node types.
+     They are evaluated against the percentages associated with their node type
+     name in the map.
+     Setting this has no impact on the global pool of nodes used for
+     MaxPercentUnhealthyNodes.
+     The node type health policy map is used only if the cluster manifest
+     enables node type health evaluation using the configuration entry for
+     HealthManager/EnableNodeTypeHealthEvaluation.
+     For example, given a cluster with many nodes of different types, with
+     important work hosted on node type "SpecialNodeType" that should not
+     tolerate any nodes down.
+     You can specify global MaxPercentUnhealthyNodes to 20% to tolerate some
+     failures for all nodes, but for the node type "SpecialNodeType", set the
+     MaxPercentUnhealthyNodes to 0 by
+     setting the value in the key value pair in NodeTypeHealthPolicyMapItem.
+     The key is the node type name.
+     This way, as long as no nodes of type "SpecialNodeType" are in Error
+     state,
+     even if some of the many nodes in the global pool are in Error state, but
+     below the global unhealthy percentage, the cluster would be evaluated to
+     Warning.
+     A Warning health state does not impact cluster upgrade or other monitoring
+     triggered by Error health state.
+     But even one node of type SpecialNodeType in Error would make cluster
+     unhealthy (in Error rather than Warning/Ok), which triggers rollback or
+     pauses the cluster upgrade, depending on the upgrade configuration.
+     Conversely, setting the global MaxPercentUnhealthyNodes to 0, and setting
+     SpecialNodeType's max percent unhealthy nodes to 100,
+     with one node of type SpecialNodeType in Error state would still put the
+     cluster in an Error state, since the global restriction is more strict in
+     this case.
+    :type node_type_health_policy_map:
+     list[~azure.servicefabric.models.NodeTypeHealthPolicyMapItem]
     """
 
     _attribute_map = {
@@ -5669,6 +5757,7 @@ class ClusterHealthPolicy(Model):
         'max_percent_unhealthy_nodes': {'key': 'MaxPercentUnhealthyNodes', 'type': 'int'},
         'max_percent_unhealthy_applications': {'key': 'MaxPercentUnhealthyApplications', 'type': 'int'},
         'application_type_health_policy_map': {'key': 'ApplicationTypeHealthPolicyMap', 'type': '[ApplicationTypeHealthPolicyMapItem]'},
+        'node_type_health_policy_map': {'key': 'NodeTypeHealthPolicyMap', 'type': '[NodeTypeHealthPolicyMapItem]'},
     }
 
     def __init__(self, **kwargs):
@@ -5677,6 +5766,7 @@ class ClusterHealthPolicy(Model):
         self.max_percent_unhealthy_nodes = kwargs.get('max_percent_unhealthy_nodes', 0)
         self.max_percent_unhealthy_applications = kwargs.get('max_percent_unhealthy_applications', 0)
         self.application_type_health_policy_map = kwargs.get('application_type_health_policy_map', None)
+        self.node_type_health_policy_map = kwargs.get('node_type_health_policy_map', None)
 
 
 class ClusterHealthReportExpiredEvent(ClusterEvent):
@@ -5981,17 +6071,10 @@ class ClusterUpgradeDescriptionObject(Model):
      evaluate the health of the cluster during a cluster upgrade.
     :type cluster_upgrade_health_policy:
      ~azure.servicefabric.models.ClusterUpgradeHealthPolicyObject
-    :param application_health_policy_map: Defines a map that contains specific
-     application health policies for different applications.
-     Each entry specifies as key the application name and as value an
-     ApplicationHealthPolicy used to evaluate the application health.
-     If an application is not specified in the map, the application health
-     evaluation uses the ApplicationHealthPolicy found in its application
-     manifest or the default application health policy (if no health policy is
-     defined in the manifest).
-     The map is empty by default.
+    :param application_health_policy_map: Represents the map of application
+     health policies for a ServiceFabric cluster upgrade
     :type application_health_policy_map:
-     list[~azure.servicefabric.models.ApplicationHealthPolicyMapItem]
+     ~azure.servicefabric.models.ApplicationHealthPolicyMapObject
     """
 
     _attribute_map = {
@@ -6006,7 +6089,7 @@ class ClusterUpgradeDescriptionObject(Model):
         'monitoring_policy': {'key': 'MonitoringPolicy', 'type': 'MonitoringPolicyDescription'},
         'cluster_health_policy': {'key': 'ClusterHealthPolicy', 'type': 'ClusterHealthPolicy'},
         'cluster_upgrade_health_policy': {'key': 'ClusterUpgradeHealthPolicy', 'type': 'ClusterUpgradeHealthPolicyObject'},
-        'application_health_policy_map': {'key': 'ApplicationHealthPolicyMap', 'type': '[ApplicationHealthPolicyMapItem]'},
+        'application_health_policy_map': {'key': 'ApplicationHealthPolicyMap', 'type': 'ApplicationHealthPolicyMapObject'},
     }
 
     def __init__(self, **kwargs):
@@ -9307,6 +9390,44 @@ class DoublePropertyValue(PropertyValue):
         self.kind = 'Double'
 
 
+class DsmsAzureBlobBackupStorageDescription(BackupStorageDescription):
+    """Describes the parameters for Dsms Azure blob store used for storing and
+    enumerating backups.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param friendly_name: Friendly name for this backup storage.
+    :type friendly_name: str
+    :param storage_kind: Required. Constant filled by server.
+    :type storage_kind: str
+    :param storage_credentials_source_location: Required. The source location
+     of the storage credentials to connect to the Dsms Azure blob store.
+    :type storage_credentials_source_location: str
+    :param container_name: Required. The name of the container in the blob
+     store to store and enumerate backups from.
+    :type container_name: str
+    """
+
+    _validation = {
+        'storage_kind': {'required': True},
+        'storage_credentials_source_location': {'required': True},
+        'container_name': {'required': True},
+    }
+
+    _attribute_map = {
+        'friendly_name': {'key': 'FriendlyName', 'type': 'str'},
+        'storage_kind': {'key': 'StorageKind', 'type': 'str'},
+        'storage_credentials_source_location': {'key': 'StorageCredentialsSourceLocation', 'type': 'str'},
+        'container_name': {'key': 'ContainerName', 'type': 'str'},
+    }
+
+    def __init__(self, **kwargs):
+        super(DsmsAzureBlobBackupStorageDescription, self).__init__(**kwargs)
+        self.storage_credentials_source_location = kwargs.get('storage_credentials_source_location', None)
+        self.container_name = kwargs.get('container_name', None)
+        self.storage_kind = 'DsmsAzureBlobStore'
+
+
 class EnableBackupDescription(Model):
     """Specifies the parameters needed to enable periodic backup.
 
@@ -11373,6 +11494,23 @@ class InlinedValueSecretResourceProperties(SecretResourceProperties):
         self.kind = 'inlinedValue'
 
 
+class InstanceLifecycleDescription(Model):
+    """Describes how the instance will behave.
+
+    :param restore_replica_location_after_upgrade: If set to true, move/swap
+     replica to original location after upgrade.
+    :type restore_replica_location_after_upgrade: bool
+    """
+
+    _attribute_map = {
+        'restore_replica_location_after_upgrade': {'key': 'RestoreReplicaLocationAfterUpgrade', 'type': 'bool'},
+    }
+
+    def __init__(self, **kwargs):
+        super(InstanceLifecycleDescription, self).__init__(**kwargs)
+        self.restore_replica_location_after_upgrade = kwargs.get('restore_replica_location_after_upgrade', None)
+
+
 class Int64PropertyValue(PropertyValue):
     """Describes a Service Fabric property value of type Int64.
 
@@ -11600,6 +11738,117 @@ class KeyValueStoreReplicaStatus(ReplicaStatusBase):
         self.copy_notification_current_progress = kwargs.get('copy_notification_current_progress', None)
         self.status_details = kwargs.get('status_details', None)
         self.kind = 'KeyValueStore'
+
+
+class LoadedPartitionInformationQueryDescription(Model):
+    """Represents data structure that contains query information.
+
+    :param metric_name: Name of the metric for which this information is
+     provided.
+    :type metric_name: str
+    :param service_name: Name of the service this partition belongs to.
+    :type service_name: str
+    :param ordering: Ordering of partitions' load. Possible values include:
+     'Desc', 'Asc'. Default value: "Desc" .
+    :type ordering: str or ~azure.servicefabric.models.Ordering
+    :param max_results: The maximum number of results to be returned as part
+     of the paged queries. This parameter defines the upper bound on the number
+     of results returned. The results returned can be less than the specified
+     maximum results if they do not fit in the message as per the max message
+     size restrictions defined in the configuration. If this parameter is zero
+     or not specified, the paged query includes as many results as possible
+     that fit in the return message.
+    :type max_results: long
+    :param continuation_token: The continuation token parameter is used to
+     obtain next set of results. The continuation token is included in the
+     response of the API when the results from the system do not fit in a
+     single response. When this value is passed to the next API call, the API
+     returns next set of results. If there are no further results, then the
+     continuation token is not included in the response.
+    :type continuation_token: str
+    """
+
+    _attribute_map = {
+        'metric_name': {'key': 'MetricName', 'type': 'str'},
+        'service_name': {'key': 'ServiceName', 'type': 'str'},
+        'ordering': {'key': 'Ordering', 'type': 'str'},
+        'max_results': {'key': 'MaxResults', 'type': 'long'},
+        'continuation_token': {'key': 'ContinuationToken', 'type': 'str'},
+    }
+
+    def __init__(self, **kwargs):
+        super(LoadedPartitionInformationQueryDescription, self).__init__(**kwargs)
+        self.metric_name = kwargs.get('metric_name', None)
+        self.service_name = kwargs.get('service_name', None)
+        self.ordering = kwargs.get('ordering', "Desc")
+        self.max_results = kwargs.get('max_results', None)
+        self.continuation_token = kwargs.get('continuation_token', None)
+
+
+class LoadedPartitionInformationResult(Model):
+    """Represents partition information.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param service_name: Required. Name of the service this partition belongs
+     to.
+    :type service_name: str
+    :param partition_id: Required. Id of the partition.
+    :type partition_id: str
+    :param metric_name: Required. Name of the metric for which this
+     information is provided.
+    :type metric_name: str
+    :param load: Required. Load for metric.
+    :type load: long
+    """
+
+    _validation = {
+        'service_name': {'required': True},
+        'partition_id': {'required': True},
+        'metric_name': {'required': True},
+        'load': {'required': True},
+    }
+
+    _attribute_map = {
+        'service_name': {'key': 'ServiceName', 'type': 'str'},
+        'partition_id': {'key': 'PartitionId', 'type': 'str'},
+        'metric_name': {'key': 'MetricName', 'type': 'str'},
+        'load': {'key': 'Load', 'type': 'long'},
+    }
+
+    def __init__(self, **kwargs):
+        super(LoadedPartitionInformationResult, self).__init__(**kwargs)
+        self.service_name = kwargs.get('service_name', None)
+        self.partition_id = kwargs.get('partition_id', None)
+        self.metric_name = kwargs.get('metric_name', None)
+        self.load = kwargs.get('load', None)
+
+
+class LoadedPartitionInformationResultList(Model):
+    """Represents data structure that contains top/least loaded partitions for a
+    certain metric.
+
+    :param continuation_token: The continuation token parameter is used to
+     obtain next set of results. The continuation token is included in the
+     response of the API when the results from the system do not fit in a
+     single response. When this value is passed to the next API call, the API
+     returns next set of results. If there are no further results, then the
+     continuation token is not included in the response.
+    :type continuation_token: str
+    :param items: List of application information.
+    :type items:
+     list[~azure.servicefabric.models.LoadedPartitionInformationResult]
+    """
+
+    _attribute_map = {
+        'continuation_token': {'key': 'ContinuationToken', 'type': 'str'},
+        'items': {'key': 'Items', 'type': '[LoadedPartitionInformationResult]'},
+    }
+
+    def __init__(self, **kwargs):
+        super(LoadedPartitionInformationResultList, self).__init__(**kwargs)
+        self.continuation_token = kwargs.get('continuation_token', None)
+        self.items = kwargs.get('items', None)
 
 
 class LoadMetricInformation(Model):
@@ -11967,6 +12216,76 @@ class ManagedApplicationIdentityDescription(Model):
         super(ManagedApplicationIdentityDescription, self).__init__(**kwargs)
         self.token_service_endpoint = kwargs.get('token_service_endpoint', None)
         self.managed_identities = kwargs.get('managed_identities', None)
+
+
+class ManagedIdentityAzureBlobBackupStorageDescription(BackupStorageDescription):
+    """Describes the parameters for Azure blob store (connected using managed
+    identity) used for storing and enumerating backups.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param friendly_name: Friendly name for this backup storage.
+    :type friendly_name: str
+    :param storage_kind: Required. Constant filled by server.
+    :type storage_kind: str
+    :param managed_identity_type: Required. The type of managed identity to be
+     used to connect to Azure Blob Store via Managed Identity. Possible values
+     include: 'Invalid', 'VMSS', 'Cluster'
+    :type managed_identity_type: str or
+     ~azure.servicefabric.models.ManagedIdentityType
+    :param blob_service_uri: Required. The Blob Service Uri to connect to the
+     Azure blob store..
+    :type blob_service_uri: str
+    :param container_name: Required. The name of the container in the blob
+     store to store and enumerate backups from.
+    :type container_name: str
+    """
+
+    _validation = {
+        'storage_kind': {'required': True},
+        'managed_identity_type': {'required': True},
+        'blob_service_uri': {'required': True},
+        'container_name': {'required': True},
+    }
+
+    _attribute_map = {
+        'friendly_name': {'key': 'FriendlyName', 'type': 'str'},
+        'storage_kind': {'key': 'StorageKind', 'type': 'str'},
+        'managed_identity_type': {'key': 'ManagedIdentityType', 'type': 'str'},
+        'blob_service_uri': {'key': 'BlobServiceUri', 'type': 'str'},
+        'container_name': {'key': 'ContainerName', 'type': 'str'},
+    }
+
+    def __init__(self, **kwargs):
+        super(ManagedIdentityAzureBlobBackupStorageDescription, self).__init__(**kwargs)
+        self.managed_identity_type = kwargs.get('managed_identity_type', None)
+        self.blob_service_uri = kwargs.get('blob_service_uri', None)
+        self.container_name = kwargs.get('container_name', None)
+        self.storage_kind = 'ManagedIdentityAzureBlobStore'
+
+
+class MetricLoadDescription(Model):
+    """Specifies metric load information.
+
+    :param metric_name: The name of the reported metric.
+    :type metric_name: str
+    :param current_load: The current value of the metric load.
+    :type current_load: long
+    :param predicted_load: The predicted value of the metric load.
+    :type predicted_load: long
+    """
+
+    _attribute_map = {
+        'metric_name': {'key': 'MetricName', 'type': 'str'},
+        'current_load': {'key': 'CurrentLoad', 'type': 'long'},
+        'predicted_load': {'key': 'PredictedLoad', 'type': 'long'},
+    }
+
+    def __init__(self, **kwargs):
+        super(MetricLoadDescription, self).__init__(**kwargs)
+        self.metric_name = kwargs.get('metric_name', None)
+        self.current_load = kwargs.get('current_load', None)
+        self.predicted_load = kwargs.get('predicted_load', None)
 
 
 class MonitoringPolicyDescription(Model):
@@ -13073,6 +13392,9 @@ class NodeInfo(Model):
     :param node_down_at: Date time in UTC when the node went down. If node has
      never been down then this value will be zero date time.
     :type node_down_at: datetime
+    :param node_tags: List that contains tags, which will be applied to the
+     nodes.
+    :type node_tags: list[str]
     """
 
     _attribute_map = {
@@ -13094,6 +13416,7 @@ class NodeInfo(Model):
         'node_down_time_in_seconds': {'key': 'NodeDownTimeInSeconds', 'type': 'str'},
         'node_up_at': {'key': 'NodeUpAt', 'type': 'iso-8601'},
         'node_down_at': {'key': 'NodeDownAt', 'type': 'iso-8601'},
+        'node_tags': {'key': 'NodeTags', 'type': '[str]'},
     }
 
     def __init__(self, **kwargs):
@@ -13116,6 +13439,7 @@ class NodeInfo(Model):
         self.node_down_time_in_seconds = kwargs.get('node_down_time_in_seconds', None)
         self.node_up_at = kwargs.get('node_up_at', None)
         self.node_down_at = kwargs.get('node_down_at', None)
+        self.node_tags = kwargs.get('node_tags', None)
 
 
 class NodeLoadInfo(Model):
@@ -13735,6 +14059,34 @@ class NodesHealthEvaluation(HealthEvaluation):
         self.kind = 'Nodes'
 
 
+class NodeTagsDescription(Model):
+    """Describes the tags required for placement or running of the service.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param count: Required. The number of tags.
+    :type count: int
+    :param tags: Required. Array of size specified by the ‘Count’ parameter,
+     for the placement tags of the service.
+    :type tags: list[str]
+    """
+
+    _validation = {
+        'count': {'required': True},
+        'tags': {'required': True},
+    }
+
+    _attribute_map = {
+        'count': {'key': 'Count', 'type': 'int'},
+        'tags': {'key': 'Tags', 'type': '[str]'},
+    }
+
+    def __init__(self, **kwargs):
+        super(NodeTagsDescription, self).__init__(**kwargs)
+        self.count = kwargs.get('count', None)
+        self.tags = kwargs.get('tags', None)
+
+
 class NodeTransitionProgress(Model):
     """Information about an NodeTransition operation.  This class contains an
     OperationState and a NodeTransitionResult.  The NodeTransitionResult is not
@@ -13783,6 +14135,103 @@ class NodeTransitionResult(Model):
         super(NodeTransitionResult, self).__init__(**kwargs)
         self.error_code = kwargs.get('error_code', None)
         self.node_result = kwargs.get('node_result', None)
+
+
+class NodeTypeHealthPolicyMapItem(Model):
+    """Defines an item in NodeTypeHealthPolicyMap.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param key: Required. The key of the node type health policy map item.
+     This is the name of the node type.
+    :type key: str
+    :param value: Required. The value of the node type health policy map item.
+     If the percentage is respected but there is at least one unhealthy node in
+     the node type, the health is evaluated as Warning.
+     The percentage is calculated by dividing the number of unhealthy nodes
+     over the total number of nodes in the node type.
+     The computation rounds up to tolerate one failure on small numbers of
+     nodes.
+     The max percent unhealthy nodes allowed for the node type. Must be between
+     zero and 100.
+    :type value: int
+    """
+
+    _validation = {
+        'key': {'required': True},
+        'value': {'required': True},
+    }
+
+    _attribute_map = {
+        'key': {'key': 'Key', 'type': 'str'},
+        'value': {'key': 'Value', 'type': 'int'},
+    }
+
+    def __init__(self, **kwargs):
+        super(NodeTypeHealthPolicyMapItem, self).__init__(**kwargs)
+        self.key = kwargs.get('key', None)
+        self.value = kwargs.get('value', None)
+
+
+class NodeTypeNodesHealthEvaluation(HealthEvaluation):
+    """Represents health evaluation for nodes of a particular node type. The node
+    type nodes evaluation can be returned when cluster health evaluation
+    returns unhealthy aggregated health state, either Error or Warning. It
+    contains health evaluations for each unhealthy node of the included node
+    type that impacted current aggregated health state.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param aggregated_health_state: The health state of a Service Fabric
+     entity such as Cluster, Node, Application, Service, Partition, Replica
+     etc. Possible values include: 'Invalid', 'Ok', 'Warning', 'Error',
+     'Unknown'
+    :type aggregated_health_state: str or
+     ~azure.servicefabric.models.HealthState
+    :param description: Description of the health evaluation, which represents
+     a summary of the evaluation process.
+    :type description: str
+    :param kind: Required. Constant filled by server.
+    :type kind: str
+    :param node_type_name: The node type name as defined in the cluster
+     manifest.
+    :type node_type_name: str
+    :param max_percent_unhealthy_nodes: Maximum allowed percentage of
+     unhealthy nodes for the node type, specified as an entry in
+     NodeTypeHealthPolicyMap.
+    :type max_percent_unhealthy_nodes: int
+    :param total_count: Total number of nodes of the node type found in the
+     health store.
+    :type total_count: long
+    :param unhealthy_evaluations: List of unhealthy evaluations that led to
+     the aggregated health state. Includes all the unhealthy
+     NodeHealthEvaluation of this node type that impacted the aggregated
+     health.
+    :type unhealthy_evaluations:
+     list[~azure.servicefabric.models.HealthEvaluationWrapper]
+    """
+
+    _validation = {
+        'kind': {'required': True},
+    }
+
+    _attribute_map = {
+        'aggregated_health_state': {'key': 'AggregatedHealthState', 'type': 'str'},
+        'description': {'key': 'Description', 'type': 'str'},
+        'kind': {'key': 'Kind', 'type': 'str'},
+        'node_type_name': {'key': 'NodeTypeName', 'type': 'str'},
+        'max_percent_unhealthy_nodes': {'key': 'MaxPercentUnhealthyNodes', 'type': 'int'},
+        'total_count': {'key': 'TotalCount', 'type': 'long'},
+        'unhealthy_evaluations': {'key': 'UnhealthyEvaluations', 'type': '[HealthEvaluationWrapper]'},
+    }
+
+    def __init__(self, **kwargs):
+        super(NodeTypeNodesHealthEvaluation, self).__init__(**kwargs)
+        self.node_type_name = kwargs.get('node_type_name', None)
+        self.max_percent_unhealthy_nodes = kwargs.get('max_percent_unhealthy_nodes', None)
+        self.total_count = kwargs.get('total_count', None)
+        self.unhealthy_evaluations = kwargs.get('unhealthy_evaluations', None)
+        self.kind = 'NodeTypeNodes'
 
 
 class NodeUpEvent(NodeEvent):
@@ -14516,6 +14965,34 @@ class PagedSubNameInfoList(Model):
         self.sub_names = kwargs.get('sub_names', None)
 
 
+class PagedUpdatePartitionLoadResultList(Model):
+    """The list of results of the call UpdatePartitionLoad. The list is paged when
+    all of the results cannot fit in a single message. The next set of results
+    can be obtained by executing the same query with the continuation token
+    provided in this list.
+
+    :param continuation_token: The continuation token parameter is used to
+     obtain next set of results. The continuation token is included in the
+     response of the API when the results from the system do not fit in a
+     single response. When this value is passed to the next API call, the API
+     returns next set of results. If there are no further results, then the
+     continuation token is not included in the response.
+    :type continuation_token: str
+    :param items: List of partition load update information.
+    :type items: list[~azure.servicefabric.models.UpdatePartitionLoadResult]
+    """
+
+    _attribute_map = {
+        'continuation_token': {'key': 'ContinuationToken', 'type': 'str'},
+        'items': {'key': 'Items', 'type': '[UpdatePartitionLoadResult]'},
+    }
+
+    def __init__(self, **kwargs):
+        super(PagedUpdatePartitionLoadResultList, self).__init__(**kwargs)
+        self.continuation_token = kwargs.get('continuation_token', None)
+        self.items = kwargs.get('items', None)
+
+
 class PagedVolumeResourceDescriptionList(Model):
     """The list of volume resources. The list is paged when all of the results
     cannot fit in a single message. The next set of results can be obtained by
@@ -15100,6 +15577,43 @@ class PartitionLoadInformation(Model):
         self.partition_id = kwargs.get('partition_id', None)
         self.primary_load_metric_reports = kwargs.get('primary_load_metric_reports', None)
         self.secondary_load_metric_reports = kwargs.get('secondary_load_metric_reports', None)
+
+
+class PartitionMetricLoadDescription(Model):
+    """Represents load information for a partition, which contains the metrics
+    load information about primary, all secondary replicas/instances or a
+    specific secondary replica/instance located on a specific node.
+
+    :param partition_id: Id of the partition.
+    :type partition_id: str
+    :param primary_replica_load_entries: Partition's load information for
+     primary replica, in case partition is from a stateful service.
+    :type primary_replica_load_entries:
+     list[~azure.servicefabric.models.MetricLoadDescription]
+    :param secondary_replicas_or_instances_load_entries: Partition's load
+     information for all secondary replicas or instances.
+    :type secondary_replicas_or_instances_load_entries:
+     list[~azure.servicefabric.models.MetricLoadDescription]
+    :param secondary_replica_or_instance_load_entries_per_node: Partition's
+     load information for a specific secondary replica or instance located on a
+     specific node.
+    :type secondary_replica_or_instance_load_entries_per_node:
+     list[~azure.servicefabric.models.ReplicaMetricLoadDescription]
+    """
+
+    _attribute_map = {
+        'partition_id': {'key': 'PartitionId', 'type': 'str'},
+        'primary_replica_load_entries': {'key': 'PrimaryReplicaLoadEntries', 'type': '[MetricLoadDescription]'},
+        'secondary_replicas_or_instances_load_entries': {'key': 'SecondaryReplicasOrInstancesLoadEntries', 'type': '[MetricLoadDescription]'},
+        'secondary_replica_or_instance_load_entries_per_node': {'key': 'SecondaryReplicaOrInstanceLoadEntriesPerNode', 'type': '[ReplicaMetricLoadDescription]'},
+    }
+
+    def __init__(self, **kwargs):
+        super(PartitionMetricLoadDescription, self).__init__(**kwargs)
+        self.partition_id = kwargs.get('partition_id', None)
+        self.primary_replica_load_entries = kwargs.get('primary_replica_load_entries', None)
+        self.secondary_replicas_or_instances_load_entries = kwargs.get('secondary_replicas_or_instances_load_entries', None)
+        self.secondary_replica_or_instance_load_entries_per_node = kwargs.get('secondary_replica_or_instance_load_entries_per_node', None)
 
 
 class PartitionNewHealthReportEvent(PartitionEvent):
@@ -16856,6 +17370,52 @@ class ReplicaInfo(Model):
         self.service_kind = None
 
 
+class ReplicaLifecycleDescription(Model):
+    """Describes how the replica will behave.
+
+    :param is_singleton_replica_move_allowed_during_upgrade: If set to true,
+     replicas with a target replica set size of 1 will be permitted to move
+     during upgrade.
+    :type is_singleton_replica_move_allowed_during_upgrade: bool
+    :param restore_replica_location_after_upgrade: If set to true, move/swap
+     replica to original location after upgrade.
+    :type restore_replica_location_after_upgrade: bool
+    """
+
+    _attribute_map = {
+        'is_singleton_replica_move_allowed_during_upgrade': {'key': 'IsSingletonReplicaMoveAllowedDuringUpgrade', 'type': 'bool'},
+        'restore_replica_location_after_upgrade': {'key': 'RestoreReplicaLocationAfterUpgrade', 'type': 'bool'},
+    }
+
+    def __init__(self, **kwargs):
+        super(ReplicaLifecycleDescription, self).__init__(**kwargs)
+        self.is_singleton_replica_move_allowed_during_upgrade = kwargs.get('is_singleton_replica_move_allowed_during_upgrade', None)
+        self.restore_replica_location_after_upgrade = kwargs.get('restore_replica_location_after_upgrade', None)
+
+
+class ReplicaMetricLoadDescription(Model):
+    """Specifies metric loads of a partition's specific secondary replica or
+    instance.
+
+    :param node_name: Node name of a specific secondary replica or instance.
+    :type node_name: str
+    :param replica_or_instance_load_entries: Loads of a different metrics for
+     a partition's secondary replica or instance.
+    :type replica_or_instance_load_entries:
+     list[~azure.servicefabric.models.MetricLoadDescription]
+    """
+
+    _attribute_map = {
+        'node_name': {'key': 'NodeName', 'type': 'str'},
+        'replica_or_instance_load_entries': {'key': 'ReplicaOrInstanceLoadEntries', 'type': '[MetricLoadDescription]'},
+    }
+
+    def __init__(self, **kwargs):
+        super(ReplicaMetricLoadDescription, self).__init__(**kwargs)
+        self.node_name = kwargs.get('node_name', None)
+        self.replica_or_instance_load_entries = kwargs.get('replica_or_instance_load_entries', None)
+
+
 class ReplicasHealthEvaluation(HealthEvaluation):
     """Represents health evaluation for replicas, containing health evaluations
     for each unhealthy replica that impacted current aggregated health state.
@@ -18256,6 +18816,12 @@ class ServiceDescription(Model):
     :param scaling_policies: Scaling policies for this service.
     :type scaling_policies:
      list[~azure.servicefabric.models.ScalingPolicyDescription]
+    :param tags_required_to_place: Tags for placement of this service.
+    :type tags_required_to_place:
+     ~azure.servicefabric.models.NodeTagsDescription
+    :param tags_required_to_run: Tags for running of this service.
+    :type tags_required_to_run:
+     ~azure.servicefabric.models.NodeTagsDescription
     :param service_kind: Required. Constant filled by server.
     :type service_kind: str
     """
@@ -18282,6 +18848,8 @@ class ServiceDescription(Model):
         'service_package_activation_mode': {'key': 'ServicePackageActivationMode', 'type': 'str'},
         'service_dns_name': {'key': 'ServiceDnsName', 'type': 'str'},
         'scaling_policies': {'key': 'ScalingPolicies', 'type': '[ScalingPolicyDescription]'},
+        'tags_required_to_place': {'key': 'TagsRequiredToPlace', 'type': 'NodeTagsDescription'},
+        'tags_required_to_run': {'key': 'TagsRequiredToRun', 'type': 'NodeTagsDescription'},
         'service_kind': {'key': 'ServiceKind', 'type': 'str'},
     }
 
@@ -18305,6 +18873,8 @@ class ServiceDescription(Model):
         self.service_package_activation_mode = kwargs.get('service_package_activation_mode', None)
         self.service_dns_name = kwargs.get('service_dns_name', None)
         self.scaling_policies = kwargs.get('scaling_policies', None)
+        self.tags_required_to_place = kwargs.get('tags_required_to_place', None)
+        self.tags_required_to_run = kwargs.get('tags_required_to_run', None)
         self.service_kind = None
 
 
@@ -19004,6 +19574,7 @@ class ServicePlacementPolicyDescription(Model):
     You probably want to use the sub-classes and not this class directly. Known
     sub-classes are: ServicePlacementInvalidDomainPolicyDescription,
     ServicePlacementNonPartiallyPlaceServicePolicyDescription,
+    ServicePlacementAllowMultipleStatelessInstancesOnNodePolicyDescription,
     ServicePlacementPreferPrimaryDomainPolicyDescription,
     ServicePlacementRequiredDomainPolicyDescription,
     ServicePlacementRequireDomainDistributionPolicyDescription
@@ -19023,12 +19594,42 @@ class ServicePlacementPolicyDescription(Model):
     }
 
     _subtype_map = {
-        'type': {'InvalidDomain': 'ServicePlacementInvalidDomainPolicyDescription', 'NonPartiallyPlaceService': 'ServicePlacementNonPartiallyPlaceServicePolicyDescription', 'PreferPrimaryDomain': 'ServicePlacementPreferPrimaryDomainPolicyDescription', 'RequireDomain': 'ServicePlacementRequiredDomainPolicyDescription', 'RequireDomainDistribution': 'ServicePlacementRequireDomainDistributionPolicyDescription'}
+        'type': {'InvalidDomain': 'ServicePlacementInvalidDomainPolicyDescription', 'NonPartiallyPlaceService': 'ServicePlacementNonPartiallyPlaceServicePolicyDescription', 'AllowMultipleStatelessInstancesOnNode': 'ServicePlacementAllowMultipleStatelessInstancesOnNodePolicyDescription', 'PreferPrimaryDomain': 'ServicePlacementPreferPrimaryDomainPolicyDescription', 'RequireDomain': 'ServicePlacementRequiredDomainPolicyDescription', 'RequireDomainDistribution': 'ServicePlacementRequireDomainDistributionPolicyDescription'}
     }
 
     def __init__(self, **kwargs):
         super(ServicePlacementPolicyDescription, self).__init__(**kwargs)
         self.type = None
+
+
+class ServicePlacementAllowMultipleStatelessInstancesOnNodePolicyDescription(ServicePlacementPolicyDescription):
+    """Describes the policy to be used for placement of a Service Fabric service
+    allowing multiple stateless instances of a partition of the service to be
+    placed on a node.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param type: Required. Constant filled by server.
+    :type type: str
+    :param domain_name: Holdover from other policy descriptions, not used for
+     this policy, values are ignored by runtime. Keeping it for any
+     backwards-compatibility with clients.
+    :type domain_name: str
+    """
+
+    _validation = {
+        'type': {'required': True},
+    }
+
+    _attribute_map = {
+        'type': {'key': 'Type', 'type': 'str'},
+        'domain_name': {'key': 'DomainName', 'type': 'str'},
+    }
+
+    def __init__(self, **kwargs):
+        super(ServicePlacementAllowMultipleStatelessInstancesOnNodePolicyDescription, self).__init__(**kwargs)
+        self.domain_name = kwargs.get('domain_name', None)
+        self.type = 'AllowMultipleStatelessInstancesOnNode'
 
 
 class ServicePlacementInvalidDomainPolicyDescription(ServicePlacementPolicyDescription):
@@ -19766,6 +20367,16 @@ class ServiceUpdateDescription(Model):
      set. The value is 8192.
      - InstanceCloseDelayDuration - Indicates the InstanceCloseDelayDuration
      property is set. The value is 16384.
+     - InstanceRestartWaitDuration - Indicates the InstanceCloseDelayDuration
+     property is set. The value is 32768.
+     - DropSourceReplicaOnMove - Indicates the DropSourceReplicaOnMove property
+     is set. The value is 65536.
+     - ServiceDnsName - Indicates the ServiceDnsName property is set. The value
+     is 131072.
+     - TagsForPlacement - Indicates the TagsForPlacement property is set. The
+     value is 1048576.
+     - TagsForRunning - Indicates the TagsForRunning property is set. The value
+     is 2097152.
     :type flags: str
     :param placement_constraints: The placement constraints as a string.
      Placement constraints are boolean expressions on node properties and allow
@@ -19788,6 +20399,12 @@ class ServiceUpdateDescription(Model):
     :param scaling_policies: Scaling policies for this service.
     :type scaling_policies:
      list[~azure.servicefabric.models.ScalingPolicyDescription]
+    :param service_dns_name: The DNS name of the service.
+    :type service_dns_name: str
+    :param tags_for_placement: Tags for placement of this service.
+    :type tags_for_placement: ~azure.servicefabric.models.NodeTagsDescription
+    :param tags_for_running: Tags for running of this service.
+    :type tags_for_running: ~azure.servicefabric.models.NodeTagsDescription
     :param service_kind: Required. Constant filled by server.
     :type service_kind: str
     """
@@ -19804,6 +20421,9 @@ class ServiceUpdateDescription(Model):
         'service_placement_policies': {'key': 'ServicePlacementPolicies', 'type': '[ServicePlacementPolicyDescription]'},
         'default_move_cost': {'key': 'DefaultMoveCost', 'type': 'str'},
         'scaling_policies': {'key': 'ScalingPolicies', 'type': '[ScalingPolicyDescription]'},
+        'service_dns_name': {'key': 'ServiceDnsName', 'type': 'str'},
+        'tags_for_placement': {'key': 'TagsForPlacement', 'type': 'NodeTagsDescription'},
+        'tags_for_running': {'key': 'TagsForRunning', 'type': 'NodeTagsDescription'},
         'service_kind': {'key': 'ServiceKind', 'type': 'str'},
     }
 
@@ -19820,6 +20440,9 @@ class ServiceUpdateDescription(Model):
         self.service_placement_policies = kwargs.get('service_placement_policies', None)
         self.default_move_cost = kwargs.get('default_move_cost', None)
         self.scaling_policies = kwargs.get('scaling_policies', None)
+        self.service_dns_name = kwargs.get('service_dns_name', None)
+        self.tags_for_placement = kwargs.get('tags_for_placement', None)
+        self.tags_for_running = kwargs.get('tags_for_running', None)
         self.service_kind = None
 
 
@@ -20324,6 +20947,12 @@ class StatefulServiceDescription(ServiceDescription):
     :param scaling_policies: Scaling policies for this service.
     :type scaling_policies:
      list[~azure.servicefabric.models.ScalingPolicyDescription]
+    :param tags_required_to_place: Tags for placement of this service.
+    :type tags_required_to_place:
+     ~azure.servicefabric.models.NodeTagsDescription
+    :param tags_required_to_run: Tags for running of this service.
+    :type tags_required_to_run:
+     ~azure.servicefabric.models.NodeTagsDescription
     :param service_kind: Required. Constant filled by server.
     :type service_kind: str
     :param target_replica_set_size: Required. The target replica set size as a
@@ -20353,6 +20982,8 @@ class StatefulServiceDescription(ServiceDescription):
      property is set. The value is 4.
      - ServicePlacementTimeLimit - Indicates the ServicePlacementTimeLimit
      property is set. The value is 8.
+     - DropSourceReplicaOnMove - Indicates the DropSourceReplicaOnMove property
+     is set. The value is 16.
     :type flags: int
     :param replica_restart_wait_duration_seconds: The duration, in seconds,
      between when a replica goes down and when a new replica is created.
@@ -20366,6 +20997,15 @@ class StatefulServiceDescription(ServiceDescription):
     :param service_placement_time_limit_seconds: The duration for which
      replicas can stay InBuild before reporting that build is stuck.
     :type service_placement_time_limit_seconds: long
+    :param drop_source_replica_on_move: Indicates whether to drop source
+     Secondary replica even if the target replica has not finished build. If
+     desired behavior is to drop it as soon as possible the value of this
+     property is true, if not it is false.
+    :type drop_source_replica_on_move: bool
+    :param replica_lifecycle_description: Defines how replicas of this service
+     will behave during their lifecycle.
+    :type replica_lifecycle_description:
+     ~azure.servicefabric.models.ReplicaLifecycleDescription
     """
 
     _validation = {
@@ -20397,6 +21037,8 @@ class StatefulServiceDescription(ServiceDescription):
         'service_package_activation_mode': {'key': 'ServicePackageActivationMode', 'type': 'str'},
         'service_dns_name': {'key': 'ServiceDnsName', 'type': 'str'},
         'scaling_policies': {'key': 'ScalingPolicies', 'type': '[ScalingPolicyDescription]'},
+        'tags_required_to_place': {'key': 'TagsRequiredToPlace', 'type': 'NodeTagsDescription'},
+        'tags_required_to_run': {'key': 'TagsRequiredToRun', 'type': 'NodeTagsDescription'},
         'service_kind': {'key': 'ServiceKind', 'type': 'str'},
         'target_replica_set_size': {'key': 'TargetReplicaSetSize', 'type': 'int'},
         'min_replica_set_size': {'key': 'MinReplicaSetSize', 'type': 'int'},
@@ -20406,6 +21048,8 @@ class StatefulServiceDescription(ServiceDescription):
         'quorum_loss_wait_duration_seconds': {'key': 'QuorumLossWaitDurationSeconds', 'type': 'long'},
         'stand_by_replica_keep_duration_seconds': {'key': 'StandByReplicaKeepDurationSeconds', 'type': 'long'},
         'service_placement_time_limit_seconds': {'key': 'ServicePlacementTimeLimitSeconds', 'type': 'long'},
+        'drop_source_replica_on_move': {'key': 'DropSourceReplicaOnMove', 'type': 'bool'},
+        'replica_lifecycle_description': {'key': 'ReplicaLifecycleDescription', 'type': 'ReplicaLifecycleDescription'},
     }
 
     def __init__(self, **kwargs):
@@ -20418,6 +21062,8 @@ class StatefulServiceDescription(ServiceDescription):
         self.quorum_loss_wait_duration_seconds = kwargs.get('quorum_loss_wait_duration_seconds', None)
         self.stand_by_replica_keep_duration_seconds = kwargs.get('stand_by_replica_keep_duration_seconds', None)
         self.service_placement_time_limit_seconds = kwargs.get('service_placement_time_limit_seconds', None)
+        self.drop_source_replica_on_move = kwargs.get('drop_source_replica_on_move', None)
+        self.replica_lifecycle_description = kwargs.get('replica_lifecycle_description', None)
         self.service_kind = 'Stateful'
 
 
@@ -20803,6 +21449,16 @@ class StatefulServiceUpdateDescription(ServiceUpdateDescription):
      set. The value is 8192.
      - InstanceCloseDelayDuration - Indicates the InstanceCloseDelayDuration
      property is set. The value is 16384.
+     - InstanceRestartWaitDuration - Indicates the InstanceCloseDelayDuration
+     property is set. The value is 32768.
+     - DropSourceReplicaOnMove - Indicates the DropSourceReplicaOnMove property
+     is set. The value is 65536.
+     - ServiceDnsName - Indicates the ServiceDnsName property is set. The value
+     is 131072.
+     - TagsForPlacement - Indicates the TagsForPlacement property is set. The
+     value is 1048576.
+     - TagsForRunning - Indicates the TagsForRunning property is set. The value
+     is 2097152.
     :type flags: str
     :param placement_constraints: The placement constraints as a string.
      Placement constraints are boolean expressions on node properties and allow
@@ -20825,6 +21481,12 @@ class StatefulServiceUpdateDescription(ServiceUpdateDescription):
     :param scaling_policies: Scaling policies for this service.
     :type scaling_policies:
      list[~azure.servicefabric.models.ScalingPolicyDescription]
+    :param service_dns_name: The DNS name of the service.
+    :type service_dns_name: str
+    :param tags_for_placement: Tags for placement of this service.
+    :type tags_for_placement: ~azure.servicefabric.models.NodeTagsDescription
+    :param tags_for_running: Tags for running of this service.
+    :type tags_for_running: ~azure.servicefabric.models.NodeTagsDescription
     :param service_kind: Required. Constant filled by server.
     :type service_kind: str
     :param target_replica_set_size: The target replica set size as a number.
@@ -20843,6 +21505,15 @@ class StatefulServiceUpdateDescription(ServiceUpdateDescription):
     :param service_placement_time_limit_seconds: The duration for which
      replicas can stay InBuild before reporting that build is stuck.
     :type service_placement_time_limit_seconds: str
+    :param drop_source_replica_on_move: Indicates whether to drop source
+     Secondary replica even if the target replica has not finished build. If
+     desired behavior is to drop it as soon as possible the value of this
+     property is true, if not it is false.
+    :type drop_source_replica_on_move: bool
+    :param replica_lifecycle_description: Defines how replicas of this service
+     will behave during their lifecycle.
+    :type replica_lifecycle_description:
+     ~azure.servicefabric.models.ReplicaLifecycleDescription
     """
 
     _validation = {
@@ -20859,6 +21530,9 @@ class StatefulServiceUpdateDescription(ServiceUpdateDescription):
         'service_placement_policies': {'key': 'ServicePlacementPolicies', 'type': '[ServicePlacementPolicyDescription]'},
         'default_move_cost': {'key': 'DefaultMoveCost', 'type': 'str'},
         'scaling_policies': {'key': 'ScalingPolicies', 'type': '[ScalingPolicyDescription]'},
+        'service_dns_name': {'key': 'ServiceDnsName', 'type': 'str'},
+        'tags_for_placement': {'key': 'TagsForPlacement', 'type': 'NodeTagsDescription'},
+        'tags_for_running': {'key': 'TagsForRunning', 'type': 'NodeTagsDescription'},
         'service_kind': {'key': 'ServiceKind', 'type': 'str'},
         'target_replica_set_size': {'key': 'TargetReplicaSetSize', 'type': 'int'},
         'min_replica_set_size': {'key': 'MinReplicaSetSize', 'type': 'int'},
@@ -20866,6 +21540,8 @@ class StatefulServiceUpdateDescription(ServiceUpdateDescription):
         'quorum_loss_wait_duration_seconds': {'key': 'QuorumLossWaitDurationSeconds', 'type': 'str'},
         'stand_by_replica_keep_duration_seconds': {'key': 'StandByReplicaKeepDurationSeconds', 'type': 'str'},
         'service_placement_time_limit_seconds': {'key': 'ServicePlacementTimeLimitSeconds', 'type': 'str'},
+        'drop_source_replica_on_move': {'key': 'DropSourceReplicaOnMove', 'type': 'bool'},
+        'replica_lifecycle_description': {'key': 'ReplicaLifecycleDescription', 'type': 'ReplicaLifecycleDescription'},
     }
 
     def __init__(self, **kwargs):
@@ -20876,6 +21552,8 @@ class StatefulServiceUpdateDescription(ServiceUpdateDescription):
         self.quorum_loss_wait_duration_seconds = kwargs.get('quorum_loss_wait_duration_seconds', None)
         self.stand_by_replica_keep_duration_seconds = kwargs.get('stand_by_replica_keep_duration_seconds', None)
         self.service_placement_time_limit_seconds = kwargs.get('service_placement_time_limit_seconds', None)
+        self.drop_source_replica_on_move = kwargs.get('drop_source_replica_on_move', None)
+        self.replica_lifecycle_description = kwargs.get('replica_lifecycle_description', None)
         self.service_kind = 'Stateful'
 
 
@@ -21127,6 +21805,12 @@ class StatelessServiceDescription(ServiceDescription):
     :param scaling_policies: Scaling policies for this service.
     :type scaling_policies:
      list[~azure.servicefabric.models.ScalingPolicyDescription]
+    :param tags_required_to_place: Tags for placement of this service.
+    :type tags_required_to_place:
+     ~azure.servicefabric.models.NodeTagsDescription
+    :param tags_required_to_run: Tags for running of this service.
+    :type tags_required_to_run:
+     ~azure.servicefabric.models.NodeTagsDescription
     :param service_kind: Required. Constant filled by server.
     :type service_kind: str
     :param instance_count: Required. The instance count.
@@ -21162,6 +21846,8 @@ class StatelessServiceDescription(ServiceDescription):
      zero.
      - InstanceCloseDelayDuration - Indicates the InstanceCloseDelayDuration
      property is set. The value is 1.
+     - InstanceRestartWaitDuration - Indicates the
+     InstanceRestartWaitDurationSeconds property is set. The value is 2.
     :type flags: int
     :param instance_close_delay_duration_seconds: Duration in seconds, to wait
      before a stateless instance is closed, to allow the active requests to
@@ -21181,6 +21867,19 @@ class StatelessServiceDescription(ServiceDescription):
      indicates that there won't be any delay or removal of the endpoint prior
      to closing the instance.
     :type instance_close_delay_duration_seconds: long
+    :param instance_lifecycle_description: Defines how instances of this
+     service will behave during their lifecycle.
+    :type instance_lifecycle_description:
+     ~azure.servicefabric.models.InstanceLifecycleDescription
+    :param instance_restart_wait_duration_seconds: When a stateless instance
+     goes down, this timer starts. When it expires Service Fabric will create a
+     new instance on any node in the cluster.
+     This configuration is to reduce unnecessary creation of a new instance in
+     situations where the instance going down is likely to recover in a short
+     time. For example, during an upgrade.
+     The default value is 0, which indicates that when stateless instance goes
+     down, Service Fabric will immediately start building its replacement.
+    :type instance_restart_wait_duration_seconds: long
     """
 
     _validation = {
@@ -21190,6 +21889,7 @@ class StatelessServiceDescription(ServiceDescription):
         'service_kind': {'required': True},
         'instance_count': {'required': True, 'minimum': -1},
         'instance_close_delay_duration_seconds': {'maximum': 4294967295, 'minimum': 0},
+        'instance_restart_wait_duration_seconds': {'maximum': 4294967295, 'minimum': 0},
     }
 
     _attribute_map = {
@@ -21207,12 +21907,16 @@ class StatelessServiceDescription(ServiceDescription):
         'service_package_activation_mode': {'key': 'ServicePackageActivationMode', 'type': 'str'},
         'service_dns_name': {'key': 'ServiceDnsName', 'type': 'str'},
         'scaling_policies': {'key': 'ScalingPolicies', 'type': '[ScalingPolicyDescription]'},
+        'tags_required_to_place': {'key': 'TagsRequiredToPlace', 'type': 'NodeTagsDescription'},
+        'tags_required_to_run': {'key': 'TagsRequiredToRun', 'type': 'NodeTagsDescription'},
         'service_kind': {'key': 'ServiceKind', 'type': 'str'},
         'instance_count': {'key': 'InstanceCount', 'type': 'int'},
         'min_instance_count': {'key': 'MinInstanceCount', 'type': 'int'},
         'min_instance_percentage': {'key': 'MinInstancePercentage', 'type': 'int'},
         'flags': {'key': 'Flags', 'type': 'int'},
         'instance_close_delay_duration_seconds': {'key': 'InstanceCloseDelayDurationSeconds', 'type': 'long'},
+        'instance_lifecycle_description': {'key': 'InstanceLifecycleDescription', 'type': 'InstanceLifecycleDescription'},
+        'instance_restart_wait_duration_seconds': {'key': 'InstanceRestartWaitDurationSeconds', 'type': 'long'},
     }
 
     def __init__(self, **kwargs):
@@ -21222,6 +21926,8 @@ class StatelessServiceDescription(ServiceDescription):
         self.min_instance_percentage = kwargs.get('min_instance_percentage', None)
         self.flags = kwargs.get('flags', None)
         self.instance_close_delay_duration_seconds = kwargs.get('instance_close_delay_duration_seconds', None)
+        self.instance_lifecycle_description = kwargs.get('instance_lifecycle_description', None)
+        self.instance_restart_wait_duration_seconds = kwargs.get('instance_restart_wait_duration_seconds', None)
         self.service_kind = 'Stateless'
 
 
@@ -21594,6 +22300,16 @@ class StatelessServiceUpdateDescription(ServiceUpdateDescription):
      set. The value is 8192.
      - InstanceCloseDelayDuration - Indicates the InstanceCloseDelayDuration
      property is set. The value is 16384.
+     - InstanceRestartWaitDuration - Indicates the InstanceCloseDelayDuration
+     property is set. The value is 32768.
+     - DropSourceReplicaOnMove - Indicates the DropSourceReplicaOnMove property
+     is set. The value is 65536.
+     - ServiceDnsName - Indicates the ServiceDnsName property is set. The value
+     is 131072.
+     - TagsForPlacement - Indicates the TagsForPlacement property is set. The
+     value is 1048576.
+     - TagsForRunning - Indicates the TagsForRunning property is set. The value
+     is 2097152.
     :type flags: str
     :param placement_constraints: The placement constraints as a string.
      Placement constraints are boolean expressions on node properties and allow
@@ -21616,6 +22332,12 @@ class StatelessServiceUpdateDescription(ServiceUpdateDescription):
     :param scaling_policies: Scaling policies for this service.
     :type scaling_policies:
      list[~azure.servicefabric.models.ScalingPolicyDescription]
+    :param service_dns_name: The DNS name of the service.
+    :type service_dns_name: str
+    :param tags_for_placement: Tags for placement of this service.
+    :type tags_for_placement: ~azure.servicefabric.models.NodeTagsDescription
+    :param tags_for_running: Tags for running of this service.
+    :type tags_for_running: ~azure.servicefabric.models.NodeTagsDescription
     :param service_kind: Required. Constant filled by server.
     :type service_kind: str
     :param instance_count: The instance count.
@@ -21655,6 +22377,19 @@ class StatelessServiceUpdateDescription(ServiceUpdateDescription):
      - Connect to a different instance of the service partition for future
      requests.
     :type instance_close_delay_duration_seconds: str
+    :param instance_lifecycle_description: Defines how instances of this
+     service will behave during their lifecycle.
+    :type instance_lifecycle_description:
+     ~azure.servicefabric.models.InstanceLifecycleDescription
+    :param instance_restart_wait_duration_seconds: When a stateless instance
+     goes down, this timer starts. When it expires Service Fabric will create a
+     new instance on any node in the cluster.
+     This configuration is to reduce unnecessary creation of a new instance in
+     situations where the instance going down is likely to recover in a short
+     time. For example, during an upgrade.
+     The default value is 0, which indicates that when stateless instance goes
+     down, Service Fabric will immediately start building its replacement.
+    :type instance_restart_wait_duration_seconds: str
     """
 
     _validation = {
@@ -21670,11 +22405,16 @@ class StatelessServiceUpdateDescription(ServiceUpdateDescription):
         'service_placement_policies': {'key': 'ServicePlacementPolicies', 'type': '[ServicePlacementPolicyDescription]'},
         'default_move_cost': {'key': 'DefaultMoveCost', 'type': 'str'},
         'scaling_policies': {'key': 'ScalingPolicies', 'type': '[ScalingPolicyDescription]'},
+        'service_dns_name': {'key': 'ServiceDnsName', 'type': 'str'},
+        'tags_for_placement': {'key': 'TagsForPlacement', 'type': 'NodeTagsDescription'},
+        'tags_for_running': {'key': 'TagsForRunning', 'type': 'NodeTagsDescription'},
         'service_kind': {'key': 'ServiceKind', 'type': 'str'},
         'instance_count': {'key': 'InstanceCount', 'type': 'int'},
         'min_instance_count': {'key': 'MinInstanceCount', 'type': 'int'},
         'min_instance_percentage': {'key': 'MinInstancePercentage', 'type': 'int'},
         'instance_close_delay_duration_seconds': {'key': 'InstanceCloseDelayDurationSeconds', 'type': 'str'},
+        'instance_lifecycle_description': {'key': 'InstanceLifecycleDescription', 'type': 'InstanceLifecycleDescription'},
+        'instance_restart_wait_duration_seconds': {'key': 'InstanceRestartWaitDurationSeconds', 'type': 'str'},
     }
 
     def __init__(self, **kwargs):
@@ -21683,6 +22423,8 @@ class StatelessServiceUpdateDescription(ServiceUpdateDescription):
         self.min_instance_count = kwargs.get('min_instance_count', None)
         self.min_instance_percentage = kwargs.get('min_instance_percentage', None)
         self.instance_close_delay_duration_seconds = kwargs.get('instance_close_delay_duration_seconds', None)
+        self.instance_lifecycle_description = kwargs.get('instance_lifecycle_description', None)
+        self.instance_restart_wait_duration_seconds = kwargs.get('instance_restart_wait_duration_seconds', None)
         self.service_kind = 'Stateless'
 
 
@@ -22151,6 +22893,29 @@ class UpdateClusterUpgradeDescription(Model):
         self.enable_delta_health_evaluation = kwargs.get('enable_delta_health_evaluation', None)
         self.cluster_upgrade_health_policy = kwargs.get('cluster_upgrade_health_policy', None)
         self.application_health_policy_map = kwargs.get('application_health_policy_map', None)
+
+
+class UpdatePartitionLoadResult(Model):
+    """Specifies result of updating load for specified partitions. The output will
+    be ordered based on the partition ID.
+
+    :param partition_id: Id of the partition.
+    :type partition_id: str
+    :param partition_error_code: If OperationState is Completed - this is 0.
+     If OperationState is Faulted - this is an error code indicating the
+     reason.
+    :type partition_error_code: int
+    """
+
+    _attribute_map = {
+        'partition_id': {'key': 'PartitionId', 'type': 'str'},
+        'partition_error_code': {'key': 'PartitionErrorCode', 'type': 'int'},
+    }
+
+    def __init__(self, **kwargs):
+        super(UpdatePartitionLoadResult, self).__init__(**kwargs)
+        self.partition_id = kwargs.get('partition_id', None)
+        self.partition_error_code = kwargs.get('partition_error_code', None)
 
 
 class UpgradeDomainDeltaNodesCheckHealthEvaluation(HealthEvaluation):

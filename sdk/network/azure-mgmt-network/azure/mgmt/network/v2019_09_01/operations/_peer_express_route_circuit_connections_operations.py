@@ -14,7 +14,7 @@ from azure.core.pipeline import PipelineResponse
 from azure.core.pipeline.transport import HttpRequest, HttpResponse
 from azure.mgmt.core.exceptions import ARMErrorFormat
 
-from .. import models
+from .. import models as _models
 
 if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
@@ -37,7 +37,7 @@ class PeerExpressRouteCircuitConnectionsOperations(object):
     :param deserializer: An object model deserializer.
     """
 
-    models = models
+    models = _models
 
     def __init__(self, client, config, serializer, deserializer):
         self._client = client
@@ -53,7 +53,7 @@ class PeerExpressRouteCircuitConnectionsOperations(object):
         connection_name,  # type: str
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.PeerExpressRouteCircuitConnection"
+        # type: (...) -> "_models.PeerExpressRouteCircuitConnection"
         """Gets the specified Peer Express Route Circuit Connection from the specified express route
         circuit.
 
@@ -70,7 +70,7 @@ class PeerExpressRouteCircuitConnectionsOperations(object):
         :rtype: ~azure.mgmt.network.v2019_09_01.models.PeerExpressRouteCircuitConnection
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.PeerExpressRouteCircuitConnection"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.PeerExpressRouteCircuitConnection"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -120,7 +120,7 @@ class PeerExpressRouteCircuitConnectionsOperations(object):
         peering_name,  # type: str
         **kwargs  # type: Any
     ):
-        # type: (...) -> Iterable["models.PeerExpressRouteCircuitConnectionListResult"]
+        # type: (...) -> Iterable["_models.PeerExpressRouteCircuitConnectionListResult"]
         """Gets all global reach peer connections associated with a private peering in an express route
         circuit.
 
@@ -135,7 +135,7 @@ class PeerExpressRouteCircuitConnectionsOperations(object):
         :rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.network.v2019_09_01.models.PeerExpressRouteCircuitConnectionListResult]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.PeerExpressRouteCircuitConnectionListResult"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.PeerExpressRouteCircuitConnectionListResult"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }

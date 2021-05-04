@@ -3,37 +3,36 @@ interactions:
     body: null
     headers:
       User-Agent:
-      - azsdk-python-storage-file-share/12.1.2 Python/3.7.3 (Windows-10-10.0.18362-SP0)
+      - azsdk-python-storage-file-share/12.3.0b2 Python/3.7.3 (Windows-10-10.0.19041-SP0)
       x-ms-date:
-      - Tue, 12 May 2020 20:36:15 GMT
+      - Wed, 07 Oct 2020 02:07:42 GMT
       x-ms-version:
-      - '2019-12-12'
+      - '2020-02-10'
     method: PUT
     uri: https://storagename.file.core.windows.net/sharerestore12700ec5?restype=share
   response:
     body:
-      string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><Error><Code>ShareAlreadyExists</Code><Message>The
-        specified share already exists.\nRequestId:a0737473-401a-00be-049c-289e58000000\nTime:2020-05-12T20:36:15.6647741Z</Message></Error>"
+      string: ''
     headers:
-      content-length: '222'
-      content-type: application/xml
-      date: Tue, 12 May 2020 20:36:15 GMT
+      content-length: '0'
+      date: Wed, 07 Oct 2020 02:07:42 GMT
+      etag: '"0x8D86A65C6BFE006"'
+      last-modified: Wed, 07 Oct 2020 02:07:43 GMT
       server: Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
-      x-ms-error-code: ShareAlreadyExists
-      x-ms-version: '2019-12-12'
+      x-ms-version: '2020-02-10'
     status:
-      code: 409
-      message: The specified share already exists.
-    url: https://seansoftdeletecanary.file.core.windows.net/sharerestore12700ec5?restype=share
+      code: 201
+      message: Created
+    url: https://emilyeuap.file.core.windows.net/sharerestore12700ec5?restype=share
 - request:
     body: null
     headers:
       User-Agent:
-      - azsdk-python-storage-file-share/12.1.2 Python/3.7.3 (Windows-10-10.0.18362-SP0)
+      - azsdk-python-storage-file-share/12.3.0b2 Python/3.7.3 (Windows-10-10.0.19041-SP0)
       x-ms-date:
-      - Tue, 12 May 2020 20:36:15 GMT
+      - Wed, 07 Oct 2020 02:07:43 GMT
       x-ms-version:
-      - '2019-12-12'
+      - '2020-02-10'
     method: DELETE
     uri: https://storagename.file.core.windows.net/sharerestore12700ec5?restype=share
   response:
@@ -41,170 +40,94 @@ interactions:
       string: ''
     headers:
       content-length: '0'
-      date: Tue, 12 May 2020 20:36:15 GMT
+      date: Wed, 07 Oct 2020 02:07:42 GMT
       server: Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
-      x-ms-version: '2019-12-12'
+      x-ms-version: '2020-02-10'
     status:
       code: 202
       message: Accepted
-    url: https://seansoftdeletecanary.file.core.windows.net/sharerestore12700ec5?restype=share
+    url: https://emilyeuap.file.core.windows.net/sharerestore12700ec5?restype=share
 - request:
     body: null
     headers:
       User-Agent:
-      - azsdk-python-storage-file-share/12.1.2 Python/3.7.3 (Windows-10-10.0.18362-SP0)
+      - azsdk-python-storage-file-share/12.3.0b2 Python/3.7.3 (Windows-10-10.0.19041-SP0)
       x-ms-date:
-      - Tue, 12 May 2020 20:36:15 GMT
+      - Wed, 07 Oct 2020 02:07:43 GMT
       x-ms-version:
-      - '2019-12-12'
+      - '2020-02-10'
     method: GET
     uri: https://storagename.file.core.windows.net/sharerestore12700ec5?restype=share
   response:
     body:
       string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><Error><Code>ShareNotFound</Code><Message>The
-        specified share does not exist.\nRequestId:a0737478-401a-00be-069c-289e58000000\nTime:2020-05-12T20:36:16.0030965Z</Message></Error>"
+        specified share does not exist.\nRequestId:059be513-001a-0006-4d4e-9c7e1f000000\nTime:2020-10-07T02:07:43.3541174Z</Message></Error>"
     headers:
       content-length: '217'
       content-type: application/xml
-      date: Tue, 12 May 2020 20:36:15 GMT
+      date: Wed, 07 Oct 2020 02:07:42 GMT
       server: Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
       x-ms-error-code: ShareNotFound
-      x-ms-version: '2019-12-12'
+      x-ms-version: '2020-02-10'
     status:
       code: 404
       message: The specified share does not exist.
-    url: https://seansoftdeletecanary.file.core.windows.net/sharerestore12700ec5?restype=share
+    url: https://emilyeuap.file.core.windows.net/sharerestore12700ec5?restype=share
 - request:
     body: null
     headers:
       Accept:
       - application/xml
       User-Agent:
-      - azsdk-python-storage-file-share/12.1.2 Python/3.7.3 (Windows-10-10.0.18362-SP0)
+      - azsdk-python-storage-file-share/12.3.0b2 Python/3.7.3 (Windows-10-10.0.19041-SP0)
       x-ms-date:
-      - Tue, 12 May 2020 20:36:16 GMT
+      - Wed, 07 Oct 2020 02:07:43 GMT
       x-ms-version:
-      - '2019-12-12'
+      - '2020-02-10'
     method: GET
     uri: https://storagename.file.core.windows.net/?include=deleted&comp=list
   response:
     body:
       string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><EnumerationResults
         ServiceEndpoint=\"https://storagename.file.core.windows.net/\"><Shares><Share><Name>existing647b1102</Name><Properties><Last-Modified>Mon,
-        11 May 2020 18:54:32 GMT</Last-Modified><Etag>\"0x8D7F5DCBE38249A\"</Etag><Quota>5120</Quota><AccessTier>TransactionOptimized</AccessTier><AccessTierChangeTime>5/11/2020
-        6:54:32 PM</AccessTierChangeTime><DefaultEncryptionScope>$account-encryption-key</DefaultEncryptionScope><DenyEncryptionScopeOverride>false</DenyEncryptionScopeOverride></Properties></Share><Share><Name>share647b1102</Name><Deleted>true</Deleted><Version>01D62891F1043495</Version><Properties><Last-Modified>Tue,
-        12 May 2020 19:17:13 GMT</Last-Modified><Etag>\"0x8D7F6A9137AA752\"</Etag><Quota>5120</Quota><AccessTier>TransactionOptimized</AccessTier><AccessTierChangeTime>5/12/2020
-        7:17:13 PM</AccessTierChangeTime><DefaultEncryptionScope>$account-encryption-key</DefaultEncryptionScope><DenyEncryptionScopeOverride>false</DenyEncryptionScopeOverride><DeletedTime>Tue,
-        12 May 2020 19:17:13 GMT</DeletedTime><RemainingRetentionDays>0</RemainingRetentionDays></Properties></Share><Share><Name>share647b1102</Name><Deleted>true</Deleted><Version>01D628921CE6979F</Version><Properties><Last-Modified>Tue,
-        12 May 2020 19:18:26 GMT</Last-Modified><Etag>\"0x8D7F6A93F5D64D2\"</Etag><Quota>5120</Quota><AccessTier>TransactionOptimized</AccessTier><AccessTierChangeTime>5/12/2020
-        7:18:26 PM</AccessTierChangeTime><DefaultEncryptionScope>$account-encryption-key</DefaultEncryptionScope><DenyEncryptionScopeOverride>false</DenyEncryptionScopeOverride><DeletedTime>Tue,
-        12 May 2020 19:18:27 GMT</DeletedTime><RemainingRetentionDays>0</RemainingRetentionDays></Properties></Share><Share><Name>share647b1102</Name><Properties><Last-Modified>Tue,
-        12 May 2020 19:18:57 GMT</Last-Modified><Etag>\"0x8D7F6A9516B1701\"</Etag><Quota>5120</Quota><AccessTier>TransactionOptimized</AccessTier><AccessTierChangeTime>5/12/2020
-        7:18:57 PM</AccessTierChangeTime><DefaultEncryptionScope>$account-encryption-key</DefaultEncryptionScope><DenyEncryptionScopeOverride>false</DenyEncryptionScopeOverride></Properties></Share><Share><Name>sharebed60c48</Name><Deleted>true</Deleted><Version>01D627DF1C7AB73E</Version><Properties><Last-Modified>Mon,
-        11 May 2020 21:57:06 GMT</Last-Modified><Etag>\"0x8D7F5F63EF11C0D\"</Etag><Quota>5120</Quota><AccessTier>TransactionOptimized</AccessTier><AccessTierChangeTime>5/11/2020
-        9:57:06 PM</AccessTierChangeTime><DefaultEncryptionScope>$account-encryption-key</DefaultEncryptionScope><DenyEncryptionScopeOverride>false</DenyEncryptionScopeOverride><DeletedTime>Mon,
-        11 May 2020 21:59:02 GMT</DeletedTime><RemainingRetentionDays>0</RemainingRetentionDays></Properties></Share><Share><Name>sharebed60c48</Name><Deleted>true</Deleted><Version>01D627E6E3F182B7</Version><Properties><Last-Modified>Mon,
-        11 May 2020 22:52:47 GMT</Last-Modified><Etag>\"0x8D7F5FE0667FD31\"</Etag><Quota>5120</Quota><AccessTier>TransactionOptimized</AccessTier><AccessTierChangeTime>5/11/2020
-        10:52:47 PM</AccessTierChangeTime><DefaultEncryptionScope>$account-encryption-key</DefaultEncryptionScope><DenyEncryptionScopeOverride>false</DenyEncryptionScopeOverride><DeletedTime>Mon,
-        11 May 2020 22:53:07 GMT</DeletedTime><RemainingRetentionDays>0</RemainingRetentionDays></Properties></Share><Share><Name>shared365137f</Name><Deleted>true</Deleted><Version>01D6289358749C19</Version><Properties><Last-Modified>Tue,
-        12 May 2020 19:27:16 GMT</Last-Modified><Etag>\"0x8D7F6AA7AEB06B6\"</Etag><Quota>5120</Quota><AccessTier>TransactionOptimized</AccessTier><AccessTierChangeTime>5/12/2020
-        7:27:16 PM</AccessTierChangeTime><DefaultEncryptionScope>$account-encryption-key</DefaultEncryptionScope><DenyEncryptionScopeOverride>false</DenyEncryptionScopeOverride><DeletedTime>Tue,
-        12 May 2020 19:27:16 GMT</DeletedTime><RemainingRetentionDays>0</RemainingRetentionDays></Properties></Share><Share><Name>shared365137f</Name><Deleted>true</Deleted><Version>01D628936A7CCB5F</Version><Properties><Last-Modified>Tue,
-        12 May 2020 19:27:46 GMT</Last-Modified><Etag>\"0x8D7F6AA8CF3289E\"</Etag><Quota>5120</Quota><AccessTier>TransactionOptimized</AccessTier><AccessTierChangeTime>5/12/2020
-        7:27:46 PM</AccessTierChangeTime><DefaultEncryptionScope>$account-encryption-key</DefaultEncryptionScope><DenyEncryptionScopeOverride>false</DenyEncryptionScopeOverride><DeletedTime>Tue,
-        12 May 2020 19:34:47 GMT</DeletedTime><RemainingRetentionDays>0</RemainingRetentionDays></Properties></Share><Share><Name>shared365137f</Name><Deleted>true</Deleted><Version>01D62894782B2ED3</Version><Properties><Last-Modified>Tue,
-        12 May 2020 19:35:19 GMT</Last-Modified><Etag>\"0x8D7F6AB9A9E0823\"</Etag><Quota>5120</Quota><AccessTier>TransactionOptimized</AccessTier><AccessTierChangeTime>5/12/2020
-        7:35:18 PM</AccessTierChangeTime><DefaultEncryptionScope>$account-encryption-key</DefaultEncryptionScope><DenyEncryptionScopeOverride>false</DenyEncryptionScopeOverride><DeletedTime>Tue,
-        12 May 2020 19:36:42 GMT</DeletedTime><RemainingRetentionDays>0</RemainingRetentionDays></Properties></Share><Share><Name>shared365137f</Name><Deleted>true</Deleted><Version>01D62894BBABA26A</Version><Properties><Last-Modified>Tue,
-        12 May 2020 19:37:12 GMT</Last-Modified><Etag>\"0x8D7F6ABDE221895\"</Etag><Quota>5120</Quota><AccessTier>TransactionOptimized</AccessTier><AccessTierChangeTime>5/12/2020
-        7:37:12 PM</AccessTierChangeTime><DefaultEncryptionScope>$account-encryption-key</DefaultEncryptionScope><DenyEncryptionScopeOverride>false</DenyEncryptionScopeOverride><DeletedTime>Tue,
-        12 May 2020 20:16:59 GMT</DeletedTime><RemainingRetentionDays>1</RemainingRetentionDays></Properties></Share><Share><Name>shared365137f</Name><Deleted>true</Deleted><Version>01D6289A5CED9EC1</Version><Properties><Last-Modified>Tue,
-        12 May 2020 20:17:30 GMT</Last-Modified><Etag>\"0x8D7F6B17F6378C3\"</Etag><Quota>5120</Quota><AccessTier>TransactionOptimized</AccessTier><AccessTierChangeTime>5/12/2020
-        8:17:30 PM</AccessTierChangeTime><DefaultEncryptionScope>$account-encryption-key</DefaultEncryptionScope><DenyEncryptionScopeOverride>false</DenyEncryptionScopeOverride><DeletedTime>Tue,
-        12 May 2020 20:22:47 GMT</DeletedTime><RemainingRetentionDays>1</RemainingRetentionDays></Properties></Share><Share><Name>shared365137f</Name><Deleted>true</Deleted><Version>01D6289B2C4BE740</Version><Properties><Last-Modified>Tue,
-        12 May 2020 20:23:18 GMT</Last-Modified><Etag>\"0x8D7F6B24EC25185\"</Etag><Quota>5120</Quota><AccessTier>TransactionOptimized</AccessTier><AccessTierChangeTime>5/12/2020
-        8:23:18 PM</AccessTierChangeTime><DefaultEncryptionScope>$account-encryption-key</DefaultEncryptionScope><DenyEncryptionScopeOverride>false</DenyEncryptionScopeOverride><DeletedTime>Tue,
-        12 May 2020 20:24:26 GMT</DeletedTime><RemainingRetentionDays>1</RemainingRetentionDays></Properties></Share><Share><Name>shared365137f</Name><Deleted>true</Deleted><Version>01D6289B670E0FE5</Version><Properties><Last-Modified>Tue,
-        12 May 2020 20:24:56 GMT</Last-Modified><Etag>\"0x8D7F6B28984B251\"</Etag><Quota>5120</Quota><AccessTier>TransactionOptimized</AccessTier><AccessTierChangeTime>5/12/2020
-        8:24:56 PM</AccessTierChangeTime><DefaultEncryptionScope>$account-encryption-key</DefaultEncryptionScope><DenyEncryptionScopeOverride>false</DenyEncryptionScopeOverride><DeletedTime>Tue,
-        12 May 2020 20:26:35 GMT</DeletedTime><RemainingRetentionDays>1</RemainingRetentionDays></Properties></Share><Share><Name>shared365137f</Name><Deleted>true</Deleted><Version>01D6289BB89BF91E</Version><Properties><Last-Modified>Tue,
-        12 May 2020 20:27:13 GMT</Last-Modified><Etag>\"0x8D7F6B2DB0FAFFB\"</Etag><Quota>5120</Quota><AccessTier>TransactionOptimized</AccessTier><AccessTierChangeTime>5/12/2020
-        8:27:13 PM</AccessTierChangeTime><DefaultEncryptionScope>$account-encryption-key</DefaultEncryptionScope><DenyEncryptionScopeOverride>false</DenyEncryptionScopeOverride><DeletedTime>Tue,
-        12 May 2020 20:29:53 GMT</DeletedTime><RemainingRetentionDays>1</RemainingRetentionDays></Properties></Share><Share><Name>shared365137f</Name><Deleted>true</Deleted><Version>01D6289C29CC3751</Version><Properties><Last-Modified>Tue,
-        12 May 2020 20:30:23 GMT</Last-Modified><Etag>\"0x8D7F6B34C42D063\"</Etag><Quota>5120</Quota><AccessTier>TransactionOptimized</AccessTier><AccessTierChangeTime>5/12/2020
-        8:30:23 PM</AccessTierChangeTime><DefaultEncryptionScope>$account-encryption-key</DefaultEncryptionScope><DenyEncryptionScopeOverride>false</DenyEncryptionScopeOverride><DeletedTime>Tue,
-        12 May 2020 20:31:16 GMT</DeletedTime><RemainingRetentionDays>1</RemainingRetentionDays></Properties></Share><Share><Name>shared365137f</Name><Properties><Last-Modified>Tue,
-        12 May 2020 20:31:46 GMT</Last-Modified><Etag>\"0x8D7F6B37DDB00D5\"</Etag><Quota>5120</Quota><AccessTier>TransactionOptimized</AccessTier><AccessTierChangeTime>5/12/2020
-        8:31:46 PM</AccessTierChangeTime><DefaultEncryptionScope>$account-encryption-key</DefaultEncryptionScope><DenyEncryptionScopeOverride>false</DenyEncryptionScopeOverride></Properties></Share><Share><Name>sharerestore12700ec5</Name><Deleted>true</Deleted><Version>01D62895628B32A6</Version><Properties><Last-Modified>Tue,
-        12 May 2020 19:41:52 GMT</Last-Modified><Etag>\"0x8D7F6AC84F7CE92\"</Etag><Quota>5120</Quota><AccessTier>TransactionOptimized</AccessTier><AccessTierChangeTime>5/12/2020
-        7:41:52 PM</AccessTierChangeTime><DefaultEncryptionScope>$account-encryption-key</DefaultEncryptionScope><DenyEncryptionScopeOverride>false</DenyEncryptionScopeOverride><DeletedTime>Tue,
-        12 May 2020 19:41:52 GMT</DeletedTime><RemainingRetentionDays>0</RemainingRetentionDays></Properties></Share><Share><Name>sharerestore12700ec5</Name><Deleted>true</Deleted><Version>01D62895E93C6018</Version><Properties><Last-Modified>Tue,
-        12 May 2020 19:45:38 GMT</Last-Modified><Etag>\"0x8D7F6AD0BB2D264\"</Etag><Quota>5120</Quota><AccessTier>TransactionOptimized</AccessTier><AccessTierChangeTime>5/12/2020
-        7:45:38 PM</AccessTierChangeTime><DefaultEncryptionScope>$account-encryption-key</DefaultEncryptionScope><DenyEncryptionScopeOverride>false</DenyEncryptionScopeOverride><DeletedTime>Tue,
-        12 May 2020 19:45:38 GMT</DeletedTime><RemainingRetentionDays>0</RemainingRetentionDays></Properties></Share><Share><Name>sharerestore12700ec5</Name><Deleted>true</Deleted><Version>01D62896EE908613</Version><Properties><Last-Modified>Tue,
-        12 May 2020 19:52:56 GMT</Last-Modified><Etag>\"0x8D7F6AE1105D23C\"</Etag><Quota>5120</Quota><AccessTier>TransactionOptimized</AccessTier><AccessTierChangeTime>5/12/2020
-        7:52:56 PM</AccessTierChangeTime><DefaultEncryptionScope>$account-encryption-key</DefaultEncryptionScope><DenyEncryptionScopeOverride>false</DenyEncryptionScopeOverride><DeletedTime>Tue,
-        12 May 2020 19:52:57 GMT</DeletedTime><RemainingRetentionDays>0</RemainingRetentionDays></Properties></Share><Share><Name>sharerestore12700ec5</Name><Deleted>true</Deleted><Version>01D62896FE2C7643</Version><Properties><Last-Modified>Tue,
-        12 May 2020 19:53:22 GMT</Last-Modified><Etag>\"0x8D7F6AE20A3E059\"</Etag><Quota>5120</Quota><AccessTier>TransactionOptimized</AccessTier><AccessTierChangeTime>5/12/2020
-        7:36:51 PM</AccessTierChangeTime><DefaultEncryptionScope>$account-encryption-key</DefaultEncryptionScope><DenyEncryptionScopeOverride>false</DenyEncryptionScopeOverride><DeletedTime>Tue,
-        12 May 2020 20:36:15 GMT</DeletedTime><RemainingRetentionDays>1</RemainingRetentionDays></Properties></Share><Share><Name>sharerestorebed60c48</Name><Properties><Last-Modified>Tue,
-        12 May 2020 01:27:19 GMT</Last-Modified><Etag>\"0x8D7F6139D00A95F\"</Etag><Quota>5120</Quota><AccessTier>TransactionOptimized</AccessTier><AccessTierChangeTime>5/12/2020
-        1:26:19 AM</AccessTierChangeTime><DefaultEncryptionScope>$account-encryption-key</DefaultEncryptionScope><DenyEncryptionScopeOverride>false</DenyEncryptionScopeOverride></Properties></Share><Share><Name>sharetorestorebed60c48</Name><Deleted>true</Deleted><Version>01D627FC3CC9AC5B</Version><Properties><Last-Modified>Tue,
-        12 May 2020 01:25:35 GMT</Last-Modified><Etag>\"0x8D7F6135F406102\"</Etag><Quota>5120</Quota><AccessTier>TransactionOptimized</AccessTier><AccessTierChangeTime>5/12/2020
-        1:25:35 AM</AccessTierChangeTime><DefaultEncryptionScope>$account-encryption-key</DefaultEncryptionScope><DenyEncryptionScopeOverride>false</DenyEncryptionScopeOverride><DeletedTime>Tue,
-        12 May 2020 01:25:36 GMT</DeletedTime><RemainingRetentionDays>0</RemainingRetentionDays></Properties></Share><Share><Name>test-share-04423526-abc3-44c9-aa2e-540f6eecac0d</Name><Properties><Last-Modified>Sun,
-        12 Apr 2020 18:42:18 GMT</Last-Modified><Etag>\"0x8D7DF113AB0D452\"</Etag><Quota>5120</Quota><AccessTier>TransactionOptimized</AccessTier><AccessTierChangeTime
-        /><DefaultEncryptionScope>$account-encryption-key</DefaultEncryptionScope><DenyEncryptionScopeOverride>false</DenyEncryptionScopeOverride></Properties></Share><Share><Name>test-share-3754bd7d-b2e4-4079-a97e-a3b9afc1648c</Name><Properties><Last-Modified>Sat,
-        11 Apr 2020 17:58:03 GMT</Last-Modified><Etag>\"0x8D7DE41E1D75DB4\"</Etag><Quota>5120</Quota><AccessTier>TransactionOptimized</AccessTier><AccessTierChangeTime
-        /><DefaultEncryptionScope>$account-encryption-key</DefaultEncryptionScope><DenyEncryptionScopeOverride>false</DenyEncryptionScopeOverride></Properties></Share><Share><Name>test-share-6214a335-a4b0-498c-9995-1e50b6bb50a2</Name><Properties><Last-Modified>Sat,
-        11 Apr 2020 17:57:43 GMT</Last-Modified><Etag>\"0x8D7DE41D5B0D211\"</Etag><Quota>5120</Quota><AccessTier>TransactionOptimized</AccessTier><AccessTierChangeTime
-        /><DefaultEncryptionScope>$account-encryption-key</DefaultEncryptionScope><DenyEncryptionScopeOverride>false</DenyEncryptionScopeOverride></Properties></Share><Share><Name>test-share-659cd252-38f3-43aa-8092-750973358be5</Name><Properties><Last-Modified>Sun,
-        12 Apr 2020 18:14:14 GMT</Last-Modified><Etag>\"0x8D7DF0D4EBB62F2\"</Etag><Quota>5120</Quota><AccessTier>TransactionOptimized</AccessTier><AccessTierChangeTime
-        /><DefaultEncryptionScope>$account-encryption-key</DefaultEncryptionScope><DenyEncryptionScopeOverride>false</DenyEncryptionScopeOverride></Properties></Share><Share><Name>test-share-6d528e3f-219f-44f9-b80b-3d2248cce9f3</Name><Properties><Last-Modified>Sat,
-        11 Apr 2020 17:58:24 GMT</Last-Modified><Etag>\"0x8D7DE41EDFB7785\"</Etag><Quota>5120</Quota><AccessTier>TransactionOptimized</AccessTier><AccessTierChangeTime
-        /><DefaultEncryptionScope>$account-encryption-key</DefaultEncryptionScope><DenyEncryptionScopeOverride>false</DenyEncryptionScopeOverride></Properties></Share><Share><Name>test-share-6fe76ac5-709b-4678-b55e-47e717c1d943</Name><Properties><Last-Modified>Sun,
-        12 Apr 2020 18:24:45 GMT</Last-Modified><Etag>\"0x8D7DF0EC69BCDD4\"</Etag><Quota>5120</Quota><AccessTier>TransactionOptimized</AccessTier><AccessTierChangeTime
-        /><DefaultEncryptionScope>$account-encryption-key</DefaultEncryptionScope><DenyEncryptionScopeOverride>false</DenyEncryptionScopeOverride></Properties></Share><Share><Name>test-share-745c2b22-c95a-4019-a1cf-df95f0cb7db9</Name><Properties><Last-Modified>Sun,
-        12 Apr 2020 18:42:49 GMT</Last-Modified><Etag>\"0x8D7DF114CDCA126\"</Etag><Quota>5120</Quota><AccessTier>TransactionOptimized</AccessTier><AccessTierChangeTime
-        /><DefaultEncryptionScope>$account-encryption-key</DefaultEncryptionScope><DenyEncryptionScopeOverride>false</DenyEncryptionScopeOverride></Properties></Share><Share><Name>test-share-7e386df5-7d6b-4fcf-b23d-9e7dd2c13a2b</Name><Properties><Last-Modified>Sun,
-        12 Apr 2020 18:23:37 GMT</Last-Modified><Etag>\"0x8D7DF0E9E44C712\"</Etag><Quota>5120</Quota><AccessTier>TransactionOptimized</AccessTier><AccessTierChangeTime
-        /><DefaultEncryptionScope>$account-encryption-key</DefaultEncryptionScope><DenyEncryptionScopeOverride>false</DenyEncryptionScopeOverride></Properties></Share><Share><Name>test-share-93210600-6d3f-49e4-8e87-7e6947c23b8b</Name><Properties><Last-Modified>Sat,
-        11 Apr 2020 17:57:33 GMT</Last-Modified><Etag>\"0x8D7DE41CF6BC1E8\"</Etag><Quota>5120</Quota><AccessTier>TransactionOptimized</AccessTier><AccessTierChangeTime
-        /><DefaultEncryptionScope>$account-encryption-key</DefaultEncryptionScope><DenyEncryptionScopeOverride>false</DenyEncryptionScopeOverride></Properties></Share><Share><Name>test-share-ba5d06e0-c1d4-41b7-8876-7aef01d366a7</Name><Properties><Last-Modified>Sat,
-        11 Apr 2020 17:57:53 GMT</Last-Modified><Etag>\"0x8D7DE41DBC30637\"</Etag><Quota>5120</Quota><AccessTier>TransactionOptimized</AccessTier><AccessTierChangeTime
-        /><DefaultEncryptionScope>$account-encryption-key</DefaultEncryptionScope><DenyEncryptionScopeOverride>false</DenyEncryptionScopeOverride></Properties></Share><Share><Name>test-share-bed60c48</Name><Properties><Last-Modified>Mon,
-        11 May 2020 19:38:41 GMT</Last-Modified><Etag>\"0x8D7F5E2E8A4F4E3\"</Etag><Quota>5120</Quota><AccessTier>TransactionOptimized</AccessTier><AccessTierChangeTime>5/11/2020
-        7:30:04 PM</AccessTierChangeTime><DefaultEncryptionScope>$account-encryption-key</DefaultEncryptionScope><DenyEncryptionScopeOverride>false</DenyEncryptionScopeOverride></Properties></Share><Share><Name>test-share-bffb30c0-47cc-4cd0-b3b4-6c560832c136</Name><Properties><Last-Modified>Sun,
-        12 Apr 2020 18:44:28 GMT</Last-Modified><Etag>\"0x8D7DF11881FBCE1\"</Etag><Quota>5120</Quota><AccessTier>TransactionOptimized</AccessTier><AccessTierChangeTime
-        /><DefaultEncryptionScope>$account-encryption-key</DefaultEncryptionScope><DenyEncryptionScopeOverride>false</DenyEncryptionScopeOverride></Properties></Share><Share><Name>test-share-ce14a14c-6463-4bad-bedc-bedf7388d692</Name><Properties><Last-Modified>Sat,
-        11 Apr 2020 17:58:14 GMT</Last-Modified><Etag>\"0x8D7DE41E7E8F550\"</Etag><Quota>5120</Quota><AccessTier>TransactionOptimized</AccessTier><AccessTierChangeTime
-        /><DefaultEncryptionScope>$account-encryption-key</DefaultEncryptionScope><DenyEncryptionScopeOverride>false</DenyEncryptionScopeOverride></Properties></Share><Share><Name>test-share-e21b1b2a-eaa6-4f88-928f-449387ef5cb9</Name><Properties><Last-Modified>Sun,
-        12 Apr 2020 18:13:43 GMT</Last-Modified><Etag>\"0x8D7DF0D3C81621C\"</Etag><Quota>5120</Quota><AccessTier>TransactionOptimized</AccessTier><AccessTierChangeTime
-        /><DefaultEncryptionScope>$account-encryption-key</DefaultEncryptionScope><DenyEncryptionScopeOverride>false</DenyEncryptionScopeOverride></Properties></Share></Shares><NextMarker
+        11 May 2020 18:30:59 GMT</Last-Modified><Etag>\"0x8D7F5D973C38650\"</Etag><LeaseStatus>unlocked</LeaseStatus><LeaseState>available</LeaseState><Quota>5120</Quota><AccessTier>TransactionOptimized</AccessTier><DefaultEncryptionScope>$account-encryption-key</DefaultEncryptionScope><DenyEncryptionScopeOverride>false</DenyEncryptionScopeOverride></Properties></Share><Share><Name>existingbed60c48</Name><Properties><Last-Modified>Mon,
+        11 May 2020 17:36:05 GMT</Last-Modified><Etag>\"0x8D7F5D1C82848E3\"</Etag><LeaseStatus>unlocked</LeaseStatus><LeaseState>available</LeaseState><Quota>5120</Quota><AccessTier>TransactionOptimized</AccessTier><AccessTierChangeTime>Mon,
+        11 May 2020 17:36:05 GMT</AccessTierChangeTime><DefaultEncryptionScope>$account-encryption-key</DefaultEncryptionScope><DenyEncryptionScopeOverride>false</DenyEncryptionScopeOverride></Properties></Share><Share><Name>share647b1102</Name><Deleted>true</Deleted><Version>01D69C4E05E0F6C1</Version><Properties><Last-Modified>Wed,
+        07 Oct 2020 02:03:17 GMT</Last-Modified><Etag>\"0x8D86A6528428E2C\"</Etag><LeaseStatus>unlocked</LeaseStatus><LeaseState>broken</LeaseState><Quota>5120</Quota><AccessTier>TransactionOptimized</AccessTier><AccessTierChangeTime>Wed,
+        07 Oct 2020 02:03:17 GMT</AccessTierChangeTime><DefaultEncryptionScope>$account-encryption-key</DefaultEncryptionScope><DenyEncryptionScopeOverride>false</DenyEncryptionScopeOverride><DeletedTime>Wed,
+        07 Oct 2020 02:03:17 GMT</DeletedTime><RemainingRetentionDays>7</RemainingRetentionDays></Properties></Share><Share><Name>share647b1102</Name><Properties><Last-Modified>Wed,
+        07 Oct 2020 02:03:48 GMT</Last-Modified><Etag>\"0x8D86A653AA236A4\"</Etag><LeaseStatus>unlocked</LeaseStatus><LeaseState>available</LeaseState><Quota>5120</Quota><AccessTier>TransactionOptimized</AccessTier><AccessTierChangeTime>Wed,
+        07 Oct 2020 02:03:48 GMT</AccessTierChangeTime><DefaultEncryptionScope>$account-encryption-key</DefaultEncryptionScope><DenyEncryptionScopeOverride>false</DenyEncryptionScopeOverride></Properties></Share><Share><Name>sharerestore12700ec5</Name><Deleted>true</Deleted><Version>01D69C4EA4499274</Version><Properties><Last-Modified>Wed,
+        07 Oct 2020 02:07:43 GMT</Last-Modified><Etag>\"0x8D86A65C6BFE006\"</Etag><LeaseStatus>unlocked</LeaseStatus><LeaseState>broken</LeaseState><Quota>5120</Quota><AccessTier>TransactionOptimized</AccessTier><AccessTierChangeTime>Wed,
+        07 Oct 2020 02:07:43 GMT</AccessTierChangeTime><DefaultEncryptionScope>$account-encryption-key</DefaultEncryptionScope><DenyEncryptionScopeOverride>false</DenyEncryptionScopeOverride><DeletedTime>Wed,
+        07 Oct 2020 02:07:43 GMT</DeletedTime><RemainingRetentionDays>7</RemainingRetentionDays></Properties></Share><Share><Name>sharerestorebed60c48</Name><Deleted>true</Deleted><Version>01D69C4E8E6FB05B</Version><Properties><Last-Modified>Wed,
+        07 Oct 2020 02:07:06 GMT</Last-Modified><Etag>\"0x8D86A65B0E651E3\"</Etag><LeaseStatus>unlocked</LeaseStatus><LeaseState>broken</LeaseState><Quota>5120</Quota><AccessTier>TransactionOptimized</AccessTier><AccessTierChangeTime>Wed,
+        07 Oct 2020 02:07:06 GMT</AccessTierChangeTime><DefaultEncryptionScope>$account-encryption-key</DefaultEncryptionScope><DenyEncryptionScopeOverride>false</DenyEncryptionScopeOverride><DeletedTime>Wed,
+        07 Oct 2020 02:07:06 GMT</DeletedTime><RemainingRetentionDays>7</RemainingRetentionDays></Properties></Share></Shares><NextMarker
         /></EnumerationResults>"
     headers:
       content-type: application/xml
-      date: Tue, 12 May 2020 20:36:15 GMT
+      date: Wed, 07 Oct 2020 02:07:42 GMT
       server: Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
       transfer-encoding: chunked
-      x-ms-version: '2019-12-12'
+      x-ms-version: '2020-02-10'
     status:
       code: 200
       message: OK
-    url: https://seansoftdeletecanary.file.core.windows.net/?include=deleted&comp=list
+    url: https://emilyeuap.file.core.windows.net/?include=deleted&comp=list
 - request:
     body: null
     headers:
       User-Agent:
-      - azsdk-python-storage-file-share/12.1.2 Python/3.7.3 (Windows-10-10.0.18362-SP0)
+      - azsdk-python-storage-file-share/12.3.0b2 Python/3.7.3 (Windows-10-10.0.19041-SP0)
       x-ms-date:
-      - Tue, 12 May 2020 20:36:16 GMT
+      - Wed, 07 Oct 2020 02:08:43 GMT
       x-ms-deleted-share-name:
       - sharerestore12700ec5
       x-ms-deleted-share-version:
-      - 01D62895628B32A6
+      - 01D69C4EA4499274
       x-ms-version:
-      - '2019-12-12'
+      - '2020-02-10'
     method: PUT
     uri: https://storagename.file.core.windows.net/sharerestore12700ec5?restype=share&comp=undelete
   response:
@@ -212,24 +135,24 @@ interactions:
       string: ''
     headers:
       content-length: '0'
-      date: Tue, 12 May 2020 20:36:16 GMT
-      etag: '"0x8D7F6B41ECF17FA"'
-      last-modified: Tue, 12 May 2020 20:36:16 GMT
+      date: Wed, 07 Oct 2020 02:08:43 GMT
+      etag: '"0x8D86A65EB25DDE6"'
+      last-modified: Wed, 07 Oct 2020 02:08:44 GMT
       server: Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
-      x-ms-version: '2019-12-12'
+      x-ms-version: '2020-02-10'
     status:
       code: 201
       message: Created
-    url: https://seansoftdeletecanary.file.core.windows.net/sharerestore12700ec5?restype=share&comp=undelete
+    url: https://emilyeuap.file.core.windows.net/sharerestore12700ec5?restype=share&comp=undelete
 - request:
     body: null
     headers:
       User-Agent:
-      - azsdk-python-storage-file-share/12.1.2 Python/3.7.3 (Windows-10-10.0.18362-SP0)
+      - azsdk-python-storage-file-share/12.3.0b2 Python/3.7.3 (Windows-10-10.0.19041-SP0)
       x-ms-date:
-      - Tue, 12 May 2020 20:36:16 GMT
+      - Wed, 07 Oct 2020 02:08:44 GMT
       x-ms-version:
-      - '2019-12-12'
+      - '2020-02-10'
     method: GET
     uri: https://storagename.file.core.windows.net/sharerestore12700ec5?restype=share
   response:
@@ -237,18 +160,20 @@ interactions:
       string: ''
     headers:
       content-length: '0'
-      date: Tue, 12 May 2020 20:36:16 GMT
-      etag: '"0x8D7F6B41ECF17FA"'
-      last-modified: Tue, 12 May 2020 20:36:16 GMT
+      date: Wed, 07 Oct 2020 02:08:43 GMT
+      etag: '"0x8D86A65EB25DDE6"'
+      last-modified: Wed, 07 Oct 2020 02:08:44 GMT
       server: Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
       x-ms-access-tier: TransactionOptimized
-      x-ms-access-tier-change-time: 5/12/2020 7:41:52 PM
+      x-ms-access-tier-change-time: Wed, 07 Oct 2020 02:07:43 GMT
       x-ms-has-immutability-policy: 'false'
       x-ms-has-legal-hold: 'false'
+      x-ms-lease-state: available
+      x-ms-lease-status: unlocked
       x-ms-share-quota: '5120'
-      x-ms-version: '2019-12-12'
+      x-ms-version: '2020-02-10'
     status:
       code: 200
       message: OK
-    url: https://seansoftdeletecanary.file.core.windows.net/sharerestore12700ec5?restype=share
+    url: https://emilyeuap.file.core.windows.net/sharerestore12700ec5?restype=share
 version: 1

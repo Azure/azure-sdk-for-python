@@ -1,0 +1,40 @@
+interactions:
+- request:
+    body: '!!! The request body has been omitted from the recording because its size
+      479269 is larger than 128KB. !!!'
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '479269'
+      Content-Type:
+      - image/jpeg
+      User-Agent:
+      - azsdk-python-ai-formrecognizer/3.1.0b4 Python/3.8.5 (Windows-10-10.0.19041-SP0)
+    method: POST
+    uri: https://region.api.cognitive.microsoft.com/formrecognizer/v2.1-preview.3/layout/analyze?language=not%20a%20language&readingOrder=basic
+  response:
+    body:
+      string: '{"error": {"code": "NotSupportedLanguage", "message": "The requested
+        operation is not supported in the language specified."}}'
+    headers:
+      apim-request-id:
+      - 320ee785-52f6-4569-8087-254b16decf25
+      content-length:
+      - '121'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Mon, 01 Mar 2021 18:47:35 GMT
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains; preload
+      x-content-type-options:
+      - nosniff
+    status:
+      code: 400
+      message: Bad Request
+version: 1

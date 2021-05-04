@@ -127,6 +127,12 @@ class ServicePropertiesTest(StorageTestCase):
 
     # --Test cases per feature ---------------------------------------
     @GlobalStorageAccountPreparer()
+    def test_empty_set_service_properties_exception(self, resource_group, location, storage_account, storage_account_key):
+        bsc = BlobServiceClient(self.account_url(storage_account, "blob"), credential=storage_account_key)
+        with self.assertRaises(ValueError):
+            bsc.set_service_properties()
+
+    @GlobalStorageAccountPreparer()
     def test_set_default_service_version(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
         bsc = BlobServiceClient(self.account_url(storage_account, "blob"), credential=storage_account_key)
@@ -170,7 +176,7 @@ class ServicePropertiesTest(StorageTestCase):
         # Should not work with 0 days
         delete_retention_policy = RetentionPolicy(enabled=True, days=0)
 
-        with self.assertRaises(ValidationError):
+        with self.assertRaises(HttpResponseError):
             bsc.set_service_properties(delete_retention_policy=delete_retention_policy)
 
         # Assert

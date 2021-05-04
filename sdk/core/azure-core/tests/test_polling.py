@@ -33,8 +33,14 @@ import pytest
 import six
 
 from azure.core import PipelineClient
+from azure.core.exceptions import ServiceResponseError
 from azure.core.polling import *
+from azure.core.polling.base_polling import (
+    LROBasePolling, LocationPolling
+)
 from msrest.serialization import Model
+from azure.core.pipeline import PipelineResponse
+from azure.core.pipeline.transport import HttpResponse
 
 
 @pytest.fixture
@@ -95,6 +101,18 @@ def test_no_polling(client):
     assert no_polling_revived.status() == "succeeded"
     assert no_polling_revived.finished()
     assert no_polling_revived.resource() == "Treated: "+initial_response
+
+def test_polling_with_path_format_arguments(client):
+    method = LROBasePolling(
+        timeout=0,
+        path_format_arguments={"host": "host:3000", "accountName": "local"}
+    )
+    client._base_url = "http://{accountName}{host}"
+
+    method._operation = LocationPolling()
+    method._operation._location_url = "/results/1"
+    method._client = client
+    assert "http://localhost:3000/results/1" == method._client.format_url(method._operation.get_polling_url(), **method._path_format_arguments)
 
 
 class PollingTwoSteps(PollingMethod):
@@ -221,3 +239,22 @@ def test_broken_poller(client):
     with pytest.raises(ValueError) as excinfo:
         poller.result()
     assert "Something bad happened" in str(excinfo.value)
+
+
+def test_poller_error_continuation(client):
+
+    class NoPollingError(PollingTwoSteps):
+        def run(self):
+            raise ServiceResponseError("Something bad happened")
+
+    initial_response = "Initial response"
+    def deserialization_callback(response):
+        return "Treated: "+response
+
+    method = NoPollingError()
+    poller = LROPoller(client, initial_response, deserialization_callback, method)
+
+    with pytest.raises(ServiceResponseError) as excinfo:
+        poller.result()
+    assert "Something bad happened" in str(excinfo.value)
+    assert excinfo.value.continuation_token == "Initial response"

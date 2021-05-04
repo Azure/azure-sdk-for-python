@@ -8,6 +8,8 @@
 import unittest
 import asyncio
 
+import pytest
+
 from azure.core.exceptions import HttpResponseError
 from azure.core.pipeline.transport import AioHttpTransport
 from multidict import CIMultiDict, CIMultiDictProxy
@@ -15,6 +17,9 @@ from azure.storage.fileshare import (
     Metrics,
     CorsRule,
     RetentionPolicy,
+    ShareProtocolSettings,
+    SmbMultichannel,
+    ShareSmbSettings,
 )
 from azure.storage.fileshare.aio import ShareServiceClient
 from devtools_testutils import ResourceGroupPreparer, StorageAccountPreparer
@@ -81,14 +86,17 @@ class FileServicePropertiesTest(AsyncStorageTestCase):
         self.assertEqual(ret1.days, ret2.days)
 
     # --Test cases per service ---------------------------------------
+    @pytest.mark.playback_test_only
     @GlobalStorageAccountPreparer()
     @AsyncStorageTestCase.await_prepared_test
     async def test_file_service_properties_async(self, resource_group, location, storage_account, storage_account_key):
         self._setup(storage_account, storage_account_key)
+        protocol_properties1 = ShareProtocolSettings(smb=ShareSmbSettings(multichannel=SmbMultichannel(enabled=False)))
+        protocol_properties2 = ShareProtocolSettings(smb=ShareSmbSettings(multichannel=SmbMultichannel(enabled=True)))
 
         # Act
         resp = await self.fsc.set_service_properties(
-            hour_metrics=Metrics(), minute_metrics=Metrics(), cors=list())
+            hour_metrics=Metrics(), minute_metrics=Metrics(), cors=list(), protocol=protocol_properties1)
 
         # Assert
         self.assertIsNone(resp)
@@ -96,6 +104,20 @@ class FileServicePropertiesTest(AsyncStorageTestCase):
         self._assert_metrics_equal(props['hour_metrics'], Metrics())
         self._assert_metrics_equal(props['minute_metrics'], Metrics())
         self._assert_cors_equal(props['cors'], list())
+        self.assertEqual(props['protocol'].smb.multichannel.enabled, False)
+        # Assert
+        with self.assertRaises(ValueError):
+            ShareProtocolSettings(smb=ShareSmbSettings(multichannel=SmbMultichannel()))
+        with self.assertRaises(ValueError):
+            ShareProtocolSettings(smb=ShareSmbSettings())
+        with self.assertRaises(ValueError):
+            ShareProtocolSettings()
+
+        # Act
+        await self.fsc.set_service_properties(
+            hour_metrics=Metrics(), minute_metrics=Metrics(), cors=list(), protocol=protocol_properties2)
+        props = await self.fsc.get_service_properties()
+        self.assertEqual(props['protocol'].smb.multichannel.enabled, True)
 
     # --Test cases per feature ---------------------------------------
     @GlobalStorageAccountPreparer()

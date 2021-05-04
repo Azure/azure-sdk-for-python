@@ -1,0 +1,31 @@
+interactions:
+- request:
+    body: 'b''{"source": "blob_sas_url"}'''
+    headers:
+      Accept:
+      - application/json
+      Content-Length:
+      - '213'
+      Content-Type:
+      - application/json
+      User-Agent:
+      - azsdk-python-ai-formrecognizer/3.1.0b4 Python/3.8.5 (Windows-10-10.0.19041-SP0)
+    method: POST
+    uri: https://region.api.cognitive.microsoft.com/formrecognizer/v2.1-preview.3/layout/analyze?language=not%20a%20language&readingOrder=basic
+  response:
+    body:
+      string: '{"error": {"code": "NotSupportedLanguage", "message": "The requested
+        operation is not supported in the language specified."}}'
+    headers:
+      apim-request-id: bc42eecf-97f3-4b56-b55c-c47fbcebd4a9
+      content-length: '121'
+      content-type: application/json; charset=utf-8
+      date: Wed, 03 Mar 2021 19:31:16 GMT
+      strict-transport-security: max-age=31536000; includeSubDomains; preload
+      x-content-type-options: nosniff
+      x-envoy-upstream-service-time: '3'
+    status:
+      code: 400
+      message: Bad Request
+    url: https://region.api.cognitive.microsoft.com/formrecognizer/v2.1-preview.3/layout/analyze?language=not%20a%20language&readingOrder=basic
+version: 1

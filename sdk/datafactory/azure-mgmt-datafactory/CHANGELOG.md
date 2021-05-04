@@ -1,5 +1,196 @@
 # Release History
 
+## 1.1.0 (2021-03-12)
+
+**Features**
+
+  - Model PipelineResource has a new parameter policy
+  - Model ManagedIntegrationRuntime has a new parameter managed_virtual_network
+  - Model CustomActivity has a new parameter auto_user_specification
+  - Model HttpLinkedService has a new parameter auth_headers
+  - Model AzureDatabricksLinkedService has a new parameter workspace_resource_id
+  - Model AzureDatabricksLinkedService has a new parameter authentication
+  - Model AzureDatabricksLinkedService has a new parameter policy_id
+  - Model RestServiceLinkedService has a new parameter auth_headers
+  - Model AzureBlobStorageLinkedService has a new parameter account_kind
+  - Model AzureMLExecutePipelineActivity has a new parameter version
+  - Model AzureMLExecutePipelineActivity has a new parameter ml_pipeline_endpoint_id
+  - Model AzureMLExecutePipelineActivity has a new parameter data_path_assignments
+  - Model IntegrationRuntimeSsisCatalogInfo has a new parameter dual_standby_pair_name
+  - Model WebActivityAuthentication has a new parameter user_tenant
+  - Model ODataLinkedService has a new parameter auth_headers
+  - Model CosmosDbLinkedService has a new parameter connection_mode
+  - Model CosmosDbLinkedService has a new parameter service_principal_credential_type
+  - Model CosmosDbLinkedService has a new parameter service_principal_id
+  - Model CosmosDbLinkedService has a new parameter tenant
+  - Model CosmosDbLinkedService has a new parameter service_principal_credential
+  - Model CosmosDbLinkedService has a new parameter azure_cloud_type
+
+## 1.0.0 (2020-12-17)
+
+**Features**
+
+  - Model Factory has a new parameter encryption
+  - Model FactoryIdentity has a new parameter user_assigned_identities
+  - Model ExecuteDataFlowActivity has a new parameter trace_level
+  - Model ExecuteDataFlowActivity has a new parameter continue_on_error
+  - Model ExecuteDataFlowActivity has a new parameter run_concurrently
+
+## 1.0.0b1 (2020-11-06)
+
+This is beta preview version.
+
+This version uses a next-generation code generator that introduces important breaking changes, but also important new features (like unified authentication and async programming).
+
+**General breaking changes**
+
+- Credential system has been completly revamped:
+
+  - `azure.common.credentials` or `msrestazure.azure_active_directory` instances are no longer supported, use the `azure-identity` classes instead: https://pypi.org/project/azure-identity/
+  - `credentials` parameter has been renamed `credential`
+
+- The `config` attribute no longer exists on a client, configuration should be passed as kwarg. Example: `MyClient(credential, subscription_id, enable_logging=True)`. For a complete set of
+  supported options, see the [parameters accept in init documentation of azure-core](https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/core/azure-core/CLIENT_LIBRARY_DEVELOPER.md#available-policies)
+- You can't import a `version` module anymore, use `__version__` instead
+- Operations that used to return a `msrest.polling.LROPoller` now returns a `azure.core.polling.LROPoller` and are prefixed with `begin_`.
+- Exceptions tree have been simplified and most exceptions are now `azure.core.exceptions.HttpResponseError` (`CloudError` has been removed).
+- Most of the operation kwarg have changed. Some of the most noticeable:
+
+  - `raw` has been removed. Equivalent feature can be found using `cls`, a callback that will give access to internal HTTP response for advanced user
+  - For a complete set of
+  supported options, see the [parameters accept in Request documentation of azure-core](https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/core/azure-core/CLIENT_LIBRARY_DEVELOPER.md#available-policies)
+
+**General new features**
+
+- Type annotations support using `typing`. SDKs are mypy ready.
+- This client has now stable and official support for async. Check the `aio` namespace of your package to find the async client.
+- This client now support natively tracing library like OpenCensus or OpenTelemetry. See this [tracing quickstart](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/core/azure-core-tracing-opentelemetry) for an overview.
+
+## 0.14.0 (2020-10-23)
+
+**Features**
+
+  - Model OrcSink has a new parameter format_settings
+  - Model DelimitedTextWriteSettings has a new parameter max_rows_per_file
+  - Model DelimitedTextWriteSettings has a new parameter file_name_prefix
+  - Model RestSink has a new parameter http_compression_type
+  - Model ParquetSink has a new parameter format_settings
+  - Model AvroWriteSettings has a new parameter max_rows_per_file
+  - Model AvroWriteSettings has a new parameter file_name_prefix
+
+**Breaking changes**
+
+  - Model RestSink no longer has parameter wrap_request_json_in_an_object
+  - Model RestSink no longer has parameter compression_type
+  
+
+## 0.13.0 (2020-08-25)
+
+**Features**
+
+  - Model LogStorageSettings has a new parameter enable_reliable_logging
+  - Model LogStorageSettings has a new parameter log_level
+  - Model HdfsReadSettings has a new parameter delete_files_after_completion
+  - Model XmlReadSettings has a new parameter detect_data_type
+  - Model XmlReadSettings has a new parameter namespaces
+  - Model CosmosDbSqlApiSource has a new parameter detect_datetime
+  - Added operation ExposureControlOperations.query_feature_values_by_factory
+  - Added operation group ManagedPrivateEndpointsOperations
+  - Added operation group ManagedVirtualNetworksOperations
+
+## 0.12.0 (2020-07-29)
+
+**Features**
+
+  - Model SalesforceMarketingCloudLinkedService has a new parameter connection_properties
+  - Model ODataLinkedService has a new parameter azure_cloud_type
+  - Model SapOpenHubSource has a new parameter custom_rfc_read_table_function_module
+  - Model SapOpenHubSource has a new parameter sap_data_column_delimiter
+  - Model AzureBlobStorageLinkedService has a new parameter azure_cloud_type
+  - Model XeroLinkedService has a new parameter connection_properties
+  - Model SapTableSource has a new parameter sap_data_column_delimiter
+  - Model AzureSqlDatabaseLinkedService has a new parameter azure_cloud_type
+  - Model SapOpenHubLinkedService has a new parameter logon_group
+  - Model SapOpenHubLinkedService has a new parameter system_id
+  - Model SapOpenHubLinkedService has a new parameter message_server_service
+  - Model SapOpenHubLinkedService has a new parameter message_server
+  - Model AzureSqlDWLinkedService has a new parameter azure_cloud_type
+  - Model AzureDataLakeStoreLinkedService has a new parameter azure_cloud_type
+  - Model QuickBooksLinkedService has a new parameter connection_properties
+  - Model RestServiceLinkedService has a new parameter azure_cloud_type
+  - Model AzureSqlMILinkedService has a new parameter azure_cloud_type
+  - Model SquareLinkedService has a new parameter connection_properties
+  - Model AzureBlobFSLinkedService has a new parameter azure_cloud_type
+  - Model AzureFileStorageLinkedService has a new parameter snapshot
+  - Model AzureDatabricksLinkedService has a new parameter new_cluster_log_destination
+  - Model ZohoLinkedService has a new parameter connection_properties
+  - Added operation TriggerRunsOperations.cancel
+
+## 0.11.0 (2020-06-16)
+
+**Features**
+
+  - Model AzureBlobStorageReadSettings has a new parameter partition_root_path
+  - Model AzureBlobStorageReadSettings has a new parameter delete_files_after_completion
+  - Model SqlSource has a new parameter partition_option
+  - Model SqlSource has a new parameter partition_settings
+  - Model JsonSource has a new parameter format_settings
+  - Model DynamicsAXSource has a new parameter http_request_timeout
+  - Model AzureFileStorageReadSettings has a new parameter partition_root_path
+  - Model AzureFileStorageReadSettings has a new parameter prefix
+  - Model AzureFileStorageReadSettings has a new parameter delete_files_after_completion
+  - Model AzureSqlSource has a new parameter partition_option
+  - Model AzureSqlSource has a new parameter partition_settings
+  - Model GetMetadataActivity has a new parameter format_settings
+  - Model GetMetadataActivity has a new parameter store_settings
+  - Model SapCloudForCustomerSink has a new parameter http_request_timeout
+  - Model DataFlowSource has a new parameter schema_linked_service
+  - Model DataFlowSource has a new parameter linked_service
+  - Model SftpReadSettings has a new parameter enable_partition_discovery
+  - Model SftpReadSettings has a new parameter partition_root_path
+  - Model SftpReadSettings has a new parameter delete_files_after_completion
+  - Model FtpReadSettings has a new parameter enable_partition_discovery
+  - Model FtpReadSettings has a new parameter partition_root_path
+  - Model FtpReadSettings has a new parameter delete_files_after_completion
+  - Model IntegrationRuntimeSsisProperties has a new parameter package_stores
+  - Model SSISPackageLocation has a new parameter configuration_access_credential
+  - Model SqlMISource has a new parameter partition_option
+  - Model SqlMISource has a new parameter partition_settings
+  - Model SapCloudForCustomerSource has a new parameter http_request_timeout
+  - Model AzureDataLakeStoreReadSettings has a new parameter delete_files_after_completion
+  - Model AzureDataLakeStoreReadSettings has a new parameter list_before
+  - Model AzureDataLakeStoreReadSettings has a new parameter partition_root_path
+  - Model AzureDataLakeStoreReadSettings has a new parameter list_after
+  - Model AzureBlobFSReadSettings has a new parameter partition_root_path
+  - Model AzureBlobFSReadSettings has a new parameter delete_files_after_completion
+  - Model SapEccSource has a new parameter http_request_timeout
+  - Model DeleteActivity has a new parameter store_settings
+  - Model FileServerReadSettings has a new parameter delete_files_after_completion
+  - Model FileServerReadSettings has a new parameter partition_root_path
+  - Model FileServerReadSettings has a new parameter file_filter
+  - Model HttpReadSettings has a new parameter enable_partition_discovery
+  - Model HttpReadSettings has a new parameter partition_root_path
+  - Model AzureFileStorageLinkedService has a new parameter connection_string
+  - Model AzureFileStorageLinkedService has a new parameter file_share
+  - Model AzureFileStorageLinkedService has a new parameter account_key
+  - Model AzureFileStorageLinkedService has a new parameter sas_uri
+  - Model AzureFileStorageLinkedService has a new parameter sas_token
+  - Model AmazonS3ReadSettings has a new parameter partition_root_path
+  - Model AmazonS3ReadSettings has a new parameter delete_files_after_completion
+  - Model GoogleCloudStorageReadSettings has a new parameter partition_root_path
+  - Model GoogleCloudStorageReadSettings has a new parameter delete_files_after_completion
+  - Model ODataSource has a new parameter http_request_timeout
+  - Model SqlDWSource has a new parameter partition_option
+  - Model SqlDWSource has a new parameter partition_settings
+  - Model BinarySource has a new parameter format_settings
+  - Model DataFlowSink has a new parameter schema_linked_service
+  - Model DataFlowSink has a new parameter linked_service
+  - Model DelimitedTextReadSettings has a new parameter compression_properties
+  - Model Factory has a new parameter global_parameters
+  - Model SqlServerSource has a new parameter partition_option
+  - Model SqlServerSource has a new parameter partition_settings
+  - Model HdfsReadSettings has a new parameter partition_root_path
+
 ## 0.10.0 (2020-03-10)
 
 **Features**

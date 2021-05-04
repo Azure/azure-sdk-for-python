@@ -1072,7 +1072,7 @@ class CosmosClientConnection(object):  # pylint: disable=too-many-public-methods
         # not each time the function is called (like it is in say, Ruby). This means
         # that if you use a mutable default argument and mutate it, you will and have
         # mutated that object for all future calls to the function as well. So, using
-        # a non-mutable deafult in this case(None) and assigning an empty dict(mutable)
+        # a non-mutable default in this case(None) and assigning an empty dict(mutable)
         # inside the method For more details on this gotcha, please refer
         # http://docs.python-guide.org/en/latest/writing/gotchas/
         if options is None:
@@ -1080,12 +1080,13 @@ class CosmosClientConnection(object):  # pylint: disable=too-many-public-methods
 
         # We check the link to be document collection link since it can be database
         # link in case of client side partitioning
-        if base.IsItemContainerLink(database_or_container_link):
-            options = self._AddPartitionKey(database_or_container_link, document, options)
-
         collection_id, document, path = self._GetContainerIdWithPathForItem(
             database_or_container_link, document, options
         )
+
+        if base.IsItemContainerLink(database_or_container_link):
+            options = self._AddPartitionKey(database_or_container_link, document, options)
+
         return self.Create(document, path, "docs", collection_id, None, options, **kwargs)
 
     def UpsertItem(self, database_or_container_link, document, options=None, **kwargs):

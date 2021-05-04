@@ -2,30 +2,56 @@ from ._version import VERSION
 from ._chat_client import ChatClient
 from ._chat_thread_client import ChatThreadClient
 from ._generated.models import (
-    ChatMessagePriority,
     SendChatMessageResult,
-    ChatThreadInfo,
+    ChatThreadItem,
+    ChatMessageType,
+    ChatError
 )
-from ._shared.user_credential import CommunicationUserCredential
+
 from ._models import (
-    ChatThreadMember,
+    ChatParticipant,
     ChatMessage,
-    ChatThread,
-    ReadReceipt,
+    ChatThreadProperties,
+    ChatMessageReadReceipt,
+    ChatMessageContent,
+    CreateChatThreadResult
 )
-from ._shared.models import CommunicationUser
+
+from ._shared.user_credential import CommunicationTokenCredential
+from ._shared.models import (
+    CommunicationIdentifier,
+    CommunicationIdentifierKind,
+    CommunicationUserIdentifier,
+    CommunicationUserProperties,
+    PhoneNumberIdentifier,
+    PhoneNumberProperties,
+    MicrosoftTeamsUserIdentifier,
+    MicrosoftTeamsUserProperties,
+    UnknownIdentifier
+)
 
 __all__ = [
     'ChatClient',
     'ChatThreadClient',
     'ChatMessage',
-    'ChatMessagePriority',
-    'ReadReceipt',
+    'ChatMessageContent',
+    'ChatMessageReadReceipt',
     'SendChatMessageResult',
-    'ChatThread',
-    'ChatThreadInfo',
-    'CommunicationUserCredential',
-    'ChatThreadMember',
-    'CommunicationUser',
+    'ChatThreadProperties',
+    'ChatThreadItem',
+    'ChatParticipant',
+    'ChatMessageType',
+    'CreateChatThreadResult',
+    'ChatError',
+    'CommunicationTokenCredential',
+    'CommunicationIdentifier',
+    'CommunicationIdentifierKind',
+    'CommunicationUserIdentifier',
+    'CommunicationUserProperties',
+    'PhoneNumberIdentifier',
+    'PhoneNumberProperties',
+    'MicrosoftTeamsUserIdentifier',
+    'MicrosoftTeamsUserProperties',
+    'UnknownIdentifier'
 ]
 __version__ = VERSION

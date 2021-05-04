@@ -1,0 +1,65 @@
+interactions:
+- request:
+    body: null
+    headers:
+      User-Agent:
+      - azsdk-python-storage-dfs/12.0.0 Python/3.7.4 (Darwin-19.4.0-x86_64-i386-64bit)
+      x-ms-client-request-id:
+      - 1860c51e-74c0-11ea-b115-acde48001122
+      x-ms-date:
+      - Thu, 02 Apr 2020 08:58:17 GMT
+      x-ms-properties:
+      - ''
+      x-ms-version:
+      - '2019-12-12'
+    method: PUT
+    uri: https://storagename.dfs.core.windows.net/filesystembf7017fd/filebf7017fd?resource=file
+  response:
+    body:
+      string: ''
+    headers:
+      Content-Length: '0'
+      Date: Thu, 02 Apr 2020 08:58:17 GMT
+      Etag: '"0x8D7D6E3FCCCCE03"'
+      Last-Modified: Thu, 02 Apr 2020 08:58:18 GMT
+      Server: Windows-Azure-HDFS/1.0 Microsoft-HTTPAPI/2.0
+      x-ms-request-id: 9824eae1-a01f-004c-48cc-08a67c000000
+      x-ms-version: '2019-12-12'
+    status:
+      code: 201
+      message: Created
+    url: https://aclcbn06stf.dfs.core.windows.net/filesystembf7017fd/filebf7017fd?resource=file
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      User-Agent:
+      - azsdk-python-storage-dfs/12.0.0 Python/3.7.4 (Darwin-19.4.0-x86_64-i386-64bit)
+      x-ms-acl:
+      - mask,default:user,default:group,user:ec3595d6-2c17-4696-8caa-7e139758d24a,group:ec3595d6-2c17-4696-8caa-7e139758d24a,default:user:ec3595d6-2c17-4696-8caa-7e139758d24a,default:group:ec3595d6-2c17-4696-8caa-7e139758d24a
+      x-ms-client-request-id:
+      - 189f112a-74c0-11ea-b115-acde48001122
+      x-ms-date:
+      - Thu, 02 Apr 2020 08:58:18 GMT
+      x-ms-version:
+      - '2019-12-12'
+    method: PATCH
+    uri: https://storagename.dfs.core.windows.net/filesystembf7017fd/filebf7017fd?mode=remove&action=setAccessControlRecursive
+  response:
+    body:
+      string: '{"directoriesSuccessful":0,"failedEntries":[],"failureCount":0,"filesSuccessful":1}
+
+        '
+    headers:
+      Date: Thu, 02 Apr 2020 08:58:17 GMT
+      Server: Windows-Azure-HDFS/1.0 Microsoft-HTTPAPI/2.0
+      Transfer-Encoding: chunked
+      x-ms-namespace-enabled: 'true'
+      x-ms-request-id: 9824eae2-a01f-004c-49cc-08a67c000000
+      x-ms-version: '2019-12-12'
+    status:
+      code: 200
+      message: OK
+    url: https://aclcbn06stf.dfs.core.windows.net/filesystembf7017fd/filebf7017fd?mode=remove&action=setAccessControlRecursive
+version: 1

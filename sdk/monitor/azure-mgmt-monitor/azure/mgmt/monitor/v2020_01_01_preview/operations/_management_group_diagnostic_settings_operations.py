@@ -14,7 +14,7 @@ from azure.core.pipeline import PipelineResponse
 from azure.core.pipeline.transport import HttpRequest, HttpResponse
 from azure.mgmt.core.exceptions import ARMErrorFormat
 
-from .. import models
+from .. import models as _models
 
 if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
@@ -37,7 +37,7 @@ class ManagementGroupDiagnosticSettingsOperations(object):
     :param deserializer: An object model deserializer.
     """
 
-    models = models
+    models = _models
 
     def __init__(self, client, config, serializer, deserializer):
         self._client = client
@@ -51,7 +51,7 @@ class ManagementGroupDiagnosticSettingsOperations(object):
         name,  # type: str
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.ManagementGroupDiagnosticSettingsResource"
+        # type: (...) -> "_models.ManagementGroupDiagnosticSettingsResource"
         """Gets the active management group diagnostic settings for the specified resource.
 
         :param management_group_id: The management group id.
@@ -63,7 +63,7 @@ class ManagementGroupDiagnosticSettingsOperations(object):
         :rtype: ~$(python-base-namespace).v2020_01_01_preview.models.ManagementGroupDiagnosticSettingsResource
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.ManagementGroupDiagnosticSettingsResource"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.ManagementGroupDiagnosticSettingsResource"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -93,7 +93,7 @@ class ManagementGroupDiagnosticSettingsOperations(object):
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.ErrorResponse, response)
+            error = self._deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('ManagementGroupDiagnosticSettingsResource', pipeline_response)
@@ -108,10 +108,10 @@ class ManagementGroupDiagnosticSettingsOperations(object):
         self,
         management_group_id,  # type: str
         name,  # type: str
-        parameters,  # type: "models.ManagementGroupDiagnosticSettingsResource"
+        parameters,  # type: "_models.ManagementGroupDiagnosticSettingsResource"
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.ManagementGroupDiagnosticSettingsResource"
+        # type: (...) -> "_models.ManagementGroupDiagnosticSettingsResource"
         """Creates or updates management group diagnostic settings for the specified resource.
 
         :param management_group_id: The management group id.
@@ -125,7 +125,7 @@ class ManagementGroupDiagnosticSettingsOperations(object):
         :rtype: ~$(python-base-namespace).v2020_01_01_preview.models.ManagementGroupDiagnosticSettingsResource
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.ManagementGroupDiagnosticSettingsResource"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.ManagementGroupDiagnosticSettingsResource"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -160,7 +160,7 @@ class ManagementGroupDiagnosticSettingsOperations(object):
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.ErrorResponse, response)
+            error = self._deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('ManagementGroupDiagnosticSettingsResource', pipeline_response)
@@ -219,7 +219,7 @@ class ManagementGroupDiagnosticSettingsOperations(object):
 
         if response.status_code not in [200, 204]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.ErrorResponse, response)
+            error = self._deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if cls:
@@ -232,7 +232,7 @@ class ManagementGroupDiagnosticSettingsOperations(object):
         management_group_id,  # type: str
         **kwargs  # type: Any
     ):
-        # type: (...) -> Iterable["models.ManagementGroupDiagnosticSettingsResourceCollection"]
+        # type: (...) -> Iterable["_models.ManagementGroupDiagnosticSettingsResourceCollection"]
         """Gets the active management group diagnostic settings list for the specified management group.
 
         :param management_group_id: The management group id.
@@ -242,7 +242,7 @@ class ManagementGroupDiagnosticSettingsOperations(object):
         :rtype: ~azure.core.paging.ItemPaged[~$(python-base-namespace).v2020_01_01_preview.models.ManagementGroupDiagnosticSettingsResourceCollection]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.ManagementGroupDiagnosticSettingsResourceCollection"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.ManagementGroupDiagnosticSettingsResourceCollection"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -287,7 +287,7 @@ class ManagementGroupDiagnosticSettingsOperations(object):
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
-                error = self._deserialize(models.ErrorResponse, response)
+                error = self._deserialize(_models.ErrorResponse, response)
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 

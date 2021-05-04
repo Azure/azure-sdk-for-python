@@ -1,7 +1,13 @@
 # Release History
 
-## 1.1.26 (Unreleased)
+## 1.1.27 (2021-03-23)
 
+- Deprecate JSON and auth file client factory  #15075
+- Add 2020-09-01-hybrid profile definition  #14642
+
+## 1.1.26 (2020-11-10)
+
+- get_client_from_cli_profile now supports azure-applicationinsights 0.1.0 package
 
 ## 1.1.25 (2020-03-09)
 

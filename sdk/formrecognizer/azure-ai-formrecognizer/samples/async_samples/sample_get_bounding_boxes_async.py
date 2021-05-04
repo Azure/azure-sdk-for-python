@@ -62,7 +62,6 @@ class GetBoundingBoxesSampleAsync(object):
                 print("Form has type: {}".format(form.form_type))
                 for name, field in form.fields.items():
                     # each field is of type FormField
-                    # The value of the field can also be a Dict[str, FormField], or a List[FormField] - in our sample, it is not.
                     print("...Field '{}' has label '{}' with value '{}' within bounding box '{}', with a confidence score of {}".format(
                         name,
                         field.label_data.text if field.label_data else name,
@@ -82,9 +81,8 @@ class GetBoundingBoxesSampleAsync(object):
                                 "...Cell[{}][{}] has text '{}' with confidence {} based on the following words: ".format(
                                     cell.row_index, cell.column_index, cell.text, cell.confidence
                                 ))
-                            # field_elements is only populated if you set include_field_elements to True in your call
-                            # to begin_recognize_custom_forms
-                            # It is a heterogeneous list of FormWord and FormLine.
+                            # field_elements is only populated if you set include_field_elements=True
+                            # It is a heterogeneous list of FormWord, FormLine, and FormSelectionMark
                             for element in cell.field_elements:
                                 if element.kind == "word":
                                     print("......Word '{}' within bounding box '{}' has a confidence of {}".format(
@@ -103,6 +101,13 @@ class GetBoundingBoxesSampleAsync(object):
                                             format_bounding_box(word.bounding_box),
                                             word.confidence
                                         ))
+                                elif element.kind == "selectionMark":
+                                    print("......Selection mark is '{}' within bounding box '{}' "
+                                          "and has a confidence of {}".format(
+                                            element.state,
+                                            format_bounding_box(element.bounding_box),
+                                            element.confidence
+                                            ))
 
                     print("---------------------------------------------------")
                 print("-----------------------------------")

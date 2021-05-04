@@ -9,13 +9,13 @@ from enum import Enum
 import pytest
 import requests
 import time
-import unittest
 import uuid
 import os
 import sys
 from datetime import datetime, timedelta
 
 from azure.core import MatchConditions
+from azure.core.credentials import AzureSasCredential
 from azure.core.exceptions import (
     HttpResponseError,
     ResourceNotFoundError,
@@ -32,7 +32,6 @@ from azure.storage.blob import (
     ContainerClient,
     BlobClient,
     BlobType,
-    StorageErrorCode,
     BlobSasPermissions,
     ContainerSasPermissions,
     ContentSettings,
@@ -47,14 +46,15 @@ from azure.storage.blob._generated.models import RehydratePriority
 from devtools_testutils import ResourceGroupPreparer, StorageAccountPreparer
 from _shared.testcase import StorageTestCase, GlobalStorageAccountPreparer, GlobalResourceGroupPreparer
 
-#------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------
 TEST_CONTAINER_PREFIX = 'container'
 TEST_BLOB_PREFIX = 'blob'
-#------------------------------------------------------------------------------
+
+# ------------------------------------------------------------------------------
+
 
 class StorageCommonBlobTest(StorageTestCase):
-
-    def _setup(self, storage_account, key):
+    def _setup(self, storage_account, key, **kwargs):
         self.bsc = BlobServiceClient(self.account_url(storage_account, "blob"), credential=key)
         self.container_name = self.get_resource_name('utcontainer')
         if self.is_live:
@@ -76,7 +76,7 @@ class StorageCommonBlobTest(StorageTestCase):
             except:
                 pass
 
-    #--Helpers-----------------------------------------------------------------
+    # --Helpers-----------------------------------------------------------------
     def _get_container_reference(self):
         return self.get_resource_name(TEST_CONTAINER_PREFIX)
 
@@ -86,7 +86,7 @@ class StorageCommonBlobTest(StorageTestCase):
     def _create_block_blob(self, standard_blob_tier=None, overwrite=False, tags=None):
         blob_name = self._get_blob_reference()
         blob = self.bsc.get_blob_client(self.container_name, blob_name)
-        blob.upload_blob(self.byte_data, length=len(self.byte_data), standard_blob_tier=standard_blob_tier, 
+        blob.upload_blob(self.byte_data, length=len(self.byte_data), standard_blob_tier=standard_blob_tier,
                          overwrite=overwrite, tags=tags)
         return blob_name
 
@@ -145,7 +145,7 @@ class StorageCommonBlobTest(StorageTestCase):
         self.assertIsNone(blob.deleted_time)
         self.assertIsNone(blob.remaining_retention_days)
 
-    #-- Common test cases for blobs ----------------------------------------------
+    # -- Common test cases for blobs ----------------------------------------------
     @GlobalStorageAccountPreparer()
     def test_blob_exists(self, resource_group, location, storage_account, storage_account_key):
         self._setup(storage_account, storage_account_key)
@@ -199,7 +199,6 @@ class StorageCommonBlobTest(StorageTestCase):
         self.assertTrue(prop)
         self.assertEqual(snapshot['snapshot'], prop.snapshot)
 
-
     @GlobalStorageAccountPreparer()
     def test_blob_snapshot_not_exists(self, resource_group, location, storage_account, storage_account_key):
         self._setup(storage_account, storage_account_key)
@@ -209,7 +208,6 @@ class StorageCommonBlobTest(StorageTestCase):
         blob = self.bsc.get_blob_client(self.container_name, blob_name, snapshot="1988-08-18T07:52:31.6690068Z")
         with self.assertRaises(ResourceNotFoundError):
             blob.get_blob_properties()
-
 
     @GlobalStorageAccountPreparer()
     def test_blob_container_not_exists(self, resource_group, location, storage_account, storage_account_key):
@@ -221,7 +219,6 @@ class StorageCommonBlobTest(StorageTestCase):
         blob = self.bsc.get_blob_client(self._get_container_reference(), blob_name)
         with self.assertRaises(ResourceNotFoundError):
             blob.get_blob_properties()
-
 
     @GlobalStorageAccountPreparer()
     def test_create_blob_with_question_mark(self, resource_group, location, storage_account, storage_account_key):
@@ -350,6 +347,23 @@ class StorageCommonBlobTest(StorageTestCase):
         md = blob.get_blob_properties().metadata
         self.assertDictEqual(md, metadata)
 
+    @GlobalStorageAccountPreparer()
+    def test_upload_blob_from_generator(self, resource_group, location, storage_account, storage_account_key):
+        self._setup(storage_account, storage_account_key)
+        blob_name = self._get_blob_reference()
+        # Act
+        raw_data = self.get_random_bytes(3 * 1024 * 1024) + b"hello random text"
+
+        def data_generator():
+            for i in range(0, 2):
+                yield raw_data
+
+        blob = self.bsc.get_blob_client(self.container_name, blob_name)
+        blob.upload_blob(data=data_generator())
+        data = blob.download_blob().readall()
+
+        # Assert
+        self.assertEqual(data, raw_data*2)
 
     @GlobalStorageAccountPreparer()
     def test_get_blob_with_existing_blob(self, resource_group, location, storage_account, storage_account_key):
@@ -363,7 +377,6 @@ class StorageCommonBlobTest(StorageTestCase):
         # Assert
         content = data.readall()
         self.assertEqual(content, self.byte_data)
-
 
     @GlobalStorageAccountPreparer()
     def test_get_blob_with_snapshot(self, resource_group, location, storage_account, storage_account_key):
@@ -379,7 +392,6 @@ class StorageCommonBlobTest(StorageTestCase):
         # Assert
         content = data.readall()
         self.assertEqual(content, self.byte_data)
-
 
     @GlobalStorageAccountPreparer()
     def test_get_blob_with_snapshot_previous(self, resource_group, location, storage_account, storage_account_key):
@@ -400,7 +412,6 @@ class StorageCommonBlobTest(StorageTestCase):
         self.assertEqual(blob_previous.readall(), self.byte_data)
         self.assertEqual(blob_latest.readall(), b'hello world again')
 
-
     @GlobalStorageAccountPreparer()
     def test_get_blob_with_range(self, resource_group, location, storage_account, storage_account_key):
         self._setup(storage_account, storage_account_key)
@@ -412,7 +423,6 @@ class StorageCommonBlobTest(StorageTestCase):
 
         # Assert
         self.assertEqual(data.readall(), self.byte_data[:5])
-
 
     @GlobalStorageAccountPreparer()
     def test_get_blob_with_lease(self, resource_group, location, storage_account, storage_account_key):
@@ -427,7 +437,6 @@ class StorageCommonBlobTest(StorageTestCase):
 
         # Assert
         self.assertEqual(data.readall(), self.byte_data)
-
 
     @GlobalStorageAccountPreparer()
     def test_get_blob_with_non_existing_blob(self, resource_group, location, storage_account, storage_account_key):
@@ -1302,7 +1311,7 @@ class StorageCommonBlobTest(StorageTestCase):
         target_blob = self.bsc.get_blob_client(self.container_name, target_blob_name)
 
         # Assert
-        with self.assertRaises(ResourceNotFoundError):
+        with self.assertRaises(ClientAuthenticationError):
             target_blob.start_copy_from_url(source_blob.url)
 
     @GlobalStorageAccountPreparer()
@@ -1713,6 +1722,34 @@ class StorageCommonBlobTest(StorageTestCase):
         self.assertEqual(self.byte_data, blob_response.content)
         self.assertTrue(container_response.ok)
 
+    @pytest.mark.live_test_only
+    @GlobalStorageAccountPreparer()
+    def test_account_sas_credential(self, resource_group, location, storage_account, storage_account_key):
+        # SAS URL is calculated from storage key, so this test runs live only
+
+        self._setup(storage_account, storage_account_key)
+        blob_name = self._create_block_blob()
+
+        token = generate_account_sas(
+            self.bsc.account_name,
+            self.bsc.credential.account_key,
+            ResourceTypes(container=True, object=True),
+            AccountSasPermissions(read=True),
+            datetime.utcnow() + timedelta(hours=1),
+        )
+
+        # Act
+        blob = BlobClient(
+            self.bsc.url, container_name=self.container_name, blob_name=blob_name, credential=AzureSasCredential(token))
+        container = ContainerClient(
+            self.bsc.url, container_name=self.container_name, credential=AzureSasCredential(token))
+        blob_properties = blob.get_blob_properties()
+        container_properties = container.get_container_properties()
+
+        # Assert
+        self.assertEqual(blob_name, blob_properties.name)
+        self.assertEqual(self.container_name, container_properties.name)
+
     @GlobalStorageAccountPreparer()
     def test_get_user_delegation_key(self, resource_group, location, storage_account, storage_account_key):
         # Act
@@ -1802,7 +1839,7 @@ class StorageCommonBlobTest(StorageTestCase):
 
     @pytest.mark.skipif(sys.version_info < (3, 0), reason="Batch not supported on Python 2.7")
     @GlobalStorageAccountPreparer()
-    def test_token_credential_with_batch_operation(self, resource_group, location, storage_account, storage_account_key):   
+    def test_token_credential_with_batch_operation(self, resource_group, location, storage_account, storage_account_key):
         # Setup
         container_name = self._get_container_reference()
         blob_name = self._get_blob_reference()
@@ -1817,7 +1854,7 @@ class StorageCommonBlobTest(StorageTestCase):
 
             delete_batch = []
             blob_list = container.list_blobs(name_starts_with=blob_name)
-            for blob in blob_list:        
+            for blob in blob_list:
                 delete_batch.append(blob.name)
 
             container.delete_blobs(*delete_batch)
@@ -2349,4 +2386,18 @@ class StorageCommonBlobTest(StorageTestCase):
         self.assertEqual(props.blob_tier, 'Hot')
         self.assertEqual(origin_props.blob_tier, 'Cool')
 
-#------------------------------------------------------------------------------
+    @pytest.mark.playback_test_only
+    @GlobalStorageAccountPreparer()
+    def test_access_token_refresh_after_retry(self, resource_group, location, storage_account, storage_account_key):
+        def fail_response(response):
+            response.http_response.status_code = 408
+        token_credential = self.generate_fake_token()
+        bsc = BlobServiceClient(self.account_url(storage_account, "blob"), credential=token_credential, retry_total=4)
+        self.container_name = self.get_resource_name('retrytest')
+        container = bsc.get_container_client(self.container_name)
+        with self.assertRaises(Exception):
+            container.create_container(raw_response_hook=fail_response)
+        # Assert that the token attempts to refresh 4 times (i.e, get_token called 4 times)
+        self.assertEqual(token_credential.get_token_count, 4)
+
+# ------------------------------------------------------------------------------

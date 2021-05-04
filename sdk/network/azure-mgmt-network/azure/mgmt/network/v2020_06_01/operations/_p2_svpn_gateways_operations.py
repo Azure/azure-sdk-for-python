@@ -16,7 +16,7 @@ from azure.core.polling import LROPoller, NoPolling, PollingMethod
 from azure.mgmt.core.exceptions import ARMErrorFormat
 from azure.mgmt.core.polling.arm_polling import ARMPolling
 
-from .. import models
+from .. import models as _models
 
 if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
@@ -39,7 +39,7 @@ class P2SVpnGatewaysOperations(object):
     :param deserializer: An object model deserializer.
     """
 
-    models = models
+    models = _models
 
     def __init__(self, client, config, serializer, deserializer):
         self._client = client
@@ -53,7 +53,7 @@ class P2SVpnGatewaysOperations(object):
         gateway_name,  # type: str
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.P2SVpnGateway"
+        # type: (...) -> "_models.P2SVpnGateway"
         """Retrieves the details of a virtual wan p2s vpn gateway.
 
         :param resource_group_name: The resource group name of the P2SVpnGateway.
@@ -65,7 +65,7 @@ class P2SVpnGatewaysOperations(object):
         :rtype: ~azure.mgmt.network.v2020_06_01.models.P2SVpnGateway
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.P2SVpnGateway"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.P2SVpnGateway"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -110,11 +110,11 @@ class P2SVpnGatewaysOperations(object):
         self,
         resource_group_name,  # type: str
         gateway_name,  # type: str
-        p2_s_vpn_gateway_parameters,  # type: "models.P2SVpnGateway"
+        p2_s_vpn_gateway_parameters,  # type: "_models.P2SVpnGateway"
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.P2SVpnGateway"
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.P2SVpnGateway"]
+        # type: (...) -> "_models.P2SVpnGateway"
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.P2SVpnGateway"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -168,10 +168,10 @@ class P2SVpnGatewaysOperations(object):
         self,
         resource_group_name,  # type: str
         gateway_name,  # type: str
-        p2_s_vpn_gateway_parameters,  # type: "models.P2SVpnGateway"
+        p2_s_vpn_gateway_parameters,  # type: "_models.P2SVpnGateway"
         **kwargs  # type: Any
     ):
-        # type: (...) -> LROPoller["models.P2SVpnGateway"]
+        # type: (...) -> LROPoller["_models.P2SVpnGateway"]
         """Creates a virtual wan p2s vpn gateway if it doesn't exist else updates the existing gateway.
 
         :param resource_group_name: The resource group name of the P2SVpnGateway.
@@ -192,7 +192,7 @@ class P2SVpnGatewaysOperations(object):
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         polling = kwargs.pop('polling', True)  # type: Union[bool, PollingMethod]
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.P2SVpnGateway"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.P2SVpnGateway"]
         lro_delay = kwargs.pop(
             'polling_interval',
             self._config.polling_interval
@@ -217,7 +217,13 @@ class P2SVpnGatewaysOperations(object):
                 return cls(pipeline_response, deserialized, {})
             return deserialized
 
-        if polling is True: polling_method = ARMPolling(lro_delay, lro_options={'final-state-via': 'azure-async-operation'},  **kwargs)
+        path_format_arguments = {
+            'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
+            'gatewayName': self._serialize.url("gateway_name", gateway_name, 'str'),
+        }
+
+        if polling is True: polling_method = ARMPolling(lro_delay, lro_options={'final-state-via': 'azure-async-operation'}, path_format_arguments=path_format_arguments,  **kwargs)
         elif polling is False: polling_method = NoPolling()
         else: polling_method = polling
         if cont_token:
@@ -235,11 +241,11 @@ class P2SVpnGatewaysOperations(object):
         self,
         resource_group_name,  # type: str
         gateway_name,  # type: str
-        p2_s_vpn_gateway_parameters,  # type: "models.TagsObject"
+        p2_s_vpn_gateway_parameters,  # type: "_models.TagsObject"
         **kwargs  # type: Any
     ):
-        # type: (...) -> Optional["models.P2SVpnGateway"]
-        cls = kwargs.pop('cls', None)  # type: ClsType[Optional["models.P2SVpnGateway"]]
+        # type: (...) -> Optional["_models.P2SVpnGateway"]
+        cls = kwargs.pop('cls', None)  # type: ClsType[Optional["_models.P2SVpnGateway"]]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -291,10 +297,10 @@ class P2SVpnGatewaysOperations(object):
         self,
         resource_group_name,  # type: str
         gateway_name,  # type: str
-        p2_s_vpn_gateway_parameters,  # type: "models.TagsObject"
+        p2_s_vpn_gateway_parameters,  # type: "_models.TagsObject"
         **kwargs  # type: Any
     ):
-        # type: (...) -> LROPoller["models.P2SVpnGateway"]
+        # type: (...) -> LROPoller["_models.P2SVpnGateway"]
         """Updates virtual wan p2s vpn gateway tags.
 
         :param resource_group_name: The resource group name of the P2SVpnGateway.
@@ -315,7 +321,7 @@ class P2SVpnGatewaysOperations(object):
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         polling = kwargs.pop('polling', True)  # type: Union[bool, PollingMethod]
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.P2SVpnGateway"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.P2SVpnGateway"]
         lro_delay = kwargs.pop(
             'polling_interval',
             self._config.polling_interval
@@ -340,7 +346,13 @@ class P2SVpnGatewaysOperations(object):
                 return cls(pipeline_response, deserialized, {})
             return deserialized
 
-        if polling is True: polling_method = ARMPolling(lro_delay, lro_options={'final-state-via': 'azure-async-operation'},  **kwargs)
+        path_format_arguments = {
+            'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
+            'gatewayName': self._serialize.url("gateway_name", gateway_name, 'str'),
+        }
+
+        if polling is True: polling_method = ARMPolling(lro_delay, lro_options={'final-state-via': 'azure-async-operation'}, path_format_arguments=path_format_arguments,  **kwargs)
         elif polling is False: polling_method = NoPolling()
         else: polling_method = polling
         if cont_token:
@@ -444,7 +456,13 @@ class P2SVpnGatewaysOperations(object):
             if cls:
                 return cls(pipeline_response, None, {})
 
-        if polling is True: polling_method = ARMPolling(lro_delay, lro_options={'final-state-via': 'location'},  **kwargs)
+        path_format_arguments = {
+            'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
+            'gatewayName': self._serialize.url("gateway_name", gateway_name, 'str'),
+        }
+
+        if polling is True: polling_method = ARMPolling(lro_delay, lro_options={'final-state-via': 'location'}, path_format_arguments=path_format_arguments,  **kwargs)
         elif polling is False: polling_method = NoPolling()
         else: polling_method = polling
         if cont_token:
@@ -463,7 +481,7 @@ class P2SVpnGatewaysOperations(object):
         resource_group_name,  # type: str
         **kwargs  # type: Any
     ):
-        # type: (...) -> Iterable["models.ListP2SVpnGatewaysResult"]
+        # type: (...) -> Iterable["_models.ListP2SVpnGatewaysResult"]
         """Lists all the P2SVpnGateways in a resource group.
 
         :param resource_group_name: The resource group name of the P2SVpnGateway.
@@ -473,7 +491,7 @@ class P2SVpnGatewaysOperations(object):
         :rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.network.v2020_06_01.models.ListP2SVpnGatewaysResult]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.ListP2SVpnGatewaysResult"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.ListP2SVpnGatewaysResult"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -533,7 +551,7 @@ class P2SVpnGatewaysOperations(object):
         self,
         **kwargs  # type: Any
     ):
-        # type: (...) -> Iterable["models.ListP2SVpnGatewaysResult"]
+        # type: (...) -> Iterable["_models.ListP2SVpnGatewaysResult"]
         """Lists all the P2SVpnGateways in a subscription.
 
         :keyword callable cls: A custom type or function that will be passed the direct response
@@ -541,7 +559,7 @@ class P2SVpnGatewaysOperations(object):
         :rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.network.v2020_06_01.models.ListP2SVpnGatewaysResult]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.ListP2SVpnGatewaysResult"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.ListP2SVpnGatewaysResult"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -602,8 +620,8 @@ class P2SVpnGatewaysOperations(object):
         gateway_name,  # type: str
         **kwargs  # type: Any
     ):
-        # type: (...) -> Optional["models.P2SVpnGateway"]
-        cls = kwargs.pop('cls', None)  # type: ClsType[Optional["models.P2SVpnGateway"]]
+        # type: (...) -> Optional["_models.P2SVpnGateway"]
+        cls = kwargs.pop('cls', None)  # type: ClsType[Optional["_models.P2SVpnGateway"]]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -652,7 +670,7 @@ class P2SVpnGatewaysOperations(object):
         gateway_name,  # type: str
         **kwargs  # type: Any
     ):
-        # type: (...) -> LROPoller["models.P2SVpnGateway"]
+        # type: (...) -> LROPoller["_models.P2SVpnGateway"]
         """Resets the primary of the p2s vpn gateway in the specified resource group.
 
         :param resource_group_name: The resource group name of the P2SVpnGateway.
@@ -670,7 +688,7 @@ class P2SVpnGatewaysOperations(object):
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         polling = kwargs.pop('polling', True)  # type: Union[bool, PollingMethod]
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.P2SVpnGateway"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.P2SVpnGateway"]
         lro_delay = kwargs.pop(
             'polling_interval',
             self._config.polling_interval
@@ -694,7 +712,13 @@ class P2SVpnGatewaysOperations(object):
                 return cls(pipeline_response, deserialized, {})
             return deserialized
 
-        if polling is True: polling_method = ARMPolling(lro_delay, lro_options={'final-state-via': 'location'},  **kwargs)
+        path_format_arguments = {
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
+            'gatewayName': self._serialize.url("gateway_name", gateway_name, 'str'),
+            'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
+        }
+
+        if polling is True: polling_method = ARMPolling(lro_delay, lro_options={'final-state-via': 'location'}, path_format_arguments=path_format_arguments,  **kwargs)
         elif polling is False: polling_method = NoPolling()
         else: polling_method = polling
         if cont_token:
@@ -712,11 +736,11 @@ class P2SVpnGatewaysOperations(object):
         self,
         resource_group_name,  # type: str
         gateway_name,  # type: str
-        parameters,  # type: "models.P2SVpnProfileParameters"
+        parameters,  # type: "_models.P2SVpnProfileParameters"
         **kwargs  # type: Any
     ):
-        # type: (...) -> Optional["models.VpnProfileResponse"]
-        cls = kwargs.pop('cls', None)  # type: ClsType[Optional["models.VpnProfileResponse"]]
+        # type: (...) -> Optional["_models.VpnProfileResponse"]
+        cls = kwargs.pop('cls', None)  # type: ClsType[Optional["_models.VpnProfileResponse"]]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -768,10 +792,10 @@ class P2SVpnGatewaysOperations(object):
         self,
         resource_group_name,  # type: str
         gateway_name,  # type: str
-        parameters,  # type: "models.P2SVpnProfileParameters"
+        parameters,  # type: "_models.P2SVpnProfileParameters"
         **kwargs  # type: Any
     ):
-        # type: (...) -> LROPoller["models.VpnProfileResponse"]
+        # type: (...) -> LROPoller["_models.VpnProfileResponse"]
         """Generates VPN profile for P2S client of the P2SVpnGateway in the specified resource group.
 
         :param resource_group_name: The name of the resource group.
@@ -792,7 +816,7 @@ class P2SVpnGatewaysOperations(object):
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         polling = kwargs.pop('polling', True)  # type: Union[bool, PollingMethod]
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.VpnProfileResponse"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.VpnProfileResponse"]
         lro_delay = kwargs.pop(
             'polling_interval',
             self._config.polling_interval
@@ -817,7 +841,13 @@ class P2SVpnGatewaysOperations(object):
                 return cls(pipeline_response, deserialized, {})
             return deserialized
 
-        if polling is True: polling_method = ARMPolling(lro_delay, lro_options={'final-state-via': 'location'},  **kwargs)
+        path_format_arguments = {
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
+            'gatewayName': self._serialize.url("gateway_name", gateway_name, 'str'),
+            'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
+        }
+
+        if polling is True: polling_method = ARMPolling(lro_delay, lro_options={'final-state-via': 'location'}, path_format_arguments=path_format_arguments,  **kwargs)
         elif polling is False: polling_method = NoPolling()
         else: polling_method = polling
         if cont_token:
@@ -837,8 +867,8 @@ class P2SVpnGatewaysOperations(object):
         gateway_name,  # type: str
         **kwargs  # type: Any
     ):
-        # type: (...) -> Optional["models.P2SVpnGateway"]
-        cls = kwargs.pop('cls', None)  # type: ClsType[Optional["models.P2SVpnGateway"]]
+        # type: (...) -> Optional["_models.P2SVpnGateway"]
+        cls = kwargs.pop('cls', None)  # type: ClsType[Optional["_models.P2SVpnGateway"]]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -887,7 +917,7 @@ class P2SVpnGatewaysOperations(object):
         gateway_name,  # type: str
         **kwargs  # type: Any
     ):
-        # type: (...) -> LROPoller["models.P2SVpnGateway"]
+        # type: (...) -> LROPoller["_models.P2SVpnGateway"]
         """Gets the connection health of P2S clients of the virtual wan P2SVpnGateway in the specified
         resource group.
 
@@ -906,7 +936,7 @@ class P2SVpnGatewaysOperations(object):
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         polling = kwargs.pop('polling', True)  # type: Union[bool, PollingMethod]
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.P2SVpnGateway"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.P2SVpnGateway"]
         lro_delay = kwargs.pop(
             'polling_interval',
             self._config.polling_interval
@@ -930,7 +960,13 @@ class P2SVpnGatewaysOperations(object):
                 return cls(pipeline_response, deserialized, {})
             return deserialized
 
-        if polling is True: polling_method = ARMPolling(lro_delay, lro_options={'final-state-via': 'location'},  **kwargs)
+        path_format_arguments = {
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
+            'gatewayName': self._serialize.url("gateway_name", gateway_name, 'str'),
+            'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
+        }
+
+        if polling is True: polling_method = ARMPolling(lro_delay, lro_options={'final-state-via': 'location'}, path_format_arguments=path_format_arguments,  **kwargs)
         elif polling is False: polling_method = NoPolling()
         else: polling_method = polling
         if cont_token:
@@ -948,11 +984,11 @@ class P2SVpnGatewaysOperations(object):
         self,
         resource_group_name,  # type: str
         gateway_name,  # type: str
-        request,  # type: "models.P2SVpnConnectionHealthRequest"
+        request,  # type: "_models.P2SVpnConnectionHealthRequest"
         **kwargs  # type: Any
     ):
-        # type: (...) -> Optional["models.P2SVpnConnectionHealth"]
-        cls = kwargs.pop('cls', None)  # type: ClsType[Optional["models.P2SVpnConnectionHealth"]]
+        # type: (...) -> Optional["_models.P2SVpnConnectionHealth"]
+        cls = kwargs.pop('cls', None)  # type: ClsType[Optional["_models.P2SVpnConnectionHealth"]]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -1004,10 +1040,10 @@ class P2SVpnGatewaysOperations(object):
         self,
         resource_group_name,  # type: str
         gateway_name,  # type: str
-        request,  # type: "models.P2SVpnConnectionHealthRequest"
+        request,  # type: "_models.P2SVpnConnectionHealthRequest"
         **kwargs  # type: Any
     ):
-        # type: (...) -> LROPoller["models.P2SVpnConnectionHealth"]
+        # type: (...) -> LROPoller["_models.P2SVpnConnectionHealth"]
         """Gets the sas url to get the connection health detail of P2S clients of the virtual wan
         P2SVpnGateway in the specified resource group.
 
@@ -1028,7 +1064,7 @@ class P2SVpnGatewaysOperations(object):
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         polling = kwargs.pop('polling', True)  # type: Union[bool, PollingMethod]
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.P2SVpnConnectionHealth"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.P2SVpnConnectionHealth"]
         lro_delay = kwargs.pop(
             'polling_interval',
             self._config.polling_interval
@@ -1053,7 +1089,13 @@ class P2SVpnGatewaysOperations(object):
                 return cls(pipeline_response, deserialized, {})
             return deserialized
 
-        if polling is True: polling_method = ARMPolling(lro_delay, lro_options={'final-state-via': 'location'},  **kwargs)
+        path_format_arguments = {
+            'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
+            'gatewayName': self._serialize.url("gateway_name", gateway_name, 'str'),
+        }
+
+        if polling is True: polling_method = ARMPolling(lro_delay, lro_options={'final-state-via': 'location'}, path_format_arguments=path_format_arguments,  **kwargs)
         elif polling is False: polling_method = NoPolling()
         else: polling_method = polling
         if cont_token:
@@ -1071,7 +1113,7 @@ class P2SVpnGatewaysOperations(object):
         self,
         resource_group_name,  # type: str
         p2_s_vpn_gateway_name,  # type: str
-        request,  # type: "models.P2SVpnConnectionRequest"
+        request,  # type: "_models.P2SVpnConnectionRequest"
         **kwargs  # type: Any
     ):
         # type: (...) -> None
@@ -1122,7 +1164,7 @@ class P2SVpnGatewaysOperations(object):
         self,
         resource_group_name,  # type: str
         p2_s_vpn_gateway_name,  # type: str
-        request,  # type: "models.P2SVpnConnectionRequest"
+        request,  # type: "_models.P2SVpnConnectionRequest"
         **kwargs  # type: Any
     ):
         # type: (...) -> LROPoller[None]
@@ -1168,7 +1210,13 @@ class P2SVpnGatewaysOperations(object):
             if cls:
                 return cls(pipeline_response, None, {})
 
-        if polling is True: polling_method = ARMPolling(lro_delay, lro_options={'final-state-via': 'location'},  **kwargs)
+        path_format_arguments = {
+            'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
+            'p2sVpnGatewayName': self._serialize.url("p2_s_vpn_gateway_name", p2_s_vpn_gateway_name, 'str'),
+        }
+
+        if polling is True: polling_method = ARMPolling(lro_delay, lro_options={'final-state-via': 'location'}, path_format_arguments=path_format_arguments,  **kwargs)
         elif polling is False: polling_method = NoPolling()
         else: polling_method = polling
         if cont_token:

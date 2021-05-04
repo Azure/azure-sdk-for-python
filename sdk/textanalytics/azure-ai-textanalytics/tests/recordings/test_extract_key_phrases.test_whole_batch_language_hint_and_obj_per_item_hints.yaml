@@ -16,9 +16,9 @@ interactions:
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-ai-textanalytics/5.1.0b1 Python/3.8.5 (macOS-10.13.6-x86_64-i386-64bit)
+      - azsdk-python-ai-textanalytics/5.1.0b7 Python/3.9.0 (Windows-10-10.0.19041-SP0)
     method: POST
-    uri: https://westcentralus.api.cognitive.microsoft.com/text/analytics/v3.1-preview.2/keyPhrases?showStats=false
+    uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.1-preview.5/keyPhrases?showStats=false
   response:
     body:
       string: "{\"documents\":[{\"id\":\"1\",\"keyPhrases\":[\"I should take my cat\"\
@@ -28,13 +28,13 @@ interactions:
         :\"2020-07-01\"}"
     headers:
       apim-request-id:
-      - 28a03393-50c4-4bba-adb2-100cba851bcd
+      - d1cf0c86-3d8c-4ae8-8040-6645eed9d1d3
       content-type:
       - application/json; charset=utf-8
       csp-billing-usage:
-      - CognitiveServices.TextAnalytics.BatchScoring=3
+      - CognitiveServices.TextAnalytics.BatchScoring=3,CognitiveServices.TextAnalytics.TextRecords=3
       date:
-      - Thu, 10 Sep 2020 15:25:32 GMT
+      - Tue, 27 Apr 2021 20:06:37 GMT
       strict-transport-security:
       - max-age=31536000; includeSubDomains; preload
       transfer-encoding:

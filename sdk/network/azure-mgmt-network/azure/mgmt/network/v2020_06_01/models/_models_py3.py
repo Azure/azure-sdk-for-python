@@ -8055,21 +8055,21 @@ class EffectiveRoutesParameters(msrest.serialization.Model):
     """The parameters specifying the resource whose effective routes are being requested.
 
     :param resource_id: The resource whose effective routes are being requested.
-    :type resource_id: ~azure.mgmt.network.v2020_06_01.models.Resource
+    :type resource_id: str
     :param virtual_wan_resource_type: The type of the specified resource like RouteTable,
      ExpressRouteConnection, HubVirtualNetworkConnection, VpnConnection and P2SConnection.
     :type virtual_wan_resource_type: str
     """
 
     _attribute_map = {
-        'resource_id': {'key': 'resourceId', 'type': 'Resource'},
+        'resource_id': {'key': 'resourceId', 'type': 'str'},
         'virtual_wan_resource_type': {'key': 'virtualWanResourceType', 'type': 'str'},
     }
 
     def __init__(
         self,
         *,
-        resource_id: Optional["Resource"] = None,
+        resource_id: Optional[str] = None,
         virtual_wan_resource_type: Optional[str] = None,
         **kwargs
     ):
@@ -11524,9 +11524,9 @@ class HubRouteTable(SubResource):
     :param labels: List of labels associated with this route table.
     :type labels: list[str]
     :ivar associated_connections: List of all connections associated with this route table.
-    :vartype associated_connections: list[~azure.mgmt.network.v2020_06_01.models.SubResource]
+    :vartype associated_connections: list[str]
     :ivar propagating_connections: List of all connections that advertise to this route table.
-    :vartype propagating_connections: list[~azure.mgmt.network.v2020_06_01.models.SubResource]
+    :vartype propagating_connections: list[str]
     :ivar provisioning_state: The provisioning state of the RouteTable resource. Possible values
      include: "Succeeded", "Updating", "Deleting", "Failed".
     :vartype provisioning_state: str or ~azure.mgmt.network.v2020_06_01.models.ProvisioningState
@@ -11547,8 +11547,8 @@ class HubRouteTable(SubResource):
         'type': {'key': 'type', 'type': 'str'},
         'routes': {'key': 'properties.routes', 'type': '[HubRoute]'},
         'labels': {'key': 'properties.labels', 'type': '[str]'},
-        'associated_connections': {'key': 'properties.associatedConnections', 'type': '[SubResource]'},
-        'propagating_connections': {'key': 'properties.propagatingConnections', 'type': '[SubResource]'},
+        'associated_connections': {'key': 'properties.associatedConnections', 'type': '[str]'},
+        'propagating_connections': {'key': 'properties.propagatingConnections', 'type': '[str]'},
         'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
     }
 

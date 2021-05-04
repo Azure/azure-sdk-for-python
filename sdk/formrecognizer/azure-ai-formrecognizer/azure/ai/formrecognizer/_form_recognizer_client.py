@@ -6,36 +6,30 @@
 
 # pylint: disable=protected-access
 
-from typing import (
-    Any,
-    IO,
-    Union,
-    List,
-    TYPE_CHECKING
-)
+from typing import Any, IO, Union, List, TYPE_CHECKING
 from azure.core.tracing.decorator import distributed_trace
-from azure.core.polling import LROPoller
 from azure.core.polling.base_polling import LROBasePolling
-from ._generated._form_recognizer_client import FormRecognizerClient as FormRecognizer
+
 from ._response_handlers import (
-    prepare_receipt,
+    prepare_prebuilt_models,
     prepare_content_result,
-    prepare_form_result
+    prepare_form_result,
 )
-from ._api_versions import FormRecognizerApiVersion, validate_api_version
-from ._helpers import _get_deserialize, get_content_type, get_authentication_policy, error_map, POLLING_INTERVAL
-from ._user_agent import USER_AGENT
+from ._helpers import get_content_type
+from ._api_versions import FormRecognizerApiVersion
+from ._form_base_client import FormRecognizerClientBase
 from ._polling import AnalyzePolling
+
 if TYPE_CHECKING:
-    from azure.core.credentials import AzureKeyCredential, TokenCredential
+    from azure.core.polling import LROPoller
     from ._models import FormPage, RecognizedForm
 
 
-class FormRecognizerClient(object):
+class FormRecognizerClient(FormRecognizerClientBase):
     """FormRecognizerClient extracts information from forms and images into structured data.
-    It is the interface to use for analyzing receipts, recognizing content/layout from
-    forms, and analyzing custom forms from trained models. It provides different methods
-    based on inputs from a URL and inputs from a stream.
+    It is the interface to use for analyzing receipts, business cards, invoices, recognizing
+    content/layout from forms, and analyzing custom forms from trained models. It provides
+    different methods based on inputs from a URL and inputs from a stream.
 
     :param str endpoint: Supported Cognitive Services endpoints (protocol and hostname,
         for example: https://westus2.api.cognitive.microsoft.com).
@@ -66,45 +60,188 @@ class FormRecognizerClient(object):
             :caption: Creating the FormRecognizerClient with a token credential.
     """
 
-    def __init__(self, endpoint, credential, **kwargs):
-        # type: (str, Union[AzureKeyCredential, TokenCredential], Any) -> None
-
-        authentication_policy = get_authentication_policy(credential)
-        polling_interval = kwargs.pop("polling_interval", POLLING_INTERVAL)
-        self.api_version = kwargs.pop('api_version', FormRecognizerApiVersion.V2_1_PREVIEW_1)
-        validate_api_version(self.api_version)
-        self._client = FormRecognizer(
-            endpoint=endpoint,
-            credential=credential,  # type: ignore
-            api_version=self.api_version,
-            sdk_moniker=USER_AGENT,
-            authentication_policy=authentication_policy,
-            polling_interval=polling_interval,
-            **kwargs
+    def _prebuilt_callback(
+        self, raw_response, _, headers
+    ):  # pylint: disable=unused-argument
+        analyze_result = self._deserialize(
+            self._generated_models.AnalyzeOperationResult, raw_response
         )
-        self._deserialize = _get_deserialize()
-        self._generated_models = self._client.models(self.api_version)
-
-    def _receipt_callback(self, raw_response, _, headers):  # pylint: disable=unused-argument
-        analyze_result = self._deserialize(self._generated_models.AnalyzeOperationResult, raw_response)
-        return prepare_receipt(analyze_result)
+        return prepare_prebuilt_models(analyze_result)
 
     @distributed_trace
     def begin_recognize_receipts(self, receipt, **kwargs):
         # type: (Union[bytes, IO[bytes]], Any) -> LROPoller[List[RecognizedForm]]
-        """Extract field text and semantic values from a given US sales receipt.
+        """Extract field text and semantic values from a given sales receipt.
         The input document must be of one of the supported content types - 'application/pdf',
-        'image/jpeg', 'image/png' or 'image/tiff'.
+        'image/jpeg', 'image/png', 'image/tiff' or 'image/bmp'.
 
         See fields found on a receipt here:
         https://aka.ms/formrecognizer/receiptfields
 
-        :param receipt: JPEG, PNG, PDF and TIFF type file stream or bytes.
-             Currently only supports US sales receipts.
+        :param receipt: JPEG, PNG, PDF, TIFF, or BMP type file stream or bytes.
         :type receipt: bytes or IO[bytes]
         :keyword bool include_field_elements:
-            Whether or not to include field elements such as lines and words in addition to form fields.
-        :keyword content_type: Media type of the body sent to the API. Content-type is
+            Whether or not to include all lines per page and field elements such as lines, words,
+            and selection marks for each form field.
+        :keyword content_type: Content-type of the body sent to the API. Content-type is
+            auto-detected, but can be overridden by passing this keyword argument. For options,
+            see :class:`~azure.ai.formrecognizer.FormContentType`.
+        :paramtype content_type: str or ~azure.ai.formrecognizer.FormContentType
+        :keyword int polling_interval: Waiting time between two polls for LRO operations
+            if no Retry-After header is present. Defaults to 5 seconds.
+        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
+        :keyword str locale: Locale of the receipt. Supported locales include: en-US, en-AU, en-CA, en-GB,
+            and en-IN.
+        :keyword list[str] pages: Custom page numbers for multi-page documents(PDF/TIFF). Input the page numbers
+            and/or ranges of pages you want to get in the result. For a range of pages, use a hyphen, like
+            `pages=["1-3", "5-6"]`. Separate each page number or range with a comma.
+        :return: An instance of an LROPoller. Call `result()` on the poller
+            object to return a list[:class:`~azure.ai.formrecognizer.RecognizedForm`].
+        :rtype: ~azure.core.polling.LROPoller[list[~azure.ai.formrecognizer.RecognizedForm]]
+        :raises ~azure.core.exceptions.HttpResponseError:
+
+        .. versionadded:: v2.1-preview
+            The *locale* and *pages* keyword arguments and support for image/bmp content
+
+        .. admonition:: Example:
+
+            .. literalinclude:: ../samples/sample_recognize_receipts.py
+                :start-after: [START recognize_receipts]
+                :end-before: [END recognize_receipts]
+                :language: python
+                :dedent: 8
+                :caption: Recognize sales receipt fields.
+        """
+        locale = kwargs.pop("locale", None)
+        pages = kwargs.pop("pages", None)
+        content_type = kwargs.pop("content_type", None)
+        include_field_elements = kwargs.pop("include_field_elements", False)
+        if content_type == "application/json":
+            raise TypeError(
+                "Call begin_recognize_receipts_from_url() to analyze a receipt from a URL."
+            )
+        cls = kwargs.pop("cls", self._prebuilt_callback)
+        if content_type is None and kwargs.get("continuation_token", None) is None:
+            content_type = get_content_type(receipt)
+
+        # FIXME: part of this code will be removed once autorest can handle diff mixin
+        # signatures across API versions
+        if locale:
+            if self._api_version == FormRecognizerApiVersion.V2_1_PREVIEW:
+                kwargs.update({"locale": locale})
+            else:
+                raise ValueError(
+                    "'locale' is only available for API version V2_1_PREVIEW and up"
+                )
+        # FIXME: part of this code will be removed once autorest can handle diff mixin
+        # signatures across API versions
+        if pages:
+            if self._api_version == FormRecognizerApiVersion.V2_1_PREVIEW:
+                kwargs.update({"pages": pages})
+            else:
+                raise ValueError(
+                    "'pages' is only available for API version V2_1_PREVIEW and up"
+                )
+        return self._client.begin_analyze_receipt_async(  # type: ignore
+            file_stream=receipt,
+            content_type=content_type,
+            include_text_details=include_field_elements,
+            cls=cls,
+            polling=True,
+            **kwargs
+        )
+
+    @distributed_trace
+    def begin_recognize_receipts_from_url(self, receipt_url, **kwargs):
+        # type: (str, Any) -> LROPoller[List[RecognizedForm]]
+        """Extract field text and semantic values from a given sales receipt.
+        The input document must be the location (URL) of the receipt to be analyzed.
+
+        See fields found on a receipt here:
+        https://aka.ms/formrecognizer/receiptfields
+
+        :param str receipt_url: The URL of the receipt to analyze. The input must be a valid, encoded URL
+            of one of the supported formats: JPEG, PNG, PDF, TIFF, or BMP.
+        :keyword bool include_field_elements:
+            Whether or not to include all lines per page and field elements such as lines, words,
+            and selection marks for each form field.
+        :keyword int polling_interval: Waiting time between two polls for LRO operations
+            if no Retry-After header is present. Defaults to 5 seconds.
+        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
+        :keyword str locale: Locale of the receipt. Supported locales include: en-US, en-AU, en-CA, en-GB,
+            and en-IN.
+        :keyword list[str] pages: Custom page numbers for multi-page documents(PDF/TIFF). Input the page numbers
+            and/or ranges of pages you want to get in the result. For a range of pages, use a hyphen, like
+            `pages=["1-3", "5-6"]`. Separate each page number or range with a comma.
+        :return: An instance of an LROPoller. Call `result()` on the poller
+            object to return a list[:class:`~azure.ai.formrecognizer.RecognizedForm`].
+        :rtype: ~azure.core.polling.LROPoller[list[~azure.ai.formrecognizer.RecognizedForm]]
+        :raises ~azure.core.exceptions.HttpResponseError:
+
+        .. versionadded:: v2.1-preview
+            The *locale* and *pages* keyword arguments and support for image/bmp content
+
+        .. admonition:: Example:
+
+            .. literalinclude:: ../samples/sample_recognize_receipts_from_url.py
+                :start-after: [START recognize_receipts_from_url]
+                :end-before: [END recognize_receipts_from_url]
+                :language: python
+                :dedent: 8
+                :caption: Recognize sales receipt fields from a URL.
+        """
+        locale = kwargs.pop("locale", None)
+        pages = kwargs.pop("pages", None)
+        include_field_elements = kwargs.pop("include_field_elements", False)
+        cls = kwargs.pop("cls", self._prebuilt_callback)
+
+        # FIXME: part of this code will be removed once autorest can handle diff mixin
+        # signatures across API versions
+        if locale:
+            if self._api_version == FormRecognizerApiVersion.V2_1_PREVIEW:
+                kwargs.update({"locale": locale})
+            else:
+                raise ValueError(
+                    "'locale' is only available for API version V2_1_PREVIEW and up"
+                )
+        # FIXME: part of this code will be removed once autorest can handle diff mixin
+        # signatures across API versions
+        if pages:
+            if self._api_version == FormRecognizerApiVersion.V2_1_PREVIEW:
+                kwargs.update({"pages": pages})
+            else:
+                raise ValueError(
+                    "'pages' is only available for API version V2_1_PREVIEW and up"
+                )
+        return self._client.begin_analyze_receipt_async(  # type: ignore
+            file_stream={"source": receipt_url},
+            include_text_details=include_field_elements,
+            cls=cls,
+            polling=True,
+            **kwargs
+        )
+
+    @distributed_trace
+    def begin_recognize_business_cards(self, business_card, **kwargs):
+        # type: (Union[bytes, IO[bytes]], Any) -> LROPoller[List[RecognizedForm]]
+        """Extract field text and semantic values from a given business card.
+        The input document must be of one of the supported content types - 'application/pdf',
+        'image/jpeg', 'image/png', 'image/tiff' or 'image/bmp'.
+
+        See fields found on a business card here:
+        https://aka.ms/formrecognizer/businesscardfields
+
+        :param business_card: JPEG, PNG, PDF, TIFF, or BMP type file stream or bytes.
+        :type business_card: bytes or IO[bytes]
+        :keyword str locale: Locale of the business card. Supported locales include: en-US, en-AU, en-CA, en-GB,
+            and en-IN.
+        :keyword bool include_field_elements:
+            Whether or not to include all lines per page and field elements such as lines, words,
+            and selection marks for each form field.
+        :keyword list[str] pages: Custom page numbers for multi-page documents(PDF/TIFF). Input the page numbers
+            and/or ranges of pages you want to get in the result. For a range of pages, use a hyphen, like
+            `pages=["1-3", "5-6"]`. Separate each page number or range with a comma.
+        :keyword content_type: Content-type of the body sent to the API. Content-type is
             auto-detected, but can be overridden by passing this keyword argument. For options,
             see :class:`~azure.ai.formrecognizer.FormContentType`.
         :paramtype content_type: str or ~azure.ai.formrecognizer.FormContentType
@@ -116,55 +253,64 @@ class FormRecognizerClient(object):
         :rtype: ~azure.core.polling.LROPoller[list[~azure.ai.formrecognizer.RecognizedForm]]
         :raises ~azure.core.exceptions.HttpResponseError:
 
+        .. versionadded:: v2.1-preview
+            The *begin_recognize_business_cards* client method
+
         .. admonition:: Example:
 
-            .. literalinclude:: ../samples/sample_recognize_receipts.py
-                :start-after: [START recognize_receipts]
-                :end-before: [END recognize_receipts]
+            .. literalinclude:: ../samples/sample_recognize_business_cards.py
+                :start-after: [START recognize_business_cards]
+                :end-before: [END recognize_business_cards]
                 :language: python
                 :dedent: 8
-                :caption: Recognize US sales receipt fields.
+                :caption: Recognize business cards from a file.
         """
-        locale = kwargs.pop("locale", None)
-        polling_interval = kwargs.pop("polling_interval", self._client._config.polling_interval)
-        continuation_token = kwargs.pop("continuation_token", None)
         content_type = kwargs.pop("content_type", None)
-        include_field_elements = kwargs.pop("include_field_elements", False)
         if content_type == "application/json":
-            raise TypeError("Call begin_recognize_receipts_from_url() to analyze a receipt from a URL.")
-        cls = kwargs.pop("cls", self._receipt_callback)
-        polling = LROBasePolling(timeout=polling_interval, **kwargs)
-        if content_type is None:
-            content_type = get_content_type(receipt)
+            raise TypeError(
+                "Call begin_recognize_business_cards_from_url() to analyze a business card from a URL."
+            )
 
-        if self.api_version == "2.1-preview.1" and locale:
-            kwargs.update({"locale": locale})
+        include_field_elements = kwargs.pop("include_field_elements", False)
 
-        return self._client.begin_analyze_receipt_async(  # type: ignore
-            file_stream=receipt,
-            content_type=content_type,
-            include_text_details=include_field_elements,
-            cls=cls,
-            polling=polling,
-            error_map=error_map,
-            continuation_token=continuation_token,
-            **kwargs
-        )
+        if content_type is None and kwargs.get("continuation_token", None) is None:
+            content_type = get_content_type(business_card)
+
+        try:
+            return self._client.begin_analyze_business_card_async(  # type: ignore
+                file_stream=business_card,
+                content_type=content_type,
+                include_text_details=include_field_elements,
+                cls=kwargs.pop("cls", self._prebuilt_callback),
+                polling=True,
+                **kwargs
+            )
+        except ValueError as e:
+            if "begin_analyze_business_card_async" in str(e):
+                raise ValueError(
+                    "Method 'begin_recognize_business_cards' is only available for API version V2_1_PREVIEW and up"
+                )
+            raise e
 
     @distributed_trace
-    def begin_recognize_receipts_from_url(self, receipt_url, **kwargs):
+    def begin_recognize_business_cards_from_url(self, business_card_url, **kwargs):
         # type: (str, Any) -> LROPoller[List[RecognizedForm]]
-        """Extract field text and semantic values from a given US sales receipt.
-        The input document must be the location (URL) of the receipt to be analyzed.
+        """Extract field text and semantic values from a given business card.
+        The input document must be the location (URL) of the card to be analyzed.
 
-        See fields found on a receipt here:
-        https://aka.ms/formrecognizer/receiptfields
+        See fields found on a business card here:
+        https://aka.ms/formrecognizer/businesscardfields
 
-        :param str receipt_url: The URL of the receipt to analyze. The input must be a valid, encoded URL
-            of one of the supported formats: JPEG, PNG, PDF and TIFF. Currently only supports
-            US sales receipts.
+        :param str business_card_url: The URL of the business card to analyze. The input must be a valid, encoded URL
+            of one of the supported formats: JPEG, PNG, PDF, TIFF, or BMP.
+        :keyword str locale: Locale of the business card. Supported locales include: en-US, en-AU, en-CA, en-GB,
+            and en-IN.
         :keyword bool include_field_elements:
-            Whether or not to include field elements such as lines and words in addition to form fields.
+            Whether or not to include all lines per page and field elements such as lines, words,
+            and selection marks for each form field.
+        :keyword list[str] pages: Custom page numbers for multi-page documents(PDF/TIFF). Input the page numbers
+            and/or ranges of pages you want to get in the result. For a range of pages, use a hyphen, like
+            `pages=["1-3", "5-6"]`. Separate each page number or range with a comma.
         :keyword int polling_interval: Waiting time between two polls for LRO operations
             if no Retry-After header is present. Defaults to 5 seconds.
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
@@ -173,35 +319,268 @@ class FormRecognizerClient(object):
         :rtype: ~azure.core.polling.LROPoller[list[~azure.ai.formrecognizer.RecognizedForm]]
         :raises ~azure.core.exceptions.HttpResponseError:
 
+        .. versionadded:: v2.1-preview
+            The *begin_recognize_business_cards_from_url* client method
+
+        """
+
+        include_field_elements = kwargs.pop("include_field_elements", False)
+
+        try:
+            return self._client.begin_analyze_business_card_async(  # type: ignore
+                file_stream={"source": business_card_url},
+                include_text_details=include_field_elements,
+                cls=kwargs.pop("cls", self._prebuilt_callback),
+                polling=True,
+                **kwargs
+            )
+        except ValueError as e:
+            if "begin_analyze_business_card_async" in str(e):
+                raise ValueError(
+                    "Method 'begin_recognize_business_cards_from_url' is "
+                    "only available for API version V2_1_PREVIEW and up"
+                )
+            raise e
+
+    @distributed_trace
+    def begin_recognize_identity_documents(self, identity_document, **kwargs):
+        # type: (Union[bytes, IO[bytes]], Any) -> LROPoller[List[RecognizedForm]]
+        """Extract field text and semantic values from a given identity document.
+        The input document must be of one of the supported content types - 'application/pdf',
+        'image/jpeg', 'image/png', 'image/tiff' or 'image/bmp'.
+
+        See fields found on an identity document here:
+        https://aka.ms/formrecognizer/iddocumentfields
+
+        :param identity_document: JPEG, PNG, PDF, TIFF, or BMP type file stream or bytes.
+        :type identity_document: bytes or IO[bytes]
+        :keyword bool include_field_elements:
+            Whether or not to include all lines per page and field elements such as lines, words,
+            and selection marks for each form field.
+        :keyword content_type: Content-type of the body sent to the API. Content-type is
+            auto-detected, but can be overridden by passing this keyword argument. For options,
+            see :class:`~azure.ai.formrecognizer.FormContentType`.
+        :paramtype content_type: str or ~azure.ai.formrecognizer.FormContentType
+        :keyword int polling_interval: Waiting time between two polls for LRO operations
+            if no Retry-After header is present. Defaults to 5 seconds.
+        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
+        :keyword list[str] pages: Custom page numbers for multi-page documents(PDF/TIFF). Input the page numbers
+            and/or ranges of pages you want to get in the result. For a range of pages, use a hyphen, like
+            `pages=["1-3", "5-6"]`. Separate each page number or range with a comma.
+        :return: An instance of an LROPoller. Call `result()` on the poller
+            object to return a list[:class:`~azure.ai.formrecognizer.RecognizedForm`].
+        :rtype: ~azure.core.polling.LROPoller[list[~azure.ai.formrecognizer.RecognizedForm]]
+        :raises ~azure.core.exceptions.HttpResponseError:
+
+        .. versionadded:: v2.1-preview
+            The *begin_recognize_identity_documents* client method
+
         .. admonition:: Example:
 
-            .. literalinclude:: ../samples/sample_recognize_receipts_from_url.py
-                :start-after: [START recognize_receipts_from_url]
-                :end-before: [END recognize_receipts_from_url]
+            .. literalinclude:: ../samples/sample_recognize_identity_documents.py
+                :start-after: [START recognize_identity_documents]
+                :end-before: [END recognize_identity_documents]
                 :language: python
                 :dedent: 8
-                :caption: Recognize US sales receipt fields from a URL.
+                :caption: Recognize identity document fields.
         """
-        locale = kwargs.pop("locale", None)
-        polling_interval = kwargs.pop("polling_interval", self._client._config.polling_interval)
-        continuation_token = kwargs.pop("continuation_token", None)
-        include_field_elements = kwargs.pop("include_field_elements", False)
-        cls = kwargs.pop("cls", self._receipt_callback)
-        polling = LROBasePolling(timeout=polling_interval, **kwargs)
-        if self.api_version == "2.1-preview.1" and locale:
-            kwargs.update({"locale": locale})
-        return self._client.begin_analyze_receipt_async(  # type: ignore
-            file_stream={"source": receipt_url},
-            include_text_details=include_field_elements,
-            cls=cls,
-            polling=polling,
-            error_map=error_map,
-            continuation_token=continuation_token,
-            **kwargs
-        )
+        content_type = kwargs.pop("content_type", None)
+        if content_type == "application/json":
+            raise TypeError(
+                "Call begin_recognize_identity_documents_from_url() to analyze an identity document from a URL."
+            )
+        if content_type is None and kwargs.get("continuation_token", None) is None:
+            content_type = get_content_type(identity_document)
 
-    def _content_callback(self, raw_response, _, headers):  # pylint: disable=unused-argument
-        analyze_result = self._deserialize(self._generated_models.AnalyzeOperationResult, raw_response)
+        include_field_elements = kwargs.pop("include_field_elements", False)
+
+        try:
+            return self._client.begin_analyze_id_document_async(  # type: ignore
+                file_stream=identity_document,
+                content_type=content_type,
+                include_text_details=include_field_elements,
+                cls=kwargs.pop("cls", self._prebuilt_callback),
+                polling=True,
+                **kwargs
+            )
+        except ValueError as e:
+            if "begin_analyze_id_document_async" in str(e):
+                raise ValueError(
+                    "Method 'begin_recognize_identity_documents' is only available for API version V2_1_PREVIEW and up"
+                )
+            raise e
+
+    @distributed_trace
+    def begin_recognize_identity_documents_from_url(self, identity_document_url, **kwargs):
+        # type: (str, Any) -> LROPoller[List[RecognizedForm]]
+        """Extract field text and semantic values from a given identity document.
+        The input document must be the location (URL) of the identity document to be analyzed.
+
+        See fields found on an identity document here:
+        https://aka.ms/formrecognizer/iddocumentfields
+
+        :param str identity_document_url: The URL of the identity document to analyze.
+            The input must be a valid, encoded URL of one of the supported formats: JPEG, PNG, PDF, TIFF, or BMP.
+        :keyword bool include_field_elements:
+            Whether or not to include all lines per page and field elements such as lines, words,
+            and selection marks for each form field.
+        :keyword int polling_interval: Waiting time between two polls for LRO operations
+            if no Retry-After header is present. Defaults to 5 seconds.
+        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
+        :keyword list[str] pages: Custom page numbers for multi-page documents(PDF/TIFF). Input the page numbers
+            and/or ranges of pages you want to get in the result. For a range of pages, use a hyphen, like
+            `pages=["1-3", "5-6"]`. Separate each page number or range with a comma.
+        :return: An instance of an LROPoller. Call `result()` on the poller
+            object to return a list[:class:`~azure.ai.formrecognizer.RecognizedForm`].
+        :rtype: ~azure.core.polling.LROPoller[list[~azure.ai.formrecognizer.RecognizedForm]]
+        :raises ~azure.core.exceptions.HttpResponseError:
+
+        .. versionadded:: v2.1-preview
+            The *begin_recognize_identity_documents_from_url* client method
+        """
+
+        include_field_elements = kwargs.pop("include_field_elements", False)
+
+        try:
+            return self._client.begin_analyze_id_document_async(  # type: ignore
+                file_stream={"source": identity_document_url},
+                include_text_details=include_field_elements,
+                cls=kwargs.pop("cls", self._prebuilt_callback),
+                polling=True,
+                **kwargs
+            )
+        except ValueError as e:
+            if "begin_analyze_id_document_async" in str(e):
+                raise ValueError(
+                    "Method 'begin_recognize_identity_documents_from_url' is "
+                    "only available for API version V2_1_PREVIEW and up"
+                )
+            raise e
+
+    @distributed_trace
+    def begin_recognize_invoices(self, invoice, **kwargs):
+        # type: (Union[bytes, IO[bytes]], Any) -> LROPoller[List[RecognizedForm]]
+        """Extract field text and semantic values from a given invoice.
+        The input document must be of one of the supported content types - 'application/pdf',
+        'image/jpeg', 'image/png', 'image/tiff' or 'image/bmp'.
+
+        See fields found on a invoice here:
+        https://aka.ms/formrecognizer/invoicefields
+
+        :param invoice: JPEG, PNG, PDF, TIFF, or BMP type file stream or bytes.
+        :type invoice: bytes or IO[bytes]
+        :keyword str locale: Locale of the invoice. Supported locales include: en-US
+        :keyword bool include_field_elements:
+            Whether or not to include all lines per page and field elements such as lines, words,
+            and selection marks for each form field.
+        :keyword list[str] pages: Custom page numbers for multi-page documents(PDF/TIFF). Input the page numbers
+            and/or ranges of pages you want to get in the result. For a range of pages, use a hyphen, like
+            `pages=["1-3", "5-6"]`. Separate each page number or range with a comma.
+        :keyword content_type: Content-type of the body sent to the API. Content-type is
+            auto-detected, but can be overridden by passing this keyword argument. For options,
+            see :class:`~azure.ai.formrecognizer.FormContentType`.
+        :paramtype content_type: str or ~azure.ai.formrecognizer.FormContentType
+        :keyword int polling_interval: Waiting time between two polls for LRO operations
+            if no Retry-After header is present. Defaults to 5 seconds.
+        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
+        :return: An instance of an LROPoller. Call `result()` on the poller
+            object to return a list[:class:`~azure.ai.formrecognizer.RecognizedForm`].
+        :rtype: ~azure.core.polling.LROPoller[list[~azure.ai.formrecognizer.RecognizedForm]]
+        :raises ~azure.core.exceptions.HttpResponseError:
+
+        .. versionadded:: v2.1-preview
+            The *begin_recognize_invoices* client method
+
+        .. admonition:: Example:
+
+            .. literalinclude:: ../samples/sample_recognize_invoices.py
+                :start-after: [START recognize_invoices]
+                :end-before: [END recognize_invoices]
+                :language: python
+                :dedent: 8
+                :caption: Recognize invoices from a file.
+        """
+        content_type = kwargs.pop("content_type", None)
+        if content_type == "application/json":
+            raise TypeError(
+                "Call begin_recognize_invoice_from_url() to analyze an invoice from a URL."
+            )
+
+        include_field_elements = kwargs.pop("include_field_elements", False)
+
+        if content_type is None and kwargs.get("continuation_token", None) is None:
+            content_type = get_content_type(invoice)
+
+        try:
+            return self._client.begin_analyze_invoice_async(  # type: ignore
+                file_stream=invoice,
+                content_type=content_type,
+                include_text_details=include_field_elements,
+                cls=kwargs.pop("cls", self._prebuilt_callback),
+                polling=True,
+                **kwargs
+            )
+        except ValueError as e:
+            if "begin_analyze_invoice_async" in str(e):
+                raise ValueError(
+                    "Method 'begin_recognize_invoices' is only available for API version V2_1_PREVIEW and up"
+                )
+            raise e
+
+    @distributed_trace
+    def begin_recognize_invoices_from_url(self, invoice_url, **kwargs):
+        # type: (str, Any) -> LROPoller[List[RecognizedForm]]
+        """Extract field text and semantic values from a given invoice.
+        The input document must be the location (URL) of the invoice to be analyzed.
+
+        See fields found on a invoice card here:
+        https://aka.ms/formrecognizer/invoicefields
+
+        :param str invoice_url: The URL of the invoice to analyze. The input must be a valid, encoded URL
+            of one of the supported formats: JPEG, PNG, PDF, TIFF, or BMP.
+        :keyword str locale: Locale of the invoice. Supported locales include: en-US
+        :keyword bool include_field_elements:
+            Whether or not to include all lines per page and field elements such as lines, words,
+            and selection marks for each form field.
+        :keyword list[str] pages: Custom page numbers for multi-page documents(PDF/TIFF). Input the page numbers
+            and/or ranges of pages you want to get in the result. For a range of pages, use a hyphen, like
+            `pages=["1-3", "5-6"]`. Separate each page number or range with a comma.
+        :keyword int polling_interval: Waiting time between two polls for LRO operations
+            if no Retry-After header is present. Defaults to 5 seconds.
+        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
+        :return: An instance of an LROPoller. Call `result()` on the poller
+            object to return a list[:class:`~azure.ai.formrecognizer.RecognizedForm`].
+        :rtype: ~azure.core.polling.LROPoller[list[~azure.ai.formrecognizer.RecognizedForm]]
+        :raises ~azure.core.exceptions.HttpResponseError:
+
+        .. versionadded:: v2.1-preview
+            The *begin_recognize_invoices_from_url* client method
+        """
+
+        include_field_elements = kwargs.pop("include_field_elements", False)
+
+        try:
+            return self._client.begin_analyze_invoice_async(  # type: ignore
+                file_stream={"source": invoice_url},
+                include_text_details=include_field_elements,
+                cls=kwargs.pop("cls", self._prebuilt_callback),
+                polling=True,
+                **kwargs
+            )
+        except ValueError as e:
+            if "begin_analyze_invoice_async" in str(e):
+                raise ValueError(
+                    "Method 'begin_recognize_invoices_from_url' is "
+                    "only available for API version V2_1_PREVIEW and up"
+                )
+            raise e
+
+    def _content_callback(
+        self, raw_response, _, headers
+    ):  # pylint: disable=unused-argument
+        analyze_result = self._deserialize(
+            self._generated_models.AnalyzeOperationResult, raw_response
+        )
         return prepare_content_result(analyze_result)
 
     @distributed_trace
@@ -209,11 +588,24 @@ class FormRecognizerClient(object):
         # type: (Union[bytes, IO[bytes]], Any) -> LROPoller[List[FormPage]]
         """Extract text and content/layout information from a given document.
         The input document must be of one of the supported content types - 'application/pdf',
-        'image/jpeg', 'image/png' or 'image/tiff'.
+        'image/jpeg', 'image/png', 'image/tiff' or 'image/bmp'.
 
-        :param form: JPEG, PNG, PDF and TIFF type file stream or bytes.
+        :param form: JPEG, PNG, PDF, TIFF, or BMP type file stream or bytes.
         :type form: bytes or IO[bytes]
-        :keyword content_type: Media type of the body sent to the API. Content-type is
+        :keyword list[str] pages: Custom page numbers for multi-page documents(PDF/TIFF). Input the page numbers
+            and/or ranges of pages you want to get in the result. For a range of pages, use a hyphen, like
+            `pages=["1-3", "5-6"]`. Separate each page number or range with a comma.
+        :keyword str language: The BCP-47 language code of the text in the document.
+            See supported language codes here:
+            https://docs.microsoft.com/azure/cognitive-services/form-recognizer/language-support.
+            Content supports auto language identification and multilanguage documents, so only
+            provide a language code if you would like to force the documented to be processed as
+            that specific language.
+        :keyword str reading_order: Reading order algorithm to sort the text lines returned. Supported
+            reading orders include: basic (default), natural. Set 'basic' to sort lines left to right and top
+            to bottom, although in some cases proximity is treated with higher priority. Set 'natural' to sort
+            lines by using positional information to keep nearby lines together.
+        :keyword content_type: Content-type of the body sent to the API. Content-type is
             auto-detected, but can be overridden by passing this keyword argument. For options,
             see :class:`~azure.ai.formrecognizer.FormContentType`.
         :paramtype content_type: str or ~azure.ai.formrecognizer.FormContentType
@@ -224,6 +616,9 @@ class FormRecognizerClient(object):
             object to return a list[:class:`~azure.ai.formrecognizer.FormPage`].
         :rtype: ~azure.core.polling.LROPoller[list[~azure.ai.formrecognizer.FormPage]]
         :raises ~azure.core.exceptions.HttpResponseError:
+
+        .. versionadded:: v2.1-preview
+            The *pages*, *language* and *reading_order* keyword arguments and support for image/bmp content
 
         .. admonition:: Example:
 
@@ -234,23 +629,49 @@ class FormRecognizerClient(object):
                 :dedent: 8
                 :caption: Recognize text and content/layout information from a form.
         """
-
-        polling_interval = kwargs.pop("polling_interval", self._client._config.polling_interval)
-        continuation_token = kwargs.pop("continuation_token", None)
+        pages = kwargs.pop("pages", None)
+        language = kwargs.pop("language", None)
         content_type = kwargs.pop("content_type", None)
+        reading_order = kwargs.pop("reading_order", None)
         if content_type == "application/json":
-            raise TypeError("Call begin_recognize_content_from_url() to analyze a document from a URL.")
+            raise TypeError(
+                "Call begin_recognize_content_from_url() to analyze a document from a URL."
+            )
 
-        if content_type is None:
+        if content_type is None and kwargs.get("continuation_token", None) is None:
             content_type = get_content_type(form)
+
+        # FIXME: part of this code will be removed once autorest can handle diff mixin
+        # signatures across API versions
+        if pages:
+            if self._api_version == FormRecognizerApiVersion.V2_1_PREVIEW:
+                kwargs.update({"pages": pages})
+            else:
+                raise ValueError(
+                    "'pages' is only available for API version V2_1_PREVIEW and up"
+                )
+
+        if reading_order:
+            if self._api_version == FormRecognizerApiVersion.V2_1_PREVIEW:
+                kwargs.update({"reading_order": reading_order})
+            else:
+                raise ValueError(
+                    "'reading_order' is only available for API version V2_1_PREVIEW and up"
+                )
+
+        if language:
+            if self._api_version == FormRecognizerApiVersion.V2_1_PREVIEW:
+                kwargs.update({"language": language})
+            else:
+                raise ValueError(
+                    "'language' is only available for API version V2_1_PREVIEW and up"
+                )
 
         return self._client.begin_analyze_layout_async(  # type: ignore
             file_stream=form,
             content_type=content_type,
             cls=kwargs.pop("cls", self._content_callback),
-            polling=LROBasePolling(timeout=polling_interval, **kwargs),
-            error_map=error_map,
-            continuation_token=continuation_token,
+            polling=True,
             **kwargs
         )
 
@@ -261,7 +682,20 @@ class FormRecognizerClient(object):
         The input document must be the location (URL) of the document to be analyzed.
 
         :param str form_url: The URL of the form to analyze. The input must be a valid, encoded URL
-            of one of the supported formats: JPEG, PNG, PDF and TIFF.
+            of one of the supported formats: JPEG, PNG, PDF, TIFF, or BMP.
+        :keyword list[str] pages: Custom page numbers for multi-page documents(PDF/TIFF). Input the page numbers
+            and/or ranges of pages you want to get in the result. For a range of pages, use a hyphen, like
+            `pages=["1-3", "5-6"]`. Separate each page number or range with a comma.
+        :keyword str language: The BCP-47 language code of the text in the document.
+            See supported language codes here:
+            https://docs.microsoft.com/azure/cognitive-services/form-recognizer/language-support.
+            Content supports auto language identification and multilanguage documents, so only
+            provide a language code if you would like to force the documented to be processed as
+            that specific language.
+        :keyword str reading_order: Reading order algorithm to sort the text lines returned. Supported
+            reading orders include: basic (default), natural. Set 'basic' to sort lines left to right and top
+            to bottom, although in some cases proximity is treated with higher priority. Set 'natural' to sort
+            lines by using positional information to keep nearby lines together.
         :keyword int polling_interval: Waiting time between two polls for LRO operations
             if no Retry-After header is present. Defaults to 5 seconds.
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
@@ -269,17 +703,44 @@ class FormRecognizerClient(object):
             object to return a list[:class:`~azure.ai.formrecognizer.FormPage`].
         :rtype: ~azure.core.polling.LROPoller[list[~azure.ai.formrecognizer.FormPage]]
         :raises ~azure.core.exceptions.HttpResponseError:
-        """
 
-        polling_interval = kwargs.pop("polling_interval", self._client._config.polling_interval)
-        continuation_token = kwargs.pop("continuation_token", None)
+        .. versionadded:: v2.1-preview
+            The *pages*, *language* and *reading_order* keyword arguments and support for image/bmp content
+        """
+        pages = kwargs.pop("pages", None)
+        language = kwargs.pop("language", None)
+        reading_order = kwargs.pop("reading_order", None)
+
+        # FIXME: part of this code will be removed once autorest can handle diff mixin
+        # signatures across API versions
+        if pages:
+            if self._api_version == FormRecognizerApiVersion.V2_1_PREVIEW:
+                kwargs.update({"pages": pages})
+            else:
+                raise ValueError(
+                    "'pages' is only available for API version V2_1_PREVIEW and up"
+                )
+
+        if reading_order:
+            if self._api_version == FormRecognizerApiVersion.V2_1_PREVIEW:
+                kwargs.update({"reading_order": reading_order})
+            else:
+                raise ValueError(
+                    "'reading_order' is only available for API version V2_1_PREVIEW and up"
+                )
+
+        if language:
+            if self._api_version == FormRecognizerApiVersion.V2_1_PREVIEW:
+                kwargs.update({"language": language})
+            else:
+                raise ValueError(
+                    "'language' is only available for API version V2_1_PREVIEW and up"
+                )
 
         return self._client.begin_analyze_layout_async(  # type: ignore
             file_stream={"source": form_url},
             cls=kwargs.pop("cls", self._content_callback),
-            polling=LROBasePolling(timeout=polling_interval, **kwargs),
-            error_map=error_map,
-            continuation_token=continuation_token,
+            polling=True,
             **kwargs
         )
 
@@ -289,17 +750,21 @@ class FormRecognizerClient(object):
         """Analyze a custom form with a model trained with or without labels. The form
         to analyze should be of the same type as the forms that were used to train the model.
         The input document must be of one of the supported content types - 'application/pdf',
-        'image/jpeg', 'image/png' or 'image/tiff'.
+        'image/jpeg', 'image/png', 'image/tiff', or 'image/bmp'.
 
         :param str model_id: Custom model identifier.
-        :param form: JPEG, PNG, PDF and TIFF type file stream or bytes.
+        :param form: JPEG, PNG, PDF, TIFF, or BMP type file stream or bytes.
         :type form: bytes or IO[bytes]
         :keyword bool include_field_elements:
-            Whether or not to include field elements such as lines and words in addition to form fields.
-        :keyword content_type: Media type of the body sent to the API. Content-type is
+            Whether or not to include all lines per page and field elements such as lines, words,
+            and selection marks for each form field.
+        :keyword content_type: Content-type of the body sent to the API. Content-type is
             auto-detected, but can be overridden by passing this keyword argument. For options,
             see :class:`~azure.ai.formrecognizer.FormContentType`.
         :paramtype content_type: str or ~azure.ai.formrecognizer.FormContentType
+        :keyword list[str] pages: Custom page numbers for multi-page documents(PDF/TIFF). Input the page numbers
+            and/or ranges of pages you want to get in the result. For a range of pages, use a hyphen, like
+            `pages=["1-3", "5-6"]`. Separate each page number or range with a comma.
         :keyword int polling_interval: Waiting time between two polls for LRO operations
             if no Retry-After header is present. Defaults to 5 seconds.
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
@@ -321,30 +786,51 @@ class FormRecognizerClient(object):
         if not model_id:
             raise ValueError("model_id cannot be None or empty.")
 
-        cls = kwargs.pop("cls", None)
-        polling_interval = kwargs.pop("polling_interval", self._client._config.polling_interval)
+        pages = kwargs.pop("pages", None)
+        polling_interval = kwargs.pop(
+            "polling_interval", self._client._config.polling_interval
+        )
         continuation_token = kwargs.pop("continuation_token", None)
         content_type = kwargs.pop("content_type", None)
         if content_type == "application/json":
-            raise TypeError("Call begin_recognize_custom_forms_from_url() to analyze a document from a URL.")
-
-        include_field_elements = kwargs.pop("include_field_elements", False)
-        if content_type is None:
+            raise TypeError(
+                "Call begin_recognize_custom_forms_from_url() to analyze a document from a URL."
+            )
+        if content_type is None and continuation_token is None:
             content_type = get_content_type(form)
 
-        def analyze_callback(raw_response, _, headers):  # pylint: disable=unused-argument
-            analyze_result = self._deserialize(self._generated_models.AnalyzeOperationResult, raw_response)
+        include_field_elements = kwargs.pop("include_field_elements", False)
+
+        def analyze_callback(
+            raw_response, _, headers
+        ):  # pylint: disable=unused-argument
+            analyze_result = self._deserialize(
+                self._generated_models.AnalyzeOperationResult, raw_response
+            )
             return prepare_form_result(analyze_result, model_id)
 
-        deserialization_callback = cls if cls else analyze_callback
+        callback = kwargs.pop("cls", analyze_callback)
+        polling = LROBasePolling(
+            timeout=polling_interval, lro_algorithms=[AnalyzePolling()], **kwargs
+        )
+
+        # FIXME: part of this code will be removed once autorest can handle diff mixin
+        # signatures across API versions
+        if pages:
+            if self._api_version == FormRecognizerApiVersion.V2_1_PREVIEW:
+                kwargs.update({"pages": pages})
+            else:
+                raise ValueError(
+                    "'pages' is only available for API version V2_1_PREVIEW and up"
+                )
+
         return self._client.begin_analyze_with_custom_model(  # type: ignore
             file_stream=form,
             model_id=model_id,
             include_text_details=include_field_elements,
             content_type=content_type,
-            cls=deserialization_callback,
-            polling=LROBasePolling(timeout=polling_interval, lro_algorithms=[AnalyzePolling()], **kwargs),
-            error_map=error_map,
+            cls=callback,
+            polling=polling,
             continuation_token=continuation_token,
             **kwargs
         )
@@ -358,9 +844,13 @@ class FormRecognizerClient(object):
 
         :param str model_id: Custom model identifier.
         :param str form_url: The URL of the form to analyze. The input must be a valid, encoded URL
-            of one of the supported formats: JPEG, PNG, PDF and TIFF.
+            of one of the supported formats: JPEG, PNG, PDF, TIFF, or BMP.
         :keyword bool include_field_elements:
-            Whether or not to include field elements such as lines and words in addition to form fields.
+            Whether or not to include all lines per page and field elements such as lines, words,
+            and selection marks for each form field.
+        :keyword list[str] pages: Custom page numbers for multi-page documents(PDF/TIFF). Input the page numbers
+            and/or ranges of pages you want to get in the result. For a range of pages, use a hyphen, like
+            `pages=["1-3", "5-6"]`. Separate each page number or range with a comma.
         :keyword int polling_interval: Waiting time between two polls for LRO operations
             if no Retry-After header is present. Defaults to 5 seconds.
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
@@ -373,31 +863,49 @@ class FormRecognizerClient(object):
         if not model_id:
             raise ValueError("model_id cannot be None or empty.")
 
-        cls = kwargs.pop("cls", None)
-        polling_interval = kwargs.pop("polling_interval", self._client._config.polling_interval)
+        pages = kwargs.pop("pages", None)
         continuation_token = kwargs.pop("continuation_token", None)
         include_field_elements = kwargs.pop("include_field_elements", False)
+        polling_interval = kwargs.pop(
+            "polling_interval", self._client._config.polling_interval
+        )
 
-        def analyze_callback(raw_response, _, headers):  # pylint: disable=unused-argument
-            analyze_result = self._deserialize(self._generated_models.AnalyzeOperationResult, raw_response)
+        def analyze_callback(
+            raw_response, _, headers
+        ):  # pylint: disable=unused-argument
+            analyze_result = self._deserialize(
+                self._generated_models.AnalyzeOperationResult, raw_response
+            )
             return prepare_form_result(analyze_result, model_id)
 
-        deserialization_callback = cls if cls else analyze_callback
+        callback = kwargs.pop("cls", analyze_callback)
+        polling = LROBasePolling(
+            timeout=polling_interval, lro_algorithms=[AnalyzePolling()], **kwargs
+        )
+
+        # FIXME: part of this code will be removed once autorest can handle diff mixin
+        # signatures across API versions
+        if pages:
+            if self._api_version == FormRecognizerApiVersion.V2_1_PREVIEW:
+                kwargs.update({"pages": pages})
+            else:
+                raise ValueError(
+                    "'pages' is only available for API version V2_1_PREVIEW and up"
+                )
+
         return self._client.begin_analyze_with_custom_model(  # type: ignore
             file_stream={"source": form_url},
             model_id=model_id,
             include_text_details=include_field_elements,
-            cls=deserialization_callback,
-            polling=LROBasePolling(timeout=polling_interval, lro_algorithms=[AnalyzePolling()], **kwargs),
-            error_map=error_map,
+            cls=callback,
+            polling=polling,
             continuation_token=continuation_token,
             **kwargs
         )
 
     def close(self):
         # type: () -> None
-        """Close the :class:`~azure.ai.formrecognizer.FormRecognizerClient` session.
-        """
+        """Close the :class:`~azure.ai.formrecognizer.FormRecognizerClient` session."""
         return self._client.close()
 
     def __enter__(self):

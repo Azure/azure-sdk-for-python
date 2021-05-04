@@ -27,11 +27,35 @@ from ._models import (
     SentenceSentiment,
     SentimentConfidenceScores,
     MinedOpinion,
-    AspectSentiment,
-    OpinionSentiment,
+    TargetSentiment,
+    AssessmentSentiment,
     RecognizePiiEntitiesResult,
     PiiEntity,
     PiiEntityDomainType,
+    AnalyzeHealthcareEntitiesResultItem,
+    HealthcareEntity,
+    HealthcareEntityDataSource,
+    RecognizeEntitiesAction,
+    RecognizeLinkedEntitiesAction,
+    RecognizePiiEntitiesAction,
+    ExtractKeyPhrasesAction,
+    AnalyzeActionsResult,
+    RequestStatistics,
+    AnalyzeActionsType,
+    AnalyzeActionsError,
+    HealthcareEntityRelationRoleType,
+    HealthcareRelation,
+    HealthcareRelationRole,
+    HealthcareEntityAssertion,
+    AnalyzeSentimentAction
+)
+from ._paging import AnalyzeHealthcareEntitiesResult
+from ._generated.v3_1_preview_5.models import (
+    PiiCategory as PiiEntityCategoryType,
+    RelationType as HealthcareEntityRelationType,
+    Conditionality as EntityConditionality,
+    Certainty as EntityCertainty,
+    Association as EntityAssociation
 )
 
 __all__ = [
@@ -56,11 +80,33 @@ __all__ = [
     'SentenceSentiment',
     'SentimentConfidenceScores',
     'MinedOpinion',
-    'AspectSentiment',
-    'OpinionSentiment',
+    'TargetSentiment',
+    'AssessmentSentiment',
     'RecognizePiiEntitiesResult',
     'PiiEntity',
     'PiiEntityDomainType',
+    'AnalyzeHealthcareEntitiesResultItem',
+    'AnalyzeHealthcareEntitiesResult',
+    'HealthcareEntity',
+    'HealthcareEntityDataSource',
+    'RecognizeEntitiesAction',
+    'RecognizeLinkedEntitiesAction',
+    'RecognizePiiEntitiesAction',
+    'ExtractKeyPhrasesAction',
+    'AnalyzeActionsResult',
+    'RequestStatistics',
+    'AnalyzeActionsType',
+    "AnalyzeActionsError",
+    "PiiEntityCategoryType",
+    "HealthcareEntityRelationType",
+    "HealthcareEntityRelationRoleType",
+    "HealthcareRelation",
+    "HealthcareRelationRole",
+    "HealthcareEntityAssertion",
+    "EntityConditionality",
+    "EntityCertainty",
+    "EntityAssociation",
+    "AnalyzeSentimentAction"
 ]
 
 __version__ = VERSION

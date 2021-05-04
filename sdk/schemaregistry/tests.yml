@@ -1,11 +1,13 @@
 trigger: none
 
-jobs:
-  - template: ../../eng/pipelines/templates/jobs/archetype-sdk-tests.yml
+stages:
+  - template: ../../eng/pipelines/templates/stages/archetype-sdk-tests.yml
     parameters:
       ServiceDirectory: schemaregistry
       TestTimeoutInMinutes: 300
       BuildTargetingString: azure-schemaregistry*
+      AllocateResourceGroup: false
+      DeployArmTemplate: true
       EnvVars:
         AZURE_SUBSCRIPTION_ID: $(azure-subscription-id)
         AZURE_TENANT_ID: $(python-schema-registry-sdk-test-tenant-id)
@@ -14,16 +16,5 @@ jobs:
         SCHEMA_REGISTRY_ENDPOINT: $(python-schema-registry-sdk-test-endpoint)
         SCHEMA_REGISTRY_GROUP: $(python-schema-registry-sdk-test-group)
         AZURE_TEST_RUN_LIVE: 'true'
-      Matrix:
-        Linux_Python35:
-          OSVmImage: 'ubuntu-18.04'
-          PythonVersion: '3.5'
-        MacOs_Python37:
-          OSVmImage: 'macOS-10.15'
-          PythonVersion: '3.7'
-        Windows_Python27:
-          OSVmImage: 'windows-2019'
-          PythonVersion: '2.7'
-        Linux_Python38:
-          OSVmImage: 'ubuntu-18.04'
-          PythonVersion: '3.8'
+      MatrixFilters:
+        - '"PythonVersion=^(?!pypy3).*"'

@@ -47,7 +47,7 @@ class ChainedTokenCredential(AsyncContextManager):
         If no credential provides a token, raises :class:`azure.core.exceptions.ClientAuthenticationError`
         with an error message from each credential.
 
-        .. note:: This method is called by Azure SDK clients. It isn't intended for use in application code.
+        This method is called automatically by Azure SDK clients.
 
         :param str scopes: desired scopes for the access token. This method requires at least one scope.
         :raises ~azure.core.exceptions.ClientAuthenticationError: no credential in the chain provided a token

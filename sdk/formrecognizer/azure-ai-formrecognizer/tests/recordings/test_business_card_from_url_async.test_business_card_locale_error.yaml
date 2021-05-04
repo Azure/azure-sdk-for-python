@@ -1,0 +1,32 @@
+interactions:
+- request:
+    body: 'b''{"source": "blob_sas_url"}'''
+    headers:
+      Accept:
+      - application/json
+      Content-Length:
+      - '229'
+      Content-Type:
+      - application/json
+      User-Agent:
+      - azsdk-python-ai-formrecognizer/3.1.0b4 Python/3.8.5 (Windows-10-10.0.19041-SP0)
+    method: POST
+    uri: https://region.api.cognitive.microsoft.com/formrecognizer/v2.1-preview.3/prebuilt/businessCard/analyze?includeTextDetails=false&locale=not%20a%20locale
+  response:
+    body:
+      string: '{"error": {"code": "UnsupportedLocale", "innerError": {"requestId":
+        "b5812fa8-1707-4131-92dc-b9b5439dc874"}, "message": "Locale unsupported. Supported
+        locales include en-AU, en-CA, en-GB, en-IN and en-US."}}'
+    headers:
+      apim-request-id: b5812fa8-1707-4131-92dc-b9b5439dc874
+      content-length: '200'
+      content-type: application/json; charset=utf-8
+      date: Thu, 18 Mar 2021 03:09:24 GMT
+      strict-transport-security: max-age=31536000; includeSubDomains; preload
+      x-content-type-options: nosniff
+      x-envoy-upstream-service-time: '490'
+    status:
+      code: 400
+      message: Bad Request
+    url: https://region.api.cognitive.microsoft.com/formrecognizer/v2.1-preview.3/prebuilt/businessCard/analyze?includeTextDetails=false&locale=not%20a%20locale
+version: 1

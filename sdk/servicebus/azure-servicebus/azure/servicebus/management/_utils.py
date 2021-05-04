@@ -3,10 +3,35 @@
 # Licensed under the MIT License. See License.txt in the project root for license information.
 # --------------------------------------------------------------------------------------------
 from datetime import datetime, timedelta
-from typing import cast
+from typing import TYPE_CHECKING, cast, Union, Mapping, Type, Any
 from xml.etree.ElementTree import ElementTree, SubElement, QName
 import isodate
 import six
+
+from . import _constants as constants
+from ._handle_response_error import _handle_response_error
+
+if TYPE_CHECKING:
+    # pylint: disable=unused-import, ungrouped-imports
+    from typing import TypeVar
+    from ._models import (
+        QueueProperties,
+        TopicProperties,
+        SubscriptionProperties,
+        RuleProperties,
+        InternalQueueDescription,
+        InternalTopicDescription,
+        InternalSubscriptionDescription,
+        InternalRuleDescription,
+    )
+
+    PropertiesType = TypeVar(
+        "PropertiesType",
+        QueueProperties,
+        TopicProperties,
+        SubscriptionProperties,
+        RuleProperties,
+    )
 
 # Refer to the async version of this module under ..\aio\management\_utils.py for detailed explanation.
 
@@ -14,9 +39,6 @@ try:
     import urllib.parse as urlparse
 except ImportError:
     import urlparse  # type: ignore  # for python 2.7
-
-from azure.servicebus.management import _constants as constants
-from ._handle_response_error import _handle_response_error
 
 
 def extract_rule_data_template(feed_class, convert, feed_element):
@@ -34,8 +56,10 @@ def extract_rule_data_template(feed_class, convert, feed_element):
         next_link = deserialized.link[1].href
     if deserialized.entry:
         list_of_entities = [
-            convert(*x) if convert else x for x in zip(
-                feed_element.findall(constants.ATOM_ENTRY_TAG), deserialized.entry)
+            convert(*x) if convert else x
+            for x in zip(
+                feed_element.findall(constants.ATOM_ENTRY_TAG), deserialized.entry
+            )
         ]
     else:
         list_of_entities = []
@@ -70,10 +94,8 @@ def get_next_template(list_func, *args, **kwargs):
         feed_element = cast(
             ElementTree,
             list_func(
-                skip=start_index, top=max_page_size,
-                api_version=api_version,
-                **kwargs
-            )
+                skip=start_index, top=max_page_size, api_version=api_version, **kwargs
+            ),
         )
     return feed_element
 
@@ -96,7 +118,9 @@ def deserialize_value(value, value_type):
 def serialize_value_type(value):
     if isinstance(value, float):
         return "double", str(value)
-    if isinstance(value, bool):  # Attention: bool is subclass of int. So put bool ahead of int
+    if isinstance(
+        value, bool
+    ):  # Attention: bool is subclass of int. So put bool ahead of int
         return "boolean", str(value).lower()
     if isinstance(value, six.string_types):
         return "string", value
@@ -106,7 +130,11 @@ def serialize_value_type(value):
         return "dateTime", isodate.datetime_isoformat(value)
     if isinstance(value, timedelta):
         return "duration", isodate.duration_isoformat(value)
-    raise ValueError("value {} of type {} is not supported for the key value".format(value, type(value)))
+    raise ValueError(
+        "value {} of type {} is not supported for the key value".format(
+            value, type(value)
+        )
+    )
 
 
 def deserialize_key_values(xml_parent, key_values):
@@ -154,24 +182,33 @@ def deserialize_rule_key_values(entry_ele, rule_description):
     """
     content = entry_ele.find(constants.ATOM_CONTENT_TAG)
     if content:
-        correlation_filter_properties_ele = content\
-            .find(constants.RULE_DESCRIPTION_TAG) \
-            .find(constants.RULE_FILTER_TAG) \
+        correlation_filter_properties_ele = (
+            content.find(constants.RULE_DESCRIPTION_TAG)
+            .find(constants.RULE_FILTER_TAG)
             .find(constants.RULE_FILTER_COR_PROPERTIES_TAG)
+        )
         if correlation_filter_properties_ele:
-            deserialize_key_values(correlation_filter_properties_ele, rule_description.filter.properties)
-        sql_filter_parameters_ele = content\
-            .find(constants.RULE_DESCRIPTION_TAG) \
-            .find(constants.RULE_FILTER_TAG) \
+            deserialize_key_values(
+                correlation_filter_properties_ele, rule_description.filter.properties
+            )
+        sql_filter_parameters_ele = (
+            content.find(constants.RULE_DESCRIPTION_TAG)
+            .find(constants.RULE_FILTER_TAG)
             .find(constants.RULE_PARAMETERS_TAG)
+        )
         if sql_filter_parameters_ele:
-            deserialize_key_values(sql_filter_parameters_ele, rule_description.filter.parameters)
-        sql_action_parameters_ele = content\
-            .find(constants.RULE_DESCRIPTION_TAG) \
-            .find(constants.RULE_ACTION_TAG) \
+            deserialize_key_values(
+                sql_filter_parameters_ele, rule_description.filter.parameters
+            )
+        sql_action_parameters_ele = (
+            content.find(constants.RULE_DESCRIPTION_TAG)
+            .find(constants.RULE_ACTION_TAG)
             .find(constants.RULE_PARAMETERS_TAG)
+        )
         if sql_action_parameters_ele:
-            deserialize_key_values(sql_action_parameters_ele, rule_description.action.parameters)
+            deserialize_key_values(
+                sql_action_parameters_ele, rule_description.action.parameters
+            )
 
 
 def serialize_key_values(xml_parent, key_values):
@@ -200,16 +237,23 @@ def serialize_key_values(xml_parent, key_values):
     if key_values:
         for key, value in key_values.items():
             value_type, value_in_str = serialize_value_type(value)
-            key_value_ele = SubElement(xml_parent, QName(constants.SB_XML_NAMESPACE, constants.RULE_KEY_VALUE))
-            key_ele = SubElement(key_value_ele, QName(constants.SB_XML_NAMESPACE, constants.RULE_KEY))
+            key_value_ele = SubElement(
+                xml_parent, QName(constants.SB_XML_NAMESPACE, constants.RULE_KEY_VALUE)
+            )
+            key_ele = SubElement(
+                key_value_ele, QName(constants.SB_XML_NAMESPACE, constants.RULE_KEY)
+            )
             key_ele.text = key
             type_qname = QName(constants.XML_SCHEMA_INSTANCE_NAMESPACE, "type")
             value_ele = SubElement(
-                key_value_ele, QName(constants.SB_XML_NAMESPACE, constants.RULE_VALUE),
-                {type_qname: constants.RULE_VALUE_TYPE_XML_PREFIX + ":" + value_type}
+                key_value_ele,
+                QName(constants.SB_XML_NAMESPACE, constants.RULE_VALUE),
+                {type_qname: constants.RULE_VALUE_TYPE_XML_PREFIX + ":" + value_type},
             )
             value_ele.text = value_in_str
-            value_ele.attrib["xmlns:"+constants.RULE_VALUE_TYPE_XML_PREFIX] = constants.XML_SCHEMA_NAMESPACE
+            value_ele.attrib[
+                "xmlns:" + constants.RULE_VALUE_TYPE_XML_PREFIX
+            ] = constants.XML_SCHEMA_NAMESPACE
 
 
 def serialize_rule_key_values(entry_ele, rule_descripiton):
@@ -223,21 +267,104 @@ def serialize_rule_key_values(entry_ele, rule_descripiton):
     """
     content = entry_ele.find(constants.ATOM_CONTENT_TAG)
     if content:
-        correlation_filter_parameters_ele = content\
-            .find(constants.RULE_DESCRIPTION_TAG) \
-            .find(constants.RULE_FILTER_TAG) \
+        correlation_filter_parameters_ele = (
+            content.find(constants.RULE_DESCRIPTION_TAG)
+            .find(constants.RULE_FILTER_TAG)
             .find(constants.RULE_FILTER_COR_PROPERTIES_TAG)
+        )
         if correlation_filter_parameters_ele:
-            serialize_key_values(correlation_filter_parameters_ele, rule_descripiton.filter.properties)
-        sql_filter_parameters_ele = content\
-            .find(constants.RULE_DESCRIPTION_TAG) \
-            .find(constants.RULE_FILTER_TAG) \
+            serialize_key_values(
+                correlation_filter_parameters_ele, rule_descripiton.filter.properties
+            )
+        sql_filter_parameters_ele = (
+            content.find(constants.RULE_DESCRIPTION_TAG)
+            .find(constants.RULE_FILTER_TAG)
             .find(constants.RULE_PARAMETERS_TAG)
+        )
         if sql_filter_parameters_ele:
-            serialize_key_values(sql_filter_parameters_ele, rule_descripiton.filter.parameters)
-        sql_action_parameters_ele = content\
-            .find(constants.RULE_DESCRIPTION_TAG) \
-            .find(constants.RULE_ACTION_TAG) \
+            serialize_key_values(
+                sql_filter_parameters_ele, rule_descripiton.filter.parameters
+            )
+        sql_action_parameters_ele = (
+            content.find(constants.RULE_DESCRIPTION_TAG)
+            .find(constants.RULE_ACTION_TAG)
             .find(constants.RULE_PARAMETERS_TAG)
+        )
         if sql_action_parameters_ele:
-            serialize_key_values(sql_action_parameters_ele, rule_descripiton.action.parameters)
+            serialize_key_values(
+                sql_action_parameters_ele, rule_descripiton.action.parameters
+            )
+
+
+# Helper functions for common parameter validation errors in the client.
+def _validate_entity_name_type(entity_name, display_name="entity name"):
+    # type: (str, str) -> None
+    if not isinstance(entity_name, str):
+        raise TypeError(
+            "{} must be a string, not {}".format(display_name, type(entity_name))
+        )
+
+
+def _validate_topic_and_subscription_types(topic_name, subscription_name):
+    # type: (str, str) -> None
+    if not isinstance(topic_name, str) or not isinstance(subscription_name, str):
+        raise TypeError(
+            "topic name and subscription name must be strings, not {} and {}".format(
+                type(topic_name), type(subscription_name)
+            )
+        )
+
+
+def _validate_topic_subscription_and_rule_types(
+    topic_name, subscription_name, rule_name
+):
+    # type: (str, str, str) -> None
+    if (
+        not isinstance(topic_name, str)
+        or not isinstance(subscription_name, str)
+        or not isinstance(rule_name, str)
+    ):
+        raise TypeError(
+            "topic name, subscription name and rule name must be strings, not {} {} and {}".format(
+                type(topic_name), type(subscription_name), type(rule_name)
+            )
+        )
+
+
+def _normalize_entity_path_to_full_path_if_needed(
+    entity_path, fully_qualified_namespace
+):
+    # type: (str, str) -> str
+    if not entity_path:
+        return entity_path
+    parsed = urlparse.urlparse(entity_path)
+    entity_path = (
+        ("sb://" + fully_qualified_namespace + "/" + entity_path)
+        if not parsed.netloc
+        else entity_path
+    )
+    return entity_path
+
+
+def create_properties_from_dict_if_needed(properties, sb_resource_type):
+    # type: (Union[PropertiesType, Mapping[str, Any]], Type[PropertiesType]) -> PropertiesType
+    """
+    This method is used to create a properties object given the
+    resource properties type and its corresponding dict representation.
+    :param properties: A properties object or its dict representation.
+    :type properties: Mapping or PropertiesType
+    :param type sb_resource_type: The type of properties object.
+    :rtype: PropertiesType
+    """
+    if isinstance(properties, sb_resource_type):
+        return properties
+    try:
+        return sb_resource_type(**cast(Mapping[str, Any], properties))
+    except TypeError as e:
+        if "required keyword arguments" in str(e):
+            raise e
+        raise TypeError(
+            "Update input must be an instance of {}, or a mapping representing one.".format(
+                sb_resource_type.__name__
+            )
+        )

@@ -19,7 +19,7 @@ except ImportError:
 
 from _shared.testcase import GlobalStorageAccountPreparer, GlobalResourceGroupPreparer
 from azure.core.exceptions import (
-    ResourceExistsError, ResourceModifiedError)
+    ResourceExistsError, ResourceModifiedError, HttpResponseError)
 from azure.storage.blob import BlobBlock
 from azure.storage.blob.aio import BlobServiceClient
 #------------------------------------------------------------------------------
@@ -92,6 +92,31 @@ class StorageBlobTagsTest(AsyncStorageTestCase):
 
         # Assert
         self.assertIsNotNone(resp)
+
+    @pytest.mark.playback_test_only
+    @GlobalStorageAccountPreparer()
+    @AsyncStorageTestCase.await_prepared_test
+    async def test_set_blob_tags_with_lease(self, resource_group, location, storage_account, storage_account_key):
+        await self._setup(storage_account, storage_account_key)
+        blob_client, _ = await self._create_block_blob()
+        lease = await blob_client.acquire_lease()
+
+        # Act
+        blob_tags = {"tag1": "firsttag", "tag2": "secondtag", "tag3": "thirdtag"}
+
+        with self.assertRaises(HttpResponseError):
+            await blob_client.set_blob_tags(blob_tags)
+        await blob_client.set_blob_tags(blob_tags, lease=lease)
+
+        await blob_client.get_blob_tags()
+        with self.assertRaises(HttpResponseError):
+            await blob_client.get_blob_tags(lease="'d92e6954-3274-4715-811c-727ca7145303'")
+        resp = await blob_client.get_blob_tags(lease=lease)
+
+        self.assertIsNotNone(resp)
+        self.assertEqual(len(resp), 3)
+
+        await blob_client.delete_blob(lease=lease)
 
     @pytest.mark.playback_test_only
     @GlobalStorageAccountPreparer()
@@ -276,8 +301,8 @@ class StorageBlobTagsTest(AsyncStorageTestCase):
             for key, value in blob.tags.items():
                 self.assertEqual(tags[key], value)
 
-    @GlobalResourceGroupPreparer()
-    @StorageAccountPreparer(random_name_enabled=True, location="canadacentral", name_prefix='pytagstorage')
+    @pytest.mark.playback_test_only
+    @GlobalStorageAccountPreparer()
     @AsyncStorageTestCase.await_prepared_test
     async def test_filter_blobs(self, resource_group, location, storage_account, storage_account_key):
         await self._setup(storage_account, storage_account_key)
@@ -294,7 +319,7 @@ class StorageBlobTagsTest(AsyncStorageTestCase):
         if self.is_live:
             sleep(10)
 
-        where = "tag1='firsttag'"
+        where = "\"tag1\"='firsttag' and \"tag2\"='secondtag'"
         blob_list = self.bsc.find_blobs_by_tags(filter_expression=where, results_per_page=2).by_page()
         first_page = await blob_list.__anext__()
         items_on_page1 = list()
@@ -307,4 +332,7 @@ class StorageBlobTagsTest(AsyncStorageTestCase):
 
         self.assertEqual(2, len(items_on_page1))
         self.assertEqual(2, len(items_on_page2))
+        self.assertEqual(len(items_on_page2[0]['tags']), 2)
+        self.assertEqual(items_on_page2[0]['tags']['tag1'], 'firsttag')
+        self.assertEqual(items_on_page2[0]['tags']['tag2'], 'secondtag')
 #------------------------------------------------------------------------------

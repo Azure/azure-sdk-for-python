@@ -1,7 +1,81 @@
 # Release History
 
-## 3.1.0b1 (Unreleased)
+## 3.1.0b5 (Unreleased)
 
+**Breaking Changes**
+
+- `begin_recognize_id_documents` renamed to `begin_recognize_identity_documents`
+- `begin_recognize_id_documents_from_url` renamed to `begin_recognize_identity_documents_from_url`
+
+## 3.1.0b4 (2021-04-06)
+
+**New features**
+
+- New methods `begin_recognize_id_documents` and `begin_recognize_id_documents_from_url` introduced to the SDK. Use these methods to recognize data from identity documents.
+- New field value types "gender" and "country" described in the `FieldValueType` enum.
+- Content-type `image/bmp` now supported by custom forms and training methods.
+- Added keyword argument `pages` for business cards, receipts, custom forms, and invoices 
+to specify which page to process of the document.
+- Added keyword argument `reading_order` to `begin_recognize_content` and `begin_recognize_content_from_url`.
+
+**Dependency Updates**
+
+- Bumped `msrest` requirement from `0.6.12` to `0.6.21`.
+
+## 3.1.0b3 (2021-02-09)
+
+**Breaking Changes**
+
+- `Appearance` is renamed to `TextAppearance`
+- `Style` is renamed to `TextStyle`
+- Client property `api_version` is no longer exposed. Pass keyword argument `api_version` into the client to select the
+API version
+
+**Dependency Updates**
+
+- Bumped `six` requirement from `1.6` to `1.11.0`.
+
+## 3.1.0b2 (2021-01-12)
+
+**Bug Fixes**
+
+- Package requires [azure-core](https://pypi.org/project/azure-core/) version 1.8.2 or greater
+
+
+## 3.1.0b1 (2020-11-23)
+
+This version of the SDK defaults to the latest supported API version, which currently is v2.1-preview.
+
+**New features**
+
+- New methods `begin_recognize_business_cards` and `begin_recognize_business_cards_from_url` introduced to the SDK. Use these
+methods to recognize data from business cards
+- New methods `begin_recognize_invoices` and `begin_recognize_invoices_from_url` introduced to the SDK. Use these
+methods to recognize data from invoices
+- Recognize receipt methods now take keyword argument `locale` to optionally indicate the locale of the receipt for
+improved results
+- Added ability to create a composed model from the `FormTrainingClient` by calling method `begin_create_composed_model()`
+- Added support to train and recognize custom forms with selection marks such as check boxes and radio buttons.
+This functionality is only available for models trained with labels
+- Added property `selection_marks` to `FormPage` which contains a list of `FormSelectionMark`
+- When passing `include_field_elements=True`, the property `field_elements` on `FieldData` and `FormTableCell` will
+also be populated with any selection marks found on the page
+- Added the properties `model_name` and `properties` to types `CustomFormModel` and `CustomFormModelInfo`
+- Added keyword argument `model_name` to `begin_training()` and `begin_create_composed_model()`
+- Added model type `CustomFormModelProperties` that includes information like if a model is a composed model
+- Added property `model_id` to `CustomFormSubmodel` and `TrainingDocumentInfo`
+- Added properties `model_id` and `form_type_confidence` to `RecognizedForm`
+- `appearance` property added to `FormLine` to indicate the style of extracted text - like "handwriting" or "other"
+- Added keyword argument `pages` to `begin_recognize_content` and `begin_recognize_content_from_url` to specify the page
+numbers to analyze
+- Added property `bounding_box` to `FormTable`
+- Content-type `image/bmp` now supported by recognize content and prebuilt models
+- Added keyword argument `language` to `begin_recognize_content` and `begin_recognize_content_from_url` to specify
+which language to process document in
+
+**Dependency updates**
+
+- Package now requires [azure-common](https://pypi.org/project/azure-common/) version 1.1
 
 ## 3.0.0 (2020-08-20)
 
@@ -46,13 +120,13 @@ Previously `value_data` returned a `FieldData` with all its attributes set to `N
 CustomFormModel` and `CustomFormModelInfo`
 - `FieldText` has been renamed to `FieldData`
 - `FormContent` has been renamed to `FormElement`
-- Parameter `include_text_content` has been renamed to `include_field_elements` for 
+- Parameter `include_text_content` has been renamed to `include_field_elements` for
 `begin_recognize_receipts`, `begin_recognize_receipts_from_url`, `begin_recognize_custom_forms`, and `begin_recognize_custom_forms_from_url`
 - `text_content` has been renamed to `field_elements` on `FieldData` and `FormTableCell`
 
 **Fixes and improvements**
 
-- Fixes a bug where `text_angle` was being returned out of the specified interval (-180, 180] 
+- Fixes a bug where `text_angle` was being returned out of the specified interval (-180, 180]
 
 ## 1.0.0b3 (2020-06-10)
 

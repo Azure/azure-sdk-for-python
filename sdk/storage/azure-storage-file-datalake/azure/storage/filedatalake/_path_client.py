@@ -3,6 +3,7 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
+from typing import Any, Dict
 
 try:
     from urllib.parse import urlparse, quote
@@ -12,16 +13,17 @@ except ImportError:
 
 import six
 
+from azure.core.exceptions import AzureError, HttpResponseError
 from azure.storage.blob import BlobClient
-from ._shared.base_client import StorageAccountHostsMixin, parse_query
-from ._shared.response_handlers import return_response_headers
+from ._data_lake_lease import DataLakeLeaseClient
+from ._deserialize import process_storage_error
+from ._generated import AzureDataLakeStorageRESTAPI
+from ._models import LocationMode, DirectoryProperties, AccessControlChangeResult, AccessControlChanges, \
+    AccessControlChangeCounters, AccessControlChangeFailure
 from ._serialize import convert_dfs_url_to_blob_url, get_mod_conditions, \
     get_path_http_headers, add_metadata_headers, get_lease_id, get_source_mod_conditions, get_access_conditions
-from ._models import LocationMode, DirectoryProperties
-from ._generated import DataLakeStorageClient
-from ._data_lake_lease import DataLakeLeaseClient
-from ._generated.models import StorageErrorException
-from ._deserialize import process_storage_error
+from ._shared.base_client import StorageAccountHostsMixin, parse_query
+from ._shared.response_handlers import return_response_headers, return_headers_and_deserialized
 
 _ERROR_UNSUPPORTED_METHOD_FOR_ENCRYPTION = (
     'The require_encryption flag is set, but encryption is not supported'
@@ -78,7 +80,13 @@ class PathClient(StorageAccountHostsMixin):
                                          _hosts=datalake_hosts, **kwargs)
         # ADLS doesn't support secondary endpoint, make sure it's empty
         self._hosts[LocationMode.SECONDARY] = ""
-        self._client = DataLakeStorageClient(self.url, file_system_name, path_name, pipeline=self._pipeline)
+        self._client = AzureDataLakeStorageRESTAPI(self.url, file_system=file_system_name, path=path_name,
+                                                   pipeline=self._pipeline)
+        self._datalake_client_for_blob_operation = AzureDataLakeStorageRESTAPI(
+            self._blob_client.url,
+            file_system=file_system_name,
+            path=path_name,
+            pipeline=self._pipeline)
 
     def __exit__(self, *args):
         self._blob_client.close()
@@ -191,7 +199,7 @@ class PathClient(StorageAccountHostsMixin):
             **kwargs)
         try:
             return self._client.path.create(**options)
-        except StorageErrorException as error:
+        except HttpResponseError as error:
             process_storage_error(error)
 
     @staticmethod
@@ -202,7 +210,6 @@ class PathClient(StorageAccountHostsMixin):
         mod_conditions = get_mod_conditions(kwargs)
 
         options = {
-            'recursive': True,
             'lease_access_conditions': access_conditions,
             'modified_access_conditions': mod_conditions,
             'timeout': kwargs.pop('timeout', None)}
@@ -242,7 +249,7 @@ class PathClient(StorageAccountHostsMixin):
         options = self._delete_path_options(**kwargs)
         try:
             return self._client.path.delete(**options)
-        except StorageErrorException as error:
+        except HttpResponseError as error:
             process_storage_error(error)
 
     @staticmethod
@@ -326,7 +333,7 @@ class PathClient(StorageAccountHostsMixin):
         options = self._set_access_control_options(owner=owner, group=group, permissions=permissions, acl=acl, **kwargs)
         try:
             return self._client.path.set_access_control(**options)
-        except StorageErrorException as error:
+        except HttpResponseError as error:
             process_storage_error(error)
 
     @staticmethod
@@ -389,8 +396,237 @@ class PathClient(StorageAccountHostsMixin):
         options = self._get_access_control_options(upn=upn, **kwargs)
         try:
             return self._client.path.get_properties(**options)
-        except StorageErrorException as error:
+        except HttpResponseError as error:
             process_storage_error(error)
+
+    @staticmethod
+    def _set_access_control_recursive_options(mode, acl, **kwargs):
+        # type: (str, str, **Any) -> Dict[str, Any]
+
+        options = {
+            'mode': mode,
+            'force_flag': kwargs.pop('continue_on_failure', None),
+            'timeout': kwargs.pop('timeout', None),
+            'continuation': kwargs.pop('continuation_token', None),
+            'max_records': kwargs.pop('batch_size', None),
+            'acl': acl,
+            'cls': return_headers_and_deserialized}
+        options.update(kwargs)
+        return options
+
+    def set_access_control_recursive(self,
+                                     acl,
+                                     **kwargs):
+        # type: (str, **Any) -> AccessControlChangeResult
+        """
+        Sets the Access Control on a path and sub-paths.
+
+        :param acl:
+            Sets POSIX access control rights on files and directories.
+            The value is a comma-separated list of access control entries. Each
+            access control entry (ACE) consists of a scope, a type, a user or
+            group identifier, and permissions in the format
+            "[scope:][type]:[id]:[permissions]".
+        :type acl: str
+        :keyword func(~azure.storage.filedatalake.AccessControlChanges) progress_hook:
+            Callback where the caller can track progress of the operation
+            as well as collect paths that failed to change Access Control.
+        :keyword str continuation_token:
+            Optional continuation token that can be used to resume previously stopped operation.
+        :keyword int batch_size:
+            Optional. If data set size exceeds batch size then operation will be split into multiple
+            requests so that progress can be tracked. Batch size should be between 1 and 2000.
+            The default when unspecified is 2000.
+        :keyword int max_batches:
+            Optional. Defines maximum number of batches that single change Access Control operation can execute.
+            If maximum is reached before all sub-paths are processed,
+            then continuation token can be used to resume operation.
+            Empty value indicates that maximum number of batches in unbound and operation continues till end.
+        :keyword bool continue_on_failure:
+            If set to False, the operation will terminate quickly on encountering user errors (4XX).
+            If True, the operation will ignore user errors and proceed with the operation on other sub-entities of
+            the directory.
+            Continuation token will only be returned when continue_on_failure is True in case of user errors.
+            If not set the default value is False for this.
+        :keyword int timeout:
+            The timeout parameter is expressed in seconds.
+        :return: A summary of the recursive operations, including the count of successes and failures,
+            as well as a continuation token in case the operation was terminated prematurely.
+        :rtype: :class:`~azure.storage.filedatalake.AccessControlChangeResult`
+        :raises ~azure.core.exceptions.AzureError:
+            User can restart the operation using continuation_token field of AzureError if the token is available.
+        """
+        if not acl:
+            raise ValueError("The Access Control List must be set for this operation")
+
+        progress_hook = kwargs.pop('progress_hook', None)
+        max_batches = kwargs.pop('max_batches', None)
+        options = self._set_access_control_recursive_options(mode='set', acl=acl, **kwargs)
+        return self._set_access_control_internal(options=options, progress_hook=progress_hook,
+                                                 max_batches=max_batches)
+
+    def update_access_control_recursive(self,
+                                        acl,
+                                        **kwargs):
+        # type: (str, **Any) -> AccessControlChangeResult
+        """
+        Modifies the Access Control on a path and sub-paths.
+
+        :param acl:
+            Modifies POSIX access control rights on files and directories.
+            The value is a comma-separated list of access control entries. Each
+            access control entry (ACE) consists of a scope, a type, a user or
+            group identifier, and permissions in the format
+            "[scope:][type]:[id]:[permissions]".
+        :type acl: str
+        :keyword func(~azure.storage.filedatalake.AccessControlChanges) progress_hook:
+            Callback where the caller can track progress of the operation
+            as well as collect paths that failed to change Access Control.
+        :keyword str continuation_token:
+            Optional continuation token that can be used to resume previously stopped operation.
+        :keyword int batch_size:
+            Optional. If data set size exceeds batch size then operation will be split into multiple
+            requests so that progress can be tracked. Batch size should be between 1 and 2000.
+            The default when unspecified is 2000.
+        :keyword int max_batches:
+            Optional. Defines maximum number of batches that single change Access Control operation can execute.
+            If maximum is reached before all sub-paths are processed,
+            then continuation token can be used to resume operation.
+            Empty value indicates that maximum number of batches in unbound and operation continues till end.
+        :keyword bool continue_on_failure:
+            If set to False, the operation will terminate quickly on encountering user errors (4XX).
+            If True, the operation will ignore user errors and proceed with the operation on other sub-entities of
+            the directory.
+            Continuation token will only be returned when continue_on_failure is True in case of user errors.
+            If not set the default value is False for this.
+        :keyword int timeout:
+            The timeout parameter is expressed in seconds.
+        :return: A summary of the recursive operations, including the count of successes and failures,
+            as well as a continuation token in case the operation was terminated prematurely.
+        :rtype: :class:`~azure.storage.filedatalake.AccessControlChangeResult`
+        :raises ~azure.core.exceptions.AzureError:
+            User can restart the operation using continuation_token field of AzureError if the token is available.
+        """
+        if not acl:
+            raise ValueError("The Access Control List must be set for this operation")
+
+        progress_hook = kwargs.pop('progress_hook', None)
+        max_batches = kwargs.pop('max_batches', None)
+        options = self._set_access_control_recursive_options(mode='modify', acl=acl, **kwargs)
+        return self._set_access_control_internal(options=options, progress_hook=progress_hook,
+                                                 max_batches=max_batches)
+
+    def remove_access_control_recursive(self,
+                                        acl,
+                                        **kwargs):
+        # type: (str, **Any) -> AccessControlChangeResult
+        """
+        Removes the Access Control on a path and sub-paths.
+
+        :param acl:
+            Removes POSIX access control rights on files and directories.
+            The value is a comma-separated list of access control entries. Each
+            access control entry (ACE) consists of a scope, a type, and a user or
+            group identifier in the format "[scope:][type]:[id]".
+        :type acl: str
+        :keyword func(~azure.storage.filedatalake.AccessControlChanges) progress_hook:
+            Callback where the caller can track progress of the operation
+            as well as collect paths that failed to change Access Control.
+        :keyword str continuation_token:
+            Optional continuation token that can be used to resume previously stopped operation.
+        :keyword int batch_size:
+            Optional. If data set size exceeds batch size then operation will be split into multiple
+            requests so that progress can be tracked. Batch size should be between 1 and 2000.
+            The default when unspecified is 2000.
+        :keyword int max_batches:
+            Optional. Defines maximum number of batches that single change Access Control operation can execute.
+            If maximum is reached before all sub-paths are processed then,
+            continuation token can be used to resume operation.
+            Empty value indicates that maximum number of batches in unbound and operation continues till end.
+        :keyword bool continue_on_failure:
+            If set to False, the operation will terminate quickly on encountering user errors (4XX).
+            If True, the operation will ignore user errors and proceed with the operation on other sub-entities of
+            the directory.
+            Continuation token will only be returned when continue_on_failure is True in case of user errors.
+            If not set the default value is False for this.
+        :keyword int timeout:
+            The timeout parameter is expressed in seconds.
+        :return: A summary of the recursive operations, including the count of successes and failures,
+            as well as a continuation token in case the operation was terminated prematurely.
+        :rtype: :class:`~azure.storage.filedatalake.AccessControlChangeResult`
+        :raises ~azure.core.exceptions.AzureError:
+            User can restart the operation using continuation_token field of AzureError if the token is available.
+        """
+        if not acl:
+            raise ValueError("The Access Control List must be set for this operation")
+
+        progress_hook = kwargs.pop('progress_hook', None)
+        max_batches = kwargs.pop('max_batches', None)
+        options = self._set_access_control_recursive_options(mode='remove', acl=acl, **kwargs)
+        return self._set_access_control_internal(options=options, progress_hook=progress_hook,
+                                                 max_batches=max_batches)
+
+    def _set_access_control_internal(self, options, progress_hook, max_batches=None):
+        try:
+            continue_on_failure = options.get('force_flag')
+            total_directories_successful = 0
+            total_files_success = 0
+            total_failure_count = 0
+            batch_count = 0
+            last_continuation_token = None
+            current_continuation_token = None
+            continue_operation = True
+            while continue_operation:
+                headers, resp = self._client.path.set_access_control_recursive(**options)
+
+                # make a running tally so that we can report the final results
+                total_directories_successful += resp.directories_successful
+                total_files_success += resp.files_successful
+                total_failure_count += resp.failure_count
+                batch_count += 1
+                current_continuation_token = headers['continuation']
+
+                if current_continuation_token is not None:
+                    last_continuation_token = current_continuation_token
+
+                if progress_hook is not None:
+                    progress_hook(AccessControlChanges(
+                        batch_counters=AccessControlChangeCounters(
+                            directories_successful=resp.directories_successful,
+                            files_successful=resp.files_successful,
+                            failure_count=resp.failure_count,
+                        ),
+                        aggregate_counters=AccessControlChangeCounters(
+                            directories_successful=total_directories_successful,
+                            files_successful=total_files_success,
+                            failure_count=total_failure_count,
+                        ),
+                        batch_failures=[AccessControlChangeFailure(
+                            name=failure.name,
+                            is_directory=failure.type == 'DIRECTORY',
+                            error_message=failure.error_message) for failure in resp.failed_entries],
+                        continuation=last_continuation_token))
+
+                # update the continuation token, if there are more operations that cannot be completed in a single call
+                max_batches_satisfied = (max_batches is not None and batch_count == max_batches)
+                continue_operation = bool(current_continuation_token) and not max_batches_satisfied
+                options['continuation'] = current_continuation_token
+
+            # currently the service stops on any failure, so we should send back the last continuation token
+            # for the user to retry the failed updates
+            # otherwise we should just return what the service gave us
+            return AccessControlChangeResult(counters=AccessControlChangeCounters(
+                directories_successful=total_directories_successful,
+                files_successful=total_files_success,
+                failure_count=total_failure_count),
+                continuation=last_continuation_token
+                if total_failure_count > 0 and not continue_on_failure else current_continuation_token)
+        except HttpResponseError as error:
+            error.continuation_token = last_continuation_token
+            process_storage_error(error)
+        except AzureError as error:
+            error.continuation_token = last_continuation_token
+            raise error
 
     def _rename_path_options(self, rename_source, content_settings=None, metadata=None, **kwargs):
         # type: (Optional[ContentSettings], Optional[Dict[str, str]], **Any) -> Dict[str, Any]
@@ -414,16 +650,15 @@ class PathClient(StorageAccountHostsMixin):
             'lease_access_conditions': access_conditions,
             'source_lease_id': source_lease_id,
             'modified_access_conditions': mod_conditions,
-            'source_modified_access_conditions':source_mod_conditions,
+            'source_modified_access_conditions': source_mod_conditions,
             'timeout': kwargs.pop('timeout', None),
             'mode': 'legacy',
             'cls': return_response_headers}
         options.update(kwargs)
         return options
 
-    def _rename_path(self, rename_source,
-                     **kwargs):
-        # type: (**Any) -> Dict[str, Any]
+    def _rename_path(self, rename_source, **kwargs):
+        # type: (str, **Any) -> Dict[str, Any]
         """
         Rename directory or file
 
@@ -483,7 +718,7 @@ class PathClient(StorageAccountHostsMixin):
             **kwargs)
         try:
             return self._client.path.create(**options)
-        except StorageErrorException as error:
+        except HttpResponseError as error:
             process_storage_error(error)
 
     def _get_path_properties(self, **kwargs):
@@ -526,8 +761,18 @@ class PathClient(StorageAccountHostsMixin):
                 :caption: Getting the properties for a file/directory.
         """
         path_properties = self._blob_client.get_blob_properties(**kwargs)
-        path_properties.__class__ = DirectoryProperties
         return path_properties
+
+    def _exists(self, **kwargs):
+        # type: (**Any) -> bool
+        """
+        Returns True if a path exists and returns False otherwise.
+
+        :kwarg int timeout:
+            The timeout parameter is expressed in seconds.
+        :returns: boolean
+        """
+        return self._blob_client.exists(**kwargs)
 
     def set_metadata(self, metadata,  # type: Dict[str, str]
                      **kwargs):

@@ -1,0 +1,5 @@
+-e ../../../tools/azure-sdk-tools
+-e ../../notificationhubs/azure-mgmt-notificationhubs
+-e ../../identity/azure-identity
+-e ../../core/azure-core
+-e ../../../tools/azure-devtools

@@ -51,6 +51,7 @@ with open('CHANGELOG.md', encoding='utf-8') as f:
 setup(
     name=PACKAGE_NAME,
     version=version,
+    include_package_data=True,
     description='Microsoft {} Client Library for Python'.format(PACKAGE_PPRINT_NAME),
     long_description=readme + '\n\n' + changelog,
     long_description_content_type='text/markdown',
@@ -68,6 +69,7 @@ setup(
         'Programming Language :: Python :: 3.6',
         'Programming Language :: Python :: 3.7',
         'Programming Language :: Python :: 3.8',
+        'Programming Language :: Python :: 3.9',
         'License :: OSI Approved :: MIT License',
     ],
     zip_safe=False,
@@ -78,9 +80,10 @@ setup(
         'azure.ai',
     ]),
     install_requires=[
-        "azure-core<2.0.0,>=1.6.0",
-        "msrest>=0.6.12",
-        'six>=1.6',
+        "azure-core<2.0.0,>=1.8.2",
+        "msrest>=0.6.21",
+        'six>=1.11.0',
+        'azure-common~=1.1',
     ],
     extras_require={
         ":python_version<'3.0'": ['azure-ai-nspkg'],

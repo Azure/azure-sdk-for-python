@@ -547,66 +547,6 @@ class BootDiagnosticsInstanceView(msrest.serialization.Model):
         self.status = None
 
 
-class Components1H8M3EpSchemasVirtualmachineidentityPropertiesUserassignedidentitiesAdditionalproperties(msrest.serialization.Model):
-    """Components1H8M3EpSchemasVirtualmachineidentityPropertiesUserassignedidentitiesAdditionalproperties.
-
-    Variables are only populated by the server, and will be ignored when sending a request.
-
-    :ivar principal_id: The principal id of user assigned identity.
-    :vartype principal_id: str
-    :ivar client_id: The client id of user assigned identity.
-    :vartype client_id: str
-    """
-
-    _validation = {
-        'principal_id': {'readonly': True},
-        'client_id': {'readonly': True},
-    }
-
-    _attribute_map = {
-        'principal_id': {'key': 'principalId', 'type': 'str'},
-        'client_id': {'key': 'clientId', 'type': 'str'},
-    }
-
-    def __init__(
-        self,
-        **kwargs
-    ):
-        super(Components1H8M3EpSchemasVirtualmachineidentityPropertiesUserassignedidentitiesAdditionalproperties, self).__init__(**kwargs)
-        self.principal_id = None
-        self.client_id = None
-
-
-class ComponentsNj115SSchemasVirtualmachinescalesetidentityPropertiesUserassignedidentitiesAdditionalproperties(msrest.serialization.Model):
-    """ComponentsNj115SSchemasVirtualmachinescalesetidentityPropertiesUserassignedidentitiesAdditionalproperties.
-
-    Variables are only populated by the server, and will be ignored when sending a request.
-
-    :ivar principal_id: The principal id of user assigned identity.
-    :vartype principal_id: str
-    :ivar client_id: The client id of user assigned identity.
-    :vartype client_id: str
-    """
-
-    _validation = {
-        'principal_id': {'readonly': True},
-        'client_id': {'readonly': True},
-    }
-
-    _attribute_map = {
-        'principal_id': {'key': 'principalId', 'type': 'str'},
-        'client_id': {'key': 'clientId', 'type': 'str'},
-    }
-
-    def __init__(
-        self,
-        **kwargs
-    ):
-        super(ComponentsNj115SSchemasVirtualmachinescalesetidentityPropertiesUserassignedidentitiesAdditionalproperties, self).__init__(**kwargs)
-        self.principal_id = None
-        self.client_id = None
-
-
 class ComputeOperationListResult(msrest.serialization.Model):
     """The List Compute Operation operation response.
 
@@ -1415,14 +1355,14 @@ class DiskInstanceView(msrest.serialization.Model):
 class EncryptionImages(msrest.serialization.Model):
     """Optional. Allows users to provide customer managed keys for encrypting the OS and data disks in the gallery artifact.
 
-    :param os_disk_image: This is the disk image encryption base class.
-    :type os_disk_image: ~azure.mgmt.compute.v2019_12_01.models.DiskImageEncryption
+    :param os_disk_image: Contains encryption settings for an OS disk image.
+    :type os_disk_image: ~azure.mgmt.compute.v2019_12_01.models.OSDiskImageEncryption
     :param data_disk_images: A list of encryption specifications for data disk images.
     :type data_disk_images: list[~azure.mgmt.compute.v2019_12_01.models.DataDiskImageEncryption]
     """
 
     _attribute_map = {
-        'os_disk_image': {'key': 'osDiskImage', 'type': 'DiskImageEncryption'},
+        'os_disk_image': {'key': 'osDiskImage', 'type': 'OSDiskImageEncryption'},
         'data_disk_images': {'key': 'dataDiskImages', 'type': '[DataDiskImageEncryption]'},
     }
 
@@ -1712,7 +1652,7 @@ class GalleryApplicationVersion(Resource):
     :type location: str
     :param tags: A set of tags. Resource tags.
     :type tags: dict[str, str]
-    :param publishing_profile: The publishing profile of a gallery Image Version.
+    :param publishing_profile: The publishing profile of a gallery image version.
     :type publishing_profile:
      ~azure.mgmt.compute.v2019_12_01.models.GalleryApplicationVersionPublishingProfile
     :ivar provisioning_state: The provisioning state, which only appears in the response. Possible
@@ -1836,7 +1776,7 @@ class GalleryArtifactPublishingProfileBase(msrest.serialization.Model):
 
 
 class GalleryApplicationVersionPublishingProfile(GalleryArtifactPublishingProfileBase):
-    """The publishing profile of a gallery Image Version.
+    """The publishing profile of a gallery image version.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
@@ -1863,9 +1803,8 @@ class GalleryApplicationVersionPublishingProfile(GalleryArtifactPublishingProfil
     :type storage_account_type: str or ~azure.mgmt.compute.v2019_12_01.models.StorageAccountType
     :param source: Required. The source image from which the Image Version is going to be created.
     :type source: ~azure.mgmt.compute.v2019_12_01.models.UserArtifactSource
-    :param content_type: Optional. May be used to help process this file. The type of file
-     contained in the source, e.g. zip, json, etc.
-    :type content_type: str
+    :param manage_actions:
+    :type manage_actions: ~azure.mgmt.compute.v2019_12_01.models.UserArtifactManage
     :param enable_health_check: Optional. Whether or not this application reports health.
     :type enable_health_check: bool
     """
@@ -1883,7 +1822,7 @@ class GalleryApplicationVersionPublishingProfile(GalleryArtifactPublishingProfil
         'end_of_life_date': {'key': 'endOfLifeDate', 'type': 'iso-8601'},
         'storage_account_type': {'key': 'storageAccountType', 'type': 'str'},
         'source': {'key': 'source', 'type': 'UserArtifactSource'},
-        'content_type': {'key': 'contentType', 'type': 'str'},
+        'manage_actions': {'key': 'manageActions', 'type': 'UserArtifactManage'},
         'enable_health_check': {'key': 'enableHealthCheck', 'type': 'bool'},
     }
 
@@ -1893,7 +1832,7 @@ class GalleryApplicationVersionPublishingProfile(GalleryArtifactPublishingProfil
     ):
         super(GalleryApplicationVersionPublishingProfile, self).__init__(**kwargs)
         self.source = kwargs['source']
-        self.content_type = kwargs.get('content_type', None)
+        self.manage_actions = kwargs.get('manage_actions', None)
         self.enable_health_check = kwargs.get('enable_health_check', None)
 
 
@@ -1910,7 +1849,7 @@ class GalleryApplicationVersionUpdate(UpdateResourceDefinition):
     :vartype type: str
     :param tags: A set of tags. Resource tags.
     :type tags: dict[str, str]
-    :param publishing_profile: The publishing profile of a gallery Image Version.
+    :param publishing_profile: The publishing profile of a gallery image version.
     :type publishing_profile:
      ~azure.mgmt.compute.v2019_12_01.models.GalleryApplicationVersionPublishingProfile
     :ivar provisioning_state: The provisioning state, which only appears in the response. Possible
@@ -2382,9 +2321,9 @@ class GalleryImageVersion(Resource):
     :type location: str
     :param tags: A set of tags. Resource tags.
     :type tags: dict[str, str]
-    :param publishing_profile: Describes the basic gallery artifact publishing profile.
+    :param publishing_profile: The publishing profile of a gallery Image Version.
     :type publishing_profile:
-     ~azure.mgmt.compute.v2019_12_01.models.GalleryArtifactPublishingProfileBase
+     ~azure.mgmt.compute.v2019_12_01.models.GalleryImageVersionPublishingProfile
     :ivar provisioning_state: The provisioning state, which only appears in the response. Possible
      values include: "Creating", "Updating", "Failed", "Succeeded", "Deleting", "Migrating".
     :vartype provisioning_state: str or
@@ -2410,7 +2349,7 @@ class GalleryImageVersion(Resource):
         'type': {'key': 'type', 'type': 'str'},
         'location': {'key': 'location', 'type': 'str'},
         'tags': {'key': 'tags', 'type': '{str}'},
-        'publishing_profile': {'key': 'properties.publishingProfile', 'type': 'GalleryArtifactPublishingProfileBase'},
+        'publishing_profile': {'key': 'properties.publishingProfile', 'type': 'GalleryImageVersionPublishingProfile'},
         'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
         'storage_profile': {'key': 'properties.storageProfile', 'type': 'GalleryImageVersionStorageProfile'},
         'replication_status': {'key': 'properties.replicationStatus', 'type': 'ReplicationStatus'},
@@ -2508,15 +2447,15 @@ class GalleryImageVersionStorageProfile(msrest.serialization.Model):
 
     :param source: The gallery artifact version source.
     :type source: ~azure.mgmt.compute.v2019_12_01.models.GalleryArtifactVersionSource
-    :param os_disk_image: This is the disk image base class.
-    :type os_disk_image: ~azure.mgmt.compute.v2019_12_01.models.GalleryDiskImage
+    :param os_disk_image: This is the OS disk image.
+    :type os_disk_image: ~azure.mgmt.compute.v2019_12_01.models.GalleryOSDiskImage
     :param data_disk_images: A list of data disk images.
     :type data_disk_images: list[~azure.mgmt.compute.v2019_12_01.models.GalleryDataDiskImage]
     """
 
     _attribute_map = {
         'source': {'key': 'source', 'type': 'GalleryArtifactVersionSource'},
-        'os_disk_image': {'key': 'osDiskImage', 'type': 'GalleryDiskImage'},
+        'os_disk_image': {'key': 'osDiskImage', 'type': 'GalleryOSDiskImage'},
         'data_disk_images': {'key': 'dataDiskImages', 'type': '[GalleryDataDiskImage]'},
     }
 
@@ -2543,9 +2482,9 @@ class GalleryImageVersionUpdate(UpdateResourceDefinition):
     :vartype type: str
     :param tags: A set of tags. Resource tags.
     :type tags: dict[str, str]
-    :param publishing_profile: Describes the basic gallery artifact publishing profile.
+    :param publishing_profile: The publishing profile of a gallery Image Version.
     :type publishing_profile:
-     ~azure.mgmt.compute.v2019_12_01.models.GalleryArtifactPublishingProfileBase
+     ~azure.mgmt.compute.v2019_12_01.models.GalleryImageVersionPublishingProfile
     :ivar provisioning_state: The provisioning state, which only appears in the response. Possible
      values include: "Creating", "Updating", "Failed", "Succeeded", "Deleting", "Migrating".
     :vartype provisioning_state: str or
@@ -2569,7 +2508,7 @@ class GalleryImageVersionUpdate(UpdateResourceDefinition):
         'name': {'key': 'name', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
         'tags': {'key': 'tags', 'type': '{str}'},
-        'publishing_profile': {'key': 'properties.publishingProfile', 'type': 'GalleryArtifactPublishingProfileBase'},
+        'publishing_profile': {'key': 'properties.publishingProfile', 'type': 'GalleryImageVersionPublishingProfile'},
         'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
         'storage_profile': {'key': 'properties.storageProfile', 'type': 'GalleryImageVersionStorageProfile'},
         'replication_status': {'key': 'properties.replicationStatus', 'type': 'ReplicationStatus'},
@@ -2846,7 +2785,7 @@ class ImageDisk(msrest.serialization.Model):
     :type storage_account_type: str or ~azure.mgmt.compute.v2019_12_01.models.StorageAccountTypes
     :param disk_encryption_set: Specifies the customer managed disk encryption set resource id for
      the managed image disk.
-    :type disk_encryption_set: ~azure.mgmt.compute.v2019_12_01.models.SubResource
+    :type disk_encryption_set: ~azure.mgmt.compute.v2019_12_01.models.DiskEncryptionSetParameters
     """
 
     _attribute_map = {
@@ -2856,7 +2795,7 @@ class ImageDisk(msrest.serialization.Model):
         'caching': {'key': 'caching', 'type': 'str'},
         'disk_size_gb': {'key': 'diskSizeGB', 'type': 'int'},
         'storage_account_type': {'key': 'storageAccountType', 'type': 'str'},
-        'disk_encryption_set': {'key': 'diskEncryptionSet', 'type': 'SubResource'},
+        'disk_encryption_set': {'key': 'diskEncryptionSet', 'type': 'DiskEncryptionSetParameters'},
     }
 
     def __init__(
@@ -2900,7 +2839,7 @@ class ImageDataDisk(ImageDisk):
     :type storage_account_type: str or ~azure.mgmt.compute.v2019_12_01.models.StorageAccountTypes
     :param disk_encryption_set: Specifies the customer managed disk encryption set resource id for
      the managed image disk.
-    :type disk_encryption_set: ~azure.mgmt.compute.v2019_12_01.models.SubResource
+    :type disk_encryption_set: ~azure.mgmt.compute.v2019_12_01.models.DiskEncryptionSetParameters
     :param lun: Required. Specifies the logical unit number of the data disk. This value is used to
      identify data disks within the VM and therefore must be unique for each data disk attached to a
      VM.
@@ -2918,7 +2857,7 @@ class ImageDataDisk(ImageDisk):
         'caching': {'key': 'caching', 'type': 'str'},
         'disk_size_gb': {'key': 'diskSizeGB', 'type': 'int'},
         'storage_account_type': {'key': 'storageAccountType', 'type': 'str'},
-        'disk_encryption_set': {'key': 'diskEncryptionSet', 'type': 'SubResource'},
+        'disk_encryption_set': {'key': 'diskEncryptionSet', 'type': 'DiskEncryptionSetParameters'},
         'lun': {'key': 'lun', 'type': 'int'},
     }
 
@@ -2987,7 +2926,7 @@ class ImageOSDisk(ImageDisk):
     :type storage_account_type: str or ~azure.mgmt.compute.v2019_12_01.models.StorageAccountTypes
     :param disk_encryption_set: Specifies the customer managed disk encryption set resource id for
      the managed image disk.
-    :type disk_encryption_set: ~azure.mgmt.compute.v2019_12_01.models.SubResource
+    :type disk_encryption_set: ~azure.mgmt.compute.v2019_12_01.models.DiskEncryptionSetParameters
     :param os_type: Required. This property allows you to specify the type of the OS that is
      included in the disk if creating a VM from a custom image. :code:`<br>`:code:`<br>` Possible
      values are: :code:`<br>`:code:`<br>` **Windows** :code:`<br>`:code:`<br>` **Linux**. Possible
@@ -3009,7 +2948,7 @@ class ImageOSDisk(ImageDisk):
         'caching': {'key': 'caching', 'type': 'str'},
         'disk_size_gb': {'key': 'diskSizeGB', 'type': 'int'},
         'storage_account_type': {'key': 'storageAccountType', 'type': 'str'},
-        'disk_encryption_set': {'key': 'diskEncryptionSet', 'type': 'SubResource'},
+        'disk_encryption_set': {'key': 'diskEncryptionSet', 'type': 'DiskEncryptionSetParameters'},
         'os_type': {'key': 'osType', 'type': 'str'},
         'os_state': {'key': 'osState', 'type': 'str'},
     }
@@ -3535,13 +3474,13 @@ class ManagedDiskParameters(SubResource):
     :type storage_account_type: str or ~azure.mgmt.compute.v2019_12_01.models.StorageAccountTypes
     :param disk_encryption_set: Specifies the customer managed disk encryption set resource id for
      the managed disk.
-    :type disk_encryption_set: ~azure.mgmt.compute.v2019_12_01.models.SubResource
+    :type disk_encryption_set: ~azure.mgmt.compute.v2019_12_01.models.DiskEncryptionSetParameters
     """
 
     _attribute_map = {
         'id': {'key': 'id', 'type': 'str'},
         'storage_account_type': {'key': 'storageAccountType', 'type': 'str'},
-        'disk_encryption_set': {'key': 'diskEncryptionSet', 'type': 'SubResource'},
+        'disk_encryption_set': {'key': 'diskEncryptionSet', 'type': 'DiskEncryptionSetParameters'},
     }
 
     def __init__(
@@ -5455,26 +5394,64 @@ class UsageName(msrest.serialization.Model):
         self.localized_value = kwargs.get('localized_value', None)
 
 
+class UserArtifactManage(msrest.serialization.Model):
+    """UserArtifactManage.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param install: Required. Required. The path and arguments to install the gallery application.
+     This is limited to 4096 characters.
+    :type install: str
+    :param remove: Required. Required. The path and arguments to remove the gallery application.
+     This is limited to 4096 characters.
+    :type remove: str
+    :param update: Optional. The path and arguments to update the gallery application. If not
+     present, then update operation will invoke remove command on the previous version and install
+     command on the current version of the gallery application. This is limited to 4096 characters.
+    :type update: str
+    """
+
+    _validation = {
+        'install': {'required': True},
+        'remove': {'required': True},
+    }
+
+    _attribute_map = {
+        'install': {'key': 'install', 'type': 'str'},
+        'remove': {'key': 'remove', 'type': 'str'},
+        'update': {'key': 'update', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(UserArtifactManage, self).__init__(**kwargs)
+        self.install = kwargs['install']
+        self.remove = kwargs['remove']
+        self.update = kwargs.get('update', None)
+
+
 class UserArtifactSource(msrest.serialization.Model):
     """The source image from which the Image Version is going to be created.
 
     All required parameters must be populated in order to send to Azure.
 
-    :param file_name: Required. Required. The fileName of the artifact.
-    :type file_name: str
     :param media_link: Required. Required. The mediaLink of the artifact, must be a readable
-     storage blob.
+     storage page blob.
     :type media_link: str
+    :param default_configuration_link: Optional. The defaultConfigurationLink of the artifact, must
+     be a readable storage page blob.
+    :type default_configuration_link: str
     """
 
     _validation = {
-        'file_name': {'required': True},
         'media_link': {'required': True},
     }
 
     _attribute_map = {
-        'file_name': {'key': 'fileName', 'type': 'str'},
         'media_link': {'key': 'mediaLink', 'type': 'str'},
+        'default_configuration_link': {'key': 'defaultConfigurationLink', 'type': 'str'},
     }
 
     def __init__(
@@ -5482,8 +5459,38 @@ class UserArtifactSource(msrest.serialization.Model):
         **kwargs
     ):
         super(UserArtifactSource, self).__init__(**kwargs)
-        self.file_name = kwargs['file_name']
         self.media_link = kwargs['media_link']
+        self.default_configuration_link = kwargs.get('default_configuration_link', None)
+
+
+class UserAssignedIdentitiesValue(msrest.serialization.Model):
+    """UserAssignedIdentitiesValue.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar principal_id: The principal id of user assigned identity.
+    :vartype principal_id: str
+    :ivar client_id: The client id of user assigned identity.
+    :vartype client_id: str
+    """
+
+    _validation = {
+        'principal_id': {'readonly': True},
+        'client_id': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'principal_id': {'key': 'principalId', 'type': 'str'},
+        'client_id': {'key': 'clientId', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(UserAssignedIdentitiesValue, self).__init__(**kwargs)
+        self.principal_id = None
+        self.client_id = None
 
 
 class VaultCertificate(msrest.serialization.Model):
@@ -6170,7 +6177,7 @@ class VirtualMachineIdentity(msrest.serialization.Model):
      Machine. The user identity dictionary key references will be ARM resource ids in the form:
      '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ManagedIdentity/userAssignedIdentities/{identityName}'.
     :type user_assigned_identities: dict[str,
-     ~azure.mgmt.compute.v2019_12_01.models.Components1H8M3EpSchemasVirtualmachineidentityPropertiesUserassignedidentitiesAdditionalproperties]
+     ~azure.mgmt.compute.v2019_12_01.models.UserAssignedIdentitiesValue]
     """
 
     _validation = {
@@ -6182,7 +6189,7 @@ class VirtualMachineIdentity(msrest.serialization.Model):
         'principal_id': {'key': 'principalId', 'type': 'str'},
         'tenant_id': {'key': 'tenantId', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
-        'user_assigned_identities': {'key': 'userAssignedIdentities', 'type': '{Components1H8M3EpSchemasVirtualmachineidentityPropertiesUserassignedidentitiesAdditionalproperties}'},
+        'user_assigned_identities': {'key': 'userAssignedIdentities', 'type': '{UserAssignedIdentitiesValue}'},
     }
 
     def __init__(
@@ -6843,7 +6850,7 @@ class VirtualMachineScaleSetIdentity(msrest.serialization.Model):
      form:
      '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ManagedIdentity/userAssignedIdentities/{identityName}'.
     :type user_assigned_identities: dict[str,
-     ~azure.mgmt.compute.v2019_12_01.models.ComponentsNj115SSchemasVirtualmachinescalesetidentityPropertiesUserassignedidentitiesAdditionalproperties]
+     ~azure.mgmt.compute.v2019_12_01.models.VirtualMachineScaleSetIdentityUserAssignedIdentitiesValue]
     """
 
     _validation = {
@@ -6855,7 +6862,7 @@ class VirtualMachineScaleSetIdentity(msrest.serialization.Model):
         'principal_id': {'key': 'principalId', 'type': 'str'},
         'tenant_id': {'key': 'tenantId', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
-        'user_assigned_identities': {'key': 'userAssignedIdentities', 'type': '{ComponentsNj115SSchemasVirtualmachinescalesetidentityPropertiesUserassignedidentitiesAdditionalproperties}'},
+        'user_assigned_identities': {'key': 'userAssignedIdentities', 'type': '{VirtualMachineScaleSetIdentityUserAssignedIdentitiesValue}'},
     }
 
     def __init__(
@@ -6867,6 +6874,36 @@ class VirtualMachineScaleSetIdentity(msrest.serialization.Model):
         self.tenant_id = None
         self.type = kwargs.get('type', None)
         self.user_assigned_identities = kwargs.get('user_assigned_identities', None)
+
+
+class VirtualMachineScaleSetIdentityUserAssignedIdentitiesValue(msrest.serialization.Model):
+    """VirtualMachineScaleSetIdentityUserAssignedIdentitiesValue.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar principal_id: The principal id of user assigned identity.
+    :vartype principal_id: str
+    :ivar client_id: The client id of user assigned identity.
+    :vartype client_id: str
+    """
+
+    _validation = {
+        'principal_id': {'readonly': True},
+        'client_id': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'principal_id': {'key': 'principalId', 'type': 'str'},
+        'client_id': {'key': 'clientId', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(VirtualMachineScaleSetIdentityUserAssignedIdentitiesValue, self).__init__(**kwargs)
+        self.principal_id = None
+        self.client_id = None
 
 
 class VirtualMachineScaleSetInstanceView(msrest.serialization.Model):
@@ -7156,18 +7193,19 @@ class VirtualMachineScaleSetListWithLinkResult(msrest.serialization.Model):
 class VirtualMachineScaleSetManagedDiskParameters(msrest.serialization.Model):
     """Describes the parameters of a ScaleSet managed disk.
 
-    :param storage_account_type: Specifies the storage account type for the managed disk. NOTE:
-     UltraSSD_LRS can only be used with data disks, it cannot be used with OS Disk. Possible values
-     include: "Standard_LRS", "Premium_LRS", "StandardSSD_LRS", "UltraSSD_LRS".
+    :param storage_account_type: Specifies the storage account type for the managed disk. Managed
+     OS disk storage account type can only be set when you create the scale set. NOTE: UltraSSD_LRS
+     can only be used with data disks, it cannot be used with OS Disk. Possible values include:
+     "Standard_LRS", "Premium_LRS", "StandardSSD_LRS", "UltraSSD_LRS".
     :type storage_account_type: str or ~azure.mgmt.compute.v2019_12_01.models.StorageAccountTypes
     :param disk_encryption_set: Specifies the customer managed disk encryption set resource id for
      the managed disk.
-    :type disk_encryption_set: ~azure.mgmt.compute.v2019_12_01.models.SubResource
+    :type disk_encryption_set: ~azure.mgmt.compute.v2019_12_01.models.DiskEncryptionSetParameters
     """
 
     _attribute_map = {
         'storage_account_type': {'key': 'storageAccountType', 'type': 'str'},
-        'disk_encryption_set': {'key': 'diskEncryptionSet', 'type': 'SubResource'},
+        'disk_encryption_set': {'key': 'diskEncryptionSet', 'type': 'DiskEncryptionSetParameters'},
     }
 
     def __init__(
@@ -7520,7 +7558,26 @@ class VirtualMachineScaleSetPublicIPAddressConfigurationDnsSettings(msrest.seria
         self.domain_name_label = kwargs['domain_name_label']
 
 
-class VirtualMachineScaleSetReimageParameters(VirtualMachineReimageParameters):
+class VirtualMachineScaleSetVMReimageParameters(VirtualMachineReimageParameters):
+    """Describes a Virtual Machine Scale Set VM Reimage Parameters.
+
+    :param temp_disk: Specifies whether to reimage temp disk. Default value: false. Note: This temp
+     disk reimage parameter is only supported for VM/VMSS with Ephemeral OS disk.
+    :type temp_disk: bool
+    """
+
+    _attribute_map = {
+        'temp_disk': {'key': 'tempDisk', 'type': 'bool'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(VirtualMachineScaleSetVMReimageParameters, self).__init__(**kwargs)
+
+
+class VirtualMachineScaleSetReimageParameters(VirtualMachineScaleSetVMReimageParameters):
     """Describes a Virtual Machine Scale Set VM Reimage Parameters.
 
     :param temp_disk: Specifies whether to reimage temp disk. Default value: false. Note: This temp
@@ -8520,25 +8577,6 @@ class VirtualMachineScaleSetVMProtectionPolicy(msrest.serialization.Model):
         super(VirtualMachineScaleSetVMProtectionPolicy, self).__init__(**kwargs)
         self.protect_from_scale_in = kwargs.get('protect_from_scale_in', None)
         self.protect_from_scale_set_actions = kwargs.get('protect_from_scale_set_actions', None)
-
-
-class VirtualMachineScaleSetVMReimageParameters(VirtualMachineReimageParameters):
-    """Describes a Virtual Machine Scale Set VM Reimage Parameters.
-
-    :param temp_disk: Specifies whether to reimage temp disk. Default value: false. Note: This temp
-     disk reimage parameter is only supported for VM/VMSS with Ephemeral OS disk.
-    :type temp_disk: bool
-    """
-
-    _attribute_map = {
-        'temp_disk': {'key': 'tempDisk', 'type': 'bool'},
-    }
-
-    def __init__(
-        self,
-        **kwargs
-    ):
-        super(VirtualMachineScaleSetVMReimageParameters, self).__init__(**kwargs)
 
 
 class VirtualMachineSize(msrest.serialization.Model):

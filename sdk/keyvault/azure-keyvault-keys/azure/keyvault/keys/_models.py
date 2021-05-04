@@ -3,7 +3,7 @@
 # Licensed under the MIT License.
 # -------------------------------------
 from collections import namedtuple
-from ._shared import parse_vault_id
+from ._shared import parse_key_vault_id
 from ._generated.v7_1.models import JsonWebKey as _JsonWebKey
 
 try:
@@ -68,7 +68,7 @@ class KeyProperties(object):
         # type: (str, Optional[_models.KeyAttributes], **Any) -> None
         self._attributes = attributes
         self._id = key_id
-        self._vault_id = parse_vault_id(key_id)
+        self._vault_id = parse_key_vault_id(key_id)
         self._managed = kwargs.get("managed", None)
         self._tags = kwargs.get("tags", None)
 

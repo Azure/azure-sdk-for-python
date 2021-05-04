@@ -522,6 +522,8 @@ def test_ownership_manager_release_partition():
         (['ownership_expired', 'ownership_released'], ["0", "1", "2", "3"], 4),
         (['ownership_active0', 'ownership_active1'], ["0", "1"], 0),
         (['ownership_active0', 'ownership_self_owned'], ["0", "1"], 1),
+        (['ownership_active0', 'ownership_active1'], [str(i) for i in range(32)], 11),
+        (['ownership_active0'], [str(i) for i in range(32)], 16),
     ]
 )
 def test_balance_ownership_greedy(ownerships, partitions, expected_result):

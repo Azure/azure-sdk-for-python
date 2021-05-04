@@ -23,8 +23,9 @@
 # THE SOFTWARE.
 #
 #--------------------------------------------------------------------------
-
+import base64
 import json
+import pickle
 import re
 import types
 import unittest
@@ -48,6 +49,7 @@ from azure.core.pipeline.transport import RequestsTransportResponse, HttpTranspo
 from azure.core.polling.base_polling import (
     LongRunningOperation,
     BadStatus,
+    LocationPolling
 )
 from azure.mgmt.core.polling.arm_polling import (
     ARMPolling,
@@ -225,7 +227,7 @@ class TestArmPolling(object):
         response = Response()
         response._content_consumed = True
         response._content = json.dumps(body).encode('ascii') if body is not None else None
-        response.request = mock.create_autospec(Request)
+        response.request = Request()
         response.request.method = method
         response.request.url = RESOURCE_URL
         response.request.headers = {
@@ -582,9 +584,22 @@ class TestArmPolling(object):
         poll = LROPoller(CLIENT, response,
             TestArmPolling.mock_outputs,
             ARMPolling(0))
-        with pytest.raises(HttpResponseError): # TODO: Node.js raises on deserialization
+        with pytest.raises(HttpResponseError) as error: # TODO: Node.js raises on deserialization
             poll.result()
+        assert error.value.continuation_token == base64.b64encode(pickle.dumps(response)).decode('ascii')
 
         LOCATION_BODY = json.dumps({ 'name': TEST_NAME })
         POLLING_STATUS = 200
+
+    def test_polling_with_path_format_arguments(self):
+        method = ARMPolling(
+            timeout=0,
+            path_format_arguments={"host": "host:3000", "accountName": "local"}
+        )
+        client = PipelineClient(base_url="http://{accountName}{host}")
+
+        method._operation = LocationPolling()
+        method._operation._location_url = "/results/1"
+        method._client = client
+        assert "http://localhost:3000/results/1" == method._client.format_url(method._operation.get_polling_url(), **method._path_format_arguments)
 

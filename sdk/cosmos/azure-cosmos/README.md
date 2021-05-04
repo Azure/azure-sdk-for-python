@@ -2,7 +2,7 @@
 
 Azure Cosmos DB is a globally distributed, multi-model database service that supports document, key-value, wide-column, and graph databases.
 
-Use the Azure Cosmos DB SQL API SDK for Python to manage databases and the JSON documents they contain in this NoSQL database service.
+Use the Azure Cosmos DB SQL API SDK for Python to manage databases and the JSON documents they contain in this NoSQL database service. High level capabilities are:
 
 * Create Cosmos DB **databases** and modify their settings
 * Create and modify **containers** to store collections of JSON documents
@@ -19,7 +19,7 @@ Use the Azure Cosmos DB SQL API SDK for Python to manage databases and the JSON 
 
 * Azure subscription - [Create a free account][azure_sub]
 * Azure [Cosmos DB account][cosmos_account] - SQL API
-* [Python 2.7 or 3.5.3+][python]
+* [Python 2.7 or 3.6+][python]
 
 If you need a Cosmos DB SQL API account, you can create one with this [Azure CLI][azure_cli] command:
 
@@ -83,16 +83,58 @@ For more information about these resources, see [Working with Azure Cosmos datab
 
 ## Limitations
 
-As of August 2020 the features below are not yet supported.
+Currently the features below are **not supported**.
 
-* Bulk/Batch processing
-* Group By queries
+**Data Plane Limitations:**
+
+* Group By queries (in roadmap for 2021)
+* Language Native async i/o (in roadmap for 2021)
+* Queries with COUNT from a DISTINCT subquery: SELECT COUNT (1) FROM (SELECT DISTINCT C.ID FROM C)
+* Bulk/Transactional batch processing
 * Direct TCP Mode access
-* Language Native async i/o
+* Continuation token for cross partitions queries
+* Change Feed: Processor
+* Change Feed: Read multiple partitions key values
+* Change Feed: Read specific time 
+* Change Feed: Read from the beggining
+* Change Feed: Pull model
+* Cross-partition ORDER BY for mixed types
 
-## Limitations Workaround
+**Control Plane Limitations:**
+
+* Get CollectionSizeUsage, DatabaseUsage, and DocumentUsage metrics
+* Create Geospatial Index
+* Provision Autoscale DBs or containers
+* Update Autoscale throughput
+* Update analytical store ttl (time to live)
+* Get the connection string
+* Get the minimum RU/s of a container. 
+
+## Bulk processing Limitation Workaround
 
 If you want to use Python SDK to perform bulk inserts to Cosmos DB, the best alternative is to use [stored procedures](https://docs.microsoft.com/azure/cosmos-db/how-to-write-stored-procedures-triggers-udfs) to write multiple items with the same partition key.
+
+## Control Plane Limitations Workaround
+
+Typically you can use [Azure Portal](https://portal.azure.com/), [Azure CLI](https://docs.microsoft.com/azure/cosmos-db/manage-with-cli) or [PowerShell](https://docs.microsoft.com/azure/cosmos-db/manage-with-powershell) for the control plane unsupported limitations.
+
+
+## Boolean Data Type
+
+While the Python language [uses](https://docs.python.org/3/library/stdtypes.html?highlight=boolean#truth-value-testing) "True" and "False" for boolean types, Cosmos DB [accepts](https://docs.microsoft.com/azure/cosmos-db/sql-query-is-bool) "true" and "false" only. In other words, the Python language uses Boolean values with the first uppercase letter and all other lowercase letters, while Cosmos DB and its SQL language use only lowercase letters for those same Boolean values. How to deal with this challenge?
+
+* Your JSON documents created with Python must use "True" and "False", to pass the language validation. The SDK will convert it to "true" and "false" for you. Meaning that "true" and "false" is what will be stored in Cosmos DB. 
+* If you retrieve those documents with the Cosmos DB Portal's Data Explorer, you will see "true" and "false". 
+* If you retrieve those documents with this Python SDK, "true" and "false" values will be automatically converted to "True" and "False".
+
+## SQL Queries x FROM Clause Subitems
+
+This SDK uses the [query_items](https://docs.microsoft.com/python/api/azure-cosmos/azure.cosmos.containerproxy?preserve-view=true&view=azure-python#query-items-query--parameters-none--partition-key-none--enable-cross-partition-query-none--max-item-count-none--enable-scan-in-query-none--populate-query-metrics-none----kwargs-) method to submit SQL queries to Azure Cosmos DB. 
+
+Cosmos DB SQL language allows you to [get subitems by using the FROM clause](https://docs.microsoft.com/azure/cosmos-db/sql-query-from#get-subitems-by-using-the-from-clause), to reduce the source to a smaller subset. As an example, you can use `select * from Families.children` instead of `select * from Families`. But please note that:
+
+* For SQL queries using the `query_items` method, this SDK demands that you specify the `partition_key` or use the `enable_cross_partition_query` flag. 
+* If you are getting subitems and specifying the `partition_key`, please make sure that your partition key is included in the subitems, which is not true for most of the cases.
 
 ## Examples
 
@@ -106,6 +148,7 @@ The following sections provide several code snippets covering some of the most c
 * [Delete data](#delete-data "Delete data")
 * [Query the database](#query-the-database "Query the database")
 * [Get database properties](#get-database-properties "Get database properties")
+* [Get database and container throughputs](#get-database-and-container-throughputs "Get database and container throughputs")
 * [Modify container properties](#modify-container-properties "Modify container properties")
 
 ### Create a database
@@ -170,9 +213,7 @@ except exceptions.CosmosHttpResponseError:
     raise
 ```
 
-The preceding snippet also handles the [CosmosHttpResponseError][ref_httpfailure] exception if the container creation failed. For more information on error handling and troubleshooting, see the [Troubleshooting](#troubleshooting "Troubleshooting") section.
-
-The preceding snippet also handles the [CosmosHttpResponseError][ref_httpfailure] exception if the container creation failed. For more information on error handling and troubleshooting, see the [Troubleshooting](#troubleshooting "Troubleshooting") section.
+The preceding snippets also handle the [CosmosHttpResponseError][ref_httpfailure] exception if the container creation failed. For more information on error handling and troubleshooting, see the [Troubleshooting](#troubleshooting "Troubleshooting") section.
 
 ### Get an existing container
 
@@ -303,6 +344,33 @@ database = client.get_database_client(database_name)
 properties = database.read()
 print(json.dumps(properties))
 ```
+
+### Get database and container throughputs
+
+Get and display the throughput values of a database and of a container with dedicated throughput:
+
+```Python
+from azure.cosmos import CosmosClient
+import os
+import json
+
+url = os.environ['ACCOUNT_URI']
+key = os.environ['ACCOUNT_KEY']
+client = CosmosClient(url, credential=key)
+
+# Database
+database_name = 'testDatabase'
+database = client.get_database_client(database_name)
+db_offer = database.read_offer()
+print('Found Offer \'{0}\' for Database \'{1}\' and its throughput is \'{2}\''.format(db_offer.properties['id'], database.id, db_offer.properties['content']['offerThroughput']))
+
+# Container with dedicated throughput only. Will return error "offer not found" for containers without dedicated throughput
+container_name = 'testContainer'
+container = database.get_container_client(container_name)
+container_offer = container.read_offer()
+print('Found Offer \'{0}\' for Container \'{1}\' and its throughput is \'{2}\''.format(container_offer.properties['id'], container.id, container_offer.properties['content']['offerThroughput'])) 
+```
+
 
 ### Modify container properties
 

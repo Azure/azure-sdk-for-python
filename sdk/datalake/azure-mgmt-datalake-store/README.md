@@ -1,47 +1,27 @@
-## Microsoft Azure SDK for Python
+# Microsoft Azure SDK for Python
 
 This is the Microsoft Azure Data Lake Store Management Client Library.
+This package has been tested with Python 2.7, 3.5, 3.6, 3.7 and 3.8.
+For a more complete view of Azure libraries, see the [azure sdk python release](https://aka.ms/azsdk/python/all).
 
-Azure Resource Manager (ARM) is the next generation of management APIs
-that replace the old Azure Service Management (ASM).
 
-This package has been tested with Python 2.7, 3.4, 3.5, 3.6 and 3.7.
+# Usage
 
-For the older Azure Service Management (ASM) libraries, see
-[azure-servicemanagement-legacy](https://pypi.python.org/pypi/azure-servicemanagement-legacy)
-library.
 
-For a more complete set of Azure libraries, see the
-[azure sdk python release](https://aka.ms/azsdk/python/all).
+To learn how to use this package, see the [quickstart guide](https://aka.ms/azsdk/python/mgmt)
 
-## Compatibility
 
-**IMPORTANT**: If you have an earlier version of the azure package
-(version < 1.0), you should uninstall it before installing this
-package.
+ 
+For docs and references, see [Python SDK References](https://docs.microsoft.com/python/api/overview/azure/data-lake-store)
+Code samples for this package can be found at [Data Lake Store Management](https://docs.microsoft.com/samples/browse/?languages=python&term=Getting%20started%20-%20Managing&terms=Getting%20started%20-%20Managing) on docs.microsoft.com.
+Additional code samples for different Azure services are available at [Samples Repo](https://aka.ms/azsdk/python/mgmt/samples)
 
-You can check the version using pip:
 
-``` shell
-pip freeze
-```
+# Provide Feedback
 
-If you see azure==0.11.0 (or any version below 1.0), uninstall it first:
+If you encounter any bugs or have suggestions, please file an issue in the
+[Issues](https://github.com/Azure/azure-sdk-for-python/issues)
+section of the project. 
 
-``` shell
-pip uninstall azure
-```
 
-## Usage
-
-For code examples, see [Data Lake Store
-Management](https://docs.microsoft.com/python/api/overview/azure/data-lake-store)
-on docs.microsoft.com.
-
-## Provide Feedback
-
-If you encounter any bugs or have suggestions, please file an issue in
-the [Issues](https://github.com/Azure/azure-sdk-for-python/issues)
-section of the project.
-
-![image](https://azure-sdk-impressions.azurewebsites.net/api/impressions/azure-sdk-for-python%2Fazure-mgmt-datalake-store%2FREADME.png)
+![Impressions](https://azure-sdk-impressions.azurewebsites.net/api/impressions/azure-sdk-for-python%2Fazure-mgmt-datalake-store%2FREADME.png)

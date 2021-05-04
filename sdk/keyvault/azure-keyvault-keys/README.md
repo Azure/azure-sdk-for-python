@@ -139,7 +139,7 @@ Azure Key Vault can create and store RSA and elliptic curve keys. Both can
 optionally be protected by hardware security modules (HSMs). Azure Key Vault
 can also perform cryptographic operations with them. For more information about
 keys and supported operations and algorithms, see the
-[Key Vault documentation](https://docs.microsoft.com/azure/key-vault/about-keys-secrets-and-certificates#key-vault-keys).
+[Key Vault documentation](https://docs.microsoft.com/azure/key-vault/keys/about-keys).
 
 [KeyClient][key_client_docs] can create keys in the vault, get existing keys
 from the vault, update key metadata, and delete keys, as shown in the
@@ -153,6 +153,7 @@ This section contains code snippets covering common tasks:
 * [Delete a Key](#delete-a-key "Delete a Key")
 * [List Keys](#list-keys "List Keys")
 * [Perform cryptographic operations](#cryptographic-operations)
+* [Async API](#async-api "Async API")
 * [Asynchronously create a Key](#asynchronously-create-a-key "Asynchronously create a Key")
 * [Asynchronously list Keys](#asynchronously-list-keys "Asynchronously list Keys")
 
@@ -277,25 +278,30 @@ for more details of the cryptography API.
 This library includes a complete async API supported on Python 3.5+. To use it, you must
 first install an async transport, such as [aiohttp](https://pypi.org/project/aiohttp/).
 See
-[azure-core documentation](https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/core/azure-core/README.md#transport)
+[azure-core documentation](https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/core/azure-core/CLIENT_LIBRARY_DEVELOPER.md#transport)
 for more information.
 
-Async clients should be closed when they're no longer needed. Each async
-client is an async context manager and defines an async `close` method. For
+Async clients and credentials should be closed when they're no longer needed. These
+objects are async context managers and define async `close` methods. For
 example:
 
 ```py
-from azure.keyvault.keys import KeyClient
+from azure.identity.aio import DefaultAzureCredential
+from azure.keyvault.keys.aio import KeyClient
 
-# call close when the client is no longer needed
-client = KeyClient()
+credential = DefaultAzureCredential()
+
+# call close when the client and credential are no longer needed
+client = KeyClient(vault_url="https://my-key-vault.vault.azure.net/", credential=credential)
 ...
 await client.close()
+await credential.close()
 
-# alternatively, use the client as an async context manager
-client = KeyClient()
+# alternatively, use them as async context managers (contextlib.AsyncExitStack can help)
+client = KeyClient(vault_url="https://my-key-vault.vault.azure.net/", credential=credential)
 async with client:
-  ...
+  async with credential:
+    ...
 ```
 
 ### Asynchronously create a Key
@@ -420,10 +426,10 @@ you need to provide a CLA and decorate the PR appropriately (e.g., label,
 comment). Simply follow the instructions provided by the bot. You will only
 need to do this once across all repos using our CLA.
 
-This project has adopted the
-[Microsoft Open Source Code of Conduct][code_of_conduct]. For more information,
-see the Code of Conduct FAQ or contact opencode@microsoft.com with any
-additional questions or comments.
+This project has adopted the [Microsoft Open Source Code of Conduct][code_of_conduct].
+For more information, see the
+[Code of Conduct FAQ](https://opensource.microsoft.com/codeofconduct/faq/) or
+contact opencode@microsoft.com with any additional questions or comments.
 
 [azure_cloud_shell]: https://shell.azure.com/bash
 [azure_core_exceptions]: https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/core/azure-core#azure-core-library-exceptions
@@ -450,4 +456,4 @@ additional questions or comments.
 [key_samples]: https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/keyvault/azure-keyvault-keys/samples
 [soft_delete]: https://docs.microsoft.com/azure/key-vault/key-vault-ovw-soft-delete
 
-![Impressions](https://azure-sdk-impressions.azurewebsites.net/api/impressions/azure-sdk-for-python%2Fsdk%2Fkeyvault%2Fazure-keyvault-keys%2FFREADME.png)
+![Impressions](https://azure-sdk-impressions.azurewebsites.net/api/impressions/azure-sdk-for-python%2Fsdk%2Fkeyvault%2Fazure-keyvault-keys%2FREADME.png)

@@ -1,0 +1,96 @@
+interactions:
+- request:
+    body: '{"TableName": "uttable2a6919ca"}'
+    headers:
+      Accept:
+      - application/json;odata=minimalmetadata
+      Content-Length:
+      - '32'
+      Content-Type:
+      - application/json;odata=nometadata
+      DataServiceVersion:
+      - '3.0'
+      Date:
+      - Fri, 18 Dec 2020 16:34:52 GMT
+      User-Agent:
+      - azsdk-python-data-tables/12.0.0b4 Python/3.9.0rc1 (Windows-10-10.0.19041-SP0)
+      x-ms-date:
+      - Fri, 18 Dec 2020 16:34:52 GMT
+      x-ms-version:
+      - '2019-02-02'
+    method: POST
+    uri: https://fake_cosmos_account.table.cosmos.azure.com/Tables
+  response:
+    body:
+      string: '{"TableName":"uttable2a6919ca","odata.metadata":"https://fake_cosmos_account.table.cosmos.azure.com/$metadata#Tables/@Element"}'
+    headers:
+      content-type: application/json;odata=minimalmetadata
+      date: Fri, 18 Dec 2020 16:34:53 GMT
+      etag: W/"datetime'2020-12-18T16%3A34%3A53.9538440Z'"
+      location: https://fake_cosmos_account.table.cosmos.azure.com/Tables('uttable2a6919ca')
+      server: Microsoft-HTTPAPI/2.0
+      transfer-encoding: chunked
+    status:
+      code: 201
+      message: Ok
+    url: https://seankaneprim.table.cosmos.azure.com/Tables
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json;odata=minimalmetadata
+      DataServiceVersion:
+      - '3.0'
+      Date:
+      - Fri, 18 Dec 2020 16:34:54 GMT
+      If-Match:
+      - '*'
+      User-Agent:
+      - azsdk-python-data-tables/12.0.0b4 Python/3.9.0rc1 (Windows-10-10.0.19041-SP0)
+      x-ms-date:
+      - Fri, 18 Dec 2020 16:34:54 GMT
+      x-ms-version:
+      - '2019-02-02'
+    method: DELETE
+    uri: https://fake_cosmos_account.table.cosmos.azure.com/uttable2a6919ca(PartitionKey='pk2a6919ca',RowKey='rk2a6919ca')
+  response:
+    body:
+      string: "{\"odata.error\":{\"code\":\"ResourceNotFound\",\"message\":{\"lang\"\
+        :\"en-us\",\"value\":\"The specified resource does not exist.\\nRequestID:f52f491c-414e-11eb-8d09-58961df361d1\\\
+        n\"}}}\r\n"
+    headers:
+      content-type: application/json;odata=fullmetadata
+      date: Fri, 18 Dec 2020 16:34:53 GMT
+      server: Microsoft-HTTPAPI/2.0
+      transfer-encoding: chunked
+    status:
+      code: 404
+      message: Not Found
+    url: https://seankaneprim.table.cosmos.azure.com/uttable2a6919ca(PartitionKey='pk2a6919ca',RowKey='rk2a6919ca')
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      Date:
+      - Fri, 18 Dec 2020 16:34:54 GMT
+      User-Agent:
+      - azsdk-python-data-tables/12.0.0b4 Python/3.9.0rc1 (Windows-10-10.0.19041-SP0)
+      x-ms-date:
+      - Fri, 18 Dec 2020 16:34:54 GMT
+      x-ms-version:
+      - '2019-02-02'
+    method: DELETE
+    uri: https://fake_cosmos_account.table.cosmos.azure.com/Tables('uttable2a6919ca')
+  response:
+    body:
+      string: ''
+    headers:
+      content-length: '0'
+      date: Fri, 18 Dec 2020 16:34:54 GMT
+      server: Microsoft-HTTPAPI/2.0
+    status:
+      code: 204
+      message: No Content
+    url: https://seankaneprim.table.cosmos.azure.com/Tables('uttable2a6919ca')
+version: 1

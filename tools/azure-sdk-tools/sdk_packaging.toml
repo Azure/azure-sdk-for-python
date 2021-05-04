@@ -1,2 +1,4 @@
 [packaging]
 auto_update = false
+need_msrestazure = false
+need_azurecore = true

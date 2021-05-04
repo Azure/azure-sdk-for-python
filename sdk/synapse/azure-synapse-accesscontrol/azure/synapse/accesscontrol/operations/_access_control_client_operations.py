@@ -13,7 +13,7 @@ from azure.core.paging import ItemPaged
 from azure.core.pipeline import PipelineResponse
 from azure.core.pipeline.transport import HttpRequest, HttpResponse
 
-from .. import models
+from .. import models as _models
 
 if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
@@ -28,7 +28,7 @@ class AccessControlClientOperationsMixin(object):
         self,
         **kwargs  # type: Any
     ):
-        # type: (...) -> Iterable["models.RolesListResponse"]
+        # type: (...) -> Iterable["_models.RolesListResponse"]
         """List roles.
 
         :keyword callable cls: A custom type or function that will be passed the direct response
@@ -36,7 +36,7 @@ class AccessControlClientOperationsMixin(object):
         :rtype: ~azure.core.paging.ItemPaged[~azure.synapse.accesscontrol.models.RolesListResponse]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.RolesListResponse"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.RolesListResponse"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -85,7 +85,7 @@ class AccessControlClientOperationsMixin(object):
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
-                error = self._deserialize(models.ErrorContract, response)
+                error = self._deserialize(_models.ErrorContract, response)
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
                 raise HttpResponseError(response=response, model=error)
 
@@ -101,7 +101,7 @@ class AccessControlClientOperationsMixin(object):
         role_id,  # type: str
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.SynapseRole"
+        # type: (...) -> "_models.SynapseRole"
         """Get role by role Id.
 
         :param role_id: Synapse Built-In Role Id.
@@ -111,7 +111,7 @@ class AccessControlClientOperationsMixin(object):
         :rtype: ~azure.synapse.accesscontrol.models.SynapseRole
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.SynapseRole"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.SynapseRole"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -141,7 +141,7 @@ class AccessControlClientOperationsMixin(object):
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.ErrorContract, response)
+            error = self._deserialize(_models.ErrorContract, response)
             raise HttpResponseError(response=response, model=error)
 
         deserialized = self._deserialize('SynapseRole', pipeline_response)
@@ -154,10 +154,10 @@ class AccessControlClientOperationsMixin(object):
 
     def create_role_assignment(
         self,
-        create_role_assignment_options,  # type: "models.RoleAssignmentOptions"
+        create_role_assignment_options,  # type: "_models.RoleAssignmentOptions"
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.RoleAssignmentDetails"
+        # type: (...) -> "_models.RoleAssignmentDetails"
         """Create role assignment.
 
         :param create_role_assignment_options: Details of role id and object id.
@@ -167,7 +167,7 @@ class AccessControlClientOperationsMixin(object):
         :rtype: ~azure.synapse.accesscontrol.models.RoleAssignmentDetails
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.RoleAssignmentDetails"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.RoleAssignmentDetails"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -201,7 +201,7 @@ class AccessControlClientOperationsMixin(object):
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.ErrorContract, response)
+            error = self._deserialize(_models.ErrorContract, response)
             raise HttpResponseError(response=response, model=error)
 
         deserialized = self._deserialize('RoleAssignmentDetails', pipeline_response)
@@ -219,7 +219,7 @@ class AccessControlClientOperationsMixin(object):
         continuation_token_parameter=None,  # type: Optional[str]
         **kwargs  # type: Any
     ):
-        # type: (...) -> List["models.RoleAssignmentDetails"]
+        # type: (...) -> List["_models.RoleAssignmentDetails"]
         """List role assignments.
 
         :param role_id: Synapse Built-In Role Id.
@@ -233,7 +233,7 @@ class AccessControlClientOperationsMixin(object):
         :rtype: list[~azure.synapse.accesscontrol.models.RoleAssignmentDetails]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType[List["models.RoleAssignmentDetails"]]
+        cls = kwargs.pop('cls', None)  # type: ClsType[List["_models.RoleAssignmentDetails"]]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -268,7 +268,7 @@ class AccessControlClientOperationsMixin(object):
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.ErrorContract, response)
+            error = self._deserialize(_models.ErrorContract, response)
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
@@ -286,7 +286,7 @@ class AccessControlClientOperationsMixin(object):
         role_assignment_id,  # type: str
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.RoleAssignmentDetails"
+        # type: (...) -> "_models.RoleAssignmentDetails"
         """Get role assignment by role assignment Id.
 
         :param role_assignment_id: The ID of the role assignment.
@@ -296,7 +296,7 @@ class AccessControlClientOperationsMixin(object):
         :rtype: ~azure.synapse.accesscontrol.models.RoleAssignmentDetails
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.RoleAssignmentDetails"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.RoleAssignmentDetails"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -326,7 +326,7 @@ class AccessControlClientOperationsMixin(object):
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.ErrorContract, response)
+            error = self._deserialize(_models.ErrorContract, response)
             raise HttpResponseError(response=response, model=error)
 
         deserialized = self._deserialize('RoleAssignmentDetails', pipeline_response)
@@ -382,7 +382,7 @@ class AccessControlClientOperationsMixin(object):
 
         if response.status_code not in [200, 204]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.ErrorContract, response)
+            error = self._deserialize(_models.ErrorContract, response)
             raise HttpResponseError(response=response, model=error)
 
         if cls:
@@ -431,7 +431,7 @@ class AccessControlClientOperationsMixin(object):
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.ErrorContract, response)
+            error = self._deserialize(_models.ErrorContract, response)
             raise HttpResponseError(response=response, model=error)
 
         deserialized = self._deserialize('[str]', pipeline_response)

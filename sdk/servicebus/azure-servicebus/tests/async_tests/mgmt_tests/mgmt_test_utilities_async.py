@@ -134,7 +134,7 @@ async def clear_queues(servicebus_management_client):
     queues = await async_pageable_to_list(servicebus_management_client.list_queues())
     for queue in queues:
         try:
-            await servicebus_management_client.delete_queue(queue)
+            await servicebus_management_client.delete_queue(queue.name)
         except:
             pass
 
@@ -143,6 +143,6 @@ async def clear_topics(servicebus_management_client):
     topics = await async_pageable_to_list(servicebus_management_client.list_topics())
     for topic in topics:
         try:
-            await servicebus_management_client.delete_topic(topic)
+            await servicebus_management_client.delete_topic(topic.name)
         except:
             pass

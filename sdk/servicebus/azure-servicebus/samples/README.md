@@ -10,11 +10,11 @@ urlFragment: servicebus-samples
 
 # Azure Service Bus client library for Python Samples
 
-> **NOTE**: This document outlines the samples for the **preview** of the next version of the `azure-servicebus` package
-> which has different APIs than the current version (0.50). Please visit [this link](https://github.com/Azure/azure-sdk-for-python/tree/servicebus_v0.50.3/sdk/servicebus/azure-servicebus/samples) for samples of the existing library.
+> **NOTE**: This document outlines the samples for the latest version of the `azure-servicebus` package
+> which has different APIs than the older version (0.50). Please visit [this link](https://github.com/Azure/azure-sdk-for-python/tree/servicebus_v0.50.3/sdk/servicebus/azure-servicebus/samples) for samples of version 0.50 of this library.
 
 These are code samples that show common scenario operations with the Azure Service Bus client library.
-Both [sync version](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/servicebus/azure-servicebus/samples/sync_samples) and [async version](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/servicebus/azure-servicebus/samples/async_samples) of samples are provided, async samples require Python 3.5 or later.
+Both [sync version](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/servicebus/azure-servicebus/samples/sync_samples) and [async version](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/servicebus/azure-servicebus/samples/async_samples) of samples are provided, async samples require Python 3.6 or later.
 
 - [send_queue.py](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/servicebus/azure-servicebus/samples/sync_samples/send_queue.py) ([async version](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/servicebus/azure-servicebus/samples/async_samples/send_queue_async.py)) - Examples to send messages to a service bus queue:
     - From a connection string
@@ -37,7 +37,7 @@ Both [sync version](https://github.com/Azure/azure-sdk-for-python/tree/master/sd
     - Receive messages by iterating over ServiceBusReceiver
 - [session_pool_receive.py](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/servicebus/azure-servicebus/samples/sync_samples/session_pool_receive.py) ([async_version](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/servicebus/azure-servicebus/samples/async_samples/session_pool_receive_async.py)) - Examples to receive messages from multiple available sessions in parallel with a thread pool:
     - Receive messages from multiple available sessions in parallel with a thread pool
-    - Automatically renew the lock on the session through AutoLockRenew
+    - Automatically renew the lock on the session through AutoLockRenewer
 - [session_send_receive.py](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/servicebus/azure-servicebus/samples/sync_samples/session_send_receive.py) ([async_version](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/servicebus/azure-servicebus/samples/async_samples/session_send_receive_async.py)) - Examples to send messages to and receive messages from a session-enabled service bus queue:
     - Send messages to a session-enabled queue
     - Receive messages from session-enabled queue
@@ -47,27 +47,49 @@ Both [sync version](https://github.com/Azure/azure-sdk-for-python/tree/master/sd
 - [schedule_topic_messages_and_cancellation](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/servicebus/azure-servicebus/samples/sync_samples/schedule_topic_messages_and_cancellation.py) ([async_version](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/servicebus/azure-servicebus/samples/async_samples/schedule_topic_messages_and_cancellation_async.py)) - Examples to schedule messages and cancel scheduled messages on a service bus topic:
     - Schedule a single message or multiple messages to a topic
     - Cancel scheduled messages from a topic
-- [client_identity_authentication.py](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/servicebus/azure-servicebus/samples/sync_samples/client_identity_authentication.py) ([async_version](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/servicebus/azure-servicebus/samples/async_samples/client_identity_authentication_async.py)) - Examples to authenticate the client by Azure Activate Directory
+- [client_identity_authentication.py](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/servicebus/azure-servicebus/samples/sync_samples/client_identity_authentication.py) ([async_version](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/servicebus/azure-servicebus/samples/async_samples/client_identity_authentication_async.py)) - Examples to authenticate the client by Azure Activate Directory:
     - Authenticate and create the client utilizing the `azure.identity` library
-- [authenticate_client_connstr.py](https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/servicebus/azure-servicebus/samples/sync_samples/authenticate_client_connstr.py) ([async_version](https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/servicebus/azure-servicebus/samples/async_samples/authenticate_client_connstr_async.py)) - Examples to authenticate the client by Connection String
+- [authenticate_client_connstr.py](https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/servicebus/azure-servicebus/samples/sync_samples/authenticate_client_connstr.py) ([async_version](https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/servicebus/azure-servicebus/samples/async_samples/authenticate_client_connstr_async.py)) - Examples to authenticate the client by Connection String:
     - Authenticate and create the client utilizing the connection string available in the Azure portal or via Azure CLI.
 - [proxy.py](https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/servicebus/azure-servicebus/samples/sync_samples/proxy.py) ([async_version](https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/servicebus/azure-servicebus/samples/async_samples/proxy_async.py)) - Examples to send message behind a proxy:
     - Send message behind a proxy
-- [auto_lock_renew.py](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/servicebus/azure-servicebus/samples/sync_samples/auto_lock_renew.py) ([async_version](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/servicebus/azure-servicebus/samples/async_samples/auto_lock_renew_async.py)) - Examples to show usage of AutoLockRenew:
+- [auto_lock_renew.py](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/servicebus/azure-servicebus/samples/sync_samples/auto_lock_renew.py) ([async_version](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/servicebus/azure-servicebus/samples/async_samples/auto_lock_renew_async.py)) - Examples to show usage of AutoLockRenewer:
     - Automatically renew lock on message received from non-sessionful entity
     - Automatically renew lock on the session of sessionful entity
     - Configure a callback to be triggered on auto lock renew failures.
-- [mgmt_queue](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/servicebus/azure-servicebus/samples/sync_samples/mgmt_queue.py) ([async_version](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/servicebus/azure-servicebus/samples/async_samples/mgmt_queue_async.py)) - Examples to manage queue entities under a given servicebus namespace
+- [mgmt_queue.py](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/servicebus/azure-servicebus/samples/sync_samples/mgmt_queue.py) ([async_version](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/servicebus/azure-servicebus/samples/async_samples/mgmt_queue_async.py)) - Examples to manage queue entities under a given servicebus namespace:
     - Create a queue
     - Delete a queue
     - Update a queue
     - List queues
     - Get queue properties
     - Get queue runtime information
-
+- [mgmt_topic](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/servicebus/azure-servicebus/samples/sync_samples/mgmt_topic.py) ([async_version](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/servicebus/azure-servicebus/samples/async_samples/mgmt_topic_async.py)) - Examples to manage topic entities under a given servicebus namespace:
+    - Create a topic
+    - Delete a topic
+    - Update a topic
+    - List topic
+    - Get topic properties
+    - Get topic runtime information
+- [mgmt_subscription](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/servicebus/azure-servicebus/samples/sync_samples/mgmt_subscription.py) ([async_version](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/servicebus/azure-servicebus/samples/async_samples/mgmt_subscription_async.py)) - Examples to manage subscription entities under a given servicebus namespace:
+    - Create a subscription
+    - Delete a subscription
+    - Update a subscription
+    - List subscription
+    - Get subscription properties
+    - Get subscription runtime information
+- [mgmt_rule](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/servicebus/azure-servicebus/samples/sync_samples/mgmt_rule.py) ([async_version](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/servicebus/azure-servicebus/samples/async_samples/mgmt_rule_async.py)) - Examples to manage rule entities under a given servicebus subscription:
+    - Create a rule
+    - Delete a rule
+    - Update a rule
+    - List rule
+    - Get rule properties
+- [failure_and_recovery.py](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/servicebus/azure-servicebus/samples/sync_samples/failure_and_recovery.py) - A demonstration of potential failure modes from an end-to-end send receive flow, as well as possible recovery patterns.
+- [deadletter_messages_and_correct.py](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/servicebus/azure-servicebus/samples/sync_samples/deadletter_messages_and_correct.py) ([async_version](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/servicebus/azure-servicebus/samples/async_samples/deadletter_messages_and_correct_async.py)) - Comprehensive example of moving messages to the dead-letter queue, retrieving messages from it, and resubmitting corrected messages back into main queue.
+- [topic_subscription_with_rule_operations.py](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/servicebus/azure-servicebus/samples/sync_samples/topic_subscription_with_rule_operations.py) ([async_version](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/servicebus/azure-servicebus/samples/async_samples/topic_subscription_with_rule_operations_async.py)) - Example to manage rules on topic subscriptions and to explore different forms of subscription filters.
 
 ## Prerequisites
-- Python 2.7, 3.5 or later.
+- Python 2.7, 3.6 or later.
 - **Microsoft Azure Subscription:**  To use Azure services, including Azure Service Bus, you'll need a subscription.
 If you do not have an existing Azure account, you may sign up for a free trial or use your MSDN subscriber benefits when you [create an account](https://account.windowsazure.com/Home/Index).
 
@@ -75,7 +97,11 @@ If you do not have an existing Azure account, you may sign up for a free trial o
 
 1. Install the Azure Service Bus client library for Python with [pip](https://pypi.org/project/pip/):
 ```bash
-pip install --pre azure-servicebus
+pip install azure-servicebus
+```
+To run samples that utilize the Azure Active Directory for authentication, please install the `azure-identity` library:
+```bash
+pip install azure-identity
 ```
 2. Clone or download this sample repository.
 3. Open the sample folder in Visual Studio Code or your IDE of choice.

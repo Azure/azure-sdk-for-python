@@ -1,0 +1,39 @@
+interactions:
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - azsdk-python-ai-metricsadvisor/1.0.0b3 Python/3.8.6 (Windows-10-10.0.19041-SP0)
+    method: GET
+    uri: https://js-metrics-advisor.cognitiveservices.azure.com/metricsadvisor/v1.0/feedback/metric/feedback_id
+  response:
+    body:
+      string: '{"feedbackId":"feedback_id","createdTime":"2020-10-21T20:53:05.91Z","userPrincipal":"krpratic@microsoft.com","metricId":"metric_id","dimensionFilter":{"dimension":{"dimension_name":"Mumbai","category":"Shoes
+        Handbags & Sunglasses"}},"feedbackType":"Anomaly","startTime":"2020-10-01T00:00:00Z","endTime":"2020-10-01T00:00:00Z","value":{"anomalyValue":"NotAnomaly"},"anomalyDetectionConfigurationId":"e17f32d4-3ddf-4dc7-84ee-b4130c7e1777","anomalyDetectionConfigurationSnapshot":{"anomalyDetectionConfigurationId":"e17f32d4-3ddf-4dc7-84ee-b4130c7e1777","name":"detection-config","description":"","metricId":"metric_id","wholeMetricConfiguration":{"smartDetectionCondition":{"sensitivity":100.0,"anomalyDetectorDirection":"Both","suppressCondition":{"minNumber":1,"minRatio":100.0}}},"dimensionGroupOverrideConfigurations":[],"seriesOverrideConfigurations":[]}}'
+    headers:
+      apim-request-id:
+      - bd780301-9a2e-429c-bc42-72eb26827e59
+      content-length:
+      - '927'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Fri, 22 Jan 2021 01:00:34 GMT
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains; preload
+      x-content-type-options:
+      - nosniff
+      x-envoy-upstream-service-time:
+      - '53'
+      x-request-id:
+      - bd780301-9a2e-429c-bc42-72eb26827e59
+    status:
+      code: 200
+      message: OK
+version: 1

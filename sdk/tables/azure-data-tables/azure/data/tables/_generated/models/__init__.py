@@ -21,8 +21,6 @@ try:
     from ._models_py3 import TableResponse
     from ._models_py3 import TableResponseProperties
     from ._models_py3 import TableServiceError
-    from ._models_py3 import TableServiceErrorOdataError
-    from ._models_py3 import TableServiceErrorOdataErrorMessage
     from ._models_py3 import TableServiceProperties
     from ._models_py3 import TableServiceStats
 except (SyntaxError, ImportError):
@@ -40,8 +38,6 @@ except (SyntaxError, ImportError):
     from ._models import TableResponse  # type: ignore
     from ._models import TableResponseProperties  # type: ignore
     from ._models import TableServiceError  # type: ignore
-    from ._models import TableServiceErrorOdataError  # type: ignore
-    from ._models import TableServiceErrorOdataErrorMessage  # type: ignore
     from ._models import TableServiceProperties  # type: ignore
     from ._models import TableServiceStats  # type: ignore
 
@@ -66,8 +62,6 @@ __all__ = [
     'TableResponse',
     'TableResponseProperties',
     'TableServiceError',
-    'TableServiceErrorOdataError',
-    'TableServiceErrorOdataErrorMessage',
     'TableServiceProperties',
     'TableServiceStats',
     'GeoReplicationStatusType',

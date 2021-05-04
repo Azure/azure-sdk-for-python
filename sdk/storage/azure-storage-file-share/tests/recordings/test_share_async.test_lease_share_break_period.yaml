@@ -1,0 +1,117 @@
+interactions:
+- request:
+    body: null
+    headers:
+      User-Agent:
+      - azsdk-python-storage-file-share/12.2.0 Python/3.8.5 (Windows-10-10.0.19041-SP0)
+      x-ms-date:
+      - Mon, 28 Sep 2020 16:22:47 GMT
+      x-ms-version:
+      - '2020-02-10'
+    method: PUT
+    uri: https://storagename.file.core.windows.net/testba4812bf?restype=share
+  response:
+    body:
+      string: ''
+    headers:
+      content-length: '0'
+      date: Mon, 28 Sep 2020 16:23:04 GMT
+      etag: '"0x8D863CAC758462F"'
+      last-modified: Mon, 28 Sep 2020 16:23:05 GMT
+      server: Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
+      x-ms-version: '2020-02-10'
+    status:
+      code: 201
+      message: Created
+    url: https://seanmcccanary3.file.core.windows.net/testba4812bf?restype=share
+- request:
+    body: null
+    headers:
+      User-Agent:
+      - azsdk-python-storage-file-share/12.2.0 Python/3.8.5 (Windows-10-10.0.19041-SP0)
+      x-ms-date:
+      - Mon, 28 Sep 2020 16:23:05 GMT
+      x-ms-lease-action:
+      - acquire
+      x-ms-lease-duration:
+      - '15'
+      x-ms-proposed-lease-id:
+      - db6e2d34-67d9-4050-873c-1c0680c0430c
+      x-ms-version:
+      - '2020-02-10'
+    method: PUT
+    uri: https://storagename.file.core.windows.net/testba4812bf?comp=lease&restype=share
+  response:
+    body:
+      string: ''
+    headers:
+      content-length: '0'
+      date: Mon, 28 Sep 2020 16:23:04 GMT
+      etag: '"0x8D863CAC758462F"'
+      last-modified: Mon, 28 Sep 2020 16:23:05 GMT
+      server: Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
+      x-ms-lease-id: db6e2d34-67d9-4050-873c-1c0680c0430c
+      x-ms-version: '2020-02-10'
+    status:
+      code: 201
+      message: Created
+    url: https://seanmcccanary3.file.core.windows.net/testba4812bf?comp=lease&restype=share
+- request:
+    body: null
+    headers:
+      User-Agent:
+      - azsdk-python-storage-file-share/12.2.0 Python/3.8.5 (Windows-10-10.0.19041-SP0)
+      x-ms-date:
+      - Mon, 28 Sep 2020 16:23:05 GMT
+      x-ms-lease-action:
+      - break
+      x-ms-lease-break-period:
+      - '5'
+      x-ms-version:
+      - '2020-02-10'
+    method: PUT
+    uri: https://storagename.file.core.windows.net/testba4812bf?comp=lease&restype=share
+  response:
+    body:
+      string: ''
+    headers:
+      content-length: '0'
+      date: Mon, 28 Sep 2020 16:23:04 GMT
+      etag: '"0x8D863CAC758462F"'
+      last-modified: Mon, 28 Sep 2020 16:23:05 GMT
+      server: Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
+      x-ms-lease-time: '5'
+      x-ms-version: '2020-02-10'
+    status:
+      code: 202
+      message: Accepted
+    url: https://seanmcccanary3.file.core.windows.net/testba4812bf?comp=lease&restype=share
+- request:
+    body: null
+    headers:
+      User-Agent:
+      - azsdk-python-storage-file-share/12.2.0 Python/3.8.5 (Windows-10-10.0.19041-SP0)
+      x-ms-date:
+      - Mon, 28 Sep 2020 16:23:11 GMT
+      x-ms-lease-id:
+      - db6e2d34-67d9-4050-873c-1c0680c0430c
+      x-ms-version:
+      - '2020-02-10'
+    method: DELETE
+    uri: https://storagename.file.core.windows.net/testba4812bf?restype=share
+  response:
+    body:
+      string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><Error><Code>LeaseLost</Code><Message>A
+        lease ID was specified, but the lease for the file share has expired.\nRequestId:4a57bdab-301a-0062-3db3-9518e5000000\nTime:2020-09-28T16:23:11.5195262Z</Message></Error>"
+    headers:
+      content-length: '249'
+      content-type: application/xml
+      date: Mon, 28 Sep 2020 16:23:10 GMT
+      server: Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
+      x-ms-error-code: LeaseLost
+      x-ms-version: '2020-02-10'
+    status:
+      code: 412
+      message: A lease ID was specified, but the lease for the file share has expired.
+    url: https://seanmcccanary3.file.core.windows.net/testba4812bf?restype=share
+version: 1

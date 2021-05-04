@@ -1,5 +1,217 @@
 # Release History
 
+## 2.0.0 (2021-02-25)
+
+**Features**
+
+  - Model Usage has a new parameter system_data
+  - Model StaticSiteFunctionOverviewARMResource has a new parameter system_data
+  - Model HybridConnection has a new parameter system_data
+  - Model GeoRegion has a new parameter system_data
+  - Model IpSecurityRestriction has a new parameter headers
+  - Model StaticSiteBuildARMResource has a new parameter system_data
+  - Model PushSettings has a new parameter system_data
+  - Model SlotDifference has a new parameter system_data
+  - Model AppServiceCertificatePatchResource has a new parameter system_data
+  - Model DiagnosticDetectorResponse has a new parameter system_data
+  - Model MetricSpecification has a new parameter supported_aggregation_types
+  - Model PremierAddOnPatchResource has a new parameter system_data
+  - Model SitePatchResource has a new parameter custom_domain_verification_id
+  - Model SitePatchResource has a new parameter system_data
+  - Model SitePatchResource has a new parameter client_cert_mode
+  - Model HostNameBinding has a new parameter system_data
+  - Model CustomHostnameAnalysisResult has a new parameter system_data
+  - Model VnetGateway has a new parameter system_data
+  - Model MSDeployLog has a new parameter system_data
+  - Model Site has a new parameter custom_domain_verification_id
+  - Model Site has a new parameter system_data
+  - Model Site has a new parameter client_cert_mode
+  - Model PrivateEndpointConnectionResource has a new parameter system_data
+  - Model ResourceHealthMetadata has a new parameter system_data
+  - Model CertificatePatchResource has a new parameter system_data
+  - Model WorkerPoolResource has a new parameter system_data
+  - Model AppServiceEnvironmentResource has a new parameter system_data
+  - Model DetectorResponse has a new parameter system_data
+  - Model TriggeredWebJob has a new parameter system_data
+  - Model SiteSourceControl has a new parameter is_git_hub_action
+  - Model SiteSourceControl has a new parameter system_data
+  - Model MSDeploy has a new parameter system_data
+  - Model TriggeredJobHistory has a new parameter system_data
+  - Model SiteConfigResource has a new parameter vnet_route_all_enabled
+  - Model SiteConfigResource has a new parameter system_data
+  - Model SiteConfigResource has a new parameter scm_min_tls_version
+  - Model SiteConfigResource has a new parameter vnet_private_ports_count
+  - Model BackupRequest has a new parameter system_data
+  - Model DeletedSite has a new parameter system_data
+  - Model RenewCertificateOrderRequest has a new parameter system_data
+  - Model StorageMigrationResponse has a new parameter system_data
+  - Model CsmPublishingCredentialsPoliciesCollection has a new parameter system_data
+  - Model AddressResponse has a new parameter system_data
+  - Model BillingMeter has a new parameter system_data
+  - Model Deployment has a new parameter system_data
+  - Model ProcessModuleInfo has a new parameter system_data
+  - Model CertificateEmail has a new parameter system_data
+  - Model Certificate has a new parameter system_data
+  - Model StaticSitePatchResource has a new parameter system_data
+  - Model SitePhpErrorLogFlag has a new parameter system_data
+  - Model CsmPublishingCredentialsPoliciesEntity has a new parameter system_data
+  - Model SwiftVirtualNetwork has a new parameter system_data
+  - Model VnetRoute has a new parameter system_data
+  - Model ConnectionStringDictionary has a new parameter system_data
+  - Model WebSiteInstanceStatus has a new parameter system_data
+  - Model WebSiteInstanceStatus has a new parameter health_check_url
+  - Model HybridConnectionKey has a new parameter system_data
+  - Model PremierAddOnOffer has a new parameter system_data
+  - Model ContinuousWebJob has a new parameter system_data
+  - Model SnapshotRestoreRequest has a new parameter system_data
+  - Model SiteAuthSettings has a new parameter git_hub_client_id
+  - Model SiteAuthSettings has a new parameter microsoft_account_client_secret_setting_name
+  - Model SiteAuthSettings has a new parameter git_hub_client_secret
+  - Model SiteAuthSettings has a new parameter is_auth_from_file
+  - Model SiteAuthSettings has a new parameter auth_file_path
+  - Model SiteAuthSettings has a new parameter google_client_secret_setting_name
+  - Model SiteAuthSettings has a new parameter git_hub_client_secret_setting_name
+  - Model SiteAuthSettings has a new parameter aad_claims_authorization
+  - Model SiteAuthSettings has a new parameter system_data
+  - Model SiteAuthSettings has a new parameter git_hub_o_auth_scopes
+  - Model SiteAuthSettings has a new parameter client_secret_setting_name
+  - Model SiteAuthSettings has a new parameter twitter_consumer_secret_setting_name
+  - Model SiteAuthSettings has a new parameter facebook_app_secret_setting_name
+  - Model DetectorDefinition has a new parameter system_data
+  - Model SiteConfigurationSnapshotInfo has a new parameter system_data
+  - Model PublicCertificate has a new parameter system_data
+  - Model DomainOwnershipIdentifier has a new parameter system_data
+  - Model StringDictionary has a new parameter system_data
+  - Model PrivateLinkConnectionApprovalRequestResource has a new parameter system_data
+  - Model SlotConfigNamesResource has a new parameter system_data
+  - Model WebJob has a new parameter system_data
+  - Model ApplicationStackResource has a new parameter system_data
+  - Model ReissueCertificateOrderRequest has a new parameter system_data
+  - Model User has a new parameter system_data
+  - Model RestoreRequest has a new parameter system_data
+  - Model StaticSiteUserInvitationRequestResource has a new parameter system_data
+  - Model StorageMigrationOptions has a new parameter system_data
+  - Model HybridConnectionLimits has a new parameter system_data
+  - Model StaticSiteUserARMResource has a new parameter system_data
+  - Model AppServiceCertificateResource has a new parameter system_data
+  - Model AnalysisDefinition has a new parameter system_data
+  - Model VnetInfo has a new parameter system_data
+  - Model DomainPatchResource has a new parameter system_data
+  - Model MSDeployStatus has a new parameter system_data
+  - Model MigrateMySqlRequest has a new parameter system_data
+  - Model Identifier has a new parameter system_data
+  - Model SiteLogsConfig has a new parameter system_data
+  - Model AppServiceCertificateOrder has a new parameter system_data
+  - Model BackupItem has a new parameter system_data
+  - Model ProcessInfo has a new parameter system_data
+  - Model MigrateMySqlStatus has a new parameter system_data
+  - Model StaticSiteResetPropertiesARMResource has a new parameter system_data
+  - Model NetworkFeatures has a new parameter system_data
+  - Model Recommendation has a new parameter system_data
+  - Model ProcessThreadInfo has a new parameter system_data
+  - Model AzureStoragePropertyDictionaryResource has a new parameter system_data
+  - Model Domain has a new parameter system_data
+  - Model StaticSiteARMResource has a new parameter system_data
+  - Model ResourceMetricDefinition has a new parameter system_data
+  - Model VnetValidationTestFailure has a new parameter system_data
+  - Model StaticSiteUserInvitationResponseResource has a new parameter system_data
+  - Model PrivateAccess has a new parameter system_data
+  - Model SiteConfig has a new parameter vnet_route_all_enabled
+  - Model SiteConfig has a new parameter vnet_private_ports_count
+  - Model SiteConfig has a new parameter scm_min_tls_version
+  - Model FunctionEnvelope has a new parameter system_data
+  - Model TopLevelDomain has a new parameter system_data
+  - Model RecommendationRule has a new parameter system_data
+  - Model RelayServiceConnectionEntity has a new parameter system_data
+  - Model ProxyOnlyResource has a new parameter system_data
+  - Model Snapshot has a new parameter system_data
+  - Model VnetParameters has a new parameter system_data
+  - Model DiagnosticAnalysis has a new parameter system_data
+  - Model CertificateOrderAction has a new parameter system_data
+  - Model DeletedAppRestoreRequest has a new parameter system_data
+  - Model AppServicePlan has a new parameter system_data
+  - Model Resource has a new parameter system_data
+  - Model StaticSiteCustomDomainOverviewARMResource has a new parameter system_data
+  - Model PremierAddOn has a new parameter system_data
+  - Model TriggeredJobRun has a new parameter system_data
+  - Model LogSpecification has a new parameter log_filter_pattern
+  - Model DiagnosticCategory has a new parameter system_data
+  - Model SourceControl has a new parameter system_data
+  - Model VnetValidationFailureDetails has a new parameter system_data
+  - Model AppServiceEnvironmentPatchResource has a new parameter system_data
+  - Model AppServiceCertificateOrderPatchResource has a new parameter system_data
+  - Model SiteExtensionInfo has a new parameter system_data
+  - Model AppServicePlanPatchResource has a new parameter system_data
+  - Added operation WebAppsOperations.update_auth_settings_v2
+  - Added operation WebAppsOperations.update_auth_settings_v2_slot
+  - Added operation WebAppsOperations.get_auth_settings_v2
+  - Added operation WebAppsOperations.get_auth_settings_v2_slot
+  - Added operation StaticSitesOperations.preview_workflow
+  - Added operation WebSiteManagementClientOperationsMixin.generate_github_access_token_for_appservice_cli_async
+
+**Breaking changes**
+
+  - Model SiteConfigResource no longer has parameter acr_use_managed_identity_creds
+  - Model SiteConfigResource no longer has parameter acr_user_managed_identity_id
+  - Model SiteConfig no longer has parameter acr_use_managed_identity_creds
+  - Model SiteConfig no longer has parameter acr_user_managed_identity_id
+  - Model FunctionSecrets has a new signature
+  - Removed operation WebAppsOperations.get_app_settings_key_vault_references
+  - Removed operation WebAppsOperations.get_app_setting_key_vault_reference
+
+## 1.0.0 (2020-11-23)
+
+- GA release
+
+## 1.0.0b1 (2020-10-13)
+
+This is beta preview version.
+
+This version uses a next-generation code generator that introduces important breaking changes, but also important new features (like unified authentication and async programming).
+
+**General breaking changes**
+
+- Credential system has been completly revamped:
+
+  - `azure.common.credentials` or `msrestazure.azure_active_directory` instances are no longer supported, use the `azure-identity` classes instead: https://pypi.org/project/azure-identity/
+  - `credentials` parameter has been renamed `credential`
+
+- The `config` attribute no longer exists on a client, configuration should be passed as kwarg. Example: `MyClient(credential, subscription_id, enable_logging=True)`. For a complete set of
+  supported options, see the [parameters accept in init documentation of azure-core](https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/core/azure-core/CLIENT_LIBRARY_DEVELOPER.md#available-policies)
+- You can't import a `version` module anymore, use `__version__` instead
+- Operations that used to return a `msrest.polling.LROPoller` now returns a `azure.core.polling.LROPoller` and are prefixed with `begin_`.
+- Exceptions tree have been simplified and most exceptions are now `azure.core.exceptions.HttpResponseError` (`CloudError` has been removed).
+- Most of the operation kwarg have changed. Some of the most noticeable:
+
+  - `raw` has been removed. Equivalent feature can be found using `cls`, a callback that will give access to internal HTTP response for advanced user
+  - For a complete set of
+  supported options, see the [parameters accept in Request documentation of azure-core](https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/core/azure-core/CLIENT_LIBRARY_DEVELOPER.md#available-policies)
+
+**General new features**
+
+- Type annotations support using `typing`. SDKs are mypy ready.
+- This client has now stable and official support for async. Check the `aio` namespace of your package to find the async client.
+- This client now support natively tracing library like OpenCensus or OpenTelemetry. See this [tracing quickstart](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/core/azure-core-tracing-opentelemetry) for an overview.
+
+## 0.48.0 (2020-09-22)
+
+**Features**
+
+  - Model SiteConfig has a new parameter acr_use_managed_identity_creds
+  - Model SiteConfig has a new parameter acr_user_managed_identity_id
+  - Model SiteConfigResource has a new parameter acr_use_managed_identity_creds
+  - Model SiteConfigResource has a new parameter acr_user_managed_identity_id
+
+## 0.47.0 (2020-06-03)
+
+**Features**
+
+  - Added operation WebAppsOperations.get_basic_publishing_credentials_policies
+  - Added operation WebAppsOperations.update_scm_allowed
+  - Added operation WebAppsOperations.update_ftp_allowed
+  - Added operation WebAppsOperations.get_scm_allowed
+  - Added operation WebAppsOperations.get_ftp_allowed
+
 ## 0.46.0 (2020-04-10)
 
 **Features**

@@ -35,8 +35,9 @@ def form_word(bounding_box):
 
 @pytest.fixture
 def form_line(bounding_box, form_word):
-    model = _models.FormLine(text="Word Word", bounding_box=bounding_box[0], words=[form_word[0], form_word[0]], page_number=1)
-    model_repr = "FormLine(text=Word Word, bounding_box={}, words=[{}, {}], page_number=1, kind=line)".format(bounding_box[1], form_word[1], form_word[1])[:1024]
+    appearance = _models.TextAppearance(style=_models.TextStyle(name="other", confidence=1.0))
+    model = _models.FormLine(text="Word Word", bounding_box=bounding_box[0], words=[form_word[0], form_word[0]], page_number=1, appearance=appearance)
+    model_repr = "FormLine(text=Word Word, bounding_box={}, words=[{}, {}], page_number=1, kind=line, appearance={})".format(bounding_box[1], form_word[1], form_word[1], appearance)[:1024]
     assert repr(model) == model_repr
     return model, model_repr
 
@@ -52,9 +53,9 @@ def form_table_cell(bounding_box, form_word):
     return model, model_repr
 
 @pytest.fixture
-def form_table(form_table_cell):
-    model = _models.FormTable(page_number=1, cells=[form_table_cell[0], form_table_cell[0]], row_count=3, column_count=4)
-    model_repr = "FormTable(page_number=1, cells=[{}, {}], row_count=3, column_count=4)".format(form_table_cell[1], form_table_cell[1])[:1024]
+def form_table(form_table_cell, bounding_box):
+    model = _models.FormTable(page_number=1, cells=[form_table_cell[0], form_table_cell[0]], row_count=3, column_count=4, bounding_box=bounding_box[0])
+    model_repr = "FormTable(page_number=1, cells=[{}, {}], row_count=3, column_count=4, bounding_box={})".format(form_table_cell[1], form_table_cell[1], bounding_box[1])[:1024]
     assert repr(model) == model_repr
     return model, model_repr
 
@@ -104,8 +105,8 @@ def custom_form_model_field():
 
 @pytest.fixture
 def custom_form_sub_model(custom_form_model_field):
-    model = _models.CustomFormSubmodel(accuracy=0.99, fields={"name": custom_form_model_field[0]}, form_type="Itemized")
-    model_repr = "CustomFormSubmodel(accuracy=0.99, fields={{'name': {}}}, form_type=Itemized)".format(custom_form_model_field[1])[:1024]
+    model = _models.CustomFormSubmodel(accuracy=0.99, model_id=1, fields={"name": custom_form_model_field[0]}, form_type="Itemized")
+    model_repr = "CustomFormSubmodel(accuracy=0.99, model_id=1, fields={{'name': {}}}, form_type=Itemized)".format(custom_form_model_field[1])[:1024]
     assert repr(model) == model_repr
     return model, model_repr
 
@@ -118,8 +119,15 @@ def form_recognizer_error():
 
 @pytest.fixture
 def training_document_info(form_recognizer_error):
-    model = _models.TrainingDocumentInfo(name="name", status=_models.TrainingStatus.PARTIALLY_SUCCEEDED, page_count=5, errors=[form_recognizer_error[0]])
-    model_repr = "TrainingDocumentInfo(name=name, status=partiallySucceeded, page_count=5, errors=[{}])".format(form_recognizer_error[1])[:1024]
+    model = _models.TrainingDocumentInfo(name="name", status=_models.TrainingStatus.PARTIALLY_SUCCEEDED, page_count=5, errors=[form_recognizer_error[0]], model_id=1)
+    model_repr = "TrainingDocumentInfo(name=name, status=partiallySucceeded, page_count=5, errors=[{}], model_id=1)".format(form_recognizer_error[1])[:1024]
+    assert repr(model) == model_repr
+    return model, model_repr
+
+@pytest.fixture
+def custom_form_model_properties():
+    model = _models.CustomFormModelProperties(is_composed_model=True)
+    model_repr = "CustomFormModelProperties(is_composed_model=True)"
     assert repr(model) == model_repr
     return model, model_repr
 
@@ -128,13 +136,13 @@ class TestRepr():
     # Not inheriting form FormRecognizerTest because that doesn't allow me to define pytest fixtures in the same file
     # Not worth moving pytest fixture definitions to conftest since all I would use is assertEqual and I can just use assert
     def test_recognized_form(self, form_field_one, page_range, form_page):
-        model = _models.RecognizedForm(form_type="receipt", fields={"one": form_field_one[0]}, page_range=page_range[0], pages=[form_page[0]])
-        model_repr = "RecognizedForm(form_type=receipt, fields={{'one': {}}}, page_range={}, pages=[{}])".format(
+        model = _models.RecognizedForm(form_type="receipt", form_type_confidence=1.0, model_id=1, fields={"one": form_field_one[0]}, page_range=page_range[0], pages=[form_page[0]])
+        model_repr = "RecognizedForm(form_type=receipt, fields={{'one': {}}}, page_range={}, pages=[{}], form_type_confidence=1.0, model_id=1)".format(
             form_field_one[1], page_range[1], form_page[1]
         )[:1024]
         assert repr(model) == model_repr
 
-    def test_custom_form_model(self, custom_form_sub_model, form_recognizer_error, training_document_info):
+    def test_custom_form_model(self, custom_form_sub_model, custom_form_model_properties, form_recognizer_error, training_document_info):
         model = _models.CustomFormModel(
             model_id=1,
             status=_models.CustomFormModelStatus.CREATING,
@@ -142,21 +150,26 @@ class TestRepr():
             training_completed_on=datetime.datetime(1, 1, 1),
             submodels=[custom_form_sub_model[0], custom_form_sub_model[0]],
             errors=[form_recognizer_error[0]],
-            training_documents=[training_document_info[0], training_document_info[0]]
+            training_documents=[training_document_info[0], training_document_info[0]],
+            properties=custom_form_model_properties[0],
+            model_name="my model"
         )
 
         model_repr = "CustomFormModel(model_id=1, status=creating, training_started_on=0001-01-01 00:00:00, " \
-            "training_completed_on=0001-01-01 00:00:00, submodels=[{}, {}], errors=[{}], training_documents=[{}, {}])".format(
-                custom_form_sub_model[1], custom_form_sub_model[1], form_recognizer_error[1], training_document_info[1], training_document_info[1]
+            "training_completed_on=0001-01-01 00:00:00, submodels=[{}, {}], errors=[{}], training_documents=[{}, {}], " \
+            "model_name=my model, properties={})".format(
+                custom_form_sub_model[1], custom_form_sub_model[1], form_recognizer_error[1], training_document_info[1], training_document_info[1],
+                custom_form_model_properties[1]
             )[:1024]
 
         assert repr(model) == model_repr
 
-    def test_custom_form_model_info(self):
+    def test_custom_form_model_info(self, custom_form_model_properties):
         model = _models.CustomFormModelInfo(
-            model_id=1, status=_models.CustomFormModelStatus.READY, training_started_on=datetime.datetime(1, 1, 1), training_completed_on=datetime.datetime(1, 1, 1)
+            model_id=1, status=_models.CustomFormModelStatus.READY, training_started_on=datetime.datetime(1, 1, 1), training_completed_on=datetime.datetime(1, 1, 1),
+            properties=custom_form_model_properties[0], model_name="my model"
         )
-        model_repr = "CustomFormModelInfo(model_id=1, status=ready, training_started_on=0001-01-01 00:00:00, training_completed_on=0001-01-01 00:00:00)"[:1024]
+        model_repr = "CustomFormModelInfo(model_id=1, status=ready, training_started_on=0001-01-01 00:00:00, training_completed_on=0001-01-01 00:00:00, properties={}, model_name=my model)".format(custom_form_model_properties[1])[:1024]
         assert repr(model) == model_repr
 
     def test_account_properties(self):

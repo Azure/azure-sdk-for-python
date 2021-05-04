@@ -1,7 +1,53 @@
 # Release History
 
-## 11.1.0b3 (Unreleased)
+## 11.2.0b3 (Unreleased)
 
+- Added support for knowledge store    #18461
+
+## 11.2.0b2 (2021-04-13)
+
+### New features
+
+- Added support for semantic search    #17638
+
+## 11.2.0b1 (2021-04-06)
+
+### New features
+
+- Added new data source type ADLS gen2  #16852
+- Added normalizer support  #17579
+
+## 11.1.0 (2021-02-10)
+
+**Breaking Changes**
+
+- `IndexDocumentsBatch` does not support `enqueue_action` any longer. `enqueue_actions` takes a single action too.
+- `max_retries` of `SearchIndexingBufferedSender` is renamed to `max_retries_per_action`
+- `SearchClient` does not support `get_search_indexing_buffered_sender`
+
+## 11.1.0b4 (2020-11-10)
+
+**Features**
+
+- Added `get_search_indexing_buffered_sender` support for `SearchClient`
+- Added `initial_batch_action_count` support for `SearchIndexingBufferedSender`
+- Added `max_retries` support for `SearchIndexingBufferedSender`
+
+## 11.1.0b3 (2020-10-06)
+
+**Breaking Changes**
+
+- Renamed `SearchIndexDocumentBatchingClient` to `SearchIndexingBufferedSender`
+- Renamed `SearchIndexDocumentBatchingClient.add_upload_actions` to `SearchIndexingBufferedSender.upload_documents`
+- Renamed `SearchIndexDocumentBatchingClient.add_delete_actions` to `SearchIndexingBufferedSender.delete_documents`
+- Renamed `SearchIndexDocumentBatchingClient.add_merge_actions` to `SearchIndexingBufferedSender.merge_documents`
+- Renamed `SearchIndexDocumentBatchingClient.add_merge_or_upload_actions` to `SearchIndexingBufferedSender.merge_or_upload_documents`
+- Stopped supporting `window` kwargs for `SearchIndexingBufferedSender`
+- Splitted kwarg `hook` into `on_new`, `on_progress`, `on_error`, `on_remove` for `SearchIndexingBufferedSender`
+
+**Features**
+
+- Added `auto_flush_interval` support for `SearchIndexingBufferedSender`
 
 ## 11.1.0b2 (2020-09-08)
 

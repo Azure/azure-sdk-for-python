@@ -16,7 +16,7 @@ from azure.core.polling import AsyncLROPoller, AsyncNoPolling, AsyncPollingMetho
 from azure.mgmt.core.exceptions import ARMErrorFormat
 from azure.mgmt.core.polling.async_arm_polling import AsyncARMPolling
 
-from ... import models
+from ... import models as _models
 
 T = TypeVar('T')
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]]
@@ -35,7 +35,7 @@ class InterfaceEndpointsOperations:
     :param deserializer: An object model deserializer.
     """
 
-    models = models
+    models = _models
 
     def __init__(self, client, config, serializer, deserializer) -> None:
         self._client = client
@@ -129,7 +129,13 @@ class InterfaceEndpointsOperations:
             if cls:
                 return cls(pipeline_response, None, {})
 
-        if polling is True: polling_method = AsyncARMPolling(lro_delay,  **kwargs)
+        path_format_arguments = {
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
+            'interfaceEndpointName': self._serialize.url("interface_endpoint_name", interface_endpoint_name, 'str'),
+            'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
+        }
+
+        if polling is True: polling_method = AsyncARMPolling(lro_delay, path_format_arguments=path_format_arguments,  **kwargs)
         elif polling is False: polling_method = AsyncNoPolling()
         else: polling_method = polling
         if cont_token:
@@ -149,7 +155,7 @@ class InterfaceEndpointsOperations:
         interface_endpoint_name: str,
         expand: Optional[str] = None,
         **kwargs
-    ) -> "models.InterfaceEndpoint":
+    ) -> "_models.InterfaceEndpoint":
         """Gets the specified interface endpoint by resource group.
 
         :param resource_group_name: The name of the resource group.
@@ -163,7 +169,7 @@ class InterfaceEndpointsOperations:
         :rtype: ~azure.mgmt.network.v2018_08_01.models.InterfaceEndpoint
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.InterfaceEndpoint"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.InterfaceEndpoint"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -210,10 +216,10 @@ class InterfaceEndpointsOperations:
         self,
         resource_group_name: str,
         interface_endpoint_name: str,
-        parameters: "models.InterfaceEndpoint",
+        parameters: "_models.InterfaceEndpoint",
         **kwargs
-    ) -> "models.InterfaceEndpoint":
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.InterfaceEndpoint"]
+    ) -> "_models.InterfaceEndpoint":
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.InterfaceEndpoint"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -267,9 +273,9 @@ class InterfaceEndpointsOperations:
         self,
         resource_group_name: str,
         interface_endpoint_name: str,
-        parameters: "models.InterfaceEndpoint",
+        parameters: "_models.InterfaceEndpoint",
         **kwargs
-    ) -> AsyncLROPoller["models.InterfaceEndpoint"]:
+    ) -> AsyncLROPoller["_models.InterfaceEndpoint"]:
         """Creates or updates an interface endpoint in the specified resource group.
 
         :param resource_group_name: The name of the resource group.
@@ -289,7 +295,7 @@ class InterfaceEndpointsOperations:
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         polling = kwargs.pop('polling', True)  # type: Union[bool, AsyncPollingMethod]
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.InterfaceEndpoint"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.InterfaceEndpoint"]
         lro_delay = kwargs.pop(
             'polling_interval',
             self._config.polling_interval
@@ -314,7 +320,13 @@ class InterfaceEndpointsOperations:
                 return cls(pipeline_response, deserialized, {})
             return deserialized
 
-        if polling is True: polling_method = AsyncARMPolling(lro_delay,  **kwargs)
+        path_format_arguments = {
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
+            'interfaceEndpointName': self._serialize.url("interface_endpoint_name", interface_endpoint_name, 'str'),
+            'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
+        }
+
+        if polling is True: polling_method = AsyncARMPolling(lro_delay, path_format_arguments=path_format_arguments,  **kwargs)
         elif polling is False: polling_method = AsyncNoPolling()
         else: polling_method = polling
         if cont_token:
@@ -332,7 +344,7 @@ class InterfaceEndpointsOperations:
         self,
         resource_group_name: str,
         **kwargs
-    ) -> AsyncIterable["models.InterfaceEndpointListResult"]:
+    ) -> AsyncIterable["_models.InterfaceEndpointListResult"]:
         """Gets all interface endpoints in a resource group.
 
         :param resource_group_name: The name of the resource group.
@@ -342,7 +354,7 @@ class InterfaceEndpointsOperations:
         :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.network.v2018_08_01.models.InterfaceEndpointListResult]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.InterfaceEndpointListResult"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.InterfaceEndpointListResult"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -401,7 +413,7 @@ class InterfaceEndpointsOperations:
     def list_by_subscription(
         self,
         **kwargs
-    ) -> AsyncIterable["models.InterfaceEndpointListResult"]:
+    ) -> AsyncIterable["_models.InterfaceEndpointListResult"]:
         """Gets all interface endpoints in a subscription.
 
         :keyword callable cls: A custom type or function that will be passed the direct response
@@ -409,7 +421,7 @@ class InterfaceEndpointsOperations:
         :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.network.v2018_08_01.models.InterfaceEndpointListResult]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.InterfaceEndpointListResult"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.InterfaceEndpointListResult"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }

@@ -2,6 +2,7 @@ parameters:
   BuildTargetingString: 'azure-*'
   ServiceDirectory: ''
   BuildStagingDirectory: $(Build.ArtifactStagingDirectory)
+  DevFeedName: 'public/azure-sdk-for-python'
   
 steps:
   - task: UsePythonVersion@0
@@ -9,14 +10,24 @@ steps:
     inputs:
      versionSpec: '3.7'
 
-  - task: DownloadPipelineArtifact@0
+  - task: DownloadPipelineArtifact@2
     inputs:
-      artifactName: 'artifacts' 
+      artifactName: 'packages'
       targetPath: $(Build.ArtifactStagingDirectory)
 
   - script: |
       pip install -r eng/ci_tools.txt
     displayName: 'Prep Environment'
+
+  - template: ../steps/set-dev-build.yml
+    parameters:
+      ServiceDirectory: ${{ parameters.ServiceDirectory }}
+      BuildTargetingString: ${{ parameters.BuildTargetingString }}
+
+  - ${{if eq(variables['System.TeamProject'], 'internal') }}:
+    - template: ../steps/auth-dev-feed.yml
+      parameters:
+        DevFeedName: ${{ parameters.DevFeedName }}
 
   - task: PythonScript@0
     displayName: 'Test Latest Released Dependents'

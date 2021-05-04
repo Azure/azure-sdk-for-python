@@ -12,7 +12,7 @@ interactions:
       User-Agent:
       - azsdk-python-search-documents/11.1.0b2 Python/3.8.5 (Windows-10-10.0.17763-SP0)
     method: POST
-    uri: https://search2ac1cd3.search.windows.net/synonymmaps?api-version=2020-06-30
+    uri: https://search2ac1cd3.search.windows.net/synonymmaps?api-version=2020-06-30-Preview
   response:
     body:
       string: '{"@odata.context":"https://search2ac1cd3.search.windows.net/$metadata#synonymmaps/$entity","@odata.etag":"\"0x8D7EBFE52E29170\"","name":"test-syn-map","format":"solr","synonyms":"USA,
@@ -25,7 +25,7 @@ interactions:
       elapsed-time: '22'
       etag: W/"0x8D7EBFE52E29170"
       expires: '-1'
-      location: https://search2ac1cd3.search.windows.net/synonymmaps('test-syn-map')?api-version=2020-06-30
+      location: https://search2ac1cd3.search.windows.net/synonymmaps('test-syn-map')?api-version=2020-06-30-Preview
       odata-version: '4.0'
       pragma: no-cache
       preference-applied: odata.include-annotations="*"
@@ -40,7 +40,7 @@ interactions:
         - https
         - search2ac1cd3.search.windows.net
         - /synonymmaps
-        - api-version=2020-06-30
+        - api-version=2020-06-30-Preview
         - ''
 - request:
     body: '{"name": "test-syn-map", "format": "solr", "synonyms": "Washington, Wash.
@@ -57,7 +57,7 @@ interactions:
       User-Agent:
       - azsdk-python-search-documents/11.1.0b2 Python/3.8.5 (Windows-10-10.0.17763-SP0)
     method: PUT
-    uri: https://search2ac1cd3.search.windows.net/synonymmaps('test-syn-map')?api-version=2020-06-30
+    uri: https://search2ac1cd3.search.windows.net/synonymmaps('test-syn-map')?api-version=2020-06-30-Preview
   response:
     body:
       string: '{"@odata.context":"https://search2ac1cd3.search.windows.net/$metadata#synonymmaps/$entity","@odata.etag":"\"0x8D7EBFE52ED8FE6\"","name":"test-syn-map","format":"solr","synonyms":"Washington,
@@ -86,7 +86,7 @@ interactions:
         - https
         - search2ac1cd3.search.windows.net
         - /synonymmaps('test-syn-map')
-        - api-version=2020-06-30
+        - api-version=2020-06-30-Preview
         - ''
 - request:
     body: '{"name": "test-syn-map", "format": "solr", "synonyms": "[''USA, United
@@ -105,7 +105,7 @@ interactions:
       User-Agent:
       - azsdk-python-search-documents/11.1.0b2 Python/3.8.5 (Windows-10-10.0.17763-SP0)
     method: PUT
-    uri: https://search2ac1cd3.search.windows.net/synonymmaps('test-syn-map')?api-version=2020-06-30
+    uri: https://search2ac1cd3.search.windows.net/synonymmaps('test-syn-map')?api-version=2020-06-30-Preview
   response:
     body:
       string: '{"error":{"code":"","message":"The precondition given in one of the
@@ -133,6 +133,6 @@ interactions:
         - https
         - search2ac1cd3.search.windows.net
         - /synonymmaps('test-syn-map')
-        - api-version=2020-06-30
+        - api-version=2020-06-30-Preview
         - ''
 version: 1

@@ -31,6 +31,7 @@ class MgmtSignalRTest(AzureMgmtTestCase):
             azure.mgmt.signalr.SignalRManagementClient
         )
     
+    @unittest.skip("skip test")
     @ResourceGroupPreparer(location=AZURE_LOCATION)
     def test_signalr(self, resource_group):
 

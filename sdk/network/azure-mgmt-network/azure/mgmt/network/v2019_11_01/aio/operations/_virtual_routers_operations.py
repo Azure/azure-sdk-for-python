@@ -16,7 +16,7 @@ from azure.core.polling import AsyncLROPoller, AsyncNoPolling, AsyncPollingMetho
 from azure.mgmt.core.exceptions import ARMErrorFormat
 from azure.mgmt.core.polling.async_arm_polling import AsyncARMPolling
 
-from ... import models
+from ... import models as _models
 
 T = TypeVar('T')
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]]
@@ -35,7 +35,7 @@ class VirtualRoutersOperations:
     :param deserializer: An object model deserializer.
     """
 
-    models = models
+    models = _models
 
     def __init__(self, client, config, serializer, deserializer) -> None:
         self._client = client
@@ -80,7 +80,7 @@ class VirtualRoutersOperations:
 
         if response.status_code not in [200, 202, 204]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.Error, response)
+            error = self._deserialize(_models.Error, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if cls:
@@ -132,7 +132,13 @@ class VirtualRoutersOperations:
             if cls:
                 return cls(pipeline_response, None, {})
 
-        if polling is True: polling_method = AsyncARMPolling(lro_delay, lro_options={'final-state-via': 'location'},  **kwargs)
+        path_format_arguments = {
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
+            'virtualRouterName': self._serialize.url("virtual_router_name", virtual_router_name, 'str'),
+            'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
+        }
+
+        if polling is True: polling_method = AsyncARMPolling(lro_delay, lro_options={'final-state-via': 'location'}, path_format_arguments=path_format_arguments,  **kwargs)
         elif polling is False: polling_method = AsyncNoPolling()
         else: polling_method = polling
         if cont_token:
@@ -152,7 +158,7 @@ class VirtualRoutersOperations:
         virtual_router_name: str,
         expand: Optional[str] = None,
         **kwargs
-    ) -> "models.VirtualRouter":
+    ) -> "_models.VirtualRouter":
         """Gets the specified Virtual Router.
 
         :param resource_group_name: The name of the resource group.
@@ -166,7 +172,7 @@ class VirtualRoutersOperations:
         :rtype: ~azure.mgmt.network.v2019_11_01.models.VirtualRouter
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.VirtualRouter"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.VirtualRouter"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -199,7 +205,7 @@ class VirtualRoutersOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.Error, response)
+            error = self._deserialize(_models.Error, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('VirtualRouter', pipeline_response)
@@ -214,10 +220,10 @@ class VirtualRoutersOperations:
         self,
         resource_group_name: str,
         virtual_router_name: str,
-        parameters: "models.VirtualRouter",
+        parameters: "_models.VirtualRouter",
         **kwargs
-    ) -> "models.VirtualRouter":
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.VirtualRouter"]
+    ) -> "_models.VirtualRouter":
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.VirtualRouter"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -253,7 +259,7 @@ class VirtualRoutersOperations:
 
         if response.status_code not in [200, 201]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.Error, response)
+            error = self._deserialize(_models.Error, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if response.status_code == 200:
@@ -272,9 +278,9 @@ class VirtualRoutersOperations:
         self,
         resource_group_name: str,
         virtual_router_name: str,
-        parameters: "models.VirtualRouter",
+        parameters: "_models.VirtualRouter",
         **kwargs
-    ) -> AsyncLROPoller["models.VirtualRouter"]:
+    ) -> AsyncLROPoller["_models.VirtualRouter"]:
         """Creates or updates the specified Virtual Router.
 
         :param resource_group_name: The name of the resource group.
@@ -294,7 +300,7 @@ class VirtualRoutersOperations:
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         polling = kwargs.pop('polling', True)  # type: Union[bool, AsyncPollingMethod]
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.VirtualRouter"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.VirtualRouter"]
         lro_delay = kwargs.pop(
             'polling_interval',
             self._config.polling_interval
@@ -319,7 +325,13 @@ class VirtualRoutersOperations:
                 return cls(pipeline_response, deserialized, {})
             return deserialized
 
-        if polling is True: polling_method = AsyncARMPolling(lro_delay, lro_options={'final-state-via': 'azure-async-operation'},  **kwargs)
+        path_format_arguments = {
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
+            'virtualRouterName': self._serialize.url("virtual_router_name", virtual_router_name, 'str'),
+            'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
+        }
+
+        if polling is True: polling_method = AsyncARMPolling(lro_delay, lro_options={'final-state-via': 'azure-async-operation'}, path_format_arguments=path_format_arguments,  **kwargs)
         elif polling is False: polling_method = AsyncNoPolling()
         else: polling_method = polling
         if cont_token:
@@ -337,7 +349,7 @@ class VirtualRoutersOperations:
         self,
         resource_group_name: str,
         **kwargs
-    ) -> AsyncIterable["models.VirtualRouterListResult"]:
+    ) -> AsyncIterable["_models.VirtualRouterListResult"]:
         """Lists all Virtual Routers in a resource group.
 
         :param resource_group_name: The name of the resource group.
@@ -347,7 +359,7 @@ class VirtualRoutersOperations:
         :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.network.v2019_11_01.models.VirtualRouterListResult]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.VirtualRouterListResult"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.VirtualRouterListResult"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -393,7 +405,7 @@ class VirtualRoutersOperations:
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
-                error = self._deserialize(models.Error, response)
+                error = self._deserialize(_models.Error, response)
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
@@ -407,7 +419,7 @@ class VirtualRoutersOperations:
     def list(
         self,
         **kwargs
-    ) -> AsyncIterable["models.VirtualRouterListResult"]:
+    ) -> AsyncIterable["_models.VirtualRouterListResult"]:
         """Gets all the Virtual Routers in a subscription.
 
         :keyword callable cls: A custom type or function that will be passed the direct response
@@ -415,7 +427,7 @@ class VirtualRoutersOperations:
         :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.network.v2019_11_01.models.VirtualRouterListResult]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.VirtualRouterListResult"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.VirtualRouterListResult"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -460,7 +472,7 @@ class VirtualRoutersOperations:
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
-                error = self._deserialize(models.Error, response)
+                error = self._deserialize(_models.Error, response)
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 

@@ -1,0 +1,204 @@
+interactions:
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/xml
+      User-Agent:
+      - azsdk-python-storage-blob/12.7.0b2 Python/3.8.5 (Windows-10-10.0.19041-SP0)
+      x-ms-date:
+      - Tue, 12 Jan 2021 05:20:56 GMT
+      x-ms-version:
+      - '2020-04-08'
+    method: PUT
+    uri: https://storagename.blob.core.windows.net/oldcontainer174cc1147?restype=container
+  response:
+    body:
+      string: ''
+    headers:
+      date: Tue, 12 Jan 2021 05:20:56 GMT
+      etag: '"0x8D8B6B9D734FD1F"'
+      last-modified: Tue, 12 Jan 2021 05:20:56 GMT
+      server: Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
+      transfer-encoding: chunked
+      x-ms-version: '2020-04-08'
+    status:
+      code: 201
+      message: Created
+    url: https://storagename.blob.core.windows.net/oldcontainer174cc1147?restype=container
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/xml
+      User-Agent:
+      - azsdk-python-storage-blob/12.7.0b2 Python/3.8.5 (Windows-10-10.0.19041-SP0)
+      x-ms-date:
+      - Tue, 12 Jan 2021 05:20:56 GMT
+      x-ms-version:
+      - '2020-04-08'
+    method: PUT
+    uri: https://storagename.blob.core.windows.net/oldcontainer274cc1147?restype=container
+  response:
+    body:
+      string: ''
+    headers:
+      date: Tue, 12 Jan 2021 05:20:56 GMT
+      etag: '"0x8D8B6B9D7457AD3"'
+      last-modified: Tue, 12 Jan 2021 05:20:56 GMT
+      server: Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
+      transfer-encoding: chunked
+      x-ms-version: '2020-04-08'
+    status:
+      code: 201
+      message: Created
+    url: https://storagename.blob.core.windows.net/oldcontainer274cc1147?restype=container
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/xml
+      User-Agent:
+      - azsdk-python-storage-blob/12.7.0b2 Python/3.8.5 (Windows-10-10.0.19041-SP0)
+      x-ms-date:
+      - Tue, 12 Jan 2021 05:20:57 GMT
+      x-ms-source-container-name:
+      - oldcontainer174cc1147
+      x-ms-version:
+      - '2020-04-08'
+    method: PUT
+    uri: https://storagename.blob.core.windows.net/newcontainer74cc1147?restype=container&comp=rename
+  response:
+    body:
+      string: ''
+    headers:
+      content-length: '0'
+      date: Tue, 12 Jan 2021 05:20:56 GMT
+      server: Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
+      x-ms-version: '2020-04-08'
+    status:
+      code: 200
+      message: OK
+    url: https://storagename.blob.core.windows.net/newcontainer74cc1147?restype=container&comp=rename
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/xml
+      User-Agent:
+      - azsdk-python-storage-blob/12.7.0b2 Python/3.8.5 (Windows-10-10.0.19041-SP0)
+      x-ms-date:
+      - Tue, 12 Jan 2021 05:20:57 GMT
+      x-ms-source-container-name:
+      - oldcontainer274cc1147
+      x-ms-version:
+      - '2020-04-08'
+    method: PUT
+    uri: https://storagename.blob.core.windows.net/newcontainer74cc1147?restype=container&comp=rename
+  response:
+    body:
+      string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?>\n<Error><Code>ContainerAlreadyExists</Code><Message>The
+        specified container already exists.\nRequestId:f442c638-901e-0002-79a2-e8e3b3000000\nTime:2021-01-12T05:20:57.1456215Z</Message></Error>"
+    headers:
+      content-length: '231'
+      content-type: application/xml
+      date: Tue, 12 Jan 2021 05:20:56 GMT
+      server: Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
+      x-ms-error-code: ContainerAlreadyExists
+      x-ms-version: '2020-04-08'
+    status:
+      code: 409
+      message: The specified container already exists.
+    url: https://storagename.blob.core.windows.net/newcontainer74cc1147?restype=container&comp=rename
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/xml
+      User-Agent:
+      - azsdk-python-storage-blob/12.7.0b2 Python/3.8.5 (Windows-10-10.0.19041-SP0)
+      x-ms-date:
+      - Tue, 12 Jan 2021 05:20:57 GMT
+      x-ms-version:
+      - '2020-04-08'
+    method: GET
+    uri: https://storagename.blob.core.windows.net/oldcontainer174cc1147?restype=container
+  response:
+    body:
+      string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><Error><Code>ContainerNotFound</Code><Message>The
+        specified container does not exist.\nRequestId:f442c639-901e-0002-7aa2-e8e3b3000000\nTime:2021-01-12T05:20:57.2086649Z</Message></Error>"
+    headers:
+      content-length: '225'
+      content-type: application/xml
+      date: Tue, 12 Jan 2021 05:20:57 GMT
+      server: Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
+      x-ms-error-code: ContainerNotFound
+      x-ms-version: '2020-04-08'
+    status:
+      code: 404
+      message: The specified container does not exist.
+    url: https://storagename.blob.core.windows.net/oldcontainer174cc1147?restype=container
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/xml
+      User-Agent:
+      - azsdk-python-storage-blob/12.7.0b2 Python/3.8.5 (Windows-10-10.0.19041-SP0)
+      x-ms-date:
+      - Tue, 12 Jan 2021 05:20:57 GMT
+      x-ms-source-container-name:
+      - badcontainer
+      x-ms-version:
+      - '2020-04-08'
+    method: PUT
+    uri: https://storagename.blob.core.windows.net/container?restype=container&comp=rename
+  response:
+    body:
+      string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?>\n<Error><Code>ContainerAlreadyExists</Code><Message>The
+        specified container already exists.\nRequestId:f442c63a-901e-0002-7ba2-e8e3b3000000\nTime:2021-01-12T05:20:57.2707083Z</Message></Error>"
+    headers:
+      content-length: '231'
+      content-type: application/xml
+      date: Tue, 12 Jan 2021 05:20:57 GMT
+      server: Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
+      x-ms-error-code: ContainerAlreadyExists
+      x-ms-version: '2020-04-08'
+    status:
+      code: 409
+      message: The specified container already exists.
+    url: https://storagename.blob.core.windows.net/container?restype=container&comp=rename
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/xml
+      User-Agent:
+      - azsdk-python-storage-blob/12.7.0b2 Python/3.8.5 (Windows-10-10.0.19041-SP0)
+      x-ms-date:
+      - Tue, 12 Jan 2021 05:20:57 GMT
+      x-ms-version:
+      - '2020-04-08'
+    method: GET
+    uri: https://storagename.blob.core.windows.net/newcontainer74cc1147?restype=container
+  response:
+    body:
+      string: ''
+    headers:
+      date: Tue, 12 Jan 2021 05:20:57 GMT
+      etag: '"0x8D8B6B9D7547066"'
+      last-modified: Tue, 12 Jan 2021 05:20:57 GMT
+      server: Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
+      transfer-encoding: chunked
+      x-ms-default-encryption-scope: $account-encryption-key
+      x-ms-deny-encryption-scope-override: 'false'
+      x-ms-has-immutability-policy: 'false'
+      x-ms-has-legal-hold: 'false'
+      x-ms-lease-state: available
+      x-ms-lease-status: unlocked
+      x-ms-version: '2020-04-08'
+    status:
+      code: 200
+      message: OK
+    url: https://storagename.blob.core.windows.net/newcontainer74cc1147?restype=container
+version: 1

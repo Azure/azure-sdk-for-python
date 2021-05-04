@@ -27,10 +27,10 @@ from typing import Any, Callable, Optional
 
 from azure.core.exceptions import TooManyRedirectsError
 from . import AsyncHTTPPolicy
-from ._redirect import RedirectPolicy
+from ._redirect import RedirectPolicyBase
 
 
-class AsyncRedirectPolicy(RedirectPolicy, AsyncHTTPPolicy):
+class AsyncRedirectPolicy(RedirectPolicyBase, AsyncHTTPPolicy):
     """An async redirect policy.
 
     An async redirect policy in the pipeline can be configured directly or per operation.

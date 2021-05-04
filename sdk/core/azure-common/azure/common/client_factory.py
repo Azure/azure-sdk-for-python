@@ -38,6 +38,8 @@ def _client_resource(client_class, cloud):
     """
     if client_class.__name__ == 'GraphRbacManagementClient':
         return cloud.endpoints.active_directory_graph_resource_id, cloud.endpoints.active_directory_graph_resource_id
+    if client_class.__name__ == 'ApplicationInsightsDataClient':
+        return cloud.endpoints.app_insights_resource_id, cloud.endpoints.app_insights_resource_id+"/v1"
     if client_class.__name__ == 'KeyVaultClient':
         vault_host = cloud.suffixes.keyvault_dns[1:]
         vault_url = 'https://{}'.format(vault_host)
@@ -107,6 +109,14 @@ def get_client_from_cli_profile(client_class, **kwargs):
     return _instantiate_client(client_class, **parameters)
 
 
+def _is_autorest_v3(client_class):
+    """Is this client a autorestv3/track2 one?.
+    Could be refined later if necessary.
+    """
+    args = get_arg_spec(client_class.__init__).args
+    return "credential" in args
+
+
 def get_client_from_json_dict(client_class, config_dict, **kwargs):
     """Return a SDK client initialized with a JSON auth dict.
 
@@ -150,6 +160,12 @@ def get_client_from_json_dict(client_class, config_dict, **kwargs):
     :param dict config_dict: A config dict.
     :return: An instantiated client
     """
+    if _is_autorest_v3(client_class):
+        raise ValueError(
+            "Auth file or JSON dict are deprecated auth approach and are not supported anymore. "
+            "Please read https://aka.ms/azsdk/python/azidmigration for details"
+        )
+
     import adal
     from msrestazure.azure_active_directory import AdalAuthentication
 

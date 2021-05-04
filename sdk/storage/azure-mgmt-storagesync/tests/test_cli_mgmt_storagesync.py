@@ -32,6 +32,7 @@ class MgmtMicrosoftStorageSyncTest(AzureMgmtTestCase):
             azure.mgmt.storagesync.StorageSyncManagementClient
         )
     
+    @unittest.skip("skip test")
     @ResourceGroupPreparer(location=AZURE_LOCATION)
     def test_storagesync(self, resource_group):
 

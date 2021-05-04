@@ -16,7 +16,7 @@ from azure.core.polling import LROPoller, NoPolling, PollingMethod
 from azure.mgmt.core.exceptions import ARMErrorFormat
 from azure.mgmt.core.polling.arm_polling import ARMPolling
 
-from .. import models
+from .. import models as _models
 
 if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
@@ -39,7 +39,7 @@ class VpnSitesOperations(object):
     :param deserializer: An object model deserializer.
     """
 
-    models = models
+    models = _models
 
     def __init__(self, client, config, serializer, deserializer):
         self._client = client
@@ -53,7 +53,7 @@ class VpnSitesOperations(object):
         vpn_site_name,  # type: str
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.VpnSite"
+        # type: (...) -> "_models.VpnSite"
         """Retrieves the details of a VPN site.
 
         :param resource_group_name: The resource group name of the VpnSite.
@@ -65,7 +65,7 @@ class VpnSitesOperations(object):
         :rtype: ~azure.mgmt.network.v2019_08_01.models.VpnSite
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.VpnSite"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.VpnSite"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -110,11 +110,11 @@ class VpnSitesOperations(object):
         self,
         resource_group_name,  # type: str
         vpn_site_name,  # type: str
-        vpn_site_parameters,  # type: "models.VpnSite"
+        vpn_site_parameters,  # type: "_models.VpnSite"
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.VpnSite"
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.VpnSite"]
+        # type: (...) -> "_models.VpnSite"
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.VpnSite"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -168,10 +168,10 @@ class VpnSitesOperations(object):
         self,
         resource_group_name,  # type: str
         vpn_site_name,  # type: str
-        vpn_site_parameters,  # type: "models.VpnSite"
+        vpn_site_parameters,  # type: "_models.VpnSite"
         **kwargs  # type: Any
     ):
-        # type: (...) -> LROPoller["models.VpnSite"]
+        # type: (...) -> LROPoller["_models.VpnSite"]
         """Creates a VpnSite resource if it doesn't exist else updates the existing VpnSite.
 
         :param resource_group_name: The resource group name of the VpnSite.
@@ -191,7 +191,7 @@ class VpnSitesOperations(object):
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         polling = kwargs.pop('polling', True)  # type: Union[bool, PollingMethod]
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.VpnSite"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.VpnSite"]
         lro_delay = kwargs.pop(
             'polling_interval',
             self._config.polling_interval
@@ -216,7 +216,13 @@ class VpnSitesOperations(object):
                 return cls(pipeline_response, deserialized, {})
             return deserialized
 
-        if polling is True: polling_method = ARMPolling(lro_delay, lro_options={'final-state-via': 'azure-async-operation'},  **kwargs)
+        path_format_arguments = {
+            'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
+            'vpnSiteName': self._serialize.url("vpn_site_name", vpn_site_name, 'str'),
+        }
+
+        if polling is True: polling_method = ARMPolling(lro_delay, lro_options={'final-state-via': 'azure-async-operation'}, path_format_arguments=path_format_arguments,  **kwargs)
         elif polling is False: polling_method = NoPolling()
         else: polling_method = polling
         if cont_token:
@@ -234,11 +240,11 @@ class VpnSitesOperations(object):
         self,
         resource_group_name,  # type: str
         vpn_site_name,  # type: str
-        vpn_site_parameters,  # type: "models.TagsObject"
+        vpn_site_parameters,  # type: "_models.TagsObject"
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.VpnSite"
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.VpnSite"]
+        # type: (...) -> "_models.VpnSite"
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.VpnSite"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -292,10 +298,10 @@ class VpnSitesOperations(object):
         self,
         resource_group_name,  # type: str
         vpn_site_name,  # type: str
-        vpn_site_parameters,  # type: "models.TagsObject"
+        vpn_site_parameters,  # type: "_models.TagsObject"
         **kwargs  # type: Any
     ):
-        # type: (...) -> LROPoller["models.VpnSite"]
+        # type: (...) -> LROPoller["_models.VpnSite"]
         """Updates VpnSite tags.
 
         :param resource_group_name: The resource group name of the VpnSite.
@@ -315,7 +321,7 @@ class VpnSitesOperations(object):
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         polling = kwargs.pop('polling', True)  # type: Union[bool, PollingMethod]
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.VpnSite"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.VpnSite"]
         lro_delay = kwargs.pop(
             'polling_interval',
             self._config.polling_interval
@@ -340,7 +346,13 @@ class VpnSitesOperations(object):
                 return cls(pipeline_response, deserialized, {})
             return deserialized
 
-        if polling is True: polling_method = ARMPolling(lro_delay,  **kwargs)
+        path_format_arguments = {
+            'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
+            'vpnSiteName': self._serialize.url("vpn_site_name", vpn_site_name, 'str'),
+        }
+
+        if polling is True: polling_method = ARMPolling(lro_delay, path_format_arguments=path_format_arguments,  **kwargs)
         elif polling is False: polling_method = NoPolling()
         else: polling_method = polling
         if cont_token:
@@ -444,7 +456,13 @@ class VpnSitesOperations(object):
             if cls:
                 return cls(pipeline_response, None, {})
 
-        if polling is True: polling_method = ARMPolling(lro_delay, lro_options={'final-state-via': 'location'},  **kwargs)
+        path_format_arguments = {
+            'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
+            'vpnSiteName': self._serialize.url("vpn_site_name", vpn_site_name, 'str'),
+        }
+
+        if polling is True: polling_method = ARMPolling(lro_delay, lro_options={'final-state-via': 'location'}, path_format_arguments=path_format_arguments,  **kwargs)
         elif polling is False: polling_method = NoPolling()
         else: polling_method = polling
         if cont_token:
@@ -463,7 +481,7 @@ class VpnSitesOperations(object):
         resource_group_name,  # type: str
         **kwargs  # type: Any
     ):
-        # type: (...) -> Iterable["models.ListVpnSitesResult"]
+        # type: (...) -> Iterable["_models.ListVpnSitesResult"]
         """Lists all the vpnSites in a resource group.
 
         :param resource_group_name: The resource group name of the VpnSite.
@@ -473,7 +491,7 @@ class VpnSitesOperations(object):
         :rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.network.v2019_08_01.models.ListVpnSitesResult]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.ListVpnSitesResult"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.ListVpnSitesResult"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -533,7 +551,7 @@ class VpnSitesOperations(object):
         self,
         **kwargs  # type: Any
     ):
-        # type: (...) -> Iterable["models.ListVpnSitesResult"]
+        # type: (...) -> Iterable["_models.ListVpnSitesResult"]
         """Lists all the VpnSites in a subscription.
 
         :keyword callable cls: A custom type or function that will be passed the direct response
@@ -541,7 +559,7 @@ class VpnSitesOperations(object):
         :rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.network.v2019_08_01.models.ListVpnSitesResult]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.ListVpnSitesResult"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.ListVpnSitesResult"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }

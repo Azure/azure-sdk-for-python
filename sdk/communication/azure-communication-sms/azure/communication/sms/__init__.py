@@ -1,17 +1,8 @@
 from ._sms_client import SmsClient
 
-from ._shared.models import (
-    PhoneNumber,
-)
-
-from ._generated.models import (
-    SendSmsOptions,
-    SendSmsResponse,
-)
+from ._models import SmsSendResult
 
 __all__ = [
     'SmsClient',
-    'PhoneNumber',
-    'SendSmsOptions',
-    'SendSmsResponse',
+    'SmsSendResult',
 ]

@@ -155,50 +155,24 @@ class AsyncioStreamDownloadGenerator(AsyncIterator):
 
     async def __anext__(self):
         loop = _get_running_loop()
-        retry_active = True
-        retry_total = 3
-        retry_interval = 1000
-        while retry_active:
-            try:
-                chunk = await loop.run_in_executor(
-                    None,
-                    _iterate_response_content,
-                    self.iter_content_func,
-                )
-                if not chunk:
-                    raise _ResponseStopIteration()
-                self.downloaded += self.block_size
-                return chunk
-            except _ResponseStopIteration:
-                self.response.internal_response.close()
-                raise StopAsyncIteration()
-            except (requests.exceptions.ChunkedEncodingError,
-                    requests.exceptions.ConnectionError):
-                retry_total -= 1
-                if retry_total <= 0:
-                    retry_active = False
-                else:
-                    await asyncio.sleep(retry_interval)
-                    headers = {'range': 'bytes=' + str(self.downloaded) + '-'}
-                    resp = self.pipeline.run(self.request, stream=True, headers=headers)
-                    if resp.status_code == 416:
-                        raise
-                    chunk = await loop.run_in_executor(
-                        None,
-                        _iterate_response_content,
-                        self.iter_content_func,
-                    )
-                    if not chunk:
-                        raise StopIteration()
-                    self.downloaded += len(chunk)
-                    return chunk
-                continue
-            except requests.exceptions.StreamConsumedError:
-                raise
-            except Exception as err:
-                _LOGGER.warning("Unable to stream download: %s", err)
-                self.response.internal_response.close()
-                raise
+        try:
+            chunk = await loop.run_in_executor(
+                None,
+                _iterate_response_content,
+                self.iter_content_func,
+            )
+            if not chunk:
+                raise _ResponseStopIteration()
+            return chunk
+        except _ResponseStopIteration:
+            self.response.internal_response.close()
+            raise StopAsyncIteration()
+        except requests.exceptions.StreamConsumedError:
+            raise
+        except Exception as err:
+            _LOGGER.warning("Unable to stream download: %s", err)
+            self.response.internal_response.close()
+            raise
 
 
 class AsyncioRequestsTransportResponse(AsyncHttpResponse, RequestsTransportResponse): # type: ignore

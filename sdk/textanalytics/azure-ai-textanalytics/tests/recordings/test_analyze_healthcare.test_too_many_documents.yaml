@@ -1,0 +1,49 @@
+interactions:
+- request:
+    body: '{"documents": [{"id": "0", "text": "input document", "language": "en"},
+      {"id": "1", "text": "input document", "language": "en"}, {"id": "2", "text":
+      "input document", "language": "en"}, {"id": "3", "text": "input document", "language":
+      "en"}, {"id": "4", "text": "input document", "language": "en"}, {"id": "5",
+      "text": "input document", "language": "en"}, {"id": "6", "text": "input document",
+      "language": "en"}, {"id": "7", "text": "input document", "language": "en"},
+      {"id": "8", "text": "input document", "language": "en"}, {"id": "9", "text":
+      "input document", "language": "en"}, {"id": "10", "text": "input document",
+      "language": "en"}]}'
+    headers:
+      Accept:
+      - application/json, text/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '643'
+      Content-Type:
+      - application/json
+      User-Agent:
+      - azsdk-python-ai-textanalytics/5.1.0b6 Python/3.9.1 (macOS-10.13.6-x86_64-i386-64bit)
+    method: POST
+    uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.1-preview.4/entities/health/jobs?stringIndexType=UnicodeCodePoint
+  response:
+    body:
+      string: '{"error":{"code":"InvalidRequest","message":"Invalid document in request.","innererror":{"code":"InvalidDocumentBatch","message":"Batch
+        request contains too many records. Max 10 records are permitted."}}}'
+    headers:
+      apim-request-id:
+      - 2d56c1ec-c87c-417e-aaf5-e7a7dcd1798a
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Mon, 01 Mar 2021 19:49:43 GMT
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains; preload
+      transfer-encoding:
+      - chunked
+      x-content-type-options:
+      - nosniff
+      x-envoy-upstream-service-time:
+      - '4'
+    status:
+      code: 400
+      message: Bad Request
+version: 1

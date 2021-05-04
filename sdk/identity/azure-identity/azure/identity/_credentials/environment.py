@@ -91,7 +91,9 @@ class EnvironmentCredential(object):
             )
             set_variables = [v for v in expected_variables if v in os.environ]
             if set_variables:
-                _LOGGER.warning("Incomplete environment configuration. Set variables: %s", ", ".join(set_variables))
+                _LOGGER.warning(
+                    "Incomplete environment configuration. These variables are set: %s", ", ".join(set_variables)
+                )
             else:
                 _LOGGER.info("No environment configuration found.")
 
@@ -100,7 +102,7 @@ class EnvironmentCredential(object):
         # type: (*str, **Any) -> AccessToken
         """Request an access token for `scopes`.
 
-        .. note:: This method is called by Azure SDK clients. It isn't intended for use in application code.
+        This method is called automatically by Azure SDK clients.
 
         :param str scopes: desired scopes for the access token. This method requires at least one scope.
         :rtype: :class:`azure.core.credentials.AccessToken`

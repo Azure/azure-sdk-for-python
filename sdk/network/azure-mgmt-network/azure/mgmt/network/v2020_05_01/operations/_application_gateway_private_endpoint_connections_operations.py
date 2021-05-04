@@ -16,7 +16,7 @@ from azure.core.polling import LROPoller, NoPolling, PollingMethod
 from azure.mgmt.core.exceptions import ARMErrorFormat
 from azure.mgmt.core.polling.arm_polling import ARMPolling
 
-from .. import models
+from .. import models as _models
 
 if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
@@ -39,7 +39,7 @@ class ApplicationGatewayPrivateEndpointConnectionsOperations(object):
     :param deserializer: An object model deserializer.
     """
 
-    models = models
+    models = _models
 
     def __init__(self, client, config, serializer, deserializer):
         self._client = client
@@ -143,7 +143,14 @@ class ApplicationGatewayPrivateEndpointConnectionsOperations(object):
             if cls:
                 return cls(pipeline_response, None, {})
 
-        if polling is True: polling_method = ARMPolling(lro_delay, lro_options={'final-state-via': 'location'},  **kwargs)
+        path_format_arguments = {
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
+            'applicationGatewayName': self._serialize.url("application_gateway_name", application_gateway_name, 'str'),
+            'connectionName': self._serialize.url("connection_name", connection_name, 'str'),
+            'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
+        }
+
+        if polling is True: polling_method = ARMPolling(lro_delay, lro_options={'final-state-via': 'location'}, path_format_arguments=path_format_arguments,  **kwargs)
         elif polling is False: polling_method = NoPolling()
         else: polling_method = polling
         if cont_token:
@@ -162,11 +169,11 @@ class ApplicationGatewayPrivateEndpointConnectionsOperations(object):
         resource_group_name,  # type: str
         application_gateway_name,  # type: str
         connection_name,  # type: str
-        parameters,  # type: "models.ApplicationGatewayPrivateEndpointConnection"
+        parameters,  # type: "_models.ApplicationGatewayPrivateEndpointConnection"
         **kwargs  # type: Any
     ):
-        # type: (...) -> Optional["models.ApplicationGatewayPrivateEndpointConnection"]
-        cls = kwargs.pop('cls', None)  # type: ClsType[Optional["models.ApplicationGatewayPrivateEndpointConnection"]]
+        # type: (...) -> Optional["_models.ApplicationGatewayPrivateEndpointConnection"]
+        cls = kwargs.pop('cls', None)  # type: ClsType[Optional["_models.ApplicationGatewayPrivateEndpointConnection"]]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -220,10 +227,10 @@ class ApplicationGatewayPrivateEndpointConnectionsOperations(object):
         resource_group_name,  # type: str
         application_gateway_name,  # type: str
         connection_name,  # type: str
-        parameters,  # type: "models.ApplicationGatewayPrivateEndpointConnection"
+        parameters,  # type: "_models.ApplicationGatewayPrivateEndpointConnection"
         **kwargs  # type: Any
     ):
-        # type: (...) -> LROPoller["models.ApplicationGatewayPrivateEndpointConnection"]
+        # type: (...) -> LROPoller["_models.ApplicationGatewayPrivateEndpointConnection"]
         """Updates the specified private endpoint connection on application gateway.
 
         :param resource_group_name: The name of the resource group.
@@ -246,7 +253,7 @@ class ApplicationGatewayPrivateEndpointConnectionsOperations(object):
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         polling = kwargs.pop('polling', True)  # type: Union[bool, PollingMethod]
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.ApplicationGatewayPrivateEndpointConnection"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.ApplicationGatewayPrivateEndpointConnection"]
         lro_delay = kwargs.pop(
             'polling_interval',
             self._config.polling_interval
@@ -272,7 +279,14 @@ class ApplicationGatewayPrivateEndpointConnectionsOperations(object):
                 return cls(pipeline_response, deserialized, {})
             return deserialized
 
-        if polling is True: polling_method = ARMPolling(lro_delay, lro_options={'final-state-via': 'azure-async-operation'},  **kwargs)
+        path_format_arguments = {
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
+            'applicationGatewayName': self._serialize.url("application_gateway_name", application_gateway_name, 'str'),
+            'connectionName': self._serialize.url("connection_name", connection_name, 'str'),
+            'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
+        }
+
+        if polling is True: polling_method = ARMPolling(lro_delay, lro_options={'final-state-via': 'azure-async-operation'}, path_format_arguments=path_format_arguments,  **kwargs)
         elif polling is False: polling_method = NoPolling()
         else: polling_method = polling
         if cont_token:
@@ -293,7 +307,7 @@ class ApplicationGatewayPrivateEndpointConnectionsOperations(object):
         connection_name,  # type: str
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.ApplicationGatewayPrivateEndpointConnection"
+        # type: (...) -> "_models.ApplicationGatewayPrivateEndpointConnection"
         """Gets the specified private endpoint connection on application gateway.
 
         :param resource_group_name: The name of the resource group.
@@ -307,7 +321,7 @@ class ApplicationGatewayPrivateEndpointConnectionsOperations(object):
         :rtype: ~azure.mgmt.network.v2020_05_01.models.ApplicationGatewayPrivateEndpointConnection
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.ApplicationGatewayPrivateEndpointConnection"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.ApplicationGatewayPrivateEndpointConnection"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -355,7 +369,7 @@ class ApplicationGatewayPrivateEndpointConnectionsOperations(object):
         application_gateway_name,  # type: str
         **kwargs  # type: Any
     ):
-        # type: (...) -> Iterable["models.ApplicationGatewayPrivateEndpointConnectionListResult"]
+        # type: (...) -> Iterable["_models.ApplicationGatewayPrivateEndpointConnectionListResult"]
         """Lists all private endpoint connections on an application gateway.
 
         :param resource_group_name: The name of the resource group.
@@ -367,7 +381,7 @@ class ApplicationGatewayPrivateEndpointConnectionsOperations(object):
         :rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.network.v2020_05_01.models.ApplicationGatewayPrivateEndpointConnectionListResult]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.ApplicationGatewayPrivateEndpointConnectionListResult"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.ApplicationGatewayPrivateEndpointConnectionListResult"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }

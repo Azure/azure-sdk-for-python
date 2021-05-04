@@ -1,3 +1,5 @@
+pip==20.2
+
 # requirements leveraged by ci for testing
 pytest==4.6.9; python_version == '2.7'
 pytest==5.4.2; python_version >= '3.5'
@@ -26,5 +28,5 @@ Jinja2==2.11.2
 pylint==1.8.4; python_version < '3.4'
 pylint==2.5.2; python_version >= '3.4'
 
-../../../tools/azure-devtools
-../../../tools/azure-sdk-tools
+# python-dotenv
+python-dotenv==0.15.0

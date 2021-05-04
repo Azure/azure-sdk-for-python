@@ -41,6 +41,10 @@ except ImportError:
 from azure.core.credentials import AccessToken
 from azure.storage.blob import generate_account_sas, AccountSasPermissions, ResourceTypes
 from azure.mgmt.storage.models import StorageAccount, Endpoints
+try:
+    from .settings_real import *
+except ImportError:
+    from .settings_fake import *
 
 try:
     from devtools_testutils import mgmt_settings_real as settings
@@ -51,6 +55,11 @@ import pytest
 
 
 LOGGING_FORMAT = '%(asctime)s %(name)-20s %(levelname)-5s %(message)s'
+os.environ['AZURE_STORAGE_ACCOUNT_NAME'] = STORAGE_ACCOUNT_NAME
+os.environ['AZURE_STORAGE_ACCOUNT_KEY'] = STORAGE_ACCOUNT_KEY
+os.environ['AZURE_TEST_RUN_LIVE'] = os.environ.get('AZURE_TEST_RUN_LIVE', None) or RUN_IN_LIVE
+os.environ['AZURE_SKIP_LIVE_RECORDING'] = os.environ.get('AZURE_SKIP_LIVE_RECORDING', None) or SKIP_LIVE_RECORDING
+
 
 class FakeTokenCredential(object):
     """Protocol for classes able to provide OAuth tokens.
@@ -58,8 +67,10 @@ class FakeTokenCredential(object):
     """
     def __init__(self):
         self.token = AccessToken("YOU SHALL NOT PASS", 0)
+        self.get_token_count = 0
 
     def get_token(self, *args):
+        self.get_token_count += 1
         return self.token
 
 
@@ -92,6 +103,10 @@ class GlobalStorageAccountPreparer(AzureMgmtPreparer):
             self.test_class_instance.scrubber.register_name_pair(
                 storage_account.name,
                 "storagename"
+            )
+            self.test_class_instance.scrubber.register_name_pair(
+                ":.{43}=\r",
+                ":fake_shared_key=\r"
             )
         else:
             name = "storagename"
@@ -140,9 +155,11 @@ class StorageTestCase(AzureMgmtTestCase):
     def __init__(self, *args, **kwargs):
         super(StorageTestCase, self).__init__(*args, **kwargs)
         self.replay_processors.append(XMSRequestIDBody())
+        self.logger = logging.getLogger('azure.storage')
+        self.configure_logging()
 
     def connection_string(self, account, key):
-        return "DefaultEndpointsProtocol=https;AccountName=" + account.name + ";AccountKey=" + str(key) + ";EndpointSuffix=core.windows.net"
+        return "DefaultEndpointsProtocol=https;AcCounTName=" + account.name + ";AccOuntKey=" + str(key) + ";EndpoIntSuffix=core.windows.net"
 
     def account_url(self, storage_account, storage_type):
         """Return an url of storage account.
@@ -163,10 +180,7 @@ class StorageTestCase(AzureMgmtTestCase):
             return 'https://{}.{}.core.windows.net'.format(storage_account, storage_type)
 
     def configure_logging(self):
-        try:
-            enable_logging = self.get_settings_value("ENABLE_LOGGING")
-        except AzureTestError:
-            enable_logging = True  # That's the default value in fake settings
+        enable_logging = ENABLE_LOGGING
 
         self.enable_logging() if enable_logging else self.disable_logging()
 
@@ -174,7 +188,7 @@ class StorageTestCase(AzureMgmtTestCase):
         handler = logging.StreamHandler()
         handler.setFormatter(logging.Formatter(LOGGING_FORMAT))
         self.logger.handlers = [handler]
-        self.logger.setLevel(logging.INFO)
+        self.logger.setLevel(logging.DEBUG)
         self.logger.propagate = True
         self.logger.disabled = False
 
@@ -411,11 +425,11 @@ def storage_account():
                     )
                     storage_account.name = storage_name
                     storage_account.id = storage_name
-                    storage_account.primary_endpoints=Endpoints()
-                    storage_account.primary_endpoints.blob = 'https://{}.{}.core.windows.net'.format(storage_name, 'blob')
-                    storage_account.primary_endpoints.queue = 'https://{}.{}.core.windows.net'.format(storage_name, 'queue')
-                    storage_account.primary_endpoints.table = 'https://{}.{}.core.windows.net'.format(storage_name, 'table')
-                    storage_account.primary_endpoints.file = 'https://{}.{}.core.windows.net'.format(storage_name, 'file')
+                    storage_account.primary_endpoints = Endpoints()
+                    storage_account.primary_endpoints.blob = '{}://{}.{}.{}'.format(PROTOCOL, storage_name, 'blob', ACCOUNT_URL_SUFFIX)
+                    storage_account.primary_endpoints.queue = '{}://{}.{}.{}'.format(PROTOCOL, storage_name, 'queue', ACCOUNT_URL_SUFFIX)
+                    storage_account.primary_endpoints.table = '{}://{}.{}.{}'.format(PROTOCOL, storage_name, 'table', ACCOUNT_URL_SUFFIX)
+                    storage_account.primary_endpoints.file = '{}://{}.{}.{}'.format(PROTOCOL, storage_name, 'file', ACCOUNT_URL_SUFFIX)
                     storage_key = existing_storage_key
 
                 if not storage_connection_string:

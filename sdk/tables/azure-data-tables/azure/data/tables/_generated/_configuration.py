@@ -24,7 +24,7 @@ class AzureTableConfiguration(Configuration):
     Note that all parameters used to create this instance are saved as instance
     attributes.
 
-    :param url: The URL of the service account or table that is the target of the desired operation.
+    :param url: The URL of the service account or table that is the targe of the desired operation.
     :type url: str
     """
 

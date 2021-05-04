@@ -43,6 +43,7 @@ class MgmtSchedulerTest(AzureMgmtTestCase):
         )
         self.assertEqual(result.name, jobcollection_name)
 
+    @unittest.skip("(BadRequest) Malformed Job Object")
     @ResourceGroupPreparer()
     def test_scheduler_job_custom_time(self, resource_group, location):
         jobcollection_name = "myjobcollection"

@@ -25,13 +25,21 @@ from ._models import (
     Metrics,
     RetentionPolicy,
     CorsRule,
+    ShareSmbSettings,
+    SmbMultichannel,
+    ShareProtocolSettings,
+    ShareProtocols,
     AccessPolicy,
     FileSasPermissions,
     ShareSasPermissions,
     ContentSettings,
     NTFSAttributes)
 from ._generated.models import (
-    HandleItem
+    HandleItem,
+    ShareAccessTier
+)
+from ._generated.models import (
+    ShareRootSquash
 )
 
 __version__ = VERSION
@@ -52,9 +60,14 @@ __all__ = [
     'Metrics',
     'RetentionPolicy',
     'CorsRule',
+    'ShareSmbSettings',
+    'ShareAccessTier',
+    'SmbMultichannel',
+    'ShareProtocolSettings',
     'AccessPolicy',
     'FileSasPermissions',
     'ShareSasPermissions',
+    'ShareProtocols',
     'ShareProperties',
     'DirectoryProperties',
     'FileProperties',
@@ -62,6 +75,7 @@ __all__ = [
     'Handle',
     'NTFSAttributes',
     'HandleItem',
+    'ShareRootSquash',
     'generate_account_sas',
     'generate_share_sas',
     'generate_file_sas'

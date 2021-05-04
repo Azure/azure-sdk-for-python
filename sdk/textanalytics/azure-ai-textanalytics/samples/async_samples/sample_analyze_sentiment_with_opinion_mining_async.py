@@ -14,9 +14,8 @@ DESCRIPTION:
     opinions from reviews (also known as aspect-based sentiment analysis).
     This feature is only available for clients with api version v3.1-preview and up.
 
-    In this sample, we will be a customer who is trying to figure out whether they should stay
-    at a specific hotel. We will be looking at which aspects of the hotel are good, and which are
-    not.
+    In this sample, we will be a hotel owner looking for complaints users have about our hotel,
+    in the hopes that we can improve people's experiences.
 
 USAGE:
     python sample_analyze_sentiment_with_opinion_mining_async.py
@@ -26,55 +25,23 @@ USAGE:
     2) AZURE_TEXT_ANALYTICS_KEY - your Text Analytics subscription key
 
 OUTPUT:
-    In this sample we will be combing through the reviews of a potential hotel to stay at: Hotel Foo.
-    I first found a handful of reviews for Hotel Foo. Let's see if I want to stay here.
+    In this sample we will be a hotel owner going through reviews of their hotel to find complaints.
+    I first found a handful of reviews for my hotel. Let's see what we have to improve.
+
+    Let's first see the general sentiment of each of these reviews
+    ...We have 1 positive reviews, 2 mixed reviews, and 0 negative reviews.
+
+    Since these reviews seem so mixed, and since I'm interested in finding exactly what it is about my hotel that should be improved, let's find the complaints users have about individual aspects of this hotel
+
+    In order to do that, I'm going to extract the targets of a negative sentiment. I'm going to map each of these targets to the mined opinion object we get back to aggregate the reviews by target.
+
+    Let's now go through the aspects of our hotel people have complained about and see what users have specifically said
+    Users have made 1 complaints about 'food', specifically saying that it's 'unacceptable'
+    Users have made 1 complaints about 'service', specifically saying that it's 'unacceptable'
+    Users have made 3 complaints about 'toilet', specifically saying that it's 'smelly', 'broken', 'dirty'
 
 
-    Let's see how many positive and negative reviews of this hotel I have right now
-    ...We have 3 positive reviews and 2 negative reviews.
-
-    Looks more positive than negative, but still pretty mixed, so I'm going to drill deeper into the opinions of individual aspects of this hotel
-
-    In order to do that, I'm going to sort them based on whether these opinions are positive, mixed, or negative
-
-
-    Let's look at the 7 positive opinions users have expressed for aspects of this hotel
-    ...Reviewers have the following opinions for the overall positive 'concierge' aspect of the hotel
-    ......'positive' opinion 'nice'
-    ...Reviewers have the following opinions for the overall positive 'AC' aspect of the hotel
-    ......'positive' opinion 'good'
-    ......'positive' opinion 'quiet'
-    ...Reviewers have the following opinions for the overall positive 'breakfast' aspect of the hotel
-    ......'positive' opinion 'good'
-    ...Reviewers have the following opinions for the overall positive 'hotel' aspect of the hotel
-    ......'positive' opinion 'good'
-    ...Reviewers have the following opinions for the overall positive 'breakfast' aspect of the hotel
-    ......'positive' opinion 'nice'
-    ...Reviewers have the following opinions for the overall positive 'shuttle service' aspect of the hotel
-    ......'positive' opinion 'loved'
-    ...Reviewers have the following opinions for the overall positive 'view' aspect of the hotel
-    ......'positive' opinion 'great'
-    ......'positive' opinion 'unobstructed'
-
-
-    Now let's look at the 1 mixed opinions users have expressed for aspects of this hotel
-    ...Reviewers have the following opinions for the overall mixed 'rooms' aspect of the hotel
-    ......'positive' opinion 'beautiful'
-    ......'negative' opinion 'dirty'
-
-
-    Finally, let's see the 4 negative opinions users have expressed for aspects of this hotel
-    ...Reviewers have the following opinions for the overall negative 'food' aspect of the hotel
-    ......'negative' opinion 'unacceptable'
-    ...Reviewers have the following opinions for the overall negative 'service' aspect of the hotel
-    ......'negative' opinion 'unacceptable'
-    ...Reviewers have the following opinions for the overall negative 'elevator' aspect of the hotel
-    ......'negative' opinion 'broken'
-    ...Reviewers have the following opinions for the overall negative 'toilet' aspect of the hotel
-    ......'negative' opinion 'smelly'
-
-
-    Looking at the breakdown, even though there were more positive opinions of this hotel, I care the most about the food and the toilets in a hotel, so I will be staying elsewhere
+    Looking at the breakdown, I can see what aspects of my hotel need improvement, and based off of both the number and content of the complaints users have made about my toilets, I need to get that fixed ASAP.
 """
 
 import os
@@ -94,67 +61,75 @@ class AnalyzeSentimentWithOpinionMiningSampleAsync(object):
             credential=AzureKeyCredential(key)
         )
 
-        print("In this sample we will be combing through the reviews of a potential hotel to stay at: Hotel Foo.")
+        print("In this sample we will be a hotel owner going through reviews of their hotel to find complaints.")
 
         print(
-            "I first found a handful of reviews for Hotel Foo. Let's see if I want to stay here."
+            "I first found a handful of reviews for my hotel. Let's see what we have to improve."
         )
 
         documents = [
-            "The food and service were unacceptable, but the concierge were nice",
-            "The rooms were beautiful but dirty. The AC was good and quiet, but the elevator was broken",
-            "The breakfast was good, but the toilet was smelly",
-            "Loved this hotel - good breakfast - nice shuttle service.",
-            "I had a great unobstructed view of the Microsoft campus"
+            """
+            The food and service were unacceptable, but the concierge were nice.
+            After talking to them about the quality of the food and the process to get room service they refunded
+            the money we spent at the restaurant and gave us a voucher for near by restaurants.
+            """,
+            """
+            The rooms were beautiful. The AC was good and quiet, which was key for us as outside it was 100F and our baby
+            was getting uncomfortable because of the heat. The breakfast was good too with good options and good servicing times.
+            The thing we didn't like was that the toilet in our bathroom was smelly. It could have been that the toilet was broken before we arrived.
+            Either way it was very uncomfortable. Once we notified the staff, they came and cleaned it and left candles.
+            """,
+            """
+            Nice rooms! I had a great unobstructed view of the Microsoft campus but bathrooms were old and the toilet was dirty when we arrived.
+            It was close to bus stops and groceries stores. If you want to be close to campus I will recommend it, otherwise, might be better to stay in a cleaner one
+            """
         ]
 
         async with text_analytics_client:
-            result = await text_analytics_client.analyze_sentiment(documents, show_opinion_mining=True)
+            result = await text_analytics_client.analyze_sentiment(documents)
         doc_result = [doc for doc in result if not doc.is_error]
 
-        print("\n\nLet's see how many positive and negative reviews of this hotel I have right now")
+        print("\nLet's first see the general sentiment of each of these reviews")
         positive_reviews = [doc for doc in doc_result if doc.sentiment == "positive"]
+        mixed_reviews = [doc for doc in doc_result if doc.sentiment == "mixed"]
         negative_reviews = [doc for doc in doc_result if doc.sentiment == "negative"]
-        print("...We have {} positive reviews and {} negative reviews. ".format(len(positive_reviews), len(negative_reviews)))
-        print("\nLooks more positive than negative, but still pretty mixed, so I'm going to drill deeper into the opinions of individual aspects of this hotel")
+        print("...We have {} positive reviews, {} mixed reviews, and {} negative reviews. ".format(
+            len(positive_reviews), len(mixed_reviews), len(negative_reviews)
+        ))
+        print(
+            "\nSince these reviews seem so mixed, and since I'm interested in finding exactly what it is about my hotel that should be improved, "
+            "let's find the complaints users have about individual aspects of this hotel"
+        )
 
-        print("\nIn order to do that, I'm going to sort them based on whether these opinions are positive, mixed, or negative")
-        positive_mined_opinions = []
-        mixed_mined_opinions = []
-        negative_mined_opinions = []
+        print(
+            "\nIn order to do that, I'm going to extract the targets of a negative sentiment. "
+            "I'm going to map each of these targets to the mined opinion object we get back to aggregate the reviews by target. "
+        )
+        target_to_complaints = {}
 
         for document in doc_result:
             for sentence in document.sentences:
                 for mined_opinion in sentence.mined_opinions:
-                    aspect = mined_opinion.aspect
-                    if aspect.sentiment == "positive":
-                        positive_mined_opinions.append(mined_opinion)
-                    elif aspect.sentiment == "mixed":
-                        mixed_mined_opinions.append(mined_opinion)
-                    else:
-                        negative_mined_opinions.append(mined_opinion)
+                    target = mined_opinion.target
+                    if target.sentiment == 'negative':
+                        target_to_complaints.setdefault(target.text, [])
+                        target_to_complaints[target.text].append(mined_opinion)
 
-        print("\n\nLet's look at the {} positive opinions users have expressed for aspects of this hotel".format(len(positive_mined_opinions)))
-        for mined_opinion in positive_mined_opinions:
-            print("...Reviewers have the following opinions for the overall positive '{}' aspect of the hotel".format(mined_opinion.aspect.text))
-            for opinion in mined_opinion.opinions:
-                print("......'{}' opinion '{}'".format(opinion.sentiment, opinion.text))
+        print("\nLet's now go through the aspects of our hotel people have complained about and see what users have specifically said")
 
-        print("\n\nNow let's look at the {} mixed opinions users have expressed for aspects of this hotel".format(len(mixed_mined_opinions)))
-        for mined_opinion in mixed_mined_opinions:
-            print("...Reviewers have the following opinions for the overall mixed '{}' aspect of the hotel".format(mined_opinion.aspect.text))
-            for opinion in mined_opinion.opinions:
-                print("......'{}' opinion '{}'".format(opinion.sentiment, opinion.text))
+        for target, complaints in target_to_complaints.items():
+            print("Users have made {} complaint(s) about '{}', specifically saying that it's '{}'".format(
+                len(complaints),
+                target,
+                "', '".join(
+                    [assessment.text for complaint in complaints for assessment in complaint.assessments]
+                )
+            ))
 
-        print("\n\nFinally, let's see the {} negative opinions users have expressed for aspects of this hotel".format(len(negative_mined_opinions)))
-        for mined_opinion in negative_mined_opinions:
-            print("...Reviewers have the following opinions for the overall negative '{}' aspect of the hotel".format(mined_opinion.aspect.text))
-            for opinion in mined_opinion.opinions:
-                print("......'{}' opinion '{}'".format(opinion.sentiment, opinion.text))
 
         print(
-            "\n\nLooking at the breakdown, even though there were more positive opinions of this hotel, "
-            "I care the most about the food and the toilets in a hotel, so I will be staying elsewhere"
+            "\n\nLooking at the breakdown, I can see what aspects of my hotel need improvement, and based off of both the number and "
+            "content of the complaints users have made about my toilets, I need to get that fixed ASAP."
         )
 
 async def main():

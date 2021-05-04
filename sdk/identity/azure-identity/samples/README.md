@@ -4,7 +4,7 @@ languages:
   - python
 products:
   - azure
-  - azure-identity
+  - azure-sdks
 urlFragment: identity-samples
 ---
 
@@ -34,4 +34,5 @@ pip install azure-identity azure-keyvault-secrets
 | File | Description |
 |-------------|-------------|
 | control_interactive_prompts.py | demonstrates controlling when interactive credentials prompt for user interaction |
+| custom_credentials.py | demonstrates custom credential implementation |
 | user_authentication.py | demonstrates user authentication API for applications |

@@ -14,7 +14,7 @@ from azure.core.pipeline import PipelineResponse
 from azure.core.pipeline.transport import HttpRequest, HttpResponse
 from azure.mgmt.core.exceptions import ARMErrorFormat
 
-from .. import models
+from .. import models as _models
 
 if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
@@ -37,7 +37,7 @@ class LogProfilesOperations(object):
     :param deserializer: An object model deserializer.
     """
 
-    models = models
+    models = _models
 
     def __init__(self, client, config, serializer, deserializer):
         self._client = client
@@ -100,7 +100,7 @@ class LogProfilesOperations(object):
         log_profile_name,  # type: str
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.LogProfileResource"
+        # type: (...) -> "_models.LogProfileResource"
         """Gets the log profile.
 
         :param log_profile_name: The name of the log profile.
@@ -110,7 +110,7 @@ class LogProfilesOperations(object):
         :rtype: ~$(python-base-namespace).v2016_03_01.models.LogProfileResource
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.LogProfileResource"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.LogProfileResource"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -140,7 +140,7 @@ class LogProfilesOperations(object):
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.ErrorResponse, response)
+            error = self._deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('LogProfileResource', pipeline_response)
@@ -154,10 +154,10 @@ class LogProfilesOperations(object):
     def create_or_update(
         self,
         log_profile_name,  # type: str
-        parameters,  # type: "models.LogProfileResource"
+        parameters,  # type: "_models.LogProfileResource"
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.LogProfileResource"
+        # type: (...) -> "_models.LogProfileResource"
         """Create or update a log profile in Azure Monitoring REST API.
 
         :param log_profile_name: The name of the log profile.
@@ -169,7 +169,7 @@ class LogProfilesOperations(object):
         :rtype: ~$(python-base-namespace).v2016_03_01.models.LogProfileResource
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.LogProfileResource"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.LogProfileResource"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -217,10 +217,10 @@ class LogProfilesOperations(object):
     def update(
         self,
         log_profile_name,  # type: str
-        log_profiles_resource,  # type: "models.LogProfileResourcePatch"
+        log_profiles_resource,  # type: "_models.LogProfileResourcePatch"
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.LogProfileResource"
+        # type: (...) -> "_models.LogProfileResource"
         """Updates an existing LogProfilesResource. To update other fields use the CreateOrUpdate method.
 
         :param log_profile_name: The name of the log profile.
@@ -232,7 +232,7 @@ class LogProfilesOperations(object):
         :rtype: ~$(python-base-namespace).v2016_03_01.models.LogProfileResource
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.LogProfileResource"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.LogProfileResource"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -267,7 +267,7 @@ class LogProfilesOperations(object):
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.ErrorResponse, response)
+            error = self._deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('LogProfileResource', pipeline_response)
@@ -282,7 +282,7 @@ class LogProfilesOperations(object):
         self,
         **kwargs  # type: Any
     ):
-        # type: (...) -> Iterable["models.LogProfileCollection"]
+        # type: (...) -> Iterable["_models.LogProfileCollection"]
         """List the log profiles.
 
         :keyword callable cls: A custom type or function that will be passed the direct response
@@ -290,7 +290,7 @@ class LogProfilesOperations(object):
         :rtype: ~azure.core.paging.ItemPaged[~$(python-base-namespace).v2016_03_01.models.LogProfileCollection]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.LogProfileCollection"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.LogProfileCollection"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }

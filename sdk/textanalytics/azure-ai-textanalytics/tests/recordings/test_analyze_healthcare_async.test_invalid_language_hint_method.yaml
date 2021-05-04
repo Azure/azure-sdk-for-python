@@ -1,0 +1,55 @@
+interactions:
+- request:
+    body: '{"documents": [{"id": "0", "text": "This should fail because we''re passing
+      in an invalid language hint", "language": "notalanguage"}]}'
+    headers:
+      Accept:
+      - application/json, text/json
+      Content-Length:
+      - '134'
+      Content-Type:
+      - application/json
+      User-Agent:
+      - azsdk-python-ai-textanalytics/5.1.0b6 Python/3.9.1 (macOS-10.13.6-x86_64-i386-64bit)
+    method: POST
+    uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.1-preview.4/entities/health/jobs?stringIndexType=UnicodeCodePoint
+  response:
+    body:
+      string: ''
+    headers:
+      apim-request-id: 97ac3a09-afa6-43c2-8677-b61235acc794
+      date: Mon, 01 Mar 2021 19:55:19 GMT
+      operation-location: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.1-preview.4/entities/health/jobs/7afcfe55-b5ae-4526-9777-1f5e3f34edd6
+      strict-transport-security: max-age=31536000; includeSubDomains; preload
+      transfer-encoding: chunked
+      x-content-type-options: nosniff
+      x-envoy-upstream-service-time: '112'
+    status:
+      code: 202
+      message: Accepted
+    url: https://westus2.api.cognitive.microsoft.com//text/analytics/v3.1-preview.4/entities/health/jobs?stringIndexType=UnicodeCodePoint
+- request:
+    body: null
+    headers:
+      User-Agent:
+      - azsdk-python-ai-textanalytics/5.1.0b6 Python/3.9.1 (macOS-10.13.6-x86_64-i386-64bit)
+    method: GET
+    uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.1-preview.4/entities/health/jobs/7afcfe55-b5ae-4526-9777-1f5e3f34edd6
+  response:
+    body:
+      string: '{"jobId":"7afcfe55-b5ae-4526-9777-1f5e3f34edd6","lastUpdateDateTime":"2021-03-01T19:55:20Z","createdDateTime":"2021-03-01T19:55:19Z","expirationDateTime":"2021-03-02T19:55:19Z","status":"succeeded","errors":[],"results":{"documents":[],"errors":[{"id":"0","error":{"code":"InvalidArgument","message":"Invalid
+        Language Code.","innererror":{"code":"UnsupportedLanguageCode","message":"Invalid
+        language code. Supported languages: en"}}}],"modelVersion":"2021-01-11"}}'
+    headers:
+      apim-request-id: 76b06196-473e-4203-b2a8-773b9cc49c0c
+      content-type: application/json; charset=utf-8
+      date: Mon, 01 Mar 2021 19:55:23 GMT
+      strict-transport-security: max-age=31536000; includeSubDomains; preload
+      transfer-encoding: chunked
+      x-content-type-options: nosniff
+      x-envoy-upstream-service-time: '30'
+    status:
+      code: 200
+      message: OK
+    url: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.1-preview.4/entities/health/jobs/7afcfe55-b5ae-4526-9777-1f5e3f34edd6
+version: 1

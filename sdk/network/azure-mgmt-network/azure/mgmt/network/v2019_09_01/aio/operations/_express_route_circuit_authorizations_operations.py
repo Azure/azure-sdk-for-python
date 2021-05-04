@@ -16,7 +16,7 @@ from azure.core.polling import AsyncLROPoller, AsyncNoPolling, AsyncPollingMetho
 from azure.mgmt.core.exceptions import ARMErrorFormat
 from azure.mgmt.core.polling.async_arm_polling import AsyncARMPolling
 
-from ... import models
+from ... import models as _models
 
 T = TypeVar('T')
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]]
@@ -35,7 +35,7 @@ class ExpressRouteCircuitAuthorizationsOperations:
     :param deserializer: An object model deserializer.
     """
 
-    models = models
+    models = _models
 
     def __init__(self, client, config, serializer, deserializer) -> None:
         self._client = client
@@ -137,7 +137,14 @@ class ExpressRouteCircuitAuthorizationsOperations:
             if cls:
                 return cls(pipeline_response, None, {})
 
-        if polling is True: polling_method = AsyncARMPolling(lro_delay, lro_options={'final-state-via': 'location'},  **kwargs)
+        path_format_arguments = {
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
+            'circuitName': self._serialize.url("circuit_name", circuit_name, 'str'),
+            'authorizationName': self._serialize.url("authorization_name", authorization_name, 'str'),
+            'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
+        }
+
+        if polling is True: polling_method = AsyncARMPolling(lro_delay, lro_options={'final-state-via': 'location'}, path_format_arguments=path_format_arguments,  **kwargs)
         elif polling is False: polling_method = AsyncNoPolling()
         else: polling_method = polling
         if cont_token:
@@ -157,7 +164,7 @@ class ExpressRouteCircuitAuthorizationsOperations:
         circuit_name: str,
         authorization_name: str,
         **kwargs
-    ) -> "models.ExpressRouteCircuitAuthorization":
+    ) -> "_models.ExpressRouteCircuitAuthorization":
         """Gets the specified authorization from the specified express route circuit.
 
         :param resource_group_name: The name of the resource group.
@@ -171,7 +178,7 @@ class ExpressRouteCircuitAuthorizationsOperations:
         :rtype: ~azure.mgmt.network.v2019_09_01.models.ExpressRouteCircuitAuthorization
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.ExpressRouteCircuitAuthorization"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.ExpressRouteCircuitAuthorization"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -218,10 +225,10 @@ class ExpressRouteCircuitAuthorizationsOperations:
         resource_group_name: str,
         circuit_name: str,
         authorization_name: str,
-        authorization_parameters: "models.ExpressRouteCircuitAuthorization",
+        authorization_parameters: "_models.ExpressRouteCircuitAuthorization",
         **kwargs
-    ) -> "models.ExpressRouteCircuitAuthorization":
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.ExpressRouteCircuitAuthorization"]
+    ) -> "_models.ExpressRouteCircuitAuthorization":
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.ExpressRouteCircuitAuthorization"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -277,9 +284,9 @@ class ExpressRouteCircuitAuthorizationsOperations:
         resource_group_name: str,
         circuit_name: str,
         authorization_name: str,
-        authorization_parameters: "models.ExpressRouteCircuitAuthorization",
+        authorization_parameters: "_models.ExpressRouteCircuitAuthorization",
         **kwargs
-    ) -> AsyncLROPoller["models.ExpressRouteCircuitAuthorization"]:
+    ) -> AsyncLROPoller["_models.ExpressRouteCircuitAuthorization"]:
         """Creates or updates an authorization in the specified express route circuit.
 
         :param resource_group_name: The name of the resource group.
@@ -302,7 +309,7 @@ class ExpressRouteCircuitAuthorizationsOperations:
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         polling = kwargs.pop('polling', True)  # type: Union[bool, AsyncPollingMethod]
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.ExpressRouteCircuitAuthorization"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.ExpressRouteCircuitAuthorization"]
         lro_delay = kwargs.pop(
             'polling_interval',
             self._config.polling_interval
@@ -328,7 +335,14 @@ class ExpressRouteCircuitAuthorizationsOperations:
                 return cls(pipeline_response, deserialized, {})
             return deserialized
 
-        if polling is True: polling_method = AsyncARMPolling(lro_delay, lro_options={'final-state-via': 'azure-async-operation'},  **kwargs)
+        path_format_arguments = {
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
+            'circuitName': self._serialize.url("circuit_name", circuit_name, 'str'),
+            'authorizationName': self._serialize.url("authorization_name", authorization_name, 'str'),
+            'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
+        }
+
+        if polling is True: polling_method = AsyncARMPolling(lro_delay, lro_options={'final-state-via': 'azure-async-operation'}, path_format_arguments=path_format_arguments,  **kwargs)
         elif polling is False: polling_method = AsyncNoPolling()
         else: polling_method = polling
         if cont_token:
@@ -347,7 +361,7 @@ class ExpressRouteCircuitAuthorizationsOperations:
         resource_group_name: str,
         circuit_name: str,
         **kwargs
-    ) -> AsyncIterable["models.AuthorizationListResult"]:
+    ) -> AsyncIterable["_models.AuthorizationListResult"]:
         """Gets all authorizations in an express route circuit.
 
         :param resource_group_name: The name of the resource group.
@@ -359,7 +373,7 @@ class ExpressRouteCircuitAuthorizationsOperations:
         :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.network.v2019_09_01.models.AuthorizationListResult]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.AuthorizationListResult"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.AuthorizationListResult"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }

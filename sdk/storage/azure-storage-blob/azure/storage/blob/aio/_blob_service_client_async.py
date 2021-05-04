@@ -10,6 +10,7 @@ from typing import (  # pylint: disable=unused-import
     TYPE_CHECKING
 )
 
+from azure.core.exceptions import HttpResponseError
 from azure.core.tracing.decorator import distributed_trace
 from azure.core.pipeline import AsyncPipeline
 from azure.core.tracing.decorator_async import distributed_trace_async
@@ -21,9 +22,8 @@ from .._shared.base_client_async import AsyncStorageAccountHostsMixin, AsyncTran
 from .._shared.response_handlers import return_response_headers, process_storage_error
 from .._shared.parser import _to_utc_datetime
 from .._shared.response_handlers import parse_to_internal_user_delegation_key
-from .._generated import VERSION
 from .._generated.aio import AzureBlobStorage
-from .._generated.models import StorageErrorException, StorageServiceProperties, KeyInfo
+from .._generated.models import StorageServiceProperties, KeyInfo
 from .._blob_service_client import BlobServiceClient as BlobServiceClientBase
 from ._container_client_async import ContainerClient
 from ._blob_client_async import BlobClient
@@ -34,8 +34,6 @@ from ._models import ContainerPropertiesPaged, FilteredBlobPaged
 
 if TYPE_CHECKING:
     from datetime import datetime
-    from azure.core.pipeline.transport import HttpTransport
-    from azure.core.pipeline.policies import HTTPPolicy
     from .._shared.models import AccountSasPermissions, ResourceTypes, UserDelegationKey
     from ._lease_async import BlobLeaseClient
     from .._models import (
@@ -63,9 +61,11 @@ class BlobServiceClient(AsyncStorageAccountHostsMixin, BlobServiceClientBase):
         authenticated with a SAS token.
     :param credential:
         The credentials with which to authenticate. This is optional if the
-        account URL already has a SAS token. The value can be a SAS token string, an account
+        account URL already has a SAS token. The value can be a SAS token string,
+        an instance of a AzureSasCredential from azure.core.credentials, an account
         shared access key, or an instance of a TokenCredentials class from azure.identity.
-        If the URL already has a SAS token, specifying an explicit credential will take priority.
+        If the resource URI already contains a SAS token, this will be ignored in favor of an explicit credential
+        - except in the case of AzureSasCredential, where the conflicting SAS tokens will raise a ValueError.
     :keyword str api_version:
         The Storage API version to use for requests. Default value is '2019-07-07'.
         Setting to an older version may result in reduced feature compatibility.
@@ -117,7 +117,8 @@ class BlobServiceClient(AsyncStorageAccountHostsMixin, BlobServiceClientBase):
             credential=credential,
             **kwargs)
         self._client = AzureBlobStorage(url=self.url, pipeline=self._pipeline)
-        self._client._config.version = get_api_version(kwargs, VERSION)  # pylint: disable=protected-access
+        default_api_version = self._client._config.version  # pylint: disable=protected-access
+        self._client._config.version = get_api_version(kwargs, default_api_version)  # pylint: disable=protected-access
         self._loop = kwargs.get('loop', None)
 
     @distributed_trace_async
@@ -145,7 +146,7 @@ class BlobServiceClient(AsyncStorageAccountHostsMixin, BlobServiceClientBase):
             user_delegation_key = await self._client.service.get_user_delegation_key(key_info=key_info,
                                                                                      timeout=timeout,
                                                                                      **kwargs)  # type: ignore
-        except StorageErrorException as error:
+        except HttpResponseError as error:
             process_storage_error(error)
 
         return parse_to_internal_user_delegation_key(user_delegation_key)  # type: ignore
@@ -172,7 +173,7 @@ class BlobServiceClient(AsyncStorageAccountHostsMixin, BlobServiceClientBase):
         """
         try:
             return await self._client.service.get_account_info(cls=return_response_headers, **kwargs) # type: ignore
-        except StorageErrorException as error:
+        except HttpResponseError as error:
             process_storage_error(error)
 
     @distributed_trace_async
@@ -215,7 +216,7 @@ class BlobServiceClient(AsyncStorageAccountHostsMixin, BlobServiceClientBase):
             stats = await self._client.service.get_statistics( # type: ignore
                 timeout=timeout, use_location=LocationMode.SECONDARY, **kwargs)
             return service_stats_deserialize(stats)
-        except StorageErrorException as error:
+        except HttpResponseError as error:
             process_storage_error(error)
 
     @distributed_trace_async
@@ -243,7 +244,7 @@ class BlobServiceClient(AsyncStorageAccountHostsMixin, BlobServiceClientBase):
         try:
             service_props = await self._client.service.get_properties(timeout=timeout, **kwargs)
             return service_properties_deserialize(service_props)
-        except StorageErrorException as error:
+        except HttpResponseError as error:
             process_storage_error(error)
 
     @distributed_trace_async
@@ -304,6 +305,11 @@ class BlobServiceClient(AsyncStorageAccountHostsMixin, BlobServiceClientBase):
                 :dedent: 12
                 :caption: Setting service properties for the blob service.
         """
+        if all(parameter is None for parameter in [
+                    analytics_logging, hour_metrics, minute_metrics, cors,
+                    target_version, delete_retention_policy, static_website]):
+            raise ValueError("set_service_properties should be called with at least one parameter")
+
         props = StorageServiceProperties(
             logging=analytics_logging,
             hour_metrics=hour_metrics,
@@ -316,7 +322,7 @@ class BlobServiceClient(AsyncStorageAccountHostsMixin, BlobServiceClientBase):
         timeout = kwargs.pop('timeout', None)
         try:
             await self._client.service.set_properties(props, timeout=timeout, **kwargs)
-        except StorageErrorException as error:
+        except HttpResponseError as error:
             process_storage_error(error)
 
     @distributed_trace
@@ -337,6 +343,10 @@ class BlobServiceClient(AsyncStorageAccountHostsMixin, BlobServiceClientBase):
         :param bool include_metadata:
             Specifies that container metadata to be returned in the response.
             The default value is `False`.
+        :keyword bool include_deleted:
+            Specifies that deleted containers to be returned in the response. This is for container restore enabled
+            account. The default value is `False`.
+            .. versionadded:: 12.4.0
         :keyword int results_per_page:
             The maximum number of container names to retrieve per API
             call. If the request does not specify the server will return up to 5,000 items.
@@ -355,6 +365,9 @@ class BlobServiceClient(AsyncStorageAccountHostsMixin, BlobServiceClientBase):
                 :caption: Listing the containers in the blob service.
         """
         include = ['metadata'] if include_metadata else []
+        include_deleted = kwargs.pop('include_deleted', None)
+        if include_deleted:
+            include.append("deleted")
         timeout = kwargs.pop('timeout', None)
         results_per_page = kwargs.pop('results_per_page', None)
         command = functools.partial(
@@ -510,8 +523,39 @@ class BlobServiceClient(AsyncStorageAccountHostsMixin, BlobServiceClientBase):
             **kwargs)
 
     @distributed_trace_async
-    async def _undelete_container(self, deleted_container_name, deleted_container_version, new_name=None, **kwargs):
-        # type: (str, str, str, **Any) -> ContainerClient
+    async def _rename_container(self, name, new_name, **kwargs):
+        # type: (str, str, **Any) -> ContainerClient
+        """Renames a container.
+
+        Operation is successful only if the source container exists.
+
+        :param str name:
+            The name of the container to rename.
+        :param str new_name:
+            The new container name the user wants to rename to.
+        :keyword lease:
+            Specify this to perform only if the lease ID given
+            matches the active lease ID of the source container.
+        :paramtype lease: ~azure.storage.blob.BlobLeaseClient or str
+        :keyword int timeout:
+            The timeout parameter is expressed in seconds.
+        :rtype: ~azure.storage.blob.ContainerClient
+        """
+        renamed_container = self.get_container_client(new_name)
+        lease = kwargs.pop('lease', None)
+        try:
+            kwargs['source_lease_id'] = lease.id  # type: str
+        except AttributeError:
+            kwargs['source_lease_id'] = lease
+        try:
+            await renamed_container._client.container.rename(name, **kwargs)   # pylint: disable = protected-access
+            return renamed_container
+        except HttpResponseError as error:
+            process_storage_error(error)
+
+    @distributed_trace_async
+    async def undelete_container(self, deleted_container_name, deleted_container_version, **kwargs):
+        # type: (str, str, **Any) -> ContainerClient
         """Restores soft-deleted container.
 
         Operation will only be successful if used within the specified number of days
@@ -524,19 +568,21 @@ class BlobServiceClient(AsyncStorageAccountHostsMixin, BlobServiceClientBase):
             Specifies the name of the deleted container to restore.
         :param str deleted_container_version:
             Specifies the version of the deleted container to restore.
-        :param str new_name:
+        :keyword str new_name:
             The new name for the deleted container to be restored to.
+            If not specified deleted_container_name will be used as the restored container name.
         :keyword int timeout:
             The timeout parameter is expressed in seconds.
         :rtype: ~azure.storage.blob.aio.ContainerClient
         """
+        new_name = kwargs.pop('new_name', None)
         container = self.get_container_client(new_name or deleted_container_name)
         try:
             await container._client.container.restore(deleted_container_name=deleted_container_name, # pylint: disable = protected-access
                                                       deleted_container_version=deleted_container_version,
                                                       timeout=kwargs.pop('timeout', None), **kwargs)
             return container
-        except StorageErrorException as error:
+        except HttpResponseError as error:
             process_storage_error(error)
 
     def get_container_client(self, container):

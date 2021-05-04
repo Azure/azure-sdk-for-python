@@ -5,11 +5,10 @@
 import abc
 
 import msal
-from azure.core.credentials import AccessToken
 
 from .msal_client import MsalClient
-from .persistent_cache import load_user_cache
-from .._internal import get_default_authority, normalize_authority
+from .._internal import get_default_authority, normalize_authority, validate_tenant_id
+from .._persistent_cache import _load_persistent_cache, TokenCachePersistenceOptions
 
 try:
     ABC = abc.ABC
@@ -30,19 +29,20 @@ class MsalCredential(ABC):
     """Base class for credentials wrapping MSAL applications"""
 
     def __init__(self, client_id, client_credential=None, **kwargs):
-        # type: (str, Optional[Union[str, Mapping[str, str]]], **Any) -> None
+        # type: (str, Optional[Union[str, dict]], **Any) -> None
         authority = kwargs.pop("authority", None)
         self._authority = normalize_authority(authority) if authority else get_default_authority()
         self._tenant_id = kwargs.pop("tenant_id", None) or "organizations"
+        validate_tenant_id(self._tenant_id)
 
         self._client_credential = client_credential
         self._client_id = client_id
 
-        self._cache = kwargs.pop("_cache", None)  # internal, for use in tests
+        self._cache = kwargs.pop("_cache", None)
         if not self._cache:
-            if kwargs.pop("enable_persistent_cache", False):
-                allow_unencrypted = kwargs.pop("allow_unencrypted_cache", False)
-                self._cache = load_user_cache(allow_unencrypted)
+            options = kwargs.pop("cache_persistence_options", None)
+            if options:
+                self._cache = _load_persistent_cache(options)
             else:
                 self._cache = msal.TokenCache()
 
@@ -57,14 +57,15 @@ class MsalCredential(ABC):
         # type: () -> msal.ClientApplication
         pass
 
-    def _create_app(self, cls):
-        # type: (Type[msal.ClientApplication]) -> msal.ClientApplication
+    def _create_app(self, cls, **kwargs):
+        # type: (Type[msal.ClientApplication], **Any) -> msal.ClientApplication
         app = cls(
             client_id=self._client_id,
             client_credential=self._client_credential,
             authority="{}/{}".format(self._authority, self._tenant_id),
             token_cache=self._cache,
             http_client=self._client,
+            **kwargs
         )
 
         return app

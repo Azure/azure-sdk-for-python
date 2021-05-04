@@ -16,7 +16,7 @@ from azure.core.polling import AsyncLROPoller, AsyncNoPolling, AsyncPollingMetho
 from azure.mgmt.core.exceptions import ARMErrorFormat
 from azure.mgmt.core.polling.async_arm_polling import AsyncARMPolling
 
-from ... import models
+from ... import models as _models
 
 T = TypeVar('T')
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]]
@@ -35,7 +35,7 @@ class LoadBalancersOperations:
     :param deserializer: An object model deserializer.
     """
 
-    models = models
+    models = _models
 
     def __init__(self, client, config, serializer, deserializer) -> None:
         self._client = client
@@ -131,7 +131,13 @@ class LoadBalancersOperations:
             if cls:
                 return cls(pipeline_response, None, {})
 
-        if polling is True: polling_method = AsyncARMPolling(lro_delay, lro_options={'final-state-via': 'location'},  **kwargs)
+        path_format_arguments = {
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
+            'loadBalancerName': self._serialize.url("load_balancer_name", load_balancer_name, 'str'),
+            'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
+        }
+
+        if polling is True: polling_method = AsyncARMPolling(lro_delay, lro_options={'final-state-via': 'location'}, path_format_arguments=path_format_arguments,  **kwargs)
         elif polling is False: polling_method = AsyncNoPolling()
         else: polling_method = polling
         if cont_token:
@@ -151,7 +157,7 @@ class LoadBalancersOperations:
         load_balancer_name: str,
         expand: Optional[str] = None,
         **kwargs
-    ) -> "models.LoadBalancer":
+    ) -> "_models.LoadBalancer":
         """Gets the specified load balancer.
 
         :param resource_group_name: The name of the resource group.
@@ -165,7 +171,7 @@ class LoadBalancersOperations:
         :rtype: ~azure.mgmt.network.v2020_05_01.models.LoadBalancer
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.LoadBalancer"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.LoadBalancer"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -212,10 +218,10 @@ class LoadBalancersOperations:
         self,
         resource_group_name: str,
         load_balancer_name: str,
-        parameters: "models.LoadBalancer",
+        parameters: "_models.LoadBalancer",
         **kwargs
-    ) -> "models.LoadBalancer":
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.LoadBalancer"]
+    ) -> "_models.LoadBalancer":
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.LoadBalancer"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -269,9 +275,9 @@ class LoadBalancersOperations:
         self,
         resource_group_name: str,
         load_balancer_name: str,
-        parameters: "models.LoadBalancer",
+        parameters: "_models.LoadBalancer",
         **kwargs
-    ) -> AsyncLROPoller["models.LoadBalancer"]:
+    ) -> AsyncLROPoller["_models.LoadBalancer"]:
         """Creates or updates a load balancer.
 
         :param resource_group_name: The name of the resource group.
@@ -291,7 +297,7 @@ class LoadBalancersOperations:
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         polling = kwargs.pop('polling', True)  # type: Union[bool, AsyncPollingMethod]
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.LoadBalancer"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.LoadBalancer"]
         lro_delay = kwargs.pop(
             'polling_interval',
             self._config.polling_interval
@@ -316,7 +322,13 @@ class LoadBalancersOperations:
                 return cls(pipeline_response, deserialized, {})
             return deserialized
 
-        if polling is True: polling_method = AsyncARMPolling(lro_delay, lro_options={'final-state-via': 'azure-async-operation'},  **kwargs)
+        path_format_arguments = {
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
+            'loadBalancerName': self._serialize.url("load_balancer_name", load_balancer_name, 'str'),
+            'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
+        }
+
+        if polling is True: polling_method = AsyncARMPolling(lro_delay, lro_options={'final-state-via': 'azure-async-operation'}, path_format_arguments=path_format_arguments,  **kwargs)
         elif polling is False: polling_method = AsyncNoPolling()
         else: polling_method = polling
         if cont_token:
@@ -334,9 +346,9 @@ class LoadBalancersOperations:
         self,
         resource_group_name: str,
         load_balancer_name: str,
-        parameters: "models.TagsObject",
+        parameters: "_models.TagsObject",
         **kwargs
-    ) -> "models.LoadBalancer":
+    ) -> "_models.LoadBalancer":
         """Updates a load balancer tags.
 
         :param resource_group_name: The name of the resource group.
@@ -350,7 +362,7 @@ class LoadBalancersOperations:
         :rtype: ~azure.mgmt.network.v2020_05_01.models.LoadBalancer
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.LoadBalancer"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.LoadBalancer"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -399,7 +411,7 @@ class LoadBalancersOperations:
     def list_all(
         self,
         **kwargs
-    ) -> AsyncIterable["models.LoadBalancerListResult"]:
+    ) -> AsyncIterable["_models.LoadBalancerListResult"]:
         """Gets all the load balancers in a subscription.
 
         :keyword callable cls: A custom type or function that will be passed the direct response
@@ -407,7 +419,7 @@ class LoadBalancersOperations:
         :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.network.v2020_05_01.models.LoadBalancerListResult]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.LoadBalancerListResult"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.LoadBalancerListResult"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -466,7 +478,7 @@ class LoadBalancersOperations:
         self,
         resource_group_name: str,
         **kwargs
-    ) -> AsyncIterable["models.LoadBalancerListResult"]:
+    ) -> AsyncIterable["_models.LoadBalancerListResult"]:
         """Gets all the load balancers in a resource group.
 
         :param resource_group_name: The name of the resource group.
@@ -476,7 +488,7 @@ class LoadBalancersOperations:
         :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.network.v2020_05_01.models.LoadBalancerListResult]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.LoadBalancerListResult"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.LoadBalancerListResult"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }

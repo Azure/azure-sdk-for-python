@@ -11,14 +11,11 @@ interactions:
       Content-Length:
       - '86'
       Content-Type:
-      - application/json; charset=utf-8
+      - application/json
       User-Agent:
-      - python/3.7.3 (Windows-10-10.0.18362-SP0) msrest/0.6.14 msrest_azure/0.4.34
-        azure-mgmt-batch/9.0.0 Azure-SDK-For-Python
-      accept-language:
-      - en-US
+      - azsdk-python-mgmt-batch/14.0.0b2 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: POST
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Batch/locations/westcentralus/checkNameAvailability?api-version=2020-05-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Batch/locations/westcentralus/checkNameAvailability?api-version=2021-01-01
   response:
     body:
       string: '{"nameAvailable":false,"reason":"Invalid","message":"Account name must
@@ -31,7 +28,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Fri, 29 May 2020 03:09:09 GMT
+      - Thu, 28 Jan 2021 07:50:53 GMT
       expires:
       - '-1'
       pragma:
@@ -63,14 +60,11 @@ interactions:
       Content-Length:
       - '61'
       Content-Type:
-      - application/json; charset=utf-8
+      - application/json
       User-Agent:
-      - python/3.7.3 (Windows-10-10.0.18362-SP0) msrest/0.6.14 msrest_azure/0.4.34
-        azure-mgmt-batch/9.0.0 Azure-SDK-For-Python
-      accept-language:
-      - en-US
+      - azsdk-python-mgmt-batch/14.0.0b2 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: POST
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Batch/locations/westcentralus/checkNameAvailability?api-version=2020-05-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Batch/locations/westcentralus/checkNameAvailability?api-version=2021-01-01
   response:
     body:
       string: '{"nameAvailable":false,"reason":"AlreadyExists","message":"An account
@@ -83,7 +77,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Fri, 29 May 2020 03:09:09 GMT
+      - Thu, 28 Jan 2021 07:50:53 GMT
       expires:
       - '-1'
       pragma:
@@ -115,14 +109,11 @@ interactions:
       Content-Length:
       - '66'
       Content-Type:
-      - application/json; charset=utf-8
+      - application/json
       User-Agent:
-      - python/3.7.3 (Windows-10-10.0.18362-SP0) msrest/0.6.14 msrest_azure/0.4.34
-        azure-mgmt-batch/9.0.0 Azure-SDK-For-Python
-      accept-language:
-      - en-US
+      - azsdk-python-mgmt-batch/14.0.0b2 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: POST
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Batch/locations/westcentralus/checkNameAvailability?api-version=2020-05-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Batch/locations/westcentralus/checkNameAvailability?api-version=2021-01-01
   response:
     body:
       string: '{"nameAvailable":true}'
@@ -134,7 +125,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Fri, 29 May 2020 03:09:10 GMT
+      - Thu, 28 Jan 2021 07:50:53 GMT
       expires:
       - '-1'
       pragma:

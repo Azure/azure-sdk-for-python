@@ -11,25 +11,25 @@ interactions:
       DataServiceVersion:
       - '3.0'
       Date:
-      - Wed, 16 Sep 2020 22:35:33 GMT
+      - Fri, 05 Feb 2021 20:18:34 GMT
       User-Agent:
       - customer_user_agent
       x-ms-date:
-      - Wed, 16 Sep 2020 22:35:33 GMT
+      - Fri, 05 Feb 2021 20:18:34 GMT
       x-ms-version:
       - '2019-02-02'
     method: GET
-    uri: https://storagename.table.core.windows.net/Tables
+    uri: https://fake_table_account.table.core.windows.net/Tables
   response:
     body:
-      string: '{"odata.metadata":"https://storagename.table.core.windows.net/$metadata#Tables","value":[]}'
+      string: '{"odata.metadata":"https://fake_table_account.table.core.windows.net/$metadata#Tables","value":[]}'
     headers:
       cache-control:
       - no-cache
       content-type:
       - application/json;odata=minimalmetadata;streaming=true;charset=utf-8
       date:
-      - Wed, 16 Sep 2020 22:35:33 GMT
+      - Fri, 05 Feb 2021 20:18:34 GMT
       server:
       - Windows-Azure-Table/1.0 Microsoft-HTTPAPI/2.0
       transfer-encoding:

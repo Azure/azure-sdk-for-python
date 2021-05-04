@@ -14,13 +14,13 @@ interactions:
     uri: https://servicebustestsbname.servicebus.windows.net/$Resources/queues?$skip=0&$top=100&api-version=2017-04
   response:
     body:
-      string: <feed xmlns="http://www.w3.org/2005/Atom"><title type="text">Queues</title><id>https://servicebustest32ip2wgoaa.servicebus.windows.net/$Resources/queues?$skip=0&amp;$top=100&amp;api-version=2017-04</id><updated>2020-08-17T08:06:59Z</updated><link
-        rel="self" href="https://servicebustest32ip2wgoaa.servicebus.windows.net/$Resources/queues?$skip=0&amp;$top=100&amp;api-version=2017-04"/></feed>
+      string: <feed xmlns="http://www.w3.org/2005/Atom"><title type="text">Queues</title><id>https://servicebustestrm7a5oi5hk.servicebus.windows.net/$Resources/queues?$skip=0&amp;$top=100&amp;api-version=2017-04</id><updated>2020-09-29T08:35:54Z</updated><link
+        rel="self" href="https://servicebustestrm7a5oi5hk.servicebus.windows.net/$Resources/queues?$skip=0&amp;$top=100&amp;api-version=2017-04"/></feed>
     headers:
       content-type:
       - application/atom+xml;type=feed;charset=utf-8
       date:
-      - Mon, 17 Aug 2020 08:06:59 GMT
+      - Tue, 29 Sep 2020 08:35:53 GMT
       server:
       - Microsoft-HTTPAPI/2.0
       transfer-encoding:
@@ -50,16 +50,16 @@ interactions:
     uri: https://servicebustestsbname.servicebus.windows.net/dfjfj?api-version=2017-04
   response:
     body:
-      string: <entry xmlns="http://www.w3.org/2005/Atom"><id>https://servicebustest32ip2wgoaa.servicebus.windows.net/dfjfj?api-version=2017-04</id><title
-        type="text">dfjfj</title><published>2020-08-17T08:06:59Z</published><updated>2020-08-17T08:06:59Z</updated><author><name>servicebustest32ip2wgoaa</name></author><link
-        rel="self" href="https://servicebustest32ip2wgoaa.servicebus.windows.net/dfjfj?api-version=2017-04"/><content
+      string: <entry xmlns="http://www.w3.org/2005/Atom"><id>https://servicebustestrm7a5oi5hk.servicebus.windows.net/dfjfj?api-version=2017-04</id><title
+        type="text">dfjfj</title><published>2020-09-29T08:35:55Z</published><updated>2020-09-29T08:35:55Z</updated><author><name>servicebustestrm7a5oi5hk</name></author><link
+        rel="self" href="https://servicebustestrm7a5oi5hk.servicebus.windows.net/dfjfj?api-version=2017-04"/><content
         type="application/xml"><QueueDescription xmlns="http://schemas.microsoft.com/netservices/2010/10/servicebus/connect"
-        xmlns:i="http://www.w3.org/2001/XMLSchema-instance"><LockDuration>PT1M</LockDuration><MaxSizeInMegabytes>1024</MaxSizeInMegabytes><RequiresDuplicateDetection>false</RequiresDuplicateDetection><RequiresSession>false</RequiresSession><DefaultMessageTimeToLive>P10675199DT2H48M5.4775807S</DefaultMessageTimeToLive><DeadLetteringOnMessageExpiration>false</DeadLetteringOnMessageExpiration><DuplicateDetectionHistoryTimeWindow>PT10M</DuplicateDetectionHistoryTimeWindow><MaxDeliveryCount>10</MaxDeliveryCount><EnableBatchedOperations>true</EnableBatchedOperations><SizeInBytes>0</SizeInBytes><MessageCount>0</MessageCount><IsAnonymousAccessible>false</IsAnonymousAccessible><AuthorizationRules></AuthorizationRules><Status>Active</Status><CreatedAt>2020-08-17T08:06:59.683Z</CreatedAt><UpdatedAt>2020-08-17T08:06:59.717Z</UpdatedAt><SupportOrdering>true</SupportOrdering><AutoDeleteOnIdle>P10675199DT2H48M5.4775807S</AutoDeleteOnIdle><EnablePartitioning>false</EnablePartitioning><EntityAvailabilityStatus>Available</EntityAvailabilityStatus><EnableExpress>false</EnableExpress></QueueDescription></content></entry>
+        xmlns:i="http://www.w3.org/2001/XMLSchema-instance"><LockDuration>PT1M</LockDuration><MaxSizeInMegabytes>1024</MaxSizeInMegabytes><RequiresDuplicateDetection>false</RequiresDuplicateDetection><RequiresSession>false</RequiresSession><DefaultMessageTimeToLive>P10675199DT2H48M5.4775807S</DefaultMessageTimeToLive><DeadLetteringOnMessageExpiration>false</DeadLetteringOnMessageExpiration><DuplicateDetectionHistoryTimeWindow>PT10M</DuplicateDetectionHistoryTimeWindow><MaxDeliveryCount>10</MaxDeliveryCount><EnableBatchedOperations>true</EnableBatchedOperations><SizeInBytes>0</SizeInBytes><MessageCount>0</MessageCount><IsAnonymousAccessible>false</IsAnonymousAccessible><AuthorizationRules></AuthorizationRules><Status>Active</Status><CreatedAt>2020-09-29T08:35:55.053Z</CreatedAt><UpdatedAt>2020-09-29T08:35:55.15Z</UpdatedAt><SupportOrdering>true</SupportOrdering><AutoDeleteOnIdle>P10675199DT2H48M5.4775807S</AutoDeleteOnIdle><EnablePartitioning>false</EnablePartitioning><EntityAvailabilityStatus>Available</EntityAvailabilityStatus><EnableExpress>false</EnableExpress></QueueDescription></content></entry>
     headers:
       content-type:
       - application/atom+xml;type=entry;charset=utf-8
       date:
-      - Mon, 17 Aug 2020 08:07:00 GMT
+      - Tue, 29 Sep 2020 08:35:54 GMT
       server:
       - Microsoft-HTTPAPI/2.0
       strict-transport-security:
@@ -74,7 +74,7 @@ interactions:
 
       <ns0:entry xmlns:ns0="http://www.w3.org/2005/Atom" xmlns="http://schemas.microsoft.com/netservices/2010/10/servicebus/connect"><ns0:content
       type="application/xml"><QueueDescription><LockDuration>PT1M</LockDuration><MaxSizeInMegabytes>1024</MaxSizeInMegabytes><RequiresDuplicateDetection>false</RequiresDuplicateDetection><RequiresSession>true</RequiresSession><DefaultMessageTimeToLive>P10675199DT2H48M5.477539S</DefaultMessageTimeToLive><DeadLetteringOnMessageExpiration>false</DeadLetteringOnMessageExpiration><DuplicateDetectionHistoryTimeWindow>PT10M</DuplicateDetectionHistoryTimeWindow><MaxDeliveryCount>10</MaxDeliveryCount><EnableBatchedOperations>true</EnableBatchedOperations><SizeInBytes>0</SizeInBytes><MessageCount>0</MessageCount><IsAnonymousAccessible>false</IsAnonymousAccessible><AuthorizationRules
-      /><Status>Active</Status><CreatedAt>2020-08-17T08:06:59.683Z</CreatedAt><UpdatedAt>2020-08-17T08:06:59.717Z</UpdatedAt><SupportOrdering>true</SupportOrdering><AutoDeleteOnIdle>P10675199DT2H48M5.477539S</AutoDeleteOnIdle><EnablePartitioning>false</EnablePartitioning><EntityAvailabilityStatus>Available</EntityAvailabilityStatus><EnableExpress>false</EnableExpress></QueueDescription></ns0:content></ns0:entry>'
+      /><Status>Active</Status><CreatedAt>2020-09-29T08:35:55.053Z</CreatedAt><UpdatedAt>2020-09-29T08:35:55.150Z</UpdatedAt><SupportOrdering>true</SupportOrdering><AutoDeleteOnIdle>P10675199DT2H48M5.477539S</AutoDeleteOnIdle><EnablePartitioning>false</EnablePartitioning><EntityAvailabilityStatus>Available</EntityAvailabilityStatus><EnableExpress>false</EnableExpress></QueueDescription></ns0:content></ns0:entry>'
     headers:
       Accept:
       - application/xml
@@ -96,15 +96,15 @@ interactions:
     body:
       string: <Error><Code>400</Code><Detail>SubCode=40000. The value for the RequiresSession
         property of an existing Queue cannot be changed. To know more visit https://aka.ms/sbResourceMgrExceptions.
-        . TrackingId:540ca39e-816a-42a9-95e9-2941b11261e8_G10, SystemTracker:servicebustestsbname.servicebus.windows.net:dfjfj,
-        Timestamp:2020-08-17T08:07:00</Detail></Error>
+        . TrackingId:d68b6e6b-0084-4bdb-b92a-8f8c08ba3692_G14, SystemTracker:servicebustestsbname.servicebus.windows.net:dfjfj,
+        Timestamp:2020-09-29T08:35:55</Detail></Error>
     headers:
       content-type:
       - application/xml; charset=utf-8
       date:
-      - Mon, 17 Aug 2020 08:07:00 GMT
+      - Tue, 29 Sep 2020 08:35:54 GMT
       etag:
-      - '637332484197170000'
+      - '637369653551500000'
       server:
       - Microsoft-HTTPAPI/2.0
       strict-transport-security:
@@ -119,7 +119,7 @@ interactions:
 
       <ns0:entry xmlns:ns0="http://www.w3.org/2005/Atom" xmlns="http://schemas.microsoft.com/netservices/2010/10/servicebus/connect"><ns0:content
       type="application/xml"><QueueDescription><LockDuration>PT1M</LockDuration><MaxSizeInMegabytes>1024</MaxSizeInMegabytes><RequiresDuplicateDetection>false</RequiresDuplicateDetection><RequiresSession>false</RequiresSession><DefaultMessageTimeToLive>P10675199DT2H48M5.477539S</DefaultMessageTimeToLive><DeadLetteringOnMessageExpiration>false</DeadLetteringOnMessageExpiration><DuplicateDetectionHistoryTimeWindow>PT10M</DuplicateDetectionHistoryTimeWindow><MaxDeliveryCount>10</MaxDeliveryCount><EnableBatchedOperations>true</EnableBatchedOperations><SizeInBytes>0</SizeInBytes><MessageCount>0</MessageCount><IsAnonymousAccessible>false</IsAnonymousAccessible><AuthorizationRules
-      /><Status>Active</Status><CreatedAt>2020-08-17T08:06:59.683Z</CreatedAt><UpdatedAt>2020-08-17T08:06:59.717Z</UpdatedAt><SupportOrdering>true</SupportOrdering><AutoDeleteOnIdle>P10675199DT2H48M5.477539S</AutoDeleteOnIdle><EnablePartitioning>false</EnablePartitioning><EntityAvailabilityStatus>Available</EntityAvailabilityStatus><EnableExpress>false</EnableExpress></QueueDescription></ns0:content></ns0:entry>'
+      /><Status>Active</Status><CreatedAt>2020-09-29T08:35:55.053Z</CreatedAt><UpdatedAt>2020-09-29T08:35:55.150Z</UpdatedAt><SupportOrdering>true</SupportOrdering><AutoDeleteOnIdle>P10675199DT2H48M5.477539S</AutoDeleteOnIdle><EnablePartitioning>false</EnablePartitioning><EntityAvailabilityStatus>Available</EntityAvailabilityStatus><EnableExpress>false</EnableExpress></QueueDescription></ns0:content></ns0:entry>'
     headers:
       Accept:
       - application/xml
@@ -141,13 +141,13 @@ interactions:
     body:
       string: <Error><Code>404</Code><Detail>SubCode=40400. Not Found. The Operation
         doesn't exist. To know more visit https://aka.ms/sbResourceMgrExceptions.
-        . TrackingId:6880ea69-57a1-48ba-9798-93eae8eae2a0_G10, SystemTracker:servicebustestsbname.servicebus.windows.net:iewdm,
-        Timestamp:2020-08-17T08:07:00</Detail></Error>
+        . TrackingId:d21f2fa0-3ff8-4d4a-95b7-da9509d04b02_G14, SystemTracker:servicebustestsbname.servicebus.windows.net:iewdm,
+        Timestamp:2020-09-29T08:35:56</Detail></Error>
     headers:
       content-type:
       - application/xml; charset=utf-8
       date:
-      - Mon, 17 Aug 2020 08:07:00 GMT
+      - Tue, 29 Sep 2020 08:35:55 GMT
       server:
       - Microsoft-HTTPAPI/2.0
       strict-transport-security:
@@ -162,7 +162,7 @@ interactions:
 
       <ns0:entry xmlns:ns0="http://www.w3.org/2005/Atom" xmlns="http://schemas.microsoft.com/netservices/2010/10/servicebus/connect"><ns0:content
       type="application/xml"><QueueDescription><LockDuration>P25D</LockDuration><MaxSizeInMegabytes>1024</MaxSizeInMegabytes><RequiresDuplicateDetection>false</RequiresDuplicateDetection><RequiresSession>false</RequiresSession><DefaultMessageTimeToLive>P10675199DT2H48M5.477539S</DefaultMessageTimeToLive><DeadLetteringOnMessageExpiration>false</DeadLetteringOnMessageExpiration><DuplicateDetectionHistoryTimeWindow>PT10M</DuplicateDetectionHistoryTimeWindow><MaxDeliveryCount>10</MaxDeliveryCount><EnableBatchedOperations>true</EnableBatchedOperations><SizeInBytes>0</SizeInBytes><MessageCount>0</MessageCount><IsAnonymousAccessible>false</IsAnonymousAccessible><AuthorizationRules
-      /><Status>Active</Status><CreatedAt>2020-08-17T08:06:59.683Z</CreatedAt><UpdatedAt>2020-08-17T08:06:59.717Z</UpdatedAt><SupportOrdering>true</SupportOrdering><AutoDeleteOnIdle>P10675199DT2H48M5.477539S</AutoDeleteOnIdle><EnablePartitioning>false</EnablePartitioning><EntityAvailabilityStatus>Available</EntityAvailabilityStatus><EnableExpress>false</EnableExpress></QueueDescription></ns0:content></ns0:entry>'
+      /><Status>Active</Status><CreatedAt>2020-09-29T08:35:55.053Z</CreatedAt><UpdatedAt>2020-09-29T08:35:55.150Z</UpdatedAt><SupportOrdering>true</SupportOrdering><AutoDeleteOnIdle>P10675199DT2H48M5.477539S</AutoDeleteOnIdle><EnablePartitioning>false</EnablePartitioning><EntityAvailabilityStatus>Available</EntityAvailabilityStatus><EnableExpress>false</EnableExpress></QueueDescription></ns0:content></ns0:entry>'
     headers:
       Accept:
       - application/xml
@@ -188,15 +188,15 @@ interactions:
 
         Parameter name: LockDuration&#xD;
 
-        Actual value was 25.00:00:00. TrackingId:599cd376-fba2-40a0-8e2c-fe3e2de60637_G10,
-        SystemTracker:servicebustestsbname.servicebus.windows.net:dfjfj, Timestamp:2020-08-17T08:07:01</Detail></Error>'
+        Actual value was 25.00:00:00. TrackingId:163c8063-1917-4229-bf17-0817929dc89a_G14,
+        SystemTracker:servicebustestsbname.servicebus.windows.net:dfjfj, Timestamp:2020-09-29T08:35:56</Detail></Error>'
     headers:
       content-type:
       - application/xml; charset=utf-8
       date:
-      - Mon, 17 Aug 2020 08:07:01 GMT
+      - Tue, 29 Sep 2020 08:35:55 GMT
       etag:
-      - '637332484197170000'
+      - '637369653551500000'
       server:
       - Microsoft-HTTPAPI/2.0
       strict-transport-security:
@@ -228,9 +228,9 @@ interactions:
       content-length:
       - '0'
       date:
-      - Mon, 17 Aug 2020 08:07:01 GMT
+      - Tue, 29 Sep 2020 08:35:56 GMT
       etag:
-      - '637332484197170000'
+      - '637369653551500000'
       server:
       - Microsoft-HTTPAPI/2.0
       strict-transport-security:

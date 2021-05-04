@@ -1,0 +1,47 @@
+interactions:
+- request:
+    body: '{"properties": {"email": "foobar@outlook.com", "firstName": "foo", "lastName":
+      "bar", "confirmation": "signup"}}'
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '112'
+      Content-Type:
+      - application/json
+      User-Agent:
+      - azsdk-python-mgmt-apimanagement/1.0.0b1 Python/3.6.9 (Linux-4.19.76-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+    method: PUT
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_apimanagement_test_usr9b7e0b1e/providers/Microsoft.ApiManagement/service/pyuser9b7e0b1e/users/123?api-version=2020-06-01-preview
+  response:
+    body:
+      string: '{"error":{"code":"ResourceNotFound","message":"The Resource ''Microsoft.ApiManagement/service/pyuser9b7e0b1e''
+        under resource group ''test_apimanagement_test_usr9b7e0b1e'' was not found.
+        For more details please go to https://aka.ms/ARMResourceNotFoundFix"}}'
+    headers:
+      cache-control:
+      - no-cache
+      content-length:
+      - '253'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Tue, 27 Oct 2020 07:05:20 GMT
+      expires:
+      - '-1'
+      pragma:
+      - no-cache
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      x-content-type-options:
+      - nosniff
+      x-ms-failure-cause:
+      - gateway
+    status:
+      code: 404
+      message: Not Found
+version: 1

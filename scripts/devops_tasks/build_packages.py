@@ -12,7 +12,7 @@ import argparse
 import sys
 import os
 
-from common_tasks import process_glob_string, run_check_call
+from common_tasks import process_glob_string, run_check_call, str_to_bool
 
 root_dir = os.path.abspath(os.path.join(os.path.abspath(__file__), "..", "..", ".."))
 build_packing_script_location = os.path.join(root_dir, "build_package.py")
@@ -22,19 +22,19 @@ tox_path = os.path.abspath(os.path.join(root_dir, "eng", "tox"))
 sys.path.append(tox_path)
 from sanitize_setup import process_requires
 
-def build_packages(targeted_packages, distribution_directory, is_dev_build = False):
+def build_packages(targeted_packages, distribution_directory, is_dev_build=False):
     # run the build and distribution
     for package_root in targeted_packages:
-        print(package_root)
+        service_hierarchy = os.path.join(os.path.basename(package_root))
         if is_dev_build:
             verify_update_package_requirement(package_root)
         print("Generating Package Using Python {}".format(sys.version))
         run_check_call(
             [
-                "python",
+                sys.executable,
                 build_packing_script_location,
                 "--dest",
-                distribution_directory,
+                os.path.join(distribution_directory, service_hierarchy),
                 package_root,
             ],
             root_dir,
@@ -93,7 +93,6 @@ if __name__ == "__main__":
         ),
     )
 
-
     args = parser.parse_args()
 
     # We need to support both CI builds of everything and individual service
@@ -104,5 +103,9 @@ if __name__ == "__main__":
     else:
         target_dir = root_dir
 
-    targeted_packages = process_glob_string(args.glob_string, target_dir, args.package_filter_string)
-    build_packages(targeted_packages, args.distribution_directory, args.is_dev_build)
+    targeted_packages = process_glob_string(
+        args.glob_string, target_dir, args.package_filter_string
+    )
+    build_packages(
+        targeted_packages, args.distribution_directory, str_to_bool(args.is_dev_build)
+    )

@@ -1,0 +1,78 @@
+interactions:
+- request:
+    body: '{"tasks": {"entityRecognitionTasks": [{"parameters": {"model-version":
+      "latest", "loggingOptOut": false, "stringIndexType": "UnicodeCodePoint"}}],
+      "entityRecognitionPiiTasks": [], "keyPhraseExtractionTasks": [], "entityLinkingTasks":
+      []}, "analysisInput": {"documents": [{"id": "0", "text": "Test passing cls to
+      endpoint", "language": "en"}]}}'
+    headers:
+      Accept:
+      - application/json, text/json
+      Content-Length:
+      - '343'
+      Content-Type:
+      - application/json
+      User-Agent:
+      - azsdk-python-ai-textanalytics/5.1.0b7 Python/3.9.0 (Windows-10-10.0.19041-SP0)
+    method: POST
+    uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.1-preview.5/analyze
+  response:
+    body:
+      string: ''
+    headers:
+      apim-request-id: 92679c48-ac2b-497f-ace3-5f8b83bc1039
+      date: Tue, 27 Apr 2021 19:37:16 GMT
+      operation-location: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.1-preview.5/analyze/jobs/cc119254-1813-4e02-ba55-2461a9bdf063
+      strict-transport-security: max-age=31536000; includeSubDomains; preload
+      transfer-encoding: chunked
+      x-content-type-options: nosniff
+      x-envoy-upstream-service-time: '93'
+    status:
+      code: 202
+      message: Accepted
+    url: https://westus2.api.cognitive.microsoft.com//text/analytics/v3.1-preview.5/analyze
+- request:
+    body: null
+    headers:
+      User-Agent:
+      - azsdk-python-ai-textanalytics/5.1.0b7 Python/3.9.0 (Windows-10-10.0.19041-SP0)
+    method: GET
+    uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.1-preview.5/analyze/jobs/cc119254-1813-4e02-ba55-2461a9bdf063
+  response:
+    body:
+      string: '{"jobId":"cc119254-1813-4e02-ba55-2461a9bdf063","lastUpdateDateTime":"2021-04-27T19:37:18Z","createdDateTime":"2021-04-27T19:37:17Z","expirationDateTime":"2021-04-28T19:37:17Z","status":"running","errors":[],"displayName":"NA","tasks":{"details":{"name":"NA","lastUpdateDateTime":"2021-04-27T19:37:18Z"},"completed":0,"failed":0,"inProgress":1,"total":1}}'
+    headers:
+      apim-request-id: dbd0f747-d06c-4951-a25d-cc6ed2aab171
+      content-type: application/json; charset=utf-8
+      date: Tue, 27 Apr 2021 19:37:21 GMT
+      strict-transport-security: max-age=31536000; includeSubDomains; preload
+      transfer-encoding: chunked
+      x-content-type-options: nosniff
+      x-envoy-upstream-service-time: '9'
+    status:
+      code: 200
+      message: OK
+    url: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.1-preview.5/analyze/jobs/cc119254-1813-4e02-ba55-2461a9bdf063
+- request:
+    body: null
+    headers:
+      User-Agent:
+      - azsdk-python-ai-textanalytics/5.1.0b7 Python/3.9.0 (Windows-10-10.0.19041-SP0)
+    method: GET
+    uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.1-preview.5/analyze/jobs/cc119254-1813-4e02-ba55-2461a9bdf063
+  response:
+    body:
+      string: '{"jobId":"cc119254-1813-4e02-ba55-2461a9bdf063","lastUpdateDateTime":"2021-04-27T19:37:23Z","createdDateTime":"2021-04-27T19:37:17Z","expirationDateTime":"2021-04-28T19:37:17Z","status":"succeeded","errors":[],"displayName":"NA","tasks":{"details":{"name":"NA","lastUpdateDateTime":"2021-04-27T19:37:23Z"},"completed":1,"failed":0,"inProgress":0,"total":1,"entityRecognitionTasks":[{"lastUpdateDateTime":"2021-04-27T19:37:23.7260435Z","name":"NA","state":"succeeded","results":{"documents":[{"id":"0","entities":[],"warnings":[]}],"errors":[],"modelVersion":"2021-01-15"}}]}}'
+    headers:
+      apim-request-id: 6d32589c-beac-4618-b70f-23a956fdd381
+      content-type: application/json; charset=utf-8
+      date: Tue, 27 Apr 2021 19:37:27 GMT
+      strict-transport-security: max-age=31536000; includeSubDomains; preload
+      transfer-encoding: chunked
+      x-content-type-options: nosniff
+      x-envoy-upstream-service-time: '32'
+    status:
+      code: 200
+      message: OK
+    url: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.1-preview.5/analyze/jobs/cc119254-1813-4e02-ba55-2461a9bdf063
+version: 1

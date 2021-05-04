@@ -1,0 +1,315 @@
+interactions:
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/xml
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '0'
+      User-Agent:
+      - azsdk-python-storage-blob/12.8.0b1 Python/3.8.5 (Windows-10-10.0.19041-SP0)
+      x-ms-date:
+      - Mon, 01 Mar 2021 04:18:10 GMT
+      x-ms-version:
+      - '2020-06-12'
+    method: PUT
+    uri: https://storagename.blob.core.windows.net/utcontainer92b711b8?restype=container
+  response:
+    body:
+      string: ''
+    headers:
+      content-length:
+      - '0'
+      date:
+      - Mon, 01 Mar 2021 04:18:10 GMT
+      etag:
+      - '"0x8D8DC69063B0887"'
+      last-modified:
+      - Mon, 01 Mar 2021 04:18:10 GMT
+      server:
+      - Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
+      x-ms-version:
+      - '2020-06-12'
+    status:
+      code: 201
+      message: Created
+- request:
+    body: hello world
+    headers:
+      Accept:
+      - application/xml
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '11'
+      Content-Type:
+      - application/octet-stream
+      User-Agent:
+      - azsdk-python-storage-blob/12.8.0b1 Python/3.8.5 (Windows-10-10.0.19041-SP0)
+      x-ms-blob-type:
+      - BlockBlob
+      x-ms-date:
+      - Mon, 01 Mar 2021 04:18:11 GMT
+      x-ms-encryption-algorithm:
+      - AES256
+      x-ms-version:
+      - '2020-06-12'
+    method: PUT
+    uri: https://storagename.blob.core.windows.net/utcontainer92b711b8/blob192b711b8
+  response:
+    body:
+      string: ''
+    headers:
+      content-length:
+      - '0'
+      content-md5:
+      - XrY7u+Ae7tCTyyK7j1rNww==
+      date:
+      - Mon, 01 Mar 2021 04:18:10 GMT
+      etag:
+      - '"0x8D8DC6906463DF5"'
+      last-modified:
+      - Mon, 01 Mar 2021 04:18:10 GMT
+      server:
+      - Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
+      x-ms-content-crc64:
+      - vo7q9sPVKY0=
+      x-ms-request-server-encrypted:
+      - 'true'
+      x-ms-version:
+      - '2020-06-12'
+    status:
+      code: 201
+      message: Created
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/xml
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - azsdk-python-storage-blob/12.8.0b1 Python/3.8.5 (Windows-10-10.0.19041-SP0)
+      x-ms-date:
+      - Mon, 01 Mar 2021 04:18:11 GMT
+      x-ms-encryption-algorithm:
+      - AES256
+      x-ms-version:
+      - '2020-06-12'
+    method: HEAD
+    uri: https://storagename.blob.core.windows.net/utcontainer92b711b8/blob192b711b8
+  response:
+    body:
+      string: ''
+    headers:
+      accept-ranges:
+      - bytes
+      content-length:
+      - '11'
+      content-md5:
+      - XrY7u+Ae7tCTyyK7j1rNww==
+      content-type:
+      - application/octet-stream
+      date:
+      - Mon, 01 Mar 2021 04:18:10 GMT
+      etag:
+      - '"0x8D8DC6906463DF5"'
+      last-modified:
+      - Mon, 01 Mar 2021 04:18:10 GMT
+      server:
+      - Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
+      vary:
+      - Origin
+      x-ms-access-tier:
+      - Hot
+      x-ms-access-tier-inferred:
+      - 'true'
+      x-ms-blob-type:
+      - BlockBlob
+      x-ms-creation-time:
+      - Mon, 01 Mar 2021 04:18:10 GMT
+      x-ms-lease-state:
+      - available
+      x-ms-lease-status:
+      - unlocked
+      x-ms-server-encrypted:
+      - 'true'
+      x-ms-version:
+      - '2020-06-12'
+    status:
+      code: 200
+      message: OK
+- request:
+    body: hello world this wont work
+    headers:
+      Accept:
+      - application/xml
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '26'
+      Content-Type:
+      - application/octet-stream
+      If-None-Match:
+      - '*'
+      User-Agent:
+      - azsdk-python-storage-blob/12.8.0b1 Python/3.8.5 (Windows-10-10.0.19041-SP0)
+      x-ms-blob-content-md5:
+      - XrY7u+Ae7tCTyyK7j1rNww==
+      x-ms-blob-type:
+      - BlockBlob
+      x-ms-date:
+      - Mon, 01 Mar 2021 04:18:11 GMT
+      x-ms-encryption-algorithm:
+      - AES256
+      x-ms-version:
+      - '2020-06-12'
+    method: PUT
+    uri: https://storagename.blob.core.windows.net/utcontainer92b711b8/blob292b711b8
+  response:
+    body:
+      string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><Error><Code>Md5Mismatch</Code><Message>The
+        MD5 value specified in the request did not match with the MD5 value calculated
+        by the server.\nRequestId:22874362-c01e-00be-4c51-0e3b8d000000\nTime:2021-03-01T04:18:10.9305633Z</Message><UserSpecifiedMd5>XrY7u+Ae7tCTyyK7j1rNww==</UserSpecifiedMd5><ServerCalculatedMd5>jZ0KWGQraqYHX42NEbH9Vg==</ServerCalculatedMd5></Error>"
+    headers:
+      content-length:
+      - '405'
+      content-type:
+      - application/xml
+      date:
+      - Mon, 01 Mar 2021 04:18:10 GMT
+      server:
+      - Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
+      x-ms-error-code:
+      - Md5Mismatch
+      x-ms-version:
+      - '2020-06-12'
+    status:
+      code: 400
+      message: The MD5 value specified in the request did not match with the MD5 value
+        calculated by the server.
+- request:
+    body: hello world
+    headers:
+      Accept:
+      - application/xml
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '11'
+      Content-Type:
+      - application/octet-stream
+      If-None-Match:
+      - '*'
+      User-Agent:
+      - azsdk-python-storage-blob/12.8.0b1 Python/3.8.5 (Windows-10-10.0.19041-SP0)
+      x-ms-blob-content-md5:
+      - XrY7u+Ae7tCTyyK7j1rNww==
+      x-ms-blob-type:
+      - BlockBlob
+      x-ms-date:
+      - Mon, 01 Mar 2021 04:18:11 GMT
+      x-ms-encryption-algorithm:
+      - AES256
+      x-ms-version:
+      - '2020-06-12'
+    method: PUT
+    uri: https://storagename.blob.core.windows.net/utcontainer92b711b8/blob292b711b8
+  response:
+    body:
+      string: ''
+    headers:
+      content-length:
+      - '0'
+      content-md5:
+      - XrY7u+Ae7tCTyyK7j1rNww==
+      date:
+      - Mon, 01 Mar 2021 04:18:10 GMT
+      etag:
+      - '"0x8D8DC690666ED45"'
+      last-modified:
+      - Mon, 01 Mar 2021 04:18:11 GMT
+      server:
+      - Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
+      x-ms-content-crc64:
+      - vo7q9sPVKY0=
+      x-ms-request-server-encrypted:
+      - 'true'
+      x-ms-version:
+      - '2020-06-12'
+    status:
+      code: 201
+      message: Created
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/xml
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - azsdk-python-storage-blob/12.8.0b1 Python/3.8.5 (Windows-10-10.0.19041-SP0)
+      x-ms-date:
+      - Mon, 01 Mar 2021 04:18:11 GMT
+      x-ms-encryption-algorithm:
+      - AES256
+      x-ms-version:
+      - '2020-06-12'
+    method: HEAD
+    uri: https://storagename.blob.core.windows.net/utcontainer92b711b8/blob292b711b8
+  response:
+    body:
+      string: ''
+    headers:
+      accept-ranges:
+      - bytes
+      content-length:
+      - '11'
+      content-md5:
+      - XrY7u+Ae7tCTyyK7j1rNww==
+      content-type:
+      - application/octet-stream
+      date:
+      - Mon, 01 Mar 2021 04:18:11 GMT
+      etag:
+      - '"0x8D8DC690666ED45"'
+      last-modified:
+      - Mon, 01 Mar 2021 04:18:11 GMT
+      server:
+      - Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
+      vary:
+      - Origin
+      x-ms-access-tier:
+      - Hot
+      x-ms-access-tier-inferred:
+      - 'true'
+      x-ms-blob-type:
+      - BlockBlob
+      x-ms-creation-time:
+      - Mon, 01 Mar 2021 04:18:11 GMT
+      x-ms-lease-state:
+      - available
+      x-ms-lease-status:
+      - unlocked
+      x-ms-server-encrypted:
+      - 'true'
+      x-ms-version:
+      - '2020-06-12'
+    status:
+      code: 200
+      message: OK
+version: 1

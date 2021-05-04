@@ -9,20 +9,20 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-azureschemaregistry/1.0.0b1 Python/3.7.7 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-azureschemaregistry/1.0.0b1 Python/3.9.0rc1 (Windows-10-10.0.19041-SP0)
     method: GET
-    uri: https://sr-playground.servicebus.windows.net/$schemagroups/getSchemaById/a?api-version=2017-04
+    uri: https://fake_resource.servicebus.windows.net/$schemagroups/getSchemaById/a?api-version=2017-04
   response:
     body:
-      string: <Error><Code>400</Code><Detail>SubCode=40000, UnknownType:The request
-        is invalid. [MGResponseHttpError=BadRequest]. TrackingId:8fffa255-f448-4289-9c6b-4fabe270883b_G1,
-        SystemTracker:sr-playground.servicebus.windows.net:$schemagroups/getSchemaById/a,
-        Timestamp:2020-09-04T22:02:07</Detail></Error>
+      string: '{"Code":400,"Detail":"SubCode=40000, UnknownType:The request is invalid.
+        [MGResponseHttpError=BadRequest]. TrackingId:d84dbd56-c52d-40d9-83f7-0e2b13655faa_G6,
+        SystemTracker:fake_resource.servicebus.windows.net:$schemagroups\/getSchemaById\/a,
+        Timestamp:2020-11-12T05:59:35"}'
     headers:
       content-type:
-      - application/xml; charset=utf-8
+      - application/json
       date:
-      - Fri, 04 Sep 2020 22:02:07 GMT
+      - Thu, 12 Nov 2020 05:59:35 GMT
       server:
       - Microsoft-HTTPAPI/2.0
       strict-transport-security:
@@ -42,19 +42,19 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-azureschemaregistry/1.0.0b1 Python/3.7.7 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-azureschemaregistry/1.0.0b1 Python/3.9.0rc1 (Windows-10-10.0.19041-SP0)
     method: GET
-    uri: https://sr-playground.servicebus.windows.net/$schemagroups/getSchemaById/aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa?api-version=2017-04
+    uri: https://fake_resource.servicebus.windows.net/$schemagroups/getSchemaById/aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa?api-version=2017-04
   response:
     body:
-      string: <Error><Code>404</Code><Detail>Schema id aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa
-        does not exist. TrackingId:0f6141ae-5a35-4219-a634-fe3533912dcc_G1, SystemTracker:sr-playground.servicebus.windows.net:$schemagroups/getSchemaById/aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa,
-        Timestamp:2020-09-04T22:02:08</Detail></Error>
+      string: '{"Code":404,"Detail":"Schema id aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa does
+        not exist. TrackingId:2d80297c-ad66-4d3e-8750-9853f7578659_G6, SystemTracker:NoSystemTracker,
+        Timestamp:2020-11-12T05:59:35"}'
     headers:
       content-type:
-      - application/xml; charset=utf-8
+      - application/json
       date:
-      - Fri, 04 Sep 2020 22:02:07 GMT
+      - Thu, 12 Nov 2020 05:59:35 GMT
       server:
       - Microsoft-HTTPAPI/2.0
       strict-transport-security:

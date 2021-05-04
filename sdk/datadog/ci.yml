@@ -1,0 +1,34 @@
+# NOTE: Please refer to https://aka.ms/azsdk/engsys/ci-yaml before editing this file.
+
+trigger:
+  branches:
+    include:
+    - master
+    - main
+    - hotfix/*
+    - release/*
+    - restapi*
+  paths:
+    include:
+    - sdk/datadog/
+
+pr:
+  branches:
+    include:
+    - master
+    - main
+    - feature/*
+    - hotfix/*
+    - release/*
+    - restapi*
+  paths:
+    include:
+    - sdk/datadog/
+
+extends:
+  template: ../../eng/pipelines/templates/stages/archetype-sdk-client.yml
+  parameters:
+    ServiceDirectory: datadog
+    Artifacts:
+    - name: azure-mgmt-datadog
+      safeName: azuremgmtdatadog

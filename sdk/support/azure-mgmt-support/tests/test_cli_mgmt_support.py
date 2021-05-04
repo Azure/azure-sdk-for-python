@@ -31,6 +31,7 @@ class MgmtMicrosoftSupportTest(AzureMgmtTestCase):
             azure.mgmt.support.MicrosoftSupport
         )
     
+    @unittest.skip("skip test")
     @ResourceGroupPreparer(location=AZURE_LOCATION)
     def test_support(self, resource_group):
 

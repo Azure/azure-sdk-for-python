@@ -10,10 +10,10 @@ from typing import (  # pylint: disable=unused-import
     Union, Optional, Any, TypeVar, TYPE_CHECKING
 )
 
+from azure.core.exceptions import HttpResponseError
 from azure.core.tracing.decorator import distributed_trace
 
 from ._shared.response_handlers import return_response_headers, process_storage_error
-from ._generated.models import StorageErrorException
 from ._serialize import get_modify_conditions
 
 if TYPE_CHECKING:
@@ -96,9 +96,9 @@ class BlobLeaseClient(object):
             and act according to the condition specified by the `match_condition` parameter.
         :keyword ~azure.core.MatchConditions match_condition:
             The match condition to use upon the etag.
-        :keyword str if_tags_match_condition
+        :keyword str if_tags_match_condition:
             Specify a SQL where clause on blob tags to operate only on blob with a matching value.
-            eg. "\"tagname\"='my tag'"
+            eg. ``\"\\\"tagname\\\"='my tag'\"``
 
             .. versionadded:: 12.4.0
 
@@ -115,7 +115,7 @@ class BlobLeaseClient(object):
                 modified_access_conditions=mod_conditions,
                 cls=return_response_headers,
                 **kwargs)
-        except StorageErrorException as error:
+        except HttpResponseError as error:
             process_storage_error(error)
         self.id = response.get('lease_id')  # type: str
         self.last_modified = response.get('last_modified')   # type: datetime
@@ -149,9 +149,9 @@ class BlobLeaseClient(object):
             and act according to the condition specified by the `match_condition` parameter.
         :keyword ~azure.core.MatchConditions match_condition:
             The match condition to use upon the etag.
-        :keyword str if_tags_match_condition
+        :keyword str if_tags_match_condition:
             Specify a SQL where clause on blob tags to operate only on blob with a matching value.
-            eg. "\"tagname\"='my tag'"
+            eg. ``\"\\\"tagname\\\"='my tag'\"``
 
             .. versionadded:: 12.4.0
 
@@ -167,7 +167,7 @@ class BlobLeaseClient(object):
                 modified_access_conditions=mod_conditions,
                 cls=return_response_headers,
                 **kwargs)
-        except StorageErrorException as error:
+        except HttpResponseError as error:
             process_storage_error(error)
         self.etag = response.get('etag')  # type: str
         self.id = response.get('lease_id')  # type: str
@@ -199,9 +199,9 @@ class BlobLeaseClient(object):
             and act according to the condition specified by the `match_condition` parameter.
         :keyword ~azure.core.MatchConditions match_condition:
             The match condition to use upon the etag.
-        :keyword str if_tags_match_condition
+        :keyword str if_tags_match_condition:
             Specify a SQL where clause on blob tags to operate only on blob with a matching value.
-            eg. "\"tagname\"='my tag'"
+            eg. ``\"\\\"tagname\\\"='my tag'\"``
 
             .. versionadded:: 12.4.0
 
@@ -217,7 +217,7 @@ class BlobLeaseClient(object):
                 modified_access_conditions=mod_conditions,
                 cls=return_response_headers,
                 **kwargs)
-        except StorageErrorException as error:
+        except HttpResponseError as error:
             process_storage_error(error)
         self.etag = response.get('etag')  # type: str
         self.id = response.get('lease_id')  # type: str
@@ -248,9 +248,9 @@ class BlobLeaseClient(object):
             and act according to the condition specified by the `match_condition` parameter.
         :keyword ~azure.core.MatchConditions match_condition:
             The match condition to use upon the etag.
-        :keyword str if_tags_match_condition
+        :keyword str if_tags_match_condition:
             Specify a SQL where clause on blob tags to operate only on blob with a matching value.
-            eg. "\"tagname\"='my tag'"
+            eg. ``\"\\\"tagname\\\"='my tag'\"``
 
             .. versionadded:: 12.4.0
 
@@ -267,7 +267,7 @@ class BlobLeaseClient(object):
                 modified_access_conditions=mod_conditions,
                 cls=return_response_headers,
                 **kwargs)
-        except StorageErrorException as error:
+        except HttpResponseError as error:
             process_storage_error(error)
         self.etag = response.get('etag')  # type: str
         self.id = response.get('lease_id')  # type: str
@@ -307,9 +307,9 @@ class BlobLeaseClient(object):
             If a date is passed in without timezone info, it is assumed to be UTC.
             Specify this header to perform the operation only if
             the resource has not been modified since the specified date/time.
-        :keyword str if_tags_match_condition
+        :keyword str if_tags_match_condition:
             Specify a SQL where clause on blob tags to operate only on blob with a matching value.
-            eg. "\"tagname\"='my tag'"
+            eg. ``\"\\\"tagname\\\"='my tag'\"``
 
             .. versionadded:: 12.4.0
 
@@ -326,6 +326,6 @@ class BlobLeaseClient(object):
                 modified_access_conditions=mod_conditions,
                 cls=return_response_headers,
                 **kwargs)
-        except StorageErrorException as error:
+        except HttpResponseError as error:
             process_storage_error(error)
         return response.get('lease_time') # type: ignore

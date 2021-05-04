@@ -1,9 +1,59 @@
 # Release History
 
-## 4.2.1 (Unreleased)
+## 4.4.0b5 (Unreleased)
+
+
+## 4.4.0b4 (2021-04-06)
+
+### Added
+- `CryptographyClient` can perform AES-CBCPAD encryption and decryption locally
+  ([#17762](https://github.com/Azure/azure-sdk-for-python/pull/17762))
+
+## 4.4.0b3 (2021-03-11)
+### Added
+- `CryptographyClient` will perform all operations locally if initialized with
+  the `.from_jwk` factory method
+  ([#16565](https://github.com/Azure/azure-sdk-for-python/pull/16565))
+- Added requirement for six>=1.12.0
+
+## 4.4.0b2 (2021-02-10)
+### Fixed
+- API versions older than 7.2-preview no longer raise `ImportError` when
+  performing async operations ([#16680](https://github.com/Azure/azure-sdk-for-python/pull/16680))
+
+## 4.4.0b1 (2021-02-10)
+### Changed
+- Key Vault API version 7.2-preview is now the default
+- Updated msrest requirement to >=0.6.21
+
+### Added
+- Support for Key Vault API version 7.2-preview
+  ([#16566](https://github.com/Azure/azure-sdk-for-python/pull/16566))
+  - Added `oct_hsm` to `KeyType`
+  - Added 128-, 192-, and 256-bit AES-GCM, AES-CBC, and AES-CBCPAD encryption
+    algorithms to `EncryptionAlgorithm`
+  - Added 128- and 192-bit AES-KW key wrapping algorithms to `KeyWrapAlgorithm`
+  - `CryptographyClient`'s `encrypt` method accepts `iv` and 
+    `additional_authenticated_data` keyword arguments
+  - `CryptographyClient`'s `decrypt` method accepts `iv`, 
+    `additional_authenticated_data`, and `authentication_tag` keyword arguments
+  - Added `iv`, `aad`, and `tag` properties to `EncryptResult`
+- Added method `parse_key_vault_key_id` that parses out a full ID returned by
+Key Vault, so users can easily access the key's `name`, `vault_url`, and `version`.
+
+## 4.3.1 (2020-12-03)
+### Fixed
+- `CryptographyClient` operations no longer raise `AttributeError` when
+  the client was constructed with a key ID
+  ([#15608](https://github.com/Azure/azure-sdk-for-python/issues/15608))
+
+## 4.3.0 (2020-10-06)
+### Changed
+- `CryptographyClient` can perform decrypt and sign operations locally
+  ([#9754](https://github.com/Azure/azure-sdk-for-python/issues/9754))
+
 ### Fixed
 - Correct typing for async paging methods
-
 
 ## 4.2.0 (2020-08-11)
 ### Fixed
@@ -48,7 +98,7 @@ as a context manager, a `KeyClient` closes opened sockets on exit.
 - Fix `AttributeError` in async CryptographyClient when verifying signatures remotely
 ([#9734](https://github.com/Azure/azure-sdk-for-python/pull/9734))
 
-## 2019-10-31 4.0.0
+## 4.0.0 (2019-10-31)
 ### Breaking changes:
 - Removed `KeyClient.get_cryptography_client()` and `CryptographyClient.get_key()`
 - Moved the optional parameters of several methods into kwargs (

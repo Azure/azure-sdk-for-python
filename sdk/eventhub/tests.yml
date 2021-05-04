@@ -1,33 +1,17 @@
 trigger: none
 
-jobs:
-  - template: ../../eng/pipelines/templates/jobs/archetype-sdk-tests.yml
+stages:
+  - template: ../../eng/pipelines/templates/stages/archetype-sdk-tests.yml
     parameters:
-      AllocateResourceGroup: 'false'
+      AllocateResourceGroup: false
       ServiceDirectory: eventhub
-      Matrix:
-        Linux_Python35:
-          OSVmImage: 'ubuntu-18.04'
-          PythonVersion: '3.5'
-        Linux_Python38:
-          OSVmImage: 'ubuntu-18.04'
-          PythonVersion: '3.8'
-        Windows_Python27:
-          OSVmImage: 'windows-2019'
-          PythonVersion: '2.7'
-        MacOs_Python37:
-          OSVmImage: 'macOS-10.15'
-          PythonVersion: '3.7'
+      BuildTargetingString: azure-eventhub*
+      DeployArmTemplate: true
+      TestSamples: true
+      MatrixFilters:
+        - PythonVersion=^(?!pypy3).*
       EnvVars:
-        AZURE_STORAGE_ACCOUNT: $(python-eh-livetest-event-hub-storage-account)
-        AZURE_STORAGE_ACCESS_KEY: $(python-eh-livetest-event-hub-storage-access-key)
-        AZURE_STORAGE_CONN_STR: $(python-eh-livetest-event-hub-storage-conn-str)
-        EVENT_HUB_CONN_STR: $(python-eh-livetest-event-hub-conn-str)
-        EVENT_HUB_HOSTNAME: $(python-eh-livetest-event-hub-hostname)
-        EVENT_HUB_NAME: $(python-eh-livetest-event-hub-name)
-        EVENT_HUB_SAS_POLICY: $(python-eh-livetest-event-hub-sas-policy)
-        EVENT_HUB_SAS_KEY: $(python-eh-livetest-event-hub-sas-key)
-        EVENT_HUB_NAMESPACE: $(python-eh-livetest-event-hub-namespace)
+        AZURE_STORAGE_DATA_LAKE_ENABLED_CONN_STR: $(python-eh-livetest-event-hub-storage-data-lake-enabled-conn-str)
         IOTHUB_CONNECTION_STR: $(python-eh-livetest-event-hub-iothub-connection-str)
         IOTHUB_DEVICE: $(python-eh-livetest-event-hub-iothub-device)
         AZURE_CLIENT_ID: $(python-eh-livetest-event-hub-aad-client-id)

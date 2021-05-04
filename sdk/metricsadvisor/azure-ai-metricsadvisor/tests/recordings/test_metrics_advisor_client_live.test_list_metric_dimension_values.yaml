@@ -1,0 +1,207 @@
+interactions:
+- request:
+    body: '{"dimensionName": "dimension_name"}'
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '25'
+      Content-Type:
+      - application/json
+      User-Agent:
+      - azsdk-python-ai-metricsadvisor/1.0.0b3 Python/3.8.6 (Windows-10-10.0.19041-SP0)
+    method: POST
+    uri: https://js-metrics-advisor.cognitiveservices.azure.com/metricsadvisor/v1.0/metrics/metric_id/dimension/query
+  response:
+    body:
+      string: '{"value":["Abidjan","Ahmadabad","Alexandria","Ankara","Atlanta","Baghdad","Bangkok","Barcelona","Beijing","Belo
+        Horizonte","Bengaluru","Bogota","Boston","Brasilia","Buenos Aires","Cairo","Chengdu","Chennai","Chicago","Chittagong"],"@nextLink":"https://js-metrics-advisor.cognitiveservices.azure.com:443/metricsadvisor/v1.0/metrics/metric_id/dimension/query?$top=20&$skip=20"}'
+    headers:
+      apim-request-id:
+      - 8b0ce0b3-8331-4386-aa24-a2ee52679abd
+      content-length:
+      - '402'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Fri, 22 Jan 2021 01:03:28 GMT
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains; preload
+      x-content-type-options:
+      - nosniff
+      x-envoy-upstream-service-time:
+      - '106'
+      x-request-id:
+      - 8b0ce0b3-8331-4386-aa24-a2ee52679abd
+    status:
+      code: 200
+      message: OK
+- request:
+    body: '{"dimensionName": "dimension_name"}'
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '25'
+      Content-Type:
+      - application/json
+      User-Agent:
+      - azsdk-python-ai-metricsadvisor/1.0.0b3 Python/3.8.6 (Windows-10-10.0.19041-SP0)
+    method: POST
+    uri: https://js-metrics-advisor.cognitiveservices.azure.com/metricsadvisor/v1.0/metrics/metric_id/dimension/query?$top=20&$skip=20
+  response:
+    body:
+      string: '{"value":["Chongqing","Dallas","Delhi","Dhaka","Dongguan","Guadalajara","Guangzhou","Hanoi","Haora","Hechi","Ho
+        Chi Minh City","Hong Kong","Houston","Hyderabad","Istanbul","Jakarta","Karachi","Khartoum","Kinshasa","Kolkata"],"@nextLink":"https://js-metrics-advisor.cognitiveservices.azure.com:443/metricsadvisor/v1.0/metrics/metric_id/dimension/query?$top=20&$skip=40"}'
+    headers:
+      apim-request-id:
+      - 8eab6046-b988-4791-8e01-7300855ffcec
+      content-length:
+      - '396'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Fri, 22 Jan 2021 01:03:28 GMT
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains; preload
+      x-content-type-options:
+      - nosniff
+      x-envoy-upstream-service-time:
+      - '101'
+      x-request-id:
+      - 8eab6046-b988-4791-8e01-7300855ffcec
+    status:
+      code: 200
+      message: OK
+- request:
+    body: '{"dimensionName": "dimension_name"}'
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '25'
+      Content-Type:
+      - application/json
+      User-Agent:
+      - azsdk-python-ai-metricsadvisor/1.0.0b3 Python/3.8.6 (Windows-10-10.0.19041-SP0)
+    method: POST
+    uri: https://js-metrics-advisor.cognitiveservices.azure.com/metricsadvisor/v1.0/metrics/metric_id/dimension/query?$top=20&$skip=40
+  response:
+    body:
+      string: '{"value":["Lagos","Lahore","Lima","London","Los Angeles","Luanda","Madrid","Manila","Melbourne","Mexico
+        City","Miami","Monterrey","Moscow","Mumbai","New York","Osaka","Paris","Philadelphia","Phoenix","Porto
+        Alegre"],"@nextLink":"https://js-metrics-advisor.cognitiveservices.azure.com:443/metricsadvisor/v1.0/metrics/metric_id/dimension/query?$top=20&$skip=60"}'
+    headers:
+      apim-request-id:
+      - 58683165-2214-4a69-b75d-4e5854383047
+      content-length:
+      - '387'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Fri, 22 Jan 2021 01:03:28 GMT
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains; preload
+      x-content-type-options:
+      - nosniff
+      x-envoy-upstream-service-time:
+      - '126'
+      x-request-id:
+      - 58683165-2214-4a69-b75d-4e5854383047
+    status:
+      code: 200
+      message: OK
+- request:
+    body: '{"dimensionName": "dimension_name"}'
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '25'
+      Content-Type:
+      - application/json
+      User-Agent:
+      - azsdk-python-ai-metricsadvisor/1.0.0b3 Python/3.8.6 (Windows-10-10.0.19041-SP0)
+    method: POST
+    uri: https://js-metrics-advisor.cognitiveservices.azure.com/metricsadvisor/v1.0/metrics/metric_id/dimension/query?$top=20&$skip=60
+  response:
+    body:
+      string: '{"value":["Pune","Rangoon","Rio de Janeiro","Riyadh","Saint Petersburg","Santiago","Sao
+        Paulo","Seoul","Shanghai","Shenyang","Shenzhen","Singapore","__SUM__","Surat","Sydney","Taipei","Tehran","Tianjin","Tokyo","Toronto"],"@nextLink":"https://js-metrics-advisor.cognitiveservices.azure.com:443/metricsadvisor/v1.0/metrics/metric_id/dimension/query?$top=20&$skip=80"}'
+    headers:
+      apim-request-id:
+      - 6583d5cb-b26b-42ed-955a-f83df852c4d7
+      content-length:
+      - '393'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Fri, 22 Jan 2021 01:03:28 GMT
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains; preload
+      x-content-type-options:
+      - nosniff
+      x-envoy-upstream-service-time:
+      - '100'
+      x-request-id:
+      - 6583d5cb-b26b-42ed-955a-f83df852c4d7
+    status:
+      code: 200
+      message: OK
+- request:
+    body: '{"dimensionName": "dimension_name"}'
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '25'
+      Content-Type:
+      - application/json
+      User-Agent:
+      - azsdk-python-ai-metricsadvisor/1.0.0b3 Python/3.8.6 (Windows-10-10.0.19041-SP0)
+    method: POST
+    uri: https://js-metrics-advisor.cognitiveservices.azure.com/metricsadvisor/v1.0/metrics/metric_id/dimension/query?$top=20&$skip=80
+  response:
+    body:
+      string: '{"value":["Washington","Wuhan","Xi''an","Yokohama"],"@nextLink":null}'
+    headers:
+      apim-request-id:
+      - 5d7721b1-cdcd-42f1-9388-5af52007d1c2
+      content-length:
+      - '68'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Fri, 22 Jan 2021 01:03:28 GMT
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains; preload
+      x-content-type-options:
+      - nosniff
+      x-envoy-upstream-service-time:
+      - '119'
+      x-request-id:
+      - 5d7721b1-cdcd-42f1-9388-5af52007d1c2
+    status:
+      code: 200
+      message: OK
+version: 1

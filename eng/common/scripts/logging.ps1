@@ -1,7 +1,4 @@
-if (-not $isDevOpsRun)
-{
-  $isDevOpsRun = ($null -ne $env:SYSTEM_TEAMPROJECTID)
-}
+$isDevOpsRun = ($null -ne $env:SYSTEM_TEAMPROJECTID)
 
 function LogWarning
 {
@@ -31,7 +28,7 @@ function LogDebug
 {
     if ($isDevOpsRun) 
     {
-        Write-Host "##vso[task.LogIssue type=debug;]$args"
+        Write-Host "[debug]$args"
     }
     else 
     {

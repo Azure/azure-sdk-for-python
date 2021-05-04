@@ -1,0 +1,32 @@
+interactions:
+- request:
+    body: '{"documents": [{"id": "1", "text": "hello world", "language": "en"}, {"id":
+      "1", "text": "I did not like the hotel we stayed at.", "language": "en"}]}'
+    headers:
+      Accept:
+      - application/json, text/json
+      Content-Length:
+      - '150'
+      Content-Type:
+      - application/json
+      User-Agent:
+      - azsdk-python-ai-textanalytics/5.1.0b6 Python/3.9.1 (macOS-10.13.6-x86_64-i386-64bit)
+    method: POST
+    uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.1-preview.4/entities/health/jobs?stringIndexType=UnicodeCodePoint
+  response:
+    body:
+      string: '{"error":{"code":"InvalidRequest","message":"Invalid document in request.","innererror":{"code":"InvalidDocument","message":"Request
+        contains duplicated Ids. Make sure each document has a unique Id."}}}'
+    headers:
+      apim-request-id: d53a87f9-428a-49f0-9e39-212673ba8424
+      content-type: application/json; charset=utf-8
+      date: Mon, 01 Mar 2021 19:55:07 GMT
+      strict-transport-security: max-age=31536000; includeSubDomains; preload
+      transfer-encoding: chunked
+      x-content-type-options: nosniff
+      x-envoy-upstream-service-time: '5'
+    status:
+      code: 400
+      message: Bad Request
+    url: https://westus2.api.cognitive.microsoft.com//text/analytics/v3.1-preview.4/entities/health/jobs?stringIndexType=UnicodeCodePoint
+version: 1

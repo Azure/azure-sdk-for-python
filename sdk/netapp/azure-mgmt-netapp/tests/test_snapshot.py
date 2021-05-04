@@ -1,5 +1,6 @@
 import time
 import json
+import unittest
 from azure.mgmt.resource import ResourceManagementClient
 from devtools_testutils import AzureMgmtTestCase
 from azure.mgmt.netapp.models import Volume
@@ -44,6 +45,7 @@ def delete_snapshot(client, rg, account_name, pool_name, volume_name, snapshot_n
             break
 
 
+@unittest.skip("skip test")
 class NetAppAccountTestCase(AzureMgmtTestCase):
     def setUp(self):
         super(NetAppAccountTestCase, self).setUp()

@@ -47,7 +47,12 @@ class AuthenticationSampleAsync(object):
         text_analytics_client = TextAnalyticsClient(endpoint, AzureKeyCredential(key))
         # [END create_ta_client_with_key_async]
 
-        doc = ["I need to take my cat to the veterinarian."]
+        doc = [
+            """
+            I need to take my cat to the veterinarian. She's been coughing for a while and I thought it was just a hairball,
+            but now I'm now worried it might be something else. She's still very healthy so I'm not too worried though.
+            """
+        ]
         async with text_analytics_client:
             result = await text_analytics_client.detect_language(doc)
 
@@ -69,7 +74,12 @@ class AuthenticationSampleAsync(object):
         text_analytics_client = TextAnalyticsClient(endpoint, credential=credential)
         # [END create_ta_client_with_aad_async]
 
-        doc = ["I need to take my cat to the veterinarian."]
+        doc = [
+            """
+            I need to take my cat to the veterinarian. She's been coughing for a while and I thought it was just a hairball,
+            but now I'm now worried it might be something else. She's still very healthy so I'm not too worried though.
+            """
+        ]
         async with text_analytics_client:
             result = await text_analytics_client.detect_language(doc)
 

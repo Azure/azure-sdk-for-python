@@ -31,6 +31,7 @@ class MgmtDataBoxEdgeTest(AzureMgmtTestCase):
             azure.mgmt.databoxedge.DataBoxEdgeManagementClient
         )
     
+    @unittest.skip("skip test")
     @ResourceGroupPreparer(location=AZURE_LOCATION)
     def test_databoxedge(self, resource_group):
 

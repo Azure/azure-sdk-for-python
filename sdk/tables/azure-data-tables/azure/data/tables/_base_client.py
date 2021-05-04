@@ -4,32 +4,21 @@
 # license information.
 # --------------------------------------------------------------------------
 
-from typing import (  # pylint: disable=unused-import
-    Union,
-    Optional,
-    Any,
-    Iterable,
-    Dict,
-    List,
-    Type,
-    Tuple,
-    TYPE_CHECKING,
-)
-import logging
-
-
-
+from typing import Dict, Optional, Any, List, Mapping
+from uuid import uuid4
 try:
-    from urllib.parse import parse_qs, quote
+    from urllib.parse import parse_qs, quote, urlparse
 except ImportError:
-    from urlparse import parse_qs  # type: ignore
+    from urlparse import parse_qs, urlparse  # type: ignore
     from urllib2 import quote  # type: ignore
 
 import six
-from azure.core.configuration import Configuration
-from azure.core.exceptions import HttpResponseError
-from azure.core.pipeline import Pipeline
-from azure.core.pipeline.transport import RequestsTransport, HttpTransport
+from azure.core.credentials import AzureSasCredential
+from azure.core.utils import parse_connection_string
+from azure.core.pipeline.transport import (
+    HttpTransport,
+    HttpRequest,
+)
 from azure.core.pipeline.policies import (
     RedirectPolicy,
     ContentDecodePolicy,
@@ -37,90 +26,117 @@ from azure.core.pipeline.policies import (
     ProxyPolicy,
     DistributedTracingPolicy,
     HttpLoggingPolicy,
-    UserAgentPolicy
+    UserAgentPolicy,
+    AzureSasCredentialPolicy,
+    NetworkTraceLoggingPolicy,
+    CustomHookPolicy,
+    RequestIdPolicy
 )
 
+from ._generated import AzureTable
+from ._common_conversion import _is_cosmos_endpoint
 from ._shared_access_signature import QueryStringConstants
-from ._constants import STORAGE_OAUTH_SCOPE, SERVICE_HOST_BASE, CONNECTION_TIMEOUT, READ_TIMEOUT
+from ._constants import (
+    STORAGE_OAUTH_SCOPE,
+    SERVICE_HOST_BASE,
+)
+from ._error import RequestTooLargeError, TableTransactionError, _decode_error
 from ._models import LocationMode
 from ._authentication import SharedKeyCredentialPolicy
 from ._policies import (
+    CosmosPatchTransformPolicy,
     StorageHeadersPolicy,
-    StorageContentValidation,
-    StorageRequestHook,
-    StorageResponseHook,
-    StorageLoggingPolicy,
     StorageHosts,
     TablesRetryPolicy,
 )
-from ._error import _process_table_error
-from ._models import PartialBatchErrorException
 from ._sdk_moniker import SDK_MONIKER
 
-
-_LOGGER = logging.getLogger(__name__)
-_SERVICE_PARAMS = {
-    "blob": {"primary": "BlobEndpoint", "secondary": "BlobSecondaryEndpoint"},
-    "queue": {"primary": "QueueEndpoint", "secondary": "QueueSecondaryEndpoint"},
-    "file": {"primary": "FileEndpoint", "secondary": "FileSecondaryEndpoint"},
-    "dfs": {"primary": "BlobEndpoint", "secondary": "BlobEndpoint"},
-    "table": {"primary": "TableEndpoint", "secondary": "TableSecondaryEndpoint"},
-}
+_SUPPORTED_API_VERSIONS = ["2019-02-02", "2019-07-07"]
 
 
-class StorageAccountHostsMixin(object):  # pylint: disable=too-many-instance-attributes
+def get_api_version(kwargs, default):
+    # type: (Dict[str, Any], str) -> str
+    api_version = kwargs.pop("api_version", None)
+    if api_version and api_version not in _SUPPORTED_API_VERSIONS:
+        versions = "\n".join(_SUPPORTED_API_VERSIONS)
+        raise ValueError(
+            "Unsupported API version '{}'. Please select from:\n{}".format(
+                api_version, versions
+            )
+        )
+    return api_version or default
+
+
+class AccountHostsMixin(object):  # pylint: disable=too-many-instance-attributes
     def __init__(
         self,
-        parsed_url,  # type: Any
-        service,  # type: str
+        account_url,  # type: Any
         credential=None,  # type: Optional[Any]
         **kwargs  # type: Any
     ):
         # type: (...) -> None
-        self._location_mode = kwargs.get("_location_mode", LocationMode.PRIMARY)
+        try:
+            if not account_url.lower().startswith("http"):
+                account_url = "https://" + account_url
+        except AttributeError:
+            raise ValueError("Account URL must be a string.")
+        self._cosmos_endpoint = _is_cosmos_endpoint(account_url)
+        parsed_url = urlparse(account_url.rstrip("/"))
+        if not parsed_url.netloc:
+            raise ValueError("Invalid URL: {}".format(account_url))
+
+        _, sas_token = parse_query(parsed_url.query)
+        if not sas_token and not credential:
+            raise ValueError(
+                "You need to provide either a SAS token or an account shared key to authenticate."
+            )
+        self._query_str, credential = format_query_string(sas_token, credential)
+        self._location_mode = kwargs.get("location_mode", LocationMode.PRIMARY)
         self._hosts = kwargs.get("_hosts")
         self.scheme = parsed_url.scheme
+        self._cosmos_endpoint = _is_cosmos_endpoint(parsed_url.hostname)
+        if ".core." in parsed_url.netloc or ".cosmos." in parsed_url.netloc:
+            account = parsed_url.netloc.split(".table.core.")
+            if "cosmos" in parsed_url.netloc:
+                account = parsed_url.netloc.split(".table.cosmos.")
+            self.account_name = account[0] if len(account) > 1 else None
+        else:
+            path_account_name = parsed_url.path.split("/")
+            if len(path_account_name) > 1:
+                self.account_name = path_account_name[1]
+                account = [self.account_name, parsed_url.netloc]
+            else:
+                # If format doesn't fit Azurite, default to standard parsing
+                account = parsed_url.netloc.split(".table.core.")
+                self.account_name = account[0] if len(account) > 1 else None
 
-        if service not in ["blob", "queue", "file-share", "dfs", "table"]:
-            raise ValueError("Invalid service: {}".format(service))
-        service_name = service.split('-')[0]
-        account = parsed_url.netloc.split(".{}.core.".format(service_name))
-        self.account_name = account[0] if len(account) > 1 else None
         secondary_hostname = None
-
         self.credential = format_shared_key_credential(account, credential)
         if self.scheme.lower() != "https" and hasattr(self.credential, "get_token"):
             raise ValueError("Token credential is only supported with HTTPS.")
         if hasattr(self.credential, "account_name"):
             self.account_name = self.credential.account_name
-            secondary_hostname = "{}-secondary.{}.{}".format(
-                self.credential.account_name, service_name, SERVICE_HOST_BASE)
+            secondary_hostname = "{}-secondary.table.{}".format(
+                self.credential.account_name, SERVICE_HOST_BASE
+            )
 
         if not self._hosts:
             if len(account) > 1:
-                secondary_hostname = parsed_url.netloc.replace(account[0], account[0] + "-secondary")
+                secondary_hostname = parsed_url.netloc.replace(
+                    account[0], account[0] + "-secondary"
+                )
             if kwargs.get("secondary_hostname"):
                 secondary_hostname = kwargs["secondary_hostname"]
-            primary_hostname = (parsed_url.netloc + parsed_url.path).rstrip('/')
-            self._hosts = {LocationMode.PRIMARY: primary_hostname, LocationMode.SECONDARY: secondary_hostname}
-
-        self.require_encryption = kwargs.get("require_encryption", False)
-        self.key_encryption_key = kwargs.get("key_encryption_key")
-        self.key_resolver_function = kwargs.get("key_resolver_function")
-        self._config, self._pipeline = self._create_pipeline(self.credential, storage_sdk=service, **kwargs)
-
-    def __enter__(self):
-        self._client.__enter__()
-        return self
-
-    def __exit__(self, *args):
-        self._client.__exit__(*args)
-
-    def close(self):
-        """ This method is to close the sockets opened by the client.
-        It need not be used when using with a context manager.
-        """
-        self._client.close()
+            primary_hostname = (parsed_url.netloc + parsed_url.path).rstrip("/")
+            self._hosts = {
+                LocationMode.PRIMARY: primary_hostname,
+                LocationMode.SECONDARY: secondary_hostname,
+            }
+        self._credential_policy = None
+        self._configure_credential(self.credential)
+        self._policies = self._configure_policies(hosts=self._hosts, **kwargs)
+        if self._cosmos_endpoint:
+            self._policies.insert(0, CosmosPatchTransformPolicy())
 
     @property
     def url(self):
@@ -183,14 +199,6 @@ class StorageAccountHostsMixin(object):  # pylint: disable=too-many-instance-att
 
         return self._location_mode
 
-    @location_mode.setter
-    def location_mode(self, value):
-        if self._hosts.get(value):
-            self._location_mode = value
-            self._client._config.url = self.url  # pylint: disable=protected-access
-        else:
-            raise ValueError("No host URL for location mode: {}".format(value))
-
     @property
     def api_version(self):
         """The version of the Storage API used for requests.
@@ -199,106 +207,118 @@ class StorageAccountHostsMixin(object):  # pylint: disable=too-many-instance-att
         """
         return self._client._config.version  # pylint: disable=protected-access
 
-    def _format_query_string(self, sas_token, credential, snapshot=None, share_snapshot=None):
-        query_str = "?"
-        if snapshot:
-            query_str += "snapshot={}&".format(self.snapshot)
-        if share_snapshot:
-            query_str += "sharesnapshot={}&".format(self.snapshot)
-        if sas_token and not credential:
-            query_str += sas_token
-        elif is_credential_sastoken(credential):
-            query_str += credential.lstrip("?")
-            credential = None
-        return query_str.rstrip("?&"), credential
 
-    def _create_pipeline(self, credential, **kwargs):
-        # type: (Any, **Any) -> Tuple[Configuration, Pipeline]
-        self._credential_policy = None
-        if hasattr(credential, "get_token"):
-            self._credential_policy = BearerTokenCredentialPolicy(credential, STORAGE_OAUTH_SCOPE)
-        elif isinstance(credential, SharedKeyCredentialPolicy):
-            self._credential_policy = credential
-        elif credential is not None:
-            raise TypeError("Unsupported credential: {}".format(credential))
+class TablesBaseClient(AccountHostsMixin):
 
-        config = kwargs.get("_configuration") or create_configuration(**kwargs)
-        if kwargs.get("_pipeline"):
-            return config, kwargs["_pipeline"]
-        config.transport = kwargs.get("transport")  # type: ignore
-        kwargs.setdefault("connection_timeout", CONNECTION_TIMEOUT)
-        kwargs.setdefault("read_timeout", READ_TIMEOUT)
-        if not config.transport:
-            config.transport = RequestsTransport(**kwargs)
-        policies = [
-            config.headers_policy,
-            config.proxy_policy,
-            config.user_agent_policy,
-            StorageContentValidation(),
-            StorageRequestHook(**kwargs),
+    def __init__(
+        self,
+        account_url,  # type: str
+        credential=None,  # type: str
+        **kwargs  # type: Any
+    ):
+        # type: (...) -> None
+        super(TablesBaseClient, self).__init__(account_url, credential=credential, **kwargs)
+        self._client = AzureTable(
+            self.url,
+            policies=kwargs.pop('policies', self._policies),
+            **kwargs
+        )
+        self._client._config.version = get_api_version(kwargs, self._client._config.version)  # pylint: disable=protected-access
+
+    def __enter__(self):
+        self._client.__enter__()
+        return self
+
+    def __exit__(self, *args):
+        self._client.__exit__(*args)
+
+    def _configure_policies(self, **kwargs):
+        return [
+            RequestIdPolicy(**kwargs),
+            StorageHeadersPolicy(**kwargs),
+            UserAgentPolicy(sdk_moniker=SDK_MONIKER, **kwargs),
+            ProxyPolicy(**kwargs),
             self._credential_policy,
             ContentDecodePolicy(response_encoding="utf-8"),
             RedirectPolicy(**kwargs),
-            StorageHosts(hosts=self._hosts, **kwargs),
-            config.retry_policy,
-            config.logging_policy,
-            StorageResponseHook(**kwargs),
+            StorageHosts(**kwargs),
+            TablesRetryPolicy(**kwargs),
+            CustomHookPolicy(**kwargs),
+            NetworkTraceLoggingPolicy(**kwargs),
             DistributedTracingPolicy(**kwargs),
-            HttpLoggingPolicy(**kwargs)
+            HttpLoggingPolicy(**kwargs),
         ]
-        return config, Pipeline(config.transport, policies=policies)
 
-    def _batch_send(
-        self, *reqs,  # type: HttpRequest
-        **kwargs
-    ):
-        """Given a series of request, do a Storage batch call.
-        """
+    def _configure_credential(self, credential):
+        # type: (Any) -> None
+        if hasattr(credential, "get_token"):
+            self._credential_policy = BearerTokenCredentialPolicy(
+                credential, STORAGE_OAUTH_SCOPE
+            )
+        elif isinstance(credential, SharedKeyCredentialPolicy):
+            self._credential_policy = credential
+        elif isinstance(credential, AzureSasCredential):
+            self._credential_policy = AzureSasCredentialPolicy(credential)
+        elif credential is not None:
+            raise TypeError("Unsupported credential: {}".format(credential))
+
+    def _batch_send(self, *reqs, **kwargs):
+        # type: (List[HttpRequest], Any) -> List[Mapping[str, Any]]
+        """Given a series of request, do a Storage batch call."""
         # Pop it here, so requests doesn't feel bad about additional kwarg
-        raise_on_any_failure = kwargs.pop("raise_on_any_failure", True)
-        request = self._client._client.post(  # pylint: disable=protected-access
-            url='{}://{}/?comp=batch{}{}'.format(
-                self.scheme,
-                self._primary_hostname,
-                kwargs.pop('sas', None),
-                kwargs.pop('timeout', None)
-            ),
-            headers={
-                'x-ms-version': self.api_version
-            }
-        )
-
         policies = [StorageHeadersPolicy()]
-        if self._credential_policy:
-            policies.append(self._credential_policy)
 
+        changeset = HttpRequest("POST", None)
+        changeset.set_multipart_mixed(
+            *reqs, policies=policies, boundary="changeset_{}".format(uuid4())
+        )
+        request = self._client._client.post(  # pylint: disable=protected-access
+            url="https://{}/$batch".format(self._primary_hostname),
+            headers={
+                "x-ms-version": self.api_version,
+                "DataServiceVersion": "3.0",
+                "MaxDataServiceVersion": "3.0;NetFx",
+                'Content-Type': 'application/json',
+                'Accept': 'application/json'
+            },
+        )
         request.set_multipart_mixed(
-            *reqs,
+            changeset,
             policies=policies,
-            enforce_https=False
+            enforce_https=False,
+            boundary="batch_{}".format(uuid4()),
         )
-
-        pipeline_response = self._pipeline.run(
-            request, **kwargs
-        )
+        pipeline_response = self._client._client._pipeline.run(request, **kwargs)  # pylint: disable=protected-access
         response = pipeline_response.http_response
+        if response.status_code == 413:
+            raise _decode_error(
+                response,
+                error_message="The transaction request was too large",
+                error_type=RequestTooLargeError)
+        if response.status_code != 202:
+            raise _decode_error(response)
 
-        try:
-            if response.status_code not in [202]:
-                raise HttpResponseError(response=response)
-            parts = response.parts()
-            if raise_on_any_failure:
-                parts = list(response.parts())
-                if any(p for p in parts if not 200 <= p.status_code < 300):
-                    error = PartialBatchErrorException(
-                        message="There is a partial failure in the batch operation.",
-                        response=response, parts=parts
-                    )
-                    raise error
-                return iter(parts)
-            return parts
-        except HttpResponseError as error:
-            _process_table_error(error)
+        parts = list(response.parts())
+        error_parts = [p for p in parts if not 200 <= p.status_code < 300]
+        if any(error_parts):
+            if error_parts[0].status_code == 413:
+                raise _decode_error(
+                    response,
+                    error_message="The transaction request was too large",
+                    error_type=RequestTooLargeError)
+            raise _decode_error(
+                response=error_parts[0],
+                error_type=TableTransactionError
+            )
+        return [extract_batch_part_metadata(p) for p in parts]
+
+    def close(self):
+        # type: () -> None
+        """This method is to close the sockets opened by the client.
+        It need not be used when using with a context manager.
+        """
+        self._client.close()
+
 
 class TransportWrapper(HttpTransport):
     """Wrapper class that ensures that an inner client created
@@ -327,7 +347,9 @@ class TransportWrapper(HttpTransport):
 def format_shared_key_credential(account, credential):
     if isinstance(credential, six.string_types):
         if len(account) < 2:
-            raise ValueError("Unable to determine account name for shared key credential.")
+            raise ValueError(
+                "Unable to determine account name for shared key credential."
+            )
         credential = {"account_name": account[0], "account_key": credential}
     if isinstance(credential, dict):
         if "account_name" not in credential:
@@ -338,89 +360,79 @@ def format_shared_key_credential(account, credential):
     return credential
 
 
-def parse_connection_str(conn_str, credential, service, keyword_args):
-    conn_str = conn_str.rstrip(";")
-    conn_settings = [s.split("=", 1) for s in conn_str.split(";")]
-    if any(len(tup) != 2 for tup in conn_settings):
-        raise ValueError("Connection string is either blank or malformed.")
-    conn_settings = dict(conn_settings)
-    endpoints = _SERVICE_PARAMS[service]
+def parse_connection_str(conn_str, credential, keyword_args):
+    conn_settings = parse_connection_string(conn_str)
     primary = None
     secondary = None
     if not credential:
         try:
-            credential = {"account_name": conn_settings["AccountName"], "account_key": conn_settings["AccountKey"]}
+            credential = {
+                "account_name": conn_settings["accountname"],
+                "account_key": conn_settings["accountkey"],
+            }
         except KeyError:
-            credential = conn_settings.get("SharedAccessSignature")
-    if endpoints["primary"] in conn_settings:
-        primary = conn_settings[endpoints["primary"]]
-        if endpoints["secondary"] in conn_settings:
-            secondary = conn_settings[endpoints["secondary"]]
-    else:
-        if endpoints["secondary"] in conn_settings:
+            credential = conn_settings.get("sharedaccesssignature")
+
+    primary = conn_settings.get("tableendpoint")
+    secondary = conn_settings.get("tablesecondaryendpoint")
+    if not primary:
+        if secondary:
             raise ValueError("Connection string specifies only secondary endpoint.")
         try:
-            primary = "{}://{}.{}.{}".format(
-                conn_settings["DefaultEndpointsProtocol"],
-                conn_settings["AccountName"],
-                service,
-                conn_settings["EndpointSuffix"],
+            primary = "{}://{}.table.{}".format(
+                conn_settings["defaultendpointsprotocol"],
+                conn_settings["accountname"],
+                conn_settings["endpointsuffix"],
             )
-            secondary = "{}-secondary.{}.{}".format(
-                conn_settings["AccountName"], service, conn_settings["EndpointSuffix"]
+            secondary = "{}-secondary.table.{}".format(
+                conn_settings["accountname"], conn_settings["endpointsuffix"]
             )
         except KeyError:
             pass
 
     if not primary:
         try:
-            primary = "https://{}.{}.{}".format(
-                conn_settings["AccountName"], service, conn_settings.get("EndpointSuffix", SERVICE_HOST_BASE)
+            primary = "https://{}.table.{}".format(
+                conn_settings["accountname"],
+                conn_settings.get("endpointsuffix", SERVICE_HOST_BASE),
             )
         except KeyError:
             raise ValueError("Connection string missing required connection details.")
 
-    if 'secondary_hostname' not in keyword_args:
-        keyword_args['secondary_hostname'] = secondary
+    if "secondary_hostname" not in keyword_args:
+        keyword_args["secondary_hostname"] = secondary
 
     return primary, credential
 
 
-def create_configuration(**kwargs):
-    # type: (**Any) -> Configuration
-    config = Configuration(**kwargs)
-    config.headers_policy = StorageHeadersPolicy(**kwargs)
-    config.user_agent_policy = UserAgentPolicy(sdk_moniker=SDK_MONIKER, **kwargs)
-        # sdk_moniker="storage-{}/{}".format(kwargs.pop('storage_sdk'), VERSION), **kwargs)
-    config.retry_policy = kwargs.get("retry_policy") or TablesRetryPolicy(**kwargs)
-    config.logging_policy = StorageLoggingPolicy(**kwargs)
-    config.proxy_policy = ProxyPolicy(**kwargs)
+def extract_batch_part_metadata(response_part):
+    metadata = {}
+    if 'Etag' in response_part.headers:
+        metadata['etag'] = response_part.headers['Etag']
+    return metadata
 
-    # Storage settings
-    config.max_single_put_size = kwargs.get("max_single_put_size", 64 * 1024 * 1024)
-    config.copy_polling_interval = 15
 
-    # Block blob uploads
-    config.max_block_size = kwargs.get("max_block_size", 4 * 1024 * 1024)
-    config.min_large_block_upload_threshold = kwargs.get("min_large_block_upload_threshold", 4 * 1024 * 1024 + 1)
-    config.use_byte_buffer = kwargs.get("use_byte_buffer", False)
-
-    # Page blob uploads
-    config.max_page_size = kwargs.get("max_page_size", 4 * 1024 * 1024)
-
-    # Blob downloads
-    config.max_single_get_size = kwargs.get("max_single_get_size", 32 * 1024 * 1024)
-    config.max_chunk_get_size = kwargs.get("max_chunk_get_size", 4 * 1024 * 1024)
-
-    # File uploads
-    config.max_range_size = kwargs.get("max_range_size", 4 * 1024 * 1024)
-    return config
+def format_query_string(sas_token, credential):
+    query_str = "?"
+    if sas_token and isinstance(credential, AzureSasCredential):
+        raise ValueError(
+            "You cannot use AzureSasCredential when the resource URI also contains a Shared Access Signature.")
+    if sas_token and not credential:
+        query_str += sas_token
+    elif is_credential_sastoken(credential):
+        query_str += credential.lstrip("?")
+        credential = None
+    return query_str.rstrip("?&"), credential
 
 
 def parse_query(query_str):
     sas_values = QueryStringConstants.to_list()
     parsed_query = {k: v[0] for k, v in parse_qs(query_str).items()}
-    sas_params = ["{}={}".format(k, quote(v, safe='')) for k, v in parsed_query.items() if k in sas_values]
+    sas_params = [
+        "{}={}".format(k, quote(v, safe=""))
+        for k, v in parsed_query.items()
+        if k in sas_values
+    ]
     sas_token = None
     if sas_params:
         sas_token = "&".join(sas_params)

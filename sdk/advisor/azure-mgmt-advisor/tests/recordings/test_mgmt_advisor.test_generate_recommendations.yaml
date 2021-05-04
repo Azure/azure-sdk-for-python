@@ -3,7 +3,7 @@ interactions:
     body: null
     headers:
       Accept:
-      - application/json
+      - '*/*'
       Accept-Encoding:
       - gzip, deflate
       Connection:
@@ -11,10 +11,7 @@ interactions:
       Content-Length:
       - '0'
       User-Agent:
-      - python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.10
-        msrest_azure/0.6.2 azure-mgmt-advisor/4.0.0 Azure-SDK-For-Python
-      accept-language:
-      - en-US
+      - azsdk-python-mgmt-advisor/9.0.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: POST
     uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Advisor/generateRecommendations?api-version=2020-01-01
   response:
@@ -26,11 +23,11 @@ interactions:
       content-length:
       - '0'
       date:
-      - Mon, 23 Mar 2020 18:34:45 GMT
+      - Tue, 22 Dec 2020 02:49:41 GMT
       expires:
       - '-1'
       location:
-      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Advisor/generateRecommendations/336e14c3-c6ce-450b-aa71-bd5b4585eb33?api-version=2020-01-01
+      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Advisor/generateRecommendations/6364424e-6d7a-438c-9825-7243edf47aa4?api-version=2020-01-01
       pragma:
       - no-cache
       server:
@@ -40,7 +37,7 @@ interactions:
       x-content-type-options:
       - nosniff
       x-ms-ratelimit-remaining-subscription-writes:
-      - '1197'
+      - '1199'
     status:
       code: 202
       message: Accepted
@@ -48,16 +45,13 @@ interactions:
     body: null
     headers:
       Accept:
-      - application/json
+      - '*/*'
       Accept-Encoding:
       - gzip, deflate
       Connection:
       - keep-alive
       User-Agent:
-      - python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.10
-        msrest_azure/0.6.2 azure-mgmt-advisor/4.0.0 Azure-SDK-For-Python
-      accept-language:
-      - en-US
+      - azsdk-python-mgmt-advisor/9.0.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: GET
     uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Advisor/generateRecommendations/00000000-0000-0000-0000-000000000000?api-version=2020-01-01
   response:
@@ -67,7 +61,7 @@ interactions:
       cache-control:
       - no-cache
       date:
-      - Mon, 23 Mar 2020 18:34:45 GMT
+      - Tue, 22 Dec 2020 02:49:42 GMT
       expires:
       - '-1'
       pragma:
@@ -79,7 +73,7 @@ interactions:
       x-content-type-options:
       - nosniff
       x-ms-ratelimit-remaining-subscription-resource-requests:
-      - '357'
+      - '359'
     status:
       code: 204
       message: No Content

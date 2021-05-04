@@ -22,7 +22,7 @@ class MgmtMonitorClientTest(AzureMgmtAsyncTestCase):
     def setUp(self):
         super(MgmtMonitorClientTest, self).setUp()
         self.mgmt_client = self.create_mgmt_aio_client(
-            azure.mgmt.monitor.aio.MonitorClient
+            azure.mgmt.monitor.aio.MonitorManagementClient
         )
 
         if self.is_live:

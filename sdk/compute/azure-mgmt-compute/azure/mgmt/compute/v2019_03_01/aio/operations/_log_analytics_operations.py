@@ -15,7 +15,7 @@ from azure.core.polling import AsyncLROPoller, AsyncNoPolling, AsyncPollingMetho
 from azure.mgmt.core.exceptions import ARMErrorFormat
 from azure.mgmt.core.polling.async_arm_polling import AsyncARMPolling
 
-from ... import models
+from ... import models as _models
 
 T = TypeVar('T')
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]]
@@ -34,7 +34,7 @@ class LogAnalyticsOperations:
     :param deserializer: An object model deserializer.
     """
 
-    models = models
+    models = _models
 
     def __init__(self, client, config, serializer, deserializer) -> None:
         self._client = client
@@ -45,10 +45,10 @@ class LogAnalyticsOperations:
     async def _export_request_rate_by_interval_initial(
         self,
         location: str,
-        parameters: "models.RequestRateByIntervalInput",
+        parameters: "_models.RequestRateByIntervalInput",
         **kwargs
-    ) -> Optional["models.LogAnalyticsOperationResult"]:
-        cls = kwargs.pop('cls', None)  # type: ClsType[Optional["models.LogAnalyticsOperationResult"]]
+    ) -> Optional["_models.LogAnalyticsOperationResult"]:
+        cls = kwargs.pop('cls', None)  # type: ClsType[Optional["_models.LogAnalyticsOperationResult"]]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -98,9 +98,9 @@ class LogAnalyticsOperations:
     async def begin_export_request_rate_by_interval(
         self,
         location: str,
-        parameters: "models.RequestRateByIntervalInput",
+        parameters: "_models.RequestRateByIntervalInput",
         **kwargs
-    ) -> AsyncLROPoller["models.LogAnalyticsOperationResult"]:
+    ) -> AsyncLROPoller["_models.LogAnalyticsOperationResult"]:
         """Export logs that show Api requests made by this subscription in the given time window to show
         throttling activities.
 
@@ -110,8 +110,8 @@ class LogAnalyticsOperations:
         :type parameters: ~azure.mgmt.compute.v2019_03_01.models.RequestRateByIntervalInput
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: True for ARMPolling, False for no polling, or a
-         polling object for personal polling strategy
+        :keyword polling: Pass in True if you'd like the AsyncARMPolling polling method,
+         False for no polling, or your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either LogAnalyticsOperationResult or the result of cls(response)
@@ -119,7 +119,7 @@ class LogAnalyticsOperations:
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         polling = kwargs.pop('polling', True)  # type: Union[bool, AsyncPollingMethod]
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.LogAnalyticsOperationResult"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.LogAnalyticsOperationResult"]
         lro_delay = kwargs.pop(
             'polling_interval',
             self._config.polling_interval
@@ -143,7 +143,12 @@ class LogAnalyticsOperations:
                 return cls(pipeline_response, deserialized, {})
             return deserialized
 
-        if polling is True: polling_method = AsyncARMPolling(lro_delay, lro_options={'final-state-via': 'azure-async-operation'},  **kwargs)
+        path_format_arguments = {
+            'location': self._serialize.url("location", location, 'str', pattern=r'^[-\w\._]+$'),
+            'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
+        }
+
+        if polling is True: polling_method = AsyncARMPolling(lro_delay, lro_options={'final-state-via': 'azure-async-operation'}, path_format_arguments=path_format_arguments,  **kwargs)
         elif polling is False: polling_method = AsyncNoPolling()
         else: polling_method = polling
         if cont_token:
@@ -160,10 +165,10 @@ class LogAnalyticsOperations:
     async def _export_throttled_requests_initial(
         self,
         location: str,
-        parameters: "models.LogAnalyticsInputBase",
+        parameters: "_models.ThrottledRequestsInput",
         **kwargs
-    ) -> Optional["models.LogAnalyticsOperationResult"]:
-        cls = kwargs.pop('cls', None)  # type: ClsType[Optional["models.LogAnalyticsOperationResult"]]
+    ) -> Optional["_models.LogAnalyticsOperationResult"]:
+        cls = kwargs.pop('cls', None)  # type: ClsType[Optional["_models.LogAnalyticsOperationResult"]]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -190,7 +195,7 @@ class LogAnalyticsOperations:
         header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
 
         body_content_kwargs = {}  # type: Dict[str, Any]
-        body_content = self._serialize.body(parameters, 'LogAnalyticsInputBase')
+        body_content = self._serialize.body(parameters, 'ThrottledRequestsInput')
         body_content_kwargs['content'] = body_content
         request = self._client.post(url, query_parameters, header_parameters, **body_content_kwargs)
         pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
@@ -213,20 +218,20 @@ class LogAnalyticsOperations:
     async def begin_export_throttled_requests(
         self,
         location: str,
-        parameters: "models.LogAnalyticsInputBase",
+        parameters: "_models.ThrottledRequestsInput",
         **kwargs
-    ) -> AsyncLROPoller["models.LogAnalyticsOperationResult"]:
+    ) -> AsyncLROPoller["_models.LogAnalyticsOperationResult"]:
         """Export logs that show total throttled Api requests for this subscription in the given time
         window.
 
         :param location: The location upon which virtual-machine-sizes is queried.
         :type location: str
         :param parameters: Parameters supplied to the LogAnalytics getThrottledRequests Api.
-        :type parameters: ~azure.mgmt.compute.v2019_03_01.models.LogAnalyticsInputBase
+        :type parameters: ~azure.mgmt.compute.v2019_03_01.models.ThrottledRequestsInput
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: True for ARMPolling, False for no polling, or a
-         polling object for personal polling strategy
+        :keyword polling: Pass in True if you'd like the AsyncARMPolling polling method,
+         False for no polling, or your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either LogAnalyticsOperationResult or the result of cls(response)
@@ -234,7 +239,7 @@ class LogAnalyticsOperations:
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         polling = kwargs.pop('polling', True)  # type: Union[bool, AsyncPollingMethod]
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.LogAnalyticsOperationResult"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.LogAnalyticsOperationResult"]
         lro_delay = kwargs.pop(
             'polling_interval',
             self._config.polling_interval
@@ -258,7 +263,12 @@ class LogAnalyticsOperations:
                 return cls(pipeline_response, deserialized, {})
             return deserialized
 
-        if polling is True: polling_method = AsyncARMPolling(lro_delay, lro_options={'final-state-via': 'azure-async-operation'},  **kwargs)
+        path_format_arguments = {
+            'location': self._serialize.url("location", location, 'str', pattern=r'^[-\w\._]+$'),
+            'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
+        }
+
+        if polling is True: polling_method = AsyncARMPolling(lro_delay, lro_options={'final-state-via': 'azure-async-operation'}, path_format_arguments=path_format_arguments,  **kwargs)
         elif polling is False: polling_method = AsyncNoPolling()
         else: polling_method = polling
         if cont_token:

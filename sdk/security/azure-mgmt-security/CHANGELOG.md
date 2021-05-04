@@ -1,5 +1,148 @@
 # Release History
 
+## 1.0.0 (2020-12-15)
+
+**Bugfixes**
+
+  - Fix unreasonable boolean enumeration type
+
+## 1.0.0b1 (2020-11-02)
+
+This is beta preview version.
+
+This version uses a next-generation code generator that introduces important breaking changes, but also important new features (like unified authentication and async programming).
+
+**General breaking changes**
+
+- Credential system has been completly revamped:
+
+  - `azure.common.credentials` or `msrestazure.azure_active_directory` instances are no longer supported, use the `azure-identity` classes instead: https://pypi.org/project/azure-identity/
+  - `credentials` parameter has been renamed `credential`
+
+- The `config` attribute no longer exists on a client, configuration should be passed as kwarg. Example: `MyClient(credential, subscription_id, enable_logging=True)`. For a complete set of
+  supported options, see the [parameters accept in init documentation of azure-core](https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/core/azure-core/CLIENT_LIBRARY_DEVELOPER.md#available-policies)
+- You can't import a `version` module anymore, use `__version__` instead
+- Operations that used to return a `msrest.polling.LROPoller` now returns a `azure.core.polling.LROPoller` and are prefixed with `begin_`.
+- Exceptions tree have been simplified and most exceptions are now `azure.core.exceptions.HttpResponseError` (`CloudError` has been removed).
+- Most of the operation kwarg have changed. Some of the most noticeable:
+
+  - `raw` has been removed. Equivalent feature can be found using `cls`, a callback that will give access to internal HTTP response for advanced user
+  - For a complete set of
+  supported options, see the [parameters accept in Request documentation of azure-core](https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/core/azure-core/CLIENT_LIBRARY_DEVELOPER.md#available-policies)
+
+**General new features**
+
+- Type annotations support using `typing`. SDKs are mypy ready.
+- This client has now stable and official support for async. Check the `aio` namespace of your package to find the async client.
+- This client now support natively tracing library like OpenCensus or OpenTelemetry. See this [tracing quickstart](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/core/azure-core-tracing-opentelemetry) for an overview.
+
+## 0.5.0 (2020-10-29)
+
+**Features**
+
+  - Model SecureScoreControlDetails has a new parameter weight
+  - Model SecureScoreControlDetails has a new parameter percentage
+  - Model SecureScoreItem has a new parameter weight
+  - Model SecureScoreItem has a new parameter percentage
+  - Model SecureScoreControlScore has a new parameter percentage
+  - Added operation AlertsOperations.get_resource_group_level
+  - Added operation AlertsOperations.get_subscription_level
+  - Added operation AlertsOperations.update_resource_group_level_state_to_resolve
+  - Added operation AlertsOperations.list_subscription_level_by_region
+  - Added operation AlertsOperations.list_resource_group_level_by_region
+  - Added operation AlertsOperations.update_subscription_level_state_to_resolve
+  - Added operation AlertsOperations.update_subscription_level_state_to_dismiss
+  - Added operation AlertsOperations.update_resource_group_level_state_to_dismiss
+  - Added operation AlertsOperations.update_subscription_level_state_to_activate
+  - Added operation AlertsOperations.update_resource_group_level_state_to_activate
+  - Added operation group IotRecommendationTypesOperations
+  - Added operation group ConnectorsOperations
+  - Added operation group DeviceOperations
+  - Added operation group DevicesForSubscriptionOperations
+  - Added operation group IotDefenderSettingsOperations
+  - Added operation group IotAlertsOperations
+  - Added operation group DevicesForHubOperations
+  - Added operation group IotSensorsOperations
+  - Added operation group IotRecommendationsOperations
+  - Added operation group SecuritySolutionsOperations
+  - Added operation group SecuritySolutionsReferenceDataOperations
+  - Added operation group OnPremiseIotSensorsOperations
+  - Added operation group IotAlertTypesOperations
+
+**Breaking changes**
+
+  - Model Alert has a new signature
+  - Removed operation AlertsOperations.list_subscription_level_alerts_by_region
+  - Removed operation AlertsOperations.update_resource_group_level_alert_state_to_dismiss
+  - Removed operation AlertsOperations.get_resource_group_level_alerts
+  - Removed operation AlertsOperations.update_subscription_level_alert_state_to_reactivate
+  - Removed operation AlertsOperations.get_subscription_level_alert
+  - Removed operation AlertsOperations.list_resource_group_level_alerts_by_region
+  - Removed operation AlertsOperations.update_resource_group_level_alert_state_to_reactivate
+  - Removed operation AlertsOperations.update_subscription_level_alert_state_to_dismiss
+  
+## 0.4.1 (2020-06-12)
+
+**Bugfixes**
+
+  - skip url-encoding for resource id
+
+## 0.4.0 (2020-06-05)
+
+**Features**
+
+  - Model IoTSecuritySolutionModel has a new parameter unmasked_ip_logging_status
+  - Model InformationProtectionPolicy has a new parameter version
+  - Model JitNetworkAccessRequest has a new parameter justification
+  - Model SensitivityLabel has a new parameter description
+  - Model SensitivityLabel has a new parameter rank
+  - Model InformationType has a new parameter description
+  - Model AppWhitelistingGroup has a new parameter protection_mode
+  - Model JitNetworkAccessPolicyInitiateRequest has a new parameter justification
+  - Model VmRecommendation has a new parameter enforcement_support
+  - Model IoTSecurityAggregatedAlert has a new parameter top_devices_list
+  - Added operation AdaptiveApplicationControlsOperations.delete
+  - Added operation AlertsOperations.update_resource_group_level_alert_state_to_dismiss
+  - Added operation AlertsOperations.update_subscription_level_alert_state_to_dismiss
+  - Added operation AlertsOperations.update_subscription_level_alert_state_to_reactivate
+  - Added operation AlertsOperations.update_resource_group_level_alert_state_to_reactivate
+  - Added operation IotSecuritySolutionOperations.list_by_subscription
+  - Added operation IotSecuritySolutionOperations.list_by_resource_group
+  - Added operation IotSecuritySolutionOperations.create_or_update
+  - Added operation group SecureScoreControlDefinitionsOperations
+  - Added operation group AssessmentsMetadataOperations
+  - Added operation group SecureScoreControlsOperations
+  - Added operation group AlertsSuppressionRulesOperations
+  - Added operation group IotSecuritySolutionsAnalyticsAggregatedAlertOperations
+  - Added operation group SubAssessmentsOperations
+  - Added operation group AutomationsOperations
+  - Added operation group IotSecuritySolutionsAnalyticsRecommendationOperations
+  - Added operation group SecureScoresOperations
+  - Added operation group IotSecuritySolutionAnalyticsOperations
+  - Added operation group AdaptiveNetworkHardeningsOperations
+  - Added operation group AssessmentsOperations
+  - Added operation group DeviceSecurityGroupsOperations
+
+**Breaking changes**
+
+  - Operation SettingsOperations.update has a new signature
+  - Operation AlertsOperations.list has a new signature
+  - Operation AlertsOperations.list_by_resource_group has a new signature
+  - Operation AlertsOperations.list_resource_group_level_alerts_by_region has a new signature
+  - Operation AlertsOperations.list_subscription_level_alerts_by_region has a new signature
+  - Operation JitNetworkAccessPoliciesOperations.initiate has a new signature
+  - Operation InformationProtectionPoliciesOperations.create_or_update has a new signature
+  - Removed operation AlertsOperations.update_resource_group_level_alert_state
+  - Removed operation AlertsOperations.update_subscription_level_alert_state
+  - Removed operation IotSecuritySolutionOperations.create
+  - Removed operation group IoTSecuritySolutionsResourceGroupOperations
+  - Removed operation group IoTSecuritySolutionsAnalyticsRecommendationsOperations
+  - Removed operation group IoTSecuritySolutionsAnalyticsRecommendationOperations
+  - Removed operation group IoTSecuritySolutionsOperations
+  - Removed operation group IoTSecuritySolutionsAnalyticsAggregatedAlertsOperations
+  - Removed operation group IoTSecuritySolutionsAnalyticsAggregatedAlertOperations
+  - Removed operation group IoTSecuritySolutionsAnalyticsOperations
+
 ## 0.3.0 (2019-08-01)
 
 **Features**

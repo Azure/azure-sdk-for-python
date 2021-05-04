@@ -14,7 +14,7 @@ from azure.core.pipeline import PipelineResponse
 from azure.core.pipeline.transport import AsyncHttpResponse, HttpRequest
 from azure.mgmt.core.exceptions import ARMErrorFormat
 
-from ... import models
+from ... import models as _models
 
 T = TypeVar('T')
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]]
@@ -33,7 +33,7 @@ class PolicyDefinitionsOperations:
     :param deserializer: An object model deserializer.
     """
 
-    models = models
+    models = _models
 
     def __init__(self, client, config, serializer, deserializer) -> None:
         self._client = client
@@ -44,9 +44,9 @@ class PolicyDefinitionsOperations:
     async def create_or_update(
         self,
         policy_definition_name: str,
-        parameters: "models.PolicyDefinition",
+        parameters: "_models.PolicyDefinition",
         **kwargs
-    ) -> "models.PolicyDefinition":
+    ) -> "_models.PolicyDefinition":
         """Creates or updates a policy definition.
 
         :param policy_definition_name: The name of the policy definition to create.
@@ -58,7 +58,7 @@ class PolicyDefinitionsOperations:
         :rtype: ~azure.mgmt.resource.policy.v2015_10_01_preview.models.PolicyDefinition
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.PolicyDefinition"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.PolicyDefinition"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -156,7 +156,7 @@ class PolicyDefinitionsOperations:
         self,
         policy_definition_name: str,
         **kwargs
-    ) -> "models.PolicyDefinition":
+    ) -> "_models.PolicyDefinition":
         """Gets the policy definition.
 
         :param policy_definition_name: The name of the policy definition to get.
@@ -166,7 +166,7 @@ class PolicyDefinitionsOperations:
         :rtype: ~azure.mgmt.resource.policy.v2015_10_01_preview.models.PolicyDefinition
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.PolicyDefinition"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.PolicyDefinition"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -210,7 +210,7 @@ class PolicyDefinitionsOperations:
         self,
         filter: Optional[str] = None,
         **kwargs
-    ) -> AsyncIterable["models.PolicyDefinitionListResult"]:
+    ) -> AsyncIterable["_models.PolicyDefinitionListResult"]:
         """Gets all the policy definitions for a subscription.
 
         :param filter: The filter to apply on the operation.
@@ -220,7 +220,7 @@ class PolicyDefinitionsOperations:
         :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.resource.policy.v2015_10_01_preview.models.PolicyDefinitionListResult]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.PolicyDefinitionListResult"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.PolicyDefinitionListResult"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }

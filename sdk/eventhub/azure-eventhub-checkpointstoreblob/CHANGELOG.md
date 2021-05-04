@@ -1,9 +1,27 @@
 # Release History
 
-## 1.1.2 (Unreleased)
+## 1.1.4 (2021-04-07)
 
+This version and all future versions will require Python 2.7 or Python 3.6+, Python 3.5 is no longer supported.
+
+**New features**
+- Updated `list_ownership`, `claim_ownership`, `update_checkpoint`, `list_checkpoints` on `BlobCheckpointStore` to support taking `**kwargs`.
+
+## 1.1.3 (2021-03-09)
+
+This version will be the last version to officially support Python 3.5, future versions will require Python 2.7 or Python 3.6+.
+
+**Bug fixes**
+- Updated vendor azure-storage-blob dependency to v12.7.1.
+  - Fixed storage blob authentication failure due to request date header too old (#16192).
+
+## 1.1.2 (2021-01-11)
+
+**Bug fixes**
+- Fixed a bug that `BlobCheckpointStore.list_ownership` and `BlobCheckpointStore.list_checkpoints` triggering `KeyError` due to reading empty metadata of parent node when working with Data Lake enabled Blob Storage.
 
 ## 1.1.1 (2020-09-08)
+
 **Bug fixes**
 - Fixed a bug that may gradually slow down retrieving checkpoint data from the storage blob if the storage account "File share soft delete" is enabled. #12836
 

@@ -20,7 +20,9 @@ _LOGGER = logging.getLogger(__name__)
 class GetTokenMixin(abc.ABC):
     def __init__(self, *args: "Any", **kwargs: "Any") -> None:
         self._last_request_time = 0
-        super(GetTokenMixin, self).__init__(*args, **kwargs)
+
+        # https://github.com/python/mypy/issues/5887
+        super(GetTokenMixin, self).__init__(*args, **kwargs)  # type: ignore
 
     @abc.abstractmethod
     async def _acquire_token_silently(self, *scopes: str) -> "Optional[AccessToken]":
@@ -41,7 +43,7 @@ class GetTokenMixin(abc.ABC):
     async def get_token(self, *scopes: str, **kwargs: "Any") -> "AccessToken":
         """Request an access token for `scopes`.
 
-        .. note:: This method is called by Azure SDK clients. It isn't intended for use in application code.
+        This method is called automatically by Azure SDK clients.
 
         :param str scopes: desired scopes for the access token. This method requires at least one scope.
         :rtype: :class:`azure.core.credentials.AccessToken`

@@ -44,7 +44,6 @@ class TestOpentelemetryWrapper:
 
     def test_span(self, tracer):
         with tracer.start_as_current_span("Root") as parent:
-            assert OpenTelemetrySpan.get_current_tracer().source is tracer.source
             with OpenTelemetrySpan() as wrapped_span:
                 assert wrapped_span.span_instance is trace.get_current_span()
 
@@ -149,7 +148,6 @@ class TestOpentelemetryWrapper:
             setattr(request, "headers", {})
             setattr(response, "status_code", 200)
             wrapped_class.set_http_attributes(request)
-            assert wrapped_class.span_instance.kind == OpenTelemetrySpanKind.CLIENT
             assert wrapped_class.span_instance.attributes.get("http.method") == request.method
             assert wrapped_class.span_instance.attributes.get("component") == "http"
             assert wrapped_class.span_instance.attributes.get("http.url") == request.url

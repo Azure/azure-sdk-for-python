@@ -14,7 +14,7 @@ from azure.core.pipeline import PipelineResponse
 from azure.core.pipeline.transport import HttpRequest, HttpResponse
 from azure.mgmt.core.exceptions import ARMErrorFormat
 
-from .. import models
+from .. import models as _models
 
 if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
@@ -37,7 +37,7 @@ class LoadBalancerBackendAddressPoolsOperations(object):
     :param deserializer: An object model deserializer.
     """
 
-    models = models
+    models = _models
 
     def __init__(self, client, config, serializer, deserializer):
         self._client = client
@@ -51,7 +51,7 @@ class LoadBalancerBackendAddressPoolsOperations(object):
         load_balancer_name,  # type: str
         **kwargs  # type: Any
     ):
-        # type: (...) -> Iterable["models.LoadBalancerBackendAddressPoolListResult"]
+        # type: (...) -> Iterable["_models.LoadBalancerBackendAddressPoolListResult"]
         """Gets all the load balancer backed address pools.
 
         :param resource_group_name: The name of the resource group.
@@ -63,7 +63,7 @@ class LoadBalancerBackendAddressPoolsOperations(object):
         :rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.network.v2018_07_01.models.LoadBalancerBackendAddressPoolListResult]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.LoadBalancerBackendAddressPoolListResult"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.LoadBalancerBackendAddressPoolListResult"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -127,7 +127,7 @@ class LoadBalancerBackendAddressPoolsOperations(object):
         backend_address_pool_name,  # type: str
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.BackendAddressPool"
+        # type: (...) -> "_models.BackendAddressPool"
         """Gets load balancer backend address pool.
 
         :param resource_group_name: The name of the resource group.
@@ -141,7 +141,7 @@ class LoadBalancerBackendAddressPoolsOperations(object):
         :rtype: ~azure.mgmt.network.v2018_07_01.models.BackendAddressPool
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.BackendAddressPool"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.BackendAddressPool"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }

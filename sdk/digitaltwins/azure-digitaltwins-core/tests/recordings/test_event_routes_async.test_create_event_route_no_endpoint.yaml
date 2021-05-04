@@ -1,0 +1,30 @@
+interactions:
+- request:
+    body: '{"endpointName": "endpoint-e153188c", "filter": "$eventType = ''DigitalTwinTelemetryMessages''
+      or $eventType = ''DigitalTwinLifecycleNotification''"}'
+    headers:
+      Accept:
+      - application/json
+      Content-Length:
+      - '145'
+      Content-Type:
+      - application/json
+      User-Agent:
+      - azsdk-python-digitaltwins-core/1.1.0 Python/3.7.4 (Windows-10-10.0.19041-SP0)
+    method: PUT
+    uri: https://dttestdigitaltwinsname.api.wcus.digitaltwins.azure.net/eventroutes/eventRoute-e153188c?api-version=2020-10-31
+  response:
+    body:
+      string: '{"error":{"code":"EventRouteEndpointInvalid","message":"The endpoint
+        provided does not exist or is not active. Check that your endpoint is provisioned
+        correctly. See event route documentation (http://aka.ms/ADTv2Routes)."}}'
+    headers:
+      content-length: '223'
+      content-type: application/json; charset=utf-8
+      date: Tue, 24 Nov 2020 21:09:01 GMT
+      strict-transport-security: max-age=2592000
+    status:
+      code: 400
+      message: Bad Request
+    url: https://dttestdigitaltwinsname.api.wcus.digitaltwins.azure.net/eventroutes/eventRoute-e153188c?api-version=2020-10-31
+version: 1

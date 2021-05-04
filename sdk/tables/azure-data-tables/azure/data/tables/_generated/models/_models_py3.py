@@ -522,75 +522,25 @@ class TableResponse(TableResponseProperties):
 class TableServiceError(msrest.serialization.Model):
     """Table Service error.
 
-    :param odata_error: The odata error.
-    :type odata_error: ~azure.data.tables.models.TableServiceErrorOdataError
+    :param message: The error message.
+    :type message: str
     """
 
     _attribute_map = {
-        'odata_error': {'key': 'odata\\.error', 'type': 'TableServiceErrorOdataError'},
+        'message': {'key': 'Message', 'type': 'str', 'xml': {'name': 'Message'}},
+    }
+    _xml_map = {
+        
     }
 
     def __init__(
         self,
         *,
-        odata_error: Optional["TableServiceErrorOdataError"] = None,
+        message: Optional[str] = None,
         **kwargs
     ):
         super(TableServiceError, self).__init__(**kwargs)
-        self.odata_error = odata_error
-
-
-class TableServiceErrorOdataError(msrest.serialization.Model):
-    """The odata error.
-
-    :param code: The service error code. The error codes possible are listed in:
-     https://docs.microsoft.com/rest/api/storageservices/table-service-error-codes.
-    :type code: str
-    :param message: The service error message.
-    :type message: ~azure.data.tables.models.TableServiceErrorOdataErrorMessage
-    """
-
-    _attribute_map = {
-        'code': {'key': 'code', 'type': 'str'},
-        'message': {'key': 'message', 'type': 'TableServiceErrorOdataErrorMessage'},
-    }
-
-    def __init__(
-        self,
-        *,
-        code: Optional[str] = None,
-        message: Optional["TableServiceErrorOdataErrorMessage"] = None,
-        **kwargs
-    ):
-        super(TableServiceErrorOdataError, self).__init__(**kwargs)
-        self.code = code
         self.message = message
-
-
-class TableServiceErrorOdataErrorMessage(msrest.serialization.Model):
-    """The service error message.
-
-    :param lang: Language code of the error message.
-    :type lang: str
-    :param value: The error message.
-    :type value: str
-    """
-
-    _attribute_map = {
-        'lang': {'key': 'lang', 'type': 'str'},
-        'value': {'key': 'value', 'type': 'str'},
-    }
-
-    def __init__(
-        self,
-        *,
-        lang: Optional[str] = None,
-        value: Optional[str] = None,
-        **kwargs
-    ):
-        super(TableServiceErrorOdataErrorMessage, self).__init__(**kwargs)
-        self.lang = lang
-        self.value = value
 
 
 class TableServiceProperties(msrest.serialization.Model):

@@ -1,0 +1,25 @@
+interactions:
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      User-Agent:
+      - azsdk-python-digitaltwins-core/1.1.0 Python/3.7.4 (Windows-10-10.0.19041-SP0)
+    method: DELETE
+    uri: https://dttestdigitaltwinsname.api.wcus.digitaltwins.azure.net/eventroutes/eventRoute-faf51909?api-version=2020-10-31
+  response:
+    body:
+      string: '{"error":{"code":"EventRouteNotFound","message":"There is no route
+        available that matches the provided input. Check for all valid event routes
+        by calling EventRoute_List. See Swagger example (http://aka.ms/RouteSwSmpl)."}}'
+    headers:
+      content-length: '222'
+      content-type: application/json; charset=utf-8
+      date: Tue, 24 Nov 2020 21:09:02 GMT
+      strict-transport-security: max-age=2592000
+    status:
+      code: 404
+      message: Not Found
+    url: https://dttestdigitaltwinsname.api.wcus.digitaltwins.azure.net/eventroutes/eventRoute-faf51909?api-version=2020-10-31
+version: 1

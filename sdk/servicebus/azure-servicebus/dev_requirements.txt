@@ -1,6 +1,6 @@
 -e ../../core/azure-core
+-e ../../identity/azure-identity
 -e ../../../tools/azure-devtools
 -e ../../../tools/azure-sdk-tools
--e ../azure-mgmt-servicebus
+azure-mgmt-servicebus~=1.0.0
 aiohttp>=3.0; python_version >= '3.5'
-

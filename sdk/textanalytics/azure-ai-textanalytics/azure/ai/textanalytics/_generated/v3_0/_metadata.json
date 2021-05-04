@@ -8,32 +8,35 @@
         "base_url": null,
         "custom_base_url": "\u0027{Endpoint}/text/analytics/v3.0\u0027",
         "azure_arm": false,
-        "has_lro_operations": false
+        "has_lro_operations": false,
+        "client_side_validation": false,
+        "sync_imports": "{\"typing\": {\"azurecore\": {\"azure.core.credentials\": [\"TokenCredential\"]}}, \"regular\": {\"azurecore\": {\"azure.profiles\": [\"KnownProfiles\", \"ProfileDefinition\"], \"azure.profiles.multiapiclient\": [\"MultiApiClientMixin\"], \"msrest\": [\"Deserializer\", \"Serializer\"], \"azure.core\": [\"PipelineClient\"]}, \"local\": {\"._configuration\": [\"TextAnalyticsClientConfiguration\"], \"._operations_mixin\": [\"TextAnalyticsClientOperationsMixin\"]}}, \"conditional\": {\"stdlib\": {\"typing\": [\"Any\", \"Optional\"]}, \"azurecore\": {\"azure.core.pipeline.transport\": [\"HttpRequest\", \"HttpResponse\"]}}}",
+        "async_imports": "{\"typing\": {\"azurecore\": {\"azure.core.credentials_async\": [\"AsyncTokenCredential\"]}}, \"regular\": {\"azurecore\": {\"azure.profiles\": [\"KnownProfiles\", \"ProfileDefinition\"], \"azure.profiles.multiapiclient\": [\"MultiApiClientMixin\"], \"msrest\": [\"Deserializer\", \"Serializer\"], \"azure.core\": [\"AsyncPipelineClient\"]}, \"local\": {\"._configuration\": [\"TextAnalyticsClientConfiguration\"], \"._operations_mixin\": [\"TextAnalyticsClientOperationsMixin\"]}}, \"conditional\": {\"stdlib\": {\"typing\": [\"Any\", \"Optional\"]}, \"azurecore\": {\"azure.core.pipeline.transport\": [\"AsyncHttpResponse\", \"HttpRequest\"]}}}"
     },
     "global_parameters": {
-        "sync_method": {
+        "sync": {
             "credential": {
-                "method_signature": "credential,  # type: \"TokenCredential\"",
+                "signature": "credential,  # type: \"TokenCredential\"",
                 "description": "Credential needed for the client to connect to Azure.",
                 "docstring_type": "~azure.core.credentials.TokenCredential",
                 "required": true
             },
             "endpoint": {
-                "method_signature": "endpoint,  # type: str",
+                "signature": "endpoint,  # type: str",
                 "description": "Supported Cognitive Services endpoints (protocol and hostname, for example: https://westus.api.cognitive.microsoft.com).",
                 "docstring_type": "str",
                 "required": true
             }
         },
-        "async_method": {
+        "async": {
             "credential": {
-                "method_signature": "credential,  # type: \"AsyncTokenCredential\"",
+                "signature": "credential: \"AsyncTokenCredential\",",
                 "description": "Credential needed for the client to connect to Azure.",
                 "docstring_type": "~azure.core.credentials_async.AsyncTokenCredential",
                 "required": true
             },
             "endpoint": {
-                "method_signature": "endpoint,  # type: str",
+                "signature": "endpoint: str,",
                 "description": "Supported Cognitive Services endpoints (protocol and hostname, for example: https://westus.api.cognitive.microsoft.com).",
                 "docstring_type": "str",
                 "required": true
@@ -41,79 +44,113 @@
         },
         "constant": {
         },
-        "call": "credential, endpoint"
+        "call": "credential, endpoint",
+        "service_client_specific": {
+            "sync": {
+                "api_version": {
+                    "signature": "api_version=None, # type: Optional[str]",
+                    "description": "API version to use if no profile is provided, or if missing in profile.",
+                    "docstring_type": "str",
+                    "required": false
+                },
+                "profile": {
+                    "signature": "profile=KnownProfiles.default, # type: KnownProfiles",
+                    "description": "A profile definition, from KnownProfiles to dict.",
+                    "docstring_type": "azure.profiles.KnownProfiles",
+                    "required": false
+                }
+            },
+            "async": {
+                "api_version": {
+                    "signature": "api_version: Optional[str] = None,",
+                    "description": "API version to use if no profile is provided, or if missing in profile.",
+                    "docstring_type": "str",
+                    "required": false
+                },
+                "profile": {
+                    "signature": "profile: KnownProfiles = KnownProfiles.default,",
+                    "description": "A profile definition, from KnownProfiles to dict.",
+                    "docstring_type": "azure.profiles.KnownProfiles",
+                    "required": false
+                }
+            }
+        }
     },
     "config": {
         "credential": true,
         "credential_scopes": ["https://cognitiveservices.azure.com/.default"],
         "credential_default_policy_type": "BearerTokenCredentialPolicy",
         "credential_default_policy_type_has_async_version": true,
-        "credential_key_header_name": null
+        "credential_key_header_name": null,
+        "sync_imports": "{\"regular\": {\"azurecore\": {\"azure.core.configuration\": [\"Configuration\"], \"azure.core.pipeline\": [\"policies\"]}, \"local\": {\"._version\": [\"VERSION\"]}}, \"conditional\": {\"stdlib\": {\"typing\": [\"Any\"]}}, \"typing\": {\"azurecore\": {\"azure.core.credentials\": [\"TokenCredential\"]}}}",
+        "async_imports": "{\"regular\": {\"azurecore\": {\"azure.core.configuration\": [\"Configuration\"], \"azure.core.pipeline\": [\"policies\"]}, \"local\": {\".._version\": [\"VERSION\"]}}, \"conditional\": {\"stdlib\": {\"typing\": [\"Any\"]}}, \"typing\": {\"azurecore\": {\"azure.core.credentials_async\": [\"AsyncTokenCredential\"]}}}"
     },
     "operation_groups": {
     },
     "operation_mixins": {
-        "entities_recognition_general" : {
-            "sync": {
-                "signature": "def entities_recognition_general(\n    self,\n    documents,  # type: List[\"models.MultiLanguageInput\"]\n    model_version=None,  # type: Optional[str]\n    show_stats=None,  # type: Optional[bool]\n    **kwargs  # type: Any\n):\n",
-                "doc": "\"\"\"Named Entity Recognition.\n\nThe API returns a list of general named entities in a given document. For the list of supported\nentity types, check :code:`\u003ca href=\"https://aka.ms/taner\"\u003eSupported Entity Types in Text\nAnalytics API\u003c/a\u003e`. See the :code:`\u003ca href=\"https://aka.ms/talangs\"\u003eSupported languages in Text\nAnalytics API\u003c/a\u003e` for the list of enabled languages.\n\n:param documents: The set of documents to process as part of this batch.\n:type documents: list[~azure.ai.textanalytics.v3_0.models.MultiLanguageInput]\n:param model_version: (Optional) This value indicates which model will be used for scoring. If\n a model-version is not specified, the API should default to the latest, non-preview version.\n:type model_version: str\n:param show_stats: (Optional) if set to true, response will contain input and document level\n statistics.\n:type show_stats: bool\n:keyword callable cls: A custom type or function that will be passed the direct response\n:return: EntitiesResult, or the result of cls(response)\n:rtype: ~azure.ai.textanalytics.v3_0.models.EntitiesResult\n:raises: ~azure.core.exceptions.HttpResponseError\n\"\"\""
+        "sync_imports": "{\"regular\": {\"azurecore\": {\"azure.core.exceptions\": [\"ClientAuthenticationError\", \"HttpResponseError\", \"ResourceExistsError\", \"ResourceNotFoundError\", \"map_error\"], \"azure.core.pipeline\": [\"PipelineResponse\"], \"azure.core.pipeline.transport\": [\"HttpRequest\", \"HttpResponse\"]}, \"stdlib\": {\"warnings\": [null]}}, \"conditional\": {\"stdlib\": {\"typing\": [\"Any\", \"Callable\", \"Dict\", \"Generic\", \"List\", \"Optional\", \"TypeVar\"]}}}",
+        "async_imports": "{\"regular\": {\"azurecore\": {\"azure.core.exceptions\": [\"ClientAuthenticationError\", \"HttpResponseError\", \"ResourceExistsError\", \"ResourceNotFoundError\", \"map_error\"], \"azure.core.pipeline\": [\"PipelineResponse\"], \"azure.core.pipeline.transport\": [\"AsyncHttpResponse\", \"HttpRequest\"]}, \"stdlib\": {\"warnings\": [null]}}, \"conditional\": {\"stdlib\": {\"typing\": [\"Any\", \"Callable\", \"Dict\", \"Generic\", \"List\", \"Optional\", \"TypeVar\"]}}}",
+        "operations": {
+            "entities_recognition_general" : {
+                "sync": {
+                    "signature": "def entities_recognition_general(\n    self,\n    documents,  # type: List[\"_models.MultiLanguageInput\"]\n    model_version=None,  # type: Optional[str]\n    show_stats=None,  # type: Optional[bool]\n    **kwargs  # type: Any\n):\n",
+                    "doc": "\"\"\"Named Entity Recognition.\n\nThe API returns a list of general named entities in a given document. For the list of supported\nentity types, check :code:`\u003ca href=\"https://aka.ms/taner\"\u003eSupported Entity Types in Text\nAnalytics API\u003c/a\u003e`. See the :code:`\u003ca href=\"https://aka.ms/talangs\"\u003eSupported languages in Text\nAnalytics API\u003c/a\u003e` for the list of enabled languages.\n\n:param documents: The set of documents to process as part of this batch.\n:type documents: list[~azure.ai.textanalytics.v3_0.models.MultiLanguageInput]\n:param model_version: (Optional) This value indicates which model will be used for scoring. If\n a model-version is not specified, the API should default to the latest, non-preview version.\n:type model_version: str\n:param show_stats: (Optional) if set to true, response will contain input and document level\n statistics.\n:type show_stats: bool\n:keyword callable cls: A custom type or function that will be passed the direct response\n:return: EntitiesResult, or the result of cls(response)\n:rtype: ~azure.ai.textanalytics.v3_0.models.EntitiesResult\n:raises: ~azure.core.exceptions.HttpResponseError\n\"\"\""
+                },
+                "async": {
+                    "coroutine": true,
+                    "signature": "async def entities_recognition_general(\n    self,\n    documents: List[\"_models.MultiLanguageInput\"],\n    model_version: Optional[str] = None,\n    show_stats: Optional[bool] = None,\n    **kwargs\n) -\u003e \"_models.EntitiesResult\":\n",
+                    "doc": "\"\"\"Named Entity Recognition.\n\nThe API returns a list of general named entities in a given document. For the list of supported\nentity types, check :code:`\u003ca href=\"https://aka.ms/taner\"\u003eSupported Entity Types in Text\nAnalytics API\u003c/a\u003e`. See the :code:`\u003ca href=\"https://aka.ms/talangs\"\u003eSupported languages in Text\nAnalytics API\u003c/a\u003e` for the list of enabled languages.\n\n:param documents: The set of documents to process as part of this batch.\n:type documents: list[~azure.ai.textanalytics.v3_0.models.MultiLanguageInput]\n:param model_version: (Optional) This value indicates which model will be used for scoring. If\n a model-version is not specified, the API should default to the latest, non-preview version.\n:type model_version: str\n:param show_stats: (Optional) if set to true, response will contain input and document level\n statistics.\n:type show_stats: bool\n:keyword callable cls: A custom type or function that will be passed the direct response\n:return: EntitiesResult, or the result of cls(response)\n:rtype: ~azure.ai.textanalytics.v3_0.models.EntitiesResult\n:raises: ~azure.core.exceptions.HttpResponseError\n\"\"\""
+                },
+                "call": "documents, model_version, show_stats"
             },
-            "async": {
-                "coroutine": true,
-                "signature": "async def entities_recognition_general(\n    self,\n    documents: List[\"models.MultiLanguageInput\"],\n    model_version: Optional[str] = None,\n    show_stats: Optional[bool] = None,\n    **kwargs\n) -\u003e \"models.EntitiesResult\":\n",
-                "doc": "\"\"\"Named Entity Recognition.\n\nThe API returns a list of general named entities in a given document. For the list of supported\nentity types, check :code:`\u003ca href=\"https://aka.ms/taner\"\u003eSupported Entity Types in Text\nAnalytics API\u003c/a\u003e`. See the :code:`\u003ca href=\"https://aka.ms/talangs\"\u003eSupported languages in Text\nAnalytics API\u003c/a\u003e` for the list of enabled languages.\n\n:param documents: The set of documents to process as part of this batch.\n:type documents: list[~azure.ai.textanalytics.v3_0.models.MultiLanguageInput]\n:param model_version: (Optional) This value indicates which model will be used for scoring. If\n a model-version is not specified, the API should default to the latest, non-preview version.\n:type model_version: str\n:param show_stats: (Optional) if set to true, response will contain input and document level\n statistics.\n:type show_stats: bool\n:keyword callable cls: A custom type or function that will be passed the direct response\n:return: EntitiesResult, or the result of cls(response)\n:rtype: ~azure.ai.textanalytics.v3_0.models.EntitiesResult\n:raises: ~azure.core.exceptions.HttpResponseError\n\"\"\""
+            "entities_linking" : {
+                "sync": {
+                    "signature": "def entities_linking(\n    self,\n    documents,  # type: List[\"_models.MultiLanguageInput\"]\n    model_version=None,  # type: Optional[str]\n    show_stats=None,  # type: Optional[bool]\n    **kwargs  # type: Any\n):\n",
+                    "doc": "\"\"\"Linked entities from a well-known knowledge base.\n\nThe API returns a list of recognized entities with links to a well-known knowledge base. See\nthe :code:`\u003ca href=\"https://aka.ms/talangs\"\u003eSupported languages in Text Analytics API\u003c/a\u003e` for\nthe list of enabled languages.\n\n:param documents: The set of documents to process as part of this batch.\n:type documents: list[~azure.ai.textanalytics.v3_0.models.MultiLanguageInput]\n:param model_version: (Optional) This value indicates which model will be used for scoring. If\n a model-version is not specified, the API should default to the latest, non-preview version.\n:type model_version: str\n:param show_stats: (Optional) if set to true, response will contain input and document level\n statistics.\n:type show_stats: bool\n:keyword callable cls: A custom type or function that will be passed the direct response\n:return: EntityLinkingResult, or the result of cls(response)\n:rtype: ~azure.ai.textanalytics.v3_0.models.EntityLinkingResult\n:raises: ~azure.core.exceptions.HttpResponseError\n\"\"\""
+                },
+                "async": {
+                    "coroutine": true,
+                    "signature": "async def entities_linking(\n    self,\n    documents: List[\"_models.MultiLanguageInput\"],\n    model_version: Optional[str] = None,\n    show_stats: Optional[bool] = None,\n    **kwargs\n) -\u003e \"_models.EntityLinkingResult\":\n",
+                    "doc": "\"\"\"Linked entities from a well-known knowledge base.\n\nThe API returns a list of recognized entities with links to a well-known knowledge base. See\nthe :code:`\u003ca href=\"https://aka.ms/talangs\"\u003eSupported languages in Text Analytics API\u003c/a\u003e` for\nthe list of enabled languages.\n\n:param documents: The set of documents to process as part of this batch.\n:type documents: list[~azure.ai.textanalytics.v3_0.models.MultiLanguageInput]\n:param model_version: (Optional) This value indicates which model will be used for scoring. If\n a model-version is not specified, the API should default to the latest, non-preview version.\n:type model_version: str\n:param show_stats: (Optional) if set to true, response will contain input and document level\n statistics.\n:type show_stats: bool\n:keyword callable cls: A custom type or function that will be passed the direct response\n:return: EntityLinkingResult, or the result of cls(response)\n:rtype: ~azure.ai.textanalytics.v3_0.models.EntityLinkingResult\n:raises: ~azure.core.exceptions.HttpResponseError\n\"\"\""
+                },
+                "call": "documents, model_version, show_stats"
             },
-            "call": "documents, model_version, show_stats"
-        },
-        "entities_linking" : {
-            "sync": {
-                "signature": "def entities_linking(\n    self,\n    documents,  # type: List[\"models.MultiLanguageInput\"]\n    model_version=None,  # type: Optional[str]\n    show_stats=None,  # type: Optional[bool]\n    **kwargs  # type: Any\n):\n",
-                "doc": "\"\"\"Linked entities from a well-known knowledge base.\n\nThe API returns a list of recognized entities with links to a well-known knowledge base. See\nthe :code:`\u003ca href=\"https://aka.ms/talangs\"\u003eSupported languages in Text Analytics API\u003c/a\u003e` for\nthe list of enabled languages.\n\n:param documents: The set of documents to process as part of this batch.\n:type documents: list[~azure.ai.textanalytics.v3_0.models.MultiLanguageInput]\n:param model_version: (Optional) This value indicates which model will be used for scoring. If\n a model-version is not specified, the API should default to the latest, non-preview version.\n:type model_version: str\n:param show_stats: (Optional) if set to true, response will contain input and document level\n statistics.\n:type show_stats: bool\n:keyword callable cls: A custom type or function that will be passed the direct response\n:return: EntityLinkingResult, or the result of cls(response)\n:rtype: ~azure.ai.textanalytics.v3_0.models.EntityLinkingResult\n:raises: ~azure.core.exceptions.HttpResponseError\n\"\"\""
+            "key_phrases" : {
+                "sync": {
+                    "signature": "def key_phrases(\n    self,\n    documents,  # type: List[\"_models.MultiLanguageInput\"]\n    model_version=None,  # type: Optional[str]\n    show_stats=None,  # type: Optional[bool]\n    **kwargs  # type: Any\n):\n",
+                    "doc": "\"\"\"Key Phrases.\n\nThe API returns a list of strings denoting the key phrases in the input text. See the :code:`\u003ca\nhref=\"https://aka.ms/talangs\"\u003eSupported languages in Text Analytics API\u003c/a\u003e` for the list of\nenabled languages.\n\n:param documents: The set of documents to process as part of this batch.\n:type documents: list[~azure.ai.textanalytics.v3_0.models.MultiLanguageInput]\n:param model_version: (Optional) This value indicates which model will be used for scoring. If\n a model-version is not specified, the API should default to the latest, non-preview version.\n:type model_version: str\n:param show_stats: (Optional) if set to true, response will contain input and document level\n statistics.\n:type show_stats: bool\n:keyword callable cls: A custom type or function that will be passed the direct response\n:return: KeyPhraseResult, or the result of cls(response)\n:rtype: ~azure.ai.textanalytics.v3_0.models.KeyPhraseResult\n:raises: ~azure.core.exceptions.HttpResponseError\n\"\"\""
+                },
+                "async": {
+                    "coroutine": true,
+                    "signature": "async def key_phrases(\n    self,\n    documents: List[\"_models.MultiLanguageInput\"],\n    model_version: Optional[str] = None,\n    show_stats: Optional[bool] = None,\n    **kwargs\n) -\u003e \"_models.KeyPhraseResult\":\n",
+                    "doc": "\"\"\"Key Phrases.\n\nThe API returns a list of strings denoting the key phrases in the input text. See the :code:`\u003ca\nhref=\"https://aka.ms/talangs\"\u003eSupported languages in Text Analytics API\u003c/a\u003e` for the list of\nenabled languages.\n\n:param documents: The set of documents to process as part of this batch.\n:type documents: list[~azure.ai.textanalytics.v3_0.models.MultiLanguageInput]\n:param model_version: (Optional) This value indicates which model will be used for scoring. If\n a model-version is not specified, the API should default to the latest, non-preview version.\n:type model_version: str\n:param show_stats: (Optional) if set to true, response will contain input and document level\n statistics.\n:type show_stats: bool\n:keyword callable cls: A custom type or function that will be passed the direct response\n:return: KeyPhraseResult, or the result of cls(response)\n:rtype: ~azure.ai.textanalytics.v3_0.models.KeyPhraseResult\n:raises: ~azure.core.exceptions.HttpResponseError\n\"\"\""
+                },
+                "call": "documents, model_version, show_stats"
             },
-            "async": {
-                "coroutine": true,
-                "signature": "async def entities_linking(\n    self,\n    documents: List[\"models.MultiLanguageInput\"],\n    model_version: Optional[str] = None,\n    show_stats: Optional[bool] = None,\n    **kwargs\n) -\u003e \"models.EntityLinkingResult\":\n",
-                "doc": "\"\"\"Linked entities from a well-known knowledge base.\n\nThe API returns a list of recognized entities with links to a well-known knowledge base. See\nthe :code:`\u003ca href=\"https://aka.ms/talangs\"\u003eSupported languages in Text Analytics API\u003c/a\u003e` for\nthe list of enabled languages.\n\n:param documents: The set of documents to process as part of this batch.\n:type documents: list[~azure.ai.textanalytics.v3_0.models.MultiLanguageInput]\n:param model_version: (Optional) This value indicates which model will be used for scoring. If\n a model-version is not specified, the API should default to the latest, non-preview version.\n:type model_version: str\n:param show_stats: (Optional) if set to true, response will contain input and document level\n statistics.\n:type show_stats: bool\n:keyword callable cls: A custom type or function that will be passed the direct response\n:return: EntityLinkingResult, or the result of cls(response)\n:rtype: ~azure.ai.textanalytics.v3_0.models.EntityLinkingResult\n:raises: ~azure.core.exceptions.HttpResponseError\n\"\"\""
+            "languages" : {
+                "sync": {
+                    "signature": "def languages(\n    self,\n    documents,  # type: List[\"_models.LanguageInput\"]\n    model_version=None,  # type: Optional[str]\n    show_stats=None,  # type: Optional[bool]\n    **kwargs  # type: Any\n):\n",
+                    "doc": "\"\"\"Detect Language.\n\nThe API returns the detected language and a numeric score between 0 and 1. Scores close to 1\nindicate 100% certainty that the identified language is true. See the :code:`\u003ca\nhref=\"https://aka.ms/talangs\"\u003eSupported languages in Text Analytics API\u003c/a\u003e` for the list of\nenabled languages.\n\n:param documents:\n:type documents: list[~azure.ai.textanalytics.v3_0.models.LanguageInput]\n:param model_version: (Optional) This value indicates which model will be used for scoring. If\n a model-version is not specified, the API should default to the latest, non-preview version.\n:type model_version: str\n:param show_stats: (Optional) if set to true, response will contain input and document level\n statistics.\n:type show_stats: bool\n:keyword callable cls: A custom type or function that will be passed the direct response\n:return: LanguageResult, or the result of cls(response)\n:rtype: ~azure.ai.textanalytics.v3_0.models.LanguageResult\n:raises: ~azure.core.exceptions.HttpResponseError\n\"\"\""
+                },
+                "async": {
+                    "coroutine": true,
+                    "signature": "async def languages(\n    self,\n    documents: List[\"_models.LanguageInput\"],\n    model_version: Optional[str] = None,\n    show_stats: Optional[bool] = None,\n    **kwargs\n) -\u003e \"_models.LanguageResult\":\n",
+                    "doc": "\"\"\"Detect Language.\n\nThe API returns the detected language and a numeric score between 0 and 1. Scores close to 1\nindicate 100% certainty that the identified language is true. See the :code:`\u003ca\nhref=\"https://aka.ms/talangs\"\u003eSupported languages in Text Analytics API\u003c/a\u003e` for the list of\nenabled languages.\n\n:param documents:\n:type documents: list[~azure.ai.textanalytics.v3_0.models.LanguageInput]\n:param model_version: (Optional) This value indicates which model will be used for scoring. If\n a model-version is not specified, the API should default to the latest, non-preview version.\n:type model_version: str\n:param show_stats: (Optional) if set to true, response will contain input and document level\n statistics.\n:type show_stats: bool\n:keyword callable cls: A custom type or function that will be passed the direct response\n:return: LanguageResult, or the result of cls(response)\n:rtype: ~azure.ai.textanalytics.v3_0.models.LanguageResult\n:raises: ~azure.core.exceptions.HttpResponseError\n\"\"\""
+                },
+                "call": "documents, model_version, show_stats"
             },
-            "call": "documents, model_version, show_stats"
-        },
-        "key_phrases" : {
-            "sync": {
-                "signature": "def key_phrases(\n    self,\n    documents,  # type: List[\"models.MultiLanguageInput\"]\n    model_version=None,  # type: Optional[str]\n    show_stats=None,  # type: Optional[bool]\n    **kwargs  # type: Any\n):\n",
-                "doc": "\"\"\"Key Phrases.\n\nThe API returns a list of strings denoting the key phrases in the input text. See the :code:`\u003ca\nhref=\"https://aka.ms/talangs\"\u003eSupported languages in Text Analytics API\u003c/a\u003e` for the list of\nenabled languages.\n\n:param documents: The set of documents to process as part of this batch.\n:type documents: list[~azure.ai.textanalytics.v3_0.models.MultiLanguageInput]\n:param model_version: (Optional) This value indicates which model will be used for scoring. If\n a model-version is not specified, the API should default to the latest, non-preview version.\n:type model_version: str\n:param show_stats: (Optional) if set to true, response will contain input and document level\n statistics.\n:type show_stats: bool\n:keyword callable cls: A custom type or function that will be passed the direct response\n:return: KeyPhraseResult, or the result of cls(response)\n:rtype: ~azure.ai.textanalytics.v3_0.models.KeyPhraseResult\n:raises: ~azure.core.exceptions.HttpResponseError\n\"\"\""
-            },
-            "async": {
-                "coroutine": true,
-                "signature": "async def key_phrases(\n    self,\n    documents: List[\"models.MultiLanguageInput\"],\n    model_version: Optional[str] = None,\n    show_stats: Optional[bool] = None,\n    **kwargs\n) -\u003e \"models.KeyPhraseResult\":\n",
-                "doc": "\"\"\"Key Phrases.\n\nThe API returns a list of strings denoting the key phrases in the input text. See the :code:`\u003ca\nhref=\"https://aka.ms/talangs\"\u003eSupported languages in Text Analytics API\u003c/a\u003e` for the list of\nenabled languages.\n\n:param documents: The set of documents to process as part of this batch.\n:type documents: list[~azure.ai.textanalytics.v3_0.models.MultiLanguageInput]\n:param model_version: (Optional) This value indicates which model will be used for scoring. If\n a model-version is not specified, the API should default to the latest, non-preview version.\n:type model_version: str\n:param show_stats: (Optional) if set to true, response will contain input and document level\n statistics.\n:type show_stats: bool\n:keyword callable cls: A custom type or function that will be passed the direct response\n:return: KeyPhraseResult, or the result of cls(response)\n:rtype: ~azure.ai.textanalytics.v3_0.models.KeyPhraseResult\n:raises: ~azure.core.exceptions.HttpResponseError\n\"\"\""
-            },
-            "call": "documents, model_version, show_stats"
-        },
-        "languages" : {
-            "sync": {
-                "signature": "def languages(\n    self,\n    documents,  # type: List[\"models.LanguageInput\"]\n    model_version=None,  # type: Optional[str]\n    show_stats=None,  # type: Optional[bool]\n    **kwargs  # type: Any\n):\n",
-                "doc": "\"\"\"Detect Language.\n\nThe API returns the detected language and a numeric score between 0 and 1. Scores close to 1\nindicate 100% certainty that the identified language is true. See the :code:`\u003ca\nhref=\"https://aka.ms/talangs\"\u003eSupported languages in Text Analytics API\u003c/a\u003e` for the list of\nenabled languages.\n\n:param documents:\n:type documents: list[~azure.ai.textanalytics.v3_0.models.LanguageInput]\n:param model_version: (Optional) This value indicates which model will be used for scoring. If\n a model-version is not specified, the API should default to the latest, non-preview version.\n:type model_version: str\n:param show_stats: (Optional) if set to true, response will contain input and document level\n statistics.\n:type show_stats: bool\n:keyword callable cls: A custom type or function that will be passed the direct response\n:return: LanguageResult, or the result of cls(response)\n:rtype: ~azure.ai.textanalytics.v3_0.models.LanguageResult\n:raises: ~azure.core.exceptions.HttpResponseError\n\"\"\""
-            },
-            "async": {
-                "coroutine": true,
-                "signature": "async def languages(\n    self,\n    documents: List[\"models.LanguageInput\"],\n    model_version: Optional[str] = None,\n    show_stats: Optional[bool] = None,\n    **kwargs\n) -\u003e \"models.LanguageResult\":\n",
-                "doc": "\"\"\"Detect Language.\n\nThe API returns the detected language and a numeric score between 0 and 1. Scores close to 1\nindicate 100% certainty that the identified language is true. See the :code:`\u003ca\nhref=\"https://aka.ms/talangs\"\u003eSupported languages in Text Analytics API\u003c/a\u003e` for the list of\nenabled languages.\n\n:param documents:\n:type documents: list[~azure.ai.textanalytics.v3_0.models.LanguageInput]\n:param model_version: (Optional) This value indicates which model will be used for scoring. If\n a model-version is not specified, the API should default to the latest, non-preview version.\n:type model_version: str\n:param show_stats: (Optional) if set to true, response will contain input and document level\n statistics.\n:type show_stats: bool\n:keyword callable cls: A custom type or function that will be passed the direct response\n:return: LanguageResult, or the result of cls(response)\n:rtype: ~azure.ai.textanalytics.v3_0.models.LanguageResult\n:raises: ~azure.core.exceptions.HttpResponseError\n\"\"\""
-            },
-            "call": "documents, model_version, show_stats"
-        },
-        "sentiment" : {
-            "sync": {
-                "signature": "def sentiment(\n    self,\n    documents,  # type: List[\"models.MultiLanguageInput\"]\n    model_version=None,  # type: Optional[str]\n    show_stats=None,  # type: Optional[bool]\n    **kwargs  # type: Any\n):\n",
-                "doc": "\"\"\"Sentiment.\n\nThe API returns a sentiment prediction, as well as sentiment scores for each sentiment class\n(Positive, Negative, and Neutral) for the document and each sentence within it. See the\n:code:`\u003ca href=\"https://aka.ms/talangs\"\u003eSupported languages in Text Analytics API\u003c/a\u003e` for the\nlist of enabled languages.\n\n:param documents: The set of documents to process as part of this batch.\n:type documents: list[~azure.ai.textanalytics.v3_0.models.MultiLanguageInput]\n:param model_version: (Optional) This value indicates which model will be used for scoring. If\n a model-version is not specified, the API should default to the latest, non-preview version.\n:type model_version: str\n:param show_stats: (Optional) if set to true, response will contain input and document level\n statistics.\n:type show_stats: bool\n:keyword callable cls: A custom type or function that will be passed the direct response\n:return: SentimentResponse, or the result of cls(response)\n:rtype: ~azure.ai.textanalytics.v3_0.models.SentimentResponse\n:raises: ~azure.core.exceptions.HttpResponseError\n\"\"\""
-            },
-            "async": {
-                "coroutine": true,
-                "signature": "async def sentiment(\n    self,\n    documents: List[\"models.MultiLanguageInput\"],\n    model_version: Optional[str] = None,\n    show_stats: Optional[bool] = None,\n    **kwargs\n) -\u003e \"models.SentimentResponse\":\n",
-                "doc": "\"\"\"Sentiment.\n\nThe API returns a sentiment prediction, as well as sentiment scores for each sentiment class\n(Positive, Negative, and Neutral) for the document and each sentence within it. See the\n:code:`\u003ca href=\"https://aka.ms/talangs\"\u003eSupported languages in Text Analytics API\u003c/a\u003e` for the\nlist of enabled languages.\n\n:param documents: The set of documents to process as part of this batch.\n:type documents: list[~azure.ai.textanalytics.v3_0.models.MultiLanguageInput]\n:param model_version: (Optional) This value indicates which model will be used for scoring. If\n a model-version is not specified, the API should default to the latest, non-preview version.\n:type model_version: str\n:param show_stats: (Optional) if set to true, response will contain input and document level\n statistics.\n:type show_stats: bool\n:keyword callable cls: A custom type or function that will be passed the direct response\n:return: SentimentResponse, or the result of cls(response)\n:rtype: ~azure.ai.textanalytics.v3_0.models.SentimentResponse\n:raises: ~azure.core.exceptions.HttpResponseError\n\"\"\""
-            },
-            "call": "documents, model_version, show_stats"
+            "sentiment" : {
+                "sync": {
+                    "signature": "def sentiment(\n    self,\n    documents,  # type: List[\"_models.MultiLanguageInput\"]\n    model_version=None,  # type: Optional[str]\n    show_stats=None,  # type: Optional[bool]\n    **kwargs  # type: Any\n):\n",
+                    "doc": "\"\"\"Sentiment.\n\nThe API returns a sentiment prediction, as well as sentiment scores for each sentiment class\n(Positive, Negative, and Neutral) for the document and each sentence within it. See the\n:code:`\u003ca href=\"https://aka.ms/talangs\"\u003eSupported languages in Text Analytics API\u003c/a\u003e` for the\nlist of enabled languages.\n\n:param documents: The set of documents to process as part of this batch.\n:type documents: list[~azure.ai.textanalytics.v3_0.models.MultiLanguageInput]\n:param model_version: (Optional) This value indicates which model will be used for scoring. If\n a model-version is not specified, the API should default to the latest, non-preview version.\n:type model_version: str\n:param show_stats: (Optional) if set to true, response will contain input and document level\n statistics.\n:type show_stats: bool\n:keyword callable cls: A custom type or function that will be passed the direct response\n:return: SentimentResponse, or the result of cls(response)\n:rtype: ~azure.ai.textanalytics.v3_0.models.SentimentResponse\n:raises: ~azure.core.exceptions.HttpResponseError\n\"\"\""
+                },
+                "async": {
+                    "coroutine": true,
+                    "signature": "async def sentiment(\n    self,\n    documents: List[\"_models.MultiLanguageInput\"],\n    model_version: Optional[str] = None,\n    show_stats: Optional[bool] = None,\n    **kwargs\n) -\u003e \"_models.SentimentResponse\":\n",
+                    "doc": "\"\"\"Sentiment.\n\nThe API returns a sentiment prediction, as well as sentiment scores for each sentiment class\n(Positive, Negative, and Neutral) for the document and each sentence within it. See the\n:code:`\u003ca href=\"https://aka.ms/talangs\"\u003eSupported languages in Text Analytics API\u003c/a\u003e` for the\nlist of enabled languages.\n\n:param documents: The set of documents to process as part of this batch.\n:type documents: list[~azure.ai.textanalytics.v3_0.models.MultiLanguageInput]\n:param model_version: (Optional) This value indicates which model will be used for scoring. If\n a model-version is not specified, the API should default to the latest, non-preview version.\n:type model_version: str\n:param show_stats: (Optional) if set to true, response will contain input and document level\n statistics.\n:type show_stats: bool\n:keyword callable cls: A custom type or function that will be passed the direct response\n:return: SentimentResponse, or the result of cls(response)\n:rtype: ~azure.ai.textanalytics.v3_0.models.SentimentResponse\n:raises: ~azure.core.exceptions.HttpResponseError\n\"\"\""
+                },
+                "call": "documents, model_version, show_stats"
+            }
         }
-    },
-    "sync_imports": "{\"regular\": {\"azurecore\": {\"azure.core.exceptions\": [\"HttpResponseError\", \"ResourceExistsError\", \"ResourceNotFoundError\", \"map_error\"], \"azure.core.pipeline\": [\"PipelineResponse\"], \"azure.core.pipeline.transport\": [\"HttpRequest\", \"HttpResponse\"]}, \"stdlib\": {\"warnings\": [null]}}, \"conditional\": {\"stdlib\": {\"typing\": [\"Any\", \"Callable\", \"Dict\", \"Generic\", \"List\", \"Optional\", \"TypeVar\"]}}}",
-    "async_imports": "{\"regular\": {\"azurecore\": {\"azure.core.exceptions\": [\"HttpResponseError\", \"ResourceExistsError\", \"ResourceNotFoundError\", \"map_error\"], \"azure.core.pipeline\": [\"PipelineResponse\"], \"azure.core.pipeline.transport\": [\"AsyncHttpResponse\", \"HttpRequest\"]}, \"stdlib\": {\"warnings\": [null]}}, \"conditional\": {\"stdlib\": {\"typing\": [\"Any\", \"Callable\", \"Dict\", \"Generic\", \"List\", \"Optional\", \"TypeVar\"]}}}"
+    }
 }

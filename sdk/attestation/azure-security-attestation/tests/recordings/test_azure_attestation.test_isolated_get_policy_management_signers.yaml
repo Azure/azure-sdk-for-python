@@ -1,0 +1,32 @@
+interactions:
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - azsdk-python-security-attestation/1.0.0b1 Python/3.9.0 (Windows-10-10.0.19041-SP0)
+    method: GET
+    uri: https://fakeresource.wus.attest.azure.net/certificates?api-version=2020-10-01
+  response:
+    body:
+      string: '{"token":"eyJhbGciOiAiUlMyNTYiLCAiamt1IjogImh0dHBzOi8vcHlsYXJyeW9hdHRlc3RhdGlvbmlzby53dXMuYXR0ZXN0LmF6dXJlLm5ldC9jZXJ0cyIsICJraWQiOiAiMTVOMk1Ib2o5aUFka0YvYzVuUkUzSjJIQjhKRzZWdWUzVXp2dTNLL1Nlcz0iLCAidHlwIjogIkpXVCJ9.eyJleHAiOiAxNjA3NjI3NDI0LCAiaWF0IjogMTYwNzYyMzgyNCwgImlzcyI6ICJodHRwczovL3B5bGFycnlvYXR0ZXN0YXRpb25pc28ud3VzLmF0dGVzdC5henVyZS5uZXQiLCAibmJmIjogMTYwNzYyMzgyNCwgIngtbXMtcG9saWN5LWNlcnRpZmljYXRlcyI6IHsia2V5cyI6IFt7ImFsZyI6ICJSUzI1NiIsICJrdHkiOiAiUlNBIiwgInVzZSI6ICJzaWciLCAieDVjIjogWyJNSUlDK0RDQ0FlQ2dBd0lCQWdJSVcyRlVtbXdlckE4d0RRWUpLb1pJaHZjTkFRRUxCUUF3TXpFeE1DOEdBMVVFQXhNb1FYUjBaWE4wWVhScGIyNUpjMjlzWVhSbFpFMWhibUZuWlcxbGJuUkRaWEowYVdacFkyRjBaVEFlRncweU1ERXlNRGN4T0RNMU1qWmFGdzB5TVRFeU1EY3hPRE0xTWpaYU1ETXhNVEF2QmdOVkJBTVRLRUYwZEdWemRHRjBhVzl1U1hOdmJHRjBaV1JOWVc1aFoyVnRaVzUwUTJWeWRHbG1hV05oZEdVd2dnRWlNQTBHQ1NxR1NJYjNEUUVCQVFVQUE0SUJEd0F3Z2dFS0FvSUJBUURFcGQ0anFydVFrWUttdmpmbzBFbHlaeHIxbmV4dWE5SCtsdUR0NFc2T3Fidng0NkQ3bW0wYTRTWHNuaG9Kd2ZQdVdCNDFBUjB2dHZLSlV3RnpVaTM4SHZpdFN4Y2V0Y0xoRlEySVhONVhUV1VDZ2hCdDZFN3ZzWWlFMXJ2YmJ3RjNWckdqbndvQ2NuRGRpMXpOdjlGMkRrWmZJM0VOQzI2WHFXTU8ycUhoUkp4T2d2MVNJMVVUZ2w4NWxHMVRBdDhWZWd4NU9CT2dEa3FnTERjNUVsY2taL2svRnA2SUJMcWRTVzBZTVhRWC9iNjZJM2Jnd0l5aTc5ejNWalUvd3IrTVQ2VTN0ZXIveUhiNDFzY2tPVFdnSlRSVjZFbVFUWGFySDIvMXExSmdzTy9yNHV2dEhuNVloM1B5RnhnTjZhZ1ljTVRnYzB0ZkphdTladWR1VGVpbEFnTUJBQUdqRURBT01Bd0dBMVVkRXdRRk1BTUJBZjh3RFFZSktvWklodmNOQVFFTEJRQURnZ0VCQUdOcWduMGVNYUt4elREdVlCY3MybFlOQTlYQ09ZMyswZi9TelhhNTZ1VHhJWG90VE5TRlh5TlVGeUw1K0EzMW83Y3RoM3lIck9zU1FYUnRmUjVKOExXdlNlOGkreHFuOVd1ckFxTDNOZ1o0bVVLbVl1N0c0d2U4b0NGYUtNZ3R4akt3cDhvNHBIbS9vNG5TUlV6K3psU3NOYmU1VFpoYk5lQUpkeU5VdHdvRVpReWVFQXEyMitPSUErYUxDdEMxUE9WRTBXblQzOUYwYlhaLzM4OGVpa2RZalpUTGVYOExtejFFT3huL3E4aUpEbGdIM09jN2VQUE4xZkk1QUg2ejlHOEZYRkhVSUVPY0dGV1l6bFhGZUdYcXZPSHZLV0c1S1gwSitLUTBIZWY0UHh6SmY4cDJSTUNyWU5DWWFlSGxUYTYrRnQ4YU1Ca2NrN05hQmVzWFZLOD0iXX1dfX0.UxISbfzH6CjNPIaHDUYfPI8LcR-FkQlN_Qik9zBrlx9st46jE03tAr7XSXvWt5ucxtglGF5SigwDkxQ9A36_PbDiP-JNIbtj3mnrGuXGb4IaS3bLLgCZkvIa-GZPDj0k6wbK2BgHDsn3Utu1b1m4RB3HQktPXZcs2OydiOurJNI"}'
+    headers:
+      content-length:
+      - '2040'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Thu, 10 Dec 2020 18:10:24 GMT
+      server:
+      - Kestrel
+      x-ms-maa-service-version:
+      - 1.10.01432.0002
+    status:
+      code: 200
+      message: OK
+version: 1
