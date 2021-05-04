@@ -8,7 +8,7 @@ Text Analytics is a cloud-based service that provides advanced natural language 
 - Personally Identifiable Information (PII) Entity Recognition
 - Language Detection
 - Key Phrase Extraction
-- Batch Analysis
+- Multiple Analysis
 - Healthcare Entities Analysis (Gated Preview)
 
 [Source code][source_code] | [Package (PyPI)][ta_pypi] | [API reference documentation][ta_ref_docs]| [Product documentation][ta_product_documentation] | [Samples][ta_samples]
@@ -209,7 +209,7 @@ Long-running operations are operations which consist of an initial request sent 
 followed by polling the service at intervals to determine whether the operation has completed or failed, and if it has
 succeeded, to get the result.
 
-Methods that support Healthcare Analysis or batch operations over multiple Text Analytics APIs are modeled as long-running operations.
+Methods that support Healthcare Analysis or multiple operations over multiple Text Analytics APIs are modeled as long-running operations.
 The client exposes a `begin_<method-name>` method that returns an `LROPoller` or `AsyncLROPoller`. Callers should wait
 for the operation to complete by calling `result()` on the poller object returned from the `begin_<method-name>` method.
 Sample code snippets are provided to illustrate using long-running operations [below](#examples "Examples").
@@ -225,7 +225,7 @@ The following section provides several code snippets covering some of the most c
 - [Extract Key Phrases](#extract-key-phrases "Extract key phrases")
 - [Detect Language](#detect-language "Detect language")
 - [Healthcare Entities Analysis](#healthcare-entities-analysis "Healthcare Entities Analysis")
-- [Batch Analysis](#batch-analysis "Batch analysis")
+- [Multiple Analysis](#multiple-analysis "Multiple analysis")
 
 ### Analyze sentiment
 
@@ -491,9 +491,9 @@ for idx, doc in enumerate(docs):
 
 Note: The Healthcare Entities Analysis service is currently available only in the API v3.1 preview versions and is in gated preview. Since this is a gated preview, AAD is not supported. More information [here](https://docs.microsoft.com/azure/cognitive-services/text-analytics/how-tos/text-analytics-for-health?tabs=ner#request-access-to-the-public-preview).
 
-### Batch Analysis
+### Multiple Analysis
 
-[Long-running operation](#long-running-operations) [`begin_analyze_batch_actions`][analyze_batch_actions] performs multiple analyses over one set of documents in a single request. Currently batching is supported using any combination of the following Text Analytics APIs in a single request:
+[Long-running operation](#long-running-operations) [`begin_analyze_actions`][analyze_actions] performs multiple analyses over one set of documents in a single request. Currently it is supported using any combination of the following Text Analytics APIs in a single request:
 
 - Entities Recognition
 - PII Entities Recognition
@@ -519,7 +519,7 @@ text_analytics_client = TextAnalyticsClient(endpoint, credential)
 
 documents = ["Microsoft was founded by Bill Gates and Paul Allen."]
 
-poller = text_analytics_client.begin_analyze_batch_actions(
+poller = text_analytics_client.begin_analyze_actions(
     documents,
     display_name="Sample Text Analysis",
     actions=[
@@ -531,7 +531,7 @@ poller = text_analytics_client.begin_analyze_batch_actions(
     ]
 )
 
-# returns batch actions results in the same order as the inputted actions
+# returns multiple actions results in the same order as the inputted actions
 result = poller.result()
 
 first_action_result = next(result)
@@ -604,7 +604,7 @@ for doc in docs:
 
 The returned response is an object encapsulating multiple iterables, each representing results of individual analyses.
 
-Note: Batch analysis is currently available only in the v3.1-preview API version.
+Note: Multiple analysis is currently available only in the v3.1-preview API version.
 
 ## Optional Configuration
 
@@ -683,7 +683,7 @@ Common scenarios
 - Extract key phrases: [sample_extract_key_phrases.py][extract_key_phrases_sample] ([async version][extract_key_phrases_sample_async])
 - Detect language: [sample_detect_language.py][detect_language_sample] ([async version][detect_language_sample_async])
 - Healthcare Entities Analysis: [sample_analyze_healthcare_entities.py][analyze_healthcare_entities_sample] ([async version][analyze_healthcare_entities_sample_async])
-- Batch Analysis: [sample_analyze_batch_actions.py][analyze_sample] ([async version][analyze_sample_async])
+- Multiple Analysis: [sample_analyze_actions.py][analyze_sample] ([async version][analyze_sample_async])
 
 Advanced scenarios
 
@@ -739,7 +739,7 @@ This project has adopted the [Microsoft Open Source Code of Conduct][code_of_con
 [detect_language_input]: https://aka.ms/azsdk-python-textanalytics-detectlanguageinput
 [text_analytics_client]: https://aka.ms/azsdk-python-textanalytics-textanalyticsclient
 [analyze_sentiment]: https://aka.ms/azsdk-python-textanalytics-analyzesentiment
-[analyze_batch_actions]: https://aka.ms/azsdk/python/docs/ref/textanalytics#azure.ai.textanalytics.TextAnalyticsClient.begin_analyze_batch_actions
+[analyze_actions]: https://aka.ms/azsdk/python/docs/ref/textanalytics#azure.ai.textanalytics.TextAnalyticsClient.begin_analyze_actions
 [analyze_healthcare_entities]: https://aka.ms/azsdk/python/docs/ref/textanalytics#azure.ai.textanalytics.TextAnalyticsClient.begin_analyze_healthcare_entities
 [recognize_entities]: https://aka.ms/azsdk-python-textanalytics-recognizeentities
 [recognize_pii_entities]: https://aka.ms/azsdk-python-textanalytics-recognizepiientities
@@ -775,8 +775,8 @@ This project has adopted the [Microsoft Open Source Code of Conduct][code_of_con
 [recognize_pii_entities_sample_async]: https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/textanalytics/azure-ai-textanalytics/samples/async_samples/sample_recognize_pii_entities_async.py
 [analyze_healthcare_entities_sample]: https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/textanalytics/azure-ai-textanalytics/samples/sample_analyze_healthcare_entities.py
 [analyze_healthcare_entities_sample_async]: https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/textanalytics/azure-ai-textanalytics/samples/async_samples/sample_analyze_healthcare_entities_async.py
-[analyze_sample]: https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/textanalytics/azure-ai-textanalytics/samples/sample_analyze_batch_actions.py
-[analyze_sample_async]: https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/textanalytics/azure-ai-textanalytics/samples/async_samples/sample_analyze_batch_actions_async.py
+[analyze_sample]: https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/textanalytics/azure-ai-textanalytics/samples/sample_analyze_actions.py
+[analyze_sample_async]: https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/textanalytics/azure-ai-textanalytics/samples/async_samples/sample_analyze_actions_async.py
 [opinion_mining_sample]: https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/textanalytics/azure-ai-textanalytics/samples/sample_analyze_sentiment_with_opinion_mining.py
 [opinion_mining_sample_async]: https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/textanalytics/azure-ai-textanalytics/samples/async_samples/sample_analyze_sentiment_with_opinion_mining_async.py
 [cla]: https://cla.microsoft.com

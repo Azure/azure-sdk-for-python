@@ -15,7 +15,7 @@ import six
 from azure.core import MatchConditions
 from azure.core.exceptions import raise_with_traceback
 
-from ._entity import EdmType, EntityProperty
+from ._entity import EdmType
 from ._common_conversion import _encode_base64, _to_utc_datetime
 from ._error import _ERROR_VALUE_TOO_LARGE, _ERROR_TYPE_NOT_SUPPORTED
 
@@ -225,11 +225,9 @@ def _add_entity_properties(source):
             mtype, value = conv(value)
         elif isinstance(value, datetime):
             mtype, value = _to_entity_datetime(value)
-        elif isinstance(value, EntityProperty):
-            conv = _EDM_TO_ENTITY_CONVERSIONS.get(value.type)
-            if conv is None:
-                raise TypeError(_ERROR_TYPE_NOT_SUPPORTED.format(value.type))
-            mtype, value = conv(value.value)
+        elif isinstance(value, tuple):
+            conv = _EDM_TO_ENTITY_CONVERSIONS.get(value[1])
+            mtype, value = conv(value[0])
         else:
             conv = _PYTHON_TO_ENTITY_CONVERSIONS.get(type(value))
             if conv is None and value is not None:

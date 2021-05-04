@@ -78,14 +78,17 @@ def _deserialize_table_creation(response, _, headers):
 
 
 def _from_entity_binary(value):
-    return EntityProperty(_decode_base64_to_bytes(value))
+    # type: (str) -> EntityProperty
+    return EntityProperty(_decode_base64_to_bytes(value), EdmType.BINARY)
 
 
 def _from_entity_int32(value):
-    return EntityProperty(int(value))
+    # type: (str) -> EntityProperty
+    return EntityProperty(int(value), EdmType.INT32)
 
 
 def _from_entity_int64(value):
+    # type: (str) -> EntityProperty
     return EntityProperty(int(value), EdmType.INT64)
 
 
@@ -125,7 +128,8 @@ def _from_entity_guid(value):
 
 
 def _from_entity_str(value):
-    return EntityProperty(value=value, type=EdmType.STRING)
+    # type: (str) -> EntityProperty
+    return EntityProperty(value, EdmType.STRING)
 
 
 _EDM_TYPES = [

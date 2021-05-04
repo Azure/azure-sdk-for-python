@@ -122,7 +122,7 @@ class StorageTableEntityTest(AzureTestCase, AsyncTableTestCase):
             'Birthday': datetime(1993, 4, 1, tzinfo=tzutc()),
             'birthday': datetime(1990, 4, 1, tzinfo=tzutc()),
             'binary': b'binary-binary',
-            'other': EntityProperty(value=40, type=EdmType.INT32),
+            'other': EntityProperty(40, EdmType.INT32),
             'clsid': uuid.UUID('c8da6455-213e-42d9-9b79-3f9149a57833')
         }
         await self.table.create_entity(properties)
@@ -149,7 +149,7 @@ class StorageTableEntityTest(AzureTestCase, AsyncTableTestCase):
             'Birthday': datetime(1973, 10, 4, tzinfo=tzutc()),
             'birthday': datetime(1970, 10, 4, tzinfo=tzutc()),
             'binary': b'binary',
-            'other': EntityProperty(value=20, type=EdmType.INT32),
+            'other': EntityProperty(20, EdmType.INT32),
             'clsid': uuid.UUID('c9da6455-213d-42c9-9a79-3e9149a57833')
         }
         return TableEntity(**properties)
