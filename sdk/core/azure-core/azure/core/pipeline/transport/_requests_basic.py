@@ -55,7 +55,7 @@ def _read_raw_stream(response, chunk_size=1):
     # Special case for urllib3.
     if hasattr(response.raw, 'stream'):
         try:
-            for chunk in response.raw.stream(chunk_size, decode_content=False):
+            for chunk in response.raw.stream(chunk_size, decompress=False):
                 yield chunk
         except ProtocolError as e:
             raise requests.exceptions.ChunkedEncodingError(e)
@@ -120,15 +120,15 @@ class StreamDownloadGenerator(object):
 
     :param pipeline: The pipeline object
     :param response: The response object.
-    :param bool decode_content: If True which is default, will attempt to decode the body based
+    :param bool decompress: If True which is default, will attempt to decode the body based
         on the ‘content-encoding’ header.
     """
-    def __init__(self, pipeline, response, decode_content=True):
+    def __init__(self, pipeline, response, decompress=True):
         self.pipeline = pipeline
         self.request = response.request
         self.response = response
         self.block_size = response.block_size
-        if decode_content:
+        if decompress:
             self.iter_content_func = self.response.internal_response.iter_content(self.block_size)
         else:
             self.iter_content_func = _read_raw_stream(self.response.internal_response, self.block_size)
@@ -161,10 +161,10 @@ class StreamDownloadGenerator(object):
 class RequestsTransportResponse(HttpResponse, _RequestsTransportResponseBase):
     """Streaming of data from the response.
     """
-    def stream_download(self, pipeline, decode_content=True):
+    def stream_download(self, pipeline, decompress=True):
         # type: (PipelineType, bool) -> Iterator[bytes]
         """Generator for streaming request body data."""
-        return StreamDownloadGenerator(pipeline, self, decode_content=decode_content)
+        return StreamDownloadGenerator(pipeline, self, decompress=decompress)
 
 
 class RequestsTransport(HttpTransport):

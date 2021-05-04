@@ -69,7 +69,7 @@ async def test_connection_error_response():
     pipeline = AsyncPipeline(MockTransport())
     http_response = AsyncHttpResponse(http_request, None)
     http_response.internal_response = MockInternalResponse()
-    stream = AioHttpStreamDownloadGenerator(pipeline, http_response, decode_content=False)
+    stream = AioHttpStreamDownloadGenerator(pipeline, http_response, decompress=False)
     with mock.patch('asyncio.sleep', new_callable=AsyncMock):
         with pytest.raises(ConnectionError):
             await stream.__anext__()
@@ -87,7 +87,7 @@ async def test_response_streaming_error_behavior():
         def __init__(self):
             self.total_response_size = 500
 
-        def stream(self, chunk_size, decode_content=False):
+        def stream(self, chunk_size, decompress=False):
             assert chunk_size == block_size
             left = total_response_size
             while left > 0:
@@ -97,7 +97,7 @@ async def test_response_streaming_error_behavior():
                 left -= len(data)
                 yield data
 
-        def read(self, chunk_size, decode_content=False):
+        def read(self, chunk_size, decompress=False):
             assert chunk_size == block_size
             if self.total_response_size > 0:
                 if self.total_response_size <= block_size:

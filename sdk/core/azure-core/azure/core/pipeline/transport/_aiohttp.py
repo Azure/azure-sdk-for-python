@@ -197,22 +197,22 @@ class AioHttpStreamDownloadGenerator(AsyncIterator):
 
     :param pipeline: The pipeline object
     :param response: The client response object.
-    :param bool decode_content: If True which is default, will attempt to decode the body based
+    :param bool decompress: If True which is default, will attempt to decode the body based
         on the ‘content-encoding’ header.
     """
-    def __init__(self, pipeline: Pipeline, response: AsyncHttpResponse, decode_content: bool = True) -> None:
+    def __init__(self, pipeline: Pipeline, response: AsyncHttpResponse, decompress: bool = True) -> None:
         self.pipeline = pipeline
         self.request = response.request
         self.response = response
         self.block_size = response.block_size
-        self._decode_content = decode_content
+        self._decompress = decompress
         self.content_length = int(response.internal_response.headers.get('Content-Length', 0))
 
     def __len__(self):
         return self.content_length
 
     async def __anext__(self):
-        if not(self._decode_content) and self.pipeline:
+        if not(self._decompress) and self.pipeline:
             try:
                 auto_decompress = self.pipeline.transport.session.auto_decompress
                 self.pipeline.transport.session.auto_decompress = False
@@ -220,13 +220,13 @@ class AioHttpStreamDownloadGenerator(AsyncIterator):
                 pass
         try:
             chunk = await self.response.internal_response.content.read(self.block_size)
-            if not(self._decode_content) and self.pipeline:
+            if not(self._decompress) and self.pipeline:
                 self.pipeline.transport.session.auto_decompress = auto_decompress
             if not chunk:
                 raise _ResponseStopIteration()
             return chunk
         except _ResponseStopIteration:
-            if not(self._decode_content) and self.pipeline:
+            if not(self._decompress) and self.pipeline:
                 try:
                     self.pipeline.transport.session.auto_decompress = auto_decompress
                 except AttributeError:
@@ -234,14 +234,14 @@ class AioHttpStreamDownloadGenerator(AsyncIterator):
             self.response.internal_response.close()
             raise StopAsyncIteration()
         except StreamConsumedError:
-            if not(self._decode_content) and self.pipeline:
+            if not(self._decompress) and self.pipeline:
                 try:
                     self.pipeline.transport.session.auto_decompress = auto_decompress
                 except AttributeError:
                     pass
             raise
         except Exception as err:
-            if not(self._decode_content) and self.pipeline:
+            if not(self._decompress) and self.pipeline:
                 try:
                     self.pipeline.transport.session.auto_decompress = auto_decompress
                 except AttributeError:
@@ -292,15 +292,15 @@ class AioHttpTransportResponse(AsyncHttpResponse):
         """Load in memory the body, so it could be accessible from sync methods."""
         self._body = await self.internal_response.read()
 
-    def stream_download(self, pipeline, decode_content=True) -> AsyncIteratorType[bytes]:
+    def stream_download(self, pipeline, decompress=True) -> AsyncIteratorType[bytes]:
         """Generator for streaming response body data.
 
         :param pipeline: The pipeline object
         :type pipeline: azure.core.pipeline.Pipeline
-        :param bool decode_content: If True which is default, will attempt to decode the body based
+        :param bool decompress: If True which is default, will attempt to decode the body based
             on the ‘content-encoding’ header.
         """
-        return AioHttpStreamDownloadGenerator(pipeline, self, decode_content=decode_content)
+        return AioHttpStreamDownloadGenerator(pipeline, self, decompress=decompress)
 
     def __getstate__(self):
         # Be sure body is loaded in memory, otherwise not pickable and let it throw

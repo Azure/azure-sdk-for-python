@@ -580,7 +580,7 @@ class _HttpResponseBase(object):
 
 
 class HttpResponse(_HttpResponseBase):  # pylint: disable=abstract-method
-    def stream_download(self, pipeline, decode_content=True):
+    def stream_download(self, pipeline, decompress=True):
         # type: (PipelineType, bool) -> Iterator[bytes]
         """Generator for streaming request body data.
 

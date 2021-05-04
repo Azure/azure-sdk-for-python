@@ -44,7 +44,7 @@ def test_connection_error_response():
                 self._count += 1
                 raise requests.exceptions.ConnectionError
         
-        def stream(self, chunk_size, decode_content=False):
+        def stream(self, chunk_size, decompress=False):
             if self._count == 0:
                 self._count += 1
                 raise requests.exceptions.ConnectionError
@@ -62,7 +62,7 @@ def test_connection_error_response():
     pipeline = Pipeline(MockTransport())
     http_response = HttpResponse(http_request, None)
     http_response.internal_response = MockInternalResponse()
-    stream = StreamDownloadGenerator(pipeline, http_response, decode_content=False)
+    stream = StreamDownloadGenerator(pipeline, http_response, decompress=False)
     with mock.patch('time.sleep', return_value=None):
         with pytest.raises(requests.exceptions.ConnectionError):
             stream.__next__()
@@ -79,7 +79,7 @@ def test_response_streaming_error_behavior():
         def __init__(self):
             self.total_response_size = 500
 
-        def stream(self, chunk_size, decode_content=False):
+        def stream(self, chunk_size, decompress=False):
             assert chunk_size == block_size
             left = total_response_size
             while left > 0:
@@ -89,7 +89,7 @@ def test_response_streaming_error_behavior():
                 left -= len(data)
                 yield data
 
-        def read(self, chunk_size, decode_content=False):
+        def read(self, chunk_size, decompress=False):
             assert chunk_size == block_size
             if self.total_response_size > 0:
                 if self.total_response_size <= block_size:
