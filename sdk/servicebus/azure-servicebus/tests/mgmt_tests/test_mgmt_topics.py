@@ -157,8 +157,32 @@ class ServiceBusAdministrationClientTopicTests(AzureMgmtTestCase):
             assert topic_description.default_message_time_to_live == datetime.timedelta(minutes=11, seconds=2)
             assert topic_description.duplicate_detection_history_time_window == datetime.timedelta(minutes=12, seconds=3)
 
+            # updating all settings with keyword arguments.
+            mgmt_service.update_topic(
+                topic_description,
+                auto_delete_on_idle=datetime.timedelta(minutes=14),
+                default_message_time_to_live=datetime.timedelta(minutes=15),
+                duplicate_detection_history_time_window=datetime.timedelta(minutes=16),
+                enable_batched_operations=False,
+                enable_express=False,
+                max_size_in_megabytes=2048,
+                support_ordering=False
+            )
+            topic_description = mgmt_service.get_topic(topic_name)
+
+            assert topic_description.auto_delete_on_idle == datetime.timedelta(minutes=14)
+            assert topic_description.default_message_time_to_live == datetime.timedelta(minutes=15)
+            assert topic_description.duplicate_detection_history_time_window == datetime.timedelta(minutes=16)
+            assert topic_description.enable_batched_operations == False
+            assert topic_description.enable_express == False
+            # assert topic_description.enable_partitioning == True
+            assert topic_description.max_size_in_megabytes == 2048
+            # assert topic_description.requires_duplicate_detection == True
+            # assert topic_description.requires_session == True
+            assert topic_description.support_ordering == False
         finally:
             mgmt_service.delete_topic(topic_name)
+            mgmt_service.close()
 
     @CachedResourceGroupPreparer(name_prefix='servicebustest')
     @CachedServiceBusNamespacePreparer(name_prefix='servicebustest')
@@ -337,8 +361,34 @@ class ServiceBusAdministrationClientTopicTests(AzureMgmtTestCase):
             # assert topic_description.requires_duplicate_detection == True
             # assert topic_description.requires_session == True
             assert topic_description.support_ordering == True
+
+            # updating all settings with keyword arguments.
+            mgmt_service.update_topic(
+                dict(topic_description),
+                auto_delete_on_idle=datetime.timedelta(minutes=14),
+                default_message_time_to_live=datetime.timedelta(minutes=15),
+                duplicate_detection_history_time_window=datetime.timedelta(minutes=16),
+                enable_batched_operations=False,
+                enable_express=False,
+                max_size_in_megabytes=2048,
+                support_ordering=False
+            )
+            topic_description = mgmt_service.get_topic(topic_name)
+
+            assert topic_description.auto_delete_on_idle == datetime.timedelta(minutes=14)
+            assert topic_description.default_message_time_to_live == datetime.timedelta(minutes=15)
+            assert topic_description.duplicate_detection_history_time_window == datetime.timedelta(minutes=16)
+            assert topic_description.enable_batched_operations == False
+            assert topic_description.enable_express == False
+            # assert topic_description.enable_partitioning == True
+            assert topic_description.max_size_in_megabytes == 2048
+            # assert topic_description.requires_duplicate_detection == True
+            # assert topic_description.requires_session == True
+            assert topic_description.support_ordering == False
+
         finally:
             mgmt_service.delete_topic(topic_name)
+            mgmt_service.close()
 
     @CachedResourceGroupPreparer(name_prefix='servicebustest')
     @CachedServiceBusNamespacePreparer(name_prefix='servicebustest')

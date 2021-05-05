@@ -8,6 +8,11 @@ The preview features related to AMQPAnnotatedMessage introduced in 7.2.0b1 are n
 
 * Added support for using `azure.core.credentials.AzureNamedKeyCredential` as credential for authenticating the clients.
 * Support for using `azure.core.credentials.AzureSasCredential` as credential for authenticating the clients is now GA.
+* `ServiceBusAdministrationClient.update_*` methods now accept keyword arguments to override the properties specified in the model instance.
+
+**Bug Fixes**
+
+* Fixed a bug where `update_queue` and `update_subscription` methods were mutating the properties `forward_to` and `forward_dead_lettered_messages_to` of the model instance when those properties are entities instead of full paths.
 
 **Notes**
 
@@ -25,6 +30,7 @@ The preview features related to AMQPAnnotatedMessage introduced in 7.2.0b1 are n
   - `SEQUENCE`: The body of message consists of one or more sequence sections and each section contains an arbitrary number of structured data elements.
   - `VALUE`: The body of message consists of one amqp-value section and the section contains a single AMQP value.
 * Added new property `body_type` on `azure.servicebus.ServiceBusMessage` and `azure.servicebus.ReceivedMessage` which returns `azure.servicebus.AMQPMessageBodyType`.
+
 
 ## 7.1.1 (2021-04-07)
 
