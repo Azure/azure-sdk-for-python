@@ -345,7 +345,7 @@ section of the project.
 <!-- LINKS -->
 [source_code]: https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/attestation/azure-security-attestation
 [attestation_pypi]: https://aka.ms/azsdk/python/azure-security-attestation
-[API_reference]:https://docs.microsoft.com/en-us/python/api/overview/azure/security-attestation-readme?view=azure-python-preview
+[API_reference]:https://docs.microsoft.com/python/api/overview/azure/security-attestation-readme?view=azure-python-preview
 [style-guide-msft]: https://docs.microsoft.com/style-guide/capitalization
 [style-guide-cloud]: https://aka.ms/azsdk/cloud-style-guide
 [microsoft_code_of_conduct]: https://opensource.microsoft.com/codeofconduct/
