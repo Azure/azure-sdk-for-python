@@ -127,7 +127,7 @@ steps:
           echo "conda install --name ${{ artifact.name }} azure-identity -c $(AzureSDKCondaChannel) --yes"
           conda install --name ${{ artifact.name }} azure-identity -c $(AzureSDKCondaChannel) --yes
 
-          echo "conda install --name ${{ artifact.name }} ${{ artifact.name }} -c $(Build.ArtifactStagingDirectory)/${{ artifact.name }} --yes"
+          echo "conda install --name ${{ artifact.name }} ${{ artifact.name }} -c $(Build.ArtifactStagingDirectory)/${{ artifact.name }} --yes -c $(AzureSDKCondaChannel)"
           conda install --name ${{ artifact.name }} ${{ artifact.name }} -c $(Build.ArtifactStagingDirectory)/${{ artifact.name }} --yes -c $(AzureSDKCondaChannel)
 
           echo "$(activate.method) ${{ artifact.name }}"
