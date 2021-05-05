@@ -84,7 +84,7 @@ def convert_iothub_to_eventhub_conn_str(iothub_conn_str):
             fully_qualified_name,
             shared_access_key_name,
             shared_access_key,
-            iot_hub_name
+            iot_hub_name[:25]
         )
     except Exception as exp:
         raise ValueError(
