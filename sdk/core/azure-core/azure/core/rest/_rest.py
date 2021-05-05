@@ -54,7 +54,7 @@ if TYPE_CHECKING:
     from azure.core.pipeline.transport._base import (
         _HttpResponseBase as _PipelineTransportHttpResponseBase
     )
-    from azure.core._pipeline_client import PipelineClient as _PipelineClient
+    from azure.core.pipeline import Pipeline
 
 class HttpVerbs(str, Enum):
     GET = "GET"
@@ -185,16 +185,21 @@ def _parse_lines_from_text(text):
 
 ################################## CLASSES ######################################
 class _StreamContextManager(object):
-    def __init__(self, client, request, **kwargs):
-        # type: (_PipelineClient, HttpRequest, Any) -> None
-        self.client = client
+    def __init__(self, pipeline, request, **kwargs):
+        # type: (Pipeline, HttpRequest, Any) -> None
+        """Used so we can treat stream requests and responses as a context manager.
+        In Autorest, we only return a `StreamContextManager` if users pass in `stream_response` True
+        Actually sends request when we enter the context manager, closes response when we exit.
+        Heavily inspired from httpx, we want the same behavior for it to feel consistent for users
+        """
+        self.pipeline = pipeline
         self.request = request
         self.kwargs = kwargs
 
     def __enter__(self):
         # type: (...) -> HttpResponse
         """Actually make the call only when we enter. For sync stream_response calls"""
-        pipeline_transport_response = self.client._pipeline.run(
+        pipeline_transport_response = self.pipeline.run(
             self.request._internal_request,
             stream=True,
             **self.kwargs
