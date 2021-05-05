@@ -272,7 +272,7 @@ class TableClient(TablesBaseClient):
         try:
             self._client.table.delete(table=self.table_name, **kwargs)
         except HttpResponseError as error:
-            if error.status_code == 404 and error.reason == u"Not Found":
+            if error.status_code == 404:
                 return
             _process_table_error(error)
 
@@ -352,7 +352,7 @@ class TableClient(TablesBaseClient):
                 **kwargs
             )
         except HttpResponseError as error:
-            if error.status_code == 404 and error.reason == u"Not Found":
+            if error.status_code == 404:
                 return
             _process_table_error(error)
 

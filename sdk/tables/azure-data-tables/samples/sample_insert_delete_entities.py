@@ -81,14 +81,11 @@ class InsertDeleteEntity(object):
                 print("Entity already exists!")
 
             # [START delete_entity]
-            try:
-                table_client.delete_entity(
-                    row_key=self.entity["RowKey"],
-                    partition_key=self.entity["PartitionKey"]
-                )
-                print("Successfully deleted!")
-            except HttpResponseError:
-                print("There was an issue deleting the entity")
+            table_client.delete_entity(
+                row_key=self.entity["RowKey"],
+                partition_key=self.entity["PartitionKey"]
+            )
+            print("Successfully deleted!")
             # [END delete_entity]
 
 
