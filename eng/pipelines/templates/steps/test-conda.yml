@@ -124,11 +124,11 @@ steps:
           SkipDefaultCheckout: true
 
       - script: |
-          echo "conda install --name ${{ artifact.name }} azure-identity -c $(AzureSDKChannel) --yes"
-          conda install --name ${{ artifact.name }} azure-identity -c $(AzureSDKChannel) --yes
+          echo "conda install --name ${{ artifact.name }} azure-identity -c $(AzureSDKCondaChannel) --yes"
+          conda install --name ${{ artifact.name }} azure-identity -c $(AzureSDKCondaChannel) --yes
 
           echo "conda install --name ${{ artifact.name }} ${{ artifact.name }} -c $(Build.ArtifactStagingDirectory)/${{ artifact.name }} --yes"
-          conda install --name ${{ artifact.name }} ${{ artifact.name }} -c $(Build.ArtifactStagingDirectory)/${{ artifact.name }} --yes -c $(AzureSDKChannel)
+          conda install --name ${{ artifact.name }} ${{ artifact.name }} -c $(Build.ArtifactStagingDirectory)/${{ artifact.name }} --yes -c $(AzureSDKCondaChannel)
 
           echo "$(activate.method) ${{ artifact.name }}"
           $(activate.method) ${{ artifact.name }}
