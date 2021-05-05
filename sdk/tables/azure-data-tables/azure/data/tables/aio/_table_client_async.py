@@ -306,7 +306,7 @@ class TableClient(AsyncTablesBaseClient):
             partition_key = kwargs.pop('partition_key', None)
             if not partition_key:
                 partition_key = args[0]
-            row_key = kwargs.pop('row_key', None) or args[1]
+            row_key = kwargs.pop("row_key", None)
             if not row_key:
                 row_key = args[1]
 

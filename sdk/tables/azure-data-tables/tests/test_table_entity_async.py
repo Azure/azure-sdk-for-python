@@ -1571,7 +1571,7 @@ class StorageTableEntityTest(AzureTestCase, AsyncTableTestCase):
 
             assert length == 1
         finally:
-            self._tear_down()
+            await self._tear_down()
 
     @TablesPreparer()
     async def test_query_user_filter_int64(self, tables_storage_account_name, tables_primary_storage_account_key):
