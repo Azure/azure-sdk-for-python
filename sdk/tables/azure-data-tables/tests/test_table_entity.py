@@ -18,7 +18,6 @@ from devtools_testutils import AzureTestCase
 
 from azure.data.tables import (
     TableServiceClient,
-    TableClient,
     generate_table_sas,
     TableEntity,
     EntityProperty,
@@ -34,7 +33,6 @@ from azure.core.exceptions import (
     HttpResponseError,
     ResourceNotFoundError,
     ResourceExistsError,
-    ResourceModifiedError,
 )
 
 from _shared.testcase import TableTestCase
@@ -135,8 +133,7 @@ class StorageTableEntityTest(AzureTestCase, TableTestCase):
             'other': EntityProperty(40, EdmType.INT32),
             'clsid': uuid.UUID('c8da6455-213e-42d9-9b79-3f9149a57833')
         }
-        entity = TableEntity(**properties)
-        self.table.create_entity(entity)
+        self.table.create_entity(properties)
         return entity1, resp
 
     def _create_random_entity_dict(self, pk=None, rk=None):
@@ -203,6 +200,8 @@ class StorageTableEntityTest(AzureTestCase, TableTestCase):
         assert entity['binary'].value ==  b'binary'
         assert entity['other'] ==  20
         assert entity['clsid'] ==  uuid.UUID('c9da6455-213d-42c9-9a79-3e9149a57833')
+        assert entity.metadata['etag']
+        assert entity.metadata['timestamp']
 
     def _assert_default_entity_json_full_metadata(self, entity, headers=None):
         '''
@@ -222,6 +221,8 @@ class StorageTableEntityTest(AzureTestCase, TableTestCase):
         assert entity['binary'].value ==  b'binary'
         assert entity['other'] ==  20
         assert entity['clsid'] ==  uuid.UUID('c9da6455-213d-42c9-9a79-3e9149a57833')
+        assert entity.metadata['etag']
+        assert entity.metadata['timestamp']
 
     def _assert_default_entity_json_no_metadata(self, entity, headers=None):
         '''
@@ -243,43 +244,49 @@ class StorageTableEntityTest(AzureTestCase, TableTestCase):
         assert entity['binary'] ==  b64encode(b'binary').decode('utf-8')
         assert entity['other'] ==  20
         assert entity['clsid'] ==  'c9da6455-213d-42c9-9a79-3e9149a57833'
+        assert entity.metadata['etag']
+        assert entity.metadata['timestamp']
 
     def _assert_updated_entity(self, entity):
         '''
         Asserts that the entity passed in matches the updated entity.
         '''
-        assert entity.age ==  'abc'
-        assert entity.sex ==  'female'
-        assert not hasattr(entity, "married")
-        assert not hasattr(entity, "deceased")
-        assert entity.sign ==  'aquarius'
-        assert not hasattr(entity, "optional")
-        assert not hasattr(entity, "ratio")
-        assert not hasattr(entity, "evenratio")
-        assert not hasattr(entity, "large")
-        assert not hasattr(entity, "Birthday")
-        assert entity.birthday, datetime(1991, 10, 4, tzinfo=tzutc())
-        assert not hasattr(entity, "other")
-        assert not hasattr(entity, "clsid")
+        assert entity['age'] ==  'abc'
+        assert entity['sex'] ==  'female'
+        assert not "married" in entity
+        assert not "deceased" in entity
+        assert entity['sign'] ==  'aquarius'
+        assert not "optional" in entity
+        assert not "ratio" in entity
+        assert not "evenratio" in entity
+        assert not "large" in entity
+        assert not "Birthday" in entity
+        assert entity['birthday'] == datetime(1991, 10, 4, tzinfo=tzutc())
+        assert not "other" in entity
+        assert not "clsid" in entity
+        assert entity.metadata['etag']
+        assert entity.metadata['timestamp']
 
     def _assert_merged_entity(self, entity):
         '''
         Asserts that the entity passed in matches the default entity
         merged with the updated entity.
         '''
-        assert entity.age ==  'abc'
-        assert entity.sex ==  'female'
-        assert entity.sign ==  'aquarius'
-        assert entity.married ==  True
-        assert entity.deceased ==  False
-        assert entity.ratio ==  3.1
-        assert entity.evenratio ==  3.0
-        assert entity.large ==  933311100
-        assert entity.Birthday, datetime(1973, 10, 4, tzinfo=tzutc())
-        assert entity.birthday, datetime(1991, 10, 4, tzinfo=tzutc())
-        assert entity.other ==  20
-        assert isinstance(entity.clsid,  uuid.UUID)
-        assert str(entity.clsid) ==  'c9da6455-213d-42c9-9a79-3e9149a57833'
+        assert entity['age'] ==  'abc'
+        assert entity['sex'] ==  'female'
+        assert entity['sign'] ==  'aquarius'
+        assert entity['married'] ==  True
+        assert entity['deceased'] ==  False
+        assert entity['ratio'] ==  3.1
+        assert entity['evenratio'] ==  3.0
+        assert entity['large'] ==  933311100
+        assert entity['Birthday'] == datetime(1973, 10, 4, tzinfo=tzutc())
+        assert entity['birthday'] == datetime(1991, 10, 4, tzinfo=tzutc())
+        assert entity['other'] ==  20
+        assert isinstance(entity['clsid'],  uuid.UUID)
+        assert str(entity['clsid']) ==  'c9da6455-213d-42c9-9a79-3e9149a57833'
+        assert entity.metadata['etag']
+        assert entity.metadata['timestamp']
 
     def _assert_valid_metadata(self, metadata):
         keys = metadata.keys()
@@ -309,11 +316,11 @@ class StorageTableEntityTest(AzureTestCase, TableTestCase):
             entities = self.table.query_entities(f)
             count = 0
             for e in entities:
-                assert e.PartitionKey == entity[u"PartitionKey"]
-                assert e.RowKey == entity[u"RowKey"]
-                assert e.Value == entity[u"Value"]
+                assert e[u'PartitionKey'] == entity[u"PartitionKey"]
+                assert e[u'RowKey'] == entity[u"RowKey"]
+                assert e[u'Value'] == entity[u"Value"]
                 count += 1
-                self.table.delete_entity(e.PartitionKey, e.RowKey)
+                self.table.delete_entity(e[u'PartitionKey'], e[u'RowKey'])
 
             assert count == 1
 
@@ -332,12 +339,14 @@ class StorageTableEntityTest(AzureTestCase, TableTestCase):
 
             entity, _ = self._insert_random_entity()
 
-            entity1 = self.table.get_entity(row_key=entity.RowKey, partition_key=entity.PartitionKey)
+            entity1 = self.table.get_entity(row_key=entity['RowKey'], partition_key=entity['PartitionKey'])
 
-            with pytest.raises(AttributeError):
-                etag = entity1.etag
+            assert 'etag' not in entity1
+            assert 'timestamp' not in entity1
+            assert entity1.metadata
+            assert entity1.metadata['etag']
+            assert entity1.metadata['timestamp']
 
-            assert entity1.metadata() is not None
         finally:
             self._tear_down()
 
@@ -825,19 +834,19 @@ class StorageTableEntityTest(AzureTestCase, TableTestCase):
                 YELLOW = 3
 
             pk, rk = self._create_pk_rk(None, None)
-            entity = TableEntity()
-            entity.PartitionKey = pk
-            entity.RowKey = rk
-            entity.test1 = Color.YELLOW
-            entity.test2 = Color.BLUE
-            entity.test3 = Color.RED
-
+            entity = TableEntity(
+                PartitionKey=pk,
+                RowKey=rk,
+                test1=Color.YELLOW,
+                test2=Color.BLUE,
+                test3=Color.RED
+            )
 
             self.table.create_entity(entity=entity)
             resp_entity = self.table.get_entity(partition_key=pk, row_key=rk)
-            assert str(entity.test1) == resp_entity.test1
-            assert str(entity.test2) == resp_entity.test2
-            assert str(entity.test3) == resp_entity.test3
+            assert str(entity['test1']) == resp_entity['test1']
+            assert str(entity['test2']) == resp_entity['test2']
+            assert str(entity['test3']) == resp_entity['test3']
 
         finally:
             self._tear_down()
@@ -896,8 +905,7 @@ class StorageTableEntityTest(AzureTestCase, TableTestCase):
                                          row_key=entity['RowKey'])
 
             self.table.delete_entity(
-                partition_key=resp['PartitionKey'],
-                row_key=resp['RowKey'],
+                {"PartitionKey": resp['PartitionKey'], "RowKey": resp['RowKey']},
                 etag=etag,
                 match_condition=MatchConditions.IfNotModified
             )
@@ -919,13 +927,13 @@ class StorageTableEntityTest(AzureTestCase, TableTestCase):
 
             # Act
             resp = self.table.get_entity(
-                entity.PartitionKey,
-                entity.RowKey,
+                entity['PartitionKey'],
+                entity['RowKey'],
                 headers={'accept': 'application/json;odata=fullmetadata'})
 
             # Assert
-            assert resp.PartitionKey ==  entity.PartitionKey
-            assert resp.RowKey ==  entity.RowKey
+            assert resp['PartitionKey'] ==  entity['PartitionKey']
+            assert resp['RowKey'] ==  entity['RowKey']
             self._assert_default_entity_json_full_metadata(resp)
         finally:
             self._tear_down()
@@ -939,13 +947,13 @@ class StorageTableEntityTest(AzureTestCase, TableTestCase):
 
             # Act
             resp = self.table.get_entity(
-                partition_key=entity.PartitionKey,
-                row_key=entity.RowKey,
+                partition_key=entity['PartitionKey'],
+                row_key=entity['RowKey'],
                 headers={'accept': 'application/json;odata=nometadata'})
 
             # Assert
-            assert resp.PartitionKey ==  entity.PartitionKey
-            assert resp.RowKey ==  entity.RowKey
+            assert resp['PartitionKey'] ==  entity['PartitionKey']
+            assert resp['RowKey'] ==  entity['RowKey']
             self._assert_default_entity_json_no_metadata(resp)
         finally:
             self._tear_down()
@@ -959,8 +967,8 @@ class StorageTableEntityTest(AzureTestCase, TableTestCase):
 
             # Act
             with pytest.raises(ResourceNotFoundError):
-                self.table.get_entity(partition_key=entity.PartitionKey,
-                                      row_key=entity.RowKey)
+                self.table.get_entity(partition_key=entity['PartitionKey'],
+                                      row_key=entity['RowKey'])
 
             # Assert
         finally:
@@ -984,9 +992,9 @@ class StorageTableEntityTest(AzureTestCase, TableTestCase):
                                          row_key=entity['RowKey'])
 
             # Assert
-            assert received_entity.inf ==  float('inf')
-            assert received_entity.negativeinf ==  float('-inf')
-            assert isnan(received_entity.nan)
+            assert received_entity['inf'] ==  float('inf')
+            assert received_entity['negativeinf'] ==  float('-inf')
+            assert isnan(received_entity['nan'])
         finally:
             self._tear_down()
 
@@ -998,14 +1006,14 @@ class StorageTableEntityTest(AzureTestCase, TableTestCase):
             entity, _ = self._insert_random_entity()
 
             # Act
-            sent_entity = self._create_updated_entity_dict(entity.PartitionKey, entity.RowKey)
+            sent_entity = self._create_updated_entity_dict(entity[u'PartitionKey'], entity[u'RowKey'])
 
             resp = self.table.update_entity(mode=UpdateMode.REPLACE, entity=sent_entity)
 
             # Assert
             #  assert resp
-            received_entity = self.table.get_entity(partition_key=entity.PartitionKey,
-                                                    row_key=entity.RowKey)
+            received_entity = self.table.get_entity(partition_key=entity[u'PartitionKey'],
+                                                    row_key=entity[u'RowKey'])
 
             with pytest.raises(KeyError):
                 del received_entity['property_that_does_not_exist']
@@ -1038,7 +1046,7 @@ class StorageTableEntityTest(AzureTestCase, TableTestCase):
             entity, etag = self._insert_random_entity()
 
             # Act
-            sent_entity = self._create_updated_entity_dict(entity.PartitionKey, entity.RowKey)
+            sent_entity = self._create_updated_entity_dict(entity[u'PartitionKey'], entity[u'RowKey'])
 
             resp = self.table.update_entity(
                 mode=UpdateMode.REPLACE, entity=sent_entity, etag=etag,
@@ -1046,7 +1054,7 @@ class StorageTableEntityTest(AzureTestCase, TableTestCase):
 
             # Assert
             self._assert_valid_metadata(resp)
-            received_entity = self.table.get_entity(entity.PartitionKey, entity.RowKey)
+            received_entity = self.table.get_entity(entity[u'PartitionKey'], entity[u'RowKey'])
             self._assert_updated_entity(received_entity)
         finally:
             self._tear_down()
@@ -1058,7 +1066,7 @@ class StorageTableEntityTest(AzureTestCase, TableTestCase):
         try:
             entity, _ = self._insert_random_entity()
 
-            sent_entity = self._create_updated_entity_dict(entity.PartitionKey, entity.RowKey)
+            sent_entity = self._create_updated_entity_dict(entity[u'PartitionKey'], entity[u'RowKey'])
             with pytest.raises(HttpResponseError):
                 self.table.update_entity(
                     mode=UpdateMode.REPLACE,
@@ -1078,12 +1086,12 @@ class StorageTableEntityTest(AzureTestCase, TableTestCase):
             entity, _ = self._insert_random_entity()
 
             # Act
-            sent_entity = self._create_updated_entity_dict(entity.PartitionKey, entity.RowKey)
+            sent_entity = self._create_updated_entity_dict(entity['PartitionKey'], entity['RowKey'])
             resp = self.table.upsert_entity(mode=UpdateMode.MERGE, entity=sent_entity)
 
             # Assert
             self._assert_valid_metadata(resp)
-            received_entity = self.table.get_entity(entity.PartitionKey, entity.RowKey)
+            received_entity = self.table.get_entity(entity['PartitionKey'], entity['RowKey'])
             self._assert_merged_entity(received_entity)
         finally:
             self._tear_down()
@@ -1117,12 +1125,12 @@ class StorageTableEntityTest(AzureTestCase, TableTestCase):
             entity, _ = self._insert_random_entity()
 
             # Act
-            sent_entity = self._create_updated_entity_dict(entity.PartitionKey, entity.RowKey)
+            sent_entity = self._create_updated_entity_dict(entity['PartitionKey'], entity['RowKey'])
             resp = self.table.upsert_entity(mode=UpdateMode.REPLACE, entity=sent_entity)
 
             # Assert
             self._assert_valid_metadata(resp)
-            received_entity = self.table.get_entity(entity.PartitionKey, entity.RowKey)
+            received_entity = self.table.get_entity(entity['PartitionKey'], entity['RowKey'])
             self._assert_updated_entity(received_entity)
         finally:
             self._tear_down()
@@ -1155,12 +1163,12 @@ class StorageTableEntityTest(AzureTestCase, TableTestCase):
             entity, _ = self._insert_random_entity()
 
             # Act
-            sent_entity = self._create_updated_entity_dict(entity.PartitionKey, entity.RowKey)
+            sent_entity = self._create_updated_entity_dict(entity['PartitionKey'], entity['RowKey'])
             resp = self.table.update_entity(mode=UpdateMode.MERGE, entity=sent_entity)
 
             # Assert
             self._assert_valid_metadata(resp)
-            received_entity = self.table.get_entity(entity.PartitionKey, entity.RowKey)
+            received_entity = self.table.get_entity(entity['PartitionKey'], entity['RowKey'])
             self._assert_merged_entity(received_entity)
         finally:
             self._tear_down()
@@ -1189,7 +1197,7 @@ class StorageTableEntityTest(AzureTestCase, TableTestCase):
             entity, etag = self._insert_random_entity()
 
             # Act
-            sent_entity = self._create_updated_entity_dict(entity.PartitionKey, entity.RowKey)
+            sent_entity = self._create_updated_entity_dict(entity['PartitionKey'], entity['RowKey'])
             resp = self.table.update_entity(
                 mode=UpdateMode.MERGE,
                 entity=sent_entity,
@@ -1198,7 +1206,7 @@ class StorageTableEntityTest(AzureTestCase, TableTestCase):
 
             # Assert
             self._assert_valid_metadata(resp)
-            received_entity = self.table.get_entity(entity.PartitionKey, entity.RowKey)
+            received_entity = self.table.get_entity(entity['PartitionKey'], entity['RowKey'])
             self._assert_merged_entity(received_entity)
         finally:
             self._tear_down()
@@ -1211,7 +1219,7 @@ class StorageTableEntityTest(AzureTestCase, TableTestCase):
             entity, _ = self._insert_random_entity()
 
             # Act
-            sent_entity = self._create_updated_entity_dict(entity.PartitionKey, entity.RowKey)
+            sent_entity = self._create_updated_entity_dict(entity['PartitionKey'], entity['RowKey'])
             with pytest.raises(HttpResponseError):
                 self.table.update_entity(mode=UpdateMode.MERGE,
                                          entity=sent_entity,
@@ -1230,12 +1238,12 @@ class StorageTableEntityTest(AzureTestCase, TableTestCase):
             entity, _ = self._insert_random_entity()
 
             # Act
-            resp = self.table.delete_entity(partition_key=entity.PartitionKey, row_key=entity.RowKey)
+            resp = self.table.delete_entity(partition_key=entity['PartitionKey'], row_key=entity['RowKey'])
 
             # Assert
             assert resp is None
             with pytest.raises(ResourceNotFoundError):
-                self.table.get_entity(entity.PartitionKey, entity.RowKey)
+                self.table.get_entity(entity['PartitionKey'], entity['RowKey'])
         finally:
             self._tear_down()
 
@@ -1248,7 +1256,7 @@ class StorageTableEntityTest(AzureTestCase, TableTestCase):
 
             # Act
             with pytest.raises(ResourceNotFoundError):
-                self.table.delete_entity(entity['PartitionKey'], entity['RowKey'])
+                self.table.delete_entity({"PartitionKey": entity['PartitionKey'], "RowKey": entity['RowKey']})
 
             # Assert
         finally:
@@ -1262,13 +1270,13 @@ class StorageTableEntityTest(AzureTestCase, TableTestCase):
             entity, etag = self._insert_random_entity()
 
             # Act
-            resp = self.table.delete_entity(entity.PartitionKey, entity.RowKey, etag=etag,
+            resp = self.table.delete_entity(entity['PartitionKey'], entity['RowKey'], etag=etag,
                                             match_condition=MatchConditions.IfNotModified)
 
             # Assert
             assert resp is None
             with pytest.raises(ResourceNotFoundError):
-                self.table.get_entity(entity.PartitionKey, entity.RowKey)
+                self.table.get_entity(entity['PartitionKey'], entity['RowKey'])
         finally:
             self._tear_down()
 
@@ -1282,11 +1290,68 @@ class StorageTableEntityTest(AzureTestCase, TableTestCase):
             # Act
             with pytest.raises(HttpResponseError):
                 self.table.delete_entity(
-                    entity.PartitionKey, entity.RowKey,
+                    entity['PartitionKey'], entity['RowKey'],
                     etag=u'W/"datetime\'2012-06-15T22%3A51%3A44.9662825Z\'"',
-                    match_condition=MatchConditions.IfNotModified)
+                    match_condition=MatchConditions.IfNotModified
+                )
 
             # Assert
+        finally:
+            self._tear_down()
+
+    @tables_decorator
+    def test_delete_entity_overloads(self, tables_storage_account_name, tables_primary_storage_account_key):
+        # Arrange
+        self._set_up(tables_storage_account_name, tables_primary_storage_account_key)
+        try:
+            entity, _ = self._insert_random_entity()
+
+            # Act
+            self.table.delete_entity(entity)
+
+            pk, rk = self._create_pk_rk("pk", "rk")
+            pk, rk = pk + u"2", rk + u"2"
+            entity2 = {
+                u"PartitionKey": pk,
+                u"RowKey": rk,
+                u"Value": 100
+            }
+            self.table.create_entity(entity2)
+
+            self.table.delete_entity(pk, rk)
+
+            count = 0
+            for entity in self.table.list_entities():
+                count += 1
+            assert count == 0
+        finally:
+            self._tear_down()
+
+    @tables_decorator
+    def test_delete_entity_overloads_kwargs(self, tables_storage_account_name, tables_primary_storage_account_key):
+        # Arrange
+        self._set_up(tables_storage_account_name, tables_primary_storage_account_key)
+        try:
+            entity, _ = self._insert_random_entity()
+
+            # Act
+            self.table.delete_entity(entity=entity)
+
+            pk, rk = self._create_pk_rk("pk", "rk")
+            pk, rk = pk + u"2", rk + u"2"
+            entity2 = {
+                u"PartitionKey": pk,
+                u"RowKey": rk,
+                u"Value": 100
+            }
+            self.table.create_entity(entity2)
+
+            self.table.delete_entity(partition_key=pk, row_key=rk)
+
+            count = 0
+            for entity in self.table.list_entities():
+                count += 1
+            assert count == 0
         finally:
             self._tear_down()
 
@@ -1309,8 +1374,8 @@ class StorageTableEntityTest(AzureTestCase, TableTestCase):
 
             # Assert
             assert len(entities) ==  2
-            assert entities[0].Description ==  u'ꀕ'
-            assert entities[1].Description ==  u'ꀕ'
+            assert entities[0]['Description'] ==  u'ꀕ'
+            assert entities[1]['Description'] ==  u'ꀕ'
         finally:
             self._tear_down()
 
@@ -1348,13 +1413,13 @@ class StorageTableEntityTest(AzureTestCase, TableTestCase):
             entity, _ = self._insert_random_entity(pk=partition_key_with_single_quote, rk=row_key_with_single_quote)
 
             # Act
-            sent_entity = self._create_updated_entity_dict(entity.PartitionKey, entity.RowKey)
+            sent_entity = self._create_updated_entity_dict(entity['PartitionKey'], entity['RowKey'])
             resp = self.table.upsert_entity(mode=UpdateMode.MERGE, entity=sent_entity)
 
             # Assert
             self._assert_valid_metadata(resp)
             # row key here only has 2 quotes
-            received_entity = self.table.get_entity(entity.PartitionKey, entity.RowKey)
+            received_entity = self.table.get_entity(entity['PartitionKey'], entity['RowKey'])
             self._assert_updated_entity(received_entity)
 
             # Act
@@ -1363,12 +1428,12 @@ class StorageTableEntityTest(AzureTestCase, TableTestCase):
 
             # Assert
             self._assert_valid_metadata(resp)
-            received_entity = self.table.get_entity(entity.PartitionKey, entity.RowKey)
+            received_entity = self.table.get_entity(entity['PartitionKey'], entity['RowKey'])
             self._assert_updated_entity(received_entity)
             assert received_entity['newField'] ==  'newFieldValue'
 
             # Act
-            resp = self.table.delete_entity(entity.PartitionKey, entity.RowKey)
+            resp = self.table.delete_entity(entity['PartitionKey'], entity['RowKey'])
 
             # Assert
             assert resp is None
@@ -1400,16 +1465,16 @@ class StorageTableEntityTest(AzureTestCase, TableTestCase):
 
             # Assert
             assert resp is not None
-            assert resp.EmptyByte.value ==  b''
-            assert resp.EmptyUnicode ==  u''
-            assert resp.SpacesOnlyByte.value ==  b'   '
-            assert resp.SpacesOnlyUnicode ==  u'   '
-            assert resp.SpacesBeforeByte.value ==  b'   Text'
-            assert resp.SpacesBeforeUnicode ==  u'   Text'
-            assert resp.SpacesAfterByte.value ==  b'Text   '
-            assert resp.SpacesAfterUnicode ==  u'Text   '
-            assert resp.SpacesBeforeAndAfterByte.value ==  b'   Text   '
-            assert resp.SpacesBeforeAndAfterUnicode ==  u'   Text   '
+            assert resp['EmptyByte'].value ==  b''
+            assert resp['EmptyUnicode'] ==  u''
+            assert resp['SpacesOnlyByte'].value ==  b'   '
+            assert resp['SpacesOnlyUnicode'] ==  u'   '
+            assert resp['SpacesBeforeByte'].value ==  b'   Text'
+            assert resp['SpacesBeforeUnicode'] ==  u'   Text'
+            assert resp['SpacesAfterByte'].value ==  b'Text   '
+            assert resp['SpacesAfterUnicode'] ==  u'Text   '
+            assert resp['SpacesBeforeAndAfterByte'].value ==  b'   Text   '
+            assert resp['SpacesBeforeAndAfterUnicode'] ==  u'   Text   '
         finally:
             self._tear_down()
 
@@ -1446,7 +1511,7 @@ class StorageTableEntityTest(AzureTestCase, TableTestCase):
 
             # Assert
             assert resp is not None
-            assert resp.binary.value ==  binary_data
+            assert resp['binary'].value ==  binary_data
         finally:
             self._tear_down()
 
@@ -1467,8 +1532,8 @@ class StorageTableEntityTest(AzureTestCase, TableTestCase):
             # Assert
             assert resp is not None
             # times are not equal because request is made after
-            # assert resp.date.astimezone(tzutc()) ==  local_date.astimezone(tzutc())
-            assert resp.date.astimezone(local_tz) ==  local_date
+            assert resp['date'].astimezone(tzutc()) ==  local_date.astimezone(tzutc())
+            assert resp['date'].astimezone(local_tz) ==  local_date
         finally:
             self._tear_down()
 
@@ -1584,17 +1649,17 @@ class StorageTableEntityTest(AzureTestCase, TableTestCase):
         self._set_up(tables_storage_account_name, tables_primary_storage_account_key)
         try:
             entity, _ = self._insert_random_entity()
-            entity2, _ = self._insert_random_entity(pk="foo" + entity.PartitionKey)
-            entity3, _ = self._insert_random_entity(pk="bar" + entity.PartitionKey)
+            entity2, _ = self._insert_random_entity(pk="foo" + entity['PartitionKey'])
+            entity3, _ = self._insert_random_entity(pk="bar" + entity['PartitionKey'])
 
             # Act
             entities = list(self.table.query_entities(
-                "PartitionKey eq '{}'".format(entity.PartitionKey),
+                "PartitionKey eq '{}'".format(entity['PartitionKey']),
                 results_per_page=1))
 
             # Assert
             assert len(entities) ==  1
-            assert entity.PartitionKey ==  entities[0].PartitionKey
+            assert entity['PartitionKey'] ==  entities[0]['PartitionKey']
             self._assert_default_entity(entities[0])
         finally:
             self._tear_down()
@@ -1679,11 +1744,11 @@ class StorageTableEntityTest(AzureTestCase, TableTestCase):
 
             # Assert
             assert len(entities) ==  2
-            assert entities[0].age ==  39
-            assert entities[0].sex ==  'male'
-            assert not hasattr(entities[0], "birthday")
-            assert not hasattr(entities[0], "married")
-            assert not hasattr(entities[0], "deceased")
+            assert entities[0]['age'] ==  39
+            assert entities[0]['sex'] ==  'male'
+            assert not "birthday" in entities[0]
+            assert not "married" in entities[0]
+            assert not "deceased" in entities[0]
         finally:
             self._tear_down()
 
@@ -1885,11 +1950,11 @@ class StorageTableEntityTest(AzureTestCase, TableTestCase):
                 credential=AzureSasCredential(token),
             )
             table = service.get_table_client(self.table_name)
-            updated_entity = self._create_updated_entity_dict(entity.PartitionKey, entity.RowKey)
+            updated_entity = self._create_updated_entity_dict(entity['PartitionKey'], entity['RowKey'])
             resp = table.update_entity(mode=UpdateMode.REPLACE, entity=updated_entity)
 
             # Assert
-            received_entity = self.table.get_entity(entity.PartitionKey, entity.RowKey)
+            received_entity = self.table.get_entity(entity['PartitionKey'], entity['RowKey'])
             assert resp is not None
             self._assert_updated_entity(received_entity)
         finally:
@@ -1917,11 +1982,11 @@ class StorageTableEntityTest(AzureTestCase, TableTestCase):
                 credential=AzureSasCredential(token),
             )
             table = service.get_table_client(self.table_name)
-            table.delete_entity(entity.PartitionKey, entity.RowKey)
+            table.delete_entity(entity['PartitionKey'], entity['RowKey'])
 
             # Assert
             with pytest.raises(ResourceNotFoundError):
-                self.table.get_entity(entity.PartitionKey, entity.RowKey)
+                self.table.get_entity(entity['PartitionKey'], entity['RowKey'])
         finally:
             self._tear_down()
 
@@ -1958,7 +2023,7 @@ class StorageTableEntityTest(AzureTestCase, TableTestCase):
             )
             table = service.get_table_client(self.table_name)
             entities = list(table.query_entities(
-                "PartitionKey eq '{}'".format(entity.PartitionKey)))
+                "PartitionKey eq '{}'".format(entity['PartitionKey'])))
 
             # Assert
             assert len(entities) ==  1
@@ -1997,7 +2062,7 @@ class StorageTableEntityTest(AzureTestCase, TableTestCase):
             )
             table = service.get_table_client(self.table_name)
             entities = list(table.query_entities(
-                "PartitionKey eq '{}'".format(entity.PartitionKey)))
+                "PartitionKey eq '{}'".format(entity['PartitionKey'])))
 
             # Assert
             assert len(entities) ==  1
@@ -2041,15 +2106,15 @@ class StorageTableEntityTest(AzureTestCase, TableTestCase):
             self.table.create_entity(entity)
             received = self.table.get_entity(partition, row)
             assert isinstance(received['datetime1'], datetime)
-            assert received.datetime1.tables_service_value == dotnet_timestamp
+            assert received['datetime1'].tables_service_value == dotnet_timestamp
 
-            received['datetime2'] = received.datetime1.replace(year=2020)
+            received['datetime2'] = received['datetime1'].replace(year=2020)
             assert received['datetime2'].tables_service_value == ""
 
             self.table.update_entity(received)
             updated = self.table.get_entity(partition, row)
             assert isinstance(updated['datetime1'], datetime)
             assert isinstance(updated['datetime2'], datetime)
-            assert updated.datetime1.tables_service_value == dotnet_timestamp
+            assert updated['datetime1'].tables_service_value == dotnet_timestamp
         finally:
             self._tear_down()

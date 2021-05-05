@@ -55,8 +55,13 @@ def get_and_update_queue(servicebus_mgmt_client):
     print("Dead Lettering on Message Expiration:", queue_properties.dead_lettering_on_message_expiration)
     print("Please refer to QueueDescription for complete available settings.")
     print("")
+    # update by updating the properties in the model
     queue_properties.max_delivery_count = 5
     servicebus_mgmt_client.update_queue(queue_properties)
+
+    # update by passing keyword arguments
+    queue_properties = servicebus_mgmt_client.get_queue(QUEUE_NAME)
+    servicebus_mgmt_client.update_queue(queue_properties, max_delivery_count=3)
 
 
 def get_queue_runtime_properties(servicebus_mgmt_client):

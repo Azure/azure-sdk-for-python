@@ -198,9 +198,6 @@ def _convert_to_entity(entry_element):
 
     # Timestamp is a known property
     timestamp = properties.pop("Timestamp", None)
-    if timestamp:
-        # entity['Timestamp'] = _from_entity_datetime(timestamp)
-        entity["Timestamp"] = timestamp
 
     for name, value in properties.items():
         mtype = edmtypes.get(name)
@@ -237,9 +234,8 @@ def _convert_to_entity(entry_element):
     etag = odata.get("etag")
     if timestamp and not etag:
         etag = "W/\"datetime'" + url_quote(timestamp) + "'\""
-    entity["etag"] = etag
 
-    entity._set_metadata()  # pylint: disable=protected-access
+    entity._metadata = {'etag': etag, 'timestamp': timestamp}  # pylint: disable=protected-access
     return entity
 
 

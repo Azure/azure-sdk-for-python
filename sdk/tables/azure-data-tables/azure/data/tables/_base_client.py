@@ -355,6 +355,8 @@ def parse_connection_str(conn_str, credential, keyword_args):
             credential = AzureNamedKeyCredential(name=conn_settings["accountname"], key=conn_settings["accountkey"])
         except KeyError:
             credential = conn_settings.get("sharedaccesssignature")
+            # if "sharedaccesssignature" in conn_settings:
+            #     credential = AzureSasCredential(conn_settings['sharedaccesssignature'])
 
     primary = conn_settings.get("tableendpoint")
     secondary = conn_settings.get("tablesecondaryendpoint")
