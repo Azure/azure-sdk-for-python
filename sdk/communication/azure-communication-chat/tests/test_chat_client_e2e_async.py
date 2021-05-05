@@ -24,6 +24,7 @@ from helper import URIIdentityReplacer
 from chat_e2e_helper import ChatURIReplacer
 from _shared.asynctestcase import AsyncCommunicationTestCase
 from _shared.testcase import BodyReplacerProcessor, ResponseReplacerProcessor
+from _shared.utils import get_http_logging_policy
 
 
 class ChatClientTestAsync(AsyncCommunicationTestCase):
@@ -47,7 +48,11 @@ class ChatClientTestAsync(AsyncCommunicationTestCase):
         self.token = token_response.token
 
         # create ChatClient
-        self.chat_client = ChatClient(self.endpoint, CommunicationTokenCredential(self.token))
+        self.chat_client = ChatClient(
+            self.endpoint, 
+            CommunicationTokenCredential(self.token), 
+            http_logging_policy=get_http_logging_policy()
+        )
 
     def tearDown(self):
         super(ChatClientTestAsync, self).tearDown()

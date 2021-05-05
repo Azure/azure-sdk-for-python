@@ -15,6 +15,7 @@ from _shared.testcase import (
     BodyReplacerProcessor
 )
 from _shared.communication_service_preparer import CommunicationPreparer
+from _shared.utils import get_http_logging_policy
 from azure.identity import DefaultAzureCredential
 from azure.communication.identity._shared.utils import parse_connection_str
 
@@ -40,7 +41,11 @@ class CommunicationIdentityClientTest(CommunicationTestCase):
             credential = FakeTokenCredential()
         else:
             credential = DefaultAzureCredential()
-        identity_client = CommunicationIdentityClient(endpoint, credential)
+        identity_client = CommunicationIdentityClient(
+            endpoint, 
+            credential,
+            http_logging_policy=get_http_logging_policy()
+        )
         user = identity_client.create_user()
 
         assert user.properties.get('id') is not None
@@ -48,12 +53,17 @@ class CommunicationIdentityClientTest(CommunicationTestCase):
     @CommunicationPreparer()
     def test_create_user(self, communication_connection_string):
         identity_client = CommunicationIdentityClient.from_connection_string(
-            communication_connection_string)
+            communication_connection_string,
+            http_logging_policy=get_http_logging_policy()
+        )
         user = identity_client.create_user()
 
     @CommunicationPreparer()
     def test_create_user_and_token(self, communication_connection_string):
-        identity_client = CommunicationIdentityClient.from_connection_string(communication_connection_string)
+        identity_client = CommunicationIdentityClient.from_connection_string(
+            communication_connection_string,
+            http_logging_policy=get_http_logging_policy()
+        )
         user, token_response = identity_client.create_user_and_token(scopes=[CommunicationTokenScope.CHAT])
 
         assert user.properties.get('id') is not None
@@ -67,7 +77,11 @@ class CommunicationIdentityClientTest(CommunicationTestCase):
             credential = FakeTokenCredential()
         else:
             credential = DefaultAzureCredential()
-        identity_client = CommunicationIdentityClient(endpoint, credential)
+        identity_client = CommunicationIdentityClient(
+            endpoint, 
+            credential, 
+            http_logging_policy=get_http_logging_policy()
+        )
         user = identity_client.create_user()
 
         token_response = identity_client.get_token(user, scopes=[CommunicationTokenScope.CHAT])
@@ -78,7 +92,9 @@ class CommunicationIdentityClientTest(CommunicationTestCase):
     @CommunicationPreparer()
     def test_get_token(self, communication_connection_string):
         identity_client = CommunicationIdentityClient.from_connection_string(
-            communication_connection_string)
+            communication_connection_string,
+            http_logging_policy=get_http_logging_policy()
+        )
         user = identity_client.create_user()
 
         token_response = identity_client.get_token(user, scopes=[CommunicationTokenScope.CHAT])
@@ -94,7 +110,11 @@ class CommunicationIdentityClientTest(CommunicationTestCase):
             credential = FakeTokenCredential()
         else:
             credential = DefaultAzureCredential()
-        identity_client = CommunicationIdentityClient(endpoint, credential)
+        identity_client = CommunicationIdentityClient(
+            endpoint, 
+            credential, 
+            http_logging_policy=get_http_logging_policy()
+        )
         user = identity_client.create_user()
 
         token_response = identity_client.get_token(user, scopes=[CommunicationTokenScope.CHAT])
@@ -106,7 +126,9 @@ class CommunicationIdentityClientTest(CommunicationTestCase):
     @CommunicationPreparer()
     def test_revoke_tokens(self, communication_connection_string):
         identity_client = CommunicationIdentityClient.from_connection_string(
-            communication_connection_string)
+            communication_connection_string,
+            http_logging_policy=get_http_logging_policy()
+        )
         user = identity_client.create_user()
 
         token_response = identity_client.get_token(user, scopes=[CommunicationTokenScope.CHAT])
@@ -123,7 +145,11 @@ class CommunicationIdentityClientTest(CommunicationTestCase):
             credential = FakeTokenCredential()
         else:
             credential = DefaultAzureCredential()
-        identity_client = CommunicationIdentityClient(endpoint, credential)
+        identity_client = CommunicationIdentityClient(
+            endpoint, 
+            credential, 
+            http_logging_policy=get_http_logging_policy()
+        )
         user = identity_client.create_user()
 
         identity_client.delete_user(user)
@@ -133,7 +159,9 @@ class CommunicationIdentityClientTest(CommunicationTestCase):
     @CommunicationPreparer()
     def test_delete_user(self, communication_connection_string):
         identity_client = CommunicationIdentityClient.from_connection_string(
-            communication_connection_string)
+            communication_connection_string,
+            http_logging_policy=get_http_logging_policy()
+        )
         user = identity_client.create_user()
 
         identity_client.delete_user(user)
@@ -142,7 +170,10 @@ class CommunicationIdentityClientTest(CommunicationTestCase):
 
     @CommunicationPreparer()
     def test_create_user_and_token_with_no_scopes(self, communication_connection_string):
-        identity_client = CommunicationIdentityClient.from_connection_string(communication_connection_string)
+        identity_client = CommunicationIdentityClient.from_connection_string(
+            communication_connection_string,
+            http_logging_policy=get_http_logging_policy()
+        )
 
         with pytest.raises(Exception) as ex:
             user, token_response = identity_client.create_user_and_token(scopes=None)
@@ -150,7 +181,9 @@ class CommunicationIdentityClientTest(CommunicationTestCase):
     @CommunicationPreparer()
     def test_delete_user_with_no_user(self, communication_connection_string):
         identity_client = CommunicationIdentityClient.from_connection_string(
-            communication_connection_string)
+            communication_connection_string,
+            http_logging_policy=get_http_logging_policy()
+        )
 
         with pytest.raises(Exception) as ex:
             identity_client.delete_user(user=None)
@@ -158,7 +191,9 @@ class CommunicationIdentityClientTest(CommunicationTestCase):
     @CommunicationPreparer()
     def test_revoke_tokens_with_no_user(self, communication_connection_string):
         identity_client = CommunicationIdentityClient.from_connection_string(
-            communication_connection_string)
+            communication_connection_string,
+            http_logging_policy=get_http_logging_policy()
+        )
         
         with pytest.raises(Exception) as ex:
             identity_client.revoke_tokens(user=None)
@@ -166,7 +201,9 @@ class CommunicationIdentityClientTest(CommunicationTestCase):
     @CommunicationPreparer()
     def test_get_token_with_no_user(self, communication_connection_string):
         identity_client = CommunicationIdentityClient.from_connection_string(
-            communication_connection_string)
+            communication_connection_string,
+            http_logging_policy=get_http_logging_policy()
+        )
 
         with pytest.raises(Exception) as ex:
             token_response = identity_client.get_token(user=None, scopes=[CommunicationTokenScope.CHAT])
@@ -174,7 +211,9 @@ class CommunicationIdentityClientTest(CommunicationTestCase):
     @CommunicationPreparer()
     def test_get_token_with_no_scopes(self, communication_connection_string):
         identity_client = CommunicationIdentityClient.from_connection_string(
-            communication_connection_string)
+            communication_connection_string,
+            http_logging_policy=get_http_logging_policy()
+        )
         user = identity_client.create_user()
 
         with pytest.raises(Exception) as ex:

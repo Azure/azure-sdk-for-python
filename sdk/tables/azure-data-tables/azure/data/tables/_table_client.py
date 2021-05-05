@@ -5,9 +5,7 @@
 # --------------------------------------------------------------------------
 
 import functools
-from typing import Optional, Any, Union, List, Tuple, Dict, Mapping
-
-
+from typing import Optional, Any, Union, List, Tuple, Dict, Mapping, Iterable, overload
 try:
     from urllib.parse import urlparse, unquote
 except ImportError:
@@ -30,7 +28,16 @@ from ._base_client import parse_connection_str, TablesBaseClient
 from ._serialize import serialize_iso, _parameter_filter_substitution
 from ._deserialize import _return_headers_and_deserialized
 from ._table_batch import TableBatchOperations
-from ._models import TableEntityPropertiesPaged, UpdateMode, AccessPolicy
+from ._models import (
+    TableEntityPropertiesPaged,
+    UpdateMode,
+    AccessPolicy,
+    TransactionOperation
+)
+
+EntityType = Union[TableEntity, Mapping[str, Any]]
+OperationType = Union[TransactionOperation, str]
+TransactionOperationType = Union[Tuple[OperationType, EntityType], Tuple[OperationType, EntityType, Mapping[str, Any]]]
 
 
 class TableClient(TablesBaseClient):
@@ -43,7 +50,7 @@ class TableClient(TablesBaseClient):
         self,
         account_url,  # type: str
         table_name,  # type: str
-        credential=None,  # type: str
+        credential=None,  # type: Union[AzureNamedKeyCredential, AzureSasCredential]
         **kwargs  # type: Any
     ):
         # type: (...) -> None
@@ -59,8 +66,9 @@ class TableClient(TablesBaseClient):
             account URL already has a SAS token, or the connection string already has shared
             access key values. The value can be a SAS token string or an account shared access
             key.
-        :type credential: str
-
+        :type credential:
+            :class:`~azure.core.credentials.AzureNamedKeyCredential` or
+            :class:`~azure.core.credentials.AzureSasCredential`
         :returns: None
         """
         if not table_name:
@@ -266,14 +274,19 @@ class TableClient(TablesBaseClient):
         except HttpResponseError as error:
             _process_table_error(error)
 
+    @overload
+    def delete_entity(self, partition_key, row_key, **kwargs):
+        # type: (str, str, Any) -> None
+        pass
+
+    @overload
+    def delete_entity(self, entity, **kwargs):
+        # type: (Union[TableEntity, Mapping[str, Any]], Any) -> None
+        pass
+
     @distributed_trace
-    def delete_entity(
-        self,
-        partition_key,  # type: str
-        row_key,  # type: str
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> None
+    def delete_entity(self, *args, **kwargs):
+        # type: (Union[TableEntity, str], Any) -> None
         """Deletes the specified entity in a table.
 
         :param partition_key: The partition key of the entity.
@@ -296,6 +309,20 @@ class TableClient(TablesBaseClient):
                 :dedent: 8
                 :caption: Deleting an entity to a Table
         """
+        try:
+            entity = kwargs.pop('entity', None)
+            if not entity:
+                entity = args[0]
+            partition_key = entity['PartitionKey']
+            row_key = entity['RowKey']
+        except (TypeError, IndexError):
+            partition_key = kwargs.pop('partition_key', None)
+            if not partition_key:
+                partition_key = args[0]
+            row_key = kwargs.pop("row_key", None)
+            if not row_key:
+                row_key = args[1]
+
 
         if_match, _ = _get_match_headers(
             kwargs=dict(
@@ -321,7 +348,7 @@ class TableClient(TablesBaseClient):
     @distributed_trace
     def create_entity(
         self,
-        entity,  # type: Union[TableEntity, Dict[str,str]]
+        entity,  # type: EntityType
         **kwargs  # type: Any
     ):
         # type: (...) -> Dict[str,str]
@@ -360,7 +387,7 @@ class TableClient(TablesBaseClient):
     @distributed_trace
     def update_entity(
         self,
-        entity,  # type: Union[TableEntity, Dict[str,str]]
+        entity,  # type: EntityType
         mode=UpdateMode.MERGE,  # type: UpdateMode
         **kwargs  # type: Any
     ):
@@ -555,7 +582,7 @@ class TableClient(TablesBaseClient):
     @distributed_trace
     def upsert_entity(
         self,
-        entity,  # type: Union[TableEntity, Dict[str,str]]
+        entity,  # type: EntityType
         mode=UpdateMode.MERGE,  # type: UpdateMode
         **kwargs  # type: Any
     ):
@@ -614,12 +641,23 @@ class TableClient(TablesBaseClient):
         except HttpResponseError as error:
             _process_table_error(error)
 
-    def create_batch(self, **kwargs):
-        # type: (Dict[str, Any]) -> TableBatchOperations
-        """Create a Batching object from a Table Client
+    def submit_transaction(
+        self,
+        operations,  # type: Iterable[TransactionOperationType]
+        **kwargs  # type: Any
+    ):
+        # type: (...) -> List[Mapping[str, Any]]
+        """Commit a list of operations as a single transaction.
 
-        :return: Object containing requests and responses
-        :rtype: :class:`~azure.data.tables.TableBatchOperations`
+        If any one of these operations fails, the entire transaction will be rejected.
+
+        :param operations: The list of operations to commit in a transaction. This should be a list of
+         tuples containing an operation name, the entity on which to operate, and optionally, a dict of additional
+         kwargs for that operation.
+        :type operations: Iterable[Tuple[str, EntityType]]
+        :return: A list of mappings with response metadata for each operation in the transaction.
+        :rtype: List[Mapping[str, Any]]
+        :raises ~azure.data.tables.TableTransactionError:
 
         .. admonition:: Example:
 
@@ -628,10 +666,9 @@ class TableClient(TablesBaseClient):
                 :end-before: [END batching]
                 :language: python
                 :dedent: 8
-                :caption: Using batches to send multiple requests at once
-        :raises None:
+                :caption: Using transactions to send multiple requests at once
         """
-        return TableBatchOperations(
+        batched_requests = TableBatchOperations(
             self._client,
             self._client._serialize,  # pylint: disable=protected-access
             self._client._deserialize,  # pylint: disable=protected-access
@@ -639,27 +676,13 @@ class TableClient(TablesBaseClient):
             self.table_name,
             **kwargs
         )
-
-    def send_batch(self, batch, **kwargs):
-        # type: (TableBatchOperations, Dict[str, Any]) -> List[Tuple[Mapping[str, Any], Mapping[str, Any]]]
-        """Commit a TableBatchOperations to send requests to the server
-
-        :param batch: Batch of operations
-        :type batch: ~azure.data.tables.TableBatchOperations
-        :return: A list of tuples, each containing the entity operated on, and a dictionary
-         of metadata returned from the service.
-        :rtype: List[Tuple[Mapping[str, Any], Mapping[str, Any]]]
-        :raises: :class:`~azure.data.tables.BatchErrorException`
-
-        .. admonition:: Example:
-
-            .. literalinclude:: ../samples/sample_batching.py
-                :start-after: [START batching]
-                :end-before: [END batching]
-                :language: python
-                :dedent: 8
-                :caption: Using batches to send multiple requests at once
-        """
-        return self._batch_send(  # pylint: disable=protected-access
-            batch._entities, *batch._requests, **kwargs  # pylint: disable=protected-access
-        )
+        for operation in operations:
+            try:
+                operation_kwargs = operation[2]
+            except IndexError:
+                operation_kwargs = {}
+            try:
+                getattr(batched_requests, operation[0].lower())(operation[1], **operation_kwargs)
+            except AttributeError:
+                raise ValueError("Unrecognized operation: {}".format(operation[0]))
+        return self._batch_send(*batched_requests.requests, **kwargs)

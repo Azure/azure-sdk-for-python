@@ -2751,6 +2751,114 @@ class ServiceFabricClientAPIsOperationsMixin(object):
             return client_raw_response
     add_configuration_parameter_overrides.metadata = {'url': '/Nodes/{nodeName}/$/AddConfigurationParameterOverrides'}
 
+    def remove_node_tags(
+            self, node_name, node_tags, custom_headers=None, raw=False, **operation_config):
+        """Removes the list of tags from the specified node.
+
+        This api allows removing set of tags from the specified node.
+
+        :param node_name: The name of the node.
+        :type node_name: str
+        :param node_tags: Description for adding list of node tags.
+        :type node_tags: list[str]
+        :param dict custom_headers: headers that will be added to the request
+        :param bool raw: returns the direct response alongside the
+         deserialized response
+        :param operation_config: :ref:`Operation configuration
+         overrides<msrest:optionsforoperations>`.
+        :return: None or ClientRawResponse if raw=true
+        :rtype: None or ~msrest.pipeline.ClientRawResponse
+        :raises:
+         :class:`FabricErrorException<azure.servicefabric.models.FabricErrorException>`
+        """
+        api_version = "7.0"
+
+        # Construct URL
+        url = self.remove_node_tags.metadata['url']
+        path_format_arguments = {
+            'nodeName': self._serialize.url("node_name", node_name, 'str')
+        }
+        url = self._client.format_url(url, **path_format_arguments)
+
+        # Construct parameters
+        query_parameters = {}
+        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
+
+        # Construct headers
+        header_parameters = {}
+        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
+        if custom_headers:
+            header_parameters.update(custom_headers)
+
+        # Construct body
+        body_content = self._serialize.body(node_tags, '[str]')
+
+        # Construct and send request
+        request = self._client.post(url, query_parameters, header_parameters, body_content)
+        response = self._client.send(request, stream=False, **operation_config)
+
+        if response.status_code not in [200]:
+            raise models.FabricErrorException(self._deserialize, response)
+
+        if raw:
+            client_raw_response = ClientRawResponse(None, response)
+            return client_raw_response
+    remove_node_tags.metadata = {'url': '/Nodes/{nodeName}/$/RemoveNodeTags'}
+
+    def add_node_tags(
+            self, node_name, node_tags, custom_headers=None, raw=False, **operation_config):
+        """Adds the list of tags on the specified node.
+
+        This api allows adding tags to the specified node.
+
+        :param node_name: The name of the node.
+        :type node_name: str
+        :param node_tags: Description for adding list of node tags.
+        :type node_tags: list[str]
+        :param dict custom_headers: headers that will be added to the request
+        :param bool raw: returns the direct response alongside the
+         deserialized response
+        :param operation_config: :ref:`Operation configuration
+         overrides<msrest:optionsforoperations>`.
+        :return: None or ClientRawResponse if raw=true
+        :rtype: None or ~msrest.pipeline.ClientRawResponse
+        :raises:
+         :class:`FabricErrorException<azure.servicefabric.models.FabricErrorException>`
+        """
+        api_version = "7.2"
+
+        # Construct URL
+        url = self.add_node_tags.metadata['url']
+        path_format_arguments = {
+            'nodeName': self._serialize.url("node_name", node_name, 'str')
+        }
+        url = self._client.format_url(url, **path_format_arguments)
+
+        # Construct parameters
+        query_parameters = {}
+        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
+
+        # Construct headers
+        header_parameters = {}
+        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
+        if custom_headers:
+            header_parameters.update(custom_headers)
+
+        # Construct body
+        body_content = self._serialize.body(node_tags, '[str]')
+
+        # Construct and send request
+        request = self._client.post(url, query_parameters, header_parameters, body_content)
+        response = self._client.send(request, stream=False, **operation_config)
+
+        if response.status_code not in [200]:
+            raise models.FabricErrorException(self._deserialize, response)
+
+        if raw:
+            client_raw_response = ClientRawResponse(None, response)
+            return client_raw_response
+    add_node_tags.metadata = {'url': '/Nodes/{nodeName}/$/AddNodeTags'}
+
     def get_application_type_info_list(
             self, application_type_definition_kind_filter=0, exclude_application_parameters=False, continuation_token=None, max_results=0, timeout=60, custom_headers=None, raw=False, **operation_config):
         """Gets the list of application types in the Service Fabric cluster.
@@ -6567,6 +6675,92 @@ class ServiceFabricClientAPIsOperationsMixin(object):
         return deserialized
     get_unplaced_replica_information.metadata = {'url': '/Services/{serviceId}/$/GetUnplacedReplicaInformation'}
 
+    def get_loaded_partition_info_list(
+            self, metric_name, service_name=None, ordering="Desc", max_results=0, continuation_token=None, custom_headers=None, raw=False, **operation_config):
+        """Gets ordered list of partitions.
+
+        Retrieves partitions which are most/least loaded according to specified
+        metric.
+
+        :param metric_name: Name of the metric based on which to get ordered
+         list of partitions.
+        :type metric_name: str
+        :param service_name: The name of a service.
+        :type service_name: str
+        :param ordering: Ordering of partitions' load. Possible values
+         include: 'Desc', 'Asc'
+        :type ordering: str or ~azure.servicefabric.models.Ordering
+        :param max_results: The maximum number of results to be returned as
+         part of the paged queries. This parameter defines the upper bound on
+         the number of results returned. The results returned can be less than
+         the specified maximum results if they do not fit in the message as per
+         the max message size restrictions defined in the configuration. If
+         this parameter is zero or not specified, the paged query includes as
+         many results as possible that fit in the return message.
+        :type max_results: long
+        :param continuation_token: The continuation token parameter is used to
+         obtain next set of results. A continuation token with a non-empty
+         value is included in the response of the API when the results from the
+         system do not fit in a single response. When this value is passed to
+         the next API call, the API returns next set of results. If there are
+         no further results, then the continuation token does not contain a
+         value. The value of this parameter should not be URL encoded.
+        :type continuation_token: str
+        :param dict custom_headers: headers that will be added to the request
+        :param bool raw: returns the direct response alongside the
+         deserialized response
+        :param operation_config: :ref:`Operation configuration
+         overrides<msrest:optionsforoperations>`.
+        :return: LoadedPartitionInformationResultList or ClientRawResponse if
+         raw=true
+        :rtype:
+         ~azure.servicefabric.models.LoadedPartitionInformationResultList or
+         ~msrest.pipeline.ClientRawResponse
+        :raises:
+         :class:`FabricErrorException<azure.servicefabric.models.FabricErrorException>`
+        """
+        api_version = "8.0"
+
+        # Construct URL
+        url = self.get_loaded_partition_info_list.metadata['url']
+
+        # Construct parameters
+        query_parameters = {}
+        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
+        query_parameters['MetricName'] = self._serialize.query("metric_name", metric_name, 'str')
+        if service_name is not None:
+            query_parameters['ServiceName'] = self._serialize.query("service_name", service_name, 'str')
+        if ordering is not None:
+            query_parameters['Ordering'] = self._serialize.query("ordering", ordering, 'str')
+        if max_results is not None:
+            query_parameters['MaxResults'] = self._serialize.query("max_results", max_results, 'long', minimum=0)
+        if continuation_token is not None:
+            query_parameters['ContinuationToken'] = self._serialize.query("continuation_token", continuation_token, 'str', skip_quote=True)
+
+        # Construct headers
+        header_parameters = {}
+        header_parameters['Accept'] = 'application/json'
+        if custom_headers:
+            header_parameters.update(custom_headers)
+
+        # Construct and send request
+        request = self._client.get(url, query_parameters, header_parameters)
+        response = self._client.send(request, stream=False, **operation_config)
+
+        if response.status_code not in [200]:
+            raise models.FabricErrorException(self._deserialize, response)
+
+        deserialized = None
+        if response.status_code == 200:
+            deserialized = self._deserialize('LoadedPartitionInformationResultList', response)
+
+        if raw:
+            client_raw_response = ClientRawResponse(deserialized, response)
+            return client_raw_response
+
+        return deserialized
+    get_loaded_partition_info_list.metadata = {'url': '/$/GetLoadedPartitionInfoList'}
+
     def get_partition_info_list(
             self, service_id, continuation_token=None, timeout=60, custom_headers=None, raw=False, **operation_config):
         """Gets the list of partitions of a Service Fabric service.
@@ -7525,8 +7719,9 @@ class ServiceFabricClientAPIsOperationsMixin(object):
         :type partition_id: str
         :param node_name: The name of the node.
         :type node_name: str
-        :param ignore_constraints: Ignore constraints when moving a replica.
-         If this parameter is not specified, all constraints are honored.
+        :param ignore_constraints: Ignore constraints when moving a replica or
+         instance. If this parameter is not specified, all constraints are
+         honored.
         :type ignore_constraints: bool
         :param timeout: The server timeout for performing the operation in
          seconds. This timeout specifies the time duration that the client is
@@ -7598,10 +7793,12 @@ class ServiceFabricClientAPIsOperationsMixin(object):
          replica move.
         :type current_node_name: str
         :param new_node_name: The name of the target node for secondary
-         replica move. If not specified, replica is moved to a random node.
+         replica or instance move. If not specified, replica or instance is
+         moved to a random node.
         :type new_node_name: str
-        :param ignore_constraints: Ignore constraints when moving a replica.
-         If this parameter is not specified, all constraints are honored.
+        :param ignore_constraints: Ignore constraints when moving a replica or
+         instance. If this parameter is not specified, all constraints are
+         honored.
         :type ignore_constraints: bool
         :param timeout: The server timeout for performing the operation in
          seconds. This timeout specifies the time duration that the client is
@@ -7741,6 +7938,96 @@ class ServiceFabricClientAPIsOperationsMixin(object):
 
         return deserialized
     update_partition_load.metadata = {'url': '/$/UpdatePartitionLoad'}
+
+    def move_instance(
+            self, service_id, partition_id, current_node_name=None, new_node_name=None, ignore_constraints=False, timeout=60, custom_headers=None, raw=False, **operation_config):
+        """Moves the instance of a partition of a stateless service.
+
+        This command moves the instance of a partition of a stateless service,
+        respecting all constraints.
+        Partition id and service name must be specified to be able to move the
+        instance.
+        CurrentNodeName when specified identifies the instance that is moved.
+        If not specified, random instance will be moved
+        New node name can be omitted, and in that case instance is moved to a
+        random node.
+        If IgnoreConstraints parameter is specified and set to true, then
+        instance will be moved regardless of the constraints.
+
+        :param service_id: The identity of the service. This ID is typically
+         the full name of the service without the 'fabric:' URI scheme.
+         Starting from version 6.0, hierarchical names are delimited with the
+         "~" character.
+         For example, if the service name is "fabric:/myapp/app1/svc1", the
+         service identity would be "myapp~app1~svc1" in 6.0+ and
+         "myapp/app1/svc1" in previous versions.
+        :type service_id: str
+        :param partition_id: The identity of the partition.
+        :type partition_id: str
+        :param current_node_name: The name of the source node for instance
+         move. If not specified, instance is moved from a random node.
+        :type current_node_name: str
+        :param new_node_name: The name of the target node for secondary
+         replica or instance move. If not specified, replica or instance is
+         moved to a random node.
+        :type new_node_name: str
+        :param ignore_constraints: Ignore constraints when moving a replica or
+         instance. If this parameter is not specified, all constraints are
+         honored.
+        :type ignore_constraints: bool
+        :param timeout: The server timeout for performing the operation in
+         seconds. This timeout specifies the time duration that the client is
+         willing to wait for the requested operation to complete. The default
+         value for this parameter is 60 seconds.
+        :type timeout: long
+        :param dict custom_headers: headers that will be added to the request
+        :param bool raw: returns the direct response alongside the
+         deserialized response
+        :param operation_config: :ref:`Operation configuration
+         overrides<msrest:optionsforoperations>`.
+        :return: None or ClientRawResponse if raw=true
+        :rtype: None or ~msrest.pipeline.ClientRawResponse
+        :raises:
+         :class:`FabricErrorException<azure.servicefabric.models.FabricErrorException>`
+        """
+        api_version = "8.0"
+
+        # Construct URL
+        url = self.move_instance.metadata['url']
+        path_format_arguments = {
+            'serviceId': self._serialize.url("service_id", service_id, 'str', skip_quote=True),
+            'partitionId': self._serialize.url("partition_id", partition_id, 'str', skip_quote=True)
+        }
+        url = self._client.format_url(url, **path_format_arguments)
+
+        # Construct parameters
+        query_parameters = {}
+        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
+        if current_node_name is not None:
+            query_parameters['CurrentNodeName'] = self._serialize.query("current_node_name", current_node_name, 'str')
+        if new_node_name is not None:
+            query_parameters['NewNodeName'] = self._serialize.query("new_node_name", new_node_name, 'str')
+        if ignore_constraints is not None:
+            query_parameters['IgnoreConstraints'] = self._serialize.query("ignore_constraints", ignore_constraints, 'bool')
+        if timeout is not None:
+            query_parameters['timeout'] = self._serialize.query("timeout", timeout, 'long', maximum=4294967295, minimum=1)
+
+        # Construct headers
+        header_parameters = {}
+        if custom_headers:
+            header_parameters.update(custom_headers)
+
+        # Construct and send request
+        request = self._client.post(url, query_parameters, header_parameters)
+        response = self._client.send(request, stream=False, **operation_config)
+
+        if response.status_code not in [200]:
+            raise models.FabricErrorException(self._deserialize, response)
+
+        if raw:
+            client_raw_response = ClientRawResponse(None, response)
+            return client_raw_response
+    move_instance.metadata = {'url': '/Services/{serviceId}/$/GetPartitions/{partitionId}/$/MoveInstance'}
 
     def create_repair_task(
             self, repair_task, custom_headers=None, raw=False, **operation_config):
@@ -12537,7 +12824,7 @@ class ServiceFabricClientAPIsOperationsMixin(object):
     cancel_operation.metadata = {'url': '/Faults/$/Cancel'}
 
     def create_backup_policy(
-            self, backup_policy_description, timeout=60, custom_headers=None, raw=False, **operation_config):
+            self, backup_policy_description, timeout=60, validate_connection=False, custom_headers=None, raw=False, **operation_config):
         """Creates a backup policy.
 
         Creates a backup policy which can be associated later with a Service
@@ -12551,6 +12838,10 @@ class ServiceFabricClientAPIsOperationsMixin(object):
          willing to wait for the requested operation to complete. The default
          value for this parameter is 60 seconds.
         :type timeout: long
+        :param validate_connection: Specifies whether to validate the storage
+         connection and credentials before creating or updating the backup
+         policies.
+        :type validate_connection: bool
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -12571,6 +12862,8 @@ class ServiceFabricClientAPIsOperationsMixin(object):
         query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
         if timeout is not None:
             query_parameters['timeout'] = self._serialize.query("timeout", timeout, 'long', maximum=4294967295, minimum=1)
+        if validate_connection is not None:
+            query_parameters['ValidateConnection'] = self._serialize.query("validate_connection", validate_connection, 'bool')
 
         # Construct headers
         header_parameters = {}
@@ -12877,7 +13170,7 @@ class ServiceFabricClientAPIsOperationsMixin(object):
     get_all_entities_backed_up_by_policy.metadata = {'url': '/BackupRestore/BackupPolicies/{backupPolicyName}/$/GetBackupEnabledEntities'}
 
     def update_backup_policy(
-            self, backup_policy_description, backup_policy_name, timeout=60, custom_headers=None, raw=False, **operation_config):
+            self, backup_policy_description, backup_policy_name, timeout=60, validate_connection=False, custom_headers=None, raw=False, **operation_config):
         """Updates the backup policy.
 
         Updates the backup policy identified by {backupPolicyName}.
@@ -12892,6 +13185,10 @@ class ServiceFabricClientAPIsOperationsMixin(object):
          willing to wait for the requested operation to complete. The default
          value for this parameter is 60 seconds.
         :type timeout: long
+        :param validate_connection: Specifies whether to validate the storage
+         connection and credentials before creating or updating the backup
+         policies.
+        :type validate_connection: bool
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -12916,6 +13213,8 @@ class ServiceFabricClientAPIsOperationsMixin(object):
         query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
         if timeout is not None:
             query_parameters['timeout'] = self._serialize.query("timeout", timeout, 'long', maximum=4294967295, minimum=1)
+        if validate_connection is not None:
+            query_parameters['ValidateConnection'] = self._serialize.query("validate_connection", validate_connection, 'bool')
 
         # Construct headers
         header_parameters = {}

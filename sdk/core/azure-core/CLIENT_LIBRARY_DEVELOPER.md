@@ -52,6 +52,7 @@ class FooServiceClient:
 ```
 
 An end user consuming this SDK may write code like so:
+
 ```python
 from azure.core.credentials import FooCredentials
 from azure.foo import FooServiceClient
@@ -93,9 +94,11 @@ response = client.get_foo_properties()
 | Parameters | Description |
 | --- | --- |
 | `pipeline` | While `PipelineClient` will create a default pipeline, users can opt to use their own pipeline by passing in a `Pipeline` object. If passed in, the other configurations will be ignored.  |
+| `policies` | While `PipelineClient` will create a default list of `policies`, users can opt to use their own policies by passing in a `policies` object. If passed in, `config` will be ignored |
 | `config` | While `PipelineClient` will create a default `Configuration`, users can opt to use their own configuration by passing in a `Configuration` object. If passed in, it will be used to create a `Pipeline` object. |
+| `per_call_policies` | If a default `pipeline` is needed and no `policies` is passed in, `per_call_policies` will be added before the `Retry` policy |
+| `per_retry_policies` | If a default `pipeline` is needed and no `policies` is passed in, `per_retry_policies` will be added after the `Retry` policy. If there is no `RetryPolicy` in the pipeline, a `ValueError` will be raised |
 | `transport` | While `PipelineClient` will create a default `RequestsTransport`, users can opt to use their own transport by passing in a `RequestsTransport` object. If it is omitted, `PipelineClient` will honor the other described [transport customizations](#transport). |
-
 
 ### Transport
 
@@ -103,6 +106,7 @@ Various combinations of sync/async HTTP libraries as well as alternative event l
 
 The transport is the last node in the pipeline, and adheres to the same basic API as any policy within the pipeline.
 The only currently available transport for synchronous pipelines uses the `Requests` library:
+
 ```python
 from azure.core.pipeline.transport import RequestsTransport
 synchronous_transport = RequestsTransport()
@@ -110,6 +114,7 @@ synchronous_transport = RequestsTransport()
 
 For asynchronous pipelines a couple of transport options are available. Each of these transports are interchangable depending on whether the user has installed various 3rd party dependencies (i.e. aiohttp or trio), and the user
 should easily be able to specify their chosen transport. SDK developers should use the `aiohttp` transport as the default for asynchronous pipelines where the user has not specified an alternative.
+
 ```python
 from azure.foo.aio import FooServiceClient
 from azure.core.pipeline.transport import (
@@ -131,6 +136,7 @@ response = await client.get_foo_properties()
 
 Some common properties can be configured on all transports. They must be passed
 as kwargs arguments while building the transport instance. These include the following properties:
+
 ```python
 transport = AioHttpTransport(
         # The connect and read timeout value. Defaults to 100 seconds.
@@ -190,6 +196,7 @@ proxy_policy.proxies = {'https': 'http://user:password@10.10.1.10:1180/'}
 The HttpRequest and HttpResponse objects represent a generic concept of HTTP request and response constructs and are in no way tied to a particular transport or HTTP library.
 
 The HttpRequest has the following API. It does not vary between transports:
+
 ```python
 class HttpRequest(object):
 
@@ -240,6 +247,7 @@ This is to accomodate how the data is extracted for the object returned by the H
 There is also an async flavor: AsyncHttpResponse. This is to allow for the asynchronous streaming of
 data from the response.
 For example:
+
 ```python
 from azure.core.pipeline.transport import (
     RequestsTransportResponse,  # HttpResponse
@@ -248,10 +256,12 @@ from azure.core.pipeline.transport import (
     AsyncioRequestsTransportResponse,  # AsyncHttpResponse
 )
 ```
+
 The API for each of these response types is identical, so the consumer of the Response need not know about these
 particular types.
 
 The HttpResponse has the following API. It does not vary between transports:
+
 ```python
 class HttpResponse(object):
 
@@ -297,6 +307,7 @@ transport specific and can contain data persisted between pipeline requests (for
 pool or "session"), as well as used by the SDK developer to carry arbitrary data through the pipeline.
 
 The API for PipelineRequest and PipelineResponse is as follows:
+
 ```python
 class PipelineRequest(object):
 
@@ -327,6 +338,7 @@ This is a simple abstract class, that can act before the request is done, or aft
 - Logging the request and/or response
 
 A SansIOHTTPPolicy should implement one or more of the following methods:
+
 ```python
 def on_request(self, request):
     """Is executed before sending the request to next policy."""
@@ -345,6 +357,7 @@ def on_exception(self, request):
 SansIOHTTPPolicy methods can be declared as coroutines, but then they can only be used with a AsyncPipeline.
 
 Current provided sans IO policies include:
+
 ```python
 from azure.core.pipeline.policies import (
     HeadersPolicy,  # Add custom headers to all requests
@@ -364,6 +377,7 @@ Some policies are more complex, like retry strategy, and need to have control of
 In the current version, they are subclasses of HTTPPolicy or AsyncHTTPPolicy, and can be used only their corresponding synchronous or asynchronous pipeline type.
 
 An HTTPPolicy or AsyncHTTPPolicy must implement the `send` method, and this implementation must in include a call to process the next policy in the pipeline:
+
 ```python
 class CustomPolicy(HTTPPolicy):
 
@@ -384,6 +398,7 @@ class CustomAsyncPolicy(AsyncHTTPPolicy):
 ```
 
 Currently provided HTTP policies include:
+
 ```python
 from azure.core.pipeline.policies import (
     RetryPolicy,
@@ -448,7 +463,6 @@ from azure.core.pipeline.policies import (
 |  |  | retry_backoff_max | x | x | The maximum back off time. Default value is `120` seconds (2 minutes). |
 |  |  | retry_mode | x | x | Fixed or exponential delay between attemps, default is exponential. |
 |  |  | timeout | x | x | Timeout setting for the operation in seconds, default is `604800s` (7 days). |
-
 
 ### The Pipeline
 

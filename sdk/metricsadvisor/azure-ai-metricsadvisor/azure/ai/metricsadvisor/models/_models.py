@@ -346,9 +346,10 @@ class DataFeed(object):  # pylint:disable=too-many-instance-attributes
     :ivar schema: Data feed schema
     :vartype schema: ~azure.ai.metricsadvisor.models.DataFeedSchema
     :ivar source: Data feed source.
-    :vartype source: Union[AzureApplicationInsightsDataFeed, AzureBlobDataFeed, AzureCosmosDBDataFeed,
-        AzureDataExplorerDataFeed, AzureDataLakeStorageGen2DataFeed, AzureTableDataFeed, HttpRequestDataFeed,
-        InfluxDBDataFeed, MySqlDataFeed, PostgreSqlDataFeed, SQLServerDataFeed, MongoDBDataFeed, ElasticsearchDataFeed]
+    :vartype source: Union[AzureApplicationInsightsDataFeedSource, AzureBlobDataFeedSource, AzureCosmosDBDataFeedSource,
+        AzureDataExplorerDataFeedSource, AzureDataLakeStorageGen2DataFeedSource, AzureTableDataFeedSource,
+        HttpRequestDataFeedSource, InfluxDBDataFeedSource, MySqlDataFeedSource, PostgreSqlDataFeedSource,
+        SQLServerDataFeedSource, MongoDBDataFeedSource, ElasticsearchDataFeedSource]
     :ivar status: Data feed status. Possible values include: "Active", "Paused".
         Default value: "Active".
     :vartype status: str or ~azure.ai.metricsadvisor.models.DataFeedStatus
@@ -375,8 +376,8 @@ class DataFeed(object):  # pylint:disable=too-many-instance-attributes
         self.status = kwargs.get('status', None)
 
     def __repr__(self):
-        return "DataFeed(created_time={}, granularity={}, id={}, ingestion_settings={}, is_admin={}, metric_ids={}, " \
-               "name={}, options={}, schema={}, source={}, status={})".format(
+        return "DataFeed(created_time={}, granularity={}, id={}, ingestion_settings={}, is_admin={}, " \
+                "metric_ids={}, name={}, options={}, schema={}, source={}, status={})".format(
                     self.created_time,
                     repr(self.granularity),
                     self.id,
@@ -920,8 +921,8 @@ class AnomalyDetectionConfiguration(object):
         )
 
 
-class AzureApplicationInsightsDataFeed(object):
-    """AzureApplicationInsightsDataFeed.
+class AzureApplicationInsightsDataFeedSource(object):
+    """AzureApplicationInsightsDataFeedSource.
 
     :param azure_cloud: Required. Azure cloud environment.
     :type azure_cloud: str
@@ -942,8 +943,8 @@ class AzureApplicationInsightsDataFeed(object):
         self.query = query
 
     def __repr__(self):
-        return "AzureApplicationInsightsDataFeed(data_source_type={}, azure_cloud={}, application_id={}, api_key={}, " \
-               "query={})".format(
+        return "AzureApplicationInsightsDataFeedSource(data_source_type={}, azure_cloud={}, application_id={}, " \
+               "api_key={}, query={})".format(
                     self.data_source_type,
                     self.azure_cloud,
                     self.application_id,
@@ -969,8 +970,8 @@ class AzureApplicationInsightsDataFeed(object):
         )
 
 
-class AzureBlobDataFeed(object):
-    """AzureBlobDataFeed.
+class AzureBlobDataFeedSource(object):
+    """AzureBlobDataFeedSource.
 
     :param connection_string: Required. Azure Blob connection string.
     :type connection_string: str
@@ -988,7 +989,8 @@ class AzureBlobDataFeed(object):
         self.blob_template = blob_template
 
     def __repr__(self):
-        return "AzureBlobDataFeed(data_source_type={}, connection_string={}, container={}, blob_template={})".format(
+        return "AzureBlobDataFeedSource(data_source_type={}, connection_string={}, container={}, " \
+               "blob_template={})".format(
                     self.data_source_type,
                     self.connection_string,
                     self.container,
@@ -1011,8 +1013,8 @@ class AzureBlobDataFeed(object):
         )
 
 
-class AzureCosmosDBDataFeed(object):
-    """AzureCosmosDBDataFeed.
+class AzureCosmosDBDataFeedSource(object):
+    """AzureCosmosDBDataFeedSource.
 
     :param connection_string: Required. Azure CosmosDB connection string.
     :type connection_string: str
@@ -1039,7 +1041,7 @@ class AzureCosmosDBDataFeed(object):
         self.collection_id = collection_id
 
     def __repr__(self):
-        return "AzureCosmosDBDataFeed(data_source_type={}, connection_string={}, sql_query={}, database={}, " \
+        return "AzureCosmosDBDataFeedSource(data_source_type={}, connection_string={}, sql_query={}, database={}, " \
                "collection_id={})".format(
                     self.data_source_type,
                     self.connection_string,
@@ -1066,8 +1068,8 @@ class AzureCosmosDBDataFeed(object):
         )
 
 
-class AzureDataExplorerDataFeed(object):
-    """AzureDataExplorerDataFeed.
+class AzureDataExplorerDataFeedSource(object):
+    """AzureDataExplorerDataFeedSource.
 
     :param connection_string: Required. Database connection string.
     :type connection_string: str
@@ -1082,7 +1084,7 @@ class AzureDataExplorerDataFeed(object):
         self.query = query
 
     def __repr__(self):
-        return "AzureDataExplorerDataFeed(data_source_type={}, connection_string={}, query={})".format(
+        return "AzureDataExplorerDataFeedSource(data_source_type={}, connection_string={}, query={})".format(
                     self.data_source_type,
                     self.connection_string,
                     self.query
@@ -1102,8 +1104,8 @@ class AzureDataExplorerDataFeed(object):
         )
 
 
-class AzureTableDataFeed(object):
-    """AzureTableDataFeed.
+class AzureTableDataFeedSource(object):
+    """AzureTableDataFeedSource.
 
     :param connection_string: Required. Azure Table connection string.
     :type connection_string: str
@@ -1121,7 +1123,7 @@ class AzureTableDataFeed(object):
         self.table = table
 
     def __repr__(self):
-        return "AzureTableDataFeed(data_source_type={}, connection_string={}, query={}, table={})".format(
+        return "AzureTableDataFeedSource(data_source_type={}, connection_string={}, query={}, table={})".format(
                     self.data_source_type,
                     self.connection_string,
                     self.query,
@@ -1144,8 +1146,8 @@ class AzureTableDataFeed(object):
         )
 
 
-class HttpRequestDataFeed(object):
-    """HttpRequestDataFeed.
+class HttpRequestDataFeedSource(object):
+    """HttpRequestDataFeedSource.
 
     :param url: Required. HTTP URL.
     :type url: str
@@ -1164,7 +1166,8 @@ class HttpRequestDataFeed(object):
         self.payload = kwargs.get("payload", None)
 
     def __repr__(self):
-        return "HttpRequestDataFeed(data_source_type={}, url={}, http_method={}, http_header={}, payload={})".format(
+        return "HttpRequestDataFeedSource(data_source_type={}, url={}, http_method={}, http_header={}, " \
+               "payload={})".format(
                     self.data_source_type,
                     self.url,
                     self.http_method,
@@ -1190,8 +1193,8 @@ class HttpRequestDataFeed(object):
         )
 
 
-class InfluxDBDataFeed(object):
-    """InfluxDBDataFeed.
+class InfluxDBDataFeedSource(object):
+    """InfluxDBDataFeedSource.
 
     :param connection_string: Required. InfluxDB connection string.
     :type connection_string: str
@@ -1222,8 +1225,8 @@ class InfluxDBDataFeed(object):
         self.query = query
 
     def __repr__(self):
-        return "InfluxDBDataFeed(data_source_type={}, connection_string={}, database={}, user_name={}, password={}, " \
-               "query={})".format(
+        return "InfluxDBDataFeedSource(data_source_type={}, connection_string={}, database={}, user_name={}, " \
+               "password={}, query={})".format(
                     self.data_source_type,
                     self.connection_string,
                     self.database,
@@ -1252,8 +1255,8 @@ class InfluxDBDataFeed(object):
         )
 
 
-class MySqlDataFeed(object):
-    """MySqlDataFeed.
+class MySqlDataFeedSource(object):
+    """MySqlDataFeedSource.
 
     :param connection_string: Required. Database connection string.
     :type connection_string: str
@@ -1268,7 +1271,7 @@ class MySqlDataFeed(object):
         self.query = query
 
     def __repr__(self):
-        return "MySqlDataFeed(data_source_type={}, connection_string={}, query={})".format(
+        return "MySqlDataFeedSource(data_source_type={}, connection_string={}, query={})".format(
                     self.data_source_type,
                     self.connection_string,
                     self.query
@@ -1288,8 +1291,8 @@ class MySqlDataFeed(object):
         )
 
 
-class PostgreSqlDataFeed(object):
-    """PostgreSqlDataFeed.
+class PostgreSqlDataFeedSource(object):
+    """PostgreSqlDataFeedSource.
 
     :param connection_string: Required. Database connection string.
     :type connection_string: str
@@ -1304,7 +1307,7 @@ class PostgreSqlDataFeed(object):
         self.query = query
 
     def __repr__(self):
-        return "PostgreSqlDataFeed(data_source_type={}, connection_string={}, query={})".format(
+        return "PostgreSqlDataFeedSource(data_source_type={}, connection_string={}, query={})".format(
                     self.data_source_type,
                     self.connection_string,
                     self.query
@@ -1324,8 +1327,8 @@ class PostgreSqlDataFeed(object):
         )
 
 
-class SQLServerDataFeed(object):
-    """SQLServerDataFeed.
+class SQLServerDataFeedSource(object):
+    """SQLServerDataFeedSource.
 
     :param connection_string: Required. Database connection string.
     :type connection_string: str
@@ -1340,7 +1343,7 @@ class SQLServerDataFeed(object):
         self.query = query
 
     def __repr__(self):
-        return "SQLServerDataFeed(data_source_type={}, connection_string={}, query={})".format(
+        return "SQLServerDataFeedSource(data_source_type={}, connection_string={}, query={})".format(
                     self.data_source_type,
                     self.connection_string,
                     self.query
@@ -1360,8 +1363,8 @@ class SQLServerDataFeed(object):
         )
 
 
-class AzureDataLakeStorageGen2DataFeed(object):
-    """AzureDataLakeStorageGen2Parameter.
+class AzureDataLakeStorageGen2DataFeedSource(object):
+    """AzureDataLakeStorageGen2DataFeedSource.
 
     :param account_name: Required. Account name.
     :type account_name: str
@@ -1393,7 +1396,7 @@ class AzureDataLakeStorageGen2DataFeed(object):
         self.file_template = file_template
 
     def __repr__(self):
-        return "AzureDataLakeStorageGen2DataFeed(data_source_type={}, account_name={}, account_key={}, " \
+        return "AzureDataLakeStorageGen2DataFeedSource(data_source_type={}, account_name={}, account_key={}, " \
                "file_system_name={}, directory_template={}, file_template={})".format(
                     self.data_source_type,
                     self.account_name,
@@ -1423,8 +1426,8 @@ class AzureDataLakeStorageGen2DataFeed(object):
         )
 
 
-class ElasticsearchDataFeed(object):
-    """ElasticsearchParameter.
+class ElasticsearchDataFeedSource(object):
+    """ElasticsearchDataFeedSource.
 
     :param host: Required. Host.
     :type host: str
@@ -1445,7 +1448,7 @@ class ElasticsearchDataFeed(object):
         self.query = query
 
     def __repr__(self):
-        return "ElasticsearchDataFeed(data_source_type={}, host={}, port={}, auth_header={}, query={})".format(
+        return "ElasticsearchDataFeedSource(data_source_type={}, host={}, port={}, auth_header={}, query={})".format(
                     self.data_source_type,
                     self.host,
                     self.port,
@@ -1471,8 +1474,8 @@ class ElasticsearchDataFeed(object):
         )
 
 
-class MongoDBDataFeed(object):
-    """MongoDBDataFeed.
+class MongoDBDataFeedSource(object):
+    """MongoDBDataFeedSource.
 
     :param connection_string: Required. MongoDB connection string.
     :type connection_string: str
@@ -1490,7 +1493,7 @@ class MongoDBDataFeed(object):
         self.command = command
 
     def __repr__(self):
-        return "MongoDBDataFeed(data_source_type={}, connection_string={}, database={}, command={})".format(
+        return "MongoDBDataFeedSource(data_source_type={}, connection_string={}, database={}, command={})".format(
                     self.data_source_type,
                     self.connection_string,
                     self.database,
@@ -2315,19 +2318,19 @@ class AnomalyAlert(object):
 
 
 DATA_FEED_TRANSFORM = {
-    "SqlServer": SQLServerDataFeed,
-    "AzureApplicationInsights": AzureApplicationInsightsDataFeed,
-    "AzureBlob": AzureBlobDataFeed,
-    "AzureCosmosDB": AzureCosmosDBDataFeed,
-    "AzureDataExplorer": AzureDataExplorerDataFeed,
-    "AzureTable": AzureTableDataFeed,
-    "HttpRequest": HttpRequestDataFeed,
-    "InfluxDB": InfluxDBDataFeed,
-    "MySql": MySqlDataFeed,
-    "PostgreSql": PostgreSqlDataFeed,
-    "MongoDB": MongoDBDataFeed,
-    "AzureDataLakeStorageGen2": AzureDataLakeStorageGen2DataFeed,
-    "Elasticsearch": ElasticsearchDataFeed
+    "SqlServer": SQLServerDataFeedSource,
+    "AzureApplicationInsights": AzureApplicationInsightsDataFeedSource,
+    "AzureBlob": AzureBlobDataFeedSource,
+    "AzureCosmosDB": AzureCosmosDBDataFeedSource,
+    "AzureDataExplorer": AzureDataExplorerDataFeedSource,
+    "AzureTable": AzureTableDataFeedSource,
+    "HttpRequest": HttpRequestDataFeedSource,
+    "InfluxDB": InfluxDBDataFeedSource,
+    "MySql": MySqlDataFeedSource,
+    "PostgreSql": PostgreSqlDataFeedSource,
+    "MongoDB": MongoDBDataFeedSource,
+    "AzureDataLakeStorageGen2": AzureDataLakeStorageGen2DataFeedSource,
+    "Elasticsearch": ElasticsearchDataFeedSource
 }
 
 

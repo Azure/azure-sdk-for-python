@@ -9,7 +9,7 @@ import six
 from devtools_testutils import AzureTestCase
 
 from azure.containerregistry import (
-    DeletedRepositoryResult,
+    DeleteRepositoryResult,
     RepositoryProperties,
 )
 from azure.containerregistry.aio import ContainerRegistryClient, ContainerRepositoryClient
@@ -67,8 +67,8 @@ class TestContainerRegistryClient(AsyncContainerRegistryTestClass):
         client = self.create_registry_client(containerregistry_endpoint)
 
         result = await client.delete_repository(TO_BE_DELETED)
-        assert isinstance(result, DeletedRepositoryResult)
-        assert result.deleted_registry_artifact_digests is not None
+        assert isinstance(result, DeleteRepositoryResult)
+        assert result.deleted_manifests is not None
         assert result.deleted_tags is not None
 
         async for repo in client.list_repositories():
