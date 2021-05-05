@@ -97,7 +97,7 @@ class TestSubmittedJobs(AsyncDocumentTranslationTest):
         # create some jobs with the status 'Cancelled'
         job_ids = await self._create_and_submit_sample_translation_jobs_async(client, jobs_count, wait=False, docs_per_job=docs_per_job)
         for id in job_ids:
-            client.cancel_job(id)
+            await client.cancel_job(id)
         self.wait(10) # wait for 'cancelled' to propagate
 
         # list jobs with status filter
