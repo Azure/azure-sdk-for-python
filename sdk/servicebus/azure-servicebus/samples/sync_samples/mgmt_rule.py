@@ -42,7 +42,7 @@ def create_rule(servicebus_mgmt_client):
         "property1 = @param1 AND property2 = @param2",
         parameters={
             "@param1": "value",
-            "@param2" : 1
+            "@param2": 1
         }
     )
     servicebus_mgmt_client.create_rule(TOPIC_NAME, SUBSCRIPTION_NAME, RULE_WITH_SQL_FILTER_NAME, filter=sql_filter_parametrized)
@@ -72,7 +72,31 @@ def get_and_update_rule(servicebus_mgmt_client):
     print("Rule Name:", rule_properties.name)
     print("Please refer to RuleProperties for complete available properties.")
     print("")
+
+    # update by updating the properties in the model
+    rule_properties.filter = SqlRuleFilter(
+        "property1 = @param1 AND property2 = @param2",
+        parameters={
+            "@param1": "value2",
+            "@param2": 2
+        }
+    )
     servicebus_mgmt_client.update_rule(TOPIC_NAME, SUBSCRIPTION_NAME, rule_properties)
+
+    # update by passing keyword arguments
+    rule_properties = servicebus_mgmt_client.get_rule(TOPIC_NAME, SUBSCRIPTION_NAME, RULE_NAME)
+    servicebus_mgmt_client.update_rule(
+        TOPIC_NAME,
+        SUBSCRIPTION_NAME,
+        rule_properties,
+        filter=SqlRuleFilter(
+            "property1 = @param1 AND property2 = @param2",
+            parameters={
+                "@param1": "value3",
+                "@param2": 3
+            }
+        )
+    )
 
 
 with ServiceBusAdministrationClient.from_connection_string(CONNECTION_STR) as servicebus_mgmt_client:
