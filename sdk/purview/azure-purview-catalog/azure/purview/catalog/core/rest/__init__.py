@@ -24,11 +24,16 @@
 #
 # --------------------------------------------------------------------------
 try:
-    from ._rest_py3 import HttpRequest
-    from ._rest_py3 import HttpResponse
-    from ._rest_py3 import AsyncHttpResponse
-    from ._rest_py3 import _StreamContextManager
-    from ._rest_py3 import _AsyncStreamContextManager
+    from ._rest_py3 import (
+        HttpRequest,
+        HttpResponse,
+        AsyncHttpResponse,
+        _StreamContextManager,
+        _AsyncStreamContextManager,
+        StreamConsumedError,
+        ResponseNotReadError,
+        ResponseClosedError,
+    )
 
     __all__ = [
         "HttpRequest",
@@ -36,12 +41,25 @@ try:
         "AsyncHttpResponse",
         "_StreamContextManager",
         "_AsyncStreamContextManager",
+        "StreamConsumedError",
+        "ResponseNotReadError",
+        "ResponseClosedError",
     ]
 except (SyntaxError, ImportError):
-    from ._rest import HttpRequest
-    from ._rest import HttpResponse
+    from ._rest import (
+        HttpRequest,
+        HttpResponse,
+        _StreamContextManager,
+        StreamConsumedError,
+        ResponseNotReadError,
+        ResponseClosedError,
+    )
 
     __all__ = [
         "HttpRequest",
         "HttpResponse",
+        "_StreamContextManager",
+        "StreamConsumedError",
+        "ResponseNotReadError",
+        "ResponseClosedError",
     ]

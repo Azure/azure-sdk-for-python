@@ -24,10 +24,6 @@
 #
 # --------------------------------------------------------------------------
 
-__all__ = [
-    "HttpRequest",
-    "HttpResponse",
-]
 from abc import abstractmethod
 import sys
 import six
@@ -58,7 +54,7 @@ if TYPE_CHECKING:
     from azure.core.pipeline.transport._base import (
         _HttpResponseBase as _PipelineTransportHttpResponseBase
     )
-    from azure.core._pipeline_client import PipelineClient as _PipelineClient
+    from azure.core.pipeline import Pipeline
 
 class HttpVerbs(str, Enum):
     GET = "GET"
@@ -68,6 +64,7 @@ class HttpVerbs(str, Enum):
     PATCH = "PATCH"
     DELETE = "DELETE"
     MERGE = "MERGE"
+from azure.core.exceptions import HttpResponseError
 
 ########################### UTILS SECTION #################################
 
@@ -188,16 +185,21 @@ def _parse_lines_from_text(text):
 
 ################################## CLASSES ######################################
 class _StreamContextManager(object):
-    def __init__(self, client, request, **kwargs):
-        # type: (_PipelineClient, HttpRequest, Any) -> None
-        self.client = client
+    def __init__(self, pipeline, request, **kwargs):
+        # type: (Pipeline, HttpRequest, Any) -> None
+        """Used so we can treat stream requests and responses as a context manager.
+        In Autorest, we only return a `StreamContextManager` if users pass in `stream_response` True
+        Actually sends request when we enter the context manager, closes response when we exit.
+        Heavily inspired from httpx, we want the same behavior for it to feel consistent for users
+        """
+        self.pipeline = pipeline
         self.request = request
         self.kwargs = kwargs
 
     def __enter__(self):
         # type: (...) -> HttpResponse
         """Actually make the call only when we enter. For sync stream_response calls"""
-        pipeline_transport_response = self.client._pipeline.run(
+        pipeline_transport_response = self.pipeline.run(
             self.request._internal_request,
             stream=True,
             **self.kwargs
@@ -339,6 +341,7 @@ class _HttpResponseBase(object):
     :ivar request: The request that resulted in this response.
     :vartype request: ~azure.core.rest.HttpRequest
     :ivar str content_type: The content type of the response
+    :ivar bool is_error: Whether this response is an error.
     """
 
     def __init__(self, **kwargs):
@@ -377,7 +380,10 @@ class _HttpResponseBase(object):
     def content(self):
         # type: (...) -> bytes
         """Returns the response content in bytes"""
-        raise NotImplementedError()
+        try:
+            return self._content
+        except AttributeError:
+            raise ResponseNotReadError()
 
     @property
     def url(self):
@@ -418,6 +424,7 @@ class _HttpResponseBase(object):
     def text(self):
         # type: (...) -> str
         """Returns the response body as a string"""
+        self.content  # access content to make sure we trigger if response not fully read in
         return self._internal_response.text(encoding=self.encoding)
 
     @property
@@ -446,6 +453,15 @@ class _HttpResponseBase(object):
         """See how many bytes of your stream response have been downloaded"""
         return self._num_bytes_downloaded
 
+    @property
+    def is_error(self):
+        # type: (...) -> bool
+        """See whether your HttpResponse is an error.
+
+        Use .raise_for_status() if you want to raise if this response is an error.
+        """
+        return self.status_code < 400
+
     def json(self):
         # type: (...) -> Any
         """Returns the whole body as a json object.
@@ -462,7 +478,8 @@ class _HttpResponseBase(object):
 
         If response is good, does nothing.
         """
-        return self._internal_response.raise_for_status()
+        if self.status_code >= 400:
+            raise HttpResponseError(response=self)
 
     def __repr__(self):
         # type: (...) -> str
@@ -476,19 +493,11 @@ class _HttpResponseBase(object):
     def _validate_streaming_access(self):
         # type: (...) -> None
         if self.is_closed:
-            raise TypeError("Can not iterate over stream, it is closed.")
+            raise ResponseClosedError()
         if self.is_stream_consumed:
-            raise TypeError("Can not iterate over stream, it has been fully consumed")
+            raise StreamConsumedError()
 
 class HttpResponse(_HttpResponseBase):
-
-    @property
-    def content(self):
-        # type: (...) -> bytes
-        try:
-            return self._content
-        except AttributeError:
-            raise TypeError("You have not read in the response's bytes yet. Call response.read() first.")
 
     def close(self):
         # type: (...) -> None
@@ -497,7 +506,7 @@ class HttpResponse(_HttpResponseBase):
 
     def __exit__(self, *args):
         # type: (...) -> None
-        self._internal_response.internal_response.__exit__(*args)
+        self.close()
 
     def read(self):
         # type: (...) -> bytes
@@ -560,3 +569,29 @@ class HttpResponse(_HttpResponseBase):
             yield raw_bytes
 
         self._close_stream()
+
+########################### ERRORS SECTION #################################
+
+class StreamConsumedError(Exception):
+    def __init__(self):
+        message = (
+            "You are attempting to read or stream content that has already been streamed. "
+            "You have likely already consumed this stream, so it can not be accessed anymore."
+        )
+        super(StreamConsumedError, self).__init__(message)
+
+class ResponseClosedError(Exception):
+    def __init__(self):
+        message = (
+            "You can not try to read or stream this response's content, since the "
+            "response has been closed."
+        )
+        super(ResponseClosedError, self).__init__(message)
+
+class ResponseNotReadError(Exception):
+
+    def __init__(self):
+        message = (
+            "You have not read in the response's bytes yet. Call response.read() first."
+        )
+        super(ResponseNotReadError, self).__init__(message)

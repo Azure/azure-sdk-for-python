@@ -5,9 +5,10 @@
 # license information.
 # --------------------------------------------------------------------------
 from testcase import PurviewCatalogTest, PurviewCatalogPowerShellPreparer
+from testcase_async import PurviewCatalogTestAsync
 from azure.purview.catalog.rest.types import build_get_all_type_defs_request
 
-class PurviewCatalogSmokeTest(PurviewCatalogTest):
+class PurviewCatalogSmokeTestAsync(PurviewCatalogTestAsync):
 
     @PurviewCatalogPowerShellPreparer()
     async def test_basic_smoke_test(self, purviewcatalog_endpoint):
