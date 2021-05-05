@@ -300,7 +300,7 @@ class AioHttpTransportResponse(AsyncHttpResponse):
         :keyword bool decompress: If True which is default, will attempt to decode the body based
             on the ‘content-encoding’ header.
         """
-        return AioHttpStreamDownloadGenerator(pipeline, self, decompress=decompress)
+        return AioHttpStreamDownloadGenerator(pipeline, self, **kwargs)
 
     def __getstate__(self):
         # Be sure body is loaded in memory, otherwise not pickable and let it throw
