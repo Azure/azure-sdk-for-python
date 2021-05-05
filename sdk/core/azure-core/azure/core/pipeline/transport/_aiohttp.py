@@ -219,7 +219,7 @@ class AioHttpStreamDownloadGenerator(AsyncIterator):
                 raise _ResponseStopIteration()
             if not(self._decompress):
                 return chunk
-            enc = response.internal_response.headers.get('Content-Encoding')
+            enc = self.response.internal_response.headers.get('Content-Encoding')
             if not(enc):
                 return chunk
             enc = enc.lower()
