@@ -52,15 +52,25 @@ class ServiceBusNamespacePreparer(AzureMgmtPreparer):
         if self.is_live:
             self.client = self.create_mgmt_client(ServiceBusManagementClient)
             group = self._get_resource_group(**kwargs)
-            namespace_async_operation = self.client.namespaces.create_or_update(
-                group.name,
-                name,
-                {
-                    'sku': {'name': self.sku},
-                    'location': self.location,
-                }
-            )
-            self.resource = namespace_async_operation.result()
+            retries = 4
+            for i in range(retries):
+                try:
+                    namespace_async_operation = self.client.namespaces.create_or_update(
+                        group.name,
+                        name,
+                        {
+                            'sku': {'name': self.sku},
+                            'location': self.location,
+                        }
+                    )
+                    self.resource = namespace_async_operation.result()
+                    break
+                except Exception as ex:
+                    error = "The requested resource {} does not exist".format(group.name)
+                    not_found_error = "Operation returned an invalid status code 'Not Found'"
+                    if (error not in str(ex) and not_found_error not in str(ex)) or i == retries - 1:
+                        raise
+                    time.sleep(3)
 
             key = self.client.namespaces.list_keys(group.name, name, SERVICEBUS_DEFAULT_AUTH_RULE_NAME)
             self.connection_string = key.primary_connection_string
@@ -156,12 +166,22 @@ class ServiceBusTopicPreparer(_ServiceBusChildResourcePreparer):
             self.client = self.create_mgmt_client(ServiceBusManagementClient)
             group = self._get_resource_group(**kwargs)
             namespace = self._get_namespace(**kwargs)
-            self.resource = self.client.topics.create_or_update(
-                group.name,
-                namespace.name,
-                name,
-                {}
-            )
+            retries = 4
+            for i in range(retries):
+                try:
+                    self.resource = self.client.topics.create_or_update(
+                        group.name,
+                        namespace.name,
+                        name,
+                        {}
+                    )
+                    break
+                except Exception as ex:
+                    error = "The requested resource {} does not exist".format(namespace)
+                    not_found_error = "Operation returned an invalid status code 'Not Found'"
+                    if (error not in str(ex) and not_found_error not in str(ex)) or i == retries - 1:
+                        raise
+                    time.sleep(3)
 
             self.test_class_instance.scrubber.register_name_pair(
                 name,
@@ -295,16 +315,26 @@ class ServiceBusQueuePreparer(_ServiceBusChildResourcePreparer):
             self.client = self.create_mgmt_client(ServiceBusManagementClient)
             group = self._get_resource_group(**kwargs)
             namespace = self._get_namespace(**kwargs)
-            self.resource = self.client.queues.create_or_update(
-                group.name,
-                namespace.name,
-                name,
-                SBQueue(
-                    lock_duration=self.lock_duration,
-                    requires_duplicate_detection = self.requires_duplicate_detection,
-                    dead_lettering_on_message_expiration = self.dead_lettering_on_message_expiration,
-                    requires_session = self.requires_session)
-            )
+            retries = 4
+            for i in range(retries):
+                try:
+                    self.resource = self.client.queues.create_or_update(
+                        group.name,
+                        namespace.name,
+                        name,
+                        SBQueue(
+                            lock_duration=self.lock_duration,
+                            requires_duplicate_detection = self.requires_duplicate_detection,
+                            dead_lettering_on_message_expiration = self.dead_lettering_on_message_expiration,
+                            requires_session = self.requires_session)
+                    )
+                    break
+                except Exception as ex:
+                    error = "The requested resource {} does not exist".format(namespace)
+                    not_found_error = "Operation returned an invalid status code 'Not Found'"
+                    if (error not in str(ex) and not_found_error not in str(ex)) or i == retries - 1:
+                        raise
+                    time.sleep(3)
 
             self.test_class_instance.scrubber.register_name_pair(
                 name,
