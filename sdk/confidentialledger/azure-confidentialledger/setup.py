@@ -11,7 +11,7 @@ import re
 # up from python 2.7. Reference here: https://github.com/Azure/azure-sdk-for-python/wiki/Azure-packaging
 
 PACKAGE_NAME = "azure-confidentialledger"
-PACKAGE_PPRINT_NAME = "Confidential Ledger"
+PACKAGE_PPRINT_NAME = "Azure Confidential Ledger"
 
 # a-b-c => a/b/c
 package_folder_path = PACKAGE_NAME.replace('-', '/')
@@ -62,7 +62,6 @@ setup(
     ]),
     install_requires=[
         'msrest>=0.6.0',
-        'msrestazure>=0.4.32,<2.0.0',
         'azure-common~=1.1',
         "azure-core<2.0.0,>=1.7.0",
     ],

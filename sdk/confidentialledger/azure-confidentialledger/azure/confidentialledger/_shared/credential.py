@@ -3,11 +3,6 @@
 # Licensed under the MIT License.
 # ------------------------------------
 
-from msrest.exceptions import ClientRequestError, raise_with_traceback
-from msrest.pipeline import HTTPPolicy
-
-import requests
-
 try:
     from typing import TYPE_CHECKING
 except ImportError:

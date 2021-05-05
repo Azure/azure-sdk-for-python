@@ -4,7 +4,7 @@
 # ------------------------------------
 
 import asyncio
-from typing import Any, List, Optional, TYPE_CHECKING, Union
+from typing import Any, Optional, TYPE_CHECKING, Union
 
 from azure.core.async_paging import AsyncItemPaged
 from azure.core.tracing.decorator import distributed_trace
@@ -94,7 +94,7 @@ class ConfidentialLedgerClient(AsyncConfidentialLedgerClientBase):
         if entry_contents is None:
             raise ValueError("entry_contents must not be None")
 
-        result = await self._client.post_ledger_entry(
+        result = await self._client.post_ledger_entry(  # pylint: disable=protected-access
             contents=entry_contents,
             sub_ledger_id=sub_ledger_id,
             cls=kwargs.pop("cls", AppendResult._from_pipeline_result),
@@ -243,7 +243,7 @@ class ConfidentialLedgerClient(AsyncConfidentialLedgerClientBase):
                     "If not None, to_transaction_id must be a non-empty string"
                 )
 
-        return self._client.get_ledger_entries(
+        return self._client.get_ledger_entries(  # pylint: disable=protected-access
             from_transaction_id=from_transaction_id,
             to_transaction_id=to_transaction_id,
             sub_ledger_id=sub_ledger_id,

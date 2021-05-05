@@ -88,7 +88,7 @@ class ConfidentialLedgerClient(ConfidentialLedgerClientBase):
         if entry_contents is None:
             raise ValueError("entry_contents must be a string")
 
-        result = self._client.post_ledger_entry(
+        result = self._client.post_ledger_entry(  # pylint: disable=protected-access
             contents=entry_contents,
             # Not a valid kwarg for wait_for_commit (will throw at requests layer),
             # so it has to be popped.
@@ -255,7 +255,7 @@ class ConfidentialLedgerClient(ConfidentialLedgerClientBase):
                     "If not None, to_transaction_id must be a non-empty string"
                 )
 
-        return self._client.get_ledger_entries(
+        return self._client.get_ledger_entries(  # pylint: disable=protected-access
             from_transaction_id=from_transaction_id,
             to_transaction_id=to_transaction_id,
             cls=kwargs.pop(

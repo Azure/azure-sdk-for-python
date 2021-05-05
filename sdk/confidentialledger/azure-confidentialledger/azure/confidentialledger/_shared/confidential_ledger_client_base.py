@@ -3,8 +3,6 @@
 # Licensed under the MIT License.
 # ------------------------------------
 
-from enum import Enum
-
 from azure.core.pipeline.policies import BearerTokenCredentialPolicy, HttpLoggingPolicy
 from azure.core.pipeline.transport import RequestsTransport
 
