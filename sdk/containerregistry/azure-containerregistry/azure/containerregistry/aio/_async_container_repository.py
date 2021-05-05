@@ -34,14 +34,12 @@ if TYPE_CHECKING:
 
 class ContainerRepository(ContainerRegistryBaseClient):
     def __init__(
-        self, endpoint: str, repository: str, credential: "AsyncTokenCredential", **kwargs: Dict[str, Any]
+        self, endpoint: str, name: str, credential: "AsyncTokenCredential", **kwargs: Dict[str, Any]
     ) -> None:
         """Create a ContainerRepository from an endpoint, repository name, and credential
 
-        :param endpoint: An ACR endpoint
-        :type endpoint: str
-        :param repository: The name of a repository
-        :type repository: str
+        :param str endpoint: An ACR endpoint
+        :param str name: The name of a repository
         :param credential: The credential with which to authenticate
         :type credential: :class:`~azure.core.credentials_async.AsyncTokenCredential`
         :returns: None
@@ -51,7 +49,7 @@ class ContainerRepository(ContainerRegistryBaseClient):
             endpoint = "https://" + endpoint
         self._endpoint = endpoint
         self._credential = credential
-        self.repository = repository
+        self.name = name
         super(ContainerRepository, self).__init__(endpoint=self._endpoint, credential=credential, **kwargs)
 
     @distributed_trace_async
@@ -63,7 +61,7 @@ class ContainerRepository(ContainerRegistryBaseClient):
         :raises: :class:`~azure.core.exceptions.ResourceNotFoundError`
         """
         return DeleteRepositoryResult._from_generated(  # pylint: disable=protected-access
-            await self._client.container_registry.delete_repository(self.repository, **kwargs)
+            await self._client.container_registry.delete_repository(self.name, **kwargs)
         )
 
     @distributed_trace_async
@@ -74,7 +72,7 @@ class ContainerRepository(ContainerRegistryBaseClient):
         :raises: :class:`~azure.core.exceptions.ResourceNotFoundError`
         """
         return RepositoryProperties._from_generated(  # pylint: disable=protected-access
-            await self._client.container_registry.get_properties(self.repository, **kwargs)
+            await self._client.container_registry.get_properties(self.name, **kwargs)
         )
 
     @distributed_trace
@@ -92,14 +90,14 @@ class ContainerRepository(ContainerRegistryBaseClient):
         :rtype: :class:`~azure.core.async_paging.AsyncItemPaged`
         :raises: :class:`~azure.core.exceptions.ResourceNotFoundError`
         """
-        name = self.repository
+        name = self.name
         last = kwargs.pop("last", None)
         n = kwargs.pop("results_per_page", None)
         orderby = kwargs.pop("order_by", None)
         cls = kwargs.pop(
             "cls",
             lambda objs: [
-                ArtifactManifestProperties._from_generated(x, repository_name=self.repository)  # pylint: disable=protected-access
+                ArtifactManifestProperties._from_generated(x, repository_name=self.name)  # pylint: disable=protected-access
                 for x in objs
             ],
         )
@@ -204,7 +202,7 @@ class ContainerRepository(ContainerRegistryBaseClient):
         """
         return RepositoryProperties._from_generated(  # pylint: disable=protected-access
             await self._client.container_registry.set_properties(
-                self.repository, properties._to_generated(), **kwargs  # pylint: disable=protected-access
+                self.name, properties._to_generated(), **kwargs  # pylint: disable=protected-access
             )
         )
 
@@ -217,4 +215,4 @@ class ContainerRepository(ContainerRegistryBaseClient):
         :returns: :class:`~azure.containerregistry.RegistryArtifact`
         :raises: None
         """
-        return RegistryArtifact(self._endpoint, self.repository, tag_or_digest, self._credential, **kwargs)
+        return RegistryArtifact(self._endpoint, self.name, tag_or_digest, self._credential, **kwargs)

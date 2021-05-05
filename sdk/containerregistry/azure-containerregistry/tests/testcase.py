@@ -238,7 +238,7 @@ class ContainerRegistryTestClass(AzureTestCase):
         return ContainerRegistryClient(endpoint=endpoint, credential=self.get_credential(), **kwargs)
 
     def create_container_repository(self, endpoint, name, **kwargs):
-        return ContainerRepository(endpoint=endpoint, repository=name, credential=self.get_credential(), **kwargs)
+        return ContainerRepository(endpoint=endpoint, name=name, credential=self.get_credential(), **kwargs)
 
     def assert_content_permission(self, content_perm, content_perm2):
         assert isinstance(content_perm, ContentProperties)
