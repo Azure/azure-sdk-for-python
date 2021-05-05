@@ -1,14 +1,16 @@
 import hashlib
+import os
+import tempfile
 
 from azure.confidentialledger import (
     LedgerUserRole,
     TransactionState,
 )
 
+from .constants import NETWORK_CERTIFICATE
 from .testcase import ConfidentialLedgerTestCase
 
 CONFIDENTIAL_LEDGER_URL = "https://fake-confidential-ledger.azure.com"
-NETWORK_CERTIFICATE_PATH = "fake-network-cert.pem"
 USER_CERTIFICATE_PATH = "fake-cert.pem"
 
 
@@ -20,12 +22,18 @@ class ConfidentialLedgerClientTestMixin:
             self.confidential_ledger_url = self.set_value_to_scrub(
                 "CONFIDENTIAL_LEDGER_URL", CONFIDENTIAL_LEDGER_URL
             )
-            self.network_certificate_path = self.set_value_to_scrub(
-                "CONFIDENTIAL_LEDGER_NETWORK_CERTIFICATE_PATH", NETWORK_CERTIFICATE_PATH
-            )
+
+            with tempfile.NamedTemporaryFile("w", suffix=".pem", delete=False) as cert_file:
+                cert_file.write(NETWORK_CERTIFICATE)
+                self.network_certificate_path = cert_file.name
+
             self.user_certificate_path = self.set_value_to_scrub(
                 "CONFIDENTIAL_LEDGER_USER_CERTIFICATE_PATH", USER_CERTIFICATE_PATH
             )
+        
+        def tearDown(self):
+            os.remove(self.network_certificate_path)
+            return super().tearDown()
 
         def test_append_entry_flow(self):
             entry_contents = "Test entry from Python SDK"

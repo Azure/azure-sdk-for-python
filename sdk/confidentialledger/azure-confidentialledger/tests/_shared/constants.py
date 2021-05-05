@@ -1,0 +1,17 @@
+# ------------------------------------
+# Copyright (c) Microsoft Corporation.
+# Licensed under the MIT License.
+# ------------------------------------
+
+NETWORK_CERTIFICATE = """-----BEGIN CERTIFICATE-----
+MIIBtjCCAT2gAwIBAgIQSw8HaSIBHIBNCOoDjlSdTTAKBggqhkjOPQQDAzAWMRQw
+EgYDVQQDDAtDQ0YgTmV0d29yazAeFw0yMTAzMTEwMDAwMDBaFw0yMzA2MTEyMzU5
+NTlaMBYxFDASBgNVBAMMC0NDRiBOZXR3b3JrMHYwEAYHKoZIzj0CAQYFK4EEACID
+YgAE+v02BHft1bJws8lZx8EANt/r2EgvdY+t4WoNJideAUyL1q5fzvkyq+KzGFKB
+tO4ZTQswmKc6851hDSFU90TFxj+Z+8blpdTd4Kyrgm1QJeC62yeiwDDV3wuxLQdp
+qdumo1AwTjAMBgNVHRMEBTADAQH/MB0GA1UdDgQWBBSqyU4AMIPtiTcr0sNylZeG
+MxLOBTAfBgNVHSMEGDAWgBSqyU4AMIPtiTcr0sNylZeGMxLOBTAKBggqhkjOPQQD
+AwNnADBkAjAvOKkxJ1ApNgnUz2AwT6ke/5zITbKleCYhsA31ydmtxKzHknFvjezV
+71M2EfnbKkUCMAsuRjhh4B5hmu6YOyM1ZSAF6eVxkpVTM0zSD1M/t9e+I/3Ym3tG
+G/fqaA8AvrxFiQ==
+-----END CERTIFICATE-----"""

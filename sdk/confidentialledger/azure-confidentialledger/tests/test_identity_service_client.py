@@ -3,10 +3,10 @@ from azure.confidentialledger.identity_service import (
     LedgerIdentity,
 )
 
+from ._shared.constants import NETWORK_CERTIFICATE
 from ._shared.testcase import ConfidentialLedgerTestCase
 
 LEDGER_ID = "fake-ledger-id"
-NETWORK_CERTIFICATE = "fake-network-cert-in-pem"
 
 
 class ConfidentialLedgerIdentityServiceClientTest(ConfidentialLedgerTestCase):
@@ -14,9 +14,6 @@ class ConfidentialLedgerIdentityServiceClientTest(ConfidentialLedgerTestCase):
         super(ConfidentialLedgerIdentityServiceClientTest, self).setUp()
 
         self.ledger_id = self.set_value_to_scrub("CONFIDENTIAL_LEDGER_ID", LEDGER_ID)
-        self.network_certificate = self.set_value_to_scrub(
-            "CONFIDENTIAL_LEDGER_NETWORK_CERTIFICATE", NETWORK_CERTIFICATE
-        )
 
     def test_get_ledger_identity(self):
         credential = self.get_credential(ConfidentialLedgerIdentityServiceClient)
@@ -31,5 +28,5 @@ class ConfidentialLedgerIdentityServiceClientTest(ConfidentialLedgerTestCase):
         )  # type: LedgerIdentity
         self.assertEqual(network_identity.ledger_id, self.ledger_id)
         self.assertEqual(
-            network_identity.ledger_tls_certificate, self.network_certificate
+            network_identity.ledger_tls_certificate, NETWORK_CERTIFICATE
         )
