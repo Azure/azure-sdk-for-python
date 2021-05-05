@@ -37,7 +37,6 @@ class TableAuthSamples(object):
 
     def __init__(self):
         load_dotenv(find_dotenv())
-        # self.connection_string = os.getenv("AZURE_TABLES_CONNECTION_STRING")
         self.access_key = os.getenv("TABLES_PRIMARY_STORAGE_ACCOUNT_KEY")
         self.endpoint = os.getenv("TABLES_STORAGE_ENDPOINT_SUFFIX")
         self.account_name = os.getenv("TABLES_STORAGE_ACCOUNT_NAME")
@@ -70,13 +69,14 @@ class TableAuthSamples(object):
         # Instantiate a TableServiceClient using a connection string
         # [START auth_by_sas]
         from azure.data.tables.aio import TableServiceClient
+        from azure.core.credentials import AzureNamedKeyCredential
 
         # Create a SAS token to use for authentication of a client
         from azure.data.tables import generate_account_sas, ResourceTypes, AccountSasPermissions
         print("Account name: {}".format(self.account_name))
+        credential = AzureNamedKeyCredential(self.account_name, self.access_key)
         sas_token = generate_account_sas(
-            self.account_name,
-            self.access_key,
+            credential,
             resource_types=ResourceTypes(service=True),
             permission=AccountSasPermissions(read=True),
             expiry=datetime.utcnow() + timedelta(hours=1)

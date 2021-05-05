@@ -29,7 +29,7 @@ class CreateClients(object):
         load_dotenv(find_dotenv())
         self.account_url = os.environ["CONTAINERREGISTRY_ENDPOINT"]
 
-    def create_registry_client(self):
+    async def create_registry_client(self):
         # Instantiate the ContainerRegistryClient
         # [START create_registry_client]
         from azure.containerregistry.aio import ContainerRegistryClient
@@ -38,7 +38,7 @@ class CreateClients(object):
         client = ContainerRegistryClient(self.account_url, DefaultAzureCredential())
         # [END create_registry_client]
 
-    def create_repository_client(self):
+    async def create_repository_client(self):
         # Instantiate the ContainerRegistryClient
         # [START create_repository_client]
         from azure.containerregistry.aio import ContainerRepositoryClient
@@ -70,13 +70,13 @@ class CreateClients(object):
                     await client.delete_repository("hello-world")
                     # [END delete_repository]
 
-
 async def main():
     sample = CreateClients()
-    sample.create_registry_client()
-    sample.create_repository_client()
+    await sample.create_registry_client()
+    await sample.create_repository_client()
+    await sample.basic_sample()
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     loop = asyncio.get_event_loop()
     loop.run_until_complete(main())

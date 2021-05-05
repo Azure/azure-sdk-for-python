@@ -21,7 +21,6 @@ USAGE:
 """
 
 import os
-from time import sleep
 import asyncio
 from dotenv import find_dotenv, load_dotenv
 
@@ -29,7 +28,6 @@ class InsertDeleteEntity(object):
 
     def __init__(self):
         load_dotenv(find_dotenv())
-        # self.connection_string = os.getenv("AZURE_TABLES_CONNECTION_STRING")
         self.access_key = os.getenv("TABLES_PRIMARY_STORAGE_ACCOUNT_KEY")
         self.endpoint = os.getenv("TABLES_STORAGE_ENDPOINT_SUFFIX")
         self.account_name = os.getenv("TABLES_STORAGE_ACCOUNT_NAME")
@@ -73,9 +71,10 @@ class InsertDeleteEntity(object):
     async def delete_entity(self):
         from azure.data.tables.aio import TableClient
         from azure.core.exceptions import ResourceNotFoundError, ResourceExistsError
-        from azure.core import MatchConditions
+        from azure.core.credentials import AzureNamedKeyCredential
 
-        table_client = TableClient(account_url=self.account_url, credential=self.access_key, table_name=self.table_name)
+        credential = AzureNamedKeyCredential(self.account_name, self.access_key)
+        table_client = TableClient(account_url=self.account_url, credential=credential, table_name=self.table_name)
 
         # [START delete_entity]
         async with table_client:
@@ -99,7 +98,7 @@ class InsertDeleteEntity(object):
         tsc = TableServiceClient.from_connection_string(self.connection_string)
         async with tsc:
             async for table in tsc.list_tables():
-                await tsc.delete_table(table.table_name)
+                await tsc.delete_table(table.name)
 
             print("Cleaned up")
 

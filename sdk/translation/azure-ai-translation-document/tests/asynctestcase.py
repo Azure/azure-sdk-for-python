@@ -62,3 +62,43 @@ class AsyncDocumentTranslationTest(DocumentTranslationTest):
             result_job_ids.append(job_details.id)
 
         return result_job_ids
+
+
+    async def _create_translation_job_with_dummy_docs_async(self, async_client, docs_count, **kwargs):
+        '''
+            appropriated this method from another PR! #18302
+            please resolve conflict before merge
+            keep in mind it's the exact same method
+        '''
+        # get input parms
+        wait_for_job = kwargs.pop('wait', False)
+        language_code = kwargs.pop('language_code', "es")
+
+        # prepare containers and test data
+        blob_data = Document.create_dummy_docs(docs_count=docs_count)
+        source_container_sas_url = self.create_source_container(data=blob_data)
+        target_container_sas_url = self.create_target_container()
+
+        # prepare translation inputs
+        translation_inputs = [
+            DocumentTranslationInput(
+                source_url=source_container_sas_url,
+                targets=[
+                    TranslationTarget(
+                        target_url=target_container_sas_url,
+                        language_code=language_code
+                    )
+                ]
+            )
+        ]
+
+        # submit job
+        job_details = await async_client.create_translation_job(translation_inputs)
+        self.assertIsNotNone(job_details.id)
+        # wait for result
+        if wait_for_job:
+                await async_client.wait_until_done(job_details.id)
+        # validate
+        self._validate_translation_job(job_details=job_details)
+
+        return job_details.id

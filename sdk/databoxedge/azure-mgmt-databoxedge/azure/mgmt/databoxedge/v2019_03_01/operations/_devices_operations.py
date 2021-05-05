@@ -32,7 +32,7 @@ class DevicesOperations(object):
     instantiates it for you and attaches it as an attribute.
 
     :ivar models: Alias to model classes used in this operation group.
-    :type models: ~azure.mgmt.databoxedge.models
+    :type models: ~azure.mgmt.databoxedge.v2019_03_01.models
     :param client: Client for service requests.
     :param config: Configuration of service client.
     :param serializer: An object model serializer.
@@ -60,7 +60,7 @@ class DevicesOperations(object):
         :type expand: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: An iterator like instance of either DataBoxEdgeDeviceList or the result of cls(response)
-        :rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.databoxedge.models.DataBoxEdgeDeviceList]
+        :rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.databoxedge.v2019_03_01.models.DataBoxEdgeDeviceList]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType["_models.DataBoxEdgeDeviceList"]
@@ -136,7 +136,7 @@ class DevicesOperations(object):
         :type expand: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: An iterator like instance of either DataBoxEdgeDeviceList or the result of cls(response)
-        :rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.databoxedge.models.DataBoxEdgeDeviceList]
+        :rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.databoxedge.v2019_03_01.models.DataBoxEdgeDeviceList]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType["_models.DataBoxEdgeDeviceList"]
@@ -212,7 +212,7 @@ class DevicesOperations(object):
         :type resource_group_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: DataBoxEdgeDevice, or the result of cls(response)
-        :rtype: ~azure.mgmt.databoxedge.models.DataBoxEdgeDevice
+        :rtype: ~azure.mgmt.databoxedge.v2019_03_01.models.DataBoxEdgeDevice
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType["_models.DataBoxEdgeDevice"]
@@ -325,15 +325,15 @@ class DevicesOperations(object):
         :param resource_group_name: The resource group name.
         :type resource_group_name: str
         :param data_box_edge_device: The resource object.
-        :type data_box_edge_device: ~azure.mgmt.databoxedge.models.DataBoxEdgeDevice
+        :type data_box_edge_device: ~azure.mgmt.databoxedge.v2019_03_01.models.DataBoxEdgeDevice
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: True for ARMPolling, False for no polling, or a
-         polling object for personal polling strategy
+        :keyword polling: Pass in True if you'd like the ARMPolling polling method,
+         False for no polling, or your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.PollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of LROPoller that returns either DataBoxEdgeDevice or the result of cls(response)
-        :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.databoxedge.models.DataBoxEdgeDevice]
+        :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.databoxedge.v2019_03_01.models.DataBoxEdgeDevice]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         polling = kwargs.pop('polling', True)  # type: Union[bool, PollingMethod]
@@ -442,8 +442,8 @@ class DevicesOperations(object):
         :type resource_group_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: True for ARMPolling, False for no polling, or a
-         polling object for personal polling strategy
+        :keyword polling: Pass in True if you'd like the ARMPolling polling method,
+         False for no polling, or your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.PollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of LROPoller that returns either None or the result of cls(response)
@@ -507,10 +507,10 @@ class DevicesOperations(object):
         :param resource_group_name: The resource group name.
         :type resource_group_name: str
         :param parameters: The resource parameters.
-        :type parameters: ~azure.mgmt.databoxedge.models.DataBoxEdgeDevicePatch
+        :type parameters: ~azure.mgmt.databoxedge.v2019_03_01.models.DataBoxEdgeDevicePatch
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: DataBoxEdgeDevice, or the result of cls(response)
-        :rtype: ~azure.mgmt.databoxedge.models.DataBoxEdgeDevice
+        :rtype: ~azure.mgmt.databoxedge.v2019_03_01.models.DataBoxEdgeDevice
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType["_models.DataBoxEdgeDevice"]
@@ -621,8 +621,8 @@ class DevicesOperations(object):
         :type resource_group_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: True for ARMPolling, False for no polling, or a
-         polling object for personal polling strategy
+        :keyword polling: Pass in True if you'd like the ARMPolling polling method,
+         False for no polling, or your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.PollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of LROPoller that returns either None or the result of cls(response)
@@ -686,7 +686,7 @@ class DevicesOperations(object):
         :type resource_group_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: DataBoxEdgeDeviceExtendedInfo, or the result of cls(response)
-        :rtype: ~azure.mgmt.databoxedge.models.DataBoxEdgeDeviceExtendedInfo
+        :rtype: ~azure.mgmt.databoxedge.v2019_03_01.models.DataBoxEdgeDeviceExtendedInfo
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType["_models.DataBoxEdgeDeviceExtendedInfo"]
@@ -792,8 +792,8 @@ class DevicesOperations(object):
         :type resource_group_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: True for ARMPolling, False for no polling, or a
-         polling object for personal polling strategy
+        :keyword polling: Pass in True if you'd like the ARMPolling polling method,
+         False for no polling, or your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.PollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of LROPoller that returns either None or the result of cls(response)
@@ -857,7 +857,7 @@ class DevicesOperations(object):
         :type resource_group_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: NetworkSettings, or the result of cls(response)
-        :rtype: ~azure.mgmt.databoxedge.models.NetworkSettings
+        :rtype: ~azure.mgmt.databoxedge.v2019_03_01.models.NetworkSettings
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType["_models.NetworkSettings"]
@@ -963,8 +963,8 @@ class DevicesOperations(object):
         :type resource_group_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: True for ARMPolling, False for no polling, or a
-         polling object for personal polling strategy
+        :keyword polling: Pass in True if you'd like the ARMPolling polling method,
+         False for no polling, or your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.PollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of LROPoller that returns either None or the result of cls(response)
@@ -1079,11 +1079,11 @@ class DevicesOperations(object):
         :param resource_group_name: The resource group name.
         :type resource_group_name: str
         :param security_settings: The security settings.
-        :type security_settings: ~azure.mgmt.databoxedge.models.SecuritySettings
+        :type security_settings: ~azure.mgmt.databoxedge.v2019_03_01.models.SecuritySettings
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: True for ARMPolling, False for no polling, or a
-         polling object for personal polling strategy
+        :keyword polling: Pass in True if you'd like the ARMPolling polling method,
+         False for no polling, or your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.PollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of LROPoller that returns either None or the result of cls(response)
@@ -1151,7 +1151,7 @@ class DevicesOperations(object):
         :type resource_group_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: UpdateSummary, or the result of cls(response)
-        :rtype: ~azure.mgmt.databoxedge.models.UpdateSummary
+        :rtype: ~azure.mgmt.databoxedge.v2019_03_01.models.UpdateSummary
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType["_models.UpdateSummary"]
@@ -1210,10 +1210,10 @@ class DevicesOperations(object):
         :param resource_group_name: The resource group name.
         :type resource_group_name: str
         :param parameters: The upload certificate request.
-        :type parameters: ~azure.mgmt.databoxedge.models.UploadCertificateRequest
+        :type parameters: ~azure.mgmt.databoxedge.v2019_03_01.models.UploadCertificateRequest
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: UploadCertificateResponse, or the result of cls(response)
-        :rtype: ~azure.mgmt.databoxedge.models.UploadCertificateResponse
+        :rtype: ~azure.mgmt.databoxedge.v2019_03_01.models.UploadCertificateResponse
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType["_models.UploadCertificateResponse"]
