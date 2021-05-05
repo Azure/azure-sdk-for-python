@@ -27,6 +27,4 @@ class ConfidentialLedgerIdentityServiceClientTest(ConfidentialLedgerTestCase):
             ledger_id=self.ledger_id
         )  # type: LedgerIdentity
         self.assertEqual(network_identity.ledger_id, self.ledger_id)
-        self.assertEqual(
-            network_identity.ledger_tls_certificate, NETWORK_CERTIFICATE
-        )
+        self.assertEqual(network_identity.ledger_tls_certificate, NETWORK_CERTIFICATE)

@@ -7,11 +7,10 @@ from azure.confidentialledger import (
     TransactionState,
 )
 
-from .constants import NETWORK_CERTIFICATE
+from .constants import NETWORK_CERTIFICATE, USER_CERTIFICATE
 from .testcase import ConfidentialLedgerTestCase
 
 CONFIDENTIAL_LEDGER_URL = "https://fake-confidential-ledger.azure.com"
-USER_CERTIFICATE_PATH = "fake-cert.pem"
 
 
 class ConfidentialLedgerClientTestMixin:
@@ -23,15 +22,24 @@ class ConfidentialLedgerClientTestMixin:
                 "CONFIDENTIAL_LEDGER_URL", CONFIDENTIAL_LEDGER_URL
             )
 
-            with tempfile.NamedTemporaryFile("w", suffix=".pem", delete=False) as cert_file:
-                cert_file.write(NETWORK_CERTIFICATE)
-                self.network_certificate_path = cert_file.name
+            with tempfile.NamedTemporaryFile(
+                "w", suffix=".pem", delete=False
+            ) as tls_cert_file:
+                tls_cert_file.write(NETWORK_CERTIFICATE)
+                self.network_certificate_path = tls_cert_file.name
 
-            self.user_certificate_path = self.set_value_to_scrub(
-                "CONFIDENTIAL_LEDGER_USER_CERTIFICATE_PATH", USER_CERTIFICATE_PATH
-            )
-        
+            with tempfile.NamedTemporaryFile(
+                "w", suffix=".pem", delete=False
+            ) as user_cert_file:
+                user_cert_file.write(
+                    self.set_value_to_scrub(
+                        "CONFIDENTIAL_LEDGER_USER_CERTIFICATE", USER_CERTIFICATE
+                    )
+                )
+                self.user_certificate_path = user_cert_file.name
+
         def tearDown(self):
+            os.remove(self.user_certificate_path)
             os.remove(self.network_certificate_path)
             return super().tearDown()
 
