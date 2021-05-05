@@ -342,7 +342,7 @@ class WeatherOperations:
         self,
         job_id: str,
         *,
-        job: Any = None,
+        body: Any = None,
         **kwargs: Any
     ) -> Any:
         cls = kwargs.pop('cls', None)  # type: ClsType[Any]
@@ -352,8 +352,8 @@ class WeatherOperations:
         error_map.update(kwargs.pop('error_map', {}))
 
         content_type = kwargs.pop("content_type", "application/json")
-        if job is not None:
-            json = self._serialize.body(job, 'object')
+        if body is not None:
+            json = self._serialize.body(body, 'object')
         else:
             json = None
 
@@ -391,15 +391,15 @@ class WeatherOperations:
         self,
         job_id: str,
         *,
-        job: Any = None,
+        body: Any = None,
         **kwargs: Any
     ) -> AsyncLROPoller[Any]:
         """Create a weather data ingestion job.
 
         :param job_id: Job id supplied by user.
         :type job_id: str
-        :keyword job: Job parameters supplied by user.
-        :paramtype job: Any
+        :keyword body: Job parameters supplied by user.
+        :paramtype body: Any
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
         :keyword polling: By default, your polling method will be AsyncLROBasePolling.
@@ -415,7 +415,7 @@ class WeatherOperations:
 
 
                 # JSON input template you can fill out and use as your `json` input.
-                job = {
+                body = {
                     "boundaryId": "str",
                     "createdDateTime": "datetime (optional)",
                     "description": "str (optional)",
@@ -479,7 +479,7 @@ class WeatherOperations:
             raw_result = await self._create_data_ingestion_job_initial(
                 job_id=job_id,
 
-                job=job,
+                body=body,
 
 
                 cls=lambda x,y,z: x,
@@ -596,7 +596,7 @@ class WeatherOperations:
         self,
         job_id: str,
         *,
-        job: Any = None,
+        body: Any = None,
         **kwargs: Any
     ) -> Any:
         cls = kwargs.pop('cls', None)  # type: ClsType[Any]
@@ -606,8 +606,8 @@ class WeatherOperations:
         error_map.update(kwargs.pop('error_map', {}))
 
         content_type = kwargs.pop("content_type", "application/json")
-        if job is not None:
-            json = self._serialize.body(job, 'object')
+        if body is not None:
+            json = self._serialize.body(body, 'object')
         else:
             json = None
 
@@ -645,15 +645,15 @@ class WeatherOperations:
         self,
         job_id: str,
         *,
-        job: Any = None,
+        body: Any = None,
         **kwargs: Any
     ) -> AsyncLROPoller[Any]:
         """Create a weather data delete job.
 
         :param job_id: Job Id supplied by end user.
         :type job_id: str
-        :keyword job: Job parameters supplied by user.
-        :paramtype job: Any
+        :keyword body: Job parameters supplied by user.
+        :paramtype body: Any
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
         :keyword polling: By default, your polling method will be AsyncLROBasePolling.
@@ -669,7 +669,7 @@ class WeatherOperations:
 
 
                 # JSON input template you can fill out and use as your `json` input.
-                job = {
+                body = {
                     "boundaryId": "str",
                     "createdDateTime": "datetime (optional)",
                     "description": "str (optional)",
@@ -729,7 +729,7 @@ class WeatherOperations:
             raw_result = await self._create_data_delete_job_initial(
                 job_id=job_id,
 
-                job=job,
+                body=body,
 
 
                 cls=lambda x,y,z: x,

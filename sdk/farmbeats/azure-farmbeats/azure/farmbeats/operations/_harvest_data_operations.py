@@ -110,7 +110,7 @@ class HarvestDataOperations(object):
         :keyword names: Names of the resource.
         :paramtype names: list[str]
         :keyword property_filters: Filters on key-value pairs within the Properties object.
-         eg. "{testkey} eq {testvalue}".
+         eg. "{testKey} eq {testValue}".
         :paramtype property_filters: list[str]
         :keyword statuses: Statuses of the resource.
         :paramtype statuses: list[str]
@@ -449,7 +449,7 @@ class HarvestDataOperations(object):
         :keyword names: Names of the resource.
         :paramtype names: list[str]
         :keyword property_filters: Filters on key-value pairs within the Properties object.
-         eg. "{testkey} eq {testvalue}".
+         eg. "{testKey} eq {testValue}".
         :paramtype property_filters: list[str]
         :keyword statuses: Statuses of the resource.
         :paramtype statuses: list[str]
@@ -728,7 +728,7 @@ class HarvestDataOperations(object):
         harvest_data_id,  # type: str
         **kwargs  # type: Any
     ):
-        # type: (...) -> Optional[Any]
+        # type: (...) -> Any
         """Get a specified harvest data resource under a particular farmer.
 
         :param farmer_id: ID of the associated farmer resource.
@@ -737,7 +737,7 @@ class HarvestDataOperations(object):
         :type harvest_data_id: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: Any, or the result of cls(response)
-        :rtype: Any or None
+        :rtype: Any
         :raises: ~azure.core.exceptions.HttpResponseError
 
         Example:
@@ -824,7 +824,7 @@ class HarvestDataOperations(object):
                 }
 
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType[Optional[Any]]
+        cls = kwargs.pop('cls', None)  # type: ClsType[Any]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -845,13 +845,11 @@ class HarvestDataOperations(object):
         pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
 
-        if response.status_code not in [200, 404]:
+        if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             raise HttpResponseError(response=response)
 
-        deserialized = None
-        if response.status_code == 200:
-            deserialized = _loads(response.text())
+        deserialized = _loads(response.text())
 
         if cls:
             return cls(pipeline_response, deserialized, {})
@@ -873,8 +871,8 @@ class HarvestDataOperations(object):
         :type farmer_id: str
         :param harvest_data_id: ID of the harvest data resource.
         :type harvest_data_id: str
-        :keyword harvest_data: Harvest data resource payload to create or update.
-        :paramtype harvest_data: Any
+        :keyword body: Harvest data resource payload to create or update.
+        :paramtype body: Any
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: Any, or the result of cls(response)
         :rtype: Any
@@ -885,7 +883,7 @@ class HarvestDataOperations(object):
 
 
                 # JSON input template you can fill out and use as your `json` input.
-                harvest_data = {
+                body = {
                     "area": {
                         "unit": "str (optional)",
                         "value": "float (optional)"
@@ -1050,11 +1048,11 @@ class HarvestDataOperations(object):
         }
         error_map.update(kwargs.pop('error_map', {}))
 
-        harvest_data = kwargs.pop('harvest_data', None)  # type: Any
+        body = kwargs.pop('body', None)  # type: Any
 
         content_type = kwargs.pop("content_type", "application/merge-patch+json")
-        if harvest_data is not None:
-            json = self._serialize.body(harvest_data, 'object')
+        if body is not None:
+            json = self._serialize.body(body, 'object')
         else:
             json = None
 

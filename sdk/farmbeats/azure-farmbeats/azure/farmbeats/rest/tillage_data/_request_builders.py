@@ -14,7 +14,7 @@ from msrest import Serializer
 
 if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
-    from typing import Any, Dict, List, Optional
+    from typing import Any, IO, List, Optional
 
 _SERIALIZER = Serializer()
 
@@ -34,9 +34,9 @@ def build_list_by_farmer_id_request(
     :paramtype min_tillage_depth: float
     :keyword max_tillage_depth: Maximum measured tillage depth (inclusive).
     :paramtype max_tillage_depth: float
-    :keyword min_tillage_pressure: Minimum downforce applied to a tillage implement (inclusive).
+    :keyword min_tillage_pressure: Minimum pressure applied by a tillage implement (inclusive).
     :paramtype min_tillage_pressure: float
-    :keyword max_tillage_pressure: Maximum downforce applied to a tillage implement (inclusive).
+    :keyword max_tillage_pressure: Maximum pressure applied by a tillage implement (inclusive).
     :paramtype max_tillage_pressure: float
     :keyword sources: Sources of the operation data.
     :paramtype sources: list[str]
@@ -71,7 +71,7 @@ def build_list_by_farmer_id_request(
     :keyword names: Names of the resource.
     :paramtype names: list[str]
     :keyword property_filters: Filters on key-value pairs within the Properties object.
-     eg. "{testkey} eq {testvalue}".
+     eg. "{testKey} eq {testValue}".
     :paramtype property_filters: list[str]
     :keyword statuses: Statuses of the resource.
     :paramtype statuses: list[str]
@@ -251,9 +251,9 @@ def build_list_request(
     :paramtype min_tillage_depth: float
     :keyword max_tillage_depth: Maximum measured tillage depth (inclusive).
     :paramtype max_tillage_depth: float
-    :keyword min_tillage_pressure: Minimum downforce applied to a tillage implement (inclusive).
+    :keyword min_tillage_pressure: Minimum pressure applied by a tillage implement (inclusive).
     :paramtype min_tillage_pressure: float
-    :keyword max_tillage_pressure: Maximum downforce applied to a tillage implement (inclusive).
+    :keyword max_tillage_pressure: Maximum pressure applied by a tillage implement (inclusive).
     :paramtype max_tillage_pressure: float
     :keyword sources: Sources of the operation data.
     :paramtype sources: list[str]
@@ -288,7 +288,7 @@ def build_list_request(
     :keyword names: Names of the resource.
     :paramtype names: list[str]
     :keyword property_filters: Filters on key-value pairs within the Properties object.
-     eg. "{testkey} eq {testvalue}".
+     eg. "{testKey} eq {testValue}".
     :paramtype property_filters: list[str]
     :keyword statuses: Statuses of the resource.
     :paramtype statuses: list[str]

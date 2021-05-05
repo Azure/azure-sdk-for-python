@@ -13,7 +13,7 @@ try:
     from ._request_builders_py3 import build_create_or_update_request
     from ._request_builders_py3 import build_delete_request
     from ._request_builders_py3 import build_get_cascade_delete_job_details_request
-    from ._request_builders_py3 import build_create_cascade_delete_job_request_initial
+    from ._request_builders_py3 import build_create_cascade_delete_job_request
 except (SyntaxError, ImportError):
     from ._request_builders import build_list_by_farmer_id_request  # type: ignore
     from ._request_builders import build_list_request  # type: ignore
@@ -21,7 +21,7 @@ except (SyntaxError, ImportError):
     from ._request_builders import build_create_or_update_request  # type: ignore
     from ._request_builders import build_delete_request  # type: ignore
     from ._request_builders import build_get_cascade_delete_job_details_request  # type: ignore
-    from ._request_builders import build_create_cascade_delete_job_request_initial  # type: ignore
+    from ._request_builders import build_create_cascade_delete_job_request  # type: ignore
 
 __all__ = [
     'build_list_by_farmer_id_request',
@@ -30,5 +30,5 @@ __all__ = [
     'build_create_or_update_request',
     'build_delete_request',
     'build_get_cascade_delete_job_details_request',
-    'build_create_cascade_delete_job_request_initial',
+    'build_create_cascade_delete_job_request',
 ]

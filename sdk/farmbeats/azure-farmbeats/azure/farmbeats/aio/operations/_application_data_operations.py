@@ -123,7 +123,7 @@ class ApplicationDataOperations:
         :keyword names: Names of the resource.
         :paramtype names: list[str]
         :keyword property_filters: Filters on key-value pairs within the Properties object.
-         eg. "{testkey} eq {testvalue}".
+         eg. "{testKey} eq {testValue}".
         :paramtype property_filters: list[str]
         :keyword statuses: Statuses of the resource.
         :paramtype statuses: list[str]
@@ -394,7 +394,7 @@ class ApplicationDataOperations:
         :keyword names: Names of the resource.
         :paramtype names: list[str]
         :keyword property_filters: Filters on key-value pairs within the Properties object.
-         eg. "{testkey} eq {testvalue}".
+         eg. "{testKey} eq {testValue}".
         :paramtype property_filters: list[str]
         :keyword statuses: Statuses of the resource.
         :paramtype statuses: list[str]
@@ -591,7 +591,7 @@ class ApplicationDataOperations:
         farmer_id: str,
         application_data_id: str,
         **kwargs: Any
-    ) -> Optional[Any]:
+    ) -> Any:
         """Get a specified application data resource under a particular farmer.
 
         :param farmer_id: ID of the associated farmer resource.
@@ -600,7 +600,7 @@ class ApplicationDataOperations:
         :type application_data_id: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: Any, or the result of cls(response)
-        :rtype: Any or None
+        :rtype: Any
         :raises: ~azure.core.exceptions.HttpResponseError
 
         Example:
@@ -656,7 +656,7 @@ class ApplicationDataOperations:
                 }
 
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType[Optional[Any]]
+        cls = kwargs.pop('cls', None)  # type: ClsType[Any]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -677,13 +677,11 @@ class ApplicationDataOperations:
         pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
 
-        if response.status_code not in [200, 404]:
+        if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             raise HttpResponseError(response=response)
 
-        deserialized = None
-        if response.status_code == 200:
-            deserialized = _loads(response.text())
+        deserialized = _loads(response.text())
 
         if cls:
             return cls(pipeline_response, deserialized, {})
@@ -697,7 +695,7 @@ class ApplicationDataOperations:
         farmer_id: str,
         application_data_id: str,
         *,
-        application_data: Any = None,
+        body: Any = None,
         **kwargs: Any
     ) -> Any:
         """Creates or updates an application data resource under a particular farmer.
@@ -706,8 +704,8 @@ class ApplicationDataOperations:
         :type farmer_id: str
         :param application_data_id: ID of the application data resource.
         :type application_data_id: str
-        :keyword application_data: Application data resource payload to create or update.
-        :paramtype application_data: Any
+        :keyword body: Application data resource payload to create or update.
+        :paramtype body: Any
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: Any, or the result of cls(response)
         :rtype: Any
@@ -718,7 +716,7 @@ class ApplicationDataOperations:
 
 
                 # JSON input template you can fill out and use as your `json` input.
-                application_data = {
+                body = {
                     "applicationProductDetails": [
                         {
                             "avgMaterial": {
@@ -822,8 +820,8 @@ class ApplicationDataOperations:
         error_map.update(kwargs.pop('error_map', {}))
 
         content_type = kwargs.pop("content_type", "application/merge-patch+json")
-        if application_data is not None:
-            json = self._serialize.body(application_data, 'object')
+        if body is not None:
+            json = self._serialize.body(body, 'object')
         else:
             json = None
 

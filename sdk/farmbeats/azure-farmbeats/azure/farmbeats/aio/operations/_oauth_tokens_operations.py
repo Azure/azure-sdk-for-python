@@ -222,7 +222,7 @@ class OAuthTokensOperations:
         pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
 
-        if response.status_code not in []:
+        if response.status_code not in [204]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             raise HttpResponseError(response=response)
 
@@ -234,13 +234,13 @@ class OAuthTokensOperations:
     async def get_o_auth_connection_link(
         self,
         *,
-        oauth_connect_request: Any = None,
+        body: Any = None,
         **kwargs: Any
     ) -> str:
         """Returns Connection link needed in the OAuth flow.
 
-        :keyword oauth_connect_request: OAuth Connect Request.
-        :paramtype oauth_connect_request: Any
+        :keyword body: OAuth Connect Request.
+        :paramtype body: Any
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: str, or the result of cls(response)
         :rtype: str
@@ -251,7 +251,7 @@ class OAuthTokensOperations:
 
 
                 # JSON input template you can fill out and use as your `json` input.
-                oauth_connect_request = {
+                body = {
                     "farmerId": "str",
                     "oAuthProviderId": "str",
                     "userRedirectLink": "str",
@@ -266,8 +266,8 @@ class OAuthTokensOperations:
         error_map.update(kwargs.pop('error_map', {}))
 
         content_type = kwargs.pop("content_type", "application/json")
-        if oauth_connect_request is not None:
-            json = self._serialize.body(oauth_connect_request, 'object')
+        if body is not None:
+            json = self._serialize.body(body, 'object')
         else:
             json = None
 

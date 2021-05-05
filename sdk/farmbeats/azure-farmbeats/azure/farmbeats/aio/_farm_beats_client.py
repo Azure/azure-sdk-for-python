@@ -28,6 +28,7 @@ from .operations import FarmOperationsOperations
 from .operations import FarmsOperations
 from .operations import FieldsOperations
 from .operations import HarvestDataOperations
+from .operations import ImageProcessingOperations
 from .operations import OAuthProvidersOperations
 from .operations import OAuthTokensOperations
 from .operations import PlantingDataOperations
@@ -61,6 +62,8 @@ class FarmBeatsClient(object):
     :vartype fields: azure.farmbeats.aio.operations.FieldsOperations
     :ivar harvest_data: HarvestDataOperations operations
     :vartype harvest_data: azure.farmbeats.aio.operations.HarvestDataOperations
+    :ivar image_processing: ImageProcessingOperations operations
+    :vartype image_processing: azure.farmbeats.aio.operations.ImageProcessingOperations
     :ivar oauth_providers: OAuthProvidersOperations operations
     :vartype oauth_providers: azure.farmbeats.aio.operations.OAuthProvidersOperations
     :ivar oauth_tokens: OAuthTokensOperations operations
@@ -79,7 +82,7 @@ class FarmBeatsClient(object):
     :vartype weather: azure.farmbeats.aio.operations.WeatherOperations
     :param credential: Credential needed for the client to connect to Azure.
     :type credential: ~azure.core.credentials_async.AsyncTokenCredential
-    :param endpoint: The endpoint of your FarmBeats resource (protocol and hostname, for example: https://{vaultName}.farmbeats.azure.net).
+    :param endpoint: The endpoint of your FarmBeats resource (protocol and hostname, for example: https://{resourceName}.farmbeats.azure.net).
     :type endpoint: str
     :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
     """
@@ -116,6 +119,8 @@ class FarmBeatsClient(object):
         self.fields = FieldsOperations(
             self._client, self._config, self._serialize, self._deserialize)
         self.harvest_data = HarvestDataOperations(
+            self._client, self._config, self._serialize, self._deserialize)
+        self.image_processing = ImageProcessingOperations(
             self._client, self._config, self._serialize, self._deserialize)
         self.oauth_providers = OAuthProvidersOperations(
             self._client, self._config, self._serialize, self._deserialize)

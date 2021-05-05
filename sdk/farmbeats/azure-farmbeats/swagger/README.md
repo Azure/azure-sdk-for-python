@@ -20,7 +20,7 @@ autorest --v3 --python
 ### Settings
 
 ```yaml
-input-file: swagger.json
+input-file: https://raw.githubusercontent.com/Azure/azure-rest-api-specs/dev-agfood-Microsoft.AgFoodPlatform-2021-03-31-preview/specification/agfood/data-plane/Microsoft.AgFoodPlatform/preview/2021-03-31-preview/agfood.json
 output-folder: ../azure/farmbeats
 namespace: azure.farmbeats
 package-name: azure-farmbeats

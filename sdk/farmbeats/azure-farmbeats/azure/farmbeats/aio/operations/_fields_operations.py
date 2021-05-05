@@ -73,7 +73,7 @@ class FieldsOperations:
         :keyword names: Names of the resource.
         :paramtype names: list[str]
         :keyword property_filters: Filters on key-value pairs within the Properties object.
-         eg. "{testkey} eq {testvalue}".
+         eg. "{testKey} eq {testValue}".
         :paramtype property_filters: list[str]
         :keyword statuses: Statuses of the resource.
         :paramtype statuses: list[str]
@@ -236,7 +236,7 @@ class FieldsOperations:
         :keyword names: Names of the resource.
         :paramtype names: list[str]
         :keyword property_filters: Filters on key-value pairs within the Properties object.
-         eg. "{testkey} eq {testvalue}".
+         eg. "{testKey} eq {testValue}".
         :paramtype property_filters: list[str]
         :keyword statuses: Statuses of the resource.
         :paramtype statuses: list[str]
@@ -377,7 +377,7 @@ class FieldsOperations:
         farmer_id: str,
         field_id: str,
         **kwargs: Any
-    ) -> Optional[Any]:
+    ) -> Any:
         """Gets a specified field resource under a particular farmer.
 
         :param farmer_id: Id of the associated farmer.
@@ -386,7 +386,7 @@ class FieldsOperations:
         :type field_id: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: Any, or the result of cls(response)
-        :rtype: Any or None
+        :rtype: Any
         :raises: ~azure.core.exceptions.HttpResponseError
 
         Example:
@@ -414,7 +414,7 @@ class FieldsOperations:
                 }
 
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType[Optional[Any]]
+        cls = kwargs.pop('cls', None)  # type: ClsType[Any]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -435,13 +435,11 @@ class FieldsOperations:
         pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
 
-        if response.status_code not in [200, 404]:
+        if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             raise HttpResponseError(response=response)
 
-        deserialized = None
-        if response.status_code == 200:
-            deserialized = _loads(response.text())
+        deserialized = _loads(response.text())
 
         if cls:
             return cls(pipeline_response, deserialized, {})
@@ -455,7 +453,7 @@ class FieldsOperations:
         farmer_id: str,
         field_id: str,
         *,
-        field: Any = None,
+        body: Any = None,
         **kwargs: Any
     ) -> Any:
         """Creates or Updates a field resource under a particular farmer.
@@ -464,8 +462,8 @@ class FieldsOperations:
         :type farmer_id: str
         :param field_id: Id of the field resource.
         :type field_id: str
-        :keyword field: Field resource payload to create or update.
-        :paramtype field: Any
+        :keyword body: Field resource payload to create or update.
+        :paramtype body: Any
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: Any, or the result of cls(response)
         :rtype: Any
@@ -476,7 +474,7 @@ class FieldsOperations:
 
 
                 # JSON input template you can fill out and use as your `json` input.
-                field = {
+                body = {
                     "boundaryIds": [
                         "str (optional)"
                     ],
@@ -524,8 +522,8 @@ class FieldsOperations:
         error_map.update(kwargs.pop('error_map', {}))
 
         content_type = kwargs.pop("content_type", "application/merge-patch+json")
-        if field is not None:
-            json = self._serialize.body(field, 'object')
+        if body is not None:
+            json = self._serialize.body(body, 'object')
         else:
             json = None
 
@@ -615,14 +613,14 @@ class FieldsOperations:
         self,
         job_id: str,
         **kwargs: Any
-    ) -> Optional[Any]:
+    ) -> Any:
         """Get a cascade delete job for specified field.
 
         :param job_id: Id of the job.
         :type job_id: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: Any, or the result of cls(response)
-        :rtype: Any or None
+        :rtype: Any
         :raises: ~azure.core.exceptions.HttpResponseError
 
         Example:
@@ -650,7 +648,7 @@ class FieldsOperations:
                 }
 
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType[Optional[Any]]
+        cls = kwargs.pop('cls', None)  # type: ClsType[Any]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -670,13 +668,11 @@ class FieldsOperations:
         pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
 
-        if response.status_code not in [200, 404]:
+        if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             raise HttpResponseError(response=response)
 
-        deserialized = None
-        if response.status_code == 200:
-            deserialized = _loads(response.text())
+        deserialized = _loads(response.text())
 
         if cls:
             return cls(pipeline_response, deserialized, {})

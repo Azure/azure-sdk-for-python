@@ -67,7 +67,7 @@ class SeasonsOperations(object):
         :keyword names: Names of the resource.
         :paramtype names: list[str]
         :keyword property_filters: Filters on key-value pairs within the Properties object.
-         eg. "{testkey} eq {testvalue}".
+         eg. "{testKey} eq {testValue}".
         :paramtype property_filters: list[str]
         :keyword statuses: Statuses of the resource.
         :paramtype statuses: list[str]
@@ -229,14 +229,14 @@ class SeasonsOperations(object):
         season_id,  # type: str
         **kwargs  # type: Any
     ):
-        # type: (...) -> Optional[Any]
+        # type: (...) -> Any
         """Gets a specified season resource.
 
         :param season_id: Id of the season.
         :type season_id: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: Any, or the result of cls(response)
-        :rtype: Any or None
+        :rtype: Any
         :raises: ~azure.core.exceptions.HttpResponseError
 
         Example:
@@ -261,7 +261,7 @@ class SeasonsOperations(object):
                 }
 
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType[Optional[Any]]
+        cls = kwargs.pop('cls', None)  # type: ClsType[Any]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -281,13 +281,11 @@ class SeasonsOperations(object):
         pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
 
-        if response.status_code not in [200, 404]:
+        if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             raise HttpResponseError(response=response)
 
-        deserialized = None
-        if response.status_code == 200:
-            deserialized = _loads(response.text())
+        deserialized = _loads(response.text())
 
         if cls:
             return cls(pipeline_response, deserialized, {})
@@ -306,8 +304,8 @@ class SeasonsOperations(object):
 
         :param season_id: Id of the season resource.
         :type season_id: str
-        :keyword season: Season resource payload to create or update.
-        :paramtype season: Any
+        :keyword body: Season resource payload to create or update.
+        :paramtype body: Any
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: Any, or the result of cls(response)
         :rtype: Any
@@ -318,7 +316,7 @@ class SeasonsOperations(object):
 
 
                 # JSON input template you can fill out and use as your `json` input.
-                season = {
+                body = {
                     "createdDateTime": "datetime (optional)",
                     "description": "str (optional)",
                     "eTag": "str (optional)",
@@ -359,11 +357,11 @@ class SeasonsOperations(object):
         }
         error_map.update(kwargs.pop('error_map', {}))
 
-        season = kwargs.pop('season', None)  # type: Any
+        body = kwargs.pop('body', None)  # type: Any
 
         content_type = kwargs.pop("content_type", "application/merge-patch+json")
-        if season is not None:
-            json = self._serialize.body(season, 'object')
+        if body is not None:
+            json = self._serialize.body(body, 'object')
         else:
             json = None
 

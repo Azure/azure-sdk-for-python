@@ -14,7 +14,7 @@ from msrest import Serializer
 
 if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
-    from typing import Any, Dict, List, Optional
+    from typing import Any, IO, List, Optional
 
 _SERIALIZER = Serializer()
 
@@ -37,7 +37,7 @@ def build_list_by_farmer_id_request(
     :keyword names: Names of the resource.
     :paramtype names: list[str]
     :keyword property_filters: Filters on key-value pairs within the Properties object.
-     eg. "{testkey} eq {testvalue}".
+     eg. "{testKey} eq {testValue}".
     :paramtype property_filters: list[str]
     :keyword statuses: Statuses of the resource.
     :paramtype statuses: list[str]
@@ -164,7 +164,7 @@ def build_list_request(
     :keyword names: Names of the resource.
     :paramtype names: list[str]
     :keyword property_filters: Filters on key-value pairs within the Properties object.
-     eg. "{testkey} eq {testvalue}".
+     eg. "{testKey} eq {testValue}".
     :paramtype property_filters: list[str]
     :keyword statuses: Statuses of the resource.
     :paramtype statuses: list[str]

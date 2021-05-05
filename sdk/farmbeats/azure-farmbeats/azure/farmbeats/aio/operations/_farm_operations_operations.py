@@ -47,7 +47,7 @@ class FarmOperationsOperations:
         self,
         job_id: str,
         *,
-        job: Any = None,
+        body: Any = None,
         **kwargs: Any
     ) -> Any:
         cls = kwargs.pop('cls', None)  # type: ClsType[Any]
@@ -57,8 +57,8 @@ class FarmOperationsOperations:
         error_map.update(kwargs.pop('error_map', {}))
 
         content_type = kwargs.pop("content_type", "application/json")
-        if job is not None:
-            json = self._serialize.body(job, 'object')
+        if body is not None:
+            json = self._serialize.body(body, 'object')
         else:
             json = None
 
@@ -96,15 +96,15 @@ class FarmOperationsOperations:
         self,
         job_id: str,
         *,
-        job: Any = None,
+        body: Any = None,
         **kwargs: Any
     ) -> AsyncLROPoller[Any]:
         """Create a farm operation data ingestion job.
 
         :param job_id: Job Id supplied by user.
         :type job_id: str
-        :keyword job: Job parameters supplied by user.
-        :paramtype job: Any
+        :keyword body: Job parameters supplied by user.
+        :paramtype body: Any
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
         :keyword polling: By default, your polling method will be AsyncLROBasePolling.
@@ -120,7 +120,7 @@ class FarmOperationsOperations:
 
 
                 # JSON input template you can fill out and use as your `json` input.
-                job = {
+                body = {
                     "authProviderId": "str",
                     "createdDateTime": "datetime (optional)",
                     "description": "str (optional)",
@@ -178,7 +178,7 @@ class FarmOperationsOperations:
             raw_result = await self._create_data_ingestion_job_initial(
                 job_id=job_id,
 
-                job=job,
+                body=body,
 
 
                 cls=lambda x,y,z: x,

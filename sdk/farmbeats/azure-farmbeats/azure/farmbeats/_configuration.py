@@ -28,7 +28,7 @@ class FarmBeatsClientConfiguration(Configuration):
 
     :param credential: Credential needed for the client to connect to Azure.
     :type credential: ~azure.core.credentials.TokenCredential
-    :param endpoint: The endpoint of your FarmBeats resource (protocol and hostname, for example: https://{vaultName}.farmbeats.azure.net).
+    :param endpoint: The endpoint of your FarmBeats resource (protocol and hostname, for example: https://{resourceName}.farmbeats.azure.net).
     :type endpoint: str
     """
 

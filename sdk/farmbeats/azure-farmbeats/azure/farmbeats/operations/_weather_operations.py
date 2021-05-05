@@ -352,11 +352,11 @@ class WeatherOperations(object):
         }
         error_map.update(kwargs.pop('error_map', {}))
 
-        job = kwargs.pop('job', None)  # type: Any
+        body = kwargs.pop('body', None)  # type: Any
 
         content_type = kwargs.pop("content_type", "application/json")
-        if job is not None:
-            json = self._serialize.body(job, 'object')
+        if body is not None:
+            json = self._serialize.body(body, 'object')
         else:
             json = None
 
@@ -400,8 +400,8 @@ class WeatherOperations(object):
 
         :param job_id: Job id supplied by user.
         :type job_id: str
-        :keyword job: Job parameters supplied by user.
-        :paramtype job: Any
+        :keyword body: Job parameters supplied by user.
+        :paramtype body: Any
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
         :keyword polling: By default, your polling method will be LROBasePolling.
@@ -417,7 +417,7 @@ class WeatherOperations(object):
 
 
                 # JSON input template you can fill out and use as your `json` input.
-                job = {
+                body = {
                     "boundaryId": "str",
                     "createdDateTime": "datetime (optional)",
                     "description": "str (optional)",
@@ -471,7 +471,7 @@ class WeatherOperations(object):
 
         """
 
-        job = kwargs.pop('job', None)  # type: Any
+        body = kwargs.pop('body', None)  # type: Any
         polling = kwargs.pop('polling', True)  # type: Union[bool, PollingMethod]
         cls = kwargs.pop('cls', None)  # type: ClsType[Any]
         lro_delay = kwargs.pop(
@@ -483,7 +483,7 @@ class WeatherOperations(object):
             raw_result = self._create_data_ingestion_job_initial(
                 job_id=job_id,
 
-                job=job,
+                body=body,
 
 
                 cls=lambda x,y,z: x,
@@ -609,11 +609,11 @@ class WeatherOperations(object):
         }
         error_map.update(kwargs.pop('error_map', {}))
 
-        job = kwargs.pop('job', None)  # type: Any
+        body = kwargs.pop('body', None)  # type: Any
 
         content_type = kwargs.pop("content_type", "application/json")
-        if job is not None:
-            json = self._serialize.body(job, 'object')
+        if body is not None:
+            json = self._serialize.body(body, 'object')
         else:
             json = None
 
@@ -657,8 +657,8 @@ class WeatherOperations(object):
 
         :param job_id: Job Id supplied by end user.
         :type job_id: str
-        :keyword job: Job parameters supplied by user.
-        :paramtype job: Any
+        :keyword body: Job parameters supplied by user.
+        :paramtype body: Any
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
         :keyword polling: By default, your polling method will be LROBasePolling.
@@ -674,7 +674,7 @@ class WeatherOperations(object):
 
 
                 # JSON input template you can fill out and use as your `json` input.
-                job = {
+                body = {
                     "boundaryId": "str",
                     "createdDateTime": "datetime (optional)",
                     "description": "str (optional)",
@@ -724,7 +724,7 @@ class WeatherOperations(object):
 
         """
 
-        job = kwargs.pop('job', None)  # type: Any
+        body = kwargs.pop('body', None)  # type: Any
         polling = kwargs.pop('polling', True)  # type: Union[bool, PollingMethod]
         cls = kwargs.pop('cls', None)  # type: ClsType[Any]
         lro_delay = kwargs.pop(
@@ -736,7 +736,7 @@ class WeatherOperations(object):
             raw_result = self._create_data_delete_job_initial(
                 job_id=job_id,
 
-                job=job,
+                body=body,
 
 
                 cls=lambda x,y,z: x,

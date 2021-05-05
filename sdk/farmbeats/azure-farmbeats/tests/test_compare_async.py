@@ -67,7 +67,7 @@ try:
     farmer = loop.run_until_complete(
         client.farmers.create_or_update(
             farmer_id=farmer_id,
-            farmer={}
+            body={}
         )
     )
     print("Done")
@@ -95,7 +95,7 @@ try:
             client.boundaries.create_or_update(
                 farmer_id=farmer_id,
                 boundary_id=boundary_id,
-                boundary={
+                body={
                     "description": "Created by SDK",
                     "geometry": {
                         "type": "Polygon",
@@ -150,7 +150,7 @@ try:
     satellite_job_poller = loop.run_until_complete(
         client.scenes.begin_create_satellite_data_ingestion_job(
             job_id=job_id,
-            job={
+            body={
                 "boundaryId": boundary_id,
                 "data": {
                     "imageNames": [

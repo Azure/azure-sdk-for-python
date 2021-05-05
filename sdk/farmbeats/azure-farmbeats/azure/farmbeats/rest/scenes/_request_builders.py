@@ -362,7 +362,7 @@ def build_download_request(
     **kwargs  # type: Any
 ):
     # type: (...) -> HttpRequest
-    """Downloads and returns file Stream as response for the given input filePath.
+    """Downloads and returns file stream as response for the given input filePath.
 
     See https://aka.ms/azsdk/python/llcwiki for how to incorporate this request builder into your code flow.
 

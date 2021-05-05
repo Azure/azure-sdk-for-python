@@ -16,7 +16,7 @@ from azure.core.polling import LROPoller, NoPolling, PollingMethod
 from azure.core.polling.base_polling import LROBasePolling
 from azure.farmbeats.core.rest import HttpRequest
 
-from ..rest import farm_operations as rest_farm_operations
+from ..rest import image_processing as rest_image_processing
 
 if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
@@ -25,8 +25,8 @@ if TYPE_CHECKING:
     T = TypeVar('T')
     ClsType = Optional[Callable[[PipelineResponse[HttpRequest, HttpResponse], T, Dict[str, Any]], Any]]
 
-class FarmOperationsOperations(object):
-    """FarmOperationsOperations operations.
+class ImageProcessingOperations(object):
+    """ImageProcessingOperations operations.
 
     You should not instantiate this class directly. Instead, you should create a Client instance that
     instantiates it for you and attaches it as an attribute.
@@ -43,7 +43,7 @@ class FarmOperationsOperations(object):
         self._deserialize = deserializer
         self._config = config
 
-    def _create_data_ingestion_job_initial(
+    def _create_rasterize_job_initial(
         self,
         job_id,  # type: str
         **kwargs  # type: Any
@@ -64,11 +64,11 @@ class FarmOperationsOperations(object):
             json = None
 
 
-        request = rest_farm_operations.build_create_data_ingestion_job_request_initial(
+        request = rest_image_processing.build_create_rasterize_job_request_initial(
             job_id=job_id,
             json=json,
             content_type=content_type,
-            template_url=self._create_data_ingestion_job_initial.metadata['url'],
+            template_url=self._create_rasterize_job_initial.metadata['url'],
             **kwargs
         )._internal_request
         path_format_arguments = {
@@ -91,17 +91,17 @@ class FarmOperationsOperations(object):
 
         return deserialized
 
-    _create_data_ingestion_job_initial.metadata = {'url': '/farm-operations/ingest-data/{jobId}'}  # type: ignore
+    _create_rasterize_job_initial.metadata = {'url': '/image-processing/rasterize/{jobId}'}  # type: ignore
 
-    def begin_create_data_ingestion_job(
+    def begin_create_rasterize_job(
         self,
         job_id,  # type: str
         **kwargs  # type: Any
     ):
         # type: (...) -> LROPoller[Any]
-        """Create a farm operation data ingestion job.
+        """Create a ImageProcessing Rasterize job.
 
-        :param job_id: Job Id supplied by user.
+        :param job_id: JobId provided by user.
         :type job_id: str
         :keyword body: Job parameters supplied by user.
         :paramtype body: Any
@@ -121,7 +121,6 @@ class FarmOperationsOperations(object):
 
                 # JSON input template you can fill out and use as your `json` input.
                 body = {
-                    "authProviderId": "str",
                     "createdDateTime": "datetime (optional)",
                     "description": "str (optional)",
                     "durationInSeconds": "str (optional)",
@@ -131,21 +130,20 @@ class FarmOperationsOperations(object):
                     "lastActionDateTime": "datetime (optional)",
                     "message": "str (optional)",
                     "name": "str (optional)",
-                    "operations": [
-                        "str (optional)"
-                    ],
                     "properties": {
                         "str": "object (optional)"
                     },
+                    "shapefileAttachmentId": "str",
+                    "shapefileColumnNames": [
+                        "str"
+                    ],
                     "startTime": "datetime (optional)",
-                    "startYear": "int",
                     "status": "str (optional)"
                 }
 
 
                 # response body for status code(s): 202
                 response_body == {
-                    "authProviderId": "str",
                     "createdDateTime": "datetime (optional)",
                     "description": "str (optional)",
                     "durationInSeconds": "str (optional)",
@@ -155,14 +153,14 @@ class FarmOperationsOperations(object):
                     "lastActionDateTime": "datetime (optional)",
                     "message": "str (optional)",
                     "name": "str (optional)",
-                    "operations": [
-                        "str (optional)"
-                    ],
                     "properties": {
                         "str": "object (optional)"
                     },
+                    "shapefileAttachmentId": "str",
+                    "shapefileColumnNames": [
+                        "str"
+                    ],
                     "startTime": "datetime (optional)",
-                    "startYear": "int",
                     "status": "str (optional)"
                 }
 
@@ -177,7 +175,7 @@ class FarmOperationsOperations(object):
         )
         cont_token = kwargs.pop('continuation_token', None)  # type: Optional[str]
         if cont_token is None:
-            raw_result = self._create_data_ingestion_job_initial(
+            raw_result = self._create_rasterize_job_initial(
                 job_id=job_id,
 
                 body=body,
@@ -214,16 +212,16 @@ class FarmOperationsOperations(object):
             )
         else:
             return LROPoller(self._client, raw_result, get_long_running_output, polling_method)
-    begin_create_data_ingestion_job.metadata = {'url': '/farm-operations/ingest-data/{jobId}'}  # type: ignore
+    begin_create_rasterize_job.metadata = {'url': '/image-processing/rasterize/{jobId}'}  # type: ignore
 
 
-    def get_data_ingestion_job_details(
+    def get_rasterize_job(
         self,
         job_id,  # type: str
         **kwargs  # type: Any
     ):
         # type: (...) -> Any
-        """Get a farm operation data ingestion job.
+        """Get ImageProcessing Rasterize job's details.
 
         :param job_id: Id of the job.
         :type job_id: str
@@ -238,7 +236,6 @@ class FarmOperationsOperations(object):
 
                 # response body for status code(s): 200
                 response_body == {
-                    "authProviderId": "str",
                     "createdDateTime": "datetime (optional)",
                     "description": "str (optional)",
                     "durationInSeconds": "str (optional)",
@@ -248,14 +245,14 @@ class FarmOperationsOperations(object):
                     "lastActionDateTime": "datetime (optional)",
                     "message": "str (optional)",
                     "name": "str (optional)",
-                    "operations": [
-                        "str (optional)"
-                    ],
                     "properties": {
                         "str": "object (optional)"
                     },
+                    "shapefileAttachmentId": "str",
+                    "shapefileColumnNames": [
+                        "str"
+                    ],
                     "startTime": "datetime (optional)",
-                    "startYear": "int",
                     "status": "str (optional)"
                 }
 
@@ -266,9 +263,9 @@ class FarmOperationsOperations(object):
         }
         error_map.update(kwargs.pop('error_map', {}))
 
-        request = rest_farm_operations.build_get_data_ingestion_job_details_request(
+        request = rest_image_processing.build_get_rasterize_job_request(
             job_id=job_id,
-            template_url=self.get_data_ingestion_job_details.metadata['url'],
+            template_url=self.get_rasterize_job.metadata['url'],
             **kwargs
         )._internal_request
         path_format_arguments = {
@@ -291,4 +288,4 @@ class FarmOperationsOperations(object):
 
         return deserialized
 
-    get_data_ingestion_job_details.metadata = {'url': '/farm-operations/ingest-data/{jobId}'}  # type: ignore
+    get_rasterize_job.metadata = {'url': '/image-processing/rasterize/{jobId}'}  # type: ignore

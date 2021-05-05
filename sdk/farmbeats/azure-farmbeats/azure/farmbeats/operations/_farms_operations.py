@@ -14,8 +14,6 @@ from azure.core.exceptions import ClientAuthenticationError, HttpResponseError, 
 from azure.core.paging import ItemPaged
 from azure.core.pipeline import PipelineResponse
 from azure.core.pipeline.transport import HttpResponse
-from azure.core.polling import LROPoller, NoPolling, PollingMethod
-from azure.core.polling.base_polling import LROBasePolling
 from azure.farmbeats.core.rest import HttpRequest
 
 from ..rest import farms as rest_farms
@@ -60,7 +58,7 @@ class FarmsOperations(object):
         :keyword names: Names of the resource.
         :paramtype names: list[str]
         :keyword property_filters: Filters on key-value pairs within the Properties object.
-         eg. "{testkey} eq {testvalue}".
+         eg. "{testKey} eq {testValue}".
         :paramtype property_filters: list[str]
         :keyword statuses: Statuses of the resource.
         :paramtype statuses: list[str]
@@ -214,7 +212,7 @@ class FarmsOperations(object):
         :keyword names: Names of the resource.
         :paramtype names: list[str]
         :keyword property_filters: Filters on key-value pairs within the Properties object.
-         eg. "{testkey} eq {testvalue}".
+         eg. "{testKey} eq {testValue}".
         :paramtype property_filters: list[str]
         :keyword statuses: Statuses of the resource.
         :paramtype statuses: list[str]
@@ -360,7 +358,7 @@ class FarmsOperations(object):
         farm_id,  # type: str
         **kwargs  # type: Any
     ):
-        # type: (...) -> Optional[Any]
+        # type: (...) -> Any
         """Gets a specified farm resource under a particular farmer.
 
         :param farmer_id: ID of the associated farmer resource.
@@ -369,7 +367,7 @@ class FarmsOperations(object):
         :type farm_id: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: Any, or the result of cls(response)
-        :rtype: Any or None
+        :rtype: Any
         :raises: ~azure.core.exceptions.HttpResponseError
 
         Example:
@@ -392,7 +390,7 @@ class FarmsOperations(object):
                 }
 
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType[Optional[Any]]
+        cls = kwargs.pop('cls', None)  # type: ClsType[Any]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -413,13 +411,11 @@ class FarmsOperations(object):
         pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
 
-        if response.status_code not in [200, 404]:
+        if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             raise HttpResponseError(response=response)
 
-        deserialized = None
-        if response.status_code == 200:
-            deserialized = _loads(response.text())
+        deserialized = _loads(response.text())
 
         if cls:
             return cls(pipeline_response, deserialized, {})
@@ -441,8 +437,8 @@ class FarmsOperations(object):
         :type farmer_id: str
         :param farm_id: Id of the farm resource.
         :type farm_id: str
-        :keyword farm: Farm resource payload to create or update.
-        :paramtype farm: Any
+        :keyword body: Farm resource payload to create or update.
+        :paramtype body: Any
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: Any, or the result of cls(response)
         :rtype: Any
@@ -453,7 +449,7 @@ class FarmsOperations(object):
 
 
                 # JSON input template you can fill out and use as your `json` input.
-                farm = {
+                body = {
                     "createdDateTime": "datetime (optional)",
                     "description": "str (optional)",
                     "eTag": "str (optional)",
@@ -490,11 +486,11 @@ class FarmsOperations(object):
         }
         error_map.update(kwargs.pop('error_map', {}))
 
-        farm = kwargs.pop('farm', None)  # type: Any
+        body = kwargs.pop('body', None)  # type: Any
 
         content_type = kwargs.pop("content_type", "application/merge-patch+json")
-        if farm is not None:
-            json = self._serialize.body(farm, 'object')
+        if body is not None:
+            json = self._serialize.body(body, 'object')
         else:
             json = None
 
@@ -586,14 +582,14 @@ class FarmsOperations(object):
         job_id,  # type: str
         **kwargs  # type: Any
     ):
-        # type: (...) -> Optional[Any]
+        # type: (...) -> Any
         """Get a cascade delete job for specified farm.
 
         :param job_id: Id of the job.
         :type job_id: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: Any, or the result of cls(response)
-        :rtype: Any or None
+        :rtype: Any
         :raises: ~azure.core.exceptions.HttpResponseError
 
         Example:
@@ -621,7 +617,7 @@ class FarmsOperations(object):
                 }
 
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType[Optional[Any]]
+        cls = kwargs.pop('cls', None)  # type: ClsType[Any]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -641,53 +637,7 @@ class FarmsOperations(object):
         pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
 
-        if response.status_code not in [200, 404]:
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise HttpResponseError(response=response)
-
-        deserialized = None
-        if response.status_code == 200:
-            deserialized = _loads(response.text())
-
-        if cls:
-            return cls(pipeline_response, deserialized, {})
-
-        return deserialized
-
-    get_cascade_delete_job_details.metadata = {'url': '/farms/cascade-delete/{jobId}'}  # type: ignore
-
-    def _create_cascade_delete_job_initial(
-        self,
-        job_id,  # type: str
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> Any
-        cls = kwargs.pop('cls', None)  # type: ClsType[Any]
-        error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
-        }
-        error_map.update(kwargs.pop('error_map', {}))
-
-        farmer_id = kwargs.pop('farmer_id')  # type: str
-        farm_id = kwargs.pop('farm_id')  # type: str
-
-        request = rest_farms.build_create_cascade_delete_job_request_initial(
-            job_id=job_id,
-            farmer_id=farmer_id,
-            farm_id=farm_id,
-            template_url=self._create_cascade_delete_job_initial.metadata['url'],
-            **kwargs
-        )._internal_request
-        path_format_arguments = {
-            'Endpoint': self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
-        }
-        request.url = self._client.format_url(request.url, **path_format_arguments)
-        kwargs.pop("content_type", None)
-
-        pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
-        response = pipeline_response.http_response
-
-        if response.status_code not in [202]:
+        if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             raise HttpResponseError(response=response)
 
@@ -698,14 +648,14 @@ class FarmsOperations(object):
 
         return deserialized
 
-    _create_cascade_delete_job_initial.metadata = {'url': '/farms/cascade-delete/{jobId}'}  # type: ignore
+    get_cascade_delete_job_details.metadata = {'url': '/farms/cascade-delete/{jobId}'}  # type: ignore
 
-    def begin_create_cascade_delete_job(
+    def create_cascade_delete_job(
         self,
         job_id,  # type: str
         **kwargs  # type: Any
     ):
-        # type: (...) -> LROPoller[Any]
+        # type: (...) -> Any
         """Create a cascade delete job for specified farm.
 
         :param job_id: Job ID supplied by end user.
@@ -715,14 +665,9 @@ class FarmsOperations(object):
         :keyword farm_id: ID of the farm to be deleted.
         :paramtype farm_id: str
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: By default, your polling method will be LROBasePolling.
-         Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.
-        :paramtype polling: bool or ~azure.core.polling.PollingMethod
-        :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
-        :return: An instance of LROPoller that returns either Any or the result of cls(response)
-        :rtype: ~azure.core.polling.LROPoller[Any]
-        :raises ~azure.core.exceptions.HttpResponseError:
+        :return: Any, or the result of cls(response)
+        :rtype: Any
+        :raises: ~azure.core.exceptions.HttpResponseError
 
         Example:
             .. code-block:: python
@@ -749,55 +694,40 @@ class FarmsOperations(object):
                 }
 
         """
+        cls = kwargs.pop('cls', None)  # type: ClsType[Any]
+        error_map = {
+            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
+        }
+        error_map.update(kwargs.pop('error_map', {}))
 
         farmer_id = kwargs.pop('farmer_id')  # type: str
         farm_id = kwargs.pop('farm_id')  # type: str
-        polling = kwargs.pop('polling', True)  # type: Union[bool, PollingMethod]
-        cls = kwargs.pop('cls', None)  # type: ClsType[Any]
-        lro_delay = kwargs.pop(
-            'polling_interval',
-            self._config.polling_interval
-        )
-        cont_token = kwargs.pop('continuation_token', None)  # type: Optional[str]
-        if cont_token is None:
-            raw_result = self._create_cascade_delete_job_initial(
-                job_id=job_id,
 
-                farmer_id=farmer_id,
-
-                farm_id=farm_id,
-
-
-                cls=lambda x,y,z: x,
-                **kwargs
-            )
-
-        kwargs.pop('error_map', None)
-        kwargs.pop('content_type', None)
-
-        def get_long_running_output(pipeline_response):
-            response = pipeline_response.http_response
-            deserialized = _loads(response.text())
-
-            if cls:
-                return cls(pipeline_response, deserialized, {})
-            return deserialized
-
+        request = rest_farms.build_create_cascade_delete_job_request(
+            job_id=job_id,
+            farmer_id=farmer_id,
+            farm_id=farm_id,
+            template_url=self.create_cascade_delete_job.metadata['url'],
+            **kwargs
+        )._internal_request
         path_format_arguments = {
             'Endpoint': self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
         }
+        request.url = self._client.format_url(request.url, **path_format_arguments)
+        kwargs.pop("content_type", None)
 
-        if polling is True: polling_method = LROBasePolling(lro_delay, lro_options={'final-state-via': 'location'}, path_format_arguments=path_format_arguments,  **kwargs)
-        elif polling is False: polling_method = NoPolling()
-        else: polling_method = polling
-        if cont_token:
-            return LROPoller.from_continuation_token(
-                polling_method=polling_method,
-                continuation_token=cont_token,
-                client=self._client,
-                deserialization_callback=get_long_running_output
-            )
-        else:
-            return LROPoller(self._client, raw_result, get_long_running_output, polling_method)
-    begin_create_cascade_delete_job.metadata = {'url': '/farms/cascade-delete/{jobId}'}  # type: ignore
+        pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
+        response = pipeline_response.http_response
 
+        if response.status_code not in [202]:
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            raise HttpResponseError(response=response)
+
+        deserialized = _loads(response.text())
+
+        if cls:
+            return cls(pipeline_response, deserialized, {})
+
+        return deserialized
+
+    create_cascade_delete_job.metadata = {'url': '/farms/cascade-delete/{jobId}'}  # type: ignore

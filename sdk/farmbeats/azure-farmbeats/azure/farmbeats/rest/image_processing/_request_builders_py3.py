@@ -6,7 +6,7 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 import datetime
-from typing import TYPE_CHECKING
+from typing import Any, IO, List, Optional, TYPE_CHECKING
 
 from azure.core.pipeline.transport._base import _format_url_section
 from azure.farmbeats.core.rest import HttpRequest
@@ -14,21 +14,23 @@ from msrest import Serializer
 
 if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
-    from typing import Any, IO, List, Optional
+    from typing import Any
 
 _SERIALIZER = Serializer()
 
 
-def build_create_data_ingestion_job_request_initial(
-    job_id,  # type: str
-    **kwargs  # type: Any
-):
-    # type: (...) -> HttpRequest
-    """Create a farm operation data ingestion job.
+def build_create_rasterize_job_request_initial(
+    job_id: str,
+    *,
+    json: Any = None,
+    content: Any = None,
+    **kwargs: Any
+) -> HttpRequest:
+    """Create a ImageProcessing Rasterize job.
 
     See https://aka.ms/azsdk/python/llcwiki for how to incorporate this request builder into your code flow.
 
-    :param job_id: Job Id supplied by user.
+    :param job_id: JobId provided by user.
     :type job_id: str
     :keyword json: Job parameters supplied by user.
     :paramtype json: Any
@@ -44,7 +46,6 @@ def build_create_data_ingestion_job_request_initial(
     
             # JSON input template you can fill out and use as your `json` input.
             json = {
-                "authProviderId": "str",
                 "createdDateTime": "datetime (optional)",
                 "description": "str (optional)",
                 "durationInSeconds": "str (optional)",
@@ -54,21 +55,20 @@ def build_create_data_ingestion_job_request_initial(
                 "lastActionDateTime": "datetime (optional)",
                 "message": "str (optional)",
                 "name": "str (optional)",
-                "operations": [
-                    "str (optional)"
-                ],
                 "properties": {
                     "str": "object (optional)"
                 },
+                "shapefileAttachmentId": "str",
+                "shapefileColumnNames": [
+                    "str"
+                ],
                 "startTime": "datetime (optional)",
-                "startYear": "int",
                 "status": "str (optional)"
             }
 
     
             # response body for status code(s): 202
             response_body == {
-                "authProviderId": "str",
                 "createdDateTime": "datetime (optional)",
                 "description": "str (optional)",
                 "durationInSeconds": "str (optional)",
@@ -78,14 +78,14 @@ def build_create_data_ingestion_job_request_initial(
                 "lastActionDateTime": "datetime (optional)",
                 "message": "str (optional)",
                 "name": "str (optional)",
-                "operations": [
-                    "str (optional)"
-                ],
                 "properties": {
                     "str": "object (optional)"
                 },
+                "shapefileAttachmentId": "str",
+                "shapefileColumnNames": [
+                    "str"
+                ],
                 "startTime": "datetime (optional)",
-                "startYear": "int",
                 "status": "str (optional)"
             }
 
@@ -95,7 +95,7 @@ def build_create_data_ingestion_job_request_initial(
     accept = "application/json"
 
     # Construct URL
-    url = kwargs.pop("template_url", '/farm-operations/ingest-data/{jobId}')
+    url = kwargs.pop("template_url", '/image-processing/rasterize/{jobId}')
     path_format_arguments = {
         'jobId': _SERIALIZER.url("job_id", job_id, 'str'),
     }
@@ -116,16 +116,17 @@ def build_create_data_ingestion_job_request_initial(
         url=url,
         params=query_parameters,
         headers=header_parameters,
+        json=json,
+        content=content,
         **kwargs
     )
 
 
-def build_get_data_ingestion_job_details_request(
-    job_id,  # type: str
-    **kwargs  # type: Any
-):
-    # type: (...) -> HttpRequest
-    """Get a farm operation data ingestion job.
+def build_get_rasterize_job_request(
+    job_id: str,
+    **kwargs: Any
+) -> HttpRequest:
+    """Get ImageProcessing Rasterize job's details.
 
     See https://aka.ms/azsdk/python/llcwiki for how to incorporate this request builder into your code flow.
 
@@ -141,7 +142,6 @@ def build_get_data_ingestion_job_details_request(
     
             # response body for status code(s): 200
             response_body == {
-                "authProviderId": "str",
                 "createdDateTime": "datetime (optional)",
                 "description": "str (optional)",
                 "durationInSeconds": "str (optional)",
@@ -151,14 +151,14 @@ def build_get_data_ingestion_job_details_request(
                 "lastActionDateTime": "datetime (optional)",
                 "message": "str (optional)",
                 "name": "str (optional)",
-                "operations": [
-                    "str (optional)"
-                ],
                 "properties": {
                     "str": "object (optional)"
                 },
+                "shapefileAttachmentId": "str",
+                "shapefileColumnNames": [
+                    "str"
+                ],
                 "startTime": "datetime (optional)",
-                "startYear": "int",
                 "status": "str (optional)"
             }
 
@@ -167,7 +167,7 @@ def build_get_data_ingestion_job_details_request(
     accept = "application/json"
 
     # Construct URL
-    url = kwargs.pop("template_url", '/farm-operations/ingest-data/{jobId}')
+    url = kwargs.pop("template_url", '/image-processing/rasterize/{jobId}')
     path_format_arguments = {
         'jobId': _SERIALIZER.url("job_id", job_id, 'str'),
     }

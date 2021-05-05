@@ -6,27 +6,27 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 from json import loads as _loads
-from typing import TYPE_CHECKING
+from typing import Any, Callable, Dict, Generic, Optional, TYPE_CHECKING, TypeVar, Union
 import warnings
 
 from azure.core.exceptions import ClientAuthenticationError, HttpResponseError, ResourceExistsError, ResourceNotFoundError, map_error
 from azure.core.pipeline import PipelineResponse
-from azure.core.pipeline.transport import HttpResponse
-from azure.core.polling import LROPoller, NoPolling, PollingMethod
-from azure.core.polling.base_polling import LROBasePolling
+from azure.core.pipeline.transport import AsyncHttpResponse
+from azure.core.polling import AsyncLROPoller, AsyncNoPolling, AsyncPollingMethod
+from azure.core.polling.async_base_polling import AsyncLROBasePolling
 from azure.farmbeats.core.rest import HttpRequest
 
-from ..rest import farm_operations as rest_farm_operations
+from ...rest import image_processing as rest_image_processing
 
 if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
-    from typing import Any, Callable, Dict, Generic, Optional, TypeVar, Union
+    from typing import Any
 
-    T = TypeVar('T')
-    ClsType = Optional[Callable[[PipelineResponse[HttpRequest, HttpResponse], T, Dict[str, Any]], Any]]
+T = TypeVar('T')
+ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]]
 
-class FarmOperationsOperations(object):
-    """FarmOperationsOperations operations.
+class ImageProcessingOperations:
+    """ImageProcessingOperations async operations.
 
     You should not instantiate this class directly. Instead, you should create a Client instance that
     instantiates it for you and attaches it as an attribute.
@@ -37,25 +37,24 @@ class FarmOperationsOperations(object):
     :param deserializer: An object model deserializer.
     """
 
-    def __init__(self, client, config, serializer, deserializer):
+    def __init__(self, client, config, serializer, deserializer) -> None:
         self._client = client
         self._serialize = serializer
         self._deserialize = deserializer
         self._config = config
 
-    def _create_data_ingestion_job_initial(
+    async def _create_rasterize_job_initial(
         self,
-        job_id,  # type: str
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> Any
+        job_id: str,
+        *,
+        body: Any = None,
+        **kwargs: Any
+    ) -> Any:
         cls = kwargs.pop('cls', None)  # type: ClsType[Any]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-
-        body = kwargs.pop('body', None)  # type: Any
 
         content_type = kwargs.pop("content_type", "application/json")
         if body is not None:
@@ -64,11 +63,11 @@ class FarmOperationsOperations(object):
             json = None
 
 
-        request = rest_farm_operations.build_create_data_ingestion_job_request_initial(
+        request = rest_image_processing.build_create_rasterize_job_request_initial(
             job_id=job_id,
             json=json,
             content_type=content_type,
-            template_url=self._create_data_ingestion_job_initial.metadata['url'],
+            template_url=self._create_rasterize_job_initial.metadata['url'],
             **kwargs
         )._internal_request
         path_format_arguments = {
@@ -77,7 +76,7 @@ class FarmOperationsOperations(object):
         request.url = self._client.format_url(request.url, **path_format_arguments)
         kwargs.pop("content_type", None)
 
-        pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
+        pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
 
         if response.status_code not in [202]:
@@ -91,28 +90,29 @@ class FarmOperationsOperations(object):
 
         return deserialized
 
-    _create_data_ingestion_job_initial.metadata = {'url': '/farm-operations/ingest-data/{jobId}'}  # type: ignore
+    _create_rasterize_job_initial.metadata = {'url': '/image-processing/rasterize/{jobId}'}  # type: ignore
 
-    def begin_create_data_ingestion_job(
+    async def begin_create_rasterize_job(
         self,
-        job_id,  # type: str
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> LROPoller[Any]
-        """Create a farm operation data ingestion job.
+        job_id: str,
+        *,
+        body: Any = None,
+        **kwargs: Any
+    ) -> AsyncLROPoller[Any]:
+        """Create a ImageProcessing Rasterize job.
 
-        :param job_id: Job Id supplied by user.
+        :param job_id: JobId provided by user.
         :type job_id: str
         :keyword body: Job parameters supplied by user.
         :paramtype body: Any
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: By default, your polling method will be LROBasePolling.
+        :keyword polling: By default, your polling method will be AsyncLROBasePolling.
          Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.
-        :paramtype polling: bool or ~azure.core.polling.PollingMethod
+        :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
-        :return: An instance of LROPoller that returns either Any or the result of cls(response)
-        :rtype: ~azure.core.polling.LROPoller[Any]
+        :return: An instance of AsyncLROPoller that returns either Any or the result of cls(response)
+        :rtype: ~azure.core.polling.AsyncLROPoller[Any]
         :raises ~azure.core.exceptions.HttpResponseError:
 
         Example:
@@ -121,7 +121,6 @@ class FarmOperationsOperations(object):
 
                 # JSON input template you can fill out and use as your `json` input.
                 body = {
-                    "authProviderId": "str",
                     "createdDateTime": "datetime (optional)",
                     "description": "str (optional)",
                     "durationInSeconds": "str (optional)",
@@ -131,21 +130,20 @@ class FarmOperationsOperations(object):
                     "lastActionDateTime": "datetime (optional)",
                     "message": "str (optional)",
                     "name": "str (optional)",
-                    "operations": [
-                        "str (optional)"
-                    ],
                     "properties": {
                         "str": "object (optional)"
                     },
+                    "shapefileAttachmentId": "str",
+                    "shapefileColumnNames": [
+                        "str"
+                    ],
                     "startTime": "datetime (optional)",
-                    "startYear": "int",
                     "status": "str (optional)"
                 }
 
 
                 # response body for status code(s): 202
                 response_body == {
-                    "authProviderId": "str",
                     "createdDateTime": "datetime (optional)",
                     "description": "str (optional)",
                     "durationInSeconds": "str (optional)",
@@ -155,21 +153,19 @@ class FarmOperationsOperations(object):
                     "lastActionDateTime": "datetime (optional)",
                     "message": "str (optional)",
                     "name": "str (optional)",
-                    "operations": [
-                        "str (optional)"
-                    ],
                     "properties": {
                         "str": "object (optional)"
                     },
+                    "shapefileAttachmentId": "str",
+                    "shapefileColumnNames": [
+                        "str"
+                    ],
                     "startTime": "datetime (optional)",
-                    "startYear": "int",
                     "status": "str (optional)"
                 }
 
         """
-
-        body = kwargs.pop('body', None)  # type: Any
-        polling = kwargs.pop('polling', True)  # type: Union[bool, PollingMethod]
+        polling = kwargs.pop('polling', True)  # type: Union[bool, AsyncPollingMethod]
         cls = kwargs.pop('cls', None)  # type: ClsType[Any]
         lro_delay = kwargs.pop(
             'polling_interval',
@@ -177,7 +173,7 @@ class FarmOperationsOperations(object):
         )
         cont_token = kwargs.pop('continuation_token', None)  # type: Optional[str]
         if cont_token is None:
-            raw_result = self._create_data_ingestion_job_initial(
+            raw_result = await self._create_rasterize_job_initial(
                 job_id=job_id,
 
                 body=body,
@@ -202,28 +198,27 @@ class FarmOperationsOperations(object):
             'Endpoint': self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
         }
 
-        if polling is True: polling_method = LROBasePolling(lro_delay, lro_options={'final-state-via': 'location'}, path_format_arguments=path_format_arguments,  **kwargs)
-        elif polling is False: polling_method = NoPolling()
+        if polling is True: polling_method = AsyncLROBasePolling(lro_delay, lro_options={'final-state-via': 'location'}, path_format_arguments=path_format_arguments,  **kwargs)
+        elif polling is False: polling_method = AsyncNoPolling()
         else: polling_method = polling
         if cont_token:
-            return LROPoller.from_continuation_token(
+            return AsyncLROPoller.from_continuation_token(
                 polling_method=polling_method,
                 continuation_token=cont_token,
                 client=self._client,
                 deserialization_callback=get_long_running_output
             )
         else:
-            return LROPoller(self._client, raw_result, get_long_running_output, polling_method)
-    begin_create_data_ingestion_job.metadata = {'url': '/farm-operations/ingest-data/{jobId}'}  # type: ignore
+            return AsyncLROPoller(self._client, raw_result, get_long_running_output, polling_method)
+    begin_create_rasterize_job.metadata = {'url': '/image-processing/rasterize/{jobId}'}  # type: ignore
 
 
-    def get_data_ingestion_job_details(
+    async def get_rasterize_job(
         self,
-        job_id,  # type: str
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> Any
-        """Get a farm operation data ingestion job.
+        job_id: str,
+        **kwargs: Any
+    ) -> Any:
+        """Get ImageProcessing Rasterize job's details.
 
         :param job_id: Id of the job.
         :type job_id: str
@@ -238,7 +233,6 @@ class FarmOperationsOperations(object):
 
                 # response body for status code(s): 200
                 response_body == {
-                    "authProviderId": "str",
                     "createdDateTime": "datetime (optional)",
                     "description": "str (optional)",
                     "durationInSeconds": "str (optional)",
@@ -248,14 +242,14 @@ class FarmOperationsOperations(object):
                     "lastActionDateTime": "datetime (optional)",
                     "message": "str (optional)",
                     "name": "str (optional)",
-                    "operations": [
-                        "str (optional)"
-                    ],
                     "properties": {
                         "str": "object (optional)"
                     },
+                    "shapefileAttachmentId": "str",
+                    "shapefileColumnNames": [
+                        "str"
+                    ],
                     "startTime": "datetime (optional)",
-                    "startYear": "int",
                     "status": "str (optional)"
                 }
 
@@ -266,9 +260,9 @@ class FarmOperationsOperations(object):
         }
         error_map.update(kwargs.pop('error_map', {}))
 
-        request = rest_farm_operations.build_get_data_ingestion_job_details_request(
+        request = rest_image_processing.build_get_rasterize_job_request(
             job_id=job_id,
-            template_url=self.get_data_ingestion_job_details.metadata['url'],
+            template_url=self.get_rasterize_job.metadata['url'],
             **kwargs
         )._internal_request
         path_format_arguments = {
@@ -277,7 +271,7 @@ class FarmOperationsOperations(object):
         request.url = self._client.format_url(request.url, **path_format_arguments)
         kwargs.pop("content_type", None)
 
-        pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
+        pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
@@ -291,4 +285,4 @@ class FarmOperationsOperations(object):
 
         return deserialized
 
-    get_data_ingestion_job_details.metadata = {'url': '/farm-operations/ingest-data/{jobId}'}  # type: ignore
+    get_rasterize_job.metadata = {'url': '/image-processing/rasterize/{jobId}'}  # type: ignore

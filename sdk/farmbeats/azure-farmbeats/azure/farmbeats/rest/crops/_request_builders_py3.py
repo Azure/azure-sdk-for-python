@@ -6,7 +6,7 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 import datetime
-from typing import Any, Dict, List, Optional, TYPE_CHECKING
+from typing import Any, IO, List, Optional, TYPE_CHECKING
 
 from azure.core.pipeline.transport._base import _format_url_section
 from azure.farmbeats.core.rest import HttpRequest
@@ -45,7 +45,7 @@ def build_list_request(
     :keyword names: Names of the resource.
     :paramtype names: list[str]
     :keyword property_filters: Filters on key-value pairs within the Properties object.
-     eg. "{testkey} eq {testvalue}".
+     eg. "{testKey} eq {testValue}".
     :paramtype property_filters: list[str]
     :keyword statuses: Statuses of the resource.
     :paramtype statuses: list[str]

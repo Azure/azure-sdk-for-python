@@ -85,7 +85,7 @@ class BoundariesOperations:
         :keyword names: Names of the resource.
         :paramtype names: list[str]
         :keyword property_filters: Filters on key-value pairs within the Properties object.
-         eg. "{testkey} eq {testvalue}".
+         eg. "{testKey} eq {testValue}".
         :paramtype property_filters: list[str]
         :keyword statuses: Statuses of the resource.
         :paramtype statuses: list[str]
@@ -235,15 +235,15 @@ class BoundariesOperations:
         self,
         farmer_id: str,
         *,
-        query: Any = None,
+        body: Any = None,
         **kwargs: Any
     ) -> AsyncIterable[Any]:
         """Search for boundaries by fields and intersecting geometry.
 
         :param farmer_id: Id of the farmer.
         :type farmer_id: str
-        :keyword query: Query filters.
-        :paramtype query: Any
+        :keyword body: Query filters.
+        :paramtype body: Any
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: An iterator like instance of either Any or the result of cls(response)
         :rtype: ~azure.core.async_paging.AsyncItemPaged[Any]
@@ -290,7 +290,7 @@ class BoundariesOperations:
                 }
 
                 # JSON input template you can fill out and use as your `json` input.
-                query = {
+                body = {
                     "$maxPageSize": "int (optional). Default value is 50",
                     "$skipToken": "str (optional)",
                     "ids": [
@@ -357,8 +357,8 @@ class BoundariesOperations:
         def prepare_request(next_link=None):
             if not next_link:
                 content_type = kwargs.pop("content_type", "application/json")
-                if query is not None:
-                    json = self._serialize.body(query, 'object')
+                if body is not None:
+                    json = self._serialize.body(body, 'object')
                 else:
                     json = None
 
@@ -377,8 +377,8 @@ class BoundariesOperations:
                 kwargs.pop("content_type", None)
             else:
                 content_type = kwargs.pop("content_type", "application/json")
-                if query is not None:
-                    json = self._serialize.body(query, 'object')
+                if body is not None:
+                    json = self._serialize.body(body, 'object')
                 else:
                     json = None
 
@@ -465,7 +465,7 @@ class BoundariesOperations:
         :keyword names: Names of the resource.
         :paramtype names: list[str]
         :keyword property_filters: Filters on key-value pairs within the Properties object.
-         eg. "{testkey} eq {testvalue}".
+         eg. "{testKey} eq {testValue}".
         :paramtype property_filters: list[str]
         :keyword statuses: Statuses of the resource.
         :paramtype statuses: list[str]
@@ -612,13 +612,13 @@ class BoundariesOperations:
     def search(
         self,
         *,
-        query: Any = None,
+        body: Any = None,
         **kwargs: Any
     ) -> AsyncIterable[Any]:
         """Search for boundaries across all farmers by fields and intersecting geometry.
 
-        :keyword query: Query filters.
-        :paramtype query: Any
+        :keyword body: Query filters.
+        :paramtype body: Any
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: An iterator like instance of either Any or the result of cls(response)
         :rtype: ~azure.core.async_paging.AsyncItemPaged[Any]
@@ -665,7 +665,7 @@ class BoundariesOperations:
                 }
 
                 # JSON input template you can fill out and use as your `json` input.
-                query = {
+                body = {
                     "$maxPageSize": "int (optional). Default value is 50",
                     "$skipToken": "str (optional)",
                     "ids": [
@@ -732,8 +732,8 @@ class BoundariesOperations:
         def prepare_request(next_link=None):
             if not next_link:
                 content_type = kwargs.pop("content_type", "application/json")
-                if query is not None:
-                    json = self._serialize.body(query, 'object')
+                if body is not None:
+                    json = self._serialize.body(body, 'object')
                 else:
                     json = None
 
@@ -751,8 +751,8 @@ class BoundariesOperations:
                 kwargs.pop("content_type", None)
             else:
                 content_type = kwargs.pop("content_type", "application/json")
-                if query is not None:
-                    json = self._serialize.body(query, 'object')
+                if body is not None:
+                    json = self._serialize.body(body, 'object')
                 else:
                     json = None
 
@@ -805,14 +805,14 @@ class BoundariesOperations:
         self,
         job_id: str,
         **kwargs: Any
-    ) -> Optional[Any]:
+    ) -> Any:
         """Get cascade delete job for specified boundary.
 
         :param job_id: Id of the job.
         :type job_id: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: Any, or the result of cls(response)
-        :rtype: Any or None
+        :rtype: Any
         :raises: ~azure.core.exceptions.HttpResponseError
 
         Example:
@@ -840,7 +840,7 @@ class BoundariesOperations:
                 }
 
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType[Optional[Any]]
+        cls = kwargs.pop('cls', None)  # type: ClsType[Any]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -860,13 +860,11 @@ class BoundariesOperations:
         pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
 
-        if response.status_code not in [200, 404]:
+        if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             raise HttpResponseError(response=response)
 
-        deserialized = None
-        if response.status_code == 200:
-            deserialized = _loads(response.text())
+        deserialized = _loads(response.text())
 
         if cls:
             return cls(pipeline_response, deserialized, {})
@@ -1024,16 +1022,16 @@ class BoundariesOperations:
         farmer_id: str,
         boundary_id: str,
         **kwargs: Any
-    ) -> Optional[Any]:
+    ) -> Any:
         """Gets a specified boundary resource under a particular farmer.
 
-        :param farmer_id: Id of the associted farmer.
+        :param farmer_id: Id of the associated farmer.
         :type farmer_id: str
         :param boundary_id: Id of the boundary.
         :type boundary_id: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: Any, or the result of cls(response)
-        :rtype: Any or None
+        :rtype: Any
         :raises: ~azure.core.exceptions.HttpResponseError
 
         Example:
@@ -1061,7 +1059,7 @@ class BoundariesOperations:
                 }
 
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType[Optional[Any]]
+        cls = kwargs.pop('cls', None)  # type: ClsType[Any]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -1082,13 +1080,11 @@ class BoundariesOperations:
         pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
 
-        if response.status_code not in [200, 404]:
+        if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             raise HttpResponseError(response=response)
 
-        deserialized = None
-        if response.status_code == 200:
-            deserialized = _loads(response.text())
+        deserialized = _loads(response.text())
 
         if cls:
             return cls(pipeline_response, deserialized, {})
@@ -1102,7 +1098,7 @@ class BoundariesOperations:
         farmer_id: str,
         boundary_id: str,
         *,
-        boundary: Any = None,
+        body: Any = None,
         **kwargs: Any
     ) -> Any:
         """Creates or updates a boundary resource.
@@ -1111,8 +1107,8 @@ class BoundariesOperations:
         :type farmer_id: str
         :param boundary_id: Id of the boundary resource.
         :type boundary_id: str
-        :keyword boundary: Boundary resource payload to create or update.
-        :paramtype boundary: Any
+        :keyword body: Boundary resource payload to create or update.
+        :paramtype body: Any
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: Any, or the result of cls(response)
         :rtype: Any
@@ -1158,7 +1154,7 @@ class BoundariesOperations:
                 }
 
                 # JSON input template you can fill out and use as your `json` input.
-                boundary = {
+                body = {
                     "acreage": "float (optional)",
                     "createdDateTime": "datetime (optional)",
                     "description": "str (optional)",
@@ -1206,8 +1202,8 @@ class BoundariesOperations:
         error_map.update(kwargs.pop('error_map', {}))
 
         content_type = kwargs.pop("content_type", "application/merge-patch+json")
-        if boundary is not None:
-            json = self._serialize.body(boundary, 'object')
+        if body is not None:
+            json = self._serialize.body(body, 'object')
         else:
             json = None
 
@@ -1301,7 +1297,7 @@ class BoundariesOperations:
         other_farmer_id: str,
         other_boundary_id: str,
         **kwargs: Any
-    ) -> Optional[Any]:
+    ) -> Any:
         """Returns overlapping acreage between two boundary Ids.
 
         :param farmer_id: Id of the farmer.
@@ -1314,7 +1310,7 @@ class BoundariesOperations:
         :paramtype other_boundary_id: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: Any, or the result of cls(response)
-        :rtype: Any or None
+        :rtype: Any
         :raises: ~azure.core.exceptions.HttpResponseError
 
         Example:
@@ -1329,7 +1325,7 @@ class BoundariesOperations:
                 }
 
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType[Optional[Any]]
+        cls = kwargs.pop('cls', None)  # type: ClsType[Any]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -1352,13 +1348,11 @@ class BoundariesOperations:
         pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
 
-        if response.status_code not in [200, 404]:
+        if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             raise HttpResponseError(response=response)
 
-        deserialized = None
-        if response.status_code == 200:
-            deserialized = _loads(response.text())
+        deserialized = _loads(response.text())
 
         if cls:
             return cls(pipeline_response, deserialized, {})

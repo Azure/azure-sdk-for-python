@@ -6,15 +6,11 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 import datetime
-from typing import Any, Dict, List, Optional, TYPE_CHECKING
+from typing import Any, Dict, List, Optional
 
 from azure.core.pipeline.transport._base import _format_url_section
 from azure.farmbeats.core.rest import HttpRequest
 from msrest import Serializer
-
-if TYPE_CHECKING:
-    # pylint: disable=unused-import,ungrouped-imports
-    from typing import Any
 
 _SERIALIZER = Serializer()
 
@@ -366,7 +362,7 @@ def build_download_request(
     file_path: str,
     **kwargs: Any
 ) -> HttpRequest:
-    """Downloads and returns file Stream as response for the given input filePath.
+    """Downloads and returns file stream as response for the given input filePath.
 
     See https://aka.ms/azsdk/python/llcwiki for how to incorporate this request builder into your code flow.
 
