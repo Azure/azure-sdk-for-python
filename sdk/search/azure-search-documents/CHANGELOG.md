@@ -2,6 +2,7 @@
 
 ## 11.2.0b3 (Unreleased)
 
+- Added support for knowledge store    #18461
 
 ## 11.2.0b2 (2021-04-13)
 
