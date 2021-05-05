@@ -323,17 +323,19 @@ class AttestationToken(Generic[T]):
                 options.validation_callback(self, None)
             return True
 
+        signer = None
         if self.algorithm != 'none' and options.validate_signature:
             # validate the signature for the token.
             candidate_certificates = self._get_candidate_signing_certificates(
                 signers)
-            if (not self._validate_signature(candidate_certificates)):
+            signer = self._validate_signature(candidate_certificates)
+            if (signer is None):
                 raise Exception(
                     "Could not find the certificate used to sign the token.")
         self._validate_static_properties(options)
 
         if (options.validation_callback is not None):
-            return options.validation_callback(self, None)
+            return options.validation_callback(self, signer)
         return True
 
     def get_body(self):
@@ -411,7 +413,6 @@ class AttestationToken(Generic[T]):
                         signed_data.encode('utf-8'),
                         SHA256())
                 return signer
-                return True
             except:
                 pass
         return None

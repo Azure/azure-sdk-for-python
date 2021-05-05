@@ -79,11 +79,11 @@ Use the [Azure CLI][azure_cli] snippet below to create/get client secret credent
 
 * Use the returned credentials above to set  **AZURE_CLIENT_ID** (appId), **AZURE_CLIENT_SECRET** (password), and **AZURE_TENANT_ID** (tenant) environment variables. The following example shows a way to do this in Powershell:
 
-    ```Powershell
+```Powershell
     $Env:AZURE_CLIENT_ID="generated-app-ID"
     $Env:AZURE_CLIENT_SECRET="random-password"
     $Env:AZURE_TENANT_ID="tenant-ID"
-    ```
+```
 
 For more information about the Azure Identity APIs and how to use them, see [Azure Identity client library](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/identity/azure-identity)
 
@@ -336,7 +336,7 @@ This project has adopted the [Microsoft Open Source Code of Conduct][microsoft_c
 
 See [CONTRIBUTING.md][contributing] for details on building, testing, and contributing to these libraries.
 
-# Provide Feedback
+## Provide Feedback
 
 If you encounter any bugs or have suggestions, please file an issue in the
 [Issues](https://github.com/Azure/azure-sdk-for-python/issues)
@@ -345,7 +345,7 @@ section of the project.
 <!-- LINKS -->
 [source_code]: https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/attestation/azure-security-attestation
 [attestation_pypi]: https://aka.ms/azsdk/python/azure-security-attestation
-[API_reference]:https://docs.microsoft.com/python/api/overview/azure/azure-security-attestation?view=azure-python-preview
+[API_reference]:https://docs.microsoft.com/en-us/python/api/overview/azure/security-attestation-readme?view=azure-python-preview
 [style-guide-msft]: https://docs.microsoft.com/style-guide/capitalization
 [style-guide-cloud]: https://aka.ms/azsdk/cloud-style-guide
 [microsoft_code_of_conduct]: https://opensource.microsoft.com/codeofconduct/
@@ -357,7 +357,5 @@ section of the project.
 [base64url_encoding]: https://tools.ietf.org/html/rfc4648#section-5
 [contributing]: https://github.com/Azure/azure-sdk-for-python/blob/master/CONTRIBUTING.md
 [coc_faq]: https://opensource.microsoft.com/codeofconduct/faq/
-[attestation_response]: ./azure.security.attestation.html#azure.security.attestation.AttestationResponse
-[attestation_policy_result_signer]: azure.security.attestation.html#azure.security.attestation.PolicyResult
 
 ![Impressions](https://azure-sdk-impressions.azurewebsites.net/api/impressions/azure-sdk-for-python%2Fsdk%2Fattestation%2Fazure-security-attestation%2FREADME.png)
