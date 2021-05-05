@@ -5,7 +5,7 @@
 # --------------------------------------------------------------------------
 
 import functools
-from typing import Optional, Any, Union, List, Tuple, Dict, Mapping, Iterable
+from typing import Optional, Any, Union, List, Tuple, Dict, Mapping, Iterable, overload
 try:
     from urllib.parse import urlparse, unquote
 except ImportError:
@@ -53,7 +53,7 @@ class TableClient(TablesBaseClient):
         self,
         endpoint,  # type: str
         table_name,  # type: str
-        credential=None,  # type: str
+        credential=None,  # type: Union[AzureNamedKeyCredential, AzureSasCredential]
         **kwargs  # type: Any
     ):
         # type: (...) -> None
@@ -66,8 +66,9 @@ class TableClient(TablesBaseClient):
             account URL already has a SAS token, or the connection string already has shared
             access key values. The value can be a SAS token string or an account shared access
             key.
-        :type credential: str
-
+        :type credential:
+            :class:`~azure.core.credentials.AzureNamedKeyCredential` or
+            :class:`~azure.core.credentials.AzureSasCredential`
         :returns: None
         """
         if not table_name:
@@ -270,14 +271,19 @@ class TableClient(TablesBaseClient):
         except HttpResponseError as error:
             _process_table_error(error)
 
+    @overload
+    def delete_entity(self, partition_key, row_key, **kwargs):
+        # type: (str, str, Any) -> None
+        pass
+
+    @overload
+    def delete_entity(self, entity, **kwargs):
+        # type: (Union[TableEntity, Mapping[str, Any]], Any) -> None
+        pass
+
     @distributed_trace
-    def delete_entity(
-        self,
-        partition_key,  # type: str
-        row_key,  # type: str
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> None
+    def delete_entity(self, *args, **kwargs):
+        # type: (Union[TableEntity, str], Any) -> None
         """Deletes the specified entity in a table.
 
         :param partition_key: The partition key of the entity.
@@ -300,6 +306,20 @@ class TableClient(TablesBaseClient):
                 :dedent: 8
                 :caption: Deleting an entity to a Table
         """
+        try:
+            entity = kwargs.pop('entity', None)
+            if not entity:
+                entity = args[0]
+            partition_key = entity['PartitionKey']
+            row_key = entity['RowKey']
+        except (TypeError, IndexError):
+            partition_key = kwargs.pop('partition_key', None)
+            if not partition_key:
+                partition_key = args[0]
+            row_key = kwargs.pop("row_key", None)
+            if not row_key:
+                row_key = args[1]
+
 
         if_match, _ = _get_match_headers(
             kwargs=dict(

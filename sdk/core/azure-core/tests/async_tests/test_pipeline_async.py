@@ -29,11 +29,12 @@ from azure.core.pipeline import AsyncPipeline
 from azure.core.pipeline.policies import (
     SansIOHTTPPolicy,
     UserAgentPolicy,
+    DistributedTracingPolicy,
     AsyncRetryPolicy,
     AsyncRedirectPolicy,
     AsyncHTTPPolicy,
     AsyncRetryPolicy,
-    HttpLoggingPolicy
+    HttpLoggingPolicy,
 )
 from azure.core.pipeline.transport import (
     AsyncHttpTransport,
@@ -286,3 +287,38 @@ async def test_add_custom_policy():
     pos_retry = policies.index(retry_policy)
     assert pos_boo < pos_retry
     assert pos_foo > pos_retry
+
+    policies = [UserAgentPolicy(),
+                AsyncRetryPolicy(),
+                DistributedTracingPolicy()]
+    client = AsyncPipelineClient(base_url="test", policies=policies, per_call_policies=boo_policy)
+    actual_policies = client._pipeline._impl_policies
+    assert boo_policy == actual_policies[0]
+    client = AsyncPipelineClient(base_url="test", policies=policies, per_call_policies=[boo_policy])
+    actual_policies = client._pipeline._impl_policies
+    assert boo_policy == actual_policies[0]
+
+    client = AsyncPipelineClient(base_url="test", policies=policies, per_retry_policies=foo_policy)
+    actual_policies = client._pipeline._impl_policies
+    assert foo_policy == actual_policies[2]
+    client = AsyncPipelineClient(base_url="test", policies=policies, per_retry_policies=[foo_policy])
+    actual_policies = client._pipeline._impl_policies
+    assert foo_policy == actual_policies[2]
+
+    client = AsyncPipelineClient(base_url="test", policies=policies, per_call_policies=boo_policy,
+                                 per_retry_policies=[foo_policy])
+    actual_policies = client._pipeline._impl_policies
+    assert boo_policy == actual_policies[0]
+    assert foo_policy == actual_policies[3]
+    client = AsyncPipelineClient(base_url="test", policies=policies, per_call_policies=[boo_policy],
+                            per_retry_policies=[foo_policy])
+    actual_policies = client._pipeline._impl_policies
+    assert boo_policy == actual_policies[0]
+    assert foo_policy == actual_policies[3]
+
+    policies = [UserAgentPolicy(),
+                DistributedTracingPolicy()]
+    with pytest.raises(ValueError):
+        client = AsyncPipelineClient(base_url="test", policies=policies, per_retry_policies=foo_policy)
+    with pytest.raises(ValueError):
+        client = AsyncPipelineClient(base_url="test", policies=policies, per_retry_policies=[foo_policy])

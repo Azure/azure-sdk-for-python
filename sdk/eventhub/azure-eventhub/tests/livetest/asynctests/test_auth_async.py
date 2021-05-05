@@ -9,7 +9,7 @@ import asyncio
 import datetime
 import time
 
-from azure.core.credentials import AzureSasCredential
+from azure.core.credentials import AzureSasCredential, AzureNamedKeyCredential
 from azure.identity.aio import EnvironmentCredential
 from azure.eventhub import EventData
 from azure.eventhub.aio import EventHubConsumerClient, EventHubProducerClient, EventHubSharedKeyCredential
@@ -134,3 +134,24 @@ class AsyncEventHubAuthTests(AzureMgmtTestCase):
             batch = await producer_client.create_batch(partition_id='0')
             batch.add(EventData(body='A single message'))
             await producer_client.send_batch(batch)
+
+    @pytest.mark.liveTest
+    @pytest.mark.asyncio
+    async def test_client_azure_named_key_credential_async(live_eventhub):
+
+        credential = AzureNamedKeyCredential(live_eventhub['key_name'], live_eventhub['access_key'])
+        consumer_client = EventHubConsumerClient(fully_qualified_namespace=live_eventhub['hostname'],
+                                                eventhub_name=live_eventhub['event_hub'],
+                                                consumer_group='$default',
+                                                credential=credential,
+                                                user_agent='customized information')
+
+        assert (await consumer_client.get_eventhub_properties()) is not None
+    
+        credential.update("foo", "bar")
+
+        with pytest.raises(Exception):
+            await consumer_client.get_eventhub_properties()
+        
+        credential.update(live_eventhub['key_name'], live_eventhub['access_key'])
+        assert (await consumer_client.get_eventhub_properties()) is not None

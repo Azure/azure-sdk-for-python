@@ -39,10 +39,13 @@ class TableServiceClient(TablesBaseClient):
         The URL to the table service endpoint. Any other entities included
         in the URL path (e.g. table) will be discarded. This URL can be optionally
         authenticated with a SAS token.
-    :param str credential:
+    :param credential:
         The credentials with which to authenticate. This is optional if the
-        account URL already has a SAS token. The value can be a SAS token string, an account
-        shared access key.
+        account URL already has a SAS token. The value can be one of AzureNamedKeyCredential
+        or AzureSasCredential from azure-core.
+    :type credential:
+        :class:`~azure.core.credentials.AzureNamedKeyCredential` or
+        :class:`~azure.core.credentials.AzureSasCredential`
     :keyword str api_version:
         The Storage API version to use for requests. Default value is '2019-02-02'.
         Setting to an older version may result in reduced feature compatibility.

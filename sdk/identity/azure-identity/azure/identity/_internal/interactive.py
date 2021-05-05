@@ -8,6 +8,7 @@ import abc
 import base64
 import json
 import logging
+import os
 import time
 from typing import TYPE_CHECKING
 
@@ -206,7 +207,11 @@ class InteractiveCredential(MsalCredential):
     def _get_app(self):
         # type: () -> msal.PublicClientApplication
         if not self._msal_app:
-            self._msal_app = self._create_app(msal.PublicClientApplication, client_capabilities=["CP1"])
+            if "AZURE_IDENTITY_DISABLE_CP1" in os.environ:
+                capabilities = None
+            else:
+                capabilities = ["CP1"]  # able to handle CAE claims challenges
+            self._msal_app = self._create_app(msal.PublicClientApplication, client_capabilities=capabilities)
         return self._msal_app
 
     @abc.abstractmethod
