@@ -44,7 +44,7 @@ def test_connection_error_response():
                 self._count += 1
                 raise requests.exceptions.ConnectionError
         
-        def stream(self, chunk_size, decompress=False):
+        def stream(self, chunk_size, decode_content=False):
             if self._count == 0:
                 self._count += 1
                 raise requests.exceptions.ConnectionError
@@ -79,7 +79,7 @@ def test_response_streaming_error_behavior():
         def __init__(self):
             self.total_response_size = 500
 
-        def stream(self, chunk_size, decompress=False):
+        def stream(self, chunk_size, decode_content=False):
             assert chunk_size == block_size
             left = total_response_size
             while left > 0:
@@ -89,7 +89,7 @@ def test_response_streaming_error_behavior():
                 left -= len(data)
                 yield data
 
-        def read(self, chunk_size, decompress=False):
+        def read(self, chunk_size, decode_content=False):
             assert chunk_size == block_size
             if self.total_response_size > 0:
                 if self.total_response_size <= block_size:
@@ -120,6 +120,6 @@ def test_response_streaming_error_behavior():
     transport = RequestsTransport()
     pipeline = Pipeline(transport)
     pipeline.run = mock_run
-    downloader = response.stream_download(pipeline)
+    downloader = response.stream_download(pipeline, decompress=False)
     with pytest.raises(requests.exceptions.ConnectionError):
         full_response = b"".join(downloader)

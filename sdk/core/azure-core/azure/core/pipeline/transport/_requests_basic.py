@@ -55,7 +55,7 @@ def _read_raw_stream(response, chunk_size=1):
     # Special case for urllib3.
     if hasattr(response.raw, 'stream'):
         try:
-            for chunk in response.raw.stream(chunk_size, decompress=False):
+            for chunk in response.raw.stream(chunk_size, decode_content=False):
                 yield chunk
         except ProtocolError as e:
             raise requests.exceptions.ChunkedEncodingError(e)

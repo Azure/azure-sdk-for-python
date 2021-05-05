@@ -87,7 +87,7 @@ async def test_response_streaming_error_behavior():
         def __init__(self):
             self.total_response_size = 500
 
-        def stream(self, chunk_size, decompress=False):
+        def stream(self, chunk_size, decode_content=False):
             assert chunk_size == block_size
             left = total_response_size
             while left > 0:
@@ -97,7 +97,7 @@ async def test_response_streaming_error_behavior():
                 left -= len(data)
                 yield data
 
-        def read(self, chunk_size, decompress=False):
+        def read(self, chunk_size, decode_content=False):
             assert chunk_size == block_size
             if self.total_response_size > 0:
                 if self.total_response_size <= block_size:
