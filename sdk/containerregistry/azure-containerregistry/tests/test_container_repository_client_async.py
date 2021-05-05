@@ -10,8 +10,8 @@ from azure.containerregistry import (
     DeleteRepositoryResult,
     ArtifactTagProperties,
     ContentProperties,
-    RegistryArtifactOrderBy,
-    RegistryArtifactProperties,
+    ManifestOrderBy,
+    ArtifactManifestProperties,
     TagOrderBy,
 )
 from azure.core.exceptions import ResourceNotFoundError
@@ -29,7 +29,7 @@ class TestContainerRepositoryClient(AsyncContainerRegistryTestClass):
 
         async for artifact in client.list_registry_artifacts():
             assert artifact is not None
-            assert isinstance(artifact, RegistryArtifactProperties)
+            assert isinstance(artifact, ArtifactManifestProperties)
             assert artifact.created_on is not None
             assert isinstance(artifact.created_on, datetime)
             assert artifact.last_updated_on is not None
@@ -277,7 +277,7 @@ class TestContainerRepositoryClient(AsyncContainerRegistryTestClass):
         count = 0
         async for artifact in client.list_registry_artifacts():
             assert artifact is not None
-            assert isinstance(artifact, RegistryArtifactProperties)
+            assert isinstance(artifact, ArtifactManifestProperties)
             assert artifact.created_on is not None
             assert isinstance(artifact.created_on, datetime)
             assert artifact.last_updated_on is not None
@@ -293,7 +293,7 @@ class TestContainerRepositoryClient(AsyncContainerRegistryTestClass):
         prev_last_updated_on = None
         count = 0
         async for artifact in client.list_registry_artifacts(
-            order_by=RegistryArtifactOrderBy.LAST_UPDATE_TIME_DESCENDING
+            order_by=ManifestOrderBy.LAST_UPDATE_TIME_DESCENDING
         ):
             if prev_last_updated_on:
                 assert artifact.last_updated_on < prev_last_updated_on
@@ -309,7 +309,7 @@ class TestContainerRepositoryClient(AsyncContainerRegistryTestClass):
         prev_last_updated_on = None
         count = 0
         async for artifact in client.list_registry_artifacts(
-            order_by=RegistryArtifactOrderBy.LAST_UPDATE_TIME_ASCENDING
+            order_by=ManifestOrderBy.LAST_UPDATE_TIME_ASCENDING
         ):
             if prev_last_updated_on:
                 assert artifact.last_updated_on > prev_last_updated_on
