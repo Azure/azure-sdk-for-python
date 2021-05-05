@@ -165,8 +165,7 @@ try:
                 "farmerId": farmer_id,
                 "startDateTime": start_date_time,
                 "endDateTime": end_date_time,
-            },
-            polling=True
+            }
         )
     )
     print("Queued... Waiting for completion... ", end="", flush=True)

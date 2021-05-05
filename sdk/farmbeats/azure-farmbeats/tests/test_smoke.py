@@ -161,7 +161,6 @@ class FarmBeatsSmokeTestCase(FarmBeatsTest):
         satellite_job_poller = client.scenes.begin_create_satellite_data_ingestion_job(
             job_id=job_id,
             job=job,
-            polling=True,
         )
         satellite = satellite_job_poller.result()
         assert satellite['farmerId'] == farmbeats_farmer_id

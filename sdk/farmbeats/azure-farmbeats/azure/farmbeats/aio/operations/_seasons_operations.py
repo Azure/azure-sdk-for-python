@@ -65,11 +65,11 @@ class SeasonsOperations:
     ) -> AsyncIterable[Any]:
         """Returns a paginated list of season resources.
 
-        :keyword min_start_date_time: Minimum season start datetime, sample format: yyyy-MM-
-         ddTHH:mm:ssZ.
+        :keyword min_start_date_time: Minimum season start datetime, sample format:
+         yyyy-MM-ddTHH:mm:ssZ.
         :paramtype min_start_date_time: ~datetime.datetime
-        :keyword max_start_date_time: Maximum season start datetime, sample format: yyyy-MM-
-         ddTHH:mm:ssZ.
+        :keyword max_start_date_time: Maximum season start datetime, sample format:
+         yyyy-MM-ddTHH:mm:ssZ.
         :paramtype max_start_date_time: ~datetime.datetime
         :keyword min_end_date_time: Minimum season end datetime, sample format: yyyy-MM-ddTHH:mm:ssZ.
         :paramtype min_end_date_time: ~datetime.datetime

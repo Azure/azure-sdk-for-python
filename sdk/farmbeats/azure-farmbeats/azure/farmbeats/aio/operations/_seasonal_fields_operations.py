@@ -102,11 +102,11 @@ class SeasonalFieldsOperations:
         :paramtype max_avg_seed_population_value: float
         :keyword avg_seed_population_unit: Unit of average seed population value attribute.
         :paramtype avg_seed_population_unit: str
-        :keyword min_planting_date_time: Minimum planting datetime, sample format: yyyy-MM-
-         ddTHH:mm:ssZ.
+        :keyword min_planting_date_time: Minimum planting datetime, sample format:
+         yyyy-MM-ddTHH:mm:ssZ.
         :paramtype min_planting_date_time: ~datetime.datetime
-        :keyword max_planting_date_time: Maximum planting datetime, sample format: yyyy-MM-
-         ddTHH:mm:ssZ.
+        :keyword max_planting_date_time: Maximum planting datetime, sample format:
+         yyyy-MM-ddTHH:mm:ssZ.
         :paramtype max_planting_date_time: ~datetime.datetime
         :keyword ids: Ids of the resource.
         :paramtype ids: list[str]
@@ -340,11 +340,11 @@ class SeasonalFieldsOperations:
         :paramtype max_avg_seed_population_value: float
         :keyword avg_seed_population_unit: Unit of average seed population value attribute.
         :paramtype avg_seed_population_unit: str
-        :keyword min_planting_date_time: Minimum planting datetime, sample format: yyyy-MM-
-         ddTHH:mm:ssZ.
+        :keyword min_planting_date_time: Minimum planting datetime, sample format:
+         yyyy-MM-ddTHH:mm:ssZ.
         :paramtype min_planting_date_time: ~datetime.datetime
-        :keyword max_planting_date_time: Maximum planting datetime, sample format: yyyy-MM-
-         ddTHH:mm:ssZ.
+        :keyword max_planting_date_time: Maximum planting datetime, sample format:
+         yyyy-MM-ddTHH:mm:ssZ.
         :paramtype max_planting_date_time: ~datetime.datetime
         :keyword ids: Ids of the resource.
         :paramtype ids: list[str]
@@ -929,8 +929,8 @@ class SeasonalFieldsOperations:
         :paramtype seasonal_field_id: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: Pass in True if you'd like the AsyncLROBasePolling polling method,
-         False for no polling, or your own initialized polling object for a personal polling strategy.
+        :keyword polling: By default, your polling method will be AsyncLROBasePolling.
+         Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either Any or the result of cls(response)
@@ -962,7 +962,7 @@ class SeasonalFieldsOperations:
                 }
 
         """
-        polling = kwargs.pop('polling', False)  # type: Union[bool, AsyncPollingMethod]
+        polling = kwargs.pop('polling', True)  # type: Union[bool, AsyncPollingMethod]
         cls = kwargs.pop('cls', None)  # type: ClsType[Any]
         lro_delay = kwargs.pop(
             'polling_interval',
