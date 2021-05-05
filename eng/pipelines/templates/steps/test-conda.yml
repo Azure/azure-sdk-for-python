@@ -117,6 +117,7 @@ steps:
           Paths:
             - "${{ checkout.checkout_path }}/${{ checkout.package }}"
             - "tools/"
+            - "sdk/confest.py"
           Repositories:
             - Name: "Azure/azure-sdk-for-python"
               Commitish: "${{ checkout.Package }}_${{ checkout.Version }}"
@@ -160,6 +161,5 @@ steps:
       - script: |
           echo "$(activate.method) ${{ artifact.name }}"
           $(activate.method) ${{ artifact.name }}
-          python -m pytest .
+          python -m pytest $(conda.build)/${{ checkout.checkout_path }}/${{ checkout.package }}
         displayName: 'Run Tests for ${{ checkout.package }}'
-        workingDirectory: $(conda.build)/${{ checkout.checkout_path }}/${{ checkout.package }}
