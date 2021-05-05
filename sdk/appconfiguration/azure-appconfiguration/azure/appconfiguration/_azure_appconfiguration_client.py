@@ -100,13 +100,12 @@ class AzureAppConfigurationClient:
 
     @classmethod
     def from_connection_string(cls, connection_string, **kwargs):
-        # type: (str, Dict, **Any) -> AzureAppConfigurationClient
+        # type: (str, Dict) -> AzureAppConfigurationClient
         """Create AzureAppConfigurationClient from a Connection String.
 
-        :param connection_string: Connection String
+        :param str connection_string: Connection String
             (one of the access keys of the Azure App Configuration resource)
             used to access the Azure App Configuration.
-        :type connection_string: str
         :return: An AzureAppConfigurationClient authenticated with the connection string
         :rtype: :class:`~azure.appconfiguration.AzureAppConfigurationClient`
 
@@ -163,7 +162,7 @@ class AzureAppConfigurationClient:
     @distributed_trace
     def list_configuration_settings(
         self, key_filter=None, label_filter=None, **kwargs
-    ):  # type: (Optional[str], Optional[str], **Dict) -> ItemPaged[ConfigurationSetting]
+    ):  # type: (Optional[str], Optional[str], **Any) -> ItemPaged[ConfigurationSetting]
 
         """List the configuration settings stored in the configuration service, optionally filtered by
         label and accept_datetime
@@ -229,7 +228,7 @@ class AzureAppConfigurationClient:
         etag="*",
         match_condition=MatchConditions.Unconditionally,
         **kwargs
-    ):  # type: (str, Optional[str], Optional[str], Optional[MatchConditions], **Dict) -> ConfigurationSetting
+    ):  # type: (str, Optional[str], Optional[str], Optional[MatchConditions], **Any) -> ConfigurationSetting
 
         """Get the matched ConfigurationSetting from Azure App Configuration service
 
@@ -335,7 +334,7 @@ class AzureAppConfigurationClient:
         configuration_setting,
         match_condition=MatchConditions.Unconditionally,
         **kwargs
-    ):  # type: (ConfigurationSetting, Optional[MatchConditions], **Dict) -> ConfigurationSetting
+    ):  # type: (ConfigurationSetting, Optional[MatchConditions], **Any) -> ConfigurationSetting
 
         """Add or update a ConfigurationSetting.
         If the configuration setting identified by key and label does not exist, this is a create.
@@ -399,7 +398,7 @@ class AzureAppConfigurationClient:
 
     @distributed_trace
     def delete_configuration_setting(self, key, label=None, **kwargs):
-        # type: (str, Optional[str], **Dict) -> ConfigurationSetting
+        # type: (str, Optional[str], **Any) -> ConfigurationSetting
 
         """Delete a ConfigurationSetting if it exists
 
