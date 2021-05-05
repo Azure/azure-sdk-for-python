@@ -8,7 +8,6 @@ from typing import TYPE_CHECKING, Dict, Any
 
 from azure.core.pipeline.transport import HttpTransport
 
-from ._anon_auth_policy import AnonymousContainerRegistryChallengePolicy
 from ._authentication_policy import ContainerRegistryChallengePolicy
 from ._generated import ContainerRegistry
 from ._user_agent import USER_AGENT
@@ -34,8 +33,6 @@ class ContainerRegistryBaseClient(object):
     def __init__(self, endpoint, credential, **kwargs):
         # type: (str, TokenCredential, Dict[str, Any]) -> None
         auth_policy = ContainerRegistryChallengePolicy(credential, endpoint)
-        if not credential:
-            auth_policy = AnonymousContainerRegistryChallengePolicy(endpoint)
         self._client = ContainerRegistry(
             credential=credential,
             url=endpoint,

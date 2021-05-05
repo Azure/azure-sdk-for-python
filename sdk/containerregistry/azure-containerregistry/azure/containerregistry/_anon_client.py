@@ -27,10 +27,10 @@ if TYPE_CHECKING:
     from azure.core.credentials import TokenCredential
 
 
-class ContainerRegistryClient(ContainerRegistryBaseClient):
+class AnonymousContainerRegistryClient(ContainerRegistryBaseClient):
     def __init__(self, endpoint, **kwargs):
         # type: (str, TokenCredential, Dict[str, Any]) -> None
-        """Create a ContainerRegistryClient from an ACR endpoint and a credential
+        """Create a AnonymousContainerRegistryClient from an ACR endpoint and a credential
 
         :param str endpoint: An ACR endpoint
         :returns: None
@@ -39,21 +39,7 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
         if not endpoint.startswith("https://") and not endpoint.startswith("http://"):
             endpoint = "https://" + endpoint
         self._endpoint = endpoint
-        super(ContainerRegistryClient, self).__init__(endpoint=endpoint, **kwargs)
-
-    # @distributed_trace
-    # def delete_repository(self, repository_name, **kwargs):
-    #     # type: (str, Dict[str, Any]) -> DeleteRepositoryResult
-    #     """Delete a repository
-
-    #     :param str repository_name: The repository to delete
-    #     :returns: Object containing information about the deleted repository
-    #     :rtype: :class:`~azure.containerregistry.DeleteRepositoryResult`
-    #     :raises: :class:`~azure.core.exceptions.ResourceNotFoundError`
-    #     """
-    #     return DeleteRepositoryResult._from_generated(  # pylint: disable=protected-access
-    #         self._client.container_registry.delete_repository(repository_name, **kwargs)
-    #     )
+        super(AnonymousContainerRegistryClient, self).__init__(endpoint=endpoint, credential=None, **kwargs)
 
     @distributed_trace
     def list_repository_names(self, **kwargs):

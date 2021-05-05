@@ -7,8 +7,6 @@ import re
 import time
 from typing import TYPE_CHECKING, Dict, Any
 
-from azure.core.pipeline.policies import SansIOHTTPPolicy
-
 from ._exchange_client import ExchangeClientAuthenticationPolicy
 from ._generated import ContainerRegistry
 from ._helpers import _parse_challenge
@@ -18,7 +16,7 @@ if TYPE_CHECKING:
     from azure.core.credentials import TokenCredential
 
 
-class ACRExchangeClient(object):
+class AnonymousACRExchangeClient(object):
     """Class for handling oauth authentication requests
 
     :param endpoint: Azure Container Registry endpoint

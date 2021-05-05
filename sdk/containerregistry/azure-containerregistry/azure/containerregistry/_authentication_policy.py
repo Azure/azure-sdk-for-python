@@ -8,6 +8,7 @@ from typing import TYPE_CHECKING
 
 from azure.core.pipeline.policies import HTTPPolicy
 
+from ._anonymous_exchange_client import AnonymousACRExchangeClient
 from ._exchange_client import ACRExchangeClient
 from ._helpers import _enforce_https
 
@@ -24,7 +25,10 @@ class ContainerRegistryChallengePolicy(HTTPPolicy):
         # type: (TokenCredential, str) -> None
         super(ContainerRegistryChallengePolicy, self).__init__()
         self._credential = credential
-        self._exchange_client = ACRExchangeClient(endpoint, self._credential)
+        if not self._credential:
+            self._exchange_client = AnonymousACRExchangeClient(endpoint)
+        else:
+            self._exchange_client = ACRExchangeClient(endpoint, self._credential)
 
     def on_request(self, request):
         # type: (PipelineRequest) -> None
