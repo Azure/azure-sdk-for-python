@@ -473,8 +473,8 @@ class StorageTableTest(AzureTestCase, TableTestCase):
 
             # Assert
             assert len(entities) ==  2
-            assert entities[0]['text'] ==  u'hello'
-            assert entities[1]['text'] ==  u'hello'
+            assert entities[0]['text'] == u'hello'
+            assert entities[1]['text'] == u'hello'
         finally:
             self._delete_table(table=table, ts=tsc)
 
