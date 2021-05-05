@@ -80,6 +80,7 @@ class ServiceBusSharedKeyCredential(object):
             raise ValueError("No token scope provided.")
         return _generate_sas_token(scopes[0], self.policy, self.key)
 
+
 class ServiceBusAzureNamedKeyTokenCredentialAsync(object):
     """The named key credential used for authentication.
     :param credential: The AzureNamedKeyCredential that should be used.
@@ -98,7 +99,7 @@ class ServiceBusAzureNamedKeyTokenCredentialAsync(object):
         return _generate_sas_token(scopes[0], name, key)
 
 
-class ServiceBusAzureSasCredentialAsync(object):
+class ServiceBusAzureSasTokenCredentialAsync(object):
     """The shared access token credential used for authentication
     when AzureSasCredential is provided.
     :param azure_sas_credential: The credential to be used for authentication.
@@ -136,7 +137,7 @@ class BaseHandler:  # pylint:disable=too-many-instance-attributes
         )
         self._mgmt_target = "{}{}".format(self._entity_path, MANAGEMENT_PATH_SUFFIX)
         if isinstance(credential, AzureSasCredential):
-            self._credential = ServiceBusAzureSasCredentialAsync(credential)
+            self._credential = ServiceBusAzureSasTokenCredentialAsync(credential)
         elif isinstance(credential, AzureNamedKeyCredential):
             self._credential = ServiceBusAzureNamedKeyTokenCredentialAsync(credential) # type: ignore
         else:
