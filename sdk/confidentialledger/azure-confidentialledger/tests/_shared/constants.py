@@ -16,6 +16,9 @@ AwNnADBkAjAvOKkxJ1ApNgnUz2AwT6ke/5zITbKleCYhsA31ydmtxKzHknFvjezV
 G/fqaA8AvrxFiQ==
 -----END CERTIFICATE-----"""
 
+# Duplicate certificate from KeyVault.
+# https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/keyvault/azure-keyvault-certificates/tests/ca.crt
+# https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/keyvault/azure-keyvault-certificates/tests/ca.key
 USER_CERTIFICATE = """-----BEGIN CERTIFICATE-----
 MIIDazCCAlOgAwIBAgIUYju9zymmCCF7rCaROzfZs0pNgmkwDQYJKoZIhvcNAQEL
 BQAwRTELMAkGA1UEBhMCQVUxEzARBgNVBAgMClNvbWUtU3RhdGUxITAfBgNVBAoM
