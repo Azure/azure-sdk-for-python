@@ -84,8 +84,8 @@ except (SyntaxError, ImportError):
 from ._container_registry_enums import (
     ArtifactArchitecture,
     ArtifactOperatingSystem,
-    ManifestOrderBy,
-    TagOrderBy,
+    ManifestOrder,
+    TagOrder,
 )
 
 __all__ = [
@@ -128,6 +128,6 @@ __all__ = [
     'V2Manifest',
     'ArtifactArchitecture',
     'ArtifactOperatingSystem',
-    'ManifestOrderBy',
-    'TagOrderBy',
+    'ManifestOrder',
+    'TagOrder',
 ]

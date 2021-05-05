@@ -83,7 +83,7 @@ class ContainerRepository(ContainerRegistryBaseClient):
             call will return values after last lexically
         :paramtype last: str
         :keyword order_by: Query parameter for ordering by time ascending or descending
-        :paramtype order_by: :class:`~azure.containerregistry.ManifestOrderBy`
+        :paramtype order_by: :class:`~azure.containerregistry.ManifestOrder`
         :keyword results_per_page: Number of repositories to return per page
         :paramtype results_per_page: int
         :return: ItemPaged[:class:`~azure.containerregistry.ArtifactManifestProperties`]

@@ -57,7 +57,7 @@ class ArtifactOperatingSystem(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum
     SOLARIS = "solaris"
     WINDOWS = "windows"
 
-class ManifestOrderBy(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class ManifestOrder(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     """Sort options for ordering manifests in a collection.
     """
 
@@ -68,7 +68,7 @@ class ManifestOrderBy(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     #: Order manifest by LastUpdatedOn field, from least recently updated to most recently updated.
     LAST_UPDATED_ON_ASCENDING = "timeasc"
 
-class TagOrderBy(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class TagOrder(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
 
     #: Do not provide an orderby value in the request.
     NONE = "none"

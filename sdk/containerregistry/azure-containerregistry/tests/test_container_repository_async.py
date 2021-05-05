@@ -10,9 +10,9 @@ from azure.containerregistry import (
     DeleteRepositoryResult,
     RepositoryProperties,
     ContentProperties,
-    ManifestOrderBy,
+    ManifestOrder,
     ArtifactManifestProperties,
-    TagOrderBy,
+    TagOrder,
 )
 from azure.containerregistry.aio import ContainerRegistryClient, ContainerRepository
 from azure.core.exceptions import ResourceNotFoundError
@@ -90,7 +90,7 @@ class TestContainerRepository(AsyncContainerRegistryTestClass):
 
         prev_last_updated_on = None
         count = 0
-        async for artifact in client.list_manifests(order_by=ManifestOrderBy.LAST_UPDATE_TIME_DESCENDING):
+        async for artifact in client.list_manifests(order_by=ManifestOrder.LAST_UPDATE_TIME_DESCENDING):
             if prev_last_updated_on:
                 assert artifact.last_updated_on < prev_last_updated_on
             prev_last_updated_on = artifact.last_updated_on
@@ -104,7 +104,7 @@ class TestContainerRepository(AsyncContainerRegistryTestClass):
 
         prev_last_updated_on = None
         count = 0
-        async for artifact in client.list_manifests(order_by=ManifestOrderBy.LAST_UPDATE_TIME_ASCENDING):
+        async for artifact in client.list_manifests(order_by=ManifestOrder.LAST_UPDATE_TIME_ASCENDING):
             if prev_last_updated_on:
                 assert artifact.last_updated_on > prev_last_updated_on
             prev_last_updated_on = artifact.last_updated_on
