@@ -13,7 +13,7 @@ from msrest import Serializer
 
 if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
-    from typing import Any, Dict, IO, List, Optional, Union
+    from typing import Any, Dict, List, Optional, Union
 
 _SERIALIZER = Serializer()
 
@@ -22,9 +22,7 @@ def build_create_or_update_request(
     **kwargs  # type: Any
 ):
     # type: (...) -> HttpRequest
-    """Create or update an entity.
-
-    Create or update an entity in Atlas.
+    """Create or update an entity in Atlas.
     Existing entity is matched using its unique guid if supplied or by its unique attributes eg:
     qualifiedName.
     Map and array of collections are not well supported. E.g., array<array:code:`<int>`>,
@@ -36,8 +34,6 @@ def build_create_or_update_request(
     :paramtype json: Any
     :keyword content: Atlas entity with extended information.
     :paramtype content: Any
-    :keyword api_version: Api Version.
-    :paramtype api_version: str
     :return: Returns an :class:`~azure.purview.catalog.core.rest.HttpRequest` that you will pass to the client's `send_request` method.
      See https://aka.ms/azsdk/python/llcwiki for how to incorporate this response into your code flow.
     :rtype: ~azure.purview.catalog.core.rest.HttpRequest
@@ -45,6 +41,7 @@ def build_create_or_update_request(
     Example:
         .. code-block:: python
 
+    
             # JSON input template you can fill out and use as your `json` input.
             json = {
                 "entity": {
@@ -52,7 +49,6 @@ def build_create_or_update_request(
                         {
                             "entityGuid": "str (optional)",
                             "entityStatus": "str (optional)",
-                            "propagate": "bool (optional)",
                             "removePropagationsOnEntityDelete": "bool (optional)",
                             "source": "str (optional)",
                             "sourceDetails": {
@@ -108,18 +104,113 @@ def build_create_or_update_request(
                     "version": "float (optional)"
                 }
             }
+
+    
+            # response body for status code(s): 200
+            response_body == {
+                "guidAssignments": {
+                    "str": "str (optional)"
+                },
+                "mutatedEntities": {
+                    "str": [
+                        {
+                            "classificationNames": [
+                                "str (optional)"
+                            ],
+                            "classifications": [
+                                {
+                                    "entityGuid": "str (optional)",
+                                    "entityStatus": "str (optional)",
+                                    "removePropagationsOnEntityDelete": "bool (optional)",
+                                    "source": "str (optional)",
+                                    "sourceDetails": {
+                                        "str": "object (optional)"
+                                    },
+                                    "validityPeriods": [
+                                        {
+                                            "endTime": "str (optional)",
+                                            "startTime": "str (optional)",
+                                            "timeZone": "str (optional)"
+                                        }
+                                    ]
+                                }
+                            ],
+                            "displayText": "str (optional)",
+                            "guid": "str (optional)",
+                            "meaningNames": [
+                                "str (optional)"
+                            ],
+                            "meanings": [
+                                {
+                                    "confidence": "int (optional)",
+                                    "createdBy": "str (optional)",
+                                    "description": "str (optional)",
+                                    "displayText": "str (optional)",
+                                    "expression": "str (optional)",
+                                    "relationGuid": "str (optional)",
+                                    "source": "str (optional)",
+                                    "status": "str (optional)",
+                                    "steward": "str (optional)",
+                                    "termGuid": "str (optional)"
+                                }
+                            ],
+                            "status": "str (optional)"
+                        }
+                    ]
+                },
+                "partialUpdatedEntities": [
+                    {
+                        "classificationNames": [
+                            "str (optional)"
+                        ],
+                        "classifications": [
+                            {
+                                "entityGuid": "str (optional)",
+                                "entityStatus": "str (optional)",
+                                "removePropagationsOnEntityDelete": "bool (optional)",
+                                "source": "str (optional)",
+                                "sourceDetails": {
+                                    "str": "object (optional)"
+                                },
+                                "validityPeriods": [
+                                    {
+                                        "endTime": "str (optional)",
+                                        "startTime": "str (optional)",
+                                        "timeZone": "str (optional)"
+                                    }
+                                ]
+                            }
+                        ],
+                        "displayText": "str (optional)",
+                        "guid": "str (optional)",
+                        "meaningNames": [
+                            "str (optional)"
+                        ],
+                        "meanings": [
+                            {
+                                "confidence": "int (optional)",
+                                "createdBy": "str (optional)",
+                                "description": "str (optional)",
+                                "displayText": "str (optional)",
+                                "expression": "str (optional)",
+                                "relationGuid": "str (optional)",
+                                "source": "str (optional)",
+                                "status": "str (optional)",
+                                "steward": "str (optional)",
+                                "termGuid": "str (optional)"
+                            }
+                        ],
+                        "status": "str (optional)"
+                    }
+                ]
+            }
+
     """
-    api_version = kwargs.pop('api_version', "2020-12-01-preview")  # type: Optional[str]
     content_type = kwargs.pop("content_type", None)
     accept = "application/json"
 
     # Construct URL
     url = kwargs.pop("template_url", '/atlas/v2/entity')
-
-    # Construct parameters
-    query_parameters = kwargs.pop("params", {})  # type: Dict[str, Any]
-    if api_version is not None:
-        query_parameters['api-version'] = _SERIALIZER.query("api_version", api_version, 'str')
 
     # Construct headers
     header_parameters = kwargs.pop("headers", {})  # type: Dict[str, Any]
@@ -130,7 +221,6 @@ def build_create_or_update_request(
     return HttpRequest(
         method="POST",
         url=url,
-        params=query_parameters,
         headers=header_parameters,
         **kwargs
     )
@@ -141,8 +231,6 @@ def build_get_by_guids_request(
 ):
     # type: (...) -> HttpRequest
     """List entities in bulk identified by its GUIDs.
-
-    List entities in bulk identified by its GUIDs.
 
     See https://aka.ms/azsdk/python/llcwiki for how to incorporate this request builder into your code flow.
 
@@ -155,67 +243,6 @@ def build_get_by_guids_request(
     :keyword exclude_relationship_types: An array of the relationship types need to be excluded
      from the response.
     :paramtype exclude_relationship_types: list[str]
-    :keyword api_version: Api Version.
-    :paramtype api_version: str
-    :return: Returns an :class:`~azure.purview.catalog.core.rest.HttpRequest` that you will pass to the client's `send_request` method.
-     See https://aka.ms/azsdk/python/llcwiki for how to incorporate this response into your code flow.
-    :rtype: ~azure.purview.catalog.core.rest.HttpRequest
-    """
-    guid = kwargs.pop('guid')  # type: List[str]
-    min_ext_info = kwargs.pop('min_ext_info', False)  # type: Optional[bool]
-    ignore_relationships = kwargs.pop('ignore_relationships', False)  # type: Optional[bool]
-    exclude_relationship_types = kwargs.pop('exclude_relationship_types', None)  # type: Optional[List[str]]
-    api_version = kwargs.pop('api_version', "2020-12-01-preview")  # type: Optional[str]
-    accept = "application/json"
-
-    # Construct URL
-    url = kwargs.pop("template_url", '/atlas/v2/entity/bulk')
-
-    # Construct parameters
-    query_parameters = kwargs.pop("params", {})  # type: Dict[str, Any]
-    query_parameters['guid'] = [_SERIALIZER.query("guid", q, 'str') if q is not None else '' for q in guid]
-    if min_ext_info is not None:
-        query_parameters['minExtInfo'] = _SERIALIZER.query("min_ext_info", min_ext_info, 'bool')
-    if ignore_relationships is not None:
-        query_parameters['ignoreRelationships'] = _SERIALIZER.query("ignore_relationships", ignore_relationships, 'bool')
-    if exclude_relationship_types is not None:
-        query_parameters['excludeRelationshipTypes'] = [_SERIALIZER.query("exclude_relationship_types", q, 'str') if q is not None else '' for q in exclude_relationship_types]
-    if api_version is not None:
-        query_parameters['api-version'] = _SERIALIZER.query("api_version", api_version, 'str')
-
-    # Construct headers
-    header_parameters = kwargs.pop("headers", {})  # type: Dict[str, Any]
-    header_parameters['Accept'] = _SERIALIZER.header("accept", accept, 'str')
-
-    return HttpRequest(
-        method="GET",
-        url=url,
-        params=query_parameters,
-        headers=header_parameters,
-        **kwargs
-    )
-
-
-def build_create_or_update_bulk_request(
-    **kwargs  # type: Any
-):
-    # type: (...) -> HttpRequest
-    """Create or update entities in bulk.
-
-    Create or update entities in Atlas in bulk.
-    Existing entity is matched using its unique guid if supplied or by its unique attributes eg:
-    qualifiedName.
-    Map and array of collections are not well supported. E.g., array<array:code:`<int>`>,
-    array<map<string, int>>.
-
-    See https://aka.ms/azsdk/python/llcwiki for how to incorporate this request builder into your code flow.
-
-    :keyword json: An array of entities to create or update.
-    :paramtype json: Any
-    :keyword content: An array of entities to create or update.
-    :paramtype content: Any
-    :keyword api_version: Api Version.
-    :paramtype api_version: str
     :return: Returns an :class:`~azure.purview.catalog.core.rest.HttpRequest` that you will pass to the client's `send_request` method.
      See https://aka.ms/azsdk/python/llcwiki for how to incorporate this response into your code flow.
     :rtype: ~azure.purview.catalog.core.rest.HttpRequest
@@ -223,15 +250,15 @@ def build_create_or_update_bulk_request(
     Example:
         .. code-block:: python
 
-            # JSON input template you can fill out and use as your `json` input.
-            json = {
+    
+            # response body for status code(s): 200
+            response_body == {
                 "entities": [
                     {
                         "classifications": [
                             {
                                 "entityGuid": "str (optional)",
                                 "entityStatus": "str (optional)",
-                                "propagate": "bool (optional)",
                                 "removePropagationsOnEntityDelete": "bool (optional)",
                                 "source": "str (optional)",
                                 "sourceDetails": {
@@ -288,9 +315,12 @@ def build_create_or_update_bulk_request(
                     }
                 ]
             }
+
     """
-    api_version = kwargs.pop('api_version', "2020-12-01-preview")  # type: Optional[str]
-    content_type = kwargs.pop("content_type", None)
+    guid = kwargs.pop('guid')  # type: List[str]
+    min_ext_info = kwargs.pop('min_ext_info', False)  # type: Optional[bool]
+    ignore_relationships = kwargs.pop('ignore_relationships', False)  # type: Optional[bool]
+    exclude_relationship_types = kwargs.pop('exclude_relationship_types', None)  # type: Optional[List[str]]
     accept = "application/json"
 
     # Construct URL
@@ -298,8 +328,222 @@ def build_create_or_update_bulk_request(
 
     # Construct parameters
     query_parameters = kwargs.pop("params", {})  # type: Dict[str, Any]
-    if api_version is not None:
-        query_parameters['api-version'] = _SERIALIZER.query("api_version", api_version, 'str')
+    query_parameters['guid'] = [_SERIALIZER.query("guid", q, 'str') if q is not None else '' for q in guid]
+    if min_ext_info is not None:
+        query_parameters['minExtInfo'] = _SERIALIZER.query("min_ext_info", min_ext_info, 'bool')
+    if ignore_relationships is not None:
+        query_parameters['ignoreRelationships'] = _SERIALIZER.query("ignore_relationships", ignore_relationships, 'bool')
+    if exclude_relationship_types is not None:
+        query_parameters['excludeRelationshipTypes'] = [_SERIALIZER.query("exclude_relationship_types", q, 'str') if q is not None else '' for q in exclude_relationship_types]
+
+    # Construct headers
+    header_parameters = kwargs.pop("headers", {})  # type: Dict[str, Any]
+    header_parameters['Accept'] = _SERIALIZER.header("accept", accept, 'str')
+
+    return HttpRequest(
+        method="GET",
+        url=url,
+        params=query_parameters,
+        headers=header_parameters,
+        **kwargs
+    )
+
+
+def build_create_or_update_bulk_request(
+    **kwargs  # type: Any
+):
+    # type: (...) -> HttpRequest
+    """Create or update entities in Atlas in bulk.
+    Existing entity is matched using its unique guid if supplied or by its unique attributes eg:
+    qualifiedName.
+    Map and array of collections are not well supported. E.g., array<array:code:`<int>`>,
+    array<map<string, int>>.
+
+    See https://aka.ms/azsdk/python/llcwiki for how to incorporate this request builder into your code flow.
+
+    :keyword json: An array of entities to create or update.
+    :paramtype json: Any
+    :keyword content: An array of entities to create or update.
+    :paramtype content: Any
+    :return: Returns an :class:`~azure.purview.catalog.core.rest.HttpRequest` that you will pass to the client's `send_request` method.
+     See https://aka.ms/azsdk/python/llcwiki for how to incorporate this response into your code flow.
+    :rtype: ~azure.purview.catalog.core.rest.HttpRequest
+
+    Example:
+        .. code-block:: python
+
+    
+            # JSON input template you can fill out and use as your `json` input.
+            json = {
+                "entities": [
+                    {
+                        "classifications": [
+                            {
+                                "entityGuid": "str (optional)",
+                                "entityStatus": "str (optional)",
+                                "removePropagationsOnEntityDelete": "bool (optional)",
+                                "source": "str (optional)",
+                                "sourceDetails": {
+                                    "str": "object (optional)"
+                                },
+                                "validityPeriods": [
+                                    {
+                                        "endTime": "str (optional)",
+                                        "startTime": "str (optional)",
+                                        "timeZone": "str (optional)"
+                                    }
+                                ]
+                            }
+                        ],
+                        "contacts": {
+                            "str": [
+                                {
+                                    "id": "str (optional)",
+                                    "info": "str (optional)"
+                                }
+                            ]
+                        },
+                        "createTime": "float (optional)",
+                        "createdBy": "str (optional)",
+                        "guid": "str (optional)",
+                        "homeId": "str (optional)",
+                        "meanings": [
+                            {
+                                "confidence": "int (optional)",
+                                "createdBy": "str (optional)",
+                                "description": "str (optional)",
+                                "displayText": "str (optional)",
+                                "expression": "str (optional)",
+                                "relationGuid": "str (optional)",
+                                "source": "str (optional)",
+                                "status": "str (optional)",
+                                "steward": "str (optional)",
+                                "termGuid": "str (optional)"
+                            }
+                        ],
+                        "provenanceType": "float (optional)",
+                        "proxy": "bool (optional)",
+                        "relationshipAttributes": {
+                            "str": "object (optional)"
+                        },
+                        "source": "str (optional)",
+                        "sourceDetails": {
+                            "str": "object (optional)"
+                        },
+                        "status": "str (optional)",
+                        "updateTime": "float (optional)",
+                        "updatedBy": "str (optional)",
+                        "version": "float (optional)"
+                    }
+                ]
+            }
+
+    
+            # response body for status code(s): 200
+            response_body == {
+                "guidAssignments": {
+                    "str": "str (optional)"
+                },
+                "mutatedEntities": {
+                    "str": [
+                        {
+                            "classificationNames": [
+                                "str (optional)"
+                            ],
+                            "classifications": [
+                                {
+                                    "entityGuid": "str (optional)",
+                                    "entityStatus": "str (optional)",
+                                    "removePropagationsOnEntityDelete": "bool (optional)",
+                                    "source": "str (optional)",
+                                    "sourceDetails": {
+                                        "str": "object (optional)"
+                                    },
+                                    "validityPeriods": [
+                                        {
+                                            "endTime": "str (optional)",
+                                            "startTime": "str (optional)",
+                                            "timeZone": "str (optional)"
+                                        }
+                                    ]
+                                }
+                            ],
+                            "displayText": "str (optional)",
+                            "guid": "str (optional)",
+                            "meaningNames": [
+                                "str (optional)"
+                            ],
+                            "meanings": [
+                                {
+                                    "confidence": "int (optional)",
+                                    "createdBy": "str (optional)",
+                                    "description": "str (optional)",
+                                    "displayText": "str (optional)",
+                                    "expression": "str (optional)",
+                                    "relationGuid": "str (optional)",
+                                    "source": "str (optional)",
+                                    "status": "str (optional)",
+                                    "steward": "str (optional)",
+                                    "termGuid": "str (optional)"
+                                }
+                            ],
+                            "status": "str (optional)"
+                        }
+                    ]
+                },
+                "partialUpdatedEntities": [
+                    {
+                        "classificationNames": [
+                            "str (optional)"
+                        ],
+                        "classifications": [
+                            {
+                                "entityGuid": "str (optional)",
+                                "entityStatus": "str (optional)",
+                                "removePropagationsOnEntityDelete": "bool (optional)",
+                                "source": "str (optional)",
+                                "sourceDetails": {
+                                    "str": "object (optional)"
+                                },
+                                "validityPeriods": [
+                                    {
+                                        "endTime": "str (optional)",
+                                        "startTime": "str (optional)",
+                                        "timeZone": "str (optional)"
+                                    }
+                                ]
+                            }
+                        ],
+                        "displayText": "str (optional)",
+                        "guid": "str (optional)",
+                        "meaningNames": [
+                            "str (optional)"
+                        ],
+                        "meanings": [
+                            {
+                                "confidence": "int (optional)",
+                                "createdBy": "str (optional)",
+                                "description": "str (optional)",
+                                "displayText": "str (optional)",
+                                "expression": "str (optional)",
+                                "relationGuid": "str (optional)",
+                                "source": "str (optional)",
+                                "status": "str (optional)",
+                                "steward": "str (optional)",
+                                "termGuid": "str (optional)"
+                            }
+                        ],
+                        "status": "str (optional)"
+                    }
+                ]
+            }
+
+    """
+    content_type = kwargs.pop("content_type", None)
+    accept = "application/json"
+
+    # Construct URL
+    url = kwargs.pop("template_url", '/atlas/v2/entity/bulk')
 
     # Construct headers
     header_parameters = kwargs.pop("headers", {})  # type: Dict[str, Any]
@@ -310,32 +554,130 @@ def build_create_or_update_bulk_request(
     return HttpRequest(
         method="POST",
         url=url,
-        params=query_parameters,
         headers=header_parameters,
         **kwargs
     )
 
 
-def build_bulk_delete_request(
+def build_delete_by_guids_request(
     **kwargs  # type: Any
 ):
     # type: (...) -> HttpRequest
     """Delete a list of entities in bulk identified by their GUIDs or unique attributes.
 
-    Delete a list of entities in bulk identified by their GUIDs or unique attributes.
-
     See https://aka.ms/azsdk/python/llcwiki for how to incorporate this request builder into your code flow.
 
     :keyword guid: An array of GUIDs of entities to delete.
     :paramtype guid: list[str]
-    :keyword api_version: Api Version.
-    :paramtype api_version: str
     :return: Returns an :class:`~azure.purview.catalog.core.rest.HttpRequest` that you will pass to the client's `send_request` method.
      See https://aka.ms/azsdk/python/llcwiki for how to incorporate this response into your code flow.
     :rtype: ~azure.purview.catalog.core.rest.HttpRequest
+
+    Example:
+        .. code-block:: python
+
+    
+            # response body for status code(s): 200
+            response_body == {
+                "guidAssignments": {
+                    "str": "str (optional)"
+                },
+                "mutatedEntities": {
+                    "str": [
+                        {
+                            "classificationNames": [
+                                "str (optional)"
+                            ],
+                            "classifications": [
+                                {
+                                    "entityGuid": "str (optional)",
+                                    "entityStatus": "str (optional)",
+                                    "removePropagationsOnEntityDelete": "bool (optional)",
+                                    "source": "str (optional)",
+                                    "sourceDetails": {
+                                        "str": "object (optional)"
+                                    },
+                                    "validityPeriods": [
+                                        {
+                                            "endTime": "str (optional)",
+                                            "startTime": "str (optional)",
+                                            "timeZone": "str (optional)"
+                                        }
+                                    ]
+                                }
+                            ],
+                            "displayText": "str (optional)",
+                            "guid": "str (optional)",
+                            "meaningNames": [
+                                "str (optional)"
+                            ],
+                            "meanings": [
+                                {
+                                    "confidence": "int (optional)",
+                                    "createdBy": "str (optional)",
+                                    "description": "str (optional)",
+                                    "displayText": "str (optional)",
+                                    "expression": "str (optional)",
+                                    "relationGuid": "str (optional)",
+                                    "source": "str (optional)",
+                                    "status": "str (optional)",
+                                    "steward": "str (optional)",
+                                    "termGuid": "str (optional)"
+                                }
+                            ],
+                            "status": "str (optional)"
+                        }
+                    ]
+                },
+                "partialUpdatedEntities": [
+                    {
+                        "classificationNames": [
+                            "str (optional)"
+                        ],
+                        "classifications": [
+                            {
+                                "entityGuid": "str (optional)",
+                                "entityStatus": "str (optional)",
+                                "removePropagationsOnEntityDelete": "bool (optional)",
+                                "source": "str (optional)",
+                                "sourceDetails": {
+                                    "str": "object (optional)"
+                                },
+                                "validityPeriods": [
+                                    {
+                                        "endTime": "str (optional)",
+                                        "startTime": "str (optional)",
+                                        "timeZone": "str (optional)"
+                                    }
+                                ]
+                            }
+                        ],
+                        "displayText": "str (optional)",
+                        "guid": "str (optional)",
+                        "meaningNames": [
+                            "str (optional)"
+                        ],
+                        "meanings": [
+                            {
+                                "confidence": "int (optional)",
+                                "createdBy": "str (optional)",
+                                "description": "str (optional)",
+                                "displayText": "str (optional)",
+                                "expression": "str (optional)",
+                                "relationGuid": "str (optional)",
+                                "source": "str (optional)",
+                                "status": "str (optional)",
+                                "steward": "str (optional)",
+                                "termGuid": "str (optional)"
+                            }
+                        ],
+                        "status": "str (optional)"
+                    }
+                ]
+            }
+
     """
     guid = kwargs.pop('guid')  # type: List[str]
-    api_version = kwargs.pop('api_version', "2020-12-01-preview")  # type: Optional[str]
     accept = "application/json"
 
     # Construct URL
@@ -344,8 +686,6 @@ def build_bulk_delete_request(
     # Construct parameters
     query_parameters = kwargs.pop("params", {})  # type: Dict[str, Any]
     query_parameters['guid'] = [_SERIALIZER.query("guid", q, 'str') if q is not None else '' for q in guid]
-    if api_version is not None:
-        query_parameters['api-version'] = _SERIALIZER.query("api_version", api_version, 'str')
 
     # Construct headers
     header_parameters = kwargs.pop("headers", {})  # type: Dict[str, Any]
@@ -366,16 +706,12 @@ def build_add_classification_request(
     # type: (...) -> HttpRequest
     """Associate a classification to multiple entities in bulk.
 
-    Associate a classification to multiple entities in bulk.
-
     See https://aka.ms/azsdk/python/llcwiki for how to incorporate this request builder into your code flow.
 
     :keyword json: The request to associate a classification to multiple entities.
     :paramtype json: Any
     :keyword content: The request to associate a classification to multiple entities.
     :paramtype content: Any
-    :keyword api_version: Api Version.
-    :paramtype api_version: str
     :return: Returns an :class:`~azure.purview.catalog.core.rest.HttpRequest` that you will pass to the client's `send_request` method.
      See https://aka.ms/azsdk/python/llcwiki for how to incorporate this response into your code flow.
     :rtype: ~azure.purview.catalog.core.rest.HttpRequest
@@ -383,12 +719,12 @@ def build_add_classification_request(
     Example:
         .. code-block:: python
 
+    
             # JSON input template you can fill out and use as your `json` input.
             json = {
                 "classification": {
                     "entityGuid": "str (optional)",
                     "entityStatus": "str (optional)",
-                    "propagate": "bool (optional)",
                     "removePropagationsOnEntityDelete": "bool (optional)",
                     "source": "str (optional)",
                     "sourceDetails": {
@@ -406,17 +742,12 @@ def build_add_classification_request(
                     "str (optional)"
                 ]
             }
+
     """
-    api_version = kwargs.pop('api_version', "2020-12-01-preview")  # type: Optional[str]
     content_type = kwargs.pop("content_type", None)
 
     # Construct URL
     url = kwargs.pop("template_url", '/atlas/v2/entity/bulk/classification')
-
-    # Construct parameters
-    query_parameters = kwargs.pop("params", {})  # type: Dict[str, Any]
-    if api_version is not None:
-        query_parameters['api-version'] = _SERIALIZER.query("api_version", api_version, 'str')
 
     # Construct headers
     header_parameters = kwargs.pop("headers", {})  # type: Dict[str, Any]
@@ -426,7 +757,6 @@ def build_add_classification_request(
     return HttpRequest(
         method="POST",
         url=url,
-        params=query_parameters,
         headers=header_parameters,
         **kwargs
     )
@@ -439,8 +769,6 @@ def build_get_by_id_request(
     # type: (...) -> HttpRequest
     """Get complete definition of an entity given its GUID.
 
-    Get complete definition of an entity given its GUID.
-
     See https://aka.ms/azsdk/python/llcwiki for how to incorporate this request builder into your code flow.
 
     :param guid: The globally unique identifier of the entity.
@@ -452,494 +780,18 @@ def build_get_by_id_request(
     :return: Returns an :class:`~azure.purview.catalog.core.rest.HttpRequest` that you will pass to the client's `send_request` method.
      See https://aka.ms/azsdk/python/llcwiki for how to incorporate this response into your code flow.
     :rtype: ~azure.purview.catalog.core.rest.HttpRequest
-    """
-    min_ext_info = kwargs.pop('min_ext_info', False)  # type: Optional[bool]
-    ignore_relationships = kwargs.pop('ignore_relationships', False)  # type: Optional[bool]
-    accept = "application/json"
-
-    # Construct URL
-    url = kwargs.pop("template_url", '/atlas/v2/entity/guid/{guid}')
-    path_format_arguments = {
-        'guid': _SERIALIZER.url("guid", guid, 'str', max_length=4096, min_length=1),
-    }
-    url = _format_url_section(url, **path_format_arguments)
-
-    # Construct parameters
-    query_parameters = kwargs.pop("params", {})  # type: Dict[str, Any]
-    if min_ext_info is not None:
-        query_parameters['minExtInfo'] = _SERIALIZER.query("min_ext_info", min_ext_info, 'bool')
-    if ignore_relationships is not None:
-        query_parameters['ignoreRelationships'] = _SERIALIZER.query("ignore_relationships", ignore_relationships, 'bool')
-
-    # Construct headers
-    header_parameters = kwargs.pop("headers", {})  # type: Dict[str, Any]
-    header_parameters['Accept'] = _SERIALIZER.header("accept", accept, 'str')
-
-    return HttpRequest(
-        method="GET",
-        url=url,
-        params=query_parameters,
-        headers=header_parameters,
-        **kwargs
-    )
-
-
-def build_partial_update_entity_attr_by_guid_request(
-    guid,  # type: str
-    **kwargs  # type: Any
-):
-    # type: (...) -> HttpRequest
-    """Update entity partially - Create/Update entity attribute identified by its GUID.
-
-    Update entity partially - create or update entity attribute identified by its GUID.
-    Supports only primitive attribute type and entity references.
-    It does not support updating complex types like arrays, and maps.
-    Null updates are not possible.
-
-    See https://aka.ms/azsdk/python/llcwiki for how to incorporate this request builder into your code flow.
-
-    :param guid: The globally unique identifier of the entity.
-    :type guid: str
-    :keyword json: The value of the attribute.
-    :paramtype json: Any
-    :keyword content: The value of the attribute.
-    :paramtype content: object
-    :keyword name: The name of the attribute.
-    :paramtype name: str
-    :return: Returns an :class:`~azure.purview.catalog.core.rest.HttpRequest` that you will pass to the client's `send_request` method.
-     See https://aka.ms/azsdk/python/llcwiki for how to incorporate this response into your code flow.
-    :rtype: ~azure.purview.catalog.core.rest.HttpRequest
 
     Example:
         .. code-block:: python
 
-            # JSON input template you can fill out and use as your `json` input.
-            json = "object (optional)"
-    """
-    name = kwargs.pop('name')  # type: str
-    content_type = kwargs.pop("content_type", None)
-    accept = "application/json"
-
-    # Construct URL
-    url = kwargs.pop("template_url", '/atlas/v2/entity/guid/{guid}')
-    path_format_arguments = {
-        'guid': _SERIALIZER.url("guid", guid, 'str', max_length=4096, min_length=1),
-    }
-    url = _format_url_section(url, **path_format_arguments)
-
-    # Construct parameters
-    query_parameters = kwargs.pop("params", {})  # type: Dict[str, Any]
-    query_parameters['name'] = _SERIALIZER.query("name", name, 'str')
-
-    # Construct headers
-    header_parameters = kwargs.pop("headers", {})  # type: Dict[str, Any]
-    if content_type is not None:
-        header_parameters['Content-Type'] = _SERIALIZER.header("content_type", content_type, 'str')
-    header_parameters['Accept'] = _SERIALIZER.header("accept", accept, 'str')
-
-    return HttpRequest(
-        method="PUT",
-        url=url,
-        params=query_parameters,
-        headers=header_parameters,
-        **kwargs
-    )
-
-
-def build_delete_by_guid_request(
-    guid,  # type: str
-    **kwargs  # type: Any
-):
-    # type: (...) -> HttpRequest
-    """Delete an entity identified by its GUID.
-
-    Delete an entity identified by its GUID.
-
-    See https://aka.ms/azsdk/python/llcwiki for how to incorporate this request builder into your code flow.
-
-    :param guid: The globally unique identifier of the entity.
-    :type guid: str
-    :return: Returns an :class:`~azure.purview.catalog.core.rest.HttpRequest` that you will pass to the client's `send_request` method.
-     See https://aka.ms/azsdk/python/llcwiki for how to incorporate this response into your code flow.
-    :rtype: ~azure.purview.catalog.core.rest.HttpRequest
-    """
-    accept = "application/json"
-
-    # Construct URL
-    url = kwargs.pop("template_url", '/atlas/v2/entity/guid/{guid}')
-    path_format_arguments = {
-        'guid': _SERIALIZER.url("guid", guid, 'str', max_length=4096, min_length=1),
-    }
-    url = _format_url_section(url, **path_format_arguments)
-
-    # Construct headers
-    header_parameters = kwargs.pop("headers", {})  # type: Dict[str, Any]
-    header_parameters['Accept'] = _SERIALIZER.header("accept", accept, 'str')
-
-    return HttpRequest(
-        method="DELETE",
-        url=url,
-        headers=header_parameters,
-        **kwargs
-    )
-
-
-def build_get_classification_request(
-    guid,  # type: str
-    classification_name,  # type: str
-    **kwargs  # type: Any
-):
-    # type: (...) -> HttpRequest
-    """List classifications for a given entity represented by a GUID.
-
-    List classifications for a given entity represented by a GUID.
-
-    See https://aka.ms/azsdk/python/llcwiki for how to incorporate this request builder into your code flow.
-
-    :param guid: The globally unique identifier of the entity.
-    :type guid: str
-    :param classification_name: The name of the classification.
-    :type classification_name: str
-    :return: Returns an :class:`~azure.purview.catalog.core.rest.HttpRequest` that you will pass to the client's `send_request` method.
-     See https://aka.ms/azsdk/python/llcwiki for how to incorporate this response into your code flow.
-    :rtype: ~azure.purview.catalog.core.rest.HttpRequest
-    """
-    accept = "application/json"
-
-    # Construct URL
-    url = kwargs.pop("template_url", '/atlas/v2/entity/guid/{guid}/classification/{classificationName}')
-    path_format_arguments = {
-        'guid': _SERIALIZER.url("guid", guid, 'str', max_length=4096, min_length=1),
-        'classificationName': _SERIALIZER.url("classification_name", classification_name, 'str', max_length=4096, min_length=1),
-    }
-    url = _format_url_section(url, **path_format_arguments)
-
-    # Construct headers
-    header_parameters = kwargs.pop("headers", {})  # type: Dict[str, Any]
-    header_parameters['Accept'] = _SERIALIZER.header("accept", accept, 'str')
-
-    return HttpRequest(
-        method="GET",
-        url=url,
-        headers=header_parameters,
-        **kwargs
-    )
-
-
-def build_delete_classification_request(
-    guid,  # type: str
-    classification_name,  # type: str
-    **kwargs  # type: Any
-):
-    # type: (...) -> HttpRequest
-    """Delete a given classification from an existing entity represented by a GUID.
-
-    Delete a given classification from an existing entity represented by a GUID.
-
-    See https://aka.ms/azsdk/python/llcwiki for how to incorporate this request builder into your code flow.
-
-    :param guid: The globally unique identifier of the entity.
-    :type guid: str
-    :param classification_name: The name of the classification.
-    :type classification_name: str
-    :return: Returns an :class:`~azure.purview.catalog.core.rest.HttpRequest` that you will pass to the client's `send_request` method.
-     See https://aka.ms/azsdk/python/llcwiki for how to incorporate this response into your code flow.
-    :rtype: ~azure.purview.catalog.core.rest.HttpRequest
-    """
-
-    # Construct URL
-    url = kwargs.pop("template_url", '/atlas/v2/entity/guid/{guid}/classification/{classificationName}')
-    path_format_arguments = {
-        'guid': _SERIALIZER.url("guid", guid, 'str', max_length=4096, min_length=1),
-        'classificationName': _SERIALIZER.url("classification_name", classification_name, 'str', max_length=4096, min_length=1),
-    }
-    url = _format_url_section(url, **path_format_arguments)
-
-    return HttpRequest(
-        method="DELETE",
-        url=url,
-        **kwargs
-    )
-
-
-def build_get_classifications_request(
-    guid,  # type: str
-    **kwargs  # type: Any
-):
-    # type: (...) -> HttpRequest
-    """List classifications for a given entity represented by a GUID.
-
-    List classifications for a given entity represented by a GUID.
-
-    See https://aka.ms/azsdk/python/llcwiki for how to incorporate this request builder into your code flow.
-
-    :param guid: The globally unique identifier of the entity.
-    :type guid: str
-    :return: Returns an :class:`~azure.purview.catalog.core.rest.HttpRequest` that you will pass to the client's `send_request` method.
-     See https://aka.ms/azsdk/python/llcwiki for how to incorporate this response into your code flow.
-    :rtype: ~azure.purview.catalog.core.rest.HttpRequest
-    """
-    accept = "application/json"
-
-    # Construct URL
-    url = kwargs.pop("template_url", '/atlas/v2/entity/guid/{guid}/classifications')
-    path_format_arguments = {
-        'guid': _SERIALIZER.url("guid", guid, 'str', max_length=4096, min_length=1),
-    }
-    url = _format_url_section(url, **path_format_arguments)
-
-    # Construct headers
-    header_parameters = kwargs.pop("headers", {})  # type: Dict[str, Any]
-    header_parameters['Accept'] = _SERIALIZER.header("accept", accept, 'str')
-
-    return HttpRequest(
-        method="GET",
-        url=url,
-        headers=header_parameters,
-        **kwargs
-    )
-
-
-def build_add_classifications_request(
-    guid,  # type: str
-    **kwargs  # type: Any
-):
-    # type: (...) -> HttpRequest
-    """Add classifications to an existing entity represented by a GUID.
-
-    Add classifications to an existing entity represented by a GUID.
-
-    See https://aka.ms/azsdk/python/llcwiki for how to incorporate this request builder into your code flow.
-
-    :param guid: The globally unique identifier of the entity.
-    :type guid: str
-    :keyword json: An array of classifications to be added.
-    :paramtype json: Any
-    :keyword content: An array of classifications to be added.
-    :paramtype content: Any
-    :return: Returns an :class:`~azure.purview.catalog.core.rest.HttpRequest` that you will pass to the client's `send_request` method.
-     See https://aka.ms/azsdk/python/llcwiki for how to incorporate this response into your code flow.
-    :rtype: ~azure.purview.catalog.core.rest.HttpRequest
-
-    Example:
-        .. code-block:: python
-
-            # JSON input template you can fill out and use as your `json` input.
-            json = [
-                {
-                    "entityGuid": "str (optional)",
-                    "entityStatus": "str (optional)",
-                    "propagate": "bool (optional)",
-                    "removePropagationsOnEntityDelete": "bool (optional)",
-                    "source": "str (optional)",
-                    "sourceDetails": {
-                        "str": "object (optional)"
-                    },
-                    "validityPeriods": [
-                        {
-                            "endTime": "str (optional)",
-                            "startTime": "str (optional)",
-                            "timeZone": "str (optional)"
-                        }
-                    ]
-                }
-            ]
-    """
-    content_type = kwargs.pop("content_type", None)
-
-    # Construct URL
-    url = kwargs.pop("template_url", '/atlas/v2/entity/guid/{guid}/classifications')
-    path_format_arguments = {
-        'guid': _SERIALIZER.url("guid", guid, 'str', max_length=4096, min_length=1),
-    }
-    url = _format_url_section(url, **path_format_arguments)
-
-    # Construct headers
-    header_parameters = kwargs.pop("headers", {})  # type: Dict[str, Any]
-    if content_type is not None:
-        header_parameters['Content-Type'] = _SERIALIZER.header("content_type", content_type, 'str')
-
-    return HttpRequest(
-        method="POST",
-        url=url,
-        headers=header_parameters,
-        **kwargs
-    )
-
-
-def build_update_classifications_request(
-    guid,  # type: str
-    **kwargs  # type: Any
-):
-    # type: (...) -> HttpRequest
-    """Update classifications to an existing entity represented by a guid.
-
-    Update classifications to an existing entity represented by a guid.
-
-    See https://aka.ms/azsdk/python/llcwiki for how to incorporate this request builder into your code flow.
-
-    :param guid: The globally unique identifier of the entity.
-    :type guid: str
-    :keyword json: An array of classifications to be updated.
-    :paramtype json: Any
-    :keyword content: An array of classifications to be updated.
-    :paramtype content: Any
-    :return: Returns an :class:`~azure.purview.catalog.core.rest.HttpRequest` that you will pass to the client's `send_request` method.
-     See https://aka.ms/azsdk/python/llcwiki for how to incorporate this response into your code flow.
-    :rtype: ~azure.purview.catalog.core.rest.HttpRequest
-
-    Example:
-        .. code-block:: python
-
-            # JSON input template you can fill out and use as your `json` input.
-            json = [
-                {
-                    "entityGuid": "str (optional)",
-                    "entityStatus": "str (optional)",
-                    "propagate": "bool (optional)",
-                    "removePropagationsOnEntityDelete": "bool (optional)",
-                    "source": "str (optional)",
-                    "sourceDetails": {
-                        "str": "object (optional)"
-                    },
-                    "validityPeriods": [
-                        {
-                            "endTime": "str (optional)",
-                            "startTime": "str (optional)",
-                            "timeZone": "str (optional)"
-                        }
-                    ]
-                }
-            ]
-    """
-    content_type = kwargs.pop("content_type", None)
-
-    # Construct URL
-    url = kwargs.pop("template_url", '/atlas/v2/entity/guid/{guid}/classifications')
-    path_format_arguments = {
-        'guid': _SERIALIZER.url("guid", guid, 'str', max_length=4096, min_length=1),
-    }
-    url = _format_url_section(url, **path_format_arguments)
-
-    # Construct headers
-    header_parameters = kwargs.pop("headers", {})  # type: Dict[str, Any]
-    if content_type is not None:
-        header_parameters['Content-Type'] = _SERIALIZER.header("content_type", content_type, 'str')
-
-    return HttpRequest(
-        method="PUT",
-        url=url,
-        headers=header_parameters,
-        **kwargs
-    )
-
-
-def build_get_by_unique_attributes_request(
-    type_name,  # type: str
-    **kwargs  # type: Any
-):
-    # type: (...) -> HttpRequest
-    """Get complete definition of an entity given its type and unique attribute.
-
-    Get complete definition of an entity given its type and unique attribute.
-    In addition to the typeName path parameter, attribute key-value pair(s) can be provided in the
-    following format:
-    attr:\:code:`<attrName>`=:code:`<attrValue>`.
-    NOTE: The attrName and attrValue should be unique across entities, eg. qualifiedName.
-    The REST request would look something like this:
-    GET /v2/entity/uniqueAttribute/type/aType?attr:aTypeAttribute=someValue.
-
-    See https://aka.ms/azsdk/python/llcwiki for how to incorporate this request builder into your code flow.
-
-    :param type_name: The name of the type.
-    :type type_name: str
-    :keyword min_ext_info: Whether to return minimal information for referred entities.
-    :paramtype min_ext_info: bool
-    :keyword ignore_relationships: Whether to ignore relationship attributes.
-    :paramtype ignore_relationships: bool
-    :keyword attr_qualified_name: The qualified name of the entity.
-    :paramtype attr_qualified_name: str
-    :return: Returns an :class:`~azure.purview.catalog.core.rest.HttpRequest` that you will pass to the client's `send_request` method.
-     See https://aka.ms/azsdk/python/llcwiki for how to incorporate this response into your code flow.
-    :rtype: ~azure.purview.catalog.core.rest.HttpRequest
-    """
-    min_ext_info = kwargs.pop('min_ext_info', False)  # type: Optional[bool]
-    ignore_relationships = kwargs.pop('ignore_relationships', False)  # type: Optional[bool]
-    attr_qualified_name = kwargs.pop('attr_qualified_name', None)  # type: Optional[str]
-    accept = "application/json"
-
-    # Construct URL
-    url = kwargs.pop("template_url", '/atlas/v2/entity/uniqueAttribute/type/{typeName}')
-    path_format_arguments = {
-        'typeName': _SERIALIZER.url("type_name", type_name, 'str', max_length=4096, min_length=1),
-    }
-    url = _format_url_section(url, **path_format_arguments)
-
-    # Construct parameters
-    query_parameters = kwargs.pop("params", {})  # type: Dict[str, Any]
-    if min_ext_info is not None:
-        query_parameters['minExtInfo'] = _SERIALIZER.query("min_ext_info", min_ext_info, 'bool')
-    if ignore_relationships is not None:
-        query_parameters['ignoreRelationships'] = _SERIALIZER.query("ignore_relationships", ignore_relationships, 'bool')
-    if attr_qualified_name is not None:
-        query_parameters['attr:qualifiedName'] = _SERIALIZER.query("attr_qualified_name", attr_qualified_name, 'str')
-
-    # Construct headers
-    header_parameters = kwargs.pop("headers", {})  # type: Dict[str, Any]
-    header_parameters['Accept'] = _SERIALIZER.header("accept", accept, 'str')
-
-    return HttpRequest(
-        method="GET",
-        url=url,
-        params=query_parameters,
-        headers=header_parameters,
-        **kwargs
-    )
-
-
-def build_partial_update_entity_by_unique_attrs_request(
-    type_name,  # type: str
-    **kwargs  # type: Any
-):
-    # type: (...) -> HttpRequest
-    """Update entity partially - Allow a subset of attributes to be updated on.
-
-    Update entity partially - Allow a subset of attributes to be updated on
-    an entity which is identified by its type and unique attribute  eg:
-    Referenceable.qualifiedName.
-    Null updates are not possible.
-    In addition to the typeName path parameter, attribute key-value pair(s) can be provided in the
-    following format:
-    attr::code:`<attrName>`=:code:`<attrValue>`.
-    NOTE: The attrName and attrValue should be unique across entities, eg. qualifiedName.
-    The REST request would look something like this:
-    PUT /v2/entity/uniqueAttribute/type/aType?attr:aTypeAttribute=someValue.
-
-    See https://aka.ms/azsdk/python/llcwiki for how to incorporate this request builder into your code flow.
-
-    :param type_name: The name of the type.
-    :type type_name: str
-    :keyword json: Atlas entity with extended information.
-    :paramtype json: Any
-    :keyword content: Atlas entity with extended information.
-    :paramtype content: Any
-    :keyword attr_qualified_name: The qualified name of the entity.
-    :paramtype attr_qualified_name: str
-    :return: Returns an :class:`~azure.purview.catalog.core.rest.HttpRequest` that you will pass to the client's `send_request` method.
-     See https://aka.ms/azsdk/python/llcwiki for how to incorporate this response into your code flow.
-    :rtype: ~azure.purview.catalog.core.rest.HttpRequest
-
-    Example:
-        .. code-block:: python
-
-            # JSON input template you can fill out and use as your `json` input.
-            json = {
+    
+            # response body for status code(s): 200
+            response_body == {
                 "entity": {
                     "classifications": [
                         {
                             "entityGuid": "str (optional)",
                             "entityStatus": "str (optional)",
-                            "propagate": "bool (optional)",
                             "removePropagationsOnEntityDelete": "bool (optional)",
                             "source": "str (optional)",
                             "sourceDetails": {
@@ -995,6 +847,940 @@ def build_partial_update_entity_by_unique_attrs_request(
                     "version": "float (optional)"
                 }
             }
+
+    """
+    min_ext_info = kwargs.pop('min_ext_info', False)  # type: Optional[bool]
+    ignore_relationships = kwargs.pop('ignore_relationships', False)  # type: Optional[bool]
+    accept = "application/json"
+
+    # Construct URL
+    url = kwargs.pop("template_url", '/atlas/v2/entity/guid/{guid}')
+    path_format_arguments = {
+        'guid': _SERIALIZER.url("guid", guid, 'str', max_length=4096, min_length=1),
+    }
+    url = _format_url_section(url, **path_format_arguments)
+
+    # Construct parameters
+    query_parameters = kwargs.pop("params", {})  # type: Dict[str, Any]
+    if min_ext_info is not None:
+        query_parameters['minExtInfo'] = _SERIALIZER.query("min_ext_info", min_ext_info, 'bool')
+    if ignore_relationships is not None:
+        query_parameters['ignoreRelationships'] = _SERIALIZER.query("ignore_relationships", ignore_relationships, 'bool')
+
+    # Construct headers
+    header_parameters = kwargs.pop("headers", {})  # type: Dict[str, Any]
+    header_parameters['Accept'] = _SERIALIZER.header("accept", accept, 'str')
+
+    return HttpRequest(
+        method="GET",
+        url=url,
+        params=query_parameters,
+        headers=header_parameters,
+        **kwargs
+    )
+
+
+def build_partial_update_entity_attr_by_guid_request(
+    guid,  # type: str
+    **kwargs  # type: Any
+):
+    # type: (...) -> HttpRequest
+    """Update entity partially - create or update entity attribute identified by its GUID.
+    Supports only primitive attribute type and entity references.
+    It does not support updating complex types like arrays, and maps.
+    Null updates are not possible.
+
+    See https://aka.ms/azsdk/python/llcwiki for how to incorporate this request builder into your code flow.
+
+    :param guid: The globally unique identifier of the entity.
+    :type guid: str
+    :keyword json: The value of the attribute.
+    :paramtype json: Any
+    :keyword content: The value of the attribute.
+    :paramtype content: Any
+    :keyword name: The name of the attribute.
+    :paramtype name: str
+    :return: Returns an :class:`~azure.purview.catalog.core.rest.HttpRequest` that you will pass to the client's `send_request` method.
+     See https://aka.ms/azsdk/python/llcwiki for how to incorporate this response into your code flow.
+    :rtype: ~azure.purview.catalog.core.rest.HttpRequest
+
+    Example:
+        .. code-block:: python
+
+    
+            # JSON input template you can fill out and use as your `json` input.
+            json = "object (optional)"
+
+    
+            # response body for status code(s): 200
+            response_body == {
+                "guidAssignments": {
+                    "str": "str (optional)"
+                },
+                "mutatedEntities": {
+                    "str": [
+                        {
+                            "classificationNames": [
+                                "str (optional)"
+                            ],
+                            "classifications": [
+                                {
+                                    "entityGuid": "str (optional)",
+                                    "entityStatus": "str (optional)",
+                                    "removePropagationsOnEntityDelete": "bool (optional)",
+                                    "source": "str (optional)",
+                                    "sourceDetails": {
+                                        "str": "object (optional)"
+                                    },
+                                    "validityPeriods": [
+                                        {
+                                            "endTime": "str (optional)",
+                                            "startTime": "str (optional)",
+                                            "timeZone": "str (optional)"
+                                        }
+                                    ]
+                                }
+                            ],
+                            "displayText": "str (optional)",
+                            "guid": "str (optional)",
+                            "meaningNames": [
+                                "str (optional)"
+                            ],
+                            "meanings": [
+                                {
+                                    "confidence": "int (optional)",
+                                    "createdBy": "str (optional)",
+                                    "description": "str (optional)",
+                                    "displayText": "str (optional)",
+                                    "expression": "str (optional)",
+                                    "relationGuid": "str (optional)",
+                                    "source": "str (optional)",
+                                    "status": "str (optional)",
+                                    "steward": "str (optional)",
+                                    "termGuid": "str (optional)"
+                                }
+                            ],
+                            "status": "str (optional)"
+                        }
+                    ]
+                },
+                "partialUpdatedEntities": [
+                    {
+                        "classificationNames": [
+                            "str (optional)"
+                        ],
+                        "classifications": [
+                            {
+                                "entityGuid": "str (optional)",
+                                "entityStatus": "str (optional)",
+                                "removePropagationsOnEntityDelete": "bool (optional)",
+                                "source": "str (optional)",
+                                "sourceDetails": {
+                                    "str": "object (optional)"
+                                },
+                                "validityPeriods": [
+                                    {
+                                        "endTime": "str (optional)",
+                                        "startTime": "str (optional)",
+                                        "timeZone": "str (optional)"
+                                    }
+                                ]
+                            }
+                        ],
+                        "displayText": "str (optional)",
+                        "guid": "str (optional)",
+                        "meaningNames": [
+                            "str (optional)"
+                        ],
+                        "meanings": [
+                            {
+                                "confidence": "int (optional)",
+                                "createdBy": "str (optional)",
+                                "description": "str (optional)",
+                                "displayText": "str (optional)",
+                                "expression": "str (optional)",
+                                "relationGuid": "str (optional)",
+                                "source": "str (optional)",
+                                "status": "str (optional)",
+                                "steward": "str (optional)",
+                                "termGuid": "str (optional)"
+                            }
+                        ],
+                        "status": "str (optional)"
+                    }
+                ]
+            }
+
+    """
+    name = kwargs.pop('name')  # type: str
+    content_type = kwargs.pop("content_type", None)
+    accept = "application/json"
+
+    # Construct URL
+    url = kwargs.pop("template_url", '/atlas/v2/entity/guid/{guid}')
+    path_format_arguments = {
+        'guid': _SERIALIZER.url("guid", guid, 'str', max_length=4096, min_length=1),
+    }
+    url = _format_url_section(url, **path_format_arguments)
+
+    # Construct parameters
+    query_parameters = kwargs.pop("params", {})  # type: Dict[str, Any]
+    query_parameters['name'] = _SERIALIZER.query("name", name, 'str')
+
+    # Construct headers
+    header_parameters = kwargs.pop("headers", {})  # type: Dict[str, Any]
+    if content_type is not None:
+        header_parameters['Content-Type'] = _SERIALIZER.header("content_type", content_type, 'str')
+    header_parameters['Accept'] = _SERIALIZER.header("accept", accept, 'str')
+
+    return HttpRequest(
+        method="PUT",
+        url=url,
+        params=query_parameters,
+        headers=header_parameters,
+        **kwargs
+    )
+
+
+def build_delete_by_guid_request(
+    guid,  # type: str
+    **kwargs  # type: Any
+):
+    # type: (...) -> HttpRequest
+    """Delete an entity identified by its GUID.
+
+    See https://aka.ms/azsdk/python/llcwiki for how to incorporate this request builder into your code flow.
+
+    :param guid: The globally unique identifier of the entity.
+    :type guid: str
+    :return: Returns an :class:`~azure.purview.catalog.core.rest.HttpRequest` that you will pass to the client's `send_request` method.
+     See https://aka.ms/azsdk/python/llcwiki for how to incorporate this response into your code flow.
+    :rtype: ~azure.purview.catalog.core.rest.HttpRequest
+
+    Example:
+        .. code-block:: python
+
+    
+            # response body for status code(s): 200
+            response_body == {
+                "guidAssignments": {
+                    "str": "str (optional)"
+                },
+                "mutatedEntities": {
+                    "str": [
+                        {
+                            "classificationNames": [
+                                "str (optional)"
+                            ],
+                            "classifications": [
+                                {
+                                    "entityGuid": "str (optional)",
+                                    "entityStatus": "str (optional)",
+                                    "removePropagationsOnEntityDelete": "bool (optional)",
+                                    "source": "str (optional)",
+                                    "sourceDetails": {
+                                        "str": "object (optional)"
+                                    },
+                                    "validityPeriods": [
+                                        {
+                                            "endTime": "str (optional)",
+                                            "startTime": "str (optional)",
+                                            "timeZone": "str (optional)"
+                                        }
+                                    ]
+                                }
+                            ],
+                            "displayText": "str (optional)",
+                            "guid": "str (optional)",
+                            "meaningNames": [
+                                "str (optional)"
+                            ],
+                            "meanings": [
+                                {
+                                    "confidence": "int (optional)",
+                                    "createdBy": "str (optional)",
+                                    "description": "str (optional)",
+                                    "displayText": "str (optional)",
+                                    "expression": "str (optional)",
+                                    "relationGuid": "str (optional)",
+                                    "source": "str (optional)",
+                                    "status": "str (optional)",
+                                    "steward": "str (optional)",
+                                    "termGuid": "str (optional)"
+                                }
+                            ],
+                            "status": "str (optional)"
+                        }
+                    ]
+                },
+                "partialUpdatedEntities": [
+                    {
+                        "classificationNames": [
+                            "str (optional)"
+                        ],
+                        "classifications": [
+                            {
+                                "entityGuid": "str (optional)",
+                                "entityStatus": "str (optional)",
+                                "removePropagationsOnEntityDelete": "bool (optional)",
+                                "source": "str (optional)",
+                                "sourceDetails": {
+                                    "str": "object (optional)"
+                                },
+                                "validityPeriods": [
+                                    {
+                                        "endTime": "str (optional)",
+                                        "startTime": "str (optional)",
+                                        "timeZone": "str (optional)"
+                                    }
+                                ]
+                            }
+                        ],
+                        "displayText": "str (optional)",
+                        "guid": "str (optional)",
+                        "meaningNames": [
+                            "str (optional)"
+                        ],
+                        "meanings": [
+                            {
+                                "confidence": "int (optional)",
+                                "createdBy": "str (optional)",
+                                "description": "str (optional)",
+                                "displayText": "str (optional)",
+                                "expression": "str (optional)",
+                                "relationGuid": "str (optional)",
+                                "source": "str (optional)",
+                                "status": "str (optional)",
+                                "steward": "str (optional)",
+                                "termGuid": "str (optional)"
+                            }
+                        ],
+                        "status": "str (optional)"
+                    }
+                ]
+            }
+
+    """
+    accept = "application/json"
+
+    # Construct URL
+    url = kwargs.pop("template_url", '/atlas/v2/entity/guid/{guid}')
+    path_format_arguments = {
+        'guid': _SERIALIZER.url("guid", guid, 'str', max_length=4096, min_length=1),
+    }
+    url = _format_url_section(url, **path_format_arguments)
+
+    # Construct headers
+    header_parameters = kwargs.pop("headers", {})  # type: Dict[str, Any]
+    header_parameters['Accept'] = _SERIALIZER.header("accept", accept, 'str')
+
+    return HttpRequest(
+        method="DELETE",
+        url=url,
+        headers=header_parameters,
+        **kwargs
+    )
+
+
+def build_get_classification_request(
+    guid,  # type: str
+    classification_name,  # type: str
+    **kwargs  # type: Any
+):
+    # type: (...) -> HttpRequest
+    """List classifications for a given entity represented by a GUID.
+
+    See https://aka.ms/azsdk/python/llcwiki for how to incorporate this request builder into your code flow.
+
+    :param guid: The globally unique identifier of the entity.
+    :type guid: str
+    :param classification_name: The name of the classification.
+    :type classification_name: str
+    :return: Returns an :class:`~azure.purview.catalog.core.rest.HttpRequest` that you will pass to the client's `send_request` method.
+     See https://aka.ms/azsdk/python/llcwiki for how to incorporate this response into your code flow.
+    :rtype: ~azure.purview.catalog.core.rest.HttpRequest
+
+    Example:
+        .. code-block:: python
+
+    
+            # response body for status code(s): 200
+            response_body == {
+                "entityGuid": "str (optional)",
+                "entityStatus": "str (optional)",
+                "removePropagationsOnEntityDelete": "bool (optional)",
+                "source": "str (optional)",
+                "sourceDetails": {
+                    "str": "object (optional)"
+                },
+                "validityPeriods": [
+                    {
+                        "endTime": "str (optional)",
+                        "startTime": "str (optional)",
+                        "timeZone": "str (optional)"
+                    }
+                ]
+            }
+
+    """
+    accept = "application/json"
+
+    # Construct URL
+    url = kwargs.pop("template_url", '/atlas/v2/entity/guid/{guid}/classification/{classificationName}')
+    path_format_arguments = {
+        'guid': _SERIALIZER.url("guid", guid, 'str', max_length=4096, min_length=1),
+        'classificationName': _SERIALIZER.url("classification_name", classification_name, 'str', max_length=4096, min_length=1),
+    }
+    url = _format_url_section(url, **path_format_arguments)
+
+    # Construct headers
+    header_parameters = kwargs.pop("headers", {})  # type: Dict[str, Any]
+    header_parameters['Accept'] = _SERIALIZER.header("accept", accept, 'str')
+
+    return HttpRequest(
+        method="GET",
+        url=url,
+        headers=header_parameters,
+        **kwargs
+    )
+
+
+def build_delete_classification_request(
+    guid,  # type: str
+    classification_name,  # type: str
+    **kwargs  # type: Any
+):
+    # type: (...) -> HttpRequest
+    """Delete a given classification from an existing entity represented by a GUID.
+
+    See https://aka.ms/azsdk/python/llcwiki for how to incorporate this request builder into your code flow.
+
+    :param guid: The globally unique identifier of the entity.
+    :type guid: str
+    :param classification_name: The name of the classification.
+    :type classification_name: str
+    :return: Returns an :class:`~azure.purview.catalog.core.rest.HttpRequest` that you will pass to the client's `send_request` method.
+     See https://aka.ms/azsdk/python/llcwiki for how to incorporate this response into your code flow.
+    :rtype: ~azure.purview.catalog.core.rest.HttpRequest
+    """
+
+    # Construct URL
+    url = kwargs.pop("template_url", '/atlas/v2/entity/guid/{guid}/classification/{classificationName}')
+    path_format_arguments = {
+        'guid': _SERIALIZER.url("guid", guid, 'str', max_length=4096, min_length=1),
+        'classificationName': _SERIALIZER.url("classification_name", classification_name, 'str', max_length=4096, min_length=1),
+    }
+    url = _format_url_section(url, **path_format_arguments)
+
+    return HttpRequest(
+        method="DELETE",
+        url=url,
+        **kwargs
+    )
+
+
+def build_get_classifications_request(
+    guid,  # type: str
+    **kwargs  # type: Any
+):
+    # type: (...) -> HttpRequest
+    """List classifications for a given entity represented by a GUID.
+
+    See https://aka.ms/azsdk/python/llcwiki for how to incorporate this request builder into your code flow.
+
+    :param guid: The globally unique identifier of the entity.
+    :type guid: str
+    :return: Returns an :class:`~azure.purview.catalog.core.rest.HttpRequest` that you will pass to the client's `send_request` method.
+     See https://aka.ms/azsdk/python/llcwiki for how to incorporate this response into your code flow.
+    :rtype: ~azure.purview.catalog.core.rest.HttpRequest
+
+    Example:
+        .. code-block:: python
+
+    
+            # response body for status code(s): 200
+            response_body == {}
+
+    """
+    accept = "application/json"
+
+    # Construct URL
+    url = kwargs.pop("template_url", '/atlas/v2/entity/guid/{guid}/classifications')
+    path_format_arguments = {
+        'guid': _SERIALIZER.url("guid", guid, 'str', max_length=4096, min_length=1),
+    }
+    url = _format_url_section(url, **path_format_arguments)
+
+    # Construct headers
+    header_parameters = kwargs.pop("headers", {})  # type: Dict[str, Any]
+    header_parameters['Accept'] = _SERIALIZER.header("accept", accept, 'str')
+
+    return HttpRequest(
+        method="GET",
+        url=url,
+        headers=header_parameters,
+        **kwargs
+    )
+
+
+def build_add_classifications_request(
+    guid,  # type: str
+    **kwargs  # type: Any
+):
+    # type: (...) -> HttpRequest
+    """Add classifications to an existing entity represented by a GUID.
+
+    See https://aka.ms/azsdk/python/llcwiki for how to incorporate this request builder into your code flow.
+
+    :param guid: The globally unique identifier of the entity.
+    :type guid: str
+    :keyword json: An array of classifications to be added.
+    :paramtype json: Any
+    :keyword content: An array of classifications to be added.
+    :paramtype content: Any
+    :return: Returns an :class:`~azure.purview.catalog.core.rest.HttpRequest` that you will pass to the client's `send_request` method.
+     See https://aka.ms/azsdk/python/llcwiki for how to incorporate this response into your code flow.
+    :rtype: ~azure.purview.catalog.core.rest.HttpRequest
+
+    Example:
+        .. code-block:: python
+
+    
+            # JSON input template you can fill out and use as your `json` input.
+            json = [
+                {
+                    "entityGuid": "str (optional)",
+                    "entityStatus": "str (optional)",
+                    "removePropagationsOnEntityDelete": "bool (optional)",
+                    "source": "str (optional)",
+                    "sourceDetails": {
+                        "str": "object (optional)"
+                    },
+                    "validityPeriods": [
+                        {
+                            "endTime": "str (optional)",
+                            "startTime": "str (optional)",
+                            "timeZone": "str (optional)"
+                        }
+                    ]
+                }
+            ]
+
+    """
+    content_type = kwargs.pop("content_type", None)
+
+    # Construct URL
+    url = kwargs.pop("template_url", '/atlas/v2/entity/guid/{guid}/classifications')
+    path_format_arguments = {
+        'guid': _SERIALIZER.url("guid", guid, 'str', max_length=4096, min_length=1),
+    }
+    url = _format_url_section(url, **path_format_arguments)
+
+    # Construct headers
+    header_parameters = kwargs.pop("headers", {})  # type: Dict[str, Any]
+    if content_type is not None:
+        header_parameters['Content-Type'] = _SERIALIZER.header("content_type", content_type, 'str')
+
+    return HttpRequest(
+        method="POST",
+        url=url,
+        headers=header_parameters,
+        **kwargs
+    )
+
+
+def build_update_classifications_request(
+    guid,  # type: str
+    **kwargs  # type: Any
+):
+    # type: (...) -> HttpRequest
+    """Update classifications to an existing entity represented by a guid.
+
+    See https://aka.ms/azsdk/python/llcwiki for how to incorporate this request builder into your code flow.
+
+    :param guid: The globally unique identifier of the entity.
+    :type guid: str
+    :keyword json: An array of classifications to be updated.
+    :paramtype json: Any
+    :keyword content: An array of classifications to be updated.
+    :paramtype content: Any
+    :return: Returns an :class:`~azure.purview.catalog.core.rest.HttpRequest` that you will pass to the client's `send_request` method.
+     See https://aka.ms/azsdk/python/llcwiki for how to incorporate this response into your code flow.
+    :rtype: ~azure.purview.catalog.core.rest.HttpRequest
+
+    Example:
+        .. code-block:: python
+
+    
+            # JSON input template you can fill out and use as your `json` input.
+            json = [
+                {
+                    "entityGuid": "str (optional)",
+                    "entityStatus": "str (optional)",
+                    "removePropagationsOnEntityDelete": "bool (optional)",
+                    "source": "str (optional)",
+                    "sourceDetails": {
+                        "str": "object (optional)"
+                    },
+                    "validityPeriods": [
+                        {
+                            "endTime": "str (optional)",
+                            "startTime": "str (optional)",
+                            "timeZone": "str (optional)"
+                        }
+                    ]
+                }
+            ]
+
+    """
+    content_type = kwargs.pop("content_type", None)
+
+    # Construct URL
+    url = kwargs.pop("template_url", '/atlas/v2/entity/guid/{guid}/classifications')
+    path_format_arguments = {
+        'guid': _SERIALIZER.url("guid", guid, 'str', max_length=4096, min_length=1),
+    }
+    url = _format_url_section(url, **path_format_arguments)
+
+    # Construct headers
+    header_parameters = kwargs.pop("headers", {})  # type: Dict[str, Any]
+    if content_type is not None:
+        header_parameters['Content-Type'] = _SERIALIZER.header("content_type", content_type, 'str')
+
+    return HttpRequest(
+        method="PUT",
+        url=url,
+        headers=header_parameters,
+        **kwargs
+    )
+
+
+def build_get_by_unique_attributes_request(
+    type_name,  # type: str
+    **kwargs  # type: Any
+):
+    # type: (...) -> HttpRequest
+    """Get complete definition of an entity given its type and unique attribute.
+    In addition to the typeName path parameter, attribute key-value pair(s) can be provided in the
+    following format:
+    attr:\:code:`<attrName>`=:code:`<attrValue>`.
+    NOTE: The attrName and attrValue should be unique across entities, eg. qualifiedName.
+    The REST request would look something like this:
+    GET /v2/entity/uniqueAttribute/type/aType?attr:aTypeAttribute=someValue.
+
+    See https://aka.ms/azsdk/python/llcwiki for how to incorporate this request builder into your code flow.
+
+    :param type_name: The name of the type.
+    :type type_name: str
+    :keyword min_ext_info: Whether to return minimal information for referred entities.
+    :paramtype min_ext_info: bool
+    :keyword ignore_relationships: Whether to ignore relationship attributes.
+    :paramtype ignore_relationships: bool
+    :keyword attr_qualified_name: The qualified name of the entity.
+    :paramtype attr_qualified_name: str
+    :return: Returns an :class:`~azure.purview.catalog.core.rest.HttpRequest` that you will pass to the client's `send_request` method.
+     See https://aka.ms/azsdk/python/llcwiki for how to incorporate this response into your code flow.
+    :rtype: ~azure.purview.catalog.core.rest.HttpRequest
+
+    Example:
+        .. code-block:: python
+
+    
+            # response body for status code(s): 200
+            response_body == {
+                "entity": {
+                    "classifications": [
+                        {
+                            "entityGuid": "str (optional)",
+                            "entityStatus": "str (optional)",
+                            "removePropagationsOnEntityDelete": "bool (optional)",
+                            "source": "str (optional)",
+                            "sourceDetails": {
+                                "str": "object (optional)"
+                            },
+                            "validityPeriods": [
+                                {
+                                    "endTime": "str (optional)",
+                                    "startTime": "str (optional)",
+                                    "timeZone": "str (optional)"
+                                }
+                            ]
+                        }
+                    ],
+                    "contacts": {
+                        "str": [
+                            {
+                                "id": "str (optional)",
+                                "info": "str (optional)"
+                            }
+                        ]
+                    },
+                    "createTime": "float (optional)",
+                    "createdBy": "str (optional)",
+                    "guid": "str (optional)",
+                    "homeId": "str (optional)",
+                    "meanings": [
+                        {
+                            "confidence": "int (optional)",
+                            "createdBy": "str (optional)",
+                            "description": "str (optional)",
+                            "displayText": "str (optional)",
+                            "expression": "str (optional)",
+                            "relationGuid": "str (optional)",
+                            "source": "str (optional)",
+                            "status": "str (optional)",
+                            "steward": "str (optional)",
+                            "termGuid": "str (optional)"
+                        }
+                    ],
+                    "provenanceType": "float (optional)",
+                    "proxy": "bool (optional)",
+                    "relationshipAttributes": {
+                        "str": "object (optional)"
+                    },
+                    "source": "str (optional)",
+                    "sourceDetails": {
+                        "str": "object (optional)"
+                    },
+                    "status": "str (optional)",
+                    "updateTime": "float (optional)",
+                    "updatedBy": "str (optional)",
+                    "version": "float (optional)"
+                }
+            }
+
+    """
+    min_ext_info = kwargs.pop('min_ext_info', False)  # type: Optional[bool]
+    ignore_relationships = kwargs.pop('ignore_relationships', False)  # type: Optional[bool]
+    attr_qualified_name = kwargs.pop('attr_qualified_name', None)  # type: Optional[str]
+    accept = "application/json"
+
+    # Construct URL
+    url = kwargs.pop("template_url", '/atlas/v2/entity/uniqueAttribute/type/{typeName}')
+    path_format_arguments = {
+        'typeName': _SERIALIZER.url("type_name", type_name, 'str', max_length=4096, min_length=1),
+    }
+    url = _format_url_section(url, **path_format_arguments)
+
+    # Construct parameters
+    query_parameters = kwargs.pop("params", {})  # type: Dict[str, Any]
+    if min_ext_info is not None:
+        query_parameters['minExtInfo'] = _SERIALIZER.query("min_ext_info", min_ext_info, 'bool')
+    if ignore_relationships is not None:
+        query_parameters['ignoreRelationships'] = _SERIALIZER.query("ignore_relationships", ignore_relationships, 'bool')
+    if attr_qualified_name is not None:
+        query_parameters['attr:qualifiedName'] = _SERIALIZER.query("attr_qualified_name", attr_qualified_name, 'str')
+
+    # Construct headers
+    header_parameters = kwargs.pop("headers", {})  # type: Dict[str, Any]
+    header_parameters['Accept'] = _SERIALIZER.header("accept", accept, 'str')
+
+    return HttpRequest(
+        method="GET",
+        url=url,
+        params=query_parameters,
+        headers=header_parameters,
+        **kwargs
+    )
+
+
+def build_partial_update_entity_by_unique_attrs_request(
+    type_name,  # type: str
+    **kwargs  # type: Any
+):
+    # type: (...) -> HttpRequest
+    """Update entity partially - Allow a subset of attributes to be updated on
+    an entity which is identified by its type and unique attribute  eg:
+    Referenceable.qualifiedName.
+    Null updates are not possible.
+    In addition to the typeName path parameter, attribute key-value pair(s) can be provided in the
+    following format:
+    attr::code:`<attrName>`=:code:`<attrValue>`.
+    NOTE: The attrName and attrValue should be unique across entities, eg. qualifiedName.
+    The REST request would look something like this:
+    PUT /v2/entity/uniqueAttribute/type/aType?attr:aTypeAttribute=someValue.
+
+    See https://aka.ms/azsdk/python/llcwiki for how to incorporate this request builder into your code flow.
+
+    :param type_name: The name of the type.
+    :type type_name: str
+    :keyword json: Atlas entity with extended information.
+    :paramtype json: Any
+    :keyword content: Atlas entity with extended information.
+    :paramtype content: Any
+    :keyword attr_qualified_name: The qualified name of the entity.
+    :paramtype attr_qualified_name: str
+    :return: Returns an :class:`~azure.purview.catalog.core.rest.HttpRequest` that you will pass to the client's `send_request` method.
+     See https://aka.ms/azsdk/python/llcwiki for how to incorporate this response into your code flow.
+    :rtype: ~azure.purview.catalog.core.rest.HttpRequest
+
+    Example:
+        .. code-block:: python
+
+    
+            # JSON input template you can fill out and use as your `json` input.
+            json = {
+                "entity": {
+                    "classifications": [
+                        {
+                            "entityGuid": "str (optional)",
+                            "entityStatus": "str (optional)",
+                            "removePropagationsOnEntityDelete": "bool (optional)",
+                            "source": "str (optional)",
+                            "sourceDetails": {
+                                "str": "object (optional)"
+                            },
+                            "validityPeriods": [
+                                {
+                                    "endTime": "str (optional)",
+                                    "startTime": "str (optional)",
+                                    "timeZone": "str (optional)"
+                                }
+                            ]
+                        }
+                    ],
+                    "contacts": {
+                        "str": [
+                            {
+                                "id": "str (optional)",
+                                "info": "str (optional)"
+                            }
+                        ]
+                    },
+                    "createTime": "float (optional)",
+                    "createdBy": "str (optional)",
+                    "guid": "str (optional)",
+                    "homeId": "str (optional)",
+                    "meanings": [
+                        {
+                            "confidence": "int (optional)",
+                            "createdBy": "str (optional)",
+                            "description": "str (optional)",
+                            "displayText": "str (optional)",
+                            "expression": "str (optional)",
+                            "relationGuid": "str (optional)",
+                            "source": "str (optional)",
+                            "status": "str (optional)",
+                            "steward": "str (optional)",
+                            "termGuid": "str (optional)"
+                        }
+                    ],
+                    "provenanceType": "float (optional)",
+                    "proxy": "bool (optional)",
+                    "relationshipAttributes": {
+                        "str": "object (optional)"
+                    },
+                    "source": "str (optional)",
+                    "sourceDetails": {
+                        "str": "object (optional)"
+                    },
+                    "status": "str (optional)",
+                    "updateTime": "float (optional)",
+                    "updatedBy": "str (optional)",
+                    "version": "float (optional)"
+                }
+            }
+
+    
+            # response body for status code(s): 200
+            response_body == {
+                "guidAssignments": {
+                    "str": "str (optional)"
+                },
+                "mutatedEntities": {
+                    "str": [
+                        {
+                            "classificationNames": [
+                                "str (optional)"
+                            ],
+                            "classifications": [
+                                {
+                                    "entityGuid": "str (optional)",
+                                    "entityStatus": "str (optional)",
+                                    "removePropagationsOnEntityDelete": "bool (optional)",
+                                    "source": "str (optional)",
+                                    "sourceDetails": {
+                                        "str": "object (optional)"
+                                    },
+                                    "validityPeriods": [
+                                        {
+                                            "endTime": "str (optional)",
+                                            "startTime": "str (optional)",
+                                            "timeZone": "str (optional)"
+                                        }
+                                    ]
+                                }
+                            ],
+                            "displayText": "str (optional)",
+                            "guid": "str (optional)",
+                            "meaningNames": [
+                                "str (optional)"
+                            ],
+                            "meanings": [
+                                {
+                                    "confidence": "int (optional)",
+                                    "createdBy": "str (optional)",
+                                    "description": "str (optional)",
+                                    "displayText": "str (optional)",
+                                    "expression": "str (optional)",
+                                    "relationGuid": "str (optional)",
+                                    "source": "str (optional)",
+                                    "status": "str (optional)",
+                                    "steward": "str (optional)",
+                                    "termGuid": "str (optional)"
+                                }
+                            ],
+                            "status": "str (optional)"
+                        }
+                    ]
+                },
+                "partialUpdatedEntities": [
+                    {
+                        "classificationNames": [
+                            "str (optional)"
+                        ],
+                        "classifications": [
+                            {
+                                "entityGuid": "str (optional)",
+                                "entityStatus": "str (optional)",
+                                "removePropagationsOnEntityDelete": "bool (optional)",
+                                "source": "str (optional)",
+                                "sourceDetails": {
+                                    "str": "object (optional)"
+                                },
+                                "validityPeriods": [
+                                    {
+                                        "endTime": "str (optional)",
+                                        "startTime": "str (optional)",
+                                        "timeZone": "str (optional)"
+                                    }
+                                ]
+                            }
+                        ],
+                        "displayText": "str (optional)",
+                        "guid": "str (optional)",
+                        "meaningNames": [
+                            "str (optional)"
+                        ],
+                        "meanings": [
+                            {
+                                "confidence": "int (optional)",
+                                "createdBy": "str (optional)",
+                                "description": "str (optional)",
+                                "displayText": "str (optional)",
+                                "expression": "str (optional)",
+                                "relationGuid": "str (optional)",
+                                "source": "str (optional)",
+                                "status": "str (optional)",
+                                "steward": "str (optional)",
+                                "termGuid": "str (optional)"
+                            }
+                        ],
+                        "status": "str (optional)"
+                    }
+                ]
+            }
+
     """
     attr_qualified_name = kwargs.pop('attr_qualified_name', None)  # type: Optional[str]
     content_type = kwargs.pop("content_type", None)
@@ -1033,8 +1819,6 @@ def build_delete_by_unique_attribute_request(
 ):
     # type: (...) -> HttpRequest
     """Delete an entity identified by its type and unique attributes.
-
-    Delete an entity identified by its type and unique attributes.
     In addition to the typeName path parameter, attribute key-value pair(s) can be provided in the
     following format:
     attr:\:code:`<attrName>`=\:code:`<attrValue>`.
@@ -1051,6 +1835,110 @@ def build_delete_by_unique_attribute_request(
     :return: Returns an :class:`~azure.purview.catalog.core.rest.HttpRequest` that you will pass to the client's `send_request` method.
      See https://aka.ms/azsdk/python/llcwiki for how to incorporate this response into your code flow.
     :rtype: ~azure.purview.catalog.core.rest.HttpRequest
+
+    Example:
+        .. code-block:: python
+
+    
+            # response body for status code(s): 200
+            response_body == {
+                "guidAssignments": {
+                    "str": "str (optional)"
+                },
+                "mutatedEntities": {
+                    "str": [
+                        {
+                            "classificationNames": [
+                                "str (optional)"
+                            ],
+                            "classifications": [
+                                {
+                                    "entityGuid": "str (optional)",
+                                    "entityStatus": "str (optional)",
+                                    "removePropagationsOnEntityDelete": "bool (optional)",
+                                    "source": "str (optional)",
+                                    "sourceDetails": {
+                                        "str": "object (optional)"
+                                    },
+                                    "validityPeriods": [
+                                        {
+                                            "endTime": "str (optional)",
+                                            "startTime": "str (optional)",
+                                            "timeZone": "str (optional)"
+                                        }
+                                    ]
+                                }
+                            ],
+                            "displayText": "str (optional)",
+                            "guid": "str (optional)",
+                            "meaningNames": [
+                                "str (optional)"
+                            ],
+                            "meanings": [
+                                {
+                                    "confidence": "int (optional)",
+                                    "createdBy": "str (optional)",
+                                    "description": "str (optional)",
+                                    "displayText": "str (optional)",
+                                    "expression": "str (optional)",
+                                    "relationGuid": "str (optional)",
+                                    "source": "str (optional)",
+                                    "status": "str (optional)",
+                                    "steward": "str (optional)",
+                                    "termGuid": "str (optional)"
+                                }
+                            ],
+                            "status": "str (optional)"
+                        }
+                    ]
+                },
+                "partialUpdatedEntities": [
+                    {
+                        "classificationNames": [
+                            "str (optional)"
+                        ],
+                        "classifications": [
+                            {
+                                "entityGuid": "str (optional)",
+                                "entityStatus": "str (optional)",
+                                "removePropagationsOnEntityDelete": "bool (optional)",
+                                "source": "str (optional)",
+                                "sourceDetails": {
+                                    "str": "object (optional)"
+                                },
+                                "validityPeriods": [
+                                    {
+                                        "endTime": "str (optional)",
+                                        "startTime": "str (optional)",
+                                        "timeZone": "str (optional)"
+                                    }
+                                ]
+                            }
+                        ],
+                        "displayText": "str (optional)",
+                        "guid": "str (optional)",
+                        "meaningNames": [
+                            "str (optional)"
+                        ],
+                        "meanings": [
+                            {
+                                "confidence": "int (optional)",
+                                "createdBy": "str (optional)",
+                                "description": "str (optional)",
+                                "displayText": "str (optional)",
+                                "expression": "str (optional)",
+                                "relationGuid": "str (optional)",
+                                "source": "str (optional)",
+                                "status": "str (optional)",
+                                "steward": "str (optional)",
+                                "termGuid": "str (optional)"
+                            }
+                        ],
+                        "status": "str (optional)"
+                    }
+                ]
+            }
+
     """
     attr_qualified_name = kwargs.pop('attr_qualified_name', None)  # type: Optional[str]
     accept = "application/json"
@@ -1086,9 +1974,7 @@ def build_delete_classification_by_unique_attribute_request(
     **kwargs  # type: Any
 ):
     # type: (...) -> HttpRequest
-    """Delete a given classification from an entity.
-
-    Delete a given classification from an entity identified by its type and unique attributes.
+    """Delete a given classification from an entity identified by its type and unique attributes.
 
     See https://aka.ms/azsdk/python/llcwiki for how to incorporate this request builder into your code flow.
 
@@ -1130,9 +2016,7 @@ def build_add_classifications_by_unique_attribute_request(
     **kwargs  # type: Any
 ):
     # type: (...) -> HttpRequest
-    """Add classification to the entity.
-
-    Add classification to the entity identified by its type and unique attributes.
+    """Add classification to the entity identified by its type and unique attributes.
 
     See https://aka.ms/azsdk/python/llcwiki for how to incorporate this request builder into your code flow.
 
@@ -1151,12 +2035,12 @@ def build_add_classifications_by_unique_attribute_request(
     Example:
         .. code-block:: python
 
+    
             # JSON input template you can fill out and use as your `json` input.
             json = [
                 {
                     "entityGuid": "str (optional)",
                     "entityStatus": "str (optional)",
-                    "propagate": "bool (optional)",
                     "removePropagationsOnEntityDelete": "bool (optional)",
                     "source": "str (optional)",
                     "sourceDetails": {
@@ -1171,6 +2055,7 @@ def build_add_classifications_by_unique_attribute_request(
                     ]
                 }
             ]
+
     """
     attr_qualified_name = kwargs.pop('attr_qualified_name', None)  # type: Optional[str]
     content_type = kwargs.pop("content_type", None)
@@ -1208,8 +2093,6 @@ def build_update_classifications_by_unique_attribute_request(
     # type: (...) -> HttpRequest
     """Update classification on an entity identified by its type and unique attributes.
 
-    Update classification on an entity identified by its type and unique attributes.
-
     See https://aka.ms/azsdk/python/llcwiki for how to incorporate this request builder into your code flow.
 
     :param type_name: The name of the type.
@@ -1227,12 +2110,12 @@ def build_update_classifications_by_unique_attribute_request(
     Example:
         .. code-block:: python
 
+    
             # JSON input template you can fill out and use as your `json` input.
             json = [
                 {
                     "entityGuid": "str (optional)",
                     "entityStatus": "str (optional)",
-                    "propagate": "bool (optional)",
                     "removePropagationsOnEntityDelete": "bool (optional)",
                     "source": "str (optional)",
                     "sourceDetails": {
@@ -1247,6 +2130,7 @@ def build_update_classifications_by_unique_attribute_request(
                     ]
                 }
             ]
+
     """
     attr_qualified_name = kwargs.pop('attr_qualified_name', None)  # type: Optional[str]
     content_type = kwargs.pop("content_type", None)
@@ -1283,8 +2167,6 @@ def build_set_classifications_request(
     # type: (...) -> HttpRequest
     """Set classifications on entities in bulk.
 
-    Set classifications on entities in bulk.
-
     See https://aka.ms/azsdk/python/llcwiki for how to incorporate this request builder into your code flow.
 
     :keyword json: Atlas entity headers.
@@ -1298,6 +2180,7 @@ def build_set_classifications_request(
     Example:
         .. code-block:: python
 
+    
             # JSON input template you can fill out and use as your `json` input.
             json = {
                 "guidHeaderMap": {
@@ -1309,7 +2192,6 @@ def build_set_classifications_request(
                             {
                                 "entityGuid": "str (optional)",
                                 "entityStatus": "str (optional)",
-                                "propagate": "bool (optional)",
                                 "removePropagationsOnEntityDelete": "bool (optional)",
                                 "source": "str (optional)",
                                 "sourceDetails": {
@@ -1347,6 +2229,13 @@ def build_set_classifications_request(
                     }
                 }
             }
+
+    
+            # response body for status code(s): 200
+            response_body == [
+                "str (optional)"
+            ]
+
     """
     content_type = kwargs.pop("content_type", None)
     accept = "application/json"
@@ -1374,8 +2263,6 @@ def build_get_entities_by_unique_attributes_request(
 ):
     # type: (...) -> HttpRequest
     """Bulk API to retrieve list of entities identified by its unique attributes.
-
-    Bulk API to retrieve list of entities identified by its unique attributes.
     
     In addition to the typeName path parameter, attribute key-value pair(s) can be provided in the
     following format
@@ -1403,6 +2290,76 @@ def build_get_entities_by_unique_attributes_request(
     :return: Returns an :class:`~azure.purview.catalog.core.rest.HttpRequest` that you will pass to the client's `send_request` method.
      See https://aka.ms/azsdk/python/llcwiki for how to incorporate this response into your code flow.
     :rtype: ~azure.purview.catalog.core.rest.HttpRequest
+
+    Example:
+        .. code-block:: python
+
+    
+            # response body for status code(s): 200
+            response_body == {
+                "entities": [
+                    {
+                        "classifications": [
+                            {
+                                "entityGuid": "str (optional)",
+                                "entityStatus": "str (optional)",
+                                "removePropagationsOnEntityDelete": "bool (optional)",
+                                "source": "str (optional)",
+                                "sourceDetails": {
+                                    "str": "object (optional)"
+                                },
+                                "validityPeriods": [
+                                    {
+                                        "endTime": "str (optional)",
+                                        "startTime": "str (optional)",
+                                        "timeZone": "str (optional)"
+                                    }
+                                ]
+                            }
+                        ],
+                        "contacts": {
+                            "str": [
+                                {
+                                    "id": "str (optional)",
+                                    "info": "str (optional)"
+                                }
+                            ]
+                        },
+                        "createTime": "float (optional)",
+                        "createdBy": "str (optional)",
+                        "guid": "str (optional)",
+                        "homeId": "str (optional)",
+                        "meanings": [
+                            {
+                                "confidence": "int (optional)",
+                                "createdBy": "str (optional)",
+                                "description": "str (optional)",
+                                "displayText": "str (optional)",
+                                "expression": "str (optional)",
+                                "relationGuid": "str (optional)",
+                                "source": "str (optional)",
+                                "status": "str (optional)",
+                                "steward": "str (optional)",
+                                "termGuid": "str (optional)"
+                            }
+                        ],
+                        "provenanceType": "float (optional)",
+                        "proxy": "bool (optional)",
+                        "relationshipAttributes": {
+                            "str": "object (optional)"
+                        },
+                        "source": "str (optional)",
+                        "sourceDetails": {
+                            "str": "object (optional)"
+                        },
+                        "status": "str (optional)",
+                        "updateTime": "float (optional)",
+                        "updatedBy": "str (optional)",
+                        "version": "float (optional)"
+                    }
+                ]
+            }
+
     """
     min_ext_info = kwargs.pop('min_ext_info', False)  # type: Optional[bool]
     ignore_relationships = kwargs.pop('ignore_relationships', False)  # type: Optional[bool]
@@ -1445,8 +2402,6 @@ def build_get_header_by_id_request(
     # type: (...) -> HttpRequest
     """Get entity header given its GUID.
 
-    Get entity header given its GUID.
-
     See https://aka.ms/azsdk/python/llcwiki for how to incorporate this request builder into your code flow.
 
     :param guid: The globally unique identifier of the entity.
@@ -1454,6 +2409,56 @@ def build_get_header_by_id_request(
     :return: Returns an :class:`~azure.purview.catalog.core.rest.HttpRequest` that you will pass to the client's `send_request` method.
      See https://aka.ms/azsdk/python/llcwiki for how to incorporate this response into your code flow.
     :rtype: ~azure.purview.catalog.core.rest.HttpRequest
+
+    Example:
+        .. code-block:: python
+
+    
+            # response body for status code(s): 200
+            response_body == {
+                "classificationNames": [
+                    "str (optional)"
+                ],
+                "classifications": [
+                    {
+                        "entityGuid": "str (optional)",
+                        "entityStatus": "str (optional)",
+                        "removePropagationsOnEntityDelete": "bool (optional)",
+                        "source": "str (optional)",
+                        "sourceDetails": {
+                            "str": "object (optional)"
+                        },
+                        "validityPeriods": [
+                            {
+                                "endTime": "str (optional)",
+                                "startTime": "str (optional)",
+                                "timeZone": "str (optional)"
+                            }
+                        ]
+                    }
+                ],
+                "displayText": "str (optional)",
+                "guid": "str (optional)",
+                "meaningNames": [
+                    "str (optional)"
+                ],
+                "meanings": [
+                    {
+                        "confidence": "int (optional)",
+                        "createdBy": "str (optional)",
+                        "description": "str (optional)",
+                        "displayText": "str (optional)",
+                        "expression": "str (optional)",
+                        "relationGuid": "str (optional)",
+                        "source": "str (optional)",
+                        "status": "str (optional)",
+                        "steward": "str (optional)",
+                        "termGuid": "str (optional)"
+                    }
+                ],
+                "status": "str (optional)"
+            }
+
     """
     accept = "application/json"
 

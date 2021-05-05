@@ -5,7 +5,7 @@
 # license information.
 # --------------------------------------------------------------------------
 from testcase import PurviewCatalogTest, PurviewCatalogPowerShellPreparer
-from azure.purview.catalog.rest.types_rest import build_get_all_type_defs_request
+from azure.purview.catalog.rest.types import build_get_all_type_defs_request
 
 class PurviewCatalogSmokeTest(PurviewCatalogTest):
 

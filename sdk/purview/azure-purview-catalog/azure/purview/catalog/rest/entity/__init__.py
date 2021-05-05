@@ -10,7 +10,7 @@ try:
     from ._request_builders_py3 import build_create_or_update_request
     from ._request_builders_py3 import build_get_by_guids_request
     from ._request_builders_py3 import build_create_or_update_bulk_request
-    from ._request_builders_py3 import build_bulk_delete_request
+    from ._request_builders_py3 import build_delete_by_guids_request
     from ._request_builders_py3 import build_add_classification_request
     from ._request_builders_py3 import build_get_by_id_request
     from ._request_builders_py3 import build_partial_update_entity_attr_by_guid_request
@@ -33,7 +33,7 @@ except (SyntaxError, ImportError):
     from ._request_builders import build_create_or_update_request  # type: ignore
     from ._request_builders import build_get_by_guids_request  # type: ignore
     from ._request_builders import build_create_or_update_bulk_request  # type: ignore
-    from ._request_builders import build_bulk_delete_request  # type: ignore
+    from ._request_builders import build_delete_by_guids_request  # type: ignore
     from ._request_builders import build_add_classification_request  # type: ignore
     from ._request_builders import build_get_by_id_request  # type: ignore
     from ._request_builders import build_partial_update_entity_attr_by_guid_request  # type: ignore
@@ -57,7 +57,7 @@ __all__ = [
     'build_create_or_update_request',
     'build_get_by_guids_request',
     'build_create_or_update_bulk_request',
-    'build_bulk_delete_request',
+    'build_delete_by_guids_request',
     'build_add_classification_request',
     'build_get_by_id_request',
     'build_partial_update_entity_attr_by_guid_request',

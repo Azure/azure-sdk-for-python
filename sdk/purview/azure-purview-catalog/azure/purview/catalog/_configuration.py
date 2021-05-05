@@ -15,7 +15,7 @@ from ._version import VERSION
 
 if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
-    from typing import Any, Optional
+    from typing import Any
 
     from azure.core.credentials import TokenCredential
 
@@ -47,6 +47,7 @@ class AzurePurviewCatalogClientConfiguration(Configuration):
 
         self.credential = credential
         self.endpoint = endpoint
+        self.api_version = "2021-05-01-preview"
         self.credential_scopes = kwargs.pop('credential_scopes', ['https://purview.azure.net/.default'])
         kwargs.setdefault('sdk_moniker', 'purview-catalog/{}'.format(VERSION))
         self._configure(**kwargs)

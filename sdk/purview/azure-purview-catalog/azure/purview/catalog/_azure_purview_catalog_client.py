@@ -15,7 +15,7 @@ from msrest import Deserializer, Serializer
 
 if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
-    from typing import Any, Dict, Optional
+    from typing import Any, Dict
 
     from azure.core.credentials import TokenCredential
     from azure.purview.catalog.core.rest import HttpRequest
@@ -44,6 +44,7 @@ class AzurePurviewCatalogClient(object):
         self._client = PipelineClient(base_url=base_url, config=self._config, **kwargs)
 
         self._serialize = Serializer()
+        self._deserialize = Deserializer()
         self._serialize.client_side_validation = False
 
     def send_request(self, http_request, **kwargs):
@@ -54,7 +55,7 @@ class AzurePurviewCatalogClient(object):
         Use these helper methods to create the request you pass to this method. See our example below:
 
         >>> from azure.purview.catalog.rest import build_create_or_update_request
-        >>> request = build_create_or_update_request(json, content, api_version)
+        >>> request = build_create_or_update_request(json, content)
         <HttpRequest [POST], url: '/atlas/v2/entity'>
         >>> response = client.send_request(request)
         <HttpResponse: 200 OK>
@@ -77,7 +78,7 @@ class AzurePurviewCatalogClient(object):
         request_copy.url = self._client.format_url(request_copy.url, **path_format_arguments)
         if kwargs.pop("stream_response", False):
             return _StreamContextManager(
-                client=self._client,
+                client=self._client._pipeline,
                 request=request_copy,
             )
         pipeline_response = self._client._pipeline.run(request_copy._internal_request, **kwargs)

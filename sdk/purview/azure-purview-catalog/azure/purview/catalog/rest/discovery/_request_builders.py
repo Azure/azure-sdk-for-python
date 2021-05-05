@@ -13,18 +13,16 @@ from msrest import Serializer
 
 if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
-    from typing import Any, Dict, IO, List, Optional, Union
+    from typing import Any, Dict, List, Optional, Union
 
 _SERIALIZER = Serializer()
 
 
-def build_search_advanced_request(
+def build_query_request(
     **kwargs  # type: Any
 ):
     # type: (...) -> HttpRequest
     """Gets data using search.
-
-    Gets data using search.
 
     See https://aka.ms/azsdk/python/llcwiki for how to incorporate this request builder into your code flow.
 
@@ -32,8 +30,6 @@ def build_search_advanced_request(
     :paramtype json: Any
     :keyword content: An object specifying the search criteria.
     :paramtype content: Any
-    :keyword api_version: Api Version.
-    :paramtype api_version: str
     :return: Returns an :class:`~azure.purview.catalog.core.rest.HttpRequest` that you will pass to the client's `send_request` method.
      See https://aka.ms/azsdk/python/llcwiki for how to incorporate this response into your code flow.
     :rtype: ~azure.purview.catalog.core.rest.HttpRequest
@@ -41,6 +37,7 @@ def build_search_advanced_request(
     Example:
         .. code-block:: python
 
+    
             # JSON input template you can fill out and use as your `json` input.
             json = {
                 "facets": [
@@ -65,9 +62,112 @@ def build_search_advanced_request(
                     }
                 }
             }
+
+    
+            # response body for status code(s): 200
+            response_body == {
+                "@search.count": "int (optional)",
+                "@search.facets": {
+                    "assetType": [
+                        {
+                            "count": "int (optional)",
+                            "value": "str (optional)"
+                        }
+                    ],
+                    "classification": [
+                        {
+                            "count": "int (optional)",
+                            "value": "str (optional)"
+                        }
+                    ],
+                    "classificationCategory": [
+                        {
+                            "count": "int (optional)",
+                            "value": "str (optional)"
+                        }
+                    ],
+                    "contactId": [
+                        {
+                            "count": "int (optional)",
+                            "value": "str (optional)"
+                        }
+                    ],
+                    "fileExtension": [
+                        {
+                            "count": "int (optional)",
+                            "value": "str (optional)"
+                        }
+                    ],
+                    "label": [
+                        {
+                            "count": "int (optional)",
+                            "value": "str (optional)"
+                        }
+                    ],
+                    "term": [
+                        {
+                            "count": "int (optional)",
+                            "value": "str (optional)"
+                        }
+                    ]
+                },
+                "value": [
+                    {
+                        "@search.highlights": {
+                            "description": [
+                                "str (optional)"
+                            ],
+                            "entityType": [
+                                "str (optional)"
+                            ],
+                            "id": [
+                                "str (optional)"
+                            ],
+                            "name": [
+                                "str (optional)"
+                            ],
+                            "qualifiedName": [
+                                "str (optional)"
+                            ]
+                        },
+                        "@search.score": "float (optional)",
+                        "@search.text": "str (optional)",
+                        "assetType": [
+                            "str (optional)"
+                        ],
+                        "classification": [
+                            "str (optional)"
+                        ],
+                        "contact": [
+                            {
+                                "contactType": "str (optional)",
+                                "id": "str (optional)",
+                                "info": "str (optional)"
+                            }
+                        ],
+                        "description": "str (optional)",
+                        "entityType": "str (optional)",
+                        "id": "str (optional)",
+                        "label": [
+                            "str (optional)"
+                        ],
+                        "name": "str (optional)",
+                        "owner": "str (optional)",
+                        "qualifiedName": "str (optional)",
+                        "term": [
+                            {
+                                "glossaryName": "str (optional)",
+                                "guid": "str (optional)",
+                                "name": "str (optional)"
+                            }
+                        ]
+                    }
+                ]
+            }
+
     """
-    api_version = kwargs.pop('api_version', "2020-12-01-preview")  # type: Optional[str]
     content_type = kwargs.pop("content_type", None)
+    api_version = "2021-05-01-preview"
     accept = "application/json"
 
     # Construct URL
@@ -75,8 +175,7 @@ def build_search_advanced_request(
 
     # Construct parameters
     query_parameters = kwargs.pop("params", {})  # type: Dict[str, Any]
-    if api_version is not None:
-        query_parameters['api-version'] = _SERIALIZER.query("api_version", api_version, 'str')
+    query_parameters['api-version'] = _SERIALIZER.query("api_version", api_version, 'str')
 
     # Construct headers
     header_parameters = kwargs.pop("headers", {})  # type: Dict[str, Any]
@@ -99,16 +198,12 @@ def build_suggest_request(
     # type: (...) -> HttpRequest
     """Get search suggestions by query criteria.
 
-    Get search suggestions by query criteria.
-
     See https://aka.ms/azsdk/python/llcwiki for how to incorporate this request builder into your code flow.
 
     :keyword json: An object specifying the suggest criteria.
     :paramtype json: Any
     :keyword content: An object specifying the suggest criteria.
     :paramtype content: Any
-    :keyword api_version: Api Version.
-    :paramtype api_version: str
     :return: Returns an :class:`~azure.purview.catalog.core.rest.HttpRequest` that you will pass to the client's `send_request` method.
      See https://aka.ms/azsdk/python/llcwiki for how to incorporate this response into your code flow.
     :rtype: ~azure.purview.catalog.core.rest.HttpRequest
@@ -116,15 +211,57 @@ def build_suggest_request(
     Example:
         .. code-block:: python
 
+    
             # JSON input template you can fill out and use as your `json` input.
             json = {
                 "filter": "object (optional)",
                 "keywords": "str (optional)",
                 "limit": "int (optional)"
             }
+
+    
+            # response body for status code(s): 200
+            response_body == {
+                "value": [
+                    {
+                        "@search.score": "float (optional)",
+                        "@search.text": "str (optional)",
+                        "assetType": [
+                            "str (optional)"
+                        ],
+                        "classification": [
+                            "str (optional)"
+                        ],
+                        "contact": [
+                            {
+                                "contactType": "str (optional)",
+                                "id": "str (optional)",
+                                "info": "str (optional)"
+                            }
+                        ],
+                        "description": "str (optional)",
+                        "entityType": "str (optional)",
+                        "id": "str (optional)",
+                        "label": [
+                            "str (optional)"
+                        ],
+                        "name": "str (optional)",
+                        "owner": "str (optional)",
+                        "qualifiedName": "str (optional)",
+                        "term": [
+                            {
+                                "glossaryName": "str (optional)",
+                                "guid": "str (optional)",
+                                "name": "str (optional)"
+                            }
+                        ]
+                    }
+                ]
+            }
+
     """
-    api_version = kwargs.pop('api_version', "2020-12-01-preview")  # type: Optional[str]
     content_type = kwargs.pop("content_type", None)
+    api_version = "2021-05-01-preview"
     accept = "application/json"
 
     # Construct URL
@@ -132,8 +269,7 @@ def build_suggest_request(
 
     # Construct parameters
     query_parameters = kwargs.pop("params", {})  # type: Dict[str, Any]
-    if api_version is not None:
-        query_parameters['api-version'] = _SERIALIZER.query("api_version", api_version, 'str')
+    query_parameters['api-version'] = _SERIALIZER.query("api_version", api_version, 'str')
 
     # Construct headers
     header_parameters = kwargs.pop("headers", {})  # type: Dict[str, Any]
@@ -156,16 +292,12 @@ def build_auto_complete_request(
     # type: (...) -> HttpRequest
     """Get auto complete options.
 
-    Get auto complete options.
-
     See https://aka.ms/azsdk/python/llcwiki for how to incorporate this request builder into your code flow.
 
     :keyword json: An object specifying the autocomplete criteria.
     :paramtype json: Any
     :keyword content: An object specifying the autocomplete criteria.
     :paramtype content: Any
-    :keyword api_version: Api Version.
-    :paramtype api_version: str
     :return: Returns an :class:`~azure.purview.catalog.core.rest.HttpRequest` that you will pass to the client's `send_request` method.
      See https://aka.ms/azsdk/python/llcwiki for how to incorporate this response into your code flow.
     :rtype: ~azure.purview.catalog.core.rest.HttpRequest
@@ -173,15 +305,28 @@ def build_auto_complete_request(
     Example:
         .. code-block:: python
 
+    
             # JSON input template you can fill out and use as your `json` input.
             json = {
                 "filter": "object (optional)",
                 "keywords": "str (optional)",
                 "limit": "int (optional)"
             }
+
+    
+            # response body for status code(s): 200
+            response_body == {
+                "value": [
+                    {
+                        "queryPlusText": "str (optional)",
+                        "text": "str (optional)"
+                    }
+                ]
+            }
+
     """
-    api_version = kwargs.pop('api_version', "2020-12-01-preview")  # type: Optional[str]
     content_type = kwargs.pop("content_type", None)
+    api_version = "2021-05-01-preview"
     accept = "application/json"
 
     # Construct URL
@@ -189,8 +334,7 @@ def build_auto_complete_request(
 
     # Construct parameters
     query_parameters = kwargs.pop("params", {})  # type: Dict[str, Any]
-    if api_version is not None:
-        query_parameters['api-version'] = _SERIALIZER.query("api_version", api_version, 'str')
+    query_parameters['api-version'] = _SERIALIZER.query("api_version", api_version, 'str')
 
     # Construct headers
     header_parameters = kwargs.pop("headers", {})  # type: Dict[str, Any]
