@@ -64,7 +64,7 @@ class ConfidentialLedgerClient(AsyncConfidentialLedgerClientBase):
             endpoint=endpoint,
             credential=credential,
             ledger_certificate_path=ledger_certificate_path,
-            **kwargs,
+            **kwargs
         )
 
     @distributed_trace_async
@@ -98,7 +98,7 @@ class ConfidentialLedgerClient(AsyncConfidentialLedgerClientBase):
             contents=entry_contents,
             sub_ledger_id=sub_ledger_id,
             cls=kwargs.pop("cls", AppendResult._from_pipeline_result),
-            **kwargs,
+            **kwargs
         )
 
         if wait_for_commit:
@@ -128,7 +128,7 @@ class ConfidentialLedgerClient(AsyncConfidentialLedgerClientBase):
         result = await self._client.create_or_update_user(
             user_id=user_id,
             assigned_role=role.value if isinstance(role, LedgerUserRole) else role,
-            **kwargs,
+            **kwargs
         )
         return LedgerUser(
             user_id=result.user_id, role=LedgerUserRole(result.assigned_role)
@@ -255,7 +255,7 @@ class ConfidentialLedgerClient(AsyncConfidentialLedgerClientBase):
                 if entries is not None
                 else [],
             ),
-            **kwargs,
+            **kwargs
         )
 
     @distributed_trace_async
@@ -307,9 +307,7 @@ class ConfidentialLedgerClient(AsyncConfidentialLedgerClientBase):
         state = None
         for _ in range(max_tries):
             result = await self._client.get_ledger_entry(
-                transaction_id=transaction_id,
-                sub_ledger_id=sub_ledger_id,
-                **kwargs,
+                transaction_id=transaction_id, sub_ledger_id=sub_ledger_id, **kwargs
             )
             ready = result.state == ConfidentialLedgerQueryState.READY
             if not ready:
@@ -319,7 +317,9 @@ class ConfidentialLedgerClient(AsyncConfidentialLedgerClientBase):
                 break
         if not ready:
             raise TimeoutError(
-                f"After {max_tries} attempts, the query still had state {state}, not {ConfidentialLedgerQueryState.READY}"
+                "After {} attempts, the query still had state {}, not {}".format(
+                    max_tries, state, ConfidentialLedgerQueryState.READY
+                )
             )
 
         return LedgerEntry(
@@ -359,8 +359,7 @@ class ConfidentialLedgerClient(AsyncConfidentialLedgerClientBase):
         state = None
         for _ in range(max_tries):
             result = await self._client.get_receipt(
-                transaction_id=transaction_id,
-                **kwargs,
+                transaction_id=transaction_id, **kwargs
             )
 
             ready = result.state == ConfidentialLedgerQueryState.READY
@@ -371,7 +370,9 @@ class ConfidentialLedgerClient(AsyncConfidentialLedgerClientBase):
                 break
         if not ready:
             raise TimeoutError(
-                f"After {max_tries} attempts, the query still had state {state}, not {ConfidentialLedgerQueryState.READY}"
+                "After {} attempts, the query still had state {}, not {}".format(
+                    max_tries, state, ConfidentialLedgerQueryState.READY
+                )
             )
 
         return TransactionReceipt(
@@ -380,9 +381,7 @@ class ConfidentialLedgerClient(AsyncConfidentialLedgerClientBase):
 
     @distributed_trace_async
     async def get_transaction_status(
-        self,
-        transaction_id: str,
-        **kwargs: Any,
+        self, transaction_id: str, **kwargs: Any
     ) -> TransactionStatus:
         """Gets the status of a transaction.
 
@@ -404,11 +403,7 @@ class ConfidentialLedgerClient(AsyncConfidentialLedgerClientBase):
         )
 
     @distributed_trace_async
-    async def get_user(
-        self,
-        user_id: str,
-        **kwargs: Any,
-    ) -> LedgerUser:
+    async def get_user(self, user_id: str, **kwargs: Any) -> LedgerUser:
         """Gets a Confidential Ledger user.
 
         :param user_id: Identifies the user to delete. This should be an AAD object id or
@@ -463,5 +458,7 @@ class ConfidentialLedgerClient(AsyncConfidentialLedgerClientBase):
                 await asyncio.sleep(interval)
 
         raise TimeoutError(
-            f"Transaction {transaction_id} is not {TransactionState.COMMITTED} yet"
+            "Transaction {} is not {} yet".format(
+                transaction_id, TransactionState.COMMITTED
+            )
         )

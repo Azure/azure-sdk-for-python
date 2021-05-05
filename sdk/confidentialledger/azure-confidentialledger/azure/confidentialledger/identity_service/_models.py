@@ -30,7 +30,7 @@ class LedgerIdentity(object):
     @property
     def ledger_id(self):
         # type: () -> str
-        """"The id for this Confidential Ledger."""
+        """ "The id for this Confidential Ledger."""
         return self._ledger_id
 
     @property

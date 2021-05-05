@@ -63,7 +63,7 @@ class ConfidentialLedgerClient(ConfidentialLedgerClientBase):
             endpoint=endpoint,
             credential=credential,
             ledger_certificate_path=ledger_certificate_path,
-            **kwargs,
+            **kwargs
         )
 
     @distributed_trace
@@ -94,7 +94,7 @@ class ConfidentialLedgerClient(ConfidentialLedgerClientBase):
             # so it has to be popped.
             sub_ledger_id=kwargs.pop("sub_ledger_id", None),
             cls=kwargs.pop("cls", AppendResult._from_pipeline_result),
-            **kwargs,
+            **kwargs
         )
 
         if wait_for_commit:
@@ -128,7 +128,7 @@ class ConfidentialLedgerClient(ConfidentialLedgerClientBase):
         result = self._client.create_or_update_user(
             user_id=user_id,
             assigned_role=role.value if isinstance(role, LedgerUserRole) else role,
-            **kwargs,
+            **kwargs
         )
         return LedgerUser(
             user_id=result.user_id, role=LedgerUserRole(result.assigned_role)
@@ -266,7 +266,7 @@ class ConfidentialLedgerClient(ConfidentialLedgerClientBase):
                 if entries is not None
                 else [],
             ),
-            **kwargs,
+            **kwargs
         )
 
     @distributed_trace
@@ -313,8 +313,7 @@ class ConfidentialLedgerClient(ConfidentialLedgerClientBase):
         state = None
         for _ in range(max_tries):
             result = self._client.get_ledger_entry(
-                transaction_id=transaction_id,
-                **kwargs,
+                transaction_id=transaction_id, **kwargs
             )
             ready = result.state == ConfidentialLedgerQueryState.READY
             if not ready:
@@ -366,10 +365,7 @@ class ConfidentialLedgerClient(ConfidentialLedgerClientBase):
         result = None
         state = None
         for _ in range(max_tries):
-            result = self._client.get_receipt(
-                transaction_id=transaction_id,
-                **kwargs,
-            )
+            result = self._client.get_receipt(transaction_id=transaction_id, **kwargs)
 
             ready = result.state == ConfidentialLedgerQueryState.READY
             if not ready:
