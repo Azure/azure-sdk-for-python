@@ -17,7 +17,7 @@ authentication as demonstrated below.
 * An [Azure subscription][azure_sub]
 * Python 2.7, 3.5.3, or later
 * A running instance of Azure Confidential Ledger.
-* A registered user in the Confidential Ledger, typically assigned during [ARM](azure_resource_manager) resource creation, with `Administrator` privileges.
+* A registered user in the Confidential Ledger, typically assigned during [ARM][azure_resource_manager] resource creation, with `Administrator` privileges.
 
 ### Authenticate the client
 #### Using Azure Active Directory
@@ -388,10 +388,9 @@ contact opencode@microsoft.com with any additional questions or comments.
 [ccf]: https://github.com/Microsoft/CCF
 [code_of_conduct]: https://opensource.microsoft.com/codeofconduct
 [code_of_conduct_faq]: https://opensource.microsoft.com/codeofconduct/faq
-[confidential_ledger_client_src]: https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/confidentialledger/azure-confidentialledger
-[confidential_ledger_docs]: https://docs.microsoft.com/azure/confidential-ledger
-[confidential_ledger_samples]: https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/confidentialledger/azure-confidentialledger/samples
+[confidential_ledger_client_src]: https://aka.ms/azsdk/python/confidentialledger/src
+[confidential_ledger_docs]: https://aka.ms/confidentialledger-servicedocs
 [default_cred_ref]: https://aka.ms/azsdk/python/identity/docs#azure.identity.DefaultAzureCredential
 [pip]: https://pypi.org/project/pip/
-[pypi_package_confidential_ledger]: https://pypi.org/project/azure-confidentialledger
-[reference_docs]: https://aka.ms/azsdk/python/confidentialledger/docs
+[pypi_package_confidential_ledger]: https://aka.ms/azsdk/python/confidentialledger/pypi
+[reference_docs]: https://aka.ms/azsdk/python/confidentialledger/ref-docs
