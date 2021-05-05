@@ -4,10 +4,10 @@
 # license information.
 # --------------------------------------------------------------------------
 
-from typing import Any, List, Mapping
+from typing import Any, List, Mapping, Optional, Union
 from uuid import uuid4
 
-from azure.core.credentials import AzureSasCredential
+from azure.core.credentials import AzureSasCredential, AzureNamedKeyCredential
 from azure.core.pipeline.policies import (
     ContentDecodePolicy,
     AsyncBearerTokenCredentialPolicy,
@@ -19,7 +19,7 @@ from azure.core.pipeline.policies import (
     AzureSasCredentialPolicy,
     RequestIdPolicy,
     CustomHookPolicy,
-    NetworkTraceLoggingPolicy
+    NetworkTraceLoggingPolicy,
 )
 from azure.core.pipeline.transport import (
     AsyncHttpTransport,
@@ -40,9 +40,9 @@ class AsyncTablesBaseClient(AccountHostsMixin):
 
     def __init__(
         self,
-        account_url,  # type: str
-        credential=None,  # type: str
-        **kwargs  # type: Any
+        account_url: str,
+        credential: Optional[Union[AzureSasCredential, AzureNamedKeyCredential]] = None,
+        **kwargs: Any
     ):
         # type: (...) -> None
         super(AsyncTablesBaseClient, self).__init__(account_url, credential=credential, **kwargs)
@@ -77,6 +77,8 @@ class AsyncTablesBaseClient(AccountHostsMixin):
             self._credential_policy = credential
         elif isinstance(credential, AzureSasCredential):
             self._credential_policy = AzureSasCredentialPolicy(credential)
+        elif isinstance(credential, AzureNamedKeyCredential):
+            self._credential_policy = SharedKeyCredentialPolicy(credential)
         elif credential is not None:
             raise TypeError("Unsupported credential: {}".format(credential))
 

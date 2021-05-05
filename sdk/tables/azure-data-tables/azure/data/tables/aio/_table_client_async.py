@@ -11,7 +11,7 @@ except ImportError:
     from urlparse import urlparse  # type: ignore
     from urllib2 import unquote  # type: ignore
 
-from azure.core.credentials import AzureSasCredential
+from azure.core.credentials import AzureNamedKeyCredential, AzureSasCredential
 from azure.core.async_paging import AsyncItemPaged
 from azure.core.exceptions import ResourceNotFoundError, HttpResponseError
 from azure.core.tracing.decorator import distributed_trace
@@ -43,7 +43,7 @@ class TableClient(AsyncTablesBaseClient):
         self,
         account_url: str,
         table_name: str,
-        credential: Optional[Union[AzureSasCredential]] = None,
+        credential: Optional[Union[AzureSasCredential, AzureNamedKeyCredential]] = None,
         **kwargs
     ) -> None:
         """Create TableClient from a Credential.
@@ -58,7 +58,9 @@ class TableClient(AsyncTablesBaseClient):
             account URL already has a SAS token, or the connection string already has shared
             access key values. The value can be a SAS token string or an account shared access
             key.
-        :type credential: str
+        :type credential:
+            :class:`~azure.core.credentials.AzureNamedKeyCredential` or
+            :class:`~azure.core.credentials.AzureSasCredential`
 
         :returns: None
         """
@@ -109,7 +111,7 @@ class TableClient(AsyncTablesBaseClient):
     def from_table_url(
         cls,
         table_url: str,
-        credential: Optional[Union[AzureSasCredential]] = None,
+        credential: Optional[Union[AzureSasCredential, AzureNamedKeyCredential]] = None,
         **kwargs
     ) -> 'TableClient':
         """A client to interact with a specific Table.
@@ -120,7 +122,9 @@ class TableClient(AsyncTablesBaseClient):
             The credentials with which to authenticate. This is optional if the
             account URL already has a SAS token. The value can be a SAS token string, an account
             shared access key.
-        :type credential: str
+        :type credential:
+            :class:`~azure.core.credentials.AzureNamedKeyCredential` or
+            :class:`~azure.core.credentials.AzureSasCredential`
         :returns: A table client.
         :rtype: :class:`~azure.data.tables.TableClient`
         """
