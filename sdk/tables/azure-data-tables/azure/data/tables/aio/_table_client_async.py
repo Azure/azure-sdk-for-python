@@ -4,7 +4,7 @@
 # license information.
 # --------------------------------------------------------------------------
 import functools
-from typing import List, Union, Any, Optional, Mapping, Iterable
+from typing import List, Union, Any, Optional, Mapping, Iterable, Dict, overload
 try:
     from urllib.parse import urlparse, unquote
 except ImportError:
@@ -264,13 +264,16 @@ class TableClient(AsyncTablesBaseClient):
         except HttpResponseError as error:
             _process_table_error(error)
 
+    @overload
+    async def delete_entity(self, partition_key: str, row_key: str, **kwargs: Any) -> None:
+        ...
+
+    @overload
+    async def delete_entity(self, entity: Union[TableEntity, Mapping[str, Any]], **kwargs: Any) -> None:
+        ...
+
     @distributed_trace_async
-    async def delete_entity(
-        self,
-        partition_key: str,
-        row_key: str,
-        **kwargs
-    ) -> None:
+    async def delete_entity(self, *args: Union[TableEntity, str], **kwargs: Any) -> None:
         """Deletes the specified entity in a table.
 
         :param partition_key: The partition key of the entity.
@@ -293,6 +296,20 @@ class TableClient(AsyncTablesBaseClient):
                 :dedent: 8
                 :caption: Adding an entity to a Table
         """
+        try:
+            entity = kwargs.pop('entity', None)
+            if not entity:
+                entity = args[0]
+            partition_key = entity['PartitionKey']
+            row_key = entity['RowKey']
+        except (TypeError, IndexError):
+            partition_key = kwargs.pop('partition_key', None)
+            if not partition_key:
+                partition_key = args[0]
+            row_key = kwargs.pop("row_key", None)
+            if not row_key:
+                row_key = args[1]
+
         if_match, _ = _get_match_headers(
             kwargs=dict(
                 kwargs,

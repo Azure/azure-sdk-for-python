@@ -451,6 +451,7 @@ class StorageTableBatchTest(AzureTestCase, AsyncTableTestCase):
 
             with pytest.raises(ResourceNotFoundError):
                 entity = await self.table.get_entity(partition_key=entity['PartitionKey'], row_key=entity['RowKey'])
+
         finally:
             await self._tear_down()
 

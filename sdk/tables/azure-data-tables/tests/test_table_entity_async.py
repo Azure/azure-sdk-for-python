@@ -636,8 +636,7 @@ class StorageTableEntityTest(AzureTestCase, AsyncTableTestCase):
                                                row_key=entity['RowKey'])
 
             await self.table.delete_entity(
-                partition_key=resp['PartitionKey'],
-                row_key=resp['RowKey'],
+                {"PartitionKey": resp['PartitionKey'], "RowKey": resp['RowKey']},
                 etag=etag,
                 match_condition=MatchConditions.IfNotModified
             )
@@ -990,7 +989,7 @@ class StorageTableEntityTest(AzureTestCase, AsyncTableTestCase):
 
             # Act
             with pytest.raises(ResourceNotFoundError):
-                await self.table.delete_entity(entity['PartitionKey'], entity['RowKey'])
+                await self.table.delete_entity({"PartitionKey": entity['PartitionKey'], "RowKey": entity['RowKey']})
 
             # Assert
         finally:
@@ -1004,8 +1003,12 @@ class StorageTableEntityTest(AzureTestCase, AsyncTableTestCase):
             entity, etag = await self._insert_random_entity()
 
             # Act
-            resp = await self.table.delete_entity(entity['PartitionKey'], entity['RowKey'], etag=etag,
-                                                  match_condition=MatchConditions.IfNotModified)
+            resp = await self.table.delete_entity(
+                entity['PartitionKey'],
+                entity['RowKey'],
+                etag=etag,
+                match_condition=MatchConditions.IfNotModified
+            )
 
             # Assert
             assert resp is None
@@ -1025,11 +1028,69 @@ class StorageTableEntityTest(AzureTestCase, AsyncTableTestCase):
             # Act
             with pytest.raises(HttpResponseError):
                 await self.table.delete_entity(
-                    entity['PartitionKey'], entity['RowKey'],
+                    entity['PartitionKey'],
+                    entity['RowKey'],
                     etag=u'W/"datetime\'2012-06-15T22%3A51%3A44.9662825Z\'"',
-                    match_condition=MatchConditions.IfNotModified)
+                    match_condition=MatchConditions.IfNotModified
+                )
 
             # Assert
+        finally:
+            await self._tear_down()
+
+    @TablesPreparer()
+    async def test_delete_entity_overloads(self, tables_storage_account_name, tables_primary_storage_account_key):
+        # Arrange
+        await self._set_up(tables_storage_account_name, tables_primary_storage_account_key)
+        try:
+            entity, _ = await self._insert_random_entity()
+
+            # Act
+            await self.table.delete_entity(entity)
+
+            pk, rk = self._create_pk_rk("pk", "rk")
+            pk, rk = pk + u"2", rk + u"2"
+            entity2 = {
+                u"PartitionKey": pk,
+                u"RowKey": rk,
+                u"Value": 100
+            }
+            await self.table.create_entity(entity2)
+
+            await self.table.delete_entity(pk, rk)
+
+            count = 0
+            async for entity in self.table.list_entities():
+                count += 1
+            assert count == 0
+        finally:
+            await self._tear_down()
+
+    @TablesPreparer()
+    async def test_delete_entity_overloads_kwargs(self, tables_storage_account_name, tables_primary_storage_account_key):
+        # Arrange
+        await self._set_up(tables_storage_account_name, tables_primary_storage_account_key)
+        try:
+            entity, _ = await self._insert_random_entity()
+
+            # Act
+            await self.table.delete_entity(entity=entity)
+
+            pk, rk = self._create_pk_rk("pk", "rk")
+            pk, rk = pk + u"2", rk + u"2"
+            entity2 = {
+                u"PartitionKey": pk,
+                u"RowKey": rk,
+                u"Value": 100
+            }
+            await self.table.create_entity(entity2)
+
+            await self.table.delete_entity(partition_key=pk, row_key=rk)
+
+            count = 0
+            async for entity in self.table.list_entities():
+                count += 1
+            assert count == 0
         finally:
             await self._tear_down()
 

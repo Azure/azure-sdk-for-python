@@ -865,8 +865,7 @@ class StorageTableEntityTest(AzureTestCase, TableTestCase):
                                          row_key=entity['RowKey'])
 
             self.table.delete_entity(
-                partition_key=resp['PartitionKey'],
-                row_key=resp['RowKey'],
+                {"PartitionKey": resp['PartitionKey'], "RowKey": resp['RowKey']},
                 etag=etag,
                 match_condition=MatchConditions.IfNotModified
             )
@@ -1229,7 +1228,7 @@ class StorageTableEntityTest(AzureTestCase, TableTestCase):
 
             # Act
             with pytest.raises(ResourceNotFoundError):
-                self.table.delete_entity(entity['PartitionKey'], entity['RowKey'])
+                self.table.delete_entity({"PartitionKey": entity['PartitionKey'], "RowKey": entity['RowKey']})
 
             # Assert
         finally:
@@ -1268,14 +1267,72 @@ class StorageTableEntityTest(AzureTestCase, TableTestCase):
             # Act
             with pytest.raises(HttpResponseError):
                 self.table.delete_entity(
-                    entity['PartitionKey'], entity['RowKey'],
+                    entity['PartitionKey'],
+                    entity['RowKey'],
                     etag=u'W/"datetime\'2012-06-15T22%3A51%3A44.9662825Z\'"',
-                    match_condition=MatchConditions.IfNotModified)
+                    match_condition=MatchConditions.IfNotModified
+                )
 
             # Assert
         finally:
             self._tear_down()
             self.sleep(SLEEP_DELAY)
+
+    @CosmosPreparer()
+    def test_delete_entity_overloads(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
+        # Arrange
+        self._set_up(tables_cosmos_account_name, tables_primary_cosmos_account_key)
+        try:
+            entity, _ = self._insert_random_entity()
+
+            # Act
+            self.table.delete_entity(entity)
+
+            pk, rk = self._create_pk_rk("pk", "rk")
+            pk, rk = pk + u"2", rk + u"2"
+            entity2 = {
+                u"PartitionKey": pk,
+                u"RowKey": rk,
+                u"Value": 100
+            }
+            self.table.create_entity(entity2)
+
+            self.table.delete_entity(pk, rk)
+
+            count = 0
+            for entity in self.table.list_entities():
+                count += 1
+            assert count == 0
+        finally:
+            self._tear_down()
+
+    @CosmosPreparer()
+    def test_delete_entity_overloads_kwargs(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
+        # Arrange
+        self._set_up(tables_cosmos_account_name, tables_primary_cosmos_account_key)
+        try:
+            entity, _ = self._insert_random_entity()
+
+            # Act
+            self.table.delete_entity(entity=entity)
+
+            pk, rk = self._create_pk_rk("pk", "rk")
+            pk, rk = pk + u"2", rk + u"2"
+            entity2 = {
+                u"PartitionKey": pk,
+                u"RowKey": rk,
+                u"Value": 100
+            }
+            self.table.create_entity(entity2)
+
+            self.table.delete_entity(partition_key=pk, row_key=rk)
+
+            count = 0
+            for entity in self.table.list_entities():
+                count += 1
+            assert count == 0
+        finally:
+            self._tear_down()
 
     @CosmosPreparer()
     def test_unicode_property_value(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
