@@ -2,7 +2,6 @@ from azure.confidentialledger.identity_service import (
     ConfidentialLedgerIdentityServiceClient,
     LedgerIdentity,
 )
-from azure.confidentialledger._generated_identity.v0_1_preview import ConfidentialLedgerClient
 
 from ._shared.constants import NETWORK_CERTIFICATE
 from ._shared.testcase import ConfidentialLedgerTestCase
@@ -17,10 +16,9 @@ class ConfidentialLedgerIdentityServiceClientTest(ConfidentialLedgerTestCase):
         self.ledger_id = self.set_value_to_scrub("CONFIDENTIAL_LEDGER_ID", LEDGER_ID)
 
     def test_get_ledger_identity(self):
-        credential = self.get_credential(ConfidentialLedgerClient)
         client = self.create_client_from_credential(
             ConfidentialLedgerIdentityServiceClient,
-            credential=credential,
+            credential=None,
             identity_service_url="https://identity.accledger.azure.com",
         )
 
