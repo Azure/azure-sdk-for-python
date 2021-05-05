@@ -616,7 +616,7 @@ class StorageTableEntityTest(AzureTestCase, AsyncTableTestCase):
         finally:
             await self._tear_down()
 
-    @cosmos_decorator_async()
+    @cosmos_decorator_async
     async def test_get_entity_if_match_entity_bad_etag(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
         # Arrange
         await self._set_up(tables_cosmos_account_name, tables_primary_cosmos_account_key)
@@ -639,6 +639,30 @@ class StorageTableEntityTest(AzureTestCase, AsyncTableTestCase):
 
         finally:
             await self._tear_down()
+
+    @cosmos_decorator_async
+    async def test_delete_entity_if_match_table_entity(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
+        # Arrange
+        await self._set_up(tables_cosmos_account_name, tables_primary_cosmos_account_key)
+        try:
+            entity, etag = await self._insert_random_entity()
+            table_entity = TableEntity(**entity)
+
+            entity = await self.table.get_entity(
+                partition_key=entity['PartitionKey'],
+                row_key=entity['RowKey']
+            )
+
+            with pytest.raises(ValueError):
+                await self.table.delete_entity(table_entity, match_condition=MatchConditions.IfNotModified)
+
+            await self.table.delete_entity(table_entity, etag=etag, match_condition=MatchConditions.IfNotModified)
+
+            with pytest.raises(ResourceNotFoundError):
+                await self.table.get_entity(entity["PartitionKey"], entity["RowKey"])
+
+        finally:
+            self._tear_down()
 
     @cosmos_decorator_async
     async def test_get_entity_full_metadata(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):

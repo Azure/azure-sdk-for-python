@@ -319,7 +319,7 @@ class TableClient(AsyncTablesBaseClient):
         if match_condition and entity and not etag:
             try:
                 etag = entity.metadata.get("etag", None)
-            except AttributeError:
+            except (AttributeError, TypeError):
                 pass
 
         if_match, _ = _get_match_headers(
@@ -413,18 +413,11 @@ class TableClient(AsyncTablesBaseClient):
         """
         match_condition = kwargs.pop("match_condition", None)
         etag = kwargs.pop("etag", None)
-        if match_condition and not etag:
-            etag = entity.metadata.get("etag")
-
-        if_match, _ = _get_match_headers(
-            kwargs=dict(
-                kwargs,
-                etag=etag,
-                match_condition=match_condition,
-            ),
-            etag_param="etag",
-            match_param="match_condition",
-        )
+        if match_condition and entity and not etag:
+            try:
+                etag = entity.metadata.get("etag", None)
+            except (AttributeError, TypeError):
+                pass
 
         if_match, _ = _get_match_headers(
             kwargs=dict(

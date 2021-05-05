@@ -5,7 +5,7 @@
 # --------------------------------------------------------------------------
 
 import functools
-from typing import Optional, Any, Union, List, Tuple, Dict, Mapping, Iterable, overload
+from typing import Optional, Any, Type, Union, List, Tuple, Dict, Mapping, Iterable, overload
 try:
     from urllib.parse import urlparse, unquote
 except ImportError:
@@ -328,7 +328,7 @@ class TableClient(TablesBaseClient):
         if match_condition and entity and not etag:
             try:
                 etag = entity.metadata.get("etag", None)
-            except AttributeError:
+            except (AttributeError, TypeError):
                 pass
 
         if_match, _ = _get_match_headers(
@@ -424,7 +424,10 @@ class TableClient(TablesBaseClient):
         match_condition = kwargs.pop("match_condition", None)
         etag = kwargs.pop("etag", None)
         if match_condition and not etag:
-            etag = entity.metadata.get("etag")
+            try:
+                etag = entity.metadata.get("etag", None)
+            except (AttributeError, TypeError):
+                pass
 
         if_match, _ = _get_match_headers(
             kwargs=dict(

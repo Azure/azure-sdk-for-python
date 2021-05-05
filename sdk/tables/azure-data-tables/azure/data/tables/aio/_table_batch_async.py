@@ -219,7 +219,7 @@ class TableBatchOperations(object):
         if match_condition and not etag:
             try:
                 etag = entity.metadata.get("etag", None)
-            except AttributeError:
+            except (AttributeError, TypeError):
                 pass
 
         if_match, _ = _get_match_headers(
@@ -498,7 +498,7 @@ class TableBatchOperations(object):
         if match_condition and not etag:
             try:
                 etag = entity.metadata.get("etag", None)
-            except AttributeError:
+            except (AttributeError, TypeError):
                 pass
 
         if_match, _ = _get_match_headers(

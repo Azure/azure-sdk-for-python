@@ -903,6 +903,29 @@ class StorageTableEntityTest(AzureTestCase, TableTestCase):
             self._tear_down()
 
     @cosmos_decorator
+    def test_delete_entity_if_match_table_entity(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
+        # Arrange
+        self._set_up(tables_cosmos_account_name, tables_primary_cosmos_account_key)
+        try:
+            entity, etag = self._insert_random_entity()
+            table_entity = TableEntity(**entity)
+
+            entity = self.table.get_entity(
+                partition_key=entity['PartitionKey'],
+                row_key=entity['RowKey']
+            )
+
+            with pytest.raises(ValueError):
+                self.table.delete_entity(table_entity, match_condition=MatchConditions.IfNotModified)
+
+            self.table.delete_entity(table_entity, etag=etag, match_condition=MatchConditions.IfNotModified)
+
+            with pytest.raises(ResourceNotFoundError):
+                self.table.get_entity(entity["PartitionKey"], entity["RowKey"])
+        finally:
+            self._tear_down()
+
+    @cosmos_decorator
     def test_get_entity_full_metadata(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
         # Arrange
         self._set_up(tables_cosmos_account_name, tables_primary_cosmos_account_key)
