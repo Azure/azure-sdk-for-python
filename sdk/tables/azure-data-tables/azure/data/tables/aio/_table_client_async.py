@@ -314,15 +314,24 @@ class TableClient(AsyncTablesBaseClient):
             if not row_key:
                 row_key = args[1]
 
+        match_condition = kwargs.pop("match_condition", None)
+        etag = kwargs.pop("etag", None)
+        if match_condition and entity and not etag:
+            try:
+                etag = entity.metadata.get("etag", None)
+            except (AttributeError, TypeError):
+                pass
+
         if_match, _ = _get_match_headers(
             kwargs=dict(
                 kwargs,
-                etag=kwargs.pop("etag", None),
-                match_condition=kwargs.pop("match_condition", None),
+                etag=etag,
+                match_condition=match_condition,
             ),
             etag_param="etag",
             match_param="match_condition",
         )
+
         try:
             await self._client.table.delete_entity(
                 table=self.table_name,
@@ -402,11 +411,19 @@ class TableClient(AsyncTablesBaseClient):
                 :dedent: 8
                 :caption: Querying entities from a TableClient
         """
+        match_condition = kwargs.pop("match_condition", None)
+        etag = kwargs.pop("etag", None)
+        if match_condition and entity and not etag:
+            try:
+                etag = entity.metadata.get("etag", None)
+            except (AttributeError, TypeError):
+                pass
+
         if_match, _ = _get_match_headers(
             kwargs=dict(
                 kwargs,
-                etag=kwargs.pop("etag", None),
-                match_condition=kwargs.pop("match_condition", None),
+                etag=etag,
+                match_condition=match_condition,
             ),
             etag_param="etag",
             match_param="match_condition",
