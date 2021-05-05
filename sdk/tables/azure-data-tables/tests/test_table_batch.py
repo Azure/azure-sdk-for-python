@@ -792,6 +792,32 @@ class StorageTableBatchTest(AzureTestCase, TableTestCase):
             self._tear_down()
 
     @pytest.mark.skipif(sys.version_info < (3, 0), reason="requires Python3")
+    @TablesPreparer()
+    def test_delete_batch_with_bad_kwarg(self, tables_storage_account_name, tables_primary_storage_account_key):
+        # Arrange
+        self._set_up(tables_storage_account_name, tables_primary_storage_account_key)
+        try:
+            entity = self._create_random_entity_dict('001', 'batch_negative_1')
+            self.table.create_entity(entity)
+
+            received = self.table.get_entity(entity["PartitionKey"], entity["RowKey"])
+            good_etag = received.metadata["etag"]
+            received.metadata["etag"] = u'W/"datetime\'2012-06-15T22%3A51%3A44.9662825Z\'"'
+
+            batch = [('delete', received, {"match_condition": MatchConditions.IfNotModified})]
+
+            with pytest.raises(TableTransactionError):
+                self.table.submit_transaction(batch)
+
+            received.metadata["etag"] = good_etag
+            batch = [('delete', received, {"match_condition": MatchConditions.IfNotModified})]
+            resp = self.table.submit_transaction(batch)
+
+            assert resp is not None
+        finally:
+            self._tear_down()
+
+    @pytest.mark.skipif(sys.version_info < (3, 0), reason="requires Python3")
     @pytest.mark.live_test_only
     @TablesPreparer()
     def test_batch_sas_auth(self, tables_storage_account_name, tables_primary_storage_account_key):
