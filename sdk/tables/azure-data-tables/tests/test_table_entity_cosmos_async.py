@@ -37,7 +37,7 @@ from azure.core.exceptions import (
 
 from _shared.asynctestcase import AsyncTableTestCase
 from _shared.testcase import SLEEP_DELAY
-from preparers import CosmosPreparer
+from async_preparers import cosmos_decorator_async
 # ------------------------------------------------------------------------------
 # TODO: change to `with table_client as client:` to close sessions
 # ------------------------------------------------------------------------------
@@ -295,7 +295,7 @@ class StorageTableEntityTest(AzureTestCase, AsyncTableTestCase):
         assert len(keys) ==  3
 
     # --Test cases for entities ------------------------------------------
-    @CosmosPreparer()
+    @cosmos_decorator_async
     async def test_url_encoding_at_symbol(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
 
         await self._set_up(tables_cosmos_account_name, tables_primary_cosmos_account_key)
@@ -330,7 +330,7 @@ class StorageTableEntityTest(AzureTestCase, AsyncTableTestCase):
         finally:
             await self._tear_down()
 
-    @CosmosPreparer()
+    @cosmos_decorator_async
     async def test_insert_entity_dictionary(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
         # Arrange
         await self._set_up(tables_cosmos_account_name, tables_primary_cosmos_account_key)
@@ -345,7 +345,7 @@ class StorageTableEntityTest(AzureTestCase, AsyncTableTestCase):
         finally:
             await self._tear_down()
 
-    @CosmosPreparer()
+    @cosmos_decorator_async
     async def test_insert_entity_with_hook(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
         # Arrange
         await self._set_up(tables_cosmos_account_name, tables_primary_cosmos_account_key)
@@ -364,7 +364,7 @@ class StorageTableEntityTest(AzureTestCase, AsyncTableTestCase):
         finally:
             await self._tear_down()
 
-    @CosmosPreparer()
+    @cosmos_decorator_async
     async def test_insert_entity_with_no_metadata(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
         # Arrange
         await self._set_up(tables_cosmos_account_name, tables_primary_cosmos_account_key)
@@ -389,7 +389,7 @@ class StorageTableEntityTest(AzureTestCase, AsyncTableTestCase):
         finally:
             await self._tear_down()
 
-    @CosmosPreparer()
+    @cosmos_decorator_async
     async def test_insert_entity_with_full_metadata(self, tables_cosmos_account_name,
                                                     tables_primary_cosmos_account_key):
         # Arrange
@@ -415,7 +415,7 @@ class StorageTableEntityTest(AzureTestCase, AsyncTableTestCase):
         finally:
             await self._tear_down()
 
-    @CosmosPreparer()
+    @cosmos_decorator_async
     async def test_insert_entity_conflict(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
         # Arrange
         await self._set_up(tables_cosmos_account_name, tables_primary_cosmos_account_key)
@@ -430,7 +430,7 @@ class StorageTableEntityTest(AzureTestCase, AsyncTableTestCase):
         finally:
             await self._tear_down()
 
-    @CosmosPreparer()
+    @cosmos_decorator_async
     async def test_insert_entity_with_large_int32_value_throws(self, tables_cosmos_account_name,
                                                                tables_primary_cosmos_account_key):
         # Arrange
@@ -450,7 +450,7 @@ class StorageTableEntityTest(AzureTestCase, AsyncTableTestCase):
         finally:
             await self._tear_down()
 
-    @CosmosPreparer()
+    @cosmos_decorator_async
     async def test_insert_entity_with_large_int64_value_throws(self, tables_cosmos_account_name,
                                                                tables_primary_cosmos_account_key):
         # Arrange
@@ -470,7 +470,7 @@ class StorageTableEntityTest(AzureTestCase, AsyncTableTestCase):
         finally:
             await self._tear_down()
 
-    @CosmosPreparer()
+    @cosmos_decorator_async
     async def test_insert_entity_with_large_int_success(self, tables_cosmos_account_name,
                                                          tables_primary_cosmos_account_key):
         # Arrange
@@ -496,7 +496,7 @@ class StorageTableEntityTest(AzureTestCase, AsyncTableTestCase):
         finally:
             await self._tear_down()
 
-    @CosmosPreparer()
+    @cosmos_decorator_async
     async def test_insert_entity_missing_pk(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
         # Arrange
         await self._set_up(tables_cosmos_account_name, tables_primary_cosmos_account_key)
@@ -510,7 +510,7 @@ class StorageTableEntityTest(AzureTestCase, AsyncTableTestCase):
         finally:
             await self._tear_down()
 
-    @CosmosPreparer()
+    @cosmos_decorator_async
     async def test_insert_entity_empty_string_pk(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
         # Arrange
         await self._set_up(tables_cosmos_account_name, tables_primary_cosmos_account_key)
@@ -523,7 +523,7 @@ class StorageTableEntityTest(AzureTestCase, AsyncTableTestCase):
         finally:
             await self._tear_down()
 
-    @CosmosPreparer()
+    @cosmos_decorator_async
     async def test_insert_entity_missing_rk(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
         # Arrange
         await self._set_up(tables_cosmos_account_name, tables_primary_cosmos_account_key)
@@ -538,7 +538,7 @@ class StorageTableEntityTest(AzureTestCase, AsyncTableTestCase):
         finally:
             await self._tear_down()
 
-    @CosmosPreparer()
+    @cosmos_decorator_async
     async def test_insert_entity_empty_string_rk(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
         # Arrange
         await self._set_up(tables_cosmos_account_name, tables_primary_cosmos_account_key)
@@ -552,7 +552,7 @@ class StorageTableEntityTest(AzureTestCase, AsyncTableTestCase):
         finally:
             await self._tear_down()
 
-    @CosmosPreparer()
+    @cosmos_decorator_async
     async def test_get_entity(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
         # Arrange
         await self._set_up(tables_cosmos_account_name, tables_primary_cosmos_account_key)
@@ -570,7 +570,7 @@ class StorageTableEntityTest(AzureTestCase, AsyncTableTestCase):
         finally:
             await self._tear_down()
 
-    @CosmosPreparer()
+    @cosmos_decorator_async
     async def test_get_entity_with_hook(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
         # Arrange
         await self._set_up(tables_cosmos_account_name, tables_primary_cosmos_account_key)
@@ -590,7 +590,7 @@ class StorageTableEntityTest(AzureTestCase, AsyncTableTestCase):
         finally:
             await self._tear_down()
 
-    @CosmosPreparer()
+    @cosmos_decorator_async
     async def test_get_entity_if_match(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
         # Arrange
         await self._set_up(tables_cosmos_account_name, tables_primary_cosmos_account_key)
@@ -616,7 +616,7 @@ class StorageTableEntityTest(AzureTestCase, AsyncTableTestCase):
         finally:
             await self._tear_down()
 
-    @CosmosPreparer()
+    @cosmos_decorator_async()
     async def test_get_entity_if_match_entity_bad_etag(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
         # Arrange
         await self._set_up(tables_cosmos_account_name, tables_primary_cosmos_account_key)
@@ -640,7 +640,7 @@ class StorageTableEntityTest(AzureTestCase, AsyncTableTestCase):
         finally:
             await self._tear_down()
 
-    @CosmosPreparer()
+    @cosmos_decorator_async
     async def test_get_entity_full_metadata(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
         # Arrange
         await self._set_up(tables_cosmos_account_name, tables_primary_cosmos_account_key)
@@ -660,7 +660,7 @@ class StorageTableEntityTest(AzureTestCase, AsyncTableTestCase):
         finally:
             await self._tear_down()
 
-    @CosmosPreparer()
+    @cosmos_decorator_async
     async def test_get_entity_no_metadata(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
         # Arrange
         await self._set_up(tables_cosmos_account_name, tables_primary_cosmos_account_key)
@@ -680,7 +680,7 @@ class StorageTableEntityTest(AzureTestCase, AsyncTableTestCase):
         finally:
             await self._tear_down()
 
-    @CosmosPreparer()
+    @cosmos_decorator_async
     async def test_get_entity_not_existing(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
         # Arrange
         await self._set_up(tables_cosmos_account_name, tables_primary_cosmos_account_key)
@@ -696,7 +696,7 @@ class StorageTableEntityTest(AzureTestCase, AsyncTableTestCase):
         finally:
             await self._tear_down()
 
-    @CosmosPreparer()
+    @cosmos_decorator_async
     async def test_get_entity_with_special_doubles(self, tables_cosmos_account_name,
                                                    tables_primary_cosmos_account_key):
         # Arrange
@@ -721,7 +721,7 @@ class StorageTableEntityTest(AzureTestCase, AsyncTableTestCase):
         finally:
             await self._tear_down()
 
-    @CosmosPreparer()
+    @cosmos_decorator_async
     async def test_update_entity(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
         # Arrange
         await self._set_up(tables_cosmos_account_name, tables_primary_cosmos_account_key)
@@ -743,7 +743,7 @@ class StorageTableEntityTest(AzureTestCase, AsyncTableTestCase):
         finally:
             await self._tear_down()
 
-    @CosmosPreparer()
+    @cosmos_decorator_async
     async def test_update_entity_not_existing(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
         # Arrange
         await self._set_up(tables_cosmos_account_name, tables_primary_cosmos_account_key)
@@ -759,7 +759,7 @@ class StorageTableEntityTest(AzureTestCase, AsyncTableTestCase):
         finally:
             await self._tear_down()
 
-    @CosmosPreparer()
+    @cosmos_decorator_async
     async def test_update_entity_with_if_matches(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
         # Arrange
         await self._set_up(tables_cosmos_account_name, tables_primary_cosmos_account_key)
@@ -781,7 +781,7 @@ class StorageTableEntityTest(AzureTestCase, AsyncTableTestCase):
         finally:
             await self._tear_down()
 
-    @CosmosPreparer()
+    @cosmos_decorator_async
     async def test_update_entity_with_if_doesnt_match(self, tables_cosmos_account_name,
                                                       tables_primary_cosmos_account_key):
         # Arrange
@@ -802,7 +802,7 @@ class StorageTableEntityTest(AzureTestCase, AsyncTableTestCase):
         finally:
             await self._tear_down()
 
-    @CosmosPreparer()
+    @cosmos_decorator_async
     async def test_insert_or_merge_entity_with_existing_entity(self, tables_cosmos_account_name,
                                                                tables_primary_cosmos_account_key):
         # Arrange
@@ -821,7 +821,7 @@ class StorageTableEntityTest(AzureTestCase, AsyncTableTestCase):
         finally:
             await self._tear_down()
 
-    @CosmosPreparer()
+    @cosmos_decorator_async
     async def test_insert_or_merge_entity_with_non_existing_entity(self, tables_cosmos_account_name,
                                                                    tables_primary_cosmos_account_key):
         # Arrange
@@ -839,7 +839,7 @@ class StorageTableEntityTest(AzureTestCase, AsyncTableTestCase):
         finally:
             await self._tear_down()
 
-    @CosmosPreparer()
+    @cosmos_decorator_async
     async def test_insert_or_replace_entity_with_existing_entity(self, tables_cosmos_account_name,
                                                                  tables_primary_cosmos_account_key):
         # Arrange
@@ -858,7 +858,7 @@ class StorageTableEntityTest(AzureTestCase, AsyncTableTestCase):
         finally:
             await self._tear_down()
 
-    @CosmosPreparer()
+    @cosmos_decorator_async
     async def test_insert_or_replace_entity_with_non_existing_entity(self, tables_cosmos_account_name,
                                                                      tables_primary_cosmos_account_key):
         # Arrange
@@ -875,7 +875,7 @@ class StorageTableEntityTest(AzureTestCase, AsyncTableTestCase):
         finally:
             await self._tear_down()
 
-    @CosmosPreparer()
+    @cosmos_decorator_async
     async def test_merge_entity(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
         # Arrange
         await self._set_up(tables_cosmos_account_name, tables_primary_cosmos_account_key)
@@ -892,7 +892,7 @@ class StorageTableEntityTest(AzureTestCase, AsyncTableTestCase):
         finally:
             await self._tear_down()
 
-    @CosmosPreparer()
+    @cosmos_decorator_async
     async def test_merge_entity_not_existing(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
         # Arrange
         await self._set_up(tables_cosmos_account_name, tables_primary_cosmos_account_key)
@@ -908,7 +908,7 @@ class StorageTableEntityTest(AzureTestCase, AsyncTableTestCase):
         finally:
             await self._tear_down()
 
-    @CosmosPreparer()
+    @cosmos_decorator_async
     async def test_merge_entity_with_if_matches(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
         # Arrange
         await self._set_up(tables_cosmos_account_name, tables_primary_cosmos_account_key)
@@ -927,7 +927,7 @@ class StorageTableEntityTest(AzureTestCase, AsyncTableTestCase):
         finally:
             await self._tear_down()
 
-    @CosmosPreparer()
+    @cosmos_decorator_async
     async def test_merge_entity_with_if_doesnt_match(self, tables_cosmos_account_name,
                                                      tables_primary_cosmos_account_key):
         # Arrange
@@ -947,7 +947,7 @@ class StorageTableEntityTest(AzureTestCase, AsyncTableTestCase):
         finally:
             await self._tear_down()
 
-    @CosmosPreparer()
+    @cosmos_decorator_async
     async def test_delete_entity(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
         # Arrange
         await self._set_up(tables_cosmos_account_name, tables_primary_cosmos_account_key)
@@ -961,7 +961,7 @@ class StorageTableEntityTest(AzureTestCase, AsyncTableTestCase):
         finally:
             await self._tear_down()
 
-    @CosmosPreparer()
+    @cosmos_decorator_async
     async def test_delete_entity_not_existing(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
         # Arrange
         await self._set_up(tables_cosmos_account_name, tables_primary_cosmos_account_key)
@@ -976,7 +976,7 @@ class StorageTableEntityTest(AzureTestCase, AsyncTableTestCase):
         finally:
             await self._tear_down()
 
-    @CosmosPreparer()
+    @cosmos_decorator_async
     async def test_delete_entity_with_if_matches(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
         # Arrange
         await self._set_up(tables_cosmos_account_name, tables_primary_cosmos_account_key)
@@ -995,7 +995,7 @@ class StorageTableEntityTest(AzureTestCase, AsyncTableTestCase):
         finally:
             await self._tear_down()
 
-    @CosmosPreparer()
+    @cosmos_decorator_async
     async def test_delete_entity_with_if_doesnt_match(self, tables_cosmos_account_name,
                                                       tables_primary_cosmos_account_key):
         # Arrange
@@ -1014,7 +1014,7 @@ class StorageTableEntityTest(AzureTestCase, AsyncTableTestCase):
         finally:
             await self._tear_down()
 
-    @CosmosPreparer()
+    @cosmos_decorator_async
     async def test_delete_entity_overloads(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
         # Arrange
         await self._set_up(tables_cosmos_account_name, tables_primary_cosmos_account_key)
@@ -1043,7 +1043,7 @@ class StorageTableEntityTest(AzureTestCase, AsyncTableTestCase):
         finally:
             await self._tear_down()
 
-    @CosmosPreparer()
+    @cosmos_decorator_async
     async def test_delete_entity_overloads_kwargs(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
         # Arrange
         await self._set_up(tables_cosmos_account_name, tables_primary_cosmos_account_key)
@@ -1072,7 +1072,7 @@ class StorageTableEntityTest(AzureTestCase, AsyncTableTestCase):
         finally:
             await self._tear_down()
 
-    @CosmosPreparer()
+    @cosmos_decorator_async
     async def test_unicode_property_value(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
         ''' regression test for github issue #57'''
         # Arrange
@@ -1099,7 +1099,7 @@ class StorageTableEntityTest(AzureTestCase, AsyncTableTestCase):
         finally:
             await self._tear_down()
 
-    @CosmosPreparer()
+    @cosmos_decorator_async
     async def test_unicode_property_name(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
         # Arrange
         await self._set_up(tables_cosmos_account_name, tables_primary_cosmos_account_key)
@@ -1126,7 +1126,7 @@ class StorageTableEntityTest(AzureTestCase, AsyncTableTestCase):
             await self._tear_down()
 
     @pytest.mark.skip("Bad Request: Cosmos cannot handle single quotes in a PK/RK (confirm)")
-    @CosmosPreparer()
+    @cosmos_decorator_async
     async def test_operations_on_entity_with_partition_key_having_single_quote(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
         # Arrange
         partition_key_with_single_quote = "a''''b"
@@ -1153,7 +1153,7 @@ class StorageTableEntityTest(AzureTestCase, AsyncTableTestCase):
         finally:
             await self._tear_down()
 
-    @CosmosPreparer()
+    @cosmos_decorator_async
     async def test_empty_and_spaces_property_value(self, tables_cosmos_account_name,
                                                    tables_primary_cosmos_account_key):
         # Arrange
@@ -1192,7 +1192,7 @@ class StorageTableEntityTest(AzureTestCase, AsyncTableTestCase):
         finally:
             await self._tear_down()
 
-    @CosmosPreparer()
+    @cosmos_decorator_async
     async def test_none_property_value(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
         # Arrange
         await self._set_up(tables_cosmos_account_name, tables_primary_cosmos_account_key)
@@ -1210,7 +1210,7 @@ class StorageTableEntityTest(AzureTestCase, AsyncTableTestCase):
         finally:
             await self._tear_down()
 
-    @CosmosPreparer()
+    @cosmos_decorator_async
     async def test_binary_property_value(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
         # Arrange
         await self._set_up(tables_cosmos_account_name, tables_primary_cosmos_account_key)
@@ -1229,7 +1229,7 @@ class StorageTableEntityTest(AzureTestCase, AsyncTableTestCase):
         finally:
             await self._tear_down()
 
-    @CosmosPreparer()
+    @cosmos_decorator_async
     async def test_timezone(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
         # Arrange
         await self._set_up(tables_cosmos_account_name, tables_primary_cosmos_account_key)
@@ -1251,7 +1251,7 @@ class StorageTableEntityTest(AzureTestCase, AsyncTableTestCase):
         finally:
             await self._tear_down()
 
-    @CosmosPreparer()
+    @cosmos_decorator_async
     async def test_query_entities(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
         # Arrange
         await self._set_up(tables_cosmos_account_name, tables_primary_cosmos_account_key)
@@ -1270,7 +1270,7 @@ class StorageTableEntityTest(AzureTestCase, AsyncTableTestCase):
         finally:
             await self._tear_down()
 
-    @CosmosPreparer()
+    @cosmos_decorator_async
     async def test_query_entities_each_page(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
         # Arrange
         await self._set_up(tables_cosmos_account_name, tables_primary_cosmos_account_key)
@@ -1310,7 +1310,7 @@ class StorageTableEntityTest(AzureTestCase, AsyncTableTestCase):
         finally:
             await self._tear_down()
 
-    @CosmosPreparer()
+    @cosmos_decorator_async
     async def test_query_user_filter(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
         # Arrange
         await self._set_up(tables_cosmos_account_name, tables_primary_cosmos_account_key)
@@ -1331,7 +1331,7 @@ class StorageTableEntityTest(AzureTestCase, AsyncTableTestCase):
         finally:
             await self._tear_down()
 
-    @CosmosPreparer()
+    @cosmos_decorator_async
     async def test_query_user_filter_multiple_params(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
         # Arrange
         await self._set_up(tables_cosmos_account_name, tables_primary_cosmos_account_key)
@@ -1355,7 +1355,7 @@ class StorageTableEntityTest(AzureTestCase, AsyncTableTestCase):
         finally:
             await self._tear_down()
 
-    @CosmosPreparer()
+    @cosmos_decorator_async
     async def test_query_user_filter_integers(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
         # Arrange
         await self._set_up(tables_cosmos_account_name, tables_primary_cosmos_account_key)
@@ -1378,7 +1378,7 @@ class StorageTableEntityTest(AzureTestCase, AsyncTableTestCase):
         finally:
             await self._tear_down()
 
-    @CosmosPreparer()
+    @cosmos_decorator_async
     async def test_query_user_filter_floats(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
         # Arrange
         await self._set_up(tables_cosmos_account_name, tables_primary_cosmos_account_key)
@@ -1401,7 +1401,7 @@ class StorageTableEntityTest(AzureTestCase, AsyncTableTestCase):
         finally:
             await self._tear_down()
 
-    @CosmosPreparer()
+    @cosmos_decorator_async
     async def test_query_user_filter_datetimes(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
         # Arrange
         await self._set_up(tables_cosmos_account_name, tables_primary_cosmos_account_key)
@@ -1424,7 +1424,7 @@ class StorageTableEntityTest(AzureTestCase, AsyncTableTestCase):
         finally:
             await self._tear_down()
 
-    @CosmosPreparer()
+    @cosmos_decorator_async
     async def test_query_user_filter_guids(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
         # Arrange
         await self._set_up(tables_cosmos_account_name, tables_primary_cosmos_account_key)
@@ -1447,7 +1447,7 @@ class StorageTableEntityTest(AzureTestCase, AsyncTableTestCase):
         finally:
             await self._tear_down()
 
-    @CosmosPreparer()
+    @cosmos_decorator_async
     async def test_query_user_filter_binary(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
         # Arrange
         await self._set_up(tables_cosmos_account_name, tables_primary_cosmos_account_key)
@@ -1470,7 +1470,7 @@ class StorageTableEntityTest(AzureTestCase, AsyncTableTestCase):
         finally:
             await self._tear_down()
 
-    @CosmosPreparer()
+    @cosmos_decorator_async
     async def test_query_user_filter_int64(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
         # Arrange
         await self._set_up(tables_cosmos_account_name, tables_primary_cosmos_account_key)
@@ -1500,7 +1500,7 @@ class StorageTableEntityTest(AzureTestCase, AsyncTableTestCase):
         finally:
             await self._tear_down()
 
-    @CosmosPreparer()
+    @cosmos_decorator_async
     async def test_query_zero_entities(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
         # Arrange
         await self._set_up(tables_cosmos_account_name, tables_primary_cosmos_account_key)
@@ -1517,7 +1517,7 @@ class StorageTableEntityTest(AzureTestCase, AsyncTableTestCase):
         finally:
             await self._tear_down()
 
-    @CosmosPreparer()
+    @cosmos_decorator_async
     async def test_query_entities_full_metadata(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
         # Arrange
         await self._set_up(tables_cosmos_account_name, tables_primary_cosmos_account_key)
@@ -1536,7 +1536,7 @@ class StorageTableEntityTest(AzureTestCase, AsyncTableTestCase):
         finally:
             await self._tear_down()
 
-    @CosmosPreparer()
+    @cosmos_decorator_async
     async def test_query_entities_no_metadata(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
         # Arrange
         await self._set_up(tables_cosmos_account_name, tables_primary_cosmos_account_key)
@@ -1555,7 +1555,7 @@ class StorageTableEntityTest(AzureTestCase, AsyncTableTestCase):
         finally:
             await self._tear_down()
 
-    @CosmosPreparer()
+    @cosmos_decorator_async
     async def test_query_entities_with_filter(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
         # Arrange
         await self._set_up(tables_cosmos_account_name, tables_primary_cosmos_account_key)
@@ -1577,7 +1577,7 @@ class StorageTableEntityTest(AzureTestCase, AsyncTableTestCase):
         finally:
             await self._tear_down()
 
-    @CosmosPreparer()
+    @cosmos_decorator_async
     async def test_query_injection_async(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
         # Arrange
         await self._set_up(tables_cosmos_account_name, tables_primary_cosmos_account_key)
@@ -1612,7 +1612,7 @@ class StorageTableEntityTest(AzureTestCase, AsyncTableTestCase):
         finally:
             await self._tear_down()
 
-    @CosmosPreparer()
+    @cosmos_decorator_async
     async def test_query_special_chars(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
         # Arrange
         await self._set_up(tables_cosmos_account_name, tables_primary_cosmos_account_key)
@@ -1670,7 +1670,7 @@ class StorageTableEntityTest(AzureTestCase, AsyncTableTestCase):
         finally:
             await self._tear_down()
 
-    @CosmosPreparer()
+    @cosmos_decorator_async
     async def test_query_invalid_filter(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
         # Arrange
         await self._set_up(tables_cosmos_account_name, tables_primary_cosmos_account_key)
@@ -1692,7 +1692,7 @@ class StorageTableEntityTest(AzureTestCase, AsyncTableTestCase):
         finally:
             await self._tear_down()
 
-    @CosmosPreparer()
+    @cosmos_decorator_async
     async def test_query_entities_with_select(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
         await self._set_up(tables_cosmos_account_name, tables_primary_cosmos_account_key)
         try:
@@ -1713,7 +1713,7 @@ class StorageTableEntityTest(AzureTestCase, AsyncTableTestCase):
         finally:
             await self._tear_down()
 
-    @CosmosPreparer()
+    @cosmos_decorator_async
     async def test_query_entities_with_top(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
         # Arrange
         await self._set_up(tables_cosmos_account_name, tables_primary_cosmos_account_key)
@@ -1728,7 +1728,7 @@ class StorageTableEntityTest(AzureTestCase, AsyncTableTestCase):
         finally:
             await self._tear_down()
 
-    @CosmosPreparer()
+    @cosmos_decorator_async
     async def test_query_entities_with_top_and_next(self, tables_cosmos_account_name,
                                                     tables_primary_cosmos_account_key):
         # Arrange
@@ -1764,7 +1764,7 @@ class StorageTableEntityTest(AzureTestCase, AsyncTableTestCase):
         finally:
             await self._tear_down()
 
-    @CosmosPreparer()
+    @cosmos_decorator_async
     async def test_datetime_milliseconds(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
         await self._set_up(tables_cosmos_account_name, tables_primary_cosmos_account_key)
         try:
@@ -1784,7 +1784,7 @@ class StorageTableEntityTest(AzureTestCase, AsyncTableTestCase):
         finally:
             await self._tear_down()
 
-    @CosmosPreparer()
+    @cosmos_decorator_async
     async def test_datetime_str_passthrough(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
         await self._set_up(tables_cosmos_account_name, tables_primary_cosmos_account_key)
         partition, row = self._create_pk_rk(None, None)
