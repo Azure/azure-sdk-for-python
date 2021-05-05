@@ -4,14 +4,14 @@
 # license information.
 # --------------------------------------------------------------------------
 import functools
-from typing import List, Union, Any, Optional, Mapping, Iterable
+from typing import List, Union, Any, Optional, Mapping, Iterable, Dict, overload
 try:
     from urllib.parse import urlparse, unquote
 except ImportError:
     from urlparse import urlparse  # type: ignore
     from urllib2 import unquote  # type: ignore
 
-from azure.core.credentials import AzureSasCredential
+from azure.core.credentials import AzureNamedKeyCredential, AzureSasCredential
 from azure.core.async_paging import AsyncItemPaged
 from azure.core.exceptions import ResourceNotFoundError, HttpResponseError
 from azure.core.tracing.decorator import distributed_trace
@@ -43,7 +43,7 @@ class TableClient(AsyncTablesBaseClient):
         self,
         account_url: str,
         table_name: str,
-        credential: Optional[Union[AzureSasCredential]] = None,
+        credential: Optional[Union[AzureSasCredential, AzureNamedKeyCredential]] = None,
         **kwargs
     ) -> None:
         """Create TableClient from a Credential.
@@ -58,7 +58,9 @@ class TableClient(AsyncTablesBaseClient):
             account URL already has a SAS token, or the connection string already has shared
             access key values. The value can be a SAS token string or an account shared access
             key.
-        :type credential: str
+        :type credential:
+            :class:`~azure.core.credentials.AzureNamedKeyCredential` or
+            :class:`~azure.core.credentials.AzureSasCredential`
 
         :returns: None
         """
@@ -109,7 +111,7 @@ class TableClient(AsyncTablesBaseClient):
     def from_table_url(
         cls,
         table_url: str,
-        credential: Optional[Union[AzureSasCredential]] = None,
+        credential: Optional[Union[AzureSasCredential, AzureNamedKeyCredential]] = None,
         **kwargs
     ) -> 'TableClient':
         """A client to interact with a specific Table.
@@ -120,7 +122,9 @@ class TableClient(AsyncTablesBaseClient):
             The credentials with which to authenticate. This is optional if the
             account URL already has a SAS token. The value can be a SAS token string, an account
             shared access key.
-        :type credential: str
+        :type credential:
+            :class:`~azure.core.credentials.AzureNamedKeyCredential` or
+            :class:`~azure.core.credentials.AzureSasCredential`
         :returns: A table client.
         :rtype: :class:`~azure.data.tables.TableClient`
         """
@@ -264,13 +268,16 @@ class TableClient(AsyncTablesBaseClient):
         except HttpResponseError as error:
             _process_table_error(error)
 
+    @overload
+    async def delete_entity(self, partition_key: str, row_key: str, **kwargs: Any) -> None:
+        ...
+
+    @overload
+    async def delete_entity(self, entity: Union[TableEntity, Mapping[str, Any]], **kwargs: Any) -> None:
+        ...
+
     @distributed_trace_async
-    async def delete_entity(
-        self,
-        partition_key: str,
-        row_key: str,
-        **kwargs
-    ) -> None:
+    async def delete_entity(self, *args: Union[TableEntity, str], **kwargs: Any) -> None:
         """Deletes the specified entity in a table.
 
         :param partition_key: The partition key of the entity.
@@ -293,15 +300,38 @@ class TableClient(AsyncTablesBaseClient):
                 :dedent: 8
                 :caption: Adding an entity to a Table
         """
+        try:
+            entity = kwargs.pop('entity', None)
+            if not entity:
+                entity = args[0]
+            partition_key = entity['PartitionKey']
+            row_key = entity['RowKey']
+        except (TypeError, IndexError):
+            partition_key = kwargs.pop('partition_key', None)
+            if not partition_key:
+                partition_key = args[0]
+            row_key = kwargs.pop("row_key", None)
+            if not row_key:
+                row_key = args[1]
+
+        match_condition = kwargs.pop("match_condition", None)
+        etag = kwargs.pop("etag", None)
+        if match_condition and entity and not etag:
+            try:
+                etag = entity.metadata.get("etag", None)
+            except (AttributeError, TypeError):
+                pass
+
         if_match, _ = _get_match_headers(
             kwargs=dict(
                 kwargs,
-                etag=kwargs.pop("etag", None),
-                match_condition=kwargs.pop("match_condition", None),
+                etag=etag,
+                match_condition=match_condition,
             ),
             etag_param="etag",
             match_param="match_condition",
         )
+
         try:
             await self._client.table.delete_entity(
                 table=self.table_name,
@@ -381,11 +411,19 @@ class TableClient(AsyncTablesBaseClient):
                 :dedent: 8
                 :caption: Querying entities from a TableClient
         """
+        match_condition = kwargs.pop("match_condition", None)
+        etag = kwargs.pop("etag", None)
+        if match_condition and entity and not etag:
+            try:
+                etag = entity.metadata.get("etag", None)
+            except (AttributeError, TypeError):
+                pass
+
         if_match, _ = _get_match_headers(
             kwargs=dict(
                 kwargs,
-                etag=kwargs.pop("etag", None),
-                match_condition=kwargs.pop("match_condition", None),
+                etag=etag,
+                match_condition=match_condition,
             ),
             etag_param="etag",
             match_param="match_condition",

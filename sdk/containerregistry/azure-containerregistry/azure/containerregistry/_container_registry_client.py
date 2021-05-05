@@ -37,6 +37,15 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
         :type credential: :class:`~azure.core.credentials.TokenCredential`
         :returns: None
         :raises: None
+
+        .. admonition:: Example:
+
+            .. literalinclude:: ../samples/sample_create_client.py
+                :start-after: [START create_registry_client]
+                :end-before: [END create_registry_client]
+                :language: python
+                :dedent: 8
+                :caption: Instantiate an instance of `ContainerRegistryClient`
         """
         if not endpoint.startswith("https://") and not endpoint.startswith("http://"):
             endpoint = "https://" + endpoint
@@ -53,6 +62,15 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
         :returns: Object containing information about the deleted repository
         :rtype: :class:`~azure.containerregistry.DeleteRepositoryResult`
         :raises: :class:`~azure.core.exceptions.ResourceNotFoundError`
+
+        .. admonition:: Example:
+
+            .. literalinclude:: ../samples/sample_create_client.py
+                :start-after: [START delete_repository]
+                :end-before: [END delete_repository]
+                :language: python
+                :dedent: 8
+                :caption: Delete a repository from the `ContainerRegistryClient`
         """
         return DeleteRepositoryResult._from_generated(  # pylint: disable=protected-access
             self._client.container_registry.delete_repository(repository_name, **kwargs)
@@ -73,6 +91,15 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
         :return: ItemPaged[str]
         :rtype: :class:`~azure.core.paging.ItemPaged`
         :raises: :class:`~azure.core.exceptions.ResourceNotFoundError`
+
+        .. admonition:: Example:
+
+            .. literalinclude:: ../samples/sample_delete_old_tags.py
+                :start-after: [START list_repositories]
+                :end-before: [END list_repositories]
+                :language: python
+                :dedent: 8
+                :caption: List repositories in a container registry account
         """
         n = kwargs.pop("results_per_page", None)
         last = kwargs.pop("last", None)
@@ -166,20 +193,31 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
         return ItemPaged(get_next, extract_data)
 
     @distributed_trace
-    def get_repository(self, repository, **kwargs):
-        # type: (str, Dict[str, Any]) -> ContainerRepository
+    def get_repository(self, repository_name, **kwargs):
+        # type: (str, Any) -> ContainerRepository
         """Get a Container Repository object
 
-        :param str repository: The repository to create a client for
+        :param str repository_name: The repository to create a client for
         :returns: :class:`~azure.containerregistry.ContainerRepository`
         :raises: None
+
+        Example
+
+        .. code-block:: python
+
+            from azure.containerregistry import ContainerRepositoryClient
+            from azure.identity import DefaultAzureCredential
+
+            account_url = os.environ["CONTAINERREGISTRY_ENDPOINT"]
+            client = ContainerRegistryClient(account_url, DefaultAzureCredential())
+            repository_client = client.get_repository_client("my_repository")
         """
         _pipeline = Pipeline(
             transport=TransportWrapper(self._client._client._pipeline._transport),  # pylint: disable=protected-access
             policies=self._client._client._pipeline._impl_policies,  # pylint: disable=protected-access
         )
         return ContainerRepository(
-            self._endpoint, repository, credential=self._credential, pipeline=_pipeline, **kwargs
+            self._endpoint, repository_name, credential=self._credential, pipeline=_pipeline, **kwargs
         )
 
     @distributed_trace
