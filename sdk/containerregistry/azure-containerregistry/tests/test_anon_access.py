@@ -21,20 +21,21 @@ from preparer import acr_preparer
 class TestContainerRegistryClient(ContainerRegistryTestClass):
     @acr_preparer()
     def test_list_repository_names(self, containerregistry_endpoint):
-        client = self.create_anon_client(containerregistry_endpoint)
+        self.import_image(HELLO_WORLD, ["{}:{}".format(repository, tag_identifier)])
+        # client = self.create_anon_client(containerregistry_endpoint)
 
-        repositories = client.list_repository_names()
-        assert isinstance(repositories, ItemPaged)
+        # repositories = client.list_repository_names()
+        # assert isinstance(repositories, ItemPaged)
 
-        count = 0
-        prev = None
-        for repo in repositories:
-            count += 1
-            assert isinstance(repo, six.string_types)
-            assert prev != repo
-            prev = repo
+        # count = 0
+        # prev = None
+        # for repo in repositories:
+        #     count += 1
+        #     assert isinstance(repo, six.string_types)
+        #     assert prev != repo
+        #     prev = repo
 
-        assert count > 0
+        # assert count > 0
 
     @pytest.mark.skip("pending")
     @acr_preparer()
