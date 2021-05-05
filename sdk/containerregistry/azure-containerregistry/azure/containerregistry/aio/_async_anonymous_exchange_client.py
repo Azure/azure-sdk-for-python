@@ -5,53 +5,62 @@
 # ------------------------------------
 import re
 import time
-from typing import TYPE_CHECKING, Dict, Any
+from typing import TYPE_CHECKING, Dict, List, Any
 
-from ._exchange_client import ExchangeClientAuthenticationPolicy
-from ._generated import ContainerRegistry
-from ._helpers import _parse_challenge
-from ._user_agent import USER_AGENT
+from azure.core.pipeline import PipelineRequest, PipelineResponse
+from azure.core.pipeline.policies import SansIOHTTPPolicy
+
+from .._generated.aio import ContainerRegistry
+from .._helpers import _parse_challenge
+from .._user_agent import USER_AGENT
 
 if TYPE_CHECKING:
-    from azure.core.credentials import TokenCredential
+    from azure.core.credentials_async import AsyncTokenCredential
 
 
 PASSWORD = u"password"
 
 
-class AnonymousACRExchangeClient(object):
+class ExchangeClientAuthenticationPolicy(SansIOHTTPPolicy):
+    """Authentication policy for exchange client that does not modify the request"""
+
+    def on_request(self, request: PipelineRequest) -> None:
+        pass
+
+    def on_response(self, request: PipelineRequest, response: PipelineResponse) -> None:
+        pass
+
+
+class ACRExchangeClient(object):
     """Class for handling oauth authentication requests
 
     :param endpoint: Azure Container Registry endpoint
     :type endpoint: str
     :param credential: Credential which provides tokens to authenticate requests
-    :type credential: :class:`~azure.core.credentials.TokenCredential`
+    :type credential: :class:`azure.core.credentials.TokenCredential`
     """
 
     BEARER = "Bearer"
     AUTHENTICATION_CHALLENGE_PARAMS_PATTERN = re.compile('(?:(\\w+)="([^""]*)")+')
 
-    def __init__(self, endpoint, credential=None, **kwargs):
-        # type: (str, TokenCredential, Dict[str, Any]) -> None
+    def __init__(self, endpoint: str, credential: "AsyncTokencredential"=None, **kwargs: Dict[str, Any]) -> None:
         if not endpoint.startswith("https://") and not endpoint.startswith("http://"):
             endpoint = "https://" + endpoint
         self._endpoint = endpoint
-        self.credential_scope = "https://management.core.windows.net/.default"
+        self._credential_scope = "https://management.core.windows.net/.default"
         self._client = ContainerRegistry(
             credential=credential,
             url=endpoint,
             sdk_moniker=USER_AGENT,
             authentication_policy=ExchangeClientAuthenticationPolicy(),
-            credential_scopes=kwargs.pop("credential_scopes", self.credential_scope),
+            credential_scopes=kwargs.pop("credential_scopes", self._credential_scope),
             **kwargs
         )
         self._credential = credential
-
-    def get_acr_access_token(self, challenge, **kwargs):
-        # type: (str, Dict[str, Any]) -> str
+    async def get_acr_access_token(self, challenge: str, **kwargs: Dict[str, Any]) -> str:
         parsed_challenge = _parse_challenge(challenge)
         parsed_challenge["grant_type"] = PASSWORD
-        return self.exchange_refresh_token_for_access_token(
+        return await self.exchange_refresh_token_for_access_token(
             None,
             service=parsed_challenge["service"],
             scope=parsed_challenge["scope"],
@@ -59,23 +68,28 @@ class AnonymousACRExchangeClient(object):
             **kwargs
         )
 
-    def exchange_refresh_token_for_access_token(self, refresh_token=None, service=None, scope=None, grant_type=PASSWORD, **kwargs):
-        # type: (str, str, str, str, Dict[str, Any]) -> str
+    def exchange_refresh_token_for_access_token(
+        self,
+        refresh_token: str = None,
+        service: str = None,
+        scope: str = None,
+        grant_type: str = PASSWORD,
+        **kwargs: Any
+    ) -> str:
         access_token = self._client.authentication.exchange_acr_refresh_token_for_acr_access_token(
             service=service, scope=scope, refresh_token=refresh_token, grant_type=grant_type, **kwargs
         )
         return access_token.access_token
 
-    def __enter__(self):
-        self._client.__enter__()
+    async def __aenter__(self):
+        self._client.__aenter__()
         return self
 
-    def __exit__(self, *args):
-        self._client.__exit__(*args)
+    async def __aexit__(self, *args):
+        self._client.__aexit__(*args)
 
-    def close(self):
-        # type: () -> None
+    async def close(self) -> None:
         """Close sockets opened by the client.
         Calling this method is unnecessary when using the client as a context manager.
         """
-        self._client.close()
+        await self._client.close()

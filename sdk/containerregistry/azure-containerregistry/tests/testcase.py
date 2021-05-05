@@ -17,7 +17,6 @@ from azure.containerregistry import (
     ContainerRegistryClient,
     ArtifactTagProperties,
     ContentProperties,
-    AnonymousContainerRegistryClient
 )
 
 from azure.core.credentials import AccessToken
@@ -243,7 +242,7 @@ class ContainerRegistryTestClass(AzureTestCase):
         return ContainerRepository(endpoint=endpoint, repository=name, credential=self.get_credential(), **kwargs)
 
     def create_anon_client(self, endpoint, **kwargs):
-        return AnonymousContainerRegistryClient(endpoint=endpoint, **kwargs)
+        return ContainerRegistryClient(endpoint=endpoint, credential=None, **kwargs)
 
     def assert_content_permission(self, content_perm, content_perm2):
         assert isinstance(content_perm, ContentProperties)

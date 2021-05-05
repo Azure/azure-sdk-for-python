@@ -6,7 +6,6 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-from ._anon_client import AnonymousContainerRegistryClient
 from ._container_registry_client import ContainerRegistryClient
 from ._container_repository import ContainerRepository
 from ._models import (
@@ -24,7 +23,6 @@ from ._version import VERSION
 __version__ = VERSION
 
 __all__ = [
-    "AnonymousContainerRegistryClient",
     "ContainerRegistryClient",
     "ContainerRepository",
     "ContentProperties",
