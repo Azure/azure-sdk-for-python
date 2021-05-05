@@ -66,6 +66,9 @@ class CreateClients(object):
                         async for tag in repository_client.list_tags():
                             print(tag.digest)
 
+                    # [START delete_repository]
+                    await client.delete_repository("hello-world")
+                    # [END delete_repository]
 
 async def main():
     sample = CreateClients()
