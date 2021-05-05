@@ -9,7 +9,7 @@ from devtools_testutils import AzureTestCase
 
 from azure.data.tables import TableServiceClient
 from _shared.testcase import TableTestCase, SLEEP_DELAY
-from preparers import CosmosPreparer
+from preparers import cosmos_decorator
 
 SERVICE_UNAVAILABLE_RESP_BODY = '<?xml version="1.0" encoding="utf-8"?><StorageServiceStats><GeoReplication><Status' \
                                 '>unavailable</Status><LastSyncTime></LastSyncTime></GeoReplication' \
@@ -48,7 +48,7 @@ class TableServiceStatsTest(AzureTestCase, TableTestCase):
     # TODO: Should we remove these both from cosmos sync/async?
     # --Test cases per service ---------------------------------------
     @pytest.mark.skip("JSON is invalid for cosmos")
-    @CosmosPreparer()
+    @cosmos_decorator
     def test_table_service_stats_f(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
         tsc = TableServiceClient(self.account_url(tables_cosmos_account_name, "cosmos"), tables_primary_cosmos_account_key)
         stats = tsc.get_service_stats(raw_response_hook=self.override_response_body_with_live_status)
@@ -57,7 +57,7 @@ class TableServiceStatsTest(AzureTestCase, TableTestCase):
         self.sleep(SLEEP_DELAY)
 
     @pytest.mark.skip("JSON is invalid for cosmos")
-    @CosmosPreparer()
+    @cosmos_decorator
     def test_table_service_stats_when_unavailable(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
         tsc = TableServiceClient(self.account_url(tables_cosmos_account_name, "cosmos"), tables_primary_cosmos_account_key)
         stats = tsc.get_service_stats(raw_response_hook=self.override_response_body_with_unavailable_status)
