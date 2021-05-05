@@ -119,6 +119,7 @@ class AuthenticationOperations:
         :type scope: str
         :param refresh_token: Must be a valid ACR refresh token.
         :type refresh_token: str
+        :keyword str grant_type: grant_type for the request
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: AcrAccessToken, or the result of cls(response)
         :rtype: ~container_registry.models.AcrAccessToken
@@ -130,7 +131,7 @@ class AuthenticationOperations:
         }
         error_map.update(kwargs.pop('error_map', {}))
         content_type = kwargs.pop("content_type", "application/x-www-form-urlencoded")
-        grant_type = "refresh_token"
+        grant_type = kwargs.pop("grant_type", "refresh_token")
         accept = "application/json"
 
         # Construct URL
