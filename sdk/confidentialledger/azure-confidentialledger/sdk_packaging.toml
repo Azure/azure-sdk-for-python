@@ -4,5 +4,5 @@ package_pprint_name = "Azure Confidential Ledger"
 package_doc_id = ""
 is_stable = false
 is_arm = false
-need_msrestazure = true
+need_msrestazure = false
 auto_update = false

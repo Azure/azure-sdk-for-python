@@ -4,6 +4,7 @@ from azure.confidentialledger.identity_service import LedgerIdentity
 from azure.confidentialledger.identity_service.aio import (
     ConfidentialLedgerIdentityServiceClient,
 )
+from azure.confidentialledger._generated_identity.v0_1_preview.aio import ConfidentialLedgerClient
 
 from ._shared.constants import NETWORK_CERTIFICATE
 from ._shared.testcase_async import AsyncConfidentialLedgerTestCase
@@ -19,7 +20,7 @@ class ConfidentialLedgerIdentityServiceClientTest(AsyncConfidentialLedgerTestCas
 
     @AzureTestCase.await_prepared_test
     async def test_get_ledger_identity(self):
-        credential = self.get_credential(ConfidentialLedgerIdentityServiceClient)
+        credential = self.get_credential(ConfidentialLedgerClient)
         client = self.create_client_from_credential(
             ConfidentialLedgerIdentityServiceClient,
             credential=credential,
