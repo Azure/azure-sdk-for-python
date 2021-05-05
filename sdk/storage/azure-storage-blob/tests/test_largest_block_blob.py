@@ -28,6 +28,8 @@ TEST_BLOB_PREFIX = 'largestblob'
 LARGEST_BLOCK_SIZE = 4000 * 1024 * 1024
 LARGEST_SINGLE_UPLOAD_SIZE = 5000 * 1024 * 1024
 
+LARGE_BLOCK_SIZE = 100 * 1024 * 1024
+
 # ------------------------------------------------------------------------------
 if platform.python_implementation() == 'PyPy':
     pytest.skip("Skip tests for Pypy", allow_module_level=True)
@@ -212,7 +214,7 @@ class StorageLargestBlockBlobTest(StorageTestCase):
     def test_substream_for_single_thread_upload_large_block(self):
         FILE_PATH = 'largest_blob_from_path.temp.{}.dat'.format(str(uuid.uuid4()))
         with open(FILE_PATH, 'wb') as stream:
-            largeStream = LargeStream(LARGEST_BLOCK_SIZE, 100 * 1024 * 1024)
+            largeStream = LargeStream(LARGE_BLOCK_SIZE, 4 * 1024 * 1024)
             chunk = largeStream.read()
             while chunk:
                 stream.write(chunk)

@@ -1,0 +1,11 @@
+trigger: none
+
+stages:
+  - template: ../../eng/pipelines/templates/stages/archetype-sdk-tests.yml
+    parameters:
+      AllocateResourceGroup: 'false'
+      ServiceDirectory: modelsrepository
+      EnvVars:
+        TEST_MODE: 'RunLiveNoRecord'
+        AZURE_SKIP_LIVE_RECORDING: 'True'
+        AZURE_TEST_RUN_LIVE: 'true'

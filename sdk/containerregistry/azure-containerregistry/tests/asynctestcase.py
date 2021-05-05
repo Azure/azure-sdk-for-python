@@ -3,27 +3,13 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 # ------------------------------------
-from datetime import datetime
-import json
-import os
-import re
-import six
-
 from azure.containerregistry.aio import (
     ContainerRepositoryClient,
     ContainerRegistryClient,
 )
-from azure.containerregistry import (
-    TagProperties,
-    ContentPermissions,
-    RegistryArtifactProperties,
-)
 
 from azure.core.credentials import AccessToken
 from azure.identity.aio import DefaultAzureCredential
-
-from azure_devtools.scenario_tests import RecordingProcessor
-from devtools_testutils import AzureTestCase
 
 from testcase import ContainerRegistryTestClass
 

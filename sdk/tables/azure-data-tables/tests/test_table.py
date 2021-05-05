@@ -68,16 +68,14 @@ class StorageTableTest(AzureTestCase, TableTestCase):
         return table
 
     def _delete_table(self, ts, table):
-        if table is None:
-            return
-        try:
-            ts.delete_table(table.name)
-        except ResourceNotFoundError:
-            pass
+        if table:
+            try:
+                ts.delete_table(table.table_name)
+            except ResourceNotFoundError:
+                pass
 
     def _delete_all_tables(self, ts):
-        tables = ts.list_tables()
-        for table in tables:
+        for table in ts.list_tables():
             try:
                 ts.delete_table(table.name)
             except ResourceNotFoundError:
@@ -470,13 +468,13 @@ class StorageTableTest(AzureTestCase, TableTestCase):
 
             # Act
 
-            sas_table = service.get_table_client(table.name)
+            sas_table = service.get_table_client(table.table_name)
             entities = list(sas_table.list_entities())
 
             # Assert
             assert len(entities) ==  2
-            assert entities[0].text ==  u'hello'
-            assert entities[1].text ==  u'hello'
+            assert entities[0]['text'] == u'hello'
+            assert entities[1]['text'] == u'hello'
         finally:
             self._delete_table(table=table, ts=tsc)
 

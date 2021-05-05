@@ -18,12 +18,12 @@ interactions:
     headers:
       api-supported-versions: 2020-07-20-preview2, 2021-02-22-preview1, 2021-03-07
       content-type: application/json; charset=utf-8
-      date: Tue, 13 Apr 2021 17:54:48 GMT
-      ms-cv: lWjOWYpL90CS7wvt6sWZmw.0
+      date: Wed, 21 Apr 2021 01:04:06 GMT
+      ms-cv: esqhi3WAnUSWE09C5oWopQ.0
       request-context: appId=
       strict-transport-security: max-age=2592000
       transfer-encoding: chunked
-      x-processing-time: 111ms
+      x-processing-time: 14ms
     status:
       code: 201
       message: Created
@@ -43,16 +43,16 @@ interactions:
     uri: https://sanitized.communication.azure.com/identities/sanitized/:issueAccessToken?api-version=2021-03-07
   response:
     body:
-      string: '{"token": "sanitized", "expiresOn": "2021-04-14T17:54:47.3442684+00:00"}'
+      string: '{"token": "sanitized", "expiresOn": "2021-04-22T01:04:05.5521447+00:00"}'
     headers:
       api-supported-versions: 2020-07-20-preview2, 2021-02-22-preview1, 2021-03-07
       content-type: application/json; charset=utf-8
-      date: Tue, 13 Apr 2021 17:54:48 GMT
-      ms-cv: sdMJ7daQx0GS9bI8pul/bw.0
+      date: Wed, 21 Apr 2021 01:04:06 GMT
+      ms-cv: DThu30avp0m4zQe2A2DIvQ.0
       request-context: appId=
       strict-transport-security: max-age=2592000
       transfer-encoding: chunked
-      x-processing-time: 123ms
+      x-processing-time: 147ms
     status:
       code: 200
       message: OK
@@ -71,11 +71,11 @@ interactions:
       string: ''
     headers:
       api-supported-versions: 2020-07-20-preview2, 2021-02-22-preview1, 2021-03-07
-      date: Tue, 13 Apr 2021 17:54:48 GMT
-      ms-cv: s2kwtg8TQkG8aJp6NDHeLg.0
+      date: Wed, 21 Apr 2021 01:04:06 GMT
+      ms-cv: ELlNYXpYGk+PxAb32vSRJA.0
       request-context: appId=
       strict-transport-security: max-age=2592000
-      x-processing-time: 248ms
+      x-processing-time: 225ms
     status:
       code: 204
       message: No Content

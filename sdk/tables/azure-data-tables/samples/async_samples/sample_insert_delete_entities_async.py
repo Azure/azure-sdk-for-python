@@ -99,7 +99,7 @@ class InsertDeleteEntity(object):
         tsc = TableServiceClient.from_connection_string(self.connection_string)
         async with tsc:
             async for table in tsc.list_tables():
-                await tsc.delete_table(table.table_name)
+                await tsc.delete_table(table.name)
 
             print("Cleaned up")
 

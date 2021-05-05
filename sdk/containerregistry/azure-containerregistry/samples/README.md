@@ -47,3 +47,6 @@ Check out the [API reference documentation][rest_docs] to learn more about what 
 [rest_docs]: https://docs.microsoft.com/rest/api/containerregistry/
 
 [container_registry_docs]: https://docs.microsoft.com/azure/container-registry/container-registry-intro
+
+[create_client]: https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/containerregistry/azure-containerregistry/samples/sample_create_client.py
+[create_client_async]: https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/containerregistry/azure-containerregistry/samples/async_samples/sample_create_client_async.py

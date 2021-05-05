@@ -43,6 +43,7 @@ with open("CHANGELOG.md", encoding="utf-8") as f:
 setup(
     name=PACKAGE_NAME,
     version=VERSION,
+    include_package_data=True,
     description="Microsoft Azure {} Library for Python".format(PACKAGE_PPRINT_NAME),
     long_description=README + "\n\n" + CHANGELOG,
     long_description_content_type="text/markdown",
