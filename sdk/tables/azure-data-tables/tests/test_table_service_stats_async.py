@@ -10,7 +10,7 @@ from devtools_testutils import AzureTestCase
 from azure.data.tables.aio import TableServiceClient
 
 from _shared.asynctestcase import AsyncTableTestCase
-from preparers import TablesPreparer
+from async_preparers import tables_decorator_async
 
 SERVICE_UNAVAILABLE_RESP_BODY = '<?xml version="1.0" encoding="utf-8"?><StorageServiceStats><GeoReplication><Status' \
                                 '>unavailable</Status><LastSyncTime></LastSyncTime></GeoReplication' \
@@ -48,7 +48,7 @@ class TableServiceStatsTest(AzureTestCase, AsyncTableTestCase):
         #  response.http_response.text = lambda _: SERVICE_LIVE_RESP_BODY
 
     # --Test cases per service ---------------------------------------
-    @TablesPreparer()
+    @tables_decorator_async
     async def test_table_service_stats_f(self, tables_storage_account_name, tables_primary_storage_account_key):
         # Arrange
         tsc = TableServiceClient(self.account_url(tables_storage_account_name, "table"), tables_primary_storage_account_key)
@@ -58,7 +58,7 @@ class TableServiceStatsTest(AzureTestCase, AsyncTableTestCase):
         # Assert
         self._assert_stats_default(stats)
 
-    @TablesPreparer()
+    @tables_decorator_async
     async def test_table_service_stats_when_unavailable(self, tables_storage_account_name, tables_primary_storage_account_key):
         # Arrange
         tsc = TableServiceClient(self.account_url(tables_storage_account_name, "table"), tables_primary_storage_account_key)
