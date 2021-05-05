@@ -30,7 +30,7 @@ backward_compat = {
 def event_tuples(system_events):
     tup_list = []
     for event in system_events:
-        class_name = event[0].replace("EventData", "EventName")
+        class_name = event[0].replace("Data", "Name")
         try:
             event_name = re.findall("Microsoft.[a-zA-Z]+.[a-zA-Z]+", event[1].__doc__)[0]
         except:
@@ -48,7 +48,7 @@ def generate_enum_content(tuples):
     for k, v in backward_compat.items():
         print(k + " = '" + v + "'\n")
 
-system_events = [m for m in inspect.getmembers(models) if m[0].endswith('EventData')]
+system_events = [m for m in inspect.getmembers(models) if m[0].endswith('Data')]
 tup_list = event_tuples(system_events)
 
 generate_enum_content(tup_list)

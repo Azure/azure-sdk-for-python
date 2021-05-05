@@ -98,7 +98,7 @@ class SystemEventNames(str, Enum):
 
     KeyVaultSecretNewVersionCreatedEventName = 'Microsoft.KeyVault.SecretNewVersionCreated'
 
-    MachineLearningServicesDatasetDriftDetectedEventName = 'Microsoft.MachineLearningServices.DatasetDriftDetected'
+    MachineLearningServicesNamesetDriftDetectedEventName = 'Microsoft.MachineLearningServices.DatasetDriftDetected'
 
     MachineLearningServicesModelDeployedEventName = 'Microsoft.MachineLearningServices.ModelDeployed'
 
@@ -150,7 +150,7 @@ class SystemEventNames(str, Enum):
 
     MediaLiveEventEncoderDisconnectedEventName = 'Microsoft.Media.LiveEventEncoderDisconnected'
 
-    MediaLiveEventIncomingDataChunkDroppedEventName = 'Microsoft.Media.LiveEventIncomingDataChunkDropped'
+    MediaLiveEventIncomingNameChunkDroppedEventName = 'Microsoft.Media.LiveEventIncomingDataChunkDropped'
 
     MediaLiveEventIncomingStreamReceivedEventName = 'Microsoft.Media.LiveEventIncomingStreamReceived'
 
@@ -169,6 +169,24 @@ class SystemEventNames(str, Enum):
     RedisPatchingCompletedEventName = 'Microsoft.Cache.PatchingCompleted'
 
     RedisScalingCompletedEventName = 'Microsoft.Cache.ScalingCompleted'
+
+    ResourceActionCancelName = 'Microsoft.Resources.ResourceActionCancel'
+
+    ResourceActionFailureName = 'Microsoft.Resources.ResourceActionFailure'
+
+    ResourceActionSuccessName = 'Microsoft.Resources.ResourceActionSuccess'
+
+    ResourceDeleteCancelName = 'Microsoft.Resources.ResourceDeleteCancel'
+
+    ResourceDeleteFailureName = 'Microsoft.Resources.ResourceDeleteFailure'
+
+    ResourceDeleteSuccessName = 'Microsoft.Resources.ResourceDeleteSuccess'
+
+    ResourceWriteCancelName = 'Microsoft.Resources.ResourceWriteCancel'
+
+    ResourceWriteFailureName = 'Microsoft.Resources.ResourceWriteFailure'
+
+    ResourceWriteSuccessName = 'Microsoft.Resources.ResourceWriteSuccess'
 
     ServiceBusActiveMessagesAvailablePeriodicNotificationsEventName = 'Microsoft.ServiceBus.ActiveMessagesAvailablePeriodicNotifications'
 
