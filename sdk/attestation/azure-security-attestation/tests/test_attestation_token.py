@@ -19,7 +19,7 @@ from cryptography.hazmat.primitives.asymmetric import ec, rsa
 from  cryptography.x509 import BasicConstraints, CertificateBuilder, NameOID, SubjectAlternativeName
 import base64
 import pytest
-from azure.security.attestation import AttestationToken, AttestationSigningKey
+from azure.security.attestation import AttestationToken, AttestationSigningKey, TokenValidationOptions
 
 
 class TestAzureAttestationToken(object):
@@ -64,6 +64,50 @@ class TestAzureAttestationToken(object):
         token = AttestationToken(body={"val1": [1, 2, 3]}, signer=signer)
         assert token.get_body()== {"val1": [1, 2, 3]}
         assert token.validate_token()
+
+    def test_token_callback(self):
+        key = self._create_rsa_key()
+        cert = self._create_x509_certificate(key, u'test certificate')
+
+        token_signer = AttestationSigningKey(key, cert)
+
+        token = AttestationToken(body={"val1": [1, 2, 3]}, signer=token_signer)
+        assert token.get_body()== {"val1": [1, 2, 3]}
+
+        global callback_invoked
+        callback_invoked = False
+
+        def callback(token, signer):
+            global callback_invoked
+            callback_invoked = True
+            assert signer.certificates[0]==cert
+            return True
+
+        options = TokenValidationOptions(validation_callback = callback)
+        
+        assert token.validate_token(options)
+        assert callback_invoked
+
+
+    def test_token_callback_rejected(self):
+        key = self._create_rsa_key()
+        cert = self._create_x509_certificate(key, u'test certificate')
+
+        token_signer = AttestationSigningKey(key, cert)
+
+        token = AttestationToken(body={"val1": [1, 2, 3]}, signer=token_signer)
+        assert token.get_body()== {"val1": [1, 2, 3]}
+
+        global callback_invoked
+        callback_invoked = False
+
+        def callback(token, signer):
+            assert signer.certificates[0]==cert
+            return False
+
+        options = TokenValidationOptions(validation_callback = callback)
+        
+        assert token.validate_token(options) is False
 
     # Helper functions to create keys and certificates wrapping those keys.
     @staticmethod

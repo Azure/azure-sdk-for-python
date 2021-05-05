@@ -19,7 +19,7 @@ autorest SWAGGER.md
 title: AzureAttestationRestClient
 require: 
   - https://raw.githubusercontent.com/Azure/azure-rest-api-specs/master/specification/attestation/data-plane/readme.md
-output-folder: azure/security/attestation/_generated
+output-folder: ../azure/security/attestation/_generated
 namespace: azure.security.attestation._generated
 no-namespace-folders: true
 license-header: MICROSOFT_MIT_NO_VERSION

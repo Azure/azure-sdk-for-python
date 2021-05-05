@@ -76,15 +76,13 @@ class TokenValidationOptions(object):
     def __init__(
             self,
             **kwargs):
-        self.validate_token = kwargs.get('validate_token')  # type: bool
-        self.validation_callback = kwargs.get(
-            'validation_callback') # type:Callable[['AttestationToken', AttestationSigner], bool]
-        self.validate_signature = kwargs.get('validate_signature')  # type:bool
-        self.validate_expiration = kwargs.get(
-            'validate_expiration')  # type:bool
-        self.validate_not_before = kwargs.get(
-            'validate_not_before')  # type:bool
-        self.validate_issuer = kwargs.get('validate_issuer')  # type:bool
+
+        self.validate_token = kwargs.get('validate_token', True)  # type: bool
+        self.validation_callback = kwargs.get('validation_callback') # type:Callable[['AttestationToken', AttestationSigner], bool]
+        self.validate_signature = kwargs.get('validate_signature', True)  # type:bool
+        self.validate_expiration = kwargs.get('validate_expiration', True)  # type:bool
+        self.validate_not_before = kwargs.get('validate_not_before', True)  # type:bool
+        self.validate_issuer = kwargs.get('validate_issuer', False)  # type:bool
         self.issuer = kwargs.get('issuer')  # type:str
         self.validation_slack = kwargs.get('validation_slack')  # type:int
 
@@ -388,7 +386,7 @@ class AttestationToken(Generic[T]):
         # type:(List[str]) -> List[Certificate]
         certs = list()
         for b64cert in x5clist:
-            cert = load_der_x509_certificate(base64.b64decode(b64cert))
+            cert = base64.b64decode(b64cert)
             certs.append(cert)
         return certs
 
@@ -397,7 +395,8 @@ class AttestationToken(Generic[T]):
         signed_data = Base64Url.encode(
             self.header_bytes)+'.'+Base64Url.encode(self.body_bytes)
         for signer in candidate_certificates:
-            signer_key = signer.certificates[0].public_key()
+            cert = load_der_x509_certificate(signer.certificates[0])
+            signer_key = cert.public_key()
             # Try to verify the signature with this candidate.
             # If it doesn't work, try the next signer.
             try:

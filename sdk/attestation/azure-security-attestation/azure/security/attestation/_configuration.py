@@ -52,7 +52,7 @@ class AttestationClientConfiguration(Configuration):
         self.instance_url = instance_url
         self.api_version = "2020-10-01"
         self.credential_scopes = kwargs.pop('credential_scopes', ['https://attest.azure.net/.default'])
-        kwargs.setdefault('sdk_moniker', 'attestation/{}'.format(VERSION))
+        kwargs.setdefault('sdk_moniker', 'security-attestation/{}'.format(VERSION))
         self._configure(**kwargs)
 
     def _configure(
