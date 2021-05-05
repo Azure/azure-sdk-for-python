@@ -37,12 +37,12 @@ async def sample_list_document_statuses_in_a_translation_job_with_filters_async(
     # obtain client secrets
     endpoint = os.environ["AZURE_DOCUMENT_TRANSLATION_ENDPOINT"]
     key = os.environ["AZURE_DOCUMENT_TRANSLATION_KEY"]
+    job_id = os.environ["JOB_ID"]  # this should be the id for the job you'd like to list docs for!
 
     # authorize client
     client = DocumentTranslationClient(endpoint, AzureKeyCredential(key))
 
     # set your filters
-    job_id = str(uuid.uuid4()) # this should be the id for the job you'd like to list docs for!
     start = datetime(2021, 4, 12)
     end = datetime(2021, 4, 14)
     statuses = ["Cancelled", "Failed"]
