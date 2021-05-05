@@ -7,6 +7,7 @@ import time
 
 from azure.core.tracing.decorator import distributed_trace
 
+from ._client_base import ConfidentialLedgerClientBase
 from ._enums import LedgerUserRole, TransactionState
 from ._generated_ledger.v0_1_preview.models import ConfidentialLedgerQueryState
 from ._models import (
@@ -23,7 +24,6 @@ from ._models import (
 )
 from ._shared import (
     ConfidentialLedgerCertificateCredential,
-    ConfidentialLedgerClientBase,
 )
 
 try:
@@ -88,7 +88,8 @@ class ConfidentialLedgerClient(ConfidentialLedgerClientBase):
         if entry_contents is None:
             raise ValueError("entry_contents must be a string")
 
-        result = self._client.post_ledger_entry(  # pylint: disable=protected-access
+        # pylint: disable=protected-access
+        result = self._client.post_ledger_entry(
             contents=entry_contents,
             # Not a valid kwarg for wait_for_commit (will throw at requests layer),
             # so it has to be popped.
@@ -255,7 +256,8 @@ class ConfidentialLedgerClient(ConfidentialLedgerClientBase):
                     "If not None, to_transaction_id must be a non-empty string"
                 )
 
-        return self._client.get_ledger_entries(  # pylint: disable=protected-access
+        # pylint: disable=protected-access
+        return self._client.get_ledger_entries(
             from_transaction_id=from_transaction_id,
             to_transaction_id=to_transaction_id,
             cls=kwargs.pop(

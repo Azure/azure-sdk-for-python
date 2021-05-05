@@ -3,30 +3,32 @@
 # Licensed under the MIT License.
 # ------------------------------------
 
-from azure.core.pipeline.policies import BearerTokenCredentialPolicy, HttpLoggingPolicy
-from azure.core.pipeline.transport import RequestsTransport
+from typing import Any, TYPE_CHECKING, Union
 
-from .._generated_ledger.v0_1_preview import (
+from azure.core.pipeline.policies import (
+    AsyncBearerTokenCredentialPolicy,
+    HttpLoggingPolicy,
+)
+from azure.core.pipeline.transport import AioHttpTransport
+
+from .._generated_ledger.v0_1_preview.aio import (
     ConfidentialLedgerClient as _ConfidentialLedgerClient,
 )
-from .credential import ConfidentialLedgerCertificateCredential
-
-try:
-    from typing import TYPE_CHECKING
-except ImportError:
-    TYPE_CHECKING = False
+from .._shared import ConfidentialLedgerCertificateCredential, DEFAULT_VERSION
 
 if TYPE_CHECKING:
     from azure.core.credentials import TokenCredential
-    from typing import Any, Union
 
 
-DEFAULT_VERSION = "0.1-preview"
-
-
-class ConfidentialLedgerClientBase(object):
-    def __init__(self, endpoint, credential, ledger_certificate_path, **kwargs):
-        # type: (str, Union[ConfidentialLedgerCertificateCredential, TokenCredential], str, Any) -> None
+class AsyncConfidentialLedgerClientBase(object):
+    def __init__(
+        self,
+        *,
+        endpoint: str,
+        credential: Union[ConfidentialLedgerCertificateCredential, "TokenCredential"],
+        ledger_certificate_path: str,
+        **kwargs: Any
+    ) -> None:
 
         client = kwargs.get("generated_client")
         if client:
@@ -48,8 +50,8 @@ class ConfidentialLedgerClientBase(object):
                 "If not None, ledger_certificate_path must be a non-empty string"
             )
 
+        endpoint = endpoint.strip(" /")
         try:
-            endpoint = endpoint.strip(" /")
             if not endpoint.startswith("https://"):
                 self._endpoint = "https://" + endpoint
             else:
@@ -65,10 +67,13 @@ class ConfidentialLedgerClientBase(object):
             # Customize the transport layer to use client certificate authentication and validate
             # a self-signed TLS certificate.
             if isinstance(credential, ConfidentialLedgerCertificateCredential):
-                kwargs["connection_cert"] = credential.certificate_path
+                # The async version of the client seems to expect a sequence of filenames.
+                # azure/core/pipeline/transport/_aiohttp.py:163
+                # > ssl_ctx.load_cert_chain(*cert)
+                kwargs["connection_cert"] = (credential.certificate_path,)
 
             kwargs["connection_verify"] = ledger_certificate_path
-            transport = RequestsTransport(**kwargs)
+            transport = AioHttpTransport(**kwargs)
 
         http_logging_policy = HttpLoggingPolicy(**kwargs)
         http_logging_policy.allowed_header_names.update(
@@ -82,7 +87,7 @@ class ConfidentialLedgerClientBase(object):
         if not isinstance(credential, ConfidentialLedgerCertificateCredential):
             kwargs["authentication_policy"] = kwargs.pop(
                 "authentication_policy",
-                BearerTokenCredentialPolicy(
+                AsyncBearerTokenCredentialPolicy(
                     credential,
                     "https://confidential-ledger.azure.com/.default",
                     **kwargs
@@ -107,24 +112,20 @@ class ConfidentialLedgerClientBase(object):
             ) from e
 
     @property
-    def endpoint(self):
-        # type: () -> str
+    def endpoint(self) -> str:
         """The URL this client is connected to."""
         return self._endpoint
 
-    def __enter__(self):
-        # type: () -> ConfidentialLedgerClientBase
-        self._client.__enter__()
+    async def __aenter__(self) -> "AsyncConfidentialLedgerClientBase":
+        await self._client.__aenter__()
         return self
 
-    def __exit__(self, *args):
-        # type: (Any) -> None
-        self._client.__exit__(*args)
+    async def __aexit__(self, *args: Any) -> None:
+        await self._client.__aexit__(*args)
 
-    def close(self):
-        # type: () -> None
+    async def close(self) -> None:
         """Close sockets opened by the client.
 
         Calling this method is unnecessary when using the client as a context manager.
         """
-        self._client.close()
+        await self._client.close()

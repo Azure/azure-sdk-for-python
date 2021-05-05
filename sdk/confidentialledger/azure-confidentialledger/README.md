@@ -17,7 +17,7 @@ authentication as demonstrated below.
 * An [Azure subscription][azure_sub]
 * Python 2.7, 3.5.3, or later
 * A running instance of Azure Confidential Ledger.
-* A registered user in the Confidential Ledger (typically assigned during [ARM](azure_resource_manager) resource creation) with `Administrator` privileges.
+* A registered user in the Confidential Ledger, typically assigned during [ARM](azure_resource_manager) resource creation, with `Administrator` privileges.
 
 ### Authenticate the client
 #### Using Azure Active Directory

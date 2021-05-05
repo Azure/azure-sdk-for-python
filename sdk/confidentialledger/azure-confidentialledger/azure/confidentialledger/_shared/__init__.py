@@ -3,9 +3,5 @@
 # Licensed under the MIT License.
 # ------------------------------------
 
-from .async_confidential_ledger_client_base import AsyncConfidentialLedgerClientBase
-from .confidential_ledger_client_base import (
-    ConfidentialLedgerClientBase,
-    DEFAULT_VERSION,
-)
+DEFAULT_VERSION = "0.1-preview"
 from .credential import ConfidentialLedgerCertificateCredential

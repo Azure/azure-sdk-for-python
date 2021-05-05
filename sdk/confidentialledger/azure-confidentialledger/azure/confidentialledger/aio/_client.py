@@ -10,6 +10,7 @@ from azure.core.async_paging import AsyncItemPaged
 from azure.core.tracing.decorator import distributed_trace
 from azure.core.tracing.decorator_async import distributed_trace_async
 
+from ._client_base import AsyncConfidentialLedgerClientBase
 from .._enums import LedgerUserRole, TransactionState
 from .._generated_ledger.v0_1_preview.models import ConfidentialLedgerQueryState
 from .._models import (
@@ -25,7 +26,6 @@ from .._models import (
     TransactionStatus,
 )
 from .._shared import (
-    AsyncConfidentialLedgerClientBase,
     ConfidentialLedgerCertificateCredential,
 )
 
@@ -94,7 +94,8 @@ class ConfidentialLedgerClient(AsyncConfidentialLedgerClientBase):
         if entry_contents is None:
             raise ValueError("entry_contents must not be None")
 
-        result = await self._client.post_ledger_entry(  # pylint: disable=protected-access
+        # pylint: disable=protected-access
+        result = await self._client.post_ledger_entry(
             contents=entry_contents,
             sub_ledger_id=sub_ledger_id,
             cls=kwargs.pop("cls", AppendResult._from_pipeline_result),
@@ -243,7 +244,8 @@ class ConfidentialLedgerClient(AsyncConfidentialLedgerClientBase):
                     "If not None, to_transaction_id must be a non-empty string"
                 )
 
-        return self._client.get_ledger_entries(  # pylint: disable=protected-access
+        # pylint: disable=protected-access
+        return self._client.get_ledger_entries(
             from_transaction_id=from_transaction_id,
             to_transaction_id=to_transaction_id,
             sub_ledger_id=sub_ledger_id,
