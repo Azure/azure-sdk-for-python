@@ -52,7 +52,7 @@ class TestSubmittedJobs(DocumentTranslationTest):
         for page in submitted_jobs_pages:
             page_jobs = list(page)
             self.assertLessEqual(len(page_jobs), results_per_page)
-            for job in page:
+            for job in page_jobs:
                 self._validate_translation_job(job)
 
 

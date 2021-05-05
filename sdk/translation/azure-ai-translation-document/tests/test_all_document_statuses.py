@@ -52,7 +52,7 @@ class TestAllDocumentStatuses(DocumentTranslationTest):
         for page in doc_statuses_pages:
             page_items = list(page)
             self.assertLessEqual(len(page_items), results_per_page)
-            for document in page:
+            for document in page_items:
                 self._validate_doc_status(document, target_language)
 
 
@@ -197,7 +197,7 @@ class TestAllDocumentStatuses(DocumentTranslationTest):
         for page in filtered_docs:
             page_docs = list(page)
             self.assertLessEqual(len(page_docs), results_per_page) # assert paging
-            for doc in page:
+            for doc in page_docs:
                 counter += 1
                 # assert ordering
                 assert(doc.created_on.replace(tzinfo=None) >= curr_time.replace(tzinfo=None))
