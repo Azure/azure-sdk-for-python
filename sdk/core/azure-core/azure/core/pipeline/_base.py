@@ -147,11 +147,6 @@ class Pipeline(AbstractContextManager, Generic[HTTPRequestType, HTTPResponseType
     def __exit__(self, *exc_details):  # pylint: disable=arguments-differ
         self._transport.__exit__(*exc_details)
 
-    @property
-    def transport(self):
-        """Runs transport used in the pipeline."""
-        return self._transport
-
     @staticmethod
     def _prepare_multipart_mixed_request(request):
         # type: (HTTPRequestType) -> None

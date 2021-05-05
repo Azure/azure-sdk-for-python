@@ -138,14 +138,15 @@ class AsyncioStreamDownloadGenerator(AsyncIterator):
 
     :param pipeline: The pipeline object
     :param response: The response object.
-    :param bool decompress: If True which is default, will attempt to decode the body based
+    :keyword bool decompress: If True which is default, will attempt to decode the body based
             on the ‘content-encoding’ header.
     """
-    def __init__(self, pipeline: Pipeline, response: AsyncHttpResponse, decompress: bool = True) -> None:
+    def __init__(self, pipeline: Pipeline, response: AsyncHttpResponse, **kwargs) -> None:
         self.pipeline = pipeline
         self.request = response.request
         self.response = response
         self.block_size = response.block_size
+        decompress = kwargs.get("decompress", True)
         if decompress:
             self.iter_content_func = self.response.internal_response.iter_content(self.block_size)
         else:
@@ -180,6 +181,6 @@ class AsyncioStreamDownloadGenerator(AsyncIterator):
 class AsyncioRequestsTransportResponse(AsyncHttpResponse, RequestsTransportResponse): # type: ignore
     """Asynchronous streaming of data from the response.
     """
-    def stream_download(self, pipeline, decompress=True) -> AsyncIteratorType[bytes]: # type: ignore
+    def stream_download(self, pipeline, **kwargs) -> AsyncIteratorType[bytes]: # type: ignore
         """Generator for streaming request body data."""
-        return AsyncioStreamDownloadGenerator(pipeline, self, decompress=decompress) # type: ignore
+        return AsyncioStreamDownloadGenerator(pipeline, self, **kwargs) # type: ignore

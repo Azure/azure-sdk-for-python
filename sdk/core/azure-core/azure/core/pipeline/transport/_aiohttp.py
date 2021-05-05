@@ -33,7 +33,7 @@ from multidict import CIMultiDict
 from requests.exceptions import StreamConsumedError
 
 from azure.core.configuration import ConnectionConfiguration
-from azure.core.exceptions import ServiceRequestError, ServiceResponseError
+from azure.core.exceptions import ServiceRequestError, ServiceResponseError, DecodeError
 from azure.core.pipeline import Pipeline
 
 from ._base import HttpRequest
@@ -90,6 +90,7 @@ class AioHttpTransport(AsyncHttpTransport):
                 loop=self._loop,
                 trust_env=self._use_env_settings,
                 cookie_jar=jar,
+                auto_decompress=False,
             )
         if self.session is not None:
             await self.session.__aenter__()
@@ -197,55 +198,54 @@ class AioHttpStreamDownloadGenerator(AsyncIterator):
 
     :param pipeline: The pipeline object
     :param response: The client response object.
-    :param bool decompress: If True which is default, will attempt to decode the body based
+    :keyword bool decompress: If True which is default, will attempt to decode the body based
         on the ‘content-encoding’ header.
     """
-    def __init__(self, pipeline: Pipeline, response: AsyncHttpResponse, decompress: bool = True) -> None:
+    def __init__(self, pipeline: Pipeline, response: AsyncHttpResponse, **kwargs) -> None:
         self.pipeline = pipeline
         self.request = response.request
         self.response = response
         self.block_size = response.block_size
-        self._decompress = decompress
+        self._decompress = kwargs.get("decompress", True)
         self.content_length = int(response.internal_response.headers.get('Content-Length', 0))
 
     def __len__(self):
         return self.content_length
 
     async def __anext__(self):
-        if not(self._decompress) and self.pipeline:
-            try:
-                auto_decompress = self.pipeline.transport.session.auto_decompress
-                self.pipeline.transport.session.auto_decompress = False
-            except AttributeError:
-                pass
         try:
             chunk = await self.response.internal_response.content.read(self.block_size)
-            if not(self._decompress) and self.pipeline:
-                self.pipeline.transport.session.auto_decompress = auto_decompress
             if not chunk:
                 raise _ResponseStopIteration()
+            if not(self._decompress):
+                return chunk
+            enc = response.internal_response.headers.get('Content-Encoding')
+            if not(enc):
+                return chunk
+            enc = enc.lower()
+            if enc in ("gzip", "deflate", "br"):
+                if encoding == "br":
+                    try:
+                        import brotli
+                        decompressor = brotli.Decompressor()
+                    except ImportError:
+                        raise DecodeError(
+                            "Can not decode content-encoding: brotli (br). "
+                            "Please install `brotlipy`"
+                        )
+                    decompressor = brotli.Decompressor()
+                else:
+                    import zlib
+                    zlib_mode = 16 + zlib.MAX_WBITS if encoding == "gzip" else zlib.MAX_WBITS
+                    decompressor = zlib.decompressobj(wbits=zlib_mode)
+                chunk = decompressor.decompress(chunk)
             return chunk
         except _ResponseStopIteration:
-            if not(self._decompress) and self.pipeline:
-                try:
-                    self.pipeline.transport.session.auto_decompress = auto_decompress
-                except AttributeError:
-                    pass
             self.response.internal_response.close()
             raise StopAsyncIteration()
         except StreamConsumedError:
-            if not(self._decompress) and self.pipeline:
-                try:
-                    self.pipeline.transport.session.auto_decompress = auto_decompress
-                except AttributeError:
-                    pass
             raise
         except Exception as err:
-            if not(self._decompress) and self.pipeline:
-                try:
-                    self.pipeline.transport.session.auto_decompress = auto_decompress
-                except AttributeError:
-                    pass
             _LOGGER.warning("Unable to stream download: %s", err)
             self.response.internal_response.close()
             raise
@@ -292,12 +292,12 @@ class AioHttpTransportResponse(AsyncHttpResponse):
         """Load in memory the body, so it could be accessible from sync methods."""
         self._body = await self.internal_response.read()
 
-    def stream_download(self, pipeline, decompress=True) -> AsyncIteratorType[bytes]:
+    def stream_download(self, pipeline, **kwargs) -> AsyncIteratorType[bytes]:
         """Generator for streaming response body data.
 
         :param pipeline: The pipeline object
         :type pipeline: azure.core.pipeline.Pipeline
-        :param bool decompress: If True which is default, will attempt to decode the body based
+        :keyword bool decompress: If True which is default, will attempt to decode the body based
             on the ‘content-encoding’ header.
         """
         return AioHttpStreamDownloadGenerator(pipeline, self, decompress=decompress)

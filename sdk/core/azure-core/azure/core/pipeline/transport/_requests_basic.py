@@ -120,14 +120,15 @@ class StreamDownloadGenerator(object):
 
     :param pipeline: The pipeline object
     :param response: The response object.
-    :param bool decompress: If True which is default, will attempt to decode the body based
+    :keyword bool decompress: If True which is default, will attempt to decode the body based
         on the ‘content-encoding’ header.
     """
-    def __init__(self, pipeline, response, decompress=True):
+    def __init__(self, pipeline, response, **kwargs):
         self.pipeline = pipeline
         self.request = response.request
         self.response = response
         self.block_size = response.block_size
+        decompress = kwargs.get("decompress", True)
         if decompress:
             self.iter_content_func = self.response.internal_response.iter_content(self.block_size)
         else:
@@ -161,10 +162,10 @@ class StreamDownloadGenerator(object):
 class RequestsTransportResponse(HttpResponse, _RequestsTransportResponseBase):
     """Streaming of data from the response.
     """
-    def stream_download(self, pipeline, decompress=True):
-        # type: (PipelineType, bool) -> Iterator[bytes]
+    def stream_download(self, pipeline, **kwargs):
+        # type: (PipelineType, **Any) -> Iterator[bytes]
         """Generator for streaming request body data."""
-        return StreamDownloadGenerator(pipeline, self, decompress=decompress)
+        return StreamDownloadGenerator(pipeline, self, **kwargs)
 
 
 class RequestsTransport(HttpTransport):
