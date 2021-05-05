@@ -2,7 +2,7 @@
 
 Azure Confidential Ledger provides a service for logging to an immutable, tamper-proof ledger. As part of the [Azure Confidential Computing][azure_confidential_computing] portfolio, Azure Confidential Ledger runs in SGX enclaves. It is built on Microsoft Research's [Confidential Consortium Framework][ccf].
 
-[Source code][confidential_ledger_client_src] | [Package (PyPI)][pypi_package_confidential_ledger] | [API reference documentation][reference_docs] | [Product documentation][confidential_ledger_docs] | [Samples][confidential_ledger_samples]
+[Source code][confidential_ledger_client_src] | [Package (PyPI)][pypi_package_confidential_ledger] | [API reference documentation][reference_docs] | [Product documentation][confidential_ledger_docs]
 
 ## Getting started
 ### Install packages
@@ -235,7 +235,7 @@ for node_id, quote in ledger_enclaves.quotes.items():
     print(quote.version)
 ```
 
-[Microsoft Azure Attestation Service](https://azure.microsoft.com/en-us/services/azure-attestation/) is one provider of SGX enclave quotes.
+[Microsoft Azure Attestation Service](https://azure.microsoft.com/services/azure-attestation/) is one provider of SGX enclave quotes.
 
 ### Async API
 This library includes a complete async API supported on Python 3.5+. To use it, you must first install an async transport, such as [aiohttp](https://pypi.org/project/aiohttp). See [azure-core documentation](https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/core/azure-core/CLIENT_LIBRARY_DEVELOPER.md#transport) for more information.
@@ -377,13 +377,13 @@ For more information, see the
 contact opencode@microsoft.com with any additional questions or comments.
 
 
-[azure_cli]: https://docs.microsoft.com/en-us/cli/azure
+[azure_cli]: https://docs.microsoft.com/cli/azure
 [azure_cloud_shell]: https://shell.azure.com/bash
-[azure_confidential_computing]: https://azure.microsoft.com/en-us/solutions/confidential-compute
+[azure_confidential_computing]: https://azure.microsoft.com/solutions/confidential-compute
 [azure_core_exceptions]: https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/core/azure-core#azure-core-library-exceptions
 [azure_identity]: https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/identity/azure-identity
 [azure_identity_pypi]: https://pypi.org/project/azure-identity/
-[azure_resource_manager]: https://docs.microsoft.com/en-us/azure/azure-resource-manager/management/overview
+[azure_resource_manager]: https://docs.microsoft.com/azure/azure-resource-manager/management/overview
 [azure_sub]: https://azure.microsoft.com/free
 [ccf]: https://github.com/Microsoft/CCF
 [code_of_conduct]: https://opensource.microsoft.com/codeofconduct
