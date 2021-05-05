@@ -30,7 +30,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Wed, 05 May 2021 18:21:53 GMT
+      - Wed, 05 May 2021 20:30:57 GMT
       docker-distribution-api-version:
       - registry/2.0
       server:
@@ -46,7 +46,7 @@ interactions:
       code: 401
       message: Unauthorized
 - request:
-    body: grant_type=access_token&service=fake_url.azurecr.io&access_token=REDACTED
+    body: grant_type=password&service=seankaneanon.azurecr.io&scope=registry%3Acatalog%3A%2A
     headers:
       Accept:
       - application/json
@@ -55,43 +55,7 @@ interactions:
       Connection:
       - keep-alive
       Content-Length:
-      - '1347'
-      Content-Type:
-      - application/x-www-form-urlencoded
-      User-Agent:
-      - azsdk-python-azure-containerregistry/1.0.0b1 Python/3.9.0rc1 (Windows-10-10.0.19041-SP0)
-    method: POST
-    uri: https://seankaneanon.azurecr.io/oauth2/exchange
-  response:
-    body:
-      string: '{"refresh_token": "REDACTED"}'
-    headers:
-      connection:
-      - keep-alive
-      content-type:
-      - application/json; charset=utf-8
-      date:
-      - Wed, 05 May 2021 18:21:54 GMT
-      server:
-      - openresty
-      strict-transport-security:
-      - max-age=31536000; includeSubDomains
-      transfer-encoding:
-      - chunked
-    status:
-      code: 200
-      message: OK
-- request:
-    body: grant_type=refresh_token&service=fake_url.azurecr.io&scope=registry%3Acatalog%3A%2A&refresh_token=REDACTED
-    headers:
-      Accept:
-      - application/json
-      Accept-Encoding:
-      - gzip, deflate
-      Connection:
-      - keep-alive
-      Content-Length:
-      - '1072'
+      - '82'
       Content-Type:
       - application/x-www-form-urlencoded
       User-Agent:
@@ -107,7 +71,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Wed, 05 May 2021 18:21:54 GMT
+      - Wed, 05 May 2021 20:30:57 GMT
       server:
       - openresty
       strict-transport-security:
@@ -146,7 +110,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Wed, 05 May 2021 18:21:54 GMT
+      - Wed, 05 May 2021 20:30:57 GMT
       docker-distribution-api-version:
       - registry/2.0
       link:
@@ -192,7 +156,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Wed, 05 May 2021 18:21:55 GMT
+      - Wed, 05 May 2021 20:30:57 GMT
       docker-distribution-api-version:
       - registry/2.0
       server:
@@ -208,7 +172,7 @@ interactions:
       code: 401
       message: Unauthorized
 - request:
-    body: grant_type=refresh_token&service=fake_url.azurecr.io&scope=registry%3Acatalog%3A%2A&refresh_token=REDACTED
+    body: grant_type=password&service=seankaneanon.azurecr.io&scope=registry%3Acatalog%3A%2A
     headers:
       Accept:
       - application/json
@@ -217,7 +181,7 @@ interactions:
       Connection:
       - keep-alive
       Content-Length:
-      - '1072'
+      - '82'
       Content-Type:
       - application/x-www-form-urlencoded
       User-Agent:
@@ -233,7 +197,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Wed, 05 May 2021 18:21:55 GMT
+      - Wed, 05 May 2021 20:30:57 GMT
       server:
       - openresty
       strict-transport-security:
@@ -272,7 +236,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Wed, 05 May 2021 18:21:55 GMT
+      - Wed, 05 May 2021 20:30:58 GMT
       docker-distribution-api-version:
       - registry/2.0
       server:

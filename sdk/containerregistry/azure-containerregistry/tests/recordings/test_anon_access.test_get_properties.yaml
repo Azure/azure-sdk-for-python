@@ -11,12 +11,12 @@ interactions:
       User-Agent:
       - azsdk-python-azure-containerregistry/1.0.0b1 Python/3.9.0rc1 (Windows-10-10.0.19041-SP0)
     method: GET
-    uri: https://seankaneanon.azurecr.io/acr/v1/_catalog
+    uri: https://seankaneanon.azurecr.io/acr/v1/library%2Fhello-world
   response:
     body:
       string: '{"errors": [{"code": "UNAUTHORIZED", "message": "authentication required,
         visit https://aka.ms/acr/authorization for more information.", "detail": [{"Type":
-        "registry", "Name": "catalog", "Action": "*"}]}]}'
+        "repository", "Name": "library/hello-world", "Action": "metadata_read"}]}]}'
     headers:
       access-control-expose-headers:
       - Docker-Content-Digest
@@ -26,11 +26,11 @@ interactions:
       connection:
       - keep-alive
       content-length:
-      - '196'
+      - '222'
       content-type:
       - application/json; charset=utf-8
       date:
-      - Wed, 05 May 2021 20:30:56 GMT
+      - Wed, 05 May 2021 20:30:53 GMT
       docker-distribution-api-version:
       - registry/2.0
       server:
@@ -46,7 +46,7 @@ interactions:
       code: 401
       message: Unauthorized
 - request:
-    body: grant_type=password&service=seankaneanon.azurecr.io&scope=registry%3Acatalog%3A%2A
+    body: grant_type=password&service=seankaneanon.azurecr.io&scope=repository%3Alibrary%2Fhello-world%3Ametadata_read
     headers:
       Accept:
       - application/json
@@ -55,7 +55,7 @@ interactions:
       Connection:
       - keep-alive
       Content-Length:
-      - '82'
+      - '108'
       Content-Type:
       - application/x-www-form-urlencoded
       User-Agent:
@@ -71,7 +71,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Wed, 05 May 2021 20:30:56 GMT
+      - Wed, 05 May 2021 20:30:54 GMT
       server:
       - openresty
       strict-transport-security:
@@ -93,10 +93,14 @@ interactions:
       User-Agent:
       - azsdk-python-azure-containerregistry/1.0.0b1 Python/3.9.0rc1 (Windows-10-10.0.19041-SP0)
     method: GET
-    uri: https://seankaneanon.azurecr.io/acr/v1/_catalog
+    uri: https://seankaneanon.azurecr.io/acr/v1/library%2Fhello-world
   response:
     body:
-      string: '{"repositories": ["library/alpine", "library/busybox", "library/hello-world"]}'
+      string: '{"registry": "seankaneanon.azurecr.io", "imageName": "library/hello-world",
+        "createdTime": "2021-05-05T18:00:19.7101132Z", "lastUpdateTime": "2021-05-05T18:00:17.5345755Z",
+        "manifestCount": 10, "tagCount": 5, "changeableAttributes": {"deleteEnabled":
+        true, "writeEnabled": true, "readEnabled": true, "listEnabled": true, "teleportEnabled":
+        false}}'
     headers:
       access-control-expose-headers:
       - Docker-Content-Digest
@@ -106,11 +110,11 @@ interactions:
       connection:
       - keep-alive
       content-length:
-      - '76'
+      - '326'
       content-type:
       - application/json; charset=utf-8
       date:
-      - Wed, 05 May 2021 20:30:56 GMT
+      - Wed, 05 May 2021 20:30:54 GMT
       docker-distribution-api-version:
       - registry/2.0
       server:

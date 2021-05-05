@@ -5,6 +5,13 @@
 # ------------------------------------
 import six
 
+from azure.containerregistry import (
+    ArtifactTagProperties,
+    RepositoryProperties,
+    ArtifactManifestProperties,
+    RegistryArtifact,
+)
+
 from azure.core.paging import ItemPaged
 from azure.core.pipeline.transport import RequestsTransport
 
@@ -33,7 +40,7 @@ class TestContainerRegistryClient(ContainerRegistryTestClass):
 
     @acr_preparer()
     def test_list_repository_names_by_page(self, containerregistry_anon_endpoint):
-        client = self.create_registry_client(containerregistry_anon_endpoint)
+        client = self.create_anon_client(containerregistry_anon_endpoint)
         results_per_page = 2
         total_pages = 0
 
@@ -55,7 +62,7 @@ class TestContainerRegistryClient(ContainerRegistryTestClass):
     @acr_preparer()
     def test_transport_closed_only_once(self, containerregistry_anon_endpoint):
         transport = RequestsTransport()
-        client = self.create_registry_client(containerregistry_anon_endpoint, transport=transport)
+        client = self.create_anon_client(containerregistry_anon_endpoint, transport=transport)
         with client:
             for r in client.list_repository_names():
                 pass
@@ -67,3 +74,50 @@ class TestContainerRegistryClient(ContainerRegistryTestClass):
             for r in client.list_repository_names():
                 pass
             assert transport.session is not None
+
+    @acr_preparer()
+    def test_get_properties(self, containerregistry_anon_endpoint):
+        client = self.create_anon_client(containerregistry_anon_endpoint)
+
+        container_repository = client.get_repository(HELLO_WORLD)
+
+        properties = container_repository.get_properties()
+
+        assert isinstance(properties, RepositoryProperties)
+        assert properties.name == HELLO_WORLD
+
+    @acr_preparer()
+    def test_list_manifests(self, containerregistry_anon_endpoint):
+        client = self.create_anon_client(containerregistry_anon_endpoint)
+
+        container_repository = client.get_repository(HELLO_WORLD)
+
+        count = 0
+        for manifest in container_repository.list_manifests():
+            assert isinstance(manifest, ArtifactManifestProperties)
+            count += 1
+        assert count > 0
+
+    @acr_preparer()
+    def test_get_artifact(self, containerregistry_anon_endpoint):
+        client = self.create_anon_client(containerregistry_anon_endpoint)
+
+        container_repository = client.get_repository(HELLO_WORLD)
+
+        registry_artifact = container_repository.get_artifact("latest")
+
+        assert isinstance(registry_artifact, RegistryArtifact)
+
+    @acr_preparer()
+    def test_list_tags(self, containerregistry_anon_endpoint):
+        client = self.create_anon_client(containerregistry_anon_endpoint)
+
+        container_repository = client.get_repository(HELLO_WORLD)
+
+        registry_artifact = container_repository.get_artifact("latest")
+
+        count = 0
+        for tag in registry_artifact.list_tags():
+            count += 1
+            assert isinstance(tag, ArtifactTagProperties)
+        assert count > 0

@@ -11,12 +11,12 @@ interactions:
       User-Agent:
       - azsdk-python-azure-containerregistry/1.0.0b1 Python/3.9.0rc1 (Windows-10-10.0.19041-SP0)
     method: GET
-    uri: https://seankaneanon.azurecr.io/acr/v1/_catalog
+    uri: https://seankaneanon.azurecr.io/acr/v1/library%2Fhello-world/_tags
   response:
     body:
       string: '{"errors": [{"code": "UNAUTHORIZED", "message": "authentication required,
         visit https://aka.ms/acr/authorization for more information.", "detail": [{"Type":
-        "registry", "Name": "catalog", "Action": "*"}]}]}'
+        "repository", "Name": "library/hello-world", "Action": "metadata_read"}]}]}'
     headers:
       access-control-expose-headers:
       - Docker-Content-Digest
@@ -26,11 +26,11 @@ interactions:
       connection:
       - keep-alive
       content-length:
-      - '196'
+      - '222'
       content-type:
       - application/json; charset=utf-8
       date:
-      - Wed, 05 May 2021 20:30:56 GMT
+      - Wed, 05 May 2021 20:30:58 GMT
       docker-distribution-api-version:
       - registry/2.0
       server:
@@ -46,7 +46,7 @@ interactions:
       code: 401
       message: Unauthorized
 - request:
-    body: grant_type=password&service=seankaneanon.azurecr.io&scope=registry%3Acatalog%3A%2A
+    body: grant_type=password&service=seankaneanon.azurecr.io&scope=repository%3Alibrary%2Fhello-world%3Ametadata_read
     headers:
       Accept:
       - application/json
@@ -55,7 +55,7 @@ interactions:
       Connection:
       - keep-alive
       Content-Length:
-      - '82'
+      - '108'
       Content-Type:
       - application/x-www-form-urlencoded
       User-Agent:
@@ -71,7 +71,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Wed, 05 May 2021 20:30:56 GMT
+      - Wed, 05 May 2021 20:30:58 GMT
       server:
       - openresty
       strict-transport-security:
@@ -93,10 +93,30 @@ interactions:
       User-Agent:
       - azsdk-python-azure-containerregistry/1.0.0b1 Python/3.9.0rc1 (Windows-10-10.0.19041-SP0)
     method: GET
-    uri: https://seankaneanon.azurecr.io/acr/v1/_catalog
+    uri: https://seankaneanon.azurecr.io/acr/v1/library%2Fhello-world/_tags
   response:
     body:
-      string: '{"repositories": ["library/alpine", "library/busybox", "library/hello-world"]}'
+      string: '{"registry": "seankaneanon.azurecr.io", "imageName": "library/hello-world",
+        "tags": [{"name": "latest", "digest": "sha256:f2266cbfc127c960fd30e76b7c792dc23b588c0db76233517e1891a4e357d519",
+        "createdTime": "2021-05-05T18:00:20.8799521Z", "lastUpdateTime": "2021-05-05T18:00:20.8799521Z",
+        "signed": false, "changeableAttributes": {"deleteEnabled": true, "writeEnabled":
+        true, "readEnabled": true, "listEnabled": true}}, {"name": "v1", "digest":
+        "sha256:f2266cbfc127c960fd30e76b7c792dc23b588c0db76233517e1891a4e357d519",
+        "createdTime": "2021-05-05T18:00:24.1188128Z", "lastUpdateTime": "2021-05-05T18:00:24.1188128Z",
+        "signed": false, "changeableAttributes": {"deleteEnabled": true, "writeEnabled":
+        true, "readEnabled": true, "listEnabled": true}}, {"name": "v2", "digest":
+        "sha256:f2266cbfc127c960fd30e76b7c792dc23b588c0db76233517e1891a4e357d519",
+        "createdTime": "2021-05-05T18:00:21.3154368Z", "lastUpdateTime": "2021-05-05T18:00:21.3154368Z",
+        "signed": false, "changeableAttributes": {"deleteEnabled": true, "writeEnabled":
+        true, "readEnabled": true, "listEnabled": true}}, {"name": "v3", "digest":
+        "sha256:f2266cbfc127c960fd30e76b7c792dc23b588c0db76233517e1891a4e357d519",
+        "createdTime": "2021-05-05T18:00:20.4944944Z", "lastUpdateTime": "2021-05-05T18:00:20.4944944Z",
+        "signed": false, "changeableAttributes": {"deleteEnabled": true, "writeEnabled":
+        true, "readEnabled": true, "listEnabled": true}}, {"name": "v4", "digest":
+        "sha256:f2266cbfc127c960fd30e76b7c792dc23b588c0db76233517e1891a4e357d519",
+        "createdTime": "2021-05-05T18:00:20.3500586Z", "lastUpdateTime": "2021-05-05T18:00:20.3500586Z",
+        "signed": false, "changeableAttributes": {"deleteEnabled": true, "writeEnabled":
+        true, "readEnabled": true, "listEnabled": true}}]}'
     headers:
       access-control-expose-headers:
       - Docker-Content-Digest
@@ -106,11 +126,11 @@ interactions:
       connection:
       - keep-alive
       content-length:
-      - '76'
+      - '1631'
       content-type:
       - application/json; charset=utf-8
       date:
-      - Wed, 05 May 2021 20:30:56 GMT
+      - Wed, 05 May 2021 20:30:58 GMT
       docker-distribution-api-version:
       - registry/2.0
       server:
