@@ -900,23 +900,46 @@ class StorageTableEntityTest(AzureTestCase, TableTestCase):
         try:
             entity, etag = self._insert_random_entity()
 
-            # Act
-            # Do a get and confirm the etag is parsed correctly by using it
-            # as a condition to delete.
-            resp = self.table.get_entity(partition_key=entity['PartitionKey'],
-                                         row_key=entity['RowKey'])
+            entity = self.table.get_entity(
+                partition_key=entity['PartitionKey'],
+                row_key=entity['RowKey']
+            )
 
             self.table.delete_entity(
-                {"PartitionKey": resp['PartitionKey'], "RowKey": resp['RowKey']},
+                entity,
                 etag=etag,
                 match_condition=MatchConditions.IfNotModified
             )
 
             with pytest.raises(ResourceNotFoundError):
-                resp = self.table.get_entity(partition_key=entity['PartitionKey'],
-                                            row_key=entity['RowKey'])
+                self.table.get_entity(
+                    partition_key=entity['PartitionKey'],
+                    row_key=entity['RowKey']
+                )
+        finally:
+            self._tear_down()
 
-            # Assert
+    @TablesPreparer()
+    def test_get_entity_if_match_entity_bad_etag(self, tables_storage_account_name, tables_primary_storage_account_key):
+        # Arrange
+        self._set_up(tables_storage_account_name, tables_primary_storage_account_key)
+        try:
+            entity, old_etag = self._insert_random_entity()
+
+            entity["value"] = 10
+            self.table.update_entity(entity)
+
+            # Get Entity and set old etag
+            e = self.table.get_entity(entity["PartitionKey"], entity["RowKey"])
+            new_etag = e.metadata["etag"]
+            e.metadata["etag"] = old_etag
+
+            with pytest.raises(HttpResponseError):
+                self.table.delete_entity(e, match_condition=MatchConditions.IfNotModified)
+
+            # Try delete with correct etag
+            self.table.delete_entity(e, etag=new_etag, match_condition=MatchConditions.IfNotModified)
+
         finally:
             self._tear_down()
 

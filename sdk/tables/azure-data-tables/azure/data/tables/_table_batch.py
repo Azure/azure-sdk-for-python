@@ -241,7 +241,10 @@ class TableBatchOperations(object):
         match_condition = kwargs.pop("match_condition", None)
         etag = kwargs.pop("etag", None)
         if match_condition and not etag:
-            etag = entity.metadata.get("etag", None)
+            try:
+                etag = entity.metadata.get("etag", None)
+            except AttributeError:
+                pass
 
         if_match, _ = _get_match_headers(
             kwargs=dict(
@@ -524,7 +527,10 @@ class TableBatchOperations(object):
         match_condition = kwargs.pop("match_condition", None)
         etag = kwargs.pop("etag", None)
         if match_condition and not etag:
-            etag = entity.metadata.get("etag", None)
+            try:
+                etag = entity.metadata.get("etag", None)
+            except AttributeError:
+                pass
 
         if_match, _ = _get_match_headers(
             kwargs=dict(

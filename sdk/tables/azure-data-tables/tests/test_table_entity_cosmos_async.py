@@ -597,17 +597,46 @@ class StorageTableEntityTest(AzureTestCase, AsyncTableTestCase):
         try:
             entity, etag = await self._insert_random_entity()
 
-            # Act
-            resp = await self.table.get_entity(partition_key=entity['PartitionKey'],
-                                               row_key=entity['RowKey'])
+            entity = await self.table.get_entity(
+                partition_key=entity['PartitionKey'],
+                row_key=entity['RowKey']
+            )
 
             await self.table.delete_entity(
-                {"PartitionKey": resp['PartitionKey'], "RowKey": resp['RowKey']},
+                entity,
                 etag=etag,
                 match_condition=MatchConditions.IfNotModified
             )
 
-            # Assert
+            with pytest.raises(ResourceNotFoundError):
+                await self.table.get_entity(
+                    partition_key=entity['PartitionKey'],
+                    row_key=entity['RowKey']
+                )
+        finally:
+            await self._tear_down()
+
+    @CosmosPreparer()
+    async def test_get_entity_if_match_entity_bad_etag(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
+        # Arrange
+        await self._set_up(tables_cosmos_account_name, tables_primary_cosmos_account_key)
+        try:
+            entity, old_etag = await self._insert_random_entity()
+
+            entity["value"] = 10
+            await self.table.update_entity(entity)
+
+            # Get Entity and set old etag
+            e = await self.table.get_entity(entity["PartitionKey"], entity["RowKey"])
+            new_etag = e.metadata["etag"]
+            e.metadata["etag"] = old_etag
+
+            with pytest.raises(HttpResponseError):
+                await self.table.delete_entity(e, match_condition=MatchConditions.IfNotModified)
+
+            # Try delete with correct etag
+            await self.table.delete_entity(e, etag=new_etag, match_condition=MatchConditions.IfNotModified)
+
         finally:
             await self._tear_down()
 
