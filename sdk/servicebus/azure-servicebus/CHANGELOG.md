@@ -18,6 +18,12 @@ The preview features related to AMQPAnnotatedMessage introduced in 7.2.0b1 are n
 
 * Updated azure-core dependency to 1.14.0.
 
+**Bug Fixes**
+
+- Updated uAMQP dependency to 1.4.0.
+  - Fixed memory leaks in the process of link attach where source and target cython objects are not properly deallocated (#15747).
+  - Improved management operation callback not to parse description value of non AMQP_TYPE_STRING type as string (#18361).
+
 ## 7.2.0b1 (2021-04-07)
 
 **New Features**
