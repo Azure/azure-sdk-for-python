@@ -1,4 +1,4 @@
-# Azure Blob Storage for Python
+# Azure Purview for Python
 
 > see https://aka.ms/autorest
 
@@ -14,7 +14,7 @@ npm install -g autorest
 
 ```ps
 cd <swagger-folder>
-autorest --v3 --python
+autorest
 ```
 
 ### Settings
