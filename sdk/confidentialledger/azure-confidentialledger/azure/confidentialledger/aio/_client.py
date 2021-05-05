@@ -214,7 +214,7 @@ class ConfidentialLedgerClient(AsyncConfidentialLedgerClientBase):
         from_transaction_id=None,  # type: Optional[str]
         to_transaction_id=None,  # type: Optional[str]
         sub_ledger_id=None,  # type: Optional[str]
-        **kwargs,  # type: Any
+        **kwargs  # type: Any
     ) -> AsyncItemPaged[LedgerEntry]:
         """Gets a range of entries in the ledger.
 
@@ -429,7 +429,7 @@ class ConfidentialLedgerClient(AsyncConfidentialLedgerClientBase):
         *,
         interval=0.5,  # type: float
         max_queries=3,  # type: int
-        **kwargs,  # type: Any
+        **kwargs  # type: Any
     ):
         # type: (...) -> None
         """Queries the status of the specified transaction until it is Committed, indicating that

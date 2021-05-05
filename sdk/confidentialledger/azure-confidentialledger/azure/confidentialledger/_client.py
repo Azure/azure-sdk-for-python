@@ -70,7 +70,7 @@ class ConfidentialLedgerClient(ConfidentialLedgerClientBase):
     def append_to_ledger(
         self,
         entry_contents,  # type: str
-        **kwargs,  # type: Any
+        **kwargs  # type: Any
     ):
         # type: (...) -> AppendResult
         """Appends an entry to the Confidential Ledger.
@@ -107,7 +107,7 @@ class ConfidentialLedgerClient(ConfidentialLedgerClientBase):
         self,
         user_id,  # type: str
         role,  # type: Union[str, LedgerUserRole]
-        **kwargs,  # type: Any
+        **kwargs  # type: Any
     ):
         # type: (...) -> LedgerUser
         """Creates a new Confidential Ledger user, or updates an existing one.
@@ -138,7 +138,7 @@ class ConfidentialLedgerClient(ConfidentialLedgerClientBase):
     def delete_user(
         self,
         user_id,  # type: str
-        **kwargs,  # type: Any
+        **kwargs  # type: Any
     ):
         # type: (...) -> None
         """Deletes a user from the Confidential Ledger.
@@ -176,7 +176,7 @@ class ConfidentialLedgerClient(ConfidentialLedgerClientBase):
     @distributed_trace
     def get_consortium(
         self,
-        **kwargs,  # type: Any
+        **kwargs  # type: Any
     ):
         # type: (...) -> Consortium
         """Gets the consortium members.
@@ -199,7 +199,7 @@ class ConfidentialLedgerClient(ConfidentialLedgerClientBase):
     @distributed_trace
     def get_enclave_quotes(
         self,
-        **kwargs,  # type: Any
+        **kwargs  # type: Any
     ):
         # type: (...) -> LedgerEnclaves
         """Gets enclave quotes from all nodes in the Confidential Ledger network.
@@ -226,7 +226,7 @@ class ConfidentialLedgerClient(ConfidentialLedgerClientBase):
     @distributed_trace
     def get_ledger_entries(
         self,
-        **kwargs,  # type: Any
+        **kwargs  # type: Any
     ):
         # type: (...) -> ItemPaged[LedgerEntry]
         """Gets a range of entries in the ledger.
@@ -272,7 +272,7 @@ class ConfidentialLedgerClient(ConfidentialLedgerClientBase):
     @distributed_trace
     def get_ledger_entry(
         self,
-        **kwargs,  # type: Any
+        **kwargs  # type: Any
     ):
         # type: (...) -> LedgerEntry
         """Gets an entry in the ledger. The query may need to be retried while the
@@ -338,7 +338,7 @@ class ConfidentialLedgerClient(ConfidentialLedgerClientBase):
     def get_transaction_receipt(
         self,
         transaction_id,  # type: str
-        **kwargs,  # type: Any
+        **kwargs  # type: Any
     ):
         # type: (...) -> TransactionReceipt
         """Get a receipt for a specific transaction. The query may need to be retried while the
@@ -388,7 +388,7 @@ class ConfidentialLedgerClient(ConfidentialLedgerClientBase):
     def get_transaction_status(
         self,
         transaction_id,  # type: str
-        **kwargs,  # type: Any
+        **kwargs  # type: Any
     ):
         # type: (...) -> TransactionStatus
         """Gets the status of a transaction.
@@ -414,7 +414,7 @@ class ConfidentialLedgerClient(ConfidentialLedgerClientBase):
     def get_user(
         self,
         user_id,  # type: str
-        **kwargs,  # type: Any
+        **kwargs  # type: Any
     ):
         # type: (...) -> LedgerUser
         """Gets a Confidential Ledger user.
@@ -439,7 +439,7 @@ class ConfidentialLedgerClient(ConfidentialLedgerClientBase):
     def wait_until_durable(
         self,
         transaction_id,  # type: str
-        **kwargs,  # type: Any
+        **kwargs  # type: Any
     ):
         # type: (...) -> None
         """Queries the status of the specified transaction until it is Committed, indicating that
