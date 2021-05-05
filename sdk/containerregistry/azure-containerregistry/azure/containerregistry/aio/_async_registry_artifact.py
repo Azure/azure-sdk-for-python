@@ -23,9 +23,7 @@ from .._models import (
     DeleteRepositoryResult,
     ContentProperties,
     ArtifactManifestProperties,
-    RepositoryProperties,
     ArtifactTagProperties,
-    ArtifactManifestProperties
 )
 
 if TYPE_CHECKING:

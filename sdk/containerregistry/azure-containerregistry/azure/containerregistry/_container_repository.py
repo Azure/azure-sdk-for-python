@@ -223,4 +223,6 @@ class ContainerRepository(ContainerRegistryBaseClient):
             transport=TransportWrapper(self._client._client._pipeline._transport),  # pylint: disable=protected-access
             policies=self._client._client._pipeline._impl_policies,  # pylint: disable=protected-access
         )
-        return RegistryArtifact(self._endpoint, self.name, tag_or_digest, self._credential, pipeline=_pipeline, **kwargs)
+        return RegistryArtifact(
+            self._endpoint, self.name, tag_or_digest, self._credential, pipeline=_pipeline, **kwargs
+        )
