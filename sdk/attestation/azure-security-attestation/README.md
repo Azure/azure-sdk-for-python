@@ -155,10 +155,6 @@ InitTime data refers to data which is used to configure the SGX enclave being at
 
 > Note that InitTime data is not supported on Azure [DCsv2-Series](https://docs.microsoft.com/azure/virtual-machines/dcv2-series) virtual machines.
 
-### Thread safety
-
-We guarantee that all client instance methods are thread-safe and independent of each other ([guideline](https://azure.github.io/azure-sdk/dotnet_introduction.html#dotnet-service-methods-thread-safety)). This ensures that the recommendation of reusing client instances is always safe, even across threads.
-
 ### Additional concepts
 
 ## Examples
@@ -173,61 +169,75 @@ We guarantee that all client instance methods are thread-safe and independent of
 
 Creates an instance of the Attestation Client at uri `endpoint`.
 
-```C# Snippet:CreateAttestationClient
-var options = new AttestationClientOptions();
-return new AttestationClient(new Uri(endpoint), new DefaultAzureCredential(), options);
+```python
+    def create_client(self, base_uri):
+        #type:(str) -> AttestationClient
+            attest_client = AttestationClient(
+                credential=DefaultAzureCredential(), 
+                instance_url=base_uri)
+            return attest_client
 ```
 
 ### Get attestation policy
 
-The `GetPolicy` method retrieves the attestation policy from the service.
+The `set_policy` method retrieves the attestation policy from the service.
 Attestation Policies are instanced on a per-attestation type basis, the `AttestationType` parameter defines the type to retrieve.
 
-```C# Snippet:GetPolicy
-var client = new AttestationAdministrationClient(new Uri(endpoint), new DefaultAzureCredential());
-
-AttestationResponse<string> policyResult = await client.GetPolicyAsync(AttestationType.SgxEnclave);
-string result = policyResult.Value;
+```python
+    policy_response = attest_client.get_policy(AttestationType.SGX_ENCLAVE)
+    print('Instance SGX policy: ', policy_response.value)
+    print('Token: ', policy_response.token)
 ```
 
 ### Set an attestation policy for a specified attestation type
 
-If the attestation service instance is running in Isolated mode, the SetPolicy API needs to provide a signing certificate (and private key) which can be used to validate that the caller is authorized to modify policy on the attestation instance. If the service instance is running in AAD mode, then the signing certificate and key are optional.
+If the attestation service instance is running in Isolated mode, the set_policy API needs to provide a signing certificate (and private key) which can be used to validate that the caller is authorized to modify policy on the attestation instance. If the service instance is running in AAD mode, then the signing certificate and key are optional.
 
 Under the covers, the SetPolicy APIs create a [JSON Web Token][json_web_token] based on the policy document and signing information which is sent to the attestation service.
 
-```C# Snippet:SetPolicy
-string attestationPolicy = "version=1.0; authorizationrules{=> permit();}; issuancerules{};";
+```python
+    policy_set_response = attest_client.set_policy(AttestationType.SGX_ENCLAVE,
+        attestation_policy,
+        signing_key=AttestationSigningKey(key, signing_certificate))
+    policy_get_response = attest_client.get_policy(AttestationType.SGX_ENCLAVE)
+    assert policy_get_response.value == attestation_policy
+```
 
-X509Certificate2 policyTokenCertificate = new X509Certificate2(<Attestation Policy Signing Certificate>);
-AsymmetricAlgorithm policyTokenKey = <Attestation Policy Signing Key>;
+If the service instance is running in AAD mode, the call to set_policy can be
+simplified:
 
-var setResult = client.SetPolicy(AttestationType.SgxEnclave, attestationPolicy, new AttestationTokenSigningKey(policyTokenKey, policyTokenCertificate));
+```python
+    policy_set_response = attest_client.set_policy(AttestationType.SGX_ENCLAVE,            
+        attestation_policy)
+    # Now retrieve the policy which was just set.
+    policy_get_response = attest_client.get_policy(AttestationType.SGX_ENCLAVE)
+    assert policy_get_response.value == attestation_policy
 ```
 
 Clients need to be able to verify that the attestation policy document was not modified before the policy document was received by the attestation service's enclave.
 
 There are two properties provided in the [PolicyResult][attestation_policy_result] that can be used to verify that the service received the policy document:
 
-* [`PolicySigner`][attestation_policy_result_signer] - if the `SetPolicy` call included a signing certificate, this will be the certificate provided at the time of the `SetPolicy` call. If no policy signer was set, this will be null.
+* [`PolicySigner`][attestation_policy_result_signer] - if the `set_policy` call included a signing certificate, this will be the certificate provided at the time of the `set_policy` call. If no policy signer was set, this will be null.
 * [`PolicyTokenHash`][attestation_policy_result_token_hash] - this is the hash of the [JSON Web Token][json_web_token] sent to the service.
 
 To verify the hash, clients can generate an attestation token and verify the hash generated from that token:
 
-```C# Snippet:VerifySigningHash
-// The SetPolicyAsync API will create an AttestationToken signed with the TokenSigningKey to transmit the policy.
-// To verify that the policy specified by the caller was received by the service inside the enclave, we
-// verify that the hash of the policy document returned from the Attestation Service matches the hash
-// of an attestation token created locally.
-TokenSigningKey signingKey = new TokenSigningKey(<Customer provided signing key>, <Customer provided certificate>)
-var policySetToken = new AttestationToken(
-    BinaryData.FromObjectAsJson(new StoredAttestationPolicy { AttestationPolicy = attestationPolicy }),
-    signingKey);
+```python
+    # The set_policy API will create an AttestationToken signed with the 
+    # AttestationSigningKey  to transmit the policy. To verify that the policy
+    # specified by the caller was received by the service inside the enclave, we
+    # verify that the hash of the policy document returned from the Attestation 
+    # Service matches the hash of an attestation token created locally.
+    expected_policy = AttestationToken(
+        body=StoredAttestationPolicy(
+            attestation_policy=str(attestation_policy).encode('ascii')),
+            signer=AttestationSigningKey(key, signing_certificate))
+    hasher = hashes.Hash(hashes.SHA256())
+    hasher.update(expected_policy.serialize().encode('utf-8'))
+    expected_hash = hasher.finalize()
 
-using var shaHasher = SHA256Managed.Create();
-byte[] attestationPolicyHash = shaHasher.ComputeHash(Encoding.UTF8.GetBytes(policySetToken.Serialize()));
-
-Debug.Assert(attestationPolicyHash.SequenceEqual(setResult.Value.PolicyTokenHash.ToArray()));
+    assert expected_hash == policy_set_response.value.policy_token_hash
 ```
 
 ### Attest SGX Enclave
@@ -250,33 +260,35 @@ This example shows one common pattern of calling into the attestation service to
 
 This example assumes that you have an existing `AttestationClient` object which is configured with the base URI for your endpoint. It also assumes that you have an SGX Quote (`binaryQuote`) generated from within the SGX enclave you are attesting, and "Runtime Data" (`runtimeData`) which is referenced in the SGX Quote.
 
-```C# Snippet:AttestSgxEnclave
-// Collect quote and runtime data from an SGX enclave.
-// For the "Secure Key Release" scenario, the runtime data is normally a serialized asymmetric key.
-// When the 'quote' (attestation evidence) is created specify the SHA256 hash of the runtime data when
-// creating the evidence.
-//
-// When the generated evidence is created, the hash of the runtime data is included in the
-// secured portion of the evidence.
-//
-// The Attestation service will validate that the Evidence is valid and that the SHA256 of the RuntimeData
-// parameter is included in the evidence.
-AttestationResponse<AttestationResult> attestationResult = client.AttestSgxEnclave(new AttestationRequest
-{
-    Evidence = BinaryData.FromBytes(binaryQuote),
-    RuntimeData = new AttestationData(BinaryData.FromBytes(binaryRuntimeData), false),
-});
+```python
+    # Collect quote and runtime data from an SGX enclave.
+    #
+    # For the "Secure Key Release" scenario, the runtime data is normally a serialized asymmetric key.
+    # When the 'quote' (attestation evidence) is created specify the SHA256 hash
+    # of the runtime data when creating the evidence.
+    #
+    # When the generated evidence is created, the hash of the runtime data is
+    #  included in the secured portion of the evidence.
+    #
+    # The Attestation service will validate that the Evidence is valid and that
+    # the SHA256 of the RuntimeData parameter is included in the evidence.
+    response = attest_client.attest_sgx_enclave(
+            quote,
+            runtime_data=AttestationData(runtime_data, is_json=False))
+    assert response.value.enclave_held_data == runtime_data
+    assert response.value.sgx_collateral is not None
 
-// At this point, the EnclaveHeldData field in the attestationResult.Value property will hold the
-// contain the input binaryRuntimeData.
+    # At this point, the EnclaveHeldData field in the attestationResult.Value 
+    # property will hold the input binaryRuntimeData.
 
-// The token is now passed to the "relying party". The relying party will validate that the token was
-// issued by the Attestation Service. It then extracts the asymmetric key from the EnclaveHeldData field.
-// The relying party will then Encrypt it's "key" data using the asymmetric key and transmits it back
-// to the enclave.
-var encryptedData = SendTokenToRelyingParty(attestationResult.Token);
+    # The token is now passed to the "relying party". The relying party will 
+    # validate that the token was issued by the Attestation Service. It then 
+    # extracts the asymmetric key from the EnclaveHeldData field. The relying
+    #  party will then Encrypt it's "key" data using the asymmetric key and 
+    # transmits it back to the enclave.
+    encryptedData = send_token_to_relying_party(attestationResult.Token)
 
-// Now the encrypted data can be passed into the enclave which can decrypt that data.
+    # Now the encrypted data can be passed into the enclave which can decrypt that data.
 ```
 
 Additional information on how to perform attestation token validation can be found in the [MAA Service Attestation Sample](https://github.com/gkostal/attestation/tree/d6a216cd6af5a509e20ac0a752197fdb242fabc3/sgx.attest.sample).
@@ -285,29 +297,26 @@ Additional information on how to perform attestation token validation can be fou
 
 Use `GetSigningCertificatesAsync` to retrieve the certificates which can be used to validate the token returned from the attestation service.
 
-```C# Snippet:GetSigningCertificates
-var client = GetAttestationClient();
-
-IReadOnlyList<AttestationSigner> signingCertificates = (await client.GetSigningCertificatesAsync()).Value;
+```python
+    signers = attest_client.get_signing_certificates()
+    for signer in signers:
+        cert = cryptography.x509.load_der_x509_certificate(signer.certificates[0])
+        print('Cert  iss:', cert.issuer, '; subject:', cert.subject)
 ```
 
 ## Troubleshooting
 
 Most Attestation service operations will raise exceptions defined in [Azure Core](https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/core/azure-core/README.md). The attestation service APIs will throw a `HttpResponseError` on failure with helpful error codes. Many of these errors are recoverable.
 
-```C# Snippet:AttestSgxEnclaveWithException
-try
-{
-    AttestationResponse<AttestationResult> attestationResult = client.AttestSgxEnclave(new AttestationRequest
-    {
-        Evidence = BinaryData.FromBytes(binaryQuote),
-        RuntimeData = new AttestationData(BinaryData.FromBytes(binaryRuntimeData), false),
-    });
-}
-catch (RequestFailedException ex)
-    when (ex.ErrorCode == "InvalidParameter")
-    {
-    // Ignore invalid quote errors.
+```python
+    try:
+    response = attest_client.attest_sgx_enclave(
+            quote,
+            runtime_data=AttestationData(runtime_data, is_json=False))
+    except HttpResponseError as ex:
+        // Ignore invalid quote errors.
+        if ex.error == "InvalidParameter":
+            pass
     }
 ```
 

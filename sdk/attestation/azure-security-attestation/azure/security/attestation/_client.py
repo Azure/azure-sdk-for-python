@@ -40,6 +40,8 @@ class AttestationClient(object):
     :keyword Pipeline pipeline: If omitted, the standard pipeline is used.
     :keyword HttpTransport transport: If omitted, the standard pipeline is used.
     :keyword list[HTTPPolicy] policies: If omitted, the standard pipeline is used.
+
+    For additional client creation configuration options, please see https://aka.ms/azsdk/python/options.
     """
 
     def __init__(
@@ -69,6 +71,9 @@ class AttestationClient(object):
         """ Returns the set of signing certificates used to sign attestation tokens.
 
         :return List[AttestationSigner]: A list of :class:`AttestationSigner` objects.
+
+        For additional request configuration options, please see https://aka.ms/azsdk/python/options.
+
         """
         signing_certificates = self._client.signing_certificates.get(**kwargs)
         signers = []
@@ -97,6 +102,8 @@ class AttestationClient(object):
             This allows a caller to test various policy documents against actual data
             before applying the policy document via the set_policy API.
         :return AttestationResponse[AttestationResult]: Attestation service response encapsulating an :class:`AttestationResult`.
+
+        For additional request configuration options, please see https://aka.ms/azsdk/python/options.
 
         """
         runtime = None
@@ -132,6 +139,9 @@ class AttestationClient(object):
             This allows a caller to test various policy documents against actual data
             before applying the policy document via the set_policy API.
         :return AttestationResponse[AttestationResult]: Attestation service response encapsulating an :class:`AttestationResult`.
+
+        For additional request configuration options, please see https://aka.ms/azsdk/python/options.
+
         """
 
         runtime = None
