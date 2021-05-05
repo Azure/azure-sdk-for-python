@@ -13,9 +13,10 @@ from azure.core.exceptions import (
     map_error,
 )
 from azure.core.paging import ItemPaged
+from azure.core.pipeline import Pipeline
 from azure.core.tracing.decorator import distributed_trace
 
-from ._base_client import ContainerRegistryBaseClient
+from ._base_client import ContainerRegistryBaseClient, TransportWrapper
 from ._generated.models import AcrErrors
 from ._helpers import _parse_next_link
 from ._models import (
@@ -218,4 +219,8 @@ class ContainerRepository(ContainerRegistryBaseClient):
         :returns: :class:`~azure.containerregistry.RegistryArtifact`
         :raises: None
         """
-        return RegistryArtifact(self._endpoint, self.name, tag_or_digest, self._credential, **kwargs)
+        _pipeline = Pipeline(
+            transport=TransportWrapper(self._client._client._pipeline._transport),  # pylint: disable=protected-access
+            policies=self._client._client._pipeline._impl_policies,  # pylint: disable=protected-access
+        )
+        return RegistryArtifact(self._endpoint, self.name, tag_or_digest, self._credential, pipeline=_pipeline, **kwargs)

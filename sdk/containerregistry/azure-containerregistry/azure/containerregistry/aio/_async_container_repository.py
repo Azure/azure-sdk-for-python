@@ -13,10 +13,11 @@ from azure.core.exceptions import (
     map_error,
 )
 from azure.core.async_paging import AsyncItemPaged, AsyncList
+from azure.core.pipeline import AsyncPipeline
 from azure.core.tracing.decorator import distributed_trace
 from azure.core.tracing.decorator_async import distributed_trace_async
 
-from ._async_base_client import ContainerRegistryBaseClient
+from ._async_base_client import ContainerRegistryBaseClient, AsyncTransportWrapper
 from .._generated.models import AcrErrors
 from .._helpers import _parse_next_link
 from .._models import (
@@ -215,4 +216,10 @@ class ContainerRepository(ContainerRegistryBaseClient):
         :returns: :class:`~azure.containerregistry.RegistryArtifact`
         :raises: None
         """
-        return RegistryArtifact(self._endpoint, self.name, tag_or_digest, self._credential, **kwargs)
+        _pipeline = AsyncPipeline(
+            transport=AsyncTransportWrapper(
+                self._client._client._pipeline._transport  # pylint: disable=protected-access
+            ),
+            policies=self._client._client._pipeline._impl_policies,  # pylint: disable=protected-access
+        )
+        return RegistryArtifact(self._endpoint, self.name, tag_or_digest, self._credential, pipeline=_pipeline, **kwargs)
