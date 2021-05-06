@@ -332,7 +332,7 @@ class FormField(object):
     def to_dict(self):
         value = self.value
         if isinstance(self.value, dict):
-            value = {k: v.to_dict() for k, v in self.value}
+            value = {k: v.to_dict() for k, v in self.value.items()}
         elif isinstance(self.value, list):
             value = [v.to_dict() for v in self.value]
         return {

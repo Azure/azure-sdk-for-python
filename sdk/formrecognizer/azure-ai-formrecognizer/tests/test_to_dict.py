@@ -6,11 +6,17 @@
 # --------------------------------------------------------------------------
 
 import pytest
+import functools
 from datetime import datetime
 from azure.ai.formrecognizer import _models
+from azure.ai.formrecognizer import FormRecognizerClient, FormContentType, FormTrainingClient
+from testcase import FormRecognizerTest
+from preparers import GlobalClientPreparer as _GlobalClientPreparer
+from preparers import FormRecognizerPreparer
 
+GlobalClientPreparer = functools.partial(_GlobalClientPreparer, FormTrainingClient)
 
-class TestToDict:
+class TestToDict(FormRecognizerTest):
     def test_point_to_dict(self):
         model = [_models.Point(1, 2), _models.Point(3, 4)]
         d = [p.to_dict() for p in model]
@@ -1068,3 +1074,27 @@ class TestToDict:
             }
         }
         assert d == final
+
+    @FormRecognizerPreparer()
+    @GlobalClientPreparer()
+    def test_custom_form_labeled_to_dict(self, client, formrecognizer_storage_container_sas_url):
+        fr_client = client.get_form_recognizer_client()
+
+        poller = client.begin_training(
+            formrecognizer_storage_container_sas_url,
+            use_training_labels=True,
+            model_name="labeled"
+        )
+        model = poller.result()
+
+        with open(self.form_jpg, "rb") as fd:
+            myfile = fd.read()
+
+        poller = fr_client.begin_recognize_custom_forms(model.model_id, myfile)
+        form = poller.result()
+
+        d = form[0].to_dict()
+        assert d['form_type'] == "custom:labeled"
+
+        self.assertEqual(form[0].form_type, "custom:labeled")
+        self.assertLabeledRecognizedFormHasValues(form[0], model)
