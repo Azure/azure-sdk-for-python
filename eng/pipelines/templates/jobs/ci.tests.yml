@@ -115,7 +115,7 @@ jobs:
     #           BuildTargetingString: ${{ parameters.BuildTargetingString }}
 
 
-- job:
+  - job:
     displayName: 'Test Conda'
     condition: |
       and(
