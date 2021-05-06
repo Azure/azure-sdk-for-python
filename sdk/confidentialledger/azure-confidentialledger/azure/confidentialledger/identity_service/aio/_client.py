@@ -50,8 +50,8 @@ class ConfidentialLedgerIdentityServiceClient(object):
                 self._identity_service_url = "https://" + identity_service_url
             else:
                 self._identity_service_url = identity_service_url
-        except AttributeError as e:
-            raise ValueError("Identity Service URL must be a string.") from e
+        except AttributeError:
+            raise ValueError("Identity Service URL must be a string.")
 
         self.api_version = kwargs.pop("api_version", DEFAULT_VERSION)
 

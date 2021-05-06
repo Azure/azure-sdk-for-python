@@ -56,8 +56,8 @@ class AsyncConfidentialLedgerClientBase(object):
                 self._endpoint = "https://" + endpoint
             else:
                 self._endpoint = endpoint
-        except AttributeError as e:
-            raise ValueError("Confidential Ledger URL must be a string.") from e
+        except AttributeError:
+            raise ValueError("Confidential Ledger URL must be a string.")
 
         self.api_version = kwargs.pop("api_version", DEFAULT_VERSION)
 
@@ -103,13 +103,13 @@ class AsyncConfidentialLedgerClientBase(object):
                 http_logging_policy=http_logging_policy,
                 **kwargs
             )
-        except NotImplementedError as e:
+        except NotImplementedError:
             raise NotImplementedError(
                 "This package doesn't support API version '{}'. ".format(
                     self.api_version
                 )
                 + "Supported versions: 0.1-preview"
-            ) from e
+            )
 
     @property
     def endpoint(self) -> str:
