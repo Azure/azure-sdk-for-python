@@ -37,7 +37,9 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
         :type credential: :class:`~azure.core.credentials_async.AsyncTokenCredential`
         :returns: None
         :raises: None
+
         .. admonition:: Example:
+
             .. literalinclude:: ../samples/async_samples/sample_create_client_async.py
                 :start-after: [START create_registry_client]
                 :end-before: [END create_registry_client]
@@ -188,7 +190,9 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
         """Get a repository client
         :param str repository_name: The repository to create a client for
         :returns: :class:`~azure.containerregistry.aio.ContainerRepository`
+
         Example
+
         .. code-block:: python
             from azure.containerregistry.aio import ContainerRepositoryClient
             from azure.identity.aio import DefaultAzureCredential

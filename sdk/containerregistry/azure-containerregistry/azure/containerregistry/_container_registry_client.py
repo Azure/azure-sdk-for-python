@@ -36,7 +36,9 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
         :type credential: :class:`~azure.core.credentials.TokenCredential`
         :returns: None
         :raises: None
+
         .. admonition:: Example:
+
             .. literalinclude:: ../samples/sample_create_client.py
                 :start-after: [START create_registry_client]
                 :end-before: [END create_registry_client]
@@ -194,7 +196,9 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
         :param str repository_name: The repository to create a client for
         :returns: :class:`~azure.containerregistry.ContainerRepository`
         :raises: None
+
         Example
+
         .. code-block:: python
             from azure.containerregistry import ContainerRepositoryClient
             from azure.identity import DefaultAzureCredential

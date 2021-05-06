@@ -50,7 +50,9 @@ class RegistryArtifact(ContainerRegistryBaseClient):
         :type credential: :class:`~azure.core.credentials.TokenCredential`
         :returns: None
         :raises: None
+
         .. admonition:: Example:
+
             .. literalinclude:: ../samples/sample_create_client.py
                 :start-after: [START create_registry_client]
                 :end-before: [END create_registry_client]
@@ -79,7 +81,9 @@ class RegistryArtifact(ContainerRegistryBaseClient):
         :returns: Object containing information about the deleted repository
         :rtype: :class:`~azure.containerregistry.DeleteRepositoryResult`
         :raises: :class:`~azure.core.exceptions.ResourceNotFoundError`
+
         Example
+
         .. code-block:: python
             from azure.containerregistry.aio import ContainerRepositoryClient
             from azure.identity.aio import DefaultAzureCredential
@@ -97,7 +101,9 @@ class RegistryArtifact(ContainerRegistryBaseClient):
         :param str tag: The tag to be deleted
         :returns: None
         :raises: :class:`~azure.core.exceptions.ResourceNotFoundError`
+
         Example
+
         .. code-block:: python
             from azure.containerregistry.aio import ContainerRepositoryClient
             from azure.identity.aio import DefaultAzureCredential
@@ -113,7 +119,9 @@ class RegistryArtifact(ContainerRegistryBaseClient):
         """Get the properties of a registry artifact
         :returns: :class:`~azure.containerregistry.ArtifactManifestProperties`
         :raises: :class:`~azure.core.exceptions.ResourceNotFoundError`
+
         Example
+
         .. code-block:: python
             from azure.containerregistry.aio import ContainerRepositoryClient
             from azure.identity.aio import DefaultAzureCredential
@@ -137,7 +145,9 @@ class RegistryArtifact(ContainerRegistryBaseClient):
         :type tag: str
         :returns: :class:`~azure.containerregistry.ArtifactTagProperties`
         :raises: :class:`~azure.core.exceptions.ResourceNotFoundError`
+
         Example
+
         .. code-block:: python
             from azure.containerregistry.aio import ContainerRepositoryClient
             from azure.identity.aio import DefaultAzureCredential
@@ -163,7 +173,9 @@ class RegistryArtifact(ContainerRegistryBaseClient):
         :return: ItemPaged[:class:`~azure.containerregistry.ArtifactTagProperties`]
         :rtype: :class:`~azure.core.async_paging.AsyncItemPaged`
         :raises: :class:`~azure.core.exceptions.ResourceNotFoundError`
+
         Example
+
         .. code-block:: python
             from azure.containerregistry.aio import ContainerRepositoryClient
             from azure.identity.aio import DefaultAzureCredential
@@ -287,7 +299,9 @@ class RegistryArtifact(ContainerRegistryBaseClient):
         :type permissions: ContentProperties
         :returns: :class:`~azure.containerregistry.ArtifactManifestProperties`
         :raises: :class:`~azure.core.exceptions.ResourceNotFoundError`
+
         Example
+
         .. code-block:: python
             from azure.containerregistry.aio import ContainerRepositoryClient
             from azure.identity.aio import DefaultAzureCredential
@@ -328,7 +342,9 @@ class RegistryArtifact(ContainerRegistryBaseClient):
         :type permissions: ContentProperties
         :returns: :class:`~azure.containerregistry.ArtifactTagProperties`
         :raises: :class:`~azure.core.exceptions.ResourceNotFoundError`
+
         Example
+
         .. code-block:: python
             from azure.containerregistry.aio import ContainerRepositoryClient
             from azure.identity.aio import DefaultAzureCredential
