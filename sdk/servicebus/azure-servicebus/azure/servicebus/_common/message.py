@@ -132,7 +132,7 @@ class ServiceBusMessage(
         # type: () -> str
         # pylint: disable=bare-except
         message_repr = "body={}".format(
-            str(self.body)
+            str(self.message)
         )
         try:
             message_repr += ", application_properties={}".format(self.application_properties)
@@ -743,7 +743,7 @@ class ServiceBusReceivedMessage(ServiceBusMessage):
         # type: () -> str
         # pylint: disable=bare-except
         message_repr = "body={}".format(
-            str(self.body)
+            str(self.message)
         )
         try:
             message_repr += ", application_properties={}".format(self.application_properties)
@@ -787,6 +787,46 @@ class ServiceBusReceivedMessage(ServiceBusMessage):
             pass
         try:
             message_repr += ", auto_renew_error={}".format(self.auto_renew_error)
+        except:
+            pass
+        try:
+            message_repr += ", dead_letter_error_description={}".format(self.dead_letter_error_description())
+        except:
+            pass
+        try:
+            message_repr += ", dead_letter_reason={}".format(self.dead_letter_reason())
+        except:
+            pass
+        try:
+            message_repr += ", dead_letter_source={}".format(self.dead_letter_source())
+        except:
+            pass
+        try:
+            message_repr += ", delivery_count={}".format(self.delivery_count())
+        except:
+            pass
+        try:
+            message_repr += ", enqueued_sequence_number={}".format(self.enqueued_sequence_number())
+        except:
+            pass
+        try:
+            message_repr += ", expires_at_utc={}".format(self.expires_at_utc())
+        except:
+            pass
+        try:
+            message_repr += ", sequence_number={}".format(self.sequence_number())
+        except:
+            pass
+        try:
+            message_repr += ", lock_token={}".format(self.lock_token())
+        except:
+            pass
+        try:
+            message_repr += ", locked_until_utc={}".format(self.locked_until_utc())
+        except:
+            pass
+        try:
+            message_repr += ", annotations={}".format(self.message.annotations)
         except:
             pass
         return "ServiceBusReceivedMessage({})".format(message_repr)[:1024]
