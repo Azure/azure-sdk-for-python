@@ -2,8 +2,6 @@
 
 ## 1.2.0b2 (2021-05-11)
 
-### Features
-
 ### Fixes
 - Fixes a deserialization bug for `FeatureFlagConfigurationSetting` and `SecretReferenceConfigurationSetting`.
 
