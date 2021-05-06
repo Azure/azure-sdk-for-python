@@ -132,7 +132,7 @@ class AttestationAdministrationClient(object):
         if self._config.token_validation_options.validate_token:
             if not token.validate_token(self._config.token_validation_options, self._get_signers(**kwargs)):
                 raise Exception("Token Validation of PolicyCertificates API failed.")
-        certificates = list()
+        certificates = []
 
         cert_list = token.get_body()
 
