@@ -192,7 +192,6 @@ class AioHttpTransport(AsyncHttpTransport):
             raise ServiceResponseError(err, error=err) from err
         return response
 
-
 class AioHttpStreamDownloadGenerator(AsyncIterator):
     """Streams the response body data.
 
