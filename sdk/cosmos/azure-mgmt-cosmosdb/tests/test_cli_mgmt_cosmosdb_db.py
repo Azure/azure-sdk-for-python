@@ -21,6 +21,22 @@ class MgmtCosmosDBTest(AzureMgmtTestCase):
 
     def setUp(self):
         super(MgmtCosmosDBTest, self).setUp()
+        self.re_replacer.register_pattern_pair(
+            '"primaryMasterKey":".{88}"',
+            '"primaryMasterKey":"FakeKey"',
+        )
+        self.re_replacer.register_pattern_pair(
+            '"secondaryMasterKey":".{88}"',
+            '"secondaryMasterKey":"FakeKey"',
+        )
+        self.re_replacer.register_pattern_pair(
+            '"primaryReadonlyMasterKey":".{88}"',
+            '"primaryReadonlyMasterKey":"FakeKey"',
+        )
+        self.re_replacer.register_pattern_pair(
+            '"secondaryReadonlyMasterKey":".{88}"',
+            '"secondaryReadonlyMasterKey":"FakeKey"',
+        )
         self.mgmt_client = self.create_mgmt_client(
             azure.mgmt.cosmosdb.CosmosDBManagementClient
         )
