@@ -94,7 +94,7 @@ class DocumentTranslationTest(AzureTestCase):
             return "dummy_string"
 
         # for actual live tests
-        container_name = "src" + str(uuid.uuid4())
+        container_name = "src" + str(uuid.uuid4()) 
         container_client = ContainerClient(self.storage_endpoint, container_name,
                                            self.storage_key)
         container_client.create_container()
@@ -137,12 +137,15 @@ class DocumentTranslationTest(AzureTestCase):
 
 
     # model helpers
-    def _validate_doc_status(self, doc_details, target_language):
+    def _validate_doc_status(self, doc_details, target_language, **kwargs):
+        status = kwargs.pop("statuses", ["Succeeded"])
+        ids = kwargs.pop("ids", None)
         # specific assertions
-        self.assertEqual(doc_details.status, "Succeeded")
+        self.assertIn(doc_details.status, status)
         self.assertEqual(doc_details.has_completed, True)
         self.assertIsNotNone(doc_details.translate_to, target_language)
         # generic assertions
+        self.assertIn(doc_details.id, ids) if ids else self.assertIsNotNone(doc_details.id)
         self.assertIsNotNone(doc_details.id)
         self.assertIsNotNone(doc_details.source_document_url)
         self.assertIsNotNone(doc_details.translated_document_url)
@@ -198,18 +201,15 @@ class DocumentTranslationTest(AzureTestCase):
         return job_details.id
         
 
-    def _create_and_submit_sample_translation_jobs(self, client, jobs_count):
+    def _create_and_submit_sample_translation_jobs(self, client, jobs_count, **kwargs):
+        wait_for_job = kwargs.pop('wait', True)
+        language_code = kwargs.pop('language_code', "es")
+        docs_per_job = kwargs.pop('docs_per_job', 2)
         result_job_ids = []
         for i in range(jobs_count):
             # prepare containers and test data
-            '''
-                WARNING!!
-                TOTAL_DOC_COUNT_IN_JOB = 1
-                if you plan to create more docs in the job,
-                please update this variable TOTAL_DOC_COUNT_IN_JOB in respective test
-            '''
-            blob_data = b'This is some text'  # TOTAL_DOC_COUNT_IN_JOB = 1
-            source_container_sas_url = self.create_source_container(data=Document(data=blob_data))
+            blob_data = Document.create_dummy_docs(docs_per_job)
+            source_container_sas_url = self.create_source_container(data=blob_data)
             target_container_sas_url = self.create_target_container()
 
             # prepare translation inputs
@@ -219,7 +219,7 @@ class DocumentTranslationTest(AzureTestCase):
                     targets=[
                         TranslationTarget(
                             target_url=target_container_sas_url,
-                            language_code="es"
+                            language_code=language_code
                         )
                     ]
                 )
@@ -228,18 +228,14 @@ class DocumentTranslationTest(AzureTestCase):
             # submit multiple jobs
             job_details = client.create_translation_job(translation_inputs)
             self.assertIsNotNone(job_details.id)
-            client.wait_until_done(job_details.id)
+            if wait_for_job:
+                client.wait_until_done(job_details.id)
             result_job_ids.append(job_details.id)
 
         return result_job_ids
 
-    
+
     def _create_translation_job_with_dummy_docs(self, client, docs_count, **kwargs):
-        '''
-            appropriated this method from another PR! #18302
-            please resolve conflict before merge
-            keep in mind it's the exact same method
-        '''
         # get input parms
         wait_for_job = kwargs.pop('wait', False)
         language_code = kwargs.pop('language_code', "es")
