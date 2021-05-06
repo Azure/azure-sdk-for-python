@@ -11,7 +11,7 @@ from azure.servicebus._common.constants import (
 def test_servicebus_message_repr():
     message = ServiceBusMessage("hello")
     assert "application_properties=None, session_id=None," in message.__repr__()
-    assert "content_type=None, correlation_id=None, to=None, reply_to=None, reply_to_session_id=None, subject=None, scheduled_enqueue_time_utc" in message.__repr__()
+    assert "content_type=None, correlation_id=None, to=None, reply_to=None, reply_to_session_id=None, subject=None, time_to_live=None, partition_key=None, scheduled_enqueue_time_utc" in message.__repr__()
 
 def test_servicebus_message_repr_with_props():
     message = ServiceBusMessage(
@@ -30,7 +30,7 @@ def test_servicebus_message_repr_with_props():
         reply_to_session_id="reply to session"
         )
     assert "application_properties={'prop': 'test'}, session_id=id_session," in message.__repr__()
-    assert "content_type=content type, correlation_id=correlation, to=forward to, reply_to=reply to, reply_to_session_id=reply to session, subject=github, scheduled_enqueue_time_utc" in message.__repr__()
+    assert "content_type=content type, correlation_id=correlation, to=forward to, reply_to=reply to, reply_to_session_id=reply to session, subject=github, time_to_live=0:00:30, partition_key=id_session, scheduled_enqueue_time_utc" in message.__repr__()
 
 def test_servicebus_received_message_repr():
     uamqp_received_message = uamqp.message.Message(

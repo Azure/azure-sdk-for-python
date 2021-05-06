@@ -174,6 +174,14 @@ class ServiceBusMessage(
         except:
             message_repr += ", subject=<read-error>"
         try:
+            message_repr += ", time_to_live={}".format(self.time_to_live)
+        except:
+            message_repr += ", time_to_live=<read-error>"
+        try:
+            message_repr += ", partition_key={}".format(self.partition_key)
+        except:
+            message_repr += ", partition_key=<read-error>"
+        try:
             message_repr += ", scheduled_enqueue_time_utc={}".format(self.scheduled_enqueue_time_utc)
         except:
             message_repr += ", scheduled_enqueue_time_utc=<read-error>"
@@ -793,6 +801,10 @@ class ServiceBusReceivedMessage(ServiceBusMessage):
             message_repr += ", subject={}".format(self.subject)
         except:
             message_repr += ", subject=<read-error>"
+        try:
+            message_repr += ", time_to_live={}".format(self.time_to_live)
+        except:
+            message_repr += ", time_to_live=<read-error>"
         try:
             message_repr += ", partition_key={}".format(self.partition_key)
         except:
