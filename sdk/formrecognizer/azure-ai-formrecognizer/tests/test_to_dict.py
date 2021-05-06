@@ -321,8 +321,8 @@ class TestToDict:
             form_type_confidence="0.84",
             model_id="examplemodel123",
             page_range=_models.FormPageRange(1, 1),
-            fields=[
-                _models.FormField(
+            fields={
+                "example": _models.FormField(
                     value_type="phoneNumber",
                     label_data=_models.FieldData(
                         text="phone",
@@ -348,7 +348,7 @@ class TestToDict:
                     value="55554444",
                     confidence=0.99,
                 )
-            ],
+            },
             pages=[_models.FormPage(
                 page_number=1,
                 text_angle=180.0,
@@ -402,8 +402,8 @@ class TestToDict:
             "form_type_confidence": "0.84",
             "model_id": "examplemodel123",
             "page_range": {"first_page_number": 1, "last_page_number": 1},
-            "fields": [
-                {
+            "fields": { 
+                "example": {
                     "value_type": "phoneNumber",
                     "label_data": {
                         "text": "phone",
@@ -431,7 +431,7 @@ class TestToDict:
                     "value": "55554444",
                     "confidence": 0.99,
                 }
-            ],
+            },
             "pages": [{
                 "page_number": 1,
                 "text_angle": 180.0,
@@ -955,26 +955,26 @@ class TestToDict:
             model_id="1234",
             form_type="submodel",
             accuracy=0.98,
-            fields=[
-                _models.CustomFormModelField(
+            fields={
+                "example": _models.CustomFormModelField(
                     label="field_label",
                     name="field",
                     accuracy=0.98,
                 )
-            ]
+            }
         )
         d = model.to_dict()
         final = {
             "model_id": "1234",
             "form_type": "submodel",
             "accuracy": 0.98,
-            "fields": [ 
-                {
+            "fields": { 
+                "example": {
                     "label": "field_label",
                     "name": "field",
                     "accuracy": 0.98,
                 }
-            ]
+            }
         }
         assert d == final
 
@@ -989,13 +989,13 @@ class TestToDict:
                     model_id="1234",
                     form_type="submodel",
                     accuracy=0.98,
-                    fields=[
-                        _models.CustomFormModelField(
+                    fields={ 
+                        "example": _models.CustomFormModelField(
                             label="field_label",
                             name="field",
                             accuracy=0.98,
                         )
-                    ]
+                    }
                 )
             ],
             errors=[
@@ -1033,13 +1033,14 @@ class TestToDict:
                 "model_id": "1234",
                 "form_type": "submodel",
                 "accuracy": 0.98,
-                "fields": [ 
+                "fields": { 
+                    "example": 
                     {
                         "label": "field_label",
                         "name": "field",
                         "accuracy": 0.98,
                     }
-                ]
+                }
             }],
             "errors": [
                 {

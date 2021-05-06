@@ -250,7 +250,7 @@ class RecognizedForm(object):
 
     def to_dict(self):
         return {
-            "fields": [v.to_dict() for v in self.fields] if self.fields else [],
+            "fields": {k: v.to_dict() for k, v in self.fields.items()} if self.fields else {},
             "form_type": self.form_type,
             "pages": [v.to_dict() for v in self.pages] if self.pages else [],
             "model_id": self.model_id,
@@ -330,10 +330,15 @@ class FormField(object):
         ]
 
     def to_dict(self):
+        value = self.value
+        if isinstance(self.value, dict):
+            value = {k: v.to_dict() for k, v in self.value}
+        elif isinstance(self.value, list):
+            value = [v.to_dict() for v in self.value]
         return {
             "value_type": self.value_type,
             "name": self.name,
-            "value": self.value,
+            "value": value,
             "confidence": self.confidence,
             "label_data": self.label_data.to_dict() if self.label_data else None,
             "value_data": self.value_data.to_dict() if self.value_data else None,
@@ -591,7 +596,7 @@ class FormWord(FormElement):
     def to_dict(self):
         return {
             "text": self.text,
-            "bounding_box": [f.to_dict() for f in self.bounding_box],
+            "bounding_box": [f.to_dict() for f in self.bounding_box] if self.bounding_box else [],
             "confidence": self.confidence,
             "page_number": self.page_number,
             "kind": self.kind,
@@ -640,7 +645,7 @@ class FormSelectionMark(FormElement):
     def to_dict(self):
         return {
             "text": self.text,
-            "bounding_box": [f.to_dict() for f in self.bounding_box],
+            "bounding_box": [f.to_dict() for f in self.bounding_box] if self.bounding_box else [],
             "confidence": self.confidence,
             "state": self.state,
             "page_number": self.page_number,
@@ -693,7 +698,7 @@ class FormTable(object):
             "row_count": self.row_count,
             "column_count": self.column_count,
             "cells": [cell.to_dict() for cell in self.cells],
-            "bounding_box": [box.to_dict() for box in self.bounding_box]
+            "bounding_box": [box.to_dict() for box in self.bounding_box] if self.bounding_box else []
         }
 
 
@@ -792,7 +797,7 @@ class FormTableCell(object):  # pylint:disable=too-many-instance-attributes
             "is_header": self.is_header,
             "is_footer": self.is_footer,
             "page_number": self.page_number,
-            "bounding_box": [box.to_dict() for box in self.bounding_box],
+            "bounding_box": [box.to_dict() for box in self.bounding_box] if self.bounding_box else [],
             "field_elements": [element.to_dict() for element in self.field_elements]
             if self.field_elements else None
         }
@@ -1009,7 +1014,7 @@ class CustomFormSubmodel(object):
         return {
             "model_id": self.model_id,
             "accuracy": self.accuracy,
-            "fields": [v.to_dict() for v in self.fields] if self.fields else [],
+            "fields": {k: v.to_dict() for k, v in self.fields.items()} if self.fields else {},
             "form_type": self.form_type
         }
 
@@ -1236,7 +1241,7 @@ class CustomFormModelInfo(object):
             "training_started_on": self.training_started_on,
             "training_completed_on": self.training_completed_on,
             "model_name": self.model_name,
-            "properties": self.properties.to_dict()
+            "properties": self.properties.to_dict() if self.properties else None
         }
 
 
