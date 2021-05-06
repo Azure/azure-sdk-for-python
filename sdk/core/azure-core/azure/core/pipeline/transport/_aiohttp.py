@@ -46,7 +46,6 @@ from ._base_async import (
 CONTENT_CHUNK_SIZE = 10 * 1024
 _LOGGER = logging.getLogger(__name__)
 
-
 class AioHttpTransport(AsyncHttpTransport):
     """AioHttp HTTP sender implementation.
 
