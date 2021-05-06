@@ -115,9 +115,7 @@ steps:
       - template: /eng/common/pipelines/templates/steps/sparse-checkout.yml
         parameters:
           Paths:
-            - "${{ checkout.checkout_path }}/${{ checkout.package }}"
-            - "tools/"
-            - "sdk/confest.py"
+            - "/*"
           Repositories:
             - Name: "Azure/azure-sdk-for-python"
               Commitish: "${{ checkout.Package }}_${{ checkout.Version }}"
@@ -139,16 +137,17 @@ steps:
         displayName: 'Install ${{ checkout.package }} Conda Package and Dev Requirements'
         workingDirectory: $(conda.build)/${{ checkout.checkout_path }}/${{ checkout.package }}
 
-      - bash: |
-          echo "what do we see in the working directory"
-          ls -A
+      - pwsh: |
+          Get-ChildItem -R $(conda.build)
+        displayName: What did we clone down?
 
+      - bash: |
+          echo "$(activate.method) ${{ artifact.name }}"
+          $(activate.method) ${{ artifact.name }}
+     
           echo "what about executable location?"
           python -c "import sys; print(sys.executable)"
 
-          echo "$(activate.method) ${{ artifact.name }}"
-          $(activate.method) ${{ artifact.name }}
-          
           echo "what about pip freeze"
           python -m pip freeze
 
