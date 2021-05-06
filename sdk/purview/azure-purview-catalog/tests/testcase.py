@@ -7,8 +7,6 @@
 import functools
 from devtools_testutils import AzureTestCase, PowerShellPreparer
 from azure.purview.catalog import AzurePurviewCatalogClient
-from azure.purview.catalog.aio import AzurePurviewCatalogClient as AsyncAzurePurviewCatalogClient
-
 
 class PurviewCatalogTest(AzureTestCase):
 
