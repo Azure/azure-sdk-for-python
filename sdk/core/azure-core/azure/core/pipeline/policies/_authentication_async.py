@@ -7,19 +7,19 @@ import asyncio
 import time
 from typing import TYPE_CHECKING
 
-from azure.core.pipeline.policies import AsyncHTTPPolicy, SansIOHTTPPolicy
+from azure.core.pipeline.policies import AsyncHTTPPolicy
 from azure.core.pipeline.policies._authentication import _BearerTokenCredentialPolicyBase
 
 from .._tools_async import await_result
 
 if TYPE_CHECKING:
-    from typing import Any, Optional
+    from typing import Any, Awaitable, Optional, Union
     from azure.core.credentials import AccessToken
     from azure.core.credentials_async import AsyncTokenCredential
     from azure.core.pipeline import PipelineRequest, PipelineResponse
 
 
-class AsyncBearerTokenCredentialPolicy(SansIOHTTPPolicy, AsyncHTTPPolicy):
+class AsyncBearerTokenCredentialPolicy(AsyncHTTPPolicy):
     """Adds a bearer token Authorization header to requests.
 
     :param credential: The credential.
@@ -99,6 +99,28 @@ class AsyncBearerTokenCredentialPolicy(SansIOHTTPPolicy, AsyncHTTPPolicy):
         :returns: a bool indicating whether the policy should send the request
         """
         # pylint:disable=unused-argument,no-self-use
+        return False
+
+    def on_response(self, request: "PipelineRequest", response: "PipelineResponse") -> "Union[None, Awaitable[None]]":
+        """Executed after the request comes back from the next policy.
+
+        :param request: Request to be modified after returning from the policy.
+        :type request: ~azure.core.pipeline.PipelineRequest
+        :param response: Pipeline response object
+        :type response: ~azure.core.pipeline.PipelineResponse
+        """
+
+    def on_exception(self, request: "PipelineRequest") -> "Union[bool, Awaitable[bool]]":
+        """Executed when an exception is raised while executing the next policy.
+
+        This method is executed inside the exception handler.
+
+        :param request: The Pipeline request object
+        :type request: ~azure.core.pipeline.PipelineRequest
+        :return: False by default, override with True to stop the exception.
+        :rtype: bool
+        """
+        # pylint: disable=no-self-use,unused-argument
         return False
 
     def _need_new_token(self) -> bool:

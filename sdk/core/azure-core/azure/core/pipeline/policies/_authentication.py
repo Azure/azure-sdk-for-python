@@ -71,7 +71,7 @@ class _BearerTokenCredentialPolicyBase(object):
         return not self._token or self._token.expires_on - time.time() < 300
 
 
-class BearerTokenCredentialPolicy(_BearerTokenCredentialPolicyBase, SansIOHTTPPolicy, HTTPPolicy):
+class BearerTokenCredentialPolicy(_BearerTokenCredentialPolicyBase, HTTPPolicy):
     """Adds a bearer token Authorization header to requests.
 
     :param credential: The credential.
@@ -144,6 +144,30 @@ class BearerTokenCredentialPolicy(_BearerTokenCredentialPolicyBase, SansIOHTTPPo
         :returns: a bool indicating whether the policy should send the request
         """
         # pylint:disable=unused-argument,no-self-use
+        return False
+
+    def on_response(self, request, response):
+        # type: (PipelineRequest, PipelineResponse) -> None
+        """Executed after the request comes back from the next policy.
+
+        :param request: Request to be modified after returning from the policy.
+        :type request: ~azure.core.pipeline.PipelineRequest
+        :param response: Pipeline response object
+        :type response: ~azure.core.pipeline.PipelineResponse
+        """
+
+    def on_exception(self, request):
+        # type: (PipelineRequest) -> bool
+        """Executed when an exception is raised while executing the next policy.
+
+        This method is executed inside the exception handler.
+
+        :param request: The Pipeline request object
+        :type request: ~azure.core.pipeline.PipelineRequest
+        :return: False by default, override with True to stop the exception.
+        :rtype: bool
+        """
+        # pylint: disable=no-self-use,unused-argument
         return False
 
 
