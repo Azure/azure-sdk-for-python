@@ -6,8 +6,8 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-from ._confidential_ledger_client_operations import ConfidentialLedgerClientOperationsMixin
+from ._confidential_ledger_identity_service_operations import ConfidentialLedgerIdentityServiceOperations
 
 __all__ = [
-    'ConfidentialLedgerClientOperationsMixin',
+    'ConfidentialLedgerIdentityServiceOperations',
 ]

@@ -17,28 +17,28 @@ if TYPE_CHECKING:
 
     from azure.core.pipeline.transport import HttpRequest, HttpResponse
 
-from ._configuration import ConfidentialLedgerClientConfiguration
-from .operations import ConfidentialLedgerOperations
+from ._configuration import ConfidentialLedgerIdentityServiceClientConfiguration
+from .operations import ConfidentialLedgerIdentityServiceOperations
 from . import models
 
 
-class ConfidentialLedgerClient(object):
-    """The ConfidentialLedgerClient writes and retrieves ledger entries against the Confidential Ledger service.
+class ConfidentialLedgerIdentityServiceClient(object):
+    """The ConfidentialLedgerIdentityServiceClient is used to retrieve the TLS certificate required for connecting to a Confidential Ledger.
 
-    :ivar confidential_ledger: ConfidentialLedgerOperations operations
-    :vartype confidential_ledger: azure.confidentialledger._generated/_generated_ledger.v0_1_preview.operations.ConfidentialLedgerOperations
-    :param ledger_uri: The Confidential Ledger URL, for example https://contoso.confidentialledger.azure.com.
-    :type ledger_uri: str
+    :ivar confidential_ledger_identity_service: ConfidentialLedgerIdentityServiceOperations operations
+    :vartype confidential_ledger_identity_service: azure.confidentialledger._generated/_generated_identity.v0_1_preview.operations.ConfidentialLedgerIdentityServiceOperations
+    :param identity_service_uri: The Identity Service URL, for example https://identity.accledger.azure.com.
+    :type identity_service_uri: str
     """
 
     def __init__(
         self,
-        ledger_uri,  # type: str
+        identity_service_uri,  # type: str
         **kwargs  # type: Any
     ):
         # type: (...) -> None
-        base_url = '{ledgerUri}'
-        self._config = ConfidentialLedgerClientConfiguration(ledger_uri, **kwargs)
+        base_url = '{identityServiceUri}'
+        self._config = ConfidentialLedgerIdentityServiceClientConfiguration(identity_service_uri, **kwargs)
         self._client = PipelineClient(base_url=base_url, config=self._config, **kwargs)
 
         client_models = {k: v for k, v in models.__dict__.items() if isinstance(v, type)}
@@ -46,7 +46,7 @@ class ConfidentialLedgerClient(object):
         self._serialize.client_side_validation = False
         self._deserialize = Deserializer(client_models)
 
-        self.confidential_ledger = ConfidentialLedgerOperations(
+        self.confidential_ledger_identity_service = ConfidentialLedgerIdentityServiceOperations(
             self._client, self._config, self._serialize, self._deserialize)
 
     def _send_request(self, http_request, **kwargs):
@@ -60,7 +60,7 @@ class ConfidentialLedgerClient(object):
         :rtype: ~azure.core.pipeline.transport.HttpResponse
         """
         path_format_arguments = {
-            'ledgerUri': self._serialize.url("self._config.ledger_uri", self._config.ledger_uri, 'str', skip_quote=True),
+            'identityServiceUri': self._serialize.url("self._config.identity_service_uri", self._config.identity_service_uri, 'str', skip_quote=True),
         }
         http_request.url = self._client.format_url(http_request.url, **path_format_arguments)
         stream = kwargs.pop("stream", True)
@@ -72,7 +72,7 @@ class ConfidentialLedgerClient(object):
         self._client.close()
 
     def __enter__(self):
-        # type: () -> ConfidentialLedgerClient
+        # type: () -> ConfidentialLedgerIdentityServiceClient
         self._client.__enter__()
         return self
 

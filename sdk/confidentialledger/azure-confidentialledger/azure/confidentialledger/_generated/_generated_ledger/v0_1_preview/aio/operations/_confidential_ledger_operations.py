@@ -18,7 +18,27 @@ from ... import models as _models
 T = TypeVar('T')
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]]
 
-class ConfidentialLedgerClientOperationsMixin:
+class ConfidentialLedgerOperations:
+    """ConfidentialLedgerOperations async operations.
+
+    You should not instantiate this class directly. Instead, you should create a Client instance that
+    instantiates it for you and attaches it as an attribute.
+
+    :ivar models: Alias to model classes used in this operation group.
+    :type models: ~azure.confidentialledger._generated/_generated_ledger.v0_1_preview.models
+    :param client: Client for service requests.
+    :param config: Configuration of service client.
+    :param serializer: An object model serializer.
+    :param deserializer: An object model deserializer.
+    """
+
+    models = _models
+
+    def __init__(self, client, config, serializer, deserializer) -> None:
+        self._client = client
+        self._serialize = serializer
+        self._deserialize = deserializer
+        self._config = config
 
     async def get_constitution(
         self,

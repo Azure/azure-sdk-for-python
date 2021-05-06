@@ -14,8 +14,8 @@ from azure.core.pipeline import policies
 from .._version import VERSION
 
 
-class ConfidentialLedgerClientConfiguration(Configuration):
-    """Configuration for ConfidentialLedgerClient.
+class ConfidentialLedgerIdentityServiceClientConfiguration(Configuration):
+    """Configuration for ConfidentialLedgerIdentityServiceClient.
 
     Note that all parameters used to create this instance are saved as instance
     attributes.
@@ -31,7 +31,7 @@ class ConfidentialLedgerClientConfiguration(Configuration):
     ) -> None:
         if identity_service_uri is None:
             raise ValueError("Parameter 'identity_service_uri' must not be None.")
-        super(ConfidentialLedgerClientConfiguration, self).__init__(**kwargs)
+        super(ConfidentialLedgerIdentityServiceClientConfiguration, self).__init__(**kwargs)
 
         self.identity_service_uri = identity_service_uri
         self.api_version = "0.1-preview"

@@ -6,11 +6,11 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-from ._confidential_ledger_client import ConfidentialLedgerClient
+from ._confidential_ledger_identity_service_client import ConfidentialLedgerIdentityServiceClient
 from ._version import VERSION
 
 __version__ = VERSION
-__all__ = ['ConfidentialLedgerClient']
+__all__ = ['ConfidentialLedgerIdentityServiceClient']
 
 try:
     from ._patch import patch_sdk  # type: ignore

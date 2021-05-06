@@ -6,72 +6,66 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-from typing import TYPE_CHECKING
+from typing import Any
 
-from azure.core import PipelineClient
+from azure.core import AsyncPipelineClient
+from azure.core.pipeline.transport import AsyncHttpResponse, HttpRequest
 from msrest import Deserializer, Serializer
 
-if TYPE_CHECKING:
-    # pylint: disable=unused-import,ungrouped-imports
-    from typing import Any
-
-    from azure.core.pipeline.transport import HttpRequest, HttpResponse
-
-from ._configuration import ConfidentialLedgerClientConfiguration
-from .operations import ConfidentialLedgerClientOperationsMixin
-from . import models
+from ._configuration import ConfidentialLedgerIdentityServiceClientConfiguration
+from .operations import ConfidentialLedgerIdentityServiceOperations
+from .. import models
 
 
-class ConfidentialLedgerClient(ConfidentialLedgerClientOperationsMixin):
-    """The ConfidentialLedgerClient writes and retrieves ledger entries against the Confidential Ledger service.
+class ConfidentialLedgerIdentityServiceClient(object):
+    """The ConfidentialLedgerIdentityServiceClient is used to retrieve the TLS certificate required for connecting to a Confidential Ledger.
 
+    :ivar confidential_ledger_identity_service: ConfidentialLedgerIdentityServiceOperations operations
+    :vartype confidential_ledger_identity_service: azure.confidentialledger._generated/_generated_identity.v0_1_preview.aio.operations.ConfidentialLedgerIdentityServiceOperations
     :param identity_service_uri: The Identity Service URL, for example https://identity.accledger.azure.com.
     :type identity_service_uri: str
     """
 
     def __init__(
         self,
-        identity_service_uri,  # type: str
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> None
+        identity_service_uri: str,
+        **kwargs: Any
+    ) -> None:
         base_url = '{identityServiceUri}'
-        self._config = ConfidentialLedgerClientConfiguration(identity_service_uri, **kwargs)
-        self._client = PipelineClient(base_url=base_url, config=self._config, **kwargs)
+        self._config = ConfidentialLedgerIdentityServiceClientConfiguration(identity_service_uri, **kwargs)
+        self._client = AsyncPipelineClient(base_url=base_url, config=self._config, **kwargs)
 
         client_models = {k: v for k, v in models.__dict__.items() if isinstance(v, type)}
         self._serialize = Serializer(client_models)
         self._serialize.client_side_validation = False
         self._deserialize = Deserializer(client_models)
 
+        self.confidential_ledger_identity_service = ConfidentialLedgerIdentityServiceOperations(
+            self._client, self._config, self._serialize, self._deserialize)
 
-    def _send_request(self, http_request, **kwargs):
-        # type: (HttpRequest, Any) -> HttpResponse
+    async def _send_request(self, http_request: HttpRequest, **kwargs: Any) -> AsyncHttpResponse:
         """Runs the network request through the client's chained policies.
 
         :param http_request: The network request you want to make. Required.
         :type http_request: ~azure.core.pipeline.transport.HttpRequest
         :keyword bool stream: Whether the response payload will be streamed. Defaults to True.
         :return: The response of your network call. Does not do error handling on your response.
-        :rtype: ~azure.core.pipeline.transport.HttpResponse
+        :rtype: ~azure.core.pipeline.transport.AsyncHttpResponse
         """
         path_format_arguments = {
             'identityServiceUri': self._serialize.url("self._config.identity_service_uri", self._config.identity_service_uri, 'str', skip_quote=True),
         }
         http_request.url = self._client.format_url(http_request.url, **path_format_arguments)
         stream = kwargs.pop("stream", True)
-        pipeline_response = self._client._pipeline.run(http_request, stream=stream, **kwargs)
+        pipeline_response = await self._client._pipeline.run(http_request, stream=stream, **kwargs)
         return pipeline_response.http_response
 
-    def close(self):
-        # type: () -> None
-        self._client.close()
+    async def close(self) -> None:
+        await self._client.close()
 
-    def __enter__(self):
-        # type: () -> ConfidentialLedgerClient
-        self._client.__enter__()
+    async def __aenter__(self) -> "ConfidentialLedgerIdentityServiceClient":
+        await self._client.__aenter__()
         return self
 
-    def __exit__(self, *exc_details):
-        # type: (Any) -> None
-        self._client.__exit__(*exc_details)
+    async def __aexit__(self, *exc_details) -> None:
+        await self._client.__aexit__(*exc_details)

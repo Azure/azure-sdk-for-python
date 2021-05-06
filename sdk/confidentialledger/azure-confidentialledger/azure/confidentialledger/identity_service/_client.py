@@ -10,7 +10,7 @@ from azure.core.tracing.decorator import distributed_trace
 from ._models import LedgerIdentity
 
 from .._generated._generated_identity.v0_1_preview import (
-    ConfidentialLedgerClient as _ConfidentialLedgerClient,
+    ConfidentialLedgerIdentityServiceClient as _ConfidentialLedgerIdentityServiceClient,
 )
 from .._shared import DEFAULT_VERSION
 
@@ -68,7 +68,7 @@ class ConfidentialLedgerIdentityServiceClient(object):
 
         authentication_policy = None
 
-        self._client = _ConfidentialLedgerClient(
+        self._client = _ConfidentialLedgerIdentityServiceClient(
             self._identity_service_url,
             api_version=self.api_version,
             pipeline=pipeline,
@@ -99,7 +99,10 @@ class ConfidentialLedgerIdentityServiceClient(object):
         if not ledger_id:
             raise ValueError("ledger_id must be a non-empty string")
 
-        result = self._client.get_ledger_identity(ledger_id=ledger_id, **kwargs)
+        result = self._client.confidential_ledger_identity_service.get_ledger_identity(
+            ledger_id=ledger_id,
+            **kwargs
+        )
         return LedgerIdentity(
             ledger_id=result.ledger_id,
             ledger_tls_certificate=result.ledger_tls_certificate,
