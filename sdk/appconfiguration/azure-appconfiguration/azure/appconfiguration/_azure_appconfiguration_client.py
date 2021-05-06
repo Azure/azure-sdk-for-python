@@ -100,7 +100,7 @@ class AzureAppConfigurationClient:
 
     @classmethod
     def from_connection_string(cls, connection_string, **kwargs):
-        # type: (str, Dict) -> AzureAppConfigurationClient
+        # type: (str, **Any) -> AzureAppConfigurationClient
         """Create AzureAppConfigurationClient from a Connection String.
 
         :param str connection_string: Connection String
@@ -285,7 +285,7 @@ class AzureAppConfigurationClient:
 
     @distributed_trace
     def add_configuration_setting(self, configuration_setting, **kwargs):
-        # type: (ConfigurationSetting, **Dict) -> ConfigurationSetting
+        # type: (ConfigurationSetting, **Any) -> ConfigurationSetting
 
         """Add a ConfigurationSetting instance into the Azure App Configuration service.
 
@@ -454,7 +454,7 @@ class AzureAppConfigurationClient:
 
     @distributed_trace
     def list_revisions(self, key_filter=None, label_filter=None, **kwargs):
-        # type: (Optional[str], Optional[str], **Dict) -> ItemPaged[ConfigurationSetting]
+        # type: (Optional[str], Optional[str], **Any) -> ItemPaged[ConfigurationSetting]
 
         """
         Find the ConfigurationSetting revision history.
@@ -514,7 +514,7 @@ class AzureAppConfigurationClient:
 
     @distributed_trace
     def set_read_only(self, configuration_setting, read_only=True, **kwargs):
-        # type: (ConfigurationSetting, Optional[bool], **Dict) -> ConfigurationSetting
+        # type: (ConfigurationSetting, Optional[bool], **Any) -> ConfigurationSetting
 
         """Set a configuration setting read only
 

@@ -67,7 +67,7 @@ class AzureAppConfigurationClient:
     # pylint:disable=protected-access
 
     def __init__(self, base_url, credential, **kwargs):
-        # type: (str, Any, dict) -> None
+        # type: (str, Any, **Any) -> None
         try:
             if not base_url.lower().startswith("http"):
                 base_url = "https://" + base_url
@@ -104,7 +104,7 @@ class AzureAppConfigurationClient:
 
     @classmethod
     def from_connection_string(cls, connection_string, **kwargs):
-        # type: (str, **Dict) -> AzureAppConfigurationClient
+        # type: (str, **Any) -> AzureAppConfigurationClient
         """Create AzureAppConfigurationClient from a Connection String.
         This is the async version of :class:`azure.appconfiguration.AzureAppConfigurationClient`
 
@@ -297,7 +297,7 @@ class AzureAppConfigurationClient:
 
     @distributed_trace_async
     async def add_configuration_setting(self, configuration_setting, **kwargs):
-        # type: (ConfigurationSetting, **Dict) -> ConfigurationSetting
+        # type: (ConfigurationSetting, **Any) -> ConfigurationSetting
 
         """Add a ConfigurationSetting instance into the Azure App Configuration service.
 
@@ -473,7 +473,7 @@ class AzureAppConfigurationClient:
     @distributed_trace
     def list_revisions(
         self, key_filter=None, label_filter=None, **kwargs
-    ):  # type: (Optional[str], Optional[str], **Dict) -> AsyncItemPaged[ConfigurationSetting]
+    ):  # type: (Optional[str], Optional[str], **Any) -> AsyncItemPaged[ConfigurationSetting]
 
         """
         Find the ConfigurationSetting revision history.
@@ -535,7 +535,7 @@ class AzureAppConfigurationClient:
     @distributed_trace
     async def set_read_only(
         self, configuration_setting, read_only=True, **kwargs
-    ):  # type: (ConfigurationSetting, Optional[bool], **Dict) -> ConfigurationSetting
+    ):  # type: (ConfigurationSetting, Optional[bool], **Any) -> ConfigurationSetting
 
         """Set a configuration setting read only
 

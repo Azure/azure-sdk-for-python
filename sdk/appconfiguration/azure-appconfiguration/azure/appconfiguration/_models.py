@@ -46,6 +46,7 @@ class ConfigurationSetting(Model):
     content_type = None
 
     def __init__(self, **kwargs):
+        # type: (**Any) -> None
         super(ConfigurationSetting, self).__init__(**kwargs)
         self.key = kwargs.get("key", None)
         self.label = kwargs.get("label", None)
