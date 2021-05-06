@@ -2,6 +2,8 @@
 
 ## 12.0.0b7 (Unreleased)
 **Breaking**
+* The `TableEntity` object now acts exclusively like a dictionary, and no longer supports key access via attributes.
+* Metadata of an entity is now accessed via `TableEntity.metadata` attribute rather than a method.
 * Removed explicit `LinearRetry` and `ExponentialRetry` in favor of keyword parameter.
 * Renamed `filter` parameter in query APIs to `query_filter`.
 * The `location_mode` attribute on clients is now read-only. This has been added as a keyword parameter to the constructor.
@@ -13,8 +15,10 @@
 * Changed optional `value` and `type` arguments of `EntityProperty` to required.
 * Renamed `EntityProperty.type` to `EntityProperty.edm_type`.
 * `BatchErrorException` has been renamed to `TableTransactionError`.
+* The only supported credentials are `AzureNamedKeyCredential`, `AzureSasCredential`, or authentication by connection string
 * `EntityProperty` is now a tuple.
 * Removed `date` and `api_version` from the `TableItem` class.
+
 
 **Fixes**
 * Fixed issue with Cosmos merge operations.
@@ -24,6 +28,7 @@
 * Added support for Azurite storage emulator
 * Throws a `RequestTooLargeError` on transaction requests that return a 413 error code
 * Added support for Int64 and Binary types in query filters
+* On `update_entity` and `delete_entity` if no `etag` is supplied via kwargs, the `etag` in the entity will be used if it is in the entity.
 
 ## 12.0.0b6 (2021-04-06)
 * Updated deserialization of datetime fields in entities to support preservation of the service format with additional decimal place.
