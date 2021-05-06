@@ -147,139 +147,21 @@ class WeatherOperations:
         )
     list.metadata = {'url': '/weather'}  # type: ignore
 
-    async def _create_data_ingestion_job_initial(
-        self,
-        job_id: str,
-        job: Optional["_models.WeatherIngestionJobRequest"] = None,
-        **kwargs
-    ) -> "_models.WeatherIngestionJobResponse":
-        cls = kwargs.pop('cls', None)  # type: ClsType["_models.WeatherIngestionJobResponse"]
-        error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
-        }
-        error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2021-03-31-preview"
-        content_type = kwargs.pop("content_type", "application/json")
-        accept = "application/json"
-
-        # Construct URL
-        url = self._create_data_ingestion_job_initial.metadata['url']  # type: ignore
-        path_format_arguments = {
-            'jobId': self._serialize.url("job_id", job_id, 'str'),
-        }
-        url = self._client.format_url(url, **path_format_arguments)
-
-        # Construct parameters
-        query_parameters = {}  # type: Dict[str, Any]
-        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
-
-        # Construct headers
-        header_parameters = {}  # type: Dict[str, Any]
-        header_parameters['Content-Type'] = self._serialize.header("content_type", content_type, 'str')
-        header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
-
-        body_content_kwargs = {}  # type: Dict[str, Any]
-        if job is not None:
-            body_content = self._serialize.body(job, 'WeatherIngestionJobRequest')
-        else:
-            body_content = None
-        body_content_kwargs['content'] = body_content
-        request = self._client.put(url, query_parameters, header_parameters, **body_content_kwargs)
-        pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
-        response = pipeline_response.http_response
-
-        if response.status_code not in [202]:
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise HttpResponseError(response=response)
-
-        deserialized = self._deserialize('WeatherIngestionJobResponse', pipeline_response)
-
-        if cls:
-            return cls(pipeline_response, deserialized, {})
-
-        return deserialized
-    _create_data_ingestion_job_initial.metadata = {'url': '/weather/ingest-data/{jobId}'}  # type: ignore
-
-    async def begin_create_data_ingestion_job(
-        self,
-        job_id: str,
-        job: Optional["_models.WeatherIngestionJobRequest"] = None,
-        **kwargs
-    ) -> AsyncLROPoller["_models.WeatherIngestionJobResponse"]:
-        """Create a weather data ingestion job.
-
-        :param job_id: Job id supplied by user.
-        :type job_id: str
-        :param job: Job parameters supplied by user.
-        :type job: ~azure.farmbeats.models.WeatherIngestionJobRequest
-        :keyword callable cls: A custom type or function that will be passed the direct response
-        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: Pass in True if you'd like the AsyncLROBasePolling polling method,
-         False for no polling, or your own initialized polling object for a personal polling strategy.
-        :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
-        :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
-        :return: An instance of AsyncLROPoller that returns either WeatherIngestionJobResponse or the result of cls(response)
-        :rtype: ~azure.core.polling.AsyncLROPoller[~azure.farmbeats.models.WeatherIngestionJobResponse]
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-        polling = kwargs.pop('polling', False)  # type: Union[bool, AsyncPollingMethod]
-        cls = kwargs.pop('cls', None)  # type: ClsType["_models.WeatherIngestionJobResponse"]
-        lro_delay = kwargs.pop(
-            'polling_interval',
-            self._config.polling_interval
-        )
-        cont_token = kwargs.pop('continuation_token', None)  # type: Optional[str]
-        if cont_token is None:
-            raw_result = await self._create_data_ingestion_job_initial(
-                job_id=job_id,
-                job=job,
-                cls=lambda x,y,z: x,
-                **kwargs
-            )
-
-        kwargs.pop('error_map', None)
-        kwargs.pop('content_type', None)
-
-        def get_long_running_output(pipeline_response):
-            deserialized = self._deserialize('WeatherIngestionJobResponse', pipeline_response)
-
-            if cls:
-                return cls(pipeline_response, deserialized, {})
-            return deserialized
-
-        path_format_arguments = {
-            'jobId': self._serialize.url("job_id", job_id, 'str'),
-        }
-
-        if polling is True: polling_method = AsyncLROBasePolling(lro_delay, lro_options={'final-state-via': 'location'}, path_format_arguments=path_format_arguments,  **kwargs)
-        elif polling is False: polling_method = AsyncNoPolling()
-        else: polling_method = polling
-        if cont_token:
-            return AsyncLROPoller.from_continuation_token(
-                polling_method=polling_method,
-                continuation_token=cont_token,
-                client=self._client,
-                deserialization_callback=get_long_running_output
-            )
-        else:
-            return AsyncLROPoller(self._client, raw_result, get_long_running_output, polling_method)
-    begin_create_data_ingestion_job.metadata = {'url': '/weather/ingest-data/{jobId}'}  # type: ignore
-
     async def get_data_ingestion_job_details(
         self,
         job_id: str,
         **kwargs
-    ) -> "_models.WeatherIngestionJobDetails":
-        """Get weather ingestion job's details.
+    ) -> "_models.WeatherDataIngestionJob":
+        """Get weather ingestion job.
 
         :param job_id: Id of the job.
         :type job_id: str
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: WeatherIngestionJobDetails, or the result of cls(response)
-        :rtype: ~azure.farmbeats.models.WeatherIngestionJobDetails
+        :return: WeatherDataIngestionJob, or the result of cls(response)
+        :rtype: ~azure.farmbeats.models.WeatherDataIngestionJob
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["_models.WeatherIngestionJobDetails"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.WeatherDataIngestionJob"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -308,9 +190,10 @@ class WeatherOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise HttpResponseError(response=response)
+            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, response)
+            raise HttpResponseError(response=response, model=error)
 
-        deserialized = self._deserialize('WeatherIngestionJobDetails', pipeline_response)
+        deserialized = self._deserialize('WeatherDataIngestionJob', pipeline_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})
@@ -318,13 +201,13 @@ class WeatherOperations:
         return deserialized
     get_data_ingestion_job_details.metadata = {'url': '/weather/ingest-data/{jobId}'}  # type: ignore
 
-    async def _create_data_delete_job_initial(
+    async def _create_data_ingestion_job_initial(
         self,
         job_id: str,
-        job: Optional["_models.WeatherDataDeleteJobRequest"] = None,
+        job: Optional["_models.WeatherDataIngestionJob"] = None,
         **kwargs
-    ) -> "_models.WeatherDataDeleteJobResponse":
-        cls = kwargs.pop('cls', None)  # type: ClsType["_models.WeatherDataDeleteJobResponse"]
+    ) -> "_models.WeatherDataIngestionJob":
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.WeatherDataIngestionJob"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -334,7 +217,7 @@ class WeatherOperations:
         accept = "application/json"
 
         # Construct URL
-        url = self._create_data_delete_job_initial.metadata['url']  # type: ignore
+        url = self._create_data_ingestion_job_initial.metadata['url']  # type: ignore
         path_format_arguments = {
             'jobId': self._serialize.url("job_id", job_id, 'str'),
         }
@@ -351,7 +234,7 @@ class WeatherOperations:
 
         body_content_kwargs = {}  # type: Dict[str, Any]
         if job is not None:
-            body_content = self._serialize.body(job, 'WeatherDataDeleteJobRequest')
+            body_content = self._serialize.body(job, 'WeatherDataIngestionJob')
         else:
             body_content = None
         body_content_kwargs['content'] = body_content
@@ -361,47 +244,48 @@ class WeatherOperations:
 
         if response.status_code not in [202]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise HttpResponseError(response=response)
+            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, response)
+            raise HttpResponseError(response=response, model=error)
 
-        deserialized = self._deserialize('WeatherDataDeleteJobResponse', pipeline_response)
+        deserialized = self._deserialize('WeatherDataIngestionJob', pipeline_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})
 
         return deserialized
-    _create_data_delete_job_initial.metadata = {'url': '/weather/delete-data/{jobId}'}  # type: ignore
+    _create_data_ingestion_job_initial.metadata = {'url': '/weather/ingest-data/{jobId}'}  # type: ignore
 
-    async def begin_create_data_delete_job(
+    async def begin_create_data_ingestion_job(
         self,
         job_id: str,
-        job: Optional["_models.WeatherDataDeleteJobRequest"] = None,
+        job: Optional["_models.WeatherDataIngestionJob"] = None,
         **kwargs
-    ) -> AsyncLROPoller["_models.WeatherDataDeleteJobResponse"]:
-        """Create a weather data delete job.
+    ) -> AsyncLROPoller["_models.WeatherDataIngestionJob"]:
+        """Create a weather data ingestion job.
 
-        :param job_id: Job Id supplied by end user.
+        :param job_id: Job id supplied by user.
         :type job_id: str
         :param job: Job parameters supplied by user.
-        :type job: ~azure.farmbeats.models.WeatherDataDeleteJobRequest
+        :type job: ~azure.farmbeats.models.WeatherDataIngestionJob
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: Pass in True if you'd like the AsyncLROBasePolling polling method,
-         False for no polling, or your own initialized polling object for a personal polling strategy.
+        :keyword polling: By default, your polling method will be AsyncLROBasePolling.
+         Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
-        :return: An instance of AsyncLROPoller that returns either WeatherDataDeleteJobResponse or the result of cls(response)
-        :rtype: ~azure.core.polling.AsyncLROPoller[~azure.farmbeats.models.WeatherDataDeleteJobResponse]
+        :return: An instance of AsyncLROPoller that returns either WeatherDataIngestionJob or the result of cls(response)
+        :rtype: ~azure.core.polling.AsyncLROPoller[~azure.farmbeats.models.WeatherDataIngestionJob]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        polling = kwargs.pop('polling', False)  # type: Union[bool, AsyncPollingMethod]
-        cls = kwargs.pop('cls', None)  # type: ClsType["_models.WeatherDataDeleteJobResponse"]
+        polling = kwargs.pop('polling', True)  # type: Union[bool, AsyncPollingMethod]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.WeatherDataIngestionJob"]
         lro_delay = kwargs.pop(
             'polling_interval',
             self._config.polling_interval
         )
         cont_token = kwargs.pop('continuation_token', None)  # type: Optional[str]
         if cont_token is None:
-            raw_result = await self._create_data_delete_job_initial(
+            raw_result = await self._create_data_ingestion_job_initial(
                 job_id=job_id,
                 job=job,
                 cls=lambda x,y,z: x,
@@ -412,7 +296,7 @@ class WeatherOperations:
         kwargs.pop('content_type', None)
 
         def get_long_running_output(pipeline_response):
-            deserialized = self._deserialize('WeatherDataDeleteJobResponse', pipeline_response)
+            deserialized = self._deserialize('WeatherDataIngestionJob', pipeline_response)
 
             if cls:
                 return cls(pipeline_response, deserialized, {})
@@ -434,23 +318,23 @@ class WeatherOperations:
             )
         else:
             return AsyncLROPoller(self._client, raw_result, get_long_running_output, polling_method)
-    begin_create_data_delete_job.metadata = {'url': '/weather/delete-data/{jobId}'}  # type: ignore
+    begin_create_data_ingestion_job.metadata = {'url': '/weather/ingest-data/{jobId}'}  # type: ignore
 
     async def get_data_delete_job_details(
         self,
         job_id: str,
         **kwargs
-    ) -> "_models.WeatherDataDeleteJobDetails":
-        """Get weather data delete job's details.
+    ) -> "_models.WeatherDataDeleteJob":
+        """Get weather data delete job.
 
         :param job_id: Id of the job.
         :type job_id: str
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: WeatherDataDeleteJobDetails, or the result of cls(response)
-        :rtype: ~azure.farmbeats.models.WeatherDataDeleteJobDetails
+        :return: WeatherDataDeleteJob, or the result of cls(response)
+        :rtype: ~azure.farmbeats.models.WeatherDataDeleteJob
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["_models.WeatherDataDeleteJobDetails"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.WeatherDataDeleteJob"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -479,12 +363,132 @@ class WeatherOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise HttpResponseError(response=response)
+            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, response)
+            raise HttpResponseError(response=response, model=error)
 
-        deserialized = self._deserialize('WeatherDataDeleteJobDetails', pipeline_response)
+        deserialized = self._deserialize('WeatherDataDeleteJob', pipeline_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})
 
         return deserialized
     get_data_delete_job_details.metadata = {'url': '/weather/delete-data/{jobId}'}  # type: ignore
+
+    async def _create_data_delete_job_initial(
+        self,
+        job_id: str,
+        job: Optional["_models.WeatherDataDeleteJob"] = None,
+        **kwargs
+    ) -> "_models.WeatherDataDeleteJob":
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.WeatherDataDeleteJob"]
+        error_map = {
+            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
+        }
+        error_map.update(kwargs.pop('error_map', {}))
+        api_version = "2021-03-31-preview"
+        content_type = kwargs.pop("content_type", "application/json")
+        accept = "application/json"
+
+        # Construct URL
+        url = self._create_data_delete_job_initial.metadata['url']  # type: ignore
+        path_format_arguments = {
+            'jobId': self._serialize.url("job_id", job_id, 'str'),
+        }
+        url = self._client.format_url(url, **path_format_arguments)
+
+        # Construct parameters
+        query_parameters = {}  # type: Dict[str, Any]
+        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
+
+        # Construct headers
+        header_parameters = {}  # type: Dict[str, Any]
+        header_parameters['Content-Type'] = self._serialize.header("content_type", content_type, 'str')
+        header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
+
+        body_content_kwargs = {}  # type: Dict[str, Any]
+        if job is not None:
+            body_content = self._serialize.body(job, 'WeatherDataDeleteJob')
+        else:
+            body_content = None
+        body_content_kwargs['content'] = body_content
+        request = self._client.put(url, query_parameters, header_parameters, **body_content_kwargs)
+        pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
+        response = pipeline_response.http_response
+
+        if response.status_code not in [202]:
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, response)
+            raise HttpResponseError(response=response, model=error)
+
+        deserialized = self._deserialize('WeatherDataDeleteJob', pipeline_response)
+
+        if cls:
+            return cls(pipeline_response, deserialized, {})
+
+        return deserialized
+    _create_data_delete_job_initial.metadata = {'url': '/weather/delete-data/{jobId}'}  # type: ignore
+
+    async def begin_create_data_delete_job(
+        self,
+        job_id: str,
+        job: Optional["_models.WeatherDataDeleteJob"] = None,
+        **kwargs
+    ) -> AsyncLROPoller["_models.WeatherDataDeleteJob"]:
+        """Create a weather data delete job.
+
+        :param job_id: Job Id supplied by end user.
+        :type job_id: str
+        :param job: Job parameters supplied by user.
+        :type job: ~azure.farmbeats.models.WeatherDataDeleteJob
+        :keyword callable cls: A custom type or function that will be passed the direct response
+        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
+        :keyword polling: By default, your polling method will be AsyncLROBasePolling.
+         Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.
+        :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
+        :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
+        :return: An instance of AsyncLROPoller that returns either WeatherDataDeleteJob or the result of cls(response)
+        :rtype: ~azure.core.polling.AsyncLROPoller[~azure.farmbeats.models.WeatherDataDeleteJob]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        polling = kwargs.pop('polling', True)  # type: Union[bool, AsyncPollingMethod]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.WeatherDataDeleteJob"]
+        lro_delay = kwargs.pop(
+            'polling_interval',
+            self._config.polling_interval
+        )
+        cont_token = kwargs.pop('continuation_token', None)  # type: Optional[str]
+        if cont_token is None:
+            raw_result = await self._create_data_delete_job_initial(
+                job_id=job_id,
+                job=job,
+                cls=lambda x,y,z: x,
+                **kwargs
+            )
+
+        kwargs.pop('error_map', None)
+        kwargs.pop('content_type', None)
+
+        def get_long_running_output(pipeline_response):
+            deserialized = self._deserialize('WeatherDataDeleteJob', pipeline_response)
+
+            if cls:
+                return cls(pipeline_response, deserialized, {})
+            return deserialized
+
+        path_format_arguments = {
+            'jobId': self._serialize.url("job_id", job_id, 'str'),
+        }
+
+        if polling is True: polling_method = AsyncLROBasePolling(lro_delay, lro_options={'final-state-via': 'location'}, path_format_arguments=path_format_arguments,  **kwargs)
+        elif polling is False: polling_method = AsyncNoPolling()
+        else: polling_method = polling
+        if cont_token:
+            return AsyncLROPoller.from_continuation_token(
+                polling_method=polling_method,
+                continuation_token=cont_token,
+                client=self._client,
+                deserialization_callback=get_long_running_output
+            )
+        else:
+            return AsyncLROPoller(self._client, raw_result, get_long_running_output, polling_method)
+    begin_create_data_delete_job.metadata = {'url': '/weather/delete-data/{jobId}'}  # type: ignore

@@ -178,11 +178,11 @@ class ScenesOperations(object):
     def _create_satellite_data_ingestion_job_initial(
         self,
         job_id,  # type: str
-        job=None,  # type: Optional["_models.SatelliteIngestionJobRequest"]
+        job=None,  # type: Optional["_models.SatelliteDataIngestionJob"]
         **kwargs  # type: Any
     ):
-        # type: (...) -> "_models.SatelliteIngestionJobResponse"
-        cls = kwargs.pop('cls', None)  # type: ClsType["_models.SatelliteIngestionJobResponse"]
+        # type: (...) -> "_models.SatelliteDataIngestionJob"
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.SatelliteDataIngestionJob"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -209,7 +209,7 @@ class ScenesOperations(object):
 
         body_content_kwargs = {}  # type: Dict[str, Any]
         if job is not None:
-            body_content = self._serialize.body(job, 'SatelliteIngestionJobRequest')
+            body_content = self._serialize.body(job, 'SatelliteDataIngestionJob')
         else:
             body_content = None
         body_content_kwargs['content'] = body_content
@@ -219,9 +219,10 @@ class ScenesOperations(object):
 
         if response.status_code not in [202]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise HttpResponseError(response=response)
+            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, response)
+            raise HttpResponseError(response=response, model=error)
 
-        deserialized = self._deserialize('SatelliteIngestionJobResponse', pipeline_response)
+        deserialized = self._deserialize('SatelliteDataIngestionJob', pipeline_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})
@@ -232,28 +233,28 @@ class ScenesOperations(object):
     def begin_create_satellite_data_ingestion_job(
         self,
         job_id,  # type: str
-        job=None,  # type: Optional["_models.SatelliteIngestionJobRequest"]
+        job=None,  # type: Optional["_models.SatelliteDataIngestionJob"]
         **kwargs  # type: Any
     ):
-        # type: (...) -> LROPoller["_models.SatelliteIngestionJobResponse"]
+        # type: (...) -> LROPoller["_models.SatelliteDataIngestionJob"]
         """Create a satellite data ingestion job.
 
         :param job_id: JobId provided by user.
         :type job_id: str
         :param job: Job parameters supplied by user.
-        :type job: ~azure.farmbeats.models.SatelliteIngestionJobRequest
+        :type job: ~azure.farmbeats.models.SatelliteDataIngestionJob
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: Pass in True if you'd like the LROBasePolling polling method,
-         False for no polling, or your own initialized polling object for a personal polling strategy.
+        :keyword polling: By default, your polling method will be LROBasePolling.
+         Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.PollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
-        :return: An instance of LROPoller that returns either SatelliteIngestionJobResponse or the result of cls(response)
-        :rtype: ~azure.core.polling.LROPoller[~azure.farmbeats.models.SatelliteIngestionJobResponse]
+        :return: An instance of LROPoller that returns either SatelliteDataIngestionJob or the result of cls(response)
+        :rtype: ~azure.core.polling.LROPoller[~azure.farmbeats.models.SatelliteDataIngestionJob]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        polling = kwargs.pop('polling', False)  # type: Union[bool, PollingMethod]
-        cls = kwargs.pop('cls', None)  # type: ClsType["_models.SatelliteIngestionJobResponse"]
+        polling = kwargs.pop('polling', True)  # type: Union[bool, PollingMethod]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.SatelliteDataIngestionJob"]
         lro_delay = kwargs.pop(
             'polling_interval',
             self._config.polling_interval
@@ -271,7 +272,7 @@ class ScenesOperations(object):
         kwargs.pop('content_type', None)
 
         def get_long_running_output(pipeline_response):
-            deserialized = self._deserialize('SatelliteIngestionJobResponse', pipeline_response)
+            deserialized = self._deserialize('SatelliteDataIngestionJob', pipeline_response)
 
             if cls:
                 return cls(pipeline_response, deserialized, {})
@@ -300,17 +301,17 @@ class ScenesOperations(object):
         job_id,  # type: str
         **kwargs  # type: Any
     ):
-        # type: (...) -> "_models.SatelliteIngestionJobDetails"
-        """Get satellite data ingestion job's details.
+        # type: (...) -> "_models.SatelliteDataIngestionJob"
+        """Get a satellite data ingestion job.
 
         :param job_id: Id of the job.
         :type job_id: str
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: SatelliteIngestionJobDetails, or the result of cls(response)
-        :rtype: ~azure.farmbeats.models.SatelliteIngestionJobDetails
+        :return: SatelliteDataIngestionJob, or the result of cls(response)
+        :rtype: ~azure.farmbeats.models.SatelliteDataIngestionJob
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["_models.SatelliteIngestionJobDetails"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.SatelliteDataIngestionJob"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -339,9 +340,10 @@ class ScenesOperations(object):
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise HttpResponseError(response=response)
+            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, response)
+            raise HttpResponseError(response=response, model=error)
 
-        deserialized = self._deserialize('SatelliteIngestionJobDetails', pipeline_response)
+        deserialized = self._deserialize('SatelliteDataIngestionJob', pipeline_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})
@@ -355,7 +357,7 @@ class ScenesOperations(object):
         **kwargs  # type: Any
     ):
         # type: (...) -> IO
-        """Downloads and returns file content as response for the given input filePath.
+        """Downloads and returns file Stream as response for the given input filePath.
 
         :param file_path: cloud storage path of scene file.
         :type file_path: str

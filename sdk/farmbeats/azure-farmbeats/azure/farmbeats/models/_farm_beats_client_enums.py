@@ -24,15 +24,11 @@ class _CaseInsensitiveEnumMeta(EnumMeta):
             raise AttributeError(name)
 
 
-class FieldOperationType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
-    """Operation Types for Field Operation.
+class DataProvider(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+    """Provider of satellite data.
     """
 
-    ALL_OPERATIONS = "AllOperations"
-    APPLICATION = "Application"
-    PLANTING = "Planting"
-    HARVEST = "Harvest"
-    TILLAGE = "Tillage"
+    MICROSOFT = "Microsoft"
 
 class GeoJsonObjectType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     """GeoJSON object type.
@@ -48,23 +44,7 @@ class ImageFormat(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
 
     TIF = "TIF"
 
-class JobStatus(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
-    """Various states a job can be in.
-    """
-
-    WAITING = "Waiting"
-    RUNNING = "Running"
-    SUCCEEDED = "Succeeded"
-    FAILED = "Failed"
-    CANCELLED = "Cancelled"
-
-class SatelliteDataProvider(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
-    """Provider of satellite data.
-    """
-
-    MICROSOFT = "Microsoft"
-
-class SatelliteSource(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class Source(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     """Source of satellite data.
     """
 

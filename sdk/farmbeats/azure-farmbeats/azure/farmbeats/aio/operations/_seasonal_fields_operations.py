@@ -608,17 +608,17 @@ class SeasonalFieldsOperations:
         self,
         job_id: str,
         **kwargs
-    ) -> Optional["_models.CascadeDeleteJobDetails"]:
-        """Get cascade delete job's details.
+    ) -> Optional["_models.CascadeDeleteJob"]:
+        """Get cascade delete job for specified seasonal field.
 
         :param job_id: Id of the job.
         :type job_id: str
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: CascadeDeleteJobDetails, or the result of cls(response)
-        :rtype: ~azure.farmbeats.models.CascadeDeleteJobDetails or None
+        :return: CascadeDeleteJob, or the result of cls(response)
+        :rtype: ~azure.farmbeats.models.CascadeDeleteJob or None
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType[Optional["_models.CascadeDeleteJobDetails"]]
+        cls = kwargs.pop('cls', None)  # type: ClsType[Optional["_models.CascadeDeleteJob"]]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -652,7 +652,7 @@ class SeasonalFieldsOperations:
 
         deserialized = None
         if response.status_code == 200:
-            deserialized = self._deserialize('CascadeDeleteJobDetails', pipeline_response)
+            deserialized = self._deserialize('CascadeDeleteJob', pipeline_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})
@@ -666,8 +666,8 @@ class SeasonalFieldsOperations:
         farmer_id: str,
         seasonal_field_id: str,
         **kwargs
-    ) -> "_models.CascadeDeleteJobResponse":
-        cls = kwargs.pop('cls', None)  # type: ClsType["_models.CascadeDeleteJobResponse"]
+    ) -> "_models.CascadeDeleteJob":
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.CascadeDeleteJob"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -698,9 +698,10 @@ class SeasonalFieldsOperations:
 
         if response.status_code not in [202]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise HttpResponseError(response=response)
+            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, response)
+            raise HttpResponseError(response=response, model=error)
 
-        deserialized = self._deserialize('CascadeDeleteJobResponse', pipeline_response)
+        deserialized = self._deserialize('CascadeDeleteJob', pipeline_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})
@@ -714,8 +715,8 @@ class SeasonalFieldsOperations:
         farmer_id: str,
         seasonal_field_id: str,
         **kwargs
-    ) -> AsyncLROPoller["_models.CascadeDeleteJobResponse"]:
-        """Create a cascade delete job for specified seasonalField.
+    ) -> AsyncLROPoller["_models.CascadeDeleteJob"]:
+        """Create a cascade delete job for specified seasonal field.
 
         :param job_id: Job ID supplied by end user.
         :type job_id: str
@@ -725,16 +726,16 @@ class SeasonalFieldsOperations:
         :type seasonal_field_id: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: Pass in True if you'd like the AsyncLROBasePolling polling method,
-         False for no polling, or your own initialized polling object for a personal polling strategy.
+        :keyword polling: By default, your polling method will be AsyncLROBasePolling.
+         Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
-        :return: An instance of AsyncLROPoller that returns either CascadeDeleteJobResponse or the result of cls(response)
-        :rtype: ~azure.core.polling.AsyncLROPoller[~azure.farmbeats.models.CascadeDeleteJobResponse]
+        :return: An instance of AsyncLROPoller that returns either CascadeDeleteJob or the result of cls(response)
+        :rtype: ~azure.core.polling.AsyncLROPoller[~azure.farmbeats.models.CascadeDeleteJob]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        polling = kwargs.pop('polling', False)  # type: Union[bool, AsyncPollingMethod]
-        cls = kwargs.pop('cls', None)  # type: ClsType["_models.CascadeDeleteJobResponse"]
+        polling = kwargs.pop('polling', True)  # type: Union[bool, AsyncPollingMethod]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.CascadeDeleteJob"]
         lro_delay = kwargs.pop(
             'polling_interval',
             self._config.polling_interval
@@ -753,7 +754,7 @@ class SeasonalFieldsOperations:
         kwargs.pop('content_type', None)
 
         def get_long_running_output(pipeline_response):
-            deserialized = self._deserialize('CascadeDeleteJobResponse', pipeline_response)
+            deserialized = self._deserialize('CascadeDeleteJob', pipeline_response)
 
             if cls:
                 return cls(pipeline_response, deserialized, {})

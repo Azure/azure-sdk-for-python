@@ -13,9 +13,7 @@ try:
     from ._models_py3 import Boundary
     from ._models_py3 import BoundaryListResponse
     from ._models_py3 import BoundaryOverlapResponse
-    from ._models_py3 import CascadeDeleteJobDetails
-    from ._models_py3 import CascadeDeleteJobRequest
-    from ._models_py3 import CascadeDeleteJobResponse
+    from ._models_py3 import CascadeDeleteJob
     from ._models_py3 import Crop
     from ._models_py3 import CropListResponse
     from ._models_py3 import CropVariety
@@ -24,9 +22,7 @@ try:
     from ._models_py3 import ErrorResponse
     from ._models_py3 import Farm
     from ._models_py3 import FarmListResponse
-    from ._models_py3 import FarmOperationDataIngestionJobRequest
-    from ._models_py3 import FarmOperationDataIngestionJobResponse
-    from ._models_py3 import FarmOperationsDataIngestionJobDetails
+    from ._models_py3 import FarmOperationDataIngestionJob
     from ._models_py3 import Farmer
     from ._models_py3 import FarmerListResponse
     from ._models_py3 import Field
@@ -52,9 +48,7 @@ try:
     from ._models_py3 import Point
     from ._models_py3 import Polygon
     from ._models_py3 import SatelliteData
-    from ._models_py3 import SatelliteIngestionJobDetails
-    from ._models_py3 import SatelliteIngestionJobRequest
-    from ._models_py3 import SatelliteIngestionJobResponse
+    from ._models_py3 import SatelliteDataIngestionJob
     from ._models_py3 import Scene
     from ._models_py3 import SceneListResponse
     from ._models_py3 import SearchBoundaryQuery
@@ -65,13 +59,9 @@ try:
     from ._models_py3 import TillageData
     from ._models_py3 import TillageDataListResponse
     from ._models_py3 import WeatherData
-    from ._models_py3 import WeatherDataDeleteJobDetails
-    from ._models_py3 import WeatherDataDeleteJobRequest
-    from ._models_py3 import WeatherDataDeleteJobResponse
+    from ._models_py3 import WeatherDataDeleteJob
+    from ._models_py3 import WeatherDataIngestionJob
     from ._models_py3 import WeatherDataListResponse
-    from ._models_py3 import WeatherIngestionJobDetails
-    from ._models_py3 import WeatherIngestionJobRequest
-    from ._models_py3 import WeatherIngestionJobResponse
 except (SyntaxError, ImportError):
     from ._models import ApplicationData  # type: ignore
     from ._models import ApplicationDataListResponse  # type: ignore
@@ -81,9 +71,7 @@ except (SyntaxError, ImportError):
     from ._models import Boundary  # type: ignore
     from ._models import BoundaryListResponse  # type: ignore
     from ._models import BoundaryOverlapResponse  # type: ignore
-    from ._models import CascadeDeleteJobDetails  # type: ignore
-    from ._models import CascadeDeleteJobRequest  # type: ignore
-    from ._models import CascadeDeleteJobResponse  # type: ignore
+    from ._models import CascadeDeleteJob  # type: ignore
     from ._models import Crop  # type: ignore
     from ._models import CropListResponse  # type: ignore
     from ._models import CropVariety  # type: ignore
@@ -92,9 +80,7 @@ except (SyntaxError, ImportError):
     from ._models import ErrorResponse  # type: ignore
     from ._models import Farm  # type: ignore
     from ._models import FarmListResponse  # type: ignore
-    from ._models import FarmOperationDataIngestionJobRequest  # type: ignore
-    from ._models import FarmOperationDataIngestionJobResponse  # type: ignore
-    from ._models import FarmOperationsDataIngestionJobDetails  # type: ignore
+    from ._models import FarmOperationDataIngestionJob  # type: ignore
     from ._models import Farmer  # type: ignore
     from ._models import FarmerListResponse  # type: ignore
     from ._models import Field  # type: ignore
@@ -120,9 +106,7 @@ except (SyntaxError, ImportError):
     from ._models import Point  # type: ignore
     from ._models import Polygon  # type: ignore
     from ._models import SatelliteData  # type: ignore
-    from ._models import SatelliteIngestionJobDetails  # type: ignore
-    from ._models import SatelliteIngestionJobRequest  # type: ignore
-    from ._models import SatelliteIngestionJobResponse  # type: ignore
+    from ._models import SatelliteDataIngestionJob  # type: ignore
     from ._models import Scene  # type: ignore
     from ._models import SceneListResponse  # type: ignore
     from ._models import SearchBoundaryQuery  # type: ignore
@@ -133,21 +117,15 @@ except (SyntaxError, ImportError):
     from ._models import TillageData  # type: ignore
     from ._models import TillageDataListResponse  # type: ignore
     from ._models import WeatherData  # type: ignore
-    from ._models import WeatherDataDeleteJobDetails  # type: ignore
-    from ._models import WeatherDataDeleteJobRequest  # type: ignore
-    from ._models import WeatherDataDeleteJobResponse  # type: ignore
+    from ._models import WeatherDataDeleteJob  # type: ignore
+    from ._models import WeatherDataIngestionJob  # type: ignore
     from ._models import WeatherDataListResponse  # type: ignore
-    from ._models import WeatherIngestionJobDetails  # type: ignore
-    from ._models import WeatherIngestionJobRequest  # type: ignore
-    from ._models import WeatherIngestionJobResponse  # type: ignore
 
 from ._farm_beats_client_enums import (
-    FieldOperationType,
+    DataProvider,
     GeoJsonObjectType,
     ImageFormat,
-    JobStatus,
-    SatelliteDataProvider,
-    SatelliteSource,
+    Source,
 )
 
 __all__ = [
@@ -159,9 +137,7 @@ __all__ = [
     'Boundary',
     'BoundaryListResponse',
     'BoundaryOverlapResponse',
-    'CascadeDeleteJobDetails',
-    'CascadeDeleteJobRequest',
-    'CascadeDeleteJobResponse',
+    'CascadeDeleteJob',
     'Crop',
     'CropListResponse',
     'CropVariety',
@@ -170,9 +146,7 @@ __all__ = [
     'ErrorResponse',
     'Farm',
     'FarmListResponse',
-    'FarmOperationDataIngestionJobRequest',
-    'FarmOperationDataIngestionJobResponse',
-    'FarmOperationsDataIngestionJobDetails',
+    'FarmOperationDataIngestionJob',
     'Farmer',
     'FarmerListResponse',
     'Field',
@@ -198,9 +172,7 @@ __all__ = [
     'Point',
     'Polygon',
     'SatelliteData',
-    'SatelliteIngestionJobDetails',
-    'SatelliteIngestionJobRequest',
-    'SatelliteIngestionJobResponse',
+    'SatelliteDataIngestionJob',
     'Scene',
     'SceneListResponse',
     'SearchBoundaryQuery',
@@ -211,17 +183,11 @@ __all__ = [
     'TillageData',
     'TillageDataListResponse',
     'WeatherData',
-    'WeatherDataDeleteJobDetails',
-    'WeatherDataDeleteJobRequest',
-    'WeatherDataDeleteJobResponse',
+    'WeatherDataDeleteJob',
+    'WeatherDataIngestionJob',
     'WeatherDataListResponse',
-    'WeatherIngestionJobDetails',
-    'WeatherIngestionJobRequest',
-    'WeatherIngestionJobResponse',
-    'FieldOperationType',
+    'DataProvider',
     'GeoJsonObjectType',
     'ImageFormat',
-    'JobStatus',
-    'SatelliteDataProvider',
-    'SatelliteSource',
+    'Source',
 ]

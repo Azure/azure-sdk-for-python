@@ -443,94 +443,10 @@ class BoundaryOverlapResponse(msrest.serialization.Model):
         self.intersecting_acreage = kwargs.get('intersecting_acreage', None)
 
 
-class CascadeDeleteJobDetails(msrest.serialization.Model):
-    """Schema for GetCascadeDeleteJobDetails.
+class CascadeDeleteJob(msrest.serialization.Model):
+    """Schema of cascade delete job.
 
     Variables are only populated by the server, and will be ignored when sending a request.
-
-    :param duration_in_seconds: Duration of the job in seconds.
-    :type duration_in_seconds: str
-    :param id: Unique job id.
-    :type id: str
-    :param status: Various states a job can be in. Possible values include: "Waiting", "Running",
-     "Succeeded", "Failed", "Cancelled".
-    :type status: str or ~azure.farmbeats.models.JobStatus
-    :param message: Status message to capture more details of the job.
-    :type message: str
-    :ivar created_date_time: Job created at dateTime. Sample format: yyyy-MM-ddTHH:mm:ssZ.
-    :vartype created_date_time: ~datetime.datetime
-    :ivar last_action_date_time: Job was last acted upon at dateTime. Sample format:
-     yyyy-MM-ddTHH:mm:ssZ.
-    :vartype last_action_date_time: ~datetime.datetime
-    :ivar start_time: Job start time when available. Sample format: yyyy-MM-ddTHH:mm:ssZ.
-    :vartype start_time: ~datetime.datetime
-    :ivar end_time: Job end time when available. Sample format: yyyy-MM-ddTHH:mm:ssZ.
-    :vartype end_time: ~datetime.datetime
-    :ivar is_cancellation_requested: A boolean flag indicating whether job cancellation is
-     requested.
-    :vartype is_cancellation_requested: bool
-    :param name: Name to identify resource.
-    :type name: str
-    :param description: Textual description of the resource.
-    :type description: str
-    :param properties: A collection of key value pairs that belongs to the resource.
-     Each pair must not have a key greater than 50 characters
-     and must not have a value greater than 150 characters.
-     Note: A maximum of 25 key value pairs can be provided for a resource and only string and
-     numeral values are supported.
-    :type properties: dict[str, object]
-    :param request_body: CascadeDelete job request object.
-    :type request_body: ~azure.farmbeats.models.CascadeDeleteJobRequest
-    """
-
-    _validation = {
-        'created_date_time': {'readonly': True},
-        'last_action_date_time': {'readonly': True},
-        'start_time': {'readonly': True},
-        'end_time': {'readonly': True},
-        'is_cancellation_requested': {'readonly': True},
-        'name': {'max_length': 100, 'min_length': 0},
-        'description': {'max_length': 500, 'min_length': 0},
-    }
-
-    _attribute_map = {
-        'duration_in_seconds': {'key': 'durationInSeconds', 'type': 'str'},
-        'id': {'key': 'id', 'type': 'str'},
-        'status': {'key': 'status', 'type': 'str'},
-        'message': {'key': 'message', 'type': 'str'},
-        'created_date_time': {'key': 'createdDateTime', 'type': 'iso-8601'},
-        'last_action_date_time': {'key': 'lastActionDateTime', 'type': 'iso-8601'},
-        'start_time': {'key': 'startTime', 'type': 'iso-8601'},
-        'end_time': {'key': 'endTime', 'type': 'iso-8601'},
-        'is_cancellation_requested': {'key': 'isCancellationRequested', 'type': 'bool'},
-        'name': {'key': 'name', 'type': 'str'},
-        'description': {'key': 'description', 'type': 'str'},
-        'properties': {'key': 'properties', 'type': '{object}'},
-        'request_body': {'key': 'requestBody', 'type': 'CascadeDeleteJobRequest'},
-    }
-
-    def __init__(
-        self,
-        **kwargs
-    ):
-        super(CascadeDeleteJobDetails, self).__init__(**kwargs)
-        self.duration_in_seconds = kwargs.get('duration_in_seconds', None)
-        self.id = kwargs.get('id', None)
-        self.status = kwargs.get('status', None)
-        self.message = kwargs.get('message', None)
-        self.created_date_time = None
-        self.last_action_date_time = None
-        self.start_time = None
-        self.end_time = None
-        self.is_cancellation_requested = None
-        self.name = kwargs.get('name', None)
-        self.description = kwargs.get('description', None)
-        self.properties = kwargs.get('properties', None)
-        self.request_body = kwargs.get('request_body', None)
-
-
-class CascadeDeleteJobRequest(msrest.serialization.Model):
-    """CascadeDelete job request object.
 
     All required parameters must be populated in order to send to Azure.
 
@@ -540,6 +456,23 @@ class CascadeDeleteJobRequest(msrest.serialization.Model):
     :type resource_id: str
     :param resource_type: Required. The type of the resource.
     :type resource_type: str
+    :ivar id: Unique job id.
+    :vartype id: str
+    :ivar status: Status of the job.
+    :vartype status: str
+    :ivar duration_in_seconds: Duration of the job in seconds.
+    :vartype duration_in_seconds: str
+    :ivar message: Status message to capture more details of the job.
+    :vartype message: str
+    :ivar created_date_time: Job created at dateTime. Sample format: yyyy-MM-ddTHH:mm:ssZ.
+    :vartype created_date_time: ~datetime.datetime
+    :ivar last_action_date_time: Job was last acted upon at dateTime. Sample format:
+     yyyy-MM-ddTHH:mm:ssZ.
+    :vartype last_action_date_time: ~datetime.datetime
+    :ivar start_time: Job start time when available. Sample format: yyyy-MM-ddTHH:mm:ssZ.
+    :vartype start_time: ~datetime.datetime
+    :ivar end_time: Job end time when available. Sample format: yyyy-MM-ddTHH:mm:ssZ.
+    :vartype end_time: ~datetime.datetime
     :param name: Name to identify resource.
     :type name: str
     :param description: Textual description of the resource.
@@ -556,6 +489,14 @@ class CascadeDeleteJobRequest(msrest.serialization.Model):
         'farmer_id': {'required': True},
         'resource_id': {'required': True},
         'resource_type': {'required': True},
+        'id': {'readonly': True},
+        'status': {'readonly': True},
+        'duration_in_seconds': {'readonly': True},
+        'message': {'readonly': True},
+        'created_date_time': {'readonly': True},
+        'last_action_date_time': {'readonly': True},
+        'start_time': {'readonly': True},
+        'end_time': {'readonly': True},
         'name': {'max_length': 100, 'min_length': 0},
         'description': {'max_length': 500, 'min_length': 0},
     }
@@ -564,82 +505,14 @@ class CascadeDeleteJobRequest(msrest.serialization.Model):
         'farmer_id': {'key': 'farmerId', 'type': 'str'},
         'resource_id': {'key': 'resourceId', 'type': 'str'},
         'resource_type': {'key': 'resourceType', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'description': {'key': 'description', 'type': 'str'},
-        'properties': {'key': 'properties', 'type': '{object}'},
-    }
-
-    def __init__(
-        self,
-        **kwargs
-    ):
-        super(CascadeDeleteJobRequest, self).__init__(**kwargs)
-        self.farmer_id = kwargs['farmer_id']
-        self.resource_id = kwargs['resource_id']
-        self.resource_type = kwargs['resource_type']
-        self.name = kwargs.get('name', None)
-        self.description = kwargs.get('description', None)
-        self.properties = kwargs.get('properties', None)
-
-
-class CascadeDeleteJobResponse(msrest.serialization.Model):
-    """CascadeDelete job response.
-
-    Variables are only populated by the server, and will be ignored when sending a request.
-
-    :param duration_in_seconds: Duration of the job in seconds.
-    :type duration_in_seconds: str
-    :param id: Unique job id.
-    :type id: str
-    :param status: Various states a job can be in. Possible values include: "Waiting", "Running",
-     "Succeeded", "Failed", "Cancelled".
-    :type status: str or ~azure.farmbeats.models.JobStatus
-    :param message: Status message to capture more details of the job.
-    :type message: str
-    :ivar created_date_time: Job created at dateTime. Sample format: yyyy-MM-ddTHH:mm:ssZ.
-    :vartype created_date_time: ~datetime.datetime
-    :ivar last_action_date_time: Job was last acted upon at dateTime. Sample format:
-     yyyy-MM-ddTHH:mm:ssZ.
-    :vartype last_action_date_time: ~datetime.datetime
-    :ivar start_time: Job start time when available. Sample format: yyyy-MM-ddTHH:mm:ssZ.
-    :vartype start_time: ~datetime.datetime
-    :ivar end_time: Job end time when available. Sample format: yyyy-MM-ddTHH:mm:ssZ.
-    :vartype end_time: ~datetime.datetime
-    :ivar is_cancellation_requested: A boolean flag indicating whether job cancellation is
-     requested.
-    :vartype is_cancellation_requested: bool
-    :param name: Name to identify resource.
-    :type name: str
-    :param description: Textual description of the resource.
-    :type description: str
-    :param properties: A collection of key value pairs that belongs to the resource.
-     Each pair must not have a key greater than 50 characters
-     and must not have a value greater than 150 characters.
-     Note: A maximum of 25 key value pairs can be provided for a resource and only string and
-     numeral values are supported.
-    :type properties: dict[str, object]
-    """
-
-    _validation = {
-        'created_date_time': {'readonly': True},
-        'last_action_date_time': {'readonly': True},
-        'start_time': {'readonly': True},
-        'end_time': {'readonly': True},
-        'is_cancellation_requested': {'readonly': True},
-        'name': {'max_length': 100, 'min_length': 0},
-        'description': {'max_length': 500, 'min_length': 0},
-    }
-
-    _attribute_map = {
-        'duration_in_seconds': {'key': 'durationInSeconds', 'type': 'str'},
         'id': {'key': 'id', 'type': 'str'},
         'status': {'key': 'status', 'type': 'str'},
+        'duration_in_seconds': {'key': 'durationInSeconds', 'type': 'str'},
         'message': {'key': 'message', 'type': 'str'},
         'created_date_time': {'key': 'createdDateTime', 'type': 'iso-8601'},
         'last_action_date_time': {'key': 'lastActionDateTime', 'type': 'iso-8601'},
         'start_time': {'key': 'startTime', 'type': 'iso-8601'},
         'end_time': {'key': 'endTime', 'type': 'iso-8601'},
-        'is_cancellation_requested': {'key': 'isCancellationRequested', 'type': 'bool'},
         'name': {'key': 'name', 'type': 'str'},
         'description': {'key': 'description', 'type': 'str'},
         'properties': {'key': 'properties', 'type': '{object}'},
@@ -649,16 +522,18 @@ class CascadeDeleteJobResponse(msrest.serialization.Model):
         self,
         **kwargs
     ):
-        super(CascadeDeleteJobResponse, self).__init__(**kwargs)
-        self.duration_in_seconds = kwargs.get('duration_in_seconds', None)
-        self.id = kwargs.get('id', None)
-        self.status = kwargs.get('status', None)
-        self.message = kwargs.get('message', None)
+        super(CascadeDeleteJob, self).__init__(**kwargs)
+        self.farmer_id = kwargs['farmer_id']
+        self.resource_id = kwargs['resource_id']
+        self.resource_type = kwargs['resource_type']
+        self.id = None
+        self.status = None
+        self.duration_in_seconds = None
+        self.message = None
         self.created_date_time = None
         self.last_action_date_time = None
         self.start_time = None
         self.end_time = None
-        self.is_cancellation_requested = None
         self.name = kwargs.get('name', None)
         self.description = kwargs.get('description', None)
         self.properties = kwargs.get('properties', None)
@@ -1125,19 +1000,39 @@ class FarmListResponse(msrest.serialization.Model):
         self.next_link = kwargs.get('next_link', None)
 
 
-class FarmOperationDataIngestionJobRequest(msrest.serialization.Model):
-    """FarmOperationDataIngestionJobRequest.
+class FarmOperationDataIngestionJob(msrest.serialization.Model):
+    """Schema of farm operation data ingestion job.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
 
     All required parameters must be populated in order to send to Azure.
 
     :param farmer_id: Required. Farmer Id.
     :type farmer_id: str
-    :param auth_provider_id: Required. Auth Provider Id.
+    :param auth_provider_id: Required. Authentication provider Id.
     :type auth_provider_id: str
-    :param operations: List of operation types for which data needs to be downloaded.
-    :type operations: list[str or ~azure.farmbeats.models.FieldOperationType]
+    :param operations: List of operation types for which data needs to be downloaded. Available
+     values: AllOperations, Application, Planting, Harvest, Tillage.
+    :type operations: list[str]
     :param start_year: Required. Start Year (Minimum = 2000, Maximum = CurrentYear).
     :type start_year: int
+    :ivar id: Unique job id.
+    :vartype id: str
+    :ivar status: Status of the job.
+    :vartype status: str
+    :ivar duration_in_seconds: Duration of the job in seconds.
+    :vartype duration_in_seconds: str
+    :ivar message: Status message to capture more details of the job.
+    :vartype message: str
+    :ivar created_date_time: Job created at dateTime. Sample format: yyyy-MM-ddTHH:mm:ssZ.
+    :vartype created_date_time: ~datetime.datetime
+    :ivar last_action_date_time: Job was last acted upon at dateTime. Sample format:
+     yyyy-MM-ddTHH:mm:ssZ.
+    :vartype last_action_date_time: ~datetime.datetime
+    :ivar start_time: Job start time when available. Sample format: yyyy-MM-ddTHH:mm:ssZ.
+    :vartype start_time: ~datetime.datetime
+    :ivar end_time: Job end time when available. Sample format: yyyy-MM-ddTHH:mm:ssZ.
+    :vartype end_time: ~datetime.datetime
     :param name: Name to identify resource.
     :type name: str
     :param description: Textual description of the resource.
@@ -1154,6 +1049,14 @@ class FarmOperationDataIngestionJobRequest(msrest.serialization.Model):
         'farmer_id': {'required': True},
         'auth_provider_id': {'required': True},
         'start_year': {'required': True},
+        'id': {'readonly': True},
+        'status': {'readonly': True},
+        'duration_in_seconds': {'readonly': True},
+        'message': {'readonly': True},
+        'created_date_time': {'readonly': True},
+        'last_action_date_time': {'readonly': True},
+        'start_time': {'readonly': True},
+        'end_time': {'readonly': True},
         'name': {'max_length': 100, 'min_length': 0},
         'description': {'max_length': 500, 'min_length': 0},
     }
@@ -1163,6 +1066,14 @@ class FarmOperationDataIngestionJobRequest(msrest.serialization.Model):
         'auth_provider_id': {'key': 'authProviderId', 'type': 'str'},
         'operations': {'key': 'operations', 'type': '[str]'},
         'start_year': {'key': 'startYear', 'type': 'int'},
+        'id': {'key': 'id', 'type': 'str'},
+        'status': {'key': 'status', 'type': 'str'},
+        'duration_in_seconds': {'key': 'durationInSeconds', 'type': 'str'},
+        'message': {'key': 'message', 'type': 'str'},
+        'created_date_time': {'key': 'createdDateTime', 'type': 'iso-8601'},
+        'last_action_date_time': {'key': 'lastActionDateTime', 'type': 'iso-8601'},
+        'start_time': {'key': 'startTime', 'type': 'iso-8601'},
+        'end_time': {'key': 'endTime', 'type': 'iso-8601'},
         'name': {'key': 'name', 'type': 'str'},
         'description': {'key': 'description', 'type': 'str'},
         'properties': {'key': 'properties', 'type': '{object}'},
@@ -1172,190 +1083,22 @@ class FarmOperationDataIngestionJobRequest(msrest.serialization.Model):
         self,
         **kwargs
     ):
-        super(FarmOperationDataIngestionJobRequest, self).__init__(**kwargs)
+        super(FarmOperationDataIngestionJob, self).__init__(**kwargs)
         self.farmer_id = kwargs['farmer_id']
         self.auth_provider_id = kwargs['auth_provider_id']
         self.operations = kwargs.get('operations', None)
         self.start_year = kwargs['start_year']
-        self.name = kwargs.get('name', None)
-        self.description = kwargs.get('description', None)
-        self.properties = kwargs.get('properties', None)
-
-
-class FarmOperationDataIngestionJobResponse(msrest.serialization.Model):
-    """FarmOperationDataIngestion job response.
-
-    Variables are only populated by the server, and will be ignored when sending a request.
-
-    :param operations: List of operation types for which data will be downloaded.
-    :type operations: list[str or ~azure.farmbeats.models.FieldOperationType]
-    :param start_year: Start Year (Minimum = 2000, Maximum = CurrentYear).
-    :type start_year: int
-    :param duration_in_seconds: Duration of the job in seconds.
-    :type duration_in_seconds: str
-    :param id: Unique job id.
-    :type id: str
-    :param status: Various states a job can be in. Possible values include: "Waiting", "Running",
-     "Succeeded", "Failed", "Cancelled".
-    :type status: str or ~azure.farmbeats.models.JobStatus
-    :param message: Status message to capture more details of the job.
-    :type message: str
-    :ivar created_date_time: Job created at dateTime. Sample format: yyyy-MM-ddTHH:mm:ssZ.
-    :vartype created_date_time: ~datetime.datetime
-    :ivar last_action_date_time: Job was last acted upon at dateTime. Sample format:
-     yyyy-MM-ddTHH:mm:ssZ.
-    :vartype last_action_date_time: ~datetime.datetime
-    :ivar start_time: Job start time when available. Sample format: yyyy-MM-ddTHH:mm:ssZ.
-    :vartype start_time: ~datetime.datetime
-    :ivar end_time: Job end time when available. Sample format: yyyy-MM-ddTHH:mm:ssZ.
-    :vartype end_time: ~datetime.datetime
-    :ivar is_cancellation_requested: A boolean flag indicating whether job cancellation is
-     requested.
-    :vartype is_cancellation_requested: bool
-    :param name: Name to identify resource.
-    :type name: str
-    :param description: Textual description of the resource.
-    :type description: str
-    :param properties: A collection of key value pairs that belongs to the resource.
-     Each pair must not have a key greater than 50 characters
-     and must not have a value greater than 150 characters.
-     Note: A maximum of 25 key value pairs can be provided for a resource and only string and
-     numeral values are supported.
-    :type properties: dict[str, object]
-    """
-
-    _validation = {
-        'created_date_time': {'readonly': True},
-        'last_action_date_time': {'readonly': True},
-        'start_time': {'readonly': True},
-        'end_time': {'readonly': True},
-        'is_cancellation_requested': {'readonly': True},
-        'name': {'max_length': 100, 'min_length': 0},
-        'description': {'max_length': 500, 'min_length': 0},
-    }
-
-    _attribute_map = {
-        'operations': {'key': 'operations', 'type': '[str]'},
-        'start_year': {'key': 'startYear', 'type': 'int'},
-        'duration_in_seconds': {'key': 'durationInSeconds', 'type': 'str'},
-        'id': {'key': 'id', 'type': 'str'},
-        'status': {'key': 'status', 'type': 'str'},
-        'message': {'key': 'message', 'type': 'str'},
-        'created_date_time': {'key': 'createdDateTime', 'type': 'iso-8601'},
-        'last_action_date_time': {'key': 'lastActionDateTime', 'type': 'iso-8601'},
-        'start_time': {'key': 'startTime', 'type': 'iso-8601'},
-        'end_time': {'key': 'endTime', 'type': 'iso-8601'},
-        'is_cancellation_requested': {'key': 'isCancellationRequested', 'type': 'bool'},
-        'name': {'key': 'name', 'type': 'str'},
-        'description': {'key': 'description', 'type': 'str'},
-        'properties': {'key': 'properties', 'type': '{object}'},
-    }
-
-    def __init__(
-        self,
-        **kwargs
-    ):
-        super(FarmOperationDataIngestionJobResponse, self).__init__(**kwargs)
-        self.operations = kwargs.get('operations', None)
-        self.start_year = kwargs.get('start_year', None)
-        self.duration_in_seconds = kwargs.get('duration_in_seconds', None)
-        self.id = kwargs.get('id', None)
-        self.status = kwargs.get('status', None)
-        self.message = kwargs.get('message', None)
+        self.id = None
+        self.status = None
+        self.duration_in_seconds = None
+        self.message = None
         self.created_date_time = None
         self.last_action_date_time = None
         self.start_time = None
         self.end_time = None
-        self.is_cancellation_requested = None
         self.name = kwargs.get('name', None)
         self.description = kwargs.get('description', None)
         self.properties = kwargs.get('properties', None)
-
-
-class FarmOperationsDataIngestionJobDetails(msrest.serialization.Model):
-    """Schema for GetFarmOperationsDataIngestionJobDetails.
-
-    Variables are only populated by the server, and will be ignored when sending a request.
-
-    :param duration_in_seconds: Duration of the job in seconds.
-    :type duration_in_seconds: str
-    :param id: Unique job id.
-    :type id: str
-    :param status: Various states a job can be in. Possible values include: "Waiting", "Running",
-     "Succeeded", "Failed", "Cancelled".
-    :type status: str or ~azure.farmbeats.models.JobStatus
-    :param message: Status message to capture more details of the job.
-    :type message: str
-    :ivar created_date_time: Job created at dateTime. Sample format: yyyy-MM-ddTHH:mm:ssZ.
-    :vartype created_date_time: ~datetime.datetime
-    :ivar last_action_date_time: Job was last acted upon at dateTime. Sample format:
-     yyyy-MM-ddTHH:mm:ssZ.
-    :vartype last_action_date_time: ~datetime.datetime
-    :ivar start_time: Job start time when available. Sample format: yyyy-MM-ddTHH:mm:ssZ.
-    :vartype start_time: ~datetime.datetime
-    :ivar end_time: Job end time when available. Sample format: yyyy-MM-ddTHH:mm:ssZ.
-    :vartype end_time: ~datetime.datetime
-    :ivar is_cancellation_requested: A boolean flag indicating whether job cancellation is
-     requested.
-    :vartype is_cancellation_requested: bool
-    :param name: Name to identify resource.
-    :type name: str
-    :param description: Textual description of the resource.
-    :type description: str
-    :param properties: A collection of key value pairs that belongs to the resource.
-     Each pair must not have a key greater than 50 characters
-     and must not have a value greater than 150 characters.
-     Note: A maximum of 25 key value pairs can be provided for a resource and only string and
-     numeral values are supported.
-    :type properties: dict[str, object]
-    :param request_body: FarmOperationDataIngestionJobRequest.
-    :type request_body: ~azure.farmbeats.models.FarmOperationDataIngestionJobRequest
-    """
-
-    _validation = {
-        'created_date_time': {'readonly': True},
-        'last_action_date_time': {'readonly': True},
-        'start_time': {'readonly': True},
-        'end_time': {'readonly': True},
-        'is_cancellation_requested': {'readonly': True},
-        'name': {'max_length': 100, 'min_length': 0},
-        'description': {'max_length': 500, 'min_length': 0},
-    }
-
-    _attribute_map = {
-        'duration_in_seconds': {'key': 'durationInSeconds', 'type': 'str'},
-        'id': {'key': 'id', 'type': 'str'},
-        'status': {'key': 'status', 'type': 'str'},
-        'message': {'key': 'message', 'type': 'str'},
-        'created_date_time': {'key': 'createdDateTime', 'type': 'iso-8601'},
-        'last_action_date_time': {'key': 'lastActionDateTime', 'type': 'iso-8601'},
-        'start_time': {'key': 'startTime', 'type': 'iso-8601'},
-        'end_time': {'key': 'endTime', 'type': 'iso-8601'},
-        'is_cancellation_requested': {'key': 'isCancellationRequested', 'type': 'bool'},
-        'name': {'key': 'name', 'type': 'str'},
-        'description': {'key': 'description', 'type': 'str'},
-        'properties': {'key': 'properties', 'type': '{object}'},
-        'request_body': {'key': 'requestBody', 'type': 'FarmOperationDataIngestionJobRequest'},
-    }
-
-    def __init__(
-        self,
-        **kwargs
-    ):
-        super(FarmOperationsDataIngestionJobDetails, self).__init__(**kwargs)
-        self.duration_in_seconds = kwargs.get('duration_in_seconds', None)
-        self.id = kwargs.get('id', None)
-        self.status = kwargs.get('status', None)
-        self.message = kwargs.get('message', None)
-        self.created_date_time = None
-        self.last_action_date_time = None
-        self.start_time = None
-        self.end_time = None
-        self.is_cancellation_requested = None
-        self.name = kwargs.get('name', None)
-        self.description = kwargs.get('description', None)
-        self.properties = kwargs.get('properties', None)
-        self.request_body = kwargs.get('request_body', None)
 
 
 class Field(msrest.serialization.Model):
@@ -2459,94 +2202,10 @@ class SatelliteData(msrest.serialization.Model):
         self.image_resolutions = kwargs.get('image_resolutions', None)
 
 
-class SatelliteIngestionJobDetails(msrest.serialization.Model):
-    """Schema for GetSatelliteJobDetails.
+class SatelliteDataIngestionJob(msrest.serialization.Model):
+    """Schema of satellite data ingestion job.
 
     Variables are only populated by the server, and will be ignored when sending a request.
-
-    :param duration_in_seconds: Duration of the job in seconds.
-    :type duration_in_seconds: str
-    :param id: Unique job id.
-    :type id: str
-    :param status: Various states a job can be in. Possible values include: "Waiting", "Running",
-     "Succeeded", "Failed", "Cancelled".
-    :type status: str or ~azure.farmbeats.models.JobStatus
-    :param message: Status message to capture more details of the job.
-    :type message: str
-    :ivar created_date_time: Job created at dateTime. Sample format: yyyy-MM-ddTHH:mm:ssZ.
-    :vartype created_date_time: ~datetime.datetime
-    :ivar last_action_date_time: Job was last acted upon at dateTime. Sample format:
-     yyyy-MM-ddTHH:mm:ssZ.
-    :vartype last_action_date_time: ~datetime.datetime
-    :ivar start_time: Job start time when available. Sample format: yyyy-MM-ddTHH:mm:ssZ.
-    :vartype start_time: ~datetime.datetime
-    :ivar end_time: Job end time when available. Sample format: yyyy-MM-ddTHH:mm:ssZ.
-    :vartype end_time: ~datetime.datetime
-    :ivar is_cancellation_requested: A boolean flag indicating whether job cancellation is
-     requested.
-    :vartype is_cancellation_requested: bool
-    :param name: Name to identify resource.
-    :type name: str
-    :param description: Textual description of the resource.
-    :type description: str
-    :param properties: A collection of key value pairs that belongs to the resource.
-     Each pair must not have a key greater than 50 characters
-     and must not have a value greater than 150 characters.
-     Note: A maximum of 25 key value pairs can be provided for a resource and only string and
-     numeral values are supported.
-    :type properties: dict[str, object]
-    :param request_body: SatelliteIngestionJobRequest.
-    :type request_body: ~azure.farmbeats.models.SatelliteIngestionJobRequest
-    """
-
-    _validation = {
-        'created_date_time': {'readonly': True},
-        'last_action_date_time': {'readonly': True},
-        'start_time': {'readonly': True},
-        'end_time': {'readonly': True},
-        'is_cancellation_requested': {'readonly': True},
-        'name': {'max_length': 100, 'min_length': 0},
-        'description': {'max_length': 500, 'min_length': 0},
-    }
-
-    _attribute_map = {
-        'duration_in_seconds': {'key': 'durationInSeconds', 'type': 'str'},
-        'id': {'key': 'id', 'type': 'str'},
-        'status': {'key': 'status', 'type': 'str'},
-        'message': {'key': 'message', 'type': 'str'},
-        'created_date_time': {'key': 'createdDateTime', 'type': 'iso-8601'},
-        'last_action_date_time': {'key': 'lastActionDateTime', 'type': 'iso-8601'},
-        'start_time': {'key': 'startTime', 'type': 'iso-8601'},
-        'end_time': {'key': 'endTime', 'type': 'iso-8601'},
-        'is_cancellation_requested': {'key': 'isCancellationRequested', 'type': 'bool'},
-        'name': {'key': 'name', 'type': 'str'},
-        'description': {'key': 'description', 'type': 'str'},
-        'properties': {'key': 'properties', 'type': '{object}'},
-        'request_body': {'key': 'requestBody', 'type': 'SatelliteIngestionJobRequest'},
-    }
-
-    def __init__(
-        self,
-        **kwargs
-    ):
-        super(SatelliteIngestionJobDetails, self).__init__(**kwargs)
-        self.duration_in_seconds = kwargs.get('duration_in_seconds', None)
-        self.id = kwargs.get('id', None)
-        self.status = kwargs.get('status', None)
-        self.message = kwargs.get('message', None)
-        self.created_date_time = None
-        self.last_action_date_time = None
-        self.start_time = None
-        self.end_time = None
-        self.is_cancellation_requested = None
-        self.name = kwargs.get('name', None)
-        self.description = kwargs.get('description', None)
-        self.properties = kwargs.get('properties', None)
-        self.request_body = kwargs.get('request_body', None)
-
-
-class SatelliteIngestionJobRequest(msrest.serialization.Model):
-    """SatelliteIngestionJobRequest.
 
     All required parameters must be populated in order to send to Azure.
 
@@ -2560,11 +2219,28 @@ class SatelliteIngestionJobRequest(msrest.serialization.Model):
     :param end_date_time: Required. End Date.
     :type end_date_time: ~datetime.datetime
     :param provider: Provider of satellite data. Possible values include: "Microsoft".
-    :type provider: str or ~azure.farmbeats.models.SatelliteDataProvider
+    :type provider: str or ~azure.farmbeats.models.DataProvider
     :param source: Source of satellite data. Possible values include: "Sentinel_2_L2A".
-    :type source: str or ~azure.farmbeats.models.SatelliteSource
+    :type source: str or ~azure.farmbeats.models.Source
     :param data: Data Model for SatelliteInjestionJobRequest.
     :type data: ~azure.farmbeats.models.SatelliteData
+    :ivar id: Unique job id.
+    :vartype id: str
+    :ivar status: Status of the job.
+    :vartype status: str
+    :ivar duration_in_seconds: Duration of the job in seconds.
+    :vartype duration_in_seconds: str
+    :ivar message: Status message to capture more details of the job.
+    :vartype message: str
+    :ivar created_date_time: Job created at dateTime. Sample format: yyyy-MM-ddTHH:mm:ssZ.
+    :vartype created_date_time: ~datetime.datetime
+    :ivar last_action_date_time: Job was last acted upon at dateTime. Sample format:
+     yyyy-MM-ddTHH:mm:ssZ.
+    :vartype last_action_date_time: ~datetime.datetime
+    :ivar start_time: Job start time when available. Sample format: yyyy-MM-ddTHH:mm:ssZ.
+    :vartype start_time: ~datetime.datetime
+    :ivar end_time: Job end time when available. Sample format: yyyy-MM-ddTHH:mm:ssZ.
+    :vartype end_time: ~datetime.datetime
     :param name: Name to identify resource.
     :type name: str
     :param description: Textual description of the resource.
@@ -2582,6 +2258,14 @@ class SatelliteIngestionJobRequest(msrest.serialization.Model):
         'boundary_id': {'required': True},
         'start_date_time': {'required': True},
         'end_date_time': {'required': True},
+        'id': {'readonly': True},
+        'status': {'readonly': True},
+        'duration_in_seconds': {'readonly': True},
+        'message': {'readonly': True},
+        'created_date_time': {'readonly': True},
+        'last_action_date_time': {'readonly': True},
+        'start_time': {'readonly': True},
+        'end_time': {'readonly': True},
         'name': {'max_length': 100, 'min_length': 0},
         'description': {'max_length': 500, 'min_length': 0},
     }
@@ -2594,6 +2278,14 @@ class SatelliteIngestionJobRequest(msrest.serialization.Model):
         'provider': {'key': 'provider', 'type': 'str'},
         'source': {'key': 'source', 'type': 'str'},
         'data': {'key': 'data', 'type': 'SatelliteData'},
+        'id': {'key': 'id', 'type': 'str'},
+        'status': {'key': 'status', 'type': 'str'},
+        'duration_in_seconds': {'key': 'durationInSeconds', 'type': 'str'},
+        'message': {'key': 'message', 'type': 'str'},
+        'created_date_time': {'key': 'createdDateTime', 'type': 'iso-8601'},
+        'last_action_date_time': {'key': 'lastActionDateTime', 'type': 'iso-8601'},
+        'start_time': {'key': 'startTime', 'type': 'iso-8601'},
+        'end_time': {'key': 'endTime', 'type': 'iso-8601'},
         'name': {'key': 'name', 'type': 'str'},
         'description': {'key': 'description', 'type': 'str'},
         'properties': {'key': 'properties', 'type': '{object}'},
@@ -2603,7 +2295,7 @@ class SatelliteIngestionJobRequest(msrest.serialization.Model):
         self,
         **kwargs
     ):
-        super(SatelliteIngestionJobRequest, self).__init__(**kwargs)
+        super(SatelliteDataIngestionJob, self).__init__(**kwargs)
         self.farmer_id = kwargs['farmer_id']
         self.boundary_id = kwargs['boundary_id']
         self.start_date_time = kwargs['start_date_time']
@@ -2611,88 +2303,14 @@ class SatelliteIngestionJobRequest(msrest.serialization.Model):
         self.provider = kwargs.get('provider', None)
         self.source = kwargs.get('source', None)
         self.data = kwargs.get('data', None)
-        self.name = kwargs.get('name', None)
-        self.description = kwargs.get('description', None)
-        self.properties = kwargs.get('properties', None)
-
-
-class SatelliteIngestionJobResponse(msrest.serialization.Model):
-    """SatelliteIngestion job response.
-
-    Variables are only populated by the server, and will be ignored when sending a request.
-
-    :param duration_in_seconds: Duration of the job in seconds.
-    :type duration_in_seconds: str
-    :param id: Unique job id.
-    :type id: str
-    :param status: Various states a job can be in. Possible values include: "Waiting", "Running",
-     "Succeeded", "Failed", "Cancelled".
-    :type status: str or ~azure.farmbeats.models.JobStatus
-    :param message: Status message to capture more details of the job.
-    :type message: str
-    :ivar created_date_time: Job created at dateTime. Sample format: yyyy-MM-ddTHH:mm:ssZ.
-    :vartype created_date_time: ~datetime.datetime
-    :ivar last_action_date_time: Job was last acted upon at dateTime. Sample format:
-     yyyy-MM-ddTHH:mm:ssZ.
-    :vartype last_action_date_time: ~datetime.datetime
-    :ivar start_time: Job start time when available. Sample format: yyyy-MM-ddTHH:mm:ssZ.
-    :vartype start_time: ~datetime.datetime
-    :ivar end_time: Job end time when available. Sample format: yyyy-MM-ddTHH:mm:ssZ.
-    :vartype end_time: ~datetime.datetime
-    :ivar is_cancellation_requested: A boolean flag indicating whether job cancellation is
-     requested.
-    :vartype is_cancellation_requested: bool
-    :param name: Name to identify resource.
-    :type name: str
-    :param description: Textual description of the resource.
-    :type description: str
-    :param properties: A collection of key value pairs that belongs to the resource.
-     Each pair must not have a key greater than 50 characters
-     and must not have a value greater than 150 characters.
-     Note: A maximum of 25 key value pairs can be provided for a resource and only string and
-     numeral values are supported.
-    :type properties: dict[str, object]
-    """
-
-    _validation = {
-        'created_date_time': {'readonly': True},
-        'last_action_date_time': {'readonly': True},
-        'start_time': {'readonly': True},
-        'end_time': {'readonly': True},
-        'is_cancellation_requested': {'readonly': True},
-        'name': {'max_length': 100, 'min_length': 0},
-        'description': {'max_length': 500, 'min_length': 0},
-    }
-
-    _attribute_map = {
-        'duration_in_seconds': {'key': 'durationInSeconds', 'type': 'str'},
-        'id': {'key': 'id', 'type': 'str'},
-        'status': {'key': 'status', 'type': 'str'},
-        'message': {'key': 'message', 'type': 'str'},
-        'created_date_time': {'key': 'createdDateTime', 'type': 'iso-8601'},
-        'last_action_date_time': {'key': 'lastActionDateTime', 'type': 'iso-8601'},
-        'start_time': {'key': 'startTime', 'type': 'iso-8601'},
-        'end_time': {'key': 'endTime', 'type': 'iso-8601'},
-        'is_cancellation_requested': {'key': 'isCancellationRequested', 'type': 'bool'},
-        'name': {'key': 'name', 'type': 'str'},
-        'description': {'key': 'description', 'type': 'str'},
-        'properties': {'key': 'properties', 'type': '{object}'},
-    }
-
-    def __init__(
-        self,
-        **kwargs
-    ):
-        super(SatelliteIngestionJobResponse, self).__init__(**kwargs)
-        self.duration_in_seconds = kwargs.get('duration_in_seconds', None)
-        self.id = kwargs.get('id', None)
-        self.status = kwargs.get('status', None)
-        self.message = kwargs.get('message', None)
+        self.id = None
+        self.status = None
+        self.duration_in_seconds = None
+        self.message = None
         self.created_date_time = None
         self.last_action_date_time = None
         self.start_time = None
         self.end_time = None
-        self.is_cancellation_requested = None
         self.name = kwargs.get('name', None)
         self.description = kwargs.get('description', None)
         self.properties = kwargs.get('properties', None)
@@ -3444,94 +3062,10 @@ class WeatherData(msrest.serialization.Model):
         self.properties = kwargs.get('properties', None)
 
 
-class WeatherDataDeleteJobDetails(msrest.serialization.Model):
-    """Schema for GetWeatherDataDeleteJobDetails.
+class WeatherDataDeleteJob(msrest.serialization.Model):
+    """Schema of weather data delete job.
 
     Variables are only populated by the server, and will be ignored when sending a request.
-
-    :param duration_in_seconds: Duration of the job in seconds.
-    :type duration_in_seconds: str
-    :param id: Unique job id.
-    :type id: str
-    :param status: Various states a job can be in. Possible values include: "Waiting", "Running",
-     "Succeeded", "Failed", "Cancelled".
-    :type status: str or ~azure.farmbeats.models.JobStatus
-    :param message: Status message to capture more details of the job.
-    :type message: str
-    :ivar created_date_time: Job created at dateTime. Sample format: yyyy-MM-ddTHH:mm:ssZ.
-    :vartype created_date_time: ~datetime.datetime
-    :ivar last_action_date_time: Job was last acted upon at dateTime. Sample format:
-     yyyy-MM-ddTHH:mm:ssZ.
-    :vartype last_action_date_time: ~datetime.datetime
-    :ivar start_time: Job start time when available. Sample format: yyyy-MM-ddTHH:mm:ssZ.
-    :vartype start_time: ~datetime.datetime
-    :ivar end_time: Job end time when available. Sample format: yyyy-MM-ddTHH:mm:ssZ.
-    :vartype end_time: ~datetime.datetime
-    :ivar is_cancellation_requested: A boolean flag indicating whether job cancellation is
-     requested.
-    :vartype is_cancellation_requested: bool
-    :param name: Name to identify resource.
-    :type name: str
-    :param description: Textual description of the resource.
-    :type description: str
-    :param properties: A collection of key value pairs that belongs to the resource.
-     Each pair must not have a key greater than 50 characters
-     and must not have a value greater than 150 characters.
-     Note: A maximum of 25 key value pairs can be provided for a resource and only string and
-     numeral values are supported.
-    :type properties: dict[str, object]
-    :param request_body: WeatherDataDeleteJobRequest.
-    :type request_body: ~azure.farmbeats.models.WeatherDataDeleteJobRequest
-    """
-
-    _validation = {
-        'created_date_time': {'readonly': True},
-        'last_action_date_time': {'readonly': True},
-        'start_time': {'readonly': True},
-        'end_time': {'readonly': True},
-        'is_cancellation_requested': {'readonly': True},
-        'name': {'max_length': 100, 'min_length': 0},
-        'description': {'max_length': 500, 'min_length': 0},
-    }
-
-    _attribute_map = {
-        'duration_in_seconds': {'key': 'durationInSeconds', 'type': 'str'},
-        'id': {'key': 'id', 'type': 'str'},
-        'status': {'key': 'status', 'type': 'str'},
-        'message': {'key': 'message', 'type': 'str'},
-        'created_date_time': {'key': 'createdDateTime', 'type': 'iso-8601'},
-        'last_action_date_time': {'key': 'lastActionDateTime', 'type': 'iso-8601'},
-        'start_time': {'key': 'startTime', 'type': 'iso-8601'},
-        'end_time': {'key': 'endTime', 'type': 'iso-8601'},
-        'is_cancellation_requested': {'key': 'isCancellationRequested', 'type': 'bool'},
-        'name': {'key': 'name', 'type': 'str'},
-        'description': {'key': 'description', 'type': 'str'},
-        'properties': {'key': 'properties', 'type': '{object}'},
-        'request_body': {'key': 'requestBody', 'type': 'WeatherDataDeleteJobRequest'},
-    }
-
-    def __init__(
-        self,
-        **kwargs
-    ):
-        super(WeatherDataDeleteJobDetails, self).__init__(**kwargs)
-        self.duration_in_seconds = kwargs.get('duration_in_seconds', None)
-        self.id = kwargs.get('id', None)
-        self.status = kwargs.get('status', None)
-        self.message = kwargs.get('message', None)
-        self.created_date_time = None
-        self.last_action_date_time = None
-        self.start_time = None
-        self.end_time = None
-        self.is_cancellation_requested = None
-        self.name = kwargs.get('name', None)
-        self.description = kwargs.get('description', None)
-        self.properties = kwargs.get('properties', None)
-        self.request_body = kwargs.get('request_body', None)
-
-
-class WeatherDataDeleteJobRequest(msrest.serialization.Model):
-    """WeatherDataDeleteJobRequest.
 
     All required parameters must be populated in order to send to Azure.
 
@@ -3549,12 +3083,29 @@ class WeatherDataDeleteJobRequest(msrest.serialization.Model):
     :type weather_data_type: str
     :param granularity: Granularity of weather data. Possible values include: 'daily' , 'hourly'.
     :type granularity: str
-    :param start_date_time: Weather data start UTC datetime (inclusive), sample format:
+    :param start_date_time: Weather data start UTC date-time (inclusive), sample format:
      yyyy-MM-ddTHH:mm:ssZ.
     :type start_date_time: ~datetime.datetime
-    :param end_date_time: Weather data end UTC datetime (inclusive), sample format:
+    :param end_date_time: Weather data end UTC date-time (inclusive), sample format:
      yyyy-MM-ddTHH:mm:ssZ.
     :type end_date_time: ~datetime.datetime
+    :ivar id: Unique job id.
+    :vartype id: str
+    :ivar status: Status of the job.
+    :vartype status: str
+    :ivar duration_in_seconds: Duration of the job in seconds.
+    :vartype duration_in_seconds: str
+    :ivar message: Status message to capture more details of the job.
+    :vartype message: str
+    :ivar created_date_time: Job created at dateTime. Sample format: yyyy-MM-ddTHH:mm:ssZ.
+    :vartype created_date_time: ~datetime.datetime
+    :ivar last_action_date_time: Job was last acted upon at dateTime. Sample format:
+     yyyy-MM-ddTHH:mm:ssZ.
+    :vartype last_action_date_time: ~datetime.datetime
+    :ivar start_time: Job start time when available. Sample format: yyyy-MM-ddTHH:mm:ssZ.
+    :vartype start_time: ~datetime.datetime
+    :ivar end_time: Job end time when available. Sample format: yyyy-MM-ddTHH:mm:ssZ.
+    :vartype end_time: ~datetime.datetime
     :param name: Name to identify resource.
     :type name: str
     :param description: Textual description of the resource.
@@ -3571,6 +3122,14 @@ class WeatherDataDeleteJobRequest(msrest.serialization.Model):
         'extension_id': {'required': True, 'max_length': 100, 'min_length': 2},
         'farmer_id': {'required': True},
         'boundary_id': {'required': True},
+        'id': {'readonly': True},
+        'status': {'readonly': True},
+        'duration_in_seconds': {'readonly': True},
+        'message': {'readonly': True},
+        'created_date_time': {'readonly': True},
+        'last_action_date_time': {'readonly': True},
+        'start_time': {'readonly': True},
+        'end_time': {'readonly': True},
         'name': {'max_length': 100, 'min_length': 0},
         'description': {'max_length': 500, 'min_length': 0},
     }
@@ -3583,6 +3142,14 @@ class WeatherDataDeleteJobRequest(msrest.serialization.Model):
         'granularity': {'key': 'granularity', 'type': 'str'},
         'start_date_time': {'key': 'startDateTime', 'type': 'iso-8601'},
         'end_date_time': {'key': 'endDateTime', 'type': 'iso-8601'},
+        'id': {'key': 'id', 'type': 'str'},
+        'status': {'key': 'status', 'type': 'str'},
+        'duration_in_seconds': {'key': 'durationInSeconds', 'type': 'str'},
+        'message': {'key': 'message', 'type': 'str'},
+        'created_date_time': {'key': 'createdDateTime', 'type': 'iso-8601'},
+        'last_action_date_time': {'key': 'lastActionDateTime', 'type': 'iso-8601'},
+        'start_time': {'key': 'startTime', 'type': 'iso-8601'},
+        'end_time': {'key': 'endTime', 'type': 'iso-8601'},
         'name': {'key': 'name', 'type': 'str'},
         'description': {'key': 'description', 'type': 'str'},
         'properties': {'key': 'properties', 'type': '{object}'},
@@ -3592,7 +3159,7 @@ class WeatherDataDeleteJobRequest(msrest.serialization.Model):
         self,
         **kwargs
     ):
-        super(WeatherDataDeleteJobRequest, self).__init__(**kwargs)
+        super(WeatherDataDeleteJob, self).__init__(**kwargs)
         self.extension_id = kwargs['extension_id']
         self.farmer_id = kwargs['farmer_id']
         self.boundary_id = kwargs['boundary_id']
@@ -3600,25 +3167,52 @@ class WeatherDataDeleteJobRequest(msrest.serialization.Model):
         self.granularity = kwargs.get('granularity', None)
         self.start_date_time = kwargs.get('start_date_time', None)
         self.end_date_time = kwargs.get('end_date_time', None)
+        self.id = None
+        self.status = None
+        self.duration_in_seconds = None
+        self.message = None
+        self.created_date_time = None
+        self.last_action_date_time = None
+        self.start_time = None
+        self.end_time = None
         self.name = kwargs.get('name', None)
         self.description = kwargs.get('description', None)
         self.properties = kwargs.get('properties', None)
 
 
-class WeatherDataDeleteJobResponse(msrest.serialization.Model):
-    """Response object for (create) WeatherDataDelete job.
+class WeatherDataIngestionJob(msrest.serialization.Model):
+    """Schema of weather ingestion job.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    :param duration_in_seconds: Duration of the job in seconds.
-    :type duration_in_seconds: str
-    :param id: Unique job id.
-    :type id: str
-    :param status: Various states a job can be in. Possible values include: "Waiting", "Running",
-     "Succeeded", "Failed", "Cancelled".
-    :type status: str or ~azure.farmbeats.models.JobStatus
-    :param message: Status message to capture more details of the job.
-    :type message: str
+    All required parameters must be populated in order to send to Azure.
+
+    :param boundary_id: Required. The id of the boundary object for which weather data is being
+     fetched.
+    :type boundary_id: str
+    :param farmer_id: Required. The id of the farmer object for which weather data is being
+     fetched.
+    :type farmer_id: str
+    :param extension_id: Required. Id of the extension to be used for the providerInput. eg.
+     DTN.ClearAg.
+    :type extension_id: str
+    :param extension_api_name: Required. Extension api name to which request is to be made.
+    :type extension_api_name: str
+    :param extension_api_input: Required. Extension api input dictionary which would be used to
+     feed request query/body/parameter information.
+    :type extension_api_input: dict[str, object]
+    :param extension_data_provider_app_id: App id of the weather data provider.
+    :type extension_data_provider_app_id: str
+    :param extension_data_provider_api_key: Api key of the weather data provider.
+    :type extension_data_provider_api_key: str
+    :ivar id: Unique job id.
+    :vartype id: str
+    :ivar status: Status of the job.
+    :vartype status: str
+    :ivar duration_in_seconds: Duration of the job in seconds.
+    :vartype duration_in_seconds: str
+    :ivar message: Status message to capture more details of the job.
+    :vartype message: str
     :ivar created_date_time: Job created at dateTime. Sample format: yyyy-MM-ddTHH:mm:ssZ.
     :vartype created_date_time: ~datetime.datetime
     :ivar last_action_date_time: Job was last acted upon at dateTime. Sample format:
@@ -3628,9 +3222,6 @@ class WeatherDataDeleteJobResponse(msrest.serialization.Model):
     :vartype start_time: ~datetime.datetime
     :ivar end_time: Job end time when available. Sample format: yyyy-MM-ddTHH:mm:ssZ.
     :vartype end_time: ~datetime.datetime
-    :ivar is_cancellation_requested: A boolean flag indicating whether job cancellation is
-     requested.
-    :vartype is_cancellation_requested: bool
     :param name: Name to identify resource.
     :type name: str
     :param description: Textual description of the resource.
@@ -3644,25 +3235,41 @@ class WeatherDataDeleteJobResponse(msrest.serialization.Model):
     """
 
     _validation = {
+        'boundary_id': {'required': True},
+        'farmer_id': {'required': True},
+        'extension_id': {'required': True, 'max_length': 100, 'min_length': 2},
+        'extension_api_name': {'required': True, 'max_length': 100, 'min_length': 2},
+        'extension_api_input': {'required': True},
+        'extension_data_provider_app_id': {'max_length': 200, 'min_length': 2},
+        'extension_data_provider_api_key': {'max_length': 200, 'min_length': 2},
+        'id': {'readonly': True},
+        'status': {'readonly': True},
+        'duration_in_seconds': {'readonly': True},
+        'message': {'readonly': True},
         'created_date_time': {'readonly': True},
         'last_action_date_time': {'readonly': True},
         'start_time': {'readonly': True},
         'end_time': {'readonly': True},
-        'is_cancellation_requested': {'readonly': True},
         'name': {'max_length': 100, 'min_length': 0},
         'description': {'max_length': 500, 'min_length': 0},
     }
 
     _attribute_map = {
-        'duration_in_seconds': {'key': 'durationInSeconds', 'type': 'str'},
+        'boundary_id': {'key': 'boundaryId', 'type': 'str'},
+        'farmer_id': {'key': 'farmerId', 'type': 'str'},
+        'extension_id': {'key': 'extensionId', 'type': 'str'},
+        'extension_api_name': {'key': 'extensionApiName', 'type': 'str'},
+        'extension_api_input': {'key': 'extensionApiInput', 'type': '{object}'},
+        'extension_data_provider_app_id': {'key': 'extensionDataProviderAppId', 'type': 'str'},
+        'extension_data_provider_api_key': {'key': 'extensionDataProviderApiKey', 'type': 'str'},
         'id': {'key': 'id', 'type': 'str'},
         'status': {'key': 'status', 'type': 'str'},
+        'duration_in_seconds': {'key': 'durationInSeconds', 'type': 'str'},
         'message': {'key': 'message', 'type': 'str'},
         'created_date_time': {'key': 'createdDateTime', 'type': 'iso-8601'},
         'last_action_date_time': {'key': 'lastActionDateTime', 'type': 'iso-8601'},
         'start_time': {'key': 'startTime', 'type': 'iso-8601'},
         'end_time': {'key': 'endTime', 'type': 'iso-8601'},
-        'is_cancellation_requested': {'key': 'isCancellationRequested', 'type': 'bool'},
         'name': {'key': 'name', 'type': 'str'},
         'description': {'key': 'description', 'type': 'str'},
         'properties': {'key': 'properties', 'type': '{object}'},
@@ -3672,16 +3279,22 @@ class WeatherDataDeleteJobResponse(msrest.serialization.Model):
         self,
         **kwargs
     ):
-        super(WeatherDataDeleteJobResponse, self).__init__(**kwargs)
-        self.duration_in_seconds = kwargs.get('duration_in_seconds', None)
-        self.id = kwargs.get('id', None)
-        self.status = kwargs.get('status', None)
-        self.message = kwargs.get('message', None)
+        super(WeatherDataIngestionJob, self).__init__(**kwargs)
+        self.boundary_id = kwargs['boundary_id']
+        self.farmer_id = kwargs['farmer_id']
+        self.extension_id = kwargs['extension_id']
+        self.extension_api_name = kwargs['extension_api_name']
+        self.extension_api_input = kwargs['extension_api_input']
+        self.extension_data_provider_app_id = kwargs.get('extension_data_provider_app_id', None)
+        self.extension_data_provider_api_key = kwargs.get('extension_data_provider_api_key', None)
+        self.id = None
+        self.status = None
+        self.duration_in_seconds = None
+        self.message = None
         self.created_date_time = None
         self.last_action_date_time = None
         self.start_time = None
         self.end_time = None
-        self.is_cancellation_requested = None
         self.name = kwargs.get('name', None)
         self.description = kwargs.get('description', None)
         self.properties = kwargs.get('properties', None)
@@ -3713,248 +3326,3 @@ class WeatherDataListResponse(msrest.serialization.Model):
         self.value = kwargs.get('value', None)
         self.skip_token = kwargs.get('skip_token', None)
         self.next_link = kwargs.get('next_link', None)
-
-
-class WeatherIngestionJobDetails(msrest.serialization.Model):
-    """Schema for GetWeatherIngestionJobDetails.
-
-    Variables are only populated by the server, and will be ignored when sending a request.
-
-    :param duration_in_seconds: Duration of the job in seconds.
-    :type duration_in_seconds: str
-    :param id: Unique job id.
-    :type id: str
-    :param status: Various states a job can be in. Possible values include: "Waiting", "Running",
-     "Succeeded", "Failed", "Cancelled".
-    :type status: str or ~azure.farmbeats.models.JobStatus
-    :param message: Status message to capture more details of the job.
-    :type message: str
-    :ivar created_date_time: Job created at dateTime. Sample format: yyyy-MM-ddTHH:mm:ssZ.
-    :vartype created_date_time: ~datetime.datetime
-    :ivar last_action_date_time: Job was last acted upon at dateTime. Sample format:
-     yyyy-MM-ddTHH:mm:ssZ.
-    :vartype last_action_date_time: ~datetime.datetime
-    :ivar start_time: Job start time when available. Sample format: yyyy-MM-ddTHH:mm:ssZ.
-    :vartype start_time: ~datetime.datetime
-    :ivar end_time: Job end time when available. Sample format: yyyy-MM-ddTHH:mm:ssZ.
-    :vartype end_time: ~datetime.datetime
-    :ivar is_cancellation_requested: A boolean flag indicating whether job cancellation is
-     requested.
-    :vartype is_cancellation_requested: bool
-    :param name: Name to identify resource.
-    :type name: str
-    :param description: Textual description of the resource.
-    :type description: str
-    :param properties: A collection of key value pairs that belongs to the resource.
-     Each pair must not have a key greater than 50 characters
-     and must not have a value greater than 150 characters.
-     Note: A maximum of 25 key value pairs can be provided for a resource and only string and
-     numeral values are supported.
-    :type properties: dict[str, object]
-    :param request_body: WeatherIngestionJobRequest.
-    :type request_body: ~azure.farmbeats.models.WeatherIngestionJobRequest
-    """
-
-    _validation = {
-        'created_date_time': {'readonly': True},
-        'last_action_date_time': {'readonly': True},
-        'start_time': {'readonly': True},
-        'end_time': {'readonly': True},
-        'is_cancellation_requested': {'readonly': True},
-        'name': {'max_length': 100, 'min_length': 0},
-        'description': {'max_length': 500, 'min_length': 0},
-    }
-
-    _attribute_map = {
-        'duration_in_seconds': {'key': 'durationInSeconds', 'type': 'str'},
-        'id': {'key': 'id', 'type': 'str'},
-        'status': {'key': 'status', 'type': 'str'},
-        'message': {'key': 'message', 'type': 'str'},
-        'created_date_time': {'key': 'createdDateTime', 'type': 'iso-8601'},
-        'last_action_date_time': {'key': 'lastActionDateTime', 'type': 'iso-8601'},
-        'start_time': {'key': 'startTime', 'type': 'iso-8601'},
-        'end_time': {'key': 'endTime', 'type': 'iso-8601'},
-        'is_cancellation_requested': {'key': 'isCancellationRequested', 'type': 'bool'},
-        'name': {'key': 'name', 'type': 'str'},
-        'description': {'key': 'description', 'type': 'str'},
-        'properties': {'key': 'properties', 'type': '{object}'},
-        'request_body': {'key': 'requestBody', 'type': 'WeatherIngestionJobRequest'},
-    }
-
-    def __init__(
-        self,
-        **kwargs
-    ):
-        super(WeatherIngestionJobDetails, self).__init__(**kwargs)
-        self.duration_in_seconds = kwargs.get('duration_in_seconds', None)
-        self.id = kwargs.get('id', None)
-        self.status = kwargs.get('status', None)
-        self.message = kwargs.get('message', None)
-        self.created_date_time = None
-        self.last_action_date_time = None
-        self.start_time = None
-        self.end_time = None
-        self.is_cancellation_requested = None
-        self.name = kwargs.get('name', None)
-        self.description = kwargs.get('description', None)
-        self.properties = kwargs.get('properties', None)
-        self.request_body = kwargs.get('request_body', None)
-
-
-class WeatherIngestionJobRequest(msrest.serialization.Model):
-    """WeatherIngestionJobRequest.
-
-    All required parameters must be populated in order to send to Azure.
-
-    :param boundary_id: Required. The id of the boundary object for which weather data is being
-     fetched.
-    :type boundary_id: str
-    :param farmer_id: Required. The id of the farmer object for which weather data is being
-     fetched.
-    :type farmer_id: str
-    :param extension_id: Required. Id of the extension to be used for the providerInput. eg.
-     DTN.ClearAg.
-    :type extension_id: str
-    :param extension_api_name: Required. Extension api name to which request is to be made.
-    :type extension_api_name: str
-    :param extension_api_input: Required. Extension api input dictionary which would be used to
-     feed request query/body/parameter information.
-    :type extension_api_input: dict[str, object]
-    :param extension_data_provider_app_id: App id of the weather data provider.
-    :type extension_data_provider_app_id: str
-    :param extension_data_provider_api_key: Api key of the weather data provider.
-    :type extension_data_provider_api_key: str
-    :param name: Name to identify resource.
-    :type name: str
-    :param description: Textual description of the resource.
-    :type description: str
-    :param properties: A collection of key value pairs that belongs to the resource.
-     Each pair must not have a key greater than 50 characters
-     and must not have a value greater than 150 characters.
-     Note: A maximum of 25 key value pairs can be provided for a resource and only string and
-     numeral values are supported.
-    :type properties: dict[str, object]
-    """
-
-    _validation = {
-        'boundary_id': {'required': True},
-        'farmer_id': {'required': True},
-        'extension_id': {'required': True, 'max_length': 100, 'min_length': 2},
-        'extension_api_name': {'required': True, 'max_length': 100, 'min_length': 2},
-        'extension_api_input': {'required': True},
-        'extension_data_provider_app_id': {'max_length': 200, 'min_length': 2},
-        'extension_data_provider_api_key': {'max_length': 200, 'min_length': 2},
-        'name': {'max_length': 100, 'min_length': 0},
-        'description': {'max_length': 500, 'min_length': 0},
-    }
-
-    _attribute_map = {
-        'boundary_id': {'key': 'boundaryId', 'type': 'str'},
-        'farmer_id': {'key': 'farmerId', 'type': 'str'},
-        'extension_id': {'key': 'extensionId', 'type': 'str'},
-        'extension_api_name': {'key': 'extensionApiName', 'type': 'str'},
-        'extension_api_input': {'key': 'extensionApiInput', 'type': '{object}'},
-        'extension_data_provider_app_id': {'key': 'extensionDataProviderAppId', 'type': 'str'},
-        'extension_data_provider_api_key': {'key': 'extensionDataProviderApiKey', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'description': {'key': 'description', 'type': 'str'},
-        'properties': {'key': 'properties', 'type': '{object}'},
-    }
-
-    def __init__(
-        self,
-        **kwargs
-    ):
-        super(WeatherIngestionJobRequest, self).__init__(**kwargs)
-        self.boundary_id = kwargs['boundary_id']
-        self.farmer_id = kwargs['farmer_id']
-        self.extension_id = kwargs['extension_id']
-        self.extension_api_name = kwargs['extension_api_name']
-        self.extension_api_input = kwargs['extension_api_input']
-        self.extension_data_provider_app_id = kwargs.get('extension_data_provider_app_id', None)
-        self.extension_data_provider_api_key = kwargs.get('extension_data_provider_api_key', None)
-        self.name = kwargs.get('name', None)
-        self.description = kwargs.get('description', None)
-        self.properties = kwargs.get('properties', None)
-
-
-class WeatherIngestionJobResponse(msrest.serialization.Model):
-    """WeatherIngestion job response.
-
-    Variables are only populated by the server, and will be ignored when sending a request.
-
-    :param duration_in_seconds: Duration of the job in seconds.
-    :type duration_in_seconds: str
-    :param id: Unique job id.
-    :type id: str
-    :param status: Various states a job can be in. Possible values include: "Waiting", "Running",
-     "Succeeded", "Failed", "Cancelled".
-    :type status: str or ~azure.farmbeats.models.JobStatus
-    :param message: Status message to capture more details of the job.
-    :type message: str
-    :ivar created_date_time: Job created at dateTime. Sample format: yyyy-MM-ddTHH:mm:ssZ.
-    :vartype created_date_time: ~datetime.datetime
-    :ivar last_action_date_time: Job was last acted upon at dateTime. Sample format:
-     yyyy-MM-ddTHH:mm:ssZ.
-    :vartype last_action_date_time: ~datetime.datetime
-    :ivar start_time: Job start time when available. Sample format: yyyy-MM-ddTHH:mm:ssZ.
-    :vartype start_time: ~datetime.datetime
-    :ivar end_time: Job end time when available. Sample format: yyyy-MM-ddTHH:mm:ssZ.
-    :vartype end_time: ~datetime.datetime
-    :ivar is_cancellation_requested: A boolean flag indicating whether job cancellation is
-     requested.
-    :vartype is_cancellation_requested: bool
-    :param name: Name to identify resource.
-    :type name: str
-    :param description: Textual description of the resource.
-    :type description: str
-    :param properties: A collection of key value pairs that belongs to the resource.
-     Each pair must not have a key greater than 50 characters
-     and must not have a value greater than 150 characters.
-     Note: A maximum of 25 key value pairs can be provided for a resource and only string and
-     numeral values are supported.
-    :type properties: dict[str, object]
-    """
-
-    _validation = {
-        'created_date_time': {'readonly': True},
-        'last_action_date_time': {'readonly': True},
-        'start_time': {'readonly': True},
-        'end_time': {'readonly': True},
-        'is_cancellation_requested': {'readonly': True},
-        'name': {'max_length': 100, 'min_length': 0},
-        'description': {'max_length': 500, 'min_length': 0},
-    }
-
-    _attribute_map = {
-        'duration_in_seconds': {'key': 'durationInSeconds', 'type': 'str'},
-        'id': {'key': 'id', 'type': 'str'},
-        'status': {'key': 'status', 'type': 'str'},
-        'message': {'key': 'message', 'type': 'str'},
-        'created_date_time': {'key': 'createdDateTime', 'type': 'iso-8601'},
-        'last_action_date_time': {'key': 'lastActionDateTime', 'type': 'iso-8601'},
-        'start_time': {'key': 'startTime', 'type': 'iso-8601'},
-        'end_time': {'key': 'endTime', 'type': 'iso-8601'},
-        'is_cancellation_requested': {'key': 'isCancellationRequested', 'type': 'bool'},
-        'name': {'key': 'name', 'type': 'str'},
-        'description': {'key': 'description', 'type': 'str'},
-        'properties': {'key': 'properties', 'type': '{object}'},
-    }
-
-    def __init__(
-        self,
-        **kwargs
-    ):
-        super(WeatherIngestionJobResponse, self).__init__(**kwargs)
-        self.duration_in_seconds = kwargs.get('duration_in_seconds', None)
-        self.id = kwargs.get('id', None)
-        self.status = kwargs.get('status', None)
-        self.message = kwargs.get('message', None)
-        self.created_date_time = None
-        self.last_action_date_time = None
-        self.start_time = None
-        self.end_time = None
-        self.is_cancellation_requested = None
-        self.name = kwargs.get('name', None)
-        self.description = kwargs.get('description', None)
-        self.properties = kwargs.get('properties', None)

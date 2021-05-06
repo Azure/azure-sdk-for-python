@@ -46,11 +46,11 @@ class FarmOperationsOperations(object):
     def _create_data_ingestion_job_initial(
         self,
         job_id,  # type: str
-        job=None,  # type: Optional["_models.FarmOperationDataIngestionJobRequest"]
+        job=None,  # type: Optional["_models.FarmOperationDataIngestionJob"]
         **kwargs  # type: Any
     ):
-        # type: (...) -> "_models.FarmOperationDataIngestionJobResponse"
-        cls = kwargs.pop('cls', None)  # type: ClsType["_models.FarmOperationDataIngestionJobResponse"]
+        # type: (...) -> "_models.FarmOperationDataIngestionJob"
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.FarmOperationDataIngestionJob"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -77,7 +77,7 @@ class FarmOperationsOperations(object):
 
         body_content_kwargs = {}  # type: Dict[str, Any]
         if job is not None:
-            body_content = self._serialize.body(job, 'FarmOperationDataIngestionJobRequest')
+            body_content = self._serialize.body(job, 'FarmOperationDataIngestionJob')
         else:
             body_content = None
         body_content_kwargs['content'] = body_content
@@ -89,7 +89,7 @@ class FarmOperationsOperations(object):
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             raise HttpResponseError(response=response)
 
-        deserialized = self._deserialize('FarmOperationDataIngestionJobResponse', pipeline_response)
+        deserialized = self._deserialize('FarmOperationDataIngestionJob', pipeline_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})
@@ -100,28 +100,28 @@ class FarmOperationsOperations(object):
     def begin_create_data_ingestion_job(
         self,
         job_id,  # type: str
-        job=None,  # type: Optional["_models.FarmOperationDataIngestionJobRequest"]
+        job=None,  # type: Optional["_models.FarmOperationDataIngestionJob"]
         **kwargs  # type: Any
     ):
-        # type: (...) -> LROPoller["_models.FarmOperationDataIngestionJobResponse"]
+        # type: (...) -> LROPoller["_models.FarmOperationDataIngestionJob"]
         """Create a farm operation data ingestion job.
 
         :param job_id: Job Id supplied by user.
         :type job_id: str
         :param job: Job parameters supplied by user.
-        :type job: ~azure.farmbeats.models.FarmOperationDataIngestionJobRequest
+        :type job: ~azure.farmbeats.models.FarmOperationDataIngestionJob
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: Pass in True if you'd like the LROBasePolling polling method,
-         False for no polling, or your own initialized polling object for a personal polling strategy.
+        :keyword polling: By default, your polling method will be LROBasePolling.
+         Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.PollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
-        :return: An instance of LROPoller that returns either FarmOperationDataIngestionJobResponse or the result of cls(response)
-        :rtype: ~azure.core.polling.LROPoller[~azure.farmbeats.models.FarmOperationDataIngestionJobResponse]
+        :return: An instance of LROPoller that returns either FarmOperationDataIngestionJob or the result of cls(response)
+        :rtype: ~azure.core.polling.LROPoller[~azure.farmbeats.models.FarmOperationDataIngestionJob]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        polling = kwargs.pop('polling', False)  # type: Union[bool, PollingMethod]
-        cls = kwargs.pop('cls', None)  # type: ClsType["_models.FarmOperationDataIngestionJobResponse"]
+        polling = kwargs.pop('polling', True)  # type: Union[bool, PollingMethod]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.FarmOperationDataIngestionJob"]
         lro_delay = kwargs.pop(
             'polling_interval',
             self._config.polling_interval
@@ -139,7 +139,7 @@ class FarmOperationsOperations(object):
         kwargs.pop('content_type', None)
 
         def get_long_running_output(pipeline_response):
-            deserialized = self._deserialize('FarmOperationDataIngestionJobResponse', pipeline_response)
+            deserialized = self._deserialize('FarmOperationDataIngestionJob', pipeline_response)
 
             if cls:
                 return cls(pipeline_response, deserialized, {})
@@ -168,17 +168,17 @@ class FarmOperationsOperations(object):
         job_id,  # type: str
         **kwargs  # type: Any
     ):
-        # type: (...) -> "_models.FarmOperationsDataIngestionJobDetails"
-        """Get farm operation data ingestion job's details.
+        # type: (...) -> "_models.FarmOperationDataIngestionJob"
+        """Get a farm operation data ingestion job.
 
         :param job_id: Id of the job.
         :type job_id: str
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: FarmOperationsDataIngestionJobDetails, or the result of cls(response)
-        :rtype: ~azure.farmbeats.models.FarmOperationsDataIngestionJobDetails
+        :return: FarmOperationDataIngestionJob, or the result of cls(response)
+        :rtype: ~azure.farmbeats.models.FarmOperationDataIngestionJob
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["_models.FarmOperationsDataIngestionJobDetails"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.FarmOperationDataIngestionJob"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -209,7 +209,7 @@ class FarmOperationsOperations(object):
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             raise HttpResponseError(response=response)
 
-        deserialized = self._deserialize('FarmOperationsDataIngestionJobDetails', pipeline_response)
+        deserialized = self._deserialize('FarmOperationDataIngestionJob', pipeline_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})
