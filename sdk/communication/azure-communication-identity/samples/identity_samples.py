@@ -25,7 +25,7 @@ from azure.communication.identity._shared.utils import parse_connection_str
 class CommunicationIdentityClientSamples(object):
 
     def __init__(self):
-        self.connection_string = os.getenv('AZURE_COMMUNICATION_SERVICE_CONNECTION_STRING')
+        self.connection_string = os.getenv('COMMUNICATION_CONNECTION_STRING')
         self.client_id = os.getenv('AZURE_CLIENT_ID')
         self.client_secret = os.getenv('AZURE_CLIENT_SECRET')
         self.tenant_id = os.getenv('AZURE_TENANT_ID')

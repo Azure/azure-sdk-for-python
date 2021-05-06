@@ -117,7 +117,7 @@ class ArtifactManifestProperties(object):
             size=generated.size,
             tags=generated.tags,
             content_permissions=generated.writeable_properties,
-            repository_name=kwargs.get("repository_name"),
+            repository_name=kwargs.get("repository_name", None),
         )
 
 

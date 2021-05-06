@@ -17,6 +17,7 @@ from azure.containerregistry import (
     ContainerRegistryClient,
     ArtifactTagProperties,
     ContentProperties,
+    ArtifactManifestProperties,
 )
 
 from azure.core.credentials import AccessToken
@@ -312,26 +313,26 @@ def import_image(repository, tags):
         pass
 
 
-@pytest.fixture(scope="session")
-def load_registry():
-    repos = [
-        "library/hello-world",
-        "library/alpine",
-        "library/busybox",
-    ]
-    tags = [
-        [
-            "library/hello-world:latest",
-            "library/hello-world:v1",
-            "library/hello-world:v2",
-            "library/hello-world:v3",
-            "library/hello-world:v4",
-        ],
-        ["library/alpine"],
-        ["library/busybox"],
-    ]
-    for repo, tag in zip(repos, tags):
-        try:
-            import_image(repo, tag)
-        except Exception as e:
-            print(e)
+# @pytest.fixture(scope="session")
+# def load_registry():
+#     repos = [
+#         "library/hello-world",
+#         "library/alpine",
+#         "library/busybox",
+#     ]
+#     tags = [
+#         [
+#             "library/hello-world:latest",
+#             "library/hello-world:v1",
+#             "library/hello-world:v2",
+#             "library/hello-world:v3",
+#             "library/hello-world:v4",
+#         ],
+#         ["library/alpine"],
+#         ["library/busybox"],
+#     ]
+#     for repo, tag in zip(repos, tags):
+#         try:
+#             import_image(repo, tag)
+#         except Exception as e:
+#             print(e)

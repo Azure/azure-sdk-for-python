@@ -70,6 +70,9 @@ Both [sync version](https://github.com/Azure/azure-sdk-for-python/tree/master/sd
 - [authenticate_with_azure_sas_credential.py](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/eventhub/azure-eventhub/samples/sync_samples/authenticate_with_azure_sas_credential.py) ([async_version](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/eventhub/azure-eventhub/samples/async_samples/authenticate_with_azure_sas_credential_async.py)) - Examples:
     - Utilize `azure.core.credentials.AzureSasCredential` to authenticate when creating an Event Hub client.
 
+- [authenticate_with_azure_named_key_credential.py](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/eventhub/azure-eventhub/samples/sync_samples/authenticate_with_azure_named_key_credential.py) ([async_version](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/eventhub/azure-eventhub/samples/async_samples/authenticate_with_azure_named_key_credential_async.py)) - Examples:
+    - Utilize `azure.core.credentials.AzureNamedKeyCredential` to authenticate when creating an Event Hub client.
+
 - [connection_to_custom_endpoint_address.py](https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/eventhub/azure-eventhub/samples/sync_samples/connection_to_custom_endpoint_address.py) ([async version](https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/eventhub/azure-eventhub/samples/async_samples/connection_to_custom_endpoint_address_async.py)) - Examples:
   to create EventHubProducerClient and EventHubConsumerClient that connect to a custom endpoint with a custom certificate.
 

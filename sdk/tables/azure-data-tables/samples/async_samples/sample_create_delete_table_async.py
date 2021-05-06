@@ -33,7 +33,6 @@ class CreateDeleteTable(object):
 
     def __init__(self):
         load_dotenv(find_dotenv())
-        # self.connection_string = os.getenv("AZURE_TABLES_CONNECTION_STRING")
         self.access_key = os.getenv("TABLES_PRIMARY_STORAGE_ACCOUNT_KEY")
         self.endpoint = os.getenv("TABLES_STORAGE_ENDPOINT_SUFFIX")
         self.account_name = os.getenv("TABLES_STORAGE_ACCOUNT_NAME")
@@ -70,15 +69,12 @@ class CreateDeleteTable(object):
 
     async def delete_table(self):
         from azure.data.tables.aio import TableServiceClient
-        from azure.core.exceptions import ResourceNotFoundError
+        from azure.core.exceptions import HttpResponseError
 
         # [START delete_table]
         async with TableServiceClient.from_connection_string(self.connection_string) as table_service_client:
-            try:
-                await table_service_client.delete_table(table_name=self.table_name)
-                print("Deleted table {}!".format(self.table_name))
-            except ResourceNotFoundError:
-                print("Table could not be found")
+            await table_service_client.delete_table(table_name=self.table_name)
+            print("Deleted table {}!".format(self.table_name))
         # [END delete_table]
 
     async def create_from_table_client(self):
@@ -95,15 +91,12 @@ class CreateDeleteTable(object):
 
     async def delete_from_table_client(self):
         from azure.data.tables.aio import TableClient
-        from azure.core.exceptions import ResourceNotFoundError
+        from azure.core.exceptions import HttpResponseError
 
         # [START delete_from_table_client]
         async with TableClient.from_connection_string(conn_str=self.connection_string, table_name=self.table_name) as table_client:
-            try:
-                await table_client.delete_table()
-                print("Deleted table {}!".format(self.table_name))
-            except ResourceNotFoundError:
-                print("Table could not be found")
+            await table_client.delete_table()
+            print("Deleted table {}!".format(self.table_name))
         # [END delete_from_table_client]
 
 

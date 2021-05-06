@@ -38,6 +38,15 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
         :type credential: :class:`~azure.core.credentials_async.AsyncTokenCredential`
         :returns: None
         :raises: None
+
+        .. admonition:: Example:
+
+            .. literalinclude:: ../samples/async_samples/sample_create_client_async.py
+                :start-after: [START create_registry_client]
+                :end-before: [END create_registry_client]
+                :language: python
+                :dedent: 8
+                :caption: Instantiate an instance of `ContainerRegistryClient`
         """
         if not endpoint.startswith("https://") and not endpoint.startswith("http://"):
             endpoint = "https://" + endpoint
@@ -53,6 +62,15 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
         :returns: Object containing information about the deleted repository
         :rtype: :class:`~azure.containerregistry.DeleteRepositoryResult`
         :raises: :class:`~azure.core.exceptions.ResourceNotFoundError`
+
+        .. admonition:: Example:
+
+            .. literalinclude:: ../samples/async_samples/sample_create_client_async.py
+                :start-after: [START delete_repository]
+                :end-before: [END delete_repository]
+                :language: python
+                :dedent: 8
+                :caption: Delete a repository from the `ContainerRegistryClient`
         """
         result = await self._client.container_registry.delete_repository(repository_name, **kwargs)
         return DeleteRepositoryResult._from_generated(result)  # pylint: disable=protected-access
@@ -71,6 +89,15 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
         :return: ItemPaged[str]
         :rtype: :class:`~azure.core.async_paging.AsyncItemPaged`
         :raises: :class:`~azure.core.exceptions.ResourceNotFoundError`
+
+        .. admonition:: Example:
+
+            .. literalinclude:: ../samples/async_samples/sample_delete_old_tags_async.py
+                :start-after: [START list_repositories]
+                :end-before: [END list_repositories]
+                :language: python
+                :dedent: 8
+                :caption: List repositories in a container registry account
         """
         n = kwargs.pop("results_per_page", None)
         last = kwargs.pop("last", None)
@@ -168,6 +195,17 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
         :param repository: The repository to create a client for
         :type repository: str
         :returns: :class:`~azure.containerregistry.aio.ContainerRepository`
+
+        Example
+
+        .. code-block:: python
+
+            from azure.containerregistry.aio import ContainerRepositoryClient
+            from azure.identity.aio import DefaultAzureCredential
+
+            account_url = os.environ["CONTAINERREGISTRY_ENDPOINT"]
+            client = ContainerRegistryClient(account_url, DefaultAzureCredential())
+            repository_client = client.get_repository_client("my_repository")
         """
         _pipeline = AsyncPipeline(
             transport=AsyncTransportWrapper(
