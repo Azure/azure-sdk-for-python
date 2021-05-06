@@ -115,7 +115,8 @@ steps:
       - template: /eng/common/pipelines/templates/steps/sparse-checkout.yml
         parameters:
           Paths:
-            - "sdk/"
+            - "${{ checkout.checkout_path }}"
+            - "sdk/conftest.py"
             - "tools/"
           Repositories:
             - Name: "Azure/azure-sdk-for-python"
@@ -142,21 +143,21 @@ steps:
         displayName: 'Install ${{ checkout.package }} Conda Package and Dev Requirements'
         workingDirectory: $(conda.build)/${{ checkout.checkout_path }}/${{ checkout.package }}
 
-      - bash: |
-          echo "$(activate.method) ${{ artifact.name }}"
-          $(activate.method) ${{ artifact.name }}
+      # - bash: |
+      #     echo "$(activate.method) ${{ artifact.name }}"
+      #     $(activate.method) ${{ artifact.name }}
      
-          echo "what about executable location?"
-          python -c "import sys; print(sys.executable)"
+      #     echo "what about executable location?"
+      #     python -c "import sys; print(sys.executable)"
 
-          echo "what about pip freeze"
-          python -m pip freeze
+      #     echo "what about pip freeze"
+      #     python -m pip freeze
 
-          echo "dumping env"
-          printenv
-        displayName: 'Dump Environment Variables'
-        continueOnError: true
-        workingDirectory: $(conda.build)/${{ checkout.checkout_path }}/${{ checkout.package }}
+      #     echo "dumping env"
+      #     printenv
+      #   displayName: 'Dump Environment Variables'
+      #   continueOnError: true
+      #   workingDirectory: $(conda.build)/${{ checkout.checkout_path }}/${{ checkout.package }}
 
       - script: |
           echo "$(activate.method) ${{ artifact.name }}"
