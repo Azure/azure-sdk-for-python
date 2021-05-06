@@ -114,14 +114,14 @@ jobs:
     #           ServiceDirectory: ${{ parameters.ServiceDirectory }}
     #           BuildTargetingString: ${{ parameters.BuildTargetingString }}
 
-  - ${{ if parameters.CondaArtifacts, '[]' }}:
+  - ${{ if ne(parameters.CondaArtifacts, '[]')}}:
     - job:
       displayName: 'Test Conda'
       condition: |
         and(
           succeededOrFailed(),
           ne(variables['Skip.TestConda'], 'true'),
-          or(eq(variables['PythonVersion'],'3.8'), eq(variables['PythonVersion'],'3.9'))
+          or(eq(variables['PythonVersion'],'3.8'),eq(variables['PythonVersion'],'3.9'))
         )
       timeoutInMinutes: ${{ parameters.TestTimeoutInMinutes }}
 
