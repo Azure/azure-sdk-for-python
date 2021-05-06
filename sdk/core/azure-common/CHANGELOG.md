@@ -2,7 +2,6 @@
 
 ## 1.1.28 (Unreleased)
 
-
 ## 1.1.27 (2021-03-23)
 
 - Deprecate JSON and auth file client factory  #15075
