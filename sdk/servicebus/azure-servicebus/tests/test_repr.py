@@ -45,7 +45,10 @@ def test_servicebus_received_message_repr():
     received_message = ServiceBusReceivedMessage(uamqp_received_message, receiver=None)
     assert "application_properties=None, session_id=None" in received_message.__repr__()
     assert "content_type=None, correlation_id=None, to=None, reply_to=None, reply_to_session_id=None, subject=None, scheduled_enqueue_time_utc" in received_message.__repr__()
-    assert "annotations={b'x-opt-partition-key': b'r_key', b'x-opt-via-partition-key': b'r_via_key', b'x-opt-scheduled-enqueue-time': 123424566}" in received_message.__repr__()
+    try:
+        assert "annotations={b'x-opt-partition-key': b'r_key', b'x-opt-via-partition-key': b'r_via_key', b'x-opt-scheduled-enqueue-time': 123424566}" in received_message.__repr__()
+    except:
+        assert "annotations={'x-opt-partition-key': 'r_key', 'x-opt-via-partition-key': 'r_via_key', 'x-opt-scheduled-enqueue-time': 123424566}" in received_message.__repr__()
 
 def test_servicebus_received_message_repr_with_props():
     uamqp_received_message = uamqp.message.Message(
@@ -70,7 +73,9 @@ def test_servicebus_received_message_repr_with_props():
         message=uamqp_received_message,
         receiver=None,
         )
-    print(received_message.__repr__())
     assert "application_properties=None, session_id=id_session" in received_message.__repr__()
     assert "content_type=content type, correlation_id=correlation, to=None, reply_to=reply to, reply_to_session_id=reply to group, subject=github, scheduled_enqueue_time_utc" in received_message.__repr__()
-    assert "annotations={b'x-opt-partition-key': b'r_key', b'x-opt-via-partition-key': b'r_via_key', b'x-opt-scheduled-enqueue-time': 123424566}" in received_message.__repr__()
+    try:
+        assert "annotations={b'x-opt-partition-key': b'r_key', b'x-opt-via-partition-key': b'r_via_key', b'x-opt-scheduled-enqueue-time': 123424566}" in received_message.__repr__()
+    except:
+        assert "annotations={'x-opt-partition-key': 'r_key', 'x-opt-via-partition-key': 'r_via_key', 'x-opt-scheduled-enqueue-time': 123424566}" in received_message.__repr__()
