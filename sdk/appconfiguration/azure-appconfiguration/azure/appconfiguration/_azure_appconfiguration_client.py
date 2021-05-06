@@ -4,7 +4,7 @@
 # license information.
 # -------------------------------------------------------------------------
 import binascii
-from typing import Dict, Optional, Any
+from typing import Optional, Any
 from requests.structures import CaseInsensitiveDict
 from azure.core import MatchConditions
 from azure.core.pipeline import Pipeline
@@ -600,3 +600,10 @@ class AzureAppConfigurationClient:
 
         """Close all connections made by the client"""
         self._impl._client.close()
+
+    def __enter__(self):
+        self._impl.__enter__()
+        return self
+
+    def __exit__(self, *args):
+        self._impl.__exit__(*args)
