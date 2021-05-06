@@ -122,6 +122,10 @@ steps:
               WorkingDirectory: "$(conda.build)"
           SkipDefaultCheckout: true
 
+      - pwsh: |
+          Get-ChildItem -R $(conda.build)
+        displayName: What did we clone down?
+
       - script: |
           echo "conda install --name ${{ artifact.name }} azure-identity -c $(AzureSDKCondaChannel) --yes"
           conda install --name ${{ artifact.name }} azure-identity -c $(AzureSDKCondaChannel) --yes
@@ -136,10 +140,6 @@ steps:
           python -m pip install -r $(Build.SourcesDirectory)/eng/conda_test_requirements.txt
         displayName: 'Install ${{ checkout.package }} Conda Package and Dev Requirements'
         workingDirectory: $(conda.build)/${{ checkout.checkout_path }}/${{ checkout.package }}
-
-      - pwsh: |
-          Get-ChildItem -R $(conda.build)
-        displayName: What did we clone down?
 
       - bash: |
           echo "$(activate.method) ${{ artifact.name }}"
