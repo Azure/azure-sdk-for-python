@@ -71,3 +71,6 @@ extends:
     - name: azure-synapse-nspkg
       safeName: azuresynapsenspkg
       skipVerifyChangeLog: true
+    - name: azure-purview-nspkg
+      safeName: azurepurviewnspkg
+      skipVerifyChangeLog: true
