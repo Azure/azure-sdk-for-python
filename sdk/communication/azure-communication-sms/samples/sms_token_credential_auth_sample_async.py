@@ -14,7 +14,7 @@ DESCRIPTION:
 USAGE:
     python sms_token_credential_auth_sample_async.py
     Set the environment variable with your own value before running the sample:
-    1) AZURE_COMMUNICATION_SERVICE_ENDPOINT - the endpoint in your ACS account
+    1) COMMUNICATION_SAMPLES_CONNECTION_STRING - the connection string in your ACS account
 """
 
 import os
@@ -28,7 +28,7 @@ sys.path.append("..")
 
 class SmsTokenCredentialAuthSampleAsync(object):
 
-    connection_string = os.getenv('AZURE_COMMUNICATION_SERVICE_CONNECTION_STRING')
+    connection_string = os.getenv('COMMUNICATION_SAMPLES_CONNECTION_STRING')
     phone_number = os.getenv("AZURE_COMMUNICATION_SERVICE_PHONE_NUMBER")
     
     async def sms_token_credential_auth_async(self):
