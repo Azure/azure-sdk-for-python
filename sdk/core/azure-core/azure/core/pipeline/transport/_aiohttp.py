@@ -193,24 +193,6 @@ class AioHttpTransport(AsyncHttpTransport):
         return response
 
 
-class _BrotliDecoder:
-    # Supports both 'brotlipy' and 'Brotli' packages
-    # since they share an import name. The top branches
-    # are for 'brotlipy' and bottom branches for 'Brotli'
-    def __init__(self) -> None:
-        import brotli
-        self._obj = brotli.Decompressor()
-
-    def decompress(self, data: bytes) -> bytes:
-        if hasattr(self._obj, "decompress"):
-            return cast(bytes, self._obj.decompress(data))
-        return cast(bytes, self._obj.process(data))
-
-    def flush(self) -> bytes:
-        if hasattr(self._obj, "flush"):
-            return cast(bytes, self._obj.flush())
-        return b""
-
 class AioHttpStreamDownloadGenerator(AsyncIterator):
     """Streams the response body data.
 
