@@ -35,6 +35,16 @@ def build_get_trigger_request(
     :return: Returns an :class:`~azure.purview.scanning.core.rest.HttpRequest` that you will pass to the client's `send_request` method.
      See https://aka.ms/azsdk/python/llcwiki for how to incorporate this response into your code flow.
     :rtype: ~azure.purview.scanning.core.rest.HttpRequest
+
+    Example:
+        .. code-block:: python
+
+    
+            # response body for status code(s): 200
+            response_body == {
+                "properties": {}
+            }
+
     """
     api_version = "2018-12-01-preview"
     accept = "application/json"
@@ -89,10 +99,18 @@ def build_create_trigger_request(
     Example:
         .. code-block:: python
 
+    
             # JSON input template you can fill out and use as your `json` input.
             json = {
                 "properties": {}
             }
+
+    
+            # response body for status code(s): 200, 201
+            response_body == {
+                "properties": {}
+            }
+
     """
     content_type = kwargs.pop("content_type", None)
     api_version = "2018-12-01-preview"
@@ -142,6 +160,16 @@ def build_delete_trigger_request(
     :return: Returns an :class:`~azure.purview.scanning.core.rest.HttpRequest` that you will pass to the client's `send_request` method.
      See https://aka.ms/azsdk/python/llcwiki for how to incorporate this response into your code flow.
     :rtype: ~azure.purview.scanning.core.rest.HttpRequest
+
+    Example:
+        .. code-block:: python
+
+    
+            # response body for status code(s): 200
+            response_body == {
+                "properties": {}
+            }
+
     """
     api_version = "2018-12-01-preview"
     accept = "application/json"

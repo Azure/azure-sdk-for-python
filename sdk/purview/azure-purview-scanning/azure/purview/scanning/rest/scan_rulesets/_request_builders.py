@@ -32,6 +32,16 @@ def build_get_request(
     :return: Returns an :class:`~azure.purview.scanning.core.rest.HttpRequest` that you will pass to the client's `send_request` method.
      See https://aka.ms/azsdk/python/llcwiki for how to incorporate this response into your code flow.
     :rtype: ~azure.purview.scanning.core.rest.HttpRequest
+
+    Example:
+        .. code-block:: python
+
+    
+            # response body for status code(s): 200
+            response_body == {
+                "kind": "ScanRuleset"
+            }
+
     """
     api_version = "2018-12-01-preview"
     accept = "application/json"
@@ -82,10 +92,21 @@ def build_create_or_update_request(
     Example:
         .. code-block:: python
 
+    
+            # kind template as part of your input body
+            kind = 'AdlsGen1ScanRuleset' or 'AdlsGen2ScanRuleset' or 'AmazonAccountScanRuleset' or 'AmazonPostgreSqlScanRuleset' or 'AmazonS3ScanRuleset' or 'AmazonSqlScanRuleset' or 'AzureCosmosDbScanRuleset' or 'AzureDataExplorerScanRuleset' or 'AzureFileServiceScanRuleset' or 'AzureMySqlScanRuleset' or 'AzurePostgreSqlScanRuleset' or 'AzureResourceGroupScanRuleset' or 'AzureSqlDataWarehouseScanRuleset' or 'AzureSqlDatabaseScanRuleset' or 'AzureSqlDatabaseManagedInstanceScanRuleset' or 'AzureStorageScanRuleset' or 'AzureSubscriptionScanRuleset' or 'AzureSynapseScanRuleset' or 'AzureSynapseWorkspaceScanRuleset' or 'OracleScanRuleset' or 'PowerBIScanRuleset' or 'SapEccScanRuleset' or 'SapS4HanaScanRuleset' or 'SqlServerDatabaseScanRuleset' or 'TeradataScanRuleset'
+
             # JSON input template you can fill out and use as your `json` input.
             json = {
-                "kind": "str"
+                "kind": "ScanRuleset"
             }
+
+    
+            # response body for status code(s): 200, 201
+            response_body == {
+                "kind": "ScanRuleset"
+            }
+
     """
     content_type = kwargs.pop("content_type", None)
     api_version = "2018-12-01-preview"
@@ -131,6 +152,16 @@ def build_delete_request(
     :return: Returns an :class:`~azure.purview.scanning.core.rest.HttpRequest` that you will pass to the client's `send_request` method.
      See https://aka.ms/azsdk/python/llcwiki for how to incorporate this response into your code flow.
     :rtype: ~azure.purview.scanning.core.rest.HttpRequest
+
+    Example:
+        .. code-block:: python
+
+    
+            # response body for status code(s): 200
+            response_body == {
+                "kind": "ScanRuleset"
+            }
+
     """
     api_version = "2018-12-01-preview"
     accept = "application/json"
@@ -170,6 +201,22 @@ def build_list_all_request(
     :return: Returns an :class:`~azure.purview.scanning.core.rest.HttpRequest` that you will pass to the client's `send_request` method.
      See https://aka.ms/azsdk/python/llcwiki for how to incorporate this response into your code flow.
     :rtype: ~azure.purview.scanning.core.rest.HttpRequest
+
+    Example:
+        .. code-block:: python
+
+    
+            # response body for status code(s): 200
+            response_body == {
+                "count": "long (optional)",
+                "nextLink": "str (optional)",
+                "value": [
+                    {
+                        "kind": "ScanRuleset"
+                    }
+                ]
+            }
+
     """
     api_version = "2018-12-01-preview"
     accept = "application/json"

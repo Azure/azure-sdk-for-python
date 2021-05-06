@@ -29,6 +29,22 @@ def build_list_all_request(
     :return: Returns an :class:`~azure.purview.scanning.core.rest.HttpRequest` that you will pass to the client's `send_request` method.
      See https://aka.ms/azsdk/python/llcwiki for how to incorporate this response into your code flow.
     :rtype: ~azure.purview.scanning.core.rest.HttpRequest
+
+    Example:
+        .. code-block:: python
+
+    
+            # response body for status code(s): 200
+            response_body == {
+                "count": "long (optional)",
+                "nextLink": "str (optional)",
+                "value": [
+                    {
+                        "kind": "SystemScanRuleset"
+                    }
+                ]
+            }
+
     """
     api_version = "2018-12-01-preview"
     accept = "application/json"
@@ -67,6 +83,16 @@ def build_get_request(
     :return: Returns an :class:`~azure.purview.scanning.core.rest.HttpRequest` that you will pass to the client's `send_request` method.
      See https://aka.ms/azsdk/python/llcwiki for how to incorporate this response into your code flow.
     :rtype: ~azure.purview.scanning.core.rest.HttpRequest
+
+    Example:
+        .. code-block:: python
+
+    
+            # response body for status code(s): 200
+            response_body == {
+                "kind": "SystemScanRuleset"
+            }
+
     """
     api_version = "2018-12-01-preview"
     accept = "application/json"
@@ -111,6 +137,16 @@ def build_get_by_version_request(
     :return: Returns an :class:`~azure.purview.scanning.core.rest.HttpRequest` that you will pass to the client's `send_request` method.
      See https://aka.ms/azsdk/python/llcwiki for how to incorporate this response into your code flow.
     :rtype: ~azure.purview.scanning.core.rest.HttpRequest
+
+    Example:
+        .. code-block:: python
+
+    
+            # response body for status code(s): 200
+            response_body == {
+                "kind": "SystemScanRuleset"
+            }
+
     """
     data_source_type = kwargs.pop('data_source_type', None)  # type: Optional[Union[str, "_models.DataSourceType"]]
     api_version = "2018-12-01-preview"
@@ -155,6 +191,16 @@ def build_get_latest_request(
     :return: Returns an :class:`~azure.purview.scanning.core.rest.HttpRequest` that you will pass to the client's `send_request` method.
      See https://aka.ms/azsdk/python/llcwiki for how to incorporate this response into your code flow.
     :rtype: ~azure.purview.scanning.core.rest.HttpRequest
+
+    Example:
+        .. code-block:: python
+
+    
+            # response body for status code(s): 200
+            response_body == {
+                "kind": "SystemScanRuleset"
+            }
+
     """
     data_source_type = kwargs.pop('data_source_type', None)  # type: Optional[Union[str, "_models.DataSourceType"]]
     api_version = "2018-12-01-preview"
@@ -195,6 +241,22 @@ def build_list_versions_by_data_source_request(
     :return: Returns an :class:`~azure.purview.scanning.core.rest.HttpRequest` that you will pass to the client's `send_request` method.
      See https://aka.ms/azsdk/python/llcwiki for how to incorporate this response into your code flow.
     :rtype: ~azure.purview.scanning.core.rest.HttpRequest
+
+    Example:
+        .. code-block:: python
+
+    
+            # response body for status code(s): 200
+            response_body == {
+                "count": "long (optional)",
+                "nextLink": "str (optional)",
+                "value": [
+                    {
+                        "kind": "SystemScanRuleset"
+                    }
+                ]
+            }
+
     """
     data_source_type = kwargs.pop('data_source_type', None)  # type: Optional[Union[str, "_models.DataSourceType"]]
     api_version = "2018-12-01-preview"

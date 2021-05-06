@@ -44,6 +44,7 @@ class AzurePurviewScanningClient(object):
         self._client = PipelineClient(base_url=base_url, config=self._config, **kwargs)
 
         self._serialize = Serializer()
+        self._deserialize = Deserializer()
         self._serialize.client_side_validation = False
 
     def send_request(self, http_request, **kwargs):
@@ -53,9 +54,9 @@ class AzurePurviewScanningClient(object):
         We have helper methods to create requests specific to this service in `azure.purview.scanning.rest`.
         Use these helper methods to create the request you pass to this method. See our example below:
 
-        >>> from azure.purview.scanning.rest import build_get_azure_key_vault_request
-        >>> request = build_get_azure_key_vault_request(azure_key_vault_name)
-        <HttpRequest [GET], url: '/azureKeyVaults/{azureKeyVaultName}'>
+        >>> from azure.purview.scanning.rest import build_get_request
+        >>> request = build_get_request(key_vault_name)
+        <HttpRequest [GET], url: '/azureKeyVaults/{keyVaultName}'>
         >>> response = client.send_request(request)
         <HttpResponse: 200 OK>
 

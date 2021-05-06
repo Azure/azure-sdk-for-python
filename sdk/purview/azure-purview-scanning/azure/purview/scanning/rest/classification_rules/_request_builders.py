@@ -32,6 +32,16 @@ def build_get_request(
     :return: Returns an :class:`~azure.purview.scanning.core.rest.HttpRequest` that you will pass to the client's `send_request` method.
      See https://aka.ms/azsdk/python/llcwiki for how to incorporate this response into your code flow.
     :rtype: ~azure.purview.scanning.core.rest.HttpRequest
+
+    Example:
+        .. code-block:: python
+
+    
+            # response body for status code(s): 200
+            response_body == {
+                "kind": "ClassificationRule"
+            }
+
     """
     api_version = "2018-12-01-preview"
     accept = "application/json"
@@ -82,10 +92,21 @@ def build_create_or_update_request(
     Example:
         .. code-block:: python
 
+    
+            # kind template as part of your input body
+            kind = 'CustomClassificationRule' or 'SystemClassificationRule'
+
             # JSON input template you can fill out and use as your `json` input.
             json = {
-                "kind": "str"
+                "kind": "ClassificationRule"
             }
+
+    
+            # response body for status code(s): 200, 201
+            response_body == {
+                "kind": "ClassificationRule"
+            }
+
     """
     content_type = kwargs.pop("content_type", None)
     api_version = "2018-12-01-preview"
@@ -131,6 +152,16 @@ def build_delete_request(
     :return: Returns an :class:`~azure.purview.scanning.core.rest.HttpRequest` that you will pass to the client's `send_request` method.
      See https://aka.ms/azsdk/python/llcwiki for how to incorporate this response into your code flow.
     :rtype: ~azure.purview.scanning.core.rest.HttpRequest
+
+    Example:
+        .. code-block:: python
+
+    
+            # response body for status code(s): 200
+            response_body == {
+                "kind": "ClassificationRule"
+            }
+
     """
     api_version = "2018-12-01-preview"
     accept = "application/json"
@@ -170,6 +201,22 @@ def build_list_all_request(
     :return: Returns an :class:`~azure.purview.scanning.core.rest.HttpRequest` that you will pass to the client's `send_request` method.
      See https://aka.ms/azsdk/python/llcwiki for how to incorporate this response into your code flow.
     :rtype: ~azure.purview.scanning.core.rest.HttpRequest
+
+    Example:
+        .. code-block:: python
+
+    
+            # response body for status code(s): 200
+            response_body == {
+                "count": "long (optional)",
+                "nextLink": "str (optional)",
+                "value": [
+                    {
+                        "kind": "ClassificationRule"
+                    }
+                ]
+            }
+
     """
     api_version = "2018-12-01-preview"
     accept = "application/json"
@@ -208,6 +255,22 @@ def build_list_versions_by_classification_rule_name_request(
     :return: Returns an :class:`~azure.purview.scanning.core.rest.HttpRequest` that you will pass to the client's `send_request` method.
      See https://aka.ms/azsdk/python/llcwiki for how to incorporate this response into your code flow.
     :rtype: ~azure.purview.scanning.core.rest.HttpRequest
+
+    Example:
+        .. code-block:: python
+
+    
+            # response body for status code(s): 200
+            response_body == {
+                "count": "long (optional)",
+                "nextLink": "str (optional)",
+                "value": [
+                    {
+                        "kind": "ClassificationRule"
+                    }
+                ]
+            }
+
     """
     api_version = "2018-12-01-preview"
     accept = "application/json"
@@ -255,6 +318,20 @@ def build_tag_classification_version_request(
     :return: Returns an :class:`~azure.purview.scanning.core.rest.HttpRequest` that you will pass to the client's `send_request` method.
      See https://aka.ms/azsdk/python/llcwiki for how to incorporate this response into your code flow.
     :rtype: ~azure.purview.scanning.core.rest.HttpRequest
+
+    Example:
+        .. code-block:: python
+
+    
+            # response body for status code(s): 202
+            response_body == {
+                "endTime": "datetime (optional)",
+                "error": {},
+                "scanResultId": "str (optional)",
+                "startTime": "datetime (optional)",
+                "status": "str (optional)"
+            }
+
     """
     action = kwargs.pop('action')  # type: Union[str, "_models.ClassificationAction"]
     api_version = "2018-12-01-preview"

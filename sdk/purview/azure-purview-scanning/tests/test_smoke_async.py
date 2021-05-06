@@ -11,7 +11,7 @@ class PurviewScanningSmokeTest(PurviewScanningTest):
 
     @PurviewScanningPowerShellPreparer()
     async def test_basic_smoke_test(self, purviewscanning_endpoint):
-        request = data_sources.build_list_by_account_request()
+        request = data_sources.build_list_all_request()
 
         client = self.create_async_client(endpoint=purviewscanning_endpoint)
         response = await client.send_request(request)

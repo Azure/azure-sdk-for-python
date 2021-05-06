@@ -5,7 +5,6 @@
 # license information.
 # -------------------------------------------------------------------------
 from testcase import PurviewScanningTest, PurviewScanningPowerShellPreparer
-from azure.purview.scanning import AzurePurviewScanningClient
 from azure.purview.scanning.rest import data_sources
 
 class PurviewScanningSmokeTest(PurviewScanningTest):
@@ -13,7 +12,7 @@ class PurviewScanningSmokeTest(PurviewScanningTest):
     @PurviewScanningPowerShellPreparer()
     def test_basic_smoke_test(self, purviewscanning_endpoint):
         client = self.create_client(endpoint=purviewscanning_endpoint)
-        request = data_sources.build_list_by_account_request()
+        request = data_sources.build_list_all_request()
         response = client.send_request(request)
         response.raise_for_status()
         assert response.status_code == 200

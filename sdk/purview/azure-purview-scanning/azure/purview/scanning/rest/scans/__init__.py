@@ -11,24 +11,15 @@ try:
     from ._request_builders_py3 import build_get_request
     from ._request_builders_py3 import build_delete_request
     from ._request_builders_py3 import build_list_by_data_source_request
-    from ._request_builders_py3 import build_run_scan_request
-    from ._request_builders_py3 import build_cancel_scan_request
-    from ._request_builders_py3 import build_list_scan_history_request
 except (SyntaxError, ImportError):
     from ._request_builders import build_create_or_update_request  # type: ignore
     from ._request_builders import build_get_request  # type: ignore
     from ._request_builders import build_delete_request  # type: ignore
     from ._request_builders import build_list_by_data_source_request  # type: ignore
-    from ._request_builders import build_run_scan_request  # type: ignore
-    from ._request_builders import build_cancel_scan_request  # type: ignore
-    from ._request_builders import build_list_scan_history_request  # type: ignore
 
 __all__ = [
     'build_create_or_update_request',
     'build_get_request',
     'build_delete_request',
     'build_list_by_data_source_request',
-    'build_run_scan_request',
-    'build_cancel_scan_request',
-    'build_list_scan_history_request',
 ]
