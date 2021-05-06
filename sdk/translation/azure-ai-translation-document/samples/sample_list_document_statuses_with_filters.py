@@ -20,6 +20,7 @@ USAGE:
     Set the environment variables with your own values before running the sample:
     1) AZURE_DOCUMENT_TRANSLATION_ENDPOINT - the endpoint to your Document Translation resource.
     2) AZURE_DOCUMENT_TRANSLATION_KEY - your Document Translation API key.
+    3) JOB_ID - The ID of the translation job
 """
 
 def sample_list_document_statuses_with_filters(self, client):
