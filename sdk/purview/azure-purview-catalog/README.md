@@ -72,13 +72,13 @@ The following section shows you how to initialize and authenticate your client, 
 ```python
 from azure.purview.catalog import AzurePurviewCatalogClient
 from azure.identity import DefaultAzureCredential
-from azure.purview.catalog.rest import types_rest
+from azure.purview.catalog.rest import types
 from azure.core.exceptions import HttpResponseError
 
 credential = DefaultAzureCredential()
 client = AzurePurviewCatalogClient(endpoint="https://<my-account-name>.catalog.purview.azure.com", credential=credential)
 
-request = types_rest.build_get_all_type_defs_request()
+request = types.build_get_all_type_defs_request()
 
 response = client.send_request(request)
 try:
