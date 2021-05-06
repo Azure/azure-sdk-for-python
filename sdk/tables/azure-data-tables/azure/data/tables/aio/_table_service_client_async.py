@@ -222,12 +222,13 @@ class TableServiceClient(AsyncTablesBaseClient):
 
     @distributed_trace_async
     async def delete_table(self, table_name: str, **kwargs) -> None:
-        """Deletes the table under the current account
+        """Deletes a table under the current account. No error will be raised if
+            the table is not found.
 
         :param str table_name: The Table name.
         :return: None
         :rtype: None
-        :raises: :class:`~azure.core.exceptions.ResourceNotFoundError`
+        :raises: :class:`~azure.core.exceptions.HttpResponseError`
 
         .. admonition:: Example:
 

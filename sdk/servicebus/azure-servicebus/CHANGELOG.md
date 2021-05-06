@@ -13,6 +13,7 @@ The preview features related to AMQPAnnotatedMessage introduced in 7.2.0b1 are n
 **Bug Fixes**
 
 * Fixed a bug where `update_queue` and `update_subscription` methods were mutating the properties `forward_to` and `forward_dead_lettered_messages_to` of the model instance when those properties are entities instead of full paths.
+* Improved the `repr` on `ServiceBusMessage` and `ServiceBusReceivedMessage` to show more meaningful text.
 
 **Notes**
 
@@ -36,7 +37,6 @@ The preview features related to AMQPAnnotatedMessage introduced in 7.2.0b1 are n
   - `SEQUENCE`: The body of message consists of one or more sequence sections and each section contains an arbitrary number of structured data elements.
   - `VALUE`: The body of message consists of one amqp-value section and the section contains a single AMQP value.
 * Added new property `body_type` on `azure.servicebus.ServiceBusMessage` and `azure.servicebus.ReceivedMessage` which returns `azure.servicebus.AMQPMessageBodyType`.
-
 
 ## 7.1.1 (2021-04-07)
 

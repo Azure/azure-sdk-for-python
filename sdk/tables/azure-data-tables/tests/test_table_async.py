@@ -240,10 +240,7 @@ class TableTestAsync(AzureTestCase, AsyncTableTestCase):
         account_url = self.account_url(tables_storage_account_name, "table")
         ts = self.create_client_from_credential(TableServiceClient, tables_primary_storage_account_key, endpoint=account_url)
         table_name = self._get_table_reference()
-
-        # Act
-        with pytest.raises(ResourceNotFoundError):
-            await ts.delete_table(table_name)
+        await ts.delete_table(table_name)
 
         # Assert
 

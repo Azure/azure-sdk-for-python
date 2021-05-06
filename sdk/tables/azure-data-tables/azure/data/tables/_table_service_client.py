@@ -228,13 +228,14 @@ class TableServiceClient(TablesBaseClient):
     @distributed_trace
     def delete_table(self, table_name, **kwargs):
         # type: (str, Any) -> None
-        """Deletes the table under the current account
+        """Deletes the table under the current account. No error will be raised
+            if the given table is not found.
 
         :param table_name: The Table name.
         :type table_name: str
         :return: None
         :rtype: None
-        :raises: :class:`~azure.core.exceptions.ResourceNotFoundError`
+        :raises: :class:`~azure.core.exceptions.HttpResponseError`
 
         .. admonition:: Example:
 

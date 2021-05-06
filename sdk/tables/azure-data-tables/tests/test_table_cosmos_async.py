@@ -252,10 +252,7 @@ class TableTestAsync(AzureTestCase, AsyncTableTestCase):
         # Arrange
         ts = TableServiceClient(self.account_url(tables_cosmos_account_name, "cosmos"), tables_primary_cosmos_account_key)
         table_name = self._get_table_reference()
-
-        # Act
-        with pytest.raises(ResourceNotFoundError):
-            await ts.delete_table(table_name)
+        await ts.delete_table(table_name)
 
         if self.is_live:
             sleep(SLEEP_DELAY)
