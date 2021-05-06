@@ -19,7 +19,7 @@ from azure.core.tracing.decorator_async import distributed_trace_async
 
 from .._base_client import parse_connection_str
 from .._entity import TableEntity
-from .._generated.models import SignedIdentifier, TableProperties
+from .._generated.models import SignedIdentifier, TableProperties, QueryOptions
 from .._models import AccessPolicy
 from .._serialize import serialize_iso, _parameter_filter_substitution
 from .._deserialize import _return_headers_and_deserialized
@@ -34,25 +34,24 @@ from .._table_client import EntityType, TransactionOperationType
 
 
 class TableClient(AsyncTablesBaseClient):
-    """
-    :ivar str account_name: Name of the storage account (Cosmos or Azure)
-    :ivar str table_name: The name of the table
+    """A client to interact with a specific Table in an Azure Tables account.
+
+    :ivar str account_name: The name of the Tables account.
+    :ivar str table_name: The name of the table.
+    :ivar str url: The full URL to the Tables account.
     """
 
     def __init__(
         self,
-        account_url: str,
+        endpoint: str,
         table_name: str,
         credential: Optional[Union[AzureSasCredential, AzureNamedKeyCredential]] = None,
         **kwargs
     ) -> None:
         """Create TableClient from a Credential.
 
-        :param account_url:
-            A url to an Azure Storage account.
-        :type account_url: str
-        :param table_name: The table name.
-        :type table_name: str
+        :param str endpoint: A URL to an Azure Tables account.
+        :param str table_name: The table name.
         :param credential:
             The credentials with which to authenticate. This is optional if the
             account URL already has a SAS token, or the connection string already has shared
@@ -68,7 +67,7 @@ class TableClient(AsyncTablesBaseClient):
             raise ValueError("Please specify a table name.")
         _validate_table_name(table_name)
         self.table_name = table_name
-        super(TableClient, self).__init__(account_url, credential=credential, **kwargs)
+        super(TableClient, self).__init__(endpoint, credential=credential, **kwargs)
 
     def _format_url(self, hostname):
         """Format the endpoint URL according to the current location
@@ -85,11 +84,8 @@ class TableClient(AsyncTablesBaseClient):
     ) -> 'TableClient':
         """Create TableClient from a Connection string.
 
-        :param conn_str:
-            A connection string to an Azure Storage or Cosmos account.
-        :type conn_str: str
-        :param table_name: The table name.
-        :type table_name: str
+        :param str conn_str: A connection string to an Azure Tables account.
+        :param str table_name: The table name.
         :returns: A table client.
         :rtype: :class:`~azure.data.tables.TableClient`
 
@@ -102,10 +98,10 @@ class TableClient(AsyncTablesBaseClient):
                 :dedent: 8
                 :caption: Creating the TableClient from a connection string.
         """
-        account_url, credential = parse_connection_str(
+        endpoint, credential = parse_connection_str(
             conn_str=conn_str, credential=None, keyword_args=kwargs
         )
-        return cls(account_url, table_name=table_name, credential=credential, **kwargs)
+        return cls(endpoint, table_name=table_name, credential=credential, **kwargs)
 
     @classmethod
     def from_table_url(
@@ -116,8 +112,7 @@ class TableClient(AsyncTablesBaseClient):
     ) -> 'TableClient':
         """A client to interact with a specific Table.
 
-        :param table_url: The full URI to the table, including SAS token if used.
-        :type table_url: str
+        :param str table_url: The full URI to the table, including SAS token if used.
         :param credential:
             The credentials with which to authenticate. This is optional if the
             account URL already has a SAS token. The value can be a SAS token string, an account
@@ -142,7 +137,7 @@ class TableClient(AsyncTablesBaseClient):
         account_path = ""
         if len(table_path) > 1:
             account_path = "/" + "/".join(table_path[:-1])
-        account_url = "{}://{}{}?{}".format(
+        endpoint = "{}://{}{}?{}".format(
             parsed_url.scheme,
             parsed_url.netloc.rstrip("/"),
             account_path,
@@ -153,7 +148,7 @@ class TableClient(AsyncTablesBaseClient):
             raise ValueError(
                 "Invalid URL. Please provide a URL with a valid table name"
             )
-        return cls(account_url, table_name=table_name, credential=credential, **kwargs)
+        return cls(endpoint, table_name=table_name, credential=credential, **kwargs)
 
     @distributed_trace_async
     async def get_table_access_policy(self, **kwargs) -> Mapping[str, AccessPolicy]:
@@ -470,8 +465,8 @@ class TableClient(AsyncTablesBaseClient):
     def list_entities(self, **kwargs) -> AsyncItemPaged[TableEntity]:
         """Lists entities in a table.
 
-        :keyword int results_per_page: Number of entities per page in return AsyncItemPaged
-        :keyword select: Specify desired properties of an entity to return certain entities
+        :keyword int results_per_page: Number of entities returned per service request.
+        :keyword select: Specify desired properties of an entity to return.
         :paramtype select: str or List[str]
         :return: AsyncItemPaged[:class:`~azure.data.tables.TableEntity`]
         :rtype: ~azure.core.async_paging.AsyncItemPaged
@@ -509,8 +504,8 @@ class TableClient(AsyncTablesBaseClient):
         """Lists entities in a table.
 
         :param str query_filter: Specify a filter to return certain entities
-        :keyword int results_per_page: Number of entities per page in return AsyncItemPaged
-        :keyword select: Specify desired properties of an entity to return certain entities
+        :keyword int results_per_page: Number of entities returned per service request.
+        :keyword select: Specify desired properties of an entity to return.
         :paramtype select: str or List[str]
         :keyword Dict[str, Any] parameters: Dictionary for formatting query with additional, user defined parameters
         :return: AsyncItemPaged[:class:`~azure.data.tables.TableEntity`]
@@ -533,7 +528,7 @@ class TableClient(AsyncTablesBaseClient):
         top = kwargs.pop("results_per_page", None)
         user_select = kwargs.pop("select", None)
         if user_select and not isinstance(user_select, str):
-            user_select = ", ".join(user_select)
+            user_select = ",".join(user_select)
 
         command = functools.partial(self._client.table.query_entities, **kwargs)
         return AsyncItemPaged(
@@ -558,6 +553,8 @@ class TableClient(AsyncTablesBaseClient):
         :type partition_key: str
         :param row_key: The row key of the entity.
         :type row_key: str
+        :keyword select: Specify desired properties of an entity to return.
+        :paramtype select: str or List[str]
         :return: Dictionary mapping operation metadata returned from the service
         :rtype: :class:`~azure.data.tables.TableEntity`
         :raises: :class:`~azure.core.exceptions.HttpResponseError`
@@ -571,14 +568,17 @@ class TableClient(AsyncTablesBaseClient):
                 :dedent: 8
                 :caption: Getting an entity from PartitionKey and RowKey
         """
+        user_select = kwargs.pop("select", None)
+        if user_select and not isinstance(user_select, str):
+            user_select = ",".join(user_select)
         try:
             entity = await self._client.table.query_entity_with_partition_and_row_key(
                 table=self.table_name,
                 partition_key=partition_key,
                 row_key=row_key,
+                query_options=QueryOptions(select=user_select),
                 **kwargs
             )
-
             properties = _convert_to_entity(entity)
             return properties
         except HttpResponseError as error:
