@@ -37,7 +37,7 @@ class ConfidentialLedgerIdentityServiceClient(object):
     :type credential: ~azure.core.credentials.TokenCredential
     """
 
-    def __init__(self, identity_service_url: str, **kwargs: Any) -> None:
+    def __init__(self, identity_service_url: str, **kwargs: Any) -> None:  # pylint: disable=missing-client-constructor-parameter-credential
         client = kwargs.get("generated_client")
         if client:
             # caller provided a configured client -> nothing left to initialize
