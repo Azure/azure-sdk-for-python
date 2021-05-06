@@ -75,7 +75,7 @@ class ManifestOrderBy(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     #: Order manifest by LastUpdatedOn field, from least recently updated to most recently updated.
     LAST_UPDATED_ON_ASCENDING = "timeasc"
 
-class TagOrder(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class TagOrderBy(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
 
     #: Do not provide an orderby value in the request.
     NONE = "none"
