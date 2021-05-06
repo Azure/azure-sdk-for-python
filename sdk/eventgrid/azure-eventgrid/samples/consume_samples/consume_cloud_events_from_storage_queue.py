@@ -20,7 +20,7 @@ import os
 import json
 
 # all types of CloudEvents below produce same DeserializedEvent
-connection_str = os.environ['STORAGE_QUEUE_CONN_STR']
+connection_str = os.environ['AZURE_STORAGE_CONNECTION_STRING']
 queue_name = os.environ['STORAGE_QUEUE_NAME']
 
 with QueueServiceClient.from_connection_string(connection_str) as qsc:

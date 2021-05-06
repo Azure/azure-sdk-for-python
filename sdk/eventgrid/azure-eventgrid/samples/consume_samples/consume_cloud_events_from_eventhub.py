@@ -19,11 +19,10 @@ from azure.core.messaging import CloudEvent
 from azure.eventhub import EventHubConsumerClient
 
 CONNECTION_STR = os.environ["EVENT_HUB_CONN_STR"]
-EVENTHUB_NAME = os.environ["EVENTHUB_NAME"]
+EVENTHUB_NAME = os.environ["EVENT_HUB_NAME"]
 
 
 def on_event(partition_context, event):
- 
     dict_event = CloudEvent.from_dict(json.loads(event)[0])
     print("data: {}\n".format(deserialized_event.data))
 
