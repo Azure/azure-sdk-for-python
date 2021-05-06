@@ -6,7 +6,7 @@
 
 from ._client import AttestationClient
 from ._administration_client import AttestationAdministrationClient
-from ._models import AttestationResponse, AttestationSigner, AttestationToken, AttestationSigningKey, AttestationData, PolicyResult, AttestationResult
+from ._models import AttestationResponse, AttestationSigner, AttestationToken, AttestationSigningKey, AttestationData, PolicyResult, AttestationResult, TpmAttestationResponse, TpmAttestationRequest
 from ._generated.models import AttestationType, StoredAttestationPolicy, CertificateModification
 from ._configuration import TokenValidationOptions
 from ._version import VERSION
@@ -26,6 +26,8 @@ __all__ = [
     'PolicyResult',
     'CertificateModification',
     'AttestationSigningKey',
+    'TpmAttestationRequest',
+    'TpmAttestationResponse',
 ]
 
 try:

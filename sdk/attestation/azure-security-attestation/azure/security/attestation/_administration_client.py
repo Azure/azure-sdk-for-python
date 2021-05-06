@@ -147,7 +147,7 @@ class AttestationAdministrationClient(object):
 
     @distributed_trace
     def add_policy_management_certificate(self, certificate_to_add, signing_key, **kwargs):
-        #type:(list[bytes], AttestationSigningKey, Any)-> AttestationResponse[PolicyCertificatesModificationResult]
+        #type:(bytes, AttestationSigningKey, Any)-> AttestationResponse[PolicyCertificatesModificationResult]
         key=JSONWebKey(kty='RSA', x5_c = [ base64.b64encode(certificate_to_add).decode('ascii')])
         add_body = AttestationCertificateManagementBody(policy_certificate=key)
         cert_add_token = AttestationToken[AttestationCertificateManagementBody](
@@ -161,6 +161,24 @@ class AttestationAdministrationClient(object):
         if self._config.token_validation_options.validate_token:
             if not token.validate_token(self._config.token_validation_options, self._get_signers(**kwargs)):
                 raise Exception("Token Validation of PolicyCertificate Add API failed.")
+        return AttestationResponse[PolicyCertificatesModificationResult](token, token.get_body())
+
+    @distributed_trace
+    def remove_policy_management_certificate(self, certificate_to_add, signing_key, **kwargs):
+        #type:(bytes, AttestationSigningKey, Any)-> AttestationResponse[PolicyCertificatesModificationResult]
+        key=JSONWebKey(kty='RSA', x5_c = [ base64.b64encode(certificate_to_add).decode('ascii')])
+        add_body = AttestationCertificateManagementBody(policy_certificate=key)
+        cert_add_token = AttestationToken[AttestationCertificateManagementBody](
+            body=add_body,
+            signer=signing_key,
+            body_type=AttestationCertificateManagementBody)
+
+        cert_response = self._client.policy_certificates.remove(cert_add_token.serialize(), **kwargs)
+        token = AttestationToken[PolicyCertificatesModificationResult](token=cert_response.token,
+            body_type=PolicyCertificatesModificationResult)
+        if self._config.token_validation_options.validate_token:
+            if not token.validate_token(self._config.token_validation_options, self._get_signers(**kwargs)):
+                raise Exception("Token Validation of PolicyCertificate Remove API failed.")
         return AttestationResponse[PolicyCertificatesModificationResult](token, token.get_body())
 
     def _get_signers(self, **kwargs):

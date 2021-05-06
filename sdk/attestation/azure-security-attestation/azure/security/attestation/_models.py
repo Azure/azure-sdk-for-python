@@ -510,3 +510,21 @@ class AttestationResponse(Generic[T]):
         # type (AttestationToken, T) -> None
         self.token = token #type: AttestationToken
         self.value = value #type: T
+
+class TpmAttestationRequest(object):
+    """ Represents a request for TPM attestation.
+
+    :param bytes data: The data to transmit to the Attestation Service for TPM attestation.
+    """
+    def __init__(self, data):
+        #type (bytes) -> None
+        self.data = data
+   
+class TpmAttestationResponse(object):
+    """ Represents a request for TPM attestation.
+
+    :param bytes data: The data to transmit to the Attestation Service for TPM attestation.
+    """
+    def __init__(self, data):
+        #type (bytes) -> None
+        self.data = data

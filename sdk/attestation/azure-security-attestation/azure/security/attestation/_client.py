@@ -21,7 +21,7 @@ if TYPE_CHECKING:
 from ._generated import AzureAttestationRestClient
 from ._generated.models import AttestationResult, RuntimeData, InitTimeData, DataType, AttestSgxEnclaveRequest, AttestOpenEnclaveRequest
 from ._configuration import AttestationClientConfiguration
-from ._models import AttestationSigner, AttestationToken, AttestationResponse, AttestationData
+from ._models import AttestationSigner, AttestationToken, AttestationResponse, AttestationData, TpmAttestationRequest, TpmAttestationResponse
 import base64
 import cryptography
 import cryptography.x509
@@ -173,7 +173,7 @@ class AttestationClient(object):
 
     @distributed_trace
     def attest_tpm(self, request):
-        #type:(bytes) -> bytes
+        #type:(TpmAttestationRequest) -> TpmAttestationResponse
         """ Attest a TPM based enclave.
 
         See ..seealso:`https://docs.microsoft.com/en-us/azure/attestation/virtualization-based-security-protocol` for more information.
@@ -182,7 +182,8 @@ class AttestationClient(object):
         :returns bytes: A structure containing the response from the TPM attestation.</returns>
 
         """
-        return self._client.attestation.attest_tpm(request)
+        response = self._client.attestation.attest_tpm(request.data)
+        return TpmAttestationResponse(response.data)
 
     def _get_signers(self, **kwargs):
         # type:(Any) -> List[AttestationSigner]

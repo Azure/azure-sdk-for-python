@@ -17,7 +17,7 @@
 # ----------------------
 
 from logging import fatal
-from typing import ByteString
+from typing import Any, ByteString
 import unittest
 from cryptography.hazmat.primitives import hashes
 from devtools_testutils import AzureTestCase, PowerShellPreparer
@@ -29,10 +29,15 @@ import base64
 import pytest
 from preparers import AttestationPreparer
 from test_policy_getset import Base64Url
+import json
 
 from azure.security.attestation import (
     AttestationClient,
+    AttestationAdministrationClient,
+    AttestationType,
     TokenValidationOptions,
+    TpmAttestationRequest,
+    TpmAttestationResponse,
     AttestationData)
 
 
@@ -191,6 +196,7 @@ class AttestationTest(AzureTestCase):
 
     @AttestationPreparer()
     def test_aad_getsigningcertificates(self, attestation_aad_url):
+        #type: (str) -> None
         attest_client = self.create_client(attestation_aad_url)
         signers = attest_client.get_signing_certificates()
         for signer in signers:
@@ -199,6 +205,7 @@ class AttestationTest(AzureTestCase):
 
     @AttestationPreparer()
     def test_isolated_getsigningcertificates(self, attestation_isolated_url):
+        #type: (str) -> None
         attest_client = self.create_client(attestation_isolated_url)
         signers = attest_client.get_signing_certificates()
         for signer in signers:
@@ -206,6 +213,7 @@ class AttestationTest(AzureTestCase):
             print('Cert  iss:', cert.issuer, '; subject:', cert.subject)
 
     def _test_attest_open_enclave(self, client_uri):
+        #type: (str) -> None
         attest_client = self.create_client(client_uri)
         oe_report = Base64Url.decode(_open_enclave_report)
         runtime_data = Base64Url.decode(_runtime_data)
@@ -226,18 +234,22 @@ class AttestationTest(AzureTestCase):
 
     @AttestationPreparer()
     def test_shared_attest_open_enclave(self, attestation_location_short_name):
+        #type: (str) -> None
         self._test_attest_open_enclave(self.shared_base_uri(attestation_location_short_name))
 
     @AttestationPreparer()
     def test_aad_attest_open_enclave(self, attestation_aad_url):
+        #type: (str) -> None
         self._test_attest_open_enclave(attestation_aad_url)
 
     @AttestationPreparer()
     def test_isolated_attest_open_enclave(self, attestation_isolated_url):
+        #type: (str) -> None
         self._test_attest_open_enclave(attestation_isolated_url)
 
 
     def _test_attest_sgx_enclave(self, base_uri):
+        #type: (str) -> None
         attest_client = self.create_client(base_uri)
         oe_report = Base64Url.decode(_open_enclave_report)
         # Convert the OE report into an SGX quote by stripping off the first 16 bytes.
@@ -267,17 +279,41 @@ class AttestationTest(AzureTestCase):
 
     @AttestationPreparer()
     def test_aad_attest_sgx_enclave(self, attestation_aad_url):
+        #type: (str) -> None
         self._test_attest_sgx_enclave(attestation_aad_url)
 
     @AttestationPreparer()
     def test_isolated_attest_sgx_enclave(self, attestation_isolated_url):
+        #type: (str) -> None
         self._test_attest_sgx_enclave(attestation_isolated_url)
 
 
     @AttestationPreparer()
     def test_shared_attest_sgx_enclave(self, attestation_location_short_name):
+        #type: (str) -> None
         self._test_attest_sgx_enclave(self.shared_base_uri(attestation_location_short_name))
 
+
+    @AttestationPreparer()
+    def test_tpm_attestation(
+        self,
+        attestation_aad_url):
+        #type: (str) -> None
+        client = self.create_client(attestation_aad_url)
+        admin_client = self.create_adminclient(attestation_aad_url)
+
+        # TPM attestation requires that there be a policy present, so set one.
+        basic_policy = "version=1.0; authorizationrules{=> permit();}; issuancerules{};"
+        admin_client.set_policy(AttestationType.TPM, basic_policy)
+
+        encoded_payload = json.dumps({ "payload": { "type": "aikcert" } }).encode("ascii")
+        tpm_response = client.attest_tpm(TpmAttestationRequest(encoded_payload))
+
+        decoded_response = json.loads(tpm_response.data)
+        assert decoded_response["payload"] is not None
+        payload = decoded_response["payload"]
+        assert payload["challenge"] is not None
+        assert payload["service_context"] is not None
 
     """
         # Commented out call showing the modifications needed to convert this to a call
@@ -299,27 +335,47 @@ class AttestationTest(AzureTestCase):
             print(response)
     """
 
-    def shared_client(self, location_name): #type(str) -> AttestationClient:
-            """
-            docstring
-            """
-            return self.create_client(self.shared_base_uri(location_name))
+    def shared_client(self, location_name, **kwargs): 
+        #type:(str, Any) -> AttestationClient
+        """
+        docstring
+        """
+        return self.create_client(self.shared_base_uri(location_name), **kwargs)
 
-    def create_client(self, base_uri): #type() -> AttestationClient
-            """
-            docstring
-            """
-            credential = self.get_credential(AttestationClient)
-            attest_client = self.create_client_from_credential(AttestationClient,
-                credential=credential,
-                instance_url=base_uri,
-                token_validation_options = TokenValidationOptions(
-                    validate_token=True,
-                    validate_signature=True,
-                    validate_issuer=self.is_live,
-                    issuer=base_uri,
-                    validate_expiration=self.is_live))
-            return attest_client
+    def create_client(self, base_uri, **kwargs): 
+        #type:(str, Any) -> AttestationClient
+        """
+        docstring
+        """
+        credential = self.get_credential(AttestationClient)
+        attest_client = self.create_client_from_credential(AttestationClient,
+            credential=credential,
+            instance_url=base_uri,
+            token_validation_options = TokenValidationOptions(
+                validate_token=True,
+                validate_signature=True,
+                validate_issuer=self.is_live,
+                issuer=base_uri,
+                validate_expiration=self.is_live))
+        return attest_client
+
+    def create_adminclient(self, base_uri, **kwargs): 
+        #type: (str, Any) -> AttestationAdministrationClient
+        """
+        docstring
+        """
+        credential = self.get_credential(AttestationAdministrationClient)
+        attest_client = self.create_client_from_credential(AttestationAdministrationClient,
+            credential=credential,
+            instance_url=base_uri,
+            token_validation_options = TokenValidationOptions(
+                validate_token=True,
+                validate_signature=True,
+                validate_issuer=self.is_live,
+                issuer=base_uri,
+                validate_expiration=self.is_live),
+            **kwargs)
+        return attest_client
 
     @staticmethod
     def shared_base_uri(location_name): #type(str) -> str

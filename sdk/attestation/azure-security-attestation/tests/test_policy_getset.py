@@ -171,7 +171,7 @@ class PolicyGetSetTests(AzureTestCase):
 
     @AttestationPreparer()
     @pytest.mark.live_test_only
-    def test_add_policy_certificate(
+    def test_add_remove_policy_certificate(
         self, 
         attestation_isolated_url,
         attestation_isolated_signing_certificate,
@@ -186,8 +186,29 @@ class PolicyGetSetTests(AzureTestCase):
 
         admin_client = self.create_admin_client(attestation_isolated_url)
 
+        # Add a new certificate.
         result = admin_client.add_policy_management_certificate(base64.b64decode(attestation_policy_signing_certificate0), signing_key)
         assert result.value.certificate_resolution == CertificateModification.IS_PRESENT
+
+        # Add it again - this should be ok.
+        result = admin_client.add_policy_management_certificate(base64.b64decode(attestation_policy_signing_certificate0), signing_key)
+        assert result.value.certificate_resolution == CertificateModification.IS_PRESENT
+
+        # Ensure that the new certificate is present. 
+        # We'll leverage the get certificates test to validate this.
+        self._test_get_policy_management_certificates(attestation_isolated_url, attestation_policy_signing_certificate0)
+
+        # Now remove the certificate we just added.
+        result = admin_client.remove_policy_management_certificate(base64.b64decode(attestation_policy_signing_certificate0), signing_key)
+        assert result.value.certificate_resolution == CertificateModification.IS_ABSENT
+
+        # Remove it again, this should be ok.
+        result = admin_client.remove_policy_management_certificate(base64.b64decode(attestation_policy_signing_certificate0), signing_key)
+        assert result.value.certificate_resolution == CertificateModification.IS_ABSENT
+
+        # The set of certificates should now just contain the original isolated certificate.
+        self._test_get_policy_management_certificates(attestation_isolated_url, attestation_isolated_signing_certificate)
+
 
     def create_admin_client(self, base_uri): #type() -> AttestationAdministrationClient:
             """
