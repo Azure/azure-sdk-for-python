@@ -210,6 +210,7 @@ class AioHttpStreamDownloadGenerator(AsyncIterator):
         if len(kwargs) > 0:
             raise ValueError("Unknown parameters!")
         self.content_length = int(response.internal_response.headers.get('Content-Length', 0))
+        self._decompressor = None
 
     def __len__(self):
         return self.content_length
@@ -226,21 +227,21 @@ class AioHttpStreamDownloadGenerator(AsyncIterator):
                 return chunk
             enc = enc.lower()
             if enc in ("gzip", "deflate", "br"):
-                if enc == "br":
-                    try:
-                        import brotli
-                        decompressor = brotli.Decompressor()
-                    except ImportError:
-                        raise DecodeError(
-                            "Can not decode content-encoding: brotli (br). "
-                            "Please install `brotlipy`"
-                        )
-                    decompressor = brotli.Decompressor()
-                else:
-                    import zlib
-                    zlib_mode = 16 + zlib.MAX_WBITS if enc == "gzip" else zlib.MAX_WBITS
-                    decompressor = zlib.decompressobj(wbits=zlib_mode)
-                chunk = decompressor.decompress(chunk)
+                if not self._decompressor:
+                    if enc == "br":
+                        try:
+                            import brotli
+                            self._decompressor = brotli.Decompressor()
+                        except ImportError:
+                            raise DecodeError(
+                                "Can not decode content-encoding: brotli (br). "
+                                "Please install `brotlipy`"
+                            )
+                    else:
+                        import zlib
+                        zlib_mode = 16 + zlib.MAX_WBITS if enc == "gzip" else zlib.MAX_WBITS
+                        self._decompressor = zlib.decompressobj(wbits=zlib_mode)
+                chunk = self._decompressor.decompress(chunk)
             return chunk
         except _ResponseStopIteration:
             self.response.internal_response.close()
