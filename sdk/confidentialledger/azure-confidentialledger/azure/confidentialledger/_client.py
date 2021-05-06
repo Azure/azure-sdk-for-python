@@ -58,9 +58,6 @@ class ConfidentialLedgerClient(ConfidentialLedgerClientBase):
 
     def __init__(self, endpoint, credential, ledger_certificate_path, **kwargs):
         # type: (str, Union[ConfidentialLedgerCertificateCredential, TokenCredential], str, Any) -> None
-
-        # Needed for Python 2.7 compatibility
-        # pylint: disable=super-with-arguments
         super(ConfidentialLedgerClient, self).__init__(
             endpoint=endpoint,
             credential=credential,
