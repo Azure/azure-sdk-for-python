@@ -193,6 +193,24 @@ class AioHttpTransport(AsyncHttpTransport):
         return response
 
 
+class _BrotliDecoder:
+    # Supports both 'brotlipy' and 'Brotli' packages
+    # since they share an import name. The top branches
+    # are for 'brotlipy' and bottom branches for 'Brotli'
+    def __init__(self) -> None:
+        import brotli
+        self._obj = brotli.Decompressor()
+
+    def decompress(self, data: bytes) -> bytes:
+        if hasattr(self._obj, "decompress"):
+            return cast(bytes, self._obj.decompress(data))
+        return cast(bytes, self._obj.process(data))
+
+    def flush(self) -> bytes:
+        if hasattr(self._obj, "flush"):
+            return cast(bytes, self._obj.flush())
+        return b""
+
 class AioHttpStreamDownloadGenerator(AsyncIterator):
     """Streams the response body data.
 
@@ -230,12 +248,11 @@ class AioHttpStreamDownloadGenerator(AsyncIterator):
                 if not self._decompressor:
                     if enc == "br":
                         try:
-                            import brotli
-                            self._decompressor = brotli.Decompressor()
+                            self._decompressor = _BrotliDecoder()
                         except ImportError:
                             raise DecodeError(
                                 "Can not decode content-encoding: brotli (br). "
-                                "Please install `brotlipy`"
+                                "Please install `Brotli`"
                             )
                     else:
                         import zlib
