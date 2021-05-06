@@ -116,6 +116,7 @@ class TestSubmittedJobs(DocumentTranslationTest):
             self.assertIn(job.id, job_ids)
 
 
+    @pytest.mark.live_test_only
     @DocumentTranslationPreparer()
     @DocumentTranslationClientPreparer()
     def test_list_submitted_jobs_filter_by_created_after(self, client):
@@ -137,6 +138,7 @@ class TestSubmittedJobs(DocumentTranslationTest):
             assert(job.created_on.replace(tzinfo=None) >= start.replace(tzinfo=None))
 
 
+    @pytest.mark.live_test_only
     @DocumentTranslationPreparer()
     @DocumentTranslationClientPreparer()
     def test_list_submitted_jobs_filter_by_created_before(self, client):
