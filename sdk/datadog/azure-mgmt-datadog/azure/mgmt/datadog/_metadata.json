@@ -1,6 +1,6 @@
 {
-    "chosen_version": "2020-02-01-preview",
-    "total_api_version_list": ["2020-02-01-preview"],
+    "chosen_version": "2021-03-01",
+    "total_api_version_list": ["2021-03-01"],
     "client": {
         "name": "MicrosoftDatadogClient",
         "filename": "_microsoft_datadog_client",
@@ -21,7 +21,7 @@
             },
             "subscription_id": {
                 "signature": "subscription_id,  # type: str",
-                "description": "The Microsoft Azure subscription ID.",
+                "description": "The ID of the target subscription.",
                 "docstring_type": "str",
                 "required": true
             }
@@ -35,7 +35,7 @@
             },
             "subscription_id": {
                 "signature": "subscription_id,  # type: str",
-                "description": "The Microsoft Azure subscription ID.",
+                "description": "The ID of the target subscription.",
                 "docstring_type": "str",
                 "required": true
             }

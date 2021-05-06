@@ -30,7 +30,6 @@ class SampleTablesQuery(object):
 
     def __init__(self):
         load_dotenv(find_dotenv())
-        # self.connection_string = os.getenv("AZURE_TABLES_CONNECTION_STRING")
         self.access_key = os.getenv("TABLES_PRIMARY_STORAGE_ACCOUNT_KEY")
         self.endpoint = os.getenv("TABLES_STORAGE_ENDPOINT_SUFFIX")
         self.account_name = os.getenv("TABLES_STORAGE_ACCOUNT_NAME")
@@ -84,7 +83,7 @@ class SampleTablesQuery(object):
                 }
                 name_filter = u"Name eq @name"
                 async for entity_chosen in table_client.query_entities(
-                    filter=name_filter, select=[u"Brand",u"Color"], parameters=parameters):
+                    query_filter=name_filter, select=[u"Brand",u"Color"], parameters=parameters):
                     print(entity_chosen)
 
             except HttpResponseError as e:
@@ -105,7 +104,7 @@ class SampleTablesQuery(object):
                 }
                 name_filter = u"Name eq @name and Brand eq @brand"
                 queried_entities = table_client.query_entities(
-                    filter=name_filter, select=[u"Brand",u"Color"], parameters=parameters)
+                    query_filter=name_filter, select=[u"Brand",u"Color"], parameters=parameters)
 
                 async for entity_chosen in queried_entities:
                     print(entity_chosen)
@@ -128,7 +127,7 @@ class SampleTablesQuery(object):
                 }
                 name_filter = u"Value gt @lower and Value lt @upper"
                 queried_entities = table_client.query_entities(
-                    filter=name_filter, select=[u"Value"], parameters=parameters)
+                    query_filter=name_filter, select=[u"Value"], parameters=parameters)
 
                 async for entity_chosen in queried_entities:
                     print(entity_chosen)

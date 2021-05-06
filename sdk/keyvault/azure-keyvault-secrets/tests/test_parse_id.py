@@ -2,17 +2,14 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 # -------------------------------------
-from azure.keyvault.secrets import SecretClient, parse_key_vault_secret_id
+from azure.keyvault.secrets import parse_key_vault_secret_id
 from devtools_testutils import PowerShellPreparer
 
 from _shared.test_case import KeyVaultTestCase
+from _test_case import SecretsTestCase
 
 
-class TestParseId(KeyVaultTestCase):
-    def create_client(self, vault_uri, **kwargs):
-        credential = self.get_credential(SecretClient)
-        return self.create_client_from_credential(SecretClient, credential=credential, vault_url=vault_uri, **kwargs)
-
+class TestParseId(SecretsTestCase, KeyVaultTestCase):
     @PowerShellPreparer("keyvault", azure_keyvault_url="https://vaultname.vault.azure.net")
     def test_parse_secret_id_with_version(self, azure_keyvault_url):
         client = self.create_client(azure_keyvault_url)

@@ -211,6 +211,9 @@ Use a dict-like representation to send to a topic with custom schema as shown be
 
 ```Python
 import os
+import uuid
+import datetime as dt
+from msrest.serialization import UTC
 from azure.core.credentials import AzureKeyCredential
 from azure.eventgrid import EventGridPublisherClient
 
@@ -299,7 +302,7 @@ This example uses a simple console exporter to export the traces. Any exporter c
 from opentelemetry import trace
 from opentelemetry.sdk.trace import TracerProvider
 from opentelemetry.sdk.trace.export import ConsoleSpanExporter
-from opentelemetry.sdk.trace.export import SimpleExportSpanProcessor
+from opentelemetry.sdk.trace.export import SimpleSpanProcessor  # this requires opentelemtry >= 1.0.0
 
 # Simple console exporter
 exporter = ConsoleSpanExporter()
@@ -307,7 +310,7 @@ exporter = ConsoleSpanExporter()
 trace.set_tracer_provider(TracerProvider())
 tracer = trace.get_tracer(__name__)
 trace.get_tracer_provider().add_span_processor(
-    SimpleExportSpanProcessor(exporter)
+    SimpleSpanProcessor(exporter)
 )
 ```
 

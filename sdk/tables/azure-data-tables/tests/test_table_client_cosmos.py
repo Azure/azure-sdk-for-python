@@ -12,12 +12,13 @@ from devtools_testutils import AzureTestCase
 
 from azure.data.tables import TableServiceClient, TableClient
 from azure.data.tables import __version__ as  VERSION
+from azure.core.credentials import AzureNamedKeyCredential
 
 from _shared.testcase import (
     TableTestCase,
     SLEEP_DELAY
 )
-from preparers import CosmosPreparer
+from preparers import cosmos_decorator
 
 # ------------------------------------------------------------------------------
 SERVICES = {
@@ -32,7 +33,7 @@ _CONNECTION_ENDPOINTS_SECONDARY = {'table': 'TableSecondaryEndpoint', 'cosmos': 
 class TestTableClient(AzureTestCase, TableTestCase):
 
     @pytest.mark.skipif(sys.version_info < (3, 0), reason="Malformed string")
-    @CosmosPreparer()
+    @cosmos_decorator
     def test_user_agent_default(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
         service = TableServiceClient(self.account_url(tables_cosmos_account_name, "cosmos"), credential=tables_primary_cosmos_account_key)
 
@@ -54,7 +55,7 @@ class TestTableClient(AzureTestCase, TableTestCase):
             sleep(SLEEP_DELAY)
 
     @pytest.mark.skipif(sys.version_info < (3, 0), reason="requires Python3")
-    @CosmosPreparer()
+    @cosmos_decorator
     def test_user_agent_custom(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
         custom_app = "TestApp/v1.0"
         service = TableServiceClient(
@@ -94,7 +95,7 @@ class TestTableClient(AzureTestCase, TableTestCase):
             sleep(SLEEP_DELAY)
 
     @pytest.mark.skipif(sys.version_info < (3, 0), reason="requires Python3")
-    @CosmosPreparer()
+    @cosmos_decorator
     def test_user_agent_append(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
         service = self.create_client_from_credential(
             TableServiceClient,
@@ -120,13 +121,14 @@ class TestTableClient(AzureTestCase, TableTestCase):
 class TestTableClientUnit(TableTestCase):
     tables_cosmos_account_name = "fake_storage_account"
     tables_primary_cosmos_account_key = "fakeXMZjnGsZGvd4bVr3Il5SeHA"
+    credential = AzureNamedKeyCredential(name=tables_cosmos_account_name, key=tables_primary_cosmos_account_key)
 
     # --Helpers-----------------------------------------------------------------
     def validate_standard_account_endpoints(self, service, account_name, account_key):
         assert service is not None
         assert service.account_name ==  account_name
-        assert service.credential.account_name ==  account_name
-        assert service.credential.account_key ==  account_key
+        assert service.credential.named_key.name ==  account_name
+        assert service.credential.named_key.key ==  account_key
         assert ('{}.{}'.format(account_name, 'table.core.windows.net') in service.url) or ('{}.{}'.format(account_name, 'table.cosmos.azure.com') in service.url)
 
     def _account_url(self, account_name):
@@ -140,13 +142,12 @@ class TestTableClientUnit(TableTestCase):
             # Act
             service = client(
                 account_url=self._account_url(self.tables_cosmos_account_name),
-                credential=self.tables_primary_cosmos_account_key,
+                credential=self.credential,
                 table_name='foo')
 
             # Assert
             self.validate_standard_account_endpoints(service, self.tables_cosmos_account_name, self.tables_primary_cosmos_account_key)
             assert service.scheme ==  'https'
-
 
     def test_create_service_with_connection_string(self):
 
@@ -154,7 +155,7 @@ class TestTableClientUnit(TableTestCase):
             # Act
             service = client(
                 account_url=self._account_url(self.tables_cosmos_account_name),
-                credential=self.tables_primary_cosmos_account_key,
+                credential=self.credential,
                 table_name="test")
 
             # Assert
@@ -187,7 +188,7 @@ class TestTableClientUnit(TableTestCase):
             # Act
             service = service_type(
                 account_url=self._account_url(self.tables_cosmos_account_name),
-                credential=self.tables_primary_cosmos_account_key,
+                credential=self.credential,
                 table_name="foo")
 
             # Assert
@@ -208,24 +209,16 @@ class TestTableClientUnit(TableTestCase):
                     credential=self.token_credential,
                     table_name="foo")
 
-    @pytest.mark.skip("Testing against a different cloud than the one created in powershell script")
-
     def test_create_service_china(self):
-        # Arrange
-        # TODO: Confirm regional cloud cosmos URLs
         for service_type in SERVICES.items():
-            # Act
-            url = self.account_url(self.tables_cosmos_account_name, "cosmos").replace('core.windows.net', 'core.chinacloudapi.cn')
-            if 'cosmos.azure' in url:
-                pytest.skip("Confirm cosmos national cloud URLs")
+            url = self.account_url(self.tables_cosmos_account_name, "cosmos").replace('cosmos.azure.com', 'core.chinacloudapi.cn')
             service = service_type[0](
-                url, credential=self.tables_primary_cosmos_account_key, table_name='foo')
+                url, credential=self.credential, table_name='foo')
 
-            # Assert
             assert service is not None
             assert service.account_name ==  self.tables_cosmos_account_name
-            assert service.credential.account_name ==  self.tables_cosmos_account_name
-            assert service.credential.account_key ==  self.tables_primary_cosmos_account_key
+            assert service.credential.named_key.name ==  self.tables_cosmos_account_name
+            assert service.credential.named_key.key ==  self.tables_primary_cosmos_account_key
             assert service._primary_endpoint.startswith('https://{}.{}.core.chinacloudapi.cn'.format(self.tables_cosmos_account_name, "table"))
 
     def test_create_service_protocol(self):
@@ -236,7 +229,7 @@ class TestTableClientUnit(TableTestCase):
             # Act
             service = service_type(
                 account_url=url,
-                credential=self.tables_primary_cosmos_account_key,
+                credential=self.credential,
                 table_name="foo")
 
             # Assert
@@ -261,17 +254,17 @@ class TestTableClientUnit(TableTestCase):
             # Act
             default_service = service_type[0](
                 account_url=self._account_url(self.tables_cosmos_account_name),
-                credential=self.tables_primary_cosmos_account_key,
+                credential=self.credential,
                 table_name="foo")
             service = service_type[0](
                 account_url=self._account_url(self.tables_cosmos_account_name),
-                credential=self.tables_primary_cosmos_account_key,
+                credential=self.credential,
                 table_name="foo", connection_timeout=22)
 
             # Assert
             self.validate_standard_account_endpoints(service, self.tables_cosmos_account_name, self.tables_primary_cosmos_account_key)
             assert service._client._client._pipeline._transport.connection_config.timeout == 22
-            assert default_service._client._client._pipeline._transport.connection_config.timeout in [20, (20, 2000)]
+            assert default_service._client._client._pipeline._transport.connection_config.timeout == 300
 
 
     # --Connection String Test Cases --------------------------------------------
@@ -317,27 +310,22 @@ class TestTableClientUnit(TableTestCase):
             assert service is not None
             assert service.account_name ==  self.tables_cosmos_account_name
             assert service.url.startswith('https://' + self.tables_cosmos_account_name + '.table.cosmos.azure.com')
-            assert service.credential.account_name ==  self.tables_cosmos_account_name
-            assert service.credential.account_key ==  self.tables_primary_cosmos_account_key
+            assert service.credential.named_key.name ==  self.tables_cosmos_account_name
+            assert service.credential.named_key.key ==  self.tables_primary_cosmos_account_key
             assert service._primary_endpoint.startswith('https://' + self.tables_cosmos_account_name + '.table.cosmos.azure.com')
             assert service.scheme ==  'https'
 
-    @pytest.mark.skip("Tests fail with non-standard clouds")
-
     def test_create_service_with_connection_string_endpoint_protocol(self):
-        # Arrange
         conn_string = 'AccountName={};AccountKey={};DefaultEndpointsProtocol=http;EndpointSuffix=core.chinacloudapi.cn;'.format(
             self.tables_cosmos_account_name, self.tables_primary_cosmos_account_key)
 
         for service_type in SERVICES.items():
-            # Act
             service = service_type[0].from_connection_string(conn_string, table_name="foo")
 
-            # Assert
             assert service is not None
             assert service.account_name ==  self.tables_cosmos_account_name
-            assert service.credential.account_name ==  self.tables_cosmos_account_name
-            assert service.credential.account_key ==  self.tables_primary_cosmos_account_key
+            assert service.credential.named_key.name ==  self.tables_cosmos_account_name
+            assert service.credential.named_key.key ==  self.tables_primary_cosmos_account_key
             assert service._primary_endpoint.startswith('http://{}.{}.core.chinacloudapi.cn'.format(self.tables_cosmos_account_name, "table"))
             assert service.scheme ==  'http'
 
@@ -363,9 +351,8 @@ class TestTableClientUnit(TableTestCase):
 
             # Assert
             assert service is not None
-            assert service.account_name == self.tables_cosmos_account_name
-            assert service.credential.account_name == self.tables_cosmos_account_name
-            assert service.credential.account_key == self.tables_primary_cosmos_account_key
+            assert service.credential.named_key.name == self.tables_cosmos_account_name
+            assert service.credential.named_key.key == self.tables_primary_cosmos_account_key
             assert service._primary_endpoint.startswith('https://www.mydomain.com')
 
 
@@ -380,9 +367,8 @@ class TestTableClientUnit(TableTestCase):
 
             # Assert
             assert service is not None
-            assert service.account_name == self.tables_cosmos_account_name
-            assert service.credential.account_name == self.tables_cosmos_account_name
-            assert service.credential.account_key == self.tables_primary_cosmos_account_key
+            assert service.credential.named_key.name == self.tables_cosmos_account_name
+            assert service.credential.named_key.key == self.tables_primary_cosmos_account_key
             assert service._primary_endpoint.startswith('https://www.mydomain.com')
 
     def test_create_service_with_conn_str_custom_domain_sec_override(self):
@@ -397,9 +383,8 @@ class TestTableClientUnit(TableTestCase):
 
             # Assert
             assert service is not None
-            assert service.account_name == self.tables_cosmos_account_name
-            assert service.credential.account_name == self.tables_cosmos_account_name
-            assert service.credential.account_key == self.tables_primary_cosmos_account_key
+            assert service.credential.named_key.name == self.tables_cosmos_account_name
+            assert service.credential.named_key.key == self.tables_primary_cosmos_account_key
             assert service._primary_endpoint.startswith('https://www.mydomain.com')
 
     def test_create_service_with_conn_str_fails_if_sec_without_primary(self):
@@ -430,9 +415,8 @@ class TestTableClientUnit(TableTestCase):
 
             # Assert
             assert service is not None
-            assert service.account_name == self.tables_cosmos_account_name
-            assert service.credential.account_name == self.tables_cosmos_account_name
-            assert service.credential.account_key == self.tables_primary_cosmos_account_key
+            assert service.credential.named_key.name == self.tables_cosmos_account_name
+            assert service.credential.named_key.key == self.tables_primary_cosmos_account_key
             assert service._primary_endpoint.startswith('https://www.mydomain.com')
 
     def test_create_service_with_custom_account_endpoint_path(self):
@@ -446,27 +430,27 @@ class TestTableClientUnit(TableTestCase):
             service = service_type[0].from_connection_string(conn_string, table_name="foo")
 
             # Assert
-            assert service.account_name == self.tables_cosmos_account_name
-            assert service.credential.account_name == self.tables_cosmos_account_name
-            assert service.credential.account_key == self.tables_primary_cosmos_account_key
+            assert service.account_name == "custom"
+            assert service.credential.named_key.name == self.tables_cosmos_account_name
+            assert service.credential.named_key.key == self.tables_primary_cosmos_account_key
             assert service._primary_hostname ==  'local-machine:11002/custom/account/path'
 
         service = TableServiceClient(account_url=custom_account_url)
-        assert service.account_name ==  None
+        assert service.account_name == "custom"
         assert service.credential ==  None
         assert service._primary_hostname ==  'local-machine:11002/custom/account/path'
         # mine doesnt have a question mark at the end
         assert service.url.startswith('http://local-machine:11002/custom/account/path')
 
         service = TableClient(account_url=custom_account_url, table_name="foo")
-        assert service.account_name ==  None
+        assert service.account_name == "custom"
         assert service.table_name ==  "foo"
         assert service.credential ==  None
         assert service._primary_hostname ==  'local-machine:11002/custom/account/path'
         assert service.url.startswith('http://local-machine:11002/custom/account/path')
 
         service = TableClient.from_table_url("http://local-machine:11002/custom/account/path/foo" + self.sas_token)
-        assert service.account_name ==  None
+        assert service.account_name == "custom"
         assert service.table_name ==  "foo"
         assert service.credential ==  None
         assert service._primary_hostname ==  'local-machine:11002/custom/account/path'
@@ -477,7 +461,7 @@ class TestTableClientUnit(TableTestCase):
         table_url = self._account_url(self.tables_cosmos_account_name) + "/foo"
         service = TableClient(
             account_url=table_url,
-            credential=self.tables_primary_cosmos_account_key,
+            credential=self.credential,
             table_name="bar")
 
         # Assert
@@ -491,7 +475,7 @@ class TestTableClientUnit(TableTestCase):
         table_url = "https://{}.table.cosmos.azure.com:443/foo".format(self.tables_cosmos_account_name)
         service = TableClient(
             account_url=table_url,
-            credential=self.tables_primary_cosmos_account_key,
+            credential=self.credential,
             table_name="bar")
 
         # Assert
@@ -519,10 +503,10 @@ class TestTableClientUnit(TableTestCase):
                 with pytest.raises(ValueError) as e:
                     service = service_type[0].from_connection_string(conn_str, table_name="test")
 
-                if conn_str in("", "foobar", "foo;bar;baz", ";"):
+                if conn_str in("", "foobar", "foo;bar;baz", ";", "foo=;bar=;", "=", "=;=="):
                     assert str(e.value) == "Connection string is either blank or malformed."
-                elif conn_str in ("foobar=baz=foo" , "foo=;bar=;", "=", "=;=="):
-                    assert str(e.value) == "Connection string missing required connection details."
+                elif conn_str in ("foobar=baz=foo"):
+                   assert str(e.value) == "Connection string missing required connection details."
 
     def test_closing_pipeline_client(self):
         # Arrange
@@ -530,7 +514,7 @@ class TestTableClientUnit(TableTestCase):
             # Act
             service = client(
                 account_url=self._account_url(self.tables_cosmos_account_name),
-                credential=self.tables_primary_cosmos_account_key,
+                credential=self.credential,
                 table_name='table')
 
             # Assert
@@ -545,7 +529,7 @@ class TestTableClientUnit(TableTestCase):
             # Act
             service = client(
                 account_url=self._account_url(self.tables_cosmos_account_name),
-                credential=self.tables_primary_cosmos_account_key,
+                credential=self.credential,
                 table_name='table')
 
             service.close()

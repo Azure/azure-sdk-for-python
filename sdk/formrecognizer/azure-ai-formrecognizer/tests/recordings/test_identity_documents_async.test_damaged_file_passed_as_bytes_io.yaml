@@ -1,0 +1,34 @@
+interactions:
+- request:
+    body: !!python/object/new:_io.BytesIO
+      state: !!python/tuple
+      - !!binary |
+        JVBERlVVVQ==
+      - 0
+      - null
+    headers:
+      Accept:
+      - application/json
+      Content-Type:
+      - application/pdf
+      User-Agent:
+      - azsdk-python-ai-formrecognizer/3.1.0b4 Python/3.8.5 (Windows-10-10.0.19041-SP0)
+    method: POST
+    uri: https://region.api.cognitive.microsoft.com/formrecognizer/v2.1-preview.3/prebuilt/idDocument/analyze?includeTextDetails=false
+  response:
+    body:
+      string: '{"error": {"code": "InvalidImage", "innerError": {"requestId": "41f90b0c-85ea-481e-bcc8-a45cbbddda62"},
+        "message": "The input data is not a valid image or password protected."}}'
+    headers:
+      apim-request-id: 41f90b0c-85ea-481e-bcc8-a45cbbddda62
+      content-length: '170'
+      content-type: application/json; charset=utf-8
+      date: Fri, 05 Mar 2021 17:43:03 GMT
+      strict-transport-security: max-age=31536000; includeSubDomains; preload
+      x-content-type-options: nosniff
+      x-envoy-upstream-service-time: '3'
+    status:
+      code: 400
+      message: Bad Request
+    url: https://region.api.cognitive.microsoft.com/formrecognizer/v2.1-preview.3/prebuilt/idDocument/analyze?includeTextDetails=false
+version: 1

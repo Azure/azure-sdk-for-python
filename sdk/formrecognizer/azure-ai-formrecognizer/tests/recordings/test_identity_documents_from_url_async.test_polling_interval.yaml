@@ -1,0 +1,146 @@
+interactions:
+- request:
+    body: 'b''{"source": "blob_sas_url"}'''
+    headers:
+      Accept:
+      - application/json
+      Content-Length:
+      - '216'
+      Content-Type:
+      - application/json
+      User-Agent:
+      - azsdk-python-ai-formrecognizer/3.1.0b4 Python/3.8.5 (Windows-10-10.0.19041-SP0)
+    method: POST
+    uri: https://region.api.cognitive.microsoft.com/formrecognizer/v2.1-preview.3/prebuilt/idDocument/analyze?includeTextDetails=false
+  response:
+    body:
+      string: ''
+    headers:
+      apim-request-id: f36ad3d8-eab0-4d46-967c-5b4bd027015d
+      content-length: '0'
+      date: Fri, 05 Mar 2021 17:42:35 GMT
+      operation-location: https://region.api.cognitive.microsoft.com/formrecognizer/v2.1-preview.3/prebuilt/idDocument/analyzeResults/f36ad3d8-eab0-4d46-967c-5b4bd027015d
+      strict-transport-security: max-age=31536000; includeSubDomains; preload
+      x-content-type-options: nosniff
+      x-envoy-upstream-service-time: '133'
+    status:
+      code: 202
+      message: Accepted
+    url: https://region.api.cognitive.microsoft.com/formrecognizer/v2.1-preview.3/prebuilt/idDocument/analyze?includeTextDetails=false
+- request:
+    body: null
+    headers:
+      User-Agent:
+      - azsdk-python-ai-formrecognizer/3.1.0b4 Python/3.8.5 (Windows-10-10.0.19041-SP0)
+    method: GET
+    uri: https://region.api.cognitive.microsoft.com/formrecognizer/v2.1-preview.3/prebuilt/idDocument/analyzeResults/f36ad3d8-eab0-4d46-967c-5b4bd027015d
+  response:
+    body:
+      string: '{"status": "succeeded", "createdDateTime": "2021-03-05T17:42:35Z",
+        "lastUpdatedDateTime": "2021-03-05T17:42:41Z", "analyzeResult": {"version":
+        "2.1.0", "readResults": [{"page": 1, "angle": -0.4021, "width": 506, "height":
+        319, "unit": "pixel"}], "documentResults": [{"docType": "prebuilt:idDocument:driverLicense",
+        "docTypeConfidence": 0.995, "pageRange": [1, 1], "fields": {"Address": {"type":
+        "string", "valueString": "123 MAIN STREET APT. 1 HARRISBURG, PA 17101-0000",
+        "text": "123 MAIN STREET APT. 1 HARRISBURG, PA 17101-0000", "boundingBox":
+        [178, 161, 357, 161, 357, 195, 178, 195], "page": 1, "confidence": 0.906},
+        "Country": {"type": "country", "valueCountry": "USA", "confidence": 0.99},
+        "DateOfBirth": {"type": "date", "valueDate": "1975-08-04", "text": "08/04/1975",
+        "boundingBox": [215, 93, 309, 92, 309, 109, 215, 108], "page": 1, "confidence":
+        0.995}, "DateOfExpiration": {"type": "date", "valueDate": "2023-08-05", "text":
+        "08/05/2023", "boundingBox": [215, 113, 307, 112, 307, 129, 215, 129], "page":
+        1, "confidence": 0.99}, "DocumentNumber": {"type": "string", "valueString":
+        "99 999 999", "text": "99 999 999", "boundingBox": [216, 74, 307, 74, 307,
+        91, 216, 91], "page": 1, "confidence": 0.991}, "FirstName": {"type": "string",
+        "valueString": "JANICE ANN", "text": "JANICE ANN", "boundingBox": [177, 147,
+        264, 147, 264, 161, 177, 161], "page": 1, "confidence": 0.987}, "LastName":
+        {"type": "string", "valueString": "SAMPLE", "text": "SAMPLE", "boundingBox":
+        [178, 135, 237, 134, 236, 147, 179, 147], "page": 1, "confidence": 0.986},
+        "Region": {"type": "string", "valueString": "Pennsylvania", "confidence":
+        0.99}, "Sex": {"type": "gender", "valueGender": "F", "text": "F", "boundingBox":
+        [210, 199, 216, 199, 217, 211, 210, 211], "page": 1, "confidence": 0.99}}}]}}'
+    headers:
+      apim-request-id: b9279e16-a52f-4b2f-8c7f-a4f62c8440cb
+      content-length: '1602'
+      content-type: application/json; charset=utf-8
+      date: Fri, 05 Mar 2021 17:42:41 GMT
+      strict-transport-security: max-age=31536000; includeSubDomains; preload
+      x-content-type-options: nosniff
+      x-envoy-upstream-service-time: '129'
+    status:
+      code: 200
+      message: OK
+    url: https://region.api.cognitive.microsoft.com/formrecognizer/v2.1-preview.3/prebuilt/idDocument/analyzeResults/f36ad3d8-eab0-4d46-967c-5b4bd027015d
+- request:
+    body: 'b''{"source": "blob_sas_url"}'''
+    headers:
+      Accept:
+      - application/json
+      Content-Length:
+      - '216'
+      Content-Type:
+      - application/json
+      User-Agent:
+      - azsdk-python-ai-formrecognizer/3.1.0b4 Python/3.8.5 (Windows-10-10.0.19041-SP0)
+    method: POST
+    uri: https://region.api.cognitive.microsoft.com/formrecognizer/v2.1-preview.3/prebuilt/idDocument/analyze?includeTextDetails=false
+  response:
+    body:
+      string: ''
+    headers:
+      apim-request-id: cd46eda4-9984-40d3-8bd1-d0651a1e5bae
+      content-length: '0'
+      date: Fri, 05 Mar 2021 17:42:41 GMT
+      operation-location: https://region.api.cognitive.microsoft.com/formrecognizer/v2.1-preview.3/prebuilt/idDocument/analyzeResults/cd46eda4-9984-40d3-8bd1-d0651a1e5bae
+      strict-transport-security: max-age=31536000; includeSubDomains; preload
+      x-content-type-options: nosniff
+      x-envoy-upstream-service-time: '88'
+    status:
+      code: 202
+      message: Accepted
+    url: https://region.api.cognitive.microsoft.com/formrecognizer/v2.1-preview.3/prebuilt/idDocument/analyze?includeTextDetails=false
+- request:
+    body: null
+    headers:
+      User-Agent:
+      - azsdk-python-ai-formrecognizer/3.1.0b4 Python/3.8.5 (Windows-10-10.0.19041-SP0)
+    method: GET
+    uri: https://region.api.cognitive.microsoft.com/formrecognizer/v2.1-preview.3/prebuilt/idDocument/analyzeResults/cd46eda4-9984-40d3-8bd1-d0651a1e5bae
+  response:
+    body:
+      string: '{"status": "succeeded", "createdDateTime": "2021-03-05T17:42:42Z",
+        "lastUpdatedDateTime": "2021-03-05T17:42:46Z", "analyzeResult": {"version":
+        "2.1.0", "readResults": [{"page": 1, "angle": -0.4021, "width": 506, "height":
+        319, "unit": "pixel"}], "documentResults": [{"docType": "prebuilt:idDocument:driverLicense",
+        "docTypeConfidence": 0.995, "pageRange": [1, 1], "fields": {"Address": {"type":
+        "string", "valueString": "123 MAIN STREET APT. 1 HARRISBURG, PA 17101-0000",
+        "text": "123 MAIN STREET APT. 1 HARRISBURG, PA 17101-0000", "boundingBox":
+        [178, 161, 357, 161, 357, 195, 178, 195], "page": 1, "confidence": 0.906},
+        "Country": {"type": "country", "valueCountry": "USA", "confidence": 0.99},
+        "DateOfBirth": {"type": "date", "valueDate": "1975-08-04", "text": "08/04/1975",
+        "boundingBox": [215, 93, 309, 92, 309, 109, 215, 108], "page": 1, "confidence":
+        0.995}, "DateOfExpiration": {"type": "date", "valueDate": "2023-08-05", "text":
+        "08/05/2023", "boundingBox": [215, 113, 307, 112, 307, 129, 215, 129], "page":
+        1, "confidence": 0.99}, "DocumentNumber": {"type": "string", "valueString":
+        "99 999 999", "text": "99 999 999", "boundingBox": [216, 74, 307, 74, 307,
+        91, 216, 91], "page": 1, "confidence": 0.991}, "FirstName": {"type": "string",
+        "valueString": "JANICE ANN", "text": "JANICE ANN", "boundingBox": [177, 147,
+        264, 147, 264, 161, 177, 161], "page": 1, "confidence": 0.987}, "LastName":
+        {"type": "string", "valueString": "SAMPLE", "text": "SAMPLE", "boundingBox":
+        [178, 135, 237, 134, 236, 147, 179, 147], "page": 1, "confidence": 0.986},
+        "Region": {"type": "string", "valueString": "Pennsylvania", "confidence":
+        0.99}, "Sex": {"type": "gender", "valueGender": "F", "text": "F", "boundingBox":
+        [210, 199, 216, 199, 217, 211, 210, 211], "page": 1, "confidence": 0.99}}}]}}'
+    headers:
+      apim-request-id: d51dad72-2aa3-4158-bf89-93e78d5d9407
+      content-length: '1602'
+      content-type: application/json; charset=utf-8
+      date: Fri, 05 Mar 2021 17:42:49 GMT
+      strict-transport-security: max-age=31536000; includeSubDomains; preload
+      x-content-type-options: nosniff
+      x-envoy-upstream-service-time: '17'
+    status:
+      code: 200
+      message: OK
+    url: https://region.api.cognitive.microsoft.com/formrecognizer/v2.1-preview.3/prebuilt/idDocument/analyzeResults/cd46eda4-9984-40d3-8bd1-d0651a1e5bae
+version: 1

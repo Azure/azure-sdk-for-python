@@ -4,8 +4,8 @@ languages:
   - python
 products:
   - azure
-  - azure-eventgrid
-urlFragment: azure-eventgrid-samples
+  - azure-event-grid
+urlFragment: eventgrid-samples
 ---
 
 # Azure Event Grid Client Library Python Samples

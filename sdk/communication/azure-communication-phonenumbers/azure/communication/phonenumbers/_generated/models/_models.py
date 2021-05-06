@@ -10,35 +10,6 @@ from azure.core.exceptions import HttpResponseError
 import msrest.serialization
 
 
-class AcquiredPhoneNumbers(msrest.serialization.Model):
-    """The list of acquired phone numbers.
-
-    All required parameters must be populated in order to send to Azure.
-
-    :param phone_numbers: Required. Represents a list of phone numbers.
-    :type phone_numbers: list[~azure.communication.phonenumbers.models.PurchasedPhoneNumber]
-    :param next_link: Represents the URL link to the next page of phone number results.
-    :type next_link: str
-    """
-
-    _validation = {
-        'phone_numbers': {'required': True},
-    }
-
-    _attribute_map = {
-        'phone_numbers': {'key': 'phoneNumbers', 'type': '[PurchasedPhoneNumber]'},
-        'next_link': {'key': 'nextLink', 'type': 'str'},
-    }
-
-    def __init__(
-        self,
-        **kwargs
-    ):
-        super(AcquiredPhoneNumbers, self).__init__(**kwargs)
-        self.phone_numbers = kwargs['phone_numbers']
-        self.next_link = kwargs.get('next_link', None)
-
-
 class CommunicationError(msrest.serialization.Model):
     """The Communication Services error.
 
@@ -390,7 +361,7 @@ class PhoneNumberSearchResult(msrest.serialization.Model):
 
 
 class PurchasedPhoneNumber(msrest.serialization.Model):
-    """Represents an acquired phone number.
+    """Represents a purchased phone number.
 
     All required parameters must be populated in order to send to Azure.
 
@@ -452,3 +423,32 @@ class PurchasedPhoneNumber(msrest.serialization.Model):
         self.assignment_type = kwargs['assignment_type']
         self.purchase_date = kwargs['purchase_date']
         self.cost = kwargs['cost']
+
+
+class PurchasedPhoneNumbers(msrest.serialization.Model):
+    """The list of purchased phone numbers.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param phone_numbers: Required. Represents a list of phone numbers.
+    :type phone_numbers: list[~azure.communication.phonenumbers.models.PurchasedPhoneNumber]
+    :param next_link: Represents the URL link to the next page of phone number results.
+    :type next_link: str
+    """
+
+    _validation = {
+        'phone_numbers': {'required': True},
+    }
+
+    _attribute_map = {
+        'phone_numbers': {'key': 'phoneNumbers', 'type': '[PurchasedPhoneNumber]'},
+        'next_link': {'key': 'nextLink', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(PurchasedPhoneNumbers, self).__init__(**kwargs)
+        self.phone_numbers = kwargs['phone_numbers']
+        self.next_link = kwargs.get('next_link', None)

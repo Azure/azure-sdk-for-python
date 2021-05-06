@@ -233,9 +233,12 @@ class ServiceBusAdministrationClientQueueTests(AzureMgmtTestCase):
         mgmt_service = ServiceBusAdministrationClient.from_connection_string(servicebus_namespace_connection_string)
         clear_queues(mgmt_service)
         queue_name = "iweidk"
+        queue_name_2 = "vladsk"
+        topic_name = "aghadh"
 
         #TODO: Why don't we have an input model (queueOptions? as superclass of QueueProperties?) and output model to not show these params?
         #TODO: This fails with the following: E           msrest.exceptions.DeserializationError: Find several XML 'prefix:DeadLetteringOnMessageExpiration' where it was not expected .tox\whl\lib\site-packages\msrest\serialization.py:1262: DeserializationError
+        mgmt_service.create_topic(topic_name)
         mgmt_service.create_queue(
             queue_name,
             auto_delete_on_idle=datetime.timedelta(minutes=10),
@@ -245,12 +248,32 @@ class ServiceBusAdministrationClientQueueTests(AzureMgmtTestCase):
             enable_batched_operations=True,
             enable_express=True,
             enable_partitioning=True,
+            forward_dead_lettered_messages_to=topic_name,
+            forward_to=topic_name,
             lock_duration=datetime.timedelta(seconds=13),
             max_delivery_count=14,
             max_size_in_megabytes=3072,
             #requires_duplicate_detection=True,
             requires_session=True
         )
+
+        mgmt_service.create_queue(
+            queue_name_2,
+            auto_delete_on_idle="PT10M1S",
+            dead_lettering_on_message_expiration=True,
+            default_message_time_to_live="PT11M2S",
+            duplicate_detection_history_time_window="PT12M3S",
+            enable_batched_operations=True,
+            enable_express=True,
+            enable_partitioning=True,
+            forward_dead_lettered_messages_to=topic_name,
+            forward_to=topic_name,
+            lock_duration="PT13S",
+            max_delivery_count=14,
+            max_size_in_megabytes=3072,
+            requires_session=True
+        )
+
         try:
             queue = mgmt_service.get_queue(queue_name)
             assert queue.name == queue_name
@@ -261,6 +284,8 @@ class ServiceBusAdministrationClientQueueTests(AzureMgmtTestCase):
             assert queue.enable_batched_operations == True
             assert queue.enable_express == True
             assert queue.enable_partitioning == True
+            assert queue.forward_dead_lettered_messages_to.endswith(".servicebus.windows.net/{}".format(topic_name))
+            assert queue.forward_to.endswith(".servicebus.windows.net/{}".format(topic_name))
             assert queue.lock_duration == datetime.timedelta(seconds=13)
             assert queue.max_delivery_count == 14
             assert queue.max_size_in_megabytes % 3072 == 0  # TODO: In my local test, I don't see a multiple of the input number. To confirm
@@ -269,8 +294,28 @@ class ServiceBusAdministrationClientQueueTests(AzureMgmtTestCase):
             # To know more visit https://aka.ms/sbResourceMgrExceptions. 
             #assert queue.requires_duplicate_detection == True
             assert queue.requires_session == True
+
+            queue2 = mgmt_service.get_queue(queue_name_2)
+            assert queue2.name == queue_name_2
+            assert queue2.auto_delete_on_idle == datetime.timedelta(minutes=10, seconds=1)
+            assert queue2.dead_lettering_on_message_expiration == True
+            assert queue2.default_message_time_to_live == datetime.timedelta(minutes=11, seconds=2)
+            assert queue2.duplicate_detection_history_time_window == datetime.timedelta(minutes=12, seconds=3)
+            assert queue2.enable_batched_operations == True
+            assert queue2.enable_express == True
+            assert queue2.enable_partitioning == True
+            assert queue2.forward_dead_lettered_messages_to.endswith(".servicebus.windows.net/{}".format(topic_name))
+            assert queue2.forward_to.endswith(".servicebus.windows.net/{}".format(topic_name))
+            assert queue2.lock_duration == datetime.timedelta(seconds=13)
+            assert queue2.max_delivery_count == 14
+            assert queue2.max_size_in_megabytes % 3072 == 0
+            assert queue2.requires_session == True
+
         finally:
             mgmt_service.delete_queue(queue_name)
+            mgmt_service.delete_queue(queue_name_2)
+            mgmt_service.delete_topic(topic_name)
+            mgmt_service.close()
 
     @pytest.mark.liveTest
     @CachedResourceGroupPreparer(name_prefix='servicebustest')
@@ -293,7 +338,9 @@ class ServiceBusAdministrationClientQueueTests(AzureMgmtTestCase):
         mgmt_service = ServiceBusAdministrationClient.from_connection_string(servicebus_namespace_connection_string)
         clear_queues(mgmt_service)
         queue_name = "fjrui"
+        topic_name = "sagho"
         queue_description = mgmt_service.create_queue(queue_name)
+        mgmt_service.create_topic(topic_name)
         try:
             # Try updating one setting.
             queue_description.lock_duration = datetime.timedelta(minutes=2)
@@ -301,6 +348,24 @@ class ServiceBusAdministrationClientQueueTests(AzureMgmtTestCase):
 
             queue_description = mgmt_service.get_queue(queue_name)
             assert queue_description.lock_duration == datetime.timedelta(minutes=2)
+
+            # Update forwarding settings with entity name.
+            queue_description.forward_to = topic_name
+            queue_description.forward_dead_lettered_messages_to = topic_name
+            mgmt_service.update_queue(queue_description)
+
+            queue_description = mgmt_service.get_queue(queue_name)
+            assert queue_description.forward_dead_lettered_messages_to.endswith(".servicebus.windows.net/{}".format(topic_name))
+            assert queue_description.forward_to.endswith(".servicebus.windows.net/{}".format(topic_name))
+
+            # Update forwarding settings with None.
+            queue_description.forward_to = None 
+            queue_description.forward_dead_lettered_messages_to = None
+            mgmt_service.update_queue(queue_description)
+
+            queue_description = mgmt_service.get_queue(queue_name)
+            assert queue_description.forward_dead_lettered_messages_to is None
+            assert queue_description.forward_to is None
 
             # Now try updating all settings.
             queue_description.auto_delete_on_idle = datetime.timedelta(minutes=10)
@@ -336,8 +401,54 @@ class ServiceBusAdministrationClientQueueTests(AzureMgmtTestCase):
             assert queue_description.forward_dead_lettered_messages_to.endswith(".servicebus.windows.net/{}".format(queue_name))
             #assert queue_description.requires_duplicate_detection == True
             #assert queue_description.requires_session == True
+
+            queue_description.auto_delete_on_idle = "PT10M1S"
+            queue_description.default_message_time_to_live = "PT11M2S"
+            queue_description.duplicate_detection_history_time_window = "PT12M3S"
+
+            mgmt_service.update_queue(queue_description)
+            queue_description = mgmt_service.get_queue(queue_name)
+
+            assert queue_description.auto_delete_on_idle == datetime.timedelta(minutes=10, seconds=1)
+            assert queue_description.default_message_time_to_live == datetime.timedelta(minutes=11, seconds=2)
+            assert queue_description.duplicate_detection_history_time_window == datetime.timedelta(minutes=12, seconds=3)
+
+            # updating all settings with keyword arguments.
+            mgmt_service.update_queue(
+                queue_description,
+                auto_delete_on_idle=datetime.timedelta(minutes=15),
+                dead_lettering_on_message_expiration=False,
+                default_message_time_to_live=datetime.timedelta(minutes=16),
+                duplicate_detection_history_time_window=datetime.timedelta(minutes=17),
+                enable_batched_operations=False,
+                enable_express=False,
+                lock_duration=datetime.timedelta(seconds=18),
+                max_delivery_count=15,
+                max_size_in_megabytes=2048,
+                forward_to=None,
+                forward_dead_lettered_messages_to=None
+            )
+            queue_description = mgmt_service.get_queue(queue_name)
+            assert queue_description.auto_delete_on_idle == datetime.timedelta(minutes=15)
+            assert queue_description.dead_lettering_on_message_expiration == False
+            assert queue_description.default_message_time_to_live == datetime.timedelta(minutes=16)
+            assert queue_description.duplicate_detection_history_time_window == datetime.timedelta(minutes=17)
+            assert queue_description.enable_batched_operations == False
+            assert queue_description.enable_express == False
+            #assert queue_description.enable_partitioning == True
+            assert queue_description.lock_duration == datetime.timedelta(seconds=18)
+            assert queue_description.max_delivery_count == 15
+            assert queue_description.max_size_in_megabytes == 2048
+            # Note: We endswith to avoid the fact that the servicebus_namespace_name is replacered locally but not in the properties bag, and still test this.
+            assert queue_description.forward_to == None
+            assert queue_description.forward_dead_lettered_messages_to == None
+            #assert queue_description.requires_duplicate_detection == True
+            #assert queue_description.requires_session == True
+
         finally:
             mgmt_service.delete_queue(queue_name)
+            mgmt_service.delete_topic(topic_name)
+            mgmt_service.close()
 
     @pytest.mark.liveTest
     @CachedResourceGroupPreparer(name_prefix='servicebustest')
@@ -526,8 +637,42 @@ class ServiceBusAdministrationClientQueueTests(AzureMgmtTestCase):
             assert queue_description.forward_dead_lettered_messages_to.endswith(".servicebus.windows.net/{}".format(queue_name))
             #assert queue_description.requires_duplicate_detection == True
             #assert queue_description.requires_session == True
+
+            # updating all settings with keyword arguments.
+            mgmt_service.update_queue(
+                dict(queue_description),
+                auto_delete_on_idle=datetime.timedelta(minutes=15),
+                dead_lettering_on_message_expiration=False,
+                default_message_time_to_live=datetime.timedelta(minutes=16),
+                duplicate_detection_history_time_window=datetime.timedelta(minutes=17),
+                enable_batched_operations=False,
+                enable_express=False,
+                lock_duration=datetime.timedelta(seconds=18),
+                max_delivery_count=15,
+                max_size_in_megabytes=2048,
+                forward_to=None,
+                forward_dead_lettered_messages_to=None
+            )
+            queue_description = mgmt_service.get_queue(queue_name)
+            assert queue_description.auto_delete_on_idle == datetime.timedelta(minutes=15)
+            assert queue_description.dead_lettering_on_message_expiration == False
+            assert queue_description.default_message_time_to_live == datetime.timedelta(minutes=16)
+            assert queue_description.duplicate_detection_history_time_window == datetime.timedelta(minutes=17)
+            assert queue_description.enable_batched_operations == False
+            assert queue_description.enable_express == False
+            #assert queue_description.enable_partitioning == True
+            assert queue_description.lock_duration == datetime.timedelta(seconds=18)
+            assert queue_description.max_delivery_count == 15
+            assert queue_description.max_size_in_megabytes == 2048
+            # Note: We endswith to avoid the fact that the servicebus_namespace_name is replacered locally but not in the properties bag, and still test this.
+            assert queue_description.forward_to == None
+            assert queue_description.forward_dead_lettered_messages_to == None
+            #assert queue_description.requires_duplicate_detection == True
+            #assert queue_description.requires_session == True
+
         finally:
             mgmt_service.delete_queue(queue_name)
+            mgmt_service.close()
 
     @pytest.mark.liveTest
     @CachedResourceGroupPreparer(name_prefix='servicebustest')

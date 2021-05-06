@@ -43,10 +43,3 @@ class EnvironmentVariables:
     MSI_SECRET = "MSI_SECRET"
 
     AZURE_AUTHORITY_HOST = "AZURE_AUTHORITY_HOST"
-
-
-class Endpoints:
-    # https://docs.microsoft.com/en-us/azure/active-directory/managed-identities-azure-resources/how-to-use-vm-token#get-a-token-using-http
-    IMDS = "http://169.254.169.254/metadata/identity/oauth2/token"
-
-    AAD_OAUTH2_V2_FORMAT = "https://" + KnownAuthorities.AZURE_PUBLIC_CLOUD + "/{}/oauth2/v2.0/token"

@@ -602,12 +602,29 @@ class EnvironmentStatus(msrest.serialization.Model):
 class EnvironmentUpdateParameters(msrest.serialization.Model):
     """Parameters supplied to the Update Environment operation.
 
+    You probably want to use the sub-classes and not this class directly. Known
+    sub-classes are: Gen1EnvironmentUpdateParameters, Gen2EnvironmentUpdateParameters.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar kind: The kind of the environment.Constant filled by server.  Possible values include:
+     "Gen1", "Gen2".
+    :vartype kind: str or ~azure.mgmt.timeseriesinsights.models.EnvironmentKind
     :param tags: A set of tags. Key-value pairs of additional properties for the environment.
     :type tags: dict[str, str]
     """
 
+    _validation = {
+        'kind': {'readonly': True},
+    }
+
     _attribute_map = {
+        'kind': {'key': 'kind', 'type': 'str'},
         'tags': {'key': 'tags', 'type': '{str}'},
+    }
+
+    _subtype_map = {
+        'kind': {'Gen1': 'Gen1EnvironmentUpdateParameters', 'Gen2': 'Gen2EnvironmentUpdateParameters'}
     }
 
     def __init__(
@@ -615,6 +632,7 @@ class EnvironmentUpdateParameters(msrest.serialization.Model):
         **kwargs
     ):
         super(EnvironmentUpdateParameters, self).__init__(**kwargs)
+        self.kind = None  # type: Optional[str]
         self.tags = kwargs.get('tags', None)
 
 
@@ -1165,12 +1183,29 @@ class EventHubEventSourceResourceProperties(EventHubEventSourceCommonProperties)
 class EventSourceUpdateParameters(msrest.serialization.Model):
     """Parameters supplied to the Update Event Source operation.
 
+    You probably want to use the sub-classes and not this class directly. Known
+    sub-classes are: EventHubEventSourceUpdateParameters, IoTHubEventSourceUpdateParameters.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar kind: The kind of the event source.Constant filled by server.  Possible values include:
+     "Microsoft.EventHub", "Microsoft.IoTHub".
+    :vartype kind: str or ~azure.mgmt.timeseriesinsights.models.EventSourceKind
     :param tags: A set of tags. Key-value pairs of additional properties for the event source.
     :type tags: dict[str, str]
     """
 
+    _validation = {
+        'kind': {'readonly': True},
+    }
+
     _attribute_map = {
+        'kind': {'key': 'kind', 'type': 'str'},
         'tags': {'key': 'tags', 'type': '{str}'},
+    }
+
+    _subtype_map = {
+        'kind': {'Microsoft.EventHub': 'EventHubEventSourceUpdateParameters', 'Microsoft.IoTHub': 'IoTHubEventSourceUpdateParameters'}
     }
 
     def __init__(
@@ -1178,12 +1213,18 @@ class EventSourceUpdateParameters(msrest.serialization.Model):
         **kwargs
     ):
         super(EventSourceUpdateParameters, self).__init__(**kwargs)
+        self.kind = None  # type: Optional[str]
         self.tags = kwargs.get('tags', None)
 
 
 class EventHubEventSourceUpdateParameters(EventSourceUpdateParameters):
     """Parameters supplied to the Update Event Source operation to update an EventHub event source.
 
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar kind: The kind of the event source.Constant filled by server.  Possible values include:
+     "Microsoft.EventHub", "Microsoft.IoTHub".
+    :vartype kind: str or ~azure.mgmt.timeseriesinsights.models.EventSourceKind
     :param tags: A set of tags. Key-value pairs of additional properties for the event source.
     :type tags: dict[str, str]
     :param timestamp_property_name: The event property that will be used as the event source's
@@ -1201,7 +1242,12 @@ class EventHubEventSourceUpdateParameters(EventSourceUpdateParameters):
     :type shared_access_key: str
     """
 
+    _validation = {
+        'kind': {'readonly': True},
+    }
+
     _attribute_map = {
+        'kind': {'key': 'kind', 'type': 'str'},
         'tags': {'key': 'tags', 'type': '{str}'},
         'timestamp_property_name': {'key': 'properties.timestampPropertyName', 'type': 'str'},
         'local_timestamp': {'key': 'properties.localTimestamp', 'type': 'LocalTimestamp'},
@@ -1213,6 +1259,7 @@ class EventHubEventSourceUpdateParameters(EventSourceUpdateParameters):
         **kwargs
     ):
         super(EventHubEventSourceUpdateParameters, self).__init__(**kwargs)
+        self.kind = 'Microsoft.EventHub'  # type: str
         self.timestamp_property_name = kwargs.get('timestamp_property_name', None)
         self.local_timestamp = kwargs.get('local_timestamp', None)
         self.shared_access_key = kwargs.get('shared_access_key', None)
@@ -1516,6 +1563,11 @@ class Gen1EnvironmentResourceProperties(Gen1EnvironmentCreationProperties, Envir
 class Gen1EnvironmentUpdateParameters(EnvironmentUpdateParameters):
     """Parameters supplied to the Update Environment operation to update a Gen1 environment.
 
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar kind: The kind of the environment.Constant filled by server.  Possible values include:
+     "Gen1", "Gen2".
+    :vartype kind: str or ~azure.mgmt.timeseriesinsights.models.EnvironmentKind
     :param tags: A set of tags. Key-value pairs of additional properties for the environment.
     :type tags: dict[str, str]
     :param sku: The sku of the environment.
@@ -1532,7 +1584,12 @@ class Gen1EnvironmentUpdateParameters(EnvironmentUpdateParameters):
      ~azure.mgmt.timeseriesinsights.models.StorageLimitExceededBehavior
     """
 
+    _validation = {
+        'kind': {'readonly': True},
+    }
+
     _attribute_map = {
+        'kind': {'key': 'kind', 'type': 'str'},
         'tags': {'key': 'tags', 'type': '{str}'},
         'sku': {'key': 'sku', 'type': 'Sku'},
         'data_retention_time': {'key': 'properties.dataRetentionTime', 'type': 'duration'},
@@ -1544,6 +1601,7 @@ class Gen1EnvironmentUpdateParameters(EnvironmentUpdateParameters):
         **kwargs
     ):
         super(Gen1EnvironmentUpdateParameters, self).__init__(**kwargs)
+        self.kind = 'Gen1'  # type: str
         self.sku = kwargs.get('sku', None)
         self.data_retention_time = kwargs.get('data_retention_time', None)
         self.storage_limit_exceeded_behavior = kwargs.get('storage_limit_exceeded_behavior', None)
@@ -1782,6 +1840,11 @@ class Gen2EnvironmentResourceProperties(EnvironmentResourceProperties):
 class Gen2EnvironmentUpdateParameters(EnvironmentUpdateParameters):
     """Parameters supplied to the Update Environment operation to update a Gen2 environment.
 
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar kind: The kind of the environment.Constant filled by server.  Possible values include:
+     "Gen1", "Gen2".
+    :vartype kind: str or ~azure.mgmt.timeseriesinsights.models.EnvironmentKind
     :param tags: A set of tags. Key-value pairs of additional properties for the environment.
     :type tags: dict[str, str]
     :param storage_configuration: The storage configuration provides the connection details that
@@ -1795,7 +1858,12 @@ class Gen2EnvironmentUpdateParameters(EnvironmentUpdateParameters):
      ~azure.mgmt.timeseriesinsights.models.WarmStoreConfigurationProperties
     """
 
+    _validation = {
+        'kind': {'readonly': True},
+    }
+
     _attribute_map = {
+        'kind': {'key': 'kind', 'type': 'str'},
         'tags': {'key': 'tags', 'type': '{str}'},
         'storage_configuration': {'key': 'properties.storageConfiguration', 'type': 'Gen2StorageConfigurationMutableProperties'},
         'warm_store_configuration': {'key': 'properties.warmStoreConfiguration', 'type': 'WarmStoreConfigurationProperties'},
@@ -1806,6 +1874,7 @@ class Gen2EnvironmentUpdateParameters(EnvironmentUpdateParameters):
         **kwargs
     ):
         super(Gen2EnvironmentUpdateParameters, self).__init__(**kwargs)
+        self.kind = 'Gen2'  # type: str
         self.storage_configuration = kwargs.get('storage_configuration', None)
         self.warm_store_configuration = kwargs.get('warm_store_configuration', None)
 
@@ -2317,6 +2386,11 @@ class IoTHubEventSourceResourceProperties(IoTHubEventSourceCommonProperties):
 class IoTHubEventSourceUpdateParameters(EventSourceUpdateParameters):
     """Parameters supplied to the Update Event Source operation to update an IoTHub event source.
 
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar kind: The kind of the event source.Constant filled by server.  Possible values include:
+     "Microsoft.EventHub", "Microsoft.IoTHub".
+    :vartype kind: str or ~azure.mgmt.timeseriesinsights.models.EventSourceKind
     :param tags: A set of tags. Key-value pairs of additional properties for the event source.
     :type tags: dict[str, str]
     :param timestamp_property_name: The event property that will be used as the event source's
@@ -2334,7 +2408,12 @@ class IoTHubEventSourceUpdateParameters(EventSourceUpdateParameters):
     :type shared_access_key: str
     """
 
+    _validation = {
+        'kind': {'readonly': True},
+    }
+
     _attribute_map = {
+        'kind': {'key': 'kind', 'type': 'str'},
         'tags': {'key': 'tags', 'type': '{str}'},
         'timestamp_property_name': {'key': 'properties.timestampPropertyName', 'type': 'str'},
         'local_timestamp': {'key': 'properties.localTimestamp', 'type': 'LocalTimestamp'},
@@ -2346,6 +2425,7 @@ class IoTHubEventSourceUpdateParameters(EventSourceUpdateParameters):
         **kwargs
     ):
         super(IoTHubEventSourceUpdateParameters, self).__init__(**kwargs)
+        self.kind = 'Microsoft.IoTHub'  # type: str
         self.timestamp_property_name = kwargs.get('timestamp_property_name', None)
         self.local_timestamp = kwargs.get('local_timestamp', None)
         self.shared_access_key = kwargs.get('shared_access_key', None)

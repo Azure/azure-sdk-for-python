@@ -60,6 +60,7 @@ class KeyClient(KeyVaultClientBase):
         :keyword curve: Elliptic curve name. Applies only to elliptic curve keys. Defaults to the NIST P-256
          elliptic curve. To create an elliptic curve key, consider using :func:`create_ec_key` instead.
         :paramtype curve: ~azure.keyvault.keys.KeyCurveName or str
+        :keyword int public_exponent: The RSA public exponent to use. Applies only to RSA keys created in a Managed HSM.
         :keyword key_operations: Allowed key operations
         :paramtype key_operations: list[~azure.keyvault.keys.KeyOperation or str]
         :keyword bool enabled: Whether the key is enabled for use.
@@ -93,7 +94,8 @@ class KeyClient(KeyVaultClientBase):
             key_attributes=attributes,
             key_ops=kwargs.pop("key_operations", None),
             tags=kwargs.pop("tags", None),
-            curve=kwargs.pop("curve", None)
+            curve=kwargs.pop("curve", None),
+            public_exponent=kwargs.pop("public_exponent", None)
         )
 
         bundle = self._client.create_key(
@@ -114,6 +116,7 @@ class KeyClient(KeyVaultClientBase):
 
         :param str name: The name for the new key.
         :keyword int size: Key size in bits, for example 2048, 3072, or 4096.
+        :keyword int public_exponent: The RSA public exponent to use. Applies only to RSA keys created in a Managed HSM.
         :keyword bool hardware_protected: Whether the key should be created in a hardware security module.
          Defaults to ``False``.
         :keyword key_operations: Allowed key operations

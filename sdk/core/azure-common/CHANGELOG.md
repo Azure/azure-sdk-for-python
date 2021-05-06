@@ -1,7 +1,9 @@
 # Release History
 
-## 1.1.27 (Unreleased)
+## 1.1.27 (2021-03-23)
 
+- Deprecate JSON and auth file client factory  #15075
+- Add 2020-09-01-hybrid profile definition  #14642
 
 ## 1.1.26 (2020-11-10)
 

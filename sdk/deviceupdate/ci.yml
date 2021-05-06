@@ -33,5 +33,5 @@ extends:
     Artifacts:
     - name: azure-iot-deviceupdate
       safeName: azureiotdeviceupdate
-    - name: azure_mgmt_deviceupdate
+    - name: azure-mgmt-deviceupdate
       safeName: azuremgmtdeviceupdate

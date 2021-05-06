@@ -64,7 +64,7 @@ class AccountsOperations:
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2020-11-01"
+        api_version = "2020-12-01"
         accept = "application/json"
 
         def prepare_request(next_link=None):
@@ -139,7 +139,7 @@ class AccountsOperations:
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2020-11-01"
+        api_version = "2020-12-01"
         accept = "application/json"
 
         # Construct URL
@@ -187,7 +187,7 @@ class AccountsOperations:
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2020-11-01"
+        api_version = "2020-12-01"
         content_type = kwargs.pop("content_type", "application/json")
         accept = "application/json"
 
@@ -291,7 +291,7 @@ class AccountsOperations:
             'accountName': self._serialize.url("account_name", account_name, 'str'),
         }
 
-        if polling is True: polling_method = AsyncARMPolling(lro_delay, lro_options={'final-state-via': 'location'}, path_format_arguments=path_format_arguments,  **kwargs)
+        if polling is True: polling_method = AsyncARMPolling(lro_delay, lro_options={'final-state-via': 'azure-async-operation'}, path_format_arguments=path_format_arguments,  **kwargs)
         elif polling is False: polling_method = AsyncNoPolling()
         else: polling_method = polling
         if cont_token:
@@ -316,7 +316,7 @@ class AccountsOperations:
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2020-11-01"
+        api_version = "2020-12-01"
 
         # Construct URL
         url = self._delete_initial.metadata['url']  # type: ignore
@@ -399,7 +399,7 @@ class AccountsOperations:
             'accountName': self._serialize.url("account_name", account_name, 'str'),
         }
 
-        if polling is True: polling_method = AsyncARMPolling(lro_delay, path_format_arguments=path_format_arguments,  **kwargs)
+        if polling is True: polling_method = AsyncARMPolling(lro_delay, lro_options={'final-state-via': 'location'}, path_format_arguments=path_format_arguments,  **kwargs)
         elif polling is False: polling_method = AsyncNoPolling()
         else: polling_method = polling
         if cont_token:
@@ -425,7 +425,7 @@ class AccountsOperations:
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2020-11-01"
+        api_version = "2020-12-01"
         content_type = kwargs.pop("content_type", "application/json")
         accept = "application/json"
 

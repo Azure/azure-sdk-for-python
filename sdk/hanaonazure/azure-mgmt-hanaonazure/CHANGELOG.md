@@ -1,5 +1,11 @@
 # Release History
 
+## 1.0.0 (2021-04-12)
+
+**Breaking changes**
+
+  - Model ErrorResponse has a new signature
+
 ## 1.0.0b1 (2020-12-04)
 
 This is beta preview version.

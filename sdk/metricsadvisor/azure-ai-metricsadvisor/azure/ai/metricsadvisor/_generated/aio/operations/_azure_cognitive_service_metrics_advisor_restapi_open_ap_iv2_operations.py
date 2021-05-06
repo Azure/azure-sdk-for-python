@@ -302,7 +302,7 @@ class AzureCognitiveServiceMetricsAdvisorRESTAPIOpenAPIV2OperationsMixin:
         configuration_id: str,
         body: "_models.AlertingResultQuery",
         skip: Optional[int] = None,
-        top: Optional[int] = None,
+        maxpagesize: Optional[int] = None,
         **kwargs
     ) -> AsyncIterable["_models.AlertResultList"]:
         """Query alerts under anomaly alerting configuration.
@@ -315,8 +315,8 @@ class AzureCognitiveServiceMetricsAdvisorRESTAPIOpenAPIV2OperationsMixin:
         :type body: ~azure.ai.metricsadvisor.models.AlertingResultQuery
         :param skip: for paging, skipped number.
         :type skip: int
-        :param top: for paging, item number in response.
-        :type top: int
+        :param maxpagesize: the maximum number of items in one page.
+        :type maxpagesize: int
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: An iterator like instance of either AlertResultList or the result of cls(response)
         :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.ai.metricsadvisor.models.AlertResultList]
@@ -348,8 +348,8 @@ class AzureCognitiveServiceMetricsAdvisorRESTAPIOpenAPIV2OperationsMixin:
                 query_parameters = {}  # type: Dict[str, Any]
                 if skip is not None:
                     query_parameters['$skip'] = self._serialize.query("skip", skip, 'int')
-                if top is not None:
-                    query_parameters['$top'] = self._serialize.query("top", top, 'int')
+                if maxpagesize is not None:
+                    query_parameters['$maxpagesize'] = self._serialize.query("maxpagesize", maxpagesize, 'int')
 
                 body_content_kwargs = {}  # type: Dict[str, Any]
                 body_content = self._serialize.body(body, 'AlertingResultQuery')
@@ -401,7 +401,7 @@ class AzureCognitiveServiceMetricsAdvisorRESTAPIOpenAPIV2OperationsMixin:
         configuration_id: str,
         alert_id: str,
         skip: Optional[int] = None,
-        top: Optional[int] = None,
+        maxpagesize: Optional[int] = None,
         **kwargs
     ) -> AsyncIterable["_models.AnomalyResultList"]:
         """Query anomalies under a specific alert.
@@ -414,8 +414,8 @@ class AzureCognitiveServiceMetricsAdvisorRESTAPIOpenAPIV2OperationsMixin:
         :type alert_id: str
         :param skip: for paging, skipped number.
         :type skip: int
-        :param top: for paging, item number in response.
-        :type top: int
+        :param maxpagesize: the maximum number of items in one page.
+        :type maxpagesize: int
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: An iterator like instance of either AnomalyResultList or the result of cls(response)
         :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.ai.metricsadvisor.models.AnomalyResultList]
@@ -446,8 +446,8 @@ class AzureCognitiveServiceMetricsAdvisorRESTAPIOpenAPIV2OperationsMixin:
                 query_parameters = {}  # type: Dict[str, Any]
                 if skip is not None:
                     query_parameters['$skip'] = self._serialize.query("skip", skip, 'int')
-                if top is not None:
-                    query_parameters['$top'] = self._serialize.query("top", top, 'int')
+                if maxpagesize is not None:
+                    query_parameters['$maxpagesize'] = self._serialize.query("maxpagesize", maxpagesize, 'int')
 
                 request = self._client.get(url, query_parameters, header_parameters)
             else:
@@ -492,7 +492,7 @@ class AzureCognitiveServiceMetricsAdvisorRESTAPIOpenAPIV2OperationsMixin:
         configuration_id: str,
         alert_id: str,
         skip: Optional[int] = None,
-        top: Optional[int] = None,
+        maxpagesize: Optional[int] = None,
         **kwargs
     ) -> AsyncIterable["_models.IncidentResultList"]:
         """Query incidents under a specific alert.
@@ -505,8 +505,8 @@ class AzureCognitiveServiceMetricsAdvisorRESTAPIOpenAPIV2OperationsMixin:
         :type alert_id: str
         :param skip: for paging, skipped number.
         :type skip: int
-        :param top: for paging, item number in response.
-        :type top: int
+        :param maxpagesize: the maximum number of items in one page.
+        :type maxpagesize: int
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: An iterator like instance of either IncidentResultList or the result of cls(response)
         :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.ai.metricsadvisor.models.IncidentResultList]
@@ -537,8 +537,8 @@ class AzureCognitiveServiceMetricsAdvisorRESTAPIOpenAPIV2OperationsMixin:
                 query_parameters = {}  # type: Dict[str, Any]
                 if skip is not None:
                     query_parameters['$skip'] = self._serialize.query("skip", skip, 'int')
-                if top is not None:
-                    query_parameters['$top'] = self._serialize.query("top", top, 'int')
+                if maxpagesize is not None:
+                    query_parameters['$maxpagesize'] = self._serialize.query("maxpagesize", maxpagesize, 'int')
 
                 request = self._client.get(url, query_parameters, header_parameters)
             else:
@@ -972,7 +972,7 @@ class AzureCognitiveServiceMetricsAdvisorRESTAPIOpenAPIV2OperationsMixin:
         configuration_id: str,
         body: "_models.DetectionAnomalyResultQuery",
         skip: Optional[int] = None,
-        top: Optional[int] = None,
+        maxpagesize: Optional[int] = None,
         **kwargs
     ) -> AsyncIterable["_models.AnomalyResultList"]:
         """Query anomalies under anomaly detection configuration.
@@ -985,8 +985,8 @@ class AzureCognitiveServiceMetricsAdvisorRESTAPIOpenAPIV2OperationsMixin:
         :type body: ~azure.ai.metricsadvisor.models.DetectionAnomalyResultQuery
         :param skip: for paging, skipped number.
         :type skip: int
-        :param top: for paging, item number in response.
-        :type top: int
+        :param maxpagesize: the maximum number of items in one page.
+        :type maxpagesize: int
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: An iterator like instance of either AnomalyResultList or the result of cls(response)
         :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.ai.metricsadvisor.models.AnomalyResultList]
@@ -1018,8 +1018,8 @@ class AzureCognitiveServiceMetricsAdvisorRESTAPIOpenAPIV2OperationsMixin:
                 query_parameters = {}  # type: Dict[str, Any]
                 if skip is not None:
                     query_parameters['$skip'] = self._serialize.query("skip", skip, 'int')
-                if top is not None:
-                    query_parameters['$top'] = self._serialize.query("top", top, 'int')
+                if maxpagesize is not None:
+                    query_parameters['$maxpagesize'] = self._serialize.query("maxpagesize", maxpagesize, 'int')
 
                 body_content_kwargs = {}  # type: Dict[str, Any]
                 body_content = self._serialize.body(body, 'DetectionAnomalyResultQuery')
@@ -1071,7 +1071,7 @@ class AzureCognitiveServiceMetricsAdvisorRESTAPIOpenAPIV2OperationsMixin:
         configuration_id: str,
         body: "_models.AnomalyDimensionQuery",
         skip: Optional[int] = None,
-        top: Optional[int] = None,
+        maxpagesize: Optional[int] = None,
         **kwargs
     ) -> AsyncIterable["_models.AnomalyDimensionList"]:
         """Query dimension values of anomalies.
@@ -1084,8 +1084,8 @@ class AzureCognitiveServiceMetricsAdvisorRESTAPIOpenAPIV2OperationsMixin:
         :type body: ~azure.ai.metricsadvisor.models.AnomalyDimensionQuery
         :param skip: for paging, skipped number.
         :type skip: int
-        :param top: for paging, item number in response.
-        :type top: int
+        :param maxpagesize: the maximum number of items in one page.
+        :type maxpagesize: int
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: An iterator like instance of either AnomalyDimensionList or the result of cls(response)
         :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.ai.metricsadvisor.models.AnomalyDimensionList]
@@ -1117,8 +1117,8 @@ class AzureCognitiveServiceMetricsAdvisorRESTAPIOpenAPIV2OperationsMixin:
                 query_parameters = {}  # type: Dict[str, Any]
                 if skip is not None:
                     query_parameters['$skip'] = self._serialize.query("skip", skip, 'int')
-                if top is not None:
-                    query_parameters['$top'] = self._serialize.query("top", top, 'int')
+                if maxpagesize is not None:
+                    query_parameters['$maxpagesize'] = self._serialize.query("maxpagesize", maxpagesize, 'int')
 
                 body_content_kwargs = {}  # type: Dict[str, Any]
                 body_content = self._serialize.body(body, 'AnomalyDimensionQuery')
@@ -1169,7 +1169,7 @@ class AzureCognitiveServiceMetricsAdvisorRESTAPIOpenAPIV2OperationsMixin:
         self,
         configuration_id: str,
         body: "_models.DetectionIncidentResultQuery",
-        top: Optional[int] = None,
+        maxpagesize: Optional[int] = None,
         **kwargs
     ) -> AsyncIterable["_models.IncidentResultList"]:
         """Query incidents under anomaly detection configuration.
@@ -1180,8 +1180,8 @@ class AzureCognitiveServiceMetricsAdvisorRESTAPIOpenAPIV2OperationsMixin:
         :type configuration_id: str
         :param body: query detection incident result request.
         :type body: ~azure.ai.metricsadvisor.models.DetectionIncidentResultQuery
-        :param top: for paging, item number in response.
-        :type top: int
+        :param maxpagesize: the maximum number of items in one page.
+        :type maxpagesize: int
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: An iterator like instance of either IncidentResultList or the result of cls(response)
         :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.ai.metricsadvisor.models.IncidentResultList]
@@ -1211,8 +1211,8 @@ class AzureCognitiveServiceMetricsAdvisorRESTAPIOpenAPIV2OperationsMixin:
                 url = self._client.format_url(url, **path_format_arguments)
                 # Construct parameters
                 query_parameters = {}  # type: Dict[str, Any]
-                if top is not None:
-                    query_parameters['$top'] = self._serialize.query("top", top, 'int')
+                if maxpagesize is not None:
+                    query_parameters['$maxpagesize'] = self._serialize.query("maxpagesize", maxpagesize, 'int')
 
                 body_content_kwargs = {}  # type: Dict[str, Any]
                 body_content = self._serialize.body(body, 'DetectionIncidentResultQuery')
@@ -1260,7 +1260,7 @@ class AzureCognitiveServiceMetricsAdvisorRESTAPIOpenAPIV2OperationsMixin:
     def get_incidents_by_anomaly_detection_configuration_next_pages(
         self,
         configuration_id: str,
-        top: Optional[int] = None,
+        maxpagesize: Optional[int] = None,
         token: Optional[str] = None,
         **kwargs
     ) -> AsyncIterable["_models.IncidentResultList"]:
@@ -1270,8 +1270,8 @@ class AzureCognitiveServiceMetricsAdvisorRESTAPIOpenAPIV2OperationsMixin:
 
         :param configuration_id: anomaly detection configuration unique id.
         :type configuration_id: str
-        :param top: for paging, item number in response.
-        :type top: int
+        :param maxpagesize: the maximum number of items in one page.
+        :type maxpagesize: int
         :param token: the token for getting the next page.
         :type token: str
         :keyword callable cls: A custom type or function that will be passed the direct response
@@ -1301,8 +1301,8 @@ class AzureCognitiveServiceMetricsAdvisorRESTAPIOpenAPIV2OperationsMixin:
                 url = self._client.format_url(url, **path_format_arguments)
                 # Construct parameters
                 query_parameters = {}  # type: Dict[str, Any]
-                if top is not None:
-                    query_parameters['$top'] = self._serialize.query("top", top, 'int')
+                if maxpagesize is not None:
+                    query_parameters['$maxpagesize'] = self._serialize.query("maxpagesize", maxpagesize, 'int')
                 if token is not None:
                     query_parameters['$token'] = self._serialize.query("token", token, 'str')
 
@@ -1424,6 +1424,313 @@ class AzureCognitiveServiceMetricsAdvisorRESTAPIOpenAPIV2OperationsMixin:
         )
     get_root_cause_of_incident_by_anomaly_detection_configuration.metadata = {'url': '/enrichment/anomalyDetection/configurations/{configurationId}/incidents/{incidentId}/rootCause'}  # type: ignore
 
+    async def create_credential(
+        self,
+        body: "_models.DataSourceCredential",
+        **kwargs
+    ) -> None:
+        """Create a new data source credential.
+
+        Create a new data source credential.
+
+        :param body: Create data source credential request.
+        :type body: ~azure.ai.metricsadvisor.models.DataSourceCredential
+        :keyword callable cls: A custom type or function that will be passed the direct response
+        :return: None, or the result of cls(response)
+        :rtype: None
+        :raises: ~azure.core.exceptions.HttpResponseError
+        """
+        cls = kwargs.pop('cls', None)  # type: ClsType[None]
+        error_map = {
+            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
+        }
+        error_map.update(kwargs.pop('error_map', {}))
+        content_type = kwargs.pop("content_type", "application/json")
+        accept = "application/json"
+
+        # Construct URL
+        url = self.create_credential.metadata['url']  # type: ignore
+        path_format_arguments = {
+            'endpoint': self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
+        }
+        url = self._client.format_url(url, **path_format_arguments)
+
+        # Construct parameters
+        query_parameters = {}  # type: Dict[str, Any]
+
+        # Construct headers
+        header_parameters = {}  # type: Dict[str, Any]
+        header_parameters['Content-Type'] = self._serialize.header("content_type", content_type, 'str')
+        header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
+
+        body_content_kwargs = {}  # type: Dict[str, Any]
+        body_content = self._serialize.body(body, 'DataSourceCredential')
+        body_content_kwargs['content'] = body_content
+        request = self._client.post(url, query_parameters, header_parameters, **body_content_kwargs)
+        pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
+        response = pipeline_response.http_response
+
+        if response.status_code not in [201]:
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = self._deserialize.failsafe_deserialize(_models.ErrorCode, response)
+            raise HttpResponseError(response=response, model=error)
+
+        response_headers = {}
+        response_headers['Location']=self._deserialize('str', response.headers.get('Location'))
+
+        if cls:
+            return cls(pipeline_response, None, response_headers)
+
+    create_credential.metadata = {'url': '/credentials'}  # type: ignore
+
+    def list_credentials(
+        self,
+        skip: Optional[int] = None,
+        maxpagesize: Optional[int] = None,
+        **kwargs
+    ) -> AsyncIterable["_models.DataSourceCredentialList"]:
+        """List all credentials.
+
+        List all credentials.
+
+        :param skip: for paging, skipped number.
+        :type skip: int
+        :param maxpagesize: the maximum number of items in one page.
+        :type maxpagesize: int
+        :keyword callable cls: A custom type or function that will be passed the direct response
+        :return: An iterator like instance of either DataSourceCredentialList or the result of cls(response)
+        :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.ai.metricsadvisor.models.DataSourceCredentialList]
+        :raises: ~azure.core.exceptions.HttpResponseError
+        """
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.DataSourceCredentialList"]
+        error_map = {
+            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
+        }
+        error_map.update(kwargs.pop('error_map', {}))
+        accept = "application/json"
+
+        def prepare_request(next_link=None):
+            # Construct headers
+            header_parameters = {}  # type: Dict[str, Any]
+            header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
+
+            if not next_link:
+                # Construct URL
+                url = self.list_credentials.metadata['url']  # type: ignore
+                path_format_arguments = {
+                    'endpoint': self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
+                }
+                url = self._client.format_url(url, **path_format_arguments)
+                # Construct parameters
+                query_parameters = {}  # type: Dict[str, Any]
+                if skip is not None:
+                    query_parameters['$skip'] = self._serialize.query("skip", skip, 'int')
+                if maxpagesize is not None:
+                    query_parameters['$maxpagesize'] = self._serialize.query("maxpagesize", maxpagesize, 'int')
+
+                request = self._client.get(url, query_parameters, header_parameters)
+            else:
+                url = next_link
+                query_parameters = {}  # type: Dict[str, Any]
+                path_format_arguments = {
+                    'endpoint': self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
+                }
+                url = self._client.format_url(url, **path_format_arguments)
+                request = self._client.get(url, query_parameters, header_parameters)
+            return request
+
+        async def extract_data(pipeline_response):
+            deserialized = self._deserialize('DataSourceCredentialList', pipeline_response)
+            list_of_elem = deserialized.value
+            if cls:
+                list_of_elem = cls(list_of_elem)
+            return deserialized.next_link or None, AsyncList(list_of_elem)
+
+        async def get_next(next_link=None):
+            request = prepare_request(next_link)
+
+            pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
+            response = pipeline_response.http_response
+
+            if response.status_code not in [200]:
+                error = self._deserialize.failsafe_deserialize(_models.ErrorCode, response)
+                map_error(status_code=response.status_code, response=response, error_map=error_map)
+                raise HttpResponseError(response=response, model=error)
+
+            return pipeline_response
+
+        return AsyncItemPaged(
+            get_next, extract_data
+        )
+    list_credentials.metadata = {'url': '/credentials'}  # type: ignore
+
+    async def update_credential(
+        self,
+        credential_id: str,
+        body: "_models.DataSourceCredentialPatch",
+        **kwargs
+    ) -> None:
+        """Update a data source credential.
+
+        Update a data source credential.
+
+        :param credential_id: Data source credential unique ID.
+        :type credential_id: str
+        :param body: Update data source credential request.
+        :type body: ~azure.ai.metricsadvisor.models.DataSourceCredentialPatch
+        :keyword callable cls: A custom type or function that will be passed the direct response
+        :return: None, or the result of cls(response)
+        :rtype: None
+        :raises: ~azure.core.exceptions.HttpResponseError
+        """
+        cls = kwargs.pop('cls', None)  # type: ClsType[None]
+        error_map = {
+            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
+        }
+        error_map.update(kwargs.pop('error_map', {}))
+        content_type = kwargs.pop("content_type", "application/merge-patch+json")
+        accept = "application/json"
+
+        # Construct URL
+        url = self.update_credential.metadata['url']  # type: ignore
+        path_format_arguments = {
+            'endpoint': self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
+            'credentialId': self._serialize.url("credential_id", credential_id, 'str'),
+        }
+        url = self._client.format_url(url, **path_format_arguments)
+
+        # Construct parameters
+        query_parameters = {}  # type: Dict[str, Any]
+
+        # Construct headers
+        header_parameters = {}  # type: Dict[str, Any]
+        header_parameters['Content-Type'] = self._serialize.header("content_type", content_type, 'str')
+        header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
+
+        body_content_kwargs = {}  # type: Dict[str, Any]
+        body_content = self._serialize.body(body, 'DataSourceCredentialPatch')
+        body_content_kwargs['content'] = body_content
+        request = self._client.patch(url, query_parameters, header_parameters, **body_content_kwargs)
+        pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
+        response = pipeline_response.http_response
+
+        if response.status_code not in [204]:
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = self._deserialize.failsafe_deserialize(_models.ErrorCode, response)
+            raise HttpResponseError(response=response, model=error)
+
+        if cls:
+            return cls(pipeline_response, None, {})
+
+    update_credential.metadata = {'url': '/credentials/{credentialId}'}  # type: ignore
+
+    async def delete_credential(
+        self,
+        credential_id: str,
+        **kwargs
+    ) -> None:
+        """Delete a data source credential.
+
+        Delete a data source credential.
+
+        :param credential_id: Data source credential unique ID.
+        :type credential_id: str
+        :keyword callable cls: A custom type or function that will be passed the direct response
+        :return: None, or the result of cls(response)
+        :rtype: None
+        :raises: ~azure.core.exceptions.HttpResponseError
+        """
+        cls = kwargs.pop('cls', None)  # type: ClsType[None]
+        error_map = {
+            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
+        }
+        error_map.update(kwargs.pop('error_map', {}))
+        accept = "application/json"
+
+        # Construct URL
+        url = self.delete_credential.metadata['url']  # type: ignore
+        path_format_arguments = {
+            'endpoint': self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
+            'credentialId': self._serialize.url("credential_id", credential_id, 'str'),
+        }
+        url = self._client.format_url(url, **path_format_arguments)
+
+        # Construct parameters
+        query_parameters = {}  # type: Dict[str, Any]
+
+        # Construct headers
+        header_parameters = {}  # type: Dict[str, Any]
+        header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
+
+        request = self._client.delete(url, query_parameters, header_parameters)
+        pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
+        response = pipeline_response.http_response
+
+        if response.status_code not in [204]:
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = self._deserialize.failsafe_deserialize(_models.ErrorCode, response)
+            raise HttpResponseError(response=response, model=error)
+
+        if cls:
+            return cls(pipeline_response, None, {})
+
+    delete_credential.metadata = {'url': '/credentials/{credentialId}'}  # type: ignore
+
+    async def get_credential(
+        self,
+        credential_id: str,
+        **kwargs
+    ) -> "_models.DataSourceCredential":
+        """Get a data source credential.
+
+        Get a data source credential.
+
+        :param credential_id: Data source credential unique ID.
+        :type credential_id: str
+        :keyword callable cls: A custom type or function that will be passed the direct response
+        :return: DataSourceCredential, or the result of cls(response)
+        :rtype: ~azure.ai.metricsadvisor.models.DataSourceCredential
+        :raises: ~azure.core.exceptions.HttpResponseError
+        """
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.DataSourceCredential"]
+        error_map = {
+            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
+        }
+        error_map.update(kwargs.pop('error_map', {}))
+        accept = "application/json"
+
+        # Construct URL
+        url = self.get_credential.metadata['url']  # type: ignore
+        path_format_arguments = {
+            'endpoint': self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
+            'credentialId': self._serialize.url("credential_id", credential_id, 'str'),
+        }
+        url = self._client.format_url(url, **path_format_arguments)
+
+        # Construct parameters
+        query_parameters = {}  # type: Dict[str, Any]
+
+        # Construct headers
+        header_parameters = {}  # type: Dict[str, Any]
+        header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
+
+        request = self._client.get(url, query_parameters, header_parameters)
+        pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = self._deserialize.failsafe_deserialize(_models.ErrorCode, response)
+            raise HttpResponseError(response=response, model=error)
+
+        deserialized = self._deserialize('DataSourceCredential', pipeline_response)
+
+        if cls:
+            return cls(pipeline_response, deserialized, {})
+
+        return deserialized
+    get_credential.metadata = {'url': '/credentials/{credentialId}'}  # type: ignore
+
     def list_data_feeds(
         self,
         data_feed_name: Optional[str] = None,
@@ -1432,7 +1739,7 @@ class AzureCognitiveServiceMetricsAdvisorRESTAPIOpenAPIV2OperationsMixin:
         status: Optional[Union[str, "_models.EntityStatus"]] = None,
         creator: Optional[str] = None,
         skip: Optional[int] = None,
-        top: Optional[int] = None,
+        maxpagesize: Optional[int] = None,
         **kwargs
     ) -> AsyncIterable["_models.DataFeedList"]:
         """List all data feeds.
@@ -1451,8 +1758,8 @@ class AzureCognitiveServiceMetricsAdvisorRESTAPIOpenAPIV2OperationsMixin:
         :type creator: str
         :param skip: for paging, skipped number.
         :type skip: int
-        :param top: for paging, item number in response.
-        :type top: int
+        :param maxpagesize: the maximum number of items in one page.
+        :type maxpagesize: int
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: An iterator like instance of either DataFeedList or the result of cls(response)
         :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.ai.metricsadvisor.models.DataFeedList]
@@ -1491,8 +1798,8 @@ class AzureCognitiveServiceMetricsAdvisorRESTAPIOpenAPIV2OperationsMixin:
                     query_parameters['creator'] = self._serialize.query("creator", creator, 'str')
                 if skip is not None:
                     query_parameters['$skip'] = self._serialize.query("skip", skip, 'int')
-                if top is not None:
-                    query_parameters['$top'] = self._serialize.query("top", top, 'int')
+                if maxpagesize is not None:
+                    query_parameters['$maxpagesize'] = self._serialize.query("maxpagesize", maxpagesize, 'int')
 
                 request = self._client.get(url, query_parameters, header_parameters)
             else:
@@ -1815,7 +2122,7 @@ class AzureCognitiveServiceMetricsAdvisorRESTAPIOpenAPIV2OperationsMixin:
         self,
         body: "_models.MetricFeedbackFilter",
         skip: Optional[int] = None,
-        top: Optional[int] = None,
+        maxpagesize: Optional[int] = None,
         **kwargs
     ) -> AsyncIterable["_models.MetricFeedbackList"]:
         """List feedback on the given metric.
@@ -1826,8 +2133,8 @@ class AzureCognitiveServiceMetricsAdvisorRESTAPIOpenAPIV2OperationsMixin:
         :type body: ~azure.ai.metricsadvisor.models.MetricFeedbackFilter
         :param skip: for paging, skipped number.
         :type skip: int
-        :param top: for paging, item number in response.
-        :type top: int
+        :param maxpagesize: the maximum number of items in one page.
+        :type maxpagesize: int
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: An iterator like instance of either MetricFeedbackList or the result of cls(response)
         :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.ai.metricsadvisor.models.MetricFeedbackList]
@@ -1858,8 +2165,8 @@ class AzureCognitiveServiceMetricsAdvisorRESTAPIOpenAPIV2OperationsMixin:
                 query_parameters = {}  # type: Dict[str, Any]
                 if skip is not None:
                     query_parameters['$skip'] = self._serialize.query("skip", skip, 'int')
-                if top is not None:
-                    query_parameters['$top'] = self._serialize.query("top", top, 'int')
+                if maxpagesize is not None:
+                    query_parameters['$maxpagesize'] = self._serialize.query("maxpagesize", maxpagesize, 'int')
 
                 body_content_kwargs = {}  # type: Dict[str, Any]
                 body_content = self._serialize.body(body, 'MetricFeedbackFilter')
@@ -1969,7 +2276,7 @@ class AzureCognitiveServiceMetricsAdvisorRESTAPIOpenAPIV2OperationsMixin:
         self,
         hook_name: Optional[str] = None,
         skip: Optional[int] = None,
-        top: Optional[int] = None,
+        maxpagesize: Optional[int] = None,
         **kwargs
     ) -> AsyncIterable["_models.HookList"]:
         """List all hooks.
@@ -1980,8 +2287,8 @@ class AzureCognitiveServiceMetricsAdvisorRESTAPIOpenAPIV2OperationsMixin:
         :type hook_name: str
         :param skip: for paging, skipped number.
         :type skip: int
-        :param top: for paging, item number in response.
-        :type top: int
+        :param maxpagesize: the maximum number of items in one page.
+        :type maxpagesize: int
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: An iterator like instance of either HookList or the result of cls(response)
         :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.ai.metricsadvisor.models.HookList]
@@ -2012,8 +2319,8 @@ class AzureCognitiveServiceMetricsAdvisorRESTAPIOpenAPIV2OperationsMixin:
                     query_parameters['hookName'] = self._serialize.query("hook_name", hook_name, 'str')
                 if skip is not None:
                     query_parameters['$skip'] = self._serialize.query("skip", skip, 'int')
-                if top is not None:
-                    query_parameters['$top'] = self._serialize.query("top", top, 'int')
+                if maxpagesize is not None:
+                    query_parameters['$maxpagesize'] = self._serialize.query("maxpagesize", maxpagesize, 'int')
 
                 request = self._client.get(url, query_parameters, header_parameters)
             else:
@@ -2282,7 +2589,7 @@ class AzureCognitiveServiceMetricsAdvisorRESTAPIOpenAPIV2OperationsMixin:
         data_feed_id: str,
         body: "_models.IngestionStatusQueryOptions",
         skip: Optional[int] = None,
-        top: Optional[int] = None,
+        maxpagesize: Optional[int] = None,
         **kwargs
     ) -> AsyncIterable["_models.IngestionStatusList"]:
         """Get data ingestion status by data feed.
@@ -2295,8 +2602,8 @@ class AzureCognitiveServiceMetricsAdvisorRESTAPIOpenAPIV2OperationsMixin:
         :type body: ~azure.ai.metricsadvisor.models.IngestionStatusQueryOptions
         :param skip: for paging, skipped number.
         :type skip: int
-        :param top: for paging, item number in response.
-        :type top: int
+        :param maxpagesize: the maximum number of items in one page.
+        :type maxpagesize: int
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: An iterator like instance of either IngestionStatusList or the result of cls(response)
         :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.ai.metricsadvisor.models.IngestionStatusList]
@@ -2328,8 +2635,8 @@ class AzureCognitiveServiceMetricsAdvisorRESTAPIOpenAPIV2OperationsMixin:
                 query_parameters = {}  # type: Dict[str, Any]
                 if skip is not None:
                     query_parameters['$skip'] = self._serialize.query("skip", skip, 'int')
-                if top is not None:
-                    query_parameters['$top'] = self._serialize.query("top", top, 'int')
+                if maxpagesize is not None:
+                    query_parameters['$maxpagesize'] = self._serialize.query("maxpagesize", maxpagesize, 'int')
 
                 body_content_kwargs = {}  # type: Dict[str, Any]
                 body_content = self._serialize.body(body, 'IngestionStatusQueryOptions')
@@ -2583,7 +2890,7 @@ class AzureCognitiveServiceMetricsAdvisorRESTAPIOpenAPIV2OperationsMixin:
         metric_id: str,
         body: "_models.MetricSeriesQueryOptions",
         skip: Optional[int] = None,
-        top: Optional[int] = None,
+        maxpagesize: Optional[int] = None,
         **kwargs
     ) -> AsyncIterable["_models.MetricSeriesList"]:
         """List series (dimension combinations) from metric.
@@ -2596,8 +2903,8 @@ class AzureCognitiveServiceMetricsAdvisorRESTAPIOpenAPIV2OperationsMixin:
         :type body: ~azure.ai.metricsadvisor.models.MetricSeriesQueryOptions
         :param skip: for paging, skipped number.
         :type skip: int
-        :param top: for paging, item number in response.
-        :type top: int
+        :param maxpagesize: the maximum number of items in one page.
+        :type maxpagesize: int
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: An iterator like instance of either MetricSeriesList or the result of cls(response)
         :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.ai.metricsadvisor.models.MetricSeriesList]
@@ -2629,8 +2936,8 @@ class AzureCognitiveServiceMetricsAdvisorRESTAPIOpenAPIV2OperationsMixin:
                 query_parameters = {}  # type: Dict[str, Any]
                 if skip is not None:
                     query_parameters['$skip'] = self._serialize.query("skip", skip, 'int')
-                if top is not None:
-                    query_parameters['$top'] = self._serialize.query("top", top, 'int')
+                if maxpagesize is not None:
+                    query_parameters['$maxpagesize'] = self._serialize.query("maxpagesize", maxpagesize, 'int')
 
                 body_content_kwargs = {}  # type: Dict[str, Any]
                 body_content = self._serialize.body(body, 'MetricSeriesQueryOptions')
@@ -2682,7 +2989,7 @@ class AzureCognitiveServiceMetricsAdvisorRESTAPIOpenAPIV2OperationsMixin:
         metric_id: str,
         body: "_models.MetricDimensionQueryOptions",
         skip: Optional[int] = None,
-        top: Optional[int] = None,
+        maxpagesize: Optional[int] = None,
         **kwargs
     ) -> AsyncIterable["_models.MetricDimensionList"]:
         """List dimension from certain metric.
@@ -2695,8 +3002,8 @@ class AzureCognitiveServiceMetricsAdvisorRESTAPIOpenAPIV2OperationsMixin:
         :type body: ~azure.ai.metricsadvisor.models.MetricDimensionQueryOptions
         :param skip: for paging, skipped number.
         :type skip: int
-        :param top: for paging, item number in response.
-        :type top: int
+        :param maxpagesize: the maximum number of items in one page.
+        :type maxpagesize: int
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: An iterator like instance of either MetricDimensionList or the result of cls(response)
         :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.ai.metricsadvisor.models.MetricDimensionList]
@@ -2728,8 +3035,8 @@ class AzureCognitiveServiceMetricsAdvisorRESTAPIOpenAPIV2OperationsMixin:
                 query_parameters = {}  # type: Dict[str, Any]
                 if skip is not None:
                     query_parameters['$skip'] = self._serialize.query("skip", skip, 'int')
-                if top is not None:
-                    query_parameters['$top'] = self._serialize.query("top", top, 'int')
+                if maxpagesize is not None:
+                    query_parameters['$maxpagesize'] = self._serialize.query("maxpagesize", maxpagesize, 'int')
 
                 body_content_kwargs = {}  # type: Dict[str, Any]
                 body_content = self._serialize.body(body, 'MetricDimensionQueryOptions')
@@ -2857,7 +3164,7 @@ class AzureCognitiveServiceMetricsAdvisorRESTAPIOpenAPIV2OperationsMixin:
         metric_id: str,
         body: "_models.EnrichmentStatusQueryOption",
         skip: Optional[int] = None,
-        top: Optional[int] = None,
+        maxpagesize: Optional[int] = None,
         **kwargs
     ) -> AsyncIterable["_models.EnrichmentStatusList"]:
         """Query anomaly detection status.
@@ -2870,8 +3177,8 @@ class AzureCognitiveServiceMetricsAdvisorRESTAPIOpenAPIV2OperationsMixin:
         :type body: ~azure.ai.metricsadvisor.models.EnrichmentStatusQueryOption
         :param skip: for paging, skipped number.
         :type skip: int
-        :param top: for paging, item number in response.
-        :type top: int
+        :param maxpagesize: the maximum number of items in one page.
+        :type maxpagesize: int
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: An iterator like instance of either EnrichmentStatusList or the result of cls(response)
         :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.ai.metricsadvisor.models.EnrichmentStatusList]
@@ -2903,8 +3210,8 @@ class AzureCognitiveServiceMetricsAdvisorRESTAPIOpenAPIV2OperationsMixin:
                 query_parameters = {}  # type: Dict[str, Any]
                 if skip is not None:
                     query_parameters['$skip'] = self._serialize.query("skip", skip, 'int')
-                if top is not None:
-                    query_parameters['$top'] = self._serialize.query("top", top, 'int')
+                if maxpagesize is not None:
+                    query_parameters['$maxpagesize'] = self._serialize.query("maxpagesize", maxpagesize, 'int')
 
                 body_content_kwargs = {}  # type: Dict[str, Any]
                 body_content = self._serialize.body(body, 'EnrichmentStatusQueryOption')

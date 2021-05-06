@@ -66,12 +66,19 @@ def get_field_value(
         return (
             value.text
         )  # FIXME https://github.com/Azure/azure-sdk-for-python/issues/15276
-
+    if value.type == "gender":
+        return value.value_gender
+    if value.type == "country":
+        return value.value_country
     return None
 
 
 class FieldValueType(str, Enum):
-    """Semantic data type of the field value."""
+    """Semantic data type of the field value.
+
+    .. versionadded:: v2.1-preview
+        The *gender* and *country* values
+    """
 
     STRING = "string"
     DATE = "date"
@@ -82,6 +89,8 @@ class FieldValueType(str, Enum):
     LIST = "list"
     DICTIONARY = "dictionary"
     SELECTION_MARK = "selectionMark"
+    GENDER = "gender"
+    COUNTRY = "country"
 
 
 class LengthUnit(str, Enum):
@@ -177,6 +186,9 @@ class FormElement(object):
 
 class RecognizedForm(object):
     """Represents a form that has been recognized by a trained or prebuilt model.
+    The `fields` property contains the form fields that were extracted from the
+    form. Tables, text lines/words, and selection marks are extracted per page
+    and found in the `pages` property.
 
     :ivar str form_type:
         The type of form the model identified the submitted form to be.
@@ -228,7 +240,8 @@ class FormField(object):
 
     :ivar str value_type: The type of `value` found on FormField. Described in
         :class:`~azure.ai.formrecognizer.FieldValueType`, possible types include: 'string',
-        'date', 'time', 'phoneNumber', 'float', 'integer', 'dictionary', 'list', or 'selectionMark'.
+        'date', 'time', 'phoneNumber', 'float', 'integer', 'dictionary', 'list', 'selectionMark',
+        'gender', or 'country'.
     :ivar ~azure.ai.formrecognizer.FieldData label_data:
         Contains the text, bounding box, and field elements for the field label.
         Note that this is not returned for forms analyzed by models trained with labels.
@@ -238,6 +251,8 @@ class FormField(object):
         analyzed from a custom model that was trained with labels.
     :ivar value:
         The value for the recognized field. Its semantic data type is described by `value_type`.
+        If the value is extracted from the form, but cannot be normalized to its type,
+        then access the `value_data.text` property for a textual representation of the value.
     :vartype value: str, int, float, :class:`~datetime.date`, :class:`~datetime.time`,
         dict[str, :class:`~azure.ai.formrecognizer.FormField`], or list[:class:`~azure.ai.formrecognizer.FormField`]
     :ivar float confidence:

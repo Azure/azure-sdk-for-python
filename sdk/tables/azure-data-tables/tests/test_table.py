@@ -29,7 +29,7 @@ from azure.data.tables import (
     generate_account_sas,
     ResourceTypes
 )
-from azure.core.credentials import AzureSasCredential
+from azure.core.credentials import AzureNamedKeyCredential, AzureSasCredential
 from azure.core.pipeline import Pipeline
 from azure.core.pipeline.policies import (
     HeadersPolicy,
@@ -42,7 +42,7 @@ from azure.core.exceptions import (
 )
 
 from _shared.testcase import TableTestCase
-from preparers import TablesPreparer
+from preparers import tables_decorator, tables_decorator
 # ------------------------------------------------------------------------------
 
 TEST_TABLE_PREFIX = 'pytablesync'
@@ -68,24 +68,22 @@ class StorageTableTest(AzureTestCase, TableTestCase):
         return table
 
     def _delete_table(self, ts, table):
-        if table is None:
-            return
-        try:
-            ts.delete_table(table.table_name)
-        except ResourceNotFoundError:
-            pass
-
-    def _delete_all_tables(self, ts):
-        tables = ts.list_tables()
-        for table in tables:
+        if table:
             try:
                 ts.delete_table(table.table_name)
             except ResourceNotFoundError:
                 pass
 
+    def _delete_all_tables(self, ts):
+        for table in ts.list_tables():
+            try:
+                ts.delete_table(table.name)
+            except ResourceNotFoundError:
+                pass
+
     # --Test cases for tables --------------------------------------------------
 
-    @TablesPreparer()
+    @tables_decorator
     def test_create_properties(self, tables_storage_account_name, tables_primary_storage_account_key):
         # # Arrange
         account_url = self.account_url(tables_storage_account_name, "table")
@@ -108,7 +106,7 @@ class StorageTableTest(AzureTestCase, TableTestCase):
         ps = ts.get_service_properties()
         ts.delete_table(table_name)
 
-    @TablesPreparer()
+    @tables_decorator
     def test_create_table(self, tables_storage_account_name, tables_primary_storage_account_key):
         # # Arrange
         account_url = self.account_url(tables_storage_account_name, "table")
@@ -123,7 +121,7 @@ class StorageTableTest(AzureTestCase, TableTestCase):
         assert created.table_name == table_name
         ts.delete_table(table_name)
 
-    @TablesPreparer()
+    @tables_decorator
     def test_create_table_fail_on_exist(self, tables_storage_account_name, tables_primary_storage_account_key):
         # Arrange
         account_url = self.account_url(tables_storage_account_name, "table")
@@ -136,13 +134,13 @@ class StorageTableTest(AzureTestCase, TableTestCase):
             ts.create_table(table_name)
 
         name_filter = "TableName eq '{}'".format(table_name)
-        existing = list(ts.query_tables(filter=name_filter))
+        existing = list(ts.query_tables(name_filter))
 
         # Assert
         assert created is not None
         ts.delete_table(table_name)
 
-    @TablesPreparer()
+    @tables_decorator
     def test_query_tables_per_page(self, tables_storage_account_name, tables_primary_storage_account_key):
         # Arrange
         account_url = self.account_url(tables_storage_account_name, "table")
@@ -156,7 +154,7 @@ class StorageTableTest(AzureTestCase, TableTestCase):
         query_filter = "TableName eq 'mytable0' or TableName eq 'mytable1' or TableName eq 'mytable2'"
         table_count = 0
         page_count = 0
-        for table_page in ts.query_tables(filter=query_filter, results_per_page=2).by_page():
+        for table_page in ts.query_tables(query_filter, results_per_page=2).by_page():
 
             temp_count = 0
             for table in table_page:
@@ -174,7 +172,7 @@ class StorageTableTest(AzureTestCase, TableTestCase):
         if self.is_live:
             self.sleep(10) # wait for tables to be deleted before proceeding
 
-    @TablesPreparer()
+    @tables_decorator
     def test_create_table_if_exists(self, tables_storage_account_name, tables_primary_storage_account_key):
         account_url = self.account_url(tables_storage_account_name, "table")
         ts = self.create_client_from_credential(TableServiceClient, tables_primary_storage_account_key, account_url=account_url)
@@ -185,10 +183,10 @@ class StorageTableTest(AzureTestCase, TableTestCase):
 
         assert t0 is not None
         assert t1 is not None
-        assert t0.table_name ==  t1.table_name
+        assert t0.table_name == t1.table_name
         ts.delete_table(table_name)
 
-    @TablesPreparer()
+    @tables_decorator
     def test_create_table_if_exists_new_table(self, tables_storage_account_name, tables_primary_storage_account_key):
         account_url = self.account_url(tables_storage_account_name, "table")
         ts = self.create_client_from_credential(TableServiceClient, tables_primary_storage_account_key, account_url=account_url)
@@ -200,7 +198,7 @@ class StorageTableTest(AzureTestCase, TableTestCase):
         assert t.table_name ==  table_name
         ts.delete_table(table_name)
 
-    @TablesPreparer()
+    @tables_decorator
     def test_query_tables(self, tables_storage_account_name, tables_primary_storage_account_key):
         # Arrange
         account_url = self.account_url(tables_storage_account_name, "table")
@@ -222,7 +220,7 @@ class StorageTableTest(AzureTestCase, TableTestCase):
         if self.is_live:
             self.sleep(10) # wait for tables to be deleted before proceeding
 
-    @TablesPreparer()
+    @tables_decorator
     def test_query_tables_with_filter(self, tables_storage_account_name, tables_primary_storage_account_key):
         # Arrange
         account_url = self.account_url(tables_storage_account_name, "table")
@@ -231,7 +229,7 @@ class StorageTableTest(AzureTestCase, TableTestCase):
 
         # Act
         name_filter = "TableName eq '{}'".format(t.table_name)
-        tables = list(ts.query_tables(filter=name_filter))
+        tables = list(ts.query_tables(name_filter))
 
         for table_item in tables:
             assert isinstance(table_item,  TableItem)
@@ -246,7 +244,7 @@ class StorageTableTest(AzureTestCase, TableTestCase):
         if self.is_live:
             self.sleep(10) # wait for tables to be deleted before proceeding
 
-    @TablesPreparer()
+    @tables_decorator
     def test_query_tables_with_num_results(self, tables_storage_account_name, tables_primary_storage_account_key):
         # Arrange
         prefix = 'listtable'
@@ -261,10 +259,10 @@ class StorageTableTest(AzureTestCase, TableTestCase):
         big_page = []
         for s in next(ts.list_tables(results_per_page=3).by_page()):
             small_page.append(s)
-            assert s.table_name.startswith(prefix)
+            assert s.name.startswith(prefix)
         for t in next(ts.list_tables().by_page()):
             big_page.append(t)
-            assert t.table_name.startswith(prefix)
+            assert t.name.startswith(prefix)
 
         # Assert
         assert len(small_page) ==  3
@@ -275,7 +273,7 @@ class StorageTableTest(AzureTestCase, TableTestCase):
         if self.is_live:
             self.sleep(10) # wait for tables to be deleted before proceeding
 
-    @TablesPreparer()
+    @tables_decorator
     def test_query_tables_with_marker(self, tables_storage_account_name, tables_primary_storage_account_key):
         # Arrange
         account_url = self.account_url(tables_storage_account_name, "table")
@@ -305,7 +303,7 @@ class StorageTableTest(AzureTestCase, TableTestCase):
         if self.is_live:
             self.sleep(10) # wait for tables to be deleted before proceeding
 
-    @TablesPreparer()
+    @tables_decorator
     def test_delete_table_with_existing_table(self, tables_storage_account_name, tables_primary_storage_account_key):
         # Arrange
         account_url = self.account_url(tables_storage_account_name, "table")
@@ -320,7 +318,7 @@ class StorageTableTest(AzureTestCase, TableTestCase):
         assert deleted is None
         assert len(existing) ==  0
 
-    @TablesPreparer()
+    @tables_decorator
     def test_delete_table_with_non_existing_table_fail_not_exist(self, tables_storage_account_name, tables_primary_storage_account_key):
         # Arrange
         account_url = self.account_url(tables_storage_account_name, "table")
@@ -331,7 +329,7 @@ class StorageTableTest(AzureTestCase, TableTestCase):
         with pytest.raises(HttpResponseError):
             ts.delete_table(table_name)
 
-    @TablesPreparer()
+    @tables_decorator
     def test_get_table_acl(self, tables_storage_account_name, tables_primary_storage_account_key):
         # Arrange
         url = self.account_url(tables_storage_account_name, "table")
@@ -348,9 +346,8 @@ class StorageTableTest(AzureTestCase, TableTestCase):
         finally:
             ts.delete_table(table.table_name)
 
-    @TablesPreparer()
-    def test_set_table_acl_with_empty_signed_identifiers(self, tables_storage_account_name,
-                                                         tables_primary_storage_account_key):
+    @tables_decorator
+    def test_set_table_acl_with_empty_signed_identifiers(self, tables_storage_account_name, tables_primary_storage_account_key):
         # Arrange
         account_url = self.account_url(tables_storage_account_name, "table")
 
@@ -368,9 +365,8 @@ class StorageTableTest(AzureTestCase, TableTestCase):
         finally:
             ts.delete_table(table.table_name)
 
-    @TablesPreparer()
-    def test_set_table_acl_with_empty_signed_identifier(self, tables_storage_account_name,
-                                                        tables_primary_storage_account_key):
+    @tables_decorator
+    def test_set_table_acl_with_empty_signed_identifier(self, tables_storage_account_name, tables_primary_storage_account_key):
         # Arrange
         account_url = self.account_url(tables_storage_account_name, "table")
 
@@ -391,9 +387,8 @@ class StorageTableTest(AzureTestCase, TableTestCase):
         finally:
             ts.delete_table(table.table_name)
 
-    @TablesPreparer()
-    def test_set_table_acl_with_signed_identifiers(self, tables_storage_account_name,
-                                                   tables_primary_storage_account_key):
+    @tables_decorator
+    def test_set_table_acl_with_signed_identifiers(self, tables_storage_account_name, tables_primary_storage_account_key):
         # Arrange
         account_url = self.account_url(tables_storage_account_name, "table")
 
@@ -417,7 +412,7 @@ class StorageTableTest(AzureTestCase, TableTestCase):
         finally:
             ts.delete_table(table.table_name)
 
-    @TablesPreparer()
+    @tables_decorator
     def test_set_table_acl_too_many_ids(self, tables_storage_account_name, tables_primary_storage_account_key):
         # Arrange
         account_url = self.account_url(tables_storage_account_name, "table")
@@ -433,12 +428,12 @@ class StorageTableTest(AzureTestCase, TableTestCase):
 
             # Assert
             with pytest.raises(ValueError):
-                table.set_table_access_policy(table_name=table.table_name, signed_identifiers=identifiers)
+                table.set_table_access_policy(signed_identifiers=identifiers)
         finally:
             ts.delete_table(table.table_name)
 
     @pytest.mark.live_test_only
-    @TablesPreparer()
+    @tables_decorator
     def test_account_sas(self, tables_storage_account_name, tables_primary_storage_account_key):
         # SAS URL is calculated from storage key, so this test runs live only
 
@@ -459,7 +454,6 @@ class StorageTableTest(AzureTestCase, TableTestCase):
             table.upsert_entity(mode=UpdateMode.MERGE, entity=entity)
 
             token = generate_account_sas(
-                tables_storage_account_name,
                 tables_primary_storage_account_key,
                 resource_types=ResourceTypes(object=True),
                 permission=AccountSasPermissions(read=True),
@@ -472,61 +466,27 @@ class StorageTableTest(AzureTestCase, TableTestCase):
             service = self.create_client_from_credential(TableServiceClient, token, account_url=account_url)
 
             # Act
-            # service = TableServiceClient(
-            #     self.account_url(tables_storage_account_name, "table"),
-            #     credential=token,
-            # )
 
             sas_table = service.get_table_client(table.table_name)
             entities = list(sas_table.list_entities())
 
             # Assert
             assert len(entities) ==  2
-            assert entities[0].text ==  u'hello'
-            assert entities[1].text ==  u'hello'
+            assert entities[0]['text'] == u'hello'
+            assert entities[1]['text'] == u'hello'
         finally:
             self._delete_table(table=table, ts=tsc)
-
-    @pytest.mark.skip("Test fails on Linux and in Python2. Throws a locale.Error: unsupported locale setting")
-    @TablesPreparer()
-    def test_locale(self, tables_storage_account_name, tables_primary_storage_account_key):
-        # Arrange
-        account_url = self.account_url(tables_storage_account_name, "table")
-        ts = self.create_client_from_credential(TableServiceClient, tables_primary_storage_account_key, account_url=account_url)
-        table = (self._get_table_reference())
-        init_locale = locale.getlocale()
-        if os.name == "nt":
-            culture = "Spanish_Spain"
-        elif os.name == 'posix':
-            culture = 'es_ES.UTF-8'
-        else:
-            culture = 'es_ES.utf8'
-
-        locale.setlocale(locale.LC_ALL, culture)
-        e = None
-
-        # Act
-        ts.create_table(table)
-
-        resp = ts.list_tables()
-
-        e = sys.exc_info()[0]
-
-        # Assert
-        assert e is None
-
-        ts.delete_table(table)
-        locale.setlocale(locale.LC_ALL, init_locale[0] or 'en_US')
 
 
 class TestTablesUnitTest(TableTestCase):
     tables_storage_account_name = "fake_storage_account"
     tables_primary_storage_account_key = "fakeXMZjnGsZGvd4bVr3Il5SeHA"
+    credential = AzureNamedKeyCredential(name=tables_storage_account_name, key=tables_primary_storage_account_key)
 
     def test_unicode_create_table_unicode_name(self):
         # Arrange
         account_url = self.account_url(self.tables_storage_account_name, "table")
-        tsc = TableServiceClient(account_url, credential=self.tables_primary_storage_account_key)
+        tsc = TableServiceClient(account_url, credential=self.credential)
 
         table_name = u'啊齄丂狛狜'
 
@@ -540,7 +500,7 @@ class TestTablesUnitTest(TableTestCase):
     def test_create_table_invalid_name(self):
         # Arrange
         account_url = self.account_url(self.tables_storage_account_name, "table")
-        tsc = TableServiceClient(account_url, credential=self.tables_primary_storage_account_key)
+        tsc = TableServiceClient(account_url, credential=self.credential)
         invalid_table_name = "my_table"
 
         with pytest.raises(ValueError) as excinfo:
@@ -552,7 +512,7 @@ class TestTablesUnitTest(TableTestCase):
     def test_delete_table_invalid_name(self):
         # Arrange
         account_url = self.account_url(self.tables_storage_account_name, "table")
-        tsc = TableServiceClient(account_url, credential=self.tables_primary_storage_account_key)
+        tsc = TableServiceClient(account_url, credential=self.credential)
         invalid_table_name = "my_table"
 
         with pytest.raises(ValueError) as excinfo:
@@ -560,3 +520,13 @@ class TestTablesUnitTest(TableTestCase):
 
         assert "Table names must be alphanumeric, cannot begin with a number, and must be between 3-63 characters long.""" in str(
             excinfo)
+
+    def test_azurite_url(self):
+        account_url = "https://127.0.0.1:10002/my_account"
+        tsc = TableServiceClient(account_url, credential=self.credential)
+
+        assert tsc.account_name == "my_account"
+        assert tsc.url == "https://127.0.0.1:10002/my_account"
+        assert tsc.location_mode == "primary"
+        assert tsc.credential.named_key.key == self.credential.named_key.key
+        assert tsc.credential.named_key.name == self.credential.named_key.name

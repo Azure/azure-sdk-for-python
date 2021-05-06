@@ -8,6 +8,7 @@ import abc
 import base64
 import json
 import logging
+import os
 import time
 from typing import TYPE_CHECKING
 
@@ -140,7 +141,8 @@ class InteractiveCredential(MsalCredential):
             result = self._request_token(*scopes, **kwargs)
             if "access_token" not in result:
                 message = "Authentication failed: {}".format(result.get("error_description") or result.get("error"))
-                raise ClientAuthenticationError(message=message)
+                response = self._client.get_error_response(result)
+                raise ClientAuthenticationError(message=message, response=response)
 
             # this may be the first authentication, or the user may have authenticated a different identity
             self._auth_record = _build_auth_record(result)
@@ -198,14 +200,18 @@ class InteractiveCredential(MsalCredential):
 
         # if we get this far, result is either None or the content of an AAD error response
         if result:
-            details = result.get("error_description") or result.get("error")
-            raise AuthenticationRequiredError(scopes, error_details=details, claims=claims)
+            response = self._client.get_error_response(result)
+            raise AuthenticationRequiredError(scopes, claims=claims, response=response)
         raise AuthenticationRequiredError(scopes, claims=claims)
 
     def _get_app(self):
         # type: () -> msal.PublicClientApplication
         if not self._msal_app:
-            self._msal_app = self._create_app(msal.PublicClientApplication, client_capabilities=["CP1"])
+            if "AZURE_IDENTITY_DISABLE_CP1" in os.environ:
+                capabilities = None
+            else:
+                capabilities = ["CP1"]  # able to handle CAE claims challenges
+            self._msal_app = self._create_app(msal.PublicClientApplication, client_capabilities=capabilities)
         return self._msal_app
 
     @abc.abstractmethod

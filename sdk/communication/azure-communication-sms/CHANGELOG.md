@@ -1,7 +1,10 @@
 # Release History
 
-## 1.0.0b7 (Unreleased)
+## 1.0.1 (Unreleased)
 
+
+## 1.0.0 (2021-03-29)
+- Stable release of `azure-communication-sms`.
 
 ## 1.0.0b6 (2021-03-09)
 ### Added
@@ -15,6 +18,7 @@
 ### Breaking
 - Send method takes in strings for phone numbers instead of `PhoneNumberIdentifier`.
 - Send method returns a list of `SmsSendResult`s instead of a `SendSmsResponse`.
+- Dropped support for Python 3.5
 
 ## 1.0.0b4 (2020-11-16)
 - Updated `azure-communication-sms` version.

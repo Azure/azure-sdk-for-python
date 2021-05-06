@@ -1,5 +1,31 @@
 # Release History
 
+## 15.1.0 (2021-04-07)
+
+**Features**
+
+  - Model Components1Q1Og48SchemasManagedclusterAllof1 has a new parameter private_link_resources
+  - Model Components1Q1Og48SchemasManagedclusterAllof1 has a new parameter disable_local_accounts
+  - Model Components1Q1Og48SchemasManagedclusterAllof1 has a new parameter http_proxy_config
+  - Model ManagedClusterPodIdentity has a new parameter binding_selector
+  - Model ManagedClusterAgentPoolProfileProperties has a new parameter gpu_instance_profile
+  - Model ManagedClusterAgentPoolProfileProperties has a new parameter enable_fips
+  - Model ManagedClusterAgentPoolProfileProperties has a new parameter os_sku
+  - Model AgentPool has a new parameter gpu_instance_profile
+  - Model AgentPool has a new parameter enable_fips
+  - Model AgentPool has a new parameter os_sku
+  - Model ManagedCluster has a new parameter extended_location
+  - Model ManagedCluster has a new parameter private_link_resources
+  - Model ManagedCluster has a new parameter disable_local_accounts
+  - Model ManagedCluster has a new parameter http_proxy_config
+  - Model ManagedClusterAgentPoolProfile has a new parameter gpu_instance_profile
+  - Model ManagedClusterAgentPoolProfile has a new parameter enable_fips
+  - Model ManagedClusterAgentPoolProfile has a new parameter os_sku
+  - Model ManagedClusterWindowsProfile has a new parameter enable_csi_proxy
+  - Added operation ManagedClustersOperations.get_command_result
+  - Added operation ManagedClustersOperations.begin_run_command
+  - Added operation ManagedClustersOperations.get_os_options
+
 ## 15.0.0 (2021-03-03)
 
 **Features**

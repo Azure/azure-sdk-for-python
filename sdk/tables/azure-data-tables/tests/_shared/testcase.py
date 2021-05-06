@@ -14,7 +14,7 @@ import logging
 import pytest
 
 from devtools_testutils import AzureTestCase
-from azure.core.credentials import AccessToken
+from azure.core.credentials import AccessToken, AzureNamedKeyCredential
 from azure.data.tables import generate_account_sas, AccountSasPermissions, ResourceTypes
 
 LOGGING_FORMAT = '%(asctime)s %(name)-20s %(levelname)-5s %(message)s'
@@ -61,8 +61,7 @@ class TableTestCase(object):
         fake_key = 'a'*30 + 'b'*30
 
         return '?' + generate_account_sas(
-            account_name = 'test', # name of the storage account
-            account_key = fake_key, # key for the storage account
+            credential = AzureNamedKeyCredential(name="fakename", key=fake_key),
             resource_types = ResourceTypes(object=True),
             permission = AccountSasPermissions(read=True,list=True),
             start = datetime.now() - timedelta(hours = 24),
@@ -71,3 +70,30 @@ class TableTestCase(object):
 
     def generate_fake_token(self):
         return FakeTokenCredential()
+
+
+class ResponseCallback(object):
+    def __init__(self, status=None, new_status=None):
+        self.status = status
+        self.new_status = new_status
+        self.first = True
+        self.count = 0
+
+    def override_first_status(self, response):
+        if self.first and response.http_response.status_code == self.status:
+            response.http_response.status_code = self.new_status
+            self.first = False
+        self.count += 1
+
+    def override_status(self, response):
+        if response.http_response.status_code == self.status:
+            response.http_response.status_code = self.new_status
+        self.count += 1
+
+
+class RetryCounter(object):
+    def __init__(self):
+        self.count = 0
+
+    def simple_count(self, retry_context):
+        self.count += 1

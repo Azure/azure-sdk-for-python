@@ -11,7 +11,7 @@ interactions:
       Content-Length:
       - '0'
       User-Agent:
-      - azsdk-python-keyvault-certificates/4.2.2 Python/3.5.3 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-keyvault-certificates/4.3.0b1 Python/3.5.3 (Windows-10-10.0.19041-SP0)
     method: GET
     uri: https://vaultname.vault.azure.net/deletedcertificates?api-version=2016-10-01
   response:
@@ -26,7 +26,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Wed, 17 Feb 2021 01:33:56 GMT
+      - Mon, 22 Mar 2021 21:37:20 GMT
       expires:
       - '-1'
       pragma:
@@ -39,11 +39,11 @@ interactions:
       x-content-type-options:
       - nosniff
       x-ms-keyvault-network-info:
-      - conn_type=Ipv4;addr=174.127.232.53;act_addr_fam=InterNetwork;
+      - conn_type=Ipv4;addr=172.92.159.124;act_addr_fam=InterNetwork;
       x-ms-keyvault-region:
-      - westus2
+      - eastus2
       x-ms-keyvault-service-version:
-      - 1.2.164.2
+      - 1.2.205.0
       x-powered-by:
       - ASP.NET
     status:
@@ -59,21 +59,21 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-keyvault-certificates/4.2.2 Python/3.5.3 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-keyvault-certificates/4.3.0b1 Python/3.5.3 (Windows-10-10.0.19041-SP0)
     method: GET
     uri: https://vaultname.vault.azure.net/deletedcertificates?api-version=2016-10-01
   response:
     body:
-      string: '{"value":[{"recoveryId":"https://vaultname.vault.azure.net/deletedcertificates/importNotPasswordEncodedCertificate","deletedDate":1613176143,"scheduledPurgeDate":1620952143,"id":"https://vaultname.vault.azure.net/certificates/importNotPasswordEncodedCertificate","x5t":"Yj07xp_eOJMn7HPlahwQbKs9Eg8","attributes":{"enabled":true,"nbf":1593090033,"exp":1624626633,"created":1613175243,"updated":1613175243,"recoveryLevel":"Recoverable+Purgeable"}},{"recoveryId":"https://vaultname.vault.azure.net/deletedcertificates/importPasswordEncodedCertificate","deletedDate":1613176146,"scheduledPurgeDate":1620952146,"id":"https://vaultname.vault.azure.net/certificates/importPasswordEncodedCertificate","x5t":"fLi3U52HunIVNXubkEnf8tP6Wbo","attributes":{"enabled":true,"nbf":1430344421,"exp":2208988799,"created":1613175245,"updated":1613175245,"recoveryLevel":"Recoverable+Purgeable"}},{"recoveryId":"https://vaultname.vault.azure.net/deletedcertificates/policyCertificate","deletedDate":1613176150,"scheduledPurgeDate":1620952150,"id":"https://vaultname.vault.azure.net/certificates/policyCertificate","x5t":"9TiBlV4lVJMhwo2vSTFh7optzSs","attributes":{"enabled":true,"nbf":1613174664,"exp":1644711264,"created":1613175264,"updated":1613175264,"recoveryLevel":"Recoverable+Purgeable"}},{"recoveryId":"https://vaultname.vault.azure.net/deletedcertificates/unknownIssuerCert","deletedDate":1613176154,"scheduledPurgeDate":1620952154,"id":"https://vaultname.vault.azure.net/certificates/unknownIssuerCert","x5t":"VK0_yZgzJRLvpHNPxx3-AkCiblY","attributes":{"enabled":true,"nbf":1613174641,"exp":1644711241,"created":1613175241,"updated":1613175241,"recoveryLevel":"Recoverable+Purgeable"}}],"nextLink":null}'
+      string: '{"value":[],"nextLink":"https://vaultname.vault.azure.net:443/deletedcertificates?api-version=2016-10-01&$skiptoken=eyJOZXh0TWFya2VyIjoiMiExMTYhTURBd01EUXlJV05sY25ScFptbGpZWFJsTDB4SlZrVkxWbFJGVTFSRFJWSlVOamxHUVVJeE1FRTFMMUJQVEVsRFdTRXdNREF3TWpnaE9UazVPUzB4TWkwek1WUXlNem8xT1RvMU9TNDVPVGs1T1RrNVdpRS0iLCJUYXJnZXRMb2NhdGlvbiI6MH0"}'
     headers:
       cache-control:
       - no-cache
       content-length:
-      - '1701'
+      - '332'
       content-type:
       - application/json; charset=utf-8
       date:
-      - Wed, 17 Feb 2021 01:33:57 GMT
+      - Mon, 22 Mar 2021 21:37:21 GMT
       expires:
       - '-1'
       pragma:
@@ -83,11 +83,55 @@ interactions:
       x-content-type-options:
       - nosniff
       x-ms-keyvault-network-info:
-      - conn_type=Ipv4;addr=174.127.232.53;act_addr_fam=InterNetwork;
+      - conn_type=Ipv4;addr=172.92.159.124;act_addr_fam=InterNetwork;
       x-ms-keyvault-region:
-      - westus2
+      - eastus2
       x-ms-keyvault-service-version:
-      - 1.2.164.2
+      - 1.2.205.0
+      x-powered-by:
+      - ASP.NET
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - azsdk-python-keyvault-certificates/4.3.0b1 Python/3.5.3 (Windows-10-10.0.19041-SP0)
+    method: GET
+    uri: https://vaultname.vault.azure.net/deletedcertificates?api-version=2016-10-01&$skiptoken=eyJOZXh0TWFya2VyIjoiMiExMTYhTURBd01EUXlJV05sY25ScFptbGpZWFJsTDB4SlZrVkxWbFJGVTFSRFJWSlVOamxHUVVJeE1FRTFMMUJQVEVsRFdTRXdNREF3TWpnaE9UazVPUzB4TWkwek1WUXlNem8xT1RvMU9TNDVPVGs1T1RrNVdpRS0iLCJUYXJnZXRMb2NhdGlvbiI6MH0
+  response:
+    body:
+      string: '{"value":[{"recoveryId":"https://vaultname.vault.azure.net/deletedcertificates/livekvtestcert86bc153a","deletedDate":1616448460,"scheduledPurgeDate":1624224460,"id":"https://vaultname.vault.azure.net/certificates/livekvtestcert86bc153a","x5t":"se7NvIEKi8S7ofjDzgwQac1xJ4k","attributes":{"enabled":true,"nbf":1616447853,"exp":1647984453,"created":1616448453,"updated":1616448460,"recoveryLevel":"Recoverable+Purgeable"},"tags":{"tag1":"updated_value1"}},{"recoveryId":"https://vaultname.vault.azure.net/deletedcertificates/livekvtestcertf76613b7","deletedDate":1616448501,"scheduledPurgeDate":1624224501,"id":"https://vaultname.vault.azure.net/certificates/livekvtestcertf76613b7","x5t":"c4HAnMZ8fqtsb0BFJX8iJTcCvfo","attributes":{"enabled":true,"nbf":1616447896,"exp":1647984496,"created":1616448496,"updated":1616448501,"recoveryLevel":"Recoverable+Purgeable"},"tags":{"tag1":"updated_value1"}},{"recoveryId":"https://vaultname.vault.azure.net/deletedcertificates/livekvtestcertf76713b8","deletedDate":1616448532,"scheduledPurgeDate":1624224532,"id":"https://vaultname.vault.azure.net/certificates/livekvtestcertf76713b8","x5t":"Xg4iTQA_I614-V1OPIdMd4DgQpI","attributes":{"enabled":true,"nbf":1616447926,"exp":1647984526,"created":1616448526,"updated":1616448532,"recoveryLevel":"Recoverable+Purgeable"},"tags":{"tag1":"updated_value1"}}],"nextLink":null}'
+    headers:
+      cache-control:
+      - no-cache
+      content-length:
+      - '1374'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Mon, 22 Mar 2021 21:37:21 GMT
+      expires:
+      - '-1'
+      pragma:
+      - no-cache
+      strict-transport-security:
+      - max-age=31536000;includeSubDomains
+      x-content-type-options:
+      - nosniff
+      x-ms-keyvault-network-info:
+      - conn_type=Ipv4;addr=172.92.159.124;act_addr_fam=InterNetwork;
+      x-ms-keyvault-region:
+      - eastus2
+      x-ms-keyvault-service-version:
+      - 1.2.205.0
       x-powered-by:
       - ASP.NET
     status:

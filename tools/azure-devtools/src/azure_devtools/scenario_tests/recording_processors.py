@@ -148,7 +148,7 @@ class OAuthRequestResponsesFilter(RecordingProcessor):
         # GET https://login.microsoftonline.com/72f988bf-86f1-41af-91ab-2d7cd011db47/oauth2/token
         # POST https://login.microsoftonline.com/72f988bf-86f1-41af-91ab-2d7cd011db47/oauth2/v2.0/token
         import re
-        if not re.match('https://login.microsoftonline.com/([^/]+)/oauth2(?:/v2.0)?/token', request.uri):
+        if not re.search('/oauth2(?:/v2.0)?/token', request.uri):
             return request
         return None
 
@@ -191,9 +191,12 @@ class GeneralNameReplacer(RecordingProcessor):
             request.uri = request.uri.replace(old, new)
 
             if is_text_payload(request) and request.body:
-                body = six.ensure_str(request.body)
-                if old in body:
-                    request.body = body.replace(old, new)
+                if isinstance(request.body, dict):
+                    pass
+                else:
+                    body = six.ensure_str(request.body)
+                    if old in body:
+                        request.body = body.replace(old, new)
 
             if request.body and request.uri and is_batch_payload(request):
                 import re
@@ -213,6 +216,7 @@ class GeneralNameReplacer(RecordingProcessor):
                     body = response['body']['string']
                     response['body']['string'].decode('utf8', 'backslashreplace').replace(old, new).encode('utf8', 'backslashreplace')
             self.replace_header(response, 'location', old, new)
+            self.replace_header(response, 'operation-location', old, new)
             self.replace_header(response, 'azure-asyncoperation', old, new)
 
         return response

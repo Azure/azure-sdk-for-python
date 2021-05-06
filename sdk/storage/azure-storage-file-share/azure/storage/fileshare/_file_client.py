@@ -97,6 +97,10 @@ def _upload_file_helper(
 class ShareFileClient(StorageAccountHostsMixin):
     """A client to interact with a specific file, although that file may not yet exist.
 
+    For more optional configuration, please click
+    `here <https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/storage/azure-storage-file-share
+    #optional-configuration>`_.
+
     :param str account_url:
         The URI to the storage account. In order to create a client given the full URI to the
         file, use the :func:`from_file_url` classmethod.
@@ -683,8 +687,10 @@ class ShareFileClient(StorageAccountHostsMixin):
             length=None,  # type: Optional[int]
             **kwargs
         ):
-        # type: (...) -> Iterable[bytes]
-        """Downloads a file to a stream with automatic chunking.
+        # type: (Optional[int], Optional[int], Any) -> StorageStreamDownloader
+        """Downloads a file to the StorageStreamDownloader. The readall() method must
+        be used to read all the content or readinto() must be used to download the file into
+        a stream. Using chunks() returns an iterator which allows the user to iterate over the content in chunks.
 
         :param int offset:
             Start of byte range to use for downloading a section of the file.
@@ -712,7 +718,8 @@ class ShareFileClient(StorageAccountHostsMixin):
         :paramtype lease: ~azure.storage.fileshare.ShareLeaseClient or str
         :keyword int timeout:
             The timeout parameter is expressed in seconds.
-        :returns: A iterable data generator (stream)
+        :returns: A streaming object (StorageStreamDownloader)
+        :rtype: ~azure.storage.fileshare.StorageStreamDownloader
 
         .. admonition:: Example:
 
