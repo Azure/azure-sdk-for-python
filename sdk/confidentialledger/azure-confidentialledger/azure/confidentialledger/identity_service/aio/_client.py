@@ -10,7 +10,7 @@ from azure.core.pipeline.transport import AsyncioRequestsTransport
 from azure.core.tracing.decorator_async import distributed_trace_async
 
 from .. import LedgerIdentity
-from ..._generated_identity.v0_1_preview.aio import (
+from ..._generated._generated_identity.v0_1_preview.aio import (
     ConfidentialLedgerClient as _ConfidentialLedgerClient,
 )
 from ..._shared import DEFAULT_VERSION

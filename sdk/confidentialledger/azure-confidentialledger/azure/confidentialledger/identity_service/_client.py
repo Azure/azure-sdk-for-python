@@ -9,7 +9,7 @@ from azure.core.tracing.decorator import distributed_trace
 
 from ._models import LedgerIdentity
 
-from .._generated_identity.v0_1_preview import (
+from .._generated._generated_identity.v0_1_preview import (
     ConfidentialLedgerClient as _ConfidentialLedgerClient,
 )
 from .._shared import DEFAULT_VERSION

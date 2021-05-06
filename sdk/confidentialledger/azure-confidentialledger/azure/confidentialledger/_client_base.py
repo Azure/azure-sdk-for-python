@@ -6,7 +6,7 @@
 from azure.core.pipeline.policies import BearerTokenCredentialPolicy, HttpLoggingPolicy
 from azure.core.pipeline.transport import RequestsTransport
 
-from ._generated_ledger.v0_1_preview import (
+from ._generated._generated_ledger.v0_1_preview import (
     ConfidentialLedgerClient as _ConfidentialLedgerClient,
 )
 from ._shared import ConfidentialLedgerCertificateCredential, DEFAULT_VERSION

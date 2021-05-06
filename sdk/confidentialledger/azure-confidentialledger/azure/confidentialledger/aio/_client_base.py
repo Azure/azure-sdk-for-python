@@ -11,7 +11,7 @@ from azure.core.pipeline.policies import (
 )
 from azure.core.pipeline.transport import AioHttpTransport
 
-from .._generated_ledger.v0_1_preview.aio import (
+from .._generated._generated_ledger.v0_1_preview.aio import (
     ConfidentialLedgerClient as _ConfidentialLedgerClient,
 )
 from .._shared import ConfidentialLedgerCertificateCredential, DEFAULT_VERSION

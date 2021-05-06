@@ -9,7 +9,7 @@ from azure.core.tracing.decorator import distributed_trace
 
 from ._client_base import ConfidentialLedgerClientBase
 from ._enums import LedgerUserRole, TransactionState
-from ._generated_ledger.v0_1_preview.models import ConfidentialLedgerQueryState
+from ._generated._generated_ledger.v0_1_preview.models import ConfidentialLedgerQueryState
 from ._models import (
     AppendResult,
     Constitution,
