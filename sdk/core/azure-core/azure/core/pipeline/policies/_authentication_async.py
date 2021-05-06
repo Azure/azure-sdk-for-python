@@ -42,6 +42,8 @@ class AsyncBearerTokenCredentialPolicy(SansIOHTTPPolicy, AsyncHTTPPolicy):
         :type request: ~azure.core.pipeline.PipelineRequest
         :raises: :class:`~azure.core.exceptions.ServiceRequestError`
         """
+        _BearerTokenCredentialPolicyBase._enforce_https(request)  # pylint:disable=protected-access
+
         if self._token is None or self._need_new_token():
             async with self._lock:
                 # double check because another coroutine may have acquired a token while we waited to acquire the lock
@@ -68,7 +70,6 @@ class AsyncBearerTokenCredentialPolicy(SansIOHTTPPolicy, AsyncHTTPPolicy):
         :param request: The pipeline request object
         :type request: ~azure.core.pipeline.PipelineRequest
         """
-        _BearerTokenCredentialPolicyBase._enforce_https(request)  # pylint:disable=protected-access
         await await_result(self.on_request, request)
         try:
             response = await self.next.send(request)

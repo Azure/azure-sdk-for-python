@@ -88,6 +88,8 @@ class BearerTokenCredentialPolicy(_BearerTokenCredentialPolicyBase, SansIOHTTPPo
 
         :param ~azure.core.pipeline.PipelineRequest request: the request
         """
+        self._enforce_https(request)
+
         if self._token is None or self._need_new_token:
             self._token = self._credential.get_token(*self._scopes)
         self._update_headers(request.http_request.headers, self._token.token)
@@ -112,7 +114,6 @@ class BearerTokenCredentialPolicy(_BearerTokenCredentialPolicyBase, SansIOHTTPPo
         :param request: The pipeline request object
         :type request: ~azure.core.pipeline.PipelineRequest
         """
-        self._enforce_https(request)
         self.on_request(request)
         try:
             response = self.next.send(request)
