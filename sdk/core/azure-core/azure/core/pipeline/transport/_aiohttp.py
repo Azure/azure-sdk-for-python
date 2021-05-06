@@ -244,20 +244,11 @@ class AioHttpStreamDownloadGenerator(AsyncIterator):
             if not enc:
                 return chunk
             enc = enc.lower()
-            if enc in ("gzip", "deflate", "br"):
+            if enc in ("gzip", "deflate"):
                 if not self._decompressor:
-                    if enc == "br":
-                        try:
-                            self._decompressor = _BrotliDecoder()
-                        except ImportError:
-                            raise DecodeError(
-                                "Can not decode content-encoding: brotli (br). "
-                                "Please install `Brotli`"
-                            )
-                    else:
-                        import zlib
-                        zlib_mode = 16 + zlib.MAX_WBITS if enc == "gzip" else zlib.MAX_WBITS
-                        self._decompressor = zlib.decompressobj(wbits=zlib_mode)
+                    import zlib
+                    zlib_mode = 16 + zlib.MAX_WBITS if enc == "gzip" else zlib.MAX_WBITS
+                    self._decompressor = zlib.decompressobj(wbits=zlib_mode)
                 chunk = self._decompressor.decompress(chunk)
             return chunk
         except _ResponseStopIteration:
