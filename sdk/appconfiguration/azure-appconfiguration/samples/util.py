@@ -26,9 +26,9 @@ def print_configuration_setting(config_setting):
 
 def get_connection_string():
     try:
-        CONNECTION_STRING = os.environ['AZURE_APPCONFIG_CONNECTION_STRING']
+        CONNECTION_STRING = os.environ['APPCONFIGURATION_CONNECTION_STRING']
         return CONNECTION_STRING
 
     except KeyError:
-        print("AZURE_APPCONFIG_CONNECTION_STRING must be set.")
+        print("APPCONFIGURATION_CONNECTION_STRING must be set.")
         sys.exit(1)
