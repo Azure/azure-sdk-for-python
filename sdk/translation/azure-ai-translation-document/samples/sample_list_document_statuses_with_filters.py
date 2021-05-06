@@ -44,8 +44,7 @@ def sample_list_document_statuses_with_filters(self, client):
     '''
         Note:
             these are just sample values for the filters!
-            please comment any filters you don't want to use 
-            only leave the ones you want
+            please comment/uncomment/change what you are interested in using.
     '''
     start = datetime(2021, 4, 12)
     end = datetime(2021, 4, 14)
