@@ -2,10 +2,13 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 # ------------------------------------
+from datetime import datetime
 from typing import TYPE_CHECKING
 
+from azure.core.exceptions import AzureError
+
 if TYPE_CHECKING:
-    from typing import Any
+    from typing import Any, Optional
 
 
 # pylint:disable=protected-access
@@ -14,20 +17,46 @@ if TYPE_CHECKING:
 class KeyVaultPermission(object):
     """Role definition permissions.
 
-    :ivar list[str] actions: Action permissions that are granted.
-    :ivar list[str] not_actions: Action permissions that are excluded but not denied. They may be granted by other role
-     definitions assigned to a principal.
-    :ivar list[str] data_actions: Data action permissions that are granted.
-    :ivar list[str] not_data_actions: Data action permissions that are excluded but not denied. They may be granted by
-     other role definitions assigned to a principal.
+    :keyword list[str] actions: Action permissions that are granted.
+    :keyword list[str] not_actions: Action permissions that are excluded but not denied. They may be granted by other
+     role definitions assigned to a principal.
+    :keyword list[str] data_actions: Data action permissions that are granted.
+    :keyword list[str] not_data_actions: Data action permissions that are excluded but not denied. They may be granted
+     by other role definitions assigned to a principal.
     """
 
     def __init__(self, **kwargs):
         # type: (**Any) -> None
-        self.actions = kwargs.get("actions")
-        self.not_actions = kwargs.get("not_actions")
-        self.data_actions = kwargs.get("data_actions")
-        self.not_data_actions = kwargs.get("not_data_actions")
+        self._actions = kwargs.get("actions", [])
+        self._not_actions = kwargs.get("not_actions", [])
+        self._data_actions = kwargs.get("data_actions", [])
+        self._not_data_actions = kwargs.get("not_data_actions", [])
+
+    @property
+    def actions(self):
+        # type: () -> list[str]
+        """Actions permissions that are granted"""
+        return self._actions
+
+    @property
+    def not_actions(self):
+        # type: () -> list[str]
+        """Action permissions that are excluded but not denied. They may be granted by other role definitions assigned
+        to a principal"""
+        return self._not_actions
+
+    @property
+    def data_actions(self):
+        # type: () -> list[str]
+        """Data action permissions that are granted"""
+        return self._data_actions
+
+    @property
+    def not_data_actions(self):
+        # type: () -> list[str]
+        """Data action permissions that are excluded but not denied. They may be granted by other role definitions
+        assigned to a principal"""
+        return self._not_data_actions
 
     @classmethod
     def _from_generated(cls, permissions):
@@ -216,12 +245,54 @@ class KeyVaultRoleDefinition(object):
 
 class _Operation(object):
     def __init__(self, **kwargs):
-        self.status = kwargs.get("status", None)
-        self.status_details = kwargs.get("status_details", None)
-        self.error = kwargs.get("error", None)
-        self.start_time = kwargs.get("start_time", None)
-        self.end_time = kwargs.get("end_time", None)
-        self.job_id = kwargs.get("job_id", None)
+        self._status = kwargs.get("status", None)
+        self._status_details = kwargs.get("status_details", None)
+        self._start_time = kwargs.get("start_time", None)
+        self._end_time = kwargs.get("end_time", None)
+        self._job_id = kwargs.get("job_id", None)
+
+        error = kwargs.get("error", None)
+        # responses can return an empty error object when there's no error
+        if error is None or error.code is None:
+            self._error = None
+        else:
+            self._error = AzureError("Error: {}".format(error.message or self._status_details), error=error)
+
+    @property
+    def status(self):
+        # type: () -> Optional[str]
+        """Status of the operation"""
+        return self._status
+
+    @property
+    def status_details(self):
+        # type: () -> Optional[str]
+        """More details of the operation's status"""
+        return self._status_details
+
+    @property
+    def error(self):
+        # type: () -> Optional[AzureError]
+        """Error encountered, if any, during the operation"""
+        return self._error
+
+    @property
+    def start_time(self):
+        # type: () -> Optional[datetime.datetime]
+        """UTC start time of the operation"""
+        return self._start_time
+
+    @property
+    def end_time(self):
+        # type: () -> Optional[datetime.datetime]
+        """UTC end time of the operation"""
+        return self._end_time
+
+    @property
+    def job_id(self):
+        # type: () -> Optional[str]
+        """Identifier for the operation"""
+        return self._job_id
 
     @classmethod
     def _wrap_generated(cls, response, deserialized_operation, response_headers):  # pylint:disable=unused-argument
@@ -229,44 +300,22 @@ class _Operation(object):
 
 
 class KeyVaultBackupOperation(_Operation):
-    """A Key Vault full backup operation.
-
-    :ivar str status: status of the backup operation
-    :ivar str status_details: more details of the operation's status
-    :ivar error: Error encountered, if any, during the operation
-    :type error: ~key_vault_client.models.Error
-    :ivar datetime.datetime start_time: UTC start time of the operation
-    :ivar datetime.datetime end_time: UTC end time of the operation
-    :ivar str job_id: identifier for the operation
-    :ivar str folder_url: URL of the Azure blob storage container which contains the backup
-    """
+    """A Key Vault full backup operation."""
 
     def __init__(self, **kwargs):
-        self.folder_url = kwargs.pop("azure_storage_blob_container_uri", None)
+        self._folder_url = kwargs.pop("azure_storage_blob_container_uri", None)
         super(KeyVaultBackupOperation, self).__init__(**kwargs)
+
+    @property
+    def folder_url(self):
+        # type: () -> str
+        """URL of the Azure blob storage container which contains the backup"""
+        return self._folder_url
 
 
 class KeyVaultRestoreOperation(_Operation):
-    """A Key Vault restore operation.
-
-    :ivar str status: status of the operation
-    :ivar str status_details: more details of the operation's status
-    :ivar error: Error encountered, if any, during the operation
-    :type error: ~key_vault_client.models.Error
-    :ivar datetime.datetime start_time: UTC start time of the operation
-    :ivar datetime.datetime end_time: UTC end time of the operation
-    :ivar str job_id: identifier for the operation
-    """
+    """A Key Vault restore operation."""
 
 
 class KeyVaultSelectiveKeyRestoreOperation(_Operation):
-    """A Key Vault operation restoring a single key.
-
-    :ivar str status: status of the operation
-    :ivar str status_details: more details of the operation's status
-    :ivar error: Error encountered, if any, during the operation
-    :type error: ~key_vault_client.models.Error
-    :ivar datetime.datetime start_time: UTC start time of the operation
-    :ivar datetime.datetime end_time: UTC end time of the operation
-    :ivar str job_id: identifier for the operation
-    """
+    """A Key Vault operation restoring a single key."""
