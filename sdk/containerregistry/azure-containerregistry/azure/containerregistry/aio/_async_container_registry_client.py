@@ -58,7 +58,9 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
         :returns: Object containing information about the deleted repository
         :rtype: :class:`~azure.containerregistry.DeleteRepositoryResult`
         :raises: :class:`~azure.core.exceptions.ResourceNotFoundError`
+
         .. admonition:: Example:
+
             .. literalinclude:: ../samples/async_samples/sample_create_client_async.py
                 :start-after: [START delete_repository]
                 :end-before: [END delete_repository]
@@ -82,7 +84,9 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
         :return: ItemPaged[str]
         :rtype: :class:`~azure.core.async_paging.AsyncItemPaged`
         :raises: :class:`~azure.core.exceptions.ResourceNotFoundError`
+
         .. admonition:: Example:
+
             .. literalinclude:: ../samples/async_samples/sample_delete_old_tags_async.py
                 :start-after: [START list_repository_names]
                 :end-before: [END list_repository_names]

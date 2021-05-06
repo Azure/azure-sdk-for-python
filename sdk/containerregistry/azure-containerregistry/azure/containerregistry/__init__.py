@@ -14,7 +14,6 @@ from ._models import (
     ContentProperties,
     ManifestOrderBy,
     DeleteRepositoryResult,
-    ContentProperties,
     ArtifactManifestProperties,
     RepositoryProperties,
     TagOrderBy,
