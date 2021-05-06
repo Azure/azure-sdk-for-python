@@ -9,7 +9,7 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-azure-containerregistry/1.0.0b1 Python/3.9.0rc1 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-azure-containerregistry/1.0.0b2 Python/3.9.0rc1 (Windows-10-10.0.19041-SP0)
     method: GET
     uri: https://fake_url.azurecr.io/acr/v1/_catalog
   response:
@@ -30,7 +30,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Wed, 28 Apr 2021 22:04:55 GMT
+      - Thu, 06 May 2021 19:53:23 GMT
       docker-distribution-api-version:
       - registry/2.0
       server:
@@ -59,7 +59,7 @@ interactions:
       Content-Type:
       - application/x-www-form-urlencoded
       User-Agent:
-      - azsdk-python-azure-containerregistry/1.0.0b1 Python/3.9.0rc1 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-azure-containerregistry/1.0.0b2 Python/3.9.0rc1 (Windows-10-10.0.19041-SP0)
     method: POST
     uri: https://fake_url.azurecr.io/oauth2/exchange
   response:
@@ -71,7 +71,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Wed, 28 Apr 2021 22:04:56 GMT
+      - Thu, 06 May 2021 19:53:24 GMT
       server:
       - openresty
       strict-transport-security:
@@ -79,7 +79,7 @@ interactions:
       transfer-encoding:
       - chunked
       x-ms-ratelimit-remaining-calls-per-second:
-      - '166.65'
+      - '165.916667'
     status:
       code: 200
       message: OK
@@ -97,7 +97,7 @@ interactions:
       Content-Type:
       - application/x-www-form-urlencoded
       User-Agent:
-      - azsdk-python-azure-containerregistry/1.0.0b1 Python/3.9.0rc1 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-azure-containerregistry/1.0.0b2 Python/3.9.0rc1 (Windows-10-10.0.19041-SP0)
     method: POST
     uri: https://fake_url.azurecr.io/oauth2/token
   response:
@@ -109,7 +109,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Wed, 28 Apr 2021 22:04:57 GMT
+      - Thu, 06 May 2021 19:53:25 GMT
       server:
       - openresty
       strict-transport-security:
@@ -117,7 +117,7 @@ interactions:
       transfer-encoding:
       - chunked
       x-ms-ratelimit-remaining-calls-per-second:
-      - '166.633333'
+      - '165.466667'
     status:
       code: 200
       message: OK
@@ -131,17 +131,16 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-azure-containerregistry/1.0.0b1 Python/3.9.0rc1 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-azure-containerregistry/1.0.0b2 Python/3.9.0rc1 (Windows-10-10.0.19041-SP0)
     method: GET
     uri: https://fake_url.azurecr.io/acr/v1/_catalog
   response:
     body:
       string: '{"repositories": ["library/alpine", "library/busybox", "repo25ce0f5d",
         "repo27331535", "repo28471541", "repo2c591564", "repo2e8319c5", "repo308e19dd",
-        "repo34ab0fa1", "repo3c82158b", "repo3db51597", "repo3e8d15a3", "repo84e316ff",
-        "repo8b5a11da", "repo9b321760", "repo9cb4121e", "repoaf9517b2", "repob0a917be",
-        "repob22512e7", "repoc1b5131a", "repoc28d1326", "repoc7611808", "repod2be1c42",
-        "repoeb7113db", "to_be_deleted"]}'
+        "repo34ab0fa1", "repo3db51597", "repo3e8d15a3", "repo84e316ff", "repo8b5a11da",
+        "repo9b321760", "repo9cb4121e", "repoaf9517b2", "repob0a917be", "repob22512e7",
+        "repoc1b5131a", "repoc28d1326", "repod2be1c42", "repos6ce51658", "to_be_deleted"]}'
     headers:
       access-control-expose-headers:
       - Docker-Content-Digest
@@ -151,11 +150,11 @@ interactions:
       connection:
       - keep-alive
       content-length:
-      - '400'
+      - '371'
       content-type:
       - application/json; charset=utf-8
       date:
-      - Wed, 28 Apr 2021 22:04:57 GMT
+      - Thu, 06 May 2021 19:53:25 GMT
       docker-distribution-api-version:
       - registry/2.0
       server:
@@ -180,7 +179,7 @@ interactions:
       Content-Length:
       - '0'
       User-Agent:
-      - azsdk-python-azure-containerregistry/1.0.0b1 Python/3.9.0rc1 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-azure-containerregistry/1.0.0b2 Python/3.9.0rc1 (Windows-10-10.0.19041-SP0)
     method: DELETE
     uri: https://fake_url.azurecr.io/acr/v1/to_be_deleted
   response:
@@ -201,7 +200,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Wed, 28 Apr 2021 22:04:57 GMT
+      - Thu, 06 May 2021 19:53:25 GMT
       docker-distribution-api-version:
       - registry/2.0
       server:
@@ -230,7 +229,7 @@ interactions:
       Content-Type:
       - application/x-www-form-urlencoded
       User-Agent:
-      - azsdk-python-azure-containerregistry/1.0.0b1 Python/3.9.0rc1 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-azure-containerregistry/1.0.0b2 Python/3.9.0rc1 (Windows-10-10.0.19041-SP0)
     method: POST
     uri: https://fake_url.azurecr.io/oauth2/exchange
   response:
@@ -242,7 +241,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Wed, 28 Apr 2021 22:04:59 GMT
+      - Thu, 06 May 2021 19:53:27 GMT
       server:
       - openresty
       strict-transport-security:
@@ -250,7 +249,7 @@ interactions:
       transfer-encoding:
       - chunked
       x-ms-ratelimit-remaining-calls-per-second:
-      - '166.65'
+      - '166.516667'
     status:
       code: 200
       message: OK
@@ -268,7 +267,7 @@ interactions:
       Content-Type:
       - application/x-www-form-urlencoded
       User-Agent:
-      - azsdk-python-azure-containerregistry/1.0.0b1 Python/3.9.0rc1 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-azure-containerregistry/1.0.0b2 Python/3.9.0rc1 (Windows-10-10.0.19041-SP0)
     method: POST
     uri: https://fake_url.azurecr.io/oauth2/token
   response:
@@ -280,7 +279,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Wed, 28 Apr 2021 22:04:59 GMT
+      - Thu, 06 May 2021 19:53:27 GMT
       server:
       - openresty
       strict-transport-security:
@@ -288,7 +287,7 @@ interactions:
       transfer-encoding:
       - chunked
       x-ms-ratelimit-remaining-calls-per-second:
-      - '166.633333'
+      - '166.266667'
     status:
       code: 200
       message: OK
@@ -304,7 +303,7 @@ interactions:
       Content-Length:
       - '0'
       User-Agent:
-      - azsdk-python-azure-containerregistry/1.0.0b1 Python/3.9.0rc1 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-azure-containerregistry/1.0.0b2 Python/3.9.0rc1 (Windows-10-10.0.19041-SP0)
     method: DELETE
     uri: https://fake_url.azurecr.io/acr/v1/to_be_deleted
   response:
@@ -333,7 +332,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Wed, 28 Apr 2021 22:05:01 GMT
+      - Thu, 06 May 2021 19:53:28 GMT
       docker-distribution-api-version:
       - registry/2.0
       server:
@@ -358,7 +357,7 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-azure-containerregistry/1.0.0b1 Python/3.9.0rc1 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-azure-containerregistry/1.0.0b2 Python/3.9.0rc1 (Windows-10-10.0.19041-SP0)
     method: GET
     uri: https://fake_url.azurecr.io/acr/v1/_catalog
   response:
@@ -379,7 +378,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Wed, 28 Apr 2021 22:05:01 GMT
+      - Thu, 06 May 2021 19:53:29 GMT
       docker-distribution-api-version:
       - registry/2.0
       server:
@@ -408,7 +407,7 @@ interactions:
       Content-Type:
       - application/x-www-form-urlencoded
       User-Agent:
-      - azsdk-python-azure-containerregistry/1.0.0b1 Python/3.9.0rc1 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-azure-containerregistry/1.0.0b2 Python/3.9.0rc1 (Windows-10-10.0.19041-SP0)
     method: POST
     uri: https://fake_url.azurecr.io/oauth2/token
   response:
@@ -420,7 +419,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Wed, 28 Apr 2021 22:05:01 GMT
+      - Thu, 06 May 2021 19:53:29 GMT
       server:
       - openresty
       strict-transport-security:
@@ -428,7 +427,7 @@ interactions:
       transfer-encoding:
       - chunked
       x-ms-ratelimit-remaining-calls-per-second:
-      - '166.616667'
+      - '165.45'
     status:
       code: 200
       message: OK
@@ -442,17 +441,16 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-azure-containerregistry/1.0.0b1 Python/3.9.0rc1 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-azure-containerregistry/1.0.0b2 Python/3.9.0rc1 (Windows-10-10.0.19041-SP0)
     method: GET
     uri: https://fake_url.azurecr.io/acr/v1/_catalog
   response:
     body:
       string: '{"repositories": ["library/alpine", "library/busybox", "repo25ce0f5d",
         "repo27331535", "repo28471541", "repo2c591564", "repo2e8319c5", "repo308e19dd",
-        "repo34ab0fa1", "repo3c82158b", "repo3db51597", "repo3e8d15a3", "repo84e316ff",
-        "repo8b5a11da", "repo9b321760", "repo9cb4121e", "repoaf9517b2", "repob0a917be",
-        "repob22512e7", "repoc1b5131a", "repoc28d1326", "repoc7611808", "repod2be1c42",
-        "repoeb7113db"]}'
+        "repo34ab0fa1", "repo3db51597", "repo3e8d15a3", "repo84e316ff", "repo8b5a11da",
+        "repo9b321760", "repo9cb4121e", "repoaf9517b2", "repob0a917be", "repob22512e7",
+        "repoc1b5131a", "repoc28d1326", "repod2be1c42", "repos6ce51658"]}'
     headers:
       access-control-expose-headers:
       - Docker-Content-Digest
@@ -462,11 +460,11 @@ interactions:
       connection:
       - keep-alive
       content-length:
-      - '384'
+      - '355'
       content-type:
       - application/json; charset=utf-8
       date:
-      - Wed, 28 Apr 2021 22:05:02 GMT
+      - Thu, 06 May 2021 19:53:29 GMT
       docker-distribution-api-version:
       - registry/2.0
       server:

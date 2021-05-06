@@ -9,7 +9,7 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-azure-containerregistry/1.0.0b1 Python/3.9.0rc1 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-azure-containerregistry/1.0.0b2 Python/3.9.0rc1 (Windows-10-10.0.19041-SP0)
     method: GET
     uri: https://fake_url.azurecr.io/acr/v1/hello-world/_manifests/sha256%3Aabcdefghijkl
   response:
@@ -25,7 +25,7 @@ interactions:
       content-type:
       - text/plain; charset=utf-8
       date:
-      - Wed, 28 Apr 2021 21:19:46 GMT
+      - Thu, 06 May 2021 20:09:15 GMT
       docker-distribution-api-version:
       - registry/2.0
       server:

@@ -163,7 +163,7 @@ class RegistryArtifact(ContainerRegistryBaseClient):
             account_url = os.environ["CONTAINERREGISTRY_ENDPOINT"]
             client = ContainerRepositoryClient(account_url, "my_repository", DefaultAzureCredential())
             async for artifact in client.list_registry_artifacts():
-                properties = await client.get_registry_artifact_properties(artifact.digest)
+                properties = await client.get_manifest_properties(artifact.digest)
         """
         if not self._digest:
             self._digest = self.tag_or_digest if not _is_tag(self.tag_or_digest) else await self._get_digest_from_tag()

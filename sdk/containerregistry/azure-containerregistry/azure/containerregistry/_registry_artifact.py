@@ -173,8 +173,8 @@ class RegistryArtifact(ContainerRegistryBaseClient):
         )
 
     @distributed_trace
-    def get_registry_artifact_properties(self, tag_or_digest, **kwargs):
-        # type: (str, Dict[str, Any]) -> ArtifactManifestProperties
+    def get_manifest_properties(self, **kwargs):
+        # type: (Dict[str, Any]) -> ArtifactManifestProperties
         """Get the properties of a registry artifact
 
         :param tag_or_digest: The tag/digest of a registry artifact
@@ -192,7 +192,7 @@ class RegistryArtifact(ContainerRegistryBaseClient):
             account_url = os.environ["CONTAINERREGISTRY_ENDPOINT"]
             client = ContainerRepositoryClient(account_url, "my_repository", DefaultAzureCredential())
             for artifact in client.list_registry_artifacts():
-                properties = client.get_registry_artifact_properties(artifact.digest)
+                properties = client.get_manifest_properties(artifact.digest)
         """
         if not self._digest:
             self._digest = self.tag_or_digest if not _is_tag(self.tag_or_digest) else self._get_digest_from_tag()
