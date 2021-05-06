@@ -13,7 +13,7 @@ from msrest import Serializer
 
 if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
-    from typing import Any, Dict, IO, List, Optional, Union
+    from typing import Any, Dict, List, Optional, Union
 
 _SERIALIZER = Serializer()
 
@@ -218,7 +218,7 @@ def build_update_request(
     )
 
 
-def build_get_by_id_request(
+def build_get_request(
     guid,  # type: str
     **kwargs  # type: Any
 ):
@@ -343,7 +343,7 @@ def build_get_by_id_request(
     )
 
 
-def build_delete_by_id_request(
+def build_delete_request(
     guid,  # type: str
     **kwargs  # type: Any
 ):

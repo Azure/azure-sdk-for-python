@@ -18,7 +18,7 @@ if TYPE_CHECKING:
 _SERIALIZER = Serializer()
 
 
-def build_get_glossaries_request(
+def build_list_glossaries_request(
     **kwargs  # type: Any
 ):
     # type: (...) -> HttpRequest
@@ -764,7 +764,7 @@ def build_partial_update_glossary_category_request(
     )
 
 
-def build_get_related_categories_request(
+def build_list_related_categories_request(
     category_guid,  # type: str
     **kwargs  # type: Any
 ):
@@ -838,7 +838,7 @@ def build_get_related_categories_request(
     )
 
 
-def build_get_category_terms_request(
+def build_list_category_terms_request(
     category_guid,  # type: str
     **kwargs  # type: Any
 ):
@@ -3262,7 +3262,7 @@ def build_delete_term_assignment_from_entities_request(
     )
 
 
-def build_get_related_terms_request(
+def build_list_related_terms_request(
     term_guid,  # type: str
     **kwargs  # type: Any
 ):
@@ -3540,7 +3540,7 @@ def build_delete_glossary_request(
     )
 
 
-def build_get_glossary_categories_request(
+def build_list_glossary_categories_request(
     glossary_guid,  # type: str
     **kwargs  # type: Any
 ):
@@ -3639,7 +3639,7 @@ def build_get_glossary_categories_request(
     )
 
 
-def build_get_glossary_categories_headers_request(
+def build_list_glossary_categories_headers_request(
     glossary_guid,  # type: str
     **kwargs  # type: Any
 ):
@@ -4116,7 +4116,7 @@ def build_partial_update_glossary_request(
     )
 
 
-def build_get_glossary_terms_request(
+def build_list_glossary_terms_request(
     glossary_guid,  # type: str
     **kwargs  # type: Any
 ):
@@ -4405,7 +4405,7 @@ def build_get_glossary_terms_request(
     )
 
 
-def build_get_glossary_term_headers_request(
+def build_list_glossary_term_headers_request(
     glossary_guid,  # type: str
     **kwargs  # type: Any
 ):
@@ -4758,7 +4758,7 @@ def build_export_glossary_terms_as_csv_request(
     )
 
 
-def build_get_terms_by_glossary_name_request(
+def build_list_terms_by_glossary_name_request(
     glossary_name,  # type: str
     **kwargs  # type: Any
 ):

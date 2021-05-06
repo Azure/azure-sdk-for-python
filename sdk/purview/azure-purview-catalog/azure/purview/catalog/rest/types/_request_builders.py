@@ -13,7 +13,7 @@ from msrest import Serializer
 
 if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
-    from typing import Any, Dict, List, Optional, Union
+    from typing import Any, Dict, IO, List, Optional, Union
 
 _SERIALIZER = Serializer()
 
@@ -126,7 +126,7 @@ def build_get_classification_def_by_name_request(
     )
 
 
-def build_get_entity_def_by_guid_request(
+def build_get_entity_definition_by_guid_request(
     guid,  # type: str
     **kwargs  # type: Any
 ):
@@ -183,7 +183,7 @@ def build_get_entity_def_by_guid_request(
     )
 
 
-def build_get_entity_def_by_name_request(
+def build_get_entity_definition_by_name_request(
     name,  # type: str
     **kwargs  # type: Any
 ):
@@ -614,7 +614,7 @@ def build_get_struct_def_by_name_request(
     )
 
 
-def build_get_type_def_by_guid_request(
+def build_get_type_definition_by_guid_request(
     guid,  # type: str
     **kwargs  # type: Any
 ):
@@ -658,7 +658,7 @@ def build_get_type_def_by_guid_request(
     )
 
 
-def build_get_type_def_by_name_request(
+def build_get_type_definition_by_name_request(
     name,  # type: str
     **kwargs  # type: Any
 ):
@@ -732,7 +732,7 @@ def build_delete_type_by_name_request(
     )
 
 
-def build_get_all_type_defs_request(
+def build_get_all_type_definitions_request(
     **kwargs  # type: Any
 ):
     # type: (...) -> HttpRequest
@@ -881,7 +881,7 @@ def build_get_all_type_defs_request(
     )
 
 
-def build_create_type_defs_request(
+def build_create_type_definitions_request(
     **kwargs  # type: Any
 ):
     # type: (...) -> HttpRequest
@@ -1124,7 +1124,7 @@ def build_create_type_defs_request(
     )
 
 
-def build_update_atlas_type_defs_request(
+def build_update_atlas_type_definitions_request(
     **kwargs  # type: Any
 ):
     # type: (...) -> HttpRequest
@@ -1366,7 +1366,7 @@ def build_update_atlas_type_defs_request(
     )
 
 
-def build_delete_type_defs_request(
+def build_delete_type_definitions_request(
     **kwargs  # type: Any
 ):
     # type: (...) -> HttpRequest
@@ -1505,7 +1505,7 @@ def build_delete_type_defs_request(
     )
 
 
-def build_get_type_def_headers_request(
+def build_list_type_definition_headers_request(
     **kwargs  # type: Any
 ):
     # type: (...) -> HttpRequest

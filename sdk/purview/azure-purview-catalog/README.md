@@ -78,7 +78,7 @@ from azure.core.exceptions import HttpResponseError
 credential = DefaultAzureCredential()
 client = AzurePurviewCatalogClient(endpoint="https://<my-account-name>.catalog.purview.azure.com", credential=credential)
 
-request = types.build_get_all_type_defs_request()
+request = types.build_get_all_type_definitions_request()
 
 response = client.send_request(request)
 try:

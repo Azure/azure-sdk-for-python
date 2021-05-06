@@ -226,9 +226,9 @@ def build_create_or_update_request(
     )
 
 
-def build_get_by_guids_request(
+def build_list_by_guids_request(
     *,
-    guid: List[str],
+    guids: List[str],
     min_ext_info: Optional[bool] = False,
     ignore_relationships: Optional[bool] = False,
     exclude_relationship_types: Optional[List[str]] = None,
@@ -238,8 +238,8 @@ def build_get_by_guids_request(
 
     See https://aka.ms/azsdk/python/llcwiki for how to incorporate this request builder into your code flow.
 
-    :keyword guid: An array of GUIDs of entities to create.
-    :paramtype guid: list[str]
+    :keyword guids: An array of GUIDs of entities to create.
+    :paramtype guids: list[str]
     :keyword min_ext_info: Whether to return minimal information for referred entities.
     :paramtype min_ext_info: bool
     :keyword ignore_relationships: Whether to ignore relationship attributes.
@@ -328,7 +328,7 @@ def build_get_by_guids_request(
 
     # Construct parameters
     query_parameters = kwargs.pop("params", {})  # type: Dict[str, Any]
-    query_parameters['guid'] = [_SERIALIZER.query("guid", q, 'str') if q is not None else '' for q in guid]
+    query_parameters['guids'] = [_SERIALIZER.query("guids", q, 'str') if q is not None else '' for q in guids]
     if min_ext_info is not None:
         query_parameters['minExtInfo'] = _SERIALIZER.query("min_ext_info", min_ext_info, 'bool')
     if ignore_relationships is not None:
@@ -349,7 +349,7 @@ def build_get_by_guids_request(
     )
 
 
-def build_create_or_update_bulk_request(
+def build_create_or_update_entities_request(
     *,
     json: Any = None,
     content: Any = None,
@@ -565,15 +565,15 @@ def build_create_or_update_bulk_request(
 
 def build_delete_by_guids_request(
     *,
-    guid: List[str],
+    guids: List[str],
     **kwargs: Any
 ) -> HttpRequest:
     """Delete a list of entities in bulk identified by their GUIDs or unique attributes.
 
     See https://aka.ms/azsdk/python/llcwiki for how to incorporate this request builder into your code flow.
 
-    :keyword guid: An array of GUIDs of entities to delete.
-    :paramtype guid: list[str]
+    :keyword guids: An array of GUIDs of entities to delete.
+    :paramtype guids: list[str]
     :return: Returns an :class:`~azure.purview.catalog.core.rest.HttpRequest` that you will pass to the client's `send_request` method.
      See https://aka.ms/azsdk/python/llcwiki for how to incorporate this response into your code flow.
     :rtype: ~azure.purview.catalog.core.rest.HttpRequest
@@ -689,7 +689,7 @@ def build_delete_by_guids_request(
 
     # Construct parameters
     query_parameters = kwargs.pop("params", {})  # type: Dict[str, Any]
-    query_parameters['guid'] = [_SERIALIZER.query("guid", q, 'str') if q is not None else '' for q in guid]
+    query_parameters['guids'] = [_SERIALIZER.query("guids", q, 'str') if q is not None else '' for q in guids]
 
     # Construct headers
     header_parameters = kwargs.pop("headers", {})  # type: Dict[str, Any]
@@ -770,7 +770,7 @@ def build_add_classification_request(
     )
 
 
-def build_get_by_id_request(
+def build_get_by_guid_request(
     guid: str,
     *,
     min_ext_info: Optional[bool] = False,
@@ -888,7 +888,7 @@ def build_get_by_id_request(
     )
 
 
-def build_partial_update_entity_attr_by_guid_request(
+def build_create_or_update_by_guid_request(
     guid: str,
     *,
     json: Any = None,
@@ -1600,7 +1600,7 @@ def build_get_by_unique_attributes_request(
     )
 
 
-def build_partial_update_entity_by_unique_attrs_request(
+def build_create_or_update_by_unique_attribute_request(
     type_name: str,
     *,
     json: Any = None,
@@ -2427,7 +2427,7 @@ def build_get_entities_by_unique_attributes_request(
     )
 
 
-def build_get_header_by_id_request(
+def build_get_header_request(
     guid: str,
     **kwargs: Any
 ) -> HttpRequest:

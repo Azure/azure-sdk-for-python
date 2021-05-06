@@ -6,14 +6,14 @@
 # --------------------------------------------------------------------------
 from testcase import PurviewCatalogTest, PurviewCatalogPowerShellPreparer
 from testcase_async import PurviewCatalogTestAsync
-from azure.purview.catalog.rest.types import build_get_all_type_defs_request
+from azure.purview.catalog.rest.types import build_get_all_type_definitions_request
 
 class PurviewCatalogSmokeTestAsync(PurviewCatalogTestAsync):
 
     @PurviewCatalogPowerShellPreparer()
     async def test_basic_smoke_test(self, purviewcatalog_endpoint):
         client = self.create_async_client(endpoint=purviewcatalog_endpoint)
-        request = build_get_all_type_defs_request()
+        request = build_get_all_type_definitions_request()
         response = await client.send_request(request)
         response.raise_for_status()
         assert response.status_code == 200

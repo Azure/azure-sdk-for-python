@@ -9,17 +9,17 @@
 try:
     from ._request_builders_py3 import build_create_request
     from ._request_builders_py3 import build_update_request
-    from ._request_builders_py3 import build_get_by_id_request
-    from ._request_builders_py3 import build_delete_by_id_request
+    from ._request_builders_py3 import build_get_request
+    from ._request_builders_py3 import build_delete_request
 except (SyntaxError, ImportError):
     from ._request_builders import build_create_request  # type: ignore
     from ._request_builders import build_update_request  # type: ignore
-    from ._request_builders import build_get_by_id_request  # type: ignore
-    from ._request_builders import build_delete_by_id_request  # type: ignore
+    from ._request_builders import build_get_request  # type: ignore
+    from ._request_builders import build_delete_request  # type: ignore
 
 __all__ = [
     'build_create_request',
     'build_update_request',
-    'build_get_by_id_request',
-    'build_delete_by_id_request',
+    'build_get_request',
+    'build_delete_request',
 ]
