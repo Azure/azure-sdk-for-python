@@ -100,7 +100,7 @@ class FormRecognizerClient(FormRecognizerClientBase):
         :rtype: ~azure.core.polling.LROPoller[list[~azure.ai.formrecognizer.RecognizedForm]]
         :raises ~azure.core.exceptions.HttpResponseError:
 
-        .. versionadded:: v2.1-preview
+        .. versionadded:: v2.1
             The *locale* and *pages* keyword arguments and support for image/bmp content
 
         .. admonition:: Example:
@@ -178,7 +178,7 @@ class FormRecognizerClient(FormRecognizerClientBase):
         :rtype: ~azure.core.polling.LROPoller[list[~azure.ai.formrecognizer.RecognizedForm]]
         :raises ~azure.core.exceptions.HttpResponseError:
 
-        .. versionadded:: v2.1-preview
+        .. versionadded:: v2.1
             The *locale* and *pages* keyword arguments and support for image/bmp content
 
         .. admonition:: Example:
@@ -253,7 +253,7 @@ class FormRecognizerClient(FormRecognizerClientBase):
         :rtype: ~azure.core.polling.LROPoller[list[~azure.ai.formrecognizer.RecognizedForm]]
         :raises ~azure.core.exceptions.HttpResponseError:
 
-        .. versionadded:: v2.1-preview
+        .. versionadded:: v2.1
             The *begin_recognize_business_cards* client method
 
         .. admonition:: Example:
@@ -319,7 +319,7 @@ class FormRecognizerClient(FormRecognizerClientBase):
         :rtype: ~azure.core.polling.LROPoller[list[~azure.ai.formrecognizer.RecognizedForm]]
         :raises ~azure.core.exceptions.HttpResponseError:
 
-        .. versionadded:: v2.1-preview
+        .. versionadded:: v2.1
             The *begin_recognize_business_cards_from_url* client method
 
         """
@@ -372,7 +372,7 @@ class FormRecognizerClient(FormRecognizerClientBase):
         :rtype: ~azure.core.polling.LROPoller[list[~azure.ai.formrecognizer.RecognizedForm]]
         :raises ~azure.core.exceptions.HttpResponseError:
 
-        .. versionadded:: v2.1-preview
+        .. versionadded:: v2.1
             The *begin_recognize_identity_documents* client method
 
         .. admonition:: Example:
@@ -435,7 +435,7 @@ class FormRecognizerClient(FormRecognizerClientBase):
         :rtype: ~azure.core.polling.LROPoller[list[~azure.ai.formrecognizer.RecognizedForm]]
         :raises ~azure.core.exceptions.HttpResponseError:
 
-        .. versionadded:: v2.1-preview
+        .. versionadded:: v2.1
             The *begin_recognize_identity_documents_from_url* client method
         """
 
@@ -488,7 +488,7 @@ class FormRecognizerClient(FormRecognizerClientBase):
         :rtype: ~azure.core.polling.LROPoller[list[~azure.ai.formrecognizer.RecognizedForm]]
         :raises ~azure.core.exceptions.HttpResponseError:
 
-        .. versionadded:: v2.1-preview
+        .. versionadded:: v2.1
             The *begin_recognize_invoices* client method
 
         .. admonition:: Example:
@@ -553,7 +553,7 @@ class FormRecognizerClient(FormRecognizerClientBase):
         :rtype: ~azure.core.polling.LROPoller[list[~azure.ai.formrecognizer.RecognizedForm]]
         :raises ~azure.core.exceptions.HttpResponseError:
 
-        .. versionadded:: v2.1-preview
+        .. versionadded:: v2.1
             The *begin_recognize_invoices_from_url* client method
         """
 
@@ -617,7 +617,7 @@ class FormRecognizerClient(FormRecognizerClientBase):
         :rtype: ~azure.core.polling.LROPoller[list[~azure.ai.formrecognizer.FormPage]]
         :raises ~azure.core.exceptions.HttpResponseError:
 
-        .. versionadded:: v2.1-preview
+        .. versionadded:: v2.1
             The *pages*, *language* and *reading_order* keyword arguments and support for image/bmp content
 
         .. admonition:: Example:
@@ -704,7 +704,7 @@ class FormRecognizerClient(FormRecognizerClientBase):
         :rtype: ~azure.core.polling.LROPoller[list[~azure.ai.formrecognizer.FormPage]]
         :raises ~azure.core.exceptions.HttpResponseError:
 
-        .. versionadded:: v2.1-preview
+        .. versionadded:: v2.1
             The *pages*, *language* and *reading_order* keyword arguments and support for image/bmp content
         """
         pages = kwargs.pop("pages", None)
