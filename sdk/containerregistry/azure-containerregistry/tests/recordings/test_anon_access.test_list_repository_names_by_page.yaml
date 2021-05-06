@@ -11,7 +11,7 @@ interactions:
       User-Agent:
       - azsdk-python-azure-containerregistry/1.0.0b1 Python/3.9.0rc1 (Windows-10-10.0.19041-SP0)
     method: GET
-    uri: https://seankaneanon.azurecr.io/acr/v1/_catalog?n=2
+    uri: https://fake_url.azurecr.io/acr/v1/_catalog?n=2
   response:
     body:
       string: '{"errors": [{"code": "UNAUTHORIZED", "message": "authentication required,
@@ -30,7 +30,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Thu, 06 May 2021 18:11:34 GMT
+      - Thu, 06 May 2021 18:42:27 GMT
       docker-distribution-api-version:
       - registry/2.0
       server:
@@ -61,7 +61,7 @@ interactions:
       User-Agent:
       - azsdk-python-azure-containerregistry/1.0.0b1 Python/3.9.0rc1 (Windows-10-10.0.19041-SP0)
     method: POST
-    uri: https://seankaneanon.azurecr.io/oauth2/token
+    uri: https://fake_url.azurecr.io/oauth2/token
   response:
     body:
       string: '{"access_token": "REDACTED"}'
@@ -71,7 +71,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Thu, 06 May 2021 18:11:35 GMT
+      - Thu, 06 May 2021 18:42:27 GMT
       server:
       - openresty
       strict-transport-security:
@@ -93,7 +93,7 @@ interactions:
       User-Agent:
       - azsdk-python-azure-containerregistry/1.0.0b1 Python/3.9.0rc1 (Windows-10-10.0.19041-SP0)
     method: GET
-    uri: https://seankaneanon.azurecr.io/acr/v1/_catalog?n=2
+    uri: https://fake_url.azurecr.io/acr/v1/_catalog?n=2
   response:
     body:
       string: '{"repositories": ["library/alpine", "library/busybox"]}'
@@ -110,7 +110,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Thu, 06 May 2021 18:11:36 GMT
+      - Thu, 06 May 2021 18:42:27 GMT
       docker-distribution-api-version:
       - registry/2.0
       link:
@@ -137,7 +137,7 @@ interactions:
       User-Agent:
       - azsdk-python-azure-containerregistry/1.0.0b1 Python/3.9.0rc1 (Windows-10-10.0.19041-SP0)
     method: GET
-    uri: https://seankaneanon.azurecr.io/acr/v1/_catalog?last=library%2Fbusybox&n=2&orderby=
+    uri: https://fake_url.azurecr.io/acr/v1/_catalog?last=library%2Fbusybox&n=2&orderby=
   response:
     body:
       string: '{"errors": [{"code": "UNAUTHORIZED", "message": "authentication required,
@@ -156,7 +156,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Thu, 06 May 2021 18:11:36 GMT
+      - Thu, 06 May 2021 18:42:27 GMT
       docker-distribution-api-version:
       - registry/2.0
       server:
@@ -187,7 +187,7 @@ interactions:
       User-Agent:
       - azsdk-python-azure-containerregistry/1.0.0b1 Python/3.9.0rc1 (Windows-10-10.0.19041-SP0)
     method: POST
-    uri: https://seankaneanon.azurecr.io/oauth2/token
+    uri: https://fake_url.azurecr.io/oauth2/token
   response:
     body:
       string: '{"access_token": "REDACTED"}'
@@ -197,7 +197,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Thu, 06 May 2021 18:11:36 GMT
+      - Thu, 06 May 2021 18:42:27 GMT
       server:
       - openresty
       strict-transport-security:
@@ -219,7 +219,7 @@ interactions:
       User-Agent:
       - azsdk-python-azure-containerregistry/1.0.0b1 Python/3.9.0rc1 (Windows-10-10.0.19041-SP0)
     method: GET
-    uri: https://seankaneanon.azurecr.io/acr/v1/_catalog?last=library%2Fbusybox&n=2&orderby=
+    uri: https://fake_url.azurecr.io/acr/v1/_catalog?last=library%2Fbusybox&n=2&orderby=
   response:
     body:
       string: '{"repositories": ["library/hello-world"]}'
@@ -236,7 +236,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Thu, 06 May 2021 18:11:37 GMT
+      - Thu, 06 May 2021 18:42:28 GMT
       docker-distribution-api-version:
       - registry/2.0
       server:

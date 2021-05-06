@@ -113,6 +113,11 @@ class AcrBodyReplacer(RecordingProcessor):
         if "seankane.azurecr.io" in request.url:
             request.url = request.url.replace("seankane.azurecr.io", "fake_url.azurecr.io")
 
+        if "seankaneanon.azurecr.io" in request.uri:
+            request.uri = request.uri.replace("seankaneanon.azurecr.io", "fake_url.azurecr.io")
+        if "seankaneanon.azurecr.io" in request.url:
+            request.url = request.url.replace("seankaneanon.azurecr.io", "fake_url.azurecr.io")
+
         return request
 
     def process_response(self, response):
@@ -132,6 +137,9 @@ class AcrBodyReplacer(RecordingProcessor):
 
                 if "seankane.azurecr.io" in body["string"]:
                     body["string"] = body["string"].replace("seankane.azurecr.io", "fake_url.azurecr.io")
+
+                if "seankaneanon.azurecr.io" in body["string"]:
+                    body["string"] = body["string"].replace("seankaneanon.azurecr.io", "fake_url.azurecr.io")
 
                 refresh = json.loads(body["string"])
                 if "refresh_token" in refresh.keys():

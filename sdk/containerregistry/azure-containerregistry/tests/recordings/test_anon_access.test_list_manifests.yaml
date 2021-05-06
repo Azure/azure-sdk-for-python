@@ -11,7 +11,7 @@ interactions:
       User-Agent:
       - azsdk-python-azure-containerregistry/1.0.0b1 Python/3.9.0rc1 (Windows-10-10.0.19041-SP0)
     method: GET
-    uri: https://seankaneanon.azurecr.io/acr/v1/library%2Fhello-world/_manifests
+    uri: https://fake_url.azurecr.io/acr/v1/library%2Fhello-world/_manifests
   response:
     body:
       string: '{"errors": [{"code": "UNAUTHORIZED", "message": "authentication required,
@@ -30,7 +30,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Thu, 06 May 2021 18:11:27 GMT
+      - Thu, 06 May 2021 18:42:24 GMT
       docker-distribution-api-version:
       - registry/2.0
       server:
@@ -61,7 +61,7 @@ interactions:
       User-Agent:
       - azsdk-python-azure-containerregistry/1.0.0b1 Python/3.9.0rc1 (Windows-10-10.0.19041-SP0)
     method: POST
-    uri: https://seankaneanon.azurecr.io/oauth2/token
+    uri: https://fake_url.azurecr.io/oauth2/token
   response:
     body:
       string: '{"access_token": "REDACTED"}'
@@ -71,7 +71,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Thu, 06 May 2021 18:11:29 GMT
+      - Thu, 06 May 2021 18:42:25 GMT
       server:
       - openresty
       strict-transport-security:
@@ -93,10 +93,10 @@ interactions:
       User-Agent:
       - azsdk-python-azure-containerregistry/1.0.0b1 Python/3.9.0rc1 (Windows-10-10.0.19041-SP0)
     method: GET
-    uri: https://seankaneanon.azurecr.io/acr/v1/library%2Fhello-world/_manifests
+    uri: https://fake_url.azurecr.io/acr/v1/library%2Fhello-world/_manifests
   response:
     body:
-      string: '{"registry": "seankaneanon.azurecr.io", "imageName": "library/hello-world",
+      string: '{"registry": "fake_url.azurecr.io", "imageName": "library/hello-world",
         "manifests": [{"digest": "sha256:1b26826f602946860c279fce658f31050cff2c596583af237d971f4629b57792",
         "imageSize": 525, "createdTime": "2021-05-05T18:00:19.9237969Z", "lastUpdateTime":
         "2021-05-05T18:00:19.9237969Z", "architecture": "amd64", "os": "linux", "mediaType":
@@ -158,7 +158,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Thu, 06 May 2021 18:11:29 GMT
+      - Thu, 06 May 2021 18:42:25 GMT
       docker-distribution-api-version:
       - registry/2.0
       server:
