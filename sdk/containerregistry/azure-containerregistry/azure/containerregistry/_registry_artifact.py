@@ -96,8 +96,8 @@ class RegistryArtifact(ContainerRegistryBaseClient):
         )
 
     @distributed_trace
-    def delete_registry_artifact(self, digest, **kwargs):
-        # type: (str, Dict[str, Any]) -> None
+    def delete_registry_artifact(self, **kwargs):
+        # type: (Dict[str, Any]) -> None
         """Delete a registry artifact
 
         :returns: None

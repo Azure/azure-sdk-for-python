@@ -4,7 +4,6 @@
 # Licensed under the MIT License.
 # ------------------------------------
 import re
-import time
 from typing import TYPE_CHECKING, Dict, List, Any
 
 from ._async_exchange_client import ExchangeClientAuthenticationPolicy
@@ -32,7 +31,7 @@ class AnonymousACRExchangeClient(object):
     BEARER = "Bearer"
     AUTHENTICATION_CHALLENGE_PARAMS_PATTERN = re.compile('(?:(\\w+)="([^""]*)")+')
 
-    def __init__(self, endpoint: str, credential: "AsyncTokencredential"=None, **kwargs: Dict[str, Any]) -> None:
+    def __init__(self, endpoint: str, credential: "AsyncTokencredential" = None, **kwargs: Dict[str, Any]) -> None:
         if not endpoint.startswith("https://") and not endpoint.startswith("http://"):
             endpoint = "https://" + endpoint
         self._endpoint = endpoint

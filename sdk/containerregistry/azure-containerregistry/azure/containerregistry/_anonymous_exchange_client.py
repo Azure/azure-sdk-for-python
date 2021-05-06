@@ -4,7 +4,6 @@
 # Licensed under the MIT License.
 # ------------------------------------
 import re
-import time
 from typing import TYPE_CHECKING, Dict, Any
 
 from ._exchange_client import ExchangeClientAuthenticationPolicy
@@ -59,7 +58,9 @@ class AnonymousACRExchangeClient(object):
             **kwargs
         )
 
-    def exchange_refresh_token_for_access_token(self, refresh_token=None, service=None, scope=None, grant_type=PASSWORD, **kwargs):
+    def exchange_refresh_token_for_access_token(
+        self, refresh_token=None, service=None, scope=None, grant_type=PASSWORD, **kwargs
+    ):
         # type: (str, str, str, str, Dict[str, Any]) -> str
         access_token = self._client.authentication.exchange_acr_refresh_token_for_acr_access_token(
             service=service, scope=scope, refresh_token=refresh_token, grant_type=grant_type, **kwargs
