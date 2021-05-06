@@ -751,7 +751,7 @@ class ServiceBusReceivedMessage(ServiceBusMessage):
             to=self.to,
         )
 
-    def __repr__(self):
+    def __repr__(self): # pylint: disable=too-many-branches,too-many-statements
         # type: () -> str
         # pylint: disable=bare-except
         message_repr = "body={}".format(
