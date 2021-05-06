@@ -30,7 +30,6 @@ def sample_list_document_statuses_with_filters(self, client):
     )
     import os
     from datetime import datetime
-    import uuid
 
     # obtain client secrets
     endpoint = os.environ["AZURE_DOCUMENT_TRANSLATION_ENDPOINT"]

@@ -32,7 +32,6 @@ async def sample_list_document_statuses_with_filters_async(self, client):
         DocumentTranslationClient,
     )
     from datetime import datetime
-    import uuid
 
     # obtain client secrets
     endpoint = os.environ["AZURE_DOCUMENT_TRANSLATION_ENDPOINT"]
