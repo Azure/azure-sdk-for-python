@@ -4,6 +4,8 @@
 
 Follow the instructions [here](https://docs.conda.io/projects/conda-build/en/latest/install-conda-build.html) to install `conda` and `conda-build`.
 
+**The Azure SDK Conda artifacts support `python3.8` and `python3.9` only.**
+
 ## CI Build Process
 
 There will be a `CondaArtifact` defined in the `ci.yml` of each service directory. (`sdk/<service>`)
