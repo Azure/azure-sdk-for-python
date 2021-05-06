@@ -29,6 +29,7 @@
 * Throws a `RequestTooLargeError` on transaction requests that return a 413 error code
 * Added support for Int64 and Binary types in query filters
 * Added support for `select` keyword parameter to `TableClient.get_entity()`.
+* On `update_entity` and `delete_entity` if no `etag` is supplied via kwargs, the `etag` in the entity will be used if it is in the entity.
 
 ## 12.0.0b6 (2021-04-06)
 * Updated deserialization of datetime fields in entities to support preservation of the service format with additional decimal place.
