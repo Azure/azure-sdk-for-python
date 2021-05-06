@@ -53,7 +53,7 @@ class AzureSearchIndexWriteBehaviorType(with_metaclass(_CaseInsensitiveEnumMeta,
     MERGE = "Merge"
     UPLOAD = "Upload"
 
-class BlobEventTypesEnum(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class BlobEventTypes(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
 
     MICROSOFT_STORAGE_BLOB_CREATED = "Microsoft.Storage.BlobCreated"
     MICROSOFT_STORAGE_BLOB_DELETED = "Microsoft.Storage.BlobDeleted"
@@ -352,6 +352,7 @@ class IntegrationRuntimeEntityReferenceType(with_metaclass(_CaseInsensitiveEnumM
 
     INTEGRATION_RUNTIME_REFERENCE = "IntegrationRuntimeReference"
     LINKED_SERVICE_REFERENCE = "LinkedServiceReference"
+    CREDENTIAL_REFERENCE = "CredentialReference"
 
 class IntegrationRuntimeInternalChannelEncryptionMode(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     """It is used to set the encryption mode for node-node communication channel (when more than 2
@@ -693,6 +694,14 @@ class SparkThriftTransportProtocol(with_metaclass(_CaseInsensitiveEnumMeta, str,
     BINARY = "Binary"
     SASL = "SASL"
     HTTP = "HTTP "
+
+class SqlAlwaysEncryptedAkvAuthType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+    """Sql always encrypted AKV authentication type. Type: string (or Expression with resultType
+    string).
+    """
+
+    SERVICE_PRINCIPAL = "ServicePrincipal"
+    MANAGED_IDENTITY = "ManagedIdentity"
 
 class SqlPartitionOption(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     """The partition mechanism that will be used for Sql read in parallel.

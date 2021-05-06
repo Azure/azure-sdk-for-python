@@ -329,7 +329,7 @@ class PipelinesOperations:
         is_recovery: Optional[bool] = None,
         start_activity_name: Optional[str] = None,
         start_from_failure: Optional[bool] = None,
-        parameters: Optional[Dict[str, object]] = None,
+        parameters: Optional[Dict[str, str]] = None,
         **kwargs
     ) -> "_models.CreateRunResponse":
         """Creates a run of a pipeline.
@@ -354,7 +354,7 @@ class PipelinesOperations:
         :type start_from_failure: bool
         :param parameters: Parameters of the pipeline run. These parameters will be used only if the
          runId is not specified.
-        :type parameters: dict[str, object]
+        :type parameters: dict[str, str]
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: CreateRunResponse, or the result of cls(response)
         :rtype: ~azure.mgmt.datafactory.models.CreateRunResponse
@@ -398,7 +398,7 @@ class PipelinesOperations:
 
         body_content_kwargs = {}  # type: Dict[str, Any]
         if parameters is not None:
-            body_content = self._serialize.body(parameters, '{object}')
+            body_content = self._serialize.body(parameters, '{str}')
         else:
             body_content = None
         body_content_kwargs['content'] = body_content
