@@ -33,7 +33,7 @@ from multidict import CIMultiDict
 from requests.exceptions import StreamConsumedError
 
 from azure.core.configuration import ConnectionConfiguration
-from azure.core.exceptions import ServiceRequestError, ServiceResponseError, DecodeError
+from azure.core.exceptions import ServiceRequestError, ServiceResponseError
 from azure.core.pipeline import Pipeline
 
 from ._base import HttpRequest
