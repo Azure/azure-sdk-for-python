@@ -1,3 +1,5 @@
+import sys
+
 from azure.confidentialledger.identity_service import (
     ConfidentialLedgerIdentityServiceClient,
     LedgerIdentity,
@@ -25,5 +27,12 @@ class ConfidentialLedgerIdentityServiceClientTest(ConfidentialLedgerTestCase):
         network_identity = client.get_ledger_identity(
             ledger_id=self.ledger_id
         )  # type: LedgerIdentity
+
         self.assertEqual(network_identity.ledger_id, self.ledger_id)
-        self.assertEqual(network_identity.ledger_tls_certificate, NETWORK_CERTIFICATE)
+
+        cert_recv = network_identity.ledger_tls_certificate
+        # Ledger certificate comes back as unicode in Python 2.7.
+        if sys.version_info < (3, 0):
+            cert_recv = cert_recv.strip("\n\x00").encode("ascii")
+
+        self.assertEqual(cert_recv, NETWORK_CERTIFICATE)
