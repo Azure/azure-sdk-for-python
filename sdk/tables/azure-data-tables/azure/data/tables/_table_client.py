@@ -254,11 +254,12 @@ class TableClient(TablesBaseClient):
         self, **kwargs  # type: Any
     ):
         # type: (...) -> None
-        """Deletes the table under the current account.
+        """Deletes the table under the current account. No error will be raised
+            if the table does not exist
 
         :return: None
         :rtype: None
-        :raises: :class:`~azure.core.exceptions.ResourceNotFoundError` If the table does not exist
+        :raises: :class:`~azure.core.exceptions.HttpResponseError`
 
         .. admonition:: Example:
 
@@ -272,6 +273,8 @@ class TableClient(TablesBaseClient):
         try:
             self._client.table.delete(table=self.table_name, **kwargs)
         except HttpResponseError as error:
+            if error.status_code == 404:
+                return
             _process_table_error(error)
 
     @overload
@@ -287,7 +290,8 @@ class TableClient(TablesBaseClient):
     @distributed_trace
     def delete_entity(self, *args, **kwargs):
         # type: (Union[TableEntity, str], Any) -> None
-        """Deletes the specified entity in a table.
+        """Deletes the specified entity in a table. No error will be raised if
+            the entity or PartitionKey-RowKey pairing is not found.
 
         :param partition_key: The partition key of the entity.
         :type partition_key: str
@@ -298,7 +302,7 @@ class TableClient(TablesBaseClient):
         :paramtype match_condition: ~azure.core.MatchConditions
         :return: None
         :rtype: None
-        :raises: :class:`~azure.core.exceptions.ResourceNotFoundError` If the entity already does not exist
+        :raises: :class:`~azure.core.exceptions.HttpResponseError`
 
         .. admonition:: Example:
 
@@ -350,6 +354,8 @@ class TableClient(TablesBaseClient):
                 **kwargs
             )
         except HttpResponseError as error:
+            if error.status_code == 404:
+                return
             _process_table_error(error)
 
     @distributed_trace
@@ -365,7 +371,7 @@ class TableClient(TablesBaseClient):
         :type entity: ~azure.data.tables.TableEntity or Dict[str,str]
         :return: Dictionary mapping operation metadata returned from the service
         :rtype: Dict[str,str]
-        :raises: :class:`~azure.core.exceptions.ResourceExistsError` If the entity already exists
+        :raises: :class:`~azure.core.exceptions.HttpResponseError`
 
         .. admonition:: Example:
 

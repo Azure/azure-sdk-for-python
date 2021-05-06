@@ -83,14 +83,11 @@ class InsertDeleteEntity(object):
             except ResourceExistsError:
                 print("Entity already exists!")
 
-            try:
-                await table_client.delete_entity(
-                    row_key=self.entity["RowKey"],
-                    partition_key=self.entity["PartitionKey"]
-                )
-                print("Successfully deleted!")
-            except ResourceNotFoundError:
-                print("Entity does not exists")
+            await table_client.delete_entity(
+                row_key=self.entity["RowKey"],
+                partition_key=self.entity["PartitionKey"]
+            )
+            print("Successfully deleted!")
         # [END delete_entity]
 
     async def clean_up(self):
