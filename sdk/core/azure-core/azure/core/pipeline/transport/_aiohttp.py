@@ -206,7 +206,9 @@ class AioHttpStreamDownloadGenerator(AsyncIterator):
         self.request = response.request
         self.response = response
         self.block_size = response.block_size
-        self._decompress = kwargs.get("decompress", True)
+        self._decompress = kwargs.pop("decompress", True)
+        if len(kwargs) > 0:
+            raise ValueError("Unknown parameters!")
         self.content_length = int(response.internal_response.headers.get('Content-Length', 0))
 
     def __len__(self):

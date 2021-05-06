@@ -128,7 +128,9 @@ class StreamDownloadGenerator(object):
         self.request = response.request
         self.response = response
         self.block_size = response.block_size
-        decompress = kwargs.get("decompress", True)
+        decompress = kwargs.pop("decompress", True)
+        if len(kwargs) > 0:
+            raise ValueError("Unknown parameters!")
         if decompress:
             self.iter_content_func = self.response.internal_response.iter_content(self.block_size)
         else:
