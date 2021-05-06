@@ -5,6 +5,13 @@
 # ------------------------------------
 import six
 
+from azure.containerregistry import (
+    RepositoryProperties,
+    ArtifactManifestProperties,
+    ArtifactTagProperties,
+)
+from azure.containerregistry.aio import RegistryArtifact
+
 from azure.core.pipeline.transport import AioHttpTransport
 
 from asynctestcase import AsyncContainerRegistryTestClass
@@ -14,10 +21,9 @@ from preparer import acr_preparer
 
 class TestContainerRegistryClient(AsyncContainerRegistryTestClass):
     @acr_preparer()
-    async def test_list_repository_names(self, containerregistry_endpoint):
-        client = self.create_registry_client(containerregistry_endpoint)
-
-        repositories = client.list_repository_names()
+    async def test_list_repository_names(self, containerregistry_anon_endpoint):
+        client = self.create_anon_client(containerregistry_anon_endpoint)
+        assert client._credential is None
 
         count = 0
         prev = None
@@ -30,8 +36,10 @@ class TestContainerRegistryClient(AsyncContainerRegistryTestClass):
         assert count > 0
 
     @acr_preparer()
-    async def test_list_repository_names_by_page(self, containerregistry_endpoint):
-        client = self.create_registry_client(containerregistry_endpoint)
+    async def test_list_repository_names_by_page(self, containerregistry_anon_endpoint):
+        client = self.create_anon_client(containerregistry_anon_endpoint)
+        assert client._credential is None
+
         results_per_page = 2
         total_pages = 0
 
@@ -51,9 +59,11 @@ class TestContainerRegistryClient(AsyncContainerRegistryTestClass):
         assert total_pages >= 1
 
     @acr_preparer()
-    async def test_transport_closed_only_once(self, containerregistry_endpoint):
+    async def test_transport_closed_only_once(self, containerregistry_anon_endpoint):
         transport = AioHttpTransport()
-        client = self.create_registry_client(containerregistry_endpoint, transport=transport)
+        client = self.create_anon_client(containerregistry_anon_endpoint, transport=transport)
+        assert client._credential is None
+
         async with client:
             async for r in client.list_repository_names():
                 pass
@@ -66,3 +76,60 @@ class TestContainerRegistryClient(AsyncContainerRegistryTestClass):
             async for r in client.list_repository_names():
                 pass
             assert transport.session is not None
+
+    @acr_preparer()
+    async def test_get_properties(self, containerregistry_anon_endpoint):
+        client = self.create_anon_client(containerregistry_anon_endpoint)
+        assert client._credential is None
+
+        container_repository = client.get_repository(HELLO_WORLD)
+        assert container_repository._credential is None
+
+        properties = await container_repository.get_properties()
+
+        assert isinstance(properties, RepositoryProperties)
+        assert properties.name == HELLO_WORLD
+
+    @acr_preparer()
+    async def test_list_manifests(self, containerregistry_anon_endpoint):
+        client = self.create_anon_client(containerregistry_anon_endpoint)
+        assert client._credential is None
+
+        container_repository = client.get_repository(HELLO_WORLD)
+        assert container_repository._credential is None
+
+        count = 0
+        async for manifest in container_repository.list_manifests():
+            assert isinstance(manifest, ArtifactManifestProperties)
+            count += 1
+        assert count > 0
+
+    @acr_preparer()
+    async def test_get_artifact(self, containerregistry_anon_endpoint):
+        client = self.create_anon_client(containerregistry_anon_endpoint)
+        assert client._credential is None
+
+        container_repository = client.get_repository(HELLO_WORLD)
+        assert container_repository._credential is None
+
+        registry_artifact = container_repository.get_artifact("latest")
+        assert registry_artifact._credential is None
+
+        assert isinstance(registry_artifact, RegistryArtifact)
+
+    @acr_preparer()
+    async def test_list_tags(self, containerregistry_anon_endpoint):
+        client = self.create_anon_client(containerregistry_anon_endpoint)
+        assert client._credential is None
+
+        container_repository = client.get_repository(HELLO_WORLD)
+        assert container_repository._credential is None
+
+        registry_artifact = container_repository.get_artifact("latest")
+        assert registry_artifact._credential is None
+
+        count = 0
+        async for tag in registry_artifact.list_tags():
+            count += 1
+            assert isinstance(tag, ArtifactTagProperties)
+        assert count > 0

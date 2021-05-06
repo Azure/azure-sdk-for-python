@@ -6,6 +6,7 @@ from typing import TYPE_CHECKING
 
 from azure.core.pipeline.policies import AsyncHTTPPolicy
 
+from ._async_anonymous_exchange_client import AnonymousACRExchangeClient
 from ._async_exchange_client import ACRExchangeClient
 from .._helpers import _enforce_https
 
@@ -21,7 +22,10 @@ class ContainerRegistryChallengePolicy(AsyncHTTPPolicy):
     def __init__(self, credential: "AsyncTokenCredential", endpoint: str) -> None:
         super().__init__()
         self._credential = credential
-        self._exchange_client = ACRExchangeClient(endpoint, self._credential)
+        if not self._credential:
+            self._exchange_client = AnonymousACRExchangeClient(endpoint)
+        else:
+            self._exchange_client = ACRExchangeClient(endpoint, self._credential)
 
     async def on_request(self, request):
         # type: (PipelineRequest) -> None

@@ -7,7 +7,7 @@ interactions:
       User-Agent:
       - azsdk-python-azure-containerregistry/1.0.0b1 Python/3.9.0rc1 (Windows-10-10.0.19041-SP0)
     method: GET
-    uri: https://fake_url.azurecr.io/acr/v1/_catalog
+    uri: https://seankaneanon.azurecr.io/acr/v1/_catalog
   response:
     body:
       string: '{"errors": [{"code": "UNAUTHORIZED", "message": "authentication required,
@@ -18,7 +18,7 @@ interactions:
       connection: keep-alive
       content-length: '196'
       content-type: application/json; charset=utf-8
-      date: Wed, 05 May 2021 19:23:06 GMT
+      date: Thu, 06 May 2021 18:24:25 GMT
       docker-distribution-api-version: registry/2.0
       server: openresty
       strict-transport-security: max-age=31536000; includeSubDomains
@@ -30,35 +30,7 @@ interactions:
     url: https://fake_url.azurecr.io/acr/v1/_catalog
 - request:
     body:
-      access_token: REDACTED
-      grant_type: access_token
-      service: fake_url.azurecr.io
-    headers:
-      Accept:
-      - application/json
-      User-Agent:
-      - azsdk-python-azure-containerregistry/1.0.0b1 Python/3.9.0rc1 (Windows-10-10.0.19041-SP0)
-    method: POST
-    uri: https://fake_url.azurecr.io/oauth2/exchange
-  response:
-    body:
-      string: '{"refresh_token": "REDACTED"}'
-    headers:
-      connection: keep-alive
-      content-type: application/json; charset=utf-8
-      date: Wed, 05 May 2021 19:23:07 GMT
-      server: openresty
-      strict-transport-security: max-age=31536000; includeSubDomains
-      transfer-encoding: chunked
-      x-ms-ratelimit-remaining-calls-per-second: '166.55'
-    status:
-      code: 200
-      message: OK
-    url: https://fake_url.azurecr.io/oauth2/exchange
-- request:
-    body:
-      grant_type: refresh_token
-      refresh_token: REDACTED
+      grant_type: password
       scope: registry:catalog:*
       service: fake_url.azurecr.io
     headers:
@@ -67,18 +39,17 @@ interactions:
       User-Agent:
       - azsdk-python-azure-containerregistry/1.0.0b1 Python/3.9.0rc1 (Windows-10-10.0.19041-SP0)
     method: POST
-    uri: https://fake_url.azurecr.io/oauth2/token
+    uri: https://seankaneanon.azurecr.io/oauth2/token
   response:
     body:
       string: '{"access_token": "REDACTED"}'
     headers:
       connection: keep-alive
       content-type: application/json; charset=utf-8
-      date: Wed, 05 May 2021 19:23:07 GMT
+      date: Thu, 06 May 2021 18:24:25 GMT
       server: openresty
       strict-transport-security: max-age=31536000; includeSubDomains
       transfer-encoding: chunked
-      x-ms-ratelimit-remaining-calls-per-second: '166.383333'
     status:
       code: 200
       message: OK
@@ -91,20 +62,16 @@ interactions:
       User-Agent:
       - azsdk-python-azure-containerregistry/1.0.0b1 Python/3.9.0rc1 (Windows-10-10.0.19041-SP0)
     method: GET
-    uri: https://fake_url.azurecr.io/acr/v1/_catalog
+    uri: https://seankaneanon.azurecr.io/acr/v1/_catalog
   response:
     body:
-      string: '{"repositories": ["library/alpine", "library/busybox", "repo28471541",
-        "repo2c591564", "repo2e8319c5", "repo308e19dd", "repo34ab0fa1", "repo3c82158b",
-        "repo3db51597", "repo3e8d15a3", "repo84e316ff", "repo9b321760", "repo9cb4121e",
-        "repoaf9517b2", "repob0a917be", "repob22512e7", "repoc28d1326", "repod2be1c42",
-        "repos6ce51658"]}'
+      string: '{"repositories": ["library/alpine", "library/busybox", "library/hello-world"]}'
     headers:
       access-control-expose-headers: X-Ms-Correlation-Request-Id
       connection: keep-alive
-      content-length: '310'
+      content-length: '76'
       content-type: application/json; charset=utf-8
-      date: Wed, 05 May 2021 19:23:07 GMT
+      date: Thu, 06 May 2021 18:24:25 GMT
       docker-distribution-api-version: registry/2.0
       server: openresty
       strict-transport-security: max-age=31536000; includeSubDomains
@@ -121,7 +88,7 @@ interactions:
       User-Agent:
       - azsdk-python-azure-containerregistry/1.0.0b1 Python/3.9.0rc1 (Windows-10-10.0.19041-SP0)
     method: GET
-    uri: https://fake_url.azurecr.io/acr/v1/_catalog
+    uri: https://seankaneanon.azurecr.io/acr/v1/_catalog
   response:
     body:
       string: '{"errors": [{"code": "UNAUTHORIZED", "message": "authentication required,
@@ -132,7 +99,7 @@ interactions:
       connection: keep-alive
       content-length: '196'
       content-type: application/json; charset=utf-8
-      date: Wed, 05 May 2021 19:23:07 GMT
+      date: Thu, 06 May 2021 18:24:25 GMT
       docker-distribution-api-version: registry/2.0
       server: openresty
       strict-transport-security: max-age=31536000; includeSubDomains
@@ -144,8 +111,7 @@ interactions:
     url: https://fake_url.azurecr.io/acr/v1/_catalog
 - request:
     body:
-      grant_type: refresh_token
-      refresh_token: REDACTED
+      grant_type: password
       scope: registry:catalog:*
       service: fake_url.azurecr.io
     headers:
@@ -154,18 +120,17 @@ interactions:
       User-Agent:
       - azsdk-python-azure-containerregistry/1.0.0b1 Python/3.9.0rc1 (Windows-10-10.0.19041-SP0)
     method: POST
-    uri: https://fake_url.azurecr.io/oauth2/token
+    uri: https://seankaneanon.azurecr.io/oauth2/token
   response:
     body:
       string: '{"access_token": "REDACTED"}'
     headers:
       connection: keep-alive
       content-type: application/json; charset=utf-8
-      date: Wed, 05 May 2021 19:23:07 GMT
+      date: Thu, 06 May 2021 18:24:25 GMT
       server: openresty
       strict-transport-security: max-age=31536000; includeSubDomains
       transfer-encoding: chunked
-      x-ms-ratelimit-remaining-calls-per-second: '166.366667'
     status:
       code: 200
       message: OK
@@ -178,20 +143,16 @@ interactions:
       User-Agent:
       - azsdk-python-azure-containerregistry/1.0.0b1 Python/3.9.0rc1 (Windows-10-10.0.19041-SP0)
     method: GET
-    uri: https://fake_url.azurecr.io/acr/v1/_catalog
+    uri: https://seankaneanon.azurecr.io/acr/v1/_catalog
   response:
     body:
-      string: '{"repositories": ["library/alpine", "library/busybox", "repo28471541",
-        "repo2c591564", "repo2e8319c5", "repo308e19dd", "repo34ab0fa1", "repo3c82158b",
-        "repo3db51597", "repo3e8d15a3", "repo84e316ff", "repo9b321760", "repo9cb4121e",
-        "repoaf9517b2", "repob0a917be", "repob22512e7", "repoc28d1326", "repod2be1c42",
-        "repos6ce51658"]}'
+      string: '{"repositories": ["library/alpine", "library/busybox", "library/hello-world"]}'
     headers:
       access-control-expose-headers: X-Ms-Correlation-Request-Id
       connection: keep-alive
-      content-length: '310'
+      content-length: '76'
       content-type: application/json; charset=utf-8
-      date: Wed, 05 May 2021 19:23:07 GMT
+      date: Thu, 06 May 2021 18:24:26 GMT
       docker-distribution-api-version: registry/2.0
       server: openresty
       strict-transport-security: max-age=31536000; includeSubDomains

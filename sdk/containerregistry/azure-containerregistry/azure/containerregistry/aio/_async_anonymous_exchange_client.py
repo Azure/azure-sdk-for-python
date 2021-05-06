@@ -7,9 +7,7 @@ import re
 import time
 from typing import TYPE_CHECKING, Dict, List, Any
 
-from azure.core.pipeline import PipelineRequest, PipelineResponse
-from azure.core.pipeline.policies import SansIOHTTPPolicy
-
+from ._async_exchange_client import ExchangeClientAuthenticationPolicy
 from .._generated.aio import ContainerRegistry
 from .._helpers import _parse_challenge
 from .._user_agent import USER_AGENT
@@ -21,17 +19,8 @@ if TYPE_CHECKING:
 PASSWORD = u"password"
 
 
-class ExchangeClientAuthenticationPolicy(SansIOHTTPPolicy):
-    """Authentication policy for exchange client that does not modify the request"""
 
-    def on_request(self, request: PipelineRequest) -> None:
-        pass
-
-    def on_response(self, request: PipelineRequest, response: PipelineResponse) -> None:
-        pass
-
-
-class ACRExchangeClient(object):
+class AnonymousACRExchangeClient(object):
     """Class for handling oauth authentication requests
 
     :param endpoint: Azure Container Registry endpoint
@@ -57,6 +46,7 @@ class ACRExchangeClient(object):
             **kwargs
         )
         self._credential = credential
+
     async def get_acr_access_token(self, challenge: str, **kwargs: Dict[str, Any]) -> str:
         parsed_challenge = _parse_challenge(challenge)
         parsed_challenge["grant_type"] = PASSWORD
@@ -68,7 +58,7 @@ class ACRExchangeClient(object):
             **kwargs
         )
 
-    def exchange_refresh_token_for_access_token(
+    async def exchange_refresh_token_for_access_token(
         self,
         refresh_token: str = None,
         service: str = None,
@@ -76,7 +66,7 @@ class ACRExchangeClient(object):
         grant_type: str = PASSWORD,
         **kwargs: Any
     ) -> str:
-        access_token = self._client.authentication.exchange_acr_refresh_token_for_acr_access_token(
+        access_token = await self._client.authentication.exchange_acr_refresh_token_for_acr_access_token(
             service=service, scope=scope, refresh_token=refresh_token, grant_type=grant_type, **kwargs
         )
         return access_token.access_token
