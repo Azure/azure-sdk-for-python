@@ -121,7 +121,6 @@ jobs:
         and(
           succeededOrFailed(),
           ne(variables['Skip.TestConda'], 'true'),
-          ne(${{ parameters.Matrix }}, '{}'),
           or(eq(variables['PythonVersion'],'3.8'), eq(variables['PythonVersion'],'3.9'))
         )
       timeoutInMinutes: ${{ parameters.TestTimeoutInMinutes }}
