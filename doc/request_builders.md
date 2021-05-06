@@ -1,6 +1,7 @@
-# Python Low-Level Client
+# Using Request Builders with Your Service Client
 
-Our low-level clients provide simple, reliable connections to APIs for previews and advanced usage.
+In this doc, we will be showing how to use our ***request builders*** to build ***http requests*** - or create raw ***http requests*** yourselves - and
+send these requests directly to the service using the ***send_request*** method.
 
 Here's how to get started:
 
@@ -22,17 +23,12 @@ Here's how to get started:
 
 ## Code Snippets
 
-**Code snippets for how to use our Low-Level clients**:
+**Code snippets for how to use our request builders with our clients**:
 
 1. [Sync client](#sync-client)
 2. [Async client](#async-client)
 
-## What is a Low-Level Client
-
-Our low-level clients provide simple, reliable connection to raw HTTP for previews and advanced usage. We provide caller `send_request` on the client to send requests to the service.
-Calls through this method fully harness the power of `azure-core` and [`azure-identity`][azure_identity_docs]. We provide both synchronous and asynchronous low-level clients.
-
-The basic structure of calls with low-level clients is:
+## Steps To Make a Call
 
 1. [Initialize your client](#1-initialize-your-client "Initialize Your Client")
 2. [Create a request](#2-create-a-request "Create a Request")
@@ -260,7 +256,7 @@ All errors thrown by `.raise_for_error()` are [exceptions defined in `azure-core
 
 ### Logging
 
-Our low-level clients also have logging support. They use the standard
+Our clients also have logging support. They use the standard
 [logging][python_logging] library for logging.
 Basic information about HTTP sessions (URLs, headers, etc.) is logged at INFO
 level.
@@ -281,7 +277,7 @@ client = ExampleClient(
 
 ### File an Issue
 
-You can file issues for the Low Level Client [here][issues] in our repo. You can label your issue with the `"Low Level Client"` label.
+You can file issues [here][issues] in our repo.
 
 <!-- LINKS -->
 
