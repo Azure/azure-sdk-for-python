@@ -40,6 +40,12 @@ async def sample_list_submitted_jobs_with_filters_async():
     client = DocumentTranslationClient(endpoint, AzureKeyCredential(key))
     async with client:
         # set your filters
+        '''
+            Note:
+                these are just sample values for the filters!
+                please comment any filters you don't want to use 
+                only leave the ones you want
+        '''
         start = datetime(2021, 4, 12)
         end = datetime(2021, 4, 14)
         statuses = ["Cancelled", "Failed"]
