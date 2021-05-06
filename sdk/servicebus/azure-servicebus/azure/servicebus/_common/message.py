@@ -802,39 +802,39 @@ class ServiceBusReceivedMessage(ServiceBusMessage):
         except:
             pass
         try:
-            message_repr += ", dead_letter_error_description={}".format(self.dead_letter_error_description())
+            message_repr += ", dead_letter_error_description={}".format(self.dead_letter_error_description)
         except:
             pass
         try:
-            message_repr += ", dead_letter_reason={}".format(self.dead_letter_reason())
+            message_repr += ", dead_letter_reason={}".format(self.dead_letter_reason)
         except:
             pass
         try:
-            message_repr += ", dead_letter_source={}".format(self.dead_letter_source())
+            message_repr += ", dead_letter_source={}".format(self.dead_letter_source)
         except:
             pass
         try:
-            message_repr += ", delivery_count={}".format(self.delivery_count())
+            message_repr += ", delivery_count={}".format(self.delivery_count)
         except:
             pass
         try:
-            message_repr += ", enqueued_sequence_number={}".format(self.enqueued_sequence_number())
+            message_repr += ", enqueued_sequence_number={}".format(self.enqueued_sequence_number)
         except:
             pass
         try:
-            message_repr += ", expires_at_utc={}".format(self.expires_at_utc())
+            message_repr += ", expires_at_utc={}".format(self.expires_at_utc)
         except:
             pass
         try:
-            message_repr += ", sequence_number={}".format(self.sequence_number())
+            message_repr += ", sequence_number={}".format(self.sequence_number)
         except:
             pass
         try:
-            message_repr += ", lock_token={}".format(self.lock_token())
+            message_repr += ", lock_token={}".format(self.lock_token)
         except:
             pass
         try:
-            message_repr += ", locked_until_utc={}".format(self.locked_until_utc())
+            message_repr += ", locked_until_utc={}".format(self.locked_until_utc)
         except:
             pass
         try:
