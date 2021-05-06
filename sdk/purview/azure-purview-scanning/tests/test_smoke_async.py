@@ -4,10 +4,11 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # -------------------------------------------------------------------------
-from testcase import PurviewScanningPowerShellPreparer, PurviewScanningTest
+from testcase import PurviewScanningPowerShellPreparer
+from testcase_async import PurviewScanningTestAsync
 from azure.purview.scanning.rest import data_sources
 
-class PurviewScanningSmokeTest(PurviewScanningTest):
+class PurviewScanningSmokeTestAsync(PurviewScanningTestAsync):
 
     @PurviewScanningPowerShellPreparer()
     async def test_basic_smoke_test(self, purviewscanning_endpoint):

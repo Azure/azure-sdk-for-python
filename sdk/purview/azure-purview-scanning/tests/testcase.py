@@ -7,8 +7,6 @@
 import functools
 from devtools_testutils import AzureTestCase, PowerShellPreparer
 from azure.purview.scanning import AzurePurviewScanningClient
-from azure.purview.scanning.aio import AzurePurviewScanningClient as AsyncAzurePurviewScanningClient
-
 
 class PurviewScanningTest(AzureTestCase):
 
@@ -16,14 +14,6 @@ class PurviewScanningTest(AzureTestCase):
         credential = self.get_credential(AzurePurviewScanningClient)
         return self.create_client_from_credential(
             AzurePurviewScanningClient,
-            credential=credential,
-            endpoint=endpoint,
-        )
-
-    def create_async_client(self, endpoint):
-        credential = self.get_credential(AsyncAzurePurviewScanningClient, is_async=True)
-        return self.create_client_from_credential(
-            AsyncAzurePurviewScanningClient,
             credential=credential,
             endpoint=endpoint,
         )
