@@ -230,13 +230,14 @@ class TableServiceClient(TablesBaseClient):
         **kwargs  # type: Any
     ):
         # type: (...) -> None
-        """Deletes the table under the current account
+        """Deletes the table under the current account. No error will be raised
+            if the given tables does not exist.
 
         :param table_name: The Table name.
         :type table_name: str
         :return: None
         :rtype: None
-        :raises: :class:`~azure.core.exceptions.ResourceNotFoundError`
+        :raises: :class:`~azure.core.exceptions.HttpResponseError`
 
         .. admonition:: Example:
 

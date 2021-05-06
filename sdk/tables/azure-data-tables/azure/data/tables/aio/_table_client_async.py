@@ -248,11 +248,12 @@ class TableClient(AsyncTablesBaseClient):
 
     @distributed_trace_async
     async def delete_table(self, **kwargs) -> None:
-        """Deletes the table under the current account.
+        """Deletes the table under the current account. No error will be raised if
+            the given table name is not found.
 
         :return: None
         :rtype: None
-        :raises: :class:`~azure.core.exceptions.ResourceNotFoundError` If the table does not exist
+        :raises: :class:`~azure.core.exceptions.HttpResponseError`
 
         .. admonition:: Example:
 
@@ -266,6 +267,8 @@ class TableClient(AsyncTablesBaseClient):
         try:
             await self._client.table.delete(table=self.table_name, **kwargs)
         except HttpResponseError as error:
+            if error.status_code == 404:
+                return
             _process_table_error(error)
 
     @overload
@@ -278,7 +281,8 @@ class TableClient(AsyncTablesBaseClient):
 
     @distributed_trace_async
     async def delete_entity(self, *args: Union[TableEntity, str], **kwargs: Any) -> None:
-        """Deletes the specified entity in a table.
+        """Deletes the specified entity in a table. No error will be raised if
+            the entity or PartitionKey-RowKey pairing is not found.
 
         :param partition_key: The partition key of the entity.
         :type partition_key: str
@@ -289,7 +293,7 @@ class TableClient(AsyncTablesBaseClient):
         :paramtype match_condition: ~azure.core.MatchConditions
         :return: None
         :rtype: None
-        :raises: :class:`~azure.core.exceptions.ResourceNotFoundError` If the entity already does not exist
+        :raises: :class:`~azure.core.exceptions.HttpResponseError`
 
         .. admonition:: Example:
 
@@ -341,6 +345,8 @@ class TableClient(AsyncTablesBaseClient):
                 **kwargs
             )
         except HttpResponseError as error:
+            if error.status_code == 404:
+                return
             _process_table_error(error)
 
     @distributed_trace_async

@@ -59,6 +59,7 @@ class SyncTokenPolicy(SansIOHTTPPolicy):
     """
 
     def __init__(self, **kwargs):  # pylint: disable=unused-argument
+        # type: (**Any) -> None
         self._sync_token_header = "Sync-Token"
         self._sync_tokens = dict()
 
