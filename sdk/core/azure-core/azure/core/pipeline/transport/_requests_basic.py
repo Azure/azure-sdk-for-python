@@ -130,7 +130,7 @@ class StreamDownloadGenerator(object):
         self.block_size = response.block_size
         decompress = kwargs.pop("decompress", True)
         if len(kwargs) > 0:
-            raise TypeError("Found incorrect parameter: {}".format(list(kwargs.keys())[0]))
+            raise TypeError("Got an unexpected keyword argument: {}".format(list(kwargs.keys())[0]))
         if decompress:
             self.iter_content_func = self.response.internal_response.iter_content(self.block_size)
         else:

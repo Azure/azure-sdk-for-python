@@ -208,7 +208,7 @@ class AioHttpStreamDownloadGenerator(AsyncIterator):
         self.block_size = response.block_size
         self._decompress = kwargs.pop("decompress", True)
         if len(kwargs) > 0:
-            raise TypeError("Found incorrect parameter: {}".format(list(kwargs.keys())[0]))
+            raise TypeError("Got an unexpected keyword argument: {}".format(list(kwargs.keys())[0]))
         self.content_length = int(response.internal_response.headers.get('Content-Length', 0))
         self._decompressor = None
 
