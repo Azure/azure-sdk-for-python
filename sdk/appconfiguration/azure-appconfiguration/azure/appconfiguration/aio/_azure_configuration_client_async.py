@@ -621,3 +621,10 @@ class AzureAppConfigurationClient:
 
         """Close all connections made by the client"""
         await self._impl._client.close()
+
+    async def __aenter__(self):
+        await self._impl.__aenter__()
+        return self
+
+    async def __aexit__(self, *args):
+        await self._impl.__aexit__(*args)

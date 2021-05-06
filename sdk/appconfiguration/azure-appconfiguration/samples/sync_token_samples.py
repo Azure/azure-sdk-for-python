@@ -23,18 +23,17 @@ def handle_event_grid_notifications(event_grid_events):
 
     all_keys = []
 
-    client = AzureAppConfigurationClient.from_connection_string(CONNECTION_STRING)
+    with AzureAppConfigurationClient.from_connection_string(CONNECTION_STRING) as client:
+        for event_grid_event in event_grid_events:
+            if event_grid_event["eventType"] == 'Microsoft.KeyValueModified':
+                sync_token = event_grid_event['data']['syncToken']
+                client.update_sync_token(sync_token)
 
-    for event_grid_event in event_grid_events:
-        if event_grid_event["eventType"] == 'Microsoft.KeyValueModified':
-            sync_token = event_grid_event['data']['syncToken']
-            client.update_sync_token(sync_token)
+                new_key = client.get_configuration_setting(
+                    key=event_grid_event['data']['key'], label=event_grid_event['data']['label']
+                )
 
-            new_key = client.get_configuration_setting(
-                key=event_grid_event['data']['key'], label=event_grid_event['data']['label']
-            )
-
-            all_keys.append(new_key)
+                all_keys.append(new_key)
 
 
 if __name__ == "__main__":

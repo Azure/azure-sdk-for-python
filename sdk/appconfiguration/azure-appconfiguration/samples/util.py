@@ -6,6 +6,7 @@
 # license information.
 # --------------------------------------------------------------------------
 
+from dotenv import load_dotenv, find_dotenv
 import os
 import sys
 
@@ -25,8 +26,9 @@ def print_configuration_setting(config_setting):
         print("etag: " + config_setting.etag)
 
 def get_connection_string():
+    load_dotenv(find_dotenv())
     try:
-        CONNECTION_STRING = os.environ['AZURE_APPCONFIG_CONNECTION_STRING']
+        CONNECTION_STRING = os.environ['APPCONFIGURATION_CONNECTION_STRING']
         return CONNECTION_STRING
 
     except KeyError:

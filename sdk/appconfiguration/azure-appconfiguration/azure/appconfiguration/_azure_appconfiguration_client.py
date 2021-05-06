@@ -605,3 +605,10 @@ class AzureAppConfigurationClient:
 
         """Close all connections made by the client"""
         self._impl._client.close()
+
+    def __enter__(self):
+        self._impl.__enter__()
+        return self
+
+    def __exit__(self, *args):
+        self._impl.__exit__(*args)
