@@ -11,13 +11,14 @@ from ._container_repository import ContainerRepository
 from ._models import (
     ArtifactArchitecture,
     ArtifactOperatingSystem,
-    ContentPermissions,
-    DeletedRepositoryResult,
-    RegistryArtifactOrderBy,
+    ContentProperties,
+    ManifestOrderBy,
+    DeleteRepositoryResult,
+    ContentProperties,
     ArtifactManifestProperties,
     RepositoryProperties,
     TagOrderBy,
-    TagProperties,
+    ArtifactTagProperties,
 )
 from ._registry_artifact import RegistryArtifact
 from ._version import VERSION
@@ -29,12 +30,13 @@ __all__ = [
     "ArtifactOperatingSystem",
     "ContainerRegistryClient",
     "ContainerRepository",
-    "ContentPermissions",
-    "DeletedRepositoryResult",
+    "ContentProperties",
     "RegistryArtifact",
-    "RegistryArtifactOrderBy",
+    "ManifestOrderBy",
+    "DeleteRepositoryResult",
+    "ContentProperties",
     "ArtifactManifestProperties",
     "RepositoryProperties",
     "TagOrderBy",
-    "TagProperties",
+    "ArtifactTagProperties",
 ]

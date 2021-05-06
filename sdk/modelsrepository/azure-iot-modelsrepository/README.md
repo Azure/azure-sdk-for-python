@@ -33,9 +33,9 @@ The repository defines a pattern to store DTDL interfaces in a directory structu
 
 ## Examples
 The following sections provide several snippets covering common Models Repository tasks:
-* [Initializing the ModelsRepositoryClient](#initializing-the-modelsrepositoryclient, "Initializing the ModelsRepositoryClient")
-* [Get Models](#modelsrepositoryclient---get-models, "Get models")
-* [DTMI Conventions](#dtmi-conventions, "DTMI Conventions")
+* [Initializing the ModelsRepositoryClient](#initializing-the-modelsrepositoryclient "Initializing the ModelsRepositoryClient")
+* [Get Models](#modelsrepositoryclient---get-models "Get models")
+* [DTMI Conventions](#dtmi-conventions "DTMI Conventions")
 
 ### Initializing the ModelsRepositoryClient
 
@@ -88,7 +88,7 @@ with ModelsRepositoryClient() as client:
 ```
 
 ### ModelsRepositoryClient - Get Models
-Note that you must first [publish models to your repository](#publishing-models, "Publishing models") before you can fetch them. The following examples assume you are using the global Azure IoT Models Repository.
+Note that you must first [publish models to your repository](#publishing-models "Publishing models") before you can fetch them. The following examples assume you are using the global Azure IoT Models Repository.
 
 Calling `.get_models()` will fetch the model at the provided DTMI and potentially its dependencies (depending on the dependency resolution mode). It will return a `dict` that maps DTMIs to model definitions.
 
@@ -107,7 +107,7 @@ with ModelsRepositoryClient() as client:
 print("{} resolved in {} interfaces".format(dtmi, len(models)))
 ```
 
-By default the client will use whichever [dependency resolution mode](#dependency-resolution-mode, "Dependency resolution mode") it was configured with at instantiation when retrieving models. However, this behavior can be overridden by passing any of the valid options in as an optional keyword argument to `.get_models()`
+By default the client will use whichever [dependency resolution mode](#dependency-resolution-mode "Dependency resolution mode") it was configured with at instantiation when retrieving models. However, this behavior can be overridden by passing any of the valid options in as an optional keyword argument to `.get_models()`
 
 ```python
 dtmi = "dtmi:com:example:TemperatureController;1"

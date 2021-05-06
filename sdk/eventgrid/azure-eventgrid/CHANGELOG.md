@@ -2,6 +2,8 @@
 
 ## 4.1.2 (Unreleased)
 
+  **New Features**
+  - Added new event names to the `SystemEventNames` enum.
 
 ## 4.1.1 (2021-04-07)
 

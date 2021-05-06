@@ -21,8 +21,8 @@ from ._async_base_client import ContainerRegistryBaseClient, AsyncTransportWrapp
 from ._async_container_repository import ContainerRepository
 from .._generated.models import AcrErrors
 from .._helpers import _parse_next_link
-from .._models import RepositoryProperties, DeletedRepositoryResult
 from ._async_registry_artifact import RegistryArtifact
+from .._models import RepositoryProperties, DeleteRepositoryResult
 
 if TYPE_CHECKING:
     from azure.core.credentials_async import AsyncTokenCredential
@@ -31,13 +31,19 @@ if TYPE_CHECKING:
 class ContainerRegistryClient(ContainerRegistryBaseClient):
     def __init__(self, endpoint: str, credential: "AsyncTokenCredential", **kwargs: Dict[str, Any]) -> None:
         """Create a ContainerRegistryClient from an endpoint and a credential
-
         :param endpoint: An ACR endpoint
         :type endpoint: str
         :param credential: The credential with which to authenticate
         :type credential: :class:`~azure.core.credentials_async.AsyncTokenCredential`
         :returns: None
         :raises: None
+        .. admonition:: Example:
+            .. literalinclude:: ../samples/async_samples/sample_create_client_async.py
+                :start-after: [START create_registry_client]
+                :end-before: [END create_registry_client]
+                :language: python
+                :dedent: 8
+                :caption: Instantiate an instance of `ContainerRegistryClient`
         """
         if not endpoint.startswith("https://") and not endpoint.startswith("http://"):
             endpoint = "https://" + endpoint
@@ -46,22 +52,26 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
         super(ContainerRegistryClient, self).__init__(endpoint=endpoint, credential=credential, **kwargs)
 
     @distributed_trace_async
-    async def delete_repository(self, repository: str, **kwargs: Dict[str, Any]) -> DeletedRepositoryResult:
+    async def delete_repository(self, repository_name: str, **kwargs: Dict[str, Any]) -> DeleteRepositoryResult:
         """Delete a repository
-
-        :param repository: The repository to delete
-        :type repository: str
+        :param str repository_name: The repository to delete
         :returns: Object containing information about the deleted repository
-        :rtype: :class:`~azure.containerregistry.DeletedRepositoryResult`
+        :rtype: :class:`~azure.containerregistry.DeleteRepositoryResult`
         :raises: :class:`~azure.core.exceptions.ResourceNotFoundError`
+        .. admonition:: Example:
+            .. literalinclude:: ../samples/async_samples/sample_create_client_async.py
+                :start-after: [START delete_repository]
+                :end-before: [END delete_repository]
+                :language: python
+                :dedent: 8
+                :caption: Delete a repository from the `ContainerRegistryClient`
         """
-        result = await self._client.container_registry.delete_repository(repository, **kwargs)
-        return DeletedRepositoryResult._from_generated(result)  # pylint: disable=protected-access
+        result = await self._client.container_registry.delete_repository(repository_name, **kwargs)
+        return DeleteRepositoryResult._from_generated(result)  # pylint: disable=protected-access
 
     @distributed_trace
-    def list_repositories(self, **kwargs: Dict[str, Any]) -> AsyncItemPaged[str]:
+    def list_repository_names(self, **kwargs: Dict[str, Any]) -> AsyncItemPaged[str]:
         """List all repositories
-
         :keyword last: Query parameter for the last item in the previous call. Ensuing
             call will return values after last lexicallyy
         :paramtype last: str
@@ -72,6 +82,13 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
         :return: ItemPaged[str]
         :rtype: :class:`~azure.core.async_paging.AsyncItemPaged`
         :raises: :class:`~azure.core.exceptions.ResourceNotFoundError`
+        .. admonition:: Example:
+            .. literalinclude:: ../samples/async_samples/sample_delete_old_tags_async.py
+                :start-after: [START list_repository_names]
+                :end-before: [END list_repository_names]
+                :language: python
+                :dedent: 8
+                :caption: List repositories in a container registry account
         """
         n = kwargs.pop("results_per_page", None)
         last = kwargs.pop("last", None)
@@ -163,12 +180,17 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
         return AsyncItemPaged(get_next, extract_data)
 
     @distributed_trace
-    def get_repository_client(self, repository: str, **kwargs: Dict[str, Any]) -> ContainerRepository:
+    def get_repository(self, repository_name: str, **kwargs: Any) -> ContainerRepository:
         """Get a repository client
-
-        :param repository: The repository to create a client for
-        :type repository: str
+        :param str repository_name: The repository to create a client for
         :returns: :class:`~azure.containerregistry.aio.ContainerRepository`
+        Example
+        .. code-block:: python
+            from azure.containerregistry.aio import ContainerRepositoryClient
+            from azure.identity.aio import DefaultAzureCredential
+            account_url = os.environ["CONTAINERREGISTRY_ENDPOINT"]
+            client = ContainerRegistryClient(account_url, DefaultAzureCredential())
+            repository_client = client.get_repository("my_repository")
         """
         _pipeline = AsyncPipeline(
             transport=AsyncTransportWrapper(
@@ -177,13 +199,12 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
             policies=self._client._client._pipeline._impl_policies,  # pylint: disable=protected-access
         )
         return ContainerRepository(
-            self._endpoint, repository, credential=self._credential, pipeline=_pipeline, **kwargs
+            self._endpoint, repository_name, credential=self._credential, pipeline=_pipeline, **kwargs
         )
 
     @distributed_trace
     def get_artifact(self, repository_name: str, tag_or_digest: str, **kwargs: Dict[str, Any]) -> RegistryArtifact:
         """Get a Registry Artifact object
-
         :param str repository_name: Name of the repository
         :param str tag_or_digest: The tag or digest of the artifact
         :returns: :class:`~azure.containerregistry.RegistryArtifact`

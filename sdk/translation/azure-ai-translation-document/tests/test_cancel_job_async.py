@@ -18,32 +18,25 @@ class TestCancelJob(AsyncDocumentTranslationTest):
     @DocumentTranslationPreparer()
     @DocumentTranslationClientPreparer()
     async def test_cancel_job(self, client):
-        # prepare containers and test data
-        blob_data = [Document(data=b'This is some text')]
-        source_container_sas_url = self.create_source_container(data=blob_data)
-        target_container_sas_url = self.create_target_container()
-
-        # prepare translation inputs
-        translation_inputs = [
-            DocumentTranslationInput(
-                source_url=source_container_sas_url,
-                targets=[
-                    TranslationTarget(
-                        target_url=target_container_sas_url,
-                        language_code="es"
-                    )
-                ]
-            )
-        ]
-
-        # submit job
-        job_details = await client.create_translation_job(translation_inputs)
-        self.assertIsNotNone(job_details.id)
+        '''
+            some notes (test sporadically failing):
+            1. use a large number of jobs
+                - because when running tests the job sometimes finishes with status 'Succeeded'
+                  before we call the 'cancel' endpoint!
+            2. wait sometime after calling 'cancel' and before calling 'get status'
+                - in order for the cancel status to propagate
+        '''
+        # submit translation job
+        docs_count = 8 # large number of docs 
+        job_id = await self._create_translation_job_with_dummy_docs_async(client, docs_count, wait=False)
 
         # cancel job
-        await client.cancel_job(job_details.id)
-        self.wait(duration=10)  # for 'cancelled' status to propagate
+        await client.cancel_job(job_id)
+
+        # wait for propagation
+        wait_time = 15  # for 'cancelled' status to propagate, if test failed, increase this value!
+        self.wait(duration=wait_time) 
 
         # check job status
-        job_details = await client.get_job_status(job_details.id)
-        self._validate_translation_job(job_details, status="Cancelled", total=1, cancelled=1)
+        job_details = await client.get_job_status(job_id)
+        self._validate_translation_job(job_details, status="Cancelled", total=docs_count)

@@ -55,15 +55,19 @@ class CreateClients(object):
         client = ContainerRegistryClient(self.account_url, DefaultAzureCredential())
         with client:
             # Iterate through all the repositories
-            for repository_name in client.list_repositories():
+            for repository_name in client.list_repository_names():
                 if repository_name == "hello-world":
                     # Create a repository client from the registry client
-                    repository_client = client.get_repository_client(repository_name)
+                    repository_client = client.get_repository(repository_name)
 
                     with repository_client:
                         # Show all tags
                         for tag in repository_client.list_tags():
                             print(tag.digest)
+
+                    # [START delete_repository]
+                    client.delete_repository("hello-world")
+                    # [END delete_repository]
 
 
 if __name__ == "__main__":

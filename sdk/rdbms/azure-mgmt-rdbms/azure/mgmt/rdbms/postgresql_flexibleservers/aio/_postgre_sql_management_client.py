@@ -8,6 +8,7 @@
 
 from typing import Any, Optional, TYPE_CHECKING
 
+from azure.core.pipeline.transport import AsyncHttpResponse, HttpRequest
 from azure.mgmt.core import AsyncARMPipelineClient
 from msrest import Deserializer, Serializer
 
@@ -24,6 +25,7 @@ from .operations import LocationBasedCapabilitiesOperations
 from .operations import VirtualNetworkSubnetUsageOperations
 from .operations import Operations
 from .operations import DatabasesOperations
+from .operations import GetPrivateDnsZoneSuffixOperations
 from .. import models
 
 
@@ -46,6 +48,8 @@ class PostgreSQLManagementClient(object):
     :vartype operations: azure.mgmt.rdbms.postgresql_flexibleservers.aio.operations.Operations
     :ivar databases: DatabasesOperations operations
     :vartype databases: azure.mgmt.rdbms.postgresql_flexibleservers.aio.operations.DatabasesOperations
+    :ivar get_private_dns_zone_suffix: GetPrivateDnsZoneSuffixOperations operations
+    :vartype get_private_dns_zone_suffix: azure.mgmt.rdbms.postgresql_flexibleservers.aio.operations.GetPrivateDnsZoneSuffixOperations
     :param credential: Credential needed for the client to connect to Azure.
     :type credential: ~azure.core.credentials_async.AsyncTokenCredential
     :param subscription_id: The ID of the target subscription.
@@ -68,6 +72,7 @@ class PostgreSQLManagementClient(object):
 
         client_models = {k: v for k, v in models.__dict__.items() if isinstance(v, type)}
         self._serialize = Serializer(client_models)
+        self._serialize.client_side_validation = False
         self._deserialize = Deserializer(client_models)
 
         self.servers = ServersOperations(
@@ -86,6 +91,25 @@ class PostgreSQLManagementClient(object):
             self._client, self._config, self._serialize, self._deserialize)
         self.databases = DatabasesOperations(
             self._client, self._config, self._serialize, self._deserialize)
+        self.get_private_dns_zone_suffix = GetPrivateDnsZoneSuffixOperations(
+            self._client, self._config, self._serialize, self._deserialize)
+
+    async def _send_request(self, http_request: HttpRequest, **kwargs: Any) -> AsyncHttpResponse:
+        """Runs the network request through the client's chained policies.
+
+        :param http_request: The network request you want to make. Required.
+        :type http_request: ~azure.core.pipeline.transport.HttpRequest
+        :keyword bool stream: Whether the response payload will be streamed. Defaults to True.
+        :return: The response of your network call. Does not do error handling on your response.
+        :rtype: ~azure.core.pipeline.transport.AsyncHttpResponse
+        """
+        path_format_arguments = {
+            'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str', min_length=1),
+        }
+        http_request.url = self._client.format_url(http_request.url, **path_format_arguments)
+        stream = kwargs.pop("stream", True)
+        pipeline_response = await self._client._pipeline.run(http_request, stream=stream, **kwargs)
+        return pipeline_response.http_response
 
     async def close(self) -> None:
         await self._client.close()

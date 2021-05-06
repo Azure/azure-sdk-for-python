@@ -19,7 +19,7 @@ from ._base_client import ContainerRegistryBaseClient
 from ._generated.models import AcrErrors
 from ._helpers import _parse_next_link
 from ._models import (
-    DeletedRepositoryResult,
+    DeleteRepositoryResult,
     ArtifactManifestProperties,
     RepositoryProperties,
 )
@@ -28,7 +28,7 @@ from ._registry_artifact import RegistryArtifact
 if TYPE_CHECKING:
     from typing import Any, Dict
     from azure.core.credentials import TokenCredential
-    from ._models import ContentPermissions
+    from ._models import ContentProperties
 
 
 class ContainerRepository(ContainerRegistryBaseClient):
@@ -58,10 +58,10 @@ class ContainerRepository(ContainerRegistryBaseClient):
         """Delete a repository
 
         :returns: Object containing information about the deleted repository
-        :rtype: :class:`~azure.containerregistry.DeletedRepositoryResult`
+        :rtype: :class:`~azure.containerregistry.DeleteRepositoryResult`
         :raises: :class:`~azure.core.exceptions.ResourceNotFoundError`
         """
-        return DeletedRepositoryResult._from_generated(  # pylint: disable=protected-access
+        return DeleteRepositoryResult._from_generated(  # pylint: disable=protected-access
             self._client.container_registry.delete_repository(self.repository, **kwargs)
         )
 
@@ -86,7 +86,7 @@ class ContainerRepository(ContainerRegistryBaseClient):
             call will return values after last lexically
         :paramtype last: str
         :keyword order_by: Query parameter for ordering by time ascending or descending
-        :paramtype order_by: :class:`~azure.containerregistry.RegistryArtifactOrderBy`
+        :paramtype order_by: :class:`~azure.containerregistry.ManifestOrderBy`
         :keyword results_per_page: Number of repositories to return per page
         :paramtype results_per_page: int
         :return: ItemPaged[:class:`ArtifactManifestProperties`]

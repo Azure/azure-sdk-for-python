@@ -16,14 +16,18 @@ import time
 from azure.containerregistry import (
     ContainerRepository,
     ContainerRegistryClient,
-    TagProperties,
-    ContentPermissions,
+    ArtifactTagProperties,
+    ContentProperties,
     ArtifactManifestProperties,
 )
 
 from azure.core.credentials import AccessToken
 from azure.mgmt.containerregistry import ContainerRegistryManagementClient
-from azure.mgmt.containerregistry.models import ImportImageParameters, ImportSource, ImportMode
+from azure.mgmt.containerregistry.models import (
+    ImportImageParameters,
+    ImportSource,
+    ImportMode
+)
 from azure.identity import DefaultAzureCredential
 
 from azure_devtools.scenario_tests import (
@@ -33,6 +37,12 @@ from azure_devtools.scenario_tests import (
     RecordingProcessor,
 )
 from devtools_testutils import AzureTestCase
+from azure_devtools.scenario_tests import (
+    GeneralNameReplacer,
+    RequestUrlNormalizer,
+    AuthenticationMetadataFilter,
+    RecordingProcessor,
+)
 
 
 REDACTED = "REDACTED"
@@ -49,6 +59,17 @@ class OAuthRequestResponsesFilterACR(RecordingProcessor):
         import re
 
         if not re.search("/oauth2(?:/v2.0)?/token", request.uri) or "azurecr.io" in request.uri:
+            return request
+        return None
+
+
+class ManagementRequestReplacer(RecordingProcessor):
+    """Remove oauth authentication requests and responses from recording."""
+
+    # Don't need to save the import image requests
+
+    def process_request(self, request):
+        if "management.azure.com" not in request.uri:
             return request
         return None
 
@@ -169,9 +190,10 @@ class ContainerRegistryTestClass(AzureTestCase):
                 AuthenticationMetadataFilter(),
                 RequestUrlNormalizer(),
                 AcrBodyReplacer(),
+                ManagementRequestReplacer(),
             ],
         )
-        self.repository = "library/hello-world"
+        self.repository = "library/busybox"
 
     def sleep(self, t):
         if self.is_live:
@@ -190,13 +212,13 @@ class ContainerRegistryTestClass(AzureTestCase):
             return
 
         reg_client = self.create_registry_client(endpoint)
-        for repo in reg_client.list_repositories():
+        for repo in reg_client.list_repository_names():
             if repo.startswith("repo"):
                 repo_client = self.create_container_repository(endpoint, repo)
                 for tag in repo_client.list_tags():
 
                     try:
-                        p = tag.content_permissions
+                        p = tag.writeable_properties
                         p.can_delete = True
                         repo_client.set_tag_properties(tag.digest, p)
                     except:
@@ -204,13 +226,13 @@ class ContainerRegistryTestClass(AzureTestCase):
 
                 for manifest in repo_client.list_registry_artifacts():
                     try:
-                        p = manifest.content_permissions
+                        p = manifest.writeable_properties
                         p.can_delete = True
                         repo_client.set_manifest_properties(tag.digest, p)
                     except:
                         pass
 
-        for repo in reg_client.list_repositories():
+        for repo in reg_client.list_repository_names():
             try:
                 reg_client.delete_repository(repo)
             except:
@@ -236,8 +258,8 @@ class ContainerRegistryTestClass(AzureTestCase):
         return c
 
     def assert_content_permission(self, content_perm, content_perm2):
-        assert isinstance(content_perm, ContentPermissions)
-        assert isinstance(content_perm2, ContentPermissions)
+        assert isinstance(content_perm, ContentProperties)
+        assert isinstance(content_perm2, ContentProperties)
         assert content_perm.can_delete == content_perm2.can_delete
         assert content_perm.can_list == content_perm2.can_list
         assert content_perm.can_read == content_perm2.can_read
@@ -254,8 +276,8 @@ class ContainerRegistryTestClass(AzureTestCase):
         registry=None,
         repository=None,
     ):
-        assert isinstance(tag, TagProperties)
-        assert isinstance(tag.writeable_permissions, ContentPermissions)
+        assert isinstance(tag, ArtifactTagProperties)
+        assert isinstance(tag.writeable_permissions, ContentProperties)
         assert isinstance(tag.created_on, datetime)
         assert isinstance(tag.last_updated_on, datetime)
         if content_permission:

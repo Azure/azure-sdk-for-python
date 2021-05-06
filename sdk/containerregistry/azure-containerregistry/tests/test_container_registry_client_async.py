@@ -6,14 +6,8 @@
 import pytest
 import six
 
-from devtools_testutils import AzureTestCase
-
-from azure.containerregistry import (
-    DeletedRepositoryResult,
-    RepositoryProperties,
-)
+from azure.containerregistry import DeleteRepositoryResult
 from azure.core.exceptions import ResourceNotFoundError
-from azure.core.paging import ItemPaged
 from azure.core.pipeline.transport import AioHttpTransport
 
 from asynctestcase import AsyncContainerRegistryTestClass
@@ -26,11 +20,11 @@ class TestContainerRegistryClient(AsyncContainerRegistryTestClass):
     async def test_list_repositories(self, containerregistry_endpoint):
         client = self.create_registry_client(containerregistry_endpoint)
 
-        repositories = client.list_repositories()
+        repositories = client.list_repository_names()
 
         count = 0
         prev = None
-        async for repo in client.list_repositories():
+        async for repo in client.list_repository_names():
             count += 1
             assert isinstance(repo, six.string_types)
             assert prev != repo
@@ -44,7 +38,7 @@ class TestContainerRegistryClient(AsyncContainerRegistryTestClass):
         results_per_page = 2
         total_pages = 0
 
-        repository_pages = client.list_repositories(results_per_page=results_per_page)
+        repository_pages = client.list_repository_names(results_per_page=results_per_page)
 
         prev = None
         async for page in repository_pages.by_page():
@@ -66,11 +60,11 @@ class TestContainerRegistryClient(AsyncContainerRegistryTestClass):
         client = self.create_registry_client(containerregistry_endpoint)
 
         result = await client.delete_repository(TO_BE_DELETED)
-        assert isinstance(result, DeletedRepositoryResult)
-        assert result.deleted_registry_artifact_digests is not None
+        assert isinstance(result, DeleteRepositoryResult)
+        assert result.deleted_manifests is not None
         assert result.deleted_tags is not None
 
-        async for repo in client.list_repositories():
+        async for repo in client.list_repository_names():
             if repo == TO_BE_DELETED:
                 raise ValueError("Repository not deleted")
 
@@ -86,14 +80,14 @@ class TestContainerRegistryClient(AsyncContainerRegistryTestClass):
         transport = AioHttpTransport()
         client = self.create_registry_client(containerregistry_endpoint, transport=transport)
         async with client:
-            async for r in client.list_repositories():
+            async for r in client.list_repository_names():
                 pass
             assert transport.session is not None
 
-            repo_client = client.get_repository_client(HELLO_WORLD)
+            repo_client = client.get_repository(HELLO_WORLD)
             async with repo_client:
                 assert transport.session is not None
 
-            async for r in client.list_repositories():
+            async for r in client.list_repository_names():
                 pass
             assert transport.session is not None
