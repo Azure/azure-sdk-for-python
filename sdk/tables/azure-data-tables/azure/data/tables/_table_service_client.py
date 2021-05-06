@@ -5,13 +5,13 @@
 # --------------------------------------------------------------------------
 
 import functools
-from typing import Any, Union, Optional, Dict
+from typing import Any, Optional, Dict, TYPE_CHECKING
 from azure.core.exceptions import HttpResponseError, ResourceExistsError
 from azure.core.paging import ItemPaged
 from azure.core.tracing.decorator import distributed_trace
 from azure.core.pipeline import Pipeline
 
-from ._generated.models import TableProperties, TableServiceProperties
+from ._generated.models import TableServiceProperties
 from ._models import (
     TablePropertiesPaged,
     service_stats_deserialize,
@@ -23,6 +23,9 @@ from ._models import LocationMode
 from ._error import _process_table_error
 from ._table_client import TableClient
 from ._serialize import _parameter_filter_substitution
+
+if TYPE_CHECKING:
+    from ._models import CorsRule, Metrics, TableAnalyticsLogging
 
 
 class TableServiceClient(TablesBaseClient):
@@ -68,17 +71,15 @@ class TableServiceClient(TablesBaseClient):
         """
 
     def _format_url(self, hostname):
+        # type: (str) -> str
         """Format the endpoint URL according to the current location
         mode hostname.
         """
         return "{}://{}{}".format(self.scheme, hostname, self._query_str)
 
     @classmethod
-    def from_connection_string(
-        cls,
-        conn_str,  # type: str
-        **kwargs  # type: Any
-    ):  # type: (...) -> TableServiceClient
+    def from_connection_string(cls, conn_str, **kwargs):
+        # type: (str, Any) -> TableServiceClient
         """Create TableServiceClient from a connection string.
 
         :param str conn_str: A connection string to an Azure Storage or Cosmos account.
@@ -101,7 +102,7 @@ class TableServiceClient(TablesBaseClient):
 
     @distributed_trace
     def get_service_stats(self, **kwargs):
-        # type: (Dict[str, Any]) -> TableServiceStats
+        # type: (Any) -> Dict[str, Any]
         """Retrieves statistics related to replication for the Table service. It is only available on the secondary
         location endpoint when read-access geo-redundant replication is enabled for the account.
 
@@ -120,7 +121,7 @@ class TableServiceClient(TablesBaseClient):
 
     @distributed_trace
     def get_service_properties(self, **kwargs):
-        # type: (...) -> Dict[str, Any]
+        # type: (Any) -> Dict[str, object]
         """Gets the properties of an account's Table service,
         including properties for Analytics and CORS (Cross-Origin Resource Sharing) rules.
 
@@ -172,12 +173,8 @@ class TableServiceClient(TablesBaseClient):
             _process_table_error(error)
 
     @distributed_trace
-    def create_table(
-        self,
-        table_name,  # type: str
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> TableClient
+    def create_table(self, table_name, **kwargs):
+        # type: (str, Any) -> TableClient
         """Creates a new table under the current account.
 
         :param table_name: The Table name.
@@ -200,12 +197,8 @@ class TableServiceClient(TablesBaseClient):
         return table
 
     @distributed_trace
-    def create_table_if_not_exists(
-        self,
-        table_name,  # type: str
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> TableClient
+    def create_table_if_not_exists(self, table_name, **kwargs):
+        # type: (str, Any) -> TableClient
         """Creates a new table if it does not currently exist.
         If the table currently exists, the current table is
         returned.
@@ -233,12 +226,8 @@ class TableServiceClient(TablesBaseClient):
         return table
 
     @distributed_trace
-    def delete_table(
-        self,
-        table_name,  # type: str
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> None
+    def delete_table(self, table_name, **kwargs):
+        # type: (str, Any) -> None
         """Deletes the table under the current account
 
         :param table_name: The Table name.
@@ -260,12 +249,8 @@ class TableServiceClient(TablesBaseClient):
         table.delete_table(**kwargs)
 
     @distributed_trace
-    def query_tables(
-        self,
-        query_filter,
-        **kwargs
-    ):
-        # type: (str, Dict[str, Any]) -> ItemPaged[TableItem]
+    def query_tables(self, query_filter, **kwargs):
+        # type: (str, Any) -> ItemPaged[TableItem]
         """Queries tables under the given account.
 
         :param str query_filter: Specify a filter to return certain tables.
@@ -327,7 +312,7 @@ class TableServiceClient(TablesBaseClient):
         )
 
     def get_table_client(self, table_name, **kwargs):
-        # type: (Union[TableProperties, str], Optional[Any]) -> TableClient
+        # type: (str, Any) -> TableClient
         """Get a client to interact with the specified table.
 
         The table need not already exist.

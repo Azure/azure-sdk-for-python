@@ -5,9 +5,10 @@
 # --------------------------------------------------------------------------
 import functools
 from typing import (
-    Union,
     Optional,
+    Dict,
     Any,
+    TYPE_CHECKING
 )
 
 from azure.core.async_paging import AsyncItemPaged
@@ -26,6 +27,9 @@ from .._serialize import _parameter_filter_substitution
 from ._table_client_async import TableClient
 from ._base_client_async import AsyncTablesBaseClient, AsyncTransportWrapper
 from ._models import TablePropertiesPaged
+
+if TYPE_CHECKING:
+    from .._models import CorsRule, Metrics, TableAnalyticsLogging
 
 
 class TableServiceClient(AsyncTablesBaseClient):
@@ -67,15 +71,14 @@ class TableServiceClient(AsyncTablesBaseClient):
             :caption: Creating the tableServiceClient with Shared Access Signature.
     """
 
-    def _format_url(self, hostname):
+    def _format_url(self, hostname: str) -> str:
         """Format the endpoint URL according to the current location
         mode hostname.
         """
         return "{}://{}{}".format(self.scheme, hostname, self._query_str)
 
     @classmethod
-    def from_connection_string(cls, conn_str, **kwargs):
-        # type: (str, Any) -> TableServiceClient
+    def from_connection_string(cls, conn_str: str, **kwargs) -> 'TableServiceClient':
         """Create TableServiceClient from a Connection String.
 
         :param str conn_str: A connection string to an Azure Tables account.
@@ -98,8 +101,7 @@ class TableServiceClient(AsyncTablesBaseClient):
         return cls(endpoint, credential=credential, **kwargs)
 
     @distributed_trace_async
-    async def get_service_stats(self, **kwargs):
-        # type: (Any) -> dict[str,object]
+    async def get_service_stats(self, **kwargs) -> Dict[str, Any]:
         """Retrieves statistics related to replication for the Table service. It is only available on the secondary
         location endpoint when read-access geo-redundant replication is enabled for the account.
 
@@ -117,8 +119,7 @@ class TableServiceClient(AsyncTablesBaseClient):
             _process_table_error(error)
 
     @distributed_trace_async
-    async def get_service_properties(self, **kwargs):
-        # type: (...) -> dict[str,Any]
+    async def get_service_properties(self, **kwargs) -> Dict[str, object]:
         """Gets the properties of an account's Table service,
         including properties for Analytics and CORS (Cross-Origin Resource Sharing) rules.
 
@@ -137,13 +138,12 @@ class TableServiceClient(AsyncTablesBaseClient):
     @distributed_trace_async
     async def set_service_properties(
         self,
-        analytics_logging=None,  # type: Optional[TableAnalyticsLogging]
-        hour_metrics=None,  # type: Optional[Metrics]
-        minute_metrics=None,  # type: Optional[Metrics]
-        cors=None,  # type: Optional[CorsRule]
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> None
+        analytics_logging: Optional['TableAnalyticsLogging'] = None,
+        hour_metrics: Optional['Metrics'] = None,
+        minute_metrics: Optional['Metrics'] = None,
+        cors: Optional['CorsRule'] = None,
+        **kwargs
+    ) -> None:
         """Sets properties for an account's Table service endpoint,
          including properties for Analytics and CORS (Cross-Origin Resource Sharing) rules.
 
@@ -171,12 +171,7 @@ class TableServiceClient(AsyncTablesBaseClient):
             _process_table_error(error)
 
     @distributed_trace_async
-    async def create_table(
-        self,
-        table_name,  # type: str
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> TableClient
+    async def create_table(self, table_name: str, **kwargs) -> TableClient:
         """Creates a new table under the given account.
 
         :param headers:
@@ -199,12 +194,7 @@ class TableServiceClient(AsyncTablesBaseClient):
         return table
 
     @distributed_trace_async
-    async def create_table_if_not_exists(
-        self,
-        table_name,  # type: str
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> TableClient
+    async def create_table_if_not_exists(self, table_name: str, **kwargs) -> TableClient:
         """Creates a new table if it does not currently exist.
         If the table currently exists, the current table is
         returned.
@@ -231,12 +221,7 @@ class TableServiceClient(AsyncTablesBaseClient):
         return table
 
     @distributed_trace_async
-    async def delete_table(
-        self,
-        table_name,  # type: str
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> None
+    async def delete_table(self, table_name: str, **kwargs) -> None:
         """Deletes the table under the current account
 
         :param str table_name: The Table name.
@@ -257,10 +242,7 @@ class TableServiceClient(AsyncTablesBaseClient):
         await table.delete_table(**kwargs)
 
     @distributed_trace
-    def list_tables(
-        self, **kwargs  # type: Any
-    ):
-        # type: (...) -> AsyncItemPaged[TableItem]
+    def list_tables(self, **kwargs) -> AsyncItemPaged[TableItem]:
         """Queries tables under the given account.
 
         :keyword int results_per_page: Number of tables per page in return ItemPaged
@@ -287,12 +269,7 @@ class TableServiceClient(AsyncTablesBaseClient):
         )
 
     @distributed_trace
-    def query_tables(
-        self,
-        query_filter,
-        **kwargs
-    ):
-        # type: (str, Dict[str, Any]) -> AsyncItemPaged[TableItem]
+    def query_tables(self, query_filter: str, **kwargs) -> AsyncItemPaged[TableItem]:
         """Queries tables under the given account.
 
         :param str query_filter: Specify a filter to return certain tables.
@@ -324,12 +301,7 @@ class TableServiceClient(AsyncTablesBaseClient):
             page_iterator_class=TablePropertiesPaged,
         )
 
-    def get_table_client(
-        self,
-        table_name,  # type: str
-        **kwargs  # type: Optional[Any]
-    ):
-        # type: (...) -> TableClient
+    def get_table_client(self, table_name: str, **kwargs) -> TableClient:
         """Get a client to interact with the specified table.
 
         The table need not already exist.
