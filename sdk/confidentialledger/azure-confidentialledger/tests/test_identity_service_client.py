@@ -3,8 +3,8 @@ from azure.confidentialledger.identity_service import (
     LedgerIdentity,
 )
 
-from ._shared.constants import NETWORK_CERTIFICATE
-from ._shared.testcase import ConfidentialLedgerTestCase
+from _shared.constants import NETWORK_CERTIFICATE
+from _shared.testcase import ConfidentialLedgerTestCase
 
 LEDGER_ID = "fake-ledger-id"
 

@@ -5,8 +5,8 @@ from azure.confidentialledger.identity_service.aio import (
     ConfidentialLedgerIdentityServiceClient,
 )
 
-from ._shared.constants import NETWORK_CERTIFICATE
-from ._shared.testcase_async import AsyncConfidentialLedgerTestCase
+from _shared.constants import NETWORK_CERTIFICATE
+from _shared.testcase_async import AsyncConfidentialLedgerTestCase
 
 LEDGER_ID = "fake-ledger-id"
 

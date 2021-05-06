@@ -4,7 +4,7 @@ from azure.confidentialledger import (
     LedgerUserRole,
 )
 
-from ._shared.client_test_common import ConfidentialLedgerClientTestMixin
+from _shared.client_test_common import ConfidentialLedgerClientTestMixin
 
 AAD_USER_OBJECT_ID = "a" * 36
 

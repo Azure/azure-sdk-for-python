@@ -3,7 +3,7 @@ from azure.confidentialledger import (
     ConfidentialLedgerCertificateCredential,
 )
 
-from ._shared.client_test_common import ConfidentialLedgerClientTestMixin
+from _shared.client_test_common import ConfidentialLedgerClientTestMixin
 
 
 class CertificateCredentialClientTest(ConfidentialLedgerClientTestMixin.BaseTest):

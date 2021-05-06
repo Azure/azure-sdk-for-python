@@ -7,7 +7,7 @@ from azure.confidentialledger import (
 )
 from azure.confidentialledger.aio import ConfidentialLedgerClient
 
-from ._shared.client_test_common_async import AsyncConfidentialLedgerClientTestMixin
+from _shared.client_test_common_async import AsyncConfidentialLedgerClientTestMixin
 
 AAD_USER_OBJECT_ID = "a" * 36
 
