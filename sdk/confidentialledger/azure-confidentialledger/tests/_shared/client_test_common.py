@@ -41,7 +41,7 @@ class ConfidentialLedgerClientTestMixin:
         def tearDown(self):
             os.remove(self.user_certificate_path)
             os.remove(self.network_certificate_path)
-            return super().tearDown()
+            return super(ConfidentialLedgerClientTestMixin.BaseTest, self).tearDown()
 
         def test_append_entry_flow(self):
             entry_contents = "Test entry from Python SDK"
