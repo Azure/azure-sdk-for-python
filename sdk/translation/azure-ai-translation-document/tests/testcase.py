@@ -94,7 +94,7 @@ class DocumentTranslationTest(AzureTestCase):
             return "dummy_string"
 
         # for actual live tests
-        container_name = "src" + str(uuid.uuid4())
+        container_name = "src" + str(uuid.uuid4()) 
         container_client = ContainerClient(self.storage_endpoint, container_name,
                                            self.storage_key)
         container_client.create_container()
