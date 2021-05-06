@@ -1,5 +1,10 @@
 # Release History
 
+## 1.2.0b2 (2021-05-11)
+
+### Fixes
+- Fixes a deserialization bug for `FeatureFlagConfigurationSetting` and `SecretReferenceConfigurationSetting`.
+
 ## 1.2.0b1 (2021-04-06)
 
 ### Features
