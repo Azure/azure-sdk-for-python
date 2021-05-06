@@ -20,7 +20,7 @@ if TYPE_CHECKING:
     from azure.core.pipeline.transport import HttpRequest, HttpResponse
 
 from ._generated import AzureAttestationRestClient
-from ._generated.models import AttestationType, PolicyResult
+from ._generated.models import AttestationType, PolicyResult, PolicyCertificatesResult, PolicyCertificatesModificationResult, JSONWebKey, AttestationCertificateManagementBody
 from ._configuration import AttestationClientConfiguration
 from ._models import AttestationSigner, AttestationToken, AttestationResponse, StoredAttestationPolicy, AttestationSigningKey
 from ._common import Base64Url
@@ -100,10 +100,59 @@ class AttestationAdministrationClient(object):
         token = AttestationToken[PolicyResult](token=policyResult.token,
             body_type=PolicyResult)
         if self._config.token_validation_options.validate_token:
-            token.validate_token(self._config.token_validation_options, self._get_signers(**kwargs))
+            if not token.validate_token(self._config.token_validation_options, self._get_signers(**kwargs)):
+                raise Exception("Token Validation of PolicySet API failed.")
+
 
         return AttestationResponse[PolicyResult](token, token.get_body())
 
+    @distributed_trace
+    def get_policy_management_certificates(self, **kwargs):
+        #type:(Any) -> AttestationResponse[list[list[bytes]]]
+        """ Retrieves the set of policy management certificates for the instance.
+
+        The list of policy management certificates will only be non-empty if the
+        attestation service instance is in Isolated mode.
+
+        :return AttestationResponse[list[list[bytes]]: Attestation service response 
+            encapsulating a list of DER encoded X.509 certificate chains.
+        """
+
+        cert_response = self._client.policy_certificates.get(**kwargs)
+        token = AttestationToken[PolicyCertificatesResult](
+            token=cert_response.token,
+            body_type=PolicyCertificatesResult)
+        if self._config.token_validation_options.validate_token:
+            if not token.validate_token(self._config.token_validation_options, self._get_signers(**kwargs)):
+                raise Exception("Token Validation of PolicyCertificates API failed.")
+        certificates = list()
+
+        cert_list = token.get_body()
+
+        for key in cert_list.policy_certificates.keys:
+            key_certs = list()
+            for cert in key.x5_c:
+                key_certs.append(base64.b64decode(cert))
+            certificates.append(key_certs)
+        return AttestationResponse[list[list[bytes]]](token, certificates)
+
+    @distributed_trace
+    def add_policy_management_certificate(self, certificate_to_add, signing_key, **kwargs):
+        #type:(list[bytes], AttestationSigningKey, Any)-> AttestationResponse[PolicyCertificatesModificationResult]
+        key=JSONWebKey(kty='RSA', x5_c = [ base64.b64encode(certificate_to_add).decode('ascii')])
+        add_body = AttestationCertificateManagementBody(policy_certificate=key)
+        cert_add_token = AttestationToken[AttestationCertificateManagementBody](
+            body=add_body,
+            signer=signing_key,
+            body_type=AttestationCertificateManagementBody)
+
+        cert_response = self._client.policy_certificates.add(cert_add_token.serialize(), **kwargs)
+        token = AttestationToken[PolicyCertificatesModificationResult](token=cert_response.token,
+            body_type=PolicyCertificatesModificationResult)
+        if self._config.token_validation_options.validate_token:
+            if not token.validate_token(self._config.token_validation_options, self._get_signers(**kwargs)):
+                raise Exception("Token Validation of PolicyCertificate Add API failed.")
+        return AttestationResponse[PolicyCertificatesModificationResult](token, token.get_body())
 
     def _get_signers(self, **kwargs):
         #type(Any) -> List[AttestationSigner]

@@ -35,7 +35,8 @@ from azure.security.attestation import (
     TokenValidationOptions,
     StoredAttestationPolicy,
     AttestationToken,
-    AttestationSigningKey)
+    AttestationSigningKey,
+    CertificateModification)
 
 class PolicyGetSetTests(AzureTestCase):
 
@@ -138,54 +139,56 @@ class PolicyGetSetTests(AzureTestCase):
         assert expected_hash == policy_set_response.value.policy_token_hash
 
 
+    def _test_get_policy_management_certificates(self, base_uri, expected_certificate):
+        #type:(str, bytes) -> None
+        admin_client = self.create_admin_client(base_uri)
+        policy_signers = admin_client.get_policy_management_certificates()
+        if expected_certificate is not None:
+            found_cert=False
+            decoded_cert = base64.b64decode(expected_certificate)
+            for signer in policy_signers.value:
+                # the signer is an X.509 certificate chain, look at the first certificate
+                # to see if it's our signing certificate.
+                if (signer[0] == decoded_cert):
+                    found_cert = True
+                    break
+            assert found_cert
+        else:
+            assert len(policy_signers.value)==0
 
-    # @AttestationPreparer()
-    # def test_aad_get_policy_management_signers(self, attestation_aad_url):
-    #     attest_client = self.create_client(attestation_aad_url)
-    #     policy_signers = attest_client.policy_certificates.get()
-    #     default_signers = policy_signers.token
-    #     policy_token = jwt.decode(
-    #         default_signers, 
-    #         options={"verify_signature":False, 'verify_exp': False},
-    #         leeway=10, 
-    #         algorithms=["none", "RS256"])
-    #     print("{}".format(policy_token))
-    #     policy_certificates = policy_token["x-ms-policy-certificates"]
-    #     assert len(policy_certificates["keys"])==0
+    @AttestationPreparer()
+    @pytest.mark.live_test_only
+    def test_isolated_get_policy_management_certificates(self, attestation_isolated_url, attestation_isolated_signing_certificate):
+        self._test_get_policy_management_certificates(attestation_isolated_url, attestation_isolated_signing_certificate)
 
-    # def test_shared_get_policy_management_signers(self):
-    #     attest_client = self.shared_client()
-    #     policy_signers = attest_client.policy_certificates.get()
-    #     default_signers = policy_signers.token
-    #     policy_token = jwt.decode(
-    #         default_signers, 
-    #         options={"verify_signature":False, 'verify_exp': False},
-    #         leeway=10,
-    #         algorithms=["none", "RS256"])
-    #     print("{}".format(policy_token))
-    #     policy_certificates = policy_token["x-ms-policy-certificates"]
-    #     assert len(policy_certificates["keys"])==0
+    @AttestationPreparer()
+    def test_aad_get_policy_management_certificates(self, attestation_aad_url):
+        self._test_get_policy_management_certificates(attestation_aad_url, None)
 
-#     @AttestationPreparer()
-#     def test_isolated_get_policy_management_signers(self, attestation_isolated_url):
-#         attest_client = self.create_client(attestation_isolated_url)
-#         policy_signers = attest_client.policy_certificates.get()
-#         default_signers = policy_signers.token
-#         policy_token = jwt.decode(
-#             default_signers, 
-#             options={"verify_signature":False, 'verify_exp': False},
-#             leeway=10,
-#             algorithms=["none", "RS256"])
-#         print("{}".format(policy_token))
-#         policy_certificates = policy_token["x-ms-policy-certificates"]
-#         assert len(policy_certificates["keys"])==1
-#         policy_key = policy_certificates["keys"][0]
-#         x5cs = policy_key["x5c"]
-#         assert len(x5cs) != 0
-#         for cert in x5cs:
-#             der_cert = base64.b64decode(cert)
-#             cert = cryptography.x509.load_der_x509_certificate(der_cert)
-#             print('Policy Management Certificate iss:', cert.issuer, '}; subject: ', cert.subject)
+    @AttestationPreparer()
+    def test_shared_get_policy_management_certificates(self, attestation_location_short_name):
+        self._test_get_policy_management_certificates(self.shared_base_uri(attestation_location_short_name), None)
+
+    @AttestationPreparer()
+    @pytest.mark.live_test_only
+    def test_add_policy_certificate(
+        self, 
+        attestation_isolated_url,
+        attestation_isolated_signing_certificate,
+        attestation_isolated_signing_key,
+        attestation_policy_signing_key0,
+        attestation_policy_signing_certificate0):
+        #type:(str, str, str, str, str, str) -> None
+
+        der_signing_cert = base64.b64decode(attestation_isolated_signing_certificate)
+        der_signing_key = base64.b64decode(attestation_isolated_signing_key)
+        signing_key = AttestationSigningKey(der_signing_key, der_signing_cert)
+
+        admin_client = self.create_admin_client(attestation_isolated_url)
+
+        result = admin_client.add_policy_management_certificate(base64.b64decode(attestation_policy_signing_certificate0), signing_key)
+        assert result.value.certificate_resolution == CertificateModification.IS_PRESENT
+
     def create_admin_client(self, base_uri): #type() -> AttestationAdministrationClient:
             """
             docstring
