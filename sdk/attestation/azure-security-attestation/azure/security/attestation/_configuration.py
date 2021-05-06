@@ -39,35 +39,13 @@ class AttestationClientConfiguration(Configuration):
         **kwargs  # type: Any
     ):
         # type: (...) -> None
-        if credential is None:
-            raise ValueError("Parameter 'credential' must not be None.")
-        if instance_url is None:
-            raise ValueError("Parameter 'instance_url' must not be None.")
+#        if credential is None:
+#            raise ValueError("Parameter 'credential' must not be None.")
+#        if instance_url is None:
+#            raise ValueError("Parameter 'instance_url' must not be None.")
         super(AttestationClientConfiguration, self).__init__(**kwargs)
 
-        self.token_validation_options = kwargs.get('token_validation_options') # type: TokenValidationOptions
-        if (self.token_validation_options == None):
-            self.token_validation_options = TokenValidationOptions(validate_token=True)
-        self.credential = credential
-        self.instance_url = instance_url
-        self.api_version = "2020-10-01"
-        self.credential_scopes = kwargs.pop('credential_scopes', ['https://attest.azure.net/.default'])
-        kwargs.setdefault('sdk_moniker', 'security-attestation/{}'.format(VERSION))
-        self._configure(**kwargs)
-
-    def _configure(
-        self,
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> None
-        self.user_agent_policy = kwargs.get('user_agent_policy') or policies.UserAgentPolicy(**kwargs)
-        self.headers_policy = kwargs.get('headers_policy') or policies.HeadersPolicy(**kwargs)
-        self.proxy_policy = kwargs.get('proxy_policy') or policies.ProxyPolicy(**kwargs)
-        self.logging_policy = kwargs.get('logging_policy') or policies.NetworkTraceLoggingPolicy(**kwargs)
-        self.http_logging_policy = kwargs.get('http_logging_policy') or policies.HttpLoggingPolicy(**kwargs)
-        self.retry_policy = kwargs.get('retry_policy') or policies.RetryPolicy(**kwargs)
-        self.custom_hook_policy = kwargs.get('custom_hook_policy') or policies.CustomHookPolicy(**kwargs)
-        self.redirect_policy = kwargs.get('redirect_policy') or policies.RedirectPolicy(**kwargs)
-        self.authentication_policy = kwargs.get('authentication_policy')
-        if self.credential and not self.authentication_policy:
-            self.authentication_policy = policies.BearerTokenCredentialPolicy(self.credential, *self.credential_scopes, **kwargs)
+        self.token_validation_options = kwargs.get('token_validation_options',
+            TokenValidationOptions(validate_token=True)) # type: TokenValidationOptions
+#        self.credential = credential
+#        self.instance_url = instance_url
