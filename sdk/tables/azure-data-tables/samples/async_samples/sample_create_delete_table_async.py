@@ -95,11 +95,8 @@ class CreateDeleteTable(object):
 
         # [START delete_from_table_client]
         async with TableClient.from_connection_string(conn_str=self.connection_string, table_name=self.table_name) as table_client:
-            try:
-                await table_client.delete_table()
-                print("Deleted table {}!".format(self.table_name))
-            except HttpResponseError:
-                print("There was an issue deleting the table")
+            await table_client.delete_table()
+            print("Deleted table {}!".format(self.table_name))
         # [END delete_from_table_client]
 
 

@@ -248,7 +248,8 @@ class TableServiceClient(AsyncTablesBaseClient):
         **kwargs  # type: Any
     ):
         # type: (...) -> None
-        """Deletes the table under the current account
+        """Deletes the table under the current account. No error will be raised if
+            the table name is not found.
 
         :param str table_name: The Table name.
         :return: None

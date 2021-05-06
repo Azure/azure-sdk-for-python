@@ -248,7 +248,8 @@ class TableClient(AsyncTablesBaseClient):
 
     @distributed_trace_async
     async def delete_table(self, **kwargs) -> None:
-        """Deletes the table under the current account.
+        """Deletes the table under the current account. No error will be raised if
+            the given table name is not found.
 
         :return: None
         :rtype: None
@@ -280,7 +281,8 @@ class TableClient(AsyncTablesBaseClient):
 
     @distributed_trace_async
     async def delete_entity(self, *args: Union[TableEntity, str], **kwargs: Any) -> None:
-        """Deletes the specified entity in a table.
+        """Deletes the specified entity in a table. No error will be raised if
+            the entity or PartitionKey-RowKey pairing is not found.
 
         :param partition_key: The partition key of the entity.
         :type partition_key: str
