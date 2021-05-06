@@ -21,7 +21,6 @@ from ._helpers import _is_tag, _parse_next_link
 from ._models import (
     DeleteRepositoryResult,
     ArtifactManifestProperties,
-    RepositoryProperties,
     ArtifactTagProperties,
 )
 
