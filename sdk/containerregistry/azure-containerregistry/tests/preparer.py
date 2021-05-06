@@ -12,5 +12,5 @@ acr_preparer = functools.partial(
     "containerregistry",
     containerregistry_endpoint="fake_url.azurecr.io",
     containerregistry_resource_group="fake_rg",
-    containerregistry_anon_endpoint="fake_url.azurecr.io",
+    containerregistry_anonregistry_endpoint="fake_url.azurecr.io",
 )

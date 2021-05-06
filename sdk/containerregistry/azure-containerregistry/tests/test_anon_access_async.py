@@ -21,8 +21,8 @@ from preparer import acr_preparer
 
 class TestContainerRegistryClient(AsyncContainerRegistryTestClass):
     @acr_preparer()
-    async def test_list_repository_names(self, containerregistry_anon_endpoint):
-        client = self.create_anon_client(containerregistry_anon_endpoint)
+    async def test_list_repository_names(self, containerregistry_anonregistry_endpoint):
+        client = self.create_anon_client(containerregistry_anonregistry_endpoint)
         assert client._credential is None
 
         count = 0
@@ -36,8 +36,8 @@ class TestContainerRegistryClient(AsyncContainerRegistryTestClass):
         assert count > 0
 
     @acr_preparer()
-    async def test_list_repository_names_by_page(self, containerregistry_anon_endpoint):
-        client = self.create_anon_client(containerregistry_anon_endpoint)
+    async def test_list_repository_names_by_page(self, containerregistry_anonregistry_endpoint):
+        client = self.create_anon_client(containerregistry_anonregistry_endpoint)
         assert client._credential is None
 
         results_per_page = 2
@@ -59,9 +59,9 @@ class TestContainerRegistryClient(AsyncContainerRegistryTestClass):
         assert total_pages >= 1
 
     @acr_preparer()
-    async def test_transport_closed_only_once(self, containerregistry_anon_endpoint):
+    async def test_transport_closed_only_once(self, containerregistry_anonregistry_endpoint):
         transport = AioHttpTransport()
-        client = self.create_anon_client(containerregistry_anon_endpoint, transport=transport)
+        client = self.create_anon_client(containerregistry_anonregistry_endpoint, transport=transport)
         assert client._credential is None
 
         async with client:
@@ -78,8 +78,8 @@ class TestContainerRegistryClient(AsyncContainerRegistryTestClass):
             assert transport.session is not None
 
     @acr_preparer()
-    async def test_get_properties(self, containerregistry_anon_endpoint):
-        client = self.create_anon_client(containerregistry_anon_endpoint)
+    async def test_get_properties(self, containerregistry_anonregistry_endpoint):
+        client = self.create_anon_client(containerregistry_anonregistry_endpoint)
         assert client._credential is None
 
         container_repository = client.get_repository(HELLO_WORLD)
@@ -91,8 +91,8 @@ class TestContainerRegistryClient(AsyncContainerRegistryTestClass):
         assert properties.name == HELLO_WORLD
 
     @acr_preparer()
-    async def test_list_manifests(self, containerregistry_anon_endpoint):
-        client = self.create_anon_client(containerregistry_anon_endpoint)
+    async def test_list_manifests(self, containerregistry_anonregistry_endpoint):
+        client = self.create_anon_client(containerregistry_anonregistry_endpoint)
         assert client._credential is None
 
         container_repository = client.get_repository(HELLO_WORLD)
@@ -105,8 +105,8 @@ class TestContainerRegistryClient(AsyncContainerRegistryTestClass):
         assert count > 0
 
     @acr_preparer()
-    async def test_get_artifact(self, containerregistry_anon_endpoint):
-        client = self.create_anon_client(containerregistry_anon_endpoint)
+    async def test_get_artifact(self, containerregistry_anonregistry_endpoint):
+        client = self.create_anon_client(containerregistry_anonregistry_endpoint)
         assert client._credential is None
 
         container_repository = client.get_repository(HELLO_WORLD)
@@ -118,8 +118,8 @@ class TestContainerRegistryClient(AsyncContainerRegistryTestClass):
         assert isinstance(registry_artifact, RegistryArtifact)
 
     @acr_preparer()
-    async def test_list_tags(self, containerregistry_anon_endpoint):
-        client = self.create_anon_client(containerregistry_anon_endpoint)
+    async def test_list_tags(self, containerregistry_anonregistry_endpoint):
+        client = self.create_anon_client(containerregistry_anonregistry_endpoint)
         assert client._credential is None
 
         container_repository = client.get_repository(HELLO_WORLD)
