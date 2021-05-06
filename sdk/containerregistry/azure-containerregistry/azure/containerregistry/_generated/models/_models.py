@@ -8,8 +8,8 @@ from azure.core.exceptions import HttpResponseError
 import msrest.serialization
 
 
-class AccessToken(msrest.serialization.Model):
-    """AccessToken.
+class AcrAccessToken(msrest.serialization.Model):
+    """AcrAccessToken.
 
     :param access_token: The access token for performing authenticated requests.
     :type access_token: str
@@ -23,7 +23,7 @@ class AccessToken(msrest.serialization.Model):
         self,
         **kwargs
     ):
-        super(AccessToken, self).__init__(**kwargs)
+        super(AcrAccessToken, self).__init__(**kwargs)
         self.access_token = kwargs.get('access_token', None)
 
 
@@ -58,7 +58,7 @@ class AcrErrors(msrest.serialization.Model):
     """Acr error response describing why the operation failed.
 
     :param errors: Array of detailed error.
-    :type errors: list[~azure_container_registry.models.AcrErrorInfo]
+    :type errors: list[~container_registry.models.AcrErrorInfo]
     """
 
     _attribute_map = {
@@ -76,18 +76,18 @@ class AcrErrors(msrest.serialization.Model):
 class AcrManifests(msrest.serialization.Model):
     """Manifest attributes.
 
-    :param registry: Registry name.
-    :type registry: str
-    :param image_name: Image name.
-    :type image_name: str
-    :param manifests_attributes: List of manifests.
-    :type manifests_attributes: list[~azure_container_registry.models.ManifestAttributesBase]
+    :param repository: Image name.
+    :type repository: str
+    :param manifests: List of manifests.
+    :type manifests: list[~container_registry.models.ManifestAttributesBase]
+    :param link:
+    :type link: str
     """
 
     _attribute_map = {
-        'registry': {'key': 'registry', 'type': 'str'},
-        'image_name': {'key': 'imageName', 'type': 'str'},
-        'manifests_attributes': {'key': 'manifests', 'type': '[ManifestAttributesBase]'},
+        'repository': {'key': 'imageName', 'type': 'str'},
+        'manifests': {'key': 'manifests', 'type': '[ManifestAttributesBase]'},
+        'link': {'key': 'link', 'type': 'str'},
     }
 
     def __init__(
@@ -95,9 +95,28 @@ class AcrManifests(msrest.serialization.Model):
         **kwargs
     ):
         super(AcrManifests, self).__init__(**kwargs)
-        self.registry = kwargs.get('registry', None)
-        self.image_name = kwargs.get('image_name', None)
-        self.manifests_attributes = kwargs.get('manifests_attributes', None)
+        self.repository = kwargs.get('repository', None)
+        self.manifests = kwargs.get('manifests', None)
+        self.link = kwargs.get('link', None)
+
+
+class AcrRefreshToken(msrest.serialization.Model):
+    """AcrRefreshToken.
+
+    :param refresh_token: The refresh token to be used for generating access tokens.
+    :type refresh_token: str
+    """
+
+    _attribute_map = {
+        'refresh_token': {'key': 'refresh_token', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(AcrRefreshToken, self).__init__(**kwargs)
+        self.refresh_token = kwargs.get('refresh_token', None)
 
 
 class Annotations(msrest.serialization.Model):
@@ -171,58 +190,191 @@ class Annotations(msrest.serialization.Model):
         self.description = kwargs.get('description', None)
 
 
-class ChangeableAttributes(msrest.serialization.Model):
-    """ChangeableAttributes.
+class ArtifactManifestProperties(msrest.serialization.Model):
+    """Manifest attributes details.
 
-    :param delete_enabled: Delete enabled.
-    :type delete_enabled: bool
-    :param write_enabled: Write enabled.
-    :type write_enabled: bool
-    :param list_enabled: List enabled.
-    :type list_enabled: bool
-    :param read_enabled: Read enabled.
-    :type read_enabled: bool
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar repository_name: Repository name.
+    :vartype repository_name: str
+    :ivar digest: Manifest.
+    :vartype digest: str
+    :ivar size: Image size.
+    :vartype size: long
+    :ivar created_on: Created time.
+    :vartype created_on: ~datetime.datetime
+    :ivar last_updated_on: Last update time.
+    :vartype last_updated_on: ~datetime.datetime
+    :ivar architecture: CPU architecture. Possible values include: "386", "amd64", "arm", "arm64",
+     "mips", "mipsle", "mips64", "mips64le", "ppc64", "ppc64le", "riscv64", "s390x", "wasm". Default
+     value: "none".
+    :vartype architecture: str or ~container_registry.models.ArtifactArchitecture
+    :ivar operating_system: Operating system. Possible values include: "aix", "android", "darwin",
+     "dragonfly", "freebsd", "illumos", "ios", "js", "linux", "netbsd", "openbsd", "plan9",
+     "solaris", "windows".
+    :vartype operating_system: str or ~container_registry.models.ArtifactOperatingSystem
+    :ivar references: List of manifest attributes details.
+    :vartype references: list[~container_registry.models.ManifestAttributesManifestReferences]
+    :ivar tags: A set of tags. List of tags.
+    :vartype tags: list[str]
+    :ivar writeable_properties: Writeable properties of the resource.
+    :vartype writeable_properties: ~container_registry.models.ContentProperties
     """
 
+    _validation = {
+        'repository_name': {'readonly': True},
+        'digest': {'readonly': True},
+        'size': {'readonly': True},
+        'created_on': {'readonly': True},
+        'last_updated_on': {'readonly': True},
+        'architecture': {'readonly': True},
+        'operating_system': {'readonly': True},
+        'references': {'readonly': True},
+        'tags': {'readonly': True},
+        'writeable_properties': {'readonly': True},
+    }
+
     _attribute_map = {
-        'delete_enabled': {'key': 'deleteEnabled', 'type': 'bool'},
-        'write_enabled': {'key': 'writeEnabled', 'type': 'bool'},
-        'list_enabled': {'key': 'listEnabled', 'type': 'bool'},
-        'read_enabled': {'key': 'readEnabled', 'type': 'bool'},
+        'repository_name': {'key': 'imageName', 'type': 'str'},
+        'digest': {'key': 'manifest.digest', 'type': 'str'},
+        'size': {'key': 'manifest.imageSize', 'type': 'long'},
+        'created_on': {'key': 'manifest.createdTime', 'type': 'iso-8601'},
+        'last_updated_on': {'key': 'manifest.lastUpdateTime', 'type': 'iso-8601'},
+        'architecture': {'key': 'manifest.architecture', 'type': 'str'},
+        'operating_system': {'key': 'manifest.os', 'type': 'str'},
+        'references': {'key': 'manifest.references', 'type': '[ManifestAttributesManifestReferences]'},
+        'tags': {'key': 'manifest.tags', 'type': '[str]'},
+        'writeable_properties': {'key': 'manifest.changeableAttributes', 'type': 'ContentProperties'},
     }
 
     def __init__(
         self,
         **kwargs
     ):
-        super(ChangeableAttributes, self).__init__(**kwargs)
-        self.delete_enabled = kwargs.get('delete_enabled', None)
-        self.write_enabled = kwargs.get('write_enabled', None)
-        self.list_enabled = kwargs.get('list_enabled', None)
-        self.read_enabled = kwargs.get('read_enabled', None)
+        super(ArtifactManifestProperties, self).__init__(**kwargs)
+        self.repository_name = None
+        self.digest = None
+        self.size = None
+        self.created_on = None
+        self.last_updated_on = None
+        self.architecture = None
+        self.operating_system = None
+        self.references = None
+        self.tags = None
+        self.writeable_properties = None
 
 
-class DeletedRepository(msrest.serialization.Model):
+class ArtifactTagProperties(msrest.serialization.Model):
+    """Tag attributes.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar repository: Required. Image name.
+    :vartype repository: str
+    :ivar name: Required. Tag name.
+    :vartype name: str
+    :ivar digest: Required. Tag digest.
+    :vartype digest: str
+    :ivar created_on: Required. Tag created time.
+    :vartype created_on: ~datetime.datetime
+    :ivar last_updated_on: Required. Tag last update time.
+    :vartype last_updated_on: ~datetime.datetime
+    :ivar writeable_properties: Required. Writeable properties of the resource.
+    :vartype writeable_properties: ~container_registry.models.ContentProperties
+    """
+
+    _validation = {
+        'repository': {'required': True, 'readonly': True},
+        'name': {'required': True, 'readonly': True},
+        'digest': {'required': True, 'readonly': True},
+        'created_on': {'required': True, 'readonly': True},
+        'last_updated_on': {'required': True, 'readonly': True},
+        'writeable_properties': {'required': True, 'readonly': True},
+    }
+
+    _attribute_map = {
+        'repository': {'key': 'imageName', 'type': 'str'},
+        'name': {'key': 'tag.name', 'type': 'str'},
+        'digest': {'key': 'tag.digest', 'type': 'str'},
+        'created_on': {'key': 'tag.createdTime', 'type': 'iso-8601'},
+        'last_updated_on': {'key': 'tag.lastUpdateTime', 'type': 'iso-8601'},
+        'writeable_properties': {'key': 'tag.changeableAttributes', 'type': 'ContentProperties'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(ArtifactTagProperties, self).__init__(**kwargs)
+        self.repository = None
+        self.name = None
+        self.digest = None
+        self.created_on = None
+        self.last_updated_on = None
+        self.writeable_properties = None
+
+
+class ContentProperties(msrest.serialization.Model):
+    """Changeable attributes.
+
+    :param can_delete: Delete enabled.
+    :type can_delete: bool
+    :param can_write: Write enabled.
+    :type can_write: bool
+    :param can_list: List enabled.
+    :type can_list: bool
+    :param can_read: Read enabled.
+    :type can_read: bool
+    """
+
+    _attribute_map = {
+        'can_delete': {'key': 'deleteEnabled', 'type': 'bool'},
+        'can_write': {'key': 'writeEnabled', 'type': 'bool'},
+        'can_list': {'key': 'listEnabled', 'type': 'bool'},
+        'can_read': {'key': 'readEnabled', 'type': 'bool'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(ContentProperties, self).__init__(**kwargs)
+        self.can_delete = kwargs.get('can_delete', None)
+        self.can_write = kwargs.get('can_write', None)
+        self.can_list = kwargs.get('can_list', None)
+        self.can_read = kwargs.get('can_read', None)
+
+
+class DeleteRepositoryResult(msrest.serialization.Model):
     """Deleted repository.
 
-    :param manifests_deleted: SHA of the deleted image.
-    :type manifests_deleted: list[str]
-    :param tags_deleted: Tag of the deleted image.
-    :type tags_deleted: list[str]
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar deleted_manifests: SHA of the deleted image.
+    :vartype deleted_manifests: list[str]
+    :ivar deleted_tags: Tag of the deleted image.
+    :vartype deleted_tags: list[str]
     """
 
+    _validation = {
+        'deleted_manifests': {'readonly': True},
+        'deleted_tags': {'readonly': True},
+    }
+
     _attribute_map = {
-        'manifests_deleted': {'key': 'manifestsDeleted', 'type': '[str]'},
-        'tags_deleted': {'key': 'tagsDeleted', 'type': '[str]'},
+        'deleted_manifests': {'key': 'manifestsDeleted', 'type': '[str]'},
+        'deleted_tags': {'key': 'tagsDeleted', 'type': '[str]'},
     }
 
     def __init__(
         self,
         **kwargs
     ):
-        super(DeletedRepository, self).__init__(**kwargs)
-        self.manifests_deleted = kwargs.get('manifests_deleted', None)
-        self.tags_deleted = kwargs.get('tags_deleted', None)
+        super(DeleteRepositoryResult, self).__init__(**kwargs)
+        self.deleted_manifests = None
+        self.deleted_tags = None
 
 
 class Descriptor(msrest.serialization.Model):
@@ -237,7 +389,7 @@ class Descriptor(msrest.serialization.Model):
     :param urls: Specifies a list of URIs from which this object may be downloaded.
     :type urls: list[str]
     :param annotations: Additional information provided through arbitrary metadata.
-    :type annotations: ~azure_container_registry.models.Annotations
+    :type annotations: ~container_registry.models.Annotations
     """
 
     _attribute_map = {
@@ -302,7 +454,7 @@ class ImageSignature(msrest.serialization.Model):
     """Signature of a signed manifest.
 
     :param header: A JSON web signature.
-    :type header: ~azure_container_registry.models.JWK
+    :type header: ~container_registry.models.JWK
     :param signature: A signature for the image manifest, signed by a libtrust private key.
     :type signature: str
     :param protected: The signed protected header.
@@ -329,7 +481,7 @@ class JWK(msrest.serialization.Model):
     """A JSON web signature.
 
     :param jwk: JSON web key parameter.
-    :type jwk: ~azure_container_registry.models.JWKHeader
+    :type jwk: ~container_registry.models.JWKHeader
     :param alg: The algorithm used to sign or encrypt the JWT.
     :type alg: str
     """
@@ -402,69 +554,59 @@ class Manifest(msrest.serialization.Model):
         self.schema_version = kwargs.get('schema_version', None)
 
 
-class ManifestAttributes(msrest.serialization.Model):
-    """Manifest attributes details.
-
-    :param registry: Registry name.
-    :type registry: str
-    :param image_name: Image name.
-    :type image_name: str
-    :param attributes: Manifest attributes.
-    :type attributes: ~azure_container_registry.models.ManifestAttributesBase
-    """
-
-    _attribute_map = {
-        'registry': {'key': 'registry', 'type': 'str'},
-        'image_name': {'key': 'imageName', 'type': 'str'},
-        'attributes': {'key': 'manifest', 'type': 'ManifestAttributesBase'},
-    }
-
-    def __init__(
-        self,
-        **kwargs
-    ):
-        super(ManifestAttributes, self).__init__(**kwargs)
-        self.registry = kwargs.get('registry', None)
-        self.image_name = kwargs.get('image_name', None)
-        self.attributes = kwargs.get('attributes', None)
-
-
 class ManifestAttributesBase(msrest.serialization.Model):
     """Manifest details.
 
-    :param digest: Manifest.
-    :type digest: str
-    :param image_size: Image size.
-    :type image_size: long
-    :param created_time: Created time.
-    :type created_time: str
-    :param last_update_time: Last update time.
-    :type last_update_time: str
-    :param architecture: CPU architecture.
-    :type architecture: str
-    :param os: Operating system.
-    :type os: str
-    :param media_type: Media type.
-    :type media_type: str
-    :param config_media_type: Config blob media type.
-    :type config_media_type: str
-    :param tags: A set of tags. List of tags.
-    :type tags: list[str]
-    :param changeable_attributes: Changeable attributes.
-    :type changeable_attributes: ~azure_container_registry.models.ChangeableAttributes
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar digest: Required. Manifest.
+    :vartype digest: str
+    :ivar size: Image size.
+    :vartype size: long
+    :ivar created_on: Created time.
+    :vartype created_on: ~datetime.datetime
+    :ivar last_updated_on: Last update time.
+    :vartype last_updated_on: ~datetime.datetime
+    :ivar architecture: CPU architecture. Possible values include: "386", "amd64", "arm", "arm64",
+     "mips", "mipsle", "mips64", "mips64le", "ppc64", "ppc64le", "riscv64", "s390x", "wasm". Default
+     value: "none".
+    :vartype architecture: str or ~container_registry.models.ArtifactArchitecture
+    :ivar operating_system: Operating system. Possible values include: "aix", "android", "darwin",
+     "dragonfly", "freebsd", "illumos", "ios", "js", "linux", "netbsd", "openbsd", "plan9",
+     "solaris", "windows".
+    :vartype operating_system: str or ~container_registry.models.ArtifactOperatingSystem
+    :ivar references: List of manifest attributes details.
+    :vartype references: list[~container_registry.models.ManifestAttributesManifestReferences]
+    :ivar tags: A set of tags. List of tags.
+    :vartype tags: list[str]
+    :ivar writeable_properties: Writeable properties of the resource.
+    :vartype writeable_properties: ~container_registry.models.ContentProperties
     """
+
+    _validation = {
+        'digest': {'required': True, 'readonly': True},
+        'size': {'readonly': True},
+        'created_on': {'readonly': True},
+        'last_updated_on': {'readonly': True},
+        'architecture': {'readonly': True},
+        'operating_system': {'readonly': True},
+        'references': {'readonly': True},
+        'tags': {'readonly': True},
+        'writeable_properties': {'readonly': True},
+    }
 
     _attribute_map = {
         'digest': {'key': 'digest', 'type': 'str'},
-        'image_size': {'key': 'imageSize', 'type': 'long'},
-        'created_time': {'key': 'createdTime', 'type': 'str'},
-        'last_update_time': {'key': 'lastUpdateTime', 'type': 'str'},
+        'size': {'key': 'imageSize', 'type': 'long'},
+        'created_on': {'key': 'createdTime', 'type': 'iso-8601'},
+        'last_updated_on': {'key': 'lastUpdateTime', 'type': 'iso-8601'},
         'architecture': {'key': 'architecture', 'type': 'str'},
-        'os': {'key': 'os', 'type': 'str'},
-        'media_type': {'key': 'mediaType', 'type': 'str'},
-        'config_media_type': {'key': 'configMediaType', 'type': 'str'},
+        'operating_system': {'key': 'os', 'type': 'str'},
+        'references': {'key': 'references', 'type': '[ManifestAttributesManifestReferences]'},
         'tags': {'key': 'tags', 'type': '[str]'},
-        'changeable_attributes': {'key': 'changeableAttributes', 'type': 'ChangeableAttributes'},
+        'writeable_properties': {'key': 'changeableAttributes', 'type': 'ContentProperties'},
     }
 
     def __init__(
@@ -472,23 +614,22 @@ class ManifestAttributesBase(msrest.serialization.Model):
         **kwargs
     ):
         super(ManifestAttributesBase, self).__init__(**kwargs)
-        self.digest = kwargs.get('digest', None)
-        self.image_size = kwargs.get('image_size', None)
-        self.created_time = kwargs.get('created_time', None)
-        self.last_update_time = kwargs.get('last_update_time', None)
-        self.architecture = kwargs.get('architecture', None)
-        self.os = kwargs.get('os', None)
-        self.media_type = kwargs.get('media_type', None)
-        self.config_media_type = kwargs.get('config_media_type', None)
-        self.tags = kwargs.get('tags', None)
-        self.changeable_attributes = kwargs.get('changeable_attributes', None)
+        self.digest = None
+        self.size = None
+        self.created_on = None
+        self.last_updated_on = None
+        self.architecture = None
+        self.operating_system = None
+        self.references = None
+        self.tags = None
+        self.writeable_properties = None
 
 
 class ManifestAttributesManifest(msrest.serialization.Model):
     """List of manifest attributes.
 
     :param references: List of manifest attributes details.
-    :type references: list[~azure_container_registry.models.ManifestAttributesManifestReferences]
+    :type references: list[~container_registry.models.ManifestAttributesManifestReferences]
     :param quarantine_tag: Quarantine tag name.
     :type quarantine_tag: str
     """
@@ -510,18 +651,32 @@ class ManifestAttributesManifest(msrest.serialization.Model):
 class ManifestAttributesManifestReferences(msrest.serialization.Model):
     """Manifest attributes details.
 
-    :param digest: Manifest digest.
-    :type digest: str
-    :param architecture: CPU architecture.
-    :type architecture: str
-    :param os: Operating system.
-    :type os: str
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar digest: Required. Manifest digest.
+    :vartype digest: str
+    :ivar architecture: Required. CPU architecture. Possible values include: "386", "amd64", "arm",
+     "arm64", "mips", "mipsle", "mips64", "mips64le", "ppc64", "ppc64le", "riscv64", "s390x",
+     "wasm". Default value: "none".
+    :vartype architecture: str or ~container_registry.models.ArtifactArchitecture
+    :ivar operating_system: Required. Operating system. Possible values include: "aix", "android",
+     "darwin", "dragonfly", "freebsd", "illumos", "ios", "js", "linux", "netbsd", "openbsd",
+     "plan9", "solaris", "windows".
+    :vartype operating_system: str or ~container_registry.models.ArtifactOperatingSystem
     """
+
+    _validation = {
+        'digest': {'required': True, 'readonly': True},
+        'architecture': {'required': True, 'readonly': True},
+        'operating_system': {'required': True, 'readonly': True},
+    }
 
     _attribute_map = {
         'digest': {'key': 'digest', 'type': 'str'},
         'architecture': {'key': 'architecture', 'type': 'str'},
-        'os': {'key': 'os', 'type': 'str'},
+        'operating_system': {'key': 'os', 'type': 'str'},
     }
 
     def __init__(
@@ -529,9 +684,9 @@ class ManifestAttributesManifestReferences(msrest.serialization.Model):
         **kwargs
     ):
         super(ManifestAttributesManifestReferences, self).__init__(**kwargs)
-        self.digest = kwargs.get('digest', None)
-        self.architecture = kwargs.get('architecture', None)
-        self.os = kwargs.get('os', None)
+        self.digest = None
+        self.architecture = None
+        self.operating_system = None
 
 
 class ManifestChangeableAttributes(msrest.serialization.Model):
@@ -581,7 +736,7 @@ class ManifestList(Manifest):
     :param media_type: Media type for this Manifest.
     :type media_type: str
     :param manifests: List of V2 image layer information.
-    :type manifests: list[~azure_container_registry.models.ManifestListAttributes]
+    :type manifests: list[~container_registry.models.ManifestListAttributes]
     """
 
     _attribute_map = {
@@ -613,7 +768,7 @@ class ManifestListAttributes(msrest.serialization.Model):
     :param platform: The platform object describes the platform which the image in the manifest
      runs on. A full list of valid operating system and architecture values are listed in the Go
      language documentation for $GOOS and $GOARCH.
-    :type platform: ~azure_container_registry.models.Platform
+    :type platform: ~container_registry.models.Platform
     """
 
     _attribute_map = {
@@ -642,13 +797,13 @@ class ManifestWrapper(Manifest):
     :param media_type: Media type for this Manifest.
     :type media_type: str
     :param manifests: (ManifestList, OCIIndex) List of V2 image layer information.
-    :type manifests: list[~azure_container_registry.models.ManifestListAttributes]
+    :type manifests: list[~container_registry.models.ManifestListAttributes]
     :param config: (V2, OCI) Image config descriptor.
-    :type config: ~azure_container_registry.models.Descriptor
+    :type config: ~container_registry.models.Descriptor
     :param layers: (V2, OCI) List of V2 image layer information.
-    :type layers: list[~azure_container_registry.models.Descriptor]
+    :type layers: list[~container_registry.models.Descriptor]
     :param annotations: (OCI, OCIIndex) Additional metadata.
-    :type annotations: ~azure_container_registry.models.Annotations
+    :type annotations: ~container_registry.models.Annotations
     :param architecture: (V1) CPU architecture.
     :type architecture: str
     :param name: (V1) Image name.
@@ -656,11 +811,11 @@ class ManifestWrapper(Manifest):
     :param tag: (V1) Image tag.
     :type tag: str
     :param fs_layers: (V1) List of layer information.
-    :type fs_layers: list[~azure_container_registry.models.FsLayer]
+    :type fs_layers: list[~container_registry.models.FsLayer]
     :param history: (V1) Image history.
-    :type history: list[~azure_container_registry.models.History]
+    :type history: list[~container_registry.models.History]
     :param signatures: (V1) Image signature.
-    :type signatures: list[~azure_container_registry.models.ImageSignature]
+    :type signatures: list[~container_registry.models.ImageSignature]
     """
 
     _attribute_map = {
@@ -702,9 +857,9 @@ class OCIIndex(Manifest):
     :param schema_version: Schema version.
     :type schema_version: int
     :param manifests: List of OCI image layer information.
-    :type manifests: list[~azure_container_registry.models.ManifestListAttributes]
+    :type manifests: list[~container_registry.models.ManifestListAttributes]
     :param annotations: Additional information provided through arbitrary metadata.
-    :type annotations: ~azure_container_registry.models.Annotations
+    :type annotations: ~container_registry.models.Annotations
     """
 
     _attribute_map = {
@@ -728,11 +883,11 @@ class OCIManifest(Manifest):
     :param schema_version: Schema version.
     :type schema_version: int
     :param config: V2 image config descriptor.
-    :type config: ~azure_container_registry.models.Descriptor
+    :type config: ~container_registry.models.Descriptor
     :param layers: List of V2 image layer information.
-    :type layers: list[~azure_container_registry.models.Descriptor]
+    :type layers: list[~container_registry.models.Descriptor]
     :param annotations: Additional information provided through arbitrary metadata.
-    :type annotations: ~azure_container_registry.models.Annotations
+    :type annotations: ~container_registry.models.Annotations
     """
 
     _attribute_map = {
@@ -755,47 +910,40 @@ class OCIManifest(Manifest):
 class Paths108HwamOauth2ExchangePostRequestbodyContentApplicationXWwwFormUrlencodedSchema(msrest.serialization.Model):
     """Paths108HwamOauth2ExchangePostRequestbodyContentApplicationXWwwFormUrlencodedSchema.
 
+    Variables are only populated by the server, and will be ignored when sending a request.
+
     All required parameters must be populated in order to send to Azure.
 
-    :param grant_type: Required. Can take a value of access_token_refresh_token, or access_token,
-     or refresh_token. Possible values include: "access_token_refresh_token", "access_token",
-     "refresh_token".
-    :type grant_type: str or ~azure_container_registry.models.PostContentSchemaGrantType
+    :ivar grant_type: Required. Can take a value of access_token. Default value: "access_token".
+    :vartype grant_type: str
     :param service: Required. Indicates the name of your Azure container registry.
     :type service: str
-    :param tenant: AAD tenant associated to the AAD credentials.
-    :type tenant: str
-    :param refresh_token: AAD refresh token, mandatory when grant_type is
-     access_token_refresh_token or refresh_token.
-    :type refresh_token: str
-    :param access_token: AAD access token, mandatory when grant_type is access_token_refresh_token
-     or access_token.
-    :type access_token: str
+    :param aad_access_token: Required. AAD access token, mandatory when grant_type is
+     access_token_refresh_token or access_token.
+    :type aad_access_token: str
     """
 
     _validation = {
-        'grant_type': {'required': True},
+        'grant_type': {'required': True, 'constant': True},
         'service': {'required': True},
+        'aad_access_token': {'required': True},
     }
 
     _attribute_map = {
         'grant_type': {'key': 'grant_type', 'type': 'str'},
         'service': {'key': 'service', 'type': 'str'},
-        'tenant': {'key': 'tenant', 'type': 'str'},
-        'refresh_token': {'key': 'refresh_token', 'type': 'str'},
-        'access_token': {'key': 'access_token', 'type': 'str'},
+        'aad_access_token': {'key': 'access_token', 'type': 'str'},
     }
+
+    grant_type = "access_token"
 
     def __init__(
         self,
         **kwargs
     ):
         super(Paths108HwamOauth2ExchangePostRequestbodyContentApplicationXWwwFormUrlencodedSchema, self).__init__(**kwargs)
-        self.grant_type = kwargs['grant_type']
         self.service = kwargs['service']
-        self.tenant = kwargs.get('tenant', None)
-        self.refresh_token = kwargs.get('refresh_token', None)
-        self.access_token = kwargs.get('access_token', None)
+        self.aad_access_token = kwargs['aad_access_token']
 
 
 class PathsV3R3RxOauth2TokenPostRequestbodyContentApplicationXWwwFormUrlencodedSchema(msrest.serialization.Model):
@@ -805,29 +953,29 @@ class PathsV3R3RxOauth2TokenPostRequestbodyContentApplicationXWwwFormUrlencodedS
 
     :param grant_type: Required. Grant type is expected to be refresh_token. Possible values
      include: "refresh_token", "password".
-    :type grant_type: str or ~azure_container_registry.models.Enum1
+    :type grant_type: str or ~container_registry.models.Enum2
     :param service: Required. Indicates the name of your Azure container registry.
     :type service: str
     :param scope: Required. Which is expected to be a valid scope, and can be specified more than
      once for multiple scope requests. You obtained this from the Www-Authenticate response header
      from the challenge.
     :type scope: str
-    :param refresh_token: Required. Must be a valid ACR refresh token.
-    :type refresh_token: str
+    :param acr_refresh_token: Required. Must be a valid ACR refresh token.
+    :type acr_refresh_token: str
     """
 
     _validation = {
         'grant_type': {'required': True},
         'service': {'required': True},
         'scope': {'required': True},
-        'refresh_token': {'required': True},
+        'acr_refresh_token': {'required': True},
     }
 
     _attribute_map = {
         'grant_type': {'key': 'grant_type', 'type': 'str'},
         'service': {'key': 'service', 'type': 'str'},
         'scope': {'key': 'scope', 'type': 'str'},
-        'refresh_token': {'key': 'refresh_token', 'type': 'str'},
+        'acr_refresh_token': {'key': 'refresh_token', 'type': 'str'},
     }
 
     def __init__(
@@ -838,7 +986,7 @@ class PathsV3R3RxOauth2TokenPostRequestbodyContentApplicationXWwwFormUrlencodedS
         self.grant_type = kwargs.get('grant_type', "refresh_token")
         self.service = kwargs['service']
         self.scope = kwargs['scope']
-        self.refresh_token = kwargs['refresh_token']
+        self.acr_refresh_token = kwargs['acr_refresh_token']
 
 
 class Platform(msrest.serialization.Model):
@@ -884,34 +1032,18 @@ class Platform(msrest.serialization.Model):
         self.features = kwargs.get('features', None)
 
 
-class RefreshToken(msrest.serialization.Model):
-    """RefreshToken.
-
-    :param refresh_token: The refresh token to be used for generating access tokens.
-    :type refresh_token: str
-    """
-
-    _attribute_map = {
-        'refresh_token': {'key': 'refresh_token', 'type': 'str'},
-    }
-
-    def __init__(
-        self,
-        **kwargs
-    ):
-        super(RefreshToken, self).__init__(**kwargs)
-        self.refresh_token = kwargs.get('refresh_token', None)
-
-
 class Repositories(msrest.serialization.Model):
     """List of repositories.
 
-    :param names: Repository names.
-    :type names: list[str]
+    :param repositories: Repository names.
+    :type repositories: list[str]
+    :param link:
+    :type link: str
     """
 
     _attribute_map = {
-        'names': {'key': 'repositories', 'type': '[str]'},
+        'repositories': {'key': 'repositories', 'type': '[str]'},
+        'link': {'key': 'link', 'type': 'str'},
     }
 
     def __init__(
@@ -919,50 +1051,60 @@ class Repositories(msrest.serialization.Model):
         **kwargs
     ):
         super(Repositories, self).__init__(**kwargs)
-        self.names = kwargs.get('names', None)
+        self.repositories = kwargs.get('repositories', None)
+        self.link = kwargs.get('link', None)
 
 
-class RepositoryAttributes(msrest.serialization.Model):
+class RepositoryProperties(msrest.serialization.Model):
     """Repository attributes.
 
-    :param registry: Registry name.
-    :type registry: str
-    :param image_name: Image name.
-    :type image_name: str
-    :param created_time: Image created time.
-    :type created_time: str
-    :param last_update_time: Image last update time.
-    :type last_update_time: str
-    :param manifest_count: Number of the manifests.
-    :type manifest_count: int
-    :param tag_count: Number of the tags.
-    :type tag_count: int
-    :param changeable_attributes: Changeable attributes.
-    :type changeable_attributes: ~azure_container_registry.models.ChangeableAttributes
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar name: Required. Image name.
+    :vartype name: str
+    :ivar created_on: Required. Image created time.
+    :vartype created_on: ~datetime.datetime
+    :ivar last_updated_on: Required. Image last update time.
+    :vartype last_updated_on: ~datetime.datetime
+    :ivar manifest_count: Required. Number of the manifests.
+    :vartype manifest_count: int
+    :ivar tag_count: Required. Number of the tags.
+    :vartype tag_count: int
+    :ivar writeable_properties: Required. Writeable properties of the resource.
+    :vartype writeable_properties: ~container_registry.models.ContentProperties
     """
 
+    _validation = {
+        'name': {'required': True, 'readonly': True},
+        'created_on': {'required': True, 'readonly': True},
+        'last_updated_on': {'required': True, 'readonly': True},
+        'manifest_count': {'required': True, 'readonly': True},
+        'tag_count': {'required': True, 'readonly': True},
+        'writeable_properties': {'required': True, 'readonly': True},
+    }
+
     _attribute_map = {
-        'registry': {'key': 'registry', 'type': 'str'},
-        'image_name': {'key': 'imageName', 'type': 'str'},
-        'created_time': {'key': 'createdTime', 'type': 'str'},
-        'last_update_time': {'key': 'lastUpdateTime', 'type': 'str'},
+        'name': {'key': 'imageName', 'type': 'str'},
+        'created_on': {'key': 'createdTime', 'type': 'iso-8601'},
+        'last_updated_on': {'key': 'lastUpdateTime', 'type': 'iso-8601'},
         'manifest_count': {'key': 'manifestCount', 'type': 'int'},
         'tag_count': {'key': 'tagCount', 'type': 'int'},
-        'changeable_attributes': {'key': 'changeableAttributes', 'type': 'ChangeableAttributes'},
+        'writeable_properties': {'key': 'changeableAttributes', 'type': 'ContentProperties'},
     }
 
     def __init__(
         self,
         **kwargs
     ):
-        super(RepositoryAttributes, self).__init__(**kwargs)
-        self.registry = kwargs.get('registry', None)
-        self.image_name = kwargs.get('image_name', None)
-        self.created_time = kwargs.get('created_time', None)
-        self.last_update_time = kwargs.get('last_update_time', None)
-        self.manifest_count = kwargs.get('manifest_count', None)
-        self.tag_count = kwargs.get('tag_count', None)
-        self.changeable_attributes = kwargs.get('changeable_attributes', None)
+        super(RepositoryProperties, self).__init__(**kwargs)
+        self.name = None
+        self.created_on = None
+        self.last_updated_on = None
+        self.manifest_count = None
+        self.tag_count = None
+        self.writeable_properties = None
 
 
 class RepositoryTags(msrest.serialization.Model):
@@ -988,57 +1130,39 @@ class RepositoryTags(msrest.serialization.Model):
         self.tags = kwargs.get('tags', None)
 
 
-class TagAttributes(msrest.serialization.Model):
-    """Tag attributes.
-
-    :param registry: Registry name.
-    :type registry: str
-    :param image_name: Image name.
-    :type image_name: str
-    :param attributes: List of tag attribute details.
-    :type attributes: ~azure_container_registry.models.TagAttributesBase
-    """
-
-    _attribute_map = {
-        'registry': {'key': 'registry', 'type': 'str'},
-        'image_name': {'key': 'imageName', 'type': 'str'},
-        'attributes': {'key': 'tag', 'type': 'TagAttributesBase'},
-    }
-
-    def __init__(
-        self,
-        **kwargs
-    ):
-        super(TagAttributes, self).__init__(**kwargs)
-        self.registry = kwargs.get('registry', None)
-        self.image_name = kwargs.get('image_name', None)
-        self.attributes = kwargs.get('attributes', None)
-
-
 class TagAttributesBase(msrest.serialization.Model):
     """Tag attribute details.
 
-    :param name: Tag name.
-    :type name: str
-    :param digest: Tag digest.
-    :type digest: str
-    :param created_time: Tag created time.
-    :type created_time: str
-    :param last_update_time: Tag last update time.
-    :type last_update_time: str
-    :param signed: Is signed.
-    :type signed: bool
-    :param changeable_attributes: Changeable attributes.
-    :type changeable_attributes: ~azure_container_registry.models.ChangeableAttributes
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar name: Required. Tag name.
+    :vartype name: str
+    :ivar digest: Required. Tag digest.
+    :vartype digest: str
+    :ivar created_on: Required. Tag created time.
+    :vartype created_on: ~datetime.datetime
+    :ivar last_updated_on: Required. Tag last update time.
+    :vartype last_updated_on: ~datetime.datetime
+    :ivar writeable_properties: Required. Writeable properties of the resource.
+    :vartype writeable_properties: ~container_registry.models.ContentProperties
     """
+
+    _validation = {
+        'name': {'required': True, 'readonly': True},
+        'digest': {'required': True, 'readonly': True},
+        'created_on': {'required': True, 'readonly': True},
+        'last_updated_on': {'required': True, 'readonly': True},
+        'writeable_properties': {'required': True, 'readonly': True},
+    }
 
     _attribute_map = {
         'name': {'key': 'name', 'type': 'str'},
         'digest': {'key': 'digest', 'type': 'str'},
-        'created_time': {'key': 'createdTime', 'type': 'str'},
-        'last_update_time': {'key': 'lastUpdateTime', 'type': 'str'},
-        'signed': {'key': 'signed', 'type': 'bool'},
-        'changeable_attributes': {'key': 'changeableAttributes', 'type': 'ChangeableAttributes'},
+        'created_on': {'key': 'createdTime', 'type': 'iso-8601'},
+        'last_updated_on': {'key': 'lastUpdateTime', 'type': 'iso-8601'},
+        'writeable_properties': {'key': 'changeableAttributes', 'type': 'ContentProperties'},
     }
 
     def __init__(
@@ -1046,12 +1170,11 @@ class TagAttributesBase(msrest.serialization.Model):
         **kwargs
     ):
         super(TagAttributesBase, self).__init__(**kwargs)
-        self.name = kwargs.get('name', None)
-        self.digest = kwargs.get('digest', None)
-        self.created_time = kwargs.get('created_time', None)
-        self.last_update_time = kwargs.get('last_update_time', None)
-        self.signed = kwargs.get('signed', None)
-        self.changeable_attributes = kwargs.get('changeable_attributes', None)
+        self.name = None
+        self.digest = None
+        self.created_on = None
+        self.last_updated_on = None
+        self.writeable_properties = None
 
 
 class TagAttributesTag(msrest.serialization.Model):
@@ -1076,18 +1199,25 @@ class TagAttributesTag(msrest.serialization.Model):
 class TagList(msrest.serialization.Model):
     """List of tag details.
 
-    :param registry: Registry name.
-    :type registry: str
-    :param image_name: Image name.
-    :type image_name: str
-    :param tags: A set of tags. List of tag attribute details.
-    :type tags: list[~azure_container_registry.models.TagAttributesBase]
+    All required parameters must be populated in order to send to Azure.
+
+    :param repository: Required. Image name.
+    :type repository: str
+    :param tag_attribute_bases: Required. List of tag attribute details.
+    :type tag_attribute_bases: list[~container_registry.models.TagAttributesBase]
+    :param link:
+    :type link: str
     """
 
+    _validation = {
+        'repository': {'required': True},
+        'tag_attribute_bases': {'required': True},
+    }
+
     _attribute_map = {
-        'registry': {'key': 'registry', 'type': 'str'},
-        'image_name': {'key': 'imageName', 'type': 'str'},
-        'tags': {'key': 'tags', 'type': '[TagAttributesBase]'},
+        'repository': {'key': 'imageName', 'type': 'str'},
+        'tag_attribute_bases': {'key': 'tags', 'type': '[TagAttributesBase]'},
+        'link': {'key': 'link', 'type': 'str'},
     }
 
     def __init__(
@@ -1095,9 +1225,9 @@ class TagList(msrest.serialization.Model):
         **kwargs
     ):
         super(TagList, self).__init__(**kwargs)
-        self.registry = kwargs.get('registry', None)
-        self.image_name = kwargs.get('image_name', None)
-        self.tags = kwargs.get('tags', None)
+        self.repository = kwargs['repository']
+        self.tag_attribute_bases = kwargs['tag_attribute_bases']
+        self.link = kwargs.get('link', None)
 
 
 class V1Manifest(Manifest):
@@ -1112,11 +1242,11 @@ class V1Manifest(Manifest):
     :param tag: Image tag.
     :type tag: str
     :param fs_layers: List of layer information.
-    :type fs_layers: list[~azure_container_registry.models.FsLayer]
+    :type fs_layers: list[~container_registry.models.FsLayer]
     :param history: Image history.
-    :type history: list[~azure_container_registry.models.History]
+    :type history: list[~container_registry.models.History]
     :param signatures: Image signature.
-    :type signatures: list[~azure_container_registry.models.ImageSignature]
+    :type signatures: list[~container_registry.models.ImageSignature]
     """
 
     _attribute_map = {
@@ -1150,9 +1280,9 @@ class V2Manifest(Manifest):
     :param media_type: Media type for this Manifest.
     :type media_type: str
     :param config: V2 image config descriptor.
-    :type config: ~azure_container_registry.models.Descriptor
+    :type config: ~container_registry.models.Descriptor
     :param layers: List of V2 image layer information.
-    :type layers: list[~azure_container_registry.models.Descriptor]
+    :type layers: list[~container_registry.models.Descriptor]
     """
 
     _attribute_map = {

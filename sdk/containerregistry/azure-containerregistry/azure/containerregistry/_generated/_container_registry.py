@@ -15,34 +15,22 @@ if TYPE_CHECKING:
 
     from azure.core.pipeline.transport import HttpRequest, HttpResponse
 
-from ._configuration import AzureContainerRegistryConfiguration
-from .operations import V2SupportOperations
-from .operations import ManifestsOperations
-from .operations import BlobOperations
-from .operations import RepositoryOperations
-from .operations import TagOperations
-from .operations import RefreshTokensOperations
-from .operations import AccessTokensOperations
+from ._configuration import ContainerRegistryConfiguration
+from .operations import ContainerRegistryOperations
+from .operations import ContainerRegistryBlobOperations
+from .operations import AuthenticationOperations
 from . import models
 
 
-class AzureContainerRegistry(object):
+class ContainerRegistry(object):
     """Metadata API definition for the Azure Container Registry runtime.
 
-    :ivar v2_support: V2SupportOperations operations
-    :vartype v2_support: azure_container_registry.operations.V2SupportOperations
-    :ivar manifests: ManifestsOperations operations
-    :vartype manifests: azure_container_registry.operations.ManifestsOperations
-    :ivar blob: BlobOperations operations
-    :vartype blob: azure_container_registry.operations.BlobOperations
-    :ivar repository: RepositoryOperations operations
-    :vartype repository: azure_container_registry.operations.RepositoryOperations
-    :ivar tag: TagOperations operations
-    :vartype tag: azure_container_registry.operations.TagOperations
-    :ivar refresh_tokens: RefreshTokensOperations operations
-    :vartype refresh_tokens: azure_container_registry.operations.RefreshTokensOperations
-    :ivar access_tokens: AccessTokensOperations operations
-    :vartype access_tokens: azure_container_registry.operations.AccessTokensOperations
+    :ivar container_registry: ContainerRegistryOperations operations
+    :vartype container_registry: container_registry.operations.ContainerRegistryOperations
+    :ivar container_registry_blob: ContainerRegistryBlobOperations operations
+    :vartype container_registry_blob: container_registry.operations.ContainerRegistryBlobOperations
+    :ivar authentication: AuthenticationOperations operations
+    :vartype authentication: container_registry.operations.AuthenticationOperations
     :param url: Registry login URL.
     :type url: str
     """
@@ -54,7 +42,7 @@ class AzureContainerRegistry(object):
     ):
         # type: (...) -> None
         base_url = '{url}'
-        self._config = AzureContainerRegistryConfiguration(url, **kwargs)
+        self._config = ContainerRegistryConfiguration(url, **kwargs)
         self._client = PipelineClient(base_url=base_url, config=self._config, **kwargs)
 
         client_models = {k: v for k, v in models.__dict__.items() if isinstance(v, type)}
@@ -62,19 +50,11 @@ class AzureContainerRegistry(object):
         self._serialize.client_side_validation = False
         self._deserialize = Deserializer(client_models)
 
-        self.v2_support = V2SupportOperations(
+        self.container_registry = ContainerRegistryOperations(
             self._client, self._config, self._serialize, self._deserialize)
-        self.manifests = ManifestsOperations(
+        self.container_registry_blob = ContainerRegistryBlobOperations(
             self._client, self._config, self._serialize, self._deserialize)
-        self.blob = BlobOperations(
-            self._client, self._config, self._serialize, self._deserialize)
-        self.repository = RepositoryOperations(
-            self._client, self._config, self._serialize, self._deserialize)
-        self.tag = TagOperations(
-            self._client, self._config, self._serialize, self._deserialize)
-        self.refresh_tokens = RefreshTokensOperations(
-            self._client, self._config, self._serialize, self._deserialize)
-        self.access_tokens = AccessTokensOperations(
+        self.authentication = AuthenticationOperations(
             self._client, self._config, self._serialize, self._deserialize)
 
     def _send_request(self, http_request, **kwargs):
@@ -100,7 +80,7 @@ class AzureContainerRegistry(object):
         self._client.close()
 
     def __enter__(self):
-        # type: () -> AzureContainerRegistry
+        # type: () -> ContainerRegistry
         self._client.__enter__()
         return self
 

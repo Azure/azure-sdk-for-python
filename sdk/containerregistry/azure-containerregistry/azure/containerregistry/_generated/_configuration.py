@@ -15,8 +15,8 @@ if TYPE_CHECKING:
 
 VERSION = "unknown"
 
-class AzureContainerRegistryConfiguration(Configuration):
-    """Configuration for AzureContainerRegistry.
+class ContainerRegistryConfiguration(Configuration):
+    """Configuration for ContainerRegistry.
 
     Note that all parameters used to create this instance are saved as instance
     attributes.
@@ -33,10 +33,10 @@ class AzureContainerRegistryConfiguration(Configuration):
         # type: (...) -> None
         if url is None:
             raise ValueError("Parameter 'url' must not be None.")
-        super(AzureContainerRegistryConfiguration, self).__init__(**kwargs)
+        super(ContainerRegistryConfiguration, self).__init__(**kwargs)
 
         self.url = url
-        kwargs.setdefault('sdk_moniker', 'azurecontainerregistry/{}'.format(VERSION))
+        kwargs.setdefault('sdk_moniker', 'containerregistry/{}'.format(VERSION))
         self._configure(**kwargs)
 
     def _configure(
