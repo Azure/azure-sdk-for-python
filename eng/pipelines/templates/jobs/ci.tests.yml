@@ -114,7 +114,7 @@ jobs:
     #           ServiceDirectory: ${{ parameters.ServiceDirectory }}
     #           BuildTargetingString: ${{ parameters.BuildTargetingString }}
 
-  - ${{ if ne(parameters.CondaArtifacts, [])}}:
+  - ${{ if ne(parameters.CondaArtifacts, '[]')}}:
     - job:
       displayName: 'Test Conda'
       condition: |
