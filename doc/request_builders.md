@@ -5,7 +5,7 @@ send these requests directly to the service using the ***send_request*** method.
 
 Here's how to get started:
 
-```pycon
+```python
 >>> from azure.identity import DefaultAzureCredential
 >>> from azure.example import ExampleClient
 >>> from azure.example.rest import build_example_request
