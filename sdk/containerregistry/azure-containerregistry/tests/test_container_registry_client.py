@@ -10,7 +10,7 @@ from devtools_testutils import AzureTestCase
 
 from azure.containerregistry import (
     ContainerRegistryClient,
-    DeletedRepositoryResult,
+    DeleteRepositoryResult,
 )
 from azure.core.exceptions import ResourceNotFoundError
 from azure.core.paging import ItemPaged
@@ -66,8 +66,8 @@ class TestContainerRegistryClient(ContainerRegistryTestClass):
         client = self.create_registry_client(containerregistry_endpoint)
 
         result = client.delete_repository(TO_BE_DELETED)
-        assert isinstance(result, DeletedRepositoryResult)
-        assert result.deleted_registry_artifact_digests is not None
+        assert isinstance(result, DeleteRepositoryResult)
+        assert result.deleted_manifests is not None
         assert result.deleted_tags is not None
 
         for repo in client.list_repositories():

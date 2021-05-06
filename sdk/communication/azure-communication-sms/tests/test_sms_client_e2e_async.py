@@ -15,6 +15,7 @@ from _shared.testcase import (
     BodyReplacerProcessor, ResponseReplacerProcessor
 )
 from azure.identity import DefaultAzureCredential
+from _shared.utils import get_http_logging_policy
 
 class FakeTokenCredential(object):
     def __init__(self):
@@ -43,7 +44,10 @@ class SMSClientTestAsync(AsyncCommunicationTestCase):
     @AsyncCommunicationTestCase.await_prepared_test
     async def test_send_sms_single_async(self):
 
-        sms_client = SmsClient.from_connection_string(self.connection_str)
+        sms_client = SmsClient.from_connection_string(
+            self.connection_str, 
+            http_logging_policy=get_http_logging_policy()
+        )
 
         async with sms_client:
             # calling send() with sms values
@@ -59,7 +63,10 @@ class SMSClientTestAsync(AsyncCommunicationTestCase):
     @AsyncCommunicationTestCase.await_prepared_test
     async def test_send_sms_multiple_with_options_async(self):
 
-        sms_client = SmsClient.from_connection_string(self.connection_str)
+        sms_client = SmsClient.from_connection_string(
+            self.connection_str, 
+            http_logging_policy=get_http_logging_policy()
+        )
 
         async with sms_client:
             # calling send() with sms values
@@ -83,7 +90,11 @@ class SMSClientTestAsync(AsyncCommunicationTestCase):
             credential = FakeTokenCredential()
         else:
             credential = DefaultAzureCredential()
-        sms_client = SmsClient(endpoint, credential)
+        sms_client = SmsClient(
+            endpoint, 
+            credential, 
+            http_logging_policy=get_http_logging_policy()
+        )
 
         async with sms_client:
             # calling send() with sms values
@@ -99,7 +110,10 @@ class SMSClientTestAsync(AsyncCommunicationTestCase):
     @AsyncCommunicationTestCase.await_prepared_test
     async def test_send_sms_fake_from_phone_number_async(self):
 
-        sms_client = SmsClient.from_connection_string(self.connection_str)
+        sms_client = SmsClient.from_connection_string(
+            self.connection_str, 
+            http_logging_policy=get_http_logging_policy()
+        )
         
         with pytest.raises(HttpResponseError) as ex:
             async with sms_client:
@@ -115,7 +129,10 @@ class SMSClientTestAsync(AsyncCommunicationTestCase):
     @AsyncCommunicationTestCase.await_prepared_test
     async def test_send_sms_fake_to_phone_number_async(self):
 
-        sms_client = SmsClient.from_connection_string(self.connection_str)
+        sms_client = SmsClient.from_connection_string(
+            self.connection_str, 
+            http_logging_policy=get_http_logging_policy()
+        )
 
         async with sms_client:
             # calling send() with sms values
@@ -134,7 +151,10 @@ class SMSClientTestAsync(AsyncCommunicationTestCase):
     @AsyncCommunicationTestCase.await_prepared_test
     async def test_send_sms_unauthorized_from_phone_number_async(self):
 
-        sms_client = SmsClient.from_connection_string(self.connection_str)
+        sms_client = SmsClient.from_connection_string(
+            self.connection_str, 
+            http_logging_policy=get_http_logging_policy()
+        )
         
         with pytest.raises(HttpResponseError) as ex:
             async with sms_client:
@@ -151,7 +171,10 @@ class SMSClientTestAsync(AsyncCommunicationTestCase):
     @pytest.mark.live_test_only
     async def test_send_sms_unique_message_ids_async(self):
 
-        sms_client = SmsClient.from_connection_string(self.connection_str)
+        sms_client = SmsClient.from_connection_string(
+            self.connection_str, 
+            http_logging_policy=get_http_logging_policy()
+        )
 
         async with sms_client:
             # calling send() with sms values

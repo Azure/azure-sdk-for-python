@@ -2,8 +2,11 @@
 
 ### Settings
 ``` yaml
-input-file: https://raw.githubusercontent.com/Azure/azure-sdk-for-js/e40f55d5fa64d177c0267b52129c77aa353f95d8/sdk/containerregistry/container-registry/swagger/containerregistry.json
+input-file: https://raw.githubusercontent.com/Azure/azure-rest-api-specs/96bdb14b80d5542ea6982cd766be19e7c8c58c86/specification/containerregistry/data-plane/Azure.ContainerRegistry/preview/2019-08-15-preview/containerregistry.json
 output-folder: "../azure/containerregistry/_generated"
+no-namespace-folders: true
+python: true
+clear-output-folder: true
 ```
 
 <!-- ```

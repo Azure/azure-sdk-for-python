@@ -34,7 +34,4 @@ extends:
     Artifacts:
     - name: azure-data-tables
       safeName: azuredatatables
-    - name: azure-data-nspkg
-      safeName: azuredatanspkg
-      skipVerifyChangeLog: true
 
