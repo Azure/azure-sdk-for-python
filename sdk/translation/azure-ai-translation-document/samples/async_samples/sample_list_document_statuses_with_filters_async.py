@@ -5,7 +5,7 @@
 # ------------------------------------
 
 """
-FILE: sample_list_document_statuses_in_a_translation_job_with_filters_async.py
+FILE: sample_list_document_statuses_with_filters_async.py
 
 DESCRIPTION:
     This sample demonstrates how to list all the docs in some translation job for the resource 
@@ -15,7 +15,7 @@ DESCRIPTION:
     with the appropriate permissions, see the README.
 
 USAGE:
-    python sample_list_document_statuses_in_a_translation_job_with_filters_async.py
+    python sample_list_document_statuses_with_filters_async.py
 
     Set the environment variables with your own values before running the sample:
     1) AZURE_DOCUMENT_TRANSLATION_ENDPOINT - the endpoint to your Document Translation resource.
@@ -25,7 +25,7 @@ USAGE:
 import os
 import asyncio
 
-async def sample_list_document_statuses_in_a_translation_job_with_filters_async(self, client):
+async def sample_list_document_statuses_with_filters_async(self, client):
     # import libraries
     from azure.core.credentials import AzureKeyCredential
     from azure.ai.translation.document import (
@@ -80,7 +80,7 @@ def display_doc_info(document):
 
 
 async def main():
-    await sample_list_document_statuses_in_a_translation_job_with_filters_async()
+    await sample_list_document_statuses_with_filters_async()
 
 if __name__ == '__main__':
     loop = asyncio.get_event_loop()

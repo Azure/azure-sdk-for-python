@@ -5,7 +5,7 @@
 # ------------------------------------
 
 """
-FILE: sample_list_document_statuses_in_a_translation_job_with_filters.py
+FILE: sample_list_document_statuses_with_filters.py
 
 DESCRIPTION:
     This sample demonstrates how to list all the docs in some translation job for the resource 
@@ -15,14 +15,14 @@ DESCRIPTION:
     with the appropriate permissions, see the README.
 
 USAGE:
-    python sample_list_document_statuses_in_a_translation_job_with_filters.py
+    python sample_list_document_statuses_with_filters.py
 
     Set the environment variables with your own values before running the sample:
     1) AZURE_DOCUMENT_TRANSLATION_ENDPOINT - the endpoint to your Document Translation resource.
     2) AZURE_DOCUMENT_TRANSLATION_KEY - your Document Translation API key.
 """
 
-def sample_list_document_statuses_in_a_translation_job_with_filters(self, client):
+def sample_list_document_statuses_with_filters(self, client):
     # import libraries
     from azure.core.credentials import AzureKeyCredential
     from azure.ai.translation.document import (
@@ -76,4 +76,4 @@ def display_doc_info(document):
         print("Translated to language: {}\n".format(document.translate_to))
 
 if __name__ == '__main__':
-    sample_list_document_statuses_in_a_translation_job_with_filters()
+    sample_list_document_statuses_with_filters()
