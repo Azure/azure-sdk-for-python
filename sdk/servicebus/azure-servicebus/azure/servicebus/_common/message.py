@@ -838,6 +838,10 @@ class ServiceBusReceivedMessage(ServiceBusMessage):
         except:
             message_repr += ", enqueued_sequence_number=<read-error>"
         try:
+            message_repr += ", enqueued_time_utc={}".format(self.enqueued_time_utc)
+        except:
+            message_repr += ", enqueued_time_utc=<read-error>"
+        try:
             message_repr += ", expires_at_utc={}".format(self.expires_at_utc)
         except:
             message_repr += ", expires_at_utc=<read-error>"
