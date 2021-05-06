@@ -28,7 +28,7 @@ CONNECTION_STR = os.environ['SERVICE_BUS_CONNECTION_STR']
 TOPIC_NAME = os.environ['SERVICE_BUS_TOPIC_NAME']
 SUBSCRIPTION_NAME = os.environ['SERVICE_BUS_SUBSCRIPTION_NAME']
 RULE_NAME = "sb_mgmt_rule" + str(uuid.uuid4())
-RULE_WITH_SQL_FILTER_NAME = "sb_mgmt_sql_filter_rule" + str(uuid.uuid4())[:16]
+RULE_WITH_SQL_FILTER_NAME = "sb_sql_rule" + str(uuid.uuid4())
 
 
 def create_rule(servicebus_mgmt_client):
