@@ -78,14 +78,17 @@ def _deserialize_table_creation(response, _, headers):
 
 
 def _from_entity_binary(value):
-    return EntityProperty(_decode_base64_to_bytes(value))
+    # type: (str) -> EntityProperty
+    return EntityProperty(_decode_base64_to_bytes(value), EdmType.BINARY)
 
 
 def _from_entity_int32(value):
-    return EntityProperty(int(value))
+    # type: (str) -> EntityProperty
+    return EntityProperty(int(value), EdmType.INT32)
 
 
 def _from_entity_int64(value):
+    # type: (str) -> EntityProperty
     return EntityProperty(int(value), EdmType.INT64)
 
 
@@ -125,7 +128,8 @@ def _from_entity_guid(value):
 
 
 def _from_entity_str(value):
-    return EntityProperty(value=value, type=EdmType.STRING)
+    # type: (str) -> EntityProperty
+    return EntityProperty(value, EdmType.STRING)
 
 
 _EDM_TYPES = [
@@ -194,9 +198,6 @@ def _convert_to_entity(entry_element):
 
     # Timestamp is a known property
     timestamp = properties.pop("Timestamp", None)
-    if timestamp:
-        # entity['Timestamp'] = _from_entity_datetime(timestamp)
-        entity["Timestamp"] = timestamp
 
     for name, value in properties.items():
         mtype = edmtypes.get(name)
@@ -233,9 +234,8 @@ def _convert_to_entity(entry_element):
     etag = odata.get("etag")
     if timestamp and not etag:
         etag = "W/\"datetime'" + url_quote(timestamp) + "'\""
-    entity["etag"] = etag
 
-    entity._set_metadata()  # pylint: disable=protected-access
+    entity._metadata = {'etag': etag, 'timestamp': timestamp}  # pylint: disable=protected-access
     return entity
 
 

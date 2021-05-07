@@ -65,6 +65,10 @@ class CreateClients(object):
                         for tag in repository_client.list_tags():
                             print(tag.digest)
 
+                    # [START delete_repository]
+                    client.delete_repository("hello-world")
+                    # [END delete_repository]
+
 
 if __name__ == "__main__":
     sample = CreateClients()

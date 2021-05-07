@@ -14,7 +14,7 @@ DESCRIPTION:
 USAGE:
     python send_sms_to_single_recipient_sample_async.py
     Set the environment variable with your own value before running the sample:
-    1) AZURE_COMMUNICATION_SERVICE_CONNECTION_STRING - the connection string in your ACS account
+    1) COMMUNICATION_SAMPLES_CONNECTION_STRING - the connection string in your ACS account
 """
 
 import os
@@ -26,7 +26,8 @@ sys.path.append("..")
 
 class SmsSingleRecipientSampleAsync(object):
 
-    connection_string = os.getenv("AZURE_COMMUNICATION_SERVICE_CONNECTION_STRING")
+    connection_string = os.getenv("COMMUNICATION_SAMPLES_CONNECTION_STRING")
+    phone_number = os.getenv("AZURE_COMMUNICATION_SERVICE_PHONE_NUMBER")
     
     async def send_sms_to_single_recipient_async(self):
         sms_client = SmsClient.from_connection_string(self.connection_string)
@@ -35,8 +36,8 @@ class SmsSingleRecipientSampleAsync(object):
             try:
                 # calling send() with sms values 
                 sms_responses = await sms_client.send(
-                    from_="<leased-phone-number>",
-                    to="<to-phone-number>",
+                    from_=self.phone_number,
+                    to=self.phone_number,
                     message="Hello World via SMS",
                     enable_delivery_report=True, # optional property
                     tag="custom-tag") # optional property
