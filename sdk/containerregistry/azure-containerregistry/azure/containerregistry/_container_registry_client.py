@@ -230,4 +230,15 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
         :returns: :class:`~azure.containerregistry.RegistryArtifact`
         :raises: None
         """
-        return RegistryArtifact(self._endpoint, repository_name, tag_or_digest, self._credential, **kwargs)
+        _pipeline = Pipeline(
+            transport=TransportWrapper(self._client._client._pipeline._transport),  # pylint: disable=protected-access
+            policies=self._client._client._pipeline._impl_policies,  # pylint: disable=protected-access
+        )
+        return RegistryArtifact(
+            self._endpoint,
+            repository_name,
+            tag_or_digest,
+            self._credential,
+            pipeline=_pipeline,
+            **kwargs
+        )
