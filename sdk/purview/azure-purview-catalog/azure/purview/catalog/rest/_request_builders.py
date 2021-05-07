@@ -24,20 +24,20 @@ def build_search_request(
     # type: (...) -> HttpRequest
     """Gets data using search.
 
-    See https://aka.ms/azsdk/python/llcwiki for how to incorporate this request builder into your code flow.
+    See https://aka.ms/azsdk/python/protocol/quickstart for how to incorporate this request builder into your code flow.
 
     :keyword json: An object specifying the search criteria.
     :paramtype json: Any
     :keyword content: An object specifying the search criteria.
     :paramtype content: Any
     :return: Returns an :class:`~azure.purview.catalog.core.rest.HttpRequest` that you will pass to the client's `send_request` method.
-     See https://aka.ms/azsdk/python/llcwiki for how to incorporate this response into your code flow.
+     See https://aka.ms/azsdk/python/protocol/quickstart for how to incorporate this response into your code flow.
     :rtype: ~azure.purview.catalog.core.rest.HttpRequest
 
     Example:
         .. code-block:: python
 
-    
+
             # JSON input template you can fill out and use as your `json` input.
             json = {
                 "facets": [
@@ -63,7 +63,7 @@ def build_search_request(
                 }
             }
 
-    
+
             # response body for status code(s): 200
             response_body == {
                 "@search.count": "int (optional)",
@@ -198,20 +198,20 @@ def build_suggest_request(
     # type: (...) -> HttpRequest
     """Get search suggestions by query criteria.
 
-    See https://aka.ms/azsdk/python/llcwiki for how to incorporate this request builder into your code flow.
+    See https://aka.ms/azsdk/python/protocol/quickstart for how to incorporate this request builder into your code flow.
 
     :keyword json: An object specifying the suggest criteria.
     :paramtype json: Any
     :keyword content: An object specifying the suggest criteria.
     :paramtype content: Any
     :return: Returns an :class:`~azure.purview.catalog.core.rest.HttpRequest` that you will pass to the client's `send_request` method.
-     See https://aka.ms/azsdk/python/llcwiki for how to incorporate this response into your code flow.
+     See https://aka.ms/azsdk/python/protocol/quickstart for how to incorporate this response into your code flow.
     :rtype: ~azure.purview.catalog.core.rest.HttpRequest
 
     Example:
         .. code-block:: python
 
-    
+
             # JSON input template you can fill out and use as your `json` input.
             json = {
                 "filter": "object (optional)",
@@ -219,7 +219,7 @@ def build_suggest_request(
                 "limit": "int (optional)"
             }
 
-    
+
             # response body for status code(s): 200
             response_body == {
                 "value": [
@@ -292,20 +292,20 @@ def build_auto_complete_request(
     # type: (...) -> HttpRequest
     """Get auto complete options.
 
-    See https://aka.ms/azsdk/python/llcwiki for how to incorporate this request builder into your code flow.
+    See https://aka.ms/azsdk/python/protocol/quickstart for how to incorporate this request builder into your code flow.
 
     :keyword json: An object specifying the autocomplete criteria.
     :paramtype json: Any
     :keyword content: An object specifying the autocomplete criteria.
     :paramtype content: Any
     :return: Returns an :class:`~azure.purview.catalog.core.rest.HttpRequest` that you will pass to the client's `send_request` method.
-     See https://aka.ms/azsdk/python/llcwiki for how to incorporate this response into your code flow.
+     See https://aka.ms/azsdk/python/protocol/quickstart for how to incorporate this response into your code flow.
     :rtype: ~azure.purview.catalog.core.rest.HttpRequest
 
     Example:
         .. code-block:: python
 
-    
+
             # JSON input template you can fill out and use as your `json` input.
             json = {
                 "filter": "object (optional)",
@@ -313,7 +313,7 @@ def build_auto_complete_request(
                 "limit": "int (optional)"
             }
 
-    
+
             # response body for status code(s): 200
             response_body == {
                 "value": [
@@ -358,7 +358,7 @@ def build_get_lineage_graph_request(
     # type: (...) -> HttpRequest
     """Get lineage info of the entity specified by GUID.
 
-    See https://aka.ms/azsdk/python/llcwiki for how to incorporate this request builder into your code flow.
+    See https://aka.ms/azsdk/python/protocol/quickstart for how to incorporate this request builder into your code flow.
 
     :param guid: The globally unique identifier of the entity.
     :type guid: str
@@ -373,13 +373,13 @@ def build_get_lineage_graph_request(
     :keyword get_derived_lineage: True to include derived lineage in the response.
     :paramtype get_derived_lineage: bool
     :return: Returns an :class:`~azure.purview.catalog.core.rest.HttpRequest` that you will pass to the client's `send_request` method.
-     See https://aka.ms/azsdk/python/llcwiki for how to incorporate this response into your code flow.
+     See https://aka.ms/azsdk/python/protocol/quickstart for how to incorporate this response into your code flow.
     :rtype: ~azure.purview.catalog.core.rest.HttpRequest
 
     Example:
         .. code-block:: python
 
-    
+
             # response body for status code(s): 200
             response_body == {
                 "baseEntityGuid": "str (optional)",
@@ -501,7 +501,7 @@ def build_next_page_lineage_request(
     # type: (...) -> HttpRequest
     """Return immediate next page lineage info about entity with pagination.
 
-    See https://aka.ms/azsdk/python/llcwiki for how to incorporate this request builder into your code flow.
+    See https://aka.ms/azsdk/python/protocol/quickstart for how to incorporate this request builder into your code flow.
 
     :param guid: The globally unique identifier of the entity.
     :type guid: str
@@ -514,13 +514,13 @@ def build_next_page_lineage_request(
     :keyword limit: The page size - by default there is no paging.
     :paramtype limit: int
     :return: Returns an :class:`~azure.purview.catalog.core.rest.HttpRequest` that you will pass to the client's `send_request` method.
-     See https://aka.ms/azsdk/python/llcwiki for how to incorporate this response into your code flow.
+     See https://aka.ms/azsdk/python/protocol/quickstart for how to incorporate this response into your code flow.
     :rtype: ~azure.purview.catalog.core.rest.HttpRequest
 
     Example:
         .. code-block:: python
 
-    
+
             # response body for status code(s): 200
             response_body == {
                 "baseEntityGuid": "str (optional)",

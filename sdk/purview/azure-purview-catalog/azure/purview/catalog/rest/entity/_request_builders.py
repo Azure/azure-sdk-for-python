@@ -28,20 +28,20 @@ def build_create_or_update_request(
     Map and array of collections are not well supported. E.g., array<array:code:`<int>`>,
     array<map<string, int>>.
 
-    See https://aka.ms/azsdk/python/llcwiki for how to incorporate this request builder into your code flow.
+    See https://aka.ms/azsdk/python/protocol/quickstart for how to incorporate this request builder into your code flow.
 
     :keyword json: Atlas entity with extended information.
     :paramtype json: Any
     :keyword content: Atlas entity with extended information.
     :paramtype content: Any
     :return: Returns an :class:`~azure.purview.catalog.core.rest.HttpRequest` that you will pass to the client's `send_request` method.
-     See https://aka.ms/azsdk/python/llcwiki for how to incorporate this response into your code flow.
+     See https://aka.ms/azsdk/python/protocol/quickstart for how to incorporate this response into your code flow.
     :rtype: ~azure.purview.catalog.core.rest.HttpRequest
 
     Example:
         .. code-block:: python
 
-    
+
             # JSON input template you can fill out and use as your `json` input.
             json = {
                 "entity": {
@@ -105,7 +105,7 @@ def build_create_or_update_request(
                 }
             }
 
-    
+
             # response body for status code(s): 200
             response_body == {
                 "guidAssignments": {
@@ -232,7 +232,7 @@ def build_list_by_guids_request(
     # type: (...) -> HttpRequest
     """List entities in bulk identified by its GUIDs.
 
-    See https://aka.ms/azsdk/python/llcwiki for how to incorporate this request builder into your code flow.
+    See https://aka.ms/azsdk/python/protocol/quickstart for how to incorporate this request builder into your code flow.
 
     :keyword guids: An array of GUIDs of entities to create.
     :paramtype guids: list[str]
@@ -244,13 +244,13 @@ def build_list_by_guids_request(
      from the response.
     :paramtype exclude_relationship_types: list[str]
     :return: Returns an :class:`~azure.purview.catalog.core.rest.HttpRequest` that you will pass to the client's `send_request` method.
-     See https://aka.ms/azsdk/python/llcwiki for how to incorporate this response into your code flow.
+     See https://aka.ms/azsdk/python/protocol/quickstart for how to incorporate this response into your code flow.
     :rtype: ~azure.purview.catalog.core.rest.HttpRequest
 
     Example:
         .. code-block:: python
 
-    
+
             # response body for status code(s): 200
             response_body == {
                 "entities": [
@@ -359,20 +359,20 @@ def build_create_or_update_entities_request(
     Map and array of collections are not well supported. E.g., array<array:code:`<int>`>,
     array<map<string, int>>.
 
-    See https://aka.ms/azsdk/python/llcwiki for how to incorporate this request builder into your code flow.
+    See https://aka.ms/azsdk/python/protocol/quickstart for how to incorporate this request builder into your code flow.
 
     :keyword json: An array of entities to create or update.
     :paramtype json: Any
     :keyword content: An array of entities to create or update.
     :paramtype content: Any
     :return: Returns an :class:`~azure.purview.catalog.core.rest.HttpRequest` that you will pass to the client's `send_request` method.
-     See https://aka.ms/azsdk/python/llcwiki for how to incorporate this response into your code flow.
+     See https://aka.ms/azsdk/python/protocol/quickstart for how to incorporate this response into your code flow.
     :rtype: ~azure.purview.catalog.core.rest.HttpRequest
 
     Example:
         .. code-block:: python
 
-    
+
             # JSON input template you can fill out and use as your `json` input.
             json = {
                 "entities": [
@@ -438,7 +438,7 @@ def build_create_or_update_entities_request(
                 ]
             }
 
-    
+
             # response body for status code(s): 200
             response_body == {
                 "guidAssignments": {
@@ -565,18 +565,18 @@ def build_delete_by_guids_request(
     # type: (...) -> HttpRequest
     """Delete a list of entities in bulk identified by their GUIDs or unique attributes.
 
-    See https://aka.ms/azsdk/python/llcwiki for how to incorporate this request builder into your code flow.
+    See https://aka.ms/azsdk/python/protocol/quickstart for how to incorporate this request builder into your code flow.
 
     :keyword guids: An array of GUIDs of entities to delete.
     :paramtype guids: list[str]
     :return: Returns an :class:`~azure.purview.catalog.core.rest.HttpRequest` that you will pass to the client's `send_request` method.
-     See https://aka.ms/azsdk/python/llcwiki for how to incorporate this response into your code flow.
+     See https://aka.ms/azsdk/python/protocol/quickstart for how to incorporate this response into your code flow.
     :rtype: ~azure.purview.catalog.core.rest.HttpRequest
 
     Example:
         .. code-block:: python
 
-    
+
             # response body for status code(s): 200
             response_body == {
                 "guidAssignments": {
@@ -706,20 +706,20 @@ def build_add_classification_request(
     # type: (...) -> HttpRequest
     """Associate a classification to multiple entities in bulk.
 
-    See https://aka.ms/azsdk/python/llcwiki for how to incorporate this request builder into your code flow.
+    See https://aka.ms/azsdk/python/protocol/quickstart for how to incorporate this request builder into your code flow.
 
     :keyword json: The request to associate a classification to multiple entities.
     :paramtype json: Any
     :keyword content: The request to associate a classification to multiple entities.
     :paramtype content: Any
     :return: Returns an :class:`~azure.purview.catalog.core.rest.HttpRequest` that you will pass to the client's `send_request` method.
-     See https://aka.ms/azsdk/python/llcwiki for how to incorporate this response into your code flow.
+     See https://aka.ms/azsdk/python/protocol/quickstart for how to incorporate this response into your code flow.
     :rtype: ~azure.purview.catalog.core.rest.HttpRequest
 
     Example:
         .. code-block:: python
 
-    
+
             # JSON input template you can fill out and use as your `json` input.
             json = {
                 "classification": {
@@ -769,7 +769,7 @@ def build_get_by_guid_request(
     # type: (...) -> HttpRequest
     """Get complete definition of an entity given its GUID.
 
-    See https://aka.ms/azsdk/python/llcwiki for how to incorporate this request builder into your code flow.
+    See https://aka.ms/azsdk/python/protocol/quickstart for how to incorporate this request builder into your code flow.
 
     :param guid: The globally unique identifier of the entity.
     :type guid: str
@@ -778,13 +778,13 @@ def build_get_by_guid_request(
     :keyword ignore_relationships: Whether to ignore relationship attributes.
     :paramtype ignore_relationships: bool
     :return: Returns an :class:`~azure.purview.catalog.core.rest.HttpRequest` that you will pass to the client's `send_request` method.
-     See https://aka.ms/azsdk/python/llcwiki for how to incorporate this response into your code flow.
+     See https://aka.ms/azsdk/python/protocol/quickstart for how to incorporate this response into your code flow.
     :rtype: ~azure.purview.catalog.core.rest.HttpRequest
 
     Example:
         .. code-block:: python
 
-    
+
             # response body for status code(s): 200
             response_body == {
                 "entity": {
@@ -890,7 +890,7 @@ def build_create_or_update_by_guid_request(
     It does not support updating complex types like arrays, and maps.
     Null updates are not possible.
 
-    See https://aka.ms/azsdk/python/llcwiki for how to incorporate this request builder into your code flow.
+    See https://aka.ms/azsdk/python/protocol/quickstart for how to incorporate this request builder into your code flow.
 
     :param guid: The globally unique identifier of the entity.
     :type guid: str
@@ -901,17 +901,17 @@ def build_create_or_update_by_guid_request(
     :keyword name: The name of the attribute.
     :paramtype name: str
     :return: Returns an :class:`~azure.purview.catalog.core.rest.HttpRequest` that you will pass to the client's `send_request` method.
-     See https://aka.ms/azsdk/python/llcwiki for how to incorporate this response into your code flow.
+     See https://aka.ms/azsdk/python/protocol/quickstart for how to incorporate this response into your code flow.
     :rtype: ~azure.purview.catalog.core.rest.HttpRequest
 
     Example:
         .. code-block:: python
 
-    
+
             # JSON input template you can fill out and use as your `json` input.
             json = "object (optional)"
 
-    
+
             # response body for status code(s): 200
             response_body == {
                 "guidAssignments": {
@@ -1049,18 +1049,18 @@ def build_delete_by_guid_request(
     # type: (...) -> HttpRequest
     """Delete an entity identified by its GUID.
 
-    See https://aka.ms/azsdk/python/llcwiki for how to incorporate this request builder into your code flow.
+    See https://aka.ms/azsdk/python/protocol/quickstart for how to incorporate this request builder into your code flow.
 
     :param guid: The globally unique identifier of the entity.
     :type guid: str
     :return: Returns an :class:`~azure.purview.catalog.core.rest.HttpRequest` that you will pass to the client's `send_request` method.
-     See https://aka.ms/azsdk/python/llcwiki for how to incorporate this response into your code flow.
+     See https://aka.ms/azsdk/python/protocol/quickstart for how to incorporate this response into your code flow.
     :rtype: ~azure.purview.catalog.core.rest.HttpRequest
 
     Example:
         .. code-block:: python
 
-    
+
             # response body for status code(s): 200
             response_body == {
                 "guidAssignments": {
@@ -1190,20 +1190,20 @@ def build_get_classification_request(
     # type: (...) -> HttpRequest
     """List classifications for a given entity represented by a GUID.
 
-    See https://aka.ms/azsdk/python/llcwiki for how to incorporate this request builder into your code flow.
+    See https://aka.ms/azsdk/python/protocol/quickstart for how to incorporate this request builder into your code flow.
 
     :param guid: The globally unique identifier of the entity.
     :type guid: str
     :param classification_name: The name of the classification.
     :type classification_name: str
     :return: Returns an :class:`~azure.purview.catalog.core.rest.HttpRequest` that you will pass to the client's `send_request` method.
-     See https://aka.ms/azsdk/python/llcwiki for how to incorporate this response into your code flow.
+     See https://aka.ms/azsdk/python/protocol/quickstart for how to incorporate this response into your code flow.
     :rtype: ~azure.purview.catalog.core.rest.HttpRequest
 
     Example:
         .. code-block:: python
 
-    
+
             # response body for status code(s): 200
             response_body == {
                 "entityGuid": "str (optional)",
@@ -1253,14 +1253,14 @@ def build_delete_classification_request(
     # type: (...) -> HttpRequest
     """Delete a given classification from an existing entity represented by a GUID.
 
-    See https://aka.ms/azsdk/python/llcwiki for how to incorporate this request builder into your code flow.
+    See https://aka.ms/azsdk/python/protocol/quickstart for how to incorporate this request builder into your code flow.
 
     :param guid: The globally unique identifier of the entity.
     :type guid: str
     :param classification_name: The name of the classification.
     :type classification_name: str
     :return: Returns an :class:`~azure.purview.catalog.core.rest.HttpRequest` that you will pass to the client's `send_request` method.
-     See https://aka.ms/azsdk/python/llcwiki for how to incorporate this response into your code flow.
+     See https://aka.ms/azsdk/python/protocol/quickstart for how to incorporate this response into your code flow.
     :rtype: ~azure.purview.catalog.core.rest.HttpRequest
     """
 
@@ -1286,18 +1286,18 @@ def build_get_classifications_request(
     # type: (...) -> HttpRequest
     """List classifications for a given entity represented by a GUID.
 
-    See https://aka.ms/azsdk/python/llcwiki for how to incorporate this request builder into your code flow.
+    See https://aka.ms/azsdk/python/protocol/quickstart for how to incorporate this request builder into your code flow.
 
     :param guid: The globally unique identifier of the entity.
     :type guid: str
     :return: Returns an :class:`~azure.purview.catalog.core.rest.HttpRequest` that you will pass to the client's `send_request` method.
-     See https://aka.ms/azsdk/python/llcwiki for how to incorporate this response into your code flow.
+     See https://aka.ms/azsdk/python/protocol/quickstart for how to incorporate this response into your code flow.
     :rtype: ~azure.purview.catalog.core.rest.HttpRequest
 
     Example:
         .. code-block:: python
 
-    
+
             # response body for status code(s): 200
             response_body == {}
 
@@ -1330,7 +1330,7 @@ def build_add_classifications_request(
     # type: (...) -> HttpRequest
     """Add classifications to an existing entity represented by a GUID.
 
-    See https://aka.ms/azsdk/python/llcwiki for how to incorporate this request builder into your code flow.
+    See https://aka.ms/azsdk/python/protocol/quickstart for how to incorporate this request builder into your code flow.
 
     :param guid: The globally unique identifier of the entity.
     :type guid: str
@@ -1339,13 +1339,13 @@ def build_add_classifications_request(
     :keyword content: An array of classifications to be added.
     :paramtype content: Any
     :return: Returns an :class:`~azure.purview.catalog.core.rest.HttpRequest` that you will pass to the client's `send_request` method.
-     See https://aka.ms/azsdk/python/llcwiki for how to incorporate this response into your code flow.
+     See https://aka.ms/azsdk/python/protocol/quickstart for how to incorporate this response into your code flow.
     :rtype: ~azure.purview.catalog.core.rest.HttpRequest
 
     Example:
         .. code-block:: python
 
-    
+
             # JSON input template you can fill out and use as your `json` input.
             json = [
                 {
@@ -1396,7 +1396,7 @@ def build_update_classifications_request(
     # type: (...) -> HttpRequest
     """Update classifications to an existing entity represented by a guid.
 
-    See https://aka.ms/azsdk/python/llcwiki for how to incorporate this request builder into your code flow.
+    See https://aka.ms/azsdk/python/protocol/quickstart for how to incorporate this request builder into your code flow.
 
     :param guid: The globally unique identifier of the entity.
     :type guid: str
@@ -1405,13 +1405,13 @@ def build_update_classifications_request(
     :keyword content: An array of classifications to be updated.
     :paramtype content: Any
     :return: Returns an :class:`~azure.purview.catalog.core.rest.HttpRequest` that you will pass to the client's `send_request` method.
-     See https://aka.ms/azsdk/python/llcwiki for how to incorporate this response into your code flow.
+     See https://aka.ms/azsdk/python/protocol/quickstart for how to incorporate this response into your code flow.
     :rtype: ~azure.purview.catalog.core.rest.HttpRequest
 
     Example:
         .. code-block:: python
 
-    
+
             # JSON input template you can fill out and use as your `json` input.
             json = [
                 {
@@ -1468,7 +1468,7 @@ def build_get_by_unique_attributes_request(
     The REST request would look something like this:
     GET /v2/entity/uniqueAttribute/type/aType?attr:aTypeAttribute=someValue.
 
-    See https://aka.ms/azsdk/python/llcwiki for how to incorporate this request builder into your code flow.
+    See https://aka.ms/azsdk/python/protocol/quickstart for how to incorporate this request builder into your code flow.
 
     :param type_name: The name of the type.
     :type type_name: str
@@ -1479,13 +1479,13 @@ def build_get_by_unique_attributes_request(
     :keyword attr_qualified_name: The qualified name of the entity.
     :paramtype attr_qualified_name: str
     :return: Returns an :class:`~azure.purview.catalog.core.rest.HttpRequest` that you will pass to the client's `send_request` method.
-     See https://aka.ms/azsdk/python/llcwiki for how to incorporate this response into your code flow.
+     See https://aka.ms/azsdk/python/protocol/quickstart for how to incorporate this response into your code flow.
     :rtype: ~azure.purview.catalog.core.rest.HttpRequest
 
     Example:
         .. code-block:: python
 
-    
+
             # response body for status code(s): 200
             response_body == {
                 "entity": {
@@ -1600,7 +1600,7 @@ def build_create_or_update_by_unique_attribute_request(
     The REST request would look something like this:
     PUT /v2/entity/uniqueAttribute/type/aType?attr:aTypeAttribute=someValue.
 
-    See https://aka.ms/azsdk/python/llcwiki for how to incorporate this request builder into your code flow.
+    See https://aka.ms/azsdk/python/protocol/quickstart for how to incorporate this request builder into your code flow.
 
     :param type_name: The name of the type.
     :type type_name: str
@@ -1611,13 +1611,13 @@ def build_create_or_update_by_unique_attribute_request(
     :keyword attr_qualified_name: The qualified name of the entity.
     :paramtype attr_qualified_name: str
     :return: Returns an :class:`~azure.purview.catalog.core.rest.HttpRequest` that you will pass to the client's `send_request` method.
-     See https://aka.ms/azsdk/python/llcwiki for how to incorporate this response into your code flow.
+     See https://aka.ms/azsdk/python/protocol/quickstart for how to incorporate this response into your code flow.
     :rtype: ~azure.purview.catalog.core.rest.HttpRequest
 
     Example:
         .. code-block:: python
 
-    
+
             # JSON input template you can fill out and use as your `json` input.
             json = {
                 "entity": {
@@ -1681,7 +1681,7 @@ def build_create_or_update_by_unique_attribute_request(
                 }
             }
 
-    
+
             # response body for status code(s): 200
             response_body == {
                 "guidAssignments": {
@@ -1826,20 +1826,20 @@ def build_delete_by_unique_attribute_request(
     The REST request would look something like this:
     DELETE /v2/entity/uniqueAttribute/type/aType?attr:aTypeAttribute=someValue.
 
-    See https://aka.ms/azsdk/python/llcwiki for how to incorporate this request builder into your code flow.
+    See https://aka.ms/azsdk/python/protocol/quickstart for how to incorporate this request builder into your code flow.
 
     :param type_name: The name of the type.
     :type type_name: str
     :keyword attr_qualified_name: The qualified name of the entity.
     :paramtype attr_qualified_name: str
     :return: Returns an :class:`~azure.purview.catalog.core.rest.HttpRequest` that you will pass to the client's `send_request` method.
-     See https://aka.ms/azsdk/python/llcwiki for how to incorporate this response into your code flow.
+     See https://aka.ms/azsdk/python/protocol/quickstart for how to incorporate this response into your code flow.
     :rtype: ~azure.purview.catalog.core.rest.HttpRequest
 
     Example:
         .. code-block:: python
 
-    
+
             # response body for status code(s): 200
             response_body == {
                 "guidAssignments": {
@@ -1976,7 +1976,7 @@ def build_delete_classification_by_unique_attribute_request(
     # type: (...) -> HttpRequest
     """Delete a given classification from an entity identified by its type and unique attributes.
 
-    See https://aka.ms/azsdk/python/llcwiki for how to incorporate this request builder into your code flow.
+    See https://aka.ms/azsdk/python/protocol/quickstart for how to incorporate this request builder into your code flow.
 
     :param type_name: The name of the type.
     :type type_name: str
@@ -1985,7 +1985,7 @@ def build_delete_classification_by_unique_attribute_request(
     :keyword attr_qualified_name: The qualified name of the entity.
     :paramtype attr_qualified_name: str
     :return: Returns an :class:`~azure.purview.catalog.core.rest.HttpRequest` that you will pass to the client's `send_request` method.
-     See https://aka.ms/azsdk/python/llcwiki for how to incorporate this response into your code flow.
+     See https://aka.ms/azsdk/python/protocol/quickstart for how to incorporate this response into your code flow.
     :rtype: ~azure.purview.catalog.core.rest.HttpRequest
     """
     attr_qualified_name = kwargs.pop('attr_qualified_name', None)  # type: Optional[str]
@@ -2018,7 +2018,7 @@ def build_add_classifications_by_unique_attribute_request(
     # type: (...) -> HttpRequest
     """Add classification to the entity identified by its type and unique attributes.
 
-    See https://aka.ms/azsdk/python/llcwiki for how to incorporate this request builder into your code flow.
+    See https://aka.ms/azsdk/python/protocol/quickstart for how to incorporate this request builder into your code flow.
 
     :param type_name: The name of the type.
     :type type_name: str
@@ -2029,13 +2029,13 @@ def build_add_classifications_by_unique_attribute_request(
     :keyword attr_qualified_name: The qualified name of the entity.
     :paramtype attr_qualified_name: str
     :return: Returns an :class:`~azure.purview.catalog.core.rest.HttpRequest` that you will pass to the client's `send_request` method.
-     See https://aka.ms/azsdk/python/llcwiki for how to incorporate this response into your code flow.
+     See https://aka.ms/azsdk/python/protocol/quickstart for how to incorporate this response into your code flow.
     :rtype: ~azure.purview.catalog.core.rest.HttpRequest
 
     Example:
         .. code-block:: python
 
-    
+
             # JSON input template you can fill out and use as your `json` input.
             json = [
                 {
@@ -2093,7 +2093,7 @@ def build_update_classifications_by_unique_attribute_request(
     # type: (...) -> HttpRequest
     """Update classification on an entity identified by its type and unique attributes.
 
-    See https://aka.ms/azsdk/python/llcwiki for how to incorporate this request builder into your code flow.
+    See https://aka.ms/azsdk/python/protocol/quickstart for how to incorporate this request builder into your code flow.
 
     :param type_name: The name of the type.
     :type type_name: str
@@ -2104,13 +2104,13 @@ def build_update_classifications_by_unique_attribute_request(
     :keyword attr_qualified_name: The qualified name of the entity.
     :paramtype attr_qualified_name: str
     :return: Returns an :class:`~azure.purview.catalog.core.rest.HttpRequest` that you will pass to the client's `send_request` method.
-     See https://aka.ms/azsdk/python/llcwiki for how to incorporate this response into your code flow.
+     See https://aka.ms/azsdk/python/protocol/quickstart for how to incorporate this response into your code flow.
     :rtype: ~azure.purview.catalog.core.rest.HttpRequest
 
     Example:
         .. code-block:: python
 
-    
+
             # JSON input template you can fill out and use as your `json` input.
             json = [
                 {
@@ -2167,20 +2167,20 @@ def build_set_classifications_request(
     # type: (...) -> HttpRequest
     """Set classifications on entities in bulk.
 
-    See https://aka.ms/azsdk/python/llcwiki for how to incorporate this request builder into your code flow.
+    See https://aka.ms/azsdk/python/protocol/quickstart for how to incorporate this request builder into your code flow.
 
     :keyword json: Atlas entity headers.
     :paramtype json: Any
     :keyword content: Atlas entity headers.
     :paramtype content: Any
     :return: Returns an :class:`~azure.purview.catalog.core.rest.HttpRequest` that you will pass to the client's `send_request` method.
-     See https://aka.ms/azsdk/python/llcwiki for how to incorporate this response into your code flow.
+     See https://aka.ms/azsdk/python/protocol/quickstart for how to incorporate this response into your code flow.
     :rtype: ~azure.purview.catalog.core.rest.HttpRequest
 
     Example:
         .. code-block:: python
 
-    
+
             # JSON input template you can fill out and use as your `json` input.
             json = {
                 "guidHeaderMap": {
@@ -2230,7 +2230,7 @@ def build_set_classifications_request(
                 }
             }
 
-    
+
             # response body for status code(s): 200
             response_body == [
                 "str (optional)"
@@ -2263,20 +2263,20 @@ def build_get_entities_by_unique_attributes_request(
 ):
     # type: (...) -> HttpRequest
     """Bulk API to retrieve list of entities identified by its unique attributes.
-    
+
     In addition to the typeName path parameter, attribute key-value pair(s) can be provided in the
     following format
-    
+
     typeName=\:code:`<typeName>`&attr_1:\:code:`<attrName>`=\:code:`<attrValue>`&attr_2:\:code:`<attrName>`=\:code:`<attrValue>`&attr_3:\:code:`<attrName>`=\:code:`<attrValue>`
-    
+
     NOTE: The attrName should be an unique attribute for the given entity-type
-    
+
     The REST request would look something like this
-    
+
     GET
     /v2/entity/bulk/uniqueAttribute/type/hive_db?attr_0:qualifiedName=db1@cl1&attr_2:qualifiedName=db2@cl1.
 
-    See https://aka.ms/azsdk/python/llcwiki for how to incorporate this request builder into your code flow.
+    See https://aka.ms/azsdk/python/protocol/quickstart for how to incorporate this request builder into your code flow.
 
     :param type_name: The name of the type.
     :type type_name: str
@@ -2288,13 +2288,13 @@ def build_get_entities_by_unique_attributes_request(
      set attrs_0:qualifiedName=db1@cl1&attrs_2:qualifiedName=db2@cl1.
     :paramtype attr_n_qualified_name: str
     :return: Returns an :class:`~azure.purview.catalog.core.rest.HttpRequest` that you will pass to the client's `send_request` method.
-     See https://aka.ms/azsdk/python/llcwiki for how to incorporate this response into your code flow.
+     See https://aka.ms/azsdk/python/protocol/quickstart for how to incorporate this response into your code flow.
     :rtype: ~azure.purview.catalog.core.rest.HttpRequest
 
     Example:
         .. code-block:: python
 
-    
+
             # response body for status code(s): 200
             response_body == {
                 "entities": [
@@ -2402,18 +2402,18 @@ def build_get_header_request(
     # type: (...) -> HttpRequest
     """Get entity header given its GUID.
 
-    See https://aka.ms/azsdk/python/llcwiki for how to incorporate this request builder into your code flow.
+    See https://aka.ms/azsdk/python/protocol/quickstart for how to incorporate this request builder into your code flow.
 
     :param guid: The globally unique identifier of the entity.
     :type guid: str
     :return: Returns an :class:`~azure.purview.catalog.core.rest.HttpRequest` that you will pass to the client's `send_request` method.
-     See https://aka.ms/azsdk/python/llcwiki for how to incorporate this response into your code flow.
+     See https://aka.ms/azsdk/python/protocol/quickstart for how to incorporate this response into your code flow.
     :rtype: ~azure.purview.catalog.core.rest.HttpRequest
 
     Example:
         .. code-block:: python
 
-    
+
             # response body for status code(s): 200
             response_body == {
                 "classificationNames": [

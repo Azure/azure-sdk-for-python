@@ -57,7 +57,7 @@ class AzurePurviewCatalogClient(object):
         >>> response = await client.send_request(request)
         <AsyncHttpResponse: 200 OK>
 
-        For more information on this code flow, see https://aka.ms/azsdk/python/llcwiki
+        For more information on this code flow, see https://aka.ms/azsdk/python/protocol/quickstart
 
         For advanced cases, you can also create your own :class:`~azure.purview.catalog.core.rest.HttpRequest`
         and pass it in.

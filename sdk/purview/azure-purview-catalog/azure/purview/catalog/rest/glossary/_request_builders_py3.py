@@ -27,7 +27,7 @@ def build_list_glossaries_request(
 ) -> HttpRequest:
     """Get all glossaries registered with Atlas.
 
-    See https://aka.ms/azsdk/python/llcwiki for how to incorporate this request builder into your code flow.
+    See https://aka.ms/azsdk/python/protocol/quickstart for how to incorporate this request builder into your code flow.
 
     :keyword limit: The page size - by default there is no paging.
     :paramtype limit: int
@@ -36,13 +36,13 @@ def build_list_glossaries_request(
     :keyword sort: The sort order, ASC (default) or DESC.
     :paramtype sort: str
     :return: Returns an :class:`~azure.purview.catalog.core.rest.HttpRequest` that you will pass to the client's `send_request` method.
-     See https://aka.ms/azsdk/python/llcwiki for how to incorporate this response into your code flow.
+     See https://aka.ms/azsdk/python/protocol/quickstart for how to incorporate this response into your code flow.
     :rtype: ~azure.purview.catalog.core.rest.HttpRequest
 
     Example:
         .. code-block:: python
 
-    
+
             # response body for status code(s): 200
             response_body == [
                 {
@@ -108,7 +108,7 @@ def build_create_glossary_request(
 ) -> HttpRequest:
     """Create a glossary.
 
-    See https://aka.ms/azsdk/python/llcwiki for how to incorporate this request builder into your code flow.
+    See https://aka.ms/azsdk/python/protocol/quickstart for how to incorporate this request builder into your code flow.
 
     :keyword json: Glossary definition, terms & categories can be anchored to a glossary.
      Using the anchor attribute when creating the Term/Category.
@@ -117,13 +117,13 @@ def build_create_glossary_request(
      Using the anchor attribute when creating the Term/Category.
     :paramtype content: Any
     :return: Returns an :class:`~azure.purview.catalog.core.rest.HttpRequest` that you will pass to the client's `send_request` method.
-     See https://aka.ms/azsdk/python/llcwiki for how to incorporate this response into your code flow.
+     See https://aka.ms/azsdk/python/protocol/quickstart for how to incorporate this response into your code flow.
     :rtype: ~azure.purview.catalog.core.rest.HttpRequest
 
     Example:
         .. code-block:: python
 
-    
+
             # JSON input template you can fill out and use as your `json` input.
             json = {
                 "categories": [
@@ -151,7 +151,7 @@ def build_create_glossary_request(
                 "usage": "str (optional)"
             }
 
-    
+
             # response body for status code(s): 200
             response_body == {
                 "categories": [
@@ -210,20 +210,20 @@ def build_create_glossary_categories_request(
 ) -> HttpRequest:
     """Create glossary category in bulk.
 
-    See https://aka.ms/azsdk/python/llcwiki for how to incorporate this request builder into your code flow.
+    See https://aka.ms/azsdk/python/protocol/quickstart for how to incorporate this request builder into your code flow.
 
     :keyword json: An array of glossary category definitions to be created.
     :paramtype json: Any
     :keyword content: An array of glossary category definitions to be created.
     :paramtype content: Any
     :return: Returns an :class:`~azure.purview.catalog.core.rest.HttpRequest` that you will pass to the client's `send_request` method.
-     See https://aka.ms/azsdk/python/llcwiki for how to incorporate this response into your code flow.
+     See https://aka.ms/azsdk/python/protocol/quickstart for how to incorporate this response into your code flow.
     :rtype: ~azure.purview.catalog.core.rest.HttpRequest
 
     Example:
         .. code-block:: python
 
-    
+
             # JSON input template you can fill out and use as your `json` input.
             json = [
                 {
@@ -263,7 +263,7 @@ def build_create_glossary_categories_request(
                 }
             ]
 
-    
+
             # response body for status code(s): 200
             response_body == [
                 {
@@ -334,7 +334,7 @@ def build_create_glossary_category_request(
 ) -> HttpRequest:
     """Create a glossary category.
 
-    See https://aka.ms/azsdk/python/llcwiki for how to incorporate this request builder into your code flow.
+    See https://aka.ms/azsdk/python/protocol/quickstart for how to incorporate this request builder into your code flow.
 
     :keyword json: The glossary category definition. A category must be anchored to a Glossary when
      creating.
@@ -347,13 +347,13 @@ def build_create_glossary_category_request(
      creation.
     :paramtype content: Any
     :return: Returns an :class:`~azure.purview.catalog.core.rest.HttpRequest` that you will pass to the client's `send_request` method.
-     See https://aka.ms/azsdk/python/llcwiki for how to incorporate this response into your code flow.
+     See https://aka.ms/azsdk/python/protocol/quickstart for how to incorporate this response into your code flow.
     :rtype: ~azure.purview.catalog.core.rest.HttpRequest
 
     Example:
         .. code-block:: python
 
-    
+
             # JSON input template you can fill out and use as your `json` input.
             json = {
                 "anchor": {
@@ -391,7 +391,7 @@ def build_create_glossary_category_request(
                 ]
             }
 
-    
+
             # response body for status code(s): 200
             response_body == {
                 "anchor": {
@@ -458,18 +458,18 @@ def build_get_glossary_category_request(
 ) -> HttpRequest:
     """Get specific glossary category by its GUID.
 
-    See https://aka.ms/azsdk/python/llcwiki for how to incorporate this request builder into your code flow.
+    See https://aka.ms/azsdk/python/protocol/quickstart for how to incorporate this request builder into your code flow.
 
     :param category_guid: The globally unique identifier of the category.
     :type category_guid: str
     :return: Returns an :class:`~azure.purview.catalog.core.rest.HttpRequest` that you will pass to the client's `send_request` method.
-     See https://aka.ms/azsdk/python/llcwiki for how to incorporate this response into your code flow.
+     See https://aka.ms/azsdk/python/protocol/quickstart for how to incorporate this response into your code flow.
     :rtype: ~azure.purview.catalog.core.rest.HttpRequest
 
     Example:
         .. code-block:: python
 
-    
+
             # response body for status code(s): 200
             response_body == {
                 "anchor": {
@@ -538,7 +538,7 @@ def build_update_glossary_category_request(
 ) -> HttpRequest:
     """Update the given glossary category by its GUID.
 
-    See https://aka.ms/azsdk/python/llcwiki for how to incorporate this request builder into your code flow.
+    See https://aka.ms/azsdk/python/protocol/quickstart for how to incorporate this request builder into your code flow.
 
     :param category_guid: The globally unique identifier of the category.
     :type category_guid: str
@@ -547,13 +547,13 @@ def build_update_glossary_category_request(
     :keyword content: The glossary category to be updated.
     :paramtype content: Any
     :return: Returns an :class:`~azure.purview.catalog.core.rest.HttpRequest` that you will pass to the client's `send_request` method.
-     See https://aka.ms/azsdk/python/llcwiki for how to incorporate this response into your code flow.
+     See https://aka.ms/azsdk/python/protocol/quickstart for how to incorporate this response into your code flow.
     :rtype: ~azure.purview.catalog.core.rest.HttpRequest
 
     Example:
         .. code-block:: python
 
-    
+
             # JSON input template you can fill out and use as your `json` input.
             json = {
                 "anchor": {
@@ -591,7 +591,7 @@ def build_update_glossary_category_request(
                 ]
             }
 
-    
+
             # response body for status code(s): 200
             response_body == {
                 "anchor": {
@@ -662,12 +662,12 @@ def build_delete_glossary_category_request(
 ) -> HttpRequest:
     """Delete a glossary category.
 
-    See https://aka.ms/azsdk/python/llcwiki for how to incorporate this request builder into your code flow.
+    See https://aka.ms/azsdk/python/protocol/quickstart for how to incorporate this request builder into your code flow.
 
     :param category_guid: The globally unique identifier of the category.
     :type category_guid: str
     :return: Returns an :class:`~azure.purview.catalog.core.rest.HttpRequest` that you will pass to the client's `send_request` method.
-     See https://aka.ms/azsdk/python/llcwiki for how to incorporate this response into your code flow.
+     See https://aka.ms/azsdk/python/protocol/quickstart for how to incorporate this response into your code flow.
     :rtype: ~azure.purview.catalog.core.rest.HttpRequest
     """
 
@@ -694,7 +694,7 @@ def build_partial_update_glossary_category_request(
 ) -> HttpRequest:
     """Update the glossary category partially.
 
-    See https://aka.ms/azsdk/python/llcwiki for how to incorporate this request builder into your code flow.
+    See https://aka.ms/azsdk/python/protocol/quickstart for how to incorporate this request builder into your code flow.
 
     :param category_guid: The globally unique identifier of the category.
     :type category_guid: str
@@ -705,19 +705,19 @@ def build_partial_update_glossary_category_request(
      attribute values for partial update.
     :paramtype content: Any
     :return: Returns an :class:`~azure.purview.catalog.core.rest.HttpRequest` that you will pass to the client's `send_request` method.
-     See https://aka.ms/azsdk/python/llcwiki for how to incorporate this response into your code flow.
+     See https://aka.ms/azsdk/python/protocol/quickstart for how to incorporate this response into your code flow.
     :rtype: ~azure.purview.catalog.core.rest.HttpRequest
 
     Example:
         .. code-block:: python
 
-    
+
             # JSON input template you can fill out and use as your `json` input.
             json = {
                 "str": "str (optional)"
             }
 
-    
+
             # response body for status code(s): 200
             response_body == {
                 "anchor": {
@@ -793,7 +793,7 @@ def build_list_related_categories_request(
     """Get all related categories (parent and children). Limit, offset, and sort parameters are
     currently not being enabled and won't work even they are passed.
 
-    See https://aka.ms/azsdk/python/llcwiki for how to incorporate this request builder into your code flow.
+    See https://aka.ms/azsdk/python/protocol/quickstart for how to incorporate this request builder into your code flow.
 
     :param category_guid: The globally unique identifier of the category.
     :type category_guid: str
@@ -804,13 +804,13 @@ def build_list_related_categories_request(
     :keyword sort: The sort order, ASC (default) or DESC.
     :paramtype sort: str
     :return: Returns an :class:`~azure.purview.catalog.core.rest.HttpRequest` that you will pass to the client's `send_request` method.
-     See https://aka.ms/azsdk/python/llcwiki for how to incorporate this response into your code flow.
+     See https://aka.ms/azsdk/python/protocol/quickstart for how to incorporate this response into your code flow.
     :rtype: ~azure.purview.catalog.core.rest.HttpRequest
 
     Example:
         .. code-block:: python
 
-    
+
             # response body for status code(s): 200
             response_body == {
                 "str": [
@@ -866,7 +866,7 @@ def build_list_category_terms_request(
 ) -> HttpRequest:
     """Get all terms associated with the specific category.
 
-    See https://aka.ms/azsdk/python/llcwiki for how to incorporate this request builder into your code flow.
+    See https://aka.ms/azsdk/python/protocol/quickstart for how to incorporate this request builder into your code flow.
 
     :param category_guid: The globally unique identifier of the category.
     :type category_guid: str
@@ -877,13 +877,13 @@ def build_list_category_terms_request(
     :keyword sort: The sort order, ASC (default) or DESC.
     :paramtype sort: str
     :return: Returns an :class:`~azure.purview.catalog.core.rest.HttpRequest` that you will pass to the client's `send_request` method.
-     See https://aka.ms/azsdk/python/llcwiki for how to incorporate this response into your code flow.
+     See https://aka.ms/azsdk/python/protocol/quickstart for how to incorporate this response into your code flow.
     :rtype: ~azure.purview.catalog.core.rest.HttpRequest
 
     Example:
         .. code-block:: python
 
-    
+
             # response body for status code(s): 200
             response_body == [
                 {
@@ -939,7 +939,7 @@ def build_create_glossary_term_request(
 ) -> HttpRequest:
     """Create a glossary term.
 
-    See https://aka.ms/azsdk/python/llcwiki for how to incorporate this request builder into your code flow.
+    See https://aka.ms/azsdk/python/protocol/quickstart for how to incorporate this request builder into your code flow.
 
     :keyword json: The glossary term definition. A term must be anchored to a Glossary at the time
      of creation.
@@ -952,13 +952,13 @@ def build_create_glossary_term_request(
     :keyword include_term_hierarchy: Whether include term hierarchy.
     :paramtype include_term_hierarchy: bool
     :return: Returns an :class:`~azure.purview.catalog.core.rest.HttpRequest` that you will pass to the client's `send_request` method.
-     See https://aka.ms/azsdk/python/llcwiki for how to incorporate this response into your code flow.
+     See https://aka.ms/azsdk/python/protocol/quickstart for how to incorporate this response into your code flow.
     :rtype: ~azure.purview.catalog.core.rest.HttpRequest
 
     Example:
         .. code-block:: python
 
-    
+
             # JSON input template you can fill out and use as your `json` input.
             json = {
                 "abbreviation": "str (optional)",
@@ -1181,7 +1181,7 @@ def build_create_glossary_term_request(
                 ]
             }
 
-    
+
             # response body for status code(s): 200
             response_body == {
                 "abbreviation": "str (optional)",
@@ -1441,20 +1441,20 @@ def build_get_glossary_term_request(
 ) -> HttpRequest:
     """Get a specific glossary term by its GUID.
 
-    See https://aka.ms/azsdk/python/llcwiki for how to incorporate this request builder into your code flow.
+    See https://aka.ms/azsdk/python/protocol/quickstart for how to incorporate this request builder into your code flow.
 
     :param term_guid: The globally unique identifier for glossary term.
     :type term_guid: str
     :keyword include_term_hierarchy: Whether include term hierarchy.
     :paramtype include_term_hierarchy: bool
     :return: Returns an :class:`~azure.purview.catalog.core.rest.HttpRequest` that you will pass to the client's `send_request` method.
-     See https://aka.ms/azsdk/python/llcwiki for how to incorporate this response into your code flow.
+     See https://aka.ms/azsdk/python/protocol/quickstart for how to incorporate this response into your code flow.
     :rtype: ~azure.purview.catalog.core.rest.HttpRequest
 
     Example:
         .. code-block:: python
 
-    
+
             # response body for status code(s): 200
             response_body == {
                 "abbreviation": "str (optional)",
@@ -1714,7 +1714,7 @@ def build_update_glossary_term_request(
 ) -> HttpRequest:
     """Update the given glossary term by its GUID.
 
-    See https://aka.ms/azsdk/python/llcwiki for how to incorporate this request builder into your code flow.
+    See https://aka.ms/azsdk/python/protocol/quickstart for how to incorporate this request builder into your code flow.
 
     :param term_guid: The globally unique identifier for glossary term.
     :type term_guid: str
@@ -1723,13 +1723,13 @@ def build_update_glossary_term_request(
     :keyword content: The glossary term to be updated.
     :paramtype content: Any
     :return: Returns an :class:`~azure.purview.catalog.core.rest.HttpRequest` that you will pass to the client's `send_request` method.
-     See https://aka.ms/azsdk/python/llcwiki for how to incorporate this response into your code flow.
+     See https://aka.ms/azsdk/python/protocol/quickstart for how to incorporate this response into your code flow.
     :rtype: ~azure.purview.catalog.core.rest.HttpRequest
 
     Example:
         .. code-block:: python
 
-    
+
             # JSON input template you can fill out and use as your `json` input.
             json = {
                 "abbreviation": "str (optional)",
@@ -1952,7 +1952,7 @@ def build_update_glossary_term_request(
                 ]
             }
 
-    
+
             # response body for status code(s): 200
             response_body == {
                 "abbreviation": "str (optional)",
@@ -2208,12 +2208,12 @@ def build_delete_glossary_term_request(
 ) -> HttpRequest:
     """Delete a glossary term.
 
-    See https://aka.ms/azsdk/python/llcwiki for how to incorporate this request builder into your code flow.
+    See https://aka.ms/azsdk/python/protocol/quickstart for how to incorporate this request builder into your code flow.
 
     :param term_guid: The globally unique identifier for glossary term.
     :type term_guid: str
     :return: Returns an :class:`~azure.purview.catalog.core.rest.HttpRequest` that you will pass to the client's `send_request` method.
-     See https://aka.ms/azsdk/python/llcwiki for how to incorporate this response into your code flow.
+     See https://aka.ms/azsdk/python/protocol/quickstart for how to incorporate this response into your code flow.
     :rtype: ~azure.purview.catalog.core.rest.HttpRequest
     """
 
@@ -2241,7 +2241,7 @@ def build_partial_update_glossary_term_request(
 ) -> HttpRequest:
     """Update the glossary term partially.
 
-    See https://aka.ms/azsdk/python/llcwiki for how to incorporate this request builder into your code flow.
+    See https://aka.ms/azsdk/python/protocol/quickstart for how to incorporate this request builder into your code flow.
 
     :param term_guid: The globally unique identifier for glossary term.
     :type term_guid: str
@@ -2254,19 +2254,19 @@ def build_partial_update_glossary_term_request(
     :keyword include_term_hierarchy: Whether include term hierarchy.
     :paramtype include_term_hierarchy: bool
     :return: Returns an :class:`~azure.purview.catalog.core.rest.HttpRequest` that you will pass to the client's `send_request` method.
-     See https://aka.ms/azsdk/python/llcwiki for how to incorporate this response into your code flow.
+     See https://aka.ms/azsdk/python/protocol/quickstart for how to incorporate this response into your code flow.
     :rtype: ~azure.purview.catalog.core.rest.HttpRequest
 
     Example:
         .. code-block:: python
 
-    
+
             # JSON input template you can fill out and use as your `json` input.
             json = {
                 "str": "str (optional)"
             }
 
-    
+
             # response body for status code(s): 200
             response_body == {
                 "abbreviation": "str (optional)",
@@ -2531,7 +2531,7 @@ def build_create_glossary_terms_request(
 ) -> HttpRequest:
     """Create glossary terms in bulk.
 
-    See https://aka.ms/azsdk/python/llcwiki for how to incorporate this request builder into your code flow.
+    See https://aka.ms/azsdk/python/protocol/quickstart for how to incorporate this request builder into your code flow.
 
     :keyword json: An array of glossary term definitions to be created in bulk.
     :paramtype json: Any
@@ -2540,13 +2540,13 @@ def build_create_glossary_terms_request(
     :keyword include_term_hierarchy: Whether include term hierarchy.
     :paramtype include_term_hierarchy: bool
     :return: Returns an :class:`~azure.purview.catalog.core.rest.HttpRequest` that you will pass to the client's `send_request` method.
-     See https://aka.ms/azsdk/python/llcwiki for how to incorporate this response into your code flow.
+     See https://aka.ms/azsdk/python/protocol/quickstart for how to incorporate this response into your code flow.
     :rtype: ~azure.purview.catalog.core.rest.HttpRequest
 
     Example:
         .. code-block:: python
 
-    
+
             # JSON input template you can fill out and use as your `json` input.
             json = [
                 {
@@ -2771,7 +2771,7 @@ def build_create_glossary_terms_request(
                 }
             ]
 
-    
+
             # response body for status code(s): 200
             response_body == [
                 {
@@ -3035,7 +3035,7 @@ def build_get_entities_assigned_with_term_request(
 ) -> HttpRequest:
     """Get all related objects assigned with the specified term.
 
-    See https://aka.ms/azsdk/python/llcwiki for how to incorporate this request builder into your code flow.
+    See https://aka.ms/azsdk/python/protocol/quickstart for how to incorporate this request builder into your code flow.
 
     :param term_guid: The globally unique identifier for glossary term.
     :type term_guid: str
@@ -3046,13 +3046,13 @@ def build_get_entities_assigned_with_term_request(
     :keyword sort: The sort order, ASC (default) or DESC.
     :paramtype sort: str
     :return: Returns an :class:`~azure.purview.catalog.core.rest.HttpRequest` that you will pass to the client's `send_request` method.
-     See https://aka.ms/azsdk/python/llcwiki for how to incorporate this response into your code flow.
+     See https://aka.ms/azsdk/python/protocol/quickstart for how to incorporate this response into your code flow.
     :rtype: ~azure.purview.catalog.core.rest.HttpRequest
 
     Example:
         .. code-block:: python
 
-    
+
             # response body for status code(s): 200
             response_body == [
                 {
@@ -3112,7 +3112,7 @@ def build_assign_term_to_entities_request(
 ) -> HttpRequest:
     """Assign the given term to the provided list of related objects.
 
-    See https://aka.ms/azsdk/python/llcwiki for how to incorporate this request builder into your code flow.
+    See https://aka.ms/azsdk/python/protocol/quickstart for how to incorporate this request builder into your code flow.
 
     :param term_guid: The globally unique identifier for glossary term.
     :type term_guid: str
@@ -3121,13 +3121,13 @@ def build_assign_term_to_entities_request(
     :keyword content: An array of related object IDs to which the term has to be associated.
     :paramtype content: Any
     :return: Returns an :class:`~azure.purview.catalog.core.rest.HttpRequest` that you will pass to the client's `send_request` method.
-     See https://aka.ms/azsdk/python/llcwiki for how to incorporate this response into your code flow.
+     See https://aka.ms/azsdk/python/protocol/quickstart for how to incorporate this response into your code flow.
     :rtype: ~azure.purview.catalog.core.rest.HttpRequest
 
     Example:
         .. code-block:: python
 
-    
+
             # JSON input template you can fill out and use as your `json` input.
             json = [
                 {
@@ -3180,7 +3180,7 @@ def build_remove_term_assignment_from_entities_request(
 ) -> HttpRequest:
     """Delete the term assignment for the given list of related objects.
 
-    See https://aka.ms/azsdk/python/llcwiki for how to incorporate this request builder into your code flow.
+    See https://aka.ms/azsdk/python/protocol/quickstart for how to incorporate this request builder into your code flow.
 
     :param term_guid: The globally unique identifier for glossary term.
     :type term_guid: str
@@ -3189,13 +3189,13 @@ def build_remove_term_assignment_from_entities_request(
     :keyword content: An array of related object IDs from which the term has to be dissociated.
     :paramtype content: Any
     :return: Returns an :class:`~azure.purview.catalog.core.rest.HttpRequest` that you will pass to the client's `send_request` method.
-     See https://aka.ms/azsdk/python/llcwiki for how to incorporate this response into your code flow.
+     See https://aka.ms/azsdk/python/protocol/quickstart for how to incorporate this response into your code flow.
     :rtype: ~azure.purview.catalog.core.rest.HttpRequest
 
     Example:
         .. code-block:: python
 
-    
+
             # JSON input template you can fill out and use as your `json` input.
             json = [
                 {
@@ -3248,7 +3248,7 @@ def build_delete_term_assignment_from_entities_request(
 ) -> HttpRequest:
     """Delete the term assignment for the given list of related objects.
 
-    See https://aka.ms/azsdk/python/llcwiki for how to incorporate this request builder into your code flow.
+    See https://aka.ms/azsdk/python/protocol/quickstart for how to incorporate this request builder into your code flow.
 
     :param term_guid: The globally unique identifier for glossary term.
     :type term_guid: str
@@ -3257,13 +3257,13 @@ def build_delete_term_assignment_from_entities_request(
     :keyword content: An array of related object IDs from which the term has to be dissociated.
     :paramtype content: Any
     :return: Returns an :class:`~azure.purview.catalog.core.rest.HttpRequest` that you will pass to the client's `send_request` method.
-     See https://aka.ms/azsdk/python/llcwiki for how to incorporate this response into your code flow.
+     See https://aka.ms/azsdk/python/protocol/quickstart for how to incorporate this response into your code flow.
     :rtype: ~azure.purview.catalog.core.rest.HttpRequest
 
     Example:
         .. code-block:: python
 
-    
+
             # JSON input template you can fill out and use as your `json` input.
             json = [
                 {
@@ -3318,7 +3318,7 @@ def build_list_related_terms_request(
     """Get all related terms for a specific term by its GUID. Limit, offset, and sort parameters are
     currently not being enabled and won't work even they are passed.
 
-    See https://aka.ms/azsdk/python/llcwiki for how to incorporate this request builder into your code flow.
+    See https://aka.ms/azsdk/python/protocol/quickstart for how to incorporate this request builder into your code flow.
 
     :param term_guid: The globally unique identifier for glossary term.
     :type term_guid: str
@@ -3329,13 +3329,13 @@ def build_list_related_terms_request(
     :keyword sort: The sort order, ASC (default) or DESC.
     :paramtype sort: str
     :return: Returns an :class:`~azure.purview.catalog.core.rest.HttpRequest` that you will pass to the client's `send_request` method.
-     See https://aka.ms/azsdk/python/llcwiki for how to incorporate this response into your code flow.
+     See https://aka.ms/azsdk/python/protocol/quickstart for how to incorporate this response into your code flow.
     :rtype: ~azure.purview.catalog.core.rest.HttpRequest
 
     Example:
         .. code-block:: python
 
-    
+
             # response body for status code(s): 200
             response_body == {
                 "str": [
@@ -3390,18 +3390,18 @@ def build_get_glossary_request(
 ) -> HttpRequest:
     """Get a specific Glossary by its GUID.
 
-    See https://aka.ms/azsdk/python/llcwiki for how to incorporate this request builder into your code flow.
+    See https://aka.ms/azsdk/python/protocol/quickstart for how to incorporate this request builder into your code flow.
 
     :param glossary_guid: The globally unique identifier for glossary.
     :type glossary_guid: str
     :return: Returns an :class:`~azure.purview.catalog.core.rest.HttpRequest` that you will pass to the client's `send_request` method.
-     See https://aka.ms/azsdk/python/llcwiki for how to incorporate this response into your code flow.
+     See https://aka.ms/azsdk/python/protocol/quickstart for how to incorporate this response into your code flow.
     :rtype: ~azure.purview.catalog.core.rest.HttpRequest
 
     Example:
         .. code-block:: python
 
-    
+
             # response body for status code(s): 200
             response_body == {
                 "categories": [
@@ -3460,7 +3460,7 @@ def build_update_glossary_request(
 ) -> HttpRequest:
     """Update the given glossary.
 
-    See https://aka.ms/azsdk/python/llcwiki for how to incorporate this request builder into your code flow.
+    See https://aka.ms/azsdk/python/protocol/quickstart for how to incorporate this request builder into your code flow.
 
     :param glossary_guid: The globally unique identifier for glossary.
     :type glossary_guid: str
@@ -3469,13 +3469,13 @@ def build_update_glossary_request(
     :keyword content: The glossary definition to be updated.
     :paramtype content: Any
     :return: Returns an :class:`~azure.purview.catalog.core.rest.HttpRequest` that you will pass to the client's `send_request` method.
-     See https://aka.ms/azsdk/python/llcwiki for how to incorporate this response into your code flow.
+     See https://aka.ms/azsdk/python/protocol/quickstart for how to incorporate this response into your code flow.
     :rtype: ~azure.purview.catalog.core.rest.HttpRequest
 
     Example:
         .. code-block:: python
 
-    
+
             # JSON input template you can fill out and use as your `json` input.
             json = {
                 "categories": [
@@ -3503,7 +3503,7 @@ def build_update_glossary_request(
                 "usage": "str (optional)"
             }
 
-    
+
             # response body for status code(s): 200
             response_body == {
                 "categories": [
@@ -3564,12 +3564,12 @@ def build_delete_glossary_request(
 ) -> HttpRequest:
     """Delete a glossary.
 
-    See https://aka.ms/azsdk/python/llcwiki for how to incorporate this request builder into your code flow.
+    See https://aka.ms/azsdk/python/protocol/quickstart for how to incorporate this request builder into your code flow.
 
     :param glossary_guid: The globally unique identifier for glossary.
     :type glossary_guid: str
     :return: Returns an :class:`~azure.purview.catalog.core.rest.HttpRequest` that you will pass to the client's `send_request` method.
-     See https://aka.ms/azsdk/python/llcwiki for how to incorporate this response into your code flow.
+     See https://aka.ms/azsdk/python/protocol/quickstart for how to incorporate this response into your code flow.
     :rtype: ~azure.purview.catalog.core.rest.HttpRequest
     """
 
@@ -3597,7 +3597,7 @@ def build_list_glossary_categories_request(
 ) -> HttpRequest:
     """Get the categories belonging to a specific glossary.
 
-    See https://aka.ms/azsdk/python/llcwiki for how to incorporate this request builder into your code flow.
+    See https://aka.ms/azsdk/python/protocol/quickstart for how to incorporate this request builder into your code flow.
 
     :param glossary_guid: The globally unique identifier for glossary.
     :type glossary_guid: str
@@ -3608,13 +3608,13 @@ def build_list_glossary_categories_request(
     :keyword sort: The sort order, ASC (default) or DESC.
     :paramtype sort: str
     :return: Returns an :class:`~azure.purview.catalog.core.rest.HttpRequest` that you will pass to the client's `send_request` method.
-     See https://aka.ms/azsdk/python/llcwiki for how to incorporate this response into your code flow.
+     See https://aka.ms/azsdk/python/protocol/quickstart for how to incorporate this response into your code flow.
     :rtype: ~azure.purview.catalog.core.rest.HttpRequest
 
     Example:
         .. code-block:: python
 
-    
+
             # response body for status code(s): 200
             response_body == [
                 {
@@ -3696,7 +3696,7 @@ def build_list_glossary_categories_headers_request(
 ) -> HttpRequest:
     """Get the category headers belonging to a specific glossary.
 
-    See https://aka.ms/azsdk/python/llcwiki for how to incorporate this request builder into your code flow.
+    See https://aka.ms/azsdk/python/protocol/quickstart for how to incorporate this request builder into your code flow.
 
     :param glossary_guid: The globally unique identifier for glossary.
     :type glossary_guid: str
@@ -3707,13 +3707,13 @@ def build_list_glossary_categories_headers_request(
     :keyword sort: The sort order, ASC (default) or DESC.
     :paramtype sort: str
     :return: Returns an :class:`~azure.purview.catalog.core.rest.HttpRequest` that you will pass to the client's `send_request` method.
-     See https://aka.ms/azsdk/python/llcwiki for how to incorporate this response into your code flow.
+     See https://aka.ms/azsdk/python/protocol/quickstart for how to incorporate this response into your code flow.
     :rtype: ~azure.purview.catalog.core.rest.HttpRequest
 
     Example:
         .. code-block:: python
 
-    
+
             # response body for status code(s): 200
             response_body == [
                 {
@@ -3765,20 +3765,20 @@ def build_get_detailed_glossary_request(
 ) -> HttpRequest:
     """Get a specific glossary with detailed information.
 
-    See https://aka.ms/azsdk/python/llcwiki for how to incorporate this request builder into your code flow.
+    See https://aka.ms/azsdk/python/protocol/quickstart for how to incorporate this request builder into your code flow.
 
     :param glossary_guid: The globally unique identifier for glossary.
     :type glossary_guid: str
     :keyword include_term_hierarchy: Whether include term hierarchy.
     :paramtype include_term_hierarchy: bool
     :return: Returns an :class:`~azure.purview.catalog.core.rest.HttpRequest` that you will pass to the client's `send_request` method.
-     See https://aka.ms/azsdk/python/llcwiki for how to incorporate this response into your code flow.
+     See https://aka.ms/azsdk/python/protocol/quickstart for how to incorporate this response into your code flow.
     :rtype: ~azure.purview.catalog.core.rest.HttpRequest
 
     Example:
         .. code-block:: python
 
-    
+
             # response body for status code(s): 200
             response_body == {
                 "categoryInfo": {
@@ -4081,7 +4081,7 @@ def build_partial_update_glossary_request(
     """Update the glossary partially. Some properties such as qualifiedName are not allowed to be
     updated.
 
-    See https://aka.ms/azsdk/python/llcwiki for how to incorporate this request builder into your code flow.
+    See https://aka.ms/azsdk/python/protocol/quickstart for how to incorporate this request builder into your code flow.
 
     :param glossary_guid: The globally unique identifier for glossary.
     :type glossary_guid: str
@@ -4094,19 +4094,19 @@ def build_partial_update_glossary_request(
     :keyword include_term_hierarchy: Whether include term hierarchy.
     :paramtype include_term_hierarchy: bool
     :return: Returns an :class:`~azure.purview.catalog.core.rest.HttpRequest` that you will pass to the client's `send_request` method.
-     See https://aka.ms/azsdk/python/llcwiki for how to incorporate this response into your code flow.
+     See https://aka.ms/azsdk/python/protocol/quickstart for how to incorporate this response into your code flow.
     :rtype: ~azure.purview.catalog.core.rest.HttpRequest
 
     Example:
         .. code-block:: python
 
-    
+
             # JSON input template you can fill out and use as your `json` input.
             json = {
                 "str": "str (optional)"
             }
 
-    
+
             # response body for status code(s): 200
             response_body == {
                 "categories": [
@@ -4178,7 +4178,7 @@ def build_list_glossary_terms_request(
 ) -> HttpRequest:
     """Get terms belonging to a specific glossary.
 
-    See https://aka.ms/azsdk/python/llcwiki for how to incorporate this request builder into your code flow.
+    See https://aka.ms/azsdk/python/protocol/quickstart for how to incorporate this request builder into your code flow.
 
     :param glossary_guid: The globally unique identifier for glossary.
     :type glossary_guid: str
@@ -4191,13 +4191,13 @@ def build_list_glossary_terms_request(
     :keyword sort: The sort order, ASC (default) or DESC.
     :paramtype sort: str
     :return: Returns an :class:`~azure.purview.catalog.core.rest.HttpRequest` that you will pass to the client's `send_request` method.
-     See https://aka.ms/azsdk/python/llcwiki for how to incorporate this response into your code flow.
+     See https://aka.ms/azsdk/python/protocol/quickstart for how to incorporate this response into your code flow.
     :rtype: ~azure.purview.catalog.core.rest.HttpRequest
 
     Example:
         .. code-block:: python
 
-    
+
             # response body for status code(s): 200
             response_body == [
                 {
@@ -4466,7 +4466,7 @@ def build_list_glossary_term_headers_request(
 ) -> HttpRequest:
     """Get term headers belonging to a specific glossary.
 
-    See https://aka.ms/azsdk/python/llcwiki for how to incorporate this request builder into your code flow.
+    See https://aka.ms/azsdk/python/protocol/quickstart for how to incorporate this request builder into your code flow.
 
     :param glossary_guid: The globally unique identifier for glossary.
     :type glossary_guid: str
@@ -4477,13 +4477,13 @@ def build_list_glossary_term_headers_request(
     :keyword sort: The sort order, ASC (default) or DESC.
     :paramtype sort: str
     :return: Returns an :class:`~azure.purview.catalog.core.rest.HttpRequest` that you will pass to the client's `send_request` method.
-     See https://aka.ms/azsdk/python/llcwiki for how to incorporate this response into your code flow.
+     See https://aka.ms/azsdk/python/protocol/quickstart for how to incorporate this response into your code flow.
     :rtype: ~azure.purview.catalog.core.rest.HttpRequest
 
     Example:
         .. code-block:: python
 
-    
+
             # response body for status code(s): 200
             response_body == [
                 {
@@ -4540,7 +4540,7 @@ def build_import_glossary_terms_via_csv_request(
 ) -> HttpRequest:
     """Import Glossary Terms from local csv file.
 
-    See https://aka.ms/azsdk/python/llcwiki for how to incorporate this request builder into your code flow.
+    See https://aka.ms/azsdk/python/protocol/quickstart for how to incorporate this request builder into your code flow.
 
     :param glossary_guid: The globally unique identifier for glossary.
     :type glossary_guid: str
@@ -4553,7 +4553,7 @@ def build_import_glossary_terms_via_csv_request(
     :keyword include_term_hierarchy: Whether include term hierarchy.
     :paramtype include_term_hierarchy: bool
     :return: Returns an :class:`~azure.purview.catalog.core.rest.HttpRequest` that you will pass to the client's `send_request` method.
-     See https://aka.ms/azsdk/python/llcwiki for how to incorporate this response into your code flow.
+     See https://aka.ms/azsdk/python/protocol/quickstart for how to incorporate this response into your code flow.
     :rtype: ~azure.purview.catalog.core.rest.HttpRequest
 
     Example:
@@ -4564,7 +4564,7 @@ def build_import_glossary_terms_via_csv_request(
                 "file": "IO. The csv file to import glossary terms from."
             }
 
-    
+
             # response body for status code(s): 202
             response_body == {
                 "createTime": "str (optional)",
@@ -4622,7 +4622,7 @@ def build_import_glossary_terms_via_csv_by_glossary_name_request(
 ) -> HttpRequest:
     """Import Glossary Terms from local csv file by glossaryName.
 
-    See https://aka.ms/azsdk/python/llcwiki for how to incorporate this request builder into your code flow.
+    See https://aka.ms/azsdk/python/protocol/quickstart for how to incorporate this request builder into your code flow.
 
     :param glossary_name: The name of the glossary.
     :type glossary_name: str
@@ -4635,7 +4635,7 @@ def build_import_glossary_terms_via_csv_by_glossary_name_request(
     :keyword include_term_hierarchy: Whether include term hierarchy.
     :paramtype include_term_hierarchy: bool
     :return: Returns an :class:`~azure.purview.catalog.core.rest.HttpRequest` that you will pass to the client's `send_request` method.
-     See https://aka.ms/azsdk/python/llcwiki for how to incorporate this response into your code flow.
+     See https://aka.ms/azsdk/python/protocol/quickstart for how to incorporate this response into your code flow.
     :rtype: ~azure.purview.catalog.core.rest.HttpRequest
 
     Example:
@@ -4646,7 +4646,7 @@ def build_import_glossary_terms_via_csv_by_glossary_name_request(
                 "file": "IO. The csv file to import glossary terms from."
             }
 
-    
+
             # response body for status code(s): 202
             response_body == {
                 "createTime": "str (optional)",
@@ -4700,18 +4700,18 @@ def build_get_import_csv_operation_status_request(
 ) -> HttpRequest:
     """Get the status of import csv operation.
 
-    See https://aka.ms/azsdk/python/llcwiki for how to incorporate this request builder into your code flow.
+    See https://aka.ms/azsdk/python/protocol/quickstart for how to incorporate this request builder into your code flow.
 
     :param operation_guid: The globally unique identifier for async operation/job.
     :type operation_guid: str
     :return: Returns an :class:`~azure.purview.catalog.core.rest.HttpRequest` that you will pass to the client's `send_request` method.
-     See https://aka.ms/azsdk/python/llcwiki for how to incorporate this response into your code flow.
+     See https://aka.ms/azsdk/python/protocol/quickstart for how to incorporate this response into your code flow.
     :rtype: ~azure.purview.catalog.core.rest.HttpRequest
 
     Example:
         .. code-block:: python
 
-    
+
             # response body for status code(s): 200
             response_body == {
                 "createTime": "str (optional)",
@@ -4762,7 +4762,7 @@ def build_export_glossary_terms_as_csv_request(
 ) -> HttpRequest:
     """Export Glossary Terms as csv file.
 
-    See https://aka.ms/azsdk/python/llcwiki for how to incorporate this request builder into your code flow.
+    See https://aka.ms/azsdk/python/protocol/quickstart for how to incorporate this request builder into your code flow.
 
     :param glossary_guid: The globally unique identifier for glossary.
     :type glossary_guid: str
@@ -4773,13 +4773,13 @@ def build_export_glossary_terms_as_csv_request(
     :keyword include_term_hierarchy: Whether include term hierarchy.
     :paramtype include_term_hierarchy: bool
     :return: Returns an :class:`~azure.purview.catalog.core.rest.HttpRequest` that you will pass to the client's `send_request` method.
-     See https://aka.ms/azsdk/python/llcwiki for how to incorporate this response into your code flow.
+     See https://aka.ms/azsdk/python/protocol/quickstart for how to incorporate this response into your code flow.
     :rtype: ~azure.purview.catalog.core.rest.HttpRequest
 
     Example:
         .. code-block:: python
 
-    
+
             # JSON input template you can fill out and use as your `json` input.
             json = [
                 "str (optional)"
@@ -4830,7 +4830,7 @@ def build_list_terms_by_glossary_name_request(
 ) -> HttpRequest:
     """Get terms by glossary name.
 
-    See https://aka.ms/azsdk/python/llcwiki for how to incorporate this request builder into your code flow.
+    See https://aka.ms/azsdk/python/protocol/quickstart for how to incorporate this request builder into your code flow.
 
     :param glossary_name: The name of the glossary.
     :type glossary_name: str
@@ -4841,13 +4841,13 @@ def build_list_terms_by_glossary_name_request(
     :keyword include_term_hierarchy: Whether include term hierarchy.
     :paramtype include_term_hierarchy: bool
     :return: Returns an :class:`~azure.purview.catalog.core.rest.HttpRequest` that you will pass to the client's `send_request` method.
-     See https://aka.ms/azsdk/python/llcwiki for how to incorporate this response into your code flow.
+     See https://aka.ms/azsdk/python/protocol/quickstart for how to incorporate this response into your code flow.
     :rtype: ~azure.purview.catalog.core.rest.HttpRequest
 
     Example:
         .. code-block:: python
 
-    
+
             # response body for status code(s): 200
             response_body == [
                 {

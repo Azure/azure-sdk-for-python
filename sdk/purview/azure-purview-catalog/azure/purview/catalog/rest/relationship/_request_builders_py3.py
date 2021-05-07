@@ -26,7 +26,7 @@ def build_create_request(
 ) -> HttpRequest:
     """Create a new relationship between entities.
 
-    See https://aka.ms/azsdk/python/llcwiki for how to incorporate this request builder into your code flow.
+    See https://aka.ms/azsdk/python/protocol/quickstart for how to incorporate this request builder into your code flow.
 
     :keyword json: The AtlasRelationship object containing the information for the relationship to
      be created.
@@ -35,13 +35,13 @@ def build_create_request(
      to be created.
     :paramtype content: Any
     :return: Returns an :class:`~azure.purview.catalog.core.rest.HttpRequest` that you will pass to the client's `send_request` method.
-     See https://aka.ms/azsdk/python/llcwiki for how to incorporate this response into your code flow.
+     See https://aka.ms/azsdk/python/protocol/quickstart for how to incorporate this response into your code flow.
     :rtype: ~azure.purview.catalog.core.rest.HttpRequest
 
     Example:
         .. code-block:: python
 
-    
+
             # JSON input template you can fill out and use as your `json` input.
             json = {
                 "createTime": "float (optional)",
@@ -70,7 +70,7 @@ def build_create_request(
                 "version": "float (optional)"
             }
 
-    
+
             # response body for status code(s): 200
             response_body == {
                 "createTime": "float (optional)",
@@ -130,7 +130,7 @@ def build_update_request(
 ) -> HttpRequest:
     """Update an existing relationship between entities.
 
-    See https://aka.ms/azsdk/python/llcwiki for how to incorporate this request builder into your code flow.
+    See https://aka.ms/azsdk/python/protocol/quickstart for how to incorporate this request builder into your code flow.
 
     :keyword json: The AtlasRelationship object containing the information for the relationship to
      be created.
@@ -139,13 +139,13 @@ def build_update_request(
      to be created.
     :paramtype content: Any
     :return: Returns an :class:`~azure.purview.catalog.core.rest.HttpRequest` that you will pass to the client's `send_request` method.
-     See https://aka.ms/azsdk/python/llcwiki for how to incorporate this response into your code flow.
+     See https://aka.ms/azsdk/python/protocol/quickstart for how to incorporate this response into your code flow.
     :rtype: ~azure.purview.catalog.core.rest.HttpRequest
 
     Example:
         .. code-block:: python
 
-    
+
             # JSON input template you can fill out and use as your `json` input.
             json = {
                 "createTime": "float (optional)",
@@ -174,7 +174,7 @@ def build_update_request(
                 "version": "float (optional)"
             }
 
-    
+
             # response body for status code(s): 200
             response_body == {
                 "createTime": "float (optional)",
@@ -234,20 +234,20 @@ def build_get_request(
 ) -> HttpRequest:
     """Get relationship information between entities by its GUID.
 
-    See https://aka.ms/azsdk/python/llcwiki for how to incorporate this request builder into your code flow.
+    See https://aka.ms/azsdk/python/protocol/quickstart for how to incorporate this request builder into your code flow.
 
     :param guid: The globally unique identifier of the relationship.
     :type guid: str
     :keyword extended_info: Limits whether includes extended information.
     :paramtype extended_info: bool
     :return: Returns an :class:`~azure.purview.catalog.core.rest.HttpRequest` that you will pass to the client's `send_request` method.
-     See https://aka.ms/azsdk/python/llcwiki for how to incorporate this response into your code flow.
+     See https://aka.ms/azsdk/python/protocol/quickstart for how to incorporate this response into your code flow.
     :rtype: ~azure.purview.catalog.core.rest.HttpRequest
 
     Example:
         .. code-block:: python
 
-    
+
             # response body for status code(s): 200
             response_body == {
                 "referredEntities": {
@@ -357,12 +357,12 @@ def build_delete_request(
 ) -> HttpRequest:
     """Delete a relationship between entities by its GUID.
 
-    See https://aka.ms/azsdk/python/llcwiki for how to incorporate this request builder into your code flow.
+    See https://aka.ms/azsdk/python/protocol/quickstart for how to incorporate this request builder into your code flow.
 
     :param guid: The globally unique identifier of the relationship.
     :type guid: str
     :return: Returns an :class:`~azure.purview.catalog.core.rest.HttpRequest` that you will pass to the client's `send_request` method.
-     See https://aka.ms/azsdk/python/llcwiki for how to incorporate this response into your code flow.
+     See https://aka.ms/azsdk/python/protocol/quickstart for how to incorporate this response into your code flow.
     :rtype: ~azure.purview.catalog.core.rest.HttpRequest
     """
 

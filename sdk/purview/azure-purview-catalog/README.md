@@ -6,7 +6,7 @@ Azure Purview Catalog is a fully managed cloud service whose users can discover 
 - Browse associated technical, business, semantic, and operational metadata
 - Identify the sensitivity level of data.
 
-**Please rely heavily on the [service's documentation][catalog_product_documentation] and our [Low-Level client docs][low_level_client] to use this library**
+**Please rely heavily on the [service's documentation][catalog_product_documentation] and our [client docs][request_builders_and_client] to use this library**
 
 [Source code][source_code] | [Package (PyPI)][catalog_pypi] | [API reference documentation][catalog_ref_docs]| [Product documentation][catalog_product_documentation]
 
@@ -57,9 +57,10 @@ client = AzurePurviewCatalogClient(endpoint="https://<my-account-name>.catalog.p
 
 ## Key concepts
 
-### Low Level Client
+### Client
 
-This client is one of our Low-Level clients. We highly recommend you read how to use a Low-Level client [here][low_level_client].
+This package offers request builders so you can build http requests and send these requests to the service using the `send_request` method.
+For more information on how to use request builders and our clients, see [here][request_builders_and_client].
 
 ## Examples
 
@@ -137,7 +138,7 @@ result = client.send_request(request, logging_enable=True)
 
 ## Next steps
 
-For more generic samples, see our [low level client docs][low_level_client].
+For more generic samples, see our [client docs][request_builders_and_client].
 
 ## Contributing
 
@@ -160,7 +161,7 @@ This project has adopted the [Microsoft Open Source Code of Conduct][code_of_con
 [azure_identity_credentials]: https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/identity/azure-identity#credentials
 [azure_identity_pip]: https://pypi.org/project/azure-identity/
 [default_azure_credential]: https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/identity/azure-identity#defaultazurecredential
-[low_level_client]: https://github.com/iscai-msft/azure-sdk-for-python/wiki/Low-Level-Client
+[request_builders_and_client]: https://aka.ms/azsdk/python/protocol/quickstart
 [enable_aad]: https://docs.microsoft.com/azure/purview/create-catalog-portal#add-a-security-principal-to-a-data-plane-role
 [python_logging]: https://docs.python.org/3.5/library/logging.html
 [cla]: https://cla.microsoft.com
