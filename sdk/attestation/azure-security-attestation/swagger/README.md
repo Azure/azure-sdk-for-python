@@ -37,8 +37,8 @@ credential-scopes: 'https://attest.azure.net/.default'
 
 #directive:
 #  from: swagger-document
-#  where: "$.definitions.StoredAttestationPolicy"
+#  where: "$.definitions.PolicyCertificatesModificationResult"
 #  transform: >
-#    $["x-ms-client-name"] = "GeneratedStoredAttestationPolicy"
+#    $["x-ms-client-name"] = "GeneratedPolicyCertificatesModificationResult"
 
 ```

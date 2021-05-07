@@ -40,9 +40,6 @@ from azure.security.attestation import (
 
 class PolicyGetSetTests(AzureTestCase):
 
-    def setUp(self):
-        super(PolicyGetSetTests, self).setUp()
-
     @AttestationPreparer()
     def test_shared_get_policy_sgx(self, attestation_location_short_name):
         attest_client = self.shared_admin_client(attestation_location_short_name)

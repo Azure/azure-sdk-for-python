@@ -147,10 +147,6 @@ _runtime_data = ("CiAgICAgICAgewogI" +
 
 class AttestationTest(AzureTestCase):
 
-    def setUp(self):
-        super(AttestationTest, self).setUp()
-
-
     # The caching infrastructure won't cache .well-known/openid_metadata responses so
     # mark the metadata related tests as live-only.
     @AttestationPreparer()
@@ -158,7 +154,6 @@ class AttestationTest(AzureTestCase):
     def test_shared_getopenidmetadata(self, attestation_location_short_name):
         attest_client = self.shared_client(attestation_location_short_name)
         open_id_metadata = attest_client.get_openidmetadata()
-        print ('{}'.format(open_id_metadata))
         assert open_id_metadata["response_types_supported"] is not None
         if self.is_live:
             assert open_id_metadata["jwks_uri"] == self.shared_base_uri(attestation_location_short_name)+"/certs"
@@ -169,22 +164,18 @@ class AttestationTest(AzureTestCase):
     def test_aad_getopenidmetadata(self, attestation_aad_url):
         attest_client = self.create_client(attestation_aad_url)
         open_id_metadata = attest_client.get_openidmetadata()
-        print ('{}'.format(open_id_metadata))
         assert open_id_metadata["response_types_supported"] is not None
-        if self.is_live:
-            assert open_id_metadata["jwks_uri"] == attestation_aad_url+"/certs"
-            assert open_id_metadata["issuer"] == attestation_aad_url
+        assert open_id_metadata["jwks_uri"] == attestation_aad_url+"/certs"
+        assert open_id_metadata["issuer"] == attestation_aad_url
 
     @AttestationPreparer()
     @pytest.mark.live_test_only
     def test_isolated_getopenidmetadata(self, attestation_isolated_url):
         attest_client = self.create_client(attestation_isolated_url)
         open_id_metadata = attest_client.get_openidmetadata()
-        print ('{}'.format(open_id_metadata))
         assert open_id_metadata["response_types_supported"] is not None
-        if self.is_live:
-            assert open_id_metadata["jwks_uri"] == attestation_isolated_url+"/certs"
-            assert open_id_metadata["issuer"] == attestation_isolated_url
+        assert open_id_metadata["jwks_uri"] == attestation_isolated_url+"/certs"
+        assert open_id_metadata["issuer"] == attestation_isolated_url
 
     @AttestationPreparer()
     def test_shared_getsigningcertificates(self, attestation_location_short_name):
@@ -192,7 +183,6 @@ class AttestationTest(AzureTestCase):
         signers = attest_client.get_signing_certificates()
         for signer in signers:
             x5c = cryptography.x509.load_der_x509_certificate(signer.certificates[0])
-            print('Cert  iss:', x5c.issuer, '; subject:', x5c.subject)
 
     @AttestationPreparer()
     def test_aad_getsigningcertificates(self, attestation_aad_url):
@@ -201,7 +191,6 @@ class AttestationTest(AzureTestCase):
         signers = attest_client.get_signing_certificates()
         for signer in signers:
             cert = cryptography.x509.load_der_x509_certificate(signer.certificates[0])
-            print('Cert  iss:', cert.issuer, '; subject:', cert.subject)
 
     @AttestationPreparer()
     def test_isolated_getsigningcertificates(self, attestation_isolated_url):
@@ -210,7 +199,6 @@ class AttestationTest(AzureTestCase):
         signers = attest_client.get_signing_certificates()
         for signer in signers:
             cert = cryptography.x509.load_der_x509_certificate(signer.certificates[0])
-            print('Cert  iss:', cert.issuer, '; subject:', cert.subject)
 
     def _test_attest_open_enclave(self, client_uri):
         #type: (str) -> None
@@ -246,7 +234,6 @@ class AttestationTest(AzureTestCase):
     def test_isolated_attest_open_enclave(self, attestation_isolated_url):
         #type: (str) -> None
         self._test_attest_open_enclave(attestation_isolated_url)
-
 
     def _test_attest_sgx_enclave(self, base_uri):
         #type: (str) -> None

@@ -4,7 +4,7 @@
 # Licensed under the MIT License. See License.txt in the project root for license information.
 # --------------------------------------------------------------------------
 
-from typing import TYPE_CHECKING
+from typing import List, Any, Optional, TYPE_CHECKING
 
 from azure.core import PipelineClient
 from msrest import Deserializer, Serializer
@@ -18,14 +18,13 @@ if TYPE_CHECKING:
     from azure.core.pipeline.transport import HttpRequest, HttpResponse
 
 from ._generated import AzureAttestationRestClient
-from ._generated.models import AttestationType, PolicyResult, PolicyCertificatesResult, PolicyCertificatesModificationResult, JSONWebKey, AttestationCertificateManagementBody
+from ._generated.models import AttestationType, PolicyResult, PolicyCertificatesResult, JSONWebKey, AttestationCertificateManagementBody, PolicyCertificatesModificationResult as GeneratedPolicyCertificatesModificationResult
 from ._configuration import AttestationClientConfiguration
-from ._models import AttestationSigner, AttestationToken, AttestationResponse, StoredAttestationPolicy, AttestationSigningKey
+from ._models import AttestationSigner, AttestationToken, AttestationResponse, StoredAttestationPolicy, AttestationSigningKey, PolicyCertificatesModificationResult
 from ._common import Base64Url
 import cryptography
 import cryptography.x509
 import base64
-from typing import List, Any
 from azure.core.tracing.decorator import distributed_trace
 from threading import Lock, Thread
 
@@ -89,7 +88,7 @@ class AttestationAdministrationClient(object):
 
     @distributed_trace
     def set_policy(self, attestation_type, attestation_policy, signing_key=None, **kwargs): 
-        #type:(AttestationType, str, AttestationSigningKey, Any) -> AttestationResponse[PolicyResult]
+        #type:(AttestationType, str, Optional[AttestationSigningKey], Any) -> AttestationResponse[PolicyResult]
         """ Sets the attestation policy for the specified attestation type.
 
         :param azure.security.attestation.AttestationType attestation_type: :class:`azure.security.attestation.AttestationType` for 
@@ -146,6 +145,15 @@ class AttestationAdministrationClient(object):
     @distributed_trace
     def add_policy_management_certificate(self, certificate_to_add, signing_key, **kwargs):
         #type:(bytes, AttestationSigningKey, Any)-> AttestationResponse[PolicyCertificatesModificationResult]
+        """ Adds a new policy management certificate to the set of policy management certificates for the instance.
+
+        :param bytes certificate_to_add: DER encoded X.509 certificate to add to 
+            the list of attestation policy management certificates.
+        :param AttestationSigningKey signing_key: Signing Key representing one of 
+            the *existing* attestation signing certificates.
+        :return AttestationResponse[PolicyCertificatesModificationResult]: Attestation service response 
+            encapsulating a list of DER encoded X.509 certificate chains.
+        """
         key=JSONWebKey(kty='RSA', x5_c = [ base64.b64encode(certificate_to_add).decode('ascii')])
         add_body = AttestationCertificateManagementBody(policy_certificate=key)
         cert_add_token = AttestationToken[AttestationCertificateManagementBody](
@@ -154,16 +162,25 @@ class AttestationAdministrationClient(object):
             body_type=AttestationCertificateManagementBody)
 
         cert_response = self._client.policy_certificates.add(cert_add_token.serialize(), **kwargs)
-        token = AttestationToken[PolicyCertificatesModificationResult](token=cert_response.token,
-            body_type=PolicyCertificatesModificationResult)
+        token = AttestationToken[GeneratedPolicyCertificatesModificationResult](token=cert_response.token,
+            body_type=GeneratedPolicyCertificatesModificationResult)
         if self._config.token_validation_options.validate_token:
             if not token.validate_token(self._config.token_validation_options, self._get_signers(**kwargs)):
                 raise Exception("Token Validation of PolicyCertificate Add API failed.")
-        return AttestationResponse[PolicyCertificatesModificationResult](token, token.get_body())
+        return AttestationResponse[PolicyCertificatesModificationResult](token, PolicyCertificatesModificationResult._from_generated(token.get_body()))
 
     @distributed_trace
     def remove_policy_management_certificate(self, certificate_to_add, signing_key, **kwargs):
         #type:(bytes, AttestationSigningKey, Any)-> AttestationResponse[PolicyCertificatesModificationResult]
+        """ Removes a new policy management certificate to the set of policy management certificates for the instance.
+
+        :param bytes certificate_to_add: DER encoded X.509 certificate to add to 
+            the list of attestation policy management certificates.
+        :param AttestationSigningKey signing_key: Signing Key representing one of 
+            the *existing* attestation signing certificates.
+        :return AttestationResponse[PolicyCertificatesModificationResult]: Attestation service response 
+            encapsulating a list of DER encoded X.509 certificate chains.
+        """
         key=JSONWebKey(kty='RSA', x5_c = [ base64.b64encode(certificate_to_add).decode('ascii')])
         add_body = AttestationCertificateManagementBody(policy_certificate=key)
         cert_add_token = AttestationToken[AttestationCertificateManagementBody](
@@ -172,12 +189,12 @@ class AttestationAdministrationClient(object):
             body_type=AttestationCertificateManagementBody)
 
         cert_response = self._client.policy_certificates.remove(cert_add_token.serialize(), **kwargs)
-        token = AttestationToken[PolicyCertificatesModificationResult](token=cert_response.token,
-            body_type=PolicyCertificatesModificationResult)
+        token = AttestationToken[GeneratedPolicyCertificatesModificationResult](token=cert_response.token,
+            body_type=GeneratedPolicyCertificatesModificationResult)
         if self._config.token_validation_options.validate_token:
             if not token.validate_token(self._config.token_validation_options, self._get_signers(**kwargs)):
                 raise Exception("Token Validation of PolicyCertificate Remove API failed.")
-        return AttestationResponse[PolicyCertificatesModificationResult](token, token.get_body())
+        return AttestationResponse[PolicyCertificatesModificationResult](token, PolicyCertificatesModificationResult._from_generated(token.get_body()))
 
     def _get_signers(self, **kwargs):
         #type(Any) -> List[AttestationSigner]

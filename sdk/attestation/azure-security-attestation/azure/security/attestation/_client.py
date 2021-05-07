@@ -74,10 +74,10 @@ class AttestationClient(object):
 
     @distributed_trace
     def get_signing_certificates(self, **kwargs): 
-        # type: (Any) ->List[AttestationSigner]
+        # type: (Any) ->list[AttestationSigner]
         """ Returns the set of signing certificates used to sign attestation tokens.
 
-        :return List[AttestationSigner]: A list of :class:`AttestationSigner` objects.
+        :return list[AttestationSigner]: A list of :class:`AttestationSigner` objects.
 
         For additional request configuration options, please see https://aka.ms/azsdk/python/options.
 
@@ -147,7 +147,7 @@ class AttestationClient(object):
             before applying the policy document via the set_policy API.
         :return AttestationResponse[AttestationResult]: Attestation service response encapsulating an :class:`AttestationResult`.
 
-        For additional request configuration options, please see https://aka.ms/azsdk/python/options.
+        For additional request configuration options, please see `Python Request Options <https://aka.ms/azsdk/python/options>`_.
 
         """
 
@@ -174,10 +174,10 @@ class AttestationClient(object):
         #type:(TpmAttestationRequest) -> TpmAttestationResponse
         """ Attest a TPM based enclave.
 
-        See ..seealso:`https://docs.microsoft.com/en-us/azure/attestation/virtualization-based-security-protocol` for more information.
+        See the `TPM Attestation Protocol Reference <https://docs.microsoft.com/en-us/azure/attestation/virtualization-based-security-protocol>`_ for more information.
 
-        :param bytes request: Incoming request to send to the TPM attestation service.
-        :returns bytes: A structure containing the response from the TPM attestation.</returns>
+        :param TpmAttestationRequest request: Incoming request to send to the TPM attestation service.
+        :returns TpmAttestationResponse: A structure containing the response from the TPM attestation.
 
         """
         response = self._client.attestation.attest_tpm(request.data)

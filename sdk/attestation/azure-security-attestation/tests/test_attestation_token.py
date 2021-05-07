@@ -19,7 +19,7 @@ from cryptography.hazmat.primitives.asymmetric import ec, rsa
 from  cryptography.x509 import BasicConstraints, CertificateBuilder, NameOID, SubjectAlternativeName
 import base64
 import pytest
-from azure.security.attestation import AttestationToken, AttestationSigningKey, TokenValidationOptions
+from azure.security.attestation import AttestationToken, AttestationSigningKey, TokenValidationOptions, AttestationTokenValidationException
 
 
 class TestAzureAttestationToken(object):
@@ -43,7 +43,7 @@ class TestAzureAttestationToken(object):
         key2 = self._create_rsa_key()
 
         # This should throw an exception, fail if the exception isn't thrown.
-        with pytest.raises(Exception):
+        with pytest.raises(ValueError):
             signer = AttestationSigningKey(key2, cert)
             print(signer) # reference signer so pylint is happy.
 
@@ -106,8 +106,8 @@ class TestAzureAttestationToken(object):
             return False
 
         options = TokenValidationOptions(validation_callback = callback)
-        
-        assert token.validate_token(options) is False
+        with pytest.raises(AttestationTokenValidationException):
+            assert token.validate_token(options) is False
 
     # Helper functions to create keys and certificates wrapping those keys.
     @staticmethod

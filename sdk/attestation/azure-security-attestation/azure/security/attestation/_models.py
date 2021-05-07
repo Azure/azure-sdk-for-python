@@ -11,7 +11,7 @@ from cryptography.hazmat.primitives import serialization
 from cryptography.hazmat.primitives.asymmetric import padding
 from cryptography.hazmat.primitives.hashes import SHA256
 from ._common import Base64Url
-from ._generated.models import PolicyResult, PolicyCertificatesModificationResult, AttestationResult, StoredAttestationPolicy, JSONWebKey
+from ._generated.models import PolicyResult, AttestationResult, StoredAttestationPolicy, JSONWebKey, CertificateModification
 from typing import Any, Callable, List, Optional, Type, TypeVar, Generic, Union
 from cryptography.hazmat.primitives.asymmetric.ec import EllipticCurvePrivateKey
 from cryptography.hazmat.primitives.serialization import Encoding, PublicFormat
@@ -20,7 +20,7 @@ from cryptography.hazmat.primitives.asymmetric.rsa import RSAPrivateKey, RSAPubl
 from json import JSONDecoder, JSONEncoder
 from datetime import datetime
 
-T = TypeVar('T', PolicyResult, AttestationResult, StoredAttestationPolicy, PolicyCertificatesModificationResult)
+T = TypeVar('T', PolicyResult, AttestationResult, StoredAttestationPolicy)
 
 
 class AttestationSigner(object):
@@ -35,6 +35,30 @@ class AttestationSigner(object):
         # type: (list[bytes], str, Any) -> None
         self.certificates = certificates
         self.key_id = key_id
+
+class PolicyCertificatesModificationResult(object):
+    """The result of a policy certificate modification.
+
+    :param certificate_thumbprint: Hex encoded SHA1 Hash of the binary representation certificate
+     which was added or removed.
+    :type certificate_thumbprint: str
+    :param certificate_resolution: The result of the operation. Possible values include:
+     "IsPresent", "IsAbsent".
+    :type certificate_resolution: str or
+     ~azure.security.attestation._generated.models.CertificateModification
+    """
+
+    def __init__(self, certificate_thumbprint, certificate_resolution):
+        #type:(str, CertificateModification)->None
+        self.certificate_thumbprint = certificate_thumbprint
+        self.certificate_resolution = certificate_resolution
+
+    @classmethod
+    def _from_generated(cls, generated):
+        if not generated:
+            return cls
+        return cls(generated.certificate_thumbprint, generated.certificate_resolution)
+
 
 class AttestationData(object):
     """ AttestationData represents an object passed as an input to the Attestation Service.
@@ -116,7 +140,7 @@ class AttestationSigningKey(object):
 
         # We only support ECDS and RSA keys in the MAA service.
         if (not isinstance(signing_key, RSAPrivateKey) and not isinstance(signing_key, EllipticCurvePrivateKey)):
-            raise Exception("Signing keys must be either ECDS or RSA keys.")
+            raise ValueError("Signing keys must be either ECDS or RSA keys.")
 
         # Ensure that the public key in the certificate matches the public key of the key.
         cert_public_key = certificate.public_key().public_bytes(
@@ -124,7 +148,7 @@ class AttestationSigningKey(object):
         key_public_key = signing_key.public_key().public_bytes(
             Encoding.PEM, PublicFormat.SubjectPublicKeyInfo)
         if cert_public_key != key_public_key:
-            raise Exception("Signing key must match certificate public key")
+            raise ValueError("Signing key must match certificate public key")
 
 
 class AttestationToken(Generic[T]):
@@ -317,6 +341,8 @@ class AttestationToken(Generic[T]):
             it will consider attributes in the header of the token.
         :return bool: Returns True if the token successfully validated, False 
             otherwise. 
+
+        : raises AttestationTokenValidationException:
         """
         if (options is None):
             options = TokenValidationOptions(
@@ -339,7 +365,10 @@ class AttestationToken(Generic[T]):
         self._validate_static_properties(options)
 
         if (options.validation_callback is not None):
-            return options.validation_callback(self, signer)
+            if options.validation_callback(self, signer):
+                return True
+            raise AttestationTokenValidationException("User validation callback failed the validation request.")
+
         return True
 
     def get_body(self):
@@ -419,7 +448,7 @@ class AttestationToken(Generic[T]):
                         SHA256())
                 return signer
             except:
-                pass
+                raise AttestationTokenValidationException("Could not verify signature of attestatoin token.")
         return None
 
     def _validate_static_properties(self, options):
@@ -430,16 +459,15 @@ class AttestationToken(Generic[T]):
             if (datetime.now() > self.expiration_time):
                 delta = datetime.now() - self.expiration_time
                 if delta.total_seconds > options.validation_slack:
-                    raise Exception(u'Token is expired.')
+                    raise AttestationTokenValidationException(u'Token is expired.')
         if options.validate_not_before and hasattr(self, 'not_before_time') and self.not_before_time is not None:
             if (datetime.now() < self.not_before_time):
                 delta = self.expiration_time - datetime.now()
                 if delta.total_seconds > options.validation_slack:
-                    raise Exception(u'Token is not yet valid.')
+                    raise AttestationTokenValidationException(u'Token is not yet valid.')
         if options.validate_issuer and hasattr(self, 'issuer') and self.issuer is not None:
             if (options.issuer != self.issuer):
-                raise Exception(u'Issuer in token: ', self.issuer,
-                                ' is not the expected issuer: ', options.issuer, '.')
+                raise AttestationTokenValidationException(u'Issuer in token: {} is not the expected issuer: {}.'.format(self.issuer, options.issuer))
         return True
 
     @staticmethod
@@ -505,6 +533,15 @@ class AttestationToken(Generic[T]):
         return_value += Base64Url.encode(signature)
         return return_value
 
+class AttestationTokenValidationException(Exception):
+    """ Thrown when an attestation token validation fails.
+
+    :param str message: Message for caller describing the reason for the failure.
+    """
+    def __init__(self, message):
+        self.message = message
+        super(AttestationTokenValidationException, self).__init__(self.message)
+        
 
 class AttestationResponse(Generic[T]):
     """ Represents a response from the attestation service.
@@ -534,3 +571,4 @@ class TpmAttestationResponse(object):
     def __init__(self, data):
         #type (bytes) -> None
         self.data = data
+
