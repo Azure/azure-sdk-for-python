@@ -1,7 +1,8 @@
 # Release History
 
-## 1.0.0b2 (Unreleased)
+## 1.0.0b2 (2021-05-11)
 
+- Added paging and filtering options to `list_all_document_statuses` and `list_submitted_jobs`. 
 
 ## 1.0.0b1 (2021-04-06)
 
