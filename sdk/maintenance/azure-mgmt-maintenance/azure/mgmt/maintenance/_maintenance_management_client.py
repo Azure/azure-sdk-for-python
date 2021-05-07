@@ -18,21 +18,20 @@ if TYPE_CHECKING:
     from azure.core.credentials import TokenCredential
     from azure.core.pipeline.transport import HttpRequest, HttpResponse
 
-from ._configuration import MaintenanceClientConfiguration
+from ._configuration import MaintenanceManagementClientConfiguration
 from .operations import PublicMaintenanceConfigurationsOperations
 from .operations import ApplyUpdatesOperations
 from .operations import ConfigurationAssignmentsOperations
 from .operations import MaintenanceConfigurationsOperations
 from .operations import MaintenanceConfigurationsForResourceGroupOperations
 from .operations import ApplyUpdateForResourceGroupOperations
-from .operations import ConfigurationAssignmentsWithinSubscriptionOperations
 from .operations import Operations
 from .operations import UpdatesOperations
 from . import models
 
 
-class MaintenanceClient(object):
-    """Maintenance Client.
+class MaintenanceManagementClient(object):
+    """Azure Maintenance Management Client.
 
     :ivar public_maintenance_configurations: PublicMaintenanceConfigurationsOperations operations
     :vartype public_maintenance_configurations: azure.mgmt.maintenance.operations.PublicMaintenanceConfigurationsOperations
@@ -46,8 +45,6 @@ class MaintenanceClient(object):
     :vartype maintenance_configurations_for_resource_group: azure.mgmt.maintenance.operations.MaintenanceConfigurationsForResourceGroupOperations
     :ivar apply_update_for_resource_group: ApplyUpdateForResourceGroupOperations operations
     :vartype apply_update_for_resource_group: azure.mgmt.maintenance.operations.ApplyUpdateForResourceGroupOperations
-    :ivar configuration_assignments_within_subscription: ConfigurationAssignmentsWithinSubscriptionOperations operations
-    :vartype configuration_assignments_within_subscription: azure.mgmt.maintenance.operations.ConfigurationAssignmentsWithinSubscriptionOperations
     :ivar operations: Operations operations
     :vartype operations: azure.mgmt.maintenance.operations.Operations
     :ivar updates: UpdatesOperations operations
@@ -69,7 +66,7 @@ class MaintenanceClient(object):
         # type: (...) -> None
         if not base_url:
             base_url = 'https://management.azure.com'
-        self._config = MaintenanceClientConfiguration(credential, subscription_id, **kwargs)
+        self._config = MaintenanceManagementClientConfiguration(credential, subscription_id, **kwargs)
         self._client = ARMPipelineClient(base_url=base_url, config=self._config, **kwargs)
 
         client_models = {k: v for k, v in models.__dict__.items() if isinstance(v, type)}
@@ -88,8 +85,6 @@ class MaintenanceClient(object):
         self.maintenance_configurations_for_resource_group = MaintenanceConfigurationsForResourceGroupOperations(
             self._client, self._config, self._serialize, self._deserialize)
         self.apply_update_for_resource_group = ApplyUpdateForResourceGroupOperations(
-            self._client, self._config, self._serialize, self._deserialize)
-        self.configuration_assignments_within_subscription = ConfigurationAssignmentsWithinSubscriptionOperations(
             self._client, self._config, self._serialize, self._deserialize)
         self.operations = Operations(
             self._client, self._config, self._serialize, self._deserialize)
@@ -119,7 +114,7 @@ class MaintenanceClient(object):
         self._client.close()
 
     def __enter__(self):
-        # type: () -> MaintenanceClient
+        # type: () -> MaintenanceManagementClient
         self._client.__enter__()
         return self
 

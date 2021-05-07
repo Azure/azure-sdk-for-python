@@ -39,51 +39,53 @@ class ImpactType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     """The impact type
     """
 
+    #: Pending updates has no impact on resource.
     NONE = "None"
+    #: Pending updates can freeze network or disk io operation on resource.
     FREEZE = "Freeze"
+    #: Pending updates can cause resource to restart.
     RESTART = "Restart"
+    #: Pending updates can redeploy resource.
     REDEPLOY = "Redeploy"
 
 class MaintenanceScope(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     """Gets or sets maintenanceScope of the configuration
     """
 
+    #: This maintenance scope controls installation of azure platform updates i.e. services on
+    #: physical nodes hosting customer VMs.
     HOST = "Host"
+    #: This maintenance scope controls os image installation on VM/VMSS.
     OS_IMAGE = "OSImage"
+    #: This maintenance scope controls extension installation on VM/VMSS.
     EXTENSION = "Extension"
+    #: This maintenance scope controls installation of windows and linux packages on VM/VMSS.
     IN_GUEST_PATCH = "InGuestPatch"
+    #: This maintenance scope controls installation of SQL server platform updates.
     SQLDB = "SQLDB"
+    #: This maintenance scope controls installation of SQL managed instance platform update.
     SQL_MANAGED_INSTANCE = "SQLManagedInstance"
-
-class RebootOptions(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
-    """Possible reboot preference as defined by the user based on which it would be decided to reboot
-    the machine or not after the patch operation is completed.
-    """
-
-    NEVER_REBOOT = "NeverReboot"
-    REBOOT_IF_REQUIRED = "RebootIfRequired"
-    ALWAYS_REBOOT = "AlwaysReboot"
-
-class TaskScope(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
-    """Global Task execute once when schedule trigger. Resource task execute for each VM.
-    """
-
-    GLOBAL_ENUM = "Global"
-    RESOURCE = "Resource"
 
 class UpdateStatus(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     """The status
     """
 
+    #: There are pending updates to be installed.
     PENDING = "Pending"
+    #: Updates installation are in progress.
     IN_PROGRESS = "InProgress"
+    #: All updates are successfully applied.
     COMPLETED = "Completed"
+    #: Updates installation failed but are ready to retry again.
     RETRY_NOW = "RetryNow"
+    #: Updates installation failed and should be retried later.
     RETRY_LATER = "RetryLater"
 
 class Visibility(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
-    """Gets or sets the visibility of the configuration
+    """Gets or sets the visibility of the configuration. The default value is 'Custom'
     """
 
+    #: Only visible to users with permissions.
     CUSTOM = "Custom"
+    #: Visible to all users.
     PUBLIC = "Public"
