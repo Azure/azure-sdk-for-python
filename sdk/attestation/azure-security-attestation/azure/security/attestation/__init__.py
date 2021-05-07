@@ -16,8 +16,10 @@ from ._models import (AttestationResponse,
     TpmAttestationResponse, 
     TpmAttestationRequest, 
     AttestationTokenValidationException,
-    PolicyCertificatesModificationResult)
-from ._generated.models import AttestationType, StoredAttestationPolicy, CertificateModification
+    PolicyCertificatesModificationResult,
+    AttestationType,
+    StoredAttestationPolicy,
+    CertificateModification)
 from ._configuration import TokenValidationOptions
 from ._version import VERSION
 
