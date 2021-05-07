@@ -27,7 +27,7 @@ def build_create_or_update_request(
 ) -> HttpRequest:
     """Creates or Updates a data source.
 
-    See https://aka.ms/azsdk/python/llcwiki for how to incorporate this request builder into your code flow.
+    See https://aka.ms/azsdk/python/protocol/quickstart for how to incorporate this request builder into your code flow.
 
     :param data_source_name:
     :type data_source_name: str
@@ -36,13 +36,13 @@ def build_create_or_update_request(
     :keyword content:
     :paramtype content: Any
     :return: Returns an :class:`~azure.purview.scanning.core.rest.HttpRequest` that you will pass to the client's `send_request` method.
-     See https://aka.ms/azsdk/python/llcwiki for how to incorporate this response into your code flow.
+     See https://aka.ms/azsdk/python/protocol/quickstart for how to incorporate this response into your code flow.
     :rtype: ~azure.purview.scanning.core.rest.HttpRequest
 
     Example:
         .. code-block:: python
 
-    
+
             # kind template as part of your input body
             kind = 'AdlsGen1DataSource' or 'AdlsGen2DataSource' or 'AmazonAccountDataSource' or 'AmazonPostgreSqlDataSource' or 'AmazonS3DataSource' or 'AmazonSqlDataSource' or 'AzureCosmosDbDataSource' or 'AzureDataExplorerDataSource' or 'AzureFileServiceDataSource' or 'AzureMySqlDataSource' or 'AzurePostgreSqlDataSource' or 'AzureResourceGroupDataSource' or 'AzureSqlDataWarehouseDataSource' or 'AzureSqlDatabaseDataSource' or 'AzureSqlDatabaseManagedInstanceDataSource' or 'AzureStorageDataSource' or 'AzureSubscriptionDataSource' or 'AzureSynapseDataSource' or 'AzureSynapseWorkspaceDataSource' or 'OracleDataSource' or 'PowerBIDataSource' or 'SapEccDataSource' or 'SapS4HanaDataSource' or 'SqlServerDatabaseDataSource' or 'TeradataDataSource'
 
@@ -78,7 +78,7 @@ def build_create_or_update_request(
                 ]
             }
 
-    
+
             # response body for status code(s): 200, 201
             response_body == {
                 "kind": "DataSource",
@@ -150,18 +150,18 @@ def build_get_request(
 ) -> HttpRequest:
     """Get a data source.
 
-    See https://aka.ms/azsdk/python/llcwiki for how to incorporate this request builder into your code flow.
+    See https://aka.ms/azsdk/python/protocol/quickstart for how to incorporate this request builder into your code flow.
 
     :param data_source_name:
     :type data_source_name: str
     :return: Returns an :class:`~azure.purview.scanning.core.rest.HttpRequest` that you will pass to the client's `send_request` method.
-     See https://aka.ms/azsdk/python/llcwiki for how to incorporate this response into your code flow.
+     See https://aka.ms/azsdk/python/protocol/quickstart for how to incorporate this response into your code flow.
     :rtype: ~azure.purview.scanning.core.rest.HttpRequest
 
     Example:
         .. code-block:: python
 
-    
+
             # response body for status code(s): 200
             response_body == {
                 "kind": "DataSource",
@@ -228,18 +228,18 @@ def build_delete_request(
 ) -> HttpRequest:
     """Deletes a data source.
 
-    See https://aka.ms/azsdk/python/llcwiki for how to incorporate this request builder into your code flow.
+    See https://aka.ms/azsdk/python/protocol/quickstart for how to incorporate this request builder into your code flow.
 
     :param data_source_name:
     :type data_source_name: str
     :return: Returns an :class:`~azure.purview.scanning.core.rest.HttpRequest` that you will pass to the client's `send_request` method.
-     See https://aka.ms/azsdk/python/llcwiki for how to incorporate this response into your code flow.
+     See https://aka.ms/azsdk/python/protocol/quickstart for how to incorporate this response into your code flow.
     :rtype: ~azure.purview.scanning.core.rest.HttpRequest
 
     Example:
         .. code-block:: python
 
-    
+
             # response body for status code(s): 200
             response_body == {
                 "kind": "DataSource",
@@ -305,16 +305,16 @@ def build_list_all_request(
 ) -> HttpRequest:
     """List data sources in Data catalog.
 
-    See https://aka.ms/azsdk/python/llcwiki for how to incorporate this request builder into your code flow.
+    See https://aka.ms/azsdk/python/protocol/quickstart for how to incorporate this request builder into your code flow.
 
     :return: Returns an :class:`~azure.purview.scanning.core.rest.HttpRequest` that you will pass to the client's `send_request` method.
-     See https://aka.ms/azsdk/python/llcwiki for how to incorporate this response into your code flow.
+     See https://aka.ms/azsdk/python/protocol/quickstart for how to incorporate this response into your code flow.
     :rtype: ~azure.purview.scanning.core.rest.HttpRequest
 
     Example:
         .. code-block:: python
 
-    
+
             # response body for status code(s): 200
             response_body == {
                 "count": "long (optional)",

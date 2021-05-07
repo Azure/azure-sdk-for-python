@@ -27,7 +27,7 @@ def build_run_scan_request(
     # type: (...) -> HttpRequest
     """Runs the scan.
 
-    See https://aka.ms/azsdk/python/llcwiki for how to incorporate this request builder into your code flow.
+    See https://aka.ms/azsdk/python/protocol/quickstart for how to incorporate this request builder into your code flow.
 
     :param data_source_name:
     :type data_source_name: str
@@ -38,13 +38,13 @@ def build_run_scan_request(
     :keyword scan_level:
     :paramtype scan_level: str or ~azure.purview.scanning.models.ScanLevelType
     :return: Returns an :class:`~azure.purview.scanning.core.rest.HttpRequest` that you will pass to the client's `send_request` method.
-     See https://aka.ms/azsdk/python/llcwiki for how to incorporate this response into your code flow.
+     See https://aka.ms/azsdk/python/protocol/quickstart for how to incorporate this response into your code flow.
     :rtype: ~azure.purview.scanning.core.rest.HttpRequest
 
     Example:
         .. code-block:: python
 
-    
+
             # response body for status code(s): 202
             response_body == {
                 "endTime": "datetime (optional)",
@@ -96,7 +96,7 @@ def build_cancel_scan_request(
     # type: (...) -> HttpRequest
     """Cancels a scan.
 
-    See https://aka.ms/azsdk/python/llcwiki for how to incorporate this request builder into your code flow.
+    See https://aka.ms/azsdk/python/protocol/quickstart for how to incorporate this request builder into your code flow.
 
     :param data_source_name:
     :type data_source_name: str
@@ -105,13 +105,13 @@ def build_cancel_scan_request(
     :param run_id:
     :type run_id: str
     :return: Returns an :class:`~azure.purview.scanning.core.rest.HttpRequest` that you will pass to the client's `send_request` method.
-     See https://aka.ms/azsdk/python/llcwiki for how to incorporate this response into your code flow.
+     See https://aka.ms/azsdk/python/protocol/quickstart for how to incorporate this response into your code flow.
     :rtype: ~azure.purview.scanning.core.rest.HttpRequest
 
     Example:
         .. code-block:: python
 
-    
+
             # response body for status code(s): 202
             response_body == {
                 "endTime": "datetime (optional)",
@@ -159,20 +159,20 @@ def build_list_scan_history_request(
     # type: (...) -> HttpRequest
     """Lists the scan history of a scan.
 
-    See https://aka.ms/azsdk/python/llcwiki for how to incorporate this request builder into your code flow.
+    See https://aka.ms/azsdk/python/protocol/quickstart for how to incorporate this request builder into your code flow.
 
     :param data_source_name:
     :type data_source_name: str
     :param scan_name:
     :type scan_name: str
     :return: Returns an :class:`~azure.purview.scanning.core.rest.HttpRequest` that you will pass to the client's `send_request` method.
-     See https://aka.ms/azsdk/python/llcwiki for how to incorporate this response into your code flow.
+     See https://aka.ms/azsdk/python/protocol/quickstart for how to incorporate this response into your code flow.
     :rtype: ~azure.purview.scanning.core.rest.HttpRequest
 
     Example:
         .. code-block:: python
 
-    
+
             # response body for status code(s): 200
             response_body == {
                 "count": "long (optional)",

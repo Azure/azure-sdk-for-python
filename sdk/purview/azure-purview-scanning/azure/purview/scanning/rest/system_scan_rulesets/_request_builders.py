@@ -24,16 +24,16 @@ def build_list_all_request(
     # type: (...) -> HttpRequest
     """List all system scan rulesets for an account.
 
-    See https://aka.ms/azsdk/python/llcwiki for how to incorporate this request builder into your code flow.
+    See https://aka.ms/azsdk/python/protocol/quickstart for how to incorporate this request builder into your code flow.
 
     :return: Returns an :class:`~azure.purview.scanning.core.rest.HttpRequest` that you will pass to the client's `send_request` method.
-     See https://aka.ms/azsdk/python/llcwiki for how to incorporate this response into your code flow.
+     See https://aka.ms/azsdk/python/protocol/quickstart for how to incorporate this response into your code flow.
     :rtype: ~azure.purview.scanning.core.rest.HttpRequest
 
     Example:
         .. code-block:: python
 
-    
+
             # response body for status code(s): 200
             response_body == {
                 "count": "long (optional)",
@@ -76,18 +76,18 @@ def build_get_request(
     # type: (...) -> HttpRequest
     """Get a system scan ruleset for a data source.
 
-    See https://aka.ms/azsdk/python/llcwiki for how to incorporate this request builder into your code flow.
+    See https://aka.ms/azsdk/python/protocol/quickstart for how to incorporate this request builder into your code flow.
 
     :param data_source_type:
     :type data_source_type: str or ~azure.purview.scanning.models.DataSourceType
     :return: Returns an :class:`~azure.purview.scanning.core.rest.HttpRequest` that you will pass to the client's `send_request` method.
-     See https://aka.ms/azsdk/python/llcwiki for how to incorporate this response into your code flow.
+     See https://aka.ms/azsdk/python/protocol/quickstart for how to incorporate this response into your code flow.
     :rtype: ~azure.purview.scanning.core.rest.HttpRequest
 
     Example:
         .. code-block:: python
 
-    
+
             # response body for status code(s): 200
             response_body == {
                 "kind": "SystemScanRuleset"
@@ -128,20 +128,20 @@ def build_get_by_version_request(
     # type: (...) -> HttpRequest
     """Get a scan ruleset by version.
 
-    See https://aka.ms/azsdk/python/llcwiki for how to incorporate this request builder into your code flow.
+    See https://aka.ms/azsdk/python/protocol/quickstart for how to incorporate this request builder into your code flow.
 
     :param version:
     :type version: int
     :keyword data_source_type:
     :paramtype data_source_type: str or ~azure.purview.scanning.models.DataSourceType
     :return: Returns an :class:`~azure.purview.scanning.core.rest.HttpRequest` that you will pass to the client's `send_request` method.
-     See https://aka.ms/azsdk/python/llcwiki for how to incorporate this response into your code flow.
+     See https://aka.ms/azsdk/python/protocol/quickstart for how to incorporate this response into your code flow.
     :rtype: ~azure.purview.scanning.core.rest.HttpRequest
 
     Example:
         .. code-block:: python
 
-    
+
             # response body for status code(s): 200
             response_body == {
                 "kind": "SystemScanRuleset"
@@ -184,18 +184,18 @@ def build_get_latest_request(
     # type: (...) -> HttpRequest
     """Get the latest version of a system scan ruleset.
 
-    See https://aka.ms/azsdk/python/llcwiki for how to incorporate this request builder into your code flow.
+    See https://aka.ms/azsdk/python/protocol/quickstart for how to incorporate this request builder into your code flow.
 
     :keyword data_source_type:
     :paramtype data_source_type: str or ~azure.purview.scanning.models.DataSourceType
     :return: Returns an :class:`~azure.purview.scanning.core.rest.HttpRequest` that you will pass to the client's `send_request` method.
-     See https://aka.ms/azsdk/python/llcwiki for how to incorporate this response into your code flow.
+     See https://aka.ms/azsdk/python/protocol/quickstart for how to incorporate this response into your code flow.
     :rtype: ~azure.purview.scanning.core.rest.HttpRequest
 
     Example:
         .. code-block:: python
 
-    
+
             # response body for status code(s): 200
             response_body == {
                 "kind": "SystemScanRuleset"
@@ -234,18 +234,18 @@ def build_list_versions_by_data_source_request(
     # type: (...) -> HttpRequest
     """List system scan ruleset versions in Data catalog.
 
-    See https://aka.ms/azsdk/python/llcwiki for how to incorporate this request builder into your code flow.
+    See https://aka.ms/azsdk/python/protocol/quickstart for how to incorporate this request builder into your code flow.
 
     :keyword data_source_type:
     :paramtype data_source_type: str or ~azure.purview.scanning.models.DataSourceType
     :return: Returns an :class:`~azure.purview.scanning.core.rest.HttpRequest` that you will pass to the client's `send_request` method.
-     See https://aka.ms/azsdk/python/llcwiki for how to incorporate this response into your code flow.
+     See https://aka.ms/azsdk/python/protocol/quickstart for how to incorporate this response into your code flow.
     :rtype: ~azure.purview.scanning.core.rest.HttpRequest
 
     Example:
         .. code-block:: python
 
-    
+
             # response body for status code(s): 200
             response_body == {
                 "count": "long (optional)",

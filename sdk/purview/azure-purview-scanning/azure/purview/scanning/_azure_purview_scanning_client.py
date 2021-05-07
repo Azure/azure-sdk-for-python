@@ -60,7 +60,7 @@ class AzurePurviewScanningClient(object):
         >>> response = client.send_request(request)
         <HttpResponse: 200 OK>
 
-        For more information on this code flow, see https://aka.ms/azsdk/python/llcwiki
+        For more information on this code flow, see https://aka.ms/azsdk/python/protocol/quickstart
 
         For advanced cases, you can also create your own :class:`~azure.purview.scanning.core.rest.HttpRequest`
         and pass it in.

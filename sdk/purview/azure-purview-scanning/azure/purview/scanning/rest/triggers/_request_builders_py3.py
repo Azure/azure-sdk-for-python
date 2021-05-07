@@ -21,20 +21,20 @@ def build_get_trigger_request(
 ) -> HttpRequest:
     """Gets trigger information.
 
-    See https://aka.ms/azsdk/python/llcwiki for how to incorporate this request builder into your code flow.
+    See https://aka.ms/azsdk/python/protocol/quickstart for how to incorporate this request builder into your code flow.
 
     :param data_source_name:
     :type data_source_name: str
     :param scan_name:
     :type scan_name: str
     :return: Returns an :class:`~azure.purview.scanning.core.rest.HttpRequest` that you will pass to the client's `send_request` method.
-     See https://aka.ms/azsdk/python/llcwiki for how to incorporate this response into your code flow.
+     See https://aka.ms/azsdk/python/protocol/quickstart for how to incorporate this response into your code flow.
     :rtype: ~azure.purview.scanning.core.rest.HttpRequest
 
     Example:
         .. code-block:: python
 
-    
+
             # response body for status code(s): 200
             response_body == {
                 "properties": {}
@@ -79,7 +79,7 @@ def build_create_trigger_request(
 ) -> HttpRequest:
     """Creates an instance of a trigger.
 
-    See https://aka.ms/azsdk/python/llcwiki for how to incorporate this request builder into your code flow.
+    See https://aka.ms/azsdk/python/protocol/quickstart for how to incorporate this request builder into your code flow.
 
     :param data_source_name:
     :type data_source_name: str
@@ -90,19 +90,19 @@ def build_create_trigger_request(
     :keyword content:
     :paramtype content: Any
     :return: Returns an :class:`~azure.purview.scanning.core.rest.HttpRequest` that you will pass to the client's `send_request` method.
-     See https://aka.ms/azsdk/python/llcwiki for how to incorporate this response into your code flow.
+     See https://aka.ms/azsdk/python/protocol/quickstart for how to incorporate this response into your code flow.
     :rtype: ~azure.purview.scanning.core.rest.HttpRequest
 
     Example:
         .. code-block:: python
 
-    
+
             # JSON input template you can fill out and use as your `json` input.
             json = {
                 "properties": {}
             }
 
-    
+
             # response body for status code(s): 200, 201
             response_body == {
                 "properties": {}
@@ -149,20 +149,20 @@ def build_delete_trigger_request(
 ) -> HttpRequest:
     """Deletes the trigger associated with the scan.
 
-    See https://aka.ms/azsdk/python/llcwiki for how to incorporate this request builder into your code flow.
+    See https://aka.ms/azsdk/python/protocol/quickstart for how to incorporate this request builder into your code flow.
 
     :param data_source_name:
     :type data_source_name: str
     :param scan_name:
     :type scan_name: str
     :return: Returns an :class:`~azure.purview.scanning.core.rest.HttpRequest` that you will pass to the client's `send_request` method.
-     See https://aka.ms/azsdk/python/llcwiki for how to incorporate this response into your code flow.
+     See https://aka.ms/azsdk/python/protocol/quickstart for how to incorporate this response into your code flow.
     :rtype: ~azure.purview.scanning.core.rest.HttpRequest
 
     Example:
         .. code-block:: python
 
-    
+
             # response body for status code(s): 200
             response_body == {
                 "properties": {}

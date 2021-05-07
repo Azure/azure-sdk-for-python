@@ -162,7 +162,7 @@ This project has adopted the [Microsoft Open Source Code of Conduct][code_of_con
 [azure_identity_credentials]: https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/identity/azure-identity#credentials
 [azure_identity_pip]: https://pypi.org/project/azure-identity/
 [default_azure_credential]: https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/identity/azure-identity#defaultazurecredential
-[low_level_client]: https://github.com/iscai-msft/azure-sdk-for-python/wiki/Low-Level-Client
+[low_level_client]: https://aka.ms/azsdk/python/protocol/quickstart
 [enable_aad]: https://docs.microsoft.com/azure/purview/create-catalog-portal#add-a-security-principal-to-a-data-plane-role
 [python_logging]: https://docs.python.org/3.5/library/logging.html
 [cla]: https://cla.microsoft.com

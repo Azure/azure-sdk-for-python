@@ -25,18 +25,18 @@ def build_get_request(
     # type: (...) -> HttpRequest
     """Get a classification rule.
 
-    See https://aka.ms/azsdk/python/llcwiki for how to incorporate this request builder into your code flow.
+    See https://aka.ms/azsdk/python/protocol/quickstart for how to incorporate this request builder into your code flow.
 
     :param classification_rule_name:
     :type classification_rule_name: str
     :return: Returns an :class:`~azure.purview.scanning.core.rest.HttpRequest` that you will pass to the client's `send_request` method.
-     See https://aka.ms/azsdk/python/llcwiki for how to incorporate this response into your code flow.
+     See https://aka.ms/azsdk/python/protocol/quickstart for how to incorporate this response into your code flow.
     :rtype: ~azure.purview.scanning.core.rest.HttpRequest
 
     Example:
         .. code-block:: python
 
-    
+
             # response body for status code(s): 200
             response_body == {
                 "kind": "ClassificationRule"
@@ -77,7 +77,7 @@ def build_create_or_update_request(
     # type: (...) -> HttpRequest
     """Creates or Updates a classification rule.
 
-    See https://aka.ms/azsdk/python/llcwiki for how to incorporate this request builder into your code flow.
+    See https://aka.ms/azsdk/python/protocol/quickstart for how to incorporate this request builder into your code flow.
 
     :param classification_rule_name:
     :type classification_rule_name: str
@@ -86,13 +86,13 @@ def build_create_or_update_request(
     :keyword content:
     :paramtype content: Any
     :return: Returns an :class:`~azure.purview.scanning.core.rest.HttpRequest` that you will pass to the client's `send_request` method.
-     See https://aka.ms/azsdk/python/llcwiki for how to incorporate this response into your code flow.
+     See https://aka.ms/azsdk/python/protocol/quickstart for how to incorporate this response into your code flow.
     :rtype: ~azure.purview.scanning.core.rest.HttpRequest
 
     Example:
         .. code-block:: python
 
-    
+
             # kind template as part of your input body
             kind = 'CustomClassificationRule' or 'SystemClassificationRule'
 
@@ -101,7 +101,7 @@ def build_create_or_update_request(
                 "kind": "ClassificationRule"
             }
 
-    
+
             # response body for status code(s): 200, 201
             response_body == {
                 "kind": "ClassificationRule"
@@ -145,18 +145,18 @@ def build_delete_request(
     # type: (...) -> HttpRequest
     """Deletes a classification rule.
 
-    See https://aka.ms/azsdk/python/llcwiki for how to incorporate this request builder into your code flow.
+    See https://aka.ms/azsdk/python/protocol/quickstart for how to incorporate this request builder into your code flow.
 
     :param classification_rule_name:
     :type classification_rule_name: str
     :return: Returns an :class:`~azure.purview.scanning.core.rest.HttpRequest` that you will pass to the client's `send_request` method.
-     See https://aka.ms/azsdk/python/llcwiki for how to incorporate this response into your code flow.
+     See https://aka.ms/azsdk/python/protocol/quickstart for how to incorporate this response into your code flow.
     :rtype: ~azure.purview.scanning.core.rest.HttpRequest
 
     Example:
         .. code-block:: python
 
-    
+
             # response body for status code(s): 200
             response_body == {
                 "kind": "ClassificationRule"
@@ -196,16 +196,16 @@ def build_list_all_request(
     # type: (...) -> HttpRequest
     """List classification rules in Account.
 
-    See https://aka.ms/azsdk/python/llcwiki for how to incorporate this request builder into your code flow.
+    See https://aka.ms/azsdk/python/protocol/quickstart for how to incorporate this request builder into your code flow.
 
     :return: Returns an :class:`~azure.purview.scanning.core.rest.HttpRequest` that you will pass to the client's `send_request` method.
-     See https://aka.ms/azsdk/python/llcwiki for how to incorporate this response into your code flow.
+     See https://aka.ms/azsdk/python/protocol/quickstart for how to incorporate this response into your code flow.
     :rtype: ~azure.purview.scanning.core.rest.HttpRequest
 
     Example:
         .. code-block:: python
 
-    
+
             # response body for status code(s): 200
             response_body == {
                 "count": "long (optional)",
@@ -248,18 +248,18 @@ def build_list_versions_by_classification_rule_name_request(
     # type: (...) -> HttpRequest
     """Lists the rule versions of a classification rule.
 
-    See https://aka.ms/azsdk/python/llcwiki for how to incorporate this request builder into your code flow.
+    See https://aka.ms/azsdk/python/protocol/quickstart for how to incorporate this request builder into your code flow.
 
     :param classification_rule_name:
     :type classification_rule_name: str
     :return: Returns an :class:`~azure.purview.scanning.core.rest.HttpRequest` that you will pass to the client's `send_request` method.
-     See https://aka.ms/azsdk/python/llcwiki for how to incorporate this response into your code flow.
+     See https://aka.ms/azsdk/python/protocol/quickstart for how to incorporate this response into your code flow.
     :rtype: ~azure.purview.scanning.core.rest.HttpRequest
 
     Example:
         .. code-block:: python
 
-    
+
             # response body for status code(s): 200
             response_body == {
                 "count": "long (optional)",
@@ -307,7 +307,7 @@ def build_tag_classification_version_request(
     # type: (...) -> HttpRequest
     """Sets Classification Action on a specific classification rule version.
 
-    See https://aka.ms/azsdk/python/llcwiki for how to incorporate this request builder into your code flow.
+    See https://aka.ms/azsdk/python/protocol/quickstart for how to incorporate this request builder into your code flow.
 
     :param classification_rule_name:
     :type classification_rule_name: str
@@ -316,13 +316,13 @@ def build_tag_classification_version_request(
     :keyword action:
     :paramtype action: str or ~azure.purview.scanning.models.ClassificationAction
     :return: Returns an :class:`~azure.purview.scanning.core.rest.HttpRequest` that you will pass to the client's `send_request` method.
-     See https://aka.ms/azsdk/python/llcwiki for how to incorporate this response into your code flow.
+     See https://aka.ms/azsdk/python/protocol/quickstart for how to incorporate this response into your code flow.
     :rtype: ~azure.purview.scanning.core.rest.HttpRequest
 
     Example:
         .. code-block:: python
 
-    
+
             # response body for status code(s): 202
             response_body == {
                 "endTime": "datetime (optional)",
