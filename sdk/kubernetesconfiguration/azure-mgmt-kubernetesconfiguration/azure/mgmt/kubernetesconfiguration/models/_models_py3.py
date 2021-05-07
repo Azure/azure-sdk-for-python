@@ -145,19 +145,18 @@ class HelmOperatorProperties(msrest.serialization.Model):
 
 
 class Resource(msrest.serialization.Model):
-    """The Resource model definition.
+    """Common fields that are returned in the response for all Azure Resource Manager resources.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    :ivar id: Resource Id.
+    :ivar id: Fully qualified resource ID for the resource. Ex -
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
     :vartype id: str
-    :ivar name: Resource name.
+    :ivar name: The name of the resource.
     :vartype name: str
-    :ivar type: Resource type.
+    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
+     "Microsoft.Storage/storageAccounts".
     :vartype type: str
-    :param system_data: Top level metadata https://github.com/Azure/azure-resource-manager-
-     rpc/blob/master/v1.0/common-api-contracts.md#system-metadata-for-all-azure-resources.
-    :type system_data: ~azure.mgmt.kubernetesconfiguration.models.SystemData
     """
 
     _validation = {
@@ -170,36 +169,31 @@ class Resource(msrest.serialization.Model):
         'id': {'key': 'id', 'type': 'str'},
         'name': {'key': 'name', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
-        'system_data': {'key': 'systemData', 'type': 'SystemData'},
     }
 
     def __init__(
         self,
-        *,
-        system_data: Optional["SystemData"] = None,
         **kwargs
     ):
         super(Resource, self).__init__(**kwargs)
         self.id = None
         self.name = None
         self.type = None
-        self.system_data = system_data
 
 
 class ProxyResource(Resource):
-    """ARM proxy resource.
+    """The resource model definition for a Azure Resource Manager proxy resource. It will not have tags and a location.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    :ivar id: Resource Id.
+    :ivar id: Fully qualified resource ID for the resource. Ex -
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
     :vartype id: str
-    :ivar name: Resource name.
+    :ivar name: The name of the resource.
     :vartype name: str
-    :ivar type: Resource type.
+    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
+     "Microsoft.Storage/storageAccounts".
     :vartype type: str
-    :param system_data: Top level metadata https://github.com/Azure/azure-resource-manager-
-     rpc/blob/master/v1.0/common-api-contracts.md#system-metadata-for-all-azure-resources.
-    :type system_data: ~azure.mgmt.kubernetesconfiguration.models.SystemData
     """
 
     _validation = {
@@ -212,16 +206,13 @@ class ProxyResource(Resource):
         'id': {'key': 'id', 'type': 'str'},
         'name': {'key': 'name', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
-        'system_data': {'key': 'systemData', 'type': 'SystemData'},
     }
 
     def __init__(
         self,
-        *,
-        system_data: Optional["SystemData"] = None,
         **kwargs
     ):
-        super(ProxyResource, self).__init__(system_data=system_data, **kwargs)
+        super(ProxyResource, self).__init__(**kwargs)
 
 
 class ResourceProviderOperation(msrest.serialization.Model):
@@ -348,20 +339,22 @@ class Result(msrest.serialization.Model):
         self.sample_property = sample_property
 
 
-class SourceControlConfiguration(Resource):
+class SourceControlConfiguration(ProxyResource):
     """The SourceControl Configuration object returned in Get & Put response.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    :ivar id: Resource Id.
+    :ivar id: Fully qualified resource ID for the resource. Ex -
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
     :vartype id: str
-    :ivar name: Resource name.
+    :ivar name: The name of the resource.
     :vartype name: str
-    :ivar type: Resource type.
+    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
+     "Microsoft.Storage/storageAccounts".
     :vartype type: str
-    :param system_data: Top level metadata https://github.com/Azure/azure-resource-manager-
-     rpc/blob/master/v1.0/common-api-contracts.md#system-metadata-for-all-azure-resources.
-    :type system_data: ~azure.mgmt.kubernetesconfiguration.models.SystemData
+    :ivar system_data: Top level metadata
+     https://github.com/Azure/azure-resource-manager-rpc/blob/master/v1.0/common-api-contracts.md#system-metadata-for-all-azure-resources.
+    :vartype system_data: ~azure.mgmt.kubernetesconfiguration.models.SystemData
     :param repository_url: Url of the SourceControl Repository.
     :type repository_url: str
     :param operator_namespace: The namespace to which this operator is installed to. Maximum of 253
@@ -387,9 +380,7 @@ class SourceControlConfiguration(Resource):
      required to access private Git instances.
     :type ssh_known_hosts_contents: str
     :param enable_helm_operator: Option to enable Helm Operator for this git configuration.
-     Possible values include: "true", "false".
-    :type enable_helm_operator: str or
-     ~azure.mgmt.kubernetesconfiguration.models.EnableHelmOperatorType
+    :type enable_helm_operator: bool
     :param helm_operator_properties: Properties for Helm operator.
     :type helm_operator_properties:
      ~azure.mgmt.kubernetesconfiguration.models.HelmOperatorProperties
@@ -405,6 +396,7 @@ class SourceControlConfiguration(Resource):
         'id': {'readonly': True},
         'name': {'readonly': True},
         'type': {'readonly': True},
+        'system_data': {'readonly': True},
         'repository_public_key': {'readonly': True},
         'provisioning_state': {'readonly': True},
         'compliance_status': {'readonly': True},
@@ -424,7 +416,7 @@ class SourceControlConfiguration(Resource):
         'operator_scope': {'key': 'properties.operatorScope', 'type': 'str'},
         'repository_public_key': {'key': 'properties.repositoryPublicKey', 'type': 'str'},
         'ssh_known_hosts_contents': {'key': 'properties.sshKnownHostsContents', 'type': 'str'},
-        'enable_helm_operator': {'key': 'properties.enableHelmOperator', 'type': 'str'},
+        'enable_helm_operator': {'key': 'properties.enableHelmOperator', 'type': 'bool'},
         'helm_operator_properties': {'key': 'properties.helmOperatorProperties', 'type': 'HelmOperatorProperties'},
         'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
         'compliance_status': {'key': 'properties.complianceStatus', 'type': 'ComplianceStatus'},
@@ -433,7 +425,6 @@ class SourceControlConfiguration(Resource):
     def __init__(
         self,
         *,
-        system_data: Optional["SystemData"] = None,
         repository_url: Optional[str] = None,
         operator_namespace: Optional[str] = "default",
         operator_instance_name: Optional[str] = None,
@@ -442,11 +433,12 @@ class SourceControlConfiguration(Resource):
         configuration_protected_settings: Optional[Dict[str, str]] = None,
         operator_scope: Optional[Union[str, "OperatorScopeType"]] = "cluster",
         ssh_known_hosts_contents: Optional[str] = None,
-        enable_helm_operator: Optional[Union[str, "EnableHelmOperatorType"]] = None,
+        enable_helm_operator: Optional[bool] = None,
         helm_operator_properties: Optional["HelmOperatorProperties"] = None,
         **kwargs
     ):
-        super(SourceControlConfiguration, self).__init__(system_data=system_data, **kwargs)
+        super(SourceControlConfiguration, self).__init__(**kwargs)
+        self.system_data = None
         self.repository_url = repository_url
         self.operator_namespace = operator_namespace
         self.operator_instance_name = operator_instance_name
@@ -493,34 +485,23 @@ class SourceControlConfigurationList(msrest.serialization.Model):
 
 
 class SystemData(msrest.serialization.Model):
-    """Top level metadata https://github.com/Azure/azure-resource-manager-rpc/blob/master/v1.0/common-api-contracts.md#system-metadata-for-all-azure-resources.
+    """Metadata pertaining to creation and last modification of the resource.
 
-    Variables are only populated by the server, and will be ignored when sending a request.
-
-    :ivar created_by: A string identifier for the identity that created the resource.
-    :vartype created_by: str
-    :ivar created_by_type: The type of identity that created the resource: user, application,
-     managedIdentity, key.
-    :vartype created_by_type: str
-    :ivar created_at: The timestamp of resource creation (UTC).
-    :vartype created_at: ~datetime.datetime
-    :ivar last_modified_by: A string identifier for the identity that last modified the resource.
-    :vartype last_modified_by: str
-    :ivar last_modified_by_type: The type of identity that last modified the resource: user,
-     application, managedIdentity, key.
-    :vartype last_modified_by_type: str
-    :ivar last_modified_at: The timestamp of resource last modification (UTC).
-    :vartype last_modified_at: ~datetime.datetime
+    :param created_by: The identity that created the resource.
+    :type created_by: str
+    :param created_by_type: The type of identity that created the resource. Possible values
+     include: "User", "Application", "ManagedIdentity", "Key".
+    :type created_by_type: str or ~azure.mgmt.kubernetesconfiguration.models.CreatedByType
+    :param created_at: The timestamp of resource creation (UTC).
+    :type created_at: ~datetime.datetime
+    :param last_modified_by: The identity that last modified the resource.
+    :type last_modified_by: str
+    :param last_modified_by_type: The type of identity that last modified the resource. Possible
+     values include: "User", "Application", "ManagedIdentity", "Key".
+    :type last_modified_by_type: str or ~azure.mgmt.kubernetesconfiguration.models.CreatedByType
+    :param last_modified_at: The timestamp of resource last modification (UTC).
+    :type last_modified_at: ~datetime.datetime
     """
-
-    _validation = {
-        'created_by': {'readonly': True},
-        'created_by_type': {'readonly': True},
-        'created_at': {'readonly': True},
-        'last_modified_by': {'readonly': True},
-        'last_modified_by_type': {'readonly': True},
-        'last_modified_at': {'readonly': True},
-    }
 
     _attribute_map = {
         'created_by': {'key': 'createdBy', 'type': 'str'},
@@ -533,12 +514,19 @@ class SystemData(msrest.serialization.Model):
 
     def __init__(
         self,
+        *,
+        created_by: Optional[str] = None,
+        created_by_type: Optional[Union[str, "CreatedByType"]] = None,
+        created_at: Optional[datetime.datetime] = None,
+        last_modified_by: Optional[str] = None,
+        last_modified_by_type: Optional[Union[str, "CreatedByType"]] = None,
+        last_modified_at: Optional[datetime.datetime] = None,
         **kwargs
     ):
         super(SystemData, self).__init__(**kwargs)
-        self.created_by = None
-        self.created_by_type = None
-        self.created_at = None
-        self.last_modified_by = None
-        self.last_modified_by_type = None
-        self.last_modified_at = None
+        self.created_by = created_by
+        self.created_by_type = created_by_type
+        self.created_at = created_at
+        self.last_modified_by = last_modified_by
+        self.last_modified_by_type = last_modified_by_type
+        self.last_modified_at = last_modified_at

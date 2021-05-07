@@ -36,12 +36,14 @@ class ComplianceStateType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     INSTALLED = "Installed"
     FAILED = "Failed"
 
-class EnableHelmOperatorType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
-    """Option to enable Helm Operator for this git configuration.
+class CreatedByType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+    """The type of identity that created the resource.
     """
 
-    TRUE = "true"
-    FALSE = "false"
+    USER = "User"
+    APPLICATION = "Application"
+    MANAGED_IDENTITY = "ManagedIdentity"
+    KEY = "Key"
 
 class Enum0(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
 

@@ -37,7 +37,7 @@ except (SyntaxError, ImportError):
 
 from ._source_control_configuration_client_enums import (
     ComplianceStateType,
-    EnableHelmOperatorType,
+    CreatedByType,
     Enum0,
     Enum1,
     MessageLevelType,
@@ -61,7 +61,7 @@ __all__ = [
     'SourceControlConfigurationList',
     'SystemData',
     'ComplianceStateType',
-    'EnableHelmOperatorType',
+    'CreatedByType',
     'Enum0',
     'Enum1',
     'MessageLevelType',
