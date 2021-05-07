@@ -601,6 +601,27 @@ class StorageTableEntityTest(AzureTestCase, AsyncTableTestCase):
             await self._tear_down()
 
     @tables_decorator_async
+    async def test_get_entity_with_select(self, tables_storage_account_name, tables_primary_storage_account_key):
+        # Arrange
+        await self._set_up(tables_storage_account_name, tables_primary_storage_account_key)
+        try:
+            entity, _ = await self._insert_random_entity()
+
+            resp = await self.table.get_entity(partition_key=entity['PartitionKey'],
+                                               row_key=entity['RowKey'],
+                                               select=['age', 'ratio'])
+            resp.pop('_metadata', None)
+            assert resp == {'age': 39, 'ratio': 3.1}
+            resp = await self.table.get_entity(partition_key=entity['PartitionKey'],
+                                               row_key=entity['RowKey'],
+                                               select='age,ratio')
+            resp.pop('_metadata', None)
+            assert resp == {'age': 39, 'ratio': 3.1}
+
+        finally:
+            await self._tear_down()
+
+    @tables_decorator_async
     async def test_get_entity_with_hook(self, tables_storage_account_name, tables_primary_storage_account_key):
         # Arrange
         await self._set_up(tables_storage_account_name, tables_primary_storage_account_key)
@@ -1036,12 +1057,7 @@ class StorageTableEntityTest(AzureTestCase, AsyncTableTestCase):
         await self._set_up(tables_storage_account_name, tables_primary_storage_account_key)
         try:
             entity = self._create_random_base_entity_dict()
-
-            # Act
-            with pytest.raises(ResourceNotFoundError):
-                await self.table.delete_entity({"PartitionKey": entity['PartitionKey'], "RowKey": entity['RowKey']})
-
-            # Assert
+            await self.table.delete_entity(entity['PartitionKey'], entity['RowKey'])
         finally:
             await self._tear_down()
 

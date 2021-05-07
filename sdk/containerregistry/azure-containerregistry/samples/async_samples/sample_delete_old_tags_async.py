@@ -30,7 +30,7 @@ class DeleteOperations(object):
         self.account_url = os.environ["CONTAINERREGISTRY_ENDPOINT"]
 
     async def delete_old_tags(self):
-        from azure.containerregistry import TagOrderBy
+        from azure.containerregistry import TagOrder
         from azure.containerregistry.aio import (
             ContainerRegistryClient,
             ContainerRepositoryClient,
@@ -48,7 +48,7 @@ class DeleteOperations(object):
 
             # [START list_tags]
             tag_count = 0
-            async for tag in repository_client.list_tags(order_by=TagOrderBy.LAST_UPDATE_TIME_DESCENDING):
+            async for tag in repository_client.list_tags(order_by=TagOrder.LAST_UPDATE_TIME_DESCENDING):
                 tag_count += 1
                 if tag_count > 3:
                     await repository_client.delete_tag(tag.name)

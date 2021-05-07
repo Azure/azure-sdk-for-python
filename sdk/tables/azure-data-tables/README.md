@@ -29,7 +29,7 @@ pip install --pre azure-data-tables
 The Azure Data Tables library allows you to interact with two types of resources:
 * the tables in your account
 * the entities within those tables.
-Interaction with these resources starts with an instance of a [client](#clients). To create a client object, you will need the account's table service endpoint URL and a credential that allows you to access the account. The `account_url` can be found on the page for your storage account in the [Azure Portal][azure_portal_account_url] under the "Access Keys" section or by running the following Azure CLI command:
+Interaction with these resources starts with an instance of a [client](#clients). To create a client object, you will need the account's table service endpoint URL and a credential that allows you to access the account. The `endpoint` can be found on the page for your storage account in the [Azure Portal][azure_portal_account_url] under the "Access Keys" section or by running the following Azure CLI command:
 
 ```bash
 # Get the table service URL for the account
@@ -39,7 +39,7 @@ az storage account show -n mystorageaccount -g MyResourceGroup --query "primaryE
 Once you have the account URL, it can be used to create the service client:
 ```python
 from azure.data.tables import TableServiceClient
-service = TableServiceClient(account_url="https://<my_account_name>.table.core.windows.net/", credential=credential)
+service = TableServiceClient(endpoint="https://<my_account_name>.table.core.windows.net/", credential=credential)
 ```
 
 For more information about table service URL's and how to configure custom domain names for Azure Storage check out the [official documentation][azure_portal_account_url]
@@ -60,7 +60,7 @@ az storage account keys list -g MyResourceGroup -n MyStorageAccount
 Use the key as the credential parameter to authenticate the client:
 ```python
     from azure.data.tables import TableServiceClient
-    service = TableServiceClient(account_url="https://<my_account_name>.table.core.windows.net", credential="<account_access_key>")
+    service = TableServiceClient(endpoint="https://<my_account_name>.table.core.windows.net", credential="<account_access_key>")
 ```
 
 ##### Creating the client from a connection string
@@ -93,7 +93,7 @@ To use a [shared access signature (SAS) token][azure_sas_token], provide the tok
         expiry=datetime.utcnow() + timedelta(hours=1)
     )
 
-    table_service_client = TableServiceClient(account_url="https://<my_account_name>.table.core.windows.net", credential=sas_token)
+    table_service_client = TableServiceClient(endpoint="https://<my_account_name>.table.core.windows.net", credential=sas_token)
 ```
 
 

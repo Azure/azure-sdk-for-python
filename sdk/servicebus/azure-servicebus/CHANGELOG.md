@@ -1,6 +1,6 @@
 # Release History
 
-## 7.2.0 (Unreleased)
+## 7.2.0 (2021-05-11)
 
 The preview features related to AMQPAnnotatedMessage introduced in 7.2.0b1 are not included in this version.
 
@@ -13,16 +13,14 @@ The preview features related to AMQPAnnotatedMessage introduced in 7.2.0b1 are n
 **Bug Fixes**
 
 * Fixed a bug where `update_queue` and `update_subscription` methods were mutating the properties `forward_to` and `forward_dead_lettered_messages_to` of the model instance when those properties are entities instead of full paths.
+* Improved the `repr` on `ServiceBusMessage` and `ServiceBusReceivedMessage` to show more meaningful text.
+* Updated uAMQP dependency to 1.4.0.
+  - Fixed memory leaks in the process of link attach where source and target cython objects are not properly deallocated (#15747).
+  - Improved management operation callback not to parse description value of non AMQP_TYPE_STRING type as string (#18361).
 
 **Notes**
 
 * Updated azure-core dependency to 1.14.0.
-
-**Bug Fixes**
-
-- Updated uAMQP dependency to 1.4.0.
-  - Fixed memory leaks in the process of link attach where source and target cython objects are not properly deallocated (#15747).
-  - Improved management operation callback not to parse description value of non AMQP_TYPE_STRING type as string (#18361).
 
 ## 7.2.0b1 (2021-04-07)
 
@@ -36,7 +34,6 @@ The preview features related to AMQPAnnotatedMessage introduced in 7.2.0b1 are n
   - `SEQUENCE`: The body of message consists of one or more sequence sections and each section contains an arbitrary number of structured data elements.
   - `VALUE`: The body of message consists of one amqp-value section and the section contains a single AMQP value.
 * Added new property `body_type` on `azure.servicebus.ServiceBusMessage` and `azure.servicebus.ReceivedMessage` which returns `azure.servicebus.AMQPMessageBodyType`.
-
 
 ## 7.1.1 (2021-04-07)
 
