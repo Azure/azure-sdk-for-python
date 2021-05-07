@@ -5,6 +5,8 @@
 # --------------------------------------------------------------------------
 
 import logging
+import sys
+from typing import Union
 
 try:
     from urllib.parse import urlparse
@@ -32,6 +34,9 @@ from ._error import (
     _wrap_exception,
 )
 
+if sys.version_info > (3, 5):
+    from typing import Awaitable  # pylint: disable=ungrouped-imports
+
 logger = logging.getLogger(__name__)
 
 
@@ -45,11 +50,8 @@ class AzureSigningError(ClientAuthenticationError):
 
 # pylint: disable=no-self-use
 class SharedKeyCredentialPolicy(SansIOHTTPPolicy):
-    def __init__(
-        self, account_name, account_key, is_emulated=False
-    ):
-        self.account_name = account_name
-        self.account_key = account_key
+    def __init__(self, credential, is_emulated=False):
+        self._credential = credential
         self.is_emulated = is_emulated
 
     def _get_headers(self, request, headers_to_sign):
@@ -82,10 +84,10 @@ class SharedKeyCredentialPolicy(SansIOHTTPPolicy):
                 )
             ):
                 uri_path = URL(uri_path)
-                return "/" + self.account_name + str(uri_path)
+                return "/" + self._credential.named_key.name + str(uri_path)
         except TypeError:
             pass
-        return "/" + self.account_name + uri_path
+        return "/" + self._credential.named_key.name + uri_path
 
     def _get_canonicalized_headers(self, request):
         string_to_sign = ""
@@ -101,17 +103,16 @@ class SharedKeyCredentialPolicy(SansIOHTTPPolicy):
 
     def _add_authorization_header(self, request, string_to_sign):
         try:
-            signature = _sign_string(self.account_key, string_to_sign)
-            auth_string = "SharedKey " + self.account_name + ":" + signature
+            signature = _sign_string(self._credential.named_key.key, string_to_sign)
+            auth_string = "SharedKey " + self._credential.named_key.name + ":" + signature
             request.headers["Authorization"] = auth_string
         except Exception as ex:
             # Wrap any error that occurred as signing error
             # Doing so will clarify/locate the source of problem
             raise _wrap_exception(ex, AzureSigningError)
 
-    def on_request(
-        self, request
-    ):  # type: (PipelineRequest) -> Union[None, Awaitable[None]]
+    def on_request(self, request):
+    # type: (PipelineRequest) -> Union[None, Awaitable[None]]
         self.sign_request(request)
 
     def sign_request(self, request):

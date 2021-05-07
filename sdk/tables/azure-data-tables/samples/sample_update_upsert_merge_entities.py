@@ -30,13 +30,13 @@ class TableEntitySamples(object):
     def __init__(self):
         load_dotenv(find_dotenv())
         self.access_key = os.getenv("TABLES_PRIMARY_STORAGE_ACCOUNT_KEY")
-        self.endpoint = os.getenv("TABLES_STORAGE_ENDPOINT_SUFFIX")
+        self.endpoint_suffix = os.getenv("TABLES_STORAGE_ENDPOINT_SUFFIX")
         self.account_name = os.getenv("TABLES_STORAGE_ACCOUNT_NAME")
-        self.account_url = "{}.table.{}".format(self.account_name, self.endpoint)
+        self.endpoint = "{}.table.{}".format(self.account_name, self.endpoint_suffix)
         self.connection_string = "DefaultEndpointsProtocol=https;AccountName={};AccountKey={};EndpointSuffix={}".format(
             self.account_name,
             self.access_key,
-            self.endpoint
+            self.endpoint_suffix
         )
         self.table_name = "SampleUpdateUpsertMerge"
 
@@ -63,8 +63,10 @@ class TableEntitySamples(object):
 
                 # [START get_entity]
                 # Get Entity by partition and row key
-                got_entity = table.get_entity(partition_key=my_entity['PartitionKey'],
-                                                                            row_key=my_entity['RowKey'])
+                got_entity = table.get_entity(
+                    partition_key=my_entity['PartitionKey'],
+                    row_key=my_entity['RowKey']
+                )
                 print("Received entity: {}".format(got_entity))
                 # [END get_entity]
 
@@ -122,28 +124,28 @@ class TableEntitySamples(object):
                 print("Inserted entity: {}".format(insert_entity))
 
                 # Try merge, and merge since already in table
-                created.text = "NewMarker"
+                created['text'] = "NewMarker"
                 merged_entity = table.upsert_entity(mode=UpdateMode.MERGE, entity=entity)
                 print("Merged entity: {}".format(merged_entity))
                 # [END upsert_entity]
 
                 # [START update_entity]
                 # Update the entity
-                created.text = "NewMarker"
+                created['text'] = "NewMarker"
                 table.update_entity(mode=UpdateMode.REPLACE, entity=created)
 
                 # Get the replaced entity
                 replaced = table.get_entity(
-                    partition_key=created.PartitionKey, row_key=created.RowKey)
+                    partition_key=created['PartitionKey'], row_key=created['RowKey'])
                 print("Replaced entity: {}".format(replaced))
 
                 # Merge the entity
-                replaced.color = "Blue"
+                replaced['color'] = "Blue"
                 table.update_entity(mode=UpdateMode.MERGE, entity=replaced)
 
                 # Get the merged entity
                 merged = table.get_entity(
-                    partition_key=replaced.PartitionKey, row_key=replaced.RowKey)
+                    partition_key=replaced['PartitionKey'], row_key=replaced['RowKey'])
                 print("Merged entity: {}".format(merged))
                 # [END update_entity]
 

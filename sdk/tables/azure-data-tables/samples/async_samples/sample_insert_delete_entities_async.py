@@ -21,7 +21,6 @@ USAGE:
 """
 
 import os
-from time import sleep
 import asyncio
 from dotenv import find_dotenv, load_dotenv
 
@@ -29,15 +28,14 @@ class InsertDeleteEntity(object):
 
     def __init__(self):
         load_dotenv(find_dotenv())
-        # self.connection_string = os.getenv("AZURE_TABLES_CONNECTION_STRING")
         self.access_key = os.getenv("TABLES_PRIMARY_STORAGE_ACCOUNT_KEY")
-        self.endpoint = os.getenv("TABLES_STORAGE_ENDPOINT_SUFFIX")
+        self.endpoint_suffix = os.getenv("TABLES_STORAGE_ENDPOINT_SUFFIX")
         self.account_name = os.getenv("TABLES_STORAGE_ACCOUNT_NAME")
-        self.account_url = "{}.table.{}".format(self.account_name, self.endpoint)
+        self.endpoint = "{}.table.{}".format(self.account_name, self.endpoint_suffix)
         self.connection_string = "DefaultEndpointsProtocol=https;AccountName={};AccountKey={};EndpointSuffix={}".format(
             self.account_name,
             self.access_key,
-            self.endpoint
+            self.endpoint_suffix
         )
         self.table_name = "InsertDeleteAsync"
 
@@ -73,9 +71,10 @@ class InsertDeleteEntity(object):
     async def delete_entity(self):
         from azure.data.tables.aio import TableClient
         from azure.core.exceptions import ResourceNotFoundError, ResourceExistsError
-        from azure.core import MatchConditions
+        from azure.core.credentials import AzureNamedKeyCredential
 
-        table_client = TableClient(account_url=self.account_url, credential=self.access_key, table_name=self.table_name)
+        credential = AzureNamedKeyCredential(self.account_name, self.access_key)
+        table_client = TableClient(endpoint=self.endpoint, credential=credential, table_name=self.table_name)
 
         # [START delete_entity]
         async with table_client:
@@ -84,14 +83,11 @@ class InsertDeleteEntity(object):
             except ResourceExistsError:
                 print("Entity already exists!")
 
-            try:
-                await table_client.delete_entity(
-                    row_key=self.entity["RowKey"],
-                    partition_key=self.entity["PartitionKey"]
-                )
-                print("Successfully deleted!")
-            except ResourceNotFoundError:
-                print("Entity does not exists")
+            await table_client.delete_entity(
+                row_key=self.entity["RowKey"],
+                partition_key=self.entity["PartitionKey"]
+            )
+            print("Successfully deleted!")
         # [END delete_entity]
 
     async def clean_up(self):
