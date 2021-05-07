@@ -1130,40 +1130,23 @@ class CustomFormModelProperties(object):
 class TextAppearance(object):
     """An object representing the appearance of the text line.
 
-    :param style: An object representing the style of the text line.
-    :type style: ~azure.ai.formrecognizer.TextStyle
+    :ivar str name: The text line style name.
+        Possible values include: "other", "handwriting".
+    :ivar float confidence: The confidence of text line style.
     """
 
     def __init__(self, **kwargs):
-        self.style = kwargs.get("style", None)
+        self.style_name = kwargs.get("style_name", None)
+        self.style_confidence = kwargs.get("style_confidence", None)
 
     @classmethod
     def _from_generated(cls, appearance):
         if appearance is None:
             return appearance
         return cls(
-            style=TextStyle(
-                name=appearance.style.name, confidence=appearance.style.confidence
-            )
+            style_name=appearance.style.name,
+            style_confidence=appearance.style.confidence
         )
 
     def __repr__(self):
-        return "TextAppearance(style={})".format(repr(self.style))
-
-
-class TextStyle(object):
-    """An object representing the style of the text line.
-
-    :param name: The text line style name.
-        Possible values include: "other", "handwriting".
-    :type name: str
-    :param confidence: The confidence of text line style.
-    :type confidence: float
-    """
-
-    def __init__(self, **kwargs):
-        self.name = kwargs.get("name", None)
-        self.confidence = kwargs.get("confidence", None)
-
-    def __repr__(self):
-        return "TextStyle(name={}, confidence={})".format(self.name, self.confidence)
+        return "TextAppearance(style_name={}, style_confidence={})".format(self.style_name, self.style_confidence)
