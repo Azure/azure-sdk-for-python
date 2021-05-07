@@ -19,11 +19,12 @@ def build_pipeline_topology():
     user_name_param = ParameterDeclaration(name="rtspUserName",type="String",default="dummyusername")
     password_param = ParameterDeclaration(name="rtspPassword",type="SecretString",default="dummypassword")
     url_param = ParameterDeclaration(name="rtspUrl",type="String",default="rtsp://www.sample.com")
+    hub_param = ParameterDeclaration(name="hubSinkOutputName",type="String")
 
     source = RtspSource(name="rtspSource", endpoint=UnsecuredEndpoint(url="${rtspUrl}",credentials=UsernamePasswordCredentials(username="${rtspUserName}",password="${rtspPassword}")))
     node = NodeInput(node_name="rtspSource")
-    sink = AssetSink(name="assetsink", inputs=[node],asset_container_sas_url='https://sampleAsset-${System.PipelineTopologyName}-${System.LivePipelineName}.com', segment_length="PT0H0M30S",local_media_cache_maximum_size_mi_b=2048,local_media_cache_path="/var/lib/azuremediaservices/tmp/")
-    pipeline_topology_properties.parameters = [user_name_param, password_param, url_param]
+    sink = IotHubMessageSink("msgSink", nodeInput, "${hubSinkOutputName}")
+    pipeline_topology_properties.parameters = [user_name_param, password_param, url_param, hub_param]
     pipeline_topology_properties.sources = [source]
     pipeline_topology_properties.sinks = [sink]
     pipeline_topology = PipelineTopology(name=pipeline_topology_name,properties=pipeline_topology_properties)
