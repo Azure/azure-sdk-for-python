@@ -20,8 +20,8 @@ if TYPE_CHECKING:
     from azure.core.credentials import TokenCredential
 
 
-class AzurePurviewScanningClientConfiguration(Configuration):
-    """Configuration for AzurePurviewScanningClient.
+class PurviewScanningClientConfiguration(Configuration):
+    """Configuration for PurviewScanningClient.
 
     Note that all parameters used to create this instance are saved as instance
     attributes.
@@ -43,7 +43,7 @@ class AzurePurviewScanningClientConfiguration(Configuration):
             raise ValueError("Parameter 'credential' must not be None.")
         if endpoint is None:
             raise ValueError("Parameter 'endpoint' must not be None.")
-        super(AzurePurviewScanningClientConfiguration, self).__init__(**kwargs)
+        super(PurviewScanningClientConfiguration, self).__init__(**kwargs)
 
         self.credential = credential
         self.endpoint = endpoint

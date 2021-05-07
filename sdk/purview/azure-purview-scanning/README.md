@@ -48,11 +48,11 @@ AZURE_CLIENT_ID, AZURE_TENANT_ID, AZURE_CLIENT_SECRET
 Use the returned token credential to authenticate the client:
 
 ```python
-from azure.purview.scanning import AzurePurviewScanningClient
+from azure.purview.scanning import PurviewScanningClient
 from azure.identity import DefaultAzureCredential
 
 credential = DefaultAzureCredential()
-client = AzurePurviewScanningClient(endpoint="https://<my-account-name>.scanning.purview.azure.com", credential=credential)
+client = PurviewScanningClient(endpoint="https://<my-account-name>.scanning.purview.azure.com", credential=credential)
 ```
 
 ## Key concepts
@@ -71,13 +71,13 @@ The following section shows you how to initialize and authenticate your client, 
 ### List All Data Sources
 
 ```python
-from azure.purview.scanning import AzurePurviewScanningClient
+from azure.purview.scanning import PurviewScanningClient
 from azure.identity import DefaultAzureCredential
 from azure.purview.scanning.rest import data_sources
 from azure.core.exceptions import HttpResponseError
 
 credential = DefaultAzureCredential()
-client = AzurePurviewScanningClient(endpoint="https://<my-account-name>.scanning.purview.azure.com", credential=credential)
+client = PurviewScanningClient(endpoint="https://<my-account-name>.scanning.purview.azure.com", credential=credential)
 
 request = data_sources.build_list_all_request()
 
@@ -114,7 +114,7 @@ headers, can be enabled on a client with the `logging_enable` keyword argument:
 import sys
 import logging
 from azure.identity import DefaultAzureCredential
-from azure.purview.scanning import AzurePurviewScanningClient
+from azure.purview.scanning import PurviewScanningClient
 
 # Create a logger for the 'azure' SDK
 logger = logging.getLogger('azure')
@@ -128,7 +128,7 @@ endpoint = "https://<my-account-name>.scanning.purview.azure.com"
 credential = DefaultAzureCredential()
 
 # This client will log detailed information about its HTTP sessions, at DEBUG level
-client = AzurePurviewScanningClient(endpoint=endpoint, credential=credential, logging_enable=True)
+client = PurviewScanningClient(endpoint=endpoint, credential=credential, logging_enable=True)
 ```
 
 Similarly, `logging_enable` can enable detailed logging for a single `send_request` call,

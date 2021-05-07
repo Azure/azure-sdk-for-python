@@ -20,10 +20,10 @@ if TYPE_CHECKING:
     from azure.core.credentials import TokenCredential
     from azure.purview.scanning.core.rest import HttpRequest
 
-from ._configuration import AzurePurviewScanningClientConfiguration
+from ._configuration import PurviewScanningClientConfiguration
 
 
-class AzurePurviewScanningClient(object):
+class PurviewScanningClient(object):
     """Creates a Microsoft.Scanning management client.
 
     :param credential: Credential needed for the client to connect to Azure.
@@ -40,7 +40,7 @@ class AzurePurviewScanningClient(object):
     ):
         # type: (...) -> None
         base_url = '{Endpoint}'
-        self._config = AzurePurviewScanningClientConfiguration(credential, endpoint, **kwargs)
+        self._config = PurviewScanningClientConfiguration(credential, endpoint, **kwargs)
         self._client = PipelineClient(base_url=base_url, config=self._config, **kwargs)
 
         self._serialize = Serializer()
@@ -95,7 +95,7 @@ class AzurePurviewScanningClient(object):
         self._client.close()
 
     def __enter__(self):
-        # type: () -> AzurePurviewScanningClient
+        # type: () -> PurviewScanningClient
         self._client.__enter__()
         return self
 

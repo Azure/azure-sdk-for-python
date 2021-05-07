@@ -6,14 +6,14 @@
 # --------------------------------------------------------------------------
 import functools
 from devtools_testutils import AzureTestCase, PowerShellPreparer
-from azure.purview.scanning import AzurePurviewScanningClient
+from azure.purview.scanning import PurviewScanningClient
 
 class PurviewScanningTest(AzureTestCase):
 
     def create_client(self, endpoint):
-        credential = self.get_credential(AzurePurviewScanningClient)
+        credential = self.get_credential(PurviewScanningClient)
         return self.create_client_from_credential(
-            AzurePurviewScanningClient,
+            PurviewScanningClient,
             credential=credential,
             endpoint=endpoint,
         )
