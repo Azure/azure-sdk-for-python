@@ -91,6 +91,7 @@ azure-mixedreality-nspkg
 azure-nspkg
 azure-keyvault-nspkg
 azure-media-nspkg
+azure-agrifood-nspkg
 azure-purview-nspkg
 azure-schemaregistry==1.0.0b1
 azure-search-nspkg
