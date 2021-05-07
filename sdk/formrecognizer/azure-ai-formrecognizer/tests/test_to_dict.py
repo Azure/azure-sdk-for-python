@@ -1074,27 +1074,3 @@ class TestToDict(FormRecognizerTest):
             }
         }
         assert d == final
-
-    @FormRecognizerPreparer()
-    @GlobalClientPreparer()
-    def test_custom_form_labeled_to_dict(self, client, formrecognizer_storage_container_sas_url):
-        fr_client = client.get_form_recognizer_client()
-
-        poller = client.begin_training(
-            formrecognizer_storage_container_sas_url,
-            use_training_labels=True,
-            model_name="labeled"
-        )
-        model = poller.result()
-
-        with open(self.form_jpg, "rb") as fd:
-            myfile = fd.read()
-
-        poller = fr_client.begin_recognize_custom_forms(model.model_id, myfile)
-        form = poller.result()
-
-        d = form[0].to_dict()
-        assert d['form_type'] == "custom:labeled"
-
-        self.assertEqual(form[0].form_type, "custom:labeled")
-        self.assertLabeledRecognizedFormHasValues(form[0], model)
