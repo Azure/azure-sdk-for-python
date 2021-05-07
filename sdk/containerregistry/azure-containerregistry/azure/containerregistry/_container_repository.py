@@ -49,6 +49,7 @@ class ContainerRepository(ContainerRegistryBaseClient):
         self._endpoint = endpoint
         self.name = name
         self._credential = credential
+        self.fully_qualified_name = self._endpoint + self.name
         super(ContainerRepository, self).__init__(endpoint=self._endpoint, credential=credential, **kwargs)
 
     @distributed_trace
