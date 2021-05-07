@@ -144,12 +144,12 @@ additional questions or comments.
 [source]: https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/videoanalyzer
 [samples]: https://github.com/Azure-Samples/live-video-analytics-iot-edge-python
 
-[doc_direct_methods]: TODO
-[doc_pipelines]: TODO
-[doc_product]: TODO
+[doc_direct_methods]: TODO://link
+[doc_pipelines]: TODO://link
+[doc_product]: TODO://link
 
 [iot-device-sdk]: https://pypi.org/project/azure-iot-device/
 [iot-hub-sdk]: https://pypi.org/project/azure-iot-hub/
-[iot_device_connection_string]: TODO
+[iot_device_connection_string]: TODO://link
 
 [github-page-issues]: https://github.com/Azure/azure-sdk-for-python/issues
