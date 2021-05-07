@@ -3,106 +3,108 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 # ------------------------------------
-from typing import Any, Dict, TYPE_CHECKING
+from typing import TYPE_CHECKING
 
-from azure.core.async_paging import AsyncItemPaged, AsyncList
 from azure.core.exceptions import (
     ClientAuthenticationError,
-    ResourceExistsError,
     ResourceNotFoundError,
+    ResourceExistsError,
     HttpResponseError,
     map_error,
 )
-from azure.core.pipeline import AsyncPipeline
+from azure.core.paging import ItemPaged
+from azure.core.pipeline import Pipeline
 from azure.core.tracing.decorator import distributed_trace
-from azure.core.tracing.decorator_async import distributed_trace_async
 
-from ._async_base_client import ContainerRegistryBaseClient, AsyncTransportWrapper
-from ._async_container_repository import ContainerRepository
-from .._generated.models import AcrErrors
-from .._helpers import _parse_next_link
-from ._async_registry_artifact import RegistryArtifact
-from .._models import RepositoryProperties, DeleteRepositoryResult
+from ._base_client import ContainerRegistryBaseClient, TransportWrapper
+from ._generated.models import AcrErrors
+from ._helpers import _parse_next_link
+from ._models import (
+    DeleteRepositoryResult,
+    ArtifactManifestProperties,
+    RepositoryProperties,
+)
+from ._registry_artifact import RegistryArtifact
 
 if TYPE_CHECKING:
-    from azure.core.credentials_async import AsyncTokenCredential
+    from typing import Any, Dict
+    from azure.core.credentials import TokenCredential
+    from ._models import ContentProperties
 
 
-class ContainerRegistryClient(ContainerRegistryBaseClient):
-    def __init__(self, endpoint: str, credential: "AsyncTokenCredential", **kwargs: Dict[str, Any]) -> None:
-        """Create a ContainerRegistryClient from an endpoint and a credential
+class ContainerRepository(ContainerRegistryBaseClient):
+    def __init__(self, endpoint, name, credential, **kwargs):
+        # type: (str, str, TokenCredential, Dict[str, Any]) -> None
+        """Create a ContainerRepository from an endpoint, repository name, and credential
 
-        :param endpoint: An ACR endpoint
-        :type endpoint: str
+        :param str endpoint: An ACR endpoint
+        :param str name: The name of a repository
         :param credential: The credential with which to authenticate
-        :type credential: :class:`~azure.core.credentials_async.AsyncTokenCredential`
+        :type credential: :class:`~azure.core.credentials.TokenCredential`
         :returns: None
         :raises: None
-
-        .. admonition:: Example:
-
-            .. literalinclude:: ../samples/async_samples/sample_create_client_async.py
-                :start-after: [START create_registry_client]
-                :end-before: [END create_registry_client]
-                :language: python
-                :dedent: 8
-                :caption: Instantiate an instance of `ContainerRegistryClient`
         """
         if not endpoint.startswith("https://") and not endpoint.startswith("http://"):
             endpoint = "https://" + endpoint
         self._endpoint = endpoint
+        self.name = name
         self._credential = credential
-        super(ContainerRegistryClient, self).__init__(endpoint=endpoint, credential=credential, **kwargs)
+        self.fully_qualified_name = self._endpoint + self.name
+        super(ContainerRepository, self).__init__(endpoint=self._endpoint, credential=credential, **kwargs)
 
-    @distributed_trace_async
-    async def delete_repository(self, repository_name: str, **kwargs: Dict[str, Any]) -> DeleteRepositoryResult:
+    @distributed_trace
+    def delete(self, **kwargs):
+        # type: (Dict[str, Any]) -> DeleteRepositoryResult
         """Delete a repository
 
-        :param str repository_name: The repository to delete
         :returns: Object containing information about the deleted repository
         :rtype: :class:`~azure.containerregistry.DeleteRepositoryResult`
         :raises: :class:`~azure.core.exceptions.ResourceNotFoundError`
-
-        .. admonition:: Example:
-
-            .. literalinclude:: ../samples/async_samples/sample_create_client_async.py
-                :start-after: [START delete_repository]
-                :end-before: [END delete_repository]
-                :language: python
-                :dedent: 8
-                :caption: Delete a repository from the `ContainerRegistryClient`
         """
-        result = await self._client.container_registry.delete_repository(repository_name, **kwargs)
-        return DeleteRepositoryResult._from_generated(result)  # pylint: disable=protected-access
+        return DeleteRepositoryResult._from_generated(  # pylint: disable=protected-access
+            self._client.container_registry.delete_repository(self.name, **kwargs)
+        )
 
     @distributed_trace
-    def list_repository_names(self, **kwargs: Dict[str, Any]) -> AsyncItemPaged[str]:
-        """List all repositories
+    def get_properties(self, **kwargs):
+        # type: (Dict[str, Any]) -> RepositoryProperties
+        """Get the properties of a repository
+
+        :returns: :class:`~azure.containerregistry.RepositoryProperties`
+        :raises: :class:`~azure.core.exceptions.ResourceNotFoundError`
+        """
+        return RepositoryProperties._from_generated(  # pylint: disable=protected-access
+            self._client.container_registry.get_properties(self.name, **kwargs)
+        )
+
+    @distributed_trace
+    def list_manifests(self, **kwargs):
+        # type: (Dict[str, Any]) -> ItemPaged[ArtifactManifestProperties]
+        """List the artifacts for a repository
 
         :keyword last: Query parameter for the last item in the previous call. Ensuing
-            call will return values after last lexicallyy
+            call will return values after last lexically
         :paramtype last: str
-        :keyword max: Maximum number of repositories to return
-        :paramtype max: int
+        :keyword order_by: Query parameter for ordering by time ascending or descending
+        :paramtype order_by: :class:`~azure.containerregistry.ManifestOrder`
         :keyword results_per_page: Number of repositories to return per page
         :paramtype results_per_page: int
-        :return: ItemPaged[str]
-        :rtype: :class:`~azure.core.async_paging.AsyncItemPaged`
+        :return: ItemPaged[:class:`ArtifactManifestProperties`]
+        :rtype: :class:`~azure.core.paging.ItemPaged`
         :raises: :class:`~azure.core.exceptions.ResourceNotFoundError`
-
-        .. admonition:: Example:
-
-            .. literalinclude:: ../samples/async_samples/sample_delete_old_tags_async.py
-                :start-after: [START list_repositories]
-                :end-before: [END list_repositories]
-                :language: python
-                :dedent: 8
-                :caption: List repositories in a container registry account
         """
-        n = kwargs.pop("results_per_page", None)
+        name = self.name
         last = kwargs.pop("last", None)
+        n = kwargs.pop("results_per_page", None)
+        orderby = kwargs.pop("order_by", None)
+        cls = kwargs.pop(
+            "cls",
+            lambda objs: [
+                ArtifactManifestProperties._from_generated(x, repository_name=self.name)  # pylint: disable=protected-access
+                for x in objs
+            ],
+        )
 
-        cls = kwargs.pop("cls", None)
         error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
         error_map.update(kwargs.pop("error_map", {}))
         accept = "application/json"
@@ -116,14 +118,15 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
 
             if not next_link:
                 # Construct URL
-                url = "/acr/v1/_catalog"
+                url = "/acr/v1/{name}/_manifests"
                 path_format_arguments = {
                     "url": self._client._serialize.url(  # pylint: disable=protected-access
-                        "self._config.url",
+                        "self._client._config.url",
                         self._client._config.url,  # pylint: disable=protected-access
                         "str",
                         skip_quote=True,
                     ),
+                    "name": self._client._serialize.url("name", name, "str"),  # pylint: disable=protected-access
                 }
                 url = self._client._client.format_url(url, **path_format_arguments)  # pylint: disable=protected-access
                 # Construct parameters
@@ -136,6 +139,10 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
                     query_parameters["n"] = self._client._serialize.query(  # pylint: disable=protected-access
                         "n", n, "int"
                     )
+                if orderby is not None:
+                    query_parameters["orderby"] = self._client._serialize.query(  # pylint: disable=protected-access
+                        "orderby", orderby, "str"
+                    )
 
                 request = self._client._client.get(  # pylint: disable=protected-access
                     url, query_parameters, header_parameters
@@ -145,11 +152,12 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
                 query_parameters = {}  # type: Dict[str, Any]
                 path_format_arguments = {
                     "url": self._client._serialize.url(  # pylint: disable=protected-access
-                        "self._config.url",
+                        "self._client._config.url",
                         self._client._config.url,  # pylint: disable=protected-access
                         "str",
                         skip_quote=True,
                     ),
+                    "name": self._client._serialize.url("name", name, "str"),  # pylint: disable=protected-access
                 }
                 url = self._client._client.format_url(url, **path_format_arguments)  # pylint: disable=protected-access
                 request = self._client._client.get(  # pylint: disable=protected-access
@@ -157,22 +165,22 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
                 )
             return request
 
-        async def extract_data(pipeline_response):
+        def extract_data(pipeline_response):
             deserialized = self._client._deserialize(  # pylint: disable=protected-access
-                "Repositories", pipeline_response
+                "AcrManifests", pipeline_response
             )
-            list_of_elem = deserialized.repositories or []
+            list_of_elem = deserialized.manifests
             if cls:
                 list_of_elem = cls(list_of_elem)
             link = None
             if "Link" in pipeline_response.http_response.headers.keys():
                 link = _parse_next_link(pipeline_response.http_response.headers["Link"])
-            return link, AsyncList(list_of_elem)
+            return link, iter(list_of_elem)
 
-        async def get_next(next_link=None):
+        def get_next(next_link=None):
             request = prepare_request(next_link)
 
-            pipeline_response = await self._client._client._pipeline.run(  # pylint: disable=protected-access
+            pipeline_response = self._client._client._pipeline.run(  # pylint: disable=protected-access
                 request, stream=False, **kwargs
             )
             response = pipeline_response.http_response
@@ -186,38 +194,25 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
 
             return pipeline_response
 
-        return AsyncItemPaged(get_next, extract_data)
+        return ItemPaged(get_next, extract_data)
 
     @distributed_trace
-    def get_repository(self, repository_name: str, **kwargs: Any) -> ContainerRepository:
-        """Get a repository client
+    def set_properties(self, properties, **kwargs):
+        # type: (RepositoryProperties, Dict[str, Any]) -> RepositoryProperties
+        """Set the properties of a repository
 
-        :param str repository_name: The repository to create a client for
-        :returns: :class:`~azure.containerregistry.aio.ContainerRepository`
-
-        Example
-
-        .. code-block:: python
-
-            from azure.containerregistry.aio import ContainerRepositoryClient
-            from azure.identity.aio import DefaultAzureCredential
-
-            account_url = os.environ["CONTAINERREGISTRY_ENDPOINT"]
-            client = ContainerRegistryClient(account_url, DefaultAzureCredential())
-            repository_client = client.get_repository_client("my_repository")
+        :returns: :class:`~azure.containerregistry.RepositoryProperties`
+        :raises: :class:`~azure.core.exceptions.ResourceNotFoundError`
         """
-        _pipeline = AsyncPipeline(
-            transport=AsyncTransportWrapper(
-                self._client._client._pipeline._transport  # pylint: disable=protected-access
-            ),
-            policies=self._client._client._pipeline._impl_policies,  # pylint: disable=protected-access
-        )
-        return ContainerRepository(
-            self._endpoint, repository_name, credential=self._credential, pipeline=_pipeline, **kwargs
+        return RepositoryProperties._from_generated(  # pylint: disable=protected-access
+            self._client.container_registry.set_properties(
+                self.name, properties._to_generated(), **kwargs  # pylint: disable=protected-access
+            )
         )
 
     @distributed_trace
-    def get_artifact(self, repository_name: str, tag_or_digest: str, **kwargs: Dict[str, Any]) -> RegistryArtifact:
+    def get_artifact(self, tag_or_digest, **kwargs):
+        # type: (str, str, Dict[str, Any]) -> RegistryArtifact
         """Get a Registry Artifact object
 
         :param str repository_name: Name of the repository
@@ -225,15 +220,10 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
         :returns: :class:`~azure.containerregistry.RegistryArtifact`
         :raises: None
         """
-        _pipeline = AsyncPipeline(
-            transport=AsyncTransportWrapper(self._client._client._pipeline._transport),  # pylint: disable=protected-access
+        _pipeline = Pipeline(
+            transport=TransportWrapper(self._client._client._pipeline._transport),  # pylint: disable=protected-access
             policies=self._client._client._pipeline._impl_policies,  # pylint: disable=protected-access
         )
         return RegistryArtifact(
-            self._endpoint,
-            repository_name,
-            tag_or_digest,
-            self._credential,
-            pipeline=_pipeline,
-            **kwargs
+            self._endpoint, self.name, tag_or_digest, self._credential, pipeline=_pipeline, **kwargs
         )

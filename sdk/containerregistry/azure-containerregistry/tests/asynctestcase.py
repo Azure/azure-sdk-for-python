@@ -4,7 +4,7 @@
 # Licensed under the MIT License.
 # ------------------------------------
 from azure.containerregistry.aio import (
-    ContainerRepositoryClient,
+    ContainerRepository,
     ContainerRegistryClient,
 )
 
@@ -42,10 +42,10 @@ class AsyncContainerRegistryTestClass(ContainerRegistryTestClass):
             **kwargs,
         )
 
-    def create_repository_client(self, endpoint, name, **kwargs):
-        return ContainerRepositoryClient(
+    def create_container_repository(self, endpoint, name, **kwargs):
+        return ContainerRepository(
             endpoint=endpoint,
-            repository=name,
+            name=name,
             credential=self.get_credential(),
             **kwargs,
         )
