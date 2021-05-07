@@ -2,6 +2,8 @@
 
 ## 11.2.0b3 (2021-05-11)
 
+### New features
+
 - Added support for knowledge store    #18461
 
 ## 11.2.0b2 (2021-04-13)
